@@ -20,6 +20,7 @@ var {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } = React
 
@@ -57,89 +58,113 @@ var AllAboutOlaf = React.createClass({
 
                 <View style={styles.container}>
 
-                    <View style={styles.rectangle1}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Menus
-                        </Text>
-                    </View>
+                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5} activeOpacity={0.5}>
+                        <View style={styles.rectangle1}>
+                            <Text style={styles.rectangleButtonText}
+                                  autoAdjustsFontSize={true}>
+                                Menus
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.rectangle2}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            SIS
-                        </Text>
-                    </View>
+                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
+                        <View style={styles.rectangle2}>
+                            <Text style={styles.rectangleButtonText}
+                                autoAdjustsFontSize={true}>
+                                SIS
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.rectangle3}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Schedules
-                        </Text>
-                    </View>
+                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
+                        <View style={styles.rectangle3}>
+                            <Text style={styles.rectangleButtonText}
+                                  autoAdjustsFontSize={true}>
+                                Schedules
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.rectangle4}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Calendar
-                        </Text>
-                    </View>
+                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
+                        <View style={styles.rectangle4}>
+                            <Text style={styles.rectangleButtonText}
+                                  autoAdjustsFontSize={true}>
+                                Calendar
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.rectangle5}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Directory
-                        </Text>
-                    </View>
+                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
+                        <View style={styles.rectangle5}>
+                            <Text style={styles.rectangleButtonText}
+                                  autoAdjustsFontSize={true}>
+                                Directory
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.rectangle6}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Streaming Media
-                        </Text>
-                    </View>
+                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
+                        <View style={styles.rectangle6}>
+                            <Text style={styles.rectangleButtonText}
+                                  autoAdjustsFontSize={true}>
+                                Streaming Media
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.rectangle7}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            News
-                        </Text>
-                    </View>
+                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
+                        <View style={styles.rectangle7}>
+                            <Text style={styles.rectangleButtonText}
+                                  autoAdjustsFontSize={true}>
+                                News
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.rectangle8}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Campus Map
-                        </Text>
-                    </View>
+                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
+                        <View style={styles.rectangle8}>
+                            <Text style={styles.rectangleButtonText}
+                                  autoAdjustsFontSize={true}>
+                                Campus Map
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.rectangle9}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Important Contacts
-                        </Text>
-                    </View>
+                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
+                        <View style={styles.rectangle9}>
+                            <Text style={styles.rectangleButtonText}
+                                  autoAdjustsFontSize={true}>
+                                Important Contacts
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.rectangle10}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Transportation
-                        </Text>
-                    </View>
+                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
+                        <View style={styles.rectangle10}>
+                            <Text style={styles.rectangleButtonText}
+                                  autoAdjustsFontSize={true}>
+                                Transportation
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.rectangle11}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Campus Dictionary
-                        </Text>
-                    </View>
+                     <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
+                       <View style={styles.rectangle11}>
+                            <Text style={styles.rectangleButtonText}
+                                  autoAdjustsFontSize={true}>
+                                Campus Dictionary
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-                    <View style={styles.rectangle12}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
+                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
+                        <View style={styles.rectangle12}>
+                            <Text style={styles.rectangleButtonText}
+                                  autoAdjustsFontSize={true}>
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-                        </Text>
-                    </View>
                 </View>
             )
         }})
