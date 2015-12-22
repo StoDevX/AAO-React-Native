@@ -1,16 +1,16 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * All About Olaf
+ * Android Index
  */
-'use strict';
+'use strict'
 
-var React = require('react-native');
+var React = require('react-native')
 var {
   AppRegistry,
   StyleSheet,
   Text,
   View,
-} = React;
+} = React
 
 var AllAboutOlaf = React.createClass({
   render: function() {
@@ -26,9 +26,9 @@ var AllAboutOlaf = React.createClass({
           Shake or press menu button for dev menu
         </Text>
       </View>
-    );
+    )
   }
-});
+})
 
 var styles = StyleSheet.create({
   container: {
@@ -47,6 +47,6 @@ var styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
-});
+})
 
-AppRegistry.registerComponent('AllAboutOlaf', () => AllAboutOlaf);
+AppRegistry.registerComponent('AllAboutOlaf', () => AllAboutOlaf)

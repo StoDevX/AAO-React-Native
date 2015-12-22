@@ -1,6 +1,6 @@
 /**
  * All About Olaf
- * Index
+ * iOS Index
  */
 'use strict'
 
