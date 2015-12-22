@@ -1,7 +1,6 @@
 /**
- * All About Olaf React Native App
- * Drew Volz
- * December 2015
+ * All About Olaf
+ * Index
  */
 'use strict'
 
