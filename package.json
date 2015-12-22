@@ -1,0 +1,13 @@
+{
+  "name": "AllAboutOlaf",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "react-native start"
+  },
+  "dependencies": {
+    "react-native": "^0.17.0",
+    "react-native-device": "^1.0.1",
+    "react-native-navbar": "^1.1.2"
+  }
+}
