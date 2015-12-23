@@ -6,317 +6,65 @@
 
 // React native
 var React = require('react-native')
-// Navigation bar
-var NavigationBar = require('react-native-navbar').default
-// Device info
-var Dimensions = require('Dimensions')
+
+// Home View
+var HomeView = require('./views/ios/home')
+// Menus View
+var MenusView = require('./views/ios/menus')
 
 // Namespacing
 var {
   AppRegistry,
+  Component,
   Navigator,
-  NavigatorIOS,
-  PixelRatio,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
 } = React
 
-// Screen size information
-let Viewport = Dimensions.get('window')
-let height = Viewport.height / 7
-let margin = Viewport.width / 13
-let width = Viewport.width / 2.3
 
-var AllAboutOlaf = React.createClass({
-  render: function() {
-
-    // Navigation button config
-    var leftButtonConfig = {
-        title: 'Info',
-        handler: function onNext() {
-            alert("HELLO WORLD!")
-        }
-    }
-    // Navigation title config
-    var titleConfig = {
-        title: 'All About Olaf',
-        tintColor: 'white',
-    }
-    // Status bar config
-    var statusBarConfig = {
-        style: 'light-content',
-        hidden: false,
-    }
-
-    // Home screen buttons
-    var Rectangle = React.createClass({
-        render: function() {
-            return (
-
-                <View style={styles.container}>
-
-                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5} activeOpacity={0.5}>
-                        <View style={styles.rectangle1}>
-                            <Text style={styles.rectangleButtonText}
-                                  autoAdjustsFontSize={true}>
-                                Menus
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
-                        <View style={styles.rectangle2}>
-                            <Text style={styles.rectangleButtonText}
-                                autoAdjustsFontSize={true}>
-                                SIS
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
-                        <View style={styles.rectangle3}>
-                            <Text style={styles.rectangleButtonText}
-                                  autoAdjustsFontSize={true}>
-                                Schedules
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
-                        <View style={styles.rectangle4}>
-                            <Text style={styles.rectangleButtonText}
-                                  autoAdjustsFontSize={true}>
-                                Calendar
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
-                        <View style={styles.rectangle5}>
-                            <Text style={styles.rectangleButtonText}
-                                  autoAdjustsFontSize={true}>
-                                Directory
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
-                        <View style={styles.rectangle6}>
-                            <Text style={styles.rectangleButtonText}
-                                  autoAdjustsFontSize={true}>
-                                Streaming Media
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
-                        <View style={styles.rectangle7}>
-                            <Text style={styles.rectangleButtonText}
-                                  autoAdjustsFontSize={true}>
-                                News
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
-                        <View style={styles.rectangle8}>
-                            <Text style={styles.rectangleButtonText}
-                                  autoAdjustsFontSize={true}>
-                                Campus Map
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
-                        <View style={styles.rectangle9}>
-                            <Text style={styles.rectangleButtonText}
-                                  autoAdjustsFontSize={true}>
-                                Important Contacts
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
-                        <View style={styles.rectangle10}>
-                            <Text style={styles.rectangleButtonText}
-                                  autoAdjustsFontSize={true}>
-                                Transportation
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                     <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
-                       <View style={styles.rectangle11}>
-                            <Text style={styles.rectangleButtonText}
-                                  autoAdjustsFontSize={true}>
-                                Campus Dictionary
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity oonPress={this._onPressButton} activeOpacity={0.5}>
-                        <View style={styles.rectangle12}>
-                            <Text style={styles.rectangleButtonText}
-                                  autoAdjustsFontSize={true}>
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-
-                </View>
-            )
-        }})
-
+class App extends Component {
+  render() {
     return (
-        <View>
+      <Navigator
+          initialRoute={{id: 'HomeView',
+                         name: 'Index'}}
+          renderScene={this.renderScene.bind(this)}
+          configureScene={(route) => {
+            if (route.sceneConfig) {
+              return route.sceneConfig
+            }
+            return Navigator.SceneConfigs.FloatFromRight
+          }} />
+    )
+  }
+  // Render a given scene
+  renderScene(route, navigator) {
+    var routeId = route.id
+    if (routeId === 'HomeView') {
+      return (
+        <HomeView
+          navigator={navigator} />
+      )
+    }
+    if (routeId === 'MenusView') {
+      return (
+        <MenusView
+          navigator={navigator} />
+      )
+    }
+    return this.noRoute(navigator)
 
-            {/* Top navigation bar */}
-            <NavigationBar
-                title={titleConfig}
-                statusBar={statusBarConfig}
-                tintColor='orange'
-                leftButton={
-                    leftButtonConfig} />
-
-            {/* Scroll for buttons */}
-            <ScrollView
-                automaticallyAdjustContentInsets={false}
-                scrollEventThrottle={200}
-                overflow={'hidden'}
-                alwaysBounceHorizontal={false}
-                style={styles.scrollView}>
-
-                {/* Action buttons */}
-                <View>
-                    <Rectangle></Rectangle>
-                </View>
-
-            </ScrollView>
-
+  }
+  noRoute(navigator) {
+    return (
+      <View style={{flex: 1, alignItems: 'stretch', justifyContent: 'center'}}>
+        <TouchableOpacity style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
+            onPress={() => navigator.pop()}>
+          <Text style={{color: 'red', fontWeight: 'bold'}}>
+            No Route Found
+          </Text>
+        </TouchableOpacity>
       </View>
     )
   }
-})
+}
 
-var styles = StyleSheet.create({
-  // Body container
-  container: {
-    flex: 1,
-    paddingLeft: 17,
-    marginLeft: margin - 25,
-    flexDirection:'row',
-    flexWrap:'wrap',
-  },
-
-  // Main buttons for actions on home screen
-  rectangle1: {
-    width: width,
-    height: height,
-    backgroundColor: "#FCB915",
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
-  },
-  rectangle2: {
-    width: width,
-    height: height,
-    backgroundColor: "F94E26",
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
-  },
-  rectangle3: {
-    width: width,
-    height: height,
-    backgroundColor: "#7E71FF",
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
-  },
-  rectangle4: {
-    width: width,
-    height: height,
-    backgroundColor: "#E52983",
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
-  },
-  rectangle5: {
-    width: width,
-    height: height,
-    backgroundColor: "#999999",
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
-  },
-  rectangle6: {
-    width: width,
-    height: height,
-    backgroundColor: "#20B407",
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
-  },
-  rectangle7: {
-    width: width,
-    height: height,
-    backgroundColor: "#FB863A",
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
-  },
-  rectangle8: {
-    width: width,
-    height: height,
-    backgroundColor: "#1C85F6",
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
-  },
-  rectangle9: {
-    width: width,
-    height: height,
-    backgroundColor: "#2C57D6",
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
-  },
-  rectangle10: {
-    width: width,
-    height: height,
-    backgroundColor: "#CD23CE",
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
-  },
-  rectangle11: {
-    width: width,
-    height: height,
-    backgroundColor: "#49D3DA",
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
-  },
-  rectangle12: {
-    width: width,
-    height: height,
-    backgroundColor: "#F1EEA1",
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
-  },
-
-  // Text styling in buttons
-  rectangleButtonText: {
-    color:'#fff',
-    textAlign:'center',
-    fontSize: 18,
-    marginTop: 40,
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-})
-
-AppRegistry.registerComponent('AllAboutOlaf', () => AllAboutOlaf)
+AppRegistry.registerComponent('AllAboutOlaf', () => App)
