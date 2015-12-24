@@ -241,6 +241,7 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingLeft: 17,
+    paddingBottom: 15,
     marginLeft: margin - 25,
     marginTop: marginTop,
     flexDirection:'row',
