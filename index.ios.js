@@ -6,11 +6,25 @@
 
 // React native
 var React = require('react-native')
+// Parse framework
+var Parse = require('parse/react-native')
+// Parse react-native
+var ParseReact = require('parse-react/react-native')
 
+Parse.initialize(
+  'APP_ID',
+  'JAVASCRIPT_KEY'
+)
+
+/*
+ * === List of Views ===
+ */
 // Home View
 var HomeView = require('./views/ios/home')
 // Menus View
 var MenusView = require('./views/ios/menus')
+// Menus View
+var DirectoryView = require('./views/ios/directory')
 
 // Namespacing
 var {
@@ -25,7 +39,7 @@ class App extends Component {
     return (
       <Navigator
           initialRoute={{id: 'HomeView',
-                         name: 'Index'}}
+                         name: 'Home'}}
           renderScene={this.renderScene.bind(this)}
           configureScene={(route) => {
             if (route.sceneConfig) {
@@ -47,6 +61,12 @@ class App extends Component {
     if (routeId === 'MenusView') {
       return (
         <MenusView
+          navigator={navigator} />
+      )
+    }
+    if (routeId === 'DirectoryView') {
+      return (
+        <DirectoryView
           navigator={navigator} />
       )
     }
