@@ -11,14 +11,23 @@ var Parse = require('parse/react-native')
 // Parse react-native
 var ParseReact = require('parse-react/react-native')
 
+/******************************************
+ *
+ *              Parse Keys
+ *
+ *****************************************/
+
 Parse.initialize(
   'APP_ID',
   'JAVASCRIPT_KEY'
 )
 
-/*
- * === List of Views ===
- */
+/******************************************
+ *
+ *              Views
+ *
+ *****************************************/
+
 // Home View
 var HomeView = require('./views/ios/home')
 // Menus View
@@ -33,6 +42,12 @@ var {
   Navigator,
 } = React
 
+
+/******************************************
+ *
+ *              App Class
+ *
+ *****************************************/
 
 class App extends Component {
   render() {
@@ -49,6 +64,13 @@ class App extends Component {
           }} />
     )
   }
+
+/******************************************
+ *
+ *              Rendering
+ *
+ *****************************************/
+
   // Render a given scene
   renderScene(route, navigator) {
     var routeId = route.id

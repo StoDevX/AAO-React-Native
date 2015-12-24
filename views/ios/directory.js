@@ -48,6 +48,12 @@ let width = Viewport.width / 2.3
     }
   }
 
+/******************************************
+ *
+ *         DirectoryPage Class
+ *
+ *****************************************/
+
 class DirectoryPage extends Component {
   render() {
     return (
@@ -62,6 +68,12 @@ class DirectoryPage extends Component {
     )
   }
 
+/******************************************
+ *
+ *       Pushing a new view
+ *
+ *****************************************/
+
   // Go to request page
   pushView(view, viewTitle) {
     this.props.navigator.push({
@@ -71,6 +83,12 @@ class DirectoryPage extends Component {
     })
   }
 
+
+/******************************************
+ *
+ *              Rendering
+ *
+ *****************************************/
 
   // Render a given scene
   renderScene(route, navigator) {
@@ -97,6 +115,7 @@ class DirectoryPage extends Component {
 
         // Array to hold all people and their desired attributes
         var peopleArray = []
+        // Loop through each object and save what we want
         for (var i = 0; i < Object.keys(jsonPeopleParsed).length; ++i) {
             // Individual and properties
             var person = []
@@ -152,6 +171,12 @@ class DirectoryPage extends Component {
   }
 }
 
+/******************************************
+ *
+ *              Routing
+ *
+ *****************************************/
+
 var NavigationBarRouteMapper = {
   // Left button customization
   LeftButton(route, navigator, index, navState) {
@@ -177,6 +202,13 @@ var NavigationBarRouteMapper = {
     )
   }
 }
+
+
+/******************************************
+ *
+ *              Styles
+ *
+ *****************************************/
 
 var styles = StyleSheet.create({
   // Body container

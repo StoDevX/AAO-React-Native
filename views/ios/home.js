@@ -29,6 +29,12 @@ let marginTop = 70
 let width = Viewport.width / 2.3
 
 
+/******************************************
+ *
+ *           HomePage Class
+ *
+ *****************************************/
+
 class HomePage extends Component {
   render() {
     return (
@@ -43,6 +49,13 @@ class HomePage extends Component {
     )
   }
 
+
+/******************************************
+ *
+ *       Pushing a new view
+ *
+ *****************************************/
+
   // Go to request page
   pushView(view, viewTitle) {
     this.props.navigator.push({
@@ -51,6 +64,13 @@ class HomePage extends Component {
       sceneConfig: Navigator.SceneConfigs.FloatFromRight,
     });
   }
+
+
+/******************************************
+ *
+ *              Rendering
+ *
+ *****************************************/
 
   // Render a given scene
   renderScene(route, navigator) {
@@ -177,6 +197,12 @@ class HomePage extends Component {
   }
 }
 
+/******************************************
+ *
+ *              Routing
+ *
+ *****************************************/
+
 var NavigationBarRouteMapper = {
   // Left button customization
   LeftButton(route, navigator, index, navState) {
@@ -202,6 +228,13 @@ var NavigationBarRouteMapper = {
     )
   }
 }
+
+
+/******************************************
+ *
+ *              Styles
+ *
+ *****************************************/
 
 var styles = StyleSheet.create({
   // Body container

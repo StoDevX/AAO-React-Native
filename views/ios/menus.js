@@ -45,6 +45,13 @@ var loading = true
 var scalesPageToFit = true
 var inputText = ''
 
+
+/******************************************
+ *
+ *           MenusPage Class
+ *
+ *****************************************/
+
 class MenusPage extends Component {
   render() {
     return (
@@ -59,9 +66,11 @@ class MenusPage extends Component {
     )
   }
 
-  handleTextInputChange(event) {
-    this.inputText = event.nativeEvent.text
-  }
+/******************************************
+ *
+ *              Rendering
+ *
+ *****************************************/
 
   // Render a given scene
   renderScene(route, navigator) {
@@ -80,6 +89,16 @@ class MenusPage extends Component {
               scalesPageToFit={scalesPageToFit}/>
           </View>
         )
+  }
+
+/******************************************
+ *
+ * Functions for buttons that do not work or display
+ *
+ *****************************************/
+
+   handleTextInputChange(event) {
+    this.inputText = event.nativeEvent.text
   }
 
   goBack() {
@@ -113,6 +132,12 @@ class MenusPage extends Component {
 
 }
 
+/******************************************
+ *
+ *              Routing
+ *
+ *****************************************/
+
 var NavigationBarRouteMapper = {
   // Left button customization
   LeftButton(route, navigator, index, navState) {
@@ -138,6 +163,12 @@ var NavigationBarRouteMapper = {
     )
   }
 }
+
+/******************************************
+ *
+ *              Styles
+ *
+ *****************************************/
 
 var styles = StyleSheet.create({
   // Body container
