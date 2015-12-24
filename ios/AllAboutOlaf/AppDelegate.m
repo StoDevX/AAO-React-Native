@@ -16,6 +16,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   NSURL *jsCodeLocation;
+  
+  [NSThread sleepForTimeInterval:0.5]; //add 0.5 seconds longer to start image
 
   /**
    * Loading JavaScript code - uncomment the one you want.
