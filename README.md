@@ -10,7 +10,7 @@ The St. Olaf community, now in pocket size... rewritten in React Native.  This i
 * Directory
 * Home Page
 
-## Todo
+## Todo (modules)
 * Calendar
 * Campus Dictionary
 * Campus Map
@@ -20,8 +20,13 @@ The St. Olaf community, now in pocket size... rewritten in React Native.  This i
 * SIS
 * Streaming Media
 * Transportation
-* A better router
+
+## Todo (other)
 * Android development in parallel
+* A better router
+* [3D touch actions](https://github.com/jordanbyron/react-native-quick-actions) for icon and within
+* Static/dynamic data loading from Parse
+* [Touch-ID](https://github.com/naoufal/react-native-touch-id) for SIS
 
 ## Contributing
 Would you like to contriubte? Great! Have a look at [React Native](http://facebook.github.io/react-native/docs/getting-started.html) and have at it.
