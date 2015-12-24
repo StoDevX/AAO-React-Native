@@ -29,6 +29,12 @@ let marginTop = 60
 // URL info
 var TEXT_INPUT_REF = 'urlInput';
 var WEBVIEW_REF = 'webview';
+
+// Note: Fix me.
+// 1. Don't keep this here... make a general purpose webview and pass url in from the router.
+// 2. Also, pull this string in from existing Parse database to ensure up-to-date info.
+// 3. A bunch of leftover history forwards/backwards/text input ref/webview ref things
+//    exist but are not used. Maybe redo the router so you can construct apps the "react way"
 var DEFAULT_URL = 'http://stolaf.cafebonappetit.com/cafe/stav-hall/#Lunch';
 
 var url = DEFAULT_URL
@@ -46,7 +52,8 @@ class MenusPage extends Component {
           renderScene={this.renderScene.bind(this)}
           navigator={this.props.navigator}
           navigationBar={
-            <Navigator.NavigationBar style={styles.navigationBar}
+            <Navigator.NavigationBar
+                style={styles.navigationBar}
                 routeMapper={NavigationBarRouteMapper} />
           } />
     )
@@ -104,19 +111,6 @@ class MenusPage extends Component {
     this.pressGoButton();
   }
 
-  pressGoButton() {
-    var url = this.inputText.toLowerCase();
-    if (url === url) {
-      this.reload();
-    } else {
-      this.setState({
-        url: url,
-      })
-    }
-       this.refs[TEXT_INPUT_REF].blur();
-  }
-
-
 }
 
 var NavigationBarRouteMapper = {
@@ -138,11 +132,9 @@ var NavigationBarRouteMapper = {
   // Title customization
   Title(route, navigator, index, navState) {
     return (
-      <TouchableOpacity style={styles.navButton}>
         <Text style={styles.navigationText}>
           Menus
         </Text>
-      </TouchableOpacity>
     )
   }
 }
