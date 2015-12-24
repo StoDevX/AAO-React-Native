@@ -36,16 +36,18 @@ class HomePage extends Component {
           renderScene={this.renderScene.bind(this)}
           navigator={this.props.navigator}
           navigationBar={
-            <Navigator.NavigationBar style={styles.navigationBar}
+            <Navigator.NavigationBar
+                style={styles.navigationBar}
                 routeMapper={NavigationBarRouteMapper} />
           } />
     )
   }
 
   // Go to request page
-  pushView(theView) {
+  pushView(view, viewTitle) {
     this.props.navigator.push({
-      id: theView,
+      id: view,
+      title: viewTitle,
       sceneConfig: Navigator.SceneConfigs.FloatFromRight,
     });
   }
@@ -63,7 +65,7 @@ class HomePage extends Component {
             style={styles.scrollView}>
 
             <View style={styles.container}>
-                <TouchableOpacity onPress={this.pushView.bind(this, "MenusView")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, "MenusView", "Menus")} activeOpacity={0.5}>
                     <View style={styles.rectangle1}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -72,7 +74,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "SISView")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, "SISView", "SIS")} activeOpacity={0.5}>
                     <View style={styles.rectangle2}>
                         <Text style={styles.rectangleButtonText}
                             autoAdjustsFontSize={true}>
@@ -81,7 +83,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "SchedulesView")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, "SchedulesView", "Schedules")} activeOpacity={0.5}>
                     <View style={styles.rectangle3}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -90,7 +92,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "CalendarView")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, "CalendarView", "Calendar")} activeOpacity={0.5}>
                     <View style={styles.rectangle4}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -99,7 +101,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "DirectoryView")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, "DirectoryView", "Directory")} activeOpacity={0.5}>
                     <View style={styles.rectangle5}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -108,7 +110,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "StreamingView")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, "StreamingView", "Streaming Media")} activeOpacity={0.5}>
                     <View style={styles.rectangle6}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -117,7 +119,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "NewsView")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, "NewsView", "News")} activeOpacity={0.5}>
                     <View style={styles.rectangle7}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -126,7 +128,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "MapView")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, "MapView", "Campus Map")} activeOpacity={0.5}>
                     <View style={styles.rectangle8}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -135,7 +137,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "ContactsView")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, "ContactsView", "Important Contacts")} activeOpacity={0.5}>
                     <View style={styles.rectangle9}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -144,7 +146,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "TransportationView")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, "TransportationView", "Transportation")} activeOpacity={0.5}>
                     <View style={styles.rectangle10}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -153,7 +155,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                 <TouchableOpacity onPress={this.pushView.bind(this, "DictionaryView")} activeOpacity={0.5}>
+                 <TouchableOpacity onPress={this.pushView.bind(this, "DictionaryView", "Campus Dictionary")} activeOpacity={0.5}>
                    <View style={styles.rectangle11}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -162,7 +164,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, "", "")} activeOpacity={0.5}>
                     <View style={styles.rectangle12}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -194,11 +196,9 @@ var NavigationBarRouteMapper = {
   // Title customization
   Title(route, navigator, index, navState) {
     return (
-      <TouchableOpacity style={styles.navButton}>
         <Text style={styles.navigationText}>
           All About Olaf
         </Text>
-      </TouchableOpacity>
     )
   }
 }
