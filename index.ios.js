@@ -5,22 +5,10 @@
 'use strict'
 
 // React native
-var React = require('react-native')
-// Parse framework
-var Parse = require('parse/react-native')
-// Parse react-native
-var ParseReact = require('parse-react/react-native')
-
-/******************************************
- *
- *              Parse Keys
- *
- *****************************************/
-
-Parse.initialize(
-  'APP_ID',
-  'JAVASCRIPT_KEY'
-)
+const React = require('react')
+const {Component} = React
+var RN = require('react-native')
+// Namespacing
 
 /******************************************
  *
@@ -28,19 +16,15 @@ Parse.initialize(
  *
  *****************************************/
 
-// Home View
-var HomeView = require('./views/ios/home')
-// Menus View
-var MenusView = require('./views/ios/menus')
-// Menus View
-var DirectoryView = require('./views/ios/directory')
+const HomeView = require('./views/ios/home')
+const MenusView = require('./views/ios/menus')
+const DirectoryView = require('./views/ios/directory')
 
 // Namespacing
-var {
+const {
   AppRegistry,
-  Component,
   Navigator,
-} = React
+} = RN
 
 
 /******************************************

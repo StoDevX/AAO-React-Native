@@ -3,13 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "react-native start"
+    "start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {
     "fbemitter": "^2.0.0",
-    "parse": "^1.6.13",
-    "parse-react": "^0.5.0",
-    "react-native": "^0.17.0",
+    "react": "^15.1.0",
+    "react-native": "0.27.1",
     "xml-parser": "^1.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^2.11.1",
+    "eslint-plugin-react": "^5.1.1"
   }
 }

@@ -5,11 +5,12 @@
 'use strict'
 
 // React native
-var React = require('react-native')
+const React = require('react')
+const RN = require('react-native')
 
 // Namespacing
-var {
-  Component,
+const {Component} = React
+const {
   Navigator,
   PixelRatio,
   ScrollView,
@@ -17,10 +18,10 @@ var {
   Text,
   TouchableOpacity,
   View,
-} = React
+} = RN
 
 // Device info
-var Dimensions = require('Dimensions')
+const Dimensions = require('Dimensions')
 // Screen size information
 let Viewport = Dimensions.get('window')
 let height = Viewport.height / 7
@@ -48,29 +49,14 @@ class HomePage extends Component {
           } />
     )
   }
-
-
-/******************************************
- *
- *       Pushing a new view
- *
- *****************************************/
-
   // Go to request page
   pushView(view, viewTitle) {
     this.props.navigator.push({
       id: view,
       title: viewTitle,
       sceneConfig: Navigator.SceneConfigs.FloatFromRight,
-    });
+    })
   }
-
-
-/******************************************
- *
- *              Rendering
- *
- *****************************************/
 
   // Render a given scene
   renderScene(route, navigator) {
@@ -85,7 +71,7 @@ class HomePage extends Component {
             style={styles.scrollView}>
 
             <View style={styles.container}>
-                <TouchableOpacity onPress={this.pushView.bind(this, "MenusView", "Menus")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, 'MenusView', 'Menus')} activeOpacity={0.5}>
                     <View style={styles.rectangle1}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -94,7 +80,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "SISView", "SIS")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, 'SISView', 'SIS')} activeOpacity={0.5}>
                     <View style={styles.rectangle2}>
                         <Text style={styles.rectangleButtonText}
                             autoAdjustsFontSize={true}>
@@ -103,7 +89,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "SchedulesView", "Schedules")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, 'SchedulesView', 'Schedules')} activeOpacity={0.5}>
                     <View style={styles.rectangle3}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -112,7 +98,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "CalendarView", "Calendar")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, 'CalendarView', 'Calendar')} activeOpacity={0.5}>
                     <View style={styles.rectangle4}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -121,7 +107,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "DirectoryView", "Directory")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, 'DirectoryView', 'Directory')} activeOpacity={0.5}>
                     <View style={styles.rectangle5}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -130,7 +116,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "StreamingView", "Streaming Media")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, 'StreamingView', 'Streaming Media')} activeOpacity={0.5}>
                     <View style={styles.rectangle6}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -139,7 +125,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "NewsView", "News")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, 'NewsView', 'News')} activeOpacity={0.5}>
                     <View style={styles.rectangle7}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -148,7 +134,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "MapView", "Campus Map")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, 'MapView', 'Campus Map')} activeOpacity={0.5}>
                     <View style={styles.rectangle8}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -157,7 +143,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "ContactsView", "Important Contacts")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, 'ContactsView', 'Important Contacts')} activeOpacity={0.5}>
                     <View style={styles.rectangle9}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -166,7 +152,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "TransportationView", "Transportation")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, 'TransportationView', 'Transportation')} activeOpacity={0.5}>
                     <View style={styles.rectangle10}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -175,7 +161,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                 <TouchableOpacity onPress={this.pushView.bind(this, "DictionaryView", "Campus Dictionary")} activeOpacity={0.5}>
+                 <TouchableOpacity onPress={this.pushView.bind(this, 'DictionaryView', 'Campus Dictionary')} activeOpacity={0.5}>
                    <View style={styles.rectangle11}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -184,7 +170,7 @@ class HomePage extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={this.pushView.bind(this, "", "")} activeOpacity={0.5}>
+                <TouchableOpacity onPress={this.pushView.bind(this, '', '')} activeOpacity={0.5}>
                     <View style={styles.rectangle12}>
                         <Text style={styles.rectangleButtonText}
                               autoAdjustsFontSize={true}>
@@ -197,10 +183,9 @@ class HomePage extends Component {
   }
 }
 
+
 /******************************************
- *
- *              Routing
- *
+ * Routing
  *****************************************/
 
 var NavigationBarRouteMapper = {
@@ -231,9 +216,7 @@ var NavigationBarRouteMapper = {
 
 
 /******************************************
- *
- *              Styles
- *
+ * Styles
  *****************************************/
 
 var styles = StyleSheet.create({
@@ -252,7 +235,7 @@ var styles = StyleSheet.create({
   rectangle1: {
     width: width,
     height: height,
-    backgroundColor: "#FCB915",
+    backgroundColor: '#FCB915',
     marginRight: 10,
     marginTop: 10,
     borderRadius: 30 / PixelRatio.get(),
@@ -260,7 +243,7 @@ var styles = StyleSheet.create({
   rectangle2: {
     width: width,
     height: height,
-    backgroundColor: "F94E26",
+    backgroundColor: '#F94E26',
     marginRight: 10,
     marginTop: 10,
     borderRadius: 30 / PixelRatio.get(),
@@ -268,7 +251,7 @@ var styles = StyleSheet.create({
   rectangle3: {
     width: width,
     height: height,
-    backgroundColor: "#7E71FF",
+    backgroundColor: '#7E71FF',
     marginRight: 10,
     marginTop: 10,
     borderRadius: 30 / PixelRatio.get(),
@@ -276,7 +259,7 @@ var styles = StyleSheet.create({
   rectangle4: {
     width: width,
     height: height,
-    backgroundColor: "#E52983",
+    backgroundColor: '#E52983',
     marginRight: 10,
     marginTop: 10,
     borderRadius: 30 / PixelRatio.get(),
@@ -284,7 +267,7 @@ var styles = StyleSheet.create({
   rectangle5: {
     width: width,
     height: height,
-    backgroundColor: "#999999",
+    backgroundColor: '#999999',
     marginRight: 10,
     marginTop: 10,
     borderRadius: 30 / PixelRatio.get(),
@@ -292,7 +275,7 @@ var styles = StyleSheet.create({
   rectangle6: {
     width: width,
     height: height,
-    backgroundColor: "#20B407",
+    backgroundColor: '#20B407',
     marginRight: 10,
     marginTop: 10,
     borderRadius: 30 / PixelRatio.get(),
@@ -300,7 +283,7 @@ var styles = StyleSheet.create({
   rectangle7: {
     width: width,
     height: height,
-    backgroundColor: "#FB863A",
+    backgroundColor: '#FB863A',
     marginRight: 10,
     marginTop: 10,
     borderRadius: 30 / PixelRatio.get(),
@@ -308,7 +291,7 @@ var styles = StyleSheet.create({
   rectangle8: {
     width: width,
     height: height,
-    backgroundColor: "#1C85F6",
+    backgroundColor: '#1C85F6',
     marginRight: 10,
     marginTop: 10,
     borderRadius: 30 / PixelRatio.get(),
@@ -316,7 +299,7 @@ var styles = StyleSheet.create({
   rectangle9: {
     width: width,
     height: height,
-    backgroundColor: "#2C57D6",
+    backgroundColor: '#2C57D6',
     marginRight: 10,
     marginTop: 10,
     borderRadius: 30 / PixelRatio.get(),
@@ -324,7 +307,7 @@ var styles = StyleSheet.create({
   rectangle10: {
     width: width,
     height: height,
-    backgroundColor: "#CD23CE",
+    backgroundColor: '#CD23CE',
     marginRight: 10,
     marginTop: 10,
     borderRadius: 30 / PixelRatio.get(),
@@ -332,7 +315,7 @@ var styles = StyleSheet.create({
   rectangle11: {
     width: width,
     height: height,
-    backgroundColor: "#49D3DA",
+    backgroundColor: '#49D3DA',
     marginRight: 10,
     marginTop: 10,
     borderRadius: 30 / PixelRatio.get(),
@@ -340,7 +323,7 @@ var styles = StyleSheet.create({
   rectangle12: {
     width: width,
     height: height,
-    backgroundColor: "#F1EEA1",
+    backgroundColor: '#F1EEA1',
     marginRight: 10,
     marginTop: 10,
     borderRadius: 30 / PixelRatio.get(),
@@ -348,7 +331,7 @@ var styles = StyleSheet.create({
 
   // Navigation bar styling
   navigationBar: {
-    backgroundColor: "orange",
+    backgroundColor: 'orange',
   },
   navigationButton: {
     flex: 1,

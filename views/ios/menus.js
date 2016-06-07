@@ -5,10 +5,11 @@
 'use strict'
 
 // React native
-var React = require('react-native')
+const React = require('react')
+const {Component} = React
+const RN = require('react-native')
 // Namespacing
-var {
-  Component,
+const {
   Navigator,
   PixelRatio,
   ScrollView,
@@ -18,32 +19,32 @@ var {
   TouchableOpacity,
   View,
   WebView,
-} = React
+} = RN
 
 // Device info
-var Dimensions = require('Dimensions')
+const Dimensions = require('Dimensions')
 // Screen size information
 let Viewport = Dimensions.get('window')
 let marginTop = 60
 
 // URL info
-var TEXT_INPUT_REF = 'urlInput';
-var WEBVIEW_REF = 'webview';
+const TEXT_INPUT_REF = 'urlInput';
+const WEBVIEW_REF = 'webview';
 
 // Note: Fix me.
 // 1. Don't keep this here... make a general purpose webview and pass url in from the router.
 // 2. Also, pull this string in from existing Parse database to ensure up-to-date info.
 // 3. A bunch of leftover history forwards/backwards/text input ref/webview ref things
 //    exist but are not used. Maybe redo the router so you can construct apps the "react way"
-var DEFAULT_URL = 'http://stolaf.cafebonappetit.com/cafe/stav-hall/#Lunch';
+const DEFAULT_URL = 'http://stolaf.cafebonappetit.com/cafe/stav-hall/#Lunch';
 
-var url = DEFAULT_URL
-var status = 'No Page Loaded'
-var backButtonEnabled = false
-var forwardButtonEnabled = false
-var loading = true
-var scalesPageToFit = true
-var inputText = ''
+let url = DEFAULT_URL
+let status = 'No Page Loaded'
+let backButtonEnabled = false
+let forwardButtonEnabled = false
+let loading = true
+let scalesPageToFit = true
+let inputText = ''
 
 
 /******************************************
@@ -114,20 +115,20 @@ class MenusPage extends Component {
   }
 
   onShouldStartLoadWithRequest(event) {
-       return true;
+    return true
   }
 
   onNavigationStateChange(navState) {
-      backButtonEnabled = navState.canGoBack
-      forwardButtonEnabled = navState.canGoForward
-      url = navState.url
-      status = navState.title
-      loading = navState.loading
-      scalesPageToFit = true
+    backButtonEnabled = navState.canGoBack
+    forwardButtonEnabled = navState.canGoForward
+    url = navState.url
+    status = navState.title
+    loading = navState.loading
+    scalesPageToFit = true
   }
 
   onSubmitEditing(event) {
-    this.pressGoButton();
+    this.pressGoButton()
   }
 
 }

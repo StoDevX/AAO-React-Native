@@ -4,16 +4,18 @@
  */
 'use strict'
 
-var React = require('react-native')
+var React = require('react')
+var RN = require('react-native')
+var {Component} = React
 var {
   AppRegistry,
   StyleSheet,
   Text,
   View,
-} = React
+} = RN
 
-var AllAboutOlaf = React.createClass({
-  render: function() {
+class AllAboutOlaf extends Component {
+  render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
@@ -28,7 +30,7 @@ var AllAboutOlaf = React.createClass({
       </View>
     )
   }
-})
+}
 
 var styles = StyleSheet.create({
   container: {

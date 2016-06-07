@@ -5,7 +5,11 @@
 'use strict'
 
 // React native
-var React = require('react-native')
+const React = require('react')
+const {Component} = React
+var RN = require('react-native')
+// Namespacing
+
 // XML Parsing
 var XMLParse = require('xml-parser')
 
@@ -20,7 +24,6 @@ var REQUEST_URL = 'http://www.stolaf.edu/personal/directory/index.cfm?fuseaction
 
 // Namespacing
 var {
-  Component,
   ListView,
   Navigator,
   PixelRatio,
@@ -29,7 +32,7 @@ var {
   Text,
   TouchableOpacity,
   View,
-} = React
+} = RN
 
 // Device info
 var Dimensions = require('Dimensions')
