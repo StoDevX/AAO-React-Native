@@ -13,7 +13,6 @@ const {
   Navigator,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   WebView,
 } = RN
@@ -24,7 +23,6 @@ let marginTop = 60
 const backButton = require('./back-button')
 
 // URL info
-const TEXT_INPUT_REF = 'urlInput'
 const WEBVIEW_REF = 'webview'
 
 // Note: Fix me.
@@ -34,9 +32,6 @@ const WEBVIEW_REF = 'webview'
 //    exist but are not used. Maybe redo the router so you can construct apps the "react way"
 const DEFAULT_URL = 'http://stolaf.cafebonappetit.com/cafe/stav-hall#Lunch'
 
-let url = DEFAULT_URL
-let scalesPageToFit = true
-
 
 /******************************************
  *
@@ -45,6 +40,12 @@ let scalesPageToFit = true
  *****************************************/
 
 class MenusPage extends React.Component {
+  constructor() {
+    super()
+    this.scalesPageToFit = true
+    this.url = DEFAULT_URL
+  }
+
   render() {
     return (
       <Navigator
@@ -60,45 +61,23 @@ class MenusPage extends React.Component {
     )
   }
 
-  componentWillUnmount() {
-
-  }
-
-
   // Render a given scene
   renderScene() {
-    this.inputText = TEXT_INPUT_REF
     return (
       <View style={styles.container}>
         <WebView
           ref={WEBVIEW_REF}
           automaticallyAdjustContentInsets={false}
           style={styles.webView}
-          source={{uri: url}}
+          source={{uri: this.url}}
           javaScriptEnabledAndroid={true}
-          onNavigationStateChange={this.onNavigationStateChange}
-          onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
+          onNavigationStateChange={this.onNavigationStateChange.bind(this)}
+          onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
           startInLoadingState={true}
-          scalesPageToFit={scalesPageToFit}
+          scalesPageToFit={this.scalesPageToFit}
         />
       </View>
     )
-  }
-
-  handleTextInputChange(event) {
-    this.inputText = event.nativeEvent.text
-  }
-
-  goBack() {
-    this.refs[WEBVIEW_REF].goBack()
-  }
-
-  goForward() {
-    this.refs[WEBVIEW_REF].goForward()
-  }
-
-  reload() {
-    this.refs[WEBVIEW_REF].reload()
   }
 
   onShouldStartLoadWithRequest() {
@@ -106,12 +85,8 @@ class MenusPage extends React.Component {
   }
 
   onNavigationStateChange(navState) {
-    url = navState.url
-    scalesPageToFit = true
-  }
-
-  onSubmitEditing() {
-    this.pressGoButton()
+    this.url = navState.url
+    this.scalesPageToFit = true
   }
 }
 

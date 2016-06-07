@@ -16,14 +16,14 @@ var RN = require('react-native')
  *
  *****************************************/
 
-const HomeView = require('./views/ios/home')
-const MenusView = require('./views/ios/menus')
-const DirectoryView = require('./views/ios/directory')
 const AboutView = require('./views/ios/about')
 const CalendarView = require('./views/ios/calendar')
 const DictionaryView = require('./views/ios/dictionary')
+const DirectoryView = require('./views/ios/directory')
+const HomeView = require('./views/ios/home')
 const MapView = require('./views/ios/map')
 const MediaView = require('./views/ios/media')
+const MenusView = require('./views/ios/menus')
 const NewsView = require('./views/ios/news')
 const SchedulesView = require('./views/ios/schedules')
 const TransportationView = require('./views/ios/transportation')
