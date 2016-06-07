@@ -20,5 +20,6 @@ module.exports = {
         "quotes": ["error", "single"],
         "semi": ["error", "never"],
         "comma-dangle": ["error", "only-multiline"],
+        "react/jsx-uses-vars": ["error"],
     },
 }
