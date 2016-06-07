@@ -23,10 +23,14 @@ const {
 const Dimensions = require('Dimensions')
 // Screen size information
 let Viewport = Dimensions.get('window')
-let height = Viewport.height / 7
-let margin = Viewport.width / 13
 let marginTop = 70
-let width = Viewport.width / 2.3
+
+let cellSpacing = 10
+let cellHeight = Viewport.height / 7
+let cellWidth = Viewport.width / 2.3
+let leftSideMargin = Viewport.width - (cellWidth * 2) - (cellSpacing * 3)
+
+const Icon = require('react-native-vector-icons/Entypo')
 
 
 class HomePage extends React.Component {
@@ -56,18 +60,17 @@ class HomePage extends React.Component {
   // Render a given scene
   renderScene() {
     let views = [
-      {view: 'MenusView', title: 'Menus'},
-      {view: 'SISView', title: 'SIS'},
-      {view: 'SchedulesView', title: 'Schedules'},
-      {view: 'CalendarView', title: 'Calendar'},
-      {view: 'DirectoryView', title: 'Directory'},
-      {view: 'StreamingView', title: 'Streaming Media'},
-      {view: 'NewsView', title: 'News'},
-      {view: 'MapView', title: 'Campus Map'},
-      {view: 'ContactsView', title: 'Important Contacts'},
-      {view: 'TransportationView', title: 'Transportation'},
-      {view: 'DictionaryView', title: 'Campus Dictionary'},
-      // {view: '', title: ''},
+      {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl'},
+      {usable: false, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
+      {usable: false, view: 'SchedulesView', title: 'Schedules', icon: 'graduation-cap'},
+      {usable: false, view: 'CalendarView', title: 'Calendar', icon: 'calendar'},
+      {usable: false, view: 'DirectoryView', title: 'Directory', icon: 'v-card'},
+      {usable: false, view: 'StreamingView', title: 'Streaming Media', icon: 'video'},
+      {usable: false, view: 'NewsView', title: 'News', icon: 'news'},
+      {usable: false, view: 'MapView', title: 'Campus Map', icon: 'map'},
+      {usable: false, view: 'ContactsView', title: 'Important Contacts', icon: 'phone'},
+      {usable: false, view: 'TransportationView', title: 'Transportation', icon: 'address'},
+      {usable: false, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
     ]
     return (
       <ScrollView
@@ -82,11 +85,12 @@ class HomePage extends React.Component {
         <View style={styles.container}>
           {views.map((view, i) =>
             <TouchableOpacity
-              key={view.view}
-              onPress={() => this.pushView(view.view, view.title)}
-              activeOpacity={0.5}
+              key={view.title}
+              onPress={() => view.usable && this.pushView(view.view, view.title)}
+              activeOpacity={view.usable ? 0.5 : 1}
             >
-              <View style={[styles.rectangle, styles['rectangle'+(i+1)]]}>
+              <View style={[styles.rectangle, styles['rectangle'+(i+1)]].concat(!view.usable ? [styles.disabledReactangle] : [])}>
+                <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
                 <Text
                   style={styles.rectangleButtonText}
                   autoAdjustsFontSize={true}
@@ -111,12 +115,11 @@ var NavigationBarRouteMapper = {
   // Left button customization
   LeftButton(route, navigator) {
     return (
-      <TouchableOpacity style={styles.navButton}
+      <TouchableOpacity
+        style={styles.navButton}
         onPress={() => navigator.parentNavigator.pop()}
       >
-        <Text style={styles.navigationButtonText}>
-          Info
-        </Text>
+        <Icon name='info' style={styles.navigationButtonText} />
       </TouchableOpacity>
     )
   },
@@ -139,13 +142,30 @@ var NavigationBarRouteMapper = {
  * Styles
  *****************************************/
 
+let NAVY = '#001f3f'
+let BLUE = '#0074D9'
+// let AQUA = '#7FDBFF'
+let TEAL = '#39CCCC'
+let OLIVE = '#3D9970'
+let GREEN = '#2ECC40'
+// let LIME = '#01FF70'
+let YELLOW = '#FFDC00'
+let ORANGE = '#FF851B'
+let RED = '#FF4136'
+let MAROON = '#85144b'
+// let FUCHSIA = '#F012BE'
+let PURPLE = '#B10DC9'
+let BLACK = '#111111'
+let GRAY = '#AAAAAA'
+let SILVER = '#DDDDDD'
+let WHITE = '#FFFFFF'
+
 var styles = StyleSheet.create({
   // Body container
   container: {
     flex: 1,
-    paddingLeft: 17,
+    paddingLeft: leftSideMargin,
     paddingBottom: 15,
-    marginLeft: margin - 25,
     marginTop: marginTop,
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -153,79 +173,87 @@ var styles = StyleSheet.create({
 
   // Main buttons for actions on home screen
   rectangle: {
-    width: width,
-    height: height,
-    marginRight: 10,
-    marginTop: 10,
+    width: cellWidth,
+    height: cellHeight,
+    marginRight: cellSpacing,
+    marginTop: cellSpacing,
     alignItems: 'center',
-    // alignContent: 'center',
     justifyContent: 'center',
     borderRadius: 30 / PixelRatio.get(),
   },
+
   rectangle1: {
-    backgroundColor: '#FCB915',
+    backgroundColor: YELLOW,
   },
   rectangle2: {
-    backgroundColor: '#F94E26',
+    backgroundColor: RED,
   },
   rectangle3: {
-    backgroundColor: '#7E71FF',
+    backgroundColor: PURPLE,
   },
   rectangle4: {
-    backgroundColor: '#E52983',
+    backgroundColor: OLIVE,
   },
   rectangle5: {
-    backgroundColor: '#999999',
+    backgroundColor: GRAY,
   },
   rectangle6: {
-    backgroundColor: '#20B407',
+    backgroundColor: GREEN,
   },
   rectangle7: {
-    backgroundColor: '#FB863A',
+    backgroundColor: ORANGE,
   },
   rectangle8: {
-    backgroundColor: '#1C85F6',
+    backgroundColor: BLUE,
   },
   rectangle9: {
-    backgroundColor: '#2C57D6',
+    backgroundColor: TEAL,
   },
   rectangle10: {
-    backgroundColor: '#CD23CE',
+    backgroundColor: MAROON,
   },
   rectangle11: {
-    backgroundColor: '#49D3DA',
+    backgroundColor: NAVY,
   },
   rectangle12: {
-    backgroundColor: '#F1EEA1',
+    backgroundColor: BLACK,
+  },
+
+  disabledReactangle: {
+    backgroundColor: SILVER,
+  },
+
+  rectangleButtonIcon: {
+    color: WHITE,
   },
 
   // Navigation bar styling
   navigationBar: {
-    backgroundColor: 'orange',
-    marginBottom: 100,
+    backgroundColor: ORANGE,
+    paddingTop: 20,
   },
   navigationButton: {
-    flex: 1,
-    justifyContent: 'center',
   },
   navigationButtonText: {
-    color: 'white',
-    margin: 10,
+    color: WHITE,
+    fontSize: 20,
+    marginTop: 8,
+    marginLeft: 14,
   },
   navigationText: {
-    color: 'white',
+    color: WHITE,
     fontWeight: '500',
-    margin: 10,
+    marginTop: 10,
     fontSize: 16,
   },
 
   // Text styling in buttons
   rectangleButtonText: {
-    color:'#fff',
-    textAlign:'center',
+    color: WHITE,
+    textAlign: 'center',
     fontSize: 14,
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 })
 
