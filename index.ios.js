@@ -19,6 +19,14 @@ var RN = require('react-native')
 const HomeView = require('./views/ios/home')
 const MenusView = require('./views/ios/menus')
 const DirectoryView = require('./views/ios/directory')
+const AboutView = require('./views/ios/about')
+const CalendarView = require('./views/ios/calendar')
+const DictionaryView = require('./views/ios/dictionary')
+const MapView = require('./views/ios/map')
+const MediaView = require('./views/ios/media')
+const NewsView = require('./views/ios/news')
+const SchedulesView = require('./views/ios/schedules')
+const TransportationView = require('./views/ios/transportation')
 
 // Namespacing
 const {
@@ -27,69 +35,66 @@ const {
 } = RN
 
 
-/******************************************
- *
- *              App Class
- *
- *****************************************/
+function noRoute(navigator) {
+  return (
+    <View style={{flex: 1, alignItems: 'stretch', justifyContent: 'center'}}>
+      <TouchableOpacity style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
+          onPress={() => navigator.pop()}>
+        <Text style={{color: 'red', fontWeight: 'bold'}}>
+          No Route Found
+        </Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
 
 class App extends Component {
   render() {
     return (
       <Navigator
-          initialRoute={{id: 'HomeView',
-                         name: 'Home'}}
-          renderScene={this.renderScene.bind(this)}
-          configureScene={(route) => {
-            if (route.sceneConfig) {
-              return route.sceneConfig
-            }
-            return Navigator.SceneConfigs.FloatFromRight
-          }} />
+        initialRoute={{
+          id: 'HomeView',
+          name: 'Home',
+        }}
+        renderScene={this.renderScene}
+        configureScene={(route) => {
+          if (route.sceneConfig) {
+            return route.sceneConfig
+          }
+          return Navigator.SceneConfigs.FloatFromRight
+        }}
+      />
     )
   }
-
-/******************************************
- *
- *              Rendering
- *
- *****************************************/
 
   // Render a given scene
   renderScene(route, navigator) {
-    var routeId = route.id
-    if (routeId === 'HomeView') {
-      return (
-        <HomeView
-          navigator={navigator} />
-      )
+    switch (route.id) {
+    case 'HomeView':
+      return <HomeView navigator={navigator} />
+    case 'MenusView':
+      return <MenusView navigator={navigator} />
+    case 'DirectoryView':
+      return <DirectoryView navigator={navigator} />
+    case 'AboutView':
+      return <AboutView navigator={navigator} />
+    case 'CalendarView':
+      return <CalendarView navigator={navigator} />
+    case 'DictionaryView':
+      return <DictionaryView navigator={navigator} />
+    case 'MapView':
+      return <MapView navigator={navigator} />
+    case 'MediaView':
+      return <MediaView navigator={navigator} />
+    case 'NewsView':
+      return <NewsView navigator={navigator} />
+    case 'SchedulesView':
+      return <SchedulesView navigator={navigator} />
+    case 'TransportationView':
+      return <TransportationView navigator={navigator} />
+    default:
+      return noRoute(navigator)
     }
-    if (routeId === 'MenusView') {
-      return (
-        <MenusView
-          navigator={navigator} />
-      )
-    }
-    if (routeId === 'DirectoryView') {
-      return (
-        <DirectoryView
-          navigator={navigator} />
-      )
-    }
-    return this.noRoute(navigator)
-
-  }
-  noRoute(navigator) {
-    return (
-      <View style={{flex: 1, alignItems: 'stretch', justifyContent: 'center'}}>
-        <TouchableOpacity style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
-            onPress={() => navigator.pop()}>
-          <Text style={{color: 'red', fontWeight: 'bold'}}>
-            No Route Found
-          </Text>
-        </TouchableOpacity>
-      </View>
-    )
   }
 }
 

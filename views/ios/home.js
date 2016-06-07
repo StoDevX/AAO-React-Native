@@ -9,7 +9,6 @@ const React = require('react')
 const RN = require('react-native')
 
 // Namespacing
-const {Component} = React
 const {
   Navigator,
   PixelRatio,
@@ -30,23 +29,19 @@ let marginTop = 70
 let width = Viewport.width / 2.3
 
 
-/******************************************
- *
- *           HomePage Class
- *
- *****************************************/
-
-class HomePage extends Component {
+class HomePage extends React.Component {
   render() {
     return (
       <Navigator
-          renderScene={this.renderScene.bind(this)}
-          navigator={this.props.navigator}
-          navigationBar={
-            <Navigator.NavigationBar
-                style={styles.navigationBar}
-                routeMapper={NavigationBarRouteMapper} />
-          } />
+        renderScene={this.renderScene.bind(this)}
+        navigator={this.props.navigator}
+        navigationBar={
+          <Navigator.NavigationBar
+            style={styles.navigationBar}
+            routeMapper={NavigationBarRouteMapper}
+          />
+        }
+      />
     )
   }
   // Go to request page
@@ -59,126 +54,50 @@ class HomePage extends Component {
   }
 
   // Render a given scene
-  renderScene(route, navigator) {
+  renderScene() {
+    let views = [
+      {view: 'MenusView', title: 'Menus'},
+      {view: 'SISView', title: 'SIS'},
+      {view: 'SchedulesView', title: 'Schedules'},
+      {view: 'CalendarView', title: 'Calendar'},
+      {view: 'DirectoryView', title: 'Directory'},
+      {view: 'StreamingView', title: 'Streaming Media'},
+      {view: 'NewsView', title: 'News'},
+      {view: 'MapView', title: 'Campus Map'},
+      {view: 'ContactsView', title: 'Important Contacts'},
+      {view: 'TransportationView', title: 'Transportation'},
+      {view: 'DictionaryView', title: 'Campus Dictionary'},
+      // {view: '', title: ''},
+    ]
     return (
-        <ScrollView
-            automaticallyAdjustContentInsets={false}
-            scrollEventThrottle={200}
-            overflow={'hidden'}
-            alwaysBounceHorizontal={false}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            style={styles.scrollView}>
-
-            <View style={styles.container}>
-                <TouchableOpacity onPress={this.pushView.bind(this, 'MenusView', 'Menus')} activeOpacity={0.5}>
-                    <View style={styles.rectangle1}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Menus
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={this.pushView.bind(this, 'SISView', 'SIS')} activeOpacity={0.5}>
-                    <View style={styles.rectangle2}>
-                        <Text style={styles.rectangleButtonText}
-                            autoAdjustsFontSize={true}>
-                            SIS
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={this.pushView.bind(this, 'SchedulesView', 'Schedules')} activeOpacity={0.5}>
-                    <View style={styles.rectangle3}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Schedules
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={this.pushView.bind(this, 'CalendarView', 'Calendar')} activeOpacity={0.5}>
-                    <View style={styles.rectangle4}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Calendar
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={this.pushView.bind(this, 'DirectoryView', 'Directory')} activeOpacity={0.5}>
-                    <View style={styles.rectangle5}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Directory
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={this.pushView.bind(this, 'StreamingView', 'Streaming Media')} activeOpacity={0.5}>
-                    <View style={styles.rectangle6}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Streaming Media
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={this.pushView.bind(this, 'NewsView', 'News')} activeOpacity={0.5}>
-                    <View style={styles.rectangle7}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            News
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={this.pushView.bind(this, 'MapView', 'Campus Map')} activeOpacity={0.5}>
-                    <View style={styles.rectangle8}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Campus Map
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={this.pushView.bind(this, 'ContactsView', 'Important Contacts')} activeOpacity={0.5}>
-                    <View style={styles.rectangle9}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Important Contacts
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={this.pushView.bind(this, 'TransportationView', 'Transportation')} activeOpacity={0.5}>
-                    <View style={styles.rectangle10}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Transportation
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                 <TouchableOpacity onPress={this.pushView.bind(this, 'DictionaryView', 'Campus Dictionary')} activeOpacity={0.5}>
-                   <View style={styles.rectangle11}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                            Campus Dictionary
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={this.pushView.bind(this, '', '')} activeOpacity={0.5}>
-                    <View style={styles.rectangle12}>
-                        <Text style={styles.rectangleButtonText}
-                              autoAdjustsFontSize={true}>
-                        </Text>
-                    </View>
-                </TouchableOpacity>
-             </View>
-          </ScrollView>
+      <ScrollView
+        automaticallyAdjustContentInsets={false}
+        scrollEventThrottle={200}
+        overflow={'hidden'}
+        alwaysBounceHorizontal={false}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        style={styles.scrollView}
+      >
+        <View style={styles.container}>
+          {views.map((view, i) =>
+            <TouchableOpacity
+              key={view.view}
+              onPress={() => this.pushView(view.view, view.title)}
+              activeOpacity={0.5}
+            >
+              <View style={[styles.rectangle, styles['rectangle'+(i+1)]]}>
+                <Text
+                  style={styles.rectangleButtonText}
+                  autoAdjustsFontSize={true}
+                >
+                  {view.title}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
+      </ScrollView>
     )
   }
 }
@@ -190,26 +109,27 @@ class HomePage extends Component {
 
 var NavigationBarRouteMapper = {
   // Left button customization
-  LeftButton(route, navigator, index, navState) {
+  LeftButton(route, navigator) {
     return (
       <TouchableOpacity style={styles.navButton}
-          onPress={() => navigator.parentNavigator.pop()}>
+        onPress={() => navigator.parentNavigator.pop()}
+      >
         <Text style={styles.navigationButtonText}>
-            Info
+          Info
         </Text>
       </TouchableOpacity>
     )
   },
   // Right button customization
-  RightButton(route, navigator, index, navState) {
+  RightButton() {
     return null
   },
   // Title customization
-  Title(route, navigator, index, navState) {
+  Title() {
     return (
-        <Text style={styles.navigationText}>
-          All About Olaf
-        </Text>
+      <Text style={styles.navigationText}>
+        All About Olaf
+      </Text>
     )
   }
 }
@@ -227,111 +147,62 @@ var styles = StyleSheet.create({
     paddingBottom: 15,
     marginLeft: margin - 25,
     marginTop: marginTop,
-    flexDirection:'row',
-    flexWrap:'wrap',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 
   // Main buttons for actions on home screen
-  rectangle1: {
+  rectangle: {
     width: width,
     height: height,
-    backgroundColor: '#FCB915',
     marginRight: 10,
     marginTop: 10,
+    alignItems: 'center',
+    // alignContent: 'center',
+    justifyContent: 'center',
     borderRadius: 30 / PixelRatio.get(),
+  },
+  rectangle1: {
+    backgroundColor: '#FCB915',
   },
   rectangle2: {
-    width: width,
-    height: height,
     backgroundColor: '#F94E26',
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
   },
   rectangle3: {
-    width: width,
-    height: height,
     backgroundColor: '#7E71FF',
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
   },
   rectangle4: {
-    width: width,
-    height: height,
     backgroundColor: '#E52983',
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
   },
   rectangle5: {
-    width: width,
-    height: height,
     backgroundColor: '#999999',
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
   },
   rectangle6: {
-    width: width,
-    height: height,
     backgroundColor: '#20B407',
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
   },
   rectangle7: {
-    width: width,
-    height: height,
     backgroundColor: '#FB863A',
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
   },
   rectangle8: {
-    width: width,
-    height: height,
     backgroundColor: '#1C85F6',
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
   },
   rectangle9: {
-    width: width,
-    height: height,
     backgroundColor: '#2C57D6',
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
   },
   rectangle10: {
-    width: width,
-    height: height,
     backgroundColor: '#CD23CE',
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
   },
   rectangle11: {
-    width: width,
-    height: height,
     backgroundColor: '#49D3DA',
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
   },
   rectangle12: {
-    width: width,
-    height: height,
     backgroundColor: '#F1EEA1',
-    marginRight: 10,
-    marginTop: 10,
-    borderRadius: 30 / PixelRatio.get(),
   },
 
   // Navigation bar styling
   navigationBar: {
     backgroundColor: 'orange',
+    marginBottom: 100,
   },
   navigationButton: {
     flex: 1,
@@ -343,6 +214,7 @@ var styles = StyleSheet.create({
   },
   navigationText: {
     color: 'white',
+    fontWeight: '500',
     margin: 10,
     fontSize: 16,
   },
@@ -352,7 +224,6 @@ var styles = StyleSheet.create({
     color:'#fff',
     textAlign:'center',
     fontSize: 14,
-    marginTop: 20,
     paddingLeft: 20,
     paddingRight: 20,
   },

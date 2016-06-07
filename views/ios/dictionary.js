@@ -1,23 +1,20 @@
 /**
  * All About Olaf
- * iOS Directory page
+ * iOS Dictionary page
  */
 'use strict'
 
 // React native
 const React = require('react')
-var RN = require('react-native')
+const RN = require('react-native')
 
 // Namespacing
-var {
+const {
   Navigator,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } = RN
-
-const queryStalkernet = require('../../lib/stalkernet')
 
 // Device info
 var Dimensions = require('Dimensions')
@@ -26,8 +23,9 @@ let Viewport = Dimensions.get('window')
 let margin = Viewport.width / 13
 let marginTop = 64
 
+const backButton = require('./back-button')
 
-class DirectoryPage extends React.Component {
+class DictionaryPage extends React.Component {
   render() {
     return (
       <Navigator
@@ -41,14 +39,6 @@ class DirectoryPage extends React.Component {
         }
       />
     )
-  }
-
-  search() {
-    queryStalkernet({
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      username: this.state.username,
-    })
   }
 
   // Go to request page
@@ -76,16 +66,7 @@ class DirectoryPage extends React.Component {
 var NavigationBarRouteMapper = {
   // Left button customization
   LeftButton(route, navigator) {
-    return (
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => navigator.parentNavigator.pop()}
-      >
-        <Text style={styles.navigationButtonText}>
-          Back
-        </Text>
-      </TouchableOpacity>
-    )
+    return backButton(navigator)
   },
   // Right button customization
   RightButton() {
@@ -95,7 +76,7 @@ var NavigationBarRouteMapper = {
   Title() {
     return (
       <Text style={styles.navigationText}>
-        Directory
+        Dictionary
       </Text>
     )
   }
@@ -113,23 +94,9 @@ var styles = StyleSheet.create({
     flexWrap:'wrap',
   },
 
-  // Directory list
-  directoryList: {
-    marginTop: marginTop + 10,
-    marginLeft: margin,
-  },
-
   // Navigation bar styling
   navigationBar: {
     backgroundColor: 'orange',
-  },
-  navigationButton: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  navigationButtonText: {
-    color: 'white',
-    margin: 10,
   },
   navigationText: {
     color: 'white',
@@ -138,4 +105,4 @@ var styles = StyleSheet.create({
   },
 })
 
-module.exports = DirectoryPage
+module.exports = DictionaryPage
