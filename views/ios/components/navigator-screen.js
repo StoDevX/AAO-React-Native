@@ -1,17 +1,46 @@
 /**
  * All About Olaf
- * iOS Menus page
+ * iOS Navigator Screen component
  */
-'use strict'
 
-const React = require('react')
-const RN = require('react-native')
-const {Navigator, StyleSheet, View} = RN
+import React from 'react'
+import {Navigator, StyleSheet, View} from 'react-native'
 
-const BackButton = require('./back-button')
-const ScreenTitle = require('./screen-title')
+import BackButton from './back-button'
+import ScreenTitle from './screen-title'
 
-class NavigatorView extends React.Component {
+const MARGIN_TOP = 60
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: MARGIN_TOP,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    backgroundColor: 'white',
+  },
+
+  navigationBar: {
+    backgroundColor: 'orange',
+  },
+})
+
+export default class NavigatorView extends React.Component {
+  static propTypes = {
+    renderScene: React.PropTypes.func.isRequired,
+    title: React.PropTypes.string.isRequired,
+    leftButton: React.PropTypes.func,
+    rightButton: React.PropTypes.func,
+  }
+
+  static defaultProps = {
+    leftButton(route, navigator) {
+      return <BackButton navigator={navigator} route={route} />
+    },
+    rightButton() {
+      return null
+    },
+  }
+
   render() {
     return (
       <Navigator
@@ -44,39 +73,3 @@ class NavigatorView extends React.Component {
     )
   }
 }
-
-NavigatorView.propTypes = {
-  renderScene: React.PropTypes.func.isRequired,
-  title: React.PropTypes.string.isRequired,
-  leftButton: React.PropTypes.func,
-  rightButton: React.PropTypes.func,
-}
-
-NavigatorView.defaultProps = {
-  leftButton(route, navigator) {
-    return <BackButton navigator={navigator} route={route} />
-  },
-  rightButton() {
-    return null
-  },
-}
-
-
-// Device info
-let MARGIN_TOP = 60
-let styles = StyleSheet.create({
-  // Body container
-  container: {
-    flex: 1,
-    marginTop: MARGIN_TOP,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-
-  // Navigation bar styling
-  navigationBar: {
-    backgroundColor: 'orange',
-  },
-})
-
-module.exports = NavigatorView

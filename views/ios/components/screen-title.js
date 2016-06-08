@@ -3,20 +3,8 @@
  * iOS screen title
  */
 
-'use strict'
-
-const React = require('react')
-const RN = require('react-native')
-
-const {
-  StyleSheet,
-  Text,
-} = RN
-
-module.exports = ({children, style}) =>
-  <Text style={[styles.navigationText, style]}>
-    {children}
-  </Text>
+import React from 'react'
+import {StyleSheet, Text} from 'react-native'
 
 const styles = StyleSheet.create({
   navigationText: {
@@ -26,3 +14,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 })
+
+export default ({children, style}) =>
+  <Text style={[styles.navigationText, style]}>
+    {children}
+  </Text>

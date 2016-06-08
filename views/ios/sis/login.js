@@ -27,29 +27,30 @@ class SISLoginSection extends React.Component {
           Credentials
         </Text>
         <View style={styles.labelRow}>
-          <Text>Username:</Text>
+          <Text style={styles.label}>Username:</Text>
           <TextInput
-            style={{flex: 1, height: 40, borderColor: 'gray', borderWidth: 1}}
+            style={styles.textInput}
             autoCapitalize='none'
             onChangeText={text => this.setState({username: text})}
             value={this.state.username}
           />
         </View>
         <View style={styles.labelRow}>
-          <Text>Password:</Text>
+          <Text style={styles.label}>Password:</Text>
           <TextInput
-            style={{flex: 1, height: 40, borderColor: 'gray', borderWidth: 1}}
+            style={styles.textInput}
             onChangeText={text => this.setState({password: text})}
             value={this.state.password}
             secureTextEntry={true}
           />
         </View>
         <Button
-          style={{fontSize: 20, color: 'green', borderWidth: 1, borderColor: 'gray'}}
+          containerStyle={styles.loginButtonContainer}
+          style={styles.loginButton}
           styleDisabled={{color: 'red'}}
           // onPress={this._handlePress}
         >
-          Press Me!
+          Log In
         </Button>
       </View>
     )
@@ -58,7 +59,35 @@ class SISLoginSection extends React.Component {
 
 var styles = StyleSheet.create({
   labelRow: {
-    flex: 1, flexDirection: 'row', flexWrap: 'nowrap', alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+  },
+  textInput: {
+    flex: 1,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  label: {
+    marginRight: 10,
+  },
+  loginButton: {
+    height: 40,
+    fontSize: 20,
+    borderColor: 'gray',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlignVertical: 'center'
+  },
+  loginButtonContainer: {
+    alignItems: 'center',
+    borderWidth: 1,
+    flex: 1,
   }
 })
 

@@ -2,25 +2,29 @@
  * All About Olaf
  * iOS Index
  */
-'use strict'
 
-// React native
-const React = require('react')
-var RN = require('react-native')
-const {Navigator} = RN
+import React from 'react'
+import {
+  AppRegistry,
+  Navigator,
+  View,
+  TouchableOpacity,
+  Text,
+} from 'react-native'
 
-const AboutView = require('./views/ios/about')
-const CalendarView = require('./views/ios/calendar')
-const DictionaryView = require('./views/ios/dictionary')
-const DirectoryView = require('./views/ios/directory')
-const HomeView = require('./views/ios/home')
-const MapView = require('./views/ios/map')
-const MediaView = require('./views/ios/media')
-const MenusView = require('./views/ios/menus')
-const NewsView = require('./views/ios/news')
-const SISView = require('./views/ios/sis')
-const BuildingHoursView = require('./views/ios/building-hours')
-const TransportationView = require('./views/ios/transportation')
+import AboutView from './views/ios/about'
+import CalendarView from './views/ios/calendar'
+import ContactsView from './views/ios/contacts'
+import DictionaryView from './views/ios/dictionary'
+import DirectoryView from './views/ios/directory'
+import HomeView from './views/ios/home'
+import MapView from './views/ios/map'
+import StreamingView from './views/ios/streaming'
+import MenusView from './views/ios/menus'
+import NewsView from './views/ios/news'
+import SISView from './views/ios/sis'
+import BuildingHoursView from './views/ios/building-hours'
+import TransportationView from './views/ios/transportation'
 
 
 const NoRoute = ({navigator}) =>
@@ -65,12 +69,14 @@ class App extends React.Component {
       return <AboutView navigator={navigator} />
     case 'CalendarView':
       return <CalendarView navigator={navigator} />
+    case 'ContactsView':
+      return <ContactsView navigator={navigator} />
     case 'DictionaryView':
       return <DictionaryView navigator={navigator} />
     case 'MapView':
       return <MapView navigator={navigator} />
-    case 'MediaView':
-      return <MediaView navigator={navigator} />
+    case 'StreamingView':
+      return <StreamingView navigator={navigator} />
     case 'NewsView':
       return <NewsView navigator={navigator} />
     case 'BuildingHoursView':
@@ -85,4 +91,4 @@ class App extends React.Component {
   }
 }
 
-RN.AppRegistry.registerComponent('AllAboutOlaf', () => App)
+AppRegistry.registerComponent('AllAboutOlaf', () => App)

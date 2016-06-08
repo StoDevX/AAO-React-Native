@@ -3,28 +3,13 @@
  * iOS back button
  */
 
-'use strict'
-
-const React = require('react')
-const RN = require('react-native')
-const Icon = require('react-native-vector-icons/Entypo')
-
-const {
+import React from 'react'
+import {
   StyleSheet,
   TouchableOpacity,
   Text,
-} = RN
-
-module.exports = ({navigator}) =>
-  <TouchableOpacity
-    style={styles.navigationButton}
-    onPress={() => navigator.parentNavigator.pop()}
-  >
-    <Text style={styles.navigationButtonText}>
-      <Icon name='chevron-thin-left' style={styles.navigationButtonIcon} />
-      Back
-    </Text>
-  </TouchableOpacity>
+} from 'react-native'
+import Icon from 'react-native-vector-icons/Entypo'
 
 const styles = StyleSheet.create({
   navigationButton: {
@@ -40,3 +25,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   }
 })
+
+export default ({navigator}) =>
+  <TouchableOpacity
+    style={styles.navigationButton}
+    onPress={() => navigator.parentNavigator.pop()}
+  >
+    <Text style={styles.navigationButtonText}>
+      <Icon name='chevron-thin-left' style={styles.navigationButtonIcon} />
+      Back
+    </Text>
+  </TouchableOpacity>

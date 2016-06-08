@@ -1,4 +1,5 @@
 module.exports = {
+    parser: 'babel-eslint',
     env: {
         es6: true,
         node: true,
@@ -6,6 +7,7 @@ module.exports = {
     extends: 'eslint:recommended',
     installedESLint: true,
     parserOptions: {
+        sourceType: 'module',
         ecmaFeatures: {
             experimentalObjectRestSpread: true,
             jsx: true,
@@ -24,6 +26,7 @@ module.exports = {
         'semi': ['error', 'never'],
         'comma-dangle': ['error', 'only-multiline'],
         'react/jsx-uses-vars': ['error'],
+        'react/jsx-uses-react': ['error'],
         'no-console': 0,
     },
 }

@@ -20,7 +20,6 @@ const {
 
 
 const STORAGE_KEY = '@AllAboutOlaf:SIS'
-const KEYCHAIN_SERVER = 'stolaf.edu'
 const SISLoginSection = require('./sis/login')
 
 class SISView extends React.Component {
@@ -29,9 +28,11 @@ class SISView extends React.Component {
   }
 
   componentWillMount() {
-    Keychain.getInternetCredentials(KEYCHAIN_SERVER).then(credentials => {
-      this.setState({isLoggedIn: Boolean(credentials)})
-    })
+    // Keychain.getGenericPassword()
+    //   .then(credentials => {
+    //     this.setState({isLoggedIn: Boolean(credentials)})
+    //   })
+    //   .catch(err => console.error(err))
   }
 
   render() {

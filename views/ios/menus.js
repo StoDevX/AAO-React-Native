@@ -6,7 +6,12 @@
 
 const React = require('react')
 const RN = require('react-native')
-const {StyleSheet, View, WebView} = RN
+const {
+  NetInfo,
+  StyleSheet,
+  View,
+  WebView,
+} = RN
 
 const NavigatorScreen = require('./components/navigator-screen')
 
@@ -16,11 +21,56 @@ const DEFAULT_URL = 'http://stolaf.cafebonappetit.com/cafe/stav-hall#Lunch'
 // const DEFAULT_URL = 'http://legacy.cafebonappetit.com/print-menu/cafe/261/menu/112732/days/today/pgbrks/0/'
 
 
+const HTML = `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system;
+        background: white;
+      }
+      h1 {
+        padding: 45px;
+        margin: 0;
+        text-align: center;
+        color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>No Connection</h1>
+  </body>
+</html>`
+
 class MenusPage extends React.Component {
   constructor() {
     super()
     this.scalesPageToFit = true
     this.url = DEFAULT_URL
+    this.state = {
+      isConnected: true
+    }
+  }
+
+  componentWillMount() {
+    NetInfo.isConnected.fetch().then(isConnected => {
+      this._onConnectivityChange(isConnected)
+    })
+    NetInfo.isConnected.addEventListener('change', this._onConnectivityChange.bind(this))
+  }
+
+  componentWillUnmount() {
+    NetInfo.isConnected.removeEventListener('change', this._onConnectivityChange.bind(this))
+  }
+
+  _onConnectivityChange(isConnected) {
+    this.setState({isConnected})
+    console.warn('isConnected', isConnected)
   }
 
   render() {
@@ -33,16 +83,19 @@ class MenusPage extends React.Component {
 
   // Render a given scene
   renderScene() {
+    let webViewSource = this.state.isConnected
+      ? {uri: this.url}
+      : {html: HTML}
     return (
       <View style={styles.container}>
         <WebView
           automaticallyAdjustContentInsets={false}
           style={styles.webView}
-          source={{uri: this.url}}
+          source={webViewSource}
           javaScriptEnabled={false}
           onNavigationStateChange={this.onNavigationStateChange.bind(this)}
           onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
-          startInLoadingState={true}
+          startInLoadingState={false}
           scalesPageToFit={this.scalesPageToFit}
         />
       </View>

@@ -5,25 +5,20 @@
 'use strict'
 
 // React native
-const React = require('react')
-const RN = require('react-native')
-const NavigatorScreen = require('./components/navigator-screen')
-
-// Namespacing
-const {
+import React from 'react'
+import {
   Navigator,
-  PixelRatio,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-} = RN
+} from 'react-native'
+import NavigatorScreen from './components/navigator-screen'
+import Icon from 'react-native-vector-icons/Entypo'
 
-const Icon = require('react-native-vector-icons/Entypo')
 
-
-class HomePage extends React.Component {
+export default class HomePage extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
@@ -66,6 +61,7 @@ class HomePage extends React.Component {
       {usable: false, view: 'TransportationView', title: 'Transportation', icon: 'address'},
       {usable: false, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
     ]
+
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}
@@ -80,8 +76,8 @@ class HomePage extends React.Component {
           {views.map((view, i) =>
             <TouchableOpacity
               key={view.title}
-              onPress={() => view.usable && this.pushView(view.view, view.title)}
-              activeOpacity={view.usable ? 0.5 : 1}
+              onPress={() => this.pushView(view.view, view.title)}
+              activeOpacity={0.5}
             >
               <View style={[styles.rectangle, styles['rectangle'+(i+1)]].concat(!view.usable ? [styles.disabledReactangle] : [])}>
                 <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
@@ -89,7 +85,7 @@ class HomePage extends React.Component {
                   style={styles.rectangleButtonText}
                   autoAdjustsFontSize={true}
                 >
-                  {view.title}
+                  {view.title}{view.usable ? '' : ' !'}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -101,56 +97,63 @@ class HomePage extends React.Component {
 }
 
 
-let NAVY = '#001f3f'
-let BLUE = '#0074D9'
 // let AQUA = '#7FDBFF'
-let TEAL = '#39CCCC'
-let OLIVE = '#3D9970'
+let BLACK = '#111111'
+let BLUE = '#0074D9'
+// let FUCHSIA = '#F012BE'
+let GRAY = '#AAAAAA'
 let GREEN = '#2ECC40'
 // let LIME = '#01FF70'
-let YELLOW = '#FFDC00'
-let ORANGE = '#FF851B'
-let RED = '#FF4136'
 let MAROON = '#85144b'
-// let FUCHSIA = '#F012BE'
+let NAVY = '#001f3f'
+let OLIVE = '#3D9970'
+let ORANGE = '#FF851B'
 let PURPLE = '#B10DC9'
-let BLACK = '#111111'
-let GRAY = '#AAAAAA'
-let SILVER = '#DDDDDD'
+let RED = '#FF4136'
+// let SILVER = '#DDDDDD'
+let TEAL = '#39CCCC'
 let WHITE = '#FFFFFF'
+let YELLOW = '#FFDC00'
 
 // Device info
 const Dimensions = require('Dimensions')
 // Screen size information
 let Viewport = Dimensions.get('window')
-let marginTop = 15
-let paddingBottom = 15
+let marginTop = 10
+let paddingBottom = marginTop
 
-let cellSpacing = 10
-let cellHeight = Viewport.height / 7
-let cellWidth = Viewport.width / 2.3
-let leftSideMargin = Viewport.width - (cellWidth * 2) - (cellSpacing * 3)
+let cellSpacing = marginTop / 2
+let cellWidth = (Viewport.width / 2) - (cellSpacing * 4)
+let cellTopPadding = 10
+let sideMargin = cellSpacing / 2
 
 var styles = StyleSheet.create({
   // Body container
   container: {
     flex: 1,
-    paddingLeft: leftSideMargin,
+    paddingLeft: sideMargin,
+    paddingRight: sideMargin,
     paddingBottom: paddingBottom,
     marginTop: marginTop,
+    justifyContent: 'space-around',
+    // alignItems: 'stretch',
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
 
   // Main buttons for actions on home screen
   rectangle: {
+    // flex: 1,
     width: cellWidth,
-    height: cellHeight,
     marginRight: cellSpacing,
+    marginBottom: cellSpacing,
+    marginLeft: cellSpacing,
     marginTop: cellSpacing,
     alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 30 / PixelRatio.get(),
+    // justifyContent: 'center',
+    paddingTop: cellTopPadding,
+    paddingBottom: cellTopPadding,
+    borderRadius: 10,
   },
 
   rectangle1: {
@@ -190,10 +193,6 @@ var styles = StyleSheet.create({
     backgroundColor: BLACK,
   },
 
-  disabledReactangle: {
-    backgroundColor: SILVER,
-  },
-
   rectangleButtonIcon: {
     color: WHITE,
   },
@@ -214,5 +213,3 @@ var styles = StyleSheet.create({
     paddingRight: 10,
   },
 })
-
-module.exports = HomePage
