@@ -6,15 +6,8 @@
 
 // React native
 const React = require('react')
-const {Component} = React
 var RN = require('react-native')
-// Namespacing
-
-/******************************************
- *
- *              Views
- *
- *****************************************/
+const {Navigator} = RN
 
 const AboutView = require('./views/ios/about')
 const CalendarView = require('./views/ios/calendar')
@@ -25,30 +18,22 @@ const MapView = require('./views/ios/map')
 const MediaView = require('./views/ios/media')
 const MenusView = require('./views/ios/menus')
 const NewsView = require('./views/ios/news')
+const SISView = require('./views/ios/sis')
 const SchedulesView = require('./views/ios/schedules')
 const TransportationView = require('./views/ios/transportation')
 
-// Namespacing
-const {
-  AppRegistry,
-  Navigator,
-} = RN
 
+const NoRoute = ({navigator}) =>
+  <View style={{flex: 1, alignItems: 'stretch', justifyContent: 'center'}}>
+    <TouchableOpacity style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
+        onPress={() => navigator.pop()}>
+      <Text style={{color: 'red', fontWeight: 'bold'}}>
+        No Route Found
+      </Text>
+    </TouchableOpacity>
+  </View>
 
-function noRoute(navigator) {
-  return (
-    <View style={{flex: 1, alignItems: 'stretch', justifyContent: 'center'}}>
-      <TouchableOpacity style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
-          onPress={() => navigator.pop()}>
-        <Text style={{color: 'red', fontWeight: 'bold'}}>
-          No Route Found
-        </Text>
-      </TouchableOpacity>
-    </View>
-  )
-}
-
-class App extends Component {
+class App extends React.Component {
   render() {
     return (
       <Navigator
@@ -90,12 +75,14 @@ class App extends Component {
       return <NewsView navigator={navigator} />
     case 'SchedulesView':
       return <SchedulesView navigator={navigator} />
+    case 'SISView':
+      return <SISView navigator={navigator} />
     case 'TransportationView':
       return <TransportationView navigator={navigator} />
     default:
-      return noRoute(navigator)
+      return <NoRoute navigator={navigator} />
     }
   }
 }
 
-AppRegistry.registerComponent('AllAboutOlaf', () => App)
+RN.AppRegistry.registerComponent('AllAboutOlaf', () => App)

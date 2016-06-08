@@ -13,10 +13,10 @@ var {
   Navigator,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } = RN
 
+const BackButton = require('./back-button')
 const queryStalkernet = require('../../lib/stalkernet')
 
 // Device info
@@ -76,16 +76,7 @@ class DirectoryPage extends React.Component {
 var NavigationBarRouteMapper = {
   // Left button customization
   LeftButton(route, navigator) {
-    return (
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => navigator.parentNavigator.pop()}
-      >
-        <Text style={styles.navigationButtonText}>
-          Back
-        </Text>
-      </TouchableOpacity>
-    )
+    return <BackButton navigator={navigator} />
   },
   // Right button customization
   RightButton() {

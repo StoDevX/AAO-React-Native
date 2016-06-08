@@ -15,6 +15,8 @@
     "querystring": "^0.2.0",
     "react": "^15.1.0",
     "react-native": "0.27.1",
+    "react-native-button": "^1.6.0",
+    "react-native-keychain": "^0.3.1",
     "react-native-vector-icons": "^2.0.3",
     "stream": "0.0.2",
     "timers": "^0.1.1",

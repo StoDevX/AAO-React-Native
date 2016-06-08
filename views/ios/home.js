@@ -7,6 +7,7 @@
 // React native
 const React = require('react')
 const RN = require('react-native')
+const NavigatorScreen = require('./navigator-screen')
 
 // Namespacing
 const {
@@ -19,35 +20,28 @@ const {
   View,
 } = RN
 
-// Device info
-const Dimensions = require('Dimensions')
-// Screen size information
-let Viewport = Dimensions.get('window')
-let marginTop = 70
-
-let cellSpacing = 10
-let cellHeight = Viewport.height / 7
-let cellWidth = Viewport.width / 2.3
-let leftSideMargin = Viewport.width - (cellWidth * 2) - (cellSpacing * 3)
-
 const Icon = require('react-native-vector-icons/Entypo')
 
 
 class HomePage extends React.Component {
   render() {
-    return (
-      <Navigator
-        renderScene={this.renderScene.bind(this)}
-        navigator={this.props.navigator}
-        navigationBar={
-          <Navigator.NavigationBar
-            style={styles.navigationBar}
-            routeMapper={NavigationBarRouteMapper}
-          />
-        }
-      />
-    )
+    return <NavigatorScreen
+      {...this.props}
+      title="All About Olaf"
+      renderScene={this.renderScene.bind(this)}
+      leftButton={(route, navigator) => {
+        return (
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigator.parentNavigator.pop()}
+          >
+            <Icon name='info' style={styles.navigationButtonText} />
+          </TouchableOpacity>
+        )
+      }}
+    />
   }
+
   // Go to request page
   pushView(view, viewTitle) {
     this.props.navigator.push({
@@ -61,8 +55,8 @@ class HomePage extends React.Component {
   renderScene() {
     let views = [
       {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl'},
-      {usable: false, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
-      {usable: false, view: 'SchedulesView', title: 'Schedules', icon: 'graduation-cap'},
+      {usable: true, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
+      {usable: false, view: 'SchedulesView', title: 'Building Hours', icon: 'clock'},
       {usable: false, view: 'CalendarView', title: 'Calendar', icon: 'calendar'},
       {usable: false, view: 'DirectoryView', title: 'Directory', icon: 'v-card'},
       {usable: false, view: 'StreamingView', title: 'Streaming Media', icon: 'video'},
@@ -107,41 +101,6 @@ class HomePage extends React.Component {
 }
 
 
-/******************************************
- * Routing
- *****************************************/
-
-var NavigationBarRouteMapper = {
-  // Left button customization
-  LeftButton(route, navigator) {
-    return (
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => navigator.parentNavigator.pop()}
-      >
-        <Icon name='info' style={styles.navigationButtonText} />
-      </TouchableOpacity>
-    )
-  },
-  // Right button customization
-  RightButton() {
-    return null
-  },
-  // Title customization
-  Title() {
-    return (
-      <Text style={styles.navigationText}>
-        All About Olaf
-      </Text>
-    )
-  }
-}
-
-
-/******************************************
- * Styles
- *****************************************/
-
 let NAVY = '#001f3f'
 let BLUE = '#0074D9'
 // let AQUA = '#7FDBFF'
@@ -160,12 +119,24 @@ let GRAY = '#AAAAAA'
 let SILVER = '#DDDDDD'
 let WHITE = '#FFFFFF'
 
+// Device info
+const Dimensions = require('Dimensions')
+// Screen size information
+let Viewport = Dimensions.get('window')
+let marginTop = 15
+let paddingBottom = 15
+
+let cellSpacing = 10
+let cellHeight = Viewport.height / 7
+let cellWidth = Viewport.width / 2.3
+let leftSideMargin = Viewport.width - (cellWidth * 2) - (cellSpacing * 3)
+
 var styles = StyleSheet.create({
   // Body container
   container: {
     flex: 1,
     paddingLeft: leftSideMargin,
-    paddingBottom: 15,
+    paddingBottom: paddingBottom,
     marginTop: marginTop,
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -227,24 +198,11 @@ var styles = StyleSheet.create({
     color: WHITE,
   },
 
-  // Navigation bar styling
-  navigationBar: {
-    backgroundColor: ORANGE,
-    paddingTop: 20,
-  },
-  navigationButton: {
-  },
   navigationButtonText: {
     color: WHITE,
     fontSize: 20,
     marginTop: 8,
     marginLeft: 14,
-  },
-  navigationText: {
-    color: WHITE,
-    fontWeight: '500',
-    marginTop: 10,
-    fontSize: 16,
   },
 
   // Text styling in buttons

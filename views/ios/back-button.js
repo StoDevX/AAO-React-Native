@@ -7,6 +7,7 @@
 
 const React = require('react')
 const RN = require('react-native')
+const Icon = require('react-native-vector-icons/Entypo')
 
 const {
   StyleSheet,
@@ -14,21 +15,18 @@ const {
   Text,
 } = RN
 
-module.exports = backButton
-function backButton(navigator) {
-  return (
-    <TouchableOpacity
-      style={styles.navigationButton}
-      onPress={() => navigator.parentNavigator.pop()}
-    >
-      <Text style={styles.navigationButtonText}>
-        Back
-      </Text>
-    </TouchableOpacity>
-  )
-}
+module.exports = ({navigator}) =>
+  <TouchableOpacity
+    style={styles.navigationButton}
+    onPress={() => navigator.parentNavigator.pop()}
+  >
+    <Text style={styles.navigationButtonText}>
+      <Icon name='chevron-thin-left' style={styles.navigationButtonIcon} />
+      Back
+    </Text>
+  </TouchableOpacity>
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   navigationButton: {
     flex: 1,
     justifyContent: 'center',
@@ -36,5 +34,9 @@ var styles = StyleSheet.create({
   navigationButtonText: {
     color: 'white',
     margin: 10,
+    textAlignVertical: 'top'
   },
+  navigationButtonIcon: {
+    fontSize: 16,
+  }
 })

@@ -4,40 +4,17 @@
  */
 'use strict'
 
-// React native
 const React = require('react')
 const RN = require('react-native')
+const {StyleSheet, View, WebView} = RN
 
-// Namespacing
-const {
-  Navigator,
-  StyleSheet,
-  Text,
-  View,
-  WebView,
-} = RN
+const NavigatorScreen = require('./navigator-screen')
 
-// Device info
-let marginTop = 60
-
-const backButton = require('./back-button')
-
-// URL info
-const WEBVIEW_REF = 'webview'
-
-// Note: Fix me.
-// 1. Don't keep this here... make a general purpose webview and pass url in from the router.
-// 2. Also, pull this string in from existing Parse database to ensure up-to-date info.
-// 3. A bunch of leftover history forwards/backwards/text input ref/webview ref things
-//    exist but are not used. Maybe redo the router so you can construct apps the "react way"
+// FIXME: Don't keep this here… make a general purpose webview and pass url in
+// from the router.
 const DEFAULT_URL = 'http://stolaf.cafebonappetit.com/cafe/stav-hall#Lunch'
+// const DEFAULT_URL = 'http://legacy.cafebonappetit.com/print-menu/cafe/261/menu/112732/days/today/pgbrks/0/'
 
-
-/******************************************
- *
- *           MenusPage Class
- *
- *****************************************/
 
 class MenusPage extends React.Component {
   constructor() {
@@ -47,18 +24,11 @@ class MenusPage extends React.Component {
   }
 
   render() {
-    return (
-      <Navigator
-        renderScene={this.renderScene.bind(this)}
-        navigator={this.props.navigator}
-        navigationBar={
-          <Navigator.NavigationBar
-            style={styles.navigationBar}
-            routeMapper={NavigationBarRouteMapper}
-          />
-        }
-      />
-    )
+    return <NavigatorScreen
+      {...this.props}
+      title="Menus"
+      renderScene={this.renderScene.bind(this)}
+    />
   }
 
   // Render a given scene
@@ -66,11 +36,10 @@ class MenusPage extends React.Component {
     return (
       <View style={styles.container}>
         <WebView
-          ref={WEBVIEW_REF}
           automaticallyAdjustContentInsets={false}
           style={styles.webView}
           source={{uri: this.url}}
-          javaScriptEnabledAndroid={true}
+          javaScriptEnabled={false}
           onNavigationStateChange={this.onNavigationStateChange.bind(this)}
           onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
           startInLoadingState={true}
@@ -91,45 +60,11 @@ class MenusPage extends React.Component {
 }
 
 
-var NavigationBarRouteMapper = {
-  // Left button customization
-  LeftButton(route, navigator) {
-    return backButton(navigator)
-  },
-  // Right button customization
-  RightButton() {
-    return null
-  },
-  // Title customization
-  Title() {
-    return (
-      <Text style={styles.navigationText}>
-        Menus
-      </Text>
-    )
-  }
-}
-
 
 var styles = StyleSheet.create({
-  // Body container
   container: {
     flex: 1,
-    marginTop: marginTop,
-    flexDirection:'row',
-    flexWrap:'wrap',
   },
-
-  // Navigation bar styling
-  navigationBar: {
-    backgroundColor: 'orange',
-  },
-  navigationText: {
-    color: 'white',
-    margin: 10,
-    fontSize: 16,
-  },
-
 })
 
 module.exports = MenusPage
