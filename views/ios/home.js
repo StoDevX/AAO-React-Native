@@ -7,7 +7,7 @@
 // React native
 const React = require('react')
 const RN = require('react-native')
-const NavigatorScreen = require('./navigator-screen')
+const NavigatorScreen = require('./components/navigator-screen')
 
 // Namespacing
 const {
@@ -56,7 +56,7 @@ class HomePage extends React.Component {
     let views = [
       {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl'},
       {usable: true, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
-      {usable: false, view: 'SchedulesView', title: 'Building Hours', icon: 'clock'},
+      {usable: false, view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock'},
       {usable: false, view: 'CalendarView', title: 'Calendar', icon: 'calendar'},
       {usable: false, view: 'DirectoryView', title: 'Directory', icon: 'v-card'},
       {usable: false, view: 'StreamingView', title: 'Streaming Media', icon: 'video'},

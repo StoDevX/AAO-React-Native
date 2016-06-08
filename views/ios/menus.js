@@ -8,7 +8,7 @@ const React = require('react')
 const RN = require('react-native')
 const {StyleSheet, View, WebView} = RN
 
-const NavigatorScreen = require('./navigator-screen')
+const NavigatorScreen = require('./components/navigator-screen')
 
 // FIXME: Don't keep this here… make a general purpose webview and pass url in
 // from the router.

@@ -19,7 +19,7 @@ const MediaView = require('./views/ios/media')
 const MenusView = require('./views/ios/menus')
 const NewsView = require('./views/ios/news')
 const SISView = require('./views/ios/sis')
-const SchedulesView = require('./views/ios/schedules')
+const BuildingHoursView = require('./views/ios/building-hours')
 const TransportationView = require('./views/ios/transportation')
 
 
@@ -73,8 +73,8 @@ class App extends React.Component {
       return <MediaView navigator={navigator} />
     case 'NewsView':
       return <NewsView navigator={navigator} />
-    case 'SchedulesView':
-      return <SchedulesView navigator={navigator} />
+    case 'BuildingHoursView':
+      return <BuildingHoursView navigator={navigator} />
     case 'SISView':
       return <SISView navigator={navigator} />
     case 'TransportationView':

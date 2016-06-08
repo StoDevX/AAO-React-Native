@@ -1,13 +1,13 @@
 /**
  * All About Olaf
- * iOS Menus page
+ * iOS SIS page
  */
 'use strict'
 
 // React native
 const React = require('react')
 const RN = require('react-native')
-const NavigatorScreen = require('./navigator-screen')
+const NavigatorScreen = require('./components/navigator-screen')
 const Keychain = require('react-native-keychain')
 
 const {
