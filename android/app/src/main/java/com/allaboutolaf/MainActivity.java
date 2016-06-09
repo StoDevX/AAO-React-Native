@@ -1,6 +1,7 @@
 package com.allaboutolaf;
 
 import com.facebook.react.ReactActivity;
+import com.xebia.reactnative.TabLayoutPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactPackage;
@@ -37,6 +38,7 @@ public class MainActivity extends ReactActivity {
     protected List<ReactPackage> getPackages() {
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new TabLayoutPackage(),
             new KeychainPackage(),
             new VectorIconsPackage()
         );
