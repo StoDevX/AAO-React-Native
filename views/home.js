@@ -62,11 +62,11 @@ export default class HomePage extends React.Component {
       {usable: false, view: 'CalendarView', title: 'Calendar', icon: 'calendar'},
       {usable: false, view: 'DirectoryView', title: 'Directory', icon: 'v-card'},
       {usable: false, view: 'StreamingView', title: 'Streaming Media', icon: 'video'},
-      {usable: false, view: 'NewsView', title: 'News', icon: 'news'},
-      {usable: false, view: 'MapView', title: 'Campus Map', icon: 'map'},
+      {usable: true, view: 'NewsView', title: 'News', icon: 'news'},
+      {usable: true, view: 'MapView', title: 'Campus Map', icon: 'map'},
       {usable: false, view: 'ContactsView', title: 'Important Contacts', icon: 'phone'},
       {usable: false, view: 'TransportationView', title: 'Transportation', icon: 'address'},
-      {usable: false, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
+      {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
     ]
 
     return (
