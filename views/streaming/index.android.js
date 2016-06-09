@@ -1,6 +1,6 @@
 /**
  * All About Olaf
- * iOS News page
+ * iOS Media page
  */
 
 import React from 'react'
@@ -14,7 +14,7 @@ import {TabLayout, Tab} from 'react-native-android-tablayout'
 import NavigatorScreen from '../components/navigator-screen'
 import tabs from './tabs'
 
-export default class NewsView extends React.Component {
+export default class MediaPage extends React.Component {
   constructor() {
     super()
     this.state = {
@@ -25,7 +25,7 @@ export default class NewsView extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="News"
+      title="Media"
       renderScene={this.renderScene.bind(this)}
     />
   }

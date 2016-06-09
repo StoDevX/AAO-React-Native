@@ -1,22 +1,23 @@
 /**
  * All About Olaf
- * iOS News page
+ * iOS Menus page
  */
 
 import React from 'react'
 import {
   StyleSheet,
   View,
-  Text,
   TabBarIOS,
 } from 'react-native'
+
 import NavigatorScreen from '../components/navigator-screen'
 import tabs from './tabs'
 
-export default class NewsView extends React.Component {
+export default class MenusPage extends React.Component {
   constructor() {
     super()
     this.state = {
+      isConnected: true,
       selectedTab: tabs[0].id,
     }
   }
@@ -24,7 +25,7 @@ export default class NewsView extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="News"
+      title="Menus"
       renderScene={this.renderScene.bind(this)}
     />
   }
@@ -53,8 +54,9 @@ export default class NewsView extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
 })
