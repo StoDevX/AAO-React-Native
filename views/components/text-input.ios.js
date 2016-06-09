@@ -13,17 +13,17 @@ import {
 } from 'react-native'
 
 export default function LabelledTextInput(props) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.label}>Username:</Text>
-        <TextInput
-          style={styles.input}
-          autoCapitalize='none'
-          onChangeText={text => this.setState({username: text})}
-          value={this.state.username}
-        />
-      </View>
-    )
+  return (
+    <View style={styles.container}>
+      <Text style={styles.label}>Username:</Text>
+      <TextInput
+        style={styles.input}
+        autoCapitalize='none'
+        onChangeText={text => this.setState({username: text})}
+        value={this.state.username}
+      />
+    </View>
+  )
 }
 
 var styles = StyleSheet.create({

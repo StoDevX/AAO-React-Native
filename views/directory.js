@@ -2,9 +2,7 @@
  * All About Olaf
  * iOS Directory page
  */
-'use strict'
 
-// React native
 import React from 'react'
 import {
   StyleSheet,
@@ -14,7 +12,7 @@ import {
 import NavigatorScreen from './components/navigator-screen'
 import queryStalkernet from '../lib/stalkernet'
 
-class DirectoryView extends React.Component {
+export default class DirectoryView extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
@@ -38,5 +36,3 @@ var styles = StyleSheet.create({
     flex: 1,
   }
 })
-
-module.exports = DirectoryView

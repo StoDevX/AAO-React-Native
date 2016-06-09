@@ -10,6 +10,7 @@ import {
   Text,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
+import * as c from './colors'
 
 const styles = StyleSheet.create({
   navigationButton: {
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   navigationButtonText: {
-    color: 'white',
+    color: c.tint,
     margin: 10,
     textAlignVertical: 'top'
   },

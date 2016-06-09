@@ -2,52 +2,23 @@
  * All About Olaf
  * iOS Menus page
  */
-'use strict'
 
-const React = require('react')
-const RN = require('react-native')
-const {
+import React from 'react'
+import {
   NetInfo,
   StyleSheet,
   View,
   WebView,
-} = RN
+} from 'react-native'
 
-const NavigatorScreen = require('./components/navigator-screen')
+import NavigatorScreen from './components/navigator-screen'
 
 // FIXME: Don't keep this here… make a general purpose webview and pass url in
 // from the router.
 const DEFAULT_URL = 'http://stolaf.cafebonappetit.com/cafe/stav-hall#Lunch'
 // const DEFAULT_URL = 'http://legacy.cafebonappetit.com/print-menu/cafe/261/menu/112732/days/today/pgbrks/0/'
 
-
-const HTML = `
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no">
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: -apple-system;
-        background: white;
-      }
-      h1 {
-        padding: 45px;
-        margin: 0;
-        text-align: center;
-        color: #000;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>No Connection</h1>
-  </body>
-</html>`
-
-class MenusPage extends React.Component {
+export default class MenusPage extends React.Component {
   constructor() {
     super()
     this.scalesPageToFit = true
@@ -83,9 +54,7 @@ class MenusPage extends React.Component {
 
   // Render a given scene
   renderScene() {
-    let webViewSource = this.state.isConnected
-      ? {uri: this.url}
-      : {html: HTML}
+    let webViewSource = {uri: this.url}
     return (
       <View style={styles.container}>
         <WebView
@@ -113,11 +82,8 @@ class MenusPage extends React.Component {
 }
 
 
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
 })
-
-module.exports = MenusPage

@@ -2,20 +2,17 @@
  * All About Olaf
  * iOS Calendar page
  */
-'use strict'
 
-// React native
-const React = require('react')
-const RN = require('react-native')
-const NavigatorScreen = require('./components/navigator-screen')
-
-const {
+import React from 'react'
+import {
   StyleSheet,
   View,
   Text,
-} = RN
+} from 'react-native'
 
-class CalendarView extends React.Component {
+import NavigatorScreen from './components/navigator-screen'
+
+export default class CalendarView extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
@@ -39,5 +36,3 @@ var styles = StyleSheet.create({
     flex: 1,
   }
 })
-
-module.exports = CalendarView

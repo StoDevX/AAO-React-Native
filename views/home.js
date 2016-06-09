@@ -2,9 +2,7 @@
  * All About Olaf
  * iOS Home page
  */
-'use strict'
 
-// React native
 import React from 'react'
 import {
   Navigator,
@@ -16,7 +14,6 @@ import {
 } from 'react-native'
 import NavigatorScreen from './components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
-
 
 export default class HomePage extends React.Component {
   render() {
@@ -157,7 +154,7 @@ var styles = StyleSheet.create({
     backgroundColor: c.goldenrod,
   },
   rectangle3: {
-    backgroundColor: c.silver,
+    backgroundColor: c.wave,
   },
   rectangle4: {
     backgroundColor: c.coolPurple,
@@ -169,22 +166,19 @@ var styles = StyleSheet.create({
     backgroundColor: c.denim,
   },
   rectangle7: {
-    backgroundColor: c.silver,
+    backgroundColor: c.eggplant,
   },
   rectangle8: {
-    backgroundColor: c.silver,
+    backgroundColor: c.coffee,
   },
   rectangle9: {
-    backgroundColor: c.silver,
+    backgroundColor: c.crimson,
   },
   rectangle10: {
-    backgroundColor: c.silver,
+    backgroundColor: c.cardTable,
   },
   rectangle11: {
-    backgroundColor: c.silver,
-  },
-  rectangle12: {
-    backgroundColor: c.silver,
+    backgroundColor: c.olive,
   },
 
   navigationButtonText: {

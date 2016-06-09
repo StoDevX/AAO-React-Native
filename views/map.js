@@ -2,20 +2,18 @@
  * All About Olaf
  * iOS Map page
  */
-'use strict'
 
-// React native
-const React = require('react')
-const RN = require('react-native')
-const NavigatorScreen = require('./components/navigator-screen')
-
-const {
+import React from 'react'
+import {
   StyleSheet,
   View,
   Text,
-} = RN
+  MapView,
+} from 'react-native'
 
-class MapView extends React.Component {
+import NavigatorScreen from './components/navigator-screen'
+
+export default class OlafMapView extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
@@ -39,5 +37,3 @@ var styles = StyleSheet.create({
     flex: 1,
   }
 })
-
-module.exports = MapView

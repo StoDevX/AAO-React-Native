@@ -143,3 +143,5 @@ export const sand = 'rgb(222, 182, 151)'
 export const mud = 'rgb(70, 45, 29)'
 export const sienna = 'rgb(160, 82, 45)'
 export const dust = 'rgb(236, 214, 197)'
+
+export const tint = mandarin
