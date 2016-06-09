@@ -15,6 +15,20 @@ import {
 import NavigatorScreen from './components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
 
+const views = [
+  {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl'},
+  {usable: true, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
+  {usable: false, view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock'},
+  {usable: false, view: 'CalendarView', title: 'Calendar', icon: 'calendar'},
+  {usable: false, view: 'DirectoryView', title: 'Directory', icon: 'v-card'},
+  {usable: true, view: 'StreamingView', title: 'Streaming Media', icon: 'video'},
+  {usable: true, view: 'NewsView', title: 'News', icon: 'news'},
+  {usable: true, view: 'MapView', title: 'Campus Map', icon: 'map'},
+  {usable: false, view: 'ContactsView', title: 'Important Contacts', icon: 'phone'},
+  {usable: false, view: 'TransportationView', title: 'Transportation', icon: 'address'},
+  {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
+]
+
 export default class HomePage extends React.Component {
   render() {
     return <NavigatorScreen
@@ -55,20 +69,6 @@ export default class HomePage extends React.Component {
 
   // Render a given scene
   renderScene() {
-    let views = [
-      {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl'},
-      {usable: true, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
-      {usable: false, view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock'},
-      {usable: false, view: 'CalendarView', title: 'Calendar', icon: 'calendar'},
-      {usable: false, view: 'DirectoryView', title: 'Directory', icon: 'v-card'},
-      {usable: false, view: 'StreamingView', title: 'Streaming Media', icon: 'video'},
-      {usable: true, view: 'NewsView', title: 'News', icon: 'news'},
-      {usable: true, view: 'MapView', title: 'Campus Map', icon: 'map'},
-      {usable: false, view: 'ContactsView', title: 'Important Contacts', icon: 'phone'},
-      {usable: false, view: 'TransportationView', title: 'Transportation', icon: 'address'},
-      {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
-    ]
-
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}
@@ -86,7 +86,7 @@ export default class HomePage extends React.Component {
               onPress={() => this.pushView(view.view, view.title)}
               activeOpacity={0.5}
             >
-              <View style={[styles.rectangle, styles['rectangle'+(i+1)]].concat(!view.usable ? [styles.disabledReactangle] : [])}>
+              <View style={[styles.rectangle, styles['rectangle'+(i+1)]]}>
                 <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
                 <Text
                   style={styles.rectangleButtonText}
