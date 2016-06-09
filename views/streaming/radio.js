@@ -10,6 +10,8 @@ import {
   Text,
 } from 'react-native'
 
+let kstoDownload = 'itms://itunes.apple.com/us/app/ksto/id953916647'
+
 export default class KSTOView extends React.Component {
   render() {
     return (

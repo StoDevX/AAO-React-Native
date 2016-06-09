@@ -17,6 +17,10 @@ import SISLoginSection from './login'
 
 const STORAGE_KEY = '@AllAboutOlaf:SIS'
 
+let financials = 'https://www.stolaf.edu/sis/st-financials.cfm'
+let sis = 'https://www.stolaf.edu/sis/login.cfm'
+let olecard = 'https://www.stolaf.edu/apps/olecard/checkbalance/authenticate.cfm'
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
