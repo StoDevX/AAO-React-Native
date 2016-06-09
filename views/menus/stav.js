@@ -1,28 +1,28 @@
-/**
- * All About Olaf
- * iOS Menus page
- */
-
 import React from 'react'
 import {
-  NetInfo,
   StyleSheet,
   View,
+  NetInfo,
   WebView,
 } from 'react-native'
 
-import NavigatorScreen from './components/navigator-screen'
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  webView: {
+    flex: 1,
+  }
+})
 
-// FIXME: Don't keep this here… make a general purpose webview and pass url in
-// from the router.
-const DEFAULT_URL = 'http://stolaf.cafebonappetit.com/cafe/stav-hall#Lunch'
+const URL = 'http://stolaf.cafebonappetit.com/cafe/stav-hall#Lunch'
 // const DEFAULT_URL = 'http://legacy.cafebonappetit.com/print-menu/cafe/261/menu/112732/days/today/pgbrks/0/'
 
-export default class MenusPage extends React.Component {
+export default class StavMenuView extends React.Component {
   constructor() {
     super()
     this.scalesPageToFit = true
-    this.url = DEFAULT_URL
+    this.url = URL
     this.state = {
       isConnected: true
     }
@@ -41,19 +41,9 @@ export default class MenusPage extends React.Component {
 
   _onConnectivityChange(isConnected) {
     this.setState({isConnected})
-    console.warn('isConnected', isConnected)
   }
 
   render() {
-    return <NavigatorScreen
-      {...this.props}
-      title="Menus"
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
-  // Render a given scene
-  renderScene() {
     let webViewSource = {uri: this.url}
     return (
       <View style={styles.container}>
@@ -61,10 +51,10 @@ export default class MenusPage extends React.Component {
           automaticallyAdjustContentInsets={false}
           style={styles.webView}
           source={webViewSource}
-          javaScriptEnabled={false}
+          javaScriptEnabled={true}
           onNavigationStateChange={this.onNavigationStateChange.bind(this)}
           onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
-          startInLoadingState={false}
+          startInLoadingState={true}
           scalesPageToFit={this.scalesPageToFit}
         />
       </View>
@@ -80,10 +70,3 @@ export default class MenusPage extends React.Component {
     this.scalesPageToFit = true
   }
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
