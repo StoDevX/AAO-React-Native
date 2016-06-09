@@ -30,7 +30,17 @@ export default class HomePage extends React.Component {
             style={styles.navButton}
             onPress={() => navigator.parentNavigator.pop()}
           >
-            <Icon name='info' style={styles.navigationButtonText} />
+            <Icon name='info' style={styles.navigationButtonIcon} />
+          </TouchableOpacity>
+        )
+      }}
+      rightButton={(route, navigator) => {
+        return (
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigator.parentNavigator.pop()}
+          >
+            <Text style={styles.navigationButtonText}>Edit</Text>
           </TouchableOpacity>
         )
       }}
@@ -97,23 +107,7 @@ export default class HomePage extends React.Component {
 }
 
 
-// let AQUA = '#7FDBFF'
-let BLACK = '#111111'
-let BLUE = '#0074D9'
-// let FUCHSIA = '#F012BE'
-let GRAY = '#AAAAAA'
-let GREEN = '#2ECC40'
-// let LIME = '#01FF70'
-let MAROON = '#85144b'
-let NAVY = '#001f3f'
-let OLIVE = '#3D9970'
-let ORANGE = '#FF851B'
-let PURPLE = '#B10DC9'
-let RED = '#FF4136'
-// let SILVER = '#DDDDDD'
-let TEAL = '#39CCCC'
-let WHITE = '#FFFFFF'
-let YELLOW = '#FFDC00'
+import * as c from './components/colors'
 
 // Device info
 const Dimensions = require('Dimensions')
@@ -157,56 +151,60 @@ var styles = StyleSheet.create({
   },
 
   rectangle1: {
-    backgroundColor: YELLOW,
+    backgroundColor: c.emerald,
   },
   rectangle2: {
-    backgroundColor: RED,
+    backgroundColor: c.goldenrod,
   },
   rectangle3: {
-    backgroundColor: PURPLE,
+    backgroundColor: c.silver,
   },
   rectangle4: {
-    backgroundColor: OLIVE,
+    backgroundColor: c.coolPurple,
   },
   rectangle5: {
-    backgroundColor: GRAY,
+    backgroundColor: c.indianRed,
   },
   rectangle6: {
-    backgroundColor: GREEN,
+    backgroundColor: c.denim,
   },
   rectangle7: {
-    backgroundColor: ORANGE,
+    backgroundColor: c.silver,
   },
   rectangle8: {
-    backgroundColor: BLUE,
+    backgroundColor: c.silver,
   },
   rectangle9: {
-    backgroundColor: TEAL,
+    backgroundColor: c.silver,
   },
   rectangle10: {
-    backgroundColor: MAROON,
+    backgroundColor: c.silver,
   },
   rectangle11: {
-    backgroundColor: NAVY,
+    backgroundColor: c.silver,
   },
   rectangle12: {
-    backgroundColor: BLACK,
-  },
-
-  rectangleButtonIcon: {
-    color: WHITE,
+    backgroundColor: c.silver,
   },
 
   navigationButtonText: {
-    color: WHITE,
+    color: c.mandarin,
+    // marginTop: 8,
+    // marginLeft: 14,
+  },
+  navigationButtonIcon: {
+    color: c.mandarin,
     fontSize: 20,
     marginTop: 8,
     marginLeft: 14,
   },
 
   // Text styling in buttons
+  rectangleButtonIcon: {
+    color: c.white,
+  },
   rectangleButtonText: {
-    color: WHITE,
+    color: c.white,
     textAlign: 'center',
     fontSize: 14,
     paddingLeft: 10,

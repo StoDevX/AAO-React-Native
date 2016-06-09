@@ -2,27 +2,28 @@
  * All About Olaf
  * iOS SIS page
  */
-'use strict'
 
-// React native
-const React = require('react')
-const RN = require('react-native')
-const NavigatorScreen = require('./components/navigator-screen')
-const Keychain = require('react-native-keychain')
-
-const {
+import React from 'react'
+import {
   StyleSheet,
   Text,
   View,
   TextInput,
   AsyncStorage,
-} = RN
-
+} from 'react-native'
+import NavigatorScreen from '../components/navigator-screen'
+import Keychain from 'react-native-keychain'
+import SISLoginSection from './login'
 
 const STORAGE_KEY = '@AllAboutOlaf:SIS'
-const SISLoginSection = require('./sis/login')
 
-class SISView extends React.Component {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  }
+})
+
+export default class SISView extends React.Component {
   constructor() {
     super()
   }
@@ -52,11 +53,3 @@ class SISView extends React.Component {
     )
   }
 }
-
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  }
-})
-
-module.exports = SISView

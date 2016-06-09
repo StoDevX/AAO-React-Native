@@ -9,6 +9,8 @@ import {Navigator, StyleSheet, View} from 'react-native'
 import BackButton from './back-button'
 import ScreenTitle from './screen-title'
 
+import * as c from './colors'
+
 const MARGIN_TOP = 60
 const styles = StyleSheet.create({
   container: {
@@ -16,11 +18,13 @@ const styles = StyleSheet.create({
     marginTop: MARGIN_TOP,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: 'white',
+    backgroundColor: c.iosLightBackground,
   },
 
   navigationBar: {
-    backgroundColor: 'orange',
+    backgroundColor: c.white,
+    borderBottomWidth: 1,
+    borderBottomColor: c.iosNavbarBottomBorder,
   },
 })
 

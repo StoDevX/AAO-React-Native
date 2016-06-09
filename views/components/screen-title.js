@@ -8,7 +8,7 @@ import {StyleSheet, Text} from 'react-native'
 
 const styles = StyleSheet.create({
   navigationText: {
-    color: 'white',
+    color: 'black',
     margin: 10,
     fontSize: 16,
     fontWeight: '600',

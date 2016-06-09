@@ -12,19 +12,19 @@ import {
   Text,
 } from 'react-native'
 
-import AboutView from './views/ios/about'
-import CalendarView from './views/ios/calendar'
-import ContactsView from './views/ios/contacts'
-import DictionaryView from './views/ios/dictionary'
-import DirectoryView from './views/ios/directory'
-import HomeView from './views/ios/home'
-import MapView from './views/ios/map'
-import StreamingView from './views/ios/streaming'
-import MenusView from './views/ios/menus'
-import NewsView from './views/ios/news'
-import SISView from './views/ios/sis'
-import BuildingHoursView from './views/ios/building-hours'
-import TransportationView from './views/ios/transportation'
+import AboutView from './views/about'
+import CalendarView from './views/calendar'
+import ContactsView from './views/contacts'
+import DictionaryView from './views/dictionary'
+import DirectoryView from './views/directory'
+import HomeView from './views/home'
+import MapView from './views/map'
+import StreamingView from './views/streaming'
+import MenusView from './views/menus'
+import NewsView from './views/news'
+import SISView from './views/sis'
+import BuildingHoursView from './views/building-hours'
+import TransportationView from './views/transportation'
 
 
 const NoRoute = ({navigator}) =>

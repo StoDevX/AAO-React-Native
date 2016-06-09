@@ -5,16 +5,14 @@
 'use strict'
 
 // React native
-const React = require('react')
-const RN = require('react-native')
-const NavigatorScreen = require('./components/navigator-screen')
-const queryStalkernet = require('../../lib/stalkernet')
-
-const {
+import React from 'react'
+import {
   StyleSheet,
   View,
   Text,
-} = RN
+} from 'react-native'
+import NavigatorScreen from './components/navigator-screen'
+import queryStalkernet from '../lib/stalkernet'
 
 class DirectoryView extends React.Component {
   render() {
