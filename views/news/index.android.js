@@ -9,8 +9,9 @@ import {
   View,
   Text,
 } from 'react-native'
+import Icon from 'react-native-vector-icons/Entypo'
 
-import NavigatorScreen from './components/navigator-screen'
+import NavigatorScreen from '../components/navigator-screen'
 
 export default class NewsView extends React.Component {
   render() {
