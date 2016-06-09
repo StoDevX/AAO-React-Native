@@ -13,7 +13,8 @@ import {
 
 import NavigatorScreen from './components/navigator-screen'
 
-const URL = 'https://www.myatlascms.com/map/index.php?id=294#!ct/14990,14877,15145,15789,14884,14882,14874,14889,15142?ce/14889'
+import mapInfo from '../data/map.json'
+const URL = mapInfo['url']
 
 export default class OlafMapView extends React.Component {
   render() {
