@@ -24,5 +24,5 @@ export default [
     title: 'Mess',
     icon: {uri: base64Icon, scale: 3},
     content: ManitouMessView,
-  }
+  },
 ]

@@ -18,7 +18,7 @@ export default class NewsView extends React.Component {
   constructor() {
     super()
     this.state = {
-      selectedTab: 0
+      selectedTab: 0,
     }
   }
 
