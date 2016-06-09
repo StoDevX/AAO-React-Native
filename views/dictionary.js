@@ -8,11 +8,27 @@ import {
   StyleSheet,
   View,
   Text,
+  ListView,
 } from 'react-native'
 
 import NavigatorScreen from './components/navigator-screen'
+import terms from '../data/dictionary.json'
 
 export default class DictionaryView extends React.Component {
+  constructor() {
+    super()
+    let ds = new ListView.DataSource({
+      rowHasChanged: this._rowHasChanged,
+    })
+    this.state = {
+      dataSource: ds.cloneWithRows(terms)
+    }
+  }
+
+  _rowHasChanged(r1, r2) {
+    return r1.word !== r2.word && r1.definition !== r2.definition
+  }
+
   render() {
     return <NavigatorScreen
       {...this.props}
@@ -21,11 +37,22 @@ export default class DictionaryView extends React.Component {
     />
   }
 
+  _renderRow(data) {
+    return (
+      <View style={styles.row}>
+        <Text style={styles.label}>{data.word}</Text>
+      </View>
+    )
+  }
+
   // Render a given scene
   renderScene() {
     return (
       <View style={styles.container}>
-        <Text>Dictionary</Text>
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this._renderRow.bind(this)}
+        />
       </View>
     )
   }
@@ -34,5 +61,10 @@ export default class DictionaryView extends React.Component {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
+  row: {
+    marginTop: 5,
+    marginBottom: 5,
+  },
+  label: {},
 })
