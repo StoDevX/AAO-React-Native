@@ -8,11 +8,12 @@ import {
   StyleSheet,
   View,
   Text,
-  MapView,
+  WebView,
 } from 'react-native'
 
 import NavigatorScreen from './components/navigator-screen'
-import mapCoordinates from '../data/map-coordinates.json'
+
+const URL = 'https://www.myatlascms.com/map/index.php?id=294#!ct/14990,14877,15145,15789,14884,14882,14874,14889,15142?ce/14889'
 
 export default class OlafMapView extends React.Component {
   render() {
@@ -27,24 +28,27 @@ export default class OlafMapView extends React.Component {
   renderScene() {
     return (
       <View style={styles.container}>
-        <Text>Map</Text>
-        <MapView
+        <WebView
+          automaticallyAdjustContentInsets={false}
           style={styles.map}
-          pitchEnabled={false}
-          rotateEnabled={false}
-          //scrollEnabled={false}
-          region={{
-            // center on dittmann
-            latitude: 44.46271,
-            longitude: -93.184158,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          }}
-          mapType={'hybrid'}
-          annotations={mapCoordinates}
+          source={{url: URL}}
+          javaScriptEnabled={false}
+          onNavigationStateChange={this.onNavigationStateChange.bind(this)}
+          onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
+          startInLoadingState={true}
+          scalesPageToFit={this.scalesPageToFit}
         />
       </View>
     )
+  }
+
+  onShouldStartLoadWithRequest() {
+    return true
+  }
+
+  onNavigationStateChange(navState) {
+    this.url = navState.url
+    this.scalesPageToFit = true
   }
 }
 
@@ -54,5 +58,5 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
-  }
+  },
 })
