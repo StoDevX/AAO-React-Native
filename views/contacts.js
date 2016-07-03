@@ -10,7 +10,18 @@ import {
   Text,
 } from 'react-native'
 
+import Button from 'react-native-button'; // the button
+import Communications from 'react-native-communications'; // the phone call functions
+import {
+  Card,
+  CardImage,
+  CardTitle,
+  CardContent,
+  CardAction
+} from 'react-native-card-view'; // this relies on the exoernal card library
+
 import NavigatorScreen from './components/navigator-screen'
+import ContactCard from './components/contactCard'
 
 export default class ContactView extends React.Component {
   render() {
@@ -24,9 +35,8 @@ export default class ContactView extends React.Component {
   // Render a given scene
   renderScene() {
     return (
-      <View style={styles.container}>
-        <Text>Contact</Text>
-      </View>
+      <ContactCard title='St. Olaf Public Safety' text='test' phoneNumber='123' buttonText='button' />
+      <ContactCard title='' text='' phoneNumber='' buttonText='' />
     )
   }
 }
