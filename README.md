@@ -12,17 +12,17 @@ The St. Olaf community, now in pocket size... rewritten in React Native.  This i
 - `npm run ios`
 
 ## Completed
-* Menus (minus auto-scroll to dinner menu)
+* Stav Menu (minus auto-scroll to dinner menu)
 
 ## Work-In-Progress
 * Directory
 * Home Page
+* Important Contacts
 
 ## Todo (modules)
 * Calendar
 * Campus Dictionary
 * Campus Map
-* Important Contacts
 * News
 * Schedules
 * SIS
@@ -30,7 +30,6 @@ The St. Olaf community, now in pocket size... rewritten in React Native.  This i
 * Transportation
 
 ## Todo (other)
-* Android development in parallel
 * A better router
 * [3D touch actions](https://github.com/jordanbyron/react-native-quick-actions) for icon and within
 * Static/dynamic data loading from Parse
