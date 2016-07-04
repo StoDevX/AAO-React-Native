@@ -1,6 +1,5 @@
 [
     {
-        "category": "Supplies and Books",
         "name": "Bookstore",
         "times": {
             "Hours": {
@@ -14,7 +13,6 @@
         }
     },
     {
-        "category": "Supplies and Books",
         "name": "Convenience Store",
         "times": {
             "Hours": {
@@ -29,22 +27,18 @@
         }
     },
     {
-        "category": "Mail and Packages",
         "name": "Post Office",
         "times": {
             "Hours": {
-                "from": "June 1",
-                "to": "August 31",
                 "Mon": ["7:30am", "4:30pm"],
                 "Tue": ["7:30am", "4:30pm"],
-                "Fri": ["7:30am", "12:00pm"],
+                "Wed": ["7:30am", "4:30pm"],
                 "Thu": ["7:30am", "4:30pm"],
-                "Wed": ["7:30am", "4:30pm"]
+                "Fri": ["7:30am", "12:00pm"],
             }
         }
     },
     {
-        "category": "Libraries",
         "name": "Rolvaag Library",
         "times": {
             "Hours": {
@@ -59,7 +53,6 @@
         }
     },
     {
-        "category": "Libraries",
         "name": "Halvorson Music Library",
         "times": {
             "Hours": {
@@ -74,7 +67,6 @@
         }
     },
     {
-        "category": "Libraries",
         "name": "Hustad Science Library",
         "times": {
             "Hours": {
@@ -89,7 +81,6 @@
         }
     },
     {
-        "category": "Gym",
         "name": "Skoglund",
         "times": {
             "Hours": {
@@ -104,7 +95,6 @@
         }
     },
     {
-        "category": "Food",
         "name": "The Cage",
         "notes": "The kitchen stops cooking at 8 p.m.",
         "times": {
@@ -120,7 +110,6 @@
         }
     },
     {
-        "category": "Food",
         "name": "The Pause Kitchen",
         "times": {
             "Hours": {
@@ -135,36 +124,45 @@
         }
     },
     {
-        "category": "Food",
-        "name": "Stav Hall",
+        "name": "Stav Hall Breakfast",
         "times": {
-            "Breakfast": {
-                "Mon": ["7:00am", "9:45am"],
-                "Tue": ["7:00am", "9:45am"],
-                "Wed": ["7:00am", "9:45am"],
-                "Thu": ["7:00am", "9:45am"],
-                "Fri": ["7:00am", "9:45am"],
-                "Sat": ["7:00am", "9:45am"],
-                "Sun": ["8:30am", "10:15am"]
-            },
-            "Lunch": {
-                "Mon": ["10:30am", "2:00pm"],
-                "Tue": ["10:30am", "2:00pm"],
-                "Wed": ["10:30am", "2:00pm"],
-                "Thu": ["10:30am", "2:00pm"],
-                "Fri": ["10:30am", "2:00pm"],
-                "Sat": ["11:00am", "1:30pm"],
-                "Sun": ["11:00am", "1:30pm"]
-            },
-             "Dinner": {
-                 "Mon": ["4:30pm", "7:00pm"],
-                 "Tue": ["4:30pm", "7:00pm"],
-                 "Wed": ["4:30pm", "7:00pm"],
-                 "Thu": ["4:30pm", "7:00pm"],
-                 "Fri": ["4:30pm", "7:00pm"],
-                 "Sat": ["4:30pm", "7:30pm"],
-                 "Sun": ["4:30pm", "7:30pm"]
-             }
+            "Hours": {
+              "Mon": ["7:00am", "9:45am"],
+              "Tue": ["7:00am", "9:45am"],
+              "Wed": ["7:00am", "9:45am"],
+              "Thu": ["7:00am", "9:45am"],
+              "Fri": ["7:00am", "9:45am"],
+              "Sat": ["7:00am", "9:45am"],
+              "Sun": ["8:30am", "10:15am"]
+            }
         }
-    }
+    },
+    {
+        "name": "Stav Hall Lunch",
+        "times": {
+            "Hours": {
+              "Mon": ["10:30am", "2:00pm"],
+              "Tue": ["10:30am", "2:00pm"],
+              "Wed": ["10:30am", "2:00pm"],
+              "Thu": ["10:30am", "2:00pm"],
+              "Fri": ["10:30am", "2:00pm"],
+              "Sat": ["11:00am", "1:30pm"],
+              "Sun": ["11:00am", "1:30pm"]
+            }
+        }
+    },
+    {
+        "name": "Stav Hall Dinner",
+        "times": {
+            "Hours": {
+              "Mon": ["4:30pm", "7:00pm"],
+              "Tue": ["4:30pm", "7:00pm"],
+              "Wed": ["4:30pm", "7:00pm"],
+              "Thu": ["4:30pm", "7:00pm"],
+              "Fri": ["4:30pm", "7:00pm"],
+              "Sat": ["4:30pm", "7:30pm"],
+              "Sun": ["4:30pm", "7:30pm"]
+            }
+        }
+    },
 ]
