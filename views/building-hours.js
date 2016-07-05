@@ -8,9 +8,11 @@ import {
   StyleSheet,
   View,
   Text,
+  Image,
 } from 'react-native'
 
 import NavigatorScreen from './components/navigator-screen'
+import BuildingView from './components/building'
 
 export default class BuildingHoursView extends React.Component {
   render() {
@@ -25,7 +27,7 @@ export default class BuildingHoursView extends React.Component {
   renderScene() {
     return (
       <View style={styles.container}>
-        <Text>Building Hours</Text>
+        <BuildingView name={'https://placehold.it/1000x1000'} />
       </View>
     )
   }

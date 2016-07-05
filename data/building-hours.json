@@ -1,6 +1,7 @@
 [
     {
         "name": "Bookstore",
+        "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
                 "Mon": ["8:00am", "5:00pm"],
@@ -14,6 +15,7 @@
     },
     {
         "name": "Convenience Store",
+        "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
                 "Mon": ["8:00am", "8:00pm"],
@@ -28,6 +30,7 @@
     },
     {
         "name": "Post Office",
+        "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
                 "Mon": ["7:30am", "4:30pm"],
@@ -40,6 +43,7 @@
     },
     {
         "name": "Rolvaag Library",
+        "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
                 "Mon": ["7:45am", "2:00am"],
@@ -54,6 +58,7 @@
     },
     {
         "name": "Halvorson Music Library",
+        "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
                 "Mon": ["7:45am", "11:00pm"],
@@ -68,6 +73,7 @@
     },
     {
         "name": "Hustad Science Library",
+        "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
                 "Mon": ["8:00am", "11:00pm"],
@@ -82,6 +88,7 @@
     },
     {
         "name": "Skoglund",
+        "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
                 "Mon": ["6:30am", "10:45pm"],
@@ -96,6 +103,7 @@
     },
     {
         "name": "The Cage",
+        "image": "http://placehold.it/500x500",
         "notes": "The kitchen stops cooking at 8 p.m.",
         "times": {
             "Hours": {
@@ -111,6 +119,7 @@
     },
     {
         "name": "The Pause Kitchen",
+        "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
                 "Mon": ["10:30am", "12:00am"],
@@ -125,6 +134,7 @@
     },
     {
         "name": "Stav Hall Breakfast",
+        "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
               "Mon": ["7:00am", "9:45am"],
@@ -139,6 +149,7 @@
     },
     {
         "name": "Stav Hall Lunch",
+        "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
               "Mon": ["10:30am", "2:00pm"],
@@ -153,6 +164,7 @@
     },
     {
         "name": "Stav Hall Dinner",
+        "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
               "Mon": ["4:30pm", "7:00pm"],
@@ -162,6 +174,21 @@
               "Fri": ["4:30pm", "7:00pm"],
               "Sat": ["4:30pm", "7:30pm"],
               "Sun": ["4:30pm", "7:30pm"]
+            }
+        }
+    },
+    {
+        "name": "DiSCO",
+        "image": "http://placehold.it/500x500",
+        "times": {
+            "Hours": {
+              "Mon": [],
+              "Tue": [],
+              "Wed": [],
+              "Thu": [],
+              "Fri": [],
+              "Sat": [],
+              "Sun": []
             }
         }
     },
