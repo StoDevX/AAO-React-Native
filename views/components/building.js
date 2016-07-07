@@ -12,15 +12,16 @@ import * as c from './colors'
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: c.black,
   },
   buildingOpen: {
     height: 100,
-    
+    borderColor: c.pastelGreen,
+    borderWidth: 5,
   },
   buildingClosed: {
-    borderColor: c.brickRed,
-    opacity: 50,
+    height: 100,
+    borderColor: c.strawberry,
+    borderWidth: 5,
   },
   name: {
 
@@ -31,7 +32,12 @@ var styles = StyleSheet.create({
 export default class BuildingView extends React.Component {
   render() {
     return (
-      <Image source={{uri: this.props.name}} style={styles.buildingOpen}/>
+      <View style={styles.container}>
+        {this.props.open ?
+          <Image source={{uri: this.props.imageSource}} style={styles.buildingOpen}/> :
+          <Image source={{uri: this.props.imageSource}} style={styles.buildingClosed}/>}
+        <Text style={styles.name}>{this.props.name}</Text>
+      </View>
     )
   }
 }

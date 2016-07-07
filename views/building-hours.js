@@ -9,12 +9,29 @@ import {
   View,
   Text,
   Image,
+  ListView
 } from 'react-native'
 
 import NavigatorScreen from './components/navigator-screen'
 import BuildingView from './components/building'
 
+import hoursData from '../data/building-hours.json'
+
 export default class BuildingHoursView extends React.Component {
+  constructor() {
+    super()
+    let ds = new ListView.DataSource({
+      rowHasChanged: this._rowHasChanged,
+    })
+    this.state = {
+      dataSource: ds.cloneWithRows(hoursData)
+    }
+  }
+
+  _rowHasChanged(r1, r2) {
+    return r1.name !== r2.name
+  }
+
   render() {
     return <NavigatorScreen
       {...this.props}
@@ -23,11 +40,22 @@ export default class BuildingHoursView extends React.Component {
     />
   }
 
+  _renderRow(data) {
+    return (
+      <View style={styles.container}>
+        <BuildingView name={data.name} open={false} imageSource={data.image}/>
+      </View>
+    )
+  }
+
   // Render a given scene
   renderScene() {
     return (
       <View style={styles.container}>
-        <BuildingView name={'https://placehold.it/1000x1000'} />
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this._renderRow.bind(this)}
+        />
       </View>
     )
   }

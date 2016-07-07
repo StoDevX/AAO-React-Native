@@ -43,7 +43,7 @@
     },
     {
         "name": "Rolvaag Library",
-        "image": "http://placehold.it/500x500",
+        "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/rolvaag.jpg",
         "times": {
             "Hours": {
                 "Mon": ["7:45am", "2:00am"],
@@ -58,7 +58,7 @@
     },
     {
         "name": "Halvorson Music Library",
-        "image": "http://placehold.it/500x500",
+        "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/halvorson.jpg",
         "times": {
             "Hours": {
                 "Mon": ["7:45am", "11:00pm"],
@@ -88,7 +88,7 @@
     },
     {
         "name": "Skoglund",
-        "image": "http://placehold.it/500x500",
+        "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/skoglund.jpg",
         "times": {
             "Hours": {
                 "Mon": ["6:30am", "10:45pm"],
@@ -103,7 +103,7 @@
     },
     {
         "name": "The Cage",
-        "image": "http://placehold.it/500x500",
+        "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/cage.png",
         "notes": "The kitchen stops cooking at 8 p.m.",
         "times": {
             "Hours": {
@@ -164,7 +164,7 @@
     },
     {
         "name": "Stav Hall Dinner",
-        "image": "http://placehold.it/500x500",
+        "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/stav.jpg",
         "times": {
             "Hours": {
               "Mon": ["4:30pm", "7:00pm"],
@@ -179,7 +179,7 @@
     },
     {
         "name": "DiSCO",
-        "image": "http://placehold.it/500x500",
+        "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/disco.jpg",
         "times": {
             "Hours": {
               "Mon": [],
