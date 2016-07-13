@@ -61,7 +61,12 @@ export default class BuildingHoursView extends React.Component {
 
   getCurrentTime() {
     var d = new Date();
-    return d.getTime();
+    var hours =  d.getHours();
+    var min = d.getMinutes();
+    if (hours < 10) {
+      hours = "0" + hours;
+    }
+    return hours + ":" + min + ":00";
   }
 
   // TODO: handle buildings that are open beyond midnight
@@ -73,7 +78,12 @@ export default class BuildingHoursView extends React.Component {
     var currentTime = this.getCurrentTime();
 
     // make comparisons
-    if (Date(startTime) <= Date(currentTime) <= Date(closeTime)) {
+    console.log(hoursInfo.name);
+    console.log("startTime: " + startTime);
+    console.log("currentTime: " + currentTime);
+    console.log("closeTime: " + closeTime);
+
+    if (startTime <= currentTime && currentTime <= closeTime) {
       return true;
     } else {
       return false;
