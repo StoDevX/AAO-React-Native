@@ -18,7 +18,7 @@ import Icon from 'react-native-vector-icons/Entypo'
 const views = [
   {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl'},
   {usable: true, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
-  {usable: false, view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock'},
+  {usable: true, view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock'},
   {usable: false, view: 'CalendarView', title: 'Calendar', icon: 'calendar'},
   {usable: false, view: 'DirectoryView', title: 'Directory', icon: 'v-card'},
   {usable: true, view: 'StreamingView', title: 'Streaming Media', icon: 'video'},

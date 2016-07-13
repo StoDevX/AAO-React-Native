@@ -1,6 +1,6 @@
 /**
  * All About Olaf
- * iOS Navigator Screen component
+ * Navigator Screen component
  */
 
 import React from 'react'
