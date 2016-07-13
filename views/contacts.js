@@ -32,24 +32,23 @@ const numbers = [
    buttonText:'Call Public Safety',
    imageURI:'../data/images/contacts/pubsafe.jpg'},
 
+  {title:'Safe Ride',
+   text:'Students concerned about their personal safety may contact Safe Ride to request a walking escort or vehicular transportation on campus and to areas immediately adjacent to the campus. This service was created for personal safety reasons only and will not transport groups of people or provide transportation to downtown locations. Safe Ride is available from 7:00 P.M. to 1:00 A.M. each day classes are in session.',
+   phoneNumber:'5077863666',
+   buttonText:'Request Safe Ride',
+   imageURI:'http://oleville.com/tech/wp-content/uploads/sites/19/2016/07/pubsafecar.jpg'},
+
+  {title:'SARN',
+   text:'SARN, the Sexual Assault Resource Network, is a confidential resource availiable to all students. Calls to SARN will be picked up by a trained advocate to provide services to students struggling with issues of sexual and domestic violence.',
+   phoneNumber:'5077863777',
+   buttonText:'Call SARN',
+   imageURI:'../data/images/contacts/pause.jpg'},
+
   {title:'The Pause Kitchen',
    text:'Place orders in The Pause Kitchen. The pause delivers anywhere on campus, or orders can be placed for pickup.',
    phoneNumber:'5077866969',
    buttonText:'Call The Pause',
    imageURI:'../data/images/contacts/pause.jpg'},
-
-   {title:'SARN',
-    text:'SARN, the Sexual Assault Resource Network, is a confidential resource availiable to all students. Calls to SARN will be picked up by a trained advocate to provide services to students struggling with issues of sexual and domestic violence.',
-    phoneNumber:'5077863777',
-    buttonText:'Call SARN',
-    imageURI:'../data/images/contacts/pause.jpg'},
-
-   {title:'',
-    text:'',
-    phoneNumber:'',
-    buttonText:'',
-    imageURI:'../data/images/contacts/pause.jpg'},
-
 ]
 
 export default class ContactView extends React.Component {
