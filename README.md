@@ -18,6 +18,7 @@ The St. Olaf community, now in pocket size... rewritten in React Native.  This i
 * Directory
 * Home Page
 * Important Contacts
+* Building Hours
 
 ## Todo (modules)
 * Calendar
@@ -25,7 +26,6 @@ The St. Olaf community, now in pocket size... rewritten in React Native.  This i
 * Campus Map
 * News
 * Schedules
-* SIS
 * Streaming Media
 * Transportation
 
@@ -36,4 +36,4 @@ The St. Olaf community, now in pocket size... rewritten in React Native.  This i
 * [Touch-ID](https://github.com/naoufal/react-native-touch-id) for SIS
 
 ## Contributing
-Would you like to contriubte? Great! Have a look at [React Native](http://facebook.github.io/react-native/docs/getting-started.html) and have at it.
+Would you like to contribute? Great! Have a look at [React Native](http://facebook.github.io/react-native/docs/getting-started.html) and have at it.
