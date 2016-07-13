@@ -1,184 +1,184 @@
 [
     {
-        "name": "Bookstore",
+        "ne": "Bookstore",
         "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
-                "Mon": ["8:00am", "5:00pm"],
-                "Tue": ["8:00am", "5:00pm"],
-                "Wed": ["8:00am", "5:00pm"],
-                "Thu": ["8:00am", "5:00pm"],
-                "Fri": ["8:00am", "5:00pm"],
-                "Sat": ["10:00am", "4:00pm"]
+                "Mon": ["8:00", "17:00"],
+                "Tue": ["8:00", "17:00"],
+                "Wed": ["8:00", "17:00"],
+                "Thu": ["8:00", "17:00"],
+                "Fri": ["8:00", "17:00"],
+                "Sat": ["10:00", "16:00"]
             }
         }
     },
     {
-        "name": "Convenience Store",
+        "ne": "Convenience Store",
         "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
-                "Mon": ["8:00am", "8:00pm"],
-                "Wed": ["8:00am", "8:00pm"],
-                "Tue": ["8:00am", "8:00pm"],
-                "Thu": ["8:00am", "8:00pm"],
-                "Fri": ["8:00am", "8:00pm"],
-                "Sat": ["10:00am", "8:00pm"],
-                "Sun": ["12:00pm", "4:00pm"]
+                "Mon": ["8:00", "20:00"],
+                "Wed": ["8:00", "20:00"],
+                "Tue": ["8:00", "20:00"],
+                "Thu": ["8:00", "20:00"],
+                "Fri": ["8:00", "20:00"],
+                "Sat": ["10:00", "20:00"],
+                "Sun": ["12:00", "16:00"]
             }
         }
     },
     {
-        "name": "Post Office",
+        "ne": "Post Office",
         "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
-                "Mon": ["7:30am", "4:30pm"],
-                "Tue": ["7:30am", "4:30pm"],
-                "Wed": ["7:30am", "4:30pm"],
-                "Thu": ["7:30am", "4:30pm"],
-                "Fri": ["7:30am", "12:00pm"],
+                "Mon": ["7:30", "16:30"],
+                "Tue": ["7:30", "16:30"],
+                "Wed": ["7:30", "16:30"],
+                "Thu": ["7:30", "16:30"],
+                "Fri": ["7:30", "12:00"],
             }
         }
     },
     {
-        "name": "Rolvaag Library",
+        "ne": "Rolvaag Library",
         "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/rolvaag.jpg",
         "times": {
             "Hours": {
-                "Mon": ["7:45am", "2:00am"],
-                "Tue": ["7:45am", "2:00am"],
-                "Wed": ["7:45am", "2:00am"],
-                "Thu": ["7:45am", "2:00am"],
-                "Fri": ["7:45am", "9:00pm"],
-                "Sat": ["9:00am", "9:00pm"],
-                "Sun": ["12:00pm", "2:00am"]
+                "Mon": ["7:45", "23:59"],
+                "Tue": ["7:45", "23:59"],
+                "Wed": ["7:45", "23:59"],
+                "Thu": ["7:45", "23:59"],
+                "Fri": ["7:45", "21:00"],
+                "Sat": ["9:00", "21:00"],
+                "Sun": ["12:00", "23:59"]
             }
         }
     },
     {
-        "name": "Halvorson Music Library",
+        "ne": "Halvorson Music Library",
         "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/halvorson.jpg",
         "times": {
             "Hours": {
-                "Mon": ["7:45am", "11:00pm"],
-                "Tue": ["7:45am", "11:00pm"],
-                "Wed": ["7:45am", "11:00pm"],
-                "Thu": ["7:45am", "11:00pm"],
-                "Fri": ["7:45am", "8:00pm"],
-                "Sat": ["9:00am", "6:00pm"],
-                "Sun": ["12:00pm", "11:00pm"]
+                "Mon": ["7:45", "23:00"],
+                "Tue": ["7:45", "23:00"],
+                "Wed": ["7:45", "23:00"],
+                "Thu": ["7:45", "23:00"],
+                "Fri": ["7:45", "20:00"],
+                "Sat": ["9:00", "18:00"],
+                "Sun": ["12:00", "23:00"]
             }
         }
     },
     {
-        "name": "Hustad Science Library",
+        "ne": "Hustad Science Library",
         "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
-                "Mon": ["8:00am", "11:00pm"],
-                "Tue": ["8:00am", "11:00pm"],
-                "Wed": ["8:00am", "11:00pm"],
-                "Thu": ["8:00am", "11:00pm"],
-                "Fri": ["8:00am", "7:00pm"],
-                "Sat": ["9:30am", "4:00pm"],
-                "Sun": ["1:00pm", "11:00pm"]
+                "Mon": ["8:00", "23:00"],
+                "Tue": ["8:00", "23:00"],
+                "Wed": ["8:00", "23:00"],
+                "Thu": ["8:00", "23:00"],
+                "Fri": ["8:00", "19:00"],
+                "Sat": ["9:30", "16:00"],
+                "Sun": ["1:00", "23:00"]
             }
         }
     },
     {
-        "name": "Skoglund",
+        "ne": "Skoglund",
         "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/skoglund.jpg",
         "times": {
             "Hours": {
-                "Mon": ["6:30am", "10:45pm"],
-                "Tue": ["6:30am", "10:45pm"],
-                "Wed": ["6:30am", "10:45pm"],
-                "Thu": ["6:30am", "10:45pm"],
-                "Fri": ["6:30am", "8:45pm"],
-                "Sat": ["9:00am", "8:45pm"],
-                "Sun": ["12:00pm", "10:45pm"]
+                "Mon": ["6:30", "22:45"],
+                "Tue": ["6:30", "22:45"],
+                "Wed": ["6:30", "22:45"],
+                "Thu": ["6:30", "22:45"],
+                "Fri": ["6:30", "20:45"],
+                "Sat": ["9:00", "20:45"],
+                "Sun": ["12:00", "22:45"]
             }
         }
     },
     {
-        "name": "The Cage",
+        "ne": "The Cage",
         "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/cage.png",
         "notes": "The kitchen stops cooking at 8 p.m.",
         "times": {
             "Hours": {
-                "Mon": ["7:30am", "11:00pm"],
-                "Tue": ["7:30am", "11:00pm"],
-                "Wed": ["7:30am", "11:00pm"],
-                "Thu": ["7:30am", "11:00pm"],
-                "Fri": ["7:30am", "8:00pm"],
-                "Sat": ["9:00am", "8:00pm"],
-                "Sun": ["9:00am", "11:00pm"]
+                "Mon": ["7:30", "23:00"],
+                "Tue": ["7:30", "23:00"],
+                "Wed": ["7:30", "23:00"],
+                "Thu": ["7:30", "23:00"],
+                "Fri": ["7:30", "20:00"],
+                "Sat": ["9:00", "20:00"],
+                "Sun": ["9:00", "23:00"]
             }
         }
     },
     {
-        "name": "The Pause Kitchen",
+        "ne": "The Pause Kitchen",
         "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
-                "Mon": ["10:30am", "12:00am"],
-                "Wed": ["10:30am", "12:00am"],
-                "Thu": ["10:30am", "12:00am"],
-                "Tue": ["10:30am", "12:00am"],
-                "Fri": ["10:30am", "2:00am"],
-                "Sat": ["10:30am", "2:00am"],
-                "Sun": ["10:30am", "12:00am"]
+                "Mon": ["10:30", "23:59"],
+                "Wed": ["10:30", "23:59"],
+                "Thu": ["10:30", "23:59"],
+                "Tue": ["10:30", "23:59"],
+                "Fri": ["10:30", "23:59"],
+                "Sat": ["10:30", "23:59"],
+                "Sun": ["10:30", "23:59"]
             }
         }
     },
     {
-        "name": "Stav Hall Breakfast",
+        "ne": "Stav Hall Breakfast",
         "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
-              "Mon": ["7:00am", "9:45am"],
-              "Tue": ["7:00am", "9:45am"],
-              "Wed": ["7:00am", "9:45am"],
-              "Thu": ["7:00am", "9:45am"],
-              "Fri": ["7:00am", "9:45am"],
-              "Sat": ["7:00am", "9:45am"],
-              "Sun": ["8:30am", "10:15am"]
+              "Mon": ["7:00", "9:45"],
+              "Tue": ["7:00", "9:45"],
+              "Wed": ["7:00", "9:45"],
+              "Thu": ["7:00", "9:45"],
+              "Fri": ["7:00", "9:45"],
+              "Sat": ["7:00", "9:45"],
+              "Sun": ["8:30", "10:15"]
             }
         }
     },
     {
-        "name": "Stav Hall Lunch",
+        "ne": "Stav Hall Lunch",
         "image": "http://placehold.it/500x500",
         "times": {
             "Hours": {
-              "Mon": ["10:30am", "2:00pm"],
-              "Tue": ["10:30am", "2:00pm"],
-              "Wed": ["10:30am", "2:00pm"],
-              "Thu": ["10:30am", "2:00pm"],
-              "Fri": ["10:30am", "2:00pm"],
-              "Sat": ["11:00am", "1:30pm"],
-              "Sun": ["11:00am", "1:30pm"]
+              "Mon": ["10:30", "14:00"],
+              "Tue": ["10:30", "14:00"],
+              "Wed": ["10:30", "14:00"],
+              "Thu": ["10:30", "14:00"],
+              "Fri": ["10:30", "14:00"],
+              "Sat": ["11:00", "13:30"],
+              "Sun": ["11:00", "13:30"]
             }
         }
     },
     {
-        "name": "Stav Hall Dinner",
+        "ne": "Stav Hall Dinner",
         "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/stav.jpg",
         "times": {
             "Hours": {
-              "Mon": ["4:30pm", "7:00pm"],
-              "Tue": ["4:30pm", "7:00pm"],
-              "Wed": ["4:30pm", "7:00pm"],
-              "Thu": ["4:30pm", "7:00pm"],
-              "Fri": ["4:30pm", "7:00pm"],
-              "Sat": ["4:30pm", "7:30pm"],
-              "Sun": ["4:30pm", "7:30pm"]
+              "Mon": ["16:30", "19:00"],
+              "Tue": ["16:30", "19:00"],
+              "Wed": ["16:30", "19:00"],
+              "Thu": ["16:30", "19:00"],
+              "Fri": ["16:30", "19:00"],
+              "Sat": ["16:30", "19:30"],
+              "Sun": ["16:30", "19:30"]
             }
         }
     },
     {
-        "name": "DiSCO",
+        "ne": "DiSCO",
         "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/disco.jpg",
         "times": {
             "Hours": {

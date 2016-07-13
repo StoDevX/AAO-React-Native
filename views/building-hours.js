@@ -28,6 +28,57 @@ export default class BuildingHoursView extends React.Component {
     }
   }
 
+  getDayOfWeek() {
+    var d = new Date();
+    var dow = d.getDay();
+    switch (dow) {
+      case 1:
+        return "Mon"
+        break;
+      case 2:
+        return "Tue"
+        break;
+      case 3:
+        return "Wed"
+        break;
+      case 4:
+        return "Thu"
+        break;
+      case 5:
+        return "Fri"
+        break;
+      case 6:
+        return "Sat"
+        break;
+      case 7:
+        return "Sun"
+        break;
+      default:
+        return null; // clearly, this should never happen. If it does, there are bigger problems
+        break;
+    }
+  }
+
+  getCurrentTime() {
+    var d = new Date();
+    return d.getTime();
+  }
+
+  isBuildingOpen(hoursInfo) {
+    var dow = getDayOfWeek();
+    var times = hoursInfo.times.hours[dow];
+    var startTime = times[0];
+    var closeTime = times[1];
+    var currentTime = getCurrentTime();
+
+    // make comparisons
+    if (Date(startTime) <= Date(currentTime) <= Date(closeTime)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   _rowHasChanged(r1, r2) {
     return r1.name !== r2.name
   }
