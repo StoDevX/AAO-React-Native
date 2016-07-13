@@ -24,7 +24,7 @@ var styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-
+    fontSize: 38,
   },
   button: {
 
@@ -41,7 +41,7 @@ export default class ContactCard extends React.Component {
           <Text style={styles.title}>{this.props.title}</Text>
         </CardTitle>
         <CardImage>
-          <Image style={styles.icon} source={{uri: 'http://oleville.com/pause/wp-content/uploads/sites/12/2014/09/pizzaCut.png'}} />
+          <Image style={styles.icon} source={{uri: this.props.imageURI}} />
         </CardImage>
         <CardContent>
           <Text>{this.props.text}</Text>
