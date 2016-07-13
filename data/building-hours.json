@@ -3,7 +3,7 @@
         "ne": "Bookstore",
         "image": "http://placehold.it/500x500",
         "times": {
-            "Hours": {
+            "hours": {
                 "Mon": ["8:00", "17:00"],
                 "Tue": ["8:00", "17:00"],
                 "Wed": ["8:00", "17:00"],
@@ -17,7 +17,7 @@
         "ne": "Convenience Store",
         "image": "http://placehold.it/500x500",
         "times": {
-            "Hours": {
+            "hours": {
                 "Mon": ["8:00", "20:00"],
                 "Wed": ["8:00", "20:00"],
                 "Tue": ["8:00", "20:00"],
@@ -32,7 +32,7 @@
         "ne": "Post Office",
         "image": "http://placehold.it/500x500",
         "times": {
-            "Hours": {
+            "hours": {
                 "Mon": ["7:30", "16:30"],
                 "Tue": ["7:30", "16:30"],
                 "Wed": ["7:30", "16:30"],
@@ -45,7 +45,7 @@
         "ne": "Rolvaag Library",
         "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/rolvaag.jpg",
         "times": {
-            "Hours": {
+            "hours": {
                 "Mon": ["7:45", "23:59"],
                 "Tue": ["7:45", "23:59"],
                 "Wed": ["7:45", "23:59"],
@@ -60,7 +60,7 @@
         "ne": "Halvorson Music Library",
         "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/halvorson.jpg",
         "times": {
-            "Hours": {
+            "hours": {
                 "Mon": ["7:45", "23:00"],
                 "Tue": ["7:45", "23:00"],
                 "Wed": ["7:45", "23:00"],
@@ -75,7 +75,7 @@
         "ne": "Hustad Science Library",
         "image": "http://placehold.it/500x500",
         "times": {
-            "Hours": {
+            "hours": {
                 "Mon": ["8:00", "23:00"],
                 "Tue": ["8:00", "23:00"],
                 "Wed": ["8:00", "23:00"],
@@ -90,7 +90,7 @@
         "ne": "Skoglund",
         "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/skoglund.jpg",
         "times": {
-            "Hours": {
+            "hours": {
                 "Mon": ["6:30", "22:45"],
                 "Tue": ["6:30", "22:45"],
                 "Wed": ["6:30", "22:45"],
@@ -106,7 +106,7 @@
         "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/cage.png",
         "notes": "The kitchen stops cooking at 8 p.m.",
         "times": {
-            "Hours": {
+            "hours": {
                 "Mon": ["7:30", "23:00"],
                 "Tue": ["7:30", "23:00"],
                 "Wed": ["7:30", "23:00"],
@@ -121,11 +121,11 @@
         "ne": "The Pause Kitchen",
         "image": "http://placehold.it/500x500",
         "times": {
-            "Hours": {
+            "hours": {
                 "Mon": ["10:30", "23:59"],
+                "Tue": ["10:30", "23:59"],
                 "Wed": ["10:30", "23:59"],
                 "Thu": ["10:30", "23:59"],
-                "Tue": ["10:30", "23:59"],
                 "Fri": ["10:30", "23:59"],
                 "Sat": ["10:30", "23:59"],
                 "Sun": ["10:30", "23:59"]
@@ -136,7 +136,7 @@
         "ne": "Stav Hall Breakfast",
         "image": "http://placehold.it/500x500",
         "times": {
-            "Hours": {
+            "hours": {
               "Mon": ["7:00", "9:45"],
               "Tue": ["7:00", "9:45"],
               "Wed": ["7:00", "9:45"],
@@ -151,7 +151,7 @@
         "ne": "Stav Hall Lunch",
         "image": "http://placehold.it/500x500",
         "times": {
-            "Hours": {
+            "hours": {
               "Mon": ["10:30", "14:00"],
               "Tue": ["10:30", "14:00"],
               "Wed": ["10:30", "14:00"],
@@ -166,7 +166,7 @@
         "ne": "Stav Hall Dinner",
         "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/stav.jpg",
         "times": {
-            "Hours": {
+            "hours": {
               "Mon": ["16:30", "19:00"],
               "Tue": ["16:30", "19:00"],
               "Wed": ["16:30", "19:00"],
@@ -181,7 +181,7 @@
         "ne": "DiSCO",
         "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/disco.jpg",
         "times": {
-            "Hours": {
+            "hours": {
               "Mon": [],
               "Tue": [],
               "Wed": [],

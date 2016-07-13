@@ -28,7 +28,7 @@ export default class BuildingHoursView extends React.Component {
     }
   }
 
-  getDayOfWeek() {
+   getDayOfWeek() {
     var d = new Date();
     var dow = d.getDay();
     switch (dow) {
@@ -64,12 +64,13 @@ export default class BuildingHoursView extends React.Component {
     return d.getTime();
   }
 
+  // TODO: handle buildings that are open beyond midnight
   isBuildingOpen(hoursInfo) {
-    var dow = getDayOfWeek();
+    var dow = this.getDayOfWeek();
     var times = hoursInfo.times.hours[dow];
     var startTime = times[0];
     var closeTime = times[1];
-    var currentTime = getCurrentTime();
+    var currentTime = this.getCurrentTime();
 
     // make comparisons
     if (Date(startTime) <= Date(currentTime) <= Date(closeTime)) {
@@ -92,9 +93,10 @@ export default class BuildingHoursView extends React.Component {
   }
 
   _renderRow(data) {
+    var isOpen = this.isBuildingOpen(data);
     return (
       <View style={styles.container}>
-        <BuildingView name={data.name} open={false} imageSource={data.image}/>
+        <BuildingView name={data.name} open={isOpen} imageSource={data.image}/>
       </View>
     )
   }
