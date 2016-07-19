@@ -3,6 +3,10 @@
  * Dictionary page
  */
 
+//TODO: Track this issue, https://github.com/naoufal/react-native-accordion/issues/16
+// It currently is really broken.
+
+
 import React from 'react'
 import {
   StyleSheet,
@@ -12,6 +16,8 @@ import {
   TouchableOpacity,
   Navigator,
 } from 'react-native'
+
+import Accordion from 'react-native-accordion'
 
 import NavigatorScreen from '../components/navigator-screen'
 import terms from '../../data/dictionary.json'
@@ -39,25 +45,26 @@ export default class DictionaryView extends React.Component {
     />
   }
 
-  pushView(view, viewTitle) {
-    this.props.navigator.push({
-      id: view,
-      title: viewTitle,
-      sceneConfig: Navigator.SceneConfigs.FloatFromRight,
-    });
-  }
-
   _renderRow(data) {
+    var header = (
+      <View >
+        <Text>{data.word}</Text>
+      </View>
+    );
+
+    var content = (
+      <View >
+        <Text>{data.definition}</Text>
+      </View>
+    );
+
     return (
-      <TouchableOpacity
-        key={data.word}
-        onPress={this.pushView('DictionaryPageView', data.word)}
-      >
-        <View style={styles.row}>
-          <Text style={styles.label}>{data.word}</Text>
-        </View>
-      </TouchableOpacity>
-    )
+        <Accordion
+          header={header}
+          content={content}
+          easing="easeOutCubic"
+        />
+    );
   }
 
   // Render a given scene
