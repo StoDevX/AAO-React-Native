@@ -12,8 +12,8 @@ import {
 } from 'react-native'
 
 import NavigatorScreen from './components/navigator-screen'
-
-const key = '';
+import EventView from './components/event'
+import * as k from '../keys'
 
 export default class CalendarView extends React.Component {
   constructor(props) {
@@ -40,7 +40,7 @@ export default class CalendarView extends React.Component {
   }
 
   componentWillMount() {
-    this.getMasterEvents(key)
+    this.getMasterEvents(k.calendarKey)
     console.log(this.state.masterEvents);
     //this.state.olevilleEvents = this.getOlevilleEvents()
 
@@ -73,7 +73,7 @@ export default class CalendarView extends React.Component {
   _renderRow(data) {
     return (
       <View style={styles.row}>
-        <Text style={styles.title}>{data.summary}</Text>
+        <EventView eventTitle={data.summary} startTime={data.start.dateTime} endTime={data.end.dateTime} location={data.location} />
       </View>
     )
   }
