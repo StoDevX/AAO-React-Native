@@ -42,15 +42,17 @@ export default class CalendarView extends React.Component {
   componentWillMount() {
     var nowDate = new Date();
     var nowString = nowDate.toISOString(); // As needed by the Google Calendar API
-    this.getMasterEvents(k.calendarKey, nowString)
-    console.log(this.state.masterEvents, nowString);
-    //this.state.olevilleEvents = this.getOlevilleEvents()
+    var offset = (nowDate.getTimezoneOffset() / 60);
+    var offsetString = "-" + offset + ":00Z";
+    nowString.replace('Z', offsetString);
+    this.getMasterEvents(k.calendarKey, nowString);
+    //this.state.olevilleEvents = this.getOlevilleEvents();
 
   }
 
   async getMasterEvents(apiKey, currentTime) {
     try {
-      let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&timeMin=' + now + '&key=' + apiKey)
+      let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&timeMin=' + currentTime + '&key=' + apiKey)
       let responseJson = await response.json();
       this.setState({masterEvents: responseJson});
     } catch (error) {
@@ -62,7 +64,7 @@ export default class CalendarView extends React.Component {
 
   async getOlevilleEvents(apiKey, currentTime) {
     try {
-      let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&timeMin=' + now + '&key=' + apiKey)
+      let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&timeMin=' + currentTime + '&key=' + apiKey)
       let responseJson = await response.json();
       this.setState({olevilleEvents: responseJson});
     } catch (error) {
