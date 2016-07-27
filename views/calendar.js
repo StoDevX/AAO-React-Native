@@ -40,15 +40,17 @@ export default class CalendarView extends React.Component {
   }
 
   componentWillMount() {
-    this.getMasterEvents(k.calendarKey)
-    console.log(this.state.masterEvents);
+    var nowDate = new Date();
+    var nowString = nowDate.toISOString(); // As needed by the Google Calendar API
+    this.getMasterEvents(k.calendarKey, nowString)
+    console.log(this.state.masterEvents, nowString);
     //this.state.olevilleEvents = this.getOlevilleEvents()
 
   }
 
-  async getMasterEvents(apiKey) {
+  async getMasterEvents(apiKey, currentTime) {
     try {
-      let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&key=' + apiKey)
+      let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&timeMin=' + now + '&key=' + apiKey)
       let responseJson = await response.json();
       this.setState({masterEvents: responseJson});
     } catch (error) {
@@ -58,16 +60,16 @@ export default class CalendarView extends React.Component {
     this.setState({masterLoaded: true});
   }
 
-  async getOlevilleEvents(apiKey) {
+  async getOlevilleEvents(apiKey, currentTime) {
     try {
-      let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&key=' + apiKey)
+      let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&timeMin=' + now + '&key=' + apiKey)
       let responseJson = await response.json();
-      this.setState({masterEvents: responseJson});
+      this.setState({olevilleEvents: responseJson});
     } catch (error) {
       this.setState({error: true});
       console.error(error);
     }
-    this.setState({masterLoaded: true});
+    this.setState({olevilleLoaded: true});
   }
 
   _renderRow(data) {
@@ -80,7 +82,6 @@ export default class CalendarView extends React.Component {
 
   // Render a given scene
   renderScene() {
-    console.log(this.state.masterEvents)
     if (this.state.masterEvents != null) {
       let ds = new ListView.DataSource({
         rowHasChanged: this._rowHasChanged,
