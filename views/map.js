@@ -1,6 +1,6 @@
 /**
  * All About Olaf
- * iOS Map page
+ * Map page
  */
 
 import React from 'react'
@@ -10,11 +10,10 @@ import {
   Text,
   WebView,
 } from 'react-native'
+import MapView from 'react-native-maps';
 
 import NavigatorScreen from './components/navigator-screen'
-
 import mapInfo from '../data/map.json'
-const URL = mapInfo['url']
 
 export default class OlafMapView extends React.Component {
   render() {
@@ -29,35 +28,37 @@ export default class OlafMapView extends React.Component {
   renderScene() {
     return (
       <View style={styles.container}>
-        <WebView
-          automaticallyAdjustContentInsets={false}
+        <MapView
           style={styles.map}
-          source={{url: URL}}
-          javaScriptEnabled={false}
-          onNavigationStateChange={this.onNavigationStateChange.bind(this)}
-          onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
-          startInLoadingState={true}
-          scalesPageToFit={this.scalesPageToFit}
-        />
+          initialRegion={{
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+         />
       </View>
     )
-  }
-
-  onShouldStartLoadWithRequest() {
-    return true
-  }
-
-  onNavigationStateChange(navState) {
-    this.url = navState.url
-    this.scalesPageToFit = true
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 400,
+    width: 400,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   map: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
-})
+});
