@@ -1,1 +1,1 @@
-For support, please email <stodevx@stolaf.edu>
+For support, please email <odt@stolaf.edu>

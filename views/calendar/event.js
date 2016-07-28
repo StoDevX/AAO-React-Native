@@ -6,8 +6,7 @@ import {
   Image,
 } from 'react-native'
 
-import NavigatorScreen from './navigator-screen'
-import * as c from './colors'
+import * as c from '../components/colors'
 
 var styles = StyleSheet.create({
   event: {

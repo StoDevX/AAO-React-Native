@@ -11,18 +11,15 @@ import {
   ListView,
 } from 'react-native'
 
-import NavigatorScreen from './components/navigator-screen'
-import EventView from './components/event'
-import * as k from '../keys'
+import EventView from './event'
+import * as k from '../../keys'
 
 export default class CalendarView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       masterEvents: null,
-      olevilleEvents: null,
       masterLoaded:false,
-      olevilleLoaded:false,
       error: false,
     }
   }
@@ -32,11 +29,7 @@ export default class CalendarView extends React.Component {
   }
 
   render() {
-    return <NavigatorScreen
-      {...this.props}
-      title="Calendar"
-      renderScene={this.renderScene.bind(this)}
-    />
+    return this.renderScene()
   }
 
   componentWillMount() {
@@ -45,9 +38,11 @@ export default class CalendarView extends React.Component {
     var offset = (nowDate.getTimezoneOffset() / 60);
     var offsetString = "-" + offset + ":00Z";
     nowString.replace('Z', offsetString);
-    this.getMasterEvents(k.calendarKey, nowString);
-    //this.state.olevilleEvents = this.getOlevilleEvents();
-
+    if(this.props.events == 'master') {
+      this.getMasterEvents(k.calendarKey, nowString);
+    } else {
+      this.getOlevilleEvents(k.calendarKey, nowString);
+    }
   }
 
   async getMasterEvents(apiKey, currentTime) {
@@ -66,12 +61,12 @@ export default class CalendarView extends React.Component {
     try {
       let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&timeMin=' + currentTime + '&key=' + apiKey)
       let responseJson = await response.json();
-      this.setState({olevilleEvents: responseJson});
+      this.setState({masterEvents: responseJson});
     } catch (error) {
       this.setState({error: true});
       console.error(error);
     }
-    this.setState({olevilleLoaded: true});
+    this.setState({masterLoaded: true});
   }
 
   _renderRow(data) {
