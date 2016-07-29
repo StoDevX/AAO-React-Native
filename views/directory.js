@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   }
 })
 
-const URL = 'https://www.stolaf.edu/personal/'
+const URL = 'https://www.stolaf.edu/personal/directory/index.cfm'
 
 export default class DirectoryView extends React.Component {
   constructor() {
