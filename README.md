@@ -13,23 +13,25 @@ The St. Olaf community, now in pocket size... rewritten in React Native.  This i
 
 ## Completed
 * Stav Menu (minus auto-scroll to dinner menu)
-
-## Work-In-Progress
 * Directory
 * Home Page
-* Important Contacts
+* Important Contacts (might add more contacts to the list)
+
+## Work-In-Progress
+* Calendar
 * Building Hours
+* Campus Dictionary
 
 ## Todo (modules)
-* Calendar
-* Campus Dictionary
 * Campus Map
 * News
-* Schedules
 * Streaming Media
 * Transportation
+* Oleville
 
 ## Todo (other)
+* Push Notifications
+* Analytics
 * A better router
 * [3D touch actions](https://github.com/jordanbyron/react-native-quick-actions) for icon and within
 * Static/dynamic data loading from Parse
