@@ -42,6 +42,8 @@ The St. Olaf community, now in pocket size... rewritten in React Native.  This i
   * This will just be a list of options, with it calculating and displaying time until the next bus (when the busses are running)
 * Oleville
   * Display content from Oleville. Currently targeting reading posts for v1, will expand for future versions.
+* SIS *PRs Welcome*
+  * Low priority for v1, since it is rather complex.
 
 ## Todo (other)
 * Push Notifications
