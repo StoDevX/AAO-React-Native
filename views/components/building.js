@@ -32,6 +32,12 @@ var styles = StyleSheet.create({
     borderWidth: 5,
     flex: 1,
   },
+  buildingAlmostClosed: {
+    height: 100,
+    borderColor: c.mustard,
+    borderWidth: 5,
+    flex: 1,
+  },
   name: {
     color: c.white,
     fontSize: 30,
@@ -42,22 +48,37 @@ var styles = StyleSheet.create({
 // PROPS: imageSrc, open, name NOTE: if open is null, it is closed. If open is defined it will produce true
 export default class BuildingView extends React.Component {
   render() {
-    if(this.props.open) {
-      return (
-        <View style={styles.container}>
-          <Image source={{uri: this.props.imageSource}} style={styles.buildingOpen}>
-            <Text style={styles.name}>{this.props.name}</Text>
-            </Image>
-        </View>
-      )
-    } else {
-      return (
-        <View style={styles.container}>
-          <Image source={{uri: this.props.imageSource}} style={styles.buildingClosed}>
-            <Text style={styles.name}>{this.props.name}</Text>
-            </Image>
-        </View>
-      )
+    switch (this.props.open) {
+      case 'open':
+        return (
+          <View style={styles.container}>
+            <Image source={{uri: this.props.imageSource}} style={styles.buildingOpen}>
+              <Text style={styles.name}>{this.props.name}</Text>
+              </Image>
+          </View>
+        )
+        break;
+      case 'almostClosed':
+        return (
+          <View style={styles.container}>
+            <Image source={{uri: this.props.imageSource}} style={styles.buildingAlmostClosed}>
+              <Text style={styles.name}>{this.props.name}</Text>
+              </Image>
+          </View>
+        )
+      break;
+      case 'closed':
+        return (
+          <View style={styles.container}>
+            <Image source={{uri: this.props.imageSource}} style={styles.buildingClosed}>
+              <Text style={styles.name}>{this.props.name}</Text>
+              </Image>
+          </View>
+        )
+        break;
+      default:
+        return;
+        break;
     }
   }
 }
