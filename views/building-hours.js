@@ -1,6 +1,6 @@
 /**
  * All About Olaf
- * iOS BuildingHours page
+ * Building Hours list page
  */
 
 import React from 'react'
@@ -84,8 +84,10 @@ export default class BuildingHoursView extends React.Component {
     console.log("closeTime: " + closeTime);
 
     if (startTime <= currentTime && currentTime <= closeTime) {
+      console.log(true)
       return true;
     } else {
+      console.log(false)
       return false;
     }
   }
