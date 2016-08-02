@@ -39,10 +39,10 @@ var styles = StyleSheet.create({
   },
 })
 
-// PROPS: imageSrc, buildingOpen, name
+// PROPS: imageSrc, open, name NOTE: if open is null, it is closed. If open is defined it will produce true
 export default class BuildingView extends React.Component {
   render() {
-    if(this.props.open === 'true') {
+    if(this.props.open) {
       return (
         <View style={styles.container}>
           <Image source={{uri: this.props.imageSource}} style={styles.buildingOpen}>

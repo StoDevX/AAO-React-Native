@@ -78,17 +78,16 @@ export default class BuildingHoursView extends React.Component {
     var currentTime = this.getCurrentTime();
 
     // make comparisons
-    console.log(hoursInfo.name);
-    console.log("startTime: " + startTime);
-    console.log("currentTime: " + currentTime);
-    console.log("closeTime: " + closeTime);
+    // console.log(hoursInfo.name);
+    // console.log("startTime: " + startTime);
+    // console.log("currentTime: " + currentTime);
+    // console.log("closeTime: " + closeTime);
 
-    if (startTime <= currentTime && currentTime <= closeTime) {
-      console.log(true)
+    // Arbitrary date to satasfy the JS Date.parse() function
+    if (Date.parse('01/01/2016 ' + startTime) <= Date.parse('01/01/2016 ' + currentTime) && Date.parse('01/01/2016 ' + currentTime) <= Date.parse('01/01/2016 ' + closeTime)) {
       return true;
     } else {
-      console.log(false)
-      return false;
+      return;
     }
   }
 
