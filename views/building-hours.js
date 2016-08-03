@@ -60,7 +60,7 @@ export default class BuildingHoursView extends React.Component {
   }
 
   getCurrentTime() {
-    var d = new Date(2016, 1, 1, 23, 0, 0, 0); // var d = new Date();
+    var d = new Date();
     var hours =  d.getHours();
     var min = d.getMinutes();
     if (hours < 10) {
