@@ -13,27 +13,31 @@ The St. Olaf community, now in pocket size... rewritten in React Native.  This i
 
 ## Completed
 * Stav Menu (minus auto-scroll to dinner menu)
-
-## Work-In-Progress
 * Directory
 * Home Page
-* Important Contacts
+* Important Contacts (might add more contacts to the list)
+
+## Work-In-Progress
+* Cage Menu
+* Calendar
 * Building Hours
+* Campus Dictionary
 
 ## Todo (modules)
-* Calendar
-* Campus Dictionary
-* Campus Map
-* News
-* Schedules
-* Streaming Media
+* Campus Map *PRs Welcome*
+* News *PRs Welcome*
+* Streaming Media *PRs Welcome*
 * Transportation
+* Oleville
+* SIS *PRs Welcome*
 
 ## Todo (other)
+* Push Notifications
+* Analytics
 * A better router
 * [3D touch actions](https://github.com/jordanbyron/react-native-quick-actions) for icon and within
 * Static/dynamic data loading from Parse
 * [Touch-ID](https://github.com/naoufal/react-native-touch-id) for SIS
 
 ## Contributing
-Would you like to contribute? Great! Have a look at [React Native](http://facebook.github.io/react-native/docs/getting-started.html) and have at it.
+Would you like to contribute? Great! Have a look at [React Native](http://facebook.github.io/react-native/docs/getting-started.html) and have at it. Pull requests required, so fork away and make one! If you feel like you should have write access to the repo, make an issue and we can discuss it.
