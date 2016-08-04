@@ -3,28 +3,29 @@
  * Dictionary page
  */
 
-//TODO: Track this issue, https://github.com/naoufal/react-native-accordion/issues/16
-// It currently is really broken.
-
-
 import React from 'react'
 import {
   StyleSheet,
   View,
   Text,
-  ListView,
-  TouchableOpacity,
-  Navigator,
+  Image,
+  ListView
 } from 'react-native'
 
-import Accordion from 'react-native-accordion'
-
 import NavigatorScreen from '../components/navigator-screen'
+import CollapsibleRow from '../components/collapsibleRow'
+
 import terms from '../../data/dictionary.json'
 
+var styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  }
+})
+
 export default class DictionaryView extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     let ds = new ListView.DataSource({
       rowHasChanged: this._rowHasChanged,
     })
@@ -34,7 +35,13 @@ export default class DictionaryView extends React.Component {
   }
 
   _rowHasChanged(r1, r2) {
-    return r1.word !== r2.word && r1.definition !== r2.definition
+    return r1.word !== r2.word
+  }
+
+  _renderRow(data) {
+    return (
+      <CollapsibleRow header={data.word} content={data.definition} />
+    )
   }
 
   render() {
@@ -45,48 +52,13 @@ export default class DictionaryView extends React.Component {
     />
   }
 
-  _renderRow(data) {
-    var header = (
-      <View >
-        <Text>{data.word}</Text>
-      </View>
-    );
-
-    var content = (
-      <View >
-        <Text>{data.definition}</Text>
-      </View>
-    );
-
-    return (
-        <Accordion
-          header={header}
-          content={content}
-          easing="easeOutCubic"
-        />
-    );
-  }
-
-  // Render a given scene
   renderScene() {
     return (
       <View style={styles.container}>
         <ListView
           dataSource={this.state.dataSource}
-          renderRow={this._renderRow.bind(this)}
-        />
+          renderRow={this._renderRow.bind(this)} />
       </View>
     )
   }
 }
-
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  row: {
-    marginTop: 5,
-    marginBottom: 5,
-  },
-  label: {},
-})
