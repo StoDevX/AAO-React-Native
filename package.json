@@ -14,7 +14,7 @@
     "fbemitter": "^2.0.0",
     "lodash": "^4.13.1",
     "querystring": "^0.2.0",
-    "react": "^15.1.0",
+    "react": "15.1.0",
     "react-native": "0.27.1",
     "react-native-android-tablayout": "git+https://github.com/AlbertBrand/react-native-android-tablayout.git#c1fb5b6656e0b675c9d0940b7594fa77b16dfa7c",
     "react-native-animatable": "^0.6.1",
