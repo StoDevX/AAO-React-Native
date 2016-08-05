@@ -10,7 +10,6 @@ import {
   Text,
   WebView,
 } from 'react-native'
-import MapView from 'react-native-maps';
 
 import NavigatorScreen from './components/navigator-screen'
 import mapInfo from '../data/map.json'
@@ -28,15 +27,6 @@ export default class OlafMapView extends React.Component {
   renderScene() {
     return (
       <View style={styles.container}>
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-         />
       </View>
     )
   }
