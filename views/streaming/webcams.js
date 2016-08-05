@@ -13,7 +13,17 @@ import {
 import webcamInfo from '../../data/webcams'
 
 const inlineVideo = url => `
-  <video autoplay muted>
+  <style>
+    body {margin: 0}
+    * {box-sizing: border-box}
+    video {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <video autoplay="autoplay" muted webkit-playsinline="webkit-playsinline">
     <source src="${url}" type="application/x-mpegURL">
   </video>
 `
@@ -24,40 +34,40 @@ export default class WebcamsView extends React.Component {
     return (
       <View style={styles.container}>
         <Text>Webcams</Text>
-        <WebView
-          style={styles.video}
-          source={{html: inlineVideo(webcamInfo[0].url)}}
-        />
+        {webcamInfo.map(webcam =>
+          <View style={styles.row} key={webcam.name}>
+            <Text>{webcam.name}</Text>
+            <WebView
+              style={styles.video}
+              mediaPlaybackRequiresUserAction={false}
+              scalesPageToFit={false}
+              allowsInlineMediaPlayback={true}
+              scrollEnabled={false}
+              source={{html: inlineVideo(webcam.url)}}
+            />
+          </View>
+        )}
       </View>
     )
-  }
-
-  loadStart(...args) {
-    console.log('loadStart', ...args)
-  }
-  setDuration(...args) {
-    console.log('setDuration', ...args)
-  }
-  setTime(...args) {
-    console.log('setTime', ...args)
-  }
-  onEnd(...args) {
-    console.log('onEnd', ...args)
-  }
-  videoError(...args) {
-    console.log('videoError', ...args)
   }
 }
 
 var styles = StyleSheet.create({
   container: {
     flex: 1,
+    // display: 'flex',
+    flexDirection: 'column',
+  },
+  row: {
+    // display: 'flex',
+    flexDirection: 'row',
+    flex: 1,
   },
   video: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 300,
+    // position: 'absolute',
+    // top: 0,
+    // left: 0,
+    // right: 0,
+    // height: 210,
   }
 })
