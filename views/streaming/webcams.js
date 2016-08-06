@@ -23,7 +23,23 @@ const inlineVideo = url => `
       height: 100%;
     }
   </style>
-  <video autoplay="autoplay" muted webkit-playsinline="webkit-playsinline">
+  <video autoplay muted webkit-playsinline>
+    <source src="${url}" type="application/x-mpegURL">
+  </video>
+`
+
+const videoAsThumbnail = url => `
+  <style>
+    body {margin: 0}
+    * {box-sizing: border-box}
+    video {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <video muted>
     <source src="${url}" type="application/x-mpegURL">
   </video>
 `
@@ -43,7 +59,7 @@ export default class WebcamsView extends React.Component {
               scalesPageToFit={false}
               allowsInlineMediaPlayback={true}
               scrollEnabled={false}
-              source={{html: inlineVideo(webcam.url)}}
+              source={{html: videoAsThumbnail(webcam.url)}}
             />
           </View>
         )}
