@@ -3,7 +3,7 @@
         "type": "Bike",
         "name": "Green Bikes",
         "description": "Great green alternative, available for check-out through Rolvaag Library.",
-        "url": "http://wp.stolaf.edu/sa/transportation/greenbikes/"
+        "url": "https://wp.stolaf.edu/sa/transportation/greenbikes/"
     },
     {
         "type": "Bus",
@@ -21,7 +21,7 @@
         "type": "Bus",
         "name": "Hiawathaland Transit",
         "description": "Free route bus that stops at both colleges, Division Street, Target/Cub, and El Tequila/Culvers.",
-        "url": "http://wp.stolaf.edu/sa/transportation/localexpressbus/"
+        "url": "https://wp.stolaf.edu/sa/transportation/localexpressbus/"
     },
     {
         "type": "Bus",
@@ -39,6 +39,6 @@
         "type": "Car",
         "name": "Ride Board",
         "description": "Post a ride or look for a ride with students.",
-        "url": "http://www.stolaf.edu/apps/rideboard/index.cfm?fuseaction=browse"
+        "url": "https://www.stolaf.edu/apps/rideboard/index.cfm?fuseaction=browse"
     }
 ]
