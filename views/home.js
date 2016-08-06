@@ -80,13 +80,13 @@ export default class HomePage extends React.Component {
         style={styles.scrollView}
       >
         <View style={styles.container}>
-          {views.map((view, i) =>
+          {views.map(view =>
             <TouchableOpacity
               key={view.title}
               onPress={() => this.pushView(view.view, view.title)}
               activeOpacity={0.5}
             >
-              <View style={[styles.rectangle, styles['rectangle'+(i+1)]]}>
+              <View style={[styles.rectangle, styles[`${view.view}Button`]]}>
                 <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
                 <Text
                   style={styles.rectangleButtonText}
@@ -142,37 +142,37 @@ var styles = StyleSheet.create({
     marginRight: cellMargin,
   },
 
-  rectangle1: {
+  MenusViewButton: {
     backgroundColor: c.emerald,
   },
-  rectangle2: {
+  SISViewButton: {
     backgroundColor: c.goldenrod,
   },
-  rectangle3: {
+  BuildingHoursViewButton: {
     backgroundColor: c.wave,
   },
-  rectangle4: {
+  CalendarViewButton: {
     backgroundColor: c.coolPurple,
   },
-  rectangle5: {
+  DirectoryViewButton: {
     backgroundColor: c.indianRed,
   },
-  rectangle6: {
+  StreamingViewButton: {
     backgroundColor: c.denim,
   },
-  rectangle7: {
+  NewsViewButton: {
     backgroundColor: c.eggplant,
   },
-  rectangle8: {
+  MapViewButton: {
     backgroundColor: c.coffee,
   },
-  rectangle9: {
+  ContactsViewButton: {
     backgroundColor: c.crimson,
   },
-  rectangle10: {
+  TransportationViewButton: {
     backgroundColor: c.cardTable,
   },
-  rectangle11: {
+  DictionaryViewButton: {
     backgroundColor: c.olive,
   },
 
