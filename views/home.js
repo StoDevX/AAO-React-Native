@@ -123,6 +123,7 @@ var styles = StyleSheet.create({
     marginLeft: cellMargin,
     marginTop: marginTop,
 
+    alignItems: 'flex-start',
     justifyContent: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
