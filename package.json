@@ -19,7 +19,6 @@
     "react-native": "0.27.1",
     "react-native-android-tablayout": "git+https://github.com/AlbertBrand/react-native-android-tablayout.git#c1fb5b6656e0b675c9d0940b7594fa77b16dfa7c",
     "react-native-animatable": "^0.6.1",
-    "react-native-blur": "^0.8.0",
     "react-native-button": "^1.6.0",
     "react-native-calendar": "^0.6.4",
     "react-native-card-view": "0.0.3",
