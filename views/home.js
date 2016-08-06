@@ -106,45 +106,40 @@ export default class HomePage extends React.Component {
 
 import * as c from './components/colors'
 
-// Device info
 const Dimensions = require('Dimensions')
-// Screen size information
 let Viewport = Dimensions.get('window')
-let marginTop = 10
-let paddingBottom = marginTop
 
-let cellSpacing = marginTop / 2
-let cellWidth = (Viewport.width / 2) - (cellSpacing * 4)
-let cellTopPadding = 10
-let sideMargin = cellSpacing / 2
+let marginTop = 15
+
+let cellMargin = 10
+let cellSidePadding = 10
+let cellEdgePadding = 10
+let cellWidth = (Viewport.width / 2) - (cellMargin * 1.5)
 
 var styles = StyleSheet.create({
   // Body container
   container: {
     flex: 1,
-    paddingLeft: sideMargin,
-    paddingRight: sideMargin,
-    paddingBottom: paddingBottom,
+    marginLeft: cellMargin,
     marginTop: marginTop,
-    justifyContent: 'space-around',
-    // alignItems: 'stretch',
+
+    justifyContent: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
 
   // Main buttons for actions on home screen
   rectangle: {
-    // flex: 1,
     width: cellWidth,
-    marginRight: cellSpacing,
-    marginBottom: cellSpacing,
-    marginLeft: cellSpacing,
-    marginTop: cellSpacing,
     alignItems: 'center',
-    // justifyContent: 'center',
-    paddingTop: cellTopPadding,
-    paddingBottom: cellTopPadding,
-    borderRadius: 10,
+    paddingTop: cellSidePadding,
+    paddingBottom: cellSidePadding,
+    paddingRight: cellEdgePadding,
+    paddingLeft: cellEdgePadding,
+    borderRadius: 6,
+
+    marginBottom: cellMargin,
+    marginRight: cellMargin,
   },
 
   rectangle1: {
@@ -183,8 +178,6 @@ var styles = StyleSheet.create({
 
   navigationButtonText: {
     color: c.mandarin,
-    // marginTop: 8,
-    // marginLeft: 14,
   },
   navigationButtonIcon: {
     color: c.mandarin,
@@ -201,7 +194,5 @@ var styles = StyleSheet.create({
     color: c.white,
     textAlign: 'center',
     fontSize: 14,
-    paddingLeft: 10,
-    paddingRight: 10,
   },
 })
