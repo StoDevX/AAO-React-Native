@@ -119,7 +119,6 @@ let cellWidth = (Viewport.width / 2) - (cellMargin * 1.5)
 var styles = StyleSheet.create({
   // Body container
   container: {
-    flex: 1,
     marginLeft: cellMargin,
     marginTop: marginTop,
 
