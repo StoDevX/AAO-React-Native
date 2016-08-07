@@ -31,9 +31,9 @@ The Calendar might nag you for a Google Calendar API key. You can either ask som
 * Calendar
 * Building Hours
 * Settings
+* Campus Map *PRs Welcome*
 
 ## Todo (modules)
-* Campus Map *PRs Welcome*
 * News *PRs Welcome*
 * Streaming Media *PRs Welcome*
 * Transportation
