@@ -68,7 +68,7 @@ render() {
                 <Cell cellStyle="RightDetail"
                     title="Contact Us"
                     accessory="DisclosureIndicator"
-                    onPress={() => {console.log('support presed')}}/>
+                    onPress={() => {console.log('support pressed')}}/>
             </Section>
 
             <Section header="ODDS & ENDS">
@@ -79,17 +79,17 @@ render() {
                 <Cell cellStyle="Basic"
                     title="Credits"
                     accessory="DisclosureIndicator"
-                    onPress={() => {console.log('credits presed')}}/>
+                    onPress={() => {console.log('credits pressed')}}/>
 
                 <Cell cellStyle="Basic"
                     title="Privacy Policy"
                     accessory="DisclosureIndicator"
-                    onPress={() => {console.log('privacy policy presed')}}/>
+                    onPress={() => {console.log('privacy policy pressed')}}/>
 
                 <Cell cellStyle="Basic"
                     title="Legal"
                     accessory="DisclosureIndicator"
-                    onPress={() => {console.log('legal presed')}}/>
+                    onPress={() => {console.log('legal pressed')}}/>
           </Section>
         </TableView>
       </ScrollView>
