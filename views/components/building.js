@@ -45,7 +45,7 @@ var styles = StyleSheet.create({
   },
 })
 
-// PROPS: imageSrc, open, name NOTE: if open is null, it is closed. If open is defined it will produce true
+// PROPS: imageSrc, open, name
 export default class BuildingView extends React.Component {
   render() {
     switch (this.props.open) {
@@ -77,7 +77,9 @@ export default class BuildingView extends React.Component {
         )
         break;
       default:
-        return;
+        return (
+          <View></View>
+        )
         break;
     }
   }
