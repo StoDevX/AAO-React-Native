@@ -17,13 +17,13 @@ import Icon from 'react-native-vector-icons/Entypo'
 
 const views = [
   {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl'},
-  {usable: true, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
+  {usable: false, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
   {usable: true, view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock'},
-  {usable: false, view: 'CalendarView', title: 'Calendar', icon: 'calendar'},
+  {usable: true, view: 'CalendarView', title: 'Calendar', icon: 'calendar'},
   {usable: false, view: 'DirectoryView', title: 'Directory', icon: 'v-card'},
-  {usable: true, view: 'StreamingView', title: 'Streaming Media', icon: 'video'},
-  {usable: true, view: 'NewsView', title: 'News', icon: 'news'},
-  {usable: true, view: 'MapView', title: 'Campus Map', icon: 'map'},
+  {usable: false, view: 'StreamingView', title: 'Streaming Media', icon: 'video'},
+  {usable: false, view: 'NewsView', title: 'News', icon: 'news'},
+  {usable: false, view: 'MapView', title: 'Campus Map', icon: 'map'},
   {usable: true, view: 'ContactsView', title: 'Important Contacts', icon: 'phone'},
   {usable: false, view: 'TransportationView', title: 'Transportation', icon: 'address'},
   {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
@@ -80,13 +80,13 @@ export default class HomePage extends React.Component {
         style={styles.scrollView}
       >
         <View style={styles.container}>
-          {views.map((view, i) =>
+          {views.map(view =>
             <TouchableOpacity
               key={view.title}
               onPress={() => this.pushView(view.view, view.title)}
               activeOpacity={0.5}
             >
-              <View style={[styles.rectangle, styles['rectangle'+(i+1)]]}>
+              <View style={[styles.rectangle, styles[`${view.view}Button`]]}>
                 <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
                 <Text
                   style={styles.rectangleButtonText}
@@ -106,85 +106,78 @@ export default class HomePage extends React.Component {
 
 import * as c from './components/colors'
 
-// Device info
 const Dimensions = require('Dimensions')
-// Screen size information
 let Viewport = Dimensions.get('window')
-let marginTop = 10
-let paddingBottom = marginTop
 
-let cellSpacing = marginTop / 2
-let cellWidth = (Viewport.width / 2) - (cellSpacing * 4)
-let cellTopPadding = 10
-let sideMargin = cellSpacing / 2
+let marginTop = 15
+
+let cellMargin = 10
+let cellSidePadding = 10
+let cellEdgePadding = 10
+let cellWidth = (Viewport.width / 2) - (cellMargin * 1.5)
 
 var styles = StyleSheet.create({
   // Body container
   container: {
     flex: 1,
-    paddingLeft: sideMargin,
-    paddingRight: sideMargin,
-    paddingBottom: paddingBottom,
+    marginLeft: cellMargin,
     marginTop: marginTop,
-    justifyContent: 'space-around',
-    // alignItems: 'stretch',
+
+    justifyContent: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
 
   // Main buttons for actions on home screen
   rectangle: {
-    // flex: 1,
     width: cellWidth,
-    marginRight: cellSpacing,
-    marginBottom: cellSpacing,
-    marginLeft: cellSpacing,
-    marginTop: cellSpacing,
     alignItems: 'center',
-    // justifyContent: 'center',
-    paddingTop: cellTopPadding,
-    paddingBottom: cellTopPadding,
-    borderRadius: 10,
+    paddingTop: cellSidePadding,
+    paddingBottom: cellSidePadding,
+    paddingRight: cellEdgePadding,
+    paddingLeft: cellEdgePadding,
+    borderRadius: 6,
+
+    marginBottom: cellMargin,
+    marginRight: cellMargin,
   },
 
-  rectangle1: {
+  MenusViewButton: {
     backgroundColor: c.emerald,
   },
-  rectangle2: {
+  SISViewButton: {
     backgroundColor: c.goldenrod,
   },
-  rectangle3: {
+  BuildingHoursViewButton: {
     backgroundColor: c.wave,
   },
-  rectangle4: {
+  CalendarViewButton: {
     backgroundColor: c.coolPurple,
   },
-  rectangle5: {
+  DirectoryViewButton: {
     backgroundColor: c.indianRed,
   },
-  rectangle6: {
+  StreamingViewButton: {
     backgroundColor: c.denim,
   },
-  rectangle7: {
+  NewsViewButton: {
     backgroundColor: c.eggplant,
   },
-  rectangle8: {
+  MapViewButton: {
     backgroundColor: c.coffee,
   },
-  rectangle9: {
+  ContactsViewButton: {
     backgroundColor: c.crimson,
   },
-  rectangle10: {
+  TransportationViewButton: {
     backgroundColor: c.cardTable,
   },
-  rectangle11: {
+  DictionaryViewButton: {
     backgroundColor: c.olive,
   },
 
   navigationButtonText: {
     color: c.mandarin,
-    // marginTop: 8,
-    // marginLeft: 14,
   },
   navigationButtonIcon: {
     color: c.mandarin,
@@ -201,7 +194,5 @@ var styles = StyleSheet.create({
     color: c.white,
     textAlign: 'center',
     fontSize: 14,
-    paddingLeft: 10,
-    paddingRight: 10,
   },
 })

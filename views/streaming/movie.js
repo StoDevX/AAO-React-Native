@@ -14,7 +14,7 @@ export default class WeeklyMovieView extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Building Hours</Text>
+        <Text>Movie</Text>
       </View>
     )
   }

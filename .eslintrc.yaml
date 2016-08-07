@@ -1,0 +1,31 @@
+parser: babel-eslint
+installedESLint: true
+
+env:
+  es6: true
+  node: true
+extends: 'eslint:recommended'
+
+parserOptions:
+  sourceType: module
+  ecmaFeatures:
+    experimentalObjectRestSpread: true
+    jsx: true
+
+plugins:
+  - react
+
+globals:
+  fetch: true
+
+rules:
+  indent: [error, 2, {SwitchCase: 1, MemberExpression: 1}]
+  linebreak-style: [error, unix]
+  quotes: [error, single]
+  semi: [error, never]
+  comma-dangle: [error, only-multiline]
+  react/jsx-uses-vars: [error]
+  react/jsx-uses-react: [error]
+  no-console: 0
+  no-unused-vars: [warn]
+  no-var: 2

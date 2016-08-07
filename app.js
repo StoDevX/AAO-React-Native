@@ -9,7 +9,7 @@ import {Navigator} from 'react-native'
 import AboutView from './views/about'
 import CalendarView from './views/calendar'
 import ContactsView from './views/contacts'
-import DictionaryView from './views/dictionary'
+import DictionaryView from './views/dictionary/dictionary'
 import DirectoryView from './views/directory'
 import HomeView from './views/home'
 import MapView from './views/map'
@@ -58,6 +58,8 @@ export default class App extends React.Component {
       return <ContactsView navigator={navigator} />
     case 'DictionaryView':
       return <DictionaryView navigator={navigator} />
+    case 'DictionaryPageView':
+      return <DictionaryPageView navigator={navigator} />
     case 'MapView':
       return <MapView navigator={navigator} />
     case 'StreamingView':
