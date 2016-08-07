@@ -53,7 +53,7 @@ render() {
 
                 <CustomCell>
                     <Icon name="lock" size={18} />
-                    <Text style={styles.label}>Passsword</Text>
+                    <Text style={styles.label}>Password</Text>
                     <TextInput
                         secureTextEntry={true}
                         autoCorrect={false}
