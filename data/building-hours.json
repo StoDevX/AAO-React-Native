@@ -1,7 +1,7 @@
 [
     {
         "name": "The Pause Kitchen",
-        "image": "http://placehold.it/500x500",
+        "image": "http://oleville.com/tech/wp-content/uploads/sites/19/2016/08/pausekitchen.jpg",
         "times": {
             "hours": {
                 "Mon": ["10:30:00", "23:59:00"],
@@ -16,7 +16,7 @@
     },
     {
         "name": "Bookstore",
-        "image": "http://placehold.it/500x500",
+        "image": "http://oleville.com/tech/wp-content/uploads/sites/19/2016/08/bookstore.jpg",
         "times": {
             "hours": {
                 "Mon": ["8:00:00", "17:00:00"],
@@ -30,7 +30,7 @@
     },
     {
         "name": "Convenience Store",
-        "image": "http://placehold.it/500x500",
+        "image": "http://oleville.com/tech/wp-content/uploads/sites/19/2016/08/convenience.jpg",
         "times": {
             "hours": {
                 "Mon": ["8:00:00", "20:00:00"],
@@ -45,80 +45,65 @@
     },
     {
         "name": "Post Office",
-        "image": "http://placehold.it/500x500",
+        "image": "http://oleville.com/tech/wp-content/uploads/sites/19/2016/08/postoffice.jpg",
         "times": {
             "hours": {
                 "Mon": ["7:30:00", "16:30:00"],
                 "Tue": ["7:30:00", "16:30:00"],
                 "Wed": ["7:30:00", "16:30:00"],
                 "Thu": ["7:30:00", "16:30:00"],
-                "Fri": ["7:30:00", "12:00:00"],
+                "Fri": ["7:30:00", "12:00:00"]
             }
         }
     },
     {
         "name": "Rolvaag Library",
-        "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/rolvaag.jpg",
+        "image": "http://oleville.com/tech/wp-content/uploads/sites/19/2016/08/rolvaag.jpg",
         "times": {
             "hours": {
-                "Mon": ["7:45", "23:59"],
-                "Tue": ["7:45", "23:59"],
-                "Wed": ["7:45", "23:59"],
-                "Thu": ["7:45", "23:59"],
-                "Fri": ["7:45", "21:00:00"],
+                "Mon": ["7:45:00", "23:59:00"],
+                "Tue": ["7:45:00", "23:59:00"],
+                "Wed": ["7:45:00", "23:59:00"],
+                "Thu": ["7:45:00", "23:59:00"],
+                "Fri": ["7:45:00", "21:00:00"],
                 "Sat": ["9:00:00", "21:00:00"],
-                "Sun": ["12:00:00", "23:59"]
+                "Sun": ["12:00:00", "23:59:00"]
             }
         }
     },
     {
         "name": "Halvorson Music Library",
-        "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/halvorson.jpg",
+        "image": "http://oleville.com/tech/wp-content/uploads/sites/19/2016/08/halvorson.jpg",
         "times": {
             "hours": {
-                "Mon": ["7:45", "23:00:00"],
-                "Tue": ["7:45", "23:00:00"],
-                "Wed": ["7:45", "23:00:00"],
-                "Thu": ["7:45", "23:00:00"],
-                "Fri": ["7:45", "20:00:00"],
+                "Mon": ["7:45:00", "23:00:00"],
+                "Tue": ["7:45:00", "23:00:00"],
+                "Wed": ["7:45:00", "23:00:00"],
+                "Thu": ["7:45:00", "23:00:00"],
+                "Fri": ["7:45:00", "20:00:00"],
                 "Sat": ["9:00:00", "18:00:00"],
                 "Sun": ["12:00:00", "23:00:00"]
             }
         }
     },
     {
-        "name": "Hustad Science Library",
-        "image": "http://placehold.it/500x500",
-        "times": {
-            "hours": {
-                "Mon": ["8:00:00", "23:00:00"],
-                "Tue": ["8:00:00", "23:00:00"],
-                "Wed": ["8:00:00", "23:00:00"],
-                "Thu": ["8:00:00", "23:00:00"],
-                "Fri": ["8:00:00", "19:00:00"],
-                "Sat": ["9:30:00", "16:00:00"],
-                "Sun": ["1:00:00", "23:00:00"]
-            }
-        }
-    },
-    {
         "name": "Skoglund",
-        "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/skoglund.jpg",
+        "image": "http://oleville.com/tech/wp-content/uploads/sites/19/2016/08/skoglund.jpg",
         "times": {
             "hours": {
-                "Mon": ["6:30:00", "22:45"],
-                "Tue": ["6:30:00", "22:45"],
-                "Wed": ["6:30:00", "22:45"],
-                "Thu": ["6:30:00", "22:45"],
-                "Fri": ["6:30:00", "20:45"],
-                "Sat": ["9:00:00", "20:45"],
-                "Sun": ["12:00:00", "22:45"]
+                "Mon": ["6:30:00", "22:45:00"],
+                "Tue": ["6:30:00", "22:45:00"],
+                "Wed": ["6:30:00", "22:45:00"],
+                "Thu": ["6:30:00", "22:45:00"],
+                "Fri": ["6:30:00", "20:45:00"],
+                "Sat": ["9:00:00", "20:45:00"],
+                "Sun": ["12:00:00", "22:45:00"]
             }
         }
     },
     {
         "name": "The Cage",
-        "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/cage.png",
+        "image": "http://oleville.com/tech/wp-content/uploads/sites/19/2016/08/cage.png",
         "notes": "The kitchen stops cooking at 8 p.m.",
         "times": {
             "hours": {
@@ -134,22 +119,22 @@
     },
     {
         "name": "Stav Hall Breakfast",
-        "image": "http://placehold.it/500x500",
+        "image": "http://oleville.com/tech/wp-content/uploads/sites/19/2016/08/stav.jpg",
         "times": {
             "hours": {
-              "Mon": ["7:00:00", "9:45"],
-              "Tue": ["7:00:00", "9:45"],
-              "Wed": ["7:00:00", "9:45"],
-              "Thu": ["7:00:00", "9:45"],
-              "Fri": ["7:00:00", "9:45"],
-              "Sat": ["7:00:00", "9:45"],
-              "Sun": ["8:30:00", "10:15"]
+              "Mon": ["7:00:00", "9:45:00"],
+              "Tue": ["7:00:00", "9:45:00"],
+              "Wed": ["7:00:00", "9:45:00"],
+              "Thu": ["7:00:00", "9:45:00"],
+              "Fri": ["7:00:00", "9:45:00"],
+              "Sat": ["7:00:00", "9:45:00"],
+              "Sun": ["8:30:00", "10:15:00"]
             }
         }
     },
     {
         "name": "Stav Hall Lunch",
-        "image": "http://placehold.it/500x500",
+        "image": "http://oleville.com/tech/wp-content/uploads/sites/19/2016/08/stav.jpg",
         "times": {
             "hours": {
               "Mon": ["10:30:00", "14:00:00"],
@@ -164,7 +149,7 @@
     },
     {
         "name": "Stav Hall Dinner",
-        "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/stav.jpg",
+        "image": "http://oleville.com/tech/wp-content/uploads/sites/19/2016/08/stav.jpg",
         "times": {
             "hours": {
               "Mon": ["16:30:00", "19:00:00"],
@@ -179,7 +164,7 @@
     },
     {
         "name": "DiSCO",
-        "image": "http://oleville.com/testing/wp-content/uploads/sites/13/2016/07/disco.jpg",
+        "image": "http://oleville.com/tech/wp-content/uploads/sites/19/2016/08/disco.jpg",
         "times": {
             "hours": {
               "Mon": [],

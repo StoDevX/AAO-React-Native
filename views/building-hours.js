@@ -1,6 +1,6 @@
 /**
  * All About Olaf
- * iOS BuildingHours page
+ * Building Hours list page
  */
 
 import React from 'react'
@@ -66,11 +66,16 @@ function isBuildingOpen(hoursInfo) {
   console.log('currentTime:', currentTime)
   console.log('closeTime:', closeTime)
 
-  if (startTime <= currentTime && currentTime <= closeTime) {
-    return true
+  // Arbitrary date to satasfy the JS Date.parse() function
+  if (Date.parse('01/01/2016 ' + startTime) < Date.parse('01/01/2016 ' + currentTime) && Date.parse('01/01/2016 ' + currentTime) < Date.parse('01/01/2016 ' + closeTime)) {
+    if (Date.parse('01/01/2016 ' + closeTime) - Date.parse('01/01/2016 ' + currentTime) < 1800000) { // 1800000 is 30 min in ms
+      return 'almostClosed'
+    } else {
+      return 'open';
+    }
+  } else {
+    return 'closed';
   }
-
-  return false
 }
 
 export default class BuildingHoursView extends React.Component {
