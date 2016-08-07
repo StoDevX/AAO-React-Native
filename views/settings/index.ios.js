@@ -21,6 +21,7 @@ import {
 
 import NavigatorScreen from '../components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
+import Communications from 'react-native-communications'
 
 export default class SettingsView extends React.Component {
   constructor(){
@@ -68,7 +69,12 @@ render() {
                 <Cell cellStyle="RightDetail"
                     title="Contact Us"
                     accessory="DisclosureIndicator"
-                    onPress={() => {console.log('support pressed')}}/>
+                    onPress={() => Communications.email(
+                        ['odt@stolaf.edu'],
+                        null,
+                        null,
+                        'All About Olaf',
+                        null)} />
             </Section>
 
             <Section header="ODDS & ENDS">
