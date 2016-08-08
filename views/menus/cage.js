@@ -13,6 +13,8 @@ import menu from '../../data/cage-menu.json'
 var styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'stretch',
+    flexDirection: 'row',
   }
 })
 

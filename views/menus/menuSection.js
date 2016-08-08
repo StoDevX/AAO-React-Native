@@ -10,35 +10,41 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native'
 
 import * as c from '../components/colors'
 import Collapsible from 'react-native-collapsible'
 import MenuItem from './menuItem'
 
+let width = Dimensions.get('window').width; //full width
+
 var styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: 10,
-
+    alignItems: 'stretch',
+    alignSelf: 'stretch',
   },
   collapsedConetent: {
     alignSelf: 'center',
     backgroundColor: c.paleGreen,
     margin: 0,
+    width: width,
   },
   headerText: {
     fontSize: 18,
     textAlign: 'center',
-
   },
   contentText: {
     marginTop: 5,
     marginBottom: 5,
     marginLeft: 10,
     marginRight: 5,
+    fontStyle: 'italic',
   },
   collapsedContainer: {
+    marginBottom: 5,
   },
 })
 

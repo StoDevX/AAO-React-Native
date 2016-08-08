@@ -15,6 +15,15 @@ import NavigatorScreen from '../components/navigator-screen'
 var styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  name: {
+    textAlign: 'left',
+  },
+  price: {
+    textAlign: 'right',
   }
 })
 
@@ -36,9 +45,8 @@ export default class CageMenuView extends React.Component {
 
   _renderRow(data) {
     return (
-      <View>
-        <Text>{data.name}</Text>
-        <Text>{data.price}</Text>
+      <View style={styles.container}>
+        <Text style={styles.name}>{data.name}</Text><Text style={styles.price}>{data.price}</Text>
       </View>
     )
   }
