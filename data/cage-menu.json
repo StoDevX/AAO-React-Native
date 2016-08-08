@@ -82,7 +82,7 @@
       {
         "name": "Soup & 1/2 Deli Sandwich",
         "price": "5.25"
-      },
+      }
     ]
   },
   {
@@ -104,7 +104,7 @@
       {
         "name": "Caesar Salad & Chicken",
         "price": "5.60"
-      },
+      }
     ]
   },
   {
@@ -322,9 +322,9 @@
       {
         "name": "Vanilla",
         "price": ""
-      },
+      }
     ]
-  }
+  },
   {
     "name": "Breakfast",
     "subtext": "",
@@ -380,7 +380,7 @@
       {
         "name": "Peanut Butter",
         "price": ".50"
-      },
+      }
     ]
   }
 ]

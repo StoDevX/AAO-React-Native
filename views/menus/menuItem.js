@@ -1,6 +1,6 @@
 /**
  * All About Olaf
- * Dictionary page
+ * A list of the items availiable from a single menuSection
  */
 
 import React from 'react'
@@ -8,14 +8,9 @@ import {
   StyleSheet,
   View,
   Text,
-  Image,
   ListView
 } from 'react-native'
-
 import NavigatorScreen from '../components/navigator-screen'
-import CollapsibleRow from '../components/collapsibleRow'
-
-import terms from '../../data/dictionary.json'
 
 var styles = StyleSheet.create({
   container: {
@@ -23,36 +18,32 @@ var styles = StyleSheet.create({
   }
 })
 
-export default class DictionaryView extends React.Component {
+export default class CageMenuView extends React.Component {
   constructor(props) {
     super(props)
+
     let ds = new ListView.DataSource({
       rowHasChanged: this._rowHasChanged,
     })
     this.state = {
-      dataSource: ds.cloneWithRows(terms)
+      dataSource: ds.cloneWithRows(this.props.items)
     }
   }
 
   _rowHasChanged(r1, r2) {
-    return r1.word !== r2.word
+    return r1.name !== r2.name
   }
 
   _renderRow(data) {
     return (
-      <CollapsibleRow header={data.word} content={data.definition} subheaderText="" />
+      <View>
+        <Text>{data.name}</Text>
+        <Text>{data.price}</Text>
+      </View>
     )
   }
 
   render() {
-    return <NavigatorScreen
-      {...this.props}
-      title="Dictionary"
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
-  renderScene() {
     return (
       <View style={styles.container}>
         <ListView
