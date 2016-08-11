@@ -1,0 +1,25 @@
+# EditorConfig <editorconfig.org> helps developers define and maintain
+# consistent coding styles between different editors and IDEs.
+
+root = true
+
+
+[*]
+# Please don't change these four settings.
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+
+# Below here, however, the rules are merely stylistic.
+[*.js]
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[{package.json,.travis.yml}]
+indent_style = space
+indent_size = 2
