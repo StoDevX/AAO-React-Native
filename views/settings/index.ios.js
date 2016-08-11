@@ -9,6 +9,7 @@ import {
   View,
   Text,
   TextInput,
+  TouchableHighlight,
   ScrollView,
 } from 'react-native'
 
@@ -23,6 +24,7 @@ import NavigatorScreen from '../components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
 import Communications from 'react-native-communications'
 import Keychain from 'react-native-keychain'
+import * as c from '../components/colors'
 
 export default class SettingsView extends React.Component {
   constructor(){
@@ -104,8 +106,13 @@ render() {
                         autoCapitalize="none"
                         style={styles.customTextInput}
                         placeholder="password"
-                        onSubmitEditing={(event) => this.updateText("password", event.nativeEvent.text)}
-                        onEndEditing={(event) => this.saveCredentials() } />
+                        onEndEditing={(event) => this.updateText("password", event.nativeEvent.text)} />
+                </CustomCell>
+            </Section>
+
+            <Section>
+                <CustomCell onPress={() => {this.saveCredentials()}} >
+                    <Text style={styles.loginButtonText}>LOGIN</Text>
                 </CustomCell>
             </Section>
 
@@ -167,5 +174,12 @@ var styles = StyleSheet.create({
     flex: 1,
     color: '#C7C7CC',
   },
+  loginButtonText: {
+    color: c.black,
+  },
+  loginButton: {
+    backgroundColor: c.white,
+  },
+
 });
 
