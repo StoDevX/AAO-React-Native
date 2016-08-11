@@ -18,6 +18,7 @@
 {
   NSURL *jsCodeLocation;
 
+  // see https://github.com/Microsoft/react-native-code-push/issues/393
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
