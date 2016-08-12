@@ -6,6 +6,7 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "ios": "react-native run-ios",
     "rn": "react-native",
+    "lint": "eslint app.js *.index.js lib/ views/",
     "launch-android-emulator": "emulator -avd 'react-native'",
     "android": "react-native run-android"
   },
@@ -36,6 +37,7 @@
   "devDependencies": {
     "babel-eslint": "^6.0.4",
     "eslint": "3.2.2",
+    "eslint-plugin-babel": "3.3.0",
     "eslint-plugin-react": "6.0.0"
   }
 }
