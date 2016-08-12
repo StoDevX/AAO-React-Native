@@ -1,0 +1,76 @@
+language: objective-c
+# We're using 7.2 currently, as xctool has issues with 7.3.
+# This also means that we're testing against iOS 9.2.
+osx_image: xcode7.2
+
+install:
+  ### basic setup stuff
+  - brew update
+  # force node 6
+  - nvm use 6
+  # turn off fancy npm stuff
+  - npm config set spin=false
+  - npm config set progress=false
+  # install node deps
+  - travis_wait npm install
+
+  ### do js-only setup stuff
+  # install flow
+  - if [[ "$TEST_TYPE" = js ]]; then brew install flow; fi
+  # prepare for jest
+  - if [[ "$TEST_TYPE" = js ]]; then rm -rf "${TMPDIR}/jest_preprocess_cache"; fi
+
+  ### do ios-only setup stuff
+  - if [[ "$TEST_TYPE" = ios ]]; then brew install xctool; fi
+
+  ### do android-only setup stuff
+  # install gradle
+  - if [[ "$TEST_TYPE" = android ]]; then brew install gradle; fi
+  # install android tools
+  - |
+    if [[ "$TEST_TYPE" = android ]]; then
+      set -ve
+      brew install android-sdk
+
+      echo y | android update sdk --no-ui --all --filter tools
+      echo y | android update sdk --no-ui --all --filter platform-tools
+      echo y | android update sdk --no-ui --all --filter build-tools-23.0.1
+      echo y | android update sdk --no-ui --all --filter android-23
+      echo y | android update sdk --no-ui --all --filter extra-android-m2repository
+      echo y | android update sdk --no-ui --all --filter extra-google-m2repository
+      echo y | android update sdk --no-ui --all --filter extra-android-support
+
+      export ANDROID_HOME=/usr/local/opt/android-sdk
+    fi
+
+
+# we can run three builds in parallel!
+env:
+  matrix:
+    - TEST_TYPE=js
+    - TEST_TYPE=ios
+    - TEST_TYPE=android
+
+script:
+  # These sections will grow over time.
+  # Each line is collapsed nicely in the travis output, which is why they're
+  # grouped in this fashion.
+
+  # travis apps don't have any env vars at the moment.
+  # I'm not comfortable having them written to disk there.
+  - touch .env.js
+
+  # JS-only tests - type checking and specs
+  - if [[ "$TEST_TYPE" = js ]]; then npm run flow; fi
+  - if [[ "$TEST_TYPE" = js ]]; then npm run test:js; fi
+
+  # iOS-only tests - building and specs
+  - if [[ "$TEST_TYPE" = ios ]]; then npm run test:ios; fi
+
+  # android-only tests - building and specs
+  - if [[ "$TEST_TYPE" = android ]]; then npm run build:android:macos; fi
+
+# ping slack with status
+notifications:
+  slack:
+    secure: fmOwJp9Xj5dJanJsdUcoJwCpHzoGEmP32zfUF+EfvHmNNkkiCiPGuXa2vt829655rjopfjm1sILfagEYr1CcnjI4fa6zIY6fQkWgii0Acy+vIEB3GZ1h46Uj8vLYOjOBC6tgNqGZvfFhtfo67hmhfRxXpP1jY6Ta0eAtxjqQ/cgGI3vUXstI3HN9eLsTa8Ejf8YiIkfV6dAPZkxDdbiQuO5+4ZbZdPYEke/QC4a/a14l4IzPntusS/8ebD5mYDavkW1+gtjZmYrqMn9aWSh+R0L1KwkqoQq5USjDw6gg4/H9L8OEj/tnCwyUQ9jyyvSLvCMTjAPGWzVvvtQKHULPuCUoH6dLAAn6HeyAPpj5rJbyVgb6voj3jfHvcOGIO2o81l4g/4JKxzN9m2tCeR8I83aPboIMUT2d1F7trfFZLWzxPUroTIWVhEoa3mRneKcQU4IY2+cATFLQnrG+iu7G3q3mNXt3figRXP76fgmdAIvdeBvN1jdmY4148DhXZVkk/Fkddd8BEJ2l/5qHlCGEKKYhM5q//+GdFOnnAiFzjbPIKixF4c1B6itEfrWo+slu3IFsd7Wsc7pb5yaW9dHaiQwlhrk5mYH0getws8fmufT1BY/Qg9pp9XJxLDos9cd24QNF3ACpKxvB9k48M4Ez0Pe5khruq+0YK04rHO+xJVw=
