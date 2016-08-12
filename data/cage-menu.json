@@ -1,0 +1,386 @@
+[
+  {
+    "name": "Burgers & Sandwiches",
+    "subtext": "All sandwiches include lettuce, tomato, pickel spear and your choice of chips, coleslaw, cottage cheese, or whole fruit.",
+    "items": [
+      {
+        "name": "Grilled Hamburger",
+        "price": "5.00"
+      },
+      {
+        "name": "Grilled Chicken Breast",
+        "price": "4.70"
+      },
+      {
+        "name": "Grilled Turkey Burger",
+        "price": "3.95"
+      },
+      {
+        "name": "Vegetarian Burger",
+        "price": "5.65"
+      },
+      {
+        "name": "Grilled Portabella Sandwich",
+        "price": "4.90"
+      },
+      {
+        "name": "BLT",
+        "price": "4.75"
+      }
+    ]
+  },
+  {
+    "name": "Hot Appetizers",
+    "subtext": "Add guacamole - $1.95",
+    "items": [
+      {
+        "name": "Chicken Fingers",
+        "price": "5.20"
+      },
+      {
+        "name": "French Fries",
+        "price": "1.90"
+      },
+      {
+        "name": "Onion Rings",
+        "price": "3.50"
+      },
+      {
+        "name": "Mozzarella Sticks",
+        "price": "3.95"
+      },
+      {
+        "name": "Chicken Quesadilla",
+        "price": "5.45"
+      },
+      {
+        "name": "Cheese Quesadilla",
+        "price": "4.25"
+      },
+      {
+        "name": "Roasted Vegatable Quesadilla",
+        "price": "4.75"
+      }
+    ]
+  },
+  {
+    "name": "Soup",
+    "subtext": "",
+    "items": [
+      {
+        "name": "Minnesota Wild Rice and Chicken",
+        "price": "3.25"
+      },
+      {
+        "name": "Soup of the Day",
+        "price": "2.90"
+      },
+      {
+        "name": "Chili of the Day",
+        "price": "3.25"
+      },
+      {
+        "name": "Soup & 1/2 Deli Sandwich",
+        "price": "5.25"
+      }
+    ]
+  },
+  {
+    "name": "Salad",
+    "subtext": "",
+    "items": [
+      {
+        "name": "House Salad",
+        "price": "3.25"
+      },
+      {
+        "name": "Chef Salad",
+        "price": "5.75"
+      },
+      {
+        "name": "Caesar Salad",
+        "price": "3.95"
+      },
+      {
+        "name": "Caesar Salad & Chicken",
+        "price": "5.60"
+      }
+    ]
+  },
+  {
+    "name": "Wraps",
+    "subtext": "All wraps include lettuce, tomato, pickel spear and your choice of chips, coleslaw, cottage cheese, or whole fruit.",
+    "items": [
+      {
+        "name": "Chicken Bacon Ranch Wrap",
+        "price": "4.95"
+      },
+      {
+        "name": "Spicy Buffalo Chicken Wrap",
+        "price": "4.95"
+      },
+      {
+        "name": "Chicken Caesar Wrap (crispy or grilled)",
+        "price": "4.95"
+      },
+      {
+        "name": "Roasted Vegatable and Hummus Wrap",
+        "price": "4.25"
+      }
+    ]
+  },
+  {
+    "name": "Ice Cream",
+    "subtext": "Flavors: vanilla, chocolate, strawberry, cookies & cream, espresso chip, rainbow sherbet",
+    "items": [
+      {
+        "name": "Sugar Cone",
+        "price": "1.90"
+      },
+      {
+        "name": "Cup",
+        "price": "1.90"
+      },
+      {
+        "name": "Waffle Cone",
+        "price": "2.10"
+      },
+      {
+        "name": "Shake",
+        "price": "3.80"
+      },
+      {
+        "name": "Malt",
+        "price": "3.80"
+      }
+    ]
+  },
+  {
+    "name": "Smoothies",
+    "subtext": "Flavors: strawberry banana, tropical mango, raspberry, coconut pineapple, carrot apple, strawberry",
+    "items": [
+      {
+        "name": "Smoothie",
+        "price": "4.25"
+      }
+    ]
+  },
+  {
+    "name": "Hot Beverages",
+    "subtext": "Hot beverages available iced",
+    "items": [
+      {
+        "name": "Peace Coffee",
+        "price": "1.25 | 1.45"
+      },
+      {
+        "name": "Latte",
+        "price": "2.05 | 2.65"
+      },
+      {
+        "name": "Mocha",
+        "price": "2.35 | 2.95"
+      },
+      {
+        "name": "Cappuccino",
+        "price": "2.05 | 2.65"
+      },
+      {
+        "name": "Americano",
+        "price": "1.50 | 1.90"
+      },
+      {
+        "name": "Steamed Milk",
+        "price": "1.35 | 1.65"
+      },
+      {
+        "name": "Chai Tea Latte",
+        "price": "2.70 | 3.30"
+      },
+      {
+        "name": "Hot Chocolate",
+        "price": "1.95 | 2.50"
+      },
+      {
+        "name": "Cafe Ole",
+        "price": "1.80 | 2.30"
+      },
+      {
+        "name": "Sweet Matcha Latte",
+        "price": "2.75 | 3.85"
+      },
+      {
+        "name": "Hot Tea",
+        "price": "1.25"
+      },
+      {
+        "name": "All Day Peace Coffee",
+        "price": "1.95"
+      },
+      {
+        "name": "Coffee on the Go (serves 8)",
+        "price": "15.50"
+      }
+    ]
+  },
+  {
+    "name": "Flavor Shots",
+    "subtext": "",
+    "items": [
+      {
+        "name": "Almond",
+        "price": ""
+      },
+      {
+        "name": "Amaretto",
+        "price": ""
+      },
+      {
+        "name": "Apple",
+        "price": ""
+      },
+      {
+        "name": "Blueberry",
+        "price": ""
+      },
+      {
+        "name": "Carmel",
+        "price": ""
+      },
+      {
+        "name": "Cherry",
+        "price": ""
+      },
+      {
+        "name": "Cinnamon",
+        "price": ""
+      },
+      {
+        "name": "Coconut",
+        "price": ""
+      },
+      {
+        "name": "Hazelnut",
+        "price": ""
+      },
+      {
+        "name": "Irish Cream",
+        "price": ""
+      },
+      {
+        "name": "Kiwi",
+        "price": ""
+      },
+      {
+        "name": "Mandarin Orange",
+        "price": ""
+      },
+      {
+        "name": "Mango",
+        "price": ""
+      },
+      {
+        "name": "Peach",
+        "price": ""
+      },
+      {
+        "name": "Peppermint",
+        "price": ""
+      },
+      {
+        "name": "Pumpkin",
+        "price": ""
+      },
+      {
+        "name": "Raspberry",
+        "price": ""
+      },
+      {
+        "name": "Salted Carmel",
+        "price": ""
+      },
+      {
+        "name": "Sugar Free Carmel",
+        "price": ""
+      },
+      {
+        "name": "Sugar Free Hazelnut",
+        "price": ""
+      },
+      {
+        "name": "Sugar Free Raspberry",
+        "price": ""
+      },
+      {
+        "name": "Sugar Free Vanilla",
+        "price": ""
+      },
+      {
+        "name": "Toffee Nut",
+        "price": ""
+      },
+      {
+        "name": "Vanilla",
+        "price": ""
+      }
+    ]
+  },
+  {
+    "name": "Breakfast",
+    "subtext": "",
+    "items": [
+      {
+        "name": "Egg & Cheese Bagel",
+        "price": "2.20"
+      },
+      {
+        "name": "Egg & Cheese English Muffin",
+        "price": "2.20"
+      },
+      {
+        "name": "Egg & Cheese Croissant",
+        "price": "2.70"
+      },
+      {
+        "name": "Egg",
+        "price": ".70"
+      },
+      {
+        "name": "Bacon",
+        "price": ".85"
+      },
+      {
+        "name": "Ham",
+        "price": ".85"
+      },
+      {
+        "name": "Sausage",
+        "price": ".85"
+      },
+      {
+        "name": "Hash Browns",
+        "price": "1.25"
+      },
+      {
+        "name": "Toast",
+        "price": ".90"
+      },
+      {
+        "name": "Bagel",
+        "price": "1.15"
+      },
+      {
+        "name": "English Muffin",
+        "price": ".90"
+      },
+      {
+        "name": "Cream Cheese",
+        "price": ".50"
+      },
+      {
+        "name": "Peanut Butter",
+        "price": ".50"
+      }
+    ]
+  }
+]
