@@ -59,6 +59,7 @@ script:
   # travis apps don't have any env vars at the moment.
   # I'm not comfortable having them written to disk there.
   - touch .env.js
+  - touch keys.js
 
   # JS-only tests - type checking and specs
   - if [[ "$TEST_TYPE" = js ]]; then npm run flow; fi

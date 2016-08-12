@@ -37,6 +37,7 @@ test_script:
   - npm test
   # prepare env
   - touch .env.js
+  - touch keys.js
 
 build_script: 'npm run build:android:win'
 
