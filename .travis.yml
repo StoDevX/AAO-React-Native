@@ -4,6 +4,8 @@ language: objective-c
 osx_image: xcode7.2
 
 install:
+  # work around android build failing - https://github.com/travis-ci/travis-ci/issues/6307
+  - rvm get head
   ### basic setup stuff
   - brew update
   # force node 6
