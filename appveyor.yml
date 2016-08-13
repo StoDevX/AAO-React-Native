@@ -1,0 +1,47 @@
+clone_folder: c:\projects\all-about-olaf
+
+# the basic outline for this install process is from
+# github.com/googlesamples/android-ndk/blob/master/appveyor.yml
+install:
+  # prepare android-sdk
+  - cd \
+  - appveyor DownloadFile "http://dl.google.com/android/android-sdk_r24.4.1-windows.zip"
+  - 7z x "android-sdk_r24.4.1-windows.zip" > nul
+  - cd c:\projects\all-about-olaf
+  # install android-sdk
+  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter android-23
+  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter platform-tools
+  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter tools
+  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter build-tools-23.0.1
+  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter extra-google-m2repository
+  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter extra-android-m2repository
+  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter extra-android-support
+  # install node and npm packages
+  - ps: Install-Product node $env:nodejs_version
+  - npm install
+
+environment:
+  nodejs_version: '6'
+  JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+  ANDROID_HOME: C:\android-sdk-windows
+  matrix:
+    # - TEST_TYPE: js
+    - TEST_TYPE: android
+
+# Post-install test scripts.
+test_script:
+  # Output useful info for debugging.
+  - node --version
+  - npm --version
+  # run tests
+  - npm test
+  # prepare env
+  - touch .env.js
+  - touch keys.js
+
+build_script: 'npm run build:android:win'
+
+notifications:
+  - provider: Slack
+    incoming_webhook:
+      secure: FAKVymf5kPEMsOf2Brk5VWIeylmsG6oCXBBURcN3S2RTSKGvLV/qEiN1m2HWU+OxGlnMZcBR7UjB2hsOw6S/Ri81KDzgpuTWcYH9FOobXWU=

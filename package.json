@@ -3,12 +3,25 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "start": "react-native start",
     "ios": "react-native run-ios",
     "rn": "react-native",
     "lint": "eslint app.js *.index.js lib/ views/",
-    "launch-android-emulator": "emulator -avd 'react-native'",
-    "android": "react-native run-android"
+    "android": "react-native run-android",
+    "android-emulator": "emulator -avd 'react-native'",
+    "flow": "echo 'Not yet implemented.'",
+    "bundle:ios": "react-native bundle --entry-file index.ios.js --dev true --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios",
+    "bundle:android": "react-native bundle --entry-file index.android.js --dev true --platform android --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
+    "build:ios": "xctool -configuration Release -project ios/AllAboutOlaf.xcodeproj -scheme AllAboutOlaf -sdk iphonesimulator -destination platform='iOS Simulator,name=iPhone 5s,OS=9.2'",
+    "build:android:macos": "cd android && ./gradlew assembleRelease --info --console=plain",
+    "build:android:win": "cd android && .\\gradlew assembleRelease --info --console=plain",
+    "test": "npm run flow && npm run test:js",
+    "test:js": "echo 'Not yet implemented! Figure out jest.'",
+    "test:ios": "xctool -configuration Release -project ios/AllAboutOlaf.xcodeproj -scheme AllAboutOlaf -sdk iphonesimulator -destination platform='iOS Simulator,name=iPhone 5s,OS=9.2' test",
+    "test:android": "echo 'Not yet implemented! See http://facebook.github.io/react-native/docs/signed-apk-android.html#testing-the-release-build-of-your-app'",
+    "release": "npm run release:ios && npm run release:android",
+    "release:ios": "echo 'Not yet implemented!'",
+    "release:android": "echo 'Not yet implemented!'"
   },
   "dependencies": {
     "buffer": "^4.9.0",
