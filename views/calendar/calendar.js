@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 
 import EventView from './event'
-import * as k from '../../keys'
+import { GOOGLE_CALENDAR_API_KEY } from '../../lib/config'
 
 export default class CalendarView extends React.Component {
   constructor(props) {
@@ -39,9 +39,9 @@ export default class CalendarView extends React.Component {
     var offsetString = "-" + offset + ":00Z";
     nowString.replace('Z', offsetString);
     if(this.props.events == 'master') {
-      this.getMasterEvents(k.calendarKey, nowString);
+      this.getMasterEvents(GOOGLE_CALENDAR_API_KEY, nowString);
     } else {
-      this.getOlevilleEvents(k.calendarKey, nowString);
+      this.getOlevilleEvents(GOOGLE_CALENDAR_API_KEY, nowString);
     }
   }
 

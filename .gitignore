@@ -42,3 +42,4 @@ android/keystores/debug.keystore
 
 # KEYS
 keys.js
+.env.js
