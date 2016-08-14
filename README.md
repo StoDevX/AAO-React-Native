@@ -1,5 +1,9 @@
 # AAO-React-Native
 
+[![Windows build status](https://ci.appveyor.com/api/projects/status/qi83hnivu0rkgbvo?svg=true)](https://ci.appveyor.com/project/hawkrives/aao-react-native)
+[![macOS build status](https://travis-ci.org/StoDevX/AAO-React-Native.svg?branch=master)](https://travis-ci.org/StoDevX/AAO-React-Native)
+
+
 ## About
 The St. Olaf community, now in pocket size... rewritten in React Native.  This is a rewrite of [All About Olaf](http://drewvolz.com/all-about-olaf/) in React Native as it is currently written in Objective-C.
 
