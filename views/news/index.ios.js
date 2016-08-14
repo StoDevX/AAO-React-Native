@@ -7,8 +7,6 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  ListView,
-  Text,
   TabBarIOS,
 } from 'react-native'
 
@@ -23,21 +21,13 @@ export default class NewsView extends React.Component {
     }
   }
 
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title="News"
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
   // Render a given scene
   renderScene() {
     return (
       <View style={styles.container}>
         <TabBarIOS
-          tintColor="white"
-          barTintColor="darkslateblue"
+          tintColor='white'
+          barTintColor='darkslateblue'
         >
           {tabs.map(tab =>
             <TabBarIOS.Item
@@ -45,13 +35,21 @@ export default class NewsView extends React.Component {
               icon={tab.icon}
               title={tab.title}
               selected={this.state.selectedTab === tab.id}
-              onPress={() => {this.setState({selectedTab: tab.id})}}
+              onPress={() => this.setState({selectedTab: tab.id})}
             >
               <tab.content />
             </TabBarIOS.Item>)}
         </TabBarIOS>
       </View>
     )
+  }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='News'
+      renderScene={this.renderScene.bind(this)}
+    />
   }
 }
 

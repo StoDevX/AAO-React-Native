@@ -6,24 +6,21 @@ import {
     View,
 } from 'react-native'
 
-export default class LoadingView extends React.Component {
-
-    render() {
-        return (
-            <View style={styles.container}>
-                <Text>
-                    Loading...
-                </Text>
-            </View>
-        )
-    }
+export default function LoadingView() {
+  return (
+    <View style={styles.container}>
+      <Text>
+        Loading...
+      </Text>
+    </View>
+  )
 }
 
-var styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor : '#ffffff',
-    },
-});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+  },
+})
