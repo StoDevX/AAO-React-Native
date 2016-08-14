@@ -7,15 +7,17 @@ import React from 'react'
 import {
   StyleSheet,
   View,
+  ListView,
   Text,
   TabBarIOS,
 } from 'react-native'
+
 import NavigatorScreen from '../components/navigator-screen'
 import tabs from './tabs'
 
 export default class NewsView extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       selectedTab: tabs[0].id,
     }
@@ -53,8 +55,9 @@ export default class NewsView extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
 })
