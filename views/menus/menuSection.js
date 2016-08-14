@@ -21,7 +21,6 @@ let width = Dimensions.get('window').width; //full width
 
 var styles = StyleSheet.create({
   container: {
-    flex: 1,
     marginBottom: 10,
     alignItems: 'stretch',
     alignSelf: 'stretch',
