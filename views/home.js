@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * iOS Home page
@@ -15,7 +16,9 @@ import {
 import NavigatorScreen from './components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
 
-const views = [
+type ViewListType = 'MenusView'| 'SISView'| 'BuildingHoursView'| 'CalendarView'| 'DirectoryView'| 'StreamingView'| 'NewsView'| 'MapView'| 'ContactsView'| 'TransportationView'| 'DictionaryView'
+type ViewType = {usable: boolean, view: ViewListType, title: string, icon: string};
+const views: ViewType[] = [
   {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl'},
   {usable: false, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
   {usable: true, view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock'},
@@ -29,14 +32,29 @@ const views = [
   {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
 ]
 
-function HomePageButton({view, navigator}) {
+const buttonStyles = StyleSheet.create({
+  MenusView: { backgroundColor: c.emerald },
+  SISView: { backgroundColor: c.goldenrod },
+  BuildingHoursView: { backgroundColor: c.wave },
+  CalendarView: { backgroundColor: c.coolPurple },
+  DirectoryView: { backgroundColor: c.indianRed },
+  StreamingView: { backgroundColor: c.denim },
+  NewsView: { backgroundColor: c.eggplant },
+  MapView: { backgroundColor: c.coffee },
+  ContactsView: { backgroundColor: c.crimson },
+  TransportationView: { backgroundColor: c.cardTable },
+  DictionaryView: { backgroundColor: c.olive },
+})
+
+type ButtonPropsType = {view: ViewType, navigator: typeof Navigator};
+function HomePageButton({view, navigator}: ButtonPropsType) {
   return (
     <TouchableOpacity
       key={view.title}
       onPress={() => navigator.push({id: view.view, title: view.title, sceneConfig: Navigator.SceneConfigs.FloatFromRight})}
       activeOpacity={0.5}
     >
-      <View style={[styles.rectangle, styles[`${view.view}Button`]]}>
+      <View style={[styles.rectangle, buttonStyles[view.view]]}>
         <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
         <Text
           style={styles.rectangleButtonText}
@@ -60,8 +78,8 @@ HomePageButton.propTypes = {
 }
 
 
-
-function HomePageScene({navigator}) {
+type ScenePropsType = {navigator: typeof Navigator};
+function HomePageScene({navigator}: ScenePropsType) {
   return (
     <ScrollView
       automaticallyAdjustContentInsets={false}
@@ -85,8 +103,7 @@ HomePageScene.propTypes = {
 }
 
 
-
-export default function HomePage({navigator}) {
+export default function HomePage({navigator}: ScenePropsType) {
   return <NavigatorScreen
     {...this.props}
     title='All About Olaf'
@@ -139,6 +156,9 @@ let styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
 
+  scrollView: {},
+  navButton: {},
+
   // Main buttons for actions on home screen
   rectangle: {
     width: cellWidth,
@@ -151,40 +171,6 @@ let styles = StyleSheet.create({
 
     marginBottom: cellMargin,
     marginRight: cellMargin,
-  },
-
-  MenusViewButton: {
-    backgroundColor: c.emerald,
-  },
-  SISViewButton: {
-    backgroundColor: c.goldenrod,
-  },
-  BuildingHoursViewButton: {
-    backgroundColor: c.wave,
-  },
-  CalendarViewButton: {
-    backgroundColor: c.coolPurple,
-  },
-  DirectoryViewButton: {
-    backgroundColor: c.indianRed,
-  },
-  StreamingViewButton: {
-    backgroundColor: c.denim,
-  },
-  NewsViewButton: {
-    backgroundColor: c.eggplant,
-  },
-  MapViewButton: {
-    backgroundColor: c.coffee,
-  },
-  ContactsViewButton: {
-    backgroundColor: c.crimson,
-  },
-  TransportationViewButton: {
-    backgroundColor: c.cardTable,
-  },
-  DictionaryViewButton: {
-    backgroundColor: c.olive,
   },
 
   navigationButtonText: {
