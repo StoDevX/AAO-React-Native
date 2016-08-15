@@ -118,7 +118,7 @@ export default function HomePage({navigator}: ScenePropsType) {
     rightButton={(route, navigator) =>
       <TouchableOpacity
         style={styles.navButton}
-        onPress={() => navigator.parentNavigator.pop()}
+        onPress={() => {}}
       >
         <Text style={styles.navigationButtonText}>Edit</Text>
       </TouchableOpacity>
