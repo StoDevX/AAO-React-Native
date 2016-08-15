@@ -16,6 +16,7 @@ import {
 import * as c from '../components/colors'
 import Collapsible from 'react-native-collapsible'
 import MenuItem from './menuItem'
+import type { MenuItemType } from './types'
 
 let width = Dimensions.get('window').width //full width
 
@@ -48,14 +49,14 @@ let styles = StyleSheet.create({
 })
 
 export default class MenuSection extends React.Component {
-  static propTypes = {
-    content: React.PropTypes.string.isRequired,
-    header: React.PropTypes.string.isRequired,
-    subText: React.PropTypes.string.isRequired,
-  }
-
   state = {
     isCollapsed: true,
+  }
+
+  props: {
+    content: MenuItemType[],
+    header: string,
+    subText: string,
   }
 
   render() {
