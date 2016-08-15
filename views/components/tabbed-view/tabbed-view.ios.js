@@ -1,29 +1,25 @@
 // @flow
-/**
- * All About Olaf
- * iOS Menus page
- */
 
 import React from 'react'
 import {
-  StyleSheet,
   View,
   TabBarIOS,
 } from 'react-native'
 
-import NavigatorScreen from '../components/navigator-screen'
-import tabs from './tabs'
+import styles from './styles'
+import type { TabbedViewPropsType } from './types'
 
-export default class MenusPage extends React.Component {
+export default class TabbedView extends React.Component {
   state = {
-    isConnected: true,
-    selectedTab: tabs[0].id,
+    selectedTab: this.props.tabs[0].id,
   }
 
-  // Render a given scene
-  renderScene() {
+  props: TabbedViewPropsType
+
+  render() {
+    let tabs = this.props.tabs
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, this.props.style]}>
         <TabBarIOS
           tintColor='white'
           barTintColor='darkslateblue'
@@ -42,19 +38,4 @@ export default class MenusPage extends React.Component {
       </View>
     )
   }
-
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Menus'
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
