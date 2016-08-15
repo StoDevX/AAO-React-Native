@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * iOS Settings page
@@ -30,11 +31,11 @@ export default class SettingsView extends React.Component {
     password: '',
   }
 
-  updateUsername(text) {
+  updateUsername(text: string) {
     this.setState({ username: text })
   }
 
-  updatePassword(text) {
+  updatePassword(text: string) {
     this.setState({ password: text })
   }
 
@@ -60,7 +61,7 @@ export default class SettingsView extends React.Component {
     console.log('Credentials successfully created')
   }
 
-  async resetCredentials(username) {
+  async resetCredentials(username: string) {
     await Keychain.resetInternetCredentials(username)
     console.log('Credentials successfully deleted')
   }

@@ -92,9 +92,7 @@ rules:
 
   # flow rules
   flowtype/define-flow-type: error
-  flowtype/require-parameter-type: [error, {excludeArrowFunctions: true}]
-  flowtype/require-return-type: [error, {excludeArrowFunctions: true}]
-  flowtype/require-valid-file-annotation: [error, always]
+  # flowtype/require-valid-file-annotation: [error, always]
   flowtype/space-after-type-colon: [warn, always]
   flowtype/space-before-type-colon: [warn, never]
   flowtype/type-id-match: error

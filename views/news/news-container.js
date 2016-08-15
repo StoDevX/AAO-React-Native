@@ -1,3 +1,4 @@
+// @flow
 import React, {PropTypes} from 'react'
 import {
   StyleSheet,
@@ -8,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native'
 
+import type {StoryType} from './types'
 import LoadingView from './loading'
 import * as c from '../components/colors'
 
@@ -32,7 +34,7 @@ export default class NewsContainer extends React.Component {
     this.fetchData()
   }
 
-  rowHasChanged(r1, r2) {
+  rowHasChanged(r1: StoryType, r2: StoryType) {
     return r1.title != r2.title
   }
 
@@ -52,7 +54,7 @@ export default class NewsContainer extends React.Component {
     this.setState({loaded: true})
   }
 
-  renderRow(story) {
+  renderRow(story: StoryType) {
     let title = entities.decode(story.title)
     let snippet = entities.decode(story.contentSnippet)
     return (
@@ -67,7 +69,7 @@ export default class NewsContainer extends React.Component {
     )
   }
 
-  onPressNews(title, story) {
+  onPressNews(title, story: StoryType) {
     this.props.navigator.push({
       id: 'NewsItemView',
       title: title,

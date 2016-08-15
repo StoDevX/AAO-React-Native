@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import {
   StyleSheet,
@@ -8,6 +9,8 @@ import MenuSection from './menuSection'
 
 import menu from '../../data/cage-menu.json'
 
+import type {MenuSectionType} from './types'
+
 let styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -17,21 +20,17 @@ let styles = StyleSheet.create({
 })
 
 export default class CageMenuView extends React.Component {
-  constructor(props) {
-    super(props)
-    let ds = new ListView.DataSource({
+  state = {
+    dataSource: new ListView.DataSource({
       rowHasChanged: this._rowHasChanged,
-    })
-    this.state = {
-      dataSource: ds.cloneWithRows(menu),
-    }
+    }).cloneWithRows(menu),
   }
 
-  _rowHasChanged(r1, r2) {
+  _rowHasChanged(r1: MenuSectionType, r2: MenuSectionType) {
     return r1.name !== r2.name
   }
 
-  _renderRow(data) {
+  _renderRow(data: MenuSectionType) {
     return (
       <MenuSection header={data.name} content={data.items} subText={data.subtext} />
     )

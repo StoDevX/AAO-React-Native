@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * iOS Menus page
@@ -14,12 +15,9 @@ import NavigatorScreen from '../components/navigator-screen'
 import tabs from './tabs'
 
 export default class MenusPage extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      isConnected: true,
-      selectedTab: tabs[0].id,
-    }
+  state = {
+    isConnected: true,
+    selectedTab: tabs[0].id,
   }
 
   // Render a given scene

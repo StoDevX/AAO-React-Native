@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * iOS Media page
@@ -13,11 +14,8 @@ import NavigatorScreen from '../components/navigator-screen'
 import tabs from './tabs'
 
 export default class MediaView extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      selectedTab: tabs[0].id,
-    }
+  state = {
+    selectedTab: tabs[0].id,
   }
 
   // Render a given scene

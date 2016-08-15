@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * A list of the items availiable from a single menuSection
@@ -26,30 +27,28 @@ let styles = StyleSheet.create({
   },
 })
 
+import type {MenuItemType} from './types'
+
 export default class CageMenuView extends React.Component {
   static propTypes = {
     items: React.PropTypes.arrayOf(React.PropTypes.object),
   }
 
-  constructor(props) {
-    super(props)
-
-    let ds = new ListView.DataSource({
+  state = {
+    dataSource: new ListView.DataSource({
       rowHasChanged: this._rowHasChanged,
-    })
-    this.state = {
-      dataSource: ds.cloneWithRows(props.items),
-    }
+    }).cloneWithRows(this.props.items),
   }
 
-  _rowHasChanged(r1, r2) {
+  _rowHasChanged(r1: MenuItemType, r2: MenuItemType) {
     return r1.name !== r2.name
   }
 
-  _renderRow(data) {
+  _renderRow(data: MenuItemType) {
     return (
       <View style={styles.container}>
-        <Text style={styles.name}>{data.name}</Text><Text style={styles.price}>{data.price}</Text>
+        <Text style={styles.name}>{data.name}</Text>
+        <Text style={styles.price}>{data.price}</Text>
       </View>
     )
   }

@@ -1,3 +1,4 @@
+// @flow
 import React, {PropTypes} from 'react'
 import {
   // Text,
@@ -9,10 +10,9 @@ import {
 import NavigatorScreen from '../components/navigator-screen'
 // let Entities = require('html-entities').AllHtmlEntities
 // const entities = new Entities()
+import type {StoryType, NewsItemPropsType} from './types'
 
-function NewsItemContents({
-  content,
-}) {
+function NewsItemContents({content}: StoryType) {
   return (
     <WebView source={{html: content}} />
   )
@@ -26,7 +26,8 @@ NewsItemContents.propTypes = {
   title: PropTypes.string,
 }
 
-export default function NewsItemView(props) {
+
+export default function NewsItemView(props: NewsItemPropsType) {
   return <NavigatorScreen
     title={props.title}
     navigator={props.navigator}

@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react'
 import {
   StyleSheet,
@@ -19,13 +21,10 @@ const URL = 'https://stolaf.cafebonappetit.com/cafe/stav-hall#Lunch'
 // const DEFAULT_URL = 'http://legacy.cafebonappetit.com/print-menu/cafe/261/menu/112732/days/today/pgbrks/0/'
 
 export default class StavMenuView extends React.Component {
-  constructor() {
-    super()
-    this.scalesPageToFit = true
-    this.url = URL
-    this.state = {
-      isConnected: true,
-    }
+  state = {
+    isConnected: true,
+    url: URL,
+    scalesPageToFit: true,
   }
 
   componentWillMount() {
@@ -39,7 +38,7 @@ export default class StavMenuView extends React.Component {
     NetInfo.isConnected.removeEventListener('change', this._onConnectivityChange.bind(this))
   }
 
-  _onConnectivityChange(isConnected) {
+  _onConnectivityChange(isConnected: boolean) {
     this.setState({isConnected})
   }
 
@@ -47,13 +46,12 @@ export default class StavMenuView extends React.Component {
     return true
   }
 
-  onNavigationStateChange(navState) {
-    this.url = navState.url
-    this.scalesPageToFit = true
+  onNavigationStateChange(navState: {url: string}) {
+    this.setState({url: navState.url})
   }
 
   render() {
-    let webViewSource = {uri: this.url}
+    let webViewSource = {uri: this.state.url}
     return (
       <View style={styles.container}>
         <WebView
@@ -64,7 +62,7 @@ export default class StavMenuView extends React.Component {
           onNavigationStateChange={this.onNavigationStateChange.bind(this)}
           onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
           startInLoadingState={true}
-          scalesPageToFit={this.scalesPageToFit}
+          scalesPageToFit={true}
         />
       </View>
     )

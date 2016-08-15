@@ -1,3 +1,4 @@
+// @flow
 // import Icon from 'react-native-vector-icons/Entypo'
 
 import CageMenuView from './cage'

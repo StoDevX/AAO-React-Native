@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * Individual row for inside a collapsible view
@@ -24,7 +25,7 @@ let styles = StyleSheet.create({
     alignItems: 'stretch',
     alignSelf: 'stretch',
   },
-  collapsedConetent: {
+  collapsedContent: {
     alignSelf: 'center',
     backgroundColor: c.paleGreen,
     margin: 0,
@@ -64,7 +65,7 @@ export default class MenuSection extends React.Component {
           onPress={() => this.setState({isCollapsed: !this.state.isCollapsed})}
         >
           <Text style={styles.headerText}>{this.props.header}</Text>
-          <Collapsible collapsed={this.state.isCollapsed} style={styles.collapsedConetent}>
+          <Collapsible collapsed={this.state.isCollapsed} style={styles.collapsedContent}>
             <View style={styles.collapsedContainer}>
               <Text style={styles.contentText}>{this.props.subText}</Text>
               <MenuItem items={this.props.content} />

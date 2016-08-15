@@ -1,7 +1,8 @@
+// @flow
 import Keychain from 'react-native-keychain'
 
 const SIS_LOGIN_CREDENTIAL_KEY = 'stolaf.edu'
-export function saveLoginCredentials(username, password) {
+export function saveLoginCredentials(username: string, password: string) {
   return Keychain.setInternetCredentials(SIS_LOGIN_CREDENTIAL_KEY, username, password)
 }
 

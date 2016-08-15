@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * Weekly Movie page

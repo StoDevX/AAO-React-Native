@@ -26,8 +26,6 @@ install:
   - travis_wait npm install
 
   ### do js-only setup stuff
-  # install flow
-  - if [[ "$TEST_TYPE" = js ]]; then brew install flow; fi
   # prepare for jest
   - if [[ "$TEST_TYPE" = js ]]; then rm -rf "${TMPDIR}/jest_preprocess_cache"; fi
 
