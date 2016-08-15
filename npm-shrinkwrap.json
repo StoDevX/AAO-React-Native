@@ -1915,6 +1915,11 @@
       "from": "hosted-git-info@>=2.1.4 <3.0.0",
       "resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-2.1.5.tgz"
     },
+    "html-entities": {
+      "version": "1.2.0",
+      "from": "html-entities@1.2.0",
+      "resolved": "https://registry.npmjs.org/html-entities/-/html-entities-1.2.0.tgz"
+    },
     "html-wiring": {
       "version": "1.2.0",
       "from": "html-wiring@>=1.0.0 <2.0.0",
