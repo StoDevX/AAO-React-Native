@@ -1,23 +1,6 @@
 import React from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-} from 'react-native'
+import NewsContainer from './news-container'
 
-const styles = StyleSheet.create({
-
-})
-
-export default class StOlafNewsView extends React.Component {
-  render() {
-    return (
-      <ScrollView>
-        <View>
-          <Text>St. Olaf News</Text>
-        </View>
-      </ScrollView>
-    )
-  }
+export default function OlafNewsView(props) {
+  return <NewsContainer {...props} />
 }

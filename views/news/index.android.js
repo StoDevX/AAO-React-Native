@@ -7,7 +7,6 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Text,
 } from 'react-native'
 
 import {TabLayout, Tab} from 'react-native-android-tablayout'
@@ -22,34 +21,34 @@ export default class NewsView extends React.Component {
     }
   }
 
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title="News"
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
   // Render a given scene
   renderScene() {
-    let TabContents = tabs[this.state.selectedTab].content
+    let tab = tabs[this.state.selectedTab]
     return (
       <View style={styles.container}>
         <TabLayout
-          selectedTabIndicatorColor="darkslateblue"
+          selectedTabIndicatorColor='darkslateblue'
           selectedTab={this.state.selectedTab}
-          onTabSelected={e => {this.setState({selectedTab: e.nativeEvent.position})}}
+          onTabSelected={e => this.setState({selectedTab: e.nativeEvent.position})}
         >
           {tabs.map(tab => <Tab key={tab.id} name={tab.title} />)}
         </TabLayout>
-        {<TabContents />}
+        {<tab.content url={tab.url} navigator={this.props.navigator} />}
       </View>
     )
   }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='News'
+      renderScene={this.renderScene.bind(this)}
+    />
+  }
 }
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
 })

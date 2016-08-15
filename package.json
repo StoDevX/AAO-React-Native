@@ -27,6 +27,7 @@
     "buffer": "4.9.0",
     "events": "1.1.1",
     "fbemitter": "2.0.2",
+    "html-entities": "1.2.0",
     "lodash": "4.15.0",
     "querystring": "0.2.0",
     "react": "15.2.1",

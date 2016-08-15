@@ -15,7 +15,14 @@ const styles = StyleSheet.create({
   },
 })
 
-export default ({children, style}) =>
-  <Text style={[styles.navigationText, style]}>
-    {children}
-  </Text>
+export default function ScreenTitle({children, style}) {
+  return (
+    <Text
+      style={[styles.navigationText, style]}
+      numberOfLines={1}
+      ellipsizeMode='tail'
+    >
+      {children}
+    </Text>
+  )
+}

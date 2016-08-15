@@ -7,26 +7,20 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Text,
   TabBarIOS,
+  Navigator,
 } from 'react-native'
+
 import NavigatorScreen from '../components/navigator-screen'
 import tabs from './tabs'
 
 export default class NewsView extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      selectedTab: tabs[0].id,
-    }
+  static propTypes = {
+    navigator: React.PropTypes.instanceOf(Navigator),
   }
 
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title="News"
-      renderScene={this.renderScene.bind(this)}
-    />
+  state = {
+    selectedTab: tabs[0].id,
   }
 
   // Render a given scene
@@ -34,8 +28,8 @@ export default class NewsView extends React.Component {
     return (
       <View style={styles.container}>
         <TabBarIOS
-          tintColor="white"
-          barTintColor="darkslateblue"
+          tintColor='white'
+          barTintColor='darkslateblue'
         >
           {tabs.map(tab =>
             <TabBarIOS.Item
@@ -43,18 +37,30 @@ export default class NewsView extends React.Component {
               icon={tab.icon}
               title={tab.title}
               selected={this.state.selectedTab === tab.id}
-              onPress={() => {this.setState({selectedTab: tab.id})}}
+              onPress={() => this.setState({selectedTab: tab.id})}
             >
-              <tab.content />
+              <tab.content
+                navigator={this.props.navigator}
+                url={tab.url}
+              />
             </TabBarIOS.Item>)}
         </TabBarIOS>
       </View>
     )
   }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='News'
+      renderScene={this.renderScene.bind(this)}
+    />
+  }
 }
 
-var styles = StyleSheet.create({
+
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
 })
