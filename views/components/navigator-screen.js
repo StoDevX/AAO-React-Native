@@ -39,7 +39,6 @@ export default class NavigatorView extends React.Component {
 
   static defaultProps = {
     leftButton(route, navigator) {
-      console.log('leftButton', route, navigator)
       return <BackButton navigator={navigator} route={route} />
     },
     rightButton() {
@@ -48,7 +47,6 @@ export default class NavigatorView extends React.Component {
   }
 
   render() {
-    console.log('Navigator#render', this.props.navigator)
     return (
       <Navigator
         navigator={this.props.navigator}
