@@ -23,10 +23,6 @@
     "release:ios": "echo 'Not yet implemented!'",
     "release:android": "echo 'Not yet implemented!'"
   },
-  "pre-commit": [
-    "lint",
-    "flow"
-  ],
   "dependencies": {
     "buffer": "4.9.0",
     "events": "1.1.1",
