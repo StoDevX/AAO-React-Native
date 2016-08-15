@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * Building Hours list element
@@ -51,7 +52,7 @@ let imageStyles = {
 }
 
 // PROPS: imageSrc, open, name
-export default function BuildingView({open}) {
+export default function BuildingView({open}: {open: 'open'|'closed'|'almostClosed'}) {
   let imageStyle = imageStyles[open]
 
   return (
