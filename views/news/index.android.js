@@ -7,6 +7,7 @@ import React from 'react'
 import {
   StyleSheet,
   View,
+  Navigator,
 } from 'react-native'
 
 import {TabLayout, Tab} from 'react-native-android-tablayout'
@@ -14,11 +15,12 @@ import NavigatorScreen from '../components/navigator-screen'
 import tabs from './tabs'
 
 export default class NewsView extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      selectedTab: 0,
-    }
+  static propTypes = {
+    navigator: React.PropTypes.instanceOf(Navigator),
+  }
+
+  state = {
+    selectedTab: tabs[0].id,
   }
 
   // Render a given scene

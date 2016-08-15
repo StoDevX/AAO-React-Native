@@ -40,20 +40,21 @@ export default function LoginButton(props) {
 }
 
 LoginButton.propTypes = {
+  children: React.PropTypes.node.isRequired,
   containerStyle: React.PropTypes.oneOfType([
     React.PropTypes.number,
     React.PropTypes.object,
   ]),
-  style: React.PropTypes.oneOfType([
-    React.PropTypes.number,
-    React.PropTypes.object,
-  ]),
+  disabled: React.PropTypes.bool,
   disabledStyle: React.PropTypes.oneOfType([
     React.PropTypes.number,
     React.PropTypes.object,
   ]),
   onPress: React.PropTypes.func,
-  disabled: React.PropTypes.bool,
+  style: React.PropTypes.oneOfType([
+    React.PropTypes.number,
+    React.PropTypes.object,
+  ]),
 }
 
 LoginButton.defaultProps = {

@@ -10,16 +10,14 @@ import {
   Text,
 } from 'react-native'
 
-let kstoDownload = 'itms://itunes.apple.com/us/app/ksto/id953916647'
+// let kstoDownload = 'itms://itunes.apple.com/us/app/ksto/id953916647'
 
-export default class KSTOView extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>KSTO Radio</Text>
-      </View>
-    )
-  }
+export default function KSTOView() {
+  return (
+    <View style={styles.container}>
+      <Text>KSTO Radio</Text>
+    </View>
+  )
 }
 
 let styles = StyleSheet.create({

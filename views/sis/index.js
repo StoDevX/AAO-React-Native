@@ -6,38 +6,34 @@
 import React from 'react'
 import {
   StyleSheet,
-  Text,
   View,
-  TextInput,
-  AsyncStorage,
 } from 'react-native'
 import NavigatorScreen from '../components/navigator-screen'
 import SISLoginSection from './login'
 
-let financials = 'https://www.stolaf.edu/sis/st-financials.cfm'
-let sis = 'https://www.stolaf.edu/sis/login.cfm'
-let olecard = 'https://www.stolaf.edu/apps/olecard/checkbalance/authenticate.cfm'
+// let financials = 'https://www.stolaf.edu/sis/st-financials.cfm'
+// let sis = 'https://www.stolaf.edu/sis/login.cfm'
+// let olecard = 'https://www.stolaf.edu/apps/olecard/checkbalance/authenticate.cfm'
 
-import Keychain from 'react-native-keychain'
-import Frisbee from 'frisbee'
-const api = new Frisbee({
-  baseURI: 'https://www.stolaf.edu',
-})
+// import Frisbee from 'frisbee'
+// const api = new Frisbee({
+//   baseURI: 'https://www.stolaf.edu',
+// })
 
-import buildFormData from './formdata'
+// import buildFormData from './formdata'
 
-import {saveLoginCredentials, loadLoginCredentials, clearLoginCredentials} from './loginstuff'
+// import {saveLoginCredentials, loadLoginCredentials, clearLoginCredentials} from './loginstuff'
 
-async function weeklyMealsRemaining() {
-  let {username, password} = await loadLoginCredentials()
-  let form = buildFormData({
-    username: username,
-    password: password,
-  })
-  let page = await api.post('/apps/olecard/checkbalance/authenticate.cfm', {body: form})
-  console.log(page)
-  return page
-}
+// async function weeklyMealsRemaining() {
+//   let {username, password} = await loadLoginCredentials()
+//   let form = buildFormData({
+//     username: username,
+//     password: password,
+//   })
+//   let page = await api.post('/apps/olecard/checkbalance/authenticate.cfm', {body: form})
+//   console.log(page)
+//   return page
+// }
 
 const styles = StyleSheet.create({
   container: {
@@ -46,20 +42,8 @@ const styles = StyleSheet.create({
 })
 
 export default class SISView extends React.Component {
-  constructor() {
-    super()
-  }
-
   componentWillMount() {
 
-  }
-
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='SIS'
-      renderScene={this.renderScene.bind(this)}
-    />
   }
 
   // Render a given scene
@@ -69,5 +53,13 @@ export default class SISView extends React.Component {
         <SISLoginSection />
       </View>
     )
+  }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='SIS'
+      renderScene={this.renderScene.bind(this)}
+    />
   }
 }

@@ -7,7 +7,6 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Text,
   WebView,
 } from 'react-native'
 
@@ -15,14 +14,6 @@ import NavigatorScreen from './components/navigator-screen'
 import mapInfo from '../data/map.json'
 
 export default class OlafMapView extends React.Component {
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Map'
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
   // Render a given scene
   renderScene() {
     return (
@@ -34,6 +25,14 @@ export default class OlafMapView extends React.Component {
         />
       </View>
     )
+  }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='Map'
+      renderScene={this.renderScene.bind(this)}
+    />
   }
 }
 

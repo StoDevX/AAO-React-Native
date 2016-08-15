@@ -10,7 +10,6 @@ import {
   Text,
   ListView,
 } from 'react-native'
-import NavigatorScreen from '../components/navigator-screen'
 
 let styles = StyleSheet.create({
   container: {
@@ -28,6 +27,10 @@ let styles = StyleSheet.create({
 })
 
 export default class CageMenuView extends React.Component {
+  static propTypes = {
+    items: React.PropTypes.arrayOf(React.PropTypes.object),
+  }
+
   constructor(props) {
     super(props)
 
@@ -35,7 +38,7 @@ export default class CageMenuView extends React.Component {
       rowHasChanged: this._rowHasChanged,
     })
     this.state = {
-      dataSource: ds.cloneWithRows(this.props.items),
+      dataSource: ds.cloneWithRows(props.items),
     }
   }
 
@@ -56,7 +59,8 @@ export default class CageMenuView extends React.Component {
       <View style={styles.container}>
         <ListView
           dataSource={this.state.dataSource}
-          renderRow={this._renderRow.bind(this)} />
+          renderRow={this._renderRow.bind(this)}
+        />
       </View>
     )
   }

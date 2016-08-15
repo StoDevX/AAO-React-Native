@@ -86,6 +86,23 @@ export default class SISLoginSection extends React.Component {
     }
   }
 
+  _handlePress = async () => {
+    this.setState({loading: true})
+    let {username, password} = this.state
+    let success = await sisLogin(username, password)
+    if (success) {
+      saveLoginCredentials(username, password)
+      AsyncStorage.setItem('sis:valid_credentials', JSON.stringify(true))
+    }
+    this.setState({loading: false, attempted: true, success})
+  }
+
+  logOut = async () => {
+    this.setState({username: '', password: ''})
+    clearLoginCredentials()
+    AsyncStorage.removeItem('sis:valid_credentials')
+  }
+
   render() {
     return (
       <ScrollView>
@@ -145,22 +162,5 @@ export default class SISLoginSection extends React.Component {
           : null}
       </ScrollView>
     )
-  }
-
-  _handlePress = async () => {
-    this.setState({loading: true})
-    let {username, password} = this.state
-    let success = await sisLogin(username, password)
-    if (success) {
-      saveLoginCredentials(username, password)
-      AsyncStorage.setItem('sis:valid_credentials', JSON.stringify(true))
-    }
-    this.setState({loading: false, attempted: true, success})
-  }
-
-  logOut = async () => {
-    this.setState({username: '', password: ''})
-    clearLoginCredentials()
-    AsyncStorage.removeItem('sis:valid_credentials')
   }
 }

@@ -11,7 +11,6 @@ import {
   Image,
 } from 'react-native'
 
-import NavigatorScreen from './navigator-screen'
 import * as c from './colors'
 
 let styles = StyleSheet.create({
@@ -45,42 +44,25 @@ let styles = StyleSheet.create({
   },
 })
 
+let imageStyles = {
+  open: styles.buildingOpen,
+  almostClosed: styles.buildingAlmostClosed,
+  closed: styles.buildingClosed,
+}
+
 // PROPS: imageSrc, open, name
-export default class BuildingView extends React.Component {
-  render() {
-    switch (this.props.open) {
-      case 'open':
-        return (
-          <View style={styles.container}>
-            <Image source={{uri: this.props.imageSource}} style={styles.buildingOpen}>
-              <Text style={styles.name}>{this.props.name}</Text>
-              </Image>
-          </View>
-        )
-        break
-      case 'almostClosed':
-        return (
-          <View style={styles.container}>
-            <Image source={{uri: this.props.imageSource}} style={styles.buildingAlmostClosed}>
-              <Text style={styles.name}>{this.props.name}</Text>
-              </Image>
-          </View>
-        )
-        break
-      case 'closed':
-        return (
-          <View style={styles.container}>
-            <Image source={{uri: this.props.imageSource}} style={styles.buildingClosed}>
-              <Text style={styles.name}>{this.props.name}</Text>
-              </Image>
-          </View>
-        )
-        break
-      default:
-        return (
-          <View></View>
-        )
-        break
-    }
-  }
+export default function BuildingView({open}) {
+  let imageStyle = imageStyles[open]
+
+  return (
+    <View style={styles.container}>
+      <Image source={{uri: this.props.imageSource}} style={imageStyle}>
+        <Text style={styles.name}>{this.props.name}</Text>
+      </Image>
+    </View>
+  )
+}
+
+BuildingView.propTypes = {
+  open: React.PropTypes.oneOf(['open', 'almostClosed', 'closed']).isRequired,
 }

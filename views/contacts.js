@@ -7,20 +7,8 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Text,
-  ScrollView,
   ListView,
 } from 'react-native'
-
-import Button from 'react-native-button' // the button
-import Communications from 'react-native-communications' // the phone call functions
-import {
-  Card,
-  CardImage,
-  CardTitle,
-  CardContent,
-  CardAction,
-} from 'react-native-card-view' // this relies on the exoernal card library
 
 import NavigatorScreen from './components/navigator-screen'
 import ContactCard from './components/contactCard'
@@ -44,14 +32,6 @@ export default class ContactView extends React.Component {
     return r1.title !== r2.title
   }
 
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Contact'
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
   renderScene() {
     return (
       <View style={styles.container}>
@@ -67,6 +47,14 @@ export default class ContactView extends React.Component {
     return (
       <ContactCard title={data.title} text={data.text} phoneNumber={data.phoneNumber} buttonText={data.buttonText} />
     )
+  }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='Contact'
+      renderScene={this.renderScene.bind(this)}
+    />
   }
 }
 

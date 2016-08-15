@@ -3,6 +3,7 @@ import {
   View,
   TouchableOpacity,
   Text,
+  Navigator,
 } from 'react-native'
 
 export default function NoRoute({navigator}) {
@@ -16,4 +17,8 @@ export default function NoRoute({navigator}) {
       </TouchableOpacity>
     </View>
   )
+}
+
+NoRoute.propTypes = {
+  navigator: React.PropTypes.instanceOf(Navigator),
 }

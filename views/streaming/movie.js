@@ -10,14 +10,12 @@ import {
   Text,
 } from 'react-native'
 
-export default class WeeklyMovieView extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Movie</Text>
-      </View>
-    )
-  }
+export default function WeeklyMovieView() {
+  return (
+    <View style={styles.container}>
+      <Text>Movie</Text>
+    </View>
+  )
 }
 
 let styles = StyleSheet.create({

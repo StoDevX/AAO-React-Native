@@ -2,10 +2,8 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Text,
   ListView,
 } from 'react-native'
-import NavigatorScreen from '../components/navigator-screen'
 import MenuSection from './menuSection'
 
 import menu from '../../data/cage-menu.json'

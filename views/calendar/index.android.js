@@ -7,13 +7,10 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Text,
 } from 'react-native'
 
 import {TabLayout, Tab} from 'react-native-android-tablayout'
 import NavigatorScreen from '../components/navigator-screen'
-import OlevilleCalendarView from './olevilleCalendar'
-import MasterCalendarView from './olevilleCalendar'
 import tabs from './tabs'
 
 export default class CalendarPage extends React.Component {
@@ -24,14 +21,6 @@ export default class CalendarPage extends React.Component {
     }
   }
 
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Calendar'
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
   // Render a given scene
   renderScene() {
     let TabContents = tabs[this.state.selectedTab].content
@@ -40,13 +29,21 @@ export default class CalendarPage extends React.Component {
         <TabLayout
           selectedTabIndicatorColor='darkslateblue'
           selectedTab={this.state.selectedTab}
-          onTabSelected={e => {this.setState({selectedTab: e.nativeEvent.position})}}
+          onTabSelected={e => this.setState({selectedTab: e.nativeEvent.position})}
         >
           {tabs.map(tab => <Tab key={tab.id} name={tab.title} />)}
         </TabLayout>
         {<TabContents />}
       </View>
     )
+  }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='Calendar'
+      renderScene={this.renderScene.bind(this)}
+    />
   }
 }
 

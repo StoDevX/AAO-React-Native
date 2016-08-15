@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
+  Navigator,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import * as c from './colors'
@@ -27,8 +28,8 @@ const styles = StyleSheet.create({
   },
 })
 
-export default ({navigator}) =>
-  <TouchableOpacity
+export default function BackButton({navigator}) {
+  return <TouchableOpacity
     style={styles.navigationButton}
     onPress={() => navigator.parentNavigator.pop()}
   >
@@ -37,3 +38,7 @@ export default ({navigator}) =>
       Back
     </Text>
   </TouchableOpacity>
+}
+BackButton.propTypes = {
+  navigator: React.PropTypes.instanceOf(Navigator),
+}

@@ -43,6 +43,15 @@ export default class StavMenuView extends React.Component {
     this.setState({isConnected})
   }
 
+  onShouldStartLoadWithRequest() {
+    return true
+  }
+
+  onNavigationStateChange(navState) {
+    this.url = navState.url
+    this.scalesPageToFit = true
+  }
+
   render() {
     let webViewSource = {uri: this.url}
     return (
@@ -59,14 +68,5 @@ export default class StavMenuView extends React.Component {
         />
       </View>
     )
-  }
-
-  onShouldStartLoadWithRequest() {
-    return true
-  }
-
-  onNavigationStateChange(navState) {
-    this.url = navState.url
-    this.scalesPageToFit = true
   }
 }

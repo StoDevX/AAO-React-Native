@@ -26,3 +26,7 @@ export default function ScreenTitle({children, style}) {
     </Text>
   )
 }
+ScreenTitle.propTypes = {
+  children: React.PropTypes.node.isRequired,
+  style: React.PropTypes.number,
+}

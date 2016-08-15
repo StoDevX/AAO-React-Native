@@ -12,7 +12,7 @@ import {
   TextInput,
 } from 'react-native'
 
-export default function LabelledTextInput(props) {
+export default function LabelledTextInput() {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Username:</Text>

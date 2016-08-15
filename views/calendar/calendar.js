@@ -15,21 +15,14 @@ import EventView from './event'
 import { GOOGLE_CALENDAR_API_KEY } from '../../lib/config'
 
 export default class CalendarView extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      masterEvents: null,
-      masterLoaded: false,
-      error: false,
-    }
+  static propTypes = {
+    events: React.PropTypes.oneOf(['master', 'oleville']).isRequired,
   }
 
-  _rowHasChanged(r1, r2) {
-    return r1.summary != r2.summary
-  }
-
-  render() {
-    return this.renderScene()
+  state = {
+    masterEvents: null,
+    masterLoaded: false,
+    error: false,
   }
 
   componentWillMount() {
@@ -43,6 +36,10 @@ export default class CalendarView extends React.Component {
     } else {
       this.getOlevilleEvents(GOOGLE_CALENDAR_API_KEY, nowString)
     }
+  }
+
+  _rowHasChanged(r1, r2) {
+    return r1.summary != r2.summary
   }
 
   async getMasterEvents(apiKey, currentTime) {
@@ -79,7 +76,7 @@ export default class CalendarView extends React.Component {
 
   // Render a given scene
   renderScene() {
-    if (this.state.masterEvents != null) {
+    if (this.state.masterEvents !== null) {
       let ds = new ListView.DataSource({
         rowHasChanged: this._rowHasChanged,
       })
@@ -96,6 +93,10 @@ export default class CalendarView extends React.Component {
         <Text> Loading </Text>
       )
     }
+  }
+
+  render() {
+    return this.renderScene()
   }
 }
 

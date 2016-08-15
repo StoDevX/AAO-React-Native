@@ -12,21 +12,21 @@ import {
 } from 'react-native'
 import webcamInfo from '../../data/webcams'
 
-const inlineVideo = url => `
-  <style>
-    body {margin: 0}
-    * {box-sizing: border-box}
-    video {
-      position: absolute;
-      top: 0;
-      width: 100%;
-      height: 100%;
-    }
-  </style>
-  <video autoplay muted webkit-playsinline>
-    <source src="${url}" type="application/x-mpegURL">
-  </video>
-`
+// const inlineVideo = url => `
+//   <style>
+//     body {margin: 0}
+//     * {box-sizing: border-box}
+//     video {
+//       position: absolute;
+//       top: 0;
+//       width: 100%;
+//       height: 100%;
+//     }
+//   </style>
+//   <video autoplay muted webkit-playsinline>
+//     <source src="${url}" type="application/x-mpegURL">
+//   </video>
+// `
 
 const videoAsThumbnail = url => `
   <style>
@@ -45,27 +45,25 @@ const videoAsThumbnail = url => `
 `
 
 
-export default class WebcamsView extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Webcams</Text>
-        {webcamInfo.map(webcam =>
-          <View style={styles.row} key={webcam.name}>
-            <Text>{webcam.name}</Text>
-            <WebView
-              style={styles.video}
-              mediaPlaybackRequiresUserAction={false}
-              scalesPageToFit={false}
-              allowsInlineMediaPlayback={true}
-              scrollEnabled={false}
-              source={{html: videoAsThumbnail(webcam.url)}}
-            />
-          </View>
-        )}
-      </View>
-    )
-  }
+export default function WebcamsView() {
+  return (
+    <View style={styles.container}>
+      <Text>Webcams</Text>
+      {webcamInfo.map(webcam =>
+        <View style={styles.row} key={webcam.name}>
+          <Text>{webcam.name}</Text>
+          <WebView
+            style={styles.video}
+            mediaPlaybackRequiresUserAction={false}
+            scalesPageToFit={false}
+            allowsInlineMediaPlayback={true}
+            scrollEnabled={false}
+            source={{html: videoAsThumbnail(webcam.url)}}
+          />
+        </View>
+      )}
+    </View>
+  )
 }
 
 let styles = StyleSheet.create({

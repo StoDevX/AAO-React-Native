@@ -3,10 +3,10 @@ import {
   StyleSheet,
   View,
   Text,
-  Image,
 } from 'react-native'
 
 import * as c from '../components/colors'
+import padEnd from 'lodash/padEnd'
 
 let styles = StyleSheet.create({
   event: {
@@ -14,7 +14,6 @@ let styles = StyleSheet.create({
     paddingBottom: 10,
     marginBottom: 5,
     justifyContent: 'flex-end',
-
   },
   title: {
     color: c.white,
@@ -33,12 +32,16 @@ let styles = StyleSheet.create({
 
 // PROPS: eventTitle, location, startTime, endTime
 export default class EventView extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      start: null,
-      end: null,
-    }
+  static propTypes = {
+    endTime: React.PropTypes.string.isRequired,
+    eventTitle: React.PropTypes.string.isRequired,
+    location: React.PropTypes.string.isRequired,
+    startTime: React.PropTypes.string.isRequired,
+  }
+
+  state = {
+    start: null,
+    end: null,
   }
 
   componentWillMount() {
@@ -49,17 +52,16 @@ export default class EventView extends React.Component {
     let month = date.getMonth() + 1 // offset since JS uses 0-11, not 1-12
     let day = date.getDate()
 
+    let hours = date.getHours()
+    let isMorning = true
     if (date.getHours() > 12) {
-      var hours = date.getHours() - 12
-      hours = hours
-      var isMorning = false
-    } else {
-      var hours = date.getHours()
-      var isMorning = true
+      hours = date.getHours() - 12
+      isMorning = false
     }
+
     let min = date.getMinutes()
     if (min.toString().length < 2) {
-      min = '' + min + '0'
+      min = padEnd(min, 2, '0')
     }
 
     if (isMorning) {
@@ -68,8 +70,7 @@ export default class EventView extends React.Component {
       min += 'PM'
     }
 
-    let str = '' + month + '/' + day +  ' ' + hours + ':' + min
-    return str
+    return `${month}/${day} ${hours}:${min}`
   }
 
   parseDates(startTime, endTime) {

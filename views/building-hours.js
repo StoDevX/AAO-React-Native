@@ -7,8 +7,6 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Text,
-  Image,
   ListView,
 } from 'react-native'
 
@@ -93,14 +91,6 @@ export default class BuildingHoursView extends React.Component {
     return r1.name !== r2.name
   }
 
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Building Hours'
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
   _renderRow(data) {
     let isOpen = isBuildingOpen(data)
     return (
@@ -120,6 +110,14 @@ export default class BuildingHoursView extends React.Component {
         />
       </View>
     )
+  }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='Building Hours'
+      renderScene={this.renderScene.bind(this)}
+    />
   }
 }
 

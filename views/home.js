@@ -29,78 +29,89 @@ const views = [
   {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
 ]
 
-export default class HomePage extends React.Component {
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='All About Olaf'
-      renderScene={this.renderScene.bind(this)}
-      leftButton={(route, navigator) => {
-        return (
-          <TouchableOpacity
-            style={styles.navButton}
-            onPress={() => this.pushView('SettingsView', 'Settings', Navigator.SceneConfigs.FloatFromLeft)}
-          >
-            <Icon name='info' style={styles.navigationButtonIcon} />
-          </TouchableOpacity>
-        )
-      }}
-      rightButton={(route, navigator) => {
-        return (
-          <TouchableOpacity
-            style={styles.navButton}
-            onPress={() => navigator.parentNavigator.pop()}
-          >
-            <Text style={styles.navigationButtonText}>Edit</Text>
-          </TouchableOpacity>
-        )
-      }}
-    />
-  }
+function HomePageButton({view, navigator}) {
+  return (
+    <TouchableOpacity
+      key={view.title}
+      onPress={() => navigator.push({id: view.view, title: view.title, sceneConfig: Navigator.SceneConfigs.FloatFromRight})}
+      activeOpacity={0.5}
+    >
+      <View style={[styles.rectangle, styles[`${view.view}Button`]]}>
+        <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
+        <Text
+          style={styles.rectangleButtonText}
+          autoAdjustsFontSize={true}
+        >
+          {view.title}{view.usable ? '' : ' !'}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  )
+}
 
-  // Go to request page
-  pushView(view, viewTitle, viewAnimation) {
-    this.props.navigator.push({
-      id: view,
-      title: viewTitle,
-      sceneConfig: viewAnimation,
-    })
-  }
+HomePageButton.propTypes = {
+  navigator: React.PropTypes.instanceOf(Navigator).isRequired,
+  view: React.PropTypes.shapeOf({
+    view: React.PropTypes.string.isRequired,
+    title: React.PropTypes.string.isRequired,
+    icon: React.PropTypes.string.isRequired,
+    usable: React.PropTypes.bool.isRequired,
+  }).isRequired,
+}
 
-  // Render a given scene
-  renderScene() {
-    return (
-      <ScrollView
-        automaticallyAdjustContentInsets={false}
-        scrollEventThrottle={200}
-        overflow={'hidden'}
-        alwaysBounceHorizontal={false}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        style={styles.scrollView}
+
+
+function HomePageScene({navigator}) {
+  return (
+    <ScrollView
+      automaticallyAdjustContentInsets={false}
+      scrollEventThrottle={200}
+      overflow={'hidden'}
+      alwaysBounceHorizontal={false}
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
+      style={styles.scrollView}
+    >
+      <View style={styles.container}>
+        {views.map(view =>
+          <HomePageButton view={view} navigator={navigator} />)}
+      </View>
+    </ScrollView>
+  )
+}
+
+HomePageScene.propTypes = {
+  navigator: React.PropTypes.instanceOf(Navigator),
+}
+
+
+
+export default function HomePage({navigator}) {
+  return <NavigatorScreen
+    {...this.props}
+    title='All About Olaf'
+    renderScene={HomePageScene.bind(null, navigator)}
+    leftButton={(route, navigator) =>
+      <TouchableOpacity
+        style={styles.navButton}
+        onPress={() => navigator.push({id: 'SettingsView', title: 'Settings', sceneConfig: Navigator.SceneConfigs.FloatFromLeft})}
       >
-        <View style={styles.container}>
-          {views.map(view =>
-            <TouchableOpacity
-              key={view.title}
-              onPress={() => this.pushView(view.view, view.title, Navigator.SceneConfigs.FloatFromRight)}
-              activeOpacity={0.5}
-            >
-              <View style={[styles.rectangle, styles[`${view.view}Button`]]}>
-                <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
-                <Text
-                  style={styles.rectangleButtonText}
-                  autoAdjustsFontSize={true}
-                >
-                  {view.title}{view.usable ? '' : ' !'}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        </View>
-      </ScrollView>
-    )
-  }
+        <Icon name='info' style={styles.navigationButtonIcon} />
+      </TouchableOpacity>
+    }
+    rightButton={(route, navigator) =>
+      <TouchableOpacity
+        style={styles.navButton}
+        onPress={() => navigator.parentNavigator.pop()}
+      >
+        <Text style={styles.navigationButtonText}>Edit</Text>
+      </TouchableOpacity>
+    }
+  />
+}
+
+HomePage.propTypes = {
+  navigator: React.PropTypes.instanceOf(Navigator),
 }
 
 

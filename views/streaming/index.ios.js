@@ -7,7 +7,6 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Text,
   TabBarIOS,
 } from 'react-native'
 import NavigatorScreen from '../components/navigator-screen'
@@ -19,14 +18,6 @@ export default class MediaView extends React.Component {
     this.state = {
       selectedTab: tabs[0].id,
     }
-  }
-
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Media'
-      renderScene={this.renderScene.bind(this)}
-    />
   }
 
   // Render a given scene
@@ -43,13 +34,21 @@ export default class MediaView extends React.Component {
               icon={tab.icon}
               title={tab.title}
               selected={this.state.selectedTab === tab.id}
-              onPress={() => {this.setState({selectedTab: tab.id})}}
+              onPress={() => this.setState({selectedTab: tab.id})}
             >
               <tab.content />
             </TabBarIOS.Item>)}
         </TabBarIOS>
       </View>
     )
+  }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='Media'
+      renderScene={this.renderScene.bind(this)}
+    />
   }
 }
 

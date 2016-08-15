@@ -49,14 +49,6 @@ export default class DirectoryView extends React.Component {
     this.setState({isConnected})
   }
 
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Directory'
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
   renderScene() {
     let webViewSource = {uri: this.url}
     return (
@@ -82,5 +74,13 @@ export default class DirectoryView extends React.Component {
   onNavigationStateChange(navState) {
     this.url = navState.url
     this.scalesPageToFit = true
+  }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='Directory'
+      renderScene={this.renderScene.bind(this)}
+    />
   }
 }

@@ -8,7 +8,6 @@ import {
   StyleSheet,
   View,
   Text,
-  Image,
   TouchableOpacity,
   Dimensions,
 } from 'react-native'
@@ -48,25 +47,29 @@ let styles = StyleSheet.create({
 })
 
 export default class MenuSection extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      isCollapsed: true,
-    }
+  static propTypes = {
+    content: React.PropTypes.string.isRequired,
+    header: React.PropTypes.string.isRequired,
+    subText: React.PropTypes.string.isRequired,
+  }
+
+  state = {
+    isCollapsed: true,
   }
 
   render() {
     return (
       <View style={styles.container}>
         <TouchableOpacity
-          onPress={() => this.setState({isCollapsed: !this.state.isCollapsed})}>
-            <Text style={styles.headerText}>{this.props.header}</Text>
-            <Collapsible collapsed={this.state.isCollapsed} style={styles.collapsedConetent}>
-              <View style={styles.collapsedContainer}>
-                <Text style={styles.contentText}>{this.props.subText}</Text>
-                <MenuItem items={this.props.content} />
-              </View>
-            </Collapsible>
+          onPress={() => this.setState({isCollapsed: !this.state.isCollapsed})}
+        >
+          <Text style={styles.headerText}>{this.props.header}</Text>
+          <Collapsible collapsed={this.state.isCollapsed} style={styles.collapsedConetent}>
+            <View style={styles.collapsedContainer}>
+              <Text style={styles.contentText}>{this.props.subText}</Text>
+              <MenuItem items={this.props.content} />
+            </View>
+          </Collapsible>
         </TouchableOpacity>
       </View>
     )

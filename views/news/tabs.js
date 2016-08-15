@@ -1,4 +1,4 @@
-import Icon from 'react-native-vector-icons/Entypo'
+// import Icon from 'react-native-vector-icons/Entypo'
 
 import StOlafNewsView from './stolaf'
 import PoliticoleView from './politicole'

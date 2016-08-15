@@ -13,14 +13,6 @@ import {
 import NavigatorScreen from './components/navigator-screen'
 
 export default class TransportationView extends React.Component {
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Transportation'
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
   // Render a given scene
   renderScene() {
     return (
@@ -28,6 +20,14 @@ export default class TransportationView extends React.Component {
         <Text>Transportation</Text>
       </View>
     )
+  }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='Transportation'
+      renderScene={this.renderScene.bind(this)}
+    />
   }
 }
 

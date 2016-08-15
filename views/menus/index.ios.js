@@ -22,14 +22,6 @@ export default class MenusPage extends React.Component {
     }
   }
 
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Menus'
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
   // Render a given scene
   renderScene() {
     return (
@@ -44,13 +36,21 @@ export default class MenusPage extends React.Component {
               icon={tab.icon}
               title={tab.title}
               selected={this.state.selectedTab === tab.id}
-              onPress={() => {this.setState({selectedTab: tab.id})}}
+              onPress={() => this.setState({selectedTab: tab.id})}
             >
               <tab.content />
             </TabBarIOS.Item>)}
         </TabBarIOS>
       </View>
     )
+  }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='Menus'
+      renderScene={this.renderScene.bind(this)}
+    />
   }
 }
 

@@ -46,6 +46,19 @@ export default class NavigatorView extends React.Component {
     },
   }
 
+  renderTitle() {
+    return <ScreenTitle>{this.props.title}</ScreenTitle>
+  }
+
+  // Render a given scene
+  renderScene() {
+    return (
+      <View style={styles.container}>
+        {this.props.renderScene()}
+      </View>
+    )
+  }
+
   render() {
     return (
       <Navigator
@@ -62,19 +75,6 @@ export default class NavigatorView extends React.Component {
           />
         }
       />
-    )
-  }
-
-  renderTitle() {
-    return <ScreenTitle>{this.props.title}</ScreenTitle>
-  }
-
-  // Render a given scene
-  renderScene() {
-    return (
-      <View style={styles.container}>
-        {this.props.renderScene()}
-      </View>
     )
   }
 }

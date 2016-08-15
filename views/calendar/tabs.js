@@ -1,5 +1,3 @@
-import Icon from 'react-native-vector-icons/Entypo'
-
 import OlevilleCalendarView from './olevilleCalendar'
 import MasterCalendarView from './masterCalendar'
 

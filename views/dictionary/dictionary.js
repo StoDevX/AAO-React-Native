@@ -7,8 +7,6 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Text,
-  Image,
   ListView,
 } from 'react-native'
 
@@ -44,14 +42,6 @@ export default class DictionaryView extends React.Component {
     )
   }
 
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Dictionary'
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
   renderScene() {
     return (
       <View style={styles.container}>
@@ -60,5 +50,13 @@ export default class DictionaryView extends React.Component {
           renderRow={this._renderRow.bind(this)} />
       </View>
     )
+  }
+
+  render() {
+    return <NavigatorScreen
+      {...this.props}
+      title='Dictionary'
+      renderScene={this.renderScene.bind(this)}
+    />
   }
 }
