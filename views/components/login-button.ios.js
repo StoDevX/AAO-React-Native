@@ -17,15 +17,11 @@ const styles = StyleSheet.create({
     // textAlignVertical: 'center',
   },
   container: {
-    // alignItems: 'flex-start',
-    // justifyContent: 'flex-start',
     borderColor: c.iosGray,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    // flex: 1,
-  },
-  disabled: {
-
+    paddingTop: 10,
+    paddingBottom: 10,
   },
 })
 
@@ -36,8 +32,9 @@ export default function LoginButton(props) {
       style={[styles.button, props.style]}
       styleDisabled={[styles.disabled, props.disabledStyle]}
       onPress={props.onPress}
+      disabled={props.disabled}
     >
-      Log In
+      {props.children}
     </RNButton>
   )
 }
@@ -56,8 +53,10 @@ LoginButton.propTypes = {
     React.PropTypes.object,
   ]),
   onPress: React.PropTypes.func,
+  disabled: React.PropTypes.bool,
 }
 
 LoginButton.defaultProps = {
-  onPress: () => {}
+  onPress: () => {},
+  disabled: false,
 }

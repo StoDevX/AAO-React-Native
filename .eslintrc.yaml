@@ -17,6 +17,7 @@ plugins:
 
 globals:
   fetch: true
+  FormData: true
 
 rules:
   indent: [error, 2, {SwitchCase: 1, MemberExpression: 1}]
