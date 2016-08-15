@@ -69,9 +69,11 @@ export default class NewsContainer extends React.Component {
 
   onPressNews(title, story) {
     this.props.navigator.push({
-      title: 'NewsItemView',
+      id: 'NewsItemView',
+      title: title,
       component: <NewsItemView
         story={story}
+        title={title}
         navigator={this.props.navigator}
       />,
     })
