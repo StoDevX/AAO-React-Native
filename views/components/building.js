@@ -13,6 +13,7 @@ import {
 } from 'react-native'
 
 import * as c from './colors'
+import type {BuildingStatusType} from '../building-hours'
 
 let styles = StyleSheet.create({
   container: {
@@ -52,18 +53,25 @@ let imageStyles = {
 }
 
 // PROPS: imageSrc, open, name
-export default function BuildingView({open}: {open: 'open'|'closed'|'almostClosed'}) {
+type PropsType = {
+  open: BuildingStatusType,
+  imageSource: string,
+  name: string,
+};
+export default function BuildingView({open, imageSource, name}: PropsType) {
   let imageStyle = imageStyles[open]
 
   return (
     <View style={styles.container}>
-      <Image source={{uri: this.props.imageSource}} style={imageStyle}>
-        <Text style={styles.name}>{this.props.name}</Text>
+      <Image source={{uri: imageSource}} style={imageStyle}>
+        <Text style={styles.name}>{name}</Text>
       </Image>
     </View>
   )
 }
 
 BuildingView.propTypes = {
+  imageSource: React.PropTypes.string.isRequired,
+  name: React.PropTypes.string.isRequired,
   open: React.PropTypes.oneOf(['open', 'almostClosed', 'closed']).isRequired,
 }

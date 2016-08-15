@@ -70,7 +70,7 @@ function isBuildingOpen(hoursInfo: BuildingInfoType): BuildingStatusType {
   return 'closed'
 }
 
-type BuildingStatusType = 'closed'|'almostClosed'|'open';
+export type BuildingStatusType = 'closed'|'almostClosed'|'open';
 type DayOfWeekType = 'Mon'|'Tue'|'Wed'|'Thu'|'Fri'|'Sat'|'Sun';
 type BuildingInfoType = {
   name: string,
