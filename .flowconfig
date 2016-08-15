@@ -23,6 +23,8 @@
 .*/Libraries/react-native/React.js
 .*/Libraries/react-native/ReactNative.js
 .*/node_modules/jest-runtime/build/__tests__/.*
+.*/react/.*/fbjs
+node_modules/react-native/Libraries/JavaScriptAppEngine/Initialization/ExceptionsManager.js
 
 [include]
 
@@ -32,6 +34,7 @@ node_modules/react-native/flow
 flow/
 
 [options]
+module.ignore_non_literal_requires=true
 module.system=haste
 
 esproposal.class_static_fields=enable
@@ -55,4 +58,4 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 unsafe.enable_getters_and_setters=true
 
 [version]
-^0.29.0
+^0.30.0
