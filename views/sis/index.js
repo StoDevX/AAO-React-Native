@@ -12,14 +12,32 @@ import {
   AsyncStorage,
 } from 'react-native'
 import NavigatorScreen from '../components/navigator-screen'
-import Keychain from 'react-native-keychain'
 import SISLoginSection from './login'
-
-const STORAGE_KEY = '@AllAboutOlaf:SIS'
 
 let financials = 'https://www.stolaf.edu/sis/st-financials.cfm'
 let sis = 'https://www.stolaf.edu/sis/login.cfm'
 let olecard = 'https://www.stolaf.edu/apps/olecard/checkbalance/authenticate.cfm'
+
+import Keychain from 'react-native-keychain'
+import Frisbee from 'frisbee'
+const api = new Frisbee({
+  baseURI: 'https://www.stolaf.edu',
+})
+
+import buildFormData from './formdata'
+
+import {saveLoginCredentials, loadLoginCredentials, clearLoginCredentials} from './loginstuff'
+
+async function weeklyMealsRemaining() {
+  let {username, password} = await loadLoginCredentials()
+  let form = buildFormData({
+    username: username,
+    password: password,
+  })
+  let page = await api.post('/apps/olecard/checkbalance/authenticate.cfm', {body: form})
+  console.log(page)
+  return page
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -33,11 +51,7 @@ export default class SISView extends React.Component {
   }
 
   componentWillMount() {
-    // Keychain.getGenericPassword()
-    //   .then(credentials => {
-    //     this.setState({isLoggedIn: Boolean(credentials)})
-    //   })
-    //   .catch(err => console.error(err))
+
   }
 
   render() {

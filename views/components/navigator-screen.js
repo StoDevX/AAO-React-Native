@@ -11,7 +11,7 @@ import ScreenTitle from './screen-title'
 
 import * as c from './colors'
 
-const MARGIN_TOP = 60
+const MARGIN_TOP = 64
 const styles = StyleSheet.create({
   container: {
     flex: 1,
