@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * iOS back button
@@ -28,10 +29,10 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function BackButton({navigator}) {
+export default function BackButton({navigator}: {navigator: typeof Navigator}) {
   return <TouchableOpacity
     style={styles.navigationButton}
-    onPress={() => navigator.parentNavigator.pop()}
+    onPress={() => navigator.pop()}
   >
     <Text style={styles.navigationButtonText}>
       <Icon name='chevron-thin-left' style={styles.navigationButtonIcon} />
@@ -40,5 +41,5 @@ export default function BackButton({navigator}) {
   </TouchableOpacity>
 }
 BackButton.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator),
+  navigator: React.PropTypes.instanceOf(Navigator).isRequired,
 }
