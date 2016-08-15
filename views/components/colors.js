@@ -1,3 +1,4 @@
+// @flow
 export const aqua = '#7FDBFF'
 export const black = '#111111'
 export const blue = '#0074D9'
@@ -16,7 +17,7 @@ export const silver = '#DDDDDD'
 export const white = '#FFFFFF'
 export const yellow = '#FFDC00'
 
-// export const iosGray = silver
+export const iosGray = silver
 
 export const iosLightBackground = 'rgb(240, 239, 245)'
 export const iosLightBorder = 'rgb(199, 199, 201)'
