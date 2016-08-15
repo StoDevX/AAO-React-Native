@@ -13,6 +13,7 @@ import {
   ScrollView,
   AsyncStorage,
 } from 'react-native'
+
 import LoginButton from '../components/login-button'
 
 
@@ -62,6 +63,8 @@ const styles = StyleSheet.create({
   label: {
     marginRight: 10,
   },
+  loginButtonContainer: {},
+  loginButton: {},
 })
 
 export default class SISLoginSection extends React.Component {
@@ -70,10 +73,14 @@ export default class SISLoginSection extends React.Component {
     password: '',
     success: false,
     loading: false,
-    attemped: false,
+    attempted: false,
   }
 
-  async componentWillMount() {
+  componentWillMount() {
+    this.loadData()
+  }
+
+  async loadData() {
     let [creds, status] = await Promise.all([
       loadLoginCredentials(),
       AsyncStorage.getItem('sis:valid_credentials').then(val => JSON.parse(val)),
