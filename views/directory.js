@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * Directory page
@@ -25,13 +26,9 @@ const styles = StyleSheet.create({
 const URL = 'https://www.stolaf.edu/personal/directory/index.cfm'
 
 export default class DirectoryView extends React.Component {
-  constructor() {
-    super()
-    this.scalesPageToFit = true
-    this.url = URL
-    this.state = {
-      isConnected: true,
-    }
+  state = {
+    isConnected: true,
+    url: URL,
   }
 
   componentWillMount() {
@@ -45,12 +42,12 @@ export default class DirectoryView extends React.Component {
     NetInfo.isConnected.removeEventListener('change', this._onConnectivityChange.bind(this))
   }
 
-  _onConnectivityChange(isConnected) {
+  _onConnectivityChange(isConnected: boolean) {
     this.setState({isConnected})
   }
 
   renderScene() {
-    let webViewSource = {uri: this.url}
+    let webViewSource = {uri: this.state.url}
     return (
       <View style={styles.container}>
         <WebView
@@ -61,7 +58,7 @@ export default class DirectoryView extends React.Component {
           onNavigationStateChange={this.onNavigationStateChange.bind(this)}
           onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
           startInLoadingState={true}
-          scalesPageToFit={this.scalesPageToFit}
+          scalesPageToFit={true}
         />
       </View>
     )
@@ -71,9 +68,8 @@ export default class DirectoryView extends React.Component {
     return true
   }
 
-  onNavigationStateChange(navState) {
-    this.url = navState.url
-    this.scalesPageToFit = true
+  onNavigationStateChange(navState: {url: string}) {
+    this.setState({url: navState.url})
   }
 
   render() {
