@@ -23,7 +23,7 @@ export default class NewsView extends React.Component {
 
   // Render a given scene
   renderScene() {
-    let TabContents = tabs[this.state.selectedTab].content
+    let tab = tabs[this.state.selectedTab]
     return (
       <View style={styles.container}>
         <TabLayout
@@ -33,7 +33,7 @@ export default class NewsView extends React.Component {
         >
           {tabs.map(tab => <Tab key={tab.id} name={tab.title} />)}
         </TabLayout>
-        {<TabContents />}
+        {<tab.content url={tab.url} navigator={this.props.navigator} />}
       </View>
     )
   }
