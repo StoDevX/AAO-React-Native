@@ -50,7 +50,6 @@ type ButtonPropsType = {view: ViewType, navigator: typeof Navigator};
 function HomePageButton({view, navigator}: ButtonPropsType) {
   return (
     <TouchableOpacity
-      key={view.title}
       onPress={() => navigator.push({id: view.view, title: view.title, sceneConfig: Navigator.SceneConfigs.FloatFromRight})}
       activeOpacity={0.5}
     >
@@ -92,7 +91,7 @@ function HomePageScene({navigator}: ScenePropsType) {
     >
       <View style={styles.container}>
         {views.map(view =>
-          <HomePageButton view={view} navigator={navigator} />)}
+          <HomePageButton key={view.title} view={view} navigator={navigator} />)}
       </View>
     </ScrollView>
   )
@@ -107,7 +106,7 @@ export default function HomePage({navigator}: ScenePropsType) {
   return <NavigatorScreen
     {...this.props}
     title='All About Olaf'
-    renderScene={HomePageScene.bind(null, navigator)}
+    renderScene={() => <HomePageScene navigator={navigator} />}
     leftButton={(route, navigator) =>
       <TouchableOpacity
         style={styles.navButton}
