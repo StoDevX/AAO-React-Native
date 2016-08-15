@@ -1,31 +1,47 @@
+// @flow
 /**
  * All About Olaf
  * iOS LoginButton component
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
+import {Platform, StyleSheet} from 'react-native'
 import RNButton from 'react-native-button'
 import * as c from './colors'
 
 const styles = StyleSheet.create({
-  button: {
-    // fontSize: 20,
-    // flexDirection: 'row',
-    // justifyContent: 'flex-start',
-    // alignItems: 'center',
-    // textAlignVertical: 'center',
-  },
+  button: {},
   container: {
     borderColor: c.iosGray,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    paddingTop: 10,
-    paddingBottom: 10,
+    ...Platform.select({
+      ios: {
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        paddingTop: 10,
+        paddingBottom: 10,
+      },
+      android: {
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+      },
+    }),
   },
+  disabled: {},
 })
 
-export default function LoginButton(props) {
+let anyFunction: Function = () => {}
+type StylesheetType = number|Object;
+type ReactElementType = React.Element<*>;
+type PropsType = {
+  containerStyle: StylesheetType,
+  disabledStyle: StylesheetType,
+  style: StylesheetType,
+  onPress: anyFunction,
+  disabled?: boolean,
+  children?: ReactElementType,
+};
+
+export default function LoginButton(props: PropsType) {
   return (
     <RNButton
       containerStyle={[styles.container, props.containerStyle]}
