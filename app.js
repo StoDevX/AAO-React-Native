@@ -48,7 +48,7 @@ export default class App extends React.Component {
       case 'NewsView':
         return <NewsView navigator={navigator} />
       case 'NewsItemView':
-        return <NewsItemView navigator={navigator} />
+        return route.component
       case 'BuildingHoursView':
         return <BuildingHoursView navigator={navigator} />
       case 'SISView':
