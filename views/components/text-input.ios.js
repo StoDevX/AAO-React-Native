@@ -26,7 +26,7 @@ export default function LabelledTextInput(props) {
   )
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',

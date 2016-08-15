@@ -56,8 +56,8 @@ export default class App extends React.Component {
         return <SISView navigator={navigator} />
       case 'TransportationView':
         return <TransportationView navigator={navigator} />
-    case 'SettingsView':
-      return <SettingsView navigator={navigator} />
+      case 'SettingsView':
+        return <SettingsView navigator={navigator} />
       default:
         return <NoRoute navigator={navigator} />
     }

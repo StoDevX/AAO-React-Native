@@ -3,19 +3,19 @@ import {
   StyleSheet,
   View,
   Text,
-  ListView
+  ListView,
 } from 'react-native'
 import NavigatorScreen from '../components/navigator-screen'
 import MenuSection from './menuSection'
 
 import menu from '../../data/cage-menu.json'
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'stretch',
     flexDirection: 'row',
-  }
+  },
 })
 
 export default class CageMenuView extends React.Component {
@@ -25,7 +25,7 @@ export default class CageMenuView extends React.Component {
       rowHasChanged: this._rowHasChanged,
     })
     this.state = {
-      dataSource: ds.cloneWithRows(menu)
+      dataSource: ds.cloneWithRows(menu),
     }
   }
 

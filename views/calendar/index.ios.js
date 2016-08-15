@@ -27,7 +27,7 @@ export default class MenusPage extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="Calendar"
+      title='Calendar'
       renderScene={this.renderScene.bind(this)}
     />
   }
@@ -37,8 +37,8 @@ export default class MenusPage extends React.Component {
     return (
       <View style={styles.container}>
         <TabBarIOS
-          tintColor="white"
-          barTintColor="darkslateblue"
+          tintColor='white'
+          barTintColor='darkslateblue'
         >
           {tabs.map(tab =>
             <TabBarIOS.Item

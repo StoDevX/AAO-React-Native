@@ -68,7 +68,7 @@ export default class WebcamsView extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     // display: 'flex',
@@ -85,5 +85,5 @@ var styles = StyleSheet.create({
     // left: 0,
     // right: 0,
     // height: 210,
-  }
+  },
 })

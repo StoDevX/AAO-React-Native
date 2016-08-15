@@ -9,7 +9,7 @@ import {
   View,
   Text,
   Image,
-  ListView
+  ListView,
 } from 'react-native'
 
 import NavigatorScreen from '../components/navigator-screen'
@@ -17,10 +17,10 @@ import CollapsibleRow from '../components/collapsibleRow'
 
 import terms from '../../data/dictionary.json'
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
 })
 
 export default class DictionaryView extends React.Component {
@@ -30,7 +30,7 @@ export default class DictionaryView extends React.Component {
       rowHasChanged: this._rowHasChanged,
     })
     this.state = {
-      dataSource: ds.cloneWithRows(terms)
+      dataSource: ds.cloneWithRows(terms),
     }
   }
 
@@ -40,14 +40,14 @@ export default class DictionaryView extends React.Component {
 
   _renderRow(data) {
     return (
-      <CollapsibleRow header={data.word} content={data.definition} subheaderText="" />
+      <CollapsibleRow header={data.word} content={data.definition} subheaderText='' />
     )
   }
 
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="Dictionary"
+      title='Dictionary'
       renderScene={this.renderScene.bind(this)}
     />
   }

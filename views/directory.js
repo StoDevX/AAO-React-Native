@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   },
   webView: {
     flex: 1,
-  }
+  },
 })
 
 const URL = 'https://www.stolaf.edu/personal/directory/index.cfm'
@@ -30,7 +30,7 @@ export default class DirectoryView extends React.Component {
     this.scalesPageToFit = true
     this.url = URL
     this.state = {
-      isConnected: true
+      isConnected: true,
     }
   }
 
@@ -52,7 +52,7 @@ export default class DirectoryView extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="Directory"
+      title='Directory'
       renderScene={this.renderScene.bind(this)}
     />
   }

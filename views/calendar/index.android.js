@@ -27,7 +27,7 @@ export default class CalendarPage extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="Calendar"
+      title='Calendar'
       renderScene={this.renderScene.bind(this)}
     />
   }
@@ -38,19 +38,19 @@ export default class CalendarPage extends React.Component {
     return (
       <View style={styles.container}>
         <TabLayout
-          selectedTabIndicatorColor="darkslateblue"
+          selectedTabIndicatorColor='darkslateblue'
           selectedTab={this.state.selectedTab}
           onTabSelected={e => {this.setState({selectedTab: e.nativeEvent.position})}}
         >
           {tabs.map(tab => <Tab key={tab.id} name={tab.title} />)}
         </TabLayout>
-        {<TabContents/>}
+        {<TabContents />}
       </View>
     )
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -58,13 +58,13 @@ var styles = StyleSheet.create({
     width: 110,
     height: 48,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   tab2: {
     width: 110,
     height: 48,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
 })

@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
   },
   webView: {
     flex: 1,
-  }
+  },
 })
 
 const URL = 'https://stolaf.cafebonappetit.com/cafe/stav-hall#Lunch'
@@ -24,7 +24,7 @@ export default class StavMenuView extends React.Component {
     this.scalesPageToFit = true
     this.url = URL
     this.state = {
-      isConnected: true
+      isConnected: true,
     }
   }
 

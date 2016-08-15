@@ -17,9 +17,9 @@ import * as c from '../components/colors'
 import Collapsible from 'react-native-collapsible'
 import MenuItem from './menuItem'
 
-let width = Dimensions.get('window').width; //full width
+let width = Dimensions.get('window').width //full width
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     marginBottom: 10,
     alignItems: 'stretch',

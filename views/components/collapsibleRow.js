@@ -15,7 +15,7 @@ import {
 import * as c from './colors'
 import Collapsible from 'react-native-collapsible'
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: 10,

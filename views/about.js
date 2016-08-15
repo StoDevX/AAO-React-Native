@@ -16,7 +16,7 @@ export default class AboutView extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="About"
+      title='About'
       renderScene={this.renderScene.bind(this)}
     />
   }
@@ -31,8 +31,8 @@ export default class AboutView extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
 })

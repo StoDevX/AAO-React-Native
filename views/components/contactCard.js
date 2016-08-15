@@ -6,13 +6,13 @@ import {
   Image,
 } from 'react-native'
 
-import Button from 'react-native-button'; // the button
-import Communications from 'react-native-communications'; // the phone call functions
+import Button from 'react-native-button' // the button
+import Communications from 'react-native-communications' // the phone call functions
 
 import NavigatorScreen from './navigator-screen'
 import * as c from './colors'
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     marginLeft: 5,
     marginRight: 5,
@@ -38,13 +38,13 @@ var styles = StyleSheet.create({
     marginBottom: 5,
     marginLeft: 10,
     marginRight: 10,
-  }
+  },
 })
 
 export default class ContactCard extends React.Component {
   render() {
-    console.log(this.props.title);
-    console.log(this.props.phoneNumber);
+    console.log(this.props.title)
+    console.log(this.props.phoneNumber)
     return (
       <View style={styles.container}>
         <Text style={styles.title}>{this.props.title}</Text>

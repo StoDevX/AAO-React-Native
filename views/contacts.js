@@ -12,15 +12,15 @@ import {
   ListView,
 } from 'react-native'
 
-import Button from 'react-native-button'; // the button
-import Communications from 'react-native-communications'; // the phone call functions
+import Button from 'react-native-button' // the button
+import Communications from 'react-native-communications' // the phone call functions
 import {
   Card,
   CardImage,
   CardTitle,
   CardContent,
   CardAction,
-} from 'react-native-card-view'; // this relies on the exoernal card library
+} from 'react-native-card-view' // this relies on the exoernal card library
 
 import NavigatorScreen from './components/navigator-screen'
 import ContactCard from './components/contactCard'
@@ -36,7 +36,7 @@ export default class ContactView extends React.Component {
       rowHasChanged: this._rowHasChanged,
     })
     this.state = {
-      dataSource: ds.cloneWithRows(numbers)
+      dataSource: ds.cloneWithRows(numbers),
     }
   }
 
@@ -47,7 +47,7 @@ export default class ContactView extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="Contact"
+      title='Contact'
       renderScene={this.renderScene.bind(this)}
     />
   }
@@ -56,7 +56,7 @@ export default class ContactView extends React.Component {
     return (
       <View style={styles.container}>
         <ListView
-        renderRow={this._renderRow.bind(this)}
+          renderRow={this._renderRow.bind(this)}
           dataSource={this.state.dataSource}
         />
       </View>
@@ -70,7 +70,7 @@ export default class ContactView extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: c.iosLightBackground,

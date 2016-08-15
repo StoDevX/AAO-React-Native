@@ -25,7 +25,7 @@ export default class MediaPage extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="Media"
+      title='Media'
       renderScene={this.renderScene.bind(this)}
     />
   }
@@ -36,7 +36,7 @@ export default class MediaPage extends React.Component {
     return (
       <View style={styles.container}>
         <TabLayout
-          selectedTabIndicatorColor="darkslateblue"
+          selectedTabIndicatorColor='darkslateblue'
           selectedTab={this.state.selectedTab}
           onTabSelected={e => {this.setState({selectedTab: e.nativeEvent.position})}}
         >
@@ -48,8 +48,8 @@ export default class MediaPage extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
 })

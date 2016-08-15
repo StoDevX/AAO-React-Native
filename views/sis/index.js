@@ -42,7 +42,7 @@ async function weeklyMealsRemaining() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
 })
 
 export default class SISView extends React.Component {
@@ -57,7 +57,7 @@ export default class SISView extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="SIS"
+      title='SIS'
       renderScene={this.renderScene.bind(this)}
     />
   }

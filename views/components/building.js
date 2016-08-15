@@ -14,7 +14,7 @@ import {
 import NavigatorScreen from './navigator-screen'
 import * as c from './colors'
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -57,7 +57,7 @@ export default class BuildingView extends React.Component {
               </Image>
           </View>
         )
-        break;
+        break
       case 'almostClosed':
         return (
           <View style={styles.container}>
@@ -66,7 +66,7 @@ export default class BuildingView extends React.Component {
               </Image>
           </View>
         )
-      break;
+        break
       case 'closed':
         return (
           <View style={styles.container}>
@@ -75,12 +75,12 @@ export default class BuildingView extends React.Component {
               </Image>
           </View>
         )
-        break;
+        break
       default:
         return (
           <View></View>
         )
-        break;
+        break
     }
   }
 }

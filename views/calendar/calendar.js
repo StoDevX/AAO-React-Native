@@ -19,7 +19,7 @@ export default class CalendarView extends React.Component {
     super(props)
     this.state = {
       masterEvents: null,
-      masterLoaded:false,
+      masterLoaded: false,
       error: false,
     }
   }
@@ -33,40 +33,40 @@ export default class CalendarView extends React.Component {
   }
 
   componentWillMount() {
-    var nowDate = new Date();
-    var nowString = nowDate.toISOString(); // As needed by the Google Calendar API
-    var offset = (nowDate.getTimezoneOffset() / 60);
-    var offsetString = "-" + offset + ":00Z";
-    nowString.replace('Z', offsetString);
-    if(this.props.events == 'master') {
-      this.getMasterEvents(GOOGLE_CALENDAR_API_KEY, nowString);
+    let nowDate = new Date()
+    let nowString = nowDate.toISOString() // As needed by the Google Calendar API
+    let offset = (nowDate.getTimezoneOffset() / 60)
+    let offsetString = '-' + offset + ':00Z'
+    nowString.replace('Z', offsetString)
+    if (this.props.events == 'master') {
+      this.getMasterEvents(GOOGLE_CALENDAR_API_KEY, nowString)
     } else {
-      this.getOlevilleEvents(GOOGLE_CALENDAR_API_KEY, nowString);
+      this.getOlevilleEvents(GOOGLE_CALENDAR_API_KEY, nowString)
     }
   }
 
   async getMasterEvents(apiKey, currentTime) {
     try {
       let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&timeMin=' + currentTime + '&key=' + apiKey)
-      let responseJson = await response.json();
-      this.setState({masterEvents: responseJson});
+      let responseJson = await response.json()
+      this.setState({masterEvents: responseJson})
     } catch (error) {
-      this.setState({error: true});
-      console.error(error);
+      this.setState({error: true})
+      console.error(error)
     }
-    this.setState({masterLoaded: true});
+    this.setState({masterLoaded: true})
   }
 
   async getOlevilleEvents(apiKey, currentTime) {
     try {
       let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&timeMin=' + currentTime + '&key=' + apiKey)
-      let responseJson = await response.json();
-      this.setState({masterEvents: responseJson});
+      let responseJson = await response.json()
+      this.setState({masterEvents: responseJson})
     } catch (error) {
-      this.setState({error: true});
-      console.error(error);
+      this.setState({error: true})
+      console.error(error)
     }
-    this.setState({masterLoaded: true});
+    this.setState({masterLoaded: true})
   }
 
   _renderRow(data) {
@@ -99,14 +99,14 @@ export default class CalendarView extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   row: {
 
   },
-  title:{
+  title: {
 
-  }
+  },
 })

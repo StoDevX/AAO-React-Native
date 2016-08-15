@@ -22,8 +22,8 @@ export default class KSTOView extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
 })

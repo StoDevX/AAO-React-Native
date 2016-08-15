@@ -33,13 +33,13 @@ export default class HomePage extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="All About Olaf"
+      title='All About Olaf'
       renderScene={this.renderScene.bind(this)}
       leftButton={(route, navigator) => {
         return (
           <TouchableOpacity
             style={styles.navButton}
-            onPress={() => this.pushView("SettingsView", "Settings", Navigator.SceneConfigs.FloatFromLeft)}
+            onPress={() => this.pushView('SettingsView', 'Settings', Navigator.SceneConfigs.FloatFromLeft)}
           >
             <Icon name='info' style={styles.navigationButtonIcon} />
           </TouchableOpacity>
@@ -116,7 +116,7 @@ let cellSidePadding = 10
 let cellEdgePadding = 10
 let cellWidth = (Viewport.width / 2) - (cellMargin * 1.5)
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   // Body container
   container: {
     marginLeft: cellMargin,

@@ -9,7 +9,7 @@ import {
   View,
   Text,
   Image,
-  ListView
+  ListView,
 } from 'react-native'
 
 import NavigatorScreen from './components/navigator-screen'
@@ -71,10 +71,10 @@ function isBuildingOpen(hoursInfo) {
     if (Date.parse('01/01/2016 ' + closeTime) - Date.parse('01/01/2016 ' + currentTime) < 1800000) { // 1800000 is 30 min in ms
       return 'almostClosed'
     } else {
-      return 'open';
+      return 'open'
     }
   } else {
-    return 'closed';
+    return 'closed'
   }
 }
 
@@ -85,7 +85,7 @@ export default class BuildingHoursView extends React.Component {
       rowHasChanged: this._rowHasChanged,
     })
     this.state = {
-      dataSource: ds.cloneWithRows(hoursData)
+      dataSource: ds.cloneWithRows(hoursData),
     }
   }
 
@@ -96,7 +96,7 @@ export default class BuildingHoursView extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="Building Hours"
+      title='Building Hours'
       renderScene={this.renderScene.bind(this)}
     />
   }
@@ -105,7 +105,7 @@ export default class BuildingHoursView extends React.Component {
     let isOpen = isBuildingOpen(data)
     return (
       <View style={styles.container}>
-        <BuildingView name={data.name} open={isOpen} imageSource={data.image}/>
+        <BuildingView name={data.name} open={isOpen} imageSource={data.image} />
       </View>
     )
   }
@@ -126,5 +126,5 @@ export default class BuildingHoursView extends React.Component {
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
 })

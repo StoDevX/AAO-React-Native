@@ -8,11 +8,11 @@ import {
   StyleSheet,
   View,
   Text,
-  ListView
+  ListView,
 } from 'react-native'
 import NavigatorScreen from '../components/navigator-screen'
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
@@ -24,7 +24,7 @@ var styles = StyleSheet.create({
   },
   price: {
     textAlign: 'right',
-  }
+  },
 })
 
 export default class CageMenuView extends React.Component {
@@ -35,7 +35,7 @@ export default class CageMenuView extends React.Component {
       rowHasChanged: this._rowHasChanged,
     })
     this.state = {
-      dataSource: ds.cloneWithRows(this.props.items)
+      dataSource: ds.cloneWithRows(this.props.items),
     }
   }
 

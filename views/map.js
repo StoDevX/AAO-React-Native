@@ -18,7 +18,7 @@ export default class OlafMapView extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="Map"
+      title='Map'
       renderScene={this.renderScene.bind(this)}
     />
   }

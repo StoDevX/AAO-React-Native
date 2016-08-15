@@ -127,10 +127,10 @@ export default class SISLoginSection extends React.Component {
 
         {this.state.success
           ? <LoginButton
-              containerStyle={styles.loginButtonContainer}
-              style={styles.loginButton}
-              disabledStyle={{color: 'red'}}
-              onPress={this.logOut}
+            containerStyle={styles.loginButtonContainer}
+            style={styles.loginButton}
+            disabledStyle={{color: 'red'}}
+            onPress={this.logOut}
             >
               Log Out
             </LoginButton>

@@ -8,7 +8,7 @@ import {
 
 import * as c from '../components/colors'
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   event: {
     backgroundColor: c.coolPurple,
     paddingBottom: 10,
@@ -37,7 +37,7 @@ export default class EventView extends React.Component {
     super(props)
     this.state = {
       start: null,
-      end:null,
+      end: null,
     }
   }
 
@@ -46,38 +46,38 @@ export default class EventView extends React.Component {
   }
 
   getString(date) {
-    var month = date.getMonth() + 1 // offset since JS uses 0-11, not 1-12
-    var day = date.getDate()
+    let month = date.getMonth() + 1 // offset since JS uses 0-11, not 1-12
+    let day = date.getDate()
 
     if (date.getHours() > 12) {
       var hours = date.getHours() - 12
       hours = hours
-      var isMorning = false;
+      var isMorning = false
     } else {
       var hours = date.getHours()
-      var isMorning = true;
+      var isMorning = true
     }
-    var min = date.getMinutes()
+    let min = date.getMinutes()
     if (min.toString().length < 2) {
-      min = "" + min + "0"
+      min = '' + min + '0'
     }
 
     if (isMorning) {
-      min += "AM"
+      min += 'AM'
     } else {
-      min += "PM"
+      min += 'PM'
     }
 
-    var str = "" + month + "/" + day +  " " + hours + ":" + min
+    let str = '' + month + '/' + day +  ' ' + hours + ':' + min
     return str
   }
 
   parseDates(startTime, endTime) {
-    var st = new Date(startTime)
-    var et = new Date(endTime)
+    let st = new Date(startTime)
+    let et = new Date(endTime)
 
-    var stString = this.getString(st)
-    var etString = this.getString(et)
+    let stString = this.getString(st)
+    let etString = this.getString(et)
 
     this.setState({start: stString})
     this.setState({end: etString})

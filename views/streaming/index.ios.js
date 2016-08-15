@@ -24,7 +24,7 @@ export default class MediaView extends React.Component {
   render() {
     return <NavigatorScreen
       {...this.props}
-      title="Media"
+      title='Media'
       renderScene={this.renderScene.bind(this)}
     />
   }
@@ -34,8 +34,8 @@ export default class MediaView extends React.Component {
     return (
       <View style={styles.container}>
         <TabBarIOS
-          tintColor="white"
-          barTintColor="darkslateblue"
+          tintColor='white'
+          barTintColor='darkslateblue'
         >
           {tabs.map(tab =>
             <TabBarIOS.Item
@@ -53,8 +53,8 @@ export default class MediaView extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
-  }
+  },
 })

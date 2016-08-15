@@ -59,5 +59,5 @@ LoginButton.propTypes = {
 }
 
 LoginButton.defaultProps = {
-  onPress: () => {}
+  onPress: () => {},
 }
