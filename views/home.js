@@ -51,7 +51,7 @@ function HomePageButton({view, navigator}) {
 
 HomePageButton.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator).isRequired,
-  view: React.PropTypes.shapeOf({
+  view: React.PropTypes.shape({
     view: React.PropTypes.string.isRequired,
     title: React.PropTypes.string.isRequired,
     icon: React.PropTypes.string.isRequired,
