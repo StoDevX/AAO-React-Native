@@ -32,7 +32,7 @@
     "querystring": "0.2.0",
     "react": "15.2.1",
     "react-native": "0.31.0",
-    "react-native-android-tablayout": "git+https://github.com/AlbertBrand/react-native-android-tablayout.git#c1fb5b6656e0b675c9d0940b7594fa77b16dfa7c",
+    "react-native-android-tablayout": "0.3.0",
     "react-native-animatable": "0.6.1",
     "react-native-button": "1.6.0",
     "react-native-calendar": "0.6.4",
