@@ -19,6 +19,7 @@ import NewsView from './views/news'
 import SISView from './views/sis'
 import BuildingHoursView from './views/building-hours'
 import TransportationView from './views/transportation'
+import SettingsView from './views/settings'
 
 import NoRoute from './views/components/no-route'
 
@@ -52,6 +53,8 @@ export default class App extends React.Component {
         return <SISView navigator={navigator} />
       case 'TransportationView':
         return <TransportationView navigator={navigator} />
+    case 'SettingsView':
+      return <SettingsView navigator={navigator} />
       default:
         return <NoRoute navigator={navigator} />
     }

@@ -39,7 +39,7 @@ export default class HomePage extends React.Component {
         return (
           <TouchableOpacity
             style={styles.navButton}
-            onPress={() => navigator.parentNavigator.pop()}
+            onPress={() => this.pushView("SettingsView", "Settings", Navigator.SceneConfigs.FloatFromLeft)}
           >
             <Icon name='info' style={styles.navigationButtonIcon} />
           </TouchableOpacity>
@@ -59,11 +59,11 @@ export default class HomePage extends React.Component {
   }
 
   // Go to request page
-  pushView(view, viewTitle) {
+  pushView(view, viewTitle, viewAnimation) {
     this.props.navigator.push({
       id: view,
       title: viewTitle,
-      sceneConfig: Navigator.SceneConfigs.FloatFromRight,
+      sceneConfig: viewAnimation,
     })
   }
 
@@ -83,7 +83,7 @@ export default class HomePage extends React.Component {
           {views.map(view =>
             <TouchableOpacity
               key={view.title}
-              onPress={() => this.pushView(view.view, view.title)}
+              onPress={() => this.pushView(view.view, view.title, Navigator.SceneConfigs.FloatFromRight)}
               activeOpacity={0.5}
             >
               <View style={[styles.rectangle, styles[`${view.view}Button`]]}>
