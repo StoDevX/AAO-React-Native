@@ -1,41 +1,40 @@
 import React, {PropTypes} from 'react'
 import {
-  Text,
-  ScrollView,
+  // Text,
+  // ScrollView,
   WebView,
+  Navigator,
 } from 'react-native'
 
-let Entities = require('html-entities').AllHtmlEntities
-const entities = new Entities()
+import NavigatorScreen from '../components/navigator-screen'
+// let Entities = require('html-entities').AllHtmlEntities
+// const entities = new Entities()
 
-export default function NewsItemView({
-  story: {
-    title,
-    publishedDate,
-    author,
-    content,
-    link,
-    categories,
-  },
+function NewsItemContents({
+  content,
 }) {
   return (
-    <ScrollView>
-      <Text>Title: {entities.decode(title)}</Text>
-      <Text>Link: {entities.decode(link)}</Text>
-      <Text>Categories: {categories.map(c => entities.decode(c)).join(', ')}</Text>
-      <Text>Published on: {entities.decode(publishedDate)}</Text>
-      <Text>by: {entities.decode(author)}</Text>
-      <WebView source={{html: content}} />
-    </ScrollView>
+    <WebView source={{html: content}} />
   )
 }
+NewsItemContents.propTypes = {
+  author: PropTypes.string,
+  categories: PropTypes.arrayOf(PropTypes.string),
+  content: PropTypes.string,
+  link: PropTypes.string,
+  publishedDate: PropTypes.string,
+  title: PropTypes.string,
+}
+
+export default function NewsItemView(props) {
+  return <NavigatorScreen
+    title={props.title}
+    navigator={props.navigator}
+    renderScene={NewsItemContents.bind(null, props.story)}
+  />
+}
 NewsItemView.propTypes = {
-  story: PropTypes.shape({
-    title: PropTypes.string,
-    publishedDate: PropTypes.string,
-    author: PropTypes.string,
-    content: PropTypes.string,
-    link: PropTypes.string,
-    categories: PropTypes.arrayOf(PropTypes.string),
-  }),
+  navigator: PropTypes.instanceOf(Navigator),
+  story: PropTypes.object,
+  title: PropTypes.string,
 }
