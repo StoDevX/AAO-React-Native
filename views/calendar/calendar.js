@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * Calendar page
@@ -11,92 +12,142 @@ import {
   ListView,
 } from 'react-native'
 
+import qs from 'querystring'
 import EventView from './event'
 import { GOOGLE_CALENDAR_API_KEY } from '../../lib/config'
 
+type GoogleCalendarTimeType = {
+  dateTime: string,
+}
+type GoogleCalendarEventType = {
+  summary: string,
+  start: GoogleCalendarTimeType,
+  end: GoogleCalendarTimeType,
+  location: string,
+};
+type StateType = {
+  events: null|GoogleCalendarResponseType,
+  loaded: boolean,
+  error: null|string,
+};
+type GoogleCalendarResponseType = {
+  items: GoogleCalendarEventType[],
+};
+
 export default class CalendarView extends React.Component {
   static propTypes = {
-    events: React.PropTypes.oneOf(['master', 'oleville']).isRequired,
+    source: React.PropTypes.oneOf(['master', 'oleville']).isRequired,
   }
 
-  state = {
-    masterEvents: null,
-    masterLoaded: false,
-    error: false,
+  state: StateType = {
+    events: null,
+    loaded: false,
+    error: null,
   }
 
   componentWillMount() {
-    let nowDate = new Date()
-    let nowString = nowDate.toISOString() // As needed by the Google Calendar API
-    let offset = (nowDate.getTimezoneOffset() / 60)
-    let offsetString = '-' + offset + ':00Z'
-    nowString.replace('Z', offsetString)
-    if (this.props.events == 'master') {
-      this.getMasterEvents(GOOGLE_CALENDAR_API_KEY, nowString)
+    if (this.props.source === 'master') {
+      this.getMasterEvents()
     } else {
-      this.getOlevilleEvents(GOOGLE_CALENDAR_API_KEY, nowString)
+      this.getOlevilleEvents()
     }
   }
 
-  _rowHasChanged(r1, r2) {
+  _rowHasChanged(r1: GoogleCalendarEventType, r2: GoogleCalendarEventType) {
     return r1.summary != r2.summary
   }
 
-  async getMasterEvents(apiKey, currentTime) {
+  async getMasterEvents() {
+    this.getEvents('le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com')
+  }
+
+  async getOlevilleEvents() {
+    this.getEvents('stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com')
+  }
+
+  getCurrentTime() {
+    let nowDate = new Date()
+    let nowString = nowDate.toISOString() // As needed by the Google Calendar API
+    let offset = (nowDate.getTimezoneOffset() / 60)
+    let offsetString = `-${offset}:00Z`
+    return nowString.replace('Z', offsetString)
+  }
+
+  buildCalendarUrl(calendarId: string) {
+    let calendarUrl = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`
+    let params = {
+      maxResults: 50,
+      orderBy: 'startTime',
+      showDeleted: false,
+      singleEvents: true,
+      timeMin: this.getCurrentTime(),
+      key: GOOGLE_CALENDAR_API_KEY,
+    }
+    return `${calendarUrl}?${qs.stringify(params)}`
+  }
+
+  async getEvents(calendarId: string) {
+    let url = this.buildCalendarUrl(calendarId)
+    console.log(url)
+
+    let data = null
+    let error = null
     try {
-      let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&timeMin=' + currentTime + '&key=' + apiKey)
-      let responseJson = await response.json()
-      this.setState({masterEvents: responseJson})
+      let result = await fetch(url).then(r => r.json())
+      error = result.error
+      data = result.items
     } catch (error) {
-      this.setState({error: true})
+      this.setState({error: 'Error!'})
       console.error(error)
     }
-    this.setState({masterLoaded: true})
-  }
 
-  async getOlevilleEvents(apiKey, currentTime) {
-    try {
-      let response = await fetch ('https://www.googleapis.com/calendar/v3/calendars/stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com/events?maxResults=50&orderBy=startTime&showDeleted=false&singleEvents=true&timeMin=' + currentTime + '&key=' + apiKey)
-      let responseJson = await response.json()
-      this.setState({masterEvents: responseJson})
-    } catch (error) {
-      this.setState({error: true})
-      console.error(error)
+    if (data) {
+      this.setState({events: data})
     }
-    this.setState({masterLoaded: true})
-  }
-
-  _renderRow(data) {
-    return (
-      <View style={styles.row}>
-        <EventView eventTitle={data.summary} startTime={data.start.dateTime} endTime={data.end.dateTime} location={data.location} />
-      </View>
-    )
-  }
-
-  // Render a given scene
-  renderScene() {
-    if (this.state.masterEvents !== null) {
-      let ds = new ListView.DataSource({
-        rowHasChanged: this._rowHasChanged,
-      })
-      return (
-        <View style={styles.container}>
-          <ListView
-            dataSource={ds.cloneWithRows(this.state.masterEvents.items)}
-            renderRow={this._renderRow.bind(this)}
-          />
-        </View>
-      )
-    } else {
-      return (
-        <Text> Loading </Text>
-      )
+    if (error) {
+      this.setState({error: error.message})
     }
+    this.setState({loaded: true})
   }
 
   render() {
-    return this.renderScene()
+    if (!this.state.events) {
+      return (
+        <Text>
+          Loading
+        </Text>
+      )
+    }
+
+    if (this.state.error) {
+      return (
+        <Text>
+          {this.state.error}
+        </Text>
+      )
+    }
+
+    let ds = new ListView.DataSource({
+      rowHasChanged: this._rowHasChanged,
+    })
+
+    return (
+      <View style={styles.container}>
+        <ListView
+          dataSource={ds.cloneWithRows(this.state.events)}
+          renderRow={data =>
+            <View style={styles.row}>
+              <EventView
+                eventTitle={data.summary}
+                startTime={data.start.dateTime}
+                endTime={data.end.dateTime}
+                location={data.location}
+              />
+            </View>
+          }
+        />
+      </View>
+    )
   }
 }
 

@@ -7,5 +7,5 @@ import React from 'react'
 import CalendarView from './calendar'
 
 export default function MasterCalendarView() {
-  return <CalendarView events='master' />
+  return <CalendarView source='master' />
 }
