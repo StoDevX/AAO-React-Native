@@ -23,45 +23,45 @@ import SettingsView from './views/settings'
 
 import NoRoute from './views/components/no-route'
 
-export default class App extends React.Component {
-  // Render a given scene
-  renderScene(route, navigator) {
-    switch (route.id) {
-      case 'HomeView':
-        return <HomeView navigator={navigator} />
-      case 'MenusView':
-        return <MenusView navigator={navigator} />
-      case 'DirectoryView':
-        return <DirectoryView navigator={navigator} />
-      case 'AboutView':
-        return <AboutView navigator={navigator} />
-      case 'CalendarView':
-        return <CalendarView navigator={navigator} />
-      case 'ContactsView':
-        return <ContactsView navigator={navigator} />
-      case 'DictionaryView':
-        return <DictionaryView navigator={navigator} />
-      case 'MapView':
-        return <MapView navigator={navigator} />
-      case 'StreamingView':
-        return <StreamingView navigator={navigator} />
-      case 'NewsView':
-        return <NewsView navigator={navigator} />
-      case 'NewsItemView':
-        return route.component
-      case 'BuildingHoursView':
-        return <BuildingHoursView navigator={navigator} />
-      case 'SISView':
-        return <SISView navigator={navigator} />
-      case 'TransportationView':
-        return <TransportationView navigator={navigator} />
-      case 'SettingsView':
-        return <SettingsView navigator={navigator} />
-      default:
-        return <NoRoute navigator={navigator} />
-    }
+// Render a given scene
+function renderScene(route, navigator) {
+  switch (route.id) {
+    case 'HomeView':
+      return <HomeView navigator={navigator} />
+    case 'MenusView':
+      return <MenusView navigator={navigator} />
+    case 'DirectoryView':
+      return <DirectoryView navigator={navigator} />
+    case 'AboutView':
+      return <AboutView navigator={navigator} />
+    case 'CalendarView':
+      return <CalendarView navigator={navigator} />
+    case 'ContactsView':
+      return <ContactsView navigator={navigator} />
+    case 'DictionaryView':
+      return <DictionaryView navigator={navigator} />
+    case 'MapView':
+      return <MapView navigator={navigator} />
+    case 'StreamingView':
+      return <StreamingView navigator={navigator} />
+    case 'NewsView':
+      return <NewsView navigator={navigator} />
+    case 'NewsItemView':
+      return route.component
+    case 'BuildingHoursView':
+      return <BuildingHoursView navigator={navigator} />
+    case 'SISView':
+      return <SISView navigator={navigator} />
+    case 'TransportationView':
+      return <TransportationView navigator={navigator} />
+    case 'SettingsView':
+      return <SettingsView navigator={navigator} />
+    default:
+      return <NoRoute navigator={navigator} />
   }
+}
 
+export default class App extends React.Component {
   render() {
     return (
       <Navigator
@@ -69,7 +69,7 @@ export default class App extends React.Component {
           id: 'HomeView',
           name: 'Home',
         }}
-        renderScene={this.renderScene}
+        renderScene={renderScene}
         configureScene={route => {
           if (route.sceneConfig) {
             return route.sceneConfig
