@@ -30,10 +30,11 @@ const styles = StyleSheet.create({
 
 export default class NavigatorView extends React.Component {
   static propTypes = {
-    renderScene: React.PropTypes.func.isRequired,
-    title: React.PropTypes.string.isRequired,
     leftButton: React.PropTypes.func,
+    navigator: React.PropTypes.instanceOf(Navigator),
+    renderScene: React.PropTypes.func.isRequired,
     rightButton: React.PropTypes.func,
+    title: React.PropTypes.string.isRequired,
   }
 
   static defaultProps = {
