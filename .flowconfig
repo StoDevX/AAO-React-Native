@@ -24,7 +24,6 @@
 .*/Libraries/react-native/ReactNative.js
 .*/node_modules/jest-runtime/build/__tests__/.*
 .*/react/.*/fbjs
-node_modules/react-native/Libraries/JavaScriptAppEngine/Initialization/ExceptionsManager.js
 
 [include]
 
@@ -34,8 +33,8 @@ node_modules/react-native/flow
 flow/
 
 [options]
-module.ignore_non_literal_requires=true
 module.system=haste
+module.ignore_non_literal_requires=true
 
 esproposal.class_static_fields=enable
 esproposal.class_instance_fields=enable
