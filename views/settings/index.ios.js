@@ -22,11 +22,52 @@ import {
 import NavigatorScreen from '../components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
 import Communications from 'react-native-communications'
+import Keychain from 'react-native-keychain'
 
 export default class SettingsView extends React.Component {
   constructor(){
     super();
+    this.state = {username: "", password: ""};
   }
+
+updateText(type, text) {
+    if(type == "username") {
+        this.setState({ username: text })
+    }
+    else if (type == "password") {
+        this.setState({ password: text })
+    }
+}
+
+// Currently only both items are saved when we hit "done" on password
+saveCredentials() {
+     // Check if we have a username set already. We cannot check for password here
+     // as it would not be set by the time we check for it
+    if(this.state.username != "") {
+        // Save the username and password from the saved state variables
+        Keychain.setGenericPassword(this.state.username, this.state.password)
+
+        // Tests to show it works
+        this.retrieveCredientials()
+        //this.resetCredentials()
+    }
+}
+
+retrieveCredientials() {
+    Keychain.getGenericPassword().then(function(credentials) {
+        console.log("username " + credentials.username +
+                    "\npassword " + credentials.password);
+        console.log('Credentials successfully created');
+    }).catch(function(error) {
+        console.log('Keychain could not be accessed', error);
+    });
+}
+
+resetCredentials(username) {
+    Keychain.resetInternetCredentials(username).then(function() {
+        console.log('Credentials successfully deleted');
+  });
+}
 
 render() {
   return <NavigatorScreen
@@ -49,19 +90,22 @@ render() {
                         autoCorrect={false}
                         autoCapitalize="none"
                         style={styles.customTextInput}
-                        placeholder="username" />
+                        placeholder="username"
+                        onEndEditing={(event) => this.updateText("username", event.nativeEvent.text)} />
                 </CustomCell>
 
                 <CustomCell>
                     <Icon name="lock" size={18} />
                     <Text style={styles.label}>Password</Text>
                     <TextInput
+                        cellStyle="Basic"
                         secureTextEntry={true}
                         autoCorrect={false}
                         autoCapitalize="none"
-                        cellStyle="Basic"
                         style={styles.customTextInput}
-                        placeholder="password" />
+                        placeholder="password"
+                        onSubmitEditing={(event) => this.updateText("password", event.nativeEvent.text)}
+                        onEndEditing={(event) => this.saveCredentials() } />
                 </CustomCell>
             </Section>
 
