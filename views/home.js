@@ -102,20 +102,21 @@ HomePageScene.propTypes = {
 }
 
 
-export default function HomePage({navigator}: ScenePropsType) {
+export default function HomePage(props: ScenePropsType) {
+  let hostNav = props.navigator
   return <NavigatorScreen
-    {...this.props}
+    navigator={hostNav}
     title='All About Olaf'
-    renderScene={() => <HomePageScene navigator={navigator} />}
+    renderScene={() => <HomePageScene navigator={hostNav} />}
     leftButton={(route, navigator) =>
       <TouchableOpacity
         style={styles.navButton}
-        onPress={() => navigator.push({id: 'SettingsView', title: 'Settings', sceneConfig: Navigator.SceneConfigs.FloatFromLeft})}
+        onPress={() => navigator.push({id: 'SettingsView', title: 'Settings', sceneConfig: Navigator.SceneConfigs.FloatFromBottom})}
       >
-        <Icon name='info' style={styles.navigationButtonIcon} />
+        <Icon name='cog' style={styles.navigationButtonIcon} />
       </TouchableOpacity>
     }
-    rightButton={(route, navigator) =>
+    rightButton={() =>
       <TouchableOpacity
         style={styles.navButton}
         onPress={() => {}}
