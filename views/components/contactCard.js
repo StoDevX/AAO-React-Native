@@ -8,52 +8,52 @@ import {
 
 import Button from 'react-native-button'; // the button
 import Communications from 'react-native-communications'; // the phone call functions
-import {
-  Card,
-  CardImage,
-  CardTitle,
-  CardContent,
-  CardAction
-} from 'react-native-card-view'; // this relies on the exoernal card library
 
 import NavigatorScreen from './navigator-screen'
-
+import * as c from './colors'
 
 var styles = StyleSheet.create({
   container: {
-    flex: 1,
+    marginLeft: 5,
+    marginRight: 5,
+    marginBottom: 5,
+    backgroundColor: c.white,
   },
   title: {
-    fontSize: 38,
+    fontSize: 30,
+    alignSelf: 'center',
+    marginTop: 10,
   },
   button: {
-
+    backgroundColor: c.denim,
+    width: 200,
+    color: c.white,
+    alignSelf: 'center',
+    height: 30,
+    paddingTop: 3,
+    marginBottom: 10,
+    borderRadius: 6,
   },
-  icon: {
-
+  content: {
+    marginBottom: 5,
+    marginLeft: 10,
+    marginRight: 10,
   }
-  })
+})
+
 export default class ContactCard extends React.Component {
   render() {
+    console.log(this.props.title);
+    console.log(this.props.phoneNumber);
     return (
-      <Card>
-        <CardTitle>
-          <Text style={styles.title}>{this.props.title}</Text>
-        </CardTitle>
-        <CardImage>
-          <Image style={styles.icon} source={{uri: this.props.imageURI}} />
-        </CardImage>
-        <CardContent>
-          <Text>{this.props.text}</Text>
-        </CardContent>
-        <CardAction>
-          <Button
-            style={styles.button}
-            onPress={() => Communications.phonecall(this.props.phoneNumber, false)}>
-            {this.props.buttonText}
-          </Button>
-        </CardAction>
-      </Card>
+      <View style={styles.container}>
+        <Text style={styles.title}>{this.props.title}</Text>
+        <Text style={styles.content}>{this.props.text}</Text>
+        <Button
+          onPress={() => Communications.phonecall(this.props.phoneNumber, false)}
+          style={styles.button}>
+          {this.props.buttonText}</Button>
+      </View>
     )
   }
 }
