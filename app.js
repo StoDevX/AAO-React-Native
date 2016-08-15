@@ -16,7 +16,7 @@ import MapView from './views/map'
 import StreamingView from './views/streaming'
 import MenusView from './views/menus'
 import NewsView from './views/news'
-import NewsDetailView from './views/news/detail'
+import NewsItemView from './views/news/news-item'
 import SISView from './views/sis'
 import BuildingHoursView from './views/building-hours'
 import TransportationView from './views/transportation'
@@ -47,8 +47,8 @@ export default class App extends React.Component {
         return <StreamingView navigator={navigator} />
       case 'NewsView':
         return <NewsView navigator={navigator} />
-      case 'NewsDetailView':
-        return <NewsDetailView navigator={navigator} />
+      case 'NewsItemView':
+        return <NewsItemView navigator={navigator} />
       case 'BuildingHoursView':
         return <BuildingHoursView navigator={navigator} />
       case 'SISView':
