@@ -13,8 +13,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
+
 import NavigatorScreen from './components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
+import * as c from './components/colors'
+
+const Dimensions = require('Dimensions')
+let Viewport = Dimensions.get('window')
 
 type ViewListType = 'MenusView'| 'SISView'| 'BuildingHoursView'| 'CalendarView'| 'DirectoryView'| 'StreamingView'| 'NewsView'| 'MapView'| 'ContactsView'| 'TransportationView'| 'DictionaryView'
 type ViewType = {usable: boolean, view: ViewListType, title: string, icon: string};
@@ -50,7 +55,7 @@ type ButtonPropsType = {view: ViewType, navigator: typeof Navigator};
 function HomePageButton({view, navigator}: ButtonPropsType) {
   return (
     <TouchableOpacity
-      onPress={() => navigator.push({id: view.view, title: view.title, sceneConfig: Navigator.SceneConfigs.FloatFromRight})}
+      onPress={() => navigator.push({id: view.view, index: 1, title: view.title, sceneConfig: Navigator.SceneConfigs.FloatFromRight})}
       activeOpacity={0.5}
     >
       <View style={[styles.rectangle, buttonStyles[view.view]]}>
@@ -108,14 +113,14 @@ export default function HomePage(props: ScenePropsType) {
     navigator={hostNav}
     title='All About Olaf'
     renderScene={() => <HomePageScene navigator={hostNav} />}
-    leftButton={(route, navigator) =>
-      <TouchableOpacity
+    leftButton={(route, navigator) => {
+      return <TouchableOpacity
         style={styles.navButton}
         onPress={() => navigator.push({id: 'SettingsView', title: 'Settings', sceneConfig: Navigator.SceneConfigs.FloatFromBottom})}
       >
         <Icon name='cog' style={styles.navigationButtonIcon} />
       </TouchableOpacity>
-    }
+    }}
     rightButton={() =>
       <TouchableOpacity
         style={styles.navButton}
@@ -131,11 +136,6 @@ HomePage.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator),
 }
 
-
-import * as c from './components/colors'
-
-const Dimensions = require('Dimensions')
-let Viewport = Dimensions.get('window')
 
 let marginTop = 15
 

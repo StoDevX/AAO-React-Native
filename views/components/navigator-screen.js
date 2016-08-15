@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 export default class NavigatorView extends React.Component {
   static propTypes = {
     leftButton: React.PropTypes.func,
-    navigator: React.PropTypes.instanceOf(Navigator),
+    navigator: React.PropTypes.instanceOf(Navigator).isRequired,
     renderScene: React.PropTypes.func.isRequired,
     rightButton: React.PropTypes.func,
     title: React.PropTypes.string.isRequired,
@@ -39,6 +39,7 @@ export default class NavigatorView extends React.Component {
 
   static defaultProps = {
     leftButton(route, navigator) {
+      console.log('leftButton', route, navigator)
       return <BackButton navigator={navigator} route={route} />
     },
     rightButton() {
@@ -46,34 +47,24 @@ export default class NavigatorView extends React.Component {
     },
   }
 
-  renderTitle() {
-    return <ScreenTitle>{this.props.title}</ScreenTitle>
-  }
-
-  // Render a given scene
-  renderScene() {
-    return (
-      <View style={styles.container}>
-        {this.props.renderScene()}
-      </View>
-    )
-  }
-
   render() {
+    console.log('Navigator#render', this.props.navigator)
     return (
       <Navigator
-        renderScene={this.renderScene.bind(this)}
         navigator={this.props.navigator}
         navigationBar={
           <Navigator.NavigationBar
             style={styles.navigationBar}
             routeMapper={{
-              LeftButton: this.props.leftButton,
-              RightButton: this.props.rightButton,
-              Title: this.renderTitle.bind(this),
+              LeftButton: route => this.props.leftButton(route, this.props.navigator),
+              RightButton: route => this.props.rightButton(route, this.props.navigator),
+              Title: () => <ScreenTitle>{this.props.title}</ScreenTitle>,
             }}
-          />
-        }
+          />}
+        renderScene={() =>
+          <View style={styles.container}>
+            {this.props.renderScene()}
+          </View>}
       />
     )
   }
