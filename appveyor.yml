@@ -34,7 +34,9 @@ test_script:
   - node --version
   - npm --version
   # run tests
-  - npm test
+  - npm run lint
+  - npm run flow
+  - npm run test:js
   # prepare env
   - touch .env.js
   - touch keys.js

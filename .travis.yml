@@ -73,6 +73,7 @@ script:
   - touch keys.js
 
   # JS-only tests - type checking and specs
+  - if [[ "$TEST_TYPE" = js ]]; then npm run lint; fi
   - if [[ "$TEST_TYPE" = js ]]; then npm run flow; fi
   - if [[ "$TEST_TYPE" = js ]]; then npm run test:js; fi
 
