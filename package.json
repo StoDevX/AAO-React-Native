@@ -9,7 +9,7 @@
     "lint": "eslint app.js *.index.js lib/ views/",
     "android": "react-native run-android",
     "android-emulator": "emulator -avd 'react-native'",
-    "flow": "echo 'Not yet implemented.'",
+    "flow": "flow",
     "bundle:ios": "react-native bundle --entry-file index.ios.js --dev true --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios",
     "bundle:android": "react-native bundle --entry-file index.android.js --dev true --platform android --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
     "build:ios": "xctool -configuration Release -project ios/AllAboutOlaf.xcodeproj -scheme AllAboutOlaf -sdk iphonesimulator -destination platform='iOS Simulator,name=iPhone 5s,OS=9.2'",
