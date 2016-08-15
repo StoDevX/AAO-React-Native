@@ -20,11 +20,11 @@ const styles = StyleSheet.create({
   navigationButtonText: {
     color: c.tint,
     margin: 10,
-    textAlignVertical: 'top'
+    textAlignVertical: 'top',
   },
   navigationButtonIcon: {
     fontSize: 16,
-  }
+  },
 })
 
 export default ({navigator}) =>
