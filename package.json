@@ -59,6 +59,7 @@
     "eslint": "3.3.0",
     "eslint-plugin-babel": "3.3.0",
     "eslint-plugin-react": "6.1.0",
+    "flow-bin": "0.30.0",
     "pre-commit": "1.1.3"
   }
 }
