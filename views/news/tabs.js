@@ -13,21 +13,26 @@ export default [
     title: 'St. Olaf',
     icon: {uri: base64Icon, scale: 3},
     content: StOlafNewsView,
-    url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=https://wp.stolaf.edu/feed',
-
+    props: {
+      url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=https://wp.stolaf.edu/feed',
+    },
   },
   {
     id: 'politicole',
     title: 'PoliticOle',
     icon: {uri: base64Icon, scale: 3},
     content: PoliticoleView,
-    url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http://oleville.com/politicole/feed',
+    props: {
+      url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http://oleville.com/politicole/feed',
+    },
   },
   {
     id: 'mess',
     title: 'Mess',
     icon: {uri: base64Icon, scale: 3},
     content: ManitouMessView,
-    url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http://manitoumessenger.com/feed',
+    props: {
+      url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http://manitoumessenger.com/feed',
+    },
   },
 ]

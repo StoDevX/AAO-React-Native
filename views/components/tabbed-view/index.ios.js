@@ -1,20 +1,20 @@
 // @flow
 
 import React from 'react'
-import {
-  View,
-  TabBarIOS,
-} from 'react-native'
+import {View, TabBarIOS} from 'react-native'
 
 import styles from './styles'
 import type { TabbedViewPropsType } from './types'
+import { TabbedViewPropTypes } from './types'
 
 export default class TabbedView extends React.Component {
+  static propTypes = TabbedViewPropTypes;
+
   state = {
     selectedTab: this.props.tabs[0].id,
   }
 
-  props: TabbedViewPropsType
+  props: TabbedViewPropsType;
 
   render() {
     let tabs = this.props.tabs
@@ -32,7 +32,7 @@ export default class TabbedView extends React.Component {
               selected={this.state.selectedTab === tab.id}
               onPress={() => this.setState({selectedTab: tab.id})}
             >
-              <tab.content />
+              <tab.content {...tab.props} />
             </TabBarIOS.Item>)}
         </TabBarIOS>
       </View>
