@@ -27,7 +27,7 @@ export default class TabbedView extends React.Component {
           selectedTab={this.state.selectedTabIndex}
           onTabSelected={e => this.setState({selectedTabIndex: e.nativeEvent.position})}
         >
-          {tabs.map(tab => <Tab key={tab.id} name={tab.title} />)}
+          {tabs.map(tab => <Tab key={tab.id} name={tab.title} style={styles.listViewStyle} />)}
         </TabLayout>
         <TabInfo.content {...this.props.childProps} {...TabInfo.props} />
       </View>

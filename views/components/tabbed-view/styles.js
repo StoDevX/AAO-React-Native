@@ -2,4 +2,7 @@ import { StyleSheet } from 'react-native'
 
 export default StyleSheet.create({
   container: {},
+  listViewStyle: {
+    paddingBottom: 51,
+  },
 })
