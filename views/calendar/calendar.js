@@ -121,33 +121,33 @@ export default class CalendarView extends React.Component {
     })
 
     return (
-      <View style={styles.container}>
-        <ListView
-          dataSource={ds.cloneWithRows(this.state.events)}
-          renderRow={data =>
-            <View style={styles.row}>
-              <EventView
-                eventTitle={data.summary}
-                startTime={data.start.dateTime}
-                endTime={data.end.dateTime}
-                location={data.location}
-              />
-            </View>
-          }
-        />
-      </View>
+      <ListView
+        style={styles.container}
+        dataSource={ds.cloneWithRows(this.state.events)}
+        renderRow={data =>
+          <EventView
+            style={styles.row}
+            eventTitle={data.summary}
+            startTime={data.start.dateTime}
+            endTime={data.end.dateTime}
+            location={data.location}
+          />
+        }
+      />
     )
   }
 }
 
 let styles = StyleSheet.create({
   container: {
+    marginBottom: 50,
     flex: 1,
+    backgroundColor: '#ffffff',
   },
   row: {
-
-  },
-  title: {
-
+    marginLeft: 10,
+    marginRight: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ebebeb',
   },
 })

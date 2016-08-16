@@ -9,88 +9,73 @@ import * as c from '../components/colors'
 import padEnd from 'lodash/padEnd'
 
 let styles = StyleSheet.create({
-  event: {
-    backgroundColor: c.coolPurple,
-    paddingBottom: 10,
-    marginBottom: 5,
-    justifyContent: 'flex-end',
+  itemTitle: {
+    color: c.black,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 10,
+    paddingBottom: 3,
+    fontSize: 16,
+    textAlign: 'left',
   },
-  title: {
-    color: c.white,
-    fontSize: 20,
-    marginLeft: 5,
-  },
-  time: {
-    color: c.white,
-    marginLeft: 5,
-  },
-  location: {
-    color: c.white,
-    marginLeft: 5,
+  itemPreview: {
+    color: c.iosText,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 6,
+    fontSize: 13,
+    textAlign: 'left',
   },
 })
 
+function getString(date) {
+  let month = date.getMonth() + 1 // offset since JS uses 0-11, not 1-12
+  let day = date.getDate()
+
+  let hours = date.getHours()
+  let isMorning = true
+  if (date.getHours() > 12) {
+    hours = date.getHours() - 12
+    isMorning = false
+  }
+
+  let min = date.getMinutes()
+  if (min.toString().length < 2) {
+    min = padEnd(min, 2, '0')
+  }
+
+  if (isMorning) {
+    min += 'AM'
+  } else {
+    min += 'PM'
+  }
+
+  return `${month}/${day} ${hours}:${min}`
+}
+
 // PROPS: eventTitle, location, startTime, endTime
-export default class EventView extends React.Component {
-  static propTypes = {
-    endTime: React.PropTypes.string.isRequired,
-    eventTitle: React.PropTypes.string.isRequired,
-    location: React.PropTypes.string.isRequired,
-    startTime: React.PropTypes.string.isRequired,
-  }
+export default function EventView(props: {eventTitle: string, location: string, startTime?: string, endTime?: string, style?: any}) {
+  let st = new Date(props.startTime)
+  let et = new Date(props.endTime)
 
-  state = {
-    start: null,
-    end: null,
-  }
+  let stString = getString(st)
+  let etString = getString(et)
 
-  componentWillMount() {
-    this.parseDates(this.props.startTime, this.props.endTime)
-  }
+  let showTimes = props.startTime && props.endTime
+  let showLocation = Boolean(props.location)
 
-  getString(date) {
-    let month = date.getMonth() + 1 // offset since JS uses 0-11, not 1-12
-    let day = date.getDate()
-
-    let hours = date.getHours()
-    let isMorning = true
-    if (date.getHours() > 12) {
-      hours = date.getHours() - 12
-      isMorning = false
-    }
-
-    let min = date.getMinutes()
-    if (min.toString().length < 2) {
-      min = padEnd(min, 2, '0')
-    }
-
-    if (isMorning) {
-      min += 'AM'
-    } else {
-      min += 'PM'
-    }
-
-    return `${month}/${day} ${hours}:${min}`
-  }
-
-  parseDates(startTime, endTime) {
-    let st = new Date(startTime)
-    let et = new Date(endTime)
-
-    let stString = this.getString(st)
-    let etString = this.getString(et)
-
-    this.setState({start: stString})
-    this.setState({end: etString})
-  }
-
-  render() {
-    return (
-      <View style={styles.event}>
-        <Text style={styles.title}>{this.props.eventTitle}</Text>
-        <Text style={styles.time}>{this.state.start} - {this.state.end}</Text>
-        <Text style={styles.location}>{this.props.location}</Text>
-      </View>
-    )
-  }
+  return (
+    <View style={props.style}>
+      <Text style={styles.itemTitle}>{props.eventTitle}</Text>
+      { showTimes ? <Text style={styles.itemPreview}>{stString} - {etString}</Text> : null }
+      { showLocation ? <Text style={styles.itemPreview}>{props.location}</Text> : null }
+    </View>
+  )
+}
+EventView.propTypes = {
+  endTime: React.PropTypes.string,
+  eventTitle: React.PropTypes.string.isRequired,
+  location: React.PropTypes.string,
+  startTime: React.PropTypes.string,
+  style: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.object]),
 }
