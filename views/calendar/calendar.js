@@ -140,7 +140,6 @@ export default class CalendarView extends React.Component {
 
 let styles = StyleSheet.create({
   container: {
-    marginBottom: 50,
     flex: 1,
     backgroundColor: '#ffffff',
   },
