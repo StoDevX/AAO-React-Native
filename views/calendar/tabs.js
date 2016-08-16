@@ -1,16 +1,16 @@
-import OlevilleCalendarView from './olevilleCalendar'
-import MasterCalendarView from './masterCalendar'
-
+// @flow
+import React from 'react'
+import CalendarView from './calendar'
 
 export default [
   {
     id: 'master',
     title: 'Master Events',
-    content: MasterCalendarView,
+    content: () => <CalendarView source='master' />,
   },
   {
     id: 'oleville',
     title: 'Oleville Events',
-    content: OlevilleCalendarView,
+    content: () => <CalendarView source='oleville' />,
   },
 ]
