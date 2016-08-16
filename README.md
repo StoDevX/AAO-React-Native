@@ -5,7 +5,7 @@
 
 
 ## About
-The St. Olaf community, now in pocket size... rewritten in React Native.  This is a rewrite of [All About Olaf](http://drewvolz.com/all-about-olaf/) in React Native as it is currently written in Objective-C.
+The St. Olaf community, now in pocket size... rewritten in React Native.  This is a rewrite of [All About Olaf](https://itunes.apple.com/us/app/all-about-olaf/id938588319) in React Native as it is currently written in Objective-C.
 
 ## Getting Started
 
@@ -18,10 +18,8 @@ The St. Olaf community, now in pocket size... rewritten in React Native.  This i
 ## Note
 The Calendar might nag you for a Google Calendar API key. You can either ask someone involved with this project for a key, or you may [create one yourself](https://console.developers.google.com/projectselector/apis/credentials) for use during development.
 
-1. Create the `keys.js` file in the uppermost directory of the project
-2. Insert this string into the file below and add your key to it
-
-    `export const calendarKey = your-key-here`
+1. Create a copy of the `.env.sample.js` file and reanme it to `.env.js`
+2. Insert your API key in place of the `key goes here` text
 
 ## Completed
 * Stav Menu (minus auto-scroll to dinner menu)
@@ -29,23 +27,23 @@ The Calendar might nag you for a Google Calendar API key. You can either ask som
 * Home Page
 * Important Contacts (might add more contacts to the list)
 * Campus Dictionary
+* Cage Menu
 
 ## Work-In-Progress
-* Cage Menu
 * Calendar
 * Building Hours
 * Settings
 * Campus Map *PRs Welcome*
-
-## Todo (modules)
 * News *PRs Welcome*
 * Streaming Media *PRs Welcome*
+* Push Notifications
+
+## Todo (modules)
 * Transportation
 * Oleville
 * SIS *PRs Welcome*
 
 ## Todo (other)
-* Push Notifications
 * Analytics
 * A better router
 * [3D touch actions](https://github.com/jordanbyron/react-native-quick-actions) for icon and within
