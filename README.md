@@ -18,7 +18,7 @@ The St. Olaf community, now in pocket size... rewritten in React Native.  This i
 ## Note
 The Calendar might nag you for a Google Calendar API key. You can either ask someone involved with this project for a key, or you may [create one yourself](https://console.developers.google.com/projectselector/apis/credentials) for use during development.
 
-1. Create a copy of the `.env.sample.js` file and reanme it to `.env.js`
+1. Create a copy of the `.env.sample.js` file and rename it to `.env.js`
 2. Insert your API key in place of the `key goes here` text
 
 ## Completed
