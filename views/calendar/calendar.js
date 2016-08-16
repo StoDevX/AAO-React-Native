@@ -65,14 +65,6 @@ export default class CalendarView extends React.Component {
     this.getEvents('stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com')
   }
 
-  getCurrentTime() {
-    let nowDate = new Date()
-    let nowString = nowDate.toISOString() // As needed by the Google Calendar API
-    let offset = (nowDate.getTimezoneOffset() / 60)
-    let offsetString = `-${offset}:00Z`
-    return nowString.replace('Z', offsetString)
-  }
-
   buildCalendarUrl(calendarId: string) {
     let calendarUrl = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`
     let params = {
@@ -80,7 +72,7 @@ export default class CalendarView extends React.Component {
       orderBy: 'startTime',
       showDeleted: false,
       singleEvents: true,
-      timeMin: this.getCurrentTime(),
+      timeMin: new Date().toISOString(),
       key: GOOGLE_CALENDAR_API_KEY,
     }
     return `${calendarUrl}?${qs.stringify(params)}`
