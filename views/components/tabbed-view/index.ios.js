@@ -21,8 +21,7 @@ export default class TabbedView extends React.Component {
     return (
       <View style={[styles.container, this.props.style]}>
         <TabBarIOS
-          tintColor='white'
-          barTintColor='darkslateblue'
+          tintColor='orange'
         >
           {tabs.map(tab =>
             <TabBarIOS.Item
