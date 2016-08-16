@@ -59,11 +59,9 @@ export default class NewsContainer extends React.Component {
     let snippet = entities.decode(story.contentSnippet)
     return (
       <TouchableOpacity onPress={() => this.onPressNews(title, story)}>
-        <View style={styles.pageContainer}>
-          <View style={styles.rightContainer}>
-            <Text style={styles.newsTitle}>{title}</Text>
-            <Text style={styles.newsSummary}>{snippet}</Text>
-          </View>
+        <View style={styles.rowContainer}>
+          <Text style={styles.itemTitle}>{title}</Text>
+          <Text style={styles.itemPreview}>{snippet}</Text>
         </View>
       </TouchableOpacity>
     )
@@ -88,7 +86,7 @@ export default class NewsContainer extends React.Component {
 
     return (
       <ListView
-        style={styles.newsItemContainer}
+        style={styles.listContainer}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow.bind(this)}
       />
@@ -97,26 +95,17 @@ export default class NewsContainer extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  pageContainer: {
+  listContainer: {
+    paddingBottom: 50,
+    backgroundColor: '#ffffff',
+  },
+  rowContainer: {
     marginLeft: 10,
     marginRight: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ebebeb',
   },
-  rightContainer: {
-    flex: 1,
-  },
-  newsItemContainer: {
-    paddingBottom: 50,
-    backgroundColor: '#ffffff',
-  },
-  newsPic: {
-    width: 90,
-    height: 60,
-    margin: 10,
-    marginLeft: 0,
-  },
-  newsTitle: {
+  itemTitle: {
     color: c.black,
     paddingLeft: 10,
     paddingRight: 10,
@@ -125,7 +114,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'left',
   },
-  newsSummary: {
+  itemPreview: {
     color: c.iosText,
     paddingLeft: 10,
     paddingRight: 10,
