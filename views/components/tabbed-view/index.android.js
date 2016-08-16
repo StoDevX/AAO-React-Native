@@ -23,7 +23,7 @@ export default class TabbedView extends React.Component {
     return (
       <View style={[styles.container, this.props.style]}>
         <TabLayout
-          selectedTabIndicatorColor='darkslateblue'
+          selectedTabIndicatorColor='orange'
           selectedTab={this.state.selectedTabIndex}
           onTabSelected={e => this.setState({selectedTabIndex: e.nativeEvent.position})}
         >
