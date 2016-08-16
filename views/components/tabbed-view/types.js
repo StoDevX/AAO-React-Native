@@ -12,7 +12,7 @@ export const TabbedViewPropTypes = {
   tabs: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    icon: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+    icon: PropTypes.shape({uri: PropTypes.string.isRequired, scale: PropTypes.number.isRequired}).isRequired,
     content: PropTypes.func.isRequired,
     props: PropTypes.object,
   })).isRequired,
