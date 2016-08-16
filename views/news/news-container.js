@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 
 import type {StoryType} from './types'
-import LoadingView from './loading'
+import LoadingView from '../components/loading'
 import * as c from '../components/colors'
 
 let Entities = require('html-entities').AllHtmlEntities

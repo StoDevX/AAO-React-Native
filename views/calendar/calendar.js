@@ -12,6 +12,7 @@ import {
   ListView,
 } from 'react-native'
 
+import LoadingView from '../components/loading'
 import qs from 'querystring'
 import EventView from './event'
 import { GOOGLE_CALENDAR_API_KEY } from '../../lib/config'
@@ -104,11 +105,7 @@ export default class CalendarView extends React.Component {
 
   render() {
     if (!this.state.events) {
-      return (
-        <Text>
-          Loading
-        </Text>
-      )
+      return <LoadingView />
     }
 
     if (this.state.error) {
