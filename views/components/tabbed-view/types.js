@@ -5,10 +5,12 @@ export type TabDefinitionType = {id: string, title: string, icon: string, conten
 export type TabbedViewPropsType = {
   style: Object|number,
   tabs: TabDefinitionType[],
+  childProps?: Object,
 };
 
 export const TabbedViewPropTypes = {
   style: PropTypes.oneOfType([PropTypes.number, PropTypes.object]),
+  childProps: PropTypes.object,
   tabs: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,

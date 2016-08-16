@@ -29,7 +29,7 @@ export default class TabbedView extends React.Component {
             translucent={true}
             onPress={() => this.setState({selectedTab: tab.id})}
           >
-            <tab.content {...tab.props} />
+            <tab.content {...this.props.childProps} {...tab.props} />
           </TabBarIOS.Item>
         )}
       </TabBarIOS>

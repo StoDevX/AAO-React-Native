@@ -20,7 +20,7 @@ import NewsItemView from './news-item'
 
 export default class NewsContainer extends React.Component {
   static propTypes = {
-    navigator: PropTypes.instanceOf(Navigator),
+    navigator: PropTypes.instanceOf(Navigator).isRequired,
     url: PropTypes.string.isRequired,
   }
 

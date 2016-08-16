@@ -16,7 +16,9 @@ export default function NewsPage({navigator}: {navigator: typeof Navigator}) {
   return <NavigatorScreen
     navigator={navigator}
     title='News'
-    renderScene={() => <TabbedView style={styles.container} tabs={tabs} />}
+    renderScene={() =>
+      <TabbedView style={styles.container} tabs={tabs} childProps={{navigator}} />
+    }
   />
 }
 NewsPage.propTypes = {
