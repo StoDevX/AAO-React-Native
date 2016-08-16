@@ -16,7 +16,6 @@ import Collapsible from 'react-native-collapsible'
 
 let styles = StyleSheet.create({
   container: {
-    flex: 1,
     marginBottom: 10,
   },
   collapsedContent: {
