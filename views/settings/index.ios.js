@@ -56,8 +56,8 @@ export default class SettingsView extends React.Component {
   async retrieveCredientials() {
     let credentials = await Keychain.getGenericPassword()
 
-    console.log('username ' + credentials.username +
-                  '\npassword ' + credentials.password)
+    console.log('username', credentials.username)
+    console.log('password', credentials.password)
     console.log('Credentials successfully created')
   }
 
