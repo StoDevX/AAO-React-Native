@@ -55,7 +55,7 @@ type ButtonPropsType = {view: ViewType, navigator: typeof Navigator};
 function HomePageButton({view, navigator}: ButtonPropsType) {
   return (
     <TouchableOpacity
-      onPress={() => navigator.push({id: view.view, index: 1, title: view.title, sceneConfig: Navigator.SceneConfigs.FloatFromRight})}
+      onPress={() => navigator.push({id: view.view, index: 1, title: view.title, sceneConfig: Navigator.SceneConfigs.PushFromRight})}
       activeOpacity={0.5}
     >
       <View style={[styles.rectangle, buttonStyles[view.view]]}>
