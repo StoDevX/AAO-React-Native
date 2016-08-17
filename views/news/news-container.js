@@ -6,7 +6,7 @@ import {
   ListView,
   Text,
   Navigator,
-  TouchableOpacity,
+  TouchableHighlight,
 } from 'react-native'
 
 import type {StoryType} from './types'
@@ -58,12 +58,12 @@ export default class NewsContainer extends React.Component {
     let title = entities.decode(story.title)
     let snippet = entities.decode(story.contentSnippet)
     return (
-      <TouchableOpacity onPress={() => this.onPressNews(title, story)}>
+      <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressNews(title, story)}>
         <View style={styles.rowContainer}>
-          <Text style={styles.itemTitle}>{title}</Text>
-          <Text style={styles.itemPreview}>{snippet}</Text>
+          <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
+          <Text style={styles.itemPreview} numberOfLines={2}>{snippet}</Text>
         </View>
-      </TouchableOpacity>
+      </TouchableHighlight>
     )
   }
 
@@ -101,7 +101,9 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     marginLeft: 10,
-    marginRight: 10,
+    paddingRight: 10,
+    paddingTop: 8,
+    paddingBottom: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#ebebeb',
   },
@@ -109,7 +111,6 @@ const styles = StyleSheet.create({
     color: c.black,
     paddingLeft: 10,
     paddingRight: 10,
-    paddingTop: 10,
     paddingBottom: 3,
     fontSize: 16,
     textAlign: 'left',
@@ -118,7 +119,6 @@ const styles = StyleSheet.create({
     color: c.iosText,
     paddingLeft: 10,
     paddingRight: 10,
-    paddingBottom: 6,
     fontSize: 13,
     textAlign: 'left',
   },
