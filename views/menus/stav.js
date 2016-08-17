@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
 })
 
-const URL = 'https://stolaf.cafebonappetit.com/cafe/stav-hall#Lunch'
+const URL = 'http://stolaf.cafebonappetit.com/cafe/stav-hall#Lunch'
 // const DEFAULT_URL = 'http://legacy.cafebonappetit.com/print-menu/cafe/261/menu/112732/days/today/pgbrks/0/'
 
 export default class StavMenuView extends React.Component {

@@ -70,6 +70,31 @@
           <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
           <true/>
         </dict>
+        <key>stolaf.cafebonappetit.com</key>
+        <dict>
+          <key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
+          <true/>
+        </dict>
+        <key>template.cafebonappetit.com</key>
+        <dict>
+          <key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
+          <true/>
+        </dict>
+        <key>bamco.com</key>
+        <dict>
+          <key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
+          <true/>
+        </dict>
+        <key>hub.cafebonappetit.com</key>
+        <dict>
+          <key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
+          <true/>
+        </dict>
+        <key>legacy.cafebonappetit.com</key>
+        <dict>
+          <key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
+          <true/>
+        </dict>
       </dict>
     </dict>
     <key>UIAppFonts</key>
