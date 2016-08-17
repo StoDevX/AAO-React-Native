@@ -20,7 +20,7 @@ cache:
 
 install:
   # work around android build failing - https://github.com/travis-ci/travis-ci/issues/6307
-  - rvm get head
+  - if [[ "$TEST_TYPE" = android ]]; then rvm get head; fi
   ### basic setup stuff
   - brew update
   # force node 6
@@ -29,7 +29,7 @@ install:
   - npm config set spin=false
   - npm config set progress=false
   # install node deps
-  - travis_wait npm install
+  - npm install
 
   ### do js-only setup stuff
   # prepare for jest
