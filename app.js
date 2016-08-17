@@ -19,6 +19,7 @@ import NewsView from './views/news'
 import SISView from './views/sis'
 import BuildingHoursView from './views/building-hours'
 import TransportationView from './views/transportation'
+import OlevilleView from './views/oleville'
 import SettingsView from './views/settings'
 
 import NoRoute from './views/components/no-route'
@@ -54,6 +55,8 @@ function renderScene(route, navigator) {
       return <SISView navigator={navigator} />
     case 'TransportationView':
       return <TransportationView navigator={navigator} />
+    case 'OlevilleView':
+      return <OlevilleView navigator={navigator} />
     case 'SettingsView':
       return <SettingsView navigator={navigator} />
     default:
