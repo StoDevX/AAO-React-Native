@@ -19,6 +19,11 @@ cache:
     - /usr/local/Cellar/.git
 
 install:
+  - echo "Now testing $TEST_TYPE on $TRAVIS_OS_NAME"
+  - echo "Using android emulator $EMULATOR"
+  - echo "Travis branch is $TRAVIS_BRANCH"
+  - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
+
   # work around android build failing - https://github.com/travis-ci/travis-ci/issues/6307
   - if [[ "$TEST_TYPE" = android ]]; then rvm get head; fi
   ### basic setup stuff
@@ -33,7 +38,7 @@ install:
 
   ### do js-only setup stuff
   # prepare for jest
-  - if [[ "$TEST_TYPE" = js ]]; then rm -rf "${TMPDIR}/jest_preprocess_cache"; fi
+  - if [[ "$TEST_TYPE" = js ]]; then rm -rf "$TMPDIR/jest_preprocess_cache"; fi
 
   ### do ios-only setup stuff
   - if [[ "$TEST_TYPE" = ios ]]; then brew install xctool; fi
@@ -77,14 +82,14 @@ script:
   - touch keys.js
 
   # JS-only tests - type checking and specs
-  - if [[ "$TEST_TYPE" = js ]]; then npm run lint; fi
+  - if [[ "$TEST_TYPE" == "js" ]]; then npm run lint; fi
   # unfortunately, flow does not yet seem willing to run properly on travis.
   # we'll just run it locally for now.
   # - if [[ "$TEST_TYPE" = js ]]; then npm run flow; fi
-  - if [[ "$TEST_TYPE" = js ]]; then npm run test:js; fi
+  - if [[ "$TEST_TYPE" == "js" ]]; then npm run test:js; fi
 
   # iOS-only tests - building and specs
-  - if [[ "$TEST_TYPE" = ios ]]; then npm run test:ios; fi
+  - if [[ "$TEST_TYPE" == "ios" ]]; then npm run test:ios; fi
 
   # android-only tests - building and specs
   - if [[ "$TEST_TYPE" = android ]]; then npm run build:android:macos; fi
