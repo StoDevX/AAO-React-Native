@@ -13,6 +13,31 @@ import NavigatorScreen from '../components/navigator-screen'
 import type {StoryType, NewsItemPropsType} from './types'
 
 function NewsItemContents({content}: StoryType) {
+  content = content + `
+    <style>
+      body {
+        font-family: -apple-system;
+        font-size: 16px;
+        margin: 0;
+        padding: 1em;
+      }
+      div {
+        width: auto !important;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+      p {
+        line-height: 1.2em;
+      }
+      a {
+        pointer-events: none;
+        color: black;
+        text-decoration: none;
+      }
+    </style>
+  `
   return (
     <WebView source={{html: content}} />
   )
