@@ -1,22 +1,91 @@
-language: objective-c
-# We're using 7.2 currently, as xctool has issues with 7.3.
-# This also means that we're testing against iOS 9.2.
-osx_image: xcode7.2
+language: generic
+
+my-caches:
+  node: &my-node-cache
+    directories:
+      # cache node_modules b/c they take a long time to install
+      - ./node_modules
+  android-before: &my-android-before_cache
+    - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  android: &my-android-cache
+    directories:
+      # cache node_modules b/c they take a long time to install
+      - ./node_modules
+      # cache .gradle for both gradle and gradle's cache
+      - $HOME/.gradle/caches/
+      - $HOME/.gradle/wrapper/
+  ios: &my-ios-cache
+    directories:
+      # cache node_modules b/c they take a long time to install
+      - ./node_modules
+      # cache homebrew's git repo?
+      - /usr/local/Cellar/.git
+
+matrix:
+  include:
+    - os: linux
+      sudo: false
+      env: TEST_TYPE=js
+      language: node_js
+      node_js: '6'
+      cache: *my-node-cache
+
+    - os: linux
+      sudo: false
+      env: TEST_TYPE=android
+      jdk: oraclejdk8
+      language: android
+      android:
+        components:
+          # Some components come pre-installed:
+          # docs.travis-ci.com/user/languages/android#Pre-installed-components
+          # However, that seems to leave us with errors in the build
+          - tools
+          - platform-tools
+          - build-tools-23.0.1
+          - android-23
+          - extra-android-m2repository
+          - extra-google-m2repository
+          - extra-android-support
+      cache: *my-android-cache
+      before_cache: *my-android-before_cache
+
+    # This is all ready to go; we just need to want it :-)
+    # - os: linux
+    #   distro: trusty
+    #   sudo: true
+    #   env: TEST_TYPE=android EMULATOR=yes
+    #   jdk: oraclejdk8
+    #   language: android
+    #   android:
+    #     components:
+    #       # Some components come pre-installed:
+    #       # docs.travis-ci.com/user/languages/android#Pre-installed-components
+    #       # However, that seems to leave us with errors in the build
+    #       - tools
+    #       - platform-tools
+    #       - build-tools-23.0.1
+    #       - android-23
+    #       - extra-android-m2repository
+    #       - extra-google-m2repository
+    #       - extra-android-support
+    #       - sys-img-armeabi-v7a-google_apis-23
+    #   cache: *my-android-cache
+    #   before_cache: *my-android-before_cache
+
+    - os: osx
+      # We're using 7.2 currently, as xctool has issues with 7.3.
+      # This also means that we're testing against iOS 9.2.
+      osx_image: xcode7.2
+      language: objective-c
+      env: TEST_TYPE=ios
+      cache: *my-ios-cache
 
 # As seen in http://stackoverflow.com/a/31882307/2347774
 # Prevent travis from building twice for PRs
 branches:
   only:
     - master
-
-cache:
-  directories:
-    # cache node_modules b/c they take a long time to install
-    - node_modules
-    # cache .gradle for both gradle and gradle's cache
-    - ~/.gradle
-    # cache homebrew's git repo?
-    - /usr/local/Cellar/.git
 
 install:
   - echo "Now testing $TEST_TYPE on $TRAVIS_OS_NAME"
@@ -25,10 +94,9 @@ install:
   - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
 
   # work around android build failing - https://github.com/travis-ci/travis-ci/issues/6307
-  - if [[ "$TEST_TYPE" = android ]]; then rvm get head; fi
-  ### basic setup stuff
-  - brew update
+  # - if [[ "$TRAVIS_OS_NAME" == "linux" && "$TEST_TYPE" == "android" ]]; then rvm get head; fi
   # force node 6
+  - nvm install 6
   - nvm use 6
   # turn off fancy npm stuff
   - npm config set spin=false
@@ -41,35 +109,26 @@ install:
   - if [[ "$TEST_TYPE" = js ]]; then rm -rf "$TMPDIR/jest_preprocess_cache"; fi
 
   ### do ios-only setup stuff
-  - if [[ "$TEST_TYPE" = ios ]]; then brew install xctool; fi
-
-  ### do android-only setup stuff
-  # install gradle
-  - if [[ "$TEST_TYPE" = android ]]; then brew install gradle; fi
-  # install android tools
   - |
-    if [[ "$TEST_TYPE" = android ]]; then
-      set -ve
-      brew install android-sdk
-
-      echo y | android update sdk --no-ui --all --filter tools > /dev/null
-      echo y | android update sdk --no-ui --all --filter platform-tools > /dev/null
-      echo y | android update sdk --no-ui --all --filter build-tools-23.0.1 > /dev/null
-      echo y | android update sdk --no-ui --all --filter android-23 > /dev/null
-      echo y | android update sdk --no-ui --all --filter extra-android-m2repository > /dev/null
-      echo y | android update sdk --no-ui --all --filter extra-google-m2repository > /dev/null
-      echo y | android update sdk --no-ui --all --filter extra-android-support > /dev/null
-
-      export ANDROID_HOME=/usr/local/opt/android-sdk
+    if [[ "$TRAVIS_OS_NAME" == "osx" && "$TEST_TYPE" == "ios" ]]; then
+      brew update
+      brew install xctool;
     fi
 
 
-# we can run three builds in parallel!
-env:
-  matrix:
-    - TEST_TYPE=js
-    - TEST_TYPE=ios
-    - TEST_TYPE=android
+before_script:
+  # Emulator Management: Create, Start and Wait
+  - |
+    if [[ "$TEST_TYPE" == "android" && "$EMULATOR" == "yes" ]]; then
+      EmuName="react-native"
+      df -h
+      mkdir -p "$HOME/.android/avd/$EmuName.avd/"
+      echo no | android create avd --force -n $EmuName -t android-23 --abi google_apis/armeabi-v7a
+      emulator -avd $EmuName -no-audio -no-window &
+      android-wait-for-emulator
+      adb shell input keyevent 82 &
+    fi
+
 
 script:
   # These sections will grow over time.
