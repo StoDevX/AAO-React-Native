@@ -5,7 +5,7 @@
 
 
 ## About
-The St. Olaf community, now in pocket size... rewritten in React Native.  This is a rewrite of [All About Olaf](https://itunes.apple.com/us/app/all-about-olaf/id938588319) in React Native as it is currently written in Objective-C.
+The St. Olaf community, now in pocket size… rewritten in React Native.
 
 ## Getting Started
 - Clone the repository
