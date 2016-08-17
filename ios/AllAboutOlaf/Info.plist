@@ -45,6 +45,11 @@
           <key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
           <true/>
         </dict>
+        <key>wp.stolaf.edu</key>
+        <dict>
+          <key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
+          <true/>
+        </dict>
         <key>oleville.com</key>
         <dict>
           <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
