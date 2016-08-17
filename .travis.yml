@@ -3,6 +3,12 @@ language: objective-c
 # This also means that we're testing against iOS 9.2.
 osx_image: xcode7.2
 
+# As seen in http://stackoverflow.com/a/31882307/2347774
+# Prevent travis from building twice for PRs
+branches:
+  only:
+    - master
+
 cache:
   directories:
     # cache node_modules b/c they take a long time to install

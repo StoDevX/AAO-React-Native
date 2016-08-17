@@ -1,5 +1,11 @@
 clone_folder: c:\projects\all-about-olaf
 
+# From http://stackoverflow.com/a/31882307/2347774
+# Hopefully prevent appveyor from building twice for PRs
+branches:
+  only:
+    - master
+
 # the basic outline for this install process is from
 # github.com/googlesamples/android-ndk/blob/master/appveyor.yml
 install:
