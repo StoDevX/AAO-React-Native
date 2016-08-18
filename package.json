@@ -24,7 +24,7 @@
     "release:android": "echo 'Not yet implemented!'"
   },
   "dependencies": {
-    "buffer": "4.9.0",
+    "buffer": "4.9.1",
     "events": "1.1.1",
     "frisbee": "1.1.1",
     "html-entities": "1.2.0",
