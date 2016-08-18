@@ -24,6 +24,7 @@ export const iosLightBorder = 'rgb(199, 199, 201)'
 export const iosText = 'rgb(199, 198, 206)'
 export const iosDisabledText = 'rgb(143, 143, 143)'
 export const iosNavbarBottomBorder = 'rgb(200, 200, 202)'
+export const iosListSectionHeader = 'rgb(248, 248, 248)'
 
 // MARK: Oleville colors
 export const theLatest = '#00BFFF'
