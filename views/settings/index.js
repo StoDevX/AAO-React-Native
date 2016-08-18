@@ -14,6 +14,7 @@ import {
   AsyncStorage,
   Navigator,
   Alert,
+  View,
 } from 'react-native'
 
 import {
@@ -55,40 +56,60 @@ function SisAccountSection(props: {
   onPasswordChange: Function,
   onSubmit: Function,
 }) {
+  let disabled = props.loading || (!props.username || !props.password)
+
+  let loginTextStyle = disabled
+    ? styles.loginButtonTextDisabled
+    : props.loading
+      ? styles.loginButtonTextLoading
+      : styles.loginButtonTextActive
+
   return (
-    <Section header='ST. OLAF ACCOUNT'>
-      <CustomCell contentContainerStyle={styles.loginCell}>
-        <Icon name='user' size={18} />
-        <Text style={styles.label}>Username</Text>
+    <View>
+      <Section header='ST. OLAF ACCOUNT'>
+        <CustomCell contentContainerStyle={styles.loginCell}>
+          <Text style={styles.label}>Username</Text>
 
-        <SisAccountTextInput
-          placeholder='username'
-          value={props.username}
-          returnKeyType='next'
-          onChangeText={props.onUsernameChange}
-        />
-      </CustomCell>
+          <SisAccountTextInput
+            disabled={disabled}
+            placeholder='username'
+            value={props.username}
+            returnKeyType='next'
+            onChangeText={props.onUsernameChange}
+          />
+        </CustomCell>
 
-      <CustomCell contentContainerStyle={styles.loginCell}>
-        <Icon name='lock' size={18} />
-        <Text style={styles.label}>Password</Text>
+        <CustomCell contentContainerStyle={styles.loginCell}>
+          <Text style={styles.label}>Password</Text>
 
-        <SisAccountTextInput
-          secureTextEntry={true}
-          placeholder='password'
-          value={props.password}
-          returnKeyType='done'
-          onChangeText={props.onPasswordChange}
-          onSubmitEditing={props.onSubmit}
-        />
-      </CustomCell>
+          <SisAccountTextInput
+            disabled={disabled}
+            secureTextEntry={true}
+            placeholder='password'
+            value={props.password}
+            returnKeyType='done'
+            onChangeText={props.onPasswordChange}
+            onSubmitEditing={props.onSubmit}
+          />
+        </CustomCell>
+      </Section>
 
-      <CustomCell disabled={props.loading} onPress={props.onSubmit}>
-        {props.loggedIn
-          ? <Text style={styles.loginButtonText}>Sign Out</Text>
-          : <Text style={styles.loginButtonText}>Sign In</Text>}
-      </CustomCell>
-    </Section>
+      <Section>
+        <CustomCell
+          contentContainerStyle={styles.actionButton}
+          isDisabled={disabled}
+          onPress={props.onSubmit}
+        >
+          <Text style={loginTextStyle}>
+            {props.loading
+              ? 'Logging in…'
+              : props.loggedIn
+                ? 'Sign Out'
+                : 'Sign In'}
+          </Text>
+        </CustomCell>
+      </Section>
+    </View>
   )
 }
 SisAccountSection.propTypes = {
@@ -195,7 +216,7 @@ export default class SettingsView extends React.Component {
   }
 
   logOut = async () => {
-    this.setState({username: '', password: ''})
+    this.setState({username: '', password: '', success: false, attempted: false})
     clearLoginCredentials()
     AsyncStorage.removeItem('stolaf:credentials-are-good')
   }
@@ -252,19 +273,27 @@ let styles = StyleSheet.create({
   label: {
     flex: 1,
     fontSize: 16,
-    marginLeft: 10,
-    marginRight: -100,
+    marginRight: -130,
+  },
+  actionButton: {
+    justifyContent: 'flex-start',
   },
   customTextInput: {
     flex: 1,
   },
-  loginButtonText: {
-    color: c.black,
+  loginButtonTextActive: {
+    color: c.infoBlue,
+  },
+  loginButtonTextDisabled: {
+    color: c.iosDisabledText,
+  },
+  loginButtonTextLoading: {
+    color: c.iosDisabledText,
   },
   loginButton: {
     backgroundColor: c.white,
   },
   loginCell: {
-    height: (Platform.OS === 'android') ? 65 : 40,
+    height: (Platform.OS === 'android') ? 65 : 44,
   },
 })
