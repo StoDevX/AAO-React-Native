@@ -47,129 +47,6 @@ function SisAccountTextInput(props) {
   />
 }
 
-function SisAccountSection(props: {
-  loading: bool,
-  loggedIn: bool,
-  username: string,
-  password: string,
-  onUsernameChange: Function,
-  onPasswordChange: Function,
-  onSubmit: Function,
-}) {
-  let disabled = props.loading || (!props.username || !props.password)
-
-  let loginTextStyle = disabled
-    ? styles.loginButtonTextDisabled
-    : props.loading
-      ? styles.loginButtonTextLoading
-      : styles.loginButtonTextActive
-
-  return (
-    <View>
-      <Section header='ST. OLAF ACCOUNT'>
-        <CustomCell contentContainerStyle={styles.loginCell}>
-          <Text style={styles.label}>Username</Text>
-
-          <SisAccountTextInput
-            disabled={disabled}
-            placeholder='username'
-            value={props.username}
-            returnKeyType='next'
-            onChangeText={props.onUsernameChange}
-          />
-        </CustomCell>
-
-        <CustomCell contentContainerStyle={styles.loginCell}>
-          <Text style={styles.label}>Password</Text>
-
-          <SisAccountTextInput
-            disabled={disabled}
-            secureTextEntry={true}
-            placeholder='password'
-            value={props.password}
-            returnKeyType='done'
-            onChangeText={props.onPasswordChange}
-            onSubmitEditing={props.onSubmit}
-          />
-        </CustomCell>
-      </Section>
-
-      <Section>
-        <CustomCell
-          contentContainerStyle={styles.actionButton}
-          isDisabled={disabled}
-          onPress={props.onSubmit}
-        >
-          <Text style={loginTextStyle}>
-            {props.loading
-              ? 'Logging in…'
-              : props.loggedIn
-                ? 'Sign Out'
-                : 'Sign In'}
-          </Text>
-        </CustomCell>
-      </Section>
-    </View>
-  )
-}
-SisAccountSection.propTypes = {
-  loading: React.PropTypes.bool.isRequired,
-  loggedIn: React.PropTypes.bool.isRequired,
-  onPasswordChange: React.PropTypes.func.isRequired,
-  onSubmit: React.PropTypes.func.isRequired,
-  onUsernameChange: React.PropTypes.func.isRequired,
-  password: React.PropTypes.string.isRequired,
-  username: React.PropTypes.string.isRequired,
-}
-
-
-function SupportSection() {
-  return (
-    <Section header='SUPPORT'>
-      <Cell cellStyle='RightDetail'
-        title='Contact Us'
-        accessory='DisclosureIndicator'
-        onPress={() => Communications.email(
-          ['odt@stolaf.edu'],
-          null,
-          null,
-          'All About Olaf',
-          null)
-        }
-      />
-    </Section>
-  )
-}
-
-
-function OddsAndEndsSection() {
-  return (
-    <Section header='ODDS & ENDS'>
-      <Cell cellStyle='RightDetail'
-        title='Version'
-        detail='<get me from info.plist>'
-      />
-
-      <Cell cellStyle='Basic'
-        title='Credits'
-        accessory='DisclosureIndicator'
-        onPress={() => console.warn('credits pressed')}
-      />
-
-      <Cell cellStyle='Basic'
-        title='Privacy Policy'
-        accessory='DisclosureIndicator'
-        onPress={() => console.warn('privacy policy pressed')}
-      />
-
-      <Cell cellStyle='Basic'
-        title='Legal'
-        accessory='DisclosureIndicator'
-        onPress={() => console.warn('legal pressed')}
-      />
-    </Section>
-  )
-}
 
 export default class SettingsView extends React.Component {
   static propTypes = {
@@ -187,6 +64,9 @@ export default class SettingsView extends React.Component {
   componentWillMount() {
     this.loadData()
   }
+
+  _usernameInput: React.Element;
+  _passwordInput: React.Element;
 
   loadData = async () => {
     let [creds, status] = await Promise.all([
@@ -229,23 +109,143 @@ export default class SettingsView extends React.Component {
     this.logOut()
   }
 
+  focusUsername = () => {
+    this._usernameInput.focus()
+  }
+
+  focusPassword = () => {
+    this._passwordInput.focus()
+  }
+
   renderScene() {
+    let username = this.state.username
+    let password = this.state.password
+
+    let onSubmit = this.state.success
+      ? this.handleLogoutPress
+      : this.handleLoginPress
+    let loggedIn = this.state.success
+    let loading = this.state.loading
+
+    let disabled = loading || (!username || !password)
+
+    let loginTextStyle = disabled
+      ? styles.loginButtonTextDisabled
+      : loading
+        ? styles.loginButtonTextLoading
+        : styles.loginButtonTextActive
+
+    let usernameCell = (
+      <CustomCell contentContainerStyle={styles.loginCell}>
+        <Text onPress={this.focusUsername} style={styles.label}>Username</Text>
+
+        <SisAccountTextInput
+          ref={ref => this._usernameInput = ref}
+          disabled={disabled}
+          placeholder='username'
+          value={username}
+          returnKeyType='next'
+          onChangeText={text => this.setState({username: text})}
+          onSubmitEditing={this.focusPassword}
+        />
+      </CustomCell>
+    )
+
+    let passwordCell = (
+      <CustomCell contentContainerStyle={styles.loginCell}>
+        <Text onPress={this.focusUsername} style={styles.label}>Password</Text>
+
+        <SisAccountTextInput
+          ref={ref => this._passwordInput = ref}
+          disabled={disabled}
+          secureTextEntry={true}
+          placeholder='password'
+          value={password}
+          returnKeyType='done'
+          onChangeText={text => this.setState({password: text})}
+          onSubmitEditing={onSubmit}
+        />
+      </CustomCell>
+    )
+
+    let actionCell = (
+      <CustomCell
+        contentContainerStyle={styles.actionButton}
+        isDisabled={disabled}
+        onPress={onSubmit}
+      >
+        <Text style={loginTextStyle}>
+          {loading
+            ? 'Logging in…'
+            : loggedIn
+              ? 'Sign Out'
+              : 'Sign In'}
+        </Text>
+      </CustomCell>
+    )
+
+    let accountSection = (
+      <View>
+        <Section header='ST. OLAF ACCOUNT'>
+          {usernameCell}
+          {passwordCell}
+        </Section>
+
+        <Section>
+          {actionCell}
+        </Section>
+      </View>
+    )
+
+    let supportSection = (
+      <Section header='SUPPORT'>
+        <Cell cellStyle='RightDetail'
+          title='Contact Us'
+          accessory='DisclosureIndicator'
+          onPress={() => Communications.email(
+            ['odt@stolaf.edu'],
+            null,
+            null,
+            'All About Olaf',
+            null)
+          }
+        />
+      </Section>
+    )
+
+    let oddsAndEndsSection = (
+      <Section header='ODDS & ENDS'>
+        <Cell cellStyle='RightDetail'
+          title='Version'
+          detail='<get me from info.plist>'
+        />
+
+        <Cell cellStyle='Basic'
+          title='Credits'
+          accessory='DisclosureIndicator'
+          onPress={() => console.warn('credits pressed')}
+        />
+
+        <Cell cellStyle='Basic'
+          title='Privacy Policy'
+          accessory='DisclosureIndicator'
+          onPress={() => console.warn('privacy policy pressed')}
+        />
+
+        <Cell cellStyle='Basic'
+          title='Legal'
+          accessory='DisclosureIndicator'
+          onPress={() => console.warn('legal pressed')}
+        />
+      </Section>
+    )
+
     return (
       <ScrollView contentContainerStyle={styles.stage}>
         <TableView>
-          <SisAccountSection
-            username={this.state.username}
-            password={this.state.password}
-            onUsernameChange={text => this.setState({username: text})}
-            onPasswordChange={text => this.setState({password: text})}
-            onSubmit={this.state.success ? this.handleLogoutPress : this.handleLoginPress}
-            loggedIn={this.state.success}
-            loading={this.state.loading}
-          />
-
-          <SupportSection />
-
-          <OddsAndEndsSection />
+          {accountSection}
+          {supportSection}
+          {oddsAndEndsSection}
         </TableView>
       </ScrollView>
     )
