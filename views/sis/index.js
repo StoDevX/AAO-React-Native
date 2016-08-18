@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native'
 import NavigatorScreen from '../components/navigator-screen'
-import SISLoginSection from './login'
 
 // let financials = 'https://www.stolaf.edu/sis/st-financials.cfm'
 // let sis = 'https://www.stolaf.edu/sis/login.cfm'
@@ -51,7 +50,7 @@ export default class SISView extends React.Component {
   renderScene() {
     return (
       <View style={styles.container}>
-        <SISLoginSection />
+        {/*<SISLoginSection />*/}
       </View>
     )
   }
