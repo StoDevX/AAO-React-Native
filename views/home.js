@@ -34,6 +34,7 @@ const views: ViewType[] = [
   {usable: true, view: 'ContactsView', title: 'Important Contacts', icon: 'phone'},
   {usable: false, view: 'TransportationView', title: 'Transportation', icon: 'address'},
   {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
+  {usable: false, view: 'PrintReleaseView', title: 'stoPrint', icon: 'print'},
 ]
 
 const buttonStyles = (StyleSheet.create({
