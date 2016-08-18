@@ -35,7 +35,7 @@ const views: ViewType[] = [
   {usable: true, view: 'ContactsView', title: 'Important Contacts', icon: 'phone'},
   {usable: false, view: 'TransportationView', title: 'Transportation', icon: 'address'},
   {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
-  {usable: true, view: 'OlevilleView', title: 'Oleville', icon: 'square'},
+  {usable: true, view: 'OlevilleView', title: 'Oleville', icon: 'youtube'},
 ]
 
 const buttonStyles = StyleSheet.create({

@@ -17,6 +17,7 @@ function NewsItemContents({content}: StoryType) {
     <WebView source={{html: content}} />
   )
 }
+
 NewsItemContents.propTypes = {
   author: PropTypes.string,
   categories: PropTypes.arrayOf(PropTypes.string),

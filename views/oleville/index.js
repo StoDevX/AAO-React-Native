@@ -4,32 +4,45 @@
  * Oleville page
  */
 
-import React from 'react'
+import React, {PropTypes} from 'react'
 import {
     View,
+    Image,
     Text,
     StyleSheet,
-    Navigator,
     TouchableOpacity,
     ListView,
+    Navigator,
 } from 'react-native'
 
 import NavigatorScreen from '../components/navigator-screen'
 import LoadingView from '../components/loading'
 import LatestView from './latestView'
-import OlevilleLatestPropsType from './types'
 import * as c from '../components/colors'
 
-const URL = 'http://www.oleville.com/wp-json/wp/v2/posts?per_page=3'
+const URL = 'http://www.oleville.com/wp-json/wp/v2/posts?per_page=5'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  imageStyle: {
 
   },
 })
 
+async function getImageUrl(id) {
+  let response = await fetch(`http://oleville.com/wp-json/wp/v2/media/${id}`)
+  let responseJson = await response.json()
+  return responseJson.media_details.sizes.medium.source_url
+}
+
 export default class OlevilleView extends React.Component {
+  static propTypes = {
+    navigator: PropTypes.instanceOf(Navigator).isRequired,
+    title: PropTypes.string,
+  }
+
   state = {
     dataSource: null,
     loaded: false,
@@ -47,7 +60,8 @@ export default class OlevilleView extends React.Component {
     try {
       let response = await fetch(URL)
       let responseJson = await response.json()
-      this.setState({dataSource: ds.cloneWithRows(responseJson.responseData.feed.entries)})
+      console.log(responseJson)
+      this.setState({dataSource: ds.cloneWithRows(responseJson)})
     } catch (error) {
       this.setState({error: true})
       console.error(error)
@@ -64,29 +78,32 @@ export default class OlevilleView extends React.Component {
       id: 'LatestView',
       title: title,
       component: <LatestView
-        navigator={this.props.navigator}
         title={title}
         content={content}
         imageURL={imageURL}
+        navigator={this.props.navigator}
       />,
     })
   }
 
-  renderRow(title, imageURL, content) {
+  renderRow(data) {
+    let title = data.title.rendered
+    let content = data.content.rendered
+    let image = getImageUrl(data.featured_media)
+    console.log(image)
     return (
-      <TouchableOpacity underlayColor={'#ebebeb'} onPress={() => onPressLatestItem(title, content, imageURL)}>
-        <View>
+      <TouchableOpacity onPress={() => onPressLatestItem(title, content, image)}>
+        <Image source={{uri: image}} style={styles.imageStyle}>
           <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
-        </View>
+        </Image>
       </TouchableOpacity>
     )
   }
 
-  render() {
+  renderScene() {
     if (this.state.dataSource === null) {
       return <LoadingView />
     }
-
     return (
       <ListView
         dataSource={this.state.dataSource}
@@ -94,4 +111,13 @@ export default class OlevilleView extends React.Component {
       />
     )
   }
+
+  render() {
+    return <NavigatorScreen
+      title='Oleville'
+      navigator={this.props.navigator}
+      renderScene={this.renderScene.bind(this)}
+    />
+  }
+
 }
