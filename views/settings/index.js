@@ -74,7 +74,7 @@ export default class SettingsView extends React.Component {
           <Section header='ST. OLAF ACCOUNT'>
             <CustomCell contentContainerStyle={styles.loginCell}>
               <Icon name='user' size={18} />
-              <Text style={styles.label}>Test</Text>
+              <Text style={styles.label}>Username</Text>
               <TextInput
                 cellStyle='Basic'
                 autoCorrect={false}
