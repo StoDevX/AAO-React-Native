@@ -213,6 +213,6 @@ let styles = StyleSheet.create({
     backgroundColor: c.white,
   },
   loginCell: {
-    height: (Platform.OS === 'android') ? 65 : '',
+    height: (Platform.OS === 'android') ? 65 : 40,
   },
 })
