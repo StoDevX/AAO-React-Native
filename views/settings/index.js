@@ -59,7 +59,7 @@ export default class SettingsView extends React.Component {
   loadData = async () => {
     let [creds, status] = await Promise.all([
       loadLoginCredentials(),
-      AsyncStorage.getItem('stolaf:credentials-are-good').then(val => JSON.parse(val)),
+      AsyncStorage.getItem('credentials:valid').then(val => JSON.parse(val)),
     ])
     if (creds) {
       this.setState({username: creds.username, password: creds.password})
@@ -82,7 +82,7 @@ export default class SettingsView extends React.Component {
   logOut = async () => {
     this.setState({username: '', password: '', success: false, attempted: false})
     clearLoginCredentials()
-    AsyncStorage.removeItem('stolaf:credentials-are-good')
+    AsyncStorage.removeItem('credentials:valid')
   }
 
   focusUsername = () => {
