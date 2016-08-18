@@ -30,10 +30,9 @@ import Communications from 'react-native-communications'
 import * as c from '../components/colors'
 
 import {
-  saveLoginCredentials,
   loadLoginCredentials,
   clearLoginCredentials,
-  checkLogin,
+  performLogin,
 } from '../../lib/login'
 
 
@@ -73,15 +72,11 @@ export default class SettingsView extends React.Component {
   logIn = async () => {
     this.setState({loading: true})
     let {username, password} = this.state
-    let success = await checkLogin(username, password)
-    if (success) {
-      saveLoginCredentials(username, password)
-      AsyncStorage.setItem('stolaf:credentials-are-good', JSON.stringify(true))
-    }
-    if (!success) {
+    let {result} = await performLogin(username, password)
+    if (!result) {
       Alert.alert('Error signing in', 'The username or password is incorrect.')
     }
-    this.setState({loading: false, attempted: true, success})
+    this.setState({loading: false, attempted: true, success: result})
   }
 
   logOut = async () => {
