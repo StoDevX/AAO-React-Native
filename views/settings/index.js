@@ -12,6 +12,8 @@ import {
   ScrollView,
   Platform,
   AsyncStorage,
+  Navigator,
+  Alert,
 } from 'react-native'
 
 import {
@@ -33,7 +35,126 @@ import {
   checkLogin,
 } from '../../lib/login'
 
+function SisAccountTextInput(props) {
+  return <TextInput
+    cellStyle='Basic'
+    autoCorrect={false}
+    autoCapitalize='none'
+    style={styles.customTextInput}
+    placeholderTextColor='#C7C7CC'
+    {...props}
+  />
+}
+
+function SisAccountSection(props: {
+  loading: bool,
+  loggedIn: bool,
+  username: string,
+  password: string,
+  onUsernameChange: Function,
+  onPasswordChange: Function,
+  onSubmit: Function,
+}) {
+  return (
+    <Section header='ST. OLAF ACCOUNT'>
+      <CustomCell contentContainerStyle={styles.loginCell}>
+        <Icon name='user' size={18} />
+        <Text style={styles.label}>Username</Text>
+
+        <SisAccountTextInput
+          placeholder='username'
+          value={props.username}
+          returnKeyType='next'
+          onChangeText={props.onUsernameChange}
+        />
+      </CustomCell>
+
+      <CustomCell contentContainerStyle={styles.loginCell}>
+        <Icon name='lock' size={18} />
+        <Text style={styles.label}>Password</Text>
+
+        <SisAccountTextInput
+          secureTextEntry={true}
+          placeholder='password'
+          value={props.password}
+          returnKeyType='done'
+          onChangeText={props.onPasswordChange}
+          onSubmitEditing={props.onSubmit}
+        />
+      </CustomCell>
+
+      <CustomCell disabled={props.loading} onPress={props.onSubmit}>
+        {props.loggedIn
+          ? <Text style={styles.loginButtonText}>Sign Out</Text>
+          : <Text style={styles.loginButtonText}>Sign In</Text>}
+      </CustomCell>
+    </Section>
+  )
+}
+SisAccountSection.propTypes = {
+  loading: React.PropTypes.bool.isRequired,
+  loggedIn: React.PropTypes.bool.isRequired,
+  onPasswordChange: React.PropTypes.func.isRequired,
+  onSubmit: React.PropTypes.func.isRequired,
+  onUsernameChange: React.PropTypes.func.isRequired,
+  password: React.PropTypes.string.isRequired,
+  username: React.PropTypes.string.isRequired,
+}
+
+
+function SupportSection() {
+  return (
+    <Section header='SUPPORT'>
+      <Cell cellStyle='RightDetail'
+        title='Contact Us'
+        accessory='DisclosureIndicator'
+        onPress={() => Communications.email(
+          ['odt@stolaf.edu'],
+          null,
+          null,
+          'All About Olaf',
+          null)
+        }
+      />
+    </Section>
+  )
+}
+
+
+function OddsAndEndsSection() {
+  return (
+    <Section header='ODDS & ENDS'>
+      <Cell cellStyle='RightDetail'
+        title='Version'
+        detail='<get me from info.plist>'
+      />
+
+      <Cell cellStyle='Basic'
+        title='Credits'
+        accessory='DisclosureIndicator'
+        onPress={() => console.warn('credits pressed')}
+      />
+
+      <Cell cellStyle='Basic'
+        title='Privacy Policy'
+        accessory='DisclosureIndicator'
+        onPress={() => console.warn('privacy policy pressed')}
+      />
+
+      <Cell cellStyle='Basic'
+        title='Legal'
+        accessory='DisclosureIndicator'
+        onPress={() => console.warn('legal pressed')}
+      />
+    </Section>
+  )
+}
+
 export default class SettingsView extends React.Component {
+  static propTypes = {
+    navigator: React.PropTypes.instanceOf(Navigator),
+  }
+
   state = {
     username: '',
     password: '',
@@ -67,6 +188,9 @@ export default class SettingsView extends React.Component {
       saveLoginCredentials(username, password)
       AsyncStorage.setItem('stolaf:credentials-are-good', JSON.stringify(true))
     }
+    if (!success) {
+      Alert.alert('Error signing in', 'The username or password is incorrect.')
+    }
     this.setState({loading: false, attempted: true, success})
   }
 
@@ -88,90 +212,19 @@ export default class SettingsView extends React.Component {
     return (
       <ScrollView contentContainerStyle={styles.stage}>
         <TableView>
-          <Section header='ST. OLAF ACCOUNT'>
-            <CustomCell contentContainerStyle={styles.loginCell}>
-              <Icon name='user' size={18} />
-              <Text style={styles.label}>Username</Text>
-              <TextInput
-                cellStyle='Basic'
-                autoCorrect={false}
-                autoCapitalize='none'
-                style={styles.customTextInput}
-                placeholder='username'
-                onChangeText={text => this.setState({username: text})}
-              />
-            </CustomCell>
+          <SisAccountSection
+            username={this.state.username}
+            password={this.state.password}
+            onUsernameChange={text => this.setState({username: text})}
+            onPasswordChange={text => this.setState({password: text})}
+            onSubmit={this.state.success ? this.handleLogoutPress : this.handleLoginPress}
+            loggedIn={this.state.success}
+            loading={this.state.loading}
+          />
 
-            <CustomCell contentContainerStyle={styles.loginCell}>
-              <Icon name='lock' size={18} />
-              <Text style={styles.label}>Password</Text>
-              <TextInput
-                cellStyle='Basic'
-                secureTextEntry={true}
-                autoCorrect={false}
-                autoCapitalize='none'
-                style={styles.customTextInput}
-                placeholder='password'
-                onChangeText={text => this.setState({password: text})}
-              />
-            </CustomCell>
-          </Section>
+          <SupportSection />
 
-          <Section>
-            {this.state.attempted
-              ? <CustomCell disabled={this.state.loading} onPress={this.handleLogoutPress}>
-                  {this.state.success
-                    ? <Text>Success!</Text>
-                    : <Text>Bad username or password</Text>}
-                </CustomCell>
-              : null}
-            {this.state.success
-              ? <CustomCell disabled={this.state.loading} onPress={this.handleLogoutPress}>
-                  <Text style={styles.loginButtonText}>LOG OUT</Text>
-                </CustomCell>
-              : <CustomCell disabled={this.state.loading} onPress={this.handleLoginPress}>
-                  <Text style={styles.loginButtonText}>LOG IN</Text>
-                </CustomCell>}
-          </Section>
-
-          <Section header='SUPPORT'>
-            <Cell cellStyle='RightDetail'
-              title='Contact Us'
-              accessory='DisclosureIndicator'
-              onPress={() => Communications.email(
-                ['odt@stolaf.edu'],
-                null,
-                null,
-                'All About Olaf',
-                null)
-              }
-            />
-          </Section>
-
-          <Section header='ODDS & ENDS'>
-            <Cell cellStyle='RightDetail'
-              title='Version'
-              detail='<get me from info.plist>'
-            />
-
-            <Cell cellStyle='Basic'
-              title='Credits'
-              accessory='DisclosureIndicator'
-              onPress={() => console.warn('credits pressed')}
-            />
-
-            <Cell cellStyle='Basic'
-              title='Privacy Policy'
-              accessory='DisclosureIndicator'
-              onPress={() => console.warn('privacy policy pressed')}
-            />
-
-            <Cell cellStyle='Basic'
-              title='Legal'
-              accessory='DisclosureIndicator'
-              onPress={() => console.warn('legal pressed')}
-            />
-          </Section>
+          <OddsAndEndsSection />
         </TableView>
       </ScrollView>
     )
@@ -179,7 +232,7 @@ export default class SettingsView extends React.Component {
 
   render() {
     return <NavigatorScreen
-      {...this.props}
+      navigator={this.props.navigator}
       title='Settings'
       renderScene={this.renderScene.bind(this)}
     />
@@ -204,7 +257,6 @@ let styles = StyleSheet.create({
   },
   customTextInput: {
     flex: 1,
-    color: '#C7C7CC',
   },
   loginButtonText: {
     color: c.black,
