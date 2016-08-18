@@ -11,6 +11,7 @@ import {
   TextInput,
   ScrollView,
   Platform,
+  AsyncStorage,
 } from 'react-native'
 
 import {
@@ -23,48 +24,64 @@ import {
 import NavigatorScreen from '../components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
 import Communications from 'react-native-communications'
-import Keychain from 'react-native-keychain'
 import * as c from '../components/colors'
+
+import {
+  saveLoginCredentials,
+  loadLoginCredentials,
+  clearLoginCredentials,
+  checkLogin,
+} from '../../lib/login'
 
 export default class SettingsView extends React.Component {
   state = {
     username: '',
     password: '',
+    success: false,
+    loading: false,
+    attempted: false,
   }
 
-  updateUsername(text: string) {
-    this.setState({ username: text })
+  componentWillMount() {
+    this.loadData()
   }
 
-  updatePassword(text: string) {
-    this.setState({ password: text })
-  }
-
-  // Currently only both items are saved when we hit "done" on password
-  saveCredentials() {
-     // Check if we have a username set already. We cannot check for password here
-     // as it would not be set by the time we check for it
-    if (this.state.username !== '') {
-        // Save the username and password from the saved state variables
-      Keychain.setGenericPassword(this.state.username, this.state.password)
-
-      // Tests to show it works
-      this.retrieveCredientials()
-      //this.resetCredentials()
+  loadData = async () => {
+    let [creds, status] = await Promise.all([
+      loadLoginCredentials(),
+      AsyncStorage.getItem('stolaf:credentials-are-good').then(val => JSON.parse(val)),
+    ])
+    if (creds) {
+      this.setState({username: creds.username, password: creds.password})
+    }
+    if (status) {
+      this.setState({success: true})
     }
   }
 
-  async retrieveCredientials() {
-    let credentials = await Keychain.getGenericPassword()
-
-    console.log('username', credentials.username)
-    console.log('password', credentials.password)
-    console.log('Credentials successfully created')
+  logIn = async () => {
+    this.setState({loading: true})
+    let {username, password} = this.state
+    let success = await checkLogin(username, password)
+    if (success) {
+      saveLoginCredentials(username, password)
+      AsyncStorage.setItem('stolaf:credentials-are-good', JSON.stringify(true))
+    }
+    this.setState({loading: false, attempted: true, success})
   }
 
-  async resetCredentials(username: string) {
-    await Keychain.resetInternetCredentials(username)
-    console.log('Credentials successfully deleted')
+  logOut = async () => {
+    this.setState({username: '', password: ''})
+    clearLoginCredentials()
+    AsyncStorage.removeItem('stolaf:credentials-are-good')
+  }
+
+  handleLoginPress = () => {
+    this.logIn()
+  }
+
+  handleLogoutPress = () => {
+    this.logOut()
   }
 
   renderScene() {
@@ -81,7 +98,7 @@ export default class SettingsView extends React.Component {
                 autoCapitalize='none'
                 style={styles.customTextInput}
                 placeholder='username'
-                onEndEditing={event => this.updateUsername(event.nativeEvent.text)}
+                onChangeText={text => this.setState({username: text})}
               />
             </CustomCell>
 
@@ -95,15 +112,26 @@ export default class SettingsView extends React.Component {
                 autoCapitalize='none'
                 style={styles.customTextInput}
                 placeholder='password'
-                onEndEditing={event => this.updatePassword(event.nativeEvent.text)}
+                onChangeText={text => this.setState({password: text})}
               />
             </CustomCell>
           </Section>
 
           <Section>
-            <CustomCell onPress={() => this.saveCredentials()}>
-              <Text style={styles.loginButtonText}>LOGIN</Text>
-            </CustomCell>
+            {this.state.attempted
+              ? <CustomCell disabled={this.state.loading} onPress={this.handleLogoutPress}>
+                  {this.state.success
+                    ? <Text>Success!</Text>
+                    : <Text>Bad username or password</Text>}
+                </CustomCell>
+              : null}
+            {this.state.success
+              ? <CustomCell disabled={this.state.loading} onPress={this.handleLogoutPress}>
+                  <Text style={styles.loginButtonText}>LOG OUT</Text>
+                </CustomCell>
+              : <CustomCell disabled={this.state.loading} onPress={this.handleLoginPress}>
+                  <Text style={styles.loginButtonText}>LOG IN</Text>
+                </CustomCell>}
           </Section>
 
           <Section header='SUPPORT'>
@@ -115,7 +143,8 @@ export default class SettingsView extends React.Component {
                 null,
                 null,
                 'All About Olaf',
-                null)}
+                null)
+              }
             />
           </Section>
 
@@ -128,19 +157,19 @@ export default class SettingsView extends React.Component {
             <Cell cellStyle='Basic'
               title='Credits'
               accessory='DisclosureIndicator'
-              onPress={() => console.log('credits pressed')}
+              onPress={() => console.warn('credits pressed')}
             />
 
             <Cell cellStyle='Basic'
               title='Privacy Policy'
               accessory='DisclosureIndicator'
-              onPress={() => console.log('privacy policy pressed')}
+              onPress={() => console.warn('privacy policy pressed')}
             />
 
             <Cell cellStyle='Basic'
               title='Legal'
               accessory='DisclosureIndicator'
-              onPress={() => console.log('legal pressed')}
+              onPress={() => console.warn('legal pressed')}
             />
           </Section>
         </TableView>
