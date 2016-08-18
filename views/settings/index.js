@@ -274,6 +274,8 @@ let styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     marginRight: -130,
+    marginTop: (Platform.OS === 'ios') ? -2 : 0,  // lines the label up with the text on iOS
+    alignSelf: 'center',
   },
   actionButton: {
     justifyContent: 'flex-start',
@@ -295,5 +297,8 @@ let styles = StyleSheet.create({
   },
   loginCell: {
     height: (Platform.OS === 'android') ? 65 : 44,
+    alignItems: 'stretch',
+    paddingTop: 0,
+    paddingBottom: 0,
   },
 })
