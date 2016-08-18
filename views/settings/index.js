@@ -36,17 +36,6 @@ import {
   checkLogin,
 } from '../../lib/login'
 
-function SisAccountTextInput(props) {
-  return <TextInput
-    cellStyle='Basic'
-    autoCorrect={false}
-    autoCapitalize='none'
-    style={styles.customTextInput}
-    placeholderTextColor='#C7C7CC'
-    {...props}
-  />
-}
-
 
 export default class SettingsView extends React.Component {
   static propTypes = {
@@ -101,15 +90,8 @@ export default class SettingsView extends React.Component {
     AsyncStorage.removeItem('stolaf:credentials-are-good')
   }
 
-  handleLoginPress = () => {
-    this.logIn()
-  }
-
-  handleLogoutPress = () => {
-    this.logOut()
-  }
-
   focusUsername = () => {
+    console.log(this._usernameInput)
     this._usernameInput.focus()
   }
 
@@ -121,9 +103,6 @@ export default class SettingsView extends React.Component {
     let username = this.state.username
     let password = this.state.password
 
-    let onSubmit = this.state.success
-      ? this.handleLogoutPress
-      : this.handleLoginPress
     let loggedIn = this.state.success
     let loading = this.state.loading
 
@@ -139,8 +118,13 @@ export default class SettingsView extends React.Component {
       <CustomCell contentContainerStyle={styles.loginCell}>
         <Text onPress={this.focusUsername} style={styles.label}>Username</Text>
 
-        <SisAccountTextInput
+        <TextInput
           ref={ref => this._usernameInput = ref}
+          cellStyle='Basic'
+          autoCorrect={false}
+          autoCapitalize='none'
+          style={styles.customTextInput}
+          placeholderTextColor='#C7C7CC'
           disabled={disabled}
           placeholder='username'
           value={username}
@@ -153,17 +137,22 @@ export default class SettingsView extends React.Component {
 
     let passwordCell = (
       <CustomCell contentContainerStyle={styles.loginCell}>
-        <Text onPress={this.focusUsername} style={styles.label}>Password</Text>
+        <Text onPress={this.focusPassword} style={styles.label}>Password</Text>
 
-        <SisAccountTextInput
+        <TextInput
           ref={ref => this._passwordInput = ref}
+          cellStyle='Basic'
+          autoCorrect={false}
+          autoCapitalize='none'
+          style={styles.customTextInput}
+          placeholderTextColor='#C7C7CC'
           disabled={disabled}
           secureTextEntry={true}
           placeholder='password'
           value={password}
           returnKeyType='done'
           onChangeText={text => this.setState({password: text})}
-          onSubmitEditing={onSubmit}
+          onSubmitEditing={loggedIn ? this.logIn : () => {}}
         />
       </CustomCell>
     )
@@ -172,9 +161,9 @@ export default class SettingsView extends React.Component {
       <CustomCell
         contentContainerStyle={styles.actionButton}
         isDisabled={disabled}
-        onPress={onSubmit}
+        onPress={loggedIn ? this.logOut : this.logIn}
       >
-        <Text style={loginTextStyle}>
+        <Text style={[styles.loginButtonText, loginTextStyle]}>
           {loading
             ? 'Logging in…'
             : loggedIn
@@ -282,6 +271,9 @@ let styles = StyleSheet.create({
   },
   customTextInput: {
     flex: 1,
+  },
+  loginButtonText: {
+    fontSize: 16,
   },
   loginButtonTextActive: {
     color: c.infoBlue,
