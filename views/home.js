@@ -21,8 +21,7 @@ import * as c from './components/colors'
 const Dimensions = require('Dimensions')
 let Viewport = Dimensions.get('window')
 
-type ViewListType = 'MenusView'| 'SISView'| 'BuildingHoursView'| 'CalendarView'| 'DirectoryView'| 'StreamingView'| 'NewsView'| 'MapView'| 'ContactsView'| 'TransportationView'| 'DictionaryView'
-type ViewType = {usable: boolean, view: ViewListType, title: string, icon: string};
+type ViewType = {usable: boolean, view: string, title: string, icon: string};
 const views: ViewType[] = [
   {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl'},
   {usable: false, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
@@ -37,7 +36,7 @@ const views: ViewType[] = [
   {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
 ]
 
-const buttonStyles = StyleSheet.create({
+const buttonStyles = (StyleSheet.create({
   MenusView: { backgroundColor: c.emerald },
   SISView: { backgroundColor: c.goldenrod },
   BuildingHoursView: { backgroundColor: c.wave },
@@ -49,7 +48,7 @@ const buttonStyles = StyleSheet.create({
   ContactsView: { backgroundColor: c.crimson },
   TransportationView: { backgroundColor: c.cardTable },
   DictionaryView: { backgroundColor: c.olive },
-})
+}): Object)  // force flow to let us access the styles with the string keys
 
 type ButtonPropsType = {view: ViewType, navigator: typeof Navigator};
 function HomePageButton({view, navigator}: ButtonPropsType) {
