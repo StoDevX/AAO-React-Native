@@ -29,6 +29,8 @@ function NewsItemContents({content}: StoryType) {
         height: auto;
         display: block;
         margin: auto;
+        margin-top: 12px;
+        margin-bottom: 12px;
       }
       p {
         line-height: 1.2em;
