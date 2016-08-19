@@ -20,7 +20,7 @@ import LoadingView from '../components/loading'
 import LatestView from './latestView'
 import * as c from '../components/colors'
 
-const URL = 'http://www.oleville.com/wp-json/wp/v2/posts?per_page=5'
+const URL = 'http://oleville.com/wp-json/wp/v2/posts?per_page=5'
 
 const styles = StyleSheet.create({
   container: {
@@ -61,8 +61,17 @@ export default class OlevilleView extends React.Component {
     })
     try {
       let response = await fetch(URL)
-      let responseJson = await response.json()
-      this.setState({dataSource: ds.cloneWithRows(responseJson)})
+      let articles = await response.json()
+
+      // get all the image urls
+      let imageUrls = await Promise.all(articles.map(article => this.getImageUrl(article.featured_media)))
+      // and embed them in the article responses
+      articles.forEach((article, i) => {
+        article._featuredImageUrl = imageUrls[i]
+      })
+
+      // then we have the _featuredImageUrl key to just get the url
+      this.setState({dataSource: ds.cloneWithRows(articles), loaded: true})
     } catch (error) {
       this.setState({error: true})
       console.error(error)
@@ -89,7 +98,7 @@ export default class OlevilleView extends React.Component {
   renderRow(data) {
     let title = data.title.rendered
     let content = data.content.rendered
-    let image = this.getImageUrl(data.featured_media)
+    let image = data._featuredImageUrl
     console.log(image)
     return (
       <TouchableOpacity onPress={() => this.onPressLatestItem(title, content, image)}>
