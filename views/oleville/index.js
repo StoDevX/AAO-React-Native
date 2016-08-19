@@ -25,9 +25,29 @@ const URL = 'http://oleville.com/wp-json/wp/v2/posts?per_page=5'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginLeft: 5,
+    marginRight: 5,
+    backgroundColor: c.olevilleBackground,
   },
   imageStyle: {
-
+    height: 200,
+  },
+  itemTitle: {
+    alignSelf: 'center',
+    fontSize: 14,
+    color: c.olevilleGold,
+  },
+  textBackground: {
+    marginTop: 175,
+    backgroundColor: c.grey,
+  },
+  theLatest: {
+    color: c.theLatest,
+    borderBottomWidth: 5,
+    fontSize: 18,
+  },
+  listRow: {
+    marginTop: 5,
   },
 })
 
@@ -48,11 +68,19 @@ export default class OlevilleView extends React.Component {
   }
 
   async getImageUrl(id) {
-    let response = await fetch(`http://oleville.com/wp-json/wp/v2/media/${id}`)
-    let responseJson = await response.json()
-    console.log('got image data')
-    this.setState({loaded: true})
-    return responseJson.media_details.sizes.medium.source_url
+    if (id) {
+      let response = await fetch(`http://oleville.com/wp-json/wp/v2/media/${id}`)
+      let responseJson = await response.json()
+      this.setState({loaded: true})
+
+      if (responseJson.media_details.sizes.medium.source_url) {
+        // if there is a featured image, use that url
+        return responseJson.media_details.sizes.medium.source_url
+      } else {
+        // otherwise default to the oleville logo
+        return 'http://oleville.com/wp-content/uploads/2015/12/Oleville-Logo.png'
+      }
+    }
   }
 
   async fetchData() {
@@ -99,11 +127,12 @@ export default class OlevilleView extends React.Component {
     let title = data.title.rendered
     let content = data.content.rendered
     let image = data._featuredImageUrl
-    console.log(image)
     return (
-      <TouchableOpacity onPress={() => this.onPressLatestItem(title, content, image)}>
+      <TouchableOpacity style={styles.listRow} onPress={() => this.onPressLatestItem(title, content, image)}>
         <Image source={{uri: image}} style={styles.imageStyle}>
-          <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
+          <View style={styles.textBackground}>
+            <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
+          </View>
         </Image>
       </TouchableOpacity>
     )
@@ -114,10 +143,13 @@ export default class OlevilleView extends React.Component {
       return <LoadingView />
     }
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderRow.bind(this)}
-      />
+      <View style={styles.container}>
+        <Text style={styles.theLatest}>THE LATEST</Text>
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this.renderRow.bind(this)}
+        />
+      </View>
     )
   }
 

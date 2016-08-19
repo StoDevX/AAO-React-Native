@@ -4,12 +4,13 @@
  * Oleville "Latest" item
  */
 
-import React from 'react'
+import React, {PropTypes} from 'react'
 import {
     View,
-    Text,
+    Navigator,
     Image,
     StyleSheet,
+    WebView,
 } from 'react-native'
 
 import NavigatorScreen from '../components/navigator-screen'
@@ -19,18 +20,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  imageStyle: {
-
-  },
-  contentStyle: {
-
-  },
 })
 
 function LatestItemContents(imageURL, content) {
   <View style={styles.container}>
     <Image source={{uri: imageURL}} style={styles.imageStyle} />
-    <Text style={styles.contentStyle}>{content}</Text>
+    <WebView source={{html: content}} />
   </View>
 }
 
@@ -40,4 +35,11 @@ export default function LatestView(props: OlevilleLatestPropsType) {
     navigator={props.navigator}
     renderScene={LatestItemContents.bind(props.imageURL, props.content)}
   />
+}
+
+LatestView.propTypes = {
+  content: PropTypes.string,
+  imageURL: PropTypes.string,
+  navigator: PropTypes.instanceOf(Navigator),
+  title: PropTypes.string,
 }
