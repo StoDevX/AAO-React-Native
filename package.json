@@ -25,9 +25,11 @@
   },
   "dependencies": {
     "buffer": "4.9.1",
+    "css-select": "1.2.0",
     "events": "1.1.1",
     "frisbee": "1.1.1",
     "html-entities": "1.2.0",
+    "htmlparser2": "3.9.1",
     "lodash": "4.15.0",
     "querystring": "0.2.0",
     "react": "15.2.1",
