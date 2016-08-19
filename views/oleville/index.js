@@ -31,12 +31,6 @@ const styles = StyleSheet.create({
   },
 })
 
-async function getImageUrl(id) {
-  let response = await fetch(`http://oleville.com/wp-json/wp/v2/media/${id}`)
-  let responseJson = await response.json()
-  return responseJson.media_details.sizes.medium.source_url
-}
-
 export default class OlevilleView extends React.Component {
   static propTypes = {
     navigator: PropTypes.instanceOf(Navigator).isRequired,
@@ -53,6 +47,14 @@ export default class OlevilleView extends React.Component {
     this.fetchData()
   }
 
+  async getImageUrl(id) {
+    let response = await fetch(`http://oleville.com/wp-json/wp/v2/media/${id}`)
+    let responseJson = await response.json()
+    console.log('got image data')
+    this.setState({loaded: true})
+    return responseJson.media_details.sizes.medium.source_url
+  }
+
   async fetchData() {
     let ds = new ListView.DataSource({
       rowHasChanged: this.rowHasChanged,
@@ -60,13 +62,11 @@ export default class OlevilleView extends React.Component {
     try {
       let response = await fetch(URL)
       let responseJson = await response.json()
-      console.log(responseJson)
       this.setState({dataSource: ds.cloneWithRows(responseJson)})
     } catch (error) {
       this.setState({error: true})
       console.error(error)
     }
-    this.setState({loaded: true})
   }
 
   rowHasChanged(r1: StoryType, r2: StoryType) {
@@ -89,10 +89,10 @@ export default class OlevilleView extends React.Component {
   renderRow(data) {
     let title = data.title.rendered
     let content = data.content.rendered
-    let image = getImageUrl(data.featured_media)
+    let image = this.getImageUrl(data.featured_media)
     console.log(image)
     return (
-      <TouchableOpacity onPress={() => onPressLatestItem(title, content, image)}>
+      <TouchableOpacity onPress={() => this.onPressLatestItem(title, content, image)}>
         <Image source={{uri: image}} style={styles.imageStyle}>
           <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
         </Image>
