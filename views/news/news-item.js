@@ -27,6 +27,8 @@ function NewsItemContents({content}: StoryType) {
       img {
         max-width: 100%;
         height: auto;
+        display: block;
+        margin: 12px auto;
       }
       p {
         line-height: 1.2em;
