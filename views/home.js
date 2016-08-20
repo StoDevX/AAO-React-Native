@@ -21,8 +21,7 @@ import * as c from './components/colors'
 const Dimensions = require('Dimensions')
 let Viewport = Dimensions.get('window')
 
-type ViewListType = 'MenusView'| 'SISView'| 'BuildingHoursView'| 'CalendarView'| 'DirectoryView'| 'StreamingView'| 'NewsView'| 'MapView'| 'ContactsView'| 'TransportationView'| 'DictionaryView'
-type ViewType = {usable: boolean, view: ViewListType, title: string, icon: string};
+type ViewType = {usable: boolean, view: string, title: string, icon: string};
 const views: ViewType[] = [
   {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl'},
   {usable: false, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
@@ -38,7 +37,7 @@ const views: ViewType[] = [
   {usable: true, view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer'},
 ]
 
-const buttonStyles = StyleSheet.create({
+const buttonStyles = (StyleSheet.create({
   MenusView: { backgroundColor: c.emerald },
   SISView: { backgroundColor: c.goldenrod },
   BuildingHoursView: { backgroundColor: c.wave },
@@ -51,13 +50,13 @@ const buttonStyles = StyleSheet.create({
   TransportationView: { backgroundColor: c.cardTable },
   DictionaryView: { backgroundColor: c.olive },
   OlevilleView: { backgroundColor: c.grapefruit },
-})
+}): Object)  // force flow to let us access the styles with the string keys
 
 type ButtonPropsType = {view: ViewType, navigator: typeof Navigator};
 function HomePageButton({view, navigator}: ButtonPropsType) {
   return (
     <TouchableOpacity
-      onPress={() => navigator.push({id: view.view, index: 1, title: view.title, sceneConfig: Navigator.SceneConfigs.FloatFromRight})}
+      onPress={() => navigator.push({id: view.view, index: 1, title: view.title, sceneConfig: Navigator.SceneConfigs.PushFromRight})}
       activeOpacity={0.5}
     >
       <View style={[styles.rectangle, buttonStyles[view.view]]}>
@@ -95,11 +94,10 @@ function HomePageScene({navigator}: ScenePropsType) {
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
       style={styles.scrollView}
+      contentContainerStyle={styles.container}
     >
-      <View style={styles.container}>
-        {views.map(view =>
-          <HomePageButton key={view.title} view={view} navigator={navigator} />)}
-      </View>
+      {views.map(view =>
+        <HomePageButton key={view.title} view={view} navigator={navigator} />)}
     </ScrollView>
   )
 }
@@ -143,7 +141,7 @@ let marginTop = 15
 
 let cellMargin = 10
 let cellSidePadding = 10
-let cellEdgePadding = 10
+let cellEdgePadding = 8
 let cellWidth = (Viewport.width / 2) - (cellMargin * 1.5)
 
 let styles = StyleSheet.create({

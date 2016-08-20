@@ -11,6 +11,10 @@ import {
   TextInput,
   ScrollView,
   Platform,
+  AsyncStorage,
+  Navigator,
+  Alert,
+  View,
 } from 'react-native'
 
 import {
@@ -23,126 +27,238 @@ import {
 import NavigatorScreen from '../components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
 import Communications from 'react-native-communications'
-import Keychain from 'react-native-keychain'
 import * as c from '../components/colors'
+import LegalView from './legal'
+import CreditsView from './credits'
+import PrivacyView from './privacy'
+import {
+  loadLoginCredentials,
+  clearLoginCredentials,
+  performLogin,
+} from '../../lib/login'
+
 
 export default class SettingsView extends React.Component {
+  static propTypes = {
+    navigator: React.PropTypes.instanceOf(Navigator),
+  }
+
   state = {
     username: '',
     password: '',
+    success: false,
+    loading: false,
+    attempted: false,
   }
 
-  updateUsername(text: string) {
-    this.setState({ username: text })
+  componentWillMount() {
+    this.loadData()
   }
 
-  updatePassword(text: string) {
-    this.setState({ password: text })
-  }
+  _usernameInput: React.Element;
+  _passwordInput: React.Element;
 
-  // Currently only both items are saved when we hit "done" on password
-  saveCredentials() {
-     // Check if we have a username set already. We cannot check for password here
-     // as it would not be set by the time we check for it
-    if (this.state.username !== '') {
-        // Save the username and password from the saved state variables
-      Keychain.setGenericPassword(this.state.username, this.state.password)
-
-      // Tests to show it works
-      this.retrieveCredientials()
-      //this.resetCredentials()
+  loadData = async () => {
+    let [creds, status] = await Promise.all([
+      loadLoginCredentials(),
+      AsyncStorage.getItem('credentials:valid').then(val => JSON.parse(val)),
+    ])
+    if (creds) {
+      this.setState({username: creds.username, password: creds.password})
+    }
+    if (status) {
+      this.setState({success: true})
     }
   }
 
-  async retrieveCredientials() {
-    let credentials = await Keychain.getGenericPassword()
-
-    console.log('username', credentials.username)
-    console.log('password', credentials.password)
-    console.log('Credentials successfully created')
+  logIn = async () => {
+    this.setState({loading: true})
+    let {username, password} = this.state
+    let {result} = await performLogin(username, password)
+    if (!result) {
+      Alert.alert('Error signing in', 'The username or password is incorrect.')
+    }
+    this.setState({loading: false, attempted: true, success: result})
   }
 
-  async resetCredentials(username: string) {
-    await Keychain.resetInternetCredentials(username)
-    console.log('Credentials successfully deleted')
+  logOut = async () => {
+    this.setState({username: '', password: '', success: false, attempted: false})
+    clearLoginCredentials()
+    AsyncStorage.removeItem('credentials:valid')
+  }
+
+  focusUsername = () => {
+    console.log(this._usernameInput)
+    this._usernameInput.focus()
+  }
+
+  focusPassword = () => {
+    this._passwordInput.focus()
+  }
+
+  onPressLegalButton() {
+    this.props.navigator.push({
+      id: 'LegalView',
+      component: <LegalView
+        navigator={this.props.navigator}
+      />,
+    })
+  }
+
+  onPressCreditsButton() {
+    this.props.navigator.push({
+      id: 'CreditsView',
+      component: <CreditsView
+        navigator={this.props.navigator}
+      />,
+    })
+  }
+
+  onPressPrivacyButton() {
+    this.props.navigator.push({
+      id: 'PrivacyView',
+      component: <PrivacyView
+        navigator={this.props.navigator}
+      />,
+    })
   }
 
   renderScene() {
+    let username = this.state.username
+    let password = this.state.password
+
+    let loggedIn = this.state.success
+    let loading = this.state.loading
+
+    let disabled = loading || (!username || !password)
+
+    let loginTextStyle = disabled
+      ? styles.loginButtonTextDisabled
+      : loading
+        ? styles.loginButtonTextLoading
+        : styles.loginButtonTextActive
+
+    let usernameCell = (
+      <CustomCell contentContainerStyle={styles.loginCell}>
+        <Text onPress={this.focusUsername} style={styles.label}>Username</Text>
+
+        <TextInput
+          ref={ref => this._usernameInput = ref}
+          cellStyle='Basic'
+          autoCorrect={false}
+          autoCapitalize='none'
+          style={styles.customTextInput}
+          placeholderTextColor='#C7C7CC'
+          disabled={disabled}
+          placeholder='username'
+          value={username}
+          returnKeyType='next'
+          onChangeText={text => this.setState({username: text})}
+          onSubmitEditing={this.focusPassword}
+        />
+      </CustomCell>
+    )
+
+    let passwordCell = (
+      <CustomCell contentContainerStyle={styles.loginCell}>
+        <Text onPress={this.focusPassword} style={styles.label}>Password</Text>
+
+        <TextInput
+          ref={ref => this._passwordInput = ref}
+          cellStyle='Basic'
+          autoCorrect={false}
+          autoCapitalize='none'
+          style={styles.customTextInput}
+          placeholderTextColor='#C7C7CC'
+          disabled={disabled}
+          secureTextEntry={true}
+          placeholder='password'
+          value={password}
+          returnKeyType='done'
+          onChangeText={text => this.setState({password: text})}
+          onSubmitEditing={loggedIn ? this.logIn : () => {}}
+        />
+      </CustomCell>
+    )
+
+    let actionCell = (
+      <CustomCell
+        contentContainerStyle={styles.actionButton}
+        isDisabled={disabled}
+        onPress={loggedIn ? this.logOut : this.logIn}
+      >
+        <Text style={[styles.loginButtonText, loginTextStyle]}>
+          {loading
+            ? 'Logging in…'
+            : loggedIn
+              ? 'Sign Out'
+              : 'Sign In'}
+        </Text>
+      </CustomCell>
+    )
+
+    let accountSection = (
+      <View>
+        <Section header='ST. OLAF ACCOUNT'>
+          {usernameCell}
+          {passwordCell}
+        </Section>
+
+        <Section>
+          {actionCell}
+        </Section>
+      </View>
+    )
+
+    let supportSection = (
+      <Section header='SUPPORT'>
+        <Cell cellStyle='RightDetail'
+          title='Contact Us'
+          accessory='DisclosureIndicator'
+          onPress={() => Communications.email(
+            ['odt@stolaf.edu'],
+            null,
+            null,
+            'Support: All About Olaf',
+            null)
+          }
+        />
+      </Section>
+    )
+
+    let oddsAndEndsSection = (
+      <Section header='ODDS & ENDS'>
+        <Cell cellStyle='RightDetail'
+          title='Version'
+          detail='<get me from info.plist>'
+        />
+
+        <Cell cellStyle='Basic'
+          title='Credits'
+          accessory='DisclosureIndicator'
+          onPress={() => this.onPressCreditsButton()}
+        />
+
+        <Cell cellStyle='Basic'
+          title='Privacy Policy'
+          accessory='DisclosureIndicator'
+          onPress={() => this.onPressPrivacyButton()}
+        />
+
+        <Cell cellStyle='Basic'
+          title='Legal'
+          accessory='DisclosureIndicator'
+          onPress={() => this.onPressLegalButton()}
+        />
+      </Section>
+    )
+
     return (
       <ScrollView contentContainerStyle={styles.stage}>
         <TableView>
-          <Section header='ST. OLAF ACCOUNT'>
-            <CustomCell contentContainerStyle={styles.loginCell}>
-              <Icon name='user' size={18} />
-              <Text style={styles.label}>Test</Text>
-              <TextInput
-                cellStyle='Basic'
-                autoCorrect={false}
-                autoCapitalize='none'
-                style={styles.customTextInput}
-                placeholder='username'
-                onEndEditing={event => this.updateUsername(event.nativeEvent.text)}
-              />
-            </CustomCell>
-
-            <CustomCell contentContainerStyle={styles.loginCell}>
-              <Icon name='lock' size={18} />
-              <Text style={styles.label}>Password</Text>
-              <TextInput
-                cellStyle='Basic'
-                secureTextEntry={true}
-                autoCorrect={false}
-                autoCapitalize='none'
-                style={styles.customTextInput}
-                placeholder='password'
-                onEndEditing={event => this.updatePassword(event.nativeEvent.text)}
-              />
-            </CustomCell>
-          </Section>
-
-          <Section>
-            <CustomCell onPress={() => this.saveCredentials()}>
-              <Text style={styles.loginButtonText}>LOGIN</Text>
-            </CustomCell>
-          </Section>
-
-          <Section header='SUPPORT'>
-            <Cell cellStyle='RightDetail'
-              title='Contact Us'
-              accessory='DisclosureIndicator'
-              onPress={() => Communications.email(
-                ['odt@stolaf.edu'],
-                null,
-                null,
-                'All About Olaf',
-                null)}
-            />
-          </Section>
-
-          <Section header='ODDS & ENDS'>
-            <Cell cellStyle='RightDetail'
-              title='Version'
-              detail='<get me from info.plist>'
-            />
-
-            <Cell cellStyle='Basic'
-              title='Credits'
-              accessory='DisclosureIndicator'
-              onPress={() => console.log('credits pressed')}
-            />
-
-            <Cell cellStyle='Basic'
-              title='Privacy Policy'
-              accessory='DisclosureIndicator'
-              onPress={() => console.log('privacy policy pressed')}
-            />
-
-            <Cell cellStyle='Basic'
-              title='Legal'
-              accessory='DisclosureIndicator'
-              onPress={() => console.log('legal pressed')}
-            />
-          </Section>
+          {accountSection}
+          {supportSection}
+          {oddsAndEndsSection}
         </TableView>
       </ScrollView>
     )
@@ -150,7 +266,7 @@ export default class SettingsView extends React.Component {
 
   render() {
     return <NavigatorScreen
-      {...this.props}
+      navigator={this.props.navigator}
       title='Settings'
       renderScene={this.renderScene.bind(this)}
     />
@@ -170,20 +286,35 @@ let styles = StyleSheet.create({
   label: {
     flex: 1,
     fontSize: 16,
-    marginLeft: 10,
-    marginRight: -100,
+    marginRight: -130,
+    marginTop: (Platform.OS === 'ios') ? -2 : 0,  // lines the label up with the text on iOS
+    alignSelf: 'center',
+  },
+  actionButton: {
+    justifyContent: 'flex-start',
   },
   customTextInput: {
     flex: 1,
-    color: '#C7C7CC',
   },
   loginButtonText: {
-    color: c.black,
+    fontSize: 16,
+  },
+  loginButtonTextActive: {
+    color: c.infoBlue,
+  },
+  loginButtonTextDisabled: {
+    color: c.iosDisabledText,
+  },
+  loginButtonTextLoading: {
+    color: c.iosDisabledText,
   },
   loginButton: {
     backgroundColor: c.white,
   },
   loginCell: {
-    height: (Platform.OS === 'android') ? 65 : '',
+    height: (Platform.OS === 'android') ? 65 : 44,
+    alignItems: 'stretch',
+    paddingTop: 0,
+    paddingBottom: 0,
   },
 })

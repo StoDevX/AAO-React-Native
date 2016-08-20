@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import {StyleSheet, Text} from 'react-native'
+import {StyleSheet, Dimensions, Text} from 'react-native'
 
 const styles = StyleSheet.create({
   navigationText: {
@@ -15,7 +15,12 @@ const styles = StyleSheet.create({
   },
 })
 
+let width = Dimensions.get('window').width
+
 export default function ScreenTitle({children, style}) {
+  if (children.length > 15) {
+    children = children.substring(0, (width/15)) + '…'
+  }
   return (
     <Text
       style={[styles.navigationText, style]}

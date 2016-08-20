@@ -13,7 +13,7 @@
     "bundle:ios": "react-native bundle --entry-file index.ios.js --dev true --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios",
     "bundle:android": "react-native bundle --entry-file index.android.js --dev true --platform android --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
     "build:ios": "xctool -configuration Release -project ios/AllAboutOlaf.xcodeproj -scheme AllAboutOlaf -sdk iphonesimulator -destination platform='iOS Simulator,name=iPhone 5s,OS=9.2'",
-    "build:android:macos": "cd android && ./gradlew assembleRelease --info --console=plain",
+    "build:android:unix": "cd android && ./gradlew assembleRelease --info --console=plain",
     "build:android:win": "cd android && .\\gradlew assembleRelease --info --console=plain",
     "test": "npm run flow && npm run test:js",
     "test:js": "echo 'Not yet implemented! Figure out jest.'",
@@ -24,10 +24,12 @@
     "release:android": "echo 'Not yet implemented!'"
   },
   "dependencies": {
-    "buffer": "4.9.0",
+    "buffer": "4.9.1",
+    "css-select": "1.2.0",
     "events": "1.1.1",
     "frisbee": "1.1.1",
     "html-entities": "1.2.0",
+    "htmlparser2": "3.9.1",
     "lodash": "4.15.0",
     "querystring": "0.2.0",
     "react": "15.2.1",
@@ -53,8 +55,8 @@
     "babel-eslint": "6.1.2",
     "eslint": "3.3.1",
     "eslint-plugin-babel": "3.3.0",
-    "eslint-plugin-flowtype": "2.7.1",
-    "eslint-plugin-react": "6.1.1",
+    "eslint-plugin-flowtype": "2.7.2",
+    "eslint-plugin-react": "6.1.2",
     "flow-bin": "0.29.0"
   }
 }
