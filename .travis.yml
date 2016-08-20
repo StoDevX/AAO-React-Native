@@ -87,7 +87,7 @@ matrix:
 branches:
   only:
     - master
-    - travis
+    - /^travis/
 
 install:
   - echo "Now testing $TEST_TYPE on $TRAVIS_OS_NAME"
@@ -109,13 +109,6 @@ install:
   ### do js-only setup stuff
   # prepare for jest
   - if [[ "$TEST_TYPE" = js ]]; then rm -rf "$TMPDIR/jest_preprocess_cache"; fi
-
-  ### do ios-only setup stuff
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "osx" && "$TEST_TYPE" == "ios" ]]; then
-      brew update
-      brew install xctool;
-    fi
 
 
 before_script:
