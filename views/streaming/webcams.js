@@ -13,7 +13,6 @@ import {
   WebView,
 } from 'react-native'
 import webcamInfo from '../../data/webcams'
-import * as c from '../components/colors'
 
 // const inlineVideo = url => `
 //   <style>
@@ -86,7 +85,7 @@ let styles = StyleSheet.create({
     paddingBottom: 5,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "#ebebeb",
+    borderColor: '#ebebeb',
   },
   webcamName: {
     paddingTop: 5,
