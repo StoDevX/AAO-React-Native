@@ -41,7 +41,7 @@ function semesterName(semester: number|string): string {
 
 function toPrettyTerm(term: number): string {
   let str = String(term)
-  let semester = semesterName(term[4])
+  let semester = semesterName(str[4])
   return `${semester} ${str.substr(0, 4)}`
 }
 
