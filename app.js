@@ -20,6 +20,9 @@ import SISView from './views/sis'
 import BuildingHoursView from './views/building-hours'
 import TransportationView from './views/transportation'
 import SettingsView from './views/settings'
+import CreditsView from './views/settings/credits'
+import PrivacyView from './views/settings/privacy'
+import LegalView from './views/settings/legal'
 
 import NoRoute from './views/components/no-route'
 
@@ -56,6 +59,12 @@ function renderScene(route, navigator) {
       return <TransportationView navigator={navigator} />
     case 'SettingsView':
       return <SettingsView navigator={navigator} />
+    case 'CreditsView':
+      return <CreditsView navigator={navigator} />
+    case 'PrivacyView':
+      return <PrivacyView navigator={navigator} />
+    case 'LegalView':
+      return <LegalView navigator={navigator} />
     default:
       return <NoRoute navigator={navigator} />
   }
