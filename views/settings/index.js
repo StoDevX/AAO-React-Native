@@ -28,7 +28,9 @@ import NavigatorScreen from '../components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
 import Communications from 'react-native-communications'
 import * as c from '../components/colors'
-
+import LegalView from './legal'
+import CreditsView from './credits'
+import PrivacyView from './privacy'
 import {
   loadLoginCredentials,
   clearLoginCredentials,
@@ -92,6 +94,33 @@ export default class SettingsView extends React.Component {
 
   focusPassword = () => {
     this._passwordInput.focus()
+  }
+
+  onPressLegalButton() {
+    this.props.navigator.push({
+      id: 'LegalView',
+      component: <LegalView
+        navigator={this.props.navigator}
+      />,
+    })
+  }
+
+  onPressCreditsButton() {
+    this.props.navigator.push({
+      id: 'CreditsView',
+      component: <CreditsView
+        navigator={this.props.navigator}
+      />,
+    })
+  }
+
+  onPressPrivacyButton() {
+    this.props.navigator.push({
+      id: 'PrivacyView',
+      component: <PrivacyView
+        navigator={this.props.navigator}
+      />,
+    })
   }
 
   renderScene() {
@@ -190,7 +219,7 @@ export default class SettingsView extends React.Component {
             ['odt@stolaf.edu'],
             null,
             null,
-            'All About Olaf',
+            'Support: All About Olaf',
             null)
           }
         />
@@ -207,19 +236,19 @@ export default class SettingsView extends React.Component {
         <Cell cellStyle='Basic'
           title='Credits'
           accessory='DisclosureIndicator'
-          onPress={() => console.warn('credits pressed')}
+          onPress={() => this.onPressCreditsButton()}
         />
 
         <Cell cellStyle='Basic'
           title='Privacy Policy'
           accessory='DisclosureIndicator'
-          onPress={() => console.warn('privacy policy pressed')}
+          onPress={() => this.onPressPrivacyButton()}
         />
 
         <Cell cellStyle='Basic'
           title='Legal'
           accessory='DisclosureIndicator'
-          onPress={() => console.warn('legal pressed')}
+          onPress={() => this.onPressLegalButton()}
         />
       </Section>
     )
