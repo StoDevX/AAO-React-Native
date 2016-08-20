@@ -92,11 +92,10 @@ function HomePageScene({navigator}: ScenePropsType) {
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
       style={styles.scrollView}
+      contentContainerStyle={styles.container}
     >
-      <View style={styles.container}>
-        {views.map(view =>
-          <HomePageButton key={view.title} view={view} navigator={navigator} />)}
-      </View>
+      {views.map(view =>
+        <HomePageButton key={view.title} view={view} navigator={navigator} />)}
     </ScrollView>
   )
 }
