@@ -3,7 +3,8 @@ import React from 'react'
 import {
   Text,
   ScrollView,
-  StyleSheet
+  StyleSheet,
+  Navigator,
 } from 'react-native'
 import legal from '../../data/legal.json'
 import NavigatorScreen from '../components/navigator-screen'
@@ -24,10 +25,13 @@ function LegalContents() {
   )
 }
 
-export default function LegalView(props: navigator) {
+export default function LegalView(props: {navigator: typeof Navigator}) {
   return <NavigatorScreen
     title={legal.title}
     navigator={props.navigator}
-    renderScene={LegalContents.bind()}
+    renderScene={() => <LegalContents />}
   />
+}
+LegalView.propTypes = {
+  navigator: React.PropTypes.instanceOf(Navigator),
 }

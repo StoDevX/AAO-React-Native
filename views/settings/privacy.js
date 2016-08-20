@@ -4,6 +4,7 @@ import {
   Text,
   ScrollView,
   StyleSheet,
+  Navigator,
 } from 'react-native'
 import privacy from '../../data/privacy.json'
 import NavigatorScreen from '../components/navigator-screen'
@@ -24,10 +25,13 @@ function PrivacyContents() {
   )
 }
 
-export default function LegalView(props: navigator) {
+export default function PrivacyView(props: {navigator: typeof Navigator}) {
   return <NavigatorScreen
     title={privacy.title}
     navigator={props.navigator}
-    renderScene={PrivacyContents.bind()}
+    renderScene={() => <PrivacyContents />}
   />
+}
+PrivacyView.propTypes = {
+  navigator: React.PropTypes.instanceOf(Navigator),
 }

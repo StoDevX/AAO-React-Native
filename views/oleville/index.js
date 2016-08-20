@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   textBackground: {
     marginTop: 175,
-    backgroundColor: c.grey,
+    backgroundColor: c.iosText,
   },
   theLatest: {
     color: c.theLatest,
@@ -68,7 +68,7 @@ export default class OlevilleView extends React.Component {
     this.fetchData()
   }
 
-  async getImageUrl(id) {
+  async getImageUrl(id: number) {
     if (id) {
       let response = await fetch(`http://oleville.com/wp-json/wp/v2/media/${id}`)
       let responseJson = await response.json()
@@ -107,11 +107,11 @@ export default class OlevilleView extends React.Component {
     }
   }
 
-  rowHasChanged(r1: StoryType, r2: StoryType) {
+  rowHasChanged(r1: Object, r2: Object) {
     return r1.title != r2.title
   }
 
-  onPressLatestItem(title, content, imageURL: OlevilleLatestPropsType) {
+  onPressLatestItem(title: string, content: string, imageURL: string) {
     this.props.navigator.push({
       id: 'LatestView',
       title: title,
@@ -124,7 +124,7 @@ export default class OlevilleView extends React.Component {
     })
   }
 
-  renderRow(data) {
+  renderRow(data: Object) {
     let title = data.title.rendered
     let content = data.content.rendered
     let image = data._featuredImageUrl

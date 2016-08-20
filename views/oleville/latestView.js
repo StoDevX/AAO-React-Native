@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 
 import NavigatorScreen from '../components/navigator-screen'
-import type {OlevilleLatestPropsType, LatestViewPropsType} from './types'
+import type {OlevilleLatestPropsType} from './types'
 
 const styles = StyleSheet.create({
   container: {

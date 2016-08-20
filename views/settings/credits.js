@@ -4,6 +4,7 @@ import {
   Text,
   ScrollView,
   StyleSheet,
+  Navigator,
 } from 'react-native'
 import credits from '../../data/credits.json'
 import NavigatorScreen from '../components/navigator-screen'
@@ -19,8 +20,7 @@ const styles = StyleSheet.create({
   },
   nameList: {
     alignSelf: 'center',
-
-  }
+  },
 })
 
 function CreditsContents() {
@@ -33,10 +33,13 @@ function CreditsContents() {
   )
 }
 
-export default function LegalView(props: navigator) {
+export default function CreditsView(props: {navigator: typeof Navigator}) {
   return <NavigatorScreen
     title={credits.title}
     navigator={props.navigator}
-    renderScene={CreditsContents.bind()}
+    renderScene={() => <CreditsContents />}
   />
+}
+CreditsView.propTypes = {
+  navigator: React.PropTypes.instanceOf(Navigator),
 }
