@@ -31,7 +31,8 @@ matrix:
       cache: *my-node-cache
 
     - os: linux
-      sudo: false
+      sudo: true
+      distro: trusty
       env: TEST_TYPE=android
       jdk: oraclejdk8
       language: android
@@ -86,6 +87,7 @@ matrix:
 branches:
   only:
     - master
+    - travis
 
 install:
   - echo "Now testing $TEST_TYPE on $TRAVIS_OS_NAME"
