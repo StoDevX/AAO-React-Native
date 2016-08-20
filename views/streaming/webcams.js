@@ -9,9 +9,11 @@ import {
   StyleSheet,
   View,
   Text,
+  ScrollView,
   WebView,
 } from 'react-native'
 import webcamInfo from '../../data/webcams'
+import * as c from '../components/colors'
 
 // const inlineVideo = url => `
 //   <style>
@@ -45,14 +47,14 @@ const videoAsThumbnail = url => `
   </video>
 `
 
-
 export default function WebcamsView() {
   return (
-    <View style={styles.container}>
-      <Text>Webcams</Text>
+    <ScrollView style={styles.container}>
       {webcamInfo.map(webcam =>
         <View style={styles.row} key={webcam.name}>
-          <Text>{webcam.name}</Text>
+          <View style={styles.webCamTitleBox}>
+            <Text style={styles.webcamName}>{webcam.name}</Text>
+          </View>
           <WebView
             style={styles.video}
             mediaPlaybackRequiresUserAction={false}
@@ -63,7 +65,7 @@ export default function WebcamsView() {
           />
         </View>
       )}
-    </View>
+    </ScrollView>
   )
 }
 
@@ -75,14 +77,26 @@ let styles = StyleSheet.create({
   },
   row: {
     // display: 'flex',
-    flexDirection: 'row',
+    //flexDirection: 'row',
+    paddingTop: 20,
     flex: 1,
   },
+  webCamTitleBox: {
+    backgroundColor: 'rgb(248, 248, 248)',
+    paddingBottom: 5,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: "#ebebeb",
+  },
+  webcamName: {
+    paddingTop: 5,
+    paddingLeft: 20,
+    paddingBottom: 10,
+  },
   video: {
-    // position: 'absolute',
-    // top: 0,
-    // left: 0,
-    // right: 0,
-    // height: 210,
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 210,
   },
 })
