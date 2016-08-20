@@ -15,6 +15,7 @@ import {
     Navigator,
 } from 'react-native'
 
+import type {LatestViewPropsType} from './types'
 import NavigatorScreen from '../components/navigator-screen'
 import LoadingView from '../components/loading'
 import LatestView from './latestView'
@@ -110,7 +111,7 @@ export default class OlevilleView extends React.Component {
     return r1.title != r2.title
   }
 
-  onPressLatestItem(title, content, imageURL) {
+  onPressLatestItem(title, content, imageURL: OlevilleLatestPropsType) {
     this.props.navigator.push({
       id: 'LatestView',
       title: title,
@@ -127,6 +128,7 @@ export default class OlevilleView extends React.Component {
     let title = data.title.rendered
     let content = data.content.rendered
     let image = data._featuredImageUrl
+    //console.log(content)
     return (
       <TouchableOpacity style={styles.listRow} onPress={() => this.onPressLatestItem(title, content, image)}>
         <Image source={{uri: image}} style={styles.imageStyle}>

@@ -14,27 +14,33 @@ import {
 } from 'react-native'
 
 import NavigatorScreen from '../components/navigator-screen'
-import type {OlevilleLatestPropsType} from './types'
+import type {OlevilleLatestPropsType, LatestViewPropsType} from './types'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  imageStyle: {
+
+  },
 })
 
-function LatestItemContents(imageURL, content) {
-  <View style={styles.container}>
-    <Image source={{uri: imageURL}} style={styles.imageStyle} />
-    <WebView source={{html: content}} />
-  </View>
-}
 
 export default function LatestView(props: OlevilleLatestPropsType) {
-  return <NavigatorScreen
-    title={props.title}
-    navigator={props.navigator}
-    renderScene={LatestItemContents.bind(props.imageURL, props.content)}
-  />
+  return (
+    <NavigatorScreen
+      title={props.title}
+      navigator={props.navigator}
+      renderScene={() => {
+        return (
+          <View style={styles.container}>
+            <Image source={{uri: props.imageURL}} style={styles.imageStyle} />
+            <WebView source={{html: props.content}} />
+          </View>
+        )
+      }}
+    />
+  )
 }
 
 LatestView.propTypes = {

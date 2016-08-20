@@ -57,6 +57,8 @@ function renderScene(route, navigator) {
       return <TransportationView navigator={navigator} />
     case 'OlevilleView':
       return <OlevilleView navigator={navigator} />
+    case 'LatestView':
+      return route.component
     case 'SettingsView':
       return <SettingsView navigator={navigator} />
     default:
