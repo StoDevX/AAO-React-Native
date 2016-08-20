@@ -14,7 +14,17 @@ export const TabbedViewPropTypes = {
   tabs: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    icon: PropTypes.shape({uri: PropTypes.string.isRequired, scale: PropTypes.number.isRequired}).isRequired,
+    rnVectorIcon: PropTypes.shape({
+      iconName: PropTypes.string.isRequired,
+      selectedIconName: PropTypes.string,
+      iconSize: PropTypes.number,
+    }),
+    rnRasterIcon: PropTypes.shape({
+      icon: PropTypes.shape({
+        uri: PropTypes.string.isRequired,
+        scale: PropTypes.number.isRequired,
+      }),
+    }),
     content: PropTypes.func.isRequired,
     props: PropTypes.object,
   })).isRequired,

@@ -1,7 +1,8 @@
 // @flow
 
 import React from 'react'
-import {TabBarIOS} from 'react-native'
+import { TabBarIOS } from 'react-native'
+import Icon from 'react-native-vector-icons/Entypo'
 
 import styles from './styles'
 import type { TabbedViewPropsType } from './types'
@@ -18,12 +19,14 @@ export default class TabbedView extends React.Component {
 
   render() {
     let tabs = this.props.tabs
+    console.log(tabs.map(t => t.rnVectorIcon))
     return (
       <TabBarIOS tintColor='orange' style={[styles.container, this.props.style]}>
         {tabs.map(tab =>
-          <TabBarIOS.Item
+          <Icon.TabBarItemIOS
             key={tab.id}
-            icon={tab.icon}
+            // apply either the vector icon, a given raster (base64) icon, or nothing.
+            {...(tab.rnVectorIcon || tab.rnRasterIcon || {})}
             title={tab.title}
             style={styles.listViewStyle}
             selected={this.state.selectedTab === tab.id}
@@ -31,7 +34,7 @@ export default class TabbedView extends React.Component {
             onPress={() => this.setState({selectedTab: tab.id})}
           >
             <tab.content {...this.props.childProps} {...tab.props} />
-          </TabBarIOS.Item>
+          </Icon.TabBarItemIOS>
         )}
       </TabBarIOS>
     )
