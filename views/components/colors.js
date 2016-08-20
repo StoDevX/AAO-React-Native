@@ -25,6 +25,10 @@ export const iosText = 'rgb(199, 198, 206)'
 export const iosDisabledText = 'rgb(143, 143, 143)'
 export const iosNavbarBottomBorder = 'rgb(200, 200, 202)'
 
+// MARK: Oleville colors
+export const theLatest = '#00BFFF'
+export const olevilleGold = '#F7B600'
+export const olevilleBackground = '#F0F0E1'
 
 // MARK: System Colors
 export const infoBlue = 'rgb(47, 112, 225)'

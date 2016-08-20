@@ -34,6 +34,7 @@ const views: ViewType[] = [
   {usable: true, view: 'ContactsView', title: 'Important Contacts', icon: 'phone'},
   {usable: false, view: 'TransportationView', title: 'Transportation', icon: 'address'},
   {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
+  {usable: true, view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer'},
 ]
 
 const buttonStyles = (StyleSheet.create({
@@ -48,6 +49,7 @@ const buttonStyles = (StyleSheet.create({
   ContactsView: { backgroundColor: c.crimson },
   TransportationView: { backgroundColor: c.cardTable },
   DictionaryView: { backgroundColor: c.olive },
+  OlevilleView: { backgroundColor: c.grapefruit },
 }): Object)  // force flow to let us access the styles with the string keys
 
 type ButtonPropsType = {view: ViewType, navigator: typeof Navigator};
