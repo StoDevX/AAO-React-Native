@@ -110,13 +110,6 @@ install:
   # prepare for jest
   - if [[ "$TEST_TYPE" = js ]]; then rm -rf "$TMPDIR/jest_preprocess_cache"; fi
 
-  ### do ios-only setup stuff
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "osx" && "$TEST_TYPE" == "ios" ]]; then
-      brew update
-      brew install xctool;
-    fi
-
 
 before_script:
   # Emulator Management: Create, Start and Wait
