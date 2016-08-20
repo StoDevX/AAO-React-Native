@@ -139,7 +139,7 @@ let marginTop = 15
 
 let cellMargin = 10
 let cellSidePadding = 10
-let cellEdgePadding = 10
+let cellEdgePadding = 8
 let cellWidth = (Viewport.width / 2) - (cellMargin * 1.5)
 
 let styles = StyleSheet.create({
