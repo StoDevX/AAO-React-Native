@@ -30,7 +30,7 @@ const SEMESTERS = {
   '9': 'Non-St. Olaf',
 }
 
-export default function semesterName(semester: number|string): string {
+function semesterName(semester: number|string): string {
   if (typeof semester === 'number') {
     semester = String(semester)
   }
