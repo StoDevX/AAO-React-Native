@@ -92,11 +92,10 @@ function HomePageScene({navigator}: ScenePropsType) {
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
       style={styles.scrollView}
+      contentContainerStyle={styles.container}
     >
-      <View style={styles.container}>
-        {views.map(view =>
-          <HomePageButton key={view.title} view={view} navigator={navigator} />)}
-      </View>
+      {views.map(view =>
+        <HomePageButton key={view.title} view={view} navigator={navigator} />)}
     </ScrollView>
   )
 }
@@ -140,7 +139,7 @@ let marginTop = 15
 
 let cellMargin = 10
 let cellSidePadding = 10
-let cellEdgePadding = 10
+let cellEdgePadding = 8
 let cellWidth = (Viewport.width / 2) - (cellMargin * 1.5)
 
 let styles = StyleSheet.create({
