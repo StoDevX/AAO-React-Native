@@ -63,7 +63,12 @@ export default class CoursesView extends React.Component {
     this.fetchData(true)
   }
 
-  rowHasChanged(r1: CourseType, r2: CourseType) {
+  rowHasChanged(r1: CourseType|Error, r2: CourseType|Error) {
+    if (r1 instanceof Error && r2 instanceof Error) {
+      return r1.message !== r2.message
+    } else if (r1 instanceof Error || r2 instanceof Error) {
+      return true
+    }
     return r1.clbid !== r2.clbid
   }
 
@@ -82,12 +87,12 @@ export default class CoursesView extends React.Component {
     this.setState({loading: false})
   }
 
-  renderRow = (course: CourseType) => {
-    if (course.error) {
+  renderRow = (course: CourseType|Error) => {
+    if (course instanceof Error) {
       return (
         <TouchableHighlight underlayColor={'#ebebeb'}>
           <View style={styles.rowContainer}>
-            <Text style={styles.itemTitle}>Error: {course.error}</Text>
+            <Text style={styles.itemTitle}>Error: {course.message}</Text>
           </View>
         </TouchableHighlight>
       )
