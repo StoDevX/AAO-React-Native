@@ -28,12 +28,15 @@ function isBuildingOpen(hoursInfo: BuildingInfoType): BuildingStatusType {
     return 'closed'
   }
 
-  let [startTime, closeTime] = times
+  let [startTime, closeTime, options={nextDay: false}] = times
   startTime = moment(startTime, TIME_FORMAT, true).tz(CENTRAL_TZ)
   closeTime = moment(closeTime, TIME_FORMAT, true).tz(CENTRAL_TZ)
   let currentTime = moment()
 
-  // Arbitrary date to satasfy the JS Date.parse() function
+  if (options.nextDay) {
+    closeTime.add(1, 'day')
+  }
+
   if (currentTime.isBetween(startTime, closeTime)) {
     if (currentTime.clone().add(30, 'min').isAfter(closeTime)) {
       return 'almostClosed'
@@ -50,7 +53,7 @@ type BuildingInfoType = {
   image: string,
   times: {
     hours: {
-      [key: DayOfWeekType]: [string, string],
+      [key: DayOfWeekType]: [string, string, ?{nextDay: boolean}],
     },
   },
 };
