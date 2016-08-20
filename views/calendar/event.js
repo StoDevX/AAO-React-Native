@@ -53,8 +53,15 @@ function getString(date) {
   return `${month}/${day} ${hours}:${min}`
 }
 
+function stripAndClean(text: string) {
+  let regex = /(<([^>]+)>)/ig
+  return text.replace(regex, '').trim()
+}
+
 // PROPS: eventTitle, location, startTime, endTime
 export default function EventView(props: {eventTitle: string, location: string, startTime?: string, endTime?: string, style?: any}) {
+  let title = stripAndClean(props.eventTitle)
+
   let st = new Date(props.startTime)
   let et = new Date(props.endTime)
 
@@ -66,7 +73,7 @@ export default function EventView(props: {eventTitle: string, location: string, 
 
   return (
     <View style={props.style}>
-      <Text style={styles.itemTitle}>{props.eventTitle}</Text>
+      <Text style={styles.itemTitle}>{title}</Text>
       { showTimes ? <Text style={styles.itemPreview}>{stString} - {etString}</Text> : null }
       { showLocation ? <Text style={styles.itemPreview}>{props.location}</Text> : null }
     </View>
