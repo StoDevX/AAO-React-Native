@@ -13,56 +13,32 @@ import {
 
 import NavigatorScreen from './components/navigator-screen'
 import BuildingView from './components/building'
+import moment from 'moment-timezone'
+const CENTRAL_TZ = 'America/Winnipeg'
+const TIME_FORMAT = 'HH:mm:ss'
 
 import hoursData from '../data/building-hours.json'
 
-function getDayOfWeek(): DayOfWeekType {
-  let dow = new Date().getDay()
-  switch (dow) {
-    case 1:
-      return 'Mon'
-    case 2:
-      return 'Tue'
-    case 3:
-      return 'Wed'
-    case 4:
-      return 'Thu'
-    case 5:
-      return 'Fri'
-    case 6:
-      return 'Sat'
-    case 7:
-      return 'Sun'
-    default:
-      // clearly, this should never happen. If it does, there are bigger problems
-      throw new TypeError(`${dow} is not a day of the week between 1 and 7!`)
-  }
-}
-
-function getCurrentTime(): string {
-  let d = new Date()
-  let hours =  d.getHours()
-  let min = d.getMinutes()
-  if (hours < 10) {
-    hours = '0' + hours
-  }
-  return `${hours}:${min}:00`
-}
 
 // TODO: handle buildings that are open beyond midnight
 function isBuildingOpen(hoursInfo: BuildingInfoType): BuildingStatusType {
-  let dow = getDayOfWeek()
-  let times = hoursInfo.times.hours[dow]
+  let dayOfWeek = moment.tz(CENTRAL_TZ).format('ddd')
+  let times = hoursInfo.times.hours[dayOfWeek]
   if (!times) {
     return 'closed'
   }
 
-  let [startTime, closeTime] = times
-  let currentTime = getCurrentTime()
+  let [startTime, closeTime, options={nextDay: false}] = times
+  startTime = moment(startTime, TIME_FORMAT, true).tz(CENTRAL_TZ)
+  closeTime = moment(closeTime, TIME_FORMAT, true).tz(CENTRAL_TZ)
+  let currentTime = moment()
 
-  // Arbitrary date to satasfy the JS Date.parse() function
-  if (Date.parse('01/01/2016 ' + startTime) < Date.parse('01/01/2016 ' + currentTime) && Date.parse('01/01/2016 ' + currentTime) < Date.parse('01/01/2016 ' + closeTime)) {
-    if (Date.parse('01/01/2016 ' + closeTime) - Date.parse('01/01/2016 ' + currentTime) < 1800000) { // 1800000 is 30 min in ms
+  if (options.nextDay) {
+    closeTime.add(1, 'day')
+  }
+
+  if (currentTime.isBetween(startTime, closeTime)) {
+    if (currentTime.clone().add(30, 'min').isAfter(closeTime)) {
       return 'almostClosed'
     }
     return 'open'
@@ -77,7 +53,7 @@ type BuildingInfoType = {
   image: string,
   times: {
     hours: {
-      [key: DayOfWeekType]: [string, string],
+      [key: DayOfWeekType]: [string, string, ?{nextDay: boolean}],
     },
   },
 };
