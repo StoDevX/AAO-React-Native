@@ -21,6 +21,8 @@ import LoadingView from '../components/loading'
 import LatestView from './latestView'
 import * as c from '../components/colors'
 
+let Entities = require('html-entities').AllHtmlEntities
+const entities = new Entities()
 const URL = 'http://oleville.com/wp-json/wp/v2/posts?per_page=5'
 
 const styles = StyleSheet.create({
@@ -125,7 +127,7 @@ export default class OlevilleView extends React.Component {
   }
 
   renderRow(data: Object) {
-    let title = data.title.rendered
+    let title = entities.decode(data.title.rendered)
     let content = data.content.rendered
     let image = data._featuredImageUrl
     //console.log(content)
