@@ -87,7 +87,7 @@ matrix:
 branches:
   only:
     - master
-    - travis
+    - /^travis/
 
 install:
   - echo "Now testing $TEST_TYPE on $TRAVIS_OS_NAME"
