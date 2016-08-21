@@ -149,7 +149,6 @@ export default class CoursesView extends React.Component {
 
 const styles = StyleSheet.create({
   listContainer: {
-    paddingBottom: 50,
     backgroundColor: '#ffffff',
   },
   rowContainer: {

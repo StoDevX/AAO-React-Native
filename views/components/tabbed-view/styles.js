@@ -1,8 +1,8 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Platform } from 'react-native'
 
 export default StyleSheet.create({
   container: {},
   listViewStyle: {
-    paddingBottom: 51,
+    paddingBottom: Platform.OS === 'ios' ? 51 : 0,
   },
 })
