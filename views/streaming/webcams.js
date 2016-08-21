@@ -93,9 +93,6 @@ let styles = StyleSheet.create({
     paddingBottom: 10,
   },
   video: {
-    top: 0,
-    left: 0,
-    right: 0,
     height: 210,
   },
 })
