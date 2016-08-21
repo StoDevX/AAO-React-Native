@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import {Navigator} from 'react-native'
+import {Navigator, BackAndroid} from 'react-native'
 
 import AboutView from './views/about'
 import CalendarView from './views/calendar'
@@ -76,9 +76,20 @@ function renderScene(route, navigator) {
 }
 
 export default class App extends React.Component {
+  componentDidMount() {
+    BackAndroid.addEventListener('hardwareBackPress', () => {
+      if (this._navigator && this._navigator.getCurrentRoutes().length > 1) {
+        this._navigator.pop()
+        return true
+      }
+      return false
+    })
+  }
+
   render() {
     return (
       <Navigator
+        ref={nav => this._navigator = nav}
         initialRoute={{
           id: 'HomeView',
           name: 'Home',
