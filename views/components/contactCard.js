@@ -30,7 +30,9 @@ let styles = StyleSheet.create({
     height: 30,
     paddingTop: 3,
     marginBottom: 10,
+    marginTop: 10,
     borderRadius: 6,
+    overflow: 'hidden',
   },
   content: {
     marginBottom: 5,
