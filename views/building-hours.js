@@ -19,8 +19,6 @@ const TIME_FORMAT = 'HH:mm:ss'
 
 import hoursData from '../data/building-hours.json'
 
-
-// TODO: handle buildings that are open beyond midnight
 function isBuildingOpen(hoursInfo: BuildingInfoType): BuildingStatusType {
   let dayOfWeek = moment.tz(CENTRAL_TZ).format('ddd')
   let times = hoursInfo.times.hours[dayOfWeek]
@@ -29,8 +27,8 @@ function isBuildingOpen(hoursInfo: BuildingInfoType): BuildingStatusType {
   }
 
   let [startTime, closeTime, options={nextDay: false}] = times
-  startTime = moment(startTime, TIME_FORMAT, true).tz(CENTRAL_TZ)
-  closeTime = moment(closeTime, TIME_FORMAT, true).tz(CENTRAL_TZ)
+  startTime = moment.tz(startTime, TIME_FORMAT, true, CENTRAL_TZ)
+  closeTime = moment.tz(closeTime, TIME_FORMAT, true, CENTRAL_TZ)
   let currentTime = moment()
 
   if (options.nextDay) {
