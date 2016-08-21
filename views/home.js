@@ -24,7 +24,7 @@ let Viewport = Dimensions.get('window')
 type ViewType = {usable: boolean, view: string, title: string, icon: string};
 const views: ViewType[] = [
   {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl'},
-  {usable: false, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
+  {usable: true, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
   {usable: true, view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock'},
   {usable: true, view: 'CalendarView', title: 'Calendar', icon: 'calendar'},
   {usable: true, view: 'DirectoryView', title: 'Directory', icon: 'v-card'},
