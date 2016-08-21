@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   },
   textBackground: {
     marginTop: 175,
-    backgroundColor: c.iosText,
+    backgroundColor: c.black,
   },
   theLatest: {
     color: c.theLatest,
