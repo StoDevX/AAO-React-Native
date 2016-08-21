@@ -20,6 +20,7 @@ import NavigatorScreen from '../components/navigator-screen'
 import LoadingView from '../components/loading'
 import LatestView from './latestView'
 import * as c from '../components/colors'
+import { getText, parseHtml } from '../../lib/html'
 
 const URL = 'http://oleville.com/wp-json/wp/v2/posts?per_page=5'
 
@@ -125,7 +126,7 @@ export default class OlevilleView extends React.Component {
   }
 
   renderRow(data: Object) {
-    let title = data.title.rendered
+    let title = getText(parseHtml(data.title.rendered))
     let content = data.content.rendered
     let image = data._featuredImageUrl
     //console.log(content)
