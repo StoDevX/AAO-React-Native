@@ -7,6 +7,7 @@ import {
 
 import * as c from '../components/colors'
 import padEnd from 'lodash/padEnd'
+import {getText, parseHtml} from '../../lib/html'
 
 let styles = StyleSheet.create({
   itemTitle: {
@@ -55,6 +56,8 @@ function getString(date) {
 
 // PROPS: eventTitle, location, startTime, endTime
 export default function EventView(props: {eventTitle: string, location: string, startTime?: string, endTime?: string, style?: any}) {
+  let title = getText(parseHtml(props.eventTitle))
+
   let st = new Date(props.startTime)
   let et = new Date(props.endTime)
 
@@ -66,7 +69,7 @@ export default function EventView(props: {eventTitle: string, location: string, 
 
   return (
     <View style={props.style}>
-      <Text style={styles.itemTitle}>{props.eventTitle}</Text>
+      <Text style={styles.itemTitle}>{title}</Text>
       { showTimes ? <Text style={styles.itemPreview}>{stString} - {etString}</Text> : null }
       { showLocation ? <Text style={styles.itemPreview}>{props.location}</Text> : null }
     </View>

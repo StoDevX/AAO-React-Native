@@ -144,6 +144,7 @@ let styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   row: {
+    minHeight: 88,
     marginLeft: 10,
     marginRight: 10,
     borderBottomWidth: 1,
