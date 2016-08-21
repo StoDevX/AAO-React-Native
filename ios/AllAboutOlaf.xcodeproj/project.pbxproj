@@ -743,7 +743,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AllAboutOlaf.app/AllAboutOlaf";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/All About Olaf.app/All About Olaf";
 			};
 			name = Debug;
 		};
@@ -760,7 +760,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AllAboutOlaf.app/AllAboutOlaf";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/All About Olaf.app/All About Olaf";
 			};
 			name = Release;
 		};
