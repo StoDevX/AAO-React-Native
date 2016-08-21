@@ -88,7 +88,6 @@ function HomePageScene({navigator}: ScenePropsType) {
   return (
     <ScrollView
       automaticallyAdjustContentInsets={false}
-      scrollEventThrottle={200}
       overflow={'hidden'}
       alwaysBounceHorizontal={false}
       showsHorizontalScrollIndicator={false}
