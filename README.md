@@ -28,6 +28,7 @@ The Calendar might nag you for a Google Calendar API key. You can either ask som
 * Campus Dictionary
 * Cage Menu
 * Calendar
+* SIS
 
 ## Work-In-Progress
 * Building Hours
@@ -36,11 +37,10 @@ The Calendar might nag you for a Google Calendar API key. You can either ask som
 * News
 * Streaming Media
 * Push Notifications
-* SIS
+* Oleville
 
 ## Todo (modules)
 * Transportation
-* Oleville
 
 ## Todo (other)
 * [3D touch actions](https://github.com/jordanbyron/react-native-quick-actions) for icon and within
