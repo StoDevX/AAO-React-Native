@@ -4,21 +4,22 @@
  */
 
 import React from 'react'
-import {Navigator, StyleSheet, View} from 'react-native'
+import {Navigator, StyleSheet, View, Platform} from 'react-native'
 
 import BackButton from './back-button'
 import ScreenTitle from './screen-title'
 
 import * as c from './colors'
 
-const MARGIN_TOP = 64
+const MARGIN_TOP_IOS = 64
+const MARGIN_TOP_ANDROID = 56
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: MARGIN_TOP,
+    marginTop: Platform.OS === 'ios' ? MARGIN_TOP_IOS : MARGIN_TOP_ANDROID,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    backgroundColor: c.iosLightBackground,
+    backgroundColor: Platform.OS === 'ios' ? c.iosLightBackground : 'rgb(239, 238, 242)',
   },
 
   navigationBar: {

@@ -136,6 +136,7 @@ export default class CoursesView extends React.Component {
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
         renderSectionHeader={this.renderSectionHeader}
+        pageSize={5}
         refreshControl={
           <RefreshControl
             refreshing={this.state.loading}
@@ -149,7 +150,6 @@ export default class CoursesView extends React.Component {
 
 const styles = StyleSheet.create({
   listContainer: {
-    paddingBottom: 50,
     backgroundColor: '#ffffff',
   },
   rowContainer: {
