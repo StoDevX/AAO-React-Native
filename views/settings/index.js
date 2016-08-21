@@ -24,6 +24,8 @@ import {
     TableView,
 } from 'react-native-tableview-simple'
 
+import {version} from '../../package.json'
+
 import NavigatorScreen from '../components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
 import Communications from 'react-native-communications'
@@ -230,7 +232,7 @@ export default class SettingsView extends React.Component {
       <Section header='ODDS & ENDS'>
         <Cell cellStyle='RightDetail'
           title='Version'
-          detail='<get me from info.plist>'
+          detail={version}
         />
 
         <Cell cellStyle='Basic'
