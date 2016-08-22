@@ -21,10 +21,14 @@ let styles = StyleSheet.create({
 })
 
 export default class BusLineView extends React.Component {
+  static propTypes = {
+    schedule: React.PropTypes.any,
+  }
+  
   state = {
     dataSource: new ListView.DataSource({
       rowHasChanged: this._rowHasChanged,
-    }).cloneWithRows(this.props.schedule)
+    }).cloneWithRows(this.props.schedule),
   }
 
   _rowHasChanged(r1: busStopType, r2: busStopType) {
