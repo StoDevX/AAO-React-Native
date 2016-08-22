@@ -19,6 +19,15 @@ let styles = StyleSheet.create({
     flex: 1,
     alignItems: 'stretch',
     flexDirection: 'row',
+    marginRight: 5,
+    marginLeft: 5,
+  },
+  busLine: {
+    textAlign: 'center',
+    textDecorationLine: 'underline',
+  },
+  lineRow: {
+    marginTop: 10,
   },
 })
 
@@ -35,8 +44,8 @@ export default class BusView extends React.Component {
 
   _renderRow(data: busStopType) {
     return (
-      <View>
-        <Text> {data.line} </Text>
+      <View style={styles.lineRow}>
+        <Text style={styles.busLine}> {data.line} </Text>
         <BusLineView schedule={data.schedule} />
       </View>
     )

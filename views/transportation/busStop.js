@@ -16,7 +16,16 @@
 
  const styles = StyleSheet.create({
    container: {
-
+     marginTop: 2,
+     flexDirection: 'row',
+   },
+   location: {
+     flex: 1,
+     textAlign: 'left',
+   },
+   stopTime: {
+     flex: 1,
+     textAlign: 'right',
    },
  })
 
@@ -41,7 +50,8 @@
  export default function BusStopView(props: busStopType) {
    return (
     <View style={styles.container}>
-     <Text> {props.location} {getNextStopTime(props.times)} </Text>
+     <Text style={styles.location}>{props.location}</Text>
+     <Text style={styles.stopTime}>{getNextStopTime(props.times)}</Text>
     </View>
   )
  }
