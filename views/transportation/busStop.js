@@ -31,9 +31,9 @@ const styles = StyleSheet.create({
 })
 
 function getNextStopTime(times) {
+  let currentTime = moment.tz(CENTRAL_TZ)
   let returner = ''
   times.some(time => {
-    let currentTime = moment.tz(CENTRAL_TZ)
     let stopTime = moment.tz(time, TIME_FORMAT, true, CENTRAL_TZ)
     if (currentTime.isBefore(stopTime)) {
       returner = time
