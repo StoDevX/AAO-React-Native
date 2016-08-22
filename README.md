@@ -31,12 +31,12 @@ The Calendar might nag you for a Google Calendar API key. You can either ask som
 * SIS
 * Transportation
 * Oleville
+* News
+* Settings
 
 ## Work-In-Progress
 * Building Hours
-* Settings
 * Campus Map
-* News
 * Streaming Media
 * Push Notifications
 
