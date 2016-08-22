@@ -7,7 +7,6 @@ import {
   ListView,
   Linking,
 } from 'react-native'
-import Icon from 'react-native-vector-icons/Entypo'
 import type {OtherModeType} from './types'
 import modes from '../../data/transportation.json'
 import * as c from '../components/colors'

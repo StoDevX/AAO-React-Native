@@ -18,6 +18,8 @@ const TIME_FORMAT = 'HH:mm:ss'
 const styles = StyleSheet.create({
   container: {
     marginTop: 2,
+    marginRight: 5,
+    marginLeft: 5,
     flexDirection: 'row',
   },
   location: {
