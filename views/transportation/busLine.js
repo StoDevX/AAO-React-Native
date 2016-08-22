@@ -7,16 +7,15 @@
 import React from 'react'
 import {
   StyleSheet,
-  View,
   ListView,
 } from 'react-native'
 import BusStopView from './busStop'
+import type {BusStopType} from './types'
 
 let styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'stretch',
-    flexDirection: 'row',
   },
 })
 
@@ -24,18 +23,18 @@ export default class BusLineView extends React.Component {
   static propTypes = {
     schedule: React.PropTypes.any,
   }
-  
+
   state = {
     dataSource: new ListView.DataSource({
       rowHasChanged: this._rowHasChanged,
     }).cloneWithRows(this.props.schedule),
   }
 
-  _rowHasChanged(r1: busStopType, r2: busStopType) {
+  _rowHasChanged(r1: BusStopType, r2: BusStopType) {
     return r1.location !== r2.location
   }
 
-  _renderRow(data: busStopType) {
+  _renderRow(data: BusStopType) {
     return (
       <BusStopView location={data.location} times={data.times} />
     )
@@ -43,11 +42,11 @@ export default class BusLineView extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <ListView
-          dataSource={this.state.dataSource}
-          renderRow={this._renderRow.bind(this)} />
-      </View>
+      <ListView
+        contentContainerStyle={styles.container}
+        dataSource={this.state.dataSource}
+        renderRow={this._renderRow}
+      />
     )
   }
 }

@@ -11,5 +11,6 @@ export type BusStopType = {
 };
 
 export type BusLineType = {
+  line: string,
   schedule: BusStopType[],
 };
