@@ -12,12 +12,12 @@ export default [
     rnVectorIcon: {iconName: 'radio'},
     content: KSTOView,
   },
-  {
-    id: 'movie',
-    title: 'Weekly Movie',
-    rnVectorIcon: {iconName: 'ticket'},
-    content: WeeklyMovieView,
-  },
+  // {
+  //   id: 'movie',
+  //   title: 'Weekly Movie',
+  //   rnVectorIcon: {iconName: 'ticket'},
+  //   content: WeeklyMovieView,
+  // },
   {
     id: 'webcams',
     title: 'Webcams',
