@@ -9,3 +9,7 @@ export type BusStopType = {
   location: string,
   times: string[],
 };
+
+export type BusLineType = {
+  schedule: BusStopType[],
+};
