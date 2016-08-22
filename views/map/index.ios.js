@@ -1,6 +1,6 @@
 /**
  * All About Olaf
- * Map page
+ * iOS Map page
  */
 
 import React from 'react'
@@ -10,8 +10,8 @@ import {
   WebView,
 } from 'react-native'
 
-import NavigatorScreen from './components/navigator-screen'
-import mapInfo from '../data/map.json'
+import NavigatorScreen from '../components/navigator-screen'
+import mapInfo from '../../data/map.json'
 
 export default class OlafMapView extends React.Component {
   // Render a given scene
