@@ -22,6 +22,7 @@ my-caches:
       - /usr/local/Cellar/.git
 
 matrix:
+  fast_finish: true
   include:
     - os: linux
       sudo: false
