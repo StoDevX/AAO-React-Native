@@ -21,15 +21,21 @@
  })
 
  function getNextStopTime(times) {
-   times.forEach(time => {
+   let returner = ''
+   times.some(time => {
      let currentTime = moment.tz(CENTRAL_TZ)
      let stopTime = moment.tz(time, TIME_FORMAT, true, CENTRAL_TZ)
-     console.log(stopTime.toString())
      if (currentTime.isBefore(stopTime)) {
-       return time
+       returner = time
+       return returner
      }
+     return null
    })
-   return 'None'
+   if (returner) {
+     return returner
+   } else {
+     return 'None'
+   }
  }
 
  export default function BusStopView(props: busStopType) {
