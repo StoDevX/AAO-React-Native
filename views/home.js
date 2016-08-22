@@ -32,7 +32,7 @@ const views: ViewType[] = [
   {usable: true, view: 'NewsView', title: 'News', icon: 'news'},
   {usable: true, view: 'MapView', title: 'Campus Map', icon: 'map'},
   {usable: true, view: 'ContactsView', title: 'Important Contacts', icon: 'phone'},
-  {usable: false, view: 'TransportationView', title: 'Transportation', icon: 'address'},
+  {usable: true, view: 'TransportationView', title: 'Transportation', icon: 'address'},
   {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
   {usable: true, view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer'},
 ]
