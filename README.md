@@ -29,6 +29,8 @@ The Calendar might nag you for a Google Calendar API key. You can either ask som
 * Cage Menu
 * Calendar
 * SIS
+* Transportation
+* Oleville
 
 ## Work-In-Progress
 * Building Hours
@@ -37,10 +39,9 @@ The Calendar might nag you for a Google Calendar API key. You can either ask som
 * News
 * Streaming Media
 * Push Notifications
-* Oleville
 
 ## Todo (modules)
-* Transportation
+See the issues for the current todo module items, or improvements that could be made to the existing modules.
 
 ## Todo (other)
 * [3D touch actions](https://github.com/jordanbyron/react-native-quick-actions) for icon and within
