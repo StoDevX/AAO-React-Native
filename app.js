@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import {Navigator, BackAndroid} from 'react-native'
+import {Navigator, BackAndroid, StyleSheet, TouchableOpacity, Text} from 'react-native'
 
 import AboutView from './views/about'
 import CalendarView from './views/calendar'
@@ -31,7 +31,6 @@ import NoRoute from './views/components/no-route'
 
 // Render a given scene
 function renderScene(route, navigator) {
-  console.log('renderScene', route)
   let props = {route, navigator, ...(route.props || {})}
   switch (route.id) {
     case 'HomeView': return <HomeView {...props} />
@@ -59,36 +58,67 @@ function renderScene(route, navigator) {
 }
 
 
-import Icon from 'react-native-vector-icons/Entypo'
+import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from './views/components/colors'
 
+import {Dimensions} from 'react-native'
 const styles = StyleSheet.create({
+  container: {
+    marginTop: 64,
+    flex: 1,
+  },
   navigationBar: {
-
+    backgroundColor: c.olevilleGold,
+    paddingTop: 22,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: c.iosNavbarBottomBorder,
+    shadowOffset: {height: 1},
+    shadowOpacity: 1,
+    shadowRadius: 0.1,
   },
   backButton: {
-    // flex: 1,
-    // justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 3,
   },
   backButtonText: {
-    color: c.tint,
-    // margin: 10,
-    // textAlignVertical: 'top',
+    fontSize: 16,
+    color: 'white',
+    fontFamily: 'System',
   },
   backButtonIcon: {
-    fontSize: 16,
+    color: 'white',
+    fontSize: 34,
+    marginTop: 2,
+    paddingLeft: 8,
+    paddingRight: 6,
+  },
+  settingsIcon: {
+    color: 'white',
+    fontSize: 24,
+    marginTop: 8,
+    paddingLeft: 8,
+    paddingRight: 6,
   },
   titleText: {
-    color: 'black',
-    margin: 10,
+    color: 'white',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
+    marginTop: 14,
+  },
+  rightButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 15,
+    marginRight: 10,
+  },
+  rightButtonText: {
+    fontSize: 16,
+    color: 'white',
   },
 })
-
-import { StyleSheet, TouchableOpacity, Text } from 'react-native'
-// import {Dimensions} from 'react-native'
-// let width = Dimensions.get('window').width
 
 const navbar = (
   <Navigator.NavigationBar
@@ -99,7 +129,7 @@ const navbar = (
           case 'HomeView':
             return (
               <TouchableOpacity
-                style={styles.backButton}
+                style={[styles.backButton, {marginLeft: 10}]}
                 onPress={() => navigator.push({
                   id: 'SettingsView',
                   title: 'Settings',
@@ -107,18 +137,20 @@ const navbar = (
                   sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
                 })}
               >
-                <Icon name='cog' style={styles.navigationButtonIcon} />
+                <Icon style={styles.settingsIcon} name='ios-settings' />
               </TouchableOpacity>
             )
+
           case 'SettingsView':
             return (
               <TouchableOpacity
-                style={styles.backButton}
+                style={[styles.backButton, {marginLeft: 10, marginTop: 14}]}
                 onPress={() => navigator.pop()}
               >
-                <Icon name='chevron-thin-down' style={styles.backButtonIcon} />
+                <Text style={styles.backButtonText}>Close</Text>
               </TouchableOpacity>
             )
+
           default: {
             if (index <= 0) {
               return null
@@ -132,24 +164,23 @@ const navbar = (
                 style={styles.backButton}
                 onPress={() => navigator.pop()}
               >
-                <Text style={styles.backButtonText}>
-                  <Icon name='chevron-thin-left' style={styles.backButtonIcon} />
-                  {backTitle}
-                </Text>
+                <Icon style={styles.backButtonIcon} name='ios-arrow-back' />
+                <Text style={styles.backButtonText}>{backTitle}</Text>
               </TouchableOpacity>
             )
           }
         }
       },
+
       RightButton(route) {
         switch (route.id) {
           case 'HomeView':
             return (
               <TouchableOpacity
-                style={styles.navButton}
+                style={styles.rightButton}
                 onPress={() => {}}
               >
-                <Text style={styles.navigationButtonText}>Edit</Text>
+                <Text style={styles.rightButtonText}>Edit</Text>
               </TouchableOpacity>
             )
 
@@ -157,18 +188,15 @@ const navbar = (
             return null
         }
       },
+
       Title(route) {
-        let title = route.title
-        // if (title.length > 15) {
-        //   title = title.substring(0, (width/15)) + '…'
-        // }
         return (
           <Text
-            style={[styles.titleText]}
+            style={[styles.titleText, {maxWidth: Dimensions.get('window').width / 2}]}
             numberOfLines={1}
             ellipsizeMode='tail'
           >
-            {title}
+            {route.title}
           </Text>
         )
       },
@@ -199,6 +227,7 @@ export default class App extends React.Component {
           index: 0,
         }}
         renderScene={renderScene}
+        sceneStyle={styles.container}
         configureScene={route => {
           if (route.sceneConfig) {
             return route.sceneConfig
