@@ -11,7 +11,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
   StatusBar,
 } from 'react-native'
 
@@ -56,19 +55,24 @@ export default function HomePageScene({navigator, route}: ScenePropsType) {
       {views.map(view =>
         <TouchableOpacity
           key={view.view}
-          onPress={() => navigator.push({id: view.view, index: route.index + 1, title: view.title, sceneConfig: Navigator.SceneConfigs.PushFromRight})}
+          onPress={() => navigator.push({
+            id: view.view,
+            index: route.index + 1,
+            title: view.title,
+            sceneConfig: Navigator.SceneConfigs.PushFromRight,
+          })}
           activeOpacity={0.5}
+          style={[styles.rectangle, {backgroundColor: view.tint}]}
         >
-          <View style={[styles.rectangle, {backgroundColor: view.tint}]}>
-            <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
-            <Text
-              style={styles.rectangleButtonText}
-              autoAdjustsFontSize={true}
-            >
-              {view.title}{view.usable ? '' : ' !'}
-            </Text>
-          </View>
-        </TouchableOpacity>)}
+          <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
+          <Text
+            style={styles.rectangleButtonText}
+            autoAdjustsFontSize={true}
+          >
+            {view.title}{view.usable ? '' : ' !'}
+          </Text>
+        </TouchableOpacity>)
+      }
     </ScrollView>
   )
 }
