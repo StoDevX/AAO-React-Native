@@ -256,7 +256,11 @@ export default class SettingsView extends React.Component {
     )
 
     return (
-      <ScrollView contentContainerStyle={styles.stage}>
+      <ScrollView
+        contentContainerStyle={styles.stage}
+        keyboardShouldPersistTaps={true}
+        keyboardDismissMode={'on-drag'}
+      >
         <TableView>
           {accountSection}
           {supportSection}
