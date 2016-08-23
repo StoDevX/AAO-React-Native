@@ -87,28 +87,8 @@ const styles = StyleSheet.create({
 })
 
 import { StyleSheet, TouchableOpacity, Text } from 'react-native'
-import {Dimensions} from 'react-native'
-let width = Dimensions.get('window').width
-
-function ScreenTitle({children}) {
-  if (children.length > 15) {
-    children = children.substring(0, (width/15)) + '…'
-  }
-  return (
-    <Text
-      style={[styles.titleText]}
-      numberOfLines={1}
-      ellipsizeMode='tail'
-    >
-      {children}
-    </Text>
-  )
-}
-ScreenTitle.propTypes = {
-  children: React.PropTypes.node.isRequired,
-}
-
-
+// import {Dimensions} from 'react-native'
+// let width = Dimensions.get('window').width
 
 const navbar = (
   <Navigator.NavigationBar
@@ -178,7 +158,19 @@ const navbar = (
         }
       },
       Title(route) {
-        return <ScreenTitle>{route.title}</ScreenTitle>
+        let title = route.title
+        // if (title.length > 15) {
+        //   title = title.substring(0, (width/15)) + '…'
+        // }
+        return (
+          <Text
+            style={[styles.titleText]}
+            numberOfLines={1}
+            ellipsizeMode='tail'
+          >
+            {title}
+          </Text>
+        )
       },
     }}
   />
