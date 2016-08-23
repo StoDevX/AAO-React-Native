@@ -1,8 +1,7 @@
 // @flow
-// import Icon from 'react-native-vector-icons/Entypo'
 
 import KSTOView from './radio'
-import WeeklyMovieView from './movie'
+// import WeeklyMovieView from './movie'
 import WebcamsView from './webcams'
 
 export default [

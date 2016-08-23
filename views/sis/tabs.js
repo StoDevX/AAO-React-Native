@@ -1,5 +1,4 @@
 // @flow
-import React from 'react'
 import BalancesView from './balances'
 import CoursesView from './courses'
 // import SearchView from './search'

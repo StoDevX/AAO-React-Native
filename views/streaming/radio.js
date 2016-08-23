@@ -8,7 +8,6 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Text,
   WebView,
 } from 'react-native'
 
