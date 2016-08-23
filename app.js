@@ -143,6 +143,10 @@ const navbar = (
             if (index <= 0) {
               return null
             }
+            let backTitle = navState.routeStack[index-1].title
+            if (index === 1) {
+              backTitle = 'Home'
+            }
             return (
               <TouchableOpacity
                 style={styles.backButton}
@@ -150,7 +154,7 @@ const navbar = (
               >
                 <Text style={styles.backButtonText}>
                   <Icon name='chevron-thin-left' style={styles.backButtonIcon} />
-                  {navState.routeStack[index-1].title}
+                  {backTitle}
                 </Text>
               </TouchableOpacity>
             )
