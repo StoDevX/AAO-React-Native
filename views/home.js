@@ -12,6 +12,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  StatusBar,
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/Entypo'
@@ -49,6 +50,9 @@ export default function HomePageScene({navigator, route}: ScenePropsType) {
       style={styles.scrollView}
       contentContainerStyle={styles.container}
     >
+      <StatusBar
+        barStyle='light-content'
+      />
       {views.map(view =>
         <TouchableOpacity
           key={view.view}
