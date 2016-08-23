@@ -7,13 +7,11 @@
 import React, {PropTypes} from 'react'
 import {
     View,
-    Navigator,
     Image,
     StyleSheet,
     WebView,
 } from 'react-native'
 
-import NavigatorScreen from '../components/navigator-screen'
 import type {OlevilleLatestPropsType} from './types'
 
 const styles = StyleSheet.create({
@@ -26,26 +24,17 @@ const styles = StyleSheet.create({
 })
 
 
-export default function LatestView(props: OlevilleLatestPropsType) {
+export default function OlevilleStoryView(props: OlevilleLatestPropsType) {
   return (
-    <NavigatorScreen
-      title={props.title}
-      navigator={props.navigator}
-      renderScene={() => {
-        return (
-          <View style={styles.container}>
-            <Image source={{uri: props.imageURL}} style={styles.imageStyle} />
-            <WebView source={{html: props.content}} />
-          </View>
-        )
-      }}
-    />
+    <View style={styles.container}>
+      <Image source={{uri: props.imageURL}} style={styles.imageStyle} />
+      <WebView source={{html: props.content}} />
+    </View>
   )
 }
 
-LatestView.propTypes = {
+OlevilleStoryView.propTypes = {
   content: PropTypes.string,
   imageURL: PropTypes.string,
-  navigator: PropTypes.instanceOf(Navigator),
   title: PropTypes.string,
 }

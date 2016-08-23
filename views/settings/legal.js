@@ -4,10 +4,8 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  Navigator,
 } from 'react-native'
 import legal from '../../data/legal.json'
-import NavigatorScreen from '../components/navigator-screen'
 
 const styles = StyleSheet.create({
   container: {
@@ -17,21 +15,11 @@ const styles = StyleSheet.create({
   },
 })
 
-function LegalContents() {
+export default function LegalView() {
   return (
     <ScrollView style={styles.container}>
       <Text>{legal.content}</Text>
     </ScrollView>
   )
 }
-
-export default function LegalView(props: {navigator: typeof Navigator}) {
-  return <NavigatorScreen
-    title={legal.title}
-    navigator={props.navigator}
-    renderScene={() => <LegalContents />}
-  />
-}
-LegalView.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator),
-}
+LegalView.propTypes = {}

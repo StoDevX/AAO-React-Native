@@ -17,12 +17,11 @@ import {
 } from 'react-native'
 import * as c from '../components/colors'
 import Button from 'react-native-button'
-import NavigatorScreen from '../components/navigator-screen'
 import mapInfo from '../../data/map.json'
 
 export default class OlafMapView extends React.Component {
   // Render a given scene
-  renderScene() {
+  render() {
     return (
       <View style={styles.container}>
           <Text>{mapInfo.description}</Text>
@@ -33,14 +32,6 @@ export default class OlafMapView extends React.Component {
           See the map!</Button>
       </View>
     )
-  }
-
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Map'
-      renderScene={this.renderScene.bind(this)}
-    />
   }
 }
 

@@ -1,8 +1,8 @@
 // @flow
 import React from 'react'
 import NewsContainer from './news-container'
-import type { NewsItemPropsType } from './types'
+import type { NewsViewPropsType } from './types'
 
-export default function PoliticOleNewsView(props: NewsItemPropsType) {
+export default function PoliticOleNewsView(props: NewsViewPropsType) {
   return <NewsContainer {...props} />
 }

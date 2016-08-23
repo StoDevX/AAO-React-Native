@@ -9,13 +9,13 @@ export default [
     id: 'balances',
     title: 'Balances',
     rnVectorIcon: {iconName: 'credit-card'},
-    content: () => <BalancesView />,
+    content: BalancesView,
   },
   {
     id: 'courses',
     title: 'Courses',
     rnVectorIcon: {iconName: 'archive'},
-    content: () => <CoursesView />,
+    content: CoursesView,
   },
   // {
   //   id: 'search',

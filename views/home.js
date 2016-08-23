@@ -14,7 +14,6 @@ import {
   View,
 } from 'react-native'
 
-import NavigatorScreen from './components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
 import * as c from './components/colors'
 
@@ -52,40 +51,9 @@ const buttonStyles = (StyleSheet.create({
   OlevilleView: { backgroundColor: c.grapefruit },
 }): Object)  // force flow to let us access the styles with the string keys
 
-type ButtonPropsType = {view: ViewType, navigator: typeof Navigator, route: Object};
-function HomePageButton({view, navigator, route}: ButtonPropsType) {
-  return (
-    <TouchableOpacity
-      onPress={() => navigator.push({id: view.view, index: route.index + 1, title: view.title, sceneConfig: Navigator.SceneConfigs.PushFromRight})}
-      activeOpacity={0.5}
-    >
-      <View style={[styles.rectangle, buttonStyles[view.view]]}>
-        <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
-        <Text
-          style={styles.rectangleButtonText}
-          autoAdjustsFontSize={true}
-        >
-          {view.title}{view.usable ? '' : ' !'}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  )
-}
-
-HomePageButton.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator).isRequired,
-  route: React.PropTypes.object.isRequired,
-  view: React.PropTypes.shape({
-    view: React.PropTypes.string.isRequired,
-    title: React.PropTypes.string.isRequired,
-    icon: React.PropTypes.string.isRequired,
-    usable: React.PropTypes.bool.isRequired,
-  }).isRequired,
-}
-
 
 type ScenePropsType = {navigator: typeof Navigator, route: Object};
-export default function HomePageScene(props: ScenePropsType) {
+export default function HomePageScene({navigator, route}: ScenePropsType) {
   return (
     <ScrollView
       automaticallyAdjustContentInsets={false}
@@ -97,7 +65,21 @@ export default function HomePageScene(props: ScenePropsType) {
       contentContainerStyle={styles.container}
     >
       {views.map(view =>
-        <HomePageButton key={view.title} view={view} navigator={props.navigator} route={props.route} />)}
+        <TouchableOpacity
+          key={view.view}
+          onPress={() => navigator.push({id: view.view, index: route.index + 1, title: view.title, sceneConfig: Navigator.SceneConfigs.PushFromRight})}
+          activeOpacity={0.5}
+        >
+          <View style={[styles.rectangle, buttonStyles[view.view]]}>
+            <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
+            <Text
+              style={styles.rectangleButtonText}
+              autoAdjustsFontSize={true}
+            >
+              {view.title}{view.usable ? '' : ' !'}
+            </Text>
+          </View>
+        </TouchableOpacity>)}
     </ScrollView>
   )
 }

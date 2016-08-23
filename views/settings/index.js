@@ -26,7 +26,6 @@ import {
 
 import {version} from '../../package.json'
 
-import NavigatorScreen from '../components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
 import Communications from 'react-native-communications'
 import * as c from '../components/colors'
@@ -125,7 +124,7 @@ export default class SettingsView extends React.Component {
     })
   }
 
-  renderScene() {
+  render() {
     let username = this.state.username
     let password = this.state.password
 
@@ -268,14 +267,6 @@ export default class SettingsView extends React.Component {
         </TableView>
       </ScrollView>
     )
-  }
-
-  render() {
-    return <NavigatorScreen
-      navigator={this.props.navigator}
-      title='Settings'
-      renderScene={this.renderScene.bind(this)}
-    />
   }
 }
 

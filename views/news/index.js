@@ -7,22 +7,16 @@
 import React from 'react'
 import {StyleSheet, Navigator} from 'react-native'
 
-import NavigatorScreen from '../components/navigator-screen'
 import TabbedView from '../components/tabbed-view'
 import tabs from './tabs'
 
 
-export default function NewsPage({navigator}: {navigator: typeof Navigator}) {
-  return <NavigatorScreen
-    navigator={navigator}
-    title='News'
-    renderScene={() =>
-      <TabbedView style={styles.container} tabs={tabs} childProps={{navigator}} />
-    }
-  />
+export default function NewsPage({navigator, route}: {navigator: typeof Navigator, route: Object}) {
+  return <TabbedView style={styles.container} tabs={tabs} childProps={{navigator, route}} />
 }
 NewsPage.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator).isRequired,
+  route: React.PropTypes.object.isRequired,
 }
 
 let styles = StyleSheet.create({

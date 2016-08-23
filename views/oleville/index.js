@@ -15,10 +15,7 @@ import {
     Navigator,
 } from 'react-native'
 
-import type {LatestViewPropsType} from './types'
-import NavigatorScreen from '../components/navigator-screen'
 import LoadingView from '../components/loading'
-import LatestView from './latestView'
 import * as c from '../components/colors'
 import { getText, parseHtml } from '../../lib/html'
 
@@ -56,7 +53,7 @@ const styles = StyleSheet.create({
 export default class OlevilleView extends React.Component {
   static propTypes = {
     navigator: PropTypes.instanceOf(Navigator).isRequired,
-    title: PropTypes.string,
+    route: PropTypes.object.isRequired,
   }
 
   state = {
@@ -114,14 +111,14 @@ export default class OlevilleView extends React.Component {
 
   onPressLatestItem(title: string, content: string, imageURL: string) {
     this.props.navigator.push({
-      id: 'LatestView',
+      id: 'OlevilleNewsStoryView',
+      index: this.props.route.index + 1,
       title: title,
-      component: <LatestView
-        title={title}
-        content={content}
-        imageURL={imageURL}
-        navigator={this.props.navigator}
-      />,
+      props: {
+        title: title,
+        content: content,
+        imageURL: imageURL,
+      },
     })
   }
 
@@ -141,7 +138,7 @@ export default class OlevilleView extends React.Component {
     )
   }
 
-  renderScene() {
+  render() {
     if (this.state.dataSource === null) {
       return <LoadingView />
     }
@@ -155,13 +152,4 @@ export default class OlevilleView extends React.Component {
       </View>
     )
   }
-
-  render() {
-    return <NavigatorScreen
-      title='Oleville'
-      navigator={this.props.navigator}
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
-
 }

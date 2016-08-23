@@ -10,7 +10,6 @@ import {
   ListView,
 } from 'react-native'
 
-import NavigatorScreen from '../components/navigator-screen'
 import CollapsibleRow from '../components/collapsibleRow'
 
 import terms from '../../data/dictionary.json'
@@ -42,7 +41,7 @@ export default class DictionaryView extends React.Component {
     )
   }
 
-  renderScene() {
+  render() {
     return (
       <View style={styles.container}>
         <ListView
@@ -50,13 +49,5 @@ export default class DictionaryView extends React.Component {
           renderRow={this._renderRow.bind(this)} />
       </View>
     )
-  }
-
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Dictionary'
-      renderScene={this.renderScene.bind(this)}
-    />
   }
 }

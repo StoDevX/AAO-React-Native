@@ -11,7 +11,6 @@ import {
   ListView,
 } from 'react-native'
 
-import NavigatorScreen from './components/navigator-screen'
 import BuildingView from './components/building'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
@@ -77,7 +76,7 @@ export default class BuildingHoursView extends React.Component {
   }
 
   // Render a given scene
-  renderScene() {
+  render() {
     return (
       <View style={styles.container}>
         <ListView
@@ -86,14 +85,6 @@ export default class BuildingHoursView extends React.Component {
         />
       </View>
     )
-  }
-
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Building Hours'
-      renderScene={this.renderScene.bind(this)}
-    />
   }
 }
 

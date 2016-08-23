@@ -16,11 +16,10 @@ import * as c from '../components/colors'
 let Entities = require('html-entities').AllHtmlEntities
 const entities = new Entities()
 
-import NewsItemView from './news-item'
-
 export default class NewsContainer extends React.Component {
   static propTypes = {
     navigator: PropTypes.instanceOf(Navigator).isRequired,
+    route: PropTypes.object.isRequired,
     url: PropTypes.string.isRequired,
   }
 
@@ -70,12 +69,11 @@ export default class NewsContainer extends React.Component {
   onPressNews(title, story: StoryType) {
     this.props.navigator.push({
       id: 'NewsItemView',
+      index: this.props.route.index + 1,
       title: title,
-      component: <NewsItemView
-        story={story}
-        title={title}
-        navigator={this.props.navigator}
-      />,
+      props: {
+        story: story,
+      },
     })
   }
 
