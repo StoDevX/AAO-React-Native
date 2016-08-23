@@ -15,8 +15,7 @@ import Button from 'react-native-button' // the button
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'stretch',
-    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: c.iosLightBackground,
   },
   row: {
@@ -33,6 +32,7 @@ let styles = StyleSheet.create({
     marginBottom: 5,
     marginLeft: 10,
     marginRight: 10,
+    textAlign: 'center',
   },
   button: {
     backgroundColor: c.denim,
@@ -55,19 +55,19 @@ export default class OtherModesView extends React.Component {
     }).cloneWithRows(modes),
   }
 
-  _rowHasChanged(r1: string, r2: OtherModeType) {
+  _rowHasChanged(r1: OtherModeType, r2: OtherModeType) {
     return r1.name !== r2.name
   }
 
   _renderRow(data: OtherModeType) {
     return (
       <View>
-        <Text style={styles.title}> {data.name} </Text>
-        <Text style={styles.content}> {data.description} </Text>
+        <Text style={styles.title}>{data.name}</Text>
+        <Text style={styles.content}>{data.description}</Text>
         <Button
           onPress={() => Linking.openURL(data.url).catch(err => console.error('An error occurred', err))}
           style={styles.button}>
-          More info >
+          More info
         </Button>
       </View>
     )
@@ -75,11 +75,11 @@ export default class OtherModesView extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <ListView
-          dataSource={this.state.dataSource}
-          renderRow={this._renderRow.bind(this)} />
-      </View>
+      <ListView
+        contentContainerStyle={styles.container}
+        dataSource={this.state.dataSource}
+        renderRow={this._renderRow.bind(this)}
+      />
     )
   }
 }

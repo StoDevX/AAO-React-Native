@@ -19,7 +19,6 @@ export default class TabbedView extends React.Component {
 
   render() {
     let tabs = this.props.tabs
-    console.log(tabs.map(t => t.rnVectorIcon))
     return (
       <TabBarIOS tintColor='orange' style={[styles.container, this.props.style]}>
         {tabs.map(tab =>

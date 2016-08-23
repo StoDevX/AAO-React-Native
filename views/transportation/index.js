@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {StyleSheet, Navigator} from 'react-native'
+import {Navigator} from 'react-native'
 
 import NavigatorScreen from '../components/navigator-screen'
 import TabbedView from '../components/tabbed-view'
@@ -15,15 +15,9 @@ export default function MenusPage({navigator}: {navigator: typeof Navigator}) {
   return <NavigatorScreen
     navigator={navigator}
     title='Transportation'
-    renderScene={() => <TabbedView style={styles.container} tabs={tabs} />}
+    renderScene={() => <TabbedView tabs={tabs} />}
   />
 }
 MenusPage.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator).isRequired,
 }
-
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
