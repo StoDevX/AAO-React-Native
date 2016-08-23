@@ -83,9 +83,6 @@ HomePageScene.propTypes = {
 }
 
 
-
-let marginTop = 15
-
 let cellMargin = 10
 let cellSidePadding = 10
 let cellEdgePadding = 8
@@ -95,7 +92,7 @@ let styles = StyleSheet.create({
   // Body container
   container: {
     marginLeft: cellMargin,
-    marginTop: marginTop,
+    marginTop: 10,
 
     alignItems: 'flex-start',
     justifyContent: 'center',
