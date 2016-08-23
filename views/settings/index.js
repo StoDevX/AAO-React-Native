@@ -178,7 +178,7 @@ export default class SettingsView extends React.Component {
           value={password}
           returnKeyType='done'
           onChangeText={text => this.setState({password: text})}
-          onSubmitEditing={loggedIn ? this.logIn : () => {}}
+          onSubmitEditing={loggedIn ? () => {} : this.logIn}
         />
       </CustomCell>
     )
