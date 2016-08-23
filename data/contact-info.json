@@ -7,6 +7,13 @@
     "imageURI":"../data/images/contacts/pubsafe.jpg"
   },
   {
+    "title":"SARN",
+    "text":"SARN, the Sexual Assault Resource Network, is a confidential resource availiable to all students. Calls to SARN will be picked up by a trained advocate to provide services to students struggling with issues of sexual and domestic violence. Students can also visit the SARN office in Buntrock Commons room 113.",
+    "phoneNumber":"5077863777",
+    "buttonText":"Call SARN",
+    "imageURI":"../data/images/contacts/pause.jpg"
+  },
+  {
     "title":"Safe Ride",
     "text":"Students concerned about their personal safety may contact Safe Ride to request a walking escort or vehicular transportation on campus and to areas immediately adjacent to the campus. This service was created for personal safety reasons only and will not transport groups of people or provide transportation to downtown locations. Safe Ride is available from 7:00 P.M. to 1:00 A.M. each day classes are in session.",
     "phoneNumber":"5077863666",
@@ -14,11 +21,10 @@
     "imageURI":"http://oleville.com/tech/wp-content/uploads/sites/19/2016/07/pubsafecar.jpg"
   },
   {
-    "title":"SARN",
-    "text":"SARN, the Sexual Assault Resource Network, is a confidential resource availiable to all students. Calls to SARN will be picked up by a trained advocate to provide services to students struggling with issues of sexual and domestic violence.",
-    "phoneNumber":"5077863777",
-    "buttonText":"Call SARN",
-    "imageURI":"../data/images/contacts/pause.jpg"
+    "title":"Boe House",
+    "text":"The Counseling Center was established by St. Olaf College to enhance the personal growth and development of its students.  The Center supports students in their academic pursuits and facilitates personal and interpersonal learning and growth.  The programs it provides are preventive as well as remedial.When contacting us to make an appointment, please note that we are often busy and schedules can be restrictive in available hours. However, if you are in need of an appointment, please call and we will accommodate you as best we can.",
+    "phoneNumber":"5077863062",
+    "buttonText":"Contact Boe House",
   },
   {
     "title":"The Pause Kitchen",
