@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: Platform.OS === 'ios' ? 16 : 20,
     fontWeight: 'bold',
     marginTop: 14,
   },
