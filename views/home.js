@@ -52,11 +52,11 @@ const buttonStyles = (StyleSheet.create({
   OlevilleView: { backgroundColor: c.grapefruit },
 }): Object)  // force flow to let us access the styles with the string keys
 
-type ButtonPropsType = {view: ViewType, navigator: typeof Navigator};
-function HomePageButton({view, navigator}: ButtonPropsType) {
+type ButtonPropsType = {view: ViewType, navigator: typeof Navigator, route: Object};
+function HomePageButton({view, navigator, route}: ButtonPropsType) {
   return (
     <TouchableOpacity
-      onPress={() => navigator.push({id: view.view, index: 1, title: view.title, sceneConfig: Navigator.SceneConfigs.PushFromRight})}
+      onPress={() => navigator.push({id: view.view, index: route.index + 1, title: view.title, sceneConfig: Navigator.SceneConfigs.PushFromRight})}
       activeOpacity={0.5}
     >
       <View style={[styles.rectangle, buttonStyles[view.view]]}>
@@ -74,6 +74,7 @@ function HomePageButton({view, navigator}: ButtonPropsType) {
 
 HomePageButton.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator).isRequired,
+  route: React.PropTypes.object.isRequired,
   view: React.PropTypes.shape({
     view: React.PropTypes.string.isRequired,
     title: React.PropTypes.string.isRequired,
@@ -83,8 +84,8 @@ HomePageButton.propTypes = {
 }
 
 
-type ScenePropsType = {navigator: typeof Navigator};
-function HomePageScene({navigator}: ScenePropsType) {
+type ScenePropsType = {navigator: typeof Navigator, route: Object};
+export default function HomePageScene(props: ScenePropsType) {
   return (
     <ScrollView
       automaticallyAdjustContentInsets={false}
@@ -96,44 +97,16 @@ function HomePageScene({navigator}: ScenePropsType) {
       contentContainerStyle={styles.container}
     >
       {views.map(view =>
-        <HomePageButton key={view.title} view={view} navigator={navigator} />)}
+        <HomePageButton key={view.title} view={view} navigator={props.navigator} route={props.route} />)}
     </ScrollView>
   )
 }
 
 HomePageScene.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator),
+  route: React.PropTypes.object.isRequired,
 }
 
-
-export default function HomePage(props: ScenePropsType) {
-  let hostNav = props.navigator
-  return <NavigatorScreen
-    navigator={hostNav}
-    title='All About Olaf'
-    renderScene={() => <HomePageScene navigator={hostNav} />}
-    leftButton={(route, navigator) => {
-      return <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => navigator.push({id: 'SettingsView', title: 'Settings', sceneConfig: Navigator.SceneConfigs.FloatFromBottom})}
-      >
-        <Icon name='cog' style={styles.navigationButtonIcon} />
-      </TouchableOpacity>
-    }}
-    rightButton={() =>
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => {}}
-      >
-        <Text style={styles.navigationButtonText}>Edit</Text>
-      </TouchableOpacity>
-    }
-  />
-}
-
-HomePage.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator),
-}
 
 
 let marginTop = 15
