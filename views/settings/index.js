@@ -26,7 +26,6 @@ import {
 
 import {version} from '../../package.json'
 
-import Icon from 'react-native-vector-icons/Entypo'
 import Communications from 'react-native-communications'
 import * as c from '../components/colors'
 import LegalView from './legal'
@@ -281,9 +280,8 @@ let styles = StyleSheet.create({
     paddingBottom: 20,
   },
   label: {
-    flex: 1,
+    width: 90,
     fontSize: 16,
-    marginRight: -130,
     marginTop: (Platform.OS === 'ios') ? -2 : 0,  // lines the label up with the text on iOS
     alignSelf: 'center',
   },
