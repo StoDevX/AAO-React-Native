@@ -206,11 +206,7 @@ export default class App extends React.Component {
           title: 'All About Olaf',
           index: 0,
         }}
-        renderScene={(...props) => {
-          let retval = renderScene(...props)
-          console.log(retval)
-          return retval
-        }}
+        renderScene={renderScene}
         configureScene={route => {
           if (route.sceneConfig) {
             return route.sceneConfig
