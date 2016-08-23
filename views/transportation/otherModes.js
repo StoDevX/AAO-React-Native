@@ -15,6 +15,7 @@ import Button from 'react-native-button' // the button
 let styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginBottom: 49,
     alignItems: 'center',
     backgroundColor: c.iosLightBackground,
   },
@@ -76,6 +77,8 @@ export default class OtherModesView extends React.Component {
   render() {
     return (
       <ListView
+        contentInset={{bottom: 49}}
+        automaticallyAdjustContentInsets={false}
         contentContainerStyle={styles.container}
         dataSource={this.state.dataSource}
         renderRow={this._renderRow.bind(this)}
