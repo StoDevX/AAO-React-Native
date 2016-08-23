@@ -6,13 +6,13 @@ export default [
   {
     id: 'master',
     title: 'Master Events',
-    rnVectorIcon: {iconName: 'graduation-cap'},
+    rnVectorIcon: {iconName: 'school'},
     content: () => <CalendarView source='master' />,
   },
   {
     id: 'oleville',
     title: 'Oleville Events',
-    rnVectorIcon: {iconName: 'mouse-pointer'},
+    rnVectorIcon: {iconName: 'happy'},
     content: () => <CalendarView source='oleville' />,
   },
 ]

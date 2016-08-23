@@ -8,7 +8,7 @@ export default [
   {
     id: 'balances',
     title: 'Balances',
-    rnVectorIcon: {iconName: 'credit-card'},
+    rnVectorIcon: {iconName: 'card'},
     content: BalancesView,
   },
   {

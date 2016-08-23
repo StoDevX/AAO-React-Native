@@ -15,13 +15,13 @@ export default [
   // {
   //   id: 'movie',
   //   title: 'Weekly Movie',
-  //   rnVectorIcon: {iconName: 'ticket'},
+  //   rnVectorIcon: {iconName: 'film'},
   //   content: WeeklyMovieView,
   // },
   {
     id: 'webcams',
     title: 'Webcams',
-    rnVectorIcon: {iconName: 'video-camera'},
+    rnVectorIcon: {iconName: 'videocam'},
     content: WebcamsView,
   },
 ]

@@ -10,7 +10,7 @@ export default [
     id: 'stav',
     title: 'Stav Hall',
     rnVectorIcon: {
-      iconName: 'text-document',
+      iconName: 'nutrition',
       selectedIconName: 'text-document-inverted',
     },
     content: StavMenuView,
@@ -18,7 +18,7 @@ export default [
   {
     id: 'cage',
     title: 'The Cage',
-    rnVectorIcon: {iconName: 'shop'},
+    rnVectorIcon: {iconName: 'cafe'},
     content: CageMenuView,
   },
   // {

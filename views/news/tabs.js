@@ -8,7 +8,7 @@ export default [
   {
     id: 'stolaf',
     title: 'St. Olaf',
-    rnVectorIcon: {iconName: 'graduation-cap'},
+    rnVectorIcon: {iconName: 'school'},
     content: StOlafNewsView,
     props: {
       url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=https://wp.stolaf.edu/feed',
@@ -26,7 +26,7 @@ export default [
   {
     id: 'mess',
     title: 'Mess',
-    rnVectorIcon: {iconName: 'documents'},
+    rnVectorIcon: {iconName: 'paper'},
     content: ManitouMessView,
     props: {
       url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http://manitoumessenger.com/feed',
