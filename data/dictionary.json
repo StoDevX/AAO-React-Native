@@ -76,6 +76,10 @@
     "definition": "As a branch of the Student Government Association, the Board of Regents Student Committee facilitates communication between the student body and the Board of Regents of the college. A primary responsibility of BORSC is to represent student concerns regarding the long range planning of the college, especially those aspects directly managed by the Board of Regents."
   },
   {
+    "word": "Buntrock Commons",
+    "definition": "The student center of St. Olaf College. Opened in 1999, it is the central gathering place for students. Students get their mail, eat, buy books, meet, get involved, host events, and just hang-out here. Check out the “Hi-Mom Cam” in the Crossroads to see the daily stream of activity."
+  },
+  {
     "word": "Caf",
     "definition": "The shortened version of “Cafeteria,” Stav Hall is located on the third floor of Buntrock Commons. Students get to dine with the best food in the nation."
   },
@@ -128,6 +132,10 @@
     "definition": "The deans coordinate and direct services and programs designed to assist students in taking full advantage of their St. Olaf experience, both in and out of the classroom. The Dean of Students Office Suite is home to the Vice President, Dean of Students, the Associate Deans and Residence Life."
   },
   {
+    "word": "Deep End",
+    "definition": "The two-pronged theater production and student service organization is dedicated to providing acting, directing, writing, and technical opportunities for students who are not involved in theater department productions."
+  },
+  {
     "word": "Den",
     "definition": "Home to the Lion’s Pause Pool table and Sports Center vibe, the Den is located in Buntrock Commons in the Pause where students go to relax, eat, and catch the game on TV."
   },
@@ -144,7 +152,7 @@
     "definition": "For one night every year, the Drag Ball gives students a chance to abandon dress codes, gender roles and inhibitions in celebration of cross-dressing. This popular event is hosted in the Pause Mane Stage!"
   },
   {
-    "word": "E-Chug",
+    "word": "E-Check Up to Go",
     "definition": "This is an interactive web survey that allows college and university students to enter information about their drinking patterns and receive feedback about their use of alcohol. The confidential assessment takes about 7-8 minutes to complete, is self-guided, and requires no face-to-face contact time with a counselor."
   },
   {
@@ -304,10 +312,6 @@
     "definition": "During finals week, each semester, one night is scheduled for breakfast food in Stav served by faculty and staff. This is a great break from studying and is one of the students favorite traditions!"
   },
   {
-    "word": "Leaders for Social Change",
-    "definition": "A summer program that compliments a St. Olaf education by providing an opportunity for students to complete a community-based internship or research project in Northfield or the Twin Cities while participating in ongoing academic and vocational reflection with faculty, staff, community leaders and alumni. Student participants explore connections between theory and practice, discern their vocations and gain professional skills that will prepare them to foster the common good in future civic and work roles"
-  },
-  {
     "word": "Libraries",
     "definition": "The St. Olaf collection, housed in three separate libraries (Rølvaag Memorial Library, Hustad Science Library, and Halvorson Music Library), includes approximately 420,000 books, 22,000 media items, 5000 periodical titles, and 18,000 scores."
   },
@@ -444,6 +448,10 @@
     "definition": "A Resident Assistant (RA) is an upper class student who builds community in upper-class residence halls."
   },
   {
+    "word": "RACE",
+    "definition": "Race and Ethnic Studies is an interdisciplinary program committed to the study of people of color, primarily, though not exclusively, in the United States. The major acquaints students with the social, cultural, and historical contributions and lived experiences of African Americans, Native Americans, Asian Americans, Latinos/as, and Middle Eastern Americans as well as the cultures and nations outside of the United States from which such peoples are drawn. The program also offers a concentration."
+  },
+  {
     "word": "Rand",
     "definition": "Nestled into the north face of Manitou Heights, Rand Hall houses 243 upper-classmen. A variety of living options are available in Rand including single, double, and quad occupancy rooms. Its suites share their own bathrooms. The hillside location offers a beautiful view of the woods and fields surrounding the college."
   },
@@ -456,7 +464,7 @@
     "definition": "Firmly rooted in a vision that articulates an integrated approach to the study of natural sciences and mathematics, Regents Hall is carrying the sciences at St. Olaf deep into the 21st century, housed in inspiring and innovative learning spaces explicitly designed to promote the student-faculty interactions for which St. Olaf is known."
   },
   {
-    "word": "Residence Hall",
+    "word": "Residence Life",
     "definition": "St. Olaf’s beautiful residential campus is a center for academic, social, cultural, and recreational activities. The Residence Life Office strives to engage, motivate, and challenge students in 11 residence halls and 21 honor houses across campus serving 96% of the student body. We are committed to providing a safe, comfortable, and student centered living environment that promotes personal and academic success."
   },
   {
@@ -492,12 +500,16 @@
     "definition": "The Student Government Association (SGA) is lead by students who want to make life on campus an adventure for their fellow peers. The ten branches of SGA bring concerts, political speakers, diversity celebrations, late-night activities, Homecoming, pizza bagels in the Pause, student representation to the Board of regents, volunteer opportunities, connections with alumni, funding for student organizations, and so much more!"
   },
   {
+    "word": "Senate",
+    "definition": "The Student Senate provides a venue where elected representatives — Hall Senators, special constituency Senators (like Multicultural and Off-Campus), faculty committee student participants, and the members of the SGA Executive team — discuss the operations of the Student Government. Administrators and staff present information regarding the College and frequently solicit student feedback from Senators. All Senate meetings are open to any student who wants to come and listen!"
+  },
+  {
     "word": "SIS",
     "definition": "The Student Information System (pronounced S.I.S.) is an all-in-one place for students to register for classes, look at their degree audit and look over their financial statements. You can use SIS on your desktop or in this application."
   },
   {
     "word": "Skoglund",
-    "definition": "Skoglund (pronounced Skog·lund) Center hosts varsity basketball and volleyball games in its 2,008-seat arena, and its natatorium is home to the men’s and women’s swimming and diving teams. Skoglund also has a field house, racquetball courts, wrestling room, sauna, locker rooms, an athletic training room, and the athletic department offices. Outdoor tennis courts are located behind the building, near the softball, baseball and soccer fields. In addition to housing athletics, Skoglund Center is used for large ensemble performances, including the annual Christmas Festival."
+    "definition": "Skoglund hosts varsity basketball and volleyball games in its 2,008-seat arena, and its natatorium is home to the men’s and women’s swimming and diving teams. Skoglund also has a field house, racquetball courts, wrestling room, sauna, locker rooms, an athletic training room, and the athletic department offices. Outdoor tennis courts are located behind the building, near the softball, baseball and soccer fields. In addition to housing athletics, Skoglund Center is used for large ensemble performances, including the annual Christmas Festival."
   },
   {
     "word": "SOC",
