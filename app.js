@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import {Navigator, BackAndroid, StyleSheet, TouchableOpacity, Text} from 'react-native'
+import {Navigator, BackAndroid, StyleSheet, TouchableOpacity, Text, Platform} from 'react-native'
 
 import AboutView from './views/about'
 import CalendarView from './views/calendar'
@@ -64,8 +64,9 @@ import * as c from './views/components/colors'
 import {Dimensions} from 'react-native'
 const styles = StyleSheet.create({
   container: {
-    marginTop: 64,
+    marginTop: Platform.OS === 'ios' ? 64 : 56,
     flex: 1,
+    backgroundColor: c.iosLightBackground,
   },
   navigationBar: {
     backgroundColor: c.olevilleGold,
@@ -73,10 +74,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: c.iosNavbarBottomBorder,
-    shadowOffset: {height: 1},
-    shadowOpacity: 1,
-    shadowRadius: 0.1,
+    borderBottomColor: c.iosNavbarBottomBorder,
+    borderBottomWidth: 1,
   },
   backButton: {
     flexDirection: 'row',
@@ -120,90 +119,83 @@ const styles = StyleSheet.create({
   },
 })
 
-const navbar = (
-  <Navigator.NavigationBar
-    style={styles.navigationBar}
-    routeMapper={{
-      LeftButton(route, navigator, index, navState) {
-        switch (route.id) {
-          case 'HomeView':
-            return (
-              <TouchableOpacity
-                style={[styles.backButton, {marginLeft: 10}]}
-                onPress={() => navigator.push({
-                  id: 'SettingsView',
-                  title: 'Settings',
-                  index: route.index + 1,
-                  sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-                })}
-              >
-                <Icon style={styles.settingsIcon} name='ios-settings' />
-              </TouchableOpacity>
-            )
 
-          case 'SettingsView':
-            return (
-              <TouchableOpacity
-                style={[styles.backButton, {marginLeft: 10, marginTop: 14}]}
-                onPress={() => navigator.pop()}
-              >
-                <Text style={styles.backButtonText}>Close</Text>
-              </TouchableOpacity>
-            )
+function LeftButton(route, navigator, index, navState) {
+  switch (route.id) {
+    case 'HomeView':
+      return (
+        <TouchableOpacity
+          style={[styles.backButton, {marginLeft: 10}]}
+          onPress={() => navigator.push({
+            id: 'SettingsView',
+            title: 'Settings',
+            index: route.index + 1,
+            sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+          })}
+        >
+          <Icon style={styles.settingsIcon} name='ios-settings' />
+        </TouchableOpacity>
+      )
 
-          default: {
-            if (index <= 0) {
-              return null
-            }
-            let backTitle = navState.routeStack[index-1].title
-            if (index === 1) {
-              backTitle = 'Home'
-            }
-            return (
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigator.pop()}
-              >
-                <Icon style={styles.backButtonIcon} name='ios-arrow-back' />
-                <Text style={styles.backButtonText}>{backTitle}</Text>
-              </TouchableOpacity>
-            )
-          }
-        }
-      },
+    case 'SettingsView':
+      return (
+        <TouchableOpacity
+          style={[styles.backButton, {marginLeft: 10, marginTop: 14}]}
+          onPress={() => navigator.pop()}
+        >
+          <Text style={styles.backButtonText}>Close</Text>
+        </TouchableOpacity>
+      )
 
-      RightButton(route) {
-        switch (route.id) {
-          case 'HomeView':
-            return (
-              <TouchableOpacity
-                style={styles.rightButton}
-                onPress={() => {}}
-              >
-                <Text style={styles.rightButtonText}>Edit</Text>
-              </TouchableOpacity>
-            )
+    default: {
+      if (index <= 0) {
+        return null
+      }
+      let backTitle = navState.routeStack[index-1].title
+      if (index === 1) {
+        backTitle = 'Home'
+      }
+      return (
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigator.pop()}
+        >
+          <Icon style={styles.backButtonIcon} name='ios-arrow-back' />
+          <Text style={styles.backButtonText}>{backTitle}</Text>
+        </TouchableOpacity>
+      )
+    }
+  }
+}
 
-          default:
-            return null
-        }
-      },
+function RightButton(route) {
+  switch (route.id) {
+    case 'HomeView':
+      return (
+        <TouchableOpacity
+          style={styles.rightButton}
+          onPress={() => {}}
+        >
+          <Text style={styles.rightButtonText}>Edit</Text>
+        </TouchableOpacity>
+      )
 
-      Title(route) {
-        return (
-          <Text
-            style={[styles.titleText, {maxWidth: Dimensions.get('window').width / 2}]}
-            numberOfLines={1}
-            ellipsizeMode='tail'
-          >
-            {route.title}
-          </Text>
-        )
-      },
-    }}
-  />
-)
+    default:
+      return null
+  }
+}
 
+function Title(route) {
+  return (
+    <Text
+      style={[styles.titleText, {maxWidth: Dimensions.get('window').width / 2}]}
+      numberOfLines={1}
+      ellipsizeMode='tail'
+    >
+      {route.title}
+    </Text>
+  )
+}
 
 export default class App extends React.Component {
   componentDidMount() {
@@ -220,7 +212,16 @@ export default class App extends React.Component {
     return (
       <Navigator
         ref={nav => this._navigator = nav}
-        navigationBar={navbar}
+        navigationBar={
+          <Navigator.NavigationBar
+            style={styles.navigationBar}
+            routeMapper={{
+              LeftButton,
+              RightButton,
+              Title,
+            }}
+          />
+        }
         initialRoute={{
           id: 'HomeView',
           title: 'All About Olaf',
