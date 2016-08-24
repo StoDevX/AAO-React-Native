@@ -13,7 +13,7 @@ import {
 
 // let kstoDownload = 'itms://itunes.apple.com/us/app/ksto/id953916647'
 
-const url = 'https://pages.stolaf.edu/ksto/listen/'
+const url = 'http://pages.stolaf.edu/ksto/listen/'
 
 export default function KSTOView() {
   return (
