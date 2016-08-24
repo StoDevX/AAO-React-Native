@@ -98,14 +98,14 @@ const styles = StyleSheet.create({
   backButtonIcon: {
     color: 'white',
     fontSize: 34,
-    marginTop: 2,
+    marginTop: Platform.OS === 'ios' ? 2 : 6,
     paddingLeft: 8,
     paddingRight: 6,
   },
   settingsIcon: {
     color: 'white',
     fontSize: 24,
-    marginTop: 8,
+    marginTop: Platform.OS === 'ios' ? 8 : 13,
     paddingLeft: 8,
     paddingRight: 6,
   },
