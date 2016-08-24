@@ -28,8 +28,7 @@ export default class OlafMapView extends React.Component {
         <Button
           onPress={() => Linking.openURL(mapInfo.url).catch(err => console.error('An error occurred', err))}
           style={styles.button}
-        >
-        See the map!</Button>
+          > View Map </Button>
       </View>
     )
   }
