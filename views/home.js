@@ -51,6 +51,7 @@ export default function HomePageScene({navigator, route}: ScenePropsType) {
     >
       <StatusBar
         barStyle='light-content'
+        backgroundColor={c.gold}
       />
       {views.map(view =>
         <TouchableOpacity
