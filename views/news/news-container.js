@@ -71,9 +71,7 @@ export default class NewsContainer extends React.Component {
       id: 'NewsItemView',
       index: this.props.route.index + 1,
       title: title,
-      props: {
-        story: story,
-      },
+      props: {story},
     })
   }
 

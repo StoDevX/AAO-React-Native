@@ -1,16 +1,10 @@
 // @flow
 import React, {PropTypes} from 'react'
-import {
-  // Text,
-  // ScrollView,
-  WebView,
-} from 'react-native'
+import {WebView} from 'react-native'
 
-// let Entities = require('html-entities').AllHtmlEntities
-// const entities = new Entities()
 import type {StoryType} from './types'
 
-export default function NewsItemView({content}: StoryType) {
+export default function NewsItemView({story: {content}}: {story: StoryType}) {
   content = content + `
     <style>
       body {
@@ -44,10 +38,12 @@ export default function NewsItemView({content}: StoryType) {
 }
 
 NewsItemView.propTypes = {
-  author: PropTypes.string,
-  categories: PropTypes.arrayOf(PropTypes.string),
-  content: PropTypes.string,
-  link: PropTypes.string,
-  publishedDate: PropTypes.string,
-  title: PropTypes.string,
+  story: PropTypes.shape({
+    author: PropTypes.string,
+    categories: PropTypes.arrayOf(PropTypes.string),
+    content: PropTypes.string,
+    link: PropTypes.string,
+    publishedDate: PropTypes.string,
+    title: PropTypes.string,
+  }).isRequired,
 }
