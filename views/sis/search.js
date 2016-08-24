@@ -6,7 +6,7 @@
 
 import React from 'react'
 import {
-  StyleSheet,
+  // StyleSheet,
   View,
   Text,
 } from 'react-native'
@@ -30,8 +30,8 @@ export default class SearchView extends React.Component {
   }
 }
 
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
+// let styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//   },
+// })

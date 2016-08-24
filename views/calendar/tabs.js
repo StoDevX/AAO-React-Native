@@ -6,13 +6,15 @@ export default [
   {
     id: 'master',
     title: 'Master Events',
-    rnVectorIcon: {iconName: 'graduation-cap'},
-    content: () => <CalendarView source='master' />,
+    rnVectorIcon: {iconName: 'school'},
+    component: CalendarView,
+    props: {source: 'master'},
   },
   {
     id: 'oleville',
     title: 'Oleville Events',
-    rnVectorIcon: {iconName: 'mouse-pointer'},
-    content: () => <CalendarView source='oleville' />,
+    rnVectorIcon: {iconName: 'happy'},
+    component: CalendarView,
+    props: {source: 'oleville'},
   },
 ]

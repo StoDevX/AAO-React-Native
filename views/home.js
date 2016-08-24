@@ -11,80 +11,34 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  StatusBar,
 } from 'react-native'
 
-import NavigatorScreen from './components/navigator-screen'
 import Icon from 'react-native-vector-icons/Entypo'
 import * as c from './components/colors'
 
 const Dimensions = require('Dimensions')
 let Viewport = Dimensions.get('window')
 
-type ViewType = {usable: boolean, view: string, title: string, icon: string};
+type ViewType = {usable: boolean, view: string, title: string, icon: string, tint: string};
 const views: ViewType[] = [
-  {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl'},
-  {usable: true, view: 'SISView', title: 'SIS', icon: 'fingerprint'},
-  {usable: true, view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock'},
-  {usable: true, view: 'CalendarView', title: 'Calendar', icon: 'calendar'},
-  {usable: true, view: 'DirectoryView', title: 'Directory', icon: 'v-card'},
-  {usable: true, view: 'StreamingView', title: 'Streaming Media', icon: 'video'},
-  {usable: true, view: 'NewsView', title: 'News', icon: 'news'},
-  {usable: true, view: 'MapView', title: 'Campus Map', icon: 'map'},
-  {usable: true, view: 'ContactsView', title: 'Important Contacts', icon: 'phone'},
-  {usable: true, view: 'TransportationView', title: 'Transportation', icon: 'address'},
-  {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book'},
-  {usable: true, view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer'},
+  {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl', tint: c.emerald},
+  {usable: true, view: 'SISView', title: 'SIS', icon: 'fingerprint', tint: c.goldenrod},
+  {usable: true, view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock', tint: c.wave},
+  {usable: true, view: 'CalendarView', title: 'Calendar', icon: 'calendar', tint: c.coolPurple},
+  {usable: true, view: 'DirectoryView', title: 'Directory', icon: 'v-card', tint: c.indianRed},
+  {usable: true, view: 'StreamingView', title: 'Streaming Media', icon: 'video', tint: c.denim},
+  {usable: true, view: 'NewsView', title: 'News', icon: 'news', tint: c.eggplant},
+  {usable: true, view: 'MapView', title: 'Campus Map', icon: 'map', tint: c.coffee},
+  {usable: true, view: 'ContactsView', title: 'Important Contacts', icon: 'phone', tint: c.crimson},
+  {usable: true, view: 'TransportationView', title: 'Transportation', icon: 'address', tint: c.cardTable},
+  {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book', tint: c.olive},
+  {usable: true, view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer', tint: c.grapefruit},
 ]
 
-const buttonStyles = (StyleSheet.create({
-  MenusView: { backgroundColor: c.emerald },
-  SISView: { backgroundColor: c.goldenrod },
-  BuildingHoursView: { backgroundColor: c.wave },
-  CalendarView: { backgroundColor: c.coolPurple },
-  DirectoryView: { backgroundColor: c.indianRed },
-  StreamingView: { backgroundColor: c.denim },
-  NewsView: { backgroundColor: c.eggplant },
-  MapView: { backgroundColor: c.coffee },
-  ContactsView: { backgroundColor: c.crimson },
-  TransportationView: { backgroundColor: c.cardTable },
-  DictionaryView: { backgroundColor: c.olive },
-  OlevilleView: { backgroundColor: c.grapefruit },
-}): Object)  // force flow to let us access the styles with the string keys
 
-type ButtonPropsType = {view: ViewType, navigator: typeof Navigator};
-function HomePageButton({view, navigator}: ButtonPropsType) {
-  return (
-    <TouchableOpacity
-      onPress={() => navigator.push({id: view.view, index: 1, title: view.title, sceneConfig: Navigator.SceneConfigs.PushFromRight})}
-      activeOpacity={0.5}
-    >
-      <View style={[styles.rectangle, buttonStyles[view.view]]}>
-        <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
-        <Text
-          style={styles.rectangleButtonText}
-          autoAdjustsFontSize={true}
-        >
-          {view.title}{view.usable ? '' : ' !'}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  )
-}
-
-HomePageButton.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator).isRequired,
-  view: React.PropTypes.shape({
-    view: React.PropTypes.string.isRequired,
-    title: React.PropTypes.string.isRequired,
-    icon: React.PropTypes.string.isRequired,
-    usable: React.PropTypes.bool.isRequired,
-  }).isRequired,
-}
-
-
-type ScenePropsType = {navigator: typeof Navigator};
-function HomePageScene({navigator}: ScenePropsType) {
+type ScenePropsType = {navigator: typeof Navigator, route: Object};
+export default function HomePageScene({navigator, route}: ScenePropsType) {
   return (
     <ScrollView
       automaticallyAdjustContentInsets={false}
@@ -95,48 +49,40 @@ function HomePageScene({navigator}: ScenePropsType) {
       style={styles.scrollView}
       contentContainerStyle={styles.container}
     >
+      <StatusBar
+        barStyle='light-content'
+        backgroundColor={c.gold}
+      />
       {views.map(view =>
-        <HomePageButton key={view.title} view={view} navigator={navigator} />)}
+        <TouchableOpacity
+          key={view.view}
+          onPress={() => navigator.push({
+            id: view.view,
+            index: route.index + 1,
+            title: view.title,
+            sceneConfig: Navigator.SceneConfigs.PushFromRight,
+          })}
+          activeOpacity={0.5}
+          style={[styles.rectangle, {backgroundColor: view.tint}]}
+        >
+          <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
+          <Text
+            style={styles.rectangleButtonText}
+            autoAdjustsFontSize={true}
+          >
+            {view.title}{view.usable ? '' : ' !'}
+          </Text>
+        </TouchableOpacity>)
+      }
     </ScrollView>
   )
 }
 
 HomePageScene.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator),
+  route: React.PropTypes.object.isRequired,
 }
 
-
-export default function HomePage(props: ScenePropsType) {
-  let hostNav = props.navigator
-  return <NavigatorScreen
-    navigator={hostNav}
-    title='All About Olaf'
-    renderScene={() => <HomePageScene navigator={hostNav} />}
-    leftButton={(route, navigator) => {
-      return <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => navigator.push({id: 'SettingsView', title: 'Settings', sceneConfig: Navigator.SceneConfigs.FloatFromBottom})}
-      >
-        <Icon name='cog' style={styles.navigationButtonIcon} />
-      </TouchableOpacity>
-    }}
-    rightButton={() =>
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => {}}
-      >
-        <Text style={styles.navigationButtonText}>Edit</Text>
-      </TouchableOpacity>
-    }
-  />
-}
-
-HomePage.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator),
-}
-
-
-let marginTop = 15
 
 let cellMargin = 10
 let cellSidePadding = 10
@@ -147,7 +93,7 @@ let styles = StyleSheet.create({
   // Body container
   container: {
     marginLeft: cellMargin,
-    marginTop: marginTop,
+    marginTop: 10,
 
     alignItems: 'flex-start',
     justifyContent: 'center',

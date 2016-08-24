@@ -10,12 +10,11 @@ import {
   WebView,
 } from 'react-native'
 
-import NavigatorScreen from '../components/navigator-screen'
 import mapInfo from '../../data/map.json'
 
 export default class OlafMapView extends React.Component {
   // Render a given scene
-  renderScene() {
+  render() {
     return (
       <View style={styles.container}>
         <WebView
@@ -25,14 +24,6 @@ export default class OlafMapView extends React.Component {
         />
       </View>
     )
-  }
-
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Map'
-      renderScene={this.renderScene.bind(this)}
-    />
   }
 }
 

@@ -11,8 +11,8 @@ export type StoryType = {
   title: string,
 };
 
-export type NewsItemPropsType = {
+export type NewsViewPropsType = {
   navigator: typeof Navigator,
-  story: StoryType,
-  title: string,
+  route: Object,
+  url: string,
 };

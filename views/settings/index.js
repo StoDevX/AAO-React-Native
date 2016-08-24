@@ -26,8 +26,6 @@ import {
 
 import {version} from '../../package.json'
 
-import NavigatorScreen from '../components/navigator-screen'
-import Icon from 'react-native-vector-icons/Entypo'
 import Communications from 'react-native-communications'
 import * as c from '../components/colors'
 import LegalView from './legal'
@@ -125,7 +123,7 @@ export default class SettingsView extends React.Component {
     })
   }
 
-  renderScene() {
+  render() {
     let username = this.state.username
     let password = this.state.password
 
@@ -269,14 +267,6 @@ export default class SettingsView extends React.Component {
       </ScrollView>
     )
   }
-
-  render() {
-    return <NavigatorScreen
-      navigator={this.props.navigator}
-      title='Settings'
-      renderScene={this.renderScene.bind(this)}
-    />
-  }
 }
 
 let styles = StyleSheet.create({
@@ -290,9 +280,8 @@ let styles = StyleSheet.create({
     paddingBottom: 20,
   },
   label: {
-    flex: 1,
+    width: 90,
     fontSize: 16,
-    marginRight: -130,
     marginTop: (Platform.OS === 'ios') ? -2 : 0,  // lines the label up with the text on iOS
     alignSelf: 'center',
   },

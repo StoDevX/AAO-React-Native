@@ -7,13 +7,13 @@ export default [
   {
     id: 'bus',
     title: 'Bus',
-    rnVectorIcon: {iconName: 'address'},
-    content: BusView,
+    rnVectorIcon: {iconName: 'bus'},
+    component: BusView,
   },
   {
     id: 'otherModes',
     title: 'Other Modes',
-    rnVectorIcon: {iconName: 'map'},
-    content: OtherModesView,
+    rnVectorIcon: {iconName: 'boat'},
+    component: OtherModesView,
   },
 ]

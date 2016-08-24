@@ -1,18 +1,10 @@
 // @flow
 import React, {PropTypes} from 'react'
-import {
-  // Text,
-  // ScrollView,
-  WebView,
-  Navigator,
-} from 'react-native'
+import {WebView} from 'react-native'
 
-import NavigatorScreen from '../components/navigator-screen'
-// let Entities = require('html-entities').AllHtmlEntities
-// const entities = new Entities()
-import type {StoryType, NewsItemPropsType} from './types'
+import type {StoryType} from './types'
 
-function NewsItemContents({content}: StoryType) {
+export default function NewsItemView({story: {content}}: {story: StoryType}) {
   content = content + `
     <style>
       body {
@@ -45,25 +37,13 @@ function NewsItemContents({content}: StoryType) {
   )
 }
 
-NewsItemContents.propTypes = {
-  author: PropTypes.string,
-  categories: PropTypes.arrayOf(PropTypes.string),
-  content: PropTypes.string,
-  link: PropTypes.string,
-  publishedDate: PropTypes.string,
-  title: PropTypes.string,
-}
-
-
-export default function NewsItemView(props: NewsItemPropsType) {
-  return <NavigatorScreen
-    title={props.title}
-    navigator={props.navigator}
-    renderScene={NewsItemContents.bind(null, props.story)}
-  />
-}
 NewsItemView.propTypes = {
-  navigator: PropTypes.instanceOf(Navigator),
-  story: PropTypes.object,
-  title: PropTypes.string,
+  story: PropTypes.shape({
+    author: PropTypes.string,
+    categories: PropTypes.arrayOf(PropTypes.string),
+    content: PropTypes.string,
+    link: PropTypes.string,
+    publishedDate: PropTypes.string,
+    title: PropTypes.string,
+  }).isRequired,
 }

@@ -10,7 +10,6 @@ import {
   ListView,
 } from 'react-native'
 
-import NavigatorScreen from './components/navigator-screen'
 import ContactCard from './components/contactCard'
 
 import * as c from './components/colors'
@@ -32,7 +31,13 @@ export default class ContactView extends React.Component {
     return r1.title !== r2.title
   }
 
-  renderScene() {
+  _renderRow(data) {
+    return (
+      <ContactCard title={data.title} text={data.text} phoneNumber={data.phoneNumber} buttonText={data.buttonText} />
+    )
+  }
+
+  render() {
     return (
       <View style={styles.container}>
         <ListView
@@ -41,20 +46,6 @@ export default class ContactView extends React.Component {
         />
       </View>
     )
-  }
-
-  _renderRow(data) {
-    return (
-      <ContactCard title={data.title} text={data.text} phoneNumber={data.phoneNumber} buttonText={data.buttonText} />
-    )
-  }
-
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Contact'
-      renderScene={this.renderScene.bind(this)}
-    />
   }
 }
 

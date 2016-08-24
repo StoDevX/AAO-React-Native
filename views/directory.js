@@ -12,8 +12,6 @@ import {
   WebView,
 } from 'react-native'
 
-import NavigatorScreen from './components/navigator-screen'
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -46,7 +44,15 @@ export default class DirectoryView extends React.Component {
     this.setState({isConnected})
   }
 
-  renderScene() {
+  onShouldStartLoadWithRequest() {
+    return true
+  }
+
+  onNavigationStateChange(navState: {url: string}) {
+    this.setState({url: navState.url})
+  }
+
+  render() {
     let webViewSource = {uri: this.state.url}
     return (
       <View style={styles.container}>
@@ -62,21 +68,5 @@ export default class DirectoryView extends React.Component {
         />
       </View>
     )
-  }
-
-  onShouldStartLoadWithRequest() {
-    return true
-  }
-
-  onNavigationStateChange(navState: {url: string}) {
-    this.setState({url: navState.url})
-  }
-
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='Directory'
-      renderScene={this.renderScene.bind(this)}
-    />
   }
 }

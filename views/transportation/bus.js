@@ -27,7 +27,7 @@ let styles = StyleSheet.create({
 
 export default function BusView() {
   return (
-    <ScrollView>
+    <ScrollView contentInset={{bottom: 49}} automaticallyAdjustContentInsets={false}>
       {busInfo.map((busLine: BusLineType) =>
         <View key={busLine.line}>
           <Text style={styles.busLine}>{busLine.line}</Text>

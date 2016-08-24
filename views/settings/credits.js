@@ -4,10 +4,8 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  Navigator,
 } from 'react-native'
 import credits from '../../data/credits.json'
-import NavigatorScreen from '../components/navigator-screen'
 
 const styles = StyleSheet.create({
   container: {
@@ -23,7 +21,7 @@ const styles = StyleSheet.create({
   },
 })
 
-function CreditsContents() {
+export default function CreditsView() {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.aboutText}>{credits.content}</Text>
@@ -31,15 +29,4 @@ function CreditsContents() {
       <Text style={styles.nameList}>Acknowledgements: {credits.acknowledgements}</Text>
     </ScrollView>
   )
-}
-
-export default function CreditsView(props: {navigator: typeof Navigator}) {
-  return <NavigatorScreen
-    title={credits.title}
-    navigator={props.navigator}
-    renderScene={() => <CreditsContents />}
-  />
-}
-CreditsView.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator),
 }

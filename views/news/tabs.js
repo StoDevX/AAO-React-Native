@@ -1,15 +1,13 @@
 // @flow
 
-import StOlafNewsView from './stolaf'
-import PoliticoleView from './politicole'
-import ManitouMessView from './mess'
+import NewsContainer from './news-container'
 
 export default [
   {
     id: 'stolaf',
     title: 'St. Olaf',
-    rnVectorIcon: {iconName: 'graduation-cap'},
-    content: StOlafNewsView,
+    rnVectorIcon: {iconName: 'school'},
+    component: NewsContainer,
     props: {
       url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=https://wp.stolaf.edu/feed',
     },
@@ -18,7 +16,7 @@ export default [
     id: 'politicole',
     title: 'PoliticOle',
     rnVectorIcon: {iconName: 'megaphone'},
-    content: PoliticoleView,
+    component: NewsContainer,
     props: {
       url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http://oleville.com/politicole/feed',
     },
@@ -26,8 +24,8 @@ export default [
   {
     id: 'mess',
     title: 'Mess',
-    rnVectorIcon: {iconName: 'documents'},
-    content: ManitouMessView,
+    rnVectorIcon: {iconName: 'paper'},
+    component: NewsContainer,
     props: {
       url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http://manitoumessenger.com/feed',
     },

@@ -1,5 +1,4 @@
 // @flow
-// import Icon from 'react-native-vector-icons/Entypo'
 
 import CageMenuView from './cage'
 import StavMenuView from './stav'
@@ -9,22 +8,19 @@ export default [
   {
     id: 'stav',
     title: 'Stav Hall',
-    rnVectorIcon: {
-      iconName: 'text-document',
-      selectedIconName: 'text-document-inverted',
-    },
-    content: StavMenuView,
+    rnVectorIcon: {iconName: 'nutrition'},
+    component: StavMenuView,
   },
   {
     id: 'cage',
     title: 'The Cage',
-    rnVectorIcon: {iconName: 'shop'},
-    content: CageMenuView,
+    rnVectorIcon: {iconName: 'cafe'},
+    component: CageMenuView,
   },
   // {
   //   id: 'pause',
   //   title: 'The Pause',
-  //   icon: {uri: base64Icon, scale: 3},
-  //   content: PauseMenuView,
+  //   rnVectorIcon: {iconName: 'paw'},
+  //   component: PauseMenuView,
   // },
 ]

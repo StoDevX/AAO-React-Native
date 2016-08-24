@@ -7,7 +7,6 @@
 import React from 'react'
 import {
   StyleSheet,
-  View,
   Text,
   ListView,
 } from 'react-native'

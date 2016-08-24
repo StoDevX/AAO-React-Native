@@ -10,24 +10,14 @@ import {
   Text,
 } from 'react-native'
 
-import NavigatorScreen from './components/navigator-screen'
-
 export default class AboutView extends React.Component {
   // Render a given scene
-  renderScene() {
+  render() {
     return (
       <View style={styles.container}>
         <Text>About</Text>
       </View>
     )
-  }
-
-  render() {
-    return <NavigatorScreen
-      {...this.props}
-      title='About'
-      renderScene={this.renderScene.bind(this)}
-    />
   }
 }
 
