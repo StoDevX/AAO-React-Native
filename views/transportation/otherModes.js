@@ -33,7 +33,6 @@ let styles = StyleSheet.create({
     marginBottom: 5,
     marginLeft: 10,
     marginRight: 10,
-    textAlign: 'center',
   },
   button: {
     backgroundColor: c.denim,
