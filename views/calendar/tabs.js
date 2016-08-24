@@ -7,12 +7,14 @@ export default [
     id: 'master',
     title: 'Master Events',
     rnVectorIcon: {iconName: 'school'},
-    content: () => <CalendarView source='master' />,
+    component: CalendarView,
+    props: {source: 'master'},
   },
   {
     id: 'oleville',
     title: 'Oleville Events',
     rnVectorIcon: {iconName: 'happy'},
-    content: () => <CalendarView source='oleville' />,
+    component: CalendarView,
+    props: {source: 'oleville'},
   },
 ]

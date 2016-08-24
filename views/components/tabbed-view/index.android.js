@@ -29,7 +29,7 @@ export default class TabbedView extends React.Component {
         >
           {tabs.map(tab => <Tab key={tab.id} name={tab.title} style={styles.listViewStyle} />)}
         </TabLayout>
-        <TabInfo.content {...this.props.childProps} {...TabInfo.props} />
+        <TabInfo.component {...this.props.childProps} {...(TabInfo.props || {})} />
       </View>
     )
   }

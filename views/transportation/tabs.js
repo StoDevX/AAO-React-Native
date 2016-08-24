@@ -8,12 +8,12 @@ export default [
     id: 'bus',
     title: 'Bus',
     rnVectorIcon: {iconName: 'bus'},
-    content: BusView,
+    component: BusView,
   },
   {
     id: 'otherModes',
     title: 'Other Modes',
     rnVectorIcon: {iconName: 'boat'},
-    content: OtherModesView,
+    component: OtherModesView,
   },
 ]

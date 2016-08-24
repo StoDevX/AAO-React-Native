@@ -9,18 +9,18 @@ export default [
     id: 'radio',
     title: 'KSTO',
     rnVectorIcon: {iconName: 'radio'},
-    content: KSTOView,
+    component: KSTOView,
   },
   // {
   //   id: 'movie',
   //   title: 'Weekly Movie',
   //   rnVectorIcon: {iconName: 'film'},
-  //   content: WeeklyMovieView,
+  //   component: WeeklyMovieView,
   // },
   {
     id: 'webcams',
     title: 'Webcams',
     rnVectorIcon: {iconName: 'videocam'},
-    content: WebcamsView,
+    component: WebcamsView,
   },
 ]
