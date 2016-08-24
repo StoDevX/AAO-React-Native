@@ -151,7 +151,7 @@ function LeftButton(route, navigator, index, navState) {
           style={[styles.backButton, {marginLeft: 10, marginTop: 14}]}
           onPress={() => navigator.pop()}
         >
-          <Text style={styles.backButtonText}>Close</Text>}
+          <Text style={styles.backButtonText}>Close</Text>
         </TouchableOpacity>
       )
 
