@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     backgroundColor: c.iosLightBackground,
   },
   navigationBar: {
-    backgroundColor: c.olevilleGold,
+    backgroundColor: c.gold,
     paddingTop: 22,
     flexDirection: 'row',
     justifyContent: 'center',
