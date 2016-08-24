@@ -4,7 +4,15 @@
  */
 
 import React from 'react'
-import {Navigator, BackAndroid, StyleSheet, TouchableOpacity, Text, Platform} from 'react-native'
+import {
+  Navigator,
+  BackAndroid,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Platform,
+  View,
+} from 'react-native'
 
 import AboutView from './views/about'
 import CalendarView from './views/calendar'
@@ -90,20 +98,20 @@ const styles = StyleSheet.create({
   backButtonIcon: {
     color: 'white',
     fontSize: 34,
-    marginTop: 2,
+    marginTop: Platform.OS === 'ios' ? 2 : 6,
     paddingLeft: 8,
     paddingRight: 6,
   },
   settingsIcon: {
     color: 'white',
     fontSize: 24,
-    marginTop: 8,
+    marginTop: Platform.OS === 'ios' ? 8 : 13,
     paddingLeft: 8,
     paddingRight: 6,
   },
   titleText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: Platform.OS === 'ios' ? 16 : 20,
     fontWeight: 'bold',
     marginTop: 14,
   },
@@ -155,31 +163,33 @@ function LeftButton(route, navigator, index, navState) {
       if (index === 1) {
         backTitle = 'Home'
       }
-      return (
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigator.pop()}
-        >
-          <Icon style={styles.backButtonIcon} name='ios-arrow-back' />
-          <Text style={styles.backButtonText}>{backTitle}</Text>
-        </TouchableOpacity>
-      )
+      if (Platform.OS === 'android') {
+        return (
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigator.pop()}
+          >
+              <Icon style={styles.backButtonIcon} name='md-arrow-back' />
+          </TouchableOpacity>
+        )
+      } else {
+        return (
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigator.pop()}
+          >
+            <Icon style={styles.backButtonIcon} name='ios-arrow-back' />
+            <Text style={styles.backButtonText}>{backTitle}</Text>
+          </TouchableOpacity>
+        )
+      }
     }
   }
 }
 
+// Leaving the boilerplate here for future expansion
 function RightButton(route) {
   switch (route.id) {
-    case 'HomeView':
-      return (
-        <TouchableOpacity
-          style={styles.rightButton}
-          onPress={() => {}}
-        >
-          <Text style={styles.rightButtonText}>Edit</Text>
-        </TouchableOpacity>
-      )
-
     default:
       return null
   }
