@@ -890,7 +890,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = /Users/verdoo1/Desktop/aao/ios/AllAboutOlafTests/Info.plist;
+				INFOPLIST_FILE = AllAboutOlafTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
@@ -909,7 +909,7 @@
 			baseConfigurationReference = 550B76C8B4A1D001A8F6FBEF /* Pods-AllAboutOlafTests.release.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = /Users/verdoo1/Desktop/aao/ios/AllAboutOlafTests/Info.plist;
+				INFOPLIST_FILE = AllAboutOlafTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
