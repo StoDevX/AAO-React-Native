@@ -1,7 +1,7 @@
 // @flow
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
-const TIME_FORMAT = 'H:mm:ss'
+const TIME_FORMAT = 'H:mm'
 
 import type {BuildingInfoType} from './types'
 
