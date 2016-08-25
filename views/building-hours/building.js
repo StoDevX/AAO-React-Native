@@ -12,8 +12,8 @@ import {
   Image,
 } from 'react-native'
 
-import * as c from './colors'
-import type {BuildingStatusType} from '../building-hours'
+import * as c from '../components/colors'
+import type {BuildingStatusType} from './types'
 
 let styles = StyleSheet.create({
   container: {
