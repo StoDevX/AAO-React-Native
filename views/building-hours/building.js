@@ -15,7 +15,7 @@ import {
 import * as c from '../components/colors'
 import type {BuildingInfoType} from './types'
 import {isBuildingOpen} from './is-building-open'
-import {getBuildingHours} from './get-building-hours'
+import {formatBuildingHours} from './format-building-hours'
 
 let styles = StyleSheet.create({
   container: {
@@ -57,9 +57,9 @@ let styles = StyleSheet.create({
 })
 
 let borderColors = {
-  open: styles.buildingOpen,
-  almostClosed: styles.buildingAlmostClosed,
-  closed: styles.buildingClosed,
+  'Open': styles.buildingOpen,
+  'Almost Closed': styles.buildingAlmostClosed,
+  'Closed': styles.buildingClosed,
 }
 
 type PropsType = {
@@ -70,7 +70,7 @@ type PropsType = {
 export default function BuildingView({info, image, name}: PropsType) {
   let open = isBuildingOpen(info)
   let borderColor = borderColors[open]
-  let hours = getBuildingHours(info)
+  let hours = formatBuildingHours(info)
 
   return (
     <View style={[styles.container, borderColor]}>

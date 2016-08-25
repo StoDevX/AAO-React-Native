@@ -1,34 +1,21 @@
 // @flow
-import moment from 'moment-timezone'
-const CENTRAL_TZ = 'America/Winnipeg'
-const TIME_FORMAT = 'H:mm:ss'
+import {getBuildingHours} from './get-building-hours'
 
 import type {BuildingStatusType, BuildingInfoType} from './types'
 
 export function isBuildingOpen(hoursInfo: BuildingInfoType): BuildingStatusType {
-  let dayOfWeek = moment.tz(CENTRAL_TZ).format('ddd')
-  let times = hoursInfo.times.hours[dayOfWeek]
-  if (!times) {
-    return 'closed'
+  let hours = getBuildingHours(hoursInfo)
+  if (!hours) {
+    return 'Closed'
   }
 
-  let currentTime = moment.tz(CENTRAL_TZ)
-  let dayOfYear = currentTime.dayOfYear()
-  let [startTimeString, closeTimeString, options={nextDay: false}] = times
-  let startTime = moment.tz(startTimeString, TIME_FORMAT, true, CENTRAL_TZ)
-  startTime.dayOfYear(dayOfYear)
-  let closeTime = moment.tz(closeTimeString, TIME_FORMAT, true, CENTRAL_TZ)
-  closeTime.dayOfYear(dayOfYear)
+  let {open, close, current} = hours
 
-  if (options.nextDay) {
-    closeTime.add(1, 'day')
-  }
-
-  if (currentTime.isBetween(startTime, closeTime)) {
-    if (currentTime.clone().add(30, 'min').isAfter(closeTime)) {
-      return 'almostClosed'
+  if (current.isBetween(open, close)) {
+    if (current.clone().add(30, 'min').isAfter(close)) {
+      return 'Almost Closed'
     }
-    return 'open'
+    return 'Open'
   }
-  return 'closed'
+  return 'Closed'
 }

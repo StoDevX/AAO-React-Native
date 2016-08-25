@@ -1,5 +1,5 @@
 // @flow
-export type BuildingStatusType = 'closed'|'almostClosed'|'open';
+export type BuildingStatusType = 'Open'|'Closed'|'Almost Closed';
 export type DayOfWeekType = 'Mon'|'Tue'|'Wed'|'Thu'|'Fri'|'Sat'|'Sun';
 export type BuildingInfoType = {
   name: string,
