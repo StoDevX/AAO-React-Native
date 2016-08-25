@@ -65,8 +65,6 @@ export default class CalendarView extends React.Component {
   }
 
   getEvents = async () => {
-    let start = Date.now()
-    this.setState({refreshing: true})
     let url = this.buildCalendarUrl(this.props.calendarId)
 
     let data = null
@@ -80,19 +78,28 @@ export default class CalendarView extends React.Component {
       console.error(error)
     }
 
-    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    let elapsed = start - Date.now()
-    if (elapsed < 500) {
-      await delay(500 - elapsed)
-    }
-
     if (data) {
       this.setState({events: this.state.events.cloneWithRows(data)})
     }
     if (error) {
       this.setState({error: error.message})
     }
-    this.setState({loaded: true, refreshing: false})
+    this.setState({loaded: true})
+  }
+
+  refresh = async () => {
+    let start = Date.now()
+    this.setState({refreshing: true})
+
+    await this.getEvents()
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    let elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState({refreshing: false})
   }
 
   render() {
@@ -122,7 +129,7 @@ export default class CalendarView extends React.Component {
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshing}
-            onRefresh={this.getEvents}
+            onRefresh={this.refresh}
           />
         }
       />

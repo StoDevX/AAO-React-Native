@@ -41,9 +41,6 @@ export default class NewsContainer extends React.Component {
   }
 
   fetchData = async () => {
-    let start = Date.now()
-    this.setState(() => ({refreshing: true}))
-
     try {
       let response = await fetch(this.props.url).then(r => r.json())
       let entries = response.responseData.feed.entries
@@ -53,12 +50,21 @@ export default class NewsContainer extends React.Component {
       console.error(error)
     }
 
+    this.setState({loaded: true})
+  }
+
+  refresh = async () => {
+    let start = Date.now()
+    this.setState(() => ({refreshing: true}))
+
+    await this.fetchData()
+
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
     let elapsed = start - Date.now()
     if (elapsed < 500) {
       await delay(500 - elapsed)
     }
-    this.setState(() => ({loaded: true, refreshing: false}))
+    this.setState(() => ({refreshing: false}))
   }
 
   renderRow = (story: StoryType) => {
@@ -98,7 +104,7 @@ export default class NewsContainer extends React.Component {
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshing}
-            onRefresh={this.fetchData}
+            onRefresh={this.refresh}
           />
         }
       />
