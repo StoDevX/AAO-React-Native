@@ -1,6 +1,26 @@
 {
-  "title": "Credits",
   "content": "All About Olaf is a collaborative application created by students and alumni of St. Olaf College in Northfield, MN under the name StoDevX. It is inspired by the original 'All About Olaf', an iOS application created by Drew Volz as an independent project. This version was written in the summer of 2016, led by Elijah Verdoorn and assisted by Hawken Rives and Drew Volz. The app is supported and published by the Student Government Association (SGA) web development team, called the Oleville Development Team.",
-  "contributers": "\nElijah Verdoorn\nDrew Volz\nHawken Rives\nMargaret Zimmermann\nErich Kauffman\nNick Nooney\nJohn Bruer\nBrandon Cash\nAnna Linden",
-  "acknowledgements": "\nEmma Lind\nSarah Bresnahan\nKris Vatter\nCatherine Paro\nLaura Mascotti\nDan Beach\nMyron Engle\nDerek Hanson"
+  "contributers": [
+  	"Elijah Verdoorn",
+  	"Drew Volz",
+  	"Hawken Rives",
+  	"Margaret Zimmermann",
+  	"Erich Kauffman",
+  	"Anna Linden"
+  ],
+  "acknowledgements": [
+  	"Emma Lind",
+  	"Sarah Bresnahan",
+  	"Kris Vatter",
+  	"Catherine Paro",
+  	"Laura Mascotti",
+  	"Dan Beach",
+  	"Myron Engle",
+  	"Derek Hanson",
+  	"Andrew Turnblad",
+  	"Matt Kilens",
+  	"Nick Nooney",
+  	"William Seabrook",
+  	"Brandon Cash"
+  ]
 }
