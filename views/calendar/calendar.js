@@ -8,6 +8,7 @@ import React from 'react'
 import {
   StyleSheet,
   Text,
+  Platform,
   ListView,
 } from 'react-native'
 
@@ -122,6 +123,7 @@ export default class CalendarView extends React.Component {
     return (
       <ListView
         style={styles.container}
+        contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
         dataSource={ds.cloneWithRows(this.state.events)}
         renderRow={data =>
           <EventView

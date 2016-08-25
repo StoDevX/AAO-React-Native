@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View,
   ListView,
+  Platform,
   Linking,
 } from 'react-native'
 import type {OtherModeType} from './types'
@@ -14,10 +15,7 @@ import Button from 'react-native-button' // the button
 
 let styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginBottom: 49,
-    alignItems: 'center',
-    backgroundColor: c.iosLightBackground,
+    backgroundColor: c.white,
   },
   row: {
     marginTop: 10,
@@ -33,6 +31,11 @@ let styles = StyleSheet.create({
     marginBottom: 5,
     marginLeft: 10,
     marginRight: 10,
+  },
+  mode: {
+    borderWidth: 5,
+    borderTopWidth: 1,
+    borderColor: c.iosLightBackground,
   },
   button: {
     backgroundColor: c.denim,
@@ -61,7 +64,7 @@ export default class OtherModesView extends React.Component {
 
   _renderRow(data: OtherModeType) {
     return (
-      <View>
+      <View style={styles.mode}>
         <Text style={styles.title}>{data.name}</Text>
         <Text style={styles.content}>{data.description}</Text>
         <Button
@@ -76,7 +79,7 @@ export default class OtherModesView extends React.Component {
   render() {
     return (
       <ListView
-        contentInset={{bottom: 49}}
+        contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
         automaticallyAdjustContentInsets={false}
         contentContainerStyle={styles.container}
         dataSource={this.state.dataSource}

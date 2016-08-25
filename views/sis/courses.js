@@ -9,6 +9,7 @@ import {
   StyleSheet,
   View,
   Text,
+  Platform,
   ListView,
   TouchableHighlight,
   RefreshControl,
@@ -133,6 +134,7 @@ export default class CoursesView extends React.Component {
     return (
       <ListView
         style={styles.listContainer}
+        contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
         renderSectionHeader={this.renderSectionHeader}
