@@ -4,6 +4,7 @@ import {
   StyleSheet,
   View,
   ListView,
+  Platform,
   Text,
   Navigator,
   TouchableHighlight,
@@ -83,6 +84,7 @@ export default class NewsContainer extends React.Component {
     return (
       <ListView
         style={styles.listContainer}
+        contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow.bind(this)}
       />
