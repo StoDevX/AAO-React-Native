@@ -52,6 +52,7 @@ export default class CoursesView extends React.Component {
       rowHasChanged: this.rowHasChanged,
       sectionHeaderHasChanged: this.sectionHeaderHasChanged,
     }),
+    refreshing: false,
     loading: true,
     error: null,
   }
@@ -78,14 +79,15 @@ export default class CoursesView extends React.Component {
   }
 
   async fetchData(forceFromServer?: bool) {
+    this.setState({refreshing: true})
     try {
       let courses = await loadAllCourses(forceFromServer)
       this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
     } catch (error) {
       this.setState({error})
-      console.error(error)
+      console.warn(error)
     }
-    this.setState({loading: false})
+    this.setState({loading: false, refreshing: false})
   }
 
   renderRow = (course: CourseType|Error) => {
@@ -141,7 +143,7 @@ export default class CoursesView extends React.Component {
         pageSize={5}
         refreshControl={
           <RefreshControl
-            refreshing={this.state.loading}
+            refreshing={this.state.refreshing}
             onRefresh={this.onRefresh}
           />
         }

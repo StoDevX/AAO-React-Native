@@ -61,7 +61,7 @@ export default class BalancesView extends React.Component {
       this.setState({flex, ole, print})
     } catch (error) {
       this.setState({error})
-      console.error(error)
+      console.warn(error)
     }
     this.setState({loading: false})
   }
