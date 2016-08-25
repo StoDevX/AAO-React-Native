@@ -94,6 +94,7 @@ export default class NewsContainer extends React.Component {
         contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
+        pageSize={5}
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshing}
