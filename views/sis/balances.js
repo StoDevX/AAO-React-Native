@@ -10,10 +10,12 @@ import {
   ScrollView,
   View,
   Text,
+  RefreshControl,
 } from 'react-native'
 
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 
+import delay from 'delay'
 import * as c from '../components/colors'
 import {getFinancialData} from '../../lib/financials'
 
@@ -40,6 +42,7 @@ export default class BalancesView extends React.Component {
     successsFinancials: false,
     loading: true,
     error: null,
+    refreshing: false,
   }
 
   state: {
@@ -49,21 +52,37 @@ export default class BalancesView extends React.Component {
     successsFinancials: bool,
     loading: bool,
     error: null|Error,
+    refreshing: bool,
   };
 
   componentWillMount() {
-    this.load()
+    this.fetchData()
   }
 
-  load = async () => {
+  async fetchData(forceFromServer: bool=false) {
     try {
-      let {flex, ole, print} = await getFinancialData()
+      let {flex, ole, print} = await getFinancialData(forceFromServer)
       this.setState({flex, ole, print})
     } catch (error) {
       this.setState({error})
       console.warn(error)
     }
     this.setState({loading: false})
+  }
+
+  refresh = async () => {
+    let start = Date.now()
+    this.setState({refreshing: true})
+
+    await this.fetchData(true)
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    let elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState({refreshing: false})
   }
 
   render() {
@@ -74,7 +93,15 @@ export default class BalancesView extends React.Component {
     let {flex, ole, print, loading} = this.state
 
     return (
-      <ScrollView contentContainerStyle={styles.stage}>
+      <ScrollView
+        contentContainerStyle={styles.stage}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this.refresh}
+          />
+        }
+      >
         <TableView>
           <Section header='BALANCES'>
             <View style={styles.balancesRow}>
