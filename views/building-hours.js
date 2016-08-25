@@ -18,6 +18,20 @@ const TIME_FORMAT = 'HH:mm:ss'
 
 import hoursData from '../data/building-hours.json'
 
+const buildingImages = {
+  pausekitchen: require('../data/images/buildinghours/pausekitchen.jpeg'),
+  bookstore: require('../data/images/buildinghours/bookstore.jpeg'),
+  convenience: require('../data/images/buildinghours/convenience.jpeg'),
+  postoffice: require('../data/images/buildinghours/postoffice.jpeg'),
+  rolvaag: require('../data/images/buildinghours/rolvaag.jpeg'),
+  halvorson: require('../data/images/buildinghours/halvorson.jpeg'),
+  skoglund: require('../data/images/buildinghours/skoglund.jpeg'),
+  cage: require('../data/images/buildinghours/cage.jpeg'),
+  stav: require('../data/images/buildinghours/stav.jpeg'),
+  disco: require('../data/images/buildinghours/disco.jpeg'),
+}
+
+
 function isBuildingOpen(hoursInfo: BuildingInfoType): BuildingStatusType {
   let dayOfWeek = moment.tz(CENTRAL_TZ).format('ddd')
   let times = hoursInfo.times.hours[dayOfWeek]
@@ -69,9 +83,12 @@ export default class BuildingHoursView extends React.Component {
   _renderRow(data: BuildingInfoType) {
     let isOpen = isBuildingOpen(data)
     return (
-      <View style={styles.container}>
-        <BuildingView name={data.name} open={isOpen} imageSource={data.image} />
-      </View>
+      <BuildingView
+        style={styles.container}
+        name={data.name}
+        open={isOpen}
+        image={buildingImages[data.image]}
+      />
     )
   }
 

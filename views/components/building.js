@@ -19,51 +19,48 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    borderWidth: 5,
     margin: 5,
+    height: 100,
   },
   buildingOpen: {
-    height: 100,
     borderColor: c.pastelGreen,
-    borderWidth: 5,
-    flex: 1,
   },
   buildingClosed: {
-    height: 100,
     borderColor: c.strawberry,
-    borderWidth: 5,
-    flex: 1,
   },
   buildingAlmostClosed: {
-    height: 100,
     borderColor: c.mustard,
-    borderWidth: 5,
-    flex: 1,
   },
   name: {
     color: c.white,
     fontSize: 30,
     textAlign: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 })
 
-let imageStyles = {
+let borderColors = {
   open: styles.buildingOpen,
   almostClosed: styles.buildingAlmostClosed,
   closed: styles.buildingClosed,
 }
 
-// PROPS: imageSrc, open, name
 type PropsType = {
   open: BuildingStatusType,
-  imageSource: string,
+  image: number,
   name: string,
 };
-export default function BuildingView({open, imageSource, name}: PropsType) {
-  let imageStyle = imageStyles[open]
+export default function BuildingView({open, image, name}: PropsType) {
+  let borderColor = borderColors[open]
 
   return (
-    <View style={styles.container}>
-      <Image source={{uri: imageSource}} style={imageStyle}>
+    <View style={[styles.container, borderColor]}>
+      <Image
+        source={image}
+        style={{width: undefined, height: 100}}
+        resizeMode='cover'
+      >
         <Text style={styles.name}>{name}</Text>
       </Image>
     </View>
@@ -71,7 +68,7 @@ export default function BuildingView({open, imageSource, name}: PropsType) {
 }
 
 BuildingView.propTypes = {
-  imageSource: React.PropTypes.string.isRequired,
+  image: React.PropTypes.number.isRequired,
   name: React.PropTypes.string.isRequired,
   open: React.PropTypes.oneOf(['open', 'almostClosed', 'closed']).isRequired,
 }
