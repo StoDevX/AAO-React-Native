@@ -12,9 +12,9 @@ export function isBuildingOpen(hoursInfo: BuildingInfoType): BuildingStatusType 
     return 'closed'
   }
 
-  let [startTime, closeTime, options={nextDay: false}] = times
-  startTime = moment.tz(startTime, TIME_FORMAT, true, CENTRAL_TZ)
-  closeTime = moment.tz(closeTime, TIME_FORMAT, true, CENTRAL_TZ)
+  let [startTimeString, closeTimeString, options={nextDay: false}] = times
+  let startTime = moment.tz(startTimeString, TIME_FORMAT, true, CENTRAL_TZ)
+  let closeTime = moment.tz(closeTimeString, TIME_FORMAT, true, CENTRAL_TZ)
 
   if (options.nextDay) {
     closeTime.add(1, 'day')
