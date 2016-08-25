@@ -10,8 +10,10 @@ import {
   Text,
   Platform,
   ListView,
+  RefreshControl,
 } from 'react-native'
 
+import delay from 'delay'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
 import EventView from './event'
@@ -26,44 +28,27 @@ type GoogleCalendarEventType = {
   end: GoogleCalendarTimeType,
   location: string,
 };
-type StateType = {
-  events: null|GoogleCalendarResponseType,
-  loaded: boolean,
-  error: null|string,
-};
-type GoogleCalendarResponseType = {
-  items: GoogleCalendarEventType[],
-};
 
 export default class CalendarView extends React.Component {
   static propTypes = {
-    source: React.PropTypes.oneOf(['master', 'oleville']).isRequired,
+    calendarId: React.PropTypes.string.isRequired,
   }
 
-  state: StateType = {
-    events: null,
+  state = {
+    events: new ListView.DataSource({
+      rowHasChanged: this._rowHasChanged,
+    }),
     loaded: false,
+    refreshing: true,
     error: null,
   }
 
   componentWillMount() {
-    if (this.props.source === 'master') {
-      this.getMasterEvents()
-    } else {
-      this.getOlevilleEvents()
-    }
+    this.getEvents()
   }
 
   _rowHasChanged(r1: GoogleCalendarEventType, r2: GoogleCalendarEventType) {
     return r1.summary != r2.summary
-  }
-
-  async getMasterEvents() {
-    this.getEvents('le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com')
-  }
-
-  async getOlevilleEvents() {
-    this.getEvents('stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com')
   }
 
   buildCalendarUrl(calendarId: string) {
@@ -79,9 +64,10 @@ export default class CalendarView extends React.Component {
     return `${calendarUrl}?${qs.stringify(params)}`
   }
 
-  async getEvents(calendarId: string) {
-    let url = this.buildCalendarUrl(calendarId)
-    console.log(url)
+  getEvents = async () => {
+    let start = Date.now()
+    this.setState({refreshing: true})
+    let url = this.buildCalendarUrl(this.props.calendarId)
 
     let data = null
     let error = null
@@ -90,41 +76,40 @@ export default class CalendarView extends React.Component {
       error = result.error
       data = result.items
     } catch (error) {
-      this.setState({error: 'Error!'})
+      this.setState({error: error.message})
       console.error(error)
     }
 
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    let elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
     if (data) {
-      this.setState({events: data})
+      this.setState({events: this.state.events.cloneWithRows(data)})
     }
     if (error) {
       this.setState({error: error.message})
     }
-    this.setState({loaded: true})
+    this.setState({loaded: true, refreshing: false})
   }
 
   render() {
-    if (!this.state.events) {
+    if (!this.state.loaded) {
       return <LoadingView />
     }
 
     if (this.state.error) {
-      return (
-        <Text>
-          {this.state.error}
-        </Text>
-      )
+      return <Text>{this.state.error}</Text>
     }
-
-    let ds = new ListView.DataSource({
-      rowHasChanged: this._rowHasChanged,
-    })
 
     return (
       <ListView
         style={styles.container}
         contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
-        dataSource={ds.cloneWithRows(this.state.events)}
+        dataSource={this.state.events}
+        pageSize={5}
         renderRow={data =>
           <EventView
             style={styles.row}
@@ -132,6 +117,12 @@ export default class CalendarView extends React.Component {
             startTime={data.start.dateTime}
             endTime={data.end.dateTime}
             location={data.location}
+          />
+        }
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this.getEvents}
           />
         }
       />
@@ -147,7 +138,7 @@ let styles = StyleSheet.create({
   row: {
     minHeight: 88,
     marginLeft: 10,
-    marginRight: 10,
+    paddingRight: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ebebeb',
   },

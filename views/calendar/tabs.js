@@ -1,5 +1,4 @@
 // @flow
-import React from 'react'
 import CalendarView from './calendar'
 
 export default [
@@ -8,13 +7,13 @@ export default [
     title: 'Master Events',
     rnVectorIcon: {iconName: 'school'},
     component: CalendarView,
-    props: {source: 'master'},
+    props: {calendarId: 'le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com'},
   },
   {
     id: 'oleville',
     title: 'Oleville Events',
     rnVectorIcon: {iconName: 'happy'},
     component: CalendarView,
-    props: {source: 'oleville'},
+    props: {calendarId: 'stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com'},
   },
 ]
