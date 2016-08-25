@@ -44,7 +44,7 @@ export default class CalendarView extends React.Component {
   }
 
   componentWillMount() {
-    this.getEvents()
+    this.refresh()
   }
 
   _rowHasChanged(r1: GoogleCalendarEventType, r2: GoogleCalendarEventType) {

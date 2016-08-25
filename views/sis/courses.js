@@ -59,7 +59,7 @@ export default class CoursesView extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.refresh()
   }
 
   rowHasChanged(r1: CourseType|Error, r2: CourseType|Error) {

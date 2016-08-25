@@ -37,7 +37,7 @@ export default class NewsContainer extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.refresh()
   }
 
   fetchData = async () => {
