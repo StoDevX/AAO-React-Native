@@ -16,6 +16,7 @@ import {
 } from 'react-native'
 import * as c from '../components/colors'
 
+import delay from 'delay'
 import zip from 'lodash/zip'
 import type {CourseType} from '../../lib/courses'
 import {loadAllCourses} from '../../lib/courses'
@@ -61,10 +62,6 @@ export default class CoursesView extends React.Component {
     this.fetchData()
   }
 
-  onRefresh = () => {
-    this.fetchData(true)
-  }
-
   rowHasChanged(r1: CourseType|Error, r2: CourseType|Error) {
     if (r1 instanceof Error && r2 instanceof Error) {
       return r1.message !== r2.message
@@ -78,7 +75,7 @@ export default class CoursesView extends React.Component {
     return h1 !== h2
   }
 
-  async fetchData(forceFromServer?: bool) {
+  async fetchData(forceFromServer: bool=false) {
     this.setState({refreshing: true})
     try {
       let courses = await loadAllCourses(forceFromServer)
@@ -87,7 +84,21 @@ export default class CoursesView extends React.Component {
       this.setState({error})
       console.warn(error)
     }
-    this.setState({loading: false, refreshing: false})
+    this.setState({loading: false})
+  }
+
+  refresh = async () => {
+    let start = Date.now()
+    this.setState({refreshing: true})
+    await this.fetchData(true)
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    let elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState({refreshing: false})
   }
 
   renderRow = (course: CourseType|Error) => {
@@ -144,7 +155,7 @@ export default class CoursesView extends React.Component {
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshing}
-            onRefresh={this.onRefresh}
+            onRefresh={this.refresh}
           />
         }
       />
