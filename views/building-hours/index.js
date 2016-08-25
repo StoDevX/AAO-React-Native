@@ -5,9 +5,10 @@
  */
 
 import React from 'react'
-import {ListView} from 'react-native'
+import {View, Text, ListView, RefreshControl} from 'react-native'
 import BuildingView from './building'
 
+import delay from 'delay'
 import type {BuildingInfoType} from './types'
 import hoursData from '../../data/building-hours.json'
 
@@ -28,15 +29,28 @@ const buildingImages = {
 export default class BuildingHoursView extends React.Component {
   state = {
     dataSource: new ListView.DataSource({
-      rowHasChanged: this._rowHasChanged,
+      rowHasChanged: (r1: BuildingInfoType, r2: BuildingInfoType) => r1.name !== r2.name,
     }).cloneWithRows(hoursData),
+    intervalId: 0,
+    now: Date.now(),
+    refreshing: false,
   }
 
-  _rowHasChanged(r1: BuildingInfoType, r2: BuildingInfoType) {
-    return r1.name !== r2.name
+  componentWillMount() {
+    // This updates the screen every ten seconds, so that the building
+    // info statuses are updated without needing to leave and come back.
+    this.setState({intervalId: setInterval(this.updateTime, 10000)})
   }
 
-  _renderRow(data: BuildingInfoType) {
+  componentWillUnmount() {
+    clearTimeout(this.state.intervalId)
+  }
+
+  updateTime = () => {
+    this.setState({now: Date.now()})
+  }
+
+  _renderRow = (data: BuildingInfoType) => {
     return (
       <BuildingView
         name={data.name}
@@ -44,6 +58,13 @@ export default class BuildingHoursView extends React.Component {
         image={buildingImages[data.image]}
       />
     )
+  }
+
+  refresh = async () => {
+    this.setState({refreshing: true})
+    await delay(500)
+    this.setState({now: Date.now()})
+    this.setState({refreshing: false})
   }
 
   // Render a given scene
@@ -54,6 +75,13 @@ export default class BuildingHoursView extends React.Component {
         renderRow={this._renderRow.bind(this)}
         pageSize={4}
         initialListSize={6}
+        removeClippedSubviews={false}  // remove after https://github.com/facebook/react-native/issues/8607#issuecomment-241715202
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this.refresh}
+          />
+        }
       />
     )
   }
