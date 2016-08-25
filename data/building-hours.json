@@ -166,15 +166,7 @@
         "name": "DiSCO",
         "image": "disco",
         "times": {
-            "hours": {
-              "Mon": [],
-              "Tue": [],
-              "Wed": [],
-              "Thu": [],
-              "Fri": [],
-              "Sat": [],
-              "Sun": []
-            }
+            "hours": {}
         }
     },
 ]
