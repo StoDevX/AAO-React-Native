@@ -13,7 +13,8 @@ import {
 } from 'react-native'
 
 import * as c from '../components/colors'
-import type {BuildingStatusType} from './types'
+import type {BuildingInfoType} from './types'
+import {isBuildingOpen} from './is-building-open'
 
 let styles = StyleSheet.create({
   container: {
@@ -47,11 +48,12 @@ let borderColors = {
 }
 
 type PropsType = {
-  open: BuildingStatusType,
+  info: BuildingInfoType,
   image: number,
   name: string,
 };
-export default function BuildingView({open, image, name}: PropsType) {
+export default function BuildingView({info, image, name}: PropsType) {
+  let open = isBuildingOpen(info)
   let borderColor = borderColors[open]
 
   return (
@@ -69,6 +71,6 @@ export default function BuildingView({open, image, name}: PropsType) {
 
 BuildingView.propTypes = {
   image: React.PropTypes.number.isRequired,
+  info: React.PropTypes.object.isRequired,
   name: React.PropTypes.string.isRequired,
-  open: React.PropTypes.oneOf(['open', 'almostClosed', 'closed']).isRequired,
 }

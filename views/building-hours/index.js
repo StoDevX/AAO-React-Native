@@ -5,13 +5,8 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  ListView,
-} from 'react-native'
-
+import {ListView} from 'react-native'
 import BuildingView from './building'
-import {isBuildingOpen} from './is-building-open'
 
 import type {BuildingInfoType} from './types'
 import hoursData from '../../data/building-hours.json'
@@ -42,12 +37,10 @@ export default class BuildingHoursView extends React.Component {
   }
 
   _renderRow(data: BuildingInfoType) {
-    let isOpen = isBuildingOpen(data)
     return (
       <BuildingView
-        style={styles.container}
         name={data.name}
-        open={isOpen}
+        info={data}
         image={buildingImages[data.image]}
       />
     )
@@ -59,16 +52,9 @@ export default class BuildingHoursView extends React.Component {
       <ListView
         dataSource={this.state.dataSource}
         renderRow={this._renderRow.bind(this)}
-        contentContainerStyle={styles.container}
         pageSize={4}
         initialListSize={6}
       />
     )
   }
 }
-
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
