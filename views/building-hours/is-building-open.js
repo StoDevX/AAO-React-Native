@@ -15,12 +15,12 @@ export function isBuildingOpen(hoursInfo: BuildingInfoType): BuildingStatusType 
   let [startTime, closeTime, options={nextDay: false}] = times
   startTime = moment.tz(startTime, TIME_FORMAT, true, CENTRAL_TZ)
   closeTime = moment.tz(closeTime, TIME_FORMAT, true, CENTRAL_TZ)
-  let currentTime = moment()
 
   if (options.nextDay) {
     closeTime.add(1, 'day')
   }
 
+  let currentTime = moment.tz(CENTRAL_TZ)
   if (currentTime.isBetween(startTime, closeTime)) {
     if (currentTime.clone().add(30, 'min').isAfter(closeTime)) {
       return 'almostClosed'
