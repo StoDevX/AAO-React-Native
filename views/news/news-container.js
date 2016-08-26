@@ -8,7 +8,10 @@ import {
   Text,
   Navigator,
   TouchableHighlight,
+  RefreshControl,
 } from 'react-native'
+
+import delay from 'delay'
 
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
@@ -25,36 +28,46 @@ export default class NewsContainer extends React.Component {
   }
 
   state = {
-    dataSource: null,
+    dataSource: new ListView.DataSource({
+      rowHasChanged: (r1: StoryType, r2: StoryType) => r1.title != r2.title,
+    }),
+    refreshing: false,
     loaded: false,
     error: false,
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.refresh()
   }
 
-  rowHasChanged(r1: StoryType, r2: StoryType) {
-    return r1.title != r2.title
-  }
-
-  async fetchData() {
-    let ds = new ListView.DataSource({
-      rowHasChanged: this.rowHasChanged,
-    })
-
+  fetchData = async () => {
     try {
-      let response = await fetch(this.props.url)
-      let responseJson = await response.json()
-      this.setState({dataSource: ds.cloneWithRows(responseJson.responseData.feed.entries)})
+      let response = await fetch(this.props.url).then(r => r.json())
+      let entries = response.responseData.feed.entries
+      this.setState({dataSource: this.state.dataSource.cloneWithRows(entries)})
     } catch (error) {
       this.setState({error: true})
       console.error(error)
     }
+
     this.setState({loaded: true})
   }
 
-  renderRow(story: StoryType) {
+  refresh = async () => {
+    let start = Date.now()
+    this.setState(() => ({refreshing: true}))
+
+    await this.fetchData()
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    let elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+    this.setState(() => ({refreshing: false}))
+  }
+
+  renderRow = (story: StoryType) => {
     let title = entities.decode(story.title)
     let snippet = entities.decode(story.contentSnippet)
     return (
@@ -67,7 +80,7 @@ export default class NewsContainer extends React.Component {
     )
   }
 
-  onPressNews(title, story: StoryType) {
+  onPressNews = (title, story: StoryType) => {
     this.props.navigator.push({
       id: 'NewsItemView',
       index: this.props.route.index + 1,
@@ -77,7 +90,7 @@ export default class NewsContainer extends React.Component {
   }
 
   render() {
-    if (this.state.dataSource === null) {
+    if (!this.state.loaded) {
       return <LoadingView />
     }
 
@@ -86,7 +99,14 @@ export default class NewsContainer extends React.Component {
         style={styles.listContainer}
         contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
         dataSource={this.state.dataSource}
-        renderRow={this.renderRow.bind(this)}
+        renderRow={this.renderRow}
+        pageSize={5}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this.refresh}
+          />
+        }
       />
     )
   }

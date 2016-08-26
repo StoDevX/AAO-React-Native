@@ -6,15 +6,17 @@
 
 import React, {PropTypes} from 'react'
 import {
-    View,
-    Image,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    ListView,
-    Navigator,
+  View,
+  Image,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ListView,
+  Navigator,
+  RefreshControl,
 } from 'react-native'
 
+import delay from 'delay'
 import LoadingView from '../components/loading'
 import * as c from '../components/colors'
 import { getText, parseHtml } from '../../lib/html'
@@ -57,9 +59,12 @@ export default class OlevilleView extends React.Component {
   }
 
   state = {
-    dataSource: null,
+    dataSource: new ListView.DataSource({
+      rowHasChanged: (r1: Object, r2: Object) => r1.title != r2.title,
+    }),
     loaded: false,
     error: false,
+    refreshing: false,
   }
 
   componentWillMount() {
@@ -82,10 +87,7 @@ export default class OlevilleView extends React.Component {
     }
   }
 
-  async fetchData() {
-    let ds = new ListView.DataSource({
-      rowHasChanged: this.rowHasChanged,
-    })
+  fetchData = async () => {
     try {
       let response = await fetch(URL)
       let articles = await response.json()
@@ -98,18 +100,30 @@ export default class OlevilleView extends React.Component {
       })
 
       // then we have the _featuredImageUrl key to just get the url
-      this.setState({dataSource: ds.cloneWithRows(articles), loaded: true})
+      this.setState({dataSource: this.state.dataSource.cloneWithRows(articles)})
     } catch (error) {
       this.setState({error: true})
       console.error(error)
     }
+
+    this.setState({loaded: true})
   }
 
-  rowHasChanged(r1: Object, r2: Object) {
-    return r1.title != r2.title
+  refresh = async () => {
+    let start = Date.now()
+    this.setState(() => ({refreshing: true}))
+
+    await this.fetchData()
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    let elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+    this.setState(() => ({refreshing: false}))
   }
 
-  onPressLatestItem(title: string, content: string, imageURL: string) {
+  onPressLatestItem = (title: string, content: string, imageURL: string) => {
     this.props.navigator.push({
       id: 'OlevilleNewsStoryView',
       index: this.props.route.index + 1,
@@ -122,7 +136,7 @@ export default class OlevilleView extends React.Component {
     })
   }
 
-  renderRow(data: Object) {
+  renderRow = (data: Object) => {
     let title = getText(parseHtml(data.title.rendered))
     let content = data.content.rendered
     let image = data._featuredImageUrl
@@ -139,7 +153,7 @@ export default class OlevilleView extends React.Component {
   }
 
   render() {
-    if (this.state.dataSource === null) {
+    if (!this.state.loaded) {
       return <LoadingView />
     }
     return (
@@ -147,7 +161,14 @@ export default class OlevilleView extends React.Component {
         <Text style={styles.theLatest}>THE LATEST</Text>
         <ListView
           dataSource={this.state.dataSource}
-          renderRow={this.renderRow.bind(this)}
+          renderRow={this.renderRow}
+          pageSize={2}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this.refresh}
+            />
+          }
         />
       </View>
     )

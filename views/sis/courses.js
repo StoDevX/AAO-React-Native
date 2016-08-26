@@ -16,6 +16,7 @@ import {
 } from 'react-native'
 import * as c from '../components/colors'
 
+import delay from 'delay'
 import zip from 'lodash/zip'
 import type {CourseType} from '../../lib/courses'
 import {loadAllCourses} from '../../lib/courses'
@@ -52,16 +53,13 @@ export default class CoursesView extends React.Component {
       rowHasChanged: this.rowHasChanged,
       sectionHeaderHasChanged: this.sectionHeaderHasChanged,
     }),
+    refreshing: false,
     loading: true,
     error: null,
   }
 
   componentWillMount() {
-    this.fetchData()
-  }
-
-  onRefresh = () => {
-    this.fetchData(true)
+    this.refresh()
   }
 
   rowHasChanged(r1: CourseType|Error, r2: CourseType|Error) {
@@ -77,15 +75,30 @@ export default class CoursesView extends React.Component {
     return h1 !== h2
   }
 
-  async fetchData(forceFromServer?: bool) {
+  async fetchData(forceFromServer: bool=false) {
+    this.setState({refreshing: true})
     try {
       let courses = await loadAllCourses(forceFromServer)
       this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
     } catch (error) {
       this.setState({error})
-      console.error(error)
+      console.warn(error)
     }
     this.setState({loading: false})
+  }
+
+  refresh = async () => {
+    let start = Date.now()
+    this.setState({refreshing: true})
+    await this.fetchData(true)
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    let elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState({refreshing: false})
   }
 
   renderRow = (course: CourseType|Error) => {
@@ -141,8 +154,8 @@ export default class CoursesView extends React.Component {
         pageSize={5}
         refreshControl={
           <RefreshControl
-            refreshing={this.state.loading}
-            onRefresh={this.onRefresh}
+            refreshing={this.state.refreshing}
+            onRefresh={this.refresh}
           />
         }
       />
