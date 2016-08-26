@@ -15,7 +15,8 @@ import {
 import TabbedView from '../components/tabbed-view'
 import Button from 'react-native-button'
 import tabs from './tabs'
-import {loadLoginCredentials} from '../../lib/login'
+import LoadingView from '../components/loading'
+import {isLoggedIn} from '../../lib/login'
 import * as c from '../components/colors'
 const styles = StyleSheet.create({
   container: {
@@ -40,12 +41,38 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function SISView({navigator, route}: {navigator: typeof Navigator, route: Object}) {
-  // Check if the user has a valid username and password
-  let {username, password} = loadLoginCredentials()
-  if (username && password) {
-    return <TabbedView style={styles.container} tabs={tabs} />
-  } else {
+export default class SISView extends React.Component {
+  static propTypes = {
+    navigator: React.PropTypes.instanceOf(Navigator).isRequired,
+    route: React.PropTypes.object.isRequired,
+  }
+
+  state = {
+    loggedIn: false,
+    loaded: false,
+  };
+
+  componentWillMount() {
+    this.load()
+  }
+
+  load = async () => {
+    let loggedIn = await isLoggedIn()
+    this.setState({loggedIn})
+  }
+
+  render() {
+    let {navigator, route} = this.props
+
+    if (!this.state.loaded) {
+      return <LoadingView />
+    }
+
+    // Check if the user has a valid username and password
+    if (this.state.loggedIn) {
+      return <TabbedView style={styles.container} tabs={tabs} />
+    }
+
     return (
       <View style={styles.error}>
         <Text>Sorry, we couldn't find your login credentials. Did you set them up in the settings?</Text>
@@ -62,9 +89,4 @@ export default function SISView({navigator, route}: {navigator: typeof Navigator
       </View>
     )
   }
-}
-
-SISView.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator).isRequired,
-  route: React.PropTypes.object.isRequired,
 }
