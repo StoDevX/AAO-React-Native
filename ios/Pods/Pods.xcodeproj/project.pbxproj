@@ -1,0 +1,436 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		44639E409E86F1D010234EA2AE73A21B /* Pods-AllAboutOlaf-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D0DF1F07B5AA8570C97FCB744840F7C /* Pods-AllAboutOlaf-dummy.m */; };
+		664F82ACF541E6C81A2FB743E54B9903 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC22C73C1608DFA5D5D78BDCB218219 /* Foundation.framework */; };
+		6C71BA25F6AEE13023B511597A6ACEB4 /* Pods-AllAboutOlafTests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D8EAB8EA744F43958B4421C6AF6284A2 /* Pods-AllAboutOlafTests-dummy.m */; };
+		D8EAF99C1B13B7B8E99211878730CF7E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC22C73C1608DFA5D5D78BDCB218219 /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0C219E3ABB3883D188AC8C8DF3F53A79 /* Pods-AllAboutOlaf-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-AllAboutOlaf-acknowledgements.plist"; sourceTree = "<group>"; };
+		1D0DF1F07B5AA8570C97FCB744840F7C /* Pods-AllAboutOlaf-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-AllAboutOlaf-dummy.m"; sourceTree = "<group>"; };
+		2403AD372BA0F36A2AF0A8A0780B0928 /* Pods-AllAboutOlafTests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-AllAboutOlafTests-resources.sh"; sourceTree = "<group>"; };
+		34360F32E7783A19EC6281B4ED3A4DA7 /* Pods-AllAboutOlaf-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-AllAboutOlaf-acknowledgements.markdown"; sourceTree = "<group>"; };
+		42690C44CDF5410726F61FAC3127F475 /* Pods-AllAboutOlafTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-AllAboutOlafTests.release.xcconfig"; sourceTree = "<group>"; };
+		4EFFF3EB572870341D13DB6AE471C6E8 /* Pods-AllAboutOlafTests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-AllAboutOlafTests-frameworks.sh"; sourceTree = "<group>"; };
+		6559C58FCFBB0645F7A5735F98F454D3 /* Pods-AllAboutOlaf.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-AllAboutOlaf.debug.xcconfig"; sourceTree = "<group>"; };
+		8A98DA003BC3D16244E1E32F64E16E21 /* OneSignal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OneSignal.framework; path = iOS_SDK/Framework/OneSignal.framework; sourceTree = "<group>"; };
+		8EA6C43B5C4BA605D76BB99A088267B6 /* Pods-AllAboutOlafTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-AllAboutOlafTests.debug.xcconfig"; sourceTree = "<group>"; };
+		92855F6DFDA0BFE66BDEDA2110C7137E /* Pods-AllAboutOlaf-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-AllAboutOlaf-frameworks.sh"; sourceTree = "<group>"; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		BD6D3B0C9FA90FF32839A97ADC12C82C /* Pods-AllAboutOlaf-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-AllAboutOlaf-resources.sh"; sourceTree = "<group>"; };
+		BF1949CC938E0C2B5384D1CFEC74019F /* Pods-AllAboutOlaf.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-AllAboutOlaf.release.xcconfig"; sourceTree = "<group>"; };
+		C3FA5C0E8205F2CC073D836590183149 /* libPods-AllAboutOlafTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AllAboutOlafTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C98AE29F963978583BF8D637C575A8F6 /* Pods-AllAboutOlafTests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-AllAboutOlafTests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		CAC2C5262E0E402C53C04C6B07620530 /* libPods-AllAboutOlaf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AllAboutOlaf.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEC22C73C1608DFA5D5D78BDCB218219 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		D7A47DF55F9F43FD17A472FCE809D930 /* Pods-AllAboutOlafTests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-AllAboutOlafTests-acknowledgements.plist"; sourceTree = "<group>"; };
+		D8EAB8EA744F43958B4421C6AF6284A2 /* Pods-AllAboutOlafTests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-AllAboutOlafTests-dummy.m"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		32FDBCA58CB73BF0FE9E7DB907FBE4DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8EAF99C1B13B7B8E99211878730CF7E /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FFF406C431D3303E97D0BF80B875C179 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				664F82ACF541E6C81A2FB743E54B9903 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		35F277490967EE7EF76117EE239566FA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CAC2C5262E0E402C53C04C6B07620530 /* libPods-AllAboutOlaf.a */,
+				C3FA5C0E8205F2CC073D836590183149 /* libPods-AllAboutOlafTests.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		36E3FF8349BA2107F136B9DFEE468025 /* Pods-AllAboutOlafTests */ = {
+			isa = PBXGroup;
+			children = (
+				C98AE29F963978583BF8D637C575A8F6 /* Pods-AllAboutOlafTests-acknowledgements.markdown */,
+				D7A47DF55F9F43FD17A472FCE809D930 /* Pods-AllAboutOlafTests-acknowledgements.plist */,
+				D8EAB8EA744F43958B4421C6AF6284A2 /* Pods-AllAboutOlafTests-dummy.m */,
+				4EFFF3EB572870341D13DB6AE471C6E8 /* Pods-AllAboutOlafTests-frameworks.sh */,
+				2403AD372BA0F36A2AF0A8A0780B0928 /* Pods-AllAboutOlafTests-resources.sh */,
+				8EA6C43B5C4BA605D76BB99A088267B6 /* Pods-AllAboutOlafTests.debug.xcconfig */,
+				42690C44CDF5410726F61FAC3127F475 /* Pods-AllAboutOlafTests.release.xcconfig */,
+			);
+			name = "Pods-AllAboutOlafTests";
+			path = "Target Support Files/Pods-AllAboutOlafTests";
+			sourceTree = "<group>";
+		};
+		3DCAB2B7CDE207B3958B6CB957FCC758 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				CEC22C73C1608DFA5D5D78BDCB218219 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		6202124E9D433C3EA7B1CF2F09917CA5 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B109A558AEC0464E1C8AD13A3517ECA8 /* OneSignal */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		6A3BF77CA8077BB559080C17D94160FB /* Pods-AllAboutOlaf */ = {
+			isa = PBXGroup;
+			children = (
+				34360F32E7783A19EC6281B4ED3A4DA7 /* Pods-AllAboutOlaf-acknowledgements.markdown */,
+				0C219E3ABB3883D188AC8C8DF3F53A79 /* Pods-AllAboutOlaf-acknowledgements.plist */,
+				1D0DF1F07B5AA8570C97FCB744840F7C /* Pods-AllAboutOlaf-dummy.m */,
+				92855F6DFDA0BFE66BDEDA2110C7137E /* Pods-AllAboutOlaf-frameworks.sh */,
+				BD6D3B0C9FA90FF32839A97ADC12C82C /* Pods-AllAboutOlaf-resources.sh */,
+				6559C58FCFBB0645F7A5735F98F454D3 /* Pods-AllAboutOlaf.debug.xcconfig */,
+				BF1949CC938E0C2B5384D1CFEC74019F /* Pods-AllAboutOlaf.release.xcconfig */,
+			);
+			name = "Pods-AllAboutOlaf";
+			path = "Target Support Files/Pods-AllAboutOlaf";
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
+				BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */,
+				6202124E9D433C3EA7B1CF2F09917CA5 /* Pods */,
+				35F277490967EE7EF76117EE239566FA /* Products */,
+				E2DEC98DDDAA03F0EF6C70E7DF1DF76C /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		B109A558AEC0464E1C8AD13A3517ECA8 /* OneSignal */ = {
+			isa = PBXGroup;
+			children = (
+				FF9CEBD734AC19E8ADE2CA12CDF9AD21 /* Frameworks */,
+			);
+			path = OneSignal;
+			sourceTree = "<group>";
+		};
+		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3DCAB2B7CDE207B3958B6CB957FCC758 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E2DEC98DDDAA03F0EF6C70E7DF1DF76C /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				6A3BF77CA8077BB559080C17D94160FB /* Pods-AllAboutOlaf */,
+				36E3FF8349BA2107F136B9DFEE468025 /* Pods-AllAboutOlafTests */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		FF9CEBD734AC19E8ADE2CA12CDF9AD21 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8A98DA003BC3D16244E1E32F64E16E21 /* OneSignal.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		886A518F86F22903ED279CC0F5716D6E /* Pods-AllAboutOlafTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 799B6C6B8BD32242CE90A8A309065FA1 /* Build configuration list for PBXNativeTarget "Pods-AllAboutOlafTests" */;
+			buildPhases = (
+				D73A08AE7179340C684498CAF8852F26 /* Sources */,
+				32FDBCA58CB73BF0FE9E7DB907FBE4DD /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Pods-AllAboutOlafTests";
+			productName = "Pods-AllAboutOlafTests";
+			productReference = C3FA5C0E8205F2CC073D836590183149 /* libPods-AllAboutOlafTests.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		FADC6EDA18D2B7218DCB725267C35D94 /* Pods-AllAboutOlaf */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C7270C24214ADEA80AF0BC13A8B84513 /* Build configuration list for PBXNativeTarget "Pods-AllAboutOlaf" */;
+			buildPhases = (
+				9346DA09FC528DC846E22C2ECA6624F7 /* Sources */,
+				FFF406C431D3303E97D0BF80B875C179 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Pods-AllAboutOlaf";
+			productName = "Pods-AllAboutOlaf";
+			productReference = CAC2C5262E0E402C53C04C6B07620530 /* libPods-AllAboutOlaf.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = 35F277490967EE7EF76117EE239566FA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FADC6EDA18D2B7218DCB725267C35D94 /* Pods-AllAboutOlaf */,
+				886A518F86F22903ED279CC0F5716D6E /* Pods-AllAboutOlafTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9346DA09FC528DC846E22C2ECA6624F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44639E409E86F1D010234EA2AE73A21B /* Pods-AllAboutOlaf-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D73A08AE7179340C684498CAF8852F26 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6C71BA25F6AEE13023B511597A6ACEB4 /* Pods-AllAboutOlafTests-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0ACDCBCB0B6796575F46FFA2F5410C6B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1D19F9BBD29790FD18A6FB3ACA11CD2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8EA6C43B5C4BA605D76BB99A088267B6 /* Pods-AllAboutOlafTests.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		5A886AF538F13775C94CB169F455983D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 42690C44CDF5410726F61FAC3127F475 /* Pods-AllAboutOlafTests.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		6352B8F66F6181F9307389849F1C3017 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF1949CC938E0C2B5384D1CFEC74019F /* Pods-AllAboutOlaf.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		D001268B3806370D4156DDC1C5BD6337 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6559C58FCFBB0645F7A5735F98F454D3 /* Pods-AllAboutOlaf.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		D3E3D092A3FF7311A98E44BBA36FFD12 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				ONLY_ACTIVE_ARCH = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D3E3D092A3FF7311A98E44BBA36FFD12 /* Debug */,
+				0ACDCBCB0B6796575F46FFA2F5410C6B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		799B6C6B8BD32242CE90A8A309065FA1 /* Build configuration list for PBXNativeTarget "Pods-AllAboutOlafTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D19F9BBD29790FD18A6FB3ACA11CD2C /* Debug */,
+				5A886AF538F13775C94CB169F455983D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C7270C24214ADEA80AF0BC13A8B84513 /* Build configuration list for PBXNativeTarget "Pods-AllAboutOlaf" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D001268B3806370D4156DDC1C5BD6337 /* Debug */,
+				6352B8F66F6181F9307389849F1C3017 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}
