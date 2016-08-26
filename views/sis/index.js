@@ -58,7 +58,7 @@ export default class SISView extends React.Component {
 
   load = async () => {
     let loggedIn = await isLoggedIn()
-    this.setState({loggedIn})
+    this.setState({loggedIn, loaded: true})
   }
 
   render() {
