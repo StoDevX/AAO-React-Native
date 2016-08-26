@@ -144,7 +144,7 @@ script:
   - if [[ "$TEST_TYPE" == "js" ]]; then npm run test:js; fi
 
   # iOS-only tests - building and specs
-  - if [[ "$TEST_TYPE" == "ios" ]]; then npm run test:ios; fi
+  - if [[ "$TEST_TYPE" == "ios" ]]; then npm run build:ios; fi
 
   # android-only tests - building and specs
   - if [[ "$TEST_TYPE" == "android" ]]; then npm run build:android:unix; fi
