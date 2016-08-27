@@ -31,6 +31,14 @@ export const theLatest = '#00BFFF'
 export const olevilleGold = '#F7B600'
 export const olevilleBackground = '#F0F0E1'
 
+// MARK: KSTO Colors
+export const kstoPrimaryLight = '#c5c5e8'
+export const kstoSecondaryLight = '#7789bb'
+export const kstoPrimaryDark = '#686ea1'
+export const kstoSecondaryDark = '#4c4f71'
+export const kstoTextLight = '#dcdde5'
+export const kstoTextDark = '#bebad4'
+
 // MARK: System Colors
 export const infoBlue = 'rgb(47, 112, 225)'
 export const success = 'rgb(83, 215, 106)'
