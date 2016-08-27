@@ -12,13 +12,20 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 5,
     marginRight: 5,
+    paddingBottom: 10,
+  },
+  privacy: {
+    paddingLeft: 25,
+    paddingRight: 25,
+    paddingTop: 10,
+    lineHeight: 20,
   },
 })
 
 export default function PrivacyView() {
   return (
     <ScrollView style={styles.container}>
-      <Text>{privacy.text}</Text>
+      <Text style={styles.privacy}>{privacy.text}</Text>
     </ScrollView>
   )
 }
