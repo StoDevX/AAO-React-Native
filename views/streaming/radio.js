@@ -11,14 +11,16 @@ import {
   Text,
   Linking,
   Platform,
+  Dimensions,
   Image,
 } from 'react-native'
 import Button from 'react-native-button'
 import * as c from '../components/colors'
-// let kstoDownload = 'itms://itunes.apple.com/us/app/ksto/id953916647'
 
-const url = 'http://elijahverdoorn.com' // For Drew Volz to update
-const image = require('../../data/images/streaming/ksto/ksto-logo.png')
+let kstoApp = 'KSTORadio://'
+let kstoDownload = 'itms://itunes.apple.com/us/app/ksto/id953916647'
+let kstoWeb = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
+let image = require('../../data/images/streaming/ksto/ksto-logo.png')
 
 export default function KSTOView() {
   return (
@@ -29,9 +31,15 @@ export default function KSTOView() {
       <Button
         onPress={() => {
           if (Platform.OS === 'android') {
-            Linking.openURL(url).catch(err => console.error('An error occurred', err))
+            Linking.openURL(kstoWeb).catch(err => console.error('An error occurred opening the Android KSTO url', err))
           } else {
-            //Drew does stuff here
+            Linking.canOpenURL(kstoApp).then(supported => {
+              if (!supported) {
+                Linking.openURL(kstoDownload).catch(err => console.error('An error occurred opening the KSTO download url', err))
+              } else {
+                return Linking.openURL(kstoApp)
+              }
+            }).catch(err => console.error('An error occurred opening the iOS KSTO url', err))
           }
         }}
         style={styles.button}
@@ -56,8 +64,8 @@ let styles = StyleSheet.create({
     marginTop: 5,
   },
   logo: {
-    width: 300,
-    height: 300,
+    maxWidth: Dimensions.get('window').width / 1.2,
+    maxHeight: Dimensions.get('window').height / 2,
   },
   button: {
     backgroundColor: c.denim,
