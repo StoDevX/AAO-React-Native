@@ -13,12 +13,19 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
   },
+  legal: {
+    paddingLeft: 25,
+    paddingRight: 25,
+    paddingTop: 10,
+    paddingBottom: 20,
+    lineHeight: 20,
+  },
 })
 
 export default function LegalView() {
   return (
     <ScrollView style={styles.container}>
-      <Text>{legal.content}</Text>
+      <Text style={styles.legal}>{legal.content}</Text>
     </ScrollView>
   )
 }
