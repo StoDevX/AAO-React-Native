@@ -941,6 +941,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "NFMTHAZVS9.com.drewvolz.stolaf-";
 				PRODUCT_NAME = "All About Olaf";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -967,6 +968,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "NFMTHAZVS9.com.drewvolz.stolaf-";
 				PRODUCT_NAME = "All About Olaf";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
