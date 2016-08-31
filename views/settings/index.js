@@ -65,11 +65,18 @@ export default class SettingsView extends React.Component {
     }
   }
 
-  logIn = async () => {
+  logIn = () => {
     this.props.navigator.push({
       id: 'SISLoginView',
       index: this.props.route.index + 1,
     })
+  }
+
+  logOut = async () => {
+    // this.props.navigator.push({
+    //   id: 'SISLoginView',
+    //   index: this.props.route.index + 1,
+    // })
   }
 
   focusUsername = () => {
@@ -109,7 +116,7 @@ export default class SettingsView extends React.Component {
     let loggedIn = this.state.success
     let loading = this.state.loading
 
-    let disabled = loading || (!username || !password)
+    let disabled = loading
 
     let loginTextStyle = disabled
       ? styles.loginButtonTextDisabled
