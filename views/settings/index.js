@@ -26,9 +26,7 @@ import {version} from '../../package.json'
 
 import Communications from 'react-native-communications'
 import * as c from '../components/colors'
-import {
-  loadLoginCredentials,
-} from '../../lib/login'
+import CookieManager from 'react-native-cookies'
 
 
 export default class SettingsView extends React.Component {
@@ -38,8 +36,7 @@ export default class SettingsView extends React.Component {
   }
 
   state = {
-    username: '',
-    password: '',
+    loggedIn: false,
     success: false,
     loading: false,
     attempted: false,
@@ -49,17 +46,10 @@ export default class SettingsView extends React.Component {
     this.loadData()
   }
 
-  _usernameInput: any;
-  _passwordInput: any;
-
   loadData = async () => {
-    let [creds, status] = await Promise.all([
-      loadLoginCredentials(),
+    let [status] = await Promise.all([
       AsyncStorage.getItem('credentials:valid').then(val => JSON.parse(val)),
     ])
-    if (creds) {
-      this.setState({username: creds.username, password: creds.password})
-    }
     if (status) {
       this.setState({success: true})
     }
@@ -73,19 +63,17 @@ export default class SettingsView extends React.Component {
   }
 
   logOut = async () => {
-    // this.props.navigator.push({
-    //   id: 'SISLoginView',
-    //   index: this.props.route.index + 1,
-    // })
-  }
-
-  focusUsername = () => {
-    console.log(this._usernameInput)
-    this._usernameInput.focus()
-  }
-
-  focusPassword = () => {
-    this._passwordInput.focus()
+    this.setState({loading: true})
+    CookieManager.clearAll((err, res) => {
+      if (err) {
+        console.log(err)
+      }
+      console.log(res)
+      this.setState({
+        success: false,
+        loading: false,
+      })
+    })
   }
 
   onPressLegalButton() {
@@ -110,9 +98,6 @@ export default class SettingsView extends React.Component {
   }
 
   render() {
-    let username = this.state.username
-    let password = this.state.password
-
     let loggedIn = this.state.success
     let loading = this.state.loading
 

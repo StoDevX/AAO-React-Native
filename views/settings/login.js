@@ -8,6 +8,7 @@ import {
   WebView,
   View,
   Text,
+  AsyncStorage,
 } from 'react-native'
 import startsWith from 'lodash/startsWith'
 
@@ -63,6 +64,7 @@ export default class SISLoginView extends React.Component {
     // If we get redirected back to the HOME_URL we know that we are logged in. If your backend does something different than this
     // change this line.
     if (startsWith(navState.url, HOME_URL)) {
+      AsyncStorage.setItem('credentials:valid', JSON.stringify(true))
       this.setState({
         loggedIn: true,
       })
