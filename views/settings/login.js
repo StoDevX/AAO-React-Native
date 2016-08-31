@@ -9,6 +9,7 @@ import {
   View,
   Text,
   AsyncStorage,
+  Navigator,
 } from 'react-native'
 import startsWith from 'lodash/startsWith'
 
@@ -23,6 +24,7 @@ const AUTH_REJECTED_URL = 'https://www.stolaf.edu/sis/login.cfm?error=access_den
 
 export default class SISLoginView extends React.Component {
   static propTypes = {
+    navigator: React.PropTypes.instanceOf(Navigator),
     onLoginComplete: React.PropTypes.func,
   };
 
