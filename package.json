@@ -35,8 +35,8 @@
     "moment": "2.14.1",
     "moment-timezone": "0.5.5",
     "querystring": "0.2.0",
-    "react": "15.3.1",
-    "react-native": "0.32.0",
+    "react": "15.2.1",
+    "react-native": "0.31.0",
     "react-native-android-tablayout": "0.3.0",
     "react-native-animatable": "0.6.1",
     "react-native-button": "1.6.0",
@@ -61,6 +61,6 @@
     "eslint-plugin-babel": "3.3.0",
     "eslint-plugin-flowtype": "2.11.4",
     "eslint-plugin-react": "6.1.2",
-    "flow-bin": "0.30.0"
+    "flow-bin": "0.29.0"
   }
 }
