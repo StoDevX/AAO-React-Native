@@ -59,6 +59,9 @@ export default class SettingsView extends React.Component {
     this.props.navigator.push({
       id: 'SISLoginView',
       index: this.props.route.index + 1,
+      props: {
+        onLoginComplete: status => this.setState({success: status}),
+      },
     })
   }
 
