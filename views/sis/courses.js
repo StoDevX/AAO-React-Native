@@ -94,7 +94,7 @@ export default class CoursesView extends React.Component {
     return loggedIn
   }
 
-  fetchData = async (forceFromServer: bool=false) => {
+  fetchData = async (forceFromServer=false) => {
     this.setState({refreshing: true})
     try {
       let courses = await loadAllCourses(forceFromServer)

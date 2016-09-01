@@ -76,7 +76,7 @@ export default class BalancesView extends React.Component {
     return loggedIn
   }
 
-  fetchData = async (forceFromServer: bool=false) => {
+  fetchData = async (forceFromServer=false) => {
     try {
       let {flex, ole, print} = await getFinancialData(forceFromServer)
       this.setState({flex, ole, print})
