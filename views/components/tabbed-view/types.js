@@ -20,7 +20,7 @@ export type TabbedViewPropsType = {
 export const TabbedViewPropTypes = {
   style: PropTypes.oneOfType([PropTypes.number, PropTypes.object]),
   childProps: PropTypes.object,
-  navigator: PropTypes.instanceOf(Navigator),
+  navigator: PropTypes.object,
   route: PropTypes.object,
   tabs: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
