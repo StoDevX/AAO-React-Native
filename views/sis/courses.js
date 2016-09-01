@@ -16,11 +16,14 @@ import {
 } from 'react-native'
 import * as c from '../components/colors'
 
+import {SisAuthenticationError} from '../../lib/errors'
+import {isLoggedIn} from '../../lib/login'
 import delay from 'delay'
 import zip from 'lodash/zip'
 import type {CourseType} from '../../lib/courses'
 import {loadAllCourses} from '../../lib/courses'
 import LoadingScreen from '../components/loading'
+import ErrorView from './error-screen'
 
 const SEMESTERS = {
   '0': 'Abroad',
@@ -48,6 +51,11 @@ function toPrettyTerm(term: number): string {
 }
 
 export default class CoursesView extends React.Component {
+  static propTypes = {
+    navigator: React.PropTypes.object.isRequired(),
+    route: React.PropTypes.object.isRequired(),
+  };
+
   state = {
     dataSource: new ListView.DataSource({
       rowHasChanged: this.rowHasChanged,
@@ -56,10 +64,15 @@ export default class CoursesView extends React.Component {
     refreshing: false,
     loading: true,
     error: null,
+    loggedIn: true,
   }
 
   componentWillMount() {
-    this.refresh()
+    this.checkLogin().then(shouldContinue => {
+      if (shouldContinue) {
+        this.fetchData()
+      }
+    })
   }
 
   rowHasChanged(r1: CourseType|Error, r2: CourseType|Error) {
@@ -75,10 +88,19 @@ export default class CoursesView extends React.Component {
     return h1 !== h2
   }
 
-  async fetchData(forceFromServer: bool=false) {
+  checkLogin = async () => {
+    let loggedIn = await isLoggedIn()
+    this.setState({loggedIn})
+    return loggedIn
+  }
+
+  fetchData = async (forceFromServer: bool=false) => {
     this.setState({refreshing: true})
     try {
       let courses = await loadAllCourses(forceFromServer)
+      if (courses instanceof SisAuthenticationError) {
+        this.setState({loggedIn: false})
+      }
       this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
     } catch (error) {
       this.setState({error})
@@ -142,6 +164,10 @@ export default class CoursesView extends React.Component {
 
     if (this.state.loading) {
       return <LoadingScreen />
+    }
+
+    if (!this.state.loggedIn) {
+      return <ErrorView route={this.props.route} navigator={this.props.navigator} />
     }
 
     return (
