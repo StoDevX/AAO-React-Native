@@ -38,8 +38,8 @@ const buttonStyles = StyleSheet.create({
 
 export default class BalancesView extends React.Component {
   static propTypes = {
-    navigator: React.PropTypes.object.isRequired(),
-    route: React.PropTypes.object.isRequired(),
+    navigator: React.PropTypes.object,
+    route: React.PropTypes.object,
   };
 
   state = {

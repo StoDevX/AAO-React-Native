@@ -52,8 +52,8 @@ function toPrettyTerm(term: number): string {
 
 export default class CoursesView extends React.Component {
   static propTypes = {
-    navigator: React.PropTypes.object.isRequired(),
-    route: React.PropTypes.object.isRequired(),
+    navigator: React.PropTypes.object,
+    route: React.PropTypes.object,
   };
 
   state = {
