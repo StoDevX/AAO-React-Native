@@ -22,6 +22,6 @@ export default function SISView(props) {
   return <TabbedView navigator={props.navigator} route={props.route} style={styles.container} tabs={tabs} />
 }
 SISView.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator).isRequired,
+  navigator: React.PropTypes.object.isRequired,
   route: React.PropTypes.object.isRequired,
 }

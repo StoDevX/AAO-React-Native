@@ -162,12 +162,12 @@ export default class CoursesView extends React.Component {
       return <Text>Error: {this.state.error.message}</Text>
     }
 
-    if (this.state.loading) {
-      return <LoadingScreen />
-    }
-
     if (!this.state.loggedIn) {
       return <ErrorView route={this.props.route} navigator={this.props.navigator} />
+    }
+
+    if (this.state.loading) {
+      return <LoadingScreen />
     }
 
     return (
