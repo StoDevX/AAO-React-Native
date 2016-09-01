@@ -77,6 +77,7 @@ export default class SettingsView extends React.Component {
         loading: false,
       })
     })
+    await AsyncStorage.setItem('credentials:valid', JSON.stringify(false))
   }
 
   onPressLegalButton() {
