@@ -1,4 +1,4 @@
-import {PropTypes} from 'react'
+import {PropTypes, Navigator} from 'react'
 
 export type TabDefinitionType = {
   id: string,
