@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
   Text,
   Platform,
-  View,
 } from 'react-native'
 
 import AboutView from './views/about'
@@ -31,6 +30,7 @@ import TransportationView from './views/transportation'
 import OlevilleView from './views/oleville'
 import OlevilleNewsStoryView from './views/oleville/latestView'
 import SettingsView from './views/settings'
+import SISLoginView from './views/settings/login'
 import CreditsView from './views/settings/credits'
 import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
@@ -58,6 +58,7 @@ function renderScene(route, navigator) {
     case 'OlevilleView': return <OlevilleView {...props} />
     case 'OlevilleNewsStoryView': return <OlevilleNewsStoryView {...props} />
     case 'SettingsView': return <SettingsView {...props} />
+    case 'SISLoginView': return <SISLoginView {...props} />
     case 'CreditsView': return <CreditsView {...props} />
     case 'PrivacyView': return <PrivacyView {...props} />
     case 'LegalView': return <LegalView {...props} />
@@ -209,13 +210,19 @@ function Title(route) {
 
 export default class App extends React.Component {
   componentDidMount() {
-    BackAndroid.addEventListener('hardwareBackPress', () => {
-      if (this._navigator && this._navigator.getCurrentRoutes().length > 1) {
-        this._navigator.pop()
-        return true
-      }
-      return false
-    })
+    BackAndroid.addEventListener('hardwareBackPress', this.registerAndroidBackButton)
+  }
+
+  componentWillUnmount() {
+    BackAndroid.removeEventListener('hardwareBackPress', this.registerAndroidBackButton)
+  }
+
+  registerAndroidBackButton = () => {
+    if (this._navigator && this._navigator.getCurrentRoutes().length > 1) {
+      this._navigator.pop()
+      return true
+    }
+    return false
   }
 
   render() {

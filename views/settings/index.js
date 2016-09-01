@@ -8,12 +8,10 @@ import React from 'react'
 import {
   StyleSheet,
   Text,
-  TextInput,
   ScrollView,
   Platform,
   AsyncStorage,
   Navigator,
-  Alert,
   View,
 } from 'react-native'
 
@@ -28,24 +26,17 @@ import {version} from '../../package.json'
 
 import Communications from 'react-native-communications'
 import * as c from '../components/colors'
-import LegalView from './legal'
-import CreditsView from './credits'
-import PrivacyView from './privacy'
-import {
-  loadLoginCredentials,
-  clearLoginCredentials,
-  performLogin,
-} from '../../lib/login'
+import CookieManager from 'react-native-cookies'
 
 
 export default class SettingsView extends React.Component {
   static propTypes = {
     navigator: React.PropTypes.instanceOf(Navigator),
+    route: React.PropTypes.object,
   }
 
   state = {
-    username: '',
-    password: '',
+    loggedIn: false,
     success: false,
     loading: false,
     attempted: false,
@@ -55,131 +46,72 @@ export default class SettingsView extends React.Component {
     this.loadData()
   }
 
-  _usernameInput: any;
-  _passwordInput: any;
-
   loadData = async () => {
-    let [creds, status] = await Promise.all([
-      loadLoginCredentials(),
+    let [status] = await Promise.all([
       AsyncStorage.getItem('credentials:valid').then(val => JSON.parse(val)),
     ])
-    if (creds) {
-      this.setState({username: creds.username, password: creds.password})
-    }
     if (status) {
       this.setState({success: true})
     }
   }
 
-  logIn = async () => {
-    this.setState({loading: true})
-    let {username, password} = this.state
-    let {result} = await performLogin(username, password)
-    if (!result) {
-      Alert.alert('Error signing in', 'The username or password is incorrect.')
-    }
-    this.setState({loading: false, attempted: true, success: result})
+  logIn = () => {
+    this.props.navigator.push({
+      id: 'SISLoginView',
+      index: this.props.route.index + 1,
+      props: {
+        onLoginComplete: status => this.setState({success: status}),
+      },
+    })
   }
 
   logOut = async () => {
-    this.setState({username: '', password: '', success: false, attempted: false})
-    clearLoginCredentials()
-    AsyncStorage.removeItem('credentials:valid')
-  }
-
-  focusUsername = () => {
-    console.log(this._usernameInput)
-    this._usernameInput.focus()
-  }
-
-  focusPassword = () => {
-    this._passwordInput.focus()
+    this.setState({loading: true})
+    CookieManager.clearAll((err, res) => {
+      if (err) {
+        console.log(err)
+      }
+      console.log(res)
+      this.setState({
+        success: false,
+        loading: false,
+      })
+    })
+    await AsyncStorage.setItem('credentials:valid', JSON.stringify(false))
   }
 
   onPressLegalButton() {
     this.props.navigator.push({
       id: 'LegalView',
-      component: <LegalView
-        navigator={this.props.navigator}
-      />,
+      index: this.props.route.index + 1,
     })
   }
 
   onPressCreditsButton() {
     this.props.navigator.push({
       id: 'CreditsView',
-      component: <CreditsView
-        navigator={this.props.navigator}
-      />,
+      index: this.props.route.index + 1,
     })
   }
 
   onPressPrivacyButton() {
     this.props.navigator.push({
       id: 'PrivacyView',
-      component: <PrivacyView
-        navigator={this.props.navigator}
-      />,
+      index: this.props.route.index + 1,
     })
   }
 
   render() {
-    let username = this.state.username
-    let password = this.state.password
-
     let loggedIn = this.state.success
     let loading = this.state.loading
 
-    let disabled = loading || (!username || !password)
+    let disabled = loading
 
     let loginTextStyle = disabled
       ? styles.loginButtonTextDisabled
       : loading
         ? styles.loginButtonTextLoading
         : styles.loginButtonTextActive
-
-    let usernameCell = (
-      <CustomCell contentContainerStyle={styles.loginCell}>
-        <Text onPress={this.focusUsername} style={styles.label}>Username</Text>
-
-        <TextInput
-          ref={ref => this._usernameInput = ref}
-          cellStyle='Basic'
-          autoCorrect={false}
-          autoCapitalize='none'
-          style={styles.customTextInput}
-          placeholderTextColor='#C7C7CC'
-          disabled={disabled}
-          placeholder='username'
-          value={username}
-          returnKeyType='next'
-          onChangeText={text => this.setState({username: text})}
-          onSubmitEditing={this.focusPassword}
-        />
-      </CustomCell>
-    )
-
-    let passwordCell = (
-      <CustomCell contentContainerStyle={styles.loginCell}>
-        <Text onPress={this.focusPassword} style={styles.label}>Password</Text>
-
-        <TextInput
-          ref={ref => this._passwordInput = ref}
-          cellStyle='Basic'
-          autoCorrect={false}
-          autoCapitalize='none'
-          style={styles.customTextInput}
-          placeholderTextColor='#C7C7CC'
-          disabled={disabled}
-          secureTextEntry={true}
-          placeholder='password'
-          value={password}
-          returnKeyType='done'
-          onChangeText={text => this.setState({password: text})}
-          onSubmitEditing={loggedIn ? () => {} : this.logIn}
-        />
-      </CustomCell>
-    )
 
     let actionCell = (
       <CustomCell
@@ -199,11 +131,6 @@ export default class SettingsView extends React.Component {
 
     let accountSection = (
       <View>
-        <Section header='ST. OLAF ACCOUNT'>
-          {usernameCell}
-          {passwordCell}
-        </Section>
-
         <Section>
           {actionCell}
         </Section>
