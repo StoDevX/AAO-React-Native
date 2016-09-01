@@ -18,7 +18,8 @@ export default class TabbedView extends React.Component {
   props: TabbedViewPropsType;
 
   render() {
-    let tabs = this.props.tabs
+    let {navigator, route, tabs} = this.props
+    let baseProps = {navigator, route}
     let TabInfo = tabs[this.state.selectedTabIndex]
     return (
       <View style={[styles.container, this.props.style]}>
@@ -29,7 +30,11 @@ export default class TabbedView extends React.Component {
         >
           {tabs.map(tab => <Tab key={tab.id} name={tab.title} style={styles.listViewStyle} />)}
         </TabLayout>
-        <TabInfo.component {...this.props.childProps} {...(TabInfo.props || {})} />
+        <TabInfo.component
+          {...this.props.childProps}
+          {...(TabInfo.props || {})}
+          {...baseProps}
+        />
       </View>
     )
   }
