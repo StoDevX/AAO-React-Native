@@ -10,10 +10,11 @@ import {
   Text,
   View,
 } from 'react-native'
-import type {BusStopType} from './types'
+import type {BusStopType} from '../types'
 import moment from 'moment-timezone'
+
 const CENTRAL_TZ = 'America/Winnipeg'
-const TIME_FORMAT = 'HH:mm:ss'
+const TIME_FORMAT = 'H:mm'
 
 const styles = StyleSheet.create({
   container: {
@@ -40,6 +41,7 @@ function getNextStopTime(times, currentTime=moment.tz(CENTRAL_TZ)): string|false
   if (nextStopTime) {
     return nextStopTime.format('h:mma')
   }
+
   return false
 }
 

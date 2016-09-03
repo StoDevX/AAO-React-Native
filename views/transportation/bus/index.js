@@ -11,13 +11,11 @@ import {
   View,
   ScrollView,
 } from 'react-native'
-import busInfo from '../../data/bus-times.json'
-import type {BusLineType} from './types'
-import BusLineView from './busLine'
+import busInfo from '../../../data/bus-times.json'
+import type {BusLineType} from '../types'
+import BusLineView from './bus-line'
 
 let styles = StyleSheet.create({
-  container: {
-  },
   busLine: {
     textAlign: 'center',
     fontWeight: 'bold',

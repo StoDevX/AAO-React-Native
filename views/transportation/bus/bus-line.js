@@ -5,11 +5,9 @@
  */
 
 import React from 'react'
-import {
-  View,
-} from 'react-native'
-import BusStopView from './busStop'
-import type {BusStopType} from './types'
+import {View} from 'react-native'
+import BusStopView from './bus-stop'
+import type {BusStopType} from '../types'
 
 export default function BusLineView({schedule}: {schedule: BusStopType[]}) {
   return (
