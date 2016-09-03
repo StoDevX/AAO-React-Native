@@ -5,7 +5,6 @@ import {View, StyleSheet, Text} from 'react-native'
 import type {BusLineType} from './types'
 import getScheduleForNow from './get-schedule-for-now'
 import getSetOfStopsForNow from './get-set-of-stops-for-now'
-import BusProgressView from './bus-progress'
 import zip from 'lodash/zip'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'
@@ -92,6 +91,7 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
   let schedule = getScheduleForNow(line.schedules)
   let now = moment.tz(TIMEZONE)
   let times = getSetOfStopsForNow(schedule, now)
+  let timesIndex = schedule.times.indexOf(times)
 
   let pairs = zip(schedule.stops, times, schedule.coordinates)
 
@@ -116,8 +116,19 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
             <View key={i} style={[styles.row, i < pairs.length - 1 ? styles.notLastRowContainer : null]}>
               <View style={[styles.dot, now.isAfter(moment.tz(time, 'h:mma', TIMEZONE)) ? styles.passedStop : styles.beforeStop]} />
               <View style={{flex: 1}}>
-                <Text style={styles.itemTitle}>{place}</Text>
-                <Text style={styles.itemPreview}>{time === false ? 'None' : time}</Text>
+                <Text style={styles.itemTitle}>
+                  {place}
+                </Text>
+                <Text
+                  style={styles.itemPreview}
+                  numberOfLines={1}
+                >
+                  {schedule.times
+                    .slice(timesIndex)
+                    .map(timeSet => timeSet[i])
+                    .map(time => time === false ? 'None' : time)
+                    .join(' • ')}
+                </Text>
               </View>
             </View>)}
         </View>
