@@ -7,7 +7,6 @@
 import React from 'react'
 import {
   StyleSheet,
-  Navigator,
 } from 'react-native'
 
 import TabbedView from '../components/tabbed-view'
