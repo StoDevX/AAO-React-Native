@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
 })
 
 export default function ErrorView(props) {
-  let {navigator, route} = props
+  let {navigator, route, onLoginComplete} = props
 
   return (
     <View style={styles.error}>
@@ -48,6 +48,9 @@ export default function ErrorView(props) {
             index: route.index + 1,
             title: 'SIS Login',
             sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+            props: {
+              onLoginComplete: onLoginComplete,
+            },
           })
         }
         style={styles.errorButton}
@@ -58,5 +61,6 @@ export default function ErrorView(props) {
 
 ErrorView.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator).isRequired,
+  onLoginComplete: React.PropTypes.func.isRequired,
   route: React.PropTypes.object.isRequired,
 }

@@ -63,11 +63,14 @@ export default class BalancesView extends React.Component {
   };
 
   componentWillMount() {
-    this.checkLogin().then(shouldContinue => {
-      if (shouldContinue) {
-        this.fetchData()
-      }
-    })
+    this.loadIfLoggedIn()
+  }
+
+  loadIfLoggedIn = async () => {
+    let shouldContinue = await this.checkLogin()
+    if (shouldContinue) {
+      await this.fetchData()
+    }
   }
 
   checkLogin = async () => {
@@ -108,7 +111,11 @@ export default class BalancesView extends React.Component {
     }
 
     if (!this.state.loggedIn) {
-      return <ErrorView route={this.props.route} navigator={this.props.navigator} />
+      return <ErrorView
+        route={this.props.route}
+        navigator={this.props.navigator}
+        onLoginComplete={() => this.loadIfLoggedIn()}
+      />
     }
 
     let {flex, ole, print, loading} = this.state

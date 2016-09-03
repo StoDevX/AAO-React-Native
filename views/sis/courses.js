@@ -68,11 +68,14 @@ export default class CoursesView extends React.Component {
   }
 
   componentWillMount() {
-    this.checkLogin().then(shouldContinue => {
-      if (shouldContinue) {
-        this.fetchData()
-      }
-    })
+    this.loadIfLoggedIn()
+  }
+
+  loadIfLoggedIn = async () => {
+    let shouldContinue = await this.checkLogin()
+    if (shouldContinue) {
+      await this.fetchData()
+    }
   }
 
   rowHasChanged(r1: CourseType|Error, r2: CourseType|Error) {
@@ -162,7 +165,11 @@ export default class CoursesView extends React.Component {
     }
 
     if (!this.state.loggedIn) {
-      return <ErrorView route={this.props.route} navigator={this.props.navigator} />
+      return <ErrorView
+        route={this.props.route}
+        navigator={this.props.navigator}
+        onLoginComplete={() => this.loadIfLoggedIn()}
+      />
     }
 
     return (
