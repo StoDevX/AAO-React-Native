@@ -35,7 +35,7 @@
     "schedules": [
       {
         "days": ["su", "mo", "tu", "we", "th", "fr", "sa"],
-        "stops": ["City Hall on Washington", "Koester Court (OUT)", "NCRC (OUT)", "Allina Clinic", "Culvers", "Dollar Tree", "Target/Cub", "YMCA", "Koester Court (IN)", "NCRC (IN)", "Senior Center", "Three Links", "City Hall on Washington"],
+        "stops": ["City Hall on Washington", "Koester Court (Outbound)", "NCRC (Outbound)", "Allina Clinic", "Culvers", "Dollar Tree", "Target/Cub", "YMCA", "Koester Court (Inbound)", "NCRC (Inbound)", "Senior Center", "Three Links", "City Hall on Washington"],
         "times": [
           ["6:00am",  "6:04am",  "6:05am",  "6:08am",  "6:11am",   false,    "6:19am",  "6:21am",  "6:25am",  "6:26am",   false,     false,    "6:40am"],
           ["6:45am",  "6:49am",  "6:50am",  "6:53am",  "6:56am",   false,    "7:04am",  "7:06am",  "7:10am",  "7:11am",   false,    "7:19am",  "7:25am"],
