@@ -5,26 +5,15 @@
  */
 
 import React from 'react'
-import {
-  Text,
-  StyleSheet,
-  View,
-  ScrollView,
-} from 'react-native'
+import {ScrollView} from 'react-native'
 import busInfo from '../../../data/bus-times.json'
 import type {BusLineType} from '../types'
 import BusLineView from './bus-line'
 
-let styles = StyleSheet.create({
-  busLine: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
-})
 
 export default class BusView extends React.Component {
   state = {
+    intervalId: 0,
     now: Date.now(),
   }
 
@@ -46,11 +35,7 @@ export default class BusView extends React.Component {
     return (
       <ScrollView contentInset={{bottom: 49}} automaticallyAdjustContentInsets={false}>
         {busInfo.map((busLine: BusLineType) =>
-          <View key={busLine.line}>
-            <Text style={styles.busLine}>{busLine.line}</Text>
-            <BusLineView schedule={busLine.schedule} />
-          </View>
-        )}
+          <BusLineView key={busLine.line} line={busLine} />)}
       </ScrollView>
     )
   }
