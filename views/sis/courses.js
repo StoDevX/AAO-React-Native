@@ -62,7 +62,7 @@ export default class CoursesView extends React.Component {
       sectionHeaderHasChanged: this.sectionHeaderHasChanged,
     }),
     refreshing: false,
-    loading: true,
+    loading: false,
     error: null,
     loggedIn: true,
   }
@@ -95,7 +95,6 @@ export default class CoursesView extends React.Component {
   }
 
   fetchData = async (forceFromServer=false) => {
-    this.setState({refreshing: true})
     try {
       let courses = await loadAllCourses(forceFromServer)
       if (courses instanceof SisAuthenticationError) {
@@ -164,10 +163,6 @@ export default class CoursesView extends React.Component {
 
     if (!this.state.loggedIn) {
       return <ErrorView route={this.props.route} navigator={this.props.navigator} />
-    }
-
-    if (this.state.loading) {
-      return <LoadingScreen />
     }
 
     return (
