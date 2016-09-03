@@ -10,10 +10,11 @@ import {
   Text,
   View,
 } from 'react-native'
-import type {BusStopType} from './types'
+import type {BusStopType} from '../types'
 import moment from 'moment-timezone'
+
 const CENTRAL_TZ = 'America/Winnipeg'
-const TIME_FORMAT = 'HH:mm:ss'
+const TIME_FORMAT = 'H:mma'
 
 const styles = StyleSheet.create({
   container: {
@@ -40,18 +41,21 @@ function getNextStopTime(times, currentTime=moment.tz(CENTRAL_TZ)): string|false
   if (nextStopTime) {
     return nextStopTime.format('h:mma')
   }
+
   return false
 }
 
-export default function BusStopView(props: BusStopType) {
+export default function BusStopView({stop}: {stop: BusStopType}) {
   return (
     <View style={styles.container}>
-      <Text style={styles.location}>{props.location}</Text>
-      <Text style={styles.stopTime}>{getNextStopTime(props.times) || 'None'}</Text>
+      <Text style={styles.location}>{stop.location}</Text>
+      <Text style={styles.stopTime}>{getNextStopTime(stop.times) || 'None'}</Text>
     </View>
   )
 }
 BusStopView.propTypes = {
-  location: React.PropTypes.string.isRequired,
-  times: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+  stop: React.PropTypes.shape({
+    location: React.PropTypes.string.isRequired,
+    times: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+  }).isRequired,
 }
