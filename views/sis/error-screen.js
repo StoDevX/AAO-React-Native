@@ -44,9 +44,9 @@ export default function ErrorView(props) {
       <Button
         onPress={() =>
           navigator.push({
-            id: 'SettingsView',
+            id: 'SISLoginView',
             index: route.index + 1,
-            title: 'Settings',
+            title: 'SIS Login',
             sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
           })
         }
