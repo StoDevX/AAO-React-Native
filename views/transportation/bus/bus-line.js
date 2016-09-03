@@ -30,6 +30,13 @@ let styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
+  busWillSkipStopTitle: {
+    color: c.iosText,
+  },
+  busWillSkipStopDetail: {},
+  busWillSkipStopDot: {
+    backgroundColor: 'transparent',
+  },
   row: {
     marginLeft: 0,
     paddingRight: 10,
@@ -50,7 +57,7 @@ let styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'left',
   },
-  itemPreview: {
+  itemDetail: {
     color: c.iosText,
     paddingLeft: 10,
     paddingRight: 10,
@@ -113,14 +120,34 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
         <View style={[styles.bar, {backgroundColor: color}]} />
         <View style={[styles.rowContainer]}>
           {pairs.map(([place, time], i) =>
-            <View key={i} style={[styles.row, i < pairs.length - 1 ? styles.notLastRowContainer : null]}>
-              <View style={[styles.dot, now.isAfter(moment.tz(time, 'h:mma', TIMEZONE)) ? styles.passedStop : styles.beforeStop]} />
+            <View
+              key={i}
+              style={[
+                styles.row,
+                i < pairs.length - 1 ? styles.notLastRowContainer : null,
+              ]}
+            >
+              <View style={[
+                styles.dot,
+                now.isAfter(moment.tz(time, 'h:mma', TIMEZONE))
+                  ? styles.passedStop
+                  : styles.beforeStop,
+                time === false
+                    ? styles.busWillSkipStopDot
+                    : null,
+              ]} />
               <View style={{flex: 1}}>
-                <Text style={styles.itemTitle}>
+                <Text style={[
+                  styles.itemTitle,
+                  time === false ? styles.busWillSkipStopTitle : null,
+                ]}>
                   {place}
                 </Text>
                 <Text
-                  style={styles.itemPreview}
+                  style={[
+                    styles.itemDetail,
+                    time === false ? styles.busWillSkipStopDetail : null,
+                  ]}
                   numberOfLines={1}
                 >
                   {schedule.times
