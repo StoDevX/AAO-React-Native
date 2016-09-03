@@ -18,7 +18,7 @@ export function getLastTime(schedule: BusScheduleType) {
 export default function getSetOfStopsForNow(
   schedule: BusScheduleType,
   now: typeof moment=moment.tz(TIMEZONE)
-): string[]|'early'|'late' {
+): string[] {
 
   let times: string[]|void = find(schedule.times, times => {
     const startTime = moment.tz(head(times), TIME_FORMAT, TIMEZONE)
