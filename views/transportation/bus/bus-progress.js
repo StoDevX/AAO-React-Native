@@ -3,36 +3,66 @@
 import React from 'react'
 import {
   StyleSheet,
-  Text,
   View,
+  Text,
 } from 'react-native'
-import type {BusScheduleType} from './types'
 import moment from 'moment-timezone'
-import BusStopView from './bus-stop'
+import * as c from '../../components/colors'
 const TIMEZONE = 'America/Winnipeg'
 
 const styles = StyleSheet.create({
+  listContainer: {
+    backgroundColor: '#ffffff',
+  },
+  row: {
+    marginLeft: 0,
+    paddingRight: 10,
+    paddingTop: 8,
+    paddingBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  notLastRowContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ebebeb',
+  },
+  itemTitle: {
+    color: c.black,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 3,
+    fontSize: 16,
+    textAlign: 'left',
+  },
+  itemPreview: {
+    color: c.iosText,
+    paddingLeft: 10,
+    paddingRight: 10,
+    fontSize: 13,
+    textAlign: 'left',
+  },
   container: {
     flex: 1,
     flexDirection: 'row',
   },
   bar: {
-    width: 20,
+    width: 30,
     paddingTop: 5,
-    borderRadius: 10,
-    marginLeft: 2,
+    borderRadius: 30,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: -15,
+    marginBottom: -15,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-around',
-    backgroundColor: 'red',
   },
   dot: {
-    marginLeft: -15,
-    marginRight: 5,
+    marginLeft: -30,
+    marginRight: 15,
     height: 10,
     width: 10,
     borderRadius: 10,
-    // marginBottom: 5,
   },
   passedStop: {
     backgroundColor: 'black',
@@ -40,36 +70,30 @@ const styles = StyleSheet.create({
   beforeStop: {
     backgroundColor: 'white',
   },
-  textContainer: {
-    paddingTop: 5,
-    paddingBottom: 5,
+  rowContainer: {
     flex: 1,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flex: 1,
-    paddingTop: 2,
-    paddingBottom: 2,
   },
 })
 
-export default function BusProgressView({pairs, now}: {pairs: [string, string][], now: Object}) {
+export default function BusProgressView({pairs, now, color=c.red}: {pairs: [string, string][], now: Object, color: string}) {
   return (
-    <View style={styles.container}>
-      <View style={styles.bar} />
-      <View style={styles.textContainer}>
+    <View style={[styles.container, styles.listContainer]}>
+      <View style={[styles.bar, {backgroundColor: color}]} />
+      <View style={[styles.rowContainer]}>
         {pairs.map(([place, time], i) =>
-          <View key={i} style={styles.row}>
+          <View key={i} style={[styles.row, i < pairs.length - 1 ? styles.notLastRowContainer : null]}>
             <View style={[styles.dot, now.isAfter(moment.tz(time, 'h:mma', TIMEZONE)) ? styles.passedStop : styles.beforeStop]} />
-            <BusStopView style={{flex: 1}} stop={place} time={time} />
+            <View style={{flex: 1}}>
+              <Text style={styles.itemTitle}>{place}</Text>
+              <Text style={styles.itemPreview}>{time === false ? 'None' : time}</Text>
+            </View>
           </View>)}
       </View>
     </View>
   )
 }
 BusProgressView.propTypes = {
+  color: React.PropTypes.string,
   now: React.PropTypes.object.isRequired,
   pairs: React.PropTypes.array.isRequired,
 }

@@ -14,11 +14,11 @@ export default class BusView extends React.Component {
   componentWillMount() {
     // This updates the screen every second, so that the "next bus" times are
     // updated without needing to leave and come back.
-    // this.setState({intervalId: setInterval(this.updateTime, 1000)})
+    this.setState({intervalId: setInterval(this.updateTime, 1000)})
   }
 
   componentWillUnmount() {
-    // clearTimeout(this.state.intervalId)
+    clearTimeout(this.state.intervalId)
   }
 
   updateTime = () => {
@@ -27,9 +27,16 @@ export default class BusView extends React.Component {
 
   render() {
     return (
-      <ScrollView contentInset={{bottom: 49}} automaticallyAdjustContentInsets={false}>
-        {busInfo.map((busLine: BusLineType) =>
-          <BusLineView key={busLine.line} line={busLine} />)}
+      <ScrollView
+        contentInset={{bottom: 49}}
+        automaticallyAdjustContentInsets={false}
+      >
+        {busInfo.map((busLine: BusLineType, i) =>
+          <BusLineView
+            key={busLine.line}
+            style={{marginBottom: i < busInfo.length - 1 ? 25 : 45}}
+            line={busLine}
+          />)}
       </ScrollView>
     )
   }
