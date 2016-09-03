@@ -26,6 +26,66 @@ let styles = StyleSheet.create({
   rowSectionHeaderText: {
     color: 'rgb(113, 113, 118)',
   },
+  listContainer: {
+    backgroundColor: '#ffffff',
+    flex: 1,
+    flexDirection: 'row',
+  },
+  row: {
+    marginLeft: 0,
+    paddingRight: 10,
+    paddingTop: 8,
+    paddingBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  notLastRowContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ebebeb',
+  },
+  itemTitle: {
+    color: c.black,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 3,
+    fontSize: 16,
+    textAlign: 'left',
+  },
+  itemPreview: {
+    color: c.iosText,
+    paddingLeft: 10,
+    paddingRight: 10,
+    fontSize: 13,
+    textAlign: 'left',
+  },
+  bar: {
+    width: 30,
+    paddingTop: 5,
+    borderRadius: 30,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: -15,
+    marginBottom: -15,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  dot: {
+    marginLeft: -30,
+    marginRight: 15,
+    height: 10,
+    width: 10,
+    borderRadius: 10,
+  },
+  passedStop: {
+    backgroundColor: 'black',
+  },
+  beforeStop: {
+    backgroundColor: 'white',
+  },
+  rowContainer: {
+    flex: 1,
+  },
 })
 
 export default function BusLineView({line, style}: {line: BusLineType, style: Object|number}) {
@@ -49,11 +109,19 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
           {line.line.toUpperCase()}
         </Text>
       </View>
-      <BusProgressView
-        pairs={pairs}
-        now={now}
-        color={color}
-      />
+      <View style={[styles.listContainer]}>
+        <View style={[styles.bar, {backgroundColor: color}]} />
+        <View style={[styles.rowContainer]}>
+          {pairs.map(([place, time], i) =>
+            <View key={i} style={[styles.row, i < pairs.length - 1 ? styles.notLastRowContainer : null]}>
+              <View style={[styles.dot, now.isAfter(moment.tz(time, 'h:mma', TIMEZONE)) ? styles.passedStop : styles.beforeStop]} />
+              <View style={{flex: 1}}>
+                <Text style={styles.itemTitle}>{place}</Text>
+                <Text style={styles.itemPreview}>{time === false ? 'None' : time}</Text>
+              </View>
+            </View>)}
+        </View>
+      </View>
     </View>
   )
 }
