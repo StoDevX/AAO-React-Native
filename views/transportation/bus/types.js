@@ -8,8 +8,14 @@ export type BusLineType = {
 
 export type BusScheduleType = {
   days: DayOfWeekType[],
-  stops: string[],
+  stops: BusStopType[],
+  coordinates?: [number, number][],
   times: BusTimeListType[],
+};
+
+export type BusStopType = string | {
+  name: string,
+  latlong: [number, number],
 };
 
 export type BusTimeListType = (string|false)[];

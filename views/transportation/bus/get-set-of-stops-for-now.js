@@ -31,7 +31,7 @@ export default function getSetOfStopsForNow(
   }
 
   let firstBus = getFirstTime(schedule)
-  if (now.isBefore(firstBus)) {
+  if (now.isSameOrBefore(firstBus)) {
     return head(schedule.times)
   }
 

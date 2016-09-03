@@ -13,7 +13,8 @@ import {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 2,
+    // marginTop: 2,
+    flex: 1,
     marginRight: 5,
     marginLeft: 5,
     flexDirection: 'row',
