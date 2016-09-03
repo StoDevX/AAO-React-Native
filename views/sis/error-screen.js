@@ -47,7 +47,7 @@ export default function ErrorView(props) {
             id: 'SettingsView',
             index: route.index + 1,
             title: 'Settings',
-            sceneConfig: Navigator.SceneConfigs.PushFromRight,
+            sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
           })
         }
         style={styles.errorButton}
