@@ -35,11 +35,11 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
 
   let pairs = zip(schedule.stops, times, schedule.coordinates)
 
-  let color = c.red
+  let color = c.salmon
   if (line.line === 'Blue') {
-    color = c.blue
+    color = c.steelBlue
   } else if (line.line === 'Express') {
-    color = c.teal
+    color = c.paleGreen
   }
 
   return (
