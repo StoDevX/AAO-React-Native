@@ -1,15 +1,9 @@
 // @flow
-/**
- * All About Olaf
- * Bus tab of the transportation page
- */
-
 import React from 'react'
 import {ScrollView} from 'react-native'
 import busInfo from '../../../data/bus-times.json'
-import type {BusLineType} from '../types'
+import type {BusLineType} from './types'
 import BusLineView from './bus-line'
-
 
 export default class BusView extends React.Component {
   state = {
@@ -20,11 +14,11 @@ export default class BusView extends React.Component {
   componentWillMount() {
     // This updates the screen every second, so that the "next bus" times are
     // updated without needing to leave and come back.
-    this.setState({intervalId: setInterval(this.updateTime, 1000)})
+    // this.setState({intervalId: setInterval(this.updateTime, 1000)})
   }
 
   componentWillUnmount() {
-    clearTimeout(this.state.intervalId)
+    // clearTimeout(this.state.intervalId)
   }
 
   updateTime = () => {

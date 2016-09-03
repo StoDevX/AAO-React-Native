@@ -10,11 +10,6 @@ import {
   Text,
   View,
 } from 'react-native'
-import type {BusStopType} from '../types'
-import moment from 'moment-timezone'
-
-const CENTRAL_TZ = 'America/Winnipeg'
-const TIME_FORMAT = 'H:mma'
 
 const styles = StyleSheet.create({
   container: {
@@ -33,29 +28,15 @@ const styles = StyleSheet.create({
   },
 })
 
-function getNextStopTime(times, currentTime=moment.tz(CENTRAL_TZ)): string|false {
-  let nextStopTime = times
-    .map(t => moment.tz(t, TIME_FORMAT, true, CENTRAL_TZ))
-    .find(time => currentTime.isBefore(time))
-
-  if (nextStopTime) {
-    return nextStopTime.format('h:mma')
-  }
-
-  return false
-}
-
-export default function BusStopView({stop}: {stop: BusStopType}) {
+export default function BusStopView({stop, time}: {stop: string, time: false|string}) {
   return (
     <View style={styles.container}>
-      <Text style={styles.location}>{stop.location}</Text>
-      <Text style={styles.stopTime}>{getNextStopTime(stop.times) || 'None'}</Text>
+      <Text style={styles.location}>{stop}</Text>
+      <Text style={styles.stopTime}>{time === false ? 'None' : time}</Text>
     </View>
   )
 }
 BusStopView.propTypes = {
-  stop: React.PropTypes.shape({
-    location: React.PropTypes.string.isRequired,
-    times: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-  }).isRequired,
+  stop: React.PropTypes.string.isRequired,
+  time: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.bool]).isRequired,
 }
