@@ -10,6 +10,7 @@ export default [
     component: NewsContainer,
     props: {
       url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=https://wp.stolaf.edu/feed',
+      name: 'St. Olaf',
     },
   },
   {
@@ -19,6 +20,7 @@ export default [
     component: NewsContainer,
     props: {
       url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http://oleville.com/politicole/feed',
+      name: 'PoliticOle',
     },
   },
   {
@@ -28,6 +30,7 @@ export default [
     component: NewsContainer,
     props: {
       url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http://manitoumessenger.com/feed',
+      name: 'Mess',
     },
   },
 ]

@@ -22,6 +22,7 @@ const entities = new Entities()
 
 export default class NewsContainer extends React.Component {
   static propTypes = {
+    name: PropTypes.string.isRequired,
     navigator: PropTypes.instanceOf(Navigator).isRequired,
     route: PropTypes.object.isRequired,
     url: PropTypes.string.isRequired,
@@ -85,6 +86,7 @@ export default class NewsContainer extends React.Component {
       id: 'NewsItemView',
       index: this.props.route.index + 1,
       title: title,
+      backButtonTitle: this.props.name,
       props: {story},
     })
   }
