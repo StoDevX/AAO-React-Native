@@ -10,6 +10,7 @@ import {
   TouchableHighlight,
   Text,
 } from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
 import AlphabetListView from 'react-native-alphabetlistview'
 
 import groupBy from 'lodash/groupBy'
@@ -26,12 +27,14 @@ let styles = StyleSheet.create({
   listView: {
     paddingRight: 16,
   },
-  row: {
+  textRows: {
     marginLeft: 20,
     paddingRight: 10,
     paddingTop: 8,
     paddingBottom: 8,
     height: 70,
+    flexDirection: 'column',
+    flex: 1,
   },
   notLastRow: {
     borderBottomWidth: 1,
@@ -62,6 +65,17 @@ let styles = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
   },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  arrowIcon: {
+    color: c.iosText,
+    fontSize: 20,
+    marginRight: 6,
+    marginLeft: 4,
+    marginTop: 8,
+  },
 })
 
 export class DictionaryView extends React.Component {
@@ -80,12 +94,15 @@ export class DictionaryView extends React.Component {
     })
   }
 
-  renderRow = ({isFirst, isLast, sectionId, index, item}) => {
+  renderRow = ({isLast, item}) => {
     return (
       <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressRow(item)}>
         <View style={[styles.row, !isLast && styles.notLastRow]}>
-          <Text style={styles.itemTitle} numberOfLines={1}>{item.word}</Text>
-          <Text style={styles.itemPreview} numberOfLines={2}>{item.definition}</Text>
+          <View style={[styles.textRows]}>
+            <Text style={styles.itemTitle} numberOfLines={1}>{item.word}</Text>
+            <Text style={styles.itemPreview} numberOfLines={2}>{item.definition}</Text>
+          </View>
+          <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
         </View>
       </TouchableHighlight>
     )
