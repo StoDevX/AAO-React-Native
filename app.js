@@ -16,7 +16,7 @@ import {
 import AboutView from './views/about'
 import CalendarView from './views/calendar'
 import ContactsView from './views/contacts'
-import DictionaryView from './views/dictionary/dictionary'
+import {DictionaryView, DictionaryDetailView} from './views/dictionary'
 import DirectoryView from './views/directory'
 import HomeView from './views/home'
 import MapView from './views/map'
@@ -48,6 +48,7 @@ function renderScene(route, navigator) {
     case 'CalendarView': return <CalendarView {...props} />
     case 'ContactsView': return <ContactsView {...props} />
     case 'DictionaryView': return <DictionaryView {...props} />
+    case 'DictionaryDetailView': return <DictionaryDetailView {...props} />
     case 'MapView': return <MapView {...props} />
     case 'StreamingView': return <StreamingView {...props} />
     case 'NewsView': return <NewsView {...props} />
