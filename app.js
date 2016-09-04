@@ -79,22 +79,22 @@ const styles = StyleSheet.create({
   },
   navigationBar: {
     backgroundColor: c.olevilleGold,
-    paddingTop: 22,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomColor: c.iosNavbarBottomBorder,
+    // flexDirection: 'row',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    borderBottomColor: '#b2b2b2',
     borderBottomWidth: 1,
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 3,
+    // marginTop: 3,
   },
   backButtonText: {
     fontSize: 16,
     color: 'white',
-    fontFamily: 'System',
+    // fontFamily: 'System',
+    marginVertical: 10,
   },
   backButtonIcon: {
     color: 'white',
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: Platform.OS === 'ios' ? 16 : 20,
     fontWeight: 'bold',
-    marginTop: 14,
+    marginVertical: 10,
   },
   rightButton: {
     flexDirection: 'row',
@@ -160,7 +160,7 @@ function LeftButton(route, navigator, index, navState) {
       if (index <= 0) {
         return null
       }
-      let backTitle = navState.routeStack[index-1].title
+      let backTitle = navState.routeStack[index].backButtonTitle || navState.routeStack[index-1].title
       if (index === 1) {
         backTitle = 'Home'
       }
@@ -199,7 +199,7 @@ function RightButton(route) {
 function Title(route) {
   return (
     <Text
-      style={[styles.titleText, {maxWidth: Dimensions.get('window').width / 2}]}
+      style={[styles.titleText, {maxWidth: Dimensions.get('window').width / 2.5}]}
       numberOfLines={1}
       ellipsizeMode='tail'
     >
