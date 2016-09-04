@@ -151,10 +151,10 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
   let lineTitle = line.line
   if (timesIndex === 0 && now.isBefore(head(times))) {
     lineTitle += ` — Starting ${head(times).format('h:mma')}`
-  } else if (timesIndex === schedule.times.length - 1) {
-    lineTitle += ' — Last Bus'
   } else if (now.isAfter(last(times))) {
     lineTitle += ' — Over for Today'
+  } else if (timesIndex === schedule.times.length - 1) {
+    lineTitle += ' — Last Bus'
   } else {
     lineTitle += ' — Running'
   }
