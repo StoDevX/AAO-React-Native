@@ -4,7 +4,7 @@
     "schedules": [
       {
         "days": ["mo", "tu", "we", "th", "fr", "sa"],
-        "stops": ["St. Olaf", "Carleton", "Food Co-op", "Cub/Target", "El Taquila", "Food Co-op", "Carleton", "St. Olaf"],
+        "stops": ["St. Olaf", "Carleton", "Food Co-op", "Cub/Target", "El Tequila", "Food Co-op", "Carleton", "St. Olaf"],
         "coordinates": [[44.462210, -93.183026], [44.460719, -93.155794], [44.454498, -93.161754], [44.433355, -93.186826], [44.448913, -93.171491], [44.454498, -93.161754], [44.460719, -93.155794], [44.462210, -93.183026]],
         "times": [["4:15pm",  "4:22pm",   "4:23pm",     "4:33pm",     "4:37pm",     "4:43pm",     "4:44pm",   "4:52pm"],
                   ["4:55pm",  "5:02pm",   "5:03pm",     "5:13pm",     "5:17pm",     "5:23pm",     "5:24pm",   "5:32pm"],
@@ -20,7 +20,7 @@
       },
       {
         "days": ["su"],
-        "stops": ["St. Olaf", "Carleton", "Food Co-op", "Cub/Target", "El Taquila", "Food Co-op", "Carleton", "St. Olaf"],
+        "stops": ["St. Olaf", "Carleton", "Food Co-op", "Cub/Target", "El Tequila", "Food Co-op", "Carleton", "St. Olaf"],
         "coordinates": [[44.462210, -93.183026], [44.460719, -93.155794], [44.454498, -93.161754], [44.433355, -93.186826], [44.448913, -93.171491], [44.454498, -93.161754], [44.460719, -93.155794], [44.462210, -93.183026]],
         "times": [["1:15pm",  "1:22pm",   "1:23pm",     "1:33pm",     "1:37pm",     "1:43pm",     "1:44pm",   "1:52pm"],
                   ["1:55pm",  "2:02pm",   "2:03pm",     "2:13pm",     "2:17pm",     "2:23pm",     "2:24pm",   "2:32pm"],
