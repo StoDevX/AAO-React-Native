@@ -37,6 +37,7 @@ let styles = StyleSheet.create({
   busWillSkipStopDetail: {},
   busWillSkipStopDot: {
     backgroundColor: 'transparent',
+    borderColor: 'transparent',
   },
   row: {
     marginLeft: 0,
@@ -66,35 +67,33 @@ let styles = StyleSheet.create({
     textAlign: 'left',
   },
   bar: {
-    width: 30,
     paddingTop: 5,
     borderRadius: 30,
     marginLeft: 10,
     marginRight: 15,
     marginTop: -15,
     marginBottom: -15,
+    width: 5,
   },
   dot: {
     marginLeft: -35,
-    marginRight: 15,
-    height: 10,
-    width: 10,
-    borderRadius: 10,
-  },
-  passedStop: {
-    backgroundColor: 'black',
-  },
-  beforeStop: {
-    backgroundColor: 'white',
-  },
-  atStop: {
-    // backgroundColor: 'red',
-    borderWidth: 3,
-    borderColor: 'white',
-    width: 20,
-    height: 20,
-    marginLeft: -40,
     marginRight: 10,
+    height: 15,
+    width: 15,
+    borderRadius: 15,
+    backgroundColor: 'white',
+    borderWidth: 3,
+  },
+  passedStop: {},
+  beforeStop: {},
+  atStop: {
+    borderWidth: 3,
+    height: 20,
+    width: 20,
+    borderRadius: 20,
+    marginRight: 7.5,
+    marginLeft: -37.5,
+    borderColor: 'white',
   },
   rowContainer: {
     flex: 1,
@@ -131,25 +130,11 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
     barColor = c.moneyGreen
   }
 
-  let passedDotColor = c.brickRed
+  let currentStopColor = c.brickRed
   if (line.line === 'Blue') {
-    passedDotColor = c.midnightBlue
+    currentStopColor = c.midnightBlue
   } else if (line.line === 'Express') {
-    passedDotColor = c.hollyGreen
-  }
-
-  let unpassedDotColor = c.paleRose
-  if (line.line === 'Blue') {
-    unpassedDotColor = c.iceberg
-  } else if (line.line === 'Express') {
-    unpassedDotColor = c.honeydew
-  }
-
-  let activeDotColor = barColor
-  if (line.line === 'Blue') {
-    activeDotColor = barColor
-  } else if (line.line === 'Express') {
-    activeDotColor = barColor
+    currentStopColor = c.hollyGreen
   }
 
   return (
@@ -173,10 +158,10 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
               <View style={[
                 styles.dot,
                 time && now.isAfter(time)
-                  ? [styles.passedStop, {backgroundColor: passedDotColor}]
-                  : [styles.beforeStop, {backgroundColor: unpassedDotColor}],
+                  ? [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}]
+                  : [styles.beforeStop, {borderColor: barColor}],
                 time && now.isSame(time, 'minute')
-                  ? [styles.atStop, {backgroundColor: passedDotColor, borderColor: unpassedDotColor}]
+                  ? [styles.atStop, {borderColor: currentStopColor}]
                   : null,
                 time === false
                   ? styles.busWillSkipStopDot
