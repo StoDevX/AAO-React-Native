@@ -89,8 +89,8 @@ export default class CalendarView extends React.Component {
 
     if (data) {
       data.forEach(event => {
-        event.startTime = moment(event.start.dateTime)
-        event.endTime = moment(event.end.dateTime)
+        event.startTime = moment(event.start.date || event.start.dateTime)
+        event.endTime = moment(event.end.date || event.end.dateTime)
       })
       let grouped = groupBy(data, event => event.startTime.format('ddd  MMM Do'))
       this.setState({events: this.state.events.cloneWithRowsAndSections(grouped)})
@@ -177,7 +177,6 @@ let styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   row: {
-    minHeight: 88,
     // marginLeft: 10,
     // paddingRight: 10,
   },
