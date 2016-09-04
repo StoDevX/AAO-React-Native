@@ -4,11 +4,10 @@ import moment from 'moment-timezone'
 import head from 'lodash/head'
 import last from 'lodash/last'
 import find from 'lodash/find'
-const TIMEZONE = 'America/Winnipeg'
 
 export default function getSetOfStopsForNow(
   schedule: BusScheduleType,
-  now: typeof moment=moment.tz(TIMEZONE)
+  now: typeof moment
 ): (typeof moment)[] {
   let times: string[]|void = find(schedule.times, times => {
     const startTime = head(times)

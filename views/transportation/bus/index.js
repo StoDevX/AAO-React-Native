@@ -4,6 +4,8 @@ import {ScrollView} from 'react-native'
 import busInfo from '../../../data/bus-times.json'
 import type {BusLineType} from './types'
 import BusLineView from './bus-line'
+import moment from 'moment-timezone'
+const TIMEZONE = 'America/Winnipeg'
 
 export default class BusView extends React.Component {
   state = {
@@ -26,6 +28,10 @@ export default class BusView extends React.Component {
   }
 
   render() {
+    // const now = moment.tz('6:53am', 'h:mma', true, TIMEZONE)
+    // now.dayOfYear(moment.tz(TIMEZONE).dayOfYear())
+    const now = moment.tz(TIMEZONE)
+
     return (
       <ScrollView
         contentInset={{bottom: 49}}
@@ -36,6 +42,7 @@ export default class BusView extends React.Component {
             key={busLine.line}
             style={{marginBottom: i < busInfo.length - 1 ? 5 : 15}}
             line={busLine}
+            now={now}
           />)}
       </ScrollView>
     )

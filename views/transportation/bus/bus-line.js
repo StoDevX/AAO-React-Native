@@ -117,11 +117,8 @@ let styles = StyleSheet.create({
   },
 })
 
-export default function BusLineView({line, style}: {line: BusLineType, style: Object|number}) {
-  let schedule = getScheduleForNow(line.schedules)
-  // let now = moment.tz('5:53pm', 'h:mma', true, TIMEZONE)
-  // now.dayOfYear(moment.tz(TIMEZONE).dayOfYear())
-  let now = moment.tz(TIMEZONE)
+export default function BusLineView({line, style, now}: {line: BusLineType, style: Object|number, now: typeof moment}) {
+  let schedule = getScheduleForNow(line.schedules, now)
 
   schedule.times = schedule.times.map(timeset => {
     return timeset.map(time =>
@@ -227,5 +224,6 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
 }
 BusLineView.propTypes = {
   line: React.PropTypes.object.isRequired,
+  now: React.PropTypes.instanceOf(moment).isRequired,
   style: React.PropTypes.object,
 }
