@@ -5,8 +5,8 @@ import {
   Text,
 } from 'react-native'
 
+import moment from 'moment-timezone'
 import * as c from '../components/colors'
-import padEnd from 'lodash/padEnd'
 import {getText, parseHtml} from '../../lib/html'
 
 let styles = StyleSheet.create({
@@ -29,40 +29,12 @@ let styles = StyleSheet.create({
   },
 })
 
-function getString(date) {
-  let month = date.getMonth() + 1 // offset since JS uses 0-11, not 1-12
-  let day = date.getDate()
-
-  let hours = date.getHours()
-  let isMorning = true
-  if (date.getHours() > 12) {
-    hours = date.getHours() - 12
-    isMorning = false
-  }
-
-  let min = date.getMinutes()
-  if (min.toString().length < 2) {
-    min = padEnd(min, 2, '0')
-  }
-
-  if (isMorning) {
-    min += 'AM'
-  } else {
-    min += 'PM'
-  }
-
-  return `${month}/${day} ${hours}:${min}`
-}
-
 // PROPS: eventTitle, location, startTime, endTime
 export default function EventView(props: {eventTitle: string, location: string, startTime?: string, endTime?: string, style?: any}) {
   let title = getText(parseHtml(props.eventTitle))
 
-  let st = new Date(props.startTime)
-  let et = new Date(props.endTime)
-
-  let stString = getString(st)
-  let etString = getString(et)
+  let stString = moment(props.startTime).format('M/D h:mma')
+  let etString = moment(props.endTime).format('M/D h:mma')
 
   let showTimes = props.startTime && props.endTime
   let showLocation = Boolean(props.location)
