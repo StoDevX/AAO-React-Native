@@ -67,13 +67,9 @@ let styles = StyleSheet.create({
     textAlign: 'left',
   },
   bar: {
-    paddingTop: 5,
-    borderRadius: 30,
-    marginLeft: 10,
-    marginRight: 15,
-    marginTop: -15,
-    marginBottom: -15,
     width: 5,
+    marginLeft: 20,
+    marginRight: 25,
   },
   dot: {
     marginLeft: -35,
