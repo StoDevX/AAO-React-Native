@@ -6,6 +6,8 @@ import type {BusLineType} from './types'
 import getScheduleForNow from './get-schedule-for-now'
 import getSetOfStopsForNow from './get-set-of-stops-for-now'
 import zip from 'lodash/zip'
+import head from 'lodash/head'
+import last from 'lodash/last'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'
 
@@ -54,6 +56,9 @@ let styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ebebeb',
   },
+  passedStopDetail: {
+
+  },
   itemTitle: {
     color: c.black,
     paddingLeft: 0,
@@ -101,6 +106,9 @@ let styles = StyleSheet.create({
     height: 20,
     width: 20,
     borderColor: 'white',
+    borderWidth: 3,
+    backgroundColor: 'white',
+  },
   },
 })
 
@@ -157,39 +165,40 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
       </View>
       <View style={[styles.listContainer]}>
         {pairs.map(([place, time], i) => {
+          let afterStop = time && now.isAfter(time)
+          let atStop = time && now.isSame(time, 'minute')
+          let beforeStop = !afterStop && !atStop
+          let skippingStop = time === false
+
           return <View key={i} style={styles.row}>
             <View style={styles.barContainer}>
               <View style={[styles.bar, {backgroundColor: barColor}]} />
               <View
                 style={[
                   styles.dot,
-                  time && now.isAfter(time)
-                    ? [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}]
-                    : [styles.beforeStop, {borderColor: barColor}],
-                  time && now.isSame(time, 'minute')
-                    ? [styles.atStop, {borderColor: currentStopColor}]
-                    : null,
-                  time === false
-                    ? styles.busWillSkipStopDot
-                    : null,
+                  afterStop && [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}],
+                  beforeStop && [styles.beforeStop, {borderColor: barColor}],
+                  atStop && [styles.atStop, {borderColor: currentStopColor}],
+                  skippingStop && styles.busWillSkipStopDot,
                 ]}
               />
               <View style={[styles.bar, {backgroundColor: barColor}]} />
             </View>
             <View style={[
               styles.rowDetail,
-              i < pairs.length - 1 ? styles.notLastRowContainer : null,
+              i < pairs.length - 1 && styles.notLastRowContainer,
             ]}>
               <Text style={[
                 styles.itemTitle,
-                time === false ? styles.busWillSkipStopTitle : null,
+                skippingStop && styles.busWillSkipStopTitle,
+                atStop && styles.atStopTitle,
               ]}>
                 {place}
               </Text>
               <Text
                 style={[
                   styles.itemDetail,
-                  time === false ? styles.busWillSkipStopDetail : null,
+                  skippingStop && styles.busWillSkipStopDetail,
                 ]}
                 numberOfLines={1}
               >
