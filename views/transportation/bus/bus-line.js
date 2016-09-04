@@ -109,6 +109,8 @@ let styles = StyleSheet.create({
     borderWidth: 3,
     backgroundColor: 'white',
   },
+  atStopTitle: {
+    fontWeight: 'bold',
   },
 })
 
