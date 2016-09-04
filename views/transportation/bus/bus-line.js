@@ -119,9 +119,9 @@ let styles = StyleSheet.create({
 
 export default function BusLineView({line, style}: {line: BusLineType, style: Object|number}) {
   let schedule = getScheduleForNow(line.schedules)
-  // let now = moment.tz('5:57pm', 'h:mma', true, TIMEZONE)
-  // now.dayOfYear(moment.tz(TIMEZONE).dayOfYear())
-  let now = moment.tz(TIMEZONE)
+  let now = moment.tz('5:53pm', 'h:mma', true, TIMEZONE)
+  now.dayOfYear(moment.tz(TIMEZONE).dayOfYear())
+  // let now = moment.tz(TIMEZONE)
 
   schedule.times = schedule.times.map(timeset => {
     return timeset.map(time =>
@@ -151,12 +151,14 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
     currentStopColor = c.hollyGreen
   }
 
+  let isLastBus = timesIndex === schedule.times.length - 1
+
   let lineTitle = line.line
   if (timesIndex === 0 && now.isBefore(head(times))) {
     lineTitle += ` — Starting ${head(times).format('h:mma')}`
   } else if (now.isAfter(last(times))) {
     lineTitle += ' — Over for Today'
-  } else if (timesIndex === schedule.times.length - 1) {
+  } else if (isLastBus) {
     lineTitle += ' — Last Bus'
   } else {
     lineTitle += ' — Running'
@@ -173,8 +175,9 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
         {pairs.map(([place, time], i) => {
           let afterStop = time && now.isAfter(time)
           let atStop = time && now.isSame(time, 'minute')
-          let beforeStop = !afterStop && !atStop
+          let beforeStop = !afterStop && !atStop && time !== false
           let skippingStop = time === false
+          let isLastRow = i === pairs.length - 1
 
           return <View key={i} style={styles.row}>
             <View style={styles.barContainer}>
@@ -192,7 +195,7 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
             </View>
             <View style={[
               styles.rowDetail,
-              i < pairs.length - 1 && styles.notLastRowContainer,
+              !isLastRow && styles.notLastRowContainer,
             ]}>
               <Text style={[
                 styles.itemTitle,
