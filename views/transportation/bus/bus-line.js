@@ -9,6 +9,7 @@ import zip from 'lodash/zip'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'
 
+const TIME_FORMAT = 'h:mma'
 const TIMEZONE = 'America/Winnipeg'
 
 let styles = StyleSheet.create({
@@ -69,15 +70,12 @@ let styles = StyleSheet.create({
     paddingTop: 5,
     borderRadius: 30,
     marginLeft: 10,
-    marginRight: 10,
+    marginRight: 15,
     marginTop: -15,
     marginBottom: -15,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-around',
   },
   dot: {
-    marginLeft: -30,
+    marginLeft: -35,
     marginRight: 15,
     height: 10,
     width: 10,
@@ -89,38 +87,83 @@ let styles = StyleSheet.create({
   beforeStop: {
     backgroundColor: 'white',
   },
+  atStop: {
+    // backgroundColor: 'red',
+    borderWidth: 3,
+    borderColor: 'white',
+    width: 20,
+    height: 20,
+    marginLeft: -40,
+    marginRight: 10,
+  },
   rowContainer: {
     flex: 1,
   },
 })
 
+// const lineColors = StyleSheet.create({
+//   Blue:
+// })
+
 export default function BusLineView({line, style}: {line: BusLineType, style: Object|number}) {
   let schedule = getScheduleForNow(line.schedules)
-  let now = moment.tz(TIMEZONE)
+  let now = moment.tz('5:21pm', 'h:mma', true, TIMEZONE)
+  now.dayOfYear(moment.tz(TIMEZONE).dayOfYear())
+
+  schedule.times = schedule.times.map(timeset => {
+    return timeset.map(time =>
+      time === false
+        ? false
+        : moment
+          .tz(time, TIME_FORMAT, true, TIMEZONE)
+          .dayOfYear(now.dayOfYear()))
+  })
+
   let times = getSetOfStopsForNow(schedule, now)
   let timesIndex = schedule.times.indexOf(times)
 
-  let pairs = zip(schedule.stops, times, schedule.coordinates)
+  let pairs: [[string], [typeof moment]] = zip(schedule.stops, times)
 
-  let color = c.salmon
+  let barColor = c.salmon
   if (line.line === 'Blue') {
-    color = c.steelBlue
+    barColor = c.steelBlue
   } else if (line.line === 'Express') {
-    color = c.paleGreen
+    barColor = c.moneyGreen
+  }
+
+  let passedDotColor = c.brickRed
+  if (line.line === 'Blue') {
+    passedDotColor = c.midnightBlue
+  } else if (line.line === 'Express') {
+    passedDotColor = c.hollyGreen
+  }
+
+  let unpassedDotColor = c.paleRose
+  if (line.line === 'Blue') {
+    unpassedDotColor = c.iceberg
+  } else if (line.line === 'Express') {
+    unpassedDotColor = c.honeydew
+  }
+
+  let activeDotColor = barColor
+  if (line.line === 'Blue') {
+    activeDotColor = barColor
+  } else if (line.line === 'Express') {
+    activeDotColor = barColor
   }
 
   return (
     <View style={[styles.container, style]}>
       <View style={styles.rowSectionHeader}>
         <Text style={styles.rowSectionHeaderText}>
-          {line.line.toUpperCase()}
+          {line.line.toUpperCase()} • {now.format('h:mma')}
         </Text>
       </View>
       <View style={[styles.listContainer]}>
-        <View style={[styles.bar, {backgroundColor: color}]} />
+        <View style={[styles.bar, {backgroundColor: barColor}]} />
         <View style={[styles.rowContainer]}>
-          {pairs.map(([place, time], i) =>
-            <View
+          {pairs.map(([place, time], i) => {
+            return <View
               key={i}
               style={[
                 styles.row,
@@ -129,12 +172,15 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
             >
               <View style={[
                 styles.dot,
-                now.isAfter(moment.tz(time, 'h:mma', TIMEZONE))
-                  ? styles.passedStop
-                  : styles.beforeStop,
+                time && now.isAfter(time)
+                  ? [styles.passedStop, {backgroundColor: passedDotColor}]
+                  : [styles.beforeStop, {backgroundColor: unpassedDotColor}],
+                time && now.isSame(time, 'minute')
+                  ? [styles.atStop, {backgroundColor: passedDotColor, borderColor: unpassedDotColor}]
+                  : null,
                 time === false
-                    ? styles.busWillSkipStopDot
-                    : null,
+                  ? styles.busWillSkipStopDot
+                  : null,
               ]} />
               <View style={{flex: 1}}>
                 <Text style={[
@@ -153,11 +199,12 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
                   {schedule.times
                     .slice(timesIndex)
                     .map(timeSet => timeSet[i])
-                    .map(time => time === false ? 'None' : time)
+                    .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
                     .join(' • ')}
                 </Text>
               </View>
-            </View>)}
+            </View>
+          })}
         </View>
       </View>
     </View>
