@@ -13,7 +13,10 @@ export default function getSetOfStopsForNow(
   let times: string[]|void = find(schedule.times, times => {
     const startTime = head(times)
     const endTime = last(times)
-    return now.isBetween(startTime, endTime)
+    // Momentjs inclusivity: A [ indicates inclusion of a value. A ( indicates
+    // exclusion. If the inclusivity parameter is used, both indicators must
+    // be passed.
+    return now.isBetween(startTime, endTime, null, '[]')
   })
 
   if (times) {
