@@ -13,6 +13,7 @@ import {
 
 import delay from 'delay'
 
+import Icon from 'react-native-vector-icons/Ionicons'
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
 import * as c from '../components/colors'
@@ -73,9 +74,12 @@ export default class NewsContainer extends React.Component {
     let snippet = entities.decode(story.contentSnippet)
     return (
       <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressNews(title, story)}>
-        <View style={styles.rowContainer}>
-          <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
-          <Text style={styles.itemPreview} numberOfLines={2}>{snippet}</Text>
+        <View style={[styles.row]}>
+          <View style={[styles.rowContainer]}>
+            <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
+            <Text style={styles.itemPreview} numberOfLines={2}>{snippet}</Text>
+          </View>
+          <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
         </View>
       </TouchableHighlight>
     )
@@ -119,26 +123,35 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
     backgroundColor: '#ffffff',
   },
-  rowContainer: {
-    marginLeft: 10,
+  row: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ebebeb',
+    marginLeft: 20,
     paddingRight: 10,
     paddingTop: 8,
     paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ebebeb',
+  },
+  arrowIcon: {
+    color: c.iosText,
+    fontSize: 20,
+    marginRight: 6,
+    marginLeft: 6,
+    marginTop: 0,
+  },
+  rowContainer: {
+    flexDirection: 'column',
+    flex: 1,
   },
   itemTitle: {
     color: c.black,
-    paddingLeft: 10,
-    paddingRight: 10,
     paddingBottom: 3,
     fontSize: 16,
     textAlign: 'left',
   },
   itemPreview: {
     color: c.iosText,
-    paddingLeft: 10,
-    paddingRight: 10,
     fontSize: 13,
     textAlign: 'left',
   },
