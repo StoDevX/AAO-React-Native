@@ -74,7 +74,7 @@ export class DictionaryView extends React.Component {
     this.props.navigator.push({
       id: 'DictionaryDetailView',
       index: this.props.route.index + 1,
-      title: data.word + data.word,
+      title: data.word,
       backButtonTitle: 'Dictionary',
       props: {item: data},
     })
