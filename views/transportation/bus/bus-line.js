@@ -119,9 +119,9 @@ let styles = StyleSheet.create({
 
 export default function BusLineView({line, style}: {line: BusLineType, style: Object|number}) {
   let schedule = getScheduleForNow(line.schedules)
-  let now = moment.tz('5:53pm', 'h:mma', true, TIMEZONE)
-  now.dayOfYear(moment.tz(TIMEZONE).dayOfYear())
-  // let now = moment.tz(TIMEZONE)
+  // let now = moment.tz('5:53pm', 'h:mma', true, TIMEZONE)
+  // now.dayOfYear(moment.tz(TIMEZONE).dayOfYear())
+  let now = moment.tz(TIMEZONE)
 
   schedule.times = schedule.times.map(timeset => {
     return timeset.map(time =>
