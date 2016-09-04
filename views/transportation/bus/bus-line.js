@@ -170,7 +170,7 @@ export default function BusLineView({line, style, now}: {line: BusLineType, styl
       </View>
       <View style={[styles.listContainer]}>
         {pairs.map(([place, time], i) => {
-          let afterStop = time && now.isAfter(time)
+          let afterStop = time && now.isAfter(time, 'minute')
           let atStop = time && now.isSame(time, 'minute')
           let beforeStop = !afterStop && !atStop && time !== false
           let skippingStop = time === false
