@@ -19,7 +19,7 @@ let styles = StyleSheet.create({
   rowSectionHeader: {
     paddingTop: 5,
     paddingBottom: 5,
-    paddingLeft: 45,
+    paddingLeft: 15,
     borderBottomWidth: 1,
     borderColor: '#ebebeb',
   },
