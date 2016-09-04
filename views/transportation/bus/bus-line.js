@@ -19,7 +19,7 @@ let styles = StyleSheet.create({
   rowSectionHeader: {
     paddingTop: 5,
     paddingBottom: 5,
-    paddingLeft: 55,
+    paddingLeft: 45,
     borderBottomWidth: 1,
     borderColor: '#ebebeb',
   },
@@ -29,7 +29,7 @@ let styles = StyleSheet.create({
   listContainer: {
     backgroundColor: '#ffffff',
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   busWillSkipStopTitle: {
     color: c.iosText,
@@ -40,12 +40,15 @@ let styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   row: {
+    flexDirection: 'row',
+  },
+  rowDetail: {
+    flex: 1,
     marginLeft: 0,
     paddingRight: 10,
     paddingTop: 8,
     paddingBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
   },
   notLastRowContainer: {
     borderBottomWidth: 1,
@@ -53,52 +56,53 @@ let styles = StyleSheet.create({
   },
   itemTitle: {
     color: c.black,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: 0,
+    paddingRight: 0,
     paddingBottom: 3,
     fontSize: 16,
     textAlign: 'left',
   },
   itemDetail: {
     color: c.iosText,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: 0,
+    paddingRight: 0,
     fontSize: 13,
     textAlign: 'left',
   },
+  barContainer: {
+    paddingRight: 5,
+    width: 45,
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
   bar: {
+    flex: 1,
     width: 5,
-    marginLeft: 20,
-    marginRight: 25,
   },
   dot: {
-    marginLeft: -35,
-    marginRight: 10,
     height: 15,
     width: 15,
-    borderRadius: 15,
-    backgroundColor: 'white',
-    borderWidth: 3,
+    marginTop: -20,
+    marginBottom: -20,
+    borderRadius: 20,
+    zIndex: 1,
   },
-  passedStop: {},
-  beforeStop: {},
-  atStop: {
+  passedStop: {
+    height: 12,
+    width: 12,
+  },
+  beforeStop: {
     borderWidth: 3,
+    backgroundColor: 'white',
+    height: 18,
+    width: 18,
+  },
+  atStop: {
     height: 20,
     width: 20,
-    borderRadius: 20,
-    marginRight: 7.5,
-    marginLeft: -37.5,
     borderColor: 'white',
   },
-  rowContainer: {
-    flex: 1,
-  },
 })
-
-// const lineColors = StyleSheet.create({
-//   Blue:
-// })
 
 export default function BusLineView({line, style}: {line: BusLineType, style: Object|number}) {
   let schedule = getScheduleForNow(line.schedules)
@@ -137,56 +141,56 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
     <View style={[styles.container, style]}>
       <View style={styles.rowSectionHeader}>
         <Text style={styles.rowSectionHeaderText}>
-          {line.line.toUpperCase()} • {now.format('h:mma')}
+          {line.line.toUpperCase()}
         </Text>
       </View>
       <View style={[styles.listContainer]}>
-        <View style={[styles.bar, {backgroundColor: barColor}]} />
-        <View style={[styles.rowContainer]}>
-          {pairs.map(([place, time], i) => {
-            return <View
-              key={i}
-              style={[
-                styles.row,
-                i < pairs.length - 1 ? styles.notLastRowContainer : null,
-              ]}
-            >
-              <View style={[
-                styles.dot,
-                time && now.isAfter(time)
-                  ? [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}]
-                  : [styles.beforeStop, {borderColor: barColor}],
-                time && now.isSame(time, 'minute')
-                  ? [styles.atStop, {borderColor: currentStopColor}]
-                  : null,
-                time === false
-                  ? styles.busWillSkipStopDot
-                  : null,
-              ]} />
-              <View style={{flex: 1}}>
-                <Text style={[
-                  styles.itemTitle,
-                  time === false ? styles.busWillSkipStopTitle : null,
-                ]}>
-                  {place}
-                </Text>
-                <Text
-                  style={[
-                    styles.itemDetail,
-                    time === false ? styles.busWillSkipStopDetail : null,
-                  ]}
-                  numberOfLines={1}
-                >
-                  {schedule.times
-                    .slice(timesIndex)
-                    .map(timeSet => timeSet[i])
-                    .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
-                    .join(' • ')}
-                </Text>
-              </View>
+        {pairs.map(([place, time], i) => {
+          return <View key={i} style={styles.row}>
+            <View style={styles.barContainer}>
+              <View style={[styles.bar, {backgroundColor: barColor}]} />
+              <View
+                style={[
+                  styles.dot,
+                  time && now.isAfter(time)
+                    ? [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}]
+                    : [styles.beforeStop, {borderColor: barColor}],
+                  time && now.isSame(time, 'minute')
+                    ? [styles.atStop, {borderColor: currentStopColor}]
+                    : null,
+                  time === false
+                    ? styles.busWillSkipStopDot
+                    : null,
+                ]}
+              />
+              <View style={[styles.bar, {backgroundColor: barColor}]} />
             </View>
-          })}
-        </View>
+            <View style={[
+              styles.rowDetail,
+              i < pairs.length - 1 ? styles.notLastRowContainer : null,
+            ]}>
+              <Text style={[
+                styles.itemTitle,
+                time === false ? styles.busWillSkipStopTitle : null,
+              ]}>
+                {place}
+              </Text>
+              <Text
+                style={[
+                  styles.itemDetail,
+                  time === false ? styles.busWillSkipStopDetail : null,
+                ]}
+                numberOfLines={1}
+              >
+                {schedule.times
+                  .slice(timesIndex)
+                  .map(timeSet => timeSet[i])
+                  .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
+                  .join(' • ')}
+              </Text>
+            </View>
+          </View>
+        })}
       </View>
     </View>
   )
