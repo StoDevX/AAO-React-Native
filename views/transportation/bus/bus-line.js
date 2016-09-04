@@ -112,6 +112,9 @@ let styles = StyleSheet.create({
   atStopTitle: {
     fontWeight: 'bold',
   },
+  passedStopTitle: {
+    color: c.iosText,
+  },
 })
 
 export default function BusLineView({line, style}: {line: BusLineType, style: Object|number}) {
@@ -194,6 +197,7 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
               <Text style={[
                 styles.itemTitle,
                 skippingStop && styles.busWillSkipStopTitle,
+                afterStop && styles.passedStopTitle,
                 atStop && styles.atStopTitle,
               ]}>
                 {place}
