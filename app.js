@@ -149,7 +149,7 @@ function LeftButton(route, navigator, index, navState) {
     case 'SettingsView':
       return (
         <TouchableOpacity
-          style={[styles.backButton, {marginLeft: 10, marginTop: 14}]}
+          style={[styles.backButton, {marginLeft: 10}]}
           onPress={() => navigator.pop()}
         >
           <Text style={styles.backButtonText}>Close</Text>
