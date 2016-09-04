@@ -34,7 +34,7 @@ export default class BusView extends React.Component {
         {busInfo.map((busLine: BusLineType, i) =>
           <BusLineView
             key={busLine.line}
-            style={{marginBottom: i < busInfo.length - 1 ? 25 : 45}}
+            style={{marginBottom: i < busInfo.length - 1 ? 5 : 15}}
             line={busLine}
           />)}
       </ScrollView>
