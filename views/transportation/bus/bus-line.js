@@ -137,11 +137,22 @@ export default function BusLineView({line, style}: {line: BusLineType, style: Ob
     currentStopColor = c.hollyGreen
   }
 
+  let lineTitle = line.line
+  if (timesIndex === 0 && now.isBefore(head(times))) {
+    lineTitle += ` — Starting ${head(times).format('h:mma')}`
+  } else if (timesIndex === schedule.times.length - 1) {
+    lineTitle += ' — Last Bus'
+  } else if (now.isAfter(last(times))) {
+    lineTitle += ' — Over for Today'
+  } else {
+    lineTitle += ' — Running'
+  }
+
   return (
     <View style={[styles.container, style]}>
       <View style={styles.rowSectionHeader}>
         <Text style={styles.rowSectionHeaderText}>
-          {line.line.toUpperCase()}
+          {lineTitle.toUpperCase()}
         </Text>
       </View>
       <View style={[styles.listContainer]}>
