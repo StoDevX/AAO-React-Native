@@ -95,33 +95,31 @@ const styles = StyleSheet.create({
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    // marginTop: 3,
   },
   backButtonText: {
     fontSize: 16,
     color: 'white',
-    // fontFamily: 'System',
-    marginVertical: 10,
+    paddingVertical: Platform.OS === 'ios' ? 10 : 17,
   },
   backButtonIcon: {
     color: 'white',
-    fontSize: 34,
-    marginTop: Platform.OS === 'ios' ? 2 : 6,
-    paddingLeft: 8,
+    fontSize: Platform.OS === 'ios' ? 34 : 24,
+    paddingVertical: Platform.OS === 'ios' ? 2 : 16,
+    paddingLeft: 16,
     paddingRight: 6,
   },
   settingsIcon: {
     color: 'white',
     fontSize: 24,
-    marginTop: Platform.OS === 'ios' ? 8 : 13,
-    paddingLeft: 8,
-    paddingRight: 6,
+    // marginTop: Platform.OS === 'ios' ? 8 : 10,
+    paddingVertical: Platform.OS === 'ios' ? 8 : 16,
+    paddingHorizontal: Platform.OS === 'ios' ? 18 : 18,
   },
   titleText: {
     color: 'white',
-    fontSize: Platform.OS === 'ios' ? 16 : 20,
-    fontWeight: 'bold',
-    marginVertical: 10,
+    fontSize: Platform.OS === 'ios' ? 16 : 21,
+    fontWeight: Platform.OS === 'ios' ? 'bold' : '500',
+    marginVertical: Platform.OS === 'ios' ? 10 : 13,
   },
   rightButton: {
     flexDirection: 'row',
@@ -141,7 +139,7 @@ function LeftButton(route, navigator, index, navState) {
     case 'HomeView':
       return (
         <TouchableOpacity
-          style={[styles.backButton, {marginLeft: 10}]}
+          style={[styles.backButton]}
           onPress={() => navigator.push({
             id: 'SettingsView',
             title: 'Settings',
