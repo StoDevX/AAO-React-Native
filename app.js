@@ -79,6 +79,7 @@ const navbarShadows = Platform.OS === 'ios'
   }
   : {
     elevation: 4,
+    // elevation: 2,
   }
 
 import {Dimensions} from 'react-native'
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 24,
     paddingVertical: Platform.OS === 'ios' ? 10 : 16,
-    paddingHorizontal: Platform.OS === 'ios' ? 18 : 22,
+    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
   },
   titleText: {
     color: 'white',
