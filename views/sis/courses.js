@@ -135,6 +135,10 @@ export default class CoursesView extends React.Component {
     )
   }
 
+  renderSeparator = (sectionID: any, rowID: any) => {
+    return <View key={`${sectionID}-${rowID}`} style={styles.separator} />
+  }
+
   render() {
     if (this.state.error) {
       return <Text>Error: {this.state.error.message}</Text>
@@ -151,6 +155,7 @@ export default class CoursesView extends React.Component {
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
         renderSectionHeader={this.renderSectionHeader}
+        renderSeparator={this.renderSeparator}
         pageSize={5}
         refreshControl={
           <RefreshControl
@@ -167,26 +172,24 @@ const styles = StyleSheet.create({
   listContainer: {
     backgroundColor: '#ffffff',
   },
-  rowContainer: {
-    marginLeft: 10,
-    paddingRight: 10,
-    paddingTop: 8,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
+  separator: {
+    borderBottomWidth: Platform.OS === 'android' ? 1 : StyleSheet.hairlineWidth,
     borderBottomColor: '#ebebeb',
+    marginLeft: 20,
+  },
+  rowContainer: {
+    paddingLeft: 20,
+    paddingRight: 10,
+    paddingVertical: 8,
   },
   itemTitle: {
     color: c.black,
-    paddingLeft: 10,
-    paddingRight: 10,
     paddingBottom: 3,
     fontSize: 16,
     textAlign: 'left',
   },
   itemPreview: {
     color: c.iosText,
-    paddingLeft: 10,
-    paddingRight: 10,
     fontSize: 13,
     textAlign: 'left',
   },
@@ -195,8 +198,8 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5,
     paddingLeft: 20,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
+    borderTopWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
+    borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
     borderColor: '#ebebeb',
   },
   rowSectionHeaderText: {
