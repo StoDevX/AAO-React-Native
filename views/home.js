@@ -71,7 +71,7 @@ export default function HomePageScene({navigator, route}: ScenePropsType) {
             style={styles.rectangleButtonText}
             autoAdjustsFontSize={true}
           >
-            {view.title}{view.usable ? '' : ' !'}
+            {view.title}
           </Text>
         </TouchableOpacity>)
       }
