@@ -82,8 +82,10 @@ const styles = StyleSheet.create({
     // flexDirection: 'row',
     // justifyContent: 'center',
     // alignItems: 'center',
-    borderBottomColor: '#b2b2b2',
-    borderBottomWidth: 1,
+    shadowOffset: { width: 0, height: StyleSheet.hairlineWidth },
+    shadowColor: 'rgb(100, 100, 100)',
+    shadowOpacity: 0.5,
+    shadowRadius: StyleSheet.hairlineWidth,
   },
   backButton: {
     flexDirection: 'row',
