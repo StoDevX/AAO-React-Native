@@ -112,13 +112,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 24,
     paddingVertical: Platform.OS === 'ios' ? 10 : 16,
-    paddingHorizontal: Platform.OS === 'ios' ? 18 : 18,
+    paddingHorizontal: Platform.OS === 'ios' ? 18 : 22,
   },
   titleText: {
     color: 'white',
-    fontSize: Platform.OS === 'ios' ? 17 : 21,
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-light',
+    fontSize: Platform.OS === 'ios' ? 17 : 20,
     fontWeight: Platform.OS === 'ios' ? 'bold' : '500',
-    marginVertical: Platform.OS === 'ios' ? 12 : 13,
+    marginVertical: Platform.OS === 'ios' ? 12 : 14,
   },
   rightButton: {
     flexDirection: 'row',
@@ -153,7 +154,7 @@ function LeftButton(route, navigator, index, navState) {
     case 'SettingsView':
       return (
         <TouchableOpacity
-          style={[styles.backButton, {marginLeft: 10}]}
+          style={[styles.backButton, {marginLeft: 10}, Platform.OS === 'android' ? {marginVertical: 21} : null]}
           onPress={() => navigator.pop()}
         >
           <Text style={styles.backButtonText}>Close</Text>
