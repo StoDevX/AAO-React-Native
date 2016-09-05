@@ -12,6 +12,7 @@ import {
   Text,
   TouchableOpacity,
   StatusBar,
+  Platform,
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/Entypo'
@@ -86,14 +87,15 @@ HomePageScene.propTypes = {
 
 let cellMargin = 10
 let cellSidePadding = 10
-let cellEdgePadding = 8
+let cellEdgePadding = 4
 let cellWidth = (Viewport.width / 2) - (cellMargin * 1.5)
 
 let styles = StyleSheet.create({
   // Body container
   container: {
-    marginLeft: cellMargin,
-    marginTop: 10,
+    marginHorizontal: cellMargin / 2,
+    marginTop: cellMargin / 2,
+    paddingBottom: cellMargin / 2,
 
     alignItems: 'flex-start',
     justifyContent: 'center',
@@ -108,24 +110,17 @@ let styles = StyleSheet.create({
   rectangle: {
     width: cellWidth,
     alignItems: 'center',
+    justifyContent: 'center',
     paddingTop: cellSidePadding,
-    paddingBottom: cellSidePadding,
-    paddingRight: cellEdgePadding,
-    paddingLeft: cellEdgePadding,
-    borderRadius: 6,
+    paddingBottom: cellSidePadding / 2,
+    paddingHorizontal: cellEdgePadding,
+    borderRadius: Platform.OS === 'ios' ? 6 : 3,
+    elevation: 2,
 
-    marginBottom: cellMargin,
-    marginRight: cellMargin,
-  },
-
-  navigationButtonText: {
-    color: c.mandarin,
-  },
-  navigationButtonIcon: {
-    color: c.mandarin,
-    fontSize: 20,
-    marginTop: 8,
-    marginLeft: 14,
+    marginTop: cellMargin / 2,
+    marginBottom: cellMargin / 2,
+    marginLeft: cellMargin / 2,
+    marginRight: cellMargin / 2,
   },
 
   // Text styling in buttons
@@ -134,6 +129,8 @@ let styles = StyleSheet.create({
   },
   rectangleButtonText: {
     color: c.white,
+    marginTop: cellSidePadding / 2,
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
     textAlign: 'center',
     fontSize: 14,
   },
