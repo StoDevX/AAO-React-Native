@@ -59,7 +59,7 @@
     "babel-eslint": "6.1.2",
     "eslint": "3.4.0",
     "eslint-plugin-babel": "3.3.0",
-    "eslint-plugin-flowtype": "2.14.2",
+    "eslint-plugin-flowtype": "2.14.3",
     "eslint-plugin-react": "6.2.0",
     "flow-bin": "0.32.0"
   }
