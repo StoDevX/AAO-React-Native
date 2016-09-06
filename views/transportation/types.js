@@ -4,13 +4,3 @@ export type OtherModeType = {
   description: string,
   url: string,
 };
-
-export type BusStopType = {
-  location: string,
-  times: string[],
-};
-
-export type BusLineType = {
-  line: string,
-  schedule: BusStopType[],
-};
