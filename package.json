@@ -37,6 +37,7 @@
     "querystring": "0.2.0",
     "react": "15.2.1",
     "react-native": "0.31.0",
+    "react-native-alphabetlistview": "0.2.0",
     "react-native-android-tablayout": "0.3.0",
     "react-native-animatable": "0.6.1",
     "react-native-button": "1.7.0",
