@@ -71,51 +71,57 @@ function renderScene(route, navigator) {
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from './views/components/colors'
 
+const navbarShadows = Platform.OS === 'ios'
+  ? {
+    shadowOffset: { width: 0, height: StyleSheet.hairlineWidth },
+    shadowColor: 'rgb(100, 100, 100)',
+    shadowOpacity: 0.5,
+    shadowRadius: StyleSheet.hairlineWidth,
+  }
+  : {
+    elevation: 4,
+    // elevation: 2,
+  }
+
 import {Dimensions} from 'react-native'
 const styles = StyleSheet.create({
   container: {
     marginTop: Platform.OS === 'ios' ? 64 : 56,
     flex: 1,
-    backgroundColor: c.iosLightBackground,
+    backgroundColor: Platform.OS === 'ios' ? c.iosLightBackground : 'rgb(237, 237, 237)',
   },
   navigationBar: {
     backgroundColor: c.olevilleGold,
-    // flexDirection: 'row',
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    borderBottomColor: '#b2b2b2',
-    borderBottomWidth: 1,
+    ...navbarShadows,
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    // marginTop: 3,
   },
   backButtonText: {
-    fontSize: 16,
+    fontSize: 17,
     color: 'white',
-    // fontFamily: 'System',
-    marginVertical: 10,
+    marginTop: -4,
   },
   backButtonIcon: {
     color: 'white',
-    fontSize: 34,
-    marginTop: Platform.OS === 'ios' ? 2 : 6,
-    paddingLeft: 8,
+    fontSize: Platform.OS === 'ios' ? 36 : 24,
+    paddingVertical: Platform.OS === 'ios' ? 4 : 16,
+    paddingLeft: Platform.OS === 'ios' ? 8 : 16,
     paddingRight: 6,
   },
   settingsIcon: {
     color: 'white',
     fontSize: 24,
-    marginTop: Platform.OS === 'ios' ? 8 : 13,
-    paddingLeft: 8,
-    paddingRight: 6,
+    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
+    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
   },
   titleText: {
     color: 'white',
-    fontSize: Platform.OS === 'ios' ? 16 : 20,
-    fontWeight: 'bold',
-    marginVertical: 10,
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-light',
+    fontSize: Platform.OS === 'ios' ? 17 : 20,
+    fontWeight: Platform.OS === 'ios' ? 'bold' : '500',
+    marginVertical: Platform.OS === 'ios' ? 12 : 14,
   },
   rightButton: {
     flexDirection: 'row',
@@ -135,7 +141,7 @@ function LeftButton(route, navigator, index, navState) {
     case 'HomeView':
       return (
         <TouchableOpacity
-          style={[styles.backButton, {marginLeft: 10}]}
+          style={[styles.backButton]}
           onPress={() => navigator.push({
             id: 'SettingsView',
             title: 'Settings',
@@ -150,7 +156,7 @@ function LeftButton(route, navigator, index, navState) {
     case 'SettingsView':
       return (
         <TouchableOpacity
-          style={[styles.backButton, {marginLeft: 10}]}
+          style={[styles.backButton, {marginLeft: 10, marginVertical: Platform.OS === 'android' ? 21 : 16}]}
           onPress={() => navigator.pop()}
         >
           <Text style={styles.backButtonText}>Close</Text>
