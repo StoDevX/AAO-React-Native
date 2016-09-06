@@ -6,6 +6,10 @@
 ## About
 The St. Olaf community, now in pocket size… rewritten in React Native.
 
+## Download
+- [Android App Store](https://play.google.com/store/apps/details?id=com.allaboutolaf)
+- [iOS App Store](https://itunes.apple.com/us/app/all-about-olaf/id938588319)
+
 ## Getting Started
 - Clone the repository
 - `cd` into the folder
