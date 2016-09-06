@@ -16,11 +16,14 @@ import {
 } from 'react-native'
 import * as c from '../components/colors'
 
+import {SisAuthenticationError} from '../../lib/errors'
+import {isLoggedIn} from '../../lib/login'
 import delay from 'delay'
 import zip from 'lodash/zip'
 import type {CourseType} from '../../lib/courses'
 import {loadAllCourses} from '../../lib/courses'
 import LoadingScreen from '../components/loading'
+import ErrorView from './error-screen'
 
 const SEMESTERS = {
   '0': 'Abroad',
@@ -48,18 +51,31 @@ function toPrettyTerm(term: number): string {
 }
 
 export default class CoursesView extends React.Component {
+  static propTypes = {
+    navigator: React.PropTypes.object,
+    route: React.PropTypes.object,
+  };
+
   state = {
     dataSource: new ListView.DataSource({
       rowHasChanged: this.rowHasChanged,
       sectionHeaderHasChanged: this.sectionHeaderHasChanged,
     }),
     refreshing: false,
-    loading: true,
+    loading: false,
     error: null,
+    loggedIn: true,
   }
 
   componentWillMount() {
-    this.refresh()
+    this.loadIfLoggedIn()
+  }
+
+  loadIfLoggedIn = async () => {
+    let shouldContinue = await this.checkLogin()
+    if (shouldContinue) {
+      await this.fetchData()
+    }
   }
 
   rowHasChanged(r1: CourseType|Error, r2: CourseType|Error) {
@@ -75,10 +91,18 @@ export default class CoursesView extends React.Component {
     return h1 !== h2
   }
 
-  async fetchData(forceFromServer: bool=false) {
-    this.setState({refreshing: true})
+  checkLogin = async () => {
+    let loggedIn = await isLoggedIn()
+    this.setState({loggedIn})
+    return loggedIn
+  }
+
+  fetchData = async (forceFromServer=false) => {
     try {
       let courses = await loadAllCourses(forceFromServer)
+      if (courses instanceof SisAuthenticationError) {
+        this.setState({loggedIn: false})
+      }
       this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
     } catch (error) {
       this.setState({error})
@@ -144,8 +168,12 @@ export default class CoursesView extends React.Component {
       return <Text>Error: {this.state.error.message}</Text>
     }
 
-    if (this.state.loading) {
-      return <LoadingScreen />
+    if (!this.state.loggedIn) {
+      return <ErrorView
+        route={this.props.route}
+        navigator={this.props.navigator}
+        onLoginComplete={() => this.loadIfLoggedIn()}
+      />
     }
 
     return (

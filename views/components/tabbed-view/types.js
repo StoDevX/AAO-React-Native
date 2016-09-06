@@ -1,4 +1,4 @@
-import {PropTypes} from 'react'
+import {PropTypes, Navigator} from 'react'
 
 export type TabDefinitionType = {
   id: string,
@@ -7,6 +7,8 @@ export type TabDefinitionType = {
   rnRasterIcon?: {icon: {uri: string, scale: number}},
   component: () => any,
   props?: Object,
+  navigator?: typeof Navigator,
+  route?: Object,
 };
 
 export type TabbedViewPropsType = {
@@ -18,6 +20,8 @@ export type TabbedViewPropsType = {
 export const TabbedViewPropTypes = {
   style: PropTypes.oneOfType([PropTypes.number, PropTypes.object]),
   childProps: PropTypes.object,
+  navigator: PropTypes.object,
+  route: PropTypes.object,
   tabs: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,

@@ -18,7 +18,8 @@ export default class TabbedView extends React.Component {
   props: TabbedViewPropsType;
 
   render() {
-    let tabs = this.props.tabs
+    let {navigator, route, tabs} = this.props
+    let baseProps = {navigator, route}
     return (
       <TabBarIOS tintColor='orange' style={[styles.container, this.props.style]}>
         {tabs.map(tab => {
@@ -41,7 +42,11 @@ export default class TabbedView extends React.Component {
             translucent={true}
             onPress={() => this.setState({selectedTab: tab.id})}
           >
-            <tab.component {...this.props.childProps} {...(tab.props || {})} />
+            <tab.component
+              {...this.props.childProps}
+              {...(tab.props || {})}
+              {...baseProps}
+            />
           </Icon.TabBarItemIOS>
         })}
       </TabBarIOS>
