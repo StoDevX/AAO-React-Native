@@ -12,7 +12,7 @@ import tabs from './tabs'
 
 
 export default function NewsPage({navigator, route}: {navigator: typeof Navigator, route: Object}) {
-  return <TabbedView style={styles.container} tabs={tabs} childProps={{navigator, route}} />
+  return <TabbedView style={styles.container} tabs={tabs} navigator={navigator} route={route} />
 }
 NewsPage.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator).isRequired,
