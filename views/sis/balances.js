@@ -50,6 +50,7 @@ export default class BalancesView extends React.Component {
     loading: true,
     error: null,
     refreshing: false,
+    loggedIn: false,
   }
 
   state: {
@@ -60,6 +61,7 @@ export default class BalancesView extends React.Component {
     loading: bool,
     error: null|Error,
     refreshing: bool,
+    loggedIn: bool,
   };
 
   componentWillMount() {
