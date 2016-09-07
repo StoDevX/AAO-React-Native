@@ -1,7 +1,4 @@
-# AAO-React-Native
-
-[![Windows build status](https://ci.appveyor.com/api/projects/status/qi83hnivu0rkgbvo?svg=true)](https://ci.appveyor.com/project/hawkrives/aao-react-native)
-[![macOS build status](https://travis-ci.org/StoDevX/AAO-React-Native.svg?branch=master)](https://travis-ci.org/StoDevX/AAO-React-Native)
+# AAO-React-Native [![Windows build status](https://ci.appveyor.com/api/projects/status/qi83hnivu0rkgbvo?svg=true)](https://ci.appveyor.com/project/hawkrives/aao-react-native) [![macOS build status](https://travis-ci.org/StoDevX/AAO-React-Native.svg?branch=master)](https://travis-ci.org/StoDevX/AAO-React-Native)
 
 ## About
 The St. Olaf community, now in pocket size… rewritten in React Native.
@@ -24,7 +21,7 @@ The Calendar might nag you for a Google Calendar API key. You can either ask som
 2. Insert your API key in place of the `key goes here` text
 
 ## Todo
-* Bugs! All bugs should have the `bug` label in the issues.
+* [Bugs!](https://github.com/StoDevX/AAO-React-Native/issues?q=is%3Aopen+is%3Aissue+label%3Abug) All bugs should have the `bug` label in the issues.
 * [3D touch actions](https://github.com/jordanbyron/react-native-quick-actions) for icon and within
 * [Touch-ID](https://github.com/naoufal/react-native-touch-id) for SIS
 
