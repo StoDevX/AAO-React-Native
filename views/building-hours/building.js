@@ -16,50 +16,18 @@ import * as c from '../components/colors'
 import type {BuildingInfoType} from './types'
 import {isBuildingOpen} from './is-building-open'
 import {formatBuildingHours} from './format-building-hours'
+import CollapsibleBlock from '../components/collapsibleBlock'
+import {allBuildingHours} from './all-building-hours.js'
+import Dimensions from 'Dimensions'
 
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    borderLeftWidth: 5,
-    borderRightWidth: 5,
-    margin: 5,
-    height: 100,
-  },
-  buildingOpen: {
-    borderColor: c.pastelGreen,
-  },
-  buildingClosed: {
-    borderColor: c.strawberry,
-  },
-  buildingAlmostClosed: {
-    borderColor: c.mustard,
-  },
-  name: {
-    color: c.white,
-    fontSize: 24,
-    textAlign: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.65)',
-  },
-  inner: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  status: {
-    color: c.white,
-    fontSize: 14,
-    paddingTop: 2,
-    paddingBottom: 2,
-    textAlign: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
-  },
-})
+
+var openStatus;
+var borderColor;
 
 let borderColors = {
-  'Open': styles.buildingOpen,
-  'Almost Closed': styles.buildingAlmostClosed,
-  'Closed': styles.buildingClosed,
+  'Open': c.pastelGreen,
+  'Almost Closed': c.mustard,
+  'Closed': c.strawberry,
 }
 
 type PropsType = {
@@ -67,24 +35,88 @@ type PropsType = {
   image: number,
   name: string,
 };
+
+
+
+let style = function(){
+    return {
+      container: {
+        flex: 1,
+        justifyContent: 'center',
+        borderLeftWidth: 5,
+        borderRightWidth: 5,
+        marginTop: 10,
+        height: 100,
+        borderColor: getBorderColor(),
+      },
+      name: {
+        color: c.white,
+        fontSize: 24,
+        textAlign: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.65)',
+      },
+      inner: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      },
+      status: {
+        color: c.white,
+        fontSize: 14,
+        paddingTop: 2,
+        paddingBottom: 2,
+        textAlign: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.45)',
+      },
+      hoursText:{
+        textAlign: 'center',
+        fontSize: 13,
+        justifyContent: 'space-between'
+      },
+      contents:{
+        paddingBottom: 10,
+        paddingTop: 5,
+        width: getContainerWidth(),
+      },
+    }
+  }
+
+  let getBorderColor = function(){
+    borderColor = borderColors[openStatus];
+    return borderColor;
+  }
+
+  let getContainerWidth = function(){
+    return Dimensions.get('window').width;
+  }
+
 export default function BuildingView({info, image, name}: PropsType) {
-  let open = isBuildingOpen(info)
-  let borderColor = borderColors[open]
+  openStatus = isBuildingOpen(info)
+  
   let hours = formatBuildingHours(info)
+  let allHours = allBuildingHours(info, style());
+
+
 
   return (
-    <View style={[styles.container, borderColor]}>
+    <CollapsibleBlock style={style()} borderColor={borderColor}>
+    <View style={[style().container]}>
       <Image
         source={image}
         style={{width: undefined, height: 100}}
-        resizeMode='cover'
-      >
-        <View style={styles.inner}>
-          <Text style={styles.name}>{name}</Text>
-          <Text style={styles.status}>{hours}</Text>
+        resizeMode='cover'>
+        <View style={style().inner}>
+          <Text style={style().name}>{name}</Text>
+          <Text style={style().status}>{hours}</Text>
         </View>
       </Image>
     </View>
+
+    <View style={style().contents}>
+      <Text style={style().hoursText}>Daily Hours</Text>
+      {allHours}
+    </View>
+    </CollapsibleBlock>
   )
 }
 
