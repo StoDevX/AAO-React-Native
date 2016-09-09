@@ -5,20 +5,22 @@
 
 import React from 'react'
 import {
-  StyleSheet,
   View,
-  Text,
   TouchableOpacity,
 } from 'react-native'
 
-import * as c from './colors'
 import Collapsible from 'react-native-collapsible'
 
 
 export default class CollapsibleBlock extends React.Component {
 
-  statusColor(){
-    return this.props.borderColor;
+  static propTypes = {
+    borderColor: React.PropTypes.string.isRequired,
+    children: React.PropTypes.array.isRequired,
+  }
+
+  state = {
+    isCollapsed: true,
   }
 
   style() {
@@ -36,8 +38,8 @@ export default class CollapsibleBlock extends React.Component {
     }
   }
 
-  state = {
-    isCollapsed: true,
+  statusColor(){
+    return this.props.borderColor
   }
 
   render() {

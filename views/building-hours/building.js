@@ -6,7 +6,6 @@
 
 import React from 'react'
 import {
-  StyleSheet,
   View,
   Text,
   Image,
@@ -21,8 +20,8 @@ import {allBuildingHours} from './all-building-hours.js'
 import Dimensions from 'Dimensions'
 
 
-var openStatus;
-var borderColor;
+let openStatus
+let borderColor
 
 let borderColors = {
   'Open': c.pastelGreen,
@@ -39,62 +38,61 @@ type PropsType = {
 
 
 let style = function(){
-    return {
-      container: {
-        flex: 1,
-        justifyContent: 'center',
-        borderLeftWidth: 5,
-        borderRightWidth: 5,
-        marginTop: 10,
-        height: 100,
-        borderColor: getBorderColor(),
-      },
-      name: {
-        color: c.white,
-        fontSize: 24,
-        textAlign: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.65)',
-      },
-      inner: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-      },
-      status: {
-        color: c.white,
-        fontSize: 14,
-        paddingTop: 2,
-        paddingBottom: 2,
-        textAlign: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.45)',
-      },
-      hoursText:{
-        textAlign: 'center',
-        fontSize: 13,
-        justifyContent: 'space-between'
-      },
-      contents:{
-        paddingBottom: 10,
-        paddingTop: 5,
-        width: getContainerWidth(),
-      },
-    }
+  return {
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      borderLeftWidth: 5,
+      borderRightWidth: 5,
+      marginTop: 10,
+      height: 100,
+      borderColor: getBorderColor(),
+    },
+    name: {
+      color: c.white,
+      fontSize: 24,
+      textAlign: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    },
+    inner: {
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+    },
+    status: {
+      color: c.white,
+      fontSize: 14,
+      paddingTop: 2,
+      paddingBottom: 2,
+      textAlign: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    },
+    hoursText: {
+      textAlign: 'center',
+      fontSize: 13,
+    },
+    contents: {
+      paddingBottom: 10,
+      paddingTop: 5,
+      width: getContainerWidth(),
+    },
   }
+}
 
-  let getBorderColor = function(){
-    borderColor = borderColors[openStatus];
-    return borderColor;
-  }
+let getBorderColor = function(){
+  borderColor = borderColors[openStatus]
+  return borderColor
+}
 
-  let getContainerWidth = function(){
-    return Dimensions.get('window').width;
-  }
+let getContainerWidth = function(){
+  return Dimensions.get('window').width
+}
 
 export default function BuildingView({info, image, name}: PropsType) {
   openStatus = isBuildingOpen(info)
   
   let hours = formatBuildingHours(info)
-  let allHours = allBuildingHours(info, style());
+  let allHours = allBuildingHours(info, style())
 
 
 
