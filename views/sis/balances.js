@@ -15,9 +15,11 @@ import {
 
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 
+import {isLoggedIn} from '../../lib/login'
 import delay from 'delay'
 import * as c from '../components/colors'
 import {getFinancialData} from '../../lib/financials'
+import ErrorView from './error-screen'
 
 const buttonStyles = StyleSheet.create({
   Common: {
@@ -35,6 +37,11 @@ const buttonStyles = StyleSheet.create({
 })
 
 export default class BalancesView extends React.Component {
+  static propTypes = {
+    navigator: React.PropTypes.object,
+    route: React.PropTypes.object,
+  };
+
   state = {
     flex: null,
     ole: null,
@@ -43,6 +50,7 @@ export default class BalancesView extends React.Component {
     loading: true,
     error: null,
     refreshing: false,
+    loggedIn: false,
   }
 
   state: {
@@ -53,13 +61,27 @@ export default class BalancesView extends React.Component {
     loading: bool,
     error: null|Error,
     refreshing: bool,
+    loggedIn: bool,
   };
 
   componentWillMount() {
-    this.fetchData()
+    this.loadIfLoggedIn()
   }
 
-  async fetchData(forceFromServer: bool=false) {
+  loadIfLoggedIn = async () => {
+    let shouldContinue = await this.checkLogin()
+    if (shouldContinue) {
+      await this.fetchData()
+    }
+  }
+
+  checkLogin = async () => {
+    let loggedIn = await isLoggedIn()
+    this.setState({loggedIn})
+    return loggedIn
+  }
+
+  fetchData = async (forceFromServer=false) => {
     try {
       let {flex, ole, print} = await getFinancialData(forceFromServer)
       this.setState({flex, ole, print})
@@ -88,6 +110,14 @@ export default class BalancesView extends React.Component {
   render() {
     if (this.state.error) {
       return <Text>Error: {this.state.error.message}</Text>
+    }
+
+    if (!this.state.loggedIn) {
+      return <ErrorView
+        route={this.props.route}
+        navigator={this.props.navigator}
+        onLoginComplete={() => this.loadIfLoggedIn()}
+      />
     }
 
     let {flex, ole, print, loading} = this.state

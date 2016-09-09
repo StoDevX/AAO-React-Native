@@ -37,7 +37,7 @@ rules:
   new-cap: 'off'
   no-case-declarations: error
   no-class-assign: error
-  no-confusing-arrow: error
+  no-confusing-arrow: 'off'
   no-console: 'off'
   no-const-assign: error
   no-div-regex: error

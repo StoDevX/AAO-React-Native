@@ -28,6 +28,10 @@ export default class SISLoginView extends React.Component {
     onLoginComplete: React.PropTypes.func,
   };
 
+  static defaultProps = {
+    onLoginComplete: () => {},
+  };
+
   state = {
     loggedIn: false,
     cookieLoaded: false,

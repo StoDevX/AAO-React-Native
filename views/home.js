@@ -12,6 +12,7 @@ import {
   Text,
   TouchableOpacity,
   StatusBar,
+  Platform,
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/Entypo'
@@ -47,7 +48,8 @@ export default function HomePageScene({navigator, route}: ScenePropsType) {
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
       style={styles.scrollView}
-      contentContainerStyle={styles.container}
+      //contentContainerStyle={Platform.OS === 'android' ? styles.rows : styles.cells}
+      contentContainerStyle={styles.cells}
     >
       <StatusBar
         barStyle='light-content'
@@ -63,14 +65,17 @@ export default function HomePageScene({navigator, route}: ScenePropsType) {
             sceneConfig: Navigator.SceneConfigs.PushFromRight,
           })}
           activeOpacity={0.5}
+          //style={[Platform.OS === 'ios' ? styles.rectangle : styles.row, Platform.OS === 'ios' ? {backgroundColor: view.tint} : null]}
           style={[styles.rectangle, {backgroundColor: view.tint}]}
         >
+          {/*<Icon name={view.icon} size={Platform.OS === 'ios' ? 32 : 28} style={[Platform.OS === 'ios' ? styles.rectangleButtonIcon : styles.listIcon, Platform.OS === 'android' ? {color: view.tint} : null]} />*/}
           <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
+
           <Text
             style={styles.rectangleButtonText}
             autoAdjustsFontSize={true}
           >
-            {view.title}{view.usable ? '' : ' !'}
+            {view.title}
           </Text>
         </TouchableOpacity>)
       }
@@ -86,14 +91,15 @@ HomePageScene.propTypes = {
 
 let cellMargin = 10
 let cellSidePadding = 10
-let cellEdgePadding = 8
+let cellEdgePadding = 4
 let cellWidth = (Viewport.width / 2) - (cellMargin * 1.5)
 
 let styles = StyleSheet.create({
   // Body container
-  container: {
-    marginLeft: cellMargin,
-    marginTop: 10,
+  cells: {
+    marginHorizontal: cellMargin / 2,
+    marginTop: cellMargin / 2,
+    paddingBottom: cellMargin / 2,
 
     alignItems: 'flex-start',
     justifyContent: 'center',
@@ -101,31 +107,44 @@ let styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
 
-  scrollView: {},
-  navButton: {},
+  rows: {},
+
+  scrollView: {
+    // elevation: 2,
+  },
 
   // Main buttons for actions on home screen
   rectangle: {
     width: cellWidth,
     alignItems: 'center',
+    justifyContent: 'center',
     paddingTop: cellSidePadding,
-    paddingBottom: cellSidePadding,
-    paddingRight: cellEdgePadding,
-    paddingLeft: cellEdgePadding,
-    borderRadius: 6,
+    paddingBottom: cellSidePadding / 2,
+    paddingHorizontal: cellEdgePadding,
+    borderRadius: Platform.OS === 'ios' ? 6 : 3,
+    elevation: 2,
 
-    marginBottom: cellMargin,
-    marginRight: cellMargin,
+    marginTop: cellMargin / 2,
+    marginBottom: cellMargin / 2,
+    marginLeft: cellMargin / 2,
+    marginRight: cellMargin / 2,
   },
 
-  navigationButtonText: {
-    color: c.mandarin,
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 20,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgb(224, 224, 224)',
   },
-  navigationButtonIcon: {
-    color: c.mandarin,
-    fontSize: 20,
-    marginTop: 8,
-    marginLeft: 14,
+
+  listIcon: {
+    paddingLeft: 15,
+    paddingRight: 30,
+  },
+  listText: {
+    fontSize: 16,
   },
 
   // Text styling in buttons
@@ -134,6 +153,8 @@ let styles = StyleSheet.create({
   },
   rectangleButtonText: {
     color: c.white,
+    marginTop: cellSidePadding / 2,
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
     textAlign: 'center',
     fontSize: 14,
   },

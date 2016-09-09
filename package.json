@@ -1,6 +1,6 @@
 {
   "name": "AllAboutOlaf",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.1",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -37,6 +37,7 @@
     "querystring": "0.2.0",
     "react": "15.2.1",
     "react-native": "0.31.0",
+    "react-native-alphabetlistview": "0.2.0",
     "react-native-android-tablayout": "0.3.0",
     "react-native-animatable": "0.6.1",
     "react-native-button": "1.7.0",
@@ -50,7 +51,7 @@
     "react-native-tableview-simple": "0.12.0",
     "react-native-vector-icons": "2.1.0",
     "react-tween-state": "0.1.5",
-    "redux": "3.5.2",
+    "redux": "3.6.0",
     "stream": "0.0.2",
     "timers": "0.1.1",
     "xml2js": "0.4.17"
@@ -59,8 +60,8 @@
     "babel-eslint": "6.1.2",
     "eslint": "3.4.0",
     "eslint-plugin-babel": "3.3.0",
-    "eslint-plugin-flowtype": "2.11.4",
+    "eslint-plugin-flowtype": "2.16.0",
     "eslint-plugin-react": "6.2.0",
-    "flow-bin": "0.32.0"
+    "flow-bin": "0.29.0"
   }
 }
