@@ -5,80 +5,94 @@ import {
   Text,
 } from 'react-native'
 
+import moment from 'moment-timezone'
 import * as c from '../components/colors'
-import padEnd from 'lodash/padEnd'
 import {getText, parseHtml} from '../../lib/html'
 
 let styles = StyleSheet.create({
-  itemTitle: {
-    color: c.black,
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 10,
-    paddingBottom: 3,
-    fontSize: 16,
-    textAlign: 'left',
+  container: {
+    paddingVertical: 2,
+    // paddingLeft: 10,
+    flexDirection: 'row',
   },
-  itemPreview: {
+  rowIllusion: {
+    paddingVertical: 4,
+  },
+  times: {
+    width: 70,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    paddingRight: 12,
+    paddingLeft: 4,
+  },
+  timeText: {
+    textAlign: 'right',
+    fontSize: 10,
+  },
+  startTime: {
+    // marginTop: 3,
+    color: 'black',
+  },
+  endTime: {
     color: c.iosText,
+  },
+  texts: {
     paddingLeft: 10,
-    paddingRight: 10,
-    paddingBottom: 6,
-    fontSize: 13,
-    textAlign: 'left',
+    flex: 1,
+    borderLeftWidth: 2,
+    borderLeftColor: c.iosGray,
+  },
+  title: {
+    color: c.black,
+    fontWeight: '500',
+    paddingBottom: 3,
+    fontSize: 14,
+  },
+  location: {
+    color: c.iosText,
+    fontSize: 10,
   },
 })
 
-function getString(date) {
-  let month = date.getMonth() + 1 // offset since JS uses 0-11, not 1-12
-  let day = date.getDate()
-
-  let hours = date.getHours()
-  let isMorning = true
-  if (date.getHours() > 12) {
-    hours = date.getHours() - 12
-    isMorning = false
-  }
-
-  let min = date.getMinutes()
-  if (min.toString().length < 2) {
-    min = padEnd(min, 2, '0')
-  }
-
-  if (isMorning) {
-    min += 'AM'
-  } else {
-    min += 'PM'
-  }
-
-  return `${month}/${day} ${hours}:${min}`
-}
-
 // PROPS: eventTitle, location, startTime, endTime
-export default function EventView(props: {eventTitle: string, location: string, startTime?: string, endTime?: string, style?: any}) {
+export default function EventView(props: {eventTitle: string, location: string, startTime?: Object, endTime?: Object, style?: any}) {
   let title = getText(parseHtml(props.eventTitle))
 
-  let st = new Date(props.startTime)
-  let et = new Date(props.endTime)
+  let eventLength = moment.duration(props.endTime.diff(props.startTime)).asHours()
+  let allDay = eventLength === 24
+  let multiDay = eventLength > 24
 
-  let stString = getString(st)
-  let etString = getString(et)
-
-  let showTimes = props.startTime && props.endTime
-  let showLocation = Boolean(props.location)
+  let times = null
+  if (allDay) {
+    times = <Text style={[styles.timeText, styles.startTime]}>all-day</Text>
+  } else if (multiDay) {
+    times = [
+      <Text key={0} style={[styles.timeText, styles.startTime]}>{props.startTime.format('h:mma')}</Text>,
+      <Text key={1} style={[styles.timeText, styles.endTime]}>to {props.endTime.format('MMM. D h:mma')}</Text>,
+    ]
+  } else {
+    times = [
+      <Text key={0} style={[styles.timeText, styles.startTime]}>{props.startTime.format('h:mma')}</Text>,
+      <Text key={1} style={[styles.timeText, styles.endTime]}>{props.endTime.format('h:mma')}</Text>,
+    ]
+  }
 
   return (
-    <View style={props.style}>
-      <Text style={styles.itemTitle}>{title}</Text>
-      { showTimes ? <Text style={styles.itemPreview}>{stString} - {etString}</Text> : null }
-      { showLocation ? <Text style={styles.itemPreview}>{props.location}</Text> : null }
+    <View style={[styles.container, props.style]}>
+      <View style={[styles.rowIllusion, styles.times]}>
+        {times}
+      </View>
+      <View style={[styles.rowIllusion, styles.texts]}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.location}>{props.location}</Text>
+      </View>
     </View>
   )
 }
 EventView.propTypes = {
-  endTime: React.PropTypes.string,
+  endTime: React.PropTypes.object,
   eventTitle: React.PropTypes.string.isRequired,
   location: React.PropTypes.string,
-  startTime: React.PropTypes.string,
+  startTime: React.PropTypes.object,
   style: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.object]),
 }
