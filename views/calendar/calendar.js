@@ -11,12 +11,16 @@ import {
   Platform,
   ListView,
   RefreshControl,
+  View,
 } from 'react-native'
 
+import groupBy from 'lodash/groupBy'
+import moment from 'moment-timezone'
 import delay from 'delay'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
 import EventView from './event'
+import * as c from '../components/colors'
 import { GOOGLE_CALENDAR_API_KEY } from '../../lib/config'
 
 type GoogleCalendarTimeType = {
@@ -36,7 +40,8 @@ export default class CalendarView extends React.Component {
 
   state = {
     events: new ListView.DataSource({
-      rowHasChanged: this._rowHasChanged,
+      rowHasChanged: this.rowHasChanged,
+      sectionHeaderHasChanged: this.sectionHeaderHasChanged,
     }),
     loaded: false,
     refreshing: true,
@@ -47,8 +52,12 @@ export default class CalendarView extends React.Component {
     this.refresh()
   }
 
-  _rowHasChanged(r1: GoogleCalendarEventType, r2: GoogleCalendarEventType) {
-    return r1.summary != r2.summary
+  rowHasChanged(r1: GoogleCalendarEventType, r2: GoogleCalendarEventType) {
+    return r1.summary !== r2.summary
+  }
+
+  sectionHeaderHasChanged(h1: number, h2: number) {
+    return h1 !== h2
   }
 
   buildCalendarUrl(calendarId: string) {
@@ -79,7 +88,12 @@ export default class CalendarView extends React.Component {
     }
 
     if (data) {
-      this.setState({events: this.state.events.cloneWithRows(data)})
+      data.forEach(event => {
+        event.startTime = moment(event.start.date || event.start.dateTime)
+        event.endTime = moment(event.end.date || event.end.dateTime)
+      })
+      let grouped = groupBy(data, event => event.startTime.format('ddd  MMM Do'))
+      this.setState({events: this.state.events.cloneWithRowsAndSections(grouped)})
     }
     if (error) {
       this.setState({error: error.message})
@@ -102,6 +116,32 @@ export default class CalendarView extends React.Component {
     this.setState({refreshing: false})
   }
 
+  renderRow = (data: Object) => {
+    return (
+      <EventView
+        style={styles.row}
+        eventTitle={data.summary}
+        startTime={data.startTime}
+        endTime={data.endTime}
+        location={data.location}
+      />
+    )
+  }
+
+  renderSectionHeader = (sectionData: Object, sectionIdentifier: any) => {
+    return (
+      <View style={styles.rowSectionHeader}>
+        <Text style={styles.rowSectionHeaderText} numberOfLines={1}>
+          {sectionIdentifier}
+        </Text>
+      </View>
+    )
+  }
+
+  renderSeparator = (sectionID: any, rowID: any) => {
+    return <View key={`${sectionID}-${rowID}`} style={styles.separator} />
+  }
+
   render() {
     if (!this.state.loaded) {
       return <LoadingView />
@@ -117,15 +157,9 @@ export default class CalendarView extends React.Component {
         contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
         dataSource={this.state.events}
         pageSize={5}
-        renderRow={data =>
-          <EventView
-            style={styles.row}
-            eventTitle={data.summary}
-            startTime={data.start.dateTime}
-            endTime={data.end.dateTime}
-            location={data.location}
-          />
-        }
+        renderRow={this.renderRow}
+        renderSectionHeader={this.renderSectionHeader}
+        renderSeparator={this.renderSeparator}
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshing}
@@ -143,10 +177,24 @@ let styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   row: {
-    minHeight: 88,
-    marginLeft: 10,
-    paddingRight: 10,
-    borderBottomWidth: 1,
+    // marginLeft: 10,
+    // paddingRight: 10,
+  },
+  separator: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#ebebeb',
+  },
+  rowSectionHeader: {
+    backgroundColor: c.iosListSectionHeader,
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#ebebeb',
+  },
+  rowSectionHeaderText: {
+    color: 'black',
+    fontWeight: 'bold',
   },
 })
