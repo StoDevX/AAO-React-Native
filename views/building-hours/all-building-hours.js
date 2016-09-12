@@ -9,10 +9,14 @@ const CENTRAL_TZ = 'America/Winnipeg'
 export function allBuildingHours(info, style) {
   let dayTimes = []
   let current = moment().tz(CENTRAL_TZ)
+
   for (let i = 0; i < 7; i++) {
     let hoursString = ''
-    let day = current.add(1, 'days').format('dddd')
+    let day = current.format('dddd')
     let d = current.format('ddd')
+
+    current = current.add(1, 'days')
+
     let timesArray = info.times.hours[d]
 
     if (timesArray) {

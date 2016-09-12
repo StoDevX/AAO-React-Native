@@ -78,7 +78,6 @@ export default function BuildingView({info, image, name}: PropsType) {
   })
 
   
-  
   let hours = formatBuildingHours(info)
   let allHours = allBuildingHours(info, styles.hoursText)
 
