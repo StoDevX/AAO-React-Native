@@ -6,9 +6,11 @@
 
 import React from 'react'
 import {
-  View,
-  Text,
-  Image,
+ View,
+ Text,
+ Image,
+ Dimensions,
+ StyleSheet,
 } from 'react-native'
 
 import * as c from '../components/colors'
@@ -17,28 +19,25 @@ import {isBuildingOpen} from './is-building-open'
 import {formatBuildingHours} from './format-building-hours'
 import CollapsibleBlock from '../components/collapsibleBlock'
 import {allBuildingHours} from './all-building-hours.js'
-import Dimensions from 'Dimensions'
 
 
-let openStatus
-let borderColor
+export default function BuildingView({info, image, name}: PropsType) {
 
-let borderColors = {
-  'Open': c.pastelGreen,
-  'Almost Closed': c.mustard,
-  'Closed': c.strawberry,
-}
+  let borderColors = {
+    'Open': '#CEFFCE',
+    'Almost Closed': '#FFFC96',
+    'Closed': '#F7C8C8',
+  }
 
-type PropsType = {
-  info: BuildingInfoType,
-  image: number,
-  name: string,
-};
+  type PropsType = {
+    info: BuildingInfoType,
+    image: number,
+    name: string,
+  };
 
+  let openStatus = isBuildingOpen(info)
 
-
-let style = function(){
-  return {
+  let styles = StyleSheet.create({
     container: {
       flex: 1,
       justifyContent: 'center',
@@ -46,7 +45,7 @@ let style = function(){
       borderRightWidth: 5,
       marginTop: 10,
       height: 100,
-      borderColor: getBorderColor(),
+      borderColor: borderColors[openStatus],
     },
     name: {
       color: c.white,
@@ -74,48 +73,35 @@ let style = function(){
     contents: {
       paddingBottom: 10,
       paddingTop: 5,
-      width: getContainerWidth(),
+      width: Dimensions.get('window').width,
     },
-  }
-}
+  })
 
-let getBorderColor = function(){
-  borderColor = borderColors[openStatus]
-  return borderColor
-}
-
-let getContainerWidth = function(){
-  return Dimensions.get('window').width
-}
-
-export default function BuildingView({info, image, name}: PropsType) {
-  openStatus = isBuildingOpen(info)
+  
   
   let hours = formatBuildingHours(info)
-  let allHours = allBuildingHours(info, style())
-
-
+  let allHours = allBuildingHours(info, styles.hoursText)
 
   return (
-    <CollapsibleBlock style={style()} borderColor={borderColor}>
-    <View style={[style().container]}>
-      <Image
-        source={image}
-        style={{width: undefined, height: 100}}
-        resizeMode='cover'>
-        <View style={style().inner}>
-          <Text style={style().name}>{name}</Text>
-          <Text style={style().status}>{hours}</Text>
-        </View>
-      </Image>
-    </View>
+    <CollapsibleBlock style={styles} backgroundColor={borderColors[openStatus]}>
+      <View style={[styles.container]}>
+        <Image
+          source={image}
+          style={{width: undefined, height: 100}}
+          resizeMode='cover'>
+          <View style={styles.inner}>
+            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.status}>{hours}</Text>
+          </View>
+        </Image>
+      </View>
 
-    <View style={style().contents}>
-      <Text style={style().hoursText}>Daily Hours</Text>
-      {allHours}
-    </View>
+      <View style={styles.contents}>
+        <Text style={styles.hoursText}>Daily Hours</Text>
+        {allHours}
+      </View>
     </CollapsibleBlock>
-  )
+    )
 }
 
 BuildingView.propTypes = {

@@ -7,6 +7,7 @@ import React from 'react'
 import {
   View,
   TouchableOpacity,
+  StyleSheet,
 } from 'react-native'
 
 import Collapsible from 'react-native-collapsible'
@@ -15,7 +16,7 @@ import Collapsible from 'react-native-collapsible'
 export default class CollapsibleBlock extends React.Component {
 
   static propTypes = {
-    borderColor: React.PropTypes.string.isRequired,
+    backgroundColor: React.PropTypes.string.isRequired,
     children: React.PropTypes.array.isRequired,
   }
 
@@ -23,24 +24,17 @@ export default class CollapsibleBlock extends React.Component {
     isCollapsed: true,
   }
 
-  style() {
-    return {
-      container: {
-        marginBottom: 0,
-      },
-      collapsedContent: {
-        alignSelf: 'center',
-        backgroundColor: this.statusColor(),
-        
-      },
-      collapsedContainer: {
-      },
-    }
-  }
+  styles = StyleSheet.create({
+    container: {
+      marginBottom: 0,
+    },
+    collapsedContent: {
+      alignSelf: 'center',
 
-  statusColor(){
-    return this.props.borderColor
-  }
+    },
+    collapsedContainer: {
+    },
+  })
 
   render() {
     return (
@@ -48,8 +42,8 @@ export default class CollapsibleBlock extends React.Component {
           onPress={() => this.setState({isCollapsed: !this.state.isCollapsed})}
         >
           {this.props.children[0]}
-          <Collapsible collapsed={this.state.isCollapsed} style={this.style().collapsedContent}>
-            <View style={this.style().collapsedContainer}>
+          <Collapsible collapsed={this.state.isCollapsed} style={[this.styles.collapsedContent, {backgroundColor: this.props.backgroundColor}]}>
+            <View style={this.styles.collapsedContainer}>
               {this.props.children[1]}
             </View>
           </Collapsible>
