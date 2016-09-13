@@ -6,16 +6,27 @@
 
 import React from 'react'
 import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
+ View,
+ Text,
+ Image,
+ Dimensions,
+ StyleSheet,
 } from 'react-native'
 
 import * as c from '../components/colors'
 import type {BuildingInfoType} from './types'
 import {isBuildingOpen} from './is-building-open'
 import {formatBuildingHours} from './format-building-hours'
+import CollapsibleBlock from '../components/collapsibleBlock'
+import {allBuildingHours} from './all-building-hours.js'
+
+
+
+type PropsType = {
+  info: BuildingInfoType,
+  image: number,
+  name: string,
+};
 
 let styles = StyleSheet.create({
   container: {
@@ -23,17 +34,8 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
     borderLeftWidth: 5,
     borderRightWidth: 5,
-    margin: 5,
+    marginTop: 10,
     height: 100,
-  },
-  buildingOpen: {
-    borderColor: c.pastelGreen,
-  },
-  buildingClosed: {
-    borderColor: c.strawberry,
-  },
-  buildingAlmostClosed: {
-    borderColor: c.mustard,
   },
   name: {
     color: c.white,
@@ -54,38 +56,49 @@ let styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.45)',
   },
+  hoursText: {
+    textAlign: 'center',
+    fontSize: 13,
+  },
+  contents: {
+    paddingBottom: 10,
+    paddingTop: 5,
+  },
 })
 
-let borderColors = {
-  'Open': styles.buildingOpen,
-  'Almost Closed': styles.buildingAlmostClosed,
-  'Closed': styles.buildingClosed,
-}
 
-type PropsType = {
-  info: BuildingInfoType,
-  image: number,
-  name: string,
-};
 export default function BuildingView({info, image, name}: PropsType) {
-  let open = isBuildingOpen(info)
-  let borderColor = borderColors[open]
+
+  let borderColors = {
+    'Open': '#CEFFCE',
+    'Almost Closed': '#FFFC96',
+    'Closed': '#F7C8C8',
+  }
+
+  let openStatus = isBuildingOpen(info)
   let hours = formatBuildingHours(info)
+  let allHours = allBuildingHours(info, styles.hoursText)
 
   return (
-    <View style={[styles.container, borderColor]}>
-      <Image
-        source={image}
-        style={{width: undefined, height: 100}}
-        resizeMode='cover'
-      >
-        <View style={styles.inner}>
-          <Text style={styles.name}>{name}</Text>
-          <Text style={styles.status}>{hours}</Text>
-        </View>
-      </Image>
-    </View>
-  )
+    <CollapsibleBlock style={styles} collapsedStyle={{backgroundColor: borderColors[openStatus]}}>
+      <View style={[styles.container, {borderColor: borderColors[openStatus]}]}>
+        <Image
+          source={image}
+          style={{width: undefined, height: 100}}
+          resizeMode='cover'>
+          <View style={styles.inner}>
+            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.status}>{hours}</Text>
+          </View>
+        </Image>
+      </View>
+
+      <View style={[styles.contents, {width: Dimensions.get('window').width}]}>
+        <Text style={styles.hoursText}>Daily Hours</Text>
+        {allHours}
+      </View>
+    </CollapsibleBlock>
+    )
 }
 
 BuildingView.propTypes = {

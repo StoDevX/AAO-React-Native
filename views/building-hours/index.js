@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {View, Text, ListView, RefreshControl} from 'react-native'
+import {ListView, RefreshControl} from 'react-native'
 import BuildingView from './building'
 
 import delay from 'delay'
