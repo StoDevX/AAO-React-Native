@@ -14,14 +14,15 @@ export function allBuildingHours(info, style) {
     let hoursString = ''
     let day = current.format('dddd')
     let d = current.format('ddd')
-
-    current = current.add(1, 'days')
+    
+    current.add(1, 'days')
+    
 
     let timesArray = info.times.hours[d]
 
     if (timesArray) {
-      let open = moment(timesArray[0], 'H:mm').format('h:mm a')
-      let close = moment(timesArray[1], 'H:mm').format('h:mm a')
+      let open = moment(timesArray[0], 'H:mm').tz(CENTRAL_TZ).format('h:mm a')
+      let close = moment(timesArray[1], 'H:mm').tz(CENTRAL_TZ).format('h:mm a')
       hoursString = open + ' - ' + close
     } else {
       hoursString = 'Closed'
