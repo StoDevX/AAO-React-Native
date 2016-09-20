@@ -35,7 +35,7 @@
     "moment": "2.14.1",
     "moment-timezone": "0.5.5",
     "querystring": "0.2.0",
-    "react": "15.2.1",
+    "react": "15.3.2",
     "react-native": "0.31.0",
     "react-native-alphabetlistview": "0.2.0",
     "react-native-android-tablayout": "0.3.0",
