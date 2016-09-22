@@ -33,13 +33,6 @@ If you are looking to get a start with the project, issues tagged with all 3 [`g
 
 We use two continuous-integration (CI) systems to make sure that the project still works as we change things. Any submissions you make will be validated by [Travis](https://travis-ci.org/StoDevX/AAO-React-Native/builds) and [AppVeyor](https://ci.appveyor.com/project/hawkrives/aao-react-native/history), the CIs.
 
-As always, please keep the [Code of Conduct](https://github.com/StoDevX/AAO-React-Native/blob/master/CodeOfConduct.md) in mind.
-
 Before you commit and push, make sure to lint your changes and fix any errors or warnings that `npm run lint` shows. We try to keep the `master` branch clean of all messages from eslint.
-) are a great place to start. These issues are ones that the team has identified as simple, small changes that won't get too deep, and will be easy to approve for merging. See our [todo](https://github.com/StoDevX/AAO-React-Native#todo) section if you are curious why they are tagged as `closed`. They really are open!
-
-We use two continuous-integration (CI) systems to make sure that the project still works as we change things. Any submissions you make will be validated by [Travis](https://travis-ci.org/StoDevX/AAO-React-Native/builds) and [AppVeyor](https://ci.appveyor.com/project/hawkrives/aao-react-native/history), the CIs.
 
 As always, please keep the [Code of Conduct](https://github.com/StoDevX/AAO-React-Native/blob/master/CodeOfConduct.md) in mind.
-
-Before you commit and push, make sure to lint your changes and fix any errors or warnings that `npm run lint` shows. We try to keep the `master` branch clean of all messages from eslint.
