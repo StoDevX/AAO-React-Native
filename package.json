@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "babel-eslint": "6.1.2",
-    "eslint": "3.5.0",
+    "eslint": "3.6.0",
     "eslint-plugin-babel": "3.3.0",
     "eslint-plugin-flowtype": "2.19.0",
     "eslint-plugin-react": "6.2.2",
