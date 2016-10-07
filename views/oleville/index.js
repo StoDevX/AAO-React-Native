@@ -80,11 +80,9 @@ export default class OlevilleView extends React.Component {
       if (responseJson.media_details.sizes.medium.source_url) {
         // if there is a featured image, use that url
         return responseJson.media_details.sizes.medium.source_url
-      } else {
-        // otherwise default to the oleville logo
-        return 'http://oleville.com/wp-content/uploads/2015/12/Oleville-Logo.png'
       }
     }
+    return 'http://oleville.com/wp-content/uploads/2015/12/Oleville-Logo.png'
   }
 
   fetchData = async () => {
