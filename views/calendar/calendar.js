@@ -178,7 +178,7 @@ let styles = StyleSheet.create({
   },
   row: {
     // marginLeft: 10,
-    // paddingRight: 10,
+    paddingRight: 10,
   },
   separator: {
     borderBottomWidth: StyleSheet.hairlineWidth,
