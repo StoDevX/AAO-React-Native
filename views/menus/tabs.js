@@ -2,7 +2,7 @@
 
 import CageMenuView from './cage'
 import StavMenuView from './stav'
-// import PauseMenuView from './pause'
+import PauseMenuView from './pause'
 
 export default [
   {
@@ -17,10 +17,10 @@ export default [
     rnVectorIcon: {iconName: 'cafe'},
     component: CageMenuView,
   },
-  // {
-  //   id: 'pause',
-  //   title: 'The Pause',
-  //   rnVectorIcon: {iconName: 'paw'},
-  //   component: PauseMenuView,
-  // },
+  {
+    id: 'pause',
+    title: 'The Pause',
+    rnVectorIcon: {iconName: 'paw'},
+    component: PauseMenuView,
+  },
 ]
