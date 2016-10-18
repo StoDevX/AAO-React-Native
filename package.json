@@ -30,7 +30,7 @@
     "events": "1.1.1",
     "frisbee": "1.1.1",
     "html-entities": "1.2.0",
-    "htmlparser2": "3.9.1",
+    "htmlparser2": "3.9.2",
     "lodash": "4.16.3",
     "moment": "2.15.1",
     "moment-timezone": "0.5.5",
