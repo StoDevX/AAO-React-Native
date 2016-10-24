@@ -32,7 +32,7 @@
     "html-entities": "1.2.0",
     "htmlparser2": "3.9.2",
     "lodash": "4.16.3",
-    "moment": "2.15.1",
+    "moment": "2.15.2",
     "moment-timezone": "0.5.7",
     "querystring": "0.2.0",
     "react": "15.2.1",
