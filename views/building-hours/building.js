@@ -98,7 +98,7 @@ export default function BuildingView({info, image, name}: PropsType) {
         {allHours}
       </View>
     </CollapsibleBlock>
-    )
+  )
 }
 
 BuildingView.propTypes = {
