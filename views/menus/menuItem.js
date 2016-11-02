@@ -55,12 +55,11 @@ export default class CageMenuView extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <ListView
-          dataSource={this.state.dataSource}
-          renderRow={this._renderRow.bind(this)}
-        />
-      </View>
+      <ListView
+        dataSource={this.state.dataSource}
+        renderRow={this._renderRow.bind(this)}
+        contentContainerStyle={styles.container}
+      />
     )
   }
 }
