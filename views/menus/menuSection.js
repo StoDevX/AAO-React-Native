@@ -38,13 +38,19 @@ let styles = StyleSheet.create({
   },
   contentText: {
     marginTop: 5,
-    marginBottom: 5,
     marginLeft: 10,
     marginRight: 5,
     fontStyle: 'italic',
   },
-  collapsedContainer: {
-    marginBottom: 5,
+  headerBox: {
+    // marginBottom: 5,
+    backgroundColor: c.iosListSectionHeader,
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#ebebeb',
   },
 })
 
@@ -61,19 +67,20 @@ export default class MenuSection extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <TouchableOpacity
-          onPress={() => this.setState({isCollapsed: !this.state.isCollapsed})}
-        >
+      <TouchableOpacity
+        onPress={() => this.setState({isCollapsed: !this.state.isCollapsed})}
+        style={styles.container}
+      >
+        <View style={styles.headerBox}>
           <Text style={styles.headerText}>{this.props.header}</Text>
-          <Collapsible collapsed={this.state.isCollapsed} style={styles.collapsedContent}>
-            <View style={styles.collapsedContainer}>
-              <Text style={styles.contentText}>{this.props.subText}</Text>
-              <MenuItem items={this.props.content} />
-            </View>
-          </Collapsible>
-        </TouchableOpacity>
-      </View>
+        </View>
+        <Collapsible collapsed={this.state.isCollapsed} style={styles.collapsedContent}>
+          <View style={styles.collapsedContainer}>
+            <Text style={styles.contentText}>{this.props.subText}</Text>
+            <MenuItem items={this.props.content} />
+          </View>
+        </Collapsible>
+      </TouchableOpacity>
     )
   }
 }

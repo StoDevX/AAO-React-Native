@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  View,
   StyleSheet,
   ListView,
 } from 'react-native'
@@ -12,8 +11,7 @@ import type {MenuSectionType} from './types'
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'stretch',
-    flexDirection: 'row',
+    marginTop: 10,
   },
 })
 
@@ -38,11 +36,11 @@ export default class PauseMenuView extends React.Component{
 
   render() {
     return (
-      <View style={styles.container}>
-        <ListView
-          dataSource={this.state.dataSource}
-          renderRow={this._renderRow.bind(this)} />
-      </View>
+      <ListView
+        dataSource={this.state.dataSource}
+        renderRow={this._renderRow.bind(this)}
+        contentContainerStyle={styles.container}
+      />
     )
   }
 }
