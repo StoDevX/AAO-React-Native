@@ -2,7 +2,7 @@
 
 import React from 'react'
 import {View, StyleSheet, Text} from 'react-native'
-import type {BusLineType} from './types'
+import type {BusLineType, BusTimeListType} from './types'
 import getScheduleForNow from './get-schedule-for-now'
 import getSetOfStopsForNow from './get-set-of-stops-for-now'
 import zip from 'lodash/zip'
@@ -20,14 +20,14 @@ let styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: '#c8c7cc',
   },
-  rowSectionHeader: {
+  busLineTitle: {
     paddingTop: 5,
     paddingBottom: 5,
     paddingLeft: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: '#c8c7cc',
   },
-  rowSectionHeaderText: {
+  busLineTitleText: {
     color: 'rgb(113, 113, 118)',
   },
   listContainer: {
@@ -119,7 +119,104 @@ let styles = StyleSheet.create({
   },
 })
 
-export default function BusLineView({line, style, now}: {line: BusLineType, style: Object|number, now: typeof moment}) {
+function BusLineTitle({title}: {title: string}) {
+  return (
+    <View style={styles.busLineTitle}>
+      <Text style={styles.busLineTitleText}>
+        {title.toUpperCase()}
+      </Text>
+    </View>
+  )
+}
+
+function BusStopRow({
+  index,
+  time,
+  now,
+  barColor,
+  currentStopColor,
+  isLastRow,
+  place,
+  times,
+}: {
+  index: number,
+  time: typeof moment,
+  now: typeof moment,
+  barColor: string,
+  currentStopColor: string,
+  isLastRow: boolean,
+  place: string,
+  times: BusTimeListType[]
+}) {
+  const afterStop = time && now.isAfter(time, 'minute')
+  const atStop = time && now.isSame(time, 'minute')
+  const beforeStop = !afterStop && !atStop && time !== false
+  const skippingStop = time === false
+
+  // To draw the bar, we draw a chunk of the bar, then we draw the dot, then
+  // we draw the last chunk of the bar.
+  const busLineProgressBar = (
+    <View style={styles.barContainer}>
+      <View style={[styles.bar, {backgroundColor: barColor}]} />
+      <View
+        style={[
+          styles.dot,
+          afterStop && [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}],
+          beforeStop && [styles.beforeStop, {borderColor: barColor}],
+          atStop && [styles.atStop, {borderColor: currentStopColor}],
+          skippingStop && styles.busWillSkipStopDot,
+        ]}
+      />
+      <View style={[styles.bar, {backgroundColor: barColor}]} />
+    </View>
+  )
+
+  // The bus line information is the stop name, and the times.
+  const busLineInformation = (
+    <View style={[
+      styles.rowDetail,
+      !isLastRow && styles.notLastRowContainer,
+    ]}>
+      <Text style={[
+        styles.itemTitle,
+        skippingStop && styles.busWillSkipStopTitle,
+        afterStop && styles.passedStopTitle,
+        atStop && styles.atStopTitle,
+      ]}>
+        {place}
+      </Text>
+      <Text
+        style={[
+          styles.itemDetail,
+          skippingStop && styles.busWillSkipStopDetail,
+        ]}
+        numberOfLines={1}
+      >
+        {times
+          .map(timeSet => timeSet[index])
+          .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
+          .join(' • ')}
+      </Text>
+    </View>
+  )
+
+  return (
+    <View style={styles.row}>
+      {busLineProgressBar}
+      {busLineInformation}
+    </View>
+  )
+}
+
+export default function BusLineView({
+  line,
+  style,
+  now,
+}: {
+  line: BusLineType,
+  style: Object|number,
+  now: typeof moment,
+}) {
   let schedule = getScheduleForNow(line.schedules, now)
 
   schedule.times = schedule.times.map(timeset => {
@@ -165,61 +262,23 @@ export default function BusLineView({line, style, now}: {line: BusLineType, styl
 
   return (
     <View style={[styles.container, style]}>
-      <View style={styles.rowSectionHeader}>
-        <Text style={styles.rowSectionHeaderText}>
-          {lineTitle.toUpperCase()}
-        </Text>
-      </View>
+      <BusLineTitle title={lineTitle} />
       <View style={[styles.listContainer]}>
-        {pairs.map(([place, time], i) => {
-          let afterStop = time && now.isAfter(time, 'minute')
-          let atStop = time && now.isSame(time, 'minute')
-          let beforeStop = !afterStop && !atStop && time !== false
-          let skippingStop = time === false
-          let isLastRow = i === pairs.length - 1
+        {pairs.map(([place, time], i) =>
+          <BusStopRow
+            key={i}
+            index={i}
 
-          return <View key={i} style={styles.row}>
-            <View style={styles.barContainer}>
-              <View style={[styles.bar, {backgroundColor: barColor}]} />
-              <View
-                style={[
-                  styles.dot,
-                  afterStop && [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}],
-                  beforeStop && [styles.beforeStop, {borderColor: barColor}],
-                  atStop && [styles.atStop, {borderColor: currentStopColor}],
-                  skippingStop && styles.busWillSkipStopDot,
-                ]}
-              />
-              <View style={[styles.bar, {backgroundColor: barColor}]} />
-            </View>
-            <View style={[
-              styles.rowDetail,
-              !isLastRow && styles.notLastRowContainer,
-            ]}>
-              <Text style={[
-                styles.itemTitle,
-                skippingStop && styles.busWillSkipStopTitle,
-                afterStop && styles.passedStopTitle,
-                atStop && styles.atStopTitle,
-              ]}>
-                {place}
-              </Text>
-              <Text
-                style={[
-                  styles.itemDetail,
-                  skippingStop && styles.busWillSkipStopDetail,
-                ]}
-                numberOfLines={1}
-              >
-                {schedule.times
-                  .slice(timesIndex)
-                  .map(timeSet => timeSet[i])
-                  .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
-                  .join(' • ')}
-              </Text>
-            </View>
-          </View>
-        })}
+            place={place}
+            times={schedule.times.slice(timesIndex)}
+
+            now={now}
+            time={time}
+            isLastRow={i === pairs.length - 1}
+
+            barColor={barColor}
+            currentStopColor={currentStopColor}
+          />)}
       </View>
     </View>
   )
