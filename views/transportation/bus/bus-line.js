@@ -36,7 +36,7 @@ let styles = StyleSheet.create({
     flexDirection: 'column',
   },
   busWillSkipStopTitle: {
-    color: c.iosText,
+    color: c.iosDisabledText,
   },
   busWillSkipStopDetail: {},
   busWillSkipStopDot: {
@@ -70,7 +70,7 @@ let styles = StyleSheet.create({
     textAlign: 'left',
   },
   itemDetail: {
-    color: c.iosText,
+    color: c.iosDisabledText,
     paddingLeft: 0,
     paddingRight: 0,
     fontSize: 13,
@@ -115,7 +115,7 @@ let styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   passedStopTitle: {
-    color: c.iosText,
+    color: c.iosDisabledText,
   },
 })
 
