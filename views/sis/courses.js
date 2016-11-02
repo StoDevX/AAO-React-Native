@@ -62,7 +62,7 @@ export default class CoursesView extends React.Component {
       sectionHeaderHasChanged: this.sectionHeaderHasChanged,
     }),
     refreshing: false,
-    loading: false,
+    loading: true,
     error: null,
     loggedIn: true,
   }
@@ -174,6 +174,10 @@ export default class CoursesView extends React.Component {
         navigator={this.props.navigator}
         onLoginComplete={() => this.loadIfLoggedIn()}
       />
+    }
+
+    if (this.state.loading) {
+      return <LoadingScreen />
     }
 
     return (
