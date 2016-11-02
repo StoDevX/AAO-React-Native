@@ -17,13 +17,15 @@ const TIMEZONE = 'America/Winnipeg'
 let styles = StyleSheet.create({
   container: {
     marginTop: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: '#c8c7cc',
   },
   rowSectionHeader: {
     paddingTop: 5,
     paddingBottom: 5,
     paddingLeft: 15,
-    borderBottomWidth: 1,
-    borderColor: '#ebebeb',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: '#c8c7cc',
   },
   rowSectionHeaderText: {
     color: 'rgb(113, 113, 118)',
@@ -53,8 +55,8 @@ let styles = StyleSheet.create({
     flexDirection: 'column',
   },
   notLastRowContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ebebeb',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#c8c7cc',
   },
   passedStopDetail: {
 
