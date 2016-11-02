@@ -31,7 +31,7 @@
     "frisbee": "1.1.1",
     "html-entities": "1.2.0",
     "htmlparser2": "3.9.2",
-    "lodash": "4.16.5",
+    "lodash": "4.16.6",
     "moment": "2.15.2",
     "moment-timezone": "0.5.7",
     "querystring": "0.2.0",
@@ -55,7 +55,7 @@
     "xml2js": "0.4.17"
   },
   "devDependencies": {
-    "babel-eslint": "7.0.0",
+    "babel-eslint": "7.1.0",
     "eslint": "3.9.1",
     "eslint-plugin-babel": "3.3.0",
     "eslint-plugin-flowtype": "2.25.0",
