@@ -46,7 +46,7 @@ export default class CageMenuView extends React.Component {
     for (let key in data){
       if (data.hasOwnProperty(key)){
         let item = data[key]
-        if (item.station.includes(currentStation) && item.special == 1){
+        if (item.special == 1 && item.station.includes(currentStation)){
           let temp = {
             name: item.label,
             dietary: item.cor_icon,

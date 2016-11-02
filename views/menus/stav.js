@@ -19,7 +19,6 @@ const dietaryFilters = DietaryFilters()
 
 import buildingHours from '../../data/building-hours.json'
 
-
 export default class StavMenuView extends React.Component {
   constructor(props){
     super(props)
@@ -101,8 +100,9 @@ export default class StavMenuView extends React.Component {
         if (stationItems.length > 0) {
           sectionIDs.push(sectionId)
 
+          let stationName = stations[sectionId].label
 
-          dataBlob[sectionId] = { station: stations[sectionId].label }
+          dataBlob[sectionId] = { station: stationName.charAt(0).toUpperCase() + stationName.slice(1) }
 
           rowIDs.push([])
 
@@ -193,5 +193,10 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: '#8E8E8E',
+  },
+  footer: {
+    flex: 1,
+    padding: 8,
+    backgroundColor: '#EAEAEA',
   },
 })
