@@ -1,41 +1,87 @@
 // @flow
 
 import React from 'react'
-import {View} from 'react-native'
-import {TabLayout, Tab} from 'react-native-android-tablayout'
-
-import styles from './styles'
+import { StyleSheet } from 'react-native'
+import { TabViewAnimated, TabBarTop } from 'react-native-tab-view'
+import * as c from '../colors'
 import type { TabbedViewPropsType } from './types'
 import { TabbedViewPropTypes } from './types'
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  tabbar: {
+    height: 48,
+    backgroundColor: c.mandarin,
+  },
+  page: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  indicator: {
+    backgroundColor: '#ffeb3b',
+  },
+  label: {
+    color: '#fff',
+    fontWeight: '400',
+  },
+})
 
 export default class TabbedView extends React.Component {
   static propTypes = TabbedViewPropTypes
 
   state = {
-    selectedTabIndex: 0,
+    index: 0,
   }
 
-  props: TabbedViewPropsType;
+  props: TabbedViewPropsType
+
+  _handleChangeTab = index => {
+    this.setState({
+      index,
+    })
+  }
+
+  _renderHeader = props => {
+    return (
+      <TabBarTop
+        {...props}
+        scrollEnabled={true}
+        indicatorStyle={styles.indicator}
+        style={styles.tabbar}
+        labelStyle={styles.label}
+      />
+    )
+  }
+
+  _renderScene = ({ route }) => {
+    if (!route.component) {
+      return null
+    }
+
+    return (
+      <route.component
+        {...this.props.childProps}
+        {...(route.props || {})}
+        navigator={this.props.navigator}
+        route={this.props.route}
+      />
+    )
+  }
 
   render() {
-    let {navigator, route, tabs} = this.props
-    let baseProps = {navigator, route}
-    let TabInfo = tabs[this.state.selectedTabIndex]
+    let routes = {routes: this.props.tabs.map(tab => ({...tab, key: tab.id}))}
+
     return (
-      <View style={[styles.container, this.props.style]}>
-        <TabLayout
-          selectedTabIndicatorColor='orange'
-          selectedTab={this.state.selectedTabIndex}
-          onTabSelected={e => this.setState({selectedTabIndex: e.nativeEvent.position})}
-        >
-          {tabs.map(tab => <Tab key={tab.id} name={tab.title} style={styles.listViewStyle} />)}
-        </TabLayout>
-        <TabInfo.component
-          {...this.props.childProps}
-          {...(TabInfo.props || {})}
-          {...baseProps}
-        />
-      </View>
+      <TabViewAnimated
+        style={styles.container}
+        navigationState={{...this.state, ...routes}}
+        renderScene={this._renderScene}
+        renderHeader={this._renderHeader}
+        onRequestChangeTab={this._handleChangeTab}
+      />
     )
   }
 }
