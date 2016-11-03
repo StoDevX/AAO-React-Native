@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#ebebeb',
     marginLeft: 20,
     paddingRight: 10,
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   arrowIcon: {
-    color: c.iosText,
+    color: c.iosDisabledText,
     fontSize: 20,
     marginRight: 6,
     marginLeft: 6,
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   itemPreview: {
-    color: c.iosText,
+    color: c.iosDisabledText,
     fontSize: 13,
     textAlign: 'left',
   },

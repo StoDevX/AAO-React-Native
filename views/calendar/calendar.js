@@ -207,8 +207,8 @@ let styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5,
     paddingLeft: 10,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: '#ebebeb',
   },
   rowSectionHeaderText: {
