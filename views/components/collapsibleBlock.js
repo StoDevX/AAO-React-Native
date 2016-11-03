@@ -10,7 +10,7 @@ import {
   StyleSheet,
 } from 'react-native'
 
-import Collapsible from 'react-native-collapsible'
+import Collapsible from './collapsible'
 
 
 let styles = StyleSheet.create({
@@ -27,7 +27,6 @@ let styles = StyleSheet.create({
 
 
 export default class CollapsibleBlock extends React.Component {
-
   static propTypes = {
     children: React.PropTypes.array.isRequired,
     collapsedStyle: React.PropTypes.object.isRequired,

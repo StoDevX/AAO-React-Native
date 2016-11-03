@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 
 import * as c from '../components/colors'
-import Collapsible from 'react-native-collapsible'
+import Collapsible from '../components/collapsible'
 import MenuItem from './menuItem'
 import type { MenuItemType } from './types'
 
