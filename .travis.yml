@@ -44,7 +44,7 @@ matrix:
           # However, that seems to leave us with errors in the build
           - tools
           - platform-tools
-          - build-tools-23.0.1
+          - build-tools-23.0.2
           - android-23
           - extra-android-m2repository
           - extra-google-m2repository
