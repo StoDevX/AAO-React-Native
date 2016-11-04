@@ -14,9 +14,8 @@ export function allBuildingHours(info, style) {
     let hoursString = ''
     let day = current.format('dddd')
     let d = current.format('ddd')
-    
+
     current.add(1, 'days')
-    
 
     let timesArray = info.times.hours[d]
 
