@@ -51,6 +51,7 @@ rules:
   no-redeclare: ['error', {builtinGlobals: true}]
   no-restricted-syntax: [error, WithStatement]
   no-self-assign: warn
+  no-trailing-spaces: error
   no-undef-init: 'off'
   no-underscore-dangle: 'off'
   no-unmodified-loop-condition: error
