@@ -106,7 +106,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
@@ -117,6 +117,7 @@
 		<string>MaterialIcons.ttf</string>
 		<string>Octicons.ttf</string>
 		<string>Zocial.ttf</string>
+		<string>SimpleLineIcons.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
