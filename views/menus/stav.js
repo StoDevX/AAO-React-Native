@@ -15,8 +15,6 @@ import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 import DietaryFilters from './dietaryFilters'
-const dietaryFilters = DietaryFilters()
-
 import buildingHours from '../../data/building-hours.json'
 
 export default class StavMenuView extends React.Component {
@@ -82,7 +80,7 @@ export default class StavMenuView extends React.Component {
   }
 
 
-  fetchData () {
+  fetchData = () => {
     fetch('http://legacy.cafebonappetit.com/api/2/menus?cafe=261').then(response => response.json()).then(responseData => {
       let items = responseData.items   
 
@@ -122,7 +120,7 @@ export default class StavMenuView extends React.Component {
         loaded: true,
       })
 
-    }).done()
+    })
   }
 
   renderLoadingView() {
@@ -149,7 +147,7 @@ export default class StavMenuView extends React.Component {
 
   renderFoodItem(rowData){
     return (
-      <FoodItem data={rowData} filters={dietaryFilters} />
+      <FoodItem data={rowData} filters={DietaryFilters} />
       )
   }
   renderListView() {

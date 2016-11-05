@@ -10,10 +10,7 @@ import {
 } from 'react-native'
 
 import FoodItem from './foodItem'
-
 import DietaryFilters from './dietaryFilters'
-const dietaryFilters = DietaryFilters()
-
 
 export default class CageMenuView extends React.Component {
   constructor(props){
@@ -73,7 +70,7 @@ export default class CageMenuView extends React.Component {
     return stationList
   }
 
-  fetchData () {
+  fetchData = () => {
     fetch('http://legacy.cafebonappetit.com/api/2/menus?cafe=262').then(response => response.json()).then(responseData => {
       let items = responseData.items
 
@@ -141,7 +138,7 @@ export default class CageMenuView extends React.Component {
 
   renderFoodItem(rowData){
     return (
-      <FoodItem data={rowData} filters={dietaryFilters} />
+      <FoodItem data={rowData} filters={DietaryFilters} />
       )
   }
 
