@@ -116,44 +116,44 @@ export default class CageMenuView extends React.Component {
   renderLoadingView() {
     return (
       <View style={styles.header}>
-      <View style={styles.container}>
-      <ActivityIndicator
-        animating={!this.state.loaded}
-        style={[styles.activityIndicator, {height: 80}]}
-        size='large'
-      />
+        <View style={styles.container}>
+          <ActivityIndicator
+            animating={!this.state.loaded}
+            style={[styles.activityIndicator, {height: 80}]}
+            size='large'
+          />
+        </View>
       </View>
-      </View>
-      )
+    )
   }
 
 
   renderSectionHeader(sectionData){
     return (
       <View style={styles.sectionHeader}>
-      <Text style={styles.sectionHeaderText}>{sectionData.station}</Text>
+        <Text style={styles.sectionHeaderText}>{sectionData.station}</Text>
       </View>
-      )
+    )
   }
 
   renderFoodItem(rowData){
     return (
       <FoodItem data={rowData} filters={DietaryFilters} />
-      )
+    )
   }
 
   renderListView() {
     return (
       <View style={styles.container}>
-      <ListView
-        style={styles.container}
-        dataSource={this.state.dataSource}
-        renderRow={this.renderFoodItem}
-        renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
-        renderSectionHeader={this.renderSectionHeader}
-      />
+        <ListView
+          style={styles.container}
+          dataSource={this.state.dataSource}
+          renderRow={this.renderFoodItem}
+          renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
+          renderSectionHeader={this.renderSectionHeader}
+        />
       </View>
-      )
+    )
   }
 
   render() {

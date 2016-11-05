@@ -1,4 +1,4 @@
-module.exports = { 
+module.exports = {
   1: {
     label: 'vegetarian',
     icon: require('../../data/images/menu-icons/v.png'),
@@ -7,7 +7,6 @@ module.exports = {
     label: 'seafood watch',
     icon: require('../../data/images/menu-icons/sw.png'),
   },
-  
   4: {
     label: 'vegan',
     icon: require('../../data/images/menu-icons/vg.png'),
@@ -31,5 +30,5 @@ module.exports = {
   11: {
     label: 'kosher',
     icon: require('../../data/images/menu-icons/k.png'),
-  }, 
+  },
 }

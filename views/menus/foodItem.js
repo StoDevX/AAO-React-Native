@@ -1,5 +1,5 @@
 import React from 'react'
-import { 
+import {
   View,
   Text,
   StyleSheet,
@@ -26,16 +26,16 @@ export default class FoodItem extends React.Component {
   render(){
     return (
       <View style={styles.container}>
-      <View style={styles.name}>
-      <Text style={styles.text}>
-      {this.props.data.name}
-      </Text>
+        <View style={styles.name}>
+          <Text style={styles.text}>
+            {this.props.data.name}
+          </Text>
+        </View>
+        <View style={styles.iconContainer}>
+          {this.getDietaryTags()}
+        </View>
       </View>
-      <View style={styles.iconContainer}>
-      {this.getDietaryTags()}
-      </View>
-      </View>
-      )
+    )
   }
 }
 
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   icons: {
-    marginLeft: 7, 
+    marginLeft: 7,
     width: 15,
     height: 15,
   },
