@@ -24,7 +24,7 @@
     "release:android": "echo 'Not yet implemented!'"
   },
   "dependencies": {
-    "buffer": "5.0.0",
+    "buffer": "5.0.1",
     "css-select": "1.2.0",
     "delay": "1.3.1",
     "events": "1.1.1",
