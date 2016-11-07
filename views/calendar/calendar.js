@@ -85,6 +85,10 @@ export default class CalendarView extends React.Component {
         event.startTime = moment(event.start.date || event.start.dateTime)
         event.endTime = moment(event.end.date || event.end.dateTime)
       })
+      data.forEach(event => {
+        if (event.startTime < Date.now())
+          event.startTime = moment()
+      })
       let grouped = groupBy(data, event => event.startTime.format('ddd  MMM Do'))
       this.setState({events: this.state.events.cloneWithRowsAndSections(grouped)})
     } else if (data && !data.length) {
