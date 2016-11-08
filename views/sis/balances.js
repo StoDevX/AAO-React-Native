@@ -17,6 +17,8 @@ import {Cell, Section, TableView} from 'react-native-tableview-simple'
 
 import {isLoggedIn} from '../../lib/login'
 import delay from 'delay'
+import isNil from 'lodash/isNil'
+import isError from 'lodash/isError'
 import * as c from '../components/colors'
 import {getFinancialData} from '../../lib/financials'
 import ErrorView from './error-screen'
@@ -83,8 +85,13 @@ export default class BalancesView extends React.Component {
 
   fetchData = async (forceFromServer=false) => {
     try {
-      let {flex, ole, print} = await getFinancialData(forceFromServer)
-      this.setState({flex, ole, print})
+      let data = await getFinancialData(forceFromServer)
+      if (isError(data)) {
+        this.setState({loggedIn: false})
+      } else {
+        let {flex, ole, print} = data
+        this.setState({flex, ole, print})
+      }
     } catch (error) {
       this.setState({error})
       console.warn(error)
@@ -137,7 +144,7 @@ export default class BalancesView extends React.Component {
             <View style={styles.balancesRow}>
               <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
                 <Text style={styles.financialText} autoAdjustsFontSize={true}>
-                  {loading ? '…' : flex === null ? 'N/A' : ('$' + (flex / 100).toFixed(2))}
+                  {loading ? '…' : isNil(flex) ? 'N/A' : ('$' + (flex / 100).toFixed(2))}
                 </Text>
                 <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
                   Flex
@@ -146,7 +153,7 @@ export default class BalancesView extends React.Component {
 
               <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
                 <Text style={styles.financialText} autoAdjustsFontSize={true}>
-                  {loading ? '…' : ole === null ? 'N/A' : ('$' + (ole / 100).toFixed(2))}
+                  {loading ? '…' : isNil(ole) ? 'N/A' : ('$' + (ole / 100).toFixed(2))}
                 </Text>
                 <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
                   Ole
@@ -155,7 +162,7 @@ export default class BalancesView extends React.Component {
 
               <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
                 <Text style={styles.financialText} autoAdjustsFontSize={true}>
-                  {loading ? '…' : print === null ? 'N/A' : ('$' + (print / 100).toFixed(2))}
+                  {loading ? '…' : isNil(print) ? 'N/A' : ('$' + (print / 100).toFixed(2))}
                 </Text>
                 <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
                   Copy/Print

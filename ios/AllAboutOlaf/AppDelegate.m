@@ -35,10 +35,10 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-  
+
   self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
                                                          appId:@"aa46a500-ab1c-4127-b9ff-e7373da3ce35"];
-  
+
   return YES;
 }
 

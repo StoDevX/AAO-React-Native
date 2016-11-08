@@ -37,8 +37,8 @@ let styles = StyleSheet.create({
     flex: 1,
   },
   notLastRow: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ebebeb',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: '#c8c7cc',
   },
   itemTitle: {
     color: c.black,
@@ -48,7 +48,7 @@ let styles = StyleSheet.create({
     textAlign: 'left',
   },
   itemPreview: {
-    color: c.iosText,
+    color: c.iosDisabledText,
     fontSize: 13,
     textAlign: 'left',
   },
@@ -70,7 +70,7 @@ let styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   arrowIcon: {
-    color: c.iosText,
+    color: c.iosDisabledText,
     fontSize: 20,
     marginRight: 6,
     marginLeft: 4,
