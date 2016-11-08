@@ -46,6 +46,7 @@ export default class CalendarView extends React.Component {
     loaded: false,
     refreshing: true,
     error: null,
+    noEvents: false,
   }
 
   componentWillMount() {
@@ -87,13 +88,15 @@ export default class CalendarView extends React.Component {
       console.error(error)
     }
 
-    if (data) {
+    if (data && data.length) {
       data.forEach(event => {
         event.startTime = moment(event.start.date || event.start.dateTime)
         event.endTime = moment(event.end.date || event.end.dateTime)
       })
       let grouped = groupBy(data, event => event.startTime.format('ddd  MMM Do'))
       this.setState({events: this.state.events.cloneWithRowsAndSections(grouped)})
+    } else if (data && !data.length) {
+      this.setState({noEvents: true})
     }
     if (error) {
       this.setState({error: error.message})
@@ -151,6 +154,21 @@ export default class CalendarView extends React.Component {
       return <Text>{this.state.error}</Text>
     }
 
+    if (this.state.noEvents) {
+      return (
+        <View style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#ffffff',
+        }}>
+          <Text>
+            No events.
+          </Text>
+        </View>
+      )
+    }
+
     return (
       <ListView
         style={styles.container}
@@ -189,8 +207,8 @@ let styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5,
     paddingLeft: 10,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: '#ebebeb',
   },
   rowSectionHeaderText: {

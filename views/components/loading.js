@@ -11,7 +11,7 @@ export default function LoadingView() {
   return (
     <View style={styles.container}>
       <Text>
-        Loading...
+        Loading…
       </Text>
     </View>
   )

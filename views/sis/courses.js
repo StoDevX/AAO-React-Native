@@ -16,13 +16,15 @@ import {
 } from 'react-native'
 import * as c from '../components/colors'
 
-import {SisAuthenticationError} from '../../lib/errors'
 import {isLoggedIn} from '../../lib/login'
 import delay from 'delay'
 import zip from 'lodash/zip'
+import isError from 'lodash/isError'
+import _isNaN from 'lodash/isNaN'
+import isNil from 'lodash/isNil'
+import LoadingScreen from '../components/loading'
 import type {CourseType} from '../../lib/courses'
 import {loadAllCourses} from '../../lib/courses'
-import LoadingScreen from '../components/loading'
 import ErrorView from './error-screen'
 
 const SEMESTERS = {
@@ -62,7 +64,7 @@ export default class CoursesView extends React.Component {
       sectionHeaderHasChanged: this.sectionHeaderHasChanged,
     }),
     refreshing: false,
-    loading: false,
+    loading: true,
     error: null,
     loggedIn: true,
   }
@@ -100,7 +102,7 @@ export default class CoursesView extends React.Component {
   fetchData = async (forceFromServer=false) => {
     try {
       let courses = await loadAllCourses(forceFromServer)
-      if (courses instanceof SisAuthenticationError) {
+      if (isError(courses)) {
         this.setState({loggedIn: false})
       }
       this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
@@ -126,17 +128,19 @@ export default class CoursesView extends React.Component {
   }
 
   renderRow = (course: CourseType|Error) => {
-    if (course instanceof Error) {
+    if (isError(course) || course.line && course.column && course.sourceURL) {
       return (
         <TouchableHighlight underlayColor={'#ebebeb'}>
           <View style={styles.rowContainer}>
-            <Text style={styles.itemTitle}>Error: {course.message}</Text>
+            <Text style={styles.itemTitle}>Error</Text>
+            <Text style={styles.itemPreview} numberOfLines={2}>{course.message || 'The course had an error'}</Text>
           </View>
         </TouchableHighlight>
       )
     }
+
     let locationTimePairs = zip(course.locations, course.times)
-    let deptnum = `${course.department.join('/')} ${course.number}` + (course.section || '')
+    let deptnum = `${course.department.join('/')} ${_isNaN(course.number) || isNil(course.number) ? '' : course.number}` + (course.section || '')
     return (
       <TouchableHighlight underlayColor={'#ebebeb'}>
         <View style={styles.rowContainer}>
@@ -176,6 +180,10 @@ export default class CoursesView extends React.Component {
       />
     }
 
+    if (this.state.loading) {
+      return <LoadingScreen />
+    }
+
     return (
       <ListView
         style={styles.listContainer}
@@ -184,6 +192,7 @@ export default class CoursesView extends React.Component {
         renderRow={this.renderRow}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
+        enableEmptySections={true}
         pageSize={5}
         refreshControl={
           <RefreshControl

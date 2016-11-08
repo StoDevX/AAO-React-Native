@@ -36,6 +36,7 @@ export default class NewsContainer extends React.Component {
     refreshing: false,
     loaded: false,
     error: false,
+    noNews: false,
   }
 
   componentWillMount() {
@@ -46,6 +47,9 @@ export default class NewsContainer extends React.Component {
     try {
       let response = await fetch(this.props.url).then(r => r.json())
       let entries = response.responseData.feed.entries
+      if (!entries.length) {
+        this.setState({noNews: true})
+      }
       this.setState({dataSource: this.state.dataSource.cloneWithRows(entries)})
     } catch (error) {
       this.setState({error: true})
@@ -100,6 +104,21 @@ export default class NewsContainer extends React.Component {
       return <LoadingView />
     }
 
+    if (this.state.noNews) {
+      return (
+        <View style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#ffffff',
+        }}>
+          <Text>
+            No events.
+          </Text>
+        </View>
+      )
+    }
+
     return (
       <ListView
         style={styles.listContainer}
@@ -126,7 +145,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#ebebeb',
     marginLeft: 20,
     paddingRight: 10,
@@ -134,7 +153,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   arrowIcon: {
-    color: c.iosText,
+    color: c.iosDisabledText,
     fontSize: 20,
     marginRight: 6,
     marginLeft: 6,
@@ -151,7 +170,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   itemPreview: {
-    color: c.iosText,
+    color: c.iosDisabledText,
     fontSize: 13,
     textAlign: 'left',
   },

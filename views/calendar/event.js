@@ -34,7 +34,7 @@ let styles = StyleSheet.create({
     color: 'black',
   },
   endTime: {
-    color: c.iosText,
+    color: c.iosDisabledText,
   },
   texts: {
     paddingLeft: 10,
@@ -49,7 +49,7 @@ let styles = StyleSheet.create({
     fontSize: 14,
   },
   location: {
-    color: c.iosText,
+    color: c.iosDisabledText,
     fontSize: 10,
   },
 })
