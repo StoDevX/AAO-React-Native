@@ -13,18 +13,18 @@ export default class StavMenuView extends React.Component {
   static menuUrl = 'http://legacy.cafebonappetit.com/api/2/menus?cafe=261'
 
   state = {
-    loaded: false,
+    loading: true,
     stationMenus: [],
     foodItems: [],
   }
 
   state: {
-    loaded: boolean,
+    loading: boolean,
     stationMenus: StationMenuType[],
     foodItems: MenuItemContainerType,
   };
 
-  componentDidMount(){
+  componentDidMount() {
     this.fetchData()
   }
 
@@ -49,11 +49,7 @@ export default class StavMenuView extends React.Component {
     let stationMenus = responseData.days[0].cafes['261'].dayparts[0][this.whichMeal()].stations
     let foodItems = responseData.items
 
-    // console.warn('stationMenus', JSON.stringify(stationMenus))
-    // console.warn('foodItems', JSON.stringify(foodItems))
-    // console.warn(JSON.stringify(responseData))
-
-    this.setState({stationMenus, foodItems})
+    this.setState({stationMenus, foodItems, loading: false})
   }
 
   render() {
