@@ -22,6 +22,7 @@ import qs from 'querystring'
 import EventView from './event'
 import * as c from '../components/colors'
 import { GOOGLE_CALENDAR_API_KEY } from '../../lib/config'
+const TIMEZONE = 'America/Winnipeg'
 
 type GoogleCalendarTimeType = {
   dateTime: string,
@@ -81,16 +82,17 @@ export default class CalendarView extends React.Component {
     }
 
     if (data && data.length) {
+      let now = moment.tz(TIMEZONE)
       data.forEach(event => {
         event.startTime = moment(event.start.date || event.start.dateTime)
         event.endTime = moment(event.end.date || event.end.dateTime)
+        event.isOngoing = event.startTime.isBefore(now, 'day')
       })
-      data.forEach(event => {
-        if (event.startTime < Date.now()) {
-          event.startTime = moment()
-        }
+      let grouped = groupBy(data, event => {
+        return event.isOngoing
+          ? 'Ongoing'  // default to "now" in CST
+          : event.startTime.format('ddd  MMM Do')  // google returns events in CST
       })
-      let grouped = groupBy(data, event => event.startTime.format('ddd  MMM Do'))
       this.setState({events: this.state.events.cloneWithRowsAndSections(grouped)})
     } else if (data && !data.length) {
       this.setState({noEvents: true})
@@ -124,6 +126,7 @@ export default class CalendarView extends React.Component {
         startTime={data.startTime}
         endTime={data.endTime}
         location={data.location}
+        isOngoing={data.isOngoing}
       />
     )
   }
