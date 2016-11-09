@@ -55,7 +55,7 @@ let styles = StyleSheet.create({
 })
 
 // PROPS: eventTitle, location, startTime, endTime
-export default function EventView(props: {eventTitle: string, location: string, startTime?: Object, endTime?: Object, style?: any}) {
+export default function EventView(props: {eventTitle: string, location: string, startTime?: Object, endTime?: Object, style?: any, isOngoing: bool}) {
   let title = getText(parseHtml(props.eventTitle))
 
   let eventLength = moment.duration(props.endTime.diff(props.startTime)).asHours()
@@ -65,6 +65,11 @@ export default function EventView(props: {eventTitle: string, location: string, 
   let times = null
   if (allDay) {
     times = <Text style={[styles.timeText, styles.startTime]}>all-day</Text>
+  } else if (props.isOngoing) {
+    times = [
+      <Text key={0} style={[styles.timeText, styles.startTime]}>{props.startTime.format('MMM. D')}</Text>,
+      <Text key={1} style={[styles.timeText, styles.endTime]}>{props.endTime.format('MMM. D')}</Text>,
+    ]
   } else if (multiDay) {
     times = [
       <Text key={0} style={[styles.timeText, styles.startTime]}>{props.startTime.format('h:mma')}</Text>,
