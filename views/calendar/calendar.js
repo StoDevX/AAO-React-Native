@@ -40,8 +40,8 @@ export default class CalendarView extends React.Component {
 
   state = {
     events: new ListView.DataSource({
-      rowHasChanged: this.rowHasChanged,
-      sectionHeaderHasChanged: this.sectionHeaderHasChanged,
+      rowHasChanged: (r1: GoogleCalendarEventType, r2: GoogleCalendarEventType) => r1.summary !== r2.summary,
+      sectionHeaderHasChanged: (h1: number, h2: number) => h1 !== h2,
     }),
     loaded: false,
     refreshing: true,
@@ -51,14 +51,6 @@ export default class CalendarView extends React.Component {
 
   componentWillMount() {
     this.refresh()
-  }
-
-  rowHasChanged(r1: GoogleCalendarEventType, r2: GoogleCalendarEventType) {
-    return r1.summary !== r2.summary
-  }
-
-  sectionHeaderHasChanged(h1: number, h2: number) {
-    return h1 !== h2
   }
 
   buildCalendarUrl(calendarId: string) {
@@ -92,6 +84,11 @@ export default class CalendarView extends React.Component {
       data.forEach(event => {
         event.startTime = moment(event.start.date || event.start.dateTime)
         event.endTime = moment(event.end.date || event.end.dateTime)
+      })
+      data.forEach(event => {
+        if (event.startTime < Date.now()) {
+          event.startTime = moment()
+        }
       })
       let grouped = groupBy(data, event => event.startTime.format('ddd  MMM Do'))
       this.setState({events: this.state.events.cloneWithRowsAndSections(grouped)})
