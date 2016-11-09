@@ -7,11 +7,11 @@ import {
     View,
 } from 'react-native'
 
-export default function LoadingView() {
+export default function LoadingView({text='Loading…'}: {text?: string}) {
   return (
     <View style={styles.container}>
       <Text>
-        Loading…
+        {text}
       </Text>
     </View>
   )
