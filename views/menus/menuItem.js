@@ -29,7 +29,7 @@ let styles = StyleSheet.create({
 
 import type {MenuItemType} from './types'
 
-export default function MenuItem({items, style}: {items: MenuItemType[], style: number|Object}) {
+export default function MenuItem({items, style}: {items: MenuItemType[], style: number|Object|Array<number|Object>}) {
   return (
     <View style={[styles.container, style]}>
       {items.map((menuItem: MenuItemType, i: number) =>

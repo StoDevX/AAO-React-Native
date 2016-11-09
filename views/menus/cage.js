@@ -11,25 +11,14 @@ import FoodItem from './foodItem'
 import DietaryFilters from './dietaryFilters'
 
 export default class CageMenuView extends React.Component {
-  constructor(props){
-    super(props)
-    let getSectionData = (dataBlob, sectionID) => {
-      return dataBlob[sectionID]
-    }
-
-    let getRowData = (dataBlob, sectionID, rowID) => {
-      return dataBlob[rowID]
-    }
-
-    this.state = {
-      loaded: false,
-      dataSource: new ListView.DataSource({
-        getSectionData: getSectionData,
-        getRowData: getRowData,
-        rowHasChanged: (row1, row2) => row1 !== row2,
-        sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
-      }),
-    }
+  state = {
+    loaded: false,
+    dataSource: new ListView.DataSource({
+      getSectionData: (dataBlob, sectionID) => dataBlob[sectionID],
+      getRowData: (dataBlob, sectionID, rowID) => dataBlob[rowID],
+      rowHasChanged: (row1, row2) => row1 !== row2,
+      sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
+    }),
   }
 
   componentDidMount(){

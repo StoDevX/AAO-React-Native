@@ -1,3 +1,4 @@
+// @flow
 import React from 'react'
 import {
   View,
@@ -6,58 +7,60 @@ import {
   Image,
 } from 'react-native'
 
-export default class FoodItem extends React.Component {
-  getDietaryTags(){
-    let tags = []
-    for (let key in this.props.filters){
-      if (this.props.data.dietary.hasOwnProperty(key)){
-        tags.push(
-          <Image
-            key={key}
-            source={this.props.filters[key].icon}
-            style={styles.icons}
-          />
-        )
-      }
-    }
-    return tags
-  }
+import keys from 'lodash/keys'
+import pick from 'lodash/pick'
+import map from 'lodash/map'
+import type {MenuItemType, ItemCorIconMapType, MasterCorIconMapType} from './types'
 
-  render(){
-    return (
-      <View style={styles.container}>
-        <View style={styles.name}>
-          <Text style={styles.text}>
-            {this.props.data.name}
-          </Text>
-        </View>
-        <View style={styles.iconContainer}>
-          {this.getDietaryTags()}
-        </View>
+function getDietaryTagsDefault(filters: MasterCorIconMapType, dietary: ItemCorIconMapType): any[] {
+  // filter the mapping of all icons by just the icons provided by this item
+  let filtered = pick(filters, keys(dietary))
+
+  // turn the remaining items into images
+  return map(filtered, (dietaryIcon, key) =>
+    <Image
+      key={key}
+      source={dietaryIcon.icon}
+      style={styles.icons}
+    />)
+}
+
+type FoodItemPropsType = {
+  filters: MasterCorIconMapType,
+  data: MenuItemType,
+  getDietaryTags?: Function,
+  style: any,
+};
+
+export default function FoodItem({data, filters, style, getDietaryTags=getDietaryTagsDefault}: FoodItemPropsType) {
+  return (
+    <View style={[styles.container, style]}>
+      <View style={styles.name}>
+        <Text style={styles.text}>
+          {data.label}
+        </Text>
       </View>
-    )
-  }
+      <View style={styles.iconContainer}>
+        {getDietaryTags(filters, data.cor_icon)}
+      </View>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 14,
+    paddingVertical: 8,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  text: {
-    marginLeft: 12,
-    fontSize: 13,
-    flexWrap: 'wrap',
-  },
   name: {
-    flex: 2,
+    flex: 1,
     alignItems: 'stretch',
   },
+  text: {
+    fontSize: 13,
+  },
   iconContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
     flexDirection: 'row',
   },
   icons: {
