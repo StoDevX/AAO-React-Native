@@ -2,7 +2,7 @@
 
 import React from 'react'
 import {View, StyleSheet, Text} from 'react-native'
-import type {BusLineType, BusTimeListType} from './types'
+import type {BusLineType, BusTimeListType, BusScheduleType} from './types'
 import getScheduleForNow from './get-schedule-for-now'
 import getSetOfStopsForNow from './get-set-of-stops-for-now'
 import zip from 'lodash/zip'
@@ -218,6 +218,9 @@ export default function BusLineView({
   now: typeof moment,
 }) {
   let schedule = getScheduleForNow(line.schedules, now)
+  if (!schedule) {
+    return null
+  }
 
   schedule.times = schedule.times.map(timeset => {
     return timeset.map(time =>

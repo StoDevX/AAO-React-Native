@@ -99,7 +99,7 @@ export default class CoursesView extends React.Component {
     return loggedIn
   }
 
-  fetchData = async (forceFromServer=false) => {
+  fetchData = async (forceFromServer: boolean=false) => {
     try {
       let courses = await loadAllCourses(forceFromServer)
       if (isError(courses)) {
@@ -138,6 +138,8 @@ export default class CoursesView extends React.Component {
         </TouchableHighlight>
       )
     }
+
+    course = ((course: any): CourseType)
 
     let locationTimePairs = zip(course.locations, course.times)
     let deptnum = `${course.department.join('/')} ${_isNaN(course.number) || isNil(course.number) ? '' : course.number}` + (course.section || '')

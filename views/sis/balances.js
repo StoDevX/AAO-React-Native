@@ -83,7 +83,7 @@ export default class BalancesView extends React.Component {
     return loggedIn
   }
 
-  fetchData = async (forceFromServer=false) => {
+  fetchData = async (forceFromServer: boolean=false) => {
     try {
       let data = await getFinancialData(forceFromServer)
       if (isError(data)) {
@@ -112,6 +112,13 @@ export default class BalancesView extends React.Component {
     }
 
     this.setState({refreshing: false})
+  }
+
+  getFormattedCurrency(value: null|number): string {
+    if (isNil(value)) {
+      return 'N/A'
+    }
+    return '$' + (((value: any): number) / 100).toFixed(2)
   }
 
   render() {
@@ -144,7 +151,7 @@ export default class BalancesView extends React.Component {
             <View style={styles.balancesRow}>
               <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
                 <Text style={styles.financialText} autoAdjustsFontSize={true}>
-                  {loading ? '…' : isNil(flex) ? 'N/A' : ('$' + (flex / 100).toFixed(2))}
+                  {loading ? '…' : this.getFormattedCurrency(flex)}
                 </Text>
                 <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
                   Flex
@@ -153,7 +160,7 @@ export default class BalancesView extends React.Component {
 
               <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
                 <Text style={styles.financialText} autoAdjustsFontSize={true}>
-                  {loading ? '…' : isNil(ole) ? 'N/A' : ('$' + (ole / 100).toFixed(2))}
+                  {loading ? '…' : this.getFormattedCurrency(ole)}
                 </Text>
                 <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
                   Ole
@@ -162,7 +169,7 @@ export default class BalancesView extends React.Component {
 
               <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
                 <Text style={styles.financialText} autoAdjustsFontSize={true}>
-                  {loading ? '…' : isNil(print) ? 'N/A' : ('$' + (print / 100).toFixed(2))}
+                  {loading ? '…' : this.getFormattedCurrency(print)}
                 </Text>
                 <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
                   Copy/Print

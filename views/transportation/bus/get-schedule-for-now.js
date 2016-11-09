@@ -7,7 +7,7 @@ const allDaysOfWeek = ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa']
 export default function getScheduleForNow(
   schedules: BusScheduleType[],
   now: typeof moment
-): BusScheduleType {
+): BusScheduleType|void {
   const thisWeekday = now.day() // 0-6, Sunday to Saturday.
 
   return schedules.find(schedule => {

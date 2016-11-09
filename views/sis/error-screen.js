@@ -35,7 +35,11 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function ErrorView(props) {
+export default function ErrorView(props: {
+  navigator: typeof Navigator,
+  onLoginComplete: () => any,
+  route: any,
+}) {
   let {navigator, route, onLoginComplete} = props
 
   return (
