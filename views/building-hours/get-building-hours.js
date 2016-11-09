@@ -23,7 +23,7 @@ export function getBuildingHours(hoursInfo: BuildingInfoType): false|{open: type
   let close = moment.tz(closeTimeString, TIME_FORMAT, true, CENTRAL_TZ)
   close.dayOfYear(dayOfYear)
 
-  if (options.nextDay) {
+  if (options && options.nextDay) {
     close.add(1, 'day')
   }
 

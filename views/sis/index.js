@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function SISView(props) {
+export default function SISView(props: {navigator: any, route: any}) {
   return <TabbedView navigator={props.navigator} route={props.route} style={styles.container} tabs={tabs} />
 }
 SISView.propTypes = {
