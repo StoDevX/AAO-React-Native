@@ -61,6 +61,7 @@ export default class StavMenuView extends React.Component {
       <FancyMenu
         stationMenus={this.state.stationMenus}
         foodItems={this.state.foodItems}
+        stationsToCreate={[]}
       />
     )
   }

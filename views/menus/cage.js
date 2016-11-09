@@ -17,6 +17,7 @@ export default class CageMenuView extends React.Component {
     loading: boolean,
     stationMenus: StationMenuType[],
     foodItems: MenuItemContainerType,
+    stationsToCreate: string[],
   };
 
   componentDidMount() {
@@ -30,7 +31,16 @@ export default class CageMenuView extends React.Component {
     let stationMenus = responseData.days[0].cafes['262'].dayparts[0][whichMeal].stations
     let foodItems = responseData.items
 
-    this.setState({stationMenus, foodItems, loading: false})
+    let stationsToCreate = [
+      // 'Breakfast',
+      // 'Bakery',
+      // 'Burgers and Sandwiches',
+      'Ice Cream',
+      'Smoothies',
+      // 'Hot Beverages',
+    ].map(label => `<strong>@${label}</strong>`)
+
+    this.setState({stationMenus, foodItems, stationsToCreate, loading: false})
   }
 
   render() {
@@ -42,6 +52,7 @@ export default class CageMenuView extends React.Component {
       <FancyMenu
         stationMenus={this.state.stationMenus}
         foodItems={this.state.foodItems}
+        stationsToCreate={this.state.stationsToCreate}
       />
     )
   }
