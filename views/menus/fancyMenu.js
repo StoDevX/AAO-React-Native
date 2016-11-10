@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 
 import startCase from 'lodash/startCase'
+import uniqBy from 'lodash/uniqBy'
 import identity from 'lodash/identity'
 import filter from 'lodash/filter'
 import groupBy from 'lodash/groupBy'
@@ -54,6 +55,7 @@ let styles = StyleSheet.create({
 type FancyMenuPropsType = {
   stationMenus: StationMenuType[],
   foodItems: MenuItemContainerType,
+  stationsToCreate: string[],
 };
 
 export default class FancyMenu extends React.Component {
@@ -110,8 +112,14 @@ export default class FancyMenu extends React.Component {
       .filter(menu => menu.length)
       .reduce(this.flatten, [])
 
+    let otherMenuItems = props.stationsToCreate
+      // filter the foodItems mapping to only the requested station
+      .map(station => [...filter(props.foodItems, item => item.station === station)])
+      .reduce(this.flatten, [])
+
     // in case we need a wider variety of sources in the future
-    let allMenuItems = groupedMenuItems
+    // prevent ourselves from returning duplicate items
+    let allMenuItems = uniqBy([...groupedMenuItems, ...otherMenuItems], item => item.id)
 
     // clean up the titles
     allMenuItems = allMenuItems.map(food => {
