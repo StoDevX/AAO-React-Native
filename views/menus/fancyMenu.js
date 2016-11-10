@@ -13,6 +13,7 @@ import identity from 'lodash/identity'
 import filter from 'lodash/filter'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
+import {toLaxTitleCase} from 'titlecase'
 import FoodItem from './foodItem'
 import DietaryFilters from './dietaryFilters'
 
@@ -81,8 +82,8 @@ export default class FancyMenu extends React.Component {
   props: FancyMenuPropsType;
 
   trimItemLabel(label: string) {
-    // remove extraneous whitespace
-    return label.replace(/\s+/g, ' ')
+    // remove extraneous whitespace and title-case the bonapp titles
+    return toLaxTitleCase(label.replace(/\s+/g, ' '))
   }
 
   trimStationName(stationName: string) {
