@@ -50,6 +50,7 @@ rules:
   no-new-symbol: error
   no-redeclare: [error, {builtinGlobals: true}]
   no-restricted-syntax: [error, WithStatement]
+  no-return-await: error
   no-self-assign: warn
   no-trailing-spaces: error
   no-undef-init: 'off'
