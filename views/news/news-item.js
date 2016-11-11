@@ -30,7 +30,9 @@ export default function NewsItemView({story: {content, title}}: {source: string,
         color: black;
         text-decoration: none;
       }
-
+      iframe {
+        max-width: 100%
+      }
       .aao-header {
         border-bottom: solid 2px #eaeaea;
         margin: 0 0 1em;
