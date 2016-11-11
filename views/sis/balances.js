@@ -20,7 +20,7 @@ import delay from 'delay'
 import isNil from 'lodash/isNil'
 import isError from 'lodash/isError'
 import * as c from '../components/colors'
-import {getFinancialData} from '../../lib/financials'
+import {getFinancialData, getWeeklyMealsRemaining} from '../../lib/financials'
 import ErrorView from './error-screen'
 
 const buttonStyles = StyleSheet.create({
@@ -48,6 +48,8 @@ export default class BalancesView extends React.Component {
     flex: null,
     ole: null,
     print: null,
+    weeklyMeals: null,
+    dailyMeals: null,
     successsFinancials: false,
     loading: true,
     error: null,
@@ -59,6 +61,8 @@ export default class BalancesView extends React.Component {
     flex: null|number,
     ole: null|number,
     print: null|number,
+    weeklyMeals: null|number,
+    dailyMeals: null|number,
     successsFinancials: bool,
     loading: bool,
     error: null|Error,
@@ -91,6 +95,13 @@ export default class BalancesView extends React.Component {
       } else {
         let {flex, ole, print} = data
         this.setState({flex, ole, print})
+      }
+      data = await getWeeklyMealsRemaining()
+      if (isError(data)) {
+        this.setState({loggedIn: false})
+      } else {
+        let {weeklyMeals, dailyMeals} = data
+        this.setState({weeklyMeals, dailyMeals})
       }
     } catch (error) {
       this.setState({error})
@@ -134,7 +145,7 @@ export default class BalancesView extends React.Component {
       />
     }
 
-    let {flex, ole, print, loading} = this.state
+    let {flex, ole, print, loading, dailyMeals, weeklyMeals} = this.state
 
     return (
       <ScrollView
@@ -181,12 +192,12 @@ export default class BalancesView extends React.Component {
           <Section header='MEAL PLAN'>
             <Cell cellStyle='RightDetail'
               title='Daily Meals Left'
-              detail='Not Available'
+              detail = {dailyMeals}
             />
 
             <Cell cellStyle='RightDetail'
               title='Weekly Meals Left'
-              detail='Not Available'
+              detail = {weeklyMeals}
             />
           </Section>
         </TableView>
