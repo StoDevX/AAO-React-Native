@@ -60,6 +60,6 @@
     "eslint-plugin-babel": "3.3.0",
     "eslint-plugin-flowtype": "2.25.0",
     "eslint-plugin-react": "6.6.0",
-    "flow-bin": "0.34.0"
+    "flow-bin": "0.35.0"
   }
 }
