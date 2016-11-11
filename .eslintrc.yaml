@@ -20,11 +20,11 @@ globals:
 
 rules:
   array-callback-return: warn
-  arrow-spacing: ['warn', {before: true, after: true}]
+  arrow-spacing: [warn, {before: true, after: true}]
   brace-style: [warn, 1tbs]
   camelcase: error
   comma-dangle: [warn, always-multiline]
-  comma-spacing: ['warn', {before: false, after: true}]
+  comma-spacing: [warn, {before: false, after: true}]
   comma-style: [warn, last]
   consistent-this: [warn, self]
   curly: [error, multi-line]
@@ -32,7 +32,7 @@ rules:
   eol-last: [error, always]
   guard-for-in: error
   indent: [error, 2, {SwitchCase: 1, MemberExpression: 1}]
-  key-spacing: ['error', {beforeColon: false, afterColon: true}]
+  key-spacing: [error, {beforeColon: false, afterColon: true}]
   keyword-spacing: warn
   linebreak-style: [error, unix]
   new-cap: 'off'
@@ -45,18 +45,19 @@ rules:
   no-eq-null: error
   no-extra-label: error
   no-fallthrough: error
-  no-implicit-coercion: ['error', {boolean: true, number: true, string: true}]
+  no-implicit-coercion: [error, {boolean: true, number: true, string: true}]
   no-implicit-globals: error
   no-new-symbol: error
-  no-redeclare: ['error', {builtinGlobals: true}]
+  no-redeclare: [error, {builtinGlobals: true}]
   no-restricted-syntax: [error, WithStatement]
+  no-return-await: error
   no-self-assign: warn
   no-trailing-spaces: error
   no-undef-init: 'off'
   no-underscore-dangle: 'off'
   no-unmodified-loop-condition: error
   no-unused-labels: error
-  no-unused-vars: ['warn', {args: 'after-used', argsIgnorePattern: '^_$'}]
+  no-unused-vars: [warn, {args: 'after-used', argsIgnorePattern: '^_$'}]
   no-useless-constructor: error
   no-var: error
   no-whitespace-before-property: error
