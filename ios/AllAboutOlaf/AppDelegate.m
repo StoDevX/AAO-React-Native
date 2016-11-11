@@ -30,6 +30,10 @@
                                                    launchOptions:launchOptions];
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 
+  // Fade to reduce the jarring white screen flash
+  rootView.loadingViewFadeDelay = 0.20;
+  rootView.loadingViewFadeDuration = 0.20;
+
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
