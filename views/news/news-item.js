@@ -31,7 +31,7 @@ export default function NewsItemView({story: {content, title}}: {source: string,
         text-decoration: none;
       }
       iframe {
-        max-width: 100%
+        max-width: 100%;
       }
       .aao-header {
         border-bottom: solid 2px #eaeaea;
