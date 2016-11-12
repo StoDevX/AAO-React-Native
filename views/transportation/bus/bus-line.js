@@ -2,7 +2,7 @@
 
 import React from 'react'
 import {View, StyleSheet} from 'react-native'
-import type {BusLineType} from './types'
+import type {BusLineType, FancyBusTimeListType} from './types'
 import getScheduleForNow from './get-schedule-for-now'
 import getSetOfStopsForNow from './get-set-of-stops-for-now'
 import zip from 'lodash/zip'
@@ -36,15 +36,15 @@ export default function BusLineView({
   now,
 }: {
   line: BusLineType,
-  style: Object|number,
-  now: moment,
+  style: Object|number|Array<Object|number>,
+  now: typeof moment,
 }) {
   let schedule = getScheduleForNow(line.schedules, now)
   if (!schedule) {
     return null
   }
 
-  let scheduledMoments = schedule.times.map(timeset => {
+  let scheduledMoments: FancyBusTimeListType[] = schedule.times.map(timeset => {
     return timeset.map(time =>
       time === false
         ? false
@@ -53,7 +53,7 @@ export default function BusLineView({
           .dayOfYear(now.dayOfYear()))
   })
 
-  let moments = getSetOfStopsForNow(scheduledMoments, now)
+  let moments: FancyBusTimeListType = getSetOfStopsForNow(scheduledMoments, now)
   let timesIndex = scheduledMoments.indexOf(moments)
 
   let pairs: [[string, typeof moment]] = zip(schedule.stops, moments)
