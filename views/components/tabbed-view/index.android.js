@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Platform } from 'react-native'
 import { TabViewAnimated, TabBarTop } from 'react-native-tab-view'
 import * as c from '../colors'
 import type { TabbedViewPropsType } from './types'
@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
   },
   label: {
     color: '#fff',
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
     fontWeight: '400',
   },
 })
