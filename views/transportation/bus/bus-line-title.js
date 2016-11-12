@@ -1,25 +1,28 @@
 // @flow
 import React from 'react'
-import {View, StyleSheet, Text} from 'react-native'
+import {Platform, View, StyleSheet, Text} from 'react-native'
 
 let styles = StyleSheet.create({
   busLineTitle: {
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingVertical: Platform.OS === 'ios' ? 5 : 15,
     paddingLeft: 15,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 0,
     borderColor: '#c8c7cc',
   },
   busLineTitleText: {
     color: 'rgb(113, 113, 118)',
+    fontWeight: Platform.OS === 'ios' ? 'normal' : 'bold',
   },
 })
 
-export function BusLineTitle({title}: {title: string}) {
+export function BusLineTitle({title, androidColor}: {title: string, androidColor: string}) {
+  title = Platform.OS === 'ios'
+    ? title.toUpperCase()
+    : title
   return (
     <View style={styles.busLineTitle}>
-      <Text style={styles.busLineTitleText}>
-        {title.toUpperCase()}
+      <Text style={[styles.busLineTitleText, Platform.OS === 'ios' ? null : {color: androidColor}]}>
+        {title}
       </Text>
     </View>
   )

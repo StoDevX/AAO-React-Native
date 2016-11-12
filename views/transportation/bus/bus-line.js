@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
+import {View, Text, StyleSheet, Platform} from 'react-native'
 import type {BusLineType, FancyBusTimeListType} from './types'
 import getScheduleForNow from './get-schedule-for-now'
 import getSetOfStopsForNow from './get-set-of-stops-for-now'
@@ -19,14 +19,15 @@ const TIMEZONE = 'America/Winnipeg'
 
 let styles = StyleSheet.create({
   container: {
-    marginTop: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: '#c8c7cc',
+    backgroundColor: Platform.OS === 'ios' ? 'transparent' : '#ffffff',
+    elevation: 5,
   },
   listContainer: {
-    backgroundColor: '#ffffff',
     flex: 1,
     flexDirection: 'column',
+    backgroundColor: Platform.OS === 'ios' ? '#ffffff' : 'transparent',
   },
 })
 
@@ -39,32 +40,6 @@ export default function BusLineView({
   style: Object|number|Array<Object|number>,
   now: typeof moment,
 }) {
-  let schedule = getScheduleForNow(line.schedules, now)
-  if (!schedule) {
-    return (
-      <View style={[styles.container, style]}>
-        <BusLineTitle title={line.line} />
-        <View>
-          <Text>This line is not running today.</Text>
-        </View>
-      </View>
-    )
-  }
-
-  let scheduledMoments: FancyBusTimeListType[] = schedule.times.map(timeset => {
-    return timeset.map(time =>
-      time === false
-        ? false
-        : moment
-          .tz(time, TIME_FORMAT, true, TIMEZONE)
-          .dayOfYear(now.dayOfYear()))
-  })
-
-  let moments: FancyBusTimeListType = getSetOfStopsForNow(scheduledMoments, now)
-  let timesIndex = scheduledMoments.indexOf(moments)
-
-  let pairs: [[string, typeof moment]] = zip(schedule.stops, moments)
-
   let barColor = c.salmon
   if (line.line === 'Blue') {
     barColor = c.steelBlue
@@ -78,6 +53,34 @@ export default function BusLineView({
   } else if (line.line === 'Express') {
     currentStopColor = c.hollyGreen
   }
+
+  let schedule = getScheduleForNow(line.schedules, now)
+  if (!schedule) {
+    return (
+      <View style={[styles.container, style]}>
+        <BusLineTitle title={line.line} androidColor={barColor} />
+        <View>
+          <Text>This line is not running today.</Text>
+        </View>
+      </View>
+    )
+  }
+
+  let scheduledMoments: FancyBusTimeListType[] = schedule.times.map(timeset => {
+    return timeset.map(time =>
+      time === false
+        ? false
+        : moment
+          // interpret in Central time
+          .tz(time, TIME_FORMAT, true, TIMEZONE)
+          // and set the date to today
+          .dayOfYear(now.dayOfYear()))
+  })
+
+  let moments: FancyBusTimeListType = getSetOfStopsForNow(scheduledMoments, now)
+  let timesIndex = scheduledMoments.indexOf(moments)
+
+  let pairs: [[string, typeof moment]] = zip(schedule.stops, moments)
 
   let isLastBus = timesIndex === scheduledMoments.length - 1
 
@@ -94,7 +97,7 @@ export default function BusLineView({
 
   return (
     <View style={[styles.container, style]}>
-      <BusLineTitle title={lineTitle} />
+      <BusLineTitle title={lineTitle} androidColor={barColor} />
       <View style={[styles.listContainer]}>
         {pairs.map(([place, moment], i) =>
           <BusStopRow

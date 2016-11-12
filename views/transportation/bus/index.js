@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {ScrollView} from 'react-native'
+import {Platform, ScrollView} from 'react-native'
 import defaultBusLines from '../../../data/bus-times.json'
 import type {BusLineType} from './types'
 import BusLineView from './bus-line'
@@ -50,7 +50,12 @@ export default class BusView extends React.Component {
         {busLines.map((busLine: BusLineType, i) =>
           <BusLineView
             key={busLine.line}
-            style={{marginBottom: i < busLines.length - 1 ? 5 : 15}}
+            style={{
+              marginTop: Platform.OS === 'ios' ? 15 : 0,
+              marginBottom: Platform.OS === 'ios'
+                ? i < busLines.length - 1 ? 15 : 5
+                : 8,
+            }}
             line={busLine}
             now={now}
           />)}

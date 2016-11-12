@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {View, StyleSheet, Text} from 'react-native'
+import {Platform, View, StyleSheet, Text} from 'react-native'
 import type {FancyBusTimeListType} from './types'
 import type moment from 'moment'
 import * as c from '../../components/colors'
@@ -24,13 +24,12 @@ let styles = StyleSheet.create({
     flex: 1,
     marginLeft: 0,
     paddingRight: 10,
-    paddingTop: 8,
-    paddingBottom: 8,
+    paddingVertical: Platform.OS === 'ios' ? 8 : 15,
     flexDirection: 'column',
   },
   notLastRowContainer: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#c8c7cc',
+    borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
+    borderBottomColor: Platform.OS === 'ios' ? '#c8c7cc' : '#e0e0e0',
   },
   passedStopDetail: {
 
@@ -40,7 +39,7 @@ let styles = StyleSheet.create({
     paddingLeft: 0,
     paddingRight: 0,
     paddingBottom: 3,
-    fontSize: 16,
+    fontSize: Platform.OS === 'ios' ? 16 : 17,
     textAlign: 'left',
   },
   itemDetail: {
