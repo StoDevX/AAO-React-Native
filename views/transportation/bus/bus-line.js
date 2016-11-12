@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {View, StyleSheet} from 'react-native'
+import {View, Text, StyleSheet} from 'react-native'
 import type {BusLineType, FancyBusTimeListType} from './types'
 import getScheduleForNow from './get-schedule-for-now'
 import getSetOfStopsForNow from './get-set-of-stops-for-now'
@@ -41,7 +41,14 @@ export default function BusLineView({
 }) {
   let schedule = getScheduleForNow(line.schedules, now)
   if (!schedule) {
-    return null
+    return (
+      <View style={[styles.container, style]}>
+        <BusLineTitle title={line.line} />
+        <View>
+          <Text>This line is not running today.</Text>
+        </View>
+      </View>
+    )
   }
 
   let scheduledMoments: FancyBusTimeListType[] = schedule.times.map(timeset => {
