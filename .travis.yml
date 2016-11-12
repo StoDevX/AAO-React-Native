@@ -75,13 +75,13 @@ matrix:
     #   cache: *my-android-cache
     #   before_cache: *my-android-before_cache
 
-    - os: osx
-      # We're using 7.2 currently, as xctool has issues with 7.3.
-      # This also means that we're testing against iOS 9.2.
-      osx_image: xcode7.2
-      language: objective-c
-      env: TEST_TYPE=ios
-      cache: *my-ios-cache
+    # - os: osx
+    #   # We're using 7.2 currently, as xctool has issues with 7.3.
+    #   # This also means that we're testing against iOS 9.2.
+    #   osx_image: xcode7.2
+    #   language: objective-c
+    #   env: TEST_TYPE=ios
+    #   cache: *my-ios-cache
 
 # As seen in http://stackoverflow.com/a/31882307/2347774
 # Prevent travis from building twice for PRs
