@@ -33,10 +33,7 @@ export default class BusView extends React.Component {
     const now = moment.tz(TIMEZONE)
 
     return (
-      <ScrollView
-        contentInset={{bottom: 49}}
-        automaticallyAdjustContentInsets={false}
-      >
+      <ScrollView>
         {busInfo.map((busLine: BusLineType, i) =>
           <BusLineView
             key={busLine.line}
