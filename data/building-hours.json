@@ -1,7 +1,7 @@
 [
     {
         "name": "The Pause Kitchen",
-        "image": "pausekitchen",
+        "image": "pause-kitchen",
         "times": {
             "hours": {
                 "Mon": ["10:30", "0:00", {"nextDay": true}],
@@ -45,7 +45,7 @@
     },
     {
         "name": "Post Office",
-        "image": "postoffice",
+        "image": "post-office",
         "times": {
             "hours": {
                 "Mon": ["7:30", "16:30"],
@@ -59,7 +59,7 @@
     },
     {
         "name": "Rølvaag Library",
-        "image": "rolvaag",
+        "image": "rolvaag-library",
         "times": {
             "hours": {
                 "Mon": ["7:45", "2:00", {"nextDay": true}],

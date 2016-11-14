@@ -13,16 +13,16 @@ import type {BuildingInfoType} from './types'
 import hoursData from '../../data/building-hours.json'
 
 const buildingImages = {
-  pausekitchen: require('../../data/images/buildinghours/pausekitchen.small.jpeg'),
-  bookstore: require('../../data/images/buildinghours/bookstore.small.jpeg'),
-  convenience: require('../../data/images/buildinghours/convenience.small.jpeg'),
-  postoffice: require('../../data/images/buildinghours/postoffice.small.jpeg'),
-  rolvaag: require('../../data/images/buildinghours/rolvaag.small.jpeg'),
-  halvorson: require('../../data/images/buildinghours/halvorson.small.jpeg'),
-  skoglund: require('../../data/images/buildinghours/skoglund.small.jpeg'),
-  cage: require('../../data/images/buildinghours/cage.small.jpeg'),
-  stav: require('../../data/images/buildinghours/stav.small.jpeg'),
-  disco: require('../../data/images/buildinghours/disco.small.jpeg'),
+  'bookstore': require('../../data/images/buildinghours/w1440/bookstore.jpg'),
+  'cage': require('../../data/images/buildinghours/w1440/cage.jpg'),
+  'convenience': require('../../data/images/buildinghours/w1440/convenience.jpg'),
+  'disco': require('../../data/images/buildinghours/w1440/disco.jpg'),
+  'halvorson': require('../../data/images/buildinghours/w1440/halvorson.jpg'),
+  'pause-kitchen': require('../../data/images/buildinghours/w1440/pause-kitchen.jpg'),
+  'post-office': require('../../data/images/buildinghours/w1440/post-office.jpg'),
+  'rolvaag-library': require('../../data/images/buildinghours/w1440/rolvaag-library.jpg'),
+  'skoglund': require('../../data/images/buildinghours/w1440/skoglund.jpg'),
+  'stav': require('../../data/images/buildinghours/w1440/stav.jpg'),
 }
 
 
