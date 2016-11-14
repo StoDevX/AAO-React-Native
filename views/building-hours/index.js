@@ -13,16 +13,29 @@ import type {BuildingInfoType} from './types'
 import hoursData from '../../data/building-hours.json'
 
 const buildingImages = {
-  pausekitchen: require('../../data/images/buildinghours/pausekitchen.small.jpeg'),
-  bookstore: require('../../data/images/buildinghours/bookstore.small.jpeg'),
-  convenience: require('../../data/images/buildinghours/convenience.small.jpeg'),
+  pause: require('../../data/images/buildinghours/pause.jpg'),
+  bookstore: require('../../data/images/buildinghours/bookstore.jpg'),
+  convenience: require('../../data/images/buildinghours/convenience.jpg'),
   postoffice: require('../../data/images/buildinghours/postoffice.small.jpeg'),
   rolvaag: require('../../data/images/buildinghours/rolvaag.small.jpeg'),
   halvorson: require('../../data/images/buildinghours/halvorson.small.jpeg'),
-  skoglund: require('../../data/images/buildinghours/skoglund.small.jpeg'),
-  cage: require('../../data/images/buildinghours/cage.small.jpeg'),
+  skoglund: require('../../data/images/buildinghours/skoglund.jpg'),
+  cage: require('../../data/images/buildinghours/cage.jpg'),
   stav: require('../../data/images/buildinghours/stav.small.jpeg'),
-  disco: require('../../data/images/buildinghours/disco.small.jpeg'),
+  disco: require('../../data/images/buildinghours/disco.jpg'),
+  alumni: require('../../data/images/buildinghours/alumni.jpg'),
+  boe: require('../../data/images/buildinghours/boe.jpg'),
+  buntrock: require('../../data/images/buildinghours/buntrock.jpg'),
+  christiansan: require('../../data/images/buildinghours/christiansan.jpg'),
+  dittmann: require('../../data/images/buildinghours/dittmann.jpg'),
+  music: require('../../data/images/buildinghours/hall.music.jpg'),
+  oldmain: require('../../data/images/buildinghours/oldmain.jpg'),
+  porter: require('../../data/images/buildinghours/porter.jpg'),
+  regents: require('../../data/images/buildinghours/regents.jpg'),
+  math: require('../../data/images/buildinghours/math.jpg'),
+  skifter: require('../../data/images/buildinghours/studioa.jpg'),
+  theater: require('../../data/images/buildinghours/theater.jpg'),
+  tomson: require('../../data/images/buildinghours/tomson.jpg'),
 }
 
 
