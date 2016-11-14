@@ -31,7 +31,7 @@ Would you like to contribute? Great! Have a look at [React Native](http://facebo
 
 If you are looking to get a start with the project, issues tagged with all 3 [`good first change`, `discussion`, and `closed`](https://github.com/StoDevX/AAO-React-Native/issues?q=is%3Aissue+is%3Aclosed+label%3Adiscussion+label%3A%22good+first+change%22) are a great place to start. These issues are ones that the team has identified as simple, small changes that won't get too deep, and will be easy to approve for merging. See our [todo](https://github.com/StoDevX/AAO-React-Native#todo) section if you are curious why they are tagged as `closed`. They really are open!
 
-We use two continuous-integration (CI) systems to make sure that the project still works as we change things. Any submissions you make will be validated by [Travis](https://travis-ci.org/StoDevX/AAO-React-Native/builds) and [AppVeyor](https://ci.appveyor.com/project/hawkrives/aao-react-native/history), the CIs.
+We use three continuous-integration (CI) systems to make sure that the project still works as we change things. Any submissions you make will be validated by [Travis](https://travis-ci.org/StoDevX/AAO-React-Native/builds), [AppVeyor](https://ci.appveyor.com/project/hawkrives/aao-react-native/history), and [Bitrise](https://www.bitrise.io/app/bc51be6a59ccbc35).
 
 Before you commit and push, make sure to lint your changes and fix any errors or warnings that `npm run lint` shows. We try to keep the `master` branch clean of all messages from eslint.
 
