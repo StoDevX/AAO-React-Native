@@ -13,6 +13,7 @@ import {
   AsyncStorage,
   Navigator,
   View,
+  TextInput,
 } from 'react-native'
 
 import {
@@ -40,6 +41,8 @@ export default class SettingsView extends React.Component {
     success: false,
     loading: false,
     attempted: false,
+    username: null,
+    password: null
   }
 
   componentWillMount() {
@@ -122,7 +125,8 @@ export default class SettingsView extends React.Component {
   render() {
     let loggedIn = this.state.success
     let loading = this.state.loading
-
+    let username = this.state.username
+    let password = this.state.password
     let disabled = loading
 
     let loginTextStyle = disabled
@@ -139,18 +143,61 @@ export default class SettingsView extends React.Component {
       >
         <Text style={[styles.loginButtonText, loginTextStyle]}>
           {loading
-            ? 'Logging in…'
+            ? 'Logging in to Google…'
             : loggedIn
-              ? 'Sign Out'
-              : 'Sign In'}
+              ? 'Sign Out of Google'
+              : 'Sign In with Google'}
         </Text>
+      </CustomCell>
+    )
+
+    let usernameCell = (
+      <CustomCell contentContainerStyle={styles.loginCell}>
+        <Text onPress={this.focusUsername} style={styles.label}>Username</Text>
+        <TextInput
+          ref={ref => this._usernameInput = ref}
+          cellStyle='Basic'
+          autoCorrect={false}
+          autoCapitalize='none'
+          style={styles.customTextInput}
+          placeholderTextColor='#C7C7CC'
+          disabled={disabled}
+          placeholder='username'
+          value={username}
+          returnKeyType='next'
+          onChangeText={text => this.setState({username: text})}
+          onSubmitEditing={this.focusPassword}
+        />
+      </CustomCell>
+    )
+
+    let passwordCell = (
+      <CustomCell contentContainerStyle={styles.loginCell}>
+        <Text onPress={this.focusPassword} style={styles.label}>Password</Text>
+        <TextInput
+          ref={ref => this._passwordInput = ref}
+          cellStyle='Basic'
+          autoCorrect={false}
+          autoCapitalize='none'
+          style={styles.customTextInput}
+          placeholderTextColor='#C7C7CC'
+          disabled={disabled}
+          secureTextEntry={true}
+          placeholder='password'
+          value={password}
+          returnKeyType='done'
+          onChangeText={text => this.setState({password: text})}
+          onSubmitEditing={loggedIn ? () => {} : this.logIn}
+        />
       </CustomCell>
     )
 
     let accountSection = (
       <View>
-        <Section>
+        <Section header='LOGIN' footer='Note: This application requires logging in to Google and inputting your St. Olaf username and password in order use all features.'>
           {actionCell}
+          {usernameCell}
+          {passwordCell}
         </Section>
       </View>
     )
@@ -229,6 +276,9 @@ let styles = StyleSheet.create({
     fontSize: 16,
     marginTop: (Platform.OS === 'ios') ? -2 : 0,  // lines the label up with the text on iOS
     alignSelf: 'center',
+  },
+  note: {
+
   },
   actionButton: {
     justifyContent: 'flex-start',
