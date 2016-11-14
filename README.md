@@ -1,4 +1,4 @@
-# AAO-React-Native [![Windows build status](https://ci.appveyor.com/api/projects/status/qi83hnivu0rkgbvo?svg=true)](https://ci.appveyor.com/project/hawkrives/aao-react-native) [![macOS build status](https://travis-ci.org/StoDevX/AAO-React-Native.svg?branch=master)](https://travis-ci.org/StoDevX/AAO-React-Native)
+# AAO-React-Native [![Windows build status](https://ci.appveyor.com/api/projects/status/qi83hnivu0rkgbvo?svg=true)](https://ci.appveyor.com/project/hawkrives/aao-react-native) [![macOS build status](https://travis-ci.org/StoDevX/AAO-React-Native.svg?branch=master)](https://travis-ci.org/StoDevX/AAO-React-Native) [![Bitrise build status](https://www.bitrise.io/app/bc51be6a59ccbc35.svg?token=sl5WbD9bOM9lkRaiv_gKBg&branch=master)](https://www.bitrise.io/app/bc51be6a59ccbc35)
 
 ## About
 The St. Olaf community, now in pocket size… rewritten in React Native.
