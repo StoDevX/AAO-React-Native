@@ -135,6 +135,16 @@ const styles = StyleSheet.create({
   },
 })
 
+let settingsButtonActive = false
+
+function openSettings(route, navigator) {
+  navigator.push({
+    id: 'SettingsView',
+    title: 'Settings',
+    index: route.index + 1,
+    sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+  })
+}
 
 function LeftButton(route, navigator, index, navState) {
   switch (route.id) {
@@ -142,12 +152,10 @@ function LeftButton(route, navigator, index, navState) {
       return (
         <TouchableOpacity
           style={[styles.backButton]}
-          onPress={() => navigator.push({
-            id: 'SettingsView',
-            title: 'Settings',
-            index: route.index + 1,
-            sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-          })}
+          onPress={settingsButtonActive ? () => {} : () => {
+            settingsButtonActive = true
+            openSettings(route, navigator)
+          }}
         >
           <Icon style={styles.settingsIcon} name='ios-settings' />
         </TouchableOpacity>
@@ -157,7 +165,10 @@ function LeftButton(route, navigator, index, navState) {
       return (
         <TouchableOpacity
           style={[styles.backButton, {marginLeft: 10, marginVertical: Platform.OS === 'android' ? 21 : 16}]}
-          onPress={() => navigator.pop()}
+          onPress={() => {
+            navigator.pop()
+            settingsButtonActive = false
+          }}
         >
           <Text style={styles.backButtonText}>Close</Text>
         </TouchableOpacity>
