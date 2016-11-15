@@ -57,7 +57,6 @@ export default class DirectoryView extends React.Component {
     return (
       <View style={styles.container}>
         <WebView
-          automaticallyAdjustContentInsets={false}
           style={styles.webView}
           source={webViewSource}
           javaScriptEnabled={true}

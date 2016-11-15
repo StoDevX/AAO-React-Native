@@ -79,8 +79,6 @@ export default class OtherModesView extends React.Component {
   render() {
     return (
       <ListView
-        contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
-        automaticallyAdjustContentInsets={false}
         contentContainerStyle={styles.container}
         dataSource={this.state.dataSource}
         renderRow={this._renderRow.bind(this)}

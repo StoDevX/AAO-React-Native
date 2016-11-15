@@ -101,7 +101,6 @@ export default class SISLoginView extends React.Component {
 
     return (
       <WebView
-        automaticallyAdjustContentInsets={false}
         source={{uri: LOGIN_URL}}
         javaScriptEnabled={true}
         onNavigationStateChange={this.onNavigationStateChange}

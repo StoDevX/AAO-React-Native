@@ -48,7 +48,7 @@ const videoAsThumbnail = url => `
 
 export default function WebcamsView() {
   return (
-    <ScrollView style={styles.container} contentInset={{bottom: 49}} automaticallyAdjustContentInsets={false}>
+    <ScrollView style={styles.container}>
       {webcamInfo.map(webcam =>
         <View style={styles.row} key={webcam.name}>
           <View style={styles.webCamTitleBox}>

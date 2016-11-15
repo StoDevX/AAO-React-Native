@@ -42,7 +42,6 @@ type ScenePropsType = {navigator: typeof Navigator, route: Object};
 export default function HomePageScene({navigator, route}: ScenePropsType) {
   return (
     <ScrollView
-      automaticallyAdjustContentInsets={false}
       overflow={'hidden'}
       alwaysBounceHorizontal={false}
       showsHorizontalScrollIndicator={false}
