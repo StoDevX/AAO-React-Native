@@ -14,13 +14,14 @@ import {
   Navigator,
   View,
   TextInput,
+  Alert,
 } from 'react-native'
 
 import {
-    Cell,
-    CustomCell,
-    Section,
-    TableView,
+  Cell,
+  CustomCell,
+  Section,
+  TableView,
 } from 'react-native-tableview-simple'
 
 import {version} from '../../package.json'
@@ -117,11 +118,15 @@ export default class SettingsView extends React.Component {
   logInStOlaf = async () => {
     this.setState({loadingStOlaf: true})
     let {username, password} = this.state
-    username.replace('@stolaf.edu', '') // just in case someone uses their full email, throw the part we don't need away
+    if (username) {
+      username.replace('@stolaf.edu', '') // just in case someone uses their full email, throw the part we don't need away
+    }
     let {result} = await performLogin(username, password)
 
     if (!result) {
       Alert.alert('Error signing in', 'The username or password is incorrect.')
+      this.setState({loadingStOlaf: false, attempted: true, successStOlaf: result, loggedInStOlaf: false})
+      return
     }
     this.setState({loadingStOlaf: false, attempted: true, successStOlaf: result, loggedInStOlaf: true})
   }
