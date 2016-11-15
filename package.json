@@ -31,7 +31,7 @@
     "frisbee": "1.1.5",
     "html-entities": "1.2.0",
     "htmlparser2": "3.9.2",
-    "lodash": "4.16.6",
+    "lodash": "4.17.0",
     "moment": "2.16.0",
     "moment-timezone": "0.5.9",
     "querystring": "0.2.0",
