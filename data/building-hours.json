@@ -1,7 +1,7 @@
 [
     {
         "name": "The Pause Kitchen",
-        "image": "pausekitchen",
+        "image": "pause-kitchen",
         "times": {
             "hours": {
                 "Mon": ["10:30", "0:00", {"nextDay": true}],
@@ -34,8 +34,8 @@
         "times": {
             "hours": {
                 "Mon": ["8:00", "20:00"],
-                "Wed": ["8:00", "20:00"],
                 "Tue": ["8:00", "20:00"],
+                "Wed": ["8:00", "20:00"],
                 "Thu": ["8:00", "20:00"],
                 "Fri": ["8:00", "20:00"],
                 "Sat": ["10:00", "20:00"],
@@ -45,20 +45,21 @@
     },
     {
         "name": "Post Office",
-        "image": "postoffice",
+        "image": "post-office",
         "times": {
             "hours": {
                 "Mon": ["7:30", "16:30"],
                 "Tue": ["7:30", "16:30"],
                 "Wed": ["7:30", "16:30"],
                 "Thu": ["7:30", "16:30"],
-                "Fri": ["7:30", "12:00"]
+                "Fri": ["7:30", "12:00"],
+                "Sat": ["10:00", "13:00"]
             }
         }
     },
     {
-        "name": "Rolvaag Library",
-        "image": "rolvaag",
+        "name": "Rølvaag Library",
+        "image": "rolvaag-library",
         "times": {
             "hours": {
                 "Mon": ["7:45", "2:00", {"nextDay": true}],
@@ -91,13 +92,13 @@
         "image": "skoglund",
         "times": {
             "hours": {
-                "Mon": ["6:30", "22:45"],
-                "Tue": ["6:30", "22:45"],
-                "Wed": ["6:30", "22:45"],
-                "Thu": ["6:30", "22:45"],
+                "Mon": ["6:30", "22:30"],
+                "Tue": ["6:30", "22:30"],
+                "Wed": ["6:30", "22:30"],
+                "Thu": ["6:30", "22:30"],
                 "Fri": ["6:30", "20:45"],
                 "Sat": ["9:00", "20:45"],
-                "Sun": ["12:00", "22:45"]
+                "Sun": ["12:00", "22:30"]
             }
         }
     },
@@ -122,13 +123,13 @@
         "image": "stav",
         "times": {
             "hours": {
-              "Mon": ["7:00", "9:45"],
-              "Tue": ["7:00", "9:45"],
-              "Wed": ["7:00", "9:45"],
-              "Thu": ["7:00", "9:45"],
-              "Fri": ["7:00", "9:45"],
-              "Sat": ["7:00", "9:45"],
-              "Sun": ["8:30", "10:15"]
+                "Mon": ["7:00", "9:45"],
+                "Tue": ["7:00", "9:45"],
+                "Wed": ["7:00", "9:45"],
+                "Thu": ["7:00", "9:45"],
+                "Fri": ["7:00", "9:45"],
+                "Sat": ["7:00", "9:45"],
+                "Sun": ["8:30", "10:15"]
             }
         }
     },
@@ -137,13 +138,13 @@
         "image": "stav",
         "times": {
             "hours": {
-              "Mon": ["10:30", "14:00"],
-              "Tue": ["10:30", "14:00"],
-              "Wed": ["10:30", "14:00"],
-              "Thu": ["10:30", "14:00"],
-              "Fri": ["10:30", "14:00"],
-              "Sat": ["11:00", "13:30"],
-              "Sun": ["11:00", "13:30"]
+                "Mon": ["10:30", "14:00"],
+                "Tue": ["10:30", "14:00"],
+                "Wed": ["10:30", "14:00"],
+                "Thu": ["10:30", "14:00"],
+                "Fri": ["10:30", "14:00"],
+                "Sat": ["11:00", "13:30"],
+                "Sun": ["11:00", "13:30"]
             }
         }
     },
@@ -152,13 +153,13 @@
         "image": "stav",
         "times": {
             "hours": {
-              "Mon": ["16:30", "19:00"],
-              "Tue": ["16:30", "19:00"],
-              "Wed": ["16:30", "19:00"],
-              "Thu": ["16:30", "19:00"],
-              "Fri": ["16:30", "19:00"],
-              "Sat": ["16:30", "19:30"],
-              "Sun": ["16:30", "19:30"]
+                "Mon": ["16:30", "19:00"],
+                "Tue": ["16:30", "19:00"],
+                "Wed": ["16:30", "19:00"],
+                "Thu": ["16:30", "19:00"],
+                "Fri": ["16:30", "19:00"],
+                "Sat": ["16:30", "19:30"],
+                "Sun": ["16:30", "19:30"]
             }
         }
     },
@@ -166,7 +167,207 @@
         "name": "DiSCO",
         "image": "disco",
         "times": {
-            "hours": {}
+            "hours": {
+                "Mon": ["10:00", "17:00"],
+                "Tue": ["10:00", "17:00"],
+                "Wed": ["10:00", "17:00"],
+                "Thu": ["10:00", "17:00"],
+                "Fri": ["10:00", "17:00"],
+                "Sun": ["13:00", "17:00"]
+            }
         }
     },
+    {
+        "name": "Alumni Hall",
+        "image": "alumni-hall",
+        "times": {
+            "hours": {
+                "Mon": ["7:00", "17:00"],
+                "Tue": ["7:00", "17:00"],
+                "Wed": ["7:00", "17:00"],
+                "Thu": ["7:00", "17:00"],
+                "Fri": ["7:00", "17:00"]
+            }
+        }
+    },
+    {
+        "name": "Boe Chapel",
+        "image": "boe",
+        "times": {
+            "hours": {
+                "Mon": ["7:00", "24:00", {"nextDay": true}],
+                "Tue": ["7:00", "24:00", {"nextDay": true}],
+                "Wed": ["7:00", "24:00", {"nextDay": true}],
+                "Thu": ["7:00", "24:00", {"nextDay": true}],
+                "Fri": ["7:00", "21:30"],
+                "Sat": ["8:00", "21:30"],
+                "Sun": ["8:00", "24:00", {"nextDay": true}]
+            }
+        }
+    },
+    {
+        "name": "Buntrock Commons",
+        "image": "buntrock",
+        "times": {
+            "hours": {
+                "Mon": ["7:00", "24:00", {"nextDay": true}],
+                "Tue": ["7:00", "24:00", {"nextDay": true}],
+                "Wed": ["7:00", "24:00", {"nextDay": true}],
+                "Thu": ["7:00", "24:00", {"nextDay": true}],
+                "Fri": ["7:00", "2:00", {"nextDay": true}],
+                "Sat": ["7:00", "2:00", {"nextDay": true}],
+                "Sun": ["7:00", "24:00", {"nextDay": true}]
+            }
+        }
+    },
+    {
+        "name": "Christiansen (CHM)",
+        "image": "christiansen",
+        "times": {
+            "hours": {
+                "Mon": ["7:00", "24:00", {"nextDay": true}],
+                "Tue": ["7:00", "24:00", {"nextDay": true}],
+                "Wed": ["7:00", "24:00", {"nextDay": true}],
+                "Thu": ["7:00", "24:00", {"nextDay": true}],
+                "Fri": ["7:00", "24:00", {"nextDay": true}],
+                "Sat": ["8:00", "24:00", {"nextDay": true}],
+                "Sun": ["8:00", "24:00", {"nextDay": true}]
+            }
+        }
+    },
+    {
+        "name": "Dittmann Center",
+        "image": "dittmann",
+        "times": {
+            "hours": {
+                "Mon": ["7:00", "24:00", {"nextDay": true}],
+                "Tue": ["7:00", "24:00", {"nextDay": true}],
+                "Wed": ["7:00", "24:00", {"nextDay": true}],
+                "Thu": ["7:00", "24:00", {"nextDay": true}],
+                "Fri": ["7:00", "24:00", {"nextDay": true}],
+                "Sat": ["8:00", "24:00", {"nextDay": true}],
+                "Sun": ["10:00", "24:00", {"nextDay": true}]
+            }
+        }
+    },
+    {
+        "name": "Hall of Music (HOM)",
+        "image": "hall-of-music",
+        "times": {
+            "hours": {
+                "Mon": ["7:00", "24:00", {"nextDay": true}],
+                "Tue": ["7:00", "24:00", {"nextDay": true}],
+                "Wed": ["7:00", "24:00", {"nextDay": true}],
+                "Thu": ["7:00", "24:00", {"nextDay": true}],
+                "Fri": ["7:00", "24:00", {"nextDay": true}],
+                "Sat": ["8:00", "24:00", {"nextDay": true}],
+                "Sun": ["8:00", "24:00", {"nextDay": true}]
+            }
+        }
+    },
+    {
+        "name": "Old Main",
+        "image": "old-main",
+        "times": {
+            "hours": {
+                "Mon": ["7:00", "21:45"],
+                "Tue": ["7:00", "21:45"],
+                "Wed": ["7:00", "21:45"],
+                "Thu": ["7:00", "21:45"],
+                "Fri": ["7:00", "18:00"],
+                "Sat": ["8:00", "18:00"],
+                "Sun": ["8:00", "18:00"]
+            }
+        }
+    },
+    {
+        "name": "Tom Porter Hall",
+        "image": "tom-porter",
+        "times": {
+            "hours": {
+                "Mon": ["10:00", "20:00"],
+                "Tue": ["10:00", "20:00"],
+                "Wed": ["10:00", "20:00"],
+                "Thu": ["10:00", "20:00"],
+                "Fri": ["7:00", "17:00"],
+                "Sat": ["8:00", "21:00"],
+                "Sun": ["12:00", "21:00"]
+            }
+        }
+    },
+    {
+        "name": "Regents Hall",
+        "image": "regents-hall",
+        "times": {
+            "hours": {
+                "Mon": ["8:00", "24:00", {"nextDay": true}],
+                "Tue": ["8:00", "24:00", {"nextDay": true}],
+                "Wed": ["8:00", "24:00", {"nextDay": true}],
+                "Thu": ["8:00", "24:00", {"nextDay": true}],
+                "Fri": ["8:00", "24:00", {"nextDay": true}],
+                "Sat": ["8:00", "24:00", {"nextDay": true}],
+                "Sun": ["8:00", "24:00", {"nextDay": true}]
+            }
+        }
+    },
+    {
+        "name": "Regents Math",
+        "image": "regents-math",
+        "times": {
+            "hours": {
+                "Mon": ["8:00", "24:00", {"nextDay": true}],
+                "Tue": ["8:00", "24:00", {"nextDay": true}],
+                "Wed": ["8:00", "24:00", {"nextDay": true}],
+                "Thu": ["8:00", "24:00", {"nextDay": true}],
+                "Fri": ["8:00", "24:00", {"nextDay": true}],
+                "Sat": ["8:00", "24:00", {"nextDay": true}],
+                "Sun": ["8:00", "24:00", {"nextDay": true}]
+            }
+        }
+    },
+    {
+        "name": "Skifter Hall",
+        "image": "skifter-studioa",
+        "times": {
+            "hours": {
+                "Mon": ["7:00", "24:00", {"nextDay": true}],
+                "Tue": ["7:00", "24:00", {"nextDay": true}],
+                "Wed": ["7:00", "24:00", {"nextDay": true}],
+                "Thu": ["7:00", "24:00", {"nextDay": true}],
+                "Fri": ["7:00", "24:00", {"nextDay": true}],
+                "Sat": ["8:00", "24:00", {"nextDay": true}],
+                "Sun": ["8:00", "24:00", {"nextDay": true}]
+            }
+        }
+    },
+    {
+        "name": "Theater Building",
+        "image": "theater",
+        "times": {
+            "hours": {
+                "Mon": ["7:00", "24:00", {"nextDay": true}],
+                "Tue": ["7:00", "24:00", {"nextDay": true}],
+                "Wed": ["7:00", "24:00", {"nextDay": true}],
+                "Thu": ["7:00", "24:00", {"nextDay": true}],
+                "Fri": ["7:00", "24:00", {"nextDay": true}],
+                "Sat": ["9:00", "24:00", {"nextDay": true}],
+                "Sun": ["9:00", "24:00", {"nextDay": true}]
+            }
+        }
+    },
+    {
+        "name": "Tomson Hall",
+        "image": "tomson",
+        "times": {
+            "hours": {
+                "Mon": ["7:00", "23:00"],
+                "Tue": ["7:00", "23:00"],
+                "Wed": ["7:00", "23:00"],
+                "Thu": ["7:00", "23:00"],
+                "Fri": ["7:00", "20:00"],
+                "Sat": ["8:00", "20:00"],
+                "Sun": ["8:00", "23:00"]
+            }
+        }
+    }
 ]
