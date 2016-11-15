@@ -1,15 +1,18 @@
 // @flow
 import React from 'react'
 import {Platform, ScrollView} from 'react-native'
-import defaultBusLines from '../../../data/bus-times.json'
 import type {BusLineType} from './types'
 import BusLineView from './bus-line'
 import moment from 'moment-timezone'
+
+import defaultBusLines from '../../../data/bus-times.json'
+(defaultBusLines: BusLineType[])
+
 const TIMEZONE = 'America/Winnipeg'
 
 export default class BusView extends React.Component {
   static propTypes = {
-    busLines: React.PropTypes.arrayOf(React.PropTypes.object),
+    busLines: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
   }
 
   static defaultProps = {
@@ -32,7 +35,7 @@ export default class BusView extends React.Component {
   }
 
   props: {
-    busLines: BusLineType[]
+    busLines: BusLineType[],
   }
 
   updateTime = () => {
