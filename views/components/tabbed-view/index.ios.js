@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import styles from './styles'
 import type { TabbedViewPropsType } from './types'
 import { TabbedViewPropTypes } from './types'
+import * as c from '../../components/colors'
 
 export default class TabbedView extends React.Component {
   static propTypes = TabbedViewPropTypes;
@@ -21,7 +22,7 @@ export default class TabbedView extends React.Component {
     let {navigator, route, tabs} = this.props
     let baseProps = {navigator, route}
     return (
-      <TabBarIOS tintColor='orange' style={[styles.container, this.props.style]}>
+      <TabBarIOS tintColor={c.mandarin} style={[styles.container, this.props.style]}>
         {tabs.map(tab => {
           let icon = {}
           if (tab.rnVectorIcon) {
