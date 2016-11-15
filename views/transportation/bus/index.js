@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {Platform, ScrollView} from 'react-native'
+import {Platform, ScrollView, View, Text} from 'react-native'
 import type {BusLineType} from './types'
 import BusLineView from './bus-line'
 import moment from 'moment-timezone'
@@ -13,6 +13,7 @@ const TIMEZONE = 'America/Winnipeg'
 export default class BusView extends React.Component {
   static propTypes = {
     busLines: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    line: React.PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -36,6 +37,7 @@ export default class BusView extends React.Component {
 
   props: {
     busLines: BusLineType[],
+    line: string,
   }
 
   updateTime = () => {
@@ -47,21 +49,27 @@ export default class BusView extends React.Component {
     // now.dayOfYear(moment.tz(TIMEZONE).dayOfYear())
     const now = moment.tz(TIMEZONE)
     const busLines = this.props.busLines
+    const activeBusLine = busLines.find(({line}) => line === this.props.line)
+
+    if (!activeBusLine) {
+      return (
+        <View>
+          <Text>The line "{this.props.line}" was not found among {busLines.map(({line}) => line).join(', ')}</Text>
+        </View>
+      )
+    }
 
     return (
       <ScrollView>
-        {busLines.map((busLine: BusLineType, i) =>
-          <BusLineView
-            key={busLine.line}
-            style={{
-              marginTop: Platform.OS === 'ios' ? 15 : 0,
-              marginBottom: Platform.OS === 'ios'
-                ? i < busLines.length - 1 ? 15 : 5
-                : 8,
-            }}
-            line={busLine}
-            now={now}
-          />)}
+        <BusLineView
+          key={activeBusLine.line}
+          style={{
+            marginTop: Platform.OS === 'ios' ? 15 : 0,
+            marginBottom: Platform.OS === 'ios' ? 0 : 8,
+          }}
+          line={activeBusLine}
+          now={now}
+        />
       </ScrollView>
     )
   }
