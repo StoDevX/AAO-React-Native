@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import credits from '../../data/credits.json'
 
-let image = require('../../data/images/icons/ios/iTunesArtwork@1x.png')
+let image = require('../../data/images/about/IconTrans.png')
 
 const styles = StyleSheet.create({
   container: {
