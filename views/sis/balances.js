@@ -75,6 +75,7 @@ export default class BalancesView extends React.Component {
   }
 
   loadIfLoggedIn = async () => {
+    console.log('TESTING')
     let shouldContinue = await this.checkLogin()
     if (shouldContinue) {
       await this.fetchData()
