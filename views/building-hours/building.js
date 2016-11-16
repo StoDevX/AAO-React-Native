@@ -13,19 +13,19 @@ import {
  StyleSheet,
 } from 'react-native'
 
-import * as c from '../components/colors'
+import type momentT from 'moment'
 import type {BuildingInfoType} from './types'
+import * as c from '../components/colors'
 import {isBuildingOpen} from './is-building-open'
 import {formatBuildingHours} from './format-building-hours'
 import CollapsibleBlock from '../components/collapsibleBlock'
 import {allBuildingHours} from './all-building-hours.js'
 
-
-
 type PropsType = {
   info: BuildingInfoType,
   image: number,
   name: string,
+  now: momentT,
 };
 
 let styles = StyleSheet.create({
@@ -67,17 +67,18 @@ let styles = StyleSheet.create({
 })
 
 
-export default function BuildingView({info, image, name}: PropsType) {
-
+export function BuildingView({info, image, name, now}: PropsType) {
   let borderColors = {
     'Open': '#CEFFCE',
     'Almost Closed': '#FFFC96',
     'Closed': '#F7C8C8',
   }
 
-  let openStatus = isBuildingOpen(info)
-  let hours = formatBuildingHours(info)
-  let allHours = allBuildingHours(info, styles.hoursText)
+  const openStatus = isBuildingOpen(info, now)
+  const hours = formatBuildingHours(info, now)
+  const allHours = allBuildingHours(info, now)
+  const allHoursAsElements = allHours.map((time, i) =>
+    <Text key={i} style={styles.hoursText}>{time}</Text>)
 
   return (
     <CollapsibleBlock style={styles} collapsedStyle={{backgroundColor: borderColors[openStatus]}}>
@@ -95,7 +96,7 @@ export default function BuildingView({info, image, name}: PropsType) {
 
       <View style={[styles.contents, {width: Dimensions.get('window').width}]}>
         <Text style={styles.hoursText}>Daily Hours</Text>
-        {allHours}
+        {allHoursAsElements}
       </View>
     </CollapsibleBlock>
   )
@@ -105,4 +106,5 @@ BuildingView.propTypes = {
   image: React.PropTypes.number.isRequired,
   info: React.PropTypes.object.isRequired,
   name: React.PropTypes.string.isRequired,
+  now: React.PropTypes.object.isRequired,
 }

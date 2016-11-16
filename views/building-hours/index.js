@@ -6,7 +6,7 @@
 
 import React from 'react'
 import {ListView, RefreshControl} from 'react-native'
-import BuildingView from './building'
+import {BuildingView} from './building'
 
 import delay from 'delay'
 import type {BuildingInfoType} from './types'
