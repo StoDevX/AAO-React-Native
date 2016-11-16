@@ -7,7 +7,7 @@ export type BuildingInfoType = {
   image: string,
   times: {
     hours: {
-      [key: DayOfWeekType]: BuildingHoursType,
+      [key: string|DayOfWeekType]: BuildingHoursType,
     },
   },
 };
