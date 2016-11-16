@@ -8,9 +8,17 @@ import type momentT from 'moment'
 
 type HourPairType = {open: momentT, close: momentT};
 
+function isBefore3am(now: momentT): boolean {
+  return now.hour() < 2
+}
+
 export function parseBuildingHours(hours: BuildingHoursType, now: momentT): HourPairType {
   let dayOfYear = now.dayOfYear()
   let [startTimeString, closeTimeString] = hours
+
+  if (isBefore3am(now)) {
+    dayOfYear -= 1
+  }
 
   let open = moment.tz(startTimeString, TIME_FORMAT, true, CENTRAL_TZ)
   open.dayOfYear(dayOfYear)
