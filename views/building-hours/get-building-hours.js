@@ -6,9 +6,9 @@ const TIME_FORMAT = 'H:mm'
 import type {BuildingInfoType, BuildingHoursType} from './types'
 import type momentT from 'moment'
 
-type ReturnType = false|{open: momentT, close: momentT};
+type HourPairType = {open: momentT, close: momentT};
 
-export function parseBuildingHours(hours: BuildingHoursType, now: momentT) {
+export function parseBuildingHours(hours: BuildingHoursType, now: momentT): HourPairType {
   let dayOfYear = now.dayOfYear()
   let [startTimeString, closeTimeString, options={nextDay: false}] = hours
 
@@ -25,7 +25,7 @@ export function parseBuildingHours(hours: BuildingHoursType, now: momentT) {
   return {open, close}
 }
 
-export function getBuildingHours(hoursInfo: BuildingInfoType, now: momentT): ReturnType {
+export function getBuildingHours(hoursInfo: BuildingInfoType, now: momentT): false|HourPairType {
   let dayOfWeek = now.format('ddd')
   let times = hoursInfo.times.hours[dayOfWeek]
 
