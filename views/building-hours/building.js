@@ -32,8 +32,8 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    borderLeftWidth: 5,
-    borderRightWidth: 5,
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
     marginTop: 10,
     height: 100,
   },
@@ -86,7 +86,8 @@ export function BuildingView({info, image, name, now}: PropsType) {
         <Image
           source={image}
           style={{width: undefined, height: 100}}
-          resizeMode='cover'>
+          resizeMode='cover'
+        >
           <View style={styles.inner}>
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.status}>{hours}</Text>
