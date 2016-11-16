@@ -149,8 +149,8 @@ function openSettings(route, navigator) {
 }
 
 function closeSettings(navigator) {
-  navigator.pop()
   settingsButtonActive = false
+  navigator.pop()
 }
 
 function LeftButton(route, navigator, index, navState) {
@@ -169,9 +169,7 @@ function LeftButton(route, navigator, index, navState) {
       return (
         <TouchableOpacity
           style={[styles.backButton, {marginLeft: 10, marginVertical: Platform.OS === 'android' ? 21 : 16}]}
-          onPress={() => {
-            closeSettings(navigator)
-          }}
+          onPress={() => closeSettings(navigator)}
         >
           <Text style={styles.backButtonText}>Close</Text>
         </TouchableOpacity>
