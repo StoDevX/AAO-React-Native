@@ -3,19 +3,14 @@ import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 const TIME_FORMAT = 'H:mm'
 
-import type {BuildingInfoType} from './types'
+import type {BuildingInfoType, BuildingHoursType} from './types'
+import type momentT from 'moment'
 
-export function getBuildingHours(hoursInfo: BuildingInfoType): false|{open: typeof moment, close: typeof moment, current: typeof moment} {
-  let dayOfWeek = moment.tz(CENTRAL_TZ).format('ddd')
-  let times = hoursInfo.times.hours[dayOfWeek]
-  if (!times) {
-    return false
-  }
+type ReturnType = false|{open: momentT, close: momentT};
 
-  let current = moment.tz(CENTRAL_TZ)
-  let dayOfYear = current.dayOfYear()
-
-  let [startTimeString, closeTimeString, options={nextDay: false}] = times
+export function parseBuildingHours(hours: BuildingHoursType, now: momentT) {
+  let dayOfYear = now.dayOfYear()
+  let [startTimeString, closeTimeString, options={nextDay: false}] = hours
 
   let open = moment.tz(startTimeString, TIME_FORMAT, true, CENTRAL_TZ)
   open.dayOfYear(dayOfYear)
@@ -27,5 +22,16 @@ export function getBuildingHours(hoursInfo: BuildingInfoType): false|{open: type
     close.add(1, 'day')
   }
 
-  return {open, close, current}
+  return {open, close}
+}
+
+export function getBuildingHours(hoursInfo: BuildingInfoType, now: momentT): ReturnType {
+  let dayOfWeek = now.format('ddd')
+  let times = hoursInfo.times.hours[dayOfWeek]
+
+  if (!times) {
+    return false
+  }
+
+  return parseBuildingHours(times, now)
 }
