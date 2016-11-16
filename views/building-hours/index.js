@@ -11,6 +11,7 @@ import {BuildingView} from './building'
 import delay from 'delay'
 import type {BuildingInfoType} from './types'
 import hoursData from '../../data/building-hours.json'
+(hoursData: BuildingInfoType[])
 
 const buildingImages = {
   'alumni-hall': require('../../data/images/buildinghours/w1440/alumni-hall.jpg'),
