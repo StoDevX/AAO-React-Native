@@ -10,7 +10,7 @@ type HourPairType = {open: momentT, close: momentT};
 
 export function parseBuildingHours(hours: BuildingHoursType, now: momentT): HourPairType {
   let dayOfYear = now.dayOfYear()
-  let [startTimeString, closeTimeString, options={nextDay: false}] = hours
+  let [startTimeString, closeTimeString] = hours
 
   let open = moment.tz(startTimeString, TIME_FORMAT, true, CENTRAL_TZ)
   open.dayOfYear(dayOfYear)
@@ -18,7 +18,7 @@ export function parseBuildingHours(hours: BuildingHoursType, now: momentT): Hour
   let close = moment.tz(closeTimeString, TIME_FORMAT, true, CENTRAL_TZ)
   close.dayOfYear(dayOfYear)
 
-  if (options && options.nextDay) {
+  if (close.isBefore(open)) {
     close.add(1, 'day')
   }
 
