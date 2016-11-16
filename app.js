@@ -36,6 +36,7 @@ import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
 
 import NoRoute from './views/components/no-route'
+import noop from 'lodash/noop'
 
 // Render a given scene
 function renderScene(route, navigator) {
@@ -138,6 +139,7 @@ const styles = StyleSheet.create({
 let settingsButtonActive = false
 
 function openSettings(route, navigator) {
+  settingsButtonActive = true
   navigator.push({
     id: 'SettingsView',
     title: 'Settings',
@@ -146,16 +148,18 @@ function openSettings(route, navigator) {
   })
 }
 
+function closeSettings() {
+  navigator.pop()
+  settingsButtonActive = false
+}
+
 function LeftButton(route, navigator, index, navState) {
   switch (route.id) {
     case 'HomeView':
       return (
         <TouchableOpacity
           style={[styles.backButton]}
-          onPress={settingsButtonActive ? () => {} : () => {
-            settingsButtonActive = true
-            openSettings(route, navigator)
-          }}
+          onPress={settingsButtonActive ? noop : () => openSettings(route, navigator)}
         >
           <Icon style={styles.settingsIcon} name='ios-settings' />
         </TouchableOpacity>
@@ -166,8 +170,7 @@ function LeftButton(route, navigator, index, navState) {
         <TouchableOpacity
           style={[styles.backButton, {marginLeft: 10, marginVertical: Platform.OS === 'android' ? 21 : 16}]}
           onPress={() => {
-            navigator.pop()
-            settingsButtonActive = false
+            closeSettings()
           }}
         >
           <Text style={styles.backButtonText}>Close</Text>
