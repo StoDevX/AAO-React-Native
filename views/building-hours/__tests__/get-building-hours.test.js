@@ -1,4 +1,3 @@
-// @flow
 import {getBuildingHours} from '../get-building-hours'
 import moment from 'moment'
 
