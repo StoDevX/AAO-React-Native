@@ -22,7 +22,7 @@ export default class BusView extends React.Component {
 
   state = {
     intervalId: 0,
-    now: Date.now(),
+    now: moment.tz(TIMEZONE),
   }
 
   componentWillMount() {
@@ -41,13 +41,12 @@ export default class BusView extends React.Component {
   }
 
   updateTime = () => {
-    this.setState({now: Date.now()})
+    this.setState({now: moment.tz(TIMEZONE)})
   }
 
   render() {
     // const now = moment.tz('6:53am', 'h:mma', true, TIMEZONE)
     // now.dayOfYear(moment.tz(TIMEZONE).dayOfYear())
-    const now = moment.tz(TIMEZONE)
     const busLines = this.props.busLines
     const activeBusLine = busLines.find(({line}) => line === this.props.line)
 
@@ -68,7 +67,7 @@ export default class BusView extends React.Component {
             marginBottom: Platform.OS === 'ios' ? 0 : 8,
           }}
           line={activeBusLine}
-          now={now}
+          now={this.state.now}
         />
       </ScrollView>
     )
