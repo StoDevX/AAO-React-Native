@@ -1,4 +1,4 @@
-// flow-typed signature: 57c807c0aee70feb1812d88cd26cd915
+// flow-typed signature: c2f0538eae184a5b184d866fc352ed8b
 // flow-typed version: <<STUB>>/react-native_v0.37.0/flow_v0.35.0
 
 /**
@@ -54,11 +54,15 @@ declare module 'react-native/flow/Set' {
   declare module.exports: any;
 }
 
-declare module 'react-native/jestSupport/env' {
+declare module 'react-native/jest/mockComponent' {
   declare module.exports: any;
 }
 
-declare module 'react-native/jestSupport/preprocessor' {
+declare module 'react-native/jest/preprocessor' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/jest/setup' {
   declare module.exports: any;
 }
 
@@ -103,6 +107,22 @@ declare module 'react-native/Libraries/ActionSheetIOS/ActionSheetIOS' {
 }
 
 declare module 'react-native/Libraries/AdSupport/AdSupportIOS' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Alert/Alert' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Alert/AlertIOS' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Alert/RCTAlertManager.android' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Alert/RCTAlertManager.ios' {
   declare module.exports: any;
 }
 
@@ -170,15 +190,7 @@ declare module 'react-native/Libraries/Animated/src/SpringConfig' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/AppRegistry/AppRegistry' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/AppState/AppState' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/AppState/AppStateIOS' {
   declare module.exports: any;
 }
 
@@ -190,31 +202,35 @@ declare module 'react-native/Libraries/ART/ReactNativeART' {
   declare module.exports: any;
 }
 
+declare module 'react-native/Libraries/BatchedBridge/__mocks__/MessageQueueTestConfig' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/BatchedBridge/__mocks__/MessageQueueTestModule' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/BatchedBridge/__mocks__/NativeModules' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/BatchedBridge/__tests__/MessageQueue-test' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/BatchedBridge/__tests__/NativeModules-test' {
+  declare module.exports: any;
+}
+
 declare module 'react-native/Libraries/BatchedBridge/BatchedBridge' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/BatchedBridge/BatchedBridgedModules/__mocks__/MessageQueueTestConfig' {
+declare module 'react-native/Libraries/BatchedBridge/MessageQueue' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/BatchedBridge/BatchedBridgedModules/__mocks__/NativeModules' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/BatchedBridge/BatchedBridgedModules/__tests__/NativeModules-test' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/BatchedBridge/BatchedBridgedModules/NativeModules' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/BatchedBridge/BatchedBridgedModules/RCTAlertManager.ios' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/BatchedBridge/BatchedBridgedModules/RCTEventEmitter' {
+declare module 'react-native/Libraries/BatchedBridge/NativeModules' {
   declare module.exports: any;
 }
 
@@ -242,11 +258,7 @@ declare module 'react-native/Libraries/Components/ActivityIndicator/ActivityIndi
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/Components/ActivityIndicator/ActivityIndicatorIOS.android' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Components/ActivityIndicator/ActivityIndicatorIOS.ios' {
+declare module 'react-native/Libraries/Components/Button' {
   declare module.exports: any;
 }
 
@@ -275,14 +287,6 @@ declare module 'react-native/Libraries/Components/DrawerAndroid/DrawerLayoutAndr
 }
 
 declare module 'react-native/Libraries/Components/DrawerAndroid/DrawerLayoutAndroid.ios' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Components/Intent/IntentAndroid.android' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Components/Intent/IntentAndroid.ios' {
   declare module.exports: any;
 }
 
@@ -382,14 +386,6 @@ declare module 'react-native/Libraries/Components/Slider/Slider' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/Components/SliderIOS/SliderIOS.android' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Components/SliderIOS/SliderIOS.ios' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/Components/StaticContainer' {
   declare module.exports: any;
 }
@@ -415,22 +411,6 @@ declare module 'react-native/Libraries/Components/Subscribable' {
 }
 
 declare module 'react-native/Libraries/Components/Switch/Switch' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Components/SwitchAndroid/SwitchAndroid.android' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Components/SwitchAndroid/SwitchAndroid.ios' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Components/SwitchIOS/SwitchIOS.android' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Components/SwitchIOS/SwitchIOS.ios' {
   declare module.exports: any;
 }
 
@@ -538,10 +518,6 @@ declare module 'react-native/Libraries/Components/UnimplementedViews/Unimplement
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/Components/View/__mocks__/View' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/Components/View/ReactNativeStyleAttributes' {
   declare module.exports: any;
 }
@@ -575,6 +551,54 @@ declare module 'react-native/Libraries/Components/WebView/WebView.android' {
 }
 
 declare module 'react-native/Libraries/Components/WebView/WebView.ios' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Core/__mocks__/ErrorUtils' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Core/Devtools/__tests__/parseErrorStack-test' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Core/Devtools/getDevServer' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Core/Devtools/openFileInEditor' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Core/Devtools/parseErrorStack' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Core/Devtools/setupDevtools' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Core/Devtools/symbolicateStackTrace' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Core/ErrorUtils' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Core/ExceptionsManager' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Core/InitializeCore' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Core/Timers/JSTimers' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Core/Timers/JSTimersExecution' {
   declare module.exports: any;
 }
 
@@ -710,10 +734,6 @@ declare module 'react-native/Libraries/DebugComponentHierarchy/RCTDebugComponent
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/Devtools/setupDevtools' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/EventEmitter/EmitterSubscription' {
   declare module.exports: any;
 }
@@ -751,6 +771,10 @@ declare module 'react-native/Libraries/EventEmitter/NativeEventEmitter' {
 }
 
 declare module 'react-native/Libraries/EventEmitter/RCTDeviceEventEmitter' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/EventEmitter/RCTEventEmitter' {
   declare module.exports: any;
 }
 
@@ -802,15 +826,7 @@ declare module 'react-native/Libraries/Experimental/WindowedListView' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/Fetch/fetch' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/Geolocation/Geolocation' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Image/__mocks__/Image' {
   declare module.exports: any;
 }
 
@@ -958,55 +974,11 @@ declare module 'react-native/Libraries/Interaction/TaskQueue' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/__tests__/parseErrorStack-test' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/ExceptionsManager' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/getDevServer' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/InitializeJavaScriptAppEngine' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/openFileInEditor' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/parseErrorStack' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/source-map-url' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/symbolicateStackTrace' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/JavaScriptAppEngine/System/JSTimers/JSTimers' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/JavaScriptAppEngine/System/JSTimers/JSTimersExecution' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/LayoutAnimation/LayoutAnimation' {
   declare module.exports: any;
 }
 
 declare module 'react-native/Libraries/Linking/Linking' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/LinkingIOS/LinkingIOS' {
   declare module.exports: any;
 }
 
@@ -1054,6 +1026,10 @@ declare module 'react-native/Libraries/Network/__tests__/XMLHttpRequest-test' {
   declare module.exports: any;
 }
 
+declare module 'react-native/Libraries/Network/fetch' {
+  declare module.exports: any;
+}
+
 declare module 'react-native/Libraries/Network/FormData' {
   declare module.exports: any;
 }
@@ -1070,7 +1046,31 @@ declare module 'react-native/Libraries/Network/RCTNetworking.ios' {
   declare module.exports: any;
 }
 
+declare module 'react-native/Libraries/Network/XHRInterceptor' {
+  declare module.exports: any;
+}
+
 declare module 'react-native/Libraries/Network/XMLHttpRequest' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Performance/CPUProfiler' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Performance/QuickPerformanceLogger' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Performance/RCTRenderingPerf' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Performance/SamplingProfiler' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/Performance/Systrace' {
   declare module.exports: any;
 }
 
@@ -1087,10 +1087,6 @@ declare module 'react-native/Libraries/promiseRejectionIsError' {
 }
 
 declare module 'react-native/Libraries/PushNotificationIOS/PushNotificationIOS' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/QuickPerformanceLogger/QuickPerformanceLogger' {
   declare module.exports: any;
 }
 
@@ -1118,23 +1114,31 @@ declare module 'react-native/Libraries/react-native/ReactNative' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/ReactIOS/AppContainer' {
+declare module 'react-native/Libraries/ReactNative/AppContainer' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/ReactIOS/renderApplication' {
+declare module 'react-native/Libraries/ReactNative/AppRegistry' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/ReactIOS/requireNativeComponent' {
+declare module 'react-native/Libraries/ReactNative/I18nManager' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/ReactIOS/verifyPropTypes' {
+declare module 'react-native/Libraries/ReactNative/queryLayoutByID' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/ReactIOS/YellowBox' {
+declare module 'react-native/Libraries/ReactNative/renderApplication' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/ReactNative/requireNativeComponent' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/ReactNative/UIManager' {
   declare module.exports: any;
 }
 
@@ -1142,7 +1146,11 @@ declare module 'react-native/Libraries/ReactNative/UIManagerStatTracker' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/RKBackendNode/queryLayoutByID' {
+declare module 'react-native/Libraries/ReactNative/verifyPropTypes' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/Libraries/ReactNative/YellowBox' {
   declare module.exports: any;
 }
 
@@ -1242,10 +1250,6 @@ declare module 'react-native/Libraries/StyleSheet/TransformPropTypes' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/Text/__mocks__/Text' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/Text/Text' {
   declare module.exports: any;
 }
@@ -1255,14 +1259,6 @@ declare module 'react-native/Libraries/Text/TextStylePropTypes' {
 }
 
 declare module 'react-native/Libraries/Text/TextUpdateTest' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Utilities/__mocks__/ErrorUtils' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Utilities/__mocks__/MessageQueueTestModule' {
   declare module.exports: any;
 }
 
@@ -1290,10 +1286,6 @@ declare module 'react-native/Libraries/Utilities/__tests__/MatrixMath-test' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/Utilities/__tests__/MessageQueue-test' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/Utilities/__tests__/Platform-test' {
   declare module.exports: any;
 }
@@ -1303,14 +1295,6 @@ declare module 'react-native/Libraries/Utilities/__tests__/truncate-test' {
 }
 
 declare module 'react-native/Libraries/Utilities/__tests__/utf8-test' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Utilities/Alert' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Utilities/AlertIOS' {
   declare module.exports: any;
 }
 
@@ -1330,10 +1314,6 @@ declare module 'react-native/Libraries/Utilities/clamp' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/Utilities/CPUProfiler' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/Utilities/createStrictShapeTypeChecker' {
   declare module.exports: any;
 }
@@ -1343,10 +1323,6 @@ declare module 'react-native/Libraries/Utilities/deepFreezeAndThrowOnMutationInD
 }
 
 declare module 'react-native/Libraries/Utilities/defineLazyObjectProperty' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Utilities/deprecatedCallback' {
   declare module.exports: any;
 }
 
@@ -1386,10 +1362,6 @@ declare module 'react-native/Libraries/Utilities/dismissKeyboard' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/Utilities/ErrorUtils' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/Utilities/groupByEveryN' {
   declare module.exports: any;
 }
@@ -1407,10 +1379,6 @@ declare module 'react-native/Libraries/Utilities/HMRLoadingView.android' {
 }
 
 declare module 'react-native/Libraries/Utilities/HMRLoadingView.ios' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Utilities/I18nManager' {
   declare module.exports: any;
 }
 
@@ -1438,10 +1406,6 @@ declare module 'react-native/Libraries/Utilities/mergeIntoFast' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/Utilities/MessageQueue' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/Utilities/PerformanceLogger' {
   declare module.exports: any;
 }
@@ -1462,19 +1426,7 @@ declare module 'react-native/Libraries/Utilities/RCTLog' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/Utilities/RCTRenderingPerf' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Utilities/SamplingProfiler' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/Utilities/stringifySafe' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Utilities/Systrace' {
   declare module.exports: any;
 }
 
@@ -1486,19 +1438,7 @@ declare module 'react-native/Libraries/Utilities/truncate' {
   declare module.exports: any;
 }
 
-declare module 'react-native/Libraries/Utilities/UIManager' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/Libraries/Utilities/utf8' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Utilities/WebSocketInterceptor' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/Libraries/Utilities/XHRInterceptor' {
   declare module.exports: any;
 }
 
@@ -1578,11 +1518,11 @@ declare module 'react-native/Libraries/WebSocket/WebSocketEvent' {
   declare module.exports: any;
 }
 
-declare module 'react-native/local-cli/__mocks__/beeper' {
+declare module 'react-native/Libraries/WebSocket/WebSocketInterceptor' {
   declare module.exports: any;
 }
 
-declare module 'react-native/local-cli/__mocks__/chalk' {
+declare module 'react-native/local-cli/__mocks__/beeper' {
   declare module.exports: any;
 }
 
@@ -2410,7 +2350,7 @@ declare module 'react-native/packager/blacklist' {
   declare module.exports: any;
 }
 
-declare module 'react-native/packager/defaultAssetExts' {
+declare module 'react-native/packager/defaults' {
   declare module.exports: any;
 }
 
@@ -2422,14 +2362,6 @@ declare module 'react-native/packager/react-packager/src/__mocks__/debug' {
   declare module.exports: any;
 }
 
-declare module 'react-native/packager/react-packager/src/__mocks__/fs' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/packager/react-packager/src/__mocks__/graceful-fs' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/packager/react-packager/src/Activity/__mocks__/chalk' {
   declare module.exports: any;
 }
@@ -2438,7 +2370,15 @@ declare module 'react-native/packager/react-packager/src/Activity/__tests__/Acti
   declare module.exports: any;
 }
 
+declare module 'react-native/packager/react-packager/src/Activity/formatData' {
+  declare module.exports: any;
+}
+
 declare module 'react-native/packager/react-packager/src/Activity/index' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/packager/react-packager/src/Activity/normaliseEventData' {
   declare module.exports: any;
 }
 
@@ -2578,6 +2518,30 @@ declare module 'react-native/packager/react-packager/src/ModuleGraph/Graph' {
   declare module.exports: any;
 }
 
+declare module 'react-native/packager/react-packager/src/ModuleGraph/node-haste/FastFS' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/packager/react-packager/src/ModuleGraph/node-haste/Module' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/packager/react-packager/src/ModuleGraph/node-haste/ModuleCache' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/packager/react-packager/src/ModuleGraph/node-haste/node-haste.flow' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/packager/react-packager/src/ModuleGraph/node-haste/node-haste' {
+  declare module.exports: any;
+}
+
+declare module 'react-native/packager/react-packager/src/ModuleGraph/node-haste/Package' {
+  declare module.exports: any;
+}
+
 declare module 'react-native/packager/react-packager/src/ModuleGraph/silent-console' {
   declare module.exports: any;
 }
@@ -2594,10 +2558,6 @@ declare module 'react-native/packager/react-packager/src/ModuleGraph/worker' {
   declare module.exports: any;
 }
 
-declare module 'react-native/packager/react-packager/src/node-haste/__mocks__/debug' {
-  declare module.exports: any;
-}
-
 declare module 'react-native/packager/react-packager/src/node-haste/__mocks__/fs' {
   declare module.exports: any;
 }
@@ -2611,14 +2571,6 @@ declare module 'react-native/packager/react-packager/src/node-haste/__tests__/As
 }
 
 declare module 'react-native/packager/react-packager/src/node-haste/__tests__/DependencyGraph-test' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/packager/react-packager/src/node-haste/__tests__/fastfs-integrated-test' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/packager/react-packager/src/node-haste/__tests__/fastpath-test' {
   declare module.exports: any;
 }
 
@@ -2675,10 +2627,6 @@ declare module 'react-native/packager/react-packager/src/node-haste/DependencyGr
 }
 
 declare module 'react-native/packager/react-packager/src/node-haste/fastfs' {
-  declare module.exports: any;
-}
-
-declare module 'react-native/packager/react-packager/src/node-haste/fastpath' {
   declare module.exports: any;
 }
 
@@ -2971,11 +2919,14 @@ declare module 'react-native/flow/react.js' {
 declare module 'react-native/flow/Set.js' {
   declare module.exports: $Exports<'react-native/flow/Set'>;
 }
-declare module 'react-native/jestSupport/env.js' {
-  declare module.exports: $Exports<'react-native/jestSupport/env'>;
+declare module 'react-native/jest/mockComponent.js' {
+  declare module.exports: $Exports<'react-native/jest/mockComponent'>;
 }
-declare module 'react-native/jestSupport/preprocessor.js' {
-  declare module.exports: $Exports<'react-native/jestSupport/preprocessor'>;
+declare module 'react-native/jest/preprocessor.js' {
+  declare module.exports: $Exports<'react-native/jest/preprocessor'>;
+}
+declare module 'react-native/jest/setup.js' {
+  declare module.exports: $Exports<'react-native/jest/setup'>;
 }
 declare module 'react-native/lib/deepDiffer.js' {
   declare module.exports: $Exports<'react-native/lib/deepDiffer'>;
@@ -3009,6 +2960,18 @@ declare module 'react-native/Libraries/ActionSheetIOS/ActionSheetIOS.js' {
 }
 declare module 'react-native/Libraries/AdSupport/AdSupportIOS.js' {
   declare module.exports: $Exports<'react-native/Libraries/AdSupport/AdSupportIOS'>;
+}
+declare module 'react-native/Libraries/Alert/Alert.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Alert/Alert'>;
+}
+declare module 'react-native/Libraries/Alert/AlertIOS.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Alert/AlertIOS'>;
+}
+declare module 'react-native/Libraries/Alert/RCTAlertManager.android.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Alert/RCTAlertManager.android'>;
+}
+declare module 'react-native/Libraries/Alert/RCTAlertManager.ios.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Alert/RCTAlertManager.ios'>;
 }
 declare module 'react-native/Libraries/Animated/release/gulpfile.js' {
   declare module.exports: $Exports<'react-native/Libraries/Animated/release/gulpfile'>;
@@ -3058,14 +3021,8 @@ declare module 'react-native/Libraries/Animated/src/polyfills/Set.js' {
 declare module 'react-native/Libraries/Animated/src/SpringConfig.js' {
   declare module.exports: $Exports<'react-native/Libraries/Animated/src/SpringConfig'>;
 }
-declare module 'react-native/Libraries/AppRegistry/AppRegistry.js' {
-  declare module.exports: $Exports<'react-native/Libraries/AppRegistry/AppRegistry'>;
-}
 declare module 'react-native/Libraries/AppState/AppState.js' {
   declare module.exports: $Exports<'react-native/Libraries/AppState/AppState'>;
-}
-declare module 'react-native/Libraries/AppState/AppStateIOS.js' {
-  declare module.exports: $Exports<'react-native/Libraries/AppState/AppStateIOS'>;
 }
 declare module 'react-native/Libraries/ART/ARTSerializablePath.js' {
   declare module.exports: $Exports<'react-native/Libraries/ART/ARTSerializablePath'>;
@@ -3073,26 +3030,29 @@ declare module 'react-native/Libraries/ART/ARTSerializablePath.js' {
 declare module 'react-native/Libraries/ART/ReactNativeART.js' {
   declare module.exports: $Exports<'react-native/Libraries/ART/ReactNativeART'>;
 }
+declare module 'react-native/Libraries/BatchedBridge/__mocks__/MessageQueueTestConfig.js' {
+  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/__mocks__/MessageQueueTestConfig'>;
+}
+declare module 'react-native/Libraries/BatchedBridge/__mocks__/MessageQueueTestModule.js' {
+  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/__mocks__/MessageQueueTestModule'>;
+}
+declare module 'react-native/Libraries/BatchedBridge/__mocks__/NativeModules.js' {
+  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/__mocks__/NativeModules'>;
+}
+declare module 'react-native/Libraries/BatchedBridge/__tests__/MessageQueue-test.js' {
+  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/__tests__/MessageQueue-test'>;
+}
+declare module 'react-native/Libraries/BatchedBridge/__tests__/NativeModules-test.js' {
+  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/__tests__/NativeModules-test'>;
+}
 declare module 'react-native/Libraries/BatchedBridge/BatchedBridge.js' {
   declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/BatchedBridge'>;
 }
-declare module 'react-native/Libraries/BatchedBridge/BatchedBridgedModules/__mocks__/MessageQueueTestConfig.js' {
-  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/BatchedBridgedModules/__mocks__/MessageQueueTestConfig'>;
+declare module 'react-native/Libraries/BatchedBridge/MessageQueue.js' {
+  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/MessageQueue'>;
 }
-declare module 'react-native/Libraries/BatchedBridge/BatchedBridgedModules/__mocks__/NativeModules.js' {
-  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/BatchedBridgedModules/__mocks__/NativeModules'>;
-}
-declare module 'react-native/Libraries/BatchedBridge/BatchedBridgedModules/__tests__/NativeModules-test.js' {
-  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/BatchedBridgedModules/__tests__/NativeModules-test'>;
-}
-declare module 'react-native/Libraries/BatchedBridge/BatchedBridgedModules/NativeModules.js' {
-  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/BatchedBridgedModules/NativeModules'>;
-}
-declare module 'react-native/Libraries/BatchedBridge/BatchedBridgedModules/RCTAlertManager.ios.js' {
-  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/BatchedBridgedModules/RCTAlertManager.ios'>;
-}
-declare module 'react-native/Libraries/BatchedBridge/BatchedBridgedModules/RCTEventEmitter.js' {
-  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/BatchedBridgedModules/RCTEventEmitter'>;
+declare module 'react-native/Libraries/BatchedBridge/NativeModules.js' {
+  declare module.exports: $Exports<'react-native/Libraries/BatchedBridge/NativeModules'>;
 }
 declare module 'react-native/Libraries/BugReporting/BugReporting.js' {
   declare module.exports: $Exports<'react-native/Libraries/BugReporting/BugReporting'>;
@@ -3112,11 +3072,8 @@ declare module 'react-native/Libraries/CameraRoll/ImagePickerIOS.js' {
 declare module 'react-native/Libraries/Components/ActivityIndicator/ActivityIndicator.js' {
   declare module.exports: $Exports<'react-native/Libraries/Components/ActivityIndicator/ActivityIndicator'>;
 }
-declare module 'react-native/Libraries/Components/ActivityIndicator/ActivityIndicatorIOS.android.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Components/ActivityIndicator/ActivityIndicatorIOS.android'>;
-}
-declare module 'react-native/Libraries/Components/ActivityIndicator/ActivityIndicatorIOS.ios.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Components/ActivityIndicator/ActivityIndicatorIOS.ios'>;
+declare module 'react-native/Libraries/Components/Button.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Components/Button'>;
 }
 declare module 'react-native/Libraries/Components/Clipboard/Clipboard.js' {
   declare module.exports: $Exports<'react-native/Libraries/Components/Clipboard/Clipboard'>;
@@ -3138,12 +3095,6 @@ declare module 'react-native/Libraries/Components/DrawerAndroid/DrawerLayoutAndr
 }
 declare module 'react-native/Libraries/Components/DrawerAndroid/DrawerLayoutAndroid.ios.js' {
   declare module.exports: $Exports<'react-native/Libraries/Components/DrawerAndroid/DrawerLayoutAndroid.ios'>;
-}
-declare module 'react-native/Libraries/Components/Intent/IntentAndroid.android.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Components/Intent/IntentAndroid.android'>;
-}
-declare module 'react-native/Libraries/Components/Intent/IntentAndroid.ios.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Components/Intent/IntentAndroid.ios'>;
 }
 declare module 'react-native/Libraries/Components/Keyboard/Keyboard.js' {
   declare module.exports: $Exports<'react-native/Libraries/Components/Keyboard/Keyboard'>;
@@ -3217,12 +3168,6 @@ declare module 'react-native/Libraries/Components/SegmentedControlIOS/SegmentedC
 declare module 'react-native/Libraries/Components/Slider/Slider.js' {
   declare module.exports: $Exports<'react-native/Libraries/Components/Slider/Slider'>;
 }
-declare module 'react-native/Libraries/Components/SliderIOS/SliderIOS.android.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Components/SliderIOS/SliderIOS.android'>;
-}
-declare module 'react-native/Libraries/Components/SliderIOS/SliderIOS.ios.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Components/SliderIOS/SliderIOS.ios'>;
-}
 declare module 'react-native/Libraries/Components/StaticContainer.js' {
   declare module.exports: $Exports<'react-native/Libraries/Components/StaticContainer'>;
 }
@@ -3243,18 +3188,6 @@ declare module 'react-native/Libraries/Components/Subscribable.js' {
 }
 declare module 'react-native/Libraries/Components/Switch/Switch.js' {
   declare module.exports: $Exports<'react-native/Libraries/Components/Switch/Switch'>;
-}
-declare module 'react-native/Libraries/Components/SwitchAndroid/SwitchAndroid.android.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Components/SwitchAndroid/SwitchAndroid.android'>;
-}
-declare module 'react-native/Libraries/Components/SwitchAndroid/SwitchAndroid.ios.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Components/SwitchAndroid/SwitchAndroid.ios'>;
-}
-declare module 'react-native/Libraries/Components/SwitchIOS/SwitchIOS.android.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Components/SwitchIOS/SwitchIOS.android'>;
-}
-declare module 'react-native/Libraries/Components/SwitchIOS/SwitchIOS.ios.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Components/SwitchIOS/SwitchIOS.ios'>;
 }
 declare module 'react-native/Libraries/Components/TabBarIOS/TabBarIOS.android.js' {
   declare module.exports: $Exports<'react-native/Libraries/Components/TabBarIOS/TabBarIOS.android'>;
@@ -3334,9 +3267,6 @@ declare module 'react-native/Libraries/Components/Touchable/TouchableWithoutFeed
 declare module 'react-native/Libraries/Components/UnimplementedViews/UnimplementedView.js' {
   declare module.exports: $Exports<'react-native/Libraries/Components/UnimplementedViews/UnimplementedView'>;
 }
-declare module 'react-native/Libraries/Components/View/__mocks__/View.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Components/View/__mocks__/View'>;
-}
 declare module 'react-native/Libraries/Components/View/ReactNativeStyleAttributes.js' {
   declare module.exports: $Exports<'react-native/Libraries/Components/View/ReactNativeStyleAttributes'>;
 }
@@ -3363,6 +3293,42 @@ declare module 'react-native/Libraries/Components/WebView/WebView.android.js' {
 }
 declare module 'react-native/Libraries/Components/WebView/WebView.ios.js' {
   declare module.exports: $Exports<'react-native/Libraries/Components/WebView/WebView.ios'>;
+}
+declare module 'react-native/Libraries/Core/__mocks__/ErrorUtils.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Core/__mocks__/ErrorUtils'>;
+}
+declare module 'react-native/Libraries/Core/Devtools/__tests__/parseErrorStack-test.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Core/Devtools/__tests__/parseErrorStack-test'>;
+}
+declare module 'react-native/Libraries/Core/Devtools/getDevServer.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Core/Devtools/getDevServer'>;
+}
+declare module 'react-native/Libraries/Core/Devtools/openFileInEditor.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Core/Devtools/openFileInEditor'>;
+}
+declare module 'react-native/Libraries/Core/Devtools/parseErrorStack.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Core/Devtools/parseErrorStack'>;
+}
+declare module 'react-native/Libraries/Core/Devtools/setupDevtools.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Core/Devtools/setupDevtools'>;
+}
+declare module 'react-native/Libraries/Core/Devtools/symbolicateStackTrace.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Core/Devtools/symbolicateStackTrace'>;
+}
+declare module 'react-native/Libraries/Core/ErrorUtils.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Core/ErrorUtils'>;
+}
+declare module 'react-native/Libraries/Core/ExceptionsManager.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Core/ExceptionsManager'>;
+}
+declare module 'react-native/Libraries/Core/InitializeCore.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Core/InitializeCore'>;
+}
+declare module 'react-native/Libraries/Core/Timers/JSTimers.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Core/Timers/JSTimers'>;
+}
+declare module 'react-native/Libraries/Core/Timers/JSTimersExecution.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Core/Timers/JSTimersExecution'>;
 }
 declare module 'react-native/Libraries/CustomComponents/ListView/ListView.js' {
   declare module.exports: $Exports<'react-native/Libraries/CustomComponents/ListView/ListView'>;
@@ -3463,9 +3429,6 @@ declare module 'react-native/Libraries/CustomComponents/Navigator/NavigatorScene
 declare module 'react-native/Libraries/DebugComponentHierarchy/RCTDebugComponentOwnership.js' {
   declare module.exports: $Exports<'react-native/Libraries/DebugComponentHierarchy/RCTDebugComponentOwnership'>;
 }
-declare module 'react-native/Libraries/Devtools/setupDevtools.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Devtools/setupDevtools'>;
-}
 declare module 'react-native/Libraries/EventEmitter/EmitterSubscription.js' {
   declare module.exports: $Exports<'react-native/Libraries/EventEmitter/EmitterSubscription'>;
 }
@@ -3495,6 +3458,9 @@ declare module 'react-native/Libraries/EventEmitter/NativeEventEmitter.js' {
 }
 declare module 'react-native/Libraries/EventEmitter/RCTDeviceEventEmitter.js' {
   declare module.exports: $Exports<'react-native/Libraries/EventEmitter/RCTDeviceEventEmitter'>;
+}
+declare module 'react-native/Libraries/EventEmitter/RCTEventEmitter.js' {
+  declare module.exports: $Exports<'react-native/Libraries/EventEmitter/RCTEventEmitter'>;
 }
 declare module 'react-native/Libraries/EventEmitter/RCTNativeAppEventEmitter.js' {
   declare module.exports: $Exports<'react-native/Libraries/EventEmitter/RCTNativeAppEventEmitter'>;
@@ -3532,14 +3498,8 @@ declare module 'react-native/Libraries/Experimental/ViewabilityHelper.js' {
 declare module 'react-native/Libraries/Experimental/WindowedListView.js' {
   declare module.exports: $Exports<'react-native/Libraries/Experimental/WindowedListView'>;
 }
-declare module 'react-native/Libraries/Fetch/fetch.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Fetch/fetch'>;
-}
 declare module 'react-native/Libraries/Geolocation/Geolocation.js' {
   declare module.exports: $Exports<'react-native/Libraries/Geolocation/Geolocation'>;
-}
-declare module 'react-native/Libraries/Image/__mocks__/Image.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Image/__mocks__/Image'>;
 }
 declare module 'react-native/Libraries/Image/__tests__/resolveAssetSource-test.js' {
   declare module.exports: $Exports<'react-native/Libraries/Image/__tests__/resolveAssetSource-test'>;
@@ -3649,44 +3609,11 @@ declare module 'react-native/Libraries/Interaction/PanResponder.js' {
 declare module 'react-native/Libraries/Interaction/TaskQueue.js' {
   declare module.exports: $Exports<'react-native/Libraries/Interaction/TaskQueue'>;
 }
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/__tests__/parseErrorStack-test.js' {
-  declare module.exports: $Exports<'react-native/Libraries/JavaScriptAppEngine/Initialization/__tests__/parseErrorStack-test'>;
-}
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/ExceptionsManager.js' {
-  declare module.exports: $Exports<'react-native/Libraries/JavaScriptAppEngine/Initialization/ExceptionsManager'>;
-}
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/getDevServer.js' {
-  declare module.exports: $Exports<'react-native/Libraries/JavaScriptAppEngine/Initialization/getDevServer'>;
-}
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/InitializeJavaScriptAppEngine.js' {
-  declare module.exports: $Exports<'react-native/Libraries/JavaScriptAppEngine/Initialization/InitializeJavaScriptAppEngine'>;
-}
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/openFileInEditor.js' {
-  declare module.exports: $Exports<'react-native/Libraries/JavaScriptAppEngine/Initialization/openFileInEditor'>;
-}
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/parseErrorStack.js' {
-  declare module.exports: $Exports<'react-native/Libraries/JavaScriptAppEngine/Initialization/parseErrorStack'>;
-}
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/source-map-url.js' {
-  declare module.exports: $Exports<'react-native/Libraries/JavaScriptAppEngine/Initialization/source-map-url'>;
-}
-declare module 'react-native/Libraries/JavaScriptAppEngine/Initialization/symbolicateStackTrace.js' {
-  declare module.exports: $Exports<'react-native/Libraries/JavaScriptAppEngine/Initialization/symbolicateStackTrace'>;
-}
-declare module 'react-native/Libraries/JavaScriptAppEngine/System/JSTimers/JSTimers.js' {
-  declare module.exports: $Exports<'react-native/Libraries/JavaScriptAppEngine/System/JSTimers/JSTimers'>;
-}
-declare module 'react-native/Libraries/JavaScriptAppEngine/System/JSTimers/JSTimersExecution.js' {
-  declare module.exports: $Exports<'react-native/Libraries/JavaScriptAppEngine/System/JSTimers/JSTimersExecution'>;
-}
 declare module 'react-native/Libraries/LayoutAnimation/LayoutAnimation.js' {
   declare module.exports: $Exports<'react-native/Libraries/LayoutAnimation/LayoutAnimation'>;
 }
 declare module 'react-native/Libraries/Linking/Linking.js' {
   declare module.exports: $Exports<'react-native/Libraries/Linking/Linking'>;
-}
-declare module 'react-native/Libraries/LinkingIOS/LinkingIOS.js' {
-  declare module.exports: $Exports<'react-native/Libraries/LinkingIOS/LinkingIOS'>;
 }
 declare module 'react-native/Libraries/Modal/Modal.js' {
   declare module.exports: $Exports<'react-native/Libraries/Modal/Modal'>;
@@ -3721,6 +3648,9 @@ declare module 'react-native/Libraries/NavigationExperimental/Reducer/Navigation
 declare module 'react-native/Libraries/Network/__tests__/XMLHttpRequest-test.js' {
   declare module.exports: $Exports<'react-native/Libraries/Network/__tests__/XMLHttpRequest-test'>;
 }
+declare module 'react-native/Libraries/Network/fetch.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Network/fetch'>;
+}
 declare module 'react-native/Libraries/Network/FormData.js' {
   declare module.exports: $Exports<'react-native/Libraries/Network/FormData'>;
 }
@@ -3733,8 +3663,26 @@ declare module 'react-native/Libraries/Network/RCTNetworking.android.js' {
 declare module 'react-native/Libraries/Network/RCTNetworking.ios.js' {
   declare module.exports: $Exports<'react-native/Libraries/Network/RCTNetworking.ios'>;
 }
+declare module 'react-native/Libraries/Network/XHRInterceptor.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Network/XHRInterceptor'>;
+}
 declare module 'react-native/Libraries/Network/XMLHttpRequest.js' {
   declare module.exports: $Exports<'react-native/Libraries/Network/XMLHttpRequest'>;
+}
+declare module 'react-native/Libraries/Performance/CPUProfiler.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Performance/CPUProfiler'>;
+}
+declare module 'react-native/Libraries/Performance/QuickPerformanceLogger.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Performance/QuickPerformanceLogger'>;
+}
+declare module 'react-native/Libraries/Performance/RCTRenderingPerf.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Performance/RCTRenderingPerf'>;
+}
+declare module 'react-native/Libraries/Performance/SamplingProfiler.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Performance/SamplingProfiler'>;
+}
+declare module 'react-native/Libraries/Performance/Systrace.js' {
+  declare module.exports: $Exports<'react-native/Libraries/Performance/Systrace'>;
 }
 declare module 'react-native/Libraries/PermissionsAndroid/PermissionsAndroid.js' {
   declare module.exports: $Exports<'react-native/Libraries/PermissionsAndroid/PermissionsAndroid'>;
@@ -3747,9 +3695,6 @@ declare module 'react-native/Libraries/promiseRejectionIsError.js' {
 }
 declare module 'react-native/Libraries/PushNotificationIOS/PushNotificationIOS.js' {
   declare module.exports: $Exports<'react-native/Libraries/PushNotificationIOS/PushNotificationIOS'>;
-}
-declare module 'react-native/Libraries/QuickPerformanceLogger/QuickPerformanceLogger.js' {
-  declare module.exports: $Exports<'react-native/Libraries/QuickPerformanceLogger/QuickPerformanceLogger'>;
 }
 declare module 'react-native/Libraries/RCTTest/SnapshotViewIOS.android.js' {
   declare module.exports: $Exports<'react-native/Libraries/RCTTest/SnapshotViewIOS.android'>;
@@ -3769,26 +3714,35 @@ declare module 'react-native/Libraries/react-native/React.js' {
 declare module 'react-native/Libraries/react-native/ReactNative.js' {
   declare module.exports: $Exports<'react-native/Libraries/react-native/ReactNative'>;
 }
-declare module 'react-native/Libraries/ReactIOS/AppContainer.js' {
-  declare module.exports: $Exports<'react-native/Libraries/ReactIOS/AppContainer'>;
+declare module 'react-native/Libraries/ReactNative/AppContainer.js' {
+  declare module.exports: $Exports<'react-native/Libraries/ReactNative/AppContainer'>;
 }
-declare module 'react-native/Libraries/ReactIOS/renderApplication.js' {
-  declare module.exports: $Exports<'react-native/Libraries/ReactIOS/renderApplication'>;
+declare module 'react-native/Libraries/ReactNative/AppRegistry.js' {
+  declare module.exports: $Exports<'react-native/Libraries/ReactNative/AppRegistry'>;
 }
-declare module 'react-native/Libraries/ReactIOS/requireNativeComponent.js' {
-  declare module.exports: $Exports<'react-native/Libraries/ReactIOS/requireNativeComponent'>;
+declare module 'react-native/Libraries/ReactNative/I18nManager.js' {
+  declare module.exports: $Exports<'react-native/Libraries/ReactNative/I18nManager'>;
 }
-declare module 'react-native/Libraries/ReactIOS/verifyPropTypes.js' {
-  declare module.exports: $Exports<'react-native/Libraries/ReactIOS/verifyPropTypes'>;
+declare module 'react-native/Libraries/ReactNative/queryLayoutByID.js' {
+  declare module.exports: $Exports<'react-native/Libraries/ReactNative/queryLayoutByID'>;
 }
-declare module 'react-native/Libraries/ReactIOS/YellowBox.js' {
-  declare module.exports: $Exports<'react-native/Libraries/ReactIOS/YellowBox'>;
+declare module 'react-native/Libraries/ReactNative/renderApplication.js' {
+  declare module.exports: $Exports<'react-native/Libraries/ReactNative/renderApplication'>;
+}
+declare module 'react-native/Libraries/ReactNative/requireNativeComponent.js' {
+  declare module.exports: $Exports<'react-native/Libraries/ReactNative/requireNativeComponent'>;
+}
+declare module 'react-native/Libraries/ReactNative/UIManager.js' {
+  declare module.exports: $Exports<'react-native/Libraries/ReactNative/UIManager'>;
 }
 declare module 'react-native/Libraries/ReactNative/UIManagerStatTracker.js' {
   declare module.exports: $Exports<'react-native/Libraries/ReactNative/UIManagerStatTracker'>;
 }
-declare module 'react-native/Libraries/RKBackendNode/queryLayoutByID.js' {
-  declare module.exports: $Exports<'react-native/Libraries/RKBackendNode/queryLayoutByID'>;
+declare module 'react-native/Libraries/ReactNative/verifyPropTypes.js' {
+  declare module.exports: $Exports<'react-native/Libraries/ReactNative/verifyPropTypes'>;
+}
+declare module 'react-native/Libraries/ReactNative/YellowBox.js' {
+  declare module.exports: $Exports<'react-native/Libraries/ReactNative/YellowBox'>;
 }
 declare module 'react-native/Libraries/Sample/Sample.android.js' {
   declare module.exports: $Exports<'react-native/Libraries/Sample/Sample.android'>;
@@ -3862,9 +3816,6 @@ declare module 'react-native/Libraries/StyleSheet/StyleSheetValidation.js' {
 declare module 'react-native/Libraries/StyleSheet/TransformPropTypes.js' {
   declare module.exports: $Exports<'react-native/Libraries/StyleSheet/TransformPropTypes'>;
 }
-declare module 'react-native/Libraries/Text/__mocks__/Text.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Text/__mocks__/Text'>;
-}
 declare module 'react-native/Libraries/Text/Text.js' {
   declare module.exports: $Exports<'react-native/Libraries/Text/Text'>;
 }
@@ -3873,12 +3824,6 @@ declare module 'react-native/Libraries/Text/TextStylePropTypes.js' {
 }
 declare module 'react-native/Libraries/Text/TextUpdateTest.js' {
   declare module.exports: $Exports<'react-native/Libraries/Text/TextUpdateTest'>;
-}
-declare module 'react-native/Libraries/Utilities/__mocks__/ErrorUtils.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/__mocks__/ErrorUtils'>;
-}
-declare module 'react-native/Libraries/Utilities/__mocks__/MessageQueueTestModule.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/__mocks__/MessageQueueTestModule'>;
 }
 declare module 'react-native/Libraries/Utilities/__mocks__/PixelRatio.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/__mocks__/PixelRatio'>;
@@ -3898,9 +3843,6 @@ declare module 'react-native/Libraries/Utilities/__tests__/mapWithSeparator-test
 declare module 'react-native/Libraries/Utilities/__tests__/MatrixMath-test.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/__tests__/MatrixMath-test'>;
 }
-declare module 'react-native/Libraries/Utilities/__tests__/MessageQueue-test.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/__tests__/MessageQueue-test'>;
-}
 declare module 'react-native/Libraries/Utilities/__tests__/Platform-test.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/__tests__/Platform-test'>;
 }
@@ -3909,12 +3851,6 @@ declare module 'react-native/Libraries/Utilities/__tests__/truncate-test.js' {
 }
 declare module 'react-native/Libraries/Utilities/__tests__/utf8-test.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/__tests__/utf8-test'>;
-}
-declare module 'react-native/Libraries/Utilities/Alert.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/Alert'>;
-}
-declare module 'react-native/Libraries/Utilities/AlertIOS.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/AlertIOS'>;
 }
 declare module 'react-native/Libraries/Utilities/BackAndroid.android.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/BackAndroid.android'>;
@@ -3928,9 +3864,6 @@ declare module 'react-native/Libraries/Utilities/buildStyleInterpolator.js' {
 declare module 'react-native/Libraries/Utilities/clamp.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/clamp'>;
 }
-declare module 'react-native/Libraries/Utilities/CPUProfiler.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/CPUProfiler'>;
-}
 declare module 'react-native/Libraries/Utilities/createStrictShapeTypeChecker.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/createStrictShapeTypeChecker'>;
 }
@@ -3939,9 +3872,6 @@ declare module 'react-native/Libraries/Utilities/deepFreezeAndThrowOnMutationInD
 }
 declare module 'react-native/Libraries/Utilities/defineLazyObjectProperty.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/defineLazyObjectProperty'>;
-}
-declare module 'react-native/Libraries/Utilities/deprecatedCallback.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/deprecatedCallback'>;
 }
 declare module 'react-native/Libraries/Utilities/deprecatedPropType.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/deprecatedPropType'>;
@@ -3970,9 +3900,6 @@ declare module 'react-native/Libraries/Utilities/Dimensions.js' {
 declare module 'react-native/Libraries/Utilities/dismissKeyboard.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/dismissKeyboard'>;
 }
-declare module 'react-native/Libraries/Utilities/ErrorUtils.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/ErrorUtils'>;
-}
 declare module 'react-native/Libraries/Utilities/groupByEveryN.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/groupByEveryN'>;
 }
@@ -3987,9 +3914,6 @@ declare module 'react-native/Libraries/Utilities/HMRLoadingView.android.js' {
 }
 declare module 'react-native/Libraries/Utilities/HMRLoadingView.ios.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/HMRLoadingView.ios'>;
-}
-declare module 'react-native/Libraries/Utilities/I18nManager.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/I18nManager'>;
 }
 declare module 'react-native/Libraries/Utilities/infoLog.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/infoLog'>;
@@ -4009,9 +3933,6 @@ declare module 'react-native/Libraries/Utilities/mergeFast.js' {
 declare module 'react-native/Libraries/Utilities/mergeIntoFast.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/mergeIntoFast'>;
 }
-declare module 'react-native/Libraries/Utilities/MessageQueue.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/MessageQueue'>;
-}
 declare module 'react-native/Libraries/Utilities/PerformanceLogger.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/PerformanceLogger'>;
 }
@@ -4027,17 +3948,8 @@ declare module 'react-native/Libraries/Utilities/Platform.ios.js' {
 declare module 'react-native/Libraries/Utilities/RCTLog.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/RCTLog'>;
 }
-declare module 'react-native/Libraries/Utilities/RCTRenderingPerf.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/RCTRenderingPerf'>;
-}
-declare module 'react-native/Libraries/Utilities/SamplingProfiler.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/SamplingProfiler'>;
-}
 declare module 'react-native/Libraries/Utilities/stringifySafe.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/stringifySafe'>;
-}
-declare module 'react-native/Libraries/Utilities/Systrace.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/Systrace'>;
 }
 declare module 'react-native/Libraries/Utilities/throwOnWrongReactAPI.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/throwOnWrongReactAPI'>;
@@ -4045,17 +3957,8 @@ declare module 'react-native/Libraries/Utilities/throwOnWrongReactAPI.js' {
 declare module 'react-native/Libraries/Utilities/truncate.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/truncate'>;
 }
-declare module 'react-native/Libraries/Utilities/UIManager.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/UIManager'>;
-}
 declare module 'react-native/Libraries/Utilities/utf8.js' {
   declare module.exports: $Exports<'react-native/Libraries/Utilities/utf8'>;
-}
-declare module 'react-native/Libraries/Utilities/WebSocketInterceptor.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/WebSocketInterceptor'>;
-}
-declare module 'react-native/Libraries/Utilities/XHRInterceptor.js' {
-  declare module.exports: $Exports<'react-native/Libraries/Utilities/XHRInterceptor'>;
 }
 declare module 'react-native/Libraries/vendor/core/_shouldPolyfillES6Collection.js' {
   declare module.exports: $Exports<'react-native/Libraries/vendor/core/_shouldPolyfillES6Collection'>;
@@ -4114,11 +4017,11 @@ declare module 'react-native/Libraries/WebSocket/WebSocket.js' {
 declare module 'react-native/Libraries/WebSocket/WebSocketEvent.js' {
   declare module.exports: $Exports<'react-native/Libraries/WebSocket/WebSocketEvent'>;
 }
+declare module 'react-native/Libraries/WebSocket/WebSocketInterceptor.js' {
+  declare module.exports: $Exports<'react-native/Libraries/WebSocket/WebSocketInterceptor'>;
+}
 declare module 'react-native/local-cli/__mocks__/beeper.js' {
   declare module.exports: $Exports<'react-native/local-cli/__mocks__/beeper'>;
-}
-declare module 'react-native/local-cli/__mocks__/chalk.js' {
-  declare module.exports: $Exports<'react-native/local-cli/__mocks__/chalk'>;
 }
 declare module 'react-native/local-cli/__tests__/generators-test.js' {
   declare module.exports: $Exports<'react-native/local-cli/__tests__/generators-test'>;
@@ -4738,8 +4641,8 @@ declare module 'react-native/packager/babelRegisterOnly.js' {
 declare module 'react-native/packager/blacklist.js' {
   declare module.exports: $Exports<'react-native/packager/blacklist'>;
 }
-declare module 'react-native/packager/defaultAssetExts.js' {
-  declare module.exports: $Exports<'react-native/packager/defaultAssetExts'>;
+declare module 'react-native/packager/defaults.js' {
+  declare module.exports: $Exports<'react-native/packager/defaults'>;
 }
 declare module 'react-native/packager/react-packager/index.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/index'>;
@@ -4747,20 +4650,20 @@ declare module 'react-native/packager/react-packager/index.js' {
 declare module 'react-native/packager/react-packager/src/__mocks__/debug.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/__mocks__/debug'>;
 }
-declare module 'react-native/packager/react-packager/src/__mocks__/fs.js' {
-  declare module.exports: $Exports<'react-native/packager/react-packager/src/__mocks__/fs'>;
-}
-declare module 'react-native/packager/react-packager/src/__mocks__/graceful-fs.js' {
-  declare module.exports: $Exports<'react-native/packager/react-packager/src/__mocks__/graceful-fs'>;
-}
 declare module 'react-native/packager/react-packager/src/Activity/__mocks__/chalk.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/Activity/__mocks__/chalk'>;
 }
 declare module 'react-native/packager/react-packager/src/Activity/__tests__/Activity-test.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/Activity/__tests__/Activity-test'>;
 }
+declare module 'react-native/packager/react-packager/src/Activity/formatData.js' {
+  declare module.exports: $Exports<'react-native/packager/react-packager/src/Activity/formatData'>;
+}
 declare module 'react-native/packager/react-packager/src/Activity/index.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/Activity/index'>;
+}
+declare module 'react-native/packager/react-packager/src/Activity/normaliseEventData.js' {
+  declare module.exports: $Exports<'react-native/packager/react-packager/src/Activity/normaliseEventData'>;
 }
 declare module 'react-native/packager/react-packager/src/Activity/Types.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/Activity/Types'>;
@@ -4864,6 +4767,24 @@ declare module 'react-native/packager/react-packager/src/ModuleGraph/__tests__/G
 declare module 'react-native/packager/react-packager/src/ModuleGraph/Graph.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/ModuleGraph/Graph'>;
 }
+declare module 'react-native/packager/react-packager/src/ModuleGraph/node-haste/FastFS.js' {
+  declare module.exports: $Exports<'react-native/packager/react-packager/src/ModuleGraph/node-haste/FastFS'>;
+}
+declare module 'react-native/packager/react-packager/src/ModuleGraph/node-haste/Module.js' {
+  declare module.exports: $Exports<'react-native/packager/react-packager/src/ModuleGraph/node-haste/Module'>;
+}
+declare module 'react-native/packager/react-packager/src/ModuleGraph/node-haste/ModuleCache.js' {
+  declare module.exports: $Exports<'react-native/packager/react-packager/src/ModuleGraph/node-haste/ModuleCache'>;
+}
+declare module 'react-native/packager/react-packager/src/ModuleGraph/node-haste/node-haste.flow.js' {
+  declare module.exports: $Exports<'react-native/packager/react-packager/src/ModuleGraph/node-haste/node-haste.flow'>;
+}
+declare module 'react-native/packager/react-packager/src/ModuleGraph/node-haste/node-haste.js' {
+  declare module.exports: $Exports<'react-native/packager/react-packager/src/ModuleGraph/node-haste/node-haste'>;
+}
+declare module 'react-native/packager/react-packager/src/ModuleGraph/node-haste/Package.js' {
+  declare module.exports: $Exports<'react-native/packager/react-packager/src/ModuleGraph/node-haste/Package'>;
+}
 declare module 'react-native/packager/react-packager/src/ModuleGraph/silent-console.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/ModuleGraph/silent-console'>;
 }
@@ -4876,9 +4797,6 @@ declare module 'react-native/packager/react-packager/src/ModuleGraph/types.flow.
 declare module 'react-native/packager/react-packager/src/ModuleGraph/worker.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/ModuleGraph/worker'>;
 }
-declare module 'react-native/packager/react-packager/src/node-haste/__mocks__/debug.js' {
-  declare module.exports: $Exports<'react-native/packager/react-packager/src/node-haste/__mocks__/debug'>;
-}
 declare module 'react-native/packager/react-packager/src/node-haste/__mocks__/fs.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/node-haste/__mocks__/fs'>;
 }
@@ -4890,12 +4808,6 @@ declare module 'react-native/packager/react-packager/src/node-haste/__tests__/As
 }
 declare module 'react-native/packager/react-packager/src/node-haste/__tests__/DependencyGraph-test.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/node-haste/__tests__/DependencyGraph-test'>;
-}
-declare module 'react-native/packager/react-packager/src/node-haste/__tests__/fastfs-integrated-test.js' {
-  declare module.exports: $Exports<'react-native/packager/react-packager/src/node-haste/__tests__/fastfs-integrated-test'>;
-}
-declare module 'react-native/packager/react-packager/src/node-haste/__tests__/fastpath-test.js' {
-  declare module.exports: $Exports<'react-native/packager/react-packager/src/node-haste/__tests__/fastpath-test'>;
 }
 declare module 'react-native/packager/react-packager/src/node-haste/__tests__/Module-test.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/node-haste/__tests__/Module-test'>;
@@ -4938,9 +4850,6 @@ declare module 'react-native/packager/react-packager/src/node-haste/DependencyGr
 }
 declare module 'react-native/packager/react-packager/src/node-haste/fastfs.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/node-haste/fastfs'>;
-}
-declare module 'react-native/packager/react-packager/src/node-haste/fastpath.js' {
-  declare module.exports: $Exports<'react-native/packager/react-packager/src/node-haste/fastpath'>;
 }
 declare module 'react-native/packager/react-packager/src/node-haste/FileWatcher/__mocks__/sane.js' {
   declare module.exports: $Exports<'react-native/packager/react-packager/src/node-haste/FileWatcher/__mocks__/sane'>;
