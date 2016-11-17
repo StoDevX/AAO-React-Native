@@ -1,0 +1,72 @@
+exports[`test renders a building 1`] = `
+<TouchableOpacity
+  activeOpacity={0.2}
+  onPress={[Function]}>
+  <View
+    style={
+      Array [
+        Object {
+          "borderLeftWidth": 10,
+          "borderRightWidth": 10,
+          "flex": 1,
+          "height": 100,
+          "justifyContent": "center",
+          "marginTop": 10,
+        },
+        Object {
+          "borderColor": "#CEFFCE",
+        },
+      ]
+    }>
+    <Image
+      resizeMode="cover"
+      source={0}
+      style={
+        Object {
+          "height": 100,
+          "width": undefined,
+        }
+      }>
+      <View
+        style={
+          Object {
+            "flex": 1,
+            "flexDirection": "column",
+            "justifyContent": "space-between",
+          }
+        }>
+        <Text
+          accessible={true}
+          allowFontScaling={true}
+          ellipsizeMode="tail"
+          style={
+            Object {
+              "backgroundColor": "rgba(0, 0, 0, 0.65)",
+              "color": "#FFFFFF",
+              "fontSize": 24,
+              "textAlign": "center",
+            }
+          }>
+          Building
+        </Text>
+        <Text
+          accessible={true}
+          allowFontScaling={true}
+          ellipsizeMode="tail"
+          style={
+            Object {
+              "backgroundColor": "rgba(0, 0, 0, 0.45)",
+              "color": "#FFFFFF",
+              "fontSize": 14,
+              "paddingBottom": 2,
+              "paddingTop": 2,
+              "textAlign": "center",
+            }
+          }>
+          10:00am / 4:00pm – Open
+        </Text>
+      </View>
+    </Image>
+  </View>
+</TouchableOpacity>
+`;
