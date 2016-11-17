@@ -4,27 +4,25 @@ import type momentT from 'moment'
 import type {BuildingInfoType, DayOfWeekType} from './types'
 import {parseBuildingHours} from './get-building-hours'
 
-const dayToDayMap: {[key: DayOfWeekType]: string} = {
-  'Mon': 'Monday',
-  'Tue': 'Tuesday',
-  'Wed': 'Wednesday',
-  'Thu': 'Thursday',
-  'Fri': 'Friday',
-  'Sat': 'Saturday',
-  'Sun': 'Sunday',
-}
+const dayToDayMap: Map<DayOfWeekType, string> = new Map([
+  ['Mon', 'Monday'],
+  ['Tue', 'Tuesday'],
+  ['Wed', 'Wednesday'],
+  ['Thu', 'Thursday'],
+  ['Fri', 'Friday'],
+  ['Sat', 'Saturday'],
+  ['Sun', 'Sunday'],
+])
+const dayToDayMapArray = Array.from(dayToDayMap.entries())
 
 export function allBuildingHours(info: BuildingInfoType, now: momentT) {
-  return map(info.times.hours, (hourSet, day) => {
-    let times = parseBuildingHours(hourSet, now)
-
-    let hoursString
-    if (times) {
-      hoursString = `${times.open.format('h:mm a')} – ${times.close.format('h:mm a')}`
-    } else {
-      hoursString = 'Closed'
+  return map(dayToDayMapArray, ([shortDay, longDay]) => {
+    let hourSet = info.times.hours[shortDay]
+    if (!hourSet) {
+      return `${longDay}: Closed`
     }
 
-    return `${dayToDayMap[day]}: ${hoursString}`
+    let {open, close} = parseBuildingHours(hourSet, now)
+    return `${longDay}: ${open.format('h:mm a')} – ${close.format('h:mm a')}`
   })
 }
