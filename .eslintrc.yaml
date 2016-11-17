@@ -66,7 +66,7 @@ rules:
   quotes: [error, single, avoid-escape]
   semi: [error, never]
   wrap-iife: error
-  babel/arrow-parens: [warn, as-needed]
+  arrow-parens: [warn, as-needed]
   babel/no-await-in-loop: warn
 
   # react rules – https://github.com/yannickcr/eslint-plugin-react
