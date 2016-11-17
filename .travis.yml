@@ -28,7 +28,7 @@ matrix:
       sudo: false
       env: TEST_TYPE=js
       language: node_js
-      node_js: '6'
+      node_js: '7'
       cache: *my-node-cache
 
     - os: linux
@@ -98,12 +98,15 @@ install:
 
   # work around android build failing - https://github.com/travis-ci/travis-ci/issues/6307
   # - if [[ "$TRAVIS_OS_NAME" == "linux" && "$TEST_TYPE" == "android" ]]; then rvm get head; fi
-  # force node 6
-  - nvm install 6
-  - nvm use 6
+
+  # force node 7 for the android build
+  - nvm install 7
+  - nvm use 7
+
   # turn off fancy npm stuff
   - npm config set spin=false
   - npm config set progress=false
+
   # install node deps
   - npm install
 
