@@ -1,13 +1,12 @@
 // @flow
 import React from 'react'
 import renderer from 'react/lib/ReactTestRenderer'
-import moment from 'moment-timezone'
-const m = time => moment.tz(time, 'ddd H:mm', false, 'America/Winnipeg')
+import {dayMoment} from './moment.helper'
 
 import {BuildingView} from '../building'
 
 it('renders a building', () => {
-  const now = m('Fri 11:00')
+  const now = dayMoment('Fri 11:00')
   const info = {
     image: 'building',
     name: 'Building',

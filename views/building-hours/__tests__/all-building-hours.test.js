@@ -1,9 +1,9 @@
 // @flow
 import {allBuildingHours} from '../all-building-hours'
-import moment from 'moment'
+import {dayMoment} from './moment.helper'
 
 it('returns an array of strings', () => {
-  let now = moment('Fri 10:01', 'dddd H:mm')
+  let now = dayMoment('Fri 10:01')
   let input = {times: {hours: {'Fri': ['10:00', '16:00']}}, name: 'Building', image: 'building'}
   let actual = allBuildingHours(input, now)
 
@@ -13,7 +13,7 @@ it('returns an array of strings', () => {
 })
 
 it('always returns an entry for each day of the week', () => {
-  let now = moment('Fri 10:01', 'dddd H:mm')
+  let now = dayMoment('Fri 10:01')
   let input = {times: {hours: {'Fri': ['10:00', '16:00']}}, name: 'Building', image: 'building'}
   let actual = allBuildingHours(input, now)
 
@@ -21,7 +21,7 @@ it('always returns an entry for each day of the week', () => {
 })
 
 it('turns a building hour object into a descriptive array of strings', () => {
-  let now = moment('Fri 10:01', 'dddd H:mm')
+  let now = dayMoment('Fri 10:01')
   let input = {times: {hours: {'Fri': ['10:00', '16:00']}}, name: 'Building', image: 'building'}
   let actual = allBuildingHours(input, now)
 
@@ -29,7 +29,7 @@ it('turns a building hour object into a descriptive array of strings', () => {
 })
 
 it('sorts the resulting days Mo-Su', () => {
-  let now = moment('Fri 10:01', 'dddd H:mm')
+  let now = dayMoment('Fri 10:01')
   let input = {
     name: 'Building',
     image: 'building',
@@ -47,7 +47,7 @@ it('sorts the resulting days Mo-Su', () => {
 })
 
 it('returns the string "Closed" for any days where the building is closed', () => {
-  let now = moment('Fri 10:01', 'dddd H:mm')
+  let now = dayMoment('Fri 10:01')
   let input = {
     name: 'Building',
     image: 'building',
