@@ -30,6 +30,7 @@
     ]
   },
   "jest": {
+    "testRegex": "/__tests__/.*\\.(test|spec)\\.js$",
     "preset": "jest-react-native"
   },
   "dependencies": {
