@@ -12,7 +12,7 @@ export function isBuildingOpen(hoursInfo: BuildingInfoType, now: momentT): Build
   let {open, close} = hours
 
   if (now.isBetween(open, close)) {
-    if (now.clone().add(30, 'min').isAfter(close)) {
+    if (now.clone().add(30, 'minutes').isAfter(close)) {
       return 'Almost Closed'
     }
     return 'Open'
