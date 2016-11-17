@@ -11,7 +11,7 @@ it('returns "Open" if the building is open', () => {
 })
 
 it('returns "Closed" if the building is closed', () => {
-  let now = dayMoment('Sat 10:01')
+  let now = dayMoment('Fri 17:00')
   let input = {times: {hours: {'Fri': ['10:00', '16:00']}}, name: 'Building', image: 'building'}
   let actual = isBuildingOpen(input, now)
 
