@@ -41,16 +41,16 @@ export default function BusLineView({
   now: typeof moment,
 }) {
   let barColor = c.salmon
-  if (line.line === 'Blue') {
+  if (line.line === 'Blue Line') {
     barColor = c.steelBlue
-  } else if (line.line === 'Express') {
+  } else if (line.line === 'Express Bus') {
     barColor = c.moneyGreen
   }
 
   let currentStopColor = c.brickRed
-  if (line.line === 'Blue') {
+  if (line.line === 'Blue Line') {
     currentStopColor = c.midnightBlue
-  } else if (line.line === 'Express') {
+  } else if (line.line === 'Express Line') {
     currentStopColor = c.hollyGreen
   }
 

@@ -1,6 +1,6 @@
 [
   {
-    "line": "Express",
+    "line": "Express Bus",
     "schedules": [
       {
         "days": ["mo", "tu", "we", "th", "fr", "sa"],
@@ -31,7 +31,7 @@
     ]
   },
   {
-    "line": "Red",
+    "line": "Red Line",
     "schedules": [
       {
         "days": ["su", "mo", "tu", "we", "th", "fr", "sa"],
@@ -58,7 +58,7 @@
     ]
   },
   {
-    "line": "Blue",
+    "line": "Blue Line",
     "schedules": [
       {
         "days": ["su", "mo", "tu", "we", "th", "fr", "sa"],

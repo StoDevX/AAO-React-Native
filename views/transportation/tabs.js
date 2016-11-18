@@ -6,24 +6,24 @@ import BusView from './bus'
 export default [
   {
     id: 'express',
-    title: 'Express',
+    title: 'Express Bus',
     rnVectorIcon: {iconName: 'bus'},
     component: BusView,
-    props: {line: 'Express'},
+    props: {line: 'Express Bus'},
   },
   {
     id: 'red',
     title: 'Red Line',
     rnVectorIcon: {iconName: 'car'},
     component: BusView,
-    props: {line: 'Red'},
+    props: {line: 'Red Line'},
   },
   {
     id: 'blue',
     title: 'Blue Line',
     rnVectorIcon: {iconName: 'train'},
     component: BusView,
-    props: {line: 'Blue'},
+    props: {line: 'Blue Line'},
   },
   {
     id: 'otherModes',
