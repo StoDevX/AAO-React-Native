@@ -141,7 +141,7 @@ script:
   # unfortunately, flow does not yet seem willing to run properly on travis.
   # we'll just run it locally for now.
   # - if [[ "$TEST_TYPE" = js ]]; then npm run flow; fi
-  - if [[ "$TEST_TYPE" == "js" ]]; then npm run test:js; fi
+  - if [[ "$TEST_TYPE" == "js" ]]; then npm run test:js:coverage; fi
 
   # iOS-only tests - building and specs
   - if [[ "$TEST_TYPE" == "ios" ]]; then npm run build:ios; fi
@@ -153,3 +153,7 @@ script:
 notifications:
   slack:
     secure: fmOwJp9Xj5dJanJsdUcoJwCpHzoGEmP32zfUF+EfvHmNNkkiCiPGuXa2vt829655rjopfjm1sILfagEYr1CcnjI4fa6zIY6fQkWgii0Acy+vIEB3GZ1h46Uj8vLYOjOBC6tgNqGZvfFhtfo67hmhfRxXpP1jY6Ta0eAtxjqQ/cgGI3vUXstI3HN9eLsTa8Ejf8YiIkfV6dAPZkxDdbiQuO5+4ZbZdPYEke/QC4a/a14l4IzPntusS/8ebD5mYDavkW1+gtjZmYrqMn9aWSh+R0L1KwkqoQq5USjDw6gg4/H9L8OEj/tnCwyUQ9jyyvSLvCMTjAPGWzVvvtQKHULPuCUoH6dLAAn6HeyAPpj5rJbyVgb6voj3jfHvcOGIO2o81l4g/4JKxzN9m2tCeR8I83aPboIMUT2d1F7trfFZLWzxPUroTIWVhEoa3mRneKcQU4IY2+cATFLQnrG+iu7G3q3mNXt3figRXP76fgmdAIvdeBvN1jdmY4148DhXZVkk/Fkddd8BEJ2l/5qHlCGEKKYhM5q//+GdFOnnAiFzjbPIKixF4c1B6itEfrWo+slu3IFsd7Wsc7pb5yaW9dHaiQwlhrk5mYH0getws8fmufT1BY/Qg9pp9XJxLDos9cd24QNF3ACpKxvB9k48M4Ez0Pe5khruq+0YK04rHO+xJVw=
+
+after_success:
+  - npm install coveralls
+  - coveralls < ./coverage/lcov.info

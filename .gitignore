@@ -43,3 +43,6 @@ android/keystores/debug.keystore
 # KEYS
 keys.js
 .env.js
+
+# Tests and code coverage
+coverage
