@@ -1,18 +1,18 @@
 // @flow
 import {getBuildingHours} from './get-building-hours'
-
+import type momentT from 'moment'
 import type {BuildingStatusType, BuildingInfoType} from './types'
 
-export function isBuildingOpen(hoursInfo: BuildingInfoType): BuildingStatusType {
-  let hours = getBuildingHours(hoursInfo)
+export function isBuildingOpen(hoursInfo: BuildingInfoType, now: momentT): BuildingStatusType {
+  let hours = getBuildingHours(hoursInfo, now)
   if (!hours) {
     return 'Closed'
   }
 
-  let {open, close, current} = hours
+  let {open, close} = hours
 
-  if (current.isBetween(open, close)) {
-    if (current.clone().add(30, 'min').isAfter(close)) {
+  if (now.isBetween(open, close)) {
+    if (now.clone().add(30, 'minutes').isAfter(close)) {
       return 'Almost Closed'
     }
     return 'Open'

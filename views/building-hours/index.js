@@ -6,11 +6,12 @@
 
 import React from 'react'
 import {ListView, RefreshControl} from 'react-native'
-import BuildingView from './building'
+import {BuildingView} from './building'
 
 import delay from 'delay'
 import type {BuildingInfoType} from './types'
 import hoursData from '../../data/building-hours.json'
+(hoursData: BuildingInfoType[])
 
 const buildingImages = {
   'alumni-hall': require('../../data/images/buildinghours/w1440/alumni-hall.jpg'),
@@ -38,6 +39,8 @@ const buildingImages = {
   'tomson': require('../../data/images/buildinghours/w1440/tomson.jpg'),
 }
 
+import moment from 'moment-timezone'
+const CENTRAL_TZ = 'America/Winnipeg'
 
 export default class BuildingHoursView extends React.Component {
   state = {
@@ -45,7 +48,7 @@ export default class BuildingHoursView extends React.Component {
       rowHasChanged: (r1: BuildingInfoType, r2: BuildingInfoType) => r1.name !== r2.name,
     }).cloneWithRows(hoursData),
     intervalId: 0,
-    now: Date.now(),
+    now: moment.tz(CENTRAL_TZ),
     refreshing: false,
   }
 
@@ -60,7 +63,7 @@ export default class BuildingHoursView extends React.Component {
   }
 
   updateTime = () => {
-    this.setState({now: Date.now()})
+    this.setState({now: moment.tz(CENTRAL_TZ)})
   }
 
   _renderRow = (data: BuildingInfoType) => {
@@ -69,6 +72,7 @@ export default class BuildingHoursView extends React.Component {
         name={data.name}
         info={data}
         image={buildingImages[data.image]}
+        now={this.state.now}
       />
     )
   }
@@ -76,8 +80,7 @@ export default class BuildingHoursView extends React.Component {
   refresh = async () => {
     this.setState({refreshing: true})
     await delay(500)
-    this.setState({now: Date.now()})
-    this.setState({refreshing: false})
+    this.setState({now: moment.tz(CENTRAL_TZ), refreshing: false})
   }
 
   // Render a given scene

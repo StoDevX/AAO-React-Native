@@ -1,35 +1,28 @@
-import React from 'react'
-import {
-  Text,
-} from 'react-native'
+// @flow
+import map from 'lodash/map'
+import type momentT from 'moment'
+import type {BuildingInfoType, DayOfWeekType} from './types'
+import {parseBuildingHours} from './get-building-hours'
 
-import moment from 'moment-timezone'
-const CENTRAL_TZ = 'America/Winnipeg'
+const dayToDayMap: Map<DayOfWeekType, string> = new Map([
+  ['Mon', 'Monday'],
+  ['Tue', 'Tuesday'],
+  ['Wed', 'Wednesday'],
+  ['Thu', 'Thursday'],
+  ['Fri', 'Friday'],
+  ['Sat', 'Saturday'],
+  ['Sun', 'Sunday'],
+])
+const dayToDayMapArray = Array.from(dayToDayMap.entries())
 
-export function allBuildingHours(info, style) {
-  let dayTimes = []
-  let current = moment().tz(CENTRAL_TZ)
-
-  for (let i = 0; i < 7; i++) {
-    let hoursString = ''
-    let day = current.format('dddd')
-    let d = current.format('ddd')
-
-    current.add(1, 'days')
-
-    let timesArray = info.times.hours[d]
-
-    if (timesArray) {
-      let open = moment(timesArray[0], 'H:mm').tz(CENTRAL_TZ).format('h:mm a')
-      let close = moment(timesArray[1], 'H:mm').tz(CENTRAL_TZ).format('h:mm a')
-      hoursString = open + ' - ' + close
-    } else {
-      hoursString = 'Closed'
+export function allBuildingHours(info: BuildingInfoType, now: momentT) {
+  return map(dayToDayMapArray, ([shortDay, longDay]) => {
+    let hourSet = info.times.hours[shortDay]
+    if (!hourSet) {
+      return `${longDay}: Closed`
     }
 
-    let dayString = day + ': ' + hoursString
-    dayTimes.push(<Text key={d} style={style}>{dayString}</Text>)
-  }
-
-  return dayTimes
+    let {open, close} = parseBuildingHours(hourSet, now)
+    return `${longDay}: ${open.format('h:mm a')} – ${close.format('h:mm a')}`
+  })
 }
