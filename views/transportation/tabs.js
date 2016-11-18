@@ -14,14 +14,14 @@ export default [
   {
     id: 'red',
     title: 'Red Line',
-    rnVectorIcon: {iconName: 'car'},
+    rnVectorIcon: {iconName: 'bus'},
     component: BusView,
     props: {line: 'Red Line'},
   },
   {
     id: 'blue',
     title: 'Blue Line',
-    rnVectorIcon: {iconName: 'train'},
+    rnVectorIcon: {iconName: 'bus'},
     component: BusView,
     props: {line: 'Blue Line'},
   },
