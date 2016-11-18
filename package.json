@@ -16,12 +16,21 @@
     "build:android:unix": "cd android && ./gradlew assembleRelease --info --console=plain",
     "build:android:win": "cd android && .\\gradlew assembleRelease --info --console=plain",
     "test": "npm run flow && npm run test:js",
-    "test:js": "echo 'Not yet implemented! Figure out jest.'",
+    "test:js": "jest",
+    "test:js:watch": "jest",
     "test:ios": "xctool -configuration Release -workspace ios/AllAboutOlaf.xcworkspace -scheme AllAboutOlaf -sdk iphonesimulator -destination platform='iOS Simulator,name=iPhone 5s,OS=9.2' test",
     "test:android": "echo 'Not yet implemented! See http://facebook.github.io/react-native/docs/signed-apk-android.html#testing-the-release-build-of-your-app'",
     "release": "npm run release:ios && npm run release:android",
     "release:ios": "echo 'Not yet implemented!'",
     "release:android": "echo 'Not yet implemented!'"
+  },
+  "babel": {
+    "presets": [
+      "react-native"
+    ]
+  },
+  "jest": {
+    "preset": "jest-react-native"
   },
   "dependencies": {
     "buffer": "5.0.1",
@@ -56,10 +65,15 @@
   },
   "devDependencies": {
     "babel-eslint": "7.1.1",
+    "babel-jest": "17.0.2",
+    "babel-preset-react-native": "1.9.0",
     "eslint": "3.10.2",
     "eslint-plugin-babel": "4.0.0",
     "eslint-plugin-flowtype": "2.25.0",
     "eslint-plugin-react": "6.7.1",
-    "flow-bin": "0.35.0"
+    "flow-bin": "0.35.0",
+    "jest": "17.0.2",
+    "jest-react-native": "17.0.2",
+    "react-test-renderer": "15.3.2"
   }
 }
