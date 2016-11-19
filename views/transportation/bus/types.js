@@ -1,4 +1,5 @@
 // @flow
+import type moment from 'moment'
 type DayOfWeekType = 'su'|'mo'|'tu'|'we'|'th'|'fr'|'sa';
 
 export type BusLineType = {
@@ -10,7 +11,7 @@ export type BusScheduleType = {
   days: DayOfWeekType[],
   stops: BusStopType[],
   coordinates?: [number, number][],
-  times: BusTimeListType[],
+  times: PlainBusTimeListType[],
 };
 
 export type BusStopType = string | {
@@ -18,4 +19,5 @@ export type BusStopType = string | {
   latlong: [number, number],
 };
 
-export type BusTimeListType = (string|false)[];
+export type PlainBusTimeListType = Array<string|false>;
+export type FancyBusTimeListType = Array<moment|false>;
