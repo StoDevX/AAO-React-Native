@@ -49,13 +49,22 @@ workflows:
             #!/bin/bash
             set -exv
             git status
+
+            if [[ "$BITRISE_GIT_BRANCH" -eq "testing" ]];
+              then fastlane_branch="fastlane-for-testing"
+              else fastlane_branch="fastlane-for-master"
+            fi
+            echo "fastlane_branch is '$fastlane_branch'"
+
             set +e
-            git branch -D fastlane
+            git branch -D "$fastlane_branch"
             set -e
-            git checkout fastlane
+            git checkout "$fastlane_branch"
             git status
+
             git rebase "$GIT_CLONE_COMMIT_HASH"
             git status
+
             cat fastlane/Fastfile
     - script@1.1.3:
         title: yarn
