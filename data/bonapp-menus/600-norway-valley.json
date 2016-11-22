@@ -1,1 +1,16 @@
-{"days":[{"date":"2016-11-22","cafes":{"600":{"name":"Norway Valley Caf\u00e9","menu_id":"","dayparts":[]}}}],"items":{},"cor_icons":{}}
+{
+  "days": [
+    {
+      "date": "2016-11-22",
+      "cafes": {
+        "600": {
+          "name": "Norway Valley Café",
+          "menu_id": "",
+          "dayparts": []
+        }
+      }
+    }
+  ],
+  "items": {},
+  "cor_icons": {}
+}

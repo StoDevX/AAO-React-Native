@@ -1,1 +1,219 @@
-{"days":[{"date":"2016-11-22","cafes":{"34":{"name":"Sayles Hill Caf\u00e9","menu_id":"127970","dayparts":[[{"starttime":"11:00","endtime":"14:00","id":"3","label":"Lunch","abbreviation":"L","stations":[{"order_id":"0002-6891","id":"6891","label":"Soup","price":"","note":"","soup":0,"items":["6185689"]},{"order_id":"0003-1392","id":"1392","label":"Grill","price":"","note":"","soup":0,"items":["6185607"]},{"order_id":"0010-2107","id":"2107","label":"Weekly Featured Drink","price":"","note":"","soup":0,"items":["5630370"]},{"order_id":"0011-2108","id":"2108","label":"Weekly Featured Sandwich","price":"","note":"","soup":0,"items":["5818983"]},{"order_id":"0018-7770","id":"7770","label":"Chef's Fare","price":"","note":"","soup":0,"items":["6185599"]}]}]]}}}],"items":{"6185607":{"id":"6185607","label":"Pork or Vegetarian Egg Roll","description":"with Choice of Beverage","zero_entree":"0","cor_icon":[],"ordered_cor_icon":[],"price":"$3.50","nutrition":{"kcal":"","well_being":"","well_being_image":""},"special":1,"tier3":0,"rating":"","connector":"","options":[],"station":"<strong>@Grill<\/strong>","nutrition_link":"","sub_station_id":"","sub_station":"","sub_station_order":""},"5630370":{"id":"5630370","label":"Raspberry White Chocolate Mocha","description":"","zero_entree":"0","cor_icon":[],"ordered_cor_icon":[],"price":"$4.50","nutrition":{"kcal":"","well_being":"","well_being_image":""},"special":1,"tier3":0,"rating":"","connector":"","options":[],"station":"<strong>@Weekly Featured Drink<\/strong>","nutrition_link":"","sub_station_id":"","sub_station":"","sub_station_order":""},"6185689":{"id":"6185689","label":"Hearty Vegetable (V)","description":"","zero_entree":"0","cor_icon":{"1":"vegetarian"},"ordered_cor_icon":{"0005-0001":{"id":"1","label":"vegetarian"}},"price":"cup - $1.00 &nbsp; bowl - $2.25","nutrition":{"kcal":"","well_being":"","well_being_image":""},"special":1,"tier3":0,"rating":"","connector":"","options":[],"station":"<strong>@Soup<\/strong>","nutrition_link":"","sub_station_id":"","sub_station":"","sub_station_order":""},"6185599":{"id":"6185599","label":"Ricotta Pasta Bake","description":"Pasta, Marinara and Ricotta Cheese<br \/>Searved with Breadsticks and Choice of Beverage","zero_entree":"0","cor_icon":[],"ordered_cor_icon":[],"price":"$5.75","nutrition":{"kcal":"","well_being":"","well_being_image":""},"special":1,"tier3":0,"rating":"","connector":"","options":[],"station":"<strong>@Chef&#039;s Fare<\/strong>","nutrition_link":"","sub_station_id":"","sub_station":"","sub_station_order":""},"5818983":{"id":"5818983","label":"Beef Dip Sandwich","description":"","zero_entree":"0","cor_icon":[],"ordered_cor_icon":[],"price":"$5.50","nutrition":{"kcal":"","well_being":"","well_being_image":""},"special":0,"tier3":0,"rating":"","connector":"","options":[],"station":"<strong>@Weekly Featured Sandwich<\/strong>","nutrition_link":"","sub_station_id":"","sub_station":"","sub_station_order":""}},"cor_icons":{"1":{"sort":"5","label":"vegetarian","description":"Vegetarian: Contains no meat, fish, poultry, shellfish or products derived from these sources but may contain dairy or eggs","image":"http:\/\/legacy.cafebonappetit.com\/assets\/cor_icons\/menu-item-type-c9d18b.png?v=1470070467","is_filter":"Y"}}}
+{
+  "days": [
+    {
+      "date": "2016-11-22",
+      "cafes": {
+        "34": {
+          "name": "Sayles Hill Café",
+          "menu_id": "127970",
+          "dayparts": [
+            [
+              {
+                "starttime": "11:00",
+                "endtime": "14:00",
+                "id": "3",
+                "label": "Lunch",
+                "abbreviation": "L",
+                "stations": [
+                  {
+                    "order_id": "0002-6891",
+                    "id": "6891",
+                    "label": "Soup",
+                    "price": "",
+                    "note": "",
+                    "soup": 0,
+                    "items": [
+                      "6185689"
+                    ]
+                  },
+                  {
+                    "order_id": "0003-1392",
+                    "id": "1392",
+                    "label": "Grill",
+                    "price": "",
+                    "note": "",
+                    "soup": 0,
+                    "items": [
+                      "6185607"
+                    ]
+                  },
+                  {
+                    "order_id": "0010-2107",
+                    "id": "2107",
+                    "label": "Weekly Featured Drink",
+                    "price": "",
+                    "note": "",
+                    "soup": 0,
+                    "items": [
+                      "5630370"
+                    ]
+                  },
+                  {
+                    "order_id": "0011-2108",
+                    "id": "2108",
+                    "label": "Weekly Featured Sandwich",
+                    "price": "",
+                    "note": "",
+                    "soup": 0,
+                    "items": [
+                      "5818983"
+                    ]
+                  },
+                  {
+                    "order_id": "0018-7770",
+                    "id": "7770",
+                    "label": "Chef's Fare",
+                    "price": "",
+                    "note": "",
+                    "soup": 0,
+                    "items": [
+                      "6185599"
+                    ]
+                  }
+                ]
+              }
+            ]
+          ]
+        }
+      }
+    }
+  ],
+  "items": {
+    "6185607": {
+      "id": "6185607",
+      "label": "Pork or Vegetarian Egg Roll",
+      "description": "with Choice of Beverage",
+      "zero_entree": "0",
+      "cor_icon": [],
+      "ordered_cor_icon": [],
+      "price": "$3.50",
+      "nutrition": {
+        "kcal": "",
+        "well_being": "",
+        "well_being_image": ""
+      },
+      "special": 1,
+      "tier3": 0,
+      "rating": "",
+      "connector": "",
+      "options": [],
+      "station": "<strong>@Grill</strong>",
+      "nutrition_link": "",
+      "sub_station_id": "",
+      "sub_station": "",
+      "sub_station_order": ""
+    },
+    "5630370": {
+      "id": "5630370",
+      "label": "Raspberry White Chocolate Mocha",
+      "description": "",
+      "zero_entree": "0",
+      "cor_icon": [],
+      "ordered_cor_icon": [],
+      "price": "$4.50",
+      "nutrition": {
+        "kcal": "",
+        "well_being": "",
+        "well_being_image": ""
+      },
+      "special": 1,
+      "tier3": 0,
+      "rating": "",
+      "connector": "",
+      "options": [],
+      "station": "<strong>@Weekly Featured Drink</strong>",
+      "nutrition_link": "",
+      "sub_station_id": "",
+      "sub_station": "",
+      "sub_station_order": ""
+    },
+    "6185689": {
+      "id": "6185689",
+      "label": "Hearty Vegetable (V)",
+      "description": "",
+      "zero_entree": "0",
+      "cor_icon": {
+        "1": "vegetarian"
+      },
+      "ordered_cor_icon": {
+        "0005-0001": {
+          "id": "1",
+          "label": "vegetarian"
+        }
+      },
+      "price": "cup - $1.00 &nbsp; bowl - $2.25",
+      "nutrition": {
+        "kcal": "",
+        "well_being": "",
+        "well_being_image": ""
+      },
+      "special": 1,
+      "tier3": 0,
+      "rating": "",
+      "connector": "",
+      "options": [],
+      "station": "<strong>@Soup</strong>",
+      "nutrition_link": "",
+      "sub_station_id": "",
+      "sub_station": "",
+      "sub_station_order": ""
+    },
+    "6185599": {
+      "id": "6185599",
+      "label": "Ricotta Pasta Bake",
+      "description": "Pasta, Marinara and Ricotta Cheese<br />Searved with Breadsticks and Choice of Beverage",
+      "zero_entree": "0",
+      "cor_icon": [],
+      "ordered_cor_icon": [],
+      "price": "$5.75",
+      "nutrition": {
+        "kcal": "",
+        "well_being": "",
+        "well_being_image": ""
+      },
+      "special": 1,
+      "tier3": 0,
+      "rating": "",
+      "connector": "",
+      "options": [],
+      "station": "<strong>@Chef&#039;s Fare</strong>",
+      "nutrition_link": "",
+      "sub_station_id": "",
+      "sub_station": "",
+      "sub_station_order": ""
+    },
+    "5818983": {
+      "id": "5818983",
+      "label": "Beef Dip Sandwich",
+      "description": "",
+      "zero_entree": "0",
+      "cor_icon": [],
+      "ordered_cor_icon": [],
+      "price": "$5.50",
+      "nutrition": {
+        "kcal": "",
+        "well_being": "",
+        "well_being_image": ""
+      },
+      "special": 0,
+      "tier3": 0,
+      "rating": "",
+      "connector": "",
+      "options": [],
+      "station": "<strong>@Weekly Featured Sandwich</strong>",
+      "nutrition_link": "",
+      "sub_station_id": "",
+      "sub_station": "",
+      "sub_station_order": ""
+    }
+  },
+  "cor_icons": {
+    "1": {
+      "sort": "5",
+      "label": "vegetarian",
+      "description": "Vegetarian: Contains no meat, fish, poultry, shellfish or products derived from these sources but may contain dairy or eggs",
+      "image": "http://legacy.cafebonappetit.com/assets/cor_icons/menu-item-type-c9d18b.png?v=1470070467",
+      "is_filter": "Y"
+    }
+  }
+}

@@ -1,1 +1,18 @@
-{"days":[{"date":"2016-11-22","cafes":{"35":{"name":"Burton","menu_id":"131696","dayparts":[[]]}}}],"items":{},"cor_icons":{}}
+{
+  "days": [
+    {
+      "date": "2016-11-22",
+      "cafes": {
+        "35": {
+          "name": "Burton",
+          "menu_id": "131696",
+          "dayparts": [
+            []
+          ]
+        }
+      }
+    }
+  ],
+  "items": {},
+  "cor_icons": {}
+}
