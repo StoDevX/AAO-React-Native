@@ -60,10 +60,7 @@ export default class StavMenuView extends React.Component {
     let foodItems = responseData.items
     let dayparts = responseData.days[0].cafes[this.props.cafeId].dayparts
     let mealInfo = this.whichMeal(dayparts)
-    let stationMenus = []
-    if (mealInfo) {
-      stationMenus = mealInfo.stations
-    }
+    let stationMenus = mealInfo ? mealInfo.stations : []
 
     this.setState({stationMenus, foodItems, loading: false})
   }

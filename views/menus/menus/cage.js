@@ -38,6 +38,8 @@ export default class CageMenuView extends React.Component {
     let responseData: BonAppResponseType = await fetch(this.props.menuUrl).then(response => response.json())
     let whichMeal = 0
 
+    // console.warn(this.props.cafeId, JSON.stringify(responseData.days))
+
     let foodItems = responseData.items
     let dayparts = responseData.days[0].cafes[this.props.cafeId].dayparts
     let stationMenus = []
@@ -60,6 +62,10 @@ export default class CageMenuView extends React.Component {
   render() {
     if (this.state.loading) {
       return <LoadingView text='Checking for vegan cookies…' />
+    }
+
+    if (!this.state.stationMenus.length) {
+      return <LoadingView text='No Moar Foodz we r sorry —Randy' />
     }
 
     return (
