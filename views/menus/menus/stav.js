@@ -51,9 +51,14 @@ export default class StavMenuView extends React.Component {
 
   fetchData = async () => {
     let responseData: BonAppResponseType = await fetch(this.props.menuUrl).then(response => response.json())
+    let whichMeal = this.whichMeal()
 
-    let stationMenus = responseData.days[0].cafes['261'].dayparts[0][this.whichMeal()].stations
     let foodItems = responseData.items
+    let dayParts = responseData.days[0].cafes['261'].dayparts
+    let stationMenus = []
+    if (dayParts.length && dayParts[0].length) {
+      stationMenus = dayParts[0][whichMeal].stations
+    }
 
     this.setState({stationMenus, foodItems, loading: false})
   }
