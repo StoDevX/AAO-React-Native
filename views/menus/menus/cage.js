@@ -39,10 +39,10 @@ export default class CageMenuView extends React.Component {
     let whichMeal = 0
 
     let foodItems = responseData.items
-    let dayParts = responseData.days[0].cafes[this.props.cafeId].dayparts
+    let dayparts = responseData.days[0].cafes[this.props.cafeId].dayparts
     let stationMenus = []
-    if (dayParts.length && dayParts[0].length) {
-      stationMenus = dayParts[0][whichMeal].stations
+    if (dayparts.length && dayparts[0].length) {
+      stationMenus = dayparts[0][whichMeal].stations
     }
 
     let stationsToCreate = [
