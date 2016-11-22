@@ -44,9 +44,7 @@ const CENTRAL_TZ = 'America/Winnipeg'
 
 export default class BuildingHoursView extends React.Component {
   state = {
-    dataSource: new ListView.DataSource({
-      rowHasChanged: (r1: BuildingInfoType, r2: BuildingInfoType) => r1.name !== r2.name,
-    }).cloneWithRows(hoursData),
+    dataSource: this.getDataSource(),
     intervalId: 0,
     now: moment.tz(CENTRAL_TZ),
     refreshing: false,
@@ -62,8 +60,17 @@ export default class BuildingHoursView extends React.Component {
     clearTimeout(this.state.intervalId)
   }
 
+  getDataSource(){
+    return new ListView.DataSource({
+      rowHasChanged: (r1: BuildingInfoType, r2: BuildingInfoType) => r1.name !== r2.name,
+    }).cloneWithRows(hoursData)
+  }
+
   updateTime = () => {
-    this.setState({now: moment.tz(CENTRAL_TZ)})
+    this.setState({
+      now: moment.tz(CENTRAL_TZ),
+      dataSource: this.getDataSource(),
+    })
   }
 
   _renderRow = (data: BuildingInfoType) => {
@@ -80,7 +87,11 @@ export default class BuildingHoursView extends React.Component {
   refresh = async () => {
     this.setState({refreshing: true})
     await delay(500)
-    this.setState({now: moment.tz(CENTRAL_TZ), refreshing: false})
+    this.setState({
+      now: moment.tz(CENTRAL_TZ),
+      refreshing: false,
+      dataSource: this.getDataSource(),
+    })
   }
 
   // Render a given scene
