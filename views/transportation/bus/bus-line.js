@@ -50,7 +50,7 @@ export default function BusLineView({
   let currentStopColor = c.brickRed
   if (line.line === 'Blue Line') {
     currentStopColor = c.midnightBlue
-  } else if (line.line === 'Express Line') {
+  } else if (line.line === 'Express Bus') {
     currentStopColor = c.hollyGreen
   }
 
