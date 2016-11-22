@@ -13,7 +13,6 @@ import {
   Platform,
 } from 'react-native'
 
-import AboutView from './views/about'
 import CalendarView from './views/calendar'
 import ContactsView from './views/contacts'
 import {DictionaryView, DictionaryDetailView} from './views/dictionary'
@@ -45,7 +44,6 @@ function renderScene(route, navigator) {
     case 'HomeView': return <HomeView {...props} />
     case 'MenusView': return <MenusView {...props} />
     case 'DirectoryView': return <DirectoryView {...props} />
-    case 'AboutView': return <AboutView {...props} />
     case 'CalendarView': return <CalendarView {...props} />
     case 'ContactsView': return <ContactsView {...props} />
     case 'DictionaryView': return <DictionaryView {...props} />
