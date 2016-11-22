@@ -22,6 +22,7 @@ export function formatBuildingHours(hoursInfo: BuildingInfoType, now: momentT): 
   } else {
     let openString = open.format(RESULT_FORMAT)
     let closeString = close.format(RESULT_FORMAT)
+    closeString = closeString === '12:00am' ? 'Midnight' : closeString
 
     return `${openString} / ${closeString} – ${openStatus}`
   }
