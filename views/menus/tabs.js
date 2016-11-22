@@ -10,14 +10,14 @@ export default [
     title: 'Stav Hall',
     rnVectorIcon: {iconName: 'nutrition'},
     component: StavMenuView,
-    childProps: {menuUrl: 'http://legacy.cafebonappetit.com/api/2/menus?cafe=261'},
+    props: {menuUrl: 'http://legacy.cafebonappetit.com/api/2/menus?cafe=261'},
   },
   {
     id: 'cage',
     title: 'The Cage',
     rnVectorIcon: {iconName: 'cafe'},
     component: CageMenuView,
-    childProps: {menuUrl: 'http://legacy.cafebonappetit.com/api/2/menus?cafe=262'},
+    props: {menuUrl: 'http://legacy.cafebonappetit.com/api/2/menus?cafe=262'},
   },
   {
     id: 'pause',
