@@ -8,6 +8,7 @@ import type {BonAppResponseType, StationMenuType, MenuItemContainerType} from '.
 
 export default class CageMenuView extends React.Component {
   static propTypes = {
+    cafeId: React.PropTypes.string.isRequired,
     menuUrl: React.PropTypes.string.isRequired,
   }
 
@@ -30,6 +31,7 @@ export default class CageMenuView extends React.Component {
 
   props: {
     menuUrl: string,
+    cafeId: string,
   }
 
   fetchData = async () => {
@@ -37,7 +39,7 @@ export default class CageMenuView extends React.Component {
     let whichMeal = 0
 
     let foodItems = responseData.items
-    let dayParts = responseData.days[0].cafes['262'].dayparts
+    let dayParts = responseData.days[0].cafes[this.props.cafeId].dayparts
     let stationMenus = []
     if (dayParts.length && dayParts[0].length) {
       stationMenus = dayParts[0][whichMeal].stations

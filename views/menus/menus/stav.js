@@ -11,6 +11,7 @@ import buildingHours from '../../../data/building-hours.json'
 
 export default class StavMenuView extends React.Component {
   static propTypes = {
+    cafeId: React.PropTypes.string.isRequired,
     menuUrl: React.PropTypes.string.isRequired,
   }
 
@@ -32,6 +33,7 @@ export default class StavMenuView extends React.Component {
 
   props: {
     menuUrl: string,
+    cafeId: string,
   }
 
   getTodaysLunchHours(currentDay: 'mo'|'tu'|'we'|'th'|'fr'|'sa'|'su') {
@@ -54,7 +56,7 @@ export default class StavMenuView extends React.Component {
     let whichMeal = this.whichMeal()
 
     let foodItems = responseData.items
-    let dayParts = responseData.days[0].cafes['261'].dayparts
+    let dayParts = responseData.days[0].cafes[this.props.cafeId].dayparts
     let stationMenus = []
     if (dayParts.length && dayParts[0].length) {
       stationMenus = dayParts[0][whichMeal].stations
