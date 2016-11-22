@@ -42,8 +42,6 @@ const buildingImages = {
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 
-
-
 export default class BuildingHoursView extends React.Component {
   state = {
     dataSource: this.getDataSource(),
@@ -69,7 +67,10 @@ export default class BuildingHoursView extends React.Component {
   }
 
   updateTime = () => {
-    this.setState({now: moment.tz(CENTRAL_TZ), dataSource: this.getDataSource()})
+    this.setState({
+      now: moment.tz(CENTRAL_TZ),
+      dataSource: this.getDataSource(),
+    })
   }
 
   _renderRow = (data: BuildingInfoType) => {
@@ -86,7 +87,9 @@ export default class BuildingHoursView extends React.Component {
   refresh = async () => {
     this.setState({refreshing: true})
     await delay(500)
-    this.setState({now: moment.tz(CENTRAL_TZ), refreshing: false,
+    this.setState({
+      now: moment.tz(CENTRAL_TZ),
+      refreshing: false,
       dataSource: this.getDataSource(),
     })
   }
