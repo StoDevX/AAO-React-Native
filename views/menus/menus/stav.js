@@ -10,7 +10,9 @@ import type {BonAppResponseType, StationMenuType, MenuItemContainerType} from '.
 import buildingHours from '../../../data/building-hours.json'
 
 export default class StavMenuView extends React.Component {
-  static menuUrl = 'http://legacy.cafebonappetit.com/api/2/menus?cafe=261'
+  static propTypes = {
+    menuUrl: React.PropTypes.string.isRequired,
+  }
 
   state = {
     loading: true,
@@ -26,6 +28,10 @@ export default class StavMenuView extends React.Component {
 
   componentDidMount() {
     this.fetchData()
+  }
+
+  props: {
+    menuUrl: string,
   }
 
   getTodaysLunchHours(currentDay: 'mo'|'tu'|'we'|'th'|'fr'|'sa'|'su') {
@@ -44,7 +50,7 @@ export default class StavMenuView extends React.Component {
   }
 
   fetchData = async () => {
-    let responseData: BonAppResponseType = await fetch(StavMenuView.menuUrl).then(response => response.json())
+    let responseData: BonAppResponseType = await fetch(this.props.menuUrl).then(response => response.json())
 
     let stationMenus = responseData.days[0].cafes['261'].dayparts[0][this.whichMeal()].stations
     let foodItems = responseData.items

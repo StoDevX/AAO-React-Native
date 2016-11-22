@@ -7,7 +7,9 @@ import FancyMenu from '../parts/fancy-menu'
 import type {BonAppResponseType, StationMenuType, MenuItemContainerType} from '../types'
 
 export default class CageMenuView extends React.Component {
-  static menuUrl = 'http://legacy.cafebonappetit.com/api/2/menus?cafe=262'
+  static propTypes = {
+    menuUrl: React.PropTypes.string.isRequired,
+  }
 
   state = {
     loading: true,
@@ -26,8 +28,12 @@ export default class CageMenuView extends React.Component {
     this.fetchData()
   }
 
+  props: {
+    menuUrl: string,
+  }
+
   fetchData = async () => {
-    let responseData: BonAppResponseType = await fetch(CageMenuView.menuUrl).then(response => response.json())
+    let responseData: BonAppResponseType = await fetch(this.props.menuUrl).then(response => response.json())
     let whichMeal = 0
 
     let stationMenus = responseData.days[0].cafes['262'].dayparts[0][whichMeal].stations
