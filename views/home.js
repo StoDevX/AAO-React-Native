@@ -21,20 +21,20 @@ import * as c from './components/colors'
 const Dimensions = require('Dimensions')
 let Viewport = Dimensions.get('window')
 
-type ViewType = {usable: boolean, view: string, title: string, icon: string, tint: string};
+type ViewType = {view: string, title: string, icon: string, tint: string};
 const views: ViewType[] = [
-  {usable: true, view: 'MenusView', title: 'Menus', icon: 'bowl', tint: c.emerald},
-  {usable: true, view: 'SISView', title: 'SIS', icon: 'fingerprint', tint: c.goldenrod},
-  {usable: true, view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock', tint: c.wave},
-  {usable: true, view: 'CalendarView', title: 'Calendar', icon: 'calendar', tint: c.coolPurple},
-  {usable: true, view: 'DirectoryView', title: 'Directory', icon: 'v-card', tint: c.indianRed},
-  {usable: true, view: 'StreamingView', title: 'Streaming Media', icon: 'video', tint: c.denim},
-  {usable: true, view: 'NewsView', title: 'News', icon: 'news', tint: c.eggplant},
-  {usable: true, view: 'MapView', title: 'Campus Map', icon: 'map', tint: c.coffee},
-  {usable: true, view: 'ContactsView', title: 'Important Contacts', icon: 'phone', tint: c.crimson},
-  {usable: true, view: 'TransportationView', title: 'Transportation', icon: 'address', tint: c.cardTable},
-  {usable: true, view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book', tint: c.olive},
-  {usable: true, view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer', tint: c.grapefruit},
+  {view: 'MenusView', title: 'Menus', icon: 'bowl', tint: c.emerald},
+  {view: 'SISView', title: 'SIS', icon: 'fingerprint', tint: c.goldenrod},
+  {view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock', tint: c.wave},
+  {view: 'CalendarView', title: 'Calendar', icon: 'calendar', tint: c.coolPurple},
+  {view: 'DirectoryView', title: 'Directory', icon: 'v-card', tint: c.indianRed},
+  {view: 'StreamingView', title: 'Streaming Media', icon: 'video', tint: c.denim},
+  {view: 'NewsView', title: 'News', icon: 'news', tint: c.eggplant},
+  {view: 'MapView', title: 'Campus Map', icon: 'map', tint: c.coffee},
+  {view: 'ContactsView', title: 'Important Contacts', icon: 'phone', tint: c.crimson},
+  {view: 'TransportationView', title: 'Transportation', icon: 'address', tint: c.cardTable},
+  {view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book', tint: c.olive},
+  {view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer', tint: c.grapefruit},
 ]
 
 
