@@ -36,8 +36,12 @@ export default class CageMenuView extends React.Component {
     let responseData: BonAppResponseType = await fetch(this.props.menuUrl).then(response => response.json())
     let whichMeal = 0
 
-    let stationMenus = responseData.days[0].cafes['262'].dayparts[0][whichMeal].stations
     let foodItems = responseData.items
+    let dayParts = responseData.days[0].cafes['262'].dayparts
+    let stationMenus = []
+    if (dayParts.length) {
+      stationMenus = dayParts[0][whichMeal].stations
+    }
 
     let stationsToCreate = [
       // 'Breakfast',
