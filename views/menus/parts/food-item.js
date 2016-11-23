@@ -11,6 +11,7 @@ import keys from 'lodash/keys'
 import pick from 'lodash/pick'
 import map from 'lodash/map'
 import type {MenuItemType, ItemCorIconMapType, MasterCorIconMapType} from '../types'
+import * as c from '../../components/colors'
 
 function getDietaryTagsDefault(filters: MasterCorIconMapType, dietary: ItemCorIconMapType): any[] {
   // filter the mapping of all icons by just the icons provided by this item
@@ -36,12 +37,13 @@ export default function FoodItem({data, filters, style, getDietaryTags=getDietar
   return (
     <View style={[styles.container, style]}>
       <View style={styles.name}>
-        <Text style={styles.text}>
-          {data.label}
-        </Text>
+        <Text style={styles.text}>{data.label}</Text>
+        <View style={styles.iconContainer}>
+          {getDietaryTags(filters, data.cor_icon)}
+        </View>
       </View>
-      <View style={styles.iconContainer}>
-        {getDietaryTags(filters, data.cor_icon)}
+      <View>
+        {data.price ? <Text style={styles.secondary}>{data.price}</Text> : null}
       </View>
     </View>
   )
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
   },
   text: {
-    fontSize: 13,
+    fontSize: 15,
   },
   iconContainer: {
     flexDirection: 'row',
@@ -67,6 +69,10 @@ const styles = StyleSheet.create({
     marginLeft: 7,
     width: 15,
     height: 15,
+  },
+  secondary: {
+    color: c.iosDisabledText,
+    fontSize: 13,
   },
 })
 

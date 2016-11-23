@@ -185,7 +185,7 @@ export default class FancyMenu extends React.Component {
   renderSectionHeader(sectionData: any, sectionId: string) {
     return (
       <View style={styles.sectionHeader} key={sectionId}>
-        <Text style={styles.sectionHeaderText}>{sectionId}</Text>
+        <Text style={styles.sectionHeaderText}>{sectionId}</Text>{sectionData.note ? <Text style={{color: c.iosDisabledText}}>({sectionData.note})</Text> : null}
       </View>
     )
   }
