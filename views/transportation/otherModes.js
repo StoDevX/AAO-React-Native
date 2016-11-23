@@ -5,7 +5,6 @@ import {
   StyleSheet,
   View,
   ListView,
-  Platform,
   Linking,
 } from 'react-native'
 import type {OtherModeType} from './types'

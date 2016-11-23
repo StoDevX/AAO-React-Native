@@ -19,19 +19,18 @@ import * as c from '../components/colors'
 import Button from 'react-native-button'
 import mapInfo from '../../data/map.json'
 
-export default class OlafMapView extends React.Component {
-  // Render a given scene
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>{mapInfo.description}</Text>
-        <Button
-          onPress={() => Linking.openURL(mapInfo.url).catch(err => console.error('An error occurred', err))}
-          style={styles.button}
-          > View Map </Button>
-      </View>
-    )
-  }
+export default function OlafMapView() {
+  return (
+    <View style={styles.container}>
+      <Text>{mapInfo.description}</Text>
+      <Button
+        onPress={() => Linking.openURL(mapInfo.url).catch(err => console.error('An error occurred', err))}
+        style={styles.button}
+      >
+          View Map
+      </Button>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({

@@ -43,23 +43,24 @@ let styles = StyleSheet.create({
   },
 })
 
+function formatNumber(phoneNumber: string) {
+  let re = /\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})/g
+  let subst = '($1) $2-$3'
+  return phoneNumber.replace(re, subst)
+}
+
+function promptCall(buttonText: string, phoneNumber: string) {
+  Alert.alert(
+    buttonText,
+    formatNumber(phoneNumber),
+    [
+        {text: 'Cancel', onPress: () => console.log('Call cancel pressed')},
+        {text: 'Call', onPress: () => Communications.phonecall(phoneNumber, false)},
+    ]
+  )
+}
+
 export default function ContactCard({title, phoneNumber, text, buttonText}) {
-  function formatNumber(phoneNumber: string) {
-    let re = /\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})/g
-    let subst = '($1) $2-$3'
-    return phoneNumber.replace(re, subst)
-  }
-
-  function promptCall(buttonText: string, phoneNumber: string) {
-    Alert.alert(
-      buttonText,
-      formatNumber(phoneNumber),
-      [
-          {text: 'Cancel', onPress: () => console.log('Call cancel pressed')},
-          {text: 'Call', onPress: () => Communications.phonecall(phoneNumber, false)},
-      ]
-  )}
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>

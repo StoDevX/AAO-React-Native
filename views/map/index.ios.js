@@ -12,19 +12,16 @@ import {
 
 import mapInfo from '../../data/map.json'
 
-export default class OlafMapView extends React.Component {
-  // Render a given scene
-  render() {
-    return (
-      <View style={styles.container}>
-        <WebView
-          source={{uri: mapInfo.url}}
-          startInLoadingState={true}
-          style={styles.container}
-        />
-      </View>
-    )
-  }
+export default function OlafMapView() {
+  return (
+    <View style={styles.container}>
+      <WebView
+        source={{uri: mapInfo.url}}
+        startInLoadingState={true}
+        style={styles.container}
+      />
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({

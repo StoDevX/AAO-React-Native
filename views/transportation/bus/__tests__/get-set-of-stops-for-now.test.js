@@ -1,18 +1,18 @@
 // @flow
-import getSetOfStopsForNow from '../get-set-of-stops-for-now'
-import moment from 'moment'
+// import getSetOfStopsForNow from '../get-set-of-stops-for-now'
+// import moment from 'moment'
 
-import type {BusScheduleType} from '../types'
-function makeSchedule(): BusScheduleType {
-  return {
-    days: ['mo', 'tu'],
-    stops: ['St. Olaf', 'Carleton', 'Food Co-op', 'Cub/Target', 'El Tequila', 'Food Co-op', 'Carleton', 'St. Olaf'],
-    times: [['4:15pm',  '4:22pm',   '4:23pm',     '4:33pm',     '4:37pm',     '4:43pm',     '4:44pm',   '4:52pm'],
-            ['4:55pm',  '5:02pm',   '5:03pm',     '5:13pm',     '5:17pm',     '5:23pm',     '5:24pm',   '5:32pm'],
-            ['5:35pm',  '5:42pm',   '5:43pm',     '5:53pm',     '5:57pm',     '6:03pm',     '6:04pm',   '6:12pm'],
-    ],
-  }
-}
+// import type {BusScheduleType} from '../types'
+// function makeSchedule(): BusScheduleType {
+//   return {
+//     days: ['mo', 'tu'],
+//     stops: ['St. Olaf', 'Carleton', 'Food Co-op', 'Cub/Target', 'El Tequila', 'Food Co-op', 'Carleton', 'St. Olaf'],
+//     times: [['4:15pm',  '4:22pm',   '4:23pm',     '4:33pm',     '4:37pm',     '4:43pm',     '4:44pm',   '4:52pm'],
+//             ['4:55pm',  '5:02pm',   '5:03pm',     '5:13pm',     '5:17pm',     '5:23pm',     '5:24pm',   '5:32pm'],
+//             ['5:35pm',  '5:42pm',   '5:43pm',     '5:53pm',     '5:57pm',     '6:03pm',     '6:04pm',   '6:12pm'],
+//     ],
+//   }
+// }
 
 // xit('returns the schedule for the given time', () => {
 //   let now = moment('Mon 16:57', 'dddd H:mm')
