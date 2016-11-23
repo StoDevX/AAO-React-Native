@@ -18,7 +18,7 @@ export function formatBuildingHours(hoursInfo: BuildingInfoType, now: momentT): 
   if (openStatus === 'Almost Closed') {
     let closingIn = close.diff(now, 'minutes') + 1
 
-    return `Closing in ${closingIn} minutes`
+    return `Closing in ${closingIn} ${closingIn === 1 ? 'minute' : 'minutes'}`
   } else {
     let openString = open.format(RESULT_FORMAT)
     let closeString = close.format(RESULT_FORMAT)
