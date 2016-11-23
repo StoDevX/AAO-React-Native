@@ -26,7 +26,7 @@ import type {
   BonAppCafeInfoType,
 } from '../types'
 
-import type {FilterSpecType, ToggleSpecType, SelectSpecType} from '../filter/types'
+import type {FilterSpecType} from '../filter/types'
 
 const fetchJson = (url, query) => fetch(`${url}?${querystring.stringify(query)}`).then(response => response.json())
 
@@ -169,27 +169,15 @@ export default class StavMenuView extends React.Component {
   }
 
   render() {
-    let content = null
-
     if (this.state.loading) {
-      content = <LoadingView text={this.props.loadingMessage} />
+      return <LoadingView text={this.props.loadingMessage} />
     } else if (this.state.message) {
-      content = <LoadingView text={this.state.message} />
+      return <LoadingView text={this.state.message} />
     } else if (!this.state.menus.length) {
-      content = <LoadingView text='No Moar Foodz we r sorry —Randy' />
-    } else {
-      content = (
-        <FancyMenu
-          stationMenus={this.state.menus}
-          foodItems={this.state.foodItems}
-          filters={this.state.filters}
-          stationsToCreate={[]}
-        />
-      )
+      return <LoadingView text='No Moar Foodz we r sorry —Randy' />
     }
 
     const now = moment.tz(CENTRAL_TZ)
-
     return (
       <View style={{flex: 1}}>
         <FilterToolbar
@@ -198,7 +186,12 @@ export default class StavMenuView extends React.Component {
           appliedFilterCount={this.state.filters.filter(f => f.type === 'toggle' ? f.value : f.value.length > 0).length}
           onPress={this.openFilterView}
         />
-        {content}
+        <FancyMenu
+          stationMenus={this.state.menus}
+          foodItems={this.state.foodItems}
+          filters={this.state.filters}
+          stationsToCreate={[]}
+        />
       </View>
     )
   }
