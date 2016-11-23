@@ -32,13 +32,13 @@ export default [
   //   component: StavMenuView,
   //   props: {cafeId: '35', loadingMessage: 'Searching for Schiller…'},
   // },
-  {
-    id: 'ldc',
-    title: 'LDC',
-    rnVectorIcon: {iconName: 'water'},
-    component: StavMenuView,
-    props: {cafeId: '36', loadingMessage: 'temp2'},
-  },
+  // {
+  //   id: 'ldc',
+  //   title: 'LDC',
+  //   rnVectorIcon: {iconName: 'water'},
+  //   component: StavMenuView,
+  //   props: {cafeId: '36', loadingMessage: 'temp2'},
+  // },
   {
     id: 'weitz',
     title: 'Weitz Center',
@@ -46,10 +46,11 @@ export default [
     component: StavMenuView,
     props: {cafeId: '458', loadingMessage: 'temp3'},
   },
-  // {
-  //   id: 'pause',
-  //   title: 'The Pause',
-  //   rnVectorIcon: {iconName: 'paw'},
-  //   component: PauseMenuView,
-  // },
+  {
+    id: 'pause',
+    title: 'The Pause',
+    rnVectorIcon: {iconName: 'paw'},
+    component: PauseMenuView,
+    props: {loadingMessage: 'temp4'},
+  },
 ]
