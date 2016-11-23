@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   backButtonText: {
     fontSize: 17,
     color: 'white',
-    marginTop: -4,
+    // marginTop: -4,
   },
   backButtonIcon: {
     color: 'white',
