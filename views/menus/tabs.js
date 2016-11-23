@@ -1,6 +1,5 @@
 // @flow
-
-import CageMenuView from './menus/cage'
+// import CageMenuView from './menus/cage'
 import StavMenuView from './menus/stav'
 import PauseMenuView from './menus/pause'
 
@@ -16,14 +15,14 @@ export default [
     id: 'cage',
     title: 'The Cage',
     rnVectorIcon: {iconName: 'cafe'},
-    component: CageMenuView,
+    component: StavMenuView,
     props: {cafeId: '262', loadingMessage: 'Checking for vegan cookies…'},
   },
   {
     id: 'sayles',
     title: 'Sayles Hill',
     rnVectorIcon: {iconName: 'cafe'},
-    component: CageMenuView,
+    component: StavMenuView,
     props: {cafeId: '34', loadingMessage: 'temp1'},
   },
   {
@@ -44,7 +43,7 @@ export default [
     id: 'weitz',
     title: 'Weitz Center',
     rnVectorIcon: {iconName: 'cafe'},
-    component: CageMenuView,
+    component: StavMenuView,
     props: {cafeId: '458', loadingMessage: 'temp3'},
   },
   {
