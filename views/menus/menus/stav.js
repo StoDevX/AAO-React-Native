@@ -173,9 +173,9 @@ export default class StavMenuView extends React.Component {
       return <LoadingView text={this.props.loadingMessage} />
     } else if (this.state.message) {
       return <LoadingView text={this.state.message} />
-    } else if (!this.state.menus.length) {
+    }/* else if (!this.state.menus.length) {
       return <LoadingView text='No Moar Foodz we r sorry —Randy' />
-    }
+    }*/
 
     const now = moment.tz(CENTRAL_TZ)
     return (

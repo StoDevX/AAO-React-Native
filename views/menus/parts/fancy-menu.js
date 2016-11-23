@@ -151,7 +151,7 @@ export default class FancyMenu extends React.Component {
   }
 
   processData(props: FancyMenuPropsType) {
-    console.log('processData called')
+    console.log('processData called', props)
     let groupedMenuItems = props.stationMenus
       .map(menu => this.buildStationMenu(menu, props.foodItems))
       .filter(menu => menu.length)
@@ -159,8 +159,12 @@ export default class FancyMenu extends React.Component {
 
     let otherMenuItems = props.stationsToCreate
       // filter the foodItems mapping to only the requested station
-      .map(station => [...filter(props.foodItems, item => item.station === station)])
+      .map(station => filter(props.foodItems, item => item.station === station))
       .reduce(this.flatten, [])
+
+    if (!props.stationsToCreate.length) {
+      otherMenuItems = values(props.foodItems)
+    }
 
     // in case we need a wider variety of sources in the future,
     // prevent ourselves from returning duplicate items
