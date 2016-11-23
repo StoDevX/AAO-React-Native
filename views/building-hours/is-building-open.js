@@ -17,5 +17,8 @@ export function isBuildingOpen(hoursInfo: BuildingInfoType, now: momentT): Build
     }
     return 'Open'
   }
+  if (now.clone().add(30, 'minutes').isAfter(open) && now.isBefore(open)) {
+    return 'Almost Open'
+  }
   return 'Closed'
 }

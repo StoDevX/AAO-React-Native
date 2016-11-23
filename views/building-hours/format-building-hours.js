@@ -14,14 +14,16 @@ export function formatBuildingHours(hoursInfo: BuildingInfoType, now: momentT): 
 
   let {open, close} = hours
   let openStatus = isBuildingOpen(hoursInfo, now)
-
-  if (openStatus === 'Almost Closed') {
-    return `Closing ${now.to(close)}`
-  }
-
   let openString = open.format(RESULT_FORMAT)
   let closeString = close.format(RESULT_FORMAT)
   closeString = closeString === '12:00am' ? 'Midnight' : closeString
 
-  return `${openString} / ${closeString} – ${openStatus}`
+  if (openStatus === 'Almost Closed') {
+    return `Closing ${now.to(close)}`
+  } else if (openStatus === 'Almost Open') {
+
+    return `Opening ${now.to(open)}`
+  } else {
+    return `${openString} / ${closeString} – ${openStatus}`
+  }
 }
