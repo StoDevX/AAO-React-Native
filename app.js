@@ -20,7 +20,7 @@ import DirectoryView from './views/directory'
 import HomeView from './views/home'
 import MapView from './views/map'
 import StreamingView from './views/streaming'
-import MenusView from './views/menus'
+import {MenusView, MenusFilterView} from './views/menus'
 import NewsView from './views/news'
 import NewsItemView from './views/news/news-item'
 import SISView from './views/sis'
@@ -42,6 +42,7 @@ function renderScene(route, navigator) {
   switch (route.id) {
     case 'HomeView': return <HomeView {...props} />
     case 'MenusView': return <MenusView {...props} />
+    case 'MenusFilterView': return <MenusFilterView {...props} />
     case 'DirectoryView': return <DirectoryView {...props} />
     case 'CalendarView': return <CalendarView {...props} />
     case 'ContactsView': return <ContactsView {...props} />
