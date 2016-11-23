@@ -70,3 +70,31 @@ export type BonAppMenuInfoType = {
 export type MenuItemContainerType = {[key: ItemIdReferenceStringType]: MenuItemType};
 export type ItemCorIconMapType = {[key: NumericStringType]: string} | Array<void>;
 export type MasterCorIconMapType = {[key: NumericStringType]: {label: string, icon: any}};
+
+
+export type BonAppCafeInfoType = {
+  cafes: {
+    [key: string]: {
+      name: string,
+      address: string,
+      city: string,
+      state: string,
+      zip: string,
+      latitude: string,
+      longitude: string,
+      description: string,
+      message: string,
+      eod: string,
+      timezone: string,
+      menu_type: string,
+      menu_html: string,
+      weekly_schedule: string,
+      days: [{
+        date: string,
+        dayparts: [{id: string, starttime: string, endtime: string, message: string, label: string}],
+        status: 'open'|'closed'|string,
+        message: string,
+      }],
+    }
+  }
+};
