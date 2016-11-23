@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   secondary: {
     color: c.iosDisabledText,
-    fontSize: 13,
+    fontSize: 15,
   },
 })
 
