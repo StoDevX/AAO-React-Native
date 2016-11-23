@@ -35,7 +35,6 @@ import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
 
 import NoRoute from './views/components/no-route'
-import noop from 'lodash/noop'
 
 // Render a given scene
 function renderScene(route, navigator) {
@@ -133,74 +132,78 @@ const styles = StyleSheet.create({
   },
 })
 
-let settingsButtonActive = false
-
 function openSettings(route, navigator) {
-  settingsButtonActive = true
-  navigator.push({
-    id: 'SettingsView',
-    title: 'Settings',
-    index: route.index + 1,
-    sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-  })
-}
+  let settingsButtonActive = false
+  return () => {
+    if (settingsButtonActive) {
+      return
+    }
 
-function closeSettings(navigator) {
-  settingsButtonActive = false
-  navigator.pop()
+    function closeSettings(route, navigator) {
+      settingsButtonActive = false
+      navigator.pop()
+    }
+
+    settingsButtonActive = true
+    navigator.push({
+      id: 'SettingsView',
+      title: 'Settings',
+      index: route.index + 1,
+      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+      onDismiss: closeSettings,
+    })
+  }
 }
 
 function LeftButton(route, navigator, index, navState) {
-  switch (route.id) {
-    case 'HomeView':
-      return (
-        <TouchableOpacity
-          style={[styles.backButton]}
-          onPress={settingsButtonActive ? noop : () => openSettings(route, navigator)}
-        >
-          <Icon style={styles.settingsIcon} name='ios-settings' />
-        </TouchableOpacity>
-      )
+  if (route.sceneConfig === Navigator.SceneConfigs.FloatFromBottom) {
+    return (
+      <TouchableOpacity
+        style={[styles.backButton, {marginLeft: 10, marginVertical: Platform.OS === 'android' ? 21 : 16}]}
+        onPress={() => route.onDismiss(route, navigator)}
+      >
+        <Text style={styles.backButtonText}>Close</Text>
+      </TouchableOpacity>
+    )
+  }
 
-    case 'SettingsView':
-      return (
-        <TouchableOpacity
-          style={[styles.backButton, {marginLeft: 10, marginVertical: Platform.OS === 'android' ? 21 : 16}]}
-          onPress={() => closeSettings(navigator)}
-        >
-          <Text style={styles.backButtonText}>Close</Text>
-        </TouchableOpacity>
-      )
+  if (route.id === 'HomeView') {
+    return (
+      <TouchableOpacity
+        style={[styles.backButton]}
+        onPress={openSettings(route, navigator)}
+      >
+        <Icon style={styles.settingsIcon} name='ios-settings' />
+      </TouchableOpacity>
+    )
+  }
 
-    default: {
-      if (index <= 0) {
-        return null
-      }
-      let backTitle = navState.routeStack[index].backButtonTitle || navState.routeStack[index-1].title
-      if (index === 1) {
-        backTitle = 'Home'
-      }
-      if (Platform.OS === 'android') {
-        return (
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigator.pop()}
-          >
-              <Icon style={styles.backButtonIcon} name='md-arrow-back' />
-          </TouchableOpacity>
-        )
-      } else {
-        return (
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigator.pop()}
-          >
-            <Icon style={styles.backButtonIcon} name='ios-arrow-back' />
-            <Text style={styles.backButtonText}>{backTitle}</Text>
-          </TouchableOpacity>
-        )
-      }
-    }
+  if (index <= 0) {
+    return null
+  }
+  let backTitle = navState.routeStack[index].backButtonTitle || navState.routeStack[index-1].title
+  if (index === 1) {
+    backTitle = 'Home'
+  }
+  if (Platform.OS === 'android') {
+    return (
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigator.pop()}
+      >
+          <Icon style={styles.backButtonIcon} name='md-arrow-back' />
+      </TouchableOpacity>
+    )
+  } else {
+    return (
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigator.pop()}
+      >
+        <Icon style={styles.backButtonIcon} name='ios-arrow-back' />
+        <Text style={styles.backButtonText}>{backTitle}</Text>
+      </TouchableOpacity>
+    )
   }
 }
 
