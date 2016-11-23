@@ -5,7 +5,7 @@ import LoadingView from '../../components/loading'
 import FancyMenu from '../parts/fancy-menu'
 import {menuBaseUrl, cafeBaseUrl} from '../data'
 
-import type {BonAppResponseType, StationMenuType, MenuItemContainerType} from '../types'
+import type {BonAppMenuInfoType, StationMenuType, MenuItemContainerType} from '../types'
 
 export default class CageMenuView extends React.Component {
   static propTypes = {

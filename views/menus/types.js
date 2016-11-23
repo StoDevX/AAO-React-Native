@@ -48,10 +48,12 @@ export type DayPartMenuType = {
   stations: StationMenuType[],
 };
 
+export type DayPartsCollectionType = Array<Array<DayPartMenuType>>;
+
 export type CafeMenuType = {
   name: string,
   menu_id: NumericStringType,
-  dayparts: Array<Array<DayPartMenuType>>
+  dayparts: DayPartsCollectionType,
 };
 
 export type MenuForDayType = {
@@ -59,7 +61,7 @@ export type MenuForDayType = {
   cafes: {[key: string]: CafeMenuType},
 };
 
-export type BonAppResponseType = {
+export type BonAppMenuInfoType = {
   cor_icons: {[key: string]: Object},
   days: MenuForDayType[],
   items: MenuItemContainerType,
@@ -67,4 +69,4 @@ export type BonAppResponseType = {
 
 export type MenuItemContainerType = {[key: ItemIdReferenceStringType]: MenuItemType};
 export type ItemCorIconMapType = {[key: NumericStringType]: string} | Array<void>;
-export type MasterCorIconMapType = {[key: NumericStringType]: {label: string, icon: any}}
+export type MasterCorIconMapType = {[key: NumericStringType]: {label: string, icon: any}};
