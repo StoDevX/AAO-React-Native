@@ -28,7 +28,7 @@ let styles = StyleSheet.create({
   },
 })
 
-import type {MenuItemType} from '../types'
+import type {MenuItemType} from '../simple-types'
 
 export function MenuItem({items, style}: {items: MenuItemType[], style: number|Object|Array<number|Object>}) {
   return (
