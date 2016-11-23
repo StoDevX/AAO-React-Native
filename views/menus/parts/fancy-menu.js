@@ -17,10 +17,15 @@ import sortBy from 'lodash/sortBy'
 import {toLaxTitleCase} from 'titlecase'
 import FoodItem from './food-item'
 import DietaryFilters from './dietary-filters'
+import includes from 'lodash/includes'
+import values from 'lodash/values'
+import difference from 'lodash/difference'
+import intersection from 'lodash/intersection'
 
 import * as c from '../../components/colors'
 
 import type {MenuItemContainerType, MenuItemType, StationMenuType} from '../types'
+import type {FilterSpecType} from '../filter/types'
 
 let styles = StyleSheet.create({
   container: {
@@ -56,6 +61,7 @@ type FancyMenuPropsType = {
   stationMenus: StationMenuType[],
   foodItems: MenuItemContainerType,
   stationsToCreate: string[],
+  filters: FilterSpecType[],
 };
 
 export default class FancyMenu extends React.Component {
@@ -70,7 +76,7 @@ export default class FancyMenu extends React.Component {
     this.load(this.props)
   }
 
-  componentDidReceiveProps(newProps: FancyMenuPropsType) {
+  componentWillReceiveProps(newProps: FancyMenuPropsType) {
     this.load(newProps)
   }
 
@@ -98,15 +104,54 @@ export default class FancyMenu extends React.Component {
       .map(itemId => foodItems[itemId])
       // remove any items that couldn't be found
       .filter(identity)
-      // the non-special foods are, like, salad dressings
-      .filter(food => food.special)
   }
 
   flatten(accumulator: any[], current: any[]) {
     return accumulator.concat(current)
   }
 
+  applyFilters(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
+    console.log('applyFilters called')
+    let onlySpecialsFilter = filters.find(({key}) => key === 'specials')
+    let onlySpecials = onlySpecialsFilter ? onlySpecialsFilter.value : false
+
+    let stationsFilter = filters.find(({key}) => key === 'stations')
+    let onlyTheseStations = []
+    if (stationsFilter && stationsFilter.type === 'list') {
+      // given all of the stations, get just the list that we want
+      // (becuase we have a list of all possibilities, and a list of the one the user _doesn't_ want to see)
+      onlyTheseStations = difference(stationsFilter.options, stationsFilter.value)
+    }
+
+    let dietaryRestrictionsFilter = filters.find(({key}) => key === 'restrictions')
+    let onlyTheseDietaryRestrictions = []
+    if (dietaryRestrictionsFilter && dietaryRestrictionsFilter.type === 'list') {
+      // given all of the dietary restrictions, get just the list that we want
+      onlyTheseDietaryRestrictions = difference(dietaryRestrictionsFilter.options, dietaryRestrictionsFilter.value)
+    }
+
+    console.log(onlySpecials, onlyTheseStations, onlyTheseDietaryRestrictions)
+
+    return filter(items, item => {
+      if (onlySpecials) {
+        return item.special === 1
+      }
+
+      if (onlyTheseStations.length) {
+        console.log(onlyTheseStations, item.station, includes(onlyTheseStations, item.station))
+        return includes(onlyTheseStations, item.station)
+      }
+
+      if (onlyTheseDietaryRestrictions.length) {
+        return intersection(onlyTheseDietaryRestrictions, values(item.cor_icon)).length
+      }
+
+      return true
+    })
+  }
+
   processData(props: FancyMenuPropsType) {
+    console.log('processData called')
     let groupedMenuItems = props.stationMenus
       .map(menu => this.buildStationMenu(menu, props.foodItems))
       .filter(menu => menu.length)
@@ -117,18 +162,24 @@ export default class FancyMenu extends React.Component {
       .map(station => [...filter(props.foodItems, item => item.station === station)])
       .reduce(this.flatten, [])
 
-    // in case we need a wider variety of sources in the future
+    // in case we need a wider variety of sources in the future,
     // prevent ourselves from returning duplicate items
     let allMenuItems = uniqBy([...groupedMenuItems, ...otherMenuItems], item => item.id)
 
-    // clean up the titles
-    allMenuItems = allMenuItems.map(food => {
-      return {...food, label: this.trimItemLabel(food.label)}
-    })
+    allMenuItems = allMenuItems.map(item => ({...item, station: startCase(this.trimStationName(item.station))}))
 
+    // apply the selected filters
+    console.log('allItems, before filter', allMenuItems)
+    allMenuItems = this.applyFilters(allMenuItems, props.filters)
+    console.log('allItems, after filter', allMenuItems)
+
+    // clean up the titles
+    allMenuItems = allMenuItems.map(food => ({...food, label: this.trimItemLabel(food.label)}))
+
+    // apply a sort to the list of menu items
     allMenuItems = sortBy(allMenuItems, [item => item.station, item => item.id])
 
-    return groupBy(allMenuItems, item => startCase(this.trimStationName(item.station)))
+    return groupBy(allMenuItems, item => item.station)
   }
 
   renderSectionHeader(sectionData: any, sectionId: string) {
@@ -154,7 +205,7 @@ export default class FancyMenu extends React.Component {
     return (
       <ListView
         style={styles.container}
-        contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
+        removeClippedSubviews={false}
         dataSource={this.state.dataSource}
         enableEmptySections={true}
         renderRow={this.renderFoodItem}

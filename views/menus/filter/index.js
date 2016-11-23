@@ -90,8 +90,9 @@ export class MenusFilterView extends React.Component {
   }
 
   init(filterSpecs: FilterSpecType[]) {
-    // We take the filter specs and turn them into a key-value mapping
-    // for easier value updates
+    // console.log(filterSpecs)
+    // We take the filter specs and turn them into a key-value mapping for
+    // easier value updates
     this.setState(fromPairs(filterSpecs.map(spec => [spec.key, spec])))
   }
 

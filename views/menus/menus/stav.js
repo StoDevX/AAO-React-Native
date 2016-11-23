@@ -12,6 +12,9 @@ import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 import findIndex from 'lodash/findIndex'
+import uniq from 'lodash/uniq'
+import values from 'lodash/values'
+import map from 'lodash/map'
 import {menuBaseUrl, cafeBaseUrl} from '../data'
 
 import type {
@@ -27,56 +30,6 @@ import type {FilterSpecType, ToggleSpecType, SelectSpecType} from '../filter/typ
 
 const fetchJson = (url, query) => fetch(`${url}?${querystring.stringify(query)}`).then(response => response.json())
 
-const t1: ToggleSpecType = {
-  type: 'toggle',
-  key: 'specials',
-  label: 'Only Specials',
-  caption: 'Allows you to either see only the "specials" for today, or everything the location has to offer, including condiments and salad fixings.',
-  value: false,
-}
-const l1: SelectSpecType = {
-  type: 'list',
-  multiple: true,
-  key: 'stations',
-  title: 'Stations',
-  booleanKind: 'NOR',
-  caption: 'a caption',
-  options: [
-    'Home',
-    'Bowls',
-    'Pizza',
-    'Grains',
-    'Tortilla',
-    'Pasta',
-    'Grill',
-  ],
-  value: [],
-}
-const l2: SelectSpecType = {
-  type: 'list',
-  multiple: true,
-  key: 'restrictions',
-  title: 'Dietary Restrictions',
-  booleanKind: 'NOR',
-  caption: 'a nother caption',
-  options: [
-    'Vegetarian',
-    'Seafood Watch',
-    'Vegan',
-    'For Your Well-Being',
-    'Farm to Fork',
-    'In Balance',
-    'Made Without Gluten-Containing Ingredients',
-    'Kosher',
-  ],
-  value: [],
-}
-
-const defaultFilters: FilterSpecType[] = [
-  t1,
-  l1,
-  l2,
-]
 
 export default class StavMenuView extends React.Component {
   static propTypes = {
@@ -98,63 +51,100 @@ export default class StavMenuView extends React.Component {
     foodItems: {},
     message: null,
     isFiltered: false,
-    filters: defaultFilters,
+    filters: [],
   }
 
-  // componentDidMount() {
-  //   const now = moment.tz(CENTRAL_TZ)
-  //   this.fetchData(now)
-  // }
+  componentDidMount() {
+    const now = moment.tz(CENTRAL_TZ)
+    this.fetchData(now)
+  }
 
-  props: {
+  props: TopLevelViewPropsType & {
     cafeId: string,
     loadingMessage: string,
-  } & TopLevelViewPropsType
+  }
 
-  // findMenu(dayparts: DayPartsCollectionType, now: momentT): void|DayPartMenuType {
-  //   if (!dayparts.length || !dayparts[0].length) {
-  //     return
-  //   }
+  findMenu(dayparts: DayPartsCollectionType, now: momentT): void|DayPartMenuType {
+    if (!dayparts.length || !dayparts[0].length) {
+      return
+    }
 
-  //   if (dayparts[0].length === 1) {
-  //     return dayparts[0][0]
-  //   }
+    if (dayparts[0].length === 1) {
+      return dayparts[0][0]
+    }
 
-  //   const times = dayparts[0].map(({starttime, endtime}) => ({
-  //     startTime: moment.tz(starttime, 'H:mm', true, CENTRAL_TZ),
-  //     endTime: moment.tz(endtime, 'H:mm', true, CENTRAL_TZ),
-  //   }))
+    const times = dayparts[0].map(({starttime, endtime}) => ({
+      startTime: moment.tz(starttime, 'H:mm', true, CENTRAL_TZ),
+      endTime: moment.tz(endtime, 'H:mm', true, CENTRAL_TZ),
+    }))
 
-  //   const mealIndex = findIndex(times, ({startTime, endTime}) => now.isBetween(startTime, endTime))
+    const mealIndex = findIndex(times, ({startTime, endTime}) => now.isBetween(startTime, endTime))
 
-  //   return dayparts[0][mealIndex]
-  // }
+    return dayparts[0][mealIndex]
+  }
 
-  // fetchData = async (now: momentT) => {
-  //   let requests = await Promise.all([
-  //     fetchJson(menuBaseUrl, {cafe: this.props.cafeId}),
-  //     fetchJson(cafeBaseUrl, {cafe: this.props.cafeId}),
-  //   ])
+  trimStationName(stationName: string) {
+    return stationName.replace(/<strong>@(.*)<\/strong>/, '$1')
+  }
 
-  //   let [
-  //     cafeMenu: BonAppMenuInfoType,
-  //     cafeInfo: BonAppCafeInfoType,
-  //   ] = requests
+  fetchData = async (now: momentT) => {
+    let requests = await Promise.all([
+      fetchJson(menuBaseUrl, {cafe: this.props.cafeId}),
+      fetchJson(cafeBaseUrl, {cafe: this.props.cafeId}),
+    ])
 
-  //   let days = cafeInfo.cafes[this.props.cafeId].days
-  //   let today = days.find(({date}) => date === now.format('YYYY-MM-DD'))
-  //   if (today.status === 'closed') {
-  //     this.setState({loading: false, message: today.message})
-  //     return
-  //   }
+    let [
+      cafeMenu: BonAppMenuInfoType,
+      cafeInfo: BonAppCafeInfoType,
+    ] = requests
 
-  //   let foodItems = cafeMenu.items
-  //   let dayparts = cafeMenu.days[0].cafes[this.props.cafeId].dayparts
-  //   let mealInfo = this.findMenu(dayparts, now)
-  //   let menus = mealInfo ? mealInfo.stations : []
+    let days = cafeInfo.cafes[this.props.cafeId].days
+    let today = days.find(({date}) => date === now.format('YYYY-MM-DD'))
+    if (today.status === 'closed') {
+      this.setState({loading: false, message: today.message})
+      return
+    }
 
-  //   this.setState({menus, foodItems, loading: false})
-  // }
+    let foodItems = cafeMenu.items
+    let dayparts = cafeMenu.days[0].cafes[this.props.cafeId].dayparts
+    let mealInfo = this.findMenu(dayparts, now)
+    let menus = mealInfo ? mealInfo.stations : []
+
+    let filters = []
+    filters.push({
+      type: 'toggle',
+      key: 'specials',
+      label: 'Only Specials',
+      caption: 'Allows you to either see only the "specials" for today, or everything the location has to offer, including condiments and salad fixings.',
+      value: false,
+    })
+
+    let allStations = uniq(map(foodItems, item => item.station)).map(this.trimStationName)
+    filters.push({
+      type: 'list',
+      multiple: true,
+      key: 'stations',
+      title: 'Stations',
+      booleanKind: 'NOR',
+      caption: 'a caption',
+      options: allStations,
+      value: [],
+    })
+
+    let allDietaryRestrictions = values(cafeMenu.cor_icons).map(item => item.label)
+    filters.push({
+      type: 'list',
+      multiple: true,
+      key: 'restrictions',
+      title: 'Dietary Restrictions',
+      booleanKind: 'NOR',
+      caption: 'a nother caption',
+      options: allDietaryRestrictions,
+      value: [],
+    })
+
+    this.setState({menus, foodItems, filters, loading: false})
+  }
 
   openFilterView = () => {
     this.props.navigator.push({
@@ -176,27 +166,27 @@ export default class StavMenuView extends React.Component {
 
   onFiltersChanged = (newFilters: FilterSpecType[]) => {
     this.setState({filters: newFilters})
-    console.log('new filters', newFilters)
   }
 
   render() {
     let content = null
 
-    content = <LoadingView text={this.props.loadingMessage} />
-    // if (this.state.loading) {
-    // } else if (this.state.message) {
-    //   content = <LoadingView text={this.state.message} />
-    // } else if (!this.state.menus.length) {
-    //   content = <LoadingView text='No Moar Foodz we r sorry —Randy' />
-    // } else {
-    //   content = (
-    //     <FancyMenu
-    //       stationMenus={this.state.menus}
-    //       foodItems={this.state.foodItems}
-    //       stationsToCreate={[]}
-    //     />
-    //   )
-    // }
+    if (this.state.loading) {
+      content = <LoadingView text={this.props.loadingMessage} />
+    } else if (this.state.message) {
+      content = <LoadingView text={this.state.message} />
+    } else if (!this.state.menus.length) {
+      content = <LoadingView text='No Moar Foodz we r sorry —Randy' />
+    } else {
+      content = (
+        <FancyMenu
+          stationMenus={this.state.menus}
+          foodItems={this.state.foodItems}
+          filters={this.state.filters}
+          stationsToCreate={[]}
+        />
+      )
+    }
 
     const now = moment.tz(CENTRAL_TZ)
 
@@ -205,7 +195,7 @@ export default class StavMenuView extends React.Component {
         <FilterToolbar
           date={now}
           title='Lunch'
-          isFiltered={this.state.filters.map(f => f.type === 'toggle' ? f.value : f.value.length > 0).some(x => x)}
+          appliedFilterCount={this.state.filters.filter(f => f.type === 'toggle' ? f.value : f.value.length > 0).length}
           onPress={this.openFilterView}
         />
         {content}
