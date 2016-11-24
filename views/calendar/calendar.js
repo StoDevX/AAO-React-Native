@@ -89,9 +89,14 @@ export default class CalendarView extends React.Component {
         event.isOngoing = event.startTime.isBefore(now, 'day')
       })
       let grouped = groupBy(data, event => {
-        return event.isOngoing
-          ? 'Ongoing'  // default to "now" in CST
-          : event.startTime.format('ddd  MMM Do')  // google returns events in CST
+        if (event.isOngoing) {
+          return 'Ongoing'
+        }
+        let isToday = event.startTime.isSame(now, 'day')
+        if (isToday) {
+          return 'Today'
+        }
+        return event.startTime.format('ddd  MMM Do')  // google returns events in CST
       })
       this.setState({events: this.state.events.cloneWithRowsAndSections(grouped)})
     } else if (data && !data.length) {
