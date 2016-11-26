@@ -83,6 +83,7 @@ export default class SettingsView extends React.Component {
   onPressLegalButton() {
     this.props.navigator.push({
       id: 'LegalView',
+      title: 'Legal',
       index: this.props.route.index + 1,
     })
   }
@@ -90,6 +91,7 @@ export default class SettingsView extends React.Component {
   onPressCreditsButton() {
     this.props.navigator.push({
       id: 'CreditsView',
+      title: 'Credits',
       index: this.props.route.index + 1,
     })
   }
@@ -97,6 +99,7 @@ export default class SettingsView extends React.Component {
   onPressPrivacyButton() {
     this.props.navigator.push({
       id: 'PrivacyView',
+      title: 'Privacy Policy',
       index: this.props.route.index + 1,
     })
   }
