@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import renderer from 'react/lib/ReactTestRenderer'
+import renderer from 'react-test-renderer'
 import {dayMoment} from './moment.helper'
 
 import {BuildingView} from '../building'
