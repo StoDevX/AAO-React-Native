@@ -27,7 +27,7 @@ import {version} from '../../package.json'
 import Communications from 'react-native-communications'
 import * as c from '../components/colors'
 import CookieManager from 'react-native-cookies'
-
+import DeviceInfo from 'react-native-device-info'
 
 export default class SettingsView extends React.Component {
   static propTypes = {
@@ -78,6 +78,21 @@ export default class SettingsView extends React.Component {
       })
     })
     await AsyncStorage.setItem('credentials:valid', JSON.stringify(false))
+  }
+
+  getDeviceInfo() {
+    let deviceInfo = `
+      ----- Please do not edit below here -----
+      ${DeviceInfo.getBrand()} ${DeviceInfo.getModel()}
+      ${DeviceInfo.getDeviceId()}
+      ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}
+      ${DeviceInfo.getReadableVersion()}
+    `
+    return deviceInfo
+  }
+
+  getSupportBody() {
+    return '\n' + this.getDeviceInfo()
   }
 
   onPressLegalButton() {
@@ -150,7 +165,7 @@ export default class SettingsView extends React.Component {
             null,
             null,
             'Support: All About Olaf',
-            null)
+            this.getSupportBody())
           }
         />
       </Section>
