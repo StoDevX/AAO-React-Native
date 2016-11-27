@@ -66,11 +66,11 @@ let styles = StyleSheet.create({
   },
 })
 
-
 export function BuildingView({info, image, name, now}: PropsType) {
   let borderColors = {
     'Open': '#CEFFCE',
     'Almost Closed': '#FFFC96',
+    'Almost Open': '#FFFC96',
     'Closed': '#F7C8C8',
   }
 
