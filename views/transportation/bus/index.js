@@ -45,8 +45,8 @@ export default class BusView extends React.Component {
   }
 
   render() {
-    // const now = moment.tz('6:53am', 'h:mma', true, TIMEZONE)
-    // now.dayOfYear(moment.tz(TIMEZONE).dayOfYear())
+    let {now} = this.state
+    // now = moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE)
     const busLines = this.props.busLines
     const activeBusLine = busLines.find(({line}) => line === this.props.line)
 
@@ -67,7 +67,7 @@ export default class BusView extends React.Component {
             marginBottom: Platform.OS === 'ios' ? 0 : 8,
           }}
           line={activeBusLine}
-          now={this.state.now}
+          now={now}
         />
       </ScrollView>
     )
