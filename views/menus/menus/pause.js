@@ -1,9 +1,9 @@
 // @flow
 import React from 'react'
 
-import MenuView from './menu'
-import type {MenuSectionType} from './types'
-import pauseMenuItems from '../../data/pause-menu.json'
+import MenuView from '../parts/menu'
+import type {MenuSectionType} from '../simple-types'
+import pauseMenuItems from '../../../data/pause-menu.json'
 
 export default function PauseMenuView({menu=pauseMenuItems}: {menu: MenuSectionType[]}) {
   return (

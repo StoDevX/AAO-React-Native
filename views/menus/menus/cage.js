@@ -1,8 +1,10 @@
-import React from 'react'
-import LoadingView from '../components/loading'
-import FancyMenu from './fancyMenu'
+// @flow
 
-import type {BonAppResponseType, StationMenuType, MenuItemContainerType} from './types'
+import React from 'react'
+import LoadingView from '../../components/loading'
+import FancyMenu from '../parts/fancy-menu'
+
+import type {BonAppResponseType, StationMenuType, MenuItemContainerType} from '../types'
 
 export default class CageMenuView extends React.Component {
   static menuUrl = 'http://legacy.cafebonappetit.com/api/2/menus?cafe=262'

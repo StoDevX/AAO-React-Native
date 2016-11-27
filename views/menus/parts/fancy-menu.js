@@ -15,12 +15,12 @@ import filter from 'lodash/filter'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import {toLaxTitleCase} from 'titlecase'
-import FoodItem from './foodItem'
-import DietaryFilters from './dietaryFilters'
+import FoodItem from './food-item'
+import DietaryFilters from './dietary-filters'
 
-import * as c from '../components/colors'
+import * as c from '../../components/colors'
 
-import type {MenuItemContainerType, MenuItemType, StationMenuType} from './types'
+import type {MenuItemContainerType, MenuItemType, StationMenuType} from '../types'
 
 let styles = StyleSheet.create({
   container: {

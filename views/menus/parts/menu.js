@@ -5,8 +5,8 @@ import {
   ScrollView,
 } from 'react-native'
 
-import MenuSection from './menuSection'
-import type {MenuSectionType} from './types'
+import {MenuSection} from './menu-section'
+import type {MenuSectionType} from '../simple-types'
 
 let styles = StyleSheet.create({
   container: {
@@ -15,7 +15,7 @@ let styles = StyleSheet.create({
   },
 })
 
-export default function MenuView({menu}: {menu: MenuSectionType[]}) {
+export function MenuView({menu}: {menu: MenuSectionType[]}) {
   return (
     <ScrollView style={styles.container}>
       {menu.map((data: MenuSectionType, i: number) =>

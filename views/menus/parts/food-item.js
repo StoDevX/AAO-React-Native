@@ -10,7 +10,7 @@ import {
 import keys from 'lodash/keys'
 import pick from 'lodash/pick'
 import map from 'lodash/map'
-import type {MenuItemType, ItemCorIconMapType, MasterCorIconMapType} from './types'
+import type {MenuItemType, ItemCorIconMapType, MasterCorIconMapType} from '../types'
 
 function getDietaryTagsDefault(filters: MasterCorIconMapType, dietary: ItemCorIconMapType): any[] {
   // filter the mapping of all icons by just the icons provided by this item

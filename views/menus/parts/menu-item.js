@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * A list of the items availiable from a single menuSection
@@ -27,9 +28,9 @@ let styles = StyleSheet.create({
   },
 })
 
-import type {MenuItemType} from './types'
+import type {MenuItemType} from '../types'
 
-export default function MenuItem({items, style}: {items: MenuItemType[], style: number|Object|Array<number|Object>}) {
+export function MenuItem({items, style}: {items: MenuItemType[], style: number|Object|Array<number|Object>}) {
   return (
     <View style={[styles.container, style]}>
       {items.map((menuItem: MenuItemType, i: number) =>

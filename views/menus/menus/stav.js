@@ -1,13 +1,13 @@
 // @flow
 import React from 'react'
-import LoadingView from '../components/loading'
-import FancyMenu from './fancyMenu'
+import LoadingView from '../../components/loading'
+import FancyMenu from '../parts/fancy-menu'
 
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 
-import type {BonAppResponseType, StationMenuType, MenuItemContainerType} from './types'
-import buildingHours from '../../data/building-hours.json'
+import type {BonAppResponseType, StationMenuType, MenuItemContainerType} from '../types'
+import buildingHours from '../../../data/building-hours.json'
 
 export default class StavMenuView extends React.Component {
   static menuUrl = 'http://legacy.cafebonappetit.com/api/2/menus?cafe=261'

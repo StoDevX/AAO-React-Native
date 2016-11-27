@@ -1,8 +1,8 @@
 // @flow
 
-import CageMenuView from './cage'
-import StavMenuView from './stav'
-import PauseMenuView from './pause'
+import CageMenuView from './menus/cage'
+import StavMenuView from './menus/stav'
+import PauseMenuView from './menus/pause'
 
 export default [
   {

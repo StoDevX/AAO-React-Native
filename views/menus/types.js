@@ -1,15 +1,4 @@
 // @flow
-// export type MenuItemType = {
-//   name: string,
-//   price: string,
-// };
-
-// export type MenuSectionType = {
-//   name: string,
-//   items: MenuItemType[],
-//   subtext: string,
-// };
-
 
 export type CurrencyStringType = string;
 export type HtmlStringType = string;
