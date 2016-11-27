@@ -79,7 +79,6 @@ const navbarShadows = Platform.OS === 'ios'
   }
   : {
     elevation: 4,
-    // elevation: 2,
   }
 
 import {Dimensions} from 'react-native'
