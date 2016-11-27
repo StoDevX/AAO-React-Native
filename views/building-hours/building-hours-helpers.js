@@ -32,7 +32,7 @@ export function parseHours({from: fromTime, to: toTime}: SingleBuildingScheduleT
   return {open, close}
 }
 
-export function formatStatusOfBuildingAtMoment(schedule: SingleBuildingScheduleType, m: momentT): string {
+export function formatBuildingTimes(schedule: SingleBuildingScheduleType, m: momentT): string {
   let {open, close} = parseHours(schedule, m)
 
   let openString = open.format(RESULT_FORMAT)
@@ -88,7 +88,7 @@ export function getDetailedBuildingStatus(info: BuildingType, m: momentT): [bool
 
     return filteredSchedules.map(schedule => {
       let isActive = isBuildingOpenAtMoment(schedule, m)
-      let status = formatStatusOfBuildingAtMoment(schedule, m)
+      let status = formatBuildingTimes(schedule, m)
       return [isActive, prefix, status]
     })
   })

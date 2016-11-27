@@ -17,7 +17,7 @@ import ParallaxView from 'react-native-parallax-view'
 import * as c from '../components/colors'
 import {
   normalizeBuildingSchedule,
-  formatStatusOfBuildingAtMoment,
+  formatBuildingTimes,
   summarizeDays,
   getShortBuildingStatus,
   isBuildingOpenAtMoment,
@@ -157,7 +157,7 @@ export class BuildingHoursDetailView extends React.Component {
                         </Text>
 
                         <Text style={[styles.scheduleHours, isActiveSchedule ? styles.bold : null]} numberOfLines={1}>
-                          {formatStatusOfBuildingAtMoment(schedule, this.state.now)}
+                          {formatBuildingTimes(schedule, this.state.now)}
                         </Text>
                       </View>
                     )
