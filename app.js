@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   container: {
     marginTop: Platform.OS === 'ios' ? 64 : 56,
     flex: 1,
-    backgroundColor: Platform.OS === 'ios' ? c.iosLightBackground : 'rgb(237, 237, 237)',
+    backgroundColor: Platform.OS === 'ios' ? c.iosLightBackground : c.androidLightBackground,
   },
   navigationBar: {
     backgroundColor: c.olevilleGold,
