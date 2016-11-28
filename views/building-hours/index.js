@@ -23,8 +23,22 @@ const buildingImages = {
   cage: require('../../data/images/buildinghours/cage.small.jpeg'),
   stav: require('../../data/images/buildinghours/stav.small.jpeg'),
   disco: require('../../data/images/buildinghours/disco.small.jpeg'),
+  alumni: require('../../data/images/buildinghours/alumni.jpg'),
+  boe: require('../../data/images/buildinghours/boe.jpg'),
+  buntrock: require('../../data/images/buildinghours/buntrock.jpg'),
+  christiansan: require('../../data/images/buildinghours/christiansan.jpg'),
+  dittmann: require('../../data/images/buildinghours/dittmann.jpg'),
+  music: require('../../data/images/buildinghours/hall.music.jpg'),
+  oldmain: require('../../data/images/buildinghours/oldmain.jpg'),
+  porter: require('../../data/images/buildinghours/porter.jpg'),
+  regents: require('../../data/images/buildinghours/regents.jpg'),
+  math: require('../../data/images/buildinghours/math.jpg'),
+  skifter: require('../../data/images/buildinghours/studioa.jpg'),
+  theater: require('../../data/images/buildinghours/theater.jpg'),
+  print: require('../../data/images/buildinghours/print.jpg'),
+  wellness: require('../../data/images/buildinghours/wellness.jpg'),
+  tomson: require('../../data/images/buildinghours/tomson.jpg'),
 }
-
 
 export default class BuildingHoursView extends React.Component {
   state = {
