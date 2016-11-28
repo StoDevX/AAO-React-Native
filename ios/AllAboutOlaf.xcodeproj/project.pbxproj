@@ -13,6 +13,8 @@
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00CFAFAE1D61761D00A6B735 /* images in Resources */ = {isa = PBXBuildFile; fileRef = 00CFAFAD1D61761D00A6B735 /* images */; };
+		00D33BE21DDA58A8001E830E /* All_About_Olaf_UI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33BE11DDA58A8001E830E /* All_About_Olaf_UI_Tests.swift */; };
+		00D33C031DDA598B001E830E /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33C011DDA5958001E830E /* SnapshotHelper.swift */; };
 		0AD888024DB21AAE85B016E3 /* libPods-AllAboutOlafTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E03F9833020DA82BB00EF77 /* libPods-AllAboutOlafTests.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
@@ -155,6 +157,13 @@
 			remoteGlobalIDString = 2D2A28131D9B038B00D4039D;
 			remoteInfo = "React-tvOS";
 		};
+		00D33BE41DDA58A8001E830E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
+			remoteInfo = AllAboutOlaf;
+		};
 		00E356F41AD99517003FC87E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
@@ -243,6 +252,11 @@
 		00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
 		00C8CB4C1D6EBA1A00E66E20 /* All About Olaf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "All About Olaf.entitlements"; path = "AllAboutOlaf/All About Olaf.entitlements"; sourceTree = "<group>"; };
 		00CFAFAD1D61761D00A6B735 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; name = images; path = ../data/images; sourceTree = "<group>"; };
+		00D33BDF1DDA58A8001E830E /* AllAboutOlafUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AllAboutOlafUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00D33BE11DDA58A8001E830E /* All_About_Olaf_UI_Tests.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = All_About_Olaf_UI_Tests.swift; sourceTree = "<group>"; };
+		00D33BE31DDA58A8001E830E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		00D33C001DDA5958001E830E /* AllAboutOlaf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AllAboutOlaf-Bridging-Header.h"; sourceTree = "<group>"; };
+		00D33C011DDA5958001E830E /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; };
 		00E356EE1AD99517003FC87E /* AllAboutOlafTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AllAboutOlafTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B7660587D10EF706A2DF67F /* Pods-AllAboutOlafTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllAboutOlafTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AllAboutOlafTests/Pods-AllAboutOlafTests.debug.xcconfig"; sourceTree = "<group>"; };
 		10892B9A230345CC9EC09E61 /* RNCookieManagerIOS.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCookieManagerIOS.xcodeproj; path = "../node_modules/react-native-cookies/RNCookieManagerIOS.xcodeproj"; sourceTree = "<group>"; };
@@ -286,6 +300,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		00D33BDC1DDA58A8001E830E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		00E356EB1AD99517003FC87E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -394,6 +415,17 @@
 				00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		00D33BE01DDA58A8001E830E /* All About Olaf UI Tests */ = {
+			isa = PBXGroup;
+			children = (
+				00D33C011DDA5958001E830E /* SnapshotHelper.swift */,
+				00D33BE11DDA58A8001E830E /* All_About_Olaf_UI_Tests.swift */,
+				00D33BE31DDA58A8001E830E /* Info.plist */,
+				00D33C001DDA5958001E830E /* AllAboutOlaf-Bridging-Header.h */,
+			);
+			path = "All About Olaf UI Tests";
 			sourceTree = "<group>";
 		};
 		1374372D1D7DF13A00FCA76C /* Products */ = {
@@ -543,6 +575,7 @@
 			children = (
 				13B07FAE1A68108700A75B9A /* AllAboutOlaf */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				00D33BE01DDA58A8001E830E /* All About Olaf UI Tests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				5A41494DACBB4D2795B46DE0 /* Resources */,
 				85B78A622B9B7A13A36B906C /* Pods */,
@@ -557,6 +590,7 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* All About Olaf.app */,
 				00E356EE1AD99517003FC87E /* AllAboutOlafTests.xctest */,
+				00D33BDF1DDA58A8001E830E /* AllAboutOlafUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -575,6 +609,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		00D33BDE1DDA58A8001E830E /* AllAboutOlafUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 00D33BFF1DDA58A8001E830E /* Build configuration list for PBXNativeTarget "AllAboutOlafUITests" */;
+			buildPhases = (
+				00D33BDB1DDA58A8001E830E /* Sources */,
+				00D33BDC1DDA58A8001E830E /* Frameworks */,
+				00D33BDD1DDA58A8001E830E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				00D33BE51DDA58A8001E830E /* PBXTargetDependency */,
+			);
+			name = AllAboutOlafUITests;
+			productName = "All About Olaf UI Tests";
+			productReference = 00D33BDF1DDA58A8001E830E /* AllAboutOlafUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		00E356ED1AD99517003FC87E /* AllAboutOlafTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "AllAboutOlafTests" */;
@@ -623,15 +675,23 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0810;
 				LastUpgradeCheck = 810;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
+					00D33BDE1DDA58A8001E830E = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 13B07F861A680F5B00A75B9A;
+					};
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 363G7T9TGX;
+						LastSwiftMigration = 0810;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -732,6 +792,7 @@
 			targets = (
 				13B07F861A680F5B00A75B9A /* AllAboutOlaf */,
 				00E356ED1AD99517003FC87E /* AllAboutOlafTests */,
+				00D33BDE1DDA58A8001E830E /* AllAboutOlafUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -922,6 +983,13 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		00D33BDD1DDA58A8001E830E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		00E356EC1AD99517003FC87E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -992,7 +1060,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		879730D79F6741B069AB266C /* [CP] Check Pods Manifest.lock */ = {
@@ -1007,7 +1075,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		BD799EE6C70FCDB60272FEE3 /* [CP] Embed Pods Frameworks */ = {
@@ -1058,6 +1126,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		00D33BDB1DDA58A8001E830E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00D33BE21DDA58A8001E830E /* All_About_Olaf_UI_Tests.swift in Sources */,
+				00D33C031DDA598B001E830E /* SnapshotHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		00E356EA1AD99517003FC87E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1077,6 +1154,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		00D33BE51DDA58A8001E830E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 13B07F861A680F5B00A75B9A /* AllAboutOlaf */;
+			targetProxy = 00D33BE41DDA58A8001E830E /* PBXContainerItemProxy */;
+		};
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 13B07F861A680F5B00A75B9A /* AllAboutOlaf */;
@@ -1097,6 +1179,44 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		00D33BE61DDA58A8001E830E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				INFOPLIST_FILE = "All About Olaf UI Tests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "hawkrives.All-About-Olaf-UI-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = AllAboutOlaf;
+			};
+			name = Debug;
+		};
+		00D33BE71DDA58A8001E830E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				INFOPLIST_FILE = "All About Olaf UI Tests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "hawkrives.All-About-Olaf-UI-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = AllAboutOlaf;
+			};
+			name = Release;
+		};
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0B7660587D10EF706A2DF67F /* Pods-AllAboutOlafTests.debug.xcconfig */;
@@ -1146,6 +1266,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = NO;
 				ENABLE_TESTABILITY = YES;
 				HEADER_SEARCH_PATHS = (
@@ -1167,6 +1288,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "NFMTHAZVS9.com.drewvolz.stolaf-";
 				PRODUCT_NAME = "All About Olaf";
+				SWIFT_OBJC_BRIDGING_HEADER = "All About Olaf UI Tests/AllAboutOlaf-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1176,6 +1300,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1195,6 +1320,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "NFMTHAZVS9.com.drewvolz.stolaf-";
 				PRODUCT_NAME = "All About Olaf";
+				SWIFT_OBJC_BRIDGING_HEADER = "All About Olaf UI Tests/AllAboutOlaf-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -1302,6 +1429,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		00D33BFF1DDA58A8001E830E /* Build configuration list for PBXNativeTarget "AllAboutOlafUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				00D33BE61DDA58A8001E830E /* Debug */,
+				00D33BE71DDA58A8001E830E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "AllAboutOlafTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

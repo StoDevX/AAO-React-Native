@@ -1,0 +1,14 @@
+# For all available options run `match --help`
+# Remove the # in the beginning of the line to enable the other options
+
+git_url "git+ssh://git@github.com/hawkrives/aao-keys"
+
+# The default type, can be: appstore, adhoc or development
+# Can be overruled with `match $type`
+type "development"
+
+# Your Apple Developer Portal username
+username "magneticpapergarden@gmail.com"
+
+# The app identifiers to get profiles for
+app_identifier ["com.volz.drew.aao.rogue"]
