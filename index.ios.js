@@ -4,8 +4,13 @@ import OneSignal from 'react-native-onesignal'
 AppRegistry.registerComponent('AllAboutOlaf', () => App)
 
 let pendingNotifications = []
-let _navigator // If applicable, declare a variable for accessing your navigator object to handle payload.
-function handleNotification(notification) { // If you want to handle the notifiaction with a payload.
+
+// If applicable, declare a variable for accessing your navigator object to handle payload.
+let _navigator
+
+// If you want to handle the notifiaction with a payload.
+function handleNotification(notification) {
+  console.log('notification', notification)
   // _navigator.to('main.post', notification.data.title, {
   //  article: {
   //    title: notification.data.title,
@@ -16,11 +21,11 @@ function handleNotification(notification) { // If you want to handle the notifia
 }
 
 OneSignal.configure({
-  onIdsAvailable: function(device) {
+  onIdsAvailable(device) {
     console.log('UserId = ', device.userId)
     console.log('PushToken = ', device.pushToken)
   },
-  onNotificationOpened: function(message, data, isActive) {
+  onNotificationOpened(message, data, isActive) {
     let notification = {message: message, data: data, isActive: isActive}
     console.log('NOTIFICATION OPENED: ', notification)
 
