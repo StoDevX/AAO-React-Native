@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		44639E409E86F1D010234EA2AE73A21B /* Pods-AllAboutOlaf-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D0DF1F07B5AA8570C97FCB744840F7C /* Pods-AllAboutOlaf-dummy.m */; };
-		664F82ACF541E6C81A2FB743E54B9903 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC22C73C1608DFA5D5D78BDCB218219 /* Foundation.framework */; };
-		6C71BA25F6AEE13023B511597A6ACEB4 /* Pods-AllAboutOlafTests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D8EAB8EA744F43958B4421C6AF6284A2 /* Pods-AllAboutOlafTests-dummy.m */; };
-		D8EAF99C1B13B7B8E99211878730CF7E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC22C73C1608DFA5D5D78BDCB218219 /* Foundation.framework */; };
+		251946BD70BB43C464B346FB8ABFC7AB /* Pods-AllAboutOlaf-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D0DF1F07B5AA8570C97FCB744840F7C /* Pods-AllAboutOlaf-dummy.m */; };
+		3EF9BA21CEFFD64E740251ABA1D717D4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
+		690E32E7AD4C7D3B6C49AC5C0DC6A877 /* Pods-AllAboutOlafTests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D8EAB8EA744F43958B4421C6AF6284A2 /* Pods-AllAboutOlafTests-dummy.m */; };
+		CC73A0929C514F431CB638DF1843835C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,31 +24,31 @@
 		8A98DA003BC3D16244E1E32F64E16E21 /* OneSignal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OneSignal.framework; path = iOS_SDK/Framework/OneSignal.framework; sourceTree = "<group>"; };
 		8EA6C43B5C4BA605D76BB99A088267B6 /* Pods-AllAboutOlafTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-AllAboutOlafTests.debug.xcconfig"; sourceTree = "<group>"; };
 		92855F6DFDA0BFE66BDEDA2110C7137E /* Pods-AllAboutOlaf-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-AllAboutOlaf-frameworks.sh"; sourceTree = "<group>"; };
-		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		BD6D3B0C9FA90FF32839A97ADC12C82C /* Pods-AllAboutOlaf-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-AllAboutOlaf-resources.sh"; sourceTree = "<group>"; };
 		BF1949CC938E0C2B5384D1CFEC74019F /* Pods-AllAboutOlaf.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-AllAboutOlaf.release.xcconfig"; sourceTree = "<group>"; };
-		C3FA5C0E8205F2CC073D836590183149 /* libPods-AllAboutOlafTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AllAboutOlafTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3FA5C0E8205F2CC073D836590183149 /* libPods-AllAboutOlafTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-AllAboutOlafTests.a"; path = "libPods-AllAboutOlafTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C98AE29F963978583BF8D637C575A8F6 /* Pods-AllAboutOlafTests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-AllAboutOlafTests-acknowledgements.markdown"; sourceTree = "<group>"; };
-		CAC2C5262E0E402C53C04C6B07620530 /* libPods-AllAboutOlaf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AllAboutOlaf.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CEC22C73C1608DFA5D5D78BDCB218219 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		CAC2C5262E0E402C53C04C6B07620530 /* libPods-AllAboutOlaf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-AllAboutOlaf.a"; path = "libPods-AllAboutOlaf.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		D7A47DF55F9F43FD17A472FCE809D930 /* Pods-AllAboutOlafTests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-AllAboutOlafTests-acknowledgements.plist"; sourceTree = "<group>"; };
 		D8EAB8EA744F43958B4421C6AF6284A2 /* Pods-AllAboutOlafTests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-AllAboutOlafTests-dummy.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		32FDBCA58CB73BF0FE9E7DB907FBE4DD /* Frameworks */ = {
+		3669AD561C6A7FC35A42C69952360B5F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8EAF99C1B13B7B8E99211878730CF7E /* Foundation.framework in Frameworks */,
+				3EF9BA21CEFFD64E740251ABA1D717D4 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FFF406C431D3303E97D0BF80B875C179 /* Frameworks */ = {
+		A5D22E6AADA45141113011072B9050E0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				664F82ACF541E6C81A2FB743E54B9903 /* Foundation.framework in Frameworks */,
+				CC73A0929C514F431CB638DF1843835C /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,14 +79,6 @@
 			path = "Target Support Files/Pods-AllAboutOlafTests";
 			sourceTree = "<group>";
 		};
-		3DCAB2B7CDE207B3958B6CB957FCC758 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				CEC22C73C1608DFA5D5D78BDCB218219 /* Foundation.framework */,
-			);
-			name = iOS;
-			sourceTree = "<group>";
-		};
 		6202124E9D433C3EA7B1CF2F09917CA5 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -110,6 +102,14 @@
 			path = "Target Support Files/Pods-AllAboutOlaf";
 			sourceTree = "<group>";
 		};
+		7531C8F8DE19F1AA3C8A7AC97A91DC29 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				CBB3DE36805AF21409EC968A9691732F /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
 		7DB346D0F39D3F0E887471402A8071AB = {
 			isa = PBXGroup;
 			children = (
@@ -126,13 +126,14 @@
 			children = (
 				FF9CEBD734AC19E8ADE2CA12CDF9AD21 /* Frameworks */,
 			);
+			name = OneSignal;
 			path = OneSignal;
 			sourceTree = "<group>";
 		};
 		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3DCAB2B7CDE207B3958B6CB957FCC758 /* iOS */,
+				7531C8F8DE19F1AA3C8A7AC97A91DC29 /* iOS */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -157,28 +158,12 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		886A518F86F22903ED279CC0F5716D6E /* Pods-AllAboutOlafTests */ = {
+		CE0A065D3CEA75B41E997124A5D010EE /* Pods-AllAboutOlaf */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 799B6C6B8BD32242CE90A8A309065FA1 /* Build configuration list for PBXNativeTarget "Pods-AllAboutOlafTests" */;
+			buildConfigurationList = A4720F56C635E5AD11018C7CFD57709A /* Build configuration list for PBXNativeTarget "Pods-AllAboutOlaf" */;
 			buildPhases = (
-				D73A08AE7179340C684498CAF8852F26 /* Sources */,
-				32FDBCA58CB73BF0FE9E7DB907FBE4DD /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Pods-AllAboutOlafTests";
-			productName = "Pods-AllAboutOlafTests";
-			productReference = C3FA5C0E8205F2CC073D836590183149 /* libPods-AllAboutOlafTests.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		FADC6EDA18D2B7218DCB725267C35D94 /* Pods-AllAboutOlaf */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C7270C24214ADEA80AF0BC13A8B84513 /* Build configuration list for PBXNativeTarget "Pods-AllAboutOlaf" */;
-			buildPhases = (
-				9346DA09FC528DC846E22C2ECA6624F7 /* Sources */,
-				FFF406C431D3303E97D0BF80B875C179 /* Frameworks */,
+				AD466A8E7771410FA61CC5D1FCB0264E /* Sources */,
+				A5D22E6AADA45141113011072B9050E0 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -187,6 +172,22 @@
 			name = "Pods-AllAboutOlaf";
 			productName = "Pods-AllAboutOlaf";
 			productReference = CAC2C5262E0E402C53C04C6B07620530 /* libPods-AllAboutOlaf.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		FA3FD8235CC1E0E85EF9C2C9D6A6B6F8 /* Pods-AllAboutOlafTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8571E335AFDE7A9963C5A1BF67EA87FE /* Build configuration list for PBXNativeTarget "Pods-AllAboutOlafTests" */;
+			buildPhases = (
+				9C2948521EAAA80C73B9F8393EE379CA /* Sources */,
+				3669AD561C6A7FC35A42C69952360B5F /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Pods-AllAboutOlafTests";
+			productName = "Pods-AllAboutOlafTests";
+			productReference = C3FA5C0E8205F2CC073D836590183149 /* libPods-AllAboutOlafTests.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -210,33 +211,102 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				FADC6EDA18D2B7218DCB725267C35D94 /* Pods-AllAboutOlaf */,
-				886A518F86F22903ED279CC0F5716D6E /* Pods-AllAboutOlafTests */,
+				CE0A065D3CEA75B41E997124A5D010EE /* Pods-AllAboutOlaf */,
+				FA3FD8235CC1E0E85EF9C2C9D6A6B6F8 /* Pods-AllAboutOlafTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		9346DA09FC528DC846E22C2ECA6624F7 /* Sources */ = {
+		9C2948521EAAA80C73B9F8393EE379CA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				44639E409E86F1D010234EA2AE73A21B /* Pods-AllAboutOlaf-dummy.m in Sources */,
+				690E32E7AD4C7D3B6C49AC5C0DC6A877 /* Pods-AllAboutOlafTests-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D73A08AE7179340C684498CAF8852F26 /* Sources */ = {
+		AD466A8E7771410FA61CC5D1FCB0264E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C71BA25F6AEE13023B511597A6ACEB4 /* Pods-AllAboutOlafTests-dummy.m in Sources */,
+				251946BD70BB43C464B346FB8ABFC7AB /* Pods-AllAboutOlaf-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		0ACDCBCB0B6796575F46FFA2F5410C6B /* Release */ = {
+		3B0ABBE70FB6B24720C4A43B159585AB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 42690C44CDF5410726F61FAC3127F475 /* Pods-AllAboutOlafTests.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		4D57325B88E4ED89497E2C77788DC7F2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF1949CC938E0C2B5384D1CFEC74019F /* Pods-AllAboutOlaf.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		5F53386DB2B0AFC7C1316A16C0DC1072 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8EA6C43B5C4BA605D76BB99A088267B6 /* Pods-AllAboutOlafTests.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		8DED8AD26D381A6ACFF202E5217EC498 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -254,6 +324,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -268,97 +339,14 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = "${SRCROOT}/../build";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		1D19F9BBD29790FD18A6FB3ACA11CD2C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8EA6C43B5C4BA605D76BB99A088267B6 /* Pods-AllAboutOlafTests.debug.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
-				MACH_O_TYPE = staticlib;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		5A886AF538F13775C94CB169F455983D /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 42690C44CDF5410726F61FAC3127F475 /* Pods-AllAboutOlafTests.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
-				MACH_O_TYPE = staticlib;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
-		6352B8F66F6181F9307389849F1C3017 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BF1949CC938E0C2B5384D1CFEC74019F /* Pods-AllAboutOlaf.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
-				MACH_O_TYPE = staticlib;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
-		D001268B3806370D4156DDC1C5BD6337 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6559C58FCFBB0645F7A5735F98F454D3 /* Pods-AllAboutOlaf.debug.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
-				MACH_O_TYPE = staticlib;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		D3E3D092A3FF7311A98E44BBA36FFD12 /* Debug */ = {
+		9E1E4E48AF2EAB23169E611BF694090A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -376,6 +364,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -395,8 +384,32 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		FFC7BAF45E633EB3ABE0711D8A3D4E95 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6559C58FCFBB0645F7A5735F98F454D3 /* Pods-AllAboutOlaf.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -406,26 +419,26 @@
 		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D3E3D092A3FF7311A98E44BBA36FFD12 /* Debug */,
-				0ACDCBCB0B6796575F46FFA2F5410C6B /* Release */,
+				9E1E4E48AF2EAB23169E611BF694090A /* Debug */,
+				8DED8AD26D381A6ACFF202E5217EC498 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		799B6C6B8BD32242CE90A8A309065FA1 /* Build configuration list for PBXNativeTarget "Pods-AllAboutOlafTests" */ = {
+		8571E335AFDE7A9963C5A1BF67EA87FE /* Build configuration list for PBXNativeTarget "Pods-AllAboutOlafTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1D19F9BBD29790FD18A6FB3ACA11CD2C /* Debug */,
-				5A886AF538F13775C94CB169F455983D /* Release */,
+				5F53386DB2B0AFC7C1316A16C0DC1072 /* Debug */,
+				3B0ABBE70FB6B24720C4A43B159585AB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C7270C24214ADEA80AF0BC13A8B84513 /* Build configuration list for PBXNativeTarget "Pods-AllAboutOlaf" */ = {
+		A4720F56C635E5AD11018C7CFD57709A /* Build configuration list for PBXNativeTarget "Pods-AllAboutOlaf" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D001268B3806370D4156DDC1C5BD6337 /* Debug */,
-				6352B8F66F6181F9307389849F1C3017 /* Release */,
+				FFC7BAF45E633EB3ABE0711D8A3D4E95 /* Debug */,
+				4D57325B88E4ED89497E2C77788DC7F2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
