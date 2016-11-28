@@ -35,6 +35,8 @@ const buildingImages = {
   math: require('../../data/images/buildinghours/math.jpg'),
   skifter: require('../../data/images/buildinghours/studioa.jpg'),
   theater: require('../../data/images/buildinghours/theater.jpg'),
+  print: require('../../data/images/buildinghours/print.jpg'),
+  wellness: require('../../data/images/buildinghours/wellness.jpg'),
   tomson: require('../../data/images/buildinghours/tomson.jpg'),
 }
 
