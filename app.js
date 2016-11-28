@@ -156,7 +156,7 @@ function openSettings(route, navigator) {
 }
 
 function LeftButton(route, navigator, index, navState) {
-  if (route.sceneConfig === Navigator.SceneConfigs.FloatFromBottom) {
+  if (route.onDismiss) {
     return (
       <TouchableOpacity
         style={[styles.backButton, {marginLeft: 10, marginVertical: Platform.OS === 'android' ? 21 : 16}]}
