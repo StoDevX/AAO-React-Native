@@ -17,7 +17,6 @@ import {
 } from 'react-native'
 
 import * as c from './components/colors'
-import map from 'lodash/map'
 import fromPairs from 'lodash/fromPairs'
 
 import EntypoIcon from 'react-native-vector-icons/Entypo'
@@ -30,9 +29,7 @@ import LoadingView from './components/loading'
 
 const window = Dimensions.get('window')
 
-let objViews = fromPairs(map(allViews, v => {
-  return [v.view, v]
-}))
+let objViews = fromPairs(allViews.map(v => ([v.view, v])))
 
 const ReorderIcon = () =>
   <IonIcon name='ios-reorder' size={32} style={styles.listButtonIcon} />
@@ -116,34 +113,26 @@ export default class EditHomeView extends React.Component {
 
   state = {
     loaded: false,
-    order: [],
+    order: Object.keys(objViews),
   }
 
   componentWillMount() {
     this.loadData()
   }
 
-  _renderRow = ({data, active}) => {
-    return (
-      <Row
-        data={data}
-        active={active}
-      />
-    )
+  renderRow({data, active}) {
+    return <Row data={data} active={active} />
   }
 
   loadData = async () => {
     this.setState({loaded: false})
 
-    let savedOrder = await Promise.all([
-      AsyncStorage.getItem('homescreen:view-order').then(val => JSON.parse(val)),
-    ])
+    let savedOrder = JSON.parse(await AsyncStorage.getItem('homescreen:view-order'))
 
-    if (savedOrder) {
-      this.setState({order: savedOrder[0]})
-    }
+    // check to see if we have a modified view order or not
+    savedOrder = savedOrder || Object.keys(objViews)
 
-    this.setState({loaded: true})
+    this.setState({loaded: true, order: savedOrder})
   }
 
   onOrderChange = order => {
@@ -161,9 +150,10 @@ export default class EditHomeView extends React.Component {
           style={styles.list}
           contentContainerStyle={styles.contentContainer}
           data={objViews}
-          order={this.state.order || Object.keys(objViews)}
-          onChangeOrder={order => this.onOrderChange(order)}
-          renderRow={this._renderRow} />
+          order={this.state.order}
+          onChangeOrder={this.onOrderChange}
+          renderRow={this.renderRow}
+        />
       </View>
     )
   }
