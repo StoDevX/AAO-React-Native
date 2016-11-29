@@ -14,10 +14,15 @@ update_fastlane
 # Update this if you use features of a newer version:
 fastlane_version "1.108.0"
 
+hockeyapp_api_token = ENV["HOCKEYAPP_TOKEN"]
 
-desc "Makes a changelog from the git commits that were committed today"
-private_lane :make_changelog do
-  sh("git log --since yesterday --pretty='%an, %aD (%h)%n> %s%n' | sed 's/^/    /'")
+
+desc "Adds any unregistered devices to the provisioning profile"
+lane :register do
+  id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+  new_devices = get_unprovisioned_devices_from_hockey(app_bundle_id: id)
+  register_devices(devices: new_devices)
+  match(force: true)
 end
 
 
@@ -34,8 +39,8 @@ platform :ios do
     match(readonly: true)
 
     increment_build_number(
-      build_number: ENV["TRAVIS_BUILD_NUMBER"] || ENV["BUILD"],
-      xcodeproj: "ios/AllAboutOlaf.xcodeproj",
+      build_number: get_version(platform: 'iOS'),
+      xcodeproj: "./ios/AllAboutOlaf.xcodeproj",
     )
 
     # Build the app
@@ -47,7 +52,7 @@ platform :ios do
     build
 
     hockey(
-      api_token: "28aa2d30407042b49855e871db8a56ed",
+      api_token: hockeyapp_api_token,
       ipa: "./ios/build/AllAboutOlaf.ipa",
       commit_sha: ENV["TRAVIS_COMMIT"],
       notes: make_changelog,
@@ -57,15 +62,19 @@ end
 
 
 platform :android do
-  before_all do
-  end
+  dir = "./android"
 
   desc "Makes a build"
   lane :build do
+    increment_version_code(
+      version_code: get_version(platform: 'Android'),
+      app_folder_name: dir,
+    )
+
     gradle(
       task: "assemble",
       build_type: "Release",
-      project_dir: "android",
+      project_dir: dir,
       print_command: true,
       print_command_output: true,
     )
@@ -77,10 +86,35 @@ platform :android do
 
     # Upload to HockeyApp
     hockey(
-      api_token: "28aa2d30407042b49855e871db8a56ed",
+      api_token: hockeyapp_api_token,
       apk: "./android/app/build/outputs/apk/app-release-unsigned.apk",
       commit_sha: ENV["TRAVIS_COMMIT"],
       notes: make_changelog,
     )
   end
 end
+
+
+# Below here are the custom helpers we've defined
+
+desc "Makes a changelog from the git commits that were committed today"
+private_lane :make_changelog do
+  sh("git log --since yesterday --pretty='%an, %aD (%h)%n> %s%n' | sed 's/^/    /'")
+end
+
+
+desc "Get the hockeyapp version"
+private_lane :get_hockeyapp_version do |options|
+  latest_hockeyapp_version_number(
+    api_token: hockeyapp_api_token,
+    app_name: "All About Olaf",
+    platform: options[:platform],
+  )
+end
+
+
+desc "Gets the version, either from Travis or from Hockey"
+private_lane :get_version do |options|
+  ENV["TRAVIS_BUILD_NUMBER"] or get_hockeyapp_version(platform: options[:platform]) + 1
+end
+

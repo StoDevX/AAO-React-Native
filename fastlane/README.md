@@ -5,6 +5,14 @@ fastlane documentation
 sudo gem install fastlane
 ```
 # Available Actions
+### register
+```
+fastlane register
+```
+Adds any unregistered devices to the provisioning profile
+
+----
+
 ## iOS
 ### ios test
 ```
@@ -16,8 +24,6 @@ Runs all the tests
 fastlane ios beta
 ```
 Submit a new Beta Build to HockeyApp
-
-This will also make sure the profile is up to date
 
 ----
 
