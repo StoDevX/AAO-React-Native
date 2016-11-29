@@ -34,6 +34,12 @@ let objViews = fromPairs(map(allViews, v => {
   return [v.view, v]
 }))
 
+const ReorderIcon = () =>
+  <IonIcon name='ios-reorder' size={32} style={styles.listButtonIcon} />
+
+const MenuIcon = ({icon, tint}: {icon: string, tint: string}) =>
+  <EntypoIcon name={icon} size={32} style={[styles.rectangleButtonIcon, {color: tint}]} />
+
 class Row extends Component {
   static propTypes = {
     active: React.PropTypes.bool,
@@ -90,23 +96,13 @@ class Row extends Component {
   }
 
   render() {
-    const {data} = this.props
     return (
       <Animated.View style={[styles.row, this.state.style]}>
-          <EntypoIcon
-            name={data.icon}
-            size={32}
-            style={[styles.rectangleButtonIcon, {color: data.tint}]}
-          />
-          <Text
-            style={[styles.text, {color: data.tint}]}>
-            {data.title}
-          </Text>
-          <IonIcon
-            size={32}
-            style={styles.listButtonIcon}
-            name='ios-reorder'
-          />
+        <MenuIcon tint={this.props.data.tint} />
+        <Text style={[styles.text, {color: this.props.data.tint}]}>
+          {this.props.data.title}
+        </Text>
+        <ReorderIcon />
       </Animated.View>
     )
   }
