@@ -4,7 +4,9 @@ import {Navigator} from 'react-native'
 
 export type TopLevelViewPropsType = {
   navigator: typeof Navigator,
-  route: Object,
+  route: {
+  	index: number,
+  },
 };
 
 export const TopLevelViewPropTypes = {
