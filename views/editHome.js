@@ -24,13 +24,13 @@ import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
 import SortableList from 'react-native-sortable-list'
 
-import {views} from './home'
+import {allViews} from './home'
 import LoadingView from './components/loading'
 //import AsyncStorageHOC from './components/asyncStorageHOC'
 
 const window = Dimensions.get('window')
 
-let objViews = fromPairs(map(views, v => {
+let objViews = fromPairs(map(allViews, v => {
   return [v.view, v]
 }))
 

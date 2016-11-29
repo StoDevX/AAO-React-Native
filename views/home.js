@@ -29,7 +29,7 @@ let Viewport = Dimensions.get('window')
 
 type ViewType = {view: string, title: string, icon: string, tint: string};
 
-export const views: ViewType[] = [
+export const allViews: ViewType[] = [
   {view: 'MenusView', title: 'Menus', icon: 'bowl', tint: c.emerald},
   {view: 'SISView', title: 'SIS', icon: 'fingerprint', tint: c.goldenrod},
   {view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock', tint: c.wave},
@@ -126,7 +126,7 @@ export default class HomePageScene extends React.Component {
         route={this.props.route}
         navigator={this.props.navigator}
         order={this.state.order}
-        views={views}
+        views={allViews}
       />
     )
   }
