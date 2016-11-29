@@ -191,13 +191,13 @@ let styles = StyleSheet.create({
   },
   rectangleButtonIcon: {
     marginRight: 20,
-    borderRadius: 20,
+    // borderRadius: 20,
     color: c.white,
     paddingLeft: 10,
     paddingRight: 10,
   },
   listButtonIcon: {
-    borderRadius: 20,
+    // borderRadius: 20,
     color: c.black,
     paddingLeft: 10,
     paddingRight: 10,
@@ -206,12 +206,5 @@ let styles = StyleSheet.create({
     flex: 1,
     fontSize: 18,
     color: c.white,
-  },
-  help: {
-    fontSize: 15,
-    color: c.black,
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
   },
 })
