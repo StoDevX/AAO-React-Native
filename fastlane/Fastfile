@@ -32,11 +32,18 @@ platform :ios do
     scan
   end
 
+  desc "Activate the rogue signing team"
+  private_lane :go_rogue do
+    sh("cd .. && ruby scripts/go-rogue.rb")
+  end
+
   desc "Provisions the profiles; bumps the build number; builds the app"
   private_lane :build do
     # Set up code signing correctly
     # (more information: https://codesigning.guide)
     match(readonly: true)
+
+    go_rogue
 
     increment_build_number(
       build_number: get_version(platform: 'iOS'),
