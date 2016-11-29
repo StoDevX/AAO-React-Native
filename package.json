@@ -80,7 +80,7 @@
     "eslint-plugin-react": "6.7.1",
     "flow-bin": "0.33.0",
     "jest": "17.0.2",
-    "jest-react-native": "17.0.2",
+    "jest-react-native": "17.1.0",
     "react-test-renderer": "15.4.1"
   }
 }
