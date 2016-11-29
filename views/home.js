@@ -60,11 +60,11 @@ export default class HomePageScene extends React.Component {
   }
 
   loadData = async () => {
-    let savedOrder = await Promise.all([
-      AsyncStorage.getItem('homescreen:view-order').then(val => JSON.parse(val)),
-    ])
+    let savedOrder = JSON.parse(await AsyncStorage.getItem('homescreen:view-order'))
+
     // check to see if we have a modified view order or not
-    savedOrder = savedOrder ? savedOrder[0] : []
+    savedOrder = savedOrder || []
+
     this.setState({order: sortBy(views, view => savedOrder.indexOf(view.view))})
   }
 
