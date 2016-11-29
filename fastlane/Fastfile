@@ -14,7 +14,7 @@ update_fastlane
 # Update this if you use features of a newer version:
 fastlane_version "1.108.0"
 
-hockeyapp_api_token = "28aa2d30407042b49855e871db8a56ed"
+hockeyapp_api_token = ENV["HOCKEYAPP_TOKEN"]
 
 
 desc "Adds any unregistered devices to the provisioning profile"
