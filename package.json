@@ -15,6 +15,7 @@
     "build:ios": "xcodebuild -configuration Release -workspace ios/AllAboutOlaf.xcworkspace -scheme AllAboutOlaf -sdk iphonesimulator -destination platform='iOS Simulator,name=iPhone 5s,OS=9.2' | xcpretty",
     "build:android:unix": "cd android && ./gradlew assembleRelease --info --console=plain",
     "build:android:win": "cd android && .\\gradlew assembleRelease --info --console=plain",
+    "rogue": "ruby scripts/go-rogue.rb",
     "test": "npm run flow && npm run test:js",
     "test:js": "jest",
     "test:js:coverage": "jest --coverage",
