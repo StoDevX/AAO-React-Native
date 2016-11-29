@@ -19,6 +19,7 @@ export const yellow = '#FFDC00'
 
 export const iosGray = silver
 
+export const androidLightBackground = 'rgb(244, 244, 244)'
 export const iosLightBackground = 'rgb(240, 239, 245)'
 export const iosLightBorder = 'rgb(199, 199, 201)'
 export const iosText = 'rgb(199, 198, 206)'

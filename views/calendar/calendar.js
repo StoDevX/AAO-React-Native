@@ -17,6 +17,7 @@ import {
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
 import delay from 'delay'
+import {Separator} from '../components/separator'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
 import EventView from './event'
@@ -147,7 +148,7 @@ export default class CalendarView extends React.Component {
   }
 
   renderSeparator = (sectionID: any, rowID: any) => {
-    return <View key={`${sectionID}-${rowID}`} style={styles.separator} />
+    return <Separator key={`${sectionID}-${rowID}`} />
   }
 
   render() {
@@ -202,10 +203,6 @@ let styles = StyleSheet.create({
   row: {
     // marginLeft: 10,
     paddingRight: 10,
-  },
-  separator: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ebebeb',
   },
   rowSectionHeader: {
     backgroundColor: c.iosListSectionHeader,

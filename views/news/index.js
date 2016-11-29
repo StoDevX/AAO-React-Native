@@ -5,19 +5,18 @@
  */
 
 import React from 'react'
-import {StyleSheet, Navigator} from 'react-native'
+import {StyleSheet} from 'react-native'
 
+import type {TopLevelViewPropsType} from '../types'
+import {TopLevelViewPropTypes} from '../types'
 import TabbedView from '../components/tabbed-view'
 import tabs from './tabs'
 
 
-export default function NewsPage({navigator, route}: {navigator: typeof Navigator, route: Object}) {
+export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
   return <TabbedView style={styles.container} tabs={tabs} navigator={navigator} route={route} />
 }
-NewsPage.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator).isRequired,
-  route: React.PropTypes.object.isRequired,
-}
+NewsPage.propTypes = TopLevelViewPropTypes
 
 let styles = StyleSheet.create({
   container: {

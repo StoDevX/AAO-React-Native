@@ -19,7 +19,7 @@ const TIMEZONE = 'America/Winnipeg'
 
 let styles = StyleSheet.create({
   container: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
     borderColor: '#c8c7cc',
     backgroundColor: Platform.OS === 'ios' ? 'transparent' : '#ffffff',
     elevation: 5,

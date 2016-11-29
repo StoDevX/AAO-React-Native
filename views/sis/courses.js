@@ -22,6 +22,7 @@ import zip from 'lodash/zip'
 import isError from 'lodash/isError'
 import _isNaN from 'lodash/isNaN'
 import isNil from 'lodash/isNil'
+import {Separator} from '../components/separator'
 import LoadingScreen from '../components/loading'
 import type {CourseType} from '../../lib/courses'
 import {loadAllCourses} from '../../lib/courses'
@@ -166,7 +167,7 @@ export default class CoursesView extends React.Component {
   }
 
   renderSeparator = (sectionID: any, rowID: any) => {
-    return <View key={`${sectionID}-${rowID}`} style={styles.separator} />
+    return <Separator key={`${sectionID}-${rowID}`} style={styles.separator} />
   }
 
   render() {
@@ -212,8 +213,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   separator: {
-    borderBottomWidth: Platform.OS === 'android' ? 1 : StyleSheet.hairlineWidth,
-    borderBottomColor: '#ebebeb',
     marginLeft: 20,
   },
   rowContainer: {

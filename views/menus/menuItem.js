@@ -1,4 +1,3 @@
-// @flow
 /**
  * All About Olaf
  * A list of the items availiable from a single menuSection

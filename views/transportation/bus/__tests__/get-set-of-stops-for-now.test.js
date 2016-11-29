@@ -1,4 +1,3 @@
-// @flow
 import getSetOfStopsForNow from '../get-set-of-stops-for-now'
 import moment from 'moment'
 
