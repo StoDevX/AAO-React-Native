@@ -13,16 +13,20 @@ import {
   TouchableOpacity,
   StatusBar,
   Platform,
+  AsyncStorage,
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/Entypo'
 import * as c from './components/colors'
+import sortBy from 'lodash/sortBy'
+//import AsyncStorageHOC from './components/asyncStorageHOC'
 
 const Dimensions = require('Dimensions')
 let Viewport = Dimensions.get('window')
 
 type ViewType = {view: string, title: string, icon: string, tint: string};
-const views: ViewType[] = [
+
+export const views: ViewType[] = [
   {view: 'MenusView', title: 'Menus', icon: 'bowl', tint: c.emerald},
   {view: 'SISView', title: 'SIS', icon: 'fingerprint', tint: c.goldenrod},
   {view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock', tint: c.wave},
@@ -37,49 +41,75 @@ const views: ViewType[] = [
   {view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer', tint: c.grapefruit},
 ]
 
+export default class HomePageScene extends React.Component {
+  static propTypes = {
+    navigator: React.PropTypes.instanceOf(Navigator),
+    route: React.PropTypes.object,
+  }
 
-type ScenePropsType = {navigator: typeof Navigator, route: Object};
-export default function HomePageScene({navigator, route}: ScenePropsType) {
-  return (
-    <ScrollView
-      overflow={'hidden'}
-      alwaysBounceHorizontal={false}
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}
-      style={styles.scrollView}
-      //contentContainerStyle={Platform.OS === 'android' ? styles.rows : styles.cells}
-      contentContainerStyle={styles.cells}
-    >
-      <StatusBar
-        barStyle='light-content'
-        backgroundColor={c.gold}
-      />
-      {views.map(view =>
-        <TouchableOpacity
-          key={view.view}
-          onPress={() => navigator.push({
-            id: view.view,
-            index: route.index + 1,
-            title: view.title,
-            sceneConfig: Navigator.SceneConfigs.PushFromRight,
-          })}
-          activeOpacity={0.5}
-          //style={[Platform.OS === 'ios' ? styles.rectangle : styles.row, Platform.OS === 'ios' ? {backgroundColor: view.tint} : null]}
-          style={[styles.rectangle, {backgroundColor: view.tint}]}
-        >
-          {/*<Icon name={view.icon} size={Platform.OS === 'ios' ? 32 : 28} style={[Platform.OS === 'ios' ? styles.rectangleButtonIcon : styles.listIcon, Platform.OS === 'android' ? {color: view.tint} : null]} />*/}
-          <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
+  state = {
+    order: [],
+  }
 
-          <Text
-            style={styles.rectangleButtonText}
-            autoAdjustsFontSize={true}
+  componentWillMount() {
+    this.loadData()
+  }
+
+  componentWillReceiveProps() {
+    this.loadData()
+  }
+
+  loadData = async () => {
+    let savedOrder = await Promise.all([
+      AsyncStorage.getItem('homescreen:view-order').then(val => JSON.parse(val)),
+    ])
+    // check to see if we have a modified view order or not
+    savedOrder = savedOrder ? savedOrder[0] : []
+    this.setState({order: sortBy(views, view => savedOrder.indexOf(view.view))})
+  }
+
+  render() {
+    return (
+      <ScrollView
+        overflow={'hidden'}
+        alwaysBounceHorizontal={false}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        style={styles.scrollView}
+        //contentContainerStyle={Platform.OS === 'android' ? styles.rows : styles.cells}
+        contentContainerStyle={styles.cells}
+      >
+        <StatusBar
+          barStyle='light-content'
+          backgroundColor={c.gold}
+        />
+        {this.state.order.map(view =>
+          <TouchableOpacity
+            key={view.view}
+            onPress={() => this.props.navigator.push({
+              id: view.view,
+              index: this.props.route.index + 1,
+              title: view.title,
+              sceneConfig: Navigator.SceneConfigs.PushFromRight,
+            })}
+            activeOpacity={0.5}
+            //style={[Platform.OS === 'ios' ? styles.rectangle : styles.row, Platform.OS === 'ios' ? {backgroundColor: view.tint} : null]}
+            style={[styles.rectangle, {backgroundColor: view.tint}]}
           >
-            {view.title}
-          </Text>
-        </TouchableOpacity>)
-      }
-    </ScrollView>
-  )
+            {/*<Icon name={view.icon} size={Platform.OS === 'ios' ? 32 : 28} style={[Platform.OS === 'ios' ? styles.rectangleButtonIcon : styles.listIcon, Platform.OS === 'android' ? {color: view.tint} : null]} />*/}
+            <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
+
+            <Text
+              style={styles.rectangleButtonText}
+              autoAdjustsFontSize={true}
+            >
+              {view.title}
+            </Text>
+          </TouchableOpacity>)
+        }
+      </ScrollView>
+    )
+  }
 }
 
 HomePageScene.propTypes = {
