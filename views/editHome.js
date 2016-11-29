@@ -95,7 +95,7 @@ class Row extends Component {
   render() {
     return (
       <Animated.View style={[styles.row, this.state.style]}>
-        <MenuIcon tint={this.props.data.tint} />
+        <MenuIcon icon={this.props.data.icon} tint={this.props.data.tint} />
         <Text style={[styles.text, {color: this.props.data.tint}]}>
           {this.props.data.title}
         </Text>
