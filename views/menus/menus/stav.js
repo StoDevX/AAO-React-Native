@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {View, Navigator} from 'react-native'
+import {View, Navigator, Platform} from 'react-native'
 import LoadingView from '../../components/loading'
 import FancyMenu from '../parts/fancy-menu'
 import {FilterToolbar} from '../filter/toolbar'
@@ -186,7 +186,7 @@ export default class StavMenuView extends React.Component {
 
     const now = moment.tz(CENTRAL_TZ)
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, marginBottom: Platform.OS === 'ios' ? 49 : 0}}>
         <FilterToolbar
           date={now}
           title='Lunch'
