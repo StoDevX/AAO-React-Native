@@ -17,7 +17,8 @@ it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
       ],
     }],
   }
-  let actual = getDetailedBuildingStatus(building, m)
+
+  const actual = getDetailedBuildingStatus(building, m)
 
   expect(actual).toBeInstanceOf(Array)
   expect(actual.length).toEqual(1)
@@ -26,6 +27,8 @@ it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
   expect(typeof actual[0][0]).toBe('boolean')
   expect(typeof actual[0][1]).toBe('string')
   expect(typeof actual[0][2]).toBe('string')
+
+  expect(actual).toMatchSnapshot()
 })
 
 it('checks a list of schedules to see if any are open', () => {
@@ -44,10 +47,13 @@ it('checks a list of schedules to see if any are open', () => {
     }],
   }
 
-  expect(getDetailedBuildingStatus(building, m)).toEqual([[true, 'Hours', '10:30am — 2:00am']])
+  const actual = getDetailedBuildingStatus(building, m)
+  expect(actual).toMatchSnapshot()
+
+  expect(actual[0][0]).toBe(true)
 })
 
-xit('handles multiple internal schedules for the same timeframe', () => {
+it('handles multiple internal schedules for the same timeframe', () => {
   let m = dayMoment('Mon 1:00pm')
   let building = {
     name: 'building',
@@ -62,10 +68,14 @@ xit('handles multiple internal schedules for the same timeframe', () => {
     }],
   }
 
-  expect(getDetailedBuildingStatus(building, m)).toBe('Open')
+  const actual = getDetailedBuildingStatus(building, m)
+  expect(actual).toMatchSnapshot()
+
+  expect(actual[0][0]).toBe(false)
+  expect(actual[1][0]).toBe(true)
 })
 
-xit('handles multiple named schedules for the same timeframe', () => {
+it('handles multiple named schedules for the same timeframe', () => {
   let m = dayMoment('Mon 1:00pm')
   let building = {
     name: 'building',
@@ -88,10 +98,15 @@ xit('handles multiple named schedules for the same timeframe', () => {
     ],
   }
 
-  expect(getDetailedBuildingStatus(building, m)).toBe('Open')
+  const actual = getDetailedBuildingStatus(building, m)
+  expect(actual).toMatchSnapshot()
+
+  expect(actual[0][0]).toBe(false)
+  expect(actual[1][0]).toBe(false)
+  expect(actual[2][0]).toBe(true)
 })
 
-xit('returns false if none are available for this day', () => {
+it('returns false if none are available for this day', () => {
   let m = dayMoment('Sun 1:00pm')
   let building = {
     name: 'building',
@@ -106,11 +121,14 @@ xit('returns false if none are available for this day', () => {
     }],
   }
 
-  expect(getDetailedBuildingStatus(building, m)).toBe('Closed')
+  const actual = getDetailedBuildingStatus(building, m)
+  expect(actual).toMatchSnapshot()
+
+  expect(actual[0][0]).toBe(false)
 })
 
 
-xit('returns false if none are open', () => {
+it('returns false if none are open', () => {
   let m = dayMoment('Mon 3:00pm')
   let building = {
     name: 'building',
@@ -125,5 +143,8 @@ xit('returns false if none are open', () => {
     }],
   }
 
-  expect(getDetailedBuildingStatus(building, m)).toBe('Closed')
+  const actual = getDetailedBuildingStatus(building, m)
+  expect(actual).toMatchSnapshot()
+
+  expect(actual[0][0]).toBe(false)
 })
