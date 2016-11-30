@@ -24,4 +24,5 @@ export const buildingImages = {
   'theater': require('../../data/images/buildinghours/w1440/theater.jpg'),
   'tom-porter': require('../../data/images/buildinghours/w1440/tom-porter.jpg'),
   'tomson': require('../../data/images/buildinghours/w1440/tomson.jpg'),
+  'wellness': require('../../data/images/buildinghours/w1440/wellness.jpg'),
 }
