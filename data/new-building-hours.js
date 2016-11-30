@@ -14,7 +14,7 @@ export const buildingHours: BuildingType[] = [
     name: 'The Cage',
     image: 'cage',
     category: 'Food',
-    namedSchedule: [
+    schedule: [
       {
         title: 'Kitchen',
         notes: 'The kitchen stops cooking at 8 p.m.',
@@ -49,9 +49,14 @@ export const buildingHours: BuildingType[] = [
     image: 'pause-kitchen',
     category: 'Food',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '10:30am', to: '12:00am'},
-      {days: [Fr, Sa], from: '10:30am', to: '2:00am'},
-      {days: [Su], from: '10:30am', to: '12:00am'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '10:30am', to: '12:00am'},
+          {days: [Fr, Sa], from: '10:30am', to: '2:00am'},
+          {days: [Su], from: '10:30am', to: '12:00am'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -68,7 +73,7 @@ export const buildingHours: BuildingType[] = [
     name: 'Stav Hall',
     image: 'stav',
     category: 'Food',
-    namedSchedule: [
+    schedule: [
       {
         title: 'Breakfast',
         hours: [
@@ -105,7 +110,12 @@ export const buildingHours: BuildingType[] = [
     name: 'Bag Lunch Line',
     category: 'Food',
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '2:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '2:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -123,8 +133,13 @@ export const buildingHours: BuildingType[] = [
     image: 'bookstore',
     category: 'Supplies and Books',
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'},
-      {days: [Sa], from: '10:00am', to: '4:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'},
+          {days: [Sa], from: '10:00am', to: '4:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -142,9 +157,14 @@ export const buildingHours: BuildingType[] = [
     image: 'convenience',
     category: 'Supplies and Books',
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '8:00pm'},
-      {days: [Sa], from: '10:00am', to: '8:00pm'},
-      {days: [Su], from: '12:00pm', to: '4:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '8:00pm'},
+          {days: [Sa], from: '10:00am', to: '8:00pm'},
+          {days: [Su], from: '12:00pm', to: '4:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -163,8 +183,13 @@ export const buildingHours: BuildingType[] = [
     category: 'Mail and Packages',
     closedForCommunityTime: true,
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'},
-      {days: [Sa], from: '10:00am', to: '1:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'},
+          {days: [Sa], from: '10:00am', to: '1:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -186,7 +211,12 @@ export const buildingHours: BuildingType[] = [
     category: 'Mail and Packages',
     closedForCommunityTime: true,
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -207,11 +237,16 @@ export const buildingHours: BuildingType[] = [
     image: 'disco',
     category: 'Libraries',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '10:00am', to: '5:00pm'},
-      {days: [Mo, Tu, We, Th], from: '7:00pm', to: '9:00pm'},
-      {days: [Fr], from: '10:00am', to: '5:00pm'},
-      {days: [Su], from: '1:00pm', to: '5:00pm'},
-      {days: [Su], from: '7:00pm', to: '9:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '10:00am', to: '5:00pm'},
+          {days: [Mo, Tu, We, Th], from: '7:00pm', to: '9:00pm'},
+          {days: [Fr], from: '10:00am', to: '5:00pm'},
+          {days: [Su], from: '1:00pm', to: '5:00pm'},
+          {days: [Su], from: '7:00pm', to: '9:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -229,10 +264,15 @@ export const buildingHours: BuildingType[] = [
     image: 'halvorson',
     category: 'Libraries',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '7:45am', to: '11:00pm'},
-      {days: [Fr], from: '7:45am', to: '8:00pm'},
-      {days: [Sa], from: '9:00am', to: '6:00pm'},
-      {days: [Su], from: '12:00pm', to: '11:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '7:45am', to: '11:00pm'},
+          {days: [Fr], from: '7:45am', to: '8:00pm'},
+          {days: [Sa], from: '9:00am', to: '6:00pm'},
+          {days: [Su], from: '12:00pm', to: '11:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -250,9 +290,14 @@ export const buildingHours: BuildingType[] = [
     name: 'IT Helpdesk',
     category: 'Libraries',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '7:45am', to: '11:00pm'},
-      {days: [Fr], from: '7:45am', to: '5:00pm'},
-      {days: [Su], from: '1:30pm', to: '11:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '7:45am', to: '11:00pm'},
+          {days: [Fr], from: '7:45am', to: '5:00pm'},
+          {days: [Su], from: '1:30pm', to: '11:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -273,10 +318,15 @@ export const buildingHours: BuildingType[] = [
     image: 'rolvaag-library',
     category: 'Libraries',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '7:45am', to: '2:00am'},
-      {days: [Fr], from: '7:45am', to: '9:00pm'},
-      {days: [Sa], from: '9:00am', to: '9:00pm'},
-      {days: [Su], from: '12:00pm', to: '2:00am'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '7:45am', to: '2:00am'},
+          {days: [Fr], from: '7:45am', to: '9:00pm'},
+          {days: [Sa], from: '9:00am', to: '9:00pm'},
+          {days: [Su], from: '12:00pm', to: '2:00am'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -296,11 +346,16 @@ export const buildingHours: BuildingType[] = [
     name: 'Rølvaag Reference Desk',
     category: 'Libraries',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '10:00am', to: '5:00pm'},
-      {days: [Mo, Tu, We, Th], from: '7:00pm', to: '9:00pm'},
-      {days: [Fr], from: '10:00am', to: '5:00pm'},
-      {days: [Su], from: '1:30pm', to: '5:00pm'},
-      {days: [Su], from: '7:00pm', to: '9:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '10:00am', to: '5:00pm'},
+          {days: [Mo, Tu, We, Th], from: '7:00pm', to: '9:00pm'},
+          {days: [Fr], from: '10:00am', to: '5:00pm'},
+          {days: [Su], from: '1:30pm', to: '5:00pm'},
+          {days: [Su], from: '7:00pm', to: '9:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -318,10 +373,15 @@ export const buildingHours: BuildingType[] = [
     image: 'skoglund',
     category: 'Gym',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '6:30am', to: '10:45pm'},
-      {days: [Fr], from: '6:30am', to: '8:45pm'},
-      {days: [Sa], from: '9:00am', to: '8:45pm'},
-      {days: [Su], from: '12:00pm', to: '10:45pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '6:30am', to: '10:45pm'},
+          {days: [Fr], from: '6:30am', to: '8:45pm'},
+          {days: [Sa], from: '9:00am', to: '8:45pm'},
+          {days: [Su], from: '12:00pm', to: '10:45pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -337,7 +397,7 @@ export const buildingHours: BuildingType[] = [
   {
     name: 'Skoglund Pool',
     category: 'Gym',
-    namedSchedule: [
+    schedule: [
       {
         title: 'Fac/Staff Swim',
         hours: [
@@ -374,7 +434,12 @@ export const buildingHours: BuildingType[] = [
     name: 'STORP',
     category: 'Gym',
     schedule: [
-      {days: [Mo, Th, Fr], from: '4:00pm', to: '6:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Th, Fr], from: '4:00pm', to: '6:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -392,10 +457,15 @@ export const buildingHours: BuildingType[] = [
     category: 'Gym',
     image: 'tom-porter',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '10:00am', to: '8:00pm'},
-      {days: [Fr], from: '7:00am', to: '5:00pm'},
-      {days: [Sa], from: '8:00am', to: '9:00pm'},
-      {days: [Su], from: '12:00pm', to: '9:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '10:00am', to: '8:00pm'},
+          {days: [Fr], from: '7:00am', to: '5:00pm'},
+          {days: [Sa], from: '8:00am', to: '9:00pm'},
+          {days: [Su], from: '12:00pm', to: '9:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -412,10 +482,15 @@ export const buildingHours: BuildingType[] = [
     name: 'Tostrud Climbing Wall',
     category: 'Gym',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '6:30am', to: '10:45pm'},
-      {days: [Fr], from: '6:30am', to: '8:45pm'},
-      {days: [Sa], from: '9:00am', to: '8:45pm'},
-      {days: [Su], from: '12:00pm', to: '10:45pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '6:30am', to: '10:45pm'},
+          {days: [Fr], from: '6:30am', to: '8:45pm'},
+          {days: [Sa], from: '9:00am', to: '8:45pm'},
+          {days: [Su], from: '12:00pm', to: '10:45pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -433,7 +508,12 @@ export const buildingHours: BuildingType[] = [
     image: 'wellness',
     category: 'Health and Wellness',
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '10:00am', to: '5:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '10:00am', to: '5:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -455,8 +535,13 @@ export const buildingHours: BuildingType[] = [
     category: 'Health and Wellness',
     closedForCommunityTime: true,
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '9:00am', to: '11:30am'},
-      {days: [Mo, Tu, We, Th, Fr], from: '1:00pm', to: '4:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '9:00am', to: '11:30am'},
+          {days: [Mo, Tu, We, Th, Fr], from: '1:00pm', to: '4:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -472,7 +557,7 @@ export const buildingHours: BuildingType[] = [
   {
     name: 'SARN',
     category: 'Health and Wellness',
-    namedSchedule: [
+    schedule: [
       {
         title: 'Office',
         hours: [
@@ -506,7 +591,12 @@ export const buildingHours: BuildingType[] = [
     image: 'alumni-hall',
     category: 'Academia',
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -522,7 +612,12 @@ export const buildingHours: BuildingType[] = [
   {
     name: 'Holland Hall',
     category: 'Under Construction',
-    schedule: [],
+    schedule: [
+      {
+        title: 'Hours',
+        hours: [],
+      },
+    ],
     breakSchedule: {
       fall: [],
       thanksgiving: [],
@@ -539,10 +634,15 @@ export const buildingHours: BuildingType[] = [
     image: 'boe',
     category: 'Academia',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '7:00am', to: '12:00am'},
-      {days: [Fr], from: '7:00am', to: '9:30pm'},
-      {days: [Sa], from: '8:00am', to: '9:30pm'},
-      {days: [Su], from: '8:00am', to: '12:00am'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '7:00am', to: '12:00am'},
+          {days: [Fr], from: '7:00am', to: '9:30pm'},
+          {days: [Sa], from: '8:00am', to: '9:30pm'},
+          {days: [Su], from: '8:00am', to: '12:00am'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -560,9 +660,14 @@ export const buildingHours: BuildingType[] = [
     image: 'buntrock',
     category: 'Academia',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '7:00am', to: '12:00am'},
-      {days: [Fr, Sa], from: '7:00am', to: '2:00am'},
-      {days: [Su], from: '7:00am', to: '12:00am'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '7:00am', to: '12:00am'},
+          {days: [Fr, Sa], from: '7:00am', to: '2:00am'},
+          {days: [Su], from: '7:00am', to: '12:00am'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -580,8 +685,13 @@ export const buildingHours: BuildingType[] = [
     image: 'christiansen',
     category: 'Academia',
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'},
-      {days: [Sa, Su], from: '8:00am', to: '12:00am'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'},
+          {days: [Sa, Su], from: '8:00am', to: '12:00am'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -598,9 +708,14 @@ export const buildingHours: BuildingType[] = [
     name: 'Dittmann Center',
     category: 'Academia',
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'},
-      {days: [Sa], from: '8:00am', to: '12:00am'},
-      {days: [Su], from: '10:00am', to: '12:00am'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'},
+          {days: [Sa], from: '8:00am', to: '12:00am'},
+          {days: [Su], from: '10:00am', to: '12:00am'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -618,8 +733,13 @@ export const buildingHours: BuildingType[] = [
     image: 'hall-of-music',
     category: 'Academia',
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'},
-      {days: [Sa, Su], from: '8:00am', to: '12:00am'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'},
+          {days: [Sa, Su], from: '8:00am', to: '12:00am'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -637,9 +757,14 @@ export const buildingHours: BuildingType[] = [
     image: 'old-main',
     category: 'Academia',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '7:00am', to: '9:45pm'},
-      {days: [Fr], from: '7:00am', to: '6:00pm'},
-      {days: [Sa, Su], from: '8:00am', to: '6:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '7:00am', to: '9:45pm'},
+          {days: [Fr], from: '7:00am', to: '6:00pm'},
+          {days: [Sa, Su], from: '8:00am', to: '6:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -656,8 +781,13 @@ export const buildingHours: BuildingType[] = [
     name: 'Regents Hall',
     category: 'Academia',
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'},
-      {days: [Sa, Su], from: '8:00am', to: '12:00am'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'},
+          {days: [Sa, Su], from: '8:00am', to: '12:00am'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [
@@ -698,8 +828,13 @@ export const buildingHours: BuildingType[] = [
     image: 'skifter-studioa',
     category: 'Academia',
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'},
-      {days: [Sa, Su], from: '8:00am', to: '12:00am'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'},
+          {days: [Sa, Su], from: '8:00am', to: '12:00am'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -717,8 +852,13 @@ export const buildingHours: BuildingType[] = [
     image: 'theater',
     category: 'Academia',
     schedule: [
-      {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'},
-      {days: [Sa, Su], from: '9:00am', to: '12:00am'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'},
+          {days: [Sa, Su], from: '9:00am', to: '12:00am'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -736,10 +876,15 @@ export const buildingHours: BuildingType[] = [
     image: 'tomson',
     category: 'Academia',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '7:00am', to: '11:00pm'},
-      {days: [Fr], from: '7:00am', to: '8:00pm'},
-      {days: [Sa], from: '8:00am', to: '8:00pm'},
-      {days: [Su], from: '8:00am', to: '11:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '7:00am', to: '11:00pm'},
+          {days: [Fr], from: '7:00am', to: '8:00pm'},
+          {days: [Sa], from: '8:00am', to: '8:00pm'},
+          {days: [Su], from: '8:00am', to: '11:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
@@ -756,10 +901,15 @@ export const buildingHours: BuildingType[] = [
     name: 'World Language Center',
     category: 'Academia',
     schedule: [
-      {days: [Mo, Tu, We, Th], from: '8:00am', to: '9:00pm'},
-      {days: [Fr], from: '8:00am', to: '5:00pm'},
-      {days: [Sa], from: '10:00am', to: '3:00pm'},
-      {days: [Su], from: '4:00pm', to: '10:00pm'},
+      {
+        title: 'Hours',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '8:00am', to: '9:00pm'},
+          {days: [Fr], from: '8:00am', to: '5:00pm'},
+          {days: [Sa], from: '10:00am', to: '3:00pm'},
+          {days: [Su], from: '4:00pm', to: '10:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],

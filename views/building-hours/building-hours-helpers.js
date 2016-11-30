@@ -195,7 +195,7 @@ export function summarizeDays(days: DayOfWeekEnumType[]): string {
 }
 
 export function normalizeBuildingSchedule(info: BuildingType): NamedBuildingScheduleType[] {
-  let schedules = info.namedSchedule || info.schedule && [{title: 'Hours', hours: info.schedule}]
+  let schedules = info.schedule
   if (!schedules) {
     return []
   }

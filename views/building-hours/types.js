@@ -35,7 +35,6 @@ export type BuildingType = {
   name: string,
   image?: string,
   category: string,
-  schedule?: SingleBuildingScheduleType[],
-  namedSchedule?: NamedBuildingScheduleType[],
+  schedule: NamedBuildingScheduleType[],
   breakSchedule?: BreakScheduleContainerType,
 };
