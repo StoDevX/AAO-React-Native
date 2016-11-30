@@ -151,7 +151,7 @@ export const buildingHours: BuildingType[] = [
     category: 'Mail and Packages',
     schedule: [
       {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'},
-      {days: [Sa], from: '10:00 am', to: '1:00 pm'},
+      {days: [Sa], from: '10:00am', to: '1:00pm'},
     ],
     breakSchedule: {
       fall: [],
