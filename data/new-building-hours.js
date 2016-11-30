@@ -1,5 +1,5 @@
 // @flow
-import type {BuildingType} from '../views/building-hours/types'
+import type {BuildingType, SingleBuildingScheduleType} from '../views/building-hours/types'
 
 const Su = 'Su'
 const Mo = 'Mo'
@@ -8,6 +8,12 @@ const We = 'We'
 const Th = 'Th'
 const Fr = 'Fr'
 const Sa = 'Sa'
+
+export const chapelSchedule: SingleBuildingScheduleType[] = [
+  {days: [Mo, We, Fr], from: '10:10am', to: '10:30am'},
+  {days: [Tu], from: '11:10am', to: '11:30am'},
+  {days: [Th], from: '11:00am', to: '12:35pm'},
+]
 
 export const buildingHours: BuildingType[] = [
   {
