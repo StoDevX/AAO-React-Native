@@ -36,6 +36,8 @@ const buildingImages = {
   'stav': require('../../data/images/buildinghours/w1440/stav.jpg'),
   'theater': require('../../data/images/buildinghours/w1440/theater.jpg'),
   'tom-porter': require('../../data/images/buildinghours/w1440/tom-porter.jpg'),
+  'print': require('../../data/images/buildinghours/print.jpg'),
+  'wellness': require('../../data/images/buildinghours/wellness.jpg'),
   'tomson': require('../../data/images/buildinghours/w1440/tomson.jpg'),
 }
 
