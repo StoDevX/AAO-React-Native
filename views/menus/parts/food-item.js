@@ -43,7 +43,7 @@ export default function FoodItem({data, filters, style, getDietaryTags=getDietar
         </View>
       </View>
       <View>
-        {data.price ? <Text style={styles.secondary}>{data.price}</Text> : null}
+        {data.price ? <Text style={styles.secondary}>{data.price.split('&nbsp;').map(s => s.trim()).join('\n')}</Text> : null}
       </View>
     </View>
   )
@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
   secondary: {
     color: c.iosDisabledText,
     fontSize: 15,
+    textAlign: 'right',
   },
 })
 
