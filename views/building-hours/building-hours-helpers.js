@@ -32,11 +32,12 @@ export function parseHours({from: fromTime, to: toTime}: SingleBuildingScheduleT
   return {open, close}
 }
 
+const getDayOfWeek = (m: momentT) => ((m.format('dd'): any): DayOfWeekEnumType)
 
 import {chapelSchedule} from '../../data/new-building-hours'
 
 export function isChapelTime(m: momentT, schedules: SingleBuildingScheduleType[]=chapelSchedule): boolean {
-  let dayOfWeek = ((m.format('dd'): any): DayOfWeekEnumType)
+  let dayOfWeek = getDayOfWeek(m)
   let sched = schedules.find(sched => sched.days.includes(dayOfWeek))
   if (!sched) {
     return false
@@ -92,7 +93,7 @@ export function getDetailedBuildingStatus(info: BuildingType, m: momentT): [bool
   // Friday Lap Swim: 12:45pm – 2:00pm
   // Friday Open Swim: 7:00am – 2:00pm
 
-  let dayOfWeek = ((m.format('dd'): any): DayOfWeekEnumType)
+  let dayOfWeek = getDayOfWeek(m)
 
   let schedules = normalizeBuildingSchedule(info)
   if (!schedules.length) {
@@ -124,7 +125,7 @@ export function getDetailedBuildingStatus(info: BuildingType, m: momentT): [bool
 }
 
 export function getShortBuildingStatus(info: BuildingType, m: momentT): string {
-  let dayOfWeek = ((m.format('dd'): any): DayOfWeekEnumType)
+  let dayOfWeek = getDayOfWeek(m)
 
   let schedules = normalizeBuildingSchedule(info)
   if (!schedules.length) {
@@ -151,7 +152,7 @@ export function getShortBuildingStatus(info: BuildingType, m: momentT): string {
 }
 
 export function isBuildingOpen(info: BuildingType, m: momentT): boolean {
-  let dayOfWeek = ((m.format('dd'): any): DayOfWeekEnumType)
+  let dayOfWeek = getDayOfWeek(m)
 
   let schedules = normalizeBuildingSchedule(info)
   if (!schedules.length) {
