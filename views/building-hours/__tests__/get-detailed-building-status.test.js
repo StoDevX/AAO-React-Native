@@ -8,7 +8,7 @@ it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
     name: 'building',
     category: '???',
     breakSchedule: {},
-    namedSchedule: [{
+    schedule: [{
       title: 'Hours',
       hours: [
         {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '12:00am'},
@@ -37,7 +37,7 @@ it('checks a list of schedules to see if any are open', () => {
     name: 'building',
     category: '???',
     breakSchedule: {},
-    namedSchedule: [{
+    schedule: [{
       title: 'Hours',
       hours: [
         {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '12:00am'},
@@ -59,7 +59,7 @@ it('handles multiple internal schedules for the same timeframe', () => {
     name: 'building',
     category: '???',
     breakSchedule: {},
-    namedSchedule: [{
+    schedule: [{
       title: 'Hours',
       hours: [
         {days: ['Mo'], from: '10:30am', to: '12:00pm'},
@@ -81,7 +81,7 @@ it('handles multiple named schedules for the same timeframe', () => {
     name: 'building',
     category: '???',
     breakSchedule: {},
-    namedSchedule: [
+    schedule: [
       {
         title: 'Hours',
         hours: [
@@ -112,7 +112,7 @@ it('returns false if none are available for this day', () => {
     name: 'building',
     category: '???',
     breakSchedule: {},
-    namedSchedule: [{
+    schedule: [{
       title: 'Hours',
       hours: [
         {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '12:00am'},
@@ -134,7 +134,7 @@ it('returns false if none are open', () => {
     name: 'building',
     category: '???',
     breakSchedule: {},
-    namedSchedule: [{
+    schedule: [{
       title: 'Hours',
       hours: [
         {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '2:00pm'},
