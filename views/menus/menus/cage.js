@@ -3,13 +3,13 @@
 import React from 'react'
 import LoadingView from '../../components/loading'
 import FancyMenu from '../parts/fancy-menu'
+import {menuBaseUrl, cafeBaseUrl} from '../data'
 
 import type {BonAppResponseType, StationMenuType, MenuItemContainerType} from '../types'
 
 export default class CageMenuView extends React.Component {
   static propTypes = {
     cafeId: React.PropTypes.string.isRequired,
-    menuUrl: React.PropTypes.string.isRequired,
   }
 
   state = {
@@ -30,12 +30,11 @@ export default class CageMenuView extends React.Component {
   }
 
   props: {
-    menuUrl: string,
     cafeId: string,
   }
 
   fetchData = async () => {
-    let responseData: BonAppResponseType = await fetch(this.props.menuUrl).then(response => response.json())
+    let responseData: BonAppMenuInfoType = await fetch(menuBaseUrl + this.props.cafeId).then(response => response.json())
     let whichMeal = 0
 
     // console.warn(this.props.cafeId, JSON.stringify(responseData.days))
