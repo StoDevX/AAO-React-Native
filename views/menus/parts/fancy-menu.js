@@ -8,7 +8,6 @@ import {
   Platform,
 } from 'react-native'
 
-import startCase from 'lodash/startCase'
 import uniqBy from 'lodash/uniqBy'
 import identity from 'lodash/identity'
 import filter from 'lodash/filter'
@@ -170,7 +169,7 @@ export default class FancyMenu extends React.Component {
     // prevent ourselves from returning duplicate items
     let allMenuItems = uniqBy([...groupedMenuItems, ...otherMenuItems], item => item.id)
 
-    allMenuItems = allMenuItems.map(item => ({...item, station: startCase(this.trimStationName(item.station))}))
+    allMenuItems = allMenuItems.map(item => ({...item, station: this.trimStationName(item.station)}))
 
     // apply the selected filters
     console.log('allItems, before filter', allMenuItems)
