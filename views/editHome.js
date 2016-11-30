@@ -72,7 +72,7 @@ class Row extends Component {
       Animated.timing(style.transform[0].scale, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 1.1,
+        toValue: 1.05,
       }),
       Animated.timing(style.shadowRadius, {
         duration: 100,
@@ -151,49 +151,40 @@ export default class EditHomeView extends React.Component {
     }
 
     return (
-      <View style={styles.container}>
-        <SortableList
-          style={styles.list}
-          contentContainerStyle={styles.contentContainer}
-          data={objViews}
-          order={this.state.order}
-          onChangeOrder={this.onOrderChange}
-          renderRow={this.renderRow}
-        />
-      </View>
+      <SortableList
+        contentContainerStyle={styles.contentContainer}
+        data={objViews}
+        order={this.state.order}
+        onChangeOrder={this.onOrderChange}
+        renderRow={this.renderRow}
+      />
     )
   }
 }
 
 let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: c.iosLightBackground,
-  },
-  list: {
-    flex: 1,
-  },
   contentContainer: {
+    flex: 1,
     width: window.width,
-    paddingHorizontal: 30,
-    paddingTop: 20,
+    backgroundColor: c.iosLightBackground,
+    paddingTop: 10,
     paddingBottom: 20,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
-    paddingRight: 16,
+    width: window.width - 15 * 2,
     marginVertical: 5,
-    height: 50,
-    width: window.width - 30 * 2,
+    marginHorizontal: 15,
+    paddingVertical: 12,
     borderRadius: 4,
+
     shadowColor: 'rgba(0,0,0,0.2)',
     shadowOpacity: 1,
     shadowOffset: {height: 2, width: 2},
     shadowRadius: 2,
+    elevation: 2,
   },
   rectangleButtonIcon: {
     marginRight: 20,
