@@ -15,11 +15,23 @@ export const buildingHours: BuildingType[] = [
     image: 'cage',
     category: 'Food',
     notes: 'The kitchen stops cooking at 8 p.m.',
-    schedule: [
-      {days: [Mo, Tu, We, Th], from: '7:30am', to: '8:00pm'},
-      {days: [Fr], from: '7:30am', to: '8:00pm'},
-      {days: [Sa], from: '9:00am', to: '8:00pm'},
-      {days: [Su], from: '9:00am', to: '8:00pm'},
+    namedSchedule: [
+      {
+        title: 'Kitchen',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '7:30am', to: '8:00pm'},
+          {days: [Fr], from: '7:30am', to: '8:00pm'},
+          {days: [Sa], from: '9:00am', to: '8:00pm'},
+          {days: [Su], from: '9:00am', to: '8:00pm'},
+        ],
+      },
+      {
+        title: 'Late Night',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '8:00pm', to: '11:00pm'},
+          {days: [Su], from: '8:00pm', to: '11:00pm'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
