@@ -14,25 +14,25 @@ export type BreakNameEnumType =
   'easter' |
   'summer';
 
-export type SingleBuildingScheduleType = {
+export type SingleBuildingScheduleType = {|
   days: DayOfWeekEnumType[],
   from: string,
   to: string,
-};
+|};
 
-export type NamedBuildingScheduleType = {
+export type NamedBuildingScheduleType = {|
   title: 'Hours'|string,
   notes?: string,
   isPhysicallyOpen?: boolean,
   closedForChapelTime?: boolean,
   hours: SingleBuildingScheduleType[],
-};
+|};
 
 export type BreakScheduleContainerType = {
   [key: BreakNameEnumType]: SingleBuildingScheduleType[],
 };
 
-export type BuildingType = {
+export type BuildingType = {|
   name: string,
   subtitle?: string,
   abbreviation?: string,
@@ -40,4 +40,4 @@ export type BuildingType = {
   category: string,
   schedule: NamedBuildingScheduleType[],
   breakSchedule?: BreakScheduleContainerType,
-};
+|};
