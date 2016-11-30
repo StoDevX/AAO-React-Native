@@ -240,6 +240,7 @@ export const buildingHours: BuildingType[] = [
 
   {
     name: 'DiSCO',
+    subtitle: 'Digital Scholarship Whatsit Place',
     image: 'disco',
     category: 'Libraries',
     schedule: [
@@ -438,6 +439,7 @@ export const buildingHours: BuildingType[] = [
 
   {
     name: 'STORP',
+    subtitle: 'St. Olaf Outdoor Recreation Program',
     category: 'Gym',
     schedule: [
       {
@@ -562,6 +564,7 @@ export const buildingHours: BuildingType[] = [
 
   {
     name: 'SARN',
+    subtitle: 'Sexual Assault Resource Network',
     category: 'Health and Wellness',
     schedule: [
       {
@@ -690,7 +693,8 @@ export const buildingHours: BuildingType[] = [
   },
 
   {
-    name: 'Christiansen (CHM)',
+    name: 'Christiansen',
+    abbreviation: 'CHM',
     image: 'christiansen',
     category: 'Academia',
     schedule: [
@@ -738,7 +742,8 @@ export const buildingHours: BuildingType[] = [
   },
 
   {
-    name: 'Hall of Music (HOM)',
+    name: 'Hall of Music',
+    abbreviation: 'HOM',
     image: 'hall-of-music',
     category: 'Academia',
     schedule: [

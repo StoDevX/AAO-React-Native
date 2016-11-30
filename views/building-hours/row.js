@@ -18,7 +18,6 @@ import * as c from '../components/colors'
 import {getDetailedBuildingStatus} from './building-hours-helpers'
 import {getShortBuildingStatus} from './building-hours-helpers'
 import Icon from 'react-native-vector-icons/Ionicons'
-import sortBy from 'lodash/sortBy'
 
 type PropsType = {
   info: BuildingType,
@@ -38,13 +37,18 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  subtitleText: {
+    fontWeight: Platform.OS === 'ios' ? '400' : '400',
+    color: c.iosDisabledText,
+    fontSize: 16,
+  },
   titleText: {
     fontWeight: Platform.OS === 'ios' ? '500' : '400',
     color: c.black,
     paddingLeft: 0,
     paddingRight: 0,
     paddingBottom: 3,
-    fontSize: Platform.OS === 'ios' ? 16 : 16,
+    fontSize: 16,
     textAlign: 'left',
   },
   accessoryBadge: {
@@ -89,6 +93,10 @@ export function BuildingRow({info, name, now, style}: PropsType) {
   const openStatus = getShortBuildingStatus(info, now)
   const hours = getDetailedBuildingStatus(info, now)
 
+  const abbr = info.abbreviation ? <Text> ({info.abbreviation})</Text> : null
+  const subtitle = info.subtitle ? <Text style={styles.subtitleText}>    {info.subtitle}</Text> : null
+  const title = <Text numberOfLines={1} style={[styles.titleText]}>{name}{abbr}{subtitle}</Text>
+
   const accent = bgColors[openStatus] || c.goldenrod
   const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
   const bgaccent = accent.replace('rgb', 'rgba').replace(')', ', 0.1)')
@@ -98,7 +106,7 @@ export function BuildingRow({info, name, now, style}: PropsType) {
       <View style={{flex: 1, flexDirection: 'column'}}>
         <View style={{flexDirection: 'row'}}>
           <View style={[styles.title, {flex: 1}]}>
-            <Text numberOfLines={1} style={[styles.titleText]}>{name}</Text>
+            {title}
           </View>
 
           <View style={[styles.accessoryBadge, {backgroundColor: bgaccent, borderColor: accent}]}>

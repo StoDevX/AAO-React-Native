@@ -24,8 +24,9 @@ import {
 } from './building-hours-helpers'
 
 const styles = StyleSheet.create({
-  inner: {
-    paddingVertical: 16,
+  title: {
+    paddingTop: 16,
+    paddingBottom: 4,
     paddingHorizontal: 8,
   },
   name: {
@@ -34,7 +35,15 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '300',
   },
+  subtitle: {
+    paddingTop: 8,
+    paddingHorizontal: 8,
+  },
+  subtitleText: {
+    fontSize: 18,
+  },
   badge: {
+    marginTop: 20,
     paddingHorizontal: 12,
     paddingVertical: 4,
     marginBottom: 14,
@@ -130,6 +139,14 @@ export class BuildingHoursDetailView extends React.Component {
     const schedules = normalizeBuildingSchedule(this.props, this.state.now)
     const dayOfWeek = ((this.state.now.format('dd'): any): DayOfWeekEnumType)
 
+    const abbr = this.props.abbreviation ? <Text style={styles.abbr}> ({this.props.abbreviation})</Text> : null
+    const title = <Text style={styles.name}>{this.props.name}{abbr}</Text>
+    const subtitle = this.props.subtitle
+      ? <View style={styles.subtitle}>
+          <Text style={[styles.name, styles.subtitleText]}>{this.props.subtitle}</Text>
+        </View>
+      : null
+
     return (
       <ParallaxView
         backgroundSource={headerImage}
@@ -137,9 +154,8 @@ export class BuildingHoursDetailView extends React.Component {
         scrollableViewStyle={styles.scrollableStyle}
       >
         <View style={{flex: 1}}>
-          <View style={styles.inner}>
-            <Text style={styles.name}>{this.props.name}</Text>
-          </View>
+          <View style={styles.title}>{title}</View>
+          {subtitle}
 
           <View style={[styles.badge, {backgroundColor: bgColors[openStatus] || c.goldenrod}]}>
             <Text style={styles.badgeText}>{openStatus}</Text>

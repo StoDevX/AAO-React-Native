@@ -34,6 +34,8 @@ export type BreakScheduleContainerType = {
 
 export type BuildingType = {
   name: string,
+  subtitle?: string,
+  abbreviation?: string,
   image?: string,
   category: string,
   schedule: NamedBuildingScheduleType[],
