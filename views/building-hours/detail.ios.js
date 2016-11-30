@@ -4,7 +4,7 @@ import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 
 import {buildingImages} from './images'
-import type {BuildingType} from './types'
+import type {BuildingType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
 
 import moment from 'moment-timezone'
@@ -12,7 +12,7 @@ const CENTRAL_TZ = 'America/Winnipeg'
 
 const transparentPixel = require('../../data/images/transparent.png')
 
-import {TableView, Section, Cell} from 'react-native-tableview-simple'
+import {TableView, Section, Cell, CustomCell} from 'react-native-tableview-simple'
 import ParallaxView from 'react-native-parallax-view'
 
 import * as c from '../components/colors'
@@ -21,6 +21,7 @@ import {
   formatBuildingTimes,
   summarizeDays,
   getShortBuildingStatus,
+  isBuildingOpenAtMoment,
 } from './building-hours-helpers'
 
 const styles = StyleSheet.create({
@@ -46,6 +47,16 @@ const styles = StyleSheet.create({
   },
   scrollableStyle: {
     backgroundColor: c.iosLightBackground,
+  },
+  scheduleDays: {
+    flex: 1,
+    paddingRight: 16,
+  },
+  bold: {
+    fontWeight: 'bold',
+  },
+  scheduleHours: {
+    flex: 3,
   },
 })
 
@@ -82,6 +93,7 @@ export class BuildingHoursDetailView extends React.Component {
       : transparentPixel
     const openStatus = getShortBuildingStatus(this.props, this.state.now)
     const schedules = normalizeBuildingSchedule(this.props, this.state.now)
+    const dayOfWeek = ((this.state.now.format('dd'): any): DayOfWeekEnumType)
 
     return (
       <ParallaxView
@@ -100,15 +112,21 @@ export class BuildingHoursDetailView extends React.Component {
 
           {<TableView>
             {schedules.map(set =>
-              <Section key={set.title} header={set.title}>
-                {set.hours.map((schedule, i) =>
-                  <Cell
-                    key={i}
-                    cellStyle='LeftDetail'
-                    title={formatBuildingTimes(schedule, this.state.now)}
-                    detail={summarizeDays(schedule.days)}
-                  />
-                )}
+              <Section key={set.title} header={set.title.toUpperCase()} footer={set.notes}>
+                {set.hours.map((schedule, i) => {
+                  let isActiveSchedule = schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)
+
+                  return (
+                    <CustomCell key={i}>
+                      <Text numberOfLines={1} style={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]}>
+                        {summarizeDays(schedule.days)}
+                      </Text>
+                      <Text numberOfLines={1} style={[styles.scheduleHours, isActiveSchedule ? styles.bold : null]}>
+                        {formatBuildingTimes(schedule, this.state.now)}
+                      </Text>
+                    </CustomCell>
+                  )
+                })}
               </Section>
             )}
           </TableView>}

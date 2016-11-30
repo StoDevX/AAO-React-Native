@@ -6,13 +6,13 @@ import {View, Text, StyleSheet} from 'react-native'
 import {buildingImages} from './images'
 import type {BuildingType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
+import {Separator} from '../components/separator'
+import ParallaxView from 'react-native-parallax-view'
 
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 const transparentPixel = require('../../data/images/transparent.png')
-
-import ParallaxView from 'react-native-parallax-view'
 
 import * as c from '../components/colors'
 import {
@@ -49,18 +49,19 @@ const styles = StyleSheet.create({
     backgroundColor: c.androidLightBackground,
   },
 
-  schedulesWrapper: {
+  card: {
     paddingTop: 10,
     paddingBottom: 10,
-  },
-  scheduleContainer: {
     marginHorizontal: 10,
-    marginBottom: 20,
     paddingHorizontal: 10,
-    paddingBottom: 6,
     backgroundColor: 'white',
     borderRadius: 2,
     elevation: 2,
+  },
+  scheduleContainer: {
+    marginBottom: 20,
+    paddingTop: 0,
+    paddingBottom: 6,
   },
   scheduleTitleWrapper: {
     paddingTop: 8,
@@ -86,6 +87,10 @@ const styles = StyleSheet.create({
   },
   scheduleHours: {
     flex: 2,
+  },
+  scheduleNotes: {
+    paddingTop: 6,
+    paddingBottom: 2,
   },
 })
 
@@ -139,33 +144,38 @@ export class BuildingHoursDetailView extends React.Component {
             <Text style={styles.badgeText}>{openStatus}</Text>
           </View>
 
-          {<View style={styles.schedulesWrapper}>
-            {schedules.map(set =>
-              <View key={set.title} style={styles.scheduleContainer}>
-                <View style={styles.scheduleTitleWrapper}>
-                  <Text style={styles.scheduleTitle}>{set.title}</Text>
-                </View>
-
-                <View style={styles.scheduleHoursWrapper}>
-                  {set.hours.map((schedule, i) => {
-                    let isActiveSchedule = schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)
-
-                    return (
-                      <View key={i} style={styles.scheduleRow}>
-                        <Text style={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]} numberOfLines={1}>
-                          {summarizeDays(schedule.days)}
-                        </Text>
-
-                        <Text style={[styles.scheduleHours, isActiveSchedule ? styles.bold : null]} numberOfLines={1}>
-                          {formatBuildingTimes(schedule, this.state.now)}
-                        </Text>
-                      </View>
-                    )
-                  })}
-                </View>
+          {schedules.map(set =>
+            <View key={set.title} style={[styles.card, styles.scheduleContainer]}>
+              <View style={styles.scheduleTitleWrapper}>
+                <Text style={styles.scheduleTitle}>{set.title}</Text>
               </View>
-            )}
-          </View>}
+
+              <View style={styles.scheduleHoursWrapper}>
+                {set.hours.map((schedule, i) => {
+                  let isActiveSchedule = schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)
+
+                  return (
+                    <View key={i} style={styles.scheduleRow}>
+                      <Text style={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]} numberOfLines={1}>
+                        {summarizeDays(schedule.days)}
+                      </Text>
+
+                      <Text style={[styles.scheduleHours, isActiveSchedule ? styles.bold : null]} numberOfLines={1}>
+                        {formatBuildingTimes(schedule, this.state.now)}
+                      </Text>
+                    </View>
+                  )
+                })}
+              </View>
+
+              {set.notes
+                ? <View style={[styles.scheduleNotesWrapper]}>
+                    <Separator />
+                    <Text style={styles.scheduleNotes}>{set.notes}</Text>
+                  </View>
+                : null}
+            </View>
+          )}
         </View>
       </ParallaxView>
     )
