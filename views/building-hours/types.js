@@ -7,6 +7,7 @@ export type DayOfWeekEnumType = 'Mo'|'Tu'|'We'|'Th'|'Fr'|'Sa'|'Su';
 export type BreakNameEnumType =
   'fall' |
   'thanksgiving' |
+  'christmasfest' |
   'winter' |
   'interim' |
   'spring' |
