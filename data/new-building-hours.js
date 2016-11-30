@@ -510,6 +510,22 @@ export const buildingHours: BuildingType[] = [
       {days: [Fr], from: '7:00am', to: '9:30pm'},
       {days: [Sa], from: '8:00am', to: '9:30pm'},
       {days: [Su], from: '8:00am', to: '12:00am'},
+    interimSchedule: [
+      {
+        title: 'Building',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '7:00am', to: '12:00am'},
+          {days: [Fr], from: '7:00am', to: '9:30pm'},
+          {days: [Sa], from: '8:00am', to: '9:30pm'},
+          {days: [Su], from: '8:00am', to: '12:00am'},
+        ],
+      },
+      {
+        title: 'Daily Chapel',
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr], from: '10:10am', to: '10:30am'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],
