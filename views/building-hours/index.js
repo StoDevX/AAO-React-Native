@@ -61,6 +61,7 @@ export class BuildingHoursView extends React.Component {
   renderRow = (data: BuildingType) => {
     return (
       <Touchable
+        underlayColor='#ebebeb'
         onPress={() => this.props.navigator.push({
           id: 'BuildingHoursDetailView',
           index: this.props.route.index + 1,
