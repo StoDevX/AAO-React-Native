@@ -32,6 +32,19 @@ export function parseHours({from: fromTime, to: toTime}: SingleBuildingScheduleT
   return {open, close}
 }
 
+
+import {chapelSchedule} from '../../data/new-building-hours'
+
+export function isChapelTime(m: momentT, schedules: SingleBuildingScheduleType[]=chapelSchedule): boolean {
+  let dayOfWeek = ((m.format('dd'): any): DayOfWeekEnumType)
+  let sched = schedules.find(sched => sched.days.includes(dayOfWeek))
+  if (!sched) {
+    return false
+  }
+
+  return _isBuildingOpenAtMoment(sched, m)
+}
+
 export function formatBuildingTimes(schedule: SingleBuildingScheduleType, m: momentT): string {
   let {open, close} = parseHours(schedule, m)
 
@@ -56,9 +69,16 @@ export function getStatusOfBuildingAtMoment(schedule: SingleBuildingScheduleType
   return 'Closed'
 }
 
-export function isBuildingOpenAtMoment(schedule: SingleBuildingScheduleType, m: momentT): boolean {
+export function _isBuildingOpenAtMoment(schedule: SingleBuildingScheduleType, m: momentT): boolean {
   let {open, close} = parseHours(schedule, m)
   return m.isBetween(open, close, 'minute', '[)')
+}
+
+export function isBuildingOpenAtMoment(schedule: SingleBuildingScheduleType, m: momentT): boolean {
+  if (isChapelTime(m)) {
+    return false
+  }
+  return _isBuildingOpenAtMoment(schedule, m)
 }
 
 export function getDetailedBuildingStatus(info: BuildingType, m: momentT): [boolean, string|null, string][] {
@@ -81,6 +101,10 @@ export function getDetailedBuildingStatus(info: BuildingType, m: momentT): [bool
 
   let results = schedules.map(set => {
     let prefix = set.title
+    if (set.closedForChapelTime && isChapelTime(m)) {
+      return [[false, prefix, 'Closed for chapel']]
+    }
+
     let filteredSchedules = set.hours.filter(sched => sched.days.includes(dayOfWeek))
     if (!filteredSchedules.length) {
       return [[false, prefix, 'Closed today']]
@@ -111,6 +135,9 @@ export function getShortBuildingStatus(info: BuildingType, m: momentT): string {
     if (set.isPhysicallyOpen === false) {
       return 'Closed'
     }
+    if (set.closedForChapelTime && isChapelTime(m)) {
+      return 'Closed (Chapel)'
+    }
 
     let filteredSchedules = set.hours.filter(sched => sched.days.includes(dayOfWeek))
     if (!filteredSchedules.length) {
@@ -133,6 +160,9 @@ export function isBuildingOpen(info: BuildingType, m: momentT): boolean {
 
   let results = schedules.map(set => {
     if (set.isPhysicallyOpen === false) {
+      return false
+    }
+    if (set.closedForChapelTime && isChapelTime(m)) {
       return false
     }
 
