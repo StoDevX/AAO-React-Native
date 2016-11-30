@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     paddingRight: 16,
   },
   bold: {
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   scheduleHours: {
     flex: 3,
