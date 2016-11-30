@@ -47,7 +47,7 @@ export const allViews: ViewType[] = [
 const Touchable = ({children, onPress}: {onPress: () => any, children?: Element<any>}) => {
   return Platform.OS === 'ios'
     ? <TouchableOpacity onPress={onPress} activeOpacity={0.65}>{children}</TouchableOpacity>
-    : <TouchableNativeFeedback onPress={onPress} background={TouchableNativeFeedback.SelectableBackground}>{children}</TouchableNativeFeedback>
+    : <TouchableNativeFeedback onPress={onPress}>{children}</TouchableNativeFeedback>
 }
 
 function HomeScreenButton({view, onPress}: {view: ViewType, onPress: () => any}) {
