@@ -676,7 +676,10 @@ export const buildingHours: BuildingType[] = [
       interim: [],
       spring: [],
       easter: [],
-      summer: [],
+      summer: [
+        {days: [Mo, Tu, We, Th], from: '7:00am', to: '10:00pm'},
+        {days: [Fr, Sa, Su], from: '7:00am', to: '7:00pm'},
+      ],
     },
   },
 
