@@ -500,6 +500,7 @@ export const buildingHours: BuildingType[] = [
 
   {
     name: 'Boe Chapel',
+    image: 'boe',
     category: 'Academia',
     schedule: [
       {days: [Mo, Tu, We, Th], from: '7:00am', to: '12:00am'},
