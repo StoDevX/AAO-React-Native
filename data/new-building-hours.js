@@ -181,10 +181,10 @@ export const buildingHours: BuildingType[] = [
     name: 'Post Office',
     image: 'post-office',
     category: 'Mail and Packages',
-    closedForCommunityTime: true,
     schedule: [
       {
         title: 'Hours',
+        closedForChapelTime: true,
         hours: [
           {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'},
           {days: [Sa], from: '10:00am', to: '1:00pm'},
@@ -209,10 +209,10 @@ export const buildingHours: BuildingType[] = [
     name: 'Print Center',
     image: 'print',
     category: 'Mail and Packages',
-    closedForCommunityTime: true,
     schedule: [
       {
         title: 'Hours',
+        closedForChapelTime: true,
         hours: [
           {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'},
         ],
@@ -533,10 +533,10 @@ export const buildingHours: BuildingType[] = [
   {
     name: 'Health Center',
     category: 'Health and Wellness',
-    closedForCommunityTime: true,
     schedule: [
       {
         title: 'Hours',
+        closedForChapelTime: true,
         hours: [
           {days: [Mo, Tu, We, Th, Fr], from: '9:00am', to: '11:30am'},
           {days: [Mo, Tu, We, Th, Fr], from: '1:00pm', to: '4:00pm'},
