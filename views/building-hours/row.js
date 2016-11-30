@@ -67,7 +67,11 @@ let styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   disclosure: {
-    marginLeft: 8,
+    marginLeft: 10,
+  },
+  disclosureIcon: {
+    color: c.iosDisabledText,
+    fontSize: 20,
   },
 })
 

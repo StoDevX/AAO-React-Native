@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   },
   row: {
     paddingLeft: 15,
-    paddingRight: Platform.OS === 'ios' ? 4 : 15,
+    paddingRight: Platform.OS === 'ios' ? 6 : 15,
   },
 
   rowSectionHeader: {
