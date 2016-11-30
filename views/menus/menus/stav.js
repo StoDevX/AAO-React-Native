@@ -78,7 +78,14 @@ export default class StavMenuView extends React.Component {
       endTime: moment.tz(endtime, 'H:mm', true, CENTRAL_TZ),
     }))
 
-    const mealIndex = findIndex(times, ({startTime, endTime}) => now.isBetween(startTime, endTime))
+    let mealIndex = findIndex(times, ({startTime, endTime}) => now.isBetween(startTime, endTime))
+    if (mealIndex === undefined) {
+      if (now.isSameOrBefore(times[0].startTime)) {
+        mealIndex = 0
+      } else {
+        mealIndex = times.length - 1
+      }
+    }
 
     return dayparts[0][mealIndex]
   }
