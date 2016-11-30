@@ -180,6 +180,27 @@ export const buildingHours: BuildingType[] = [
   },
 
   {
+    name: 'Print Center',
+    category: 'Mail and Packages',
+    closedForCommunityTime: true,
+    schedule: [
+      {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'},
+    ],
+    breakSchedule: {
+      fall: [],
+      thanksgiving: [],
+      winter: [],
+      interim: [],
+      spring: [],
+      easter: [],
+      summer: [
+        {days: [Mo, Tu, We, Th], from: '7:30am', to: '4:30pm'},
+        {days: [Fr], from: '7:30am', to: '12:00pm'},
+      ],
+    },
+  },
+
+  {
     name: 'DiSCO',
     image: 'disco',
     category: 'Libraries',
