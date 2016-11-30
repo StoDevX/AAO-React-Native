@@ -5,7 +5,6 @@ import {
   View,
   ListView,
   Text,
-  Platform,
 } from 'react-native'
 
 import uniqBy from 'lodash/uniqBy'
@@ -110,7 +109,7 @@ export default class FancyMenu extends React.Component {
   }
 
   applyFilters(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
-    console.log('applyFilters called')
+    // console.log('applyFilters called')
     let onlySpecialsFilter = filters.find(({key}) => key === 'specials')
     let onlySpecials = onlySpecialsFilter ? onlySpecialsFilter.value : false
 
@@ -129,7 +128,7 @@ export default class FancyMenu extends React.Component {
       onlyTheseDietaryRestrictions = difference(dietaryRestrictionsFilter.options, dietaryRestrictionsFilter.value)
     }
 
-    console.log(onlySpecials, onlyTheseStations, onlyTheseDietaryRestrictions)
+    // console.log(onlySpecials, onlyTheseStations, onlyTheseDietaryRestrictions)
 
     return filter(items, item => {
       if (onlySpecials) {
@@ -137,7 +136,7 @@ export default class FancyMenu extends React.Component {
       }
 
       if (onlyTheseStations.length) {
-        console.log(onlyTheseStations, item.station, includes(onlyTheseStations, item.station))
+        // console.log(onlyTheseStations, item.station, includes(onlyTheseStations, item.station))
         return includes(onlyTheseStations, item.station)
       }
 
@@ -150,7 +149,7 @@ export default class FancyMenu extends React.Component {
   }
 
   processData(props: FancyMenuPropsType) {
-    console.log('processData called', props)
+    // console.log('processData called', props)
     let groupedMenuItems = props.stationMenus
       .map(menu => this.buildStationMenu(menu, props.foodItems))
       .filter(menu => menu.length)
@@ -172,9 +171,9 @@ export default class FancyMenu extends React.Component {
     allMenuItems = allMenuItems.map(item => ({...item, station: this.trimStationName(item.station)}))
 
     // apply the selected filters
-    console.log('allItems, before filter', allMenuItems)
+    // console.log('allItems, before filter', allMenuItems)
     allMenuItems = this.applyFilters(allMenuItems, props.filters)
-    console.log('allItems, after filter', allMenuItems)
+    // console.log('allItems, after filter', allMenuItems)
 
     // clean up the titles
     allMenuItems = allMenuItems.map(food => ({...food, label: this.trimItemLabel(food.label)}))
@@ -209,6 +208,7 @@ export default class FancyMenu extends React.Component {
       <ListView
         style={styles.container}
         removeClippedSubviews={false}
+        automaticallyAdjustContentInsets={true}
         dataSource={this.state.dataSource}
         enableEmptySections={true}
         renderRow={this.renderFoodItem}
