@@ -5,7 +5,7 @@ import {Navigator} from 'react-native'
 export type TopLevelViewPropsType = {
   navigator: typeof Navigator,
   route: {
-  	index: number,
+    index: number,
   },
 };
 
