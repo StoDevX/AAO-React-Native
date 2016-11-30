@@ -505,11 +505,25 @@ export const buildingHours: BuildingType[] = [
     name: 'Boe Chapel',
     image: 'boe',
     category: 'Academia',
-    schedule: [
-      {days: [Mo, Tu, We, Th], from: '7:00am', to: '12:00am'},
-      {days: [Fr], from: '7:00am', to: '9:30pm'},
-      {days: [Sa], from: '8:00am', to: '9:30pm'},
-      {days: [Su], from: '8:00am', to: '12:00am'},
+    namedSchedule: [
+      {
+        title: 'Building',
+        hours: [
+          {days: [Mo, Tu, We, Th], from: '7:00am', to: '12:00am'},
+          {days: [Fr], from: '7:00am', to: '9:30pm'},
+          {days: [Sa], from: '8:00am', to: '9:30pm'},
+          {days: [Su], from: '8:00am', to: '12:00am'},
+        ],
+      },
+      {
+        title: 'Daily Chapel',
+        hours: [
+          {days: [Mo, We, Fr], from: '10:10am', to: '10:30am'},
+          {days: [Tu], from: '11:10am', to: '11:30am'},
+          {days: [Th], from: '11:00am', to: '11:15am'},
+        ],
+      },
+    ],
     interimSchedule: [
       {
         title: 'Building',
