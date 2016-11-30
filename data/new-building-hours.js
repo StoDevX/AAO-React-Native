@@ -292,10 +292,9 @@ export const buildingHours: BuildingType[] = [
     },
   },
 
-
   {
     name: 'IT Helpdesk',
-    category: 'Libraries',
+    category: 'Help and Support',
     schedule: [
       {
         title: 'Hours',
