@@ -181,6 +181,7 @@ export const buildingHours: BuildingType[] = [
 
   {
     name: 'Print Center',
+    image: 'print',
     category: 'Mail and Packages',
     closedForCommunityTime: true,
     schedule: [

@@ -13,6 +13,7 @@ export const buildingImages = {
   'halvorson': require('../../data/images/buildinghours/w1440/halvorson.jpg'),
   'old-main': require('../../data/images/buildinghours/w1440/old-main.jpg'),
   'pause-kitchen': require('../../data/images/buildinghours/w1440/pause-kitchen.jpg'),
+  'print': require('../../data/images/buildinghours/w1440/print.jpg'),
   'post-office': require('../../data/images/buildinghours/w1440/post-office.jpg'),
   'regents-hall': require('../../data/images/buildinghours/w1440/regents-hall.jpg'),
   'regents-math': require('../../data/images/buildinghours/w1440/regents-math.jpg'),
