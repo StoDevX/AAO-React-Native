@@ -1,6 +1,6 @@
 // @flow
 
-export type BuildingStatusType = 'Open'|'Closed'|'Almost Closed'|'Almost Open';
+export type BuildingStatusType = 'Open'|'Closed'|'Almost Closed'|'Almost Open'|'Chapel';
 
 export type DayOfWeekEnumType = 'Mo'|'Tu'|'We'|'Th'|'Fr'|'Sa'|'Su';
 
