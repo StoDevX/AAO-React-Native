@@ -22,6 +22,7 @@ export type SingleBuildingScheduleType = {
 
 export type NamedBuildingScheduleType = {
   title: 'Hours'|string,
+  notes?: string,
   hours: SingleBuildingScheduleType[],
 };
 
@@ -31,7 +32,6 @@ export type BreakScheduleContainerType = {
 
 export type BuildingType = {
   name: string,
-  notes?: string,
   image?: string,
   category: string,
   schedule?: SingleBuildingScheduleType[],

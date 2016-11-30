@@ -14,10 +14,10 @@ export const buildingHours: BuildingType[] = [
     name: 'The Cage',
     image: 'cage',
     category: 'Food',
-    notes: 'The kitchen stops cooking at 8 p.m.',
     namedSchedule: [
       {
         title: 'Kitchen',
+        notes: 'The kitchen stops cooking at 8 p.m.',
         hours: [
           {days: [Mo, Tu, We, Th], from: '7:30am', to: '8:00pm'},
           {days: [Fr], from: '7:30am', to: '8:00pm'},
