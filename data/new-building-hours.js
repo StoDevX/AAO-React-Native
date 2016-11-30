@@ -338,7 +338,9 @@ export const buildingHours: BuildingType[] = [
   {
     name: 'STORP',
     category: 'Gym',
-    schedule: [],
+    schedule: [
+      {days: [Mo, Th, Fr], from: '4:00pm', to: '6:00pm'},
+    ],
     breakSchedule: {
       fall: [],
       thanksgiving: [],
@@ -394,7 +396,9 @@ export const buildingHours: BuildingType[] = [
   {
     name: 'Wellness Center',
     category: 'Health and Wellness',
-    schedule: [],
+    schedule: [
+      {days: [Mo, Tu, We, Th, Fr], from: '10:00am', to: '5:00pm'},
+    ],
     breakSchedule: {
       fall: [],
       thanksgiving: [],
@@ -413,7 +417,10 @@ export const buildingHours: BuildingType[] = [
   {
     name: 'Health Center',
     category: 'Health and Wellness',
-    schedule: [],
+    schedule: [
+      {days: [Mo, Tu, We, Th, Fr], from: '9:00am', to: '11:30am'},
+      {days: [Mo, Tu, We, Th, Fr], from: '1:00pm', to: '4:00pm'},
+    ],
     breakSchedule: {
       fall: [],
       thanksgiving: [],
