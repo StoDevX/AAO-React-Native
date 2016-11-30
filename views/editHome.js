@@ -23,6 +23,7 @@ import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
 import SortableList from 'react-native-sortable-list'
 
+import type {ViewType} from './home'
 import {allViews} from './home'
 import LoadingView from './components/loading'
 //import AsyncStorageHOC from './components/asyncStorageHOC'
@@ -59,6 +60,11 @@ class Row extends Component {
       }
     }
   }
+
+  props: {
+    data: ViewType,
+    active: boolean,
+  };
 
   startActivationAnimation = () => {
     const {style} = this.state
@@ -120,7 +126,7 @@ export default class EditHomeView extends React.Component {
     this.loadData()
   }
 
-  renderRow({data, active}) {
+  renderRow({data, active}: {data: ViewType, active: boolean}) {
     return <Row data={data} active={active} />
   }
 
@@ -135,7 +141,7 @@ export default class EditHomeView extends React.Component {
     this.setState({loaded: true, order: savedOrder})
   }
 
-  onOrderChange = order => {
+  onOrderChange = (order: {[key: string]: ViewType}) => {
     AsyncStorage.setItem('homescreen:view-order', JSON.stringify(Object.values(order)))
   }
 

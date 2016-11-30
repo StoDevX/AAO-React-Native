@@ -5,6 +5,7 @@
  */
 
 import React from 'react'
+import type {Element} from 'react'
 import {
   Navigator,
   ScrollView,
@@ -27,8 +28,7 @@ import type {TopLevelViewPropsType} from './types'
 const Dimensions = require('Dimensions')
 let Viewport = Dimensions.get('window')
 
-type ViewType = {view: string, title: string, icon: string, tint: string};
-
+export type ViewType = {view: string, title: string, icon: string, tint: string};
 export const allViews: ViewType[] = [
   {view: 'MenusView', title: 'Menus', icon: 'bowl', tint: c.emerald},
   {view: 'SISView', title: 'SIS', icon: 'fingerprint', tint: c.goldenrod},
@@ -44,22 +44,22 @@ export const allViews: ViewType[] = [
   {view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer', tint: c.grapefruit},
 ]
 
-const HomeScreenTouchable = ({...props, children}: {props: any, children: React$Element}) => {
+const Touchable = ({children, onPress}: {onPress: () => any, children?: Element<any>}) => {
   return Platform.OS === 'ios'
-    ? <TouchableOpacity {...props} activeOpacity={0.65}>{children}</TouchableOpacity>
-    : <TouchableNativeFeedback {...props} background={TouchableNativeFeedback.SelectableBackground}>{children}</TouchableNativeFeedback>
+    ? <TouchableOpacity onPress={onPress} activeOpacity={0.65}>{children}</TouchableOpacity>
+    : <TouchableNativeFeedback onPress={onPress} background={TouchableNativeFeedback.SelectableBackground}>{children}</TouchableNativeFeedback>
 }
 
 function HomeScreenButton({view, onPress}: {view: ViewType, onPress: () => any}) {
   return (
-    <HomeScreenTouchable onPress={onPress}>
+    <Touchable onPress={onPress}>
       <View style={[styles.rectangle, {backgroundColor: view.tint}]}>
         <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
         <Text style={styles.rectangleButtonText}>
           {view.title}
         </Text>
       </View>
-    </HomeScreenTouchable>
+    </Touchable>
   )
 }
 
