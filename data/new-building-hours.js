@@ -470,6 +470,31 @@ export const buildingHours: BuildingType[] = [
   },
 
   {
+    name: 'SARN',
+    category: 'Health and Wellness',
+    namedSchedule: [
+      {
+        title: 'Office',
+        hours: [
+          {days: [Mo, We, Fr], from: '10:10am', to: '10:30am'},
+          {days: [Tu], from: '11:10am', to: '11:30am'},
+          {days: [Th], from: '11:00am', to: '12:35am'},
+          {days: [Tu, Su], from: '7:00pm', to: '8:00pm'},
+        ],
+      },
+    ],
+    breakSchedule: {
+      fall: [],
+      thanksgiving: [],
+      winter: [],
+      interim: [],
+      spring: [],
+      easter: [],
+      summer: [],
+    },
+  },
+
+  {
     name: 'Alumni Hall',
     image: 'alumni-hall',
     category: 'Academia',
