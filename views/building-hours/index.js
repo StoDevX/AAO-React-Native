@@ -25,6 +25,7 @@ export class BuildingHoursView extends React.Component {
   state = {
     dataSource: this.getDataSource(),
     intervalId: 0,
+    // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
     refreshing: false,
   }

@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
 export class BuildingHoursDetailView extends React.Component {
   state: {intervalId: number, now: momentT} = {
     intervalId: 0,
+    // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
   }
 
