@@ -89,6 +89,9 @@ export function getDetailedBuildingStatus(info: BuildingType, m: momentT): [bool
     return filteredSchedules.map(schedule => {
       let isActive = isBuildingOpenAtMoment(schedule, m)
       let status = formatBuildingTimes(schedule, m)
+      if (set.isPhysicallyOpen === false) {
+        isActive = false
+      }
       return [isActive, prefix, status]
     })
   })
@@ -105,6 +108,10 @@ export function getShortBuildingStatus(info: BuildingType, m: momentT): string {
   }
 
   let statuses = schedules.map(set => {
+    if (set.isPhysicallyOpen === false) {
+      return 'Closed'
+    }
+
     let filteredSchedules = set.hours.filter(sched => sched.days.includes(dayOfWeek))
     if (!filteredSchedules.length) {
       return 'Closed'
@@ -125,6 +132,10 @@ export function isBuildingOpen(info: BuildingType, m: momentT): boolean {
   }
 
   let results = schedules.map(set => {
+    if (set.isPhysicallyOpen === false) {
+      return false
+    }
+
     let filteredSchedules = set.hours.filter(sched => sched.days.includes(dayOfWeek))
     if (!filteredSchedules.length) {
       return false

@@ -153,7 +153,7 @@ export class BuildingHoursDetailView extends React.Component {
 
               <View style={styles.scheduleHoursWrapper}>
                 {set.hours.map((schedule, i) => {
-                  let isActiveSchedule = schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)
+                  let isActiveSchedule = set.isPhysicallyOpen !== false && schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)
 
                   return (
                     <View key={i} style={styles.scheduleRow}>

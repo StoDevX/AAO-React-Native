@@ -115,7 +115,7 @@ export class BuildingHoursDetailView extends React.Component {
             {schedules.map(set =>
               <Section key={set.title} header={set.title.toUpperCase()} footer={set.notes}>
                 {set.hours.map((schedule, i) => {
-                  let isActiveSchedule = schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)
+                  let isActiveSchedule = set.isPhysicallyOpen !== false && schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)
 
                   return (
                     <CustomCell key={i}>

@@ -482,6 +482,13 @@ export const buildingHours: BuildingType[] = [
           {days: [Tu, Su], from: '7:00pm', to: '8:00pm'},
         ],
       },
+      {
+        title: 'Phone',
+        isPhysicallyOpen: false,
+        hours: [
+          {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '8:00pm', to: '8:00am'},
+        ],
+      },
     ],
     breakSchedule: {
       fall: [],

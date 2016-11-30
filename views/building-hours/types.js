@@ -23,6 +23,7 @@ export type SingleBuildingScheduleType = {
 export type NamedBuildingScheduleType = {
   title: 'Hours'|string,
   notes?: string,
+  isPhysicallyOpen?: boolean,
   hours: SingleBuildingScheduleType[],
 };
 
