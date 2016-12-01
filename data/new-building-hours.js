@@ -240,7 +240,7 @@ export const buildingHours: BuildingType[] = [
 
   {
     name: 'DiSCO',
-    subtitle: 'Digital Scholarship Whatsit Place',
+    subtitle: 'Digital Scholarship Center at St. Olaf',
     image: 'disco',
     category: 'Libraries',
     schedule: [
