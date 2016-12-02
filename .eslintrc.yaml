@@ -19,21 +19,21 @@ globals:
   FormData: true
 
 rules:
-  array-callback-return: warn
-  arrow-spacing: [warn, {before: true, after: true}]
-  brace-style: [warn, 1tbs]
+  array-callback-return: error
+  arrow-spacing: [error, {before: true, after: true}]
+  brace-style: [error, 1tbs]
   camelcase: error
-  comma-dangle: [warn, always-multiline]
-  comma-spacing: [warn, {before: false, after: true}]
-  comma-style: [warn, last]
-  consistent-this: [warn, self]
+  comma-dangle: [error, always-multiline]
+  comma-spacing: [error, {before: false, after: true}]
+  comma-style: [error, last]
+  consistent-this: [error, self]
   curly: [error, multi-line]
   default-case: error
   eol-last: [error, always]
   guard-for-in: error
   indent: [error, 2, {SwitchCase: 1, MemberExpression: 1}]
   key-spacing: [error, {beforeColon: false, afterColon: true}]
-  keyword-spacing: warn
+  keyword-spacing: error
   linebreak-style: [error, unix]
   new-cap: 'off'
   no-case-declarations: error
@@ -51,53 +51,53 @@ rules:
   no-redeclare: [error, {builtinGlobals: true}]
   no-restricted-syntax: [error, WithStatement]
   no-return-await: error
-  no-self-assign: warn
+  no-self-assign: error
   no-trailing-spaces: error
   no-undef-init: 'off'
   no-underscore-dangle: 'off'
   no-unmodified-loop-condition: error
   no-unused-labels: error
-  no-unused-vars: [warn, {args: 'after-used', argsIgnorePattern: '^_$'}]
+  no-unused-vars: [error, {args: 'after-used', argsIgnorePattern: '^_$'}]
   no-useless-constructor: error
   no-var: error
   no-whitespace-before-property: error
   one-var-declaration-per-line: error
-  prefer-spread: warn
+  prefer-spread: error
   quotes: [error, single, avoid-escape]
   semi: [error, never]
   wrap-iife: error
-  arrow-parens: [warn, as-needed]
-  babel/no-await-in-loop: warn
+  arrow-parens: [error, as-needed]
+  babel/no-await-in-loop: error
 
   # react rules – https://github.com/yannickcr/eslint-plugin-react
-  jsx-quotes: [warn, prefer-single]
+  jsx-quotes: [error, prefer-single]
   react/display-name: 'off'
-  react/jsx-curly-spacing: [warn, never]
-  react/jsx-indent-props: [warn, 2]
-  react/jsx-no-duplicate-props: warn
+  react/jsx-curly-spacing: [error, never]
+  react/jsx-indent-props: [error, 2]
+  react/jsx-no-duplicate-props: error
   react/jsx-no-undef: error
   react/jsx-space-before-closing: error
   react/jsx-uses-react: error
   react/jsx-uses-vars: error
   react/no-deprecated: error
-  react/no-did-mount-set-state: warn
-  react/no-did-update-set-state: warn
+  react/no-did-mount-set-state: error
+  react/no-did-update-set-state: error
   react/no-direct-mutation-state: error
   react/no-multi-comp: 'off'  # prevent multiple component definition per file
-  react/no-unknown-property: warn
-  react/prefer-stateless-function: warn
+  react/no-unknown-property: error
+  react/prefer-stateless-function: error
   react/prop-types: error  # prevent missing proptypes in a react component definition
   react/react-in-jsx-scope: error
-  react/self-closing-comp: warn  # prevent extra closing tags for components without children
-  react/sort-comp: warn
-  react/sort-prop-types: warn
+  react/self-closing-comp: error  # prevent extra closing tags for components without children
+  react/sort-comp: error
+  react/sort-prop-types: error
   react/wrap-multilines: 'off'
 
   # flow rules
   flowtype/define-flow-type: error
   # flowtype/require-valid-file-annotation: [error, always]
-  flowtype/space-after-type-colon: [warn, always]
-  flowtype/space-before-type-colon: [warn, never]
+  flowtype/space-after-type-colon: [error, always]
+  flowtype/space-before-type-colon: [error, never]
   flowtype/type-id-match: error
   flowtype/use-flow-type: error
-  flowtype/valid-syntax: warn
+  flowtype/valid-syntax: error
