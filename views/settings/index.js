@@ -61,6 +61,9 @@ export default class SettingsView extends React.Component {
     this.loadData()
   }
 
+  _usernameInput: any;
+  _passwordInput: any;
+
   loadData = async () => {
     let [creds, status] = await Promise.all([
       loadLoginCredentials(),
