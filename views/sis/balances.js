@@ -139,6 +139,13 @@ export default class BalancesView extends React.Component {
     return '$' + (((value: any): number) / 100).toFixed(2)
   }
 
+  getFormattedMealsRemaining(value: null|number): string {
+    if (isNil(value)) {
+      return 'N/A'
+    }
+    return ((value: any): string)
+  }
+
   render() {
     if (this.state.error) {
       return <Text>Error: {this.state.error.message}</Text>
@@ -199,12 +206,12 @@ export default class BalancesView extends React.Component {
           <Section header='MEAL PLAN'>
             <Cell cellStyle='RightDetail'
               title='Daily Meals Left'
-              detail={dailyMeals}
+              detail={this.getFormattedMealsRemaining(dailyMeals)}
             />
 
             <Cell cellStyle='RightDetail'
               title='Weekly Meals Left'
-              detail={weeklyMeals}
+              detail={this.getFormattedMealsRemaining(weeklyMeals)}
             />
           </Section>
         </TableView>
