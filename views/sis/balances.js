@@ -89,14 +89,21 @@ export default class BalancesView extends React.Component {
 
   fetchData = async (forceFromServer: boolean=false) => {
     try {
-      let sisFinancialsInfo = await getFinancialData(forceFromServer)
+      let [
+        sisFinancialsInfo,
+        mealsRemaining,
+      ] = await Promise.all([
+        getFinancialData(forceFromServer),
+        getWeeklyMealsRemaining(),
+      ])
+
       if (isError(sisFinancialsInfo)) {
         this.setState({loggedIn: false})
       } else {
         let {flex, ole, print} = sisFinancialsInfo
         this.setState({flex, ole, print})
       }
-      let mealsRemaining = await getWeeklyMealsRemaining()
+
       if (isError(mealsRemaining)) {
         this.setState({loggedIn: false})
       } else {
