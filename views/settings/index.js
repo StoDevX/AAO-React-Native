@@ -137,7 +137,6 @@ export default class SettingsView extends React.Component {
   logOutStOlaf = async () => {
     this.setState({username: '', password: '', successStOlaf: false, attempted: false, loggedInStOlaf: false})
     clearLoginCredentials()
-    AsyncStorage.removeItem('credentials:valid')
   }
 
   onPressLegalButton() {
