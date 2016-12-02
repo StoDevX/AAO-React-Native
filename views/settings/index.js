@@ -219,7 +219,7 @@ export default class SettingsView extends React.Component {
           autoCorrect={false}
           autoCapitalize='none'
           style={styles.customTextInput}
-          placeholderTextColor='#C7C7CC'
+          placeholderTextColor={c.iosPlaceholderText}
           disabled={disabledStOlaf}
           placeholder='username'
           value={username}
@@ -239,7 +239,7 @@ export default class SettingsView extends React.Component {
           autoCorrect={false}
           autoCapitalize='none'
           style={styles.customTextInput}
-          placeholderTextColor='#C7C7CC'
+          placeholderTextColor={c.iosPlaceholderText}
           disabled={disabledStOlaf}
           secureTextEntry={true}
           placeholder='password'
