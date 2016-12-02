@@ -53,8 +53,8 @@ export default class SettingsView extends React.Component {
     loadingGoogle: false,
     loadingStOlaf: false,
     attempted: false,
-    username: null,
-    password: null,
+    username: '',
+    password: '',
   }
 
   componentWillMount() {
