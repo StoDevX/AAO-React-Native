@@ -90,6 +90,7 @@ export default class SettingsView extends React.Component {
 
   logOutGoogle = async () => {
     this.setState({loadingGoogle: true})
+    AsyncStorage.removeItem('credentials:valid')
     CookieManager.clearAll(err => {
       if (err) {
         console.log(err)
@@ -100,7 +101,6 @@ export default class SettingsView extends React.Component {
         loadingGoogle: false,
       })
     })
-    await AsyncStorage.setItem('credentials:valid', JSON.stringify(false))
   }
 
 
