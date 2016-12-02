@@ -75,7 +75,6 @@ export default class BalancesView extends React.Component {
   }
 
   loadIfLoggedIn = async () => {
-    console.log('TESTING')
     let shouldContinue = await this.checkLogin()
     if (shouldContinue) {
       await this.fetchData()
@@ -193,12 +192,12 @@ export default class BalancesView extends React.Component {
           <Section header='MEAL PLAN'>
             <Cell cellStyle='RightDetail'
               title='Daily Meals Left'
-              detail = {dailyMeals}
+              detail={dailyMeals}
             />
 
             <Cell cellStyle='RightDetail'
               title='Weekly Meals Left'
-              detail = {weeklyMeals}
+              detail={weeklyMeals}
             />
           </Section>
         </TableView>

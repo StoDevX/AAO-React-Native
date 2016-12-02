@@ -35,7 +35,7 @@ import DeviceInfo from 'react-native-device-info'
 import {
   loadLoginCredentials,
   clearLoginCredentials,
-  performLogin
+  performLogin,
 } from '../../lib/login'
 
 
@@ -67,7 +67,7 @@ export default class SettingsView extends React.Component {
       AsyncStorage.getItem('credentials:valid').then(val => JSON.parse(val)),
     ])
     if (creds) {
-      this.setState({username: creds.username, password:creds.password})
+      this.setState({username: creds.username, password: creds.password})
     }
     if (status) {
       this.setState({loggedInStOlaf: true})
@@ -86,11 +86,11 @@ export default class SettingsView extends React.Component {
 
   logOutGoogle = async () => {
     this.setState({loadingGoogle: true})
-    CookieManager.clearAll((err, res) => {
+    CookieManager.clearAll((err) => {
       if (err) {
         console.log(err)
+        Alert.alert('Error signing out', 'There was an issue signing out. Please try again.')
       }
-      console.log(res)
       this.setState({
         successGoogle: false,
         loadingGoogle: false,
@@ -119,7 +119,7 @@ export default class SettingsView extends React.Component {
     this.setState({loadingStOlaf: true})
     let {username, password} = this.state
     if (username) {
-      username.replace('@stolaf.edu', '') // just in case someone uses their full email, throw the part we don't need away
+      username = username.replace(/@.*/g, '') // just in case someone uses their full email, throw the part we don't need away
     }
     let {result} = await performLogin(username, password)
 
@@ -258,7 +258,7 @@ export default class SettingsView extends React.Component {
 
     let accountSection = (
       <View>
-        <Section header='LOGIN' footer='Note: This application requires logging in to Google and inputting your St. Olaf username and password in order use all features.'>
+        <Section header='LOGIN' footer='Note: This application requires both logging in to Google and inputting your St. Olaf username and password in order to use all features.'>
           {usernameCell}
           {passwordCell}
           {loginButton}
