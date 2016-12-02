@@ -73,7 +73,7 @@ export default class SettingsView extends React.Component {
       this.setState({username: creds.username, password: creds.password})
     }
     if (status) {
-      this.setState({loggedInStOlaf: true})
+      this.setState({loggedInGoogle: true})
     }
   }
 
