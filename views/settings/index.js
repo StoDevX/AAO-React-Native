@@ -30,6 +30,7 @@ import * as c from '../components/colors'
 import CookieManager from 'react-native-cookies'
 import DeviceInfo from 'react-native-device-info'
 
+// These imports manage the St. Olaf login system
 import {
   loadLoginCredentials,
   clearLoginCredentials,
@@ -116,16 +117,17 @@ export default class SettingsView extends React.Component {
   logInStOlaf = async () => {
     this.setState({loadingStOlaf: true})
     let {username, password} = this.state
+    username.replace('@stolaf.edu', '') // just in case someone uses their full email, throw the part we don't need away
     let {result} = await performLogin(username, password)
 
     if (!result) {
       Alert.alert('Error signing in', 'The username or password is incorrect.')
     }
-    this.setState({loadingStOlaf: false, attempted: true, successStOlaf: result})
+    this.setState({loadingStOlaf: false, attempted: true, successStOlaf: result, loggedInStOlaf: true})
   }
 
   logOutStOlaf = async () => {
-    this.setState({username: '', password: '', successStOlaf: false, attempted: false})
+    this.setState({username: '', password: '', successStOlaf: false, attempted: false, loggedInStOlaf: false})
     clearLoginCredentials()
     AsyncStorage.removeItem('credentials:valid')
   }
