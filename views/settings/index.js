@@ -83,7 +83,7 @@ export default class SettingsView extends React.Component {
       id: 'SISLoginView',
       index: this.props.route.index + 1,
       props: {
-        onLoginComplete: status => this.setState({successGoogle: status}),
+        onLoginComplete: status => this.setState({successGoogle: status, loggedInGoogle: status}),
       },
     })
   }
