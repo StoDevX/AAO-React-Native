@@ -24,7 +24,7 @@ import MenusView from './views/menus'
 import NewsView from './views/news'
 import NewsItemView from './views/news/news-item'
 import SISView from './views/sis'
-import BuildingHoursView from './views/building-hours'
+import {BuildingHoursView, BuildingHoursDetailView} from './views/building-hours'
 import TransportationView from './views/transportation'
 import OlevilleView from './views/oleville'
 import OlevilleNewsStoryView from './views/oleville/latestView'
@@ -52,6 +52,7 @@ function renderScene(route, navigator) {
     case 'NewsView': return <NewsView {...props} />
     case 'NewsItemView': return <NewsItemView {...props} />
     case 'BuildingHoursView': return <BuildingHoursView {...props} />
+    case 'BuildingHoursDetailView': return <BuildingHoursDetailView {...props} />
     case 'SISView': return <SISView {...props} />
     case 'TransportationView': return <TransportationView {...props} />
     case 'OlevilleView': return <OlevilleView {...props} />

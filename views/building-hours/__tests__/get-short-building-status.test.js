@@ -1,5 +1,5 @@
 // @flow
-import {isBuildingOpen} from '../building-hours-helpers'
+import {getShortBuildingStatus} from '../building-hours-helpers'
 import {dayMoment} from './moment.helper'
 
 it('checks a list of schedules to see if any are open', () => {
@@ -18,7 +18,7 @@ it('checks a list of schedules to see if any are open', () => {
     }],
   }
 
-  expect(isBuildingOpen(building, m)).toBe(true)
+  expect(getShortBuildingStatus(building, m)).toBe('Open')
 })
 
 it('handles multiple internal schedules for the same timeframe', () => {
@@ -36,7 +36,7 @@ it('handles multiple internal schedules for the same timeframe', () => {
     }],
   }
 
-  expect(isBuildingOpen(building, m)).toBe(true)
+  expect(getShortBuildingStatus(building, m)).toBe('Open')
 })
 
 it('handles multiple named schedules for the same timeframe', () => {
@@ -62,7 +62,7 @@ it('handles multiple named schedules for the same timeframe', () => {
     ],
   }
 
-  expect(isBuildingOpen(building, m)).toBe(true)
+  expect(getShortBuildingStatus(building, m)).toBe('Open')
 })
 
 it('returns false if none are available for this day', () => {
@@ -80,7 +80,7 @@ it('returns false if none are available for this day', () => {
     }],
   }
 
-  expect(isBuildingOpen(building, m)).toBe(false)
+  expect(getShortBuildingStatus(building, m)).toBe('Closed')
 })
 
 
@@ -99,5 +99,5 @@ it('returns false if none are open', () => {
     }],
   }
 
-  expect(isBuildingOpen(building, m)).toBe(false)
+  expect(getShortBuildingStatus(building, m)).toBe('Closed')
 })
