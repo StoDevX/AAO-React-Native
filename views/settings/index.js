@@ -269,10 +269,12 @@ export default class SettingsView extends React.Component {
 
     let accountSection = (
       <View>
-        <Section header='LOGIN' footer='Note: This application requires both logging in to Google and inputting your St. Olaf username and password in order to use all features.'>
+        <Section header='ST. OLAF LOGIN' footer='St. Olaf login enables the "meals remaining" feature.'>
           {usernameCell}
           {passwordCell}
           {loginButton}
+        </Section>
+        <Section header='GOOGLE LOGIN' footer='Google login allows SIS access, which enables flex dollars, ole dollars, and course information.'>
           {actionCell}
         </Section>
       </View>
