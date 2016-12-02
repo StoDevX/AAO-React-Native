@@ -71,6 +71,7 @@ export default class SettingsView extends React.Component {
     ])
     if (creds) {
       this.setState({username: creds.username, password: creds.password})
+      this.logInStOlaf()
     }
     if (status) {
       this.setState({loggedInGoogle: true})
