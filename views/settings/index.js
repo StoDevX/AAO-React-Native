@@ -164,6 +164,14 @@ export default class SettingsView extends React.Component {
     })
   }
 
+  focusUsername = () => {
+    this._usernameInput.focus()
+  }
+
+  focusPassword = () => {
+    this._passwordInput.focus()
+  }
+
   render() {
     let loggedInGoogle = this.state.loggedInGoogle
     let loggedInStOlaf = this.state.loggedInStOlaf
