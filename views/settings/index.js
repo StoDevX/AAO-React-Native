@@ -88,7 +88,7 @@ export default class SettingsView extends React.Component {
     })
   }
 
-  logOutGoogle = async () => {
+  logOutGoogle = () => {
     this.setState({loadingGoogle: true})
     AsyncStorage.removeItem('credentials:valid')
     CookieManager.clearAll(err => {
@@ -99,6 +99,7 @@ export default class SettingsView extends React.Component {
       this.setState({
         successGoogle: false,
         loadingGoogle: false,
+        loggedInGoogle: false,
       })
     })
   }
