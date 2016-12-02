@@ -89,7 +89,7 @@ export default class SettingsView extends React.Component {
 
   logOutGoogle = async () => {
     this.setState({loadingGoogle: true})
-    CookieManager.clearAll((err) => {
+    CookieManager.clearAll(err => {
       if (err) {
         console.log(err)
         Alert.alert('Error signing out', 'There was an issue signing out. Please try again.')
