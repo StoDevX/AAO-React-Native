@@ -30,6 +30,13 @@ import * as c from '../components/colors'
 import CookieManager from 'react-native-cookies'
 import DeviceInfo from 'react-native-device-info'
 
+import {
+  loadLoginCredentials,
+  clearLoginCredentials,
+  performLogin
+} from '../../lib/login'
+
+
 export default class SettingsView extends React.Component {
   static propTypes = {
     navigator: React.PropTypes.instanceOf(Navigator),
@@ -37,12 +44,15 @@ export default class SettingsView extends React.Component {
   }
 
   state = {
-    loggedIn: false,
-    success: false,
-    loading: false,
+    loggedInGoogle: false,
+    loggedInStOlaf: false,
+    successGoogle: false,
+    successStOlaf: false,
+    loadingGoogle: false,
+    loadingStOlaf: false,
     attempted: false,
     username: null,
-    password: null
+    password: null,
   }
 
   componentWillMount() {
@@ -50,38 +60,43 @@ export default class SettingsView extends React.Component {
   }
 
   loadData = async () => {
-    let [status] = await Promise.all([
+    let [creds, status] = await Promise.all([
+      loadLoginCredentials(),
       AsyncStorage.getItem('credentials:valid').then(val => JSON.parse(val)),
     ])
+    if (creds) {
+      this.setState({username: creds.username, password:creds.password})
+    }
     if (status) {
-      this.setState({success: true})
+      this.setState({loggedInStOlaf: true})
     }
   }
 
-  logIn = () => {
+  logInGoogle = () => {
     this.props.navigator.push({
       id: 'SISLoginView',
       index: this.props.route.index + 1,
       props: {
-        onLoginComplete: status => this.setState({success: status}),
+        onLoginComplete: status => this.setState({successGoogle: status}),
       },
     })
   }
 
-  logOut = async () => {
-    this.setState({loading: true})
+  logOutGoogle = async () => {
+    this.setState({loadingGoogle: true})
     CookieManager.clearAll((err, res) => {
       if (err) {
         console.log(err)
       }
       console.log(res)
       this.setState({
-        success: false,
-        loading: false,
+        successGoogle: false,
+        loadingGoogle: false,
       })
     })
     await AsyncStorage.setItem('credentials:valid', JSON.stringify(false))
   }
+
 
   getDeviceInfo() {
     let deviceInfo = `
@@ -96,6 +111,23 @@ export default class SettingsView extends React.Component {
 
   getSupportBody() {
     return '\n' + this.getDeviceInfo()
+  }
+
+  logInStOlaf = async () => {
+    this.setState({loadingStOlaf: true})
+    let {username, password} = this.state
+    let {result} = await performLogin(username, password)
+
+    if (!result) {
+      Alert.alert('Error signing in', 'The username or password is incorrect.')
+    }
+    this.setState({loadingStOlaf: false, attempted: true, successStOlaf: result})
+  }
+
+  logOutStOlaf = async () => {
+    this.setState({username: '', password: '', successStOlaf: false, attempted: false})
+    clearLoginCredentials()
+    AsyncStorage.removeItem('credentials:valid')
   }
 
   onPressLegalButton() {
@@ -123,28 +155,37 @@ export default class SettingsView extends React.Component {
   }
 
   render() {
-    let loggedIn = this.state.success
-    let loading = this.state.loading
+    let loggedInGoogle = this.state.loggedInGoogle
+    let loggedInStOlaf = this.state.loggedInStOlaf
+    let loadingGoogle = this.state.loadingGoogle
+    let loadingStOlaf = this.state.loadingStOlaf
     let username = this.state.username
     let password = this.state.password
-    let disabled = loading
+    let disabledGoogle = loadingGoogle
+    let disabledStOlaf = loadingStOlaf
 
-    let loginTextStyle = disabled
+    let loginTextStyleGoogle = disabledGoogle
       ? styles.loginButtonTextDisabled
-      : loading
+      : loadingGoogle
+        ? styles.loginButtonTextLoading
+        : styles.loginButtonTextActive
+
+    let loginTextStyleStOlaf = disabledStOlaf
+      ? styles.loginButtonTextDisabled
+      : loadingStOlaf
         ? styles.loginButtonTextLoading
         : styles.loginButtonTextActive
 
     let actionCell = (
       <CustomCell
         contentContainerStyle={styles.actionButton}
-        isDisabled={disabled}
-        onPress={loggedIn ? this.logOut : this.logIn}
+        isDisabled={disabledGoogle}
+        onPress={loggedInGoogle ? this.logOutGoogle : this.logInGoogle}
       >
-        <Text style={[styles.loginButtonText, loginTextStyle]}>
-          {loading
+        <Text style={[styles.loginButtonText, loginTextStyleGoogle]}>
+          {loadingGoogle
             ? 'Logging in to Google…'
-            : loggedIn
+            : loggedInGoogle
               ? 'Sign Out of Google'
               : 'Sign In with Google'}
         </Text>
@@ -161,7 +202,7 @@ export default class SettingsView extends React.Component {
           autoCapitalize='none'
           style={styles.customTextInput}
           placeholderTextColor='#C7C7CC'
-          disabled={disabled}
+          disabled={disabledStOlaf}
           placeholder='username'
           value={username}
           returnKeyType='next'
@@ -181,23 +222,40 @@ export default class SettingsView extends React.Component {
           autoCapitalize='none'
           style={styles.customTextInput}
           placeholderTextColor='#C7C7CC'
-          disabled={disabled}
+          disabled={disabledStOlaf}
           secureTextEntry={true}
           placeholder='password'
           value={password}
           returnKeyType='done'
           onChangeText={text => this.setState({password: text})}
-          onSubmitEditing={loggedIn ? () => {} : this.logIn}
+          onSubmitEditing={loggedInStOlaf ? () => {} : this.logInStOlaf}
         />
+      </CustomCell>
+    )
+
+    let loginButton = (
+      <CustomCell
+        contentContainerStyle={styles.actionButton}
+        isDisabled={disabledStOlaf}
+        onPress={loggedInStOlaf ? this.logOutStOlaf : this.logInStOlaf}
+      >
+        <Text style={[styles.loginButtonText, loginTextStyleStOlaf]}>
+          {loadingStOlaf
+            ? 'Logging in St. Olaf…'
+            : loggedInStOlaf
+              ? 'Sign Out of St. Olaf'
+              : 'Sign In to St. Olaf'}
+        </Text>
       </CustomCell>
     )
 
     let accountSection = (
       <View>
         <Section header='LOGIN' footer='Note: This application requires logging in to Google and inputting your St. Olaf username and password in order use all features.'>
-          {actionCell}
           {usernameCell}
           {passwordCell}
+          {loginButton}
+          {actionCell}
         </Section>
       </View>
     )
