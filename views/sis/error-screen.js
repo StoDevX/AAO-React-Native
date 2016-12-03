@@ -44,13 +44,13 @@ export default function ErrorView(props: {
 
   return (
     <View style={styles.error}>
-      <Text>Sorry, either we couldn't find your login credentials, or your SIS session timed out. Could you set them up in the settings?</Text>
+      <Text>Sorry, either we couldn't find your login credentials, or your SIS session timed out. Could you set them up in the settings? The SIS view requires both logins.</Text>
       <Button
         onPress={() =>
           navigator.push({
-            id: 'SISLoginView',
+            id: 'SettingsView',
+            title: 'Settings',
             index: route.index + 1,
-            title: 'SIS Login',
             sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
             props: {
               onLoginComplete: onLoginComplete,

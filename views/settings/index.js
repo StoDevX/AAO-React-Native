@@ -13,13 +13,15 @@ import {
   AsyncStorage,
   Navigator,
   View,
+  TextInput,
+  Alert,
 } from 'react-native'
 
 import {
-    Cell,
-    CustomCell,
-    Section,
-    TableView,
+  Cell,
+  CustomCell,
+  Section,
+  TableView,
 } from 'react-native-tableview-simple'
 
 import {version} from '../../package.json'
@@ -29,6 +31,14 @@ import * as c from '../components/colors'
 import CookieManager from 'react-native-cookies'
 import DeviceInfo from 'react-native-device-info'
 
+// These imports manage the St. Olaf login system
+import {
+  loadLoginCredentials,
+  clearLoginCredentials,
+  performLogin,
+} from '../../lib/login'
+
+
 export default class SettingsView extends React.Component {
   static propTypes = {
     navigator: React.PropTypes.instanceOf(Navigator),
@@ -36,49 +46,64 @@ export default class SettingsView extends React.Component {
   }
 
   state = {
-    loggedIn: false,
-    success: false,
-    loading: false,
+    loggedInGoogle: false,
+    loggedInStOlaf: false,
+    successGoogle: false,
+    successStOlaf: false,
+    loadingGoogle: false,
+    loadingStOlaf: false,
     attempted: false,
+    username: '',
+    password: '',
   }
 
   componentWillMount() {
     this.loadData()
   }
 
+  _usernameInput: any;
+  _passwordInput: any;
+
   loadData = async () => {
-    let [status] = await Promise.all([
+    let [creds, status] = await Promise.all([
+      loadLoginCredentials(),
       AsyncStorage.getItem('credentials:valid').then(val => JSON.parse(val)),
     ])
+    if (creds) {
+      this.setState({username: creds.username, password: creds.password})
+      this.logInStOlaf()
+    }
     if (status) {
-      this.setState({success: true})
+      this.setState({loggedInGoogle: true})
     }
   }
 
-  logIn = () => {
+  logInGoogle = () => {
     this.props.navigator.push({
       id: 'SISLoginView',
       index: this.props.route.index + 1,
       props: {
-        onLoginComplete: status => this.setState({success: status}),
+        onLoginComplete: status => this.setState({successGoogle: status, loggedInGoogle: status}),
       },
     })
   }
 
-  logOut = async () => {
-    this.setState({loading: true})
-    CookieManager.clearAll((err, res) => {
+  logOutGoogle = () => {
+    this.setState({loadingGoogle: true})
+    AsyncStorage.removeItem('credentials:valid')
+    CookieManager.clearAll(err => {
       if (err) {
         console.log(err)
+        Alert.alert('Error signing out', 'There was an issue signing out. Please try again.')
       }
-      console.log(res)
       this.setState({
-        success: false,
-        loading: false,
+        successGoogle: false,
+        loadingGoogle: false,
+        loggedInGoogle: false,
       })
     })
-    await AsyncStorage.setItem('credentials:valid', JSON.stringify(false))
   }
+
 
   getDeviceInfo() {
     let deviceInfo = `
@@ -93,6 +118,27 @@ export default class SettingsView extends React.Component {
 
   getSupportBody() {
     return '\n' + this.getDeviceInfo()
+  }
+
+  logInStOlaf = async () => {
+    this.setState({loadingStOlaf: true})
+    let {username, password} = this.state
+    if (username) {
+      username = username.replace(/@.*/g, '') // just in case someone uses their full email, throw the part we don't need away
+    }
+    let {result} = await performLogin(username, password)
+
+    if (!result) {
+      Alert.alert('Error signing in', 'The username or password is incorrect.')
+      this.setState({loadingStOlaf: false, attempted: true, successStOlaf: result, loggedInStOlaf: false})
+      return
+    }
+    this.setState({loadingStOlaf: false, attempted: true, successStOlaf: result, loggedInStOlaf: true})
+  }
+
+  logOutStOlaf = async () => {
+    this.setState({username: '', password: '', successStOlaf: false, attempted: false, loggedInStOlaf: false})
+    clearLoginCredentials()
   }
 
   onPressLegalButton() {
@@ -119,37 +165,117 @@ export default class SettingsView extends React.Component {
     })
   }
 
+  focusUsername = () => {
+    this._usernameInput.focus()
+  }
+
+  focusPassword = () => {
+    this._passwordInput.focus()
+  }
+
   render() {
-    let loggedIn = this.state.success
-    let loading = this.state.loading
+    let loggedInGoogle = this.state.loggedInGoogle
+    let loggedInStOlaf = this.state.loggedInStOlaf
+    let loadingGoogle = this.state.loadingGoogle
+    let loadingStOlaf = this.state.loadingStOlaf
+    let username = this.state.username
+    let password = this.state.password
+    let disabledGoogle = loadingGoogle
+    let disabledStOlaf = loadingStOlaf
 
-    let disabled = loading
-
-    let loginTextStyle = disabled
+    let loginTextStyleGoogle = disabledGoogle
       ? styles.loginButtonTextDisabled
-      : loading
+      : loadingGoogle
+        ? styles.loginButtonTextLoading
+        : styles.loginButtonTextActive
+
+    let loginTextStyleStOlaf = disabledStOlaf
+      ? styles.loginButtonTextDisabled
+      : loadingStOlaf
         ? styles.loginButtonTextLoading
         : styles.loginButtonTextActive
 
     let actionCell = (
       <CustomCell
         contentContainerStyle={styles.actionButton}
-        isDisabled={disabled}
-        onPress={loggedIn ? this.logOut : this.logIn}
+        isDisabled={disabledGoogle}
+        onPress={loggedInGoogle ? this.logOutGoogle : this.logInGoogle}
       >
-        <Text style={[styles.loginButtonText, loginTextStyle]}>
-          {loading
-            ? 'Logging in…'
-            : loggedIn
-              ? 'Sign Out'
-              : 'Sign In'}
+        <Text style={[styles.loginButtonText, loginTextStyleGoogle]}>
+          {loadingGoogle
+            ? 'Logging in to Google…'
+            : loggedInGoogle
+              ? 'Sign Out of Google'
+              : 'Sign In with Google'}
+        </Text>
+      </CustomCell>
+    )
+
+    let usernameCell = (
+      <CustomCell contentContainerStyle={styles.loginCell}>
+        <Text onPress={this.focusUsername} style={styles.label}>Username</Text>
+        <TextInput
+          ref={ref => this._usernameInput = ref}
+          cellStyle='Basic'
+          autoCorrect={false}
+          autoCapitalize='none'
+          style={styles.customTextInput}
+          placeholderTextColor={c.iosPlaceholderText}
+          disabled={disabledStOlaf}
+          placeholder='username'
+          value={username}
+          returnKeyType='next'
+          onChangeText={text => this.setState({username: text})}
+          onSubmitEditing={this.focusPassword}
+        />
+      </CustomCell>
+    )
+
+    let passwordCell = (
+      <CustomCell contentContainerStyle={styles.loginCell}>
+        <Text onPress={this.focusPassword} style={styles.label}>Password</Text>
+        <TextInput
+          ref={ref => this._passwordInput = ref}
+          cellStyle='Basic'
+          autoCorrect={false}
+          autoCapitalize='none'
+          style={styles.customTextInput}
+          placeholderTextColor={c.iosPlaceholderText}
+          disabled={disabledStOlaf}
+          secureTextEntry={true}
+          placeholder='password'
+          value={password}
+          returnKeyType='done'
+          onChangeText={text => this.setState({password: text})}
+          onSubmitEditing={loggedInStOlaf ? () => {} : this.logInStOlaf}
+        />
+      </CustomCell>
+    )
+
+    let loginButton = (
+      <CustomCell
+        contentContainerStyle={styles.actionButton}
+        isDisabled={disabledStOlaf}
+        onPress={loggedInStOlaf ? this.logOutStOlaf : this.logInStOlaf}
+      >
+        <Text style={[styles.loginButtonText, loginTextStyleStOlaf]}>
+          {loadingStOlaf
+            ? 'Logging in St. Olaf…'
+            : loggedInStOlaf
+              ? 'Sign Out of St. Olaf'
+              : 'Sign In to St. Olaf'}
         </Text>
       </CustomCell>
     )
 
     let accountSection = (
       <View>
-        <Section>
+        <Section header='ST. OLAF LOGIN' footer='St. Olaf login enables the "meals remaining" feature.'>
+          {usernameCell}
+          {passwordCell}
+          {loginButton}
+        </Section>
+        <Section header='GOOGLE LOGIN' footer='Google login allows SIS access, which enables flex dollars, ole dollars, and course information.'>
           {actionCell}
         </Section>
       </View>
@@ -229,6 +355,9 @@ let styles = StyleSheet.create({
     fontSize: 16,
     marginTop: (Platform.OS === 'ios') ? -2 : 0,  // lines the label up with the text on iOS
     alignSelf: 'center',
+  },
+  note: {
+
   },
   actionButton: {
     justifyContent: 'flex-start',

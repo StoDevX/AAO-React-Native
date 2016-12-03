@@ -20,7 +20,7 @@ import delay from 'delay'
 import isNil from 'lodash/isNil'
 import isError from 'lodash/isError'
 import * as c from '../components/colors'
-import {getFinancialData} from '../../lib/financials'
+import {getFinancialData, getWeeklyMealsRemaining} from '../../lib/financials'
 import ErrorView from './error-screen'
 
 const buttonStyles = StyleSheet.create({
@@ -48,6 +48,8 @@ export default class BalancesView extends React.Component {
     flex: null,
     ole: null,
     print: null,
+    weeklyMeals: null,
+    dailyMeals: null,
     successsFinancials: false,
     loading: true,
     error: null,
@@ -59,6 +61,8 @@ export default class BalancesView extends React.Component {
     flex: null|number,
     ole: null|number,
     print: null|number,
+    weeklyMeals: null|number,
+    dailyMeals: null|number,
     successsFinancials: bool,
     loading: bool,
     error: null|Error,
@@ -85,12 +89,26 @@ export default class BalancesView extends React.Component {
 
   fetchData = async (forceFromServer: boolean=false) => {
     try {
-      let data = await getFinancialData(forceFromServer)
-      if (isError(data)) {
+      let [
+        sisFinancialsInfo,
+        mealsRemaining,
+      ] = await Promise.all([
+        getFinancialData(forceFromServer),
+        getWeeklyMealsRemaining(),
+      ])
+
+      if (isError(sisFinancialsInfo)) {
         this.setState({loggedIn: false})
       } else {
-        let {flex, ole, print} = data
+        let {flex, ole, print} = sisFinancialsInfo
         this.setState({flex, ole, print})
+      }
+
+      if (isError(mealsRemaining)) {
+        this.setState({loggedIn: false})
+      } else {
+        let {weeklyMeals, dailyMeals} = mealsRemaining
+        this.setState({weeklyMeals, dailyMeals})
       }
     } catch (error) {
       this.setState({error})
@@ -121,6 +139,13 @@ export default class BalancesView extends React.Component {
     return '$' + (((value: any): number) / 100).toFixed(2)
   }
 
+  getFormattedMealsRemaining(value: null|number): string {
+    if (isNil(value)) {
+      return 'N/A'
+    }
+    return ((value: any): string)
+  }
+
   render() {
     if (this.state.error) {
       return <Text>Error: {this.state.error.message}</Text>
@@ -134,7 +159,7 @@ export default class BalancesView extends React.Component {
       />
     }
 
-    let {flex, ole, print, loading} = this.state
+    let {flex, ole, print, loading, dailyMeals, weeklyMeals} = this.state
 
     return (
       <ScrollView
@@ -181,12 +206,12 @@ export default class BalancesView extends React.Component {
           <Section header='MEAL PLAN'>
             <Cell cellStyle='RightDetail'
               title='Daily Meals Left'
-              detail='Not Available'
+              detail={this.getFormattedMealsRemaining(dailyMeals)}
             />
 
             <Cell cellStyle='RightDetail'
               title='Weekly Meals Left'
-              detail='Not Available'
+              detail={this.getFormattedMealsRemaining(weeklyMeals)}
             />
           </Section>
         </TableView>
