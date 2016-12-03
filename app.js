@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: Platform.OS === 'ios' ? 18 : 16,
-    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
+    paddingHorizontal: Platform.OS === 'ios' ? 10 : 16,
   },
   backButtonCloseText: {
     fontSize: 17,
