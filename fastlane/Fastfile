@@ -56,7 +56,7 @@ platform :ios do
   end
 
   desc "Provisions the profiles; bumps the build number; builds the app"
-  private_lane :build do
+  lane :build do
     # Set up code signing correctly
     # (more information: https://codesigning.guide)
     match(readonly: true)

@@ -29,6 +29,11 @@ In case match needs to be updated - probably never needs to be run
 fastlane ios ci_keychains
 ```
 Do CI-system keychain setup
+### ios build
+```
+fastlane ios build
+```
+Provisions the profiles; bumps the build number; builds the app
 ### ios beta
 ```
 fastlane ios beta
