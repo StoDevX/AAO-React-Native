@@ -1,47 +1,33 @@
 language: generic
 
-my-caches:
-  node: &my-node-cache
-    directories:
-      # cache node_modules b/c they take a long time to install
-      - ./node_modules
-  android-before: &my-android-before_cache
-    - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
-  android: &my-android-cache
-    directories:
-      # cache node_modules b/c they take a long time to install
-      - ./node_modules
-      # cache .gradle for both gradle and gradle's cache
-      - $HOME/.gradle/caches/
-      - $HOME/.gradle/wrapper/
-  ios: &my-ios-cache
-    directories:
-      # cache node_modules b/c they take a long time to install
-      - ./node_modules
-      # cache homebrew's git repo?
-      - /usr/local/Cellar/.git
+before_cache:
+  - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"
+  - rm -rf "$TMPDIR/jest_preprocess_cache"
+
+cache:
+  bundler: true
+  directories:
+    - ./node_modules
+    - $HOME/.gradle
 
 matrix:
   fast_finish: true
   include:
     - os: linux
+      dist: trusty
       sudo: false
-      env: TEST_TYPE=js
       language: node_js
       node_js: '7'
-      cache: *my-node-cache
+      env: {type: 'js'}
 
     - os: linux
-      sudo: true
-      distro: trusty
-      env: TEST_TYPE=android
-      jdk: oraclejdk8
+      dist: precise
+      sudo: required
       language: android
+      jdk: oraclejdk8
+      env: {type: 'android', can_deploy: 'yes'}
       android:
         components:
-          # Some components come pre-installed:
-          # docs.travis-ci.com/user/languages/android#Pre-installed-components
-          # However, that seems to leave us with errors in the build
           - tools
           - platform-tools
           - build-tools-23.0.1
@@ -49,21 +35,15 @@ matrix:
           - extra-android-m2repository
           - extra-google-m2repository
           - extra-android-support
-      cache: *my-android-cache
-      before_cache: *my-android-before_cache
 
-    # This is all ready to go; we just need to want it :-)
     # - os: linux
-    #   distro: trusty
-    #   sudo: true
-    #   env: TEST_TYPE=android EMULATOR=yes
-    #   jdk: oraclejdk8
+    #   dist: precise
+    #   sudo: required
     #   language: android
+    #   jdk: oraclejdk8
+    #   env: {type: 'android', emulator: 'yes'}
     #   android:
     #     components:
-    #       # Some components come pre-installed:
-    #       # docs.travis-ci.com/user/languages/android#Pre-installed-components
-    #       # However, that seems to leave us with errors in the build
     #       - tools
     #       - platform-tools
     #       - build-tools-23.0.1
@@ -72,16 +52,13 @@ matrix:
     #       - extra-google-m2repository
     #       - extra-android-support
     #       - sys-img-armeabi-v7a-google_apis-23
-    #   cache: *my-android-cache
-    #   before_cache: *my-android-before_cache
 
-    # - os: osx
-    #   # We're using 7.2 currently, as xctool has issues with 7.3.
-    #   # This also means that we're testing against iOS 9.2.
-    #   osx_image: xcode7.2
-    #   language: objective-c
-    #   env: TEST_TYPE=ios
-    #   cache: *my-ios-cache
+    - os: osx
+      language: objective-c
+      osx_image: xcode8.1
+      node_js: '7'
+      env: {type: 'ios', can_deploy: 'yes'}
+
 
 # As seen in http://stackoverflow.com/a/31882307/2347774
 # Prevent travis from building twice for PRs
@@ -90,71 +67,121 @@ branches:
     - master
     - /^travis/
 
-install:
-  - echo "Now testing $TEST_TYPE on $TRAVIS_OS_NAME"
-  - echo "Using android emulator $EMULATOR"
+
+before_install:
+  - echo "Now testing $type on $TRAVIS_OS_NAME"
+  - echo "Using the android emulator? $emulator"
   - echo "Travis branch is $TRAVIS_BRANCH"
-  - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
+  - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
+  - echo "Build triggered by $TRAVIS_EVENT_TYPE"
 
-  # work around android build failing - https://github.com/travis-ci/travis-ci/issues/6307
-  # - if [[ "$TRAVIS_OS_NAME" == "linux" && "$TEST_TYPE" == "android" ]]; then rvm get head; fi
+  # only deploy from the once-daily cron-triggered jobs
+  - run_deploy="no"
+  - if [[ "$can_deploy" == "yes" && "$TRAVIS_EVENT_TYPE" == "cron" ]]; then run_deploy="yes"; fi
 
-  # force node 7 for the android build
-  - nvm install 7
-  - nvm use 7
+  # force node 7 on the android builds
+  - |
+    if [[ "$type" == "android" ]]; then
+      nvm install 7
+      nvm use 7
+    fi
 
   # turn off fancy npm stuff
   - npm config set spin=false
   - npm config set progress=false
 
-  # install node deps
-  - npm install
+  # see macoscope.com/blog/simplify-your-life-with-fastlane-match
+  - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
 
-  ### do js-only setup stuff
-  # prepare for jest
-  - if [[ "$TEST_TYPE" = js ]]; then rm -rf "$TMPDIR/jest_preprocess_cache"; fi
+  # Dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
+  - PATH=`echo $PATH | sed "s/\.\/node_modules\/\.bin//g"`
+  - export PATH=$PATH
+  - echo $PATH
+
+  # make sure to use ruby 2.3
+  - |
+    if [[ "$type" == "android" || "$type" == "ios" ]]; then
+      rvm use 2.3 --install --binary --fuzzy
+      gem install bundler
+    fi
+
+
+
+install:
+  # install packages
+  - npm install
+  # install fastlane
+  - if [[ "$type" == "android" || "$type" == "ios" ]]; then bundle install --deployment; fi
 
 
 before_script:
-  # Emulator Management: Create, Start and Wait
+  # Fire up the Android emulator
   - |
-    if [[ "$TEST_TYPE" == "android" && "$EMULATOR" == "yes" ]]; then
+    if [[ "$type" == "android" && "$emulator" == "yes" ]]; then
       EmuName="react-native"
-      df -h
       mkdir -p "$HOME/.android/avd/$EmuName.avd/"
-      echo no | android create avd --force -n $EmuName -t android-23 --abi google_apis/armeabi-v7a
-      emulator -avd $EmuName -no-audio -no-window &
+      echo no | android create avd --force -n "$EmuName" -t android-23 --abi google_apis/armeabi-v7a
+      emulator -avd "$EmuName" -no-audio -no-window &
       android-wait-for-emulator
       adb shell input keyevent 82 &
     fi
 
+  # `match` keychain info – the values don't matter, they're defined
+  # here so they're consistent throughout
+  - export MATCH_KEYCHAIN_NAME=travis-ios-keychain
+  - export MATCH_KEYCHAIN_PASSWORD=alpine
+
+  # Fix keychain issues for iOS signing
+  - if [[ "$type" == "ios" ]]; then bundle exec fastlane ios ci_keychains; fi
+  # add HockeySDK to iOS build
+  - if [[ "$type" == "ios" && "$run_deploy" == "yes" ]]; then scripts/hockeyapp.sh; fi
+
 
 script:
   # These sections will grow over time.
-  # Each line is collapsed nicely in the travis output, which is why they're
-  # grouped in this fashion.
+  # Each line is collapsed nicely in the travis output.
 
-  # travis apps don't have any env vars at the moment.
-  # I'm not comfortable having them written to disk there.
+  # ensure the env file exists
   - touch .env.js
-  - touch keys.js
+  # and fill it out, if we're deploying
+  - |
+    if [[ "$run_deploy" == "yes" ]]; then
+      echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
+    fi
 
-  # JS-only tests - type checking and specs
-  - if [[ "$TEST_TYPE" == "js" ]]; then npm run lint; fi
-  - if [[ "$TEST_TYPE" == "js" ]]; then npm run flow; fi
-  - if [[ "$TEST_TYPE" == "js" ]]; then npm run test:js:coverage; fi
+  # JS
+  # Lint
+  - if [[ "$type" == "js" ]]; then npm run lint; fi
+  # Type check
+  - if [[ "$type" == "js" ]]; then npm run flow; fi
+  # Build a bundle
+  - if [[ "$type" == "js" ]]; then npm run bundle:ios; fi
+  # Run tests + collect coverage info
+  - if [[ "$type" == "js" ]]; then npm run test:js:coverage; fi
 
-  # iOS-only tests - building and specs
-  - if [[ "$TEST_TYPE" == "ios" ]]; then npm run build:ios; fi
+  # iOS
+  # Run Xcode tests – except they're failing again, so back to "build the app"
+  # - if [[ "$type" == "ios" && "$run_deploy" == "no" ]]; then bundle exec fastlane ios test; fi
+  - if [[ "$type" == "ios" && "$run_deploy" == "no" ]]; then bundle exec fastlane ios build; fi
+  # Build + release the app
+  - if [[ "$type" == "ios" && "$run_deploy" == "yes" ]]; then bundle exec fastlane ios beta; fi
 
-  # android-only tests - building and specs
-  - if [[ "$TEST_TYPE" == "android" ]]; then npm run build:android:unix; fi
+  # Android
+  # Build the app
+  - if [[ "$type" == "android" && "$run_deploy" == "no" ]]; then bundle exec fastlane android build; fi
+  # Release the app
+  - if [[ "$type" == "android" && "$run_deploy" == "yes" ]]; then bundle exec fastlane android beta; fi
+
+
+after_success:
+  - |
+    if [[ "$type" == "js" ]]; then
+      npm install coveralls
+      coveralls < ./coverage/lcov.info
+    fi
+
 
 # ping slack with status
 notifications:
   slack:
     secure: fmOwJp9Xj5dJanJsdUcoJwCpHzoGEmP32zfUF+EfvHmNNkkiCiPGuXa2vt829655rjopfjm1sILfagEYr1CcnjI4fa6zIY6fQkWgii0Acy+vIEB3GZ1h46Uj8vLYOjOBC6tgNqGZvfFhtfo67hmhfRxXpP1jY6Ta0eAtxjqQ/cgGI3vUXstI3HN9eLsTa8Ejf8YiIkfV6dAPZkxDdbiQuO5+4ZbZdPYEke/QC4a/a14l4IzPntusS/8ebD5mYDavkW1+gtjZmYrqMn9aWSh+R0L1KwkqoQq5USjDw6gg4/H9L8OEj/tnCwyUQ9jyyvSLvCMTjAPGWzVvvtQKHULPuCUoH6dLAAn6HeyAPpj5rJbyVgb6voj3jfHvcOGIO2o81l4g/4JKxzN9m2tCeR8I83aPboIMUT2d1F7trfFZLWzxPUroTIWVhEoa3mRneKcQU4IY2+cATFLQnrG+iu7G3q3mNXt3figRXP76fgmdAIvdeBvN1jdmY4148DhXZVkk/Fkddd8BEJ2l/5qHlCGEKKYhM5q//+GdFOnnAiFzjbPIKixF4c1B6itEfrWo+slu3IFsd7Wsc7pb5yaW9dHaiQwlhrk5mYH0getws8fmufT1BY/Qg9pp9XJxLDos9cd24QNF3ACpKxvB9k48M4Ez0Pe5khruq+0YK04rHO+xJVw=
-
-after_success:
-  - npm install coveralls
-  - coveralls < ./coverage/lcov.info
