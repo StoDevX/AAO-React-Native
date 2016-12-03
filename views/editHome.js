@@ -163,7 +163,6 @@ export default class EditHomeView extends React.Component {
 
 let styles = StyleSheet.create({
   contentContainer: {
-    flex: 1,
     width: window.width,
     backgroundColor: c.iosLightBackground,
     paddingTop: 10,
