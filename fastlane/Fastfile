@@ -145,6 +145,6 @@ end
 
 desc "Gets the version, either from Travis or from Hockey"
 private_lane :get_version do |options|
-  ENV["TRAVIS_BUILD_NUMBER"] or get_hockeyapp_version(platform: options[:platform]) + 1
+  ENV["TRAVIS_BUILD_NUMBER"] || get_hockeyapp_version(platform: options[:platform]) + 1
 end
 
