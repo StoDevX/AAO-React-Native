@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   backButtonClose: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
+    paddingVertical: Platform.OS === 'ios' ? 18 : 16,
     paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
   },
   backButtonCloseText: {
