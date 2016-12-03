@@ -5,6 +5,7 @@
  */
 
 import React from 'react'
+import type {Element} from 'react'
 import {
   Navigator,
   ScrollView,
@@ -12,17 +13,23 @@ import {
   Text,
   TouchableOpacity,
   StatusBar,
+  View,
   Platform,
+  AsyncStorage,
+  TouchableNativeFeedback,
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/Entypo'
 import * as c from './components/colors'
+import sortBy from 'lodash/sortBy'
+import type {TopLevelViewPropsType} from './types'
+//import AsyncStorageHOC from './components/asyncStorageHOC'
 
 const Dimensions = require('Dimensions')
 let Viewport = Dimensions.get('window')
 
-type ViewType = {view: string, title: string, icon: string, tint: string};
-const views: ViewType[] = [
+export type ViewType = {view: string, title: string, icon: string, tint: string};
+export const allViews: ViewType[] = [
   {view: 'MenusView', title: 'Menus', icon: 'bowl', tint: c.emerald},
   {view: 'SISView', title: 'SIS', icon: 'fingerprint', tint: c.goldenrod},
   {view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock', tint: c.wave},
@@ -37,25 +44,42 @@ const views: ViewType[] = [
   {view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer', tint: c.grapefruit},
 ]
 
+const Touchable = ({children, onPress}: {onPress: () => any, children?: Element<any>}) => {
+  return Platform.OS === 'ios'
+    ? <TouchableOpacity onPress={onPress} activeOpacity={0.65}>{children}</TouchableOpacity>
+    : <TouchableNativeFeedback onPress={onPress}>{children}</TouchableNativeFeedback>
+}
 
-type ScenePropsType = {navigator: typeof Navigator, route: Object};
-export default function HomePageScene({navigator, route}: ScenePropsType) {
+function HomeScreenButton({view, onPress}: {view: ViewType, onPress: () => any}) {
+  return (
+    <Touchable onPress={onPress}>
+      <View style={[styles.rectangle, {backgroundColor: view.tint}]}>
+        <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
+        <Text style={styles.rectangleButtonText}>
+          {view.title}
+        </Text>
+      </View>
+    </Touchable>
+  )
+}
+
+function HomePage({navigator, route, order, views}: {order: string[], views: ViewType[]} & TopLevelViewPropsType) {
+  const sortedViews = sortBy(views, view => order.indexOf(view.view))
+
   return (
     <ScrollView
-      overflow={'hidden'}
+      overflow='hidden'
       alwaysBounceHorizontal={false}
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
       style={styles.scrollView}
-      //contentContainerStyle={Platform.OS === 'android' ? styles.rows : styles.cells}
       contentContainerStyle={styles.cells}
     >
-      <StatusBar
-        barStyle='light-content'
-        backgroundColor={c.gold}
-      />
-      {views.map(view =>
-        <TouchableOpacity
+      <StatusBar barStyle='light-content' backgroundColor={c.gold} />
+
+      {sortedViews.map(view =>
+        <HomeScreenButton
+          view={view}
           key={view.view}
           onPress={() => navigator.push({
             id: view.view,
@@ -63,23 +87,49 @@ export default function HomePageScene({navigator, route}: ScenePropsType) {
             title: view.title,
             sceneConfig: Navigator.SceneConfigs.PushFromRight,
           })}
-          activeOpacity={0.5}
-          //style={[Platform.OS === 'ios' ? styles.rectangle : styles.row, Platform.OS === 'ios' ? {backgroundColor: view.tint} : null]}
-          style={[styles.rectangle, {backgroundColor: view.tint}]}
-        >
-          {/*<Icon name={view.icon} size={Platform.OS === 'ios' ? 32 : 28} style={[Platform.OS === 'ios' ? styles.rectangleButtonIcon : styles.listIcon, Platform.OS === 'android' ? {color: view.tint} : null]} />*/}
-          <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
-
-          <Text
-            style={styles.rectangleButtonText}
-            autoAdjustsFontSize={true}
-          >
-            {view.title}
-          </Text>
-        </TouchableOpacity>)
+        />)
       }
     </ScrollView>
   )
+}
+
+export default class HomePageScene extends React.Component {
+  static propTypes = {
+    navigator: React.PropTypes.instanceOf(Navigator),
+    route: React.PropTypes.object,
+  }
+
+  state = {
+    order: [],
+  }
+
+  componentWillMount() {
+    this.loadData()
+  }
+
+  componentWillReceiveProps() {
+    this.loadData()
+  }
+
+  loadData = async () => {
+    let savedOrder = JSON.parse(await AsyncStorage.getItem('homescreen:view-order'))
+
+    // check to see if we have a modified view order or not
+    savedOrder = savedOrder || []
+
+    this.setState({order: savedOrder})
+  }
+
+  render() {
+    return (
+      <HomePage
+        route={this.props.route}
+        navigator={this.props.navigator}
+        order={this.state.order}
+        views={allViews}
+      />
+    )
+  }
 }
 
 HomePageScene.propTypes = {
