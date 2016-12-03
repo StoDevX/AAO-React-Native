@@ -13,7 +13,6 @@ import {
   Navigator,
   StyleSheet,
   Text,
-  View,
 } from 'react-native'
 
 import * as c from './components/colors'
