@@ -32,6 +32,11 @@ platform :ios do
     scan
   end
 
+  desc "Take screenshots"
+  lane :screenshot do
+    snapshot
+  end
+
   desc "Activate the rogue signing team"
   private_lane :go_rogue do
     sh("cd .. && ruby scripts/go-rogue.rb")
