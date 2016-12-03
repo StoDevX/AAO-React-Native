@@ -92,13 +92,13 @@ end
 
 
 platform :android do
-  dir = "./android"
+  dir = "android"
 
   desc "Makes a build"
   lane :build do
     increment_version_code(
       version_code: get_version(platform: 'Android'),
-      app_folder_name: dir,
+      app_folder_name: dir + '/app',
     )
 
     gradle(
