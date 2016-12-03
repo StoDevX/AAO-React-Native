@@ -37,6 +37,11 @@ platform :ios do
     sh("cd .. && ruby scripts/go-rogue.rb")
   end
 
+  desc "In case match needs to be updated - probably never needs to be run"
+  lane :update_match do
+    match(readonly: false)
+  end
+
   desc "Provisions the profiles; bumps the build number; builds the app"
   private_lane :build do
     # Set up code signing correctly

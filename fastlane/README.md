@@ -19,6 +19,11 @@ Adds any unregistered devices to the provisioning profile
 fastlane ios test
 ```
 Runs all the tests
+### ios update_match
+```
+fastlane ios update_match
+```
+In case match needs to be updated - probably never needs to be run
 ### ios beta
 ```
 fastlane ios beta
