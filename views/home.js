@@ -13,13 +13,13 @@ import {
   TouchableOpacity,
   StatusBar,
   Platform,
+  Dimensions,
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/Entypo'
 import * as c from './components/colors'
 
-const Dimensions = require('Dimensions')
-let Viewport = Dimensions.get('window')
+const Viewport = Dimensions.get('window')
 
 type ViewType = {view: string, title: string, icon: string, tint: string};
 const views: ViewType[] = [

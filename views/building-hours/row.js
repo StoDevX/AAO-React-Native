@@ -15,8 +15,10 @@ import {
 import type momentT from 'moment'
 import type {BuildingType} from './types'
 import * as c from '../components/colors'
-import {getDetailedBuildingStatus} from './building-hours-helpers'
-import {getShortBuildingStatus} from './building-hours-helpers'
+import {
+  getDetailedBuildingStatus,
+  getShortBuildingStatus,
+} from './building-hours-helpers'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 type PropsType = {

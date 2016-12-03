@@ -9,6 +9,7 @@ import {
   View,
   Text,
 } from 'react-native'
+import type {MenuItemType} from './types'
 
 let styles = StyleSheet.create({
   container: {
@@ -26,8 +27,6 @@ let styles = StyleSheet.create({
     textAlign: 'right',
   },
 })
-
-import type {MenuItemType} from './types'
 
 export default function MenuItem({items, style}: {items: MenuItemType[], style: number|Object}) {
   return (

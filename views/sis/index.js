@@ -11,6 +11,7 @@ import {
 
 import TabbedView from '../components/tabbed-view'
 import tabs from './tabs'
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

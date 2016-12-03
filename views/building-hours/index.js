@@ -13,10 +13,10 @@ import delay from 'delay'
 import {buildingHours} from '../../data/new-building-hours'
 import {Separator} from '../components/separator'
 import groupBy from 'lodash/groupBy'
-const Touchable = Platform.OS === 'ios' ? TouchableHighlight : TouchableNativeFeedback
-
 import * as c from '../components/colors'
 import moment from 'moment-timezone'
+
+const Touchable = Platform.OS === 'ios' ? TouchableHighlight : TouchableNativeFeedback
 const CENTRAL_TZ = 'America/Winnipeg'
 
 export {BuildingHoursDetailView} from './detail'

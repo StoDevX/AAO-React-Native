@@ -11,11 +11,9 @@ import {
 } from 'react-native'
 
 import ContactCard from './components/contactCard'
-
 import * as c from './components/colors'
-
-
 import numbers from '../data/contact-info'
+
 export default class ContactView extends React.Component {
   constructor() {
     super()
