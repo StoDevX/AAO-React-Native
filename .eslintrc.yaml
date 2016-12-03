@@ -1,8 +1,5 @@
 parser: babel-eslint
-extends:
-  - eslint:recommended
-  - plugin:import/errors
-  - plugin:import/warnings
+extends: eslint:recommended
 installedESLint: true
 
 env:
@@ -111,5 +108,20 @@ rules:
   flowtype/valid-syntax: error
 
   # import checks
-  import/no-named-as-default: error
+  import/default: error
+  import/export: error
+  import/first: error
+  import/named: error
+  import/namespace: error
+  import/newline-after-import: error
+  import/no-absolute-path: error
+  import/no-duplicates: error
+  import/no-dynamic-require: error
+  import/no-extraneous-dependencies: error
+  import/no-mutable-exports: error
   import/no-named-as-default-member: error
+  import/no-named-as-default: error
+  import/no-named-default: error
+  import/no-unresolved: error
+  import/no-webpack-loader-syntax: error
+  import/unambiguous: warn
