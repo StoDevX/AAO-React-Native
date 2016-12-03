@@ -42,6 +42,19 @@ platform :ios do
     match(readonly: false)
   end
 
+  desc "Do CI-system keychain setup"
+  lane :ci_keychains do
+    create_keychain(
+      name: ENV["MATCH_KEYCHAIN_NAME"],
+      password: ENV["MATCH_KEYCHAIN_PASSWORD"],
+      timeout: 3600,
+    )
+
+    match(readonly: true)
+
+    sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{ENV["MATCH_KEYCHAIN_PASSWORD"]} #{ENV["MATCH_KEYCHAIN_NAME"]}")
+  end
+
   desc "Provisions the profiles; bumps the build number; builds the app"
   private_lane :build do
     # Set up code signing correctly

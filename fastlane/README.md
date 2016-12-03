@@ -24,6 +24,11 @@ Runs all the tests
 fastlane ios update_match
 ```
 In case match needs to be updated - probably never needs to be run
+### ios ci_keychains
+```
+fastlane ios ci_keychains
+```
+Do CI-system keychain setup
 ### ios beta
 ```
 fastlane ios beta
