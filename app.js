@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     backgroundColor: Platform.OS === 'ios' ? c.iosLightBackground : c.androidLightBackground,
   },
   navigationBar: {
-    backgroundColor: c.olevilleGold,
+    backgroundColor: c.tint,
     ...navbarShadows,
   },
   backButton: {
