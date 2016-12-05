@@ -159,8 +159,9 @@ const styles = StyleSheet.create({
   },
 })
 
+let editHomeButtonActive = false
+
 function openEditHome(route, navigator) {
-  let editHomeButtonActive = false
   return () => {
     if (editHomeButtonActive) {
       return
