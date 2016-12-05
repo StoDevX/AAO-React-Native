@@ -131,12 +131,8 @@ export default class EditHomeView extends React.Component {
 
   loadData = async () => {
     this.setState({loaded: false})
-
     let savedOrder = JSON.parse(await AsyncStorage.getItem('homescreen:view-order'))
-
-    // check to see if we have a modified view order or not
     savedOrder = savedOrder || Object.keys(objViews)
-
     this.setState({loaded: true, order: savedOrder})
   }
 
@@ -177,7 +173,6 @@ let styles = StyleSheet.create({
     marginHorizontal: 15,
     paddingVertical: 12,
     borderRadius: 4,
-
     shadowColor: 'rgba(0,0,0,0.2)',
     shadowOpacity: 1,
     shadowOffset: {height: 2, width: 2},
@@ -186,13 +181,11 @@ let styles = StyleSheet.create({
   },
   rectangleButtonIcon: {
     marginRight: 20,
-    // borderRadius: 20,
     color: c.white,
     paddingLeft: 10,
     paddingRight: 10,
   },
   listButtonIcon: {
-    // borderRadius: 20,
     color: c.black,
     paddingLeft: 10,
     paddingRight: 10,
