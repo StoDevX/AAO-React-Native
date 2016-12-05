@@ -38,13 +38,13 @@ export default function FoodItem({data, filters, style, getDietaryTags=getDietar
     <View style={[styles.container, style]}>
       <View style={styles.name}>
         <Text style={styles.text}>{data.label}</Text>
-        <View style={styles.iconContainer}>
-          {getDietaryTags(filters, data.cor_icon)}
-        </View>
       </View>
-      <View>
+      <View style={styles.iconContainer}>
+        {getDietaryTags(filters, data.cor_icon)}
+      </View>
+      {/*<View>
         {data.price ? <Text style={styles.secondary}>{data.price.split('&nbsp;').map(s => s.trim()).join('\n')}</Text> : null}
-      </View>
+      </View>*/}
     </View>
   )
 }
