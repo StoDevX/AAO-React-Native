@@ -18,7 +18,6 @@ import DietaryFilters from './dietary-filters'
 import includes from 'lodash/includes'
 import values from 'lodash/values'
 import difference from 'lodash/difference'
-import intersection from 'lodash/intersection'
 
 import * as c from '../../components/colors'
 
@@ -142,8 +141,12 @@ export default class FancyMenu extends React.Component {
     // console.log(items)
 
     if (onlyTheseDietaryRestrictions.length) {
-      items = filter(items, item =>
-        intersection(onlyTheseDietaryRestrictions, values(item.cor_icon)).length)
+      items = filter(items, item => {
+        let theseRestrictions = values(item.cor_icon)
+        // if the item has no restrictions, it can't have the one we're filtering by.
+        // then we check that the number of different items between the two lists is 0.
+        return theseRestrictions.length && difference(theseRestrictions, onlyTheseDietaryRestrictions).length === 0
+      })
     }
     // console.log(items)
 
