@@ -129,23 +129,25 @@ export default class FancyMenu extends React.Component {
     }
 
     // console.log(onlySpecials, onlyTheseStations, onlyTheseDietaryRestrictions)
+    // console.log(items)
 
-    return filter(items, item => {
-      if (onlySpecials) {
-        return item.special === 1
-      }
+    if (onlySpecials) {
+      items = filter(items, item => item.special === 1)
+    }
+    // console.log(items)
 
-      if (onlyTheseStations.length) {
-        // console.log(onlyTheseStations, item.station, includes(onlyTheseStations, item.station))
-        return includes(onlyTheseStations, item.station)
-      }
+    if (onlyTheseStations.length) {
+      items = filter(items, item => includes(onlyTheseStations, item.station))
+    }
+    // console.log(items)
 
-      if (onlyTheseDietaryRestrictions.length) {
-        return intersection(onlyTheseDietaryRestrictions, values(item.cor_icon)).length
-      }
+    if (onlyTheseDietaryRestrictions.length) {
+      items = filter(items, item =>
+        intersection(onlyTheseDietaryRestrictions, values(item.cor_icon)).length)
+    }
+    // console.log(items)
 
-      return true
-    })
+    return items
   }
 
   processData(props: FancyMenuPropsType) {
