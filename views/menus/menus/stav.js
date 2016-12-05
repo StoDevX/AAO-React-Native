@@ -126,7 +126,7 @@ export default class StavMenuView extends React.Component {
       key: 'specials',
       label: 'Only Specials',
       caption: 'Allows you to either see only the "specials" for today, or everything the location has to offer, including condiments and salad fixings.',
-      value: false,
+      value: true,
     })
 
     let allStations = uniq(map(foodItems, item => item.station)).map(this.trimStationName)
