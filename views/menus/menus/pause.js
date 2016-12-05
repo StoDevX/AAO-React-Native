@@ -7,7 +7,6 @@ import {FilterToolbar} from '../filter/toolbar'
 
 import type {TopLevelViewPropsType} from '../../types'
 import {TopLevelViewPropTypes} from '../../types'
-import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 import uniq from 'lodash/uniq'
@@ -47,8 +46,7 @@ export default class PauseMenuView extends React.Component {
   }
 
   componentDidMount() {
-    const now = moment.tz(CENTRAL_TZ)
-    this.fetchData(now)
+    this.fetchData()
   }
 
   props: TopLevelViewPropsType & {
@@ -59,7 +57,7 @@ export default class PauseMenuView extends React.Component {
     return stationName.replace(/<strong>@(.*)<\/strong>/, '$1')
   }
 
-  fetchData = async (now: momentT) => {
+  fetchData = async () => {
     let cafeMenu = defaultPauseMenu
 
     let foodItems = cafeMenu.items

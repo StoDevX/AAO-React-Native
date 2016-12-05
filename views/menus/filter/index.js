@@ -1,12 +1,11 @@
 // @flow
 import React from 'react'
-import {ScrollView, View, Text, Switch} from 'react-native'
+import {ScrollView, Text, Switch} from 'react-native'
 
 import {TableView, Section, Cell, CustomCell} from 'react-native-tableview-simple'
 
 import type {FilterSpecType} from './types'
 import fromPairs from 'lodash/fromPairs'
-import identity from 'lodash/identity'
 import values from 'lodash/values'
 import includes from 'lodash/includes'
 import difference from 'lodash/difference'
