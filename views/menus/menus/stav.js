@@ -45,12 +45,14 @@ export default class StavMenuView extends React.Component {
     message: string|null,
     isFiltered: bool,
     filters: FilterSpecType[],
+    mealName: string,
   } = {
     loading: true,
     menus: [],
     foodItems: {},
     message: null,
     isFiltered: false,
+    mealName: '',
     filters: [],
   }
 
@@ -116,6 +118,7 @@ export default class StavMenuView extends React.Component {
     let dayparts = cafeMenu.days[0].cafes[this.props.cafeId].dayparts
     let mealInfo = this.findMenu(dayparts, now)
     let menus = mealInfo ? mealInfo.stations : []
+    let mealName = mealInfo ? mealInfo.label : ''
 
     let filters = []
     filters.push({
@@ -150,7 +153,7 @@ export default class StavMenuView extends React.Component {
       value: [],
     })
 
-    this.setState({menus, foodItems, filters, loading: false})
+    this.setState({menus, mealName, foodItems, filters, loading: false})
   }
 
   openFilterView = () => {
@@ -189,7 +192,7 @@ export default class StavMenuView extends React.Component {
       <View style={{flex: 1, marginBottom: Platform.OS === 'ios' ? 49 : 0}}>
         <FilterToolbar
           date={now}
-          title='Lunch'
+          title={this.state.mealName}
           appliedFilterCount={this.state.filters.filter(f => f.type === 'toggle' ? f.value : f.value.length > 0).length}
           onPress={this.openFilterView}
         />
