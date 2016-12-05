@@ -4,13 +4,13 @@ import StavMenuView from './menus/stav'
 import PauseMenuView from './menus/pause'
 
 export default [
-  {
-    id: 'sayles',
-    title: 'Sayles Hill',
-    rnVectorIcon: {iconName: 'snow'},
-    component: StavMenuView,
-    props: {cafeId: '34', loadingMessage: 'temp1'},
-  },
+  // {
+  //   id: 'sayles',
+  //   title: 'Sayles Hill',
+  //   rnVectorIcon: {iconName: 'snow'},
+  //   component: StavMenuView,
+  //   props: {cafeId: '34', loadingMessage: 'temp1'},
+  // },
   {
     id: 'stav',
     title: 'Stav Hall',
@@ -39,13 +39,13 @@ export default [
   //   component: StavMenuView,
   //   props: {cafeId: '36', loadingMessage: 'temp2'},
   // },
-  {
-    id: 'weitz',
-    title: 'Weitz Center',
-    rnVectorIcon: {iconName: 'wine'},
-    component: StavMenuView,
-    props: {cafeId: '458', loadingMessage: 'temp3'},
-  },
+  // {
+  //   id: 'weitz',
+  //   title: 'Weitz Center',
+  //   rnVectorIcon: {iconName: 'wine'},
+  //   component: StavMenuView,
+  //   props: {cafeId: '458', loadingMessage: 'temp3'},
+  // },
   {
     id: 'pause',
     title: 'The Pause',
