@@ -4,17 +4,18 @@
  * Edit Home page
  */
 
-import React, { Component } from 'react'
+import React from 'react'
 import {
   Animated,
-  AsyncStorage,
   Dimensions,
   Easing,
-  Navigator,
   StyleSheet,
   Text,
 } from 'react-native'
 
+import type {TopLevelViewPropsType} from './types'
+import {saveHomescreenOrder} from '../flux'
+import {connect} from 'react-redux'
 import * as c from './components/colors'
 import fromPairs from 'lodash/fromPairs'
 
@@ -28,8 +29,7 @@ import LoadingView from './components/loading'
 //import AsyncStorageHOC from './components/asyncStorageHOC'
 
 const window = Dimensions.get('window')
-
-let objViews = fromPairs(allViews.map(v => ([v.view, v])))
+const objViews = fromPairs(allViews.map(v => ([v.view, v])))
 
 const ReorderIcon = () =>
   <IonIcon name='ios-reorder' size={32} style={styles.listButtonIcon} />
@@ -37,7 +37,7 @@ const ReorderIcon = () =>
 const MenuIcon = ({icon, tint}: {icon: string, tint: string}) =>
   <EntypoIcon name={icon} size={32} style={[styles.rectangleButtonIcon, {color: tint}]} />
 
-class Row extends Component {
+class Row extends React.Component {
   static propTypes = {
     active: React.PropTypes.bool,
     data: React.PropTypes.object.isRequired,
@@ -110,52 +110,34 @@ class Row extends Component {
   }
 }
 
-export default class EditHomeView extends React.Component {
-  static propTypes = {
-    navigator: React.PropTypes.instanceOf(Navigator),
-    route: React.PropTypes.object,
-  }
+function EditHomeView(props: {
+  onSaveOrder: () => any,
+  order: string[],
+} & TopLevelViewPropsType) {
+  return (
+    <SortableList
+      contentContainerStyle={styles.contentContainer}
+      data={objViews}
+      order={props.order}
+      onChangeOrder={(order: {[key: string]: ViewType}) => props.onSaveOrder(order)}
+      renderRow={({data, active}: {data: ViewType, active: boolean}) =>
+        <Row data={data} active={active} />}
+    />
+  )
+}
 
-  state = {
-    loaded: false,
-    order: Object.keys(objViews),
-  }
 
-  componentWillMount() {
-    this.loadData()
-  }
-
-  renderRow({data, active}: {data: ViewType, active: boolean}) {
-    return <Row data={data} active={active} />
-  }
-
-  loadData = async () => {
-    this.setState({loaded: false})
-    let savedOrder = JSON.parse(await AsyncStorage.getItem('homescreen:view-order'))
-    savedOrder = savedOrder || Object.keys(objViews)
-    this.setState({loaded: true, order: savedOrder})
-  }
-
-  onOrderChange = (order: {[key: string]: ViewType}) => {
-    AsyncStorage.setItem('homescreen:view-order', JSON.stringify(Object.values(order)))
-  }
-
-  render() {
-    if (!this.state.loaded) {
-      return <LoadingView />
-    }
-
-    return (
-      <SortableList
-        contentContainerStyle={styles.contentContainer}
-        data={objViews}
-        order={this.state.order}
-        onChangeOrder={this.onOrderChange}
-        renderRow={this.renderRow}
-      />
-    )
+function mapStateToProps(state) {
+  return {
+    order: state.homescreen.order,
   }
 }
+function mapDispatchToProps(dispatch) {
+  return {
+    onSaveOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(EditHomeView)
 
 let styles = StyleSheet.create({
   contentContainer: {
