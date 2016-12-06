@@ -28,21 +28,8 @@ import type {TopLevelViewPropsType} from './types'
 const Dimensions = require('Dimensions')
 let Viewport = Dimensions.get('window')
 
-export type ViewType = {view: string, title: string, icon: string, tint: string};
-export const allViews: ViewType[] = [
-  {view: 'MenusView', title: 'Menus', icon: 'bowl', tint: c.emerald},
-  {view: 'SISView', title: 'SIS', icon: 'fingerprint', tint: c.goldenrod},
-  {view: 'BuildingHoursView', title: 'Building Hours', icon: 'clock', tint: c.wave},
-  {view: 'CalendarView', title: 'Calendar', icon: 'calendar', tint: c.coolPurple},
-  {view: 'DirectoryView', title: 'Directory', icon: 'v-card', tint: c.indianRed},
-  {view: 'StreamingView', title: 'Streaming Media', icon: 'video', tint: c.denim},
-  {view: 'NewsView', title: 'News', icon: 'news', tint: c.eggplant},
-  {view: 'MapView', title: 'Campus Map', icon: 'map', tint: c.coffee},
-  {view: 'ContactsView', title: 'Important Contacts', icon: 'phone', tint: c.crimson},
-  {view: 'TransportationView', title: 'Transportation', icon: 'address', tint: c.cardTable},
-  {view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book', tint: c.olive},
-  {view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer', tint: c.grapefruit},
-]
+import type {ViewType} from './views'
+import {allViews} from './views'
 
 const Touchable = ({children, onPress}: {onPress: () => any, children?: Element<any>}) => {
   return Platform.OS === 'ios'
