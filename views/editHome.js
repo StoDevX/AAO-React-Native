@@ -22,8 +22,8 @@ import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
 import SortableList from 'react-native-sortable-list'
 
-import type {ViewType} from './home'
-import {allViews} from './home'
+import type {ViewType} from './views'
+import {allViews} from './views'
 import LoadingView from './components/loading'
 //import AsyncStorageHOC from './components/asyncStorageHOC'
 
