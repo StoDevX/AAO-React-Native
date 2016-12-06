@@ -139,7 +139,7 @@ function EditHomeView(props: {
       contentContainerStyle={styles.contentContainer}
       data={objViews}
       order={props.order}
-      onChangeOrder={(order: {[key: string]: ViewType}) => props.onSaveOrder(order)}
+      onChangeOrder={(order: ViewType[]) => props.onSaveOrder(order)}
       renderRow={({data, active}: {data: ViewType, active: boolean}) =>
         <Row data={data} active={active} />}
     />
