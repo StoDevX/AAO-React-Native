@@ -15,7 +15,6 @@ import {
   StatusBar,
   View,
   Platform,
-  AsyncStorage,
   TouchableNativeFeedback,
 } from 'react-native'
 
@@ -24,7 +23,6 @@ import Icon from 'react-native-vector-icons/Entypo'
 import * as c from './components/colors'
 import sortBy from 'lodash/sortBy'
 import type {TopLevelViewPropsType} from './types'
-//import AsyncStorageHOC from './components/asyncStorageHOC'
 
 const Dimensions = require('Dimensions')
 let Viewport = Dimensions.get('window')
@@ -85,7 +83,7 @@ function mapStateToProps(state) {
   return {
     order: state.homescreen.order,
   }
-  }
+}
 export default connect(mapStateToProps)(HomePage)
 
 

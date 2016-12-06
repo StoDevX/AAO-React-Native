@@ -25,8 +25,6 @@ import SortableList from 'react-native-sortable-list'
 
 import type {ViewType} from './views'
 import {allViews} from './views'
-import LoadingView from './components/loading'
-//import AsyncStorageHOC from './components/asyncStorageHOC'
 
 const window = Dimensions.get('window')
 const objViews = fromPairs(allViews.map(v => ([v.view, v])))
