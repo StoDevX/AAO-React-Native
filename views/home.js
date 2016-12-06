@@ -19,6 +19,7 @@ import {
   TouchableNativeFeedback,
 } from 'react-native'
 
+import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/Entypo'
 import * as c from './components/colors'
 import sortBy from 'lodash/sortBy'
@@ -50,7 +51,7 @@ function HomeScreenButton({view, onPress}: {view: ViewType, onPress: () => any})
   )
 }
 
-function HomePage({navigator, route, order, views}: {order: string[], views: ViewType[]} & TopLevelViewPropsType) {
+function HomePage({navigator, route, order, views=allViews}: {order: string[], views: ViewType[]} & TopLevelViewPropsType) {
   const sortedViews = sortBy(views, view => order.indexOf(view.view))
 
   return (
@@ -80,49 +81,12 @@ function HomePage({navigator, route, order, views}: {order: string[], views: Vie
   )
 }
 
-export default class HomePageScene extends React.Component {
-  static propTypes = {
-    navigator: React.PropTypes.instanceOf(Navigator),
-    route: React.PropTypes.object,
+function mapStateToProps(state) {
+  return {
+    order: state.homescreen.order,
   }
-
-  state = {
-    order: [],
   }
-
-  componentWillMount() {
-    this.loadData()
-  }
-
-  componentWillReceiveProps() {
-    this.loadData()
-  }
-
-  loadData = async () => {
-    let savedOrder = JSON.parse(await AsyncStorage.getItem('homescreen:view-order'))
-
-    // check to see if we have a modified view order or not
-    savedOrder = savedOrder || []
-
-    this.setState({order: savedOrder})
-  }
-
-  render() {
-    return (
-      <HomePage
-        route={this.props.route}
-        navigator={this.props.navigator}
-        order={this.state.order}
-        views={allViews}
-      />
-    )
-  }
-}
-
-HomePageScene.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator),
-  route: React.PropTypes.object.isRequired,
-}
+export default connect(mapStateToProps)(HomePage)
 
 
 let cellMargin = 10

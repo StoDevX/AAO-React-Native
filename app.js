@@ -12,6 +12,8 @@ import {
   Text,
   Platform,
 } from 'react-native'
+import {Provider} from 'react-redux'
+import {store} from './flux'
 
 import CalendarView from './views/calendar'
 import ContactsView from './views/contacts'
@@ -286,7 +288,7 @@ function Title(route) {
   )
 }
 
-export default class App extends React.Component {
+class App extends React.Component {
   componentDidMount() {
     BackAndroid.addEventListener('hardwareBackPress', this.registerAndroidBackButton)
   }
@@ -333,4 +335,12 @@ export default class App extends React.Component {
       />
     )
   }
+}
+
+export default () => {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  )
 }
