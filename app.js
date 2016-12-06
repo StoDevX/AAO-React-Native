@@ -146,8 +146,9 @@ const styles = StyleSheet.create({
   },
 })
 
+let settingsButtonActive = false
+
 function openSettings(route, navigator) {
-  let settingsButtonActive = false
   return () => {
     if (settingsButtonActive) {
       return
