@@ -89,7 +89,7 @@ export default class NewsContainer extends React.Component {
     )
   }
 
-  onPressNews = (title, story: StoryType) => {
+  onPressNews = (title: string, story: StoryType) => {
     this.props.navigator.push({
       id: 'NewsItemView',
       index: this.props.route.index + 1,
