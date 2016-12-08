@@ -28,8 +28,8 @@ const fetchJson = url => fetch(url).then(r => r.json())
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginLeft: 5,
-    marginRight: 5,
+    paddingLeft: 5,
+    paddingRight: 5,
     backgroundColor: c.olevilleBackground,
   },
   imageStyle: {
