@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		008845151DF9FCBB00C23F56 /* AllAboutOlafTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 008845131DF9FCBB00C23F56 /* AllAboutOlafTests.m */; };
+		008845161DF9FCBB00C23F56 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 008845141DF9FCBB00C23F56 /* Info.plist */; };
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
 		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
@@ -244,6 +246,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		008845131DF9FCBB00C23F56 /* AllAboutOlafTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllAboutOlafTests.m; sourceTree = "<group>"; };
+		008845141DF9FCBB00C23F56 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
 		00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGeolocation.xcodeproj; path = "../node_modules/react-native/Libraries/Geolocation/RCTGeolocation.xcodeproj"; sourceTree = "<group>"; };
@@ -373,6 +377,15 @@
 				008413761D5C3AC30034750D /* libRNKeychain.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		008845121DF9FCBB00C23F56 /* AllAboutOlafTests */ = {
+			isa = PBXGroup;
+			children = (
+				008845131DF9FCBB00C23F56 /* AllAboutOlafTests.m */,
+				008845141DF9FCBB00C23F56 /* Info.plist */,
+			);
+			path = AllAboutOlafTests;
 			sourceTree = "<group>";
 		};
 		00C302A81ABCB8CE00DB3ED1 /* Products */ = {
@@ -575,6 +588,7 @@
 			children = (
 				13B07FAE1A68108700A75B9A /* AllAboutOlaf */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				008845121DF9FCBB00C23F56 /* AllAboutOlafTests */,
 				00D33BE01DDA58A8001E830E /* All About Olaf UI Tests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				5A41494DACBB4D2795B46DE0 /* Resources */,
@@ -994,6 +1008,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				008845161DF9FCBB00C23F56 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1139,6 +1154,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				008845151DF9FCBB00C23F56 /* AllAboutOlafTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
