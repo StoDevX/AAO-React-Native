@@ -42,6 +42,7 @@ export default class ContactView extends React.Component {
       <View style={styles.container}>
         <ListView
           initialListSize={3}
+          removeClippedSubviews={false}
           renderRow={this._renderRow.bind(this)}
           dataSource={this.state.dataSource}
         />
