@@ -53,9 +53,7 @@ export default class ContactView extends React.Component {
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: c.iosLightBackground,
   },
   scrollView: {
-
   },
 })

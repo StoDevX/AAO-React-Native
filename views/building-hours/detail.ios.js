@@ -120,7 +120,7 @@ export class BuildingHoursDetailView extends React.Component {
         windowHeight={100}
         scrollableViewStyle={styles.scrollableStyle}
       >
-        <View style={{flex: 1}}>
+        <View>
           <View style={styles.title}>{title}</View>
           {subtitle}
 

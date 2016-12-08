@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
   sectionHeader: {
-    flex: 1,
     padding: 8,
     justifyContent: 'center',
     backgroundColor: '#EAEAEA',

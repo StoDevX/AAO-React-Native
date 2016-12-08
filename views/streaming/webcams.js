@@ -75,7 +75,6 @@ let styles = StyleSheet.create({
   },
   row: {
     paddingTop: 20,
-    flex: 1,
   },
   webCamTitleBox: {
     backgroundColor: 'rgb(248, 248, 248)',

@@ -113,7 +113,7 @@ export default class NewsContainer extends React.Component {
           backgroundColor: '#ffffff',
         }}>
           <Text>
-            No events.
+            No news.
           </Text>
         </View>
       )
@@ -161,7 +161,6 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: 'column',
-    flex: 1,
   },
   itemTitle: {
     color: c.black,
