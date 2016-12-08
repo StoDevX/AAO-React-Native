@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   rowContainer: {
+    flex: 1,
     flexDirection: 'column',
   },
   itemTitle: {
