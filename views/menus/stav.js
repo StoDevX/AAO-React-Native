@@ -190,9 +190,4 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#8E8E8E',
   },
-  footer: {
-    flex: 1,
-    padding: 8,
-    backgroundColor: '#EAEAEA',
-  },
 })
