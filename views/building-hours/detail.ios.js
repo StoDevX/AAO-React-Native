@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
   },
   scheduleDays: {
     flex: 1,
+    minWidth: 100,
     paddingRight: 16,
   },
   bold: {
