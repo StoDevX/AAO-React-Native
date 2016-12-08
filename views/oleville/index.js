@@ -20,8 +20,10 @@ import delay from 'delay'
 import LoadingView from '../components/loading'
 import * as c from '../components/colors'
 import { getText, parseHtml } from '../../lib/html'
+import get from 'lodash/get'
 
 const URL = 'http://oleville.com/wp-json/wp/v2/posts?per_page=5'
+const defaultOlevilleImageUrl = 'http://oleville.com/wp-content/uploads/2015/12/Oleville-Logo.png'
 
 const fetchJson = url => fetch(url).then(r => r.json())
 
@@ -74,17 +76,16 @@ export default class OlevilleView extends React.Component {
   }
 
   async getImageUrl(id: number) {
-    if (id) {
-      let response = await fetch(`http://oleville.com/wp-json/wp/v2/media/${id}`)
-      let responseJson = await response.json()
-      this.setState({loaded: true})
-
-      if (responseJson.media_details.sizes.medium.source_url) {
-        // if there is a featured image, use that url
-        return responseJson.media_details.sizes.medium.source_url
+    try {
+      if (id) {
+        let responseJson = await fetchJson(`http://oleville.com/wp-json/wp/v2/media/${id}`)
+        let url = get(responseJson, 'media_details.sizes.medium.source_url')
+        return url || defaultOlevilleImageUrl
       }
+    } catch (err) {
+      console.warn(err)
     }
-    return 'http://oleville.com/wp-content/uploads/2015/12/Oleville-Logo.png'
+    return defaultOlevilleImageUrl
   }
 
   fetchData = async () => {
