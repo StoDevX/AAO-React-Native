@@ -21,6 +21,7 @@ import LoadingView from '../components/loading'
 import * as c from '../components/colors'
 import { getText, parseHtml } from '../../lib/html'
 import get from 'lodash/get'
+import zipWith from 'lodash/zipWith'
 
 const URL = 'http://oleville.com/wp-json/wp/v2/posts?per_page=5'
 const defaultOlevilleImageUrl = 'http://oleville.com/wp-content/uploads/2015/12/Oleville-Logo.png'
@@ -90,14 +91,14 @@ export default class OlevilleView extends React.Component {
 
   fetchData = async () => {
     try {
-      let response = await fetch(URL)
-      let articles = await response.json()
+      let articles = await fetchJson(URL)
 
       // get all the image urls
       let imageUrls = await Promise.all(articles.map(article => this.getImageUrl(article.featured_media)))
+
       // and embed them in the article responses
-      articles.forEach((article, i) => {
-        article._featuredImageUrl = imageUrls[i]
+      articles = zipWith(articles, imageUrls, (article, imageUrl) => {
+        return {...article, _featuredImageUrl: imageUrl}
       })
 
       // then we have the _featuredImageUrl key to just get the url
