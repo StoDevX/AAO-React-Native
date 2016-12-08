@@ -45,6 +45,8 @@ class Row extends React.Component {
     style: {
       shadowRadius: new Animated.Value(2),
       transform: [{scale: new Animated.Value(1)}],
+      opacity: new Animated.Value(1.0),
+      elevation: new Animated.Value(2),
     },
   }
 
@@ -76,6 +78,16 @@ class Row extends React.Component {
         easing: Easing.out(Easing.quad),
         toValue: 10,
       }),
+      Animated.timing(style.opacity, {
+        duration: 100,
+        easing: Easing.out(Easing.quad),
+        toValue: 0.65,
+      }),
+      Animated.timing(style.elevation, {
+        duration: 100,
+        easing: Easing.out(Easing.quad),
+        toValue: 4,
+      }),
     ]).start()
   }
 
@@ -88,6 +100,16 @@ class Row extends React.Component {
         toValue: 1,
       }),
       Animated.timing(style.shadowRadius, {
+        duration: 100,
+        easing: Easing.out(Easing.quad),
+        toValue: 2,
+      }),
+      Animated.timing(style.opacity, {
+        duration: 100,
+        easing: Easing.out(Easing.quad),
+        toValue: 1.0,
+      }),
+      Animated.timing(style.elevation, {
         duration: 100,
         easing: Easing.out(Easing.quad),
         toValue: 2,
@@ -157,6 +179,7 @@ let styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowOffset: {height: 2, width: 2},
     shadowRadius: 2,
+    opacity: 1.0,
     elevation: 2,
   },
   rectangleButtonIcon: {
