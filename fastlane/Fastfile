@@ -32,13 +32,36 @@ platform :ios do
     scan
   end
 
+  desc "Take screenshots"
+  lane :screenshot do
+    snapshot
+  end
+
   desc "Activate the rogue signing team"
   private_lane :go_rogue do
     sh("cd .. && ruby scripts/go-rogue.rb")
   end
 
+  desc "In case match needs to be updated - probably never needs to be run"
+  lane :update_match do
+    match(readonly: false)
+  end
+
+  desc "Do CI-system keychain setup"
+  lane :ci_keychains do
+    create_keychain(
+      name: ENV["MATCH_KEYCHAIN_NAME"],
+      password: ENV["MATCH_KEYCHAIN_PASSWORD"],
+      timeout: 3600,
+    )
+
+    match(readonly: true)
+
+    sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{ENV["MATCH_KEYCHAIN_PASSWORD"]} #{ENV["MATCH_KEYCHAIN_NAME"]}")
+  end
+
   desc "Provisions the profiles; bumps the build number; builds the app"
-  private_lane :build do
+  lane :build do
     # Set up code signing correctly
     # (more information: https://codesigning.guide)
     match(readonly: true)
@@ -62,20 +85,20 @@ platform :ios do
       api_token: hockeyapp_api_token,
       ipa: "./ios/build/AllAboutOlaf.ipa",
       commit_sha: ENV["TRAVIS_COMMIT"],
-      notes: make_changelog,
+      notes: build_notes,
     )
   end
 end
 
 
 platform :android do
-  dir = "./android"
+  dir = "android"
 
   desc "Makes a build"
   lane :build do
     increment_version_code(
       version_code: get_version(platform: 'Android'),
-      app_folder_name: dir,
+      app_folder_name: dir + '/app',
     )
 
     gradle(
@@ -96,7 +119,7 @@ platform :android do
       api_token: hockeyapp_api_token,
       apk: "./android/app/build/outputs/apk/app-release-unsigned.apk",
       commit_sha: ENV["TRAVIS_COMMIT"],
-      notes: make_changelog,
+      notes: build_notes,
     )
   end
 end
@@ -104,11 +127,13 @@ end
 
 # Below here are the custom helpers we've defined
 
-desc "Makes a changelog from the git commits that were committed today"
+desc "Makes a changelog from the timespan passed"
 private_lane :make_changelog do
-  sh("git log --since yesterday --pretty='%an, %aD (%h)%n> %s%n' | sed 's/^/    /'")
-end
+  to_ref = ENV["TRAVIS_COMMIT"] || "HEAD"
+  from_ref = get_hockeyapp_version_commit || "HEAD~3"
 
+  sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n' | sed 's/^/    /'")
+end
 
 desc "Get the hockeyapp version"
 private_lane :get_hockeyapp_version do |options|
@@ -119,9 +144,23 @@ private_lane :get_hockeyapp_version do |options|
   )
 end
 
+desc "Get the commit of the latest build on HockeyApp"
+private_lane :get_hockeyapp_version_commit do |options|
+  parsed_latest_hockeyapp_notes(
+    api_token: hockeyapp_api_token,
+    app_name: "All About Olaf",
+    platform: options[:platform],
+  )[:commit_hash]
+end
 
 desc "Gets the version, either from Travis or from Hockey"
 private_lane :get_version do |options|
-  ENV["TRAVIS_BUILD_NUMBER"] or get_hockeyapp_version(platform: options[:platform]) + 1
+  ENV["TRAVIS_BUILD_NUMBER"] || get_hockeyapp_version(platform: options[:platform]) + 1
 end
 
+private_lane :build_notes do
+  branch = git_branch
+  sha = last_git_commit[:commit_hash]
+  changelog = make_changelog
+  "branch: #{branch}\ngit commit: #{sha}\n\n## Changelog\n#{changelog}"
+end
