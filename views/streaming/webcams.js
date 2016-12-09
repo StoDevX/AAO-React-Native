@@ -71,14 +71,10 @@ export default function WebcamsView() {
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    // display: 'flex',
     flexDirection: 'column',
   },
   row: {
-    // display: 'flex',
-    //flexDirection: 'row',
     paddingTop: 20,
-    flex: 1,
   },
   webCamTitleBox: {
     backgroundColor: 'rgb(248, 248, 248)',

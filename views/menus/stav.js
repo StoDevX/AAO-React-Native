@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
   },
   sectionHeader: {
-    flex: 1,
     padding: 8,
     justifyContent: 'center',
     backgroundColor: '#EAEAEA',
@@ -189,10 +188,5 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: '#8E8E8E',
-  },
-  footer: {
-    flex: 1,
-    padding: 8,
-    backgroundColor: '#EAEAEA',
   },
 })

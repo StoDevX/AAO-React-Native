@@ -232,7 +232,6 @@ let styles = StyleSheet.create({
   },
 
   balancesRow: {
-    flex: 1,
     flexDirection: 'row',
     marginTop: 0,
     marginBottom: -10,

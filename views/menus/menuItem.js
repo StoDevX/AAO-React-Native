@@ -14,7 +14,6 @@ let styles = StyleSheet.create({
   container: {
   },
   menuItem: {
-    flex: 1,
     flexDirection: 'row',
     paddingBottom: 4,
   },
