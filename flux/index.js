@@ -6,7 +6,7 @@ import {AsyncStorage} from 'react-native'
 import {allViews} from '../views/views'
 
 export const SAVE_HOMESCREEN_ORDER = 'SAVE_HOMESCREEN_ORDER'
-let defaultViewOrder = allViews.map(v > v.view)
+let defaultViewOrder = allViews.map(v => v.view)
 
 export const loadHomescreenOrder = async () => {
   let savedOrder = JSON.parse(await AsyncStorage.getItem('homescreen:view-order')) || defaultViewOrder
