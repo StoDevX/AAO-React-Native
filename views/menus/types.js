@@ -12,11 +12,18 @@ export type MenuItemType = {
   description: string,
   id: NumericStringType,
   label: string,
+  monotony: {} | {
+    id: string,
+    name: string,
+    short_name: ?null,
+    image: string,
+  },
   nutrition: {
     kcal: NumericStringType,
     well_being: string,
     well_being_image: string,
   },
+  nutrition_link: string,
   options: any[],
   price: CurrencyStringType,
   rating: NumericStringType,
