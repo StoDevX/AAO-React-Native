@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
 
 type PropsType = {
   date: momentT,
-  title: string,
+  title?: string,
   onPress: () => any,
   appliedFilterCount: number,
 };
@@ -79,8 +79,8 @@ export function FilterToolbar({date, title, appliedFilterCount, onPress}: PropsT
         <View style={{flexDirection: 'row'}}>
           <View style={[styles.toolbarSection, styles.today]}>
             <Text>{date.format('MMM Do')}</Text>
-            <Text style={{paddingHorizontal: 8}}>•</Text>
-            <Text>{title}</Text>
+            {title ? <Text style={{paddingHorizontal: 8}}>•</Text> : null}
+            {title ? <Text>{title}</Text> : null}
           </View>
 
           <View style={[styles.toolbarSection, styles.filterButton, isFiltered ? styles.filterButtonActive : styles.filterButtonInactive]}>

@@ -33,7 +33,7 @@ export class FilteredMenuView extends React.Component {
     now: momentT,
     stationMenus: StationMenuType[],
     foodItems: MenuItemContainerType,
-    menuLabel: string,
+    menuLabel?: string,
     menuCorIcons: MasterCorIconMapType,
   }
 
