@@ -22,6 +22,7 @@ import type {
   DayPartMenuType,
   DayPartsCollectionType,
   BonAppCafeInfoType,
+  MasterCorIconMapType,
 } from '../types'
 
 import type {FilterSpecType} from '../filter/types'
@@ -57,10 +58,14 @@ export class BaseMenuView extends React.Component {
   }
 
   props: TopLevelViewPropsType & {
-    cafeId: string,
-    cafeInfo: BonAppCafeInfoType,
-    cafeMenu: BonAppMenuInfoType,
     now: momentT,
+    cafeId?: string,
+    cafeInfo?: BonAppCafeInfoType,
+    cafeMenu?: BonAppMenuInfoType,
+    menuStations?: StationMenuType[],
+    menuItems?: MenuItemContainerType,
+    menuLabel?: string,
+    menuCorIcons?: MasterCorIconMapType,
   }
 
   findMenu(dayparts: DayPartsCollectionType, now: momentT): void|DayPartMenuType {
@@ -94,20 +99,37 @@ export class BaseMenuView extends React.Component {
   }
 
   parseData = async () => {
-    let {cafeId, cafeMenu, cafeInfo, now} = this.props
+    let {
+      now,
+      cafeId,
+      cafeMenu,
+      cafeInfo,
+      menuStations,
+      menuItems,
+      menuLabel,
+      menuCorIcons,
+    } = this.props
 
-    let days = cafeInfo.cafes[cafeId].days
-    let today = days.find(({date}) => date === now.format('YYYY-MM-DD'))
-    if (!today || today.status === 'closed') {
-      this.setState({message: today ? today.message : 'Closed today'})
-      return
+    let foodItems = cafeMenu ? cafeMenu.items : menuItems
+    let mealName = menuLabel
+    let menus = menuStations
+    let icons = menuCorIcons
+
+    // if it's a bonapp menu
+    if (cafeMenu && cafeInfo && cafeId) {
+      let days = cafeInfo.cafes[cafeId].days
+      let today = days.find(({date}) => date === now.format('YYYY-MM-DD'))
+      if (!today || today.status === 'closed') {
+        this.setState({message: today ? today.message : 'Closed today'})
+        return
+      }
+
+      let dayparts = cafeMenu.days[0].cafes[cafeId].dayparts
+      let mealInfo = this.findMenu(dayparts, now)
+      menus = mealInfo ? mealInfo.stations : []
+      mealName = mealInfo ? mealInfo.label : ''
+      icons = cafeMenu.cor_icons
     }
-
-    let foodItems = cafeMenu.items
-    let dayparts = cafeMenu.days[0].cafes[cafeId].dayparts
-    let mealInfo = this.findMenu(dayparts, now)
-    let menus = mealInfo ? mealInfo.stations : []
-    let mealName = mealInfo ? mealInfo.label : ''
 
     let filters = []
     filters.push({
@@ -130,7 +152,7 @@ export class BaseMenuView extends React.Component {
       value: [],
     })
 
-    let allDietaryRestrictions = values(cafeMenu.cor_icons).map(item => item.label)
+    let allDietaryRestrictions = values(icons).map(item => item.label)
     filters.push({
       type: 'list',
       multiple: true,
