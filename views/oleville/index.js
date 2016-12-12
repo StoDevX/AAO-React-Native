@@ -20,14 +20,19 @@ import delay from 'delay'
 import LoadingView from '../components/loading'
 import * as c from '../components/colors'
 import { getText, parseHtml } from '../../lib/html'
+import get from 'lodash/get'
+import zipWith from 'lodash/zipWith'
 
 const URL = 'http://oleville.com/wp-json/wp/v2/posts?per_page=5'
+const defaultOlevilleImageUrl = 'http://oleville.com/wp-content/uploads/2015/12/Oleville-Logo.png'
+
+const fetchJson = url => fetch(url).then(r => r.json())
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginLeft: 5,
-    marginRight: 5,
+    paddingLeft: 5,
+    paddingRight: 5,
     backgroundColor: c.olevilleBackground,
   },
   imageStyle: {
@@ -72,29 +77,28 @@ export default class OlevilleView extends React.Component {
   }
 
   async getImageUrl(id: number) {
-    if (id) {
-      let response = await fetch(`http://oleville.com/wp-json/wp/v2/media/${id}`)
-      let responseJson = await response.json()
-      this.setState({loaded: true})
-
-      if (responseJson.media_details.sizes.medium.source_url) {
-        // if there is a featured image, use that url
-        return responseJson.media_details.sizes.medium.source_url
+    try {
+      if (id) {
+        let responseJson = await fetchJson(`http://oleville.com/wp-json/wp/v2/media/${id}`)
+        let url = get(responseJson, 'media_details.sizes.medium.source_url')
+        return url || defaultOlevilleImageUrl
       }
+    } catch (err) {
+      console.warn(err)
     }
-    return 'http://oleville.com/wp-content/uploads/2015/12/Oleville-Logo.png'
+    return defaultOlevilleImageUrl
   }
 
   fetchData = async () => {
     try {
-      let response = await fetch(URL)
-      let articles = await response.json()
+      let articles = await fetchJson(URL)
 
       // get all the image urls
       let imageUrls = await Promise.all(articles.map(article => this.getImageUrl(article.featured_media)))
+
       // and embed them in the article responses
-      articles.forEach((article, i) => {
-        article._featuredImageUrl = imageUrls[i]
+      articles = zipWith(articles, imageUrls, (article, imageUrl) => {
+        return {...article, _featuredImageUrl: imageUrl}
       })
 
       // then we have the _featuredImageUrl key to just get the url

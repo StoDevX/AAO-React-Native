@@ -15,11 +15,6 @@ const styles = StyleSheet.create({
     height: 48,
     backgroundColor: c.mandarin,
   },
-  page: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   indicator: {
     backgroundColor: '#ffeb3b',
   },

@@ -12,6 +12,8 @@ import {
   Text,
   Platform,
 } from 'react-native'
+import {Provider} from 'react-redux'
+import {store} from './flux'
 
 import CalendarView from './views/calendar'
 import ContactsView from './views/contacts'
@@ -24,7 +26,7 @@ import {MenusView, MenusFilterView} from './views/menus'
 import NewsView from './views/news'
 import NewsItemView from './views/news/news-item'
 import SISView from './views/sis'
-import BuildingHoursView from './views/building-hours'
+import {BuildingHoursView, BuildingHoursDetailView} from './views/building-hours'
 import TransportationView from './views/transportation'
 import OlevilleView from './views/oleville'
 import OlevilleNewsStoryView from './views/oleville/latestView'
@@ -33,6 +35,7 @@ import SISLoginView from './views/settings/login'
 import CreditsView from './views/settings/credits'
 import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
+import EditHomeView from './views/editHome'
 
 import NoRoute from './views/components/no-route'
 
@@ -53,6 +56,7 @@ function renderScene(route, navigator) {
     case 'NewsView': return <NewsView {...props} />
     case 'NewsItemView': return <NewsItemView {...props} />
     case 'BuildingHoursView': return <BuildingHoursView {...props} />
+    case 'BuildingHoursDetailView': return <BuildingHoursDetailView {...props} />
     case 'SISView': return <SISView {...props} />
     case 'TransportationView': return <TransportationView {...props} />
     case 'OlevilleView': return <OlevilleView {...props} />
@@ -62,6 +66,7 @@ function renderScene(route, navigator) {
     case 'CreditsView': return <CreditsView {...props} />
     case 'PrivacyView': return <PrivacyView {...props} />
     case 'LegalView': return <LegalView {...props} />
+    case 'EditHomeView': return <EditHomeView {...props} />
     default: return <NoRoute {...props} />
   }
 }
@@ -99,7 +104,6 @@ const styles = StyleSheet.create({
   backButtonText: {
     fontSize: 17,
     color: 'white',
-    // marginTop: -4,
   },
   backButtonIcon: {
     color: 'white',
@@ -111,8 +115,33 @@ const styles = StyleSheet.create({
   settingsIcon: {
     color: 'white',
     fontSize: 24,
+  },
+  settingsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: Platform.OS === 'ios' ? 10 : 16,
     paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
+  },
+  editHomeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
+  },
+  editHomeText: {
+    fontSize: 17,
+    color: 'white',
+    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
+  },
+  backButtonClose: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
+    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
+  },
+  backButtonCloseText: {
+    fontSize: 17,
+    color: 'white',
   },
   titleText: {
     color: 'white',
@@ -133,8 +162,31 @@ const styles = StyleSheet.create({
   },
 })
 
+let editHomeButtonActive = false
+function openEditHome(route, navigator) {
+  return () => {
+    if (editHomeButtonActive) {
+      return
+    }
+
+    function closeEditHome(route, navigator) {
+      editHomeButtonActive = false
+      navigator.pop()
+    }
+
+    editHomeButtonActive = true
+    navigator.push({
+      id: 'EditHomeView',
+      title: 'Edit Home',
+      index: route.index + 1,
+      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+      onDismiss: closeEditHome,
+    })
+  }
+}
+
+let settingsButtonActive = false
 function openSettings(route, navigator) {
-  let settingsButtonActive = false
   return () => {
     if (settingsButtonActive) {
       return
@@ -158,20 +210,13 @@ function openSettings(route, navigator) {
 
 function LeftButton(route, navigator, index, navState) {
   if (route.onDismiss) {
-    return (
-      <TouchableOpacity
-        style={[styles.backButton, {marginLeft: 10, marginVertical: Platform.OS === 'android' ? 21 : 16}]}
-        onPress={() => route.onDismiss(route, navigator)}
-      >
-        <Text style={styles.backButtonText}>Close</Text>
-      </TouchableOpacity>
-    )
+    return null
   }
 
   if (route.id === 'HomeView') {
     return (
       <TouchableOpacity
-        style={[styles.backButton]}
+        style={[styles.settingsButton]}
         onPress={openSettings(route, navigator)}
       >
         <Icon style={styles.settingsIcon} name='ios-settings' />
@@ -209,10 +254,26 @@ function LeftButton(route, navigator, index, navState) {
 }
 
 // Leaving the boilerplate here for future expansion
-function RightButton(route) {
-  switch (route.id) {
-    default:
-      return null
+function RightButton(route, navigator) {
+  if (route.onDismiss) {
+    return (
+      <TouchableOpacity
+        style={styles.backButtonClose}
+        onPress={() => route.onDismiss(route, navigator)}
+      >
+        <Text style={styles.backButtonCloseText}>Close</Text>
+      </TouchableOpacity>
+    )
+  }
+  if (route.id === 'HomeView') {
+    return (
+      <TouchableOpacity
+        style={[styles.editHomeButton]}
+        onPress={openEditHome(route, navigator)}
+      >
+        <Text style={[styles.editHomeText]}>Edit</Text>
+      </TouchableOpacity>
+    )
   }
 }
 
@@ -228,7 +289,7 @@ function Title(route) {
   )
 }
 
-export default class App extends React.Component {
+class App extends React.Component {
   componentDidMount() {
     BackAndroid.addEventListener('hardwareBackPress', this.registerAndroidBackButton)
   }
@@ -275,4 +336,12 @@ export default class App extends React.Component {
       />
     )
   }
+}
+
+export default () => {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  )
 }

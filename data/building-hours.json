@@ -2,6 +2,7 @@
     {
         "name": "The Pause Kitchen",
         "image": "pause-kitchen",
+        "category": "Food",
         "times": {
             "hours": {
                 "Mon": ["10:30", "0:00", {"nextDay": true}],
@@ -17,6 +18,7 @@
     {
         "name": "Bookstore",
         "image": "bookstore",
+        "category": "Supplies and Books",
         "times": {
             "hours": {
                 "Mon": ["8:00", "17:00"],
@@ -31,6 +33,7 @@
     {
         "name": "Convenience Store",
         "image": "convenience",
+        "category": "Supplies and Books",
         "times": {
             "hours": {
                 "Mon": ["8:00", "20:00"],
@@ -46,47 +49,22 @@
     {
         "name": "Post Office",
         "image": "post-office",
+        "category": "Mail",
         "times": {
             "hours": {
-                "Mon": ["8:00", "17:00"],
-                "Tue": ["8:00", "17:00"],
-                "Wed": ["8:00", "17:00"],
-                "Thu": ["8:00", "17:00"],
-                "Fri": ["8:00", "17:00"],
+                "Mon": ["7:30", "16:30"],
+                "Tue": ["7:30", "16:30"],
+                "Wed": ["7:30", "16:30"],
+                "Thu": ["7:30", "16:30"],
+                "Fri": ["7:30", "12:00"],
                 "Sat": ["10:00", "13:00"]
-            }
-        }
-    },
-    {
-        "name": "Print Center",
-        "image": "print",
-        "times": {
-            "hours": {
-                "Mon": ["8:00", "17:00"],
-                "Tue": ["8:00", "17:00"],
-                "Wed": ["8:00", "17:00"],
-                "Thu": ["8:00", "17:00"],
-                "Fri": ["8:00", "17:00"],
-                "Sat": ["10:00", "13:00"]
-            }
-        }
-    },
-    {
-        "name": "Wellness Center",
-        "image": "wellness",
-        "times": {
-            "hours": {
-              "Mon": ["10:00", "17:00"],
-              "Tue": ["10:00", "17:00"],
-              "Wed": ["10:00", "17:00"],
-              "Thu": ["10:00", "17:00"],
-              "Fri": ["10:00", "17:00"],
             }
         }
     },
     {
         "name": "Rølvaag Library",
         "image": "rolvaag-library",
+        "category": "Libraries",
         "times": {
             "hours": {
                 "Mon": ["7:45", "2:00", {"nextDay": true}],
@@ -102,6 +80,7 @@
     {
         "name": "Halvorson Music Library",
         "image": "halvorson",
+        "category": "Libraries",
         "times": {
             "hours": {
                 "Mon": ["7:45", "23:00"],
@@ -117,6 +96,7 @@
     {
         "name": "Skoglund",
         "image": "skoglund",
+        "category": "Gym",
         "times": {
             "hours": {
                 "Mon": ["6:30", "22:30"],
@@ -133,6 +113,7 @@
         "name": "The Cage",
         "image": "cage",
         "notes": "The kitchen stops cooking at 8 p.m.",
+        "category": "Food",
         "times": {
             "hours": {
                 "Mon": ["7:30", "23:00"],
@@ -148,6 +129,7 @@
     {
         "name": "Stav Hall Breakfast",
         "image": "stav",
+        "category": "Food",
         "times": {
             "hours": {
                 "Mon": ["7:00", "9:45"],
@@ -163,6 +145,7 @@
     {
         "name": "Stav Hall Lunch",
         "image": "stav",
+        "category": "Food",
         "times": {
             "hours": {
                 "Mon": ["10:30", "14:00"],
@@ -178,6 +161,7 @@
     {
         "name": "Stav Hall Dinner",
         "image": "stav",
+        "category": "Food",
         "times": {
             "hours": {
                 "Mon": ["16:30", "19:00"],
@@ -193,6 +177,7 @@
     {
         "name": "DiSCO",
         "image": "disco",
+        "category": "Libraries",
         "times": {
             "hours": {
                 "Mon": ["10:00", "17:00"],
@@ -207,6 +192,7 @@
     {
         "name": "Alumni Hall",
         "image": "alumni-hall",
+        "category": "Academia",
         "times": {
             "hours": {
                 "Mon": ["7:00", "17:00"],
@@ -220,6 +206,7 @@
     {
         "name": "Boe Chapel",
         "image": "boe",
+        "category": "Academia",
         "times": {
             "hours": {
                 "Mon": ["7:00", "24:00", {"nextDay": true}],
@@ -235,6 +222,7 @@
     {
         "name": "Buntrock Commons",
         "image": "buntrock",
+        "category": "Academia",
         "times": {
             "hours": {
                 "Mon": ["7:00", "24:00", {"nextDay": true}],
@@ -250,6 +238,7 @@
     {
         "name": "Christiansen (CHM)",
         "image": "christiansen",
+        "category": "Academia",
         "times": {
             "hours": {
                 "Mon": ["7:00", "24:00", {"nextDay": true}],
@@ -265,6 +254,7 @@
     {
         "name": "Dittmann Center",
         "image": "dittmann",
+        "category": "Academia",
         "times": {
             "hours": {
                 "Mon": ["7:00", "24:00", {"nextDay": true}],
@@ -280,6 +270,7 @@
     {
         "name": "Hall of Music (HOM)",
         "image": "hall-of-music",
+        "category": "Academia",
         "times": {
             "hours": {
                 "Mon": ["7:00", "24:00", {"nextDay": true}],
@@ -295,6 +286,7 @@
     {
         "name": "Old Main",
         "image": "old-main",
+        "category": "Academia",
         "times": {
             "hours": {
                 "Mon": ["7:00", "21:45"],
@@ -310,6 +302,7 @@
     {
         "name": "Tom Porter Hall",
         "image": "tom-porter",
+        "category": "Gym",
         "times": {
             "hours": {
                 "Mon": ["10:00", "20:00"],
@@ -325,6 +318,7 @@
     {
         "name": "Regents Hall",
         "image": "regents-hall",
+        "category": "Academia",
         "times": {
             "hours": {
                 "Mon": ["8:00", "24:00", {"nextDay": true}],
@@ -340,6 +334,7 @@
     {
         "name": "Regents Math",
         "image": "regents-math",
+        "category": "Academia",
         "times": {
             "hours": {
                 "Mon": ["8:00", "24:00", {"nextDay": true}],
@@ -355,6 +350,7 @@
     {
         "name": "Skifter Hall",
         "image": "skifter-studioa",
+        "category": "Academia",
         "times": {
             "hours": {
                 "Mon": ["7:00", "24:00", {"nextDay": true}],
@@ -370,6 +366,7 @@
     {
         "name": "Theater Building",
         "image": "theater",
+        "category": "Academia",
         "times": {
             "hours": {
                 "Mon": ["7:00", "24:00", {"nextDay": true}],
@@ -385,6 +382,7 @@
     {
         "name": "Tomson Hall",
         "image": "tomson",
+        "category": "Academia",
         "times": {
             "hours": {
                 "Mon": ["7:00", "23:00"],

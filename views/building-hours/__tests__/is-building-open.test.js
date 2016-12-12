@@ -1,35 +1,103 @@
 // @flow
-import {isBuildingOpen} from '../is-building-open'
+import {isBuildingOpen} from '../building-hours-helpers'
 import {dayMoment} from './moment.helper'
 
-it('returns "Open" if the building is open', () => {
-  let now = dayMoment('Fri 10:01')
-  let input = {times: {hours: {'Fri': ['10:00', '16:00']}}, name: 'Building', image: 'building'}
-  let actual = isBuildingOpen(input, now)
+it('checks a list of schedules to see if any are open', () => {
+  let m = dayMoment('Fri 1:00pm')
+  let building = {
+    name: 'building',
+    category: '???',
+    breakSchedule: {},
+    schedule: [{
+      title: 'Hours',
+      hours: [
+        {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '12:00am'},
+        {days: ['Fr', 'Sa'], from: '10:30am', to: '2:00am'},
+        {days: ['Su'], from: '10:30am', to: '12:00am'},
+      ],
+    }],
+  }
 
-  expect(actual).toBe('Open')
+  expect(isBuildingOpen(building, m)).toBe(true)
 })
 
-it('returns "Closed" if the building is closed', () => {
-  let now = dayMoment('Fri 17:00')
-  let input = {times: {hours: {'Fri': ['10:00', '16:00']}}, name: 'Building', image: 'building'}
-  let actual = isBuildingOpen(input, now)
+it('handles multiple internal schedules for the same timeframe', () => {
+  let m = dayMoment('Mon 1:00pm')
+  let building = {
+    name: 'building',
+    category: '???',
+    breakSchedule: {},
+    schedule: [{
+      title: 'Hours',
+      hours: [
+        {days: ['Mo'], from: '10:30am', to: '12:00pm'},
+        {days: ['Mo'], from: '1:00pm', to: '3:00pm'},
+      ],
+    }],
+  }
 
-  expect(actual).toBe('Closed')
+  expect(isBuildingOpen(building, m)).toBe(true)
 })
 
-it('returns "Almost Closed" if the building closes within 30 minutes', () => {
-  let now = dayMoment('Fri 15:31')
-  let input = {times: {hours: {'Fri': ['10:00', '16:00']}}, name: 'Building', image: 'building'}
-  let actual = isBuildingOpen(input, now)
+it('handles multiple named schedules for the same timeframe', () => {
+  let m = dayMoment('Mon 1:00pm')
+  let building = {
+    name: 'building',
+    category: '???',
+    breakSchedule: {},
+    schedule: [
+      {
+        title: 'Hours',
+        hours: [
+          {days: ['Mo'], from: '10:30am', to: '12:00pm'},
+        ],
+      },
+      {
+        title: 'Hours2',
+        hours: [
+          {days: ['Mo'], from: '10:30am', to: '12:00pm'},
+          {days: ['Mo'], from: '1:00pm', to: '3:00pm'},
+        ],
+      },
+    ],
+  }
 
-  expect(actual).toBe('Almost Closed')
+  expect(isBuildingOpen(building, m)).toBe(true)
 })
 
-it('returns "Closed" if the building is not open today', () => {
-  let now = dayMoment('Mon 12:00')
-  let input = {times: {hours: {'Fri': ['10:00', '16:00']}}, name: 'Building', image: 'building'}
-  let actual = isBuildingOpen(input, now)
+it('returns false if none are available for this day', () => {
+  let m = dayMoment('Sun 1:00pm')
+  let building = {
+    name: 'building',
+    category: '???',
+    breakSchedule: {},
+    schedule: [{
+      title: 'Hours',
+      hours: [
+        {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '12:00am'},
+        {days: ['Fr', 'Sa'], from: '10:30am', to: '2:00am'},
+      ],
+    }],
+  }
 
-  expect(actual).toBe('Closed')
+  expect(isBuildingOpen(building, m)).toBe(false)
+})
+
+
+it('returns false if none are open', () => {
+  let m = dayMoment('Mon 3:00pm')
+  let building = {
+    name: 'building',
+    category: '???',
+    breakSchedule: {},
+    schedule: [{
+      title: 'Hours',
+      hours: [
+        {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '2:00pm'},
+        {days: ['Fr', 'Sa'], from: '10:30am', to: '2:00pm'},
+      ],
+    }],
+  }
+
+  expect(isBuildingOpen(building, m)).toBe(false)
 })
