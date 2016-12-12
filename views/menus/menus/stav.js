@@ -16,6 +16,7 @@ import uniq from 'lodash/uniq'
 import values from 'lodash/values'
 import map from 'lodash/map'
 import {menuBaseUrl, cafeBaseUrl} from '../data'
+import sample from 'lodash/sample'
 
 import type {
   BonAppMenuInfoType,
@@ -63,7 +64,7 @@ export default class StavMenuView extends React.Component {
 
   props: TopLevelViewPropsType & {
     cafeId: string,
-    loadingMessage: string,
+    loadingMessage: string[],
   }
 
   findMenu(dayparts: DayPartsCollectionType, now: momentT): void|DayPartMenuType {
@@ -180,7 +181,8 @@ export default class StavMenuView extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return <LoadingView text={this.props.loadingMessage} />
+      let msg = sample(this.props.loadingMessage)
+      return <LoadingView text={msg} />
     } else if (this.state.message) {
       return <LoadingView text={this.state.message} />
     }/* else if (!this.state.menus.length) {

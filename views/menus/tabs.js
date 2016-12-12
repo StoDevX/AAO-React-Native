@@ -16,14 +16,27 @@ export default [
     title: 'Stav Hall',
     rnVectorIcon: {iconName: 'nutrition'},
     component: StavMenuView,
-    props: {cafeId: '261', loadingMessage: 'Hunting Ferndale Turkey…'},
+    props: {
+      cafeId: '261',
+      loadingMessage: [
+        'Hunting Ferndale Turkey…',
+        'Tracking wild vegan burgers…',
+        '"Cooking" some lutefisk…',
+      ],
+    },
   },
   {
     id: 'cage',
     title: 'The Cage',
     rnVectorIcon: {iconName: 'cafe'},
     component: StavMenuView,
-    props: {cafeId: '262', loadingMessage: 'Checking for vegan cookies…'},
+    props: {
+      cafeId: '262',
+      loadingMessage: [
+        'Checking for vegan cookies…',
+        'Serving up some shakes…',
+      ],
+    },
   },
   // {
   //   id: 'burton',
@@ -51,6 +64,11 @@ export default [
     title: 'The Pause',
     rnVectorIcon: {iconName: 'paw'},
     component: PauseMenuView,
-    props: {loadingMessage: 'temp4'},
+    props: {
+      loadingMessage: [
+        'Mixing up a shake…',
+        'Spinning up pizzas…',
+      ],
+    },
   },
 ]

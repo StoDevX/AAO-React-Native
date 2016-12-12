@@ -12,6 +12,7 @@ const CENTRAL_TZ = 'America/Winnipeg'
 import uniq from 'lodash/uniq'
 import values from 'lodash/values'
 import map from 'lodash/map'
+import sample from 'lodash/sample'
 
 import type {
   StationMenuType,
@@ -50,7 +51,7 @@ export default class PauseMenuView extends React.Component {
   }
 
   props: TopLevelViewPropsType & {
-    loadingMessage: string,
+    loadingMessage: string[],
   }
 
   trimStationName(stationName: string) {
@@ -123,7 +124,8 @@ export default class PauseMenuView extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return <LoadingView text={this.props.loadingMessage} />
+      let msg = sample(this.props.loadingMessage)
+      return <LoadingView text={msg} />
     } else if (this.state.message) {
       return <LoadingView text={this.state.message} />
     } else if (!this.state.menus.length) {
