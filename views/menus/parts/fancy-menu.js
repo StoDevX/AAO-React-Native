@@ -1,58 +1,18 @@
 // @flow
 import React from 'react'
-import {
-  StyleSheet,
-  View,
-  ListView,
-  Text,
-} from 'react-native'
-
 import uniqBy from 'lodash/uniqBy'
 import identity from 'lodash/identity'
 import filter from 'lodash/filter'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import {toLaxTitleCase} from 'titlecase'
-import FoodItem from './food-item'
-import DietaryFilters from './dietary-filters'
 import includes from 'lodash/includes'
 import values from 'lodash/values'
 import difference from 'lodash/difference'
-
-import * as c from '../../components/colors'
-
 import type {MenuItemContainerType, MenuItemType, StationMenuType} from '../types'
 import type {FilterSpecType} from '../filter/types'
-
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
-  row: {
-    minHeight: 52,
-    paddingRight: 10,
-    paddingLeft: 20,
-  },
-  separator: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ebebeb',
-    marginLeft: 20,
-  },
-  sectionHeader: {
-    backgroundColor: c.iosListSectionHeader,
-    paddingVertical: 5,
-    paddingLeft: 20,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#ebebeb',
-  },
-  sectionHeaderText: {
-    color: 'black',
-    fontWeight: 'bold',
-  },
-})
-
+import type {ProcessedMenuPropsType} from './fancy-menu-list'
+import {FancyMenuListView} from './fancy-menu-list'
 
 type FancyMenuPropsType = {
   stationMenus: StationMenuType[],
@@ -62,12 +22,7 @@ type FancyMenuPropsType = {
 };
 
 export default class FancyMenu extends React.Component {
-  state = {
-    dataSource: new ListView.DataSource({
-      rowHasChanged: (row1, row2) => row1 !== row2,
-      sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
-    }),
-  }
+  state: {data: ProcessedMenuPropsType} = {data: {}};
 
   componentWillMount() {
     this.load(this.props)
@@ -77,11 +32,8 @@ export default class FancyMenu extends React.Component {
     this.load(newProps)
   }
 
-  load(props: FancyMenuPropsType) {
-    let dataBlob = this.processData(props)
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRowsAndSections(dataBlob),
-    })
+  load = (props: FancyMenuPropsType) => {
+    this.setState({data: this.processData(props)})
   }
 
   props: FancyMenuPropsType;
@@ -189,37 +141,7 @@ export default class FancyMenu extends React.Component {
     return groupBy(allMenuItems, item => item.station)
   }
 
-  renderSectionHeader(sectionData: any, sectionId: string) {
-    return (
-      <View style={styles.sectionHeader} key={sectionId}>
-        <Text style={styles.sectionHeaderText}>{sectionId}</Text>{sectionData.note ? <Text style={{color: c.iosDisabledText}}>({sectionData.note})</Text> : null}
-      </View>
-    )
-  }
-
-  renderFoodItem(rowData: MenuItemType, sectionId: string, rowId: string) {
-    return (
-      <FoodItem
-        key={`${sectionId}-${rowId}`}
-        data={rowData}
-        filters={DietaryFilters}
-        style={styles.row}
-      />
-    )
-  }
-
   render() {
-    return (
-      <ListView
-        style={styles.container}
-        removeClippedSubviews={false}
-        automaticallyAdjustContentInsets={true}
-        dataSource={this.state.dataSource}
-        enableEmptySections={true}
-        renderRow={this.renderFoodItem}
-        renderSeparator={(sectionId, rowId) => <View key={`${sectionId}-${rowId}`} style={styles.separator} />}
-        renderSectionHeader={this.renderSectionHeader}
-      />
-    )
+    return <FancyMenuListView data={this.state.data} />
   }
 }
