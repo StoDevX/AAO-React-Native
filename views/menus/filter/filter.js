@@ -13,25 +13,37 @@ type PropsType = {
 export function FilterView({sections, onFilterChanged}: PropsType) {
   return (
     <TableView>
-      {sections.map(info =>
-        info.type === 'toggle'
-          ? <SingleToggleSection
-            key={info.key}
-            header={info.title}
-            footer={info.caption}
-            label={info.label}
-            value={info.value}
-            onChange={newVal => onFilterChanged(info, newVal)}
-          />
-          : <ChecklistSection
-            key={info.key}
-            header={info.title}
-            footer={info.caption}
-            options={info.options}
-            value={info.value}
-            onChange={newVal => onFilterChanged(info, newVal)}
-          />
-      )}
+      {sections.map(filter => {
+        if (filter.type === 'toggle') {
+          return (
+            <SingleToggleSection
+              key={filter.key}
+              header={filter.title}
+              footer={filter.caption}
+              onChange={newVal => onFilterChanged(filter, newVal)}
+              value={filter.value}
+              label={filter.label}
+            />
+          )
+        } else if (filter.type === 'list') {
+          if (filter.options && !filter.options.length) {
+            return null
+          }
+
+          return (
+            <ChecklistSection
+              key={filter.key}
+              header={filter.title}
+              footer={filter.caption}
+              onChange={newVal => onFilterChanged(filter, newVal)}
+              value={filter.value}
+              options={filter.options}
+            />
+          )
+        }
+
+        return null
+      })}
     </TableView>
   )
 }
