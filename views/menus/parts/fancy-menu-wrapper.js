@@ -59,12 +59,21 @@ export class FancyMenuWrapper extends React.Component {
     return accumulator.concat(current)
   }
 
-  applyFilters(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
-    // console.log('applyFilters called')
+  applySpecialsFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
     let onlySpecialsFilter = filters.find(({key}) => key === 'specials')
+
     let onlySpecials = onlySpecialsFilter ? onlySpecialsFilter.value : false
 
+    if (onlySpecials) {
+      items = filter(items, item => item.special)
+    }
+
+    return items
+  }
+
+  applyStationsFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
     let stationsFilter = filters.find(({key}) => key === 'stations')
+
     let onlyTheseStations = []
     if (stationsFilter && stationsFilter.type === 'list') {
       // given all of the stations, get just the list that we want
@@ -72,34 +81,46 @@ export class FancyMenuWrapper extends React.Component {
       onlyTheseStations = difference(stationsFilter.options, stationsFilter.value)
     }
 
+    if (onlyTheseStations.length) {
+      items = filter(items, item => includes(onlyTheseStations, item.station))
+    }
+
+    return items
+  }
+
+  applyDietaryFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
     let dietaryRestrictionsFilter = filters.find(({key}) => key === 'restrictions')
+
     let onlyTheseDietaryRestrictions = []
     if (dietaryRestrictionsFilter && dietaryRestrictionsFilter.type === 'list') {
       // given all of the dietary restrictions, get just the list that we want
       onlyTheseDietaryRestrictions = difference(dietaryRestrictionsFilter.options, dietaryRestrictionsFilter.value)
     }
 
-    // console.log(onlySpecials, onlyTheseStations, onlyTheseDietaryRestrictions)
-    // console.log(items)
-
-    if (onlySpecials) {
-      items = filter(items, item => item.special === 1)
-    }
-    // console.log(items)
-
-    if (onlyTheseStations.length) {
-      items = filter(items, item => includes(onlyTheseStations, item.station))
-    }
-    // console.log(items)
-
     if (onlyTheseDietaryRestrictions.length) {
       items = filter(items, item => {
         let theseRestrictions = values(item.cor_icon)
-        // if the item has no restrictions, it can't have the one we're filtering by.
-        // then we check that the number of different items between the two lists is 0.
+        // If the item has no restrictions, it can't have the one we're
+        // filtering by. Then we check that the number of different items
+        // between the two lists is 0.
         return theseRestrictions.length && difference(theseRestrictions, onlyTheseDietaryRestrictions).length === 0
       })
     }
+
+    return items
+  }
+
+  applyFilters(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
+    // console.log('applyFilters called')
+    // console.log(items)
+
+    items = this.applySpecialsFilter(items, filters)
+    // console.log(items)
+
+    items = this.applyStationsFilter(items, filters)
+    // console.log(items)
+
+    items = this.applyDietaryFilter(items, filters)
     // console.log(items)
 
     return items
