@@ -6,15 +6,15 @@ import filter from 'lodash/filter'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import {toLaxTitleCase} from 'titlecase'
-import includes from 'lodash/includes'
 import values from 'lodash/values'
-import difference from 'lodash/difference'
 import type {MenuItemContainerType, MenuItemType, StationMenuType} from '../types'
 import type {FilterSpecType} from '../filter/types'
 import type {ProcessedMenuPropsType} from './fancy-menu-list'
 import {FancyMenuListView} from './fancy-menu-list'
+import {applyFilters} from '../filter/apply'
 
 type FancyMenuPropsType = {
+  applyFilters: (items: MenuItemType[], filters: FilterSpecType[]) => MenuItemType[],
   stationMenus: StationMenuType[],
   foodItems: MenuItemContainerType,
   stationsToCreate: string[],
@@ -22,6 +22,10 @@ type FancyMenuPropsType = {
 };
 
 export class FancyMenuWrapper extends React.Component {
+  static defaultProps = {
+    applyFilters: applyFilters,
+  }
+
   state: {data: ProcessedMenuPropsType} = {data: {}};
 
   componentWillMount() {
@@ -59,72 +63,6 @@ export class FancyMenuWrapper extends React.Component {
     return accumulator.concat(current)
   }
 
-  applySpecialsFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
-    let onlySpecialsFilter = filters.find(({key}) => key === 'specials')
-
-    let onlySpecials = onlySpecialsFilter ? onlySpecialsFilter.value : false
-
-    if (onlySpecials) {
-      items = filter(items, item => item.special)
-    }
-
-    return items
-  }
-
-  applyStationsFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
-    let stationsFilter = filters.find(({key}) => key === 'stations')
-
-    let onlyTheseStations = []
-    if (stationsFilter && stationsFilter.type === 'list') {
-      // given all of the stations, get just the list that we want
-      // (becuase we have a list of all possibilities, and a list of the one the user _doesn't_ want to see)
-      onlyTheseStations = difference(stationsFilter.options, stationsFilter.value)
-    }
-
-    if (onlyTheseStations.length) {
-      items = filter(items, item => includes(onlyTheseStations, item.station))
-    }
-
-    return items
-  }
-
-  applyDietaryFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
-    let dietaryRestrictionsFilter = filters.find(({key}) => key === 'restrictions')
-
-    let onlyTheseDietaryRestrictions = []
-    if (dietaryRestrictionsFilter && dietaryRestrictionsFilter.type === 'list') {
-      // given all of the dietary restrictions, get just the list that we want
-      onlyTheseDietaryRestrictions = difference(dietaryRestrictionsFilter.options, dietaryRestrictionsFilter.value)
-    }
-
-    if (onlyTheseDietaryRestrictions.length) {
-      items = filter(items, item => {
-        let theseRestrictions = values(item.cor_icon)
-        // If the item has no restrictions, it can't have the one we're
-        // filtering by. Then we check that the number of different items
-        // between the two lists is 0.
-        return theseRestrictions.length && difference(theseRestrictions, onlyTheseDietaryRestrictions).length === 0
-      })
-    }
-
-    return items
-  }
-
-  applyFilters(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
-    // console.log('applyFilters called')
-    // console.log(items)
-
-    items = this.applySpecialsFilter(items, filters)
-    // console.log(items)
-
-    items = this.applyStationsFilter(items, filters)
-    // console.log(items)
-
-    items = this.applyDietaryFilter(items, filters)
-    // console.log(items)
-
-    return items
-  }
 
   processData(props: FancyMenuPropsType) {
     // console.log('processData called', props)
@@ -150,7 +88,7 @@ export class FancyMenuWrapper extends React.Component {
 
     // apply the selected filters
     // console.log('allItems, before filter', allMenuItems)
-    allMenuItems = this.applyFilters(allMenuItems, props.filters)
+    allMenuItems = this.props.applyFilters(allMenuItems, props.filters)
     // console.log('allItems, after filter', allMenuItems)
 
     // clean up the titles
