@@ -5,7 +5,11 @@ import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 import type {StationMenuType, MenuItemContainerType, MasterCorIconMapType} from '../types'
-import {stations as defaultStations, items as defaultItems, corIcons as defaultIcons} from '../../../data/pause-bonapp.js'
+import {
+  stations as defaultStations,
+  items as defaultItems,
+  corIcons as defaultIcons,
+} from '../../../data/pause-bonapp.js'
 import {BaseMenuView} from './base'
 
 export class LocalMenuView extends React.Component {

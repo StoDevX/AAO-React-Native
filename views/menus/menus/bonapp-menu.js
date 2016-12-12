@@ -3,17 +3,15 @@ import React from 'react'
 import {View, Text} from 'react-native'
 import LoadingView from '../../components/loading'
 import {BonAppMenuView} from './bonapp'
-import querystring from 'qs'
 import type {TopLevelViewPropsType} from '../../types'
 import {TopLevelViewPropTypes} from '../../types'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
-import {menuBaseUrl, cafeBaseUrl} from '../data'
+import {bonappMenuBaseUrl, bonappCafeBaseUrl} from '../data'
 import sample from 'lodash/sample'
 import type {BonAppMenuInfoType, BonAppCafeInfoType} from '../types'
-
-const fetchJson = (url, query) => fetch(`${url}?${querystring.stringify(query)}`).then(response => response.json())
+import {fetchJson} from './fetch'
 
 
 export class RemoteMenuView extends React.Component {
@@ -48,8 +46,8 @@ export class RemoteMenuView extends React.Component {
     this.setState({loading: true})
 
     let requests = await Promise.all([
-      fetchJson(menuBaseUrl, {cafe: this.props.cafeId}),
-      fetchJson(cafeBaseUrl, {cafe: this.props.cafeId}),
+      fetchJson(bonappMenuBaseUrl, {cafe: this.props.cafeId}),
+      fetchJson(bonappCafeBaseUrl, {cafe: this.props.cafeId}),
     ])
 
     let [
