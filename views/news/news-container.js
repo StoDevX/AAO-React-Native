@@ -17,8 +17,8 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
 import * as c from '../components/colors'
+import {AllHtmlEntities as Entities} from 'html-entities'
 
-let Entities = require('html-entities').AllHtmlEntities
 const entities = new Entities()
 
 export default class NewsContainer extends React.Component {

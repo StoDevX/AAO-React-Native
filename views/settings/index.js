@@ -26,9 +26,9 @@ import {
 
 import {version} from '../../package.json'
 
-import Communications from 'react-native-communications'
+import {email} from 'react-native-communications'
 import * as c from '../components/colors'
-import CookieManager from 'react-native-cookies'
+import CookieManager from 'react-native-cookies'  // eslint-disable-line
 import DeviceInfo from 'react-native-device-info'
 
 // These imports manage the St. Olaf login system
@@ -286,7 +286,7 @@ export default class SettingsView extends React.Component {
         <Cell cellStyle='RightDetail'
           title='Contact Us'
           accessory='DisclosureIndicator'
-          onPress={() => Communications.email(
+          onPress={() => email(
             ['odt@stolaf.edu'],
             null,
             null,

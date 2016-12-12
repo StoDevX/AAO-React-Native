@@ -15,6 +15,7 @@ import {
   StatusBar,
   View,
   Platform,
+  Dimensions,
   TouchableNativeFeedback,
 } from 'react-native'
 
@@ -24,8 +25,7 @@ import * as c from './components/colors'
 import sortBy from 'lodash/sortBy'
 import type {TopLevelViewPropsType} from './types'
 
-const Dimensions = require('Dimensions')
-let Viewport = Dimensions.get('window')
+const Viewport = Dimensions.get('window')
 
 import type {ViewType} from './views'
 import {allViews} from './views'

@@ -1,8 +1,8 @@
 // @flow
 import getScheduleForNow from '../get-schedule-for-now'
 import moment from 'moment'
-
 import type {BusScheduleType} from '../types'
+
 function buildBusSchedules(): BusScheduleType[] {
   return [
     {

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   1: {
     label: 'vegetarian',
     icon: require('../../data/images/menu-icons/v.png'),

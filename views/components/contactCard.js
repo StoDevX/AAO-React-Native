@@ -7,7 +7,7 @@ import {
 } from 'react-native'
 
 import Button from 'react-native-button' // the button
-import Communications from 'react-native-communications' // the phone call functions
+import {phonecall} from 'react-native-communications' // the phone call functions
 
 import * as c from './colors'
 
@@ -55,7 +55,7 @@ function promptCall(buttonText: string, phoneNumber: string) {
     formatNumber(phoneNumber),
     [
         {text: 'Cancel', onPress: () => console.log('Call cancel pressed')},
-        {text: 'Call', onPress: () => Communications.phonecall(phoneNumber, false)},
+        {text: 'Call', onPress: () => phonecall(phoneNumber, false)},
     ]
   )
 }

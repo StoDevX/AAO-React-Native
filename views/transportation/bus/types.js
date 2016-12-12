@@ -1,5 +1,6 @@
 // @flow
 import type moment from 'moment'
+
 type DayOfWeekType = 'su'|'mo'|'tu'|'we'|'th'|'fr'|'sa';
 
 export type BusLineType = {

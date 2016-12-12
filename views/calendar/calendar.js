@@ -23,6 +23,7 @@ import qs from 'querystring'
 import EventView from './event'
 import * as c from '../components/colors'
 import { GOOGLE_CALENDAR_API_KEY } from '../../lib/config'
+
 const TIMEZONE = 'America/Winnipeg'
 
 type GoogleCalendarTimeType = {

@@ -13,7 +13,7 @@ import {
 } from 'react-native'
 import startsWith from 'lodash/startsWith'
 
-import CookieManager from 'react-native-cookies'
+import CookieManager from 'react-native-cookies'  // eslint-disable-line
 import LoadingView from '../components/loading'
 
 const COOKIE_NAME = 'JSESSIONID'

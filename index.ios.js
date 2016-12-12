@@ -1,6 +1,8 @@
+/* eslint-disable import/default */
 import {AppRegistry} from 'react-native'
 import App from './app'
 import OneSignal from 'react-native-onesignal'
+
 AppRegistry.registerComponent('AllAboutOlaf', () => App)
 
 let pendingNotifications = []

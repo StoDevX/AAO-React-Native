@@ -10,10 +10,6 @@ import {Separator} from '../components/separator'
 import ParallaxView from 'react-native-parallax-view'
 
 import moment from 'moment-timezone'
-const CENTRAL_TZ = 'America/Winnipeg'
-
-const transparentPixel = require('../../data/images/transparent.png')
-
 import * as c from '../components/colors'
 import {
   normalizeBuildingSchedule,
@@ -22,6 +18,10 @@ import {
   getShortBuildingStatus,
   isBuildingOpenAtMoment,
 } from './building-hours-helpers'
+
+const transparentPixel = require('../../data/images/transparent.png')
+
+const CENTRAL_TZ = 'America/Winnipeg'
 
 const styles = StyleSheet.create({
   title: {

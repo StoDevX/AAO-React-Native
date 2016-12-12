@@ -11,9 +11,13 @@ import {
   TouchableOpacity,
   Text,
   Platform,
+  Dimensions,
 } from 'react-native'
 import {Provider} from 'react-redux'
 import {store} from './flux'
+
+import Icon from 'react-native-vector-icons/Ionicons'
+import * as c from './views/components/colors'
 
 import CalendarView from './views/calendar'
 import ContactsView from './views/contacts'
@@ -70,10 +74,6 @@ function renderScene(route, navigator) {
   }
 }
 
-
-import Icon from 'react-native-vector-icons/Ionicons'
-import * as c from './views/components/colors'
-
 const navbarShadows = Platform.OS === 'ios'
   ? {
     shadowOffset: { width: 0, height: StyleSheet.hairlineWidth },
@@ -85,7 +85,6 @@ const navbarShadows = Platform.OS === 'ios'
     elevation: 4,
   }
 
-import {Dimensions} from 'react-native'
 const styles = StyleSheet.create({
   container: {
     marginTop: Platform.OS === 'ios' ? 64 : 56,
