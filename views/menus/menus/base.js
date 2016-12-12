@@ -100,7 +100,7 @@ export class BaseMenuView extends React.Component {
 
   render() {
     return (
-      <View style={{flex: 1, marginBottom: Platform.OS === 'ios' ? 49 : 0}}>
+      <View style={{flex: 1}}>
         <FilterToolbar
           date={this.props.now}
           title={this.props.menuLabel}
