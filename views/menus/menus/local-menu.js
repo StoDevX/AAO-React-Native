@@ -36,7 +36,7 @@ export class LocalMenuView extends React.Component {
         stationMenus={this.props.stationMenus}
         foodItems={this.props.foodItems}
         menuCorIcons={this.props.corIcons}
-        menuLabel='Din-din'
+        menuLabel='Menu'
       />
     )
   }
