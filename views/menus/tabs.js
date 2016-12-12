@@ -1,13 +1,13 @@
 // @flow
-import StavMenuView from './menus/stav'
-import PauseMenuView from './menus/pause'
+import {RemoteMenuView} from './menus/remote-menu'
+import {LocalMenuView} from './menus/local-menu'
 
 const stolaf = [
   {
     id: 'stav',
     title: 'Stav Hall',
     rnVectorIcon: {iconName: 'nutrition'},
-    component: StavMenuView,
+    component: RemoteMenuView,
     props: {
       cafeId: '261',
       loadingMessage: [
@@ -21,7 +21,7 @@ const stolaf = [
     id: 'cage',
     title: 'The Cage',
     rnVectorIcon: {iconName: 'cafe'},
-    component: StavMenuView,
+    component: RemoteMenuView,
     props: {
       cafeId: '262',
       loadingMessage: [
@@ -34,7 +34,7 @@ const stolaf = [
     id: 'pause',
     title: 'The Pause',
     rnVectorIcon: {iconName: 'paw'},
-    component: PauseMenuView,
+    component: LocalMenuView,
     props: {
       loadingMessage: [
         'Mixing up a shake…',
@@ -49,7 +49,7 @@ const carleton = [
     id: 'burton',
     title: 'Burton',
     rnVectorIcon: {iconName: 'trophy'},
-    component: StavMenuView,
+    component: RemoteMenuView,
     props: {
       cafeId: '35',
       loadingMessage: [
@@ -61,7 +61,7 @@ const carleton = [
     id: 'ldc',
     title: 'LDC',
     rnVectorIcon: {iconName: 'water'},
-    component: StavMenuView,
+    component: RemoteMenuView,
     props: {
       cafeId: '36',
       loadingMessage: [
@@ -73,7 +73,7 @@ const carleton = [
     id: 'weitz',
     title: 'Weitz Center',
     rnVectorIcon: {iconName: 'wine'},
-    component: StavMenuView,
+    component: RemoteMenuView,
     props: {
       cafeId: '458',
       loadingMessage: [
@@ -86,7 +86,7 @@ const carleton = [
     id: 'sayles',
     title: 'Sayles Hill',
     rnVectorIcon: {iconName: 'snow'},
-    component: StavMenuView,
+    component: RemoteMenuView,
     props: {
       cafeId: '34',
       loadingMessage: [

@@ -2,9 +2,8 @@
 import React from 'react'
 import {View, Text} from 'react-native'
 import LoadingView from '../../components/loading'
-import {BaseMenuView} from './base'
+import {BonAppMenuView} from './bonapp'
 import querystring from 'qs'
-
 import type {TopLevelViewPropsType} from '../../types'
 import {TopLevelViewPropTypes} from '../../types'
 import type momentT from 'moment'
@@ -12,16 +11,12 @@ import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 import {menuBaseUrl, cafeBaseUrl} from '../data'
 import sample from 'lodash/sample'
-
-import type {
-  BonAppMenuInfoType,
-  BonAppCafeInfoType,
-} from '../types'
+import type {BonAppMenuInfoType, BonAppCafeInfoType} from '../types'
 
 const fetchJson = (url, query) => fetch(`${url}?${querystring.stringify(query)}`).then(response => response.json())
 
 
-export default class StavMenuView extends React.Component {
+export class RemoteMenuView extends React.Component {
   static propTypes = {
     cafeId: React.PropTypes.string.isRequired,
     loadingMessage: React.PropTypes.string.isRequired,
@@ -80,7 +75,7 @@ export default class StavMenuView extends React.Component {
     }
 
     return (
-      <BaseMenuView
+      <BonAppMenuView
         route={this.props.route}
         navigator={this.props.navigator}
         cafeId={this.props.cafeId}
