@@ -5,7 +5,6 @@ import identity from 'lodash/identity'
 import filter from 'lodash/filter'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
-import flatten from 'lodash/flatten'
 import {toLaxTitleCase} from 'titlecase'
 import values from 'lodash/values'
 import type {MenuItemContainerType, MenuItemType, StationMenuType} from '../types'
@@ -84,6 +83,8 @@ export class FancyMenuWrapper extends React.Component {
     // apply a sort to the list of menu items
     allMenuItems = sortBy(allMenuItems, [item => item.station, item => item.id])
 
-    return <FancyMenuListView data={groupBy(allMenuItems, item => item.station)} />
+    let data: ProcessedMenuPropsType = groupBy(allMenuItems, item => item.station)
+
+    return <FancyMenuListView data={data} />
   }
 }
