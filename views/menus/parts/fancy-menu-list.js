@@ -4,6 +4,7 @@ import {StyleSheet, View, ListView, Text} from 'react-native'
 import FoodItem from './food-item'
 import DietaryFilters from './dietary-filters'
 import * as c from '../../components/colors'
+import {Separator} from '../../components/separator'
 import type {MenuItemType} from '../types'
 
 export type ProcessedMenuPropsType = {
@@ -21,8 +22,6 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   separator: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ebebeb',
     marginLeft: 20,
   },
   sectionHeader: {
@@ -94,7 +93,8 @@ export class FancyMenuListView extends React.Component {
         dataSource={this.state.dataSource}
         enableEmptySections={true}
         renderRow={this.renderFoodItem}
-        renderSeparator={(sectionId, rowId) => <View key={`${sectionId}-${rowId}`} style={styles.separator} />}
+        renderSeparator={(sectionId, rowId) =>
+          <Separator key={`${sectionId}-${rowId}`} style={styles.separator} />}
         renderSectionHeader={this.renderSectionHeader}
       />
     )
