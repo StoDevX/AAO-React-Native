@@ -1,16 +1,8 @@
 // @flow
-// import CageMenuView from './menus/cage'
 import StavMenuView from './menus/stav'
 import PauseMenuView from './menus/pause'
 
-export default [
-  // {
-  //   id: 'sayles',
-  //   title: 'Sayles Hill',
-  //   rnVectorIcon: {iconName: 'snow'},
-  //   component: StavMenuView,
-  //   props: {cafeId: '34', loadingMessage: 'temp1'},
-  // },
+const stolaf = [
   {
     id: 'stav',
     title: 'Stav Hall',
@@ -38,27 +30,6 @@ export default [
       ],
     },
   },
-  // {
-  //   id: 'burton',
-  //   title: 'Burton',
-  //   rnVectorIcon: {iconName: 'trophy'},
-  //   component: StavMenuView,
-  //   props: {cafeId: '35', loadingMessage: 'Searching for Schiller…'},
-  // },
-  // {
-  //   id: 'ldc',
-  //   title: 'LDC',
-  //   rnVectorIcon: {iconName: 'water'},
-  //   component: StavMenuView,
-  //   props: {cafeId: '36', loadingMessage: 'temp2'},
-  // },
-  // {
-  //   id: 'weitz',
-  //   title: 'Weitz Center',
-  //   rnVectorIcon: {iconName: 'wine'},
-  //   component: StavMenuView,
-  //   props: {cafeId: '458', loadingMessage: 'temp3'},
-  // },
   {
     id: 'pause',
     title: 'The Pause',
@@ -72,3 +43,59 @@ export default [
     },
   },
 ]
+
+const carleton = [
+  {
+    id: 'burton',
+    title: 'Burton',
+    rnVectorIcon: {iconName: 'trophy'},
+    component: StavMenuView,
+    props: {
+      cafeId: '35',
+      loadingMessage: [
+        'Searching for Schiller…',
+      ],
+    },
+  },
+  {
+    id: 'ldc',
+    title: 'LDC',
+    rnVectorIcon: {iconName: 'water'},
+    component: StavMenuView,
+    props: {
+      cafeId: '36',
+      loadingMessage: [
+        'Tracking down empty seats…',
+      ],
+    },
+  },
+  {
+    id: 'weitz',
+    title: 'Weitz Center',
+    rnVectorIcon: {iconName: 'wine'},
+    component: StavMenuView,
+    props: {
+      cafeId: '458',
+      loadingMessage: [
+        'Observing the artwork…',
+        'Previewing performances…',
+      ],
+    },
+  },
+  {
+    id: 'sayles',
+    title: 'Sayles Hill',
+    rnVectorIcon: {iconName: 'snow'},
+    component: StavMenuView,
+    props: {
+      cafeId: '34',
+      loadingMessage: [
+        'Engaging in people-watching…',
+        'Checking the mail…',
+      ],
+    },
+  },
+]
+
+export {stolaf, carleton}
+export default stolaf
