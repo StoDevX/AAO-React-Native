@@ -5,6 +5,7 @@ import identity from 'lodash/identity'
 import filter from 'lodash/filter'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
+import flatten from 'lodash/flatten'
 import {toLaxTitleCase} from 'titlecase'
 import values from 'lodash/values'
 import type {MenuItemContainerType, MenuItemType, StationMenuType} from '../types'
@@ -24,20 +25,6 @@ type FancyMenuPropsType = {
 export class FancyMenuWrapper extends React.Component {
   static defaultProps = {
     applyFilters: applyFilters,
-  }
-
-  state: {data: ProcessedMenuPropsType} = {data: {}};
-
-  componentWillMount() {
-    this.load(this.props)
-  }
-
-  componentWillReceiveProps(newProps: FancyMenuPropsType) {
-    this.load(newProps)
-  }
-
-  load = (props: FancyMenuPropsType) => {
-    this.setState({data: this.processData(props)})
   }
 
   props: FancyMenuPropsType;
@@ -63,9 +50,9 @@ export class FancyMenuWrapper extends React.Component {
     return accumulator.concat(current)
   }
 
+  render() {
+    let props = this.props
 
-  processData(props: FancyMenuPropsType) {
-    // console.log('processData called', props)
     let groupedMenuItems = props.stationMenus
       .map(menu => this.buildStationMenu(menu, props.foodItems))
       .filter(menu => menu.length)
@@ -97,10 +84,6 @@ export class FancyMenuWrapper extends React.Component {
     // apply a sort to the list of menu items
     allMenuItems = sortBy(allMenuItems, [item => item.station, item => item.id])
 
-    return groupBy(allMenuItems, item => item.station)
-  }
-
-  render() {
-    return <FancyMenuListView data={this.state.data} />
+    return <FancyMenuListView data={groupBy(allMenuItems, item => item.station)} />
   }
 }
