@@ -10,7 +10,7 @@ import {
   items as defaultItems,
   corIcons as defaultIcons,
 } from '../../../data/pause-bonapp.js'
-import {BaseMenuView} from './base'
+import {FilteredMenuView} from '../parts/filtered-menu'
 
 export class LocalMenuView extends React.Component {
   static defaultProps = {
@@ -29,7 +29,7 @@ export class LocalMenuView extends React.Component {
 
   render() {
     return (
-      <BaseMenuView
+      <FilteredMenuView
         route={this.props.route}
         navigator={this.props.navigator}
         now={this.props.now}

@@ -2,7 +2,7 @@
 import React from 'react'
 import {View, Text} from 'react-native'
 import LoadingView from '../../components/loading'
-import {BaseMenuView} from './base'
+import {FilteredMenuView} from '../parts/filtered-menu'
 import {fetchJson} from './fetch'
 import type {TopLevelViewPropsType} from '../../types'
 import {TopLevelViewPropTypes} from '../../types'
@@ -18,7 +18,7 @@ import type {
 } from '../types'
 
 
-export class RemoteMenuView extends React.Component {
+export class GithubMenuView extends React.Component {
   static propTypes = {
     cafeId: React.PropTypes.string.isRequired,
     loadingMessage: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
@@ -78,7 +78,7 @@ export class RemoteMenuView extends React.Component {
     }
 
     return (
-      <BaseMenuView
+      <FilteredMenuView
         route={this.props.route}
         navigator={this.props.navigator}
         stationMenus={this.state.stationMenus}

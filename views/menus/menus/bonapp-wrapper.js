@@ -6,7 +6,7 @@ import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 import findIndex from 'lodash/findIndex'
-import {BaseMenuView} from './base'
+import {FilteredMenuView} from '../parts/filtered-menu'
 import type {
   BonAppMenuInfoType,
   DayPartMenuType,
@@ -14,7 +14,7 @@ import type {
   BonAppCafeInfoType,
 } from '../types'
 
-export class BonAppMenuView extends React.Component {
+export class BonAppMenuWrapper extends React.Component {
   props: TopLevelViewPropsType & {
     now: momentT,
     cafeId: string,
@@ -68,7 +68,7 @@ export class BonAppMenuView extends React.Component {
     let mealName = mealInfo ? mealInfo.label : ''
 
     return (
-      <BaseMenuView
+      <FilteredMenuView
         route={this.props.route}
         navigator={this.props.navigator}
         now={this.props.now}

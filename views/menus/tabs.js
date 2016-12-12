@@ -1,5 +1,5 @@
 // @flow
-import {RemoteMenuView} from './menus/remote-menu'
+import {BonAppHostedMenu} from './menus/bonapp-menu'
 import {LocalMenuView} from './menus/local-menu'
 
 const stolaf = [
@@ -7,7 +7,7 @@ const stolaf = [
     id: 'stav',
     title: 'Stav Hall',
     rnVectorIcon: {iconName: 'nutrition'},
-    component: RemoteMenuView,
+    component: BonAppHostedMenu,
     props: {
       cafeId: '261',
       loadingMessage: [
@@ -21,7 +21,7 @@ const stolaf = [
     id: 'cage',
     title: 'The Cage',
     rnVectorIcon: {iconName: 'cafe'},
-    component: RemoteMenuView,
+    component: BonAppHostedMenu,
     props: {
       cafeId: '262',
       loadingMessage: [
@@ -49,7 +49,7 @@ const carleton = [
     id: 'burton',
     title: 'Burton',
     rnVectorIcon: {iconName: 'trophy'},
-    component: RemoteMenuView,
+    component: BonAppHostedMenu,
     props: {
       cafeId: '35',
       loadingMessage: [
@@ -61,7 +61,7 @@ const carleton = [
     id: 'ldc',
     title: 'LDC',
     rnVectorIcon: {iconName: 'water'},
-    component: RemoteMenuView,
+    component: BonAppHostedMenu,
     props: {
       cafeId: '36',
       loadingMessage: [
@@ -73,7 +73,7 @@ const carleton = [
     id: 'weitz',
     title: 'Weitz Center',
     rnVectorIcon: {iconName: 'wine'},
-    component: RemoteMenuView,
+    component: BonAppHostedMenu,
     props: {
       cafeId: '458',
       loadingMessage: [
@@ -86,7 +86,7 @@ const carleton = [
     id: 'sayles',
     title: 'Sayles Hill',
     rnVectorIcon: {iconName: 'snow'},
-    component: RemoteMenuView,
+    component: BonAppHostedMenu,
     props: {
       cafeId: '34',
       loadingMessage: [

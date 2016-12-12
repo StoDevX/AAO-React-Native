@@ -21,7 +21,7 @@ type FancyMenuPropsType = {
   filters: FilterSpecType[],
 };
 
-export default class FancyMenu extends React.Component {
+export class FancyMenuWrapper extends React.Component {
   state: {data: ProcessedMenuPropsType} = {data: {}};
 
   componentWillMount() {

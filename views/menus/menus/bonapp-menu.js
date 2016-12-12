@@ -2,7 +2,7 @@
 import React from 'react'
 import {View, Text} from 'react-native'
 import LoadingView from '../../components/loading'
-import {BonAppMenuView} from './bonapp'
+import {BonAppMenuWrapper} from './bonapp-wrapper'
 import type {TopLevelViewPropsType} from '../../types'
 import {TopLevelViewPropTypes} from '../../types'
 import type momentT from 'moment'
@@ -14,7 +14,7 @@ import type {BonAppMenuInfoType, BonAppCafeInfoType} from '../types'
 import {fetchJson} from './fetch'
 
 
-export class RemoteMenuView extends React.Component {
+export class BonAppHostedMenu extends React.Component {
   static propTypes = {
     cafeId: React.PropTypes.string.isRequired,
     loadingMessage: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
@@ -73,7 +73,7 @@ export class RemoteMenuView extends React.Component {
     }
 
     return (
-      <BonAppMenuView
+      <BonAppMenuWrapper
         route={this.props.route}
         navigator={this.props.navigator}
         cafeId={this.props.cafeId}

@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {View, Navigator} from 'react-native'
-import FancyMenu from '../parts/fancy-menu'
+import {FancyMenuWrapper} from './fancy-menu-wrapper'
 import {FilterToolbar} from '../filter/toolbar'
 
 import type {TopLevelViewPropsType} from '../../types'
@@ -18,7 +18,7 @@ import type {
 
 import type {FilterSpecType} from '../filter/types'
 
-export class BaseMenuView extends React.Component {
+export class FilteredMenuView extends React.Component {
   state: {|
     filters: FilterSpecType[],
   |} = {
@@ -107,7 +107,7 @@ export class BaseMenuView extends React.Component {
           appliedFilterCount={this.state.filters.filter(f => f.type === 'toggle' ? f.value : f.value.length > 0).length}
           onPress={this.openFilterView}
         />
-        <FancyMenu
+        <FancyMenuWrapper
           stationMenus={this.props.stationMenus}
           foodItems={this.props.foodItems}
           filters={this.state.filters}
