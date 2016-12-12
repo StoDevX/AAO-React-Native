@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {View, Navigator, Platform} from 'react-native'
+import {View, Navigator} from 'react-native'
 import FancyMenu from '../parts/fancy-menu'
 import {FilterToolbar} from '../filter/toolbar'
 
