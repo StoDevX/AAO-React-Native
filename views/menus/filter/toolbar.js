@@ -8,14 +8,15 @@ const touchableBg = Platform.OS === 'ios' ? null : Touchable.SelectableBackgroun
 import * as c from '../../components/colors'
 
 const styles = StyleSheet.create({
-  shadow: Platform.OS === 'ios'
-    ? {
+  shadow: {
+    ios: {
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: '#ebebeb',
-    }
-    : {
+    },
+    android: {
       elevation: 4,
     },
+  },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -54,7 +55,15 @@ const styles = StyleSheet.create({
   },
 })
 
-export function FilterToolbar({date, title, appliedFilterCount, onPress}: {date: momentT, title: string, onPress: () => any, appliedFilterCount: number}) {
+
+type PropsType = {
+  date: momentT,
+  title: string,
+  onPress: () => any,
+  appliedFilterCount: number,
+};
+
+export function FilterToolbar({date, title, appliedFilterCount, onPress}: PropsType) {
   const isFiltered = appliedFilterCount > 0
   const icon = Platform.OS === 'ios'
     ? isFiltered
