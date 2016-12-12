@@ -173,16 +173,12 @@ export class BaseMenuView extends React.Component {
       index: this.props.route.index + 1,
       title: 'Filter',
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-      onDismiss: this.closeFilterView,
+      onDismiss: (route: any, navigator: any) => navigator.pop(),
       props: {
         filters: this.state.filters,
         onChange: this.onFiltersChanged,
       },
     })
-  }
-
-  closeFilterView = (route: any, navigator: any) => {
-    navigator.pop()
   }
 
   onFiltersChanged = (newFilters: FilterSpecType[]) => {
