@@ -23,29 +23,42 @@ export class BonAppMenuWrapper extends React.Component {
   }
 
   findMenu(dayparts: DayPartsCollectionType, now: momentT): void|DayPartMenuType {
+    // `dayparts` is, conceptually, a collection of bonapp menus for a
+    // location. It's a single-element array of arrays, so we first check
+    // to see if either dimension is empty.
     if (!dayparts.length || !dayparts[0].length) {
       return
     }
 
-    if (dayparts[0].length === 1) {
-      return dayparts[0][0]
+    // Now that we know they're not empty, we grab the single element out of
+    // the top array for easier use.
+    const daypart = dayparts[0]
+
+    // If there's only a single bonapp menu for this location (think the Cage,
+    // instead of the Caf), we just return that item.
+    if (daypart.length === 1) {
+      return daypart[0]
     }
 
-    const times = dayparts[0].map(({starttime, endtime}) => ({
+    // Otherwise, we make ourselves a list of {starttime, endtime} pairs so we
+    // can query times relative to `now`.
+    const times = daypart.map(({starttime, endtime}) => ({
       startTime: moment.tz(starttime, 'H:mm', true, CENTRAL_TZ),
       endTime: moment.tz(endtime, 'H:mm', true, CENTRAL_TZ),
     }))
 
-    let mealIndex = findIndex(times, ({startTime, endTime}) => now.isBetween(startTime, endTime))
-    if (mealIndex === undefined) {
-      if (now.isSameOrBefore(times[0].startTime)) {
-        mealIndex = 0
-      } else {
-        mealIndex = times.length - 1
-      }
+    // We grab the first meal that ends sometime after `now`. The only time
+    // this really fails is in the early morning, if it's like 1am and you're
+    // wondering what there was at dinner.
+    let mealIndex = findIndex(times, ({endTime}) => now.isSameOrBefore(endTime))
+
+    // If we didn't find a meal, we must be after the last meal, so we want to
+    // return the last meal of the day.
+    if (mealIndex === -1) {
+      mealIndex = times.length - 1
     }
 
-    return dayparts[0][mealIndex]
+    return daypart[mealIndex]
   }
 
   render() {
@@ -56,12 +69,16 @@ export class BonAppMenuWrapper extends React.Component {
       cafeInfo,
     } = this.props
 
+    // We grab the "today" info from here because BonApp returns special
+    // messages in this response, like "Closed for Christmas Break"
     let days = cafeInfo.cafes[cafeId].days
     let today = days.find(({date}) => date === now.format('YYYY-MM-DD'))
     if (!today || today.status === 'closed') {
       return <LoadingView text={today ? today.message : 'Closed today'} />
     }
 
+    // We hard-code to the first day returned because we're only requesting one day.
+    // `cafes` is a map of cafe ids to cafes, but we only request one at a time.
     let dayparts = cafeMenu.days[0].cafes[cafeId].dayparts
     let mealInfo = this.findMenu(dayparts, now)
     let menus = mealInfo ? mealInfo.stations : []
