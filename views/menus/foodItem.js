@@ -41,7 +41,6 @@ export default class FoodItem extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 14,
     flexDirection: 'row',
     alignItems: 'center',

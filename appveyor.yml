@@ -39,15 +39,14 @@ test_script:
   # Output useful info for debugging.
   - node --version
   - npm --version
+  # prepare env
+  # - touch .env.js
   # run tests
-  - npm run lint
+  # - npm run lint
   # flow 0.29 doesn't support windows
   # turning this off until we can upgrade to flow 0.30
   # - npm run flow
-  - npm run test:js
-  # prepare env
-  - touch .env.js
-  - touch keys.js
+  # - npm run test:js
 
 build_script: 'npm run build:android:win'
 

@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
   },
   scheduleDays: {
     flex: 1,
+    minWidth: 100,
     paddingRight: 16,
   },
   bold: {
@@ -118,7 +119,7 @@ export class BuildingHoursDetailView extends React.Component {
         windowHeight={100}
         scrollableViewStyle={styles.scrollableStyle}
       >
-        <View style={{flex: 1}}>
+        <View>
           <View style={styles.title}>{title}</View>
           {subtitle}
 

@@ -32,7 +32,6 @@ let styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     paddingVertical: Platform.OS === 'ios' ? 8 : 16,
-    flex: 1,
     alignItems: 'center',
   },
   title: {

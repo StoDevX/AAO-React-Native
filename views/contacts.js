@@ -11,7 +11,6 @@ import {
 } from 'react-native'
 
 import ContactCard from './components/contactCard'
-import * as c from './components/colors'
 import numbers from '../data/contact-info'
 
 export default class ContactView extends React.Component {
@@ -40,6 +39,7 @@ export default class ContactView extends React.Component {
       <View style={styles.container}>
         <ListView
           initialListSize={3}
+          removeClippedSubviews={false}
           renderRow={this._renderRow.bind(this)}
           dataSource={this.state.dataSource}
         />
@@ -51,9 +51,7 @@ export default class ContactView extends React.Component {
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: c.iosLightBackground,
   },
   scrollView: {
-
   },
 })

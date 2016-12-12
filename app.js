@@ -13,6 +13,8 @@ import {
   Platform,
   Dimensions,
 } from 'react-native'
+import {Provider} from 'react-redux'
+import {store} from './flux'
 
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from './views/components/colors'
@@ -37,6 +39,7 @@ import SISLoginView from './views/settings/login'
 import CreditsView from './views/settings/credits'
 import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
+import EditHomeView from './views/editHome'
 
 import NoRoute from './views/components/no-route'
 
@@ -66,6 +69,7 @@ function renderScene(route, navigator) {
     case 'CreditsView': return <CreditsView {...props} />
     case 'PrivacyView': return <PrivacyView {...props} />
     case 'LegalView': return <LegalView {...props} />
+    case 'EditHomeView': return <EditHomeView {...props} />
     default: return <NoRoute {...props} />
   }
 }
@@ -116,11 +120,22 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === 'ios' ? 10 : 16,
     paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
   },
+  editHomeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
+  },
+  editHomeText: {
+    fontSize: 17,
+    color: 'white',
+    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
+  },
   backButtonClose: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Platform.OS === 'ios' ? 18 : 16,
-    paddingHorizontal: Platform.OS === 'ios' ? 10 : 16,
+    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
+    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
   },
   backButtonCloseText: {
     fontSize: 17,
@@ -145,8 +160,30 @@ const styles = StyleSheet.create({
   },
 })
 
-let settingsButtonActive = false
+let editHomeButtonActive = false
+function openEditHome(route, navigator) {
+  return () => {
+    if (editHomeButtonActive) {
+      return
+    }
 
+    function closeEditHome(route, navigator) {
+      editHomeButtonActive = false
+      navigator.pop()
+    }
+
+    editHomeButtonActive = true
+    navigator.push({
+      id: 'EditHomeView',
+      title: 'Edit Home',
+      index: route.index + 1,
+      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+      onDismiss: closeEditHome,
+    })
+  }
+}
+
+let settingsButtonActive = false
 function openSettings(route, navigator) {
   return () => {
     if (settingsButtonActive) {
@@ -226,6 +263,16 @@ function RightButton(route, navigator) {
       </TouchableOpacity>
     )
   }
+  if (route.id === 'HomeView') {
+    return (
+      <TouchableOpacity
+        style={[styles.editHomeButton]}
+        onPress={openEditHome(route, navigator)}
+      >
+        <Text style={[styles.editHomeText]}>Edit</Text>
+      </TouchableOpacity>
+    )
+  }
 }
 
 function Title(route) {
@@ -240,7 +287,7 @@ function Title(route) {
   )
 }
 
-export default class App extends React.Component {
+class App extends React.Component {
   componentDidMount() {
     BackAndroid.addEventListener('hardwareBackPress', this.registerAndroidBackButton)
   }
@@ -287,4 +334,12 @@ export default class App extends React.Component {
       />
     )
   }
+}
+
+export default () => {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  )
 }
