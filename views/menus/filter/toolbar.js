@@ -9,13 +9,15 @@ import * as c from '../../components/colors'
 
 const styles = StyleSheet.create({
   shadow: {
-    ios: {
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: '#ebebeb',
-    },
-    android: {
-      elevation: 4,
-    },
+    ...Platform.select({
+      ios: {
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: '#ebebeb',
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   container: {
     flexDirection: 'row',

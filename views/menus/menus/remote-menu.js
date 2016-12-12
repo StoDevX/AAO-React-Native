@@ -19,7 +19,7 @@ const fetchJson = (url, query) => fetch(`${url}?${querystring.stringify(query)}`
 export class RemoteMenuView extends React.Component {
   static propTypes = {
     cafeId: React.PropTypes.string.isRequired,
-    loadingMessage: React.PropTypes.string.isRequired,
+    loadingMessage: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
     ...TopLevelViewPropTypes,
   }
 
