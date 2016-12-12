@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
   },
 })
 
-
 export class FancyMenuListView extends React.Component {
   state = {
     dataSource: new ListView.DataSource({
@@ -48,16 +47,16 @@ export class FancyMenuListView extends React.Component {
   }
 
   componentWillMount() {
-    this.load(this.props)
+    this.load(this.props.data)
   }
 
-  componentWillReceiveProps(newProps: ProcessedMenuPropsType) {
-    this.load(newProps)
+  componentWillReceiveProps(newProps: {data: ProcessedMenuPropsType}) {
+    this.load(newProps.data)
   }
 
-  load(props: ProcessedMenuPropsType) {
+  load(data: ProcessedMenuPropsType) {
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRowsAndSections(props.data),
+      dataSource: this.state.dataSource.cloneWithRowsAndSections(data),
     })
   }
 
@@ -68,7 +67,11 @@ export class FancyMenuListView extends React.Component {
   renderSectionHeader(sectionData: any, sectionId: string) {
     return (
       <View style={styles.sectionHeader} key={sectionId}>
-        <Text style={styles.sectionHeaderText}>{sectionId}</Text>{sectionData.note ? <Text style={{color: c.iosDisabledText}}>({sectionData.note})</Text> : null}
+        <Text style={styles.sectionHeaderText}>
+          {sectionId}
+        </Text>
+        {/*I'm reasonably sure that sectionData is an Array<MenuItemType>…*/}
+        {sectionData.note ? <Text style={{color: c.iosDisabledText}}>({sectionData.note})</Text> : null}
       </View>
     )
   }
