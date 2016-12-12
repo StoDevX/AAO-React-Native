@@ -99,12 +99,14 @@ export class FilteredMenuView extends React.Component {
   }
 
   render() {
+    const filterCount = this.state.filters.filter(f => f.type === 'toggle' ? f.value : f.value.length > 0).length
+
     return (
       <View style={{flex: 1}}>
         <FilterToolbar
           date={this.props.now}
           title={this.props.menuLabel}
-          appliedFilterCount={this.state.filters.filter(f => f.type === 'toggle' ? f.value : f.value.length > 0).length}
+          appliedFilterCount={filterCount}
           onPress={this.openFilterView}
         />
         <FancyMenuWrapper
