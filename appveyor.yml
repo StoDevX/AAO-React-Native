@@ -15,13 +15,13 @@ install:
   - 7z x "android-sdk_r24.4.1-windows.zip" > nul
   - cd c:\projects\all-about-olaf
   # install android-sdk
-  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter android-23
-  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter platform-tools
-  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter tools
-  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter build-tools-23.0.1
-  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter extra-google-m2repository
-  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter extra-android-m2repository
-  - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter extra-android-support
+  - echo y | C:\android-sdk-windows\tools\android.bat --silent update sdk --no-ui --all --filter android-23
+  - echo y | C:\android-sdk-windows\tools\android.bat --silent update sdk --no-ui --all --filter platform-tools
+  - echo y | C:\android-sdk-windows\tools\android.bat --silent update sdk --no-ui --all --filter tools
+  - echo y | C:\android-sdk-windows\tools\android.bat --silent update sdk --no-ui --all --filter build-tools-23.0.1
+  - echo y | C:\android-sdk-windows\tools\android.bat --silent update sdk --no-ui --all --filter extra-google-m2repository
+  - echo y | C:\android-sdk-windows\tools\android.bat --silent update sdk --no-ui --all --filter extra-android-m2repository
+  - echo y | C:\android-sdk-windows\tools\android.bat --silent update sdk --no-ui --all --filter extra-android-support
   # install node and npm packages
   - ps: Install-Product node $env:nodejs_version
   # switch to yarn for faster install times
