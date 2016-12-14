@@ -18,13 +18,7 @@ init:
 
 install:
   # install android-sdk
-  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter android-23
-  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter platform-tools
-  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter tools
-  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter build-tools-23.0.1
-  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter extra-google-m2repository
-  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter extra-android-m2repository
-  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter extra-android-support
+  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter android-23,platform-tools,tools,build-tools-23.0.1,extra-google-m2repository,extra-android-m2repository,extra-android-support
   # install node and npm packages
   - ps: Install-Product node $env:nodejs_version
   # switch to yarn for faster install times
