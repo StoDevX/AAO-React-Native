@@ -10,11 +10,17 @@ branches:
 # the basic outline for this install process is from
 # github.com/googlesamples/android-ndk/blob/master/appveyor.yml
 init:
-  - choco install android-sdk -version 24.4.1.3
+  # prepare android-sdk
+  - cd \
+  - appveyor DownloadFile "http://dl.google.com/android/android-sdk_r24.4.1-windows.zip"
+  - 7z x "android-sdk_r24.4.1-windows.zip" > nul
+  - cd c:\projects\all-about-olaf
 
 install:
   # install android-sdk
   - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter android-23
+  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter platform-tools
+  - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter tools
   - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter build-tools-23.0.1
   - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter extra-google-m2repository
   - echo y | "%ANDROID_HOME%\tools\android.bat" --silent update sdk --no-ui --all --filter extra-android-m2repository
@@ -27,6 +33,7 @@ install:
 environment:
   nodejs_version: '7'
   JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+  ANDROID_HOME: C:\android-sdk-windows
   matrix:
     - TEST_TYPE: android
 
