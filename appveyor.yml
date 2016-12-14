@@ -1,3 +1,7 @@
+# Note: Be aware that if you do a lot of commits producing queued builds and
+# depth number is too small, git checkout operation following git clone can
+# fail because the requested commit is not present in a cloned repository.
+clone_depth: 50
 clone_folder: c:\projects\all-about-olaf
 
 # From http://stackoverflow.com/a/31882307/2347774
