@@ -9,12 +9,14 @@ branches:
 
 # the basic outline for this install process is from
 # github.com/googlesamples/android-ndk/blob/master/appveyor.yml
-install:
+init:
   # prepare android-sdk
   - cd \
   - appveyor DownloadFile "http://dl.google.com/android/android-sdk_r24.4.1-windows.zip"
   - 7z x "android-sdk_r24.4.1-windows.zip" > nul
   - cd c:\projects\all-about-olaf
+
+install:
   # install android-sdk
   - echo y | C:\android-sdk-windows\tools\android.bat --silent update sdk --no-ui --all --filter android-23
   - echo y | C:\android-sdk-windows\tools\android.bat --silent update sdk --no-ui --all --filter platform-tools
