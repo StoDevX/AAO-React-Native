@@ -24,7 +24,8 @@ install:
   - echo y | C:\android-sdk-windows\tools\android.bat update sdk --no-ui --all --filter extra-android-support
   # install node and npm packages
   - ps: Install-Product node $env:nodejs_version
-  - npm install
+  # switch to yarn for faster install times
+  - yarn
 
 environment:
   nodejs_version: '7'
@@ -36,7 +37,7 @@ environment:
 # Post-install test scripts.
 test_script:
   - node --version
-  - npm --version
+  - yarn -V
 
 build_script: 'npm run build:android:win'
 
