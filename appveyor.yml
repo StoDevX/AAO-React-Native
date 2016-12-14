@@ -40,7 +40,7 @@ test_script:
   - node --version
   - yarn -V
 
-build_script: 'npm run build:android:win'
+build_script: 'yarn run build:android:win'
 
 notifications:
   - provider: Slack
