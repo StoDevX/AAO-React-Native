@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-light',
     fontSize: Platform.OS === 'ios' ? 17 : 20,
-    fontWeight: Platform.OS === 'ios' ? 'bold' : '500',
+    fontWeight: Platform.OS === 'ios' ? '600' : '500',
     marginVertical: Platform.OS === 'ios' ? 12 : 14,
   },
   rightButton: {
