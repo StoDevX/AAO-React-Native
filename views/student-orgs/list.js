@@ -19,11 +19,8 @@ import delay from 'delay'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
+import { getText, parseHtml } from '../../lib/html'
 
-import terms from '../../data/dictionary.json'
-
-let Entities = require('html-entities').AllHtmlEntities
-const entities = new Entities()
 const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 
 let styles = StyleSheet.create({
@@ -170,12 +167,15 @@ export class StudentOrgsView extends React.Component {
   }
 
   renderRow = ({isLast, item}) => {
+    let orgName = getText(parseHtml(item.name))
+    let orgCategory = getText(parseHtml(item.categories[0]))
+
     return (
       <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressRow(item)}>
         <View style={[styles.row, !isLast && styles.notLastRow]}>
           <View style={[styles.textRows]}>
-            <Text style={styles.itemTitle} numberOfLines={1}>{item.name}</Text>
-            <Text style={styles.itemPreview} numberOfLines={2}>{item.categories[0]}</Text>
+            <Text style={styles.itemTitle} numberOfLines={1}>{orgName}</Text>
+            <Text style={styles.itemPreview}>{orgCategory}</Text>
           </View>
           <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
         </View>
@@ -198,7 +198,7 @@ export class StudentOrgsView extends React.Component {
       return <LoadingView />
     }
 
-    if (this.state.noNews) {
+    if (this.state.noOrgs) {
       return (
         <View style={{
           flex: 1,
