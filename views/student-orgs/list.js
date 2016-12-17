@@ -20,6 +20,7 @@ import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
 import { getText, parseHtml } from '../../lib/html'
+import startCase from 'lodash/startCase'
 
 const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 
@@ -217,7 +218,7 @@ export class StudentOrgsView extends React.Component {
       <View style={styles.container}>
       <AlphabetListView
         contentContainerStyle={styles.listView}
-        data={groupBy(this.state.dataSource, item => head(item.name))}
+        data={groupBy(this.state.dataSource, item => head(startCase(item.name)))}
         cell={this.renderRow}
         sectionHeader={this.renderHeader}
         sectionHeaderHeight={28}
