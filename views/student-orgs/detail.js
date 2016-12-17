@@ -10,65 +10,69 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 18,
   },
-  cellTitles: {
-    fontSize: 13,
-    color: "red",
-  },
   name: {
     textAlign: 'center',
-    paddingTop: 10,
+    paddingTop: 14,
+    paddingHorizontal: 5,
     color: 'black',
     fontSize: 32,
     fontWeight: '300',
   },
-  desc: {
-    flex: 1,
-  },
-  descText: {
-    fontSize: 13,
-    padding: 15,
+  description: {
+    paddingTop: 13,
+    paddingBottom: 13,
+    paddingLeft: 16,
+    paddingRight: 16,
+    fontSize: 16,
     backgroundColor: c.white,
   },
 })
 
 export function StudentOrgsDetailView(props) {
-  // let meetingTime = props.item.regularMeetingTime !== undefined
-  //   ? 'Meeting Time: ' +
-  //   : ''
-  // let meetingLocation = props.item.regularMeetingTime !== undefined
-  //   ? 'Location: ' +
-  //   : ''
+  let orgName = props.item.name !== undefined
+    ? getText(parseHtml(props.item.name))
+    : 'Name not listed'
+  let orgCategory = props.item.categories[0] !== undefined
+    ? getText(parseHtml(props.item.categories[0]))
+    : 'Category not listed'
+  let orgMeetingTime = props.item.regularMeetingTime !== undefined
+    ? getText(parseHtml(props.item.regularMeetingTime))
+    : 'Meeting time not listed'
+  let orgMeetingLocation = props.item.regularMeetingLocation !== undefined
+    ? getText(parseHtml(props.item.regularMeetingLocation))
+    : 'Meeting location not listed'
+  let orgContact = props.item.contactName !== undefined
+    ? getText(parseHtml(props.item.contactName))
+    : 'Contact not listed'
+  let orgDescription = props.item.description !== undefined
+    ? getText(parseHtml(props.item.description))
+    : 'Description not listed'
 
-  let description = getText(parseHtml(props.item.description))
+ // We should not show the member numbers
+ // It is inaccurate (more are involved than sign-up online)
+ // It might discourage people from joining large/small groups
+
+ // <Section header='MEMBERS'>
+ //   <Cell cellStyle='RightDetail'
+ //     title={props.item.memberCount}
+ //   />
+ // </Section>
 
   return (
     <ScrollView>
-     <Text style={styles.name}>{props.item.name}</Text>
+     <Text style={styles.name}>{orgName}</Text>
      <TableView>
-      <Section header='DETAILS'>
-        <Cell contentContainerStyle={styles.cellTitles} cellStyle='RightDetail'
-          title='Category'
-          detail={props.item.categories[0]}
-        />
-        <Cell cellStyle='RightDetail'
-          title='Members'
-          detail={props.item.memberCount}
-        />
-        <Cell cellStyle='RightDetail'
-          title='Meets'
-          detail={props.item.regularMeetingTime}
-        />
-        <Cell cellStyle='RightDetail'
-          title='Location'
-          detail={props.item.regularMeetingLocation}
-        />
+       <Section header='CATEGORY'>
+         <Cell cellStyle='Basic' title={orgCategory} />
+       </Section>
+       <Section header='MEETINGS'>
+        <Cell cellStyle='Subtitle' title={orgMeetingTime} detail={orgMeetingLocation} />
+       </Section>
+       <Section header='CONTACT'>
+        <Cell cellStyle='Basic' title={orgContact} />
       </Section>
       <Section header='DESCRIPTION'>
-         <View style={styles.desc}>
-          <Text style={styles.descText}>
-            {description}
-          </Text>
-         </View>
+        <Text style={styles.description}>{orgDescription}</Text>
       </Section>
     </TableView>
    </ScrollView>
@@ -82,5 +86,6 @@ StudentOrgsDetailView.propTypes = {
     regularMeetingTime: React.PropTypes.string,
     regularMeetingLocation: React.PropTypes.string,
     description: React.PropTypes.string,
+    contactName: React.PropTypes.string,
   }).isRequired,
 }
