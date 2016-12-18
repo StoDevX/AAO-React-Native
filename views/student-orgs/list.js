@@ -93,7 +93,7 @@ export class StudentOrgsView extends React.Component {
     dataSource: null,
     refreshing: false,
     loaded: false,
-    loadedDetail: false,
+    loadedDetail: true,
     error: false,
     noOrgs: false,
   }
@@ -120,14 +120,14 @@ export class StudentOrgsView extends React.Component {
   fetchDetailData = async url => {
     let detailData = null
     try {
+      this.setState({loadedDetail: false})
       let response = await fetch(url).then(r => r.json())
       detailData = response
+      this.setState({loadedDetail: true})
     } catch (error) {
       this.setState({error: true})
       console.error(error)
     }
-
-    this.setState({loadedDetail: true})
 
     if (this.state.loadedDetail) {
       this.props.navigator.push({
@@ -203,6 +203,10 @@ export class StudentOrgsView extends React.Component {
           </Text>
         </View>
       )
+    }
+
+    if (!this.state.loadedDetail) {
+      return <LoadingView />
     }
 
     return (
