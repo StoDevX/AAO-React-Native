@@ -2,13 +2,12 @@
 import {Navigator} from 'react-native'
 
 export type StudentOrgType = {
-  author: string,
-  categories: string[],
-  content: string,
-  contentSnippet: string,
-  link: string,
-  publishedDate: string,
-  title: string,
+  name: string,
+  categories: string,
+  regularMeetingTime: string,
+  regularMeetingLocation: string,
+  contactName: string,
+  description: string,
 };
 
 export type StudentOrgPropsType = {
