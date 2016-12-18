@@ -8,7 +8,6 @@ import {
   StyleSheet,
   View,
   TouchableHighlight,
-  ListView,
   Text,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -164,7 +163,7 @@ export class StudentOrgsView extends React.Component {
 
   renderRow = ({isLast, item}) => {
     let orgName = getText(parseHtml(item.name))
-    let orgCategory = getText(parseHtml(item.categories[0]))
+    let orgCategory = getText(parseHtml(item.categories))
 
     return (
       <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressRow(item)}>
@@ -199,15 +198,17 @@ export class StudentOrgsView extends React.Component {
           backgroundColor: '#ffffff',
         }}>
           <Text>
-            No Organizations Found.
+            No organizations found.
           </Text>
         </View>
       )
     }
 
-    if (!this.state.loadedDetail) {
-      return <LoadingView />
-    }
+    // This is causing the listview to not retain its position on view pop...
+
+    // if (!this.state.loadedDetail) {
+    //   return <LoadingView />
+    // }
 
     return (
       <View style={styles.container}>
