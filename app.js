@@ -326,7 +326,7 @@ class App extends React.Component {
           />
         }
         initialRoute={{
-          id: 'StudentOrgsView',
+          id: 'HomeView',
           title: 'All About Olaf',
           index: 0,
         }}
