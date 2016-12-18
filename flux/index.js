@@ -10,7 +10,10 @@ let defaultViewOrder = allViews.map(v => v.view)
 
 export const loadHomescreenOrder = async () => {
   let savedOrder = JSON.parse(await AsyncStorage.getItem('homescreen:view-order')) || defaultViewOrder
-  return saveHomescreenOrder(savedOrder)
+  let shouldSaveNewView = savedOrder.length != defaultViewOrder.length
+  let homeOrder = shouldSaveNewView === true ? defaultViewOrder : savedOrder
+
+  return saveHomescreenOrder(homeOrder)
 }
 
 export const saveHomescreenOrder = order => {
