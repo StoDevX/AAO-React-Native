@@ -29,24 +29,12 @@ const styles = StyleSheet.create({
 })
 
 export function StudentOrgsDetailView(props) {
-  let orgName = props.item.name !== undefined
-    ? getText(parseHtml(props.item.name))
-    : 'Name not listed'
-  let orgCategory = props.item.categories[0] !== undefined
-    ? getText(parseHtml(props.item.categories[0]))
-    : 'Category not listed'
-  let orgMeetingTime = props.item.regularMeetingTime !== undefined
-    ? getText(parseHtml(props.item.regularMeetingTime))
-    : 'Meeting time not listed'
-  let orgMeetingLocation = props.item.regularMeetingLocation !== undefined
-    ? getText(parseHtml(props.item.regularMeetingLocation))
-    : 'Meeting location not listed'
-  let orgContact = props.item.contactName !== undefined
-    ? getText(parseHtml(props.item.contactName))
-    : 'Contact not listed'
-  let orgDescription = props.item.description !== undefined
-    ? getText(parseHtml(props.item.description))
-    : 'Description not listed'
+  let orgName = getText(parseHtml(props.item.name)) || 'Name not listed'
+  let orgCategory = getText(parseHtml(props.item.categories[0])) || 'Category not listed'
+  let orgMeetingTime = getText(parseHtml(props.item.regularMeetingTime)) || 'Meeting time not listed'
+  let orgMeetingLocation = getText(parseHtml(props.item.regularMeetingLocation)) || 'Meeting location not listed'
+  let orgContact = getText(parseHtml(props.item.contactName)) || 'Contact not listed'
+  let orgDescription = getText(parseHtml(props.item.description)) || 'Description not listed'
 
  // We should not show the member numbers
  // It is inaccurate (more are involved than sign-up online)
