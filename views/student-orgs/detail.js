@@ -1,7 +1,7 @@
 import React from 'react'
 import {ScrollView, Text, View, StyleSheet} from 'react-native'
 
-import {Cell, CustomCell, Section, TableView} from 'react-native-tableview-simple'
+import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import { getText, parseHtml } from '../../lib/html'
 import * as c from '../components/colors'
 
@@ -28,41 +28,96 @@ const styles = StyleSheet.create({
   },
 })
 
+function displayName(orgName) {
+  if (!orgName) {
+    return null
+  }
+
+  return (
+    <Text style={styles.name}>{orgName}</Text>
+  )
+}
+
+function displayCategory(orgCategory) {
+  if (!orgCategory) {
+    return null
+  }
+
+  return (
+    <Section header='CATEGORY'>
+      <Cell cellStyle='Basic' title={orgCategory} />
+    </Section>
+  )
+}
+
+function displayContact(orgContact) {
+  if (!orgContact) {
+    return null
+  }
+
+  return (
+    <Section header='CONTACT'>
+      <Cell cellStyle='Basic' title={orgContact} />
+    </Section>
+  )
+}
+
+function displayDescription(orgDescription) {
+  if (!orgDescription) {
+    return null
+  }
+
+  return (
+    <Section header='DESCRIPTION'>
+        <Text style={styles.description}>{orgDescription}</Text>
+    </Section>
+  )
+}
+
+function displayMeetings(orgMeetingTime, orgMeetingLocation) {
+  if (!orgMeetingTime && !orgMeetingLocation) {
+    return null
+  }
+
+  let contents = null
+  if (orgMeetingTime && orgMeetingLocation) {
+    contents = <Cell cellStyle='Subtitle' title={orgMeetingTime} detail={orgMeetingLocation} />
+  } else if (orgMeetingTime) {
+    contents = <Cell cellStyle='Basic' title={orgMeetingTime} detail={orgMeetingLocation} />
+  } else if (orgMeetingLocation) {
+    contents = <Cell cellStyle='Basic' title={orgMeetingLocation} />
+  }
+
+  return (
+    <Section header='MEETINGS'>
+      {contents}
+    </Section>
+  )
+}
+
 export function StudentOrgsDetailView(props) {
-  let orgName = getText(parseHtml(props.item.name)) || 'Name not listed'
-  let orgCategory = getText(parseHtml(props.item.categories[0])) || 'Category not listed'
-  let orgMeetingTime = getText(parseHtml(props.item.regularMeetingTime)) || 'Meeting time not listed'
-  let orgMeetingLocation = getText(parseHtml(props.item.regularMeetingLocation)) || 'Meeting location not listed'
-  let orgContact = getText(parseHtml(props.item.contactName)) || 'Contact not listed'
-  let orgDescription = getText(parseHtml(props.item.description)) || 'Description not listed'
+  let orgName = getText(parseHtml(props.item.name)) || ''
+  let orgCategory = getText(parseHtml(props.item.categories)) || ''
+  let orgMeetingTime = getText(parseHtml(props.item.regularMeetingTime)) || ''
+  let orgMeetingLocation = getText(parseHtml(props.item.regularMeetingLocation)) || ''
+  let orgContact = getText(parseHtml(props.item.contactName)) || ''
+  let orgDescription = getText(parseHtml(props.item.description)) || ''
 
- // We should not show the member numbers
- // It is inaccurate (more are involved than sign-up online)
- // It might discourage people from joining large/small groups
-
- // <Section header='MEMBERS'>
- //   <Cell cellStyle='RightDetail'
- //     title={props.item.memberCount}
- //   />
- // </Section>
+  let name = displayName(orgName)
+  let category = displayCategory(orgCategory)
+  let meetings = displayMeetings(orgMeetingTime, orgMeetingLocation)
+  let contact = displayContact(orgContact)
+  let description = displayDescription(orgDescription)
 
   return (
     <ScrollView>
-     <Text style={styles.name}>{orgName}</Text>
-     <TableView>
-       <Section header='CATEGORY'>
-         <Cell cellStyle='Basic' title={orgCategory} />
-       </Section>
-       <Section header='MEETINGS'>
-        <Cell cellStyle='Subtitle' title={orgMeetingTime} detail={orgMeetingLocation} />
-       </Section>
-       <Section header='CONTACT'>
-        <Cell cellStyle='Basic' title={orgContact} />
-      </Section>
-      <Section header='DESCRIPTION'>
-        <Text style={styles.description}>{orgDescription}</Text>
-      </Section>
-    </TableView>
+      <TableView>
+        {name}
+        {category}
+        {meetings}
+        {contact}
+        {description}
+      </TableView>
    </ScrollView>
   )
 }
