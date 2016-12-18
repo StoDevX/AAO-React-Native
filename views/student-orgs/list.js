@@ -90,13 +90,7 @@ export class StudentOrgsView extends React.Component {
   }
 
   state = {
-    // dataSource: new ListView.DataSource({
-    //   rowHasChanged: (r1: StudentOrgType, r2: StudentOrgType) => r1.title != r2.title,
-    // }),
     dataSource: null,
-    detailSource: null,
-    detailUrl: '',
-    detailUrlSet: false,
     refreshing: false,
     loaded: false,
     loadedDetail: false,
@@ -123,10 +117,11 @@ export class StudentOrgsView extends React.Component {
     this.setState({loaded: true})
   }
 
-  fetchDetailData = async () => {
+  fetchDetailData = async url => {
+    let detailData = null
     try {
-      let response = await fetch(this.state.detailUrl).then(r => r.json())
-      this.setState({detailSource: response})
+      let response = await fetch(url).then(r => r.json())
+      detailData = response
     } catch (error) {
       this.setState({error: true})
       console.error(error)
@@ -138,9 +133,9 @@ export class StudentOrgsView extends React.Component {
       this.props.navigator.push({
         id: 'StudentOrgsDetailView',
         index: this.props.route.index + 1,
-        title: this.state.detailSource.name,
+        title: detailData.name,
         backButtonTitle: 'Orgs',
-        props: {item: this.state.detailSource},
+        props: {item: detailData},
       })
     }
   }
@@ -184,14 +179,10 @@ export class StudentOrgsView extends React.Component {
     )
   }
 
+
   onPressRow = data => {
     let orgUrl = orgsUrl + '/' + data.uri
-    this.setState(() => ({detailUrl: orgUrl}))
-    this.setState(() => ({detailUrlSet: true}))
-
-    if (this.state.detailUrlSet) {
-      this.fetchDetailData(orgUrl)
-    }
+    this.fetchDetailData(orgUrl)
   }
 
   render() {
