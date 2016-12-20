@@ -4,8 +4,7 @@ import {ScrollView, Text, View, StyleSheet} from 'react-native'
 
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
-import {getText, parseHtml} from '../../lib/html'
-import delay from 'delay'
+import {getTextWithSpaces, parseHtml} from '../../lib/html'
 import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 
@@ -108,7 +107,8 @@ export class StudentOrgsDetailView extends React.Component {
       return null
     }
 
-    orgDescription = getText(parseHtml(orgDescription))
+    orgDescription = getTextWithSpaces(parseHtml(orgDescription))
+    orgDescription = orgDescription.split(/\s+/).join(' ')
 
     return (
       <Section header='DESCRIPTION'>
