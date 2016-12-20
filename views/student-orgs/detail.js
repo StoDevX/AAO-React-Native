@@ -4,7 +4,7 @@ import {ScrollView, Text, View, StyleSheet} from 'react-native'
 
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
-import LoadingView from '../components/loading'
+import {getText, parseHtml} from '../../lib/html'
 import delay from 'delay'
 import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
 import type {TopLevelViewPropsType} from '../types'
@@ -150,48 +150,60 @@ export class StudentOrgsDetailView extends React.Component {
     )
   }
 
-  render() {
-    if (!this.state.loaded) {
-      return <LoadingView />
-    }
-
+  renderBody = () => {
     let data = this.state.data
+
     if (!data) {
       return (
-        <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#ffffff',
-        }}>
-          <Text>
-            No info found.
-          </Text>
-        </View>
+        <Section header='ORGANIZATION'>
+          <Cell cellStyle='Basic' title='No information found.' />
+        </Section>
       )
     }
 
-    let orgName = data.name.trim()
-    let orgCategory = data.categories.join(', ')
-    let orgMeetingTime = data.regularMeetingTime.trim()
-    let orgMeetingLocation = data.regularMeetingLocation.trim()
-    let orgContact = data.contactName.trim()
-    let orgDescription = data.description ? data.description.trim() : null
+    let {
+      regularMeetingTime='',
+      regularMeetingLocation='',
+      description='',
+      contactName='',
+    } = data
 
-    let name = this.displayOrgName(orgName)
-    let category = this.displayCategory(orgCategory)
-    let meetings = this.displayMeetings(orgMeetingTime, orgMeetingLocation)
-    let contact = this.displayContact(orgContact)
-    let description = this.displayDescription(orgDescription)
+    contactName = contactName.trim()
+    description = description.trim()
+    regularMeetingTime = regularMeetingTime.trim()
+    regularMeetingLocation = regularMeetingLocation.trim()
+
+    return (
+      <View>
+        {this.displayMeetings(regularMeetingTime, regularMeetingLocation)}
+        {this.displayContact(contactName)}
+        {this.displayDescription(description)}
+      </View>
+    )
+  }
+
+  render() {
+    let knownData = this.props.item
+    let orgName = knownData.name.trim()
+    let orgCategory = knownData.categories.join(', ')
+
+    let contents
+    if (!this.state.loaded) {
+      contents = (
+        <Section header='ORGANIZATION'>
+          <Cell cellStyle='Basic' title='Loading…' />
+        </Section>
+      )
+    } else {
+      contents = this.renderBody()
+    }
 
     return (
       <ScrollView>
         <TableView>
-          {name}
-          {category}
-          {meetings}
-          {contact}
-          {description}
+          {this.displayOrgName(orgName)}
+          {this.displayCategory(orgCategory)}
+          {contents}
         </TableView>
       </ScrollView>
     )
