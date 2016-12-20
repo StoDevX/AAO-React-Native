@@ -40,7 +40,7 @@ export class StudentOrgsDetailView extends React.Component {
   }
 
   state = {
-    dataSource: null,
+    data: null,
     refreshing: false,
     loaded: false,
     detailsLoaded: false,
@@ -60,10 +60,7 @@ export class StudentOrgsDetailView extends React.Component {
 
     try {
       let response = await fetch(orgUrl).then(r => r.json())
-      if (!response.length) {
-        this.setState({detailsLoaded: true})
-      }
-      this.setState({dataSource: response})
+      this.setState({data: response})
     } catch (error) {
       this.setState({error: true})
       console.error(error)
@@ -154,12 +151,12 @@ export class StudentOrgsDetailView extends React.Component {
   }
 
   render() {
-
     if (!this.state.loaded) {
       return <LoadingView />
     }
 
-    if (!this.state.detailsLoaded) {
+    let data = this.state.data
+    if (!data) {
       return (
         <View style={{
           flex: 1,
@@ -174,32 +171,30 @@ export class StudentOrgsDetailView extends React.Component {
       )
     }
 
-    if (this.state.dataSource) {
-      let orgName = getText(parseHtml(this.state.dataSource.name)) || ''
-      let orgCategory = getText(parseHtml(this.state.dataSource.categories)) || ''
-      let orgMeetingTime = getText(parseHtml(this.state.dataSource.regularMeetingTime)) || ''
-      let orgMeetingLocation = getText(parseHtml(this.state.dataSource.regularMeetingLocation)) || ''
-      let orgContact = getText(parseHtml(this.state.dataSource.contactName)) || ''
-      let orgDescription = getText(parseHtml(this.state.dataSource.description)) || ''
+    let orgName = data.name.trim()
+    let orgCategory = data.categories.join(', ')
+    let orgMeetingTime = data.regularMeetingTime.trim()
+    let orgMeetingLocation = data.regularMeetingLocation.trim()
+    let orgContact = data.contactName.trim()
+    let orgDescription = data.description ? data.description.trim() : null
 
-      let name = this.displayOrgName(orgName)
-      let category = this.displayCategory(orgCategory)
-      let meetings = this.displayMeetings(orgMeetingTime, orgMeetingLocation)
-      let contact = this.displayContact(orgContact)
-      let description = this.displayDescription(orgDescription)
+    let name = this.displayOrgName(orgName)
+    let category = this.displayCategory(orgCategory)
+    let meetings = this.displayMeetings(orgMeetingTime, orgMeetingLocation)
+    let contact = this.displayContact(orgContact)
+    let description = this.displayDescription(orgDescription)
 
-      return (
-        <ScrollView>
-          <TableView>
-            {name}
-            {category}
-            {meetings}
-            {contact}
-            {description}
-          </TableView>
-        </ScrollView>
-      )
-    }
+    return (
+      <ScrollView>
+        <TableView>
+          {name}
+          {category}
+          {meetings}
+          {contact}
+          {description}
+        </TableView>
+      </ScrollView>
+    )
   }
 }
 
