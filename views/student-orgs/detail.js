@@ -108,6 +108,8 @@ export class StudentOrgsDetailView extends React.Component {
       return null
     }
 
+    orgDescription = getText(parseHtml(orgDescription))
+
     return (
       <Section header='DESCRIPTION'>
         <Text style={styles.description}>{orgDescription}</Text>
