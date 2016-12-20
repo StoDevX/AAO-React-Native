@@ -1,9 +1,14 @@
 import React from 'react'
-import {ScrollView, Text, StyleSheet} from 'react-native'
+import {ScrollView, Text, View, StyleSheet} from 'react-native'
 
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import { getText, parseHtml } from '../../lib/html'
+import type {StudentOrgDetailPropsType} from './types'
 import * as c from '../components/colors'
+import LoadingView from '../components/loading'
+import delay from 'delay'
+
+const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 
 const styles = StyleSheet.create({
   container: {
@@ -28,99 +33,176 @@ const styles = StyleSheet.create({
   },
 })
 
-function displayName(orgName) {
-  if (!orgName) {
-    return null
+export class StudentOrgsDetailView extends React.Component {
+  static propTypes = {
+    navigator: React.PropTypes.object.isRequired,
+    route: React.PropTypes.object.isRequired,
   }
 
-  return (
-    <Text style={styles.name}>{orgName}</Text>
-  )
-}
-
-function displayCategory(orgCategory) {
-  if (!orgCategory) {
-    return null
+  state = {
+    dataSource: null,
+    refreshing: false,
+    loaded: false,
+    detailsLoaded: false,
+    error: false,
   }
 
-  return (
-    <Section header='CATEGORY'>
-      <Cell cellStyle='Basic' title={orgCategory} />
-    </Section>
-  )
-}
-
-function displayContact(orgContact) {
-  if (!orgContact) {
-    return null
+  componentWillMount() {
+    this.refresh()
   }
 
-  return (
-    <Section header='CONTACT'>
-      <Cell cellStyle='Basic' title={orgContact} />
-    </Section>
-  )
-}
-
-function displayDescription(orgDescription) {
-  if (!orgDescription) {
-    return null
+  props: {
+    item: StudentOrgDetailPropsType,
   }
 
-  return (
-    <Section header='DESCRIPTION'>
-        <Text style={styles.description}>{orgDescription}</Text>
-    </Section>
-  )
-}
+  fetchData = async () => {
+    let orgUrl = orgsUrl + '/' + this.props.item.uri
 
-function displayMeetings(orgMeetingTime, orgMeetingLocation) {
-  if (!orgMeetingTime && !orgMeetingLocation) {
-    return null
+    try {
+      let response = await fetch(orgUrl).then(r => r.json())
+      if (!response.length) {
+        this.setState({detailsLoaded: true})
+      }
+      this.setState({dataSource: response})
+    } catch (error) {
+      this.setState({error: true})
+      console.error(error)
+    }
+
+    this.setState({loaded: true})
   }
 
-  let contents = null
-  if (orgMeetingTime && orgMeetingLocation) {
-    contents = <Cell cellStyle='Subtitle' title={orgMeetingTime} detail={orgMeetingLocation} />
-  } else if (orgMeetingTime) {
-    contents = <Cell cellStyle='Basic' title={orgMeetingTime} detail={orgMeetingLocation} />
-  } else if (orgMeetingLocation) {
-    contents = <Cell cellStyle='Basic' title={orgMeetingLocation} />
+  refresh = async () => {
+    let start = Date.now()
+    this.setState(() => ({refreshing: true}))
+
+    await this.fetchData()
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    let elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+    this.setState(() => ({refreshing: false}))
   }
 
-  return (
-    <Section header='MEETINGS'>
-      {contents}
-    </Section>
-  )
+  displayOrgName(orgName) {
+    if (!orgName) {
+      return null
+    }
+
+    return (
+      <Text style={styles.name}>{orgName}</Text>
+    )
+  }
+
+  displayCategory(orgCategory) {
+    if (!orgCategory) {
+      return null
+    }
+
+    return (
+      <Section header='CATEGORY'>
+        <Cell cellStyle='Basic' title={orgCategory} />
+      </Section>
+    )
+  }
+
+  displayContact(orgContact) {
+    if (!orgContact) {
+      return null
+    }
+
+    return (
+      <Section header='CONTACT'>
+        <Cell cellStyle='Basic' title={orgContact} />
+      </Section>
+    )
+  }
+
+  displayDescription(orgDescription) {
+    if (!orgDescription) {
+      return null
+    }
+
+    return (
+      <Section header='DESCRIPTION'>
+          <Text style={styles.description}>{orgDescription}</Text>
+      </Section>
+    )
+  }
+
+  displayMeetings(orgMeetingTime, orgMeetingLocation) {
+    if (!orgMeetingTime && !orgMeetingLocation) {
+      return null
+    }
+
+    let contents = null
+    if (orgMeetingTime && orgMeetingLocation) {
+      contents = <Cell cellStyle='Subtitle' title={orgMeetingTime} detail={orgMeetingLocation} />
+    } else if (orgMeetingTime) {
+      contents = <Cell cellStyle='Basic' title={orgMeetingTime} detail={orgMeetingLocation} />
+    } else if (orgMeetingLocation) {
+      contents = <Cell cellStyle='Basic' title={orgMeetingLocation} />
+    }
+
+    return (
+      <Section header='MEETINGS'>
+        {contents}
+      </Section>
+    )
+  }
+
+  render() {
+
+    if (!this.state.loaded) {
+      return <LoadingView />
+    }
+
+    if (!this.state.detailsLoaded) {
+      return (
+        <View style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#ffffff',
+        }}>
+          <Text>
+            No info found.
+          </Text>
+        </View>
+      )
+    }
+
+    if (this.state.dataSource) {
+      let orgName = getText(parseHtml(this.state.dataSource.name)) || ''
+      let orgCategory = getText(parseHtml(this.state.dataSource.categories)) || ''
+      let orgMeetingTime = getText(parseHtml(this.state.dataSource.regularMeetingTime)) || ''
+      let orgMeetingLocation = getText(parseHtml(this.state.dataSource.regularMeetingLocation)) || ''
+      let orgContact = getText(parseHtml(this.state.dataSource.contactName)) || ''
+      let orgDescription = getText(parseHtml(this.state.dataSource.description)) || ''
+
+      let name = this.displayOrgName(orgName)
+      let category = this.displayCategory(orgCategory)
+      let meetings = this.displayMeetings(orgMeetingTime, orgMeetingLocation)
+      let contact = this.displayContact(orgContact)
+      let description = this.displayDescription(orgDescription)
+
+      return (
+        <ScrollView>
+          <TableView>
+            {name}
+            {category}
+            {meetings}
+            {contact}
+            {description}
+          </TableView>
+        </ScrollView>
+      )
+    }
+  }
 }
 
-export function StudentOrgsDetailView(props) {
-  let orgName = getText(parseHtml(props.item.name)) || ''
-  let orgCategory = getText(parseHtml(props.item.categories)) || ''
-  let orgMeetingTime = getText(parseHtml(props.item.regularMeetingTime)) || ''
-  let orgMeetingLocation = getText(parseHtml(props.item.regularMeetingLocation)) || ''
-  let orgContact = getText(parseHtml(props.item.contactName)) || ''
-  let orgDescription = getText(parseHtml(props.item.description)) || ''
-
-  let name = displayName(orgName)
-  let category = displayCategory(orgCategory)
-  let meetings = displayMeetings(orgMeetingTime, orgMeetingLocation)
-  let contact = displayContact(orgContact)
-  let description = displayDescription(orgDescription)
-
-  return (
-    <ScrollView>
-      <TableView>
-        {name}
-        {category}
-        {meetings}
-        {contact}
-        {description}
-      </TableView>
-   </ScrollView>
-  )
-}
 StudentOrgsDetailView.propTypes = {
   item: React.PropTypes.shape({
     name: React.PropTypes.string.isRequired,

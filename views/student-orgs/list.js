@@ -116,28 +116,28 @@ export class StudentOrgsView extends React.Component {
     this.setState({loaded: true})
   }
 
-  fetchDetailData = async url => {
-    let detailData = null
-    try {
-      this.setState({loadedDetail: false})
-      let response = await fetch(url).then(r => r.json())
-      detailData = response
-      this.setState({loadedDetail: true})
-    } catch (error) {
-      this.setState({error: true})
-      console.error(error)
-    }
+  // fetchDetailData = async url => {
+  //   let detailData = null
+  //   try {
+  //     this.setState({loadedDetail: false})
+  //     let response = await fetch(url).then(r => r.json())
+  //     detailData = response
+  //     this.setState({loadedDetail: true})
+  //   } catch (error) {
+  //     this.setState({error: true})
+  //     console.error(error)
+  //   }
 
-    if (this.state.loadedDetail) {
-      this.props.navigator.push({
-        id: 'StudentOrgsDetailView',
-        index: this.props.route.index + 1,
-        title: detailData.name,
-        backButtonTitle: 'Orgs',
-        props: {item: detailData},
-      })
-    }
-  }
+  //   if (this.state.loadedDetail) {
+  //     this.props.navigator.push({
+  //       id: 'StudentOrgsDetailView',
+  //       index: this.props.route.index + 1,
+  //       title: detailData.name,
+  //       backButtonTitle: 'Orgs',
+  //       props: {item: detailData},
+  //     })
+  //   }
+  // }
 
   refresh = async () => {
     let start = Date.now()
@@ -178,10 +178,14 @@ export class StudentOrgsView extends React.Component {
     )
   }
 
-
   onPressRow = data => {
-    let orgUrl = orgsUrl + '/' + data.uri
-    this.fetchDetailData(orgUrl)
+    this.props.navigator.push({
+      id: 'StudentOrgsDetailView',
+      index: this.props.route.index + 1,
+      title: data.name,
+      backButtonTitle: 'Orgs',
+      props: {item: data},
+    })
   }
 
   render() {
@@ -203,12 +207,6 @@ export class StudentOrgsView extends React.Component {
         </View>
       )
     }
-
-    // This is causing the listview to not retain its position on view pop...
-
-    // if (!this.state.loadedDetail) {
-    //   return <LoadingView />
-    // }
 
     return (
       <View style={styles.container}>
