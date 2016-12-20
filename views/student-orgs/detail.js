@@ -46,8 +46,8 @@ export class StudentOrgsDetailView extends React.Component {
     this.refresh()
   }
 
-  props: {
-    item: StudentOrgDetailPropsType,
+  props: TopLevelViewPropsType & {
+    item: {uri: string},
   }
 
   fetchData = async () => {
