@@ -4,16 +4,24 @@ import reduxPromise from 'redux-promise'
 import reduxThunk from 'redux-thunk'
 import {AsyncStorage} from 'react-native'
 import {allViews} from '../views/views'
+import difference from 'lodash/difference'
 
 export const SAVE_HOMESCREEN_ORDER = 'SAVE_HOMESCREEN_ORDER'
 let defaultViewOrder = allViews.map(v => v.view)
 
 export const loadHomescreenOrder = async () => {
-  let savedOrder = JSON.parse(await AsyncStorage.getItem('homescreen:view-order')) || defaultViewOrder
-  let shouldSaveNewView = savedOrder.length != defaultViewOrder.length
-  let homeOrder = shouldSaveNewView === true ? defaultViewOrder : savedOrder
+  // get the saved list from asyncstorage
+  // or, if the result is null, use the default order.
+  let order = JSON.parse(await AsyncStorage.getItem('homescreen:view-order')) || defaultViewOrder
+  // In case new screens have been added, get a list of the new screens
+  let newAdditions = difference(order, defaultViewOrder)
+  // add the new screens to the list
+  order = order.concat(newAdditions)
+  // check for removed screens
+  let removedScreens = difference(defaultViewOrder, order)
+  order = difference(order, removedScreens)
 
-  return saveHomescreenOrder(homeOrder)
+  return saveHomescreenOrder(order)
 }
 
 export const saveHomescreenOrder = order => {
