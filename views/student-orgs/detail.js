@@ -48,7 +48,7 @@ export class StudentOrgsDetailView extends React.Component {
   }
 
   componentWillMount() {
-    this.refresh()
+    this.fetchData()
   }
 
   props: TopLevelViewPropsType & {
@@ -67,20 +67,6 @@ export class StudentOrgsDetailView extends React.Component {
     }
 
     this.setState({loaded: true})
-  }
-
-  refresh = async () => {
-    let start = Date.now()
-    this.setState(() => ({refreshing: true}))
-
-    await this.fetchData()
-
-    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    let elapsed = start - Date.now()
-    if (elapsed < 500) {
-      await delay(500 - elapsed)
-    }
-    this.setState(() => ({refreshing: false}))
   }
 
   displayOrgName(orgName: ?string) {
