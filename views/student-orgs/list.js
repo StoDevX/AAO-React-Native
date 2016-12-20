@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * StudentOrgs page
@@ -20,6 +21,7 @@ import head from 'lodash/head'
 import * as c from '../components/colors'
 import { getText, parseHtml } from '../../lib/html'
 import startCase from 'lodash/startCase'
+import type {StudentOrgType} from './types'
 
 const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 
@@ -153,7 +155,7 @@ export class StudentOrgsView extends React.Component {
     this.setState(() => ({refreshing: false}))
   }
 
-  renderHeader = ({title}) => {
+  renderHeader = ({title}: {title: string}) => {
     return (
       <View style={styles.rowSectionHeader}>
         <Text style={styles.rowSectionHeaderText}>{title}</Text>
@@ -161,9 +163,9 @@ export class StudentOrgsView extends React.Component {
     )
   }
 
-  renderRow = ({isLast, item}) => {
-    let orgName = getText(parseHtml(item.name))
-    let orgCategory = getText(parseHtml(item.categories))
+  renderRow = ({isLast, item}: {isLast: boolean, item: StudentOrgType}) => {
+    let orgName = item.name
+    let orgCategory = item.categories.join(', ')
 
     return (
       <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressRow(item)}>
@@ -178,7 +180,7 @@ export class StudentOrgsView extends React.Component {
     )
   }
 
-  onPressRow = data => {
+  onPressRow = (data: StudentOrgType) => {
     this.props.navigator.push({
       id: 'StudentOrgsDetailView',
       index: this.props.route.index + 1,
