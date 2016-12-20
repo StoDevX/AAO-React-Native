@@ -16,6 +16,9 @@ import AlphabetListView from 'react-native-alphabetlistview'
 import LoadingView from '../components/loading'
 import delay from 'delay'
 
+import size from 'lodash/size'
+import map from 'lodash/map'
+import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
@@ -86,12 +89,16 @@ export class StudentOrgsView extends React.Component {
     route: React.PropTypes.object.isRequired,
   }
 
-  state = {
-    dataSource: null,
+  state: {
+    orgs: StudentOrgType[],
+    refreshing: boolean,
+    error: boolean,
+    loaded: boolean,
+  } = {
+    orgs: [],
     refreshing: false,
     loaded: false,
     error: false,
-    noOrgs: false,
   }
 
   componentWillMount() {
@@ -100,11 +107,18 @@ export class StudentOrgsView extends React.Component {
 
   fetchData = async () => {
     try {
-      let response = await fetch(orgsUrl).then(r => r.json())
-      if (!response.length) {
-        this.setState({noOrgs: true})
-      }
-      this.setState({dataSource: response})
+      let responseData: StudentOrgType[] = await fetch(orgsUrl).then(r => r.json())
+      let withSortableNames = map(responseData, item => {
+        let sortableName = item.name.replace(/^St\. Olaf +/, '')
+        return {
+          ...item,
+          $sortableName: sortableName,
+          $groupableName: head(startCase(sortableName)),
+        }
+      })
+      let sorted = sortBy(withSortableNames, '$sortableName')
+      let grouped = groupBy(sorted, '$groupableName')
+      this.setState({orgs: grouped})
     } catch (error) {
       this.setState({error: true})
       console.error(error)
@@ -167,7 +181,7 @@ export class StudentOrgsView extends React.Component {
       return <LoadingView />
     }
 
-    if (this.state.noOrgs) {
+    if (!size(this.state.orgs)) {
       return (
         <View style={{
           flex: 1,
@@ -185,7 +199,7 @@ export class StudentOrgsView extends React.Component {
     return (
       <AlphabetListView
         contentContainerStyle={styles.listView}
-        data={groupBy(this.state.dataSource, item => head(startCase(item.name)))}
+        data={this.state.orgs}
         cell={this.renderRow}
         sectionHeader={this.renderHeader}
         sectionHeaderHeight={28}
