@@ -140,7 +140,7 @@ export class StudentOrgsView extends React.Component {
     let orgCategory = item.categories.join(', ')
 
     return (
-      <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressRow(item)}>
+      <TouchableHighlight underlayColor='#ebebeb' onPress={() => this.onPressRow(item)}>
         <View style={[styles.row, !isLast && styles.notLastRow]}>
           <View style={[styles.textRows]}>
             <Text style={styles.itemTitle} numberOfLines={1}>{orgName}</Text>
