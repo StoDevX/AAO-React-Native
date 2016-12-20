@@ -52,7 +52,7 @@ export class StudentOrgsDetailView extends React.Component {
   }
 
   props: TopLevelViewPropsType & {
-    item: {uri: string},
+    item: StudentOrgAbridgedType,
   }
 
   fetchData = async () => {
