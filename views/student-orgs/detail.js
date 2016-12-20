@@ -1,11 +1,9 @@
 import React from 'react'
-import {ScrollView, Text, Image, Dimensions, StyleSheet} from 'react-native'
+import {ScrollView, Text, StyleSheet} from 'react-native'
 
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import { getText, parseHtml } from '../../lib/html'
 import * as c from '../components/colors'
-
-let orgPhotoBase = 'https://az795308.vo.msecnd.net/organizationphotos/'
 
 const styles = StyleSheet.create({
   container: {
@@ -38,17 +36,6 @@ function displayName(orgName) {
   return (
     <Text style={styles.name}>{orgName}</Text>
   )
-}
-
-function displayImage(orgImage) {
-  if (!orgImage) {
-    return null
-  }
-
-  let orgPhotoUrl = orgPhotoBase + orgImage
-  let orgPhoto = <Image style={{width: Dimensions.width, height: 100}} source={{uri: orgPhotoUrl}} />
-
-  return orgPhoto
 }
 
 function displayCategory(orgCategory) {
@@ -109,7 +96,6 @@ function displayMeetings(orgMeetingTime, orgMeetingLocation) {
 }
 
 export function StudentOrgsDetailView(props) {
-  let orgImage = getText(parseHtml(props.item.photoUri)) || ''
   let orgName = getText(parseHtml(props.item.name)) || ''
   let orgCategory = getText(parseHtml(props.item.categories)) || ''
   let orgMeetingTime = getText(parseHtml(props.item.regularMeetingTime)) || ''
@@ -117,7 +103,6 @@ export function StudentOrgsDetailView(props) {
   let orgContact = getText(parseHtml(props.item.contactName)) || ''
   let orgDescription = getText(parseHtml(props.item.description)) || ''
 
-  let image = displayImage(orgImage)
   let name = displayName(orgName)
   let category = displayCategory(orgCategory)
   let meetings = displayMeetings(orgMeetingTime, orgMeetingLocation)
@@ -127,7 +112,6 @@ export function StudentOrgsDetailView(props) {
   return (
     <ScrollView>
       <TableView>
-        {image}
         {name}
         {category}
         {meetings}
@@ -146,6 +130,5 @@ StudentOrgsDetailView.propTypes = {
     regularMeetingLocation: React.PropTypes.string,
     description: React.PropTypes.string,
     contactName: React.PropTypes.string,
-    photoUri: React.PropTypes.string,
   }).isRequired,
 }
