@@ -1,12 +1,13 @@
+// @flow
 import React from 'react'
 import {ScrollView, Text, View, StyleSheet} from 'react-native'
 
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
-import { getText, parseHtml } from '../../lib/html'
-import type {StudentOrgDetailPropsType} from './types'
 import * as c from '../components/colors'
 import LoadingView from '../components/loading'
 import delay from 'delay'
+import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
+import type {TopLevelViewPropsType} from '../types'
 
 const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 
@@ -34,11 +35,15 @@ const styles = StyleSheet.create({
 })
 
 export class StudentOrgsDetailView extends React.Component {
-  state = {
+  state: {
+    data: ?StudentOrgInfoType,
+    refreshing: boolean,
+    loaded: boolean,
+    error: boolean,
+  } = {
     data: null,
     refreshing: false,
     loaded: false,
-    detailsLoaded: false,
     error: false,
   }
 
@@ -78,7 +83,7 @@ export class StudentOrgsDetailView extends React.Component {
     this.setState(() => ({refreshing: false}))
   }
 
-  displayOrgName(orgName) {
+  displayOrgName(orgName: ?string) {
     if (!orgName) {
       return null
     }
@@ -88,7 +93,7 @@ export class StudentOrgsDetailView extends React.Component {
     )
   }
 
-  displayCategory(orgCategory) {
+  displayCategory(orgCategory: ?string) {
     if (!orgCategory) {
       return null
     }
@@ -100,7 +105,7 @@ export class StudentOrgsDetailView extends React.Component {
     )
   }
 
-  displayContact(orgContact) {
+  displayContact(orgContact: ?string) {
     if (!orgContact) {
       return null
     }
@@ -112,7 +117,7 @@ export class StudentOrgsDetailView extends React.Component {
     )
   }
 
-  displayDescription(orgDescription) {
+  displayDescription(orgDescription: ?string) {
     if (!orgDescription) {
       return null
     }
@@ -124,7 +129,7 @@ export class StudentOrgsDetailView extends React.Component {
     )
   }
 
-  displayMeetings(orgMeetingTime, orgMeetingLocation) {
+  displayMeetings(orgMeetingTime: string, orgMeetingLocation: string) {
     if (!orgMeetingTime && !orgMeetingLocation) {
       return null
     }
