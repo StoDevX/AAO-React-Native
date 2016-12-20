@@ -23,7 +23,7 @@ import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
 import startCase from 'lodash/startCase'
-import type {StudentOrgType} from './types'
+import type {StudentOrgAbridgedType} from './types'
 
 const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 
@@ -90,7 +90,7 @@ export class StudentOrgsView extends React.Component {
   }
 
   state: {
-    orgs: StudentOrgType[],
+    orgs: StudentOrgAbridgedType[],
     refreshing: boolean,
     error: boolean,
     loaded: boolean,
@@ -107,7 +107,7 @@ export class StudentOrgsView extends React.Component {
 
   fetchData = async () => {
     try {
-      let responseData: StudentOrgType[] = await fetch(orgsUrl).then(r => r.json())
+      let responseData: StudentOrgAbridgedType[] = await fetch(orgsUrl).then(r => r.json())
       let withSortableNames = map(responseData, item => {
         let sortableName = item.name.replace(/^St\. Olaf +/, '')
         return {
@@ -149,7 +149,7 @@ export class StudentOrgsView extends React.Component {
     )
   }
 
-  renderRow = ({isLast, item}: {isLast: boolean, item: StudentOrgType}) => {
+  renderRow = ({isLast, item}: {isLast: boolean, item: StudentOrgAbridgedType}) => {
     let orgName = item.name
     let orgCategory = item.categories.join(', ')
 
@@ -166,7 +166,7 @@ export class StudentOrgsView extends React.Component {
     )
   }
 
-  onPressRow = (data: StudentOrgType) => {
+  onPressRow = (data: StudentOrgAbridgedType) => {
     this.props.navigator.push({
       id: 'StudentOrgsDetailView',
       index: this.props.route.index + 1,

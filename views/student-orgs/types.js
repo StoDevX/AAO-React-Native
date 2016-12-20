@@ -1,14 +1,19 @@
 // @flow
 import {Navigator} from 'react-native'
 
-export type StudentOrgType = {
+export type StudentOrgAbridgedType = {
+  name: string,
+  categories: string[],
+  newOrg: boolean,
+}
+
+export type StudentOrgInfoType = {
   name: string,
   categories: string[],
   regularMeetingTime: string,
   regularMeetingLocation: string,
   contactName: string,
   description: string,
-  newOrg: boolean,
 }
 
 export type StudentOrgPropsType = {
