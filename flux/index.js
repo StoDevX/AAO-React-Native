@@ -8,18 +8,34 @@ import difference from 'lodash/difference'
 
 export const SAVE_HOMESCREEN_ORDER = 'SAVE_HOMESCREEN_ORDER'
 
-export const loadHomescreenOrder = async () => {
-  // get the saved list from asyncstorage
-  // or, if the result is null, use the default order.
-  let order = JSON.parse(await AsyncStorage.getItem('homescreen:view-order')) || defaultViewOrder
-  // In case new screens have been added, get a list of the new screens
-  let newAdditions = difference(order, defaultViewOrder)
-  // add the new screens to the list
-  order = order.concat(newAdditions)
-  // check for removed screens
-  let removedScreens = difference(defaultViewOrder, order)
-  order = difference(order, removedScreens)
+export const updateViewOrder = (currentOrder, defaultOrder=defaultViewOrder) => {
+  currentOrder = currentOrder || []
 
+  // lodash/difference: Creates an array of array values _not included_ in the
+  // other given arrays.
+
+  // In case new screens have been added, get a list of the new screens
+  let addedScreens = difference(defaultOrder, currentOrder)
+  // check for removed screens
+  let removedScreens = difference(currentOrder, defaultOrder)
+
+  // add the new screens to the list
+  currentOrder = currentOrder.concat(addedScreens)
+
+  // now we remove the screens that were removed
+  currentOrder = difference(currentOrder, removedScreens)
+
+  return currentOrder
+}
+
+export const loadHomescreenOrder = async () => {
+  // get the saved list from AsyncStorage
+  let savedOrder = JSON.parse(await AsyncStorage.getItem('homescreen:view-order'))
+
+  // update the order, in case new views have been added/removed
+  let order = updateViewOrder(savedOrder, defaultViewOrder)
+
+  // return an action to save it to AsyncStorage
   return saveHomescreenOrder(order)
 }
 
