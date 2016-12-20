@@ -124,7 +124,7 @@ export class StudentOrgsDetailView extends React.Component {
 
     return (
       <Section header='DESCRIPTION'>
-          <Text style={styles.description}>{orgDescription}</Text>
+        <Text style={styles.description}>{orgDescription}</Text>
       </Section>
     )
   }
