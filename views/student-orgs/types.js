@@ -3,7 +3,7 @@ import {Navigator} from 'react-native'
 
 export type StudentOrgType = {
   name: string,
-  categories: string,
+  categories: string[],
   regularMeetingTime: string,
   regularMeetingLocation: string,
   contactName: string,
