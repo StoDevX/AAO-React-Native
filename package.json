@@ -67,7 +67,7 @@
     "react-native-tab-view": "0.0.40",
     "react-native-tableview-simple": "0.13.0",
     "react-native-vector-icons": "3.0.0",
-    "react-redux": "5.0.0",
+    "react-redux": "5.0.1",
     "redux": "3.6.0",
     "redux-logger": "2.7.4",
     "redux-promise": "0.5.3",
@@ -78,15 +78,15 @@
   },
   "devDependencies": {
     "babel-eslint": "7.1.1",
-    "babel-jest": "17.0.2",
+    "babel-jest": "18.0.0",
     "babel-plugin-flow-react-proptypes": "0.18.2",
-    "babel-preset-react-native": "1.9.0",
-    "eslint": "3.12.1",
+    "babel-preset-react-native": "1.9.1",
+    "eslint": "3.12.2",
     "eslint-plugin-babel": "4.0.0",
     "eslint-plugin-flowtype": "2.29.1",
     "eslint-plugin-react": "6.8.0",
     "flow-bin": "0.35.0",
-    "jest": "17.0.2",
+    "jest": "18.0.0",
     "react-test-renderer": "15.4.1"
   }
 }
