@@ -93,7 +93,6 @@ export class StudentOrgsView extends React.Component {
     dataSource: null,
     refreshing: false,
     loaded: false,
-    loadedDetail: true,
     error: false,
     noOrgs: false,
   }
@@ -116,29 +115,6 @@ export class StudentOrgsView extends React.Component {
 
     this.setState({loaded: true})
   }
-
-  // fetchDetailData = async url => {
-  //   let detailData = null
-  //   try {
-  //     this.setState({loadedDetail: false})
-  //     let response = await fetch(url).then(r => r.json())
-  //     detailData = response
-  //     this.setState({loadedDetail: true})
-  //   } catch (error) {
-  //     this.setState({error: true})
-  //     console.error(error)
-  //   }
-
-  //   if (this.state.loadedDetail) {
-  //     this.props.navigator.push({
-  //       id: 'StudentOrgsDetailView',
-  //       index: this.props.route.index + 1,
-  //       title: detailData.name,
-  //       backButtonTitle: 'Orgs',
-  //       props: {item: detailData},
-  //     })
-  //   }
-  // }
 
   refresh = async () => {
     let start = Date.now()
