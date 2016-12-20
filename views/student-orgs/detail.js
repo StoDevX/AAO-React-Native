@@ -34,11 +34,6 @@ const styles = StyleSheet.create({
 })
 
 export class StudentOrgsDetailView extends React.Component {
-  static propTypes = {
-    navigator: React.PropTypes.object.isRequired,
-    route: React.PropTypes.object.isRequired,
-  }
-
   state = {
     data: null,
     refreshing: false,
@@ -196,16 +191,4 @@ export class StudentOrgsDetailView extends React.Component {
       </ScrollView>
     )
   }
-}
-
-StudentOrgsDetailView.propTypes = {
-  item: React.PropTypes.shape({
-    name: React.PropTypes.string.isRequired,
-    categories: React.PropTypes.array.isRequired,
-    memberCount: React.PropTypes.number.isRequired,
-    regularMeetingTime: React.PropTypes.string,
-    regularMeetingLocation: React.PropTypes.string,
-    description: React.PropTypes.string,
-    contactName: React.PropTypes.string,
-  }).isRequired,
 }
