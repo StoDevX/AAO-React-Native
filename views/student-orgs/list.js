@@ -25,11 +25,8 @@ import type {StudentOrgType} from './types'
 const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 
 let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
   listView: {
+    backgroundColor: '#ffffff',
     paddingRight: 16,
   },
   textRows: {
@@ -186,7 +183,6 @@ export class StudentOrgsView extends React.Component {
     }
 
     return (
-      <View style={styles.container}>
       <AlphabetListView
         contentContainerStyle={styles.listView}
         data={groupBy(this.state.dataSource, item => head(startCase(item.name)))}
@@ -196,7 +192,6 @@ export class StudentOrgsView extends React.Component {
         cellHeight={70}
         showsVerticalScrollIndicator={false}
       />
-      </View>
     )
   }
 }
