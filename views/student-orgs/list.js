@@ -19,7 +19,6 @@ import delay from 'delay'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
-import { getText, parseHtml } from '../../lib/html'
 import startCase from 'lodash/startCase'
 import type {StudentOrgType} from './types'
 
