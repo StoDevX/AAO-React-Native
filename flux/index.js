@@ -3,11 +3,10 @@ import createLogger from 'redux-logger'
 import reduxPromise from 'redux-promise'
 import reduxThunk from 'redux-thunk'
 import {AsyncStorage} from 'react-native'
-import {allViews} from '../views/views'
+import {allViewNames as defaultViewOrder} from '../views/views'
 import difference from 'lodash/difference'
 
 export const SAVE_HOMESCREEN_ORDER = 'SAVE_HOMESCREEN_ORDER'
-let defaultViewOrder = allViews.map(v => v.view)
 
 export const loadHomescreenOrder = async () => {
   // get the saved list from asyncstorage
