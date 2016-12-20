@@ -8,6 +8,7 @@ export type StudentOrgType = {
   regularMeetingLocation: string,
   contactName: string,
   description: string,
+  newOrg: boolean,
 }
 
 export type StudentOrgPropsType = {
