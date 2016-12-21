@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {View, Navigator} from 'react-native'
-import {FilterToolbar} from '../filter/toolbar'
+import {FilterMenuToolbar} from './filter-menu-toolbar'
 
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
@@ -92,7 +92,7 @@ export class FancyMenu extends React.Component {
 
     return (
       <View style={{flex: 1}}>
-        <FilterToolbar
+        <FilterMenuToolbar
           date={this.props.now}
           title={this.props.menuLabel}
           filters={this.state.filters}
