@@ -1,19 +1,17 @@
 // @flow
 import React from 'react'
+import type {SelectSpecType} from './types'
 import {Section, Cell} from 'react-native-tableview-simple'
 import includes from 'lodash/includes'
 import without from 'lodash/without'
 import concat from 'lodash/concat'
 
 type PropsType = {
-  header?: string,
-  footer?: string,
-  options: string[],
+  filter: SelectSpecType,
   onChange: () => any,
-  value: string[],
 };
 
-export function ChecklistSection({header, footer, options, onChange, value}: PropsType) {
+export function ChecklistSection({filter: {title, caption, options, value}, onChange}: PropsType) {
   function callback(tappedValue) {
     let result = value
 
@@ -31,7 +29,7 @@ export function ChecklistSection({header, footer, options, onChange, value}: Pro
   }
 
   return (
-    <Section header={header} footer={footer}>
+    <Section header={title} footer={caption}>
       {options.map(val =>
         <Cell
           key={val}

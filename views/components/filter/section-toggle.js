@@ -1,20 +1,17 @@
 // @flow
 import React from 'react'
+import type {ToggleSpecType} from './types'
 import {Text, Switch} from 'react-native'
-
 import {Section, CustomCell} from 'react-native-tableview-simple'
 
 type PropsType = {
-  header?: string,
-  footer?: string,
-  label: string,
-  value: bool,
+  filter: ToggleSpecType,
   onChange: () => any,
 };
 
-export function SingleToggleSection({header, footer, label, value, onChange}: PropsType) {
+export function SingleToggleSection({filter: {title, caption, label, value}, onChange}: PropsType) {
   return (
-    <Section header={header} footer={footer}>
+    <Section header={title} footer={caption}>
       <CustomCell>
         <Text style={{flex: 1, fontSize: 16}}>{label}</Text>
         <Switch value={value} onValueChange={onChange} />

@@ -10,17 +10,10 @@ type FilterSectionPropsType = {
 };
 
 export function FilterSection({filter, onChange}: FilterSectionPropsType) {
+  let callback = val => onChange(filter, val)
+
   if (filter.type === 'toggle') {
-    return (
-      <SingleToggleSection
-        key={filter.key}
-        header={filter.title}
-        footer={filter.caption}
-        onChange={newVal => onChange(filter, newVal)}
-        value={filter.value}
-        label={filter.label}
-      />
-    )
+    return <SingleToggleSection filter={filter} onChange={callback} />
   }
 
   if (filter.type === 'list') {
@@ -28,16 +21,7 @@ export function FilterSection({filter, onChange}: FilterSectionPropsType) {
       return null
     }
 
-    return (
-      <ChecklistSection
-        key={filter.key}
-        header={filter.title}
-        footer={filter.caption}
-        onChange={newVal => onChange(filter, newVal)}
-        value={filter.value}
-        options={filter.options}
-      />
-    )
+    return <ChecklistSection filter={filter} onChange={callback} />
   }
 
   return null
