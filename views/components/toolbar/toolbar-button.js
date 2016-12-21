@@ -6,6 +6,7 @@ import * as c from '../../components/colors'
 
 const buttonStyles = StyleSheet.create({
   filterButton: {
+    flexDirection: 'row',
     alignItems: 'center',
     marginRight: 8,
     paddingHorizontal: 8,
