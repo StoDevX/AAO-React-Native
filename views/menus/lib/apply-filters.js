@@ -1,6 +1,6 @@
 // @flow
 import type {MenuItemType} from '../types'
-import type {FilterSpecType} from './types'
+import type {FilterSpecType} from '../filter/types'
 import difference from 'lodash/difference'
 import includes from 'lodash/includes'
 import filter from 'lodash/filter'
@@ -72,4 +72,3 @@ function applyDietaryFilter(items: MenuItemType[], filters: FilterSpecType[]): M
 
   return items
 }
-

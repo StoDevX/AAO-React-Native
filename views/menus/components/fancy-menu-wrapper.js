@@ -11,7 +11,7 @@ import type {MenuItemContainerType, MenuItemType, StationMenuType} from '../type
 import type {FilterSpecType} from '../filter/types'
 import type {ProcessedMenuPropsType} from './fancy-menu-list'
 import {FancyMenuListView} from './fancy-menu-list'
-import {applyFilters} from '../filter/apply'
+import {applyFilters} from '../lib/apply-filters'
 
 type FancyMenuPropsType = {
   applyFilters: (items: MenuItemType[], filters: FilterSpecType[]) => MenuItemType[],
