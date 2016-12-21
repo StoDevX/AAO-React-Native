@@ -74,21 +74,20 @@ export class FancyMenu extends React.Component {
 
   render() {
     let {props, state} = this
-    let {stationMenus, foodItems} = props
 
     // TODO: do we need menuItems and stationMenus anymore?
 
     // expand the mapping of menu item ids to retrieve the actual items.
     // we re-group the items later on.
-    let menuItems = stationMenus
+    let menuItems = props.stationMenus
       // grab the items from the overall list
-      .map(menu => menu.items.map(id => foodItems[id]))
+      .map(menu => menu.items.map(id => props.foodItems[id]))
       // flatten the menu arrays into one master menu
       .reduce(this.flatten, [])
       // and only return the items that were retrieved successfully
       .filter(identity)
 
-    let otherMenuItems = values(foodItems)
+    let otherMenuItems = values(props.foodItems)
 
     // prevent ourselves from returning duplicate items
     let allMenuItems = uniqBy([...menuItems, ...otherMenuItems], item => item.id)
