@@ -2,7 +2,7 @@
 import React from 'react'
 import {View, Text} from 'react-native'
 import LoadingView from '../../components/loading'
-import {FilteredMenuView} from '../parts/filtered-menu'
+import {FilteredMenuView} from '../components/filtered-menu'
 import {fetchJson} from '../../components/fetch'
 import type {TopLevelViewPropsType} from '../../types'
 import {TopLevelViewPropTypes} from '../../types'

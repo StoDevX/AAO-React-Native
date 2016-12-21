@@ -10,7 +10,7 @@ import {
   items as defaultItems,
   corIcons as defaultIcons,
 } from '../../../data/pause-bonapp.js'
-import {FilteredMenuView} from '../parts/filtered-menu'
+import {FilteredMenuView} from '../components/filtered-menu'
 
 export class LocalMenu extends React.Component {
   static defaultProps = {
