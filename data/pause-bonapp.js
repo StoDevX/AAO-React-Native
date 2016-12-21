@@ -1,22 +1,10 @@
 // @flow
 import mapValues from 'lodash/mapValues'
 import type {
-  StationMenuType,
   MenuItemContainerType,
   MasterCorIconMapType,
   MenuItemType,
 } from '../views/menus/types'
-
-function upgradeStations(station, index): StationMenuType {
-  return {
-    'soup': false,
-    'price': '',
-    'note': '',
-    'order_id': String(index),
-    ...station,
-    id: String(index),
-  }
-}
 
 function upgradeMenuItem(item, key): MenuItemType {
   return {
@@ -43,64 +31,6 @@ function upgradeMenuItem(item, key): MenuItemType {
     id: key,
   }
 }
-
-
-export const stations: StationMenuType[] = [
-  {
-    items: ['43', '44', '45'],
-    label: 'Fountain & Bottled',
-    note: [
-      'Root Beer Float: small or large',
-      'Fountain: refills are extra',
-    ].join('\n'),
-  },
-  {
-    items: ['01', '02', '03', '04'],
-    label: 'Pizza',
-    note: 'Includes two toppings',
-  },
-  {
-    items: ['05', '06', '07', '08', '09'],
-    label: 'Pizza - Specialties',
-  },
-  {
-    items: ['28', '29', '30', '31'],
-    label: 'Pita',
-    note: 'Pizza built on pita bread, includes two toppings',
-  },
-  {
-    items: ['26', '27'],
-    label: 'Quesadilla',
-    note: [
-      'Ultimate: tomatoes, onions, green peppers, jalapeños',
-      'Salsa / Sour Cream are extra',
-    ].join('\n'),
-  },
-  {
-    items: ['32', '33', '34', '35', '36', '37', '38', '39'],
-    label: 'Savory',
-  },
-  {
-    items: ['40', '41', '42'],
-    note: [
-      'Ice Cream: Vanilla, Chocolate, or Twist Soft-Serve in a cup or a cone',
-      'Shakes: Vanilla, Chocolate, Strawberry, Butter pecan, Butterscotch, Mocha, Mint, Cheesecake',
-    ].join('\n'),
-    label: 'Sweet',
-  },
-  {
-    items: ['23', '24', '25'],
-    label: 'Shakes -- Mixins',
-  },
-  {
-    items: ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'],
-    label: 'Toppings',
-    note: [
-      'Extra toppings: $',
-      'Extra chicken: $$',
-    ].join('\n'),
-  },
-].map(upgradeStations)
 
 export const items: MenuItemContainerType = mapValues({
   '01': {
