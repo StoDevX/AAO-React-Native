@@ -3,7 +3,7 @@ import React from 'react'
 import {View, Text} from 'react-native'
 import LoadingView from '../../components/loading'
 import type {TopLevelViewPropsType} from '../../types'
-import {FilteredMenuView} from '../components/filtered-menu'
+import {FancyMenu} from '../components/fancy-menu'
 import type {BonAppMenuInfoType, BonAppCafeInfoType} from '../types'
 import {bonappMenuBaseUrl, bonappCafeBaseUrl} from '../data'
 import sample from 'lodash/sample'
@@ -88,7 +88,7 @@ export class BonAppHostedMenu extends React.Component {
     let mealName = mealInfo ? mealInfo.label : ''
 
     return (
-      <FilteredMenuView
+      <FancyMenu
         route={this.props.route}
         navigator={this.props.navigator}
         now={now}

@@ -2,7 +2,7 @@
 import React from 'react'
 import {View, Text} from 'react-native'
 import LoadingView from '../../components/loading'
-import {FilteredMenuView} from '../components/filtered-menu'
+import {FancyMenu} from '../components/fancy-menu'
 import {fetchJson} from '../../components/fetch'
 import type {TopLevelViewPropsType} from '../../types'
 import {TopLevelViewPropTypes} from '../../types'
@@ -77,7 +77,7 @@ export class GithubHostedMenu extends React.Component {
     }
 
     return (
-      <FilteredMenuView
+      <FancyMenu
         route={this.props.route}
         navigator={this.props.navigator}
         stationMenus={this.state.stationMenus}
