@@ -9,8 +9,8 @@ export function buildMenuFilters({foodItems, corIcons}: {foodItems: MenuItemCont
   let filters = []
 
   filters.push({
-    type: 'toggle',
     key: 'specials',
+    type: 'toggle',
     label: 'Only Specials',
     caption: 'Allows you to either see only the "specials" for today, or everything the location has to offer, including condiments and salad fixings.',
     value: true,
@@ -20,11 +20,10 @@ export function buildMenuFilters({foodItems, corIcons}: {foodItems: MenuItemCont
   // and clean them up
   let allStations = uniq(map(foodItems, item => item.station)).map(trimStationName)
   filters.push({
+    key: 'stations',
     type: 'list',
     multiple: true,
-    key: 'stations',
     title: 'Stations',
-    caption: 'a caption',
     options: allStations,
     value: [],
   })
@@ -32,11 +31,10 @@ export function buildMenuFilters({foodItems, corIcons}: {foodItems: MenuItemCont
   // Grab the labels of the COR icons
   let allDietaryRestrictions = map(corIcons, item => item.label)
   filters.push({
+    key: 'restrictions',
     type: 'list',
     multiple: true,
-    key: 'restrictions',
     title: 'Dietary Restrictions',
-    caption: 'a nother caption',
     options: allDietaryRestrictions,
     value: [],
   })
