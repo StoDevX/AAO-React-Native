@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from '../../components/colors'
 
 const buttonStyles = StyleSheet.create({
-  filterButton: {
+  button: {
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 8,
@@ -15,17 +15,17 @@ const buttonStyles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 2,
   },
-  filterButtonActive: {
+  activeButton: {
     backgroundColor: c.mandarin,
     borderColor: c.mandarin,
   },
-  filterButtonInactive: {
+  inactiveButton: {
     borderColor: c.iosDisabledText,
   },
-  filterButtonActiveText: {
+  activeText: {
     color: c.white,
   },
-  filterButtonInactiveText: {
+  inactiveText: {
     color: c.iosDisabledText,
   },
   textWithIcon: {
@@ -50,11 +50,11 @@ export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
   }
 
   let activeButtonStyle = isActive
-    ? buttonStyles.filterButtonActive
-    : buttonStyles.filterButtonInactive
+    ? buttonStyles.activeButton
+    : buttonStyles.inactiveButton
   let activeContentStyle = isActive
-    ? buttonStyles.filterButtonActiveText
-    : buttonStyles.filterButtonInactiveText
+    ? buttonStyles.activeText
+    : buttonStyles.inactiveText
 
   let textWithIconStyle = icon ? buttonStyles.textWithIcon : null
   let activeTextStyle = {
@@ -62,7 +62,7 @@ export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
   }
 
   return (
-    <View style={[buttonStyles.filterButton, activeButtonStyle]}>
+    <View style={[buttonStyles.button, activeButtonStyle]}>
       <Text style={[activeContentStyle, textWithIconStyle, activeTextStyle]}>
         {title}
       </Text>
