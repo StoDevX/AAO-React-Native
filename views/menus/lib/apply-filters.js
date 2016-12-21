@@ -29,9 +29,7 @@ function applySpecialsFilter(items: MenuItemType[], filters: FilterSpecType[]): 
 function applyStationsFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
   let stationsFilter = filters.find(({key}) => key === 'stations')
 
-  // given all of the stations, get just the list that we want. (becuase we
-  // have a list of all possibilities, and a list of the one the user
-  // _doesn't_ want to see)
+  // Given all of the stations, get just the ones we want.
   let onlyTheseStations = getSelectedValuesFromListFilter(stationsFilter)
 
   if (onlyTheseStations) {
@@ -44,7 +42,7 @@ function applyStationsFilter(items: MenuItemType[], filters: FilterSpecType[]): 
 function applyDietaryFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
   let dietaryRestrictionsFilter = filters.find(({key}) => key === 'restrictions')
 
-  // given all of the dietary restrictions, get just the list that we want
+  // Given all of the dietary restrictions, get just the ones we want.
   let onlyTheseDietaryRestrictions = getSelectedValuesFromListFilter(dietaryRestrictionsFilter)
 
   if (onlyTheseDietaryRestrictions) {
