@@ -15,6 +15,9 @@ type PropsType = {
 };
 
 export class FilterView extends React.Component {
+  // This component is special: `state` is used solely to
+  // manage the filters.
+
   state: {[key: string]: FilterSpecType} = {}
 
   componentWillMount() {
@@ -43,12 +46,17 @@ export class FilterView extends React.Component {
   }
 
   render() {
-    const sections = values(this.state)
+    const contents = values(this.state).map(filter =>
+      <FilterSection
+        key={filter.key}
+        filter={filter}
+        onChange={this.onFilterChanged}
+      />)
+
     return (
       <ScrollView style={{flex: 1}}>
         <TableView>
-          {sections.map(filter =>
-            <FilterSection filter={filter} onChange={this.onFilterChanged} />)}
+          {contents}
         </TableView>
       </ScrollView>
     )
