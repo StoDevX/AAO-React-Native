@@ -105,3 +105,7 @@ export type BonAppCafeInfoType = {
     }
   }
 };
+
+export type ProcessedMenuPropsType = {
+  [key: string]: MenuItemType[],
+};

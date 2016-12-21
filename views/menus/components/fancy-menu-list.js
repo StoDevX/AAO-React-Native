@@ -5,11 +5,7 @@ import FoodItem from './food-item'
 import DietaryFilters from './dietary-filters'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
-import type {MenuItemType} from '../types'
-
-export type ProcessedMenuPropsType = {
-  [key: string]: MenuItemType[],
-};
+import type {MenuItemType, ProcessedMenuPropsType} from '../types'
 
 const styles = StyleSheet.create({
   container: {
