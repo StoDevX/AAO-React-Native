@@ -65,7 +65,7 @@
     "react-native-refreshable-listview": "1.3.0",
     "react-native-sortable-list": "github:drewvolz/react-native-sortable-list#92762db0e2e5d38a5262aea53cfb71073adedf1d",
     "react-native-tab-view": "0.0.40",
-    "react-native-tableview-simple": "0.13.0",
+    "react-native-tableview-simple": "0.15.0",
     "react-native-vector-icons": "3.0.0",
     "react-redux": "5.0.1",
     "redux": "3.6.0",
