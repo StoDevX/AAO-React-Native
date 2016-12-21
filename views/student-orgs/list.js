@@ -109,7 +109,7 @@ export class StudentOrgsView extends React.Component {
     try {
       let responseData: StudentOrgAbridgedType[] = await fetch(orgsUrl).then(r => r.json())
       let withSortableNames = map(responseData, item => {
-        let sortableName = item.name.replace(/^St\. Olaf +|^The +/, '')
+        let sortableName = item.name.replace(/^(St\.? Olaf|The) +/i, '')
         return {
           ...item,
           $sortableName: sortableName,
