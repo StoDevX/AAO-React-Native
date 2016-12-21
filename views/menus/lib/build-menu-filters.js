@@ -1,5 +1,5 @@
 // @flow
-import type {FilterSpecType} from '../filter/types'
+import type {FilterSpecType} from '../../components/filter'
 import type {MenuItemContainerType, MasterCorIconMapType} from '../types'
 import {trimStationName} from '../lib/trim-names'
 import uniq from 'lodash/uniq'

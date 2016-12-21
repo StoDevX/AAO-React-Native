@@ -1,6 +1,6 @@
 // @flow
-import {BonAppHostedMenu} from './menus/bonapp-menu'
-import {LocalMenu} from './menus/local-menu'
+import {BonAppHostedMenu} from './menu-bonapp'
+import {LocalMenu} from './menu-local'
 
 const stolaf = [
   {

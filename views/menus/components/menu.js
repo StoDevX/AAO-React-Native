@@ -2,7 +2,7 @@
 import React from 'react'
 import {StyleSheet, View, ListView, Text} from 'react-native'
 import {FoodItemRow} from './food-item-row'
-import DietaryFilters from './dietary-filters'
+import DietaryFilters from '../../../data/dietary-filters'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
 import type {MenuItemType, ProcessedMenuPropsType} from '../types'

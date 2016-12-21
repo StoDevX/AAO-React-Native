@@ -1,26 +1,19 @@
 // @flow
 import React from 'react'
 import {View, Text} from 'react-native'
-import LoadingView from '../../components/loading'
-import {FancyMenu} from '../components/fancy-menu'
-import {fetchJson} from '../../components/fetch'
-import type {TopLevelViewPropsType} from '../../types'
-import {TopLevelViewPropTypes} from '../../types'
+import LoadingView from '../components/loading'
+import {FancyMenu} from './components/fancy-menu'
+import {fetchJson} from '../components/fetch'
+import type {TopLevelViewPropsType} from '../types'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 import sample from 'lodash/sample'
-import type {MenuItemContainerType, MasterCorIconMapType} from '../types'
+import type {MenuItemContainerType, MasterCorIconMapType} from './types'
 
 const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native/menus'
 
 export class GithubHostedMenu extends React.Component {
-  static propTypes = {
-    cafeId: React.PropTypes.string.isRequired,
-    loadingMessage: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    ...TopLevelViewPropTypes,
-  }
-
   state: {
     loading: boolean,
     now: momentT,

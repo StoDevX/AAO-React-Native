@@ -2,9 +2,8 @@
 import React from 'react'
 import {StyleSheet, View, Text, Platform} from 'react-native'
 import type momentT from 'moment'
-import type {FilterSpecType} from '../filter/types'
-import {Toolbar} from '../filter/toolbar'
-import {ToolbarButton} from '../filter/toolbar-button'
+import type {FilterSpecType} from '../../components/filter'
+import {Toolbar, ToolbarButton} from '../../components/toolbar'
 
 const styles = StyleSheet.create({
   today: {

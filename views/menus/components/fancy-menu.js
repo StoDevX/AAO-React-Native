@@ -20,7 +20,7 @@ import type {
   MasterCorIconMapType,
 } from '../types'
 import type {ProcessedMenuPropsType} from '../types'
-import type {FilterSpecType} from '../filter/types'
+import type {FilterSpecType} from '../../components/filter'
 
 export class FancyMenu extends React.Component {
   static defaultProps = {

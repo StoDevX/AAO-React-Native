@@ -1,6 +1,6 @@
 // @flow
 import type {MenuItemType} from '../types'
-import type {FilterSpecType} from '../filter/types'
+import type {FilterSpecType} from '../../components/filter'
 import difference from 'lodash/difference'
 import includes from 'lodash/includes'
 import filter from 'lodash/filter'
