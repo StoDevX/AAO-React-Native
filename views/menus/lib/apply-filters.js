@@ -1,6 +1,7 @@
 // @flow
 import type {MenuItemType} from '../types'
 import type {FilterSpecType} from '../../components/filter'
+import {getSelectedValuesFromListFilter} from '../../components/filter'
 import difference from 'lodash/difference'
 import includes from 'lodash/includes'
 import filter from 'lodash/filter'
@@ -37,14 +38,12 @@ function applySpecialsFilter(items: MenuItemType[], filters: FilterSpecType[]): 
 function applyStationsFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
   let stationsFilter = filters.find(({key}) => key === 'stations')
 
-  let onlyTheseStations = []
-  if (stationsFilter && stationsFilter.type === 'list') {
-    // given all of the stations, get just the list that we want
-    // (becuase we have a list of all possibilities, and a list of the one the user _doesn't_ want to see)
-    onlyTheseStations = difference(stationsFilter.options, stationsFilter.value)
-  }
+  // given all of the stations, get just the list that we want. (becuase we
+  // have a list of all possibilities, and a list of the one the user
+  // _doesn't_ want to see)
+  let onlyTheseStations = getSelectedValuesFromListFilter(stationsFilter)
 
-  if (onlyTheseStations.length) {
+  if (onlyTheseStations) {
     items = filter(items, item => includes(onlyTheseStations, item.station))
   }
 
@@ -54,13 +53,10 @@ function applyStationsFilter(items: MenuItemType[], filters: FilterSpecType[]): 
 function applyDietaryFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
   let dietaryRestrictionsFilter = filters.find(({key}) => key === 'restrictions')
 
-  let onlyTheseDietaryRestrictions = []
-  if (dietaryRestrictionsFilter && dietaryRestrictionsFilter.type === 'list') {
-    // given all of the dietary restrictions, get just the list that we want
-    onlyTheseDietaryRestrictions = difference(dietaryRestrictionsFilter.options, dietaryRestrictionsFilter.value)
-  }
+  // given all of the dietary restrictions, get just the list that we want
+  let onlyTheseDietaryRestrictions = getSelectedValuesFromListFilter(dietaryRestrictionsFilter)
 
-  if (onlyTheseDietaryRestrictions.length) {
+  if (onlyTheseDietaryRestrictions) {
     items = filter(items, item => {
       let theseRestrictions = values(item.cor_icon)
       // If the item has no restrictions, it can't have the one we're
