@@ -9,12 +9,10 @@ import {TopLevelViewPropTypes} from '../../types'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
-import {githubMenuBaseUrl} from '../data'
 import sample from 'lodash/sample'
-import type {
-  MenuItemContainerType,
-  MasterCorIconMapType,
-} from '../types'
+import type {MenuItemContainerType, MasterCorIconMapType} from '../types'
+
+const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native/menus'
 
 export class GithubHostedMenu extends React.Component {
   static propTypes = {

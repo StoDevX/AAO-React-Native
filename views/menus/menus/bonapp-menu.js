@@ -5,13 +5,15 @@ import LoadingView from '../../components/loading'
 import type {TopLevelViewPropsType} from '../../types'
 import {FancyMenu} from '../components/fancy-menu'
 import type {BonAppMenuInfoType, BonAppCafeInfoType} from '../types'
-import {bonappMenuBaseUrl, bonappCafeBaseUrl} from '../data'
 import sample from 'lodash/sample'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 import {findMenu} from '../lib/find-menu'
 import {fetchJson} from '../../components/fetch'
+
+const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
+const bonappCafeBaseUrl = 'http://legacy.cafebonappetit.com/api/2/cafes'
 
 export class BonAppHostedMenu extends React.Component {
   state: {
