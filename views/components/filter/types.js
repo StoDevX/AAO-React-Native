@@ -12,7 +12,6 @@ export type SelectSpecType = {
   type: 'list',
   multiple: boolean,
   key: string,
-  booleanKind: 'AND' | 'OR' | 'NOR',
   title?: string,
   caption?: string,
   options: string[],
