@@ -57,7 +57,8 @@ function applyDietaryFilter(items: MenuItemType[], filters: FilterSpecType[]): M
       }
 
       // Then we check that the number of different items between the two
-      // lists is 0.
+      // lists is 0, to ensure that the item has all of the restricions we're
+      // seeking.
       let differentItems = difference(theseRestrictions, onlyTheseDietaryRestrictions)
       return differentItems.length === 0
     })
