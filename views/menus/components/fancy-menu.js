@@ -7,15 +7,14 @@ import uniqBy from 'lodash/uniqBy'
 import identity from 'lodash/identity'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
-import {toLaxTitleCase} from 'titlecase'
+import {trimStationName, trimItemLabel} from '../lib/trim-names'
 import {MenuListView} from './menu'
 import {applyFilters} from '../lib/apply-filters'
+import {buildMenuFilters} from '../lib/build-menu-filters'
 
 import type {TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
-import uniq from 'lodash/uniq'
 import values from 'lodash/values'
-import map from 'lodash/map'
 
 import type {
   MenuItemContainerType,
@@ -25,53 +24,6 @@ import type {
 } from '../types'
 import type {ProcessedMenuPropsType} from '../types'
 import type {FilterSpecType} from '../filter/types'
-
-function trimStationName(stationName: string) {
-  return stationName.replace(/<strong>@(.*)<\/strong>/, '$1')
-}
-
-function trimItemLabel(label: string) {
-  // remove extraneous whitespace and title-case the bonapp titles
-  return toLaxTitleCase(label.replace(/\s+/g, ' '))
-}
-
-function buildMenuFilters({foodItems, corIcons}): FilterSpecType[] {
-  let filters = []
-  filters.push({
-    type: 'toggle',
-    key: 'specials',
-    label: 'Only Specials',
-    caption: 'Allows you to either see only the "specials" for today, or everything the location has to offer, including condiments and salad fixings.',
-    value: true,
-  })
-
-  let allStations = uniq(map(foodItems, item => item.station)).map(trimStationName)
-  filters.push({
-    type: 'list',
-    multiple: true,
-    key: 'stations',
-    title: 'Stations',
-    booleanKind: 'NOR',
-    caption: 'a caption',
-    options: allStations,
-    value: [],
-  })
-
-  let allDietaryRestrictions = values(corIcons).map(item => item.label)
-  filters.push({
-    type: 'list',
-    multiple: true,
-    key: 'restrictions',
-    title: 'Dietary Restrictions',
-    booleanKind: 'NOR',
-    caption: 'a nother caption',
-    options: allDietaryRestrictions,
-    value: [],
-  })
-
-  return filters
-}
-
 
 export class FancyMenu extends React.Component {
   static defaultProps = {
