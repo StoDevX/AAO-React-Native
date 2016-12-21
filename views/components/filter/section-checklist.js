@@ -2,8 +2,8 @@
 import React from 'react'
 import {Section, Cell} from 'react-native-tableview-simple'
 import includes from 'lodash/includes'
-import difference from 'lodash/difference'
-import union from 'lodash/union'
+import without from 'lodash/without'
+import concat from 'lodash/concat'
 
 type PropsType = {
   header?: string,
@@ -21,10 +21,10 @@ export function ChecklistSection({header, footer, options, onChange, value}: Pro
     if (includes(value, tappedValue)) {
       // therefore, if the user has tapped an item, and it's already in the list of things they've tapped,
       // we want to _remove_ it from that list.
-      result = difference(value, [tappedValue])
+      result = without(value, tappedValue)
     } else {
       // otherwise, we need to add it to the list
-      result = union(value, [tappedValue])
+      result = concat(value, tappedValue)
     }
 
     onChange(result)
