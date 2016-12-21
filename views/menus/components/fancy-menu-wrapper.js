@@ -2,7 +2,6 @@
 import React from 'react'
 import uniqBy from 'lodash/uniqBy'
 import identity from 'lodash/identity'
-import filter from 'lodash/filter'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import {toLaxTitleCase} from 'titlecase'
@@ -17,7 +16,6 @@ type FancyMenuPropsType = {
   applyFilters: (items: MenuItemType[], filters: FilterSpecType[]) => MenuItemType[],
   stationMenus: StationMenuType[],
   foodItems: MenuItemContainerType,
-  stationsToCreate: string[],
   filters: FilterSpecType[],
 };
 
@@ -57,14 +55,7 @@ export class FancyMenuWrapper extends React.Component {
       .filter(menu => menu.length)
       .reduce(this.flatten, [])
 
-    let otherMenuItems = props.stationsToCreate
-      // filter the foodItems mapping to only the requested station
-      .map(station => filter(props.foodItems, item => item.station === station))
-      .reduce(this.flatten, [])
-
-    if (!props.stationsToCreate.length) {
-      otherMenuItems = values(props.foodItems)
-    }
+    let otherMenuItems = values(props.foodItems)
 
     // in case we need a wider variety of sources in the future,
     // prevent ourselves from returning duplicate items

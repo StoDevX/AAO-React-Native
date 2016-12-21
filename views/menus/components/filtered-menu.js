@@ -113,7 +113,6 @@ export class FilteredMenuView extends React.Component {
           stationMenus={this.props.stationMenus}
           foodItems={this.props.foodItems}
           filters={this.state.filters}
-          stationsToCreate={[]}
         />
       </View>
     )
