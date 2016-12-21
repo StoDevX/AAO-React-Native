@@ -10,7 +10,7 @@ import {FilterSection} from './section'
 import {TableView} from 'react-native-tableview-simple'
 
 type PropsType = {
-  filters: Array<FilterSpecType>,
+  filters: FilterSpecType[],
   onChange: (x: FilterSpecType[]) => any,
 };
 
@@ -28,7 +28,6 @@ export class FilterView extends React.Component {
   props: PropsType;
 
   init(filterSpecs: FilterSpecType[]) {
-    // console.log(filterSpecs)
     // We take the filter specs and turn them into a key-value mapping for
     // easier value updates
     this.setState(fromPairs(filterSpecs.map(spec => [spec.key, spec])))
