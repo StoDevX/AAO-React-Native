@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {StyleSheet, View, ListView, Text} from 'react-native'
-import FoodItem from './food-item'
+import {FoodItemRow} from './food-item-row'
 import DietaryFilters from './dietary-filters'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
@@ -74,7 +74,7 @@ export class MenuListView extends React.Component {
 
   renderFoodItem(rowData: MenuItemType, sectionId: string, rowId: string) {
     return (
-      <FoodItem
+      <FoodItemRow
         key={`${sectionId}-${rowId}`}
         data={rowData}
         filters={DietaryFilters}
