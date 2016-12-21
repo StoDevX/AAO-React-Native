@@ -11,8 +11,8 @@ const CENTRAL_TZ = 'America/Winnipeg'
 import {bonappMenuBaseUrl, bonappCafeBaseUrl} from '../data'
 import sample from 'lodash/sample'
 import type {BonAppMenuInfoType, BonAppCafeInfoType} from '../types'
-import {fetchJson} from './fetch'
 
+import {fetchJson} from '../../components/fetch'
 
 export class BonAppHostedMenu extends React.Component {
   static propTypes = {
