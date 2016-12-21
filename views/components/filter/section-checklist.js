@@ -36,7 +36,7 @@ export function ChecklistSection({header, footer, options, onChange, value}: Pro
         <Cell
           key={val}
           onPress={() => callback(val)}
-          accessory={includes(value, val) ? '' : 'Checkmark'}
+          accessory={includes(value, val) ? null : 'Checkmark'}
           title={val}
         />)}
     </Section>
