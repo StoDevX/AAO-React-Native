@@ -48,7 +48,7 @@ export class FancyMenu extends React.Component {
 
   openFilterView = () => {
     this.props.navigator.push({
-      id: 'MenusFilterView',
+      id: 'FilterView',
       index: this.props.route.index + 1,
       title: 'Filter',
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
