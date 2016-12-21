@@ -3,11 +3,11 @@ import type {FilterSpecType} from '../../components/filter'
 import type {MenuItemContainerType, MasterCorIconMapType} from '../types'
 import {trimStationName} from '../lib/trim-names'
 import uniq from 'lodash/uniq'
-import values from 'lodash/values'
 import map from 'lodash/map'
 
 export function buildMenuFilters({foodItems, corIcons}: {foodItems: MenuItemContainerType, corIcons: MasterCorIconMapType}): FilterSpecType[] {
   let filters = []
+
   filters.push({
     type: 'toggle',
     key: 'specials',
@@ -16,6 +16,8 @@ export function buildMenuFilters({foodItems, corIcons}: {foodItems: MenuItemCont
     value: true,
   })
 
+  // Extract the station names from the food items,
+  // and clean them up
   let allStations = uniq(map(foodItems, item => item.station)).map(trimStationName)
   filters.push({
     type: 'list',
@@ -28,7 +30,8 @@ export function buildMenuFilters({foodItems, corIcons}: {foodItems: MenuItemCont
     value: [],
   })
 
-  let allDietaryRestrictions = values(corIcons).map(item => item.label)
+  // Grab the labels of the COR icons
+  let allDietaryRestrictions = map(corIcons, item => item.label)
   filters.push({
     type: 'list',
     multiple: true,
