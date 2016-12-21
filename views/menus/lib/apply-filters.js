@@ -8,18 +8,9 @@ import filter from 'lodash/filter'
 import values from 'lodash/values'
 
 export function applyFilters(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
-  // console.log('applyFilters called')
-  // console.log(items)
-
   items = applySpecialsFilter(items, filters)
-  // console.log(items)
-
   items = applyStationsFilter(items, filters)
-  // console.log(items)
-
   items = applyDietaryFilter(items, filters)
-  // console.log(items)
-
   return items
 }
 
