@@ -19,8 +19,8 @@ export function ChecklistSection({header, footer, options, onChange, value}: Pro
 
     // we default to all items selected
     if (includes(value, tappedValue)) {
-      // therefore, if the user has tapped an item, and it's already in the list of things they've tapped,
-      // we want to _remove_ it from that list.
+      // therefore, if the user has tapped an item, and it's already in the
+      // list of things they've tapped, we want to _remove_ it from that list.
       result = without(value, tappedValue)
     } else {
       // otherwise, we need to add it to the list
