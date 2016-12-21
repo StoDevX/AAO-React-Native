@@ -9,8 +9,8 @@ import {toLaxTitleCase} from 'titlecase'
 import values from 'lodash/values'
 import type {MenuItemContainerType, MenuItemType, StationMenuType} from '../types'
 import type {FilterSpecType} from '../filter/types'
-import type {ProcessedMenuPropsType} from './fancy-menu-list'
-import {FancyMenuListView} from './fancy-menu-list'
+import type {ProcessedMenuPropsType} from '../types'
+import {MenuListView} from './fancy-menu-list'
 import {applyFilters} from '../lib/apply-filters'
 
 type FancyMenuPropsType = {
@@ -85,6 +85,6 @@ export class FancyMenuWrapper extends React.Component {
 
     let data: ProcessedMenuPropsType = groupBy(allMenuItems, item => item.station)
 
-    return <FancyMenuListView data={data} />
+    return <MenuListView data={data} />
   }
 }

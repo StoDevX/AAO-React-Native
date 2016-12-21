@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export class FancyMenuListView extends React.Component {
+export class MenuListView extends React.Component {
   state = {
     dataSource: new ListView.DataSource({
       rowHasChanged: (row1, row2) => row1 !== row2,
