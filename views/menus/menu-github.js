@@ -26,7 +26,7 @@ export class GithubHostedMenu extends React.Component {
     corIcons: null,
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.fetchData()
   }
 

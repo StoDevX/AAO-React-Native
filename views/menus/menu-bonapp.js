@@ -28,7 +28,7 @@ export class BonAppHostedMenu extends React.Component {
     cafeInfo: null,
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.fetchData()
   }
 
