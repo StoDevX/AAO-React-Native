@@ -2,25 +2,18 @@
 import React from 'react'
 import {View, Text} from 'react-native'
 import LoadingView from '../../components/loading'
-import {BonAppMenuWrapper} from './bonapp-wrapper'
 import type {TopLevelViewPropsType} from '../../types'
-import {TopLevelViewPropTypes} from '../../types'
+import {FilteredMenuView} from '../parts/filtered-menu'
+import type {BonAppMenuInfoType, BonAppCafeInfoType} from '../types'
+import {bonappMenuBaseUrl, bonappCafeBaseUrl} from '../data'
+import sample from 'lodash/sample'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
-import {bonappMenuBaseUrl, bonappCafeBaseUrl} from '../data'
-import sample from 'lodash/sample'
-import type {BonAppMenuInfoType, BonAppCafeInfoType} from '../types'
-
+import {findMenu} from './find-menu'
 import {fetchJson} from '../../components/fetch'
 
 export class BonAppHostedMenu extends React.Component {
-  static propTypes = {
-    cafeId: React.PropTypes.string.isRequired,
-    loadingMessage: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    ...TopLevelViewPropTypes,
-  }
-
   state: {
     loading: boolean,
     now: momentT,
@@ -72,14 +65,37 @@ export class BonAppHostedMenu extends React.Component {
       )
     }
 
+    let {cafeId} = this.props
+    let {
+      now,
+      cafeMenu,
+      cafeInfo,
+    } = this.state
+
+    // We grab the "today" info from here because BonApp returns special
+    // messages in this response, like "Closed for Christmas Break"
+    let days = cafeInfo.cafes[cafeId].days
+    let today = days.find(({date}) => date === now.format('YYYY-MM-DD'))
+    if (!today || today.status === 'closed') {
+      return <LoadingView text={today ? today.message : 'Closed today'} />
+    }
+
+    // We hard-code to the first day returned because we're only requesting one day.
+    // `cafes` is a map of cafe ids to cafes, but we only request one at a time.
+    let dayparts = cafeMenu.days[0].cafes[cafeId].dayparts
+    let mealInfo = findMenu(dayparts, now)
+    let menus = mealInfo ? mealInfo.stations : []
+    let mealName = mealInfo ? mealInfo.label : ''
+
     return (
-      <BonAppMenuWrapper
+      <FilteredMenuView
         route={this.props.route}
         navigator={this.props.navigator}
-        cafeId={this.props.cafeId}
-        cafeInfo={this.state.cafeInfo}
-        cafeMenu={this.state.cafeMenu}
-        now={this.state.now}
+        now={now}
+        stationMenus={menus}
+        menuLabel={mealName}
+        menuCorIcons={cafeMenu.cor_icons}
+        foodItems={cafeMenu.items}
       />
     )
   }
