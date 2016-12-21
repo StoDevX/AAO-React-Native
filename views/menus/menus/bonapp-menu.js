@@ -84,7 +84,6 @@ export class BonAppHostedMenu extends React.Component {
     // `cafes` is a map of cafe ids to cafes, but we only request one at a time.
     let dayparts = cafeMenu.days[0].cafes[cafeId].dayparts
     let mealInfo = findMenu(dayparts, now)
-    let menus = mealInfo ? mealInfo.stations : []
     let mealName = mealInfo ? mealInfo.label : ''
 
     return (
@@ -92,7 +91,6 @@ export class BonAppHostedMenu extends React.Component {
         route={this.props.route}
         navigator={this.props.navigator}
         now={now}
-        stationMenus={menus}
         menuLabel={mealName}
         menuCorIcons={cafeMenu.cor_icons}
         foodItems={cafeMenu.items}

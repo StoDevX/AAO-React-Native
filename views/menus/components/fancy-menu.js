@@ -3,8 +3,6 @@ import React from 'react'
 import {View, Navigator} from 'react-native'
 import {FilterToolbar} from '../filter/toolbar'
 
-import uniqBy from 'lodash/uniqBy'
-import identity from 'lodash/identity'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import {trimStationName, trimItemLabel} from '../lib/trim-names'
@@ -19,7 +17,6 @@ import values from 'lodash/values'
 import type {
   MenuItemContainerType,
   MenuItemType,
-  StationMenuType,
   MasterCorIconMapType,
 } from '../types'
 import type {ProcessedMenuPropsType} from '../types'
@@ -44,7 +41,6 @@ export class FancyMenu extends React.Component {
   props: TopLevelViewPropsType & {
     applyFilters: (items: MenuItemType[], filters: FilterSpecType[]) => MenuItemType[],
     now: momentT,
-    stationMenus: StationMenuType[],
     foodItems: MenuItemContainerType,
     menuLabel?: string,
     menuCorIcons: MasterCorIconMapType,
@@ -77,20 +73,8 @@ export class FancyMenu extends React.Component {
 
     // TODO: do we need menuItems and stationMenus anymore?
 
-    // expand the mapping of menu item ids to retrieve the actual items.
-    // we re-group the items later on.
-    let menuItems = props.stationMenus
-      // grab the items from the overall list
-      .map(menu => menu.items.map(id => props.foodItems[id]))
-      // flatten the menu arrays into one master menu
-      .reduce(this.flatten, [])
-      // and only return the items that were retrieved successfully
-      .filter(identity)
-
-    let otherMenuItems = values(props.foodItems)
-
     // prevent ourselves from returning duplicate items
-    let allMenuItems = uniqBy([...menuItems, ...otherMenuItems], item => item.id)
+    let allMenuItems = values(props.foodItems)
 
     // clean up the station names
     allMenuItems = allMenuItems.map(item => ({...item, station: trimStationName(item.station)}))

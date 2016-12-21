@@ -12,7 +12,6 @@ const CENTRAL_TZ = 'America/Winnipeg'
 import {githubMenuBaseUrl} from '../data'
 import sample from 'lodash/sample'
 import type {
-  StationMenuType,
   MenuItemContainerType,
   MasterCorIconMapType,
 } from '../types'
@@ -27,13 +26,11 @@ export class GithubHostedMenu extends React.Component {
   state: {
     loading: boolean,
     now: momentT,
-    stationMenus: ?(StationMenuType[]),
     foodItems: ?MenuItemContainerType,
     corIcons: ?MasterCorIconMapType,
   } = {
     loading: true,
     now: moment.tz(CENTRAL_TZ),
-    stationMenus: null,
     foodItems: null,
     corIcons: null,
   }
@@ -50,16 +47,15 @@ export class GithubHostedMenu extends React.Component {
   fetchData = async () => {
     this.setState({loading: true})
 
-    let stationMenus
     let foodItems
     let corIcons
     try {
-      ({stations: stationMenus, items: foodItems, corIcons} = await fetchJson(`${githubMenuBaseUrl}/pause.json`))
+      ({items: foodItems, corIcons} = await fetchJson(`${githubMenuBaseUrl}/pause.json`))
     } catch (err) {
       console.warn(err)
     }
 
-    this.setState({loading: false, corIcons, foodItems, stationMenus, now: moment.tz(CENTRAL_TZ)})
+    this.setState({loading: false, corIcons, foodItems, now: moment.tz(CENTRAL_TZ)})
   }
 
   render() {
@@ -68,7 +64,7 @@ export class GithubHostedMenu extends React.Component {
       return <LoadingView text={msg} />
     }
 
-    if (!this.state.stationMenus || !this.state.foodItems || !this.state.corIcons) {
+    if (!this.state.foodItems || !this.state.corIcons) {
       return (
         <View>
           <Text>Something went wrong. Email odt@stolaf.edu to let them know?</Text>
@@ -80,7 +76,6 @@ export class GithubHostedMenu extends React.Component {
       <FancyMenu
         route={this.props.route}
         navigator={this.props.navigator}
-        stationMenus={this.state.stationMenus}
         foodItems={this.state.foodItems}
         menuCorIcons={this.state.corIcons}
         menuLabel='Din-din'
