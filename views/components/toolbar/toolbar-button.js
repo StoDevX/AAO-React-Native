@@ -27,6 +27,9 @@ const buttonStyles = StyleSheet.create({
   filterButtonInactiveText: {
     color: c.iosDisabledText,
   },
+  textWithIcon: {
+    paddingRight: 8,
+  },
 })
 
 type ButtonPropsType = {
@@ -45,13 +48,25 @@ export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
     icon = iconName
   }
 
+  let activeButtonStyle = isActive
+    ? buttonStyles.filterButtonActive
+    : buttonStyles.filterButtonInactive
+  let activeContentStyle = isActive
+    ? buttonStyles.filterButtonActiveText
+    : buttonStyles.filterButtonInactiveText
+
+  let textWithIconStyle = icon ? buttonStyles.textWithIcon : null
+  let activeTextStyle = {
+    fontWeight: isActive && Platform.OS === 'android' ? 'bold' : 'normal',
+  }
+
   return (
-    <View style={[buttonStyles.toolbarSection, buttonStyles.filterButton, isActive ? buttonStyles.filterButtonActive : buttonStyles.filterButtonInactive]}>
-      <Text style={[isActive ? buttonStyles.filterButtonActiveText : buttonStyles.filterButtonInactiveText, {paddingRight: 8, fontWeight: isActive && Platform.OS === 'android' ? 'bold' : 'normal'}]}>
+    <View style={[buttonStyles.filterButton, activeButtonStyle]}>
+      <Text style={[activeContentStyle, textWithIconStyle, activeTextStyle]}>
         {title}
       </Text>
       {icon
-        ? <Icon size={18} name={icon} style={[isActive ? buttonStyles.filterButtonActiveText : buttonStyles.filterButtonInactiveText]} />
+        ? <Icon size={18} name={icon} style={activeContentStyle} />
         : null}
     </View>
   )
