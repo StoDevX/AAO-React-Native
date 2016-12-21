@@ -17,8 +17,7 @@ import type {
   MasterCorIconMapType,
 } from '../types'
 
-
-export class GithubMenuView extends React.Component {
+export class GithubHostedMenu extends React.Component {
   static propTypes = {
     cafeId: React.PropTypes.string.isRequired,
     loadingMessage: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,

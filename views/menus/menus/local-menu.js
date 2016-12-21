@@ -12,7 +12,7 @@ import {
 } from '../../../data/pause-bonapp.js'
 import {FilteredMenuView} from '../parts/filtered-menu'
 
-export class LocalMenuView extends React.Component {
+export class LocalMenu extends React.Component {
   static defaultProps = {
     stationMenus: defaultStations,
     foodItems: defaultItems,

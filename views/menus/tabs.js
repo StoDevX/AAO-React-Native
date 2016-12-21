@@ -1,6 +1,6 @@
 // @flow
 import {BonAppHostedMenu} from './menus/bonapp-menu'
-import {LocalMenuView} from './menus/local-menu'
+import {LocalMenu} from './menus/local-menu'
 
 const stolaf = [
   {
@@ -34,7 +34,7 @@ const stolaf = [
     id: 'pause',
     title: 'The Pause',
     rnVectorIcon: {iconName: 'paw'},
-    component: LocalMenuView,
+    component: LocalMenu,
     props: {
       loadingMessage: [
         'Mixing up a shake…',
