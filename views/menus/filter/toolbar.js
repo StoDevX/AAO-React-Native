@@ -6,6 +6,7 @@ import type momentT from 'moment'
 const Touchable = Platform.OS === 'ios' ? TouchableOpacity : TouchableNativeFeedback
 const touchableBg = Platform.OS === 'ios' ? null : Touchable.SelectableBackgroundBorderless()
 import * as c from '../../components/colors'
+import type {FilterSpecType} from './types'
 
 const styles = StyleSheet.create({
   shadow: {
@@ -62,10 +63,11 @@ type PropsType = {
   date: momentT,
   title?: string,
   onPress: () => any,
-  appliedFilterCount: number,
+  filters: FilterSpecType[],
 };
 
-export function FilterToolbar({date, title, appliedFilterCount, onPress}: PropsType) {
+export function FilterToolbar({date, title, filters, onPress}: PropsType) {
+  const appliedFilterCount = filters.filter(f => f.type === 'toggle' ? f.value : f.value.length > 0).length
   const isFiltered = appliedFilterCount > 0
   const icon = Platform.OS === 'ios'
     ? isFiltered
