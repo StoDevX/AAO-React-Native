@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * Index view
@@ -297,6 +298,8 @@ class App extends React.Component {
   componentWillUnmount() {
     BackAndroid.removeEventListener('hardwareBackPress', this.registerAndroidBackButton)
   }
+
+  _navigator: typeof Navigator;
 
   registerAndroidBackButton = () => {
     if (this._navigator && this._navigator.getCurrentRoutes().length > 1) {
