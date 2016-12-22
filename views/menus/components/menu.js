@@ -98,7 +98,11 @@ export class MenuListView extends React.Component {
         style={styles.container}
         pageSize={3}
         removeClippedSubviews={false}
-        automaticallyAdjustContentInsets={true}
+        // we have to disable this here and do it manually, because
+        // there appears to be a bug where the ListView fails to
+        // auto-calculate when the data is loaded after the listview mounts
+        automaticallyAdjustContentInsets={false}
+        contentInset={{bottom: 49}}
         dataSource={this.state.dataSource}
         enableEmptySections={true}
         renderRow={this.renderFoodItem}
