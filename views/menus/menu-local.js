@@ -18,6 +18,7 @@ export class LocalMenu extends React.Component {
   props: TopLevelViewPropsType & {
     corIcons: MasterCorIconMapType,
     foodItems: MenuItemType[],
+    name: string,
     now: momentT,
   }
 
@@ -30,6 +31,7 @@ export class LocalMenu extends React.Component {
         menuCorIcons={this.props.corIcons}
         menuLabel='Menu'
         now={this.props.now}
+        name={this.props.name}
       />
     )
   }

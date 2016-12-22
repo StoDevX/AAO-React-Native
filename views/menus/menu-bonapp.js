@@ -36,6 +36,7 @@ export class BonAppHostedMenu extends React.Component {
   props: TopLevelViewPropsType & {
     cafeId: string,
     loadingMessage: string[],
+    name: string,
   }
 
   fetchData = async () => {
@@ -88,6 +89,7 @@ export class BonAppHostedMenu extends React.Component {
         menuCorIcons={cafeMenu.cor_icons}
         menuLabel={mealName}
         now={now}
+        name={this.props.name}
       />
     )
   }

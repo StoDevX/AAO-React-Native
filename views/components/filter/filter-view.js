@@ -4,13 +4,16 @@ import {ScrollView} from 'react-native'
 import type {FilterSpecType} from './types'
 import {FilterSection} from './section'
 import {TableView} from 'react-native-tableview-simple'
+import {connect} from 'react-redux'
+import get from 'lodash/get'
 
 type PropsType = {
+  pathToFilters: string[],
   filters: FilterSpecType[],
   onChange: (x: FilterSpecType[]) => any,
 };
 
-export class FilterView extends React.Component {
+class FilterViewComponent extends React.Component {
   props: PropsType;
 
   onFilterChanged = (filter: FilterSpecType) => {
@@ -36,3 +39,11 @@ export class FilterView extends React.Component {
     )
   }
 }
+
+const mapStateToProps = (state, actualProps) => {
+  return {
+    filters: get(state, actualProps.pathToFilters, []),
+  }
+}
+
+export const FilterView = connect(mapStateToProps)(FilterViewComponent)

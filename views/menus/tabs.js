@@ -9,6 +9,7 @@ const stolaf = [
     rnVectorIcon: {iconName: 'nutrition'},
     component: BonAppHostedMenu,
     props: {
+      name: 'stav',
       cafeId: '261',
       loadingMessage: [
         'Hunting Ferndale Turkey…',
@@ -23,6 +24,7 @@ const stolaf = [
     rnVectorIcon: {iconName: 'cafe'},
     component: BonAppHostedMenu,
     props: {
+      name: 'cage',
       cafeId: '262',
       loadingMessage: [
         'Checking for vegan cookies…',
@@ -36,6 +38,7 @@ const stolaf = [
     rnVectorIcon: {iconName: 'paw'},
     component: LocalMenu,
     props: {
+      name: 'pause',
       loadingMessage: [
         'Mixing up a shake…',
         'Spinning up pizzas…',

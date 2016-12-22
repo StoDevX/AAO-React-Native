@@ -1,6 +1,8 @@
 // @flow
 import React from 'react'
 import {View, Navigator} from 'react-native'
+import {connect} from 'react-redux'
+import {updateMenuFilters} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
 import type {MenuItemType, MasterCorIconMapType} from '../types'
@@ -13,30 +15,29 @@ import {applyFilters} from '../lib/apply-filters'
 import {buildMenuFilters} from '../lib/build-menu-filters'
 import {trimStationName, trimItemLabel} from '../lib/trim-names'
 
-export class FancyMenu extends React.Component {
+type FancyMenuPropsType = TopLevelViewPropsType & {
+  applyFilters: (items: MenuItemType[], filters: FilterSpecType[]) => MenuItemType[],
+  now: momentT,
+  name: string,
+  filters: FilterSpecType[],
+  foodItems: MenuItemType[],
+  menuLabel?: string,
+  menuCorIcons: MasterCorIconMapType,
+  onFiltersChange: (f: FilterSpecType[]) => any,
+};
+
+class FancyMenuView extends React.Component {
   static defaultProps = {
     applyFilters: applyFilters,
   }
 
-  state: {|
-    filters: FilterSpecType[],
-  |} = {
-    filters: [],
-  }
-
   componentWillMount() {
     let {foodItems, menuCorIcons} = this.props
-    let filters = buildMenuFilters({foodItems, corIcons: menuCorIcons})
-    this.setState({filters})
+    let filters: FilterSpecType[] = buildMenuFilters({foodItems, corIcons: menuCorIcons})
+    this.props.onFiltersChange(filters)
   }
 
-  props: TopLevelViewPropsType & {
-    applyFilters: (items: MenuItemType[], filters: FilterSpecType[]) => MenuItemType[],
-    now: momentT,
-    foodItems: MenuItemType[],
-    menuLabel?: string,
-    menuCorIcons: MasterCorIconMapType,
-  }
+  props: FancyMenuPropsType;
 
   openFilterView = () => {
     this.props.navigator.push({
@@ -46,15 +47,14 @@ export class FancyMenu extends React.Component {
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
       onDismiss: (route: any, navigator: any) => navigator.pop(),
       props: {
-        filters: this.state.filters,
-        onChange: (newFilters: FilterSpecType[]) => this.setState({filters: newFilters}),
+        pathToFilters: ['menus', this.props.name],
+        onChange: filters => this.props.onFiltersChange(filters),
       },
     })
   }
 
   render() {
-    let {foodItems, now, menuLabel} = this.props
-    let {filters} = this.state
+    let {foodItems, now, menuLabel, filters} = this.props
 
     // get all the food
     let allMenuItems = foodItems.map(item => ({
@@ -82,3 +82,17 @@ export class FancyMenu extends React.Component {
     )
   }
 }
+
+function mapStateToProps(state, actualProps: FancyMenuPropsType) {
+  return {
+    filters: state.menus[actualProps.name] || [],
+  }
+}
+
+function mapDispatchToProps(dispatch, actualProps: FancyMenuPropsType) {
+  return {
+    onFiltersChange: (filters: FilterSpecType[]) => dispatch(updateMenuFilters(actualProps.name, filters)),
+  }
+}
+
+export const FancyMenu = connect(mapStateToProps, mapDispatchToProps)(FancyMenuView)
