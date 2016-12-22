@@ -1,26 +1,18 @@
 // @flow
 import React from 'react'
 import {View, Navigator} from 'react-native'
-import {FilterMenuToolbar} from './filter-menu-toolbar'
-
+import type {TopLevelViewPropsType} from '../../types'
+import type momentT from 'moment'
+import type {MenuItemContainerType, MenuItemType, MasterCorIconMapType} from '../types'
+import type {FilterSpecType} from '../../components/filter'
 import groupBy from 'lodash/groupBy'
+import map from 'lodash/map'
 import sortBy from 'lodash/sortBy'
-import {trimStationName, trimItemLabel} from '../lib/trim-names'
+import {FilterMenuToolbar} from './filter-menu-toolbar'
 import {MenuListView} from './menu'
 import {applyFilters} from '../lib/apply-filters'
 import {buildMenuFilters} from '../lib/build-menu-filters'
-
-import type {TopLevelViewPropsType} from '../../types'
-import type momentT from 'moment'
-import values from 'lodash/values'
-
-import type {
-  MenuItemContainerType,
-  MenuItemType,
-  MasterCorIconMapType,
-} from '../types'
-import type {ProcessedMenuPropsType} from '../types'
-import type {FilterSpecType} from '../../components/filter'
+import {trimStationName, trimItemLabel} from '../lib/trim-names'
 
 export class FancyMenu extends React.Component {
   static defaultProps = {
@@ -69,31 +61,28 @@ export class FancyMenu extends React.Component {
   }
 
   render() {
-    let {props, state} = this
+    let {foodItems, now, menuLabel} = this.props
+    let {filters} = this.state
 
     // get all the food
-    let allMenuItems = values(props.foodItems)
+    let allMenuItems = map(foodItems, item => ({
+      ...item,  // we want to edit the item, not replace it
+      station: trimStationName(item.station),  // station names are a mess
+      label: trimItemLabel(item.label),  // clean up the titles
+    }))
 
-    // clean up the station names
-    allMenuItems = allMenuItems.map(item => ({...item, station: trimStationName(item.station)}))
-
-    // apply the selected filters
-    let filtered = props.applyFilters(allMenuItems, state.filters)
-
-    // clean up the titles
-    filtered = filtered.map(food => ({...food, label: trimItemLabel(food.label)}))
-
-    // apply a sort to the list of menu items
+    // apply the selected filters, then sort the list of menu items, then
+    // group them for the ListView
+    let filtered = applyFilters(allMenuItems, filters)
     let sorted = sortBy(filtered, [item => item.station, item => item.id])
-
-    let grouped: ProcessedMenuPropsType = groupBy(sorted, item => item.station)
+    let grouped = groupBy(sorted, item => item.station)
 
     return (
       <View style={{flex: 1}}>
         <FilterMenuToolbar
-          date={this.props.now}
-          title={this.props.menuLabel}
-          filters={this.state.filters}
+          date={now}
+          title={menuLabel}
+          filters={filters}
           onPress={this.openFilterView}
         />
         <MenuListView data={grouped} />
