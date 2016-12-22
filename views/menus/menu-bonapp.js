@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
-import {View, Text} from 'react-native'
 import LoadingView from '../components/loading'
+import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {FancyMenu} from './components/fancy-menu'
 import type {BonAppMenuInfoType, BonAppCafeInfoType} from './types'
@@ -59,11 +59,7 @@ export class BonAppHostedMenu extends React.Component {
     }
 
     if (!this.state.cafeMenu || !this.state.cafeInfo) {
-      return (
-        <View>
-          <Text>Something went wrong. Email odt@stolaf.edu to let them know?</Text>
-        </View>
-      )
+      return <NoticeView text='Something went wrong. Email odt@stolaf.edu to let them know?' />
     }
 
     let {cafeId} = this.props
@@ -74,7 +70,7 @@ export class BonAppHostedMenu extends React.Component {
     let days = cafeInfo.cafes[cafeId].days
     let today = days.find(({date}) => date === now.format('YYYY-MM-DD'))
     if (!today || today.status === 'closed') {
-      return <LoadingView text={today ? today.message : 'Closed today'} />
+      return <NoticeView text={today ? today.message : 'Closed today'} />
     }
 
     // We hard-code to the first day returned because we're only requesting one day.

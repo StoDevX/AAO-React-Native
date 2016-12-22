@@ -1,12 +1,12 @@
 // @flow
 import React from 'react'
 import {StyleSheet, View, ListView, Text} from 'react-native'
+import {NoticeView} from '../../components/notice'
 import {FoodItemRow} from './food-item-row'
 import DietaryFilters from '../../../data/dietary-filters'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
 import type {MenuItemType, ProcessedMenuPropsType} from '../types'
-import {Cell} from 'react-native-tableview-simple'
 
 const styles = StyleSheet.create({
   container: {
@@ -86,11 +86,7 @@ export class MenuListView extends React.Component {
 
   render() {
     if (!this.state.dataSource.getRowCount()) {
-      return (
-        <View style={styles.container}>
-          <Cell title='No items to show. Try changing the filters.' />
-        </View>
-      )
+      return <NoticeView style={styles.container} text='No items to show. Try changing the filters.' />
     }
 
     return (

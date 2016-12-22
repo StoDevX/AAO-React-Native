@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
-import {View, Text} from 'react-native'
 import LoadingView from '../components/loading'
+import {NoticeView} from '../components/notice'
 import {FancyMenu} from './components/fancy-menu'
 import {fetchJson} from '../components/fetch'
 import type {TopLevelViewPropsType} from '../types'
@@ -56,11 +56,7 @@ export class GithubHostedMenu extends React.Component {
     }
 
     if (!this.state.foodItems || !this.state.corIcons) {
-      return (
-        <View>
-          <Text>Something went wrong. Email odt@stolaf.edu to let them know?</Text>
-        </View>
-      )
+      return <NoticeView text='Something went wrong. Email odt@stolaf.edu to let them know?' />
     }
 
     return (
