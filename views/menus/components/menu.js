@@ -92,7 +92,8 @@ export class MenuListView extends React.Component {
     return (
       <ListView
         style={styles.container}
-        pageSize={3}
+        initialListSize={12}
+        pageSize={4}
         removeClippedSubviews={false}
         // we have to disable this here and do it manually, because there
         // appears to be a bug where the ListView fails to auto-calculate when
