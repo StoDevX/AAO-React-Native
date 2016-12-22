@@ -8,11 +8,13 @@ import concat from 'lodash/concat'
 
 type PropsType = {
   filter: SelectSpecType,
-  onChange: () => any,
+  onChange: (filter: SelectSpecType) => any,
 };
 
-export function ChecklistSection({filter: {title, caption, options, value}, onChange}: PropsType) {
-  function callback(tappedValue) {
+export function ChecklistSection({filter, onChange}: PropsType) {
+  const {title='', caption, options, value} = filter
+
+  function callback(tappedValue: string) {
     let result = value
 
     // we default to all items selected
@@ -25,11 +27,11 @@ export function ChecklistSection({filter: {title, caption, options, value}, onCh
       result = concat(value, tappedValue)
     }
 
-    onChange(result)
+    onChange({...filter, value: result})
   }
 
   return (
-    <Section header={title} footer={caption}>
+    <Section header={title.toUpperCase()} footer={caption}>
       {options.map(val =>
         <Cell
           key={val}

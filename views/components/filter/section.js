@@ -6,14 +6,12 @@ import {ChecklistSection} from './section-checklist'
 
 type FilterSectionPropsType = {
   filter: FilterSpecType,
-  onChange: (filter: FilterSpecType, val: any) => any,
+  onChange: (filter: FilterSpecType) => any,
 };
 
 export function FilterSection({filter, onChange}: FilterSectionPropsType) {
-  let callback = val => onChange(filter, val)
-
   if (filter.type === 'toggle') {
-    return <SingleToggleSection filter={filter} onChange={callback} />
+    return <SingleToggleSection filter={filter} onChange={onChange} />
   }
 
   if (filter.type === 'list') {
@@ -21,7 +19,7 @@ export function FilterSection({filter, onChange}: FilterSectionPropsType) {
       return null
     }
 
-    return <ChecklistSection filter={filter} onChange={callback} />
+    return <ChecklistSection filter={filter} onChange={onChange} />
   }
 
   return null

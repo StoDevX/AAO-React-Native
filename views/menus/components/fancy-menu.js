@@ -47,13 +47,9 @@ export class FancyMenu extends React.Component {
       onDismiss: (route: any, navigator: any) => navigator.pop(),
       props: {
         filters: this.state.filters,
-        onChange: this.onFiltersChanged,
+        onChange: (newFilters: FilterSpecType[]) => this.setState({filters: newFilters}),
       },
     })
-  }
-
-  onFiltersChanged = (newFilters: FilterSpecType[]) => {
-    this.setState({filters: newFilters})
   }
 
   render() {
