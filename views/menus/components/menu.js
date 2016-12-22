@@ -6,6 +6,7 @@ import DietaryFilters from '../../../data/dietary-filters'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
 import type {MenuItemType, ProcessedMenuPropsType} from '../types'
+import {Cell} from 'react-native-tableview-simple'
 
 const styles = StyleSheet.create({
   container: {
@@ -84,6 +85,14 @@ export class MenuListView extends React.Component {
   }
 
   render() {
+    if (!this.state.dataSource.getRowCount()) {
+      return (
+        <View style={styles.container}>
+          <Cell title='No items to show. Try changing the filters.' />
+        </View>
+      )
+    }
+
     return (
       <ListView
         style={styles.container}
