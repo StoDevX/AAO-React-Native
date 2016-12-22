@@ -87,10 +87,10 @@ export class BonAppHostedMenu extends React.Component {
       <FancyMenu
         route={this.props.route}
         navigator={this.props.navigator}
-        now={now}
-        menuLabel={mealName}
-        menuCorIcons={cafeMenu.cor_icons}
         foodItems={cafeMenu.items}
+        menuCorIcons={cafeMenu.cor_icons}
+        menuLabel={mealName}
+        now={now}
       />
     )
   }
