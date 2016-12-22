@@ -1,17 +1,17 @@
 // @flow
 import React from 'react'
-import type {SelectSpecType} from './types'
+import type {ListSpecType} from './types'
 import {Section, Cell} from 'react-native-tableview-simple'
 import includes from 'lodash/includes'
 import without from 'lodash/without'
 import concat from 'lodash/concat'
 
 type PropsType = {
-  filter: SelectSpecType,
-  onChange: (filter: SelectSpecType) => any,
+  filter: ListSpecType,
+  onChange: (filter: ListSpecType) => any,
 };
 
-export function ChecklistSection({filter, onChange}: PropsType) {
+export function ListSection({filter, onChange}: PropsType) {
   const {title='', caption, options, value} = filter
 
   function callback(tappedValue: string) {

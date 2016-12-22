@@ -2,7 +2,7 @@
 import React from 'react'
 import type {FilterSpecType} from './types'
 import {SingleToggleSection} from './section-toggle'
-import {ChecklistSection} from './section-checklist'
+import {ListSection} from './section-list'
 
 type FilterSectionPropsType = {
   filter: FilterSpecType,
@@ -19,7 +19,7 @@ export function FilterSection({filter, onChange}: FilterSectionPropsType) {
       return null
     }
 
-    return <ChecklistSection filter={filter} onChange={onChange} />
+    return <ListSection filter={filter} onChange={onChange} />
   }
 
   return null

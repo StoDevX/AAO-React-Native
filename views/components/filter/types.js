@@ -8,7 +8,7 @@ export type ToggleSpecType = {
   value: boolean,
 };
 
-export type SelectSpecType = {
+export type ListSpecType = {
   type: 'list',
   multiple: boolean,
   key: string,
@@ -18,4 +18,4 @@ export type SelectSpecType = {
   value: string[],
 };
 
-export type FilterSpecType = ToggleSpecType | SelectSpecType;
+export type FilterSpecType = ToggleSpecType | ListSpecType;
