@@ -32,7 +32,7 @@ function applyStationsFilter(items: MenuItemType[], filters: FilterSpecType[]): 
   // Given all of the stations, get just the ones we want.
   let onlyTheseStations = getSelectedValuesFromListFilter(stationsFilter)
 
-  if (onlyTheseStations) {
+  if (onlyTheseStations.length) {
     items = filter(items, item => includes(onlyTheseStations, item.station))
   }
 
@@ -45,7 +45,7 @@ function applyDietaryFilter(items: MenuItemType[], filters: FilterSpecType[]): M
   // Given all of the dietary restrictions, get just the ones we want.
   let onlyTheseDietaryRestrictions = getSelectedValuesFromListFilter(dietaryRestrictionsFilter)
 
-  if (onlyTheseDietaryRestrictions) {
+  if (onlyTheseDietaryRestrictions.length) {
     items = filter(items, item => {
       let theseRestrictions = values(item.cor_icon)
       // If the item has no restrictions, it can't have the one we're
