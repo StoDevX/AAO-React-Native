@@ -71,9 +71,7 @@ export class FancyMenu extends React.Component {
   render() {
     let {props, state} = this
 
-    // TODO: do we need menuItems and stationMenus anymore?
-
-    // prevent ourselves from returning duplicate items
+    // get all the food
     let allMenuItems = values(props.foodItems)
 
     // clean up the station names
