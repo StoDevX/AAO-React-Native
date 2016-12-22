@@ -55,8 +55,7 @@ export class BonAppHostedMenu extends React.Component {
 
   render() {
     if (this.state.loading) {
-      let msg = sample(this.props.loadingMessage)
-      return <LoadingView text={msg} />
+      return <LoadingView text={sample(this.props.loadingMessage)} />
     }
 
     if (!this.state.cafeMenu || !this.state.cafeInfo) {
@@ -68,11 +67,7 @@ export class BonAppHostedMenu extends React.Component {
     }
 
     let {cafeId} = this.props
-    let {
-      now,
-      cafeMenu,
-      cafeInfo,
-    } = this.state
+    let {now, cafeMenu, cafeInfo} = this.state
 
     // We grab the "today" info from here because BonApp returns special
     // messages in this response, like "Closed for Christmas Break"
