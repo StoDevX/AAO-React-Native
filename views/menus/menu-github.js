@@ -9,7 +9,7 @@ import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 import sample from 'lodash/sample'
-import type {MenuItemContainerType, MasterCorIconMapType} from './types'
+import type {MenuItemType, MasterCorIconMapType} from './types'
 
 const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native/menus'
 
@@ -17,13 +17,13 @@ export class GithubHostedMenu extends React.Component {
   state: {
     loading: boolean,
     now: momentT,
-    foodItems: ?MenuItemContainerType,
-    corIcons: ?MasterCorIconMapType,
+    foodItems: MenuItemType[],
+    corIcons: MasterCorIconMapType,
   } = {
     loading: true,
     now: moment.tz(CENTRAL_TZ),
-    foodItems: null,
-    corIcons: null,
+    foodItems: [],
+    corIcons: {},
   }
 
   componentWillMount() {
@@ -53,10 +53,6 @@ export class GithubHostedMenu extends React.Component {
     if (this.state.loading) {
       let msg = sample(this.props.loadingMessage)
       return <LoadingView text={msg} />
-    }
-
-    if (!this.state.foodItems || !this.state.corIcons) {
-      return <NoticeView text='Something went wrong. Email odt@stolaf.edu to let them know?' />
     }
 
     return (

@@ -3,10 +3,9 @@ import React from 'react'
 import {View, Navigator} from 'react-native'
 import type {TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
-import type {MenuItemContainerType, MenuItemType, MasterCorIconMapType} from '../types'
+import type {MenuItemType, MasterCorIconMapType} from '../types'
 import type {FilterSpecType} from '../../components/filter'
 import groupBy from 'lodash/groupBy'
-import map from 'lodash/map'
 import sortBy from 'lodash/sortBy'
 import {FilterMenuToolbar} from './filter-menu-toolbar'
 import {MenuListView} from './menu'
@@ -27,13 +26,14 @@ export class FancyMenu extends React.Component {
 
   componentWillMount() {
     let {foodItems, menuCorIcons} = this.props
-    this.setState({filters: buildMenuFilters({foodItems, corIcons: menuCorIcons})})
+    let filters = buildMenuFilters({foodItems, corIcons: menuCorIcons})
+    this.setState({filters})
   }
 
   props: TopLevelViewPropsType & {
     applyFilters: (items: MenuItemType[], filters: FilterSpecType[]) => MenuItemType[],
     now: momentT,
-    foodItems: MenuItemContainerType,
+    foodItems: MenuItemType[],
     menuLabel?: string,
     menuCorIcons: MasterCorIconMapType,
   }
@@ -65,7 +65,7 @@ export class FancyMenu extends React.Component {
     let {filters} = this.state
 
     // get all the food
-    let allMenuItems = map(foodItems, item => ({
+    let allMenuItems = foodItems.map(item => ({
       ...item,  // we want to edit the item, not replace it
       station: trimStationName(item.station),  // station names are a mess
       label: trimItemLabel(item.label),  // clean up the titles

@@ -6,6 +6,7 @@ import type {TopLevelViewPropsType} from '../types'
 import {FancyMenu} from './components/fancy-menu'
 import type {BonAppMenuInfoType, BonAppCafeInfoType} from './types'
 import sample from 'lodash/sample'
+import values from 'lodash/values'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
@@ -83,7 +84,7 @@ export class BonAppHostedMenu extends React.Component {
       <FancyMenu
         route={this.props.route}
         navigator={this.props.navigator}
-        foodItems={cafeMenu.items}
+        foodItems={values(cafeMenu.items)}
         menuCorIcons={cafeMenu.cor_icons}
         menuLabel={mealName}
         now={now}

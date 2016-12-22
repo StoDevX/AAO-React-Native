@@ -1,11 +1,11 @@
 // @flow
 import type {FilterSpecType} from '../../components/filter'
-import type {MenuItemContainerType, MasterCorIconMapType} from '../types'
+import type {MenuItemType, MasterCorIconMapType} from '../types'
 import {trimStationName} from '../lib/trim-names'
 import uniq from 'lodash/uniq'
 import map from 'lodash/map'
 
-export function buildMenuFilters({foodItems, corIcons}: {foodItems: MenuItemContainerType, corIcons: MasterCorIconMapType}): FilterSpecType[] {
+export function buildMenuFilters({foodItems, corIcons}: {foodItems: MenuItemType[], corIcons: MasterCorIconMapType}): FilterSpecType[] {
   let filters = []
 
   filters.push({
