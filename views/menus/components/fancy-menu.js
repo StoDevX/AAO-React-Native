@@ -56,10 +56,6 @@ export class FancyMenu extends React.Component {
     this.setState({filters: newFilters})
   }
 
-  flatten(accumulator: any[], current: any[]) {
-    return accumulator.concat(current)
-  }
-
   render() {
     let {foodItems, now, menuLabel} = this.props
     let {filters} = this.state
