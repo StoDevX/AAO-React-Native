@@ -96,6 +96,7 @@ export class MenuListView extends React.Component {
     return (
       <ListView
         style={styles.container}
+        pageSize={3}
         removeClippedSubviews={false}
         automaticallyAdjustContentInsets={true}
         dataSource={this.state.dataSource}
