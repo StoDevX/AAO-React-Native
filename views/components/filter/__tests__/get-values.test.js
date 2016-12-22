@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import {getSelectedValuesFromListFilter as getValues} from '../get-values'
 
-const makeChecklistFilter = ({options=[], value=[]}={}) => ({
+const makeListFilter = ({options=[], value=[]}={}) => ({
   type: 'list',
   multiple: true,
   key: 'key',
@@ -24,6 +24,6 @@ it('should return an empty array if no filter is passed', () => {
 })
 
 it('should return an array for a List filter', () => {
-  let filter = makeChecklistFilter()
+  let filter = makeListFilter()
   expect(getValues(filter)).toBeInstanceOf(Array)
 })
