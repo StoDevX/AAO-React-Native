@@ -20,6 +20,10 @@ type FancyMenuPropsType = TopLevelViewPropsType & {
   stationMenus: StationMenuType[],
 };
 
+// We're disabling the stateless-function check for a short while. Only until
+// the next PR comes in, as it requires state. This will make the diff
+// smaller.
+// eslint-disable-next-line react/prefer-stateless-function
 export class FancyMenu extends React.Component {
   props: FancyMenuPropsType;
 
