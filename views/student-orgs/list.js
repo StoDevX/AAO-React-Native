@@ -30,6 +30,7 @@ const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 let styles = StyleSheet.create({
   listView: {
     paddingRight: 16,
+    backgroundColor: c.white,
   },
   textRows: {
     paddingTop: 8,
