@@ -24,16 +24,17 @@ export function findMenu(dayparts: DayPartsCollectionType, now: momentT): void|D
   }
 
   // Otherwise, we make ourselves a list of {starttime, endtime} pairs so we
-  // can query times relative to `now`.
+  // can query times relative to `now`. Also make sure to set dayOfYear to
+  // `now`, so that we don't have our days wandering all over the place.
   const times = daypart.map(({starttime, endtime}) => ({
-    startTime: moment.tz(starttime, 'H:mm', true, CENTRAL_TZ),
-    endTime: moment.tz(endtime, 'H:mm', true, CENTRAL_TZ),
+    start: moment.tz(starttime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
+    end: moment.tz(endtime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
   }))
 
   // We grab the first meal that ends sometime after `now`. The only time
   // this really fails is in the early morning, if it's like 1am and you're
   // wondering what there was at dinner.
-  let mealIndex = findIndex(times, ({endTime}) => now.isSameOrBefore(endTime))
+  let mealIndex = findIndex(times, ({end}) => now.isSameOrBefore(end))
 
   // If we didn't find a meal, we must be after the last meal, so we want to
   // return the last meal of the day.
