@@ -12,7 +12,7 @@ import FoodItem from './foodItem'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 
-import DietaryFilters from './dietaryFilters'
+import DietaryFilters from '../../data/dietary-filters'
 import buildingHours from '../../data/building-hours.json'
 
 export default class StavMenuView extends React.Component {
