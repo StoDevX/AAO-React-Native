@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 
 import FoodItem from './foodItem'
-import DietaryFilters from './dietaryFilters'
+import DietaryFilters from '../../data/dietary-filters'
 
 export default class CageMenuView extends React.Component {
   constructor(props){
