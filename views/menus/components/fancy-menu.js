@@ -59,7 +59,7 @@ class FancyMenuView extends React.Component {
     // get all the food
     let allMenuItems = foodItems.map(item => ({
       ...item,  // we want to edit the item, not replace it
-      station: trimStationName(item.station),  // station names are a mess
+      station: trimStationName(item.station),  // <b>@station names</b> are a mess
       label: trimItemLabel(item.label),  // clean up the titles
     }))
 
