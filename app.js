@@ -3,6 +3,9 @@
  * Index view
  */
 
+// Tweak the global fetch
+import './globalize-fetch'
+
 import React from 'react'
 import {
   Navigator,
