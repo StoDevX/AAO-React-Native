@@ -21,6 +21,16 @@ describe('applySpecialsFilter', () => {
 
     expect(actual).toEqual(expected)
   })
+
+  it('does not apply when the filter is not given', () => {
+    let items = [{special: true}, {special: false}, {special: false}]
+    let filters = []
+
+    let actual = applySpecialsFilter(items, filters)
+    let expected = items
+
+    expect(actual).toEqual(expected)
+  })
 })
 
 describe('applyStationsFilter', () => {
@@ -37,6 +47,16 @@ describe('applyStationsFilter', () => {
   it('does not apply the filter when the filter is disabled', () => {
     let items = [{station: 'a'}, {station: 'b'}, {station: 'a'}]
     let filters = [{key: 'stations', options: ['a', 'b'], value: ['a', 'b']}]
+
+    let actual = applyStationsFilter(items, filters)
+    let expected = items
+
+    expect(actual).toEqual(expected)
+  })
+
+  it('does not apply when the filter is not given', () => {
+    let items = [{station: 'a'}, {station: 'b'}, {station: 'a'}]
+    let filters = []
 
     let actual = applyStationsFilter(items, filters)
     let expected = items
@@ -69,6 +89,16 @@ describe('applyDietaryFilter', () => {
   it('does not apply the filter when the filter is disabled', () => {
     let items = [{'cor_icon': {}}, {'cor_icon': {'1': 'a'}}, {'cor_icon': {'1': 'a'}}, {'cor_icon': {'1': 'a'}}]
     let filters = [{key: 'restrictions', type: 'list', options: ['a', 'b'], value: ['a', 'b']}]
+
+    let actual = applyDietaryFilter(items, filters)
+    let expected = items
+
+    expect(actual).toEqual(expected)
+  })
+
+  it('does not apply when the filter is not given', () => {
+    let items = [{'cor_icon': {}}, {'cor_icon': {'1': 'a'}}, {'cor_icon': {'1': 'a'}}, {'cor_icon': {'1': 'a'}}]
+    let filters = []
 
     let actual = applyDietaryFilter(items, filters)
     let expected = items
