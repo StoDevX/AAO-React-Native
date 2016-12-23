@@ -34,7 +34,7 @@
   "jest": {
     "testRegex": "/__tests__/.*\\.(test|spec)\\.js$",
     "collectCoverageFrom": [
-      "{lib,views}/**/*.{js,jsx}",
+      "{flux,lib,views}/**/*.{js,jsx}",
       "!**/node_modules/**"
     ],
     "preset": "react-native"
