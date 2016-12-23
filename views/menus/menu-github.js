@@ -12,7 +12,7 @@ import type {MenuItemType, MasterCorIconMapType} from './types'
 
 const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native/menus'
 
-export class GithubHostedMenu extends React.Component {
+export class GitHubHostedMenu extends React.Component {
   state: {
     loading: boolean,
     now: momentT,
