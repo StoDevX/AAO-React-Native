@@ -3,7 +3,7 @@
 export type CurrencyStringType = string;
 export type HtmlStringType = string;
 export type ItemIdReferenceStringType = string;
-export type MilitaryTimeStringType = string;
+export type MilitaryTimeStringType = string; // H:mm
 export type NumericStringType = string;
 
 export type MenuItemType = {
