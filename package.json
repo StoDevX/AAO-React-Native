@@ -35,6 +35,7 @@
     "testRegex": "/__tests__/.*\\.(test|spec)\\.js$",
     "collectCoverageFrom": [
       "{flux,lib,views}/**/*.{js,jsx}",
+      "!**/__tests__/**",
       "!**/node_modules/**"
     ],
     "preset": "react-native"
