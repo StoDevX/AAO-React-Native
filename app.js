@@ -1,3 +1,4 @@
+// @flow
 /**
  * All About Olaf
  * Index view
@@ -22,7 +23,8 @@ import DirectoryView from './views/directory'
 import HomeView from './views/home'
 import MapView from './views/map'
 import StreamingView from './views/streaming'
-import MenusView from './views/menus'
+import {MenusView} from './views/menus'
+import {FilterView} from './views/components/filter'
 import NewsView from './views/news'
 import NewsItemView from './views/news/news-item'
 import SISView from './views/sis'
@@ -45,6 +47,7 @@ function renderScene(route, navigator) {
   switch (route.id) {
     case 'HomeView': return <HomeView {...props} />
     case 'MenusView': return <MenusView {...props} />
+    case 'FilterView': return <FilterView {...props} />
     case 'DirectoryView': return <DirectoryView {...props} />
     case 'CalendarView': return <CalendarView {...props} />
     case 'ContactsView': return <ContactsView {...props} />
@@ -296,6 +299,8 @@ class App extends React.Component {
   componentWillUnmount() {
     BackAndroid.removeEventListener('hardwareBackPress', this.registerAndroidBackButton)
   }
+
+  _navigator: typeof Navigator;
 
   registerAndroidBackButton = () => {
     if (this._navigator && this._navigator.getCurrentRoutes().length > 1) {

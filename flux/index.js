@@ -32,9 +32,28 @@ function homescreen(state=initialHomescreenState, action) {
   }
 }
 
+
+export const UPDATE_MENU_FILTERS = 'menus/UPDATE_MENU_FILTERS'
+
+export const updateMenuFilters = (menuName: string, filters: any[]) => {
+  return {type: UPDATE_MENU_FILTERS, payload: {menuName, filters}}
+}
+
+const initialMenusState = {}
+function menus(state=initialMenusState, action) {
+  let {type, payload} = action
+  switch (type) {
+    case UPDATE_MENU_FILTERS:
+      return {...state, [payload.menuName]: payload.filters}
+    default:
+      return state
+  }
+}
+
 export function aao(state={}, action) {
   return {
     homescreen: homescreen(state.homescreen, action),
+    menus: menus(state.menus, action),
   }
 }
 
