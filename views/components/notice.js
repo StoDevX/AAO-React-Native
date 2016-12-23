@@ -7,15 +7,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    textAlign: 'center',
     backgroundColor: '#ffffff',
+  },
+  text: {
+    textAlign: 'center',
   },
 })
 
 export function NoticeView({text, style}: {text: string, style?: any}) {
   return (
     <View style={[styles.container, style]}>
-      <Text>
+      <Text style={styles.text}>
         {text}
       </Text>
     </View>
