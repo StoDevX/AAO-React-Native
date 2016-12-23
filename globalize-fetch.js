@@ -18,7 +18,7 @@ function json(response) {
 }
 
 // make fetch() calls throw if the server returns a non-200 status code
-global.fetch = (...args: any[]) => global.fetch(...args).then(status)
+global.fetch = (...args: any[]) => global.rawFetch(...args).then(status)
 
 // add a global fetchJson wrapper
 global.fetchJson = (...args: any[]) => fetch(...args).then(json)
