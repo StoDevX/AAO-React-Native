@@ -11,7 +11,7 @@ import {
  StyleSheet,
  Platform,
 } from 'react-native'
-
+import {Badge} from '../components/badge'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
 import * as c from '../components/colors'
@@ -51,15 +51,7 @@ let styles = StyleSheet.create({
     textAlign: 'left',
   },
   accessoryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
     marginLeft: 4,
-    borderRadius: 2,
-    borderWidth: 1,
-    alignSelf: 'center',
-  },
-  accessoryBadgeText: {
-    color: c.white,
   },
   previewText: {
     color: c.iosDisabledText,
@@ -98,7 +90,6 @@ export function BuildingRow({info, name, now, style}: PropsType) {
 
   const accent = bgColors[openStatus] || c.goldenrod
   const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
-  const bgaccent = accent.replace('rgb', 'rgba').replace(')', ', 0.1)')
 
   return (
     <View style={[styles.row, style]}>
@@ -108,9 +99,7 @@ export function BuildingRow({info, name, now, style}: PropsType) {
             {title}
           </View>
 
-          <View style={[styles.accessoryBadge, {backgroundColor: bgaccent, borderColor: accent}]}>
-            <Text style={[styles.accessoryBadgeText, {color: textaccent}]}>{openStatus}</Text>
-          </View>
+          <Badge text={openStatus} accentColor={accent} textColor={textaccent} style={styles.accessoryBadge} />
         </View>
 
         <View style={[styles.preview]}>
