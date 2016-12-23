@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import LoadingView from '../components/loading'
-import {NoticeView} from '../components/notice'
 import {FancyMenu} from './components/fancy-menu'
 import {fetchJson} from '../components/fetch'
 import type {TopLevelViewPropsType} from '../types'
