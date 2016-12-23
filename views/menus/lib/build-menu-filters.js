@@ -1,7 +1,7 @@
 // @flow
 import type {FilterSpecType} from '../../components/filter'
 import type {MenuItemType, MasterCorIconMapType} from '../types'
-import {trimStationName} from '../lib/trim-names'
+import {trimStationName} from './trim-names'
 import uniq from 'lodash/uniq'
 import map from 'lodash/map'
 
