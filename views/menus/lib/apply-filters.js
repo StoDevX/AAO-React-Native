@@ -14,7 +14,7 @@ export function applyFilters(items: MenuItemType[], filters: FilterSpecType[]): 
   return items
 }
 
-function applySpecialsFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
+export function applySpecialsFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
   let onlySpecialsFilter = filters.find(({key}) => key === 'specials')
 
   let onlySpecials = onlySpecialsFilter ? onlySpecialsFilter.value : false
@@ -26,7 +26,7 @@ function applySpecialsFilter(items: MenuItemType[], filters: FilterSpecType[]): 
   return items
 }
 
-function applyStationsFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
+export function applyStationsFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
   let stationsFilter = filters.find(({key}) => key === 'stations')
 
   // Given all of the stations, get just the ones we want.
@@ -39,7 +39,7 @@ function applyStationsFilter(items: MenuItemType[], filters: FilterSpecType[]): 
   return items
 }
 
-function applyDietaryFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
+export function applyDietaryFilter(items: MenuItemType[], filters: FilterSpecType[]): MenuItemType[] {
   let dietaryRestrictionsFilter = filters.find(({key}) => key === 'restrictions')
 
   // Given all of the dietary restrictions, get just the ones we want.
