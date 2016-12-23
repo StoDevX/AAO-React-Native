@@ -18,7 +18,7 @@ export type MenuItemType = {
     short_name: ?null,
     image: string,
   },
-  nutrition: {
+  nutrition: {} | {
     kcal: NumericStringType,
     well_being: string,
     well_being_image: string,
