@@ -26,7 +26,10 @@ let styles = StyleSheet.create({
   },
 })
 
-import type {MenuItemType} from './types'
+export type MenuItemType = {
+  name: string,
+  price: string,
+};
 
 export default function MenuItem({items, style}: {items: MenuItemType[], style: number|Object}) {
   return (

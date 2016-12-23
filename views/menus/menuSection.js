@@ -16,7 +16,13 @@ import {
 import * as c from '../components/colors'
 import Collapsible from '../components/collapsible'
 import MenuItem from './menuItem'
-import type { MenuItemType } from './types'
+import type { MenuItemType } from './menuItem'
+
+export type MenuSectionType = {
+  name: string,
+  items: MenuItemType[],
+  subtext: string,
+};
 
 let width = Dimensions.get('window').width //full width
 

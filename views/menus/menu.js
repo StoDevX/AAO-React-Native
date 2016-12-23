@@ -6,7 +6,7 @@ import {
 } from 'react-native'
 
 import MenuSection from './menuSection'
-import type {MenuSectionType} from './types'
+import type {MenuSectionType} from './menuSection'
 
 let styles = StyleSheet.create({
   container: {
