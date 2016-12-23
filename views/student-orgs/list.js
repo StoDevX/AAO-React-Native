@@ -29,21 +29,25 @@ const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 
 let styles = StyleSheet.create({
   listView: {
-    backgroundColor: '#ffffff',
     paddingRight: 16,
   },
   textRows: {
-    marginLeft: 20,
-    paddingRight: 10,
     paddingTop: 8,
     paddingBottom: 8,
-    height: 60,
+    height: 53,
     flexDirection: 'column',
     flex: 1,
   },
   notLastRow: {
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: '#c8c7cc',
+  },
+  itemNew: {
+    marginLeft: -15,
+    marginRight: 5,
+    marginTop: -1,
+    width: 15,
+    fontSize: 28,
   },
   itemTitle: {
     color: c.black,
@@ -73,6 +77,7 @@ let styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    marginLeft: 20,
   },
   arrowIcon: {
     color: c.iosDisabledText,
@@ -152,10 +157,11 @@ export class StudentOrgsView extends React.Component {
   renderRow = ({isLast, item}: {isLast: boolean, item: StudentOrgAbridgedType}) => {
     let orgName = item.name
     let orgCategory = item.categories.join(', ')
-
+    let orgNew = [styles.itemNew, {color: item.newOrg ? 'blue' : 'transparent'}]
     return (
       <TouchableHighlight underlayColor='#ebebeb' onPress={() => this.onPressRow(item)}>
         <View style={[styles.row, !isLast && styles.notLastRow]}>
+          <Text style={orgNew}>• </Text>
           <View style={[styles.textRows]}>
             <Text style={styles.itemTitle} numberOfLines={1}>{orgName}</Text>
             <Text style={styles.itemPreview}>{orgCategory}</Text>
@@ -203,7 +209,7 @@ export class StudentOrgsView extends React.Component {
         cell={this.renderRow}
         sectionHeader={this.renderHeader}
         sectionHeaderHeight={28}
-        cellHeight={70}
+        cellHeight={53}
         showsVerticalScrollIndicator={false}
       />
     )
