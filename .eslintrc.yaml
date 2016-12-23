@@ -17,6 +17,8 @@ plugins: [babel, react, flowtype]
 globals:
   fetch: true
   FormData: true
+  fetchJson: true
+  rawFetch: true
 
 rules:
   array-callback-return: error

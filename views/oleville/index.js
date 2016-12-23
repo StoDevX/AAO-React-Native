@@ -26,8 +26,6 @@ import zipWith from 'lodash/zipWith'
 const URL = 'http://oleville.com/wp-json/wp/v2/posts?per_page=5'
 const defaultOlevilleImageUrl = 'http://oleville.com/wp-content/uploads/2015/12/Oleville-Logo.png'
 
-const fetchJson = url => fetch(url).then(r => r.json())
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
