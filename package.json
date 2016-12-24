@@ -63,7 +63,7 @@
     "react-native-onesignal": "1.2.3",
     "react-native-parallax-view": "2.0.6",
     "react-native-refreshable-listview": "1.3.0",
-    "react-native-sortable-list": "github:drewvolz/react-native-sortable-list#d8c4f40738e10cdb423bd5e1ea091da769cae3d4",
+    "react-native-sortable-list": "github:hawkrives/react-native-sortable-list#a46c78161e0a1a8d3a45f2fef69d98af3e911b6d",
     "react-native-tab-view": "0.0.40",
     "react-native-tableview-simple": "0.13.0",
     "react-native-vector-icons": "3.0.0",
