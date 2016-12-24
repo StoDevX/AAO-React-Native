@@ -59,7 +59,7 @@ export class StudentOrgsDetailView extends React.Component {
     let orgUrl = orgsUrl + '/' + this.props.item.uri
 
     try {
-      let response = await fetch(orgUrl).then(r => r.json())
+      let response = await fetchJson(orgUrl)
       this.setState({data: response})
     } catch (error) {
       this.setState({error: true})
