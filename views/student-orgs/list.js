@@ -46,8 +46,7 @@ let styles = StyleSheet.create({
   itemNew: {
     marginLeft: -15,
     marginRight: 5,
-    marginTop: -1,
-    width: 15,
+    width: 11,
     fontSize: 28,
   },
   itemTitle: {
