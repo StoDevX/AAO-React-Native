@@ -1,17 +1,38 @@
 {
+  "stationMenus": [
+    {
+      "label": "Shakes",
+      "note": "Mixins: M&Ms, Oreos, Reese’s Peanut Butter Cups"
+    },
+    {
+      "label": "Soft-Serve",
+      "note": "Hand-swirled in a cup or a cone",
+    },
+    {
+      "label": "Pizza",
+      "note": "Includes a cup of Marinara, Ranch, BBQ, or Honey Mustard sauce"
+    },
+    {
+      "label": "Quesadilla",
+      "note": "Salsa & Sour Cream are extra"
+    }
+  ],
   "foodItems": [
     {
-      "label": "Slice",
+      "description": "One (1) slice of pizza pie",
+      "label": "Single Slice",
       "special": true,
       "station": "Pizza"
     },
     {
       "label": "Small Pizza (12 in)",
+      "description": "Includes two toppings",
       "special": true,
       "station": "Pizza"
     },
     {
       "label": "Large Pizza (16 in)",
+      "description": "Includes two toppings",
       "special": true,
       "station": "Pizza"
     },
@@ -23,29 +44,29 @@
     {
       "label": "BBQ Chicken",
       "special": true,
-      "station": "Pizza - Specialties"
+      "station": "Specialty Pizzas",
     },
     {
       "label": "Buffalo Chicken",
       "special": true,
-      "station": "Pizza - Specialties"
+      "station": "Specialty Pizzas",
     },
     {
       "label": "Chicken Bacon Ranch",
       "special": true,
-      "station": "Pizza - Specialties"
+      "station": "Specialty Pizzas",
     },
     {
-      "description": "tomatoes",
+      "description": "Includes tomatoes",
       "label": "Chicken Pesto",
       "special": true,
-      "station": "Pizza - Specialties"
+      "station": "Specialty Pizzas",
     },
     {
-      "description": "pepperoni, sausage, onions, green peppers, black olives",
+      "description": "Includes pepperoni, sausage, onions, green peppers, and black olives",
       "label": "Ole Pizza",
       "special": true,
-      "station": "Pizza - Specialties"
+      "station": "Specialty Pizzas",
     },
     {
       "label": "Bacon",
@@ -100,39 +121,30 @@
       "station": "Toppings"
     },
     {
-      "label": "M&Ms",
-      "station": "Shake Mixins"
-    },
-    {
-      "label": "Oreo",
-      "station": "Shake Mixins"
-    },
-    {
-      "label": "Reese’s peanut butter cups",
-      "station": "Shake Mixins"
-    },
-    {
       "label": "Cheese Quesadilla (Half / Whole)",
       "special": true,
       "station": "Quesadilla"
     },
     {
+      "description": "Includes tomatoes, onions, green peppers, and jalapeños",
       "label": "Ultimate Quesadilla (Half / Whole)",
       "special": true,
       "station": "Quesadilla"
     },
     {
+      "description": "Pizza built on pita bread; includes two toppings",
       "label": "Pita Pizza",
       "special": true,
       "station": "Pita"
     },
     {
+      "description": "Pizza built on pita bread; includes two toppings",
       "label": "Specialty Pita Pizza",
       "special": true,
       "station": "Pita"
     },
     {
-      "description": "Pita bread with choice of Hummus and Vegetable Toppings, cooked",
+      "description": "Pita bread with choice of hummus and cooked vegetable toppings",
       "label": "Garden Pita",
       "special": true,
       "station": "Pita"
@@ -149,7 +161,7 @@
       "station": "Savory"
     },
     {
-      "label": "Pizza Bagel - Specialty",
+      "label": "Specialty Pizza Bagel",
       "special": true,
       "station": "Savory"
     },
@@ -159,12 +171,13 @@
       "station": "Savory"
     },
     {
-      "description": "Chips and cheese cup",
+      "description": "Includes both chips and a cheese cup",
       "label": "Nachos",
       "special": true,
       "station": "Savory"
     },
     {
+      "description": "Includes both chips and salsa",
       "label": "Chips & Salsa",
       "special": true,
       "station": "Savory"
@@ -180,40 +193,89 @@
       "station": "Savory"
     },
     {
-      "description": "Choice of dipping sauce: BBQ, Honey Mustard, Marinara, Ranch, Blue Cheese, Hot Sauce",
+      "description": "Dipping sauces: BBQ, Honey Mustard, Marinara, Ranch, Blue Cheese, or Hot Sauce",
       "label": "Chicken Strips",
       "special": true,
       "station": "Savory"
     },
     {
-      "label": "Shakes",
+      "label": "Vanilla",
       "special": true,
-      "station": "Sweet"
+      "station": "Shakes",
     },
     {
-      "label": "Ice Cream",
+      "label": "Chocolate",
       "special": true,
-      "station": "Sweet"
+      "station": "Shakes",
     },
     {
+      "label": "Strawberry",
+      "special": true,
+      "station": "Shakes",
+    },
+    {
+      "label": "Butter Pecan",
+      "special": true,
+      "station": "Shakes",
+    },
+    {
+      "label": "Butterscotch",
+      "special": true,
+      "station": "Shakes",
+    },
+    {
+      "label": "Mocha",
+      "special": true,
+      "station": "Shakes",
+    },
+    {
+      "label": "Mint",
+      "special": true,
+      "station": "Shakes",
+    },
+    {
+      "label": "Cheesecake",
+      "special": true,
+      "station": "Shakes",
+    },
+    {
+      "label": "Vanilla",
+      "special": true,
+      "station": "Soft-Serve",
+    },
+    {
+      "label": "Chocolate",
+      "special": true,
+      "station": "Soft-Serve",
+    },
+    {
+      "label": "Twist",
+      "special": true,
+      "station": "Soft-Serve",
+    },
+    {
+      "description": "A delectable fusion of cookie dough and chocolate chunks, in cookie form",
       "label": "Pause Cookie",
       "special": true,
-      "station": "Sweet"
+      "station": "Late-Night Feast",
     },
     {
       "label": "Fountain Drinks",
+      "description": "Refills are extra",
       "special": true,
-      "station": "Fountain & Bottled"
+      "station": "Fountain & Bottled Drinks",
     },
     {
+      "description": "No refills",
       "label": "Bottled Beverages",
       "special": true,
-      "station": "Fountain & Bottled"
+      "station": "Fountain & Bottled Drinks",
     },
     {
+      "description": "Available in Small or Large sizes",
       "label": "Root Beer Float",
       "special": true,
-      "station": "Fountain & Bottled"
+      "station": "Fountain & Bottled Drinks",
     }
   ],
   "corIcons": {}
