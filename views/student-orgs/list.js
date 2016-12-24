@@ -157,7 +157,7 @@ export class StudentOrgsView extends React.Component {
   renderRow = ({isLast, item}: {isLast: boolean, item: StudentOrgAbridgedType}) => {
     let orgName = item.name
     let orgCategory = item.categories.join(', ')
-    let orgNew = [styles.itemNew, {color: item.newOrg ? 'blue' : 'transparent'}]
+    let orgNew = [styles.itemNew, {color: item.newOrg ? c.infoBlue : 'transparent'}]
     return (
       <TouchableHighlight underlayColor='#ebebeb' onPress={() => this.onPressRow(item)}>
         <View style={[styles.row, !isLast && styles.notLastRow]}>
