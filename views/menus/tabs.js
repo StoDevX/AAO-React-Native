@@ -1,6 +1,6 @@
 // @flow
 import {BonAppHostedMenu} from './menu-bonapp'
-import PauseMenuView from './pause'
+import {GitHubHostedMenu} from './menu-github'
 
 const stolaf = [
   {
@@ -36,14 +36,14 @@ const stolaf = [
     id: 'pause',
     title: 'The Pause',
     rnVectorIcon: {iconName: 'paw'},
-    component: PauseMenuView,
-    // props: {
-    //   name: 'pause',
-    //   loadingMessage: [
-    //     'Mixing up a shake…',
-    //     'Spinning up pizzas…',
-    //   ],
-    // },
+    component: GitHubHostedMenu,
+    props: {
+      name: 'pause',
+      loadingMessage: [
+        'Mixing up a shake…',
+        'Spinning up pizzas…',
+      ],
+    },
   },
 ]
 
