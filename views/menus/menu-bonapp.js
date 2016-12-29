@@ -17,6 +17,12 @@ const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
 const bonappCafeBaseUrl = 'http://legacy.cafebonappetit.com/api/2/cafes'
 const fetchJsonQuery = (url, query) => fetchJson(`${url}?${qs.stringify(query)}`)
 
+type BonAppPropsType = TopLevelViewPropsType & {
+  cafeId: string,
+  loadingMessage: string[],
+  name: string,
+};
+
 export class BonAppHostedMenu extends React.Component {
   state: {
     error: ?Error,
@@ -33,16 +39,16 @@ export class BonAppHostedMenu extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData(this.props)
   }
 
-  props: TopLevelViewPropsType & {
-    cafeId: string,
-    loadingMessage: string[],
-    name: string,
+  componentWillReceiveProps(newProps: BonAppPropsType) {
+    this.props.cafeId !== newProps.cafeId && this.fetchData(newProps)
   }
 
-  fetchData = async () => {
+  props: BonAppPropsType;
+
+  fetchData = async (props: BonAppPropsType) => {
     this.setState({loading: true})
 
     let cafeMenu = null
@@ -50,8 +56,8 @@ export class BonAppHostedMenu extends React.Component {
 
     try {
       let requests = await Promise.all([
-        fetchJsonQuery(bonappMenuBaseUrl, {cafe: this.props.cafeId}),
-        fetchJsonQuery(bonappCafeBaseUrl, {cafe: this.props.cafeId}),
+        fetchJsonQuery(bonappMenuBaseUrl, {cafe: props.cafeId}),
+        fetchJsonQuery(bonappCafeBaseUrl, {cafe: props.cafeId}),
       ])
       cafeMenu = (requests[0]: BonAppMenuInfoType)
       cafeInfo = (requests[1]: BonAppCafeInfoType)
