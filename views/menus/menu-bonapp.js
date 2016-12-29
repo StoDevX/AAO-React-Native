@@ -7,7 +7,8 @@ import type {TopLevelViewPropsType} from '../types'
 import {FancyMenu} from './components/fancy-menu'
 import type {BonAppMenuInfoType, BonAppCafeInfoType} from './types'
 import sample from 'lodash/sample'
-import values from 'lodash/values'
+import flatten from 'lodash/flatten'
+import identity from 'lodash/identity'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
@@ -107,18 +108,26 @@ export class BonAppHostedMenu extends React.Component {
       return <NoticeView text={specialMessage} />
     }
 
-    // We hard-code to the first day returned because we're only requesting one day.
-    // `cafes` is a map of cafe ids to cafes, but we only request one at a time.
+    // We hard-code to the first day returned because we're only requesting
+    // one day. `cafes` is a map of cafe ids to cafes, but we only request one
+    // cafe at a time, so we just grab the one we requested.
     let dayparts = cafeMenu.days[0].cafes[cafeId].dayparts
     let mealInfo = findMenu(dayparts, now)
     let mealName = mealInfo ? mealInfo.label : ''
     let stationMenus = mealInfo ? mealInfo.stations : []
 
+    // flow … has issues when we access cafeMenu.items inside a nested closure
+    const allFoodItems = cafeMenu.items
+    // Retrieve food items referenced by each station from the master list
+    const foodItemsByStation = stationMenus.map(s => s.items.map(id => allFoodItems[id]))
+    // Flatten the array (since it's currently grouped by station)
+    const existantFoodItems = flatten(foodItemsByStation).filter(identity)
+
     return (
       <FancyMenu
         route={this.props.route}
         navigator={this.props.navigator}
-        foodItems={values(cafeMenu.items)}
+        foodItems={existantFoodItems}
         menuCorIcons={cafeMenu.cor_icons}
         menuLabel={mealName}
         now={now}
