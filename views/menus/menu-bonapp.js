@@ -62,6 +62,22 @@ export class BonAppHostedMenu extends React.Component {
     this.setState({loading: false, cafeMenu, cafeInfo, now: moment.tz(CENTRAL_TZ)})
   }
 
+  findCafeMessage = (cafeId: string, cafeInfo: BonAppCafeInfoType, now: momentT) => {
+    let actualCafeInfo = cafeInfo.cafes[cafeId]
+    if (!actualCafeInfo) {
+      return 'BonApp did not return a menu for that café'
+    }
+
+    let today = actualCafeInfo.days.find(({date}) => date === now.format('YYYY-MM-DD'))
+    if (!today) {
+      return 'Closed today'
+    } else if (today.status === 'closed') {
+      return today.message || 'Closed today'
+    }
+
+    return null
+  }
+
   render() {
     if (this.state.loading) {
       return <LoadingView text={sample(this.props.loadingMessage)} />
@@ -80,10 +96,9 @@ export class BonAppHostedMenu extends React.Component {
 
     // We grab the "today" info from here because BonApp returns special
     // messages in this response, like "Closed for Christmas Break"
-    let days = cafeInfo.cafes[cafeId].days
-    let today = days.find(({date}) => date === now.format('YYYY-MM-DD'))
-    if (!today || today.status === 'closed') {
-      return <NoticeView text={today ? today.message : 'Closed today'} />
+    let specialMessage = this.findCafeMessage(cafeId, cafeInfo, now)
+    if (specialMessage) {
+      return <NoticeView text={specialMessage} />
     }
 
     // We hard-code to the first day returned because we're only requesting one day.
