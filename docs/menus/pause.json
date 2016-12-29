@@ -3,7 +3,7 @@
     {"label": "Pizza", "note": "Includes a cup of Marinara, Ranch, BBQ, or Honey Mustard sauce. For orders of 4 or more pizzas, please visit Oleville 24 hours in advance."},
     {"label": "Specialty Pizza"},
     {"label": "Toppings"},
-    {"label": "Quesadilla", "note": "Salsa & Sour Cream are extra"}
+    {"label": "Quesadilla", "note": "Salsa & Sour Cream are extra"},
     {"label": "Pita"},
     {"label": "Savory"},
     {"label": "Shakes", "note": "Mixins: M&Ms, Oreos, Reese’s Peanut Butter Cups"},
@@ -38,29 +38,29 @@
     {
       "label": "BBQ Chicken",
       "special": true,
-      "station": "Specialty Pizzas",
+      "station": "Specialty Pizzas"
     },
     {
       "label": "Buffalo Chicken",
       "special": true,
-      "station": "Specialty Pizzas",
+      "station": "Specialty Pizzas"
     },
     {
       "label": "Chicken Bacon Ranch",
       "special": true,
-      "station": "Specialty Pizzas",
+      "station": "Specialty Pizzas"
     },
     {
       "description": "Includes tomatoes",
       "label": "Chicken Pesto",
       "special": true,
-      "station": "Specialty Pizzas",
+      "station": "Specialty Pizzas"
     },
     {
       "description": "Includes pepperoni, sausage, onions, green peppers, and black olives",
       "label": "Ole Pizza",
       "special": true,
-      "station": "Specialty Pizzas",
+      "station": "Specialty Pizzas"
     },
     {
       "label": "Bacon",
@@ -195,81 +195,81 @@
     {
       "label": "Vanilla",
       "special": true,
-      "station": "Shakes",
+      "station": "Shakes"
     },
     {
       "label": "Chocolate",
       "special": true,
-      "station": "Shakes",
+      "station": "Shakes"
     },
     {
       "label": "Strawberry",
       "special": true,
-      "station": "Shakes",
+      "station": "Shakes"
     },
     {
       "label": "Butter Pecan",
       "special": true,
-      "station": "Shakes",
+      "station": "Shakes"
     },
     {
       "label": "Butterscotch",
       "special": true,
-      "station": "Shakes",
+      "station": "Shakes"
     },
     {
       "label": "Mocha",
       "special": true,
-      "station": "Shakes",
+      "station": "Shakes"
     },
     {
       "label": "Mint",
       "special": true,
-      "station": "Shakes",
+      "station": "Shakes"
     },
     {
       "label": "Cheesecake",
       "special": true,
-      "station": "Shakes",
+      "station": "Shakes"
     },
     {
       "label": "Vanilla",
       "special": true,
-      "station": "Soft-Serve",
+      "station": "Soft-Serve"
     },
     {
       "label": "Chocolate",
       "special": true,
-      "station": "Soft-Serve",
+      "station": "Soft-Serve"
     },
     {
       "label": "Twist",
       "special": true,
-      "station": "Soft-Serve",
+      "station": "Soft-Serve"
     },
     {
       "description": "A delectable fusion of cookie dough and chocolate chunks, in cookie form",
       "label": "Pause Cookie",
       "special": true,
-      "station": "Late-Night Feast",
+      "station": "Late-Night Feast"
     },
     {
       "label": "Fountain Drinks",
       "description": "Refills are extra",
       "special": true,
-      "station": "Fountain & Bottled Drinks",
+      "station": "Fountain & Bottled Drinks"
     },
     {
       "description": "No refills",
       "label": "Bottled Beverages",
       "special": true,
-      "station": "Fountain & Bottled Drinks",
+      "station": "Fountain & Bottled Drinks"
     },
     {
       "description": "Available in Small or Large sizes",
       "label": "Root Beer Float",
       "special": true,
-      "station": "Fountain & Bottled Drinks",
+      "station": "Fountain & Bottled Drinks"
     }
   ],
   "corIcons": {}
