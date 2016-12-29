@@ -1,21 +1,15 @@
 {
   "stationMenus": [
-    {
-      "label": "Shakes",
-      "note": "Mixins: M&Ms, Oreos, Reese’s Peanut Butter Cups"
-    },
-    {
-      "label": "Soft-Serve",
-      "note": "Hand-swirled in a cup or a cone",
-    },
-    {
-      "label": "Pizza",
-      "note": "Includes a cup of Marinara, Ranch, BBQ, or Honey Mustard sauce"
-    },
-    {
-      "label": "Quesadilla",
-      "note": "Salsa & Sour Cream are extra"
-    }
+    {"label": "Pizza", "note": "Includes a cup of Marinara, Ranch, BBQ, or Honey Mustard sauce"},
+    {"label": "Specialty Pizza"},
+    {"label": "Toppings"},
+    {"label": "Quesadilla", "note": "Salsa & Sour Cream are extra"}
+    {"label": "Pita"},
+    {"label": "Savory"},
+    {"label": "Shakes", "note": "Mixins: M&Ms, Oreos, Reese’s Peanut Butter Cups"},
+    {"label": "Soft-Serve", "note": "Hand-swirled in a cup or a cone"},
+    {"label": "Late-Night Feast"},
+    {"label": "Fountain & Bottled Drinks"}
   ],
   "foodItems": [
     {
