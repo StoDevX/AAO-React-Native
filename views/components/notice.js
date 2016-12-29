@@ -18,7 +18,7 @@ export function NoticeView({text, style}: {text: string, style?: any}) {
   return (
     <View style={[styles.container, style]}>
       <Text style={styles.text}>
-        {text}
+        {text || 'Notice!'}
       </Text>
     </View>
   )
