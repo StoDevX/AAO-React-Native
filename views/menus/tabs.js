@@ -1,6 +1,7 @@
 // @flow
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
+// import {BonAppPickerView} from './dev-bonapp-picker'
 
 const stolaf = [
   {
@@ -45,6 +46,12 @@ const stolaf = [
       ],
     },
   },
+  // {
+  //   id: 'any',
+  //   title: 'BonApp',
+  //   rnVectorIcon: {iconName: 'ionic'},
+  //   component: BonAppPickerView,
+  // },
 ]
 
 const carleton = [
