@@ -66,8 +66,9 @@ export class MenuListView extends React.Component {
   }
 
   props: {
-    data: ProcessedMenuPropsType,
     badgeSpecials: boolean,
+    data: ProcessedMenuPropsType,
+    message?: string,
     stationNotes: {[key: string]: string},
   };
 
@@ -97,6 +98,10 @@ export class MenuListView extends React.Component {
   }
 
   render() {
+    if (this.props.message) {
+      return <NoticeView style={styles.container} text={this.props.message} />
+    }
+
     if (!this.state.dataSource.getRowCount()) {
       return <NoticeView style={styles.container} text='No items to show. Try changing the filters.' />
     }
