@@ -1,6 +1,6 @@
 {
   "stationMenus": [
-    {"label": "Pizza", "note": "Includes a cup of Marinara, Ranch, BBQ, or Honey Mustard sauce. For orders of 4 or more pizzas, please visit Oleville 24 hours in advance."},
+    {"label": "Pizza", "note": "For orders of 4 or more pizzas, please visit Oleville 24 hours in advance."},
     {"label": "Specialty Pizza"},
     {"label": "Toppings"},
     {"label": "Quesadilla", "note": "Salsa & Sour Cream are extra"},
