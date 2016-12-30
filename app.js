@@ -39,6 +39,7 @@ import CreditsView from './views/settings/credits'
 import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
 import EditHomeView from './views/editHome'
+import {StudentOrgsView, StudentOrgsDetailView}  from './views/student-orgs'
 
 import NoRoute from './views/components/no-route'
 
@@ -69,6 +70,8 @@ function renderScene(route, navigator) {
     case 'PrivacyView': return <PrivacyView {...props} />
     case 'LegalView': return <LegalView {...props} />
     case 'EditHomeView': return <EditHomeView {...props} />
+    case 'StudentOrgsView': return <StudentOrgsView {...props} />
+    case 'StudentOrgsDetailView': return <StudentOrgsDetailView {...props} />
     default: return <NoRoute {...props} />
   }
 }

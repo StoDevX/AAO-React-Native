@@ -14,6 +14,7 @@ export const allViews: ViewType[] = [
   {view: 'TransportationView', title: 'Transportation', icon: 'address', tint: c.cardTable, gradient: c.grayToDarkGray},
   {view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book', tint: c.olive, gradient: c.yellowToGoldLight},
   {view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer', tint: c.grapefruit, gradient: c.pinkToHotpink},
+  {view: 'StudentOrgsView', title: 'Student Orgs', icon: 'globe', tint: c.periwinkle, gradient: c.lightBlueToBlueDark},
 ]
 
 export const allViewNames = allViews.map(v => v.view)
