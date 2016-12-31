@@ -45,12 +45,12 @@ export default class NewsContainer extends React.Component {
     let re = '<img.*?src="([^"]*)"[^>]*>(?:</img>)?'
     let imageMatch = content.match(re)
 
-    if (imageMatch !== null && imageMatch !== undefined) {
+    if (imageMatch) {
       let src = imageMatch[1]
       return <Image source={{uri: src}} style={styles.image} />
     }
 
-    return false
+    return null
   }
 
   fetchData = async () => {
