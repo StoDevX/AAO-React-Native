@@ -10,6 +10,7 @@ import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import fromPairs from 'lodash/fromPairs'
 import filter from 'lodash/filter'
+import map from 'lodash/map'
 import {MenuListView} from './menu'
 
 type FancyMenuPropsType = TopLevelViewPropsType & {
@@ -23,6 +24,67 @@ type FancyMenuPropsType = TopLevelViewPropsType & {
 };
 
 class FancyMenuView extends React.Component {
+  componentWillMount() {
+    let {menuCorIcons, filters, stationMenus} = this.props
+
+    // prevent ourselves from overwriting the filters from redux on mount
+    if (filters.length) {
+      return
+    }
+
+    let stations = stationMenus.map(m => m.label)
+    filters = this.buildFilters({stations, corIcons: menuCorIcons})
+    this.props.onFiltersChange(filters)
+  }
+
+  buildFilters({stations, corIcons}: {stations: string[], corIcons: MasterCorIconMapType}): FilterType[] {
+    // Grab the labels of the COR icons
+    let allDietaryRestrictions = map(corIcons, item => item.label)
+
+    return [
+      {
+        type: 'toggle',
+        key: 'specials',
+        enabled: true,
+        spec: {
+          label: 'Only Show Specials',
+          caption: 'Allows you to either see only the "specials" for today, or everything the location has to offer (e.g., condiments.)',
+        },
+        apply: {
+          key: 'special',
+        },
+      },
+      {
+        type: 'list',
+        key: 'stations',
+        enabled: false,
+        spec: {
+          title: 'Stations',
+          options: stations,
+          mode: 'OR',
+          selected: stations,
+        },
+        apply: {
+          key: 'station',
+        },
+      },
+      {
+        type: 'list',
+        key: 'dietary-restrictions',
+        enabled: false,
+        spec: {
+          title: 'Dietary Restrictions',
+          options: allDietaryRestrictions,
+          mode: 'AND',
+          selected: [],
+        },
+        apply: {
+          key: 'cor_icon',
+        },
+      },
+    ]
+  }
+
   props: FancyMenuPropsType;
 
   render() {
