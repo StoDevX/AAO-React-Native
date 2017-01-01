@@ -2,10 +2,12 @@
 import React from 'react'
 import {View, Navigator} from 'react-native'
 import {connect} from 'react-redux'
+import {updateMenuFilters} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
 import type {MenuItemType, MasterCorIconMapType, StationMenuType} from '../types'
 import type {FilterType} from '../../components/filter'
+import {applyFiltersToItem} from '../../components/filter'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import fromPairs from 'lodash/fromPairs'
@@ -15,6 +17,7 @@ import {FilterMenuToolbar} from './filter-menu-toolbar'
 import {MenuListView} from './menu'
 
 type FancyMenuPropsType = TopLevelViewPropsType & {
+  applyFilters: (filters: FilterType[], item: MenuItemType) => boolean,
   now: momentT,
   name: string,
   filters: FilterType[],
@@ -26,6 +29,10 @@ type FancyMenuPropsType = TopLevelViewPropsType & {
 };
 
 class FancyMenuView extends React.Component {
+  static defaultProps = {
+    applyFilters: applyFiltersToItem,
+  }
+
   componentWillMount() {
     let {menuCorIcons, filters, stationMenus} = this.props
 
@@ -105,6 +112,7 @@ class FancyMenuView extends React.Component {
 
   render() {
     const {
+      applyFilters,
       filters,
       foodItems,
       menuLabel,
@@ -116,7 +124,9 @@ class FancyMenuView extends React.Component {
     const stationsSort = stationMenus.map(m => m.label)
 
     // only show items that the menu lists today
-    const filtered = filter(foodItems, item => stationsSort.includes(item.station))
+    const filteredByMenu = filter(foodItems, item => stationsSort.includes(item.station))
+    // apply the selected filters
+    const filtered = filter(filteredByMenu, item => applyFilters(filters, item))
     // sort the remaining items by station
     const sortedByStation = sortBy(filtered, item => stationsSort.indexOf(item.station))
     // group them for the ListView
