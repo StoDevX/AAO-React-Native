@@ -89,6 +89,7 @@ class FancyMenuView extends React.Component {
 
   render() {
     const {
+      filters,
       foodItems,
       stationMenus,
     } = this.props
@@ -103,9 +104,22 @@ class FancyMenuView extends React.Component {
     // group them for the ListView
     const grouped = groupBy(sortedByStation, item => item.station)
 
+    const specialsFilterEnabled = Boolean(filters.find(f =>
+      f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'))
+
+    let message = ''
+    if (specialsFilterEnabled && sortedByStation.length === 0) {
+      message = 'No items to show. There may be no specials today.\nTry changing the filters.'
+    }
+
     return (
       <View style={{flex: 1}}>
-        <MenuListView data={grouped} stationNotes={stationNotes} badgeSpecials />
+        <MenuListView
+          data={grouped}
+          stationNotes={stationNotes}
+          message={message}
+          badgeSpecials
+        />
       </View>
     )
   }
