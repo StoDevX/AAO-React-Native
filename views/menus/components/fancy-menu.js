@@ -152,6 +152,9 @@ class FancyMenuView extends React.Component {
           data={grouped}
           stationNotes={stationNotes}
           message={message}
+          // We can't conditionally show the star – wierd things happen, like
+          // the first two items having a star and none of the rest.
+          //badgeSpecials={!specialsFilterEnabled}
           badgeSpecials
         />
       </View>
