@@ -6,7 +6,6 @@ import {FoodItemRow} from './food-item-row'
 import DietaryFilters from '../../../data/dietary-filters'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
-import {toLaxTitleCase} from 'titlecase'
 import type {MenuItemType, ProcessedMenuPropsType} from '../types'
 
 const rightSideSpacing = 10
@@ -78,7 +77,7 @@ export class MenuListView extends React.Component {
     return (
       <View style={styles.sectionHeader}>
         <Text>
-          <Text style={styles.sectionHeaderText}>{toLaxTitleCase(sectionName)}</Text>
+          <Text style={styles.sectionHeaderText}>{sectionName}</Text>
           {note ? <Text style={styles.sectionHeaderNote}> — {note}</Text> : null}
         </Text>
       </View>

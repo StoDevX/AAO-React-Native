@@ -9,10 +9,13 @@ import type {BonAppMenuInfoType, BonAppCafeInfoType} from './types'
 import sample from 'lodash/sample'
 import flatten from 'lodash/flatten'
 import identity from 'lodash/identity'
+import uniqBy from 'lodash/uniqBy'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 import {findMenu} from './lib/find-menu'
+import {trimStationName, trimItemLabel} from './lib/trim-names'
+import {toLaxTitleCase} from 'titlecase'
 
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
 const bonappCafeBaseUrl = 'http://legacy.cafebonappetit.com/api/2/cafes'
@@ -116,6 +119,9 @@ export class BonAppHostedMenu extends React.Component {
     let mealName = mealInfo ? mealInfo.label : ''
     let stationMenus = mealInfo ? mealInfo.stations : []
 
+    // Make sure to titlecase the station menus list, too, so the sort works
+    stationMenus = stationMenus.map(s => ({...s, label: toLaxTitleCase(s.label)}))
+
     // flow … has issues when we access cafeMenu.items inside a nested closure
     const allFoodItems = cafeMenu.items
     // Retrieve food items referenced by each station from the master list
@@ -123,11 +129,22 @@ export class BonAppHostedMenu extends React.Component {
     // Flatten the array (since it's currently grouped by station)
     const existantFoodItems = flatten(foodItemsByStation).filter(identity)
 
+    // Now clean up the labels and stations so they're nice
+    const foodItems = existantFoodItems.map(item => ({
+      ...item,  // we want to edit the item, not replace it
+      station: toLaxTitleCase(trimStationName(item.station)),  // <b>@station names</b> are a mess
+      label: trimItemLabel(item.label),  // clean up the titles
+    }))
+
+    // And finally, because BonApp is silly, we clean up the food items by
+    // label somewhat.
+    const uniqdFoodItems = uniqBy(foodItems, item => item.label)
+
     return (
       <FancyMenu
         route={this.props.route}
         navigator={this.props.navigator}
-        foodItems={existantFoodItems}
+        foodItems={uniqdFoodItems}
         menuCorIcons={cafeMenu.cor_icons}
         menuLabel={mealName}
         now={now}
