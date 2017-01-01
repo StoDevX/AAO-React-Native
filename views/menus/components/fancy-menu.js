@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {View} from 'react-native'
+import {View, Navigator} from 'react-native'
 import {connect} from 'react-redux'
 import type {TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
@@ -11,6 +11,7 @@ import sortBy from 'lodash/sortBy'
 import fromPairs from 'lodash/fromPairs'
 import filter from 'lodash/filter'
 import map from 'lodash/map'
+import {FilterMenuToolbar} from './filter-menu-toolbar'
 import {MenuListView} from './menu'
 
 type FancyMenuPropsType = TopLevelViewPropsType & {
@@ -21,6 +22,7 @@ type FancyMenuPropsType = TopLevelViewPropsType & {
   menuLabel?: string,
   menuCorIcons: MasterCorIconMapType,
   stationMenus: StationMenuType[],
+  onFiltersChange: (f: FilterType[]) => any,
 };
 
 class FancyMenuView extends React.Component {
@@ -87,10 +89,26 @@ class FancyMenuView extends React.Component {
 
   props: FancyMenuPropsType;
 
+  openFilterView = () => {
+    this.props.navigator.push({
+      id: 'FilterView',
+      index: this.props.route.index + 1,
+      title: 'Filter',
+      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+      onDismiss: (route: any, navigator: any) => navigator.pop(),
+      props: {
+        pathToFilters: ['menus', this.props.name],
+        onChange: filters => this.props.onFiltersChange(filters),
+      },
+    })
+  }
+
   render() {
     const {
       filters,
       foodItems,
+      menuLabel,
+      now,
       stationMenus,
     } = this.props
 
@@ -114,6 +132,12 @@ class FancyMenuView extends React.Component {
 
     return (
       <View style={{flex: 1}}>
+        <FilterMenuToolbar
+          date={now}
+          title={menuLabel}
+          filters={filters}
+          onPress={this.openFilterView}
+        />
         <MenuListView
           data={grouped}
           stationNotes={stationNotes}
@@ -131,4 +155,10 @@ function mapStateToProps(state, actualProps: FancyMenuPropsType) {
   }
 }
 
-export const FancyMenu = connect(mapStateToProps)(FancyMenuView)
+function mapDispatchToProps(dispatch, actualProps: FancyMenuPropsType) {
+  return {
+    onFiltersChange: (filters: FilterType[]) => dispatch(updateMenuFilters(actualProps.name, filters)),
+  }
+}
+
+export const FancyMenu = connect(mapStateToProps, mapDispatchToProps)(FancyMenuView)
