@@ -1,0 +1,222 @@
+stationMenus:
+  - {label: "Pizza", note: "For orders of 4 or more pizzas, please visit Oleville 24 hours in advance."}
+  - {label: "Specialty Pizza"}
+  - {label: "Toppings"}
+  - {label: "Quesadilla", note: "Salsa & Sour Cream are extra"}
+  - {label: "Pita"}
+  - {label: "Savory"}
+  - {label: "Shakes", note: "Mixins: M&Ms, Oreos, Reese’s Peanut Butter Cups"}
+  - {label: "Soft-Serve", note: "Hand-swirled in a cup or a cone"}
+  - {label: "Late-Night Feast"}
+  - {label: "Fountain & Bottled Drinks"}
+
+foodItems:
+  - description: "One (1) slice of pizza pie"
+    label: "Single Slice"
+    special: true
+    station: "Pizza"
+
+  - label: "Small Pizza (12 in)"
+    description: "Includes two toppings"
+    special: true
+    station: "Pizza"
+
+  - label: "Large Pizza (16 in)"
+    description: "Includes two toppings"
+    special: true
+    station: "Pizza"
+
+  - description: "Marinara, Ranch, BBQ, Honey Mustard"
+    label: "Side of Sauce"
+    station: "Pizza"
+
+  - label: "BBQ Chicken"
+    special: true
+    station: "Specialty Pizzas"
+
+  - label: "Buffalo Chicken"
+    special: true
+    station: "Specialty Pizzas"
+
+  - label: "Chicken Bacon Ranch"
+    special: true
+    station: "Specialty Pizzas"
+
+  - description: "Includes tomatoes"
+    label: "Chicken Pesto"
+    special: true
+    station: "Specialty Pizzas"
+
+  - description: "Includes pepperoni, sausage, onions, green peppers, and black olives"
+    label: "Ole Pizza"
+    special: true
+    station: "Specialty Pizzas"
+
+  - label: "Bacon"
+    station: "Toppings"
+
+  - label: "Canadian Bacon"
+    station: "Toppings"
+
+  - label: "Chicken"
+    station: "Toppings"
+
+  - label: "Pepperoni"
+    station: "Toppings"
+
+  - label: "Sausage"
+    station: "Toppings"
+
+  - label: "Black Olives"
+    station: "Toppings"
+
+  - label: "Green Peppers"
+    station: "Toppings"
+
+  - label: "Jalapeños"
+    station: "Toppings"
+
+  - label: "Mushrooms"
+    station: "Toppings"
+
+  - label: "Onions"
+    station: "Toppings"
+
+  - label: "Pineapple"
+    station: "Toppings"
+
+  - label: "Spinach"
+    station: "Toppings"
+
+  - label: "Tomatoes"
+    station: "Toppings"
+
+  - label: "Cheese Quesadilla (Half / Whole)"
+    special: true
+    station: "Quesadilla"
+
+  - description: "Includes tomatoes, onions, green peppers, and jalapeños"
+    label: "Ultimate Quesadilla (Half / Whole)"
+    special: true
+    station: "Quesadilla"
+
+  - description: "Pizza built on pita bread; includes two toppings"
+    label: "Pita Pizza"
+    special: true
+    station: "Pita"
+
+  - description: "Pizza built on pita bread"
+    label: "Specialty Pita Pizza"
+    special: true
+    station: "Pita"
+
+  - description: "Pita bread with choice of hummus and cooked vegetable toppings"
+    label: "Garden Pita"
+    special: true
+    station: "Pita"
+
+  - description: "Choice of Garlic, Red Pepper, or Feisty Feta Hummus"
+    label: "Toasted Pita and Hummus"
+    special: true
+    station: "Pita"
+
+  - label: "Pizza Bagel"
+    special: true
+    station: "Savory"
+
+  - label: "Specialty Pizza Bagel"
+    special: true
+    station: "Savory"
+
+  - label: "Garlic Cheesy Bread"
+    special: true
+    station: "Savory"
+
+  - description: "Includes both chips and a cheese cup"
+    label: "Nachos"
+    special: true
+    station: "Savory"
+
+  - description: "Includes both chips and salsa"
+    label: "Chips & Salsa"
+    special: true
+    station: "Savory"
+
+  - label: "Bosco Sticks"
+    special: true
+    station: "Savory"
+
+  - label: "Soft Pretzel"
+    special: true
+    station: "Savory"
+
+  - description: "Dipping sauces: BBQ, Honey Mustard, Marinara, Ranch, Blue Cheese, or Hot Sauce"
+    label: "Chicken Strips"
+    special: true
+    station: "Savory"
+
+  - label: "Vanilla"
+    special: true
+    station: "Shakes"
+
+  - label: "Chocolate"
+    special: true
+    station: "Shakes"
+
+  - label: "Strawberry"
+    special: true
+    station: "Shakes"
+
+  - label: "Butter Pecan"
+    special: true
+    station: "Shakes"
+
+  - label: "Butterscotch"
+    special: true
+    station: "Shakes"
+
+  - label: "Mocha"
+    special: true
+    station: "Shakes"
+
+  - label: "Mint"
+    special: true
+    station: "Shakes"
+
+  - label: "Cheesecake"
+    special: true
+    station: "Shakes"
+
+  - label: "Vanilla"
+    special: true
+    station: "Soft-Serve"
+
+  - label: "Chocolate"
+    special: true
+    station: "Soft-Serve"
+
+  - label: "Twist"
+    special: true
+    station: "Soft-Serve"
+
+  - description: "A delectable fusion of cookie dough and chocolate chunks, in cookie form"
+    label: "Pause Cookie"
+    special: true
+    station: "Late-Night Feast"
+
+  - label: "Fountain Drinks"
+    description: "Refills are extra"
+    special: true
+    station: "Fountain & Bottled Drinks"
+
+  - description: "No refills"
+    label: "Bottled Beverages"
+    special: true
+    station: "Fountain & Bottled Drinks"
+
+  - description: "Available in Small or Large sizes"
+    label: "Root Beer Float"
+    special: true
+    station: "Fountain & Bottled Drinks"
+
+corIcons: {}

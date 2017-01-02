@@ -1,16 +1,41 @@
 {
+  "dateModified": "2017-01-02T17:13:53.320Z",
   "data": {
     "stationMenus": [
-      {"label": "Pizza", "note": "For orders of 4 or more pizzas, please visit Oleville 24 hours in advance."},
-      {"label": "Specialty Pizza"},
-      {"label": "Toppings"},
-      {"label": "Quesadilla", "note": "Salsa & Sour Cream are extra"},
-      {"label": "Pita"},
-      {"label": "Savory"},
-      {"label": "Shakes", "note": "Mixins: M&Ms, Oreos, Reese’s Peanut Butter Cups"},
-      {"label": "Soft-Serve", "note": "Hand-swirled in a cup or a cone"},
-      {"label": "Late-Night Feast"},
-      {"label": "Fountain & Bottled Drinks"}
+      {
+        "label": "Pizza",
+        "note": "For orders of 4 or more pizzas, please visit Oleville 24 hours in advance."
+      },
+      {
+        "label": "Specialty Pizza"
+      },
+      {
+        "label": "Toppings"
+      },
+      {
+        "label": "Quesadilla",
+        "note": "Salsa & Sour Cream are extra"
+      },
+      {
+        "label": "Pita"
+      },
+      {
+        "label": "Savory"
+      },
+      {
+        "label": "Shakes",
+        "note": "Mixins: M&Ms, Oreos, Reese’s Peanut Butter Cups"
+      },
+      {
+        "label": "Soft-Serve",
+        "note": "Hand-swirled in a cup or a cone"
+      },
+      {
+        "label": "Late-Night Feast"
+      },
+      {
+        "label": "Fountain & Bottled Drinks"
+      }
     ],
     "foodItems": [
       {
