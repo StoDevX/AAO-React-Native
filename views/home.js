@@ -88,7 +88,7 @@ export default connect(mapStateToProps)(HomePage)
 
 
 let cellMargin = 10
-let cellSidePadding = 10
+let cellSidePadding = 8
 let cellEdgePadding = 4
 let cellWidth = (Viewport.width / 2) - (cellMargin * 1.5)
 
