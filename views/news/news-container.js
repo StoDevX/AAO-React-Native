@@ -7,10 +7,9 @@ import {
   Platform,
   Text,
   Navigator,
-  TouchableHighlight,
   RefreshControl,
 } from 'react-native'
-
+import {Touchable} from '../components/touchable'
 import delay from 'delay'
 
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -77,15 +76,13 @@ export default class NewsContainer extends React.Component {
     let title = entities.decode(story.title)
     let snippet = entities.decode(story.contentSnippet)
     return (
-      <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressNews(title, story)}>
-        <View style={[styles.row]}>
-          <View style={[styles.rowContainer]}>
-            <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
-            <Text style={styles.itemPreview} numberOfLines={2}>{snippet}</Text>
-          </View>
-          <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
+      <Touchable onPress={() => this.onPressNews(title, story)} style={[styles.row]}>
+        <View style={[styles.rowContainer]}>
+          <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
+          <Text style={styles.itemPreview} numberOfLines={2}>{snippet}</Text>
         </View>
-      </TouchableHighlight>
+        <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
+      </Touchable>
     )
   }
 

@@ -5,17 +5,12 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  View,
-  TouchableHighlight,
-  Text,
-} from 'react-native'
+import {StyleSheet, View, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import AlphabetListView from 'react-native-alphabetlistview'
 import LoadingView from '../components/loading'
 import delay from 'delay'
-
+import {Touchable} from '../components/touchable'
 import size from 'lodash/size'
 import map from 'lodash/map'
 import sortBy from 'lodash/sortBy'
@@ -155,20 +150,15 @@ export class StudentOrgsView extends React.Component {
   }
 
   renderRow = ({isLast, item}: {isLast: boolean, item: StudentOrgAbridgedType}) => {
-    let orgName = item.name
-    let orgCategory = item.categories.join(', ')
-    let orgNew = [styles.itemNew, {color: item.newOrg ? c.infoBlue : 'transparent'}]
     return (
-      <TouchableHighlight underlayColor='#ebebeb' onPress={() => this.onPressRow(item)}>
-        <View style={[styles.row, !isLast && styles.notLastRow]}>
-          <Text style={orgNew}>• </Text>
-          <View style={[styles.textRows]}>
-            <Text style={styles.itemTitle} numberOfLines={1}>{orgName}</Text>
-            <Text style={styles.itemPreview}>{orgCategory}</Text>
-          </View>
-          <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
+      <Touchable onPress={() => this.onPressRow(item)} style={[styles.row, !isLast && styles.notLastRow]}>
+        <Text style={[styles.itemNew, {color: item.newOrg ? c.infoBlue : 'transparent'}]}>• </Text>
+        <View style={styles.textRows}>
+          <Text style={styles.itemTitle} numberOfLines={1}>{item.name}</Text>
+          <Text style={styles.itemPreview}>{item.categories.join(', ')}</Text>
         </View>
-      </TouchableHighlight>
+        <Icon style={styles.arrowIcon} name='ios-arrow-forward' />
+      </Touchable>
     )
   }
 
