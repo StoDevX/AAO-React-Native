@@ -3,14 +3,14 @@
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 
-import {buildingImages} from '../../data/building-images'
+import {buildingImages} from '../../images/building-images'
 import type {BuildingType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
 
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 
-const transparentPixel = require('../../data/images/transparent.png')
+const transparentPixel = require('../../images/transparent.png')
 
 import {TableView, Section, CustomCell} from 'react-native-tableview-simple'
 import ParallaxView from 'react-native-parallax-view'
