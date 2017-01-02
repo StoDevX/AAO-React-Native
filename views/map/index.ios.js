@@ -10,7 +10,7 @@ import {
   WebView,
 } from 'react-native'
 
-import mapInfo from '../../data/map.json'
+import {data as mapInfo} from '../../docs/map.json'
 
 export default function OlafMapView() {
   return (

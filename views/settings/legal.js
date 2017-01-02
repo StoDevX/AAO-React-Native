@@ -5,7 +5,7 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native'
-import legal from '../../data/legal.json'
+import {text as legal} from '../../docs/legal.json'
 
 const styles = StyleSheet.create({
   container: {
@@ -24,9 +24,9 @@ const styles = StyleSheet.create({
 
 export default function LegalView() {
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.legal}>{legal.content}</Text>
-    </ScrollView>
+    <WebView style={styles.container}>
+      {legal}
+    </WebView>
   )
 }
 LegalView.propTypes = {}

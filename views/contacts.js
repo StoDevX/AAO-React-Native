@@ -9,11 +9,9 @@ import {
   View,
   ListView,
 } from 'react-native'
-
 import ContactCard from './components/contactCard'
+import {data as numbers} from '../docs/contact-info'
 
-
-import numbers from '../data/contact-info'
 export default class ContactView extends React.Component {
   constructor() {
     super()

@@ -5,7 +5,7 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native'
-import privacy from '../../data/privacy.json'
+import {text as privacy} from '../../docs/privacy.json'
 
 const styles = StyleSheet.create({
   container: {
@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
 
 export default function PrivacyView() {
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.privacy}>{privacy.text}</Text>
-    </ScrollView>
+    <WebView style={styles.container}>
+      {privacy.text}
+    </WebView>
   )
 }
