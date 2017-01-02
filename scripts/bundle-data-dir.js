@@ -22,7 +22,7 @@ function bundleDataDir({fromDir, toFile}) {
     let contents = fs.readFileSync(fpath, 'utf-8')
     return yaml.safeLoad(contents)
   })
-  const dated = {dateModified: new Date().toISOString(), data: loaded}
+  const dated = {data: loaded}
   const output = JSON.stringify(dated, null, 2) + '\n'
 
   const outStream = toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
