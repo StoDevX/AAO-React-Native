@@ -3,7 +3,7 @@
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 
-import {buildingImages} from './images'
+import {buildingImages} from '../../data/building-images'
 import type {BuildingType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
 import {Separator} from '../components/separator'
