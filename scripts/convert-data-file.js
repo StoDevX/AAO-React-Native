@@ -39,10 +39,10 @@ function convertDataFile({fromFile, toFile}) {
 
 function processYaml(fileContents) {
   let loaded = yaml.safeLoad(fileContents)
-  return JSON.stringify(loaded, null, 2)
+  return JSON.stringify({dateModified: new Date().toISOString(), data: loaded}, null, 2)
 }
 
 function processMarkdown(fileContents) {
   let loaded = marked(fileContents)
-  return JSON.stringify({text: loaded}, null, 2)
+  return JSON.stringify({dateModified: new Date().toISOString(), text: loaded}, null, 2)
 }
