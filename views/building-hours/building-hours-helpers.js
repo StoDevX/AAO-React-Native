@@ -8,6 +8,8 @@ import type {BuildingType, NamedBuildingScheduleType, SingleBuildingScheduleType
 import type momentT from 'moment'
 import flatten from 'lodash/flatten'
 import sortBy from 'lodash/sortBy'
+import {data as chapelData} from '../../docs/chapel'
+const {chapelSchedule} = chapelData
 
 type HourPairType = {open: momentT, close: momentT};
 
@@ -33,8 +35,6 @@ export function parseHours({from: fromTime, to: toTime}: SingleBuildingScheduleT
 }
 
 const getDayOfWeek = (m: momentT) => ((m.format('dd'): any): DayOfWeekEnumType)
-
-import {chapelSchedule} from '../../data/new-building-hours'
 
 export function isChapelTime(m: momentT, schedules: SingleBuildingScheduleType[]=chapelSchedule): boolean {
   let dayOfWeek = getDayOfWeek(m)

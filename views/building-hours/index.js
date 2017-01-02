@@ -10,7 +10,7 @@ import {BuildingRow} from './row'
 
 import type {BuildingType} from './types'
 import delay from 'delay'
-import {buildingHours} from '../../data/new-building-hours'
+import {data as buildingHours} from '../../docs/building-hours'
 import {Separator} from '../components/separator'
 import groupBy from 'lodash/groupBy'
 const Touchable = Platform.OS === 'ios' ? TouchableHighlight : TouchableNativeFeedback
@@ -18,6 +18,7 @@ const Touchable = Platform.OS === 'ios' ? TouchableHighlight : TouchableNativeFe
 import * as c from '../components/colors'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
+(buildingHours: BuildingType[]);
 
 export {BuildingHoursDetailView} from './detail'
 
