@@ -10,6 +10,7 @@
     "android": "react-native run-android",
     "android-emulator": "emulator -avd 'react-native'",
     "flow": "flow",
+    "bundle-data": "node scripts/bundle-data.js",
     "validate-json": "node scripts/validate-json-files.js data/*.json docs/menus/*.json",
     "bundle:ios": "react-native bundle --entry-file index.ios.js --dev true --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios",
     "bundle:android": "react-native bundle --entry-file index.android.js --dev true --platform android --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
@@ -89,6 +90,9 @@
     "eslint-plugin-react": "6.8.0",
     "flow-bin": "0.35.0",
     "jest": "18.1.0",
+    "js-yaml": "3.7.0",
+    "junk": "2.0.0",
+    "marked": "0.3.6",
     "react-test-renderer": "15.4.1"
   }
 }
