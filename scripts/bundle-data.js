@@ -19,6 +19,7 @@ dirs.forEach(dirname => {
 
 // Convert these files into JSON equivalents
 let files = [
+  "breaks.yaml",
   "chapel.yaml",
   "credits.yaml",
   "legal.md",
