@@ -10,7 +10,7 @@ we collect, use, protect or otherwise handle your Personally Identifiable
 Information in accordance with our website.
 
 > What personal information do we collect from the people that visit our blog,
-website or app? When do we collect information?
+> website or app? When do we collect information?
 
 We collect information from you when you register on our site or enter
 information on our site. Provide us with feedback on our products or services
@@ -152,10 +152,10 @@ Contacting Us
 If there are any questions regarding this privacy policy, you may contact us
 using the information below.
 
-oleville.com
-1520 St. Olaf Ave.
-Northfield, MN 55057
-USA
+oleville.com  
+1520 St. Olaf Ave.  
+Northfield, MN 55057  
+USA  
 sgawebmaster@stolaf.edu
 
 Last Edited on 2017-01-01
