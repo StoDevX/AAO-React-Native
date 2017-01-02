@@ -24,6 +24,7 @@ let files = [
   'credits.yaml',
   'legal.md',
   'map.yaml',
+  'pause-menu.yaml',
   'privacy.md',
 ]
 files.forEach(file => {
