@@ -1,0 +1,19 @@
+name: 'The Pause Kitchen'
+image: 'pause-kitchen'
+category: 'Food'
+
+schedule:
+  - title: 'Hours'
+    hours:
+      - {days: [Mo, Tu, We, Th], from: '10:30am', to: '12:00am'}
+      - {days: [Fr, Sa], from: '10:30am', to: '2:00am'}
+      - {days: [Su], from: '10:30am', to: '12:00am'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

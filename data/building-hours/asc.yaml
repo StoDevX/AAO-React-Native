@@ -1,0 +1,38 @@
+name: 'Academic Support Center'
+abbreviation: 'ASC'
+category: 'Help and Support'
+
+schedule:
+  - title: 'Study Space'
+    hours:
+      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '9:00pm'}
+      - {days: [Fr], from: '8:00am', to: '5:00pm'}
+      - {days: [Su], from: '1:00pm', to: '9:00pm'}
+
+  - title: 'Speaking Space'
+    isPhysicallyOpen: false
+    hours:
+      - {days: [Mo, Tu, We, Th], from: '7:00pm', to: '9:00pm'}
+      - {days: [Sa], from: '2:00pm', to: '5:00pm'}
+      - {days: [Su], from: '6:00pm', to: '9:00pm'}
+
+  - title: 'Writing Desk Appointments'
+    isPhysicallyOpen: false
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '10:00am', to: '5:00pm'}
+      - {days: [Mo, Tu, We, Th], from: '7:00pm', to: '10:00pm'}
+      # - {days: [Fr], from: '10:00am', to: '5:00pm'}
+      - {days: [Sa], from: '11:30am', to: '5:00pm'}
+      - {days: [Su], from: '1:00pm', to: '5:00pm'}
+      - {days: [Su], from: '7:00pm', to: '10:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer:
+    - {days: [Mo, Tu, We, Th], from: '7:30am', to: '4:30pm'}
+    - {days: [Fr], from: '7:45am', to: '12:00pm'}

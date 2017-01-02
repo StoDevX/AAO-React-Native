@@ -1,0 +1,18 @@
+name: 'Dittmann Center'
+category: 'Academia'
+
+schedule:
+  - title: 'Hours'
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
+      - {days: [Sa], from: '8:00am', to: '12:00am'}
+      - {days: [Su], from: '10:00am', to: '12:00am'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []
