@@ -152,8 +152,6 @@ script:
   # JS
   # Lint
   - if [[ "$type" == "js" ]]; then npm run lint; fi
-  # Validate JSON
-  - if [[ "$type" == "js" ]]; then npm run validate-json; fi
   # Type check
   - if [[ "$type" == "js" ]]; then npm run flow; fi
   # Build the bundles
