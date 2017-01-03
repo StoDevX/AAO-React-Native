@@ -9,8 +9,8 @@ applicable: {from: 2016, to: 2017}
 schoolYear:
   start: 2016-08-29
   end: 2017-05-24T10:00:00
-  # seniors is a special key for denoting senior end time, vs. general end time
-  seniors: 2017-05-29T11:00:00
+  # endForSeniors is a special key for denoting senior end time, vs. general end time
+  endForSeniors: 2017-05-29T11:00:00
 
 weekZero:
   description: The week where campus is prepared for incoming students.
@@ -37,6 +37,11 @@ thanksgiving:
   hasMealPlan: true
   start: 2016-11-23T17:00:00
   end: 2016-11-27
+
+christmasfest:
+  description: 'Welcome, visitors! Students, stay warm!'
+  start: 2016-12-01
+  end: 2016-12-04
 
 winter:
   description: 'Happy holidays! :snow: :blizzard:'
