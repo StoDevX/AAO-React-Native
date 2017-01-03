@@ -1,15 +1,17 @@
 #!/usr/bin/env node
-// usage: convert-data-file file.{yaml,md} [file.json]
-
 const fs = require('fs')
 const yaml = require('js-yaml')
 const marked = require('marked')
 
 // run cli
-const args = process.argv.slice(2)
-if (args.length) {
+if (process.mainModule === module) {
+  const args = process.argv.slice(2)
   const fromFile = args[0]
   const toFile = args[1] || '-'
+  if (!fromFile || fromFile === '-h' || fromFile === '--help') {
+    console.error('usage: node convert-data-file.js <from-file.{md,yaml}> [to-file]')
+    process.exit(1)
+  }
   convertDataFile({fromFile, toFile})
 }
 
