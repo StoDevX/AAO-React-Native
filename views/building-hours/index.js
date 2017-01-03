@@ -18,7 +18,6 @@ const Touchable = Platform.OS === 'ios' ? TouchableHighlight : TouchableNativeFe
 import * as c from '../components/colors'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
-(buildingHours: BuildingType[]);
 
 export {BuildingHoursDetailView} from './detail'
 

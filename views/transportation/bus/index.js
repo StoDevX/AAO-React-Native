@@ -6,7 +6,6 @@ import BusLineView from './bus-line'
 import moment from 'moment-timezone'
 
 import {data as defaultBusLines} from '../../../docs/bus-times.json'
-(defaultBusLines: BusLineType[]);
 
 const TIMEZONE = 'America/Winnipeg'
 
