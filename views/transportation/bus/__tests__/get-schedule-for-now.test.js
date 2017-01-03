@@ -6,7 +6,7 @@ import type {BusScheduleType} from '../types'
 function buildBusSchedules(): BusScheduleType[] {
   return [
     {
-      days: ['mo', 'tu'],
+      days: ['Mo', 'Tu'],
       stops: ['St. Olaf', 'Carleton', 'Food Co-op', 'Cub/Target', 'El Tequila', 'Food Co-op', 'Carleton', 'St. Olaf'],
       times: [['4:15pm',  '4:22pm',   '4:23pm',     '4:33pm',     '4:37pm',     '4:43pm',     '4:44pm',   '4:52pm'],
               ['4:55pm',  '5:02pm',   '5:03pm',     '5:13pm',     '5:17pm',     '5:23pm',     '5:24pm',   '5:32pm'],
@@ -14,7 +14,7 @@ function buildBusSchedules(): BusScheduleType[] {
       ],
     },
     {
-      days: ['we', 'th'],
+      days: ['We', 'Th'],
       stops: ['St. Olaf', 'Carleton', 'Food Co-op', 'Cub/Target', 'El Tequila', 'Food Co-op', 'Carleton', 'St. Olaf'],
       times: [['6:15pm',  '6:22pm',   '6:23pm',     '6:33pm',     '6:37pm',     '6:43pm',     '6:44pm',   '6:52pm'],
               ['6:55pm',  '7:02pm',   '7:03pm',     '7:13pm',     '7:17pm',     '7:23pm',     '7:24pm',   '7:32pm'],
@@ -22,7 +22,7 @@ function buildBusSchedules(): BusScheduleType[] {
       ],
     },
     {
-      days: ['fr', 'sa'],
+      days: ['Fr', 'Sa'],
       stops: ['St. Olaf', 'Carleton', 'Food Co-op', 'Cub/Target', 'El Tequila', 'Food Co-op', 'Carleton', 'St. Olaf'],
       times: [['8:15pm',  '8:22pm',   '8:23pm',     '8:33pm',     '8:37pm',     '8:43pm',     '8:44pm',   '8:52pm'],
               ['8:55pm',  '9:02pm',   '9:03pm',     '9:13pm',     '9:17pm',     '9:23pm',     '9:24pm',   '9:32pm'],
@@ -41,7 +41,7 @@ it('returns the bus schedule for today', () => {
     return
   }
 
-  expect(actual.days).toEqual(['fr', 'sa'])
+  expect(actual.days).toEqual(['Fr', 'Sa'])
 })
 
 it('returns `undefined` if there is no schedule for today', () => {
