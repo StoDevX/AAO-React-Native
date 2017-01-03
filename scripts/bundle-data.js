@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env node
 const bundleDataDir = require('./bundle-data-dir')
 const convertDataFile = require('./convert-data-file')
 
