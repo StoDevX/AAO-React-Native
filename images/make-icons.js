@@ -1,42 +1,36 @@
-const childSpawn = require('child_process').spawn
-
+const childSpawn = require('child_process').spawnSync
 const source = 'icon-source.png'
 
-const spawn = (cmd, args) => {
+const spawn = (cmd, ...args) => {
   console.log(cmd, ...args)
   childSpawn(cmd, args)
 }
 
+const resize = (img, width, toFile) => spawn('convert', img, '-resize', `${width}x${width}`, toFile)
+
 // iOS app icons
-// for (let size of [29, 40, 60, 76, 83.5]) {
-for (let size of [29, 40, 60]) {
-  for (let x of [1, 2, 3]) {
-    if ((x === 1) && [40, 60].indexOf(size) >= 0) {
-      continue
-    }
-    let s = size * x
-    spawn('convert', [source, '-resize', `${s}x${s}`, `icons/ios/AppIcon.appiconset/Icon-${size}@${x}x.png`])
-  }
+const iosSizes = [[29, 1], [29, 2], [29, 3], [40, 2], [40, 3], [60, 2], [60, 3]]
+for (const [width, density] of iosSizes) {
+  resize(source, width * density, `icons/ios/AppIcon.appiconset/Icon-${width}@${density}x.png`)
 }
 
 // iTunes icons
-spawn('convert', [source, '-resize', '512x512', 'icons/ios/iTunesArtwork@1x.png'])
-spawn('convert', [source, '-resize', '1024x1024', 'icons/ios/iTunesArtwork@2x.png'])
-spawn('convert', [source, '-resize', '1536x1536', 'icons/ios/iTunesArtwork@3x.png'])
-
+const itunes = [[512, 1], [1024, 2], [1536, 3]]
+for (const [width, density] of itunes) {
+  resize(source, width, `icons/ios/iTunesArtwork@${density}x.png`)
+}
 
 // Android app icons
-let androidSizes = new Map([
+const androidSizes = [
   ['ldpi', 36],
   ['mdpi', 48],
   ['hdpi', 72],
   ['xhdpi', 96],
   ['xxhdpi', 144],
   ['xxxhdpi', 192],
-])
-
-for (let [name, size] of androidSizes.entries()) {
-  spawn('convert', [source, '-resize', `${size}x${size}`, `icons/android/mipmap-${name}/ic_launcher.png`])
+]
+for (const [label, size] of androidSizes) {
+  resize(source, size, `icons/android/mipmap-${label}/ic_launcher.png`)
 }
 
-spawn('convert', [source, '-resize', '512x512', 'icons/android/playstore-icon.png'])
+resize(source, '512', 'icons/android/playstore-icon.png')
