@@ -103,6 +103,6 @@ If there are any questions regarding this privacy policy, you may contact us usi
 oleville.com
 1520 St. Olaf Ave.
 Northfield, MN 55057 USA
-sgawebmaster@stolaf.edu
+<sgawebmaster@stolaf.edu>
 
 Last Edited on 2017-01-02
