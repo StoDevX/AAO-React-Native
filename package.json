@@ -23,10 +23,7 @@
     "test:js:coverage": "jest --coverage",
     "test:js:watch": "jest --watch",
     "test:ios": "xctool -configuration Release -workspace ios/AllAboutOlaf.xcworkspace -scheme AllAboutOlaf -sdk iphonesimulator -destination platform='iOS Simulator,name=iPhone 5s,OS=9.2' test",
-    "test:android": "echo 'Not yet implemented! See http://facebook.github.io/react-native/docs/signed-apk-android.html#testing-the-release-build-of-your-app'",
-    "release": "npm run release:ios && npm run release:android",
-    "release:ios": "echo 'Not yet implemented!'",
-    "release:android": "echo 'Not yet implemented!'"
+    "test:android": "echo 'Not yet implemented! See http://facebook.github.io/react-native/docs/signed-apk-android.html#testing-the-release-build-of-your-app'"
   },
   "babel": {
     "presets": [
