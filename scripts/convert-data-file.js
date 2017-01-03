@@ -45,6 +45,6 @@ function processYaml(fileContents) {
 }
 
 function processMarkdown(fileContents) {
-  let loaded = marked(fileContents)
+  let loaded = marked(fileContents, {mangle: false})
   return JSON.stringify({text: loaded}, null, 2)
 }
