@@ -21,6 +21,10 @@ if (process.mainModule === module) {
 module.exports = bundleDataDir
 function bundleDataDir({fromDir, toFile}) {
   const files = fs.readdirSync(fromDir).filter(junk.not).map(f => path.join(fromDir, f))
+  if (!files.length) {
+    return
+  }
+
   const loaded = files.map(fpath => {
     let contents = fs.readFileSync(fpath, 'utf-8')
     return yaml.safeLoad(contents)
