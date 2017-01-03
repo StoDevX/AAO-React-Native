@@ -156,8 +156,9 @@ script:
   - if [[ "$type" == "js" ]]; then npm run validate-json; fi
   # Type check
   - if [[ "$type" == "js" ]]; then npm run flow; fi
-  # Build a bundle
+  # Build the bundles
   - if [[ "$type" == "js" ]]; then npm run bundle:ios; fi
+  - if [[ "$type" == "js" ]]; then npm run bundle:android; fi
   # Run tests + collect coverage info
   - if [[ "$type" == "js" ]]; then npm run test:js:coverage; fi
 
