@@ -23,6 +23,7 @@ let files = [
   'chapel.yaml',
   'credits.yaml',
   'legal.md',
+  'faqs.md',
   'map.yaml',
   'pause-menu.yaml',
   'privacy.md',
