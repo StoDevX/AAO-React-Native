@@ -8,53 +8,11 @@
  *
  * Fill this stub out by replacing all the `any` types.
  *
- * Once filled out, we encourage you to share your work with the 
- * community by sending a pull request to: 
+ * Once filled out, we encourage you to share your work with the
+ * community by sending a pull request to:
  * https://github.com/flowtype/flow-typed
  */
 
 declare module 'titlecase' {
   declare module.exports: any;
-}
-
-/**
- * We include stubs for each file inside this npm package in case you need to
- * require those files directly. Feel free to delete any files that aren't
- * needed.
- */
-declare module 'titlecase/articles' {
-  declare module.exports: any;
-}
-
-declare module 'titlecase/bin' {
-  declare module.exports: any;
-}
-
-declare module 'titlecase/conjunctions' {
-  declare module.exports: any;
-}
-
-declare module 'titlecase/prepositions' {
-  declare module.exports: any;
-}
-
-declare module 'titlecase/to-title-case' {
-  declare module.exports: any;
-}
-
-// Filename aliases
-declare module 'titlecase/articles.js' {
-  declare module.exports: $Exports<'titlecase/articles'>;
-}
-declare module 'titlecase/bin.js' {
-  declare module.exports: $Exports<'titlecase/bin'>;
-}
-declare module 'titlecase/conjunctions.js' {
-  declare module.exports: $Exports<'titlecase/conjunctions'>;
-}
-declare module 'titlecase/prepositions.js' {
-  declare module.exports: $Exports<'titlecase/prepositions'>;
-}
-declare module 'titlecase/to-title-case.js' {
-  declare module.exports: $Exports<'titlecase/to-title-case'>;
 }

@@ -8,52 +8,11 @@
  *
  * Fill this stub out by replacing all the `any` types.
  *
- * Once filled out, we encourage you to share your work with the 
- * community by sending a pull request to: 
+ * Once filled out, we encourage you to share your work with the
+ * community by sending a pull request to:
  * https://github.com/flowtype/flow-typed
  */
 
 declare module 'react-native-alphabetlistview' {
   declare module.exports: any;
-}
-
-/**
- * We include stubs for each file inside this npm package in case you need to
- * require those files directly. Feel free to delete any files that aren't
- * needed.
- */
-declare module 'react-native-alphabetlistview/components/CellWrapper' {
-  declare module.exports: any;
-}
-
-declare module 'react-native-alphabetlistview/components/SectionHeader' {
-  declare module.exports: any;
-}
-
-declare module 'react-native-alphabetlistview/components/SectionList' {
-  declare module.exports: any;
-}
-
-declare module 'react-native-alphabetlistview/components/SelectableSectionsListView' {
-  declare module.exports: any;
-}
-
-// Filename aliases
-declare module 'react-native-alphabetlistview/components/CellWrapper.js' {
-  declare module.exports: $Exports<'react-native-alphabetlistview/components/CellWrapper'>;
-}
-declare module 'react-native-alphabetlistview/components/SectionHeader.js' {
-  declare module.exports: $Exports<'react-native-alphabetlistview/components/SectionHeader'>;
-}
-declare module 'react-native-alphabetlistview/components/SectionList.js' {
-  declare module.exports: $Exports<'react-native-alphabetlistview/components/SectionList'>;
-}
-declare module 'react-native-alphabetlistview/components/SelectableSectionsListView.js' {
-  declare module.exports: $Exports<'react-native-alphabetlistview/components/SelectableSectionsListView'>;
-}
-declare module 'react-native-alphabetlistview/index' {
-  declare module.exports: $Exports<'react-native-alphabetlistview'>;
-}
-declare module 'react-native-alphabetlistview/index.js' {
-  declare module.exports: $Exports<'react-native-alphabetlistview'>;
 }
