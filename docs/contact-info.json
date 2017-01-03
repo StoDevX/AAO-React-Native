@@ -1,20 +1,6 @@
 {
   "data": [
     {
-      "title": "Boe House",
-      "phoneNumber": "5077863062",
-      "buttonText": "Contact Boe House",
-      "image": "boe house.jpg",
-      "text": "The Counseling Center was established by St. Olaf College to enhance the personal growth and development of its students.The Center supports students in their academic pursuits and facilitates personal and interpersonal learning and growth.The programs it provides are preventive as well as remedial.When contacting us to make an appointment, please note that we are often busy and schedules can be restrictive in available hours. However, if you are in need of an appointment, please call and we will accommodate you as best we can.\n"
-    },
-    {
-      "title": "The Pause Kitchen",
-      "phoneNumber": "5077866969",
-      "buttonText": "Call The Pause",
-      "image": "pause kitchen.jpg",
-      "text": "Place orders in The Pause Kitchen. The pause delivers anywhere on campus, or orders can be placed for pickup.\n"
-    },
-    {
       "title": "St. Olaf Public Safety",
       "phoneNumber": "5077863666",
       "buttonText": "Call Public Safety",
@@ -34,6 +20,20 @@
       "buttonText": "Call SARN",
       "image": "sarn.jpg",
       "text": "SARN, the Sexual Assault Resource Network, is a confidential resource availiable to all students. Calls to SARN will be picked up by a trained advocate to provide services to students struggling with issues of sexual and domestic violence. Students can also visit the SARN office in Buntrock Commons room 113.\n"
+    },
+    {
+      "title": "Boe House",
+      "phoneNumber": "5077863062",
+      "buttonText": "Contact Boe House",
+      "image": "boe house.jpg",
+      "text": "The Counseling Center was established by St. Olaf College to enhance the personal growth and development of its students. The Center supports students in their academic pursuits and facilitates personal and interpersonal learning and growth.\nThe programs it provides are preventive as well as remedial. When contacting us to make an appointment, please note that we are often busy and schedules can be restrictive in available hours. However, if you are in need of an appointment, please call and we will accommodate you as best we can.\n"
+    },
+    {
+      "title": "The Pause Kitchen",
+      "phoneNumber": "5077866969",
+      "buttonText": "Call The Pause",
+      "image": "pause kitchen.jpg",
+      "text": "Place orders in The Pause Kitchen. The pause delivers anywhere on campus, or orders can be placed for pickup.\n"
     }
   ]
 }
