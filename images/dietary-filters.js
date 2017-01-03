@@ -41,7 +41,7 @@ const madeWithoutGlutenContainingIngredients = {
 
 const kosher = {
   label: 'kosher',
-  icon: require('./images/menu-icons/k.png'),
+  icon: require('./menu-icons/k.png'),
 }
 
 export default {
