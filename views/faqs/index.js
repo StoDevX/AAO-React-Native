@@ -1,55 +1,45 @@
 // @flow
-
 import React from 'react'
-import {ListView, View, Text} from 'react-native'
+import {WebView, StyleSheet} from 'react-native'
+import LoadingView from '../components/loading'
+import {text as faqs} from '../../docs/faqs.json'
 
-class OfflineError extends Error {}
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 30,
+    paddingTop: 10,
+    paddingBottom: 20,
+    backgroundColor: 'transparent',
+  },
+})
 
-let fetchAndCache = async (url, cacheTime=[1, 'hour'], fetchArgs={}) => {
-  let cached = JSON.parse(await AsyncStorage.getItem(`cache:${url}`))
-  let online = await NetInfo.isConnected.fetch()
-  if (!online) {
-    return new OfflineError()
-  }
-  if (cached && moment(cacheTime))
-  fetch(url, fetchArgs).then(status).then(resp)
-}
-
-
-function FaqItem({title, excerpt}) {
-  return (
-    <View>
-      <Text>{title}</Text>
-      <Text>{excerpt}</Text>
-    </View>
-  )
-}
-
-export default class FaqView extends React.Component {
+export class FaqView extends React.Component {
   state = {
-    faqs: [],
+    html: faqs,
   }
 
-  url = "https://stodevx.github.io/AAO-React-Native/faqs.md"
+  url = "https://stodevx.github.io/AAO-React-Native/faqs.json"
 
   componentWillMount() {
     this.fetchData()
   }
 
   fetchData = async (forceFromServer=false) => {
-    let isOnline = await NetInfo.status()
-    if (!isOnline) {
-      this.setState({offline: true})
+    let html = faqs
+    try {
+      let blob: {text: string} = await fetchJson(this.url)
+      html = blob.text
+    } catch (err) {
+      console.warn(err)
     }
-    let markdown = await fetch(this.url).then(status).then(text)
-    this.setState({raw: markdown})
+    this.setState({html: html})
   }
 
   render() {
-    return (
-      <ListView
-        dataSource
-      />
-    )
+    if (!this.state.html) {
+      return <LoadingView />
+    }
+    return <WebView style={styles.container} source={{html: this.state.html}} />
   }
 }
