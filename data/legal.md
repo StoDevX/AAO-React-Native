@@ -1,3 +1,11 @@
+<style>
+body {
+  -webkit-overflow-scrolling: touch;
+  font-family: -apple-system, Roboto, sans-serif;
+  background-color: transparent;
+}
+</style>
+
 The MIT License (MIT)
 
 Copyright (c) 2015 StoDevX
