@@ -16,4 +16,11 @@ export default [
     component: CalendarView,
     props: {calendarId: 'stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com'},
   },
+  {
+    id: 'northfield',
+    title: 'Northfield',
+    rnVectorIcon: {iconName: 'pin'},
+    component: CalendarView,
+    props: {calendarId: 'thisisnorthfield%40gmail.com'},
+  },
 ]
