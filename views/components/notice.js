@@ -23,10 +23,10 @@ export function NoticeView({text, style, spinner}: {text: string, style?: any, s
   let activityIndicator = spinner ? <ActivityIndicator style={styles.spinner} /> : null
   return (
     <View style={[styles.container, style]}>
+      {activityIndicator}
       <Text style={styles.text}>
         {text}
       </Text>
-      {activityIndicator}
     </View>
   )
 }
