@@ -38,54 +38,54 @@
     ],
     "foodItems": [
       {
-        "description": "One (1) slice of pizza pie",
         "label": "Single Slice",
-        "special": true,
-        "station": "Pizza"
+        "station": "Pizza",
+        "description": "One (1) slice of pizza pie",
+        "special": true
       },
       {
         "label": "Small Pizza (12 in)",
+        "station": "Pizza",
         "description": "Includes two toppings",
-        "special": true,
-        "station": "Pizza"
+        "special": true
       },
       {
         "label": "Large Pizza (16 in)",
+        "station": "Pizza",
         "description": "Includes two toppings",
-        "special": true,
-        "station": "Pizza"
+        "special": true
       },
       {
-        "description": "Marinara, Ranch, BBQ, Honey Mustard",
         "label": "Side of Sauce",
-        "station": "Pizza"
+        "station": "Pizza",
+        "description": "Marinara, Ranch, BBQ, Honey Mustard"
       },
       {
         "label": "BBQ Chicken",
-        "special": true,
-        "station": "Specialty Pizzas"
+        "station": "Specialty Pizzas",
+        "special": true
       },
       {
         "label": "Buffalo Chicken",
-        "special": true,
-        "station": "Specialty Pizzas"
+        "station": "Specialty Pizzas",
+        "special": true
       },
       {
         "label": "Chicken Bacon Ranch",
-        "special": true,
-        "station": "Specialty Pizzas"
+        "station": "Specialty Pizzas",
+        "special": true
       },
       {
-        "description": "Includes tomatoes",
         "label": "Chicken Pesto",
-        "special": true,
-        "station": "Specialty Pizzas"
+        "station": "Specialty Pizzas",
+        "description": "Includes tomatoes",
+        "special": true
       },
       {
-        "description": "Includes pepperoni, sausage, onions, green peppers, and black olives",
         "label": "Ole Pizza",
-        "special": true,
-        "station": "Specialty Pizzas"
+        "station": "Specialty Pizzas",
+        "description": "Includes pepperoni, sausage, onions, green peppers, and black olives",
+        "special": true
       },
       {
         "label": "Bacon",
@@ -141,160 +141,160 @@
       },
       {
         "label": "Cheese Quesadilla (Half / Whole)",
-        "special": true,
-        "station": "Quesadilla"
+        "station": "Quesadilla",
+        "special": true
       },
       {
-        "description": "Includes tomatoes, onions, green peppers, and jalapeños",
         "label": "Ultimate Quesadilla (Half / Whole)",
-        "special": true,
-        "station": "Quesadilla"
+        "station": "Quesadilla",
+        "description": "Includes tomatoes, onions, green peppers, and jalapeños",
+        "special": true
       },
       {
-        "description": "Pizza built on pita bread; includes two toppings",
         "label": "Pita Pizza",
-        "special": true,
-        "station": "Pita"
+        "station": "Pita",
+        "description": "Pizza built on pita bread; includes two toppings",
+        "special": true
       },
       {
-        "description": "Pizza built on pita bread",
         "label": "Specialty Pita Pizza",
-        "special": true,
-        "station": "Pita"
+        "station": "Pita",
+        "description": "Pizza built on pita bread",
+        "special": true
       },
       {
-        "description": "Pita bread with choice of hummus and cooked vegetable toppings",
         "label": "Garden Pita",
-        "special": true,
-        "station": "Pita"
+        "station": "Pita",
+        "description": "Pita bread with choice of hummus and cooked vegetable toppings",
+        "special": true
       },
       {
-        "description": "Choice of Garlic, Red Pepper, or Feisty Feta Hummus",
         "label": "Toasted Pita and Hummus",
-        "special": true,
-        "station": "Pita"
+        "station": "Pita",
+        "description": "Choice of Garlic, Red Pepper, or Feisty Feta Hummus",
+        "special": true
       },
       {
         "label": "Pizza Bagel",
-        "special": true,
-        "station": "Savory"
+        "station": "Savory",
+        "special": true
       },
       {
         "label": "Specialty Pizza Bagel",
-        "special": true,
-        "station": "Savory"
+        "station": "Savory",
+        "special": true
       },
       {
         "label": "Garlic Cheesy Bread",
-        "special": true,
-        "station": "Savory"
+        "station": "Savory",
+        "special": true
       },
       {
-        "description": "Includes both chips and a cheese cup",
         "label": "Nachos",
-        "special": true,
-        "station": "Savory"
+        "station": "Savory",
+        "description": "Includes both chips and a cheese cup",
+        "special": true
       },
       {
-        "description": "Includes both chips and salsa",
         "label": "Chips & Salsa",
-        "special": true,
-        "station": "Savory"
+        "station": "Savory",
+        "description": "Includes both chips and salsa",
+        "special": true
       },
       {
         "label": "Bosco Sticks",
-        "special": true,
-        "station": "Savory"
+        "station": "Savory",
+        "special": true
       },
       {
         "label": "Soft Pretzel",
-        "special": true,
-        "station": "Savory"
+        "station": "Savory",
+        "special": true
       },
       {
-        "description": "Dipping sauces: BBQ, Honey Mustard, Marinara, Ranch, Blue Cheese, or Hot Sauce",
         "label": "Chicken Strips",
-        "special": true,
-        "station": "Savory"
+        "station": "Savory",
+        "description": "Dipping sauces: BBQ, Honey Mustard, Marinara, Ranch, Blue Cheese, or Hot Sauce",
+        "special": true
       },
       {
         "label": "Vanilla",
-        "special": true,
-        "station": "Shakes"
+        "station": "Shakes",
+        "special": true
       },
       {
         "label": "Chocolate",
-        "special": true,
-        "station": "Shakes"
+        "station": "Shakes",
+        "special": true
       },
       {
         "label": "Strawberry",
-        "special": true,
-        "station": "Shakes"
+        "station": "Shakes",
+        "special": true
       },
       {
         "label": "Butter Pecan",
-        "special": true,
-        "station": "Shakes"
+        "station": "Shakes",
+        "special": true
       },
       {
         "label": "Butterscotch",
-        "special": true,
-        "station": "Shakes"
+        "station": "Shakes",
+        "special": true
       },
       {
         "label": "Mocha",
-        "special": true,
-        "station": "Shakes"
+        "station": "Shakes",
+        "special": true
       },
       {
         "label": "Mint",
-        "special": true,
-        "station": "Shakes"
+        "station": "Shakes",
+        "special": true
       },
       {
         "label": "Cheesecake",
-        "special": true,
-        "station": "Shakes"
+        "station": "Shakes",
+        "special": true
       },
       {
         "label": "Vanilla",
-        "special": true,
-        "station": "Soft-Serve"
+        "station": "Soft-Serve",
+        "special": true
       },
       {
         "label": "Chocolate",
-        "special": true,
-        "station": "Soft-Serve"
+        "station": "Soft-Serve",
+        "special": true
       },
       {
         "label": "Twist",
-        "special": true,
-        "station": "Soft-Serve"
+        "station": "Soft-Serve",
+        "special": true
       },
       {
-        "description": "A delectable fusion of cookie dough and chocolate chunks, in cookie form",
         "label": "Pause Cookie",
-        "special": true,
-        "station": "Late-Night Feast"
+        "station": "Late-Night Feast",
+        "description": "A delectable fusion of cookie dough and chocolate chunks, in cookie form",
+        "special": true
       },
       {
         "label": "Fountain Drinks",
+        "station": "Fountain & Bottled Drinks",
         "description": "Refills are extra",
-        "special": true,
-        "station": "Fountain & Bottled Drinks"
+        "special": true
       },
       {
-        "description": "No refills",
         "label": "Bottled Beverages",
-        "special": true,
-        "station": "Fountain & Bottled Drinks"
+        "station": "Fountain & Bottled Drinks",
+        "description": "No refills",
+        "special": true
       },
       {
-        "description": "Available in Small or Large sizes",
         "label": "Root Beer Float",
-        "special": true,
-        "station": "Fountain & Bottled Drinks"
+        "station": "Fountain & Bottled Drinks",
+        "description": "Available in Small or Large sizes",
+        "special": true
       }
     ],
     "corIcons": {}
