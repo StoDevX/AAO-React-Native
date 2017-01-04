@@ -164,7 +164,7 @@ export default class SettingsView extends React.Component {
       index: this.props.route.index + 1,
     })
   }
-  
+
   onPressFaqButton() {
     this.props.navigator.push({
       id: 'FaqView',
@@ -311,7 +311,7 @@ export default class SettingsView extends React.Component {
           title='Version'
           detail={version}
         />
-          
+
         <Cell cellStyle='Basic'
           title='FAQ'
           accessory='DisclosureIndicator'
