@@ -4,6 +4,6 @@ import {NoticeView} from './notice'
 
 export default function LoadingView({text='Loading…'}: {text?: string}) {
   return (
-    <NoticeView text={text} />
+    <NoticeView text={text} spinner={true} />
   )
 }
