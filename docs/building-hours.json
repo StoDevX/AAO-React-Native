@@ -742,7 +742,7 @@
       "category": "Help and Support",
       "schedule": [
         {
-          "title": "Study Space",
+          "title": "Hours",
           "hours": [
             {
               "days": [
@@ -769,10 +769,42 @@
               "to": "9:00pm"
             }
           ]
-        },
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": [
+          {
+            "days": [
+              "Mo",
+              "Tu",
+              "We",
+              "Th"
+            ],
+            "from": "7:30am",
+            "to": "4:30pm"
+          },
+          {
+            "days": [
+              "Fr"
+            ],
+            "from": "7:45am",
+            "to": "12:00pm"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ASC – Speaking Space",
+      "category": "Help and Support",
+      "schedule": [
         {
-          "title": "Speaking Space",
-          "isPhysicallyOpen": false,
+          "title": "Hours",
           "hours": [
             {
               "days": [
@@ -799,10 +831,25 @@
               "to": "9:00pm"
             }
           ]
-        },
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": []
+      }
+    },
+    {
+      "name": "ASC – Writing Desk",
+      "category": "Help and Support",
+      "schedule": [
         {
-          "title": "Writing Desk Appointments",
-          "isPhysicallyOpen": false,
+          "title": "Hours",
+          "notes": "Times by appointment.",
           "hours": [
             {
               "days": [
@@ -856,25 +903,7 @@
         "interim": [],
         "spring": [],
         "easter": [],
-        "summer": [
-          {
-            "days": [
-              "Mo",
-              "Tu",
-              "We",
-              "Th"
-            ],
-            "from": "7:30am",
-            "to": "4:30pm"
-          },
-          {
-            "days": [
-              "Fr"
-            ],
-            "from": "7:45am",
-            "to": "12:00pm"
-          }
-        ]
+        "summer": []
       }
     },
     {
