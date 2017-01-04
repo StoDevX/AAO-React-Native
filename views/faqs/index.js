@@ -19,13 +19,13 @@ export class FaqView extends React.Component {
     html: faqs,
   }
 
-  url = "https://stodevx.github.io/AAO-React-Native/faqs.json"
-
   componentWillMount() {
     this.fetchData()
   }
 
-  fetchData = async (forceFromServer=false) => {
+  url = 'https://stodevx.github.io/AAO-React-Native/faqs.json'
+
+  fetchData = async () => {
     let html = faqs
     try {
       let blob: {text: string} = await fetchJson(this.url)
