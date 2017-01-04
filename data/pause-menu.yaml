@@ -157,46 +157,57 @@ foodItems:
 
   - label: Vanilla
     station: Shakes
+    description: 'Vanilla (adj): having no special or extra features; ordinary or standard'
     special: true
 
   - label: Chocolate
     station: Shakes
+    description: 'A plain flavor to layer onto the plain shake'
     special: true
 
   - label: Strawberry
     station: Shakes
+    description: "The wild child – you've left the realm of safety now"
     special: true
 
   - label: Butter Pecan
     station: Shakes
+    description: 'Butter + pecan. *crunch crunch*'
     special: true
 
   - label: Butterscotch
     station: Shakes
+    description: 'Butter + scotch? Whatever happened to a "dry campus"?'
     special: true
 
   - label: Mocha
     station: Shakes
+    description: 'Hot coffee leads to iced coffee leads to coffee shakes…'
     special: true
 
   - label: Mint
     station: Shakes
+    description: 'Pale green and perfect for springtime, or fall, or winter'
     special: true
 
   - label: Cheesecake
     station: Shakes
+    description: 'Creamy goodness in distilled, shaken form'
     special: true
 
   - label: Vanilla
     station: Soft-Serve
+    description: 'Vanilla (adj): having no special or extra features; ordinary or standard'
     special: true
 
   - label: Chocolate
     station: Soft-Serve
+    description: 'If you need more flavor to go with the cold sweetness'
     special: true
 
   - label: Twist
     station: Soft-Serve
+    description: 'The ultimate answer to the age-old question: "either/or? why not both?"'
     special: true
 
   - label: Pause Cookie
