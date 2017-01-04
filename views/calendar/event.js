@@ -78,6 +78,7 @@ export default function EventView(props: {eventTitle: string, location: string, 
   } else if (props.startTime.isSame(props.endTime, 'minute')) {
     times = [
       <Text key={0} style={[styles.timeText, styles.startTime]}>{props.startTime.format('h:mma')}</Text>,
+      <Text key={1} style={[styles.timeText, styles.endTime]}>until ???</Text>,
     ]
   } else {
     times = [
