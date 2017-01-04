@@ -6,7 +6,6 @@ import {FoodItemRow} from './food-item-row'
 import DietaryFilters from '../../../data/dietary-filters'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
-import {toLaxTitleCase} from 'titlecase'
 import type {MenuItemType, ProcessedMenuPropsType} from '../types'
 
 const rightSideSpacing = 10
@@ -66,8 +65,9 @@ export class MenuListView extends React.Component {
   }
 
   props: {
-    data: ProcessedMenuPropsType,
     badgeSpecials: boolean,
+    data: ProcessedMenuPropsType,
+    message?: string,
     stationNotes: {[key: string]: string},
   };
 
@@ -77,7 +77,7 @@ export class MenuListView extends React.Component {
     return (
       <View style={styles.sectionHeader}>
         <Text>
-          <Text style={styles.sectionHeaderText}>{toLaxTitleCase(sectionName)}</Text>
+          <Text style={styles.sectionHeaderText}>{sectionName}</Text>
           {note ? <Text style={styles.sectionHeaderNote}> — {note}</Text> : null}
         </Text>
       </View>
@@ -97,6 +97,10 @@ export class MenuListView extends React.Component {
   }
 
   render() {
+    if (this.props.message) {
+      return <NoticeView style={styles.container} text={this.props.message} />
+    }
+
     if (!this.state.dataSource.getRowCount()) {
       return <NoticeView style={styles.container} text='No items to show. Try changing the filters.' />
     }
