@@ -19,14 +19,14 @@ const styles = StyleSheet.create({
   },
 })
 
-export function NoticeView({text, style}: {text: string, style?: any}) {
-  let spinner = text === 'Loading…' ? <ActivityIndicator style={styles.spinner} /> : null
+export function NoticeView({text, style, spinner}: {text: string, style?: any, spinner?: boolean}) {
+  let activityIndicator = spinner ? <ActivityIndicator style={styles.spinner} /> : null
   return (
     <View style={[styles.container, style]}>
       <Text style={styles.text}>
         {text}
       </Text>
-      {spinner}
+      {activityIndicator}
     </View>
   )
 }
