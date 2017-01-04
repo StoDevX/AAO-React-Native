@@ -10,7 +10,7 @@
     "android": "react-native run-android",
     "android-emulator": "emulator -avd 'react-native'",
     "flow": "flow",
-    "validate-json": "node scripts/validate-json-files.js data/*.json docs/menus/*.json",
+    "bundle-data": "node scripts/bundle-data.js data/ docs/",
     "bundle:ios": "react-native bundle --entry-file index.ios.js --dev true --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios",
     "bundle:android": "react-native bundle --entry-file index.android.js --dev true --platform android --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
     "build:ios": "xcodebuild -configuration Release -workspace ios/AllAboutOlaf.xcworkspace -scheme AllAboutOlaf -sdk iphonesimulator -destination platform='iOS Simulator,name=iPhone 5s,OS=9.2' | xcpretty",
@@ -22,10 +22,7 @@
     "test:js:coverage": "jest --coverage",
     "test:js:watch": "jest --watch",
     "test:ios": "xctool -configuration Release -workspace ios/AllAboutOlaf.xcworkspace -scheme AllAboutOlaf -sdk iphonesimulator -destination platform='iOS Simulator,name=iPhone 5s,OS=9.2' test",
-    "test:android": "echo 'Not yet implemented! See http://facebook.github.io/react-native/docs/signed-apk-android.html#testing-the-release-build-of-your-app'",
-    "release": "npm run release:ios && npm run release:android",
-    "release:ios": "echo 'Not yet implemented!'",
-    "release:android": "echo 'Not yet implemented!'"
+    "test:android": "echo 'Not yet implemented! See http://facebook.github.io/react-native/docs/signed-apk-android.html#testing-the-release-build-of-your-app'"
   },
   "babel": {
     "presets": [
@@ -35,7 +32,7 @@
   "jest": {
     "testRegex": "/__tests__/.*\\.(test|spec)\\.js$",
     "collectCoverageFrom": [
-      "{lib,views}/**/*.{js,jsx}",
+      "{lib,views}/**/*.js",
       "!**/node_modules/**"
     ],
     "preset": "react-native"
@@ -88,6 +85,9 @@
     "eslint-plugin-react": "6.8.0",
     "flow-bin": "0.35.0",
     "jest": "18.1.0",
+    "js-yaml": "3.7.0",
+    "junk": "2.0.0",
+    "marked": "0.3.6",
     "react-test-renderer": "15.4.1"
   }
 }

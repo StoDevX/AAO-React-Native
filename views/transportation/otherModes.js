@@ -8,7 +8,7 @@ import {
   Linking,
 } from 'react-native'
 import type {OtherModeType} from './types'
-import modes from '../../data/transportation.json'
+import {data as modes} from '../../docs/transportation.json'
 import * as c from '../components/colors'
 import Button from 'react-native-button' // the button
 

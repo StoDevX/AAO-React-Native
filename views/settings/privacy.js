@@ -1,31 +1,18 @@
 // @flow
 import React from 'react'
-import {
-  Text,
-  ScrollView,
-  StyleSheet,
-} from 'react-native'
-import privacy from '../../data/privacy.json'
+import {StyleSheet, WebView} from 'react-native'
+import {text as privacy} from '../../docs/privacy.json'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginLeft: 5,
-    marginRight: 5,
-    paddingBottom: 10,
-  },
-  privacy: {
-    paddingLeft: 25,
-    paddingRight: 25,
+    paddingHorizontal: 30,
     paddingTop: 10,
-    lineHeight: 20,
+    paddingBottom: 20,
+    backgroundColor: 'transparent',
   },
 })
 
 export default function PrivacyView() {
-  return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.privacy}>{privacy.text}</Text>
-    </ScrollView>
-  )
+  return <WebView style={styles.container} source={{html: privacy}} />
 }

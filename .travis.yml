@@ -152,12 +152,20 @@ script:
   # JS
   # Lint
   - if [[ "$type" == "js" ]]; then npm run lint; fi
-  # Validate JSON
-  - if [[ "$type" == "js" ]]; then npm run validate-json; fi
+  # Ensure that the data files have been updated
+  - |
+    if [[ "$type" == "js" ]]; then
+      # Run the data-bundling process
+      npm run bundle-data
+      # If there are any changes in the output folder, kill the build.
+      # We need to commit the changes ourselves.
+      git diff --quiet docs/
+    fi
   # Type check
   - if [[ "$type" == "js" ]]; then npm run flow; fi
-  # Build a bundle
+  # Build the bundles
   - if [[ "$type" == "js" ]]; then npm run bundle:ios; fi
+  - if [[ "$type" == "js" ]]; then npm run bundle:android; fi
   # Run tests + collect coverage info
   - if [[ "$type" == "js" ]]; then npm run test:js:coverage; fi
 
