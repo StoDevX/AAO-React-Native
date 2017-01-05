@@ -1,0 +1,8 @@
+$schema: http://json-schema.org/draft-04/schema#
+
+additionalProperties: false
+required: [name, url, description]
+properties:
+  name: {type: string}
+  url: {type: string}
+  description: {type: string}
