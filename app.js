@@ -223,7 +223,7 @@ function LeftButton(route, navigator, index, navState) {
   }
 
   if (route.id === 'HomeView') {
-    let onPressSettings = (settingsButtonActive || editHomeButtonActive) ? null : openSettings(route, navigator)
+    let onPressSettings = (settingsButtonActive || editHomeButtonActive) ? () => {} : openSettings(route, navigator)
     return (
       <TouchableOpacity
         style={[styles.settingsButton]}
@@ -280,7 +280,7 @@ function RightButton(route, navigator) {
     )
   }
   if (route.id === 'HomeView') {
-    let onPressEditHome = (settingsButtonActive || editHomeButtonActive) ? null : openEditHome(route, navigator)
+    let onPressEditHome = (settingsButtonActive || editHomeButtonActive) ? () => {} : openEditHome(route, navigator)
     return (
       <TouchableOpacity
         style={[styles.editHomeButton]}
