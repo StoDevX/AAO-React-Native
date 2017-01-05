@@ -8,6 +8,14 @@ blockquote {
   font-style: italic;
   margin-left: 1em;
 }
+a {
+  pointer-events: none;
+  color: black;
+  text-decoration: none;
+}
+p, blockquote {
+  line-height: 1.2em;
+}
 </style>
 
 Oleville.com and All About Olaf Privacy Policy

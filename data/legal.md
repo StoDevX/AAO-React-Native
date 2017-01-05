@@ -4,6 +4,14 @@ body {
   font-family: -apple-system, Roboto, sans-serif;
   background-color: transparent;
 }
+a {
+  pointer-events: none;
+  color: black;
+  text-decoration: none;
+}
+p {
+  line-height: 1.2em;
+}
 </style>
 
 The MIT License (MIT)

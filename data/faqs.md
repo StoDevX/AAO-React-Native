@@ -7,6 +7,14 @@ body {
 h1 {
   font-size: 1.35em;
 }
+a {
+  pointer-events: none;
+  color: black;
+  text-decoration: none;
+}
+p {
+  line-height: 1.2em;
+}
 </style>
 
 # What's going on with the SIS view?
