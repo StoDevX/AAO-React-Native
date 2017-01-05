@@ -24,7 +24,9 @@
   // see https://github.com/Microsoft/react-native-code-push/issues/393
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
 
-  UIView *loadingView = [[[NSBundle mainBundle] loadNibNamed:@"LaunchScreen" owner:self options:nil] objectAtIndex:0];
+  UIStoryboard *loadingViewStoryBoard = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
+  UIViewController *loadingViewController = [loadingViewStoryBoard instantiateViewControllerWithIdentifier:@"LaunchViewController"];
+  loadingViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"AllAboutOlaf"
@@ -38,7 +40,7 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
 
-  rootView.loadingView = loadingView;
+  rootView.loadingView = loadingViewController.view;
 
   self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
                                                          appId:@"aa46a500-ab1c-4127-b9ff-e7373da3ce35"];
