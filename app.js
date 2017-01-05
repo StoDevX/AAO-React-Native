@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
 let editHomeButtonActive = false
 function openEditHome(route, navigator) {
   return () => {
-    if (editHomeButtonActive) {
+    if (editHomeButtonActive || settingsButtonActive) {
       return
     }
 
@@ -197,7 +197,7 @@ function openEditHome(route, navigator) {
 let settingsButtonActive = false
 function openSettings(route, navigator) {
   return () => {
-    if (settingsButtonActive) {
+    if (settingsButtonActive || editHomeButtonActive) {
       return
     }
 
