@@ -24,7 +24,7 @@ import {
   TableView,
 } from 'react-native-tableview-simple'
 
-import {version} from '../../package.json'
+import {getVersion} from 'react-native-device-info'
 
 import Communications from 'react-native-communications'
 import * as c from '../components/colors'
@@ -309,7 +309,7 @@ export default class SettingsView extends React.Component {
       <Section header='ODDS & ENDS'>
         <Cell cellStyle='RightDetail'
           title='Version'
-          detail={version}
+          detail={getVersion()}
         />
 
         <Cell cellStyle='Basic'
