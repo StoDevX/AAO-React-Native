@@ -99,7 +99,7 @@ export type BonAppCafeInfoType = {
         date: string,
         dayparts: [{id: string, starttime: string, endtime: string, message: string, label: string}],
         status: 'open'|'closed'|string,
-        message: string,
+        message: false|string,
       }],
     }
   }

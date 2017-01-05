@@ -17,7 +17,7 @@ import {
 } from 'react-native'
 import * as c from '../components/colors'
 import Button from 'react-native-button'
-import mapInfo from '../../data/map.json'
+import {data as mapInfo} from '../../docs/map.json'
 
 export default function OlafMapView() {
   return (

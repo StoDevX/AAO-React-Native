@@ -3,7 +3,7 @@
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 
-import {buildingImages} from './images'
+import {buildingImages} from '../../images/building-images'
 import type {BuildingType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
 import {Separator} from '../components/separator'
@@ -12,7 +12,7 @@ import ParallaxView from 'react-native-parallax-view'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 
-const transparentPixel = require('../../data/images/transparent.png')
+const transparentPixel = require('../../images/transparent.png')
 
 import * as c from '../components/colors'
 import {

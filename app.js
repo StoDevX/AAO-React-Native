@@ -26,6 +26,7 @@ import HomeView from './views/home'
 import MapView from './views/map'
 import StreamingView from './views/streaming'
 import {MenusView} from './views/menus'
+import {FilterView} from './views/components/filter'
 import NewsView from './views/news'
 import NewsItemView from './views/news/news-item'
 import SISView from './views/sis'
@@ -40,6 +41,7 @@ import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
 import EditHomeView from './views/editHome'
 import {StudentOrgsView, StudentOrgsDetailView}  from './views/student-orgs'
+import {FaqView} from './views/faqs'
 
 import NoRoute from './views/components/no-route'
 
@@ -49,6 +51,7 @@ function renderScene(route, navigator) {
   switch (route.id) {
     case 'HomeView': return <HomeView {...props} />
     case 'MenusView': return <MenusView {...props} />
+    case 'FilterView': return <FilterView {...props} />
     case 'DirectoryView': return <DirectoryView {...props} />
     case 'CalendarView': return <CalendarView {...props} />
     case 'ContactsView': return <ContactsView {...props} />
@@ -72,6 +75,7 @@ function renderScene(route, navigator) {
     case 'EditHomeView': return <EditHomeView {...props} />
     case 'StudentOrgsView': return <StudentOrgsView {...props} />
     case 'StudentOrgsDetailView': return <StudentOrgsDetailView {...props} />
+    case 'FaqView': return <FaqView {...props} />
     default: return <NoRoute {...props} />
   }
 }

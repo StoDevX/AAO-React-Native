@@ -6,9 +6,9 @@ import {
   Image,
   StyleSheet,
 } from 'react-native'
-import credits from '../../data/credits.json'
+import {data as credits} from '../../docs/credits.json'
 
-let image = require('../../data/images/about/IconTrans.png')
+const image = require('../../images/about/IconTrans.png')
 
 const styles = StyleSheet.create({
   container: {

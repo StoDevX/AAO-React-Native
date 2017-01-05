@@ -12,7 +12,7 @@ import {
   ScrollView,
   WebView,
 } from 'react-native'
-import webcamInfo from '../../data/webcams'
+import {data as webcams} from '../../docs/webcams'
 
 // const inlineVideo = url => `
 //   <style>
@@ -49,7 +49,7 @@ const videoAsThumbnail = url => `
 export default function WebcamsView() {
   return (
     <ScrollView style={styles.container}>
-      {webcamInfo.map(webcam =>
+      {webcams.map(webcam =>
         <View style={styles.row} key={webcam.name}>
           <View style={styles.webCamTitleBox}>
             <Text style={styles.webcamName}>{webcam.name}</Text>

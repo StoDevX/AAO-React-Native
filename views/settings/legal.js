@@ -1,32 +1,18 @@
 // @flow
 import React from 'react'
-import {
-  Text,
-  ScrollView,
-  StyleSheet,
-} from 'react-native'
-import legal from '../../data/legal.json'
+import {StyleSheet, WebView} from 'react-native'
+import {text as legal} from '../../docs/legal.json'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginLeft: 5,
-    marginRight: 5,
-  },
-  legal: {
-    paddingLeft: 25,
-    paddingRight: 25,
+    paddingHorizontal: 30,
     paddingTop: 10,
     paddingBottom: 20,
-    lineHeight: 20,
+    backgroundColor: 'transparent',
   },
 })
 
 export default function LegalView() {
-  return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.legal}>{legal.content}</Text>
-    </ScrollView>
-  )
+  return <WebView style={styles.container} source={{html: legal}} />
 }
-LegalView.propTypes = {}

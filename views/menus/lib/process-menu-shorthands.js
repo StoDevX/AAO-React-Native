@@ -1,6 +1,18 @@
-import type {MenuItemType, StationMenuType} from '../views/menus/types'
+// @flow
+import type {MenuItemType, StationMenuType} from '../types'
 
-export function upgradeMenuItem(item, index): MenuItemType {
+type BasicMenuItemType = {
+  label: string,
+  station: string,
+  special?: boolean,
+  description?: string,
+};
+
+type BasicStationMenuType = {
+  label: string,
+};
+
+export function upgradeMenuItem(item: BasicMenuItemType, index: number): MenuItemType {
   return {
     'connector': '',
     'cor_icon': {},
@@ -27,12 +39,13 @@ export function upgradeMenuItem(item, index): MenuItemType {
   }
 }
 
-export function upgradeStation(station, index): StationMenuType {
+export function upgradeStation(station: BasicStationMenuType, index: number): StationMenuType {
   return {
     'soup': false,
     'price': '',
     'note': '',
     'order_id': String(index),
+    'items': [],
     ...station,
     id: String(index),
   }

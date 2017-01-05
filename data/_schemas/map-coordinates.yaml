@@ -1,0 +1,8 @@
+$schema: http://json-schema.org/draft-04/schema#
+
+additionalProperties: false
+required: [title, latitude, longitude]
+properties:
+  title: {type: string}
+  latitude: {type: number}
+  longitude: {type: number}

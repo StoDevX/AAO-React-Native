@@ -165,6 +165,14 @@ export default class SettingsView extends React.Component {
     })
   }
 
+  onPressFaqButton() {
+    this.props.navigator.push({
+      id: 'FaqView',
+      title: 'FAQs',
+      index: this.props.route.index + 1,
+    })
+  }
+
   focusUsername = () => {
     this._usernameInput.focus()
   }
@@ -302,6 +310,12 @@ export default class SettingsView extends React.Component {
         <Cell cellStyle='RightDetail'
           title='Version'
           detail={version}
+        />
+
+        <Cell cellStyle='Basic'
+          title='FAQ'
+          accessory='DisclosureIndicator'
+          onPress={() => this.onPressFaqButton()}
         />
 
         <Cell cellStyle='Basic'

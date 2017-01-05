@@ -17,7 +17,7 @@ import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
 
-import terms from '../../data/dictionary.json'
+import {data as terms} from '../../docs/dictionary.json'
 
 let styles = StyleSheet.create({
   container: {

@@ -1,0 +1,10 @@
+$schema: http://json-schema.org/draft-04/schema#
+
+additionalProperties: false
+required: [title, phoneNumber, buttonText, image, text]
+properties:
+  title: {type: string}
+  phoneNumber: {type: string}
+  buttonText: {type: string}
+  image: {type: string}
+  text: {type: string}

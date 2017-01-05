@@ -1,0 +1,15 @@
+name: 'Holland Hall'
+category: 'Under Construction'
+
+schedule:
+  - title: 'Hours'
+    hours: []
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

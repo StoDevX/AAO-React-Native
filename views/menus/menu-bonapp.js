@@ -7,15 +7,25 @@ import type {TopLevelViewPropsType} from '../types'
 import {FancyMenu} from './components/fancy-menu'
 import type {BonAppMenuInfoType, BonAppCafeInfoType} from './types'
 import sample from 'lodash/sample'
-import values from 'lodash/values'
+import flatten from 'lodash/flatten'
+import identity from 'lodash/identity'
+import uniqBy from 'lodash/uniqBy'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 import {findMenu} from './lib/find-menu'
+import {trimStationName, trimItemLabel} from './lib/trim-names'
+import {toLaxTitleCase} from 'titlecase'
 
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
 const bonappCafeBaseUrl = 'http://legacy.cafebonappetit.com/api/2/cafes'
 const fetchJsonQuery = (url, query) => fetchJson(`${url}?${qs.stringify(query)}`)
+
+type BonAppPropsType = TopLevelViewPropsType & {
+  cafeId: string,
+  loadingMessage: string[],
+  name: string,
+};
 
 export class BonAppHostedMenu extends React.Component {
   state: {
@@ -33,16 +43,16 @@ export class BonAppHostedMenu extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData(this.props)
   }
 
-  props: TopLevelViewPropsType & {
-    cafeId: string,
-    loadingMessage: string[],
-    name: string,
+  componentWillReceiveProps(newProps: BonAppPropsType) {
+    this.props.cafeId !== newProps.cafeId && this.fetchData(newProps)
   }
 
-  fetchData = async () => {
+  props: BonAppPropsType;
+
+  fetchData = async (props: BonAppPropsType) => {
     this.setState({loading: true})
 
     let cafeMenu = null
@@ -50,8 +60,8 @@ export class BonAppHostedMenu extends React.Component {
 
     try {
       let requests = await Promise.all([
-        fetchJsonQuery(bonappMenuBaseUrl, {cafe: this.props.cafeId}),
-        fetchJsonQuery(bonappCafeBaseUrl, {cafe: this.props.cafeId}),
+        fetchJsonQuery(bonappMenuBaseUrl, {cafe: props.cafeId}),
+        fetchJsonQuery(bonappCafeBaseUrl, {cafe: props.cafeId}),
       ])
       cafeMenu = (requests[0]: BonAppMenuInfoType)
       cafeInfo = (requests[1]: BonAppCafeInfoType)
@@ -60,6 +70,22 @@ export class BonAppHostedMenu extends React.Component {
     }
 
     this.setState({loading: false, cafeMenu, cafeInfo, now: moment.tz(CENTRAL_TZ)})
+  }
+
+  findCafeMessage = (cafeId: string, cafeInfo: BonAppCafeInfoType, now: momentT) => {
+    let actualCafeInfo = cafeInfo.cafes[cafeId]
+    if (!actualCafeInfo) {
+      return 'BonApp did not return a menu for that café'
+    }
+
+    let today = actualCafeInfo.days.find(({date}) => date === now.format('YYYY-MM-DD'))
+    if (!today) {
+      return 'Closed today'
+    } else if (today.status === 'closed') {
+      return today.message || 'Closed today'
+    }
+
+    return null
   }
 
   render() {
@@ -80,24 +106,45 @@ export class BonAppHostedMenu extends React.Component {
 
     // We grab the "today" info from here because BonApp returns special
     // messages in this response, like "Closed for Christmas Break"
-    let days = cafeInfo.cafes[cafeId].days
-    let today = days.find(({date}) => date === now.format('YYYY-MM-DD'))
-    if (!today || today.status === 'closed') {
-      return <NoticeView text={today ? today.message : 'Closed today'} />
+    let specialMessage = this.findCafeMessage(cafeId, cafeInfo, now)
+    if (specialMessage) {
+      return <NoticeView text={specialMessage} />
     }
 
-    // We hard-code to the first day returned because we're only requesting one day.
-    // `cafes` is a map of cafe ids to cafes, but we only request one at a time.
+    // We hard-code to the first day returned because we're only requesting
+    // one day. `cafes` is a map of cafe ids to cafes, but we only request one
+    // cafe at a time, so we just grab the one we requested.
     let dayparts = cafeMenu.days[0].cafes[cafeId].dayparts
     let mealInfo = findMenu(dayparts, now)
     let mealName = mealInfo ? mealInfo.label : ''
     let stationMenus = mealInfo ? mealInfo.stations : []
 
+    // Make sure to titlecase the station menus list, too, so the sort works
+    stationMenus = stationMenus.map(s => ({...s, label: toLaxTitleCase(s.label)}))
+
+    // flow … has issues when we access cafeMenu.items inside a nested closure
+    const allFoodItems = cafeMenu.items
+    // Retrieve food items referenced by each station from the master list
+    const foodItemsByStation = stationMenus.map(s => s.items.map(id => allFoodItems[id]))
+    // Flatten the array (since it's currently grouped by station)
+    const existantFoodItems = flatten(foodItemsByStation).filter(identity)
+
+    // Now clean up the labels and stations so they're nice
+    const foodItems = existantFoodItems.map(item => ({
+      ...item,  // we want to edit the item, not replace it
+      station: toLaxTitleCase(trimStationName(item.station)),  // <b>@station names</b> are a mess
+      label: trimItemLabel(item.label),  // clean up the titles
+    }))
+
+    // And finally, because BonApp is silly, we clean up the food items by
+    // label somewhat.
+    const uniqdFoodItems = uniqBy(foodItems, item => item.label)
+
     return (
       <FancyMenu
         route={this.props.route}
         navigator={this.props.navigator}
-        foodItems={values(cafeMenu.items)}
+        foodItems={uniqdFoodItems}
         menuCorIcons={cafeMenu.cor_icons}
         menuLabel={mealName}
         now={now}

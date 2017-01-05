@@ -10,9 +10,9 @@ const CENTRAL_TZ = 'America/Winnipeg'
 import sample from 'lodash/sample'
 import type {MenuItemType, MasterCorIconMapType, StationMenuType} from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
-const fallbackMenu = require('../../docs/menus/pause.json')
+const {data: fallbackMenu} = require('../../docs/pause-menu.json')
 
-const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native/menus'
+const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
 
 export class GitHubHostedMenu extends React.Component {
   state: {
@@ -48,7 +48,8 @@ export class GitHubHostedMenu extends React.Component {
     let stationMenus: StationMenuType[] = []
     let corIcons: MasterCorIconMapType = {}
     try {
-      let data = await fetchJson(`${githubMenuBaseUrl}/pause.json`)
+      let container = await fetchJson(`${githubMenuBaseUrl}/pause-menu.json`)
+      let data = container.data
       foodItems = data.foodItems || []
       stationMenus = data.stationMenus || []
       corIcons = data.corIcons || {}
