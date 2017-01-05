@@ -48,7 +48,8 @@ export class GitHubHostedMenu extends React.Component {
     let stationMenus: StationMenuType[] = []
     let corIcons: MasterCorIconMapType = {}
     try {
-      let data = await fetchJson(`${githubMenuBaseUrl}/pause-menu.json`)
+      let container = await fetchJson(`${githubMenuBaseUrl}/pause-menu.json`)
+      let data = container.data
       foodItems = data.foodItems || []
       stationMenus = data.stationMenus || []
       corIcons = data.corIcons || {}
