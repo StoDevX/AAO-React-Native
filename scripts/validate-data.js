@@ -11,7 +11,7 @@ const SCHEMA_BASE = path.join(__dirname, '..', 'data', '_schemas')
 const DATA_BASE = path.join(__dirname, '..', 'data')
 
 const isDir = pth => tryBoolean(() => fs.statSync(pth).isDirectory())
-const readYaml = pth => JSON.parse(JSON.stringify(yaml.safeLoad(fs.readFileSync(pth, 'utf-8'), {filename: p})))
+const readYaml = pth => JSON.parse(JSON.stringify(yaml.safeLoad(fs.readFileSync(pth, 'utf-8'), {filename: pth})))
 const readDir = pth => fs.readdirSync(pth).filter(junk.not).filter(entry => !entry.startsWith('_'))
 
 /// MARK: program
