@@ -223,10 +223,11 @@ function LeftButton(route, navigator, index, navState) {
   }
 
   if (route.id === 'HomeView') {
+    let onPressSettings = (settingsButtonActive || editHomeButtonActive) ? null : openSettings(route, navigator)
     return (
       <TouchableOpacity
         style={[styles.settingsButton]}
-        onPress={openSettings(route, navigator)}
+        onPress={onPressSettings}
       >
         <Icon style={styles.settingsIcon} name='ios-settings' />
       </TouchableOpacity>
@@ -265,6 +266,10 @@ function LeftButton(route, navigator, index, navState) {
 // Leaving the boilerplate here for future expansion
 function RightButton(route, navigator) {
   if (route.onDismiss) {
+    if (route.id === 'SettingsView' || route.id === 'EditHomeView') {
+      settingsButtonActive = false
+      editHomeButtonActive = false
+    }
     return (
       <TouchableOpacity
         style={styles.backButtonClose}
@@ -275,10 +280,11 @@ function RightButton(route, navigator) {
     )
   }
   if (route.id === 'HomeView') {
+    let onPressEditHome = (settingsButtonActive || editHomeButtonActive) ? null : openEditHome(route, navigator)
     return (
       <TouchableOpacity
         style={[styles.editHomeButton]}
-        onPress={openEditHome(route, navigator)}
+        onPress={onPressEditHome}
       >
         <Text style={[styles.editHomeText]}>Edit</Text>
       </TouchableOpacity>
