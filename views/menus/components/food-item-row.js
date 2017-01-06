@@ -5,6 +5,9 @@ import {DietaryTags} from './dietary-tags'
 import {ListRow} from '../../components/list-row'
 import type {MenuItemType, MasterCorIconMapType} from '../types'
 import * as c from '../../components/colors'
+import Icon from 'react-native-vector-icons/Ionicons'
+
+const specialsIcon = Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'
 
 type FoodItemPropsType = {|
   filters: MasterCorIconMapType,
@@ -25,7 +28,7 @@ export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodI
       arrowPosition='none'
     >
       <View style={[styles.badge, {width: left, alignSelf: hasDescription ? 'flex-start' : 'center'}]}>
-        <Text style={styles.badgeIcon}>{badgeSpecials && data.special ? '✩' : ''}</Text>
+        {badgeSpecials && data.special ? <Icon style={styles.badgeIcon} name={specialsIcon} /> : null}
       </View>
 
       <View style={[styles.column, {flex: 1}]}>
@@ -51,8 +54,6 @@ export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodI
   )
 }
 
-const titleFontSize = 16
-const titleLineHeight = 18
 const styles = StyleSheet.create({
   container: {
     minHeight: 44,
@@ -70,8 +71,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     color: c.black,
-    fontSize: titleFontSize,
-    lineHeight: titleLineHeight,
+    fontSize: 16,
   },
   description: {
     paddingTop: 2,
@@ -85,9 +85,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   badgeIcon: {
-    fontSize: titleLineHeight,
-    lineHeight: titleLineHeight,
-    marginBottom: -3,
+    fontSize: 18,
     color: c.iosDisabledText,
   },
   iconContainer: {
