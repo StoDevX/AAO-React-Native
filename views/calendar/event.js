@@ -1,18 +1,14 @@
+// @flow
 import React from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-} from 'react-native'
-
+import {StyleSheet, View, Text} from 'react-native'
+import type {EventType} from './types'
 import moment from 'moment-timezone'
 import * as c from '../components/colors'
 import {getText, parseHtml} from '../../lib/html'
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     paddingVertical: 2,
-    // paddingLeft: 10,
     flexDirection: 'row',
   },
   rowIllusion: {
@@ -30,8 +26,7 @@ let styles = StyleSheet.create({
     fontSize: 10,
   },
   startTime: {
-    // marginTop: 3,
-    color: 'black',
+    color: c.black,
   },
   endTime: {
     color: c.iosDisabledText,
@@ -54,9 +49,8 @@ let styles = StyleSheet.create({
   },
 })
 
-// PROPS: eventTitle, location, startTime, endTime
-export default function EventView(props: {eventTitle: string, location: string, startTime?: Object, endTime?: Object, style?: any, isOngoing: bool}) {
-  let title = getText(parseHtml(props.eventTitle))
+export default function EventView(props: EventType) {
+  let title = getText(parseHtml(props.summary))
 
   let eventLength = moment.duration(props.endTime.diff(props.startTime)).asHours()
   let allDay = eventLength === 24
@@ -98,11 +92,4 @@ export default function EventView(props: {eventTitle: string, location: string, 
       </View>
     </View>
   )
-}
-EventView.propTypes = {
-  endTime: React.PropTypes.object,
-  eventTitle: React.PropTypes.string.isRequired,
-  location: React.PropTypes.string,
-  startTime: React.PropTypes.object,
-  style: React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.object]),
 }

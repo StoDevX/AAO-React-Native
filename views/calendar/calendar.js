@@ -14,6 +14,7 @@ import {
   View,
 } from 'react-native'
 
+import type {EventType} from './types'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
 import delay from 'delay'
@@ -71,12 +72,12 @@ export default class CalendarView extends React.Component {
   getEvents = async (now: momentT=moment.tz(TIMEZONE)) => {
     let url = this.buildCalendarUrl(this.props.calendarId)
 
-    let data = []
+    let data: GoogleCalendarEventType[] = []
     try {
       let result = await fetchJson(url)
-      let error = result.error
-      if (error) {
-        this.setState({error: error})
+
+      if (result.error) {
+        this.setState({error: result.error})
       }
 
       data = result.items
@@ -85,18 +86,22 @@ export default class CalendarView extends React.Component {
       console.warn(error)
     }
 
-    data.forEach(event => {
-      event.startTime = moment(event.start.date || event.start.dateTime)
-      event.endTime = moment(event.end.date || event.end.dateTime)
-      event.isOngoing = event.startTime.isBefore(now, 'day')
+    const events: EventType[] = data.map((event: GoogleCalendarEventType) => {
+      const startTime = moment(event.start.date || event.start.dateTime)
+      const endTime = moment(event.end.date || event.end.dateTime)
+      return {
+        ...event,
+        startTime,
+        endTime,
+        isOngoing: startTime.isBefore(now, 'day'),
+      }
     })
 
-    let grouped = groupBy(data, event => {
+    let grouped = groupBy(events, event => {
       if (event.isOngoing) {
         return 'Ongoing'
       }
-      let isToday = event.startTime.isSame(now, 'day')
-      if (isToday) {
+      if (event.startTime.isSame(now, 'day')) {
         return 'Today'
       }
       return event.startTime.format('ddd  MMM Do')  // google returns events in CST
@@ -123,7 +128,7 @@ export default class CalendarView extends React.Component {
     this.setState({refreshing: false})
   }
 
-  renderRow = (data: Object) => {
+  renderRow = (data: EventType) => {
     return (
       <EventView
         style={styles.row}
