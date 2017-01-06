@@ -21,25 +21,6 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  bold: {
-    fontWeight: 'bold',
-  },
-  title: {
-    ...Platform.select({
-      ios: {
-        color: c.black,
-        fontWeight: '400',
-      },
-      android: {
-        color: c.tint,
-        fontWeight: '500',
-      },
-    }),
-  },
-  sectionHeaderSubtitle: {
-    fontSize: 13,
-    color: c.iosDisabledText,  // todo: find android equivalent
-  },
 })
 
 const arrowStyles = StyleSheet.create({
