@@ -1,28 +1,31 @@
+// @flow
 /**
  * All About Olaf
  * Dictionary page
  */
 
 import React from 'react'
-import {StyleSheet, View, Text} from 'react-native'
-import AlphabetListView from 'react-native-alphabetlistview'
+import {StyleSheet, View, Text, Platform} from 'react-native'
+import {StyledAlphabetListView} from '../components/alphabet-listview'
 import {ListRow} from '../components/list-row'
 import {ListSectionHeader} from '../components/list-section-header'
 import {ListSeparator} from '../components/list-separator'
-
+import type {WordType} from './types'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
 
 import {data as terms} from '../../docs/dictionary.json'
 
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
+const rowHeight = Platform.OS === 'ios' ? 68 : 89
+const headerHeight = Platform.OS === 'ios' ? 27 : 41
+
+const styles = StyleSheet.create({
+  row: {
+    height: rowHeight,
   },
-  listView: {
-    paddingRight: 16,
+  rowSectionHeader: {
+    height: headerHeight,
   },
   itemTitle: {
     color: c.black,
@@ -36,12 +39,6 @@ let styles = StyleSheet.create({
     fontSize: 13,
     textAlign: 'left',
   },
-  row: {
-    height: 70,
-  },
-  rowSectionHeader: {
-    height: 27,
-  },
 })
 
 export class DictionaryView extends React.Component {
@@ -50,7 +47,7 @@ export class DictionaryView extends React.Component {
     route: React.PropTypes.object.isRequired,
   };
 
-  onPressRow = data => {
+  onPressRow = (data: WordType) => {
     this.props.navigator.push({
       id: 'DictionaryDetailView',
       index: this.props.route.index + 1,
@@ -60,12 +57,11 @@ export class DictionaryView extends React.Component {
     })
   }
 
-  renderRow = ({isLast, item}) => {
+  renderRow = ({isLast, item}: {isLast: boolean, item: WordType}) => {
     return (
       <View>
         <ListRow
           onPress={() => this.onPressRow(item)}
-          style={{flexDirection: 'column'}}
           contentContainerStyle={styles.row}
           arrowPosition='top'
         >
@@ -77,24 +73,26 @@ export class DictionaryView extends React.Component {
     )
   }
 
-  renderHeader = ({title}) => {
-    return <ListSectionHeader text={title} style={styles.rowSectionHeader} />
+  renderHeader = ({title}: {title: string}) => {
+    return (
+      <ListSectionHeader
+        title={title}
+        style={styles.rowSectionHeader}
+      />
+    )
   }
 
   render() {
-    // console.error(groupBy(terms, item => head(item.word)))
     return (
-      <View style={styles.container}>
-        <AlphabetListView
-          contentContainerStyle={styles.listView}
-          data={groupBy(terms, item => head(item.word))}
-          cell={this.renderRow}
-          sectionHeader={this.renderHeader}
-          sectionHeaderHeight={28}
-          cellHeight={70}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
+      <StyledAlphabetListView
+        data={groupBy(terms, item => head(item.word))}
+        cell={this.renderRow}
+        // just setting cellHeight sends the wrong values on iOS.
+        cellHeight={rowHeight + (Platform.OS === 'ios' ? (11/12 * StyleSheet.hairlineWidth) : 0)}
+        sectionHeader={this.renderHeader}
+        sectionHeaderHeight={headerHeight}
+        showsVerticalScrollIndicator={false}
+      />
     )
   }
 }
