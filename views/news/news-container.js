@@ -9,10 +9,11 @@ import {
   Navigator,
   RefreshControl,
 } from 'react-native'
-import {Touchable} from '../components/touchable'
+import {ListRow} from '../components/list-row'
+import {ListSeparator} from '../components/list-separator'
+import {NoticeView} from '../components/notice'
 import delay from 'delay'
 
-import Icon from 'react-native-vector-icons/Ionicons'
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
 import * as c from '../components/colors'
@@ -35,7 +36,6 @@ export default class NewsContainer extends React.Component {
     refreshing: false,
     loaded: false,
     error: false,
-    noNews: false,
   }
 
   componentWillMount() {
@@ -44,11 +44,8 @@ export default class NewsContainer extends React.Component {
 
   fetchData = async () => {
     try {
-      let response = await fetch(this.props.url).then(r => r.json())
+      let response = await fetchJson(this.props.url)
       let entries = response.responseData.feed.entries
-      if (!entries.length) {
-        this.setState({noNews: true})
-      }
       this.setState({dataSource: this.state.dataSource.cloneWithRows(entries)})
     } catch (error) {
       this.setState({error: true})
@@ -76,14 +73,20 @@ export default class NewsContainer extends React.Component {
     let title = entities.decode(story.title)
     let snippet = entities.decode(story.contentSnippet)
     return (
-      <Touchable onPress={() => this.onPressNews(title, story)} style={[styles.row]}>
+      <ListRow
+        onPress={() => this.onPressNews(title, story)}
+        arrowPosition='top'
+      >
         <View style={[styles.rowContainer]}>
           <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
           <Text style={styles.itemPreview} numberOfLines={2}>{snippet}</Text>
         </View>
-        <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
-      </Touchable>
+      </ListRow>
     )
+  }
+
+  renderSeparator = () => {
+    return <ListSeparator />
   }
 
   onPressNews = (title: string, story: StoryType) => {
@@ -101,19 +104,8 @@ export default class NewsContainer extends React.Component {
       return <LoadingView />
     }
 
-    if (this.state.noNews) {
-      return (
-        <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#ffffff',
-        }}>
-          <Text>
-            No news.
-          </Text>
-        </View>
-      )
+    if (!this.state.dataSource.getRowCount()) {
+      return <NoticeView text='No news.' />
     }
 
     return (
@@ -122,6 +114,7 @@ export default class NewsContainer extends React.Component {
         contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
+        renderSeparator={this.renderSeparator}
         pageSize={5}
         refreshControl={
           <RefreshControl
@@ -139,25 +132,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
     backgroundColor: '#ffffff',
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ebebeb',
-    marginLeft: 20,
-    paddingRight: 10,
-    paddingTop: 8,
-    paddingBottom: 8,
-  },
-  arrowIcon: {
-    color: c.iosDisabledText,
-    fontSize: 20,
-    marginRight: 6,
-    marginLeft: 6,
-    marginTop: 0,
-  },
   rowContainer: {
-    flex: 1,
     flexDirection: 'column',
   },
   itemTitle: {
