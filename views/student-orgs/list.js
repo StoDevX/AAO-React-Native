@@ -5,8 +5,8 @@
  */
 
 import React from 'react'
-import {StyleSheet, View, Text} from 'react-native'
-import AlphabetListView from 'react-native-alphabetlistview'
+import {StyleSheet, View, Text, Platform} from 'react-native'
+import {StyledAlphabetListView} from '../components/alphabet-listview'
 import LoadingView from '../components/loading'
 import delay from 'delay'
 import {NoticeView} from '../components/notice'
@@ -23,33 +23,33 @@ import startCase from 'lodash/startCase'
 import type {StudentOrgAbridgedType} from './types'
 
 const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
+const leftSideSpacing = 20
+const rowHeight = Platform.OS === 'ios' ? 53 : 74
 
-let styles = StyleSheet.create({
-  listView: {
-    paddingRight: 16,
-    backgroundColor: c.white,
+const styles = StyleSheet.create({
+  row: {
+    height: rowHeight,
   },
   textRows: {
-    height: 53,
     flexDirection: 'column',
   },
-  itemNew: {
-    marginLeft: -15,
-    marginRight: 5,
-    width: 11,
-    fontSize: 28,
+  badge: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeIcon: {
+    fontSize: Platform.OS === 'ios' ? 24: 28,
+    color: 'transparent',
   },
   itemTitle: {
     color: c.black,
     fontWeight: '500',
     paddingBottom: 1,
     fontSize: 16,
-    textAlign: 'left',
   },
   itemPreview: {
     color: c.iosDisabledText,
     fontSize: 13,
-    textAlign: 'left',
   },
 })
 
@@ -111,8 +111,15 @@ export class StudentOrgsView extends React.Component {
     this.setState(() => ({refreshing: false}))
   }
 
-  renderHeader = ({title}: {title: string}) => {
-    return <ListSectionHeader spacing={{left: 20}} style={styles.rowSectionHeader} title={title} />
+  renderSectionHeader = ({title}: {title: string}) => {
+    return (
+      <ListSectionHeader
+        title={title}
+        spacing={{left: leftSideSpacing}}
+        // hide the _very first_ border on android
+        style={Platform.OS === 'android' && title === 'A' ? {borderTopWidth: 0} : null}
+      />
+    )
   }
 
   renderRow = ({isLast, item}: {isLast: boolean, item: StudentOrgAbridgedType}) => {
@@ -121,16 +128,19 @@ export class StudentOrgsView extends React.Component {
         <ListRow
           onPress={() => this.onPressRow(item)}
           contentContainerStyle={styles.row}
-          spacing={{left: 20}}
+          style={{flexDirection: 'row'}}
+          fullWidth={true}
           arrowPosition='top'
         >
-          <Text style={[styles.itemNew, {color: item.newOrg ? c.infoBlue : 'transparent'}]}>• </Text>
-          <View style={styles.textRows}>
+          <View style={[styles.badge, {width: leftSideSpacing, alignSelf: 'flex-start'}]}>
+            <Text style={[styles.badgeIcon, item.newOrg && {color: c.infoBlue}]}>•</Text>
+          </View>
+          <View style={[styles.textRows, {flex: 1}]}>
             <Text style={styles.itemTitle} numberOfLines={1}>{item.name}</Text>
             <Text style={styles.itemPreview} numberOfLines={1}>{item.categories.join(', ')}</Text>
           </View>
         </ListRow>
-        {!isLast ? <ListSeparator spacing={{left: 20}} /> : null}
+        {!isLast ? <ListSeparator spacing={{left: leftSideSpacing}} /> : null}
       </View>
     )
   }
@@ -155,13 +165,12 @@ export class StudentOrgsView extends React.Component {
     }
 
     return (
-      <AlphabetListView
-        contentContainerStyle={styles.listView}
+      <StyledAlphabetListView
         data={this.state.orgs}
         cell={this.renderRow}
-        sectionHeader={this.renderHeader}
+        cellHeight={rowHeight}
+        sectionHeader={this.renderSectionHeader}
         sectionHeaderHeight={28}
-        cellHeight={53}
         showsVerticalScrollIndicator={false}
       />
     )
