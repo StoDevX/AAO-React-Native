@@ -32,7 +32,6 @@ let styles = StyleSheet.create({
   textRows: {
     height: 53,
     flexDirection: 'column',
-    flex: 1,
   },
   itemNew: {
     marginLeft: -15,
