@@ -18,6 +18,7 @@ import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
 import delay from 'delay'
 import {Separator} from '../components/separator'
+import {NoticeView} from '../components/notice'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
 import EventView from './event'
@@ -27,7 +28,7 @@ const TIMEZONE = 'America/Winnipeg'
 
 type GoogleCalendarTimeType = {
   dateTime: string,
-}
+};
 type GoogleCalendarEventType = {
   summary: string,
   start: GoogleCalendarTimeType,
@@ -42,13 +43,12 @@ export default class CalendarView extends React.Component {
 
   state = {
     events: new ListView.DataSource({
-      rowHasChanged: (r1: GoogleCalendarEventType, r2: GoogleCalendarEventType) => r1.summary !== r2.summary,
-      sectionHeaderHasChanged: (h1: number, h2: number) => h1 !== h2,
+      rowHasChanged: (r1: EventType, r2: EventType) => r1 !== r2,
+      sectionHeaderHasChanged: (h1: any, h2: any) => h1 !== h2,
     }),
     loaded: false,
     refreshing: true,
     error: null,
-    noEvents: false,
   }
 
   componentWillMount() {
@@ -158,22 +158,11 @@ export default class CalendarView extends React.Component {
     }
 
     if (this.state.error) {
-      return <Text>{this.state.error}</Text>
+      return <NoticeView text={this.state.error} />
     }
 
-    if (this.state.noEvents) {
-      return (
-        <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#ffffff',
-        }}>
-          <Text>
-            No events.
-          </Text>
-        </View>
-      )
+    if (!this.state.events.getRowCount()) {
+      return <NoticeView text='No events.' />
     }
 
     return (
