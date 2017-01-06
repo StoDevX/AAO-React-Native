@@ -15,6 +15,7 @@ import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 import {findMenu} from './lib/find-menu'
 import {trimStationName, trimItemLabel} from './lib/trim-names'
+import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
 import {toLaxTitleCase} from 'titlecase'
 
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
@@ -134,6 +135,7 @@ export class BonAppHostedMenu extends React.Component {
       ...item,  // we want to edit the item, not replace it
       station: toLaxTitleCase(trimStationName(item.station)),  // <b>@station names</b> are a mess
       label: trimItemLabel(item.label),  // clean up the titles
+      description: getTrimmedTextWithSpaces(parseHtml(item.description || '')),  // clean up the descriptions
     }))
 
     // And finally, because BonApp is silly, we clean up the food items by
