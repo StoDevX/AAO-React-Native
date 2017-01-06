@@ -127,7 +127,7 @@ export class StudentOrgsView extends React.Component {
           <Text style={[styles.itemNew, {color: item.newOrg ? c.infoBlue : 'transparent'}]}>• </Text>
           <View style={styles.textRows}>
             <Text style={styles.itemTitle} numberOfLines={1}>{item.name}</Text>
-            <Text style={styles.itemPreview}>{item.categories.join(', ')}</Text>
+            <Text style={styles.itemPreview} numberOfLines={1}>{item.categories.join(', ')}</Text>
           </View>
         </ListRow>
         {!isLast ? <ListSeparator spacing={{left: 20}} /> : null}
