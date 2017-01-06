@@ -68,45 +68,44 @@ export default class CalendarView extends React.Component {
     return `${calendarUrl}?${qs.stringify(params)}`
   }
 
-  getEvents = async () => {
+  getEvents = async (now: momentT=moment.tz(TIMEZONE)) => {
     let url = this.buildCalendarUrl(this.props.calendarId)
 
-    let data = null
-    let error = null
+    let data = []
     try {
-      let result = await fetch(url).then(r => r.json())
-      error = result.error
+      let result = await fetchJson(url)
+      let error = result.error
+      if (error) {
+        this.setState({error: error})
+      }
+
       data = result.items
     } catch (error) {
       this.setState({error: error.message})
-      console.error(error)
+      console.warn(error)
     }
 
-    if (data && data.length) {
-      let now = moment.tz(TIMEZONE)
-      data.forEach(event => {
-        event.startTime = moment(event.start.date || event.start.dateTime)
-        event.endTime = moment(event.end.date || event.end.dateTime)
-        event.isOngoing = event.startTime.isBefore(now, 'day')
-      })
-      let grouped = groupBy(data, event => {
-        if (event.isOngoing) {
-          return 'Ongoing'
-        }
-        let isToday = event.startTime.isSame(now, 'day')
-        if (isToday) {
-          return 'Today'
-        }
-        return event.startTime.format('ddd  MMM Do')  // google returns events in CST
-      })
-      this.setState({events: this.state.events.cloneWithRowsAndSections(grouped)})
-    } else if (data && !data.length) {
-      this.setState({noEvents: true})
-    }
-    if (error) {
-      this.setState({error: error.message})
-    }
-    this.setState({loaded: true})
+    data.forEach(event => {
+      event.startTime = moment(event.start.date || event.start.dateTime)
+      event.endTime = moment(event.end.date || event.end.dateTime)
+      event.isOngoing = event.startTime.isBefore(now, 'day')
+    })
+
+    let grouped = groupBy(data, event => {
+      if (event.isOngoing) {
+        return 'Ongoing'
+      }
+      let isToday = event.startTime.isSame(now, 'day')
+      if (isToday) {
+        return 'Today'
+      }
+      return event.startTime.format('ddd  MMM Do')  // google returns events in CST
+    })
+
+    this.setState({
+      loaded: true,
+      events: this.state.events.cloneWithRowsAndSections(grouped),
+    })
   }
 
   refresh = async () => {
