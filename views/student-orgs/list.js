@@ -25,10 +25,14 @@ import type {StudentOrgAbridgedType} from './types'
 const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 const leftSideSpacing = 20
 const rowHeight = Platform.OS === 'ios' ? 53 : 74
+const headerHeight = Platform.OS === 'ios' ? 27 : 41
 
 const styles = StyleSheet.create({
   row: {
     height: rowHeight,
+  },
+  rowSectionHeader: {
+    height: headerHeight,
   },
   textRows: {
     flexDirection: 'column',
@@ -116,8 +120,7 @@ export class StudentOrgsView extends React.Component {
       <ListSectionHeader
         title={title}
         spacing={{left: leftSideSpacing}}
-        // hide the _very first_ border on android
-        style={Platform.OS === 'android' && title === 'A' ? {borderTopWidth: 0} : null}
+        style={styles.rowSectionHeader}
       />
     )
   }
@@ -168,9 +171,10 @@ export class StudentOrgsView extends React.Component {
       <StyledAlphabetListView
         data={this.state.orgs}
         cell={this.renderRow}
-        cellHeight={rowHeight}
+        // just setting cellHeight sends the wrong values on iOS.
+        cellHeight={rowHeight + (Platform.OS === 'ios' ? (11/12 * StyleSheet.hairlineWidth) : 0)}
         sectionHeader={this.renderSectionHeader}
-        sectionHeaderHeight={28}
+        sectionHeaderHeight={headerHeight}
         showsVerticalScrollIndicator={false}
       />
     )
