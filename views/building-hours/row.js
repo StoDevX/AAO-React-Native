@@ -5,19 +5,13 @@
  */
 
 import React from 'react'
-import {
- View,
- Text,
- StyleSheet,
- Platform,
-} from 'react-native'
+import {View, Text, StyleSheet, Platform} from 'react-native'
 import {Badge} from '../components/badge'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
 import * as c from '../components/colors'
 import {getDetailedBuildingStatus} from './building-hours-helpers'
 import {getShortBuildingStatus} from './building-hours-helpers'
-import Icon from 'react-native-vector-icons/Ionicons'
 
 type PropsType = {
   info: BuildingType,
@@ -27,17 +21,12 @@ type PropsType = {
 };
 
 let styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    paddingVertical: Platform.OS === 'ios' ? 8 : 16,
-    alignItems: 'center',
-  },
   title: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   subtitleText: {
-    fontWeight: Platform.OS === 'ios' ? '400' : '400',
+    fontWeight: '400',
     color: c.iosDisabledText,
     fontSize: 16,
   },
@@ -61,15 +50,7 @@ let styles = StyleSheet.create({
   activeHourSet: {
     fontWeight: 'bold',
   },
-  disclosure: {
-    marginLeft: 10,
-  },
-  disclosureIcon: {
-    color: c.iosDisabledText,
-    fontSize: 20,
-  },
 })
-
 
 export function BuildingRow({info, name, now, style}: PropsType) {
   let bgColors = {
@@ -92,42 +73,35 @@ export function BuildingRow({info, name, now, style}: PropsType) {
   const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
 
   return (
-    <View style={[styles.row, style]}>
-      <View style={{flex: 1, flexDirection: 'column'}}>
-        <View style={{flexDirection: 'row'}}>
-          <View style={[styles.title, {flex: 1}]}>
-            {title}
-          </View>
-
-          <Badge text={openStatus} accentColor={accent} textColor={textaccent} style={styles.accessoryBadge} />
+    <View style={[{flex: 1, flexDirection: 'column'}, style]}>
+      <View style={{flexDirection: 'row'}}>
+        <View style={[styles.title, {flex: 1}]}>
+          {title}
         </View>
 
-        <View style={[styles.preview]}>
-          {hours.map(([isActive, label, status], i) => {
-            // we don't want to show the 'Hours' label, since almost every row has it
-            let showLabel = label && label !== 'Hours'
-            // we want to highlight the time section when there's no label shown
-            let highlightTime = hours.length > 1 && isActive
-
-            return (
-              <Text key={i} style={[styles.previewText]}>
-                {showLabel && <Text style={[isActive ? styles.activeHourSet : null]}>{label}: </Text>}
-                {<Text style={[highlightTime ? styles.activeHourSet : null]}>{status}</Text>}
-              </Text>
-            )
-          })}
-        </View>
+        <Badge
+          text={openStatus}
+          accentColor={accent}
+          textColor={textaccent}
+          style={styles.accessoryBadge}
+        />
       </View>
 
-      {Platform.OS === 'ios' ? <View style={styles.disclosure}>
-        <Icon style={[styles.disclosureIcon]} name='ios-arrow-forward' />
-      </View> : null}
+      <View style={[styles.preview]}>
+        {hours.map(([isActive, label, status], i) => {
+          // we don't want to show the 'Hours' label, since almost every row has it
+          let showLabel = label && label !== 'Hours'
+          // we want to highlight the time section when there's no label shown
+          let highlightTime = hours.length > 1 && isActive
+
+          return (
+            <Text key={i} style={[styles.previewText]}>
+              {showLabel && <Text style={[isActive ? styles.activeHourSet : null]}>{label}: </Text>}
+              {<Text style={[highlightTime ? styles.activeHourSet : null]}>{status}</Text>}
+            </Text>
+          )
+        })}
+      </View>
     </View>
   )
-}
-
-BuildingRow.propTypes = {
-  info: React.PropTypes.object.isRequired,
-  name: React.PropTypes.string.isRequired,
-  now: React.PropTypes.object.isRequired,
 }

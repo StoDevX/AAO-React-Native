@@ -8,7 +8,6 @@ import {getText, parseHtml} from '../../lib/html'
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 2,
     flexDirection: 'row',
   },
   rowIllusion: {

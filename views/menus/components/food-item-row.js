@@ -8,7 +8,7 @@ import * as c from '../../components/colors'
 type FoodItemPropsType = {
   filters: MasterCorIconMapType,
   data: MenuItemType,
-  style: any,
+  style?: any,
   badgeSpecials?: boolean,
 };
 
@@ -47,7 +47,6 @@ const titleFontSize = 16
 const titleLineHeight = 18
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 6,
     flexDirection: 'row',
     alignItems: 'center',
   },

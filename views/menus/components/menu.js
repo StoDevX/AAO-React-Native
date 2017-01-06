@@ -1,11 +1,12 @@
 // @flow
 import React from 'react'
-import {StyleSheet, View, ListView, Text} from 'react-native'
+import {StyleSheet, ListView} from 'react-native'
 import {NoticeView} from '../../components/notice'
 import {FoodItemRow} from './food-item-row'
 import DietaryFilters from '../../../images/dietary-filters'
-import * as c from '../../components/colors'
-import {Separator} from '../../components/separator'
+import {ListSeparator} from '../../components/list-separator'
+import {ListSectionHeader} from '../../components/list-section-header'
+import {ListRow} from '../../components/list-row'
 import type {MenuItemType, ProcessedMenuPropsType} from '../types'
 
 const rightSideSpacing = 10
@@ -24,21 +25,7 @@ const styles = StyleSheet.create({
     marginLeft: leftSideSpacing,
   },
   sectionHeader: {
-    backgroundColor: c.iosListSectionHeader,
-    paddingVertical: 5,
     paddingLeft: leftSideSpacing,
-    paddingRight: rightSideSpacing,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#ebebeb',
-  },
-  sectionHeaderText: {
-    color: 'black',
-    fontWeight: 'bold',
-  },
-  sectionHeaderNote: {
-    fontSize: 13,
-    color: c.iosDisabledText,
   },
 })
 
@@ -75,24 +62,27 @@ export class MenuListView extends React.Component {
     let note = this.props.stationNotes[sectionName]
 
     return (
-      <View style={styles.sectionHeader}>
-        <Text>
-          <Text style={styles.sectionHeaderText}>{sectionName}</Text>
-          {note ? <Text style={styles.sectionHeaderNote}> — {note}</Text> : null}
-        </Text>
-      </View>
+      <ListSectionHeader
+        style={styles.sectionHeader}
+        title={sectionName}
+        subtitle={note}
+      />
     )
   }
 
   renderFoodItem = (rowData: MenuItemType, sectionId: string, rowId: string) => {
     return (
-      <FoodItemRow
+      <ListRow
         key={`${sectionId}-${rowId}`}
-        data={rowData}
-        filters={DietaryFilters}
         style={styles.row}
-        badgeSpecials={this.props.badgeSpecials}
-      />
+        arrowPosition='none'
+      >
+        <FoodItemRow
+          data={rowData}
+          filters={DietaryFilters}
+          badgeSpecials={this.props.badgeSpecials}
+        />
+      </ListRow>
     )
   }
 
@@ -120,7 +110,7 @@ export class MenuListView extends React.Component {
         enableEmptySections={true}
         renderRow={this.renderFoodItem}
         renderSeparator={(sectionId, rowId) =>
-          <Separator key={`${sectionId}-${rowId}`} style={styles.separator} />}
+          <ListSeparator key={`${sectionId}-${rowId}`} style={styles.separator} />}
         renderSectionHeader={this.renderSectionHeader}
       />
     )

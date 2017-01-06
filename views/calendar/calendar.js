@@ -5,26 +5,20 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  Text,
-  Platform,
-  ListView,
-  RefreshControl,
-  View,
-} from 'react-native'
-
+import {StyleSheet, Platform, ListView, RefreshControl} from 'react-native'
 import type {EventType} from './types'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
+import type momentT from 'moment'
 import delay from 'delay'
-import {Separator} from '../components/separator'
 import {NoticeView} from '../components/notice'
+import {ListSeparator} from '../components/list-separator'
+import {ListRow} from '../components/list-row'
+import {ListSectionHeader} from '../components/list-section-header'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
 import EventView from './event'
-import * as c from '../components/colors'
-import { GOOGLE_CALENDAR_API_KEY } from '../../lib/config'
+import {GOOGLE_CALENDAR_API_KEY} from '../../lib/config'
 const TIMEZONE = 'America/Winnipeg'
 
 type GoogleCalendarTimeType = {
@@ -130,29 +124,28 @@ export default class CalendarView extends React.Component {
 
   renderRow = (data: EventType) => {
     return (
-      <EventView
+      <ListRow
         style={styles.row}
-        eventTitle={data.summary}
-        startTime={data.startTime}
-        endTime={data.endTime}
-        location={data.location}
-        isOngoing={data.isOngoing}
-      />
+        arrowPosition='none'
+        fullWidth={true}
+      >
+        <EventView
+          summary={data.summary}
+          startTime={data.startTime}
+          endTime={data.endTime}
+          location={data.location}
+          isOngoing={data.isOngoing}
+        />
+      </ListRow>
     )
   }
 
-  renderSectionHeader = (sectionData: Object, sectionIdentifier: any) => {
-    return (
-      <View style={styles.rowSectionHeader}>
-        <Text style={styles.rowSectionHeaderText} numberOfLines={1}>
-          {sectionIdentifier}
-        </Text>
-      </View>
-    )
+  renderSectionHeader = (sectionData: EventType[], sectionIdentifier: string) => {
+    return <ListSectionHeader title={sectionIdentifier} style={styles.rowSectionHeader} />
   }
 
   renderSeparator = (sectionID: any, rowID: any) => {
-    return <Separator key={`${sectionID}-${rowID}`} />
+    return <ListSeparator key={`${sectionID}-${rowID}`} />
   }
 
   render() {
@@ -193,21 +186,7 @@ let styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
-  row: {
-    // marginLeft: 10,
-    paddingRight: 10,
-  },
   rowSectionHeader: {
-    backgroundColor: c.iosListSectionHeader,
-    paddingTop: 5,
-    paddingBottom: 5,
     paddingLeft: 10,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#ebebeb',
-  },
-  rowSectionHeaderText: {
-    color: 'black',
-    fontWeight: 'bold',
   },
 })
