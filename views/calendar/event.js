@@ -4,6 +4,7 @@ import {StyleSheet, View, Text} from 'react-native'
 import type {EventType} from './types'
 import moment from 'moment-timezone'
 import * as c from '../components/colors'
+import {ListRow} from '../components/list-row'
 import {getText, parseHtml} from '../../lib/html'
 
 const styles = StyleSheet.create({
@@ -81,7 +82,12 @@ export default function EventView(props: EventType) {
   }
 
   return (
-    <View style={[styles.container, props.style]}>
+    <ListRow
+      contentContainerStyle={{paddingVertical: 2}}
+      style={[styles.container, props.style]}
+      arrowPosition='none'
+      fullWidth={true}
+    >
       <View style={[styles.rowIllusion, styles.times]}>
         {times}
       </View>
@@ -89,6 +95,6 @@ export default function EventView(props: EventType) {
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.location}>{props.location}</Text>
       </View>
-    </View>
+    </ListRow>
   )
 }

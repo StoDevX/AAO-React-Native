@@ -13,7 +13,6 @@ import type momentT from 'moment'
 import delay from 'delay'
 import {NoticeView} from '../components/notice'
 import {ListSeparator} from '../components/list-separator'
-import {ListRow} from '../components/list-row'
 import {ListSectionHeader} from '../components/list-section-header'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
@@ -124,19 +123,13 @@ export default class CalendarView extends React.Component {
 
   renderRow = (data: EventType) => {
     return (
-      <ListRow
-        style={styles.row}
-        arrowPosition='none'
-        fullWidth={true}
-      >
-        <EventView
-          summary={data.summary}
-          startTime={data.startTime}
-          endTime={data.endTime}
-          location={data.location}
-          isOngoing={data.isOngoing}
-        />
-      </ListRow>
+      <EventView
+        summary={data.summary}
+        startTime={data.startTime}
+        endTime={data.endTime}
+        location={data.location}
+        isOngoing={data.isOngoing}
+      />
     )
   }
 
@@ -145,7 +138,7 @@ export default class CalendarView extends React.Component {
   }
 
   renderSeparator = (sectionID: any, rowID: any) => {
-    return <ListSeparator key={`${sectionID}-${rowID}`} />
+    return <ListSeparator fullWidth={true} key={`${sectionID}-${rowID}`} />
   }
 
   render() {

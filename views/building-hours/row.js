@@ -10,6 +10,7 @@ import {Badge} from '../components/badge'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
 import * as c from '../components/colors'
+import {ListRow} from '../components/list-row'
 import {getDetailedBuildingStatus} from './building-hours-helpers'
 import {getShortBuildingStatus} from './building-hours-helpers'
 
@@ -17,6 +18,7 @@ type PropsType = {
   info: BuildingType,
   name: string,
   now: momentT,
+  onPress: () => any,
   style?: Number|Object|Array<Number|Object>,
 };
 
@@ -52,7 +54,7 @@ let styles = StyleSheet.create({
   },
 })
 
-export function BuildingRow({info, name, now, style}: PropsType) {
+export function BuildingRow({info, name, now, style, onPress}: PropsType) {
   let bgColors = {
     Open: c.moneyGreen,
     Closed: c.salmon,
@@ -73,7 +75,11 @@ export function BuildingRow({info, name, now, style}: PropsType) {
   const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
 
   return (
-    <View style={[{flex: 1, flexDirection: 'column'}, style]}>
+    <ListRow
+      onPress={onPress}
+      arrowPosition='top'
+      style={[{flex: 1, flexDirection: 'column'}, style]}
+    >
       <View style={{flexDirection: 'row'}}>
         <View style={[styles.title, {flex: 1}]}>
           {title}
@@ -102,6 +108,6 @@ export function BuildingRow({info, name, now, style}: PropsType) {
           )
         })}
       </View>
-    </View>
+    </ListRow>
   )
 }

@@ -15,7 +15,6 @@ import {data as buildingHours} from '../../docs/building-hours'
 import groupBy from 'lodash/groupBy'
 import {ListSeparator} from '../components/list-separator'
 import {ListSectionHeader} from '../components/list-section-header'
-import {ListRow} from '../components/list-row'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 
@@ -64,8 +63,10 @@ export class BuildingHoursView extends React.Component {
 
   renderRow = (data: BuildingType) => {
     return (
-      <ListRow
-        arrowPosition='top'
+      <BuildingRow
+        name={data.name}
+        info={data}
+        now={this.state.now}
         onPress={config => this.props.navigator.push({
           ...config,
           index: this.props.route.index + 1,
@@ -74,9 +75,7 @@ export class BuildingHoursView extends React.Component {
           backButtonTitle: 'Hours',
           props: data,
         })}
-      >
-        <BuildingRow name={data.name} info={data} now={this.state.now} />
-      </ListRow>
+      />
     )
   }
 
