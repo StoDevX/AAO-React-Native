@@ -88,10 +88,7 @@ export function ListRow(props: PropsType) {
 
   const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
   const arrowPositionStyle = {alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start'}
-  let spacing = {paddingLeft: leftSpacing}
-  if (fullWidth) {
-    spacing = {paddingLeft: 0}
-  }
+  const spacing = {paddingLeft: fullWidth ? 0 : leftSpacing}
 
   return (
     <Component style={[styles.container, spacing, contentContainerStyle]} onPress={callback}>
