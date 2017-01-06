@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
       android: {
         backgroundColor: 'white',
         paddingTop: 10,
-        paddingBottom: 15,
+        paddingBottom: 10,
         borderTopWidth: 1,
         borderBottomWidth: 0,
         borderColor: '#c8c7cc',
