@@ -21,7 +21,9 @@ import zip from 'lodash/zip'
 import isError from 'lodash/isError'
 import _isNaN from 'lodash/isNaN'
 import isNil from 'lodash/isNil'
-import {Separator} from '../components/separator'
+import {ListSeparator} from '../components/list-separator'
+import {ListRow} from '../components/list-row'
+import {ListSectionHeader} from '../components/list-section-header'
 import LoadingScreen from '../components/loading'
 import type {CourseType} from '../../lib/courses'
 import {loadAllCourses} from '../../lib/courses'
@@ -130,10 +132,10 @@ export default class CoursesView extends React.Component {
   renderRow = (course: CourseType|Error) => {
     if (isError(course) || course.line && course.column && course.sourceURL) {
       return (
-        <View style={styles.rowContainer}>
+        <ListRow style={styles.rowContainer}>
           <Text style={styles.itemTitle}>Error</Text>
           <Text style={styles.itemPreview} numberOfLines={2}>{course.message || 'The course had an error'}</Text>
-        </View>
+        </ListRow>
       )
     }
 
@@ -142,27 +144,21 @@ export default class CoursesView extends React.Component {
     let locationTimePairs = zip(course.locations, course.times)
     let deptnum = `${course.department.join('/')} ${_isNaN(course.number) || isNil(course.number) ? '' : course.number}` + (course.section || '')
     return (
-      <View style={styles.rowContainer}>
+      <ListRow style={styles.rowContainer}>
         <Text style={styles.itemTitle} numberOfLines={1}>{course.name}</Text>
         <Text style={styles.itemPreview} numberOfLines={2}>{deptnum}</Text>
         {locationTimePairs.map(([place, time], i) =>
           <Text key={i} style={styles.itemPreview} numberOfLines={1}>{place}: {time}</Text>)}
-      </View>
+      </ListRow>
     )
   }
 
   renderSectionHeader = (courses: Object, term: number) => {
-    return (
-      <View style={styles.rowSectionHeader}>
-        <Text style={styles.rowSectionHeaderText} numberOfLines={1}>
-          {toPrettyTerm(term)}
-        </Text>
-      </View>
-    )
+    return <ListSectionHeader style={styles.rowSectionHeader} title={toPrettyTerm(term)} />
   }
 
   renderSeparator = (sectionID: any, rowID: any) => {
-    return <Separator key={`${sectionID}-${rowID}`} style={styles.separator} />
+    return <ListSeparator key={`${sectionID}-${rowID}`} style={styles.separator} />
   }
 
   render() {
@@ -207,14 +203,6 @@ const styles = StyleSheet.create({
   listContainer: {
     backgroundColor: '#ffffff',
   },
-  separator: {
-    marginLeft: 20,
-  },
-  rowContainer: {
-    paddingLeft: 20,
-    paddingRight: 10,
-    paddingVertical: 8,
-  },
   itemTitle: {
     color: c.black,
     paddingBottom: 3,
@@ -225,15 +213,6 @@ const styles = StyleSheet.create({
     color: c.iosText,
     fontSize: 13,
     textAlign: 'left',
-  },
-  rowSectionHeader: {
-    backgroundColor: c.iosListSectionHeader,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 20,
-    borderTopWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
-    borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
-    borderColor: '#ebebeb',
   },
   rowSectionHeaderText: {
     color: 'black',

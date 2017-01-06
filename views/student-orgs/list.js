@@ -6,11 +6,13 @@
 
 import React from 'react'
 import {StyleSheet, View, Text} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
 import AlphabetListView from 'react-native-alphabetlistview'
 import LoadingView from '../components/loading'
 import delay from 'delay'
-import {Touchable} from '../components/touchable'
+import {NoticeView} from '../components/notice'
+import {ListRow} from '../components/list-row'
+import {ListSectionHeader} from '../components/list-section-header'
+import {ListSeparator} from '../components/list-separator'
 import size from 'lodash/size'
 import map from 'lodash/map'
 import sortBy from 'lodash/sortBy'
@@ -28,15 +30,9 @@ let styles = StyleSheet.create({
     backgroundColor: c.white,
   },
   textRows: {
-    paddingTop: 8,
-    paddingBottom: 8,
     height: 53,
     flexDirection: 'column',
     flex: 1,
-  },
-  notLastRow: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#c8c7cc',
   },
   itemNew: {
     marginLeft: -15,
@@ -55,31 +51,6 @@ let styles = StyleSheet.create({
     color: c.iosDisabledText,
     fontSize: 13,
     textAlign: 'left',
-  },
-  rowSectionHeader: {
-    backgroundColor: c.iosListSectionHeader,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 20,
-    height: 27,
-    borderBottomWidth: 1,
-    borderColor: '#ebebeb',
-  },
-  rowSectionHeaderText: {
-    color: 'black',
-    fontWeight: 'bold',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginLeft: 20,
-  },
-  arrowIcon: {
-    color: c.iosDisabledText,
-    fontSize: 20,
-    marginRight: 6,
-    marginLeft: 4,
-    marginTop: 8,
   },
 })
 
@@ -142,23 +113,26 @@ export class StudentOrgsView extends React.Component {
   }
 
   renderHeader = ({title}: {title: string}) => {
-    return (
-      <View style={styles.rowSectionHeader}>
-        <Text style={styles.rowSectionHeaderText}>{title}</Text>
-      </View>
-    )
+    return <ListSectionHeader spacing={{left: 20}} style={styles.rowSectionHeader} title={title} />
   }
 
   renderRow = ({isLast, item}: {isLast: boolean, item: StudentOrgAbridgedType}) => {
     return (
-      <Touchable onPress={() => this.onPressRow(item)} style={[styles.row, !isLast && styles.notLastRow]}>
-        <Text style={[styles.itemNew, {color: item.newOrg ? c.infoBlue : 'transparent'}]}>• </Text>
-        <View style={styles.textRows}>
-          <Text style={styles.itemTitle} numberOfLines={1}>{item.name}</Text>
-          <Text style={styles.itemPreview}>{item.categories.join(', ')}</Text>
-        </View>
-        <Icon style={styles.arrowIcon} name='ios-arrow-forward' />
-      </Touchable>
+      <View>
+        <ListRow
+          onPress={() => this.onPressRow(item)}
+          contentContainerStyle={styles.row}
+          spacing={{left: 20}}
+          arrowPosition='top'
+        >
+          <Text style={[styles.itemNew, {color: item.newOrg ? c.infoBlue : 'transparent'}]}>• </Text>
+          <View style={styles.textRows}>
+            <Text style={styles.itemTitle} numberOfLines={1}>{item.name}</Text>
+            <Text style={styles.itemPreview}>{item.categories.join(', ')}</Text>
+          </View>
+        </ListRow>
+        {!isLast ? <ListSeparator spacing={{left: 20}} /> : null}
+      </View>
     )
   }
 
@@ -178,18 +152,7 @@ export class StudentOrgsView extends React.Component {
     }
 
     if (!size(this.state.orgs)) {
-      return (
-        <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#ffffff',
-        }}>
-          <Text>
-            No organizations found.
-          </Text>
-        </View>
-      )
+      return <NoticeView text='No organizations found.' />
     }
 
     return (
