@@ -16,24 +16,25 @@ type FoodItemPropsType = {|
 
 export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodItemPropsType) {
   const {left=0} = props.spacing
+  const hasDescription = Boolean(data.description)
   return (
     <ListRow
-      style={[styles.container, props.style]}
+      style={[styles.container, hasDescription ? styles.hasDescription : styles.titleOnly, props.style]}
       fullWidth={true}
+      //arrowPosition={hasDescription ? 'top' : 'center'}
       arrowPosition='none'
     >
-      <View style={styles.main}>
-        <View style={styles.title}>
-          <View style={[styles.badgeView, {width: left}]}>
-            <Text style={styles.badgeTextBlob}>{badgeSpecials && data.special ? '✩' : ''}</Text>
-          </View>
-          <Text style={styles.titleText}>
-            {data.label}
-          </Text>
-        </View>
+      <View style={[styles.badge, {width: left, alignSelf: hasDescription ? 'flex-start' : 'center'}]}>
+        <Text style={styles.badgeIcon}>{badgeSpecials && data.special ? '✩' : ''}</Text>
+      </View>
+
+      <View style={[styles.column, {flex: 1}]}>
+        <Text style={styles.titleText}>
+          {data.label}
+        </Text>
 
         {data.description
-          ? <View style={[styles.description, {marginLeft: left}]}>
+          ? <View style={[styles.description]}>
             <Text style={styles.descriptionText}>
               {data.description}
             </Text>
@@ -58,12 +59,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  main: {
-    flex: 1,
+  titleOnly: {
+    paddingVertical: 8,
   },
-  title: {
-    alignItems: 'center',
-    flexDirection: 'row',
+  hasDescription: {
+  },
+  column: {
+    alignItems: 'flex-start',
+    flexDirection: 'column',
   },
   titleText: {
     color: c.black,
@@ -71,18 +74,17 @@ const styles = StyleSheet.create({
     lineHeight: titleLineHeight,
   },
   description: {
-    paddingTop: 3,
-    marginLeft: 0.5,  // Needed to line up the title and description because of the icon
+    paddingTop: 2,
   },
   descriptionText: {
     color: c.iosDisabledText,
     fontSize: Platform.OS === 'ios' ? 13 : 14,
   },
-  badgeView: {
+  badge: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  badgeTextBlob: {
+  badgeIcon: {
     fontSize: titleLineHeight,
     lineHeight: titleLineHeight,
     marginBottom: -3,
