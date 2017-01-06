@@ -24,9 +24,9 @@ export function ListSeparator(props: PropsType) {
     spacing: {left: leftSpacing = 15, right: rightSpacing} = {},
   } = props
 
-  let spacing = {paddingLeft: leftSpacing, paddingRight: rightSpacing}
+  let spacing = {marginLeft: leftSpacing, marginRight: rightSpacing}
   if (fullWidth) {
-    spacing = {paddingLeft: 0, paddingRight: 0}
+    spacing = {marginLeft: 0, marginRight: 0}
   }
 
   return <Separator style={[styles.separator, spacing, props.styles]} />

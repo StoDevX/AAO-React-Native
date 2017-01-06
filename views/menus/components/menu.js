@@ -9,7 +9,6 @@ import {ListSectionHeader} from '../../components/list-section-header'
 import type {MenuItemType, ProcessedMenuPropsType} from '../types'
 
 const leftSideSpacing = 28
-const rightSideSpacing = 10
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -54,7 +53,7 @@ export class MenuListView extends React.Component {
         style={styles.sectionHeader}
         title={sectionName}
         subtitle={note}
-        spacing={{left: leftSideSpacing, right: rightSideSpacing}}
+        spacing={{left: leftSideSpacing}}
       />
     )
   }
@@ -65,7 +64,7 @@ export class MenuListView extends React.Component {
         data={rowData}
         filters={DietaryFilters}
         badgeSpecials={this.props.badgeSpecials}
-        spacing={{left: leftSideSpacing, right: rightSideSpacing}}
+        spacing={{left: leftSideSpacing}}
       />
     )
   }
@@ -95,9 +94,10 @@ export class MenuListView extends React.Component {
         initialListSize={12}
         pageSize={4}
         removeClippedSubviews={false}
-        // we have to disable this here and do it manually, because there
-        // appears to be a bug where the ListView fails to auto-calculate when
-        // the data is loaded after the listview mounts
+        // we have to disable the automatic content-inset calc here and do it
+        // manually, because there appears to be a bug where the ListView
+        // fails to auto-calculate when the data is loaded after the listview
+        // mounts
         automaticallyAdjustContentInsets={false}
         contentInset={{bottom: 49}}
         dataSource={this.state.dataSource}

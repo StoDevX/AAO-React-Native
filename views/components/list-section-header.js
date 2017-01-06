@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
         borderTopWidth: StyleSheet.hairlineWidth,
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderColor: '#ebebeb',
-        paddingRight: 6,
+        paddingRight: 10,
       },
       android: {
         backgroundColor: 'white',
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  sectionHeaderSubtitle: {
+  subtitle: {
     fontSize: 13,
     color: c.iosDisabledText,  // todo: find android equivalent
   },
@@ -66,13 +66,11 @@ export function ListSectionHeader(props: PropsType) {
     subtitle=null,
     subtitleStyle,
     separator=' — ',
-    spacing: {left: leftSpacing = 15, right: rightSpacing} = {},
+    spacing: {left: leftSpacing = 15} = {},
   } = props
 
-  const spacing = {paddingLeft: leftSpacing, paddingRight: rightSpacing}
-
   return (
-    <View style={[styles.container, spacing, style]}>
+    <View style={[styles.container, {paddingLeft: leftSpacing}, style]}>
       <Text>
         <Text style={[styles.title, titleStyle, bold ? styles.bold : null]}>{title}</Text>
         {subtitle

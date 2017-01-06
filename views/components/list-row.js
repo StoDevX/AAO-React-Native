@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         paddingVertical: 8,
-        paddingRight: 6,
+        paddingRight: 8,
       },
       android: {
         paddingVertical: 16,
@@ -95,7 +95,7 @@ export function ListRow(props: PropsType) {
 
   return (
     <Component style={[styles.container, spacing, contentContainerStyle]} onPress={callback}>
-      <View style={style}>
+      <View style={[{flex: 1}, style]}>
         {children}
       </View>
       {arrowPosition !== 'none' ? <DisclosureArrow style={arrowPositionStyle} /> : null}

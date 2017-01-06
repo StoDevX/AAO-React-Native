@@ -11,34 +11,36 @@ type FoodItemPropsType = {|
   data: MenuItemType,
   style?: any,
   badgeSpecials?: boolean,
-  spacing: {left: number, right: number},
+  spacing: {left: number},
 |};
 
 export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodItemPropsType) {
+  const {left=0} = props.spacing
   return (
     <ListRow
       style={[styles.container, props.style]}
-      arrowPosition='none'
       fullWidth={true}
-      spacing={props.spacing}
+      arrowPosition='none'
     >
       <View style={styles.main}>
         <View style={styles.title}>
-          <View style={styles.badgeView}>
+          <View style={[styles.badgeView, {width: left}]}>
             <Text style={styles.badgeTextBlob}>{badgeSpecials && data.special ? '✩' : ''}</Text>
           </View>
           <Text style={styles.titleText}>
             {data.label}
           </Text>
         </View>
+
         {data.description
-          ? <View style={styles.description}>
+          ? <View style={[styles.description, {marginLeft: left}]}>
             <Text style={styles.descriptionText}>
               {data.description}
             </Text>
           </View>
           : null}
       </View>
+
       <DietaryTags
         filters={filters}
         dietary={data.cor_icon}
@@ -48,13 +50,13 @@ export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodI
   )
 }
 
-const leftSideSpacing = 28
-const rightSideSpacing = 10
 const titleFontSize = 16
 const titleLineHeight = 18
 const styles = StyleSheet.create({
   container: {
-    minHeight: 52,
+    minHeight: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   main: {
     flex: 1,
@@ -77,8 +79,6 @@ const styles = StyleSheet.create({
     fontSize: Platform.OS === 'ios' ? 13 : 14,
   },
   badgeView: {
-    width: leftSideSpacing,
-    marginLeft: -leftSideSpacing,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
     color: c.iosDisabledText,
   },
   iconContainer: {
-    marginLeft: rightSideSpacing,
+    marginLeft: 10,
+    marginRight: 4,
   },
 })
