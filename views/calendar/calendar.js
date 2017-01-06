@@ -134,7 +134,7 @@ export default class CalendarView extends React.Component {
   }
 
   renderSectionHeader = (sectionData: EventType[], sectionIdentifier: string) => {
-    return <ListSectionHeader title={sectionIdentifier} style={styles.rowSectionHeader} />
+    return <ListSectionHeader title={sectionIdentifier} spacing={{left: 10}} />
   }
 
   renderSeparator = (sectionID: any, rowID: any) => {
@@ -178,8 +178,5 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-  },
-  rowSectionHeader: {
-    paddingLeft: 10,
   },
 })
