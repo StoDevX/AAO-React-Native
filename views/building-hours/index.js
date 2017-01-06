@@ -67,8 +67,7 @@ export class BuildingHoursView extends React.Component {
         name={data.name}
         info={data}
         now={this.state.now}
-        onPress={config => this.props.navigator.push({
-          ...config,
+        onPress={() => this.props.navigator.push({
           index: this.props.route.index + 1,
           id: 'BuildingHoursDetailView',
           title: data.name,
