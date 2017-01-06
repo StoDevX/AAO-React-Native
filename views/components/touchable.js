@@ -1,9 +1,4 @@
 // @flow
-/**
- * All About Olaf
- * Building Hours list page
- */
-
 import React from 'react'
 import {
   TouchableOpacity,
@@ -13,39 +8,33 @@ import {
   View,
 } from 'react-native'
 
-export const Touchable = ({
-  highlight=true,
-  children,
-  onPress=() => {},
-  borderless=false,
-  style,
-  ...props
-}: {
+type PropsType = {
   highlight?: boolean,
   onPress?: () => any,
   children?: any,
   borderless?: boolean,
   style?: any,
-}) => {
+};
+export const Touchable = ({
+  children,
+  style,
+  highlight=true,
+  borderless=false,
+  onPress=() => {},
+  ...props
+}: PropsType) => {
   // The child <View> is required; the Touchable needs a View as its direct child.
+  const content = <View style={style}>{children}</View>
+
   switch (Platform.OS) {
     case 'ios':
     default: {
-      if (highlight) {
-        return (
-          <TouchableHighlight onPress={onPress} underlayColor='#ebebeb' {...props}>
-            <View style={style}>
-              {children}
-            </View>
-          </TouchableHighlight>
-        )
-      }
+      const Component = highlight ? TouchableHighlight : TouchableOpacity
+      const innerProps = highlight ? {underlayColor: '#ebebeb'} : {activeOpacity: 0.65}
       return (
-        <TouchableOpacity onPress={onPress} activeOpacity={0.65} {...props}>
-          <View style={style}>
-            {children}
-          </View>
-        </TouchableOpacity>
+        <Component onPress={onPress} {...innerProps} {...props}>
+          {content}
+        </Component>
       )
     }
     case 'android': {
@@ -54,9 +43,7 @@ export const Touchable = ({
         : TouchableNativeFeedback.SelectableBackground()
       return (
         <TouchableNativeFeedback onPress={onPress} background={background} {...props}>
-          <View style={style}>
-            {children}
-          </View>
+          {content}
         </TouchableNativeFeedback>
       )
     }
