@@ -2,7 +2,7 @@
 import React from 'react'
 import {Platform, StyleSheet, View} from 'react-native'
 import {Touchable} from './touchable'
-import identity from 'lodash/identity'
+import noop from 'lodash/noop'
 import * as c from './colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 
@@ -65,7 +65,7 @@ export function ListRow(props: PropsType) {
   } = props
 
   const Component = onPress ? Touchable : View
-  const callback = onPress || identity
+  const callback = onPress || noop
 
   const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
   const arrowPositionStyle = {alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start'}
