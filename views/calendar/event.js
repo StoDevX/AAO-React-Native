@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {StyleSheet, View, Text} from 'react-native'
+import {StyleSheet, View, Text, Platform} from 'react-native'
 import type {EventType} from './types'
 import moment from 'moment-timezone'
 import * as c from '../components/colors'
@@ -14,12 +14,14 @@ const styles = StyleSheet.create({
   rowIllusion: {
     paddingVertical: 4,
   },
-  times: {
+  timesWrapper: {
     width: 70,
+    paddingLeft: 4,
+    flexDirection: 'row',
+  },
+  times: {
     flexDirection: 'column',
     justifyContent: 'space-between',
-    paddingRight: 12,
-    paddingLeft: 4,
   },
   timeText: {
     textAlign: 'right',
@@ -31,11 +33,19 @@ const styles = StyleSheet.create({
   endTime: {
     color: c.iosDisabledText,
   },
+  border: {
+    ...Platform.select({
+      ios: {
+        marginLeft: 8,
+        width: 2,
+        backgroundColor: c.iosGray,
+      },
+      android: {},
+    }),
+  },
   texts: {
-    paddingLeft: 10,
+    paddingLeft: 8,
     flex: 1,
-    borderLeftWidth: 2,
-    borderLeftColor: c.iosGray,
   },
   title: {
     color: c.black,
@@ -48,6 +58,37 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
 })
+
+const dotBarStyles = StyleSheet.create({
+  diagram: {
+    marginTop: 4,
+    marginBottom: 3,
+    marginLeft: 8,
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  circle: {
+    height: 5,
+    width: 5,
+    borderRadius: 5,
+    backgroundColor: c.tint,
+  },
+  line: {
+    width: 1,
+    backgroundColor: c.tint,
+    flex: 1,
+  },
+})
+
+function DotBar() {
+  return (
+    <View style={[dotBarStyles.diagram]}>
+      <View style={dotBarStyles.circle} />
+      <View style={dotBarStyles.line} />
+      <View style={dotBarStyles.circle} />
+    </View>
+  )
+}
 
 export default function EventView(props: EventType) {
   let title = getText(parseHtml(props.summary))
@@ -88,9 +129,13 @@ export default function EventView(props: EventType) {
       arrowPosition='none'
       fullWidth={true}
     >
-      <View style={[styles.rowIllusion, styles.times]}>
-        {times}
+      <View style={[styles.rowIllusion, styles.row, styles.timesWrapper]}>
+        <View style={[styles.column, styles.times, {flex: 1}]}>
+          {times}
+        </View>
+        {Platform.OS === 'android' ? <DotBar /> : null}
       </View>
+      <View style={styles.border} />
       <View style={[styles.rowIllusion, styles.texts]}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.location}>{props.location}</Text>
