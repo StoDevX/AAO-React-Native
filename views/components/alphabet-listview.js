@@ -20,6 +20,8 @@ export function StyledAlphabetListView(props: Object) {
     <AlphabetListView
       contentContainerStyle={styles.listView}
       sectionListStyle={styles.sectionItems}
+      initialListSize={36}
+      pageSize={24}
       {...props}
     />
   )
