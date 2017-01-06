@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    marginLeft: 15,
+    paddingLeft: 15,
     ...Platform.select({
       ios: {
         paddingVertical: 8,
@@ -52,13 +52,13 @@ const arrowStyles = StyleSheet.create({
   },
 })
 
-const DisclosureArrow = () => {
+const DisclosureArrow = ({style}: {style?: any}) => {
   if (Platform.OS === 'android') {
     return null
   }
 
   return (
-    <View style={arrowStyles.wrapper}>
+    <View style={[arrowStyles.wrapper, style]}>
       <Icon style={arrowStyles.icon} name='ios-arrow-forward' />
     </View>
   )
@@ -67,6 +67,7 @@ const DisclosureArrow = () => {
 type PropsType = {
   children?: any,
   style?: any,
+  contentContainerStyle?: any,
   arrowPosition?: 'center'|'top'|'none',
   fullWidth?: boolean,
   spacing?: {left?: number, right?: number},
@@ -75,8 +76,10 @@ type PropsType = {
 export function ListRow(props: PropsType) {
   const {
     style,
+    contentContainerStyle,
     children,
     onPress,
+    spacing: {left: leftSpacing = 15, right: rightSpacing} = {},
     fullWidth=false,
   } = props
 
@@ -84,15 +87,18 @@ export function ListRow(props: PropsType) {
   const callback = onPress || identity
 
   const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
-  const arrowPositionStyle = {alignItems: arrowPosition === 'center' ? 'center' : 'flex-start'}
-  const spacing = fullWidth ? {marginLeft: 0} : {marginLeft: 15}
+  const arrowPositionStyle = {alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start'}
+  let spacing = {paddingLeft: leftSpacing, paddingRight: rightSpacing}
+  if (fullWidth) {
+    spacing = {paddingLeft: 0, paddingRight: rightSpacing}
+  }
 
   return (
-    <Component style={[styles.container, spacing, arrowPositionStyle, style]} onPress={callback}>
-      <View>
+    <Component style={[styles.container, spacing, contentContainerStyle]} onPress={callback}>
+      <View style={style}>
         {children}
       </View>
-      {arrowPosition !== 'none' ? <DisclosureArrow /> : null}
+      {arrowPosition !== 'none' ? <DisclosureArrow style={arrowPositionStyle} /> : null}
     </Component>
   )
 }

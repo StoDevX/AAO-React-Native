@@ -55,6 +55,7 @@ type PropsType = {
   subtitleStyle?: any,
   separator?: string,
   style?: any,
+  spacing?: {left?: number, right?: number},
 };
 export function ListSectionHeader(props: PropsType) {
   const {
@@ -65,10 +66,13 @@ export function ListSectionHeader(props: PropsType) {
     subtitle=null,
     subtitleStyle,
     separator=' — ',
+    spacing: {left: leftSpacing = 15, right: rightSpacing} = {},
   } = props
 
+  const spacing = {paddingLeft: leftSpacing, paddingRight: rightSpacing}
+
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container, spacing, style]}>
       <Text>
         <Text style={[styles.title, titleStyle, bold ? styles.bold : null]}>{title}</Text>
         <Text style={[styles.subtitle, subtitleStyle]}>{separator}{subtitle}</Text>

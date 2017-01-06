@@ -9,9 +9,25 @@ const styles = StyleSheet.create({
   },
 })
 
-export function ListSeparator(props: {styles?: any}) {
+type PropsType = {
+  styles?: any,
+  fullWidth?: boolean,
+  spacing?: {left?: number, right?: number}
+};
+export function ListSeparator(props: PropsType) {
   if (Platform.OS === 'android') {
     return null
   }
-  return <Separator style={[styles.separator, props.styles]} />
+
+  const {
+    fullWidth,
+    spacing: {left: leftSpacing = 15, right: rightSpacing} = {},
+  } = props
+
+  let spacing = {paddingLeft: leftSpacing, paddingRight: rightSpacing}
+  if (fullWidth) {
+    spacing = {paddingLeft: 0, paddingRight: 0}
+  }
+
+  return <Separator style={[styles.separator, spacing, props.styles]} />
 }
