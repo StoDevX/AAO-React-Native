@@ -5,9 +5,10 @@
 
 import React from 'react'
 import {StyleSheet, View, Text} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
 import AlphabetListView from 'react-native-alphabetlistview'
-import {Touchable} from '../components/touchable'
+import {ListRow} from '../components/list-row'
+import {ListSectionHeader} from '../components/list-section-header'
+import {ListSeparator} from '../components/list-separator'
 
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
@@ -23,19 +24,6 @@ let styles = StyleSheet.create({
   listView: {
     paddingRight: 16,
   },
-  textRows: {
-    marginLeft: 20,
-    paddingRight: 10,
-    paddingTop: 8,
-    paddingBottom: 8,
-    height: 70,
-    flexDirection: 'column',
-    flex: 1,
-  },
-  notLastRow: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#c8c7cc',
-  },
   itemTitle: {
     color: c.black,
     fontWeight: '500',
@@ -48,29 +36,11 @@ let styles = StyleSheet.create({
     fontSize: 13,
     textAlign: 'left',
   },
-  rowSectionHeader: {
-    backgroundColor: c.iosListSectionHeader,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 20,
-    height: 27,
-    borderBottomWidth: 1,
-    borderColor: '#ebebeb',
-  },
-  rowSectionHeaderText: {
-    color: 'black',
-    fontWeight: 'bold',
-  },
   row: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    height: 70,
   },
-  arrowIcon: {
-    color: c.iosDisabledText,
-    fontSize: 20,
-    marginRight: 6,
-    marginLeft: 4,
-    marginTop: 8,
+  rowSectionHeader: {
+    height: 27,
   },
 })
 
@@ -92,37 +62,37 @@ export class DictionaryView extends React.Component {
 
   renderRow = ({isLast, item}) => {
     return (
-      <Touchable onPress={() => this.onPressRow(item)} style={[styles.row, !isLast && styles.notLastRow]}>
-        <View style={[styles.textRows]}>
-          <Text style={styles.itemTitle} numberOfLines={1}>{item.word}</Text>
-          <Text style={styles.itemPreview} numberOfLines={2}>{item.definition}</Text>
-        </View>
-        <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
-      </Touchable>
+      <View>
+        <ListRow
+          onPress={() => this.onPressRow(item)}
+          style={styles.row}
+          arrowPosition='top'
+        >
+          <View><Text style={styles.itemTitle} numberOfLines={1}>{item.word}</Text></View>
+          <View><Text style={styles.itemPreview} numberOfLines={2}>{item.definition}</Text></View>
+        </ListRow>
+        {!isLast ? <ListSeparator /> : null}
+      </View>
     )
   }
 
   renderHeader = ({title}) => {
-    return (
-      <View style={styles.rowSectionHeader}>
-        <Text style={styles.rowSectionHeaderText}>{title}</Text>
-      </View>
-    )
+    return <ListSectionHeader text={title} style={styles.rowSectionHeader} />
   }
 
   render() {
     // console.error(groupBy(terms, item => head(item.word)))
     return (
       <View style={styles.container}>
-      <AlphabetListView
-        contentContainerStyle={styles.listView}
-        data={groupBy(terms, item => head(item.word))}
-        cell={this.renderRow}
-        sectionHeader={this.renderHeader}
-        sectionHeaderHeight={28}
-        cellHeight={70}
-        showsVerticalScrollIndicator={false}
-      />
+        <AlphabetListView
+          contentContainerStyle={styles.listView}
+          data={groupBy(terms, item => head(item.word))}
+          cell={this.renderRow}
+          sectionHeader={this.renderHeader}
+          sectionHeaderHeight={28}
+          cellHeight={70}
+          showsVerticalScrollIndicator={false}
+        />
       </View>
     )
   }
