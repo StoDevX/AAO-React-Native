@@ -157,8 +157,8 @@ export default class CoursesView extends React.Component {
     return <ListSectionHeader style={styles.rowSectionHeader} title={toPrettyTerm(term)} />
   }
 
-  renderSeparator = (sectionID: any, rowID: any) => {
-    return <ListSeparator key={`${sectionID}-${rowID}`} style={styles.separator} />
+  renderSeparator = (sectionId: string, rowId: string) => {
+    return <ListSeparator key={`${sectionId}-${rowId}`} style={styles.separator} />
   }
 
   render() {

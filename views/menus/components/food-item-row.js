@@ -2,19 +2,26 @@
 import React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
 import {DietaryTags} from './dietary-tags'
+import {ListRow} from '../../components/list-row'
 import type {MenuItemType, MasterCorIconMapType} from '../types'
 import * as c from '../../components/colors'
 
-type FoodItemPropsType = {
+type FoodItemPropsType = {|
   filters: MasterCorIconMapType,
   data: MenuItemType,
   style?: any,
   badgeSpecials?: boolean,
-};
+  spacing: {left: number, right: number},
+|};
 
-export function FoodItemRow({data, filters, style, badgeSpecials=true}: FoodItemPropsType) {
+export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodItemPropsType) {
   return (
-    <View style={[styles.container, style]}>
+    <ListRow
+      style={[styles.container, props.style]}
+      arrowPosition='none'
+      fullWidth={true}
+      spacing={props.spacing}
+    >
       <View style={styles.main}>
         <View style={styles.title}>
           <View style={styles.badgeView}>
@@ -37,7 +44,7 @@ export function FoodItemRow({data, filters, style, badgeSpecials=true}: FoodItem
         dietary={data.cor_icon}
         style={styles.iconContainer}
       />
-    </View>
+    </ListRow>
   )
 }
 
@@ -47,8 +54,7 @@ const titleFontSize = 16
 const titleLineHeight = 18
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    minHeight: 52,
   },
   main: {
     flex: 1,

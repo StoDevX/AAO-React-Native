@@ -6,26 +6,14 @@ import {FoodItemRow} from './food-item-row'
 import DietaryFilters from '../../../images/dietary-filters'
 import {ListSeparator} from '../../components/list-separator'
 import {ListSectionHeader} from '../../components/list-section-header'
-import {ListRow} from '../../components/list-row'
 import type {MenuItemType, ProcessedMenuPropsType} from '../types'
 
-const rightSideSpacing = 10
 const leftSideSpacing = 28
+const rightSideSpacing = 10
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-  },
-  row: {
-    minHeight: 52,
-    paddingRight: rightSideSpacing,
-    paddingLeft: leftSideSpacing,
-  },
-  separator: {
-    marginLeft: leftSideSpacing,
-  },
-  sectionHeader: {
-    paddingLeft: leftSideSpacing,
   },
 })
 
@@ -66,23 +54,29 @@ export class MenuListView extends React.Component {
         style={styles.sectionHeader}
         title={sectionName}
         subtitle={note}
+        spacing={{left: leftSideSpacing, right: rightSideSpacing}}
       />
     )
   }
 
-  renderFoodItem = (rowData: MenuItemType, sectionId: string, rowId: string) => {
+  renderRow = (rowData: MenuItemType) => {
     return (
-      <ListRow
+      <FoodItemRow
+        data={rowData}
+        filters={DietaryFilters}
+        badgeSpecials={this.props.badgeSpecials}
+        spacing={{left: leftSideSpacing, right: rightSideSpacing}}
+      />
+    )
+  }
+
+  renderSeparator = (sectionId: string, rowId: string) => {
+    return (
+      <ListSeparator
+        spacing={{left: leftSideSpacing}}
         key={`${sectionId}-${rowId}`}
-        style={styles.row}
-        arrowPosition='none'
-      >
-        <FoodItemRow
-          data={rowData}
-          filters={DietaryFilters}
-          badgeSpecials={this.props.badgeSpecials}
-        />
-      </ListRow>
+        style={styles.separator}
+      />
     )
   }
 
@@ -108,9 +102,8 @@ export class MenuListView extends React.Component {
         contentInset={{bottom: 49}}
         dataSource={this.state.dataSource}
         enableEmptySections={true}
-        renderRow={this.renderFoodItem}
-        renderSeparator={(sectionId, rowId) =>
-          <ListSeparator key={`${sectionId}-${rowId}`} style={styles.separator} />}
+        renderRow={this.renderRow}
+        renderSeparator={this.renderSeparator}
         renderSectionHeader={this.renderSectionHeader}
       />
     )

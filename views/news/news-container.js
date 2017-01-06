@@ -85,8 +85,8 @@ export default class NewsContainer extends React.Component {
     )
   }
 
-  renderSeparator = () => {
-    return <ListSeparator />
+  renderSeparator = (sectionId: string, rowId: string) => {
+    return <ListSeparator key={`${sectionId}-${rowId}`} />
   }
 
   onPressNews = (title: string, story: StoryType) => {
