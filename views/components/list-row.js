@@ -69,6 +69,10 @@ export function ListRow(props: PropsType) {
 
   const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
   const arrowPositionStyle = {alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start'}
+  const arrow = arrowPosition === 'none' || Platform.OS === 'android'
+    ? null
+    : <DisclosureArrow style={arrowPositionStyle} />
+
   const spacing = {paddingLeft: fullWidth ? 0 : leftSpacing}
 
   return (
@@ -76,7 +80,7 @@ export function ListRow(props: PropsType) {
       <View style={[{flex: 1}, style]}>
         {children}
       </View>
-      {arrowPosition !== 'none' ? <DisclosureArrow style={arrowPositionStyle} /> : null}
+      {arrow}
     </Component>
   )
 }
