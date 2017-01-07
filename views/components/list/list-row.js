@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {Platform, StyleSheet, View} from 'react-native'
-import {Touchable} from './touchable'
+import {Touchable} from '../touchable'
 import noop from 'lodash/noop'
 import * as c from './colors'
 import Icon from 'react-native-vector-icons/Ionicons'
