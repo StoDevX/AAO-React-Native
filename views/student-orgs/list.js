@@ -10,9 +10,7 @@ import {StyledAlphabetListView} from '../components/alphabet-listview'
 import LoadingView from '../components/loading'
 import delay from 'delay'
 import {NoticeView} from '../components/notice'
-import {ListRow} from '../components/list-row'
-import {ListSectionHeader} from '../components/list-section-header'
-import {ListSeparator} from '../components/list-separator'
+import {ListRow, ListSectionHeader, ListSeparator} from '../components/list'
 import size from 'lodash/size'
 import map from 'lodash/map'
 import sortBy from 'lodash/sortBy'
@@ -34,9 +32,6 @@ const styles = StyleSheet.create({
   rowSectionHeader: {
     height: headerHeight,
   },
-  textRows: {
-    flexDirection: 'column',
-  },
   badge: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -44,16 +39,6 @@ const styles = StyleSheet.create({
   badgeIcon: {
     fontSize: Platform.OS === 'ios' ? 24: 28,
     color: 'transparent',
-  },
-  itemTitle: {
-    color: c.black,
-    fontWeight: '500',
-    paddingBottom: 1,
-    fontSize: 16,
-  },
-  itemPreview: {
-    color: c.iosDisabledText,
-    fontSize: 13,
   },
 })
 
@@ -131,18 +116,15 @@ export class StudentOrgsView extends React.Component {
         <ListRow
           onPress={() => this.onPressRow(item)}
           contentContainerStyle={styles.row}
-          style={{flexDirection: 'row'}}
-          fullWidth={true}
           arrowPosition='top'
-        >
-          <View style={[styles.badge, {width: leftSideSpacing, alignSelf: 'flex-start'}]}>
-            <Text style={[styles.badgeIcon, item.newOrg && {color: c.infoBlue}]}>•</Text>
-          </View>
-          <View style={[styles.textRows, {flex: 1}]}>
-            <Text style={styles.itemTitle} numberOfLines={1}>{item.name}</Text>
-            <Text style={styles.itemPreview} numberOfLines={1}>{item.categories.join(', ')}</Text>
-          </View>
-        </ListRow>
+
+          badge={<NewOrgBadge newOrg={item.newOrg} />}
+
+          title={item.name}
+          titleLines={1}
+          description={item.categories.join(', ')}
+          descriptionLines={1}
+        />
         {!isLast ? <ListSeparator spacing={{left: leftSideSpacing}} /> : null}
       </View>
     )
@@ -179,4 +161,12 @@ export class StudentOrgsView extends React.Component {
       />
     )
   }
+}
+
+const NewOrgBadge = ({newOrg}: {newOrg: boolean}) => {
+  return (
+    <View style={[styles.badge, {width: leftSideSpacing, alignSelf: 'flex-start'}]}>
+      <Text style={[styles.badgeIcon, newOrg && {color: c.infoBlue}]}>•</Text>
+    </View>
+  )
 }

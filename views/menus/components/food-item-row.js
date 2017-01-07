@@ -1,8 +1,8 @@
 // @flow
 import React from 'react'
-import {View, Text, StyleSheet, Platform} from 'react-native'
+import {View, StyleSheet, Platform} from 'react-native'
 import {DietaryTags} from './dietary-tags'
-import {ListRow} from '../../components/list-row'
+import {ListRow} from '../../components/list'
 import type {MenuItemType, MasterCorIconMapType} from '../types'
 import * as c from '../../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -24,39 +24,31 @@ export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodI
     <ListRow
       style={[styles.container, hasDescription ? styles.hasDescription : styles.titleOnly, props.style]}
       fullWidth={true}
-      //arrowPosition={hasDescription ? 'top' : 'center'}
       arrowPosition='none'
-    >
-      <View style={[styles.badge, {width: left, alignSelf: hasDescription ? 'flex-start' : 'center'}]}>
-        {badgeSpecials && data.special ? <Icon style={styles.badgeIcon} name={specialsIcon} /> : null}
-      </View>
 
-      <View style={[styles.column, {flex: 1}]}>
-        <Text style={styles.titleText}>
-          {data.label}
-        </Text>
+      badge={
+        <View style={[styles.badge, {width: left, alignSelf: hasDescription ? 'flex-start' : 'center'}]}>
+          {badgeSpecials && data.special ? <Icon style={styles.badgeIcon} name={specialsIcon} /> : null}
+        </View>
+      }
 
-        {data.description
-          ? <View style={[styles.description]}>
-            <Text style={styles.descriptionText}>
-              {data.description}
-            </Text>
-          </View>
-          : null}
-      </View>
+      title={data.label}
+      description={data.description}
 
-      <DietaryTags
-        filters={filters}
-        dietary={data.cor_icon}
-        style={styles.iconContainer}
-      />
-    </ListRow>
+      rightColumn={
+        <DietaryTags
+          filters={filters}
+          dietary={data.cor_icon}
+          style={styles.iconContainer}
+        />
+      }
+    />
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    minHeight: 44,
+    minHeight: 36,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -64,21 +56,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   hasDescription: {
-  },
-  column: {
-    alignItems: 'flex-start',
-    flexDirection: 'column',
-  },
-  titleText: {
-    color: c.black,
-    fontSize: 16,
-  },
-  description: {
-    paddingTop: 2,
-  },
-  descriptionText: {
-    color: c.iosDisabledText,
-    fontSize: Platform.OS === 'ios' ? 13 : 14,
   },
   badge: {
     alignItems: 'center',

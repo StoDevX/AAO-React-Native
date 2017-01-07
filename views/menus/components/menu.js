@@ -4,8 +4,7 @@ import {StyleSheet, ListView} from 'react-native'
 import {NoticeView} from '../../components/notice'
 import {FoodItemRow} from './food-item-row'
 import DietaryFilters from '../../../images/dietary-filters'
-import {ListSeparator} from '../../components/list-separator'
-import {ListSectionHeader} from '../../components/list-section-header'
+import {ListSeparator, ListSectionHeader} from '../../components/list'
 import type {MenuItemType, ProcessedMenuPropsType} from '../types'
 
 const leftSideSpacing = 28

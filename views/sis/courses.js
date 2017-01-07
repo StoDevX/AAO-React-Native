@@ -12,7 +12,6 @@ import {
   ListView,
   RefreshControl,
 } from 'react-native'
-import * as c from '../components/colors'
 
 import {isLoggedIn} from '../../lib/login'
 import delay from 'delay'
@@ -20,9 +19,7 @@ import zip from 'lodash/zip'
 import isError from 'lodash/isError'
 import _isNaN from 'lodash/isNaN'
 import isNil from 'lodash/isNil'
-import {ListSeparator} from '../components/list-separator'
-import {ListRow} from '../components/list-row'
-import {ListSectionHeader} from '../components/list-section-header'
+import {ListSeparator, ListRow, ListSectionHeader} from '../components/list'
 import LoadingScreen from '../components/loading'
 import type {CourseType} from '../../lib/courses'
 import {loadAllCourses} from '../../lib/courses'
@@ -131,10 +128,12 @@ export default class CoursesView extends React.Component {
   renderRow = (course: CourseType|Error) => {
     if (isError(course) || course.line && course.column && course.sourceURL) {
       return (
-        <ListRow style={styles.rowContainer}>
-          <Text style={styles.itemTitle}>Error</Text>
-          <Text style={styles.itemPreview} numberOfLines={2}>{course.message || 'The course had an error'}</Text>
-        </ListRow>
+        <ListRow
+          style={styles.rowContainer}
+          title='Error'
+          description={course.message || 'The course had an error'}
+          descriptionLines={2}
+        />
       )
     }
 
@@ -143,12 +142,15 @@ export default class CoursesView extends React.Component {
     let locationTimePairs = zip(course.locations, course.times)
     let deptnum = `${course.department.join('/')} ${_isNaN(course.number) || isNil(course.number) ? '' : course.number}` + (course.section || '')
     return (
-      <ListRow style={styles.rowContainer}>
-        <Text style={styles.itemTitle} numberOfLines={1}>{course.name}</Text>
-        <Text style={styles.itemPreview} numberOfLines={2}>{deptnum}</Text>
-        {locationTimePairs.map(([place, time], i) =>
-          <Text key={i} style={styles.itemPreview} numberOfLines={1}>{place}: {time}</Text>)}
-      </ListRow>
+      <ListRow
+        style={styles.rowContainer}
+        title={course.name}
+        description={[
+          <Text key='desc'>{deptnum}</Text>,
+          ...locationTimePairs.map(([place, time], i) =>
+            <Text key={i}>{place}: {time}</Text>)
+        ]}
+      />
     )
   }
 
@@ -201,20 +203,5 @@ export default class CoursesView extends React.Component {
 const styles = StyleSheet.create({
   listContainer: {
     backgroundColor: '#ffffff',
-  },
-  itemTitle: {
-    color: c.black,
-    paddingBottom: 3,
-    fontSize: 16,
-    textAlign: 'left',
-  },
-  itemPreview: {
-    color: c.iosText,
-    fontSize: 13,
-    textAlign: 'left',
-  },
-  rowSectionHeaderText: {
-    color: 'black',
-    fontWeight: 'bold',
   },
 })

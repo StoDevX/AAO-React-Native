@@ -2,21 +2,17 @@
 import React, {PropTypes} from 'react'
 import {
   StyleSheet,
-  View,
   ListView,
   Platform,
-  Text,
   Navigator,
   RefreshControl,
 } from 'react-native'
-import {ListRow} from '../components/list-row'
-import {ListSeparator} from '../components/list-separator'
+import {ListRow, ListSeparator} from '../components/list'
 import {NoticeView} from '../components/notice'
 import delay from 'delay'
 
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
-import * as c from '../components/colors'
 
 let Entities = require('html-entities').AllHtmlEntities
 const entities = new Entities()
@@ -76,12 +72,11 @@ export default class NewsContainer extends React.Component {
       <ListRow
         onPress={() => this.onPressNews(title, story)}
         arrowPosition='top'
-      >
-        <View style={[styles.rowContainer]}>
-          <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
-          <Text style={styles.itemPreview} numberOfLines={2}>{snippet}</Text>
-        </View>
-      </ListRow>
+        title={title}
+        titleLines={1}
+        description={snippet}
+        descriptionLines={2}
+      />
     )
   }
 
@@ -131,19 +126,5 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingBottom: 50,
     backgroundColor: '#ffffff',
-  },
-  rowContainer: {
-    flexDirection: 'column',
-  },
-  itemTitle: {
-    color: c.black,
-    paddingBottom: 3,
-    fontSize: 16,
-    textAlign: 'left',
-  },
-  itemPreview: {
-    color: c.iosDisabledText,
-    fontSize: 13,
-    textAlign: 'left',
   },
 })

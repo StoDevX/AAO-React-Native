@@ -12,8 +12,7 @@ import moment from 'moment-timezone'
 import type momentT from 'moment'
 import delay from 'delay'
 import {NoticeView} from '../components/notice'
-import {ListSeparator} from '../components/list-separator'
-import {ListSectionHeader} from '../components/list-section-header'
+import {ListSeparator, ListSectionHeader} from '../components/list'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
 import EventView from './event'
@@ -122,15 +121,7 @@ export default class CalendarView extends React.Component {
   }
 
   renderRow = (data: EventType) => {
-    return (
-      <EventView
-        summary={data.summary}
-        startTime={data.startTime}
-        endTime={data.endTime}
-        location={data.location}
-        isOngoing={data.isOngoing}
-      />
-    )
+    return <EventView {...data} />
   }
 
   renderSectionHeader = (sectionData: EventType[], sectionIdentifier: string) => {

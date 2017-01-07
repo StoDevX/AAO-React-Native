@@ -3,18 +3,13 @@
  * All About Olaf
  * Dictionary page
  */
-
 import React from 'react'
-import {StyleSheet, View, Text, Platform} from 'react-native'
+import {StyleSheet, View, Platform} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
-import {ListRow} from '../components/list-row'
-import {ListSectionHeader} from '../components/list-section-header'
-import {ListSeparator} from '../components/list-separator'
+import {ListRow, ListSectionHeader, ListSeparator} from '../components/list'
 import type {WordType} from './types'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
-import * as c from '../components/colors'
-
 import {data as terms} from '../../docs/dictionary.json'
 
 const rowHeight = Platform.OS === 'ios' ? 68 : 89
@@ -26,18 +21,6 @@ const styles = StyleSheet.create({
   },
   rowSectionHeader: {
     height: headerHeight,
-  },
-  itemTitle: {
-    color: c.black,
-    fontWeight: '500',
-    paddingBottom: 1,
-    fontSize: 16,
-    textAlign: 'left',
-  },
-  itemPreview: {
-    color: c.iosDisabledText,
-    fontSize: 13,
-    textAlign: 'left',
   },
 })
 
@@ -64,10 +47,12 @@ export class DictionaryView extends React.Component {
           onPress={() => this.onPressRow(item)}
           contentContainerStyle={styles.row}
           arrowPosition='top'
-        >
-          <Text style={styles.itemTitle} numberOfLines={1}>{item.word}</Text>
-          <Text style={styles.itemPreview} numberOfLines={2}>{item.definition}</Text>
-        </ListRow>
+
+          title={item.word}
+          titleLines={1}
+          description={item.definition}
+          descriptionLines={2}
+        />
         {!isLast ? <ListSeparator /> : null}
       </View>
     )
