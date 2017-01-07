@@ -2,7 +2,8 @@
 import React from 'react'
 import {ScrollView, Text, View, StyleSheet} from 'react-native'
 
-import {Cell, Section, TableView} from 'react-native-tableview-simple'
+import {Cell} from 'react-native-tableview-simple'
+import {Card} from '../components/card'
 import * as c from '../components/colors'
 import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
 
@@ -20,13 +21,16 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '300',
   },
-  description: {
+  card: {
+    marginBottom: 20,
+  },
+  cardBody: {
+    color: c.black,
     paddingTop: 13,
     paddingBottom: 13,
     paddingLeft: 16,
     paddingRight: 16,
     fontSize: 16,
-    backgroundColor: c.white,
   },
 })
 
@@ -39,17 +43,17 @@ export class StudentOrgsDetailRenderView extends React.Component {
 
   displayContact(contactInfo: string) {
     return (
-      <Section header='CONTACT'>
-        <Cell cellStyle='Basic' title={contactInfo} />
-      </Section>
+      <Card header='Contact' style={styles.card}>
+        <Text style={styles.cardBody}>{contactInfo}</Text>
+      </Card>
     )
   }
 
   displayDescription(description: string) {
     return (
-      <Section header='DESCRIPTION'>
-        <Text style={styles.description}>{description}</Text>
-      </Section>
+      <Card header='Description' style={styles.card}>
+        <Text style={styles.cardBody}>{description}</Text>
+      </Card>
     )
   }
 
@@ -64,9 +68,9 @@ export class StudentOrgsDetailRenderView extends React.Component {
     }
 
     return (
-      <Section header='MEETINGS'>
+      <Card header='Meetings' style={styles.card}>
         {contents}
-      </Section>
+      </Card>
     )
   }
 
@@ -97,15 +101,15 @@ export class StudentOrgsDetailRenderView extends React.Component {
     let contents
     if (!this.props.loaded) {
       contents = (
-        <Section header='ORGANIZATION'>
-          <Cell cellStyle='Basic' title='Loading…' />
-        </Section>
+        <Card header='Organization' style={styles.card}>
+          <Text style={styles.cardBody}>Loading…</Text>
+        </Card>
       )
     } else if (!this.props.full) {
       contents = (
-        <Section header='ORGANIZATION'>
-          <Cell cellStyle='Basic' title='No information found.' />
-        </Section>
+        <Card header='Organization' style={styles.card}>
+          <Text style={styles.cardBody}>No information found.</Text>
+        </Card>
       )
     } else {
       contents = this.renderBody(this.props.full)
@@ -113,15 +117,13 @@ export class StudentOrgsDetailRenderView extends React.Component {
 
     return (
       <ScrollView>
-        <TableView>
-          <Text style={styles.name}>{orgName}</Text>
+        <Text style={styles.name}>{orgName}</Text>
 
-          <Section header='CATEGORY'>
-            <Cell cellStyle='Basic' title={orgCategory} />
-          </Section>
+        <Card header='Category' style={styles.card}>
+          <Text style={styles.cardBody}>{orgCategory}</Text>
+        </Card>
 
-          {contents}
-        </TableView>
+        {contents}
       </ScrollView>
     )
   }
