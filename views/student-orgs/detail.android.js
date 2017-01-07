@@ -37,64 +37,30 @@ export class StudentOrgsDetailRenderView extends React.Component {
     full: ?StudentOrgInfoType,
   };
 
-  displayOrgName(orgName: ?string) {
-    if (!orgName) {
-      return null
-    }
-
-    return (
-      <Text style={styles.name}>{orgName}</Text>
-    )
-  }
-
-  displayCategory(orgCategory: ?string) {
-    if (!orgCategory) {
-      return null
-    }
-
-    return (
-      <Section header='CATEGORY'>
-        <Cell cellStyle='Basic' title={orgCategory} />
-      </Section>
-    )
-  }
-
-  displayContact(orgContact: ?string) {
-    if (!orgContact) {
-      return null
-    }
-
+  displayContact(contactInfo: string) {
     return (
       <Section header='CONTACT'>
-        <Cell cellStyle='Basic' title={orgContact} />
+        <Cell cellStyle='Basic' title={contactInfo} />
       </Section>
     )
   }
 
-  displayDescription(orgDescription: ?string) {
-    if (!orgDescription) {
-      return null
-    }
-
+  displayDescription(description: string) {
     return (
       <Section header='DESCRIPTION'>
-        <Text style={styles.description}>{orgDescription}</Text>
+        <Text style={styles.description}>{description}</Text>
       </Section>
     )
   }
 
-  displayMeetings(orgMeetingTime: string, orgMeetingLocation: string) {
-    if (!orgMeetingTime && !orgMeetingLocation) {
-      return null
-    }
-
+  displayMeetings(meetingTime: string, meetingLocation: string) {
     let contents = null
-    if (orgMeetingTime && orgMeetingLocation) {
-      contents = <Cell cellStyle='Subtitle' title={orgMeetingTime} detail={orgMeetingLocation} />
-    } else if (orgMeetingTime) {
-      contents = <Cell cellStyle='Basic' title={orgMeetingTime} detail={orgMeetingLocation} />
-    } else if (orgMeetingLocation) {
-      contents = <Cell cellStyle='Basic' title={orgMeetingLocation} />
+    if (meetingTime && meetingLocation) {
+      contents = <Cell cellStyle='Subtitle' title={meetingTime} detail={meetingLocation} />
+    } else if (meetingTime) {
+      contents = <Cell cellStyle='Basic' title={meetingTime} detail={meetingLocation} />
+    } else if (meetingLocation) {
+      contents = <Cell cellStyle='Basic' title={meetingLocation} />
     }
 
     return (
@@ -104,29 +70,21 @@ export class StudentOrgsDetailRenderView extends React.Component {
     )
   }
 
-  renderBody = () => {
-    let data = this.props.full
-
-    if (!data) {
-      return (
-        <Section header='ORGANIZATION'>
-          <Cell cellStyle='Basic' title='No information found.' />
-        </Section>
-      )
-    }
-
-    let {
+  renderBody = (data: StudentOrgInfoType) => {
+    const {
       regularMeetingTime='',
       regularMeetingLocation='',
       description='',
       contactName='',
     } = data
 
+    const showMeetingSection = regularMeetingTime && regularMeetingLocation
+
     return (
       <View>
-        {this.displayMeetings(regularMeetingTime, regularMeetingLocation)}
-        {this.displayContact(contactName)}
-        {this.displayDescription(description)}
+        {showMeetingSection ? this.displayMeetings(regularMeetingTime, regularMeetingLocation) : null}
+        {contactName ? this.displayContact(contactName) : null}
+        {description ? this.displayDescription(description) : null}
       </View>
     )
   }
@@ -143,15 +101,25 @@ export class StudentOrgsDetailRenderView extends React.Component {
           <Cell cellStyle='Basic' title='Loading…' />
         </Section>
       )
+    } else if (!this.props.full) {
+      contents = (
+        <Section header='ORGANIZATION'>
+          <Cell cellStyle='Basic' title='No information found.' />
+        </Section>
+      )
     } else {
-      contents = this.renderBody()
+      contents = this.renderBody(this.props.full)
     }
 
     return (
       <ScrollView>
         <TableView>
-          {this.displayOrgName(orgName)}
-          {this.displayCategory(orgCategory)}
+          <Text style={styles.name}>{orgName}</Text>
+
+          <Section header='CATEGORY'>
+            <Cell cellStyle='Basic' title={orgCategory} />
+          </Section>
+
           {contents}
         </TableView>
       </ScrollView>
