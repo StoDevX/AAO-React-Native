@@ -1,5 +1,4 @@
 // @flow
-
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {buildingImages} from '../../images/building-images'
