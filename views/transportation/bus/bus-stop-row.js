@@ -1,21 +1,18 @@
 // @flow
-
 import React from 'react'
 import {Platform, View, StyleSheet, Text} from 'react-native'
 import type {FancyBusTimeListType} from './types'
 import type moment from 'moment'
 import * as c from '../../components/colors'
+import {BusProgressBar} from './bus-progress-bar'
 
 const TIME_FORMAT = 'h:mma'
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   busWillSkipStopTitle: {
     color: c.iosDisabledText,
   },
-  busWillSkipStopDetail: {},
-  busWillSkipStopDot: {
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
+  busWillSkipStopDetail: {
   },
   row: {
     flexDirection: 'row',
@@ -32,7 +29,6 @@ let styles = StyleSheet.create({
     borderBottomColor: Platform.OS === 'ios' ? '#c8c7cc' : '#e0e0e0',
   },
   passedStopDetail: {
-
   },
   itemTitle: {
     color: c.black,
@@ -49,41 +45,6 @@ let styles = StyleSheet.create({
     fontSize: 13,
     textAlign: 'left',
   },
-  barContainer: {
-    paddingRight: 5,
-    width: 45,
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  bar: {
-    flex: 1,
-    width: 5,
-  },
-  dot: {
-    height: 15,
-    width: 15,
-    marginTop: -20,
-    marginBottom: -20,
-    borderRadius: 20,
-    zIndex: 1,
-  },
-  passedStop: {
-    height: 12,
-    width: 12,
-  },
-  beforeStop: {
-    borderWidth: 3,
-    backgroundColor: 'white',
-    height: 18,
-    width: 18,
-  },
-  atStop: {
-    height: 20,
-    width: 20,
-    borderColor: 'white',
-    borderWidth: 3,
-    backgroundColor: 'white',
-  },
   atStopTitle: {
     fontWeight: 'bold',
   },
@@ -92,16 +53,7 @@ let styles = StyleSheet.create({
   },
 })
 
-export function BusStopRow({
-  index,
-  time,
-  now,
-  barColor,
-  currentStopColor,
-  isLastRow,
-  place,
-  times,
-}: {
+export function BusStopRow({index, time, now, barColor, currentStopColor, isLastRow, place, times}: {
   index: number,
   time: moment,
   now: moment,
@@ -116,26 +68,25 @@ export function BusStopRow({
   const beforeStop = !afterStop && !atStop && time !== false
   const skippingStop = time === false
 
-  // To draw the bar, we draw a chunk of the bar, then we draw the dot, then
-  // we draw the last chunk of the bar.
-  const busLineProgressBar = (
-    <View style={styles.barContainer}>
-      <View style={[styles.bar, {backgroundColor: barColor}]} />
-      <View
-        style={[
-          styles.dot,
-          afterStop && [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}],
-          beforeStop && [styles.beforeStop, {borderColor: barColor}],
-          atStop && [styles.atStop, {borderColor: currentStopColor}],
-          skippingStop && styles.busWillSkipStopDot,
-        ]}
-      />
-      <View style={[styles.bar, {backgroundColor: barColor}]} />
+  return (
+    <View style={styles.row}>
+      <BusProgressBar {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}} />
+      <BusLineInformation {...{afterStop, atStop, index, isLastRow, place, skippingStop, times}} />
     </View>
   )
+}
 
+const BusLineInformation = ({afterStop, atStop, index, isLastRow, place, skippingStop, times}: {
+  afterStop: boolean,
+  atStop: boolean,
+  index: number,
+  isLastRow: boolean,
+  place: string,
+  skippingStop: boolean,
+  times: FancyBusTimeListType[],
+}) => {
   // The bus line information is the stop name, and the times.
-  const busLineInformation = (
+  return (
     <View style={[
       styles.rowDetail,
       !isLastRow && styles.notLastRowContainer,
@@ -148,25 +99,28 @@ export function BusStopRow({
       ]}>
         {place}
       </Text>
-      <Text
-        style={[
-          styles.itemDetail,
-          skippingStop && styles.busWillSkipStopDetail,
-        ]}
-        numberOfLines={1}
-      >
-        {times
-          .map(timeSet => timeSet[index])
-          .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
-          .join(' • ')}
-      </Text>
+      <BusDetail times={times} index={index} skipping={skippingStop} />
     </View>
   )
+}
 
+const BusDetail = ({index, times, skipping}: {
+  index: number,
+  skipping: boolean,
+  times: FancyBusTimeListType[],
+}) => {
   return (
-    <View style={styles.row}>
-      {busLineProgressBar}
-      {busLineInformation}
-    </View>
+    <Text
+      style={[
+        styles.itemDetail,
+        skipping && styles.busWillSkipStopDetail,
+      ]}
+      numberOfLines={1}
+    >
+      {times
+        .map(timeSet => timeSet[index])
+        .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
+        .join(' • ')}
+    </Text>
   )
 }

@@ -1,10 +1,8 @@
 // @flow
-
 import React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
 import type {BusLineType, FancyBusTimeListType} from './types'
-import getScheduleForNow from './get-schedule-for-now'
-import getSetOfStopsForNow from './get-set-of-stops-for-now'
+import {getScheduleForNow, getSetOfStopsForNow} from './lib'
 import zip from 'lodash/zip'
 import head from 'lodash/head'
 import last from 'lodash/last'
@@ -17,7 +15,7 @@ import {BusStopRow} from './bus-stop-row'
 const TIME_FORMAT = 'h:mma'
 const TIMEZONE = 'America/Winnipeg'
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
     borderColor: '#c8c7cc',
@@ -31,14 +29,10 @@ let styles = StyleSheet.create({
   },
 })
 
-export default function BusLineView({
-  line,
-  style,
-  now,
-}: {
+export default function BusLineView({line, style, now}: {
   line: BusLineType,
-  style: Object|number|Array<Object|number>,
-  now: typeof moment,
+  style?: any,
+  now: moment,
 }) {
   let barColor = c.salmon
   if (line.line === 'Blue Line') {
@@ -117,9 +111,4 @@ export default function BusLineView({
       </View>
     </View>
   )
-}
-BusLineView.propTypes = {
-  line: React.PropTypes.object.isRequired,
-  now: React.PropTypes.instanceOf(moment).isRequired,
-  style: React.PropTypes.object,
 }
