@@ -3,23 +3,21 @@
  * All About Olaf
  * Building Hours list element
  */
-
 import React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
 import {Badge} from '../components/badge'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
 import * as c from '../components/colors'
-import {ListRow} from '../components/list-row'
-import {getDetailedBuildingStatus} from './building-hours-helpers'
-import {getShortBuildingStatus} from './building-hours-helpers'
+import {ListRow} from '../components/list'
+import {getDetailedBuildingStatus, getShortBuildingStatus} from './building-hours-helpers'
 
 type PropsType = {
   info: BuildingType,
   name: string,
   now: momentT,
   onPress: () => any,
-  style?: Number|Object|Array<Number|Object>,
+  style?: any,
 };
 
 let styles = StyleSheet.create({
@@ -49,7 +47,7 @@ let styles = StyleSheet.create({
     fontSize: Platform.OS === 'ios' ? 13 : 14,
     textAlign: 'left',
   },
-  activeHourSet: {
+  bold: {
     fontWeight: 'bold',
   },
 })
@@ -69,7 +67,6 @@ export function BuildingRow({info, name, now, style, onPress}: PropsType) {
 
   const abbr = info.abbreviation ? <Text> ({info.abbreviation})</Text> : null
   const subtitle = info.subtitle ? <Text style={styles.subtitleText}>    {info.subtitle}</Text> : null
-  const title = <Text numberOfLines={1} style={[styles.titleText]}>{name}{abbr}{subtitle}</Text>
 
   const accent = bgColors[openStatus] || c.goldenrod
   const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
@@ -82,7 +79,9 @@ export function BuildingRow({info, name, now, style, onPress}: PropsType) {
     >
       <View style={{flexDirection: 'row'}}>
         <View style={[styles.title, {flex: 1}]}>
-          {title}
+          <Text numberOfLines={1} style={[styles.titleText]}>
+            {name}{abbr}{subtitle}
+          </Text>
         </View>
 
         <Badge
@@ -94,20 +93,25 @@ export function BuildingRow({info, name, now, style, onPress}: PropsType) {
       </View>
 
       <View style={[styles.preview]}>
-        {hours.map(([isActive, label, status], i) => {
-          // we don't want to show the 'Hours' label, since almost every row has it
-          let showLabel = label && label !== 'Hours'
-          // we want to highlight the time section when there's no label shown
-          let highlightTime = hours.length > 1 && isActive
-
-          return (
-            <Text key={i} style={[styles.previewText]}>
-              {showLabel && <Text style={[isActive ? styles.activeHourSet : null]}>{label}: </Text>}
-              {<Text style={[highlightTime ? styles.activeHourSet : null]}>{status}</Text>}
-            </Text>
-          )
-        })}
+        {hours.map(([isActive, label, status], i) =>
+          <BuildingTimeSlot
+            key={i}
+            highlight={hours.length > 1 && isActive}
+            {...{isActive, label, status}}
+          />)}
       </View>
     </ListRow>
+  )
+}
+
+const BuildingTimeSlot = ({isActive, label, status, highlight}: {isActive: boolean, label: ?string, status: string, highlight: boolean}) => {
+  // we don't want to show the 'Hours' label, since almost every row has it
+  let showLabel = label && label !== 'Hours'
+
+  return (
+    <Text style={[styles.previewText]}>
+      {showLabel && <Text style={[isActive ? styles.bold : null]}>{label}: </Text>}
+      {<Text style={[highlight ? styles.bold : null]}>{status}</Text>}
+    </Text>
   )
 }
