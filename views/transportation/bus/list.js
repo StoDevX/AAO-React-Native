@@ -9,8 +9,8 @@ import last from 'lodash/last'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'
 
-import {BusLineTitle} from './bus-line-title'
-import {BusStopRow} from './bus-stop-row'
+import {LineTitle} from './components/line-title'
+import {BusRow} from './row'
 
 const TIME_FORMAT = 'h:mma'
 const TIMEZONE = 'America/Winnipeg'
@@ -52,7 +52,7 @@ export default function BusLineView({line, style, now}: {
   if (!schedule) {
     return (
       <View style={[styles.container, style]}>
-        <BusLineTitle title={line.line} androidColor={barColor} />
+        <LineTitle title={line.line} androidColor={barColor} />
         <View>
           <Text>This line is not running today.</Text>
         </View>
@@ -91,10 +91,10 @@ export default function BusLineView({line, style, now}: {
 
   return (
     <View style={[styles.container, style]}>
-      <BusLineTitle title={lineTitle} androidColor={barColor} />
+      <LineTitle title={lineTitle} androidColor={barColor} />
       <View style={[styles.listContainer]}>
         {pairs.map(([place, moment], i) =>
-          <BusStopRow
+          <BusRow
             key={i}
             index={i}
 

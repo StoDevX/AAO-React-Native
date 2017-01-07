@@ -4,7 +4,7 @@ import {Platform, View, StyleSheet, Text} from 'react-native'
 import type {FancyBusTimeListType} from './types'
 import type moment from 'moment'
 import * as c from '../../components/colors'
-import {BusProgressBar} from './bus-progress-bar'
+import {ProgressChunk} from './components/progress-chunk'
 
 const TIME_FORMAT = 'h:mma'
 
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export function BusStopRow({index, time, now, barColor, currentStopColor, isLastRow, place, times}: {
+export function BusRow({index, time, now, barColor, currentStopColor, isLastRow, place, times}: {
   index: number,
   time: moment,
   now: moment,
@@ -70,41 +70,27 @@ export function BusStopRow({index, time, now, barColor, currentStopColor, isLast
 
   return (
     <View style={styles.row}>
-      <BusProgressBar {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}} />
-      <BusLineInformation {...{afterStop, atStop, index, isLastRow, place, skippingStop, times}} />
-    </View>
-  )
-}
+      <ProgressChunk {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}} />
 
-const BusLineInformation = ({afterStop, atStop, index, isLastRow, place, skippingStop, times}: {
-  afterStop: boolean,
-  atStop: boolean,
-  index: number,
-  isLastRow: boolean,
-  place: string,
-  skippingStop: boolean,
-  times: FancyBusTimeListType[],
-}) => {
-  // The bus line information is the stop name, and the times.
-  return (
-    <View style={[
-      styles.rowDetail,
-      !isLastRow && styles.notLastRowContainer,
-    ]}>
-      <Text style={[
-        styles.itemTitle,
-        skippingStop && styles.busWillSkipStopTitle,
-        afterStop && styles.passedStopTitle,
-        atStop && styles.atStopTitle,
+      <View style={[
+        styles.rowDetail,
+        !isLastRow && styles.notLastRowContainer,
       ]}>
-        {place}
-      </Text>
-      <BusDetail times={times} index={index} skipping={skippingStop} />
+        <Text style={[
+          styles.itemTitle,
+          skippingStop && styles.busWillSkipStopTitle,
+          afterStop && styles.passedStopTitle,
+          atStop && styles.atStopTitle,
+        ]}>
+          {place}
+        </Text>
+        <ScheduleTimes times={times} index={index} skipping={skippingStop} />
+      </View>
     </View>
   )
 }
 
-const BusDetail = ({index, times, skipping}: {
+const ScheduleTimes = ({index, times, skipping}: {
   index: number,
   skipping: boolean,
   times: FancyBusTimeListType[],

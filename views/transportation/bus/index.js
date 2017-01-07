@@ -2,7 +2,7 @@
 import React from 'react'
 import {Platform, ScrollView, View, Text} from 'react-native'
 import type {BusLineType} from './types'
-import BusLineView from './bus-line'
+import BusLineView from './list'
 import moment from 'moment-timezone'
 
 import {data as defaultBusLines} from '../../../docs/bus-times.json'

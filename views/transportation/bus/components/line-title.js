@@ -2,7 +2,7 @@
 import React from 'react'
 import {Platform, View, StyleSheet, Text} from 'react-native'
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   busLineTitle: {
     paddingVertical: Platform.OS === 'ios' ? 5 : 15,
     paddingLeft: 15,
@@ -15,7 +15,7 @@ let styles = StyleSheet.create({
   },
 })
 
-export function BusLineTitle({title, androidColor}: {title: string, androidColor: string}) {
+export function LineTitle({title, androidColor}: {title: string, androidColor: string}) {
   title = Platform.OS === 'ios'
     ? title.toUpperCase()
     : title

@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export const BusProgressBar = ({afterStop, atStop, barColor, beforeStop, currentStopColor, skippingStop}: {
+export const ProgressChunk = ({afterStop, atStop, barColor, beforeStop, currentStopColor, skippingStop}: {
   afterStop: boolean,
   atStop: boolean,
   barColor: string,
