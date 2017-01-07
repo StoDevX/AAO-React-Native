@@ -50,7 +50,7 @@
     "moment": "2.17.1",
     "moment-timezone": "0.5.11",
     "querystring": "0.2.0",
-    "react": "15.4.1",
+    "react": "15.4.2",
     "react-addons-shallow-compare": "15.4.2",
     "react-native": "0.39.2",
     "react-native-alphabetlistview": "0.2.0",
