@@ -50,8 +50,8 @@
     "moment": "2.17.1",
     "moment-timezone": "0.5.11",
     "querystring": "0.2.0",
-    "react": "15.4.1",
-    "react-addons-shallow-compare": "15.4.1",
+    "react": "15.4.2",
+    "react-addons-shallow-compare": "15.4.2",
     "react-native": "0.39.2",
     "react-native-alphabetlistview": "0.2.0",
     "react-native-button": "1.7.1",
@@ -91,6 +91,6 @@
     "junk": "2.0.0",
     "marked": "0.3.6",
     "minimist": "1.2.0",
-    "react-test-renderer": "15.4.1"
+    "react-test-renderer": "15.4.2"
   }
 }
