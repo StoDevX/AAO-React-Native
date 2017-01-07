@@ -4,11 +4,7 @@ import {ScrollView, Text, View, StyleSheet} from 'react-native'
 
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
-import {getTextWithSpaces, parseHtml} from '../../lib/html'
 import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
-import type {TopLevelViewPropsType} from '../types'
-
-const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 
 const styles = StyleSheet.create({
   container: {
@@ -34,40 +30,12 @@ const styles = StyleSheet.create({
   },
 })
 
-export class StudentOrgsDetailView extends React.Component {
-  state: {
-    data: ?StudentOrgInfoType,
-    refreshing: boolean,
+export class StudentOrgsDetailRenderView extends React.Component {
+  props: {
     loaded: boolean,
-    error: boolean,
-  } = {
-    data: null,
-    refreshing: false,
-    loaded: false,
-    error: false,
-  }
-
-  componentWillMount() {
-    this.fetchData()
-  }
-
-  props: TopLevelViewPropsType & {
-    item: StudentOrgAbridgedType,
-  }
-
-  fetchData = async () => {
-    let orgUrl = orgsUrl + '/' + this.props.item.uri
-
-    try {
-      let response = await fetchJson(orgUrl)
-      this.setState({data: response})
-    } catch (error) {
-      this.setState({error: true})
-      console.error(error)
-    }
-
-    this.setState({loaded: true})
-  }
+    base: StudentOrgAbridgedType,
+    full: ?StudentOrgInfoType,
+  };
 
   displayOrgName(orgName: ?string) {
     if (!orgName) {
@@ -108,9 +76,6 @@ export class StudentOrgsDetailView extends React.Component {
       return null
     }
 
-    orgDescription = getTextWithSpaces(parseHtml(orgDescription))
-    orgDescription = orgDescription.split(/\s+/).join(' ')
-
     return (
       <Section header='DESCRIPTION'>
         <Text style={styles.description}>{orgDescription}</Text>
@@ -140,7 +105,7 @@ export class StudentOrgsDetailView extends React.Component {
   }
 
   renderBody = () => {
-    let data = this.state.data
+    let data = this.props.full
 
     if (!data) {
       return (
@@ -157,11 +122,6 @@ export class StudentOrgsDetailView extends React.Component {
       contactName='',
     } = data
 
-    contactName = contactName.trim()
-    description = description.trim()
-    regularMeetingTime = regularMeetingTime.trim()
-    regularMeetingLocation = regularMeetingLocation.trim()
-
     return (
       <View>
         {this.displayMeetings(regularMeetingTime, regularMeetingLocation)}
@@ -172,12 +132,12 @@ export class StudentOrgsDetailView extends React.Component {
   }
 
   render() {
-    let knownData = this.props.item
+    let knownData = this.props.base
     let orgName = knownData.name.trim()
     let orgCategory = knownData.categories.join(', ')
 
     let contents
-    if (!this.state.loaded) {
+    if (!this.props.loaded) {
       contents = (
         <Section header='ORGANIZATION'>
           <Cell cellStyle='Basic' title='Loading…' />
