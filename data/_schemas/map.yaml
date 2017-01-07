@@ -3,5 +3,5 @@ $schema: http://json-schema.org/draft-04/schema#
 additionalProperties: false
 required: [url, description]
 properties:
-  url: {type: string}
+  url: {type: string, format: uri}
   description: {type: string}
