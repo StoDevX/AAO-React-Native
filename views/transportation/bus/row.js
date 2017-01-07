@@ -24,10 +24,6 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === 'ios' ? 8 : 15,
     flexDirection: 'column',
   },
-  notLastRowContainer: {
-    borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
-    borderBottomColor: Platform.OS === 'ios' ? '#c8c7cc' : '#e0e0e0',
-  },
   passedStopDetail: {
   },
   itemTitle: {
@@ -53,12 +49,11 @@ const styles = StyleSheet.create({
   },
 })
 
-export function BusStopRow({time, now, barColor, currentStopColor, isLastRow, place, times}: {
+export function BusStopRow({time, now, barColor, currentStopColor, place, times}: {
   time: moment,
   now: moment,
   barColor: string,
   currentStopColor: string,
-  isLastRow: boolean,
   place: string,
   times: FancyBusTimeListType,
 }) {
@@ -71,7 +66,7 @@ export function BusStopRow({time, now, barColor, currentStopColor, isLastRow, pl
     <View style={styles.row}>
       <ProgressChunk {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}} />
 
-      <View style={[styles.rowDetail, !isLastRow && styles.notLastRowContainer]}>
+      <View style={styles.rowDetail}>
         <Text style={[
           styles.itemTitle,
           skippingStop && styles.busWillSkipStopTitle,

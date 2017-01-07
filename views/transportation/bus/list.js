@@ -3,12 +3,13 @@ import React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
 import type {BusLineType, FancyBusTimeListType} from './types'
 import {getScheduleForNow, getSetOfStopsForNow} from './lib'
+import get from 'lodash/get'
 import zip from 'lodash/zip'
 import head from 'lodash/head'
 import last from 'lodash/last'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'
-
+import {Separator} from '../../components/separator'
 import {LineTitle} from './components/line-title'
 import {BusStopRow} from './row'
 
@@ -29,26 +30,40 @@ const styles = StyleSheet.create({
   },
 })
 
+const barColors = {
+  'Blue Line': c.steelBlue,
+  'Express Bus': c.moneyGreen,
+  'Red Line': c.salmon,
+}
+const stopColors = {
+  'Blue Line': c.midnightBlue,
+  'Express Bus': c.hollyGreen,
+  'Red Line': c.brickRed,
+}
+
+function makeTitle({line, now, moments, isLastBus}) {
+  let lineDetail = 'Running'
+
+  if (now.isBefore(head(moments))) {
+    lineDetail = `Starts ${now.to(head(moments))}`
+  } else if (now.isAfter(last(moments))) {
+    lineDetail = 'Over for Today'
+  } else if (isLastBus) {
+    lineDetail = 'Last Bus'
+  }
+
+  return `${line.line} — ${lineDetail}`
+}
+
 export function BusLine({line, style, now}: {
   line: BusLineType,
   style?: any,
   now: moment,
 }) {
-  let barColor = c.salmon
-  if (line.line === 'Blue Line') {
-    barColor = c.steelBlue
-  } else if (line.line === 'Express Bus') {
-    barColor = c.moneyGreen
-  }
+  const barColor = get(barColors, line.line, c.black)
+  const currentStopColor = get(stopColors, line.line, c.gray)
 
-  let currentStopColor = c.brickRed
-  if (line.line === 'Blue Line') {
-    currentStopColor = c.midnightBlue
-  } else if (line.line === 'Express Bus') {
-    currentStopColor = c.hollyGreen
-  }
-
-  let schedule = getScheduleForNow(line.schedules, now)
+  const schedule = getScheduleForNow(line.schedules, now)
   if (!schedule) {
     return (
       <View style={[styles.container, style]}>
@@ -60,7 +75,7 @@ export function BusLine({line, style, now}: {
     )
   }
 
-  let scheduledMoments: FancyBusTimeListType[] = schedule.times.map(timeset => {
+  const scheduledMoments: FancyBusTimeListType[] = schedule.times.map(timeset => {
     return timeset.map(time =>
       // either pass `false` through or return a parsed time
       time === false ? false : moment
@@ -70,43 +85,33 @@ export function BusLine({line, style, now}: {
         .dayOfYear(now.dayOfYear()))
   })
 
-  let moments: FancyBusTimeListType = getSetOfStopsForNow(scheduledMoments, now)
-  let timesIndex = scheduledMoments.indexOf(moments)
+  const moments: FancyBusTimeListType = getSetOfStopsForNow(scheduledMoments, now)
+  const pairs: [[string, moment]] = zip(schedule.stops, moments)
 
-  let pairs: [[string, moment]] = zip(schedule.stops, moments)
-
-  let isLastBus = timesIndex === scheduledMoments.length - 1
-
-  let lineTitle = line.line
-  if (timesIndex === 0 && now.isBefore(head(moments))) {
-    lineTitle += ` — Starts ${now.to(head(moments))}`
-  } else if (now.isAfter(last(moments))) {
-    lineTitle += ' — Over for Today'
-  } else if (isLastBus) {
-    lineTitle += ' — Last Bus'
-  } else {
-    lineTitle += ' — Running'
-  }
+  const timesIndex = scheduledMoments.indexOf(moments)
+  const isLastBus = timesIndex === scheduledMoments.length - 1
+  const lineTitle = makeTitle({line, now, moments, isLastBus})
 
   return (
     <View style={[styles.container, style]}>
       <LineTitle title={lineTitle} androidColor={barColor} />
       <View style={[styles.listContainer]}>
         {pairs.map(([placeTitle, moment], i, list) =>
-          <BusStopRow
-            key={i}
+          <View key={i}>
+            <BusStopRow
+              // get the arrival time for this stop from each bus loop after
+              // the current time (as given by `now`)
+              times={scheduledMoments.slice(timesIndex).map(timeSet => timeSet[i])}
+              place={placeTitle}
 
-            // get the arrival time for this stop from each bus loop
-            times={scheduledMoments.slice(timesIndex).map(timeSet => timeSet[i])}
-            place={placeTitle}
+              now={now}
+              time={moment}
 
-            now={now}
-            time={moment}
-            isLastRow={i === list.length - 1}
-
-            barColor={barColor}
-            currentStopColor={currentStopColor}
-          />)}
+              barColor={barColor}
+              currentStopColor={currentStopColor}
+            />
+            {i < list.length - 1 ? <Separator style={{marginLeft: 45}} /> : null}
+          </View>)}
       </View>
     </View>
   )
