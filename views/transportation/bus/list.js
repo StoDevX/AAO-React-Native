@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {View, Text, StyleSheet, Platform} from 'react-native'
+import {View, StyleSheet, Platform} from 'react-native'
 import type {BusLineType, FancyBusTimeListType} from './types'
 import {getScheduleForNow, getSetOfStopsForNow} from './lib'
 import get from 'lodash/get'
@@ -10,8 +10,9 @@ import last from 'lodash/last'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
-import {LineTitle} from './components/line-title'
 import {BusStopRow} from './row'
+import {ListRow} from '../../components/list'
+import {ListSectionHeader} from '../../components/list'
 
 const TIME_FORMAT = 'h:mma'
 const TIMEZONE = 'America/Winnipeg'
@@ -41,7 +42,7 @@ const stopColors = {
   'Red Line': c.brickRed,
 }
 
-function makeTitle({line, now, moments, isLastBus}) {
+function makeSubtitle({now, moments, isLastBus}) {
   let lineDetail = 'Running'
 
   if (now.isBefore(head(moments))) {
@@ -52,7 +53,7 @@ function makeTitle({line, now, moments, isLastBus}) {
     lineDetail = 'Last Bus'
   }
 
-  return `${line.line} — ${lineDetail}`
+  return lineDetail
 }
 
 export function BusLine({line, style, now}: {
@@ -62,15 +63,14 @@ export function BusLine({line, style, now}: {
 }) {
   const barColor = get(barColors, line.line, c.black)
   const currentStopColor = get(stopColors, line.line, c.gray)
+  const androidColor = Platform.OS === 'android' ? {color: barColor} : null
 
   const schedule = getScheduleForNow(line.schedules, now)
   if (!schedule) {
     return (
       <View style={[styles.container, style]}>
-        <LineTitle title={line.line} androidColor={barColor} />
-        <View>
-          <Text>This line is not running today.</Text>
-        </View>
+        <ListSectionHeader title={line.line} titleStyle={androidColor} />
+        <ListRow title='This line is not running today.' />
       </View>
     )
   }
@@ -90,14 +90,18 @@ export function BusLine({line, style, now}: {
 
   const timesIndex = scheduledMoments.indexOf(moments)
   const isLastBus = timesIndex === scheduledMoments.length - 1
-  const lineTitle = makeTitle({line, now, moments, isLastBus})
+  const subtitle = makeSubtitle({now, moments, isLastBus})
 
   return (
     <View style={[styles.container, style]}>
-      <LineTitle title={lineTitle} androidColor={barColor} />
+      <ListSectionHeader
+        title={line.line}
+        subtitle={subtitle}
+        titleStyle={androidColor}
+      />
       <View style={[styles.listContainer]}>
         {pairs.map(([placeTitle, moment], i, list) =>
-          <View key={i}>
+          <ListRow key={i} fullWidth={true} contentContainerStyle={{paddingVertical: 0, paddingRight: 0}}>
             <BusStopRow
               // get the arrival time for this stop from each bus loop after
               // the current time (as given by `now`)
@@ -111,7 +115,7 @@ export function BusLine({line, style, now}: {
               currentStopColor={currentStopColor}
             />
             {i < list.length - 1 ? <Separator style={{marginLeft: 45}} /> : null}
-          </View>)}
+          </ListRow>)}
       </View>
     </View>
   )
