@@ -53,15 +53,14 @@ const styles = StyleSheet.create({
   },
 })
 
-export function BusRow({index, time, now, barColor, currentStopColor, isLastRow, place, times}: {
-  index: number,
+export function BusStopRow({time, now, barColor, currentStopColor, isLastRow, place, times}: {
   time: moment,
   now: moment,
   barColor: string,
   currentStopColor: string,
   isLastRow: boolean,
   place: string,
-  times: FancyBusTimeListType[]
+  times: FancyBusTimeListType,
 }) {
   const afterStop = time && now.isAfter(time, 'minute')
   const atStop = time && now.isSame(time, 'minute')
@@ -72,10 +71,7 @@ export function BusRow({index, time, now, barColor, currentStopColor, isLastRow,
     <View style={styles.row}>
       <ProgressChunk {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}} />
 
-      <View style={[
-        styles.rowDetail,
-        !isLastRow && styles.notLastRowContainer,
-      ]}>
+      <View style={[styles.rowDetail, !isLastRow && styles.notLastRowContainer]}>
         <Text style={[
           styles.itemTitle,
           skippingStop && styles.busWillSkipStopTitle,
@@ -84,28 +80,22 @@ export function BusRow({index, time, now, barColor, currentStopColor, isLastRow,
         ]}>
           {place}
         </Text>
-        <ScheduleTimes times={times} index={index} skipping={skippingStop} />
+        <ScheduleTimes {...{times, skippingStop}} />
       </View>
     </View>
   )
 }
 
-const ScheduleTimes = ({index, times, skipping}: {
-  index: number,
-  skipping: boolean,
-  times: FancyBusTimeListType[],
+const ScheduleTimes = ({times, skippingStop}: {
+  skippingStop: boolean,
+  times: FancyBusTimeListType,
 }) => {
   return (
     <Text
-      style={[
-        styles.itemDetail,
-        skipping && styles.busWillSkipStopDetail,
-      ]}
+      style={[styles.itemDetail, skippingStop && styles.busWillSkipStopDetail]}
       numberOfLines={1}
     >
       {times
-        // get the arrival time for this stop from each bus loop
-        .map(timeSet => timeSet[index])
         // and format the times
         .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
         .join(' • ')}

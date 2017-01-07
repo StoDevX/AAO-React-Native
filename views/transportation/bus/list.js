@@ -10,7 +10,7 @@ import moment from 'moment-timezone'
 import * as c from '../../components/colors'
 
 import {LineTitle} from './components/line-title'
-import {BusRow} from './row'
+import {BusStopRow} from './row'
 
 const TIME_FORMAT = 'h:mma'
 const TIMEZONE = 'America/Winnipeg'
@@ -92,17 +92,17 @@ export function BusLine({line, style, now}: {
     <View style={[styles.container, style]}>
       <LineTitle title={lineTitle} androidColor={barColor} />
       <View style={[styles.listContainer]}>
-        {pairs.map(([place, moment], i) =>
-          <BusRow
+        {pairs.map(([placeTitle, moment], i, list) =>
+          <BusStopRow
             key={i}
-            index={i}
 
-            place={place}
-            times={scheduledMoments.slice(timesIndex)}
+            // get the arrival time for this stop from each bus loop
+            times={scheduledMoments.slice(timesIndex).map(timeSet => timeSet[i])}
+            place={placeTitle}
 
             now={now}
             time={moment}
-            isLastRow={i === pairs.length - 1}
+            isLastRow={i === list.length - 1}
 
             barColor={barColor}
             currentStopColor={currentStopColor}
