@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function BusLineView({line, style, now}: {
+export function BusLine({line, style, now}: {
   line: BusLineType,
   style?: any,
   now: moment,
@@ -62,25 +62,24 @@ export default function BusLineView({line, style, now}: {
 
   let scheduledMoments: FancyBusTimeListType[] = schedule.times.map(timeset => {
     return timeset.map(time =>
-      time === false
-        ? false
-        : moment
-          // interpret in Central time
-          .tz(time, TIME_FORMAT, true, TIMEZONE)
-          // and set the date to today
-          .dayOfYear(now.dayOfYear()))
+      // either pass `false` through or return a parsed time
+      time === false ? false : moment
+        // interpret in Central time
+        .tz(time, TIME_FORMAT, true, TIMEZONE)
+        // and set the date to today
+        .dayOfYear(now.dayOfYear()))
   })
 
   let moments: FancyBusTimeListType = getSetOfStopsForNow(scheduledMoments, now)
   let timesIndex = scheduledMoments.indexOf(moments)
 
-  let pairs: [[string, typeof moment]] = zip(schedule.stops, moments)
+  let pairs: [[string, moment]] = zip(schedule.stops, moments)
 
   let isLastBus = timesIndex === scheduledMoments.length - 1
 
   let lineTitle = line.line
   if (timesIndex === 0 && now.isBefore(head(moments))) {
-    lineTitle += ` — Starting ${head(moments).format('h:mma')}`
+    lineTitle += ` — Starts ${now.to(head(moments))}`
   } else if (now.isAfter(last(moments))) {
     lineTitle += ' — Over for Today'
   } else if (isLastBus) {

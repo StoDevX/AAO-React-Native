@@ -104,7 +104,9 @@ const ScheduleTimes = ({index, times, skipping}: {
       numberOfLines={1}
     >
       {times
+        // get the arrival time for this stop from each bus loop
         .map(timeSet => timeSet[index])
+        // and format the times
         .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
         .join(' • ')}
     </Text>

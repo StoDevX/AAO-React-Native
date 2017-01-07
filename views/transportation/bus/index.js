@@ -1,20 +1,16 @@
 // @flow
 import React from 'react'
-import {Platform, ScrollView, View, Text} from 'react-native'
+import {Platform, ScrollView} from 'react-native'
 import type {BusLineType} from './types'
-import BusLineView from './list'
+import {BusLine} from './list'
 import moment from 'moment-timezone'
+import {NoticeView} from '../../components/notice'
 
 import {data as defaultBusLines} from '../../../docs/bus-times.json'
 
 const TIMEZONE = 'America/Winnipeg'
 
 export default class BusView extends React.Component {
-  static propTypes = {
-    busLines: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    line: React.PropTypes.string.isRequired,
-  }
-
   static defaultProps = {
     busLines: defaultBusLines,
   }
@@ -50,16 +46,12 @@ export default class BusView extends React.Component {
     const activeBusLine = busLines.find(({line}) => line === this.props.line)
 
     if (!activeBusLine) {
-      return (
-        <View>
-          <Text>The line "{this.props.line}" was not found among {busLines.map(({line}) => line).join(', ')}</Text>
-        </View>
-      )
+      return <NoticeView text={`The line "${this.props.line}" was not found among ${busLines.map(({line}) => line).join(', ')}`} />
     }
 
     return (
       <ScrollView>
-        <BusLineView
+        <BusLine
           key={activeBusLine.line}
           style={{
             marginTop: Platform.OS === 'ios' ? 15 : 0,
