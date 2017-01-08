@@ -1,10 +1,10 @@
 // @flow
-import type {BusScheduleType, DayOfWeekType} from './types'
+import type {BusScheduleType, DayOfWeekType} from '../types'
 import moment from 'moment-timezone'
 
 const allDaysOfWeek: DayOfWeekType[] = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 
-export default function getScheduleForNow(
+export function getScheduleForNow(
   schedules: BusScheduleType[],
   now: typeof moment
 ): BusScheduleType|void {

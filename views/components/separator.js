@@ -4,11 +4,19 @@ import {View, StyleSheet, Platform} from 'react-native'
 
 const styles = StyleSheet.create({
   separator: {
-    borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
-    borderBottomColor: Platform.OS === 'ios' ? '#c8c7cc' : '#e0e0e0',
+    ...Platform.select({
+      ios: {
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: '#c8c7cc',
+      },
+      android: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+      },
+    }),
   },
 })
 
-export function Separator({style}: {style?: Number|Object|Array<Number|Object>}) {
+export function Separator({style}: {style?: any}) {
   return <View style={[styles.separator, style]} />
 }

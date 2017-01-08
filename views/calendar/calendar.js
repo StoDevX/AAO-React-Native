@@ -5,29 +5,23 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  Text,
-  Platform,
-  ListView,
-  RefreshControl,
-  View,
-} from 'react-native'
-
+import {StyleSheet, Platform, ListView, RefreshControl} from 'react-native'
+import type {EventType} from './types'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
+import type momentT from 'moment'
 import delay from 'delay'
-import {Separator} from '../components/separator'
+import {NoticeView} from '../components/notice'
+import {ListSeparator, ListSectionHeader} from '../components/list'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
 import EventView from './event'
-import * as c from '../components/colors'
-import { GOOGLE_CALENDAR_API_KEY } from '../../lib/config'
+import {GOOGLE_CALENDAR_API_KEY} from '../../lib/config'
 const TIMEZONE = 'America/Winnipeg'
 
 type GoogleCalendarTimeType = {
   dateTime: string,
-}
+};
 type GoogleCalendarEventType = {
   summary: string,
   start: GoogleCalendarTimeType,
@@ -42,13 +36,12 @@ export default class CalendarView extends React.Component {
 
   state = {
     events: new ListView.DataSource({
-      rowHasChanged: (r1: GoogleCalendarEventType, r2: GoogleCalendarEventType) => r1.summary !== r2.summary,
-      sectionHeaderHasChanged: (h1: number, h2: number) => h1 !== h2,
+      rowHasChanged: (r1: EventType, r2: EventType) => r1 !== r2,
+      sectionHeaderHasChanged: (h1: any, h2: any) => h1 !== h2,
     }),
     loaded: false,
     refreshing: true,
     error: null,
-    noEvents: false,
   }
 
   componentWillMount() {
@@ -68,45 +61,48 @@ export default class CalendarView extends React.Component {
     return `${calendarUrl}?${qs.stringify(params)}`
   }
 
-  getEvents = async () => {
+  getEvents = async (now: momentT=moment.tz(TIMEZONE)) => {
     let url = this.buildCalendarUrl(this.props.calendarId)
 
-    let data = null
-    let error = null
+    let data: GoogleCalendarEventType[] = []
     try {
-      let result = await fetch(url).then(r => r.json())
-      error = result.error
+      let result = await fetchJson(url)
+
+      if (result.error) {
+        this.setState({error: result.error})
+      }
+
       data = result.items
     } catch (error) {
       this.setState({error: error.message})
-      console.error(error)
+      console.warn(error)
     }
 
-    if (data && data.length) {
-      let now = moment.tz(TIMEZONE)
-      data.forEach(event => {
-        event.startTime = moment(event.start.date || event.start.dateTime)
-        event.endTime = moment(event.end.date || event.end.dateTime)
-        event.isOngoing = event.startTime.isBefore(now, 'day')
-      })
-      let grouped = groupBy(data, event => {
-        if (event.isOngoing) {
-          return 'Ongoing'
-        }
-        let isToday = event.startTime.isSame(now, 'day')
-        if (isToday) {
-          return 'Today'
-        }
-        return event.startTime.format('ddd  MMM Do')  // google returns events in CST
-      })
-      this.setState({events: this.state.events.cloneWithRowsAndSections(grouped)})
-    } else if (data && !data.length) {
-      this.setState({noEvents: true})
-    }
-    if (error) {
-      this.setState({error: error.message})
-    }
-    this.setState({loaded: true})
+    const events: EventType[] = data.map((event: GoogleCalendarEventType) => {
+      const startTime = moment(event.start.date || event.start.dateTime)
+      const endTime = moment(event.end.date || event.end.dateTime)
+      return {
+        ...event,
+        startTime,
+        endTime,
+        isOngoing: startTime.isBefore(now, 'day'),
+      }
+    })
+
+    let grouped = groupBy(events, event => {
+      if (event.isOngoing) {
+        return 'Ongoing'
+      }
+      if (event.startTime.isSame(now, 'day')) {
+        return 'Today'
+      }
+      return event.startTime.format('ddd  MMM Do')  // google returns events in CST
+    })
+
+    this.setState({
+      loaded: true,
+      events: this.state.events.cloneWithRowsAndSections(grouped),
+    })
   }
 
   refresh = async () => {
@@ -124,31 +120,16 @@ export default class CalendarView extends React.Component {
     this.setState({refreshing: false})
   }
 
-  renderRow = (data: Object) => {
-    return (
-      <EventView
-        style={styles.row}
-        eventTitle={data.summary}
-        startTime={data.startTime}
-        endTime={data.endTime}
-        location={data.location}
-        isOngoing={data.isOngoing}
-      />
-    )
+  renderRow = (data: EventType) => {
+    return <EventView {...data} />
   }
 
-  renderSectionHeader = (sectionData: Object, sectionIdentifier: any) => {
-    return (
-      <View style={styles.rowSectionHeader}>
-        <Text style={styles.rowSectionHeaderText} numberOfLines={1}>
-          {sectionIdentifier}
-        </Text>
-      </View>
-    )
+  renderSectionHeader = (sectionData: EventType[], sectionIdentifier: string) => {
+    return <ListSectionHeader title={sectionIdentifier} spacing={{left: 10}} />
   }
 
   renderSeparator = (sectionID: any, rowID: any) => {
-    return <Separator key={`${sectionID}-${rowID}`} />
+    return <ListSeparator fullWidth={true} key={`${sectionID}-${rowID}`} />
   }
 
   render() {
@@ -157,22 +138,11 @@ export default class CalendarView extends React.Component {
     }
 
     if (this.state.error) {
-      return <Text>{this.state.error}</Text>
+      return <NoticeView text={this.state.error} />
     }
 
-    if (this.state.noEvents) {
-      return (
-        <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#ffffff',
-        }}>
-          <Text>
-            No events.
-          </Text>
-        </View>
-      )
+    if (!this.state.events.getRowCount()) {
+      return <NoticeView text='No events.' />
     }
 
     return (
@@ -199,22 +169,5 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-  },
-  row: {
-    // marginLeft: 10,
-    paddingRight: 10,
-  },
-  rowSectionHeader: {
-    backgroundColor: c.iosListSectionHeader,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 10,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#ebebeb',
-  },
-  rowSectionHeaderText: {
-    color: 'black',
-    fontWeight: 'bold',
   },
 })

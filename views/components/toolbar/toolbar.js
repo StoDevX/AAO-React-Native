@@ -1,8 +1,7 @@
 // @flow
 import React from 'react'
-import {StyleSheet, View, Platform, TouchableOpacity, TouchableNativeFeedback} from 'react-native'
-const Touchable = Platform.OS === 'ios' ? TouchableOpacity : TouchableNativeFeedback
-const touchableBg = Platform.OS === 'ios' ? null : Touchable.SelectableBackgroundBorderless()
+import {StyleSheet, View, Platform} from 'react-native'
+import {Touchable} from '../touchable'
 
 const toolbarStyles = StyleSheet.create({
   shadow: {
@@ -12,7 +11,7 @@ const toolbarStyles = StyleSheet.create({
         borderBottomColor: '#ebebeb',
       },
       android: {
-        elevation: 4,
+        elevation: 3,
       },
     }),
   },
@@ -32,10 +31,8 @@ type ToolbarPropsType = {
 export function Toolbar({children, onPress}: ToolbarPropsType) {
   return (
     <View style={[toolbarStyles.shadow, toolbarStyles.container]}>
-      <Touchable onPress={onPress} style={{flex: 1}} background={touchableBg}>
-        <View style={{flexDirection: 'row'}}>
-          {children}
-        </View>
+      <Touchable onPress={onPress} style={{flex: 1, flexDirection: 'row'}} borderless>
+        {children}
       </Touchable>
     </View>
   )

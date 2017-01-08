@@ -7,14 +7,11 @@
 import React from 'react'
 import {
   StyleSheet,
-  View,
   Text,
   Platform,
   ListView,
-  TouchableHighlight,
   RefreshControl,
 } from 'react-native'
-import * as c from '../components/colors'
 
 import {isLoggedIn} from '../../lib/login'
 import delay from 'delay'
@@ -22,7 +19,8 @@ import zip from 'lodash/zip'
 import isError from 'lodash/isError'
 import _isNaN from 'lodash/isNaN'
 import isNil from 'lodash/isNil'
-import {Separator} from '../components/separator'
+import {Column} from '../components/layout'
+import {ListRow, ListSeparator, ListSectionHeader, Detail, Title} from '../components/list'
 import LoadingScreen from '../components/loading'
 import type {CourseType} from '../../lib/courses'
 import {loadAllCourses} from '../../lib/courses'
@@ -61,8 +59,8 @@ export default class CoursesView extends React.Component {
 
   state = {
     dataSource: new ListView.DataSource({
-      rowHasChanged: this.rowHasChanged,
-      sectionHeaderHasChanged: this.sectionHeaderHasChanged,
+      rowHasChanged: (r1: any, r2: any) => r1 !== r2,
+      sectionHeaderHasChanged: (h1: any, h2: any) => h1 !== h2,
     }),
     refreshing: false,
     loading: true,
@@ -79,19 +77,6 @@ export default class CoursesView extends React.Component {
     if (shouldContinue) {
       await this.fetchData()
     }
-  }
-
-  rowHasChanged(r1: CourseType|Error, r2: CourseType|Error) {
-    if (r1 instanceof Error && r2 instanceof Error) {
-      return r1.message !== r2.message
-    } else if (r1 instanceof Error || r2 instanceof Error) {
-      return true
-    }
-    return r1.clbid !== r2.clbid
-  }
-
-  sectionHeaderHasChanged(h1: number, h2: number) {
-    return h1 !== h2
   }
 
   checkLogin = async () => {
@@ -129,14 +114,16 @@ export default class CoursesView extends React.Component {
   }
 
   renderRow = (course: CourseType|Error) => {
-    if (isError(course) || course.line && course.column && course.sourceURL) {
+    if (course.message) {
+      // curses be to flow
+      let innerCourse = ((course: any): {message: string})
       return (
-        <TouchableHighlight underlayColor={'#ebebeb'}>
-          <View style={styles.rowContainer}>
-            <Text style={styles.itemTitle}>Error</Text>
-            <Text style={styles.itemPreview} numberOfLines={2}>{course.message || 'The course had an error'}</Text>
-          </View>
-        </TouchableHighlight>
+        <ListRow style={styles.rowContainer}>
+          <Column>
+            <Title>Error</Title>
+            <Detail lines={2}>{innerCourse.message || 'The course had an error'}</Detail>
+          </Column>
+        </ListRow>
       )
     }
 
@@ -145,29 +132,25 @@ export default class CoursesView extends React.Component {
     let locationTimePairs = zip(course.locations, course.times)
     let deptnum = `${course.department.join('/')} ${_isNaN(course.number) || isNil(course.number) ? '' : course.number}` + (course.section || '')
     return (
-      <TouchableHighlight underlayColor={'#ebebeb'}>
-        <View style={styles.rowContainer}>
-          <Text style={styles.itemTitle} numberOfLines={1}>{course.name}</Text>
-          <Text style={styles.itemPreview} numberOfLines={2}>{deptnum}</Text>
-          {locationTimePairs.map(([place, time], i) =>
-            <Text key={i} style={styles.itemPreview} numberOfLines={1}>{place}: {time}</Text>)}
-        </View>
-      </TouchableHighlight>
+      <ListRow style={styles.rowContainer}>
+        <Column>
+          <Title>{course.name}</Title>
+          <Detail>
+            <Text key='desc'>{deptnum}</Text>
+            {locationTimePairs.map(([place, time], i) =>
+              <Text key={i}>{place}: {time}</Text>)}
+          </Detail>
+        </Column>
+      </ListRow>
     )
   }
 
   renderSectionHeader = (courses: Object, term: number) => {
-    return (
-      <View style={styles.rowSectionHeader}>
-        <Text style={styles.rowSectionHeaderText} numberOfLines={1}>
-          {toPrettyTerm(term)}
-        </Text>
-      </View>
-    )
+    return <ListSectionHeader style={styles.rowSectionHeader} title={toPrettyTerm(term)} />
   }
 
-  renderSeparator = (sectionID: any, rowID: any) => {
-    return <Separator key={`${sectionID}-${rowID}`} style={styles.separator} />
+  renderSeparator = (sectionId: string, rowId: string) => {
+    return <ListSeparator key={`${sectionId}-${rowId}`} style={styles.separator} />
   }
 
   render() {
@@ -211,37 +194,5 @@ export default class CoursesView extends React.Component {
 const styles = StyleSheet.create({
   listContainer: {
     backgroundColor: '#ffffff',
-  },
-  separator: {
-    marginLeft: 20,
-  },
-  rowContainer: {
-    paddingLeft: 20,
-    paddingRight: 10,
-    paddingVertical: 8,
-  },
-  itemTitle: {
-    color: c.black,
-    paddingBottom: 3,
-    fontSize: 16,
-    textAlign: 'left',
-  },
-  itemPreview: {
-    color: c.iosText,
-    fontSize: 13,
-    textAlign: 'left',
-  },
-  rowSectionHeader: {
-    backgroundColor: c.iosListSectionHeader,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 20,
-    borderTopWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
-    borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
-    borderColor: '#ebebeb',
-  },
-  rowSectionHeaderText: {
-    color: 'black',
-    fontWeight: 'bold',
   },
 })

@@ -5,21 +5,25 @@
  */
 
 import React from 'react'
-import {View, Text, ListView, RefreshControl, StyleSheet, TouchableHighlight, TouchableNativeFeedback, Platform, Navigator} from 'react-native'
+import {ListView, RefreshControl, StyleSheet} from 'react-native'
 import {BuildingRow} from './row'
 
+import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 import delay from 'delay'
 import {data as buildingHours} from '../../docs/building-hours'
-import {Separator} from '../components/separator'
 import groupBy from 'lodash/groupBy'
-const Touchable = Platform.OS === 'ios' ? TouchableHighlight : TouchableNativeFeedback
-
-import * as c from '../components/colors'
+import {ListSeparator, ListSectionHeader} from '../components/list'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 export {BuildingHoursDetailView} from './detail'
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+  },
+})
 
 export class BuildingHoursView extends React.Component {
   state = {
@@ -40,14 +44,11 @@ export class BuildingHoursView extends React.Component {
     clearTimeout(this.state.intervalId)
   }
 
-  props: {
-    navigator: any,
-    route: any,
-  }
+  props: TopLevelViewPropsType;
 
   getDataSource(){
     return new ListView.DataSource({
-      rowHasChanged: (r1: BuildingType, r2: BuildingType) => r1.name !== r2.name,
+      rowHasChanged: (r1: BuildingType, r2: BuildingType) => r1 !== r2,
       sectionHeaderHasChanged: (r1: any, r2: any) => r1 !== r2,
     }).cloneWithRowsAndSections(groupBy(buildingHours, b => b.category || 'Other'))
   }
@@ -61,43 +62,27 @@ export class BuildingHoursView extends React.Component {
 
   renderRow = (data: BuildingType) => {
     return (
-      <Touchable
-        underlayColor='#ebebeb'
+      <BuildingRow
+        name={data.name}
+        info={data}
+        now={this.state.now}
         onPress={() => this.props.navigator.push({
-          id: 'BuildingHoursDetailView',
           index: this.props.route.index + 1,
+          id: 'BuildingHoursDetailView',
           title: data.name,
           backButtonTitle: 'Hours',
           props: data,
-          sceneConfig: Platform.OS === 'android' ? Navigator.SceneConfigs.FloatFromBottom : undefined,
         })}
-        // this child <View> is required; the Touchable needs a View as its direct child.
-      >
-        <View>
-          <BuildingRow
-            name={data.name}
-            info={data}
-            now={this.state.now}
-            style={styles.row}
-          />
-        </View>
-      </Touchable>
+      />
     )
   }
 
   renderSectionHeader = (data: any, id: string) => {
-    return (
-      <View style={styles.rowSectionHeader}>
-        <Text style={styles.rowSectionHeaderText}>{id}</Text>
-      </View>
-    )
+    return <ListSectionHeader style={styles.rowSectionHeader} title={id} />
   }
 
   renderSeparator = (sectionID: any, rowID: any) => {
-    if (Platform.OS === 'android') {
-      return null
-    }
-    return <Separator key={`${sectionID}-${rowID}`} style={styles.separator} />
+    return <ListSeparator key={`${sectionID}-${rowID}`} />
   }
 
   refresh = async () => {
@@ -130,31 +115,3 @@ export class BuildingHoursView extends React.Component {
     )
   }
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-  },
-  separator: {
-    marginLeft: 15,
-  },
-  row: {
-    paddingLeft: 15,
-    paddingRight: Platform.OS === 'ios' ? 6 : 15,
-  },
-
-  rowSectionHeader: {
-    backgroundColor: Platform.OS === 'ios' ? c.iosListSectionHeader : 'white',
-    paddingTop: Platform.OS === 'ios' ? 5 : 10,
-    paddingBottom: Platform.OS === 'ios' ? 5 : 15,
-    paddingLeft: 15,
-    borderTopWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
-    borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 0,
-    borderColor: '#c8c7cc',
-  },
-  rowSectionHeaderText: {
-    color: 'rgb(113, 113, 118)',
-    fontWeight: Platform.OS === 'ios' ? 'normal' : '500',
-  },
-})

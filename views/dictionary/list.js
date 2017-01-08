@@ -1,80 +1,27 @@
+// @flow
 /**
  * All About Olaf
  * Dictionary page
  */
-
 import React from 'react'
-import {
-  StyleSheet,
-  View,
-  TouchableHighlight,
-  Text,
-} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
-import AlphabetListView from 'react-native-alphabetlistview'
-
+import {StyleSheet, View, Platform} from 'react-native'
+import {StyledAlphabetListView} from '../components/alphabet-listview'
+import {Column} from '../components/layout'
+import {Detail, Title, ListRow, ListSectionHeader, ListSeparator} from '../components/list'
+import type {WordType} from './types'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
-import * as c from '../components/colors'
-
 import {data as terms} from '../../docs/dictionary.json'
 
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
-  listView: {
-    paddingRight: 16,
-  },
-  textRows: {
-    marginLeft: 20,
-    paddingRight: 10,
-    paddingTop: 8,
-    paddingBottom: 8,
-    height: 70,
-    flexDirection: 'column',
-    flex: 1,
-  },
-  notLastRow: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#c8c7cc',
-  },
-  itemTitle: {
-    color: c.black,
-    fontWeight: '500',
-    paddingBottom: 1,
-    fontSize: 16,
-    textAlign: 'left',
-  },
-  itemPreview: {
-    color: c.iosDisabledText,
-    fontSize: 13,
-    textAlign: 'left',
+const rowHeight = Platform.OS === 'ios' ? 76 : 89
+const headerHeight = Platform.OS === 'ios' ? 33 : 41
+
+const styles = StyleSheet.create({
+  row: {
+    height: rowHeight,
   },
   rowSectionHeader: {
-    backgroundColor: c.iosListSectionHeader,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 20,
-    height: 27,
-    borderBottomWidth: 1,
-    borderColor: '#ebebeb',
-  },
-  rowSectionHeaderText: {
-    color: 'black',
-    fontWeight: 'bold',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  arrowIcon: {
-    color: c.iosDisabledText,
-    fontSize: 20,
-    marginRight: 6,
-    marginLeft: 4,
-    marginTop: 8,
+    height: headerHeight,
   },
 })
 
@@ -84,7 +31,7 @@ export class DictionaryView extends React.Component {
     route: React.PropTypes.object.isRequired,
   };
 
-  onPressRow = data => {
+  onPressRow = (data: WordType) => {
     this.props.navigator.push({
       id: 'DictionaryDetailView',
       index: this.props.route.index + 1,
@@ -94,42 +41,45 @@ export class DictionaryView extends React.Component {
     })
   }
 
-  renderRow = ({isLast, item}) => {
+  renderRow = ({isLast, item}: {isLast: boolean, item: WordType}) => {
     return (
-      <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressRow(item)}>
-        <View style={[styles.row, !isLast && styles.notLastRow]}>
-          <View style={[styles.textRows]}>
-            <Text style={styles.itemTitle} numberOfLines={1}>{item.word}</Text>
-            <Text style={styles.itemPreview} numberOfLines={2}>{item.definition}</Text>
-          </View>
-          <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
-        </View>
-      </TouchableHighlight>
+      <View>
+        <ListRow
+          onPress={() => this.onPressRow(item)}
+          contentContainerStyle={styles.row}
+          arrowPosition='none'
+        >
+          <Column>
+            <Title lines={1}>{item.word}</Title>
+            <Detail lines={2} style={{fontSize: 14}}>{item.definition}</Detail>
+          </Column>
+        </ListRow>
+
+        {!isLast ? <ListSeparator /> : null}
+      </View>
     )
   }
 
-  renderHeader = ({title}) => {
+  renderHeader = ({title}: {title: string}) => {
     return (
-      <View style={styles.rowSectionHeader}>
-        <Text style={styles.rowSectionHeaderText}>{title}</Text>
-      </View>
+      <ListSectionHeader
+        title={title}
+        style={styles.rowSectionHeader}
+      />
     )
   }
 
   render() {
-    // console.error(groupBy(terms, item => head(item.word)))
     return (
-      <View style={styles.container}>
-      <AlphabetListView
-        contentContainerStyle={styles.listView}
+      <StyledAlphabetListView
         data={groupBy(terms, item => head(item.word))}
         cell={this.renderRow}
+        // just setting cellHeight sends the wrong values on iOS.
+        cellHeight={rowHeight + (Platform.OS === 'ios' ? (11/12 * StyleSheet.hairlineWidth) : 0)}
         sectionHeader={this.renderHeader}
-        sectionHeaderHeight={28}
-        cellHeight={70}
+        sectionHeaderHeight={headerHeight}
         showsVerticalScrollIndicator={false}
       />
-      </View>
     )
   }
 }
