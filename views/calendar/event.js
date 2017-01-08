@@ -25,6 +25,20 @@ const styles = StyleSheet.create({
   end: {
     color: c.iosDisabledText,
   },
+  title: {
+    ...Platform.select({
+      ios: {
+        fontSize: 15,
+      },
+    }),
+  },
+  detail: {
+    ...Platform.select({
+      ios: {
+        fontSize: 12,
+      },
+    }),
+  },
 })
 
 export default function EventView(props: EventType) {
@@ -42,8 +56,8 @@ export default function EventView(props: EventType) {
         <Bar style={{marginHorizontal: 10}} />
 
         <Column flex={1} paddingTop={2} paddingBottom={3}>
-          <Title lines={1} style={{fontWeight: '400'}}>{title}</Title>
-          <Detail style={Platform.OS === 'ios' && {fontSize: 12}}>{props.location}</Detail>
+          <Title bold={false} style={styles.title}>{title}</Title>
+          <Detail style={styles.detail}>{props.location}</Detail>
         </Column>
       </Row>
     </ListRow>
