@@ -82,6 +82,7 @@
       "schedule": [
         {
           "title": "Hours",
+          "notes": "The late night menu starts at 9 p.m.",
           "hours": [
             {
               "days": [
@@ -99,7 +100,7 @@
                 "Sa"
               ],
               "from": "10:30am",
-              "to": "2:00am"
+              "to": "9:00pm"
             },
             {
               "days": [
@@ -107,6 +108,19 @@
               ],
               "from": "10:30am",
               "to": "12:00am"
+            }
+          ]
+        },
+        {
+          "title": "Late Night",
+          "hours": [
+            {
+              "days": [
+                "Fr",
+                "Sa"
+              ],
+              "from": "9:00pm",
+              "to": "2:00am"
             }
           ]
         }
