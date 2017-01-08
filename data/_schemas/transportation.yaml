@@ -4,5 +4,5 @@ additionalProperties: false
 required: [name, url, description]
 properties:
   name: {type: string}
-  url: {type: string}
+  url: {type: string, format: uri}
   description: {type: string}
