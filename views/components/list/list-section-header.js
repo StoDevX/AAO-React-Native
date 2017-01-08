@@ -28,19 +28,22 @@ const styles = StyleSheet.create({
     }),
   },
   bold: {
-    fontWeight: 'bold',
+    ...Platform.select({
+      ios: {fontWeight: '500'},
+      android: {fontWeight: '600'},
+    }),
   },
   title: {
+    fontWeight: '400',
     ...Platform.select({
       ios: {
         fontSize: 16,
         color: c.black,
-        fontWeight: '400',
       },
       android: {
-        fontSize: 13,
+        fontSize: 16,
+        fontFamily: 'sans-serif-condensed',
         color: c.tint,
-        fontWeight: '500',
       },
     }),
   },
@@ -52,7 +55,8 @@ const styles = StyleSheet.create({
         color: c.iosDisabledText,
       },
       android: {
-        fontSize: 13,
+        fontSize: 16,
+        fontFamily: 'sans-serif-condensed',
         color: c.iosDisabledText,  // todo: find android equivalent
       },
     }),
