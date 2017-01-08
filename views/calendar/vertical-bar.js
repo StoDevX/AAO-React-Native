@@ -5,8 +5,8 @@ import * as c from '../components/colors'
 
 const dotBarStyles = StyleSheet.create({
   diagram: {
-    marginTop: 4,
-    marginBottom: 3,
+    marginTop: 9,
+    marginBottom: 8,
     flexDirection: 'column',
     alignItems: 'center',
   },
