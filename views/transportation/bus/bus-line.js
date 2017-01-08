@@ -74,34 +74,22 @@ export function BusLine({line, now}: {line: BusLineType, now: moment}) {
     )
   }
 
-  let scheduledMoments: FancyBusTimeListType[] = schedule.times.map(timeset => {
+  const scheduledMoments: FancyBusTimeListType[] = schedule.times.map(timeset => {
     return timeset.map(time =>
-      time === false
-        ? false
-        : moment
-          // interpret in Central time
-          .tz(time, TIME_FORMAT, true, TIMEZONE)
-          // and set the date to today
-          .dayOfYear(now.dayOfYear()))
+      // either pass `false` through or return a parsed time
+      time === false ? false : moment
+        // interpret in Central time
+        .tz(time, TIME_FORMAT, true, TIMEZONE)
+        // and set the date to today
+        .dayOfYear(now.dayOfYear()))
   })
 
-  let moments: FancyBusTimeListType = getSetOfStopsForNow(scheduledMoments, now)
-  let timesIndex = scheduledMoments.indexOf(moments)
+  const moments: FancyBusTimeListType = getSetOfStopsForNow(scheduledMoments, now)
+  const pairs: [[string, moment]] = zip(schedule.stops, moments)
 
-  let pairs: [[string, typeof moment]] = zip(schedule.stops, moments)
-
-  let isLastBus = timesIndex === scheduledMoments.length - 1
-
-  let lineTitle = line.line
-  if (timesIndex === 0 && now.isBefore(head(moments))) {
-    lineTitle += ` — Starting ${head(moments).format('h:mma')}`
-  } else if (now.isAfter(last(moments))) {
-    lineTitle += ' — Over for Today'
-  } else if (isLastBus) {
-    lineTitle += ' — Last Bus'
-  } else {
-    lineTitle += ' — Running'
-  }
+  const timesIndex = scheduledMoments.indexOf(moments)
+  const isLastBus = timesIndex === scheduledMoments.length - 1
+  const subtitle = makeSubtitle({now, moments, isLastBus})
 
   return (
     <View style={[styles.container, style]}>
@@ -117,7 +105,6 @@ export function BusLine({line, now}: {line: BusLineType, now: moment}) {
 
             now={now}
             time={moment}
-            isLastRow={i === pairs.length - 1}
 
             barColor={barColor}
             currentStopColor={currentStopColor}
@@ -125,9 +112,4 @@ export function BusLine({line, now}: {line: BusLineType, now: moment}) {
       </View>
     </View>
   )
-}
-BusLineView.propTypes = {
-  line: React.PropTypes.object.isRequired,
-  now: React.PropTypes.instanceOf(moment).isRequired,
-  style: React.PropTypes.object,
 }
