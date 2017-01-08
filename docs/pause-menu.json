@@ -145,7 +145,18 @@
         "special": true
       },
       {
+        "label": "Chicken Quesadilla (Half / Whole)",
+        "station": "Quesadilla",
+        "special": true
+      },
+      {
         "label": "Ultimate Quesadilla (Half / Whole)",
+        "station": "Quesadilla",
+        "description": "Includes tomatoes, onions, green peppers, and jalapeños",
+        "special": true
+      },
+      {
+        "label": "Ultimate Chicken Quesadilla (Half / Whole)",
         "station": "Quesadilla",
         "description": "Includes tomatoes, onions, green peppers, and jalapeños",
         "special": true
