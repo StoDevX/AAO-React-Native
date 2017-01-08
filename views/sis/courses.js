@@ -58,8 +58,8 @@ export default class CoursesView extends React.Component {
 
   state = {
     dataSource: new ListView.DataSource({
-      rowHasChanged: this.rowHasChanged,
-      sectionHeaderHasChanged: this.sectionHeaderHasChanged,
+      rowHasChanged: (r1: any, r2: any) => r1 !== r2,
+      sectionHeaderHasChanged: (h1: any, h2: any) => h1 !== h2,
     }),
     refreshing: false,
     loading: true,
@@ -76,19 +76,6 @@ export default class CoursesView extends React.Component {
     if (shouldContinue) {
       await this.fetchData()
     }
-  }
-
-  rowHasChanged(r1: CourseType|Error, r2: CourseType|Error) {
-    if (r1 instanceof Error && r2 instanceof Error) {
-      return r1.message !== r2.message
-    } else if (r1 instanceof Error || r2 instanceof Error) {
-      return true
-    }
-    return r1.clbid !== r2.clbid
-  }
-
-  sectionHeaderHasChanged(h1: number, h2: number) {
-    return h1 !== h2
   }
 
   checkLogin = async () => {
