@@ -47,7 +47,8 @@ class NewsRow extends React.Component {
       const url = this.findImage(props.story['content:encoded'][0])
       // if we didn't find a valid URL, return null
       if (!url) {
-        return null
+        resolve(null)
+        return
       }
 
       // Image.getSize is a callback-based API
