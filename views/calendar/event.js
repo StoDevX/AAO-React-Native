@@ -10,14 +10,19 @@ import {getText, parseHtml} from '../../lib/html'
 import {Bar} from './vertical-bar'
 
 const styles = StyleSheet.create({
+  timeContainer: {
+    justifyContent: 'space-between',
+    width: 70,
+    paddingVertical: 3,
+  },
   time: {
     textAlign: 'right',
-    fontSize: 10,
+    fontSize: 12,
   },
   start: {
     color: c.black,
   },
-  endTime: {
+  end: {
     color: c.iosDisabledText,
   },
 })
@@ -32,13 +37,12 @@ export default function EventView(props: EventType) {
       fullWidth={true}
     >
       <Row>
-        <Row width={70}>
-          <CalendarTimes {...props} />
-          <Bar />
-        </Row>
+        <CalendarTimes {...props} style={styles.timeContainer} />
 
-        <Column>
-          <Title>{title}</Title>
+        <Bar style={{marginHorizontal: 10}} />
+
+        <Column flex={1} paddingTop={2} paddingBottom={3}>
+          <Title lines={1} style={{fontWeight: '400'}}>{title}</Title>
           <Detail>{props.location}</Detail>
         </Column>
       </Row>
@@ -61,23 +65,23 @@ function CalendarTimes(props: EventType) {
     ]
   } else if (multiDay) {
     times = [
-      <Text key={0} style={[styles.time, styles.start]}>{props.startTime.format('h:mma')}</Text>,
-      <Text key={1} style={[styles.time, styles.end]}>to {props.endTime.format('MMM. D h:mma')}</Text>,
+      <Text key={0} style={[styles.time, styles.start]}>{props.startTime.format('h:mm A')}</Text>,
+      <Text key={1} style={[styles.time, styles.end]}>to {props.endTime.format('MMM. D h:mm A')}</Text>,
     ]
   } else if (props.startTime.isSame(props.endTime, 'minute')) {
     times = [
-      <Text key={0} style={[styles.time, styles.start]}>{props.startTime.format('h:mma')}</Text>,
+      <Text key={0} style={[styles.time, styles.start]}>{props.startTime.format('h:mm A')}</Text>,
       <Text key={1} style={[styles.time, styles.end]}>until ???</Text>,
     ]
   } else {
     times = [
-      <Text key={0} style={[styles.time, styles.start]}>{props.startTime.format('h:mma')}</Text>,
-      <Text key={1} style={[styles.time, styles.end]}>{props.endTime.format('h:mma')}</Text>,
+      <Text key={0} style={[styles.time, styles.start]}>{props.startTime.format('h:mm A')}</Text>,
+      <Text key={1} style={[styles.time, styles.end]}>{props.endTime.format('h:mm A')}</Text>,
     ]
   }
 
   return (
-    <Column justifyContent='space-between'>
+    <Column style={props.style}>
       {times}
     </Column>
   )
