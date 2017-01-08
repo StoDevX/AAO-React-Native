@@ -84,17 +84,6 @@ function renderScene(route, navigator) {
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from './views/components/colors'
 
-const navbarShadows = Platform.OS === 'ios'
-  ? {
-    shadowOffset: { width: 0, height: StyleSheet.hairlineWidth },
-    shadowColor: 'rgb(100, 100, 100)',
-    shadowOpacity: 0.5,
-    shadowRadius: StyleSheet.hairlineWidth,
-  }
-  : {
-    elevation: 4,
-  }
-
 import {Dimensions} from 'react-native'
 const styles = StyleSheet.create({
   container: {
@@ -104,7 +93,17 @@ const styles = StyleSheet.create({
   },
   navigationBar: {
     backgroundColor: c.olevilleGold,
-    ...navbarShadows,
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: StyleSheet.hairlineWidth },
+        shadowColor: 'rgb(100, 100, 100)',
+        shadowOpacity: 0.5,
+        shadowRadius: StyleSheet.hairlineWidth,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   backButton: {
     flexDirection: 'row',
