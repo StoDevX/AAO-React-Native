@@ -117,14 +117,17 @@ export class StudentOrgsView extends React.Component {
           onPress={() => this.onPressRow(item)}
           contentContainerStyle={styles.row}
           arrowPosition='top'
+        >
+          <Row>
+            <NewOrgBadge newOrg={item.newOrg} />
 
-          badge={<NewOrgBadge newOrg={item.newOrg} />}
+            <Column>
+              <Title lines={1}>{item.name}</Title>
+              <Detail lines={1}>{item.categories.join(', ')}</Detail>
+            </Column>
+          </Row>
+        </ListRow>
 
-          title={item.name}
-          titleLines={1}
-          description={item.categories.join(', ')}
-          descriptionLines={1}
-        />
         {!isLast ? <ListSeparator spacing={{left: leftSideSpacing}} /> : null}
       </View>
     )

@@ -9,10 +9,6 @@ import {getText, parseHtml} from '../../lib/html'
 import {Bar} from './vertical-bar'
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
   time: {
     textAlign: 'right',
     fontSize: 10,
@@ -32,18 +28,20 @@ export default function EventView(props: EventType) {
     <ListRow
       contentContainerStyle={{paddingVertical: 2}}
       arrowPosition='none'
-      spacing={{left: 0}}
-
-      leftColumn={
-        <View style={{flexDirection: 'row', width: 70}}>
+      fullWidth={true}
+    >
+      <Row>
+        <Row width={70}>
           <CalendarTimes {...props} />
           <Bar />
-        </View>
-      }
+        </Row>
 
-      title={title}
-      description={props.location}
-    />
+        <Column>
+          <Title>{title}</Title>
+          <Detail>{props.location}</Detail>
+        </Column>
+      </Row>
+    </ListRow>
   )
 }
 
@@ -78,8 +76,8 @@ function CalendarTimes(props: EventType) {
   }
 
   return (
-    <View style={[styles.container]}>
+    <Column justifyContent='space-between'>
       {times}
-    </View>
+    </Column>
   )
 }

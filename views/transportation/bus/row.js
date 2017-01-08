@@ -49,17 +49,24 @@ export function BusStopRow({time, now, barColor, currentStopColor, place, times}
   return (
     <ListRow
       fullWidth={true}
-      contentContainerStyle={[{paddingVertical: 0, paddingRight: 0}]}
+      fullHeight={true}
       style={styles.rowDetail}
-      leftColumn={<ProgressChunk {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}} />}
-      title={place}
-      titleStyle={[
-        skippingStop && styles.skippingStopTitle,
-        afterStop && styles.passedStopTitle,
-        atStop && styles.atStopTitle,
-      ]}
-      description={<ScheduleTimes {...{times, skippingStop}} />}
-    />
+    >
+      <Row>
+        <ProgressChunk {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}} />
+
+        <Column>
+          <Title style={[
+            skippingStop && styles.skippingStopTitle,
+            afterStop && styles.passedStopTitle,
+            atStop && styles.atStopTitle,
+          ]}>{place}</Title>
+          <Detail>
+            <ScheduleTimes {...{times, skippingStop}} />
+          </Detail>
+        </Column>
+      </Row>
+    </ListRow>
   )
 }
 

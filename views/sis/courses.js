@@ -130,12 +130,12 @@ export default class CoursesView extends React.Component {
       // curses be to flow
       let innerCourse = ((course: any): {message: string})
       return (
-        <ListRow
-          style={styles.rowContainer}
-          title='Error'
-          description={innerCourse.message || 'The course had an error'}
-          descriptionLines={2}
-        />
+        <ListRow style={styles.rowContainer}>
+          <Column>
+            <Title>Error</Title>
+            <Detail lines={2}>{innerCourse.message || 'The course had an error'}</Detail>
+          </Column>
+        </ListRow>
       )
     }
 
@@ -144,15 +144,16 @@ export default class CoursesView extends React.Component {
     let locationTimePairs = zip(course.locations, course.times)
     let deptnum = `${course.department.join('/')} ${_isNaN(course.number) || isNil(course.number) ? '' : course.number}` + (course.section || '')
     return (
-      <ListRow
-        style={styles.rowContainer}
-        title={course.name}
-        description={[
-          <Text key='desc'>{deptnum}</Text>,
-          ...locationTimePairs.map(([place, time], i) =>
-            <Text key={i}>{place}: {time}</Text>),
-        ]}
-      />
+      <ListRow style={styles.rowContainer}>
+        <Column>
+          <Title>{course.name}</Title>
+          <Detail>
+            <Text key='desc'>{deptnum}</Text>
+            {locationTimePairs.map(([place, time], i) =>
+              <Text key={i}>{place}: {time}</Text>)}
+          </Detail>
+        </Column>
+      </ListRow>
     )
   }
 

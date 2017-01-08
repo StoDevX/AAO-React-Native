@@ -25,24 +25,24 @@ export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodI
       style={[styles.container, hasDescription ? styles.hasDescription : styles.titleOnly, props.style]}
       fullWidth={true}
       arrowPosition='none'
-
-      badge={
+    >
+      <Row>
         <View style={[styles.badge, {width: left, alignSelf: hasDescription ? 'flex-start' : 'center'}]}>
           {badgeSpecials && data.special ? <Icon style={styles.badgeIcon} name={specialsIcon} /> : null}
         </View>
-      }
 
-      title={data.label}
-      description={data.description}
+        <Column>
+          <Title>{data.label}</Title>
+          <Detail>{data.description}</Detail>
+        </Column>
 
-      rightColumn={
         <DietaryTags
           filters={filters}
           dietary={data.cor_icon}
           style={styles.iconContainer}
         />
-      }
-    />
+      </Row>
+    </ListRow>
   )
 }
 

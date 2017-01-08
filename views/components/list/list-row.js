@@ -4,6 +4,7 @@ import {Platform, StyleSheet, View, Text} from 'react-native'
 import {Touchable} from '../touchable'
 import {DisclosureArrow} from './disclosure-arrow'
 import noop from 'lodash/noop'
+import isNil from 'lodash/isNil'
 import * as c from '../colors'
 // import * as Row from './modes'
 
@@ -22,6 +23,12 @@ const styles = StyleSheet.create({
         paddingRight: 15,
       },
     }),
+  },
+  fullWidth: {
+    paddingLeft: 0,
+  },
+  fullHeight: {
+    paddingVertical: 0,
   },
 
   title: {
@@ -103,6 +110,7 @@ type PropsType = {
   contentContainerStyle?: any,
   arrowPosition?: 'center'|'top'|'none',
   fullWidth?: boolean,
+  fullHeight?: boolean,
   spacing?: {left?: number, right?: number},
   onPress?: () => any,
 
@@ -126,8 +134,9 @@ export function ListRow(props: PropsType) {
     contentContainerStyle,
     // children,
     onPress,
-    spacing: {left: leftSpacing = 15} = {},
+    spacing: {left: leftSpacing = 15, right: rightSpacing = null} = {},
     fullWidth=false,
+    fullHeight=false,
   } = props
 
   const Component = onPress ? Touchable : View
@@ -141,10 +150,18 @@ export function ListRow(props: PropsType) {
     ? null
     : <DisclosureArrow style={arrowPositionStyle} />
 
-  const spacing = {paddingLeft: fullWidth ? 0 : leftSpacing}
-
   return (
-    <Component style={[styles.container, spacing, contentContainerStyle]} onPress={callback}>
+    <Component
+      style={[
+        styles.container,
+        !isNil(leftSpacing) && {paddingLeft: leftSpacing},
+        !isNil(rightSpacing) && {paddingRight: rightSpacing},
+        fullWidth && styles.fullWidth,
+        fullHeight && styles.fullHeight,
+        contentContainerStyle,
+      ]}
+      onPress={callback}
+    >
       <View style={[{flex: 1}, style]}>
         {contents}
       </View>

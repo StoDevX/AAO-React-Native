@@ -72,11 +72,12 @@ export default class NewsContainer extends React.Component {
       <ListRow
         onPress={() => this.onPressNews(title, story)}
         arrowPosition='top'
-        title={title}
-        titleLines={1}
-        description={snippet}
-        descriptionLines={2}
-      />
+      >
+        <Column>
+          <Title lines={1}>{title}</Title>
+          <Detail lines={2}>{snippet}</Detail>
+        </Column>
+      </ListRow>
     )
   }
 

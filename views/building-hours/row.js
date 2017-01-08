@@ -56,14 +56,15 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
     <ListRow
       onPress={onPress}
       arrowPosition='top'
-
-      title={
-        <View style={[{flexDirection: 'row', justifyContent: 'space-between'}, styles.titleText]}>
-          <Text numberOfLines={1} style={{flex: 1}}>
+      direction='column'
+    >
+      <Column>
+        <Row justifyContent='space-between' style={styles.titleText}>
+          <Title lines={1} style={{flex: 1}}>
             <Text>{name}</Text>
             {info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
             {info.subtitle ? <Text style={styles.subtitleText}>    {info.subtitle}</Text> : null}
-          </Text>
+          </Title>
 
           <Badge
             text={openStatus}
@@ -71,17 +72,19 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
             textColor={textaccent}
             style={styles.accessoryBadge}
           />
-        </View>
-      }
+        </Row>
 
-      description={hours.map(([isActive, label, status], i) =>
-        <BuildingTimeSlot
-          key={i}
-          highlight={hours.length > 1 && isActive}
-          {...{isActive, label, status}}
-        />
-      )}
-    />
+        <Detail>
+          {hours.map(([isActive, label, status], i) =>
+            <BuildingTimeSlot
+              key={i}
+              highlight={hours.length > 1 && isActive}
+              {...{isActive, label, status}}
+            />
+          )}
+        </Detail>
+      </Column>
+    </ListRow>
   )
 }
 

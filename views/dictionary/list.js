@@ -47,12 +47,13 @@ export class DictionaryView extends React.Component {
           onPress={() => this.onPressRow(item)}
           contentContainerStyle={styles.row}
           arrowPosition='top'
+        >
+          <Column>
+            <Title lines={1}>{item.word}</Title>
+            <Detail lines={2}>{item.definition}</Detail>
+          </Column>
+        </ListRow>
 
-          title={item.word}
-          titleLines={1}
-          description={item.definition}
-          descriptionLines={2}
-        />
         {!isLast ? <ListSeparator /> : null}
       </View>
     )

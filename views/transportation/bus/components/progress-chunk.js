@@ -54,19 +54,16 @@ export const ProgressChunk = ({afterStop, atStop, barColor, beforeStop, currentS
 }) => {
   // To draw the bar, we draw a chunk of the bar, then we draw the dot, then
   // we draw the last chunk of the bar.
-
   return (
     <View style={styles.barContainer}>
       <View style={[styles.bar, {backgroundColor: barColor}]} />
-      <View
-        style={[
-          styles.dot,
-          afterStop && [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}],
-          beforeStop && [styles.beforeStop, {borderColor: barColor}],
-          atStop && [styles.atStop, {borderColor: currentStopColor}],
-          skippingStop && styles.skippingStop,
-        ]}
-      />
+      <View style={[
+        styles.dot,
+        afterStop && [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}],
+        beforeStop && [styles.beforeStop, {borderColor: barColor}],
+        atStop && [styles.atStop, {borderColor: currentStopColor}],
+        skippingStop && styles.skippingStop,
+      ]} />
       <View style={[styles.bar, {backgroundColor: barColor}]} />
     </View>
   )
