@@ -4,6 +4,7 @@ import React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
 import type {BusLineType, FancyBusTimeListType} from './types'
 import {getScheduleForNow, getSetOfStopsForNow} from './lib'
+import get from 'lodash/get'
 import zip from 'lodash/zip'
 import head from 'lodash/head'
 import last from 'lodash/last'
@@ -30,30 +31,38 @@ let styles = StyleSheet.create({
   },
 })
 
-export default function BusLineView({
-  line,
-  style,
-  now,
-}: {
-  line: BusLineType,
-  style: Object|number|Array<Object|number>,
-  now: typeof moment,
-}) {
-  let barColor = c.salmon
-  if (line.line === 'Blue Line') {
-    barColor = c.steelBlue
-  } else if (line.line === 'Express Bus') {
-    barColor = c.moneyGreen
+const barColors = {
+  'Blue Line': c.steelBlue,
+  'Express Bus': c.moneyGreen,
+  'Red Line': c.salmon,
+}
+const stopColors = {
+  'Blue Line': c.midnightBlue,
+  'Express Bus': c.hollyGreen,
+  'Red Line': c.brickRed,
+}
+
+function makeSubtitle({now, moments, isLastBus}) {
+  let lineDetail = 'Running'
+
+  if (now.isBefore(head(moments))) {
+    lineDetail = `Starts ${now.to(head(moments))}`
+  } else if (now.isAfter(last(moments))) {
+    lineDetail = 'Over for Today'
+  } else if (isLastBus) {
+    lineDetail = 'Last Bus'
   }
 
-  let currentStopColor = c.brickRed
-  if (line.line === 'Blue Line') {
-    currentStopColor = c.midnightBlue
-  } else if (line.line === 'Express Bus') {
-    currentStopColor = c.hollyGreen
-  }
+  return lineDetail
+}
 
-  let schedule = getScheduleForNow(line.schedules, now)
+export function BusLine({line, now}: {line: BusLineType, now: moment}) {
+  // grab the colors (with fallbacks) via _.get
+  const barColor = get(barColors, line.line, c.black)
+  const currentStopColor = get(stopColors, line.line, c.gray)
+  const androidColor = Platform.OS === 'android' ? {color: barColor} : null
+
+  const schedule = getScheduleForNow(line.schedules, now)
   if (!schedule) {
     return (
       <View style={[styles.container, style]}>
