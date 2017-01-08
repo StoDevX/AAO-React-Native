@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {Platform, ScrollView} from 'react-native'
+import {ScrollView} from 'react-native'
 import type {BusLineType} from './types'
 import {BusLine} from './list'
 import moment from 'moment-timezone'
