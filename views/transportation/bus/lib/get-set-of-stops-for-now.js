@@ -1,10 +1,10 @@
 // @flow
-import type {FancyBusTimeListType} from './types'
+import type {FancyBusTimeListType} from '../types'
 import type moment from 'moment'
 import head from 'lodash/head'
 import last from 'lodash/last'
 
-export default function getSetOfStopsForNow(scheduledMoments: FancyBusTimeListType[], now: moment): FancyBusTimeListType {
+export function getSetOfStopsForNow(scheduledMoments: FancyBusTimeListType[], now: moment): FancyBusTimeListType {
   // Given a list of bus loops, we need to find the loop for the current time.
   // There are three possible cases:
 
