@@ -7,7 +7,6 @@ const dotBarStyles = StyleSheet.create({
   diagram: {
     marginTop: 4,
     marginBottom: 3,
-    marginLeft: 8,
     flexDirection: 'column',
     alignItems: 'center',
   },
@@ -24,9 +23,9 @@ const dotBarStyles = StyleSheet.create({
   },
 })
 
-function DottedBar() {
+function DottedBar({style}: {style?: any}) {
   return (
-    <View style={[dotBarStyles.diagram]}>
+    <View style={[dotBarStyles.diagram, style]}>
       <View style={dotBarStyles.circle} />
       <View style={dotBarStyles.line} />
       <View style={dotBarStyles.circle} />
@@ -36,20 +35,19 @@ function DottedBar() {
 
 const solidBarStyles = StyleSheet.create({
   border: {
-    marginLeft: 8,
-    width: 2,
-    backgroundColor: c.iosGray,
+    width: 1.5,
+    backgroundColor: c.black75Percent,
   },
 })
 
-function SolidBar() {
-  return <View style={solidBarStyles.border} />
+function SolidBar({style}: {style?: any}) {
+  return <View style={[solidBarStyles.border, style]} />
 }
 
-export function Bar() {
+export function Bar(props: Object) {
   switch (Platform.OS) {
-    case 'ios': return <SolidBar />
-    case 'android': return <DottedBar />
-    default: return <SolidBar />
+    case 'ios': return <SolidBar {...props} />
+    case 'android': return <DottedBar {...props} />
+    default: return <SolidBar {...props} />
   }
 }

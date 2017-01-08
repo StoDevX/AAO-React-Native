@@ -5,9 +5,17 @@ import * as c from '../colors'
 
 const styles = StyleSheet.create({
   detail: {
-    color: c.iosDisabledText,
-    paddingTop: 3,
-    fontSize: 13,
+    paddingTop: 4,
+    ...Platform.select({
+      ios: {
+        color: c.iosDisabledText,
+        fontSize: 12,
+      },
+      android: {
+        color: c.iosDisabledText,
+        fontSize: 14,
+      },
+    }),
   },
 })
 

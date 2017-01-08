@@ -9,10 +9,11 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         backgroundColor: c.iosListSectionHeader,
-        paddingVertical: 5,
+        paddingVertical: 6,
         borderTopWidth: StyleSheet.hairlineWidth,
         borderBottomWidth: StyleSheet.hairlineWidth,
-        borderColor: '#ebebeb',
+        borderTopColor: c.iosHeaderTopBorder,
+        borderBottomColor: c.iosHeaderBottomBorder,
         paddingRight: 10,
       },
       android: {
@@ -32,18 +33,29 @@ const styles = StyleSheet.create({
   title: {
     ...Platform.select({
       ios: {
+        fontSize: 16,
         color: c.black,
         fontWeight: '400',
       },
       android: {
+        fontSize: 13,
         color: c.tint,
         fontWeight: '500',
       },
     }),
   },
   subtitle: {
-    fontSize: 13,
-    color: c.iosDisabledText,  // todo: find android equivalent
+    fontWeight: '400',
+    ...Platform.select({
+      ios: {
+        fontSize: 16,
+        color: c.black,
+      },
+      android: {
+        fontSize: 13,
+        color: c.iosDisabledText,  // todo: find android equivalent
+      },
+    }),
   },
 })
 

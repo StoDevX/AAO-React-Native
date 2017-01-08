@@ -5,9 +5,16 @@ import * as c from '../colors'
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: Platform.OS === 'ios' ? 16 : 17,
-    fontWeight: Platform.OS === 'ios' ? '500' : '600',
     color: c.black,
+    fontSize: 17,
+    ...Platform.select({
+      ios: {
+        fontWeight: '500',
+      },
+      android: {
+        fontWeight: '600',
+      },
+    })
   },
 })
 

@@ -33,7 +33,7 @@ export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodI
         </View>
 
         <Column flex={1}>
-          <Title>{data.label}</Title>
+          <Title style={{fontWeight: 'normal'}}>{data.label}</Title>
           {data.description ? <Detail>{data.description}</Detail> : null}
         </Column>
 
