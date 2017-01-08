@@ -62,28 +62,28 @@
       },
       {
         "label": "BBQ Chicken",
-        "station": "Specialty Pizzas",
+        "station": "Specialty Pizza",
         "special": true
       },
       {
         "label": "Buffalo Chicken",
-        "station": "Specialty Pizzas",
+        "station": "Specialty Pizza",
         "special": true
       },
       {
         "label": "Chicken Bacon Ranch",
-        "station": "Specialty Pizzas",
+        "station": "Specialty Pizza",
         "special": true
       },
       {
         "label": "Chicken Pesto",
-        "station": "Specialty Pizzas",
+        "station": "Specialty Pizza",
         "description": "Includes tomatoes",
         "special": true
       },
       {
         "label": "Ole Pizza",
-        "station": "Specialty Pizzas",
+        "station": "Specialty Pizza",
         "description": "Includes pepperoni, sausage, onions, green peppers, and black olives",
         "special": true
       },
