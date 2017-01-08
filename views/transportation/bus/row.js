@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
-import {Platform, View, StyleSheet, Text} from 'react-native'
+import {Platform, StyleSheet, Text} from 'react-native'
+import {ListRow} from '../../components/list'
 import type {FancyBusTimeListType} from './types'
 import type moment from 'moment'
 import * as c from '../../components/colors'
@@ -9,37 +10,20 @@ import {ProgressChunk} from './components/progress-chunk'
 const TIME_FORMAT = 'h:mma'
 
 const styles = StyleSheet.create({
-  busWillSkipStopTitle: {
+  skippingStopTitle: {
     color: c.iosDisabledText,
   },
-  busWillSkipStopDetail: {
+  skippingStopDetail: {
   },
   row: {
     flexDirection: 'row',
   },
   rowDetail: {
-    flex: 1,
-    marginLeft: 0,
-    paddingRight: 10,
     paddingVertical: Platform.OS === 'ios' ? 8 : 15,
-    flexDirection: 'column',
-  },
-  passedStopDetail: {
-  },
-  itemTitle: {
-    color: c.black,
-    paddingLeft: 0,
-    paddingRight: 0,
-    paddingBottom: 3,
-    fontSize: Platform.OS === 'ios' ? 16 : 17,
-    textAlign: 'left',
   },
   itemDetail: {
     color: c.iosDisabledText,
-    paddingLeft: 0,
-    paddingRight: 0,
     fontSize: 13,
-    textAlign: 'left',
   },
   atStopTitle: {
     fontWeight: 'bold',
@@ -63,21 +47,19 @@ export function BusStopRow({time, now, barColor, currentStopColor, place, times}
   const skippingStop = time === false
 
   return (
-    <View style={styles.row}>
-      <ProgressChunk {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}} />
-
-      <View style={styles.rowDetail}>
-        <Text style={[
-          styles.itemTitle,
-          skippingStop && styles.busWillSkipStopTitle,
-          afterStop && styles.passedStopTitle,
-          atStop && styles.atStopTitle,
-        ]}>
-          {place}
-        </Text>
-        <ScheduleTimes {...{times, skippingStop}} />
-      </View>
-    </View>
+    <ListRow
+      fullWidth={true}
+      contentContainerStyle={[{paddingVertical: 0, paddingRight: 0}]}
+      style={styles.rowDetail}
+      leftColumn={<ProgressChunk {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}} />}
+      title={place}
+      titleStyle={[
+        skippingStop && styles.skippingStopTitle,
+        afterStop && styles.passedStopTitle,
+        atStop && styles.atStopTitle,
+      ]}
+      description={<ScheduleTimes {...{times, skippingStop}} />}
+    />
   )
 }
 
@@ -87,7 +69,7 @@ const ScheduleTimes = ({times, skippingStop}: {
 }) => {
   return (
     <Text
-      style={[styles.itemDetail, skippingStop && styles.busWillSkipStopDetail]}
+      style={[styles.itemDetail, skippingStop && styles.skippingStopDetail]}
       numberOfLines={1}
     >
       {times

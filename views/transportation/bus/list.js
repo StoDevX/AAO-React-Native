@@ -101,7 +101,7 @@ export function BusLine({line, style, now}: {
       />
       <View style={[styles.listContainer]}>
         {pairs.map(([placeTitle, moment], i, list) =>
-          <ListRow key={i} fullWidth={true} contentContainerStyle={{paddingVertical: 0, paddingRight: 0}}>
+          <View key={i}>
             <BusStopRow
               // get the arrival time for this stop from each bus loop after
               // the current time (as given by `now`)
@@ -115,7 +115,7 @@ export function BusLine({line, style, now}: {
               currentStopColor={currentStopColor}
             />
             {i < list.length - 1 ? <Separator style={{marginLeft: 45}} /> : null}
-          </ListRow>)}
+          </View>)}
       </View>
     </View>
   )

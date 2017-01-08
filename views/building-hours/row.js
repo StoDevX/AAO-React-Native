@@ -4,7 +4,7 @@
  * Building Hours list element
  */
 import React from 'react'
-import {Text, StyleSheet} from 'react-native'
+import {Text, StyleSheet, View} from 'react-native'
 import {Badge} from '../components/badge'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
@@ -49,30 +49,30 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
   const openStatus = getShortBuildingStatus(info, now)
   const hours = getDetailedBuildingStatus(info, now)
 
-  const abbr = info.abbreviation ? <Text key={1}> ({info.abbreviation})</Text> : null
-  const subtitle = info.subtitle ? <Text key={2} style={styles.subtitleText}>    {info.subtitle}</Text> : null
-
   const accent = bgColors[openStatus] || c.goldenrod
   const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
-
-  const badge = (
-    <Badge
-      text={openStatus}
-      accentColor={accent}
-      textColor={textaccent}
-      style={styles.accessoryBadge}
-    />
-  )
 
   return (
     <ListRow
       onPress={onPress}
       arrowPosition='top'
 
-      title={[name, abbr, subtitle]}
-      titleLines={1}
-      titleStyle={styles.titleText}
-      titleBadge={badge}
+      title={
+        <View style={[{flexDirection: 'row', justifyContent: 'space-between'}, styles.titleText]}>
+          <Text numberOfLines={1} style={{flex: 1}}>
+            <Text>{name}</Text>
+            {info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
+            {info.subtitle ? <Text style={styles.subtitleText}>    {info.subtitle}</Text> : null}
+          </Text>
+
+          <Badge
+            text={openStatus}
+            accentColor={accent}
+            textColor={textaccent}
+            style={styles.accessoryBadge}
+          />
+        </View>
+      }
 
       description={hours.map(([isActive, label, status], i) =>
         <BuildingTimeSlot

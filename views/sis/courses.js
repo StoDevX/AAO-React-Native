@@ -126,12 +126,14 @@ export default class CoursesView extends React.Component {
   }
 
   renderRow = (course: CourseType|Error) => {
-    if (isError(course) || course.line && course.column && course.sourceURL) {
+    if (course.message) {
+      // curses be to flow
+      let innerCourse = ((course: any): {message: string})
       return (
         <ListRow
           style={styles.rowContainer}
           title='Error'
-          description={course.message || 'The course had an error'}
+          description={innerCourse.message || 'The course had an error'}
           descriptionLines={2}
         />
       )
@@ -148,7 +150,7 @@ export default class CoursesView extends React.Component {
         description={[
           <Text key='desc'>{deptnum}</Text>,
           ...locationTimePairs.map(([place, time], i) =>
-            <Text key={i}>{place}: {time}</Text>)
+            <Text key={i}>{place}: {time}</Text>),
         ]}
       />
     )
