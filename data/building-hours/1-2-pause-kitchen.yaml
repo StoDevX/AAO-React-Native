@@ -3,7 +3,7 @@ image: 'pause-kitchen'
 category: 'Food'
 
 schedule:
-  - title: 'Hours'
+  - title: 'Daylight'
     notes: 'The late night menu starts at 9 p.m.'
     hours:
       - {days: [Mo, Tu, We, Th], from: '10:30am', to: '12:00am'}
