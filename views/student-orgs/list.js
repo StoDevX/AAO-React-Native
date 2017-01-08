@@ -50,12 +50,12 @@ export class StudentOrgsView extends React.Component {
   }
 
   state: {
-    orgs: StudentOrgAbridgedType[],
+    orgs: {[key: string]: StudentOrgAbridgedType[]},
     refreshing: boolean,
     error: boolean,
     loaded: boolean,
   } = {
-    orgs: [],
+    orgs: {},
     refreshing: false,
     loaded: false,
     error: false,
