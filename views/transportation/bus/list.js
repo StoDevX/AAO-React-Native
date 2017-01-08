@@ -18,16 +18,10 @@ const TIME_FORMAT = 'h:mma'
 const TIMEZONE = 'America/Winnipeg'
 
 const styles = StyleSheet.create({
-  container: {
-    borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
-    borderColor: '#c8c7cc',
-    backgroundColor: Platform.OS === 'ios' ? 'transparent' : '#ffffff',
-    elevation: 5,
-  },
-  listContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: Platform.OS === 'ios' ? '#ffffff' : 'transparent',
+  separator: {
+    marginLeft: 45,
+    // erase the gap in the bar caused by the separators' block-ness
+    marginTop: -1,
   },
 })
 
@@ -56,11 +50,8 @@ function makeSubtitle({now, moments, isLastBus}) {
   return lineDetail
 }
 
-export function BusLine({line, style, now}: {
-  line: BusLineType,
-  style?: any,
-  now: moment,
-}) {
+export function BusLine({line, now}: {line: BusLineType, now: moment}) {
+  // grab the colors (with fallbacks) via _.get
   const barColor = get(barColors, line.line, c.black)
   const currentStopColor = get(stopColors, line.line, c.gray)
   const androidColor = Platform.OS === 'android' ? {color: barColor} : null
@@ -68,7 +59,7 @@ export function BusLine({line, style, now}: {
   const schedule = getScheduleForNow(line.schedules, now)
   if (!schedule) {
     return (
-      <View style={[styles.container, style]}>
+      <View>
         <ListSectionHeader title={line.line} titleStyle={androidColor} />
         <ListRow title='This line is not running today.' />
       </View>
@@ -93,30 +84,29 @@ export function BusLine({line, style, now}: {
   const subtitle = makeSubtitle({now, moments, isLastBus})
 
   return (
-    <View style={[styles.container, style]}>
+    <View>
       <ListSectionHeader
         title={line.line}
         subtitle={subtitle}
         titleStyle={androidColor}
       />
-      <View style={[styles.listContainer]}>
-        {pairs.map(([placeTitle, moment], i, list) =>
-          <View key={i}>
-            <BusStopRow
-              // get the arrival time for this stop from each bus loop after
-              // the current time (as given by `now`)
-              times={scheduledMoments.slice(timesIndex).map(timeSet => timeSet[i])}
-              place={placeTitle}
 
-              now={now}
-              time={moment}
+      {pairs.map(([placeTitle, moment], i, list) =>
+        <View key={i}>
+          <BusStopRow
+            // get the arrival time for this stop from each bus loop after
+            // the current time (as given by `now`)
+            times={scheduledMoments.slice(timesIndex).map(set => set[i])}
+            place={placeTitle}
 
-              barColor={barColor}
-              currentStopColor={currentStopColor}
-            />
-            {i < list.length - 1 ? <Separator style={{marginLeft: 45}} /> : null}
-          </View>)}
-      </View>
+            now={now}
+            time={moment}
+
+            barColor={barColor}
+            currentStopColor={currentStopColor}
+          />
+          {i < list.length - 1 ? <Separator style={styles.separator} /> : null}
+        </View>)}
     </View>
   )
 }

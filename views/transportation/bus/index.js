@@ -51,10 +51,7 @@ export default class BusView extends React.Component {
 
     return (
       <ScrollView>
-        <BusLine
-          line={activeBusLine}
-          now={now}
-        />
+        <BusLine line={activeBusLine} now={now} />
       </ScrollView>
     )
   }

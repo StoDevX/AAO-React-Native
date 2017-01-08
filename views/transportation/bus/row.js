@@ -16,18 +16,11 @@ const styles = StyleSheet.create({
   },
   skippingStopDetail: {
   },
-  row: {
-    flexDirection: 'row',
-  },
-  rowDetail: {
+  internalPadding: {
     paddingVertical: Platform.OS === 'ios' ? 8 : 15,
   },
-  itemDetail: {
-    color: c.iosDisabledText,
-    fontSize: 13,
-  },
   atStopTitle: {
-    fontWeight: 'bold',
+    fontWeight: Platform.OS === 'ios' ? '500' : '600',
   },
   passedStopTitle: {
     color: c.iosDisabledText,
@@ -51,17 +44,21 @@ export function BusStopRow({time, now, barColor, currentStopColor, place, times}
     <ListRow
       fullWidth={true}
       fullHeight={true}
-      style={styles.rowDetail}
     >
       <Row>
         <ProgressChunk {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}} />
 
-        <Column>
-          <Title style={[
-            skippingStop && styles.skippingStopTitle,
-            afterStop && styles.passedStopTitle,
-            atStop && styles.atStopTitle,
-          ]}>{place}</Title>
+        <Column style={styles.internalPadding}>
+          <Title
+            bold={false}
+            style={[
+              skippingStop && styles.skippingStopTitle,
+              afterStop && styles.passedStopTitle,
+              atStop && styles.atStopTitle,
+            ]}
+          >
+            {place}
+          </Title>
           <Detail>
             <ScheduleTimes {...{times, skippingStop}} />
           </Detail>
@@ -77,7 +74,7 @@ const ScheduleTimes = ({times, skippingStop}: {
 }) => {
   return (
     <Text
-      style={[styles.itemDetail, skippingStop && styles.skippingStopDetail]}
+      style={skippingStop && styles.skippingStopDetail}
       numberOfLines={1}
     >
       {times
