@@ -7,14 +7,15 @@ import {
   Navigator,
   RefreshControl,
 } from 'react-native'
-import {ListRow, ListSeparator} from '../components/list'
+import {Column} from '../components/layout'
+import {ListRow, ListSeparator, Detail, Title} from '../components/list'
 import {NoticeView} from '../components/notice'
 import delay from 'delay'
 
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
 
-let Entities = require('html-entities').AllHtmlEntities
+const Entities = require('html-entities').AllHtmlEntities
 const entities = new Entities()
 
 export default class NewsContainer extends React.Component {

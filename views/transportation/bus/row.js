@@ -1,7 +1,8 @@
 // @flow
 import React from 'react'
 import {Platform, StyleSheet, Text} from 'react-native'
-import {ListRow} from '../../components/list'
+import {Row, Column} from '../../components/layout'
+import {ListRow, Detail, Title} from '../../components/list'
 import type {FancyBusTimeListType} from './types'
 import type moment from 'moment'
 import * as c from '../../components/colors'

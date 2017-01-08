@@ -4,12 +4,13 @@
  * Building Hours list element
  */
 import React from 'react'
-import {Text, StyleSheet, View} from 'react-native'
+import {View, Text, StyleSheet} from 'react-native'
 import {Badge} from '../components/badge'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
 import * as c from '../components/colors'
-import {ListRow} from '../components/list'
+import {Row, Column} from '../components/layout'
+import {ListRow, Detail, Title} from '../components/list'
 import {getDetailedBuildingStatus, getShortBuildingStatus} from './building-hours-helpers'
 
 const styles = StyleSheet.create({
@@ -74,28 +75,32 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
           />
         </Row>
 
-        <Detail>
+        <View style={{paddingTop: 3}}>
           {hours.map(([isActive, label, status], i) =>
-            <BuildingTimeSlot
-              key={i}
-              highlight={hours.length > 1 && isActive}
-              {...{isActive, label, status}}
-            />
+            <Detail key={i} style={{paddingTop: 0}}>
+              <BuildingTimeSlot
+                highlight={hours.length > 1 && isActive}
+                label={label}
+                status={status}
+              />
+            </Detail>
           )}
-        </Detail>
+        </View>
       </Column>
     </ListRow>
   )
 }
 
-const BuildingTimeSlot = ({isActive, label, status, highlight}: {isActive: boolean, label: ?string, status: string, highlight: boolean}) => {
+const BuildingTimeSlot = ({label, status, highlight}: {label: ?string, status: string, highlight: boolean}) => {
   // we don't want to show the 'Hours' label, since almost every row has it
-  let showLabel = label && label !== 'Hours'
+  const showLabel = label !== 'Hours'
 
   return (
     <Text style={[styles.previewText]}>
-      {showLabel && <Text style={[isActive ? styles.bold : null]}>{label}: </Text>}
-      {<Text style={[highlight ? styles.bold : null]}>{status}</Text>}
+      {showLabel ?
+        <Text style={[highlight ? styles.bold : null]}>{label}: </Text>
+        : null}
+      <Text style={[highlight ? styles.bold : null]}>{status}</Text>
     </Text>
   )
 }

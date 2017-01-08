@@ -2,7 +2,8 @@
 import React from 'react'
 import {View, StyleSheet, Platform} from 'react-native'
 import {DietaryTags} from './dietary-tags'
-import {ListRow} from '../../components/list'
+import {Row, Column} from '../../components/layout'
+import {ListRow, Detail, Title} from '../../components/list'
 import type {MenuItemType, MasterCorIconMapType} from '../types'
 import * as c from '../../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -31,9 +32,9 @@ export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodI
           {badgeSpecials && data.special ? <Icon style={styles.badgeIcon} name={specialsIcon} /> : null}
         </View>
 
-        <Column>
+        <Column flex={1}>
           <Title>{data.label}</Title>
-          <Detail>{data.description}</Detail>
+          {data.description ? <Detail>{data.description}</Detail> : null}
         </Column>
 
         <DietaryTags

@@ -1,10 +1,11 @@
 // @flow
 import React from 'react'
-import {StyleSheet, View, Text} from 'react-native'
+import {StyleSheet, Text} from 'react-native'
 import type {EventType} from './types'
 import moment from 'moment-timezone'
 import * as c from '../components/colors'
-import {ListRow} from '../components/list'
+import {Row, Column} from '../components/layout'
+import {ListRow, Detail, Title} from '../components/list'
 import {getText, parseHtml} from '../../lib/html'
 import {Bar} from './vertical-bar'
 
