@@ -14,13 +14,13 @@ import {ListRow, Detail, Title} from '../components/list'
 import {getDetailedBuildingStatus, getShortBuildingStatus} from './building-hours-helpers'
 
 const styles = StyleSheet.create({
+  title: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   subtitleText: {
     fontWeight: '400',
     color: c.iosDisabledText,
-  },
-  titleText: {
-    paddingHorizontal: 0,
-    paddingBottom: 3,
   },
   accessoryBadge: {
     marginLeft: 4,
@@ -60,7 +60,7 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
       direction='column'
     >
       <Column>
-        <Row justifyContent='space-between' style={styles.titleText}>
+        <Row style={styles.title}>
           <Title lines={1} style={{flex: 1}}>
             <Text>{name}</Text>
             {info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
@@ -96,11 +96,9 @@ const BuildingTimeSlot = ({label, status, highlight}: {label: ?string, status: s
   const showLabel = label !== 'Hours'
 
   return (
-    <Text style={[styles.previewText]}>
-      {showLabel ?
-        <Text style={[highlight ? styles.bold : null]}>{label}: </Text>
-        : null}
-      <Text style={[highlight ? styles.bold : null]}>{status}</Text>
+    <Text>
+      {showLabel ? <Text style={highlight && styles.bold}>{label}: </Text> : null}
+      <Text style={highlight && styles.bold}>{status}</Text>
     </Text>
   )
 }
