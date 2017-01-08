@@ -23,8 +23,8 @@ import type {StudentOrgAbridgedType} from './types'
 
 const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 const leftSideSpacing = 20
-const rowHeight = Platform.OS === 'ios' ? 53 : 74
-const headerHeight = Platform.OS === 'ios' ? 27 : 41
+const rowHeight = Platform.OS === 'ios' ? 58 : 74
+const headerHeight = Platform.OS === 'ios' ? 33 : 41
 
 const styles = StyleSheet.create({
   row: {
@@ -116,13 +116,16 @@ export class StudentOrgsView extends React.Component {
       <View>
         <ListRow
           onPress={() => this.onPressRow(item)}
-          contentContainerStyle={styles.row}
-          arrowPosition='top'
+          contentContainerStyle={[styles.row, {paddingRight: 2}]}
+          arrowPosition='none'
+          fullWidth={true}
         >
-          <Row>
-            <NewOrgBadge newOrg={item.newOrg} />
+          <Row alignItems='flex-start'>
+            <View style={[styles.badge, {width: leftSideSpacing, alignSelf: 'flex-start'}]}>
+              <Text style={[styles.badgeIcon, item.newOrg && {color: c.infoBlue}]}>•</Text>
+            </View>
 
-            <Column>
+            <Column flex={1}>
               <Title lines={1}>{item.name}</Title>
               <Detail lines={1}>{item.categories.join(', ')}</Detail>
             </Column>
@@ -165,12 +168,4 @@ export class StudentOrgsView extends React.Component {
       />
     )
   }
-}
-
-const NewOrgBadge = ({newOrg}: {newOrg: boolean}) => {
-  return (
-    <View style={[styles.badge, {width: leftSideSpacing, alignSelf: 'flex-start'}]}>
-      <Text style={[styles.badgeIcon, newOrg && {color: c.infoBlue}]}>•</Text>
-    </View>
-  )
 }

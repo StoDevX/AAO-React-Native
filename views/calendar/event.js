@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {StyleSheet, Text} from 'react-native'
+import {StyleSheet, Text, Platform} from 'react-native'
 import type {EventType} from './types'
 import moment from 'moment-timezone'
 import * as c from '../components/colors'
@@ -43,7 +43,7 @@ export default function EventView(props: EventType) {
 
         <Column flex={1} paddingTop={2} paddingBottom={3}>
           <Title lines={1} style={{fontWeight: '400'}}>{title}</Title>
-          <Detail>{props.location}</Detail>
+          <Detail style={Platform.OS === 'ios' && {fontSize: 12}}>{props.location}</Detail>
         </Column>
       </Row>
     </ListRow>

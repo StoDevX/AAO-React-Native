@@ -20,20 +20,19 @@ type FoodItemPropsType = {|
 
 export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodItemPropsType) {
   const {left=0} = props.spacing
-  const hasDescription = Boolean(data.description)
   return (
     <ListRow
-      style={[styles.container, hasDescription ? styles.hasDescription : styles.titleOnly, props.style]}
+      style={[styles.container, props.style]}
       fullWidth={true}
       arrowPosition='none'
     >
       <Row>
-        <View style={[styles.badge, {width: left, alignSelf: hasDescription ? 'flex-start' : 'center'}]}>
+        <View style={[styles.badge, {width: left, alignSelf: 'center'}]}>
           {badgeSpecials && data.special ? <Icon style={styles.badgeIcon} name={specialsIcon} /> : null}
         </View>
 
         <Column flex={1}>
-          <Title style={{fontWeight: 'normal'}}>{data.label}</Title>
+          <Title bold={false}>{data.label}</Title>
           {data.description ? <Detail>{data.description}</Detail> : null}
         </Column>
 
@@ -53,17 +52,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  titleOnly: {
-    paddingVertical: 8,
-  },
-  hasDescription: {
-  },
   badge: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   badgeIcon: {
-    fontSize: 18,
+    fontSize: 16,
     color: c.iosDisabledText,
   },
   iconContainer: {

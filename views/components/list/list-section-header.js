@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         fontSize: 16,
-        color: c.black,
+        color: c.iosDisabledText,
       },
       android: {
         fontSize: 13,

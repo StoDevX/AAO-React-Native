@@ -13,8 +13,8 @@ import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import {data as terms} from '../../docs/dictionary.json'
 
-const rowHeight = Platform.OS === 'ios' ? 68 : 89
-const headerHeight = Platform.OS === 'ios' ? 27 : 41
+const rowHeight = Platform.OS === 'ios' ? 76 : 89
+const headerHeight = Platform.OS === 'ios' ? 33 : 41
 
 const styles = StyleSheet.create({
   row: {
@@ -47,11 +47,11 @@ export class DictionaryView extends React.Component {
         <ListRow
           onPress={() => this.onPressRow(item)}
           contentContainerStyle={styles.row}
-          arrowPosition='top'
+          arrowPosition='none'
         >
           <Column>
             <Title lines={1}>{item.word}</Title>
-            <Detail lines={2}>{item.definition}</Detail>
+            <Detail lines={2} style={{fontSize: 14}}>{item.definition}</Detail>
           </Column>
         </ListRow>
 
