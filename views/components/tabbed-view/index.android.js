@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import { StyleSheet, Platform } from 'react-native'
+import { StyleSheet, Platform, Dimensions } from 'react-native'
 import { TabViewAnimated, TabBarTop } from 'react-native-tab-view'
 import * as c from '../colors'
 import type { TabbedViewPropsType } from './types'
@@ -41,15 +41,28 @@ export default class TabbedView extends React.Component {
   }
 
   _renderHeader = props => {
-    return (
-      <TabBarTop
-        {...props}
-        scrollEnabled={true}
-        indicatorStyle={styles.indicator}
-        style={styles.tabbar}
-        labelStyle={styles.label}
-      />
-    )
+    if (this.props.tabs.length > 2) {
+      return (
+        <TabBarTop
+          {...props}
+          scrollEnabled={true}
+          indicatorStyle={styles.indicator}
+          style={styles.tabbar}
+          labelStyle={styles.label}
+        />
+      )
+    } else {
+      return (
+        <TabBarTop
+          {...props}
+          scrollEnabled={true}
+          indicatorStyle={styles.indicator}
+          style={styles.tabbar}
+          labelStyle={styles.label}
+          tabWidth={Dimensions.get('window').width / 2}
+        />
+      )
+    }
   }
 
   _renderScene = ({ route }) => {
