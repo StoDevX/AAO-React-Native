@@ -4,7 +4,7 @@ additionalProperties: false
 required: [title, phoneNumber, buttonText, image, text]
 properties:
   title: {type: string}
-  phoneNumber: {type: string}
+  phoneNumber: {$ref: '_defs.json#/definitions/phone'}
   buttonText: {type: string}
   image: {type: string}
   text: {type: string}
