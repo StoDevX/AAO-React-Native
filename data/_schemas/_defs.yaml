@@ -6,6 +6,10 @@ definitions:
     type: string
     pattern: ^1?\d:[0-5]?\d[ap]m$
 
+  phone:
+    type: string
+    pattern: ^\d{9}$
+
   day-of-week:
     type: string
     enum: [Mo, Tu, We, Th, Fr, Sa, Su]
