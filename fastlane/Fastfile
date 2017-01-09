@@ -85,8 +85,18 @@ platform :ios do
       api_token: hockeyapp_api_token,
       ipa: "./ios/build/AllAboutOlaf.ipa",
       commit_sha: ENV["TRAVIS_COMMIT"],
-      notes: build_notes,
+      notes: build_notes(platform: 'iOS'),
     )
+  end
+
+  lane :auto_beta do
+    last_commit = get_hockeyapp_version_commit(platform: 'iOS')
+    current_commit = last_git_commit[:commit_hash]
+    UI.message "In faux-git terms:"
+    UI.message "origin/hockeyapp: #{last_commit}"
+    UI.message "HEAD: #{current_commit}"
+    UI.message "Thus, will we beta? #{last_commit != current_commit}"
+    beta unless last_commit == current_commit
   end
 end
 
@@ -119,8 +129,18 @@ platform :android do
       api_token: hockeyapp_api_token,
       apk: "./android/app/build/outputs/apk/app-release-unsigned.apk",
       commit_sha: ENV["TRAVIS_COMMIT"],
-      notes: build_notes,
+      notes: build_notes(platform: 'Android'),
     )
+  end
+
+  lane :auto_beta do
+    last_commit = get_hockeyapp_version_commit(platform: 'Android')
+    current_commit = last_git_commit[:commit_hash]
+    UI.message "In faux-git terms:"
+    UI.message "origin/hockeyapp: #{last_commit}"
+    UI.message "HEAD: #{current_commit}"
+    UI.message "Thus, will we beta? #{last_commit != current_commit}"
+    beta unless last_commit == current_commit
   end
 end
 
@@ -128,9 +148,9 @@ end
 # Below here are the custom helpers we've defined
 
 desc "Makes a changelog from the timespan passed"
-private_lane :make_changelog do
+private_lane :make_changelog do |options|
   to_ref = ENV["TRAVIS_COMMIT"] || "HEAD"
-  from_ref = get_hockeyapp_version_commit || "HEAD~3"
+  from_ref = get_hockeyapp_version_commit(platform: options[:platform]) || "HEAD~3"
 
   sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n' | sed 's/^/    /'")
 end
@@ -158,9 +178,9 @@ private_lane :get_version do |options|
   ENV["TRAVIS_BUILD_NUMBER"] || get_hockeyapp_version(platform: options[:platform]) + 1
 end
 
-private_lane :build_notes do
+private_lane :build_notes do |options|
   branch = git_branch
   sha = last_git_commit[:commit_hash]
-  changelog = make_changelog
+  changelog = make_changelog(platform: options[:platform])
   "branch: #{branch}\ngit commit: #{sha}\n\n## Changelog\n#{changelog}"
 end

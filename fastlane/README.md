@@ -44,6 +44,11 @@ Provisions the profiles; bumps the build number; builds the app
 fastlane ios beta
 ```
 Submit a new Beta Build to HockeyApp
+### ios auto_beta
+```
+fastlane ios auto_beta
+```
+
 
 ----
 
@@ -58,6 +63,11 @@ Makes a build
 fastlane android beta
 ```
 Submit a new Beta Build to HockeyApp
+### android auto_beta
+```
+fastlane android auto_beta
+```
+
 
 ----
 
