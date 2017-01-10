@@ -176,13 +176,13 @@ script:
   # - if [[ "$type" == "ios" && "$run_deploy" == "no" ]]; then bundle exec fastlane ios test; fi
   - if [[ "$type" == "ios" && "$run_deploy" == "no" ]]; then bundle exec fastlane ios build; fi
   # Build + release the app
-  - if [[ "$type" == "ios" && "$run_deploy" == "yes" ]]; then bundle exec fastlane ios beta; fi
+  - if [[ "$type" == "ios" && "$run_deploy" == "yes" ]]; then bundle exec fastlane ios auto_beta; fi
 
   # Android
   # Build the app
   - if [[ "$type" == "android" && "$run_deploy" == "no" ]]; then bundle exec fastlane android build; fi
   # Release the app
-  - if [[ "$type" == "android" && "$run_deploy" == "yes" ]]; then bundle exec fastlane android beta; fi
+  - if [[ "$type" == "android" && "$run_deploy" == "yes" ]]; then bundle exec fastlane android auto_beta; fi
 
 
 after_success:
