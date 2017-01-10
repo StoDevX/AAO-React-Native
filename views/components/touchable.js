@@ -27,8 +27,8 @@ export const Touchable = ({
   const content = <View style={style}>{children}</View>
 
   switch (Platform.OS) {
-    case 'ios':
-    default: {
+    default:
+    case 'ios': {
       const Component = highlight ? TouchableHighlight : TouchableOpacity
       const innerProps = highlight ? {underlayColor: '#ebebeb'} : {activeOpacity: 0.65}
       return (
