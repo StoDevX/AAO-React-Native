@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import type {ListType} from './types'
+import type {ListType, ListItemSpecType} from './types'
 import {Section, Cell} from 'react-native-tableview-simple'
 import includes from 'lodash/includes'
 import without from 'lodash/without'
@@ -16,7 +16,7 @@ export function ListSection({filter, onChange}: PropsType) {
   const {title='', options, selected, mode} = spec
   const {caption=`Show items with ${mode === 'AND' ? 'all' : 'any'} of these options.`} = spec
 
-  function buttonPushed(tappedValue: string) {
+  function buttonPushed(tappedValue: ListItemSpecType) {
     let result
 
     if (includes(selected, tappedValue)) {
@@ -62,10 +62,12 @@ export function ListSection({filter, onChange}: PropsType) {
 
   let buttons = options.map(val =>
     <Cell
-      key={val}
+      key={val.title}
+      cellStyle={val.detail ? 'Subtitle' : 'Basic'}
       onPress={() => buttonPushed(val)}
       accessory={includes(selected, val) ? 'Checkmark' : null}
-      title={val}
+      title={val.title}
+      detail={val.detail}
     />
   )
 

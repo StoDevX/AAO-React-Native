@@ -15,6 +15,7 @@ import filter from 'lodash/filter'
 import map from 'lodash/map'
 import {FilterMenuToolbar} from './filter-menu-toolbar'
 import {MenuListView} from './menu'
+import DietaryFilters from '../../../images/dietary-filters'
 
 type FancyMenuPropsType = TopLevelViewPropsType & {
   applyFilters: (filters: FilterType[], item: MenuItemType) => boolean,
@@ -47,8 +48,14 @@ class FancyMenuView extends React.Component {
   }
 
   buildFilters({stations, corIcons}: {stations: string[], corIcons: MasterCorIconMapType}): FilterType[] {
+    // Format the items for the stations filter
+    const allStations = map(stations, name => ({title: name}))
     // Grab the labels of the COR icons
-    let allDietaryRestrictions = map(corIcons, item => item.label)
+    const allDietaryRestrictions = map(corIcons, (item, key) => ({
+      title: item.label,
+      image: DietaryFilters[key] ? DietaryFilters[key].icon : null,
+      detail: DietaryFilters[key].description,
+    }))
 
     return [
       {
@@ -69,9 +76,9 @@ class FancyMenuView extends React.Component {
         enabled: false,
         spec: {
           title: 'Stations',
-          options: stations,
+          options: allStations,
           mode: 'OR',
-          selected: stations,
+          selected: allStations,
         },
         apply: {
           key: 'station',
