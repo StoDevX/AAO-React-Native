@@ -27,6 +27,8 @@ export const iosDisabledText = 'rgb(143, 143, 143)'
 export const iosNavbarBottomBorder = 'rgb(200, 200, 202)'
 export const iosListSectionHeader = 'rgb(248, 248, 248)'
 export const iosPlaceholderText = '#C7C7CC'
+export const iosHeaderTopBorder = 'rgb(199, 199, 199)'
+export const iosHeaderBottomBorder = 'rgb(224, 224, 224)'
 
 // MARK: Oleville colors
 export const theLatest = '#00BFFF'
