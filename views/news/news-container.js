@@ -16,6 +16,7 @@ import delay from 'delay'
 import Icon from 'react-native-vector-icons/Ionicons'
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
+import {NoticeView} from '../components/notice'
 import * as c from '../components/colors'
 
 let Entities = require('html-entities').AllHtmlEntities
@@ -31,12 +32,11 @@ export default class NewsContainer extends React.Component {
 
   state = {
     dataSource: new ListView.DataSource({
-      rowHasChanged: (r1: StoryType, r2: StoryType) => r1.title != r2.title,
+      rowHasChanged: (r1: StoryType, r2: StoryType) => r1 != r2,
     }),
     refreshing: false,
     loaded: false,
     error: false,
-    noNews: false,
   }
 
   componentWillMount() {
@@ -47,9 +47,6 @@ export default class NewsContainer extends React.Component {
     try {
       let response = await fetch(this.props.url).then(r => r.json())
       let entries = response.responseData.feed.entries
-      if (!entries.length) {
-        this.setState({noNews: true})
-      }
       this.setState({dataSource: this.state.dataSource.cloneWithRows(entries)})
     } catch (error) {
       this.setState({error: true})
@@ -104,19 +101,8 @@ export default class NewsContainer extends React.Component {
       return <LoadingView />
     }
 
-    if (this.state.noNews) {
-      return (
-        <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#ffffff',
-        }}>
-          <Text>
-            No news.
-          </Text>
-        </View>
-      )
+    if (!this.state.dataSource.getRowCount()) {
+      return <NoticeView text='No news.' />
     }
 
     return (
