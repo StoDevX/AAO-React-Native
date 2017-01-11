@@ -1,5 +1,4 @@
 // @flow
-import {Navigator} from 'react-native'
 
 export type StoryType = {
   author: string,
@@ -9,10 +8,4 @@ export type StoryType = {
   link: string,
   publishedDate: string,
   title: string,
-};
-
-export type NewsViewPropsType = {
-  navigator: typeof Navigator,
-  route: Object,
-  url: string,
 };

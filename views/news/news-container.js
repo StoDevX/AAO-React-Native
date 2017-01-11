@@ -17,19 +17,13 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
 import {NoticeView} from '../components/notice'
+import type {TopLevelViewPropsType} from '../types'
 import * as c from '../components/colors'
 
 let Entities = require('html-entities').AllHtmlEntities
 const entities = new Entities()
 
 export default class NewsContainer extends React.Component {
-  static propTypes = {
-    name: PropTypes.string.isRequired,
-    navigator: PropTypes.instanceOf(Navigator).isRequired,
-    route: PropTypes.object.isRequired,
-    url: PropTypes.string.isRequired,
-  }
-
   state = {
     dataSource: new ListView.DataSource({
       rowHasChanged: (r1: StoryType, r2: StoryType) => r1 != r2,
@@ -42,6 +36,12 @@ export default class NewsContainer extends React.Component {
   componentWillMount() {
     this.refresh()
   }
+
+  props: TopLevelViewPropsType & {
+    name: string,
+    url: string,
+    mode: 'rss'|'wp-json',
+  };
 
   fetchData = async () => {
     try {
