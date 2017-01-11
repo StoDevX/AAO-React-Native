@@ -55,14 +55,3 @@ export default function NewsItemView({story: {content, title}}: {source: string,
     <WebView source={{html: content}} />
   )
 }
-
-NewsItemView.propTypes = {
-  story: PropTypes.shape({
-    author: PropTypes.string,
-    categories: PropTypes.arrayOf(PropTypes.string),
-    content: PropTypes.string,
-    link: PropTypes.string,
-    publishedDate: PropTypes.string,
-    title: PropTypes.string,
-  }).isRequired,
-}
