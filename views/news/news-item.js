@@ -49,7 +49,7 @@ export default function NewsItemView({story}: {story: StoryType}) {
     <header class="aao-header">
       <h1>${story.title[0]}</h1>
     </header>
-    ${story['content:encoded'][0]}
+    ${(story['content:encoded'] || story['description'])[0]}
   `
   return (
     <WebView source={{html: content}} />
