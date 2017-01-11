@@ -9,7 +9,7 @@ import {
   TouchableHighlight,
   RefreshControl,
 } from 'react-native'
-import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
+import {fastGetTrimmedText} from '../../lib/html'
 import delay from 'delay'
 import {parseXml} from './parse-feed'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -75,7 +75,7 @@ export default class NewsContainer extends React.Component {
 
   renderRow = (story: StoryType) => {
     let title = entities.decode(story.title[0])
-    let snippet = getTrimmedTextWithSpaces(parseHtml(story.description[0]))
+    let snippet = entities.decode(fastGetTrimmedText(story.description[0]))
     return (
       <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressNews(title, story)}>
         <View style={[styles.row]}>
