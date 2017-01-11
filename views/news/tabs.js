@@ -19,7 +19,7 @@ export default [
     rnVectorIcon: {iconName: 'megaphone'},
     component: NewsContainer,
     props: {
-      url: 'http://oleville.com/politicole/feed',
+      url: 'http://oleville.com/politicole/feed/',
       mode: 'rss',
       name: 'PoliticOle',
     },
@@ -30,7 +30,7 @@ export default [
     rnVectorIcon: {iconName: 'paper'},
     component: NewsContainer,
     props: {
-      url: 'http://manitoumessenger.com/feed',
+      url: 'http://manitoumessenger.com/feed/',
       mode: 'rss',
       name: 'Mess',
     },
