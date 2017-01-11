@@ -65,7 +65,7 @@
     "react-native-tab-view": "0.0.47",
     "react-native-tableview-simple": "0.15.3",
     "react-native-vector-icons": "3.0.0",
-    "react-redux": "5.0.1",
+    "react-redux": "5.0.2",
     "redux": "3.6.0",
     "redux-logger": "2.7.4",
     "redux-promise": "0.5.3",
