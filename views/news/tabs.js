@@ -8,7 +8,8 @@ export default [
     rnVectorIcon: {iconName: 'school'},
     component: NewsContainer,
     props: {
-      url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=https://wp.stolaf.edu/feed',
+      url: 'https://wp.stolaf.edu/feed/',
+      mode: 'rss',
       name: 'St. Olaf',
     },
   },
@@ -18,7 +19,8 @@ export default [
     rnVectorIcon: {iconName: 'megaphone'},
     component: NewsContainer,
     props: {
-      url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http://oleville.com/politicole/feed',
+      url: 'http://oleville.com/politicole/feed',
+      mode: 'rss',
       name: 'PoliticOle',
     },
   },
@@ -28,7 +30,8 @@ export default [
     rnVectorIcon: {iconName: 'paper'},
     component: NewsContainer,
     props: {
-      url: 'https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=-1&q=http://manitoumessenger.com/feed',
+      url: 'http://manitoumessenger.com/feed',
+      mode: 'rss',
       name: 'Mess',
     },
   },

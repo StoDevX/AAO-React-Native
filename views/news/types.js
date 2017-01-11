@@ -1,13 +1,13 @@
 // @flow
 
 export type StoryType = {
-  author: string,
-  categories: string[],
-  content: string,
-  contentSnippet: string,
-  link: string,
-  publishedDate: string,
-  title: string,
+  'dc:creator': string[],
+  category: string[],
+  'content:encoded': string[],
+  description: string[],
+  link: string[],
+  pubDate: string[],
+  title: string[],
 };
 
 export type FeedResponseType = {

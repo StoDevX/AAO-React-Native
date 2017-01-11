@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 
 import delay from 'delay'
-
+import {parseXml} from './parse-feed'
 import Icon from 'react-native-vector-icons/Ionicons'
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
@@ -45,9 +45,13 @@ export default class NewsContainer extends React.Component {
 
   fetchData = async () => {
     try {
-      let response = await fetch(this.props.url).then(r => r.json())
-      let entries = response.responseData.feed.entries
-      this.setState({dataSource: this.state.dataSource.cloneWithRows(entries)})
+      const responseText = await fetch(this.props.url).then(r => r.text())
+      const feed = await parseXml(responseText)
+
+      const entries = feed.rss.channel[0].item
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(entries),
+      })
     } catch (error) {
       console.warn(error)
       this.setState({error})
@@ -71,8 +75,8 @@ export default class NewsContainer extends React.Component {
   }
 
   renderRow = (story: StoryType) => {
-    let title = entities.decode(story.title)
-    let snippet = entities.decode(story.contentSnippet)
+    let title = entities.decode(story.title[0])
+    let snippet = entities.decode(story.description[0])
     return (
       <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressNews(title, story)}>
         <View style={[styles.row]}>
