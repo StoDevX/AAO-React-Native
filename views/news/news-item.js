@@ -1,10 +1,10 @@
 // @flow
-import React, {PropTypes} from 'react'
+import React from 'react'
 import {WebView} from 'react-native'
 
 import type {StoryType} from './types'
 
-export default function NewsItemView({story}: {source: string, story: StoryType}) {
+export default function NewsItemView({story}: {story: StoryType}) {
   const content = `
     <style>
       body {
