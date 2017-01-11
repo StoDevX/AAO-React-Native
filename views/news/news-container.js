@@ -1,59 +1,59 @@
 // @flow
-import React, {PropTypes} from 'react'
+import React from 'react'
 import {
   StyleSheet,
   View,
   ListView,
   Platform,
   Text,
-  Navigator,
   TouchableHighlight,
   RefreshControl,
 } from 'react-native'
-
+import {fastGetTrimmedText} from '../../lib/html'
 import delay from 'delay'
-
+import {parseXml} from './parse-feed'
 import Icon from 'react-native-vector-icons/Ionicons'
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
+import {NoticeView} from '../components/notice'
+import type {TopLevelViewPropsType} from '../types'
 import * as c from '../components/colors'
 
 let Entities = require('html-entities').AllHtmlEntities
 const entities = new Entities()
 
 export default class NewsContainer extends React.Component {
-  static propTypes = {
-    name: PropTypes.string.isRequired,
-    navigator: PropTypes.instanceOf(Navigator).isRequired,
-    route: PropTypes.object.isRequired,
-    url: PropTypes.string.isRequired,
-  }
-
   state = {
     dataSource: new ListView.DataSource({
-      rowHasChanged: (r1: StoryType, r2: StoryType) => r1.title != r2.title,
+      rowHasChanged: (r1: StoryType, r2: StoryType) => r1 != r2,
     }),
     refreshing: false,
     loaded: false,
-    error: false,
-    noNews: false,
+    error: null,
   }
 
   componentWillMount() {
     this.refresh()
   }
 
+  props: TopLevelViewPropsType & {
+    name: string,
+    url: string,
+    mode: 'rss'|'wp-json',
+  };
+
   fetchData = async () => {
     try {
-      let response = await fetch(this.props.url).then(r => r.json())
-      let entries = response.responseData.feed.entries
-      if (!entries.length) {
-        this.setState({noNews: true})
-      }
-      this.setState({dataSource: this.state.dataSource.cloneWithRows(entries)})
+      const responseText = await fetch(this.props.url).then(r => r.text())
+      const feed = await parseXml(responseText)
+
+      const entries = feed.rss.channel[0].item
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(entries),
+      })
     } catch (error) {
-      this.setState({error: true})
-      console.error(error)
+      console.warn(error)
+      this.setState({error})
     }
 
     this.setState({loaded: true})
@@ -74,8 +74,8 @@ export default class NewsContainer extends React.Component {
   }
 
   renderRow = (story: StoryType) => {
-    let title = entities.decode(story.title)
-    let snippet = entities.decode(story.contentSnippet)
+    let title = entities.decode(story.title[0])
+    let snippet = entities.decode(fastGetTrimmedText(story.description[0]))
     return (
       <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressNews(title, story)}>
         <View style={[styles.row]}>
@@ -104,19 +104,12 @@ export default class NewsContainer extends React.Component {
       return <LoadingView />
     }
 
-    if (this.state.noNews) {
-      return (
-        <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#ffffff',
-        }}>
-          <Text>
-            No news.
-          </Text>
-        </View>
-      )
+    if (!this.state.dataSource.getRowCount()) {
+      return <NoticeView text='No news.' />
+    }
+
+    if (this.state.error) {
+      return <NoticeView text={'Error: ' + this.state.error.message} />
     }
 
     return (
