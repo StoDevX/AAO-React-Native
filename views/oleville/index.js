@@ -19,7 +19,7 @@ import {
 import delay from 'delay'
 import LoadingView from '../components/loading'
 import * as c from '../components/colors'
-import { getText, parseHtml } from '../../lib/html'
+import { getTrimmedTextWithSpaces, parseHtml } from '../../lib/html'
 import get from 'lodash/get'
 import zipWith from 'lodash/zipWith'
 
@@ -137,7 +137,7 @@ export default class OlevilleView extends React.Component {
   }
 
   renderRow = (data: Object) => {
-    let title = getText(parseHtml(data.title.rendered))
+    let title = getTrimmedTextWithSpaces(parseHtml(data.title.rendered))
     let content = data.content.rendered
     let image = data._featuredImageUrl
     //console.log(content)

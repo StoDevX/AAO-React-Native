@@ -50,19 +50,19 @@
     "moment": "2.17.1",
     "moment-timezone": "0.5.11",
     "querystring": "0.2.0",
-    "react": "15.4.1",
-    "react-addons-shallow-compare": "15.4.1",
+    "react": "15.4.2",
+    "react-addons-shallow-compare": "15.4.2",
     "react-native": "0.40.0",
-    "react-native-alphabetlistview": "0.2.0",
+    "react-native-alphabetlistview": "github:sunnylqm/react-native-alphabetlistview#aea5d61fdd9034c7178d73ce8b2ee104da6941cc",
     "react-native-button": "1.7.1",
     "react-native-communications": "2.1.4",
     "react-native-cookies": "2.0.0",
     "react-native-device-info": "0.9.7",
-    "react-native-keychain": "0.3.2",
+    "react-native-keychain": "1.0.0",
     "react-native-onesignal": "1.2.3",
     "react-native-parallax-view": "2.0.6",
     "react-native-sortable-list": "github:hawkrives/react-native-sortable-list#a46c78161e0a1a8d3a45f2fef69d98af3e911b6d",
-    "react-native-tab-view": "0.0.40",
+    "react-native-tab-view": "0.0.47",
     "react-native-tableview-simple": "0.15.3",
     "react-native-vector-icons": "4.0.0",
     "react-redux": "5.0.1",
@@ -76,12 +76,12 @@
     "xml2js": "0.4.17"
   },
   "devDependencies": {
-    "ajv": "4.10.3",
+    "ajv": "4.10.4",
     "babel-eslint": "7.1.1",
     "babel-jest": "18.0.0",
     "babel-plugin-flow-react-proptypes": "0.19.0",
     "babel-preset-react-native": "1.9.1",
-    "eslint": "3.12.2",
+    "eslint": "3.13.1",
     "eslint-plugin-babel": "4.0.0",
     "eslint-plugin-flowtype": "2.29.2",
     "eslint-plugin-react": "6.8.0",
@@ -91,6 +91,6 @@
     "junk": "2.0.0",
     "marked": "0.3.6",
     "minimist": "1.2.0",
-    "react-test-renderer": "15.4.1"
+    "react-test-renderer": "15.4.2"
   }
 }

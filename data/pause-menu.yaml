@@ -31,24 +31,24 @@ foodItems:
     description: 'Marinara, Ranch, BBQ, Honey Mustard'
 
   - label: BBQ Chicken
-    station: Specialty Pizzas
+    station: Specialty Pizza
     special: true
 
   - label: Buffalo Chicken
-    station: Specialty Pizzas
+    station: Specialty Pizza
     special: true
 
   - label: Chicken Bacon Ranch
-    station: Specialty Pizzas
+    station: Specialty Pizza
     special: true
 
   - label: Chicken Pesto
-    station: Specialty Pizzas
+    station: Specialty Pizza
     description: 'Includes tomatoes'
     special: true
 
   - label: Ole Pizza
-    station: Specialty Pizzas
+    station: Specialty Pizza
     description: 'Includes pepperoni, sausage, onions, green peppers, and black olives'
     special: true
 
@@ -95,7 +95,16 @@ foodItems:
     station: Quesadilla
     special: true
 
+  - label: Chicken Quesadilla (Half / Whole)
+    station: Quesadilla
+    special: true
+
   - label: Ultimate Quesadilla (Half / Whole)
+    station: Quesadilla
+    description: 'Includes tomatoes, onions, green peppers, and jalapeños'
+    special: true
+
+  - label: Ultimate Chicken Quesadilla (Half / Whole)
     station: Quesadilla
     description: 'Includes tomatoes, onions, green peppers, and jalapeños'
     special: true
