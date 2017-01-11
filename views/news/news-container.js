@@ -1,12 +1,11 @@
 // @flow
-import React, {PropTypes} from 'react'
+import React from 'react'
 import {
   StyleSheet,
   View,
   ListView,
   Platform,
   Text,
-  Navigator,
   TouchableHighlight,
   RefreshControl,
 } from 'react-native'
