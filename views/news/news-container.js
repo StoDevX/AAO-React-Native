@@ -36,7 +36,7 @@ export default class NewsContainer extends React.Component {
     }),
     refreshing: false,
     loaded: false,
-    error: false,
+    error: null,
   }
 
   componentWillMount() {
@@ -49,8 +49,8 @@ export default class NewsContainer extends React.Component {
       let entries = response.responseData.feed.entries
       this.setState({dataSource: this.state.dataSource.cloneWithRows(entries)})
     } catch (error) {
-      this.setState({error: true})
-      console.error(error)
+      console.warn(error)
+      this.setState({error})
     }
 
     this.setState({loaded: true})
@@ -103,6 +103,10 @@ export default class NewsContainer extends React.Component {
 
     if (!this.state.dataSource.getRowCount()) {
       return <NoticeView text='No news.' />
+    }
+
+    if (this.state.error) {
+      return <NoticeView text={'Error: ' + this.state.error.message} />
     }
 
     return (
