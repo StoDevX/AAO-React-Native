@@ -47,7 +47,7 @@ const stolaf = [
     },
   },
   // {
-  //   id: 'any',
+  //   id: 'BonAppDevToolView',
   //   title: 'BonApp',
   //   rnVectorIcon: {iconName: 'ionic'},
   //   component: BonAppPickerView,
@@ -56,7 +56,7 @@ const stolaf = [
 
 const carleton = [
   {
-    id: 'burton',
+    id: 'CarletonBurtonMenuView',
     title: 'Burton',
     rnVectorIcon: {iconName: 'trophy'},
     component: BonAppHostedMenu,
@@ -68,7 +68,7 @@ const carleton = [
     },
   },
   {
-    id: 'ldc',
+    id: 'CarletonLDCMenuView',
     title: 'LDC',
     rnVectorIcon: {iconName: 'water'},
     component: BonAppHostedMenu,
@@ -80,7 +80,7 @@ const carleton = [
     },
   },
   {
-    id: 'weitz',
+    id: 'CarletonWeitzMenuView',
     title: 'Weitz Center',
     rnVectorIcon: {iconName: 'wine'},
     component: BonAppHostedMenu,
@@ -93,7 +93,7 @@ const carleton = [
     },
   },
   {
-    id: 'sayles',
+    id: 'CarletonSaylesMenuView',
     title: 'Sayles Hill',
     rnVectorIcon: {iconName: 'snow'},
     component: BonAppHostedMenu,
