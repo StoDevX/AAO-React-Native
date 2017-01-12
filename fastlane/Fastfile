@@ -96,6 +96,18 @@ platform :ios do
     sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain}")
   end
 
+  desc "Run iOS builds or tests, as appropriate"
+  lane :ci_run do
+    # I'd like to test, instead of just building, but… Xcode's tests keep
+    # failing on us. So, we just build, if we're not deploying.
+    should_deploy = ENV["run_deploy"] == "yes"
+    unless should_deploy
+      build
+    else
+      auto_beta
+    end
+  end
+
   desc "In case match needs to be updated - probably never needs to be run"
   lane :update_match do
     match(readonly: false)
@@ -143,8 +155,17 @@ platform :android do
     UI.message "Thus, will we beta? #{last_commit != current_commit}"
     beta unless last_commit == current_commit
   end
-end
 
+  desc "Run the appropriate action on CI"
+  lane :ci_run do
+    should_deploy = ENV["run_deploy"] == "yes"
+    unless should_deploy
+      build
+    else
+      auto_beta
+    end
+  end
+end
 
 
 desc "Makes a changelog from the timespan passed"
