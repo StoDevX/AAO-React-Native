@@ -68,7 +68,6 @@ GEM
       xcpretty-travis-formatter (>= 0.0.3)
     fastlane-plugin-get_unprovisioned_devices_from_hockey (0.1.1)
       json
-    fastlane-plugin-increment_version_code (0.3.1)
     fastlane-plugin-latest_hockeyapp_version_number (1.0.0)
       hockeyapp
     gh_inspector (1.0.2)
@@ -189,7 +188,6 @@ PLATFORMS
 DEPENDENCIES
   fastlane
   fastlane-plugin-get_unprovisioned_devices_from_hockey
-  fastlane-plugin-increment_version_code
   fastlane-plugin-latest_hockeyapp_version_number
   hockeyapp
   xcodeproj

@@ -128,15 +128,15 @@ end
 platform :android do
   desc "Makes a build"
   lane :build do
-    increment_version_code(
-      version_code: get_version(platform: 'Android'),
-      app_folder_name: "android/app",
+    set_version_code(
+      version_code: get_version(platform: "Android"),
+      gradle_path: "./android/app/build.gradle",
     )
 
     gradle(
       task: "assemble",
       build_type: "Release",
-      project_dir: "android",
+      project_dir: "./android",
       print_command: true,
       print_command_output: true,
     )
