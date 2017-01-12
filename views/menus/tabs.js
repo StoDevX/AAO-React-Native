@@ -5,7 +5,7 @@ import {GitHubHostedMenu} from './menu-github'
 
 const stolaf = [
   {
-    id: 'stav',
+    id: 'StavHallMenuView',
     title: 'Stav Hall',
     rnVectorIcon: {iconName: 'nutrition'},
     component: BonAppHostedMenu,
@@ -20,7 +20,7 @@ const stolaf = [
     },
   },
   {
-    id: 'cage',
+    id: 'TheCageMenuView',
     title: 'The Cage',
     rnVectorIcon: {iconName: 'cafe'},
     component: BonAppHostedMenu,
@@ -34,7 +34,7 @@ const stolaf = [
     },
   },
   {
-    id: 'pause',
+    id: 'ThePauseMenuView',
     title: 'The Pause',
     rnVectorIcon: {iconName: 'paw'},
     component: GitHubHostedMenu,
