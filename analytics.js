@@ -5,7 +5,7 @@ import {
   GoogleAnalyticsSettings,
 } from 'react-native-google-analytics-bridge'
 
-const trackerId = 'UA-90234209-1'
+const trackerId = __DEV__ ? 'UA-90234209-1' : 'UA-90234209-2'
 export const tracker = new GoogleAnalyticsTracker(trackerId)
 
 async function disableIfOptedOut() {
