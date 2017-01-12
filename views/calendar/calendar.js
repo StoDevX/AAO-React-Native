@@ -13,7 +13,7 @@ import {
   RefreshControl,
   View,
 } from 'react-native'
-
+import {tracker} from '../../analytics'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
 import delay from 'delay'
@@ -78,6 +78,7 @@ export default class CalendarView extends React.Component {
       error = result.error
       data = result.items
     } catch (error) {
+      tracker.trackException(error.message)
       this.setState({error: error.message})
       console.error(error)
     }
@@ -104,6 +105,7 @@ export default class CalendarView extends React.Component {
       this.setState({noEvents: true})
     }
     if (error) {
+      tracker.trackException(error.message)
       this.setState({error: error.message})
     }
     this.setState({loaded: true})
