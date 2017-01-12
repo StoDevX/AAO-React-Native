@@ -16,6 +16,7 @@ import {
 } from 'react-native'
 import Button from 'react-native-button'
 import * as c from '../components/colors'
+import {tracker} from '../../analytics'
 
 let kstoApp = 'KSTORadio://'
 let kstoDownload = 'itms://itunes.apple.com/us/app/ksto/id953916647'
@@ -31,15 +32,24 @@ export default function KSTOView() {
       <Button
         onPress={() => {
           if (Platform.OS === 'android') {
-            Linking.openURL(kstoWeb).catch(err => console.error('An error occurred opening the Android KSTO url', err))
+            Linking.openURL(kstoWeb).catch(err => {
+              tracker.trackException('opening Android KSTO url: ' + err.message)
+              console.error('An error occurred opening the Android KSTO url', err)
+            })
           } else {
             Linking.canOpenURL(kstoApp).then(supported => {
               if (!supported) {
-                Linking.openURL(kstoDownload).catch(err => console.error('An error occurred opening the KSTO download url', err))
+                Linking.openURL(kstoDownload).catch(err => {
+                  tracker.trackException('opening KSTO download url: ' + err.message)
+                  console.error('An error occurred opening the KSTO download url', err)
+                })
               } else {
                 return Linking.openURL(kstoApp)
               }
-            }).catch(err => console.error('An error occurred opening the iOS KSTO url', err))
+            }).catch(err => {
+              tracker.trackException('opening iOS KSTO url: ' + err.message)
+              console.error('An error occurred opening the iOS KSTO url', err)
+            })
           }
         }}
         style={styles.button}

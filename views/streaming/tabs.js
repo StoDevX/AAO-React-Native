@@ -6,19 +6,19 @@ import WebcamsView from './webcams'
 
 export default [
   {
-    id: 'radio',
+    id: 'KSTORadioView',
     title: 'KSTO',
     rnVectorIcon: {iconName: 'radio'},
     component: KSTOView,
   },
   // {
-  //   id: 'movie',
+  //   id: 'WeeklyMovieView',
   //   title: 'Weekly Movie',
   //   rnVectorIcon: {iconName: 'film'},
   //   component: WeeklyMovieView,
   // },
   {
-    id: 'webcams',
+    id: 'LiveWebcamsView',
     title: 'Webcams',
     rnVectorIcon: {iconName: 'videocam'},
     component: WebcamsView,

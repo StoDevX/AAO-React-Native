@@ -5,19 +5,19 @@ import CoursesView from './courses'
 
 export default [
   {
-    id: 'balances',
+    id: 'BalancesView',
     title: 'Balances',
     rnVectorIcon: {iconName: 'card'},
     component: BalancesView,
   },
   {
-    id: 'courses',
+    id: 'CoursesView',
     title: 'Courses',
     rnVectorIcon: {iconName: 'archive'},
     component: CoursesView,
   },
   // {
-  //   id: 'search',
+  //   id: 'CourseSearchView',
   //   title: 'Search',
   //   icon: {uri: base64Icon, scale: 3},
   //   component: () => <SearchView />,

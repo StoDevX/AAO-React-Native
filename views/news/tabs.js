@@ -3,7 +3,7 @@ import NewsContainer from './news-container'
 
 export default [
   {
-    id: 'stolaf',
+    id: 'StOlafNewsView',
     title: 'St. Olaf',
     rnVectorIcon: {iconName: 'school'},
     component: NewsContainer,
@@ -14,7 +14,7 @@ export default [
     },
   },
   {
-    id: 'politicole',
+    id: 'PoliticOleNewsView',
     title: 'PoliticOle',
     rnVectorIcon: {iconName: 'megaphone'},
     component: NewsContainer,
@@ -25,7 +25,7 @@ export default [
     },
   },
   {
-    id: 'mess',
+    id: 'MessNewsView',
     title: 'Mess',
     rnVectorIcon: {iconName: 'paper'},
     component: NewsContainer,

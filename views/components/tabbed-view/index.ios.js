@@ -3,7 +3,7 @@
 import React from 'react'
 import { TabBarIOS } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-
+import {tracker} from '../../../analytics'
 import styles from './styles'
 import type { TabbedViewPropsType } from './types'
 import { TabbedViewPropTypes } from './types'
@@ -17,6 +17,11 @@ export default class TabbedView extends React.Component {
   }
 
   props: TabbedViewPropsType;
+
+  onChangeTab = (tabId: string) => {
+    tracker.trackScreenView(tabId)
+    this.setState({selectedTab: tabId})
+  }
 
   render() {
     let {navigator, route, tabs} = this.props
@@ -41,7 +46,7 @@ export default class TabbedView extends React.Component {
             style={styles.listViewStyle}
             selected={this.state.selectedTab === tab.id}
             translucent={true}
-            onPress={() => this.setState({selectedTab: tab.id})}
+            onPress={() => this.onChangeTab(tab.id)}
           >
             <tab.component
               {...this.props.childProps}

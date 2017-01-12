@@ -19,6 +19,7 @@ globals:
   FormData: true
   fetchJson: true
   rawFetch: true
+  __DEV__: true
 
 rules:
   array-callback-return: error

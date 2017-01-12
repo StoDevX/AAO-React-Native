@@ -18,13 +18,17 @@ import {
 import * as c from '../components/colors'
 import Button from 'react-native-button'
 import {data as mapInfo} from '../../docs/map.json'
+import {tracker} from '../../analytics'
 
 export default function OlafMapView() {
   return (
     <View style={styles.container}>
       <Text>{mapInfo.description}</Text>
       <Button
-        onPress={() => Linking.openURL(mapInfo.url).catch(err => console.error('An error occurred', err))}
+        onPress={() => Linking.openURL(mapInfo.url).catch(err => {
+          tracker.trackException(err.message)
+          console.error('An error occurred', err)
+        })}
         style={styles.button}
       >
           View Map

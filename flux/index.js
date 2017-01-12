@@ -5,6 +5,7 @@ import reduxThunk from 'redux-thunk'
 import {AsyncStorage} from 'react-native'
 import {allViewNames as defaultViewOrder} from '../views/views'
 import difference from 'lodash/difference'
+import {tracker} from '../analytics'
 
 export const SAVE_HOMESCREEN_ORDER = 'SAVE_HOMESCREEN_ORDER'
 
@@ -36,10 +37,11 @@ export const loadHomescreenOrder = async () => {
   let order = updateViewOrder(savedOrder, defaultViewOrder)
 
   // return an action to save it to AsyncStorage
-  return saveHomescreenOrder(order)
+  return saveHomescreenOrder(order, {noTrack: true})
 }
 
-export const saveHomescreenOrder = order => {
+export const saveHomescreenOrder = (order, options={}) => {
+  options.noTrack || tracker.trackEventWithCustomDimensionValues('homescreen', 'reorder', {}, {order: order.join(', ')})
   AsyncStorage.setItem('homescreen:view-order', JSON.stringify(order))
   return {type: SAVE_HOMESCREEN_ORDER, payload: order}
 }
@@ -62,6 +64,7 @@ function homescreen(state=initialHomescreenState, action) {
 export const UPDATE_MENU_FILTERS = 'menus/UPDATE_MENU_FILTERS'
 
 export const updateMenuFilters = (menuName: string, filters: any[]) => {
+  tracker.trackEventWithCustomDimensionValues('menus', 'filter', {label: menuName}, {filters: JSON.stringify(filters)})
   return {type: UPDATE_MENU_FILTERS, payload: {menuName, filters}}
 }
 

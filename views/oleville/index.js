@@ -15,7 +15,7 @@ import {
   Navigator,
   RefreshControl,
 } from 'react-native'
-
+import {tracker} from '../../analytics'
 import delay from 'delay'
 import LoadingView from '../components/loading'
 import * as c from '../components/colors'
@@ -82,6 +82,7 @@ export default class OlevilleView extends React.Component {
         return url || defaultOlevilleImageUrl
       }
     } catch (err) {
+      tracker.trackException(err.message)
       console.warn(err)
     }
     return defaultOlevilleImageUrl
@@ -102,6 +103,7 @@ export default class OlevilleView extends React.Component {
       // then we have the _featuredImageUrl key to just get the url
       this.setState({dataSource: this.state.dataSource.cloneWithRows(articles)})
     } catch (error) {
+      tracker.trackException(error.message)
       this.setState({error: true})
       console.error(error)
     }

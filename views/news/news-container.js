@@ -18,6 +18,7 @@ import LoadingView from '../components/loading'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import * as c from '../components/colors'
+import {tracker} from '../../analytics'
 
 let Entities = require('html-entities').AllHtmlEntities
 const entities = new Entities()
@@ -52,6 +53,7 @@ export default class NewsContainer extends React.Component {
         dataSource: this.state.dataSource.cloneWithRows(entries),
       })
     } catch (error) {
+      tracker.trackException(error.message)
       console.warn(error)
       this.setState({error})
     }

@@ -7,7 +7,7 @@
 import React from 'react'
 import {View, Text, ListView, RefreshControl, StyleSheet, Platform, Navigator} from 'react-native'
 import {BuildingRow} from './row'
-
+import {tracker} from '../../analytics'
 import type {BuildingType} from './types'
 import delay from 'delay'
 import {data as buildingHours} from '../../docs/building-hours'
@@ -59,18 +59,21 @@ export class BuildingHoursView extends React.Component {
     })
   }
 
+  onPressRow = (data: BuildingType) => {
+    tracker.trackEvent('building-hours', data.name)
+    this.props.navigator.push({
+      id: 'BuildingHoursDetailView',
+      index: this.props.route.index + 1,
+      title: data.name,
+      backButtonTitle: 'Hours',
+      props: data,
+      sceneConfig: Platform.OS === 'android' ? Navigator.SceneConfigs.FloatFromBottom : undefined,
+    })
+  }
+
   renderRow = (data: BuildingType) => {
     return (
-      <Touchable
-        onPress={() => this.props.navigator.push({
-          id: 'BuildingHoursDetailView',
-          index: this.props.route.index + 1,
-          title: data.name,
-          backButtonTitle: 'Hours',
-          props: data,
-          sceneConfig: Platform.OS === 'android' ? Navigator.SceneConfigs.FloatFromBottom : undefined,
-        })}
-      >
+      <Touchable onPress={() => this.onPressRow(data)}>
         <BuildingRow
           name={data.name}
           info={data}

@@ -7,6 +7,7 @@ import * as c from '../components/colors'
 import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
 import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
 import type {TopLevelViewPropsType} from '../types'
+import {tracker} from '../../analytics'
 
 const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
 
@@ -62,6 +63,7 @@ export class StudentOrgsDetailView extends React.Component {
       let response = await fetchJson(orgUrl)
       this.setState({data: response})
     } catch (error) {
+      tracker.trackException(error.message)
       this.setState({error: true})
       console.error(error)
     }
