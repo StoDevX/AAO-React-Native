@@ -93,7 +93,7 @@ platform :ios do
 
     # see macoscope.com/blog/simplify-your-life-with-fastlane-match
     # we're allowing the CI access to the keys repo
-    File.open("~/.netrc", "a+") do |file|
+    File.open("#{ENV['HOME']}/.netrc", "a+") do |file|
       file << "machine github.com\n  login #{token}"
     end
 
