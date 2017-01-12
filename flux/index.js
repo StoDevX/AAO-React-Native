@@ -41,7 +41,7 @@ export const loadHomescreenOrder = async () => {
 }
 
 export const saveHomescreenOrder = (order, options={}) => {
-  options.noTrack || tracker.trackEventWithCustomDimensionValues('homescreen', 'reorder', {}, {order})
+  options.noTrack || tracker.trackEventWithCustomDimensionValues('homescreen', 'reorder', {}, {order: order.join(', ')})
   AsyncStorage.setItem('homescreen:view-order', JSON.stringify(order))
   return {type: SAVE_HOMESCREEN_ORDER, payload: order}
 }
@@ -64,7 +64,7 @@ function homescreen(state=initialHomescreenState, action) {
 export const UPDATE_MENU_FILTERS = 'menus/UPDATE_MENU_FILTERS'
 
 export const updateMenuFilters = (menuName: string, filters: any[]) => {
-  tracker.trackEventWithCustomDimensionValues('menus', 'filter', {label: menuName}, {filters})
+  tracker.trackEventWithCustomDimensionValues('menus', 'filter', {label: menuName}, {filters: JSON.stringify(filters)})
   return {type: UPDATE_MENU_FILTERS, payload: {menuName, filters}}
 }
 
