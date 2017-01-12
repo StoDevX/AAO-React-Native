@@ -190,6 +190,7 @@ DEPENDENCIES
   fastlane-plugin-get_unprovisioned_devices_from_hockey
   fastlane-plugin-latest_hockeyapp_version_number
   hockeyapp
+  json
   xcodeproj
 
 BUNDLED WITH

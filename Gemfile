@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem "fastlane"
 gem "hockeyapp"
+gem "json"
 gem "xcodeproj"
 
 plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
