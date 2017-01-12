@@ -9,8 +9,6 @@
 
 # This is the minimum version number required.
 # Update this if you use features of a newer version:
-
-hockeyapp_api_token = ENV["HOCKEYAPP_TOKEN"]
 fastlane_version "2.5.0"
 
 
@@ -74,13 +72,14 @@ platform :ios do
     build
 
     hockey(
-      api_token: hockeyapp_api_token,
+      api_token: ENV["HOCKEYAPP_TOKEN"],
       ipa: "./ios/build/AllAboutOlaf.ipa",
       commit_sha: ENV["TRAVIS_COMMIT"],
       notes: build_notes(platform: 'iOS'),
     )
   end
 
+  desc "Make a beta build if there have been new commits since the last beta"
   lane :auto_beta do
     last_commit = get_hockeyapp_version_commit(platform: 'iOS')
     current_commit = last_git_commit[:commit_hash]
@@ -94,19 +93,17 @@ end
 
 
 platform :android do
-  dir = "android"
-
   desc "Makes a build"
   lane :build do
     increment_version_code(
       version_code: get_version(platform: 'Android'),
-      app_folder_name: dir + '/app',
+      app_folder_name: "android/app",
     )
 
     gradle(
       task: "assemble",
       build_type: "Release",
-      project_dir: dir,
+      project_dir: "android",
       print_command: true,
       print_command_output: true,
     )
@@ -118,13 +115,14 @@ platform :android do
 
     # Upload to HockeyApp
     hockey(
-      api_token: hockeyapp_api_token,
+      api_token: ENV["HOCKEYAPP_TOKEN"],
       apk: "./android/app/build/outputs/apk/app-release-unsigned.apk",
       commit_sha: ENV["TRAVIS_COMMIT"],
       notes: build_notes(platform: 'Android'),
     )
   end
 
+  desc "Make a beta build if there have been new commits since the last beta"
   lane :auto_beta do
     last_commit = get_hockeyapp_version_commit(platform: 'Android')
     current_commit = last_git_commit[:commit_hash]
@@ -137,7 +135,6 @@ platform :android do
 end
 
 
-# Below here are the custom helpers we've defined
 
 desc "Makes a changelog from the timespan passed"
 private_lane :make_changelog do |options|
