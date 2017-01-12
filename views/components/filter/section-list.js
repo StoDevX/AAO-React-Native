@@ -28,9 +28,16 @@ export function ListSection({filter, onChange}: PropsType) {
       result = concat(selected, tappedValue)
     }
 
+    let enabled = false
+    if (mode === 'OR') {
+      enabled = result.length !== options.length
+    } else if (mode === 'AND') {
+      enabled = result.length > 0
+    }
+
     onChange({
       ...filter,
-      enabled: result.length !== options.length,
+      enabled: enabled,
       spec: {...spec, selected: result},
     })
   }

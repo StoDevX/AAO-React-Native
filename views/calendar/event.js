@@ -7,7 +7,7 @@ import {
 
 import moment from 'moment-timezone'
 import * as c from '../components/colors'
-import {getText, parseHtml} from '../../lib/html'
+import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
 
 let styles = StyleSheet.create({
   container: {
@@ -56,7 +56,7 @@ let styles = StyleSheet.create({
 
 // PROPS: eventTitle, location, startTime, endTime
 export default function EventView(props: {eventTitle: string, location: string, startTime?: Object, endTime?: Object, style?: any, isOngoing: bool}) {
-  let title = getText(parseHtml(props.eventTitle))
+  let title = getTrimmedTextWithSpaces(parseHtml(props.eventTitle))
 
   let eventLength = moment.duration(props.endTime.diff(props.startTime)).asHours()
   let allDay = eventLength === 24

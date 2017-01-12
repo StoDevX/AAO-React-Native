@@ -17,6 +17,13 @@ export default [
     props: {calendarId: 'stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com'},
   },
   {
+    id: 'pause',
+    title: 'The Pause',
+    rnVectorIcon: {iconName: 'paw'},
+    component: CalendarView,
+    props: {calendarId: 'stolaf.edu_qkrej5rm8c8582dlnc28nreboc@group.calendar.google.com'},
+  },
+  {
     id: 'northfield',
     title: 'Northfield',
     rnVectorIcon: {iconName: 'pin'},
