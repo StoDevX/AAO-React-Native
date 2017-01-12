@@ -165,6 +165,7 @@ export class StudentOrgsView extends React.Component {
   }
 
   onPressRow = (data: StudentOrgAbridgedType) => {
+    tracker.trackEvent('student-org', data.name)
     this.props.navigator.push({
       id: 'StudentOrgsDetailView',
       index: this.props.route.index + 1,
