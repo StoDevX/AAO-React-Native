@@ -1,17 +1,12 @@
-# `fastlane` reports which actions are used No personal data is recorded.
-# Learn more at https://github.com/fastlane/enhancer
+# All fastlane files are Ruby files.
 
 # Customise this file! Documentation can be found here:
 # https://github.com/fastlane/fastlane/tree/master/fastlane/docs
 
-# You should change your syntax highlighting to Ruby.
-# All lines starting with a # are comments.
-
-# This is the minimum version number required.
-# Update this if you use features of a newer version:
+# Set a minimum version for fastlane
 fastlane_version "2.5.0"
 
-
+# These lanes are non-platform-specific
 desc "Adds any unregistered devices to the provisioning profile"
 lane :register do
   id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
