@@ -46,7 +46,7 @@ export default class TabbedView extends React.Component {
             style={styles.listViewStyle}
             selected={this.state.selectedTab === tab.id}
             translucent={true}
-            onPress={() => this.setState({selectedTab: tab.id})}
+            onPress={() => this.onChangeTab(tab.id)}
           >
             <tab.component
               {...this.props.childProps}
