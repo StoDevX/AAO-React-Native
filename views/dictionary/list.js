@@ -8,7 +8,7 @@ import {StyleSheet, View, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import AlphabetListView from 'react-native-alphabetlistview'
 import {Touchable} from '../components/touchable'
-
+import {tracker} from '../../analytics'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
@@ -81,6 +81,7 @@ export class DictionaryView extends React.Component {
   };
 
   onPressRow = data => {
+    tracker.trackEvent('dictionary', data.word)
     this.props.navigator.push({
       id: 'DictionaryDetailView',
       index: this.props.route.index + 1,
