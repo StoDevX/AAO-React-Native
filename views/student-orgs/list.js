@@ -11,6 +11,7 @@ import AlphabetListView from 'react-native-alphabetlistview'
 import LoadingView from '../components/loading'
 import delay from 'delay'
 import {Touchable} from '../components/touchable'
+import {tracker} from '../../analytics'
 import size from 'lodash/size'
 import map from 'lodash/map'
 import sortBy from 'lodash/sortBy'
@@ -120,6 +121,7 @@ export class StudentOrgsView extends React.Component {
       let grouped = groupBy(sorted, '$groupableName')
       this.setState({orgs: grouped})
     } catch (error) {
+      tracker.trackException(error.message)
       this.setState({error: true})
       console.error(error)
     }

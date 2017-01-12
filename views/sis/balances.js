@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
-
+import {tracker} from '../../analytics'
 import {isLoggedIn} from '../../lib/login'
 import delay from 'delay'
 import isNil from 'lodash/isNil'
@@ -111,6 +111,7 @@ export default class BalancesView extends React.Component {
         this.setState({weeklyMeals, dailyMeals})
       }
     } catch (error) {
+      tracker.trackException(error.message)
       this.setState({error})
       console.warn(error)
     }

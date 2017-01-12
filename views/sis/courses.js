@@ -14,7 +14,7 @@ import {
   RefreshControl,
 } from 'react-native'
 import * as c from '../components/colors'
-
+import {tracker} from '../../analytics'
 import {isLoggedIn} from '../../lib/login'
 import delay from 'delay'
 import zip from 'lodash/zip'
@@ -107,6 +107,7 @@ export default class CoursesView extends React.Component {
       }
       this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
     } catch (error) {
+      tracker.trackException(error.message)
       this.setState({error})
       console.warn(error)
     }

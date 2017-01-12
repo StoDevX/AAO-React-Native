@@ -17,6 +17,7 @@ import {findMenu} from './lib/find-menu'
 import {trimStationName, trimItemLabel} from './lib/trim-names'
 import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
 import {toLaxTitleCase} from 'titlecase'
+import {tracker} from '../../analytics'
 
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
 const bonappCafeBaseUrl = 'http://legacy.cafebonappetit.com/api/2/cafes'
@@ -67,6 +68,7 @@ export class BonAppHostedMenu extends React.Component {
       cafeMenu = (requests[0]: BonAppMenuInfoType)
       cafeInfo = (requests[1]: BonAppCafeInfoType)
     } catch (err) {
+      tracker.trackException(err.message)
       this.setState({error: err})
     }
 
@@ -99,6 +101,7 @@ export class BonAppHostedMenu extends React.Component {
     }
 
     if (!this.state.cafeMenu || !this.state.cafeInfo) {
+      tracker.trackException(`Something went wrong loading BonApp cafe ${this.props.cafeId}`)
       return <NoticeView text='Something went wrong. Email odt@stolaf.edu to let them know?' />
     }
 
