@@ -29,10 +29,10 @@ export function ListSection({filter, onChange}: PropsType) {
     }
 
     let enabled = false
-    if (mode === 'AND') {
+    if (mode === 'OR') {
       enabled = result.length !== options.length
-    } else if (mode === 'OR') {
-      enabled = result.length !== 0
+    } else if (mode === 'AND') {
+      enabled = result.length > 0
     }
 
     onChange({
