@@ -5,6 +5,7 @@
 
 // Tweak the global fetch
 import './globalize-fetch'
+import {tracker} from './analytics'
 
 import React from 'react'
 import {
@@ -48,6 +49,7 @@ import NoRoute from './views/components/no-route'
 // Render a given scene
 function renderScene(route, navigator) {
   let props = {route, navigator, ...(route.props || {})}
+  tracker.trackScreenView(route.id)
   switch (route.id) {
     case 'HomeView': return <HomeView {...props} />
     case 'MenusView': return <MenusView {...props} />
@@ -310,6 +312,7 @@ function Title(route) {
 
 class App extends React.Component {
   componentDidMount() {
+    tracker.trackEvent('app', 'launch')
     BackAndroid.addEventListener('hardwareBackPress', this.registerAndroidBackButton)
   }
 
