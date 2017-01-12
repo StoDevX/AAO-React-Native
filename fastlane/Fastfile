@@ -32,24 +32,6 @@ platform :ios do
     snapshot
   end
 
-  desc "In case match needs to be updated - probably never needs to be run"
-  lane :update_match do
-    match(readonly: false)
-  end
-
-  desc "Do CI-system keychain setup"
-  lane :ci_keychains do
-    create_keychain(
-      name: ENV["MATCH_KEYCHAIN_NAME"],
-      password: ENV["MATCH_KEYCHAIN_PASSWORD"],
-      timeout: 3600,
-    )
-
-    match(readonly: true)
-
-    sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{ENV["MATCH_KEYCHAIN_PASSWORD"]} #{ENV["MATCH_KEYCHAIN_NAME"]}")
-  end
-
   desc "Provisions the profiles; bumps the build number; builds the app"
   lane :build do
     # Set up code signing correctly
@@ -88,6 +70,35 @@ platform :ios do
     UI.message "HEAD: #{current_commit}"
     UI.message "Thus, will we beta? #{last_commit != current_commit}"
     beta unless last_commit == current_commit
+  end
+
+  # Lanes specifically for the CIs
+  desc "Do CI-system keychain setup"
+  lane :ci_keychains do
+    token = ENV["CI_USER_TOKEN"]
+    keychain = ENV["MATCH_KEYCHAIN_NAME"]
+    password = ENV["MATCH_KEYCHAIN_PASSWORD"]
+
+    # see macoscope.com/blog/simplify-your-life-with-fastlane-match
+    # we're allowing the CI access to the keys repo
+    File.open("~/.netrc", "a") do |file|
+      file << "machine github.com\n  login #{token}"
+    end
+
+    create_keychain(
+      name: keychain,
+      password: password,
+      timeout: 3600,
+    )
+
+    match(readonly: true)
+
+    sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain}")
+  end
+
+  desc "In case match needs to be updated - probably never needs to be run"
+  lane :update_match do
+    match(readonly: false)
   end
 end
 
