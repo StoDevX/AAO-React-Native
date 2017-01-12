@@ -7,14 +7,11 @@
 # You should change your syntax highlighting to Ruby.
 # All lines starting with a # are comments.
 
-# To automatically update fastlane if a new version is available:
-update_fastlane
-
 # This is the minimum version number required.
 # Update this if you use features of a newer version:
-fastlane_version "1.108.0"
 
 hockeyapp_api_token = ENV["HOCKEYAPP_TOKEN"]
+fastlane_version "2.5.0"
 
 
 desc "Adds any unregistered devices to the provisioning profile"
