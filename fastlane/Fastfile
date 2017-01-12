@@ -64,7 +64,7 @@ platform :ios do
     )
 
     # Build the app
-    gym(sdk: "iphoneos10.1")
+    gym
   end
 
   desc "Submit a new Beta Build to HockeyApp"

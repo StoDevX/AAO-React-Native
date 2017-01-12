@@ -8,6 +8,7 @@
 
 workspace "ios/AllAboutOlaf.xcworkspace"
 scheme "AllAboutOlaf"
+sdk "iphoneos10.1"
 
 export_method "ad-hoc"
 
