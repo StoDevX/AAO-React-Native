@@ -9,6 +9,6 @@ const styles = StyleSheet.create({
   },
 })
 
-export function Separator({style}: {style?: Number|Object|Array<Number|Object>}) {
+export function Separator({style}: {style?: mixed}) {
   return <View style={[styles.separator, style]} />
 }
