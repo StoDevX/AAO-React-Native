@@ -34,11 +34,6 @@ platform :ios do
     snapshot
   end
 
-  desc "Activate the rogue signing team"
-  private_lane :go_rogue do
-    sh("cd .. && ruby scripts/go-rogue.rb")
-  end
-
   desc "In case match needs to be updated - probably never needs to be run"
   lane :update_match do
     match(readonly: false)
