@@ -175,7 +175,7 @@ after_success:
   - |
     if [[ "$type" == "js" ]]; then
       npm install coveralls
-      coveralls < ./coverage/lcov.info
+      ./node_modules/.bin/coveralls < ./coverage/lcov.info
     fi
 
 
