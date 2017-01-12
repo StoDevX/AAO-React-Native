@@ -1,11 +1,11 @@
 // @flow
-
 import React from 'react'
 import { StyleSheet, Platform, Dimensions } from 'react-native'
 import { TabViewAnimated, TabBarTop } from 'react-native-tab-view'
 import * as c from '../colors'
 import type { TabbedViewPropsType } from './types'
 import { TabbedViewPropTypes } from './types'
+import {tracker} from '../../../analytics'
 
 const styles = StyleSheet.create({
   container: {
@@ -35,6 +35,7 @@ export default class TabbedView extends React.Component {
   props: TabbedViewPropsType
 
   _handleChangeTab = index => {
+    tracker.trackScreenView(this.props.tabs[index].title)
     this.setState({
       index,
     })
