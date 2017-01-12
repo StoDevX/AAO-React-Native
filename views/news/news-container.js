@@ -6,9 +6,9 @@ import {
   ListView,
   Platform,
   Text,
-  TouchableHighlight,
   RefreshControl,
 } from 'react-native'
+import {Touchable} from '../components/touchable'
 import {fastGetTrimmedText} from '../../lib/html'
 import delay from 'delay'
 import {parseXml} from './parse-feed'
@@ -77,15 +77,13 @@ export default class NewsContainer extends React.Component {
     let title = entities.decode(story.title[0])
     let snippet = entities.decode(fastGetTrimmedText(story.description[0]))
     return (
-      <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressNews(title, story)}>
-        <View style={[styles.row]}>
-          <View style={[styles.rowContainer]}>
-            <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
-            <Text style={styles.itemPreview} numberOfLines={2}>{snippet}</Text>
-          </View>
-          <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
+      <Touchable onPress={() => this.onPressNews(title, story)} style={[styles.row]}>
+        <View style={[styles.rowContainer]}>
+          <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
+          <Text style={styles.itemPreview} numberOfLines={2}>{snippet}</Text>
         </View>
-      </TouchableHighlight>
+        <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
+      </Touchable>
     )
   }
 
