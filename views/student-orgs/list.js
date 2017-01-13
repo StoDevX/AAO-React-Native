@@ -5,12 +5,13 @@
  */
 
 import React from 'react'
-import {StyleSheet, View, Text} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
-import AlphabetListView from 'react-native-alphabetlistview'
+import {StyleSheet, View, Text, Platform} from 'react-native'
+import {StyledAlphabetListView} from '../components/alphabet-listview'
 import LoadingView from '../components/loading'
 import delay from 'delay'
-import {Touchable} from '../components/touchable'
+import {NoticeView} from '../components/notice'
+import {Row, Column} from '../components/layout'
+import {ListRow, ListSectionHeader, ListSeparator, Detail, Title} from '../components/list'
 import {tracker} from '../../analytics'
 import size from 'lodash/size'
 import map from 'lodash/map'
@@ -22,65 +23,24 @@ import startCase from 'lodash/startCase'
 import type {StudentOrgAbridgedType} from './types'
 
 const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
+const leftSideSpacing = 20
+const rowHeight = Platform.OS === 'ios' ? 58 : 74
+const headerHeight = Platform.OS === 'ios' ? 33 : 41
 
-let styles = StyleSheet.create({
-  listView: {
-    paddingRight: 16,
-    backgroundColor: c.white,
-  },
-  textRows: {
-    paddingTop: 8,
-    paddingBottom: 8,
-    height: 53,
-    flexDirection: 'column',
-    flex: 1,
-  },
-  notLastRow: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#c8c7cc',
-  },
-  itemNew: {
-    marginLeft: -15,
-    marginRight: 5,
-    width: 11,
-    fontSize: 28,
-  },
-  itemTitle: {
-    color: c.black,
-    fontWeight: '500',
-    paddingBottom: 1,
-    fontSize: 16,
-    textAlign: 'left',
-  },
-  itemPreview: {
-    color: c.iosDisabledText,
-    fontSize: 13,
-    textAlign: 'left',
+const styles = StyleSheet.create({
+  row: {
+    height: rowHeight,
   },
   rowSectionHeader: {
-    backgroundColor: c.iosListSectionHeader,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 20,
-    height: 27,
-    borderBottomWidth: 1,
-    borderColor: '#ebebeb',
+    height: headerHeight,
   },
-  rowSectionHeaderText: {
-    color: 'black',
-    fontWeight: 'bold',
+  badge: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginLeft: 20,
-  },
-  arrowIcon: {
-    color: c.iosDisabledText,
-    fontSize: 20,
-    marginRight: 6,
-    marginLeft: 4,
-    marginTop: 8,
+  badgeIcon: {
+    fontSize: Platform.OS === 'ios' ? 24: 28,
+    color: 'transparent',
   },
 })
 
@@ -91,12 +51,12 @@ export class StudentOrgsView extends React.Component {
   }
 
   state: {
-    orgs: StudentOrgAbridgedType[],
+    orgs: {[key: string]: StudentOrgAbridgedType[]},
     refreshing: boolean,
     error: boolean,
     loaded: boolean,
   } = {
-    orgs: [],
+    orgs: {},
     refreshing: false,
     loaded: false,
     error: false,
@@ -143,25 +103,40 @@ export class StudentOrgsView extends React.Component {
     this.setState(() => ({refreshing: false}))
   }
 
-  renderHeader = ({title}: {title: string}) => {
+  renderSectionHeader = ({title}: {title: string}) => {
     return (
-      <View style={styles.rowSectionHeader}>
-        <Text style={styles.rowSectionHeaderText}>{title}</Text>
-      </View>
+      <ListSectionHeader
+        title={title}
+        spacing={{left: leftSideSpacing}}
+        style={styles.rowSectionHeader}
+      />
     )
   }
 
-  renderRow = ({isLast, item}: {isLast: boolean, item: StudentOrgAbridgedType}) => {
+  renderRow = ({item}: {item: StudentOrgAbridgedType}) => {
     return (
-      <Touchable onPress={() => this.onPressRow(item)} style={[styles.row, !isLast && styles.notLastRow]}>
-        <Text style={[styles.itemNew, {color: item.newOrg ? c.infoBlue : 'transparent'}]}>• </Text>
-        <View style={styles.textRows}>
-          <Text style={styles.itemTitle} numberOfLines={1}>{item.name}</Text>
-          <Text style={styles.itemPreview}>{item.categories.join(', ')}</Text>
-        </View>
-        <Icon style={styles.arrowIcon} name='ios-arrow-forward' />
-      </Touchable>
+      <ListRow
+        onPress={() => this.onPressRow(item)}
+        contentContainerStyle={[styles.row, {paddingRight: 2}]}
+        arrowPosition='none'
+        fullWidth={true}
+      >
+        <Row alignItems='flex-start'>
+          <View style={[styles.badge, {width: leftSideSpacing, alignSelf: 'flex-start'}]}>
+            <Text style={[styles.badgeIcon, item.newOrg && {color: c.infoBlue}]}>•</Text>
+          </View>
+
+          <Column flex={1}>
+            <Title lines={1}>{item.name}</Title>
+            <Detail lines={1}>{item.categories.join(', ')}</Detail>
+          </Column>
+        </Row>
+      </ListRow>
     )
+  }
+
+  renderSeparator = (sectionId: string, rowId: string) => {
+    return <ListSeparator key={`${sectionId}-${rowId}`} spacing={{left: leftSideSpacing}} />
   }
 
   onPressRow = (data: StudentOrgAbridgedType) => {
@@ -181,28 +156,18 @@ export class StudentOrgsView extends React.Component {
     }
 
     if (!size(this.state.orgs)) {
-      return (
-        <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#ffffff',
-        }}>
-          <Text>
-            No organizations found.
-          </Text>
-        </View>
-      )
+      return <NoticeView text='No organizations found.' />
     }
 
     return (
-      <AlphabetListView
-        contentContainerStyle={styles.listView}
+      <StyledAlphabetListView
         data={this.state.orgs}
         cell={this.renderRow}
-        sectionHeader={this.renderHeader}
-        sectionHeaderHeight={28}
-        cellHeight={53}
+        // just setting cellHeight sends the wrong values on iOS.
+        cellHeight={rowHeight + (Platform.OS === 'ios' ? (11/12 * StyleSheet.hairlineWidth) : 0)}
+        sectionHeader={this.renderSectionHeader}
+        sectionHeaderHeight={headerHeight}
+        renderSeparator={this.renderSeparator}
         showsVerticalScrollIndicator={false}
       />
     )
