@@ -12,8 +12,6 @@
 #import "RCTBundleURLProvider.h"
 #import "RCTRootView.h"
 
-#import "RCTOneSignal.h"
-
 @implementation AppDelegate
 @synthesize oneSignal = _oneSignal;
 
