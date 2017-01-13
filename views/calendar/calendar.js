@@ -14,6 +14,7 @@ import {
   View,
 } from 'react-native'
 import {tracker} from '../../analytics'
+import type {EventType} from './types'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
 import delay from 'delay'
@@ -68,13 +69,13 @@ export default class CalendarView extends React.Component {
     return `${calendarUrl}?${qs.stringify(params)}`
   }
 
-  getEvents = async (now: momentT=moment.tz(TIMEZONE)) => {
+  getEvents = async (now: moment=moment.tz(TIMEZONE)) => {
     let url = this.buildCalendarUrl(this.props.calendarId)
 
-    let data = []
+    let data: GoogleCalendarEventType[] = []
     try {
       let result = await fetchJson(url)
-      let error = result.error
+      const error = result.error
       if (error) {
         tracker.trackException(error.message)
         this.setState({error: error})
@@ -87,18 +88,22 @@ export default class CalendarView extends React.Component {
       console.warn(error)
     }
 
-    data.forEach(event => {
-      event.startTime = moment(event.start.date || event.start.dateTime)
-      event.endTime = moment(event.end.date || event.end.dateTime)
-      event.isOngoing = event.startTime.isBefore(now, 'day')
+    const events: EventType[] = data.map((event: GoogleCalendarEventType) => {
+      const startTime = moment(event.start.date || event.start.dateTime)
+      const endTime = moment(event.end.date || event.end.dateTime)
+      return {
+        ...event,
+        startTime,
+        endTime,
+        isOngoing: startTime.isBefore(now, 'day'),
+      }
     })
 
-    const grouped = groupBy(data, event => {
+    const grouped = groupBy(events, event => {
       if (event.isOngoing) {
         return 'Ongoing'
       }
-      const isToday = event.startTime.isSame(now, 'day')
-      if (isToday) {
+      if (event.startTime.isSame(now, 'day')) {
         return 'Today'
       }
       return event.startTime.format('ddd  MMM Do')  // google returns events in CST
@@ -125,11 +130,11 @@ export default class CalendarView extends React.Component {
     this.setState({refreshing: false})
   }
 
-  renderRow = (data: Object) => {
+  renderRow = (data: EventType) => {
     return (
       <EventView
         style={styles.row}
-        eventTitle={data.summary}
+        summary={data.summary}
         startTime={data.startTime}
         endTime={data.endTime}
         location={data.location}
