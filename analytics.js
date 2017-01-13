@@ -15,3 +15,13 @@ async function disableIfOptedOut() {
   }
 }
 disableIfOptedOut()
+
+// Google requires that custom dimensions be tracked by index, and we only get
+// 20 custom dimensions, so I decided to centralize them here.
+export function trackMenuFilters(menuName: string, filters: mixed) {
+  tracker.trackEvent('menus', 'filter', {label: menuName}, {'1': JSON.stringify(filters)})
+}
+
+export function trackHomescreenOrder(order: string[]) {
+  tracker.trackEvent('homescreen', 'reorder', {}, {'2': order.join(', ')})
+}
