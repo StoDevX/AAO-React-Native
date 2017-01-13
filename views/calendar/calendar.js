@@ -14,10 +14,12 @@ import {
   View,
 } from 'react-native'
 import {tracker} from '../../analytics'
+import type {EventType} from './types'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
 import delay from 'delay'
 import {Separator} from '../components/separator'
+import {NoticeView} from '../components/notice'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
 import EventView from './event'
@@ -27,7 +29,7 @@ const TIMEZONE = 'America/Winnipeg'
 
 type GoogleCalendarTimeType = {
   dateTime: string,
-}
+};
 type GoogleCalendarEventType = {
   summary: string,
   start: GoogleCalendarTimeType,
@@ -42,13 +44,12 @@ export default class CalendarView extends React.Component {
 
   state = {
     events: new ListView.DataSource({
-      rowHasChanged: (r1: GoogleCalendarEventType, r2: GoogleCalendarEventType) => r1.summary !== r2.summary,
-      sectionHeaderHasChanged: (h1: number, h2: number) => h1 !== h2,
+      rowHasChanged: (r1: EventType, r2: EventType) => r1 !== r2,
+      sectionHeaderHasChanged: (h1: any, h2: any) => h1 !== h2,
     }),
     loaded: false,
     refreshing: true,
     error: null,
-    noEvents: false,
   }
 
   componentWillMount() {
@@ -68,47 +69,50 @@ export default class CalendarView extends React.Component {
     return `${calendarUrl}?${qs.stringify(params)}`
   }
 
-  getEvents = async () => {
+  getEvents = async (now: moment=moment.tz(TIMEZONE)) => {
     let url = this.buildCalendarUrl(this.props.calendarId)
 
-    let data = null
-    let error = null
+    let data: GoogleCalendarEventType[] = []
     try {
-      let result = await fetch(url).then(r => r.json())
-      error = result.error
+      let result = await fetchJson(url)
+      const error = result.error
+      if (error) {
+        tracker.trackException(error.message)
+        this.setState({error: error})
+      }
+
       data = result.items
     } catch (error) {
       tracker.trackException(error.message)
       this.setState({error: error.message})
-      console.error(error)
+      console.warn(error)
     }
 
-    if (data && data.length) {
-      let now = moment.tz(TIMEZONE)
-      data.forEach(event => {
-        event.startTime = moment(event.start.date || event.start.dateTime)
-        event.endTime = moment(event.end.date || event.end.dateTime)
-        event.isOngoing = event.startTime.isBefore(now, 'day')
-      })
-      let grouped = groupBy(data, event => {
-        if (event.isOngoing) {
-          return 'Ongoing'
-        }
-        let isToday = event.startTime.isSame(now, 'day')
-        if (isToday) {
-          return 'Today'
-        }
-        return event.startTime.format('ddd  MMM Do')  // google returns events in CST
-      })
-      this.setState({events: this.state.events.cloneWithRowsAndSections(grouped)})
-    } else if (data && !data.length) {
-      this.setState({noEvents: true})
-    }
-    if (error) {
-      tracker.trackException(error.message)
-      this.setState({error: error.message})
-    }
-    this.setState({loaded: true})
+    const events: EventType[] = data.map((event: GoogleCalendarEventType) => {
+      const startTime = moment(event.start.date || event.start.dateTime)
+      const endTime = moment(event.end.date || event.end.dateTime)
+      return {
+        ...event,
+        startTime,
+        endTime,
+        isOngoing: startTime.isBefore(now, 'day'),
+      }
+    })
+
+    const grouped = groupBy(events, event => {
+      if (event.isOngoing) {
+        return 'Ongoing'
+      }
+      if (event.startTime.isSame(now, 'day')) {
+        return 'Today'
+      }
+      return event.startTime.format('ddd  MMM Do')  // google returns events in CST
+    })
+
+    this.setState({
+      loaded: true,
+      events: this.state.events.cloneWithRowsAndSections(grouped),
+    })
   }
 
   refresh = async () => {
@@ -126,11 +130,11 @@ export default class CalendarView extends React.Component {
     this.setState({refreshing: false})
   }
 
-  renderRow = (data: Object) => {
+  renderRow = (data: EventType) => {
     return (
       <EventView
         style={styles.row}
-        eventTitle={data.summary}
+        summary={data.summary}
         startTime={data.startTime}
         endTime={data.endTime}
         location={data.location}
@@ -159,22 +163,11 @@ export default class CalendarView extends React.Component {
     }
 
     if (this.state.error) {
-      return <Text>{this.state.error}</Text>
+      return <NoticeView text={this.state.error} />
     }
 
-    if (this.state.noEvents) {
-      return (
-        <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#ffffff',
-        }}>
-          <Text>
-            No events.
-          </Text>
-        </View>
-      )
+    if (!this.state.events.getRowCount()) {
+      return <NoticeView text='No events.' />
     }
 
     return (
