@@ -10,6 +10,11 @@ sudo gem install fastlane
 fastlane register
 ```
 Adds any unregistered devices to the provisioning profile
+### bump
+```
+fastlane bump
+```
+Bump the version string to a new version
 
 ----
 
@@ -24,16 +29,6 @@ Runs all the tests
 fastlane ios screenshot
 ```
 Take screenshots
-### ios update_match
-```
-fastlane ios update_match
-```
-In case match needs to be updated - probably never needs to be run
-### ios ci_keychains
-```
-fastlane ios ci_keychains
-```
-Do CI-system keychain setup
 ### ios build
 ```
 fastlane ios build
@@ -48,7 +43,22 @@ Submit a new Beta Build to HockeyApp
 ```
 fastlane ios auto_beta
 ```
-
+Make a beta build if there have been new commits since the last beta
+### ios ci_keychains
+```
+fastlane ios ci_keychains
+```
+Do CI-system keychain setup
+### ios ci_run
+```
+fastlane ios ci_run
+```
+Run iOS builds or tests, as appropriate
+### ios update_match
+```
+fastlane ios update_match
+```
+In case match needs to be updated - probably never needs to be run
 
 ----
 
@@ -67,7 +77,12 @@ Submit a new Beta Build to HockeyApp
 ```
 fastlane android auto_beta
 ```
-
+Make a beta build if there have been new commits since the last beta
+### android ci_run
+```
+fastlane android ci_run
+```
+Run the appropriate action on CI
 
 ----
 
