@@ -4,15 +4,11 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  View,
-  TouchableHighlight,
-  Text,
-} from 'react-native'
+import {StyleSheet, View, Text} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import AlphabetListView from 'react-native-alphabetlistview'
-
+import {Touchable} from '../components/touchable'
+import {tracker} from '../../analytics'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
@@ -85,6 +81,7 @@ export class DictionaryView extends React.Component {
   };
 
   onPressRow = data => {
+    tracker.trackEvent('dictionary', data.word)
     this.props.navigator.push({
       id: 'DictionaryDetailView',
       index: this.props.route.index + 1,
@@ -96,15 +93,13 @@ export class DictionaryView extends React.Component {
 
   renderRow = ({isLast, item}) => {
     return (
-      <TouchableHighlight underlayColor={'#ebebeb'} onPress={() => this.onPressRow(item)}>
-        <View style={[styles.row, !isLast && styles.notLastRow]}>
-          <View style={[styles.textRows]}>
-            <Text style={styles.itemTitle} numberOfLines={1}>{item.word}</Text>
-            <Text style={styles.itemPreview} numberOfLines={2}>{item.definition}</Text>
-          </View>
-          <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
+      <Touchable onPress={() => this.onPressRow(item)} style={[styles.row, !isLast && styles.notLastRow]}>
+        <View style={[styles.textRows]}>
+          <Text style={styles.itemTitle} numberOfLines={1}>{item.word}</Text>
+          <Text style={styles.itemPreview} numberOfLines={2}>{item.definition}</Text>
         </View>
-      </TouchableHighlight>
+        <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
+      </Touchable>
     )
   }
 

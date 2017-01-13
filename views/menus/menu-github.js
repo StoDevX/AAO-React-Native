@@ -11,6 +11,7 @@ import sample from 'lodash/sample'
 import type {MenuItemType, MasterCorIconMapType, StationMenuType} from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 const {data: fallbackMenu} = require('../../docs/pause-menu.json')
+import {tracker} from '../../analytics'
 
 const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
 
@@ -54,6 +55,7 @@ export class GitHubHostedMenu extends React.Component {
       stationMenus = data.stationMenus || []
       corIcons = data.corIcons || {}
     } catch (err) {
+      tracker.trackException(err.message)
       console.warn(err)
       foodItems = fallbackMenu.foodItems || []
       stationMenus = fallbackMenu.stationMenus || []

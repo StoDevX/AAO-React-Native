@@ -10,6 +10,13 @@ cache:
     - ./node_modules
     - $HOME/.gradle
 
+env:
+  global:
+    # `match` keychain info – the values don't matter, they're defined
+    # here so they're consistent throughout
+    MATCH_KEYCHAIN_NAME: travis-ios-keychain
+    MATCH_KEYCHAIN_PASSWORD: alpine
+
 matrix:
   fast_finish: true
   include:
@@ -90,9 +97,6 @@ before_install:
   - npm config set spin=false
   - npm config set progress=false
 
-  # see macoscope.com/blog/simplify-your-life-with-fastlane-match
-  - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
-
   # Dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
   - PATH=`echo $PATH | sed "s/\.\/node_modules\/\.bin//g"`
   - export PATH=$PATH
@@ -126,28 +130,17 @@ before_script:
       adb shell input keyevent 82 &
     fi
 
-  # `match` keychain info – the values don't matter, they're defined
-  # here so they're consistent throughout
-  - export MATCH_KEYCHAIN_NAME=travis-ios-keychain
-  - export MATCH_KEYCHAIN_PASSWORD=alpine
-
   # Fix keychain issues for iOS signing
   - if [[ "$type" == "ios" ]]; then bundle exec fastlane ios ci_keychains; fi
-  # add HockeySDK to iOS build
-  - if [[ "$type" == "ios" && "$run_deploy" == "yes" ]]; then scripts/hockeyapp.sh; fi
 
 
 script:
   # These sections will grow over time.
   # Each line is collapsed nicely in the travis output.
 
-  # ensure the env file exists
+  # ensure the env file exists and fill it out
   - touch .env.js
-  # and fill it out, if we're deploying
-  - |
-    if [[ "$run_deploy" == "yes" ]]; then
-      echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
-    fi
+  - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
 
   # JS
   # Lint
@@ -160,7 +153,7 @@ script:
       # Run the data-bundling process
       npm run bundle-data
       # If there are any changes in the output folder, kill the build.
-      # We need to commit the changes ourselves.
+      # We must commit the changes ourselves, before CI runs.
       git diff --quiet docs/
     fi
   # Type check
@@ -169,27 +162,20 @@ script:
   - if [[ "$type" == "js" ]]; then npm run bundle:ios; fi
   - if [[ "$type" == "js" ]]; then npm run bundle:android; fi
   # Run tests + collect coverage info
-  - if [[ "$type" == "js" ]]; then npm run test:js:coverage; fi
+  - if [[ "$type" == "js" ]]; then npm run test -- --coverage; fi
 
   # iOS
-  # Run Xcode tests – except they're failing again, so back to "build the app"
-  # - if [[ "$type" == "ios" && "$run_deploy" == "no" ]]; then bundle exec fastlane ios test; fi
-  - if [[ "$type" == "ios" && "$run_deploy" == "no" ]]; then bundle exec fastlane ios build; fi
-  # Build + release the app
-  - if [[ "$type" == "ios" && "$run_deploy" == "yes" ]]; then bundle exec fastlane ios auto_beta; fi
+  - if [[ "$type" == "ios" ]]; then bundle exec fastlane ios ci_run; fi
 
   # Android
-  # Build the app
-  - if [[ "$type" == "android" && "$run_deploy" == "no" ]]; then bundle exec fastlane android build; fi
-  # Release the app
-  - if [[ "$type" == "android" && "$run_deploy" == "yes" ]]; then bundle exec fastlane android auto_beta; fi
+  - if [[ "$type" == "android" ]]; then bundle exec fastlane android ci_run; fi
 
 
 after_success:
   - |
     if [[ "$type" == "js" ]]; then
       npm install coveralls
-      coveralls < ./coverage/lcov.info
+      ./node_modules/.bin/coveralls < ./coverage/lcov.info
     fi
 
 

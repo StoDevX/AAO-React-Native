@@ -11,11 +11,10 @@ import {
   Text,
   Platform,
   ListView,
-  TouchableHighlight,
   RefreshControl,
 } from 'react-native'
 import * as c from '../components/colors'
-
+import {tracker} from '../../analytics'
 import {isLoggedIn} from '../../lib/login'
 import delay from 'delay'
 import zip from 'lodash/zip'
@@ -108,6 +107,7 @@ export default class CoursesView extends React.Component {
       }
       this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
     } catch (error) {
+      tracker.trackException(error.message)
       this.setState({error})
       console.warn(error)
     }
@@ -131,12 +131,10 @@ export default class CoursesView extends React.Component {
   renderRow = (course: CourseType|Error) => {
     if (isError(course) || course.line && course.column && course.sourceURL) {
       return (
-        <TouchableHighlight underlayColor={'#ebebeb'}>
-          <View style={styles.rowContainer}>
-            <Text style={styles.itemTitle}>Error</Text>
-            <Text style={styles.itemPreview} numberOfLines={2}>{course.message || 'The course had an error'}</Text>
-          </View>
-        </TouchableHighlight>
+        <View style={styles.rowContainer}>
+          <Text style={styles.itemTitle}>Error</Text>
+          <Text style={styles.itemPreview} numberOfLines={2}>{course.message || 'The course had an error'}</Text>
+        </View>
       )
     }
 
@@ -145,14 +143,12 @@ export default class CoursesView extends React.Component {
     let locationTimePairs = zip(course.locations, course.times)
     let deptnum = `${course.department.join('/')} ${_isNaN(course.number) || isNil(course.number) ? '' : course.number}` + (course.section || '')
     return (
-      <TouchableHighlight underlayColor={'#ebebeb'}>
-        <View style={styles.rowContainer}>
-          <Text style={styles.itemTitle} numberOfLines={1}>{course.name}</Text>
-          <Text style={styles.itemPreview} numberOfLines={2}>{deptnum}</Text>
-          {locationTimePairs.map(([place, time], i) =>
-            <Text key={i} style={styles.itemPreview} numberOfLines={1}>{place}: {time}</Text>)}
-        </View>
-      </TouchableHighlight>
+      <View style={styles.rowContainer}>
+        <Text style={styles.itemTitle} numberOfLines={1}>{course.name}</Text>
+        <Text style={styles.itemPreview} numberOfLines={2}>{deptnum}</Text>
+        {locationTimePairs.map(([place, time], i) =>
+          <Text key={i} style={styles.itemPreview} numberOfLines={1}>{place}: {time}</Text>)}
+      </View>
     )
   }
 

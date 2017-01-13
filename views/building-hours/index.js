@@ -5,15 +5,15 @@
  */
 
 import React from 'react'
-import {View, Text, ListView, RefreshControl, StyleSheet, TouchableHighlight, TouchableNativeFeedback, Platform, Navigator} from 'react-native'
+import {View, Text, ListView, RefreshControl, StyleSheet, Platform, Navigator} from 'react-native'
 import {BuildingRow} from './row'
-
+import {tracker} from '../../analytics'
 import type {BuildingType} from './types'
 import delay from 'delay'
 import {data as buildingHours} from '../../docs/building-hours'
 import {Separator} from '../components/separator'
 import groupBy from 'lodash/groupBy'
-const Touchable = Platform.OS === 'ios' ? TouchableHighlight : TouchableNativeFeedback
+import {Touchable} from '../components/touchable'
 
 import * as c from '../components/colors'
 import moment from 'moment-timezone'
@@ -59,28 +59,27 @@ export class BuildingHoursView extends React.Component {
     })
   }
 
+  onPressRow = (data: BuildingType) => {
+    tracker.trackEvent('building-hours', data.name)
+    this.props.navigator.push({
+      id: 'BuildingHoursDetailView',
+      index: this.props.route.index + 1,
+      title: data.name,
+      backButtonTitle: 'Hours',
+      props: data,
+      sceneConfig: Platform.OS === 'android' ? Navigator.SceneConfigs.FloatFromBottom : undefined,
+    })
+  }
+
   renderRow = (data: BuildingType) => {
     return (
-      <Touchable
-        underlayColor='#ebebeb'
-        onPress={() => this.props.navigator.push({
-          id: 'BuildingHoursDetailView',
-          index: this.props.route.index + 1,
-          title: data.name,
-          backButtonTitle: 'Hours',
-          props: data,
-          sceneConfig: Platform.OS === 'android' ? Navigator.SceneConfigs.FloatFromBottom : undefined,
-        })}
-        // this child <View> is required; the Touchable needs a View as its direct child.
-      >
-        <View>
-          <BuildingRow
-            name={data.name}
-            info={data}
-            now={this.state.now}
-            style={styles.row}
-          />
-        </View>
+      <Touchable onPress={() => this.onPressRow(data)}>
+        <BuildingRow
+          name={data.name}
+          info={data}
+          now={this.state.now}
+          style={styles.row}
+        />
       </Touchable>
     )
   }

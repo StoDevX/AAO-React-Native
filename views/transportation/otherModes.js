@@ -11,6 +11,7 @@ import type {OtherModeType} from './types'
 import {data as modes} from '../../docs/transportation.json'
 import * as c from '../components/colors'
 import Button from 'react-native-button' // the button
+import {tracker} from '../../analytics'
 
 let styles = StyleSheet.create({
   container: {
@@ -67,7 +68,10 @@ export default class OtherModesView extends React.Component {
         <Text style={styles.title}>{data.name}</Text>
         <Text style={styles.content}>{data.description}</Text>
         <Button
-          onPress={() => Linking.openURL(data.url).catch(err => console.error('An error occurred', err))}
+          onPress={() => Linking.openURL(data.url).catch(err => {
+            tracker.trackException(err.message)
+            console.error('An error occurred', err)
+          })}
           style={styles.button}>
           More info
         </Button>

@@ -1,28 +1,33 @@
-# `fastlane` reports which actions are used No personal data is recorded.
-# Learn more at https://github.com/fastlane/enhancer
+# All fastlane files are Ruby files.
 
 # Customise this file! Documentation can be found here:
 # https://github.com/fastlane/fastlane/tree/master/fastlane/docs
 
-# You should change your syntax highlighting to Ruby.
-# All lines starting with a # are comments.
+# Set a minimum version for fastlane
+fastlane_version "2.5.0"
 
-# To automatically update fastlane if a new version is available:
-update_fastlane
-
-# This is the minimum version number required.
-# Update this if you use features of a newer version:
-fastlane_version "1.108.0"
-
-hockeyapp_api_token = ENV["HOCKEYAPP_TOKEN"]
-
-
+# These lanes are non-platform-specific
 desc "Adds any unregistered devices to the provisioning profile"
 lane :register do
   id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
   new_devices = get_unprovisioned_devices_from_hockey(app_bundle_id: id)
   register_devices(devices: new_devices)
   match(force: true)
+end
+
+desc "Bump the version string to a new version"
+lane :bump do |options|
+  old_version = get_package_key(key: "version")
+  UI.message("Current version: #{old_version}")
+  version = options[:version] || UI.input("New version: ").strip
+  UI.message("Upgrading from #{old_version} to #{version}")
+
+  # update iOS version
+  increment_version_number(version_number: version, xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
+  # update Android version
+  set_version_name(version_name: version, gradle_path: "android/app/build.gradle")
+  # update package.json version
+  set_package_data(data: {"version" => version})
 end
 
 
@@ -35,29 +40,6 @@ platform :ios do
   desc "Take screenshots"
   lane :screenshot do
     snapshot
-  end
-
-  desc "Activate the rogue signing team"
-  private_lane :go_rogue do
-    sh("cd .. && ruby scripts/go-rogue.rb")
-  end
-
-  desc "In case match needs to be updated - probably never needs to be run"
-  lane :update_match do
-    match(readonly: false)
-  end
-
-  desc "Do CI-system keychain setup"
-  lane :ci_keychains do
-    create_keychain(
-      name: ENV["MATCH_KEYCHAIN_NAME"],
-      password: ENV["MATCH_KEYCHAIN_PASSWORD"],
-      timeout: 3600,
-    )
-
-    match(readonly: true)
-
-    sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{ENV["MATCH_KEYCHAIN_PASSWORD"]} #{ENV["MATCH_KEYCHAIN_NAME"]}")
   end
 
   desc "Provisions the profiles; bumps the build number; builds the app"
@@ -74,21 +56,24 @@ platform :ios do
     )
 
     # Build the app
-    gym(sdk: "iphoneos10.1")
+    gym
   end
 
   desc "Submit a new Beta Build to HockeyApp"
   lane :beta do
+    hockeysdk
+
     build
 
     hockey(
-      api_token: hockeyapp_api_token,
+      api_token: ENV["HOCKEYAPP_TOKEN"],
       ipa: "./ios/build/AllAboutOlaf.ipa",
       commit_sha: ENV["TRAVIS_COMMIT"],
       notes: build_notes(platform: 'iOS'),
     )
   end
 
+  desc "Make a beta build if there have been new commits since the last beta"
   lane :auto_beta do
     last_commit = get_hockeyapp_version_commit(platform: 'iOS')
     current_commit = last_git_commit[:commit_hash]
@@ -98,23 +83,75 @@ platform :ios do
     UI.message "Thus, will we beta? #{last_commit != current_commit}"
     beta unless last_commit == current_commit
   end
+
+  # Lanes specifically for the CIs
+  desc "Do CI-system keychain setup"
+  lane :ci_keychains do
+    token = ENV["CI_USER_TOKEN"]
+    keychain = ENV["MATCH_KEYCHAIN_NAME"]
+    password = ENV["MATCH_KEYCHAIN_PASSWORD"]
+
+    # see macoscope.com/blog/simplify-your-life-with-fastlane-match
+    # we're allowing the CI access to the keys repo
+    File.open("#{ENV['HOME']}/.netrc", "a+") do |file|
+      file << "machine github.com\n  login #{token}"
+    end
+
+    create_keychain(
+      name: keychain,
+      password: password,
+      timeout: 3600,
+    )
+
+    match(readonly: true)
+
+    sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain}")
+  end
+
+  desc "Add HockeySDK to the app"
+  private_lane :hockeysdk do
+    podpath = "../ios/Podfile"
+
+    # append the HockeySDK to the Podfile, unless it already lists it
+    File.open(podpath, "a") do |file|
+      file << "pod \"HockeySDK\"\n"
+    end unless File.foreach(podpath).grep(/HockeySDK/).any?
+
+    # and install the new pods
+    cocoapods(podfile: "./ios")
+  end
+
+  desc "Run iOS builds or tests, as appropriate"
+  lane :ci_run do
+    # I'd like to test, instead of just building, but… Xcode's tests keep
+    # failing on us. So, we just build, if we're not deploying.
+    should_deploy = ENV["run_deploy"] == "yes"
+    unless should_deploy
+      build
+    else
+      auto_beta
+    end
+  end
+
+  desc "In case match needs to be updated - probably never needs to be run"
+  lane :update_match do
+    match(readonly: false)
+  end
 end
 
 
 platform :android do
-  dir = "android"
-
   desc "Makes a build"
   lane :build do
-    increment_version_code(
-      version_code: get_version(platform: 'Android'),
-      app_folder_name: dir + '/app',
+    set_version_code(
+      version_code: get_version(platform: "Android"),
+      gradle_path: "./android/app/build.gradle",
     )
 
     gradle(
       task: "assemble",
       build_type: "Release",
-      project_dir: dir,
+      project_dir: "./android",
       print_command: true,
       print_command_output: true,
     )
@@ -126,13 +163,14 @@ platform :android do
 
     # Upload to HockeyApp
     hockey(
-      api_token: hockeyapp_api_token,
+      api_token: ENV["HOCKEYAPP_TOKEN"],
       apk: "./android/app/build/outputs/apk/app-release-unsigned.apk",
       commit_sha: ENV["TRAVIS_COMMIT"],
       notes: build_notes(platform: 'Android'),
     )
   end
 
+  desc "Make a beta build if there have been new commits since the last beta"
   lane :auto_beta do
     last_commit = get_hockeyapp_version_commit(platform: 'Android')
     current_commit = last_git_commit[:commit_hash]
@@ -142,10 +180,18 @@ platform :android do
     UI.message "Thus, will we beta? #{last_commit != current_commit}"
     beta unless last_commit == current_commit
   end
+
+  desc "Run the appropriate action on CI"
+  lane :ci_run do
+    should_deploy = ENV["run_deploy"] == "yes"
+    unless should_deploy
+      build
+    else
+      auto_beta
+    end
+  end
 end
 
-
-# Below here are the custom helpers we've defined
 
 desc "Makes a changelog from the timespan passed"
 private_lane :make_changelog do |options|

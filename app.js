@@ -5,18 +5,19 @@
 
 // Tweak the global fetch
 import './globalize-fetch'
+import {tracker} from './analytics'
 
 import React from 'react'
 import {
   Navigator,
   BackAndroid,
   StyleSheet,
-  TouchableOpacity,
   Text,
   Platform,
 } from 'react-native'
 import {Provider} from 'react-redux'
 import {store} from './flux'
+import {Touchable} from './views/components/touchable'
 
 import CalendarView from './views/calendar'
 import ContactsView from './views/contacts'
@@ -48,6 +49,7 @@ import NoRoute from './views/components/no-route'
 // Render a given scene
 function renderScene(route, navigator) {
   let props = {route, navigator, ...(route.props || {})}
+  tracker.trackScreenView(route.id)
   switch (route.id) {
     case 'HomeView': return <HomeView {...props} />
     case 'MenusView': return <MenusView {...props} />
@@ -224,12 +226,14 @@ function LeftButton(route, navigator, index, navState) {
 
   if (route.id === 'HomeView') {
     return (
-      <TouchableOpacity
+      <Touchable
+        borderless
+        highlight={false}
         style={[styles.settingsButton]}
         onPress={openSettings(route, navigator)}
       >
         <Icon style={styles.settingsIcon} name='ios-settings' />
-      </TouchableOpacity>
+      </Touchable>
     )
   }
 
@@ -242,22 +246,26 @@ function LeftButton(route, navigator, index, navState) {
   }
   if (Platform.OS === 'android') {
     return (
-      <TouchableOpacity
+      <Touchable
+        borderless
+        highlight={false}
         style={styles.backButton}
         onPress={() => navigator.pop()}
       >
-          <Icon style={styles.backButtonIcon} name='md-arrow-back' />
-      </TouchableOpacity>
+        <Icon style={styles.backButtonIcon} name='md-arrow-back' />
+      </Touchable>
     )
   } else {
     return (
-      <TouchableOpacity
+      <Touchable
+        borderless
+        highlight={false}
         style={styles.backButton}
         onPress={() => navigator.pop()}
       >
         <Icon style={styles.backButtonIcon} name='ios-arrow-back' />
         <Text style={styles.backButtonText}>{backTitle}</Text>
-      </TouchableOpacity>
+      </Touchable>
     )
   }
 }
@@ -266,22 +274,26 @@ function LeftButton(route, navigator, index, navState) {
 function RightButton(route, navigator) {
   if (route.onDismiss) {
     return (
-      <TouchableOpacity
+      <Touchable
+        borderless
+        highlight={false}
         style={styles.backButtonClose}
         onPress={() => route.onDismiss(route, navigator)}
       >
         <Text style={styles.backButtonCloseText}>Close</Text>
-      </TouchableOpacity>
+      </Touchable>
     )
   }
   if (route.id === 'HomeView') {
     return (
-      <TouchableOpacity
+      <Touchable
+        borderless
+        highlight={false}
         style={[styles.editHomeButton]}
         onPress={openEditHome(route, navigator)}
       >
         <Text style={[styles.editHomeText]}>Edit</Text>
-      </TouchableOpacity>
+      </Touchable>
     )
   }
 }
@@ -300,6 +312,7 @@ function Title(route) {
 
 class App extends React.Component {
   componentDidMount() {
+    tracker.trackEvent('app', 'launch')
     BackAndroid.addEventListener('hardwareBackPress', this.registerAndroidBackButton)
   }
 

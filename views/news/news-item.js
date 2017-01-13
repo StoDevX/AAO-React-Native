@@ -1,11 +1,11 @@
 // @flow
-import React, {PropTypes} from 'react'
+import React from 'react'
 import {WebView} from 'react-native'
 
 import type {StoryType} from './types'
 
-export default function NewsItemView({story: {content, title}}: {source: string, story: StoryType}) {
-  content = `
+export default function NewsItemView({story}: {story: StoryType}) {
+  const content = `
     <style>
       body {
         font-family: -apple-system, Roboto, sans-serif;
@@ -47,22 +47,11 @@ export default function NewsItemView({story: {content, title}}: {source: string,
       }
     </style>
     <header class="aao-header">
-      <h1>${title}</h1>
+      <h1>${story.title[0]}</h1>
     </header>
-    ${content}
+    ${(story['content:encoded'] || story['description'])[0]}
   `
   return (
     <WebView source={{html: content}} />
   )
-}
-
-NewsItemView.propTypes = {
-  story: PropTypes.shape({
-    author: PropTypes.string,
-    categories: PropTypes.arrayOf(PropTypes.string),
-    content: PropTypes.string,
-    link: PropTypes.string,
-    publishedDate: PropTypes.string,
-    title: PropTypes.string,
-  }).isRequired,
 }

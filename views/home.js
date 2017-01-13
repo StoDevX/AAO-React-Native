@@ -5,18 +5,15 @@
  */
 
 import React from 'react'
-import type {Element} from 'react'
 import {
   Navigator,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   StatusBar,
-  View,
   Platform,
-  TouchableNativeFeedback,
 } from 'react-native'
+import {Touchable} from './components/touchable'
 
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/Entypo'
@@ -30,21 +27,13 @@ let Viewport = Dimensions.get('window')
 import type {ViewType} from './views'
 import {allViews} from './views'
 
-const Touchable = ({children, onPress}: {onPress: () => any, children?: Element<any>}) => {
-  return Platform.OS === 'ios'
-    ? <TouchableOpacity onPress={onPress} activeOpacity={0.65}>{children}</TouchableOpacity>
-    : <TouchableNativeFeedback onPress={onPress}>{children}</TouchableNativeFeedback>
-}
-
 function HomeScreenButton({view, onPress}: {view: ViewType, onPress: () => any}) {
   return (
-    <Touchable onPress={onPress}>
-      <View style={[styles.rectangle, {backgroundColor: view.tint}]}>
-        <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
-        <Text style={styles.rectangleButtonText}>
-          {view.title}
-        </Text>
-      </View>
+    <Touchable highlight={false} onPress={onPress} style={[styles.rectangle, {backgroundColor: view.tint}]}>
+      <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
+      <Text style={styles.rectangleButtonText}>
+        {view.title}
+      </Text>
     </Touchable>
   )
 }

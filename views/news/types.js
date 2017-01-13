@@ -1,18 +1,23 @@
 // @flow
-import {Navigator} from 'react-native'
 
 export type StoryType = {
-  author: string,
-  categories: string[],
-  content: string,
-  contentSnippet: string,
-  link: string,
-  publishedDate: string,
-  title: string,
+  'dc:creator': string[],
+  category: string[],
+  'content:encoded': string[],
+  description: string[],
+  link: string[],
+  pubDate: string[],
+  title: string[],
 };
 
-export type NewsViewPropsType = {
-  navigator: typeof Navigator,
-  route: Object,
-  url: string,
+export type FeedResponseType = {
+  rss: {
+    channel: Array<{
+      title: string[],
+      'atom:link': mixed[],
+      link: string[],
+      description: string[],
+      item: StoryType[],
+    }>,
+  }
 };
