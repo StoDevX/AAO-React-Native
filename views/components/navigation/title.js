@@ -10,7 +10,7 @@ import type {RouteType} from '../../types'
 export function Title(route: RouteType) {
   return (
     <Text
-      style={[styles.titleText, {maxWidth: Dimensions.get('window').width / 2.5}]}
+      style={[styles.text, {maxWidth: Dimensions.get('window').width / 2.5}]}
       numberOfLines={1}
       ellipsizeMode='tail'
     >
@@ -21,7 +21,7 @@ export function Title(route: RouteType) {
 
 
 const styles = StyleSheet.create({
-  titleText: {
+  text: {
     color: 'white',
     fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-light',
     fontSize: Platform.OS === 'ios' ? 17 : 20,

@@ -32,11 +32,11 @@ export function LeftButton(
 
   let contents = null
   if (Platform.OS === 'android') {
-    contents = <Icon style={styles.backButtonIcon} name='md-arrow-back' />
+    contents = <Icon style={styles.icon} name='md-arrow-back' />
   } else {
     contents = [
-      <Icon key={0} style={styles.backButtonIcon} name='ios-arrow-back' />,
-      <Text key={1} style={styles.backButtonText}>{backTitle}</Text>,
+      <Icon key={0} style={styles.icon} name='ios-arrow-back' />,
+      <Text key={1} style={styles.text}>{backTitle}</Text>,
     ]
   }
 
@@ -44,7 +44,7 @@ export function LeftButton(
     <Touchable
       borderless
       highlight={false}
-      style={styles.backButton}
+      style={styles.button}
       onPress={() => navigator.pop()}
     >
       {contents}
@@ -53,15 +53,15 @@ export function LeftButton(
 }
 
 const styles = StyleSheet.create({
-  backButton: {
+  button: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  backButtonText: {
+  text: {
     fontSize: 17,
     color: 'white',
   },
-  backButtonIcon: {
+  icon: {
     color: 'white',
     fontSize: Platform.OS === 'ios' ? 36 : 24,
     paddingVertical: Platform.OS === 'ios' ? 4 : 16,

@@ -15,10 +15,10 @@ export function EditHomeButton(
     <Touchable
       borderless
       highlight={false}
-      style={[styles.editHomeButton, buttonStyle]}
+      style={[styles.button, buttonStyle]}
       onPress={() => openEditHome(route, navigator)}
     >
-      <Text style={styles.editHomeText}>Edit</Text>
+      <Text style={styles.text}>Edit</Text>
     </Touchable>
   )
 }
@@ -46,13 +46,13 @@ function openEditHome(route, navigator: Navigator) {
 }
 
 const styles = StyleSheet.create({
-  editHomeButton: {
+  button: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
   },
-  editHomeText: {
+  text: {
     fontSize: 17,
     color: 'white',
     paddingVertical: Platform.OS === 'ios' ? 10 : 16,
