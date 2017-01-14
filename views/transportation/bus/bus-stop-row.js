@@ -27,7 +27,14 @@ const styles = StyleSheet.create({
   },
 })
 
-export function BusStopRow({time, now, barColor, currentStopColor, place, times}: {
+export function BusStopRow({
+  time,
+  now,
+  barColor,
+  currentStopColor,
+  place,
+  times,
+}: {
   time: moment,
   now: moment,
   barColor: string,
