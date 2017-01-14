@@ -7,7 +7,7 @@ export type RouteType = {
   id: string,
   title: string,
   backButtonTitle?: string,
-  onDismiss?: (any, any) => any,
+  onDismiss: (r: RouteType, n: Navigator) => any,
 };
 
 export type NavStateType = {
