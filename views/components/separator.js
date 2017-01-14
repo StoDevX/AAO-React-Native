@@ -1,11 +1,20 @@
 // @flow
 import React from 'react'
 import {View, StyleSheet, Platform} from 'react-native'
+import * as c from './colors'
 
 const styles = StyleSheet.create({
   separator: {
-    borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
-    borderBottomColor: Platform.OS === 'ios' ? '#c8c7cc' : '#e0e0e0',
+    ...Platform.select({
+      ios: {
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: c.iosSeparator,
+      },
+      android: {
+        borderBottomWidth: 1,
+        borderBottomColor: c.androidSeparator,
+      },
+    }),
   },
 })
 
