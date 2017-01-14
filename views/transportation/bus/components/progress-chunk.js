@@ -50,6 +50,8 @@ export const ProgressChunk = ({
   beforeStop,
   currentStopColor,
   skippingStop,
+  isFirstChunk,
+  isLastChunk,
 }: {
   afterStop: boolean,
   atStop: boolean,
@@ -57,6 +59,8 @@ export const ProgressChunk = ({
   beforeStop: boolean,
   currentStopColor: string,
   skippingStop: boolean,
+  isFirstChunk: boolean,
+  isLastChunk: boolean,
 }) => {
   // To draw the bar, we draw a chunk of the bar, then we draw the dot, then
   // we draw the last chunk of the bar.
