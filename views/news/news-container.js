@@ -21,6 +21,97 @@ import {AllHtmlEntities} from 'html-entities'
 
 const entities = new AllHtmlEntities()
 
+class NewsRow extends React.Component {
+  state = {
+    thumbnailUrl: null,
+  }
+
+  componentWillMount() {
+    this.makeThumbnail(this.props)
+  }
+
+  componentWillRecieveProps(nextProps) {
+    this.makeThumbnail(nextProps)
+  }
+
+  props: {
+    story: StoryType,
+    onPress: (title: string, story: StoryType) => any,
+  };
+
+  makeThumbnail = async props => {
+    const thumbnailUrl = await new Promise(resolve => {
+      // grab the URL
+      const url = this.findImage(props.story['content:encoded'][0])
+      // if we didn't find a valid URL, return null
+      if (!url) {
+        resolve(null)
+      }
+
+      // Image.getSize is a callback-based API
+      Image.getSize(url,
+        (width, height) => {
+          // so if it's successful, we "resolve" the promise
+          // – aka we return a value
+          if (width >= 50 && height >= 50) {
+            // if the image is big enough, we return the url
+            resolve(url)
+          }
+          // otherwise, we return `null`
+          resolve(null)
+        },
+        // if getSize fails, we also resolve with `null`
+        () => resolve(null))
+    })
+
+    if (!thumbnailUrl) {
+      return
+    }
+
+    this.setState({thumbnailUrl})
+  }
+
+  findImage = (content: string) => {
+    let reUrl = /^https?:\/\/[^\s/$.?#].[^\s]*$/
+    let reImg = /<img.*src=["'](.*?)["'].*?>/
+    let imageMatch = reImg.exec(content)
+
+    if (!imageMatch) {
+      return null
+    }
+
+    let imageUrl = imageMatch[1]
+    if (!reUrl.test(imageUrl)) {
+      return null
+    }
+
+    return imageUrl
+  }
+
+  render() {
+    let title = entities.decode(this.props.story.title[0])
+    let snippet = entities.decode(fastGetTrimmedText(this.props.story.description[0]))
+    let image = this.state.thumbnailUrl
+      ? <Image source={{uri: this.state.thumbnailUrl}} style={styles.image} />
+      : null
+
+    return (
+      <ListRow
+        onPress={() => this.props.onPress(title, this.props.story)}
+        arrowPosition='top'
+      >
+        <Row justifyContent='space-between'>
+          <Column>
+            <Title lines={1}>{title}</Title>
+            <Detail lines={2}>{snippet}</Detail>
+          </Column>
+          {image}
+        </Row>
+      </ListRow>
+    )
+  }
+}
+
 export default class NewsContainer extends React.Component {
   state = {
     dataSource: new ListView.DataSource({
@@ -40,29 +131,6 @@ export default class NewsContainer extends React.Component {
     url: string,
     mode: 'rss'|'wp-json',
   };
-
-  findImage = (content: string) => {
-    let reUrl = /^https?:\/\/[^\s/$.?#].[^\s]*$/
-    let reImg = /<img.*src=["'](.*?)["'].*?>/
-    let imageMatch = reImg.exec(content)
-
-    if (!imageMatch) {
-      return null
-    }
-
-    let imageUrl = imageMatch[1]
-    if (!reUrl.test(imageUrl)) {
-      return null
-    }
-
-    let icon = <Image source={{uri: imageUrl}} style={styles.image} />
-
-    Image.getSize(imageUrl, (width, height) => {
-      icon = (width >= 50 && height >= 50) ? icon : null
-    })
-
-    return icon
-  }
 
   fetchData = async () => {
     try {
@@ -97,23 +165,7 @@ export default class NewsContainer extends React.Component {
   }
 
   renderRow = (story: StoryType) => {
-    let title = entities.decode(story.title[0])
-    let snippet = entities.decode(fastGetTrimmedText(story.description[0]))
-    let image = this.findImage(story['content:encoded'][0])
-    return (
-      <ListRow
-        onPress={() => this.onPressNews(title, story)}
-        arrowPosition='top'
-      >
-        <Row justifyContent='space-between'>
-          <Column>
-            <Title lines={1}>{title}</Title>
-            <Detail lines={2}>{snippet}</Detail>
-          </Column>
-          {image}
-        </Row>
-      </ListRow>
-    )
+    return <NewsRow story={story} onPress={this.onPressNews} />
   }
 
   renderSeparator = (sectionId: string, rowId: string) => {
