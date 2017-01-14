@@ -16,22 +16,22 @@ export function CloseScreenButton(
     <Touchable
       borderless
       highlight={false}
-      style={[styles.backButtonClose, buttonStyle]}
+      style={[styles.button, buttonStyle]}
       onPress={route.onDismiss ? () => route.onDismiss(route, navigator) : noop}
     >
-      <Text style={styles.backButtonCloseText}>Close</Text>
+      <Text style={styles.text}>Close</Text>
     </Touchable>
   )
 }
 
 const styles = StyleSheet.create({
-  backButtonClose: {
+  button: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: Platform.OS === 'ios' ? 10 : 16,
     paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
   },
-  backButtonCloseText: {
+  text: {
     fontSize: 17,
     color: 'white',
   },
