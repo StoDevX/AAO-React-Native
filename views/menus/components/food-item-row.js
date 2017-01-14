@@ -26,8 +26,8 @@ export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodI
       fullWidth={true}
       arrowPosition='none'
     >
-      <Row>
-        <View style={[styles.badge, {width: left, alignSelf: 'center'}]}>
+      <Row alignItems='center'>
+        <View style={[styles.badge, {width: left}]}>
           {badgeSpecials && data.special ? <Icon style={styles.badgeIcon} name={specialsIcon} /> : null}
         </View>
 
