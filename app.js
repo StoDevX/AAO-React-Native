@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
 let editHomeButtonActive = false
 function openEditHome(route, navigator) {
   return () => {
-    if (editHomeButtonActive) {
+    if (editHomeButtonActive || settingsButtonActive) {
       return
     }
 
@@ -199,7 +199,7 @@ function openEditHome(route, navigator) {
 let settingsButtonActive = false
 function openSettings(route, navigator) {
   return () => {
-    if (settingsButtonActive) {
+    if (settingsButtonActive || editHomeButtonActive) {
       return
     }
 
@@ -225,12 +225,13 @@ function LeftButton(route, navigator, index, navState) {
   }
 
   if (route.id === 'HomeView') {
+    let onPressSettings = (settingsButtonActive || editHomeButtonActive) ? () => {} : openSettings(route, navigator)
     return (
       <Touchable
         borderless
         highlight={false}
         style={[styles.settingsButton]}
-        onPress={openSettings(route, navigator)}
+        onPress={onPressSettings}
       >
         <Icon style={styles.settingsIcon} name='ios-settings' />
       </Touchable>
@@ -273,6 +274,10 @@ function LeftButton(route, navigator, index, navState) {
 // Leaving the boilerplate here for future expansion
 function RightButton(route, navigator) {
   if (route.onDismiss) {
+    if (route.id === 'SettingsView' || route.id === 'EditHomeView') {
+      settingsButtonActive = false
+      editHomeButtonActive = false
+    }
     return (
       <Touchable
         borderless
@@ -285,12 +290,13 @@ function RightButton(route, navigator) {
     )
   }
   if (route.id === 'HomeView') {
+    let onPressEditHome = (settingsButtonActive || editHomeButtonActive) ? () => {} : openEditHome(route, navigator)
     return (
       <Touchable
         borderless
         highlight={false}
         style={[styles.editHomeButton]}
-        onPress={openEditHome(route, navigator)}
+        onPress={onPressEditHome}
       >
         <Text style={[styles.editHomeText]}>Edit</Text>
       </Touchable>
