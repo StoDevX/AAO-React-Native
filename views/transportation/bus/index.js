@@ -51,14 +51,7 @@ export default class BusView extends React.Component {
 
     return (
       <ScrollView>
-        <BusLine
-          style={{
-            marginTop: Platform.OS === 'ios' ? 15 : 0,
-            marginBottom: Platform.OS === 'ios' ? 0 : 8,
-          }}
-          line={activeBusLine}
-          now={now}
-        />
+        <BusLine line={activeBusLine} now={now} />
       </ScrollView>
     )
   }
