@@ -42,12 +42,14 @@ export default class NewsContainer extends React.Component {
   };
 
   findImage = (content: string) => {
-    let re = '<img.*?src="([^"]*)"[^>]*>(?:</img>)?'
-    let imageMatch = content.match(re)
+    let reUrl = /^https?:\/\/[^\s/$.?#].[^\s]*$/
+    let reImg = /<img.*src=["'](.*?)["'].*?>/g
+    let images = content.match(reImg)
 
-    if (imageMatch) {
-      let src = imageMatch[1]
-      return <Image source={{uri: src}} style={styles.image} />
+    if (images) {
+      let imageUrls = images.map(tag => reImg.exec(tag))
+      let validUrls = imageUrls[0].filter(url => reUrl.test(url))[0]
+      return <Image source={{uri: validUrls}} style={styles.image} />
     }
 
     return null
