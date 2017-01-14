@@ -10,9 +10,10 @@ import {Title} from './title'
 import {LeftButton} from './button-left'
 import {RightButton} from './button-right'
 
-export function NavigationBar() {
+export function NavigationBar(props: mixed) {
   return (
     <Navigator.NavigationBar
+      {...props}
       style={styles.navigationBar}
       routeMapper={{
         LeftButton,
