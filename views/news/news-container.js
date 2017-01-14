@@ -21,6 +21,10 @@ import {AllHtmlEntities} from 'html-entities'
 
 const entities = new AllHtmlEntities()
 
+type NewsRowPropsType = {
+  story: StoryType,
+  onPress: (t: string, s: StoryType) => any,
+};
 class NewsRow extends React.Component {
   state = {
     thumbnailUrl: null,
@@ -30,16 +34,13 @@ class NewsRow extends React.Component {
     this.makeThumbnail(this.props)
   }
 
-  componentWillRecieveProps(nextProps) {
+  componentWillReceiveProps(nextProps: NewsRowPropsType) {
     this.makeThumbnail(nextProps)
   }
 
-  props: {
-    story: StoryType,
-    onPress: (title: string, story: StoryType) => any,
-  };
+  props: NewsRowPropsType;
 
-  makeThumbnail = async props => {
+  makeThumbnail = async (props: NewsRowPropsType) => {
     const thumbnailUrl = await new Promise(resolve => {
       // grab the URL
       const url = this.findImage(props.story['content:encoded'][0])
