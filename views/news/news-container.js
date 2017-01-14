@@ -55,7 +55,13 @@ export default class NewsContainer extends React.Component {
       return null
     }
 
-    return <Image source={{uri: imageUrl}} style={styles.image} />
+    let icon = <Image source={{uri: imageUrl}} style={styles.image} />
+
+    Image.getSize(imageUrl, (width, height) => {
+      icon = (width >= 50 && height >= 50) ? icon : null
+    })
+
+    return icon
   }
 
   fetchData = async () => {
