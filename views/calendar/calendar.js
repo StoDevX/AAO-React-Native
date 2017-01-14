@@ -5,25 +5,17 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  Text,
-  Platform,
-  ListView,
-  RefreshControl,
-  View,
-} from 'react-native'
+import {StyleSheet, Platform, ListView, RefreshControl} from 'react-native'
 import {tracker} from '../../analytics'
 import type {EventType} from './types'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
 import delay from 'delay'
-import {Separator} from '../components/separator'
+import {ListSeparator, ListSectionHeader} from '../components/list'
 import {NoticeView} from '../components/notice'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
 import EventView from './event'
-import * as c from '../components/colors'
 import { GOOGLE_CALENDAR_API_KEY } from '../../lib/config'
 const TIMEZONE = 'America/Winnipeg'
 
@@ -131,30 +123,15 @@ export default class CalendarView extends React.Component {
   }
 
   renderRow = (data: EventType) => {
-    return (
-      <EventView
-        style={styles.row}
-        summary={data.summary}
-        startTime={data.startTime}
-        endTime={data.endTime}
-        location={data.location}
-        isOngoing={data.isOngoing}
-      />
-    )
+    return <EventView {...data} />
   }
 
-  renderSectionHeader = (sectionData: Object, sectionIdentifier: any) => {
-    return (
-      <View style={styles.rowSectionHeader}>
-        <Text style={styles.rowSectionHeaderText} numberOfLines={1}>
-          {sectionIdentifier}
-        </Text>
-      </View>
-    )
+  renderSectionHeader = (sectionData: EventType[], sectionIdentifier: string) => {
+    return <ListSectionHeader title={sectionIdentifier} spacing={{left: 10}} />
   }
 
   renderSeparator = (sectionID: any, rowID: any) => {
-    return <Separator key={`${sectionID}-${rowID}`} />
+    return <ListSeparator fullWidth={true} key={`${sectionID}-${rowID}`} />
   }
 
   render() {
@@ -194,22 +171,5 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-  },
-  row: {
-    // marginLeft: 10,
-    paddingRight: 10,
-  },
-  rowSectionHeader: {
-    backgroundColor: c.iosListSectionHeader,
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 10,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#ebebeb',
-  },
-  rowSectionHeaderText: {
-    color: 'black',
-    fontWeight: 'bold',
   },
 })
