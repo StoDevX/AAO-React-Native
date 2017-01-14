@@ -115,7 +115,7 @@ install:
   # install packages
   - npm install
   # install fastlane
-  - if [[ "$type" == "android" || "$type" == "ios" ]]; then bundle install --deployment; fi
+  - if [[ "$type" == "android" || "$type" == "ios" ]]; then bundle install; fi
 
 
 before_script:
