@@ -2,6 +2,7 @@
 import React from 'react'
 import {
   StyleSheet,
+  Image,
   ListView,
   Platform,
   RefreshControl,
@@ -11,7 +12,7 @@ import delay from 'delay'
 import {parseXml} from './parse-feed'
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
-import {Column} from '../components/layout'
+import {Row, Column} from '../components/layout'
 import {ListRow, ListSeparator, Detail, Title} from '../components/list'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
@@ -39,6 +40,18 @@ export default class NewsContainer extends React.Component {
     url: string,
     mode: 'rss'|'wp-json',
   };
+
+  findImage = (content: string) => {
+    let re = '<img.*?src="([^"]*)"[^>]*>(?:</img>)?'
+    let imageMatch = content.match(re)
+
+    if (imageMatch !== null && imageMatch !== undefined) {
+      let src = imageMatch[1]
+      return <Image source={{uri: src}} style={styles.image} />
+    }
+
+    return false
+  }
 
   fetchData = async () => {
     try {
@@ -75,15 +88,19 @@ export default class NewsContainer extends React.Component {
   renderRow = (story: StoryType) => {
     let title = entities.decode(story.title[0])
     let snippet = entities.decode(fastGetTrimmedText(story.description[0]))
+    let image = this.findImage(story['content:encoded'][0])
     return (
       <ListRow
         onPress={() => this.onPressNews(title, story)}
         arrowPosition='top'
       >
-        <Column>
-          <Title lines={1}>{title}</Title>
-          <Detail lines={2}>{snippet}</Detail>
-        </Column>
+        <Row justifyContent='space-between'>
+          <Column>
+            <Title lines={1}>{title}</Title>
+            <Detail lines={2}>{snippet}</Detail>
+          </Column>
+          {image}
+        </Row>
       </ListRow>
     )
   }
@@ -137,5 +154,12 @@ export default class NewsContainer extends React.Component {
 const styles = StyleSheet.create({
   listContainer: {
     backgroundColor: '#ffffff',
+  },
+  image: {
+    height: 50,
+    width: 50,
+    marginTop: 3,
+    marginLeft: 6,
+    marginRight: 6,
   },
 })
