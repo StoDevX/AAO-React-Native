@@ -13,14 +13,16 @@ import type {RouteType} from '../../types'
 export function OpenSettingsButton(
   {route, navigator, buttonStyle}: {route: RouteType, navigator: Navigator, buttonStyle?: any}
 ) {
-  <Touchable
-    borderless
-    highlight={false}
-    style={[styles.button, buttonStyle]}
-    onPress={openSettings(route, navigator)}
-  >
-    <Icon style={styles.icon} name='ios-settings' />
-  </Touchable>
+  return (
+    <Touchable
+      borderless
+      highlight={false}
+      style={[styles.button, buttonStyle]}
+      onPress={openSettings(route, navigator)}
+    >
+      <Icon style={styles.icon} name='ios-settings' />
+    </Touchable>
+  )
 }
 
 
