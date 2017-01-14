@@ -48,7 +48,7 @@ export function BusStopRow({time, now, barColor, currentStopColor, place, times}
       <Row>
         <ProgressChunk {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}} />
 
-        <Column style={styles.internalPadding}>
+        <Column flex={1} style={styles.internalPadding}>
           <Title
             bold={false}
             style={[
@@ -59,7 +59,7 @@ export function BusStopRow({time, now, barColor, currentStopColor, place, times}
           >
             {place}
           </Title>
-          <Detail>
+          <Detail lines={1}>
             <ScheduleTimes {...{times, skippingStop}} />
           </Detail>
         </Column>
@@ -73,10 +73,7 @@ const ScheduleTimes = ({times, skippingStop}: {
   times: FancyBusTimeListType,
 }) => {
   return (
-    <Text
-      style={skippingStop && styles.skippingStopDetail}
-      numberOfLines={1}
-    >
+    <Text style={skippingStop && styles.skippingStopDetail}>
       {times
         // and format the times
         .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
