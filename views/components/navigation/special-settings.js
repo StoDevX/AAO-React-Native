@@ -18,7 +18,7 @@ export function OpenSettingsButton(
       borderless
       highlight={false}
       style={[styles.button, buttonStyle]}
-      onPress={openSettings(route, navigator)}
+      onPress={() => openSettings(route, navigator)}
     >
       <Icon style={styles.icon} name='ios-settings' />
     </Touchable>
@@ -28,25 +28,23 @@ export function OpenSettingsButton(
 
 let settingsButtonActive = false
 function openSettings(route, navigator) {
-  return () => {
-    if (settingsButtonActive) {
-      return
-    }
-
-    function closeSettings(route, navigator) {
-      settingsButtonActive = false
-      navigator.pop()
-    }
-
-    settingsButtonActive = true
-    navigator.push({
-      id: 'SettingsView',
-      title: 'Settings',
-      index: route.index + 1,
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-      onDismiss: closeSettings,
-    })
+  if (settingsButtonActive) {
+    return
   }
+
+  function closeSettings(route, navigator) {
+    settingsButtonActive = false
+    navigator.pop()
+  }
+
+  settingsButtonActive = true
+  navigator.push({
+    id: 'SettingsView',
+    title: 'Settings',
+    index: route.index + 1,
+    sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+    onDismiss: closeSettings,
+  })
 }
 
 const styles = StyleSheet.create({
