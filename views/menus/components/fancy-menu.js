@@ -150,7 +150,7 @@ class FancyMenuView extends React.Component {
 
     let message = ''
     if (specialsFilterEnabled && sortedByStation.length === 0) {
-      message = 'No items to show. There may be no specials today.\nTry changing the filters.'
+      message = 'No items to show. There may be no specials today. Try changing the filters.'
     }
 
     return (
