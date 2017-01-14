@@ -23,8 +23,9 @@ const entities = new AllHtmlEntities()
 
 type NewsRowPropsType = {
   story: StoryType,
-  onPress: (t: string, s: StoryType) => any,
+  onPress: (title: string, story: StoryType) => any,
 };
+
 class NewsRow extends React.Component {
   state = {
     thumbnailUrl: null,
@@ -46,7 +47,7 @@ class NewsRow extends React.Component {
       const url = this.findImage(props.story['content:encoded'][0])
       // if we didn't find a valid URL, return null
       if (!url) {
-        resolve(null)
+        return null
       }
 
       // Image.getSize is a callback-based API
