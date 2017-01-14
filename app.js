@@ -18,7 +18,7 @@ import {
 import {Provider} from 'react-redux'
 import {store} from './flux'
 import * as c from './views/components/colors'
-import {NavigationBar} from './views/components/navigation'
+import {Title, LeftButton, RightButton} from './views/components/navigation'
 
 import CalendarView from './views/calendar'
 import ContactsView from './views/contacts'
@@ -89,6 +89,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Platform.OS === 'ios' ? c.iosLightBackground : c.androidLightBackground,
   },
+  navigationBar: {
+    backgroundColor: c.olevilleGold,
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: StyleSheet.hairlineWidth },
+        shadowColor: 'rgb(100, 100, 100)',
+        shadowOpacity: 0.5,
+        shadowRadius: StyleSheet.hairlineWidth,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
 })
 
 class App extends React.Component {
@@ -115,7 +129,16 @@ class App extends React.Component {
     return (
       <Navigator
         ref={nav => this._navigator = nav}
-        navigationBar={<NavigationBar />}
+        navigationBar={
+          <Navigator.NavigationBar
+            style={styles.navigationBar}
+            routeMapper={{
+              LeftButton,
+              RightButton,
+              Title,
+            }}
+          />
+        }
         initialRoute={{
           id: 'HomeView',
           title: 'All About Olaf',
