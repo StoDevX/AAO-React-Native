@@ -3,75 +3,41 @@
  * All About Olaf
  * Building Hours list element
  */
-
 import React from 'react'
-import {
- View,
- Text,
- StyleSheet,
- Platform,
-} from 'react-native'
+import {View, Text, StyleSheet} from 'react-native'
 import {Badge} from '../components/badge'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
 import * as c from '../components/colors'
-import {getDetailedBuildingStatus} from './building-hours-helpers'
-import {getShortBuildingStatus} from './building-hours-helpers'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Row, Column} from '../components/layout'
+import {ListRow, Detail, Title} from '../components/list'
+import {getDetailedBuildingStatus, getShortBuildingStatus} from './building-hours-helpers'
+
+const styles = StyleSheet.create({
+  title: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  subtitleText: {
+    fontWeight: '400',
+    color: c.iosDisabledText,
+  },
+  accessoryBadge: {
+    marginLeft: 4,
+  },
+  bold: {
+    fontWeight: 'bold',
+  },
+})
 
 type PropsType = {
   info: BuildingType,
   name: string,
   now: momentT,
-  style?: Number|Object|Array<Number|Object>,
+  onPress: () => any,
 };
 
-let styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    paddingVertical: Platform.OS === 'ios' ? 8 : 16,
-    alignItems: 'center',
-  },
-  title: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  subtitleText: {
-    fontWeight: Platform.OS === 'ios' ? '400' : '400',
-    color: c.iosDisabledText,
-    fontSize: 16,
-  },
-  titleText: {
-    fontWeight: Platform.OS === 'ios' ? '500' : '400',
-    color: c.black,
-    paddingLeft: 0,
-    paddingRight: 0,
-    paddingBottom: 3,
-    fontSize: 16,
-    textAlign: 'left',
-  },
-  accessoryBadge: {
-    marginLeft: 4,
-  },
-  previewText: {
-    color: c.iosDisabledText,
-    fontSize: Platform.OS === 'ios' ? 13 : 14,
-    textAlign: 'left',
-  },
-  activeHourSet: {
-    fontWeight: 'bold',
-  },
-  disclosure: {
-    marginLeft: 10,
-  },
-  disclosureIcon: {
-    color: c.iosDisabledText,
-    fontSize: 20,
-  },
-})
-
-
-export function BuildingRow({info, name, now, style}: PropsType) {
+export function BuildingRow({info, name, now, onPress}: PropsType) {
   let bgColors = {
     Open: c.moneyGreen,
     Closed: c.salmon,
@@ -84,50 +50,55 @@ export function BuildingRow({info, name, now, style}: PropsType) {
   const openStatus = getShortBuildingStatus(info, now)
   const hours = getDetailedBuildingStatus(info, now)
 
-  const abbr = info.abbreviation ? <Text> ({info.abbreviation})</Text> : null
-  const subtitle = info.subtitle ? <Text style={styles.subtitleText}>    {info.subtitle}</Text> : null
-  const title = <Text numberOfLines={1} style={[styles.titleText]}>{name}{abbr}{subtitle}</Text>
-
   const accent = bgColors[openStatus] || c.goldenrod
   const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
 
   return (
-    <View style={[styles.row, style]}>
-      <View style={{flex: 1, flexDirection: 'column'}}>
-        <View style={{flexDirection: 'row'}}>
-          <View style={[styles.title, {flex: 1}]}>
-            {title}
-          </View>
+    <ListRow
+      onPress={onPress}
+      arrowPosition='center'
+      direction='column'
+    >
+      <Column>
+        <Row style={styles.title}>
+          <Title lines={1} style={{flex: 1}}>
+            <Text>{name}</Text>
+            {info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
+            {info.subtitle ? <Text style={styles.subtitleText}>    {info.subtitle}</Text> : null}
+          </Title>
 
-          <Badge text={openStatus} accentColor={accent} textColor={textaccent} style={styles.accessoryBadge} />
+          <Badge
+            text={openStatus}
+            accentColor={accent}
+            textColor={textaccent}
+            style={styles.accessoryBadge}
+          />
+        </Row>
+
+        <View style={{paddingTop: 3}}>
+          {hours.map(([isActive, label, status], i) =>
+            <Detail key={i} style={{paddingTop: 0}}>
+              <BuildingTimeSlot
+                highlight={hours.length > 1 && isActive}
+                label={label}
+                status={status}
+              />
+            </Detail>
+          )}
         </View>
-
-        <View style={[styles.preview]}>
-          {hours.map(([isActive, label, status], i) => {
-            // we don't want to show the 'Hours' label, since almost every row has it
-            let showLabel = label && label !== 'Hours'
-            // we want to highlight the time section when there's no label shown
-            let highlightTime = hours.length > 1 && isActive
-
-            return (
-              <Text key={i} style={[styles.previewText]}>
-                {showLabel && <Text style={[isActive ? styles.activeHourSet : null]}>{label}: </Text>}
-                {<Text style={[highlightTime ? styles.activeHourSet : null]}>{status}</Text>}
-              </Text>
-            )
-          })}
-        </View>
-      </View>
-
-      {Platform.OS === 'ios' ? <View style={styles.disclosure}>
-        <Icon style={[styles.disclosureIcon]} name='ios-arrow-forward' />
-      </View> : null}
-    </View>
+      </Column>
+    </ListRow>
   )
 }
 
-BuildingRow.propTypes = {
-  info: React.PropTypes.object.isRequired,
-  name: React.PropTypes.string.isRequired,
-  now: React.PropTypes.object.isRequired,
+const BuildingTimeSlot = ({label, status, highlight}: {label: ?string, status: string, highlight: boolean}) => {
+  // we don't want to show the 'Hours' label, since almost every row has it
+  const showLabel = label !== 'Hours'
+
+  return (
+    <Text>
+      {showLabel ? <Text style={highlight && styles.bold}>{label}: </Text> : null}
+      <Text style={highlight && styles.bold}>{status}</Text>
+    </Text>
+  )
 }
