@@ -32,7 +32,7 @@ export class NewsRow extends React.Component {
   makeThumbnail = async (props: NewsRowPropsType) => {
     const thumbnailUrl = await new Promise(resolve => {
       // grab the URL
-      const url = this.findImage(props.story['content:encoded'][0])
+      const url = this.findImage((props.story['content:encoded'] || props.story['description'])[0])
       // if we didn't find a valid URL, return null
       if (!url) {
         resolve(null)
@@ -92,7 +92,7 @@ export class NewsRow extends React.Component {
         arrowPosition='top'
       >
         <Row justifyContent='space-between'>
-          <Column>
+          <Column flex={1}>
             <Title lines={1}>{title}</Title>
             <Detail lines={2}>{snippet}</Detail>
           </Column>
@@ -104,7 +104,11 @@ export class NewsRow extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  listContainer: {
-    backgroundColor: '#ffffff',
+  image: {
+    height: 50,
+    width: 50,
+    marginTop: 3,
+    marginLeft: 6,
+    marginRight: 6,
   },
 })
