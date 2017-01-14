@@ -12,12 +12,13 @@ import type {RouteType} from '../../types'
 export function CloseScreenButton(
   {route, navigator, buttonStyle}: {route: RouteType, navigator: Navigator, buttonStyle?: any}
 ) {
+  const onDismiss = route.onDismiss ? route.onDismiss : noop
   return (
     <Touchable
       borderless
       highlight={false}
       style={[styles.button, buttonStyle]}
-      onPress={route.onDismiss ? () => route.onDismiss(route, navigator) : noop}
+      onPress={() => onDismiss(route, navigator)}
     >
       <Text style={styles.text}>Close</Text>
     </Touchable>
