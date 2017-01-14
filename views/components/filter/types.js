@@ -14,6 +14,7 @@ export type ListItemSpecType = {|
 export type ListSpecType = {
   title?: string,
   caption?: string,
+  showImages?: boolean,
   options: ListItemSpecType[],
   selected: ListItemSpecType[],
   mode: 'AND'|'OR',

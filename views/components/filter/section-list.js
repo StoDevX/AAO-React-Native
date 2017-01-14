@@ -1,7 +1,10 @@
 // @flow
 import React from 'react'
+import {Text, Image, StyleSheet} from 'react-native'
 import type {ListType, ListItemSpecType} from './types'
-import {Section, Cell} from 'react-native-tableview-simple'
+import {Section, Cell, CustomCell} from 'react-native-tableview-simple'
+import {Row, Column} from '../layout'
+import {Checkmark} from '../checkmark'
 import includes from 'lodash/includes'
 import without from 'lodash/without'
 import concat from 'lodash/concat'
@@ -61,14 +64,25 @@ export function ListSection({filter, onChange}: PropsType) {
   }
 
   let buttons = options.map(val =>
-    <Cell
+    <CustomCell
       key={val.title}
-      cellStyle={val.detail ? 'Subtitle' : 'Basic'}
       onPress={() => buttonPushed(val)}
-      accessory={includes(selected, val) ? 'Checkmark' : null}
-      title={val.title}
-      detail={val.detail}
-    />
+    >
+      <Row style={styles.row}>
+        {spec.showImages
+          ? <Image style={styles.icon} source={val.image} />
+          : null}
+
+        <Column flex={1}>
+          <Text style={styles.title}>{val.title}</Text>
+          {val.detail
+            ? <Text style={styles.detail}>{val.detail}</Text>
+            : null}
+        </Column>
+
+        <Checkmark transparent={!includes(selected, val)} />
+      </Row>
+    </CustomCell>
   )
 
   if (mode === 'OR') {
@@ -89,3 +103,21 @@ export function ListSection({filter, onChange}: PropsType) {
     </Section>
   )
 }
+
+const styles = StyleSheet.create({
+  row: {
+    alignItems: 'center',
+    minHeight: 24, // 24 (px?) is somehow equivalent to 44pt…
+  },
+  title: {
+    fontSize: 16,
+  },
+  detail: {
+    fontSize: 11,
+  },
+  icon: {
+    width: 16,
+    height: 16,
+    marginRight: 15,
+  },
+})

@@ -96,6 +96,7 @@ class FancyMenuView extends React.Component {
         enabled: false,
         spec: {
           title: 'Dietary Restrictions',
+          showImages: true,
           options: allDietaryRestrictions,
           mode: 'AND',
           selected: [],

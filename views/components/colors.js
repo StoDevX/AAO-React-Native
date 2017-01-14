@@ -32,6 +32,8 @@ export const iosSeparator = 'rgb(199, 199, 204)'
 export const iosHeaderTopBorder = 'rgb(199, 199, 199)'
 export const iosHeaderBottomBorder = 'rgb(224, 224, 224)'
 
+export const tableviewAccessoryColor = 'rgb(0, 122, 255)'
+
 // MARK: Oleville colors
 export const theLatest = '#00BFFF'
 export const olevilleGold = '#F7B600'
