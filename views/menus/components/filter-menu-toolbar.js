@@ -31,9 +31,10 @@ export function FilterMenuToolbar({date, title, filters, onPress}: PropsType) {
   return (
     <Toolbar onPress={onPress}>
       <View style={[styles.toolbarSection, styles.today]}>
-        <Text>{date.format('MMM. Do')}</Text>
-        {title ? <Text style={{paddingHorizontal: 4}}>—</Text> : null}
-        {title ? <Text>{title}</Text> : null}
+        <Text>
+          <Text>{date.format('MMM. Do')}</Text>
+          {title ? <Text> — {title}</Text> : null}
+        </Text>
       </View>
 
       <ToolbarButton
