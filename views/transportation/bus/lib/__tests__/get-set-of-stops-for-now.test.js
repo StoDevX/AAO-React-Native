@@ -1,7 +1,7 @@
-import getSetOfStopsForNow from '../get-set-of-stops-for-now'
+import {getSetOfStopsForNow} from '../get-set-of-stops-for-now'
 import moment from 'moment'
 
-import type {BusScheduleType} from '../types'
+import type {BusScheduleType} from '../../types'
 function makeSchedule(): BusScheduleType {
   return {
     days: ['Mo', 'Tu'],
