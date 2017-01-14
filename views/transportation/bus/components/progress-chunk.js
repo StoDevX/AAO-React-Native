@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
-import {View, StyleSheet} from 'react-native'
+import {View, StyleSheet, Platform} from 'react-native'
+const isAndroid = Platform.OS === 'android'
 
 const styles = StyleSheet.create({
   barContainer: {
@@ -64,9 +65,12 @@ export const ProgressChunk = ({
 }) => {
   // To draw the bar, we draw a chunk of the bar, then we draw the dot, then
   // we draw the last chunk of the bar.
+  const startBarColor = isAndroid && isFirstChunk ? 'transparent' : barColor
+  const endBarColor = isAndroid && isLastChunk ? 'transparent' : barColor
+
   return (
     <View style={styles.barContainer}>
-      <View style={[styles.bar, {backgroundColor: barColor}]} />
+      <View style={[styles.bar, {backgroundColor: startBarColor}]} />
       <View style={[
         styles.dot,
         afterStop && [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}],
@@ -74,7 +78,7 @@ export const ProgressChunk = ({
         atStop && [styles.atStop, {borderColor: currentStopColor}],
         skippingStop && styles.skippingStop,
       ]} />
-      <View style={[styles.bar, {backgroundColor: barColor}]} />
+      <View style={[styles.bar, {backgroundColor: endBarColor}]} />
     </View>
   )
 }
