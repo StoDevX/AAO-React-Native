@@ -35,7 +35,7 @@ class FancyMenuView extends React.Component {
   }
 
   componentWillMount() {
-    let {menuCorIcons, filters, stationMenus} = this.props
+    let {foodItems, menuCorIcons, filters, stationMenus} = this.props
 
     // prevent ourselves from overwriting the filters from redux on mount
     if (filters.length) {
@@ -43,13 +43,14 @@ class FancyMenuView extends React.Component {
     }
 
     let stations = stationMenus.map(m => m.label)
-    filters = this.buildFilters({stations, corIcons: menuCorIcons})
+    filters = this.buildFilters({foodItems, stations, corIcons: menuCorIcons})
     this.props.onFiltersChange(filters)
   }
 
-  buildFilters({stations, corIcons}: {stations: string[], corIcons: MasterCorIconMapType}): FilterType[] {
+  buildFilters({foodItems, stations, corIcons}: {foodItems: MenuItemType[], stations: string[], corIcons: MasterCorIconMapType}): FilterType[] {
     // Format the items for the stations filter
     const allStations = map(stations, name => ({title: name}))
+
     // Grab the labels of the COR icons
     const allDietaryRestrictions = map(corIcons, (item, key) => ({
       title: item.label,
@@ -57,11 +58,16 @@ class FancyMenuView extends React.Component {
       detail: DietaryFilters[key].description,
     }))
 
+    // Check if there is at least one special in order to show the specials-only filter
+    const stationNames = allStations.map(s => s.title)
+    const shouldShowSpecials = filter(foodItems, item =>
+      item.special && stationNames.includes(item.station)).length >= 1
+
     return [
       {
         type: 'toggle',
         key: 'specials',
-        enabled: true,
+        enabled: shouldShowSpecials,
         spec: {
           label: 'Only Show Specials',
           caption: 'Allows you to either see only the "specials" for today, or everything the location has to offer (e.g., condiments.)',
