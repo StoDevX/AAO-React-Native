@@ -51,7 +51,7 @@ export default function ErrorView(props: {
             id: 'SettingsView',
             title: 'Settings',
             index: route.index + 1,
-            sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+            sceneConfig: 'fromBottom',
             props: {
               onLoginComplete: onLoginComplete,
             },

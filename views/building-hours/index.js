@@ -71,7 +71,7 @@ export class BuildingHoursView extends React.Component {
       title: data.name,
       backButtonTitle: 'Hours',
       props: data,
-      sceneConfig: Platform.OS === 'android' ? Navigator.SceneConfigs.FloatFromBottom : undefined,
+      sceneConfig: Platform.OS === 'android' ? 'fromBottom' : undefined,
     })
   }
 

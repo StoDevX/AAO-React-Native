@@ -40,7 +40,7 @@ function openEditHome(route, navigator: Navigator) {
     id: 'EditHomeView',
     title: 'Edit Home',
     index: route.index + 1,
-    sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+    sceneConfig: 'fromBottom',
     onDismiss: closeEditHome,
   })
 }
