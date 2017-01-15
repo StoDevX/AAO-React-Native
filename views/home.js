@@ -60,6 +60,7 @@ function HomePage({navigator, route, order, views=allViews}: {order: string[], v
             id: view.view,
             index: route.index + 1,
             title: view.title,
+            backButtonTitle: 'Home',
             sceneConfig: Navigator.SceneConfigs.PushFromRight,
           })}
         />)
