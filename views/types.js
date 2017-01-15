@@ -8,6 +8,7 @@ export type RouteType = {
   title: string,
   backButtonTitle?: string,
   onDismiss?: (r: RouteType, n: Navigator) => any,
+  sceneConfig?: Object|'fromBottom'|void,
 };
 
 export type NavStateType = {
