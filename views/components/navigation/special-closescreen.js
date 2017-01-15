@@ -21,7 +21,7 @@ export function CloseScreenButton(
       style={[commonStyles.button, buttonStyle]}
       onPress={() => onDismiss(route, navigator)}
     >
-      <Text style={commonStyles.text}>Close</Text>
+      <Text style={[commonStyles.text, {fontWeight: '600'}]}>Done</Text>
     </Touchable>
   )
 }
