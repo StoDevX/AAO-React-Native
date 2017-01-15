@@ -10,11 +10,26 @@ export const commonStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
-    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
+    ...Platform.select({
+      ios: {
+        paddingHorizontal: 18,
+      },
+      android: {
+        paddingHorizontal: 16,
+      },
+    }),
   },
   text: {
     fontSize: 17,
     color: 'white',
-    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
+    ...Platform.select({
+      ios: {
+        paddingVertical: 10,
+      },
+      android: {
+        paddingVertical: 17,
+        marginTop: 1,
+      },
+    }),
   },
 })
