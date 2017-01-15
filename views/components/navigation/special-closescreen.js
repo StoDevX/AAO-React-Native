@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import {Text, Navigator} from 'react-native'
+import {Text, Navigator, Platform, StyleSheet} from 'react-native'
 import {Touchable} from '../touchable'
 import noop from 'lodash/noop'
 import type {RouteType} from '../../types'
@@ -21,7 +21,21 @@ export function CloseScreenButton(
       style={[commonStyles.button, buttonStyle]}
       onPress={() => onDismiss(route, navigator)}
     >
-      <Text style={[commonStyles.text, {fontWeight: '600'}]}>Done</Text>
+      <Text style={[commonStyles.text, styles.text]}>Done</Text>
     </Touchable>
   )
 }
+
+
+const styles = StyleSheet.create({
+  text: {
+    ...Platform.select({
+      ios: {
+        fontWeight: '600',
+      },
+      android: {
+        fontWeight: '400',
+      },
+    }),
+  },
+})
