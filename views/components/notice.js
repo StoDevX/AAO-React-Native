@@ -5,6 +5,7 @@ import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 16,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ffffff',
