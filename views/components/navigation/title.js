@@ -23,9 +23,19 @@ export function Title(route: RouteType) {
 const styles = StyleSheet.create({
   text: {
     color: 'white',
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-light',
-    fontSize: Platform.OS === 'ios' ? 17 : 20,
-    fontWeight: Platform.OS === 'ios' ? '600' : '500',
-    marginVertical: Platform.OS === 'ios' ? 12 : 14,
+    ...Platform.select({
+      ios: {
+        fontFamily: 'System',
+        fontSize: 17,
+        fontWeight: '600',
+        marginVertical: 11,
+      },
+      android: {
+        fontFamily: 'sans-serif-light',
+        fontSize: 20,
+        fontWeight: '600',
+        marginVertical: 14,
+      },
+    }),
   },
 })
