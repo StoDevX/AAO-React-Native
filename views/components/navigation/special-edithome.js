@@ -4,9 +4,10 @@
  */
 
 import React from 'react'
-import {Text, Navigator, StyleSheet, Platform} from 'react-native'
+import {Text, Navigator} from 'react-native'
 import {Touchable} from '../touchable'
 import type {RouteType} from '../../types'
+import {commonStyles} from './styles'
 
 export function EditHomeButton(
   {route, navigator, buttonStyle}: {route: RouteType, navigator: Navigator, buttonStyle?: any}
@@ -15,10 +16,10 @@ export function EditHomeButton(
     <Touchable
       borderless
       highlight={false}
-      style={[styles.button, buttonStyle]}
+      style={[commonStyles.button, buttonStyle]}
       onPress={() => openEditHome(route, navigator)}
     >
-      <Text style={styles.text}>Edit</Text>
+      <Text style={commonStyles.text}>Edit</Text>
     </Touchable>
   )
 }
@@ -44,17 +45,3 @@ function openEditHome(route, navigator: Navigator) {
     onDismiss: closeEditHome,
   })
 }
-
-const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
-  },
-  text: {
-    fontSize: 17,
-    color: 'white',
-    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
-  },
-})

@@ -4,10 +4,11 @@
  */
 
 import React from 'react'
-import {Text, Navigator, StyleSheet, Platform} from 'react-native'
+import {Text, Navigator} from 'react-native'
 import {Touchable} from '../touchable'
 import noop from 'lodash/noop'
 import type {RouteType} from '../../types'
+import {commonStyles} from './styles'
 
 export function CloseScreenButton(
   {route, navigator, buttonStyle}: {route: RouteType, navigator: Navigator, buttonStyle?: any}
@@ -17,23 +18,10 @@ export function CloseScreenButton(
     <Touchable
       borderless
       highlight={false}
-      style={[styles.button, buttonStyle]}
+      style={[commonStyles.button, buttonStyle]}
       onPress={() => onDismiss(route, navigator)}
     >
-      <Text style={styles.text}>Close</Text>
+      <Text style={commonStyles.text}>Close</Text>
     </Touchable>
   )
 }
-
-const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
-    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
-  },
-  text: {
-    fontSize: 17,
-    color: 'white',
-  },
-})
