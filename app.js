@@ -1,4 +1,5 @@
 /**
+ * @flow
  * All About Olaf
  * Index view
  */
@@ -12,12 +13,12 @@ import {
   Navigator,
   BackAndroid,
   StyleSheet,
-  Text,
   Platform,
 } from 'react-native'
 import {Provider} from 'react-redux'
 import {store} from './flux'
-import {Touchable} from './views/components/touchable'
+import * as c from './views/components/colors'
+import {Title, LeftButton, RightButton} from './views/components/navigation'
 
 import CalendarView from './views/calendar'
 import ContactsView from './views/contacts'
@@ -82,22 +83,6 @@ function renderScene(route, navigator) {
   }
 }
 
-
-import Icon from 'react-native-vector-icons/Ionicons'
-import * as c from './views/components/colors'
-
-const navbarShadows = Platform.OS === 'ios'
-  ? {
-    shadowOffset: { width: 0, height: StyleSheet.hairlineWidth },
-    shadowColor: 'rgb(100, 100, 100)',
-    shadowOpacity: 0.5,
-    shadowRadius: StyleSheet.hairlineWidth,
-  }
-  : {
-    elevation: 4,
-  }
-
-import {Dimensions} from 'react-native'
 const styles = StyleSheet.create({
   container: {
     marginTop: Platform.OS === 'ios' ? 64 : 56,
@@ -106,209 +91,19 @@ const styles = StyleSheet.create({
   },
   navigationBar: {
     backgroundColor: c.olevilleGold,
-    ...navbarShadows,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButtonText: {
-    fontSize: 17,
-    color: 'white',
-  },
-  backButtonIcon: {
-    color: 'white',
-    fontSize: Platform.OS === 'ios' ? 36 : 24,
-    paddingVertical: Platform.OS === 'ios' ? 4 : 16,
-    paddingLeft: Platform.OS === 'ios' ? 8 : 16,
-    paddingRight: 6,
-  },
-  settingsIcon: {
-    color: 'white',
-    fontSize: 24,
-  },
-  settingsButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
-    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
-  },
-  editHomeButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
-  },
-  editHomeText: {
-    fontSize: 17,
-    color: 'white',
-    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
-  },
-  backButtonClose: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
-    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
-  },
-  backButtonCloseText: {
-    fontSize: 17,
-    color: 'white',
-  },
-  titleText: {
-    color: 'white',
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-light',
-    fontSize: Platform.OS === 'ios' ? 17 : 20,
-    fontWeight: Platform.OS === 'ios' ? '600' : '500',
-    marginVertical: Platform.OS === 'ios' ? 12 : 14,
-  },
-  rightButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 15,
-    marginRight: 10,
-  },
-  rightButtonText: {
-    fontSize: 16,
-    color: 'white',
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: StyleSheet.hairlineWidth },
+        shadowColor: 'rgb(100, 100, 100)',
+        shadowOpacity: 0.5,
+        shadowRadius: StyleSheet.hairlineWidth,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
 })
-
-let editHomeButtonActive = false
-function openEditHome(route, navigator) {
-  return () => {
-    if (editHomeButtonActive) {
-      return
-    }
-
-    function closeEditHome(route, navigator) {
-      editHomeButtonActive = false
-      navigator.pop()
-    }
-
-    editHomeButtonActive = true
-    navigator.push({
-      id: 'EditHomeView',
-      title: 'Edit Home',
-      index: route.index + 1,
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-      onDismiss: closeEditHome,
-    })
-  }
-}
-
-let settingsButtonActive = false
-function openSettings(route, navigator) {
-  return () => {
-    if (settingsButtonActive) {
-      return
-    }
-
-    function closeSettings(route, navigator) {
-      settingsButtonActive = false
-      navigator.pop()
-    }
-
-    settingsButtonActive = true
-    navigator.push({
-      id: 'SettingsView',
-      title: 'Settings',
-      index: route.index + 1,
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-      onDismiss: closeSettings,
-    })
-  }
-}
-
-function LeftButton(route, navigator, index, navState) {
-  if (route.onDismiss) {
-    return null
-  }
-
-  if (route.id === 'HomeView') {
-    return (
-      <Touchable
-        borderless
-        highlight={false}
-        style={[styles.settingsButton]}
-        onPress={openSettings(route, navigator)}
-      >
-        <Icon style={styles.settingsIcon} name='ios-settings' />
-      </Touchable>
-    )
-  }
-
-  if (index <= 0) {
-    return null
-  }
-  let backTitle = navState.routeStack[index].backButtonTitle || navState.routeStack[index-1].title
-  if (index === 1) {
-    backTitle = 'Home'
-  }
-  if (Platform.OS === 'android') {
-    return (
-      <Touchable
-        borderless
-        highlight={false}
-        style={styles.backButton}
-        onPress={() => navigator.pop()}
-      >
-        <Icon style={styles.backButtonIcon} name='md-arrow-back' />
-      </Touchable>
-    )
-  } else {
-    return (
-      <Touchable
-        borderless
-        highlight={false}
-        style={styles.backButton}
-        onPress={() => navigator.pop()}
-      >
-        <Icon style={styles.backButtonIcon} name='ios-arrow-back' />
-        <Text style={styles.backButtonText}>{backTitle}</Text>
-      </Touchable>
-    )
-  }
-}
-
-// Leaving the boilerplate here for future expansion
-function RightButton(route, navigator) {
-  if (route.onDismiss) {
-    return (
-      <Touchable
-        borderless
-        highlight={false}
-        style={styles.backButtonClose}
-        onPress={() => route.onDismiss(route, navigator)}
-      >
-        <Text style={styles.backButtonCloseText}>Close</Text>
-      </Touchable>
-    )
-  }
-  if (route.id === 'HomeView') {
-    return (
-      <Touchable
-        borderless
-        highlight={false}
-        style={[styles.editHomeButton]}
-        onPress={openEditHome(route, navigator)}
-      >
-        <Text style={[styles.editHomeText]}>Edit</Text>
-      </Touchable>
-    )
-  }
-}
-
-function Title(route) {
-  return (
-    <Text
-      style={[styles.titleText, {maxWidth: Dimensions.get('window').width / 2.5}]}
-      numberOfLines={1}
-      ellipsizeMode='tail'
-    >
-      {route.title}
-    </Text>
-  )
-}
 
 class App extends React.Component {
   componentDidMount() {
@@ -319,6 +114,8 @@ class App extends React.Component {
   componentWillUnmount() {
     BackAndroid.removeEventListener('hardwareBackPress', this.registerAndroidBackButton)
   }
+
+  _navigator: Navigator;
 
   registerAndroidBackButton = () => {
     if (this._navigator && this._navigator.getCurrentRoutes().length > 1) {
@@ -345,6 +142,7 @@ class App extends React.Component {
         initialRoute={{
           id: 'HomeView',
           title: 'All About Olaf',
+          backButtonTitle: 'Home',
           index: 0,
         }}
         renderScene={renderScene}
