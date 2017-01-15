@@ -142,7 +142,6 @@ class App extends React.Component {
         initialRoute={{
           id: 'HomeView',
           title: 'All About Olaf',
-          backButtonTitle: 'Home',
           index: 0,
         }}
         renderScene={renderScene}
