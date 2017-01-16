@@ -104,6 +104,9 @@ export function BusLine({line, now}: {line: BusLineType, now: moment}) {
 
             barColor={barColor}
             currentStopColor={currentStopColor}
+
+            isFirstRow={i === 0}
+            isLastRow={i === list.length - 1}
           />
           {i < list.length - 1 ? <Separator style={styles.separator} /> : null}
         </View>)}

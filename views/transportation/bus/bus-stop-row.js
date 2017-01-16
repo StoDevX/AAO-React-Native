@@ -27,13 +27,24 @@ const styles = StyleSheet.create({
   },
 })
 
-export function BusStopRow({time, now, barColor, currentStopColor, place, times}: {
+export function BusStopRow({
+  time,
+  now,
+  barColor,
+  currentStopColor,
+  place,
+  times,
+  isFirstRow,
+  isLastRow,
+}: {
   time: moment,
   now: moment,
   barColor: string,
   currentStopColor: string,
   place: string,
   times: FancyBusTimeListType,
+  isFirstRow: boolean,
+  isLastRow: boolean,
 }) {
   const afterStop = time && now.isAfter(time, 'minute')
   const atStop = time && now.isSame(time, 'minute')
@@ -46,7 +57,11 @@ export function BusStopRow({time, now, barColor, currentStopColor, place, times}
       fullHeight={true}
     >
       <Row>
-        <ProgressChunk {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}} />
+        <ProgressChunk
+          {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}}
+          isFirstChunk={isFirstRow}
+          isLastChunk={isLastRow}
+        />
 
         <Column flex={1} style={styles.internalPadding}>
           <Title
