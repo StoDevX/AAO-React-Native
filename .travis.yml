@@ -85,6 +85,7 @@ before_install:
   # only deploy from the once-daily cron-triggered jobs
   - run_deploy="no"
   - if [[ "$can_deploy" == "yes" && "$TRAVIS_EVENT_TYPE" == "cron" ]]; then run_deploy="yes"; fi
+  - export run_deploy=$run_deploy
 
   # force node 7 on the android builds
   - |
