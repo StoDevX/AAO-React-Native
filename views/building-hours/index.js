@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {ListView, RefreshControl, StyleSheet, Platform, Navigator} from 'react-native'
+import {ListView, RefreshControl, StyleSheet, Platform} from 'react-native'
 import {BuildingRow} from './row'
 import {tracker} from '../../analytics'
 

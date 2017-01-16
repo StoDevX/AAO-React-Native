@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {View, Navigator} from 'react-native'
+import {View} from 'react-native'
 import {connect} from 'react-redux'
 import {updateMenuFilters} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
