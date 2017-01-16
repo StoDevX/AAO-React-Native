@@ -18,7 +18,7 @@ import {
 import {Provider} from 'react-redux'
 import {store} from './flux'
 import * as c from './views/components/colors'
-import {Title, LeftButton, RightButton} from './views/components/navigation'
+import {Title, LeftButton, RightButton, configureScene} from './views/components/navigation'
 
 import CalendarView from './views/calendar'
 import ContactsView from './views/contacts'
@@ -146,12 +146,7 @@ class App extends React.Component {
         }}
         renderScene={renderScene}
         sceneStyle={styles.container}
-        configureScene={route => {
-          if (route.sceneConfig) {
-            return route.sceneConfig
-          }
-          return Navigator.SceneConfigs.PushFromRight
-        }}
+        configureScene={configureScene}
       />
     )
   }

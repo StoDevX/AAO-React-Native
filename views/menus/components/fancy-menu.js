@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {View, Navigator} from 'react-native'
+import {View} from 'react-native'
 import {connect} from 'react-redux'
 import {updateMenuFilters} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
@@ -115,7 +115,7 @@ class FancyMenuView extends React.Component {
       id: 'FilterView',
       index: this.props.route.index + 1,
       title: 'Filter',
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+      sceneConfig: 'fromBottom',
       onDismiss: (route: any, navigator: any) => navigator.pop(),
       props: {
         pathToFilters: ['menus', this.props.name],

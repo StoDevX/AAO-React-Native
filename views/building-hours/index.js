@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {ListView, RefreshControl, StyleSheet, Platform, Navigator} from 'react-native'
+import {ListView, RefreshControl, StyleSheet, Platform} from 'react-native'
 import {BuildingRow} from './row'
 import {tracker} from '../../analytics'
 
@@ -71,7 +71,7 @@ export class BuildingHoursView extends React.Component {
       title: data.name,
       backButtonTitle: 'Hours',
       props: data,
-      sceneConfig: Platform.OS === 'android' ? Navigator.SceneConfigs.FloatFromBottom : undefined,
+      sceneConfig: Platform.OS === 'android' ? 'fromBottom' : undefined,
     })
   }
 
