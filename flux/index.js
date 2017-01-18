@@ -43,6 +43,7 @@ export const loadHomescreenOrder = async () => {
   // return an action to save it to persistent storage
   return saveHomescreenOrder(order, {noTrack: true})
 }
+import {init} from './init'
 
 export const saveHomescreenOrder = (order, options={}) => {
   options.noTrack || trackHomescreenOrder(order)
@@ -90,8 +91,9 @@ export function aao(state={}, action) {
   }
 }
 
+
 const logger = createLogger()
-export const store = createStore(
+const store = createStore(
   aao,
   applyMiddleware(
     reduxPromise,
@@ -100,4 +102,6 @@ export const store = createStore(
   )
 )
 
-store.dispatch(loadHomescreenOrder())
+init(store)
+
+export {store}
