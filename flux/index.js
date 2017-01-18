@@ -1,3 +1,7 @@
+/**
+ * Root reducer for state storage
+ */
+
 import {createStore, applyMiddleware} from 'redux'
 import createLogger from 'redux-logger'
 import reduxPromise from 'redux-promise'
