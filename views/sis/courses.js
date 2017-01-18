@@ -11,7 +11,6 @@ import {
   ListView,
   RefreshControl,
 } from 'react-native'
-import {tracker} from '../../analytics'
 import {connect} from 'react-redux'
 import delay from 'delay'
 import zip from 'lodash/zip'
@@ -22,9 +21,9 @@ import {ListRow, ListSeparator, ListSectionHeader, Detail, Title} from '../compo
 import LoadingScreen from '../components/loading'
 import {NoticeView} from '../components/notice'
 import type {CourseType} from '../../lib/courses'
-import {loadAllCourses} from '../../lib/courses'
 import ErrorView from './error-screen'
 import type {TopLevelViewPropsType} from '../types'
+import {updateCourses} from '../../flux/parts/sis'
 
 const SEMESTERS = {
   '0': 'Abroad',
@@ -52,13 +51,14 @@ function toPrettyTerm(term: number): string {
 }
 
 type CoursesViewPropsType = TopLevelViewPropsType & {
+  error: null,
   loggedIn: true,
+  updateCourses: (force: boolean) => Promise<(CourseType|Error)[]>,
+  courses: (CourseType|Error)[],
 };
 
 class CoursesView extends React.Component {
   state: {
-    error: ?Error,
-    refreshing: boolean,
     loading: boolean,
     dataSource: ListView.DataSource,
   } = {
@@ -66,40 +66,35 @@ class CoursesView extends React.Component {
       rowHasChanged: (r1: any, r2: any) => r1 !== r2,
       sectionHeaderHasChanged: (h1: any, h2: any) => h1 !== h2,
     }),
-    refreshing: false,
-    loading: true,
-    error: null,
+    loading: false,
+  }
+
+  componentWillReceiveProps(nextProps: CoursesViewPropsType) {
+    this.updateListview(nextProps.courses)
   }
 
   props: CoursesViewPropsType;
 
-  fetchData = async (forceFromServer: boolean=false) => {
-    try {
-      let courses = await loadAllCourses(forceFromServer)
-      if (courses.error) {
-        tracker.trackException(courses.value.message)
-        this.setState({error: courses.value})
-        return
-      }
-      this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
-    } catch (error) {
-      tracker.trackException(error.message)
-      this.setState({error})
-      console.warn(error)
-    }
-    this.setState({loading: false})
+  updateListview(courses) {
+    this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
+  }
+
+  fetchData = async () => {
+    let courses = await this.props.updateCourses(true)
+    this.updateListview(courses)
   }
 
   refresh = async () => {
     let start = Date.now()
-    this.setState({refreshing: true})
-    await this.fetchData(true)
+    this.setState({loading: true})
+
+    await this.fetchData()
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
     let elapsed = start - Date.now()
     await delay(500 - elapsed)
 
-    this.setState({refreshing: false})
+    this.setState({loading: false})
   }
 
   renderRow = (course: CourseType) => {
@@ -126,11 +121,11 @@ class CoursesView extends React.Component {
   }
 
   render() {
-    if (this.state.error) {
-      return <NoticeView text={'Error: ' + this.state.error.message} />
+    if (this.props.error) {
+      return <NoticeView text={'Error: ' + this.props.error.message} />
     }
 
-    if (!this.state.loggedIn) {
+    if (!this.props.loggedIn) {
       return <ErrorView
         route={this.props.route}
         navigator={this.props.navigator}
@@ -153,7 +148,7 @@ class CoursesView extends React.Component {
         pageSize={5}
         refreshControl={
           <RefreshControl
-            refreshing={this.state.refreshing}
+            refreshing={this.state.loading}
             onRefresh={this.refresh}
           />
         }
@@ -164,11 +159,19 @@ class CoursesView extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    loggedIn: state.settings.tokenValid,
+    courses: state.sis.courses.courses,
+    error: state.sis.courses.error,
+    loggedIn: state.settings.token.valid,
   }
 }
 
-export default connect(mapStateToProps)(CoursesView)
+function mapDispatchToProps(dispatch) {
+  return {
+    updateCourses: f => dispatch(updateCourses(f)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CoursesView)
 
 const styles = StyleSheet.create({
   listContainer: {
