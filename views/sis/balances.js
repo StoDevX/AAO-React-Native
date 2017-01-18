@@ -22,6 +22,7 @@ import isError from 'lodash/isError'
 import * as c from '../components/colors'
 import {getFinancialData, getWeeklyMealsRemaining} from '../../lib/financials'
 import ErrorView from './error-screen'
+import {SectionWithNullChildren} from '../components/section-with-null-children'
 
 const buttonStyles = StyleSheet.create({
   Common: {
@@ -38,12 +39,7 @@ const buttonStyles = StyleSheet.create({
   Search: {},
 })
 
-export default class BalancesView extends React.Component {
-  static propTypes = {
-    navigator: React.PropTypes.object,
-    route: React.PropTypes.object,
-  };
-
+class BalancesView extends React.Component {
   state = {
     flex: null,
     ole: null,
@@ -171,48 +167,61 @@ export default class BalancesView extends React.Component {
         }
       >
         <TableView>
-          <Section header='BALANCES'>
+          <SectionWithNullChildren header='BALANCES'>
             <View style={styles.balancesRow}>
-              <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
-                <Text style={styles.financialText} autoAdjustsFontSize={true}>
-                  {loading ? '…' : this.getFormattedCurrency(flex)}
-                </Text>
-                <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
-                  Flex
-                </Text>
-              </View>
+              <FinancialBalancesCell
+                label='Flex'
+                value={flex}
+                indeterminate={loading}
+              />
 
-              <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
-                <Text style={styles.financialText} autoAdjustsFontSize={true}>
-                  {loading ? '…' : this.getFormattedCurrency(ole)}
-                </Text>
-                <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
-                  Ole
-                </Text>
-              </View>
+              <FinancialBalancesCell
+                label='Ole'
+                value={ole}
+                indeterminate={loading}
+              />
 
-              <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
-                <Text style={styles.financialText} autoAdjustsFontSize={true}>
-                  {loading ? '…' : this.getFormattedCurrency(print)}
-                </Text>
-                <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
-                  Copy/Print
-                </Text>
-              </View>
-             </View>
-          </Section>
+              <FinancialBalancesCell
+                label='Copy/Print'
+                value={print}
+                indeterminate={loading}
+              />
+            </View>
 
-          <Section header='MEAL PLAN'>
+            {this.props.tokenValid ?
+              null
+              : <Cell
+                cellStyle='Basic'
+                title='Log into the SIS'
+                accessory='DisclosureIndicator'
+                onPress={this.openSettings}
+              />}
+
+            {this.props.balancesError ? <Cell cellStyle='Basic' title={this.props.balancesError} /> : null}
+          </SectionWithNullChildren>
+
+          <SectionWithNullChildren header='MEAL PLAN'>
             <Cell cellStyle='RightDetail'
               title='Daily Meals Left'
-              detail={this.getFormattedMealsRemaining(dailyMeals)}
+              detail={loading ? '…' : getFormattedMealsRemaining(dailyMeals)}
             />
 
             <Cell cellStyle='RightDetail'
               title='Weekly Meals Left'
-              detail={this.getFormattedMealsRemaining(weeklyMeals)}
+              detail={loading ? '…' : getFormattedMealsRemaining(weeklyMeals)}
             />
-          </Section>
+
+            {this.props.credentialsValid ?
+              null
+              : <Cell
+                cellStyle='Basic'
+                title='Log in with St. Olaf'
+                accessory='DisclosureIndicator'
+                onPress={this.openSettings}
+              />}
+
+            {this.props.mealsError ? <Cell cellStyle='Basic' title={this.props.mealsError} /> : null}
+          </SectionWithNullChildren>
         </TableView>
       </ScrollView>
     )
@@ -265,3 +274,31 @@ let styles = StyleSheet.create({
     fontSize: 16,
   },
 })
+
+
+function getFormattedCurrency(value: ?number): string {
+  if (isNil(value)) {
+    return 'N/A'
+  }
+  return '$' + (((value: any): number) / 100).toFixed(2)
+}
+
+function getFormattedMealsRemaining(value: ?number): string {
+  if (isNil(value)) {
+    return 'N/A'
+  }
+  return (value: any).toString()
+}
+
+function FinancialBalancesCell({indeterminate, label, value}: {indeterminate: boolean, label: string, value: ?number}) {
+  return (
+    <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
+      <Text style={styles.financialText} autoAdjustsFontSize={true}>
+        {indeterminate ? '…' : getFormattedCurrency(value)}
+      </Text>
+      <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
+        {label}
+      </Text>
+    </View>
+  )
+}
