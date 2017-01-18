@@ -8,12 +8,14 @@ import reduxPromise from 'redux-promise'
 import reduxThunk from 'redux-thunk'
 import {init} from './init'
 
+import {app} from './parts/app'
 import {homescreen} from './parts/homescreen'
 import {menus} from './parts/menus'
 
 
 export function aao(state={}, action) {
   return {
+    app: app(state.app, action),
     homescreen: homescreen(state.homescreen, action),
     menus: menus(state.menus, action),
   }
