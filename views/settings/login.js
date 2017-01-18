@@ -1,8 +1,8 @@
 // @flow
 import React from 'react'
-import {WebView, View, Button, Text} from 'react-native'
+import {WebView} from 'react-native'
 
-import {Section, CustomCell, Cell} from 'react-native-tableview-simple'
+import {NoticeView} from '../components/notice'
 
 import startsWith from 'lodash/startsWith'
 import type {TopLevelViewPropsType} from '../types'
@@ -30,14 +30,7 @@ export default class SISLoginView extends React.Component {
 
   render() {
     if (this.state.complete) {
-      return (
-        <Section>
-          <Cell title="You're logged in!" />
-          <CustomCell>
-            <Button onPress={this.onComplete} title='Done' />
-          </CustomCell>
-        </Section>
-      )
+      return <NoticeView text="You're logged in!" onPress={this.onComplete} buttonText='Done' />
     }
 
     return (

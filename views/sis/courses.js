@@ -20,7 +20,6 @@ import {ListRow, ListSeparator, ListSectionHeader, Detail, Title} from '../compo
 import LoadingScreen from '../components/loading'
 import {NoticeView} from '../components/notice'
 import type {CourseType, CoursesByTermType} from '../../lib/courses'
-import ErrorView from './error-screen'
 import type {TopLevelViewPropsType} from '../types'
 import {updateCourses} from '../../flux/parts/sis'
 
@@ -77,7 +76,7 @@ class CoursesView extends React.Component {
         <Column>
           <Title>{course.name}</Title>
           <Detail>{deptnum}</Detail>
-          <Detail>{course.instructors}</Detail>
+          {course.instructors ? <Detail>{course.instructors}</Detail> : null}
         </Column>
       </ListRow>
     )
@@ -97,7 +96,21 @@ class CoursesView extends React.Component {
     }
 
     if (!this.props.loggedIn) {
-      return <ErrorView route={this.props.route} navigator={this.props.navigator} />
+      return (
+        <NoticeView
+          text='Sorry, it looks like your SIS session timed out. Could you set up the Google login in Settings?'
+          buttonText='Open Settings'
+          onPress={() =>
+            this.props.navigator.push({
+              id: 'SettingsView',
+              title: 'Settings',
+              index: this.props.route.index + 1,
+              onDismiss: (route, navigator) => navigator.pop(),
+              sceneConfig: 'fromBottom',
+            })
+          }
+        />
+      )
     }
 
     if (this.state.loading) {
@@ -111,6 +124,7 @@ class CoursesView extends React.Component {
     return (
       <ListView
         style={styles.listContainer}
+        automaticallyAdjustContentInsets={false}
         contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
