@@ -2,10 +2,10 @@ import {createStore, applyMiddleware} from 'redux'
 import createLogger from 'redux-logger'
 import reduxPromise from 'redux-promise'
 import reduxThunk from 'redux-thunk'
-import {AsyncStorage} from 'react-native'
 import {allViewNames as defaultViewOrder} from '../views/views'
 import difference from 'lodash/difference'
 import {trackMenuFilters, trackHomescreenOrder} from '../analytics'
+import * as storage from '../lib/storage'
 
 export const SAVE_HOMESCREEN_ORDER = 'SAVE_HOMESCREEN_ORDER'
 
@@ -30,19 +30,19 @@ export const updateViewOrder = (currentOrder, defaultOrder=defaultViewOrder) => 
 }
 
 export const loadHomescreenOrder = async () => {
-  // get the saved list from AsyncStorage
-  let savedOrder = JSON.parse(await AsyncStorage.getItem('homescreen:view-order'))
+  // get the saved list from persistent storage
+  let savedOrder = await storage.getHomescreenOrder()
 
   // update the order, in case new views have been added/removed
   let order = updateViewOrder(savedOrder, defaultViewOrder)
 
-  // return an action to save it to AsyncStorage
+  // return an action to save it to persistent storage
   return saveHomescreenOrder(order, {noTrack: true})
 }
 
 export const saveHomescreenOrder = (order, options={}) => {
   options.noTrack || trackHomescreenOrder(order)
-  AsyncStorage.setItem('homescreen:view-order', JSON.stringify(order))
+  storage.setHomescreenOrder(order)
   return {type: SAVE_HOMESCREEN_ORDER, payload: order}
 }
 
