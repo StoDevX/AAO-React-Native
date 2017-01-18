@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 
 import type {TopLevelViewPropsType} from './types'
-import {saveHomescreenOrder} from '../flux'
+import {saveHomescreenOrder} from '../flux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from './components/colors'
 import fromPairs from 'lodash/fromPairs'
