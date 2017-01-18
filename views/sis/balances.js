@@ -1,5 +1,5 @@
-// @flow
 /**
+ * @flow
  * All About Olaf
  * Balances page
  */
@@ -97,10 +97,10 @@ export default class BalancesView extends React.Component {
         getWeeklyMealsRemaining(),
       ])
 
-      if (isError(sisFinancialsInfo)) {
+      if (sisFinancialsInfo.error) {
         this.setState({loggedIn: false})
       } else {
-        let {flex, ole, print} = sisFinancialsInfo
+        let {flex, ole, print} = sisFinancialsInfo.value
         this.setState({flex, ole, print})
       }
 

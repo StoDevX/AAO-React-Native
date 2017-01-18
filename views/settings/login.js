@@ -8,15 +8,13 @@ import {
   WebView,
   View,
   Text,
-  AsyncStorage,
   Navigator,
 } from 'react-native'
 import startsWith from 'lodash/startsWith'
 
-import CookieManager from 'react-native-cookies'
+import {setTokenValid} from '../../lib/login'
 import LoadingView from '../components/loading'
 
-const COOKIE_NAME = 'JSESSIONID'
 const HOME_URL = 'https://www.stolaf.edu/sis/index.cfm'
 const LOGIN_URL = 'https://www.stolaf.edu/sis/login.cfm'
 const AUTH_REJECTED_URL = 'https://www.stolaf.edu/sis/login.cfm?error=access_denied#'
@@ -42,31 +40,10 @@ export default class SISLoginView extends React.Component {
   }
 
   loadCookie = () => {
-    CookieManager.get(HOME_URL, cookie => {
-      let isAuthenticated
-
-      if (cookie && cookie.indexOf(COOKIE_NAME) != -1) {
-        isAuthenticated = true
-      } else {
-        isAuthenticated = false
-      }
-
-      this.setState({
-        loggedIn: isAuthenticated,
-        loadedCookie: true,
-      })
-      this.props.onLoginComplete(isAuthenticated)
-    })
+    // this.props.onLoginComplete(isAuthenticated)
   }
 
   logout () {
-    CookieManager.clearAll((err, res) => {
-      if (err) {
-        console.log(err)
-      }
-      console.log(res)
-    })
-
     this.setState({
       loggedIn: false,
     })
@@ -76,7 +53,7 @@ export default class SISLoginView extends React.Component {
     // If we get redirected back to the HOME_URL we know that we are logged in. If your backend does something different than this
     // change this line.
     if (startsWith(navState.url, HOME_URL)) {
-      AsyncStorage.setItem('credentials:valid', JSON.stringify(true))
+      setTokenValid(true)
       this.setState({
         loggedIn: true,
       })

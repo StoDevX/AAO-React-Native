@@ -1,5 +1,5 @@
-// @flow
 /**
+ * @flow
  * All About Olaf
  * Courses page
  */
@@ -15,7 +15,6 @@ import {tracker} from '../../analytics'
 import {isLoggedIn} from '../../lib/login'
 import delay from 'delay'
 import zip from 'lodash/zip'
-import isError from 'lodash/isError'
 import _isNaN from 'lodash/isNaN'
 import isNil from 'lodash/isNil'
 import {Column} from '../components/layout'
@@ -57,7 +56,13 @@ export default class CoursesView extends React.Component {
     route: React.PropTypes.object,
   };
 
-  state = {
+  state: {
+    error: ?Error,
+    refreshing: boolean,
+    loading: boolean,
+    loggedIn: boolean,
+    dataSource: ListView.DataSource,
+  } = {
     dataSource: new ListView.DataSource({
       rowHasChanged: (r1: any, r2: any) => r1 !== r2,
       sectionHeaderHasChanged: (h1: any, h2: any) => h1 !== h2,
@@ -88,8 +93,10 @@ export default class CoursesView extends React.Component {
   fetchData = async (forceFromServer: boolean=false) => {
     try {
       let courses = await loadAllCourses(forceFromServer)
-      if (isError(courses)) {
-        this.setState({loggedIn: false})
+      if (courses.error) {
+        tracker.trackException(courses.value.message)
+        this.setState({loggedIn: false, error: courses.value})
+        return
       }
       this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
     } catch (error) {
@@ -114,22 +121,7 @@ export default class CoursesView extends React.Component {
     this.setState({refreshing: false})
   }
 
-  renderRow = (course: CourseType|Error) => {
-    if (course.message) {
-      // curses be to flow
-      let innerCourse = ((course: any): {message: string})
-      return (
-        <ListRow style={styles.rowContainer}>
-          <Column>
-            <Title>Error</Title>
-            <Detail lines={2}>{innerCourse.message || 'The course had an error'}</Detail>
-          </Column>
-        </ListRow>
-      )
-    }
-
-    course = ((course: any): CourseType)
-
+  renderRow = (course: CourseType) => {
     let locationTimePairs = zip(course.locations, course.times)
     let deptnum = `${course.department.join('/')} ${_isNaN(course.number) || isNil(course.number) ? '' : course.number}` + (course.section || '')
     return (

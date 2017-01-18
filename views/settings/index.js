@@ -10,7 +10,6 @@ import {
   Text,
   ScrollView,
   Platform,
-  AsyncStorage,
   Navigator,
   View,
   TextInput,
@@ -28,8 +27,8 @@ import {getVersion} from 'react-native-device-info'
 
 import Communications from 'react-native-communications'
 import * as c from '../components/colors'
-import CookieManager from 'react-native-cookies'
 import DeviceInfo from 'react-native-device-info'
+import * as storage from '../../lib/storage'
 
 // These imports manage the St. Olaf login system
 import {
@@ -67,12 +66,14 @@ export default class SettingsView extends React.Component {
   loadData = async () => {
     let [creds, status] = await Promise.all([
       loadLoginCredentials(),
-      AsyncStorage.getItem('credentials:valid').then(val => JSON.parse(val)),
+      storage.getTokenValid(),
     ])
+
     if (creds) {
       this.setState({username: creds.username, password: creds.password})
       this.logInStOlaf()
     }
+
     if (status) {
       this.setState({loggedInGoogle: true})
     }
@@ -90,17 +91,12 @@ export default class SettingsView extends React.Component {
 
   logOutGoogle = () => {
     this.setState({loadingGoogle: true})
-    AsyncStorage.removeItem('credentials:valid')
-    CookieManager.clearAll(err => {
-      if (err) {
-        console.log(err)
-        Alert.alert('Error signing out', 'There was an issue signing out. Please try again.')
-      }
-      this.setState({
-        successGoogle: false,
-        loadingGoogle: false,
-        loggedInGoogle: false,
-      })
+    storage.setTokenValid(false)
+
+    this.setState({
+      successGoogle: false,
+      loadingGoogle: false,
+      loggedInGoogle: false,
     })
   }
 
@@ -126,7 +122,7 @@ export default class SettingsView extends React.Component {
     if (username) {
       username = username.replace(/@.*/g, '') // just in case someone uses their full email, throw the part we don't need away
     }
-    let {result} = await performLogin(username, password)
+    let result = await performLogin(username, password)
 
     if (!result) {
       Alert.alert('Error signing in', 'The username or password is incorrect.')

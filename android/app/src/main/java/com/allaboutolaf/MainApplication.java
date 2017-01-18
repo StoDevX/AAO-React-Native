@@ -6,7 +6,6 @@ import android.util.Log;
 import com.facebook.react.ReactApplication;
 import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import com.psykar.cookiemanager.CookieManagerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.facebook.react.ReactInstanceManager;
@@ -33,7 +32,6 @@ public class MainApplication extends Application implements ReactApplication {
         new MainReactPackage(),
         new GoogleAnalyticsBridgePackage(),
         new RNDeviceInfo(),
-        new CookieManagerPackage(),
         new VectorIconsPackage(),
         new KeychainPackage(),
         new ReactNativeOneSignalPackage()
