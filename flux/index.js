@@ -12,6 +12,7 @@ import {init} from './init'
 import {app} from './parts/app'
 import {homescreen} from './parts/homescreen'
 import {menus} from './parts/menus'
+import {settings} from './parts/settings'
 
 
 export function aao(state: Object={}, action: Object) {
@@ -19,6 +20,7 @@ export function aao(state: Object={}, action: Object) {
     app: app(state.app, action),
     homescreen: homescreen(state.homescreen, action),
     menus: menus(state.menus, action),
+    settings: settings(state.settings, action),
   }
 }
 

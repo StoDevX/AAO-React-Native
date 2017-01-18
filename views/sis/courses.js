@@ -12,7 +12,7 @@ import {
   RefreshControl,
 } from 'react-native'
 import {tracker} from '../../analytics'
-import {isLoggedIn} from '../../lib/login'
+import {connect} from 'react-redux'
 import delay from 'delay'
 import zip from 'lodash/zip'
 import _isNaN from 'lodash/isNaN'
@@ -24,6 +24,7 @@ import {NoticeView} from '../components/notice'
 import type {CourseType} from '../../lib/courses'
 import {loadAllCourses} from '../../lib/courses'
 import ErrorView from './error-screen'
+import type {TopLevelViewPropsType} from '../types'
 
 const SEMESTERS = {
   '0': 'Abroad',
@@ -50,17 +51,15 @@ function toPrettyTerm(term: number): string {
   return `${semester} ${str.substr(0, 4)}`
 }
 
-export default class CoursesView extends React.Component {
-  static propTypes = {
-    navigator: React.PropTypes.object,
-    route: React.PropTypes.object,
-  };
+type CoursesViewPropsType = TopLevelViewPropsType & {
+  loggedIn: true,
+};
 
+class CoursesView extends React.Component {
   state: {
     error: ?Error,
     refreshing: boolean,
     loading: boolean,
-    loggedIn: boolean,
     dataSource: ListView.DataSource,
   } = {
     dataSource: new ListView.DataSource({
@@ -70,32 +69,16 @@ export default class CoursesView extends React.Component {
     refreshing: false,
     loading: true,
     error: null,
-    loggedIn: true,
   }
 
-  componentWillMount() {
-    this.loadIfLoggedIn()
-  }
-
-  loadIfLoggedIn = async () => {
-    let shouldContinue = await this.checkLogin()
-    if (shouldContinue) {
-      await this.fetchData()
-    }
-  }
-
-  checkLogin = async () => {
-    let loggedIn = await isLoggedIn()
-    this.setState({loggedIn})
-    return loggedIn
-  }
+  props: CoursesViewPropsType;
 
   fetchData = async (forceFromServer: boolean=false) => {
     try {
       let courses = await loadAllCourses(forceFromServer)
       if (courses.error) {
         tracker.trackException(courses.value.message)
-        this.setState({loggedIn: false, error: courses.value})
+        this.setState({error: courses.value})
         return
       }
       this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
@@ -114,9 +97,7 @@ export default class CoursesView extends React.Component {
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
     let elapsed = start - Date.now()
-    if (elapsed < 500) {
-      await delay(500 - elapsed)
-    }
+    await delay(500 - elapsed)
 
     this.setState({refreshing: false})
   }
@@ -153,7 +134,6 @@ export default class CoursesView extends React.Component {
       return <ErrorView
         route={this.props.route}
         navigator={this.props.navigator}
-        onLoginComplete={() => this.loadIfLoggedIn()}
       />
     }
 
@@ -181,6 +161,14 @@ export default class CoursesView extends React.Component {
     )
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    loggedIn: state.settings.tokenValid,
+  }
+}
+
+export default connect(mapStateToProps)(CoursesView)
 
 const styles = StyleSheet.create({
   listContainer: {

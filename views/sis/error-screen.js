@@ -37,10 +37,9 @@ const styles = StyleSheet.create({
 
 export default function ErrorView(props: {
   navigator: typeof Navigator,
-  onLoginComplete: () => any,
   route: any,
 }) {
-  let {navigator, route, onLoginComplete} = props
+  let {navigator, route} = props
 
   return (
     <View style={styles.error}>
@@ -52,9 +51,6 @@ export default function ErrorView(props: {
             title: 'Settings',
             index: route.index + 1,
             sceneConfig: 'fromBottom',
-            props: {
-              onLoginComplete: onLoginComplete,
-            },
           })
         }
         style={styles.errorButton}

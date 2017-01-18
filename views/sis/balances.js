@@ -126,9 +126,7 @@ export default class BalancesView extends React.Component {
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
     let elapsed = start - Date.now()
-    if (elapsed < 500) {
-      await delay(500 - elapsed)
-    }
+    await delay(500 - elapsed)
 
     this.setState({refreshing: false})
   }
