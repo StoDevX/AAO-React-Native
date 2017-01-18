@@ -1,4 +1,5 @@
 /**
+ * @flow
  * Reducer for menus state info
  */
 
@@ -15,7 +16,7 @@ export const updateMenuFilters = (menuName: string, filters: any[]) => {
 
 
 const initialMenusState = {}
-export function menus(state=initialMenusState, action) {
+export function menus(state: Object=initialMenusState, action: Object) {
   const {type, payload} = action
 
   switch (type) {

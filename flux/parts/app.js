@@ -1,4 +1,5 @@
 /**
+ * @flow
  * Reducer for app-wide miscallaneous state
  */
 
@@ -18,7 +19,7 @@ const initialAppState = {
   isConnected: false,
 }
 
-export function app(state=initialAppState, action) {
+export function app(state: Object=initialAppState, action: Object) {
   const {type, payload} = action
 
   switch (type) {

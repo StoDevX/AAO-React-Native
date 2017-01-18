@@ -1,4 +1,5 @@
 /**
+ * @flow
  * Functions to initialize bits of the global state, as appropriate
  */
 
@@ -30,7 +31,7 @@ function netInfoIsConnected(store) {
   NetInfo.isConnected.fetch().then(updateConnectionStatus)
 }
 
-export function init(store) {
+export function init(store: {dispatch: any}) {
   homescreen(store)
   sisLoginCredentials(store)
   netInfoIsConnected(store)

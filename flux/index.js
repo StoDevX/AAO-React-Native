@@ -1,4 +1,5 @@
 /**
+ * @flow
  * Root reducer for state storage
  */
 
@@ -13,7 +14,7 @@ import {homescreen} from './parts/homescreen'
 import {menus} from './parts/menus'
 
 
-export function aao(state={}, action) {
+export function aao(state: Object={}, action: Object) {
   return {
     app: app(state.app, action),
     homescreen: homescreen(state.homescreen, action),

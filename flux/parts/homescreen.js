@@ -1,17 +1,18 @@
 /**
+ * @flow
  * Reducer for state for the homescreen
  */
 
 import {allViewNames as defaultViewOrder} from '../../views/views'
 import difference from 'lodash/difference'
 import {trackHomescreenOrder} from '../../analytics'
-import * as storage from '../lib/storage'
+import * as storage from '../../lib/storage'
 
 
 export const SAVE_HOMESCREEN_ORDER = 'SAVE_HOMESCREEN_ORDER'
 
 
-export const updateViewOrder = (currentOrder, defaultOrder=defaultViewOrder) => {
+export const updateViewOrder = (currentOrder: string[], defaultOrder: string[]=defaultViewOrder) => {
   currentOrder = currentOrder || []
 
   // lodash/difference: Creates an array of array values _not included_ in the
@@ -42,7 +43,7 @@ export const loadHomescreenOrder = async () => {
   return saveHomescreenOrder(order, {noTrack: true})
 }
 
-export const saveHomescreenOrder = (order, options={}) => {
+export const saveHomescreenOrder = (order: string[], options: {noTrack?: boolean}={}) => {
   options.noTrack || trackHomescreenOrder(order)
   storage.setHomescreenOrder(order)
   return {type: SAVE_HOMESCREEN_ORDER, payload: order}
@@ -52,7 +53,7 @@ export const saveHomescreenOrder = (order, options={}) => {
 const initialHomescreenState = {
   order: [],
 }
-export function homescreen(state=initialHomescreenState, action) {
+export function homescreen(state: Object=initialHomescreenState, action: Object) {
   const {type, payload} = action
 
   switch (type) {
