@@ -7,7 +7,7 @@ import {NetInfo} from 'react-native'
 import {loadLoginCredentials} from '../lib/login'
 import {updateOnlineStatus} from './parts/app'
 import {loadHomescreenOrder} from './parts/homescreen'
-import {setLoginCredentials} from './parts/settings'
+import {setLoginCredentials, logInViaToken} from './parts/settings'
 
 function homescreen(store) {
   store.dispatch(loadHomescreenOrder())
@@ -18,6 +18,17 @@ function sisLoginCredentials(store) {
     if (!username || !password) return
 
     let action = setLoginCredentials(username, password)
+    store.dispatch(action)
+  })
+}
+
+function checkSisLogin(store) {
+  // check if we can log in to the SIS
+  fetch(FINANCIALS_URL).then(r => {
+    if (r.url !== FINANCIALS_URL) {
+      return
+    }
+    const action = logInViaToken(true)
     store.dispatch(action)
   })
 }
@@ -34,5 +45,6 @@ function netInfoIsConnected(store) {
 export function init(store: {dispatch: any}) {
   homescreen(store)
   sisLoginCredentials(store)
+  checkSisLogin(store)
   netInfoIsConnected(store)
 }
