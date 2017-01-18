@@ -27,7 +27,7 @@ export function aao(state: Object={}, action: Object) {
 }
 
 
-const logger = createLogger()
+const logger = createLogger({collapsed: () => true})
 const store = createStore(
   aao,
   applyMiddleware(
