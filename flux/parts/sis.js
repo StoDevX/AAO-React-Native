@@ -1,18 +1,15 @@
 /**
+ * @flow
  * Reducer for app settings
  */
 
 import {
-  getFinancialDataFromServer,
-  getFinancialDataFromStorage,
-  shouldUpdateFromInternet,
-  getMealsRemainingFromServer,
-  getMealsRemainingFromStorage,
+  getMealsRemaining,
+  getFinancialData,
 } from '../../lib/financials'
 
 import {
-  getAllCoursesFromServer,
-  getAllCoursesFromStorage,
+  loadAllCourses,
 } from '../../lib/courses'
 
 
@@ -25,57 +22,33 @@ export const UPDATE_MEALS_WEEKLY = 'sis/UPDATE_MEALS_WEEKLY'
 export const UPDATE_MEALS_REMAINING = 'sis/UPDATE_MEALS_REMAINING'
 export const UPDATE_COURSES = 'sis/UPDATE_COURSES'
 
-export function updateFinancialData(forceFromServer=false) {
-  return async (dispatch, getState) => {
+export function updateFinancialData(forceFromServer: boolean=false) {
+  return async (dispatch: () => {}, getState: any) => {
     const state = getState()
-    if (!state.app.isConnected) {
-      return
-    }
-    const now = new Date()
-    const shouldUpdate = !forceFromServer || shouldUpdateFromInternet(now, state.sis.balances)
-    const data = shouldUpdate
-      ? await getFinancialDataFromServer()
-      : await getFinancialDataFromStorage()
-    return {type: UPDATE_FINANCIAL_DATA, payload: {data, now}}
+    const balances = await getFinancialData(state.app.isConnected, forceFromServer)
+    dispatch({type: UPDATE_FINANCIAL_DATA, error: balances.error, payload: balances.value})
   }
 }
 
-export function updateMealsRemaining(forceFromServer=false) {
-  return async (dispatch, getState) => {
+export function updateMealsRemaining(forceFromServer: boolean=false) {
+  return async (dispatch: () => {}, getState: any) => {
     const state = getState()
-    if (!state.app.isConnected) {
-      return
-    }
-    const now = new Date()
-    const shouldUpdate = !forceFromServer || shouldUpdateFromInternet(now, state.sis.balances)
-    const data = shouldUpdate
-      ? await getMealsRemainingFromServer(state.settings.credentials)
-      : await getMealsRemainingFromStorage()
-    return {type: UPDATE_MEALS_REMAINING, payload: {data, now}}
+    const meals = await getMealsRemaining(state.app.isConnected, forceFromServer)
+    dispatch({type: UPDATE_MEALS_REMAINING, error: meals.error, payload: meals.value})
   }
 }
 
-export function updateCourses(forceFromServer=false) {
-  return async (dispatch, getState) => {
+export function updateCourses(forceFromServer: bool=false) {
+  return async (dispatch: () => {}, getState: any) => {
     const state = getState()
-    if (!state.app.isConnected) {
-      return
-    }
-    const now = new Date()
-    const shouldUpdate = !forceFromServer || shouldUpdateFromInternet(now, state.sis.courses)
-    // console.log('shouldUpdate', shouldUpdate, state.sis.courses)
-    const data = shouldUpdate
-      ? await getAllCoursesFromServer()
-      : await getAllCoursesFromStorage()
-    return {type: UPDATE_COURSES, payload: {data, now}}
+    const courses = await loadAllCourses(state.app.isConnected, forceFromServer)
+    dispatch({type: UPDATE_COURSES, error: courses.error, payload: courses.value})
   }
 }
 
 
 const initialBalancesState = {
   message: null,
-  lastUpdated: null,
-  cacheTime: [1, 'minute'],
   flex: null,
   ole: null,
   print: null,
@@ -85,11 +58,11 @@ function balances(state=initialBalancesState, action) {
 
   switch (type) {
     case UPDATE_OLE_DOLLARS:
-      return {...state, ole: payload.balance, lastUpdated: payload.now}
+      return {...state, ole: payload.balance}
     case UPDATE_FLEX_DOLLARS:
-      return {...state, flex: payload.balance, lastUpdated: payload.now}
+      return {...state, flex: payload.balance}
     case UPDATE_PRINT_DOLLARS:
-      return {...state, print: payload.balance, lastUpdated: payload.now}
+      return {...state, print: payload.balance}
 
     case UPDATE_FINANCIAL_DATA: {
       if (error) {
@@ -97,9 +70,8 @@ function balances(state=initialBalancesState, action) {
       }
       return {
         ...state,
-        ...payload.data,
+        ...payload,
         message: null,
-        lastUpdated: payload.now,
       }
     }
 
@@ -111,8 +83,6 @@ function balances(state=initialBalancesState, action) {
 
 const initialMealsState = {
   message: null,
-  lastUpdated: null,
-  cacheTime: [1, 'minute'],
   daily: null,
   weekly: null,
 }
@@ -121,9 +91,9 @@ function meals(state=initialMealsState, action) {
 
   switch (type) {
     case UPDATE_MEALS_DAILY:
-      return {...state, daily: payload.mealsRemaining, lastUpdated: payload.now}
+      return {...state, daily: payload.mealsRemaining}
     case UPDATE_MEALS_WEEKLY:
-      return {...state, weekly: payload.mealsRemaining, lastUpdated: payload.now}
+      return {...state, weekly: payload.mealsRemaining}
 
     case UPDATE_MEALS_REMAINING: {
       if (error) {
@@ -134,9 +104,9 @@ function meals(state=initialMealsState, action) {
       }
       return {
         ...state,
-        ...payload.data,
+        weekly: payload.weekly,
+        daily: payload.daily,
         message: null,
-        lastUpdated: payload.now,
       }
     }
 
@@ -146,22 +116,13 @@ function meals(state=initialMealsState, action) {
 }
 
 
-const initialCoursesState = {
-  message: null,
-  lastUpdated: null,
-  cacheTime: [1, 'day'],
-  courses: [],
-}
+const initialCoursesState = {}
 function courses(state=initialCoursesState, action) {
   const {type, payload} = action
 
   switch (type) {
     case UPDATE_COURSES:
-      return {
-        ...state,
-        courses: payload.courses,
-        lastUpdated: payload.now,
-      }
+      return {...payload}
 
     default:
       return state
@@ -170,7 +131,7 @@ function courses(state=initialCoursesState, action) {
 
 
 const initialSisPageState = {}
-export function sis(state=initialSisPageState, action) {
+export function sis(state: Object=initialSisPageState, action: Object) {
   return {
     balances: balances(state.balances, action),
     meals: meals(state.meals, action),

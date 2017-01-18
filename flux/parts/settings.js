@@ -1,14 +1,15 @@
 /**
+ * @flow
  * Reducer for app settings
  */
 
 import {
   performLogin,
-  stOlafLogin,
+  saveLoginCredentials,
   clearLoginCredentials,
-  clearLoginToken,
 } from '../../lib/login'
 
+import {setTokenValid, clearTokenValid} from '../../lib/storage'
 
 export const SET_LOGIN_CREDENTIALS = 'settings/SET_LOGIN_CREDENTIALS'
 export const CREDENTIALS_LOGIN = 'settings/CREDENTIALS_LOGIN'
@@ -19,15 +20,18 @@ export const TOKEN_LOGOUT = 'settings/TOKEN_LOGOUT'
 export const CHANGE_THEME = 'settings/CHANGE_THEME'
 
 
-export function setLoginCredentials(username: string, password: string) {
+export async function setLoginCredentials(username: string, password: string) {
+  await saveLoginCredentials(username, password)
   return {type: SET_LOGIN_CREDENTIALS, payload: {username, password}}
 }
 
 export async function logInViaCredentials(username: string, password: string) {
-  return {type: CREDENTIALS_LOGIN, payload: performLogin(username, password)}
+  const result = await performLogin(username, password)
+  return {type: CREDENTIALS_LOGIN, payload: {username, password, result}}
 }
 
-export function logInViaToken(tokenStatus: boolean) {
+export async function logInViaToken(tokenStatus: boolean) {
+  await setTokenValid(tokenStatus)
   return {type: TOKEN_LOGIN, payload: tokenStatus}
 }
 
@@ -35,12 +39,14 @@ export function logOutViaCredentials() {
   return {type: CREDENTIALS_LOGOUT, payload: clearLoginCredentials()}
 }
 
-export async function validateLoginCredentials(username: string, password: string) {
-  return {type: CREDENTIALS_VALIDATE, payload: stOlafLogin(username, password)}
+export async function validateLoginCredentials(username?: string, password?: string) {
+  const result = await performLogin(username, password)
+  return {type: CREDENTIALS_VALIDATE, payload: {result}}
 }
 
-export function logOutViaToken() {
-  return {type: TOKEN_LOGOUT, payload: clearLoginToken()}
+export async function logOutViaToken() {
+  await clearTokenValid()
+  return {type: TOKEN_LOGOUT}
 }
 
 
@@ -162,12 +168,12 @@ const initialSettingsState = {
   credentials: undefined,
   token: undefined,
 }
-export function settings(state=initialSettingsState, action) {
+export function settings(state: Object=initialSettingsState, action: Object) {
   // start out by running the reducers for the complex chunks of the state
   state = {
     ...state,
-    credentials: credentialsReducer(state, action),
-    token: tokenReducer(state, action),
+    credentials: credentialsReducer(state.credentials, action),
+    token: tokenReducer(state.token, action),
   }
 
   const {type, payload} = action
