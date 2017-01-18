@@ -8,7 +8,6 @@ import reduxPromise from 'redux-promise'
 import reduxThunk from 'redux-thunk'
 import {allViewNames as defaultViewOrder} from '../views/views'
 import difference from 'lodash/difference'
-import {trackMenuFilters, trackHomescreenOrder} from '../analytics'
 import * as storage from '../lib/storage'
 
 export const SAVE_HOMESCREEN_ORDER = 'SAVE_HOMESCREEN_ORDER'
@@ -65,24 +64,8 @@ function homescreen(state=initialHomescreenState, action) {
   }
 }
 
+import {menus} from './parts/menus'
 
-export const UPDATE_MENU_FILTERS = 'menus/UPDATE_MENU_FILTERS'
-
-export const updateMenuFilters = (menuName: string, filters: any[]) => {
-  trackMenuFilters(menuName, filters)
-  return {type: UPDATE_MENU_FILTERS, payload: {menuName, filters}}
-}
-
-const initialMenusState = {}
-function menus(state=initialMenusState, action) {
-  let {type, payload} = action
-  switch (type) {
-    case UPDATE_MENU_FILTERS:
-      return {...state, [payload.menuName]: payload.filters}
-    default:
-      return state
-  }
-}
 
 export function aao(state={}, action) {
   return {
@@ -105,3 +88,4 @@ const store = createStore(
 init(store)
 
 export {store}
+export {updateMenuFilters} from './parts/menus'
