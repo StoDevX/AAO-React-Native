@@ -13,48 +13,22 @@ import {
 } from 'react-native'
 import {connect} from 'react-redux'
 import delay from 'delay'
-import zip from 'lodash/zip'
 import _isNaN from 'lodash/isNaN'
 import isNil from 'lodash/isNil'
 import {Column} from '../components/layout'
 import {ListRow, ListSeparator, ListSectionHeader, Detail, Title} from '../components/list'
 import LoadingScreen from '../components/loading'
 import {NoticeView} from '../components/notice'
-import type {CourseType} from '../../lib/courses'
+import type {CourseType, CoursesByTermType} from '../../lib/courses'
 import ErrorView from './error-screen'
 import type {TopLevelViewPropsType} from '../types'
 import {updateCourses} from '../../flux/parts/sis'
 
-const SEMESTERS = {
-  '0': 'Abroad',
-  '1': 'Fall',
-  '2': 'Interim',
-  '3': 'Spring',
-  '4': 'Summer Session 1',
-  '5': 'Summer Session 2',
-  '9': 'Non-St. Olaf',
-}
-
-function semesterName(semester: number|string): string {
-  if (typeof semester === 'number') {
-    semester = String(semester)
-  }
-  return SEMESTERS.hasOwnProperty(semester)
-        ? SEMESTERS[semester]
-        : `Unknown (${semester})`
-}
-
-function toPrettyTerm(term: number): string {
-  let str = String(term)
-  let semester = semesterName(str[4])
-  return `${semester} ${str.substr(0, 4)}`
-}
-
 type CoursesViewPropsType = TopLevelViewPropsType & {
   error: null,
   loggedIn: true,
-  updateCourses: (force: boolean) => Promise<(CourseType|Error)[]>,
-  courses: (CourseType|Error)[],
+  updateCourses: (force: boolean) => {},
+  coursesByTerm: CoursesByTermType,
 };
 
 class CoursesView extends React.Component {
@@ -69,26 +43,25 @@ class CoursesView extends React.Component {
     loading: false,
   }
 
+  componentWillMount() {
+    this.updateListview(this.props.coursesByTerm)
+  }
+
   componentWillReceiveProps(nextProps: CoursesViewPropsType) {
-    this.updateListview(nextProps.courses)
+    this.updateListview(nextProps.coursesByTerm)
   }
 
   props: CoursesViewPropsType;
 
-  updateListview(courses) {
-    this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
-  }
-
-  fetchData = async () => {
-    let courses = await this.props.updateCourses(true)
-    this.updateListview(courses)
+  updateListview(coursesByTerm) {
+    this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(coursesByTerm)})
   }
 
   refresh = async () => {
     let start = Date.now()
     this.setState({loading: true})
 
-    await this.fetchData()
+    await this.props.updateCourses(true)
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
     let elapsed = start - Date.now()
@@ -98,22 +71,20 @@ class CoursesView extends React.Component {
   }
 
   renderRow = (course: CourseType) => {
-    let locationTimePairs = zip(course.locations, course.times)
     let deptnum = `${course.department.join('/')} ${_isNaN(course.number) || isNil(course.number) ? '' : course.number}` + (course.section || '')
     return (
       <ListRow style={styles.rowContainer}>
         <Column>
           <Title>{course.name}</Title>
           <Detail>{deptnum}</Detail>
-          {locationTimePairs.map(([place, time], i) =>
-            <Detail key={i}>{place}: {time}</Detail>)}
+          <Detail>{course.instructors}</Detail>
         </Column>
       </ListRow>
     )
   }
 
-  renderSectionHeader = (courses: Object, term: number) => {
-    return <ListSectionHeader style={styles.rowSectionHeader} title={toPrettyTerm(term)} />
+  renderSectionHeader = (courses: CourseType[], term: string) => {
+    return <ListSectionHeader style={styles.rowSectionHeader} title={term} />
   }
 
   renderSeparator = (sectionId: string, rowId: string) => {
@@ -126,14 +97,15 @@ class CoursesView extends React.Component {
     }
 
     if (!this.props.loggedIn) {
-      return <ErrorView
-        route={this.props.route}
-        navigator={this.props.navigator}
-      />
+      return <ErrorView route={this.props.route} navigator={this.props.navigator} />
     }
 
     if (this.state.loading) {
       return <LoadingScreen />
+    }
+
+    if (!this.state.dataSource.getRowCount()) {
+      return <NoticeView text='No courses found.' buttonText='Try again?' onPress={this.refresh} />
     }
 
     return (
@@ -159,7 +131,7 @@ class CoursesView extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    courses: state.sis.courses.courses,
+    coursesByTerm: state.sis.courses,
     error: state.sis.courses.error,
     loggedIn: state.settings.token.valid,
   }
