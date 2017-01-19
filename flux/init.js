@@ -7,7 +7,11 @@ import {NetInfo} from 'react-native'
 import {loadLoginCredentials} from '../lib/login'
 import {updateOnlineStatus} from './parts/app'
 import {loadHomescreenOrder} from './parts/homescreen'
-import {setLoginCredentials, logInViaToken} from './parts/settings'
+import {
+  setLoginCredentials,
+  logInViaToken,
+  validateLoginCredentials,
+} from './parts/settings'
 import {
   updateFinancialData,
   updateMealsRemaining,
@@ -39,6 +43,13 @@ function checkSisLogin(store) {
   })
 }
 
+function validateOlafCredentials(store) {
+  loadLoginCredentials().then(({username, password}={}) => {
+    const action = validateLoginCredentials(username, password)
+    store.dispatch(action)
+  })
+}
+
 function loadBalances(store) {
   store.dispatch(updateFinancialData(false, false))
 }
@@ -62,6 +73,7 @@ export function init(store: {dispatch: any}) {
   homescreen(store)
   sisLoginCredentials(store)
   checkSisLogin(store)
+  validateOlafCredentials(store)
   loadBalances(store)
   loadMeals(store)
   loadCourses(store)

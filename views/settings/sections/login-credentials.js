@@ -8,11 +8,6 @@ import {LoginButton} from '../components/login-button'
 export class CredentialsLoginSection extends React.Component {
   state = {
     loading: false,
-    hasCheckedValidity: false,
-  }
-
-  componentWillMount() {
-    this.loadData()
   }
 
   props: {
@@ -31,14 +26,6 @@ export class CredentialsLoginSection extends React.Component {
   _passwordInput: any;
   focusUsername = () => this._usernameInput.focus();
   focusPassword = () => this._passwordInput.focus();
-
-  loadData = async () => {
-    if (!this.state.hasCheckedValidity && this.props.username && this.props.password) {
-      this.setState({loading: true})
-      await this.props.validateLogin(this.props.username, this.props.password)
-      this.setState({loading: false, hasCheckedValidity: true})
-    }
-  }
 
   logIn = async () => {
     this.setState({loading: true})
