@@ -31,6 +31,7 @@ const farmToFork = {
 const inBalance = {
   label: 'in balance',
   icon: require('./menu-icons/ib.png'),
+  description: 'Contains a balanced portion of whole grains, fresh fruits and vegetables, and lean protein with a minimum amount of healthy fat',
 }
 
 const madeWithoutGlutenContainingIngredients = {
@@ -42,6 +43,7 @@ const madeWithoutGlutenContainingIngredients = {
 const kosher = {
   label: 'kosher',
   icon: require('./menu-icons/k.png'),
+  description: 'Contains only ingredients prepared in accordance with Jewish Dietary Law',
 }
 
 export default {
