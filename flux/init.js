@@ -8,6 +8,12 @@ import {loadLoginCredentials} from '../lib/login'
 import {updateOnlineStatus} from './parts/app'
 import {loadHomescreenOrder} from './parts/homescreen'
 import {setLoginCredentials, logInViaToken} from './parts/settings'
+import {
+  updateFinancialData,
+  updateMealsRemaining,
+  updateCourses,
+} from './parts/sis'
+import {FINANCIALS_URL} from '../lib/financials/urls'
 
 function homescreen(store) {
   store.dispatch(loadHomescreenOrder())
@@ -33,6 +39,16 @@ function checkSisLogin(store) {
   })
 }
 
+function loadBalances(store) {
+  store.dispatch(updateFinancialData(false, false))
+}
+function loadMeals(store) {
+  store.dispatch(updateMealsRemaining(false, false))
+}
+function loadCourses(store) {
+  store.dispatch(updateCourses(false, false))
+}
+
 function netInfoIsConnected(store) {
   function updateConnectionStatus(isConnected) {
     store.dispatch(updateOnlineStatus(isConnected))
@@ -46,5 +62,8 @@ export function init(store: {dispatch: any}) {
   homescreen(store)
   sisLoginCredentials(store)
   checkSisLogin(store)
+  loadBalances(store)
+  loadMeals(store)
+  loadCourses(store)
   netInfoIsConnected(store)
 }
