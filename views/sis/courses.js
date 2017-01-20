@@ -70,12 +70,11 @@ class CoursesView extends React.Component {
   }
 
   renderRow = (course: CourseType) => {
-    let deptnum = `${course.department.join('/')} ${_isNaN(course.number) || isNil(course.number) ? '' : course.number}` + (course.section || '')
     return (
       <ListRow style={styles.rowContainer}>
         <Column>
           <Title>{course.name}</Title>
-          <Detail>{deptnum}</Detail>
+          <Detail>{course.deptnum}</Detail>
           {course.instructors ? <Detail>{course.instructors}</Detail> : null}
         </Column>
       </ListRow>
