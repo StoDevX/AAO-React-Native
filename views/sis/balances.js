@@ -30,18 +30,13 @@ import {SectionWithNullChildren} from '../components/section-with-null-children'
 import type {TopLevelViewPropsType} from '../types'
 
 const buttonStyles = StyleSheet.create({
-  Common: {
+  common: {
     backgroundColor: c.white,
   },
-  Balances: {
-    borderRightWidth: 1,
+  balances: {
+    borderRightWidth: StyleSheet.hairlineWidth,
     borderRightColor: c.iosGray,
   },
-  Courses: {
-    borderRightWidth: 1,
-    borderRightColor: c.iosGray,
-  },
-  Search: {},
 })
 
 class BalancesView extends React.Component {
@@ -127,6 +122,7 @@ class BalancesView extends React.Component {
                 label='Copy/Print'
                 value={print}
                 indeterminate={loading}
+                style={{borderRightWidth: 0}}
               />
             </View>
 
@@ -256,9 +252,14 @@ function getFormattedMealsRemaining(value: ?number): string {
   return (value: any).toString()
 }
 
-function FinancialBalancesCell({indeterminate, label, value}: {indeterminate: boolean, label: string, value: ?number}) {
+function FinancialBalancesCell({indeterminate, label, value, style}: {
+  indeterminate: boolean,
+  label: string,
+  value: ?number,
+  style?: any,
+}) {
   return (
-    <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
+    <View style={[styles.rectangle, buttonStyles.common, buttonStyles.balances, style]}>
       <Text style={styles.financialText} autoAdjustsFontSize={true}>
         {indeterminate ? '…' : getFormattedCurrency(value)}
       </Text>
