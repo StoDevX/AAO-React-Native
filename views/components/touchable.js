@@ -38,7 +38,8 @@ export const Touchable = ({
       )
     }
     case 'android': {
-      const background = borderless
+      const canBorderless = Platform.Version >= 21
+      const background = borderless && canBorderless
         ? TouchableNativeFeedback.SelectableBackgroundBorderless()
         : TouchableNativeFeedback.SelectableBackground()
       return (
