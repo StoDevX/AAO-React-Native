@@ -130,6 +130,7 @@ class CoursesView extends React.Component {
         renderRow={this.renderRow}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
+        removeClippedSubviews={false}
         enableEmptySections={true}
         pageSize={5}
         refreshControl={
