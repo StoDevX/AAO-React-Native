@@ -11,6 +11,12 @@ import {
 
 import {setTokenValid, clearTokenValid} from '../../lib/storage'
 
+import {
+  updateFinancialData,
+  updateMealsRemaining,
+  updateCourses,
+} from './sis'
+
 export const SET_LOGIN_CREDENTIALS = 'settings/SET_LOGIN_CREDENTIALS'
 export const CREDENTIALS_LOGIN = 'settings/CREDENTIALS_LOGIN'
 export const CREDENTIALS_LOGOUT = 'settings/CREDENTIALS_LOGOUT'
@@ -25,14 +31,29 @@ export async function setLoginCredentials(username: string, password: string) {
   return {type: SET_LOGIN_CREDENTIALS, payload: {username, password}}
 }
 
-export async function logInViaCredentials(username: string, password: string) {
-  const result = await performLogin(username, password)
-  return {type: CREDENTIALS_LOGIN, payload: {username, password, result}}
+export function logInViaCredentials(username: string, password: string) {
+  return async (dispatch: () => {}) => {
+    const result = await performLogin(username, password)
+    dispatch({type: CREDENTIALS_LOGIN, payload: {username, password, result}})
+
+    // if we logged in successfully, go ahead and fetch the meals remaining number
+    if (result) {
+      dispatch(updateMealsRemaining())
+    }
+  }
 }
 
 export async function logInViaToken(tokenStatus: boolean) {
-  await setTokenValid(tokenStatus)
-  return {type: TOKEN_LOGIN, payload: tokenStatus}
+  return async (dispatch: () => {}) => {
+    await setTokenValid(tokenStatus)
+    dispatch({type: TOKEN_LOGIN, payload: tokenStatus})
+
+    // if we logged in successfully, go ahead and fetch the data that requires a valid token
+    if (tokenStatus) {
+      dispatch(updateFinancialData())
+      dispatch(updateCourses())
+    }
+  }
 }
 
 export function logOutViaCredentials() {
