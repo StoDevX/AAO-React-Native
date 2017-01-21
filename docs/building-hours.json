@@ -1506,8 +1506,8 @@
       }
     },
     {
-      "name": "Christiansen",
-      "abbreviation": "CHM",
+      "name": "CHM",
+      "subtitle": "Christiansen",
       "image": "christiansen",
       "category": "Academia",
       "schedule": [
@@ -2014,7 +2014,8 @@
       }
     },
     {
-      "name": "World Language Center",
+      "name": "WLC",
+      "subtitle": "World Language Center",
       "category": "Academia",
       "schedule": [
         {
@@ -2393,7 +2394,7 @@
                 "We"
               ],
               "from": "7:00pm",
-              "to '9:00pm'": null
+              "to": "9:00pm"
             }
           ]
         }
