@@ -1,9 +1,9 @@
-name: 'Old Main'
-image: 'old-main'
-category: 'Academia'
+name: Old Main
+image: old-main
+category: Academia
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th], from: '7:00am', to: '9:45pm'}
       - {days: [Fr], from: '7:00am', to: '6:00pm'}

@@ -1,9 +1,9 @@
-name: 'Buntrock Commons'
-image: 'buntrock'
-category: 'Academia'
+name: Buntrock Commons
+image: buntrock
+category: Academia
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th], from: '7:00am', to: '12:00am'}
       - {days: [Fr, Sa], from: '7:00am', to: '2:00am'}

@@ -1,12 +1,11 @@
-name: Bookstore
-image: bookstore
-category: Supplies and Books
+name: Admissions
+category: Offices
 
 schedule:
   - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}
-      - {days: [Sa], from: '10:00am', to: '4:00pm'}
+      - {days: [Sa], from: '8:00am', to: '12:00pm'}
 
 breakSchedule:
   fall: []
@@ -15,4 +14,5 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer: []
+  summer:
+    - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '4:30pm'}

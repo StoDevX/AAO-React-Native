@@ -1,13 +1,11 @@
-name: Convenience Store
-image: convenience
-category: Supplies and Books
+name: CMIE
+subtitle: Center for Multiculteral and International Engagement
+category: Offices
 
 schedule:
   - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '8:00pm'}
-      - {days: [Sa], from: '10:00am', to: '8:00pm'}
-      - {days: [Su], from: '12:00pm', to: '4:00pm'}
 
 breakSchedule:
   fall: []

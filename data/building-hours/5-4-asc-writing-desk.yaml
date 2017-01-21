@@ -1,9 +1,9 @@
-name: 'ASC – Writing Desk'
-category: 'Help and Support'
+name: ASC – Writing Desk
+category: Help and Support
 
 schedule:
-  - title: 'Hours'
-    notes: 'Times by appointment.'
+  - title: Hours
+    notes: Times by appointment.
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '10:00am', to: '5:00pm'}
       - {days: [Mo, Tu, We, Th], from: '7:00pm', to: '10:00pm'}
