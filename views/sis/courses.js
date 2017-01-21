@@ -13,8 +13,6 @@ import {
 } from 'react-native'
 import {connect} from 'react-redux'
 import delay from 'delay'
-import _isNaN from 'lodash/isNaN'
-import isNil from 'lodash/isNil'
 import {Column} from '../components/layout'
 import {ListRow, ListSeparator, ListSectionHeader, Detail, Title} from '../components/list'
 import LoadingScreen from '../components/loading'
