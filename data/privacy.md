@@ -104,13 +104,17 @@ To be in accordance with CANSPAM, we agree to the following:
 
 If at any time you would like to unsubscribe from receiving future emails, you can email us at <sgawebmaster@stolaf.edu> and we will promptly remove you from ALL correspondence.
 
+> Google Analytics
+
+The app also uses Google Analytics to see how people use the app, which allow us to prioritize our development time more efficiently.
+
 > Contacting Us
 
 If there are any questions regarding this privacy policy, you may contact us using the information below.
 
-oleville.com
+Student Government Assoc. ATTN: Webmaster
 1520 St. Olaf Ave.
 Northfield, MN 55057 USA
 <sgawebmaster@stolaf.edu>
 
-Last Edited on 2017-01-02
+Last Edited on 2017-01-20
