@@ -751,8 +751,8 @@
       }
     },
     {
-      "name": "Academic Support Center",
-      "abbreviation": "ASC",
+      "name": "ASC",
+      "subtitle": "Academic Support Center",
       "category": "Help and Support",
       "schedule": [
         {

@@ -1,9 +1,9 @@
-name: 'CMIE'
-subtitle: 'Center for Multiculteral and International Engagement'
-category: 'Offices'
+name: CMIE
+subtitle: Center for Multiculteral and International Engagement
+category: Offices
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '8:00pm'}
 

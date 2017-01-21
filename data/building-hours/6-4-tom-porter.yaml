@@ -1,9 +1,9 @@
-name: 'Tom Porter Weight Room'
-category: 'Gym'
-image: 'tom-porter'
+name: Tom Porter Weight Room
+category: Gym
+image: tom-porter
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th], from: '10:00am', to: '8:00pm'}
       - {days: [Fr], from: '7:00am', to: '5:00pm'}

@@ -1,10 +1,10 @@
-name: 'Hall of Music'
-abbreviation: 'HOM'
-image: 'hall-of-music'
-category: 'Academia'
+name: Hall of Music
+abbreviation: HOM
+image: hall-of-music
+category: Academia
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
       - {days: [Sa, Su], from: '8:00am', to: '12:00am'}

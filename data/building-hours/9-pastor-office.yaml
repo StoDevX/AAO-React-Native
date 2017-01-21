@@ -1,8 +1,8 @@
 name: Pastor's Office
-category: 'Offices'
+category: Offices
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}
 

@@ -1,8 +1,8 @@
-name: 'Business Office'
-category: 'Offices'
+name: Business Office
+category: Offices
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '4:30pm'}
 
