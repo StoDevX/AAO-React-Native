@@ -1,7 +1,7 @@
 const vegetarian = {
   label: 'vegetarian',
   icon: require('./menu-icons/v.png'),
-  description: 'Vegetarian: Contains no meat, fish, poultry, shellfish or products derived from these sources but may contain dairy or eggs',
+  description: 'Contains no meat, fish, poultry, shellfish or products derived from these sources but may contain dairy or eggs',
 }
 
 const seafoodWatch = {
