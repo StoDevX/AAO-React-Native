@@ -87,26 +87,32 @@
             {
               "days": [
                 "Mo",
-                "Tu",
-                "We",
-                "Th"
+                "We"
               ],
               "from": "10:30am",
               "to": "12:00am"
             },
             {
               "days": [
-                "Fr",
-                "Sa"
+                "Fr"
               ],
               "from": "10:30am",
               "to": "9:00pm"
             },
             {
               "days": [
-                "Su"
+                "Sa"
               ],
-              "from": "10:30am",
+              "from": "11:30am",
+              "to": "9:00pm"
+            },
+            {
+              "days": [
+                "Su",
+                "Tu",
+                "Th"
+              ],
+              "from": "11:30am",
               "to": "12:00am"
             }
           ]
