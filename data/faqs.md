@@ -18,8 +18,7 @@ p {
 </style>
 
 # Why does this app update so slowly?
-We hear you, and we are working hard. Magic is hard to find these days. Have you ever tried looking for it?
+We hear you. Magic is hard to find these days. Have you ever tried looking for it?
 
-# Status(es)
+# Known Issues
 - SIS: we're working on a way to have you log into the sis for more than 15 minutes at a time.
-- News: Google removed the service we used to load the news feeds. The next version will bring them back.
