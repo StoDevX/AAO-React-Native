@@ -50,7 +50,7 @@
     "react-native-device-info": "0.9.7",
     "react-native-google-analytics-bridge": "4.0.2",
     "react-native-keychain": "0.3.2",
-    "react-native-onesignal": "1.2.3",
+    "react-native-onesignal": "2.0.0",
     "react-native-parallax-view": "2.0.6",
     "react-native-sortable-list": "github:hawkrives/react-native-sortable-list#a46c78161e0a1a8d3a45f2fef69d98af3e911b6d",
     "react-native-tab-view": "0.0.49",
