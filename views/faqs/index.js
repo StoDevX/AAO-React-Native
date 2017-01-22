@@ -35,6 +35,11 @@ export class FaqView extends React.Component {
       tracker.trackException(err.message)
       console.warn(err.message)
     }
+
+    if (__DEV__) {
+      html = faqs
+    }
+
     this.setState({html: html})
   }
 
