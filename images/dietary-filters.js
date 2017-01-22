@@ -37,7 +37,7 @@ const inBalance = {
 const madeWithoutGlutenContainingIngredients = {
   label: 'made without gluten-containing ingredients',
   icon: require('./menu-icons/mwgci.png'),
-  description: 'Made without Gluten-Containing Ingredients: Due to our open kitchens that handle gluten, we cannot guarantee that items made without gluten-containing ingredients are “gluten-free,” as defined by the FDA.  We make every effort to avoid gluten cross-contact; however there is always the potential for cross-contact with other gluten-containing food items, particularly in our self-serve facilities. We encourage guests to speak to the chef or manager regarding any questions about ingredients.',
+  description: 'Due to our open kitchens that handle gluten, we cannot guarantee that items made without gluten-containing ingredients are “gluten-free,” as defined by the FDA.  We make every effort to avoid gluten cross-contact; however there is always the potential for cross-contact with other gluten-containing food items, particularly in our self-serve facilities. We encourage guests to speak to the chef or manager regarding any questions about ingredients.',
 }
 
 const kosher = {
