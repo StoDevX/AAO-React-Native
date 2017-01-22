@@ -34,21 +34,21 @@ export default function KSTOView() {
           if (Platform.OS === 'android') {
             Linking.openURL(kstoWeb).catch(err => {
               tracker.trackException('opening Android KSTO url: ' + err.message)
-              console.error('An error occurred opening the Android KSTO url', err)
+              console.warn('An error occurred opening the Android KSTO url', err)
             })
           } else {
             Linking.canOpenURL(kstoApp).then(supported => {
               if (!supported) {
                 Linking.openURL(kstoDownload).catch(err => {
                   tracker.trackException('opening KSTO download url: ' + err.message)
-                  console.error('An error occurred opening the KSTO download url', err)
+                  console.warn('An error occurred opening the KSTO download url', err)
                 })
               } else {
                 return Linking.openURL(kstoApp)
               }
             }).catch(err => {
               tracker.trackException('opening iOS KSTO url: ' + err.message)
-              console.error('An error occurred opening the iOS KSTO url', err)
+              console.warn('An error occurred opening the iOS KSTO url', err)
             })
           }
         }}
