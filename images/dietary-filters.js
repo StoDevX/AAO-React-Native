@@ -7,25 +7,25 @@ const vegetarian = {
 const seafoodWatch = {
   label: 'seafood watch',
   icon: require('./menu-icons/sw.png'),
-  description: 'Seafood Watch: Contains seafood that meets the Monterey Bay Aquarium’s Seafood Watch guidelines for commercial buyers.',
+  description: 'Contains seafood that meets the Monterey Bay Aquarium’s Seafood Watch guidelines for commercial buyers.',
 }
 
 const vegan = {
   label: 'vegan',
   icon: require('./menu-icons/vg.png'),
-  description: 'Vegan: Contains absolutely no animal or dairy products.',
+  description: 'Contains absolutely no animal or dairy products.',
 }
 
 const forYourWellBeing = {
   label: 'for your well-being',
   icon: require('./menu-icons/wb.png'),
-  description: 'For Your Well-Being: Contains foods illustrating this month’s Food For Your Well-Being topic ',
+  description: 'Contains foods illustrating this month’s Food For Your Well-Being topic ',
 }
 
 const farmToFork = {
   label: 'farm to fork',
   icon: require('./menu-icons/ff.png'),
-  description: 'Farm to Fork: Contains seasonal, minimally processed ingredients from a local farm, ranch, or fishing boat.',
+  description: 'Contains seasonal, minimally processed ingredients from a local farm, ranch, or fishing boat.',
 }
 
 const inBalance = {
