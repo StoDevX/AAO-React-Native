@@ -30,7 +30,7 @@ export const Touchable = ({
     default:
     case 'ios': {
       const Component = highlight ? TouchableHighlight : TouchableOpacity
-      const innerProps = highlight ? {underlayColor: '#ebebeb'} : {activeOpacity: 0.65}
+      const innerProps = highlight ? {underlayColor: '#d9d9d9'} : {activeOpacity: 0.65}
       return (
         <Component onPress={onPress} {...innerProps} {...props}>
           {content}
