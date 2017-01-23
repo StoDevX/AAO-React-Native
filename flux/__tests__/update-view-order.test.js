@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import {updateViewOrder} from '../index'
+import {updateViewOrder} from '../parts/homescreen'
 
 test('it should return the current order if no screens have changed', () => {
   let savedOrder = ['a', 'b', 'c']

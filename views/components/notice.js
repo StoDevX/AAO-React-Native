@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
+import {Button} from './button'
 
 const styles = StyleSheet.create({
   container: {
@@ -20,7 +21,13 @@ const styles = StyleSheet.create({
   },
 })
 
-export function NoticeView({text, style, spinner}: {text: string, style?: any, spinner?: boolean}) {
+export function NoticeView({text, style, spinner, buttonText, onPress}: {
+  text: string,
+  style?: any,
+  spinner?: boolean,
+  buttonText?: string,
+  onPress?: () => any,
+}) {
   let activityIndicator = spinner ? <ActivityIndicator style={styles.spinner} /> : null
   return (
     <View style={[styles.container, style]}>
@@ -28,6 +35,7 @@ export function NoticeView({text, style, spinner}: {text: string, style?: any, s
       <Text style={styles.text}>
         {text || 'Notice!'}
       </Text>
+      {buttonText ? <Button onPress={onPress} title={buttonText} /> : null}
     </View>
   )
 }
