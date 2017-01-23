@@ -200,6 +200,7 @@ platform :android do
 
     ci_git_setup
 
+    git_url = "https://github.com/hawkrives/aao-keys"
     dir = Dir.mktmpdir
     command = "git clone --depth 1 '#{git_url}' '#{dir}'"
 
