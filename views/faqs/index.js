@@ -32,9 +32,15 @@ export class FaqView extends React.Component {
       let blob: {text: string} = await fetchJson(this.url)
       html = blob.text
     } catch (err) {
+      html = faqs
       tracker.trackException(err.message)
       console.warn(err.message)
     }
+
+    if (__DEV__) {
+      html = faqs
+    }
+
     this.setState({html: html})
   }
 
