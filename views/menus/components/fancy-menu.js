@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {View, Navigator} from 'react-native'
+import {View} from 'react-native'
 import {connect} from 'react-redux'
 import {updateMenuFilters} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
@@ -15,6 +15,7 @@ import filter from 'lodash/filter'
 import map from 'lodash/map'
 import {FilterMenuToolbar} from './filter-menu-toolbar'
 import {MenuListView} from './menu'
+import DietaryFilters from '../../../images/dietary-filters'
 
 type FancyMenuPropsType = TopLevelViewPropsType & {
   applyFilters: (filters: FilterType[], item: MenuItemType) => boolean,
@@ -34,7 +35,7 @@ class FancyMenuView extends React.Component {
   }
 
   componentWillMount() {
-    let {menuCorIcons, filters, stationMenus} = this.props
+    let {foodItems, menuCorIcons, filters, stationMenus} = this.props
 
     // prevent ourselves from overwriting the filters from redux on mount
     if (filters.length) {
@@ -42,19 +43,31 @@ class FancyMenuView extends React.Component {
     }
 
     let stations = stationMenus.map(m => m.label)
-    filters = this.buildFilters({stations, corIcons: menuCorIcons})
+    filters = this.buildFilters({foodItems, stations, corIcons: menuCorIcons})
     this.props.onFiltersChange(filters)
   }
 
-  buildFilters({stations, corIcons}: {stations: string[], corIcons: MasterCorIconMapType}): FilterType[] {
+  buildFilters({foodItems, stations, corIcons}: {foodItems: MenuItemType[], stations: string[], corIcons: MasterCorIconMapType}): FilterType[] {
+    // Format the items for the stations filter
+    const allStations = map(stations, name => ({title: name}))
+
     // Grab the labels of the COR icons
-    let allDietaryRestrictions = map(corIcons, item => item.label)
+    const allDietaryRestrictions = map(corIcons, (item, key) => ({
+      title: item.label,
+      image: DietaryFilters[key] ? DietaryFilters[key].icon : null,
+      detail: DietaryFilters[key].description,
+    }))
+
+    // Check if there is at least one special in order to show the specials-only filter
+    const stationNames = allStations.map(s => s.title)
+    const shouldShowSpecials = filter(foodItems, item =>
+      item.special && stationNames.includes(item.station)).length >= 1
 
     return [
       {
         type: 'toggle',
         key: 'specials',
-        enabled: true,
+        enabled: shouldShowSpecials,
         spec: {
           label: 'Only Show Specials',
           caption: 'Allows you to either see only the "specials" for today, or everything the location has to offer (e.g., condiments.)',
@@ -69,9 +82,9 @@ class FancyMenuView extends React.Component {
         enabled: false,
         spec: {
           title: 'Stations',
-          options: stations,
+          options: allStations,
           mode: 'OR',
-          selected: stations,
+          selected: allStations,
         },
         apply: {
           key: 'station',
@@ -83,6 +96,7 @@ class FancyMenuView extends React.Component {
         enabled: false,
         spec: {
           title: 'Dietary Restrictions',
+          showImages: true,
           options: allDietaryRestrictions,
           mode: 'AND',
           selected: [],
@@ -101,7 +115,7 @@ class FancyMenuView extends React.Component {
       id: 'FilterView',
       index: this.props.route.index + 1,
       title: 'Filter',
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+      sceneConfig: 'fromBottom',
       onDismiss: (route: any, navigator: any) => navigator.pop(),
       props: {
         pathToFilters: ['menus', this.props.name],
@@ -137,7 +151,7 @@ class FancyMenuView extends React.Component {
 
     let message = ''
     if (specialsFilterEnabled && sortedByStation.length === 0) {
-      message = 'No items to show. There may be no specials today.\nTry changing the filters.'
+      message = 'No items to show. There may be no specials today. Try changing the filters.'
     }
 
     return (

@@ -1,19 +1,19 @@
-name: 'Stav Hall'
-image: 'stav'
-category: 'Food'
+name: Stav Hall
+image: stav
+category: Food
 
 schedule:
-  - title: 'Breakfast'
+  - title: Breakfast
     hours:
       - {days: [Mo, Tu, We, Th, Fr, Sa], from: '7:00am', to: '9:45am'}
       - {days: [Su], from: '8:30am', to: '10:15am'}
 
-  - title: 'Lunch'
+  - title: Lunch
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '10:30am', to: '2:00pm'}
       - {days: [Sa, Su], from: '11:00am', to: '1:30pm'}
 
-  - title: 'Dinner'
+  - title: Dinner
     hours:
       - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:30pm'}
 

@@ -1,91 +1,26 @@
 // @flow
-
 import React from 'react'
-import {Platform, View, StyleSheet, Text} from 'react-native'
+import {Platform, StyleSheet, Text} from 'react-native'
+import {Row, Column} from '../../components/layout'
+import {ListRow, Detail, Title} from '../../components/list'
 import type {FancyBusTimeListType} from './types'
 import type moment from 'moment'
 import * as c from '../../components/colors'
+import {ProgressChunk} from './components/progress-chunk'
 
 const TIME_FORMAT = 'h:mma'
 
-let styles = StyleSheet.create({
-  busWillSkipStopTitle: {
+const styles = StyleSheet.create({
+  skippingStopTitle: {
     color: c.iosDisabledText,
   },
-  busWillSkipStopDetail: {},
-  busWillSkipStopDot: {
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
+  skippingStopDetail: {
   },
-  row: {
-    flexDirection: 'row',
-  },
-  rowDetail: {
-    flex: 1,
-    marginLeft: 0,
-    paddingRight: 10,
+  internalPadding: {
     paddingVertical: Platform.OS === 'ios' ? 8 : 15,
-    flexDirection: 'column',
-  },
-  notLastRowContainer: {
-    borderBottomWidth: Platform.OS === 'ios' ? StyleSheet.hairlineWidth : 1,
-    borderBottomColor: Platform.OS === 'ios' ? '#c8c7cc' : '#e0e0e0',
-  },
-  passedStopDetail: {
-
-  },
-  itemTitle: {
-    color: c.black,
-    paddingLeft: 0,
-    paddingRight: 0,
-    paddingBottom: 3,
-    fontSize: Platform.OS === 'ios' ? 16 : 17,
-    textAlign: 'left',
-  },
-  itemDetail: {
-    color: c.iosDisabledText,
-    paddingLeft: 0,
-    paddingRight: 0,
-    fontSize: 13,
-    textAlign: 'left',
-  },
-  barContainer: {
-    paddingRight: 5,
-    width: 45,
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  bar: {
-    flex: 1,
-    width: 5,
-  },
-  dot: {
-    height: 15,
-    width: 15,
-    marginTop: -20,
-    marginBottom: -20,
-    borderRadius: 20,
-    zIndex: 1,
-  },
-  passedStop: {
-    height: 12,
-    width: 12,
-  },
-  beforeStop: {
-    borderWidth: 3,
-    backgroundColor: 'white',
-    height: 18,
-    width: 18,
-  },
-  atStop: {
-    height: 20,
-    width: 20,
-    borderColor: 'white',
-    borderWidth: 3,
-    backgroundColor: 'white',
   },
   atStopTitle: {
-    fontWeight: 'bold',
+    fontWeight: Platform.OS === 'ios' ? '500' : '600',
   },
   passedStopTitle: {
     color: c.iosDisabledText,
@@ -93,80 +28,71 @@ let styles = StyleSheet.create({
 })
 
 export function BusStopRow({
-  index,
   time,
   now,
   barColor,
   currentStopColor,
-  isLastRow,
   place,
   times,
+  isFirstRow,
+  isLastRow,
 }: {
-  index: number,
   time: moment,
   now: moment,
   barColor: string,
   currentStopColor: string,
-  isLastRow: boolean,
   place: string,
-  times: FancyBusTimeListType[]
+  times: FancyBusTimeListType,
+  isFirstRow: boolean,
+  isLastRow: boolean,
 }) {
   const afterStop = time && now.isAfter(time, 'minute')
   const atStop = time && now.isSame(time, 'minute')
   const beforeStop = !afterStop && !atStop && time !== false
   const skippingStop = time === false
 
-  // To draw the bar, we draw a chunk of the bar, then we draw the dot, then
-  // we draw the last chunk of the bar.
-  const busLineProgressBar = (
-    <View style={styles.barContainer}>
-      <View style={[styles.bar, {backgroundColor: barColor}]} />
-      <View
-        style={[
-          styles.dot,
-          afterStop && [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}],
-          beforeStop && [styles.beforeStop, {borderColor: barColor}],
-          atStop && [styles.atStop, {borderColor: currentStopColor}],
-          skippingStop && styles.busWillSkipStopDot,
-        ]}
-      />
-      <View style={[styles.bar, {backgroundColor: barColor}]} />
-    </View>
-  )
-
-  // The bus line information is the stop name, and the times.
-  const busLineInformation = (
-    <View style={[
-      styles.rowDetail,
-      !isLastRow && styles.notLastRowContainer,
-    ]}>
-      <Text style={[
-        styles.itemTitle,
-        skippingStop && styles.busWillSkipStopTitle,
-        afterStop && styles.passedStopTitle,
-        atStop && styles.atStopTitle,
-      ]}>
-        {place}
-      </Text>
-      <Text
-        style={[
-          styles.itemDetail,
-          skippingStop && styles.busWillSkipStopDetail,
-        ]}
-        numberOfLines={1}
-      >
-        {times
-          .map(timeSet => timeSet[index])
-          .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
-          .join(' • ')}
-      </Text>
-    </View>
-  )
-
   return (
-    <View style={styles.row}>
-      {busLineProgressBar}
-      {busLineInformation}
-    </View>
+    <ListRow
+      fullWidth={true}
+      fullHeight={true}
+    >
+      <Row>
+        <ProgressChunk
+          {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}}
+          isFirstChunk={isFirstRow}
+          isLastChunk={isLastRow}
+        />
+
+        <Column flex={1} style={styles.internalPadding}>
+          <Title
+            bold={false}
+            style={[
+              skippingStop && styles.skippingStopTitle,
+              afterStop && styles.passedStopTitle,
+              atStop && styles.atStopTitle,
+            ]}
+          >
+            {place}
+          </Title>
+          <Detail lines={1}>
+            <ScheduleTimes {...{times, skippingStop}} />
+          </Detail>
+        </Column>
+      </Row>
+    </ListRow>
+  )
+}
+
+const ScheduleTimes = ({times, skippingStop}: {
+  skippingStop: boolean,
+  times: FancyBusTimeListType,
+}) => {
+  return (
+    <Text style={skippingStop && styles.skippingStopDetail}>
+      {times
+        // and format the times
+        .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
+        .join(' • ')}
+    </Text>
   )
 }

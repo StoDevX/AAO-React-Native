@@ -1,9 +1,9 @@
-name: 'Alumni Hall'
-image: 'alumni-hall'
-category: 'Academia'
+name: Alumni Hall
+image: alumni-hall
+category: Academia
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
 

@@ -32,8 +32,6 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
         new GoogleAnalyticsBridgePackage(),
-        new RNDeviceInfo(),
-        new CookieManagerPackage(),
         new KeychainPackage(),
         new ReactNativeOneSignalPackage(),
         new RNDeviceInfo(),

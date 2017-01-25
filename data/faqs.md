@@ -18,8 +18,9 @@ p {
 </style>
 
 # Why does this app update so slowly?
-We hear you, and we are working hard. Magic is hard to find these days. Have you ever tried looking for it?
+We hear you. Magic is hard to find these days. Have you ever tried looking for it?
 
-# Status(es)
+# Known Issues
 - SIS: we're working on a way to have you log into the sis for more than 15 minutes at a time.
-- News: Google removed the service we used to load the news feeds. The next version will bring them back.
+- Building Hours: It reports the 2am buildings as open too often; for instance, the Pause is open on Saturday at 2am, continuing from Friday, but the app reports it as being open on Friday at 2am, as well. This is incorrect.
+- The Cage menu only shows specials: that's a limitation of the data we get from BonApp. SGA is talking with them about providing the rest of the Cage menu. One day, it'll suddenly work!

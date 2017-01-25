@@ -1,102 +1,36 @@
-/**
- * All About Olaf
- * Index view
- */
-
+// @flow
 import React from 'react'
-import {
-  WebView,
-  View,
-  Text,
-  AsyncStorage,
-  Navigator,
-} from 'react-native'
+import {WebView} from 'react-native'
+
+import {NoticeView} from '../components/notice'
+
 import startsWith from 'lodash/startsWith'
+import type {TopLevelViewPropsType} from '../types'
 
-import CookieManager from 'react-native-cookies'
-import LoadingView from '../components/loading'
-
-const COOKIE_NAME = 'JSESSIONID'
 const HOME_URL = 'https://www.stolaf.edu/sis/index.cfm'
 const LOGIN_URL = 'https://www.stolaf.edu/sis/login.cfm'
-const AUTH_REJECTED_URL = 'https://www.stolaf.edu/sis/login.cfm?error=access_denied#'
-
 
 export default class SISLoginView extends React.Component {
-  static propTypes = {
-    navigator: React.PropTypes.instanceOf(Navigator),
-    onLoginComplete: React.PropTypes.func,
-  };
+  state = {complete: false};
 
-  static defaultProps = {
-    onLoginComplete: () => {},
-  };
+  props: TopLevelViewPropsType & {onLoginComplete: (status: boolean) => any};
 
-  state = {
-    loggedIn: false,
-    cookieLoaded: false,
-  };
-
-  componentWillMount() {
-    this.loadCookie()
-  }
-
-  loadCookie = () => {
-    CookieManager.get(HOME_URL, cookie => {
-      let isAuthenticated
-
-      if (cookie && cookie.indexOf(COOKIE_NAME) != -1) {
-        isAuthenticated = true
-      } else {
-        isAuthenticated = false
-      }
-
-      this.setState({
-        loggedIn: isAuthenticated,
-        loadedCookie: true,
-      })
-      this.props.onLoginComplete(isAuthenticated)
-    })
-  }
-
-  logout () {
-    CookieManager.clearAll((err, res) => {
-      if (err) {
-        console.log(err)
-      }
-      console.log(res)
-    })
-
-    this.setState({
-      loggedIn: false,
-    })
-  }
-
-  onNavigationStateChange = navState => {
-    // If we get redirected back to the HOME_URL we know that we are logged in. If your backend does something different than this
-    // change this line.
+  onNavigationStateChange = (navState: {url: string}) => {
+    console.info(navState.url)
+    // If we hit HOME_URL, we know we're logged in.
     if (startsWith(navState.url, HOME_URL)) {
-      AsyncStorage.setItem('credentials:valid', JSON.stringify(true))
-      this.setState({
-        loggedIn: true,
-      })
-      // TODO: figure out a way to do this that doesn't involve reaching
-      // into the parent? But this migth be the good way. Think about it.
+      this.setState({complete: true})
       this.props.onLoginComplete(true)
-      this.props.navigator.pop()
-    } else if (startsWith(navState.url, AUTH_REJECTED_URL)) {
-      this.props.onLoginComplete(false)
-      this.props.navigator.pop()
     }
+  }
+
+  onComplete = () => {
+    this.props.navigator.pop()
   }
 
   render() {
-    // If we have completed loading the cookie choose to show Login WebView or the LoggedIn component, else just show an empty View.
-    if (!this.state.loadedCookie) {
-      return <LoadingView />
-    }
-    if (this.state.loggedIn) {
-      return <View><Text>Logged in!</Text></View>
+    if (this.state.complete) {
+      return <NoticeView text="You're logged in!" onPress={this.onComplete} buttonText='Done' />
     }
 
     return (

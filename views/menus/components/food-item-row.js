@@ -1,89 +1,67 @@
 // @flow
 import React from 'react'
-import {View, Text, StyleSheet, Platform} from 'react-native'
+import {View, StyleSheet, Platform} from 'react-native'
 import {DietaryTags} from './dietary-tags'
+import {Row, Column} from '../../components/layout'
+import {ListRow, Detail, Title} from '../../components/list'
 import type {MenuItemType, MasterCorIconMapType} from '../types'
 import * as c from '../../components/colors'
+import Icon from 'react-native-vector-icons/Ionicons'
 
-type FoodItemPropsType = {
+const specialsIcon = Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'
+
+type FoodItemPropsType = {|
   filters: MasterCorIconMapType,
   data: MenuItemType,
-  style: any,
+  style?: any,
   badgeSpecials?: boolean,
-};
+  spacing: {left: number},
+|};
 
-export function FoodItemRow({data, filters, style, badgeSpecials=true}: FoodItemPropsType) {
+export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodItemPropsType) {
+  const {left=0} = props.spacing
   return (
-    <View style={[styles.container, style]}>
-      <View style={styles.main}>
-        <View style={styles.title}>
-          <View style={styles.badgeView}>
-            <Text style={styles.badgeTextBlob}>{badgeSpecials && data.special ? '✩' : ''}</Text>
-          </View>
-          <Text style={styles.titleText}>
-            {data.label}
-          </Text>
+    <ListRow
+      style={[styles.container, props.style]}
+      fullWidth={true}
+      arrowPosition='none'
+    >
+      <Row alignItems='center'>
+        <View style={[styles.badge, {width: left}]}>
+          {badgeSpecials && data.special ? <Icon style={styles.badgeIcon} name={specialsIcon} /> : null}
         </View>
-        {data.description
-          ? <View style={styles.description}>
-            <Text style={styles.descriptionText}>
-              {data.description}
-            </Text>
-          </View>
-          : null}
-      </View>
-      <DietaryTags
-        filters={filters}
-        dietary={data.cor_icon}
-        style={styles.iconContainer}
-      />
-    </View>
+
+        <Column flex={1}>
+          <Title bold={false}>{data.label}</Title>
+          {data.description ? <Detail>{data.description}</Detail> : null}
+        </Column>
+
+        <DietaryTags
+          filters={filters}
+          dietary={data.cor_icon}
+          style={styles.iconContainer}
+        />
+      </Row>
+    </ListRow>
   )
 }
 
-const leftSideSpacing = 28
-const rightSideSpacing = 10
-const titleFontSize = 16
-const titleLineHeight = 18
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 6,
+    minHeight: 36,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  main: {
-    flex: 1,
-  },
-  title: {
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  titleText: {
-    color: c.black,
-    fontSize: titleFontSize,
-    lineHeight: titleLineHeight,
-  },
-  description: {
-    paddingTop: 3,
-    marginLeft: 0.5,  // Needed to line up the title and description because of the icon
-  },
-  descriptionText: {
-    color: c.iosDisabledText,
-    fontSize: Platform.OS === 'ios' ? 13 : 14,
-  },
-  badgeView: {
-    width: leftSideSpacing,
-    marginLeft: -leftSideSpacing,
+  badge: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  badgeTextBlob: {
-    fontSize: titleLineHeight,
-    lineHeight: titleLineHeight,
-    marginBottom: -3,
+  badgeIcon: {
+    fontSize: 16,
     color: c.iosDisabledText,
   },
   iconContainer: {
-    marginLeft: rightSideSpacing,
+    marginLeft: 10,
+    marginRight: 4,
   },
 })

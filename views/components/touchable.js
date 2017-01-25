@@ -30,7 +30,7 @@ export const Touchable = ({
     default:
     case 'ios': {
       const Component = highlight ? TouchableHighlight : TouchableOpacity
-      const innerProps = highlight ? {underlayColor: '#ebebeb'} : {activeOpacity: 0.65}
+      const innerProps = highlight ? {underlayColor: '#d9d9d9'} : {activeOpacity: 0.65}
       return (
         <Component onPress={onPress} {...innerProps} {...props}>
           {content}
@@ -38,7 +38,8 @@ export const Touchable = ({
       )
     }
     case 'android': {
-      const background = borderless
+      const canBorderless = Platform.Version >= 21
+      const background = borderless && canBorderless
         ? TouchableNativeFeedback.SelectableBackgroundBorderless()
         : TouchableNativeFeedback.SelectableBackground()
       return (

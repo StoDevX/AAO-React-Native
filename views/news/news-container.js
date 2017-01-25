@@ -2,26 +2,23 @@
 import React from 'react'
 import {
   StyleSheet,
-  View,
   ListView,
   Platform,
-  Text,
   RefreshControl,
 } from 'react-native'
-import {Touchable} from '../components/touchable'
 import {fastGetTrimmedText} from '../../lib/html'
 import delay from 'delay'
 import {parseXml} from './parse-feed'
-import Icon from 'react-native-vector-icons/Ionicons'
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
+import {Column} from '../components/layout'
+import {ListRow, ListSeparator, Detail, Title} from '../components/list'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
-import * as c from '../components/colors'
 import {tracker} from '../../analytics'
+import {AllHtmlEntities} from 'html-entities'
 
-let Entities = require('html-entities').AllHtmlEntities
-const entities = new Entities()
+const entities = new AllHtmlEntities()
 
 export default class NewsContainer extends React.Component {
   state = {
@@ -79,14 +76,20 @@ export default class NewsContainer extends React.Component {
     let title = entities.decode(story.title[0])
     let snippet = entities.decode(fastGetTrimmedText(story.description[0]))
     return (
-      <Touchable onPress={() => this.onPressNews(title, story)} style={[styles.row]}>
-        <View style={[styles.rowContainer]}>
-          <Text style={styles.itemTitle} numberOfLines={1}>{title}</Text>
-          <Text style={styles.itemPreview} numberOfLines={2}>{snippet}</Text>
-        </View>
-        <Icon style={[styles.arrowIcon]} name='ios-arrow-forward' />
-      </Touchable>
+      <ListRow
+        onPress={() => this.onPressNews(title, story)}
+        arrowPosition='top'
+      >
+        <Column>
+          <Title lines={1}>{title}</Title>
+          <Detail lines={2}>{snippet}</Detail>
+        </Column>
+      </ListRow>
     )
+  }
+
+  renderSeparator = (sectionId: string, rowId: string) => {
+    return <ListSeparator key={`${sectionId}-${rowId}`} />
   }
 
   onPressNews = (title: string, story: StoryType) => {
@@ -118,6 +121,7 @@ export default class NewsContainer extends React.Component {
         contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
+        renderSeparator={this.renderSeparator}
         pageSize={5}
         refreshControl={
           <RefreshControl
@@ -132,39 +136,6 @@ export default class NewsContainer extends React.Component {
 
 const styles = StyleSheet.create({
   listContainer: {
-    paddingBottom: 50,
     backgroundColor: '#ffffff',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ebebeb',
-    marginLeft: 20,
-    paddingRight: 10,
-    paddingTop: 8,
-    paddingBottom: 8,
-  },
-  arrowIcon: {
-    color: c.iosDisabledText,
-    fontSize: 20,
-    marginRight: 6,
-    marginLeft: 6,
-    marginTop: 0,
-  },
-  rowContainer: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  itemTitle: {
-    color: c.black,
-    paddingBottom: 3,
-    fontSize: 16,
-    textAlign: 'left',
-  },
-  itemPreview: {
-    color: c.iosDisabledText,
-    fontSize: 13,
-    textAlign: 'left',
   },
 })

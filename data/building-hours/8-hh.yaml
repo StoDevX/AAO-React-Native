@@ -1,8 +1,8 @@
-name: 'Holland Hall'
-category: 'Under Construction'
+name: Holland Hall
+category: Under Construction
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours: []
 
 breakSchedule:

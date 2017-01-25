@@ -5,11 +5,18 @@ export type ToggleSpecType = {
   caption?: string,
 };
 
+export type ListItemSpecType = {|
+  title: string,
+  detail?: string,
+  image?: ?any,
+|};
+
 export type ListSpecType = {
   title?: string,
   caption?: string,
-  options: string[],
-  selected: string[],
+  showImages?: boolean,
+  options: ListItemSpecType[],
+  selected: ListItemSpecType[],
   mode: 'AND'|'OR',
 };
 
