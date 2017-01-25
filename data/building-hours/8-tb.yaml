@@ -1,9 +1,9 @@
-name: 'Theatre Building'
-image: 'theater'
-category: 'Academia'
+name: Theatre Building
+image: theater
+category: Academia
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
       - {days: [Sa, Su], from: '9:00am', to: '12:00am'}

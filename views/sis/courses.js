@@ -1,5 +1,5 @@
-// @flow
 /**
+ * @flow
  * All About Olaf
  * Courses page
  */
@@ -11,141 +11,76 @@ import {
   ListView,
   RefreshControl,
 } from 'react-native'
-import {tracker} from '../../analytics'
-import {isLoggedIn} from '../../lib/login'
+import {connect} from 'react-redux'
 import delay from 'delay'
-import zip from 'lodash/zip'
-import isError from 'lodash/isError'
-import _isNaN from 'lodash/isNaN'
-import isNil from 'lodash/isNil'
 import {Column} from '../components/layout'
 import {ListRow, ListSeparator, ListSectionHeader, Detail, Title} from '../components/list'
 import LoadingScreen from '../components/loading'
 import {NoticeView} from '../components/notice'
-import type {CourseType} from '../../lib/courses'
-import {loadAllCourses} from '../../lib/courses'
-import ErrorView from './error-screen'
+import type {CourseType, CoursesByTermType} from '../../lib/courses'
+import type {TopLevelViewPropsType} from '../types'
+import {updateCourses} from '../../flux/parts/sis'
 
-const SEMESTERS = {
-  '0': 'Abroad',
-  '1': 'Fall',
-  '2': 'Interim',
-  '3': 'Spring',
-  '4': 'Summer Session 1',
-  '5': 'Summer Session 2',
-  '9': 'Non-St. Olaf',
-}
+type CoursesViewPropsType = TopLevelViewPropsType & {
+  error: null,
+  loggedIn: true,
+  updateCourses: (force: boolean) => {},
+  coursesByTerm: CoursesByTermType,
+};
 
-function semesterName(semester: number|string): string {
-  if (typeof semester === 'number') {
-    semester = String(semester)
-  }
-  return SEMESTERS.hasOwnProperty(semester)
-        ? SEMESTERS[semester]
-        : `Unknown (${semester})`
-}
-
-function toPrettyTerm(term: number): string {
-  let str = String(term)
-  let semester = semesterName(str[4])
-  return `${semester} ${str.substr(0, 4)}`
-}
-
-export default class CoursesView extends React.Component {
-  static propTypes = {
-    navigator: React.PropTypes.object,
-    route: React.PropTypes.object,
-  };
-
-  state = {
+class CoursesView extends React.Component {
+  state: {
+    loading: boolean,
+    dataSource: ListView.DataSource,
+  } = {
     dataSource: new ListView.DataSource({
       rowHasChanged: (r1: any, r2: any) => r1 !== r2,
       sectionHeaderHasChanged: (h1: any, h2: any) => h1 !== h2,
     }),
-    refreshing: false,
-    loading: true,
-    error: null,
-    loggedIn: true,
+    loading: false,
   }
 
   componentWillMount() {
-    this.loadIfLoggedIn()
+    this.updateListview(this.props.coursesByTerm)
   }
 
-  loadIfLoggedIn = async () => {
-    let shouldContinue = await this.checkLogin()
-    if (shouldContinue) {
-      await this.fetchData()
-    }
+  componentWillReceiveProps(nextProps: CoursesViewPropsType) {
+    this.updateListview(nextProps.coursesByTerm)
   }
 
-  checkLogin = async () => {
-    let loggedIn = await isLoggedIn()
-    this.setState({loggedIn})
-    return loggedIn
-  }
+  props: CoursesViewPropsType;
 
-  fetchData = async (forceFromServer: boolean=false) => {
-    try {
-      let courses = await loadAllCourses(forceFromServer)
-      if (isError(courses)) {
-        this.setState({loggedIn: false})
-      }
-      this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(courses)})
-    } catch (error) {
-      tracker.trackException(error.message)
-      this.setState({error})
-      console.warn(error)
-    }
-    this.setState({loading: false})
+  updateListview(coursesByTerm) {
+    this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(coursesByTerm)})
   }
 
   refresh = async () => {
     let start = Date.now()
-    this.setState({refreshing: true})
-    await this.fetchData(true)
+    this.setState({loading: true})
+
+    await this.props.updateCourses(true)
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
     let elapsed = start - Date.now()
-    if (elapsed < 500) {
-      await delay(500 - elapsed)
-    }
+    await delay(500 - elapsed)
 
-    this.setState({refreshing: false})
+    this.setState({loading: false})
   }
 
-  renderRow = (course: CourseType|Error) => {
-    if (course.message) {
-      // curses be to flow
-      let innerCourse = ((course: any): {message: string})
-      return (
-        <ListRow style={styles.rowContainer}>
-          <Column>
-            <Title>Error</Title>
-            <Detail lines={2}>{innerCourse.message || 'The course had an error'}</Detail>
-          </Column>
-        </ListRow>
-      )
-    }
-
-    course = ((course: any): CourseType)
-
-    let locationTimePairs = zip(course.locations, course.times)
-    let deptnum = `${course.department.join('/')} ${_isNaN(course.number) || isNil(course.number) ? '' : course.number}` + (course.section || '')
+  renderRow = (course: CourseType) => {
     return (
       <ListRow style={styles.rowContainer}>
         <Column>
           <Title>{course.name}</Title>
-          <Detail>{deptnum}</Detail>
-          {locationTimePairs.map(([place, time], i) =>
-            <Detail key={i}>{place}: {time}</Detail>)}
+          <Detail>{course.deptnum}</Detail>
+          {course.instructors ? <Detail>{course.instructors}</Detail> : null}
         </Column>
       </ListRow>
     )
   }
 
-  renderSectionHeader = (courses: Object, term: number) => {
-    return <ListSectionHeader style={styles.rowSectionHeader} title={toPrettyTerm(term)} />
+  renderSectionHeader = (courses: CourseType[], term: string) => {
+    return <ListSectionHeader style={styles.rowSectionHeader} title={term} />
   }
 
   renderSeparator = (sectionId: string, rowId: string) => {
@@ -153,35 +88,51 @@ export default class CoursesView extends React.Component {
   }
 
   render() {
-    if (this.state.error) {
-      return <NoticeView text={'Error: ' + this.state.error.message} />
+    if (this.props.error) {
+      return <NoticeView text={'Error: ' + this.props.error.message} />
     }
 
-    if (!this.state.loggedIn) {
-      return <ErrorView
-        route={this.props.route}
-        navigator={this.props.navigator}
-        onLoginComplete={() => this.loadIfLoggedIn()}
-      />
+    if (!this.props.loggedIn) {
+      return (
+        <NoticeView
+          text='Sorry, it looks like your SIS session timed out. Could you set up the Google login in Settings?'
+          buttonText='Open Settings'
+          onPress={() =>
+            this.props.navigator.push({
+              id: 'SettingsView',
+              title: 'Settings',
+              index: this.props.route.index + 1,
+              onDismiss: (route, navigator) => navigator.pop(),
+              sceneConfig: 'fromBottom',
+            })
+          }
+        />
+      )
     }
 
     if (this.state.loading) {
       return <LoadingScreen />
     }
 
+    if (!this.state.dataSource.getRowCount()) {
+      return <NoticeView text='No courses found.' buttonText='Try again?' onPress={this.refresh} />
+    }
+
     return (
       <ListView
         style={styles.listContainer}
+        automaticallyAdjustContentInsets={false}
         contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
+        removeClippedSubviews={false}
         enableEmptySections={true}
         pageSize={5}
         refreshControl={
           <RefreshControl
-            refreshing={this.state.refreshing}
+            refreshing={this.state.loading}
             onRefresh={this.refresh}
           />
         }
@@ -189,6 +140,22 @@ export default class CoursesView extends React.Component {
     )
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    coursesByTerm: state.sis.courses,
+    error: state.sis.courses.error,
+    loggedIn: state.settings.token.valid,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    updateCourses: f => dispatch(updateCourses(f)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CoursesView)
 
 const styles = StyleSheet.create({
   listContainer: {

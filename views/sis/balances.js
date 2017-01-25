@@ -1,5 +1,5 @@
-// @flow
 /**
+ * @flow
  * All About Olaf
  * Balances page
  */
@@ -11,215 +11,184 @@ import {
   View,
   Text,
   RefreshControl,
+  Navigator,
 } from 'react-native'
 
-import {Cell, Section, TableView} from 'react-native-tableview-simple'
-import {tracker} from '../../analytics'
-import {isLoggedIn} from '../../lib/login'
+import {connect} from 'react-redux'
+import {Cell, TableView} from 'react-native-tableview-simple'
+
+import {
+  updateMealsRemaining,
+  updateFinancialData,
+} from '../../flux/parts/sis'
+
 import delay from 'delay'
 import isNil from 'lodash/isNil'
-import isError from 'lodash/isError'
 import * as c from '../components/colors'
-import {getFinancialData, getWeeklyMealsRemaining} from '../../lib/financials'
-import ErrorView from './error-screen'
+import {SectionWithNullChildren} from '../components/section-with-null-children'
+
+import type {TopLevelViewPropsType} from '../types'
 
 const buttonStyles = StyleSheet.create({
-  Common: {
+  common: {
     backgroundColor: c.white,
   },
-  Balances: {
-    borderRightWidth: 1,
+  balances: {
+    borderRightWidth: StyleSheet.hairlineWidth,
     borderRightColor: c.iosGray,
   },
-  Courses: {
-    borderRightWidth: 1,
-    borderRightColor: c.iosGray,
-  },
-  Search: {},
 })
 
-export default class BalancesView extends React.Component {
-  static propTypes = {
-    navigator: React.PropTypes.object,
-    route: React.PropTypes.object,
-  };
-
+class BalancesView extends React.Component {
   state = {
-    flex: null,
-    ole: null,
-    print: null,
-    weeklyMeals: null,
-    dailyMeals: null,
-    successsFinancials: false,
-    loading: true,
-    error: null,
-    refreshing: false,
-    loggedIn: false,
+    loading: false,
   }
 
-  state: {
-    flex: null|number,
-    ole: null|number,
-    print: null|number,
-    weeklyMeals: null|number,
-    dailyMeals: null|number,
-    successsFinancials: bool,
-    loading: bool,
-    error: null|Error,
-    refreshing: bool,
-    loggedIn: bool,
+  props: TopLevelViewPropsType & {
+    flex: ?number,
+    ole: ?number,
+    print: ?number,
+    weeklyMeals: ?number,
+    dailyMeals: ?number,
+    tokenValid: bool,
+    credentialsValid: bool,
+    balancesError: ?string,
+    mealsError: ?string,
+
+    updateFinancialData: () => any,
+    updateMealsRemaining: () => any,
   };
-
-  componentWillMount() {
-    this.loadIfLoggedIn()
-  }
-
-  loadIfLoggedIn = async () => {
-    let shouldContinue = await this.checkLogin()
-    if (shouldContinue) {
-      await this.fetchData()
-    }
-  }
-
-  checkLogin = async () => {
-    let loggedIn = await isLoggedIn()
-    this.setState({loggedIn})
-    return loggedIn
-  }
-
-  fetchData = async (forceFromServer: boolean=false) => {
-    try {
-      let [
-        sisFinancialsInfo,
-        mealsRemaining,
-      ] = await Promise.all([
-        getFinancialData(forceFromServer),
-        getWeeklyMealsRemaining(),
-      ])
-
-      if (isError(sisFinancialsInfo)) {
-        this.setState({loggedIn: false})
-      } else {
-        let {flex, ole, print} = sisFinancialsInfo
-        this.setState({flex, ole, print})
-      }
-
-      if (isError(mealsRemaining)) {
-        this.setState({loggedIn: false})
-      } else {
-        let {weeklyMeals, dailyMeals} = mealsRemaining
-        this.setState({weeklyMeals, dailyMeals})
-      }
-    } catch (error) {
-      tracker.trackException(error.message)
-      this.setState({error})
-      console.warn(error)
-    }
-    this.setState({loading: false})
-  }
 
   refresh = async () => {
     let start = Date.now()
-    this.setState({refreshing: true})
+    this.setState({loading: true})
 
-    await this.fetchData(true)
+    await this.fetchData()
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
     let elapsed = start - Date.now()
-    if (elapsed < 500) {
-      await delay(500 - elapsed)
-    }
+    await delay(500 - elapsed)
 
-    this.setState({refreshing: false})
+    this.setState({loading: false})
   }
 
-  getFormattedCurrency(value: null|number): string {
-    if (isNil(value)) {
-      return 'N/A'
-    }
-    return '$' + (((value: any): number) / 100).toFixed(2)
+  fetchData = async () => {
+    await Promise.all([
+      this.props.updateFinancialData(true),
+      this.props.updateMealsRemaining(true),
+    ])
   }
 
-  getFormattedMealsRemaining(value: null|number): string {
-    if (isNil(value)) {
-      return 'N/A'
-    }
-    return ((value: any): string)
+  openSettings = () => {
+    this.props.navigator.push({
+      id: 'SettingsView',
+      title: 'Settings',
+      index: this.props.route.index + 1,
+      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+      onDismiss: () => this.props.navigator.pop(),
+    })
   }
 
   render() {
-    if (this.state.error) {
-      return <Text>Error: {this.state.error.message}</Text>
-    }
-
-    if (!this.state.loggedIn) {
-      return <ErrorView
-        route={this.props.route}
-        navigator={this.props.navigator}
-        onLoginComplete={() => this.loadIfLoggedIn()}
-      />
-    }
-
-    let {flex, ole, print, loading, dailyMeals, weeklyMeals} = this.state
+    let {flex, ole, print, dailyMeals, weeklyMeals} = this.props
+    let {loading} = this.state
 
     return (
       <ScrollView
         contentContainerStyle={styles.stage}
         refreshControl={
           <RefreshControl
-            refreshing={this.state.refreshing}
+            refreshing={this.state.loading}
             onRefresh={this.refresh}
           />
         }
       >
         <TableView>
-          <Section header='BALANCES'>
+          <SectionWithNullChildren header='BALANCES'>
             <View style={styles.balancesRow}>
-              <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
-                <Text style={styles.financialText} autoAdjustsFontSize={true}>
-                  {loading ? '…' : this.getFormattedCurrency(flex)}
-                </Text>
-                <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
-                  Flex
-                </Text>
-              </View>
+              <FinancialBalancesCell
+                label='Flex'
+                value={flex}
+                indeterminate={loading}
+              />
 
-              <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
-                <Text style={styles.financialText} autoAdjustsFontSize={true}>
-                  {loading ? '…' : this.getFormattedCurrency(ole)}
-                </Text>
-                <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
-                  Ole
-                </Text>
-              </View>
+              <FinancialBalancesCell
+                label='Ole'
+                value={ole}
+                indeterminate={loading}
+              />
 
-              <View style={[styles.rectangle, buttonStyles.Common, buttonStyles.Balances]}>
-                <Text style={styles.financialText} autoAdjustsFontSize={true}>
-                  {loading ? '…' : this.getFormattedCurrency(print)}
-                </Text>
-                <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
-                  Copy/Print
-                </Text>
-              </View>
-             </View>
-          </Section>
+              <FinancialBalancesCell
+                label='Copy/Print'
+                value={print}
+                indeterminate={loading}
+                style={{borderRightWidth: 0}}
+              />
+            </View>
 
-          <Section header='MEAL PLAN'>
+            {this.props.tokenValid ?
+              null
+              : <Cell
+                cellStyle='Basic'
+                title='Log into the SIS'
+                accessory='DisclosureIndicator'
+                onPress={this.openSettings}
+              />}
+
+            {this.props.balancesError ? <Cell cellStyle='Basic' title={this.props.balancesError} /> : null}
+          </SectionWithNullChildren>
+
+          <SectionWithNullChildren header='MEAL PLAN'>
             <Cell cellStyle='RightDetail'
               title='Daily Meals Left'
-              detail={this.getFormattedMealsRemaining(dailyMeals)}
+              detail={loading ? '…' : getFormattedMealsRemaining(dailyMeals)}
             />
 
             <Cell cellStyle='RightDetail'
               title='Weekly Meals Left'
-              detail={this.getFormattedMealsRemaining(weeklyMeals)}
+              detail={loading ? '…' : getFormattedMealsRemaining(weeklyMeals)}
             />
-          </Section>
+
+            {this.props.credentialsValid ?
+              null
+              : <Cell
+                cellStyle='Basic'
+                title='Log in with St. Olaf'
+                accessory='DisclosureIndicator'
+                onPress={this.openSettings}
+              />}
+
+            {this.props.mealsError ? <Cell cellStyle='Basic' title={this.props.mealsError} /> : null}
+          </SectionWithNullChildren>
         </TableView>
       </ScrollView>
     )
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    flex: state.sis.balances.flex,
+    ole: state.sis.balances.ole,
+    print: state.sis.balances.print,
+    weeklyMeals: state.sis.meals.weekly,
+    dailyMeals: state.sis.meals.daily,
+    balancesError: state.sis.balances.message,
+    mealsError: state.sis.meals.message,
+
+    credentialsValid: state.settings.credentials.valid,
+    tokenValid: state.settings.token.valid,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    updateMealsRemaining: force => dispatch(updateMealsRemaining(force)),
+    updateFinancialData: force => dispatch(updateFinancialData(force)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(BalancesView)
 
 let cellMargin = 10
 let cellSidePadding = 10
@@ -267,3 +236,36 @@ let styles = StyleSheet.create({
     fontSize: 16,
   },
 })
+
+
+function getFormattedCurrency(value: ?number): string {
+  if (isNil(value)) {
+    return 'N/A'
+  }
+  return '$' + (((value: any): number) / 100).toFixed(2)
+}
+
+function getFormattedMealsRemaining(value: ?number): string {
+  if (isNil(value)) {
+    return 'N/A'
+  }
+  return (value: any).toString()
+}
+
+function FinancialBalancesCell({indeterminate, label, value, style}: {
+  indeterminate: boolean,
+  label: string,
+  value: ?number,
+  style?: any,
+}) {
+  return (
+    <View style={[styles.rectangle, buttonStyles.common, buttonStyles.balances, style]}>
+      <Text style={styles.financialText} autoAdjustsFontSize={true}>
+        {indeterminate ? '…' : getFormattedCurrency(value)}
+      </Text>
+      <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
+        {label}
+      </Text>
+    </View>
+  )
+}

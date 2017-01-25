@@ -1,43 +1,50 @@
 // @flow
 /**
  * All About Olaf
- * Building Hours list page
+ * Building Hours view. This component loads data from either GitHub or
+ * the local copy as a fallback, and renders the list of buildings.
  */
 
 import React from 'react'
-import {ListView, RefreshControl, StyleSheet, Platform, Navigator} from 'react-native'
-import {BuildingRow} from './row'
+import {NoticeView} from '../components/notice'
 import {tracker} from '../../analytics'
+import {BuildingHoursList} from './list'
 
+import type momentT from 'moment'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
-import delay from 'delay'
-import {data as buildingHours} from '../../docs/building-hours'
+import {data as fallbackBuildingHours} from '../../docs/building-hours'
 import groupBy from 'lodash/groupBy'
 
-import * as c from '../components/colors'
-import {ListSeparator, ListSectionHeader} from '../components/list'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 export {BuildingHoursDetailView} from './detail'
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: c.white,
-  },
-})
+const githubBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
+
+const groupBuildings = (buildings: BuildingType[]) => groupBy(buildings, b => b.category || 'Other')
+
 
 export class BuildingHoursView extends React.Component {
-  state = {
-    dataSource: this.getDataSource(),
-    intervalId: 0,
+  state: {
+    error: ?Error,
+    loading: boolean,
+    now: momentT,
+    buildings: {[key: string]: BuildingType[]},
+    intervalId: number,
+  } = {
+    error: null,
+    loading: true,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
-    refreshing: false,
+    buildings: groupBuildings(fallbackBuildingHours),
+    intervalId: 0,
   }
 
   componentWillMount() {
+    this.fetchData()
+
     // This updates the screen every ten seconds, so that the building
     // info statuses are updated without needing to leave and come back.
     this.setState({intervalId: setInterval(this.updateTime, 10000)})
@@ -49,77 +56,48 @@ export class BuildingHoursView extends React.Component {
 
   props: TopLevelViewPropsType;
 
-  getDataSource(){
-    return new ListView.DataSource({
-      rowHasChanged: (r1: BuildingType, r2: BuildingType) => r1 !== r2,
-      sectionHeaderHasChanged: (r1: any, r2: any) => r1 !== r2,
-    }).cloneWithRowsAndSections(groupBy(buildingHours, b => b.category || 'Other'))
-  }
-
   updateTime = () => {
+    this.setState({now: moment.tz(CENTRAL_TZ)})
+  }
+
+  fetchData = async () => {
+    this.setState({loading: true})
+
+    let buildings: BuildingType[] = []
+    try {
+      let container = await fetchJson(`${githubBaseUrl}/building-hours.json`)
+      let data = container.data
+      buildings = data
+    } catch (err) {
+      tracker.trackException(err.message)
+      console.warn(err)
+      buildings = fallbackBuildingHours
+    }
+
+    if (__DEV__) {
+      buildings = fallbackBuildingHours
+    }
+
     this.setState({
+      loading: false,
+      buildings: groupBuildings(buildings),
       now: moment.tz(CENTRAL_TZ),
-      dataSource: this.getDataSource(),
     })
   }
 
-  onPressRow = (data: BuildingType) => {
-    tracker.trackEvent('building-hours', data.name)
-    this.props.navigator.push({
-      id: 'BuildingHoursDetailView',
-      index: this.props.route.index + 1,
-      title: data.name,
-      backButtonTitle: 'Hours',
-      props: data,
-      sceneConfig: Platform.OS === 'android' ? Navigator.SceneConfigs.FloatFromBottom : undefined,
-    })
-  }
-
-  renderRow = (data: BuildingType) => {
-    return (
-      <BuildingRow
-        name={data.name}
-        info={data}
-        now={this.state.now}
-        onPress={() => this.onPressRow(data)}
-      />
-    )
-  }
-
-  renderSectionHeader = (data: any, id: string) => {
-    return <ListSectionHeader style={styles.rowSectionHeader} title={id} />
-  }
-
-  renderSeparator = (sectionID: any, rowID: any) => {
-    return <ListSeparator key={`${sectionID}-${rowID}`} />
-  }
-
-  refresh = async () => {
-    this.setState({refreshing: true})
-    await delay(500)
-    this.setState({
-      now: moment.tz(CENTRAL_TZ),
-      refreshing: false,
-      dataSource: this.getDataSource(),
-    })
-  }
-
-  // Render a given scene
   render() {
+    if (this.state.error) {
+      return <NoticeView text={'Error: ' + this.state.error.message} />
+    }
+
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderRow}
-        renderSectionHeader={this.renderSectionHeader}
-        renderSeparator={this.renderSeparator}
-        contentContainerStyle={styles.container}
-        removeClippedSubviews={false}  // remove after https://github.com/facebook/react-native/issues/8607#issuecomment-241715202
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this.refresh}
-          />
-        }
+      <BuildingHoursList
+        route={this.props.route}
+        navigator={this.props.navigator}
+        buildings={this.state.buildings}
+        now={this.state.now}
+        onRefresh={this.fetchData}
+        loading={this.state.loading}
       />
     )
   }

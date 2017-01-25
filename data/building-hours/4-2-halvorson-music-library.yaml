@@ -1,9 +1,9 @@
-name: 'Halvorson Music Library'
-image: 'halvorson'
-category: 'Libraries'
+name: Halvorson Music Library
+image: halvorson
+category: Libraries
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th], from: '7:45am', to: '11:00pm'}
       - {days: [Fr], from: '7:45am', to: '8:00pm'}

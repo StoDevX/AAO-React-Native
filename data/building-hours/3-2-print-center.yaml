@@ -1,9 +1,9 @@
-name: 'Print Center'
-image: 'print'
-category: 'Mail and Packages'
+name: Print Center
+image: print
+category: Mail and Packages
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     closedForChapelTime: true
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}

@@ -6,7 +6,7 @@ import {
   Alert,
 } from 'react-native'
 
-import Button from 'react-native-button' // the button
+import {Button} from './button' // the button
 import Communications from 'react-native-communications' // the phone call functions
 
 import * as c from './colors'
@@ -22,18 +22,6 @@ let styles = StyleSheet.create({
     fontSize: 30,
     alignSelf: 'center',
     marginTop: 10,
-  },
-  button: {
-    backgroundColor: c.denim,
-    width: 200,
-    color: c.white,
-    alignSelf: 'center',
-    height: 30,
-    paddingTop: 3,
-    marginBottom: 10,
-    marginTop: 10,
-    borderRadius: 6,
-    overflow: 'hidden',
   },
   content: {
     marginTop: 5,
@@ -67,10 +55,8 @@ export default function ContactCard({title, phoneNumber, text, buttonText}) {
       <Text style={styles.content}>{text}</Text>
       <Button
         onPress={() => promptCall(buttonText, phoneNumber)}
-        style={styles.button}
-      >
-        {buttonText}
-      </Button>
+        title={buttonText}
+      />
     </View>
   )
 }
