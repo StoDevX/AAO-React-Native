@@ -50,10 +50,10 @@ platform :ios do
 
     go_rogue
 
-    increment_build_number(
-      build_number: get_version(platform: 'iOS'),
-      xcodeproj: "./ios/AllAboutOlaf.xcodeproj",
-    )
+    version = get_current_bundle_version(platform: "iOS")
+    build_number = get_build_number(platform: "iOS")
+    increment_version_number(version_number: "#{version}.#{build_number}", xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
+    increment_build_number(build_number: build_number, xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
 
     # Build the app
     gym
@@ -143,10 +143,11 @@ end
 platform :android do
   desc "Makes a build"
   lane :build do
-    set_version_code(
-      version_code: get_version(platform: "Android"),
-      gradle_path: "./android/app/build.gradle",
-    )
+    version = get_current_bundle_version(platform: "Android")
+    build_number = get_build_number(platform: "Android")
+
+    set_version_name(version_name: "#{version}.#{build_number}", gradle_path: "android/app/build.gradle")
+    set_version_code(version_code: build_number, gradle_path: "./android/app/build.gradle")
 
     gradle(
       task: "assemble",
@@ -220,7 +221,7 @@ private_lane :get_hockeyapp_version_commit do |options|
 end
 
 desc "Gets the version, either from Travis or from Hockey"
-private_lane :get_version do |options|
+private_lane :get_build_number do |options|
   ENV["TRAVIS_BUILD_NUMBER"] || get_hockeyapp_version(platform: options[:platform]) + 1
 end
 
@@ -229,4 +230,12 @@ private_lane :build_notes do |options|
   sha = last_git_commit[:commit_hash]
   changelog = make_changelog(platform: options[:platform])
   "branch: #{branch}\ngit commit: #{sha}\n\n## Changelog\n#{changelog}"
+end
+
+private_lane :get_current_bundle_version do |options|
+  if options[:platform] == 'Android'
+    get_version_name(gradle_path: "android/app/build.gradle")
+  elsif options[:platform] == 'iOS'
+    get_info_plist_value(path: "ios/AllAboutOlaf/Info.plist", key: "CFBundleShortVersionString")
+  end
 end
