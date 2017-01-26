@@ -11,14 +11,14 @@ import Icon from 'react-native-vector-icons/Ionicons'
 const specialsIcon = Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'
 
 type FoodItemPropsType = {|
-  filters: MasterCorIconMapType,
+  corIcons: MasterCorIconMapType,
   data: MenuItemType,
   style?: any,
   badgeSpecials?: boolean,
   spacing: {left: number},
 |};
 
-export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodItemPropsType) {
+export function FoodItemRow({data, corIcons, badgeSpecials=true, ...props}: FoodItemPropsType) {
   const {left=0} = props.spacing
   return (
     <ListRow
@@ -37,7 +37,7 @@ export function FoodItemRow({data, filters, badgeSpecials=true, ...props}: FoodI
         </Column>
 
         <DietaryTags
-          filters={filters}
+          corIcons={corIcons}
           dietary={data.cor_icon}
           style={styles.iconContainer}
         />
