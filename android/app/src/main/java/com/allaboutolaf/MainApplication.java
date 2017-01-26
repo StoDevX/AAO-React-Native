@@ -14,7 +14,6 @@ import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
-import com.psykar.cookiemanager.CookieManagerPackage;
 
 import java.util.Arrays;
 import java.util.List;
