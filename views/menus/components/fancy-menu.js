@@ -9,6 +9,7 @@ import type {MenuItemType, MasterCorIconMapType, StationMenuType, CorIconType} f
 import {tracker} from '../../../analytics'
 import type {FilterType} from '../../components/filter'
 import {applyFiltersToItem} from '../../components/filter'
+import {fastGetTrimmedText} from '../../../lib/html'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import fromPairs from 'lodash/fromPairs'
@@ -40,7 +41,7 @@ function getDetailsFromDietaryFilter(item: CorIconType, filterKey: string, given
     return {
       title: item.label,
       image: item.image ? {uri: item.image} : null,
-      detail: item.description ? item.description.trim() : '',
+      detail: item.description ? fastGetTrimmedText(item.description) : '',
     }
   }
 
