@@ -34,7 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
         new KeychainPackage(),
         new ReactNativeOneSignalPackage(),
         new RNDeviceInfo(),
-        new VectorIconsPackage(),
+        new VectorIconsPackage()
       );
     }
   };
