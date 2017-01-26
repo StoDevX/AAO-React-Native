@@ -74,6 +74,7 @@
     "eslint-plugin-babel": "4.0.1",
     "eslint-plugin-flowtype": "2.30.0",
     "eslint-plugin-react": "6.8.0",
+    "execa": "0.6.0",
     "flow-bin": "0.35.0",
     "jest": "18.1.0",
     "js-yaml": "3.7.0",
