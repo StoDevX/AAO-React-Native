@@ -35,13 +35,69 @@ class All_About_Olaf_UI_Tests: XCTestCase {
     func testMainMenuScreen() {
         snapshot("00MainMenuScreen")
     }
-    
-    func testOpenMenusScreen() {
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    XCUIApplication().otherElements["    Menus   SIS   Building Hours   Calendar   Directory   Streaming Media   News   Campus Map   Important Contacts   Transportation   Campus Dictionary   Oleville"].otherElements["  Menus"].tap()
 
+    func testOpenMenusScreen() {
+        XCUIApplication().otherElements["   Menus"].tap()
         snapshot("01MenusScreenStavMenu")
     }
-    
+
+    func testOpenSisScreen() {
+        XCUIApplication().otherElements["   SIS"].tap()
+        snapshot("02SisScreen")
+    }
+
+    func testOpenBuildingHoursScreen() {
+        XCUIApplication().otherElements["   Building Hours"].tap()
+        snapshot("03BuildingHoursScreen")
+    }
+
+    func testOpenCalendarScreen() {
+        XCUIApplication().otherElements["   Calendar"].tap()
+        snapshot("04CalendarScreen")
+    }
+
+    func testOpenDirectoryScreen() {
+        XCUIApplication().otherElements["   Directory"].tap()
+        snapshot("05DirectoryScreen")
+    }
+
+    func testOpenStreamingMediaScreen() {
+        XCUIApplication().otherElements["   Streaming Media"].tap()
+        snapshot("06StreamingMediaScreen")
+    }
+
+    func testOpenNewsScreen() {
+        XCUIApplication().otherElements["   News"].tap()
+        snapshot("07NewsScreen")
+    }
+
+    func testOpenCampusMapScreen() {
+        XCUIApplication().otherElements["   Campus Map"].tap()
+        snapshot("08CampusMapScreen")
+    }
+
+    func testOpenImportantContactsScreen() {
+        XCUIApplication().otherElements["   Important Contacts"].tap()
+        snapshot("09ImportantContactsScreen")
+    }
+
+    func testOpenTransportationScreen() {
+        XCUIApplication().otherElements["   Transportation"].tap()
+        snapshot("10TransportationScreen")
+    }
+
+    func testOpenCampusDictionaryScreen() {
+        XCUIApplication().otherElements["   Campus Dictionary"].tap()
+        snapshot("11CampusDictionaryScreen")
+    }
+
+    func testOpenOlevilleScreen() {
+        XCUIApplication().otherElements["   Oleville"].tap()
+        snapshot("12OlevilleScreen")
+    }
+
+    func testOpenStudentOrgsScreen() {
+        XCUIApplication().otherElements["   Student Orgs"].tap()
+        snapshot("13StudentOrgsScreen")
+    }
 }
