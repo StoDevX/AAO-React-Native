@@ -46,6 +46,12 @@ const kosher = {
   description: 'Contains only ingredients prepared in accordance with Jewish Dietary Law',
 }
 
+const humane = {
+  label: 'humane',
+  icon: require('./menu-icons/h.png'),
+  description: 'Contains humanely raised meat, poultry, or eggs. Must be certified by a credible third-party animal welfare organization',
+}
+
 export default {
   '1': vegetarian,
   '3': seafoodWatch,
@@ -55,4 +61,5 @@ export default {
   '7': inBalance,
   '9': madeWithoutGlutenContainingIngredients,
   '11': kosher,
+  '18': humane,
 }
