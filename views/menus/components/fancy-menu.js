@@ -5,7 +5,8 @@ import {connect} from 'react-redux'
 import {updateMenuFilters} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
-import type {MenuItemType, MasterCorIconMapType, StationMenuType} from '../types'
+import type {MenuItemType, MasterCorIconMapType, StationMenuType, CorIconType} from '../types'
+import {tracker} from '../../../analytics'
 import type {FilterType} from '../../components/filter'
 import {applyFiltersToItem} from '../../components/filter'
 import groupBy from 'lodash/groupBy'
@@ -28,6 +29,28 @@ type FancyMenuPropsType = TopLevelViewPropsType & {
   stationMenus: StationMenuType[],
   onFiltersChange: (f: FilterType[]) => any,
 };
+
+function getDetailsFromDietaryFilter(item: CorIconType, filterKey: string, givenFilters: any, localFilters=DietaryFilters): {title: string, image: any, detail: string} {
+  // check if we've got local info for the filter
+  const ourInfo = localFilters[filterKey]
+
+  if (!ourInfo) {
+    // if not, fall back to the version from bonapp
+    tracker.trackEvent('menus', 'unknown-dietary-filter', {label: item.label})
+    return {
+      title: item.label,
+      image: item.image ? {uri: item.image} : null,
+      detail: item.description ? item.description.trim() : '',
+    }
+  }
+
+  // otherwise, return our info
+  return {
+    title: ourInfo.label,
+    image: ourInfo.icon,
+    detail: ourInfo.description,
+  }
+}
 
 class FancyMenuView extends React.Component {
   static defaultProps = {
@@ -52,11 +75,7 @@ class FancyMenuView extends React.Component {
     const allStations = map(stations, name => ({title: name}))
 
     // Grab the labels of the COR icons
-    const allDietaryRestrictions = map(corIcons, (item, key) => ({
-      title: item.label,
-      image: DietaryFilters[key] ? DietaryFilters[key].icon : null,
-      detail: DietaryFilters[key].description,
-    }))
+    const allDietaryRestrictions = map(corIcons, getDetailsFromDietaryFilter)
 
     // Check if there is at least one special in order to show the specials-only filter
     const stationNames = allStations.map(s => s.title)

@@ -10,11 +10,13 @@ import * as storage from './lib/storage'
 const trackerId = __DEV__ ? 'UA-90234209-1' : 'UA-90234209-2'
 export const tracker = new GoogleAnalyticsTracker(trackerId)
 
-async function disableIfOptedOut() {
-  const didOptOut = await storage.getAnalyticsOptOut()
-  if (didOptOut) {
-    GoogleAnalyticsSettings.setOptOut(true)
-  }
+function disableIfOptedOut() {
+  return storage.getAnalyticsOptOut()
+    .then(didOptOut => {
+      if (didOptOut) {
+        GoogleAnalyticsSettings.setOptOut(true)
+      }
+    })
 }
 disableIfOptedOut()
 
