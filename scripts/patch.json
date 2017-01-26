@@ -1,0 +1,113 @@
+{
+  "sha": "4394419b60c7dfe5287e5e3f897e855eb7dc57c2",
+  "commit": {
+    "author": {
+      "name": "Steven Goff",
+      "email": "stevengoff@discover.com",
+      "date": "2016-12-16T01:41:12Z"
+    },
+    "committer": {
+      "name": "Facebook Github Bot",
+      "email": "facebook-github-bot@users.noreply.github.com",
+      "date": "2016-12-16T01:43:35Z"
+    },
+    "message": "Android Text component allowFontScaling\n\nSummary:\nThe reason for this change is to implement `allowFontScaling` on the Android's React Native Text component.  Prior to this PR `allowFontScaling` only works for iOS.\n\nThe following link contains images of `allowFontScaling` working in Android on small, normal, large, and huge system fonts (from native Android display settings)\n\nhttp://imgur.com/a/94bF1\n\nThe following link is a video of the same thing working on an Android emulator\n\nhttps://youtu.be/1jTlZhPdj9Y\n\nHere is the sample code snippet driving the video/images\n```\nrender() {\n    const size = [12, 14, 16, 18];\n    return (\n      <View style={{backgroundColor: 'white', flex: 1}}>\n        <Text>\n          Default size no allowFontScaling prop (default true)\n        </Text>\n        <Text allowFontScaling={true}>\n          Default size allowFontScaling: true\n        </Text>\n        <Text style={{ marginBottom: 10, }} allowFontScaling={false}>\n          Default size allowFontScaling: false\n        </Text>\n\n        { size.map(\nCloses https://github.com/facebook/react-native/pull/10898\n\nDifferential Revision: D4335190\n\nPulled By: lacker\n\nfbshipit-source-id: 0480809c44983644ff2abfcaf4887569b2bfede5",
+    "tree": {
+      "sha": "a7c1b9d80da3d930c1becc3a7ffdc00a653d1c2d",
+      "url": "https://api.github.com/repos/facebook/react-native/git/trees/a7c1b9d80da3d930c1becc3a7ffdc00a653d1c2d"
+    },
+    "url": "https://api.github.com/repos/facebook/react-native/git/commits/4394419b60c7dfe5287e5e3f897e855eb7dc57c2",
+    "comment_count": 0
+  },
+  "url": "https://api.github.com/repos/facebook/react-native/commits/4394419b60c7dfe5287e5e3f897e855eb7dc57c2",
+  "html_url": "https://github.com/facebook/react-native/commit/4394419b60c7dfe5287e5e3f897e855eb7dc57c2",
+  "comments_url": "https://api.github.com/repos/facebook/react-native/commits/4394419b60c7dfe5287e5e3f897e855eb7dc57c2/comments",
+  "author": {
+    "login": "sdg9",
+    "id": 3091143,
+    "avatar_url": "https://avatars.githubusercontent.com/u/3091143?v=3",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/sdg9",
+    "html_url": "https://github.com/sdg9",
+    "followers_url": "https://api.github.com/users/sdg9/followers",
+    "following_url": "https://api.github.com/users/sdg9/following{/other_user}",
+    "gists_url": "https://api.github.com/users/sdg9/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/sdg9/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/sdg9/subscriptions",
+    "organizations_url": "https://api.github.com/users/sdg9/orgs",
+    "repos_url": "https://api.github.com/users/sdg9/repos",
+    "events_url": "https://api.github.com/users/sdg9/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/sdg9/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "facebook-github-bot",
+    "id": 6422482,
+    "avatar_url": "https://avatars.githubusercontent.com/u/6422482?v=3",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/facebook-github-bot",
+    "html_url": "https://github.com/facebook-github-bot",
+    "followers_url": "https://api.github.com/users/facebook-github-bot/followers",
+    "following_url": "https://api.github.com/users/facebook-github-bot/following{/other_user}",
+    "gists_url": "https://api.github.com/users/facebook-github-bot/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/facebook-github-bot/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/facebook-github-bot/subscriptions",
+    "organizations_url": "https://api.github.com/users/facebook-github-bot/orgs",
+    "repos_url": "https://api.github.com/users/facebook-github-bot/repos",
+    "events_url": "https://api.github.com/users/facebook-github-bot/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/facebook-github-bot/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "sha": "23e2610f4fcebbdad3ee8f0e18baa83c8bef624b",
+      "url": "https://api.github.com/repos/facebook/react-native/commits/23e2610f4fcebbdad3ee8f0e18baa83c8bef624b",
+      "html_url": "https://github.com/facebook/react-native/commit/23e2610f4fcebbdad3ee8f0e18baa83c8bef624b"
+    }
+  ],
+  "stats": {
+    "total": 33,
+    "additions": 28,
+    "deletions": 5
+  },
+  "files": [
+    {
+      "sha": "8c990d0d5b4bd8e527a0b3704a262b3f217f4311",
+      "filename": "Libraries/Text/Text.js",
+      "status": "modified",
+      "additions": 0,
+      "deletions": 2,
+      "changes": 2,
+      "blob_url": "https://github.com/facebook/react-native/blob/4394419b60c7dfe5287e5e3f897e855eb7dc57c2/Libraries/Text/Text.js",
+      "raw_url": "https://github.com/facebook/react-native/raw/4394419b60c7dfe5287e5e3f897e855eb7dc57c2/Libraries/Text/Text.js",
+      "contents_url": "https://api.github.com/repos/facebook/react-native/contents/Libraries/Text/Text.js?ref=4394419b60c7dfe5287e5e3f897e855eb7dc57c2",
+      "patch": "@@ -153,8 +153,6 @@ const Text = React.createClass({\n     /**\n      * Specifies whether fonts should scale to respect Text Size accessibility setting on iOS. The\n      * default is `true`.\n-     *\n-     * @platform ios\n      */\n     allowFontScaling: React.PropTypes.bool,\n     /**"
+    },
+    {
+      "sha": "f3faee5090f0a88dcf46d823c4a9c011d3071df3",
+      "filename": "ReactAndroid/src/main/java/com/facebook/react/uimanager/ViewProps.java",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 0,
+      "changes": 2,
+      "blob_url": "https://github.com/facebook/react-native/blob/4394419b60c7dfe5287e5e3f897e855eb7dc57c2/ReactAndroid/src/main/java/com/facebook/react/uimanager/ViewProps.java",
+      "raw_url": "https://github.com/facebook/react-native/raw/4394419b60c7dfe5287e5e3f897e855eb7dc57c2/ReactAndroid/src/main/java/com/facebook/react/uimanager/ViewProps.java",
+      "contents_url": "https://api.github.com/repos/facebook/react-native/contents/ReactAndroid/src/main/java/com/facebook/react/uimanager/ViewProps.java?ref=4394419b60c7dfe5287e5e3f897e855eb7dc57c2",
+      "patch": "@@ -83,6 +83,8 @@\n   public static final String TEXT_ALIGN_VERTICAL = \"textAlignVertical\";\n   public static final String TEXT_DECORATION_LINE = \"textDecorationLine\";\n \n+  public static final String ALLOW_FONT_SCALING = \"allowFontScaling\";\n+\n   public static final String BORDER_WIDTH = \"borderWidth\";\n   public static final String BORDER_LEFT_WIDTH = \"borderLeftWidth\";\n   public static final String BORDER_TOP_WIDTH = \"borderTopWidth\";"
+    },
+    {
+      "sha": "1a38a51f3f024ea41e4831e992959ea15f59074f",
+      "filename": "ReactAndroid/src/main/java/com/facebook/react/views/text/ReactTextShadowNode.java",
+      "status": "modified",
+      "additions": 26,
+      "deletions": 3,
+      "changes": 29,
+      "blob_url": "https://github.com/facebook/react-native/blob/4394419b60c7dfe5287e5e3f897e855eb7dc57c2/ReactAndroid/src/main/java/com/facebook/react/views/text/ReactTextShadowNode.java",
+      "raw_url": "https://github.com/facebook/react-native/raw/4394419b60c7dfe5287e5e3f897e855eb7dc57c2/ReactAndroid/src/main/java/com/facebook/react/views/text/ReactTextShadowNode.java",
+      "contents_url": "https://api.github.com/repos/facebook/react-native/contents/ReactAndroid/src/main/java/com/facebook/react/views/text/ReactTextShadowNode.java?ref=4394419b60c7dfe5287e5e3f897e855eb7dc57c2",
+      "patch": "@@ -195,7 +195,9 @@ protected static Spannable fromTextCSSNode(ReactTextShadowNode textCSSNode) {\n     buildSpannedFromTextCSSNode(textCSSNode, sb, ops);\n     if (textCSSNode.mFontSize == UNSET) {\n       sb.setSpan(\n-          new AbsoluteSizeSpan((int) Math.ceil(PixelUtil.toPixelFromSP(ViewDefaults.FONT_SIZE_SP))),\n+          new AbsoluteSizeSpan(textCSSNode.mAllowFontScaling\n+          ? (int) Math.ceil(PixelUtil.toPixelFromSP(ViewDefaults.FONT_SIZE_SP))\n+          : (int) Math.ceil(PixelUtil.toPixelFromDIP(ViewDefaults.FONT_SIZE_SP))),\n           0,\n           sb.length(),\n           Spannable.SPAN_INCLUSIVE_EXCLUSIVE);\n@@ -305,12 +307,15 @@ private static int parseNumericFontWeight(String fontWeightString) {\n \n   private float mLineHeight = Float.NaN;\n   private boolean mIsColorSet = false;\n+  private boolean mAllowFontScaling = true;\n   private int mColor;\n   private boolean mIsBackgroundColorSet = false;\n   private int mBackgroundColor;\n \n   protected int mNumberOfLines = UNSET;\n   protected int mFontSize = UNSET;\n+  protected float mFontSizeInput = UNSET;\n+  protected int mLineHeightInput = UNSET;\n   protected int mTextAlign = Gravity.NO_GRAVITY;\n \n   private float mTextShadowOffsetDx = 0;\n@@ -412,10 +417,26 @@ public void setNumberOfLines(int numberOfLines) {\n \n   @ReactProp(name = ViewProps.LINE_HEIGHT, defaultInt = UNSET)\n   public void setLineHeight(int lineHeight) {\n-    mLineHeight = lineHeight == UNSET ? Float.NaN : PixelUtil.toPixelFromSP(lineHeight);\n+    mLineHeightInput = lineHeight;\n+    if (lineHeight == UNSET) {\n+      mLineHeight = Float.NaN;\n+    } else {\n+      mLineHeight = mAllowFontScaling ?\n+        PixelUtil.toPixelFromSP(lineHeight) : PixelUtil.toPixelFromDIP(lineHeight);\n+    }\n     markUpdated();\n   }\n \n+  @ReactProp(name = ViewProps.ALLOW_FONT_SCALING, defaultBoolean = true)\n+  public void setAllowFontScaling(boolean allowFontScaling) {\n+    if (allowFontScaling != mAllowFontScaling) {\n+      mAllowFontScaling = allowFontScaling;\n+      setFontSize(mFontSizeInput);\n+      setLineHeight(mLineHeightInput);\n+      markUpdated();\n+    }\n+  }\n+\n   @ReactProp(name = ViewProps.TEXT_ALIGN)\n   public void setTextAlign(@Nullable String textAlign) {\n     if (textAlign == null || \"auto\".equals(textAlign)) {\n@@ -437,8 +458,10 @@ public void setTextAlign(@Nullable String textAlign) {\n \n   @ReactProp(name = ViewProps.FONT_SIZE, defaultFloat = UNSET)\n   public void setFontSize(float fontSize) {\n+    mFontSizeInput = fontSize;\n     if (fontSize != UNSET) {\n-      fontSize = (float) Math.ceil(PixelUtil.toPixelFromSP(fontSize));\n+      fontSize = mAllowFontScaling ? (float) Math.ceil(PixelUtil.toPixelFromSP(fontSize))\n+        : (float) Math.ceil(PixelUtil.toPixelFromDIP(fontSize));\n     }\n     mFontSize = (int) fontSize;\n     markUpdated();"
+    }
+  ]
+}
