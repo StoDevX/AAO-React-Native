@@ -73,9 +73,16 @@ export type BonAppMenuInfoType = {
   items: MenuItemContainerType,
 };
 
+export type CorIconType = {
+  sort: string,
+  label: string,
+  description: string,
+  image: string,
+};
+
 export type MenuItemContainerType = {[key: ItemIdReferenceStringType]: MenuItemType};
 export type ItemCorIconMapType = {[key: NumericStringType]: string} | Array<void>;
-export type MasterCorIconMapType = {[key: NumericStringType]: {label: string, icon: any}};
+export type MasterCorIconMapType = {[key: NumericStringType]: CorIconType};
 
 
 export type BonAppCafeInfoType = {
