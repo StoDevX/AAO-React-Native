@@ -649,7 +649,7 @@
 				00D33BE51DDA58A8001E830E /* PBXTargetDependency */,
 			);
 			name = AllAboutOlafUITests;
-			productName = "All About Olaf UI Tests";
+			productName = AllAboutOlafUITests;
 			productReference = 00D33BDF1DDA58A8001E830E /* AllAboutOlafUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
@@ -1200,7 +1200,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				INFOPLIST_FILE = "All About Olaf UI Tests/Info.plist";
+				INFOPLIST_FILE = AllAboutOlafUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "hawkrives.All-About-Olaf-UI-Tests";
@@ -1220,7 +1220,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				INFOPLIST_FILE = "All About Olaf UI Tests/Info.plist";
+				INFOPLIST_FILE = AllAboutOlafUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "hawkrives.All-About-Olaf-UI-Tests";
@@ -1304,7 +1304,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "NFMTHAZVS9.com.drewvolz.stolaf-";
 				PRODUCT_NAME = "All About Olaf";
-				SWIFT_OBJC_BRIDGING_HEADER = "All About Olaf UI Tests/AllAboutOlaf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
@@ -1336,7 +1336,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "NFMTHAZVS9.com.drewvolz.stolaf-";
 				PRODUCT_NAME = "All About Olaf";
-				SWIFT_OBJC_BRIDGING_HEADER = "All About Olaf UI Tests/AllAboutOlaf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
