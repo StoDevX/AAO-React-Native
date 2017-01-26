@@ -3,9 +3,8 @@ import React from 'react'
 import {StyleSheet, ListView} from 'react-native'
 import {NoticeView} from '../../components/notice'
 import {FoodItemRow} from './food-item-row'
-import DietaryFilters from '../../../images/dietary-filters'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
-import type {MenuItemType, ProcessedMenuPropsType} from '../types'
+import type {MenuItemType, ProcessedMenuPropsType, MasterCorIconMapType} from '../types'
 
 const leftSideSpacing = 28
 const styles = StyleSheet.create({
@@ -40,6 +39,7 @@ export class MenuListView extends React.Component {
   props: {
     badgeSpecials: boolean,
     data: ProcessedMenuPropsType,
+    corIcons: MasterCorIconMapType,
     message?: string,
     stationNotes: {[key: string]: string},
   };
@@ -60,7 +60,7 @@ export class MenuListView extends React.Component {
     return (
       <FoodItemRow
         data={rowData}
-        filters={DietaryFilters}
+        corIcons={this.props.corIcons}
         badgeSpecials={this.props.badgeSpecials}
         spacing={{left: leftSideSpacing}}
       />
