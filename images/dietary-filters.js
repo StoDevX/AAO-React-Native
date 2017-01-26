@@ -1,7 +1,7 @@
 const vegetarian = {
   label: 'vegetarian',
   icon: require('./menu-icons/v.png'),
-  description: 'Contains no meat, fish, poultry, shellfish or products derived from these sources but may contain dairy or eggs',
+  description: 'Contains no meat, fish, poultry, shellfish or products derived from these sources but may contain dairy or eggs.',
 }
 
 const seafoodWatch = {
@@ -19,7 +19,7 @@ const vegan = {
 const forYourWellBeing = {
   label: 'for your well-being',
   icon: require('./menu-icons/wb.png'),
-  description: 'Contains foods illustrating this month’s Food For Your Well-Being topic ',
+  description: 'Contains foods illustrating this month’s Food For Your Well-Being topic.',
 }
 
 const farmToFork = {
@@ -31,7 +31,7 @@ const farmToFork = {
 const inBalance = {
   label: 'in balance',
   icon: require('./menu-icons/ib.png'),
-  description: 'Contains a balanced portion of whole grains, fresh fruits and vegetables, and lean protein with a minimum amount of healthy fat',
+  description: 'Contains a balanced portion of whole grains, fresh fruits and vegetables, and lean protein with a minimum amount of healthy fat.',
 }
 
 const madeWithoutGlutenContainingIngredients = {
@@ -43,7 +43,13 @@ const madeWithoutGlutenContainingIngredients = {
 const kosher = {
   label: 'kosher',
   icon: require('./menu-icons/k.png'),
-  description: 'Contains only ingredients prepared in accordance with Jewish Dietary Law',
+  description: 'Contains only ingredients prepared in accordance with Jewish Dietary Law.',
+}
+
+const humane = {
+  label: 'humane',
+  icon: require('./menu-icons/h.png'),
+  description: 'Contains humanely raised meat, poultry, or eggs. Must be certified by a credible third-party animal welfare organization.',
 }
 
 export default {
@@ -55,4 +61,5 @@ export default {
   '7': inBalance,
   '9': madeWithoutGlutenContainingIngredients,
   '11': kosher,
+  '18': humane,
 }
