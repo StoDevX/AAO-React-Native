@@ -1,9 +1,9 @@
-name: 'Bookstore'
-image: 'bookstore'
-category: 'Supplies and Books'
+name: Bookstore
+image: bookstore
+category: Supplies and Books
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}
       - {days: [Sa], from: '10:00am', to: '4:00pm'}

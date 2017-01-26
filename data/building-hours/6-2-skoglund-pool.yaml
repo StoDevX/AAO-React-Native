@@ -1,18 +1,18 @@
-name: 'Skoglund Pool'
-category: 'Gym'
+name: Skoglund Pool
+category: Gym
 
 schedule:
-  - title: 'Fac/Staff Swim'
+  - title: Fac/Staff Swim
     hours:
       - {days: [Mo, Tu, We, Th, Fr, Sa], from: '7:00am', to: '9:45am'}
       - {days: [Su], from: '8:30am', to: '10:15am'}
 
-  - title: 'Lap Swim'
+  - title: Lap Swim
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '12:45pm', to: '2:00pm'}
       - {days: [Mo, Tu, We, Th, Fr], from: '6:00pm', to: '8:00pm'}
 
-  - title: 'Open Swim'
+  - title: Open Swim
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '2:00pm'}
 

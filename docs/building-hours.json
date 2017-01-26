@@ -86,27 +86,51 @@
           "hours": [
             {
               "days": [
-                "Mo",
-                "Tu",
-                "We",
-                "Th"
+                "Mo"
               ],
               "from": "10:30am",
               "to": "12:00am"
             },
             {
               "days": [
-                "Fr",
-                "Sa"
+                "Tu"
+              ],
+              "from": "11:30am",
+              "to": "12:00am"
+            },
+            {
+              "days": [
+                "We"
+              ],
+              "from": "10:30am",
+              "to": "12:00am"
+            },
+            {
+              "days": [
+                "Th"
+              ],
+              "from": "11:30am",
+              "to": "12:00am"
+            },
+            {
+              "days": [
+                "Fr"
               ],
               "from": "10:30am",
               "to": "9:00pm"
             },
             {
               "days": [
+                "Sa"
+              ],
+              "from": "11:30am",
+              "to": "9:00pm"
+            },
+            {
+              "days": [
                 "Su"
               ],
-              "from": "10:30am",
+              "from": "11:30am",
               "to": "12:00am"
             }
           ]
@@ -751,8 +775,8 @@
       }
     },
     {
-      "name": "Academic Support Center",
-      "abbreviation": "ASC",
+      "name": "ASC",
+      "subtitle": "Academic Support Center",
       "category": "Help and Support",
       "schedule": [
         {
@@ -1506,8 +1530,8 @@
       }
     },
     {
-      "name": "Christiansen",
-      "abbreviation": "CHM",
+      "name": "CHM",
+      "subtitle": "Christiansen",
       "image": "christiansen",
       "category": "Academia",
       "schedule": [
@@ -1611,8 +1635,8 @@
       }
     },
     {
-      "name": "Hall of Music",
-      "abbreviation": "HOM",
+      "name": "HOM",
+      "subtitle": "Hall of Music",
       "image": "hall-of-music",
       "category": "Academia",
       "schedule": [
@@ -2014,7 +2038,8 @@
       }
     },
     {
-      "name": "World Language Center",
+      "name": "WLC",
+      "subtitle": "World Language Center",
       "category": "Academia",
       "schedule": [
         {
@@ -2062,6 +2087,405 @@
         "spring": [],
         "easter": [],
         "summer": []
+      }
+    },
+    {
+      "name": "Admissions",
+      "category": "Offices",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr"
+              ],
+              "from": "8:00am",
+              "to": "5:00pm"
+            },
+            {
+              "days": [
+                "Sa"
+              ],
+              "from": "8:00am",
+              "to": "12:00pm"
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": [
+          {
+            "days": [
+              "Mo",
+              "Tu",
+              "We",
+              "Th",
+              "Fr"
+            ],
+            "from": "7:30am",
+            "to": "4:30pm"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Business Office",
+      "category": "Offices",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr"
+              ],
+              "from": "8:00am",
+              "to": "4:30pm"
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": [
+          {
+            "days": [
+              "Mo",
+              "Tu",
+              "We",
+              "Th"
+            ],
+            "from": "7:30am",
+            "to": "4:00pm"
+          },
+          {
+            "days": [
+              "Fr"
+            ],
+            "from": "7:30am",
+            "to": "12:00pm"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CMIE",
+      "subtitle": "Center for Multiculteral and International Engagement",
+      "category": "Offices",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th"
+              ],
+              "from": "8:00am",
+              "to": "8:00pm"
+            },
+            {
+              "days": [
+                "Fr"
+              ],
+              "from": "8:00am",
+              "to": "5:00pm"
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": []
+      }
+    },
+    {
+      "name": "Conferences, Camps and Events Office",
+      "category": "Offices",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr"
+              ],
+              "from": "8:00am",
+              "to": "5:00pm"
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": []
+      }
+    },
+    {
+      "name": "Financial Aid",
+      "category": "Offices",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr"
+              ],
+              "from": "8:00am",
+              "to": "5:00pm"
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": [
+          {
+            "days": [
+              "Mo",
+              "Tu",
+              "We",
+              "Th"
+            ],
+            "from": "7:30am",
+            "to": "4:30pm"
+          },
+          {
+            "days": [
+              "Fr"
+            ],
+            "from": "7:30am",
+            "to": "12:00pm"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OSA",
+      "subtitle": "Office of Student Activities",
+      "category": "Offices",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr"
+              ],
+              "from": "8:00am",
+              "to": "5:00pm"
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": []
+      }
+    },
+    {
+      "name": "Parking Office",
+      "category": "Offices",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr"
+              ],
+              "from": "9:00am",
+              "to": "3:00pm"
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": []
+      }
+    },
+    {
+      "name": "Pastor's Office",
+      "category": "Offices",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr"
+              ],
+              "from": "8:00am",
+              "to": "5:00pm"
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": []
+      }
+    },
+    {
+      "name": "Piper Center",
+      "category": "Offices",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr"
+              ],
+              "from": "8:00am",
+              "to": "5:00pm"
+            },
+            {
+              "days": [
+                "Tu",
+                "We"
+              ],
+              "from": "7:00pm",
+              "to": "9:00pm"
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": []
+      }
+    },
+    {
+      "name": "Registrar",
+      "category": "Offices",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr"
+              ],
+              "from": "8:00am",
+              "to": "4:30pm"
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": [
+          {
+            "days": [
+              "Mo",
+              "Tu",
+              "We",
+              "Th"
+            ],
+            "from": "7:30am",
+            "to": "4:30pm"
+          },
+          {
+            "days": [
+              "Fr"
+            ],
+            "from": "7:30am",
+            "to": "12:00pm"
+          }
+        ]
       }
     }
   ]

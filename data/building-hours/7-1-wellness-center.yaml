@@ -1,9 +1,9 @@
-name: 'Wellness Center'
-image: 'wellness'
-category: 'Health and Wellness'
+name: Wellness Center
+image: wellness
+category: Health and Wellness
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '10:00am', to: '5:00pm'}
 

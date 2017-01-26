@@ -1,9 +1,9 @@
-name: 'Skoglund'
-image: 'skoglund'
-category: 'Gym'
+name: Skoglund
+image: skoglund
+category: Gym
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th], from: '6:30am', to: '10:45pm'}
       - {days: [Fr], from: '6:30am', to: '8:45pm'}

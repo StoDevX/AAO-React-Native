@@ -96,7 +96,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
-        versionName "2.0.1"
+        versionName "2.1.1"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -142,7 +142,6 @@ android {
 dependencies {
     compile project(':react-native-google-analytics-bridge')
     compile project(':react-native-device-info')
-    compile project(':react-native-cookies')
     compile project(':react-native-vector-icons')
     compile project(':react-native-keychain')
     compile fileTree(dir: "libs", include: ["*.jar"])

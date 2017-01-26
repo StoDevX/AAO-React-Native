@@ -1,8 +1,8 @@
-name: 'Rølvaag Reference Desk'
-category: 'Libraries'
+name: Rølvaag Reference Desk
+category: Libraries
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th], from: '10:00am', to: '5:00pm'}
       - {days: [Mo, Tu, We, Th], from: '7:00pm', to: '9:00pm'}

@@ -62,6 +62,12 @@ export class GitHubHostedMenu extends React.Component {
       corIcons = fallbackMenu.corIcons || {}
     }
 
+    if (__DEV__) {
+      foodItems = fallbackMenu.foodItems
+      stationMenus = fallbackMenu.stationMenus || []
+      corIcons = fallbackMenu.corIcons || {}
+    }
+
     foodItems = foodItems.map(upgradeMenuItem)
     stationMenus = stationMenus.map(upgradeStation)
     this.setState({loading: false, corIcons, foodItems, stationMenus, now: moment.tz(CENTRAL_TZ)})

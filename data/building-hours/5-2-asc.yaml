@@ -1,9 +1,9 @@
-name: 'Academic Support Center'
-abbreviation: 'ASC'
-category: 'Help and Support'
+name: ASC
+subtitle: Academic Support Center
+category: Help and Support
 
 schedule:
-  - title: 'Hours'
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th], from: '8:00am', to: '9:00pm'}
       - {days: [Fr], from: '8:00am', to: '5:00pm'}
