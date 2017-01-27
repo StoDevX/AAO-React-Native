@@ -1,7 +1,8 @@
 // @flow
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
-// import {BonAppPickerView} from './dev-bonapp-picker'
+import {CarletonMenuPicker} from './carleton-list'
+//import {BonAppPickerView} from './dev-bonapp-picker'
 
 const stolaf = [
   {
@@ -44,6 +45,15 @@ const stolaf = [
         'Mixing up a shake…',
         'Spinning up pizzas…',
       ],
+    },
+  },
+  {
+    id: 'CarletonMenuListView',
+    title: 'Carleton',
+    rnVectorIcon: {iconName: 'menu'},
+    component: CarletonMenuPicker,
+    props: {
+      name: 'carleton',
     },
   },
   // {

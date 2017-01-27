@@ -62,6 +62,13 @@ export type CafeMenuType = {
   dayparts: DayPartsCollectionType,
 };
 
+export type CarletonDetailMenuType = {
+  component: any,
+  id: string,
+  props: {cafeId: string, loadingMessage: Array<string>},
+  title: string,
+};
+
 export type MenuForDayType = {
   date: string,
   cafes: {[key: string]: CafeMenuType},
