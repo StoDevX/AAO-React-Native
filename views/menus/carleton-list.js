@@ -35,7 +35,7 @@ export class CarletonMenuPicker extends React.Component {
     })
   }
 
-  renderCafes = () => {
+  render() {
     if (!carleton) {
       return <NoticeView text={'No Carleton Cafes to choose.'} />
     }
@@ -55,15 +55,6 @@ export class CarletonMenuPicker extends React.Component {
           </View>
         )}
       </ScrollView>
-    )
-  }
-
-  render() {
-    let cafeList = this.renderCafes()
-    return (
-      <View style={{flex: 1}}>
-        {cafeList}
-      </View>
     )
   }
 }
