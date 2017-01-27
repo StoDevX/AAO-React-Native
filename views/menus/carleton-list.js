@@ -21,6 +21,7 @@ export class CarletonMenuPicker extends React.Component {
   onPressRow = (data: CarletonDetailMenuType) => {
     let name = data.title
     let id = data.props.cafeId
+    let message = data.props.loadingMessage
 
     this.props.navigator.push({
       id: 'BonAppHostedMenu',
@@ -29,7 +30,7 @@ export class CarletonMenuPicker extends React.Component {
       index: this.props.route.index + 1,
       props: {
         name: name,
-        loadingMessage: data.props.loadingMessage,
+        loadingMessage: message,
         cafeId: id,
       },
     })
