@@ -1,10 +1,9 @@
 // @flow
 import React from 'react'
 import { StyleSheet, Platform, Dimensions } from 'react-native'
-import { TabViewAnimated, TabBarTop } from 'react-native-tab-view'
+import { TabViewAnimated, TabBar } from 'react-native-tab-view'
 import * as c from '../colors'
 import type { TabbedViewPropsType } from './types'
-import { TabbedViewPropTypes } from './types'
 import {tracker} from '../../../analytics'
 
 const styles = StyleSheet.create({
@@ -26,8 +25,6 @@ const styles = StyleSheet.create({
 })
 
 export default class TabbedView extends React.Component {
-  static propTypes = TabbedViewPropTypes
-
   state = {
     index: 0,
   }
@@ -42,28 +39,20 @@ export default class TabbedView extends React.Component {
   }
 
   _renderHeader = props => {
-    if (this.props.tabs.length > 2) {
-      return (
-        <TabBarTop
-          {...props}
-          scrollEnabled={true}
-          indicatorStyle={styles.indicator}
-          style={styles.tabbar}
-          labelStyle={styles.label}
-        />
-      )
-    } else {
-      return (
-        <TabBarTop
-          {...props}
-          scrollEnabled={true}
-          indicatorStyle={styles.indicator}
-          style={styles.tabbar}
-          labelStyle={styles.label}
-          tabWidth={Dimensions.get('window').width / 2}
-        />
-      )
-    }
+    const tabStyle = this.props.tabs.length <= 2
+      ? {width: Dimensions.get('window').width / 2}
+      : undefined
+
+    return (
+      <TabBar
+        {...props}
+        scrollEnabled={true}
+        indicatorStyle={[styles.indicator]}
+        style={styles.tabbar}
+        labelStyle={styles.label}
+        tabStyle={tabStyle}
+      />
+    )
   }
 
   _renderScene = ({ route }) => {
