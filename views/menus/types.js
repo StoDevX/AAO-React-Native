@@ -65,7 +65,7 @@ export type CafeMenuType = {
 export type CarletonDetailMenuType = {
   component: any,
   id: string,
-  props: {cafeId: number, loadingMessage: Array<string>},
+  props: {cafeId: string, loadingMessage: Array<string>},
   title: string,
 };
 
