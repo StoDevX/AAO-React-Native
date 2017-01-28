@@ -1,12 +1,15 @@
 // @flow
 import React from 'react'
-import {Cell, Section} from 'react-native-tableview-simple'
+import {Text, Switch} from 'react-native'
+import {Cell, CustomCell, Section} from 'react-native-tableview-simple'
 import {getVersion} from 'react-native-device-info'
 import type {TopLevelViewPropsType} from '../../types'
 
-export
-class OddsAndEndsSection extends React.Component {
-  props: TopLevelViewPropsType;
+export class OddsAndEndsSection extends React.Component {
+  props: TopLevelViewPropsType & {
+    onChangeFeedbackToggle: (feedbackEnabled: boolean) => any,
+    feedbackEnabled: boolean,
+  };
 
   onPressLegalButton = () => {
     this.props.navigator.push({
@@ -47,6 +50,11 @@ class OddsAndEndsSection extends React.Component {
           title='Version'
           detail={getVersion()}
         />
+
+        <CustomCell>
+          <Text style={{flex: 1, fontSize: 16}}>Share Analytics</Text>
+          <Switch value={this.props.feedbackEnabled} onValueChange={val => this.props.onChangeFeedbackToggle(val)} />
+        </CustomCell>
 
         <Cell cellStyle='Basic'
           title='FAQ'

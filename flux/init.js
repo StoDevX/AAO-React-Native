@@ -11,6 +11,7 @@ import {
   setLoginCredentials,
   logInViaToken,
   validateLoginCredentials,
+  loadFeedbackStatus,
 } from './parts/settings'
 import {
   updateFinancialData,
@@ -21,6 +22,10 @@ import {FINANCIALS_URL} from '../lib/financials/urls'
 
 function homescreen(store) {
   store.dispatch(loadHomescreenOrder())
+}
+
+function feedbackOptOutStatus(store) {
+  store.dispatch(loadFeedbackStatus())
 }
 
 function sisLoginCredentials(store) {
@@ -71,6 +76,7 @@ function netInfoIsConnected(store) {
 
 export function init(store: {dispatch: any}) {
   homescreen(store)
+  feedbackOptOutStatus(store)
   sisLoginCredentials(store)
   checkSisLogin(store)
   validateOlafCredentials(store)
