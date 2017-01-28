@@ -9,7 +9,12 @@ import {
   clearLoginCredentials,
 } from '../../lib/login'
 
-import {setTokenValid, clearTokenValid} from '../../lib/storage'
+import {
+  setTokenValid,
+  clearTokenValid,
+  setAnalyticsOptOut,
+  getAnalyticsOptOut,
+} from '../../lib/storage'
 
 import {
   updateFinancialData,
@@ -21,10 +26,19 @@ export const SET_LOGIN_CREDENTIALS = 'settings/SET_LOGIN_CREDENTIALS'
 export const CREDENTIALS_LOGIN = 'settings/CREDENTIALS_LOGIN'
 export const CREDENTIALS_LOGOUT = 'settings/CREDENTIALS_LOGOUT'
 export const CREDENTIALS_VALIDATE = 'settings/CREDENTIALS_VALIDATE'
+export const SET_FEEDBACK = 'settings/SET_FEEDBACK'
 export const TOKEN_LOGIN = 'settings/TOKEN_LOGIN'
 export const TOKEN_LOGOUT = 'settings/TOKEN_LOGOUT'
 export const CHANGE_THEME = 'settings/CHANGE_THEME'
 
+export async function setFeedbackStatus(feedbackEnabled: boolean) {
+  await setAnalyticsOptOut(feedbackEnabled)
+  return {type: SET_FEEDBACK, payload: feedbackEnabled}
+}
+
+export function loadFeedbackStatus() {
+  return {type: SET_FEEDBACK, payload: getAnalyticsOptOut()}
+}
 
 export async function setLoginCredentials(username: string, password: string) {
   await saveLoginCredentials(username, password)
@@ -188,6 +202,7 @@ const initialSettingsState = {
 
   credentials: undefined,
   token: undefined,
+  feedbackEnabled: true,
 }
 export function settings(state: Object=initialSettingsState, action: Object) {
   // start out by running the reducers for the complex chunks of the state
@@ -202,6 +217,9 @@ export function settings(state: Object=initialSettingsState, action: Object) {
   switch (type) {
     case CHANGE_THEME:
       return {...state, theme: payload}
+
+    case SET_FEEDBACK:
+      return {...state, feedbackEnabled: payload}
 
     default:
       return state

@@ -10,6 +10,7 @@ import {
   logInViaToken,
   logOutViaToken,
   setLoginCredentials,
+  setFeedbackStatus,
 } from '../../flux/parts/settings'
 import {connect} from 'react-redux'
 import * as c from '../components/colors'
@@ -40,6 +41,8 @@ type SettingsViewPropsType = TopLevelViewPropsType & {
   logInViaToken: (status: boolean) => any,
   logOutViaToken: () => any,
   setLoginCredentials: (username: string, password: string) => any,
+  setFeedbackStatus: (feedbackEnabled: boolean) => any,
+  feedbackEnabled: boolean,
 };
 
 function SettingsView(props: SettingsViewPropsType) {
@@ -74,6 +77,8 @@ function SettingsView(props: SettingsViewPropsType) {
         <SupportSection />
 
         <OddsAndEndsSection
+          feedbackEnabled={props.feedbackEnabled}
+          onChangeFeedbackToggle={props.setFeedbackStatus}
           navigator={props.navigator}
           route={props.route}
         />
@@ -89,6 +94,7 @@ function mapStateToProps(state) {
     credentialsValid: state.settings.credentials.valid,
     credentialsMessage: state.settings.credentials.error,
     tokenValid: state.settings.token.valid,
+    feedbackEnabled: state.settings.feedbackEnabled,
     tokenMessage: state.settings.token.error,
   }
 }
@@ -101,6 +107,7 @@ function mapDispatchToProps(dispatch) {
     logInViaToken: s => dispatch(logInViaToken(s)),
     logOutViaToken: () => dispatch(logOutViaToken()),
     setLoginCredentials: (u, p) => dispatch(setLoginCredentials(u, p)),
+    setFeedbackStatus: s => dispatch(setFeedbackStatus(s)),
   }
 }
 

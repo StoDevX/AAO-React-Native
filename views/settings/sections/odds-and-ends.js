@@ -1,12 +1,22 @@
 // @flow
 import React from 'react'
-import {Cell, Section} from 'react-native-tableview-simple'
+import {Text, Switch} from 'react-native'
+import {Cell, CustomCell, Section} from 'react-native-tableview-simple'
 import {getVersion} from 'react-native-device-info'
 import type {TopLevelViewPropsType} from '../../types'
+import * as storage from '../../../lib/storage'
 
-export
-class OddsAndEndsSection extends React.Component {
-  props: TopLevelViewPropsType;
+export const SET_FEEDBACK = 'settings/SET_FEEDBACK'
+
+export class OddsAndEndsSection extends React.Component {
+  props: TopLevelViewPropsType &
+  {onChangeFeedbackToggle: (feedbackEnabled: boolean) => any} &
+  {feedbackEnabled: boolean};
+
+  onPressFeedbackToggle = (feedbackEnabled: boolean) => {
+    storage.setAnalyticsOptOut(feedbackEnabled)
+    return {type: SET_FEEDBACK, payload: feedbackEnabled}
+  }
 
   onPressLegalButton = () => {
     this.props.navigator.push({
@@ -47,6 +57,11 @@ class OddsAndEndsSection extends React.Component {
           title='Version'
           detail={getVersion()}
         />
+
+        <CustomCell>
+          <Text style={{flex: 1, fontSize: 16}}>Share Analytics</Text>
+          <Switch value={this.props.feedbackEnabled} onValueChange={val => this.onPressFeedbackToggle(val)} />
+        </CustomCell>
 
         <Cell cellStyle='Basic'
           title='FAQ'
