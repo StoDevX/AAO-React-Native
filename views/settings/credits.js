@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center',
     fontSize: 18,
-    paddingTop: 20,
     paddingBottom: 5,
   },
   logo: {
@@ -42,6 +41,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingLeft: 25,
     paddingRight: 25,
+    paddingBottom: 20,
     lineHeight: 20,
   },
   last: {
