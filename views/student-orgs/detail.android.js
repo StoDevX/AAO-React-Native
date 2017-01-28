@@ -32,6 +32,12 @@ const styles = StyleSheet.create({
     paddingRight: 16,
     fontSize: 16,
   },
+  footer: {
+    fontSize: 10,
+    color: c.iosDisabledText,
+    textAlign: 'center',
+    paddingBottom: 20,
+  },
 })
 
 export class StudentOrgsDetailRenderView extends React.Component {
@@ -74,6 +80,10 @@ export class StudentOrgsDetailRenderView extends React.Component {
     )
   }
 
+  displayFooter() {
+    return <Text style={styles.footer}>Powered by CheckImHere</Text>
+  }
+
   renderBody = (data: StudentOrgInfoType) => {
     const {
       regularMeetingTime='',
@@ -89,6 +99,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
         {showMeetingSection ? this.displayMeetings(regularMeetingTime, regularMeetingLocation) : null}
         {contactName ? this.displayContact(contactName) : null}
         {description ? this.displayDescription(description) : null}
+        {this.displayFooter()}
       </View>
     )
   }
