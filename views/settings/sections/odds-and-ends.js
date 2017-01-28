@@ -52,7 +52,7 @@ export class OddsAndEndsSection extends React.Component {
         />
 
         <CustomCell>
-          <Text style={{flex: 1, fontSize: 16}}>Share Feedback</Text>
+          <Text style={{flex: 1, fontSize: 16}}>Share Analytics</Text>
           <Switch value={this.props.feedbackEnabled} onValueChange={val => this.props.onChangeFeedbackToggle(val)} />
         </CustomCell>
 
