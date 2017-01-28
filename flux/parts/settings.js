@@ -33,6 +33,7 @@ export const CHANGE_THEME = 'settings/CHANGE_THEME'
 
 export async function setFeedbackStatus(feedbackEnabled: boolean) {
   await setAnalyticsOptOut(feedbackEnabled)
+  console.log({type: SET_FEEDBACK, payload: feedbackEnabled})
   return {type: SET_FEEDBACK, payload: feedbackEnabled}
 }
 
@@ -152,7 +153,6 @@ function credentialsReducer(state=initialCredentialsState, action) {
       return state
   }
 }
-
 
 
 const initialTokenState = {
