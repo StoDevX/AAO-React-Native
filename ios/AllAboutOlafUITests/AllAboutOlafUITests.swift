@@ -33,13 +33,13 @@ class AllAboutOlafUITests: XCTestCase {
     }
 
     func testMainMenuScreen() {
-        sleep(1)
+        sleep(15)
         snapshot("00MainMenuScreen")
     }
 
     func testOpenMenusScreen() {
         XCUIApplication().otherElements["   Menus"].tap()
-        sleep(10)
+        sleep(5)
         snapshot("01MenusScreenStavMenu")
     }
 
@@ -57,13 +57,13 @@ class AllAboutOlafUITests: XCTestCase {
 
     func testOpenCalendarScreen() {
         XCUIApplication().otherElements["   Calendar"].tap()
-        sleep(10)
+        sleep(5)
         snapshot("04CalendarScreen")
     }
 
     func testOpenDirectoryScreen() {
         XCUIApplication().otherElements["   Directory"].tap()
-        sleep(10)
+        sleep(5)
         snapshot("05DirectoryScreen")
     }
 
@@ -75,13 +75,13 @@ class AllAboutOlafUITests: XCTestCase {
 
     func testOpenNewsScreen() {
         XCUIApplication().otherElements["   News"].tap()
-        sleep(10)
+        sleep(5)
         snapshot("07NewsScreen")
     }
 
     func testOpenCampusMapScreen() {
         XCUIApplication().otherElements["   Campus Map"].tap()
-        sleep(10)
+        sleep(5)
         snapshot("08CampusMapScreen")
     }
 
@@ -111,7 +111,7 @@ class AllAboutOlafUITests: XCTestCase {
 
     func testOpenStudentOrgsScreen() {
         XCUIApplication().otherElements["   Student Orgs"].tap()
-        sleep(10)
+        sleep(5)
         snapshot("13StudentOrgsScreen")
     }
 }
