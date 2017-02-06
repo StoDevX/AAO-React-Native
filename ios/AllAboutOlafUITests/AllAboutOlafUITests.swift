@@ -33,71 +33,85 @@ class AllAboutOlafUITests: XCTestCase {
     }
 
     func testMainMenuScreen() {
+        sleep(1)
         snapshot("00MainMenuScreen")
     }
 
     func testOpenMenusScreen() {
         XCUIApplication().otherElements["   Menus"].tap()
+        sleep(10)
         snapshot("01MenusScreenStavMenu")
     }
 
     func testOpenSisScreen() {
         XCUIApplication().otherElements["   SIS"].tap()
+        sleep(1)
         snapshot("02SisScreen")
     }
 
     func testOpenBuildingHoursScreen() {
         XCUIApplication().otherElements["   Building Hours"].tap()
+        sleep(1)
         snapshot("03BuildingHoursScreen")
     }
 
     func testOpenCalendarScreen() {
         XCUIApplication().otherElements["   Calendar"].tap()
+        sleep(10)
         snapshot("04CalendarScreen")
     }
 
     func testOpenDirectoryScreen() {
         XCUIApplication().otherElements["   Directory"].tap()
+        sleep(10)
         snapshot("05DirectoryScreen")
     }
 
     func testOpenStreamingMediaScreen() {
         XCUIApplication().otherElements["   Streaming Media"].tap()
+        sleep(1)
         snapshot("06StreamingMediaScreen")
     }
 
     func testOpenNewsScreen() {
         XCUIApplication().otherElements["   News"].tap()
+        sleep(10)
         snapshot("07NewsScreen")
     }
 
     func testOpenCampusMapScreen() {
         XCUIApplication().otherElements["   Campus Map"].tap()
+        sleep(10)
         snapshot("08CampusMapScreen")
     }
 
     func testOpenImportantContactsScreen() {
         XCUIApplication().otherElements["   Important Contacts"].tap()
+        sleep(1)
         snapshot("09ImportantContactsScreen")
     }
 
     func testOpenTransportationScreen() {
         XCUIApplication().otherElements["   Transportation"].tap()
+        sleep(1)
         snapshot("10TransportationScreen")
     }
 
     func testOpenCampusDictionaryScreen() {
         XCUIApplication().otherElements["   Campus Dictionary"].tap()
+        sleep(1)
         snapshot("11CampusDictionaryScreen")
     }
 
     func testOpenOlevilleScreen() {
         XCUIApplication().otherElements["   Oleville"].tap()
+        sleep(10)
         snapshot("12OlevilleScreen")
     }
 
     func testOpenStudentOrgsScreen() {
         XCUIApplication().otherElements["   Student Orgs"].tap()
+        sleep(10)
         snapshot("13StudentOrgsScreen")
     }
 }
