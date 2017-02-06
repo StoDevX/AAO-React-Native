@@ -1,20 +1,12 @@
 // @flow
-
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
-
-import {buildingImages} from '../../images/building-images'
-import type {BuildingType, DayOfWeekEnumType} from './types'
+import {buildingImages} from '../../../images/building-images'
+import type {SingleBuildingScheduleType, BuildingType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
-
-import moment from 'moment-timezone'
-const CENTRAL_TZ = 'America/Winnipeg'
-
-const transparentPixel = require('../../images/transparent.png')
-
-import {TableView, Section, CustomCell} from 'react-native-tableview-simple'
+import {Card} from '../components/card'
 import ParallaxView from 'react-native-parallax-view'
-
+import moment from 'moment-timezone'
 import * as c from '../components/colors'
 import {
   normalizeBuildingSchedule,
@@ -23,6 +15,10 @@ import {
   getShortBuildingStatus,
   isBuildingOpenAtMoment,
 } from './building-hours-helpers'
+
+const transparentPixel = require('../../../images/transparent.png')
+
+const CENTRAL_TZ = 'America/Winnipeg'
 
 const styles = StyleSheet.create({
   title: {
@@ -47,6 +43,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingHorizontal: 12,
     paddingVertical: 4,
+    marginBottom: 14,
     borderRadius: 5,
     alignSelf: 'center',
   },
@@ -55,18 +52,31 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   scrollableStyle: {
-    backgroundColor: c.iosLightBackground,
+    backgroundColor: c.androidLightBackground,
+  },
+
+  scheduleContainer: {
+    marginBottom: 20,
+  },
+
+  bold: {
+    fontWeight: 'bold',
+  },
+  scheduleRow: {
+    flexDirection: 'row',
+    paddingVertical: 6,
   },
   scheduleDays: {
     flex: 1,
-    minWidth: 100,
+    textAlign: 'right',
     paddingRight: 16,
   },
-  bold: {
-    fontWeight: '600',
-  },
   scheduleHours: {
-    flex: 3,
+    flex: 2,
+  },
+  scheduleNotes: {
+    paddingTop: 6,
+    paddingBottom: 2,
   },
 })
 
@@ -110,8 +120,8 @@ export class BuildingHoursDetailView extends React.Component {
     const title = <Text style={styles.name}>{this.props.name}{abbr}</Text>
     const subtitle = this.props.subtitle
       ? <View style={styles.subtitle}>
-          <Text style={[styles.name, styles.subtitleText]}>{this.props.subtitle}</Text>
-        </View>
+        <Text style={[styles.name, styles.subtitleText]}>{this.props.subtitle}</Text>
+      </View>
       : null
 
     return (
@@ -120,7 +130,7 @@ export class BuildingHoursDetailView extends React.Component {
         windowHeight={100}
         scrollableViewStyle={styles.scrollableStyle}
       >
-        <View>
+        <View style={{flex: 1}}>
           <View style={styles.title}>{title}</View>
           {subtitle}
 
@@ -128,28 +138,36 @@ export class BuildingHoursDetailView extends React.Component {
             <Text style={styles.badgeText}>{openStatus}</Text>
           </View>
 
-          {<TableView>
-            {schedules.map(set =>
-              <Section key={set.title} header={set.title.toUpperCase()} footer={set.notes}>
-                {set.hours.map((schedule, i) => {
-                  let isActiveSchedule = set.isPhysicallyOpen !== false && schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)
-
-                  return (
-                    <CustomCell key={i}>
-                      <Text numberOfLines={1} style={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]}>
-                        {summarizeDays(schedule.days)}
-                      </Text>
-                      <Text numberOfLines={1} style={[styles.scheduleHours, isActiveSchedule ? styles.bold : null]}>
-                        {formatBuildingTimes(schedule, this.state.now)}
-                      </Text>
-                    </CustomCell>
-                  )
-                })}
-              </Section>
-            )}
-          </TableView>}
+          {schedules.map(set =>
+            <Card key={set.title} style={styles.scheduleContainer} header={set.title} footer={set.notes}>
+              <View style={styles.scheduleHoursWrapper}>
+                {set.hours.map((schedule, i) =>
+                  <ScheduleRow
+                    key={i}
+                    now={this.state.now}
+                    schedule={schedule}
+                    isActive={set.isPhysicallyOpen !== false && schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)}
+                  />)}
+              </View>
+            </Card>
+          )}
         </View>
       </ParallaxView>
     )
   }
+}
+
+
+const ScheduleRow = ({schedule, isActive, now}: {schedule: SingleBuildingScheduleType, isActive: boolean, now: momentT}) => {
+  return (
+    <View style={styles.scheduleRow}>
+      <Text style={[styles.scheduleDays, isActive && styles.bold]} numberOfLines={1}>
+        {summarizeDays(schedule.days)}
+      </Text>
+
+      <Text style={[styles.scheduleHours, isActive && styles.bold]} numberOfLines={1}>
+        {formatBuildingTimes(schedule, now)}
+      </Text>
+    </View>
+  )
 }

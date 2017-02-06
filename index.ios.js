@@ -1,5 +1,5 @@
 import {AppRegistry} from 'react-native'
-import App from './app'
+import App from './source/app'
 import OneSignal from 'react-native-onesignal'
 AppRegistry.registerComponent('AllAboutOlaf', () => App)
 

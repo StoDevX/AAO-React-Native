@@ -12,7 +12,7 @@ import {
   ScrollView,
   WebView,
 } from 'react-native'
-import {data as webcams} from '../../docs/webcams'
+import {data as webcams} from '../../../docs/webcams'
 
 // const inlineVideo = url => `
 //   <style>

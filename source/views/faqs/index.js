@@ -2,7 +2,7 @@
 import React from 'react'
 import {WebView, StyleSheet} from 'react-native'
 import LoadingView from '../components/loading'
-import {text as faqs} from '../../docs/faqs.json'
+import {text as faqs} from '../../../docs/faqs.json'
 import {tracker} from '../../analytics'
 
 const styles = StyleSheet.create({

@@ -10,7 +10,7 @@ const CENTRAL_TZ = 'America/Winnipeg'
 import sample from 'lodash/sample'
 import type {MenuItemType, MasterCorIconMapType, StationMenuType} from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
-const {data: fallbackMenu} = require('../../docs/pause-menu.json')
+const {data: fallbackMenu} = require('../../../docs/pause-menu.json')
 import {tracker} from '../../analytics'
 
 const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
