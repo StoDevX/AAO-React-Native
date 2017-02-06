@@ -454,8 +454,7 @@
 				00D33BE31DDA58A8001E830E /* Info.plist */,
 				00D33C001DDA5958001E830E /* AllAboutOlaf-Bridging-Header.h */,
 			);
-			name = AllAboutOlafUITests;
-			path = "All About Olaf UI Tests";
+			path = AllAboutOlafUITests;
 			sourceTree = "<group>";
 		};
 		139105B71AF99BAD00B5F7CC /* Products */ = {
