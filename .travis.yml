@@ -145,6 +145,7 @@ script:
 
   # JS
   # Lint
+  - if [[ "$type" == "js" ]]; then npm run danger; fi
   - if [[ "$type" == "js" ]]; then npm run lint; fi
   # Validate data
   - if [[ "$type" == "js" ]]; then npm run validate-data; fi
