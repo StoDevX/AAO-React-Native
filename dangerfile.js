@@ -13,8 +13,8 @@ if (unFlowedFiles.length > 0) {
   warn(`These new JS files do not have Flow enabled: ${unFlowedFiles.join(", ")}`)
 }
 
-const packageChanged = includes(danger.git.modified_files, 'package.json');
-const lockfileChanged = includes(danger.git.modified_files, 'yarn.lock');
+const packageChanged = danger.git.modified_files.includes('package.json');
+const lockfileChanged = danger.git.modified_files.includes('yarn.lock');
 if (packageChanged && !lockfileChanged) {
     const message = 'Changes were made to package.json, but not to yarn.lock';
     const idea = 'Perhaps you need to run `yarn install`?';
