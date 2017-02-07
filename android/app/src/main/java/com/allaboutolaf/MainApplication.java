@@ -4,16 +4,16 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
-import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import com.oblador.vectoricons.VectorIconsPackage;
-import com.oblador.keychain.KeychainPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
-import com.geektime.reactnativeonesignal.ReactNativeOneSignalPackage;
 import com.facebook.soloader.SoLoader;
+import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
+import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.oblador.keychain.KeychainPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,10 +31,10 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
         new GoogleAnalyticsBridgePackage(),
-        new RNDeviceInfo(),
-        new VectorIconsPackage(),
         new KeychainPackage(),
-        new ReactNativeOneSignalPackage()
+        new ReactNativeOneSignalPackage(),
+        new RNDeviceInfo(),
+        new VectorIconsPackage()
       );
     }
   };

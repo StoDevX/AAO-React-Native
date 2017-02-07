@@ -42,7 +42,6 @@ android/app/libs
 *.keystore
 
 # KEYS
-keys.js
 .env.js
 
 # Tests and code coverage
