@@ -29,4 +29,4 @@ test:
     - yarn run lint
     - yarn run flow -- check
     - yarn run validate-data
-    - yarn test
+    - yarn test -- --runInBand
