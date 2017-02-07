@@ -1,4 +1,4 @@
-import { danger, fail, warn, github } from "danger"
+import { danger, fail, warn } from "danger"
 import { readFileSync } from "fs"
 import execa from "execa"
 
@@ -34,7 +34,7 @@ jsTests.forEach(file => {
 
 // Warn when PR size is large (mainly for hawken)
 const bigPRThreshold = 400
-const thisPRSize = github.pr.additions + github.pr.deletions
+const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
 if (thisPRSize > bigPRThreshold) {
   warn(':exclamation: Big PR!')
   markdown(`> The Pull Request size is a bit big. We like to try and keep PRs under ${bigPRThreshold} lines per PR, and this one was ${thisPRSize} lines. If the PR contains multiple logical changes, splitting each into separate PRs will allow a faster, easier, and more thorough review.`)
