@@ -1,4 +1,4 @@
-import { danger, fail, warn } from "danger"
+import { danger, fail, warn, github } from "danger"
 import { readFileSync } from "fs"
 import execa from "execa"
 
