@@ -13,6 +13,8 @@ machine:
 dependencies:
   override:
     - yarn
+    - touch .env.js
+
   cache_directories:
     - ~/.cache/yarn
 
