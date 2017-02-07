@@ -20,4 +20,3 @@ if (packageChanged && !lockfileChanged) {
 	    const idea = 'Perhaps you need to run `yarn install`?';
 	      warn(`${message} - <i>${idea}</i>`);
 }
-
