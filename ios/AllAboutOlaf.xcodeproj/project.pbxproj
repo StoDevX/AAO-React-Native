@@ -5,18 +5,18 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		0002961D1E270BD1000909F2 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0002961C1E270BD1000909F2 /* CoreData.framework */; };
 		0002961F1E270BD9000909F2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0002961E1E270BD9000909F2 /* SystemConfiguration.framework */; };
 		000296211E270BE4000909F2 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 000296201E270BE4000909F2 /* libz.tbd */; };
 		000296231E270BF0000909F2 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 000296221E270BF0000909F2 /* libsqlite3.0.tbd */; };
-		008845151DF9FCBB00C23F56 /* AllAboutOlafTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 008845131DF9FCBB00C23F56 /* AllAboutOlafTests.m */; };
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
 		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
-		00D33BE21DDA58A8001E830E /* All_About_Olaf_UI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33BE11DDA58A8001E830E /* All_About_Olaf_UI_Tests.swift */; };
+		00D33BE21DDA58A8001E830E /* AllAboutOlafUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33BE11DDA58A8001E830E /* AllAboutOlafUITests.swift */; };
 		00D33C031DDA598B001E830E /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33C011DDA5958001E830E /* SnapshotHelper.swift */; };
 		0AD888024DB21AAE85B016E3 /* libPods-AllAboutOlafTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E03F9833020DA82BB00EF77 /* libPods-AllAboutOlafTests.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
@@ -251,8 +251,6 @@
 		0002961E1E270BD9000909F2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		000296201E270BE4000909F2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		000296221E270BF0000909F2 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
-		008845131DF9FCBB00C23F56 /* AllAboutOlafTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllAboutOlafTests.m; sourceTree = "<group>"; };
-		008845141DF9FCBB00C23F56 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
 		00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGeolocation.xcodeproj; path = "../node_modules/react-native/Libraries/Geolocation/RCTGeolocation.xcodeproj"; sourceTree = "<group>"; };
@@ -261,7 +259,7 @@
 		00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
 		00C8CB4C1D6EBA1A00E66E20 /* All About Olaf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "All About Olaf.entitlements"; path = "AllAboutOlaf/All About Olaf.entitlements"; sourceTree = "<group>"; };
 		00D33BDF1DDA58A8001E830E /* AllAboutOlafUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AllAboutOlafUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		00D33BE11DDA58A8001E830E /* All_About_Olaf_UI_Tests.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = All_About_Olaf_UI_Tests.swift; sourceTree = "<group>"; };
+		00D33BE11DDA58A8001E830E /* AllAboutOlafUITests.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = AllAboutOlafUITests.swift; sourceTree = "<group>"; };
 		00D33BE31DDA58A8001E830E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00D33C001DDA5958001E830E /* AllAboutOlaf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AllAboutOlaf-Bridging-Header.h"; sourceTree = "<group>"; };
 		00D33C011DDA5958001E830E /* SnapshotHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SnapshotHelper.swift; path = fastlane/SnapshotHelper.swift; sourceTree = SOURCE_ROOT; };
@@ -395,15 +393,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		008845121DF9FCBB00C23F56 /* AllAboutOlafTests */ = {
-			isa = PBXGroup;
-			children = (
-				008845131DF9FCBB00C23F56 /* AllAboutOlafTests.m */,
-				008845141DF9FCBB00C23F56 /* Info.plist */,
-			);
-			path = AllAboutOlafTests;
-			sourceTree = "<group>";
-		};
 		00C302A81ABCB8CE00DB3ED1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -446,15 +435,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		00D33BE01DDA58A8001E830E /* All About Olaf UI Tests */ = {
+		00D33BE01DDA58A8001E830E /* AllAboutOlafUITests */ = {
 			isa = PBXGroup;
 			children = (
 				00D33C011DDA5958001E830E /* SnapshotHelper.swift */,
-				00D33BE11DDA58A8001E830E /* All_About_Olaf_UI_Tests.swift */,
+				00D33BE11DDA58A8001E830E /* AllAboutOlafUITests.swift */,
 				00D33BE31DDA58A8001E830E /* Info.plist */,
 				00D33C001DDA5958001E830E /* AllAboutOlaf-Bridging-Header.h */,
 			);
-			path = "All About Olaf UI Tests";
+			path = AllAboutOlafUITests;
 			sourceTree = "<group>";
 		};
 		139105B71AF99BAD00B5F7CC /* Products */ = {
@@ -599,8 +588,7 @@
 			children = (
 				13B07FAE1A68108700A75B9A /* AllAboutOlaf */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				008845121DF9FCBB00C23F56 /* AllAboutOlafTests */,
-				00D33BE01DDA58A8001E830E /* All About Olaf UI Tests */,
+				00D33BE01DDA58A8001E830E /* AllAboutOlafUITests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				5A41494DACBB4D2795B46DE0 /* Resources */,
 				85B78A622B9B7A13A36B906C /* Pods */,
@@ -648,7 +636,7 @@
 				00D33BE51DDA58A8001E830E /* PBXTargetDependency */,
 			);
 			name = AllAboutOlafUITests;
-			productName = "All About Olaf UI Tests";
+			productName = AllAboutOlafUITests;
 			productReference = 00D33BDF1DDA58A8001E830E /* AllAboutOlafUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
@@ -1154,7 +1142,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00D33BE21DDA58A8001E830E /* All_About_Olaf_UI_Tests.swift in Sources */,
+				00D33BE21DDA58A8001E830E /* AllAboutOlafUITests.swift in Sources */,
 				00D33C031DDA598B001E830E /* SnapshotHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1163,7 +1151,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				008845151DF9FCBB00C23F56 /* AllAboutOlafTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1199,7 +1186,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				INFOPLIST_FILE = "All About Olaf UI Tests/Info.plist";
+				INFOPLIST_FILE = AllAboutOlafUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "hawkrives.All-About-Olaf-UI-Tests";
@@ -1219,7 +1206,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				INFOPLIST_FILE = "All About Olaf UI Tests/Info.plist";
+				INFOPLIST_FILE = AllAboutOlafUITests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "hawkrives.All-About-Olaf-UI-Tests";
@@ -1241,9 +1228,7 @@
 				);
 				INFOPLIST_FILE = AllAboutOlafTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1262,9 +1247,7 @@
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = AllAboutOlafTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-lc++",
@@ -1303,7 +1286,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "NFMTHAZVS9.com.drewvolz.stolaf-";
 				PRODUCT_NAME = "All About Olaf";
-				SWIFT_OBJC_BRIDGING_HEADER = "All About Olaf UI Tests/AllAboutOlaf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
@@ -1335,7 +1318,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "NFMTHAZVS9.com.drewvolz.stolaf-";
 				PRODUCT_NAME = "All About Olaf";
-				SWIFT_OBJC_BRIDGING_HEADER = "All About Olaf UI Tests/AllAboutOlaf-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
