@@ -5,24 +5,32 @@ general:
       - gh-pages
 
 machine:
-  node:
-    version: 7
+  pre:
+    - brew install rvm
+
+  xcode:
+    version: "8.2"
 
   environment:
     PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
 
 dependencies:
   override:
+    - nvm install 7
+    - nvm use 7
+    - rvm use 2.3 --install --binary --fuzzy
+    - gem install bundler
+    - bundle install --deployment
     - yarn
-    - touch .env.js
 
   cache_directories:
     - ~/.cache/yarn
+    - ~/rvm_binaries
 
 compile:
   override:
-    - yarn run bundle:android
-    - yarn run bundle:ios
+    - touch .env.js  
+    - bundle exec fastlane ios ci_run
 
 test:
   override:
