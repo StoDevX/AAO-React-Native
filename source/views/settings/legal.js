@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {StyleSheet, WebView} from 'react-native'
-import {text as privacy} from '../../docs/privacy.json'
+import {text as legal} from '../../../docs/legal.json'
 
 const styles = StyleSheet.create({
   container: {
@@ -13,6 +13,6 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function PrivacyView() {
-  return <WebView style={styles.container} source={{html: privacy}} />
+export default function LegalView() {
+  return <WebView style={styles.container} source={{html: legal}} />
 }

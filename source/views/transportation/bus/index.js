@@ -6,7 +6,7 @@ import {BusLine} from './bus-line'
 import moment from 'moment-timezone'
 import {NoticeView} from '../../components/notice'
 
-import {data as defaultBusLines} from '../../../docs/bus-times.json'
+import {data as defaultBusLines} from '../../../../docs/bus-times.json'
 
 const TIMEZONE = 'America/Winnipeg'
 
