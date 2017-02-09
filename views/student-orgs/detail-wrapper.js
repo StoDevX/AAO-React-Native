@@ -5,7 +5,7 @@ import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {StudentOrgsDetailRenderView} from './detail'
 
-const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
+const orgsUrl = 'https://api.presence.io/stolaf/v1/organizations'
 
 export class StudentOrgsDetailView extends React.Component {
   state: {
