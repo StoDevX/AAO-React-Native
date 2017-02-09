@@ -17,7 +17,7 @@ export default [
   {
     id: 'OlevilleView',
     title: 'Oleville',
-    rnVectorIcon: {iconName: 'mouse-pointer'},
+    rnVectorIcon: {iconName: 'ion-mouse'},
     component: OlevilleView,
     props: {},
   },
