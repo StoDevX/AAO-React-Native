@@ -21,3 +21,10 @@ export type FeedResponseType = {
     }>,
   }
 };
+
+export type OlevilleLatestPropsType = {
+  navigator: typeof Navigator,
+  title: string,
+  imageURL: string,
+  content: string,
+};

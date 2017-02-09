@@ -13,7 +13,6 @@ export const allViews: ViewType[] = [
   {view: 'ContactsView', title: 'Important Contacts', icon: 'phone', tint: c.crimson, gradient: c.orangeToRed},
   {view: 'TransportationView', title: 'Transportation', icon: 'address', tint: c.cardTable, gradient: c.grayToDarkGray},
   {view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book', tint: c.olive, gradient: c.yellowToGoldLight},
-  {view: 'OlevilleView', title: 'Oleville', icon: 'mouse-pointer', tint: c.grapefruit, gradient: c.pinkToHotpink},
   {view: 'StudentOrgsView', title: 'Student Orgs', icon: 'globe', tint: c.periwinkle, gradient: c.lightBlueToBlueDark},
 ]
 
