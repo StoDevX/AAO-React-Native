@@ -77,7 +77,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
   }
 
   displayFooter() {
-    return <Text style={styles.footer}>Powered by CheckImHere</Text>
+    return <Text style={styles.footer}>Powered by Presence</Text>
   }
 
   renderBody = (data: StudentOrgInfoType) => {
@@ -95,7 +95,6 @@ export class StudentOrgsDetailRenderView extends React.Component {
         {showMeetingSection ? this.displayMeetings(regularMeetingTime, regularMeetingLocation) : null}
         {contactName ? this.displayContact(contactName) : null}
         {description ? this.displayDescription(description) : null}
-        {this.displayFooter()}
       </View>
     )
   }
@@ -132,6 +131,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
           </Section>
 
           {contents}
+          {this.displayFooter()}
         </TableView>
       </ScrollView>
     )
