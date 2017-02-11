@@ -10,7 +10,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-// import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
+import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.oblador.keychain.KeychainPackage;
@@ -34,7 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
         // please keep these sorted alphabetically
         new GoogleAnalyticsBridgePackage(),
         new KeychainPackage(),
-        // new ReactNativeOneSignalPackage(),
+        new ReactNativeOneSignalPackage(),
         new RNDeviceInfo(),
         new VectorIconsPackage()
       );
