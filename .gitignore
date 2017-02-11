@@ -34,6 +34,7 @@ local.properties
 #
 node_modules/
 npm-debug.log
+yarn-error.log
 
 # BUCK
 buck-out/
@@ -42,7 +43,6 @@ android/app/libs
 *.keystore
 
 # KEYS
-keys.js
 .env.js
 
 # Tests and code coverage

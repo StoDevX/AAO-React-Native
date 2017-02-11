@@ -1,9 +1,0 @@
-target 'AllAboutOlaf' do
-  # Pods for AllAboutOlaf
-  pod 'OneSignal', '~> 1.13.2'
-
-  target 'AllAboutOlafTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-end

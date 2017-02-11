@@ -38,6 +38,7 @@ matrix:
           - tools
           - platform-tools
           - build-tools-23.0.1
+          - build-tools-23.0.2
           - android-23
           - extra-android-m2repository
           - extra-google-m2repository
@@ -144,8 +145,9 @@ script:
   - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
 
   # JS
-  # Lint
+  # Danger?
   - if [[ "$type" == "js" ]]; then npm run danger; fi
+  # Lint
   - if [[ "$type" == "js" ]]; then npm run lint; fi
   # Validate data
   - if [[ "$type" == "js" ]]; then npm run validate-data; fi
