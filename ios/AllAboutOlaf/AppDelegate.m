@@ -15,6 +15,7 @@
 #import "RCTOneSignal.h"
 
 @implementation AppDelegate
+
 @synthesize oneSignal = _oneSignal;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -47,7 +48,7 @@
   return YES;
 }
 
- Required for the notification event.
+// Required for the notification event.
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification {
   [RCTOneSignal didReceiveRemoteNotification:notification];
 }
