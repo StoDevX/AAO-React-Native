@@ -12,10 +12,10 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
-#import "RCTOneSignal.h"
+//#import "RCTOneSignal.h"
 
 @implementation AppDelegate
-@synthesize oneSignal = _oneSignal;
+//@synthesize oneSignal = _oneSignal;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -41,15 +41,15 @@
 
   rootView.loadingView = loadingViewController.view;
 
-  self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
-                                                         appId:@"aa46a500-ab1c-4127-b9ff-e7373da3ce35"];
+  //self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
+  //                                                       appId:@"aa46a500-ab1c-4127-b9ff-e7373da3ce35"];
 
   return YES;
 }
 
 // Required for the notification event.
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification {
-  [RCTOneSignal didReceiveRemoteNotification:notification];
-}
+//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification {
+//  [RCTOneSignal didReceiveRemoteNotification:notification];
+//}
 
 @end
