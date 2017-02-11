@@ -42,6 +42,11 @@ platform :ios do
     snapshot
   end
 
+  desc "Go rogue"
+  lane :rogue do
+    go_rogue
+  end
+
   desc "Provisions the profiles; bumps the build number; builds the app"
   lane :build do
     # Set up code signing correctly
