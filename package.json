@@ -16,6 +16,18 @@
     "test": "jest",
     "validate-data": "node scripts/validate-data.js"
   },
+  "codepush": {
+    "ios": {
+      "release": "oSozdf5RtDr2j8T7PFz-oWgNmoBIEJN_nzUOz",
+      "staging": "wU8CTAoyYARqbOBVPXo6kWm7iq8CEJN_nzUOz",
+      "nightly": "lkDky5WyEEILExg-RWX6ymfrJDn6EJN_nzUOz"
+    },
+    "android": {
+      "release": "5jvlQ5-xBItoSRqf-D-3hqdEsPTLEJN_nzUOz",
+      "staging": "GsN8Ii8enIpe8dVijiFQWZ743lV_EJN_nzUOz",
+      "nightly": "cMzHZZ5aUuk0ILftVFFwJvZLxiycEJN_nzUOz"
+    }
+  },
   "babel": {
     "presets": [
       "react-native"
