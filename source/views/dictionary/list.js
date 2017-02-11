@@ -12,7 +12,7 @@ import type {WordType} from './types'
 import {tracker} from '../../analytics'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
-import {data as terms} from '../../docs/dictionary.json'
+import {data as terms} from '../../../docs/dictionary.json'
 
 const rowHeight = Platform.OS === 'ios' ? 76 : 89
 const headerHeight = Platform.OS === 'ios' ? 33 : 41

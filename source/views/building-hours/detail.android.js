@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
-import {buildingImages} from '../../images/building-images'
+import {buildingImages} from '../../../images/building-images'
 import type {SingleBuildingScheduleType, BuildingType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
 import {Card} from '../components/card'
@@ -16,7 +16,7 @@ import {
   isBuildingOpenAtMoment,
 } from './building-hours-helpers'
 
-const transparentPixel = require('../../images/transparent.png')
+const transparentPixel = require('../../../images/transparent.png')
 
 const CENTRAL_TZ = 'America/Winnipeg'
 

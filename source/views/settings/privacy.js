@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {StyleSheet, WebView} from 'react-native'
-import {text as privacy} from '../../docs/privacy.json'
+import {text as privacy} from '../../../docs/privacy.json'
 
 const styles = StyleSheet.create({
   container: {

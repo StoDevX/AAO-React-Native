@@ -21,7 +21,7 @@ import {tracker} from '../../analytics'
 let kstoApp = 'KSTORadio://'
 let kstoDownload = 'itms://itunes.apple.com/us/app/ksto/id953916647'
 let kstoWeb = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
-let image = require('../../images/streaming/ksto/ksto-logo.png')
+const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
 export default function KSTOView() {
   return (

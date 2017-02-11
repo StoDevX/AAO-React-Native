@@ -8,7 +8,7 @@ import type {BuildingType, NamedBuildingScheduleType, SingleBuildingScheduleType
 import type momentT from 'moment'
 import flatten from 'lodash/flatten'
 import sortBy from 'lodash/sortBy'
-import {data as chapelData} from '../../docs/chapel'
+import {data as chapelData} from '../../../docs/chapel.json'
 const {chapelSchedule} = chapelData
 
 type HourPairType = {open: momentT, close: momentT};

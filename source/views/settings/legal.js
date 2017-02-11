@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {StyleSheet, WebView} from 'react-native'
-import {text as legal} from '../../docs/legal.json'
+import {text as legal} from '../../../docs/legal.json'
 
 const styles = StyleSheet.create({
   container: {
