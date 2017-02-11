@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
     color: 'white',
     ...Platform.select({
       ios: {
-        marginTop: -1,
       },
     }),
   },
@@ -72,7 +71,6 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         fontSize: 36,
-        paddingVertical: 4,
         paddingLeft: 8,
         marginTop: 3,
       },
