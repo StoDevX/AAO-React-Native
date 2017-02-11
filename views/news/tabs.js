@@ -1,5 +1,6 @@
 // @flow
 import NewsContainer from './news-container'
+import OlevilleView from './oleville-view'
 
 export default [
   {
@@ -14,15 +15,11 @@ export default [
     },
   },
   {
-    id: 'PoliticOleNewsView',
-    title: 'PoliticOle',
-    rnVectorIcon: {iconName: 'megaphone'},
-    component: NewsContainer,
-    props: {
-      url: 'http://oleville.com/politicole/feed/',
-      mode: 'rss',
-      name: 'PoliticOle',
-    },
+    id: 'OlevilleView',
+    title: 'Oleville',
+    rnVectorIcon: {iconName: 'happy'},
+    component: OlevilleView,
+    props: {},
   },
   {
     id: 'MessNewsView',
@@ -33,6 +30,17 @@ export default [
       url: 'http://manitoumessenger.com/feed/',
       mode: 'rss',
       name: 'Mess',
+    },
+  },
+  {
+    id: 'PoliticOleNewsView',
+    title: 'PoliticOle',
+    rnVectorIcon: {iconName: 'megaphone'},
+    component: NewsContainer,
+    props: {
+      url: 'http://oleville.com/politicole/feed/',
+      mode: 'rss',
+      name: 'PoliticOle',
     },
   },
 ]
