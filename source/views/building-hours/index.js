@@ -13,7 +13,7 @@ import {BuildingHoursList} from './list'
 import type momentT from 'moment'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
-import {data as fallbackBuildingHours} from '../../docs/building-hours'
+import {data as fallbackBuildingHours} from '../../../docs/building-hours'
 import groupBy from 'lodash/groupBy'
 
 import moment from 'moment-timezone'

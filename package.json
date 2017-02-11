@@ -11,7 +11,7 @@
     "data": "node scripts/bundle-data.js data/ docs/",
     "flow": "flow",
     "ios": "react-native run-ios",
-    "lint": "eslint app.js index.*.js lib/ views/",
+    "lint": "eslint source/ index.*.js",
     "start": "react-native start",
     "test": "jest",
     "validate-data": "node scripts/validate-data.js"
@@ -24,7 +24,7 @@
   "jest": {
     "testRegex": "/__tests__/.*\\.(test|spec)\\.js$",
     "collectCoverageFrom": [
-      "{lib,views}/**/*.js",
+      "source/**/*.js",
       "!**/node_modules/**"
     ],
     "preset": "react-native"
