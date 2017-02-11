@@ -140,7 +140,7 @@ class App extends React.Component {
   }
 
   onRegistered(notifData) {
-    console.log('Device had been registered for push notifications!', notifData)
+    console.log('Device is now registered for push notifications!', notifData)
   }
 
   onIds(device) {
