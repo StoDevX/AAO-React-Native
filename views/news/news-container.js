@@ -6,19 +6,15 @@ import {
   Platform,
   RefreshControl,
 } from 'react-native'
-import {fastGetTrimmedText} from '../../lib/html'
 import delay from 'delay'
 import {parseXml} from './parse-feed'
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
-import {Column} from '../components/layout'
-import {ListRow, ListSeparator, Detail, Title} from '../components/list'
+import {ListSeparator} from '../components/list'
 import {NoticeView} from '../components/notice'
+import {NewsRow} from './news-row'
 import type {TopLevelViewPropsType} from '../types'
 import {tracker} from '../../analytics'
-import {AllHtmlEntities} from 'html-entities'
-
-const entities = new AllHtmlEntities()
 
 export default class NewsContainer extends React.Component {
   state = {
@@ -73,19 +69,7 @@ export default class NewsContainer extends React.Component {
   }
 
   renderRow = (story: StoryType) => {
-    let title = entities.decode(story.title[0])
-    let snippet = entities.decode(fastGetTrimmedText(story.description[0]))
-    return (
-      <ListRow
-        onPress={() => this.onPressNews(title, story)}
-        arrowPosition='top'
-      >
-        <Column>
-          <Title lines={1}>{title}</Title>
-          <Detail lines={2}>{snippet}</Detail>
-        </Column>
-      </ListRow>
-    )
+    return <NewsRow story={story} onPress={this.onPressNews} />
   }
 
   renderSeparator = (sectionId: string, rowId: string) => {
