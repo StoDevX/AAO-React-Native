@@ -22,7 +22,7 @@ import * as c from '../components/colors'
 import startCase from 'lodash/startCase'
 import type {StudentOrgAbridgedType} from './types'
 
-const orgsUrl = 'https://api.checkimhere.com/stolaf/v1/organizations'
+const orgsUrl = 'https://api.presence.io/stolaf/v1/organizations'
 const leftSideSpacing = 20
 const rowHeight = Platform.OS === 'ios' ? 58 : 74
 const headerHeight = Platform.OS === 'ios' ? 33 : 41
