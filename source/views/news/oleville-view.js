@@ -125,15 +125,22 @@ export default class OlevilleView extends React.Component {
     this.setState(() => ({refreshing: false}))
   }
 
-  onPressLatestItem = (title: string, content: string, imageURL: string) => {
+  onPressLatestItem = (title: string, content: string) => {
     this.props.navigator.push({
-      id: 'OlevilleNewsStoryView',
+      id: 'NewsItemView',
       index: this.props.route.index + 1,
       title: title,
+      backButtonTitle: 'Oleville',
       props: {
-        title: title,
-        content: content,
-        imageURL: imageURL,
+        story: {
+          title: [title],
+          'content:encoded': [content],
+          category: [],
+          description: [],
+          link: [],
+          pubDate: [],
+          'dc:creator': [],
+        },
       },
     })
   }
