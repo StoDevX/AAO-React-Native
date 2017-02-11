@@ -1,7 +1,7 @@
 # For more information about this configuration visit
 # https://github.com/fastlane/fastlane/tree/master/gym#gymfile
 
-project "ios/AllAboutOlaf.xcproject"
+project "ios/AllAboutOlaf.xcodeproj"
 scheme "AllAboutOlaf"
 sdk "iphoneos10.1"
 
