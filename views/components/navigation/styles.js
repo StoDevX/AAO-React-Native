@@ -15,7 +15,7 @@ export const commonStyles = StyleSheet.create({
         paddingHorizontal: 18,
       },
       android: {
-        paddingVertical: 11,
+        paddingVertical: 15.5,
         paddingHorizontal: 16,
       },
     }),
