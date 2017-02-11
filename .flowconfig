@@ -4,6 +4,7 @@
 
 ; Ignore json files from flow
 *.json
+.*/CodePushHash.json
 
 ; Ignore "BUCK" generated dirs
 <PROJECT_ROOT>/\.buckd/
