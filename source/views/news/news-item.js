@@ -51,7 +51,6 @@ export default function NewsItemView({story}: {story: StoryType}) {
     </header>
     ${(story['content:encoded'] || story['description'])[0]}
   `
-  return (
-    <WebView source={{html: content}} />
-  )
+
+  return <WebView source={{html: content}} />
 }
