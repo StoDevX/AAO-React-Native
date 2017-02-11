@@ -66,8 +66,6 @@ platform :ios do
 
   desc "Submit a new Beta Build to HockeyApp"
   lane :beta do
-    hockeysdk
-
     build
 
     hockey(
@@ -111,19 +109,6 @@ platform :ios do
     match(readonly: true)
 
     sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain}")
-  end
-
-  desc "Add HockeySDK to the app"
-  private_lane :hockeysdk do
-    podpath = "../ios/Podfile"
-
-    # append the HockeySDK to the Podfile, unless it already lists it
-    File.open(podpath, "a") do |file|
-      file << "pod \"HockeySDK\"\n"
-    end unless File.foreach(podpath).grep(/HockeySDK/).any?
-
-    # and install the new pods
-    cocoapods(podfile: "./ios")
   end
 
   desc "Run iOS builds or tests, as appropriate"
