@@ -24,6 +24,7 @@ export default function NewsItemView({story, embedFeaturedImage}: {story: StoryT
       }
       p {
         line-height: 1.2em;
+        margin-bottom: 0.25em;
       }
       a {
         pointer-events: none;
