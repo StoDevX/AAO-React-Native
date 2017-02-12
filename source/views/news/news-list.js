@@ -23,6 +23,7 @@ type NewsListPropsType = TopLevelViewPropsType & {
   onRefresh: () => any,
   entries: StoryType[],
   loading: boolean,
+  embedFeaturedImage: ?boolean,
 };
 
 export class NewsList extends React.Component {
@@ -65,7 +66,7 @@ export class NewsList extends React.Component {
       index: this.props.route.index + 1,
       title: title,
       backButtonTitle: this.props.name,
-      props: story,
+      props: {story, embedFeaturedImage: this.props.embedFeaturedImage},
     })
   }
 

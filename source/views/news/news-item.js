@@ -4,7 +4,7 @@ import {WebView} from 'react-native'
 
 import type {StoryType} from './types'
 
-export default function NewsItemView(props: StoryType) {
+export default function NewsItemView({story, embedFeaturedImage}: {story: StoryType, embedFeaturedImage: ?boolean}) {
   const content = `
     <style>
       body {
@@ -47,9 +47,12 @@ export default function NewsItemView(props: StoryType) {
       }
     </style>
     <header class="aao-header">
-      <h1>${props.title}</h1>
+      <h1>${story.title}</h1>
     </header>
-    ${props.content}
+    ${embedFeaturedImage && story.featuredImage
+      ? `<img src="${story.featuredImage}">`
+      : ''}
+    ${story.content}
   `
 
   return <WebView source={{html: content}} />

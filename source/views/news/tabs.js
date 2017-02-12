@@ -23,6 +23,7 @@ export default [
       mode: 'wp-json',
       url: 'http://oleville.com/wp-json/wp/v2/posts/',
       query: {'per_page': 10, _embed: true},
+      embedFeaturedImage: true,
       name: 'Oleville',
     },
   },

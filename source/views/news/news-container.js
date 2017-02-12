@@ -31,6 +31,7 @@ export default class NewsContainer extends React.Component {
     name: string,
     url: string,
     query?: Object,
+    embedFeaturedImage?: boolean,
     mode: 'rss'|'wp-json',
   };
 
@@ -86,6 +87,7 @@ export default class NewsContainer extends React.Component {
         route={this.props.route}
         name={this.props.name}
         mode={this.props.mode}
+        embedFeaturedImage={this.props.embedFeaturedImage}
       />
     )
   }
