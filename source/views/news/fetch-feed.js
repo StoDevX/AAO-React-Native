@@ -4,7 +4,6 @@ import qs from 'querystring'
 import {AllHtmlEntities} from 'html-entities'
 import {parseString} from 'xml2js'
 import pify from 'pify'
-import get from 'lodash/get'
 import type {
   StoryType,
   FeedResponseType,
