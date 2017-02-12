@@ -1,6 +1,16 @@
 // @flow
 
 export type StoryType = {
+  authors: string[],
+  categories: string[],
+  content: string,
+  excerpt: string,
+  link: ?string,
+  title: string,
+  datePublished: ?string,
+};
+
+export type RssFeedItemType = {
   'dc:creator': string[],
   category: string[],
   'content:encoded': string[],
@@ -17,14 +27,62 @@ export type FeedResponseType = {
       'atom:link': mixed[],
       link: string[],
       description: string[],
-      item: StoryType[],
+      item: RssFeedItemType[],
     }>,
   }
 };
 
-export type OlevilleLatestPropsType = {
-  navigator: typeof Navigator,
-  title: string,
-  imageURL: string,
-  content: string,
+export type WpEmbeddedAuthorType = {
+  avatar_urls: {[key: string]: string},
+  description: string,
+  id: number,
+  link: string,
+  name: string,
+  slug: string,
 };
+
+export type WpEmbeddedFeaturedMediaType = {
+  alt_text: string,
+  author: number,
+  date: string,
+  id: number,
+  link: string,
+  media_details: {
+    height: number,
+    width: number,
+    sizes: {[key: string]: {
+      file: string,
+      height: number,
+      width: number,
+      mime_type: string,
+      source_url: string,
+    }},
+  },
+  media_type: 'image',
+  mime_type: string,
+  slug: string,
+  source_url: string,
+  title: {
+    rendered: string,
+  },
+  type: 'attachment',
+};
+
+export type WpJsonItemType = {
+  _embedded?: {
+    author?: WpEmbeddedAuthorType[],
+    'wp:featured_media'?: WpEmbeddedFeaturedMediaType[],
+  },
+  author: number,
+  categories: number[],
+  content: {rendered: string},
+  date_gmt: string,
+  excerpt: {rendered: string},
+  featured_media: number,
+  id: number,
+  link: string,
+  modified_gmt: string,
+  title: {rendered: string},
+};
+
+export type WpJsonResponseType = WpJsonItemType[];
