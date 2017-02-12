@@ -7,7 +7,6 @@ import {
   RefreshControl,
 } from 'react-native'
 import type {StoryType} from './types'
-import LoadingView from '../components/loading'
 import {Column} from '../components/layout'
 import {ListRow, ListSeparator, Detail, Title} from '../components/list'
 import {NoticeView} from '../components/notice'
