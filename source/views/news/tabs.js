@@ -15,14 +15,14 @@ export default [
     },
   },
   {
-    id: 'OlevilleView',
+    id: 'OlevilleNewsView',
     title: 'Oleville',
     rnVectorIcon: {iconName: 'happy'},
     component: NewsContainer,
     props: {
-      url: 'http://oleville.com/wp-json/wp/v2/posts/',
-      query: {'per_page': 5, _embed: true},
       mode: 'wp-json',
+      url: 'http://oleville.com/wp-json/wp/v2/posts/',
+      query: {'per_page': 10, _embed: true},
       name: 'Oleville',
     },
   },
@@ -32,8 +32,8 @@ export default [
     rnVectorIcon: {iconName: 'paper'},
     component: NewsContainer,
     props: {
-      url: 'http://manitoumessenger.com/feed/',
       mode: 'rss',
+      url: 'http://manitoumessenger.com/feed/',
       name: 'Mess',
     },
   },
@@ -43,8 +43,8 @@ export default [
     rnVectorIcon: {iconName: 'megaphone'},
     component: NewsContainer,
     props: {
-      url: 'http://oleville.com/politicole/feed/',
       mode: 'rss',
+      url: 'http://oleville.com/politicole/feed/',
       name: 'PoliticOle',
     },
   },
