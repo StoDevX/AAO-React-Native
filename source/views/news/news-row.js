@@ -5,13 +5,11 @@ import {
   StyleSheet,
   Image,
   View,
-  Text,
 } from 'react-native'
 import {Touchable} from '../components/touchable'
 import {Column} from '../components/layout'
 import {ListRow, Detail, Title} from '../components/list'
 import type {StoryType} from './types'
-import * as c from '../components/colors'
 
 
 type NewsRowPropsType = {
@@ -35,14 +33,14 @@ function NewsListRow({onPress, story}: NewsRowPropsType) {
 
 function NewsCard({onPress, story}: NewsRowPropsType) {
   return (
-    <Touchable style={styles.listRow} onPress={onPress}>
-      <Image source={{uri: story.featuredImage}} style={styles.imageStyle}>
-        <View style={styles.textBackground}>
-          <Text style={styles.itemTitle} numberOfLines={1}>
-            {story.title}
-          </Text>
+    <Touchable highlight={false} style={styles.card} onPress={onPress}>
+      <View style={styles.wrapper}>
+        <Image source={{uri: story.featuredImage}} style={styles.imageStyle} />
+        <View style={styles.info}>
+          <Title lines={1}>{story.title}</Title>
+          <Detail lines={2}>{story.excerpt}</Detail>
         </View>
-      </Image>
+      </View>
     </Touchable>
   )
 }
@@ -54,31 +52,30 @@ export function NewsRow(props: NewsRowPropsType) {
   return <NewsListRow {...props} />
 }
 
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingLeft: 5,
-    paddingRight: 5,
-    backgroundColor: c.olevilleBackground,
+  listRow: {
+    backgroundColor: 'transparent',
   },
   imageStyle: {
-    height: 200,
+    height: 180,
   },
-  itemTitle: {
-    alignSelf: 'center',
-    fontSize: 14,
-    color: c.olevilleGold,
+  info: {
+    marginVertical: 12,
+    marginHorizontal: 10,
   },
-  textBackground: {
-    marginTop: 175,
-    backgroundColor: c.black,
+  wrapper: {
+    overflow: 'hidden',
+    borderRadius: 2,
   },
-  theLatest: {
-    color: c.theLatest,
-    borderBottomWidth: 5,
-    fontSize: 18,
-  },
-  listRow: {
-    marginTop: 5,
+  card: {
+    marginTop: 8,
+    marginBottom: 8,
+    marginHorizontal: 10,
+    shadowColor: '#444',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    borderRadius: 2,
   },
 })
