@@ -76,10 +76,6 @@ export class NewsList extends React.Component {
   }
 
   render() {
-    if (this.props.loading) {
-      return <LoadingView />
-    }
-
     if (!this.state.dataSource.getRowCount()) {
       return <NoticeView text='No news.' />
     }
