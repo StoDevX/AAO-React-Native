@@ -28,13 +28,13 @@ export default [
   },
   {
     id: 'MessNewsView',
-    title: 'Mess',
+    title: 'The Mess',
     rnVectorIcon: {iconName: 'paper'},
     component: NewsContainer,
     props: {
       mode: 'rss',
       url: 'http://manitoumessenger.com/feed/',
-      name: 'Mess',
+      name: 'The Mess',
     },
   },
   {
