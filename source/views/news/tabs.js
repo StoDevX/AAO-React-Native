@@ -1,6 +1,5 @@
 // @flow
 import NewsContainer from './news-container'
-import OlevilleView from './oleville-view'
 
 export default [
   {
@@ -18,8 +17,13 @@ export default [
     id: 'OlevilleView',
     title: 'Oleville',
     rnVectorIcon: {iconName: 'happy'},
-    component: OlevilleView,
-    props: {},
+    component: NewsContainer,
+    props: {
+      url: 'http://oleville.com/wp-json/wp/v2/posts/',
+      query: {'per_page': 5, _embed: true},
+      mode: 'wp-json',
+      name: 'Oleville',
+    },
   },
   {
     id: 'MessNewsView',
