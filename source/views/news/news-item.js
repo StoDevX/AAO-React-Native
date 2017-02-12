@@ -4,7 +4,7 @@ import {WebView} from 'react-native'
 
 import type {StoryType} from './types'
 
-export default function NewsItemView({story}: {story: StoryType}) {
+export default function NewsItemView(props: StoryType) {
   const content = `
     <style>
       body {
@@ -47,9 +47,9 @@ export default function NewsItemView({story}: {story: StoryType}) {
       }
     </style>
     <header class="aao-header">
-      <h1>${story.title[0]}</h1>
+      <h1>${props.title}</h1>
     </header>
-    ${(story['content:encoded'] || story['description'])[0]}
+    ${props.content}
   `
 
   return <WebView source={{html: content}} />
