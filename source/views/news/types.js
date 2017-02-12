@@ -4,10 +4,11 @@ export type StoryType = {
   authors: string[],
   categories: string[],
   content: string,
+  datePublished: ?string,
   excerpt: string,
+  featuredImage: ?string,
   link: ?string,
   title: string,
-  datePublished: ?string,
 };
 
 export type RssFeedItemType = {
@@ -71,7 +72,7 @@ export type WpEmbeddedFeaturedMediaType = {
 export type WpJsonItemType = {
   _embedded?: {
     author?: WpEmbeddedAuthorType[],
-    'wp:featured_media'?: WpEmbeddedFeaturedMediaType[],
+    'wp:featuredmedia'?: WpEmbeddedFeaturedMediaType[],
   },
   author: number,
   categories: number[],

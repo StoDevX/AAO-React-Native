@@ -4,6 +4,7 @@ import qs from 'querystring'
 import {AllHtmlEntities} from 'html-entities'
 import {parseString} from 'xml2js'
 import pify from 'pify'
+import get from 'lodash/get'
 import type {
   StoryType,
   FeedResponseType,
@@ -42,10 +43,11 @@ export function convertRssItemToStory(item: RssFeedItemType): StoryType {
     authors,
     categories,
     content,
+    datePublished,
     excerpt,
+    featuredImage: null,
     link,
     title,
-    datePublished,
   }
 }
 
@@ -58,13 +60,27 @@ export function convertWpJsonItemToStory(item: WpJsonItemType): StoryType {
     author = 'Unknown Author'
   }
 
+  let featuredImage = null
+  if (item._embedded && item._embedded['wp:featuredmedia']) {
+    let featuredMediaInfo = item._embedded['wp:featuredmedia'].find(m => m.id === item.featured_media && m.media_type === 'image')
+
+    if (featuredMediaInfo) {
+      if (featuredMediaInfo.media_details.sizes.medium_large) {
+        featuredImage = featuredMediaInfo.media_details.sizes.medium_large.source_url
+      } else {
+        featuredImage = featuredMediaInfo.source_url
+      }
+    }
+  }
+
   return {
     authors: [author],
     categories: [],
     content: item.content.rendered,
+    datePublished: item.date_gmt,
     excerpt: entities.decode(fastGetTrimmedText(item.excerpt.rendered)),
+    featuredImage: featuredImage,
     link: item.link,
     title: entities.decode(item.title.rendered),
-    datePublished: item.date_gmt,
   }
 }
