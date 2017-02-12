@@ -8,8 +8,9 @@ export default [
     rnVectorIcon: {iconName: 'school'},
     component: NewsContainer,
     props: {
-      url: 'https://wp.stolaf.edu/feed/',
-      mode: 'rss',
+      mode: 'wp-json',
+      url: 'https://wp.stolaf.edu/wp-json/wp/v2/posts',
+      query: {'per_page': 10, _embed: true},
       name: 'St. Olaf',
     },
   },
