@@ -56,7 +56,7 @@ export class NewsList extends React.Component {
   }
 
   renderSeparator = (sectionId: string, rowId: string) => {
-    {/*return <ListSeparator key={`${sectionId}-${rowId}`} />*/}
+    return <ListSeparator key={`${sectionId}-${rowId}`} />
   }
 
   onPressNews = (title: string, story: StoryType) => {
