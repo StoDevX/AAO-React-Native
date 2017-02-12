@@ -7,10 +7,10 @@ import {
   RefreshControl,
 } from 'react-native'
 import type {StoryType} from './types'
-import {Column} from '../components/layout'
-import {ListRow, ListSeparator, Detail, Title} from '../components/list'
+import {ListSeparator} from '../components/list'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
+import {NewsRow} from './news-row'
 
 const styles = StyleSheet.create({
   listContainer: {
@@ -48,15 +48,10 @@ export class NewsList extends React.Component {
 
   renderRow = (story: StoryType) => {
     return (
-      <ListRow
+      <NewsRow
         onPress={() => this.onPressNews(story.title, story)}
-        arrowPosition='top'
-      >
-        <Column>
-          <Title lines={1}>{story.title}</Title>
-          <Detail lines={2}>{story.excerpt}</Detail>
-        </Column>
-      </ListRow>
+        story={story}
+      />
     )
   }
 
