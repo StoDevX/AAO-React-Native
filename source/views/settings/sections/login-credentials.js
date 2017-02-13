@@ -50,7 +50,7 @@ export class CredentialsLoginSection extends React.Component {
           label='Username'
           _ref={ref => this._usernameInput = ref}
           disabled={loading}
-          onChangeText={text => text && this.props.onChangeUsername(text)}
+          onChangeText={(text='') => this.props.onChangeUsername(text)}
           onSubmitEditing={this.focusPassword}
           placeholder='username'
           returnKeyType='next'
@@ -62,7 +62,7 @@ export class CredentialsLoginSection extends React.Component {
           label='Password'
           _ref={ref => this._passwordInput = ref}
           disabled={loading}
-          onChangeText={text => text && this.props.onChangePassword(text)}
+          onChangeText={(text='') => this.props.onChangePassword(text)}
           onSubmitEditing={loggedIn ? () => {} : this.logIn}
           placeholder='password'
           returnKeyType='done'
