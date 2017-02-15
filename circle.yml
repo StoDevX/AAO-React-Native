@@ -22,6 +22,8 @@ machine:
 
   environment:
     PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
+    MATCH_KEYCHAIN_NAME: circle-ios-keychain
+    MATCH_KEYCHAIN_PASSWORD: alpine
 
 dependencies:
   override:
