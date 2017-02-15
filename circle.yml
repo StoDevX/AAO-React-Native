@@ -14,6 +14,8 @@ machine:
     - brew unlink node || true
     - brew install node || true
     - brew link --overwrite node
+    # install yarn
+    - brew install yarn
 
   xcode:
     version: "8.2"
