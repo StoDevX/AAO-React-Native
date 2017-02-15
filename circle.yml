@@ -5,24 +5,41 @@ general:
       - gh-pages
 
 machine:
-  node:
-    version: 7
+  pre:
+    - brew update
+    # install ruby2.3
+    - brew install homebrew/versions/ruby23 || true
+    - brew link --overwrite ruby23
+    # install node
+    - brew unlink node || true
+    - brew install node || true
+    - brew link --overwrite node
+    # install yarn
+    - brew install yarn
+
+  xcode:
+    version: "8.2"
 
   environment:
     PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
+    MATCH_KEYCHAIN_NAME: circle-ios-keychain
+    MATCH_KEYCHAIN_PASSWORD: alpine
 
 dependencies:
   override:
+    - gem install bundler
+    - bundle install --deployment
     - yarn
-    - touch .env.js
 
   cache_directories:
     - ~/.cache/yarn
+    - ~/rvm_binaries
 
 compile:
   override:
-    - yarn run bundle:android
-    - yarn run bundle:ios
+    - touch .env.js
+    - bundle exec fastlane ios ci_keychains
+    - bundle exec fastlane ios ci_run
 
 test:
   override:
