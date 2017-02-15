@@ -6,9 +6,14 @@ general:
 
 machine:
   pre:
+    # install rvm
     - brew install gpg
     - gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-    - curl -sSL https://get.rvm.io | bash -s stable --ruby
+    - curl -sSL https://get.rvm.io | bash -s stable --ruby=2.3.3
+    - source ~/.rvm/scripts/rvm
+    # install nvm
+    - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash
+    - source ~/.nvm/nvm.sh
 
   xcode:
     version: "8.2"
@@ -20,7 +25,6 @@ dependencies:
   override:
     - nvm install 7
     - nvm use 7
-    - rvm use 2.3 --install --binary --fuzzy
     - gem install bundler
     - bundle install --deployment
     - yarn
@@ -40,4 +44,3 @@ test:
     - yarn run flow -- check
     - yarn run validate-data
     - yarn test -- --runInBand
-
