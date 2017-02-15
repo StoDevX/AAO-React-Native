@@ -6,16 +6,10 @@ general:
 
 machine:
   pre:
-    - cat ~/.profile
-    - unset GEM_HOME
-    # install rvm
-    - brew install gpg
-    - gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-    - curl -sSL https://get.rvm.io | bash -s stable --ruby=2.3.3
-    - source ~/.rvm/scripts/rvm
+    # install ruby2.3
+    - brew install homebrew/versions/ruby23
     # install nvm
-    - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash
-    - source ~/.nvm/nvm.sh
+    - brew install node
 
   xcode:
     version: "8.2"
@@ -25,8 +19,6 @@ machine:
 
 dependencies:
   override:
-    - nvm install 7
-    - nvm use 7
     - gem install bundler
     - bundle install --deployment
     - yarn
