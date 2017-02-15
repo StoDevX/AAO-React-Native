@@ -6,11 +6,14 @@ general:
 
 machine:
   pre:
+    - brew update
     # install ruby2.3
-    - brew install homebrew/versions/ruby23 || exit 0
+    - brew install homebrew/versions/ruby23 || true
     - brew link --overwrite ruby23
-    # install nvm
-    - brew install node
+    # install node
+    - brew unlink node || true
+    - brew install node || true
+    - brew link --overwrite node
 
   xcode:
     version: "8.2"
