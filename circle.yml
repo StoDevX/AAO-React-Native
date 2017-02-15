@@ -35,7 +35,8 @@ dependencies:
 
 compile:
   override:
-    - touch .env.js  
+    - touch .env.js
+    - bundle exec fastlane ios ci_keychains
     - bundle exec fastlane ios ci_run
 
 test:
