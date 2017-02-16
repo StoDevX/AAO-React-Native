@@ -14,56 +14,52 @@ import {NoticeView} from '../components/notice'
 //import {Column} from '../components/layout'
 //import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
 
-
-let athleticsUrl = 'http://athletics.stolaf.edu/services/scores_chris.aspx?format=json'
+let athleticsUrl =
+	'http://athletics.stolaf.edu/services/scores_chris.aspx?format=json'
 
 export class AthleticsView extends React.Component {
-  state = {
-    loaded: false,
-    refreshing: true,
-    error: null,
-    data: null,
-  }
+	state = {
+		loaded: false,
+		refreshing: true,
+		error: null,
+		data: null,
+	}
 
-  componentWillMount() {
-    this.fetchData()
-  }
+	componentWillMount() {
+		this.fetchData()
+	}
 
-  fetchData = async () => {
-    try {
-      const response = await fetchJson(athleticsUrl)
-      const result = response.scores
+	fetchData = async () => {
+		try {
+			const response = await fetchJson(athleticsUrl)
+			const result = response.scores
 
-      this.setState({
-        data: result,
-        loaded: true,
-        refreshing: false,
-        error: null,
-      })
+			this.setState({
+				data: result,
+				loaded: true,
+				refreshing: false,
+				error: null,
+			})
+		} catch (error) {
+			this.setState({error: error.message})
+			console.warn(error)
+		}
+	}
 
-    } catch (error) {
-      this.setState({error: error.message})
-      console.warn(error)
-    }
-  }
+	render() {
+		if (!this.state.loaded) {
+			return <LoadingView />
+		}
 
-  render() {
+		if (this.state.error) {
+			return <NoticeView text={'Error: ' + this.state.error.message} />
+		}
 
-    if (!this.state.loaded) {
-      return <LoadingView />
-    }
+		if (this.state.data.size < 1) {
+			return <NoticeView text="Oops! We didn't find any athletic data." />
+		}
 
-    if (this.state.error) {
-      return <NoticeView text={'Error: ' + this.state.error.message} />
-    }
-
-    if (this.state.data.size < 1) {
-      return <NoticeView text="Oops! We didn't find any athletic data." />
-    }
-
-    let athleticsData = this.state.data
-    return (
-      <AthleticsRow data={athleticsData} />
-    )
-  }
+		let athleticsData = this.state.data
+		return <AthleticsRow data={athleticsData} />
+	}
 }

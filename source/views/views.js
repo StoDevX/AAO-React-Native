@@ -162,6 +162,14 @@ export const allViews: ViewType[] = [
     tint: c.lavender,
     gradient: c.yellowToGoldLight,
   },
+  {
+    type: 'view',
+    view: 'HelpView',
+    title: 'Report A Problem',
+    icon: 'help',
+    tint: c.lavender,
+    gradient: c.purpleToIndigo,
+  },
 ]
 
 export const allViewNames = allViews.map(v => v.view)
