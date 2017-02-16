@@ -46,6 +46,7 @@ import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
 import {SnapshotsView} from './storybook'
 import HelpView from './views/help'
+import {AthleticsView} from './views/athletics'
 
 import NoRoute from './views/components/no-route'
 
@@ -107,6 +108,8 @@ function renderScene(route, navigator) {
       return <SnapshotsView {...props} />
     case 'HelpView':
       return <HelpView {...props} />
+    case 'AthleticsView': return <AthleticsView {...props} />
+      return <AthleticsView {...props} />
     default:
       return <NoRoute {...props} />
   }
