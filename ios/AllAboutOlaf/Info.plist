@@ -43,6 +43,11 @@
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>athletics.stolaf.edu</key>
+			<dict>
+				<key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
 			<key>legacy.cafebonappetit.com</key>
 			<dict>
 				<key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>

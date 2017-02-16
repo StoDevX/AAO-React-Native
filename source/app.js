@@ -46,6 +46,7 @@ import LegalView from './views/settings/legal'
 import EditHomeView from './views/editHome'
 import {StudentOrgsView, StudentOrgsDetailView}  from './views/student-orgs'
 import {FaqView} from './views/faqs'
+import {AthleticsView} from './views/athletics'
 
 import NoRoute from './views/components/no-route'
 
@@ -82,6 +83,7 @@ function renderScene(route, navigator) {
     case 'StudentOrgsView': return <StudentOrgsView {...props} />
     case 'StudentOrgsDetailView': return <StudentOrgsDetailView {...props} />
     case 'FaqView': return <FaqView {...props} />
+    case 'AthleticsView': return <AthleticsView {...props} />
     default: return <NoRoute {...props} />
   }
 }
@@ -172,7 +174,7 @@ class App extends React.Component {
           />
         }
         initialRoute={{
-          id: 'HomeView',
+          id: 'AthleticsView',
           title: 'All About Olaf',
           index: 0,
         }}
