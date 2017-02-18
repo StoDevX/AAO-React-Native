@@ -1,5 +1,10 @@
 // @flow
-import type {FilterType, ToggleType, ListType, ListItemSpecType} from './types'
+import type {
+  FilterType,
+  ToggleType,
+  ListType,
+  ListItemSpecType,
+} from './types'
 import values from 'lodash/values'
 import difference from 'lodash/difference'
 import isPlainObject from 'lodash/isPlainObject'
