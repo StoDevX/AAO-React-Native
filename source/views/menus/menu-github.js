@@ -14,6 +14,7 @@ import type {
   MasterCorIconMapType,
   StationMenuType,
   MenuItemContainerType,
+  ProcessedMealType,
 } from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import {data as fallbackMenu} from '../../../docs/pause-menu.json'
@@ -29,14 +30,14 @@ export class GitHubHostedMenu extends React.Component {
     now: momentT,
     foodItems: MenuItemContainerType,
     corIcons: MasterCorIconMapType,
-    stationMenus: StationMenuType[],
+    meals: ProcessedMealType[],
   } = {
     error: null,
     loading: true,
     now: moment.tz(CENTRAL_TZ),
     foodItems: {},
     corIcons: {},
-    stationMenus: [],
+    meals: [],
   }
 
   componentWillMount() {
@@ -85,7 +86,12 @@ export class GitHubHostedMenu extends React.Component {
       loading: false,
       corIcons,
       foodItems,
-      stationMenus,
+      meals: [{
+        label: 'Menu',
+        stationMenus: stationMenus,
+        starttime: null,
+        endtime: null,
+      }],
       now: moment.tz(CENTRAL_TZ),
     })
   }
@@ -104,9 +110,8 @@ export class GitHubHostedMenu extends React.Component {
         route={this.props.route}
         navigator={this.props.navigator}
         foodItems={this.state.foodItems}
-        stationMenus={this.state.stationMenus}
         menuCorIcons={this.state.corIcons}
-        menuLabel='Menu'
+        meals={this.state.meals}
         now={this.state.now}
         name={this.props.name}
       />

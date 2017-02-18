@@ -122,3 +122,10 @@ export type BonAppCafeInfoType = {
 export type ProcessedMenuPropsType = {
   [key: string]: MenuItemType[],
 };
+
+export type ProcessedMealType = {
+  starttime: ?MilitaryTimeStringType,
+  endtime: ?MilitaryTimeStringType,
+  label: string,
+  stationMenus: StationMenuType[],
+};
