@@ -81,11 +81,12 @@ export class BonAppHostedMenu extends React.Component {
       return 'BonApp did not return a menu for that café'
     }
 
-    let today = actualCafeInfo.days.find(({date}) => date === now.format('YYYY-MM-DD'))
-    if (!today) {
+    const todayDate = now.format('YYYY-MM-DD')
+    let todayMenu = actualCafeInfo.days.find(({date}) => date === todayDate)
+    if (!todayMenu) {
       return 'Closed today'
-    } else if (today.status === 'closed') {
-      return today.message || 'Closed today'
+    } else if (todayMenu.status === 'closed') {
+      return todayMenu.message || 'Closed today'
     }
 
     return null
