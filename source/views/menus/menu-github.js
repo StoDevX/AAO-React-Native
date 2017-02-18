@@ -7,7 +7,13 @@ import type {TopLevelViewPropsType} from '../types'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import sample from 'lodash/sample'
-import type {MenuItemType, MasterCorIconMapType, StationMenuType} from './types'
+import fromPairs from 'lodash/fromPairs'
+import filter from 'lodash/filter'
+import type {
+  MenuItemType,
+  MasterCorIconMapType,
+  StationMenuType,
+} from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import {data as fallbackMenu} from '../../../docs/pause-menu.json'
 import {tracker} from '../../analytics'

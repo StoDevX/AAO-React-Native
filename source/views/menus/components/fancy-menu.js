@@ -5,7 +5,11 @@ import {connect} from 'react-redux'
 import {updateMenuFilters} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
-import type {MenuItemType, MasterCorIconMapType, StationMenuType} from '../types'
+import type {
+  MenuItemType,
+  MasterCorIconMapType,
+  StationMenuType,
+} from '../types'
 import type {FilterType} from '../../components/filter'
 import {applyFiltersToItem} from '../../components/filter'
 import {fastGetTrimmedText} from '../../../lib/html'
