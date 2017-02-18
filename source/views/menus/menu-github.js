@@ -13,6 +13,7 @@ import type {
   MenuItemType,
   MasterCorIconMapType,
   StationMenuType,
+  MenuItemContainerType,
 } from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import {data as fallbackMenu} from '../../../docs/pause-menu.json'
@@ -26,14 +27,14 @@ export class GitHubHostedMenu extends React.Component {
     error: ?Error,
     loading: boolean,
     now: momentT,
-    foodItems: MenuItemType[],
+    foodItems: MenuItemContainerType,
     corIcons: MasterCorIconMapType,
     stationMenus: StationMenuType[],
   } = {
     error: null,
     loading: true,
     now: moment.tz(CENTRAL_TZ),
-    foodItems: [],
+    foodItems: {},
     corIcons: {},
     stationMenus: [],
   }
@@ -74,9 +75,19 @@ export class GitHubHostedMenu extends React.Component {
       corIcons = fallbackMenu.corIcons || {}
     }
 
-    foodItems = foodItems.map(upgradeMenuItem)
-    stationMenus = stationMenus.map(upgradeStation)
-    this.setState({loading: false, corIcons, foodItems, stationMenus, now: moment.tz(CENTRAL_TZ)})
+    foodItems = fromPairs(foodItems.map(upgradeMenuItem).map(item => [item.id, item]))
+    stationMenus = stationMenus.map((menu, index) => ({
+      ...upgradeStation(menu, index),
+      items: filter(foodItems, item => item.station === menu.label).map(item => item.id),
+    }))
+
+    this.setState({
+      loading: false,
+      corIcons,
+      foodItems,
+      stationMenus,
+      now: moment.tz(CENTRAL_TZ),
+    })
   }
 
   render() {

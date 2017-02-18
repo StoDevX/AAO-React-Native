@@ -7,9 +7,7 @@ import type {TopLevelViewPropsType} from '../types'
 import {FancyMenu} from './components/fancy-menu'
 import type {BonAppMenuInfoType, BonAppCafeInfoType} from './types'
 import sample from 'lodash/sample'
-import flatten from 'lodash/flatten'
-import identity from 'lodash/identity'
-import uniqBy from 'lodash/uniqBy'
+import mapValues from 'lodash/mapValues'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import {findMenu} from './lib/find-menu'
@@ -128,29 +126,18 @@ export class BonAppHostedMenu extends React.Component {
     stationMenus = stationMenus.map(s => ({...s, label: toLaxTitleCase(s.label)}))
 
     // flow … has issues when we access cafeMenu.items inside a nested closure
-    const allFoodItems = cafeMenu.items
-    // Retrieve food items referenced by each station from the master list
-    const foodItemsByStation = stationMenus.map(s => s.items.map(id => allFoodItems[id]))
-    // Flatten the array (since it's currently grouped by station)
-    const existantFoodItems = flatten(foodItemsByStation).filter(identity)
-
-    // Now clean up the labels and stations so they're nice
-    const foodItems = existantFoodItems.map(item => ({
+    const foodItems = mapValues(cafeMenu.items, item => ({
       ...item,  // we want to edit the item, not replace it
       station: toLaxTitleCase(trimStationName(item.station)),  // <b>@station names</b> are a mess
       label: trimItemLabel(item.label),  // clean up the titles
       description: getTrimmedTextWithSpaces(parseHtml(item.description || '')),  // clean up the descriptions
     }))
 
-    // And finally, because BonApp is silly, we clean up the food items by
-    // label somewhat.
-    const uniqdFoodItems = uniqBy(foodItems, item => item.label)
-
     return (
       <FancyMenu
         route={this.props.route}
         navigator={this.props.navigator}
-        foodItems={uniqdFoodItems}
+        foodItems={foodItems}
         menuCorIcons={cafeMenu.cor_icons}
         menuLabel={mealName}
         now={now}
