@@ -42,7 +42,7 @@ export function applyToggleFilter(filter: ToggleType, item: any): boolean {
   return Boolean(itemValue)
 }
 
-export function applyPickerFilter(filter: PickerType, item: any): boolean {
+export function applyPickerFilter(): boolean {
   // // Dereference the value-to-check
   // const itemValue = item[filter.apply.key]
   // // Grab the "selected" item
