@@ -72,35 +72,32 @@ export class CarletonMenuPicker extends React.Component {
   props: TopLevelViewPropsType;
 
   onPressRow = (data: CarletonDetailMenuType) => {
-    let name = data.title
-    let id = data.props.cafeId
-    let message = data.props.loadingMessage
-
     this.props.navigator.push({
       id: 'BonAppHostedMenu',
-      title: name,
+      title: data.title,
       backButtonTitle: 'Carleton',
       index: this.props.route.index + 1,
       props: {
-        name: name,
-        loadingMessage: message,
-        cafeId: id,
+        name: data.title,
+        loadingMessage: data.props.loadingMessage,
+        cafeId: data.props.cafeId,
       },
     })
   }
 
   render() {
     if (!carleton) {
-      return <NoticeView text={'No Carleton Cafes to choose.'} />
+      return <NoticeView text='No Carleton Cafes to choose.' />
     }
 
     return (
       <ScrollView style={{paddingTop: Platform.OS === 'ios' ? 20 : 0}}>
         {carleton.map((loc: CarletonDetailMenuType, i, collection) =>
-          <View key={`${i}`}>
+          <View key={i}>
             <ListRow
               onPress={() => this.onPressRow(loc)}
-              arrowPosition='center'>
+              arrowPosition='center'
+            >
               <Row alignItems='center'>
                 <Title style={styles.rowText}>{loc.title}</Title>
               </Row>

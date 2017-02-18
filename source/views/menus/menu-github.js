@@ -6,12 +6,12 @@ import {FancyMenu} from './components/fancy-menu'
 import type {TopLevelViewPropsType} from '../types'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
-const CENTRAL_TZ = 'America/Winnipeg'
 import sample from 'lodash/sample'
 import type {MenuItemType, MasterCorIconMapType, StationMenuType} from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import {data as fallbackMenu} from '../../../docs/pause-menu.json'
 import {tracker} from '../../analytics'
+const CENTRAL_TZ = 'America/Winnipeg'
 
 const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
 
