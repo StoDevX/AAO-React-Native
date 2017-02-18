@@ -98,7 +98,7 @@ export class BonAppHostedMenu extends React.Component {
     }
 
     if (this.state.error) {
-      return <NoticeView text={'Error: ' + this.state.error.message} />
+      return <NoticeView text={`Error: ${this.state.error.message}`} />
     }
 
     if (!this.state.cafeMenu || !this.state.cafeInfo) {
