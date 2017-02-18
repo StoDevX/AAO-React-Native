@@ -1,5 +1,11 @@
 // @flow
-import type {FilterType, ToggleType, ListType, ListItemSpecType} from './types'
+import type {
+  FilterType,
+  ToggleType,
+  PickerType,
+  ListType,
+  ListItemSpecType,
+} from './types'
 import values from 'lodash/values'
 import difference from 'lodash/difference'
 import isPlainObject from 'lodash/isPlainObject'
@@ -23,6 +29,8 @@ export function applyFilter(filter: FilterType, item: any): boolean {
       return applyToggleFilter(filter, item)
     case 'list':
       return applyListFilter(filter, item)
+    case 'picker':
+      return applyPickerFilter(filter, item)
     default:
       return true
   }
@@ -32,6 +40,14 @@ export function applyToggleFilter(filter: ToggleType, item: any): boolean {
   // Dereference the value-to-check
   const itemValue = item[filter.apply.key]
   return Boolean(itemValue)
+}
+
+export function applyPickerFilter(filter: PickerType, item: any): boolean {
+  // // Dereference the value-to-check
+  // const itemValue = item[filter.apply.key]
+  // // Grab the "selected" item
+  // const filterValue = filter.spec.selected
+  return true
 }
 
 export function applyListFilter(filter: ListType, item: any): boolean {

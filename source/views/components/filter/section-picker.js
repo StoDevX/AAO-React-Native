@@ -1,0 +1,55 @@
+// @flow
+import React from 'react'
+import {Picker, StyleSheet, Platform} from 'react-native'
+import type {PickerType} from './types'
+import {Section} from 'react-native-tableview-simple'
+
+type PropsType = {
+  filter: PickerType,
+  onChange: (filter: PickerType) => any,
+};
+
+export function PickerSection({filter, onChange}: PropsType) {
+  const {spec} = filter
+  const {title='', caption='', options, selected} = spec
+
+  function pickerPicked(pickedValue: string, pickedItemIndex: number) {
+    let pickedItem = spec.options[pickedItemIndex]
+
+    onChange({
+      ...filter,
+      spec: {
+        ...spec,
+        selected: pickedItem,
+      },
+    })
+  }
+
+  return (
+    <Section header={title.toUpperCase()} footer={caption}>
+      <Picker
+        onValueChange={pickerPicked}
+        selectedValue={JSON.stringify(selected || options[0])}
+        style={styles.picker}
+      >
+        {options.map((val, i) =>
+          <Picker.Item
+            key={i}
+            label={val.label}
+            value={JSON.stringify(val)}
+          />
+        )}
+      </Picker>
+    </Section>
+  )
+}
+
+const styles = StyleSheet.create({
+  picker: {
+    ...Platform.select({
+      ios: {
+        backgroundColor: 'white',
+      },
+    }),
+  },
+})
