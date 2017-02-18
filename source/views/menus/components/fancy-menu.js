@@ -14,8 +14,6 @@ import type {
 import type {FilterType} from '../../components/filter'
 import {applyFiltersToItem} from '../../components/filter'
 import {fastGetTrimmedText} from '../../../lib/html'
-import groupBy from 'lodash/groupBy'
-import sortBy from 'lodash/sortBy'
 import fromPairs from 'lodash/fromPairs'
 import filter from 'lodash/filter'
 import map from 'lodash/map'
