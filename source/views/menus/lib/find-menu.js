@@ -1,9 +1,14 @@
 // @flow
 import type momentT from 'moment'
 import moment from 'moment-timezone'
-const CENTRAL_TZ = 'America/Winnipeg'
 import findIndex from 'lodash/findIndex'
-import type {DayPartMenuType, DayPartsCollectionType} from '../types'
+import type {
+  DayPartMenuType,
+  DayPartsCollectionType,
+  ProcessedMealType,
+  MilitaryTimeStringType,
+} from '../types'
+const CENTRAL_TZ = 'America/Winnipeg'
 
 export function findMenu(dayparts: DayPartsCollectionType, now: momentT): void|DayPartMenuType {
   // `dayparts` is, conceptually, a collection of bonapp menus for a
@@ -17,19 +22,35 @@ export function findMenu(dayparts: DayPartsCollectionType, now: momentT): void|D
   // the top array for easier use.
   const daypart = dayparts[0]
 
+  const menuIndex = findMenuIndex(daypart, now)
+  return daypart[menuIndex]
+}
+
+export function findMeal(meals: ProcessedMealType[], now: momentT): void|ProcessedMealType {
+  if (!meals.length) {
+    return
+  }
+
+  const mealIndex = findMenuIndex(meals, now)
+  return meals[mealIndex]
+}
+
+function findMenuIndex(dayparts: {starttime: ?MilitaryTimeStringType, endtime: ?MilitaryTimeStringType}[], now: momentT): number {
   // If there's only a single bonapp menu for this location (think the Cage,
   // instead of the Caf), we just return that item.
-  if (daypart.length === 1) {
-    return daypart[0]
+  if (dayparts.length === 1) {
+    return 0
   }
 
   // Otherwise, we make ourselves a list of {starttime, endtime} pairs so we
   // can query times relative to `now`. Also make sure to set dayOfYear to
   // `now`, so that we don't have our days wandering all over the place.
-  const times = daypart.map(({starttime, endtime}) => ({
-    start: moment.tz(starttime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
-    end: moment.tz(endtime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
-  }))
+  const times = dayparts
+    .filter(({starttime, endtime}) => starttime && endtime)
+    .map(({starttime, endtime}) => ({
+      start: moment.tz(starttime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
+      end: moment.tz(endtime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
+    }))
 
   // We grab the first meal that ends sometime after `now`. The only time
   // this really fails is in the early morning, if it's like 1am and you're
@@ -42,5 +63,5 @@ export function findMenu(dayparts: DayPartsCollectionType, now: momentT): void|D
     mealIndex = times.length - 1
   }
 
-  return daypart[mealIndex]
+  return mealIndex
 }
