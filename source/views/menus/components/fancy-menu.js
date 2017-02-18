@@ -8,16 +8,19 @@ import type momentT from 'moment'
 import type {
   MenuItemType,
   MasterCorIconMapType,
-  StationMenuType,
+  ProcessedMealType,
   MenuItemContainerType,
 } from '../types'
 import type {FilterType} from '../../components/filter'
 import {applyFiltersToItem} from '../../components/filter'
 import {fastGetTrimmedText} from '../../../lib/html'
+import {findMeal} from '../lib/find-menu'
 import fromPairs from 'lodash/fromPairs'
 import filter from 'lodash/filter'
 import map from 'lodash/map'
+import flatten from 'lodash/flatten'
 import values from 'lodash/values'
+import uniq from 'lodash/uniq'
 import {FilterMenuToolbar} from './filter-menu-toolbar'
 import {MenuListView} from './menu'
 
@@ -27,9 +30,8 @@ type FancyMenuPropsType = TopLevelViewPropsType & {
   name: string,
   filters: FilterType[],
   foodItems: MenuItemContainerType,
-  menuLabel?: string,
+  meals: ProcessedMealType[],
   menuCorIcons: MasterCorIconMapType,
-  stationMenus: StationMenuType[],
   onFiltersChange: (f: FilterType[]) => any,
 };
 
@@ -39,22 +41,23 @@ class FancyMenuView extends React.Component {
   }
 
   componentWillMount() {
-    let {foodItems, menuCorIcons, filters, stationMenus} = this.props
+    let {foodItems, menuCorIcons, filters, meals} = this.props
 
     // prevent ourselves from overwriting the filters from redux on mount
     if (filters.length) {
       return
     }
 
-    let foodItemsArray = values(foodItems)
-    let stations = stationMenus.map(m => m.label)
-    filters = this.buildFilters({foodItems: foodItemsArray, stations, corIcons: menuCorIcons})
+    const foodItemsArray = values(foodItems)
+    filters = this.buildFilters({foodItems: foodItemsArray, corIcons: menuCorIcons, meals})
     this.props.onFiltersChange(filters)
   }
 
-  buildFilters({foodItems, stations, corIcons}: {foodItems: MenuItemType[], stations: string[], corIcons: MasterCorIconMapType}): FilterType[] {
+  buildFilters({foodItems, meals, corIcons}: {foodItems: MenuItemType[], meals: ProcessedMealType[], corIcons: MasterCorIconMapType}): FilterType[] {
     // Format the items for the stations filter
-    const allStations = map(stations, name => ({title: name}))
+    const stations = flatten(meals.map(meal => meal.stationMenus))
+    const stationLabels = uniq(stations.map(station => station.label))
+    const allStations = stationLabels.map(label => ({title: label}))
 
     // Grab the labels of the COR icons
     const allDietaryRestrictions = map(corIcons, cor => ({
@@ -129,16 +132,34 @@ class FancyMenuView extends React.Component {
     })
   }
 
+  findMeal(meals: ProcessedMealType[], filters: FilterType[], now: momentT): ProcessedMealType {
+    const mealChooserFilter = filters.find(f => f.type === 'picker' && f.spec.title === "Today's Menus")
+    let selectedMeal = meals[0]
+
+    if (mealChooserFilter && mealChooserFilter.spec.selected) {
+      let label = mealChooserFilter.spec.selected.label
+      selectedMeal = meals.find(meal => meal.label === label)
+    } else {
+      selectedMeal = findMeal(meals, now)
+    }
+
+    if (!selectedMeal) {
+      selectedMeal = {label: '', stationMenus: [], starttime: null, endtime: null}
+    }
+
+    return selectedMeal
+  }
+
   render() {
     const {
       applyFilters,
       filters,
       foodItems,
-      menuLabel,
       now,
-      stationMenus,
+      meals,
     } = this.props
 
+    const {label: mealName, stationMenus} = this.findMeal(meals, filters, now)
     const stationNotes = fromPairs(stationMenus.map(m => [m.label, m.note]))
 
     const filteredByMenu = stationMenus
@@ -170,7 +191,7 @@ class FancyMenuView extends React.Component {
       <View style={{flex: 1}}>
         <FilterMenuToolbar
           date={now}
-          title={menuLabel}
+          title={mealName}
           filters={filters}
           onPress={this.openFilterView}
         />
