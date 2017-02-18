@@ -2,7 +2,6 @@
 import type {
   FilterType,
   ToggleType,
-  PickerType,
   ListType,
   ListItemSpecType,
 } from './types'
@@ -29,8 +28,6 @@ export function applyFilter(filter: FilterType, item: any): boolean {
       return applyToggleFilter(filter, item)
     case 'list':
       return applyListFilter(filter, item)
-    case 'picker':
-      return applyPickerFilter(filter, item)
     default:
       return true
   }
@@ -40,14 +37,6 @@ export function applyToggleFilter(filter: ToggleType, item: any): boolean {
   // Dereference the value-to-check
   const itemValue = item[filter.apply.key]
   return Boolean(itemValue)
-}
-
-export function applyPickerFilter(): boolean {
-  // // Dereference the value-to-check
-  // const itemValue = item[filter.apply.key]
-  // // Grab the "selected" item
-  // const filterValue = filter.spec.selected
-  return true
 }
 
 export function applyListFilter(filter: ListType, item: any): boolean {
