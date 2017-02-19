@@ -184,7 +184,8 @@ export class BonAppHostedMenu extends React.Component {
     const mealInfoItems = dayparts[0].length
       ? dayparts[0]
       : [{label: 'Menu', starttime: '0:00', endtime: '23:59', id: 'na', abbreviation: 'M', stations: []}]
-    const allMeals = mealInfoItems.map(mealInfo => this.prepareSingleMenu(mealInfo, foodItems, ignoreProvidedMenus))
+    const ignoreMenus = dayparts[0].length ? ignoreProvidedMenus : true
+    const allMeals = mealInfoItems.map(mealInfo => this.prepareSingleMenu(mealInfo, foodItems, ignoreMenus))
 
     return (
       <FancyMenu
