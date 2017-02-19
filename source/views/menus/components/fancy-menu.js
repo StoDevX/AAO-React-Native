@@ -5,15 +5,19 @@ import {connect} from 'react-redux'
 import {updateMenuFilters} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
-import type {MenuItemType, MasterCorIconMapType, StationMenuType} from '../types'
+import type {
+  MenuItemType,
+  MasterCorIconMapType,
+  StationMenuType,
+  MenuItemContainerType,
+} from '../types'
 import type {FilterType} from '../../components/filter'
 import {applyFiltersToItem} from '../../components/filter'
 import {fastGetTrimmedText} from '../../../lib/html'
-import groupBy from 'lodash/groupBy'
-import sortBy from 'lodash/sortBy'
 import fromPairs from 'lodash/fromPairs'
 import filter from 'lodash/filter'
 import map from 'lodash/map'
+import values from 'lodash/values'
 import {FilterMenuToolbar} from './filter-menu-toolbar'
 import {MenuListView} from './menu'
 
@@ -22,7 +26,7 @@ type FancyMenuPropsType = TopLevelViewPropsType & {
   now: momentT,
   name: string,
   filters: FilterType[],
-  foodItems: MenuItemType[],
+  foodItems: MenuItemContainerType,
   menuLabel?: string,
   menuCorIcons: MasterCorIconMapType,
   stationMenus: StationMenuType[],
@@ -42,8 +46,9 @@ class FancyMenuView extends React.Component {
       return
     }
 
+    let foodItemsArray = values(foodItems)
     let stations = stationMenus.map(m => m.label)
-    filters = this.buildFilters({foodItems, stations, corIcons: menuCorIcons})
+    filters = this.buildFilters({foodItems: foodItemsArray, stations, corIcons: menuCorIcons})
     this.props.onFiltersChange(filters)
   }
 
@@ -135,22 +140,29 @@ class FancyMenuView extends React.Component {
     } = this.props
 
     const stationNotes = fromPairs(stationMenus.map(m => [m.label, m.note]))
-    const stationsSort = stationMenus.map(m => m.label)
 
-    // only show items that the menu lists today
-    const filteredByMenu = filter(foodItems, item => stationsSort.includes(item.station))
-    // apply the selected filters
-    const filtered = filter(filteredByMenu, item => applyFilters(filters, item))
-    // sort the remaining items by station
-    const sortedByStation = sortBy(filtered, item => stationsSort.indexOf(item.station))
-    // group them for the ListView
-    const grouped = groupBy(sortedByStation, item => item.station)
+    const filteredByMenu = stationMenus
+      .map(menu => [
+        // we're grouping the menu items in a [label, Array<items>] tuple.
+        menu.label,
+        // dereference each menu item
+        menu.items.map(id => foodItems[id])
+          // ensure that the referenced menu items exist
+          // and apply the selected filters to the items in the menu
+          .filter(item => item && applyFilters(filters, item)),
+      ])
+      // we only want to show stations with at least one item in them
+      .filter(([_, items]) => items.length)
+
+    // group the tuples into an object (because ListView wants {key: value} not [key, value])
+    const grouped = fromPairs(filteredByMenu)
+
 
     const specialsFilterEnabled = Boolean(filters.find(f =>
       f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'))
 
     let message = ''
-    if (specialsFilterEnabled && sortedByStation.length === 0) {
+    if (specialsFilterEnabled && stationMenus.length === 0) {
       message = 'No items to show. There may be no specials today. Try changing the filters.'
     }
 
