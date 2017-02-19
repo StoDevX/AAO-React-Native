@@ -11,12 +11,13 @@ import type {
   ProcessedMealType,
   MenuItemContainerType,
 } from '../types'
-import type {FilterType} from '../../components/filter'
+import type {FilterType, PickerType} from '../../components/filter'
 import {applyFiltersToItem} from '../../components/filter'
 import {fastGetTrimmedText} from '../../../lib/html'
 import {findMeal} from '../lib/find-menu'
 import fromPairs from 'lodash/fromPairs'
 import filter from 'lodash/filter'
+import find from 'lodash/find'
 import map from 'lodash/map'
 import flatten from 'lodash/flatten'
 import values from 'lodash/values'
@@ -49,11 +50,15 @@ class FancyMenuView extends React.Component {
     }
 
     const foodItemsArray = values(foodItems)
-    filters = this.buildFilters({foodItems: foodItemsArray, corIcons: menuCorIcons, meals})
+    filters = this.buildFilters(foodItemsArray, menuCorIcons, meals)
     this.props.onFiltersChange(filters)
   }
 
-  buildFilters({foodItems, meals, corIcons}: {foodItems: MenuItemType[], meals: ProcessedMealType[], corIcons: MasterCorIconMapType}): FilterType[] {
+  buildFilters(
+    foodItems: MenuItemType[],
+    corIcons: MasterCorIconMapType,
+    meals: ProcessedMealType[]
+  ): FilterType[] {
     // Format the items for the stations filter
     const stations = flatten(meals.map(meal => meal.stations))
     const stationLabels = uniq(stations.map(station => station.label))
@@ -133,7 +138,7 @@ class FancyMenuView extends React.Component {
   }
 
   findMeal(meals: ProcessedMealType[], filters: FilterType[], now: momentT): ProcessedMealType {
-    const mealChooserFilter = filters.find(f => f.type === 'picker' && f.spec.title === "Today's Menus")
+    const mealChooserFilter: ?PickerType = find(filters, f => f.type === 'picker' && f.spec.title === "Today's Menus")
     let selectedMeal = meals[0]
 
     if (mealChooserFilter && mealChooserFilter.spec.selected) {
@@ -177,7 +182,6 @@ class FancyMenuView extends React.Component {
 
     // group the tuples into an object (because ListView wants {key: value} not [key, value])
     const grouped = fromPairs(filteredByMenu)
-
 
     const specialsFilterEnabled = Boolean(filters.find(f =>
       f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'))
