@@ -45,14 +45,14 @@ export type StationMenuType = {
   items: ItemIdReferenceStringType[],
 };
 
-export type DayPartMenuType = {
+export type DayPartMenuType = {|
   starttime: MilitaryTimeStringType,
   endtime: MilitaryTimeStringType,
   id: NumericStringType,
   label: string,
   abbreviation: string,
   stations: StationMenuType[],
-};
+|};
 
 export type DayPartsCollectionType = Array<Array<DayPartMenuType>>;
 
@@ -122,3 +122,10 @@ export type BonAppCafeInfoType = {
 export type ProcessedMenuPropsType = {
   [key: string]: MenuItemType[],
 };
+
+export type ProcessedMealType = {|
+  starttime: MilitaryTimeStringType,
+  endtime: MilitaryTimeStringType,
+  label: string,
+  stations: StationMenuType[],
+|};

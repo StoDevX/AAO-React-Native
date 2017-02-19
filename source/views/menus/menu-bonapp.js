@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 // @flow
 import React from 'react'
 import LoadingView from '../components/loading'
@@ -5,12 +6,17 @@ import qs from 'querystring'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {FancyMenu} from './components/fancy-menu'
-import type {BonAppMenuInfoType, BonAppCafeInfoType} from './types'
+import type {
+  BonAppMenuInfoType,
+  BonAppCafeInfoType,
+  StationMenuType,
+  ProcessedMealType,
+  DayPartMenuType,
+} from './types'
 import sample from 'lodash/sample'
 import mapValues from 'lodash/mapValues'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
-import {findMenu} from './lib/find-menu'
 import {trimStationName, trimItemLabel} from './lib/trim-names'
 import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
 import {toLaxTitleCase} from 'titlecase'
@@ -90,6 +96,22 @@ export class BonAppHostedMenu extends React.Component {
     return null
   }
 
+  prepareSingleMenu({mealInfo}: {mealInfo: DayPartMenuType}): ProcessedMealType {
+    let stationMenus: StationMenuType[] = mealInfo
+      ? mealInfo.stations
+      : []
+
+    // Make sure to titlecase the station menus list, too, so the sort works
+    stationMenus = stationMenus.map(s => ({...s, label: toLaxTitleCase(s.label)}))
+
+    return {
+      stations: stationMenus,
+      label: mealInfo.label || '',
+      starttime: mealInfo.starttime || '0:00',
+      endtime: mealInfo.endtime || '23:59',
+    }
+  }
+
   render() {
     if (this.state.loading) {
       return <LoadingView text={sample(this.props.loadingMessage)} />
@@ -114,18 +136,7 @@ export class BonAppHostedMenu extends React.Component {
       return <NoticeView text={specialMessage} />
     }
 
-    // We hard-code to the first day returned because we're only requesting
-    // one day. `cafes` is a map of cafe ids to cafes, but we only request one
-    // cafe at a time, so we just grab the one we requested.
-    let dayparts = cafeMenu.days[0].cafes[cafeId].dayparts
-    let mealInfo = findMenu(dayparts, now)
-    let mealName = mealInfo ? mealInfo.label : ''
-    let stationMenus = mealInfo ? mealInfo.stations : []
-
-    // Make sure to titlecase the station menus list, too, so the sort works
-    stationMenus = stationMenus.map(s => ({...s, label: toLaxTitleCase(s.label)}))
-
-    // flow … has issues when we access cafeMenu.items inside a nested closure
+    // prepare all food items from bonapp for rendering
     const foodItems = mapValues(cafeMenu.items, item => ({
       ...item,  // we want to edit the item, not replace it
       station: toLaxTitleCase(trimStationName(item.station)),  // <b>@station names</b> are a mess
@@ -133,16 +144,26 @@ export class BonAppHostedMenu extends React.Component {
       description: getTrimmedTextWithSpaces(parseHtml(item.description || '')),  // clean up the descriptions
     }))
 
+    // We hard-code to the first day returned because we're only requesting
+    // one day. `cafes` is a map of cafe ids to cafes, but we only request one
+    // cafe at a time, so we just grab the one we requested.
+    const dayparts = cafeMenu.days[0].cafes[cafeId].dayparts
+
+    // either use the meals as provided by bonapp, or make our own custom meal info
+    const mealInfoItems = dayparts[0].length
+      ? dayparts[0]
+      : [{label: 'Menu', starttime: '0:00', endtime: '23:59', id: 'na', abbreviation: 'M', stations: []}]
+    const allMeals = mealInfoItems.map(mealInfo => this.prepareSingleMenu({mealInfo}))
+
     return (
       <FancyMenu
         route={this.props.route}
         navigator={this.props.navigator}
         foodItems={foodItems}
         menuCorIcons={cafeMenu.cor_icons}
-        menuLabel={mealName}
+        meals={allMeals}
         now={now}
         name={this.props.name}
-        stationMenus={stationMenus}
       />
     )
   }
