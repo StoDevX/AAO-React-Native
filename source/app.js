@@ -36,8 +36,6 @@ import NewsItemView from './views/news/news-item'
 import SISView from './views/sis'
 import {BuildingHoursView, BuildingHoursDetailView} from './views/building-hours'
 import TransportationView from './views/transportation'
-import OlevilleView from './views/news/oleville-view'
-import OlevilleNewsStoryView from './views/news/latestView'
 import SettingsView from './views/settings'
 import SISLoginView from './views/settings/login'
 import CreditsView from './views/settings/credits'
@@ -71,8 +69,6 @@ function renderScene(route, navigator) {
     case 'BuildingHoursDetailView': return <BuildingHoursDetailView {...props} />
     case 'SISView': return <SISView {...props} />
     case 'TransportationView': return <TransportationView {...props} />
-    case 'OlevilleView': return <OlevilleView {...props} />
-    case 'OlevilleNewsStoryView': return <OlevilleNewsStoryView {...props} />
     case 'SettingsView': return <SettingsView {...props} />
     case 'SISLoginView': return <SISLoginView {...props} />
     case 'CreditsView': return <CreditsView {...props} />

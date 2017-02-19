@@ -4,7 +4,7 @@ import {WebView} from 'react-native'
 
 import type {StoryType} from './types'
 
-export default function NewsItemView({story}: {story: StoryType}) {
+export default function NewsItemView({story, embedFeaturedImage}: {story: StoryType, embedFeaturedImage: ?boolean}) {
   const content = `
     <style>
       body {
@@ -24,6 +24,7 @@ export default function NewsItemView({story}: {story: StoryType}) {
       }
       p {
         line-height: 1.2em;
+        margin-bottom: 0.25em;
       }
       a {
         pointer-events: none;
@@ -47,11 +48,13 @@ export default function NewsItemView({story}: {story: StoryType}) {
       }
     </style>
     <header class="aao-header">
-      <h1>${story.title[0]}</h1>
+      <h1>${story.title}</h1>
     </header>
-    ${(story['content:encoded'] || story['description'])[0]}
+    ${embedFeaturedImage && story.featuredImage
+      ? `<img src="${story.featuredImage}">`
+      : ''}
+    ${story.content}
   `
-  return (
-    <WebView source={{html: content}} />
-  )
+
+  return <WebView source={{html: content}} />
 }

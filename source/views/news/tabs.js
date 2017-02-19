@@ -1,6 +1,5 @@
 // @flow
 import NewsContainer from './news-container'
-import OlevilleView from './oleville-view'
 
 export default [
   {
@@ -9,27 +8,34 @@ export default [
     rnVectorIcon: {iconName: 'school'},
     component: NewsContainer,
     props: {
-      url: 'https://wp.stolaf.edu/feed/',
-      mode: 'rss',
+      mode: 'wp-json',
+      url: 'https://wp.stolaf.edu/wp-json/wp/v2/posts',
+      query: {'per_page': 10, _embed: true},
       name: 'St. Olaf',
     },
   },
   {
-    id: 'OlevilleView',
+    id: 'OlevilleNewsView',
     title: 'Oleville',
     rnVectorIcon: {iconName: 'happy'},
-    component: OlevilleView,
-    props: {},
+    component: NewsContainer,
+    props: {
+      mode: 'wp-json',
+      url: 'http://oleville.com/wp-json/wp/v2/posts/',
+      query: {'per_page': 10, _embed: true},
+      embedFeaturedImage: true,
+      name: 'Oleville',
+    },
   },
   {
     id: 'MessNewsView',
-    title: 'Mess',
+    title: 'The Mess',
     rnVectorIcon: {iconName: 'paper'},
     component: NewsContainer,
     props: {
-      url: 'http://manitoumessenger.com/feed/',
       mode: 'rss',
-      name: 'Mess',
+      url: 'http://manitoumessenger.com/feed/',
+      name: 'The Mess',
     },
   },
   {
@@ -38,9 +44,21 @@ export default [
     rnVectorIcon: {iconName: 'megaphone'},
     component: NewsContainer,
     props: {
-      url: 'http://oleville.com/politicole/feed/',
       mode: 'rss',
+      url: 'http://oleville.com/politicole/feed/',
       name: 'PoliticOle',
+    },
+  },
+  {
+    id: 'KstoNewsView',
+    title: 'KSTO',
+    rnVectorIcon: {iconName: 'radio'},
+    component: NewsContainer,
+    props: {
+      mode: 'wp-json',
+      url: 'https://pages.stolaf.edu/ksto/wp-json/wp/v2/posts/',
+      query: {'per_page': 10, _embed: true},
+      name: 'KSTO',
     },
   },
 ]
