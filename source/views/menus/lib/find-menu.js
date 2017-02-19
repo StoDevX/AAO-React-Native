@@ -55,11 +55,10 @@ function findMenuIndex(dayparts: DayPartMenuType[], now: momentT): number {
   // Otherwise, we make ourselves a list of {starttime, endtime} pairs so we
   // can query times relative to `now`. Also make sure to set dayOfYear to
   // `now`, so that we don't have our days wandering all over the place.
-  const times = dayparts
-    .map(({starttime, endtime}) => ({
-      start: moment.tz(starttime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
-      end: moment.tz(endtime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
-    }))
+  const times = dayparts.map(({starttime, endtime}) => ({
+    start: moment.tz(starttime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
+    end: moment.tz(endtime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
+  }))
 
   // We grab the first meal that ends sometime after `now`. The only time
   // this really fails is in the early morning, if it's like 1am and you're
