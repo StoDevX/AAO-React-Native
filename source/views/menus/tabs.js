@@ -28,6 +28,7 @@ const stolaf = [
     props: {
       name: 'cage',
       cafeId: '262',
+      ignoreProvidedMenus: true,
       loadingMessage: [
         'Checking for vegan cookies…',
         'Serving up some shakes…',
