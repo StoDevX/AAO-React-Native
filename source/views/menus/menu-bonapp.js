@@ -12,9 +12,11 @@ import type {
   StationMenuType,
   ProcessedMealType,
   DayPartMenuType,
+  MenuItemContainerType,
 } from './types'
 import sample from 'lodash/sample'
 import mapValues from 'lodash/mapValues'
+import reduce from 'lodash/reduce'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import {trimStationName, trimItemLabel} from './lib/trim-names'
@@ -29,6 +31,7 @@ const fetchJsonQuery = (url, query) => fetchJson(`${url}?${qs.stringify(query)}`
 
 type BonAppPropsType = TopLevelViewPropsType & {
   cafeId: string,
+  ignoreProvidedMenus?: boolean,
   loadingMessage: string[],
   name: string,
 };
@@ -96,10 +99,38 @@ export class BonAppHostedMenu extends React.Component {
     return null
   }
 
-  prepareSingleMenu({mealInfo}: {mealInfo: DayPartMenuType}): ProcessedMealType {
+  prepareSingleMenu(
+    mealInfo: DayPartMenuType,
+    foodItems: MenuItemContainerType,
+    ignoreProvidedMenus: boolean
+  ): ProcessedMealType {
     let stationMenus: StationMenuType[] = mealInfo
       ? mealInfo.stations
       : []
+
+    if (ignoreProvidedMenus) {
+      // go over the list of all food items, turning it into a mapping
+      // of {StationName: Array<FoodItemId>}
+      const idsGroupedByStation = reduce(foodItems, (grouped, item) => {
+        if (item.station in grouped) {
+          grouped[item.station].push(item.id)
+        } else {
+          grouped[item.station] = [item.id]
+        }
+        return grouped
+      }, {})
+
+      // then we make our own StationMenus list
+      stationMenus = Object.keys(idsGroupedByStation).map((name, i) => ({
+        'order_id': String(i),
+        id: String(i),
+        label: name,
+        price: '',
+        note: '',
+        soup: false,
+        items: idsGroupedByStation[name],
+      }))
+    }
 
     // Make sure to titlecase the station menus list, too, so the sort works
     stationMenus = stationMenus.map(s => ({...s, label: toLaxTitleCase(s.label)}))
@@ -126,7 +157,7 @@ export class BonAppHostedMenu extends React.Component {
       return <NoticeView text='Something went wrong. Email odt@stolaf.edu to let them know?' />
     }
 
-    let {cafeId} = this.props
+    let {cafeId, ignoreProvidedMenus=false} = this.props
     let {now, cafeMenu, cafeInfo} = this.state
 
     // We grab the "today" info from here because BonApp returns special
@@ -153,7 +184,7 @@ export class BonAppHostedMenu extends React.Component {
     const mealInfoItems = dayparts[0].length
       ? dayparts[0]
       : [{label: 'Menu', starttime: '0:00', endtime: '23:59', id: 'na', abbreviation: 'M', stations: []}]
-    const allMeals = mealInfoItems.map(mealInfo => this.prepareSingleMenu({mealInfo}))
+    const allMeals = mealInfoItems.map(mealInfo => this.prepareSingleMenu(mealInfo, foodItems, ignoreProvidedMenus))
 
     return (
       <FancyMenu
