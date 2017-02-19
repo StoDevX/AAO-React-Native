@@ -4,6 +4,8 @@
 
 ; Ignore json files from flow
 *.json
+
+; Ignore the non-json Codepush file
 .*/CodePushHash.json
 
 ; Ignore "BUCK" generated dirs
