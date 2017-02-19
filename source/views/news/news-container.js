@@ -49,12 +49,12 @@ export default class NewsContainer extends React.Component {
 
       this.setState({entries})
     } catch (error) {
-      tracker.trackException(error.message)
-      console.warn(error)
       if (error.message.startswith('Unexpected token <')) {
         tracker.trackEvent('news', 'St. Olaf WPDefender strikes again')
         this.setState({error: new Error("Oops. Looks like we've triggered a St. Olaf website defense mechanism. Try again in 5 minutes.")})
       } else {
+        tracker.trackException(error.message)
+        console.warn(error)
         this.setState({error})
       }
     }
