@@ -25,7 +25,9 @@ type PropsType = {
 };
 
 export function FilterMenuToolbar({date, title, filters, onPress}: PropsType) {
-  const appliedFilterCount = filters.filter(f => f.enabled).length
+  const appliedFilterCount = filters
+    .filter(f => f.type !== 'picker')
+    .filter(f => f.enabled).length
   const isFiltered = appliedFilterCount > 0
 
   return (

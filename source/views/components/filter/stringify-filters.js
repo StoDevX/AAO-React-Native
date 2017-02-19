@@ -11,8 +11,11 @@ export function stringifyFilters(filters: FilterType[]): string {
 
 function stringifyFilter(filter: FilterType): string {
   let spec = 'n/a'
+
   if (filter.type === 'list') {
     spec = stringifyListFilter(filter)
+  } else if (filter.type === 'picker') {
+    spec = filter.spec.selected
   }
 
   return JSON.stringify({
