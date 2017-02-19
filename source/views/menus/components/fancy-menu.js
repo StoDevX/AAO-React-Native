@@ -42,7 +42,7 @@ class FancyMenuView extends React.Component {
   }
 
   componentWillMount() {
-    let {foodItems, menuCorIcons, filters, meals} = this.props
+    let {foodItems, menuCorIcons, filters, meals, now} = this.props
 
     // prevent ourselves from overwriting the filters from redux on mount
     if (filters.length) {
@@ -50,14 +50,15 @@ class FancyMenuView extends React.Component {
     }
 
     const foodItemsArray = values(foodItems)
-    filters = this.buildFilters(foodItemsArray, menuCorIcons, meals)
+    filters = this.buildFilters(foodItemsArray, menuCorIcons, meals, now)
     this.props.onFiltersChange(filters)
   }
 
   buildFilters(
     foodItems: MenuItemType[],
     corIcons: MasterCorIconMapType,
-    meals: ProcessedMealType[]
+    meals: ProcessedMealType[],
+    now: momentT
   ): FilterType[] {
     // Format the items for the stations filter
     const stations = flatten(meals.map(meal => meal.stations))
@@ -76,6 +77,10 @@ class FancyMenuView extends React.Component {
     const shouldShowSpecials = filter(foodItems, item =>
       item.special && stationNames.includes(item.station)).length >= 1
 
+    // Decide which meal will be selected by default
+    const mealOptions = meals.map(m => ({label: m.label}))
+    const selectedMeal = this.findMeal(meals, [], now)
+
     return [
       {
         type: 'toggle',
@@ -87,6 +92,19 @@ class FancyMenuView extends React.Component {
         },
         apply: {
           key: 'special',
+        },
+      },
+      {
+        type: 'picker',
+        key: 'meals',
+        enabled: true,
+        spec: {
+          title: "Today's Menus",
+          options: mealOptions,
+          selected: {label: selectedMeal.label},
+        },
+        apply: {
+          key: 'label',
         },
       },
       {
