@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {Picker, StyleSheet, Platform} from 'react-native'
+import {Picker, StyleSheet} from 'react-native'
 import type {PickerType} from './types'
 import {Section} from 'react-native-tableview-simple'
 
@@ -46,10 +46,6 @@ export function PickerSection({filter, onChange}: PropsType) {
 
 const styles = StyleSheet.create({
   picker: {
-    ...Platform.select({
-      ios: {
-        backgroundColor: 'white',
-      },
-    }),
+    backgroundColor: 'white',
   },
 })
