@@ -88,9 +88,9 @@ export class GitHubHostedMenu extends React.Component {
       foodItems,
       meals: [{
         label: 'Menu',
-        stationMenus: stationMenus,
-        starttime: null,
-        endtime: null,
+        stations: stationMenus,
+        starttime: '0:00',
+        endtime: '23:59',
       }],
       now: moment.tz(CENTRAL_TZ),
     })

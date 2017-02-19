@@ -6,7 +6,6 @@ import type {
   DayPartMenuType,
   DayPartsCollectionType,
   ProcessedMealType,
-  MilitaryTimeStringType,
 } from '../types'
 const CENTRAL_TZ = 'America/Winnipeg'
 
@@ -31,11 +30,22 @@ export function findMeal(meals: ProcessedMealType[], now: momentT): void|Process
     return
   }
 
-  const mealIndex = findMenuIndex(meals, now)
+  // TODO: Revisit this typing stuff here when we go to flow@0.39
+  const dayparts: DayPartMenuType[] = meals
+    .map(m => ({
+      starttime: m.starttime,
+      endtime: m.endtime,
+      label: m.label,
+      stations: m.stations,
+      id: m.label,
+      abbreviation: m.label,
+    }))
+
+  const mealIndex = findMenuIndex(dayparts, now)
   return meals[mealIndex]
 }
 
-function findMenuIndex(dayparts: {starttime: ?MilitaryTimeStringType, endtime: ?MilitaryTimeStringType}[], now: momentT): number {
+function findMenuIndex(dayparts: DayPartMenuType[], now: momentT): number {
   // If there's only a single bonapp menu for this location (think the Cage,
   // instead of the Caf), we just return that item.
   if (dayparts.length === 1) {
@@ -46,7 +56,6 @@ function findMenuIndex(dayparts: {starttime: ?MilitaryTimeStringType, endtime: ?
   // can query times relative to `now`. Also make sure to set dayOfYear to
   // `now`, so that we don't have our days wandering all over the place.
   const times = dayparts
-    .filter(({starttime, endtime}) => starttime && endtime)
     .map(({starttime, endtime}) => ({
       start: moment.tz(starttime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
       end: moment.tz(endtime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),

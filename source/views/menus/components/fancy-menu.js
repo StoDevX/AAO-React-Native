@@ -55,7 +55,7 @@ class FancyMenuView extends React.Component {
 
   buildFilters({foodItems, meals, corIcons}: {foodItems: MenuItemType[], meals: ProcessedMealType[], corIcons: MasterCorIconMapType}): FilterType[] {
     // Format the items for the stations filter
-    const stations = flatten(meals.map(meal => meal.stationMenus))
+    const stations = flatten(meals.map(meal => meal.stations))
     const stationLabels = uniq(stations.map(station => station.label))
     const allStations = stationLabels.map(label => ({title: label}))
 
@@ -144,7 +144,7 @@ class FancyMenuView extends React.Component {
     }
 
     if (!selectedMeal) {
-      selectedMeal = {label: '', stationMenus: [], starttime: null, endtime: null}
+      selectedMeal = {label: '', stations: [], starttime: '0:00', endtime: '0:00'}
     }
 
     return selectedMeal
@@ -159,7 +159,7 @@ class FancyMenuView extends React.Component {
       meals,
     } = this.props
 
-    const {label: mealName, stationMenus} = this.findMeal(meals, filters, now)
+    const {label: mealName, stations: stationMenus} = this.findMeal(meals, filters, now)
     const stationNotes = fromPairs(stationMenus.map(m => [m.label, m.note]))
 
     const filteredByMenu = stationMenus

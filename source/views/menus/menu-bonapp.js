@@ -105,10 +105,10 @@ export class BonAppHostedMenu extends React.Component {
     stationMenus = stationMenus.map(s => ({...s, label: toLaxTitleCase(s.label)}))
 
     return {
-      stationMenus: stationMenus,
+      stations: stationMenus,
       label: mealInfo.label || '',
-      starttime: mealInfo.starttime || null,
-      endtime: mealInfo.endtime || null,
+      starttime: mealInfo.starttime || '0:00',
+      endtime: mealInfo.endtime || '23:59',
     }
   }
 
