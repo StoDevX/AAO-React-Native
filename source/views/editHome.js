@@ -13,7 +13,6 @@ import {
   Text,
 } from 'react-native'
 
-import type {TopLevelViewPropsType} from './types'
 import {saveHomescreenOrder} from '../flux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from './components/colors'
@@ -36,11 +35,6 @@ const MenuIcon = ({icon, tint}: {icon: string, tint: string}) =>
   <EntypoIcon name={icon} size={32} style={[styles.rectangleButtonIcon, {color: tint}]} />
 
 class Row extends React.Component {
-  static propTypes = {
-    active: React.PropTypes.bool,
-    data: React.PropTypes.object.isRequired,
-  }
-
   state = {
     style: {
       shadowRadius: new Animated.Value(2),
@@ -133,7 +127,7 @@ class Row extends React.Component {
 function EditHomeView(props: {
   onSaveOrder: () => any,
   order: string[],
-} & TopLevelViewPropsType) {
+}) {
   return (
     <SortableList
       contentContainerStyle={styles.contentContainer}
