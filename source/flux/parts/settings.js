@@ -202,7 +202,7 @@ const initialSettingsState = {
 
   credentials: undefined,
   token: undefined,
-  feedbackEnabled: true,
+  feedbackDisabled: false,
 }
 export function settings(state: Object=initialSettingsState, action: Object) {
   // start out by running the reducers for the complex chunks of the state
@@ -219,7 +219,7 @@ export function settings(state: Object=initialSettingsState, action: Object) {
       return {...state, theme: payload}
 
     case SET_FEEDBACK:
-      return {...state, feedbackEnabled: payload}
+      return {...state, feedbackDisabled: payload}
 
     default:
       return state
