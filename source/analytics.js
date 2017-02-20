@@ -5,18 +5,17 @@ import {
 } from 'react-native-google-analytics-bridge'
 import {stringifyFilters} from './views/components/filter'
 
-import * as storage from './lib/storage'
+import {getAnalyticsOptOut} from './lib/storage'
 
 const trackerId = __DEV__ ? 'UA-90234209-1' : 'UA-90234209-2'
 export const tracker = new GoogleAnalyticsTracker(trackerId)
 
 function disableIfOptedOut() {
-  return storage.getAnalyticsOptOut()
-    .then(didOptOut => {
-      if (didOptOut) {
-        GoogleAnalyticsSettings.setOptOut(true)
-      }
-    })
+  return getAnalyticsOptOut().then(didOptOut => {
+    if (didOptOut) {
+      GoogleAnalyticsSettings.setOptOut(true)
+    }
+  })
 }
 disableIfOptedOut()
 

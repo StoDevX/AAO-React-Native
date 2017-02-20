@@ -41,8 +41,8 @@ type SettingsViewPropsType = TopLevelViewPropsType & {
   logInViaToken: (status: boolean) => any,
   logOutViaToken: () => any,
   setLoginCredentials: (username: string, password: string) => any,
-  setFeedbackStatus: (feedbackEnabled: boolean) => any,
-  feedbackEnabled: boolean,
+  setFeedbackStatus: (feedbackDisabled: boolean) => any,
+  feedbackDisabled: boolean,
 };
 
 function SettingsView(props: SettingsViewPropsType) {
@@ -77,7 +77,7 @@ function SettingsView(props: SettingsViewPropsType) {
         <SupportSection />
 
         <OddsAndEndsSection
-          feedbackEnabled={props.feedbackEnabled}
+          feedbackDisabled={props.feedbackDisabled}
           onChangeFeedbackToggle={props.setFeedbackStatus}
           navigator={props.navigator}
           route={props.route}
@@ -94,8 +94,8 @@ function mapStateToProps(state) {
     credentialsValid: state.settings.credentials.valid,
     credentialsMessage: state.settings.credentials.error,
     tokenValid: state.settings.token.valid,
-    feedbackEnabled: state.settings.feedbackEnabled,
     tokenMessage: state.settings.token.error,
+    feedbackDisabled: state.settings.feedbackDisabled,
   }
 }
 

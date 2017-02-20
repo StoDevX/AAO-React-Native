@@ -7,8 +7,8 @@ import type {TopLevelViewPropsType} from '../../types'
 
 export class OddsAndEndsSection extends React.Component {
   props: TopLevelViewPropsType & {
-    onChangeFeedbackToggle: (feedbackEnabled: boolean) => any,
-    feedbackEnabled: boolean,
+    onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
+    feedbackDisabled: boolean,
   };
 
   onPressLegalButton = () => {
@@ -53,7 +53,8 @@ export class OddsAndEndsSection extends React.Component {
 
         <CustomCell>
           <Text style={{flex: 1, fontSize: 16}}>Share Analytics</Text>
-          <Switch value={this.props.feedbackEnabled} onValueChange={val => this.props.onChangeFeedbackToggle(val)} />
+          {/*These are both inverted because the toggle makes more sense as optout/optin, but the code works better as optin/optout */}
+          <Switch value={!this.props.feedbackDisabled} onValueChange={val => this.props.onChangeFeedbackToggle(!val)} />
         </CustomCell>
 
         <Cell cellStyle='Basic'

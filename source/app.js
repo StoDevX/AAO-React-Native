@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
 })
 
-class App extends React.Component {
+export default class App extends React.Component {
   componentDidMount() {
     tracker.trackEvent('app', 'launch')
     BackAndroid.addEventListener('hardwareBackPress', this.registerAndroidBackButton)
@@ -124,23 +124,23 @@ class App extends React.Component {
     OneSignal.removeEventListener('ids', this.onIds)
   }
 
-  onReceived(notification) {
-    console.log('Notification received: ', notification)
+  onReceived(notification: any) {
+    console.log('Notification received:', notification)
   }
 
-  onOpened(openResult) {
-    console.log('Message: ', openResult.notification.payload.body)
-    console.log('Data: ', openResult.notification.payload.additionalData)
-    console.log('isActive: ', openResult.notification.isAppInFocus)
-    console.log('openResult: ', openResult)
+  onOpened(openResult: any) {
+    console.log('Message:', openResult.notification.payload.body)
+    console.log('Data:', openResult.notification.payload.additionalData)
+    console.log('isActive:', openResult.notification.isAppInFocus)
+    console.log('openResult:', openResult)
   }
 
-  onRegistered(notifData) {
+  onRegistered(notifData: any) {
     console.log('Device is now registered for push notifications!', notifData)
   }
 
-  onIds(device) {
-    console.log('Device info: ', device)
+  onIds(device: any) {
+    console.log('Device info:', device)
   }
 
   _navigator: Navigator;
@@ -155,6 +155,7 @@ class App extends React.Component {
 
   render() {
     return (
+      <Provider store={store}>
       <Navigator
         ref={nav => this._navigator = nav}
         navigationBar={
@@ -176,14 +177,7 @@ class App extends React.Component {
         sceneStyle={styles.container}
         configureScene={configureScene}
       />
+      </Provider>
     )
   }
-}
-
-export default () => {
-  return (
-    <Provider store={store}>
-      <App />
-    </Provider>
-  )
 }
