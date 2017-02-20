@@ -125,14 +125,14 @@ export default class App extends React.Component {
   }
 
   onReceived(notification: any) {
-    console.log('Notification received: ', notification)
+    console.log('Notification received:', notification)
   }
 
   onOpened(openResult: any) {
-    console.log('Message: ', openResult.notification.payload.body)
-    console.log('Data: ', openResult.notification.payload.additionalData)
-    console.log('isActive: ', openResult.notification.isAppInFocus)
-    console.log('openResult: ', openResult)
+    console.log('Message:', openResult.notification.payload.body)
+    console.log('Data:', openResult.notification.payload.additionalData)
+    console.log('isActive:', openResult.notification.isAppInFocus)
+    console.log('openResult:', openResult)
   }
 
   onRegistered(notifData: any) {
@@ -140,7 +140,7 @@ export default class App extends React.Component {
   }
 
   onIds(device: any) {
-    console.log('Device info: ', device)
+    console.log('Device info:', device)
   }
 
   _navigator: Navigator;
