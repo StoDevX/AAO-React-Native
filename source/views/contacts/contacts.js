@@ -5,40 +5,30 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  ListView,
-} from 'react-native'
+import {StyleSheet} from 'react-native'
+import SimpleListView from '../components/listview'
 import ContactCard from './card'
 import {data as numbers} from '../../../docs/contact-info.json'
 
-export default class ContactView extends React.Component {
-  state = {
-    dataSource: new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2,
-    }).cloneWithRows(numbers),
-  }
-
-  render() {
-    return (
-      <ListView
-        contentContainerStyle={styles.container}
-        initialListSize={3}
-        removeClippedSubviews={false}
-        dataSource={this.state.dataSource}
-        renderRow={data =>
-          <ContactCard
-            title={data.title}
-            text={data.text}
-            phoneNumber={data.phoneNumber}
-            buttonText={data.buttonText}
-          />}
-      />
-    )
-  }
+export default function ContactView() {
+  return (
+    <SimpleListView
+      contentContainerStyle={styles.container}
+      data={numbers}
+    >
+      {data =>
+        <ContactCard
+          title={data.title}
+          text={data.text}
+          phoneNumber={data.phoneNumber}
+          buttonText={data.buttonText}
+        />
+      }
+    </SimpleListView>
+  )
 }
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
