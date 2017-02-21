@@ -50,9 +50,9 @@ export default class SimpleListView extends React.Component {
 
     return (
       <ListView
+        {...iosInset}
         initialListSize={6}
         pageSize={6}
-        {...iosInset}
         removeClippedSubviews={false}
         dataSource={this.state.dataSource}
         renderRow={rowData => renderRow(rowData)}
