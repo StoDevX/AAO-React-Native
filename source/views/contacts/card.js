@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react'
 import {
   StyleSheet,
@@ -42,13 +44,13 @@ function promptCall(buttonText: string, phoneNumber: string) {
     buttonText,
     formatNumber(phoneNumber),
     [
-        {text: 'Cancel', onPress: () => console.log('Call cancel pressed')},
-        {text: 'Call', onPress: () => Communications.phonecall(phoneNumber, false)},
+      {text: 'Cancel', onPress: () => console.log('Call cancel pressed')},
+      {text: 'Call', onPress: () => Communications.phonecall(phoneNumber, false)},
     ]
   )
 }
 
-export default function ContactCard({title, phoneNumber, text, buttonText}) {
+export default function ContactCard({title, phoneNumber, text, buttonText}: {title: string, phoneNumber: string, text: string, buttonText: string}) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
@@ -59,10 +61,4 @@ export default function ContactCard({title, phoneNumber, text, buttonText}) {
       />
     </View>
   )
-}
-ContactCard.propTypes = {
-  buttonText: React.PropTypes.string.isRequired,
-  phoneNumber: React.PropTypes.string.isRequired,
-  text: React.PropTypes.string.isRequired,
-  title: React.PropTypes.string.isRequired,
 }
