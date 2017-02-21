@@ -105,7 +105,7 @@ export class HtmlView extends React.Component {
       case 'ios':
         return this.iosOpen(url)
       default:
-        return
+        return this.genericOpen(url)
     }
   }
 
