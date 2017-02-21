@@ -10,7 +10,7 @@ import {CustomTabs} from 'react-native-custom-tabs'
 
 import type {StoryType} from './types'
 
-export function NewsStory({story, embedFeaturedImage, ...props}: {story: StoryType, embedFeaturedImage: ?boolean}) {
+export default function NewsItem({story, embedFeaturedImage}: {story: StoryType, embedFeaturedImage: ?boolean}) {
   const content = `
     <style>
       body {
@@ -57,18 +57,12 @@ export function NewsStory({story, embedFeaturedImage, ...props}: {story: StoryTy
     ${story.content}
   `
 
-  return (
-    <WebView
-      {...props}
-      source={{html: content}}
-    />
-  )
+  return <HtmlView html={content} />
 }
 
-export default class NewsItem extends React.Component {
+export class HtmlView extends React.Component {
   props: {
-    story: StoryType,
-    embedFeaturedImage: ?boolean,
+    html: string,
   }
 
   genericOpen(url: string) {
@@ -116,12 +110,9 @@ export default class NewsItem extends React.Component {
   }
 
   render() {
-    const {story, embedFeaturedImage} = this.props
-
     return (
-      <NewsStory
-        story={story}
-        embedFeaturedImage={embedFeaturedImage}
+      <WebView
+        source={{html: this.props.html}}
         onNavigationStateChange={this.onNavigationStateChange}
       />
     )
