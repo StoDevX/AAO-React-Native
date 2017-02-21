@@ -107,12 +107,8 @@ export class HtmlView extends React.Component {
 
   iosOpen(url: string) {
     SafariView.isAvailable()
-      .then(() => {
-        SafariView.show({
-          url: url,
-          barTintColor: c.olevilleGold,
-        })
-      })
+    // if it's around, open in safari
+      .then(() => SafariView.show({url}))
       // fall back to opening in default browser
       .catch(() => this.genericOpen(url))
   }
