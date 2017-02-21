@@ -5,10 +5,12 @@
  */
 
 import React from 'react'
-import {StyleSheet, Platform, ListView, RefreshControl} from 'react-native'
+import {StyleSheet, RefreshControl} from 'react-native'
+import SimpleListView from '../components/listview'
 import {tracker} from '../../analytics'
 import type {EventType} from './types'
 import groupBy from 'lodash/groupBy'
+import size from 'lodash/size'
 import moment from 'moment-timezone'
 import delay from 'delay'
 import {ListSeparator, ListSectionHeader} from '../components/list'
@@ -30,15 +32,8 @@ type GoogleCalendarEventType = {
 };
 
 export default class CalendarView extends React.Component {
-  static propTypes = {
-    calendarId: React.PropTypes.string.isRequired,
-  }
-
   state = {
-    events: new ListView.DataSource({
-      rowHasChanged: (r1: EventType, r2: EventType) => r1 !== r2,
-      sectionHeaderHasChanged: (h1: any, h2: any) => h1 !== h2,
-    }),
+    events: {},
     loaded: false,
     refreshing: true,
     error: null,
@@ -47,6 +42,10 @@ export default class CalendarView extends React.Component {
   componentWillMount() {
     this.refresh()
   }
+
+  props: {
+    calendarId: string,
+  };
 
   buildCalendarUrl(calendarId: string) {
     let calendarUrl = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`
@@ -59,6 +58,29 @@ export default class CalendarView extends React.Component {
       key: GOOGLE_CALENDAR_API_KEY,
     }
     return `${calendarUrl}?${qs.stringify(params)}`
+  }
+
+  groupEvents(data: GoogleCalendarEventType[], now: moment) {
+    const events: EventType[] = data.map(event => {
+      const startTime = moment(event.start.date || event.start.dateTime)
+      const endTime = moment(event.end.date || event.end.dateTime)
+      return {
+        ...event,
+        startTime,
+        endTime,
+        isOngoing: startTime.isBefore(now, 'day'),
+      }
+    })
+
+    return groupBy(events, event => {
+      if (event.isOngoing) {
+        return 'Ongoing'
+      }
+      if (event.startTime.isSame(now, 'day')) {
+        return 'Today'
+      }
+      return event.startTime.format('ddd  MMM Do')  // google returns events in CST
+    })
   }
 
   getEvents = async (now: moment=moment.tz(TIMEZONE)) => {
@@ -80,30 +102,11 @@ export default class CalendarView extends React.Component {
       console.warn(error)
     }
 
-    const events: EventType[] = data.map((event: GoogleCalendarEventType) => {
-      const startTime = moment(event.start.date || event.start.dateTime)
-      const endTime = moment(event.end.date || event.end.dateTime)
-      return {
-        ...event,
-        startTime,
-        endTime,
-        isOngoing: startTime.isBefore(now, 'day'),
-      }
-    })
-
-    const grouped = groupBy(events, event => {
-      if (event.isOngoing) {
-        return 'Ongoing'
-      }
-      if (event.startTime.isSame(now, 'day')) {
-        return 'Today'
-      }
-      return event.startTime.format('ddd  MMM Do')  // google returns events in CST
-    })
+    const grouped = this.groupEvents(data, now)
 
     this.setState({
       loaded: true,
-      events: this.state.events.cloneWithRowsAndSections(grouped),
+      events: grouped,
     })
   }
 
@@ -120,10 +123,6 @@ export default class CalendarView extends React.Component {
     }
 
     this.setState({refreshing: false})
-  }
-
-  renderRow = (data: EventType) => {
-    return <EventView {...data} />
   }
 
   renderSectionHeader = (sectionData: EventType[], sectionIdentifier: string) => {
@@ -143,17 +142,15 @@ export default class CalendarView extends React.Component {
       return <NoticeView text={this.state.error} />
     }
 
-    if (!this.state.events.getRowCount()) {
+    if (!size(this.state.events)) {
       return <NoticeView text='No events.' />
     }
 
     return (
-      <ListView
+      <SimpleListView
         style={styles.container}
-        contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
-        dataSource={this.state.events}
-        pageSize={5}
-        renderRow={this.renderRow}
+        forceBottomInset={true}
+        data={this.state.events}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
         refreshControl={
@@ -162,7 +159,9 @@ export default class CalendarView extends React.Component {
             onRefresh={this.refresh}
           />
         }
-      />
+      >
+        {(data: EventType) => <EventView {...data} />}
+      </SimpleListView>
     )
   }
 }
