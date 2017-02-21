@@ -98,7 +98,13 @@ export class HtmlView extends React.Component {
   }
 
   genericOpen(url: string) {
-    Linking.openURL(url)
+    Linking.canOpenURL(url)
+      .then(isSupported => {
+        if (!isSupported) {
+          console.warn('cannot handle', url)
+        }
+        return Linking.openURL(url)
+      })
       .catch(err => {
         tracker.trackException(err)
         console.error(err)
