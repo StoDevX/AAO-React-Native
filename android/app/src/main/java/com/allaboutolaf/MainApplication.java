@@ -11,6 +11,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
+import com.github.droibit.android.reactnative.customtabs.CustomTabsPackage;
 import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.microsoft.codepush.react.CodePush;
@@ -39,6 +40,7 @@ public class MainApplication extends Application implements ReactApplication {
         new MainReactPackage(),
         // please keep these sorted alphabetically
         new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
+        new CustomTabsPackage(),
         new GoogleAnalyticsBridgePackage(),
         new KeychainPackage(),
         new ReactNativeOneSignalPackage(),
