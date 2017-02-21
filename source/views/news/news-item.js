@@ -134,7 +134,7 @@ export class HtmlView extends React.Component {
   }
 
   onNavigationStateChange = ({url}: {url: string}) => {
-    if (url.startsWith('about:')) {
+    if (url.startsWith('about:') || url.startsWith('data:')) {
       return
     }
 
