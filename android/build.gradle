@@ -26,5 +26,9 @@ allprojects {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url "$rootDir/../node_modules/react-native/android"
         }
+        maven {
+            // react-native-custom-tabs requires this maven repository
+            url "https://jitpack.io"
+        }
     }
 }

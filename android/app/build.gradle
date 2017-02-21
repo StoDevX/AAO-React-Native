@@ -143,6 +143,7 @@ android {
 dependencies {
     // please keep this list sorted
     compile project(':react-native-code-push')
+    compile project(':react-native-custom-tabs')
     compile project(':react-native-device-info')
     compile project(':react-native-google-analytics-bridge')
     compile project(':react-native-keychain')
