@@ -133,6 +133,13 @@ export class HtmlView extends React.Component {
   }
 
   onNavigationStateChange = ({url}: {url: string}) => {
+    if (url.startsWith('about:')) {
+      return
+    }
+
+    this._webview.stopLoading()
+    this._webview.goBack()
+
     switch (Platform.OS) {
       case 'android':
         return this.androidOpen(url)
@@ -146,6 +153,7 @@ export class HtmlView extends React.Component {
   render() {
     return (
       <WebView
+        ref={ref => this._webview = ref}
         source={{html: this.props.html}}
         onNavigationStateChange={this.onNavigationStateChange}
       />
