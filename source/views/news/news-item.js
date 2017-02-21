@@ -56,7 +56,13 @@ export function NewsStory({story, embedFeaturedImage, ...props}: {story: StoryTy
       : ''}
     ${story.content}
   `
-  return <WebView {...props} onNavigationStateChange={props.onNavigationStateChange()} source={{html: content}} />
+
+  return (
+    <WebView
+      {...props}
+      source={{html: content}}
+    />
+  )
 }
 
 export default class NewsItem extends React.Component {
@@ -116,7 +122,7 @@ export default class NewsItem extends React.Component {
       <NewsStory
         story={story}
         embedFeaturedImage={embedFeaturedImage}
-        onNavigationStateChange={() => this.onNavigationStateChange}
+        onNavigationStateChange={this.onNavigationStateChange}
       />
     )
   }
