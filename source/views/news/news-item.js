@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {WebView, Platform, Linking} from 'react-native'
+import {WebView, Platform, Linking, StatusBar} from 'react-native'
 
 import * as c from '../components/colors'
 
@@ -61,8 +61,40 @@ export default function NewsItem({story, embedFeaturedImage}: {story: StoryType,
 }
 
 export class HtmlView extends React.Component {
+  state = {
+    iosOnShowListener: null,
+    iosOnDismissListener: null,
+  }
+
   props: {
     html: string,
+  }
+
+  _webview: WebView;
+
+  componentWillMount() {
+    SafariView.isAvailable()
+      .then(() => {
+        const iosOnShowListener = SafariView.addEventListener('onShow',
+          () => StatusBar.setBarStyle('dark-content'))
+
+        const iosOnDismissListener = SafariView.addEventListener('onDismiss',
+          () => StatusBar.setBarStyle('light-content'))
+
+        this.setState({
+          iosOnShowListener,
+          iosOnDismissListener,
+        })
+      })
+      .catch(() => {})
+  }
+
+  componentWillUnmount() {
+    SafariView.isAvailable()
+      .then(() => {
+        SafariView.removeEventListener('onShow', this.state.iosOnShowListener)
+        SafariView.removeEventListener('onDismiss', this.state.iosOnDismissListener)
+      }).catch(() => {})
   }
 
   genericOpen(url: string) {
