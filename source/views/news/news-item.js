@@ -129,6 +129,7 @@ export class HtmlView extends React.Component {
       })
     } catch (err) {
       // fall back to opening in Chrome / Browser / platform default
+      this.genericOpen(url)
     }
   }
 
