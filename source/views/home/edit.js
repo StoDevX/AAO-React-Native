@@ -1,5 +1,5 @@
-// @flow
 /**
+ * @flow
  * All About Olaf
  * Edit Home page
  */
