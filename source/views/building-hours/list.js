@@ -5,8 +5,9 @@
  */
 
 import React from 'react'
-import {ListView, RefreshControl, StyleSheet, Platform} from 'react-native'
+import {RefreshControl, StyleSheet, Platform} from 'react-native'
 import {BuildingRow} from './row'
+import SimpleListView from '../components/listview'
 import {tracker} from '../../analytics'
 
 import type momentT from 'moment'
@@ -32,26 +33,7 @@ type BuildingHoursPropsType = TopLevelViewPropsType & {
 };
 
 export class BuildingHoursList extends React.Component {
-  state = {
-    dataSource: this.getDataSource(this.props),
-  }
-
-  componentWillMount() {
-    this.setState({dataSource: this.getDataSource(this.props)})
-  }
-
-  componentWillReceiveProps(nextProps: BuildingHoursPropsType) {
-    this.setState({dataSource: this.getDataSource(nextProps)})
-  }
-
   props: BuildingHoursPropsType;
-
-  getDataSource(props: BuildingHoursPropsType) {
-    return new ListView.DataSource({
-      rowHasChanged: (r1: BuildingType, r2: BuildingType) => r1 !== r2,
-      sectionHeaderHasChanged: (r1: any, r2: any) => r1 !== r2,
-    }).cloneWithRowsAndSections(props.buildings)
-  }
 
   onPressRow = (data: BuildingType) => {
     tracker.trackEvent('building-hours', data.name)
@@ -65,17 +47,6 @@ export class BuildingHoursList extends React.Component {
     })
   }
 
-  renderRow = (data: BuildingType) => {
-    return (
-      <BuildingRow
-        name={data.name}
-        info={data}
-        now={this.props.now}
-        onPress={() => this.onPressRow(data)}
-      />
-    )
-  }
-
   renderSectionHeader = (data: any, id: string) => {
     return <ListSectionHeader style={styles.rowSectionHeader} title={id} />
   }
@@ -86,9 +57,8 @@ export class BuildingHoursList extends React.Component {
 
   render() {
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderRow}
+      <SimpleListView
+        data={this.props.buildings}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
         contentContainerStyle={styles.container}
@@ -99,7 +69,15 @@ export class BuildingHoursList extends React.Component {
             onRefresh={this.props.onRefresh}
           />
         }
-      />
+      >
+        {(data: BuildingType) =>
+          <BuildingRow
+            name={data.name}
+            info={data}
+            now={this.props.now}
+            onPress={() => this.onPressRow(data)}
+          />}
+      </SimpleListView>
     )
   }
 }
