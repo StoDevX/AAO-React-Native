@@ -134,6 +134,8 @@ export class HtmlView extends React.Component {
   }
 
   onNavigationStateChange = ({url}: {url: string}) => {
+    // iOS navigates to about:blank when you provide raw HTML to a webview.
+    // Android navigates to data:text/html;$stuff (that is, the document you passed) instead.
     if (url.startsWith('about:') || url.startsWith('data:')) {
       return
     }
