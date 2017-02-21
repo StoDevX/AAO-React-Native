@@ -1,10 +1,16 @@
 // @flow
 import React from 'react'
-import {WebView} from 'react-native'
+import {WebView, Platform, Linking} from 'react-native'
+
+import * as c from '../components/colors'
+
+import {tracker} from '../../analytics'
+import SafariView from 'react-native-safari-view'
+import {CustomTabs} from 'react-native-custom-tabs'
 
 import type {StoryType} from './types'
 
-export default function NewsItemView({story, embedFeaturedImage}: {story: StoryType, embedFeaturedImage: ?boolean}) {
+export function NewsStory({story, embedFeaturedImage, ...props}: {story: StoryType, embedFeaturedImage: ?boolean}) {
   const content = `
     <style>
       body {
@@ -25,11 +31,6 @@ export default function NewsItemView({story, embedFeaturedImage}: {story: StoryT
       p {
         line-height: 1.2em;
         margin-bottom: 0.25em;
-      }
-      a {
-        pointer-events: none;
-        color: black;
-        text-decoration: none;
       }
       iframe {
         max-width: 100%;
@@ -55,6 +56,68 @@ export default function NewsItemView({story, embedFeaturedImage}: {story: StoryT
       : ''}
     ${story.content}
   `
+  return <WebView {...props} onNavigationStateChange={props.onNavigationStateChange()} source={{html: content}} />
+}
 
-  return <WebView source={{html: content}} />
+export default class NewsItem extends React.Component {
+  props: {
+    story: StoryType,
+    embedFeaturedImage: ?boolean,
+  }
+
+  genericOpen(url: string) {
+    Linking.openURL(url)
+      .catch(err => {
+        tracker.trackException(err)
+        console.error(err)
+      })
+  }
+
+  iosOpen(url: string) {
+    SafariView.isAvailable()
+      .then(() => {
+        SafariView.show({
+          url: url,
+          barTintColor: c.olevilleGold,
+        })
+      })
+      // fall back to opening in default browser
+      .catch(() => this.genericOpen(url))
+  }
+
+  androidOpen(url: string) {
+    try {
+      CustomTabs.openURL(url, {
+        toolbarColor: c.olevilleGold,
+        showPageTitle: true,
+        enableUrlBarHiding: true,
+        enableDefaultShare: true,
+      })
+    } catch (err) {
+      // fall back to opening in Chrome / Browser / platform default
+    }
+  }
+
+  onNavigationStateChange = ({url}: {url: string}) => {
+    switch (Platform.OS) {
+      case 'android':
+        return this.androidOpen(url)
+      case 'ios':
+        return this.iosOpen(url)
+      default:
+        return
+    }
+  }
+
+  render() {
+    const {story, embedFeaturedImage} = this.props
+
+    return (
+      <NewsStory
+        story={story}
+        embedFeaturedImage={embedFeaturedImage}
+        onNavigationStateChange={() => this.onNavigationStateChange}
+      />
+    )
+  }
 }
