@@ -60,7 +60,7 @@ export class OddsAndEndsSection extends React.Component {
         <Cell cellStyle='Basic'
           title='FAQ'
           accessory='DisclosureIndicator'
-          onPress={() => this.onPressFaqButton()}
+          onPress={this.onPressFaqButton}
         />
 
         <Cell cellStyle='Basic'
