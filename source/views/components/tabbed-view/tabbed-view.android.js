@@ -29,6 +29,10 @@ export class TabbedView extends React.Component {
     index: 0,
   };
 
+  componentWillMount() {
+    this._handleChangeTab(0)
+  }
+
   props: TabbedViewPropsType;
 
   _handleChangeTab = index => {
