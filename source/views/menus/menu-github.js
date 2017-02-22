@@ -46,7 +46,6 @@ export class GitHubHostedMenu extends React.Component {
 
   props: TopLevelViewPropsType & {
     name: string,
-    cafeId: string,
     loadingMessage: string[],
   }
 

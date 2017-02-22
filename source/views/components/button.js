@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
 
 export function Button({title, onPress}: {
   title?: string,
-  onPress?: () => {},
+  onPress?: () => any,
 }) {
   return (
     <BasicButton
