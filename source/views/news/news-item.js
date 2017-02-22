@@ -120,16 +120,14 @@ export class HtmlView extends React.Component {
   }
 
   androidOpen(url: string) {
-    try {
-      CustomTabs.openURL(url, {
+    CustomTabs
+      .openURL(url, {
         showPageTitle: true,
         enableUrlBarHiding: true,
         enableDefaultShare: true,
       })
-    } catch (err) {
       // fall back to opening in Chrome / Browser / platform default
-      this.genericOpen(url)
-    }
+      .catch(() => this.genericOpen(url))
   }
 
   onNavigationStateChange = ({url}: {url: string}) => {
