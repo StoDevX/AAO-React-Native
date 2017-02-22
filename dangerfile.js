@@ -39,8 +39,53 @@ if (thisPRSize > bigPRThreshold) {
   markdown(`> The Pull Request size is a bit big. We like to try and keep PRs under ${bigPRThreshold} lines per PR, and this one was ${thisPRSize} lines. If the PR contains multiple logical changes, splitting each into separate PRs will allow a faster, easier, and more thorough review.`)
 }
 
-// wishlist:
-// - `flow check` output
-// - `eslint` output
-// - `validate-data` output
-// - results of `bundle-data`
+
+//
+// Check for and report errors from our tools
+//
+
+const codeBlock = (contents, lang=null) => `\`\`\`${lang || ''}\n${contents}\n\`\`\``
+
+// Eslint
+const eslintLog = readFileSync('logs/eslint').trim()
+const dataValidationLog = readFileSync('logs/validate-data').trim()
+const dataBundlingStatusLog = readFileSync('logs/bundle-data').trim()
+const flowLog = readFileSync('logs/flow').trim()
+const iosJsBundleLog = readFileSync('logs/bundle-ios').trim()
+const androidJsBundleLog = readFileSync('logs/bundle-android').trim()
+const jestLog = readFileSync('logs/jest').trim()
+
+if (eslintLog) {
+  warn('Eslint had a thing to say!')
+  codeBlock(eslintLog)
+}
+
+if (dataValidationLog) {
+  warn("Something's up with the data.")
+  codeBlock(dataValidationLog)
+}
+
+if (dataBundlingStatusLog) {
+  fail("The data changed when it was re-bundled. You'll need to bundle it manually.")
+  codeBlock(dataBundlingStatusLog)
+}
+
+if (flowLog !== 'No errors!') {
+  warn('Flow would like to interject about types…')
+  codeBlock(flowLog)
+}
+
+if (iosJsBundleLog) {
+  warn('The iOS bundle ran into an issue.')
+  codeBlock(iosJsBundleLog)
+}
+
+if (androidJsBundleLog) {
+  warn('The Android bundle ran into an issue.')
+  codeBlock(androidJsBundleLog)
+}
+
+if (jestLog) {
+  warn('Some Jest tests failed. Take a peek?')
+  codeBlock(jestLog)
+}
