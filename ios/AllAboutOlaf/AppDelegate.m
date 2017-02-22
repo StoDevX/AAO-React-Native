@@ -24,7 +24,8 @@
   NSURL *jsCodeLocation;
 
 #ifdef DEBUG
-    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
+    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios"
+                                                                    fallbackResource:nil];
 #else
     jsCodeLocation = [CodePush bundleURL];
 #endif
@@ -48,6 +49,12 @@
 
   self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
                                                          appId:@"aa46a500-ab1c-4127-b9ff-e7373da3ce35"];
+
+  // set up the requests cacher
+  NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024   // 4 MiB
+                                                       diskCapacity:20 * 1024 * 1024  // 20 MiB
+                                                           diskPath:nil];
+  [NSURLCache setSharedURLCache:URLCache];
 
   return YES;
 }
