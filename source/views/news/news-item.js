@@ -122,7 +122,6 @@ export class HtmlView extends React.Component {
   androidOpen(url: string) {
     try {
       CustomTabs.openURL(url, {
-        toolbarColor: c.olevilleGold,
         showPageTitle: true,
         enableUrlBarHiding: true,
         enableDefaultShare: true,
