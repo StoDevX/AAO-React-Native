@@ -31,13 +31,13 @@
 		37755BD2F66641FB97979B7E /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 203BE3D7758C4020A78210B2 /* libRCTOneSignal.a */; };
 		3A0CEA921DEA203F0036E739 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0CEA781DEA20340036E739 /* libRCTAnimation.a */; };
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
+		56DC65C1BF07427AA1F84CFC /* libSafariViewManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D530CE76BA714A59B2BECB28 /* libSafariViewManager.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		9304AFEA1BEF4D77A9BE9E47 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EFDF596D3434455B7F672D3 /* libRNVectorIcons.a */; };
 		A0102781BF874C25BD76AD1D /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2D51A8982104BF29657933B /* libRNDeviceInfo.a */; };
 		A3D56267BEA24AB583A6D2A2 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E90E6CCE2A464D80BE6D83B2 /* libCodePush.a */; };
-		BBDFD91C684046CB9FD0CD55 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 742B362B86E443C09A7F9FD9 /* Entypo.ttf */; };
-		56DC65C1BF07427AA1F84CFC /* libSafariViewManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D530CE76BA714A59B2BECB28 /* libSafariViewManager.a */; };
 		A90299E6C1BD45C385BBF8F0 /* libDBCustomTabs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D222CA78E6554BBB83448435 /* libDBCustomTabs.a */; };
+		BBDFD91C684046CB9FD0CD55 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 742B362B86E443C09A7F9FD9 /* Entypo.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,6 +124,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 5DBEB1501B18CEA900B34395;
 			remoteInfo = RNVectorIcons;
+		};
+		009845B81E5DEE6800194E4A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE0A6E16923B40C9930B546C /* ReactNativeCustomTabs.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DA7118681CC9158A0087DF95;
+			remoteInfo = DBCustomTabs;
+		};
+		009845C01E5DEE6800194E4A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = SafariViewManager;
 		};
 		00C302AB1ABCB8CE00DB3ED1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -325,19 +339,19 @@
 		828A2E49D4E3430FB2853AFF /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		82EC831AEBDF400A923F5809 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SafariViewManager.xcodeproj; path = "../node_modules/react-native-safari-view/SafariViewManager.xcodeproj"; sourceTree = "<group>"; };
 		8EFDF596D3434455B7F672D3 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		916377371C784A9B8A7A1F5C /* RCTOneSignal.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTOneSignal.xcodeproj; path = "../node_modules/react-native-onesignal/ios/RCTOneSignal.xcodeproj"; sourceTree = "<group>"; };
 		A2D51A8982104BF29657933B /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = "<group>"; };
 		A91038679F834707B769D282 /* RNKeychain.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeychain.xcodeproj; path = "../node_modules/react-native-keychain/RNKeychain.xcodeproj"; sourceTree = "<group>"; };
 		AECB3DDD098E445D8AB3555F /* CodePush.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = CodePush.xcodeproj; path = "../node_modules/react-native-code-push/ios/CodePush.xcodeproj"; sourceTree = "<group>"; };
+		CE0A6E16923B40C9930B546C /* ReactNativeCustomTabs.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeCustomTabs.xcodeproj; path = "../node_modules/react-native-custom-tabs/ios/ReactNativeCustomTabs.xcodeproj"; sourceTree = "<group>"; };
 		CF2508C73D024BE2B226091B /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
+		D222CA78E6554BBB83448435 /* libDBCustomTabs.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libDBCustomTabs.a; sourceTree = "<group>"; };
+		D530CE76BA714A59B2BECB28 /* libSafariViewManager.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSafariViewManager.a; sourceTree = "<group>"; };
 		E6FBE71A05CC43E2B4885180 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		E90E6CCE2A464D80BE6D83B2 /* libCodePush.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libCodePush.a; sourceTree = "<group>"; };
 		F803FE6585F04E9F8D3C053F /* libRCTGoogleAnalyticsBridge.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTGoogleAnalyticsBridge.a; sourceTree = "<group>"; };
-		89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */ = {isa = PBXFileReference; name = "SafariViewManager.xcodeproj"; path = "../node_modules/react-native-safari-view/SafariViewManager.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		D530CE76BA714A59B2BECB28 /* libSafariViewManager.a */ = {isa = PBXFileReference; name = "libSafariViewManager.a"; path = "libSafariViewManager.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		CE0A6E16923B40C9930B546C /* ReactNativeCustomTabs.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeCustomTabs.xcodeproj"; path = "../node_modules/react-native-custom-tabs/ios/ReactNativeCustomTabs.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		D222CA78E6554BBB83448435 /* libDBCustomTabs.a */ = {isa = PBXFileReference; name = "libDBCustomTabs.a"; path = "libDBCustomTabs.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -425,6 +439,22 @@
 			isa = PBXGroup;
 			children = (
 				008413791D5C3AC30034750D /* libRNVectorIcons.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		009845971E5DEE6800194E4A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				009845C11E5DEE6800194E4A /* libSafariViewManager.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		009845991E5DEE6800194E4A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				009845B91E5DEE6800194E4A /* libDBCustomTabs.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -787,6 +817,10 @@
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 				},
 				{
+					ProductGroup = 009845991E5DEE6800194E4A /* Products */;
+					ProjectRef = CE0A6E16923B40C9930B546C /* ReactNativeCustomTabs.xcodeproj */;
+				},
+				{
 					ProductGroup = 3A9B26421DE3709F00B6A428 /* Products */;
 					ProjectRef = 828A2E49D4E3430FB2853AFF /* RNDeviceInfo.xcodeproj */;
 				},
@@ -805,6 +839,10 @@
 				{
 					ProductGroup = 008413661D5C3AC30034750D /* Products */;
 					ProjectRef = 43E420DADB24468C9E296F25 /* RNVectorIcons.xcodeproj */;
+				},
+				{
+					ProductGroup = 009845971E5DEE6800194E4A /* Products */;
+					ProjectRef = 89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -898,6 +936,20 @@
 			fileType = archive.ar;
 			path = libRNVectorIcons.a;
 			remoteRef = 008413781D5C3AC30034750D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		009845B91E5DEE6800194E4A /* libDBCustomTabs.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libDBCustomTabs.a;
+			remoteRef = 009845B81E5DEE6800194E4A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		009845C11E5DEE6800194E4A /* libSafariViewManager.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSafariViewManager.a;
+			remoteRef = 009845C01E5DEE6800194E4A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */ = {
