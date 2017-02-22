@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export default class TabbedView extends React.Component {
+export class TabbedView extends React.Component {
   state = {
     index: 0,
   };
