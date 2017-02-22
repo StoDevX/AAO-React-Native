@@ -66,12 +66,6 @@ export class HtmlView extends React.Component {
     iosOnDismissListener: null,
   }
 
-  props: {
-    html: string,
-  }
-
-  _webview: WebView;
-
   componentWillMount() {
     SafariView.isAvailable()
       .then(() => {
@@ -96,6 +90,12 @@ export class HtmlView extends React.Component {
         SafariView.removeEventListener('onDismiss', this.state.iosOnDismissListener)
       }).catch(() => {})
   }
+
+  props: {
+    html: string,
+  }
+
+  _webview: WebView;
 
   genericOpen(url: string) {
     Linking.canOpenURL(url)
