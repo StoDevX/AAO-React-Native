@@ -135,14 +135,19 @@ export class BuildingHoursDetailView extends React.Component {
                   let isActiveSchedule = set.isPhysicallyOpen !== false && schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)
 
                   return (
-                    <CustomCell key={i}>
-                      <Text numberOfLines={1} style={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]}>
-                        {summarizeDays(schedule.days)}
-                      </Text>
-                      <Text numberOfLines={1} style={[styles.scheduleHours, isActiveSchedule ? styles.bold : null]}>
-                        {formatBuildingTimes(schedule, this.state.now)}
-                      </Text>
-                    </CustomCell>
+                    <Cell
+                      key={i}
+                      cellContentView={
+                        <Row>
+                          <Text numberOfLines={1} style={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]}>
+                            {summarizeDays(schedule.days)}
+                          </Text>
+                          <Text numberOfLines={1} style={[styles.scheduleHours, isActiveSchedule ? styles.bold : null]}>
+                            {formatBuildingTimes(schedule, this.state.now)}
+                          </Text>
+                        </Row>
+                      }
+                    />
                   )
                 })}
               </Section>
