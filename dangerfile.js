@@ -1,17 +1,16 @@
-import { danger, fail, warn } from "danger"
-import { readFileSync } from "fs"
-import execa from "execa"
+import { danger, fail, warn, markdown } from 'danger'
+import { readFileSync } from 'fs'
 
-const jsFiles = danger.git.created_files.filter(path => path.endsWith("js"))
+const jsFiles = danger.git.created_files.filter(path => path.endsWith('js'))
 
 // new js files should have `@flow` at the top
 const unFlowedFiles = jsFiles.filter(filepath => {
   const content = readFileSync(filepath, 'utf-8')
-  return !content.includes("@flow")
+  return !content.includes('@flow')
 })
 
 if (unFlowedFiles.length > 0) {
-  warn(`These new JS files do not have Flow enabled: ${unFlowedFiles.join(", ")}`)
+  warn(`These new JS files do not have Flow enabled: ${unFlowedFiles.join(', ')}`)
 }
 
 // revisit this when we move to yarn
