@@ -9,8 +9,8 @@ import {
   View,
   ListView,
 } from 'react-native'
-import ContactCard from './components/contactCard'
-import {data as numbers} from '../../docs/contact-info.json'
+import ContactCard from './card'
+import {data as numbers} from '../../../docs/contact-info.json'
 
 export default class ContactView extends React.Component {
   constructor() {

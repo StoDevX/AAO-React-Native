@@ -13,17 +13,17 @@ import {
   Text,
 } from 'react-native'
 
-import {saveHomescreenOrder} from '../flux/parts/homescreen'
+import {saveHomescreenOrder} from '../../flux/parts/homescreen'
 import {connect} from 'react-redux'
-import * as c from './components/colors'
+import * as c from '../components/colors'
 import fromPairs from 'lodash/fromPairs'
 
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
 import SortableList from 'react-native-sortable-list'
 
-import type {ViewType} from './views'
-import {allViews} from './views'
+import type {ViewType} from '../views'
+import {allViews} from '../views'
 
 const window = Dimensions.get('window')
 const objViews = fromPairs(allViews.map(v => ([v.view, v])))

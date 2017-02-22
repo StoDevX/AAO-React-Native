@@ -6,10 +6,10 @@ import {
   Alert,
 } from 'react-native'
 
-import {Button} from './button' // the button
+import {Button} from '../components/button' // the button
 import Communications from 'react-native-communications' // the phone call functions
 
-import * as c from './colors'
+import * as c from '../components/colors'
 
 let styles = StyleSheet.create({
   container: {

@@ -13,19 +13,19 @@ import {
   StatusBar,
   Platform,
 } from 'react-native'
-import {Touchable} from './components/touchable'
+import {Touchable} from '../components/touchable'
 
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/Entypo'
-import * as c from './components/colors'
+import * as c from '../components/colors'
 import sortBy from 'lodash/sortBy'
-import type {TopLevelViewPropsType} from './types'
+import type {TopLevelViewPropsType} from '../types'
 
 const Dimensions = require('Dimensions')
 let Viewport = Dimensions.get('window')
 
-import type {ViewType} from './views'
-import {allViews} from './views'
+import type {ViewType} from '../views'
+import {allViews} from '../views'
 
 function HomeScreenButton({view, onPress}: {view: ViewType, onPress: () => any}) {
   return (
