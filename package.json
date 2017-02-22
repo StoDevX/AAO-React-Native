@@ -68,7 +68,7 @@
     "react-native-safari-view": "2.0.0",
     "react-native-sortable-list": "github:hawkrives/react-native-sortable-list#a46c78161e0a1a8d3a45f2fef69d98af3e911b6d",
     "react-native-tab-view": "0.0.56",
-    "react-native-tableview-simple": "0.16.0",
+    "react-native-tableview-simple": "0.16.1",
     "react-native-vector-icons": "4.0.0",
     "react-redux": "5.0.2",
     "redux": "3.6.0",
