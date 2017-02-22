@@ -3,6 +3,7 @@ import React from 'react'
 import {Cell, Section} from 'react-native-tableview-simple'
 import Communications from 'react-native-communications'
 import DeviceInfo from 'react-native-device-info'
+import {version} from '../../../../package.json'
 
 export class SupportSection extends React.Component {
   getDeviceInfo = () => {
@@ -12,6 +13,7 @@ export class SupportSection extends React.Component {
       ${DeviceInfo.getDeviceId()}
       ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}
       ${DeviceInfo.getReadableVersion()}
+      Codepush: ${version}
     `
   }
 
