@@ -39,9 +39,9 @@ const stopColors = {
 function makeSubtitle({now, moments, isLastBus}) {
   let lineDetail = 'Running'
 
-  if (now.isBefore(head(moments))) {
+  if (now.isBefore(head(moments), 'minute')) {
     lineDetail = `Starts ${now.to(head(moments))}`
-  } else if (now.isAfter(last(moments))) {
+  } else if (now.isAfter(last(moments), 'minute')) {
     lineDetail = 'Over for Today'
   } else if (isLastBus) {
     lineDetail = 'Last Bus'
