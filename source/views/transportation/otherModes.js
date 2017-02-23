@@ -37,18 +37,6 @@ let styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: c.iosLightBackground,
   },
-  button: {
-    backgroundColor: c.denim,
-    width: 200,
-    color: c.white,
-    alignSelf: 'center',
-    height: 30,
-    paddingTop: 3,
-    marginBottom: 10,
-    marginTop: 10,
-    borderRadius: 6,
-    overflow: 'hidden',
-  },
 })
 
 export default class OtherModesView extends React.Component {
@@ -72,7 +60,6 @@ export default class OtherModesView extends React.Component {
             tracker.trackException(err.message)
             console.error('An error occurred', err)
           })}
-          style={styles.button}
           title='More info'
         />
       </View>
