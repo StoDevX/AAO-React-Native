@@ -142,14 +142,16 @@ script:
   # ensure the env file exists and fill it out
   - touch .env.js
   - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
+  - mkdir -p logs/
+
+  # disable npm wrapper for npm scripts
+  - echo "loglevel=silent" >> .npmrc
 
   # JS
-  # Danger?
-  - if [[ "$type" == "js" ]]; then npm run danger; fi
   # Lint
-  - if [[ "$type" == "js" ]]; then npm run lint; fi
+  - if [[ "$type" == "js" ]]; then npm run lint | tee logs/eslint; fi
   # Validate data
-  - if [[ "$type" == "js" ]]; then npm run validate-data -- --quiet; fi
+  - if [[ "$type" == "js" ]]; then npm run validate-data -- --quiet | tee logs/validate-data; fi
   # Ensure that the data files have been updated
   - |
     if [[ "$type" == "js" ]]; then
@@ -157,15 +159,17 @@ script:
       npm run bundle-data
       # If there are any changes in the output folder, kill the build.
       # We must commit the changes ourselves, before CI runs.
-      git diff --quiet docs/
+      git diff --stat --exit-code docs/ | tee logs/bundle-data
     fi
   # Type check
-  - if [[ "$type" == "js" ]]; then npm run flow; fi
+  - if [[ "$type" == "js" ]]; then npm run flow -- check --quiet | tee logs/flow; fi
   # Build the bundles
-  - if [[ "$type" == "js" ]]; then npm run bundle:ios; fi
-  - if [[ "$type" == "js" ]]; then npm run bundle:android; fi
+  - if [[ "$type" == "js" ]]; then npm run bundle:ios | tee logs/bundle-ios; fi
+  - if [[ "$type" == "js" ]]; then npm run bundle:android | tee logs/bundle-android; fi
   # Run tests + collect coverage info
-  - if [[ "$type" == "js" ]]; then npm run test -- --coverage; fi
+  - if [[ "$type" == "js" ]]; then npm run test -- --coverage | tee logs/jest; fi
+  # Danger?
+  - if [[ "$type" == "js" ]]; then npm run danger; fi
 
   # iOS
   - if [[ "$type" == "ios" ]]; then bundle exec fastlane ios ci_run; fi
