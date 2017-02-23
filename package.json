@@ -93,7 +93,7 @@
     "eslint-plugin-react": "6.10.0",
     "execa": "0.6.0",
     "flow-bin": "0.37.4",
-    "jest": "18.1.0",
+    "jest": "19.0.2",
     "js-yaml": "3.8.1",
     "junk": "2.0.0",
     "marked": "0.3.6",
