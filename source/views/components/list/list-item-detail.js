@@ -8,12 +8,14 @@ const styles = StyleSheet.create({
   detail: {
     paddingTop: 4,
     fontSize: FONT_SIZE,
-    lineHeight: FONT_SIZE * 1.25,
     ...Platform.select({
       ios: {
+        lineHeight: FONT_SIZE * 1.25,
         color: c.iosDisabledText,
       },
       android: {
+        // android lineHeight must be an integer: see kinda https://github.com/facebook/react-native/issues/10607
+        lineHeight: Math.round(FONT_SIZE * 1.25),
         color: c.iosDisabledText,
       },
     }),
