@@ -16,7 +16,7 @@ import {
   Linking,
 } from 'react-native'
 import * as c from '../components/colors'
-import Button from 'react-native-button'
+import {Button} from '../components/button'
 import {data as mapInfo} from '../../../docs/map.json'
 import {tracker} from '../../analytics'
 
@@ -29,10 +29,8 @@ export default function OlafMapView() {
           tracker.trackException(err.message)
           console.error('An error occurred', err)
         })}
-        style={styles.button}
-      >
-          View Map
-      </Button>
+        title='View Map'
+      />
     </View>
   )
 }
@@ -45,11 +43,5 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginLeft: 10,
     flexWrap: 'wrap',
-  },
-  button: {
-    marginTop: 15,
-    padding: 10,
-    color: c.white,
-    backgroundColor: c.denim,
   },
 })
