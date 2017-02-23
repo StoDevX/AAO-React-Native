@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {View} from 'react-native'
+import {View, StyleSheet} from 'react-native'
 import {connect} from 'react-redux'
 import {updateMenuFilters} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
@@ -11,19 +11,23 @@ import type {
   ProcessedMealType,
   MenuItemContainerType,
 } from '../types'
+import flatten from 'lodash/flatten'
+import filter from 'lodash/filter'
+import find from 'lodash/find'
+import fromPairs from 'lodash/fromPairs'
+import map from 'lodash/map'
+import size from 'lodash/size'
+import values from 'lodash/values'
+import uniq from 'lodash/uniq'
+import {ListSeparator, ListSectionHeader} from '../../components/list'
 import type {FilterType, PickerType} from '../../components/filter'
 import {applyFiltersToItem} from '../../components/filter'
 import {fastGetTrimmedText} from '../../../lib/html'
+import SimpleListView from '../../components/listview'
+import {NoticeView} from '../../components/notice'
 import {findMeal} from '../lib/find-menu'
-import fromPairs from 'lodash/fromPairs'
-import filter from 'lodash/filter'
-import find from 'lodash/find'
-import map from 'lodash/map'
-import flatten from 'lodash/flatten'
-import values from 'lodash/values'
-import uniq from 'lodash/uniq'
 import {FilterMenuToolbar} from './filter-menu-toolbar'
-import {MenuListView} from './menu'
+import {FoodItemRow} from './food-item-row'
 
 type FancyMenuPropsType = TopLevelViewPropsType & {
   applyFilters: (filters: FilterType[], item: MenuItemType) => boolean,
@@ -35,6 +39,15 @@ type FancyMenuPropsType = TopLevelViewPropsType & {
   menuCorIcons: MasterCorIconMapType,
   onFiltersChange: (f: FilterType[]) => any,
 };
+
+const leftSideSpacing = 28
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+})
+
 
 class FancyMenuView extends React.Component {
   static defaultProps = {
@@ -173,6 +186,31 @@ class FancyMenuView extends React.Component {
     return selectedMeal
   }
 
+  renderSectionHeader = (sectionData: MenuItemType[], sectionName: string) => {
+    const {filters, now, meals} = this.props
+    const {stations} = this.findMeal(meals, filters, now)
+    const menu = stations.find(m => m.label === sectionName)
+    const note = menu ? menu.note : ''
+
+    return (
+      <ListSectionHeader
+        title={sectionName}
+        subtitle={note}
+        spacing={{left: leftSideSpacing}}
+      />
+    )
+  }
+
+  renderSeparator = (sectionId: string, rowId: string) => {
+    return (
+      <ListSeparator
+        spacing={{left: leftSideSpacing}}
+        key={`${sectionId}-${rowId}`}
+        style={styles.separator}
+      />
+    )
+  }
+
   render() {
     const {
       applyFilters,
@@ -183,7 +221,6 @@ class FancyMenuView extends React.Component {
     } = this.props
 
     const {label: mealName, stations: stationMenus} = this.findMeal(meals, filters, now)
-    const stationNotes = fromPairs(stationMenus.map(m => [m.label, m.note]))
 
     const filteredByMenu = stationMenus
       .map(menu => [
@@ -204,9 +241,22 @@ class FancyMenuView extends React.Component {
     const specialsFilterEnabled = Boolean(filters.find(f =>
       f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'))
 
-    let message = ''
+    let messageView = null
     if (specialsFilterEnabled && stationMenus.length === 0) {
-      message = 'No items to show. There may be no specials today. Try changing the filters.'
+      messageView = (
+        <NoticeView
+          style={styles.container}
+          text='No items to show. There may be no specials today. Try changing the filters.'
+        />
+      )
+    }
+    if (!size(grouped)) {
+      messageView = (
+        <NoticeView
+          style={styles.container}
+          text='No items to show. Try changing the filters.'
+        />
+      )
     }
 
     return (
@@ -217,16 +267,27 @@ class FancyMenuView extends React.Component {
           filters={filters}
           onPress={this.openFilterView}
         />
-        <MenuListView
-          data={grouped}
-          stationNotes={stationNotes}
-          message={message}
-          corIcons={this.props.menuCorIcons}
-          // We can't conditionally show the star – wierd things happen, like
-          // the first two items having a star and none of the rest.
-          //badgeSpecials={!specialsFilterEnabled}
-          badgeSpecials
-        />
+        {messageView
+          ? messageView
+          : <SimpleListView
+            style={styles.container}
+            forceBottomInset={true}
+            data={grouped}
+            renderSeparator={this.renderSeparator}
+            renderSectionHeader={this.renderSectionHeader}
+          >
+            {(rowData: MenuItemType) =>
+              <FoodItemRow
+                data={rowData}
+                corIcons={this.props.menuCorIcons}
+                // We can't conditionally show the star – wierd things happen, like
+                // the first two items having a star and none of the rest.
+                //badgeSpecials={!specialsFilterEnabled}
+                badgeSpecials={true}
+                spacing={{left: leftSideSpacing}}
+              />}
+          </SimpleListView>
+        }
       </View>
     )
   }
