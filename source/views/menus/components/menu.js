@@ -1,8 +1,10 @@
 // @flow
 import React from 'react'
-import {StyleSheet, Platform, ListView} from 'react-native'
+import {StyleSheet} from 'react-native'
+import SimpleListView from '../../components/listview'
 import {NoticeView} from '../../components/notice'
 import {FoodItemRow} from './food-item-row'
+import size from 'lodash/size'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
 import type {MenuItemType, ProcessedMenuPropsType, MasterCorIconMapType} from '../types'
 
@@ -15,27 +17,6 @@ const styles = StyleSheet.create({
 })
 
 export class MenuListView extends React.Component {
-  state = {
-    dataSource: new ListView.DataSource({
-      rowHasChanged: (row1, row2) => row1 !== row2,
-      sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
-    }),
-  }
-
-  componentWillMount() {
-    this.load(this.props.data)
-  }
-
-  componentWillReceiveProps(newProps: {data: ProcessedMenuPropsType}) {
-    this.load(newProps.data)
-  }
-
-  load(data: ProcessedMenuPropsType) {
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRowsAndSections(data),
-    })
-  }
-
   props: {
     badgeSpecials: boolean,
     data: ProcessedMenuPropsType,
@@ -56,17 +37,6 @@ export class MenuListView extends React.Component {
     )
   }
 
-  renderRow = (rowData: MenuItemType) => {
-    return (
-      <FoodItemRow
-        data={rowData}
-        corIcons={this.props.corIcons}
-        badgeSpecials={this.props.badgeSpecials}
-        spacing={{left: leftSideSpacing}}
-      />
-    )
-  }
-
   renderSeparator = (sectionId: string, rowId: string) => {
     return (
       <ListSeparator
@@ -82,28 +52,27 @@ export class MenuListView extends React.Component {
       return <NoticeView style={styles.container} text={this.props.message} />
     }
 
-    if (!this.state.dataSource.getRowCount()) {
+    if (!size(this.props.data)) {
       return <NoticeView style={styles.container} text='No items to show. Try changing the filters.' />
     }
 
     return (
-      <ListView
+      <SimpleListView
         style={styles.container}
-        initialListSize={12}
-        pageSize={4}
-        removeClippedSubviews={false}
-        // we have to disable the automatic content-inset calc here and do it
-        // manually, because there appears to be a bug where the ListView
-        // fails to auto-calculate when the data is loaded after the listview
-        // mounts
-        automaticallyAdjustContentInsets={false}
-        contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
-        dataSource={this.state.dataSource}
-        enableEmptySections={true}
-        renderRow={this.renderRow}
+        forceBottomInset={true}
+        data={this.props.data}
         renderSeparator={this.renderSeparator}
         renderSectionHeader={this.renderSectionHeader}
-      />
+      >
+        {(rowData: MenuItemType) =>
+          <FoodItemRow
+            data={rowData}
+            corIcons={this.props.corIcons}
+            badgeSpecials={this.props.badgeSpecials}
+            spacing={{left: leftSideSpacing}}
+          />
+        }
+      </SimpleListView>
     )
   }
 }
