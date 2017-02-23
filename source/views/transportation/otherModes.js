@@ -10,7 +10,7 @@ import {
 import type {OtherModeType} from './types'
 import {data as modes} from '../../../docs/transportation.json'
 import * as c from '../components/colors'
-import Button from 'react-native-button' // the button
+import Button from '../components/button'
 import {tracker} from '../../analytics'
 
 let styles = StyleSheet.create({
@@ -72,9 +72,9 @@ export default class OtherModesView extends React.Component {
             tracker.trackException(err.message)
             console.error('An error occurred', err)
           })}
-          style={styles.button}>
-          More info
-        </Button>
+          style={styles.button}
+          title='More info'
+        />
       </View>
     )
   }
