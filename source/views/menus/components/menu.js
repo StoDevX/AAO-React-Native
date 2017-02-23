@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {StyleSheet, ListView} from 'react-native'
+import {StyleSheet, Platform, ListView} from 'react-native'
 import {NoticeView} from '../../components/notice'
 import {FoodItemRow} from './food-item-row'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
@@ -97,7 +97,7 @@ export class MenuListView extends React.Component {
         // fails to auto-calculate when the data is loaded after the listview
         // mounts
         automaticallyAdjustContentInsets={false}
-        contentInset={{bottom: 49}}
+        contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
         dataSource={this.state.dataSource}
         enableEmptySections={true}
         renderRow={this.renderRow}
