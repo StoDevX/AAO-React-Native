@@ -1,12 +1,14 @@
 // @flow
 
 import React from 'react'
-import {ListView, Platform} from 'react-native'
+import {ListView, Platform, RefreshControl} from 'react-native'
 
 type PropsType = {
   data: Array<any> | {[key: string]: any},
   forceBottomInset?: boolean,
   children?: (any) => React$Component<*, *, *>,
+  onRefresh?: () => any,
+  refreshing?: boolean,
 };
 
 export default class SimpleListView extends React.Component {
@@ -48,9 +50,21 @@ export default class SimpleListView extends React.Component {
       }
       : {}
 
+    const refresher = this.props.onRefresh && 'refreshing' in this.props
+      ? {
+        refreshControl: (
+          <RefreshControl
+            onRefresh={this.props.onRefresh}
+            refreshing={this.props.refreshing}
+          />
+        )
+      }
+      : {}
+
     return (
       <ListView
         {...iosInset}
+        {...refresher}
         initialListSize={6}
         pageSize={6}
         removeClippedSubviews={false}
