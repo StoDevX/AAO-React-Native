@@ -45,8 +45,8 @@ export class NewsList extends React.Component {
 
   init(props: NewsListPropsType) {
     // remove all entries with a <form> from the list
-    const entries = props.entries.filter(entry => entry.content.includes('<form>'))
-    this.setState({dataSource: this.state.dataSource.cloneWithRows(props.entries)})
+    const entries = props.entries.filter(entry => !entry.content.includes('<form>'))
+    this.setState({dataSource: this.state.dataSource.cloneWithRows(entries)})
   }
 
   renderRow = (story: StoryType) => {
