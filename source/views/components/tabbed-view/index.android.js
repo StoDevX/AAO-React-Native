@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
-import { StyleSheet, Platform, Dimensions } from 'react-native'
-import { TabViewAnimated, TabBar } from 'react-native-tab-view'
+import {StyleSheet, Platform, Dimensions} from 'react-native'
+import {TabViewAnimated, TabBar} from 'react-native-tab-view'
 import * as c from '../colors'
 import type { TabbedViewPropsType } from './types'
 import {tracker} from '../../../analytics'
@@ -27,6 +27,10 @@ const styles = StyleSheet.create({
 export default class TabbedView extends React.Component {
   state = {
     index: 0,
+  }
+
+  componentWillMount() {
+    this._handleChangeTab(0)
   }
 
   props: TabbedViewPropsType
