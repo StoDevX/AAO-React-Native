@@ -149,7 +149,7 @@ script:
   # Lint
   - if [[ "$type" == "js" ]]; then npm run lint; fi
   # Validate data
-  - if [[ "$type" == "js" ]]; then npm run validate-data; fi
+  - if [[ "$type" == "js" ]]; then npm run validate-data -- --quiet; fi
   # Ensure that the data files have been updated
   - |
     if [[ "$type" == "js" ]]; then
