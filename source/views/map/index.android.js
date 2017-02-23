@@ -15,7 +15,6 @@ import {
   Text,
   Linking,
 } from 'react-native'
-import * as c from '../components/colors'
 import {Button} from '../components/button'
 import {data as mapInfo} from '../../../docs/map.json'
 import {tracker} from '../../analytics'
