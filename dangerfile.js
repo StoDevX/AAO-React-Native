@@ -60,7 +60,7 @@ if (eslintLog) {
   codeBlock(eslintLog)
 }
 
-if (dataValidationLog) {
+if (dataValidationLog && dataValidationLog.split('\n').some(l => !l.endsWith("is valid")) {
   warn("Something's up with the data.")
   codeBlock(dataValidationLog)
 }
@@ -70,7 +70,7 @@ if (dataBundlingStatusLog) {
   codeBlock(dataBundlingStatusLog)
 }
 
-if (flowLog !== 'No errors!') {
+if (flowLog !== 'Found 0 errors') {
   warn('Flow would like to interject about types…')
   codeBlock(flowLog)
 }
@@ -85,7 +85,7 @@ if (androidJsBundleLog) {
   codeBlock(androidJsBundleLog)
 }
 
-if (jestLog) {
+if (!jestLog.split('\n')[0].startsWith('----------')) {
   warn('Some Jest tests failed. Take a peek?')
   codeBlock(jestLog)
 }
