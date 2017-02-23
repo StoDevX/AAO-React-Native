@@ -45,14 +45,14 @@ if (thisPRSize > bigPRThreshold) {
 //
 
 const codeBlock = (contents, lang=null) => markdown(`\`\`\`${lang || ''}\n${contents}\n\`\`\``)
-const isGoodBundleLog = log => {
+const isBadBundleLog = log => {
   const lines = log.split('\n')
   const startsGood = lines[0] === 'Loading dependency graph, done.'
   const endsGood = lines[lines.length-1] === 'bundle: Done copying assets'
   if (startsGood && endsGood && lines.length === 7) {
-    return true
+    return false
   }
-  return false
+  return true
 }
 
 // Eslint
@@ -84,12 +84,12 @@ if (flowLog !== 'Found 0 errors') {
   codeBlock(flowLog)
 }
 
-if (iosJsBundleLog && isGoodBundleLog(iosJsBundleLog)) {
+if (iosJsBundleLog && isBadBundleLog(iosJsBundleLog)) {
   warn('The iOS bundle ran into an issue.')
   codeBlock(iosJsBundleLog)
 }
 
-if (androidJsBundleLog && isGoodBundleLog(androidJsBundleLog)) {
+if (androidJsBundleLog && isBadBundleLog(androidJsBundleLog)) {
   warn('The Android bundle ran into an issue.')
   codeBlock(androidJsBundleLog)
 }
