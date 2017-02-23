@@ -2,7 +2,7 @@
 import React from 'react'
 import {Text, Switch} from 'react-native'
 import {Cell, CustomCell, Section} from 'react-native-tableview-simple'
-import {getVersion} from 'react-native-device-info'
+import {version} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
 
 export class OddsAndEndsSection extends React.Component {
@@ -48,7 +48,7 @@ export class OddsAndEndsSection extends React.Component {
       <Section header='ODDS & ENDS'>
         <Cell cellStyle='RightDetail'
           title='Version'
-          detail={getVersion()}
+          detail={version}
         />
 
         <CustomCell>
@@ -60,7 +60,7 @@ export class OddsAndEndsSection extends React.Component {
         <Cell cellStyle='Basic'
           title='FAQ'
           accessory='DisclosureIndicator'
-          onPress={() => this.onPressFaqButton()}
+          onPress={this.onPressFaqButton}
         />
 
         <Cell cellStyle='Basic'
