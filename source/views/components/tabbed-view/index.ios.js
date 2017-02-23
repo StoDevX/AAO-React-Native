@@ -16,6 +16,10 @@ export default class TabbedView extends React.Component {
     selectedTab: this.props.tabs[0].id,
   }
 
+  componentWillMount() {
+    this.onChangeTab(this.props.tabs[0].id)
+  }
+
   props: TabbedViewPropsType;
 
   onChangeTab = (tabId: string) => {
