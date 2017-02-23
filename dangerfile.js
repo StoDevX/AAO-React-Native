@@ -60,7 +60,7 @@ if (eslintLog) {
   codeBlock(eslintLog)
 }
 
-if (dataValidationLog && dataValidationLog.split('\n').some(l => !l.endsWith("is valid")) {
+if (dataValidationLog && dataValidationLog.split('\n').some(l => !l.endsWith("is valid"))) {
   warn("Something's up with the data.")
   codeBlock(dataValidationLog)
 }
