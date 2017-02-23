@@ -10,7 +10,7 @@ import {
 import type {OtherModeType} from './types'
 import {data as modes} from '../../../docs/transportation.json'
 import * as c from '../components/colors'
-import Button from '../components/button'
+import {Button} from '../components/button'
 import {tracker} from '../../analytics'
 
 let styles = StyleSheet.create({
