@@ -1,6 +1,8 @@
 package com.allaboutolaf;
 
 import android.app.Application;
+import android.net.http.HttpResponseCache;
+import android.os.Bundle;
 import android.util.Log;
 
 // keep these sorted alphabetically
@@ -18,6 +20,8 @@ import com.microsoft.codepush.react.CodePush;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,5 +63,22 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+
+    // set up network cache
+    try {
+      File httpCacheDir = new File(getApplicationContext().getCacheDir(), "http");
+      long httpCacheSize = 20 * 1024 * 1024; // 20 MiB
+      HttpResponseCache.install(httpCacheDir, httpCacheSize);
+    } catch (IOException e) {
+      Log.i("allaboutolaf", "HTTP response cache installation failed:", e);
+      //      Log.i(TAG, "HTTP response cache installation failed:", e);
+    }
+  }
+
+  public void onStop() {
+    HttpResponseCache cache = HttpResponseCache.getInstalled();
+    if (cache != null) {
+      cache.flush();
+    }
   }
 }
