@@ -44,7 +44,7 @@ if (thisPRSize > bigPRThreshold) {
 // Check for and report errors from our tools
 //
 
-const codeBlock = (contents, lang=null) => `\`\`\`${lang || ''}\n${contents}\n\`\`\``
+const codeBlock = (contents, lang=null) => markdown(`\`\`\`${lang || ''}\n${contents}\n\`\`\``)
 
 // Eslint
 const eslintLog = readFileSync('logs/eslint', 'utf-8').trim()
