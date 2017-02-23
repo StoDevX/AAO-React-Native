@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {StyleSheet, RefreshControl} from 'react-native'
+import {StyleSheet} from 'react-native'
 import SimpleListView from '../components/listview'
 import type {StoryType} from './types'
 import {ListSeparator} from '../components/list'
@@ -53,12 +53,8 @@ export class NewsList extends React.Component {
         forceBottomInset={true}
         data={entries}
         renderSeparator={this.renderSeparator}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.props.loading}
-            onRefresh={this.props.onRefresh}
-          />
-        }
+        refreshing={this.props.loading}
+        onRefresh={this.props.onRefresh}
       >
         {(story: StoryType) =>
           <NewsRow

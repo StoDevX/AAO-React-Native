@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {StyleSheet, RefreshControl} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {connect} from 'react-redux'
 import delay from 'delay'
 import size from 'lodash/size'
@@ -93,12 +93,8 @@ class CoursesView extends React.Component {
         data={this.props.coursesByTerm}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.loading}
-            onRefresh={this.refresh}
-          />
-        }
+        refreshing={this.state.loading}
+        onRefresh={this.refresh}
       >
         {(course: CourseType) =>
           <ListRow style={styles.rowContainer}>

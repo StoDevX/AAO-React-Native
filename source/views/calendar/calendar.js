@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {StyleSheet, RefreshControl} from 'react-native'
+import {StyleSheet} from 'react-native'
 import SimpleListView from '../components/listview'
 import {tracker} from '../../analytics'
 import type {EventType} from './types'
@@ -153,12 +153,8 @@ export default class CalendarView extends React.Component {
         data={this.state.events}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this.refresh}
-          />
-        }
+        refreshing={this.state.refreshing}
+        onRefresh={this.refresh}
       >
         {(data: EventType) => <EventView {...data} />}
       </SimpleListView>

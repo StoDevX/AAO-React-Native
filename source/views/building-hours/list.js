@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {RefreshControl, StyleSheet, Platform} from 'react-native'
+import {StyleSheet, Platform} from 'react-native'
 import {BuildingRow} from './row'
 import SimpleListView from '../components/listview'
 import {tracker} from '../../analytics'
@@ -63,12 +63,8 @@ export class BuildingHoursList extends React.Component {
         renderSeparator={this.renderSeparator}
         contentContainerStyle={styles.container}
         removeClippedSubviews={false}  // remove after https://github.com/facebook/react-native/issues/8607#issuecomment-241715202
-        refreshControl={
-          <RefreshControl
-            refreshing={this.props.loading}
-            onRefresh={this.props.onRefresh}
-          />
-        }
+        refreshing={this.props.loading}
+        onRefresh={this.props.onRefresh}
       >
         {(data: BuildingType) =>
           <BuildingRow
