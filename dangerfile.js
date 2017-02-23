@@ -47,13 +47,13 @@ if (thisPRSize > bigPRThreshold) {
 const codeBlock = (contents, lang=null) => `\`\`\`${lang || ''}\n${contents}\n\`\`\``
 
 // Eslint
-const eslintLog = readFileSync('logs/eslint').strip()
-const dataValidationLog = readFileSync('logs/validate-data').strip()
-const dataBundlingStatusLog = readFileSync('logs/bundle-data').strip()
-const flowLog = readFileSync('logs/flow').strip()
-const iosJsBundleLog = readFileSync('logs/bundle-ios').strip()
-const androidJsBundleLog = readFileSync('logs/bundle-android').strip()
-const jestLog = readFileSync('logs/jest').strip()
+const eslintLog = readFileSync('logs/eslint', 'utf-8').trim()
+const dataValidationLog = readFileSync('logs/validate-data', 'utf-8').trim()
+const dataBundlingStatusLog = readFileSync('logs/bundle-data', 'utf-8').trim()
+const flowLog = readFileSync('logs/flow', 'utf-8').trim()
+const iosJsBundleLog = readFileSync('logs/bundle-ios', 'utf-8').trim()
+const androidJsBundleLog = readFileSync('logs/bundle-android', 'utf-8').trim()
+const jestLog = readFileSync('logs/jest', 'utf-8').trim()
 
 if (eslintLog) {
   warn('Eslint had a thing to say!')
