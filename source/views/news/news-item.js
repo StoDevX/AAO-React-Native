@@ -2,8 +2,6 @@
 import React from 'react'
 import {WebView, Platform, Linking, StatusBar} from 'react-native'
 
-import * as c from '../components/colors'
-
 import {tracker} from '../../analytics'
 import SafariView from 'react-native-safari-view'
 import {CustomTabs} from 'react-native-custom-tabs'
