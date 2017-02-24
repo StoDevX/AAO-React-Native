@@ -5,13 +5,12 @@ import {
   StyleSheet,
   View,
   ListView,
-  Linking,
 } from 'react-native'
 import type {OtherModeType} from './types'
 import {data as modes} from '../../../docs/transportation.json'
 import * as c from '../components/colors'
 import Button from 'react-native-button' // the button
-import {tracker} from '../../analytics'
+import openUrl from '../components/open-url'
 
 let styles = StyleSheet.create({
   container: {
@@ -68,10 +67,7 @@ export default class OtherModesView extends React.Component {
         <Text style={styles.title}>{data.name}</Text>
         <Text style={styles.content}>{data.description}</Text>
         <Button
-          onPress={() => Linking.openURL(data.url).catch(err => {
-            tracker.trackException(err.message)
-            console.error('An error occurred', err)
-          })}
+          onPress={() => openUrl(data.url)}
           style={styles.button}>
           More info
         </Button>
