@@ -19,6 +19,7 @@ import type {TopLevelViewPropsType} from '../types'
 import type {ViewType} from '../views'
 import {allViews} from '../views'
 import {HomeScreenButton, CELL_MARGIN} from './button'
+import openUrl from '../components/open-url'
 
 
 function HomePage({navigator, route, order, views=allViews}: {order: string[], views: ViewType[]} & TopLevelViewPropsType) {
@@ -38,13 +39,17 @@ function HomePage({navigator, route, order, views=allViews}: {order: string[], v
         <HomeScreenButton
           view={view}
           key={view.view}
-          onPress={() => navigator.push({
-            id: view.view,
-            index: route.index + 1,
-            title: view.title,
-            backButtonTitle: 'Home',
-            sceneConfig: Navigator.SceneConfigs.PushFromRight,
-          })}
+          onPress={() =>
+            view.type === 'view'
+              ? navigator.push({
+                id: view.view,
+                index: route.index + 1,
+                title: view.title,
+                backButtonTitle: 'Home',
+                sceneConfig: Navigator.SceneConfigs.PushFromRight,
+              })
+              : openUrl(view.url)
+          }
         />)
       }
     </ScrollView>
