@@ -51,7 +51,7 @@ function iosOpen(url: string) {
     // if it's around, open in safari
     .then(() => SafariView.show({url}))
     // fall back to opening in default browser
-    .catch(() => this.genericOpen(url))
+    .catch(() => genericOpen(url))
 }
 
 function androidOpen(url: string) {
@@ -62,7 +62,7 @@ function androidOpen(url: string) {
       enableDefaultShare: true,
     })
     // fall back to opening in Chrome / Browser / platform default
-    .catch(() => this.genericOpen(url))
+    .catch(() => genericOpen(url))
 }
 
 export default function openUrl(url: string) {
