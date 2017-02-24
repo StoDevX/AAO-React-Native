@@ -14,7 +14,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native'
-import Button from 'react-native-button'
+import {Button} from '../components/button'
 import * as c from '../components/colors'
 import {tracker} from '../../analytics'
 
@@ -52,8 +52,8 @@ export default function KSTOView() {
             })
           }
         }}
-        style={styles.button}
-        >Listen to KSTO</Button>
+        text='Listen to KSTO'
+      />
       <Text style={styles.kstoSubtext}>Look out for changes here soon!</Text>
     </View>
   )
@@ -76,17 +76,5 @@ let styles = StyleSheet.create({
   logo: {
     maxWidth: Dimensions.get('window').width / 1.2,
     maxHeight: Dimensions.get('window').height / 2,
-  },
-  button: {
-    backgroundColor: c.denim,
-    width: 200,
-    color: c.white,
-    alignSelf: 'center',
-    height: 30,
-    paddingTop: 3,
-    marginBottom: 10,
-    marginTop: 10,
-    borderRadius: 6,
-    overflow: 'hidden',
   },
 })

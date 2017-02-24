@@ -9,7 +9,7 @@ import {
 import type {OtherModeType} from './types'
 import {data as modes} from '../../../docs/transportation.json'
 import * as c from '../components/colors'
-import Button from 'react-native-button' // the button
+import {Button} from '../components/button'
 import openUrl from '../components/open-url'
 
 let styles = StyleSheet.create({
@@ -35,18 +35,6 @@ let styles = StyleSheet.create({
     borderWidth: 5,
     borderTopWidth: 1,
     borderColor: c.iosLightBackground,
-  },
-  button: {
-    backgroundColor: c.denim,
-    width: 200,
-    color: c.white,
-    alignSelf: 'center',
-    height: 30,
-    paddingTop: 3,
-    marginBottom: 10,
-    marginTop: 10,
-    borderRadius: 6,
-    overflow: 'hidden',
   },
 })
 

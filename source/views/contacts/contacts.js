@@ -5,10 +5,7 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  ListView,
-} from 'react-native'
+import {ListView} from 'react-native'
 import ContactCard from './card'
 import {data as numbers} from '../../../docs/contact-info.json'
 
@@ -22,7 +19,6 @@ export default class ContactView extends React.Component {
   render() {
     return (
       <ListView
-        contentContainerStyle={styles.container}
         initialListSize={3}
         removeClippedSubviews={false}
         dataSource={this.state.dataSource}
@@ -37,9 +33,3 @@ export default class ContactView extends React.Component {
     )
   }
 }
-
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
