@@ -1,2 +1,2 @@
 // @flow
-export {getBalances} from './meals'
+export {getBalances} from './balances'

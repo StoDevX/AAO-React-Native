@@ -38,7 +38,6 @@ export async function getBalances(isConnected: boolean, force?: boolean): Promis
 }
 
 async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {
-  // TODO: come up with a better story around auth for olecard
   const {username, password} = await loadLoginCredentials()
   if (!username || !password) {
     throw new Error('not logged in!')
