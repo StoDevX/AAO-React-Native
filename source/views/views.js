@@ -35,6 +35,15 @@ export const allViews: ViewType[] = [
   {type: 'view', view: 'TransportationView', title: 'Transportation', icon: 'address', tint: c.cardTable, gradient: c.grayToDarkGray},
   {type: 'view', view: 'DictionaryView', title: 'Campus Dictionary', icon: 'open-book', tint: c.olive, gradient: c.yellowToGoldLight},
   {type: 'view', view: 'StudentOrgsView', title: 'Student Orgs', icon: 'globe', tint: c.periwinkle, gradient: c.lightBlueToBlueDark},
+  {
+    type: 'url',
+    url: 'https://papercut.stolaf.edu:9192',
+    view: 'PrintReleaseView',
+    title: 'StoPrint',
+    icon: 'print',
+    tint: c.chartreuse,
+    gradient: c.tealToSeafoam,
+  },
 ]
 
 export const allViewNames = allViews.map(v => v.view)
