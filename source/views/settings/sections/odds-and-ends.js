@@ -4,8 +4,10 @@ import {Text, Switch} from 'react-native'
 import {Cell, CustomCell, Section} from 'react-native-tableview-simple'
 import {version} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
+import {setFeedbackStatus} from '../../../flux/parts/settings'
+import {connect} from 'react-redux'
 
-export class OddsAndEndsSection extends React.Component {
+class OddsAndEndsSection extends React.Component {
   props: TopLevelViewPropsType & {
     onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
     feedbackDisabled: boolean,
@@ -84,3 +86,18 @@ export class OddsAndEndsSection extends React.Component {
     )
   }
 }
+
+
+function mapStateToProps(state) {
+  return {
+    feedbackDisabled: state.settings.feedbackDisabled,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onChangeFeedbackToggle: s => dispatch(setFeedbackStatus(s)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(OddsAndEndsSection)
