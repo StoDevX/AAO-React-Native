@@ -3,8 +3,9 @@
 import React from 'react'
 import {ListView, Platform, RefreshControl} from 'react-native'
 
+type DataType = Array<any> | {[key: string]: any};
 type PropsType = {
-  data: Array<any> | {[key: string]: any},
+  data: DataType,
   forceBottomInset?: boolean,
   children?: (any) => React$Component<*, *, *>,
   onRefresh?: () => any,
@@ -30,11 +31,15 @@ export default class SimpleListView extends React.Component {
   props: PropsType;
 
   setup = (props: PropsType) => {
-    this.setState(state => {
-      return Array.isArray(props.data)
-        ? state.dataSource.cloneWithRows(props.data)
-        : state.dataSource.cloneWithRowsAndSections(props.data)
-    })
+    this.setState(state => ({
+      dataSource: this.cloneDatasource(state.dataSource, props.data)
+    }))
+  }
+
+  cloneDatasource(dataSource: ListView.DataSource, data: DataType) {
+    return Array.isArray(data)
+      ? dataSource.cloneWithRows(data)
+      : dataSource.cloneWithRowsAndSections(data)
   }
 
   render() {
