@@ -8,7 +8,7 @@ import * as c from '../components/colors'
 import CredentialsLoginSection from './sections/login-credentials'
 import TokenLoginSection from './sections/login-token'
 import OddsAndEndsSection from './sections/odds-and-ends'
-import {SupportSection} from './sections/support'
+import SupportSection from './sections/support'
 
 const styles = StyleSheet.create({
   container: {
