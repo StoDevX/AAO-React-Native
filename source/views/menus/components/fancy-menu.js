@@ -72,14 +72,14 @@ class FancyMenuView extends React.Component {
       detail: cor.description ? fastGetTrimmedText(cor.description) : '',
     }))
 
-    // Check if there is at least one special in order to show the specials-only filter
-    const stationNames = allStations.map(s => s.title)
-    const shouldShowSpecials = filter(foodItems, item =>
-      item.special && stationNames.includes(item.station)).length >= 1
-
     // Decide which meal will be selected by default
     const mealOptions = meals.map(m => ({label: m.label}))
     const selectedMeal = this.findMeal(meals, [], now)
+
+    // Check if there is at least one special in order to show the specials-only filter
+    const stationNames = selectedMeal.stations.map(s => s.label)
+    const shouldShowSpecials = filter(foodItems, item =>
+      item.special && stationNames.includes(item.station)).length >= 1
 
     return [
       {

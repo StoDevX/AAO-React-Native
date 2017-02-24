@@ -1,17 +1,12 @@
 // @flow
 import React from 'react'
-import {
-  Text,
-  StyleSheet,
-  View,
-  Linking,
-} from 'react-native'
+import {StyleSheet, Text, View} from 'react-native'
 import type {OtherModeType} from './types'
 import {data as modes} from '../../../docs/transportation.json'
 import * as c from '../components/colors'
 import {Button} from '../components/button'
 import SimpleListView from '../components/listview'
-import {tracker} from '../../analytics'
+import openUrl from '../components/open-url'
 
 let styles = StyleSheet.create({
   container: {
@@ -37,18 +32,6 @@ let styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: c.iosLightBackground,
   },
-  button: {
-    backgroundColor: c.denim,
-    width: 200,
-    color: c.white,
-    alignSelf: 'center',
-    height: 30,
-    paddingTop: 3,
-    marginBottom: 10,
-    marginTop: 10,
-    borderRadius: 6,
-    overflow: 'hidden',
-  },
 })
 
 export default function OtherModesView() {
@@ -64,10 +47,7 @@ export default function OtherModesView() {
           <Text style={styles.content}>{data.description}</Text>
           <Button
             title='More info'
-            onPress={() => Linking.openURL(data.url).catch(err => {
-              tracker.trackException(err.message)
-              console.error('An error occurred', err)
-            })}
+            onPress={() => openUrl(data.url)}
             style={styles.button}
           />
         </View>}

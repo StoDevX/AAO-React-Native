@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
-import { StyleSheet, Platform, Dimensions } from 'react-native'
-import { TabViewAnimated, TabBar } from 'react-native-tab-view'
+import {StyleSheet, Platform, Dimensions} from 'react-native'
+import {TabViewAnimated, TabBar} from 'react-native-tab-view'
 import * as c from '../colors'
 import type { TabbedViewPropsType } from './types'
 import {tracker} from '../../../analytics'
@@ -29,10 +29,14 @@ export default class TabbedView extends React.Component {
     index: 0,
   }
 
+  componentWillMount() {
+    this._handleChangeTab(0)
+  }
+
   props: TabbedViewPropsType
 
   _handleChangeTab = index => {
-    tracker.trackScreenView(this.props.tabs[index].title)
+    tracker.trackScreenView(this.props.tabs[index].id)
     this.setState({
       index,
     })

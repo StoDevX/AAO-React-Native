@@ -5,17 +5,13 @@
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
 import SimpleListView from '../components/listview'
 import ContactCard from './card'
 import {data as numbers} from '../../../docs/contact-info.json'
 
 export default function ContactView() {
   return (
-    <SimpleListView
-      contentContainerStyle={styles.container}
-      data={numbers}
-    >
+    <SimpleListView data={numbers}>
       {data =>
         <ContactCard
           title={data.title}
@@ -27,9 +23,3 @@ export default function ContactView() {
     </SimpleListView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
