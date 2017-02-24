@@ -1,7 +1,7 @@
 // @flow
 import {loadLoginCredentials} from '../login'
 import buildFormData from '../formdata'
-import {parseHtml, cssSelect, getTrimmedTextWithSpaces, getText} from '../html'
+import {parseHtml, cssSelect, getTrimmedTextWithSpaces} from '../html'
 import {OLECARD_AUTH_URL} from './urls'
 import type {BalancesShapeType} from './types'
 import fromPairs from 'lodash/fromPairs'
