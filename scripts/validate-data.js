@@ -48,7 +48,7 @@ for (const multitudes of iterator) {
       }
       break
     }
-    console.log(`${filename} is valid`)
+    args.quiet || console.log(`${filename} is valid`)
   }
 }
 
@@ -57,7 +57,7 @@ for (const multitudes of iterator) {
 function parseArgs(argv) {
   const allSchemas = readDir(SCHEMA_BASE).map(f => f.replace('.yaml', ''))
   const args = minimist(argv, {
-    boolean: ['help', 'bail'],
+    boolean: ['help', 'bail', 'quiet'],
     string: ['data', 'schema'],
     alias: {d: 'data', s: 'schema'},
     default: {

@@ -151,7 +151,7 @@ script:
   # Lint
   - if [[ "$type" == "js" ]]; then npm run lint | tee logs/eslint; fi
   # Validate data
-  - if [[ "$type" == "js" ]]; then npm run validate-data | tee logs/validate-data; fi
+  - if [[ "$type" == "js" ]]; then npm run validate-data -- --quiet | tee logs/validate-data; fi
   # Ensure that the data files have been updated
   - |
     if [[ "$type" == "js" ]]; then
