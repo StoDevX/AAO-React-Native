@@ -77,8 +77,6 @@ export class BuildingHoursDetailView extends React.Component {
     now: moment.tz(CENTRAL_TZ),
   }
 
-  props: BuildingType;
-
   componentWillMount() {
     // This updates the screen every ten seconds, so that the building
     // info statuses are updated without needing to leave and come back.
@@ -88,6 +86,8 @@ export class BuildingHoursDetailView extends React.Component {
   componentWillUnmount() {
     clearTimeout(this.state.intervalId)
   }
+
+  props: BuildingType;
 
   updateTime = () => {
     this.setState({now: moment.tz(CENTRAL_TZ)})
