@@ -1,3 +1,5 @@
+// @flow
+
 import * as c from './components/colors'
 
 export type ViewType = {view: string, title: string, icon: string, tint: string, gradient?: [string, string]};
