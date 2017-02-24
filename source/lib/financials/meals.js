@@ -1,36 +1,43 @@
 // @flow
 import {loadLoginCredentials} from '../login'
 import buildFormData from '../formdata'
-import {parseHtml, cssSelect} from '../html'
+import {parseHtml, cssSelect, getTrimmedTextWithSpaces, getText} from '../html'
 import {OLECARD_AUTH_URL} from './urls'
-import type {MealsShapeType} from './types'
+import type {BalancesShapeType} from './types'
+import fromPairs from 'lodash/fromPairs'
+import isNil from 'lodash/isNil'
 import * as cache from '../cache'
 
-type MealOrErrorType = {error: true, value: Error}|{error: false, value: MealsShapeType};
+type BalancesOrErrorType = {error: true, value: Error}|{error: false, value: BalancesShapeType};
 
-export async function getMealsRemaining(isConnected: boolean, force?: boolean): Promise<MealOrErrorType> {
-  const {isExpired, isCached, value} = await cache.getMealInfo()
+export async function getBalances(isConnected: boolean, force?: boolean): Promise<BalancesOrErrorType> {
+  const {flex, ole, print, daily, weekly, _isExpired, _isCached} = await cache.getBalances()
 
-  if (isConnected && (isExpired || !isCached || force)) {
-    const termList = await fetchMealsRemainingFromServer()
+  if (isConnected && (_isExpired || !_isCached || force)) {
+    const balances = await fetchBalancesFromServer()
 
     // we don't want to cache error responses
-    if (termList.error) {
-      return termList
+    if (balances.error) {
+      return balances
     }
 
-    await cache.setMealInfo(termList.value)
-    return termList
+    await cache.setBalances(balances.value)
+    return balances
   }
 
-  if (!value) {
-    return {error: false, value: {daily: null, weekly: null}}
+  return {
+    error: false,
+    value: {
+      flex: flex.value,
+      ole: ole.value,
+      print: print.value,
+      daily: daily.value,
+      weekly: weekly.value,
+    },
   }
-
-  return {error: false, value: value}
 }
 
-async function fetchMealsRemainingFromServer(): Promise<MealOrErrorType> {
+async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {
   // TODO: come up with a better story around auth for olecard
   const {username, password} = await loadLoginCredentials()
   if (!username || !password) {
@@ -42,20 +49,66 @@ async function fetchMealsRemainingFromServer(): Promise<MealOrErrorType> {
     password: password,
   })
   const result = await fetch(OLECARD_AUTH_URL, {method: 'POST', body: form})
-  const page = result.text()
+  const page = await result.text()
   const dom = parseHtml(page)
 
-  return parseMealsRemainingFromDom(dom)
+  return parseBalancesFromDom(dom)
 }
 
-function parseMealsRemainingFromDom(dom: mixed): MealOrErrorType {
-  const data = cssSelect('.accountrow', dom)
-  const values = data.map(item => {
-    return item.next.next.children[0].data
-  })
+function parseBalancesFromDom(dom: mixed): BalancesOrErrorType {
+  // .accountrow is the name of the row, and it's immediate sibling is a cell with id=value
+  const elements = cssSelect('.accountrow', dom)
+    .map(el => el.parent)
+    .map(getTrimmedTextWithSpaces)
+    .map(rowIntoNamedAmount)
+    .filter(Boolean)
 
-  if (values.length < 4) {
-    return {error: false, value: {weekly: null, daily: null}}
+  const namedValues = fromPairs(elements)
+
+  const flex = dollarAmountToInteger(namedValues.flex)
+  const ole = dollarAmountToInteger(namedValues.ole)
+  const print = dollarAmountToInteger(namedValues.print)
+  const daily = namedValues.daily
+  const weekly = namedValues.weekly
+
+  return {
+    error: false,
+    value: {
+      flex: isNil(flex) ? null : flex,
+      ole: isNil(ole) ? null : ole,
+      print: isNil(print) ? null : print,
+      daily: isNil(daily) ? null : daily,
+      weekly: isNil(weekly) ? null : weekly,
+    },
   }
-  return {error: false, value: {weekly: values[4], daily: values[3]}}
+}
+
+const lookupHash: Map<RegExp, string> = new Map([
+  [/ flex /i, 'flex'],
+  [/ ole /i, 'ole'],
+  [/ print/i, 'print'],
+  [/daily/i, 'daily'],
+  [/weekly/i, 'weekly'],
+])
+
+function rowIntoNamedAmount(row: string): ?[string, string] {
+  const chunks = row.split(' ')
+  const name = chunks.slice(0, -1).join(' ')
+  const amount = chunks[chunks.length - 1]
+
+  // We have a list of regexes that check the row names for keywords.
+  // Those keywords are associated with the actual key names.
+  for (const [lookup, key] of lookupHash.entries()) {
+    if (lookup.test(name)) {
+      return [key, amount]
+    }
+  }
+}
+
+function dollarAmountToInteger(amount: ?string): ?number {
+  const amountString = amount || ''
+  // remove the /[$.]/, and put the numbers into big strings (eg, $3.14 -> '314')
+  const nonDenominationalAmount = amountString.replace('$', '').split('.').join('')
+  const num = parseInt(nonDenominationalAmount, 10)
+  return Number.isNaN(num) ? null : num
 }
