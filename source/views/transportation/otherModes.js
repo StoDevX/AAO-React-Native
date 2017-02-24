@@ -11,7 +11,6 @@ import {data as modes} from '../../../docs/transportation.json'
 import * as c from '../components/colors'
 import openUrl from '../components/open-url'
 import {Button} from '../components/button'
-import {tracker} from '../../analytics'
 
 let styles = StyleSheet.create({
   container: {
