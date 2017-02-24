@@ -2,6 +2,7 @@
 
 import React from 'react'
 import {ListView, Platform, RefreshControl} from 'react-native'
+import isFunction from 'lodash/isFunction'
 
 type DataType = Array<any> | {[key: string]: any};
 type PropsType = {
@@ -44,7 +45,7 @@ export default class SimpleListView extends React.Component {
 
   render() {
     const renderRow = this.props.children
-    if (!renderRow) {
+    if (!renderRow || !isFunction(renderRow)) {
       throw new Error('SimpleListView requires a function as the child')
     }
 
