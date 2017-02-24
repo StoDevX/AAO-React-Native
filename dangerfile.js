@@ -1,5 +1,7 @@
 import { danger, fail, warn, markdown } from 'danger'
 import { readFileSync } from 'fs'
+import path from 'path'
+import kebabCase from 'lodash/kebabCase'
 
 const jsFiles = danger.git.created_files.filter(path => path.endsWith('js'))
 
@@ -39,6 +41,12 @@ if (thisPRSize > bigPRThreshold) {
   markdown(`> The Pull Request size is a bit big. We like to try and keep PRs under ${bigPRThreshold} lines per PR, and this one was ${thisPRSize} lines. If the PR contains multiple logical changes, splitting each into separate PRs will allow a faster, easier, and more thorough review.`)
 }
 
+// check for camelCase filenames
+danger.git.created_files
+  .filter(file => path.basename(file) !== kebabCase(path.basename(file)))
+  .forEach(file => {
+    warn(`Please rename ${file} to ${kebabCase(path.basename(file))}`)
+  })
 
 //
 // Check for and report errors from our tools
