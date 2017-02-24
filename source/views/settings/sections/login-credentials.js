@@ -30,6 +30,8 @@ type CredentialsSectionPropsType = {
 class CredentialsLoginSection extends React.Component {
   state = {
     loading: false,
+    username: this.props.username,
+    password: this.props.password,
   }
 
   props: CredentialsSectionPropsType;
@@ -41,7 +43,7 @@ class CredentialsLoginSection extends React.Component {
 
   logIn = async () => {
     this.setState({loading: true})
-    await this.props.logIn(this.props.username, this.props.password)
+    await this.props.logIn(this.state.username, this.state.password)
     this.setState({loading: false})
   }
 
@@ -51,7 +53,7 @@ class CredentialsLoginSection extends React.Component {
 
   render() {
     let {loggedIn, message} = this.props
-    let {loading} = this.state
+    let {loading, username, password} = this.state
 
     return (
       <SectionWithNullChildren
@@ -62,24 +64,24 @@ class CredentialsLoginSection extends React.Component {
           label='Username'
           _ref={ref => this._usernameInput = ref}
           disabled={loading}
-          onChangeText={(text='') => this.props.setCredentials(text, this.props.password)}
+          onChangeText={(text='') => this.setState({username: text})}
           onSubmitEditing={this.focusPassword}
           placeholder='username'
           returnKeyType='next'
           secureTextEntry={false}
-          value={this.props.username}
+          value={username}
         />
 
         <LoginField
           label='Password'
           _ref={ref => this._passwordInput = ref}
           disabled={loading}
-          onChangeText={(text='') => this.props.setCredentials(this.props.username, text)}
+          onChangeText={(text='') => this.setState({password: text})}
           onSubmitEditing={loggedIn ? noop : this.logIn}
           placeholder='password'
           returnKeyType='done'
           secureTextEntry={true}
-          value={this.props.password}
+          value={password}
         />
 
         {message ? <Cell title={'⚠️ ' + message} /> : null}
@@ -87,7 +89,7 @@ class CredentialsLoginSection extends React.Component {
         <LoginButton
           loggedIn={loggedIn}
           loading={loading}
-          disabled={loading || (!this.props.username || !this.props.password)}
+          disabled={loading || (!username || !password)}
           onPress={loggedIn ? this.logOut : this.logIn}
           label='St. Olaf'
         />
