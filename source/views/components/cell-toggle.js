@@ -13,7 +13,6 @@ export function CellToggle({value, onChange, label}: PropsType) {
   return (
     <Cell
       title={label}
-      cellStyle='RightDetail'
       cellAccessoryView={<Switch value={value} onValueChange={onChange} />}
     />
   )
