@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {Text, Switch} from 'react-native'
+import {Switch} from 'react-native'
 import {Cell} from 'react-native-tableview-simple'
 
 type PropsType = {
@@ -12,7 +12,8 @@ type PropsType = {
 export function CellToggle({value, onChange, label}: PropsType) {
   return (
     <Cell
-      cellContentView={<Text style={{flex: 1, fontSize: 16}}>{label}</Text>}
+      title={label}
+      cellStyle='RightDetail'
       cellAccessoryView={<Switch value={value} onValueChange={onChange} />}
     />
   )
