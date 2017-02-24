@@ -1,7 +1,8 @@
 // @flow
 import React from 'react'
 import {StyleSheet, Text, Platform, TextInput} from 'react-native'
-import {CustomCell} from 'react-native-tableview-simple'
+import {Cell} from 'react-native-tableview-simple'
+import {Row} from '../../components/layout'
 import * as c from '../../components/colors'
 
 const styles = StyleSheet.create({
@@ -12,6 +13,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   customTextInput: {
+    flex: 1,
+  },
+  contents: {
     flex: 1,
   },
   loginCell: {
@@ -44,26 +48,42 @@ export class LoginField extends React.Component {
   }
 
   render() {
+    const label = (
+      <Text onPress={this.focusInput} style={styles.label}>
+        {this.props.label}
+      </Text>
+    )
+
+    const input = (
+      <TextInput
+        ref={this.cacheRef}
+        autoCapitalize='none'
+        autoCorrect={false}
+        clearButtonMode='while-editing'
+        disabled={this.props.disabled}
+        onChangeText={this.props.onChangeText}
+        onSubmitEditing={this.props.onSubmitEditing}
+        placeholder={this.props.placeholder}
+        placeholderTextColor={c.iosPlaceholderText}
+        returnKeyType={this.props.returnKeyType}
+        secureTextEntry={this.props.secureTextEntry}
+        style={styles.customTextInput}
+        value={this.props.value}
+      />
+    )
+
+    const contents = (
+      <Row style={styles.contents}>
+        {label}
+        {input}
+      </Row>
+    )
+
     return (
-      <CustomCell contentContainerStyle={styles.loginCell}>
-        <Text onPress={this.focusInput} style={styles.label}>{this.props.label}</Text>
-        <TextInput
-          ref={this.cacheRef}
-          autoCapitalize='none'
-          autoCorrect={false}
-          cellStyle='Basic'
-          clearButtonMode='while-editing'
-          disabled={this.props.disabled}
-          onChangeText={this.props.onChangeText}
-          onSubmitEditing={this.props.onSubmitEditing}
-          placeholder={this.props.placeholder}
-          placeholderTextColor={c.iosPlaceholderText}
-          returnKeyType={this.props.returnKeyType}
-          secureTextEntry={this.props.secureTextEntry}
-          style={styles.customTextInput}
-          value={this.props.value}
-        />
-      </CustomCell>
+      <Cell
+        contentContainerStyle={styles.loginCell}
+        cellContentView={contents}
+      />
     )
   }
 }
