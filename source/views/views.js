@@ -1,3 +1,5 @@
+// @flow
+
 import * as c from './components/colors'
 
 export type ViewType =
