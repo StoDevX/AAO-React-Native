@@ -1,9 +1,6 @@
 // @flow
 import React from 'react'
-import {WebView} from 'react-native'
-
-import openUrl, {canOpenUrl} from '../components/open-url'
-
+import {HtmlView} from '../components/html-view'
 import type {StoryType} from './types'
 
 export default function NewsItem({story, embedFeaturedImage}: {story: StoryType, embedFeaturedImage: ?boolean}) {
@@ -54,34 +51,4 @@ export default function NewsItem({story, embedFeaturedImage}: {story: StoryType,
   `
 
   return <HtmlView html={content} />
-}
-
-export class HtmlView extends React.Component {
-  props: {
-    html: string,
-  }
-  _webview: WebView;
-
-  onNavigationStateChange = ({url}: {url: string}) => {
-    // iOS navigates to about:blank when you provide raw HTML to a webview.
-    // Android navigates to data:text/html;$stuff (that is, the document you passed) instead.
-    if (!canOpenUrl(url)) {
-      return
-    }
-
-    this._webview.stopLoading()
-    this._webview.goBack()
-
-    return openUrl(url)
-  }
-
-  render() {
-    return (
-      <WebView
-        ref={ref => this._webview = ref}
-        source={{html: this.props.html}}
-        onNavigationStateChange={this.onNavigationStateChange}
-      />
-    )
-  }
 }
