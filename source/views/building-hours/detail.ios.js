@@ -2,19 +2,13 @@
 
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
-
 import {buildingImages} from '../../../images/building-images'
 import type {BuildingType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
-
 import moment from 'moment-timezone'
-const CENTRAL_TZ = 'America/Winnipeg'
-
-const transparentPixel = require('../../../images/transparent.png')
-
-import {TableView, Section, CustomCell} from 'react-native-tableview-simple'
+import {TableView, Section, Cell} from 'react-native-tableview-simple'
+import {Row} from '../components/layout'
 import ParallaxView from 'react-native-parallax-view'
-
 import * as c from '../components/colors'
 import {
   normalizeBuildingSchedule,
@@ -23,6 +17,9 @@ import {
   getShortBuildingStatus,
   isBuildingOpenAtMoment,
 } from './building-hours-helpers'
+
+const CENTRAL_TZ = 'America/Winnipeg'
+const transparentPixel = require('../../../images/transparent.png')
 
 const styles = StyleSheet.create({
   title: {
