@@ -9,8 +9,8 @@ import {
 import type {OtherModeType} from './types'
 import {data as modes} from '../../../docs/transportation.json'
 import * as c from '../components/colors'
-import openUrl from '../components/open-url'
 import {Button} from '../components/button'
+import openUrl from '../components/open-url'
 
 let styles = StyleSheet.create({
   container: {
