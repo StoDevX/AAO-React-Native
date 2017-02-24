@@ -1,10 +1,8 @@
 // @flow
 import React from 'react'
-import {WebView, Platform, Linking, StatusBar} from 'react-native'
+import {WebView} from 'react-native'
 
-import {tracker} from '../../analytics'
-import SafariView from 'react-native-safari-view'
-import {CustomTabs} from 'react-native-custom-tabs'
+import openUrl, {canOpenUrl} from '../components/open-url'
 
 import type {StoryType} from './types'
 
@@ -59,93 +57,22 @@ export default function NewsItem({story, embedFeaturedImage}: {story: StoryType,
 }
 
 export class HtmlView extends React.Component {
-  state = {
-    iosOnShowListener: null,
-    iosOnDismissListener: null,
-  }
-
-  componentWillMount() {
-    SafariView.isAvailable()
-      .then(() => {
-        const iosOnShowListener = SafariView.addEventListener('onShow',
-          () => StatusBar.setBarStyle('dark-content'))
-
-        const iosOnDismissListener = SafariView.addEventListener('onDismiss',
-          () => StatusBar.setBarStyle('light-content'))
-
-        this.setState({
-          iosOnShowListener,
-          iosOnDismissListener,
-        })
-      })
-      .catch(() => {})
-  }
-
-  componentWillUnmount() {
-    SafariView.isAvailable()
-      .then(() => {
-        SafariView.removeEventListener('onShow', this.state.iosOnShowListener)
-        SafariView.removeEventListener('onDismiss', this.state.iosOnDismissListener)
-      }).catch(() => {})
-  }
-
   props: {
     html: string,
   }
-
   _webview: WebView;
-
-  genericOpen(url: string) {
-    Linking.canOpenURL(url)
-      .then(isSupported => {
-        if (!isSupported) {
-          console.warn('cannot handle', url)
-        }
-        return Linking.openURL(url)
-      })
-      .catch(err => {
-        tracker.trackException(err)
-        console.error(err)
-      })
-  }
-
-  iosOpen(url: string) {
-    SafariView.isAvailable()
-    // if it's around, open in safari
-      .then(() => SafariView.show({url}))
-      // fall back to opening in default browser
-      .catch(() => this.genericOpen(url))
-  }
-
-  androidOpen(url: string) {
-    CustomTabs
-      .openURL(url, {
-        showPageTitle: true,
-        enableUrlBarHiding: true,
-        enableDefaultShare: true,
-      })
-      // fall back to opening in Chrome / Browser / platform default
-      .catch(() => this.genericOpen(url))
-  }
 
   onNavigationStateChange = ({url}: {url: string}) => {
     // iOS navigates to about:blank when you provide raw HTML to a webview.
     // Android navigates to data:text/html;$stuff (that is, the document you passed) instead.
-    if (/^about|data:/.test(url)) {
+    if (!canOpenUrl(url)) {
       return
     }
 
     this._webview.stopLoading()
     this._webview.goBack()
 
-    switch (Platform.OS) {
-      case 'android':
-        return this.androidOpen(url)
-      case 'ios':
-        return this.iosOpen(url)
-      default:
-        return this.genericOpen(url)
-    }
+    return openUrl(url)
   }
 
   render() {
