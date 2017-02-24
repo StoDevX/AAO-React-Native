@@ -4,7 +4,7 @@ import * as c from './components/colors'
 
 export type ViewType =
   | {type: 'view', view: string, title: string, icon: string, tint: string, gradient?: [string, string]}
-  | {type: 'url', url: string, title: string, icon: string, tint: string, gradient?: [string, string]};
+  | {type: 'url', view: string, url: string, title: string, icon: string, tint: string, gradient?: [string, string]};
 
 export const allViews: ViewType[] = [
   {type: 'view', view: 'MenusView', title: 'Menus', icon: 'bowl', tint: c.emerald, gradient: c.grassToLime},
