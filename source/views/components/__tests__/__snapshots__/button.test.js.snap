@@ -1,0 +1,75 @@
+exports[`test calls the callback 1`] = `
+<Button
+  onPress={[Function]}
+  style={
+    Object {
+      "alignSelf": "center",
+      "backgroundColor": "rgb(67, 114, 170)",
+      "borderRadius": 6,
+      "color": "#FFFFFF",
+      "marginVertical": 10,
+      "overflow": "hidden",
+      "paddingVertical": 10,
+      "width": 200,
+    }
+  }>
+  Push me!
+</Button>
+`;
+
+exports[`test calls the callback 2`] = `
+<Button
+  onPress={[Function]}
+  style={
+    Object {
+      "alignSelf": "center",
+      "backgroundColor": "rgb(67, 114, 170)",
+      "borderRadius": 6,
+      "color": "#FFFFFF",
+      "marginVertical": 10,
+      "overflow": "hidden",
+      "paddingVertical": 10,
+      "width": 200,
+    }
+  }>
+  Push me!
+</Button>
+`;
+
+exports[`test can change the title 1`] = `
+<Button
+  onPress={[Function]}
+  style={
+    Object {
+      "alignSelf": "center",
+      "backgroundColor": "rgb(67, 114, 170)",
+      "borderRadius": 6,
+      "color": "#FFFFFF",
+      "marginVertical": 10,
+      "overflow": "hidden",
+      "paddingVertical": 10,
+      "width": 200,
+    }
+  }>
+  Title
+</Button>
+`;
+
+exports[`test renders 1`] = `
+<Button
+  onPress={[Function]}
+  style={
+    Object {
+      "alignSelf": "center",
+      "backgroundColor": "rgb(67, 114, 170)",
+      "borderRadius": 6,
+      "color": "#FFFFFF",
+      "marginVertical": 10,
+      "overflow": "hidden",
+      "paddingVertical": 10,
+      "width": 200,
+    }
+  }>
+  Push me!
+</Button>
+`;
