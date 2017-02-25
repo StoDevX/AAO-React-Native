@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
 })
 
 export function NoticeView({text, style, spinner, buttonText, onPress}: {
-  text: string,
+  text?: string,
   style?: any,
   spinner?: boolean,
   buttonText?: string,
