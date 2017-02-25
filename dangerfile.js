@@ -49,7 +49,7 @@ if (thisPRSize > bigPRThreshold) {
 }
 
 // check for camelCase filenames
-const stripext = filename => filename.split('.').slice(0, -1).join('.')
+const stripext = filename => filename.split('.')[0]
 const basename = filename => stripext(path.basename(filename))
 
 danger.git.created_files
