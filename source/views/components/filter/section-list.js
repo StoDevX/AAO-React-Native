@@ -2,9 +2,8 @@
 import React from 'react'
 import {Text, Image, StyleSheet} from 'react-native'
 import type {ListType, ListItemSpecType} from './types'
-import {Section, Cell, CustomCell} from 'react-native-tableview-simple'
-import {Row, Column} from '../layout'
-import {Checkmark} from '../checkmark'
+import {Section, Cell} from 'react-native-tableview-simple'
+import {Column} from '../layout'
 import includes from 'lodash/includes'
 import without from 'lodash/without'
 import concat from 'lodash/concat'
@@ -63,26 +62,24 @@ export function ListSection({filter, onChange}: PropsType) {
     })
   }
 
+  const hasImageColumn = options.some(val => Boolean(val.image))
   let buttons = options.map(val =>
-    <CustomCell
+    <Cell
       key={val.title}
       onPress={() => buttonPushed(val)}
-    >
-      <Row style={styles.row}>
-        {spec.showImages
-          ? <Image style={styles.icon} source={val.image} />
-          : null}
-
-        <Column flex={1}>
+      disableImageResize={true}
+      image={spec.showImages && <Image style={styles.icon} source={val.image} />}
+      accessory={!includes(selected, val) && 'Checkmark'}
+      cellStyle='RightDetail'
+      cellContentView={
+        <Column style={styles.content}>
           <Text style={styles.title}>{val.title}</Text>
           {val.detail
             ? <Text style={styles.detail}>{val.detail}</Text>
             : null}
         </Column>
-
-        <Checkmark transparent={!includes(selected, val)} />
-      </Row>
-    </CustomCell>
+      }
+    />
   )
 
   if (mode === 'OR') {
@@ -98,16 +95,16 @@ export function ListSection({filter, onChange}: PropsType) {
   }
 
   return (
-    <Section header={title.toUpperCase()} footer={caption}>
+    <Section header={title.toUpperCase()} footer={caption} separatorInsetLeft={hasImageColumn ? 45 : undefined}>
       {buttons}
     </Section>
   )
 }
 
 const styles = StyleSheet.create({
-  row: {
-    alignItems: 'center',
-    minHeight: 24, // 24 (px?) is somehow equivalent to 44pt…
+  content: {
+    flex: 1,
+    paddingVertical: 10,
   },
   title: {
     fontSize: 16,
@@ -118,6 +115,5 @@ const styles = StyleSheet.create({
   icon: {
     width: 16,
     height: 16,
-    marginRight: 15,
   },
 })
