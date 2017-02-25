@@ -6,7 +6,7 @@ import {data as modes} from '../../../docs/transportation.json'
 import * as c from '../components/colors'
 import {Button} from '../components/button'
 import SimpleListView from '../components/listview'
-import openUrl from '../components/open-url'
+import {trackedOpenUrl} from '../components/open-url'
 
 let styles = StyleSheet.create({
   container: {
@@ -46,7 +46,10 @@ export default function OtherModesView() {
           <Text style={styles.title}>{data.name}</Text>
           <Text style={styles.content}>{data.description}</Text>
           <Button
-            onPress={() => openUrl(data.url)}
+            onPress={() => trackedOpenUrl({
+              url: data.url,
+              id: `Transportation_OtherModes_${data.name.replace(' ', '')}View`,
+            })}
             title='More info'
           />
         </View>}
