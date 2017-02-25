@@ -7,5 +7,5 @@ export function trimStationName(stationName: string) {
 
 export function trimItemLabel(label: string) {
   // remove extraneous whitespace and title-case the bonapp titles
-  return toLaxTitleCase(label.replace(/\s+/g, ' '))
+  return toLaxTitleCase((label.replace(/\s+/g, ' ')).replace(/\([^)]?.?.\)/g, ''))
 }
