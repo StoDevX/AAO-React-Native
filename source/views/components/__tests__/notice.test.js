@@ -2,11 +2,9 @@
 // @flow
 
 import React from 'react'
-import {Text} from 'react-native'
 import {shallow} from 'enzyme'
 
 import {NoticeView} from '../notice'
-import noop from 'lodash/noop'
 
 test('renders', () => {
   const tree = shallow(
