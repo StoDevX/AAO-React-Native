@@ -7,7 +7,7 @@ export function trimStationName(stationName: string) {
 
 function removeParenTags(str: string) {
   const parensRegex = / \([^)]*?\)$/
-  while (str !== str.replace(parensRegex, '')) {
+  while (str.match(parensRegex)) {
     str = str.replace(parensRegex, '')
   }
   return str
