@@ -1,7 +1,5 @@
 import { danger, fail, warn, markdown } from 'danger'
 import { readFileSync } from 'fs'
-import path from 'path'
-import kebabCase from 'lodash/kebabCase'
 const readFile = filename => {
   try {
     return readFileSync(filename, 'utf-8')
@@ -66,7 +64,6 @@ const isBadBundleLog = log => {
 // Eslint
 const eslintLog = readFile('logs/eslint').trim()
 const dataValidationLog = readFile('logs/validate-data').trim()
-const dataBundlingStatusLog = readFile('logs/bundle-data').trim()
 const flowLog = readFile('logs/flow').trim()
 const iosJsBundleLog = readFile('logs/bundle-ios').trim()
 const androidJsBundleLog = readFile('logs/bundle-android').trim()
@@ -80,11 +77,6 @@ if (eslintLog) {
 if (dataValidationLog && dataValidationLog.split('\n').some(l => !l.endsWith('is valid'))) {
   warn("Something's up with the data.")
   codeBlock(dataValidationLog)
-}
-
-if (dataBundlingStatusLog) {
-  fail("The data changed when it was re-bundled. You'll need to bundle it manually.")
-  codeBlock(dataBundlingStatusLog)
 }
 
 if (flowLog !== 'Found 0 errors') {
