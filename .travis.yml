@@ -15,6 +15,8 @@ env:
     # here so they're consistent throughout
     MATCH_KEYCHAIN_NAME: travis-ios-keychain
     MATCH_KEYCHAIN_PASSWORD: alpine
+    # this just gives us a nice label to use
+    ENCRYPTION_LABEL: 199c454344e1
 
 matrix:
   fast_finish: true
@@ -102,6 +104,17 @@ before_install:
   - PATH=`echo $PATH | sed "s/\.\/node_modules\/\.bin//g"`
   - export PATH=$PATH
   - echo $PATH
+
+  # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
+  - export ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
+  - export ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
+  - export ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
+  - export ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
+  - export DEPLOY_KEY="scripts/travisci_deploy_key"
+  - openssl aes-256-cbc -K "$ENCRYPTED_KEY" -iv "$ENCRYPTED_IV" -in "$DEPLOY_KEY.enc" -out "$DEPLOY_KEY" -d
+  - chmod 600 "$DEPLOY_KEY"
+  - eval $(ssh-agent -s)
+  - ssh-add "$DEPLOY_KEY"
 
   # make sure to use ruby 2.3
   - |
