@@ -2,19 +2,13 @@
 
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
-
 import {buildingImages} from '../../../images/building-images'
 import type {BuildingType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
-
 import moment from 'moment-timezone'
-const CENTRAL_TZ = 'America/Winnipeg'
-
-const transparentPixel = require('../../../images/transparent.png')
-
-import {TableView, Section, CustomCell} from 'react-native-tableview-simple'
+import {TableView, Section, Cell} from 'react-native-tableview-simple'
+import {Row} from '../components/layout'
 import ParallaxView from 'react-native-parallax-view'
-
 import * as c from '../components/colors'
 import {
   normalizeBuildingSchedule,
@@ -23,6 +17,9 @@ import {
   getShortBuildingStatus,
   isBuildingOpenAtMoment,
 } from './building-hours-helpers'
+
+const CENTRAL_TZ = 'America/Winnipeg'
+const transparentPixel = require('../../../images/transparent.png')
 
 const styles = StyleSheet.create({
   title: {
@@ -135,14 +132,19 @@ export class BuildingHoursDetailView extends React.Component {
                   let isActiveSchedule = set.isPhysicallyOpen !== false && schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)
 
                   return (
-                    <CustomCell key={i}>
-                      <Text numberOfLines={1} style={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]}>
-                        {summarizeDays(schedule.days)}
-                      </Text>
-                      <Text numberOfLines={1} style={[styles.scheduleHours, isActiveSchedule ? styles.bold : null]}>
-                        {formatBuildingTimes(schedule, this.state.now)}
-                      </Text>
-                    </CustomCell>
+                    <Cell
+                      key={i}
+                      cellContentView={
+                        <Row>
+                          <Text numberOfLines={1} style={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]}>
+                            {summarizeDays(schedule.days)}
+                          </Text>
+                          <Text numberOfLines={1} style={[styles.scheduleHours, isActiveSchedule ? styles.bold : null]}>
+                            {formatBuildingTimes(schedule, this.state.now)}
+                          </Text>
+                        </Row>
+                      }
+                    />
                   )
                 })}
               </Section>

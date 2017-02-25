@@ -36,7 +36,7 @@ export default class TabbedView extends React.Component {
   props: TabbedViewPropsType
 
   _handleChangeTab = index => {
-    tracker.trackScreenView(this.props.tabs[index].title)
+    tracker.trackScreenView(this.props.tabs[index].id)
     this.setState({
       index,
     })

@@ -76,6 +76,10 @@ export default function openUrl(url: string) {
   }
 }
 
+export function trackedOpenUrl({url, id}: {url: string, id?: string}) {
+  tracker.trackScreenView(id || url)
+  return openUrl(url)
+}
 
 export function canOpenUrl(url: string) {
   // iOS navigates to about:blank when you provide raw HTML to a webview.
