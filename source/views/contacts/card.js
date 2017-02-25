@@ -7,9 +7,9 @@ import {
   Text,
   Alert,
 } from 'react-native'
-
-import {Button} from '../components/button' // the button
-import Communications from 'react-native-communications' // the phone call functions
+import {Button} from '../components/button'
+import Communications from 'react-native-communications'
+import {tracker} from '../../analytics'
 
 import * as c from '../components/colors'
 
@@ -56,7 +56,10 @@ export default function ContactCard({title, phoneNumber, text, buttonText}: {tit
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.content}>{text}</Text>
       <Button
-        onPress={() => promptCall(buttonText, phoneNumber)}
+        onPress={() => {
+          tracker.trackScreenView(`ImportantContacts_${title.replace(' ', '')}View`)
+          promptCall(buttonText, phoneNumber)
+        }}
         title={buttonText}
       />
     </View>
