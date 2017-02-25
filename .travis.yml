@@ -84,6 +84,11 @@ before_install:
   - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
   - echo "Build triggered by $TRAVIS_EVENT_TYPE"
 
+  # get a single branch var for both pushes and PRs
+  - export BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+  - export REPO=$(git config remote.origin.url)
+  - export SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
+
   # only deploy from the once-daily cron-triggered jobs
   - run_deploy="no"
   - if [[ "$can_deploy" == "yes" && "$TRAVIS_EVENT_TYPE" == "cron" ]]; then run_deploy="yes"; fi
