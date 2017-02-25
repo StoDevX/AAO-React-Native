@@ -176,11 +176,13 @@ script:
   # Ensure that the data files have been updated
   - |
     if [[ "$type" == "js" ]]; then
-      # Run the data-bundling process
       npm run bundle-data
-      # If there are any changes in the output folder, kill the build.
-      # We must commit the changes ourselves, before CI runs.
-      git diff --stat --exit-code docs/ | tee logs/bundle-data
+      if ! git diff --quiet docs/; then
+        git checkout "$BRANCH"
+        git add docs/
+        git commit -m "update docs"
+        git checkout "$TRAVIS_COMMIT"
+      fi
     fi
   # Type check
   - if [[ "$type" == "js" ]]; then npm run flow -- check --quiet | tee logs/flow; fi
