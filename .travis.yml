@@ -201,6 +201,13 @@ script:
 
 after_success:
   - |
+    # todo: test this on a forked build w/maintainer access to the branch
+    if [[ "$type" == "js" ]]; then
+      git checkout "$BRANCH"
+      git push "$SSH_REPO" "$BRANCH"
+      git checkout "$TRAVIS_COMMIT"
+    fi
+  - |
     if [[ "$type" == "js" ]]; then
       npm install coveralls
       ./node_modules/.bin/coveralls < ./coverage/lcov.info
