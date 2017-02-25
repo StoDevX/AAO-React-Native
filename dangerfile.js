@@ -48,16 +48,6 @@ if (thisPRSize > bigPRThreshold) {
   markdown(`> The Pull Request size is a bit big. We like to try and keep PRs under ${bigPRThreshold} lines per PR, and this one was ${thisPRSize} lines. If the PR contains multiple logical changes, splitting each into separate PRs will allow a faster, easier, and more thorough review.`)
 }
 
-// check for camelCase filenames
-const stripext = filename => filename.split('.')[0]
-const basename = filename => stripext(path.basename(filename))
-
-danger.git.created_files
-  .filter(file => basename(file) !== kebabCase(basename(file)))
-  .forEach(file => {
-    warn(`Please rename ${file} to ${kebabCase(basename(file))}`)
-  })
-
 //
 // Check for and report errors from our tools
 //
