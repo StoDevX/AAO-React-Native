@@ -52,7 +52,7 @@ export default function KSTOView() {
             })
           }
         }}
-        text='Listen to KSTO'
+        title='Listen to KSTO'
       />
       <Text style={styles.kstoSubtext}>Look out for changes here soon!</Text>
     </View>
