@@ -139,6 +139,9 @@ script:
   # These sections will grow over time.
   # Each line is collapsed nicely in the travis output.
 
+  # Make sure that a failing command in a pipe fails the build
+  - set -o pipefail
+
   # ensure the env file exists and fill it out
   - touch .env.js
   - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js

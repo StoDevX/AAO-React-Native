@@ -46,9 +46,8 @@ export default function OtherModesView() {
           <Text style={styles.title}>{data.name}</Text>
           <Text style={styles.content}>{data.description}</Text>
           <Button
-            title='More info'
             onPress={() => openUrl(data.url)}
-            style={styles.button}
+            title='More info'
           />
         </View>}
     </SimpleListView>

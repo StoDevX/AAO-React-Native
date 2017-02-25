@@ -57,7 +57,7 @@ export function logInViaCredentials(username: string, password: string) {
   }
 }
 
-export async function logInViaToken(tokenStatus: boolean) {
+export function logInViaToken(tokenStatus: boolean) {
   return async (dispatch: () => {}) => {
     await setTokenValid(tokenStatus)
     dispatch({type: TOKEN_LOGIN, payload: tokenStatus})

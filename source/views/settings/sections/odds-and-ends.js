@@ -1,9 +1,9 @@
 // @flow
 import React from 'react'
-import {Text, Switch} from 'react-native'
-import {Cell, CustomCell, Section} from 'react-native-tableview-simple'
+import {Cell, Section} from 'react-native-tableview-simple'
 import {version} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
+import {CellToggle} from '../../components/cell-toggle'
 
 export class OddsAndEndsSection extends React.Component {
   props: TopLevelViewPropsType & {
@@ -51,11 +51,13 @@ export class OddsAndEndsSection extends React.Component {
           detail={version}
         />
 
-        <CustomCell>
-          <Text style={{flex: 1, fontSize: 16}}>Share Analytics</Text>
-          {/*These are both inverted because the toggle makes more sense as optout/optin, but the code works better as optin/optout */}
-          <Switch value={!this.props.feedbackDisabled} onValueChange={val => this.props.onChangeFeedbackToggle(!val)} />
-        </CustomCell>
+        <CellToggle
+          label='Share Analytics'
+          // These are both inverted because the toggle makes more sense as
+          // optout/optin, but the code works better as optin/optout.
+          value={!this.props.feedbackDisabled}
+          onChange={val => this.props.onChangeFeedbackToggle(!val)}
+        />
 
         <Cell cellStyle='Basic'
           title='FAQ'
