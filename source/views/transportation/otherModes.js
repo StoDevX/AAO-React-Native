@@ -56,9 +56,8 @@ export default class OtherModesView extends React.Component {
         <Text style={styles.content}>{data.description}</Text>
         <Button
           onPress={() => openUrl(data.url)}
-          style={styles.button}>
-          More info
-        </Button>
+          title='More info'
+        />
       </View>
     )
   }
