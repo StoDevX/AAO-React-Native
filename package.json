@@ -11,7 +11,7 @@
     "data": "node scripts/bundle-data.js data/ docs/",
     "flow": "flow",
     "ios": "react-native run-ios",
-    "lint": "eslint source/ index.*.js",
+    "lint": "eslint source/ *.js",
     "start": "react-native start",
     "test": "jest",
     "validate-data": "node scripts/validate-data.js"
