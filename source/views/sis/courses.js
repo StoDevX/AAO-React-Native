@@ -84,7 +84,7 @@ class CoursesView extends React.Component {
   }
 
   renderSeparator = (sectionId: string, rowId: string) => {
-    return <ListSeparator key={`${sectionId}-${rowId}`} style={styles.separator} />
+    return <ListSeparator key={`${sectionId}-${rowId}`} />
   }
 
   render() {
