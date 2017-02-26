@@ -22,11 +22,9 @@ it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
 
   expect(actual).toBeInstanceOf(Array)
   expect(actual.length).toEqual(1)
-  expect(actual[0]).toBeInstanceOf(Array)
-  expect(actual[0].length).toBe(3)
-  expect(typeof actual[0][0]).toBe('boolean')
-  expect(typeof actual[0][1]).toBe('string')
-  expect(typeof actual[0][2]).toBe('string')
+  expect(typeof actual[0].isActive).toBe('boolean')
+  expect(typeof actual[0].label).toBe('string')
+  expect(typeof actual[0].status).toBe('string')
 
   expect(actual).toMatchSnapshot()
 })
@@ -50,7 +48,7 @@ it('checks a list of schedules to see if any are open', () => {
   const actual = getDetailedBuildingStatus(building, m)
   expect(actual).toMatchSnapshot()
 
-  expect(actual[0][0]).toBe(true)
+  expect(actual[0].isActive).toBe(true)
 })
 
 it('handles multiple internal schedules for the same timeframe', () => {
@@ -71,8 +69,8 @@ it('handles multiple internal schedules for the same timeframe', () => {
   const actual = getDetailedBuildingStatus(building, m)
   expect(actual).toMatchSnapshot()
 
-  expect(actual[0][0]).toBe(false)
-  expect(actual[1][0]).toBe(true)
+  expect(actual[0].isActive).toBe(false)
+  expect(actual[1].isActive).toBe(true)
 })
 
 it('handles multiple named schedules for the same timeframe', () => {
@@ -101,9 +99,9 @@ it('handles multiple named schedules for the same timeframe', () => {
   const actual = getDetailedBuildingStatus(building, m)
   expect(actual).toMatchSnapshot()
 
-  expect(actual[0][0]).toBe(false)
-  expect(actual[1][0]).toBe(false)
-  expect(actual[2][0]).toBe(true)
+  expect(actual[0].isActive).toBe(false)
+  expect(actual[1].isActive).toBe(false)
+  expect(actual[2].isActive).toBe(true)
 })
 
 it('returns false if none are available for this day', () => {
@@ -124,7 +122,7 @@ it('returns false if none are available for this day', () => {
   const actual = getDetailedBuildingStatus(building, m)
   expect(actual).toMatchSnapshot()
 
-  expect(actual[0][0]).toBe(false)
+  expect(actual[0].isActive).toBe(false)
 })
 
 
@@ -146,5 +144,5 @@ it('returns false if none are open', () => {
   const actual = getDetailedBuildingStatus(building, m)
   expect(actual).toMatchSnapshot()
 
-  expect(actual[0][0]).toBe(false)
+  expect(actual[0].isActive).toBe(false)
 })
