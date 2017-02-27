@@ -59,3 +59,6 @@ fastlane/screenshots
 
 # scan temporary files
 fastlane/test_output
+
+# deploy key
+scripts/travisci_deploy_key
