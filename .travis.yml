@@ -28,22 +28,22 @@ matrix:
       node_js: '7'
       env: {type: 'js'}
 
-#    - os: linux
-#      dist: precise
-#      sudo: required
-#      language: android
-#      jdk: oraclejdk8
-#      env: {type: 'android', can_deploy: 'yes'}
-#      android:
-#        components:
-#          - tools
-#          - platform-tools
-#          - build-tools-23.0.1
-#          - build-tools-23.0.2
-#          - android-23
-#          - extra-android-m2repository
-#          - extra-google-m2repository
-#          - extra-android-support
+    - os: linux
+      dist: precise
+      sudo: required
+      language: android
+      jdk: oraclejdk8
+      env: {type: 'android', can_deploy: 'yes'}
+      android:
+        components:
+          - tools
+          - platform-tools
+          - build-tools-23.0.1
+          - build-tools-23.0.2
+          - android-23
+          - extra-android-m2repository
+          - extra-google-m2repository
+          - extra-android-support
 
     # - os: linux
     #   dist: precise
@@ -62,11 +62,11 @@ matrix:
     #       - extra-android-support
     #       - sys-img-armeabi-v7a-google_apis-23
 
-#    - os: osx
-#      language: objective-c
-#      osx_image: xcode8.1
-#      node_js: '7'
-#      env: {type: 'ios', can_deploy: 'yes'}
+    - os: osx
+      language: objective-c
+      osx_image: xcode8.1
+      node_js: '7'
+      env: {type: 'ios', can_deploy: 'yes'}
 
 
 # As seen in http://stackoverflow.com/a/31882307/2347774
