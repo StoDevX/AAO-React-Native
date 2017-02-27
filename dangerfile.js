@@ -94,6 +94,8 @@ if (androidJsBundleLog && isBadBundleLog(androidJsBundleLog)) {
   codeBlock(androidJsBundleLog)
 }
 
+codeBlock(jestLog)
+
 if (!jestLog.split('\n')[0].startsWith('----------')) {
   warn('Some Jest tests failed. Take a peek?')
   codeBlock(jestLog)
