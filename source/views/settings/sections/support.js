@@ -5,7 +5,7 @@ import Communications from 'react-native-communications'
 import DeviceInfo from 'react-native-device-info'
 import {version} from '../../../../package.json'
 
-export class SupportSection extends React.Component {
+export default class SupportSection extends React.Component {
   getDeviceInfo = () => {
     return `
       ----- Please do not edit below here -----

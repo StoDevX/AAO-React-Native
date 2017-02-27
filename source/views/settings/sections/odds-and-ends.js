@@ -3,9 +3,11 @@ import React from 'react'
 import {Cell, Section} from 'react-native-tableview-simple'
 import {version} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
+import {setFeedbackStatus} from '../../../flux/parts/settings'
+import {connect} from 'react-redux'
 import {CellToggle} from '../../components/cell-toggle'
 
-export class OddsAndEndsSection extends React.Component {
+class OddsAndEndsSection extends React.Component {
   props: TopLevelViewPropsType & {
     onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
     feedbackDisabled: boolean,
@@ -60,7 +62,6 @@ export class OddsAndEndsSection extends React.Component {
   }
 }
 
-
 const PushButtonCell = ({title, onPress}: {title: string, onPress: () => any}) => {
   return (
     <Cell
@@ -71,3 +72,18 @@ const PushButtonCell = ({title, onPress}: {title: string, onPress: () => any}) =
     />
   )
 }
+
+
+function mapStateToProps(state) {
+  return {
+    feedbackDisabled: state.settings.feedbackDisabled,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onChangeFeedbackToggle: s => dispatch(setFeedbackStatus(s)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(OddsAndEndsSection)
