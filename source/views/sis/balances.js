@@ -259,7 +259,7 @@ function FinancialBalancesCell({indeterminate, label, value, style}: {
 }) {
   return (
     <View style={[styles.rectangle, buttonStyles.common, buttonStyles.balances, style]}>
-      <Text style={styles.financialText} autoAdjustsFontSize={true}>
+      <Text selectable={true} style={styles.financialText} autoAdjustsFontSize={true}>
         {indeterminate ? '…' : getFormattedCurrency(value)}
       </Text>
       <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>

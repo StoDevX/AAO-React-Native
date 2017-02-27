@@ -104,10 +104,10 @@ export class BuildingHoursDetailView extends React.Component {
     const dayOfWeek = ((this.state.now.format('dd'): any): DayOfWeekEnumType)
 
     const abbr = this.props.abbreviation ? <Text style={styles.abbr}> ({this.props.abbreviation})</Text> : null
-    const title = <Text style={styles.name}>{this.props.name}{abbr}</Text>
+    const title = <Text selectable={true} style={styles.name}>{this.props.name}{abbr}</Text>
     const subtitle = this.props.subtitle
       ? <View style={styles.subtitle}>
-          <Text style={[styles.name, styles.subtitleText]}>{this.props.subtitle}</Text>
+          <Text selectable={true} style={[styles.name, styles.subtitleText]}>{this.props.subtitle}</Text>
         </View>
       : null
 
@@ -122,7 +122,7 @@ export class BuildingHoursDetailView extends React.Component {
           {subtitle}
 
           <View style={[styles.badge, {backgroundColor: bgColors[openStatus] || c.goldenrod}]}>
-            <Text style={styles.badgeText}>{openStatus}</Text>
+            <Text selectable={true} style={styles.badgeText}>{openStatus}</Text>
           </View>
 
           {<TableView>
@@ -136,10 +136,10 @@ export class BuildingHoursDetailView extends React.Component {
                       key={i}
                       cellContentView={
                         <Row>
-                          <Text numberOfLines={1} style={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]}>
+                          <Text selectable={true} numberOfLines={1} style={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]}>
                             {summarizeDays(schedule.days)}
                           </Text>
-                          <Text numberOfLines={1} style={[styles.scheduleHours, isActiveSchedule ? styles.bold : null]}>
+                          <Text selectable={true} numberOfLines={1} style={[styles.scheduleHours, isActiveSchedule ? styles.bold : null]}>
                             {formatBuildingTimes(schedule, this.state.now)}
                           </Text>
                         </Row>

@@ -161,11 +161,11 @@ export class BuildingHoursDetailView extends React.Component {
 const ScheduleRow = ({schedule, isActive, now}: {schedule: SingleBuildingScheduleType, isActive: boolean, now: momentT}) => {
   return (
     <View style={styles.scheduleRow}>
-      <Text style={[styles.scheduleDays, isActive && styles.bold]} numberOfLines={1}>
+      <Text selectable={true} style={[styles.scheduleDays, isActive && styles.bold]} numberOfLines={1}>
         {summarizeDays(schedule.days)}
       </Text>
 
-      <Text style={[styles.scheduleHours, isActive && styles.bold]} numberOfLines={1}>
+      <Text selectable={true} style={[styles.scheduleHours, isActive && styles.bold]} numberOfLines={1}>
         {formatBuildingTimes(schedule, now)}
       </Text>
     </View>

@@ -32,7 +32,7 @@ export function NoticeView({text, style, spinner, buttonText, onPress}: {
   return (
     <View style={[styles.container, style]}>
       {activityIndicator}
-      <Text style={styles.text}>
+      <Text selectable={true} style={styles.text}>
         {text || 'Notice!'}
       </Text>
       {buttonText ? <Button onPress={onPress} title={buttonText} /> : null}
