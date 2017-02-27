@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
-import {Cell} from 'react-native-tableview-simple'
-import {SectionWithNullChildren} from '../../components/section-with-null-children'
+import {Cell, Section} from 'react-native-tableview-simple'
 import type {TopLevelViewPropsType} from '../../types'
 import {LoginButton} from '../components/login-button'
 import {logInViaToken, logOutViaToken} from '../../../flux/parts/settings'
@@ -40,7 +39,7 @@ class TokenLoginSection extends React.Component {
     let {loading} = this.state
 
     return (
-      <SectionWithNullChildren
+      <Section
         header='GOOGLE LOGIN'
         footer='Google login allows SIS access, which enables flex dollars, ole dollars, and course information.'
       >
@@ -52,7 +51,7 @@ class TokenLoginSection extends React.Component {
           label='Google'
           onPress={loggedIn ? this.logOut : this.logIn}
         />
-      </SectionWithNullChildren>
+      </Section>
     )
   }
 }

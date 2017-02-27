@@ -14,7 +14,7 @@
 ; Ignore unexpected extra "@providesModule"
 .*/node_modules/.*/node_modules/fbjs/.*
 
-; Ignore the vendor/ folder, since CIs appear to stuck ruby deps in there
+; Ignore the vendor/ folder, since CIs appear to stick ruby deps in there
 <PROJECT_ROOT>/vendor/
 
 ; Ignore duplicate module providers
@@ -27,6 +27,7 @@
 .*/node_modules/jest-runtime/build/__tests__/.*
 .*/node_modules/babel-plugin-flow-react-proptypes/src/__test__/.*
 .*/node_modules/.*/examples/.*
+.*/node_modules/react-native-mock/.*
 
 [include]
 

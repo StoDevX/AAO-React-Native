@@ -15,7 +15,7 @@ import {
 } from 'react-native'
 
 import {connect} from 'react-redux'
-import {Cell, TableView} from 'react-native-tableview-simple'
+import {Cell, TableView, Section} from 'react-native-tableview-simple'
 
 import {
   updateMealsRemaining,
@@ -25,7 +25,6 @@ import {
 import delay from 'delay'
 import isNil from 'lodash/isNil'
 import * as c from '../components/colors'
-import {SectionWithNullChildren} from '../components/section-with-null-children'
 
 import type {TopLevelViewPropsType} from '../types'
 
@@ -104,7 +103,7 @@ class BalancesView extends React.Component {
         }
       >
         <TableView>
-          <SectionWithNullChildren header='BALANCES'>
+          <Section header='BALANCES'>
             <View style={styles.balancesRow}>
               <FinancialBalancesCell
                 label='Flex'
@@ -136,9 +135,9 @@ class BalancesView extends React.Component {
               />}
 
             {this.props.balancesError ? <Cell cellStyle='Basic' title={this.props.balancesError} /> : null}
-          </SectionWithNullChildren>
+          </Section>
 
-          <SectionWithNullChildren header='MEAL PLAN'>
+          <Section header='MEAL PLAN'>
             <Cell cellStyle='RightDetail'
               title='Daily Meals Left'
               detail={loading ? '…' : getFormattedMealsRemaining(dailyMeals)}
@@ -159,7 +158,7 @@ class BalancesView extends React.Component {
               />}
 
             {this.props.mealsError ? <Cell cellStyle='Basic' title={this.props.mealsError} /> : null}
-          </SectionWithNullChildren>
+          </Section>
         </TableView>
       </ScrollView>
     )

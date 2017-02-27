@@ -11,7 +11,7 @@
     "data": "node scripts/bundle-data.js data/ docs/",
     "flow": "flow",
     "ios": "react-native run-ios",
-    "lint": "eslint source/ index.*.js",
+    "lint": "eslint source/ *.js",
     "start": "react-native start",
     "test": "jest",
     "validate-data": "node scripts/validate-data.js"
@@ -38,6 +38,12 @@
     "collectCoverageFrom": [
       "source/**/*.js",
       "!**/node_modules/**"
+    ],
+    "setupFiles": [
+      "react-native-mock"
+    ],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
     ],
     "preset": "react-native"
   },
@@ -87,6 +93,8 @@
     "babel-plugin-flow-react-proptypes": "0.21.0",
     "babel-preset-react-native": "1.9.1",
     "danger": "0.11.5",
+    "enzyme": "2.7.1",
+    "enzyme-to-json": "1.5.0",
     "eslint": "3.16.1",
     "eslint-plugin-babel": "4.0.1",
     "eslint-plugin-flowtype": "2.30.0",
@@ -95,10 +103,11 @@
     "flow-bin": "0.37.4",
     "jest": "18.1.0",
     "js-yaml": "3.8.1",
-    "junk": "2.0.0",
+    "junk": "2.1.0",
     "marked": "0.3.6",
     "minimist": "1.2.0",
     "pify": "2.3.0",
+    "react-native-mock": "0.3.1",
     "react-test-renderer": "15.4.2"
   }
 }

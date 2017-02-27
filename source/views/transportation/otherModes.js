@@ -1,16 +1,12 @@
 // @flow
 import React from 'react'
-import {
-  Text,
-  StyleSheet,
-  View,
-  ListView,
-} from 'react-native'
+import {StyleSheet, Text, View} from 'react-native'
 import type {OtherModeType} from './types'
 import {data as modes} from '../../../docs/transportation.json'
 import * as c from '../components/colors'
 import {Button} from '../components/button'
-import openUrl from '../components/open-url'
+import SimpleListView from '../components/listview'
+import {trackedOpenUrl} from '../components/open-url'
 
 let styles = StyleSheet.create({
   container: {
@@ -38,38 +34,25 @@ let styles = StyleSheet.create({
   },
 })
 
-export default class OtherModesView extends React.Component {
-  state = {
-    dataSource: new ListView.DataSource({
-      rowHasChanged: this._rowHasChanged,
-    }).cloneWithRows(modes),
-  }
-
-  _rowHasChanged(r1: OtherModeType, r2: OtherModeType) {
-    return r1.name !== r2.name
-  }
-
-  _renderRow(data: OtherModeType) {
-    return (
-      <View style={styles.mode}>
-        <Text style={styles.title}>{data.name}</Text>
-        <Text style={styles.content}>{data.description}</Text>
-        <Button
-          onPress={() => openUrl(data.url)}
-          style={styles.button}>
-          More info
-        </Button>
-      </View>
-    )
-  }
-
-  render() {
-    return (
-      <ListView
-        contentContainerStyle={styles.container}
-        dataSource={this.state.dataSource}
-        renderRow={this._renderRow.bind(this)}
-      />
-    )
-  }
+export default function OtherModesView() {
+  return (
+    <SimpleListView
+      contentContainerStyle={styles.container}
+      forceBottomInset={true}
+      data={modes}
+    >
+      {(data: OtherModeType) =>
+        <View style={styles.mode}>
+          <Text style={styles.title}>{data.name}</Text>
+          <Text style={styles.content}>{data.description}</Text>
+          <Button
+            onPress={() => trackedOpenUrl({
+              url: data.url,
+              id: `Transportation_OtherModes_${data.name.replace(' ', '')}View`,
+            })}
+            title='More info'
+          />
+        </View>}
+    </SimpleListView>
+  )
 }

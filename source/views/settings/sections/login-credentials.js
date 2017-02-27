@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
-import {Cell} from 'react-native-tableview-simple'
-import {SectionWithNullChildren} from '../../components/section-with-null-children'
+import {Cell, Section} from 'react-native-tableview-simple'
 import {LoginField} from '../components/login-field'
 import {LoginButton} from '../components/login-button'
 import {
@@ -56,7 +55,7 @@ class CredentialsLoginSection extends React.Component {
     let {loading, username, password} = this.state
 
     return (
-      <SectionWithNullChildren
+      <Section
         header='ST. OLAF LOGIN'
         footer='St. Olaf login enables the "meals remaining" feature.'
       >
@@ -93,7 +92,7 @@ class CredentialsLoginSection extends React.Component {
           onPress={loggedIn ? this.logOut : this.logIn}
           label='St. Olaf'
         />
-      </SectionWithNullChildren>
+      </Section>
     )
   }
 }

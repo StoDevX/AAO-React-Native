@@ -37,22 +37,30 @@ function sisLoginCredentials(store) {
   })
 }
 
-function checkSisLogin(store) {
+async function checkSisLogin(store) {
+  const online = await NetInfo.isConnected.fetch()
+  if (!online) {
+    return
+  }
+
   // check if we can log in to the SIS
-  fetch(FINANCIALS_URL).then(r => {
-    if (r.url !== FINANCIALS_URL) {
-      return
-    }
-    const action = logInViaToken(true)
-    store.dispatch(action)
-  })
+  const r = await fetch(FINANCIALS_URL)
+  if (r.url !== FINANCIALS_URL) {
+    return
+  }
+  const action = logInViaToken(true)
+  store.dispatch(action)
 }
 
-function validateOlafCredentials(store) {
-  loadLoginCredentials().then(({username, password}={}) => {
-    const action = validateLoginCredentials(username, password)
-    store.dispatch(action)
-  })
+async function validateOlafCredentials(store) {
+  const online = await NetInfo.isConnected.fetch()
+  if (!online) {
+    return
+  }
+
+  const {username, password} = await loadLoginCredentials()
+  const action = validateLoginCredentials(username, password)
+  store.dispatch(action)
 }
 
 function loadBalances(store) {

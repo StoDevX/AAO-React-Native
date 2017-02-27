@@ -13,34 +13,10 @@ class OddsAndEndsSection extends React.Component {
     feedbackDisabled: boolean,
   };
 
-  onPressLegalButton = () => {
+  onPressButton = (id: string, title: string) => {
     this.props.navigator.push({
-      id: 'LegalView',
-      title: 'Legal',
-      index: this.props.route.index + 1,
-    })
-  };
-
-  onPressCreditsButton = () => {
-    this.props.navigator.push({
-      id: 'CreditsView',
-      title: 'Credits',
-      index: this.props.route.index + 1,
-    })
-  };
-
-  onPressPrivacyButton = () => {
-    this.props.navigator.push({
-      id: 'PrivacyView',
-      title: 'Privacy Policy',
-      index: this.props.route.index + 1,
-    })
-  };
-
-  onPressFaqButton = () => {
-    this.props.navigator.push({
-      id: 'FaqView',
-      title: 'FAQs',
+      id: id,
+      title: title,
       index: this.props.route.index + 1,
     })
   };
@@ -48,7 +24,8 @@ class OddsAndEndsSection extends React.Component {
   render () {
     return (
       <Section header='ODDS & ENDS'>
-        <Cell cellStyle='RightDetail'
+        <Cell
+          cellStyle='RightDetail'
           title='Version'
           detail={version}
         />
@@ -61,32 +38,39 @@ class OddsAndEndsSection extends React.Component {
           onChange={val => this.props.onChangeFeedbackToggle(!val)}
         />
 
-        <Cell cellStyle='Basic'
+        <PushButtonCell
           title='FAQ'
-          accessory='DisclosureIndicator'
-          onPress={this.onPressFaqButton}
+          onPress={() => this.onPressButton('FaqView', 'FAQs')}
         />
 
-        <Cell cellStyle='Basic'
+        <PushButtonCell
           title='Credits'
-          accessory='DisclosureIndicator'
-          onPress={this.onPressCreditsButton}
+          onPress={() => this.onPressButton('CreditsView', 'Credits')}
         />
 
-        <Cell cellStyle='Basic'
+        <PushButtonCell
           title='Privacy Policy'
-          accessory='DisclosureIndicator'
-          onPress={this.onPressPrivacyButton}
+          onPress={() => this.onPressButton('PrivacyView', 'Privacy Policy')}
         />
 
-        <Cell cellStyle='Basic'
+        <PushButtonCell
           title='Legal'
-          accessory='DisclosureIndicator'
-          onPress={this.onPressLegalButton}
+          onPress={() => this.onPressButton('LegalView', 'Legal')}
         />
       </Section>
     )
   }
+}
+
+const PushButtonCell = ({title, onPress}: {title: string, onPress: () => any}) => {
+  return (
+    <Cell
+      cellStyle='Basic'
+      title={title}
+      accessory='DisclosureIndicator'
+      onPress={onPress}
+    />
+  )
 }
 
 
