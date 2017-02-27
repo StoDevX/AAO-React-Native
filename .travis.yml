@@ -190,7 +190,7 @@ script:
   - if [[ "$type" == "js" ]]; then npm run bundle:ios | tee logs/bundle-ios; fi
   - if [[ "$type" == "js" ]]; then npm run bundle:android | tee logs/bundle-android; fi
   # Run tests + collect coverage info
-  - if [[ "$type" == "js" ]]; then npm run test -- --coverage | tee logs/jest; fi
+  - if [[ "$type" == "js" ]]; then npm run test -- --coverage 2>&1 | tee logs/jest; fi
   # Danger?
   - if [[ "$type" == "js" ]]; then npm run danger; fi
 
