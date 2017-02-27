@@ -96,7 +96,7 @@ if (androidJsBundleLog && isBadBundleLog(androidJsBundleLog)) {
 
 if (jestLog && jestLog.includes('FAIL')) {
   warn('Some Jest tests failed. Take a peek?')
-  const lines = jestLog.split('\n').map(l => l.trim())
-  const startIndex = lines.findIndex(l => l === 'Summary of all failing tests')
+  const lines = jestLog.split('\n')
+  const startIndex = lines.findIndex(l => l.includes('Summary of all failing tests'))
   codeBlock(lines.slice(startIndex).join('\n'))
 }
