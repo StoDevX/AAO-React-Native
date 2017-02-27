@@ -33,7 +33,7 @@ export default class SimpleListView extends React.Component {
 
   setup = (props: PropsType) => {
     this.setState(state => ({
-      dataSource: this.cloneDatasource(state.dataSource, props.data)
+      dataSource: this.cloneDatasource(state.dataSource, props.data),
     }))
   }
 
@@ -63,7 +63,7 @@ export default class SimpleListView extends React.Component {
             onRefresh={this.props.onRefresh}
             refreshing={this.props.refreshing}
           />
-        )
+        ),
       }
       : {}
 
