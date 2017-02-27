@@ -5,14 +5,11 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  Platform,
-  ListView,
-  RefreshControl,
-} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {connect} from 'react-redux'
 import delay from 'delay'
+import size from 'lodash/size'
+import SimpleListView from '../components/listview'
 import {Column} from '../components/layout'
 import {ListRow, ListSeparator, ListSectionHeader, Detail, Title} from '../components/list'
 import LoadingScreen from '../components/loading'
@@ -31,28 +28,11 @@ type CoursesViewPropsType = TopLevelViewPropsType & {
 class CoursesView extends React.Component {
   state: {
     loading: boolean,
-    dataSource: ListView.DataSource,
   } = {
-    dataSource: new ListView.DataSource({
-      rowHasChanged: (r1: any, r2: any) => r1 !== r2,
-      sectionHeaderHasChanged: (h1: any, h2: any) => h1 !== h2,
-    }),
     loading: false,
   }
 
-  componentWillMount() {
-    this.updateListview(this.props.coursesByTerm)
-  }
-
-  componentWillReceiveProps(nextProps: CoursesViewPropsType) {
-    this.updateListview(nextProps.coursesByTerm)
-  }
-
   props: CoursesViewPropsType;
-
-  updateListview(coursesByTerm) {
-    this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(coursesByTerm)})
-  }
 
   refresh = async () => {
     let start = Date.now()
@@ -65,18 +45,6 @@ class CoursesView extends React.Component {
     await delay(500 - elapsed)
 
     this.setState({loading: false})
-  }
-
-  renderRow = (course: CourseType) => {
-    return (
-      <ListRow style={styles.rowContainer}>
-        <Column>
-          <Title>{course.name}</Title>
-          <Detail>{course.deptnum}</Detail>
-          {course.instructors ? <Detail>{course.instructors}</Detail> : null}
-        </Column>
-      </ListRow>
-    )
   }
 
   renderSectionHeader = (courses: CourseType[], term: string) => {
@@ -114,29 +82,30 @@ class CoursesView extends React.Component {
       return <LoadingScreen />
     }
 
-    if (!this.state.dataSource.getRowCount()) {
+    if (!size(this.props.coursesByTerm)) {
       return <NoticeView text='No courses found.' buttonText='Try again?' onPress={this.refresh} />
     }
 
     return (
-      <ListView
+      <SimpleListView
         style={styles.listContainer}
-        automaticallyAdjustContentInsets={false}
-        contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
-        dataSource={this.state.dataSource}
-        renderRow={this.renderRow}
+        forceBottomInset={true}
+        data={this.props.coursesByTerm}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
-        removeClippedSubviews={false}
-        enableEmptySections={true}
-        pageSize={5}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.loading}
-            onRefresh={this.refresh}
-          />
-        }
-      />
+        refreshing={this.state.loading}
+        onRefresh={this.refresh}
+      >
+        {(course: CourseType) =>
+          <ListRow style={styles.rowContainer}>
+            <Column>
+              <Title>{course.name}</Title>
+              <Detail>{course.deptnum}</Detail>
+              {course.instructors ? <Detail>{course.instructors}</Detail> : null}
+            </Column>
+          </ListRow>
+        }}
+      </SimpleListView>
     )
   }
 }

@@ -97,7 +97,7 @@ rules:
 
   # flow rules
   flowtype/define-flow-type: warn
-  flowtype/space-after-type-colon: [warn, always]
-  flowtype/space-before-type-colon: [warn, never]
+  flowtype/space-after-type-colon: ['off', always]
+  flowtype/space-before-type-colon: ['off', never]
   flowtype/use-flow-type: error
   flowtype/valid-syntax: error
