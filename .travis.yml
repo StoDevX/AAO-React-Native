@@ -15,6 +15,8 @@ env:
     # here so they're consistent throughout
     MATCH_KEYCHAIN_NAME: travis-ios-keychain
     MATCH_KEYCHAIN_PASSWORD: alpine
+    # this just gives us a nice label to use
+    ENCRYPTION_LABEL: 199c454344e1
 
 matrix:
   fast_finish: true
@@ -82,6 +84,11 @@ before_install:
   - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
   - echo "Build triggered by $TRAVIS_EVENT_TYPE"
 
+  # get a single branch var for both pushes and PRs
+  - export BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+  - export REPO=$(git config remote.origin.url)
+  - export SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
+
   # only deploy from the once-daily cron-triggered jobs
   - run_deploy="no"
   - if [[ "$can_deploy" == "yes" && "$TRAVIS_EVENT_TYPE" == "cron" ]]; then run_deploy="yes"; fi
@@ -102,6 +109,17 @@ before_install:
   - PATH=`echo $PATH | sed "s/\.\/node_modules\/\.bin//g"`
   - export PATH=$PATH
   - echo $PATH
+
+  # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
+  - export ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
+  - export ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
+  - export ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
+  - export ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
+  - export DEPLOY_KEY="scripts/travisci_deploy_key"
+  - openssl aes-256-cbc -K "$ENCRYPTED_KEY" -iv "$ENCRYPTED_IV" -in "$DEPLOY_KEY.enc" -out "$DEPLOY_KEY" -d
+  - chmod 600 "$DEPLOY_KEY"
+  - eval $(ssh-agent -s)
+  - ssh-add "$DEPLOY_KEY"
 
   # make sure to use ruby 2.3
   - |
@@ -158,11 +176,13 @@ script:
   # Ensure that the data files have been updated
   - |
     if [[ "$type" == "js" ]]; then
-      # Run the data-bundling process
       npm run bundle-data
-      # If there are any changes in the output folder, kill the build.
-      # We must commit the changes ourselves, before CI runs.
-      git diff --stat --exit-code docs/ | tee logs/bundle-data
+      if ! git diff --quiet docs/; then
+        git checkout "$BRANCH"
+        git add docs/
+        git commit -m "update docs [skip ci]"
+        git checkout "$TRAVIS_COMMIT"
+      fi
     fi
   # Type check
   - if [[ "$type" == "js" ]]; then npm run flow -- check --quiet | tee logs/flow; fi
@@ -170,7 +190,7 @@ script:
   - if [[ "$type" == "js" ]]; then npm run bundle:ios | tee logs/bundle-ios; fi
   - if [[ "$type" == "js" ]]; then npm run bundle:android | tee logs/bundle-android; fi
   # Run tests + collect coverage info
-  - if [[ "$type" == "js" ]]; then npm run test -- --coverage | tee logs/jest; fi
+  - if [[ "$type" == "js" ]]; then npm run test -- --coverage 2>&1 | tee logs/jest; fi
   # Danger?
   - if [[ "$type" == "js" ]]; then npm run danger; fi
 
@@ -182,6 +202,13 @@ script:
 
 
 after_success:
+  - |
+    # todo: test this on a forked build w/maintainer access to the branch
+    if [[ "$type" == "js" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+      git checkout "$BRANCH"
+      git push "$SSH_REPO" "$BRANCH"
+      git checkout "$TRAVIS_COMMIT"
+    fi
   - |
     if [[ "$type" == "js" ]]; then
       npm install coveralls
