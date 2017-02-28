@@ -1,16 +1,7 @@
 // @flow
 import React from 'react'
-import {Share} from 'react-native'
 import {HtmlView} from '../components/html-view'
 import type {StoryType} from './types'
-
-function shareText(story: StoryType) {
-  Share.share({
-    url: story.link,
-  })
-    .then(result => console.log(result))
-    .catch(error => console.log(error.message))
-}
 
 export default function NewsItem({story, embedFeaturedImage}: {story: StoryType, embedFeaturedImage: ?boolean}) {
   const content = `
