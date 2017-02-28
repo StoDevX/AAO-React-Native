@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {StyleSheet, Share} from 'react-native'
+import {StyleSheet, Platform, Share} from 'react-native'
 import SimpleListView from '../components/listview'
 import type {StoryType} from './types'
 import {ListSeparator} from '../components/list'
@@ -56,7 +56,7 @@ export class NewsList extends React.Component {
             ? <Icon style={[style]} name='ios-share-outline' />
             : <Icon style={[style]} name='md-share' />}
         </Touchable>
-      )
+      ),
     })
   }
 
