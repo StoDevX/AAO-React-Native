@@ -1,11 +1,20 @@
 // @flow
-import type momentT from 'moment'
+import type moment from 'moment'
+
+type GoogleTimeType = {
+  dateTime: string,
+};
+export type GoogleEventType = {
+  summary: string,
+  start: GoogleTimeType,
+  end: GoogleTimeType,
+  location: string,
+};
 
 export type EventType = {
   summary: string,
   location: string,
-  startTime: momentT,
-  endTime: momentT,
-  style?: any,
+  startTime: moment,
+  endTime: moment,
   isOngoing: bool,
 }
