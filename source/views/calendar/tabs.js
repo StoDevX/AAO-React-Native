@@ -1,5 +1,6 @@
 // @flow
 import {GoogleCalendarView} from './calendar-google'
+import {PresenceCalendarView} from './calendar-presence'
 
 export default [
   {
@@ -22,6 +23,13 @@ export default [
     rnVectorIcon: {iconName: 'paw'},
     component: GoogleCalendarView,
     props: {calendarId: 'stolaf.edu_qkrej5rm8c8582dlnc28nreboc@group.calendar.google.com'},
+  },
+  {
+    id: 'StudentOrgsCalendarView',
+    title: 'Student Orgs',
+    rnVectorIcon: {iconName: 'happy'},
+    component: PresenceCalendarView,
+    props: {url: 'https://api.presence.io/stolaf/v1/events'},
   },
   {
     id: 'NorthfieldCalendarView',
