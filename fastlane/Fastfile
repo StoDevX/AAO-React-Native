@@ -159,12 +159,16 @@ platform :android do
 
   desc "Submit a new Beta Build to HockeyApp"
   lane :beta do
+    # add a keystore
+    ci_keystore
+
+    # build the app
     build
 
     # Upload to HockeyApp
     hockey(
       api_token: ENV["HOCKEYAPP_TOKEN"],
-      apk: "./android/app/build/outputs/apk/app-release-unsigned.apk",
+      apk: "./android/app/build/outputs/apk/app-rogue.apk",
       commit_sha: ENV["TRAVIS_COMMIT"],
       notes: build_notes(platform: 'Android'),
     )
