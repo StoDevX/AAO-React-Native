@@ -60,7 +60,7 @@ export class EventList extends React.Component {
       <SimpleListView
         style={styles.container}
         forceBottomInset={true}
-        data={this.props.events}
+        data={events}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
         refreshing={this.props.refreshing}
