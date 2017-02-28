@@ -101,7 +101,10 @@ export function isBuildingOpenAtMoment(schedule: SingleBuildingScheduleType, m: 
   return _isBuildingOpenAtMoment(schedule, m)
 }
 
-export function getDetailedBuildingStatus(info: BuildingType, m: momentT): [boolean, string|null, string][] {
+export function getDetailedBuildingStatus(
+  info: BuildingType,
+  m: momentT
+): Array<{isActive: boolean, label: string|null, status: string}> {
   // Friday: 9:00am – Midnight
   // -- or --
   // Friday Breakfast: 7:00am – 9:45am
@@ -116,18 +119,18 @@ export function getDetailedBuildingStatus(info: BuildingType, m: momentT): [bool
 
   let schedules = normalizeBuildingSchedule(info)
   if (!schedules.length) {
-    return [[false, null, 'Hours unknown']]
+    return [{isActive: false, label: null, status: 'Hours unknown'}]
   }
 
   let results = schedules.map(set => {
-    let prefix = set.title
+    let label = set.title
     if (set.closedForChapelTime && isChapelTime(m)) {
-      return [[false, prefix, `Closed for chapel: ${formatChapelTime(m)}`]]
+      return [{isActive: false, label, status: `Closed for chapel: ${formatChapelTime(m)}`}]
     }
 
     let filteredSchedules = set.hours.filter(sched => sched.days.includes(dayOfWeek))
     if (!filteredSchedules.length) {
-      return [[false, prefix, 'Closed today']]
+      return [{isActive: false, label, status: 'Closed today'}]
     }
 
     return filteredSchedules.map(schedule => {
@@ -136,7 +139,7 @@ export function getDetailedBuildingStatus(info: BuildingType, m: momentT): [bool
       if (set.isPhysicallyOpen === false) {
         isActive = false
       }
-      return [isActive, prefix, status]
+      return {isActive, label, status}
     })
   })
 
