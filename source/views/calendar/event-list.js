@@ -14,7 +14,6 @@ import moment from 'moment-timezone'
 import {ListSeparator, ListSectionHeader} from '../components/list'
 import {NoticeView} from '../components/notice'
 import EventView from './event-row'
-const TIMEZONE = 'America/Winnipeg'
 
 export class EventList extends React.Component {
   props: {
