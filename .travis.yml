@@ -26,14 +26,14 @@ matrix:
       sudo: false
       language: node_js
       node_js: '7'
-      env: {type: 'js'}
+      env: {js: true}
 
     - os: linux
       dist: precise
       sudo: required
       language: android
       jdk: oraclejdk8
-      env: {type: 'android', can_deploy: 'yes'}
+      env: {android: true, can_deploy: true}
       android:
         components:
           - tools
@@ -50,7 +50,7 @@ matrix:
     #   sudo: required
     #   language: android
     #   jdk: oraclejdk8
-    #   env: {type: 'android', emulator: 'yes'}
+    #   env: {android: true, emulator: true}
     #   android:
     #     components:
     #       - tools
@@ -66,7 +66,7 @@ matrix:
       language: objective-c
       osx_image: xcode8.1
       node_js: '7'
-      env: {type: 'ios', can_deploy: 'yes'}
+      env: {ios: true, can_deploy: true}
 
 
 # As seen in http://stackoverflow.com/a/31882307/2347774
@@ -90,13 +90,13 @@ before_install:
   - export SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 
   # only deploy from the once-daily cron-triggered jobs
-  - run_deploy="no"
-  - if [[ "$can_deploy" == "yes" && "$TRAVIS_EVENT_TYPE" == "cron" ]]; then run_deploy="yes"; fi
+  - run_deploy=0
+  - if [[ $can_deploy && $TRAVIS_EVENT_TYPE == "cron" ]]; then run_deploy=1; fi
   - export run_deploy=$run_deploy
 
   # force node 7 on the android builds
   - |
-    if [[ "$type" == "android" ]]; then
+    if [[ $android ]]; then
       nvm install 7
       nvm use 7
     fi
@@ -123,7 +123,7 @@ before_install:
 
   # make sure to use ruby 2.3
   - |
-    if [[ "$type" == "android" || "$type" == "ios" ]]; then
+    if [[ $android || $ios ]]; then
       rvm use 2.3 --install --binary --fuzzy
       gem install bundler
     fi
@@ -134,13 +134,13 @@ install:
   # install packages
   - npm install
   # install fastlane
-  - if [[ "$type" == "android" || "$type" == "ios" ]]; then bundle install --deployment; fi
+  - if [[ $android || $ios ]]; then bundle install --deployment; fi
 
 
 before_script:
   # Fire up the Android emulator
   - |
-    if [[ "$type" == "android" && "$emulator" == "yes" ]]; then
+    if [[ $android && $emulator ]]; then
       EmuName="react-native"
       mkdir -p "$HOME/.android/avd/$EmuName.avd/"
       echo no | android create avd --force -n "$EmuName" -t android-23 --abi google_apis/armeabi-v7a
@@ -150,7 +150,7 @@ before_script:
     fi
 
   # Fix keychain issues for iOS signing
-  - if [[ "$type" == "ios" ]]; then bundle exec fastlane ios ci_keychains; fi
+  - if [[ $ios ]]; then bundle exec fastlane ios ci_keychains; fi
 
 
 script:
@@ -170,12 +170,12 @@ script:
 
   # JS
   # Lint
-  - if [[ "$type" == "js" ]]; then npm run lint | tee logs/eslint; fi
+  - if [[ $js ]]; then npm run lint | tee logs/eslint; fi
   # Validate data
-  - if [[ "$type" == "js" ]]; then npm run validate-data -- --quiet | tee logs/validate-data; fi
+  - if [[ $js ]]; then npm run validate-data -- --quiet | tee logs/validate-data; fi
   # Ensure that the data files have been updated
   - |
-    if [[ "$type" == "js" ]]; then
+    if [[ $js ]]; then
       npm run bundle-data
       if ! git diff --quiet docs/; then
         git checkout "$BRANCH"
@@ -185,32 +185,32 @@ script:
       fi
     fi
   # Type check
-  - if [[ "$type" == "js" ]]; then npm run flow -- check --quiet | tee logs/flow; fi
+  - if [[ $js ]]; then npm run flow -- check --quiet | tee logs/flow; fi
   # Build the bundles
-  - if [[ "$type" == "js" ]]; then npm run bundle:ios | tee logs/bundle-ios; fi
-  - if [[ "$type" == "js" ]]; then npm run bundle:android | tee logs/bundle-android; fi
+  - if [[ $js ]]; then npm run bundle:ios | tee logs/bundle-ios; fi
+  - if [[ $js ]]; then npm run bundle:android | tee logs/bundle-android; fi
   # Run tests + collect coverage info
-  - if [[ "$type" == "js" ]]; then npm run test -- --coverage 2>&1 | tee logs/jest; fi
+  - if [[ $js ]]; then npm run test -- --coverage 2>&1 | tee logs/jest; fi
   # Danger?
-  - if [[ "$type" == "js" ]]; then npm run danger; fi
+  - if [[ $js ]]; then npm run danger; fi
 
   # iOS
-  - if [[ "$type" == "ios" ]]; then bundle exec fastlane ios ci_run; fi
+  - if [[ $ios ]]; then bundle exec fastlane ios ci_run; fi
 
   # Android
-  - if [[ "$type" == "android" ]]; then bundle exec fastlane android ci_run; fi
+  - if [[ $android ]]; then bundle exec fastlane android ci_run; fi
 
 
 after_success:
   - |
     # todo: test this on a forked build w/maintainer access to the branch
-    if [[ "$type" == "js" && "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+    if [[ $js && $TRAVIS_PULL_REQUEST != "false" ]]; then
       git checkout "$BRANCH"
       git push "$SSH_REPO" "$BRANCH"
       git checkout "$TRAVIS_COMMIT"
     fi
   - |
-    if [[ "$type" == "js" ]]; then
+    if [[ $js ]]; then
       npm install coveralls
       ./node_modules/.bin/coveralls < ./coverage/lcov.info
     fi
