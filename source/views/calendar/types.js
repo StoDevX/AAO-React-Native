@@ -29,10 +29,15 @@ export type PresenceEventType = {
   tags: string[],
 };
 
+type EmbeddedEventDetailType =
+  | {type: 'google', data: GoogleEventType}
+  | {type: 'presence', data: PresenceEventType}
+
 export type EventType = {
   summary: string,
   location: string,
   startTime: moment,
   endTime: moment,
   isOngoing: bool,
+  extra: EmbeddedEventDetailType,
 }

@@ -62,6 +62,7 @@ export class GoogleCalendarView extends React.Component {
         summary: event.summary,
         location: event.location,
         isOngoing: startTime.isBefore(now, 'day'),
+        extra: {type: 'google', data: event},
       }
     })
   }

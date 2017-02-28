@@ -48,6 +48,7 @@ export class PresenceCalendarView extends React.Component {
           summary: event.eventName,
           location: `Where: ${event.location}\nOrg: ${event.organizationName}`,
           isOngoing: startTime.isBefore(now, 'day'),
+          extra: {type: 'presence', data: event},
         }
       })
       .filter(event => {
