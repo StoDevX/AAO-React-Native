@@ -38,17 +38,21 @@ export class PresenceCalendarView extends React.Component {
   };
 
   convertEvents(data: PresenceEventType[], now: moment): EventType[] {
-    return data.map(event => {
-      const startTime = moment(event.startDateTimeUtc)
-      const endTime = moment(event.endDateTimeUtc)
-      return {
-        startTime,
-        endTime,
-        summary: event.eventName,
-        location: `Where: ${event.location}\nOrg: ${event.organizationName}`,
-        isOngoing: startTime.isBefore(now, 'day'),
-      }
-    })
+    return data
+      .map(event => {
+        const startTime = moment(event.startDateTimeUtc)
+        const endTime = moment(event.endDateTimeUtc)
+        return {
+          startTime,
+          endTime,
+          summary: event.eventName,
+          location: `Where: ${event.location}\nOrg: ${event.organizationName}`,
+          isOngoing: startTime.isBefore(now, 'day'),
+        }
+      })
+      .filter(event => {
+        return event.endTime.isSameOrAfter(now)
+      })
   }
 
   getEvents = async (now: moment=moment.tz(TIMEZONE)) => {
