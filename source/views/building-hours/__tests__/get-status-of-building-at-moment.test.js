@@ -36,3 +36,17 @@ it('handles after the schedule closes', () => {
 
   expect(getStatusOfBuildingAtMoment(schedule, m)).toBe('Closed')
 })
+
+it('rounds the second down when calculating times (pre-30s)', () => {
+  let m = dayMoment('Tue 7:43:30am', 'ddd h:mm:ssa')
+  let schedule = {days: ['Tu'], from: '8:00am', to: '1:00pm'}
+
+  expect(getStatusOfBuildingAtMoment(schedule, m)).toBe('Opens in 17 minutes')
+})
+
+it('rounds the second down when calculating times (post-30s)', () => {
+  let m = dayMoment('Tue 7:43:31am', 'ddd h:mm:ssa')
+  let schedule = {days: ['Tu'], from: '8:00am', to: '1:00pm'}
+
+  expect(getStatusOfBuildingAtMoment(schedule, m)).toBe('Opens in 17 minutes')
+})

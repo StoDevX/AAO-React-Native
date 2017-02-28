@@ -63,7 +63,7 @@ function findMenuIndex(dayparts: DayPartMenuType[], now: momentT): number {
   // We grab the first meal that ends sometime after `now`. The only time
   // this really fails is in the early morning, if it's like 1am and you're
   // wondering what there was at dinner.
-  let mealIndex = findIndex(times, ({end}) => now.isSameOrBefore(end, 'minute'))
+  let mealIndex = findIndex(times, ({end}) => now.isSameOrBefore(end))
 
   // If we didn't find a meal, we must be after the last meal, so we want to
   // return the last meal of the day.
