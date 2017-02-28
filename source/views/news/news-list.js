@@ -1,12 +1,14 @@
 // @flow
 import React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, Share} from 'react-native'
 import SimpleListView from '../components/listview'
 import type {StoryType} from './types'
 import {ListSeparator} from '../components/list'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {NewsRow} from './news-row'
+import Icon from 'react-native-vector-icons/Ionicons'
+import {Touchable} from '../components/touchable'
 
 const styles = StyleSheet.create({
   listContainer: {
@@ -29,6 +31,15 @@ export class NewsList extends React.Component {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
   }
 
+  shareItem = (story: StoryType) => {
+    Share.share({
+      url: story.link,
+      message: story.link,
+    })
+      .then(result => console.log(result))
+      .catch(error => console.log(error.message))
+  }
+
   onPressNews = (title: string, story: StoryType) => {
     this.props.navigator.push({
       id: 'NewsItemView',
@@ -36,6 +47,16 @@ export class NewsList extends React.Component {
       title: title,
       backButtonTitle: this.props.name,
       props: {story, embedFeaturedImage: this.props.embedFeaturedImage},
+      rightButton: ({contentContainerStyle, style}) => (
+        <Touchable
+          style={[contentContainerStyle]}
+          onPress={() => this.shareItem(story)}
+        >
+          {Platform.OS === 'ios'
+            ? <Icon style={[style]} name='ios-share-outline' />
+            : <Icon style={[style]} name='md-share' />}
+        </Touchable>
+      )
     })
   }
 
