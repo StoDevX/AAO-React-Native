@@ -27,7 +27,7 @@ export function parseHours({from: fromTime, to: toTime}: SingleBuildingScheduleT
   let close = moment.tz(toTime, TIME_FORMAT, true, CENTRAL_TZ)
   close.dayOfYear(dayOfYear)
 
-  if (close.isBefore(open, 'minute')) {
+  if (close.isBefore(open)) {
     close.add(1, 'day')
   }
 
@@ -77,11 +77,11 @@ export function formatBuildingTimes(schedule: SingleBuildingScheduleType, m: mom
 export function getStatusOfBuildingAtMoment(schedule: SingleBuildingScheduleType, m: momentT): string {
   let {open, close} = parseHours(schedule, m)
 
-  if (m.isBefore(open, 'minute') && m.clone().add(30, 'minutes').isSameOrAfter(open, 'minute')) {
+  if (m.isBefore(open) && m.clone().add(30, 'minutes').isSameOrAfter(open)) {
     return `Opens ${m.to(open)}`
   }
   if (m.isBetween(open, close, 'minute', '[)')) {
-    if (m.clone().add(30, 'minutes').isSameOrAfter(close, 'minute')) {
+    if (m.clone().add(30, 'minutes').isSameOrAfter(close)) {
       return `Closes ${m.to(close)}`
     }
     return 'Open'

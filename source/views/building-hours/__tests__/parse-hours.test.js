@@ -31,8 +31,8 @@ it('will add a day to the close time with nextDay:true', () => {
   let input = {days: [], from: '10:00am', to: '2:00am'}
   let {open, close} = parseHours(input, now)
 
-  expect(close.isAfter(open, 'minute')).toBe(true)
-  expect(close.isAfter(now, 'minute')).toBe(true)
+  expect(close.isAfter(open)).toBe(true)
+  expect(close.isAfter(now)).toBe(true)
 })
 
 describe('handles wierd times', () => {
@@ -41,7 +41,7 @@ describe('handles wierd times', () => {
     let input = {days: [], from: '10:00am', to: '2:00am'}
     let {open, close} = parseHours(input, now)
 
-    expect(now.isBetween(open, close, 'minute')).toBe(true)
+    expect(now.isBetween(open, close)).toBe(true)
   })
 
   it('handles Saturday at 1:30am', () => {
@@ -49,6 +49,6 @@ describe('handles wierd times', () => {
     let input = {days: [], from: '10:00am', to: '2:00am'}
     let {open, close} = parseHours(input, now)
 
-    expect(now.isBetween(open, close, 'minute')).toBe(true)
+    expect(now.isBetween(open, close)).toBe(true)
   })
 })
