@@ -76,7 +76,7 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
         </Row>
 
         <View style={{paddingTop: 3}}>
-          {hours.map(([isActive, label, status], i) =>
+          {hours.map(({isActive, label, status}, i) =>
             <Detail key={i} style={{paddingTop: 0}}>
               <BuildingTimeSlot
                 highlight={hours.length > 1 && isActive}
