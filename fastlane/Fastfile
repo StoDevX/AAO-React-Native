@@ -116,7 +116,7 @@ platform :ios do
   lane :ci_run do
     # I'd like to test, instead of just building, but… Xcode's tests keep
     # failing on us. So, we just build, if we're not deploying.
-    should_deploy = ENV["run_deploy"] == "yes"
+    should_deploy = ENV["run_deploy"]
     if should_deploy
       auto_beta
     else
@@ -176,7 +176,7 @@ platform :android do
 
   desc "Run the appropriate action on CI"
   lane :ci_run do
-    should_deploy = ENV["run_deploy"] == "yes"
+    should_deploy = ENV["run_deploy"]
     if should_deploy
       auto_beta
     else
