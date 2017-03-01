@@ -1,9 +1,9 @@
 // @flow
-import React from 'react';
-import {WebView, StyleSheet} from 'react-native';
-import LoadingView from '../components/loading';
-import {text as faqs} from '../../../docs/faqs.json';
-import {tracker} from '../../analytics';
+import React from 'react'
+import {WebView, StyleSheet} from 'react-native'
+import LoadingView from '../components/loading'
+import {text as faqs} from '../../../docs/faqs.json'
+import {tracker} from '../../analytics'
 
 const styles = StyleSheet.create({
   container: {
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     backgroundColor: 'transparent',
   },
-});
+})
 
 export class FaqView extends React.Component {
   state = {
@@ -21,35 +21,35 @@ export class FaqView extends React.Component {
   };
 
   componentWillMount() {
-    this.fetchData();
+    this.fetchData()
   }
 
   url = 'https://stodevx.github.io/AAO-React-Native/faqs.json';
 
   fetchData = async () => {
-    let html = faqs;
+    let html = faqs
     try {
-      let blob: {text: string} = await fetchJson(this.url);
-      html = blob.text;
+      let blob: {text: string} = await fetchJson(this.url)
+      html = blob.text
     } catch (err) {
-      html = faqs;
-      tracker.trackException(err.message);
-      console.warn(err.message);
+      html = faqs
+      tracker.trackException(err.message)
+      console.warn(err.message)
     }
 
     if (__DEV__) {
-      html = faqs;
+      html = faqs
     }
 
-    this.setState({html: html});
+    this.setState({html: html})
   };
 
   render() {
     if (!this.state.html) {
-      return <LoadingView />;
+      return <LoadingView />
     }
     return (
       <WebView style={styles.container} source={{html: this.state.html}} />
-    );
+    )
   }
 }

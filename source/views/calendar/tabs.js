@@ -1,6 +1,6 @@
 // @flow
-import {GoogleCalendarView} from './calendar-google';
-import {PresenceCalendarView} from './calendar-presence';
+import {GoogleCalendarView} from './calendar-google'
+import {PresenceCalendarView} from './calendar-presence'
 
 export default [
   {
@@ -44,4 +44,4 @@ export default [
     component: GoogleCalendarView,
     props: {calendarId: 'thisisnorthfield%40gmail.com'},
   },
-];
+]

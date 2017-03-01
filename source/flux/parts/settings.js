@@ -7,80 +7,80 @@ import {
   performLogin,
   saveLoginCredentials,
   clearLoginCredentials,
-} from '../../lib/login';
+} from '../../lib/login'
 
 import {
   setTokenValid,
   clearTokenValid,
   setAnalyticsOptOut,
   getAnalyticsOptOut,
-} from '../../lib/storage';
+} from '../../lib/storage'
 
-import {updateFinancialData, updateMealsRemaining, updateCourses} from './sis';
+import {updateFinancialData, updateMealsRemaining, updateCourses} from './sis'
 
-export const SET_LOGIN_CREDENTIALS = 'settings/SET_LOGIN_CREDENTIALS';
-export const CREDENTIALS_LOGIN = 'settings/CREDENTIALS_LOGIN';
-export const CREDENTIALS_LOGOUT = 'settings/CREDENTIALS_LOGOUT';
-export const CREDENTIALS_VALIDATE = 'settings/CREDENTIALS_VALIDATE';
-export const SET_FEEDBACK = 'settings/SET_FEEDBACK';
-export const TOKEN_LOGIN = 'settings/TOKEN_LOGIN';
-export const TOKEN_LOGOUT = 'settings/TOKEN_LOGOUT';
-export const CHANGE_THEME = 'settings/CHANGE_THEME';
+export const SET_LOGIN_CREDENTIALS = 'settings/SET_LOGIN_CREDENTIALS'
+export const CREDENTIALS_LOGIN = 'settings/CREDENTIALS_LOGIN'
+export const CREDENTIALS_LOGOUT = 'settings/CREDENTIALS_LOGOUT'
+export const CREDENTIALS_VALIDATE = 'settings/CREDENTIALS_VALIDATE'
+export const SET_FEEDBACK = 'settings/SET_FEEDBACK'
+export const TOKEN_LOGIN = 'settings/TOKEN_LOGIN'
+export const TOKEN_LOGOUT = 'settings/TOKEN_LOGOUT'
+export const CHANGE_THEME = 'settings/CHANGE_THEME'
 
 export async function setFeedbackStatus(feedbackEnabled: boolean) {
-  await setAnalyticsOptOut(feedbackEnabled);
-  return {type: SET_FEEDBACK, payload: feedbackEnabled};
+  await setAnalyticsOptOut(feedbackEnabled)
+  return {type: SET_FEEDBACK, payload: feedbackEnabled}
 }
 
 export function loadFeedbackStatus() {
-  return {type: SET_FEEDBACK, payload: getAnalyticsOptOut()};
+  return {type: SET_FEEDBACK, payload: getAnalyticsOptOut()}
 }
 
 export async function setLoginCredentials(username: string, password: string) {
-  await saveLoginCredentials(username, password);
-  return {type: SET_LOGIN_CREDENTIALS, payload: {username, password}};
+  await saveLoginCredentials(username, password)
+  return {type: SET_LOGIN_CREDENTIALS, payload: {username, password}}
 }
 
 export function logInViaCredentials(username: string, password: string) {
   return async (dispatch: () => {}) => {
-    const result = await performLogin(username, password);
-    dispatch({type: CREDENTIALS_LOGIN, payload: {username, password, result}});
+    const result = await performLogin(username, password)
+    dispatch({type: CREDENTIALS_LOGIN, payload: {username, password, result}})
 
     // if we logged in successfully, go ahead and fetch the meals remaining number
     if (result) {
-      dispatch(updateMealsRemaining());
+      dispatch(updateMealsRemaining())
     }
-  };
+  }
 }
 
 export function logInViaToken(tokenStatus: boolean) {
   return async (dispatch: () => {}) => {
-    await setTokenValid(tokenStatus);
-    dispatch({type: TOKEN_LOGIN, payload: tokenStatus});
+    await setTokenValid(tokenStatus)
+    dispatch({type: TOKEN_LOGIN, payload: tokenStatus})
 
     // if we logged in successfully, go ahead and fetch the data that requires a valid token
     if (tokenStatus) {
-      dispatch(updateFinancialData());
-      dispatch(updateCourses());
+      dispatch(updateFinancialData())
+      dispatch(updateCourses())
     }
-  };
+  }
 }
 
 export function logOutViaCredentials() {
-  return {type: CREDENTIALS_LOGOUT, payload: clearLoginCredentials()};
+  return {type: CREDENTIALS_LOGOUT, payload: clearLoginCredentials()}
 }
 
 export async function validateLoginCredentials(
   username?: string,
   password?: string,
 ) {
-  const result = await performLogin(username, password);
-  return {type: CREDENTIALS_VALIDATE, payload: {result}};
+  const result = await performLogin(username, password)
+  return {type: CREDENTIALS_VALIDATE, payload: {result}}
 }
 
 export async function logOutViaToken() {
-  await clearTokenValid();
-  return {type: TOKEN_LOGOUT};
+  await clearTokenValid()
+  return {type: TOKEN_LOGOUT}
 }
 
 const initialCredentialsState = {
@@ -88,9 +88,9 @@ const initialCredentialsState = {
   password: '',
   error: null,
   valid: false,
-};
+}
 function credentialsReducer(state = initialCredentialsState, action) {
-  const {type, payload, error} = action;
+  const {type, payload, error} = action
 
   switch (type) {
     case CREDENTIALS_VALIDATE: {
@@ -99,14 +99,14 @@ function credentialsReducer(state = initialCredentialsState, action) {
           ...state,
           valid: false,
           error: payload.message,
-        };
+        }
       }
 
       return {
         ...state,
         valid: true,
         error: null,
-      };
+      }
     }
 
     case SET_LOGIN_CREDENTIALS: {
@@ -114,7 +114,7 @@ function credentialsReducer(state = initialCredentialsState, action) {
         ...state,
         username: payload.username,
         password: payload.password,
-      };
+      }
     }
 
     case CREDENTIALS_LOGIN: {
@@ -123,7 +123,7 @@ function credentialsReducer(state = initialCredentialsState, action) {
           ...state,
           valid: false,
           error: payload.message,
-        };
+        }
       }
 
       return {
@@ -132,7 +132,7 @@ function credentialsReducer(state = initialCredentialsState, action) {
         error: null,
         username: payload.username,
         password: payload.password,
-      };
+      }
     }
 
     case CREDENTIALS_LOGOUT: {
@@ -142,11 +142,11 @@ function credentialsReducer(state = initialCredentialsState, action) {
         password: '',
         valid: false,
         error: null,
-      };
+      }
     }
 
     default:
-      return state;
+      return state
   }
 }
 
@@ -154,9 +154,9 @@ const initialTokenState = {
   status: false,
   error: null,
   valid: false,
-};
+}
 function tokenReducer(state = initialTokenState, action) {
-  const {type, payload, error} = action;
+  const {type, payload, error} = action
   switch (type) {
     case TOKEN_LOGIN: {
       if (error === true) {
@@ -165,7 +165,7 @@ function tokenReducer(state = initialTokenState, action) {
           valid: false,
           error: payload,
           status: false,
-        };
+        }
       }
 
       return {
@@ -173,7 +173,7 @@ function tokenReducer(state = initialTokenState, action) {
         valid: payload === true,
         error: null,
         status: payload,
-      };
+      }
     }
 
     case TOKEN_LOGOUT: {
@@ -182,11 +182,11 @@ function tokenReducer(state = initialTokenState, action) {
         valid: false,
         error: null,
         status: false,
-      };
+      }
     }
 
     default:
-      return state;
+      return state
   }
 }
 
@@ -197,25 +197,25 @@ const initialSettingsState = {
   credentials: undefined,
   token: undefined,
   feedbackDisabled: false,
-};
+}
 export function settings(state: Object = initialSettingsState, action: Object) {
   // start out by running the reducers for the complex chunks of the state
   state = {
     ...state,
     credentials: credentialsReducer(state.credentials, action),
     token: tokenReducer(state.token, action),
-  };
+  }
 
-  const {type, payload} = action;
+  const {type, payload} = action
 
   switch (type) {
     case CHANGE_THEME:
-      return {...state, theme: payload};
+      return {...state, theme: payload}
 
     case SET_FEEDBACK:
-      return {...state, feedbackDisabled: payload};
+      return {...state, feedbackDisabled: payload}
 
     default:
-      return state;
+      return state
   }
 }

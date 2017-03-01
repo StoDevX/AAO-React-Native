@@ -1,6 +1,6 @@
 // @flow
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React from 'react'
+import {View, Text, StyleSheet} from 'react-native'
 
 const cardStyles = StyleSheet.create({
   card: {
@@ -27,7 +27,7 @@ const cardStyles = StyleSheet.create({
     paddingBottom: 2,
   },
   footerText: {},
-});
+})
 
 export function Card(
   {
@@ -55,5 +55,5 @@ export function Card(
           </View>
         : null}
     </View>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-import {PropTypes, Navigator} from 'react';
+import {PropTypes, Navigator} from 'react'
 
 export type TabDefinitionType = {
   id: string,
@@ -45,4 +45,4 @@ export const TabbedViewPropTypes = {
       props: PropTypes.object,
     }),
   ).isRequired,
-};
+}

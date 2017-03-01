@@ -1,6 +1,6 @@
 // @flow
-import React from 'react';
-import {View} from 'react-native';
+import React from 'react'
+import {View} from 'react-native'
 
 export type PropsType = {children?: any, style?: any, props: mixed};
 export const StyledComponent = ({children, style, ...props}: PropsType) => {
@@ -8,5 +8,5 @@ export const StyledComponent = ({children, style, ...props}: PropsType) => {
     <View style={[props, style]}>
       {children}
     </View>
-  );
-};
+  )
+}

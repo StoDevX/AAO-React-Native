@@ -1,7 +1,7 @@
 // @flow
-import {BonAppHostedMenu} from './menu-bonapp';
-import {GitHubHostedMenu} from './menu-github';
-import {CarletonMenuPicker} from './carleton-list';
+import {BonAppHostedMenu} from './menu-bonapp'
+import {GitHubHostedMenu} from './menu-github'
+import {CarletonMenuPicker} from './carleton-list'
 //import {BonAppPickerView} from './dev-bonapp-picker'
 
 const stolaf = [
@@ -60,6 +60,6 @@ const stolaf = [
   //   rnVectorIcon: {iconName: 'ionic'},
   //   component: BonAppPickerView,
   // },
-];
+]
 
-export default stolaf;
+export default stolaf

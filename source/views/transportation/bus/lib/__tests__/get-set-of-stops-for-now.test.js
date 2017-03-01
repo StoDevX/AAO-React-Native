@@ -1,7 +1,7 @@
-import {getSetOfStopsForNow} from '../get-set-of-stops-for-now';
-import moment from 'moment';
+import {getSetOfStopsForNow} from '../get-set-of-stops-for-now'
+import moment from 'moment'
 
-import type {BusScheduleType} from '../../types';
+import type {BusScheduleType} from '../../types'
 function makeSchedule(): BusScheduleType {
   return {
     days: ['Mo', 'Tu'],
@@ -47,13 +47,13 @@ function makeSchedule(): BusScheduleType {
         '6:12pm',
       ],
     ],
-  };
+  }
 }
 
 xit('returns the schedule for the given time', () => {
-  let now = moment('Mon 16:57', 'dddd H:mm');
-  let input = makeSchedule();
-  let actual = getSetOfStopsForNow(input, now);
+  let now = moment('Mon 16:57', 'dddd H:mm')
+  let input = makeSchedule()
+  let actual = getSetOfStopsForNow(input, now)
 
   expect(actual).toEqual([
     '4:55pm',
@@ -64,15 +64,15 @@ xit('returns the schedule for the given time', () => {
     '5:23pm',
     '5:24pm',
     '5:32pm',
-  ]);
-});
+  ])
+})
 
 xit(
   'returns the first schedule if the current time is before the first loop',
   () => {
-    let now = moment('Mon 12:00', 'dddd H:mm');
-    let input = makeSchedule();
-    let actual = getSetOfStopsForNow(input, now);
+    let now = moment('Mon 12:00', 'dddd H:mm')
+    let input = makeSchedule()
+    let actual = getSetOfStopsForNow(input, now)
 
     expect(actual).toEqual([
       '4:15pm',
@@ -83,16 +83,16 @@ xit(
       '4:43pm',
       '4:44pm',
       '4:52pm',
-    ]);
+    ])
   },
-);
+)
 
 xit(
   'returns the last schedule if the current time is after the last loop',
   () => {
-    let now = moment('Mon 23:30', 'dddd H:mm');
-    let input = makeSchedule();
-    let actual = getSetOfStopsForNow(input, now);
+    let now = moment('Mon 23:30', 'dddd H:mm')
+    let input = makeSchedule()
+    let actual = getSetOfStopsForNow(input, now)
 
     expect(actual).toEqual([
       '5:35pm',
@@ -103,6 +103,6 @@ xit(
       '6:03pm',
       '6:04pm',
       '6:12pm',
-    ]);
+    ])
   },
-);
+)

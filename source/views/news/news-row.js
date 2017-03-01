@@ -1,10 +1,10 @@
 // @flow
 
-import React from 'react';
-import {StyleSheet, Image} from 'react-native';
-import {Column, Row} from '../components/layout';
-import {ListRow, Detail, Title} from '../components/list';
-import type {StoryType} from './types';
+import React from 'react'
+import {StyleSheet, Image} from 'react-native'
+import {Column, Row} from '../components/layout'
+import {ListRow, Detail, Title} from '../components/list'
+import type {StoryType} from './types'
 
 type NewsRowPropsType = {
   onPress: () => any,
@@ -13,8 +13,8 @@ type NewsRowPropsType = {
 
 export function NewsRow({onPress, story}: NewsRowPropsType) {
   return (
-    <ListRow onPress={onPress} arrowPosition="top">
-      <Row alignItems="center">
+    <ListRow onPress={onPress} arrowPosition='top'>
+      <Row alignItems='center'>
         <Column flex={1}>
           <Title lines={1}>{story.title}</Title>
           <Detail lines={2}>{story.excerpt}</Detail>
@@ -24,7 +24,7 @@ export function NewsRow({onPress, story}: NewsRowPropsType) {
           : null}
       </Row>
     </ListRow>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -36,4 +36,4 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
   },
-});
+})

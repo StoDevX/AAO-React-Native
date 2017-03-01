@@ -1,14 +1,14 @@
 // @flow
-import React from 'react';
-import {ScrollView} from 'react-native';
-import type {BusLineType} from './types';
-import {BusLine} from './bus-line';
-import moment from 'moment-timezone';
-import {NoticeView} from '../../components/notice';
+import React from 'react'
+import {ScrollView} from 'react-native'
+import type {BusLineType} from './types'
+import {BusLine} from './bus-line'
+import moment from 'moment-timezone'
+import {NoticeView} from '../../components/notice'
 
-import {data as defaultBusLines} from '../../../../docs/bus-times.json';
+import {data as defaultBusLines} from '../../../../docs/bus-times.json'
 
-const TIMEZONE = 'America/Winnipeg';
+const TIMEZONE = 'America/Winnipeg'
 
 export default class BusView extends React.Component {
   static defaultProps = {
@@ -23,11 +23,11 @@ export default class BusView extends React.Component {
   componentWillMount() {
     // This updates the screen every second, so that the "next bus" times are
     // updated without needing to leave and come back.
-    this.setState({intervalId: setInterval(this.updateTime, 5000)});
+    this.setState({intervalId: setInterval(this.updateTime, 5000)})
   }
 
   componentWillUnmount() {
-    clearTimeout(this.state.intervalId);
+    clearTimeout(this.state.intervalId)
   }
 
   props: {
@@ -36,14 +36,14 @@ export default class BusView extends React.Component {
   };
 
   updateTime = () => {
-    this.setState({now: moment.tz(TIMEZONE)});
+    this.setState({now: moment.tz(TIMEZONE)})
   };
 
   render() {
-    let {now} = this.state;
+    let {now} = this.state
     // now = moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE)
-    const busLines = this.props.busLines;
-    const activeBusLine = busLines.find(({line}) => line === this.props.line);
+    const busLines = this.props.busLines
+    const activeBusLine = busLines.find(({line}) => line === this.props.line)
 
     if (!activeBusLine) {
       return (
@@ -54,13 +54,13 @@ export default class BusView extends React.Component {
               .join(', ')}`
           }
         />
-      );
+      )
     }
 
     return (
       <ScrollView>
         <BusLine line={activeBusLine} now={now} />
       </ScrollView>
-    );
+    )
   }
 }

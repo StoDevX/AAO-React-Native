@@ -1,9 +1,9 @@
 // @flow
-import React from 'react';
-import {View, TextInput, StyleSheet} from 'react-native';
-import {Toolbar, ToolbarButton} from '../components/toolbar';
-import type {TopLevelViewPropsType} from '../types';
-import {BonAppHostedMenu} from './menu-bonapp';
+import React from 'react'
+import {View, TextInput, StyleSheet} from 'react-native'
+import {Toolbar, ToolbarButton} from '../components/toolbar'
+import type {TopLevelViewPropsType} from '../types'
+import {BonAppHostedMenu} from './menu-bonapp'
 
 const styles = StyleSheet.create({
   default: {
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 8,
   },
-});
+})
 
 export class BonAppPickerView extends React.Component {
   state: {
@@ -27,16 +27,16 @@ export class BonAppPickerView extends React.Component {
   };
 
   componentWillMount() {
-    this.chooseMenu();
+    this.chooseMenu()
   }
 
   props: TopLevelViewPropsType;
 
   chooseCafe = (cafeId: string) => {
     if (!/^\d*$/.test(cafeId)) {
-      return;
+      return
     }
-    this.setState({cafeId});
+    this.setState({cafeId})
   };
 
   chooseMenu = () => {
@@ -45,11 +45,11 @@ export class BonAppPickerView extends React.Component {
         route={this.props.route}
         navigator={this.props.navigator}
         cafeId={this.state.cafeId}
-        name="BonApp"
+        name='BonApp'
         loadingMessage={['Loading…']}
       />
-    );
-    this.setState({menu});
+    )
+    this.setState({menu})
   };
 
   render() {
@@ -57,16 +57,16 @@ export class BonAppPickerView extends React.Component {
       <View style={{flex: 1}}>
         <Toolbar onPress={this.chooseMenu}>
           <TextInput
-            keyboardType="numeric"
+            keyboardType='numeric'
             onChangeText={this.chooseCafe}
             value={this.state.cafeId}
             style={styles.default}
             onBlur={this.chooseMenu}
           />
-          <ToolbarButton title="Go" isActive />
+          <ToolbarButton title='Go' isActive />
         </Toolbar>
         {this.state.menu}
       </View>
-    );
+    )
   }
 }
