@@ -30,18 +30,6 @@ lane :bump do |options|
   set_package_data(data: {"version" => version})
 end
 
-# Lanes specifically for the CIs
-desc "Do CI-system keychain setup"
-lane :ci_git_setup do
-  token = ENV["CI_USER_TOKEN"]
-
-  # see macoscope.com/blog/simplify-your-life-with-fastlane-match
-  # we're allowing the CI access to the keys repo
-  File.open("#{ENV['HOME']}/.netrc", "a+") do |file|
-    file << "machine github.com\n  login #{token}"
-  end
-end
-
 
 platform :ios do
   desc "Runs all the tests"
@@ -103,10 +91,15 @@ platform :ios do
   # Lanes specifically for the CIs
   desc "Do CI-system keychain setup"
   lane :ci_keychains do
+    token = ENV["CI_USER_TOKEN"]
     keychain = ENV["MATCH_KEYCHAIN_NAME"]
     password = ENV["MATCH_KEYCHAIN_PASSWORD"]
 
-    ci_git_setup
+    # see macoscope.com/blog/simplify-your-life-with-fastlane-match
+    # we're allowing the CI access to the keys repo
+    File.open("#{ENV['HOME']}/.netrc", "a+") do |file|
+      file << "machine github.com\n  login #{token}"
+    end
 
     create_keychain(
       name: keychain,
@@ -159,16 +152,12 @@ platform :android do
 
   desc "Submit a new Beta Build to HockeyApp"
   lane :beta do
-    # add a keystore
-    ci_keystore
-
-    # build the app
     build
 
     # Upload to HockeyApp
     hockey(
       api_token: ENV["HOCKEYAPP_TOKEN"],
-      apk: "./android/app/build/outputs/apk/app-rogue.apk",
+      apk: "./android/app/build/outputs/apk/app-release-unsigned.apk",
       commit_sha: ENV["TRAVIS_COMMIT"],
       notes: build_notes(platform: 'Android'),
     )
@@ -193,43 +182,6 @@ platform :android do
     else
       build
     end
-  end
-
-  lane :ci_keystore do
-    require 'fileutils'
-
-    ci_git_setup
-
-    git_url = "https://github.com/hawkrives/aao-keys"
-    dir = Dir.mktmpdir
-    command = "git clone --depth 1 '#{git_url}' '#{dir}'"
-
-    # this block pulled from https://github.com/fastlane/fastlane/blob/master/match/lib/match/git_helper.rb
-    UI.message "Cloning remote git repo..."
-    begin
-      # GIT_TERMINAL_PROMPT will fail the `git clone` command if user credentials are missing
-      FastlaneCore::CommandExecutor.execute(command: "GIT_TERMINAL_PROMPT=0 #{command}",
-                                          print_all: true,
-                                      print_command: true)
-    rescue
-      UI.error("Error cloning certificates repo, please make sure you have read access to the repository you want to use")
-      UI.error("Run the following command manually to make sure you're properly authenticated:")
-      UI.command(command)
-      UI.user_error!("Error cloning certificates git repo, please make sure you have access to the repository - see instructions above")
-    end
-
-    # don't forget – lanes run inside of ./fastlane
-    gradle_file = "gradle.properties"
-    keystore_name = "rogue-release-key.keystore"
-
-    src_dir = "#{dir}/android"
-    dest_dir = "../android/app"
-
-    # FastlaneCore::CommandExecutor.execute(command: "pwd", print_all: true, print_command: true)
-    UI.message "cp #{src_dir}/#{gradle_file} #{ENV["HOME"]}/.gradle/#{gradle_file}"
-    FileUtils.cp("#{src_dir}/#{gradle_file}", "#{ENV["HOME"]}/.gradle/#{gradle_file}")
-    UI.message "#{src_dir}/#{keystore_name} #{dest_dir}/#{keystore_name}"
-    FileUtils.cp("#{src_dir}/#{keystore_name}", "#{dest_dir}/#{keystore_name}")
   end
 end
 
