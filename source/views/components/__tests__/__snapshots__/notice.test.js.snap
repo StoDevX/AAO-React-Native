@@ -16,6 +16,7 @@ exports[`test renders 1`] = `
     accessible={true}
     allowFontScaling={true}
     ellipsizeMode="tail"
+    selectable={true}
     style={
       Object {
         "textAlign": "center",
