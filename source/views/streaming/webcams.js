@@ -4,15 +4,9 @@
  * Webcams page
  */
 
-import React from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  WebView,
-} from 'react-native'
-import {data as webcams} from '../../../docs/webcams'
+import React from 'react';
+import {StyleSheet, View, Text, ScrollView, WebView} from 'react-native';
+import {data as webcams} from '../../../docs/webcams';
 
 // const inlineVideo = url => `
 //   <style>
@@ -44,12 +38,12 @@ const videoAsThumbnail = url => `
   <video muted>
     <source src="${url}" type="application/x-mpegURL">
   </video>
-`
+`;
 
 export default function WebcamsView() {
   return (
     <ScrollView style={styles.container}>
-      {webcams.map(webcam =>
+      {webcams.map(webcam => (
         <View style={styles.row} key={webcam.name}>
           <View style={styles.webCamTitleBox}>
             <Text style={styles.webcamName}>{webcam.name}</Text>
@@ -63,9 +57,9 @@ export default function WebcamsView() {
             source={{html: videoAsThumbnail(webcam.url)}}
           />
         </View>
-      )}
+      ))}
     </ScrollView>
-  )
+  );
 }
 
 let styles = StyleSheet.create({
@@ -91,4 +85,4 @@ let styles = StyleSheet.create({
   video: {
     height: 210,
   },
-})
+});

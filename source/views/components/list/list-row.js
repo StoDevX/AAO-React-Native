@@ -1,10 +1,10 @@
 // @flow
-import React from 'react'
-import {Platform, StyleSheet, View} from 'react-native'
-import {Touchable} from '../touchable'
-import {DisclosureArrow} from './disclosure-arrow'
-import noop from 'lodash/noop'
-import isNil from 'lodash/isNil'
+import React from 'react';
+import {Platform, StyleSheet, View} from 'react-native';
+import {Touchable} from '../touchable';
+import {DisclosureArrow} from './disclosure-arrow';
+import noop from 'lodash/noop';
+import isNil from 'lodash/isNil';
 
 const styles = StyleSheet.create({
   container: {
@@ -28,12 +28,12 @@ const styles = StyleSheet.create({
   fullHeight: {
     paddingVertical: 0,
   },
-})
+});
 
 type PropsType = {
   style?: any,
   contentContainerStyle?: any,
-  arrowPosition?: 'center'|'top'|'none',
+  arrowPosition?: 'center' | 'top' | 'none',
   fullWidth?: boolean,
   fullHeight?: boolean,
   spacing?: {left?: number, right?: number},
@@ -47,18 +47,20 @@ export function ListRow(props: PropsType) {
     children,
     onPress,
     spacing: {left: leftSpacing = 15, right: rightSpacing = null} = {},
-    fullWidth=false,
-    fullHeight=false,
-  } = props
+    fullWidth = false,
+    fullHeight = false,
+  } = props;
 
-  const Component = onPress ? Touchable : View
-  const callback = onPress || noop
+  const Component = onPress ? Touchable : View;
+  const callback = onPress || noop;
 
-  const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
-  const arrowPositionStyle = {alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start'}
+  const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none');
+  const arrowPositionStyle = {
+    alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start',
+  };
   const arrow = arrowPosition === 'none' || Platform.OS === 'android'
     ? null
-    : <DisclosureArrow style={arrowPositionStyle} />
+    : <DisclosureArrow style={arrowPositionStyle} />;
 
   return (
     <Component
@@ -77,5 +79,5 @@ export function ListRow(props: PropsType) {
       </View>
       {arrow}
     </Component>
-  )
+  );
 }

@@ -1,13 +1,12 @@
 // @flow
-import React from 'react'
-import {View, Platform, ScrollView, StyleSheet} from 'react-native'
-import type {TopLevelViewPropsType} from '../types'
-import type {CarletonDetailMenuType} from './types'
-import {Row} from '../components/layout'
-import {ListRow, ListSeparator, Title} from '../components/list'
-import {NoticeView} from '../components/notice'
-import {BonAppHostedMenu} from './menu-bonapp'
-
+import React from 'react';
+import {View, Platform, ScrollView, StyleSheet} from 'react-native';
+import type {TopLevelViewPropsType} from '../types';
+import type {CarletonDetailMenuType} from './types';
+import {Row} from '../components/layout';
+import {ListRow, ListSeparator, Title} from '../components/list';
+import {NoticeView} from '../components/notice';
+import {BonAppHostedMenu} from './menu-bonapp';
 
 const carleton = [
   {
@@ -17,9 +16,7 @@ const carleton = [
     component: BonAppHostedMenu,
     props: {
       cafeId: '35',
-      loadingMessage: [
-        'Searching for Schiller…',
-      ],
+      loadingMessage: ['Searching for Schiller…'],
     },
   },
   {
@@ -29,9 +26,7 @@ const carleton = [
     component: BonAppHostedMenu,
     props: {
       cafeId: '36',
-      loadingMessage: [
-        'Tracking down empty seats…',
-      ],
+      loadingMessage: ['Tracking down empty seats…'],
     },
   },
   {
@@ -41,10 +36,7 @@ const carleton = [
     component: BonAppHostedMenu,
     props: {
       cafeId: '458',
-      loadingMessage: [
-        'Observing the artwork…',
-        'Previewing performances…',
-      ],
+      loadingMessage: ['Observing the artwork…', 'Previewing performances…'],
     },
   },
   {
@@ -54,19 +46,16 @@ const carleton = [
     component: BonAppHostedMenu,
     props: {
       cafeId: '34',
-      loadingMessage: [
-        'Engaging in people-watching…',
-        'Checking the mail…',
-      ],
+      loadingMessage: ['Engaging in people-watching…', 'Checking the mail…'],
     },
   },
-]
+];
 
 const styles = StyleSheet.create({
   rowText: {
     paddingVertical: 6,
   },
-})
+});
 
 export class CarletonMenuPicker extends React.Component {
   props: TopLevelViewPropsType;
@@ -82,30 +71,32 @@ export class CarletonMenuPicker extends React.Component {
         loadingMessage: data.props.loadingMessage,
         cafeId: data.props.cafeId,
       },
-    })
-  }
+    });
+  };
 
   render() {
     if (!carleton) {
-      return <NoticeView text='No Carleton Cafes to choose.' />
+      return <NoticeView text="No Carleton Cafes to choose." />;
     }
 
     return (
       <ScrollView style={{paddingTop: Platform.OS === 'ios' ? 20 : 0}}>
-        {carleton.map((loc: CarletonDetailMenuType, i, collection) =>
+        {carleton.map((loc: CarletonDetailMenuType, i, collection) => (
           <View key={i}>
             <ListRow
               onPress={() => this.onPressRow(loc)}
-              arrowPosition='center'
+              arrowPosition="center"
             >
-              <Row alignItems='center'>
+              <Row alignItems="center">
                 <Title style={styles.rowText}>{loc.title}</Title>
               </Row>
             </ListRow>
-            {i < collection.length - 1 ? <ListSeparator spacing={{left: 15}} /> : null}
+            {i < collection.length - 1
+              ? <ListSeparator spacing={{left: 15}} />
+              : null}
           </View>
-        )}
+        ))}
       </ScrollView>
-    )
+    );
   }
 }

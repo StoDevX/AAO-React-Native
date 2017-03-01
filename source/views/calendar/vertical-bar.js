@@ -1,7 +1,7 @@
 // @flow
-import React from 'react'
-import {StyleSheet, View, Platform} from 'react-native'
-import * as c from '../components/colors'
+import React from 'react';
+import {StyleSheet, View, Platform} from 'react-native';
+import * as c from '../components/colors';
 
 const dotBarStyles = StyleSheet.create({
   diagram: {
@@ -21,7 +21,7 @@ const dotBarStyles = StyleSheet.create({
     backgroundColor: c.tint,
     flex: 1,
   },
-})
+});
 
 function DottedBar({style}: {style?: any}) {
   return (
@@ -30,7 +30,7 @@ function DottedBar({style}: {style?: any}) {
       <View style={dotBarStyles.line} />
       <View style={dotBarStyles.circle} />
     </View>
-  )
+  );
 }
 
 const solidBarStyles = StyleSheet.create({
@@ -38,16 +38,19 @@ const solidBarStyles = StyleSheet.create({
     width: 1.5,
     backgroundColor: c.black75Percent,
   },
-})
+});
 
 function SolidBar({style}: {style?: any}) {
-  return <View style={[solidBarStyles.border, style]} />
+  return <View style={[solidBarStyles.border, style]} />;
 }
 
 export function Bar(props: Object) {
   switch (Platform.OS) {
-    case 'ios': return <SolidBar {...props} />
-    case 'android': return <DottedBar {...props} />
-    default: return <SolidBar {...props} />
+    case 'ios':
+      return <SolidBar {...props} />;
+    case 'android':
+      return <DottedBar {...props} />;
+    default:
+      return <SolidBar {...props} />;
   }
 }
