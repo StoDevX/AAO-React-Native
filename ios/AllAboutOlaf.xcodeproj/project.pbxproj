@@ -624,25 +624,25 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				3A0CEA711DEA20340036E739 /* RCTAnimation.xcodeproj */,
-				146833FF1AC3E56700842450 /* React.xcodeproj */,
+				AECB3DDD098E445D8AB3555F /* CodePush.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
+				3A0CEA711DEA20340036E739 /* RCTAnimation.xcodeproj */,
 				00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */,
+				150D47C893AB4ACBA45D7AF8 /* RCTGoogleAnalyticsBridge.xcodeproj */,
 				00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */,
 				78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */,
 				00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */,
+				916377371C784A9B8A7A1F5C /* RCTOneSignal.xcodeproj */,
 				139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */,
 				832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */,
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
-				71D5CCADA66D45008D9A38F2 /* RNVectorIcons.xcodeproj */,
-				828A2E49D4E3430FB2853AFF /* RNDeviceInfo.xcodeproj */,
-				150D47C893AB4ACBA45D7AF8 /* RCTGoogleAnalyticsBridge.xcodeproj */,
-				916377371C784A9B8A7A1F5C /* RCTOneSignal.xcodeproj */,
-				2560C43708D64866AA01FCC8 /* RNKeychain.xcodeproj */,
-				AECB3DDD098E445D8AB3555F /* CodePush.xcodeproj */,
-				89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */,
+				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				CE0A6E16923B40C9930B546C /* ReactNativeCustomTabs.xcodeproj */,
+				828A2E49D4E3430FB2853AFF /* RNDeviceInfo.xcodeproj */,
+				2560C43708D64866AA01FCC8 /* RNKeychain.xcodeproj */,
+				71D5CCADA66D45008D9A38F2 /* RNVectorIcons.xcodeproj */,
+				89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
