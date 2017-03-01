@@ -43,8 +43,8 @@ export default function OtherModesView() {
     >
       {(data: OtherModeType) =>
         <View style={styles.mode}>
-          <Text style={styles.title}>{data.name}</Text>
-          <Text style={styles.content}>{data.description}</Text>
+          <Text selectable={true} style={styles.title}>{data.name}</Text>
+          <Text selectable={true} style={styles.content}>{data.description}</Text>
           <Button
             onPress={() => trackedOpenUrl({
               url: data.url,

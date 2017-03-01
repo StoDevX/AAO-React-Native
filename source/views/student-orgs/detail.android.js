@@ -50,7 +50,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
   displayContact(contactInfo: string) {
     return (
       <Card header='Contact' style={styles.card}>
-        <Text style={styles.cardBody}>{contactInfo}</Text>
+        <Text selectable={true} style={styles.cardBody}>{contactInfo}</Text>
       </Card>
     )
   }
@@ -58,7 +58,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
   displayDescription(description: string) {
     return (
       <Card header='Description' style={styles.card}>
-        <Text style={styles.cardBody}>{description}</Text>
+        <Text selectable={true} style={styles.cardBody}>{description}</Text>
       </Card>
     )
   }
@@ -81,7 +81,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
   }
 
   displayFooter() {
-    return <Text style={styles.footer}>Powered by Presence</Text>
+    return <Text selectable={true} style={styles.footer}>Powered by Presence</Text>
   }
 
   renderBody = (data: StudentOrgInfoType) => {
@@ -112,13 +112,13 @@ export class StudentOrgsDetailRenderView extends React.Component {
     if (!this.props.loaded) {
       contents = (
         <Card header='Organization' style={styles.card}>
-          <Text style={styles.cardBody}>Loading…</Text>
+          <Text selectable={true} style={styles.cardBody}>Loading…</Text>
         </Card>
       )
     } else if (!this.props.full) {
       contents = (
         <Card header='Organization' style={styles.card}>
-          <Text style={styles.cardBody}>No information found.</Text>
+          <Text selectable={true} style={styles.cardBody}>No information found.</Text>
         </Card>
       )
     } else {

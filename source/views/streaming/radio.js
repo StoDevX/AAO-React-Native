@@ -27,8 +27,8 @@ export default function KSTOView() {
   return (
     <View style={styles.container}>
       <Image source={image} style={styles.logo} />
-      <Text style={styles.kstoText}>St. Olaf College Radio</Text>
-      <Text style={styles.kstoText}>KSTO 93.1 FM</Text>
+      <Text selectable={true} style={styles.kstoText}>St. Olaf College Radio</Text>
+      <Text selectable={true} style={styles.kstoText}>KSTO 93.1 FM</Text>
       <Button
         onPress={() => {
           if (Platform.OS === 'android') {
@@ -54,7 +54,7 @@ export default function KSTOView() {
         }}
         title='Listen to KSTO'
       />
-      <Text style={styles.kstoSubtext}>Look out for changes here soon!</Text>
+      <Text selectable={true} style={styles.kstoSubtext}>Look out for changes here soon!</Text>
     </View>
   )
 }

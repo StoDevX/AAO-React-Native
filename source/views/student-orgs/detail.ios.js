@@ -54,7 +54,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
   displayDescription(description: string) {
     return (
       <Section header='DESCRIPTION'>
-        <Text style={styles.description}>{description}</Text>
+        <Text selectable={true} style={styles.description}>{description}</Text>
       </Section>
     )
   }
@@ -124,7 +124,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
     return (
       <ScrollView>
         <TableView>
-          <Text style={styles.name}>{orgName}</Text>
+          <Text selectable={true} style={styles.name}>{orgName}</Text>
 
           <Section header='CATEGORY'>
             <Cell cellStyle='Basic' title={orgCategory} />

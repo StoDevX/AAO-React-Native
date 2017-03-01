@@ -53,8 +53,8 @@ function promptCall(buttonText: string, phoneNumber: string) {
 export default function ContactCard({title, phoneNumber, text, buttonText}: {title: string, phoneNumber: string, text: string, buttonText: string}) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.content}>{text}</Text>
+      <Text selectable={true} style={styles.title}>{title}</Text>
+      <Text selectable={true} style={styles.content}>{text}</Text>
       <Button
         onPress={() => {
           tracker.trackScreenView(`ImportantContacts_${title.replace(' ', '')}View`)

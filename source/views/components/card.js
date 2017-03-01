@@ -35,7 +35,7 @@ export function Card({header, footer, children, style}: {header?: string, footer
   return (
     <View style={[cardStyles.card, style]}>
       <View style={cardStyles.title}>
-        <Text style={cardStyles.titleText}>{header}</Text>
+        <Text selectable={true} style={cardStyles.titleText}>{header}</Text>
       </View>
 
       <View style={cardStyles.contentWrapper}>
@@ -44,7 +44,7 @@ export function Card({header, footer, children, style}: {header?: string, footer
 
       {footer
         ? <View style={cardStyles.footer}>
-          <Text style={cardStyles.footerText}>{footer}</Text>
+          <Text selectable={true} style={cardStyles.footerText}>{footer}</Text>
         </View>
         : null}
     </View>
