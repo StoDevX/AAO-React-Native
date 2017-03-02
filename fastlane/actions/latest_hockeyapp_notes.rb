@@ -34,21 +34,21 @@ module Fastlane
         changelog = lines.drop(2).join "\n"
 
         {
-          :branch => branch,
-          :commit_hash => commit_hash,
-          :changelog => changelog,
+          branch: branch,
+          commit_hash: commit_hash,
+          changelog: changelog,
         }
       end
 
       def self.platform_lookup(platform)
         platforms = {
-          :ios => 'iOS',
-          :android => 'Android',
-          :macos => 'Mac OS',
-          :mac => 'Mac OS',
-          :osx => 'Mac OS',
-          :windowsphone => 'Windows Phone',
-          :custom => 'Custom',
+          ios: 'iOS',
+          android: 'Android',
+          macos: 'Mac OS',
+          mac: 'Mac OS',
+          osx: 'Mac OS',
+          windowsphone: 'Windows Phone',
+          custom: 'Custom',
         }
         platforms[platform.to_sym]
       end

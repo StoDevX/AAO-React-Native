@@ -13,7 +13,7 @@ lane :bump do |options|
   set_gradle_version_name(version_name: new_version, gradle_file: lane_context[:GRADLE_FILE])
 
   # update package.json version
-  package_set_data(data: {:version => new_version})
+  package_set_data(data: {version: new_version})
 end
 
 desc 'Adds any unregistered devices to the provisioning profile'
