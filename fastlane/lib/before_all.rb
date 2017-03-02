@@ -28,4 +28,7 @@ before_all do
     end
 
   lane_context[:BUILD_NUMBER] = current_build_number.to_s
+
+  UI.message "VERSION_NUMBER is #{lane_context[:VERSION_NUMBER]}"
+  UI.message "BUILD_NUMBER is #{lane_context[:BUILD_NUMBER]}"
 end
