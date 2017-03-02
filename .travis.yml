@@ -151,9 +151,6 @@ before_script:
       adb shell input keyevent 82 &
     fi
 
-  # Fix keychain issues for iOS signing
-  - if [[ $ios ]]; then bundle exec fastlane ios ci_keychains; fi
-
 
 script:
   # These sections will grow over time.
