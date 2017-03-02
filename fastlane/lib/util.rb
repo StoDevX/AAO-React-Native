@@ -33,3 +33,14 @@ def auto_beta()
 
   beta if last_commit != current_commit
 end
+
+# Makes a changelog from the time since the last commit
+def changelog()
+  to_ref = ENV["TRAVIS_COMMIT"] || "HEAD"
+  from_ref = hockeyapp_version_commit || "HEAD~3"
+
+  sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n'")
+    .lines
+    .map { |line| '    ' + line }
+    .join
+end
