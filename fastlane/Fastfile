@@ -6,6 +6,13 @@
 # Set a minimum version for fastlane
 fastlane_version "2.5.0"
 
+before_all do
+  # set up global info for `gym`
+  ENV['GYM_PROJECT'] = './ios/AllAboutOlaf.xcodeproj'
+  ENV['GYM_SCHEME'] = 'AllAboutOlaf'
+end
+
+
 # These lanes are non-platform-specific
 desc "Adds any unregistered devices to the provisioning profile"
 lane :register do
@@ -37,7 +44,10 @@ lane :"fl-readme" do end
 platform :ios do
   desc "Runs all the tests"
   lane :test do
-    scan
+    scan(
+      scheme: ENV['GYM_SCHEME'],
+      project: ENV['GYM_PROJECT'],
+    )
   end
 
   desc "Take screenshots"
