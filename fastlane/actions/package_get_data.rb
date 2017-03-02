@@ -2,19 +2,19 @@ require 'json'
 
 module Fastlane
   module Actions
-    class GetPackageKeyAction < Action
+    class PackageGetDataAction < Action
       def self.run(params)
         key = params[:key]
         package_path = params[:package_path]
 
         file = File.read(package_path)
-        data_hash = JSON.parse(file)
+        data_hash = JSON.parse(file, symbolize_names: true)
 
-        data_hash[key]
+        data_hash[key.to_sym]
       end
 
       def self.description
-        "Retrieve a value from your package.json file."
+        "Retrieve the named value from your package.json file."
       end
 
       def self.authors
@@ -24,12 +24,12 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :key,
-                               description: "The key to fetch",
-                                      type: String),
+                                       description: "The key to fetch",
+                                       type: String),
           FastlaneCore::ConfigItem.new(key: :package_path,
-                               description: "The path to the package.json file",
-                                      type: String,
-                             default_value: "./package.json"),
+                                       description: "The path to the package.json file",
+                                       type: String,
+                                       default_value: "./package.json"),
         ]
       end
 

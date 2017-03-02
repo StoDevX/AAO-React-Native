@@ -24,7 +24,7 @@ end
 
 desc "Bump the version string to a new version"
 lane :bump do |options|
-  old_version = get_package_key(key: "version")
+  old_version = package_get_data(key: :version)
   UI.message("Current version: #{old_version}")
   version = options[:version] || UI.input("New version: ").strip
   UI.message("Upgrading from #{old_version} to #{version}")
