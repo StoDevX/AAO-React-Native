@@ -52,9 +52,9 @@ Runs all the tests
 fastlane ios screenshot
 ```
 Take screenshots
-### ios rogue
+### ios go_rogue
 ```
-fastlane ios rogue
+fastlane ios go_rogue
 ```
 Go rogue
 ### ios build
