@@ -3,15 +3,15 @@ module Fastlane
     class LatestHockeyappVersionNumberAction < Action
       def self.run(params)
         require 'hockeyapp'
-
-        HockeyApp::Config.configure do |config|
-          config.token = params[:api_token]
-        end
-
+        HockeyApp::Config.configure { |config| config.token = params[:api_token] }
         UI.message "Fetching latest version of #{params[:app_name]} from HockeyApp"
+
         client = HockeyApp.build_client
-        apps = client.get_apps
-        app = apps.find { |a| a.title == params[:app_name] && a.platform == params[:platform] && a.release_type == params[:release_type].to_i }
+        app = client.get_apps.find { |a|
+          a.title == params[:app_name] &&
+            a.platform.downcase == params[:platform].to_s &&
+            a.release_type == params[:release_type].to_i }
+
         version = app.versions.first.version.to_i
         UI.message "Found version #{version}"
 
@@ -62,7 +62,7 @@ module Fastlane
       end
 
       def self.is_supported?(platform)
-        [:ios, :mac, :android].include? platform
+        [:ios, :android].include? platform
       end
     end
   end

@@ -4,13 +4,12 @@ module Fastlane
       def self.run(params)
         require 'hockeyapp'
         HockeyApp::Config.configure { |config| config.token = params[:api_token] }
-
         UI.message "Fetching latest version of #{params[:app_name]} from HockeyApp"
 
         client = HockeyApp.build_client
         app = client.get_apps.find { |a|
           a.title == params[:app_name] &&
-            a.platform == platform_lookup(params[:platform]) &&
+            a.platform.downcase == params[:platform].to_s &&
             a.release_type == params[:release_type].to_i }
 
         parsed = app.versions
@@ -29,13 +28,9 @@ module Fastlane
       end
 
       def self.parse_notes(notes)
-        lines = notes
-          .split("\n")
-          .reject(&:empty?)
+        lines = notes.split("\n").reject(&:empty?)
 
-        if lines.size <= 3 then
-          return nil
-        end
+        return nil unless lines.size > 3
 
         branch = self.parse_html_line(lines[0])
         commit_hash = self.parse_html_line(lines[1])
@@ -50,22 +45,7 @@ module Fastlane
 
       def self.parse_html_line(line)
         # `line` looks like "<tag>key: value</tag>", where both parts of <tag> may or may not exist.
-        line
-          .split(/: +/).last
-          .split('<').first
-      end
-
-      def self.platform_lookup(platform)
-        platforms = {
-          ios: 'iOS',
-          android: 'Android',
-          macos: 'Mac OS',
-          mac: 'Mac OS',
-          osx: 'Mac OS',
-          windowsphone: 'Windows Phone',
-          custom: 'Custom',
-        }
-        platforms[platform.to_sym]
+        line.split(/: +/).last.split('<').first
       end
 
       def self.description
@@ -110,7 +90,7 @@ module Fastlane
       end
 
       def self.is_supported?(platform)
-        [:ios, :mac, :android].include? platform
+        [:ios, :android].include? platform
       end
     end
   end
