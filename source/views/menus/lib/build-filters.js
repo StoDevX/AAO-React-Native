@@ -12,8 +12,10 @@ import map from 'lodash/map'
 import uniq from 'lodash/uniq'
 import type {FilterType} from '../../components/filter'
 import {fastGetTrimmedText} from '../../../lib/html'
+import {AllHtmlEntities} from 'html-entities'
 import {chooseMeal} from './choose-meal'
 
+const entities = new AllHtmlEntities()
 
 export function buildFilters(
   foodItems: MenuItemType[],
@@ -28,9 +30,9 @@ export function buildFilters(
 
   // Grab the labels of the COR icons
   const allDietaryRestrictions = map(corIcons, cor => ({
-    title: cor.label,
+    title: entities.decode(cor.label),
     image: cor.image ? {uri: cor.image} : null,
-    detail: cor.description ? fastGetTrimmedText(cor.description) : '',
+    detail: cor.description ? entities.decode(fastGetTrimmedText(cor.description)) : '',
   }))
 
   // Decide which meal will be selected by default
