@@ -94,25 +94,17 @@ platform :ios do
   # Lanes specifically for the CIs
   desc "Do CI-system keychain setup"
   lane :ci_keychains do
-    token = ENV["CI_USER_TOKEN"]
-    keychain = ENV["MATCH_KEYCHAIN_NAME"]
+    keychain_name = ENV["MATCH_KEYCHAIN_NAME"]
     password = ENV["MATCH_KEYCHAIN_PASSWORD"]
 
-    # see macoscope.com/blog/simplify-your-life-with-fastlane-match
-    # we're allowing the CI access to the keys repo
-    File.open("#{ENV['HOME']}/.netrc", "a+") do |file|
-      file << "machine github.com\n  login #{token}"
-    end
-
     create_keychain(
-      name: keychain,
+      name: keychain_name,
       password: password,
       timeout: 3600,
     )
 
     match(readonly: true)
-
-    sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain}")
+    sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain_name}")
   end
 
   desc "Run iOS builds or tests, as appropriate"
@@ -214,6 +206,17 @@ private_lane :get_hockeyapp_version_commit do |options|
     platform: options[:platform],
     release_branch: options[:branch],
   )[:commit_hash]
+end
+
+desc "Add the github token for stodevx-bot to the CI machine"
+lane :authorize_ci_for_keys do
+  token = ENV["CI_USER_TOKEN"]
+
+  # see macoscope.com/blog/simplify-your-life-with-fastlane-match
+  # we're allowing the CI access to the keys repo
+  File.open("#{ENV['HOME']}/.netrc", "a+") do |file|
+    file << "machine github.com\n  login #{token}"
+  end
 end
 
 desc "Gets the version, either from Travis or from Hockey"
