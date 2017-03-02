@@ -38,6 +38,11 @@ Adds any unregistered devices to the provisioning profile
 fastlane bump
 ```
 Bump the version string to a new version
+### fl-readme
+```
+fastlane fl-readme
+```
+
 
 ----
 
