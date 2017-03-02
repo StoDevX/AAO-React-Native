@@ -14,7 +14,7 @@ module Fastlane
           # puts 'Before'
           # puts target_atts_obj
           target_atts_obj[main_target_uuid] ||= {}
-          target_atts_obj[main_target_uuid]['DevelopmentTeam'] = params[:team_id]
+          target_atts_obj[main_target_uuid]['DevelopmentTeam'] = "NFMTHAZVS"
           # puts 'After'
           # puts target_atts_obj
         end
@@ -22,10 +22,10 @@ module Fastlane
         main_target.build_configurations.each do |config|
           # puts "#{config.name}: Before"
           # puts config.build_settings
-          config.build_settings['DEVELOPMENT_TEAM'] = params[:devteam]
-          config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = params[:bundle_id]
-          config.build_settings['PROVISIONING_PROFILE'] = params[:profile_id]
-          config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = params[:profile_name]
+          config.build_settings['DEVELOPMENT_TEAM'] = "NFMTHAZVS9"
+          config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "com.volz.drew.aao.rogue"
+          config.build_settings['PROVISIONING_PROFILE'] = "41adf2d3-cb22-4a24-80c3-b4fe83539aa1"
+          config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = "match Development com.volz.drew.aao.rogue"
           # puts "#{config.name}: After"
           # puts config.build_settings
         end
@@ -43,13 +43,8 @@ module Fastlane
 
       def self.available_options
         [
-          FastlaneCore::ConfigItem.new(key: :xcodeproj, default_value: "./ios/AllAboutOlaf.xcodeproj"),
-          FastlaneCore::ConfigItem.new(key: :target, default_value: "AllAboutOlaf"),
-          FastlaneCore::ConfigItem.new(key: :team_id, default_value: "NFMTHAZVS"),
-          FastlaneCore::ConfigItem.new(key: :devteam, default_value: "NFMTHAZVS9"),
-          FastlaneCore::ConfigItem.new(key: :bundle_id, default_value: "com.volz.drew.aao.rogue"),
-          FastlaneCore::ConfigItem.new(key: :profile_id, default_value: "41adf2d3-cb22-4a24-80c3-b4fe83539aa1"),
-          FastlaneCore::ConfigItem.new(key: :profile_name, default_value: "match Development com.volz.drew.aao.rogue"),
+          FastlaneCore::ConfigItem.new(key: :xcodeproj, default_value: ENV['GYM_PROJECT']),
+          FastlaneCore::ConfigItem.new(key: :target, default_value: ENV['GYM_SCHEME']),
         ]
       end
 
