@@ -10,6 +10,9 @@ before_all do
   # set up global info for `gym`
   ENV['GYM_PROJECT'] = './ios/AllAboutOlaf.xcodeproj'
   ENV['GYM_SCHEME'] = 'AllAboutOlaf'
+
+  # set up global info for `gradle`
+  ENV['FL_GRADLE_PROJECT_DIR'] = './android'
 end
 
 
@@ -26,13 +29,16 @@ desc "Bump the version string to a new version"
 lane :bump do |options|
   old_version = package_get_data(key: :version)
   UI.message("Current version: #{old_version}")
-  version = options[:version] || UI.input("New version: ").strip
-  UI.message("Upgrading from #{old_version} to #{version}")
+
+  new_version = options[:version] || UI.input("New version: ").strip
+  UI.message("Upgrading from #{old_version} to #{new_version}")
 
   # update iOS version
-  increment_version_number(version_number: version, xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
+  increment_version_number(version_number: new_version, xcodeproj: ENV['GYM_PROJECT'])
+
   # update Android version
-  set_version_name(version_name: version, gradle_path: "android/app/build.gradle")
+  set_gradle_version_name(version_name: new_version, gradle_path: lane_context[SharedValues::GRADLE_FILE])
+
   # update package.json version
   set_package_data(data: {"version" => version})
 end
