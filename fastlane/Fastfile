@@ -37,9 +37,6 @@ lane :bump do |options|
   set_package_data(data: {"version" => version})
 end
 
-desc "Regenerate the fastlane README"
-lane :"fl-readme" do end
-
 
 platform :ios do
   desc "Runs all the tests"
