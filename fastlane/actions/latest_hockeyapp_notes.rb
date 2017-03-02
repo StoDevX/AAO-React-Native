@@ -13,10 +13,12 @@ module Fastlane
             a.platform == platform_lookup(params[:platform]) &&
             a.release_type == params[:release_type].to_i }
 
-        parsed = app.versions.map { |version| self.parse_notes(version.notes) }
+        parsed = app.versions
+          .map { |version| self.parse_notes(version.notes) }
+          .reject(&:nil?)
 
-        data = parsed.find { |version| info[:branch] == params[:release_branch] }
-        data = parsed.find { |version| info[:branch] == 'master' } unless data
+        data = parsed.find { |version| version[:branch] == params[:release_branch] }
+        data = parsed.find { |version| version[:branch] == 'master' } unless data
         data = parsed.first unless data
 
         UI.message "Last build branch: #{data[:branch]}"
@@ -27,10 +29,16 @@ module Fastlane
       end
 
       def self.parse_notes(notes)
-        lines = notes.split "\n"
+        lines = notes
+          .split("\n")
+          .reject(&:empty?)
 
-        branch = lines[0].split(/: +/).last.split('<').first
-        commit_hash = lines[1].split(/: +/).last.split('<').first
+        if lines.size <= 3 then
+          return nil
+        end
+
+        branch = self.parse_html_line(lines[0])
+        commit_hash = self.parse_html_line(lines[1])
         changelog = lines.drop(2).join "\n"
 
         {
@@ -38,6 +46,13 @@ module Fastlane
           commit_hash: commit_hash,
           changelog: changelog,
         }
+      end
+
+      def self.parse_html_line(line)
+        # `line` looks like "<tag>key: value</tag>", where both parts of <tag> may or may not exist.
+        line
+          .split(/: +/).last
+          .split('<').first
       end
 
       def self.platform_lookup(platform)
