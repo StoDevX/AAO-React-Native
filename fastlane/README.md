@@ -38,11 +38,21 @@ Adds any unregistered devices to the provisioning profile
 fastlane bump
 ```
 Bump the version string to a new version
-### fl-readme
+### release_notes
 ```
-fastlane fl-readme
+fastlane release_notes
 ```
-
+Build the release notes: branch, commit hash, changelog
+### changelog
+```
+fastlane changelog
+```
+Makes a changelog from the time since the last commit
+### authorize_ci_for_keys
+```
+fastlane authorize_ci_for_keys
+```
+Add the github token for stodevx-bot to the CI machine
 
 ----
 
@@ -72,16 +82,11 @@ Provisions the profiles; bumps the build number; builds the app
 fastlane ios beta
 ```
 Submit a new Beta Build to HockeyApp
-### ios auto_beta
-```
-fastlane ios auto_beta
-```
-Make a beta build if there have been new commits since the last beta
 ### ios ci_keychains
 ```
 fastlane ios ci_keychains
 ```
-Do CI-system keychain setup
+# Fix keychain issues for iOS signing
 ### ios ci_run
 ```
 fastlane ios ci_run
@@ -106,11 +111,6 @@ Makes a build
 fastlane android beta
 ```
 Submit a new Beta Build to HockeyApp
-### android auto_beta
-```
-fastlane android auto_beta
-```
-Make a beta build if there have been new commits since the last beta
 ### android ci_run
 ```
 fastlane android ci_run

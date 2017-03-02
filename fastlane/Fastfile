@@ -7,12 +7,34 @@
 fastlane_version "2.19.0"
 
 before_all do
+  # too lazy to change the name in travis, so we jut copy it here
+  ENV['FL_HOCKEY_API_TOKEN'] = ENV['HOCKEY_TOKEN'] if ENV.has_key?('HOCKEY_TOKEN')
+
   # set up global info for `gym`
   ENV['GYM_PROJECT'] = './ios/AllAboutOlaf.xcodeproj'
   ENV['GYM_SCHEME'] = 'AllAboutOlaf'
+  ENV['GYM_OUTPUT_DIRECTORY'] = './ios/build'
+  ENV['GYM_OUTPUT_NAME'] = 'AllAboutOlaf'
 
   # set up global info for `gradle`
   ENV['FL_GRADLE_PROJECT_DIR'] = './android'
+
+  # set up other global shared values
+  lane_context[SharedValues::PRETTY_APP_NAME] = "All About Olaf"
+  ENV['FL_HOCKEY_PUBLIC_IDENTIFIER'] = lane_context[SharedValues::PRETTY_APP_NAME]
+
+  lane_context[SharedValues::GRADLE_FILE] = "#{ENV['FL_GRADLE_PROJECT_DIR']}/app/build.gradle"
+
+  lane_context[SharedValues::VERSION_NUMBER] = case lane_context[:PLATFORM_NAME]
+                                               when 'ios' then
+                                                 get_info_plist_value(path: "./ios/AllAboutOlaf/Info.plist", key: "CFBundleShortVersionString")
+                                               when 'android' then
+                                                 get_gradle_version_name(gradle_path: lane_context[SharedValues::GRADLE_FILE])
+                                               else
+                                                 package_get_data(key: :version)
+                                               end
+
+  lane_context[SharedValues::BUILD_NUMBER] = current_build_number.to_s
 end
 
 
@@ -40,7 +62,7 @@ lane :bump do |options|
   set_gradle_version_name(version_name: new_version, gradle_path: lane_context[SharedValues::GRADLE_FILE])
 
   # update package.json version
-  set_package_data(data: {"version" => version})
+  package_set_data(data: {:version => new_version})
 end
 
 
@@ -75,37 +97,40 @@ platform :ios do
 
   desc "Provisions the profiles; bumps the build number; builds the app"
   lane :build do
-    # Set up code signing correctly
-    # (more information: https://codesigning.guide)
-    match(readonly: true)
-
-    activate_rogue_team
-
-    version = get_current_bundle_version(platform: "iOS")
-    build_number = get_current_build_number(platform: "iOS")
-    increment_version_number(version_number: "#{version}.#{build_number}", xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
-    increment_build_number(build_number: build_number, xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
-    set_package_data(data: {"version" => "#{version}.#{build_number}"})
-
-    # Build the app
-    gym
+    gym(sdk: "iphoneos10.1", export_method: "ad-hoc")
   end
 
   desc "Submit a new Beta Build to HockeyApp"
   lane :beta do
+    activate_rogue_team
+
+    set_version(
+      version: lane_context[SharedValues::VERSION_NUMBER],
+      build: [SharedValues::BUILD_NUMBER],
+    )
+
+    match(readonly: true)
+
     build
 
-    hockey(
-      api_token: ENV["HOCKEYAPP_TOKEN"],
-      ipa: "./ios/build/AllAboutOlaf.ipa",
-      commit_sha: ENV["TRAVIS_COMMIT"],
-      notes: build_notes(platform: 'iOS'),
-    )
+    hockey(notes: release_notes)
   end
 
+  private_lane :set_version do |options|
+    increment_version_number(
+      version_number: "#{options[:version]}.#{options[:build]}",
+      xcodeproj: ENV['GYM_PROJECT'],
+    )
 
-  # Lanes specifically for the CIs
-  desc "Do CI-system keychain setup"
+    increment_build_number(
+      build_number: build,
+      xcodeproj: ENV['GYM_PROJECT'],
+    )
+
+    package_set_data(data: {:version => "#{options[:version]}.#{options[:build]}"})
+  end
+
+  desc "# Fix keychain issues for iOS signing"
   lane :ci_keychains do
     keychain_name = ENV["MATCH_KEYCHAIN_NAME"]
     password = ENV["MATCH_KEYCHAIN_PASSWORD"]
@@ -122,19 +147,19 @@ platform :ios do
 
   desc "Run iOS builds or tests, as appropriate"
   lane :ci_run do
-    # I'd like to test, instead of just building, but… Xcode's tests keep
-    # failing on us. So, we just build, if we're not deploying.
-    should_deploy = ENV["run_deploy"] == "1"
-    if should_deploy
-      auto_beta
-    else
-      build
+    authorize_ci_for_keys
+
+    case
+      when ENV["run_deploy"] == "1" then
+        auto_beta
+      else
+        build
     end
   end
 
   desc "In case match needs to be updated - probably never needs to be run"
   lane :update_match do
-    match(readonly: false)
+    match
   end
 end
 
@@ -142,17 +167,9 @@ end
 platform :android do
   desc "Makes a build"
   lane :build do
-    version = get_current_bundle_version(platform: "Android")
-    build_number = get_current_build_number(platform: "Android")
-
-    set_version_name(version_name: "#{version}.#{build_number}", gradle_path: "android/app/build.gradle")
-    set_version_code(version_code: build_number, gradle_path: "./android/app/build.gradle")
-    set_package_data(data: {"version" => "#{version}.#{build_number}"})
-
     gradle(
       task: "assemble",
       build_type: "Release",
-      project_dir: "./android",
       print_command: true,
       print_command_output: true,
     )
@@ -160,55 +177,66 @@ platform :android do
 
   desc "Submit a new Beta Build to HockeyApp"
   lane :beta do
+    set_version(
+      version: lane_context[SharedValues::VERSION_NUMBER],
+      build: [SharedValues::BUILD_NUMBER],
+    )
+
     build
 
     # Upload to HockeyApp
-    hockey(
-      api_token: ENV["HOCKEYAPP_TOKEN"],
-      apk: "./android/app/build/outputs/apk/app-release-unsigned.apk",
-      commit_sha: ENV["TRAVIS_COMMIT"],
-      notes: build_notes(platform: 'Android'),
-    )
+    hockey(notes: release_notes)
   end
 
+  desc "Set the version in build.gradle"
+  private_lane :set_version do |options|
+    set_gradle_version_name(
+      version_name: "#{options[:version]}.#{options[:build]}",
+      gradle_file: lane_context[SharedValues::GRADLE_FILE],
+    )
+
+    set_gradle_version_code(
+      version_code: options[:build],
+      gradle_file: lane_context[SharedValues::GRADLE_FILE],
+    )
+
+    package_set_data(data: {:version => "#{options[:version]}.#{options[:build]}"})
+  end
 
   desc "Run the appropriate action on CI"
   lane :ci_run do
-    should_deploy = ENV["run_deploy"] == "1"
-    if should_deploy
-      auto_beta
-    else
-      build
+    authorize_ci_for_keys
+
+    case
+      when ENV["run_deploy"] == "1" then
+        auto_beta
+      else
+        build
     end
   end
 end
 
 
-desc "Makes a changelog from the timespan passed"
-private_lane :make_changelog do |options|
+desc "Build the release notes: branch, commit hash, changelog"
+lane :release_notes do |options|
+  <<~END
+  branch: #{git_branch}
+  git commit: #{last_git_commit[:commit_hash]}
+
+  ## Changelog
+  #{changelog}
+  END
+end
+
+desc "Makes a changelog from the time since the last commit"
+lane :changelog do
   to_ref = ENV["TRAVIS_COMMIT"] || "HEAD"
-  from_ref = get_hockeyapp_version_commit(platform: options[:platform], branch: options[:branch]) || "HEAD~3"
+  from_ref = hockeyapp_version_commit || "HEAD~3"
 
-  sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n' | sed 's/^/    /'")
-end
-
-desc "Get the hockeyapp version"
-private_lane :get_hockeyapp_version do |options|
-  latest_hockeyapp_version_number(
-    api_token: ENV["HOCKEYAPP_TOKEN"],
-    app_name: "All About Olaf",
-    platform: options[:platform],
-  )
-end
-
-desc "Get the commit of the latest build on HockeyApp"
-private_lane :get_hockeyapp_version_commit do |options|
-  latest_hockeyapp_notes(
-    api_token: ENV["HOCKEYAPP_TOKEN"],
-    app_name: "All About Olaf",
-    platform: options[:platform],
-    release_branch: options[:branch],
-  )[:commit_hash]
+  sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n'")
+    .lines
+    .map { |line| '    ' + line }
+    .join
 end
 
 desc "Add the github token for stodevx-bot to the CI machine"
@@ -220,11 +248,6 @@ lane :authorize_ci_for_keys do
   File.open("#{ENV['HOME']}/.netrc", "a+") do |file|
     file << "machine github.com\n  login #{token}"
   end
-end
-
-desc "Gets the version, either from Travis or from Hockey"
-private_lane :get_current_build_number do |options|
-  ENV["TRAVIS_BUILD_NUMBER"] || get_hockeyapp_version(platform: options[:platform]) + 1
 end
 
 # It doesn't make sense to duplicate this in both platforms, and fastlane is smart
@@ -242,17 +265,12 @@ private_lane :auto_beta do
   beta if last_commit != current_commit
 end
 
-private_lane :build_notes do |options|
-  branch = git_branch
-  sha = last_git_commit[:commit_hash]
-  changelog = make_changelog(branch: git_branch, platform: options[:platform])
-  "branch: #{branch}\ngit commit: #{sha}\n\n## Changelog\n#{changelog}"
+# Retrieves the last-built commit from the current branch's released betas
+def hockeyapp_version_commit()
+  latest_hockeyapp_notes(release_branch: git_branch)[:commit_hash]
 end
 
-private_lane :get_current_bundle_version do |options|
-  if options[:platform] == 'Android'
-    get_version_name(gradle_path: "android/app/build.gradle")
-  elsif options[:platform] == 'iOS'
-    get_info_plist_value(path: "ios/AllAboutOlaf/Info.plist", key: "CFBundleShortVersionString")
-  end
+# Gets the "current" version, either from Travis or from Hockey
+def current_build_number()
+  ENV["TRAVIS_BUILD_NUMBER"] || latest_hockeyapp_version_number + 1
 end
