@@ -52,13 +52,14 @@ if (thisPRSize > bigPRThreshold) {
 
 const codeBlock = (contents, lang=null) => markdown(`\`\`\`${lang || ''}\n${contents}\n\`\`\``)
 const isBadBundleLog = log => {
-  const lines = log.split('\n')
-  const startsGood = lines[0] === 'Loading dependency graph, done.'
-  const endsGood = lines[lines.length-1] === 'bundle: Done copying assets'
-  if (startsGood && endsGood && lines.length === 7) {
-    return false
-  }
-  return true
+  const allLines = log.split('\n')
+  const requiredLines = [
+    'bundle: start',
+    'bundle: finish',
+    'bundle: Done writing bundle output',
+    'bundle: Done copying assets',
+  ]
+  return requiredLines.some(line => !allLines.includes(line))
 }
 
 // Eslint
