@@ -1,9 +1,9 @@
-desc "Bump the version string to a new version"
+desc 'Bump the version string to a new version'
 lane :bump do |options|
   old_version = package_get_data(key: :version)
   UI.message("Current version: #{old_version}")
 
-  new_version = options[:version] || UI.input("New version: ").strip
+  new_version = options[:version] || UI.input('New version: ').strip
   UI.message("Upgrading from #{old_version} to #{new_version}")
 
   # update iOS version
@@ -16,7 +16,7 @@ lane :bump do |options|
   package_set_data(data: {:version => new_version})
 end
 
-desc "Adds any unregistered devices to the provisioning profile"
+desc 'Adds any unregistered devices to the provisioning profile'
 lane :register do
   id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
   new_devices = get_unprovisioned_devices_from_hockey(app_bundle_id: id)
@@ -24,7 +24,7 @@ lane :register do
   match(force: true)
 end
 
-desc "Build the release notes: branch, commit hash, changelog"
+desc 'Build the release notes: branch, commit hash, changelog'
 lane :release_notes do |options|
   <<~END
   branch: #{git_branch}

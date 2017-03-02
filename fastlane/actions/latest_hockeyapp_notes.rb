@@ -16,7 +16,7 @@ module Fastlane
         parsed = app.versions.map { |version| self.parse_notes(version.notes) }
 
         data = parsed.find { |version| info[:branch] == params[:release_branch] }
-        data = parsed.find { |version| info[:branch] == "master" } unless data
+        data = parsed.find { |version| info[:branch] == 'master' } unless data
         data = parsed.first unless data
 
         UI.message "Last build branch: #{data[:branch]}"
@@ -54,44 +54,44 @@ module Fastlane
       end
 
       def self.description
-        "Easily fetch the most recent HockeyApp version for your app"
+        'Easily fetch the most recent HockeyApp version for your app'
       end
 
       def self.details
-        "Allows increment_build_number to increment from the latest HockeyApp version"
+        'Allows increment_build_number to increment from the latest HockeyApp version'
       end
 
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :app_name,
-                                       env_name: "FL_HOCKEY_PUBLIC_IDENTIFIER",
-                                       description: "The app name to use when fetching the notes",
+                                       env_name: 'FL_HOCKEY_PUBLIC_IDENTIFIER',
+                                       description: 'The app name to use when fetching the notes',
                                        optional: false),
           FastlaneCore::ConfigItem.new(key: :api_token,
-                                       env_name: "FL_HOCKEY_API_TOKEN",
-                                       description: "API Token for Hockey Access",
+                                       env_name: 'FL_HOCKEY_API_TOKEN',
+                                       description: 'API Token for Hockey Access',
                                        optional: false),
           FastlaneCore::ConfigItem.new(key: :release_type,
-                                       env_name: "FL_HOCKEY_RELEASE_TYPE",
-                                       description: "The release type to use when fetching the notes: Beta=0, Store=1, Alpha=2, Enterprise=3",
-                                       default_value: "0"),
+                                       env_name: 'FL_HOCKEY_RELEASE_TYPE',
+                                       description: 'The release type to use when fetching the notes: Beta=0, Store=1, Alpha=2, Enterprise=3',
+                                       default_value: '0'),
           FastlaneCore::ConfigItem.new(key: :platform,
-                                       env_name: "FL_LATEST_HOCKEYAPP_NOTES_PLATFORM",
-                                       description: "The platform to use when fetching the notes: iOS, Android, Mac OS, Windows Phone, Custom",
+                                       env_name: 'FL_LATEST_HOCKEYAPP_NOTES_PLATFORM',
+                                       description: 'The platform to use when fetching the notes: iOS, Android, Mac OS, Windows Phone, Custom',
                                        default_value: lane_context[:PLATFORM_NAME] || :ios),
           FastlaneCore::ConfigItem.new(key: :release_branch,
-                                       env_name: "FL_LATEST_HOCKEYAPP_NOTES_RELEASE_BRANCH",
-                                       description: "The branch to look for when fetching the notes (falls back to `master` or, failing that, to the latest build)",
-                                       default_value: "master"),
+                                       env_name: 'FL_LATEST_HOCKEYAPP_NOTES_RELEASE_BRANCH',
+                                       description: 'The branch to look for when fetching the notes (falls back to `master` or, failing that, to the latest build)',
+                                       default_value: 'master'),
         ]
       end
 
       def self.return_value
-        "Parsed notes field for the most recent version of the specified app"
+        'Parsed notes field for the most recent version of the specified app'
       end
 
       def self.authors
-        ["Hawken Rives"]
+        ['Hawken Rives']
       end
 
       def self.is_supported?(platform)

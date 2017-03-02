@@ -1,5 +1,5 @@
 platform :ios do
-  desc "Runs all the tests"
+  desc 'Runs all the tests'
   lane :test do
     scan(
       scheme: ENV['GYM_SCHEME'],
@@ -7,27 +7,27 @@ platform :ios do
     )
   end
 
-  desc "Take screenshots"
+  desc 'Take screenshots'
   lane :screenshot do
     snapshot(
-      devices: ["iPhone 7 Plus", "iPhone 6", "iPhone 5s", "iPhone 4s"],
-      languages: ["en-US"],
+      devices: ['iPhone 7 Plus', 'iPhone 6', 'iPhone 5s', 'iPhone 4s'],
+      languages: ['en-US'],
       scheme: ENV['GYM_SCHEME'],
       project: ENV['GYM_PROJECT'],
     )
   end
 
-  desc "Go rogue"
+  desc 'Go rogue'
   lane :go_rogue do
     activate_rogue_team
   end
 
-  desc "Provisions the profiles; bumps the build number; builds the app"
+  desc 'Provisions the profiles; bumps the build number; builds the app'
   lane :build do
-    gym(sdk: "iphoneos10.1", export_method: "ad-hoc")
+    gym(sdk: 'iphoneos10.1', export_method: 'ad-hoc')
   end
 
-  desc "Submit a new Beta Build to HockeyApp"
+  desc 'Submit a new Beta Build to HockeyApp'
   lane :beta do
     activate_rogue_team
 
@@ -57,10 +57,10 @@ platform :ios do
     package_set_data(data: {:version => "#{options[:version]}.#{options[:build]}"})
   end
 
-  desc "# Fix keychain issues for iOS signing"
+  desc 'Fix keychain issues for iOS signing'
   lane :ci_keychains do
-    keychain_name = ENV["MATCH_KEYCHAIN_NAME"]
-    password = ENV["MATCH_KEYCHAIN_PASSWORD"]
+    keychain_name = ENV['MATCH_KEYCHAIN_NAME']
+    password = ENV['MATCH_KEYCHAIN_PASSWORD']
 
     create_keychain(
       name: keychain_name,
@@ -72,19 +72,19 @@ platform :ios do
     sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain_name}")
   end
 
-  desc "Run iOS builds or tests, as appropriate"
+  desc 'Run iOS builds or tests, as appropriate'
   lane :ci_run do
     authorize_ci_for_keys
 
     case
-      when ENV["run_deploy"] == "1" then
+      when ENV['run_deploy'] == '1' then
         auto_beta
       else
         build
     end
   end
 
-  desc "In case match needs to be updated - probably never needs to be run"
+  desc 'In case match needs to be updated - probably never needs to be run'
   lane :update_match do
     match
   end

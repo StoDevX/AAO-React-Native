@@ -12,14 +12,14 @@ before_all do
   ENV['FL_GRADLE_PROJECT_DIR'] = './android'
 
   # set up other global shared values
-  lane_context[:PRETTY_APP_NAME] = "All About Olaf"
+  lane_context[:PRETTY_APP_NAME] = 'All About Olaf'
   ENV['FL_HOCKEY_PUBLIC_IDENTIFIER'] = lane_context[:PRETTY_APP_NAME]
 
   lane_context[:GRADLE_FILE] = "#{ENV['FL_GRADLE_PROJECT_DIR']}/app/build.gradle"
 
   lane_context[:VERSION_NUMBER] = case lane_context[:PLATFORM_NAME]
                                                when 'ios' then
-                                                 get_info_plist_value(path: "./ios/AllAboutOlaf/Info.plist", key: "CFBundleShortVersionString")
+                                                 get_info_plist_value(path: './ios/AllAboutOlaf/Info.plist', key: 'CFBundleShortVersionString')
                                                when 'android' then
                                                  get_gradle_version_name(gradle_path: lane_context[:GRADLE_FILE])
                                                else

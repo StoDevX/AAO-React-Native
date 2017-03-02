@@ -6,7 +6,7 @@ module Fastlane
         version_name = nil
 
         File.foreach(gradle_file) do |line|
-          if line.include? "versionName "
+          if line.include? 'versionName '
             components = line.strip.split(" ")
             version_name = components[1].tr("\"", "")
           end
@@ -22,11 +22,11 @@ module Fastlane
       end
 
       def self.description
-        "Get the version name of your android project."
+        'Get the version name of your android project.'
       end
 
       def self.authors
-        ["Hawken Rives"]
+        ['Hawken Rives']
       end
 
       def self.available_options

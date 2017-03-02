@@ -21,22 +21,22 @@ module Fastlane
       end
 
       def self.description
-        "Change data in your package.json file."
+        'Change data in your package.json file.'
       end
 
       def self.authors
-        ["Hawken Rives"]
+        ['Hawken Rives']
       end
 
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :data,
-                                       description: "The data to update",
+                                       description: 'The data to update',
                                        type: Hash),
           FastlaneCore::ConfigItem.new(key: :package_path,
-                                       description: "The path to the package.json file",
+                                       description: 'The path to the package.json file',
                                        type: String,
-                                       default_value: "./package.json"),
+                                       default_value: './package.json'),
         ]
       end
 

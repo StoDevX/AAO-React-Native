@@ -14,7 +14,7 @@ module Fastlane
           # puts 'Before'
           # puts target_atts_obj
           target_atts_obj[main_target_uuid] ||= {}
-          target_atts_obj[main_target_uuid]['DevelopmentTeam'] = "NFMTHAZVS"
+          target_atts_obj[main_target_uuid]['DevelopmentTeam'] = 'NFMTHAZVS'
           # puts 'After'
           # puts target_atts_obj
         end
@@ -22,10 +22,10 @@ module Fastlane
         main_target.build_configurations.each do |config|
           # puts "#{config.name}: Before"
           # puts config.build_settings
-          config.build_settings['DEVELOPMENT_TEAM'] = "NFMTHAZVS9"
-          config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "com.volz.drew.aao.rogue"
-          config.build_settings['PROVISIONING_PROFILE'] = "41adf2d3-cb22-4a24-80c3-b4fe83539aa1"
-          config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = "match Development com.volz.drew.aao.rogue"
+          config.build_settings['DEVELOPMENT_TEAM'] = 'NFMTHAZVS9'
+          config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.volz.drew.aao.rogue'
+          config.build_settings['PROVISIONING_PROFILE'] = '41adf2d3-cb22-4a24-80c3-b4fe83539aa1'
+          config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = 'match Development com.volz.drew.aao.rogue'
           # puts "#{config.name}: After"
           # puts config.build_settings
         end
@@ -34,11 +34,11 @@ module Fastlane
       end
 
       def self.description
-        "Activate the rogue signing team"
+        'Activate the rogue signing team'
       end
 
       def self.details
-        "Activate the rogue signing team"
+        'Activate the rogue signing team'
       end
 
       def self.available_options
@@ -49,11 +49,11 @@ module Fastlane
       end
 
       def self.return_value
-        "None"
+        'None'
       end
 
       def self.authors
-        ["Hawken Rives"]
+        ['Hawken Rives']
       end
 
       def self.is_supported?(platform)

@@ -1,15 +1,15 @@
 platform :android do
-  desc "Makes a build"
+  desc 'Makes a build'
   lane :build do
     gradle(
-      task: "assemble",
-      build_type: "Release",
+      task: 'assemble',
+      build_type: 'Release',
       print_command: true,
       print_command_output: true,
     )
   end
 
-  desc "Submit a new Beta Build to HockeyApp"
+  desc 'Submit a new Beta Build to HockeyApp'
   lane :beta do
     set_version(
       version: lane_context[:VERSION_NUMBER],
@@ -22,7 +22,7 @@ platform :android do
     hockey(notes: release_notes)
   end
 
-  desc "Set the version in build.gradle"
+  desc 'Set the version in build.gradle'
   private_lane :set_version do |options|
     set_gradle_version_name(
       version_name: "#{options[:version]}.#{options[:build]}",
@@ -37,12 +37,12 @@ platform :android do
     package_set_data(data: {:version => "#{options[:version]}.#{options[:build]}"})
   end
 
-  desc "Run the appropriate action on CI"
+  desc 'Run the appropriate action on CI'
   lane :ci_run do
     authorize_ci_for_keys
 
     case
-      when ENV["run_deploy"] == "1" then
+      when ENV['run_deploy'] == "1" then
         auto_beta
       else
         build
