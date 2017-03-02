@@ -3,16 +3,16 @@ require "fileutils"
 
 module Fastlane
   module Actions
-    class SetVersionCodeAction < Action
+    class SetGradleVersionCodeAction < Action
       def self.run(params)
-        gradle_path = params[:gradle_path]
+        gradle_file = params[:gradle_file]
 
         old_version_code = "0"
         new_version_code = params[:version_code]
 
         temp_file = Tempfile.new("fastlaneIncrementVersionCode")
 
-        File.foreach(gradle_path) do |line|
+        File.foreach(gradle_file) do |line|
           if line.include? "versionCode "
             old_version_code = line.strip.split(" ")[1]
             line = line.sub(old_version_code, new_version_code.to_s)
@@ -22,7 +22,7 @@ module Fastlane
 
         temp_file.rewind
         temp_file.close
-        FileUtils.mv(temp_file.path, gradle_path)
+        FileUtils.mv(temp_file.path, gradle_file)
         temp_file.unlink
 
         if old_version_code == "0" || new_version_code == "1"
@@ -44,14 +44,12 @@ module Fastlane
 
       def self.available_options
         [
-          FastlaneCore::ConfigItem.new(key: :gradle_path,
-                                  env_name: "INCREMENTVERSIONCODE_GRADLE_PATH",
-                               description: "The path to the build.gradle file",
-                                      type: String),
+          FastlaneCore::ConfigItem.new(key: :gradle_file,
+                                       description: "The path to the build.gradle file",
+                                       type: String),
           FastlaneCore::ConfigItem.new(key: :version_code,
-                                  env_name: "INCREMENTVERSIONCODE_VERSION_CODE",
-                               description: "The version to change to",
-                                      type: Integer)
+                                       description: "The version to change to",
+                                       type: Integer),
         ]
       end
 

@@ -8,9 +8,10 @@ module Fastlane
         UI.message "Fetching latest version of #{params[:app_name]} from HockeyApp"
 
         client = HockeyApp.build_client
-        app = client.get_apps.find { |a| a.title == params[:app_name] &&
-                                         a.platform == params[:platform] &&
-                                         a.release_type == params[:release_type].to_i }
+        app = client.get_apps.find { |a|
+          a.title == params[:app_name] &&
+            a.platform == platform_lookup(params[:platform]) &&
+            a.release_type == params[:release_type].to_i }
 
         parsed = app.versions.map { |version| self.parse_notes(version.notes) }
 
@@ -33,10 +34,23 @@ module Fastlane
         changelog = lines.drop(2).join "\n"
 
         {
-            :branch => branch,
-            :commit_hash => commit_hash,
-            :changelog => changelog,
+          :branch => branch,
+          :commit_hash => commit_hash,
+          :changelog => changelog,
         }
+      end
+
+      def self.platform_lookup(platform)
+        platforms = {
+          :ios => 'iOS',
+          :android => 'Android',
+          :macos => 'Mac OS',
+          :mac => 'Mac OS',
+          :osx => 'Mac OS',
+          :windowsphone => 'Windows Phone',
+          :custom => 'Custom',
+        }
+        platforms[platform.to_sym]
       end
 
       def self.description
@@ -50,7 +64,7 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :app_name,
-                                       env_name: "FL_LATEST_HOCKEYAPP_NOTES_APP_NAME",
+                                       env_name: "FL_HOCKEY_PUBLIC_IDENTIFIER",
                                        description: "The app name to use when fetching the notes",
                                        optional: false),
           FastlaneCore::ConfigItem.new(key: :api_token,
@@ -58,13 +72,13 @@ module Fastlane
                                        description: "API Token for Hockey Access",
                                        optional: false),
           FastlaneCore::ConfigItem.new(key: :release_type,
-                                       env_name: "FL_LATEST_HOCKEYAPP_NOTES_RELEASE_TYPE",
+                                       env_name: "FL_HOCKEY_RELEASE_TYPE",
                                        description: "The release type to use when fetching the notes: Beta=0, Store=1, Alpha=2, Enterprise=3",
                                        default_value: "0"),
           FastlaneCore::ConfigItem.new(key: :platform,
                                        env_name: "FL_LATEST_HOCKEYAPP_NOTES_PLATFORM",
                                        description: "The platform to use when fetching the notes: iOS, Android, Mac OS, Windows Phone, Custom",
-                                       default_value: "iOS"),
+                                       default_value: lane_context[:PLATFORM_NAME] || :ios),
           FastlaneCore::ConfigItem.new(key: :release_branch,
                                        env_name: "FL_LATEST_HOCKEYAPP_NOTES_RELEASE_BRANCH",
                                        description: "The branch to look for when fetching the notes (falls back to `master` or, failing that, to the latest build)",
