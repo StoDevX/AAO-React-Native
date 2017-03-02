@@ -103,16 +103,6 @@ platform :ios do
     )
   end
 
-  desc "Make a beta build if there have been new commits since the last beta"
-  lane :auto_beta do
-    last_commit = get_hockeyapp_version_commit(platform: 'iOS')
-    current_commit = last_git_commit[:commit_hash]
-    UI.message "In faux-git terms:"
-    UI.message "origin/hockeyapp: #{last_commit}"
-    UI.message "HEAD: #{current_commit}"
-    UI.message "Thus, will we beta? #{last_commit != current_commit}"
-    beta unless last_commit == current_commit
-  end
 
   # Lanes specifically for the CIs
   desc "Do CI-system keychain setup"
@@ -181,16 +171,6 @@ platform :android do
     )
   end
 
-  desc "Make a beta build if there have been new commits since the last beta"
-  lane :auto_beta do
-    last_commit = get_hockeyapp_version_commit(platform: 'Android')
-    current_commit = last_git_commit[:commit_hash]
-    UI.message "In faux-git terms:"
-    UI.message "origin/hockeyapp: #{last_commit}"
-    UI.message "HEAD: #{current_commit}"
-    UI.message "Thus, will we beta? #{last_commit != current_commit}"
-    beta unless last_commit == current_commit
-  end
 
   desc "Run the appropriate action on CI"
   lane :ci_run do
@@ -245,6 +225,21 @@ end
 desc "Gets the version, either from Travis or from Hockey"
 private_lane :get_current_build_number do |options|
   ENV["TRAVIS_BUILD_NUMBER"] || get_hockeyapp_version(platform: options[:platform]) + 1
+end
+
+# It doesn't make sense to duplicate this in both platforms, and fastlane is smart
+# enough to call the appropriate platform's "beta" lane.
+desc "Make a beta build if there have been new commits since the last beta"
+private_lane :auto_beta do
+  last_commit = hockeyapp_version_commit
+  current_commit = last_git_commit[:commit_hash]
+
+  UI.message "In faux-git terms:"
+  UI.message "origin/hockeyapp: #{last_commit}"
+  UI.message "HEAD: #{current_commit}"
+  UI.message "Thus, will we beta? #{last_commit != current_commit ? "yes" : "no"}"
+
+  beta if last_commit != current_commit
 end
 
 private_lane :build_notes do |options|
