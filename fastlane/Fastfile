@@ -9,9 +9,6 @@ fastlane_version "2.19.0"
 import 'lib/before_all.rb'
 import 'lib/util.rb'
 
-import 'lanes/bump.rb'
-import 'lanes/register.rb'
-import 'lanes/release_notes.rb'
-
+import 'platforms/generic.rb'
 import 'platforms/android.rb'
 import 'platforms/ios.rb'
