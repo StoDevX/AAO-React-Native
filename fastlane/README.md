@@ -28,31 +28,40 @@ xcode-select --install
 </tr>
 </table>
 # Available Actions
-### register
-```
-fastlane register
-```
-Adds any unregistered devices to the provisioning profile
 ### bump
 ```
 fastlane bump
 ```
 Bump the version string to a new version
+### register
+```
+fastlane register
+```
+Adds any unregistered devices to the provisioning profile
 ### release_notes
 ```
 fastlane release_notes
 ```
 Build the release notes: branch, commit hash, changelog
-### changelog
+
+----
+
+## Android
+### android build
 ```
-fastlane changelog
+fastlane android build
 ```
-Makes a changelog from the time since the last commit
-### authorize_ci_for_keys
+Makes a build
+### android beta
 ```
-fastlane authorize_ci_for_keys
+fastlane android beta
 ```
-Add the github token for stodevx-bot to the CI machine
+Submit a new Beta Build to HockeyApp
+### android ci_run
+```
+fastlane android ci_run
+```
+Run the appropriate action on CI
 
 ----
 
@@ -97,25 +106,6 @@ Run iOS builds or tests, as appropriate
 fastlane ios update_match
 ```
 In case match needs to be updated - probably never needs to be run
-
-----
-
-## Android
-### android build
-```
-fastlane android build
-```
-Makes a build
-### android beta
-```
-fastlane android beta
-```
-Submit a new Beta Build to HockeyApp
-### android ci_run
-```
-fastlane android ci_run
-```
-Run the appropriate action on CI
 
 ----
 
