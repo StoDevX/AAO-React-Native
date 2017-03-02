@@ -65,7 +65,7 @@
 }
 
 - (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
-    [[NSURLCache sharedURLCache] removeAllCachedResponses];
+  [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
 @end
