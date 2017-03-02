@@ -62,6 +62,7 @@
 // Required for the notification event.
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification {
   [RCTOneSignal didReceiveRemoteNotification:notification];
+  [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
 @end
