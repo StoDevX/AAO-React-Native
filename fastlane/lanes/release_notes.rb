@@ -9,8 +9,8 @@ lane :release_notes do |options|
   END
 end
 
-desc "Makes a changelog from the time since the last commit"
-private_lane :changelog do
+# Makes a changelog from the time since the last commit
+def changelog()
   to_ref = ENV["TRAVIS_COMMIT"] || "HEAD"
   from_ref = hockeyapp_version_commit || "HEAD~3"
 
