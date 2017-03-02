@@ -26,11 +26,13 @@ end
 
 desc 'Build the release notes: branch, commit hash, changelog'
 lane :release_notes do |options|
-  <<~END
-  branch: #{git_branch}
-  git commit: #{last_git_commit[:commit_hash]}
+  notes = <<~END
+    branch: #{git_branch}
+    git commit: #{last_git_commit[:commit_hash]}
 
-  ## Changelog
-  #{changelog}
+    ## Changelog
+    #{changelog}
   END
+  UI.message notes
+  notes
 end
