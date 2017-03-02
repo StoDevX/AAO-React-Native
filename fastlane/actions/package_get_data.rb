@@ -25,7 +25,7 @@ module Fastlane
         [
           FastlaneCore::ConfigItem.new(key: :key,
                                        description: "The key to fetch",
-                                       type: String),
+                                       type: Symbol),
           FastlaneCore::ConfigItem.new(key: :package_path,
                                        description: "The path to the package.json file",
                                        type: String,
