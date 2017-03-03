@@ -24,7 +24,7 @@ platform :ios do
 
   desc 'Provisions the profiles; bumps the build number; builds the app'
   lane :build do
-    gym(sdk: 'iphoneos10.1', export_method: 'ad-hoc')
+    gym(export_method: 'ad-hoc')
   end
 
   desc 'Submit a new Beta Build to HockeyApp'
