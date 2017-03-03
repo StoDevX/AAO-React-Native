@@ -24,6 +24,8 @@ platform :ios do
 
   desc 'Provisions the profiles; bumps the build number; builds the app'
   lane :build do
+    match(readonly: true)
+
     gym(export_method: 'ad-hoc')
   end
 
@@ -38,7 +40,7 @@ platform :ios do
 
     match(readonly: true)
 
-    build
+    gym(export_method: 'ad-hoc')
 
     hockey(notes: release_notes)
   end
