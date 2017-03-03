@@ -13,7 +13,6 @@ before_all do
 
   # set up other global shared values
   lane_context[:PRETTY_APP_NAME] = 'All About Olaf'
-  ENV['FL_HOCKEY_PUBLIC_IDENTIFIER'] = lane_context[:PRETTY_APP_NAME]
 
   lane_context[:GRADLE_FILE] = "#{ENV['FL_GRADLE_PROJECT_DIR']}/app/build.gradle"
 
