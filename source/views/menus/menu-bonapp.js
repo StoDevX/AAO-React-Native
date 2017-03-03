@@ -26,7 +26,6 @@ import {toLaxTitleCase} from 'titlecase'
 import {tracker} from '../../analytics'
 const CENTRAL_TZ = 'America/Winnipeg'
 
-
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
 const bonappCafeBaseUrl = 'http://legacy.cafebonappetit.com/api/2/cafes'
 const fetchJsonQuery = (url, query) => fetchJson(`${url}?${qs.stringify(query)}`)
