@@ -38,8 +38,6 @@ platform :ios do
       build: lane_context[:BUILD_NUMBER],
     )
 
-    match(readonly: true)
-
     gym(export_method: 'ad-hoc')
 
     hockey(notes: release_notes)
@@ -77,6 +75,7 @@ platform :ios do
   desc 'Run iOS builds or tests, as appropriate'
   lane :ci_run do
     authorize_ci_for_keys
+    ci_keychains
 
     case
       when ENV['run_deploy'] == '1' then
