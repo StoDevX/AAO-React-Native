@@ -29,7 +29,7 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :app_name,
-                                       env_name: 'FL_HOCKEY_PUBLIC_IDENTIFIER',
+                                       env_name: 'FL_HOCKEY_APP_NAME',
                                        description: 'The app name to use when fetching the version number',
                                        optional: false,
                                        verify_block: proc do |value|
@@ -48,8 +48,8 @@ module Fastlane
                                        default_value: '0'),
           FastlaneCore::ConfigItem.new(key: :platform,
                                        env_name: 'FL_LATEST_HOCKEYAPP_VERSION_NUMBER_PLATFORM',
-                                       description: 'The platform to use when fetching the version number: iOS, Android, Mac OS, Windows Phone, Custom',
-                                       default_value: 'iOS')
+                                       description: 'The platform to use when fetching the version number: ios, android',
+                                       default_value: lane_context[:PLATFORM_NAME] || :ios)
         ]
       end
 

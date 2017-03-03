@@ -59,8 +59,8 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :app_name,
-                                       env_name: 'FL_HOCKEY_PUBLIC_IDENTIFIER',
                                        description: 'The app name to use when fetching the notes',
+                                       default_value: Actions.lane_context[:PRETTY_APP_NAME],
                                        optional: false),
           FastlaneCore::ConfigItem.new(key: :api_token,
                                        env_name: 'FL_HOCKEY_API_TOKEN',
@@ -72,7 +72,7 @@ module Fastlane
                                        default_value: '0'),
           FastlaneCore::ConfigItem.new(key: :platform,
                                        env_name: 'FL_LATEST_HOCKEYAPP_NOTES_PLATFORM',
-                                       description: 'The platform to use when fetching the notes: iOS, Android, Mac OS, Windows Phone, Custom',
+                                       description: 'The platform to use when fetching the notes: ios, android',
                                        default_value: lane_context[:PLATFORM_NAME] || :ios),
           FastlaneCore::ConfigItem.new(key: :release_branch,
                                        env_name: 'FL_LATEST_HOCKEYAPP_NOTES_RELEASE_BRANCH',
