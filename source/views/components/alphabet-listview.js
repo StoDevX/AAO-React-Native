@@ -1,8 +1,8 @@
 // @flow
-import React from 'react';
-import {StyleSheet} from 'react-native';
-import AlphabetListView from 'react-native-alphabetlistview';
-import * as c from '../components/colors';
+import React from 'react'
+import {StyleSheet} from 'react-native'
+import AlphabetListView from 'react-native-alphabetlistview'
+import * as c from '../components/colors'
 
 const styles = StyleSheet.create({
   listView: {
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     right: 3,
   },
-});
+})
 
 export function StyledAlphabetListView(props: Object) {
   return (
@@ -24,5 +24,5 @@ export function StyledAlphabetListView(props: Object) {
       pageSize={8}
       {...props}
     />
-  );
+  )
 }

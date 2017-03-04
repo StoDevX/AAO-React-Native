@@ -1,8 +1,8 @@
 // @flow
 
-import KSTOView from './radio';
+import KSTOView from './radio'
 // import WeeklyMovieView from './movie'
-import WebcamsView from './webcams';
+import WebcamsView from './webcams'
 
 export default [
   {
@@ -23,4 +23,4 @@ export default [
     rnVectorIcon: {iconName: 'videocam'},
     component: WebcamsView,
   },
-];
+]

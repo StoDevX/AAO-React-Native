@@ -1,35 +1,34 @@
 // @flow
 
-import React from 'react';
-import {Text, StyleSheet, Platform, Dimensions} from 'react-native';
-import Icon from 'react-native-vector-icons/Entypo';
-import type {ViewType} from '../views';
-import {Touchable} from '../components/touchable';
-import * as c from '../components/colors';
+import React from 'react'
+import {
+  Text,
+  StyleSheet,
+  Platform,
+  Dimensions,
+} from 'react-native'
+import Icon from 'react-native-vector-icons/Entypo'
+import type {ViewType} from '../views'
+import {Touchable} from '../components/touchable'
+import * as c from '../components/colors'
 
-const Viewport = Dimensions.get('window');
+const Viewport = Dimensions.get('window')
 
-export function HomeScreenButton(
-  {view, onPress}: {view: ViewType, onPress: () => any},
-) {
+export function HomeScreenButton({view, onPress}: {view: ViewType, onPress: () => any}) {
   return (
-    <Touchable
-      highlight={false}
-      onPress={onPress}
-      style={[styles.rectangle, {backgroundColor: view.tint}]}
-    >
+    <Touchable highlight={false} onPress={onPress} style={[styles.rectangle, {backgroundColor: view.tint}]}>
       <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
       <Text style={styles.rectangleButtonText}>
         {view.title}
       </Text>
     </Touchable>
-  );
+  )
 }
 
-export const CELL_MARGIN = 10;
-const cellVerticalPadding = 8;
-const cellHorizontalPadding = 4;
-const cellWidth = Viewport.width / 2 - CELL_MARGIN * 1.5;
+export const CELL_MARGIN = 10
+const cellVerticalPadding = 8
+const cellHorizontalPadding = 4
+const cellWidth = (Viewport.width / 2) - (CELL_MARGIN * 1.5)
 
 const styles = StyleSheet.create({
   // Main buttons for actions on home screen
@@ -60,4 +59,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
   },
-});
+})

@@ -1,7 +1,7 @@
 // @flow
 
-import OtherModesView from './otherModes';
-import BusView from './bus';
+import OtherModesView from './otherModes'
+import BusView from './bus'
 
 export default [
   {
@@ -31,4 +31,4 @@ export default [
     rnVectorIcon: {iconName: 'boat'},
     component: OtherModesView,
   },
-];
+]

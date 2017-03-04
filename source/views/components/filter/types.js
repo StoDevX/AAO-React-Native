@@ -17,7 +17,7 @@ export type ListSpecType = {
   showImages?: boolean,
   options: ListItemSpecType[],
   selected: ListItemSpecType[],
-  mode: 'AND' | 'OR',
+  mode: 'AND'|'OR',
 };
 
 export type PickerItemSpecType = {|
@@ -29,7 +29,7 @@ export type PickerSpecType = {
   caption?: string,
   options: PickerItemSpecType[],
   selected: ?PickerItemSpecType,
-};
+}
 
 export type ToggleFilterFunctionType = {
   key: string,
@@ -67,4 +67,7 @@ export type ListType = {
   apply: ListFilterFunctionType,
 };
 
-export type FilterType = ToggleType | PickerType | ListType;
+export type FilterType =
+  | ToggleType
+  | PickerType
+  | ListType;

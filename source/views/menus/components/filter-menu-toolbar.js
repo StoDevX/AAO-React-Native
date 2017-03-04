@@ -1,9 +1,9 @@
 // @flow
-import React from 'react';
-import {StyleSheet, View, Text, Platform} from 'react-native';
-import type momentT from 'moment';
-import type {FilterType} from '../../components/filter';
-import {Toolbar, ToolbarButton} from '../../components/toolbar';
+import React from 'react'
+import {StyleSheet, View, Text, Platform} from 'react-native'
+import type momentT from 'moment'
+import type {FilterType} from '../../components/filter'
+import {Toolbar, ToolbarButton} from '../../components/toolbar'
 
 const styles = StyleSheet.create({
   today: {
@@ -14,7 +14,8 @@ const styles = StyleSheet.create({
   toolbarSection: {
     flexDirection: 'row',
   },
-});
+})
+
 
 type PropsType = {
   date: momentT,
@@ -26,8 +27,8 @@ type PropsType = {
 export function FilterMenuToolbar({date, title, filters, onPress}: PropsType) {
   const appliedFilterCount = filters
     .filter(f => f.type !== 'picker')
-    .filter(f => f.enabled).length;
-  const isFiltered = appliedFilterCount > 0;
+    .filter(f => f.enabled).length
+  const isFiltered = appliedFilterCount > 0
 
   return (
     <Toolbar onPress={onPress}>
@@ -40,13 +41,9 @@ export function FilterMenuToolbar({date, title, filters, onPress}: PropsType) {
 
       <ToolbarButton
         isActive={isFiltered}
-        title={
-          isFiltered
-            ? `${appliedFilterCount} ${appliedFilterCount === 1 ? 'Filter' : 'Filters'}`
-            : 'No Filters'
-        }
+        title={isFiltered ? `${appliedFilterCount} ${appliedFilterCount === 1 ? 'Filter' : 'Filters'}` : 'No Filters'}
         iconName={Platform.OS === 'ios' ? 'ios-funnel' : 'md-funnel'}
       />
     </Toolbar>
-  );
+  )
 }

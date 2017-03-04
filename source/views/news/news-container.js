@@ -1,13 +1,13 @@
 // @flow
-import React from 'react';
-import delay from 'delay';
-import type {StoryType} from './types';
-import LoadingView from '../components/loading';
-import {NoticeView} from '../components/notice';
-import type {TopLevelViewPropsType} from '../types';
-import {tracker} from '../../analytics';
-import {NewsList} from './news-list';
-import {fetchRssFeed, fetchWpJson} from './fetch-feed';
+import React from 'react'
+import delay from 'delay'
+import type {StoryType} from './types'
+import LoadingView from '../components/loading'
+import {NoticeView} from '../components/notice'
+import type {TopLevelViewPropsType} from '../types'
+import {tracker} from '../../analytics'
+import {NewsList} from './news-list'
+import {fetchRssFeed, fetchWpJson} from './fetch-feed'
 
 export default class NewsContainer extends React.Component {
   state: {
@@ -20,10 +20,11 @@ export default class NewsContainer extends React.Component {
     loading: true,
     error: null,
     refreshing: false,
-  };
+  }
 
   componentWillMount() {
-    this.fetchData().then(() => this.setState({loading: false}));
+    this.fetchData().then(() =>
+      this.setState({loading: false}))
   }
 
   props: TopLevelViewPropsType & {
@@ -31,59 +32,55 @@ export default class NewsContainer extends React.Component {
     url: string,
     query?: Object,
     embedFeaturedImage?: boolean,
-    mode: 'rss' | 'wp-json',
+    mode: 'rss'|'wp-json',
   };
 
   fetchData = async () => {
     try {
-      let entries: StoryType[] = [];
+      let entries: StoryType[] = []
 
       if (this.props.mode === 'rss') {
-        entries = await fetchRssFeed(this.props.url, this.props.query);
+        entries = await fetchRssFeed(this.props.url, this.props.query)
       } else if (this.props.mode === 'wp-json') {
-        entries = await fetchWpJson(this.props.url, this.props.query);
+        entries = await fetchWpJson(this.props.url, this.props.query)
       } else {
-        throw new Error(`unknown mode ${this.props.mode}`);
+        throw new Error(`unknown mode ${this.props.mode}`)
       }
 
-      this.setState({entries});
+      this.setState({entries})
     } catch (error) {
       if (error.message.startsWith('Unexpected token <')) {
-        tracker.trackEvent('news', 'St. Olaf WPDefender strikes again');
-        this.setState({
-          error: new Error(
-            "Oops. Looks like we've triggered a St. Olaf website defense mechanism. Try again in 5 minutes.",
-          ),
-        });
+        tracker.trackEvent('news', 'St. Olaf WPDefender strikes again')
+        this.setState({error: new Error("Oops. Looks like we've triggered a St. Olaf website defense mechanism. Try again in 5 minutes.")})
       } else {
-        tracker.trackException(error.message);
-        console.warn(error);
-        this.setState({error});
+        tracker.trackException(error.message)
+        console.warn(error)
+        this.setState({error})
       }
     }
-  };
+  }
 
   refresh = async () => {
-    let start = Date.now();
-    this.setState({refreshing: true});
+    let start = Date.now()
+    this.setState({refreshing: true})
 
-    await this.fetchData();
+    await this.fetchData()
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    let elapsed = start - Date.now();
+    let elapsed = start - Date.now()
     if (elapsed < 500) {
-      await delay(500 - elapsed);
+      await delay(500 - elapsed)
     }
-    this.setState({refreshing: false});
-  };
+    this.setState({refreshing: false})
+  }
 
   render() {
     if (this.state.error) {
-      return <NoticeView text={`Error: ${this.state.error.message}`} />;
+      return <NoticeView text={`Error: ${this.state.error.message}`} />
     }
 
     if (this.state.loading) {
-      return <LoadingView />;
+      return <LoadingView />
     }
 
     return (
@@ -97,6 +94,6 @@ export default class NewsContainer extends React.Component {
         mode={this.props.mode}
         embedFeaturedImage={this.props.embedFeaturedImage}
       />
-    );
+    )
   }
 }

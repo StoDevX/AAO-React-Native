@@ -3,21 +3,17 @@
  * Exports a button that closes the current overlay screen
  */
 
-import React from 'react';
-import {Text, Navigator, Platform, StyleSheet} from 'react-native';
-import {Touchable} from '../touchable';
-import noop from 'lodash/noop';
-import type {RouteType} from '../../types';
-import {commonStyles} from './styles';
+import React from 'react'
+import {Text, Navigator, Platform, StyleSheet} from 'react-native'
+import {Touchable} from '../touchable'
+import noop from 'lodash/noop'
+import type {RouteType} from '../../types'
+import {commonStyles} from './styles'
 
 export function CloseScreenButton(
-  {
-    route,
-    navigator,
-    buttonStyle,
-  }: {route: RouteType, navigator: Navigator, buttonStyle?: any},
+  {route, navigator, buttonStyle}: {route: RouteType, navigator: Navigator, buttonStyle?: any}
 ) {
-  const onDismiss = route.onDismiss ? route.onDismiss : noop;
+  const onDismiss = route.onDismiss ? route.onDismiss : noop
   return (
     <Touchable
       borderless
@@ -27,8 +23,9 @@ export function CloseScreenButton(
     >
       <Text style={[commonStyles.text, styles.text]}>Done</Text>
     </Touchable>
-  );
+  )
 }
+
 
 const styles = StyleSheet.create({
   text: {
@@ -41,4 +38,4 @@ const styles = StyleSheet.create({
       },
     }),
   },
-});
+})
