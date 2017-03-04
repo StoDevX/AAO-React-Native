@@ -6,14 +6,21 @@ import * as cache from '../cache'
 import {FINANCIALS_URL, LANDING_URL} from './urls'
 import type {FinancialDataShapeType} from './types'
 
-type PromisedDataType = Promise<{error: true, value: Error}|{error: false, value: FinancialDataShapeType}>;
+type PromisedDataType = Promise<
+  | {error: true, value: Error}
+  | {error: false, value: FinancialDataShapeType}>;
 
-export async function getFinancialData(isConnected: boolean, force?: bool): PromisedDataType {
+export async function getFinancialData(
+  isConnected: boolean,
+  force?: boolean,
+): PromisedDataType {
   const [flex, ole, print] = await getBalances()
 
-  const balancesExist = (!flex || !ole || !print)
-  const isExpired = balancesExist && (flex.isExpired || ole.isExpired || print.isExpired)
-  const isCached = balancesExist && (flex.isCached || ole.isCached || print.isCached)
+  const balancesExist = !flex || !ole || !print
+  const isExpired = balancesExist &&
+    (flex.isExpired || ole.isExpired || print.isExpired)
+  const isCached = balancesExist &&
+    (flex.isCached || ole.isCached || print.isCached)
 
   if (isConnected && (isExpired || !isCached || force)) {
     const balances = await fetchFinancialDataFromServer()
@@ -50,7 +57,6 @@ function getBalances() {
   ])
 }
 
-
 async function fetchFinancialDataFromServer(): PromisedDataType {
   const resp = await fetch(FINANCIALS_URL)
   if (startsWith(resp.url, LANDING_URL)) {
@@ -67,7 +73,8 @@ async function fetchFinancialDataFromServer(): PromisedDataType {
 }
 
 function parseBalancesFromDom(dom: mixed): FinancialDataShapeType {
-  const data: (number|null)[] = cssSelect('.sis-money', dom).slice(-3)
+  const data: number | null[] = cssSelect('.sis-money', dom)
+    .slice(-3)
     .map(getText)
     // remove the /[$.]/, and put the numbers into big strings (eg, $3.14 -> '314')
     .map(s => s.replace('$', '').split('.').join(''))

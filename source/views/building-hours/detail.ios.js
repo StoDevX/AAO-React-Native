@@ -72,7 +72,7 @@ export class BuildingHoursDetailView extends React.Component {
     intervalId: 0,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
-  }
+  };
 
   componentWillMount() {
     // This updates the screen every ten seconds, so that the building
@@ -88,12 +88,12 @@ export class BuildingHoursDetailView extends React.Component {
 
   updateTime = () => {
     this.setState({now: moment.tz(CENTRAL_TZ)})
-  }
+  };
 
   render() {
     const bgColors = {
-      'Open': c.moneyGreen,
-      'Closed': c.salmon,
+      Open: c.moneyGreen,
+      Closed: c.salmon,
     }
 
     const headerImage = this.props.image
@@ -103,11 +103,17 @@ export class BuildingHoursDetailView extends React.Component {
     const schedules = normalizeBuildingSchedule(this.props, this.state.now)
     const dayOfWeek = ((this.state.now.format('dd'): any): DayOfWeekEnumType)
 
-    const abbr = this.props.abbreviation ? <Text style={styles.abbr}> ({this.props.abbreviation})</Text> : null
-    const title = <Text selectable={true} style={styles.name}>{this.props.name}{abbr}</Text>
+    const abbr = this.props.abbreviation
+      ? <Text style={styles.abbr}> ({this.props.abbreviation})</Text>
+      : null
+    const title = (
+      <Text selectable={true} style={styles.name}>{this.props.name}{abbr}</Text>
+    )
     const subtitle = this.props.subtitle
       ? <View style={styles.subtitle}>
-          <Text selectable={true} style={[styles.name, styles.subtitleText]}>{this.props.subtitle}</Text>
+          <Text selectable={true} style={[styles.name, styles.subtitleText]}>
+            {this.props.subtitle}
+          </Text>
         </View>
       : null
 
@@ -121,25 +127,50 @@ export class BuildingHoursDetailView extends React.Component {
           <View style={styles.title}>{title}</View>
           {subtitle}
 
-          <View style={[styles.badge, {backgroundColor: bgColors[openStatus] || c.goldenrod}]}>
+          <View
+            style={[
+              styles.badge,
+              {backgroundColor: bgColors[openStatus] || c.goldenrod},
+            ]}
+          >
             <Text selectable={true} style={styles.badgeText}>{openStatus}</Text>
           </View>
 
           <TableView>
-            {schedules.map(set =>
-              <Section key={set.title} header={set.title.toUpperCase()} footer={set.notes}>
+            {schedules.map(set => (
+              <Section
+                key={set.title}
+                header={set.title.toUpperCase()}
+                footer={set.notes}
+              >
                 {set.hours.map((schedule, i) => {
-                  let isActiveSchedule = set.isPhysicallyOpen !== false && schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)
+                  let isActiveSchedule = set.isPhysicallyOpen !== false &&
+                    schedule.days.includes(dayOfWeek) &&
+                    isBuildingOpenAtMoment(schedule, this.state.now)
 
                   return (
                     <Cell
                       key={i}
                       cellContentView={
                         <Row>
-                          <Text selectable={true} numberOfLines={1} style={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]}>
+                          <Text
+                            selectable={true}
+                            numberOfLines={1}
+                            style={[
+                              styles.scheduleDays,
+                              isActiveSchedule ? styles.bold : null,
+                            ]}
+                          >
                             {summarizeDays(schedule.days)}
                           </Text>
-                          <Text selectable={true} numberOfLines={1} style={[styles.scheduleHours, isActiveSchedule ? styles.bold : null]}>
+                          <Text
+                            selectable={true}
+                            numberOfLines={1}
+                            style={[
+                              styles.scheduleHours,
+                              isActiveSchedule ? styles.bold : null,
+                            ]}
+                          >
                             {formatBuildingTimes(schedule, this.state.now)}
                           </Text>
                         </Row>
@@ -148,7 +179,7 @@ export class BuildingHoursDetailView extends React.Component {
                   )
                 })}
               </Section>
-            )}
+            ))}
           </TableView>
         </View>
       </ParallaxView>

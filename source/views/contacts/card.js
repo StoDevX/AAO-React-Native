@@ -1,12 +1,7 @@
 // @flow
 
 import React from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-  Alert,
-} from 'react-native'
+import {StyleSheet, View, Text, Alert} from 'react-native'
 import {Button} from '../components/button'
 import Communications from 'react-native-communications'
 import {tracker} from '../../analytics'
@@ -40,24 +35,29 @@ function formatNumber(phoneNumber: string) {
 }
 
 function promptCall(buttonText: string, phoneNumber: string) {
-  Alert.alert(
-    buttonText,
-    formatNumber(phoneNumber),
-    [
-      {text: 'Cancel', onPress: () => console.log('Call cancel pressed')},
-      {text: 'Call', onPress: () => Communications.phonecall(phoneNumber, false)},
-    ]
-  )
+  Alert.alert(buttonText, formatNumber(phoneNumber), [
+    {text: 'Cancel', onPress: () => console.log('Call cancel pressed')},
+    {text: 'Call', onPress: () => Communications.phonecall(phoneNumber, false)},
+  ])
 }
 
-export default function ContactCard({title, phoneNumber, text, buttonText}: {title: string, phoneNumber: string, text: string, buttonText: string}) {
+export default function ContactCard(
+  {
+    title,
+    phoneNumber,
+    text,
+    buttonText,
+  }: {title: string, phoneNumber: string, text: string, buttonText: string},
+) {
   return (
     <View style={styles.container}>
       <Text selectable={true} style={styles.title}>{title}</Text>
       <Text selectable={true} style={styles.content}>{text}</Text>
       <Button
         onPress={() => {
-          tracker.trackScreenView(`ImportantContacts_${title.replace(' ', '')}View`)
+          tracker.trackScreenView(
+            `ImportantContacts_${title.replace(' ', '')}View`,
+          )
           promptCall(buttonText, phoneNumber)
         }}
         title={buttonText}

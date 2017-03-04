@@ -8,4 +8,5 @@ const codePushOptions = {
   installMode: codePush.InstallMode.ON_NEXT_RESUME,
 }
 
-AppRegistry.registerComponent('AllAboutOlaf', () => codePush(codePushOptions)(App))
+AppRegistry.registerComponent('AllAboutOlaf', () =>
+  codePush(codePushOptions)(App))

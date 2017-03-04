@@ -8,14 +8,16 @@ it('checks a list of schedules to see if any are open', () => {
     name: 'building',
     category: '???',
     breakSchedule: {},
-    schedule: [{
-      title: 'Hours',
-      hours: [
-        {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '12:00am'},
-        {days: ['Fr', 'Sa'], from: '10:30am', to: '2:00am'},
-        {days: ['Su'], from: '10:30am', to: '12:00am'},
-      ],
-    }],
+    schedule: [
+      {
+        title: 'Hours',
+        hours: [
+          {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '12:00am'},
+          {days: ['Fr', 'Sa'], from: '10:30am', to: '2:00am'},
+          {days: ['Su'], from: '10:30am', to: '12:00am'},
+        ],
+      },
+    ],
   }
 
   expect(isBuildingOpen(building, m)).toBe(true)
@@ -27,13 +29,15 @@ it('handles multiple internal schedules for the same timeframe', () => {
     name: 'building',
     category: '???',
     breakSchedule: {},
-    schedule: [{
-      title: 'Hours',
-      hours: [
-        {days: ['Mo'], from: '10:30am', to: '12:00pm'},
-        {days: ['Mo'], from: '1:00pm', to: '3:00pm'},
-      ],
-    }],
+    schedule: [
+      {
+        title: 'Hours',
+        hours: [
+          {days: ['Mo'], from: '10:30am', to: '12:00pm'},
+          {days: ['Mo'], from: '1:00pm', to: '3:00pm'},
+        ],
+      },
+    ],
   }
 
   expect(isBuildingOpen(building, m)).toBe(true)
@@ -48,9 +52,7 @@ it('handles multiple named schedules for the same timeframe', () => {
     schedule: [
       {
         title: 'Hours',
-        hours: [
-          {days: ['Mo'], from: '10:30am', to: '12:00pm'},
-        ],
+        hours: [{days: ['Mo'], from: '10:30am', to: '12:00pm'}],
       },
       {
         title: 'Hours2',
@@ -71,18 +73,19 @@ it('returns false if none are available for this day', () => {
     name: 'building',
     category: '???',
     breakSchedule: {},
-    schedule: [{
-      title: 'Hours',
-      hours: [
-        {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '12:00am'},
-        {days: ['Fr', 'Sa'], from: '10:30am', to: '2:00am'},
-      ],
-    }],
+    schedule: [
+      {
+        title: 'Hours',
+        hours: [
+          {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '12:00am'},
+          {days: ['Fr', 'Sa'], from: '10:30am', to: '2:00am'},
+        ],
+      },
+    ],
   }
 
   expect(isBuildingOpen(building, m)).toBe(false)
 })
-
 
 it('returns false if none are open', () => {
   let m = dayMoment('Mon 3:00pm')
@@ -90,13 +93,15 @@ it('returns false if none are open', () => {
     name: 'building',
     category: '???',
     breakSchedule: {},
-    schedule: [{
-      title: 'Hours',
-      hours: [
-        {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '2:00pm'},
-        {days: ['Fr', 'Sa'], from: '10:30am', to: '2:00pm'},
-      ],
-    }],
+    schedule: [
+      {
+        title: 'Hours',
+        hours: [
+          {days: ['Mo', 'Tu', 'We', 'Th'], from: '10:30am', to: '2:00pm'},
+          {days: ['Fr', 'Sa'], from: '10:30am', to: '2:00pm'},
+        ],
+      },
+    ],
   }
 
   expect(isBuildingOpen(building, m)).toBe(false)

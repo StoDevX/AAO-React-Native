@@ -18,13 +18,13 @@ const styles = StyleSheet.create({
 export class FaqView extends React.Component {
   state = {
     html: faqs,
-  }
+  };
 
   componentWillMount() {
     this.fetchData()
   }
 
-  url = 'https://stodevx.github.io/AAO-React-Native/faqs.json'
+  url = 'https://stodevx.github.io/AAO-React-Native/faqs.json';
 
   fetchData = async () => {
     let html = faqs
@@ -42,12 +42,14 @@ export class FaqView extends React.Component {
     }
 
     this.setState({html: html})
-  }
+  };
 
   render() {
     if (!this.state.html) {
       return <LoadingView />
     }
-    return <WebView style={styles.container} source={{html: this.state.html}} />
+    return (
+      <WebView style={styles.container} source={{html: this.state.html}} />
+    )
   }
 }
