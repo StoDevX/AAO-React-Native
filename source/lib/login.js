@@ -1,18 +1,18 @@
 // @flow
-import * as Keychain from 'react-native-keychain'
+import * as Keychain from 'react-native-keychain';
 
-import * as storage from './storage'
-import buildFormData from './formdata'
-import {OLECARD_AUTH_URL} from './financials/urls'
+import * as storage from './storage';
+import buildFormData from './formdata';
+import {OLECARD_AUTH_URL} from './financials/urls';
 
-const SIS_LOGIN_CREDENTIAL_KEY = 'stolaf.edu'
+const SIS_LOGIN_CREDENTIAL_KEY = 'stolaf.edu';
 
 export function saveLoginCredentials(username: string, password: string) {
   return Keychain.setInternetCredentials(
     SIS_LOGIN_CREDENTIAL_KEY,
     username,
     password,
-  ).catch(() => {})
+  ).catch(() => {});
 }
 export function loadLoginCredentials(): Promise<{
   username?: string,
@@ -20,20 +20,20 @@ export function loadLoginCredentials(): Promise<{
 }> {
   return Keychain.getInternetCredentials(
     SIS_LOGIN_CREDENTIAL_KEY,
-  ).catch(() => {})
+  ).catch(() => {});
 }
 export function clearLoginCredentials() {
   return Keychain.resetInternetCredentials(
     SIS_LOGIN_CREDENTIAL_KEY,
-  ).catch(() => {})
+  ).catch(() => {});
 }
 
 export async function isLoggedIn(): Promise<boolean> {
   const result = await Promise.all([
     storage.getTokenValid(),
     storage.getCredentialsValid(),
-  ])
-  return result.every(result => result === true)
+  ]);
+  return result.every(result => result === true);
 }
 
 export async function performLogin(
@@ -41,25 +41,25 @@ export async function performLogin(
   password?: string,
 ): Promise<boolean> {
   if (!username || !password) {
-    return false
+    return false;
   }
 
-  const form = buildFormData({username, password})
+  const form = buildFormData({username, password});
   const loginResult = await fetch(OLECARD_AUTH_URL, {
     method: 'POST',
     body: form,
-  })
-  const page = await loginResult.text()
+  });
+  const page = await loginResult.text();
 
   if (page.includes('Password')) {
-    await storage.setCredentialsValid(false)
-    return false
+    await storage.setCredentialsValid(false);
+    return false;
   }
 
   await Promise.all([
     saveLoginCredentials(username, password),
     storage.setCredentialsValid(true),
-  ])
+  ]);
 
-  return true
+  return true;
 }

@@ -1,5 +1,5 @@
-import React from 'react'
-import {ScrollView, Text, StyleSheet} from 'react-native'
+import React from 'react';
+import {ScrollView, Text, StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   definition: {},
-})
+});
 
 export function DictionaryDetailView(props) {
   return (
@@ -23,11 +23,11 @@ export function DictionaryDetailView(props) {
         {props.item.definition}
       </Text>
     </ScrollView>
-  )
+  );
 }
 DictionaryDetailView.propTypes = {
   item: React.PropTypes.shape({
     word: React.PropTypes.string.isRequired,
     definition: React.PropTypes.string.isRequired,
   }).isRequired,
-}
+};

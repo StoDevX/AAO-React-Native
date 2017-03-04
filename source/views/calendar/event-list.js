@@ -4,16 +4,16 @@
  * List of calendar events
  */
 
-import React from 'react'
-import {StyleSheet} from 'react-native'
-import SimpleListView from '../components/listview'
-import type {EventType} from './types'
-import groupBy from 'lodash/groupBy'
-import size from 'lodash/size'
-import moment from 'moment-timezone'
-import {ListSeparator, ListSectionHeader} from '../components/list'
-import {NoticeView} from '../components/notice'
-import EventView from './event-row'
+import React from 'react';
+import {StyleSheet} from 'react-native';
+import SimpleListView from '../components/listview';
+import type {EventType} from './types';
+import groupBy from 'lodash/groupBy';
+import size from 'lodash/size';
+import moment from 'moment-timezone';
+import {ListSeparator, ListSectionHeader} from '../components/list';
+import {NoticeView} from '../components/notice';
+import EventView from './event-row';
 
 export class EventList extends React.Component {
   props: {
@@ -27,36 +27,36 @@ export class EventList extends React.Component {
   groupEvents(events: EventType[], now: moment): {[key: string]: EventType[]} {
     return groupBy(events, event => {
       if (event.isOngoing) {
-        return 'Ongoing'
+        return 'Ongoing';
       }
       if (event.startTime.isSame(now, 'day')) {
-        return 'Today'
+        return 'Today';
       }
-      return event.startTime.format('ddd  MMM Do') // google returns events in CST
-    })
+      return event.startTime.format('ddd  MMM Do'); // google returns events in CST
+    });
   }
 
   renderSectionHeader = (
     sectionData: EventType[],
     sectionIdentifier: string,
   ) => {
-    return <ListSectionHeader title={sectionIdentifier} spacing={{left: 10}} />
+    return <ListSectionHeader title={sectionIdentifier} spacing={{left: 10}} />;
   };
 
   renderSeparator = (sectionID: any, rowID: any) => {
-    return <ListSeparator fullWidth={true} key={`${sectionID}-${rowID}`} />
+    return <ListSeparator fullWidth={true} key={`${sectionID}-${rowID}`} />;
   };
 
   render() {
     if (this.props.message) {
-      return <NoticeView text={this.props.message} />
+      return <NoticeView text={this.props.message} />;
     }
 
     if (!size(this.props.events)) {
-      return <NoticeView text="No events." />
+      return <NoticeView text="No events." />;
     }
 
-    const events = this.groupEvents(this.props.events, this.props.now)
+    const events = this.groupEvents(this.props.events, this.props.now);
 
     return (
       <SimpleListView
@@ -70,7 +70,7 @@ export class EventList extends React.Component {
       >
         {(data: EventType) => <EventView {...data} />}
       </SimpleListView>
-    )
+    );
   }
 }
 
@@ -79,4 +79,4 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
-})
+});

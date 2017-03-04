@@ -1,16 +1,16 @@
 // @flow
-import React from 'react'
-import {View, StyleSheet, Platform} from 'react-native'
-import {DietaryTags} from './dietary-tags'
-import {Row, Column} from '../../components/layout'
-import {ListRow, Detail, Title} from '../../components/list'
-import type {MenuItemType, MasterCorIconMapType} from '../types'
-import * as c from '../../components/colors'
-import Icon from 'react-native-vector-icons/Ionicons'
+import React from 'react';
+import {View, StyleSheet, Platform} from 'react-native';
+import {DietaryTags} from './dietary-tags';
+import {Row, Column} from '../../components/layout';
+import {ListRow, Detail, Title} from '../../components/list';
+import type {MenuItemType, MasterCorIconMapType} from '../types';
+import * as c from '../../components/colors';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const specialsIcon = Platform.OS === 'ios'
   ? 'ios-star-outline'
-  : 'md-star-outline'
+  : 'md-star-outline';
 
 type FoodItemPropsType = {|
   corIcons: MasterCorIconMapType,
@@ -23,7 +23,7 @@ type FoodItemPropsType = {|
 export function FoodItemRow(
   {data, corIcons, badgeSpecials = true, ...props}: FoodItemPropsType,
 ) {
-  const {left = 0} = props.spacing
+  const {left = 0} = props.spacing;
   return (
     <ListRow
       style={[styles.container, props.style]}
@@ -49,7 +49,7 @@ export function FoodItemRow(
         />
       </Row>
     </ListRow>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -70,4 +70,4 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 4,
   },
-})
+});

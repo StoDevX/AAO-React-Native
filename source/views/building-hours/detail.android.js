@@ -1,28 +1,28 @@
 // @flow
-import React from 'react'
-import {View, Text, StyleSheet} from 'react-native'
-import {buildingImages} from '../../../images/building-images'
+import React from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import {buildingImages} from '../../../images/building-images';
 import type {
   SingleBuildingScheduleType,
   BuildingType,
   DayOfWeekEnumType,
-} from './types'
-import type momentT from 'moment'
-import {Card} from '../components/card'
-import ParallaxView from 'react-native-parallax-view'
-import moment from 'moment-timezone'
-import * as c from '../components/colors'
+} from './types';
+import type momentT from 'moment';
+import {Card} from '../components/card';
+import ParallaxView from 'react-native-parallax-view';
+import moment from 'moment-timezone';
+import * as c from '../components/colors';
 import {
   normalizeBuildingSchedule,
   formatBuildingTimes,
   summarizeDays,
   getShortBuildingStatus,
   isBuildingOpenAtMoment,
-} from './building-hours-helpers'
+} from './building-hours-helpers';
 
-const transparentPixel = require('../../../images/transparent.png')
+const transparentPixel = require('../../../images/transparent.png');
 
-const CENTRAL_TZ = 'America/Winnipeg'
+const CENTRAL_TZ = 'America/Winnipeg';
 
 const styles = StyleSheet.create({
   title: {
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     paddingTop: 6,
     paddingBottom: 2,
   },
-})
+});
 
 export class BuildingHoursDetailView extends React.Component {
   state: {intervalId: number, now: momentT} = {
@@ -94,43 +94,43 @@ export class BuildingHoursDetailView extends React.Component {
   componentWillMount() {
     // This updates the screen every ten seconds, so that the building
     // info statuses are updated without needing to leave and come back.
-    this.setState({intervalId: setInterval(this.updateTime, 10000)})
+    this.setState({intervalId: setInterval(this.updateTime, 10000)});
   }
 
   componentWillUnmount() {
-    clearTimeout(this.state.intervalId)
+    clearTimeout(this.state.intervalId);
   }
 
   props: BuildingType;
 
   updateTime = () => {
-    this.setState({now: moment.tz(CENTRAL_TZ)})
+    this.setState({now: moment.tz(CENTRAL_TZ)});
   };
 
   render() {
     const bgColors = {
       Open: c.moneyGreen,
       Closed: c.salmon,
-    }
+    };
 
     const headerImage = this.props.image
       ? buildingImages[this.props.image]
-      : transparentPixel
-    const openStatus = getShortBuildingStatus(this.props, this.state.now)
-    const schedules = normalizeBuildingSchedule(this.props, this.state.now)
-    const dayOfWeek = ((this.state.now.format('dd'): any): DayOfWeekEnumType)
+      : transparentPixel;
+    const openStatus = getShortBuildingStatus(this.props, this.state.now);
+    const schedules = normalizeBuildingSchedule(this.props, this.state.now);
+    const dayOfWeek = ((this.state.now.format('dd'): any): DayOfWeekEnumType);
 
     const abbr = this.props.abbreviation
       ? <Text style={styles.abbr}> ({this.props.abbreviation})</Text>
-      : null
-    const title = <Text style={styles.name}>{this.props.name}{abbr}</Text>
+      : null;
+    const title = <Text style={styles.name}>{this.props.name}{abbr}</Text>;
     const subtitle = this.props.subtitle
       ? <View style={styles.subtitle}>
           <Text style={[styles.name, styles.subtitleText]}>
             {this.props.subtitle}
           </Text>
         </View>
-      : null
+      : null;
 
     return (
       <ParallaxView
@@ -176,7 +176,7 @@ export class BuildingHoursDetailView extends React.Component {
           ))}
         </View>
       </ParallaxView>
-    )
+    );
   }
 }
 
@@ -205,5 +205,5 @@ const ScheduleRow = (
         {formatBuildingTimes(schedule, now)}
       </Text>
     </View>
-  )
-}
+  );
+};

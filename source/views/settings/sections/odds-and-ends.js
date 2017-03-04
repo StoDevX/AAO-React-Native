@@ -1,11 +1,11 @@
 // @flow
-import React from 'react'
-import {Cell, Section} from 'react-native-tableview-simple'
-import {version} from '../../../../package.json'
-import type {TopLevelViewPropsType} from '../../types'
-import {setFeedbackStatus} from '../../../flux/parts/settings'
-import {connect} from 'react-redux'
-import {CellToggle} from '../../components/cell-toggle'
+import React from 'react';
+import {Cell, Section} from 'react-native-tableview-simple';
+import {version} from '../../../../package.json';
+import type {TopLevelViewPropsType} from '../../types';
+import {setFeedbackStatus} from '../../../flux/parts/settings';
+import {connect} from 'react-redux';
+import {CellToggle} from '../../components/cell-toggle';
 
 class OddsAndEndsSection extends React.Component {
   props: TopLevelViewPropsType & {
@@ -18,7 +18,7 @@ class OddsAndEndsSection extends React.Component {
       id: id,
       title: title,
       index: this.props.route.index + 1,
-    })
+    });
   };
 
   render() {
@@ -54,7 +54,7 @@ class OddsAndEndsSection extends React.Component {
           onPress={() => this.onPressButton('LegalView', 'Legal')}
         />
       </Section>
-    )
+    );
   }
 }
 
@@ -68,19 +68,19 @@ const PushButtonCell = (
       accessory="DisclosureIndicator"
       onPress={onPress}
     />
-  )
-}
+  );
+};
 
 function mapStateToProps(state) {
   return {
     feedbackDisabled: state.settings.feedbackDisabled,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     onChangeFeedbackToggle: s => dispatch(setFeedbackStatus(s)),
-  }
+  };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(OddsAndEndsSection)
+export default connect(mapStateToProps, mapDispatchToProps)(OddsAndEndsSection);

@@ -1,12 +1,12 @@
 // @flow
 
-import React from 'react'
-import {StyleSheet, View, Text, Alert} from 'react-native'
-import {Button} from '../components/button'
-import Communications from 'react-native-communications'
-import {tracker} from '../../analytics'
+import React from 'react';
+import {StyleSheet, View, Text, Alert} from 'react-native';
+import {Button} from '../components/button';
+import Communications from 'react-native-communications';
+import {tracker} from '../../analytics';
 
-import * as c from '../components/colors'
+import * as c from '../components/colors';
 
 let styles = StyleSheet.create({
   container: {
@@ -26,19 +26,19 @@ let styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
   },
-})
+});
 
 function formatNumber(phoneNumber: string) {
-  let re = /\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})/g
-  let subst = '($1) $2-$3'
-  return phoneNumber.replace(re, subst)
+  let re = /\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})/g;
+  let subst = '($1) $2-$3';
+  return phoneNumber.replace(re, subst);
 }
 
 function promptCall(buttonText: string, phoneNumber: string) {
   Alert.alert(buttonText, formatNumber(phoneNumber), [
     {text: 'Cancel', onPress: () => console.log('Call cancel pressed')},
     {text: 'Call', onPress: () => Communications.phonecall(phoneNumber, false)},
-  ])
+  ]);
 }
 
 export default function ContactCard(
@@ -57,11 +57,11 @@ export default function ContactCard(
         onPress={() => {
           tracker.trackScreenView(
             `ImportantContacts_${title.replace(' ', '')}View`,
-          )
-          promptCall(buttonText, phoneNumber)
+          );
+          promptCall(buttonText, phoneNumber);
         }}
         title={buttonText}
       />
     </View>
-  )
+  );
 }

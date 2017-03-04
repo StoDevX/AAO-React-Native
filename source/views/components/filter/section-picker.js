@@ -1,8 +1,8 @@
 // @flow
-import React from 'react'
-import {Picker, StyleSheet} from 'react-native'
-import type {PickerType} from './types'
-import {Section} from 'react-native-tableview-simple'
+import React from 'react';
+import {Picker, StyleSheet} from 'react-native';
+import type {PickerType} from './types';
+import {Section} from 'react-native-tableview-simple';
 
 type PropsType = {
   filter: PickerType,
@@ -10,11 +10,11 @@ type PropsType = {
 };
 
 export function PickerSection({filter, onChange}: PropsType) {
-  const {spec} = filter
-  const {title = '', caption = '', options, selected} = spec
+  const {spec} = filter;
+  const {title = '', caption = '', options, selected} = spec;
 
   function pickerPicked(pickedValue: string, pickedItemIndex: number) {
-    let pickedItem = spec.options[pickedItemIndex]
+    let pickedItem = spec.options[pickedItemIndex];
 
     onChange({
       ...filter,
@@ -22,7 +22,7 @@ export function PickerSection({filter, onChange}: PropsType) {
         ...spec,
         selected: pickedItem,
       },
-    })
+    });
   }
 
   return (
@@ -37,11 +37,11 @@ export function PickerSection({filter, onChange}: PropsType) {
         ))}
       </Picker>
     </Section>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   picker: {
     backgroundColor: 'white',
   },
-})
+});

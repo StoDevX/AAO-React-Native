@@ -1,11 +1,11 @@
 // @flow
-import React from 'react'
-import {ScrollView, Text, View, StyleSheet} from 'react-native'
+import React from 'react';
+import {ScrollView, Text, View, StyleSheet} from 'react-native';
 
-import {Cell} from 'react-native-tableview-simple'
-import {Card} from '../components/card'
-import * as c from '../components/colors'
-import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
+import {Cell} from 'react-native-tableview-simple';
+import {Card} from '../components/card';
+import * as c from '../components/colors';
+import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types';
 
 const styles = StyleSheet.create({
   container: {
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingBottom: 20,
   },
-})
+});
 
 export class StudentOrgsDetailRenderView extends React.Component {
   props: {
@@ -52,7 +52,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
       <Card header="Contact" style={styles.card}>
         <Text selectable={true} style={styles.cardBody}>{contactInfo}</Text>
       </Card>
-    )
+    );
   }
 
   displayDescription(description: string) {
@@ -60,11 +60,11 @@ export class StudentOrgsDetailRenderView extends React.Component {
       <Card header="Description" style={styles.card}>
         <Text selectable={true} style={styles.cardBody}>{description}</Text>
       </Card>
-    )
+    );
   }
 
   displayMeetings(meetingTime: string, meetingLocation: string) {
-    let contents = null
+    let contents = null;
     if (meetingTime && meetingLocation) {
       contents = (
         <Cell
@@ -72,26 +72,26 @@ export class StudentOrgsDetailRenderView extends React.Component {
           title={meetingTime}
           detail={meetingLocation}
         />
-      )
+      );
     } else if (meetingTime) {
       contents = (
         <Cell cellStyle="Basic" title={meetingTime} detail={meetingLocation} />
-      )
+      );
     } else if (meetingLocation) {
-      contents = <Cell cellStyle="Basic" title={meetingLocation} />
+      contents = <Cell cellStyle="Basic" title={meetingLocation} />;
     }
 
     return (
       <Card header="Meetings" style={styles.card}>
         {contents}
       </Card>
-    )
+    );
   }
 
   displayFooter() {
     return (
       <Text selectable={true} style={styles.footer}>Powered by Presence</Text>
-    )
+    );
   }
 
   renderBody = (data: StudentOrgInfoType) => {
@@ -100,9 +100,9 @@ export class StudentOrgsDetailRenderView extends React.Component {
       regularMeetingLocation = '',
       description = '',
       contactName = '',
-    } = data
+    } = data;
 
-    const showMeetingSection = regularMeetingTime && regularMeetingLocation
+    const showMeetingSection = regularMeetingTime && regularMeetingLocation;
 
     return (
       <View>
@@ -112,21 +112,21 @@ export class StudentOrgsDetailRenderView extends React.Component {
         {contactName ? this.displayContact(contactName) : null}
         {description ? this.displayDescription(description) : null}
       </View>
-    )
+    );
   };
 
   render() {
-    let knownData = this.props.base
-    let orgName = knownData.name.trim()
-    let orgCategory = knownData.categories.join(', ')
+    let knownData = this.props.base;
+    let orgName = knownData.name.trim();
+    let orgCategory = knownData.categories.join(', ');
 
-    let contents
+    let contents;
     if (!this.props.loaded) {
       contents = (
         <Card header="Organization" style={styles.card}>
           <Text selectable={true} style={styles.cardBody}>Loading…</Text>
         </Card>
-      )
+      );
     } else if (!this.props.full) {
       contents = (
         <Card header="Organization" style={styles.card}>
@@ -134,9 +134,9 @@ export class StudentOrgsDetailRenderView extends React.Component {
             No information found.
           </Text>
         </Card>
-      )
+      );
     } else {
-      contents = this.renderBody(this.props.full)
+      contents = this.renderBody(this.props.full);
     }
 
     return (
@@ -150,6 +150,6 @@ export class StudentOrgsDetailRenderView extends React.Component {
         {contents}
         {this.displayFooter()}
       </ScrollView>
-    )
+    );
   }
 }

@@ -3,12 +3,12 @@
  * Exports the LeftButton side of the Navigator.NavBar
  */
 
-import React from 'react'
-import {Text, Platform, Navigator, StyleSheet} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
-import {Touchable} from '../touchable'
-import {OpenSettingsButton} from './special-settings'
-import type {RouteType, NavStateType} from '../../types'
+import React from 'react';
+import {Text, Platform, Navigator, StyleSheet} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {Touchable} from '../touchable';
+import {OpenSettingsButton} from './special-settings';
+import type {RouteType, NavStateType} from '../../types';
 
 export function LeftButton(
   route: RouteType,
@@ -17,28 +17,28 @@ export function LeftButton(
   navState: NavStateType,
 ) {
   if (route.id === 'HomeView') {
-    return <OpenSettingsButton route={route} navigator={navigator} />
+    return <OpenSettingsButton route={route} navigator={navigator} />;
   }
 
   if (route.onDismiss) {
-    return null
+    return null;
   }
 
   if (index <= 0) {
-    return null
+    return null;
   }
 
   const backTitle = navState.routeStack[index].backButtonTitle ||
-    navState.routeStack[index - 1].title
+    navState.routeStack[index - 1].title;
 
-  let contents = null
+  let contents = null;
   if (Platform.OS === 'android') {
-    contents = <Icon style={styles.icon} name="md-arrow-back" />
+    contents = <Icon style={styles.icon} name="md-arrow-back" />;
   } else {
     contents = [
       <Icon key={0} style={styles.icon} name="ios-arrow-back" />,
       <Text key={1} style={styles.text}>{backTitle}</Text>,
-    ]
+    ];
   }
 
   return (
@@ -50,7 +50,7 @@ export function LeftButton(
     >
       {contents}
     </Touchable>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -81,4 +81,4 @@ const styles = StyleSheet.create({
       },
     }),
   },
-})
+});

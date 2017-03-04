@@ -1,9 +1,9 @@
 // @flow
-import {isBuildingOpen} from '../building-hours-helpers'
-import {dayMoment} from './moment.helper'
+import {isBuildingOpen} from '../building-hours-helpers';
+import {dayMoment} from './moment.helper';
 
 it('checks a list of schedules to see if any are open', () => {
-  let m = dayMoment('Fri 1:00pm')
+  let m = dayMoment('Fri 1:00pm');
   let building = {
     name: 'building',
     category: '???',
@@ -18,13 +18,13 @@ it('checks a list of schedules to see if any are open', () => {
         ],
       },
     ],
-  }
+  };
 
-  expect(isBuildingOpen(building, m)).toBe(true)
-})
+  expect(isBuildingOpen(building, m)).toBe(true);
+});
 
 it('handles multiple internal schedules for the same timeframe', () => {
-  let m = dayMoment('Mon 1:00pm')
+  let m = dayMoment('Mon 1:00pm');
   let building = {
     name: 'building',
     category: '???',
@@ -38,13 +38,13 @@ it('handles multiple internal schedules for the same timeframe', () => {
         ],
       },
     ],
-  }
+  };
 
-  expect(isBuildingOpen(building, m)).toBe(true)
-})
+  expect(isBuildingOpen(building, m)).toBe(true);
+});
 
 it('handles multiple named schedules for the same timeframe', () => {
-  let m = dayMoment('Mon 1:00pm')
+  let m = dayMoment('Mon 1:00pm');
   let building = {
     name: 'building',
     category: '???',
@@ -62,13 +62,13 @@ it('handles multiple named schedules for the same timeframe', () => {
         ],
       },
     ],
-  }
+  };
 
-  expect(isBuildingOpen(building, m)).toBe(true)
-})
+  expect(isBuildingOpen(building, m)).toBe(true);
+});
 
 it('returns false if none are available for this day', () => {
-  let m = dayMoment('Sun 1:00pm')
+  let m = dayMoment('Sun 1:00pm');
   let building = {
     name: 'building',
     category: '???',
@@ -82,13 +82,13 @@ it('returns false if none are available for this day', () => {
         ],
       },
     ],
-  }
+  };
 
-  expect(isBuildingOpen(building, m)).toBe(false)
-})
+  expect(isBuildingOpen(building, m)).toBe(false);
+});
 
 it('returns false if none are open', () => {
-  let m = dayMoment('Mon 3:00pm')
+  let m = dayMoment('Mon 3:00pm');
   let building = {
     name: 'building',
     category: '???',
@@ -102,7 +102,7 @@ it('returns false if none are open', () => {
         ],
       },
     ],
-  }
+  };
 
-  expect(isBuildingOpen(building, m)).toBe(false)
-})
+  expect(isBuildingOpen(building, m)).toBe(false);
+});

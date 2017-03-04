@@ -1,7 +1,7 @@
 // @flow
-import React from 'react'
-import {StyleSheet, WebView} from 'react-native'
-import {text as legal} from '../../../docs/legal.json'
+import React from 'react';
+import {StyleSheet, WebView} from 'react-native';
+import {text as legal} from '../../../docs/legal.json';
 
 const styles = StyleSheet.create({
   container: {
@@ -11,8 +11,8 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     backgroundColor: 'transparent',
   },
-})
+});
 
 export default function LegalView() {
-  return <WebView style={styles.container} source={{html: legal}} />
+  return <WebView style={styles.container} source={{html: legal}} />;
 }

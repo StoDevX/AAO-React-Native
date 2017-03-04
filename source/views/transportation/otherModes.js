@@ -1,12 +1,12 @@
 // @flow
-import React from 'react'
-import {StyleSheet, Text, View} from 'react-native'
-import type {OtherModeType} from './types'
-import {data as modes} from '../../../docs/transportation.json'
-import * as c from '../components/colors'
-import {Button} from '../components/button'
-import SimpleListView from '../components/listview'
-import {trackedOpenUrl} from '../components/open-url'
+import React from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import type {OtherModeType} from './types';
+import {data as modes} from '../../../docs/transportation.json';
+import * as c from '../components/colors';
+import {Button} from '../components/button';
+import SimpleListView from '../components/listview';
+import {trackedOpenUrl} from '../components/open-url';
 
 let styles = StyleSheet.create({
   container: {
@@ -32,7 +32,7 @@ let styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: c.iosLightBackground,
   },
-})
+});
 
 export default function OtherModesView() {
   return (
@@ -57,5 +57,5 @@ export default function OtherModesView() {
         </View>
       )}
     </SimpleListView>
-  )
+  );
 }

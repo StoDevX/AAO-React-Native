@@ -1,5 +1,5 @@
 // @flow
-import NewsContainer from './news-container'
+import NewsContainer from './news-container';
 
 export default [
   {
@@ -61,4 +61,4 @@ export default [
       name: 'KSTO',
     },
   },
-]
+];

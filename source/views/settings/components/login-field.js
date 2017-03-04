@@ -1,9 +1,9 @@
 // @flow
-import React from 'react'
-import {StyleSheet, Text, Platform, TextInput} from 'react-native'
-import {Cell} from 'react-native-tableview-simple'
-import {Row} from '../../components/layout'
-import * as c from '../../components/colors'
+import React from 'react';
+import {StyleSheet, Text, Platform, TextInput} from 'react-native';
+import {Cell} from 'react-native-tableview-simple';
+import {Row} from '../../components/layout';
+import * as c from '../../components/colors';
 
 const styles = StyleSheet.create({
   label: {
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     paddingBottom: 0,
   },
-})
+});
 
 export class LoginField extends React.Component {
   props: {
@@ -43,8 +43,8 @@ export class LoginField extends React.Component {
   focusInput = () => this._input.focus();
 
   cacheRef = (ref: any) => {
-    this._input = ref
-    this.props._ref(ref)
+    this._input = ref;
+    this.props._ref(ref);
   };
 
   render() {
@@ -52,7 +52,7 @@ export class LoginField extends React.Component {
       <Text onPress={this.focusInput} style={styles.label}>
         {this.props.label}
       </Text>
-    )
+    );
 
     const input = (
       <TextInput
@@ -70,20 +70,20 @@ export class LoginField extends React.Component {
         style={styles.customTextInput}
         value={this.props.value}
       />
-    )
+    );
 
     const contents = (
       <Row style={styles.contents}>
         {label}
         {input}
       </Row>
-    )
+    );
 
     return (
       <Cell
         contentContainerStyle={styles.loginCell}
         cellContentView={contents}
       />
-    )
+    );
   }
 }
