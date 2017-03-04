@@ -1,3 +1,3 @@
 // @flow
-export {Toolbar} from './toolbar';
-export {ToolbarButton} from './toolbar-button';
+export {Toolbar} from './toolbar'
+export {ToolbarButton} from './toolbar-button'

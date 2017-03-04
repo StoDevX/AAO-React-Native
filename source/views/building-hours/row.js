@@ -3,18 +3,18 @@
  * All About Olaf
  * Building Hours list element
  */
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {Badge} from '../components/badge';
-import type momentT from 'moment';
-import type {BuildingType} from './types';
-import * as c from '../components/colors';
-import {Row, Column} from '../components/layout';
-import {ListRow, Detail, Title} from '../components/list';
+import React from 'react'
+import {View, Text, StyleSheet} from 'react-native'
+import {Badge} from '../components/badge'
+import type momentT from 'moment'
+import type {BuildingType} from './types'
+import * as c from '../components/colors'
+import {Row, Column} from '../components/layout'
+import {ListRow, Detail, Title} from '../components/list'
 import {
   getDetailedBuildingStatus,
   getShortBuildingStatus,
-} from './building-hours-helpers';
+} from './building-hours-helpers'
 
 const styles = StyleSheet.create({
   title: {
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   bold: {
     fontWeight: 'bold',
   },
-});
+})
 
 type PropsType = {
   info: BuildingType,
@@ -44,20 +44,20 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
   let bgColors = {
     Open: c.moneyGreen,
     Closed: c.salmon,
-  };
+  }
   let foregroundColors = {
     Open: c.hollyGreen,
     Closed: c.brickRed,
-  };
+  }
 
-  const openStatus = getShortBuildingStatus(info, now);
-  const hours = getDetailedBuildingStatus(info, now);
+  const openStatus = getShortBuildingStatus(info, now)
+  const hours = getDetailedBuildingStatus(info, now)
 
-  const accent = bgColors[openStatus] || c.goldenrod;
-  const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)';
+  const accent = bgColors[openStatus] || c.goldenrod
+  const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
 
   return (
-    <ListRow onPress={onPress} arrowPosition="center" direction="column">
+    <ListRow onPress={onPress} arrowPosition='center' direction='column'>
       <Column>
         <Row style={styles.title}>
           <Title lines={1} style={{flex: 1}}>
@@ -89,7 +89,7 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
         </View>
       </Column>
     </ListRow>
-  );
+  )
 }
 
 const BuildingTimeSlot = (
@@ -100,7 +100,7 @@ const BuildingTimeSlot = (
   }: {label: ?string, status: string, highlight: boolean},
 ) => {
   // we don't want to show the 'Hours' label, since almost every row has it
-  const showLabel = label !== 'Hours';
+  const showLabel = label !== 'Hours'
 
   return (
     <Text>
@@ -109,5 +109,5 @@ const BuildingTimeSlot = (
         : null}
       <Text style={highlight && styles.bold}>{status}</Text>
     </Text>
-  );
-};
+  )
+}

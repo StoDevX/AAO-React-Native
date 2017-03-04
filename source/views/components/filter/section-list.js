@@ -1,12 +1,12 @@
 // @flow
-import React from 'react';
-import {Text, Image, StyleSheet} from 'react-native';
-import type {ListType, ListItemSpecType} from './types';
-import {Section, Cell} from 'react-native-tableview-simple';
-import {Column} from '../layout';
-import includes from 'lodash/includes';
-import without from 'lodash/without';
-import concat from 'lodash/concat';
+import React from 'react'
+import {Text, Image, StyleSheet} from 'react-native'
+import type {ListType, ListItemSpecType} from './types'
+import {Section, Cell} from 'react-native-tableview-simple'
+import {Column} from '../layout'
+import includes from 'lodash/includes'
+import without from 'lodash/without'
+import concat from 'lodash/concat'
 
 type PropsType = {
   filter: ListType,
@@ -14,57 +14,57 @@ type PropsType = {
 };
 
 export function ListSection({filter, onChange}: PropsType) {
-  const {spec} = filter;
-  const {title = '', options, selected, mode} = spec;
+  const {spec} = filter
+  const {title = '', options, selected, mode} = spec
   const {
     caption = `Show items with ${mode === 'AND' ? 'all' : 'any'} of these options.`,
-  } = spec;
+  } = spec
 
   function buttonPushed(tappedValue: ListItemSpecType) {
-    let result;
+    let result
 
     if (includes(selected, tappedValue)) {
       // if the user has tapped an item, and it's already in the list of
       // things they've tapped, we want to _remove_ it from that list.
-      result = without(selected, tappedValue);
+      result = without(selected, tappedValue)
     } else {
       // otherwise, we need to add it to the list
-      result = concat(selected, tappedValue);
+      result = concat(selected, tappedValue)
     }
 
-    let enabled = false;
+    let enabled = false
     if (mode === 'OR') {
-      enabled = result.length !== options.length;
+      enabled = result.length !== options.length
     } else if (mode === 'AND') {
-      enabled = result.length > 0;
+      enabled = result.length > 0
     }
 
     onChange({
       ...filter,
       enabled: enabled,
       spec: {...spec, selected: result},
-    });
+    })
   }
 
   function showAll() {
-    let result;
+    let result
 
     if (selected.length === options.length) {
       // when all items are selected: uncheck them all
-      result = [];
+      result = []
     } else {
       // when one or more items are not checked: check them all
-      result = options;
+      result = options
     }
 
     onChange({
       ...filter,
       enabled: result.length !== options.length,
       spec: {...spec, selected: result},
-    });
+    })
   }
 
-  const hasImageColumn = options.some(val => Boolean(val.image));
+  const hasImageColumn = options.some(val => Boolean(val.image))
   let buttons = options.map(val => (
     <Cell
       key={val.title}
@@ -74,7 +74,7 @@ export function ListSection({filter, onChange}: PropsType) {
         spec.showImages && <Image style={styles.icon} source={val.image} />
       }
       accessory={!includes(selected, val) && 'Checkmark'}
-      cellStyle="RightDetail"
+      cellStyle='RightDetail'
       cellContentView={
         <Column style={styles.content}>
           <Text style={styles.title}>{val.title}</Text>
@@ -82,18 +82,18 @@ export function ListSection({filter, onChange}: PropsType) {
         </Column>
       }
     />
-  ));
+  ))
 
   if (mode === 'OR') {
     const showAllButton = (
       <Cell
-        key="__show_all"
-        title="Show All"
+        key='__show_all'
+        title='Show All'
         onPress={showAll}
         accessory={selected.length === options.length ? 'Checkmark' : null}
       />
-    );
-    buttons = [showAllButton].concat(buttons);
+    )
+    buttons = [showAllButton].concat(buttons)
   }
 
   return (
@@ -104,7 +104,7 @@ export function ListSection({filter, onChange}: PropsType) {
     >
       {buttons}
     </Section>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -122,4 +122,4 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
   },
-});
+})

@@ -1,10 +1,10 @@
 // @flow
-import React from 'react';
-import {Platform, StyleSheet, View} from 'react-native';
-import {Touchable} from '../touchable';
-import {DisclosureArrow} from './disclosure-arrow';
-import noop from 'lodash/noop';
-import isNil from 'lodash/isNil';
+import React from 'react'
+import {Platform, StyleSheet, View} from 'react-native'
+import {Touchable} from '../touchable'
+import {DisclosureArrow} from './disclosure-arrow'
+import noop from 'lodash/noop'
+import isNil from 'lodash/isNil'
 
 const styles = StyleSheet.create({
   container: {
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   fullHeight: {
     paddingVertical: 0,
   },
-});
+})
 
 type PropsType = {
   style?: any,
@@ -49,18 +49,18 @@ export function ListRow(props: PropsType) {
     spacing: {left: leftSpacing = 15, right: rightSpacing = null} = {},
     fullWidth = false,
     fullHeight = false,
-  } = props;
+  } = props
 
-  const Component = onPress ? Touchable : View;
-  const callback = onPress || noop;
+  const Component = onPress ? Touchable : View
+  const callback = onPress || noop
 
-  const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none');
+  const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
   const arrowPositionStyle = {
     alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start',
-  };
+  }
   const arrow = arrowPosition === 'none' || Platform.OS === 'android'
     ? null
-    : <DisclosureArrow style={arrowPositionStyle} />;
+    : <DisclosureArrow style={arrowPositionStyle} />
 
   return (
     <Component
@@ -79,5 +79,5 @@ export function ListRow(props: PropsType) {
       </View>
       {arrow}
     </Component>
-  );
+  )
 }

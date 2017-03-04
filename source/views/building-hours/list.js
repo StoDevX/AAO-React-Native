@@ -4,26 +4,26 @@
  * Building Hours list page
  */
 
-import React from 'react';
-import {StyleSheet, Platform} from 'react-native';
-import {BuildingRow} from './row';
-import SimpleListView from '../components/listview';
-import {tracker} from '../../analytics';
+import React from 'react'
+import {StyleSheet, Platform} from 'react-native'
+import {BuildingRow} from './row'
+import SimpleListView from '../components/listview'
+import {tracker} from '../../analytics'
 
-import type momentT from 'moment';
-import type {TopLevelViewPropsType} from '../types';
-import type {BuildingType} from './types';
+import type momentT from 'moment'
+import type {TopLevelViewPropsType} from '../types'
+import type {BuildingType} from './types'
 
-import * as c from '../components/colors';
-import {ListSeparator, ListSectionHeader} from '../components/list';
+import * as c from '../components/colors'
+import {ListSeparator, ListSectionHeader} from '../components/list'
 
-export {BuildingHoursDetailView} from './detail';
+export {BuildingHoursDetailView} from './detail'
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: c.white,
   },
-});
+})
 
 type BuildingHoursPropsType = TopLevelViewPropsType & {
   now: momentT,
@@ -36,7 +36,7 @@ export class BuildingHoursList extends React.Component {
   props: BuildingHoursPropsType;
 
   onPressRow = (data: BuildingType) => {
-    tracker.trackEvent('building-hours', data.name);
+    tracker.trackEvent('building-hours', data.name)
     this.props.navigator.push({
       id: 'BuildingHoursDetailView',
       index: this.props.route.index + 1,
@@ -44,15 +44,15 @@ export class BuildingHoursList extends React.Component {
       backButtonTitle: 'Hours',
       props: data,
       sceneConfig: Platform.OS === 'android' ? 'fromBottom' : undefined,
-    });
+    })
   };
 
   renderSectionHeader = (data: any, id: string) => {
-    return <ListSectionHeader style={styles.rowSectionHeader} title={id} />;
+    return <ListSectionHeader style={styles.rowSectionHeader} title={id} />
   };
 
   renderSeparator = (sectionID: any, rowID: any) => {
-    return <ListSeparator key={`${sectionID}-${rowID}`} />;
+    return <ListSeparator key={`${sectionID}-${rowID}`} />
   };
 
   render() {
@@ -75,6 +75,6 @@ export class BuildingHoursList extends React.Component {
           />
         )}
       </SimpleListView>
-    );
+    )
   }
 }

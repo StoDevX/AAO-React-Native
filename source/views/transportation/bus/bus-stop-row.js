@@ -1,14 +1,14 @@
 // @flow
-import React from 'react';
-import {Platform, StyleSheet, Text} from 'react-native';
-import {Row, Column} from '../../components/layout';
-import {ListRow, Detail, Title} from '../../components/list';
-import type {FancyBusTimeListType} from './types';
-import type moment from 'moment';
-import * as c from '../../components/colors';
-import {ProgressChunk} from './components/progress-chunk';
+import React from 'react'
+import {Platform, StyleSheet, Text} from 'react-native'
+import {Row, Column} from '../../components/layout'
+import {ListRow, Detail, Title} from '../../components/list'
+import type {FancyBusTimeListType} from './types'
+import type moment from 'moment'
+import * as c from '../../components/colors'
+import {ProgressChunk} from './components/progress-chunk'
 
-const TIME_FORMAT = 'h:mma';
+const TIME_FORMAT = 'h:mma'
 
 const styles = StyleSheet.create({
   skippingStopTitle: {
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   passedStopTitle: {
     color: c.iosDisabledText,
   },
-});
+})
 
 export function BusStopRow(
   {
@@ -47,10 +47,10 @@ export function BusStopRow(
     isLastRow: boolean,
   },
 ) {
-  const afterStop = time && now.isAfter(time, 'minute');
-  const atStop = time && now.isSame(time, 'minute');
-  const beforeStop = !afterStop && !atStop && time !== false;
-  const skippingStop = time === false;
+  const afterStop = time && now.isAfter(time, 'minute')
+  const atStop = time && now.isSame(time, 'minute')
+  const beforeStop = !afterStop && !atStop && time !== false
+  const skippingStop = time === false
 
   return (
     <ListRow fullWidth={true} fullHeight={true}>
@@ -85,7 +85,7 @@ export function BusStopRow(
         </Column>
       </Row>
     </ListRow>
-  );
+  )
 }
 
 const ScheduleTimes = (
@@ -104,5 +104,5 @@ const ScheduleTimes = (
         .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
         .join(' • ')}
     </Text>
-  );
-};
+  )
+}

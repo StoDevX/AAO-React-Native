@@ -4,16 +4,16 @@
  * Directory page
  */
 
-import React from 'react';
-import {StyleSheet, View, WebView} from 'react-native';
+import React from 'react'
+import {StyleSheet, View, WebView} from 'react-native'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-});
+})
 
-const URL = 'https://www.stolaf.edu/personal/directory/index.cfm';
+const URL = 'https://www.stolaf.edu/personal/directory/index.cfm'
 
 export default class DirectoryView extends React.Component {
   state = {
@@ -21,7 +21,7 @@ export default class DirectoryView extends React.Component {
   };
 
   onNavigationStateChange = (navState: {url: string}) => {
-    this.setState({url: navState.url});
+    this.setState({url: navState.url})
   };
 
   render() {
@@ -36,6 +36,6 @@ export default class DirectoryView extends React.Component {
           scalesPageToFit={true}
         />
       </View>
-    );
+    )
   }
 }

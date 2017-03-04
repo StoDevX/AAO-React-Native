@@ -3,7 +3,7 @@
  * A collection of common styles for navbar buttons
  */
 
-import {StyleSheet, Platform} from 'react-native';
+import {StyleSheet, Platform} from 'react-native'
 
 export const commonStyles = StyleSheet.create({
   button: {
@@ -29,4 +29,4 @@ export const commonStyles = StyleSheet.create({
       },
     }),
   },
-});
+})
