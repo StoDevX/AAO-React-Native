@@ -1,5 +1,5 @@
 // @flow
-import type {MenuItemType, StationMenuType} from '../types'
+import type {MenuItemType, StationMenuType} from '../types';
 
 type BasicMenuItemType = {
   label: string,
@@ -39,7 +39,7 @@ export function upgradeMenuItem(
     zero_entree: '0',
     ...item,
     id: String(index),
-  }
+  };
 }
 
 export function upgradeStation(
@@ -54,5 +54,5 @@ export function upgradeStation(
     items: [],
     ...station,
     id: String(index),
-  }
+  };
 }

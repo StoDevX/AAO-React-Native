@@ -1,13 +1,13 @@
 // @flow
 
-import React from 'react'
-import {TabBarIOS} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
-import {tracker} from '../../../analytics'
-import styles from './styles'
-import type {TabbedViewPropsType} from './types'
-import {TabbedViewPropTypes} from './types'
-import * as c from '../../components/colors'
+import React from 'react';
+import {TabBarIOS} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {tracker} from '../../../analytics';
+import styles from './styles';
+import type {TabbedViewPropsType} from './types';
+import {TabbedViewPropTypes} from './types';
+import * as c from '../../components/colors';
 
 export default class TabbedView extends React.Component {
   static propTypes = TabbedViewPropTypes;
@@ -17,30 +17,30 @@ export default class TabbedView extends React.Component {
   };
 
   componentWillMount() {
-    this.onChangeTab(this.props.tabs[0].id)
+    this.onChangeTab(this.props.tabs[0].id);
   }
 
   props: TabbedViewPropsType;
 
   onChangeTab = (tabId: string) => {
-    tracker.trackScreenView(tabId)
-    this.setState({selectedTab: tabId})
+    tracker.trackScreenView(tabId);
+    this.setState({selectedTab: tabId});
   };
 
   render() {
-    let {navigator, route, tabs} = this.props
-    let baseProps = {navigator, route}
+    let {navigator, route, tabs} = this.props;
+    let baseProps = {navigator, route};
     return (
       <TabBarIOS
         tintColor={c.mandarin}
         style={[styles.container, this.props.style]}
       >
         {tabs.map(tab => {
-          let icon = {}
+          let icon = {};
           if (tab.rnVectorIcon) {
-            let name = tab.rnVectorIcon.iconName
-            icon.iconName = `ios-${name}-outline`
-            icon.selectedIconName = `ios-${name}`
+            let name = tab.rnVectorIcon.iconName;
+            icon.iconName = `ios-${name}-outline`;
+            icon.selectedIconName = `ios-${name}`;
           }
           return (
             <Icon.TabBarItemIOS
@@ -59,9 +59,9 @@ export default class TabbedView extends React.Component {
                 {...baseProps}
               />
             </Icon.TabBarItemIOS>
-          )
+          );
         })}
       </TabBarIOS>
-    )
+    );
   }
 }

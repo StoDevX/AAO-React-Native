@@ -4,13 +4,13 @@
  * News page
  */
 
-import React from 'react'
-import {StyleSheet} from 'react-native'
+import React from 'react';
+import {StyleSheet} from 'react-native';
 
-import type {TopLevelViewPropsType} from '../types'
-import {TopLevelViewPropTypes} from '../types'
-import TabbedView from '../components/tabbed-view'
-import tabs from './tabs'
+import type {TopLevelViewPropsType} from '../types';
+import {TopLevelViewPropTypes} from '../types';
+import TabbedView from '../components/tabbed-view';
+import tabs from './tabs';
 
 export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
   return (
@@ -20,12 +20,12 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
       navigator={navigator}
       route={route}
     />
-  )
+  );
 }
-NewsPage.propTypes = TopLevelViewPropTypes
+NewsPage.propTypes = TopLevelViewPropTypes;
 
 let styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-})
+});

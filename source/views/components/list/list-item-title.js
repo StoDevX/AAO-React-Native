@@ -1,7 +1,7 @@
 // @flow
-import React from 'react'
-import {StyleSheet, Platform, Text} from 'react-native'
-import * as c from '../colors'
+import React from 'react';
+import {StyleSheet, Platform, Text} from 'react-native';
+import * as c from '../colors';
 
 const styles = StyleSheet.create({
   title: {
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   noBold: {
     fontWeight: '400',
   },
-})
+});
 
 type PropsType = {
   children?: any,
@@ -35,5 +35,5 @@ export function Title(props: PropsType) {
     >
       {props.children}
     </Text>
-  )
+  );
 }

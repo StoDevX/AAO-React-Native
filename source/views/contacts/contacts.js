@@ -4,10 +4,10 @@
  * iOS Contact page
  */
 
-import React from 'react'
-import SimpleListView from '../components/listview'
-import ContactCard from './card'
-import {data as numbers} from '../../../docs/contact-info.json'
+import React from 'react';
+import SimpleListView from '../components/listview';
+import ContactCard from './card';
+import {data as numbers} from '../../../docs/contact-info.json';
 
 export default function ContactView() {
   return (
@@ -21,5 +21,5 @@ export default function ContactView() {
         />
       )}
     </SimpleListView>
-  )
+  );
 }

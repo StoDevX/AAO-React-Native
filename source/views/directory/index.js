@@ -1,3 +1,3 @@
 // @flow
 
-export {default as DirectoryView} from './directory'
+export {default as DirectoryView} from './directory';

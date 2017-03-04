@@ -1,7 +1,7 @@
 // @flow
-import React from 'react'
-import {Platform, StyleSheet, Text, View} from 'react-native'
-import * as c from '../colors'
+import React from 'react';
+import {Platform, StyleSheet, Text, View} from 'react-native';
+import * as c from '../colors';
 
 const styles = StyleSheet.create({
   container: {
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-})
+});
 
 type PropsType = {
   title: string,
@@ -83,7 +83,7 @@ export function ListSectionHeader(props: PropsType) {
     subtitleStyle,
     separator = ' — ',
     spacing: {left: leftSpacing = 15} = {},
-  } = props
+  } = props;
 
   return (
     <View style={[styles.container, {paddingLeft: leftSpacing}, style]}>
@@ -98,5 +98,5 @@ export function ListSectionHeader(props: PropsType) {
           : null}
       </Text>
     </View>
-  )
+  );
 }

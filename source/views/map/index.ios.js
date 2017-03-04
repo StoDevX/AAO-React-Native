@@ -3,10 +3,10 @@
  * iOS Map page
  */
 
-import React from 'react'
-import {StyleSheet, View, WebView} from 'react-native'
+import React from 'react';
+import {StyleSheet, View, WebView} from 'react-native';
 
-import {data as mapInfo} from '../../../docs/map.json'
+import {data as mapInfo} from '../../../docs/map.json';
 
 export default function OlafMapView() {
   return (
@@ -17,7 +17,7 @@ export default function OlafMapView() {
         style={styles.container}
       />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -32,4 +32,4 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-})
+});

@@ -1,53 +1,53 @@
 // @flow
-import {AsyncStorage} from 'react-native'
+import {AsyncStorage} from 'react-native';
 
 /// MARK: Utilities
 
 function setItem(key: string, value: any) {
-  return AsyncStorage.setItem(`aao:${key}`, JSON.stringify(value))
+  return AsyncStorage.setItem(`aao:${key}`, JSON.stringify(value));
 }
 function getItem(key: string): Promise<any> {
-  return AsyncStorage.getItem(`aao:${key}`).then(stored => JSON.parse(stored))
+  return AsyncStorage.getItem(`aao:${key}`).then(stored => JSON.parse(stored));
 }
 function removeItem(key: string): Promise<any> {
-  return AsyncStorage.removeItem(`aao:${key}`)
+  return AsyncStorage.removeItem(`aao:${key}`);
 }
 
 /// MARK: Settings
 
-const analyticsOptOutKey = 'settings:opt-out'
+const analyticsOptOutKey = 'settings:opt-out';
 export function setAnalyticsOptOut(status: boolean) {
-  return setItem(analyticsOptOutKey, status)
+  return setItem(analyticsOptOutKey, status);
 }
 export function getAnalyticsOptOut(): Promise<boolean> {
-  return getItem(analyticsOptOutKey)
+  return getItem(analyticsOptOutKey);
 }
 
-const homescreenOrderKey = 'homescreen:view-order'
+const homescreenOrderKey = 'homescreen:view-order';
 export function setHomescreenOrder(order: string[]) {
-  return setItem(homescreenOrderKey, order)
+  return setItem(homescreenOrderKey, order);
 }
 export function getHomescreenOrder(): Promise<string[]> {
-  return getItem(homescreenOrderKey)
+  return getItem(homescreenOrderKey);
 }
 
 /// MARK: Credentials
 
-const tokenValidKey = 'credentials:valid'
+const tokenValidKey = 'credentials:valid';
 export function setTokenValid(valid: boolean) {
-  return setItem(tokenValidKey, valid)
+  return setItem(tokenValidKey, valid);
 }
 export function getTokenValid(): Promise<boolean> {
-  return getItem(tokenValidKey)
+  return getItem(tokenValidKey);
 }
 export function clearTokenValid(): Promise<any> {
-  return removeItem(tokenValidKey)
+  return removeItem(tokenValidKey);
 }
 
-const credentialsValidKey = 'olafCredentials:valid'
+const credentialsValidKey = 'olafCredentials:valid';
 export function setCredentialsValid(valid: boolean) {
-  return setItem(credentialsValidKey, valid)
+  return setItem(credentialsValidKey, valid);
 }
 export function getCredentialsValid(): Promise<boolean> {
-  return getItem(credentialsValidKey)
+  return getItem(credentialsValidKey);
 }

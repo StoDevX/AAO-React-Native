@@ -1,10 +1,10 @@
 // @flow
 
-import type momentT from 'moment'
-import type {ProcessedMealType} from '../types'
-import type {FilterType, PickerType} from '../../components/filter'
-import find from 'lodash/find'
-import {findMeal} from './find-menu'
+import type momentT from 'moment';
+import type {ProcessedMealType} from '../types';
+import type {FilterType, PickerType} from '../../components/filter';
+import find from 'lodash/find';
+import {findMeal} from './find-menu';
 
 export function chooseMeal(
   meals: ProcessedMealType[],
@@ -14,14 +14,14 @@ export function chooseMeal(
   const mealChooserFilter: ?PickerType = find(
     filters,
     f => f.type === 'picker' && f.spec.title === "Today's Menus",
-  )
-  let selectedMeal = meals[0]
+  );
+  let selectedMeal = meals[0];
 
   if (mealChooserFilter && mealChooserFilter.spec.selected) {
-    let label = mealChooserFilter.spec.selected.label
-    selectedMeal = meals.find(meal => meal.label === label)
+    let label = mealChooserFilter.spec.selected.label;
+    selectedMeal = meals.find(meal => meal.label === label);
   } else {
-    selectedMeal = findMeal(meals, now)
+    selectedMeal = findMeal(meals, now);
   }
 
   if (!selectedMeal) {
@@ -30,8 +30,8 @@ export function chooseMeal(
       stations: [],
       starttime: '0:00',
       endtime: '0:00',
-    }
+    };
   }
 
-  return selectedMeal
+  return selectedMeal;
 }
