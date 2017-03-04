@@ -1,6 +1,6 @@
-import React from 'react'
-import {View, Text, Navigator} from 'react-native'
-import {Touchable} from './touchable'
+import React from 'react';
+import {View, Text, Navigator} from 'react-native';
+import {Touchable} from './touchable';
 
 export default function NoRoute({navigator}) {
   return (
@@ -14,9 +14,9 @@ export default function NoRoute({navigator}) {
         </Text>
       </Touchable>
     </View>
-  )
+  );
 }
 
 NoRoute.propTypes = {
   navigator: React.PropTypes.instanceOf(Navigator),
-}
+};

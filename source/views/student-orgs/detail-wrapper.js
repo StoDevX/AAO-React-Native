@@ -1,11 +1,11 @@
 // @flow
-import React from 'react'
-import {fastGetTrimmedText} from '../../lib/html'
-import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
-import type {TopLevelViewPropsType} from '../types'
-import {StudentOrgsDetailRenderView} from './detail'
+import React from 'react';
+import {fastGetTrimmedText} from '../../lib/html';
+import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types';
+import type {TopLevelViewPropsType} from '../types';
+import {StudentOrgsDetailRenderView} from './detail';
 
-const orgsUrl = 'https://api.presence.io/stolaf/v1/organizations'
+const orgsUrl = 'https://api.presence.io/stolaf/v1/organizations';
 
 export class StudentOrgsDetailView extends React.Component {
   state: {
@@ -18,45 +18,45 @@ export class StudentOrgsDetailView extends React.Component {
     refreshing: false,
     loaded: false,
     error: false,
-  }
+  };
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData();
   }
 
   props: TopLevelViewPropsType & {
     item: StudentOrgAbridgedType,
-  }
+  };
 
   fetchData = async () => {
-    let orgUrl = orgsUrl + '/' + this.props.item.uri
+    let orgUrl = orgsUrl + '/' + this.props.item.uri;
 
     try {
-      let response = await fetchJson(orgUrl)
-      response = this.cleanResponseData(response)
-      this.setState({data: response})
+      let response = await fetchJson(orgUrl);
+      response = this.cleanResponseData(response);
+      this.setState({data: response});
     } catch (error) {
-      this.setState({error: true})
-      console.error(error)
+      this.setState({error: true});
+      console.error(error);
     }
 
-    this.setState({loaded: true})
-  }
+    this.setState({loaded: true});
+  };
 
   cleanResponseData = (data: StudentOrgInfoType) => {
     let {
-      contactName='',
-      description='',
-      regularMeetingTime='',
-      regularMeetingLocation='',
-    } = data
+      contactName = '',
+      description = '',
+      regularMeetingTime = '',
+      regularMeetingLocation = '',
+    } = data;
 
-    contactName = contactName.trim()
-    description = description.trim()
-    regularMeetingTime = regularMeetingTime.trim()
-    regularMeetingLocation = regularMeetingLocation.trim()
+    contactName = contactName.trim();
+    description = description.trim();
+    regularMeetingTime = regularMeetingTime.trim();
+    regularMeetingLocation = regularMeetingLocation.trim();
 
-    description = fastGetTrimmedText(description)
+    description = fastGetTrimmedText(description);
 
     return {
       ...data,
@@ -64,8 +64,8 @@ export class StudentOrgsDetailView extends React.Component {
       description,
       regularMeetingTime,
       regularMeetingLocation,
-    }
-  }
+    };
+  };
 
   render() {
     return (
@@ -74,6 +74,6 @@ export class StudentOrgsDetailView extends React.Component {
         base={this.props.item}
         full={this.state.data}
       />
-    )
+    );
   }
 }
