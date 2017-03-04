@@ -21,6 +21,7 @@ import type momentT from 'moment'
 import moment from 'moment-timezone'
 import {trimStationName, trimItemLabel} from './lib/trim-names'
 import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
+import {AllHtmlEntities} from 'html-entities'
 import {toLaxTitleCase} from 'titlecase'
 import {tracker} from '../../analytics'
 const CENTRAL_TZ = 'America/Winnipeg'
@@ -28,6 +29,7 @@ const CENTRAL_TZ = 'America/Winnipeg'
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
 const bonappCafeBaseUrl = 'http://legacy.cafebonappetit.com/api/2/cafes'
 const fetchJsonQuery = (url, query) => fetchJson(`${url}?${qs.stringify(query)}`)
+const entities = new AllHtmlEntities()
 
 type BonAppPropsType = TopLevelViewPropsType & {
   cafeId: string,
@@ -170,8 +172,8 @@ export class BonAppHostedMenu extends React.Component {
     // prepare all food items from bonapp for rendering
     const foodItems = mapValues(cafeMenu.items, item => ({
       ...item,  // we want to edit the item, not replace it
-      station: toLaxTitleCase(trimStationName(item.station)),  // <b>@station names</b> are a mess
-      label: trimItemLabel(item.label),  // clean up the titles
+      station: entities.decode(toLaxTitleCase(trimStationName(item.station))),  // <b>@station names</b> are a mess
+      label: entities.decode(trimItemLabel(item.label)),  // clean up the titles
       description: getTrimmedTextWithSpaces(parseHtml(item.description || '')),  // clean up the descriptions
     }))
 
