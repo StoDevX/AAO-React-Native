@@ -1,12 +1,12 @@
 // @flow
-import React from 'react'
-import {View, Platform, ScrollView, StyleSheet} from 'react-native'
-import type {TopLevelViewPropsType} from '../types'
-import type {CarletonDetailMenuType} from './types'
-import {Row} from '../components/layout'
-import {ListRow, ListSeparator, Title} from '../components/list'
-import {NoticeView} from '../components/notice'
-import {BonAppHostedMenu} from './menu-bonapp'
+import React from 'react';
+import {View, Platform, ScrollView, StyleSheet} from 'react-native';
+import type {TopLevelViewPropsType} from '../types';
+import type {CarletonDetailMenuType} from './types';
+import {Row} from '../components/layout';
+import {ListRow, ListSeparator, Title} from '../components/list';
+import {NoticeView} from '../components/notice';
+import {BonAppHostedMenu} from './menu-bonapp';
 
 const carleton = [
   {
@@ -49,13 +49,13 @@ const carleton = [
       loadingMessage: ['Engaging in people-watching…', 'Checking the mail…'],
     },
   },
-]
+];
 
 const styles = StyleSheet.create({
   rowText: {
     paddingVertical: 6,
   },
-})
+});
 
 export class CarletonMenuPicker extends React.Component {
   props: TopLevelViewPropsType;
@@ -71,12 +71,12 @@ export class CarletonMenuPicker extends React.Component {
         loadingMessage: data.props.loadingMessage,
         cafeId: data.props.cafeId,
       },
-    })
+    });
   };
 
   render() {
     if (!carleton) {
-      return <NoticeView text='No Carleton Cafes to choose.' />
+      return <NoticeView text="No Carleton Cafes to choose." />;
     }
 
     return (
@@ -85,9 +85,9 @@ export class CarletonMenuPicker extends React.Component {
           <View key={i}>
             <ListRow
               onPress={() => this.onPressRow(loc)}
-              arrowPosition='center'
+              arrowPosition="center"
             >
-              <Row alignItems='center'>
+              <Row alignItems="center">
                 <Title style={styles.rowText}>{loc.title}</Title>
               </Row>
             </ListRow>
@@ -97,6 +97,6 @@ export class CarletonMenuPicker extends React.Component {
           </View>
         ))}
       </ScrollView>
-    )
+    );
   }
 }

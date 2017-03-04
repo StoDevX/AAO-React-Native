@@ -1,5 +1,5 @@
 // @flow
-import type moment from 'moment'
+import type moment from 'moment';
 
 type GoogleTimeType = {
   dateTime: string,

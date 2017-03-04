@@ -1,9 +1,9 @@
 // @flow
-import React from 'react'
-import {Cell, Section} from 'react-native-tableview-simple'
-import Communications from 'react-native-communications'
-import DeviceInfo from 'react-native-device-info'
-import {version} from '../../../../package.json'
+import React from 'react';
+import {Cell, Section} from 'react-native-tableview-simple';
+import Communications from 'react-native-communications';
+import DeviceInfo from 'react-native-device-info';
+import {version} from '../../../../package.json';
 
 export default class SupportSection extends React.Component {
   getDeviceInfo = () => {
@@ -14,11 +14,11 @@ export default class SupportSection extends React.Component {
       ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}
       ${DeviceInfo.getReadableVersion()}
       Codepush: ${version}
-    `
+    `;
   };
 
   getSupportBody = () => {
-    return '\n' + this.getDeviceInfo()
+    return '\n' + this.getDeviceInfo();
   };
 
   openEmail = () => {
@@ -28,19 +28,19 @@ export default class SupportSection extends React.Component {
       null,
       'Support: All About Olaf',
       this.getSupportBody(),
-    )
+    );
   };
 
   render() {
     return (
-      <Section header='SUPPORT'>
+      <Section header="SUPPORT">
         <Cell
-          cellStyle='RightDetail'
-          title='Contact Us'
-          accessory='DisclosureIndicator'
+          cellStyle="RightDetail"
+          title="Contact Us"
+          accessory="DisclosureIndicator"
           onPress={this.openEmail}
         />
       </Section>
-    )
+    );
   }
 }

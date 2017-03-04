@@ -1,16 +1,16 @@
 // @flow
-import React from 'react'
-import {Cell, Section} from 'react-native-tableview-simple'
-import {LoginField} from '../components/login-field'
-import {LoginButton} from '../components/login-button'
+import React from 'react';
+import {Cell, Section} from 'react-native-tableview-simple';
+import {LoginField} from '../components/login-field';
+import {LoginButton} from '../components/login-button';
 import {
   logInViaCredentials,
   logOutViaCredentials,
   validateLoginCredentials,
   setLoginCredentials,
-} from '../../../flux/parts/settings'
-import {connect} from 'react-redux'
-import noop from 'lodash/noop'
+} from '../../../flux/parts/settings';
+import {connect} from 'react-redux';
+import noop from 'lodash/noop';
 
 type CredentialsSectionPropsType = {
   username: string,
@@ -39,44 +39,44 @@ class CredentialsLoginSection extends React.Component {
   focusPassword = () => this._passwordInput.focus();
 
   logIn = async () => {
-    this.setState({loading: true})
-    await this.props.logIn(this.state.username, this.state.password)
-    this.setState({loading: false})
+    this.setState({loading: true});
+    await this.props.logIn(this.state.username, this.state.password);
+    this.setState({loading: false});
   };
 
   logOut = () => {
-    this.props.logOut()
+    this.props.logOut();
   };
 
   render() {
-    let {loggedIn, message} = this.props
-    let {loading, username, password} = this.state
+    let {loggedIn, message} = this.props;
+    let {loading, username, password} = this.state;
 
     return (
       <Section
-        header='ST. OLAF LOGIN'
-        footer='St. Olaf login enables the &quot;meals remaining&quot; feature.'
+        header="ST. OLAF LOGIN"
+        footer="St. Olaf login enables the &quot;meals remaining&quot; feature."
       >
         <LoginField
-          label='Username'
+          label="Username"
           _ref={ref => this._usernameInput = ref}
           disabled={loading}
           onChangeText={(text = '') => this.setState({username: text})}
           onSubmitEditing={this.focusPassword}
-          placeholder='username'
-          returnKeyType='next'
+          placeholder="username"
+          returnKeyType="next"
           secureTextEntry={false}
           value={username}
         />
 
         <LoginField
-          label='Password'
+          label="Password"
           _ref={ref => this._passwordInput = ref}
           disabled={loading}
           onChangeText={(text = '') => this.setState({password: text})}
           onSubmitEditing={loggedIn ? noop : this.logIn}
-          placeholder='password'
-          returnKeyType='done'
+          placeholder="password"
+          returnKeyType="done"
           secureTextEntry={true}
           value={password}
         />
@@ -88,10 +88,10 @@ class CredentialsLoginSection extends React.Component {
           loading={loading}
           disabled={loading || (!username || !password)}
           onPress={loggedIn ? this.logOut : this.logIn}
-          label='St. Olaf'
+          label="St. Olaf"
         />
       </Section>
-    )
+    );
   }
 }
 
@@ -101,7 +101,7 @@ function mapStateToProps(state) {
     password: state.settings.credentials.password,
     loggedIn: state.settings.credentials.valid,
     message: state.settings.credentials.error,
-  }
+  };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -110,9 +110,9 @@ function mapDispatchToProps(dispatch) {
     logOut: () => dispatch(logOutViaCredentials()),
     validateCredentials: (u, p) => dispatch(validateLoginCredentials(u, p)),
     setCredentials: (u, p) => dispatch(setLoginCredentials(u, p)),
-  }
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   CredentialsLoginSection,
-)
+);
