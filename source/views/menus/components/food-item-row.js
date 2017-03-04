@@ -1,14 +1,16 @@
 // @flow
-import React from 'react'
-import {View, StyleSheet, Platform} from 'react-native'
-import {DietaryTags} from './dietary-tags'
-import {Row, Column} from '../../components/layout'
-import {ListRow, Detail, Title} from '../../components/list'
-import type {MenuItemType, MasterCorIconMapType} from '../types'
-import * as c from '../../components/colors'
-import Icon from 'react-native-vector-icons/Ionicons'
+import React from 'react';
+import {View, StyleSheet, Platform} from 'react-native';
+import {DietaryTags} from './dietary-tags';
+import {Row, Column} from '../../components/layout';
+import {ListRow, Detail, Title} from '../../components/list';
+import type {MenuItemType, MasterCorIconMapType} from '../types';
+import * as c from '../../components/colors';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-const specialsIcon = Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'
+const specialsIcon = Platform.OS === 'ios'
+  ? 'ios-star-outline'
+  : 'md-star-outline';
 
 type FoodItemPropsType = {|
   corIcons: MasterCorIconMapType,
@@ -18,17 +20,21 @@ type FoodItemPropsType = {|
   spacing: {left: number},
 |};
 
-export function FoodItemRow({data, corIcons, badgeSpecials=true, ...props}: FoodItemPropsType) {
-  const {left=0} = props.spacing
+export function FoodItemRow(
+  {data, corIcons, badgeSpecials = true, ...props}: FoodItemPropsType,
+) {
+  const {left = 0} = props.spacing;
   return (
     <ListRow
       style={[styles.container, props.style]}
       fullWidth={true}
-      arrowPosition='none'
+      arrowPosition="none"
     >
-      <Row alignItems='center'>
+      <Row alignItems="center">
         <View style={[styles.badge, {width: left}]}>
-          {badgeSpecials && data.special ? <Icon style={styles.badgeIcon} name={specialsIcon} /> : null}
+          {badgeSpecials && data.special
+            ? <Icon style={styles.badgeIcon} name={specialsIcon} />
+            : null}
         </View>
 
         <Column flex={1}>
@@ -43,7 +49,7 @@ export function FoodItemRow({data, corIcons, badgeSpecials=true, ...props}: Food
         />
       </Row>
     </ListRow>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -64,4 +70,4 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 4,
   },
-})
+});

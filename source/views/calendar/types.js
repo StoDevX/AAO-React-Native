@@ -1,5 +1,5 @@
 // @flow
-import type moment from 'moment'
+import type moment from 'moment';
 
 type GoogleTimeType = {
   dateTime: string,
@@ -22,7 +22,7 @@ export type PresenceEventType = {
   contactName?: string,
   contactEmail?: string,
   hasCoverImage?: boolean,
-  photoType: 'upload'|'search',
+  photoType: 'upload' | 'search',
   photoUriWithVersion: string,
   startDateTimeUtc: string,
   endDateTimeUtc: string,
@@ -31,13 +31,13 @@ export type PresenceEventType = {
 
 type EmbeddedEventDetailType =
   | {type: 'google', data: GoogleEventType}
-  | {type: 'presence', data: PresenceEventType}
+  | {type: 'presence', data: PresenceEventType};
 
 export type EventType = {
   summary: string,
   location: string,
   startTime: moment,
   endTime: moment,
-  isOngoing: bool,
+  isOngoing: boolean,
   extra: EmbeddedEventDetailType,
-}
+};

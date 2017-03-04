@@ -3,12 +3,12 @@
  * A function to handle custom sceneconfigs in routes
  */
 
-import {Navigator} from 'react-native'
-import type {RouteType} from '../../types'
+import {Navigator} from 'react-native';
+import type {RouteType} from '../../types';
 
 export function configureScene(route: RouteType) {
   if (typeof route.sceneConfig === 'object') {
-    return route.sceneConfig
+    return route.sceneConfig;
   }
 
   if (typeof route.sceneConfig === 'string') {
@@ -16,13 +16,13 @@ export function configureScene(route: RouteType) {
       return {
         ...Navigator.SceneConfigs.FloatFromBottom,
         gestures: null,
-      }
+      };
     }
 
     if (route.sceneConfig in Navigator.SceneConfigs) {
-      return Navigator.SceneConfigs[route.sceneConfig]
+      return Navigator.SceneConfigs[route.sceneConfig];
     }
   }
 
-  return Navigator.SceneConfigs.PushFromRight
+  return Navigator.SceneConfigs.PushFromRight;
 }

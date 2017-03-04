@@ -1,7 +1,7 @@
 // @flow
-import React from 'react'
-import {Platform, StyleSheet, Text, View} from 'react-native'
-import * as c from '../colors'
+import React from 'react';
+import {Platform, StyleSheet, Text, View} from 'react-native';
+import * as c from '../colors';
 
 const styles = StyleSheet.create({
   container: {
@@ -57,11 +57,11 @@ const styles = StyleSheet.create({
       android: {
         fontSize: 16,
         fontFamily: 'sans-serif-condensed',
-        color: c.iosDisabledText,  // todo: find android equivalent
+        color: c.iosDisabledText, // todo: find android equivalent
       },
     }),
   },
-})
+});
 
 type PropsType = {
   title: string,
@@ -77,22 +77,26 @@ export function ListSectionHeader(props: PropsType) {
   const {
     style,
     title,
-    bold=true,
+    bold = true,
     titleStyle,
-    subtitle=null,
+    subtitle = null,
     subtitleStyle,
-    separator=' — ',
+    separator = ' — ',
     spacing: {left: leftSpacing = 15} = {},
-  } = props
+  } = props;
 
   return (
     <View style={[styles.container, {paddingLeft: leftSpacing}, style]}>
       <Text>
-        <Text style={[styles.title, titleStyle, bold ? styles.bold : null]}>{title}</Text>
+        <Text style={[styles.title, titleStyle, bold ? styles.bold : null]}>
+          {title}
+        </Text>
         {subtitle
-          ? <Text style={[styles.subtitle, subtitleStyle]}>{separator}{subtitle}</Text>
+          ? <Text style={[styles.subtitle, subtitleStyle]}>
+              {separator}{subtitle}
+            </Text>
           : null}
       </Text>
     </View>
-  )
+  );
 }

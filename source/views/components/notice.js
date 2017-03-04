@@ -1,7 +1,7 @@
 // @flow
-import React from 'react'
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
-import {Button} from './button'
+import React from 'react';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
+import {Button} from './button';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,16 +19,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 8,
   },
-})
+});
 
-export function NoticeView({text, style, spinner, buttonText, onPress}: {
-  text?: string,
-  style?: any,
-  spinner?: boolean,
-  buttonText?: string,
-  onPress?: () => any,
-}) {
-  let activityIndicator = spinner ? <ActivityIndicator style={styles.spinner} /> : null
+export function NoticeView(
+  {
+    text,
+    style,
+    spinner,
+    buttonText,
+    onPress,
+  }: {
+    text?: string,
+    style?: any,
+    spinner?: boolean,
+    buttonText?: string,
+    onPress?: () => any,
+  },
+) {
+  let activityIndicator = spinner
+    ? <ActivityIndicator style={styles.spinner} />
+    : null;
   return (
     <View style={[styles.container, style]}>
       {activityIndicator}
@@ -37,5 +47,5 @@ export function NoticeView({text, style, spinner, buttonText, onPress}: {
       </Text>
       {buttonText ? <Button onPress={onPress} title={buttonText} /> : null}
     </View>
-  )
+  );
 }
