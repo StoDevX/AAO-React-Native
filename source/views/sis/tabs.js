@@ -1,6 +1,6 @@
 // @flow
-import BalancesView from './balances';
-import CoursesView from './courses';
+import BalancesView from './balances'
+import CoursesView from './courses'
 // import SearchView from './search'
 
 export default [
@@ -22,4 +22,4 @@ export default [
   //   icon: {uri: base64Icon, scale: 3},
   //   component: () => <SearchView />,
   // },
-];
+]

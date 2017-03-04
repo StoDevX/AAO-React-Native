@@ -1,53 +1,42 @@
 // @flow
-import {fastGetTrimmedText} from '../../lib/html';
-import qs from 'querystring';
-import {AllHtmlEntities} from 'html-entities';
-import {parseString} from 'xml2js';
-import pify from 'pify';
+import {fastGetTrimmedText} from '../../lib/html'
+import qs from 'querystring'
+import {AllHtmlEntities} from 'html-entities'
+import {parseString} from 'xml2js'
+import pify from 'pify'
 import type {
   StoryType,
   FeedResponseType,
   RssFeedItemType,
   WpJsonItemType,
   WpJsonResponseType,
-} from './types';
+} from './types'
 
-const parseXml = pify(parseString);
-const entities = new AllHtmlEntities();
+const parseXml = pify(parseString)
+const entities = new AllHtmlEntities()
 
-export async function fetchRssFeed(
-  url: string,
-  query?: Object,
-): Promise<StoryType[]> {
-  const responseText = await fetch(
-    `${url}?${qs.stringify(query)}`,
-  ).then(r => r.text());
-  const feed: FeedResponseType = await parseXml(responseText);
-  return feed.rss.channel[0].item.map(convertRssItemToStory);
+export async function fetchRssFeed(url: string, query?: Object): Promise<StoryType[]> {
+  const responseText = await fetch(`${url}?${qs.stringify(query)}`).then(r => r.text())
+  const feed: FeedResponseType = await parseXml(responseText)
+  return feed.rss.channel[0].item.map(convertRssItemToStory)
 }
 
-export async function fetchWpJson(
-  url: string,
-  query?: Object,
-): Promise<StoryType[]> {
-  const feed: WpJsonResponseType = await fetchJson(
-    `${url}?${qs.stringify(query)}`,
-  );
-  return feed.map(convertWpJsonItemToStory);
+export async function fetchWpJson(url: string, query?: Object): Promise<StoryType[]> {
+  const feed: WpJsonResponseType = await fetchJson(`${url}?${qs.stringify(query)}`)
+  return feed.map(convertWpJsonItemToStory)
 }
 
 export function convertRssItemToStory(item: RssFeedItemType): StoryType {
-  const authors = item['dc:creator'] || ['Unknown Author'];
-  const categories = item.category || [];
-  const link = (item.link || [])[0] || null;
-  const title = entities.decode(item.title[0] || '<no title>');
-  const datePublished = (item.pubDate || [])[0] || null;
+  const authors = item['dc:creator'] || ['Unknown Author']
+  const categories = item.category || []
+  const link = (item.link || [])[0] || null
+  const title = entities.decode(item.title[0] || '<no title>')
+  const datePublished = (item.pubDate || [])[0] || null
 
-  let content = (item['content:encoded'] || item.description || [])[0] ||
-    '<No content>';
+  let content = (item['content:encoded'] || item.description || [])[0] || '<No content>'
 
-  let excerpt = (item.description || [])[0] || content.substr(0, 250);
-  excerpt = entities.decode(fastGetTrimmedText(excerpt));
+  let excerpt = (item.description || [])[0] || content.substr(0, 250)
+  excerpt = entities.decode(fastGetTrimmedText(excerpt))
 
   return {
     authors,
@@ -58,29 +47,27 @@ export function convertRssItemToStory(item: RssFeedItemType): StoryType {
     featuredImage: null,
     link,
     title,
-  };
+  }
 }
 
 export function convertWpJsonItemToStory(item: WpJsonItemType): StoryType {
-  let author = item.author;
+  let author = item.author
   if (item._embedded && item._embedded.author) {
-    let authorInfo = item._embedded.author.find(a => a.id === item.author);
-    author = authorInfo ? authorInfo.name : 'Unknown Author';
+    let authorInfo = item._embedded.author.find(a => a.id === item.author)
+    author = authorInfo ? authorInfo.name : 'Unknown Author'
   } else {
-    author = 'Unknown Author';
+    author = 'Unknown Author'
   }
 
-  let featuredImage = null;
+  let featuredImage = null
   if (item._embedded && item._embedded['wp:featuredmedia']) {
-    let featuredMediaInfo = item._embedded['wp:featuredmedia'].find(
-      m => m.id === item.featured_media && m.media_type === 'image',
-    );
+    let featuredMediaInfo = item._embedded['wp:featuredmedia'].find(m => m.id === item.featured_media && m.media_type === 'image')
 
     if (featuredMediaInfo) {
       if (featuredMediaInfo.media_details.sizes.medium_large) {
-        featuredImage = featuredMediaInfo.media_details.sizes.medium_large.source_url;
+        featuredImage = featuredMediaInfo.media_details.sizes.medium_large.source_url
       } else {
-        featuredImage = featuredMediaInfo.source_url;
+        featuredImage = featuredMediaInfo.source_url
       }
     }
   }
@@ -94,5 +81,5 @@ export function convertWpJsonItemToStory(item: WpJsonItemType): StoryType {
     featuredImage: featuredImage,
     link: item.link,
     title: entities.decode(item.title.rendered),
-  };
+  }
 }

@@ -4,35 +4,35 @@
  * Edit Home page
  */
 
-import React from 'react';
-import {Animated, Dimensions, Easing, StyleSheet, Text} from 'react-native';
+import React from 'react'
+import {
+  Animated,
+  Dimensions,
+  Easing,
+  StyleSheet,
+  Text,
+} from 'react-native'
 
-import {saveHomescreenOrder} from '../../flux/parts/homescreen';
-import {connect} from 'react-redux';
-import * as c from '../components/colors';
-import fromPairs from 'lodash/fromPairs';
+import {saveHomescreenOrder} from '../../flux/parts/homescreen'
+import {connect} from 'react-redux'
+import * as c from '../components/colors'
+import fromPairs from 'lodash/fromPairs'
 
-import EntypoIcon from 'react-native-vector-icons/Entypo';
-import IonIcon from 'react-native-vector-icons/Ionicons';
-import SortableList from 'react-native-sortable-list';
+import EntypoIcon from 'react-native-vector-icons/Entypo'
+import IonIcon from 'react-native-vector-icons/Ionicons'
+import SortableList from 'react-native-sortable-list'
 
-import type {ViewType} from '../views';
-import {allViews} from '../views';
+import type {ViewType} from '../views'
+import {allViews} from '../views'
 
-const window = Dimensions.get('window');
-const objViews = fromPairs(allViews.map(v => [v.view, v]));
+const window = Dimensions.get('window')
+const objViews = fromPairs(allViews.map(v => ([v.view, v])))
 
-const ReorderIcon = () => (
-  <IonIcon name="ios-reorder" size={32} style={styles.listButtonIcon} />
-);
+const ReorderIcon = () =>
+  <IonIcon name='ios-reorder' size={32} style={styles.listButtonIcon} />
 
-const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
-  <EntypoIcon
-    name={icon}
-    size={32}
-    style={[styles.rectangleButtonIcon, {color: tint}]}
-  />
-);
+const MenuIcon = ({icon, tint}: {icon: string, tint: string}) =>
+  <EntypoIcon name={icon} size={32} style={[styles.rectangleButtonIcon, {color: tint}]} />
 
 class Row extends React.Component {
   state = {
@@ -42,14 +42,14 @@ class Row extends React.Component {
       opacity: new Animated.Value(1.0),
       elevation: new Animated.Value(2),
     },
-  };
+  }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.active !== nextProps.active) {
       if (nextProps.active) {
-        this.startActivationAnimation();
+        this.startActivationAnimation()
       } else {
-        this.startDeactivationAnimation();
+        this.startDeactivationAnimation()
       }
     }
   }
@@ -60,7 +60,7 @@ class Row extends React.Component {
   };
 
   startActivationAnimation = () => {
-    const {style} = this.state;
+    const {style} = this.state
     Animated.parallel([
       Animated.timing(style.transform[0].scale, {
         duration: 100,
@@ -82,11 +82,11 @@ class Row extends React.Component {
         easing: Easing.out(Easing.quad),
         toValue: 4,
       }),
-    ]).start();
-  };
+    ]).start()
+  }
 
   startDeactivationAnimation = () => {
-    const {style} = this.state;
+    const {style} = this.state
     Animated.parallel([
       Animated.timing(style.transform[0].scale, {
         duration: 100,
@@ -108,8 +108,8 @@ class Row extends React.Component {
         easing: Easing.out(Easing.quad),
         toValue: 2,
       }),
-    ]).start();
-  };
+    ]).start()
+  }
 
   render() {
     return (
@@ -120,40 +120,38 @@ class Row extends React.Component {
         </Text>
         <ReorderIcon />
       </Animated.View>
-    );
+    )
   }
 }
 
-function EditHomeView(
-  props: {
-    onSaveOrder: () => any,
-    order: string[],
-  },
-) {
+function EditHomeView(props: {
+  onSaveOrder: () => any,
+  order: string[],
+}) {
   return (
     <SortableList
       contentContainerStyle={styles.contentContainer}
       data={objViews}
       order={props.order}
       onChangeOrder={(order: ViewType[]) => props.onSaveOrder(order)}
-      renderRow={({data, active}: {data: ViewType, active: boolean}) => (
-        <Row data={data} active={active} />
-      )}
+      renderRow={({data, active}: {data: ViewType, active: boolean}) =>
+        <Row data={data} active={active} />}
     />
-  );
+  )
 }
+
 
 function mapStateToProps(state) {
   return {
     order: state.homescreen.order,
-  };
+  }
 }
 function mapDispatchToProps(dispatch) {
   return {
     onSaveOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
-  };
+  }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(EditHomeView);
+export default connect(mapStateToProps, mapDispatchToProps)(EditHomeView)
 
 let styles = StyleSheet.create({
   contentContainer: {
@@ -194,4 +192,4 @@ let styles = StyleSheet.create({
     fontSize: 18,
     color: c.white,
   },
-});
+})
