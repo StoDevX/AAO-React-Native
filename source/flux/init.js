@@ -3,93 +3,93 @@
  * Functions to initialize bits of the global state, as appropriate
  */
 
-import {NetInfo} from 'react-native';
-import {loadLoginCredentials} from '../lib/login';
-import {updateOnlineStatus} from './parts/app';
-import {loadHomescreenOrder} from './parts/homescreen';
+import {NetInfo} from 'react-native'
+import {loadLoginCredentials} from '../lib/login'
+import {updateOnlineStatus} from './parts/app'
+import {loadHomescreenOrder} from './parts/homescreen'
 import {
   setLoginCredentials,
   logInViaToken,
   validateLoginCredentials,
   loadFeedbackStatus,
-} from './parts/settings';
+} from './parts/settings'
 import {
   updateFinancialData,
   updateMealsRemaining,
   updateCourses,
-} from './parts/sis';
-import {FINANCIALS_URL} from '../lib/financials/urls';
+} from './parts/sis'
+import {FINANCIALS_URL} from '../lib/financials/urls'
 
 function homescreen(store) {
-  store.dispatch(loadHomescreenOrder());
+  store.dispatch(loadHomescreenOrder())
 }
 
 function feedbackOptOutStatus(store) {
-  store.dispatch(loadFeedbackStatus());
+  store.dispatch(loadFeedbackStatus())
 }
 
 function sisLoginCredentials(store) {
-  loadLoginCredentials().then(({username, password} = {}) => {
-    if (!username || !password) return;
+  loadLoginCredentials().then(({username, password}={}) => {
+    if (!username || !password) return
 
-    let action = setLoginCredentials(username, password);
-    store.dispatch(action);
-  });
+    let action = setLoginCredentials(username, password)
+    store.dispatch(action)
+  })
 }
 
 async function checkSisLogin(store) {
-  const online = await NetInfo.isConnected.fetch();
+  const online = await NetInfo.isConnected.fetch()
   if (!online) {
-    return;
+    return
   }
 
   // check if we can log in to the SIS
-  const r = await fetch(FINANCIALS_URL);
+  const r = await fetch(FINANCIALS_URL)
   if (r.url !== FINANCIALS_URL) {
-    return;
+    return
   }
-  const action = logInViaToken(true);
-  store.dispatch(action);
+  const action = logInViaToken(true)
+  store.dispatch(action)
 }
 
 async function validateOlafCredentials(store) {
-  const online = await NetInfo.isConnected.fetch();
+  const online = await NetInfo.isConnected.fetch()
   if (!online) {
-    return;
+    return
   }
 
-  const {username, password} = await loadLoginCredentials();
-  const action = validateLoginCredentials(username, password);
-  store.dispatch(action);
+  const {username, password} = await loadLoginCredentials()
+  const action = validateLoginCredentials(username, password)
+  store.dispatch(action)
 }
 
 function loadBalances(store) {
-  store.dispatch(updateFinancialData(false, false));
+  store.dispatch(updateFinancialData(false, false))
 }
 function loadMeals(store) {
-  store.dispatch(updateMealsRemaining(false, false));
+  store.dispatch(updateMealsRemaining(false, false))
 }
 function loadCourses(store) {
-  store.dispatch(updateCourses(false, false));
+  store.dispatch(updateCourses(false, false))
 }
 
 function netInfoIsConnected(store) {
   function updateConnectionStatus(isConnected) {
-    store.dispatch(updateOnlineStatus(isConnected));
+    store.dispatch(updateOnlineStatus(isConnected))
   }
 
-  NetInfo.isConnected.addEventListener('change', updateConnectionStatus);
-  NetInfo.isConnected.fetch().then(updateConnectionStatus);
+  NetInfo.isConnected.addEventListener('change', updateConnectionStatus)
+  NetInfo.isConnected.fetch().then(updateConnectionStatus)
 }
 
 export function init(store: {dispatch: any}) {
-  homescreen(store);
-  feedbackOptOutStatus(store);
-  sisLoginCredentials(store);
-  checkSisLogin(store);
-  validateOlafCredentials(store);
-  loadBalances(store);
-  loadMeals(store);
-  loadCourses(store);
-  netInfoIsConnected(store);
+  homescreen(store)
+  feedbackOptOutStatus(store)
+  sisLoginCredentials(store)
+  checkSisLogin(store)
+  validateOlafCredentials(store)
+  loadBalances(store)
+  loadMeals(store)
+  loadCourses(store)
+  netInfoIsConnected(store)
 }

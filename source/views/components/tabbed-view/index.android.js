@@ -1,10 +1,10 @@
 // @flow
-import React from 'react';
-import {StyleSheet, Platform, Dimensions} from 'react-native';
-import {TabViewAnimated, TabBar} from 'react-native-tab-view';
-import * as c from '../colors';
-import type {TabbedViewPropsType} from './types';
-import {tracker} from '../../../analytics';
+import React from 'react'
+import {StyleSheet, Platform, Dimensions} from 'react-native'
+import {TabViewAnimated, TabBar} from 'react-native-tab-view'
+import * as c from '../colors'
+import type { TabbedViewPropsType } from './types'
+import {tracker} from '../../../analytics'
 
 const styles = StyleSheet.create({
   container: {
@@ -22,30 +22,30 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
     fontWeight: '400',
   },
-});
+})
 
 export default class TabbedView extends React.Component {
   state = {
     index: 0,
-  };
-
-  componentWillMount() {
-    this._handleChangeTab(0);
   }
 
-  props: TabbedViewPropsType;
+  componentWillMount() {
+    this._handleChangeTab(0)
+  }
+
+  props: TabbedViewPropsType
 
   _handleChangeTab = index => {
-    tracker.trackScreenView(this.props.tabs[index].id);
+    tracker.trackScreenView(this.props.tabs[index].id)
     this.setState({
       index,
-    });
-  };
+    })
+  }
 
   _renderHeader = props => {
     const tabStyle = this.props.tabs.length <= 2
       ? {width: Dimensions.get('window').width / 2}
-      : undefined;
+      : undefined
 
     return (
       <TabBar
@@ -56,26 +56,26 @@ export default class TabbedView extends React.Component {
         labelStyle={styles.label}
         tabStyle={tabStyle}
       />
-    );
-  };
+    )
+  }
 
-  _renderScene = ({route}) => {
+  _renderScene = ({ route }) => {
     if (!route.component) {
-      return null;
+      return null
     }
 
     return (
       <route.component
         {...this.props.childProps}
-        {...route.props || {}}
+        {...(route.props || {})}
         navigator={this.props.navigator}
         route={this.props.route}
       />
-    );
-  };
+    )
+  }
 
   render() {
-    let routes = {routes: this.props.tabs.map(tab => ({...tab, key: tab.id}))};
+    let routes = {routes: this.props.tabs.map(tab => ({...tab, key: tab.id}))}
 
     return (
       <TabViewAnimated
@@ -85,6 +85,6 @@ export default class TabbedView extends React.Component {
         renderHeader={this._renderHeader}
         onRequestChangeTab={this._handleChangeTab}
       />
-    );
+    )
   }
 }

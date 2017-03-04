@@ -1,12 +1,12 @@
 // @flow
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import type {OtherModeType} from './types';
-import {data as modes} from '../../../docs/transportation.json';
-import * as c from '../components/colors';
-import {Button} from '../components/button';
-import SimpleListView from '../components/listview';
-import {trackedOpenUrl} from '../components/open-url';
+import React from 'react'
+import {StyleSheet, Text, View} from 'react-native'
+import type {OtherModeType} from './types'
+import {data as modes} from '../../../docs/transportation.json'
+import * as c from '../components/colors'
+import {Button} from '../components/button'
+import SimpleListView from '../components/listview'
+import {trackedOpenUrl} from '../components/open-url'
 
 let styles = StyleSheet.create({
   container: {
@@ -32,7 +32,7 @@ let styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: c.iosLightBackground,
   },
-});
+})
 
 export default function OtherModesView() {
   return (
@@ -41,21 +41,18 @@ export default function OtherModesView() {
       forceBottomInset={true}
       data={modes}
     >
-      {(data: OtherModeType) => (
+      {(data: OtherModeType) =>
         <View style={styles.mode}>
           <Text selectable={true} style={styles.title}>{data.name}</Text>
-          <Text selectable={true} style={styles.content}>
-            {data.description}
-          </Text>
+          <Text selectable={true} style={styles.content}>{data.description}</Text>
           <Button
             onPress={() => trackedOpenUrl({
               url: data.url,
               id: `Transportation_OtherModes_${data.name.replace(' ', '')}View`,
             })}
-            title="More info"
+            title='More info'
           />
-        </View>
-      )}
+        </View>}
     </SimpleListView>
-  );
+  )
 }

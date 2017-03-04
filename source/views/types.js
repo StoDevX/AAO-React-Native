@@ -1,6 +1,6 @@
 // @flow
-import {PropTypes} from 'react';
-import {Navigator} from 'react-native';
+import {PropTypes} from 'react'
+import {Navigator} from 'react-native'
 
 export type RouteType = {
   index: number,
@@ -9,7 +9,7 @@ export type RouteType = {
   backButtonTitle?: string,
   rightButton?: () => ReactComponent<any>,
   onDismiss?: (r: RouteType, n: Navigator) => any,
-  sceneConfig?: Object | 'fromBottom' | string,
+  sceneConfig?: Object|'fromBottom'|string,
 };
 
 export type NavStateType = {
@@ -24,4 +24,4 @@ export type TopLevelViewPropsType = {
 export const TopLevelViewPropTypes = {
   navigator: PropTypes.instanceOf(Navigator).isRequired,
   route: PropTypes.object.isRequired,
-};
+}
