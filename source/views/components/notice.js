@@ -1,7 +1,7 @@
 // @flow
-import React from 'react';
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
-import {Button} from './button';
+import React from 'react'
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
+import {Button} from './button'
 
 const styles = StyleSheet.create({
   container: {
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 8,
   },
-});
+})
 
 export function NoticeView(
   {
@@ -38,7 +38,7 @@ export function NoticeView(
 ) {
   let activityIndicator = spinner
     ? <ActivityIndicator style={styles.spinner} />
-    : null;
+    : null
   return (
     <View style={[styles.container, style]}>
       {activityIndicator}
@@ -47,5 +47,5 @@ export function NoticeView(
       </Text>
       {buttonText ? <Button onPress={onPress} title={buttonText} /> : null}
     </View>
-  );
+  )
 }

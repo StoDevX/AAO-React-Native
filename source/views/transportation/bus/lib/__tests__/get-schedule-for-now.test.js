@@ -1,8 +1,8 @@
 // @flow
-import {getScheduleForNow} from '../get-schedule-for-now';
-import moment from 'moment';
+import {getScheduleForNow} from '../get-schedule-for-now'
+import moment from 'moment'
 
-import type {BusScheduleType} from '../../types';
+import type {BusScheduleType} from '../../types'
 function buildBusSchedules(): BusScheduleType[] {
   return [
     {
@@ -140,24 +140,24 @@ function buildBusSchedules(): BusScheduleType[] {
         ],
       ],
     },
-  ];
+  ]
 }
 
 it('returns the bus schedule for today', () => {
-  let now = moment('Fri 10:01', 'dddd H:mm');
-  let input = buildBusSchedules();
-  let actual = getScheduleForNow(input, now);
+  let now = moment('Fri 10:01', 'dddd H:mm')
+  let input = buildBusSchedules()
+  let actual = getScheduleForNow(input, now)
   if (!actual) {
-    return;
+    return
   }
 
-  expect(actual.days).toEqual(['Fr', 'Sa']);
-});
+  expect(actual.days).toEqual(['Fr', 'Sa'])
+})
 
 it('returns `undefined` if there is no schedule for today', () => {
-  let now = moment('Sun 10:01', 'dddd H:mm');
-  let input = buildBusSchedules();
-  let actual = getScheduleForNow(input, now);
+  let now = moment('Sun 10:01', 'dddd H:mm')
+  let input = buildBusSchedules()
+  let actual = getScheduleForNow(input, now)
 
-  expect(actual).toBeUndefined();
-});
+  expect(actual).toBeUndefined()
+})

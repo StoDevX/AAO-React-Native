@@ -4,7 +4,7 @@
  * Balances page
  */
 
-import React from 'react';
+import React from 'react'
 import {
   StyleSheet,
   ScrollView,
@@ -12,18 +12,18 @@ import {
   Text,
   RefreshControl,
   Navigator,
-} from 'react-native';
+} from 'react-native'
 
-import {connect} from 'react-redux';
-import {Cell, TableView, Section} from 'react-native-tableview-simple';
+import {connect} from 'react-redux'
+import {Cell, TableView, Section} from 'react-native-tableview-simple'
 
-import {updateMealsRemaining, updateFinancialData} from '../../flux/parts/sis';
+import {updateMealsRemaining, updateFinancialData} from '../../flux/parts/sis'
 
-import delay from 'delay';
-import isNil from 'lodash/isNil';
-import * as c from '../components/colors';
+import delay from 'delay'
+import isNil from 'lodash/isNil'
+import * as c from '../components/colors'
 
-import type {TopLevelViewPropsType} from '../types';
+import type {TopLevelViewPropsType} from '../types'
 
 const buttonStyles = StyleSheet.create({
   common: {
@@ -33,7 +33,7 @@ const buttonStyles = StyleSheet.create({
     borderRightWidth: StyleSheet.hairlineWidth,
     borderRightColor: c.iosGray,
   },
-});
+})
 
 class BalancesView extends React.Component {
   state = {
@@ -56,23 +56,23 @@ class BalancesView extends React.Component {
   };
 
   refresh = async () => {
-    let start = Date.now();
-    this.setState({loading: true});
+    let start = Date.now()
+    this.setState({loading: true})
 
-    await this.fetchData();
+    await this.fetchData()
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    let elapsed = start - Date.now();
-    await delay(500 - elapsed);
+    let elapsed = start - Date.now()
+    await delay(500 - elapsed)
 
-    this.setState({loading: false});
+    this.setState({loading: false})
   };
 
   fetchData = async () => {
     await Promise.all([
       this.props.updateFinancialData(true),
       this.props.updateMealsRemaining(true),
-    ]);
+    ])
   };
 
   openSettings = () => {
@@ -82,12 +82,12 @@ class BalancesView extends React.Component {
       index: this.props.route.index + 1,
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
       onDismiss: () => this.props.navigator.pop(),
-    });
+    })
   };
 
   render() {
-    let {flex, ole, print, dailyMeals, weeklyMeals} = this.props;
-    let {loading} = this.state;
+    let {flex, ole, print, dailyMeals, weeklyMeals} = this.props
+    let {loading} = this.state
 
     return (
       <ScrollView
@@ -164,7 +164,7 @@ class BalancesView extends React.Component {
           </Section>
         </TableView>
       </ScrollView>
-    );
+    )
   }
 }
 
@@ -180,21 +180,21 @@ function mapStateToProps(state) {
 
     credentialsValid: state.settings.credentials.valid,
     tokenValid: state.settings.token.valid,
-  };
+  }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     updateMealsRemaining: force => dispatch(updateMealsRemaining(force)),
     updateFinancialData: force => dispatch(updateFinancialData(force)),
-  };
+  }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(BalancesView);
+export default connect(mapStateToProps, mapDispatchToProps)(BalancesView)
 
-let cellMargin = 10;
-let cellSidePadding = 10;
-let cellEdgePadding = 10;
+let cellMargin = 10
+let cellSidePadding = 10
+let cellEdgePadding = 10
 
 let styles = StyleSheet.create({
   stage: {
@@ -237,20 +237,20 @@ let styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
   },
-});
+})
 
 function getFormattedCurrency(value: ?number): string {
   if (isNil(value)) {
-    return 'N/A';
+    return 'N/A'
   }
-  return '$' + (((value: any): number) / 100).toFixed(2);
+  return '$' + (((value: any): number) / 100).toFixed(2)
 }
 
 function getFormattedMealsRemaining(value: ?number): string {
   if (isNil(value)) {
-    return 'N/A';
+    return 'N/A'
   }
-  return (value: any).toString();
+  return (value: any).toString()
 }
 
 function FinancialBalancesCell(
@@ -286,5 +286,5 @@ function FinancialBalancesCell(
         {label}
       </Text>
     </View>
-  );
+  )
 }

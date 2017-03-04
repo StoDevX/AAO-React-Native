@@ -1,10 +1,10 @@
 // @flow
-import React from 'react';
-import {ScrollView, Text, View, StyleSheet} from 'react-native';
+import React from 'react'
+import {ScrollView, Text, View, StyleSheet} from 'react-native'
 
-import {Cell, Section, TableView} from 'react-native-tableview-simple';
-import * as c from '../components/colors';
-import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types';
+import {Cell, Section, TableView} from 'react-native-tableview-simple'
+import * as c from '../components/colors'
+import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
 
 const styles = StyleSheet.create({
   container: {
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingBottom: 20,
   },
-});
+})
 
 export class StudentOrgsDetailRenderView extends React.Component {
   props: {
@@ -48,7 +48,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
       <Section header="CONTACT">
         <Cell cellStyle="Basic" title={contactInfo} />
       </Section>
-    );
+    )
   }
 
   displayDescription(description: string) {
@@ -56,11 +56,11 @@ export class StudentOrgsDetailRenderView extends React.Component {
       <Section header="DESCRIPTION">
         <Text selectable={true} style={styles.description}>{description}</Text>
       </Section>
-    );
+    )
   }
 
   displayMeetings(meetingTime: string, meetingLocation: string) {
-    let contents = null;
+    let contents = null
     if (meetingTime && meetingLocation) {
       contents = (
         <Cell
@@ -68,24 +68,24 @@ export class StudentOrgsDetailRenderView extends React.Component {
           title={meetingTime}
           detail={meetingLocation}
         />
-      );
+      )
     } else if (meetingTime) {
       contents = (
         <Cell cellStyle="Basic" title={meetingTime} detail={meetingLocation} />
-      );
+      )
     } else if (meetingLocation) {
-      contents = <Cell cellStyle="Basic" title={meetingLocation} />;
+      contents = <Cell cellStyle="Basic" title={meetingLocation} />
     }
 
     return (
       <Section header="MEETINGS">
         {contents}
       </Section>
-    );
+    )
   }
 
   displayFooter() {
-    return <Text style={styles.footer}>Powered by Presence</Text>;
+    return <Text style={styles.footer}>Powered by Presence</Text>
   }
 
   renderBody = (data: StudentOrgInfoType) => {
@@ -94,9 +94,9 @@ export class StudentOrgsDetailRenderView extends React.Component {
       regularMeetingLocation = '',
       description = '',
       contactName = '',
-    } = data;
+    } = data
 
-    const showMeetingSection = regularMeetingTime && regularMeetingLocation;
+    const showMeetingSection = regularMeetingTime && regularMeetingLocation
 
     return (
       <View>
@@ -106,29 +106,29 @@ export class StudentOrgsDetailRenderView extends React.Component {
         {contactName ? this.displayContact(contactName) : null}
         {description ? this.displayDescription(description) : null}
       </View>
-    );
+    )
   };
 
   render() {
-    let knownData = this.props.base;
-    let orgName = knownData.name.trim();
-    let orgCategory = knownData.categories.join(', ');
+    let knownData = this.props.base
+    let orgName = knownData.name.trim()
+    let orgCategory = knownData.categories.join(', ')
 
-    let contents;
+    let contents
     if (!this.props.loaded) {
       contents = (
         <Section header="ORGANIZATION">
           <Cell cellStyle="Basic" title="Loading…" />
         </Section>
-      );
+      )
     } else if (!this.props.full) {
       contents = (
         <Section header="ORGANIZATION">
           <Cell cellStyle="Basic" title="No information found." />
         </Section>
-      );
+      )
     } else {
-      contents = this.renderBody(this.props.full);
+      contents = this.renderBody(this.props.full)
     }
 
     return (
@@ -144,6 +144,6 @@ export class StudentOrgsDetailRenderView extends React.Component {
           {this.displayFooter()}
         </TableView>
       </ScrollView>
-    );
+    )
   }
 }

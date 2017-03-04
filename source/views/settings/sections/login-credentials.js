@@ -1,16 +1,16 @@
 // @flow
-import React from 'react';
-import {Cell, Section} from 'react-native-tableview-simple';
-import {LoginField} from '../components/login-field';
-import {LoginButton} from '../components/login-button';
+import React from 'react'
+import {Cell, Section} from 'react-native-tableview-simple'
+import {LoginField} from '../components/login-field'
+import {LoginButton} from '../components/login-button'
 import {
   logInViaCredentials,
   logOutViaCredentials,
   validateLoginCredentials,
   setLoginCredentials,
-} from '../../../flux/parts/settings';
-import {connect} from 'react-redux';
-import noop from 'lodash/noop';
+} from '../../../flux/parts/settings'
+import {connect} from 'react-redux'
+import noop from 'lodash/noop'
 
 type CredentialsSectionPropsType = {
   username: string,
@@ -39,18 +39,18 @@ class CredentialsLoginSection extends React.Component {
   focusPassword = () => this._passwordInput.focus();
 
   logIn = async () => {
-    this.setState({loading: true});
-    await this.props.logIn(this.state.username, this.state.password);
-    this.setState({loading: false});
+    this.setState({loading: true})
+    await this.props.logIn(this.state.username, this.state.password)
+    this.setState({loading: false})
   };
 
   logOut = () => {
-    this.props.logOut();
+    this.props.logOut()
   };
 
   render() {
-    let {loggedIn, message} = this.props;
-    let {loading, username, password} = this.state;
+    let {loggedIn, message} = this.props
+    let {loading, username, password} = this.state
 
     return (
       <Section
@@ -91,7 +91,7 @@ class CredentialsLoginSection extends React.Component {
           label="St. Olaf"
         />
       </Section>
-    );
+    )
   }
 }
 
@@ -101,7 +101,7 @@ function mapStateToProps(state) {
     password: state.settings.credentials.password,
     loggedIn: state.settings.credentials.valid,
     message: state.settings.credentials.error,
-  };
+  }
 }
 
 function mapDispatchToProps(dispatch) {
@@ -110,9 +110,9 @@ function mapDispatchToProps(dispatch) {
     logOut: () => dispatch(logOutViaCredentials()),
     validateCredentials: (u, p) => dispatch(validateLoginCredentials(u, p)),
     setCredentials: (u, p) => dispatch(setLoginCredentials(u, p)),
-  };
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(
   CredentialsLoginSection,
-);
+)

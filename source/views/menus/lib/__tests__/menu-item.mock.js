@@ -1,5 +1,5 @@
 // @flow
-import type {MenuItemType} from '../../types';
+import type {MenuItemType} from '../../types'
 
 export const item: (
   {|cor_icon?: Object, station?: string, special?: boolean|},
@@ -24,4 +24,4 @@ export const item: (
   price: '',
   tier3: false,
   zero_entree: '',
-});
+})

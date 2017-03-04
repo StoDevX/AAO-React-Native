@@ -5,109 +5,109 @@
  */
 
 // Tweak the global fetch
-import './globalize-fetch';
-import {tracker} from './analytics';
-import OneSignal from 'react-native-onesignal';
+import './globalize-fetch'
+import {tracker} from './analytics'
+import OneSignal from 'react-native-onesignal'
 
-import React from 'react';
-import {Navigator, BackAndroid, StyleSheet, Platform} from 'react-native';
-import {Provider} from 'react-redux';
-import {store} from './flux';
-import * as c from './views/components/colors';
+import React from 'react'
+import {Navigator, BackAndroid, StyleSheet, Platform} from 'react-native'
+import {Provider} from 'react-redux'
+import {store} from './flux'
+import * as c from './views/components/colors'
 import {
   Title,
   LeftButton,
   RightButton,
   configureScene,
-} from './views/components/navigation';
+} from './views/components/navigation'
 
-import CalendarView from './views/calendar';
-import {ContactsView} from './views/contacts';
-import {DictionaryView, DictionaryDetailView} from './views/dictionary';
-import {DirectoryView} from './views/directory';
-import {HomeView, EditHomeView} from './views/home';
-import MapView from './views/map';
-import StreamingView from './views/streaming';
-import {MenusView} from './views/menus';
-import {BonAppHostedMenu} from './views/menus/menu-bonapp';
-import {FilterView} from './views/components/filter';
-import NewsView from './views/news';
-import NewsItemView from './views/news/news-item';
-import SISView from './views/sis';
+import CalendarView from './views/calendar'
+import {ContactsView} from './views/contacts'
+import {DictionaryView, DictionaryDetailView} from './views/dictionary'
+import {DirectoryView} from './views/directory'
+import {HomeView, EditHomeView} from './views/home'
+import MapView from './views/map'
+import StreamingView from './views/streaming'
+import {MenusView} from './views/menus'
+import {BonAppHostedMenu} from './views/menus/menu-bonapp'
+import {FilterView} from './views/components/filter'
+import NewsView from './views/news'
+import NewsItemView from './views/news/news-item'
+import SISView from './views/sis'
 import {
   BuildingHoursView,
   BuildingHoursDetailView,
-} from './views/building-hours';
-import TransportationView from './views/transportation';
-import SettingsView from './views/settings';
-import SISLoginView from './views/settings/login';
-import CreditsView from './views/settings/credits';
-import PrivacyView from './views/settings/privacy';
-import LegalView from './views/settings/legal';
-import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs';
-import {FaqView} from './views/faqs';
+} from './views/building-hours'
+import TransportationView from './views/transportation'
+import SettingsView from './views/settings'
+import SISLoginView from './views/settings/login'
+import CreditsView from './views/settings/credits'
+import PrivacyView from './views/settings/privacy'
+import LegalView from './views/settings/legal'
+import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
+import {FaqView} from './views/faqs'
 
-import NoRoute from './views/components/no-route';
+import NoRoute from './views/components/no-route'
 
 // Render a given scene
 function renderScene(route, navigator) {
-  let props = {route, navigator, ...(route.props || {})};
-  tracker.trackScreenView(route.id);
+  let props = {route, navigator, ...(route.props || {})}
+  tracker.trackScreenView(route.id)
   switch (route.id) {
     case 'HomeView':
-      return <HomeView {...props} />;
+      return <HomeView {...props} />
     case 'MenusView':
-      return <MenusView {...props} />;
+      return <MenusView {...props} />
     case 'BonAppHostedMenu':
-      return <BonAppHostedMenu {...props} />;
+      return <BonAppHostedMenu {...props} />
     case 'FilterView':
-      return <FilterView {...props} />;
+      return <FilterView {...props} />
     case 'DirectoryView':
-      return <DirectoryView {...props} />;
+      return <DirectoryView {...props} />
     case 'CalendarView':
-      return <CalendarView {...props} />;
+      return <CalendarView {...props} />
     case 'ContactsView':
-      return <ContactsView {...props} />;
+      return <ContactsView {...props} />
     case 'DictionaryView':
-      return <DictionaryView {...props} />;
+      return <DictionaryView {...props} />
     case 'DictionaryDetailView':
-      return <DictionaryDetailView {...props} />;
+      return <DictionaryDetailView {...props} />
     case 'MapView':
-      return <MapView {...props} />;
+      return <MapView {...props} />
     case 'StreamingView':
-      return <StreamingView {...props} />;
+      return <StreamingView {...props} />
     case 'NewsView':
-      return <NewsView {...props} />;
+      return <NewsView {...props} />
     case 'NewsItemView':
-      return <NewsItemView {...props} />;
+      return <NewsItemView {...props} />
     case 'BuildingHoursView':
-      return <BuildingHoursView {...props} />;
+      return <BuildingHoursView {...props} />
     case 'BuildingHoursDetailView':
-      return <BuildingHoursDetailView {...props} />;
+      return <BuildingHoursDetailView {...props} />
     case 'SISView':
-      return <SISView {...props} />;
+      return <SISView {...props} />
     case 'TransportationView':
-      return <TransportationView {...props} />;
+      return <TransportationView {...props} />
     case 'SettingsView':
-      return <SettingsView {...props} />;
+      return <SettingsView {...props} />
     case 'SISLoginView':
-      return <SISLoginView {...props} />;
+      return <SISLoginView {...props} />
     case 'CreditsView':
-      return <CreditsView {...props} />;
+      return <CreditsView {...props} />
     case 'PrivacyView':
-      return <PrivacyView {...props} />;
+      return <PrivacyView {...props} />
     case 'LegalView':
-      return <LegalView {...props} />;
+      return <LegalView {...props} />
     case 'EditHomeView':
-      return <EditHomeView {...props} />;
+      return <EditHomeView {...props} />
     case 'StudentOrgsView':
-      return <StudentOrgsView {...props} />;
+      return <StudentOrgsView {...props} />
     case 'StudentOrgsDetailView':
-      return <StudentOrgsDetailView {...props} />;
+      return <StudentOrgsDetailView {...props} />
     case 'FaqView':
-      return <FaqView {...props} />;
+      return <FaqView {...props} />
     default:
-      return <NoRoute {...props} />;
+      return <NoRoute {...props} />
   }
 }
 
@@ -133,61 +133,61 @@ const styles = StyleSheet.create({
       },
     }),
   },
-});
+})
 
 export default class App extends React.Component {
   componentDidMount() {
-    tracker.trackEvent('app', 'launch');
+    tracker.trackEvent('app', 'launch')
     BackAndroid.addEventListener(
       'hardwareBackPress',
       this.registerAndroidBackButton,
-    );
+    )
 
-    OneSignal.addEventListener('received', this.onReceived);
-    OneSignal.addEventListener('opened', this.onOpened);
-    OneSignal.addEventListener('registered', this.onRegistered);
-    OneSignal.addEventListener('ids', this.onIds);
+    OneSignal.addEventListener('received', this.onReceived)
+    OneSignal.addEventListener('opened', this.onOpened)
+    OneSignal.addEventListener('registered', this.onRegistered)
+    OneSignal.addEventListener('ids', this.onIds)
   }
 
   componentWillUnmount() {
     BackAndroid.removeEventListener(
       'hardwareBackPress',
       this.registerAndroidBackButton,
-    );
+    )
 
-    OneSignal.removeEventListener('received', this.onReceived);
-    OneSignal.removeEventListener('opened', this.onOpened);
-    OneSignal.removeEventListener('registered', this.onRegistered);
-    OneSignal.removeEventListener('ids', this.onIds);
+    OneSignal.removeEventListener('received', this.onReceived)
+    OneSignal.removeEventListener('opened', this.onOpened)
+    OneSignal.removeEventListener('registered', this.onRegistered)
+    OneSignal.removeEventListener('ids', this.onIds)
   }
 
   onReceived(notification: any) {
-    console.log('Notification received:', notification);
+    console.log('Notification received:', notification)
   }
 
   onOpened(openResult: any) {
-    console.log('Message:', openResult.notification.payload.body);
-    console.log('Data:', openResult.notification.payload.additionalData);
-    console.log('isActive:', openResult.notification.isAppInFocus);
-    console.log('openResult:', openResult);
+    console.log('Message:', openResult.notification.payload.body)
+    console.log('Data:', openResult.notification.payload.additionalData)
+    console.log('isActive:', openResult.notification.isAppInFocus)
+    console.log('openResult:', openResult)
   }
 
   onRegistered(notifData: any) {
-    console.log('Device is now registered for push notifications!', notifData);
+    console.log('Device is now registered for push notifications!', notifData)
   }
 
   onIds(device: any) {
-    console.log('Device info:', device);
+    console.log('Device info:', device)
   }
 
   _navigator: Navigator;
 
   registerAndroidBackButton = () => {
     if (this._navigator && this._navigator.getCurrentRoutes().length > 1) {
-      this._navigator.pop();
-      return true;
+      this._navigator.pop()
+      return true
     }
-    return false;
+    return false
   };
 
   render() {
@@ -215,6 +215,6 @@ export default class App extends React.Component {
           configureScene={configureScene}
         />
       </Provider>
-    );
+    )
   }
 }

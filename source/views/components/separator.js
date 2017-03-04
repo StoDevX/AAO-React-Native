@@ -1,7 +1,7 @@
 // @flow
-import React from 'react';
-import {View, StyleSheet, Platform} from 'react-native';
-import * as c from './colors';
+import React from 'react'
+import {View, StyleSheet, Platform} from 'react-native'
+import * as c from './colors'
 
 const styles = StyleSheet.create({
   separator: {
@@ -16,8 +16,8 @@ const styles = StyleSheet.create({
       },
     }),
   },
-});
+})
 
 export function Separator({style}: {style?: mixed}) {
-  return <View style={[styles.separator, style]} />;
+  return <View style={[styles.separator, style]} />
 }

@@ -1,21 +1,21 @@
 // @flow
-import {toLaxTitleCase} from 'titlecase';
+import {toLaxTitleCase} from 'titlecase'
 
 export function trimStationName(stationName: string) {
-  return stationName.replace(/<strong>@(.*)<\/strong>/, '$1');
+  return stationName.replace(/<strong>@(.*)<\/strong>/, '$1')
 }
 
 function removeParenTags(str: string) {
-  const parensRegex = / \([^)]*?\)$/;
+  const parensRegex = / \([^)]*?\)$/
   while (str.match(parensRegex)) {
-    str = str.replace(parensRegex, '');
+    str = str.replace(parensRegex, '')
   }
-  return str;
+  return str
 }
 
 export function trimItemLabel(label: string) {
   // remove extraneous whitespace and title-case the bonapp titles
-  const evenedWhitespace = label.replace(/\s+/g, ' ');
-  const noParens = removeParenTags(evenedWhitespace);
-  return toLaxTitleCase(noParens);
+  const evenedWhitespace = label.replace(/\s+/g, ' ')
+  const noParens = removeParenTags(evenedWhitespace)
+  return toLaxTitleCase(noParens)
 }

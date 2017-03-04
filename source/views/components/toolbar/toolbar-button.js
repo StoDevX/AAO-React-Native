@@ -1,8 +1,8 @@
 // @flow
-import React from 'react';
-import {StyleSheet, View, Text, Platform} from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import * as c from '../../components/colors';
+import React from 'react'
+import {StyleSheet, View, Text, Platform} from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
+import * as c from '../../components/colors'
 
 const buttonStyles = StyleSheet.create({
   button: {
@@ -31,7 +31,7 @@ const buttonStyles = StyleSheet.create({
   textWithIcon: {
     paddingRight: 8,
   },
-});
+})
 
 type ButtonPropsType = {
   iconName?: string,
@@ -40,26 +40,26 @@ type ButtonPropsType = {
 };
 
 export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
-  let icon;
+  let icon
   if (!iconName) {
-    icon = null;
+    icon = null
   } else if (Platform.OS === 'ios') {
-    icon = isActive ? iconName : iconName + '-outline';
+    icon = isActive ? iconName : iconName + '-outline'
   } else if (Platform.OS === 'android') {
-    icon = iconName;
+    icon = iconName
   }
 
   let activeButtonStyle = isActive
     ? buttonStyles.activeButton
-    : buttonStyles.inactiveButton;
+    : buttonStyles.inactiveButton
   let activeContentStyle = isActive
     ? buttonStyles.activeText
-    : buttonStyles.inactiveText;
+    : buttonStyles.inactiveText
 
-  let textWithIconStyle = icon ? buttonStyles.textWithIcon : null;
+  let textWithIconStyle = icon ? buttonStyles.textWithIcon : null
   let activeTextStyle = {
     fontWeight: isActive && Platform.OS === 'android' ? 'bold' : 'normal',
-  };
+  }
 
   return (
     <View style={[buttonStyles.button, activeButtonStyle]}>
@@ -68,5 +68,5 @@ export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
       </Text>
       {icon ? <Icon size={18} name={icon} style={activeContentStyle} /> : null}
     </View>
-  );
+  )
 }

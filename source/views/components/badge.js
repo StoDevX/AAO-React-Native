@@ -1,7 +1,7 @@
 // @flow
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import * as c from '../components/colors';
+import React from 'react'
+import {View, Text, StyleSheet} from 'react-native'
+import * as c from '../components/colors'
 
 type PropsType = {
   text: string,
@@ -22,7 +22,7 @@ let styles = StyleSheet.create({
   accessoryBadgeText: {
     color: c.white,
   },
-});
+})
 
 export function Badge(
   {
@@ -33,7 +33,7 @@ export function Badge(
     textColor = 'hsl(26, 49%, 34%)',
   }: PropsType,
 ) {
-  const bgaccent = accentColor.replace('rgb', 'rgba').replace(')', ', 0.1)');
+  const bgaccent = accentColor.replace('rgb', 'rgba').replace(')', ', 0.1)')
 
   return (
     <View
@@ -47,5 +47,5 @@ export function Badge(
         {text}
       </Text>
     </View>
-  );
+  )
 }

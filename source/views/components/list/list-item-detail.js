@@ -1,9 +1,9 @@
 // @flow
-import React from 'react';
-import {StyleSheet, Platform, Text} from 'react-native';
-import * as c from '../colors';
+import React from 'react'
+import {StyleSheet, Platform, Text} from 'react-native'
+import * as c from '../colors'
 
-const FONT_SIZE = 14;
+const FONT_SIZE = 14
 const styles = StyleSheet.create({
   detail: {
     paddingTop: 4,
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-});
+})
 
 type PropsType = {
   children?: any,
@@ -32,5 +32,5 @@ export function Detail(props: PropsType) {
     <Text numberOfLines={props.lines} style={[styles.detail, props.style]}>
       {props.children}
     </Text>
-  );
+  )
 }

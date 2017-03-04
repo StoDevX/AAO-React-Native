@@ -1,8 +1,8 @@
 // @flow
 
-import React from 'react';
-import {ListView, Platform, RefreshControl} from 'react-native';
-import isFunction from 'lodash/isFunction';
+import React from 'react'
+import {ListView, Platform, RefreshControl} from 'react-native'
+import isFunction from 'lodash/isFunction'
 
 type DataType = Array<any> | {[key: string]: any};
 type PropsType = {
@@ -22,11 +22,11 @@ export default class SimpleListView extends React.Component {
   };
 
   componentWillMount() {
-    this.setup(this.props);
+    this.setup(this.props)
   }
 
   componentWillReceiveProps(nextProps: PropsType) {
-    this.setup(nextProps);
+    this.setup(nextProps)
   }
 
   props: PropsType;
@@ -34,19 +34,19 @@ export default class SimpleListView extends React.Component {
   setup = (props: PropsType) => {
     this.setState(state => ({
       dataSource: this.cloneDatasource(state.dataSource, props.data),
-    }));
+    }))
   };
 
   cloneDatasource(dataSource: ListView.DataSource, data: DataType) {
     return Array.isArray(data)
       ? dataSource.cloneWithRows(data)
-      : dataSource.cloneWithRowsAndSections(data);
+      : dataSource.cloneWithRowsAndSections(data)
   }
 
   render() {
-    const renderRow = this.props.children;
+    const renderRow = this.props.children
     if (!renderRow || !isFunction(renderRow)) {
-      throw new Error('SimpleListView requires a function as the child');
+      throw new Error('SimpleListView requires a function as the child')
     }
 
     const iosInset = this.props.forceBottomInset && Platform.OS === 'ios'
@@ -54,7 +54,7 @@ export default class SimpleListView extends React.Component {
           automaticallyAdjustContentInsets: false,
           contentInset: {bottom: 49},
         }
-      : {};
+      : {}
 
     const refresher = this.props.onRefresh && 'refreshing' in this.props
       ? {
@@ -65,7 +65,7 @@ export default class SimpleListView extends React.Component {
             />
           ),
         }
-      : {};
+      : {}
 
     return (
       <ListView
@@ -78,6 +78,6 @@ export default class SimpleListView extends React.Component {
         renderRow={rowData => renderRow(rowData)}
         {...this.props}
       />
-    );
+    )
   }
 }

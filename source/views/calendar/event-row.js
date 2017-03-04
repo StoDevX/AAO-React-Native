@@ -1,13 +1,13 @@
 // @flow
-import React from 'react';
-import {StyleSheet, Text} from 'react-native';
-import type {EventType} from './types';
-import moment from 'moment-timezone';
-import * as c from '../components/colors';
-import {Row, Column} from '../components/layout';
-import {ListRow, Detail, Title} from '../components/list';
-import {fastGetTrimmedText} from '../../lib/html';
-import {Bar} from './vertical-bar';
+import React from 'react'
+import {StyleSheet, Text} from 'react-native'
+import type {EventType} from './types'
+import moment from 'moment-timezone'
+import * as c from '../components/colors'
+import {Row, Column} from '../components/layout'
+import {ListRow, Detail, Title} from '../components/list'
+import {fastGetTrimmedText} from '../../lib/html'
+import {Bar} from './vertical-bar'
 
 const styles = StyleSheet.create({
   timeContainer: {
@@ -24,10 +24,10 @@ const styles = StyleSheet.create({
   end: {
     color: c.iosDisabledText,
   },
-});
+})
 
 export default function EventView(props: EventType) {
-  const title = fastGetTrimmedText(props.summary);
+  const title = fastGetTrimmedText(props.summary)
 
   return (
     <ListRow
@@ -46,19 +46,19 @@ export default function EventView(props: EventType) {
         </Column>
       </Row>
     </ListRow>
-  );
+  )
 }
 
 function CalendarTimes({event, style}: {event: EventType, style: any}) {
   const eventLength = moment
     .duration(event.endTime.diff(event.startTime))
-    .asHours();
-  const allDay = eventLength === 24;
-  const multiDay = eventLength > 24;
+    .asHours()
+  const allDay = eventLength === 24
+  const multiDay = eventLength > 24
 
-  let times = null;
+  let times = null
   if (allDay) {
-    times = <Text style={[styles.time, styles.start]}>all-day</Text>;
+    times = <Text style={[styles.time, styles.start]}>all-day</Text>
   } else if (event.isOngoing) {
     times = [
       (
@@ -71,7 +71,7 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
           {event.endTime.format('MMM. D')}
         </Text>
       ),
-    ];
+    ]
   } else if (multiDay) {
     times = [
       (
@@ -84,7 +84,7 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
           to {event.endTime.format('MMM. D h:mm A')}
         </Text>
       ),
-    ];
+    ]
   } else if (event.startTime.isSame(event.endTime, 'minute')) {
     times = [
       (
@@ -93,7 +93,7 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
         </Text>
       ),
       <Text key={1} style={[styles.time, styles.end]}>until ???</Text>,
-    ];
+    ]
   } else {
     times = [
       (
@@ -106,12 +106,12 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
           {event.endTime.format('h:mm A')}
         </Text>
       ),
-    ];
+    ]
   }
 
   return (
     <Column style={style}>
       {times}
     </Column>
-  );
+  )
 }

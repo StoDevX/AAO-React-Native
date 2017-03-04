@@ -1,6 +1,6 @@
 // @flow
 
-import * as c from './components/colors';
+import * as c from './components/colors'
 
 export type ViewType =
   | {
@@ -120,6 +120,6 @@ export const allViews: ViewType[] = [
     tint: c.periwinkle,
     gradient: c.lightBlueToBlueDark,
   },
-];
+]
 
-export const allViewNames = allViews.map(v => v.view);
+export const allViewNames = allViews.map(v => v.view)

@@ -1,8 +1,8 @@
 // @flow
-import React from 'react';
-import type {ToggleType} from './types';
-import {Section} from 'react-native-tableview-simple';
-import {CellToggle} from '../../components/cell-toggle';
+import React from 'react'
+import type {ToggleType} from './types'
+import {Section} from 'react-native-tableview-simple'
+import {CellToggle} from '../../components/cell-toggle'
 
 type PropsType = {
   filter: ToggleType,
@@ -10,8 +10,8 @@ type PropsType = {
 };
 
 export function SingleToggleSection({filter, onChange}: PropsType) {
-  const {spec, enabled} = filter;
-  const {title = '', caption, label} = spec;
+  const {spec, enabled} = filter
+  const {title = '', caption, label} = spec
   return (
     <Section header={title.toUpperCase()} footer={caption}>
       <CellToggle
@@ -20,5 +20,5 @@ export function SingleToggleSection({filter, onChange}: PropsType) {
         onChange={val => onChange({...filter, enabled: val})}
       />
     </Section>
-  );
+  )
 }
