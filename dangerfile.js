@@ -47,9 +47,13 @@ const bigPRThreshold = 400
 const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
 if (thisPRSize > bigPRThreshold) {
   warn(':exclamation: Big PR!')
-  markdown(
-    `> The Pull Request size is a bit big. We like to try and keep PRs under ${bigPRThreshold} lines per PR, and this one was ${thisPRSize} lines. If the PR contains multiple logical changes, splitting each into separate PRs will allow a faster, easier, and more thorough review.`,
-  )
+  markdown(`
+    > The Pull Request is a bit big. We like to try and keep PRs
+    > under ${bigPRThreshold} lines per PR, and this one was
+    > ${thisPRSize} lines. If the PR contains multiple logical changes,
+    > splitting each into separate PRs will allow a faster, easier, and
+    > more thorough review.
+  `)
 }
 
 //

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 // @flow
 import NewsContainer from './news-container'
 
@@ -10,7 +11,7 @@ export default [
     props: {
       mode: 'wp-json',
       url: 'https://wp.stolaf.edu/wp-json/wp/v2/posts',
-      query: {'per_page': 10, _embed: true},
+      query: {per_page: 10, _embed: true},
       name: 'St. Olaf',
     },
   },
@@ -22,7 +23,7 @@ export default [
     props: {
       mode: 'wp-json',
       url: 'http://oleville.com/wp-json/wp/v2/posts/',
-      query: {'per_page': 10, _embed: true},
+      query: {per_page: 10, _embed: true},
       embedFeaturedImage: true,
       name: 'Oleville',
     },
@@ -57,7 +58,7 @@ export default [
     props: {
       mode: 'wp-json',
       url: 'https://pages.stolaf.edu/ksto/wp-json/wp/v2/posts/',
-      query: {'per_page': 10, _embed: true},
+      query: {per_page: 10, _embed: true},
       name: 'KSTO',
     },
   },
