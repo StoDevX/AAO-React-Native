@@ -8,20 +8,19 @@ const readFile = filename => {
     return err.message
   }
 }
+const codeBlock = (contents, lang = null) => {
+  markdown(`\`\`\`${lang || ''}\n${contents}\n\`\`\``)
+}
 
 const jsFiles = danger.git.created_files.filter(path => path.endsWith('.js'))
 
 // new js files should have `@flow` at the top
-const unFlowedFiles = jsFiles.filter(filepath => {
-  const content = readFile(filepath)
-  return !content.includes('@flow')
-})
-
-if (unFlowedFiles.length > 0) {
-  warn(
-    `These new JS files do not have Flow enabled: ${unFlowedFiles.join(', ')}`,
-  )
-}
+jsFiles
+  .filter(filepath => {
+    const content = readFile(filepath)
+    return !content.includes('@flow')
+  })
+  .forEach(file => fail(`${file} will not be checked by Flow!`))
 
 // revisit this when we move to yarn
 // const packageChanged = danger.git.modified_files.includes('package.json')
@@ -33,15 +32,14 @@ if (unFlowedFiles.length > 0) {
 // }
 
 // Be careful of leaving testing shortcuts in the codebase
-const jsTests = jsFiles.filter(filepath => filepath.endsWith('test.js'))
-jsTests.forEach(file => {
-  const content = readFile(file)
-  if (content.includes('it.only') || content.includes('describe.only')) {
-    fail(
-      `An <code>only</code> was left in ${file} – that prevents any other tests from running.`,
-    )
-  }
-})
+jsFiles
+  .filter(filepath => filepath.endsWith('test.js'))
+  .filter(filepath => {
+    const content = readFile(filepath)
+    return content.includes('it.only') || content.includes('describe.only')
+  })
+  .forEach(file =>
+    fail(`An <code>only</code> was left in ${file} – no other tests can run.`))
 
 // Warn when PR size is large (mainly for hawken)
 const bigPRThreshold = 400
@@ -62,9 +60,6 @@ if (thisPRSize > bigPRThreshold) {
 //
 // Check for and report errors from our tools
 //
-
-const codeBlock = (contents, lang = null) =>
-  markdown(`\`\`\`${lang || ''}\n${contents}\n\`\`\``)
 const isBadBundleLog = log => {
   const allLines = log.split('\n')
   const requiredLines = [
@@ -76,7 +71,6 @@ const isBadBundleLog = log => {
   return requiredLines.some(line => !allLines.includes(line))
 }
 
-// Eslint
 const prettierLog = readFile('logs/prettier').trim()
 const eslintLog = readFile('logs/eslint').trim()
 const dataValidationLog = readFile('logs/validate-data').trim()
