@@ -1,18 +1,20 @@
 parser: babel-eslint
-extends: eslint:recommended
-installedESLint: true
+
+plugins:
+  - babel
+  - react
+  - flowtype
+
+extends:
+  - eslint:recommended
+  - plugin:flowtype/recommended
+  - prettier
+  - prettier/flowtype
+  - prettier/react
 
 env:
   es6: true
   node: true
-
-parserOptions:
-  sourceType: module
-  ecmaFeatures:
-    experimentalObjectRestSpread: true
-    jsx: true
-
-plugins: [babel, react, flowtype]
 
 globals:
   fetch: true
@@ -23,21 +25,11 @@ globals:
 
 rules:
   array-callback-return: error
-  arrow-parens: [warn, as-needed]
-  arrow-spacing: [warn, {before: true, after: true}]
-  brace-style: [warn, 1tbs]
   camelcase: warn
-  comma-dangle: [warn, always-multiline]
-  comma-spacing: [warn, {before: false, after: true}]
-  comma-style: [warn, last]
   consistent-this: [error, self]
   curly: [warn, multi-line]
   default-case: error
-  eol-last: [warn, always]
   guard-for-in: error
-  indent: [warn, 2, {SwitchCase: 1, MemberExpression: 1}]
-  key-spacing: [warn, {beforeColon: false, afterColon: true}]
-  keyword-spacing: warn
   linebreak-style: [error, unix]
   new-cap: 'off'
   no-await-in-loop: warn
@@ -53,7 +45,6 @@ rules:
   no-new-symbol: error
   no-restricted-syntax: [error, WithStatement]
   no-return-await: error
-  no-trailing-spaces: warn
   no-throw-literal: error
   no-undef-init: 'off'
   no-underscore-dangle: 'off'
@@ -61,24 +52,16 @@ rules:
   no-unused-vars: [warn, {args: 'after-used', argsIgnorePattern: '^_$'}]
   no-useless-constructor: error
   no-var: error
-  no-whitespace-before-property: warn
-  one-var-declaration-per-line: error
   prefer-promise-reject-errors: error
   prefer-spread: error
   quotes: [warn, single, avoid-escape]
   require-await: warn
   semi: [error, never]
-  template-tag-spacing: [warn, never]
-  wrap-iife: error
 
   # react rules – https://github.com/yannickcr/eslint-plugin-react
-  jsx-quotes: [warn, prefer-single]
   react/display-name: 'off'
-  react/jsx-curly-spacing: [warn, never]
-  react/jsx-indent-props: [warn, 2]
   react/jsx-no-duplicate-props: warn
   react/jsx-no-undef: error
-  react/jsx-space-before-closing: warn
   react/jsx-uses-react: warn
   react/jsx-uses-vars: warn
   react/no-deprecated: warn
@@ -97,7 +80,5 @@ rules:
 
   # flow rules
   flowtype/define-flow-type: warn
-  flowtype/space-after-type-colon: ['off', always]
-  flowtype/space-before-type-colon: ['off', never]
   flowtype/use-flow-type: error
   flowtype/valid-syntax: error

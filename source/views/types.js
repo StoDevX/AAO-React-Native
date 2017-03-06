@@ -9,7 +9,7 @@ export type RouteType = {
   backButtonTitle?: string,
   rightButton?: () => ReactComponent<any>,
   onDismiss?: (r: RouteType, n: Navigator) => any,
-  sceneConfig?: Object|'fromBottom'|string,
+  sceneConfig?: Object | 'fromBottom' | string,
 };
 
 export type NavStateType = {

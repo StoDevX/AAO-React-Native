@@ -23,7 +23,9 @@ function annotateCacheEntry(stored) {
   }
 
   // migration from old storage
-  if (!('dateCached' in stored && 'timeToCache' in stored && 'value' in stored)) {
+  if (
+    !('dateCached' in stored && 'timeToCache' in stored && 'value' in stored)
+  ) {
     return {isCached: true, isExpired: true, value: stored}
   }
 
@@ -37,7 +39,6 @@ function annotateCacheEntry(stored) {
   return {isCached: true, isExpired, value: stored.value}
 }
 
-
 /// MARK: Utilities
 
 function setItem(key: string, value: any, cacheTime?: [number, string]) {
@@ -49,10 +50,9 @@ function setItem(key: string, value: any, cacheTime?: [number, string]) {
   return AsyncStorage.setItem(`aao:${key}`, JSON.stringify(dataToStore))
 }
 function getItem(key: string): CacheResultType<any> {
-  return AsyncStorage.getItem(`aao:${key}`)
-    .then(stored => annotateCacheEntry(JSON.parse(stored)))
+  return AsyncStorage.getItem(`aao:${key}`).then(stored =>
+    annotateCacheEntry(JSON.parse(stored)))
 }
-
 
 /// MARK: courses
 
@@ -73,7 +73,6 @@ export function setAllCourses(courses: CoursesByTermType) {
 export function getAllCourses(): CacheResultType<?CoursesByTermType> {
   return getItem(coursesKey)
 }
-
 
 /// MARK: Financials
 
@@ -104,7 +103,6 @@ export function getPrintBalance(): CacheResultType<?number> {
   return getItem(printBalanceKey)
 }
 
-
 /// MARK: Meals
 
 const mealsKey = 'meals'
@@ -112,6 +110,9 @@ const mealsCacheTime = [5, 'minutes']
 export function setMealInfo(meals: {weekly: ?string, daily: ?string}) {
   return setItem(mealsKey, meals, mealsCacheTime)
 }
-export function getMealInfo(): CacheResultType<{weekly: ?string, daily: ?string}> {
+export function getMealInfo(): CacheResultType<{
+  weekly: ?string,
+  daily: ?string,
+}> {
   return getItem(mealsKey)
 }

@@ -29,7 +29,7 @@ function feedbackOptOutStatus(store) {
 }
 
 function sisLoginCredentials(store) {
-  loadLoginCredentials().then(({username, password}={}) => {
+  loadLoginCredentials().then(({username, password} = {}) => {
     if (!username || !password) return
 
     let action = setLoginCredentials(username, password)

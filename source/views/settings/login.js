@@ -22,15 +22,21 @@ export default class SISLoginView extends React.Component {
       this.setState({complete: true})
       this.props.onLoginComplete(true)
     }
-  }
+  };
 
   onComplete = () => {
     this.props.navigator.pop()
-  }
+  };
 
   render() {
     if (this.state.complete) {
-      return <NoticeView text="You're logged in!" onPress={this.onComplete} buttonText='Done' />
+      return (
+        <NoticeView
+          text="You're logged in!"
+          onPress={this.onComplete}
+          buttonText="Done"
+        />
+      )
     }
 
     return (

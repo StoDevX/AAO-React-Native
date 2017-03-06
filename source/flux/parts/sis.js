@@ -3,15 +3,9 @@
  * Reducer for app settings
  */
 
-import {
-  getMealsRemaining,
-  getFinancialData,
-} from '../../lib/financials'
+import {getMealsRemaining, getFinancialData} from '../../lib/financials'
 
-import {
-  loadAllCourses,
-} from '../../lib/courses'
-
+import {loadAllCourses} from '../../lib/courses'
 
 export const UPDATE_OLE_DOLLARS = 'sis/UPDATE_OLE_DOLLARS'
 export const UPDATE_FLEX_DOLLARS = 'sis/UPDATE_FLEX_DOLLARS'
@@ -22,30 +16,50 @@ export const UPDATE_MEALS_WEEKLY = 'sis/UPDATE_MEALS_WEEKLY'
 export const UPDATE_MEALS_REMAINING = 'sis/UPDATE_MEALS_REMAINING'
 export const UPDATE_COURSES = 'sis/UPDATE_COURSES'
 
-export function updateFinancialData(forceFromServer: boolean=false) {
+export function updateFinancialData(forceFromServer: boolean = false) {
   return async (dispatch: () => {}, getState: any) => {
     const state = getState()
-    const balances = await getFinancialData(state.app.isConnected, forceFromServer)
-    dispatch({type: UPDATE_FINANCIAL_DATA, error: balances.error, payload: balances.value})
+    const balances = await getFinancialData(
+      state.app.isConnected,
+      forceFromServer,
+    )
+    dispatch({
+      type: UPDATE_FINANCIAL_DATA,
+      error: balances.error,
+      payload: balances.value,
+    })
   }
 }
 
-export function updateMealsRemaining(forceFromServer: boolean=false) {
+export function updateMealsRemaining(forceFromServer: boolean = false) {
   return async (dispatch: () => {}, getState: any) => {
     const state = getState()
-    const meals = await getMealsRemaining(state.app.isConnected, forceFromServer)
-    dispatch({type: UPDATE_MEALS_REMAINING, error: meals.error, payload: meals.value})
+    const meals = await getMealsRemaining(
+      state.app.isConnected,
+      forceFromServer,
+    )
+    dispatch({
+      type: UPDATE_MEALS_REMAINING,
+      error: meals.error,
+      payload: meals.value,
+    })
   }
 }
 
-export function updateCourses(forceFromServer: bool=false) {
+export function updateCourses(forceFromServer: boolean = false) {
   return async (dispatch: () => {}, getState: any) => {
     const state = getState()
-    const courses = await loadAllCourses(state.app.isConnected, forceFromServer)
-    dispatch({type: UPDATE_COURSES, error: courses.error, payload: courses.value})
+    const courses = await loadAllCourses(
+      state.app.isConnected,
+      forceFromServer,
+    )
+    dispatch({
+      type: UPDATE_COURSES,
+      error: courses.error,
+      payload: courses.value,
+    })
   }
 }
-
 
 const initialBalancesState = {
   message: null,
@@ -53,7 +67,7 @@ const initialBalancesState = {
   ole: null,
   print: null,
 }
-function balances(state=initialBalancesState, action) {
+function balances(state = initialBalancesState, action) {
   const {type, payload, error} = action
 
   switch (type) {
@@ -80,13 +94,12 @@ function balances(state=initialBalancesState, action) {
   }
 }
 
-
 const initialMealsState = {
   message: null,
   daily: null,
   weekly: null,
 }
-function meals(state=initialMealsState, action) {
+function meals(state = initialMealsState, action) {
   const {type, payload, error} = action
 
   switch (type) {
@@ -115,9 +128,8 @@ function meals(state=initialMealsState, action) {
   }
 }
 
-
 const initialCoursesState = {}
-function courses(state=initialCoursesState, action) {
+function courses(state = initialCoursesState, action) {
   const {type, payload} = action
 
   switch (type) {
@@ -129,9 +141,8 @@ function courses(state=initialCoursesState, action) {
   }
 }
 
-
 const initialSisPageState = {}
-export function sis(state: Object=initialSisPageState, action: Object) {
+export function sis(state: Object = initialSisPageState, action: Object) {
   return {
     balances: balances(state.balances, action),
     meals: meals(state.meals, action),

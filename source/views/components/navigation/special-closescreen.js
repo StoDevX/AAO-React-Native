@@ -11,7 +11,11 @@ import type {RouteType} from '../../types'
 import {commonStyles} from './styles'
 
 export function CloseScreenButton(
-  {route, navigator, buttonStyle}: {route: RouteType, navigator: Navigator, buttonStyle?: any}
+  {
+    route,
+    navigator,
+    buttonStyle,
+  }: {route: RouteType, navigator: Navigator, buttonStyle?: any},
 ) {
   const onDismiss = route.onDismiss ? route.onDismiss : noop
   return (
@@ -25,7 +29,6 @@ export function CloseScreenButton(
     </Touchable>
   )
 }
-
 
 const styles = StyleSheet.create({
   text: {

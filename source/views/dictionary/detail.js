@@ -16,10 +16,14 @@ const styles = StyleSheet.create({
 })
 
 export function DictionaryDetailView(props) {
-  return <ScrollView contentContainerStyle={styles.container}>
-    <Text selectable={true} style={styles.term}>{props.item.word}</Text>
-    <Text selectable={true} style={styles.definition}>{props.item.definition}</Text>
-  </ScrollView>
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text selectable={true} style={styles.term}>{props.item.word}</Text>
+      <Text selectable={true} style={styles.definition}>
+        {props.item.definition}
+      </Text>
+    </ScrollView>
+  )
 }
 DictionaryDetailView.propTypes = {
   item: React.PropTypes.shape({

@@ -32,7 +32,7 @@ export default function EventView(props: EventType) {
   return (
     <ListRow
       contentContainerStyle={{paddingVertical: 2}}
-      arrowPosition='none'
+      arrowPosition="none"
       fullWidth={true}
     >
       <Row>
@@ -50,7 +50,9 @@ export default function EventView(props: EventType) {
 }
 
 function CalendarTimes({event, style}: {event: EventType, style: any}) {
-  const eventLength = moment.duration(event.endTime.diff(event.startTime)).asHours()
+  const eventLength = moment
+    .duration(event.endTime.diff(event.startTime))
+    .asHours()
   const allDay = eventLength === 24
   const multiDay = eventLength > 24
 
@@ -59,23 +61,51 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
     times = <Text style={[styles.time, styles.start]}>all-day</Text>
   } else if (event.isOngoing) {
     times = [
-      <Text key={0} style={[styles.time, styles.start]}>{event.startTime.format('MMM. D')}</Text>,
-      <Text key={1} style={[styles.time, styles.end]}>{event.endTime.format('MMM. D')}</Text>,
+      (
+        <Text key={0} style={[styles.time, styles.start]}>
+          {event.startTime.format('MMM. D')}
+        </Text>
+      ),
+      (
+        <Text key={1} style={[styles.time, styles.end]}>
+          {event.endTime.format('MMM. D')}
+        </Text>
+      ),
     ]
   } else if (multiDay) {
     times = [
-      <Text key={0} style={[styles.time, styles.start]}>{event.startTime.format('h:mm A')}</Text>,
-      <Text key={1} style={[styles.time, styles.end]}>to {event.endTime.format('MMM. D h:mm A')}</Text>,
+      (
+        <Text key={0} style={[styles.time, styles.start]}>
+          {event.startTime.format('h:mm A')}
+        </Text>
+      ),
+      (
+        <Text key={1} style={[styles.time, styles.end]}>
+          to {event.endTime.format('MMM. D h:mm A')}
+        </Text>
+      ),
     ]
   } else if (event.startTime.isSame(event.endTime, 'minute')) {
     times = [
-      <Text key={0} style={[styles.time, styles.start]}>{event.startTime.format('h:mm A')}</Text>,
+      (
+        <Text key={0} style={[styles.time, styles.start]}>
+          {event.startTime.format('h:mm A')}
+        </Text>
+      ),
       <Text key={1} style={[styles.time, styles.end]}>until ???</Text>,
     ]
   } else {
     times = [
-      <Text key={0} style={[styles.time, styles.start]}>{event.startTime.format('h:mm A')}</Text>,
-      <Text key={1} style={[styles.time, styles.end]}>{event.endTime.format('h:mm A')}</Text>,
+      (
+        <Text key={0} style={[styles.time, styles.start]}>
+          {event.startTime.format('h:mm A')}
+        </Text>
+      ),
+      (
+        <Text key={1} style={[styles.time, styles.end]}>
+          {event.endTime.format('h:mm A')}
+        </Text>
+      ),
     ]
   }
 
