@@ -6,7 +6,10 @@ import * as cache from '../cache'
 import {FINANCIALS_URL, LANDING_URL} from './urls'
 import type {FinancialDataShapeType} from './types'
 
-type PromisedDataType = Promise<{error: true, value: Error}|{error: false, value: FinancialDataShapeType}>;
+type DataType =
+  | {error: true, value: Error}
+  | {error: false, value: FinancialDataShapeType};
+type PromisedDataType = Promise<DataType>;
 
 export async function getFinancialData(isConnected: boolean, force?: bool): PromisedDataType {
   const [flex, ole, print] = await getBalances()
