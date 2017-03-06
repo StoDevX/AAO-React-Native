@@ -4,12 +4,7 @@ const CENTRAL_TZ = 'America/Winnipeg'
 const TIME_FORMAT = 'h:mma'
 const RESULT_FORMAT = 'h:mma'
 
-import type {
-  BuildingType,
-  NamedBuildingScheduleType,
-  SingleBuildingScheduleType,
-  DayOfWeekEnumType,
-} from './types'
+import type {BuildingType, NamedBuildingScheduleType, SingleBuildingScheduleType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
 import flatten from 'lodash/flatten'
 import sortBy from 'lodash/sortBy'
@@ -18,10 +13,7 @@ const {chapelSchedule} = chapelData
 
 type HourPairType = {open: momentT, close: momentT};
 
-export function parseHours(
-  {from: fromTime, to: toTime}: SingleBuildingScheduleType,
-  m: momentT,
-): HourPairType {
+export function parseHours({from: fromTime, to: toTime}: SingleBuildingScheduleType, m: momentT): HourPairType {
   let dayOfYear = m.dayOfYear()
 
   // if the moment is before 3am
@@ -44,10 +36,7 @@ export function parseHours(
 
 const getDayOfWeek = (m: momentT) => ((m.format('dd'): any): DayOfWeekEnumType)
 
-export function isChapelTime(
-  m: momentT,
-  schedules: SingleBuildingScheduleType[] = chapelSchedule,
-): boolean {
+export function isChapelTime(m: momentT, schedules: SingleBuildingScheduleType[]=chapelSchedule): boolean {
   let dayOfWeek = getDayOfWeek(m)
   let sched = schedules.find(sched => sched.days.includes(dayOfWeek))
   if (!sched) {
@@ -57,10 +46,7 @@ export function isChapelTime(
   return _isBuildingOpenAtMoment(sched, m)
 }
 
-export function formatChapelTime(
-  m: momentT,
-  schedules: SingleBuildingScheduleType[] = chapelSchedule,
-): string {
+export function formatChapelTime(m: momentT, schedules: SingleBuildingScheduleType[]=chapelSchedule): string {
   let dayOfWeek = getDayOfWeek(m)
   let sched = schedules.find(sched => sched.days.includes(dayOfWeek))
   if (!sched) {
@@ -69,10 +55,7 @@ export function formatChapelTime(
   return formatBuildingTimes(sched, m)
 }
 
-export function getTimeUntilChapelCloses(
-  m: momentT,
-  schedules: SingleBuildingScheduleType[] = chapelSchedule,
-): string {
+export function getTimeUntilChapelCloses(m: momentT, schedules: SingleBuildingScheduleType[]=chapelSchedule): string {
   let dayOfWeek = getDayOfWeek(m)
   let sched = schedules.find(sched => sched.days.includes(dayOfWeek))
   if (!sched) {
@@ -82,10 +65,7 @@ export function getTimeUntilChapelCloses(
   return m.clone().seconds(0).to(close)
 }
 
-export function formatBuildingTimes(
-  schedule: SingleBuildingScheduleType,
-  m: momentT,
-): string {
+export function formatBuildingTimes(schedule: SingleBuildingScheduleType, m: momentT): string {
   let {open, close} = parseHours(schedule, m)
 
   let openString = open.format(RESULT_FORMAT)
@@ -94,10 +74,7 @@ export function formatBuildingTimes(
   return `${openString} — ${closeString}`
 }
 
-export function getStatusOfBuildingAtMoment(
-  schedule: SingleBuildingScheduleType,
-  m: momentT,
-): string {
+export function getStatusOfBuildingAtMoment(schedule: SingleBuildingScheduleType, m: momentT): string {
   let {open, close} = parseHours(schedule, m)
 
   if (m.isBefore(open) && m.clone().add(30, 'minutes').isSameOrAfter(open)) {
@@ -112,18 +89,12 @@ export function getStatusOfBuildingAtMoment(
   return 'Closed'
 }
 
-export function _isBuildingOpenAtMoment(
-  schedule: SingleBuildingScheduleType,
-  m: momentT,
-): boolean {
+export function _isBuildingOpenAtMoment(schedule: SingleBuildingScheduleType, m: momentT): boolean {
   let {open, close} = parseHours(schedule, m)
   return m.isBetween(open, close, 'minute', '[)')
 }
 
-export function isBuildingOpenAtMoment(
-  schedule: SingleBuildingScheduleType,
-  m: momentT,
-): boolean {
+export function isBuildingOpenAtMoment(schedule: SingleBuildingScheduleType, m: momentT): boolean {
   if (isChapelTime(m)) {
     return false
   }
@@ -132,8 +103,8 @@ export function isBuildingOpenAtMoment(
 
 export function getDetailedBuildingStatus(
   info: BuildingType,
-  m: momentT,
-): Array<{isActive: boolean, label: string | null, status: string}> {
+  m: momentT
+): Array<{isActive: boolean, label: string|null, status: string}> {
   // Friday: 9:00am – Midnight
   // -- or --
   // Friday Breakfast: 7:00am – 9:45am
@@ -154,17 +125,10 @@ export function getDetailedBuildingStatus(
   let results = schedules.map(set => {
     let label = set.title
     if (set.closedForChapelTime && isChapelTime(m)) {
-      return [
-        {
-          isActive: false,
-          label,
-          status: `Closed for chapel: ${formatChapelTime(m)}`,
-        },
-      ]
+      return [{isActive: false, label, status: `Closed for chapel: ${formatChapelTime(m)}`}]
     }
 
-    let filteredSchedules = set.hours.filter(sched =>
-      sched.days.includes(dayOfWeek))
+    let filteredSchedules = set.hours.filter(sched => sched.days.includes(dayOfWeek))
     if (!filteredSchedules.length) {
       return [{isActive: false, label, status: 'Closed today'}]
     }
@@ -199,14 +163,12 @@ export function getShortBuildingStatus(info: BuildingType, m: momentT): string {
       return 'Chapel'
     }
 
-    let filteredSchedules = set.hours.filter(sched =>
-      sched.days.includes(dayOfWeek))
+    let filteredSchedules = set.hours.filter(sched => sched.days.includes(dayOfWeek))
     if (!filteredSchedules.length) {
       return 'Closed'
     }
 
-    return filteredSchedules.map(schedule =>
-      getStatusOfBuildingAtMoment(schedule, m))
+    return filteredSchedules.map(schedule => getStatusOfBuildingAtMoment(schedule, m))
   })
 
   return flatten(statuses).find(status => status !== 'Closed') || 'Closed'
@@ -228,28 +190,18 @@ export function isBuildingOpen(info: BuildingType, m: momentT): boolean {
       return false
     }
 
-    let filteredSchedules = set.hours.filter(sched =>
-      sched.days.includes(dayOfWeek))
+    let filteredSchedules = set.hours.filter(sched => sched.days.includes(dayOfWeek))
     if (!filteredSchedules.length) {
       return false
     }
 
-    return filteredSchedules.map(schedule =>
-      isBuildingOpenAtMoment(schedule, m))
+    return filteredSchedules.map(schedule => isBuildingOpenAtMoment(schedule, m))
   })
 
   return flatten(results).find(status => status !== false) || false
 }
 
-const daysOfTheWeek: DayOfWeekEnumType[] = [
-  'Mo',
-  'Tu',
-  'We',
-  'Th',
-  'Fr',
-  'Sa',
-  'Su',
-]
+const daysOfTheWeek: DayOfWeekEnumType[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 export function summarizeDays(days: DayOfWeekEnumType[]): string {
   // If one day is given: return the full name of that day.
   //    ['Fr'] => 'Friday'
@@ -268,7 +220,7 @@ export function summarizeDays(days: DayOfWeekEnumType[]): string {
   let sortedDays = sortBy(days, d => daysOfTheWeek.indexOf(d))
 
   let startDay = sortedDays[0]
-  let endDay = sortedDays[sortedDays.length - 1]
+  let endDay = sortedDays[sortedDays.length-1]
 
   // Get the indices of the start/end days from the master list of all days
   let startIndex = daysOfTheWeek.indexOf(startDay)
@@ -296,9 +248,7 @@ export function summarizeDays(days: DayOfWeekEnumType[]): string {
   return `${start} — ${end}`
 }
 
-export function normalizeBuildingSchedule(
-  info: BuildingType,
-): NamedBuildingScheduleType[] {
+export function normalizeBuildingSchedule(info: BuildingType): NamedBuildingScheduleType[] {
   let schedules = info.schedule
   if (!schedules) {
     return []

@@ -21,7 +21,7 @@ export function buildFilters(
   foodItems: MenuItemType[],
   corIcons: MasterCorIconMapType,
   meals: ProcessedMealType[],
-  now: momentT,
+  now: momentT
 ): FilterType[] {
   // Format the items for the stations filter
   const stations = flatten(meals.map(meal => meal.stations))
@@ -32,9 +32,7 @@ export function buildFilters(
   const allDietaryRestrictions = map(corIcons, cor => ({
     title: entities.decode(cor.label),
     image: cor.image ? {uri: cor.image} : null,
-    detail: cor.description
-      ? entities.decode(fastGetTrimmedText(cor.description))
-      : '',
+    detail: cor.description ? entities.decode(fastGetTrimmedText(cor.description)) : '',
   }))
 
   // Decide which meal will be selected by default
@@ -43,10 +41,8 @@ export function buildFilters(
 
   // Check if there is at least one special in order to show the specials-only filter
   const stationNames = selectedMeal.stations.map(s => s.label)
-  const shouldShowSpecials = filter(
-    foodItems,
-    item => item.special && stationNames.includes(item.station),
-  ).length >= 1
+  const shouldShowSpecials = filter(foodItems, item =>
+    item.special && stationNames.includes(item.station)).length >= 1
 
   return [
     {

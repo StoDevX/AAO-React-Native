@@ -20,13 +20,12 @@ export function FilterViewComponent(props: PropsType) {
     props.onChange(result)
   }
 
-  const contents = props.filters.map(filter => (
+  const contents = props.filters.map(filter =>
     <FilterSection
       key={filter.key}
       filter={filter}
       onChange={onFilterChanged}
-    />
-  ))
+    />)
 
   return (
     <ScrollView style={{flex: 1}}>

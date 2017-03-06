@@ -15,24 +15,14 @@ import type {
 const parseXml = pify(parseString)
 const entities = new AllHtmlEntities()
 
-export async function fetchRssFeed(
-  url: string,
-  query?: Object,
-): Promise<StoryType[]> {
-  const responseText = await fetch(
-    `${url}?${qs.stringify(query)}`,
-  ).then(r => r.text())
+export async function fetchRssFeed(url: string, query?: Object): Promise<StoryType[]> {
+  const responseText = await fetch(`${url}?${qs.stringify(query)}`).then(r => r.text())
   const feed: FeedResponseType = await parseXml(responseText)
   return feed.rss.channel[0].item.map(convertRssItemToStory)
 }
 
-export async function fetchWpJson(
-  url: string,
-  query?: Object,
-): Promise<StoryType[]> {
-  const feed: WpJsonResponseType = await fetchJson(
-    `${url}?${qs.stringify(query)}`,
-  )
+export async function fetchWpJson(url: string, query?: Object): Promise<StoryType[]> {
+  const feed: WpJsonResponseType = await fetchJson(`${url}?${qs.stringify(query)}`)
   return feed.map(convertWpJsonItemToStory)
 }
 
@@ -43,8 +33,7 @@ export function convertRssItemToStory(item: RssFeedItemType): StoryType {
   const title = entities.decode(item.title[0] || '<no title>')
   const datePublished = (item.pubDate || [])[0] || null
 
-  let content = (item['content:encoded'] || item.description || [])[0] ||
-    '<No content>'
+  let content = (item['content:encoded'] || item.description || [])[0] || '<No content>'
 
   let excerpt = (item.description || [])[0] || content.substr(0, 250)
   excerpt = entities.decode(fastGetTrimmedText(excerpt))
@@ -72,9 +61,7 @@ export function convertWpJsonItemToStory(item: WpJsonItemType): StoryType {
 
   let featuredImage = null
   if (item._embedded && item._embedded['wp:featuredmedia']) {
-    let featuredMediaInfo = item._embedded['wp:featuredmedia'].find(
-      m => m.id === item.featured_media && m.media_type === 'image',
-    )
+    let featuredMediaInfo = item._embedded['wp:featuredmedia'].find(m => m.id === item.featured_media && m.media_type === 'image')
 
     if (featuredMediaInfo) {
       if (featuredMediaInfo.media_details.sizes.medium_large) {

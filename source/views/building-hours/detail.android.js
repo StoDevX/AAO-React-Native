@@ -2,11 +2,7 @@
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {buildingImages} from '../../../images/building-images'
-import type {
-  SingleBuildingScheduleType,
-  BuildingType,
-  DayOfWeekEnumType,
-} from './types'
+import type {SingleBuildingScheduleType, BuildingType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
 import {Card} from '../components/card'
 import ParallaxView from 'react-native-parallax-view'
@@ -89,7 +85,7 @@ export class BuildingHoursDetailView extends React.Component {
     intervalId: 0,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
-  };
+  }
 
   componentWillMount() {
     // This updates the screen every ten seconds, so that the building
@@ -105,12 +101,12 @@ export class BuildingHoursDetailView extends React.Component {
 
   updateTime = () => {
     this.setState({now: moment.tz(CENTRAL_TZ)})
-  };
+  }
 
   render() {
     const bgColors = {
-      Open: c.moneyGreen,
-      Closed: c.salmon,
+      'Open': c.moneyGreen,
+      'Closed': c.salmon,
     }
 
     const headerImage = this.props.image
@@ -120,16 +116,12 @@ export class BuildingHoursDetailView extends React.Component {
     const schedules = normalizeBuildingSchedule(this.props, this.state.now)
     const dayOfWeek = ((this.state.now.format('dd'): any): DayOfWeekEnumType)
 
-    const abbr = this.props.abbreviation
-      ? <Text style={styles.abbr}> ({this.props.abbreviation})</Text>
-      : null
+    const abbr = this.props.abbreviation ? <Text style={styles.abbr}> ({this.props.abbreviation})</Text> : null
     const title = <Text style={styles.name}>{this.props.name}{abbr}</Text>
     const subtitle = this.props.subtitle
       ? <View style={styles.subtitle}>
-          <Text style={[styles.name, styles.subtitleText]}>
-            {this.props.subtitle}
-          </Text>
-        </View>
+        <Text style={[styles.name, styles.subtitleText]}>{this.props.subtitle}</Text>
+      </View>
       : null
 
     return (
@@ -142,66 +134,38 @@ export class BuildingHoursDetailView extends React.Component {
           <View style={styles.title}>{title}</View>
           {subtitle}
 
-          <View
-            style={[
-              styles.badge,
-              {backgroundColor: bgColors[openStatus] || c.goldenrod},
-            ]}
-          >
+          <View style={[styles.badge, {backgroundColor: bgColors[openStatus] || c.goldenrod}]}>
             <Text style={styles.badgeText}>{openStatus}</Text>
           </View>
 
-          {schedules.map(set => (
-            <Card
-              key={set.title}
-              style={styles.scheduleContainer}
-              header={set.title}
-              footer={set.notes}
-            >
+          {schedules.map(set =>
+            <Card key={set.title} style={styles.scheduleContainer} header={set.title} footer={set.notes}>
               <View style={styles.scheduleHoursWrapper}>
-                {set.hours.map((schedule, i) => (
+                {set.hours.map((schedule, i) =>
                   <ScheduleRow
                     key={i}
                     now={this.state.now}
                     schedule={schedule}
-                    isActive={
-                      set.isPhysicallyOpen !== false &&
-                        schedule.days.includes(dayOfWeek) &&
-                        isBuildingOpenAtMoment(schedule, this.state.now)
-                    }
-                  />
-                ))}
+                    isActive={set.isPhysicallyOpen !== false && schedule.days.includes(dayOfWeek) && isBuildingOpenAtMoment(schedule, this.state.now)}
+                  />)}
               </View>
             </Card>
-          ))}
+          )}
         </View>
       </ParallaxView>
     )
   }
 }
 
-const ScheduleRow = (
-  {
-    schedule,
-    isActive,
-    now,
-  }: {schedule: SingleBuildingScheduleType, isActive: boolean, now: momentT},
-) => {
+
+const ScheduleRow = ({schedule, isActive, now}: {schedule: SingleBuildingScheduleType, isActive: boolean, now: momentT}) => {
   return (
     <View style={styles.scheduleRow}>
-      <Text
-        selectable={true}
-        style={[styles.scheduleDays, isActive && styles.bold]}
-        numberOfLines={1}
-      >
+      <Text selectable={true} style={[styles.scheduleDays, isActive && styles.bold]} numberOfLines={1}>
         {summarizeDays(schedule.days)}
       </Text>
 
-      <Text
-        selectable={true}
-        style={[styles.scheduleHours, isActive && styles.bold]}
-        numberOfLines={1}
-      >
+      <Text selectable={true} style={[styles.scheduleHours, isActive && styles.bold]} numberOfLines={1}>
         {formatBuildingTimes(schedule, now)}
       </Text>
     </View>

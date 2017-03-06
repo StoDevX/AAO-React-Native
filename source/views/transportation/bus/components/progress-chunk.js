@@ -44,27 +44,25 @@ const styles = StyleSheet.create({
   },
 })
 
-export const ProgressChunk = (
-  {
-    afterStop,
-    atStop,
-    barColor,
-    beforeStop,
-    currentStopColor,
-    skippingStop,
-    isFirstChunk,
-    isLastChunk,
-  }: {
-    afterStop: boolean,
-    atStop: boolean,
-    barColor: string,
-    beforeStop: boolean,
-    currentStopColor: string,
-    skippingStop: boolean,
-    isFirstChunk: boolean,
-    isLastChunk: boolean,
-  },
-) => {
+export const ProgressChunk = ({
+  afterStop,
+  atStop,
+  barColor,
+  beforeStop,
+  currentStopColor,
+  skippingStop,
+  isFirstChunk,
+  isLastChunk,
+}: {
+  afterStop: boolean,
+  atStop: boolean,
+  barColor: string,
+  beforeStop: boolean,
+  currentStopColor: string,
+  skippingStop: boolean,
+  isFirstChunk: boolean,
+  isLastChunk: boolean,
+}) => {
   // To draw the bar, we draw a chunk of the bar, then we draw the dot, then
   // we draw the last chunk of the bar.
   const startBarColor = isAndroid && isFirstChunk ? 'transparent' : barColor
@@ -73,18 +71,13 @@ export const ProgressChunk = (
   return (
     <View style={styles.barContainer}>
       <View style={[styles.bar, {backgroundColor: startBarColor}]} />
-      <View
-        style={[
-          styles.dot,
-          afterStop && [
-            styles.passedStop,
-            {borderColor: barColor, backgroundColor: barColor},
-          ],
-          beforeStop && [styles.beforeStop, {borderColor: barColor}],
-          atStop && [styles.atStop, {borderColor: currentStopColor}],
-          skippingStop && styles.skippingStop,
-        ]}
-      />
+      <View style={[
+        styles.dot,
+        afterStop && [styles.passedStop, {borderColor: barColor, backgroundColor: barColor}],
+        beforeStop && [styles.beforeStop, {borderColor: barColor}],
+        atStop && [styles.atStop, {borderColor: currentStopColor}],
+        skippingStop && styles.skippingStop,
+      ]} />
       <View style={[styles.bar, {backgroundColor: endBarColor}]} />
     </View>
   )

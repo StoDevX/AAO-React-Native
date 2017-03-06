@@ -21,13 +21,17 @@ class OddsAndEndsSection extends React.Component {
     })
   };
 
-  render() {
+  render () {
     return (
-      <Section header="ODDS &amp; ENDS">
-        <Cell cellStyle="RightDetail" title="Version" detail={version} />
+      <Section header='ODDS & ENDS'>
+        <Cell
+          cellStyle='RightDetail'
+          title='Version'
+          detail={version}
+        />
 
         <CellToggle
-          label="Share Analytics"
+          label='Share Analytics'
           // These are both inverted because the toggle makes more sense as
           // optout/optin, but the code works better as optin/optout.
           value={!this.props.feedbackDisabled}
@@ -35,22 +39,22 @@ class OddsAndEndsSection extends React.Component {
         />
 
         <PushButtonCell
-          title="FAQ"
+          title='FAQ'
           onPress={() => this.onPressButton('FaqView', 'FAQs')}
         />
 
         <PushButtonCell
-          title="Credits"
+          title='Credits'
           onPress={() => this.onPressButton('CreditsView', 'Credits')}
         />
 
         <PushButtonCell
-          title="Privacy Policy"
+          title='Privacy Policy'
           onPress={() => this.onPressButton('PrivacyView', 'Privacy Policy')}
         />
 
         <PushButtonCell
-          title="Legal"
+          title='Legal'
           onPress={() => this.onPressButton('LegalView', 'Legal')}
         />
       </Section>
@@ -58,18 +62,17 @@ class OddsAndEndsSection extends React.Component {
   }
 }
 
-const PushButtonCell = (
-  {title, onPress}: {title: string, onPress: () => any},
-) => {
+const PushButtonCell = ({title, onPress}: {title: string, onPress: () => any}) => {
   return (
     <Cell
-      cellStyle="Basic"
+      cellStyle='Basic'
       title={title}
-      accessory="DisclosureIndicator"
+      accessory='DisclosureIndicator'
       onPress={onPress}
     />
   )
 }
+
 
 function mapStateToProps(state) {
   return {

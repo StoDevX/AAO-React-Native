@@ -6,14 +6,9 @@ import {OLECARD_AUTH_URL} from './urls'
 import type {MealsShapeType} from './types'
 import * as cache from '../cache'
 
-type MealOrErrorType =
-  | {error: true, value: Error}
-  | {error: false, value: MealsShapeType};
+type MealOrErrorType = {error: true, value: Error}|{error: false, value: MealsShapeType};
 
-export async function getMealsRemaining(
-  isConnected: boolean,
-  force?: boolean,
-): Promise<MealOrErrorType> {
+export async function getMealsRemaining(isConnected: boolean, force?: boolean): Promise<MealOrErrorType> {
   const {isExpired, isCached, value} = await cache.getMealInfo()
 
   if (isConnected && (isExpired || !isCached || force)) {

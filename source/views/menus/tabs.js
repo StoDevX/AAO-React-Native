@@ -42,7 +42,10 @@ const stolaf = [
     component: GitHubHostedMenu,
     props: {
       name: 'pause',
-      loadingMessage: ['Mixing up a shake…', 'Spinning up pizzas…'],
+      loadingMessage: [
+        'Mixing up a shake…',
+        'Spinning up pizzas…',
+      ],
     },
   },
   {

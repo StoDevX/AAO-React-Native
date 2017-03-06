@@ -19,7 +19,7 @@ export default class SimpleListView extends React.Component {
       rowHasChanged: (r1, r2) => r1 !== r2,
       sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
     }),
-  };
+  }
 
   componentWillMount() {
     this.setup(this.props)
@@ -35,7 +35,7 @@ export default class SimpleListView extends React.Component {
     this.setState(state => ({
       dataSource: this.cloneDatasource(state.dataSource, props.data),
     }))
-  };
+  }
 
   cloneDatasource(dataSource: ListView.DataSource, data: DataType) {
     return Array.isArray(data)
@@ -51,20 +51,20 @@ export default class SimpleListView extends React.Component {
 
     const iosInset = this.props.forceBottomInset && Platform.OS === 'ios'
       ? {
-          automaticallyAdjustContentInsets: false,
-          contentInset: {bottom: 49},
-        }
+        automaticallyAdjustContentInsets: false,
+        contentInset: {bottom: 49},
+      }
       : {}
 
     const refresher = this.props.onRefresh && 'refreshing' in this.props
       ? {
-          refreshControl: (
-            <RefreshControl
-              onRefresh={this.props.onRefresh}
-              refreshing={this.props.refreshing}
-            />
-          ),
-        }
+        refreshControl: (
+          <RefreshControl
+            onRefresh={this.props.onRefresh}
+            refreshing={this.props.refreshing}
+          />
+        ),
+      }
       : {}
 
     return (

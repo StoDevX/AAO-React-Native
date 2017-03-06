@@ -19,28 +19,18 @@ const styles = StyleSheet.create({
   },
 })
 
-export function LoginButton(
-  {
-    loading,
-    disabled,
-    loggedIn,
-    onPress,
-    label,
-  }: {
-    loading: boolean,
-    disabled?: boolean,
-    loggedIn: boolean,
-    onPress: () => any,
-    label: string,
-  },
-) {
-  let loginTextStyle = loading || disabled ? styles.disabled : styles.active
+export function LoginButton({loading, disabled, loggedIn, onPress, label}: {loading: boolean, disabled?: boolean, loggedIn: boolean, onPress: () => any, label: string}) {
+  let loginTextStyle = loading || disabled
+    ? styles.disabled
+    : styles.active
 
   const contents = (
     <Text style={[styles.text, loginTextStyle]}>
       {loading
         ? `Logging in to ${label}…`
-        : loggedIn ? `Sign Out of ${label}` : `Sign In to ${label}`}
+        : loggedIn
+          ? `Sign Out of ${label}`
+          : `Sign In to ${label}`}
     </Text>
   )
 

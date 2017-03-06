@@ -7,9 +7,11 @@ export const PUSH_VIEW = 'app/PUSH_VIEW'
 export const POP_VIEW = 'app/POP_VIEW'
 export const ONLINE_STATUS = 'app/ONLINE_STATUS'
 
+
 export function updateOnlineStatus(status: boolean) {
   return {type: ONLINE_STATUS, payload: status}
 }
+
 
 const initialAppState = {
   currentView: null,
@@ -17,7 +19,7 @@ const initialAppState = {
   isConnected: false,
 }
 
-export function app(state: Object = initialAppState, action: Object) {
+export function app(state: Object=initialAppState, action: Object) {
   const {type, payload} = action
 
   switch (type) {

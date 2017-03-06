@@ -7,8 +7,14 @@
 // This was done to get code out the door since none of the developers could
 // figure out how to render the map on Android. Changes to this hack are welcome.
 
+
 import React from 'react'
-import {StyleSheet, View, Text, Linking} from 'react-native'
+import {
+  StyleSheet,
+  View,
+  Text,
+  Linking,
+} from 'react-native'
 import {Button} from '../components/button'
 import {data as mapInfo} from '../../../docs/map.json'
 import {tracker} from '../../analytics'
@@ -22,7 +28,7 @@ export default function OlafMapView() {
           tracker.trackException(err.message)
           console.error('An error occurred', err)
         })}
-        title="View Map"
+        title='View Map'
       />
     </View>
   )

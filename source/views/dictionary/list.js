@@ -7,13 +7,7 @@ import React from 'react'
 import {StyleSheet, Platform} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
 import {Column} from '../components/layout'
-import {
-  Detail,
-  Title,
-  ListRow,
-  ListSectionHeader,
-  ListSeparator,
-} from '../components/list'
+import {Detail, Title, ListRow, ListSectionHeader, ListSeparator} from '../components/list'
 import type {WordType} from './types'
 import {tracker} from '../../analytics'
 import groupBy from 'lodash/groupBy'
@@ -47,14 +41,14 @@ export class DictionaryView extends React.Component {
       backButtonTitle: 'Dictionary',
       props: {item: data},
     })
-  };
+  }
 
   renderRow = ({item}: {item: WordType}) => {
     return (
       <ListRow
         onPress={() => this.onPressRow(item)}
         contentContainerStyle={styles.row}
-        arrowPosition="none"
+        arrowPosition='none'
       >
         <Column>
           <Title lines={1}>{item.word}</Title>
@@ -62,15 +56,20 @@ export class DictionaryView extends React.Component {
         </Column>
       </ListRow>
     )
-  };
+  }
 
   renderHeader = ({title}: {title: string}) => {
-    return <ListSectionHeader title={title} style={styles.rowSectionHeader} />
-  };
+    return (
+      <ListSectionHeader
+        title={title}
+        style={styles.rowSectionHeader}
+      />
+    )
+  }
 
   renderSeparator = (sectionId: string, rowId: string) => {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
-  };
+  }
 
   render() {
     return (
@@ -78,10 +77,7 @@ export class DictionaryView extends React.Component {
         data={groupBy(terms, item => head(item.word))}
         cell={this.renderRow}
         // just setting cellHeight sends the wrong values on iOS.
-        cellHeight={
-          rowHeight +
-            (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
-        }
+        cellHeight={rowHeight + (Platform.OS === 'ios' ? (11/12 * StyleSheet.hairlineWidth) : 0)}
         sectionHeader={this.renderHeader}
         sectionHeaderHeight={headerHeight}
         showsVerticalScrollIndicator={false}

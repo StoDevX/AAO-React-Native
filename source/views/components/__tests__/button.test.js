@@ -12,7 +12,7 @@ test('renders', () => {
 })
 
 test('can change the title', () => {
-  const tree = shallow(<Button title="Title" />)
+  const tree = shallow(<Button title='Title' />)
   expect(tree).toMatchSnapshot()
 })
 

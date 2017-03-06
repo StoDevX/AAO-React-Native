@@ -5,9 +5,14 @@
  */
 
 import React from 'react'
-import {Navigator, ScrollView, StyleSheet, StatusBar} from 'react-native'
+import {
+  Navigator,
+  ScrollView,
+  StyleSheet,
+  StatusBar,
+} from 'react-native'
 
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
 import * as c from '../components/colors'
 import sortBy from 'lodash/sortBy'
 import type {TopLevelViewPropsType} from '../types'
@@ -16,27 +21,21 @@ import {allViews} from '../views'
 import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl} from '../components/open-url'
 
-function HomePage(
-  {
-    navigator,
-    route,
-    order,
-    views = allViews,
-  }: {order: string[], views: ViewType[]} & TopLevelViewPropsType,
-) {
+
+function HomePage({navigator, route, order, views=allViews}: {order: string[], views: ViewType[]} & TopLevelViewPropsType) {
   const sortedViews = sortBy(views, view => order.indexOf(view.view))
 
   return (
     <ScrollView
-      overflow="hidden"
+      overflow='hidden'
       alwaysBounceHorizontal={false}
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.cells}
     >
-      <StatusBar barStyle="light-content" backgroundColor={c.gold} />
+      <StatusBar barStyle='light-content' backgroundColor={c.gold} />
 
-      {sortedViews.map(view => (
+      {sortedViews.map(view =>
         <HomeScreenButton
           view={view}
           key={view.view}
@@ -53,8 +52,8 @@ function HomePage(
               })
             }
           }}
-        />
-      ))}
+        />)
+      }
     </ScrollView>
   )
 }
@@ -65,6 +64,7 @@ function mapStateToProps(state) {
   }
 }
 export default connect(mapStateToProps)(HomePage)
+
 
 const styles = StyleSheet.create({
   cells: {

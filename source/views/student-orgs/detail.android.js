@@ -49,7 +49,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
 
   displayContact(contactInfo: string) {
     return (
-      <Card header="Contact" style={styles.card}>
+      <Card header='Contact' style={styles.card}>
         <Text selectable={true} style={styles.cardBody}>{contactInfo}</Text>
       </Card>
     )
@@ -57,7 +57,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
 
   displayDescription(description: string) {
     return (
-      <Card header="Description" style={styles.card}>
+      <Card header='Description' style={styles.card}>
         <Text selectable={true} style={styles.cardBody}>{description}</Text>
       </Card>
     )
@@ -66,54 +66,42 @@ export class StudentOrgsDetailRenderView extends React.Component {
   displayMeetings(meetingTime: string, meetingLocation: string) {
     let contents = null
     if (meetingTime && meetingLocation) {
-      contents = (
-        <Cell
-          cellStyle="Subtitle"
-          title={meetingTime}
-          detail={meetingLocation}
-        />
-      )
+      contents = <Cell cellStyle='Subtitle' title={meetingTime} detail={meetingLocation} />
     } else if (meetingTime) {
-      contents = (
-        <Cell cellStyle="Basic" title={meetingTime} detail={meetingLocation} />
-      )
+      contents = <Cell cellStyle='Basic' title={meetingTime} detail={meetingLocation} />
     } else if (meetingLocation) {
-      contents = <Cell cellStyle="Basic" title={meetingLocation} />
+      contents = <Cell cellStyle='Basic' title={meetingLocation} />
     }
 
     return (
-      <Card header="Meetings" style={styles.card}>
+      <Card header='Meetings' style={styles.card}>
         {contents}
       </Card>
     )
   }
 
   displayFooter() {
-    return (
-      <Text selectable={true} style={styles.footer}>Powered by Presence</Text>
-    )
+    return <Text selectable={true} style={styles.footer}>Powered by Presence</Text>
   }
 
   renderBody = (data: StudentOrgInfoType) => {
     const {
-      regularMeetingTime = '',
-      regularMeetingLocation = '',
-      description = '',
-      contactName = '',
+      regularMeetingTime='',
+      regularMeetingLocation='',
+      description='',
+      contactName='',
     } = data
 
     const showMeetingSection = regularMeetingTime && regularMeetingLocation
 
     return (
       <View>
-        {showMeetingSection
-          ? this.displayMeetings(regularMeetingTime, regularMeetingLocation)
-          : null}
+        {showMeetingSection ? this.displayMeetings(regularMeetingTime, regularMeetingLocation) : null}
         {contactName ? this.displayContact(contactName) : null}
         {description ? this.displayDescription(description) : null}
       </View>
     )
-  };
+  }
 
   render() {
     let knownData = this.props.base
@@ -123,16 +111,14 @@ export class StudentOrgsDetailRenderView extends React.Component {
     let contents
     if (!this.props.loaded) {
       contents = (
-        <Card header="Organization" style={styles.card}>
+        <Card header='Organization' style={styles.card}>
           <Text selectable={true} style={styles.cardBody}>Loading…</Text>
         </Card>
       )
     } else if (!this.props.full) {
       contents = (
-        <Card header="Organization" style={styles.card}>
-          <Text selectable={true} style={styles.cardBody}>
-            No information found.
-          </Text>
+        <Card header='Organization' style={styles.card}>
+          <Text selectable={true} style={styles.cardBody}>No information found.</Text>
         </Card>
       )
     } else {
@@ -143,7 +129,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
       <ScrollView>
         <Text style={styles.name}>{orgName}</Text>
 
-        <Card header="Category" style={styles.card}>
+        <Card header='Category' style={styles.card}>
           <Text style={styles.cardBody}>{orgCategory}</Text>
         </Card>
 

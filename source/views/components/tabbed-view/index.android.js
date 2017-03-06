@@ -3,7 +3,7 @@ import React from 'react'
 import {StyleSheet, Platform, Dimensions} from 'react-native'
 import {TabViewAnimated, TabBar} from 'react-native-tab-view'
 import * as c from '../colors'
-import type {TabbedViewPropsType} from './types'
+import type { TabbedViewPropsType } from './types'
 import {tracker} from '../../../analytics'
 
 const styles = StyleSheet.create({
@@ -27,20 +27,20 @@ const styles = StyleSheet.create({
 export default class TabbedView extends React.Component {
   state = {
     index: 0,
-  };
+  }
 
   componentWillMount() {
     this._handleChangeTab(0)
   }
 
-  props: TabbedViewPropsType;
+  props: TabbedViewPropsType
 
   _handleChangeTab = index => {
     tracker.trackScreenView(this.props.tabs[index].id)
     this.setState({
       index,
     })
-  };
+  }
 
   _renderHeader = props => {
     const tabStyle = this.props.tabs.length <= 2
@@ -57,9 +57,9 @@ export default class TabbedView extends React.Component {
         tabStyle={tabStyle}
       />
     )
-  };
+  }
 
-  _renderScene = ({route}) => {
+  _renderScene = ({ route }) => {
     if (!route.component) {
       return null
     }
@@ -67,12 +67,12 @@ export default class TabbedView extends React.Component {
     return (
       <route.component
         {...this.props.childProps}
-        {...route.props || {}}
+        {...(route.props || {})}
         navigator={this.props.navigator}
         route={this.props.route}
       />
     )
-  };
+  }
 
   render() {
     let routes = {routes: this.props.tabs.map(tab => ({...tab, key: tab.id}))}

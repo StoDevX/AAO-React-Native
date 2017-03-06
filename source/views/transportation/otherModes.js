@@ -41,21 +41,18 @@ export default function OtherModesView() {
       forceBottomInset={true}
       data={modes}
     >
-      {(data: OtherModeType) => (
+      {(data: OtherModeType) =>
         <View style={styles.mode}>
           <Text selectable={true} style={styles.title}>{data.name}</Text>
-          <Text selectable={true} style={styles.content}>
-            {data.description}
-          </Text>
+          <Text selectable={true} style={styles.content}>{data.description}</Text>
           <Button
             onPress={() => trackedOpenUrl({
               url: data.url,
               id: `Transportation_OtherModes_${data.name.replace(' ', '')}View`,
             })}
-            title="More info"
+            title='More info'
           />
-        </View>
-      )}
+        </View>}
     </SimpleListView>
   )
 }

@@ -28,15 +28,14 @@ export function LeftButton(
     return null
   }
 
-  const backTitle = navState.routeStack[index].backButtonTitle ||
-    navState.routeStack[index - 1].title
+  const backTitle = navState.routeStack[index].backButtonTitle || navState.routeStack[index-1].title
 
   let contents = null
   if (Platform.OS === 'android') {
-    contents = <Icon style={styles.icon} name="md-arrow-back" />
+    contents = <Icon style={styles.icon} name='md-arrow-back' />
   } else {
     contents = [
-      <Icon key={0} style={styles.icon} name="ios-arrow-back" />,
+      <Icon key={0} style={styles.icon} name='ios-arrow-back' />,
       <Text key={1} style={styles.text}>{backTitle}</Text>,
     ]
   }
@@ -62,7 +61,8 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: 'white',
     ...Platform.select({
-      ios: {},
+      ios: {
+      },
     }),
   },
   icon: {

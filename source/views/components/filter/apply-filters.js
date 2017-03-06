@@ -1,5 +1,10 @@
 // @flow
-import type {FilterType, ToggleType, ListType, ListItemSpecType} from './types'
+import type {
+  FilterType,
+  ToggleType,
+  ListType,
+  ListItemSpecType,
+} from './types'
 import values from 'lodash/values'
 import difference from 'lodash/difference'
 import isPlainObject from 'lodash/isPlainObject'
@@ -50,18 +55,12 @@ export function applyListFilter(filter: ListType, item: any): boolean {
   }
 }
 
-export function applyOrListFilter(
-  filterValue: ListItemSpecType[],
-  itemValue: string,
-): boolean {
+export function applyOrListFilter(filterValue: ListItemSpecType[], itemValue: string): boolean {
   // An item passes, if its value is in the filter's selected items array
   return filterValue.map(f => f.title).includes(itemValue)
 }
 
-export function applyAndListFilter(
-  filterValue: ListItemSpecType[],
-  itemValue: string[] | {[key: string]: string},
-): boolean {
+export function applyAndListFilter(filterValue: ListItemSpecType[], itemValue: string[]|{[key: string]: string}): boolean {
   // In case the value is an object, instead of an array, convert it to an array
   if (isPlainObject(itemValue)) {
     itemValue = values(itemValue)

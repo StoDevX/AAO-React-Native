@@ -11,13 +11,7 @@ import LoadingView from '../components/loading'
 import delay from 'delay'
 import {NoticeView} from '../components/notice'
 import {Row, Column} from '../components/layout'
-import {
-  ListRow,
-  ListSectionHeader,
-  ListSeparator,
-  Detail,
-  Title,
-} from '../components/list'
+import {ListRow, ListSectionHeader, ListSeparator, Detail, Title} from '../components/list'
 import {tracker} from '../../analytics'
 import size from 'lodash/size'
 import map from 'lodash/map'
@@ -45,7 +39,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   badgeIcon: {
-    fontSize: Platform.OS === 'ios' ? 24 : 28,
+    fontSize: Platform.OS === 'ios' ? 24: 28,
     color: 'transparent',
   },
 })
@@ -54,7 +48,7 @@ export class StudentOrgsView extends React.Component {
   static propTypes = {
     navigator: React.PropTypes.object.isRequired,
     route: React.PropTypes.object.isRequired,
-  };
+  }
 
   state: {
     orgs: {[key: string]: StudentOrgAbridgedType[]},
@@ -66,7 +60,7 @@ export class StudentOrgsView extends React.Component {
     refreshing: false,
     loaded: false,
     error: false,
-  };
+  }
 
   componentWillMount() {
     this.refresh()
@@ -93,7 +87,7 @@ export class StudentOrgsView extends React.Component {
     }
 
     this.setState({loaded: true})
-  };
+  }
 
   refresh = async () => {
     let start = Date.now()
@@ -107,7 +101,7 @@ export class StudentOrgsView extends React.Component {
       await delay(500 - elapsed)
     }
     this.setState(() => ({refreshing: false}))
-  };
+  }
 
   renderSectionHeader = ({title}: {title: string}) => {
     return (
@@ -117,28 +111,19 @@ export class StudentOrgsView extends React.Component {
         style={styles.rowSectionHeader}
       />
     )
-  };
+  }
 
   renderRow = ({item}: {item: StudentOrgAbridgedType}) => {
     return (
       <ListRow
         onPress={() => this.onPressRow(item)}
         contentContainerStyle={[styles.row, {paddingRight: 2}]}
-        arrowPosition="none"
+        arrowPosition='none'
         fullWidth={true}
       >
-        <Row alignItems="flex-start">
-          <View
-            style={[
-              styles.badge,
-              {width: leftSideSpacing, alignSelf: 'flex-start'},
-            ]}
-          >
-            <Text
-              style={[styles.badgeIcon, item.newOrg && {color: c.infoBlue}]}
-            >
-              •
-            </Text>
+        <Row alignItems='flex-start'>
+          <View style={[styles.badge, {width: leftSideSpacing, alignSelf: 'flex-start'}]}>
+            <Text style={[styles.badgeIcon, item.newOrg && {color: c.infoBlue}]}>•</Text>
           </View>
 
           <Column flex={1}>
@@ -148,16 +133,11 @@ export class StudentOrgsView extends React.Component {
         </Row>
       </ListRow>
     )
-  };
+  }
 
   renderSeparator = (sectionId: string, rowId: string) => {
-    return (
-      <ListSeparator
-        key={`${sectionId}-${rowId}`}
-        spacing={{left: leftSideSpacing}}
-      />
-    )
-  };
+    return <ListSeparator key={`${sectionId}-${rowId}`} spacing={{left: leftSideSpacing}} />
+  }
 
   onPressRow = (data: StudentOrgAbridgedType) => {
     tracker.trackEvent('student-org', data.name)
@@ -168,7 +148,7 @@ export class StudentOrgsView extends React.Component {
       backButtonTitle: 'Orgs',
       props: {item: data},
     })
-  };
+  }
 
   render() {
     if (!this.state.loaded) {
@@ -176,7 +156,7 @@ export class StudentOrgsView extends React.Component {
     }
 
     if (!size(this.state.orgs)) {
-      return <NoticeView text="No organizations found." />
+      return <NoticeView text='No organizations found.' />
     }
 
     return (
@@ -184,10 +164,7 @@ export class StudentOrgsView extends React.Component {
         data={this.state.orgs}
         cell={this.renderRow}
         // just setting cellHeight sends the wrong values on iOS.
-        cellHeight={
-          rowHeight +
-            (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
-        }
+        cellHeight={rowHeight + (Platform.OS === 'ios' ? (11/12 * StyleSheet.hairlineWidth) : 0)}
         sectionHeader={this.renderSectionHeader}
         sectionHeaderHeight={headerHeight}
         renderSeparator={this.renderSeparator}

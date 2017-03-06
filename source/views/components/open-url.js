@@ -6,20 +6,17 @@ import {tracker} from '../../analytics'
 import SafariView from 'react-native-safari-view'
 import {CustomTabs} from 'react-native-custom-tabs'
 
+
 let iosOnShowListener = null
 let iosOnDismissListener = null
 function startStatusBarColorChanger() {
   SafariView.isAvailable()
     .then(() => {
-      iosOnShowListener = SafariView.addEventListener(
-        'onShow',
-        () => StatusBar.setBarStyle('dark-content'),
-      )
+      iosOnShowListener = SafariView.addEventListener('onShow',
+        () => StatusBar.setBarStyle('dark-content'))
 
-      iosOnDismissListener = SafariView.addEventListener(
-        'onDismiss',
-        () => StatusBar.setBarStyle('light-content'),
-      )
+      iosOnDismissListener = SafariView.addEventListener('onDismiss',
+        () => StatusBar.setBarStyle('light-content'))
     })
     .catch(() => {})
 }
@@ -31,9 +28,9 @@ function stopStatusBarColorChanger() {
     .then(() => {
       SafariView.removeEventListener('onShow', iosOnShowListener)
       SafariView.removeEventListener('onDismiss', iosOnDismissListener)
-    })
-    .catch(() => {})
+    }).catch(() => {})
 }
+
 
 function genericOpen(url: string) {
   return Linking.canOpenURL(url)
@@ -58,12 +55,14 @@ function iosOpen(url: string) {
 }
 
 function androidOpen(url: string) {
-  return CustomTabs.openURL(url, {
-    showPageTitle: true,
-    enableUrlBarHiding: true,
-    enableDefaultShare: true,
-  })// fall back to opening in Chrome / Browser / platform default
-  .catch(() => genericOpen(url))
+  return CustomTabs
+    .openURL(url, {
+      showPageTitle: true,
+      enableUrlBarHiding: true,
+      enableDefaultShare: true,
+    })
+    // fall back to opening in Chrome / Browser / platform default
+    .catch(() => genericOpen(url))
 }
 
 export default function openUrl(url: string) {

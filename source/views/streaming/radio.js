@@ -27,50 +27,34 @@ export default function KSTOView() {
   return (
     <View style={styles.container}>
       <Image source={image} style={styles.logo} />
-      <Text selectable={true} style={styles.kstoText}>
-        St. Olaf College Radio
-      </Text>
+      <Text selectable={true} style={styles.kstoText}>St. Olaf College Radio</Text>
       <Text selectable={true} style={styles.kstoText}>KSTO 93.1 FM</Text>
       <Button
         onPress={() => {
           if (Platform.OS === 'android') {
             Linking.openURL(kstoWeb).catch(err => {
-              tracker.trackException(
-                'opening Android KSTO url: ' + err.message,
-              )
-              console.warn(
-                'An error occurred opening the Android KSTO url',
-                err,
-              )
+              tracker.trackException('opening Android KSTO url: ' + err.message)
+              console.warn('An error occurred opening the Android KSTO url', err)
             })
           } else {
-            Linking.canOpenURL(kstoApp)
-              .then(supported => {
-                if (!supported) {
-                  Linking.openURL(kstoDownload).catch(err => {
-                    tracker.trackException(
-                      'opening KSTO download url: ' + err.message,
-                    )
-                    console.warn(
-                      'An error occurred opening the KSTO download url',
-                      err,
-                    )
-                  })
-                } else {
-                  return Linking.openURL(kstoApp)
-                }
-              })
-              .catch(err => {
-                tracker.trackException('opening iOS KSTO url: ' + err.message)
-                console.warn('An error occurred opening the iOS KSTO url', err)
-              })
+            Linking.canOpenURL(kstoApp).then(supported => {
+              if (!supported) {
+                Linking.openURL(kstoDownload).catch(err => {
+                  tracker.trackException('opening KSTO download url: ' + err.message)
+                  console.warn('An error occurred opening the KSTO download url', err)
+                })
+              } else {
+                return Linking.openURL(kstoApp)
+              }
+            }).catch(err => {
+              tracker.trackException('opening iOS KSTO url: ' + err.message)
+              console.warn('An error occurred opening the iOS KSTO url', err)
+            })
           }
         }}
-        title="Listen to KSTO"
+        title='Listen to KSTO'
       />
-      <Text selectable={true} style={styles.kstoSubtext}>
-        Look out for changes here soon!
-      </Text>
+      <Text selectable={true} style={styles.kstoSubtext}>Look out for changes here soon!</Text>
     </View>
   )
 }

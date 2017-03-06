@@ -1,5 +1,5 @@
-import {danger, fail, warn, markdown} from 'danger'
-import {readFileSync} from 'fs'
+import { danger, fail, warn, markdown } from 'danger'
+import { readFileSync } from 'fs'
 const readFile = filename => {
   try {
     return readFileSync(filename, 'utf-8')
@@ -17,9 +17,7 @@ const unFlowedFiles = jsFiles.filter(filepath => {
 })
 
 if (unFlowedFiles.length > 0) {
-  warn(
-    `These new JS files do not have Flow enabled: ${unFlowedFiles.join(', ')}`,
-  )
+  warn(`These new JS files do not have Flow enabled: ${unFlowedFiles.join(', ')}`)
 }
 
 // revisit this when we move to yarn
@@ -36,9 +34,7 @@ const jsTests = jsFiles.filter(filepath => filepath.endsWith('test.js'))
 jsTests.forEach(file => {
   const content = readFile(file)
   if (content.includes('it.only') || content.includes('describe.only')) {
-    fail(
-      `An <code>only</code> was left in ${file} – that prevents any other tests from running.`,
-    )
+    fail(`An <code>only</code> was left in ${file} – that prevents any other tests from running.`)
   }
 })
 
@@ -47,17 +43,14 @@ const bigPRThreshold = 400
 const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
 if (thisPRSize > bigPRThreshold) {
   warn(':exclamation: Big PR!')
-  markdown(
-    `> The Pull Request size is a bit big. We like to try and keep PRs under ${bigPRThreshold} lines per PR, and this one was ${thisPRSize} lines. If the PR contains multiple logical changes, splitting each into separate PRs will allow a faster, easier, and more thorough review.`,
-  )
+  markdown(`> The Pull Request size is a bit big. We like to try and keep PRs under ${bigPRThreshold} lines per PR, and this one was ${thisPRSize} lines. If the PR contains multiple logical changes, splitting each into separate PRs will allow a faster, easier, and more thorough review.`)
 }
 
 //
 // Check for and report errors from our tools
 //
 
-const codeBlock = (contents, lang = null) =>
-  markdown(`\`\`\`${lang || ''}\n${contents}\n\`\`\``)
+const codeBlock = (contents, lang=null) => markdown(`\`\`\`${lang || ''}\n${contents}\n\`\`\``)
 const isBadBundleLog = log => {
   const allLines = log.split('\n')
   const requiredLines = [
@@ -82,10 +75,7 @@ if (eslintLog) {
   codeBlock(eslintLog)
 }
 
-if (
-  dataValidationLog &&
-  dataValidationLog.split('\n').some(l => !l.endsWith('is valid'))
-) {
+if (dataValidationLog && dataValidationLog.split('\n').some(l => !l.endsWith('is valid'))) {
   warn("Something's up with the data.")
   codeBlock(dataValidationLog)
 }
@@ -108,7 +98,6 @@ if (androidJsBundleLog && isBadBundleLog(androidJsBundleLog)) {
 if (jestLog && jestLog.includes('FAIL')) {
   warn('Some Jest tests failed. Take a peek?')
   const lines = jestLog.split('\n')
-  const startIndex = lines.findIndex(l =>
-    l.includes('Summary of all failing tests'))
+  const startIndex = lines.findIndex(l => l.includes('Summary of all failing tests'))
   codeBlock(lines.slice(startIndex).join('\n'))
 }

@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 class FancyMenuView extends React.Component {
   static defaultProps = {
     applyFilters: applyFiltersToItem,
-  };
+  }
 
   componentWillMount() {
     let {foodItems, menuCorIcons, filters, meals, now} = this.props
@@ -58,9 +58,7 @@ class FancyMenuView extends React.Component {
     }
 
     const foodItemsArray = values(foodItems)
-    this.props.onFiltersChange(
-      buildFilters(foodItemsArray, menuCorIcons, meals, now),
-    )
+    this.props.onFiltersChange(buildFilters(foodItemsArray, menuCorIcons, meals, now))
   }
 
   props: FancyMenuPropsType;
@@ -77,7 +75,7 @@ class FancyMenuView extends React.Component {
         onChange: filters => this.props.onFiltersChange(filters),
       },
     })
-  };
+  }
 
   renderSectionHeader = (sectionData: MenuItemType[], sectionName: string) => {
     const {filters, now, meals} = this.props
@@ -92,7 +90,7 @@ class FancyMenuView extends React.Component {
         spacing={{left: leftSideSpacing}}
       />
     )
-  };
+  }
 
   renderSeparator = (sectionId: string, rowId: string) => {
     return (
@@ -102,7 +100,7 @@ class FancyMenuView extends React.Component {
         style={styles.separator}
       />
     )
-  };
+  }
 
   render() {
     const {
@@ -113,19 +111,14 @@ class FancyMenuView extends React.Component {
       meals,
     } = this.props
 
-    const {label: mealName, stations: stationMenus} = chooseMeal(
-      meals,
-      filters,
-      now,
-    )
+    const {label: mealName, stations: stationMenus} = chooseMeal(meals, filters, now)
 
     const filteredByMenu = stationMenus
       .map(menu => [
         // we're grouping the menu items in a [label, Array<items>] tuple.
         menu.label,
         // dereference each menu item
-        menu.items
-          .map(id => foodItems[id])
+        menu.items.map(id => foodItems[id])
           // ensure that the referenced menu items exist
           // and apply the selected filters to the items in the menu
           .filter(item => item && applyFilters(filters, item)),
@@ -136,21 +129,15 @@ class FancyMenuView extends React.Component {
     // group the tuples into an object (because ListView wants {key: value} not [key, value])
     const grouped = fromPairs(filteredByMenu)
 
-    const specialsFilterEnabled = Boolean(
-      filters.find(
-        f =>
-          f.enabled &&
-          f.type === 'toggle' &&
-          f.spec.label === 'Only Show Specials',
-      ),
-    )
+    const specialsFilterEnabled = Boolean(filters.find(f =>
+      f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'))
 
     let messageView = null
     if (specialsFilterEnabled && stationMenus.length === 0) {
       messageView = (
         <NoticeView
           style={styles.container}
-          text="No items to show. There may be no specials today. Try changing the filters."
+          text='No items to show. There may be no specials today. Try changing the filters.'
         />
       )
     }
@@ -158,7 +145,7 @@ class FancyMenuView extends React.Component {
       messageView = (
         <NoticeView
           style={styles.container}
-          text="No items to show. Try changing the filters."
+          text='No items to show. Try changing the filters.'
         />
       )
     }
@@ -174,24 +161,24 @@ class FancyMenuView extends React.Component {
         {messageView
           ? messageView
           : <SimpleListView
-              style={styles.container}
-              forceBottomInset={true}
-              data={grouped}
-              renderSeparator={this.renderSeparator}
-              renderSectionHeader={this.renderSectionHeader}
-            >
-              {(rowData: MenuItemType) => (
-                <FoodItemRow
-                  data={rowData}
-                  corIcons={this.props.menuCorIcons}
-                  // We can't conditionally show the star – wierd things happen, like
-                  // the first two items having a star and none of the rest.
-                  //badgeSpecials={!specialsFilterEnabled}
-                  badgeSpecials={true}
-                  spacing={{left: leftSideSpacing}}
-                />
-              )}
-            </SimpleListView>}
+            style={styles.container}
+            forceBottomInset={true}
+            data={grouped}
+            renderSeparator={this.renderSeparator}
+            renderSectionHeader={this.renderSectionHeader}
+          >
+            {(rowData: MenuItemType) =>
+              <FoodItemRow
+                data={rowData}
+                corIcons={this.props.menuCorIcons}
+                // We can't conditionally show the star – wierd things happen, like
+                // the first two items having a star and none of the rest.
+                //badgeSpecials={!specialsFilterEnabled}
+                badgeSpecials={true}
+                spacing={{left: leftSideSpacing}}
+              />}
+          </SimpleListView>
+        }
       </View>
     )
   }
@@ -205,11 +192,8 @@ function mapStateToProps(state, actualProps: FancyMenuPropsType) {
 
 function mapDispatchToProps(dispatch, actualProps: FancyMenuPropsType) {
   return {
-    onFiltersChange: (filters: FilterType[]) =>
-      dispatch(updateMenuFilters(actualProps.name, filters)),
+    onFiltersChange: (filters: FilterType[]) => dispatch(updateMenuFilters(actualProps.name, filters)),
   }
 }
 
-export const FancyMenu = connect(mapStateToProps, mapDispatchToProps)(
-  FancyMenuView,
-)
+export const FancyMenu = connect(mapStateToProps, mapDispatchToProps)(FancyMenuView)

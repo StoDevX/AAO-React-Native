@@ -12,9 +12,7 @@ import SupportSection from './sections/support'
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Platform.OS === 'ios'
-      ? c.iosLightBackground
-      : c.androidLightBackground,
+    backgroundColor: Platform.OS === 'ios' ? c.iosLightBackground : c.androidLightBackground,
     paddingVertical: 20,
   },
 })
@@ -25,17 +23,23 @@ export default function SettingsView(props: SettingsViewPropsType) {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="always"
-      keyboardDismissMode="on-drag"
+      keyboardShouldPersistTaps='always'
+      keyboardDismissMode='on-drag'
     >
       <TableView>
         <CredentialsLoginSection />
 
-        <TokenLoginSection navigator={props.navigator} route={props.route} />
+        <TokenLoginSection
+          navigator={props.navigator}
+          route={props.route}
+        />
 
         <SupportSection />
 
-        <OddsAndEndsSection navigator={props.navigator} route={props.route} />
+        <OddsAndEndsSection
+          navigator={props.navigator}
+          route={props.route}
+        />
       </TableView>
     </ScrollView>
   )

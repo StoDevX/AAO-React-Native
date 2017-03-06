@@ -15,7 +15,7 @@ export default class SearchView extends React.Component {
   state = {
     loaded: false,
     error: null,
-  };
+  }
 
   render() {
     if (this.state.error) {
@@ -24,7 +24,7 @@ export default class SearchView extends React.Component {
 
     return (
       <View>
-        <Text>Search</Text>
+          <Text>Search</Text>
       </View>
     )
   }

@@ -17,7 +17,10 @@ import {
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
 
-import {updateMealsRemaining, updateFinancialData} from '../../flux/parts/sis'
+import {
+  updateMealsRemaining,
+  updateFinancialData,
+} from '../../flux/parts/sis'
 
 import delay from 'delay'
 import isNil from 'lodash/isNil'
@@ -38,7 +41,7 @@ const buttonStyles = StyleSheet.create({
 class BalancesView extends React.Component {
   state = {
     loading: false,
-  };
+  }
 
   props: TopLevelViewPropsType & {
     flex: ?number,
@@ -46,8 +49,8 @@ class BalancesView extends React.Component {
     print: ?number,
     weeklyMeals: ?number,
     dailyMeals: ?number,
-    tokenValid: boolean,
-    credentialsValid: boolean,
+    tokenValid: bool,
+    credentialsValid: bool,
     balancesError: ?string,
     mealsError: ?string,
 
@@ -66,14 +69,14 @@ class BalancesView extends React.Component {
     await delay(500 - elapsed)
 
     this.setState({loading: false})
-  };
+  }
 
   fetchData = async () => {
     await Promise.all([
       this.props.updateFinancialData(true),
       this.props.updateMealsRemaining(true),
     ])
-  };
+  }
 
   openSettings = () => {
     this.props.navigator.push({
@@ -83,7 +86,7 @@ class BalancesView extends React.Component {
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
       onDismiss: () => this.props.navigator.pop(),
     })
-  };
+  }
 
   render() {
     let {flex, ole, print, dailyMeals, weeklyMeals} = this.props
@@ -100,67 +103,61 @@ class BalancesView extends React.Component {
         }
       >
         <TableView>
-          <Section header="BALANCES">
+          <Section header='BALANCES'>
             <View style={styles.balancesRow}>
               <FinancialBalancesCell
-                label="Flex"
+                label='Flex'
                 value={flex}
                 indeterminate={loading}
               />
 
               <FinancialBalancesCell
-                label="Ole"
+                label='Ole'
                 value={ole}
                 indeterminate={loading}
               />
 
               <FinancialBalancesCell
-                label="Copy/Print"
+                label='Copy/Print'
                 value={print}
                 indeterminate={loading}
                 style={{borderRightWidth: 0}}
               />
             </View>
 
-            {this.props.tokenValid
-              ? null
+            {this.props.tokenValid ?
+              null
               : <Cell
-                  cellStyle="Basic"
-                  title="Log into the SIS"
-                  accessory="DisclosureIndicator"
-                  onPress={this.openSettings}
-                />}
+                cellStyle='Basic'
+                title='Log into the SIS'
+                accessory='DisclosureIndicator'
+                onPress={this.openSettings}
+              />}
 
-            {this.props.balancesError
-              ? <Cell cellStyle="Basic" title={this.props.balancesError} />
-              : null}
+            {this.props.balancesError ? <Cell cellStyle='Basic' title={this.props.balancesError} /> : null}
           </Section>
 
-          <Section header="MEAL PLAN">
-            <Cell
-              cellStyle="RightDetail"
-              title="Daily Meals Left"
+          <Section header='MEAL PLAN'>
+            <Cell cellStyle='RightDetail'
+              title='Daily Meals Left'
               detail={loading ? '…' : getFormattedMealsRemaining(dailyMeals)}
             />
 
-            <Cell
-              cellStyle="RightDetail"
-              title="Weekly Meals Left"
+            <Cell cellStyle='RightDetail'
+              title='Weekly Meals Left'
               detail={loading ? '…' : getFormattedMealsRemaining(weeklyMeals)}
             />
 
-            {this.props.credentialsValid
-              ? null
+            {this.props.credentialsValid ?
+              null
               : <Cell
-                  cellStyle="Basic"
-                  title="Log in with St. Olaf"
-                  accessory="DisclosureIndicator"
-                  onPress={this.openSettings}
-                />}
+                cellStyle='Basic'
+                title='Log in with St. Olaf'
+                accessory='DisclosureIndicator'
+                onPress={this.openSettings}
+              />}
 
-            {this.props.mealsError
-              ? <Cell cellStyle="Basic" title={this.props.mealsError} />
-              : null}
+            {this.props.mealsError ? <Cell cellStyle='Basic' title={this.props.mealsError} /> : null}
           </Section>
         </TableView>
       </ScrollView>
@@ -239,6 +236,7 @@ let styles = StyleSheet.create({
   },
 })
 
+
 function getFormattedCurrency(value: ?number): string {
   if (isNil(value)) {
     return 'N/A'
@@ -253,33 +251,15 @@ function getFormattedMealsRemaining(value: ?number): string {
   return (value: any).toString()
 }
 
-function FinancialBalancesCell(
-  {
-    indeterminate,
-    label,
-    value,
-    style,
-  }: {
-    indeterminate: boolean,
-    label: string,
-    value: ?number,
-    style?: any,
-  },
-) {
+function FinancialBalancesCell({indeterminate, label, value, style}: {
+  indeterminate: boolean,
+  label: string,
+  value: ?number,
+  style?: any,
+}) {
   return (
-    <View
-      style={[
-        styles.rectangle,
-        buttonStyles.common,
-        buttonStyles.balances,
-        style,
-      ]}
-    >
-      <Text
-        selectable={true}
-        style={styles.financialText}
-        autoAdjustsFontSize={true}
-      >
+    <View style={[styles.rectangle, buttonStyles.common, buttonStyles.balances, style]}>
+      <Text selectable={true} style={styles.financialText} autoAdjustsFontSize={true}>
         {indeterminate ? '…' : getFormattedCurrency(value)}
       </Text>
       <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>

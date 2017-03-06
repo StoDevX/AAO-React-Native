@@ -30,7 +30,7 @@ export type FeedResponseType = {
       description: string[],
       item: RssFeedItemType[],
     }>,
-  },
+  }
 };
 
 export type WpEmbeddedAuthorType = {
@@ -51,15 +51,13 @@ export type WpEmbeddedFeaturedMediaType = {
   media_details: {
     height: number,
     width: number,
-    sizes: {
-      [key: string]: {
-        file: string,
-        height: number,
-        width: number,
-        mime_type: string,
-        source_url: string,
-      },
-    },
+    sizes: {[key: string]: {
+      file: string,
+      height: number,
+      width: number,
+      mime_type: string,
+      source_url: string,
+    }},
   },
   media_type: 'image',
   mime_type: string,

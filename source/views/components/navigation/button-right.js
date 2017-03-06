@@ -11,10 +11,7 @@ import type {RouteType} from '../../types'
 
 export function RightButton(route: RouteType, navigator: Navigator) {
   if (route.rightButton) {
-    return route.rightButton({
-      contentContainerStyle: styles.button,
-      style: styles.icon,
-    })
+    return route.rightButton({contentContainerStyle: styles.button, style: styles.icon})
   }
 
   if (route.onDismiss) {

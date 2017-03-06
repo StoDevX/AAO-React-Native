@@ -12,6 +12,7 @@ import {
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
 
+
 type CredentialsSectionPropsType = {
   username: string,
   password: string,
@@ -24,12 +25,13 @@ type CredentialsSectionPropsType = {
   setCredentials: (username: string, password: string) => any,
 };
 
+
 class CredentialsLoginSection extends React.Component {
   state = {
     loading: false,
     username: this.props.username,
     password: this.props.password,
-  };
+  }
 
   props: CredentialsSectionPropsType;
 
@@ -42,11 +44,11 @@ class CredentialsLoginSection extends React.Component {
     this.setState({loading: true})
     await this.props.logIn(this.state.username, this.state.password)
     this.setState({loading: false})
-  };
+  }
 
   logOut = () => {
     this.props.logOut()
-  };
+  }
 
   render() {
     let {loggedIn, message} = this.props
@@ -54,29 +56,29 @@ class CredentialsLoginSection extends React.Component {
 
     return (
       <Section
-        header="ST. OLAF LOGIN"
-        footer="St. Olaf login enables the &quot;meals remaining&quot; feature."
+        header='ST. OLAF LOGIN'
+        footer='St. Olaf login enables the "meals remaining" feature.'
       >
         <LoginField
-          label="Username"
+          label='Username'
           _ref={ref => this._usernameInput = ref}
           disabled={loading}
-          onChangeText={(text = '') => this.setState({username: text})}
+          onChangeText={(text='') => this.setState({username: text})}
           onSubmitEditing={this.focusPassword}
-          placeholder="username"
-          returnKeyType="next"
+          placeholder='username'
+          returnKeyType='next'
           secureTextEntry={false}
           value={username}
         />
 
         <LoginField
-          label="Password"
+          label='Password'
           _ref={ref => this._passwordInput = ref}
           disabled={loading}
-          onChangeText={(text = '') => this.setState({password: text})}
+          onChangeText={(text='') => this.setState({password: text})}
           onSubmitEditing={loggedIn ? noop : this.logIn}
-          placeholder="password"
-          returnKeyType="done"
+          placeholder='password'
+          returnKeyType='done'
           secureTextEntry={true}
           value={password}
         />
@@ -88,12 +90,13 @@ class CredentialsLoginSection extends React.Component {
           loading={loading}
           disabled={loading || (!username || !password)}
           onPress={loggedIn ? this.logOut : this.logIn}
-          label="St. Olaf"
+          label='St. Olaf'
         />
       </Section>
     )
   }
 }
+
 
 function mapStateToProps(state) {
   return {
@@ -113,6 +116,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  CredentialsLoginSection,
-)
+export default connect(mapStateToProps, mapDispatchToProps)(CredentialsLoginSection)

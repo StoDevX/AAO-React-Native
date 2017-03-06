@@ -29,7 +29,7 @@ export class NewsList extends React.Component {
 
   renderSeparator = (sectionId: string, rowId: string) => {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
-  };
+  }
 
   shareItem = (story: StoryType) => {
     Share.share({
@@ -38,7 +38,7 @@ export class NewsList extends React.Component {
     })
       .then(result => console.log(result))
       .catch(error => console.log(error.message))
-  };
+  }
 
   onPressNews = (title: string, story: StoryType) => {
     this.props.navigator.push({
@@ -53,21 +53,19 @@ export class NewsList extends React.Component {
           onPress={() => this.shareItem(story)}
         >
           {Platform.OS === 'ios'
-            ? <Icon style={[style]} name="ios-share-outline" />
-            : <Icon style={[style]} name="md-share" />}
+            ? <Icon style={[style]} name='ios-share-outline' />
+            : <Icon style={[style]} name='md-share' />}
         </Touchable>
       ),
     })
-  };
+  }
 
   render() {
     // remove all entries with a <form> from the list
-    const entries = this.props.entries.filter(
-      entry => !entry.content.includes('<form>'),
-    )
+    const entries = this.props.entries.filter(entry => !entry.content.includes('<form>'))
 
     if (!entries.length) {
-      return <NoticeView text="No news." />
+      return <NoticeView text='No news.' />
     }
 
     return (
@@ -79,12 +77,11 @@ export class NewsList extends React.Component {
         refreshing={this.props.loading}
         onRefresh={this.props.onRefresh}
       >
-        {(story: StoryType) => (
+        {(story: StoryType) =>
           <NewsRow
             onPress={() => this.onPressNews(story.title, story)}
             story={story}
-          />
-        )}
+          />}
       </SimpleListView>
     )
   }

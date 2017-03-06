@@ -21,7 +21,7 @@ export const DisclosureArrow = ({style}: {style?: any}) => {
 
   return (
     <View style={[arrowStyles.wrapper, style]}>
-      <Icon style={arrowStyles.icon} name="ios-arrow-forward" />
+      <Icon style={arrowStyles.icon} name='ios-arrow-forward' />
     </View>
   )
 }

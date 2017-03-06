@@ -9,12 +9,9 @@ import {findMeal} from './find-menu'
 export function chooseMeal(
   meals: ProcessedMealType[],
   filters: FilterType[],
-  now: momentT,
+  now: momentT
 ): ProcessedMealType {
-  const mealChooserFilter: ?PickerType = find(
-    filters,
-    f => f.type === 'picker' && f.spec.title === "Today's Menus",
-  )
+  const mealChooserFilter: ?PickerType = find(filters, f => f.type === 'picker' && f.spec.title === "Today's Menus")
   let selectedMeal = meals[0]
 
   if (mealChooserFilter && mealChooserFilter.spec.selected) {
@@ -25,12 +22,7 @@ export function chooseMeal(
   }
 
   if (!selectedMeal) {
-    selectedMeal = {
-      label: '',
-      stations: [],
-      starttime: '0:00',
-      endtime: '0:00',
-    }
+    selectedMeal = {label: '', stations: [], starttime: '0:00', endtime: '0:00'}
   }
 
   return selectedMeal

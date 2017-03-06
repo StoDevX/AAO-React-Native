@@ -1,6 +1,11 @@
 // @flow
 import React from 'react'
-import {Text, ScrollView, Image, StyleSheet} from 'react-native'
+import {
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+} from 'react-native'
 import {data as credits} from '../../../docs/credits.json'
 
 const image = require('../../../images/about/IconTrans.png')
@@ -45,12 +50,8 @@ const styles = StyleSheet.create({
 })
 
 export default function CreditsView() {
-  let formattedContributors = credits.contributors
-    .map(w => w.replace(' ', ' '))
-    .join(' • ')
-  let formattedAcks = credits.acknowledgements
-    .map(w => w.replace(' ', ' '))
-    .join(' • ')
+  let formattedContributors = credits.contributors.map(w => w.replace(' ', ' ')).join(' • ')
+  let formattedAcks = credits.acknowledgements.map(w => w.replace(' ', ' ')).join(' • ')
   return (
     <ScrollView style={styles.container}>
       <Image source={image} style={styles.logo} />

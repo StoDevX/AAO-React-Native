@@ -19,21 +19,13 @@ const styles = StyleSheet.create({
   },
 })
 
-export function DietaryTags(
-  {
-    corIcons,
-    dietary,
-    style,
-  }: {corIcons: MasterCorIconMapType, dietary: ItemCorIconMapType, style?: any},
-) {
+export function DietaryTags({corIcons, dietary, style}: {corIcons: MasterCorIconMapType, dietary: ItemCorIconMapType, style?: any}) {
   // filter the mapping of all icons by just the icons provided by this item
   let filtered = pick(corIcons, keys(dietary))
 
   // turn the remaining items into images
   let tags = map(filtered, (dietaryIcon, key) => {
-    return (
-      <Image key={key} source={{uri: dietaryIcon.image}} style={styles.icons} />
-    )
+    return <Image key={key} source={{uri: dietaryIcon.image}} style={styles.icons} />
   })
 
   return <View style={[styles.container, style]}>{tags}</View>

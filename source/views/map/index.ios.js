@@ -4,7 +4,11 @@
  */
 
 import React from 'react'
-import {StyleSheet, View, WebView} from 'react-native'
+import {
+  StyleSheet,
+  View,
+  WebView,
+} from 'react-native'
 
 import {data as mapInfo} from '../../../docs/map.json'
 

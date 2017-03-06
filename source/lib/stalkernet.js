@@ -23,10 +23,7 @@ export function cache() {
   let promises = ['a', 'e', 'i', 'o', 'u'].map(l => query({lastName: l}))
   return Promise.all(promises).then(data => {
     data = flatten(data)
-    data = uniqBy(
-      data,
-      item => `${item.lastName}-${item.firstName}-${item.email}`,
-    )
+    data = uniqBy(data, item => `${item.lastName}-${item.firstName}-${item.email}`)
     return AsyncStorage.setItem('@AllAboutOlaf:Stalkernet', data)
   })
 }
@@ -68,8 +65,7 @@ function removeSillyStalkernetResults(person) {
 }
 
 function parseStalkernetResults(data) {
-  return xml2js
-    .parseStringAsync(data)
+  return xml2js.parseStringAsync(data)
     .then(results => results['Results']['Person'])
     .then(people => people.map(simplifySingleStalkernetResult))
     .then(people => people.filter(removeSillyStalkernetResults))
