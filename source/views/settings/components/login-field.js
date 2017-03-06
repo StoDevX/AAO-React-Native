@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   label: {
     width: 90,
     fontSize: 16,
-    marginTop: (Platform.OS === 'ios') ? -2 : 0,  // lines the label up with the text on iOS
+    marginTop: Platform.OS === 'ios' ? -2 : 0, // lines the label up with the text on iOS
     alignSelf: 'center',
   },
   customTextInput: {
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   loginCell: {
-    height: (Platform.OS === 'android') ? 65 : 44,
+    height: Platform.OS === 'android' ? 65 : 44,
     alignItems: 'stretch',
     paddingTop: 0,
     paddingBottom: 0,
@@ -34,7 +34,7 @@ export class LoginField extends React.Component {
     onChangeText: () => any,
     onSubmitEditing: () => any,
     placeholder: string,
-    returnKeyType: 'done'|'next',
+    returnKeyType: 'done' | 'next',
     secureTextEntry: boolean,
     value: string,
   };
@@ -45,7 +45,7 @@ export class LoginField extends React.Component {
   cacheRef = (ref: any) => {
     this._input = ref
     this.props._ref(ref)
-  }
+  };
 
   render() {
     const label = (
@@ -57,9 +57,9 @@ export class LoginField extends React.Component {
     const input = (
       <TextInput
         ref={this.cacheRef}
-        autoCapitalize='none'
+        autoCapitalize="none"
         autoCorrect={false}
-        clearButtonMode='while-editing'
+        clearButtonMode="while-editing"
         disabled={this.props.disabled}
         onChangeText={this.props.onChangeText}
         onSubmitEditing={this.props.onSubmitEditing}
