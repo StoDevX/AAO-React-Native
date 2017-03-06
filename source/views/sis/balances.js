@@ -17,10 +17,7 @@ import {
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
 
-import {
-  updateMealsRemaining,
-  updateFinancialData,
-} from '../../flux/parts/sis'
+import {updateBalances} from '../../flux/parts/sis'
 
 import delay from 'delay'
 import isNil from 'lodash/isNil'
@@ -49,13 +46,10 @@ class BalancesView extends React.Component {
     print: ?number,
     weeklyMeals: ?number,
     dailyMeals: ?number,
-    tokenValid: bool,
     credentialsValid: bool,
-    balancesError: ?string,
-    mealsError: ?string,
+    message: ?string,
 
-    updateFinancialData: () => any,
-    updateMealsRemaining: () => any,
+    updateBalances: () => any,
   };
 
   refresh = async () => {
@@ -73,8 +67,7 @@ class BalancesView extends React.Component {
 
   fetchData = async () => {
     await Promise.all([
-      this.props.updateFinancialData(true),
-      this.props.updateMealsRemaining(true),
+      this.props.updateBalances(true),
     ])
   }
 
@@ -125,16 +118,16 @@ class BalancesView extends React.Component {
               />
             </View>
 
-            {this.props.tokenValid ?
+            {this.props.credentialsValid ?
               null
               : <Cell
                 cellStyle='Basic'
-                title='Log into the SIS'
+                title='Log in with St. Olaf'
                 accessory='DisclosureIndicator'
                 onPress={this.openSettings}
               />}
 
-            {this.props.balancesError ? <Cell cellStyle='Basic' title={this.props.balancesError} /> : null}
+            {this.props.message ? <Cell cellStyle='Basic' title={this.props.message} /> : null}
           </Section>
 
           <Section header='MEAL PLAN'>
@@ -157,7 +150,7 @@ class BalancesView extends React.Component {
                 onPress={this.openSettings}
               />}
 
-            {this.props.mealsError ? <Cell cellStyle='Basic' title={this.props.mealsError} /> : null}
+            {this.props.message ? <Cell cellStyle='Basic' title={this.props.message} /> : null}
           </Section>
         </TableView>
       </ScrollView>
@@ -170,20 +163,17 @@ function mapStateToProps(state) {
     flex: state.sis.balances.flex,
     ole: state.sis.balances.ole,
     print: state.sis.balances.print,
-    weeklyMeals: state.sis.meals.weekly,
-    dailyMeals: state.sis.meals.daily,
-    balancesError: state.sis.balances.message,
-    mealsError: state.sis.meals.message,
+    weeklyMeals: state.sis.balances.weekly,
+    dailyMeals: state.sis.balances.daily,
+    message: state.sis.balances.message,
 
     credentialsValid: state.settings.credentials.valid,
-    tokenValid: state.settings.token.valid,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    updateMealsRemaining: force => dispatch(updateMealsRemaining(force)),
-    updateFinancialData: force => dispatch(updateFinancialData(force)),
+    updateBalances: force => dispatch(updateBalances(force)),
   }
 }
 

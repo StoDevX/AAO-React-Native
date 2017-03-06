@@ -1,80 +1,113 @@
 // @flow
-import startsWith from 'lodash/startsWith'
-
-import {parseHtml, cssSelect, getText} from '../html'
+import {loadLoginCredentials} from '../login'
+import buildFormData from '../formdata'
+import {parseHtml, cssSelect, getTrimmedTextWithSpaces} from '../html'
+import {OLECARD_AUTH_URL} from './urls'
+import type {BalancesShapeType} from './types'
+import fromPairs from 'lodash/fromPairs'
+import isNil from 'lodash/isNil'
 import * as cache from '../cache'
-import {FINANCIALS_URL, LANDING_URL} from './urls'
-import type {FinancialDataShapeType} from './types'
 
-type PromisedDataType = Promise<{error: true, value: Error}|{error: false, value: FinancialDataShapeType}>;
+type BalancesOrErrorType = {error: true, value: Error}|{error: false, value: BalancesShapeType};
 
-export async function getFinancialData(isConnected: boolean, force?: bool): PromisedDataType {
-  const [flex, ole, print] = await getBalances()
+export async function getBalances(isConnected: boolean, force?: boolean): Promise<BalancesOrErrorType> {
+  const {flex, ole, print, daily, weekly, _isExpired, _isCached} = await cache.getBalances()
 
-  const balancesExist = (!flex || !ole || !print)
-  const isExpired = balancesExist && (flex.isExpired || ole.isExpired || print.isExpired)
-  const isCached = balancesExist && (flex.isCached || ole.isCached || print.isCached)
-
-  if (isConnected && (isExpired || !isCached || force)) {
-    const balances = await fetchFinancialDataFromServer()
+  if (isConnected && (_isExpired || !_isCached || force)) {
+    const balances = await fetchBalancesFromServer()
 
     // we don't want to cache error responses
     if (balances.error) {
       return balances
     }
 
-    await Promise.all([
-      cache.setFlexBalance(balances.value.flex),
-      cache.setOleBalance(balances.value.ole),
-      cache.setPrintBalance(balances.value.print),
-    ])
-
+    await cache.setBalances(balances.value)
     return balances
   }
 
   return {
     error: false,
     value: {
-      flex: flex ? flex.value : null,
-      ole: ole ? ole.value : null,
-      print: print ? print.value : null,
+      flex: flex.value,
+      ole: ole.value,
+      print: print.value,
+      daily: daily.value,
+      weekly: weekly.value,
     },
   }
 }
 
-function getBalances() {
-  return Promise.all([
-    cache.getFlexBalance(),
-    cache.getOleBalance(),
-    cache.getPrintBalance(),
-  ])
-}
-
-
-async function fetchFinancialDataFromServer(): PromisedDataType {
-  const resp = await fetch(FINANCIALS_URL)
-  if (startsWith(resp.url, LANDING_URL)) {
-    return {error: true, value: new Error('Authentication Error')}
-  }
-  const page = await resp.text()
-  if (!page) {
-    return {error: false, value: {flex: null, ole: null, print: null}}
+async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {
+  const {username, password} = await loadLoginCredentials()
+  if (!username || !password) {
+    throw new Error('not logged in!')
   }
 
+  const form = buildFormData({
+    username: username,
+    password: password,
+  })
+  const result = await fetch(OLECARD_AUTH_URL, {method: 'POST', body: form})
+  const page = await result.text()
   const dom = parseHtml(page)
 
-  return {error: false, value: parseBalancesFromDom(dom)}
+  return parseBalancesFromDom(dom)
 }
 
-function parseBalancesFromDom(dom: mixed): FinancialDataShapeType {
-  const data: (number|null)[] = cssSelect('.sis-money', dom).slice(-3)
-    .map(getText)
-    // remove the /[$.]/, and put the numbers into big strings (eg, $3.14 -> '314')
-    .map(s => s.replace('$', '').split('.').join(''))
-    .map(s => parseInt(s, 10))
-    .map(n => Number.isNaN(n) ? null : n)
+function parseBalancesFromDom(dom: mixed): BalancesOrErrorType {
+  // .accountrow is the name of the row, and it's immediate sibling is a cell with id=value
+  const elements = cssSelect('.accountrow', dom)
+    .map(el => el.parent)
+    .map(getTrimmedTextWithSpaces)
+    .map(rowIntoNamedAmount)
+    .filter(Boolean)
 
-  const [flex, ole, print] = data
+  const namedValues = fromPairs(elements)
 
-  return {flex, ole, print}
+  const flex = dollarAmountToInteger(namedValues.flex)
+  const ole = dollarAmountToInteger(namedValues.ole)
+  const print = dollarAmountToInteger(namedValues.print)
+  const daily = namedValues.daily
+  const weekly = namedValues.weekly
+
+  return {
+    error: false,
+    value: {
+      flex: isNil(flex) ? null : flex,
+      ole: isNil(ole) ? null : ole,
+      print: isNil(print) ? null : print,
+      daily: isNil(daily) ? null : daily,
+      weekly: isNil(weekly) ? null : weekly,
+    },
+  }
+}
+
+const lookupHash: Map<RegExp, string> = new Map([
+  [/ flex /i, 'flex'],
+  [/ ole /i, 'ole'],
+  [/ print/i, 'print'],
+  [/daily/i, 'daily'],
+  [/weekly/i, 'weekly'],
+])
+
+function rowIntoNamedAmount(row: string): ?[string, string] {
+  const chunks = row.split(' ')
+  const name = chunks.slice(0, -1).join(' ')
+  const amount = chunks[chunks.length - 1]
+
+  // We have a list of regexes that check the row names for keywords.
+  // Those keywords are associated with the actual key names.
+  for (const [lookup, key] of lookupHash.entries()) {
+    if (lookup.test(name)) {
+      return [key, amount]
+    }
+  }
+}
+
+function dollarAmountToInteger(amount: ?string): ?number {
+  const amountString = amount || ''
+  // remove the /[$.]/, and put the numbers into big strings (eg, $3.14 -> '314')
+  const nonDenominationalAmount = amountString.replace('$', '').split('.').join('')
+  const num = parseInt(nonDenominationalAmount, 10)
+  return Number.isNaN(num) ? null : num
 }
