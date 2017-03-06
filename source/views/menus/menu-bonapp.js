@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable react/prop-types, camelcase */
 // @flow
 import React from 'react'
 import LoadingView from '../components/loading'
@@ -124,7 +124,7 @@ export class BonAppHostedMenu extends React.Component {
 
       // then we make our own StationMenus list
       stationMenus = Object.keys(idsGroupedByStation).map((name, i) => ({
-        'order_id': String(i),
+        order_id: String(i),
         id: String(i),
         label: name,
         price: '',
