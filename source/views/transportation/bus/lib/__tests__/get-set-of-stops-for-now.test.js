@@ -2,6 +2,8 @@ import {getSetOfStopsForNow} from '../get-set-of-stops-for-now'
 import moment from 'moment'
 
 import type {BusScheduleType} from '../../types'
+
+// prettier-ignore
 function makeSchedule(): BusScheduleType {
   return {
     days: ['Mo', 'Tu'],
