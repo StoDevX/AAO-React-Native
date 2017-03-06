@@ -13,7 +13,14 @@ import TabbedView from '../components/tabbed-view'
 import tabs from './tabs'
 
 export function MenusView({navigator, route}: TopLevelViewPropsType) {
-  return <TabbedView style={styles.container} tabs={tabs} navigator={navigator} route={route} />
+  return (
+    <TabbedView
+      style={styles.container}
+      tabs={tabs}
+      navigator={navigator}
+      route={route}
+    />
+  )
 }
 MenusView.propTypes = TopLevelViewPropTypes
 
