@@ -13,7 +13,10 @@ type BasicStationMenuType = {
   label: string,
 };
 
-export function upgradeMenuItem(item: BasicMenuItemType, index: number): MenuItemType {
+export function upgradeMenuItem(
+  item: BasicMenuItemType,
+  index: number,
+): MenuItemType {
   return {
     connector: '',
     cor_icon: {},
@@ -40,7 +43,10 @@ export function upgradeMenuItem(item: BasicMenuItemType, index: number): MenuIte
   }
 }
 
-export function upgradeStation(station: BasicStationMenuType, index: number): StationMenuType {
+export function upgradeStation(
+  station: BasicStationMenuType,
+  index: number,
+): StationMenuType {
   return {
     soup: false,
     price: '',

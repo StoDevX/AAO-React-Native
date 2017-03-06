@@ -5,11 +5,7 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  View,
-  WebView,
-} from 'react-native'
+import {StyleSheet, View, WebView} from 'react-native'
 
 const styles = StyleSheet.create({
   container: {
@@ -22,7 +18,7 @@ const URL = 'https://www.stolaf.edu/personal/directory/index.cfm'
 export default class DirectoryView extends React.Component {
   state = {
     url: URL,
-  }
+  };
 
   onNavigationStateChange = (navState: {url: string}) => {
     this.setState({url: navState.url})

@@ -1,7 +1,6 @@
 // @flow
 import {AsyncStorage} from 'react-native'
 
-
 /// MARK: Utilities
 
 function setItem(key: string, value: any) {
@@ -13,7 +12,6 @@ function getItem(key: string): Promise<any> {
 function removeItem(key: string): Promise<any> {
   return AsyncStorage.removeItem(`aao:${key}`)
 }
-
 
 /// MARK: Settings
 
@@ -32,7 +30,6 @@ export function setHomescreenOrder(order: string[]) {
 export function getHomescreenOrder(): Promise<string[]> {
   return getItem(homescreenOrderKey)
 }
-
 
 /// MARK: Credentials
 

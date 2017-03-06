@@ -7,8 +7,8 @@ type PropsType = {
   text: string,
   accentColor?: string,
   textColor?: string,
-  style?: Number|Object|Array<Number|Object>,
-  textStyle?: Number|Object|Array<Number|Object>,
+  style?: Number | Object | Array<Number | Object>,
+  textStyle?: Number | Object | Array<Number | Object>,
 };
 
 let styles = StyleSheet.create({
@@ -24,18 +24,28 @@ let styles = StyleSheet.create({
   },
 })
 
-export function Badge({
-  text,
-  style,
-  textStyle,
-  accentColor=c.goldenrod,
-  textColor='hsl(26, 49%, 34%)',
-}: PropsType) {
+export function Badge(
+  {
+    text,
+    style,
+    textStyle,
+    accentColor = c.goldenrod,
+    textColor = 'hsl(26, 49%, 34%)',
+  }: PropsType,
+) {
   const bgaccent = accentColor.replace('rgb', 'rgba').replace(')', ', 0.1)')
 
   return (
-    <View style={[styles.accessoryBadge, style, {backgroundColor: bgaccent, borderColor: accentColor}]}>
-      <Text style={[styles.accessoryBadgeText, textStyle, {color: textColor}]}>{text}</Text>
+    <View
+      style={[
+        styles.accessoryBadge,
+        style,
+        {backgroundColor: bgaccent, borderColor: accentColor},
+      ]}
+    >
+      <Text style={[styles.accessoryBadgeText, textStyle, {color: textColor}]}>
+        {text}
+      </Text>
     </View>
   )
 }

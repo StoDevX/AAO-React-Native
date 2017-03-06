@@ -9,7 +9,10 @@ import type {
 } from '../types'
 const CENTRAL_TZ = 'America/Winnipeg'
 
-export function findMenu(dayparts: DayPartsCollectionType, now: momentT): void|DayPartMenuType {
+export function findMenu(
+  dayparts: DayPartsCollectionType,
+  now: momentT,
+): void | DayPartMenuType {
   // `dayparts` is, conceptually, a collection of bonapp menus for a
   // location. It's a single-element array of arrays, so we first check
   // to see if either dimension is empty.
@@ -25,21 +28,23 @@ export function findMenu(dayparts: DayPartsCollectionType, now: momentT): void|D
   return daypart[menuIndex]
 }
 
-export function findMeal(meals: ProcessedMealType[], now: momentT): void|ProcessedMealType {
+export function findMeal(
+  meals: ProcessedMealType[],
+  now: momentT,
+): void | ProcessedMealType {
   if (!meals.length) {
     return
   }
 
   // TODO: Revisit this typing stuff here when we go to flow@0.39
-  const dayparts: DayPartMenuType[] = meals
-    .map(m => ({
-      starttime: m.starttime,
-      endtime: m.endtime,
-      label: m.label,
-      stations: m.stations,
-      id: m.label,
-      abbreviation: m.label,
-    }))
+  const dayparts: DayPartMenuType[] = meals.map(m => ({
+    starttime: m.starttime,
+    endtime: m.endtime,
+    label: m.label,
+    stations: m.stations,
+    id: m.label,
+    abbreviation: m.label,
+  }))
 
   const mealIndex = findMenuIndex(dayparts, now)
   return meals[mealIndex]
@@ -56,8 +61,12 @@ function findMenuIndex(dayparts: DayPartMenuType[], now: momentT): number {
   // can query times relative to `now`. Also make sure to set dayOfYear to
   // `now`, so that we don't have our days wandering all over the place.
   const times = dayparts.map(({starttime, endtime}) => ({
-    start: moment.tz(starttime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
-    end: moment.tz(endtime, 'H:mm', true, CENTRAL_TZ).dayOfYear(now.dayOfYear()),
+    start: moment
+      .tz(starttime, 'H:mm', true, CENTRAL_TZ)
+      .dayOfYear(now.dayOfYear()),
+    end: moment
+      .tz(endtime, 'H:mm', true, CENTRAL_TZ)
+      .dayOfYear(now.dayOfYear()),
   }))
 
   // We grab the first meal that ends sometime after `now`. The only time

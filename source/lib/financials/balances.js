@@ -8,10 +8,23 @@ import fromPairs from 'lodash/fromPairs'
 import isNil from 'lodash/isNil'
 import * as cache from '../cache'
 
-type BalancesOrErrorType = {error: true, value: Error}|{error: false, value: BalancesShapeType};
+type BalancesOrErrorType =
+  | {error: true, value: Error}
+  | {error: false, value: BalancesShapeType};
 
-export async function getBalances(isConnected: boolean, force?: boolean): Promise<BalancesOrErrorType> {
-  const {flex, ole, print, daily, weekly, _isExpired, _isCached} = await cache.getBalances()
+export async function getBalances(
+  isConnected: boolean,
+  force?: boolean,
+): Promise<BalancesOrErrorType> {
+  const {
+    flex,
+    ole,
+    print,
+    daily,
+    weekly,
+    _isExpired,
+    _isCached,
+  } = await cache.getBalances()
 
   if (isConnected && (_isExpired || !_isCached || force)) {
     const balances = await fetchBalancesFromServer()
@@ -107,7 +120,10 @@ function rowIntoNamedAmount(row: string): ?[string, string] {
 function dollarAmountToInteger(amount: ?string): ?number {
   const amountString = amount || ''
   // remove the /[$.]/, and put the numbers into big strings (eg, $3.14 -> '314')
-  const nonDenominationalAmount = amountString.replace('$', '').split('.').join('')
+  const nonDenominationalAmount = amountString
+    .replace('$', '')
+    .split('.')
+    .join('')
   const num = parseInt(nonDenominationalAmount, 10)
   return Number.isNaN(num) ? null : num
 }

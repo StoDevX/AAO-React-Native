@@ -34,7 +34,6 @@ function buildBusSchedules(): BusScheduleType[] {
   ]
 }
 
-
 it('returns the bus schedule for today', () => {
   let now = moment('Fri 10:01', 'dddd H:mm')
   let input = buildBusSchedules()

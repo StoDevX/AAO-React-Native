@@ -5,9 +5,7 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-} from 'react-native'
+import {StyleSheet} from 'react-native'
 
 import TabbedView from '../components/tabbed-view'
 import tabs from './tabs'
@@ -18,7 +16,14 @@ const styles = StyleSheet.create({
 })
 
 export default function SISView(props: {navigator: any, route: any}) {
-  return <TabbedView navigator={props.navigator} route={props.route} style={styles.container} tabs={tabs} />
+  return (
+    <TabbedView
+      navigator={props.navigator}
+      route={props.route}
+      style={styles.container}
+      tabs={tabs}
+    />
+  )
 }
 SISView.propTypes = {
   navigator: React.PropTypes.object.isRequired,
