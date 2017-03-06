@@ -1,4 +1,4 @@
-import {danger, fail, warn, markdown} from 'danger'
+import {danger, fail, warn, message} from 'danger'
 import {readFileSync} from 'fs'
 import dedent from 'dedent'
 const readFile = filename => {
@@ -7,9 +7,6 @@ const readFile = filename => {
   } catch (err) {
     return err.message
   }
-}
-const codeBlock = (contents, lang = null) => {
-  markdown(`\`\`\`${lang || ''}\n${contents}\n\`\`\``)
 }
 
 const jsFiles = danger.git.created_files.filter(path => path.endsWith('.js'))
@@ -42,18 +39,17 @@ jsFiles
     fail(`An <code>only</code> was left in ${file} – no other tests can run.`))
 
 // Warn when PR size is large (mainly for hawken)
-const bigPRThreshold = 400
+const bigPRThreshold = 400 // lines
 const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
 if (thisPRSize > bigPRThreshold) {
-  warn(':exclamation: Big PR!')
-  markdown(
+  warn(
     dedent`
-      > The Pull Request is a bit big. We like to try and keep PRs
-      > under ${bigPRThreshold} lines per PR, and this one was
-      > ${thisPRSize} lines. If the PR contains multiple logical changes,
-      > splitting each into separate PRs will allow a faster, easier, and
-      > more thorough review.
-    `,
+    <details>
+      <summary>:exclamation: Big PR!</summary>
+      <blockquote>We like to try and keep PRs under ${bigPRThreshold} lines per PR, and this one was ${thisPRSize} lines.</blockquote>
+      <blockquote>If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.</blockquote>
+    </details>
+  `,
   )
 }
 
@@ -71,6 +67,19 @@ const isBadBundleLog = log => {
   return requiredLines.some(line => !allLines.includes(line))
 }
 
+const fileLog = (name, log) => {
+  message(
+    dedent`
+    <details>
+      <summary>${name}</summary>
+      <pre><code>
+        ${log}
+      </code></pre>
+    </details>
+  `,
+  )
+}
+
 const prettierLog = readFile('logs/prettier').trim()
 const eslintLog = readFile('logs/eslint').trim()
 const dataValidationLog = readFile('logs/validate-data').trim()
@@ -80,42 +89,38 @@ const androidJsBundleLog = readFile('logs/bundle-android').trim()
 const jestLog = readFile('logs/jest').trim()
 
 if (prettierLog) {
-  warn('Prettier made some changes')
-  codeBlock(prettierLog, 'diff')
+  fileLog('Prettier made some changes', prettierLog)
 }
 
 if (eslintLog) {
-  warn('Eslint had a thing to say!')
-  codeBlock(eslintLog)
+  fileLog('Eslint had a thing to say!', eslintLog)
 }
 
-if (
-  dataValidationLog &&
+const dataHadIssues = dataValidationLog &&
   dataValidationLog.split('\n').some(l => !l.endsWith('is valid'))
-) {
-  warn("Something's up with the data.")
-  codeBlock(dataValidationLog)
+if (dataHadIssues) {
+  fileLog("Something's up with the data.", dataValidationLog)
 }
 
 if (flowLog !== 'Found 0 errors') {
-  warn('Flow would like to interject about types…')
-  codeBlock(flowLog)
+  fileLog('Flow would like to interject about types…', flowLog)
 }
 
 if (iosJsBundleLog && isBadBundleLog(iosJsBundleLog)) {
-  warn('The iOS bundle ran into an issue.')
-  codeBlock(iosJsBundleLog)
+  fileLog('The iOS bundle ran into an issue.', iosJsBundleLog)
 }
 
 if (androidJsBundleLog && isBadBundleLog(androidJsBundleLog)) {
-  warn('The Android bundle ran into an issue.')
-  codeBlock(androidJsBundleLog)
+  fileLog('The Android bundle ran into an issue.', androidJsBundleLog)
 }
 
 if (jestLog && jestLog.includes('FAIL')) {
-  warn('Some Jest tests failed. Take a peek?')
   const lines = jestLog.split('\n')
   const startIndex = lines.findIndex(l =>
     l.includes('Summary of all failing tests'))
-  codeBlock(lines.slice(startIndex).join('\n'))
+
+  fileLog(
+    'Some Jest tests failed. Take a peek?',
+    lines.slice(startIndex).join('\n'),
+  )
 }
