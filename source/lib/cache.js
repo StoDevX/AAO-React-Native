@@ -104,14 +104,67 @@ export function getPrintBalance(): CacheResultType<?number> {
   return getItem(printBalanceKey)
 }
 
-
-/// MARK: Meals
-
-const mealsKey = 'meals'
-const mealsCacheTime = [5, 'minutes']
-export function setMealInfo(meals: {weekly: ?string, daily: ?string}) {
-  return setItem(mealsKey, meals, mealsCacheTime)
+const dailyMealsKey = 'meals:daily'
+const dailyMealsCacheTime = [5, 'minutes']
+export function setDailyMealInfo(dailyMeals: ?string) {
+  return setItem(dailyMealsKey, dailyMeals, dailyMealsCacheTime)
 }
-export function getMealInfo(): CacheResultType<{weekly: ?string, daily: ?string}> {
-  return getItem(mealsKey)
+export function getDailyMealInfo(): CacheResultType<?string> {
+  return getItem(dailyMealsKey)
+}
+
+const weeklyMealsKey = 'meals:weekly'
+const weeklyMealsCacheTime = [5, 'minutes']
+export function setWeeklyMealInfo(weeklyMeals: ?string) {
+  return setItem(weeklyMealsKey, weeklyMeals, weeklyMealsCacheTime)
+}
+export function getWeeklyMealInfo(): CacheResultType<?string> {
+  return getItem(weeklyMealsKey)
+}
+
+type BalancesInputType = {
+  flex: ?number,
+  ole: ?number,
+  print: ?number,
+  daily: ?string,
+  weekly: ?string,
+};
+export function setBalances({flex, ole, print, daily, weekly}: BalancesInputType) {
+  return Promise.all([
+    setFlexBalance(flex),
+    setOleBalance(ole),
+    setPrintBalance(print),
+    setDailyMealInfo(daily),
+    setWeeklyMealInfo(weekly),
+  ])
+}
+
+type BalancesOutputType = {
+  flex: BaseCacheResultType<?number>,
+  ole: BaseCacheResultType<?number>,
+  print: BaseCacheResultType<?number>,
+  daily: BaseCacheResultType<?string>,
+  weekly: BaseCacheResultType<?string>,
+  _isExpired: boolean,
+  _isCached: boolean,
+}
+export async function getBalances(): Promise<BalancesOutputType> {
+  const [
+    flex,
+    ole,
+    print,
+    daily,
+    weekly,
+  ] = await Promise.all([
+    getFlexBalance(),
+    getOleBalance(),
+    getPrintBalance(),
+    getDailyMealInfo(),
+    getWeeklyMealInfo(),
+  ])
+
+  const _isExpired = (flex.isExpired || ole.isExpired || print.isExpired || daily.isExpired || weekly.isExpired)
+  const _isCached = (flex.isCached || ole.isCached || print.isCached || daily.isCached || weekly.isCached)
+
+  return {flex, ole, print, daily, weekly, _isExpired, _isCached}
 }

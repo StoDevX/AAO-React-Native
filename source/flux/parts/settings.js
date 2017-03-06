@@ -17,8 +17,7 @@ import {
 } from '../../lib/storage'
 
 import {
-  updateFinancialData,
-  updateMealsRemaining,
+  updateBalances,
   updateCourses,
 } from './sis'
 
@@ -52,7 +51,7 @@ export function logInViaCredentials(username: string, password: string) {
 
     // if we logged in successfully, go ahead and fetch the meals remaining number
     if (result) {
-      dispatch(updateMealsRemaining())
+      dispatch(updateBalances())
     }
   }
 }
@@ -64,7 +63,6 @@ export function logInViaToken(tokenStatus: boolean) {
 
     // if we logged in successfully, go ahead and fetch the data that requires a valid token
     if (tokenStatus) {
-      dispatch(updateFinancialData())
       dispatch(updateCourses())
     }
   }
