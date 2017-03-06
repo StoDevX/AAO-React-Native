@@ -1,5 +1,6 @@
 import {danger, fail, warn, markdown} from 'danger'
 import {readFileSync} from 'fs'
+import dedent from 'dedent'
 const readFile = filename => {
   try {
     return readFileSync(filename, 'utf-8')
@@ -48,13 +49,13 @@ const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
 if (thisPRSize > bigPRThreshold) {
   warn(':exclamation: Big PR!')
   markdown(
-    `
-    > The Pull Request is a bit big. We like to try and keep PRs
-    > under ${bigPRThreshold} lines per PR, and this one was
-    > ${thisPRSize} lines. If the PR contains multiple logical changes,
-    > splitting each into separate PRs will allow a faster, easier, and
-    > more thorough review.
-  `,
+    dedent`
+      > The Pull Request is a bit big. We like to try and keep PRs
+      > under ${bigPRThreshold} lines per PR, and this one was
+      > ${thisPRSize} lines. If the PR contains multiple logical changes,
+      > splitting each into separate PRs will allow a faster, easier, and
+      > more thorough review.
+    `,
   )
 }
 
