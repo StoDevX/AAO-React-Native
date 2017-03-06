@@ -175,7 +175,7 @@ script:
   - |
     if [[ $js ]]; then
       npm run prettier:all
-      git diff --stat --exit-code *.js source/ | tee logs/prettier
+      git diff --exit-code *.js source/ | tee logs/prettier
     fi
   # Lint
   - if [[ $js ]]; then npm run lint | tee logs/eslint; fi
