@@ -173,16 +173,6 @@ script:
   # JS
   # Lint
   - if [[ $js ]]; then npm run lint | tee logs/eslint; fi
-  - |
-    if [[ $js ]]; then
-      npm run prettier
-      if ! git diff --quiet *.js source/; then
-        git checkout "$BRANCH"
-        git add *.js source/
-        git commit -m "prettify code"
-        git checkout "$TRAVIS_COMMIT"
-      fi
-    fi
   # Validate data
   - if [[ $js ]]; then npm run validate-data -- --quiet | tee logs/validate-data; fi
   # Ensure that the data files have been updated
