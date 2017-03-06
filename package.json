@@ -12,22 +12,10 @@
     "flow": "flow",
     "ios": "react-native run-ios",
     "lint": "eslint --cache source/ *.js",
-    "prettier:all": "prettier --single-quote --trailing-comma all --no-bracket-spacing --write 'source/**/*.js' '*.js' && eslint --cache --fix 'source/' '*.js'",
-    "precommit": "",
+    "prettier": "prettier --single-quote --trailing-comma all --no-bracket-spacing --write 'source/**/*.js' '*.js' && eslint --cache --fix 'source/' '*.js'",
     "start": "react-native start",
     "test": "jest",
     "validate-data": "node scripts/validate-data.js"
-  },
-  "lint-staged": {
-    "*.js": [
-      "prettier --write --single-quote --trailing-comma all --no-bracket-spacing",
-      "eslint --fix",
-      "git add"
-    ]
-  },
-  "pre-commit": {
-    "npm": false,
-    "run": "lint-staged"
   },
   "codepush": {
     "ios": {
@@ -119,11 +107,9 @@
     "jest": "18.1.0",
     "js-yaml": "3.8.1",
     "junk": "2.1.0",
-    "lint-staged": "3.3.1",
     "marked": "0.3.6",
     "minimist": "1.2.0",
     "pify": "2.3.0",
-    "pre-commit": "github:hawkrives/pre-commit#c9655d018c7d1065b214d2950dd6136bfe1faf43",
     "prettier": "0.21.0",
     "react-native-mock": "0.3.1",
     "react-test-renderer": "15.4.2"
