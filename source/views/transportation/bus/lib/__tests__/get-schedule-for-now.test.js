@@ -3,6 +3,8 @@ import {getScheduleForNow} from '../get-schedule-for-now'
 import moment from 'moment'
 
 import type {BusScheduleType} from '../../types'
+
+// prettier-ignore
 function buildBusSchedules(): BusScheduleType[] {
   return [
     {
