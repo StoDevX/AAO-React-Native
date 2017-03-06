@@ -15,8 +15,10 @@ import type {
 const parseXml = pify(parseString)
 const entities = new AllHtmlEntities()
 
+const fetchText = url => fetch(url).then(r => r.text())
+
 export async function fetchRssFeed(url: string, query?: Object): Promise<StoryType[]> {
-  const responseText = await fetch(`${url}?${qs.stringify(query)}`).then(r => r.text())
+  const responseText = await fetchText(`${url}?${qs.stringify(query)}`)
   const feed: FeedResponseType = await parseXml(responseText)
   return feed.rss.channel[0].item.map(convertRssItemToStory)
 }
