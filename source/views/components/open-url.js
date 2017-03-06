@@ -62,8 +62,7 @@ function androidOpen(url: string) {
     showPageTitle: true,
     enableUrlBarHiding: true,
     enableDefaultShare: true,
-  })// fall back to opening in Chrome / Browser / platform default
-  .catch(() => genericOpen(url))
+  }).catch(() => genericOpen(url)) // fall back to opening in Chrome / Browser / platform default
 }
 
 export default function openUrl(url: string) {

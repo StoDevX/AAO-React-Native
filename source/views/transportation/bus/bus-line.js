@@ -70,8 +70,8 @@ export function BusLine({line, now}: {line: BusLineType, now: moment}) {
     timeset => {
       return timeset.map(
         time => time === false
-        // either pass `false` through or return a parsed time
-          ? false
+          ? // either pass `false` through or return a parsed time
+            false
           : moment
               // interpret in Central time
               .tz(time, TIME_FORMAT, true, TIMEZONE)
