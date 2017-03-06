@@ -49,6 +49,7 @@ export class NewsList extends React.Component {
       props: {story, embedFeaturedImage: this.props.embedFeaturedImage},
       rightButton: ({contentContainerStyle, style}) => (
         <Touchable
+          highlight={false}
           style={[contentContainerStyle]}
           onPress={() => this.shareItem(story)}
         >

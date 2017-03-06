@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     color: 'white',
     ...Platform.select({
       ios: {
-        fontSize: 26,
+        fontSize: 32,
       },
       android: {
         fontSize: 24,
