@@ -13,12 +13,12 @@ const TIMEZONE = 'America/Winnipeg'
 export default class BusView extends React.Component {
   static defaultProps = {
     busLines: defaultBusLines,
-  }
+  };
 
   state = {
     intervalId: 0,
     now: moment.tz(TIMEZONE),
-  }
+  };
 
   componentWillMount() {
     // This updates the screen every second, so that the "next bus" times are
@@ -33,11 +33,11 @@ export default class BusView extends React.Component {
   props: {
     busLines: BusLineType[],
     line: string,
-  }
+  };
 
   updateTime = () => {
     this.setState({now: moment.tz(TIMEZONE)})
-  }
+  };
 
   render() {
     let {now} = this.state
@@ -46,7 +46,15 @@ export default class BusView extends React.Component {
     const activeBusLine = busLines.find(({line}) => line === this.props.line)
 
     if (!activeBusLine) {
-      return <NoticeView text={`The line "${this.props.line}" was not found among ${busLines.map(({line}) => line).join(', ')}`} />
+      return (
+        <NoticeView
+          text={
+            `The line "${this.props.line}" was not found among ${busLines
+              .map(({line}) => line)
+              .join(', ')}`
+          }
+        />
+      )
     }
 
     return (
