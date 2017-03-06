@@ -16,7 +16,8 @@ type PropsType = {
 export function ListSection({filter, onChange}: PropsType) {
   const {spec} = filter
   const {title='', options, selected, mode} = spec
-  const {caption=`Show items with ${mode === 'AND' ? 'all' : 'any'} of these options.`} = spec
+  const quantifier = mode === 'AND' ? 'all' : 'any'
+  const {caption=`Show items with ${quantifier} of these options.`} = spec
 
   function buttonPushed(tappedValue: ListItemSpecType) {
     let result
