@@ -81,13 +81,13 @@ export class StudentOrgsView extends React.Component {
       let sorted = sortBy(withSortableNames, '$sortableName')
       let grouped = groupBy(sorted, '$groupableName')
       // New orgs
-      let newOrgs = sorted.filter(org => org.newOrg).map(newOrgs, item => {
+      let newOrgs = sorted.filter(org => org.newOrg).map(item => {
         return {
           ...item,
           $groupableName: 'New',
         }
       })
-      let newOrgsGrouped = groupBy(newOrgsSortableNames, '$groupableName')
+      let newOrgsGrouped = groupBy(newOrgs, '$groupableName')
       let combined = {...newOrgsGrouped, ...grouped}
       this.setState({orgs: combined})
     } catch (error) {
