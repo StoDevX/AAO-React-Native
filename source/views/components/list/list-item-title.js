@@ -31,11 +31,7 @@ export function Title(props: PropsType) {
   return (
     <Text
       numberOfLines={props.lines}
-      style={[
-        styles.title,
-        !props.bold && styles.noBold,
-        props.style,
-      ]}
+      style={[styles.title, !props.bold && styles.noBold, props.style]}
     >
       {props.children}
     </Text>

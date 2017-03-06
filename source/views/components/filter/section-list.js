@@ -15,9 +15,9 @@ type PropsType = {
 
 export function ListSection({filter, onChange}: PropsType) {
   const {spec} = filter
-  const {title='', options, selected, mode} = spec
+  const {title = '', options, selected, mode} = spec
   const quantifier = mode === 'AND' ? 'all' : 'any'
-  const {caption=`Show items with ${quantifier} of these options.`} = spec
+  const {caption = `Show items with ${quantifier} of these options.`} = spec
 
   function buttonPushed(tappedValue: ListItemSpecType) {
     let result
@@ -64,30 +64,30 @@ export function ListSection({filter, onChange}: PropsType) {
   }
 
   const hasImageColumn = options.some(val => Boolean(val.image))
-  let buttons = options.map(val =>
+  let buttons = options.map(val => (
     <Cell
       key={val.title}
       onPress={() => buttonPushed(val)}
       disableImageResize={true}
-      image={spec.showImages && <Image style={styles.icon} source={val.image} />}
+      image={
+        spec.showImages && <Image style={styles.icon} source={val.image} />
+      }
       accessory={!includes(selected, val) && 'Checkmark'}
-      cellStyle='RightDetail'
+      cellStyle="RightDetail"
       cellContentView={
         <Column style={styles.content}>
           <Text style={styles.title}>{val.title}</Text>
-          {val.detail
-            ? <Text style={styles.detail}>{val.detail}</Text>
-            : null}
+          {val.detail ? <Text style={styles.detail}>{val.detail}</Text> : null}
         </Column>
       }
     />
-  )
+  ))
 
   if (mode === 'OR') {
     const showAllButton = (
       <Cell
-        key='__show_all'
-        title='Show All'
+        key="__show_all"
+        title="Show All"
         onPress={showAll}
         accessory={selected.length === options.length ? 'Checkmark' : null}
       />
@@ -96,7 +96,11 @@ export function ListSection({filter, onChange}: PropsType) {
   }
 
   return (
-    <Section header={title.toUpperCase()} footer={caption} separatorInsetLeft={hasImageColumn ? 45 : undefined}>
+    <Section
+      header={title.toUpperCase()}
+      footer={caption}
+      separatorInsetLeft={hasImageColumn ? 45 : undefined}
+    >
       {buttons}
     </Section>
   )
