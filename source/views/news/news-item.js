@@ -3,7 +3,9 @@ import React from 'react'
 import {HtmlView} from '../components/html-view'
 import type {StoryType} from './types'
 
-export default function NewsItem({story, embedFeaturedImage}: {story: StoryType, embedFeaturedImage: ?boolean}) {
+export default function NewsItem(
+  {story, embedFeaturedImage}: {story: StoryType, embedFeaturedImage: ?boolean},
+) {
   const content = `
     <style>
       body {
@@ -44,9 +46,7 @@ export default function NewsItem({story, embedFeaturedImage}: {story: StoryType,
     <header class="aao-header">
       <h1>${story.title}</h1>
     </header>
-    ${embedFeaturedImage && story.featuredImage
-      ? `<img src="${story.featuredImage}">`
-      : ''}
+    ${embedFeaturedImage && story.featuredImage ? `<img src="${story.featuredImage}">` : ''}
     ${story.content}
   `
 
