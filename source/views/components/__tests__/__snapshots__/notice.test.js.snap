@@ -4,7 +4,7 @@ exports[`test renders 1`] = `
     Array [
       Object {
         "alignItems": "center",
-        "backgroundColor": "#ffffff",
+        "backgroundColor": "#FFFFFF",
         "flex": 1,
         "justifyContent": "center",
         "paddingHorizontal": 16,
