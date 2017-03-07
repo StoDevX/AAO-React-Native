@@ -67,12 +67,16 @@ const isBadBundleLog = log => {
   return requiredLines.some(line => !allLines.includes(line))
 }
 
-const fileLog = (name, log) => {
+const fileLog = (name, log, lang = null) => {
   message(
     dedent`
     <details>
       <summary>${name}</summary>
-      <pre><code>${log}</code></pre>
+
+      \`\`\`${lang || ''}
+      ${log}
+      \`\`\`
+
     </details>
   `,
   )
@@ -87,7 +91,7 @@ const androidJsBundleLog = readFile('logs/bundle-android').trim()
 const jestLog = readFile('logs/jest').trim()
 
 if (prettierLog) {
-  fileLog('Prettier made some changes', prettierLog)
+  fileLog('Prettier made some changes', prettierLog, 'diff')
 }
 
 if (eslintLog) {
