@@ -142,7 +142,7 @@ export class BuildingHoursDetailView extends React.Component {
                   return (
                     <Cell
                       key={i}
-                      cellStyle='RightDetail'
+                      cellStyle="RightDetail"
                       title={summarizeDays(schedule.days)}
                       titleTextStyle={isActiveSchedule ? styles.bold : null}
                       detail={formatBuildingTimes(schedule, this.state.now)}
