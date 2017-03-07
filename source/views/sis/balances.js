@@ -258,14 +258,7 @@ function FinancialBalancesCell(
   },
 ) {
   return (
-    <View
-      style={[
-        styles.rectangle,
-        styles.common,
-        styles.balances,
-        style,
-      ]}
-    >
+    <View style={[styles.rectangle, styles.common, styles.balances, style]}>
       <Text
         selectable={true}
         style={styles.financialText}
