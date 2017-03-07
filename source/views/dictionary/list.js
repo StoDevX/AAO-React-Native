@@ -30,6 +30,9 @@ const styles = StyleSheet.create({
   rowSectionHeader: {
     height: headerHeight,
   },
+  rowDetailText: {
+    fontSize: 14,
+  },
 })
 
 export class DictionaryView extends React.Component {
@@ -58,7 +61,9 @@ export class DictionaryView extends React.Component {
       >
         <Column>
           <Title lines={1}>{item.word}</Title>
-          <Detail lines={2} style={{fontSize: 14}}>{item.definition}</Detail>
+          <Detail lines={2} style={styles.rowDetailText}>
+            {item.definition}
+          </Detail>
         </Column>
       </ListRow>
     )
