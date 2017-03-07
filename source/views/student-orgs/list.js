@@ -123,6 +123,11 @@ export class StudentOrgsView extends React.Component {
     )
   }
 
+  getSectionListTitle = (...args: any) => {
+    let name = args[0]
+    return name === 'New' ? '•' : name
+  }
+
   renderRow = ({item}: {item: StudentOrgAbridgedType}) => {
     return (
       <ListRow
@@ -175,6 +180,7 @@ export class StudentOrgsView extends React.Component {
         cell={this.renderRow}
         // just setting cellHeight sends the wrong values on iOS.
         cellHeight={rowHeight + (Platform.OS === 'ios' ? (11/12 * StyleSheet.hairlineWidth) : 0)}
+        getSectionListTitle={this.getSectionListTitle}
         sectionHeader={this.renderSectionHeader}
         sectionHeaderHeight={headerHeight}
         renderSeparator={this.renderSeparator}
