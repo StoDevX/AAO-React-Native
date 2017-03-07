@@ -36,6 +36,7 @@ const headerHeight = Platform.OS === 'ios' ? 33 : 41
 const styles = StyleSheet.create({
   row: {
     height: rowHeight,
+    paddingRight: 2,
   },
   rowSectionHeader: {
     height: headerHeight,
@@ -43,10 +44,15 @@ const styles = StyleSheet.create({
   badge: {
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'flex-start',
+    width: leftSideSpacing,
   },
-  badgeIcon: {
+  badgeContainer: {
     fontSize: Platform.OS === 'ios' ? 24 : 28,
-    color: 'transparent',
+    color: c.transparent,
+  },
+  newOrgBadge: {
+    color: c.infoBlue,
   },
 })
 
@@ -123,20 +129,13 @@ export class StudentOrgsView extends React.Component {
     return (
       <ListRow
         onPress={() => this.onPressRow(item)}
-        contentContainerStyle={[styles.row, {paddingRight: 2}]}
+        contentContainerStyle={[styles.row]}
         arrowPosition="none"
         fullWidth={true}
       >
         <Row alignItems="flex-start">
-          <View
-            style={[
-              styles.badge,
-              {width: leftSideSpacing, alignSelf: 'flex-start'},
-            ]}
-          >
-            <Text
-              style={[styles.badgeIcon, item.newOrg && {color: c.infoBlue}]}
-            >
+          <View style={styles.badgeContainer}>
+            <Text style={[styles.badge, item.newOrg && styles.newOrgBadge]}>
               •
             </Text>
           </View>

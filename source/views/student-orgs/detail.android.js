@@ -8,16 +8,12 @@ import * as c from '../components/colors'
 import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 6,
-    paddingHorizontal: 18,
-  },
   name: {
     textAlign: 'center',
     marginTop: 20,
     marginBottom: 15,
     paddingHorizontal: 5,
-    color: 'black',
+    color: c.black,
     fontSize: 32,
     fontWeight: '300',
   },
