@@ -146,7 +146,7 @@ class FancyMenuView extends React.Component {
     )
 
     let messageView = null
-    let filtersEnabled = filters.some(f => f.enabled)
+    let anyFiltersEnabled = filters.some(f => f.enabled)
     if (specialsFilterEnabled && stationMenus.length === 0) {
       messageView = (
         <NoticeView
@@ -155,7 +155,7 @@ class FancyMenuView extends React.Component {
         />
       )
     }
-    else if (filtersEnabled && !size(grouped)) {
+    else if (anyFiltersEnabled && !size(grouped)) {
       messageView = (
         <NoticeView
           style={styles.container}
