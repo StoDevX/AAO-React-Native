@@ -25,6 +25,9 @@ const transparentPixel = require('../../../images/transparent.png')
 const CENTRAL_TZ = 'America/Winnipeg'
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   title: {
     paddingTop: 16,
     paddingBottom: 4,
@@ -32,7 +35,7 @@ const styles = StyleSheet.create({
   },
   name: {
     textAlign: 'center',
-    color: 'black',
+    color: c.black,
     fontSize: 32,
     fontWeight: '300',
   },
@@ -77,10 +80,6 @@ const styles = StyleSheet.create({
   },
   scheduleHours: {
     flex: 2,
-  },
-  scheduleNotes: {
-    paddingTop: 6,
-    paddingBottom: 2,
   },
 })
 
@@ -138,7 +137,7 @@ export class BuildingHoursDetailView extends React.Component {
         windowHeight={100}
         scrollableViewStyle={styles.scrollableStyle}
       >
-        <View style={{flex: 1}}>
+        <View style={styles.container}>
           <View style={styles.title}>{title}</View>
           {subtitle}
 
