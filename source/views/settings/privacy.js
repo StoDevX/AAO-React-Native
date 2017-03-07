@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import {StyleSheet, WebView} from 'react-native'
+import * as c from '../components/colors'
 import {text as privacy} from '../../../docs/privacy.json'
 
 const styles = StyleSheet.create({
@@ -9,7 +10,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingTop: 10,
     paddingBottom: 20,
-    backgroundColor: 'transparent',
+    backgroundColor: c.transparent,
   },
 })
 
