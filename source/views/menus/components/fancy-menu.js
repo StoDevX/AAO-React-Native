@@ -154,21 +154,16 @@ class FancyMenuView extends React.Component {
           text="No items to show. There may be no specials today. Try changing the filters."
         />
       )
-    }
-    else if (anyFiltersEnabled && !size(grouped)) {
+    } else if (anyFiltersEnabled && !size(grouped)) {
       messageView = (
         <NoticeView
           style={styles.container}
           text="No items to show. Try changing the filters."
         />
       )
-    }
-    else if (!size(grouped)) {
+    } else if (!size(grouped)) {
       messageView = (
-        <NoticeView
-          style={styles.container}
-          text="No items to show."
-        />
+        <NoticeView style={styles.container} text="No items to show." />
       )
     }
 
