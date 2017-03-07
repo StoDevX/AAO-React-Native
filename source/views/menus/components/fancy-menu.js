@@ -136,7 +136,7 @@ class FancyMenuView extends React.Component {
     // group the tuples into an object (because ListView wants {key: value} not [key, value])
     const grouped = fromPairs(filteredByMenu)
 
-    let anyFiltersEnabled = filters.some(f => f.enabled)
+    const anyFiltersEnabled = filters.some(f => f.enabled)
     const specialsFilterEnabled = Boolean(
       filters.find(
         f =>
