@@ -126,8 +126,7 @@ export class StudentOrgsView extends React.Component {
     )
   };
 
-  getSectionListTitle = (...args: any) => {
-    let name = args[0]
+  getSectionListTitle = (name: string) => {
     return name === 'New' ? '•' : name
   }
 
