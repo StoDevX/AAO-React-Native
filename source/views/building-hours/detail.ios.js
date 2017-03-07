@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   scheduleHours: {
-    flex: 3,
+    flex: 0,
   },
 })
 
