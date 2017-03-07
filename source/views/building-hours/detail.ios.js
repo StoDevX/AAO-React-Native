@@ -53,16 +53,8 @@ const styles = StyleSheet.create({
   scrollableStyle: {
     backgroundColor: c.iosLightBackground,
   },
-  scheduleDays: {
-    flex: 1,
-    minWidth: 100,
-    paddingRight: 16,
-  },
   bold: {
     fontWeight: '600',
-  },
-  scheduleHours: {
-    flex: 0,
   },
 })
 
@@ -152,7 +144,7 @@ export class BuildingHoursDetailView extends React.Component {
                       key={i}
                       cellStyle='RightDetail'
                       title={summarizeDays(schedule.days)}
-                      titleTextStyle={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]}
+                      titleTextStyle={isActiveSchedule ? styles.bold : null}
                       detail={formatBuildingTimes(schedule, this.state.now)}
                       detailTextStyle={isActiveSchedule ? styles.bold : null}
                     />
