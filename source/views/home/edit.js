@@ -5,7 +5,14 @@
  */
 
 import React from 'react'
-import {Animated, Dimensions, Easing, StyleSheet, Text} from 'react-native'
+import {
+  Animated,
+  Dimensions,
+  Easing,
+  StyleSheet,
+  Text,
+  Platform,
+} from 'react-native'
 
 import {saveHomescreenOrder} from '../../flux/parts/homescreen'
 import {connect} from 'react-redux'
@@ -23,7 +30,11 @@ const window = Dimensions.get('window')
 const objViews = fromPairs(allViews.map(v => [v.view, v]))
 
 const ReorderIcon = () => (
-  <IonIcon name="ios-reorder" size={32} style={styles.listButtonIcon} />
+  <IonIcon
+    name={Platform.OS === 'ios' ? 'ios-reorder' : 'md-reorder'}
+    size={32}
+    style={styles.listButtonIcon}
+  />
 )
 
 const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
