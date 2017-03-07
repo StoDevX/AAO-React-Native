@@ -73,9 +73,9 @@ const fileLog = (name, log, lang = null) => {
     <details>
       <summary>${name}</summary>
 
-      \`\`\`${lang || ''}
-      ${log}
-      \`\`\`
+\`\`\`${lang || ''}
+${log}
+\`\`\`
 
     </details>
   `,
