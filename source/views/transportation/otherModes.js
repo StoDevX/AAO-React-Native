@@ -12,11 +12,6 @@ let styles = StyleSheet.create({
   container: {
     backgroundColor: c.white,
   },
-  row: {
-    marginTop: 10,
-    marginBottom: 10,
-    backgroundColor: c.white,
-  },
   title: {
     fontSize: 30,
     alignSelf: 'center',
