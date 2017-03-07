@@ -26,7 +26,7 @@ export class PresenceCalendarView extends React.Component {
     refreshing: true,
     error: null,
     now: moment.tz(TIMEZONE),
-  }
+  };
 
   componentWillMount() {
     this.refresh()
@@ -53,7 +53,7 @@ export class PresenceCalendarView extends React.Component {
       .filter(event => event.endTime.isSameOrAfter(now))
   }
 
-  getEvents = async (now: moment=moment.tz(TIMEZONE)) => {
+  getEvents = async (now: moment = moment.tz(TIMEZONE)) => {
     let url = this.props.url
 
     let data: PresenceEventType[] = []
@@ -70,7 +70,7 @@ export class PresenceCalendarView extends React.Component {
       loaded: true,
       events: this.convertEvents(data, now),
     })
-  }
+  };
 
   refresh = async () => {
     let start = Date.now()
@@ -85,7 +85,7 @@ export class PresenceCalendarView extends React.Component {
     }
 
     this.setState({refreshing: false})
-  }
+  };
 
   render() {
     if (!this.state.loaded) {

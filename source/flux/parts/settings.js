@@ -16,11 +16,7 @@ import {
   getAnalyticsOptOut,
 } from '../../lib/storage'
 
-import {
-  updateFinancialData,
-  updateMealsRemaining,
-  updateCourses,
-} from './sis'
+import {updateBalances, updateCourses} from './sis'
 
 export const SET_LOGIN_CREDENTIALS = 'settings/SET_LOGIN_CREDENTIALS'
 export const CREDENTIALS_LOGIN = 'settings/CREDENTIALS_LOGIN'
@@ -52,7 +48,7 @@ export function logInViaCredentials(username: string, password: string) {
 
     // if we logged in successfully, go ahead and fetch the meals remaining number
     if (result) {
-      dispatch(updateMealsRemaining())
+      dispatch(updateBalances())
     }
   }
 }
@@ -64,7 +60,6 @@ export function logInViaToken(tokenStatus: boolean) {
 
     // if we logged in successfully, go ahead and fetch the data that requires a valid token
     if (tokenStatus) {
-      dispatch(updateFinancialData())
       dispatch(updateCourses())
     }
   }
@@ -74,7 +69,10 @@ export function logOutViaCredentials() {
   return {type: CREDENTIALS_LOGOUT, payload: clearLoginCredentials()}
 }
 
-export async function validateLoginCredentials(username?: string, password?: string) {
+export async function validateLoginCredentials(
+  username?: string,
+  password?: string,
+) {
   const result = await performLogin(username, password)
   return {type: CREDENTIALS_VALIDATE, payload: {result}}
 }
@@ -84,15 +82,13 @@ export async function logOutViaToken() {
   return {type: TOKEN_LOGOUT}
 }
 
-
-
 const initialCredentialsState = {
   username: '',
   password: '',
   error: null,
   valid: false,
 }
-function credentialsReducer(state=initialCredentialsState, action) {
+function credentialsReducer(state = initialCredentialsState, action) {
   const {type, payload, error} = action
 
   switch (type) {
@@ -153,13 +149,12 @@ function credentialsReducer(state=initialCredentialsState, action) {
   }
 }
 
-
 const initialTokenState = {
   status: false,
   error: null,
   valid: false,
 }
-function tokenReducer(state=initialTokenState, action) {
+function tokenReducer(state = initialTokenState, action) {
   const {type, payload, error} = action
   switch (type) {
     case TOKEN_LOGIN: {
@@ -194,7 +189,6 @@ function tokenReducer(state=initialTokenState, action) {
   }
 }
 
-
 const initialSettingsState = {
   theme: 'All About Olaf',
   dietaryPreferences: [],
@@ -203,7 +197,7 @@ const initialSettingsState = {
   token: undefined,
   feedbackDisabled: false,
 }
-export function settings(state: Object=initialSettingsState, action: Object) {
+export function settings(state: Object = initialSettingsState, action: Object) {
   // start out by running the reducers for the complex chunks of the state
   state = {
     ...state,

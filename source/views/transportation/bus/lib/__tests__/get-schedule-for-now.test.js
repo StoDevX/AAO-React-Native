@@ -3,6 +3,8 @@ import {getScheduleForNow} from '../get-schedule-for-now'
 import moment from 'moment'
 
 import type {BusScheduleType} from '../../types'
+
+// prettier-ignore
 function buildBusSchedules(): BusScheduleType[] {
   return [
     {
@@ -31,7 +33,6 @@ function buildBusSchedules(): BusScheduleType[] {
     },
   ]
 }
-
 
 it('returns the bus schedule for today', () => {
   let now = moment('Fri 10:01', 'dddd H:mm')

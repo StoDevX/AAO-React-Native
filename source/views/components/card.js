@@ -19,19 +19,24 @@ const cardStyles = StyleSheet.create({
     color: 'rgb(113, 113, 118)',
     fontWeight: 'bold',
   },
-  contentWrapper: {
-  },
+  contentWrapper: {},
   footer: {
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
     paddingTop: 6,
     paddingBottom: 2,
   },
-  footerText: {
-  },
+  footerText: {},
 })
 
-export function Card({header, footer, children, style}: {header?: string, footer?: string, children?: any, style?: any}) {
+export function Card(
+  {
+    header,
+    footer,
+    children,
+    style,
+  }: {header?: string, footer?: string, children?: any, style?: any},
+) {
   return (
     <View style={[cardStyles.card, style]}>
       <View style={cardStyles.title}>
@@ -44,8 +49,10 @@ export function Card({header, footer, children, style}: {header?: string, footer
 
       {footer
         ? <View style={cardStyles.footer}>
-          <Text selectable={true} style={cardStyles.footerText}>{footer}</Text>
-        </View>
+            <Text selectable={true} style={cardStyles.footerText}>
+              {footer}
+            </Text>
+          </View>
         : null}
     </View>
   )

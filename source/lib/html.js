@@ -13,21 +13,21 @@ export function parseHtml(string: string): Object {
 }
 
 // from https://github.com/fb55/domutils/blob/master/lib/stringify.js
-export function getText(elem: Object|Object[]): string {
+export function getText(elem: Object | Object[]): string {
   if (Array.isArray(elem)) return elem.map(getText).join('')
   if (elem.type === 'tag') return getText(elem.children)
   if (elem.type === 'text') return elem.data
   return ''
 }
 
-function getTextWithSpaces(elem: Object|Object[]): string {
+function getTextWithSpaces(elem: Object | Object[]): string {
   if (Array.isArray(elem)) return elem.map(getText).join(' ')
   if (elem.type === 'tag') return getText(elem.children)
   if (elem.type === 'text') return elem.data
   return ''
 }
 
-export function getTrimmedTextWithSpaces(elem: Object|Object[]): string {
+export function getTrimmedTextWithSpaces(elem: Object | Object[]): string {
   return getTextWithSpaces(elem).split(/\s+/).join(' ').trim()
 }
 
