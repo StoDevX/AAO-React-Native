@@ -38,6 +38,8 @@ export const iosHeaderBottomBorder = 'rgb(224, 224, 224)'
 
 export const tableviewAccessoryColor = 'rgb(0, 122, 255)'
 
+export const semitransparentGray = 'rgba(0,0,0,0.2)'
+
 // MARK: Oleville colors
 export const theLatest = '#00BFFF'
 export const olevilleGold = '#F7B600'
