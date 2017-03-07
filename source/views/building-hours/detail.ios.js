@@ -7,7 +7,6 @@ import type {BuildingType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
-import {Row} from '../components/layout'
 import ParallaxView from 'react-native-parallax-view'
 import * as c from '../components/colors'
 import {
@@ -151,30 +150,11 @@ export class BuildingHoursDetailView extends React.Component {
                   return (
                     <Cell
                       key={i}
-                      cellContentView={
-                        <Row>
-                          <Text
-                            selectable={true}
-                            numberOfLines={1}
-                            style={[
-                              styles.scheduleDays,
-                              isActiveSchedule ? styles.bold : null,
-                            ]}
-                          >
-                            {summarizeDays(schedule.days)}
-                          </Text>
-                          <Text
-                            selectable={true}
-                            numberOfLines={1}
-                            style={[
-                              styles.scheduleHours,
-                              isActiveSchedule ? styles.bold : null,
-                            ]}
-                          >
-                            {formatBuildingTimes(schedule, this.state.now)}
-                          </Text>
-                        </Row>
-                      }
+                      cellStyle='RightDetail'
+                      title={summarizeDays(schedule.days)}
+                      titleTextStyle={[styles.scheduleDays, isActiveSchedule ? styles.bold : null]}
+                      detail={formatBuildingTimes(schedule, this.state.now)}
+                      detailTextStyle={isActiveSchedule ? styles.bold : null}
                     />
                   )
                 })}
