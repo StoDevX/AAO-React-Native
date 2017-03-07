@@ -174,7 +174,7 @@ script:
   # Ensure prettiness
   - |
     if [[ $js ]]; then
-      npm run prettier:all
+      npm run prettier
       git diff --exit-code *.js source/ | tee logs/prettier
     fi
   # Lint
