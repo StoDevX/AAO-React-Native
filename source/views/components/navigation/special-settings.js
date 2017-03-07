@@ -5,6 +5,7 @@
 
 import React from 'react'
 import {Navigator, StyleSheet, Platform} from 'react-native'
+import * as c from '../colors'
 import {Touchable} from '../touchable'
 import Icon from 'react-native-vector-icons/Ionicons'
 import type {RouteType} from '../../types'
@@ -51,7 +52,7 @@ function openSettings(route, navigator) {
 
 const styles = StyleSheet.create({
   icon: {
-    color: 'white',
+    color: c.white,
     fontSize: 24,
   },
   button: {

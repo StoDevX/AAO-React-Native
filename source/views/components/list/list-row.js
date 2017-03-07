@@ -1,16 +1,20 @@
 // @flow
 import React from 'react'
 import {Platform, StyleSheet, View} from 'react-native'
+import * as c from '../colors'
 import {Touchable} from '../touchable'
 import {DisclosureArrow} from './disclosure-arrow'
 import noop from 'lodash/noop'
 import isNil from 'lodash/isNil'
 
 const styles = StyleSheet.create({
+  childWrapper: {
+    flex: 1,
+  },
   container: {
     flexDirection: 'row',
     paddingLeft: 15,
-    backgroundColor: 'white',
+    backgroundColor: c.white,
     ...Platform.select({
       ios: {
         paddingVertical: 8,
@@ -74,7 +78,7 @@ export function ListRow(props: PropsType) {
       ]}
       onPress={callback}
     >
-      <View style={[{flex: 1}, style]}>
+      <View style={[styles.childWrapper, style]}>
         {children}
       </View>
       {arrow}

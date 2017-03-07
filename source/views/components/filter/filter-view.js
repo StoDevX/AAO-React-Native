@@ -1,11 +1,17 @@
 // @flow
 import React from 'react'
-import {ScrollView} from 'react-native'
+import {ScrollView, StyleSheet} from 'react-native'
 import type {FilterType} from './types'
 import {FilterSection} from './section'
 import {TableView} from 'react-native-tableview-simple'
 import {connect} from 'react-redux'
 import get from 'lodash/get'
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+})
 
 type PropsType = {
   pathToFilters: string[],
@@ -29,7 +35,7 @@ export function FilterViewComponent(props: PropsType) {
   ))
 
   return (
-    <ScrollView style={{flex: 1}}>
+    <ScrollView style={styles.container}>
       <TableView>
         {contents}
       </TableView>

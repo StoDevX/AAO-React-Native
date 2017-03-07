@@ -6,6 +6,7 @@
 import React from 'react'
 import {Text, Platform, Navigator, StyleSheet} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
+import * as c from '../colors'
 import {Touchable} from '../touchable'
 import {OpenSettingsButton} from './special-settings'
 import type {RouteType, NavStateType} from '../../types'
@@ -60,13 +61,13 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 17,
-    color: 'white',
+    color: c.white,
     ...Platform.select({
       ios: {},
     }),
   },
   icon: {
-    color: 'white',
+    color: c.white,
     paddingRight: 6,
     ...Platform.select({
       ios: {

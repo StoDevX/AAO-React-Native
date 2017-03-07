@@ -5,6 +5,7 @@
 
 import React from 'react'
 import {Text, Dimensions, StyleSheet, Platform} from 'react-native'
+import * as c from '../colors'
 import type {RouteType} from '../../types'
 
 export function Title(route: RouteType) {
@@ -25,7 +26,7 @@ export function Title(route: RouteType) {
 
 const styles = StyleSheet.create({
   text: {
-    color: 'white',
+    color: c.white,
     ...Platform.select({
       ios: {
         fontFamily: 'System',

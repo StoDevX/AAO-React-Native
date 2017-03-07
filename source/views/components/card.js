@@ -1,13 +1,14 @@
 // @flow
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
+import * as c from './colors'
 
 const cardStyles = StyleSheet.create({
   card: {
     marginHorizontal: 10,
     paddingHorizontal: 10,
     paddingBottom: 4,
-    backgroundColor: 'white',
+    backgroundColor: c.white,
     borderRadius: 2,
     elevation: 2,
   },
@@ -16,17 +17,15 @@ const cardStyles = StyleSheet.create({
     paddingBottom: 6,
   },
   titleText: {
-    color: 'rgb(113, 113, 118)',
+    color: c.androidTextColor,
     fontWeight: 'bold',
   },
-  contentWrapper: {},
   footer: {
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: c.androidSeparator,
     paddingTop: 6,
     paddingBottom: 2,
   },
-  footerText: {},
 })
 
 export function Card(
@@ -43,13 +42,13 @@ export function Card(
         <Text selectable={true} style={cardStyles.titleText}>{header}</Text>
       </View>
 
-      <View style={cardStyles.contentWrapper}>
+      <View>
         {children}
       </View>
 
       {footer
         ? <View style={cardStyles.footer}>
-            <Text selectable={true} style={cardStyles.footerText}>
+            <Text selectable={true}>
               {footer}
             </Text>
           </View>

@@ -21,6 +21,9 @@ export const iosGray = silver
 
 export const androidLightBackground = 'rgb(244, 244, 244)'
 export const androidSeparator = 'rgb(224, 224, 224)'
+export const androidTextColor = 'rgb(113, 113, 118)'
+export const androidTabAccentColor = '#ffeb3b'
+
 export const iosLightBackground = 'rgb(240, 239, 245)'
 export const iosLightBorder = 'rgb(199, 199, 201)'
 export const iosText = 'rgb(199, 198, 206)'
