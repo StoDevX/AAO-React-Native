@@ -199,7 +199,6 @@ export class StudentOrgsView extends React.Component {
         data={this.state.orgs}
         cell={this.renderRow}
         // just setting cellHeight sends the wrong values on iOS.
-        cellHeight={rowHeight + (Platform.OS === 'ios' ? (11/12 * StyleSheet.hairlineWidth) : 0)}
         getSectionListTitle={this.getSectionListTitle}
         cellHeight={
           rowHeight +
