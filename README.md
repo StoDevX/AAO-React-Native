@@ -35,10 +35,10 @@ We use a continuous-integration (CI) system to make sure that the project still 
 
 We use a set of tools to enforce code style and find common bugs: [ESLint][eslint], [Flow][flow], [Jest][jest], and [Prettier][prettier].
 
-- ESLint finds and flags things that might be typos, or unintentional bugs: `npm run lint`
-- Flow looks for type errors (in JS? yes!): `npm run flow`
-- Jest runs our unit tests: `npm run test`
-- Prettier enforces a common style on the JS code, without us needing to edit anything: `npm run prettier`
+- `npm run lint`: ESLint finds and flags things that might be typos, or unintentional bugs
+- `npm run flow`: Flow looks for type errors (in JS? yes!)
+- `npm run test`: Jest runs our unit tests
+- `npm run prettier`: Prettier enforces a common style on the JS code, without us needing to edit anything
 
 Before you commit and push, you may wish to run those four commands. If you don't, TravisCI will run them for you and our StoDevX Bot will comment in the PR to let you know exactly what happened.
 
