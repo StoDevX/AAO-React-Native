@@ -3,6 +3,7 @@ parser: babel-eslint
 plugins:
   - babel
   - react
+  - react-native
   - flowtype
 
 extends:
@@ -82,3 +83,8 @@ rules:
   flowtype/define-flow-type: warn
   flowtype/use-flow-type: error
   flowtype/valid-syntax: error
+
+  # react-native rules
+  react-native/no-unused-styles: warn
+  react-native/no-inline-styles: warn
+  react-native/no-color-literals: warn
