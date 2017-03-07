@@ -16,6 +16,7 @@ export const silver = '#DDDDDD'
 // export const teal = '#39CCCC'
 export const white = '#FFFFFF'
 export const yellow = '#FFDC00'
+export const transparent = 'transparent'
 
 export const iosGray = silver
 
