@@ -83,9 +83,14 @@ export class StudentOrgsView extends React.Component {
           $groupableName: head(startCase(sortableName)),
         }
       })
+
       let sorted = sortBy(withSortableNames, '$sortableName')
       let grouped = groupBy(sorted, '$groupableName')
-      this.setState({orgs: grouped})
+
+      let newOrgs = sorted.filter(org => org.newOrg)
+      let orgs = {New: newOrgs, ...grouped}
+
+      this.setState({orgs: orgs})
     } catch (error) {
       tracker.trackException(error.message)
       this.setState({error: true})
@@ -117,6 +122,10 @@ export class StudentOrgsView extends React.Component {
         style={styles.rowSectionHeader}
       />
     )
+  };
+
+  getSectionListTitle = (name: string) => {
+    return name === 'New' ? '•' : name
   };
 
   renderRow = ({item}: {item: StudentOrgAbridgedType}) => {
@@ -183,6 +192,7 @@ export class StudentOrgsView extends React.Component {
       <StyledAlphabetListView
         data={this.state.orgs}
         cell={this.renderRow}
+        getSectionListTitle={this.getSectionListTitle}
         // just setting cellHeight sends the wrong values on iOS.
         cellHeight={
           rowHeight +
