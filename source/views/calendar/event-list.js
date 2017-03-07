@@ -6,6 +6,7 @@
 
 import React from 'react'
 import {StyleSheet} from 'react-native'
+import * as c from '../components/colors'
 import SimpleListView from '../components/listview'
 import type {EventType} from './types'
 import groupBy from 'lodash/groupBy'
@@ -77,6 +78,6 @@ export class EventList extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: c.white,
   },
 })
