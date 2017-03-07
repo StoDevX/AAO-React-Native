@@ -33,7 +33,7 @@ export default [
   {
     id: 'StudentOrgsCalendarView',
     title: 'Student Orgs',
-    rnVectorIcon: {iconName: 'happy'},
+    rnVectorIcon: {iconName: 'people'},
     component: PresenceCalendarView,
     props: {url: 'https://api.presence.io/stolaf/v1/events'},
   },
