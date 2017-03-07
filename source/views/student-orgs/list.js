@@ -85,7 +85,7 @@ export class StudentOrgsView extends React.Component {
       })
       // All orgs
       let sorted = sortBy(withSortableNames, '$sortableName')
-      let grouped = groupBy(sorted, '$groupableName')
+      let allOrgsGrouped = groupBy(sorted, '$groupableName')
       // New orgs
       let newOrgs = sorted.filter(org => org.newOrg).map(item => {
         return {
@@ -94,7 +94,7 @@ export class StudentOrgsView extends React.Component {
         }
       })
       let newOrgsGrouped = groupBy(newOrgs, '$groupableName')
-      let combined = {...newOrgsGrouped, ...grouped}
+      let combined = {...newOrgsGrouped, ...allOrgsGrouped}
       this.setState({orgs: combined})
     } catch (error) {
       tracker.trackException(error.message)
