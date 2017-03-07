@@ -194,8 +194,8 @@ export class StudentOrgsView extends React.Component {
       <StyledAlphabetListView
         data={this.state.orgs}
         cell={this.renderRow}
-        // just setting cellHeight sends the wrong values on iOS.
         getSectionListTitle={this.getSectionListTitle}
+        // just setting cellHeight sends the wrong values on iOS.
         cellHeight={
           rowHeight +
             (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
