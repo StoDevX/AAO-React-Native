@@ -136,6 +136,7 @@ class FancyMenuView extends React.Component {
     // group the tuples into an object (because ListView wants {key: value} not [key, value])
     const grouped = fromPairs(filteredByMenu)
 
+    const anyFiltersEnabled = filters.some(f => f.enabled)
     const specialsFilterEnabled = Boolean(
       filters.find(
         f =>
@@ -154,11 +155,19 @@ class FancyMenuView extends React.Component {
         />
       )
     }
-    if (!size(grouped)) {
+    else if (anyFiltersEnabled && !size(grouped)) {
       messageView = (
         <NoticeView
           style={styles.container}
           text="No items to show. Try changing the filters."
+        />
+      )
+    }
+    else if (!size(grouped)) {
+      messageView = (
+        <NoticeView
+          style={styles.container}
+          text="No items to show."
         />
       )
     }
