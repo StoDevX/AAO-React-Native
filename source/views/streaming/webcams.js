@@ -6,6 +6,7 @@
 
 import React from 'react'
 import {StyleSheet, View, Text, ScrollView, WebView} from 'react-native'
+import * as c from '../components/colors'
 import {data as webcams} from '../../../docs/webcams'
 
 // const inlineVideo = url => `
@@ -71,11 +72,11 @@ let styles = StyleSheet.create({
     paddingTop: 20,
   },
   webCamTitleBox: {
-    backgroundColor: 'rgb(248, 248, 248)',
+    backgroundColor: c.white,
     paddingBottom: 5,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: '#ebebeb',
+    borderColor: c.iosGray,
   },
   webcamName: {
     paddingTop: 5,
