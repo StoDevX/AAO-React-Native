@@ -72,9 +72,7 @@ const fileLog = (name, log) => {
     dedent`
     <details>
       <summary>${name}</summary>
-      <pre><code>
-        ${log}
-      </code></pre>
+      <pre><code>${log}</code></pre>
     </details>
   `,
   )
