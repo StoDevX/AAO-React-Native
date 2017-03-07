@@ -55,6 +55,9 @@ const styles = StyleSheet.create({
   rowText: {
     paddingVertical: 6,
   },
+  container: {
+    paddingTop: Platform.OS === 'ios' ? 20 : 0,
+  },
 })
 
 export class CarletonMenuPicker extends React.Component {
@@ -80,7 +83,7 @@ export class CarletonMenuPicker extends React.Component {
     }
 
     return (
-      <ScrollView style={{paddingTop: Platform.OS === 'ios' ? 20 : 0}}>
+      <ScrollView style={styles.container}>
         {carleton.map((loc: CarletonDetailMenuType, i, collection) => (
           <View key={i}>
             <ListRow

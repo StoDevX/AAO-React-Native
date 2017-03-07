@@ -2,6 +2,7 @@
 
 import React from 'react'
 import {View, StyleSheet} from 'react-native'
+import * as c from '../../components/colors'
 import {connect} from 'react-redux'
 import {updateMenuFilters} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
@@ -40,7 +41,10 @@ const leftSideSpacing = 28
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+  },
+  inner: {
+    flex: 1,
+    backgroundColor: c.white,
   },
 })
 
@@ -149,7 +153,7 @@ class FancyMenuView extends React.Component {
     if (specialsFilterEnabled && stationMenus.length === 0) {
       messageView = (
         <NoticeView
-          style={styles.container}
+          style={styles.inner}
           text="No items to show. There may be no specials today. Try changing the filters."
         />
       )
@@ -157,14 +161,14 @@ class FancyMenuView extends React.Component {
     if (!size(grouped)) {
       messageView = (
         <NoticeView
-          style={styles.container}
+          style={styles.inner}
           text="No items to show. Try changing the filters."
         />
       )
     }
 
     return (
-      <View style={{flex: 1}}>
+      <View style={styles.container}>
         <FilterMenuToolbar
           date={now}
           title={mealName}
@@ -174,7 +178,7 @@ class FancyMenuView extends React.Component {
         {messageView
           ? messageView
           : <SimpleListView
-              style={styles.container}
+              style={styles.inner}
               forceBottomInset={true}
               data={grouped}
               renderSeparator={this.renderSeparator}
