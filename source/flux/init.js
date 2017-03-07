@@ -13,10 +13,7 @@ import {
   validateLoginCredentials,
   loadFeedbackStatus,
 } from './parts/settings'
-import {
-  updateBalances,
-  updateCourses,
-} from './parts/sis'
+import {updateBalances, updateCourses} from './parts/sis'
 import {FINANCIALS_URL} from '../lib/financials/urls'
 
 function homescreen(store) {
@@ -28,7 +25,7 @@ function feedbackOptOutStatus(store) {
 }
 
 function sisLoginCredentials(store) {
-  loadLoginCredentials().then(({username, password}={}) => {
+  loadLoginCredentials().then(({username, password} = {}) => {
     if (!username || !password) return
 
     let action = setLoginCredentials(username, password)

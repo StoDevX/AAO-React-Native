@@ -11,7 +11,13 @@ import delay from 'delay'
 import size from 'lodash/size'
 import SimpleListView from '../components/listview'
 import {Column} from '../components/layout'
-import {ListRow, ListSeparator, ListSectionHeader, Detail, Title} from '../components/list'
+import {
+  ListRow,
+  ListSeparator,
+  ListSectionHeader,
+  Detail,
+  Title,
+} from '../components/list'
 import LoadingScreen from '../components/loading'
 import {NoticeView} from '../components/notice'
 import type {CourseType, CoursesByTermType} from '../../lib/courses'
@@ -30,7 +36,7 @@ class CoursesView extends React.Component {
     loading: boolean,
   } = {
     loading: false,
-  }
+  };
 
   props: CoursesViewPropsType;
 
@@ -45,15 +51,15 @@ class CoursesView extends React.Component {
     await delay(500 - elapsed)
 
     this.setState({loading: false})
-  }
+  };
 
   renderSectionHeader = (courses: CourseType[], term: string) => {
     return <ListSectionHeader style={styles.rowSectionHeader} title={term} />
-  }
+  };
 
   renderSeparator = (sectionId: string, rowId: string) => {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
-  }
+  };
 
   render() {
     if (this.props.error) {
@@ -63,17 +69,15 @@ class CoursesView extends React.Component {
     if (!this.props.loggedIn) {
       return (
         <NoticeView
-          text='Sorry, it looks like your SIS session timed out. Could you set up the Google login in Settings?'
-          buttonText='Open Settings'
-          onPress={() =>
-            this.props.navigator.push({
-              id: 'SettingsView',
-              title: 'Settings',
-              index: this.props.route.index + 1,
-              onDismiss: (route, navigator) => navigator.pop(),
-              sceneConfig: 'fromBottom',
-            })
-          }
+          text="Sorry, it looks like your SIS session timed out. Could you set up the Google login in Settings?"
+          buttonText="Open Settings"
+          onPress={() => this.props.navigator.push({
+            id: 'SettingsView',
+            title: 'Settings',
+            index: this.props.route.index + 1,
+            onDismiss: (route, navigator) => navigator.pop(),
+            sceneConfig: 'fromBottom',
+          })}
         />
       )
     }
@@ -83,7 +87,13 @@ class CoursesView extends React.Component {
     }
 
     if (!size(this.props.coursesByTerm)) {
-      return <NoticeView text='No courses found.' buttonText='Try again?' onPress={this.refresh} />
+      return (
+        <NoticeView
+          text="No courses found."
+          buttonText="Try again?"
+          onPress={this.refresh}
+        />
+      )
     }
 
     return (
@@ -96,15 +106,17 @@ class CoursesView extends React.Component {
         refreshing={this.state.loading}
         onRefresh={this.refresh}
       >
-        {(course: CourseType) =>
+        {(course: CourseType) => (
           <ListRow style={styles.rowContainer}>
             <Column>
               <Title>{course.name}</Title>
               <Detail>{course.deptnum}</Detail>
-              {course.instructors ? <Detail>{course.instructors}</Detail> : null}
+              {course.instructors
+                ? <Detail>{course.instructors}</Detail>
+                : null}
             </Column>
           </ListRow>
-        }}
+        )}}
       </SimpleListView>
     )
   }

@@ -15,8 +15,7 @@ import {menus} from './parts/menus'
 import {settings} from './parts/settings'
 import {sis} from './parts/sis'
 
-
-export function aao(state: Object={}, action: Object) {
+export function aao(state: Object = {}, action: Object) {
   return {
     app: app(state.app, action),
     homescreen: homescreen(state.homescreen, action),
@@ -26,15 +25,10 @@ export function aao(state: Object={}, action: Object) {
   }
 }
 
-
 const logger = createLogger({collapsed: () => true})
 const store = createStore(
   aao,
-  applyMiddleware(
-    reduxPromise,
-    reduxThunk,
-    logger
-  )
+  applyMiddleware(reduxPromise, reduxThunk, logger),
 )
 
 init(store)

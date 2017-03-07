@@ -171,6 +171,12 @@ script:
   - echo "loglevel=silent" >> .npmrc
 
   # JS
+  # Ensure prettiness
+  - |
+    if [[ $js ]]; then
+      npm run prettier:all
+      git diff --exit-code *.js source/ | tee logs/prettier
+    fi
   # Lint
   - if [[ $js ]]; then npm run lint | tee logs/eslint; fi
   # Validate data

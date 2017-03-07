@@ -45,15 +45,15 @@ export class BuildingHoursList extends React.Component {
       props: data,
       sceneConfig: Platform.OS === 'android' ? 'fromBottom' : undefined,
     })
-  }
+  };
 
   renderSectionHeader = (data: any, id: string) => {
     return <ListSectionHeader style={styles.rowSectionHeader} title={id} />
-  }
+  };
 
   renderSeparator = (sectionID: any, rowID: any) => {
     return <ListSeparator key={`${sectionID}-${rowID}`} />
-  }
+  };
 
   render() {
     return (
@@ -62,17 +62,18 @@ export class BuildingHoursList extends React.Component {
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
         contentContainerStyle={styles.container}
-        removeClippedSubviews={false}  // remove after https://github.com/facebook/react-native/issues/8607#issuecomment-241715202
+        removeClippedSubviews={false} // remove after https://github.com/facebook/react-native/issues/8607#issuecomment-241715202
         refreshing={this.props.loading}
         onRefresh={this.props.onRefresh}
       >
-        {(data: BuildingType) =>
+        {(data: BuildingType) => (
           <BuildingRow
             name={data.name}
             info={data}
             now={this.props.now}
             onPress={() => this.onPressRow(data)}
-          />}
+          />
+        )}
       </SimpleListView>
     )
   }

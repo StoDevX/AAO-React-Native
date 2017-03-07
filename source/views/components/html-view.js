@@ -7,7 +7,7 @@ import openUrl, {canOpenUrl} from '../components/open-url'
 export class HtmlView extends React.Component {
   props: {
     html: string,
-  }
+  };
   _webview: WebView;
 
   onNavigationStateChange = ({url}: {url: string}) => {
@@ -21,7 +21,7 @@ export class HtmlView extends React.Component {
     this._webview.goBack()
 
     return openUrl(url)
-  }
+  };
 
   render() {
     return (

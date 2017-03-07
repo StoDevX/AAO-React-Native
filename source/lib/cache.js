@@ -23,7 +23,9 @@ function annotateCacheEntry(stored) {
   }
 
   // migration from old storage
-  if (!('dateCached' in stored && 'timeToCache' in stored && 'value' in stored)) {
+  if (
+    !('dateCached' in stored && 'timeToCache' in stored && 'value' in stored)
+  ) {
     return {isCached: true, isExpired: true, value: stored}
   }
 
@@ -37,7 +39,6 @@ function annotateCacheEntry(stored) {
   return {isCached: true, isExpired, value: stored.value}
 }
 
-
 /// MARK: Utilities
 
 function setItem(key: string, value: any, cacheTime?: [number, string]) {
@@ -49,10 +50,9 @@ function setItem(key: string, value: any, cacheTime?: [number, string]) {
   return AsyncStorage.setItem(`aao:${key}`, JSON.stringify(dataToStore))
 }
 function getItem(key: string): CacheResultType<any> {
-  return AsyncStorage.getItem(`aao:${key}`)
-    .then(stored => annotateCacheEntry(JSON.parse(stored)))
+  return AsyncStorage.getItem(`aao:${key}`).then(stored =>
+    annotateCacheEntry(JSON.parse(stored)))
 }
-
 
 /// MARK: courses
 
@@ -73,7 +73,6 @@ export function setAllCourses(courses: CoursesByTermType) {
 export function getAllCourses(): CacheResultType<?CoursesByTermType> {
   return getItem(coursesKey)
 }
-
 
 /// MARK: Financials
 
@@ -129,7 +128,9 @@ type BalancesInputType = {
   daily: ?string,
   weekly: ?string,
 };
-export function setBalances({flex, ole, print, daily, weekly}: BalancesInputType) {
+export function setBalances(
+  {flex, ole, print, daily, weekly}: BalancesInputType,
+) {
   return Promise.all([
     setFlexBalance(flex),
     setOleBalance(ole),
@@ -147,15 +148,9 @@ type BalancesOutputType = {
   weekly: BaseCacheResultType<?string>,
   _isExpired: boolean,
   _isCached: boolean,
-}
+};
 export async function getBalances(): Promise<BalancesOutputType> {
-  const [
-    flex,
-    ole,
-    print,
-    daily,
-    weekly,
-  ] = await Promise.all([
+  const [flex, ole, print, daily, weekly] = await Promise.all([
     getFlexBalance(),
     getOleBalance(),
     getPrintBalance(),
@@ -163,8 +158,16 @@ export async function getBalances(): Promise<BalancesOutputType> {
     getWeeklyMealInfo(),
   ])
 
-  const _isExpired = (flex.isExpired || ole.isExpired || print.isExpired || daily.isExpired || weekly.isExpired)
-  const _isCached = (flex.isCached || ole.isCached || print.isCached || daily.isCached || weekly.isCached)
+  const _isExpired = flex.isExpired ||
+    ole.isExpired ||
+    print.isExpired ||
+    daily.isExpired ||
+    weekly.isExpired
+  const _isCached = flex.isCached ||
+    ole.isCached ||
+    print.isCached ||
+    daily.isCached ||
+    weekly.isCached
 
   return {flex, ole, print, daily, weekly, _isExpired, _isCached}
 }

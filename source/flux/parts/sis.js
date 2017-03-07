@@ -3,14 +3,9 @@
  * Reducer for app settings
  */
 
-import {
-  getBalances,
-} from '../../lib/financials'
+import {getBalances} from '../../lib/financials'
 
-import {
-  loadAllCourses,
-} from '../../lib/courses'
-
+import {loadAllCourses} from '../../lib/courses'
 
 export const UPDATE_OLE_DOLLARS = 'sis/UPDATE_OLE_DOLLARS'
 export const UPDATE_FLEX_DOLLARS = 'sis/UPDATE_FLEX_DOLLARS'
@@ -21,22 +16,32 @@ export const UPDATE_MEALS_WEEKLY = 'sis/UPDATE_MEALS_WEEKLY'
 export const UPDATE_MEALS_REMAINING = 'sis/UPDATE_MEALS_REMAINING'
 export const UPDATE_COURSES = 'sis/UPDATE_COURSES'
 
-export function updateBalances(forceFromServer: boolean=false) {
+export function updateBalances(forceFromServer: boolean = false) {
   return async (dispatch: () => {}, getState: any) => {
     const state = getState()
     const balances = await getBalances(state.app.isConnected, forceFromServer)
-    dispatch({type: UPDATE_BALANCES, error: balances.error, payload: balances.value})
+    dispatch({
+      type: UPDATE_BALANCES,
+      error: balances.error,
+      payload: balances.value,
+    })
   }
 }
 
-export function updateCourses(forceFromServer: bool=false) {
+export function updateCourses(forceFromServer: boolean = false) {
   return async (dispatch: () => {}, getState: any) => {
     const state = getState()
-    const courses = await loadAllCourses(state.app.isConnected, forceFromServer)
-    dispatch({type: UPDATE_COURSES, error: courses.error, payload: courses.value})
+    const courses = await loadAllCourses(
+      state.app.isConnected,
+      forceFromServer,
+    )
+    dispatch({
+      type: UPDATE_COURSES,
+      error: courses.error,
+      payload: courses.value,
+    })
   }
 }
-
 
 const initialBalancesState = {
   message: null,
@@ -46,7 +51,7 @@ const initialBalancesState = {
   daily: null,
   weekly: null,
 }
-function balances(state=initialBalancesState, action) {
+function balances(state = initialBalancesState, action) {
   const {type, payload, error} = action
 
   switch (type) {
@@ -77,9 +82,8 @@ function balances(state=initialBalancesState, action) {
   }
 }
 
-
 const initialCoursesState = {}
-function courses(state=initialCoursesState, action) {
+function courses(state = initialCoursesState, action) {
   const {type, payload} = action
 
   switch (type) {
@@ -91,9 +95,8 @@ function courses(state=initialCoursesState, action) {
   }
 }
 
-
 const initialSisPageState = {}
-export function sis(state: Object=initialSisPageState, action: Object) {
+export function sis(state: Object = initialSisPageState, action: Object) {
   return {
     balances: balances(state.balances, action),
     courses: courses(state.courses, action),

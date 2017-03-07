@@ -38,7 +38,7 @@ const buttonStyles = StyleSheet.create({
 class BalancesView extends React.Component {
   state = {
     loading: false,
-  }
+  };
 
   props: TopLevelViewPropsType & {
     flex: ?number,
@@ -46,7 +46,7 @@ class BalancesView extends React.Component {
     print: ?number,
     weeklyMeals: ?number,
     dailyMeals: ?number,
-    credentialsValid: bool,
+    credentialsValid: boolean,
     message: ?string,
 
     updateBalances: () => any,
@@ -63,13 +63,11 @@ class BalancesView extends React.Component {
     await delay(500 - elapsed)
 
     this.setState({loading: false})
-  }
+  };
 
   fetchData = async () => {
-    await Promise.all([
-      this.props.updateBalances(true),
-    ])
-  }
+    await Promise.all([this.props.updateBalances(true)])
+  };
 
   openSettings = () => {
     this.props.navigator.push({
@@ -79,7 +77,7 @@ class BalancesView extends React.Component {
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
       onDismiss: () => this.props.navigator.pop(),
     })
-  }
+  };
 
   render() {
     let {flex, ole, print, dailyMeals, weeklyMeals} = this.props
@@ -96,61 +94,67 @@ class BalancesView extends React.Component {
         }
       >
         <TableView>
-          <Section header='BALANCES'>
+          <Section header="BALANCES">
             <View style={styles.balancesRow}>
               <FinancialBalancesCell
-                label='Flex'
+                label="Flex"
                 value={flex}
                 indeterminate={loading}
               />
 
               <FinancialBalancesCell
-                label='Ole'
+                label="Ole"
                 value={ole}
                 indeterminate={loading}
               />
 
               <FinancialBalancesCell
-                label='Copy/Print'
+                label="Copy/Print"
                 value={print}
                 indeterminate={loading}
                 style={{borderRightWidth: 0}}
               />
             </View>
 
-            {this.props.credentialsValid ?
-              null
+            {this.props.credentialsValid
+              ? null
               : <Cell
-                cellStyle='Basic'
-                title='Log in with St. Olaf'
-                accessory='DisclosureIndicator'
-                onPress={this.openSettings}
-              />}
+                  cellStyle="Basic"
+                  title="Log in with St. Olaf"
+                  accessory="DisclosureIndicator"
+                  onPress={this.openSettings}
+                />}
 
-            {this.props.message ? <Cell cellStyle='Basic' title={this.props.message} /> : null}
+            {this.props.message
+              ? <Cell cellStyle="Basic" title={this.props.message} />
+              : null}
           </Section>
 
-          <Section header='MEAL PLAN'>
-            <Cell cellStyle='RightDetail'
-              title='Daily Meals Left'
+          <Section header="MEAL PLAN">
+            <Cell
+              cellStyle="RightDetail"
+              title="Daily Meals Left"
               detail={loading ? '…' : getFormattedMealsRemaining(dailyMeals)}
             />
 
-            <Cell cellStyle='RightDetail'
-              title='Weekly Meals Left'
+            <Cell
+              cellStyle="RightDetail"
+              title="Weekly Meals Left"
               detail={loading ? '…' : getFormattedMealsRemaining(weeklyMeals)}
             />
 
-            {this.props.credentialsValid ?
-              null
+            {this.props.credentialsValid
+              ? null
               : <Cell
-                cellStyle='Basic'
-                title='Log in with St. Olaf'
-                accessory='DisclosureIndicator'
-                onPress={this.openSettings}
-              />}
+                  cellStyle="Basic"
+                  title="Log in with St. Olaf"
+                  accessory="DisclosureIndicator"
+                  onPress={this.openSettings}
+                />}
 
-            {this.props.message ? <Cell cellStyle='Basic' title={this.props.message} /> : null}
+            {this.props.message
+              ? <Cell cellStyle="Basic" title={this.props.message} />
+              : null}
           </Section>
         </TableView>
       </ScrollView>
@@ -226,7 +230,6 @@ let styles = StyleSheet.create({
   },
 })
 
-
 function getFormattedCurrency(value: ?number): string {
   if (isNil(value)) {
     return 'N/A'
@@ -241,15 +244,33 @@ function getFormattedMealsRemaining(value: ?number): string {
   return (value: any).toString()
 }
 
-function FinancialBalancesCell({indeterminate, label, value, style}: {
-  indeterminate: boolean,
-  label: string,
-  value: ?number,
-  style?: any,
-}) {
+function FinancialBalancesCell(
+  {
+    indeterminate,
+    label,
+    value,
+    style,
+  }: {
+    indeterminate: boolean,
+    label: string,
+    value: ?number,
+    style?: any,
+  },
+) {
   return (
-    <View style={[styles.rectangle, buttonStyles.common, buttonStyles.balances, style]}>
-      <Text selectable={true} style={styles.financialText} autoAdjustsFontSize={true}>
+    <View
+      style={[
+        styles.rectangle,
+        buttonStyles.common,
+        buttonStyles.balances,
+        style,
+      ]}
+    >
+      <Text
+        selectable={true}
+        style={styles.financialText}
+        autoAdjustsFontSize={true}
+      >
         {indeterminate ? '…' : getFormattedCurrency(value)}
       </Text>
       <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>

@@ -14,7 +14,7 @@ export default class TabbedView extends React.Component {
 
   state = {
     selectedTab: this.props.tabs[0].id,
-  }
+  };
 
   componentWillMount() {
     this.onChangeTab(this.props.tabs[0].id)
@@ -25,13 +25,16 @@ export default class TabbedView extends React.Component {
   onChangeTab = (tabId: string) => {
     tracker.trackScreenView(tabId)
     this.setState({selectedTab: tabId})
-  }
+  };
 
   render() {
     let {navigator, route, tabs} = this.props
     let baseProps = {navigator, route}
     return (
-      <TabBarIOS tintColor={c.mandarin} style={[styles.container, this.props.style]}>
+      <TabBarIOS
+        tintColor={c.mandarin}
+        style={[styles.container, this.props.style]}
+      >
         {tabs.map(tab => {
           let icon = {}
           if (tab.rnVectorIcon) {
@@ -39,22 +42,24 @@ export default class TabbedView extends React.Component {
             icon.iconName = `ios-${name}-outline`
             icon.selectedIconName = `ios-${name}`
           }
-          return <Icon.TabBarItemIOS
-            key={tab.id}
-            // apply either the vector icon, a given raster (base64) icon, or nothing.
-            {...icon}
-            title={tab.title}
-            style={styles.listViewStyle}
-            selected={this.state.selectedTab === tab.id}
-            translucent={true}
-            onPress={() => this.onChangeTab(tab.id)}
-          >
-            <tab.component
-              {...this.props.childProps}
-              {...(tab.props || {})}
-              {...baseProps}
-            />
-          </Icon.TabBarItemIOS>
+          return (
+            <Icon.TabBarItemIOS
+              key={tab.id}
+              // apply either the vector icon, a given raster (base64) icon, or nothing.
+              {...icon}
+              title={tab.title}
+              style={styles.listViewStyle}
+              selected={this.state.selectedTab === tab.id}
+              translucent={true}
+              onPress={() => this.onChangeTab(tab.id)}
+            >
+              <tab.component
+                {...this.props.childProps}
+                {...tab.props || {}}
+                {...baseProps}
+              />
+            </Icon.TabBarItemIOS>
+          )
         })}
       </TabBarIOS>
     )

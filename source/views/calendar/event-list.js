@@ -32,17 +32,20 @@ export class EventList extends React.Component {
       if (event.startTime.isSame(now, 'day')) {
         return 'Today'
       }
-      return event.startTime.format('ddd  MMM Do')  // google returns events in CST
+      return event.startTime.format('ddd  MMM Do') // google returns events in CST
     })
   }
 
-  renderSectionHeader = (sectionData: EventType[], sectionIdentifier: string) => {
+  renderSectionHeader = (
+    sectionData: EventType[],
+    sectionIdentifier: string,
+  ) => {
     return <ListSectionHeader title={sectionIdentifier} spacing={{left: 10}} />
-  }
+  };
 
   renderSeparator = (sectionID: any, rowID: any) => {
     return <ListSeparator fullWidth={true} key={`${sectionID}-${rowID}`} />
-  }
+  };
 
   render() {
     if (this.props.message) {
@@ -50,7 +53,7 @@ export class EventList extends React.Component {
     }
 
     if (!size(this.props.events)) {
-      return <NoticeView text='No events.' />
+      return <NoticeView text="No events." />
     }
 
     const events = this.groupEvents(this.props.events, this.props.now)

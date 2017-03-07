@@ -9,14 +9,14 @@ import {connect} from 'react-redux'
 class TokenLoginSection extends React.Component {
   state = {
     loading: false,
-  }
+  };
 
   props: TopLevelViewPropsType & {
     loggedIn: boolean,
     logIn: (tokenStatus: boolean) => any,
     logOut: () => any,
     message: ?string,
-  }
+  };
 
   logIn = () => {
     this.props.navigator.push({
@@ -28,11 +28,11 @@ class TokenLoginSection extends React.Component {
         onLoginComplete: this.props.logIn,
       },
     })
-  }
+  };
 
   logOut = () => {
     this.props.logOut()
-  }
+  };
 
   render() {
     let {loggedIn, message} = this.props
@@ -40,22 +40,21 @@ class TokenLoginSection extends React.Component {
 
     return (
       <Section
-        header='GOOGLE LOGIN'
-        footer='Google login allows SIS access, which enables flex dollars, ole dollars, and course information.'
+        header="GOOGLE LOGIN"
+        footer="Google login allows SIS access, which enables flex dollars, ole dollars, and course information."
       >
         {message ? <Cell title={'⚠️ ' + message} /> : null}
 
         <LoginButton
           loading={loading}
           loggedIn={loggedIn}
-          label='Google'
+          label="Google"
           onPress={loggedIn ? this.logOut : this.logIn}
         />
       </Section>
     )
   }
 }
-
 
 function mapStateToProps(state) {
   return {
