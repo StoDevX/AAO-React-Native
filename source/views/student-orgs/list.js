@@ -143,11 +143,11 @@ export class StudentOrgsView extends React.Component {
         fullWidth={true}
       >
         <Row alignItems="flex-start">
-          <View style={styles.badgeContainer}>
-            <Text style={[styles.badge, item.newOrg && styles.newOrgBadge]}>
+          <Text style={[styles.badge, styles.badgeContainer]}>
+            <Text style={[item.newOrg && styles.newOrgBadge]}>
               •
             </Text>
-          </View>
+          </Text>
 
           <Column flex={1}>
             <Title lines={1}>{item.name}</Title>
