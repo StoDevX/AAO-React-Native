@@ -7,7 +7,6 @@ import type {BuildingType, DayOfWeekEnumType} from './types'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
-import {Row} from '../components/layout'
 import ParallaxView from 'react-native-parallax-view'
 import * as c from '../components/colors'
 import {
@@ -54,16 +53,8 @@ const styles = StyleSheet.create({
   scrollableStyle: {
     backgroundColor: c.iosLightBackground,
   },
-  scheduleDays: {
-    flex: 1,
-    minWidth: 100,
-    paddingRight: 16,
-  },
   bold: {
     fontWeight: '600',
-  },
-  scheduleHours: {
-    flex: 0,
   },
 })
 
@@ -151,30 +142,11 @@ export class BuildingHoursDetailView extends React.Component {
                   return (
                     <Cell
                       key={i}
-                      cellContentView={
-                        <Row>
-                          <Text
-                            selectable={true}
-                            numberOfLines={1}
-                            style={[
-                              styles.scheduleDays,
-                              isActiveSchedule ? styles.bold : null,
-                            ]}
-                          >
-                            {summarizeDays(schedule.days)}
-                          </Text>
-                          <Text
-                            selectable={true}
-                            numberOfLines={1}
-                            style={[
-                              styles.scheduleHours,
-                              isActiveSchedule ? styles.bold : null,
-                            ]}
-                          >
-                            {formatBuildingTimes(schedule, this.state.now)}
-                          </Text>
-                        </Row>
-                      }
+                      cellStyle="RightDetail"
+                      title={summarizeDays(schedule.days)}
+                      titleTextStyle={isActiveSchedule ? styles.bold : null}
+                      detail={formatBuildingTimes(schedule, this.state.now)}
+                      detailTextStyle={isActiveSchedule ? styles.bold : null}
                     />
                   )
                 })}
