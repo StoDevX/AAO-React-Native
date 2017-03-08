@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import {StyleSheet, Platform, Share} from 'react-native'
+import * as c from '../components/colors'
 import SimpleListView from '../components/listview'
 import type {StoryType} from './types'
 import {ListSeparator} from '../components/list'
@@ -12,7 +13,7 @@ import {Touchable} from '../components/touchable'
 
 const styles = StyleSheet.create({
   listContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: c.white,
   },
 })
 

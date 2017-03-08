@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
+import * as c from './colors'
 import {Button} from './button'
 
 const styles = StyleSheet.create({
@@ -9,7 +10,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: c.white,
   },
   text: {
     textAlign: 'center',

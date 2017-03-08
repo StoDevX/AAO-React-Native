@@ -102,6 +102,7 @@
     "eslint-plugin-babel": "4.1.1",
     "eslint-plugin-flowtype": "2.30.3",
     "eslint-plugin-react": "6.10.0",
+    "eslint-plugin-react-native": "2.3.1",
     "execa": "0.6.0",
     "flow-bin": "0.38.0",
     "jest": "18.1.0",

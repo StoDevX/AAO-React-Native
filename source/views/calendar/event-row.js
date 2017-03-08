@@ -10,10 +10,16 @@ import {fastGetTrimmedText} from '../../lib/html'
 import {Bar} from './vertical-bar'
 
 const styles = StyleSheet.create({
+  row: {
+    paddingVertical: 2,
+  },
   timeContainer: {
     width: 70,
     justifyContent: 'space-between',
     paddingVertical: 3,
+  },
+  bar: {
+    marginHorizontal: 10,
   },
   time: {
     textAlign: 'right',
@@ -31,14 +37,14 @@ export default function EventView(props: EventType) {
 
   return (
     <ListRow
-      contentContainerStyle={{paddingVertical: 2}}
+      contentContainerStyle={styles.row}
       arrowPosition="none"
       fullWidth={true}
     >
       <Row>
         <CalendarTimes event={props} style={styles.timeContainer} />
 
-        <Bar style={{marginHorizontal: 10}} />
+        <Bar style={styles.bar} />
 
         <Column flex={1} paddingTop={2} paddingBottom={3}>
           <Title style={styles.title}>{title}</Title>

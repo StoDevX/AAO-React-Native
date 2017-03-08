@@ -28,9 +28,6 @@ export function NewsRow({onPress, story}: NewsRowPropsType) {
 }
 
 const styles = StyleSheet.create({
-  listRow: {
-    backgroundColor: 'transparent',
-  },
   image: {
     marginLeft: 8,
     height: 50,

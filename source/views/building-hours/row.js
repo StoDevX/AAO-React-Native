@@ -21,6 +21,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  titleText: {
+    flex: 1,
+  },
+  detailWrapper: {
+    paddingTop: 3,
+  },
+  detailRow: {
+    paddingTop: 0,
+  },
   subtitleText: {
     fontWeight: '400',
     color: c.iosDisabledText,
@@ -60,7 +69,7 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
     <ListRow onPress={onPress} arrowPosition="center" direction="column">
       <Column>
         <Row style={styles.title}>
-          <Title lines={1} style={{flex: 1}}>
+          <Title lines={1} style={styles.titleText}>
             <Text>{name}</Text>
             {info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
             {info.subtitle
@@ -76,9 +85,9 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
           />
         </Row>
 
-        <View style={{paddingTop: 3}}>
+        <View style={styles.detailWrapper}>
           {hours.map(({isActive, label, status}, i) => (
-            <Detail key={i} style={{paddingTop: 0}}>
+            <Detail key={i} style={styles.detailRow}>
               <BuildingTimeSlot
                 highlight={hours.length > 1 && isActive}
                 label={label}

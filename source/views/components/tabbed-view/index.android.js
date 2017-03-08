@@ -15,10 +15,10 @@ const styles = StyleSheet.create({
     backgroundColor: c.mandarin,
   },
   indicator: {
-    backgroundColor: '#ffeb3b',
+    backgroundColor: c.androidTabAccentColor,
   },
   label: {
-    color: '#fff',
+    color: c.white,
     fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
     fontWeight: '400',
   },

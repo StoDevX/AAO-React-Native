@@ -5,6 +5,7 @@
 
 import React from 'react'
 import {Navigator, Platform, StyleSheet} from 'react-native'
+import * as c from '../colors'
 import {CloseScreenButton} from './special-closescreen'
 import {EditHomeButton} from './special-edithome'
 import type {RouteType} from '../../types'
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
     }),
   },
   icon: {
-    color: 'white',
+    color: c.white,
     ...Platform.select({
       ios: {
         fontSize: 32,

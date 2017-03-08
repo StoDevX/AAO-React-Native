@@ -16,11 +16,15 @@ export const silver = '#DDDDDD'
 // export const teal = '#39CCCC'
 export const white = '#FFFFFF'
 export const yellow = '#FFDC00'
+export const transparent = 'transparent'
 
 export const iosGray = silver
 
 export const androidLightBackground = 'rgb(244, 244, 244)'
 export const androidSeparator = 'rgb(224, 224, 224)'
+export const androidTextColor = 'rgb(113, 113, 118)'
+export const androidTabAccentColor = '#ffeb3b'
+
 export const iosLightBackground = 'rgb(240, 239, 245)'
 export const iosLightBorder = 'rgb(199, 199, 201)'
 export const iosText = 'rgb(199, 198, 206)'
@@ -33,6 +37,8 @@ export const iosHeaderTopBorder = 'rgb(199, 199, 199)'
 export const iosHeaderBottomBorder = 'rgb(224, 224, 224)'
 
 export const tableviewAccessoryColor = 'rgb(0, 122, 255)'
+
+export const semitransparentGray = 'rgba(0,0,0,0.2)'
 
 // MARK: Oleville colors
 export const theLatest = '#00BFFF'

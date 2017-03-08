@@ -25,16 +25,6 @@ import * as c from '../components/colors'
 
 import type {TopLevelViewPropsType} from '../types'
 
-const buttonStyles = StyleSheet.create({
-  common: {
-    backgroundColor: c.white,
-  },
-  balances: {
-    borderRightWidth: StyleSheet.hairlineWidth,
-    borderRightColor: c.iosGray,
-  },
-})
-
 class BalancesView extends React.Component {
   state = {
     loading: false,
@@ -112,7 +102,7 @@ class BalancesView extends React.Component {
                 label="Copy/Print"
                 value={print}
                 indeterminate={loading}
-                style={{borderRightWidth: 0}}
+                style={styles.finalCell}
               />
             </View>
 
@@ -189,9 +179,22 @@ let cellEdgePadding = 10
 
 let styles = StyleSheet.create({
   stage: {
-    backgroundColor: '#EFEFF4',
+    backgroundColor: c.iosLightBackground,
     paddingTop: 20,
     paddingBottom: 20,
+  },
+
+  common: {
+    backgroundColor: c.white,
+  },
+
+  balances: {
+    borderRightWidth: StyleSheet.hairlineWidth,
+    borderRightColor: c.iosGray,
+  },
+
+  finalCell: {
+    borderRightWidth: 0,
   },
 
   balancesRow: {
@@ -218,9 +221,6 @@ let styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '200',
     fontSize: 23,
-  },
-  rectangleButtonIcon: {
-    color: c.black,
   },
   rectangleButtonText: {
     paddingTop: 15,
@@ -258,14 +258,7 @@ function FinancialBalancesCell(
   },
 ) {
   return (
-    <View
-      style={[
-        styles.rectangle,
-        buttonStyles.common,
-        buttonStyles.balances,
-        style,
-      ]}
-    >
+    <View style={[styles.rectangle, styles.common, styles.balances, style]}>
       <Text
         selectable={true}
         style={styles.financialText}

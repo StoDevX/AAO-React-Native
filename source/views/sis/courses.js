@@ -9,6 +9,7 @@ import {StyleSheet} from 'react-native'
 import {connect} from 'react-redux'
 import delay from 'delay'
 import size from 'lodash/size'
+import * as c from '../components/colors'
 import SimpleListView from '../components/listview'
 import {Column} from '../components/layout'
 import {
@@ -140,6 +141,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(CoursesView)
 
 const styles = StyleSheet.create({
   listContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: c.white,
   },
 })

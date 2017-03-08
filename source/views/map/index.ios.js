@@ -25,11 +25,4 @@ const styles = StyleSheet.create({
     position: 'relative',
     flex: 1,
   },
-  map: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
 })
