@@ -9,7 +9,7 @@ const readFile = filename => {
   }
 }
 
-const jsFiles = danger.git.created_files.filter(path => path.endsWith('.js'));
+const jsFiles = danger.git.created_files.filter(path => path.endsWith('.js'))
 
 // new js files should have `@flow` at the top
 jsFiles
