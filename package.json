@@ -11,7 +11,7 @@
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && npm cache clean",
     "danger": "danger",
     "data": "node scripts/bundle-data.js data/ docs/",
-    "deep-clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf ios/build/ModuleCache/* && rm -rf node_modules/ && npm cache clean && npm install",  
+    "deep-clean": "npm run clean && rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf ios/build/ModuleCache/* && rm -rf node_modules/",  
     "flow": "flow",
     "ios": "react-native run-ios",
     "lint": "eslint --cache source/ *.js",
