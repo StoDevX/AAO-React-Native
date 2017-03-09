@@ -5,7 +5,7 @@ export const buildingImages = {
   'bookstore': require('./buildinghours/w1440/bookstore.jpg'),
   'buntrock': require('./buildinghours/w1440/buntrock.jpg'),
   'cage': require('./buildinghours/w1440/cage.jpg'),
-  'center-for-arts-and-dance': require('./buildinghours/w1440/dittmann.jpg'),
+  'center-for-arts-and-dance': require('./buildinghours/w1440/center-for-arts-and-dance.jpg'),
   'christiansen': require('./buildinghours/w1440/christiansen.jpg'),
   'convenience': require('./buildinghours/w1440/convenience.jpg'),
   'disco': require('./buildinghours/w1440/disco.jpg'),
