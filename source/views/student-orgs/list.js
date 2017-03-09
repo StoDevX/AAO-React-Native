@@ -41,13 +41,13 @@ const styles = StyleSheet.create({
   rowSectionHeader: {
     height: headerHeight,
   },
-  badge: {
+  badgeContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'flex-start',
     width: leftSideSpacing,
   },
-  badgeContainer: {
+  badge: {
     fontSize: Platform.OS === 'ios' ? 24 : 28,
     color: c.transparent,
   },
