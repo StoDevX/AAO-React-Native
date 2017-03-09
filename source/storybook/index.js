@@ -47,11 +47,10 @@ import {
 import TransportationView from '../views/transportation'
 
 import SettingsView from '../views/settings'
-import SISLoginView from '../views/settings/login'
 import CreditsView from '../views/settings/credits'
 import PrivacyView from '../views/settings/privacy'
-
 import LegalView from '../views/settings/legal'
+
 import {StudentOrgsView, StudentOrgsDetailView} from '../views/student-orgs'
 import {FaqView} from '../views/faqs'
 
@@ -62,7 +61,6 @@ type ViewCollectionType = {
   [key: string]: {
     [key: string]: {
       view: ReactClass<*>,
-      props: Object,
       delay: number,
     },
   },
@@ -76,40 +74,43 @@ export class SnapshotsView extends React.Component {
   _ref: any;
 
   views: ViewCollectionType = {
+    buildinghours: {
+      list: {view: () => <BuildingHoursView />, delay: 100}
+    },
     contacts: {
-      list: {view: ContactsView, props: {}, delay: 100},
+      list: {view: () => <ContactsView />, delay: 100},
     },
     dictionary: {
-      list: {view: DictionaryView, props: {}, delay: 100},
+      list: {view: () => <DictionaryView />, delay: 100},
     },
     home: {
-      home: {view: HomeView, props: {}, delay: 100},
-      edit: {view: EditHomeView, props: {}, delay: 100},
+      home: {view: () => <HomeView />, delay: 100},
+      edit: {view: () => <EditHomeView />, delay: 100},
     },
     news: {
-      tabs: {view: NewsView, props: {}, delay: 5000},
+      tabs: {view: () => <NewsView />, delay: 5000},
     },
     settings: {
-      index: {view: SettingsView, props: {}, delay: 100},
-      credits: {view: CreditsView, props: {}, delay: 100},
-      faqs: {view: FaqView, props: {}, delay: 100},
-      legal: {view: LegalView, props: {}, delay: 100},
-      privacy: {view: PrivacyView, props: {}, delay: 100},
+      index: {view: () => <SettingsView />, delay: 100},
+      credits: {view: () => <CreditsView />, delay: 100},
+      faqs: {view: () => <FaqView />, delay: 100},
+      legal: {view: () => <LegalView />, delay: 100},
+      privacy: {view: () => <PrivacyView />, delay: 100},
     },
     sis: {
-      tabs: {view: SISView, props: {}, delay: 100},
-      balances: {view: BalancesView, props: {}, delay: 100},
+      tabs: {view: () => <SISView />, delay: 100},
+      balances: {view: () => <BalancesView />, delay: 100},
     },
     streaming: {
-      tabs: {view: StreamingView, props: {}, delay: 100},
-      radio: {view: KSTOView, props: {}, delay: 100},
-      webcams: {view: WebcamsView, props: {}, delay: 1000},
+      tabs: {view: () => <StreamingView />, delay: 100},
+      radio: {view: () => <KSTOView />, delay: 100},
+      webcams: {view: () => <WebcamsView />, delay: 1000},
     },
     studentorgs: {
-      list: {view: StudentOrgsView, props: {}, delay: 2000},
+      list: {view: () => <StudentOrgsView />, delay: 2000},
     },
     transit: {
-      tabs: {view: TransportationView, props: {}, delay: 100},
+      tabs: {view: () => <TransportationView />, delay: 100},
     },
   };
 
@@ -188,7 +189,7 @@ export class SnapshotsView extends React.Component {
           ref={ref => this._ref = ref}
           style={[styles.viewContainer, childStyle]}
         >
-          <selected.view {...selected.props} />
+          {selected.view()}
         </View>
       </ScrollView>
     )
