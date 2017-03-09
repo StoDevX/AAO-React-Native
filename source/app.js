@@ -71,8 +71,6 @@ function renderScene(route, navigator) {
       return <DictionaryView {...props} />
     case 'DictionaryDetailView':
       return <DictionaryDetailView {...props} />
-    case 'MapView':
-      return <MapView {...props} />
     case 'StreamingView':
       return <StreamingView {...props} />
     case 'NewsView':
