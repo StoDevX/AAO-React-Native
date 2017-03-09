@@ -18,10 +18,11 @@ export default function OlafMapView() {
     <View style={styles.container}>
       <Text>{mapInfo.description}</Text>
       <Button
-        onPress={() => Linking.openURL(mapInfo.url).catch(err => {
-          tracker.trackException(err.message)
-          console.error('An error occurred', err)
-        })}
+        onPress={() =>
+          Linking.openURL(mapInfo.url).catch(err => {
+            tracker.trackException(err.message)
+            console.error('An error occurred', err)
+          })}
         title="View Map"
       />
     </View>
