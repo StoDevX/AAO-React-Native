@@ -72,13 +72,14 @@ class CoursesView extends React.Component {
         <NoticeView
           text="Sorry, it looks like your SIS session timed out. Could you set up the Google login in Settings?"
           buttonText="Open Settings"
-          onPress={() => this.props.navigator.push({
-            id: 'SettingsView',
-            title: 'Settings',
-            index: this.props.route.index + 1,
-            onDismiss: (route, navigator) => navigator.pop(),
-            sceneConfig: 'fromBottom',
-          })}
+          onPress={() =>
+            this.props.navigator.push({
+              id: 'SettingsView',
+              title: 'Settings',
+              index: this.props.route.index + 1,
+              onDismiss: (route, navigator) => navigator.pop(),
+              sceneConfig: 'fromBottom',
+            })}
         />
       )
     }
