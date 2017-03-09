@@ -21,6 +21,10 @@ class OddsAndEndsSection extends React.Component {
     })
   };
 
+  onFaqButton = () => this.onPressButton('FaqView', 'FAQs');
+  onCreditsButton = () => this.onPressButton('CreditsView', 'Credits');
+  onPrivacyButton = () => this.onPressButton('PrivacyView', 'Privacy Policy');
+  onLegalButton = () => this.onPressButton('LegalView', 'Legal');
   render() {
     return (
       <Section header="ODDS &amp; ENDS">
@@ -34,25 +38,11 @@ class OddsAndEndsSection extends React.Component {
           onChange={val => this.props.onChangeFeedbackToggle(!val)}
         />
 
-        <PushButtonCell
-          title="FAQ"
-          onPress={() => this.onPressButton('FaqView', 'FAQs')}
-        />
+        <PushButtonCell title="FAQ" onPress={this.onFaqButton} />
+        <PushButtonCell title="Credits" onPress={this.onCreditsButton} />
+        <PushButtonCell title="Privacy Policy" onPress={this.onPrivacyButton} />
+        <PushButtonCell title="Legal" onPress={this.onLegalButton} />
 
-        <PushButtonCell
-          title="Credits"
-          onPress={() => this.onPressButton('CreditsView', 'Credits')}
-        />
-
-        <PushButtonCell
-          title="Privacy Policy"
-          onPress={() => this.onPressButton('PrivacyView', 'Privacy Policy')}
-        />
-
-        <PushButtonCell
-          title="Legal"
-          onPress={() => this.onPressButton('LegalView', 'Legal')}
-        />
       </Section>
     )
   }
