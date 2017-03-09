@@ -3,14 +3,15 @@
 
 import React from 'react'
 import {
-  View,
   Button,
-  Picker,
-  ScrollView,
   Dimensions,
+  Navigator,
+  Picker,
   Platform,
+  ScrollView,
   StatusBar,
   StyleSheet,
+  View,
 } from 'react-native'
 
 import delay from 'delay'
@@ -21,6 +22,7 @@ import toPairs from 'lodash/toPairs'
 import {white} from '../views/components/colors'
 
 import CalendarView from '../views/calendar'
+
 import {ContactsView} from '../views/contacts'
 
 import {DictionaryView, DictionaryDetailView} from '../views/dictionary'
@@ -34,6 +36,7 @@ import WebcamsView from '../views/streaming/webcams'
 import {MenusView} from '../views/menus'
 import {BonAppHostedMenu} from '../views/menus/menu-bonapp'
 import {FilterView} from '../views/components/filter'
+
 import NewsView from '../views/news'
 import NewsItemView from '../views/news/news-item'
 
@@ -44,15 +47,16 @@ import {
   BuildingHoursView,
   BuildingHoursDetailView,
 } from '../views/building-hours'
+
 import TransportationView from '../views/transportation'
 
 import SettingsView from '../views/settings'
 import CreditsView from '../views/settings/credits'
 import PrivacyView from '../views/settings/privacy'
 import LegalView from '../views/settings/legal'
+import {FaqView} from '../views/faqs'
 
 import {StudentOrgsView, StudentOrgsDetailView} from '../views/student-orgs'
-import {FaqView} from '../views/faqs'
 
 const {DocumentDir} = dirs
 const outputDir = `${DocumentDir}/aao-view-shots`
@@ -66,6 +70,11 @@ type ViewCollectionType = {
   },
 };
 
+const defaultProps = {
+  navigator: Navigator,
+  route: {id: '', title: '', index: 0},
+}
+
 export class SnapshotsView extends React.Component {
   state = {
     viewPath: 'streaming.radio',
@@ -75,7 +84,7 @@ export class SnapshotsView extends React.Component {
 
   views: ViewCollectionType = {
     buildinghours: {
-      list: {view: () => <BuildingHoursView />, delay: 100}
+      list: {view: () => <BuildingHoursView {...defaultProps} />, delay: 100}
     },
     contacts: {
       list: {view: () => <ContactsView />, delay: 100},
@@ -88,17 +97,17 @@ export class SnapshotsView extends React.Component {
       edit: {view: () => <EditHomeView />, delay: 100},
     },
     news: {
-      tabs: {view: () => <NewsView />, delay: 5000},
+      tabs: {view: () => <NewsView {...defaultProps} />, delay: 5000},
     },
     settings: {
-      index: {view: () => <SettingsView />, delay: 100},
+      index: {view: () => <SettingsView {...defaultProps} />, delay: 100},
       credits: {view: () => <CreditsView />, delay: 100},
       faqs: {view: () => <FaqView />, delay: 100},
       legal: {view: () => <LegalView />, delay: 100},
       privacy: {view: () => <PrivacyView />, delay: 100},
     },
     sis: {
-      tabs: {view: () => <SISView />, delay: 100},
+      tabs: {view: () => <SISView {...defaultProps} />, delay: 100},
       balances: {view: () => <BalancesView />, delay: 100},
     },
     streaming: {
