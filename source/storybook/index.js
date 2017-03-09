@@ -19,7 +19,12 @@ import {takeSnapshot, dirs} from 'react-native-view-shot'
 import get from 'lodash/get'
 import flatten from 'lodash/flatten'
 import toPairs from 'lodash/toPairs'
+
 import * as c from '../views/components/colors'
+import SimpleListView from '../views/components/listview'
+SimpleListView.initialListSize = 18
+import {StyledAlphabetListView} from '../views/components/alphabet-listview'
+StyledAlphabetListView.initialListSize = 18
 
 import CalendarView from '../views/calendar'
 
@@ -89,7 +94,7 @@ export class SnapshotsView extends React.Component {
 
   views: ViewCollectionType = {
     buildinghours: {
-      list: {view: () => <BuildingHoursView {...defaultProps} />, delay: 100}
+      list: {view: () => <BuildingHoursView {...defaultProps} />, delay: 1500}
     },
     calendar: {
       tabs: {view: () => <CalendarView {...defaultProps} />, delay: 1000},
@@ -98,11 +103,11 @@ export class SnapshotsView extends React.Component {
       list: {view: () => <ContactsView />, delay: 100},
     },
     dictionary: {
-      list: {view: () => <DictionaryView />, delay: 100},
+      list: {view: () => <DictionaryView />, delay: 1000},
     },
     home: {
       home: {view: () => <HomeView />, delay: 100},
-      edit: {view: () => <EditHomeView />, delay: 100},
+      edit: {view: () => <EditHomeView />, delay: 500},
     },
     menus: {
       tabs: {view: () => <MenusView {...defaultProps} />, delay: 2000},
@@ -132,7 +137,7 @@ export class SnapshotsView extends React.Component {
       webcams: {view: () => <WebcamsView />, delay: 1000},
     },
     studentorgs: {
-      list: {view: () => <StudentOrgsView />, delay: 2000},
+      list: {view: () => <StudentOrgsView />, delay: 2500},
     },
     transit: {
       tabs: {view: () => <TransportationView />, delay: 100},
@@ -158,7 +163,6 @@ export class SnapshotsView extends React.Component {
       this.setState({viewPath})
       await delay(args.delay || 1000)
       await this.saveSnapshot()
-      await delay(100)
     }
   };
 
