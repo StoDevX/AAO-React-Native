@@ -19,6 +19,7 @@ import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.microsoft.codepush.react.CodePush;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
+import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +50,7 @@ public class MainApplication extends Application implements ReactApplication {
         new KeychainPackage(),
         new ReactNativeOneSignalPackage(),
         new RNDeviceInfo(),
+        new RNViewShotPackage(),
         new VectorIconsPackage()
       );
     }
