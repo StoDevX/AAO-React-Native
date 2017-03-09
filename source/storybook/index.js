@@ -19,7 +19,7 @@ import {takeSnapshot, dirs} from 'react-native-view-shot'
 import get from 'lodash/get'
 import flatten from 'lodash/flatten'
 import toPairs from 'lodash/toPairs'
-import {white} from '../views/components/colors'
+import * as c from '../views/components/colors'
 
 import CalendarView from '../views/calendar'
 
@@ -196,7 +196,7 @@ export class SnapshotsView extends React.Component {
       <ScrollView style={styles.container}>
         <StatusBar barStyle="light-content" />
 
-        <View>
+        <View style={styles.settings}>
           <Picker
             onValueChange={this.onChangeView}
             selectedValue={this.state.viewPath}
@@ -225,11 +225,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  settings: {
+    backgroundColor: c.white,
+  },
   buttonBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+    marginBottom: 15,
   },
   viewContainer: {
-    backgroundColor: white,
+    ...Platform.select({
+      ios: {
+        backgroundColor: c.iosLightBackground,
+      },
+      android: {
+        backgroundColor: c.androidLightBackground,
+      },
+    })
   },
 })
