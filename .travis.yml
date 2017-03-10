@@ -200,10 +200,10 @@ script:
   - if [[ $js ]]; then npm run danger; fi
 
   # iOS
-  - if [[ $ios ]]; then bundle exec fastlane ios ci_run; fi
+  - if [[ $ios ]]; then bundle exec fastlane ios ci-run; fi
 
   # Android
-  - if [[ $android ]]; then bundle exec fastlane android ci_run; fi
+  - if [[ $android ]]; then bundle exec fastlane android ci-run; fi
 
 
 after_success:
