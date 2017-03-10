@@ -34,18 +34,17 @@ platform :android do
       gradle_file: lane_context[:GRADLE_FILE],
     )
 
-    package_set_data(data: {:version => "#{options[:version]}.#{options[:build]}"})
+    package_set_data(data: {version: "#{options[:version]}.#{options[:build]}"})
   end
 
   desc 'Run the appropriate action on CI'
   lane :ci_run do
     authorize_ci_for_keys
 
-    case
-      when ENV['run_deploy'] == "1" then
-        auto_beta
-      else
-        build
+    if ENV['run_deploy'] == "1"
+      auto_beta
+    else
+      build
     end
   end
 end
