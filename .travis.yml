@@ -110,6 +110,7 @@ before_install:
   - npm config set progress=false
 
   # Dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
+  - echo $PATH
   - PATH=`echo $PATH | sed "s/\.\/node_modules\/\.bin//g"`
   - export PATH=$PATH
   - echo $PATH
