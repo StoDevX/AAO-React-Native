@@ -77,11 +77,10 @@ platform :ios do
     authorize_ci_for_keys
     ci_keychains
 
-    case
-      when ENV['run_deploy'] == '1' then
-        auto_beta
-      else
-        build
+    if ENV['run_deploy'] == '1'
+      auto_beta
+    else
+      build
     end
   end
 
