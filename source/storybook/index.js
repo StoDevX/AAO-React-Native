@@ -30,7 +30,7 @@ import CalendarView from '../views/calendar'
 
 import {ContactsView} from '../views/contacts'
 
-import {DictionaryView, DictionaryDetailView} from '../views/dictionary'
+import {DictionaryView} from '../views/dictionary'
 
 import {HomeView, EditHomeView} from '../views/home'
 
@@ -39,20 +39,13 @@ import KSTOView from '../views/streaming/radio'
 import WebcamsView from '../views/streaming/webcams'
 
 import {MenusView} from '../views/menus'
-import {BonAppHostedMenu} from '../views/menus/menu-bonapp'
-import {GitHubHostedMenu} from '../views/menus/menu-github'
-import {FilterView} from '../views/components/filter'
 
 import NewsView from '../views/news'
-import NewsItemView from '../views/news/news-item'
 
 import SISView from '../views/sis'
 import BalancesView from '../views/sis/balances'
 
-import {
-  BuildingHoursView,
-  BuildingHoursDetailView,
-} from '../views/building-hours'
+import {BuildingHoursView} from '../views/building-hours'
 
 import TransportationView from '../views/transportation'
 
@@ -67,7 +60,7 @@ import OddsAndEndsSection from '../views/settings/sections/odds-and-ends'
 import SupportSection from '../views/settings/sections/support'
 import {FaqView} from '../views/faqs'
 
-import {StudentOrgsView, StudentOrgsDetailView} from '../views/student-orgs'
+import {StudentOrgsView} from '../views/student-orgs'
 
 const {DocumentDir} = dirs
 const outputDir = `${DocumentDir}/aao-view-shots`
@@ -112,16 +105,6 @@ export class SnapshotsView extends React.Component {
     },
     menus: {
       tabs: {view: () => <MenusView {...defaultProps} />, delay: 2000},
-      pause: {
-        view: () => (
-          <GitHubHostedMenu
-            {...defaultProps}
-            name="pause"
-            loadingMessage={[]}
-          />
-        ),
-        delay: 2000,
-      },
     },
     news: {
       tabs: {view: () => <NewsView {...defaultProps} />, delay: 5000},
