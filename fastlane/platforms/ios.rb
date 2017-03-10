@@ -54,7 +54,7 @@ platform :ios do
       xcodeproj: ENV['GYM_PROJECT'],
     )
 
-    package_set_data(data: {:version => "#{options[:version]}.#{options[:build]}"})
+    package_set_data(data: {version: "#{options[:version]}.#{options[:build]}"})
   end
 
   desc 'Fix keychain issues for iOS signing'
