@@ -18,7 +18,7 @@ platform :ios do
   end
 
   desc 'Go rogue'
-  lane :go_rogue do
+  lane :'go-rogue' do
     activate_rogue_team
   end
 
@@ -79,7 +79,7 @@ platform :ios do
   end
 
   desc 'Run iOS builds or tests, as appropriate'
-  lane :ci_run do
+  lane :'ci-run' do
     authorize_ci_for_keys
     ci_keychains
 
@@ -91,7 +91,7 @@ platform :ios do
   end
 
   desc 'In case match needs to be updated - probably never needs to be run'
-  lane :update_match do
+  lane :'update-match' do
     match
   end
 end

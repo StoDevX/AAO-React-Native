@@ -38,7 +38,7 @@ platform :android do
   end
 
   desc 'Run the appropriate action on CI'
-  lane :ci_run do
+  lane :'ci-run' do
     authorize_ci_for_keys
 
     if ENV['run_deploy'] == "1"

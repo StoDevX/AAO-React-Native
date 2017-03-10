@@ -57,9 +57,9 @@ Makes a build
 fastlane android beta
 ```
 Submit a new Beta Build to HockeyApp
-### android ci_run
+### android ci-run
 ```
-fastlane android ci_run
+fastlane android ci-run
 ```
 Run the appropriate action on CI
 
@@ -76,9 +76,9 @@ Runs all the tests
 fastlane ios screenshot
 ```
 Take screenshots
-### ios go_rogue
+### ios go-rogue
 ```
-fastlane ios go_rogue
+fastlane ios go-rogue
 ```
 Go rogue
 ### ios build-rogue
@@ -96,14 +96,14 @@ Provisions the profiles; bumps the build number; builds the app
 fastlane ios beta
 ```
 Submit a new Beta Build to HockeyApp
-### ios ci_run
+### ios ci-run
 ```
-fastlane ios ci_run
+fastlane ios ci-run
 ```
 Run iOS builds or tests, as appropriate
-### ios update_match
+### ios update-match
 ```
-fastlane ios update_match
+fastlane ios update-match
 ```
 In case match needs to be updated - probably never needs to be run
 
