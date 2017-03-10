@@ -5,7 +5,15 @@ end
 
 # Gets the "current" version, either from Travis or from Hockey
 def current_build_number()
-  ENV['TRAVIS_BUILD_NUMBER'] || latest_hockeyapp_version_number + 1
+  if ENV['TRAVIS_BUILD_NUMBER']
+    ENV['TRAVIS_BUILD_NUMBER']
+  end
+
+  begin
+    latest_hockeyapp_version_number + 1
+  rescue
+    1
+  end
 end
 
 # Add the github token for stodevx-bot to the CI machine
