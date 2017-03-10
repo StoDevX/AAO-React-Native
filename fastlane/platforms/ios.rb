@@ -58,7 +58,7 @@ platform :ios do
   end
 
   desc 'Fix keychain issues for iOS signing'
-  lane :ci_keychains do
+  private_lane :ci_keychains do
     keychain_name = ENV['MATCH_KEYCHAIN_NAME']
     password = ENV['MATCH_KEYCHAIN_PASSWORD']
 

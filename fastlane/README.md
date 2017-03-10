@@ -91,11 +91,6 @@ Provisions the profiles; bumps the build number; builds the app
 fastlane ios beta
 ```
 Submit a new Beta Build to HockeyApp
-### ios ci_keychains
-```
-fastlane ios ci_keychains
-```
-Fix keychain issues for iOS signing
 ### ios ci_run
 ```
 fastlane ios ci_run
