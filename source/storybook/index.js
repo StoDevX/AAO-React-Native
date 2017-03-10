@@ -74,11 +74,11 @@ type ViewCollectionType = {
   },
 };
 
-const Nav = ({children}: {children?: Function}) =>
+const Nav = ({children}: {children?: Function}) => (
   <Navigator
     renderScene={(route, navigator) => children && children({route, navigator})}
   />
-
+)
 
 export class SnapshotsView extends React.Component {
   state = {
@@ -89,10 +89,16 @@ export class SnapshotsView extends React.Component {
 
   views: ViewCollectionType = {
     buildinghours: {
-      list: {view: () => <Nav>{props => <BuildingHoursView {...props} />}</Nav>, delay: 1500},
+      list: {
+        view: () => <Nav>{props => <BuildingHoursView {...props} />}</Nav>,
+        delay: 1500,
+      },
     },
     calendar: {
-      tabs: {view: () => <Nav>{props => <CalendarView {...props} />}</Nav>, delay: 1000},
+      tabs: {
+        view: () => <Nav>{props => <CalendarView {...props} />}</Nav>,
+        delay: 1000,
+      },
     },
     contacts: {
       list: {view: () => <ContactsView />, delay: 100},
@@ -105,13 +111,22 @@ export class SnapshotsView extends React.Component {
       edit: {view: () => <EditHomeView />, delay: 500},
     },
     menus: {
-      tabs: {view: () => <Nav>{props => <MenusView {...props} />}</Nav>, delay: 2000},
+      tabs: {
+        view: () => <Nav>{props => <MenusView {...props} />}</Nav>,
+        delay: 2000,
+      },
     },
     news: {
-      tabs: {view: () => <Nav>{props => <NewsView {...props} />}</Nav>, delay: 5000},
+      tabs: {
+        view: () => <Nav>{props => <NewsView {...props} />}</Nav>,
+        delay: 5000,
+      },
     },
     settings: {
-      index: {view: () => <Nav>{props => <SettingsView {...props} />}</Nav>, delay: 100},
+      index: {
+        view: () => <Nav>{props => <SettingsView {...props} />}</Nav>,
+        delay: 100,
+      },
       credits: {view: () => <CreditsView />, delay: 100},
       faqs: {view: () => <FaqView />, delay: 100},
       legal: {view: () => <LegalView />, delay: 100},
@@ -125,7 +140,10 @@ export class SnapshotsView extends React.Component {
       'section-odds and ends': {view: () => <OddsAndEndsSection />, delay: 100},
     },
     sis: {
-      tabs: {view: () => <Nav>{props => <SISView {...props} />}</Nav>, delay: 100},
+      tabs: {
+        view: () => <Nav>{props => <SISView {...props} />}</Nav>,
+        delay: 100,
+      },
       balances: {view: () => <BalancesView />, delay: 100},
     },
     streaming: {
