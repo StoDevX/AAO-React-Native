@@ -22,6 +22,12 @@ platform :ios do
     activate_rogue_team
   end
 
+  desc 'Build, but rogue'
+  lane :'build-rogue' do
+    activate_rogue_team
+    build
+  end
+
   desc 'Provisions the profiles; bumps the build number; builds the app'
   lane :build do
     match(readonly: true)

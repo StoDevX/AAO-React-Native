@@ -81,6 +81,11 @@ Take screenshots
 fastlane ios go_rogue
 ```
 Go rogue
+### ios build-rogue
+```
+fastlane ios build-rogue
+```
+Build, but rogue
 ### ios build
 ```
 fastlane ios build
