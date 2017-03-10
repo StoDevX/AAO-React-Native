@@ -28,31 +28,31 @@ matrix:
       node_js: '7'
       env: {js: true}
 
-    - os: linux
-      dist: precise
-      sudo: required
-      language: android
-      jdk: oraclejdk8
-      env: {android: true, can_deploy: true}
-      android:
-        components:
-          - tools
-          - platform-tools
-          - build-tools-23.0.1
-          - build-tools-23.0.2
-          - build-tools-25.0.2
-          - android-23
-          - android-25
-          - extra-android-m2repository
-          - extra-google-m2repository
-          - extra-android-support
+    # - os: linux
+    #   dist: precise
+    #   sudo: required
+    #   language: android
+    #   jdk: oraclejdk8
+    #   env: [android=true, can_deploy=true]
+    #   android:
+    #     components:
+    #       - tools
+    #       - platform-tools
+    #       - build-tools-23.0.1
+    #       - build-tools-23.0.2
+    #       - build-tools-25.0.2
+    #       - android-23
+    #       - android-25
+    #       - extra-android-m2repository
+    #       - extra-google-m2repository
+    #       - extra-android-support
 
     # - os: linux
     #   dist: precise
     #   sudo: required
     #   language: android
     #   jdk: oraclejdk8
-    #   env: {android: true, emulator: true}
+    #   env: [android=true, emulator=true]
     #   android:
     #     components:
     #       - tools
@@ -64,11 +64,11 @@ matrix:
     #       - extra-android-support
     #       - sys-img-armeabi-v7a-google_apis-23
 
-    - os: osx
-      language: objective-c
-      osx_image: xcode8.1
-      node_js: '7'
-      env: {ios: true, can_deploy: true}
+    # - os: osx
+    #   language: objective-c
+    #   osx_image: xcode8.1
+    #   node_js: '7'
+    #   env: [ios=true, can_deploy=true]
 
 
 # As seen in http://stackoverflow.com/a/31882307/2347774
