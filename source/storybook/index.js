@@ -60,7 +60,8 @@ import SettingsView from '../views/settings'
 import CreditsView from '../views/settings/credits'
 import PrivacyView from '../views/settings/privacy'
 import LegalView from '../views/settings/legal'
-import CredentialsLoginSection from '../views/settings/sections/login-credentials'
+import CredentialsLoginSection
+  from '../views/settings/sections/login-credentials'
 import TokenLoginSection from '../views/settings/sections/login-token'
 import OddsAndEndsSection from '../views/settings/sections/odds-and-ends'
 import SupportSection from '../views/settings/sections/support'
@@ -94,7 +95,7 @@ export class SnapshotsView extends React.Component {
 
   views: ViewCollectionType = {
     buildinghours: {
-      list: {view: () => <BuildingHoursView {...defaultProps} />, delay: 1500}
+      list: {view: () => <BuildingHoursView {...defaultProps} />, delay: 1500},
     },
     calendar: {
       tabs: {view: () => <CalendarView {...defaultProps} />, delay: 1000},
@@ -111,7 +112,16 @@ export class SnapshotsView extends React.Component {
     },
     menus: {
       tabs: {view: () => <MenusView {...defaultProps} />, delay: 2000},
-      pause: {view: () => <GitHubHostedMenu {...defaultProps} name='pause' loadingMessage={[]} />, delay: 2000},
+      pause: {
+        view: () => (
+          <GitHubHostedMenu
+            {...defaultProps}
+            name="pause"
+            loadingMessage={[]}
+          />
+        ),
+        delay: 2000,
+      },
     },
     news: {
       tabs: {view: () => <NewsView {...defaultProps} />, delay: 5000},
@@ -122,7 +132,10 @@ export class SnapshotsView extends React.Component {
       faqs: {view: () => <FaqView />, delay: 100},
       legal: {view: () => <LegalView />, delay: 100},
       privacy: {view: () => <PrivacyView />, delay: 100},
-      'section-credentials': {view: () => <CredentialsLoginSection />, delay: 100},
+      'section-credentials': {
+        view: () => <CredentialsLoginSection />,
+        delay: 100,
+      },
       'section-token': {view: () => <TokenLoginSection />, delay: 100},
       'section-support': {view: () => <SupportSection />, delay: 100},
       'section-odds and ends': {view: () => <OddsAndEndsSection />, delay: 100},
@@ -245,6 +258,6 @@ const styles = StyleSheet.create({
       android: {
         backgroundColor: c.androidLightBackground,
       },
-    })
+    }),
   },
 })
