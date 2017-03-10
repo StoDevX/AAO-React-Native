@@ -220,8 +220,8 @@ script:
 
 
 after_success:
+  # todo: test this on a forked build w/maintainer access to the branch
   - |
-    # todo: test this on a forked build w/maintainer access to the branch
     if [[ $js && $TRAVIS_PULL_REQUEST != "false" ]]; then
       set -x
       git checkout "$BRANCH"
