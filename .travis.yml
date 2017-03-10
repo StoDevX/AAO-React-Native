@@ -99,8 +99,10 @@ before_install:
   # force node 7 on the android builds
   - |
     if [[ $android ]]; then
+      set -x
       nvm install 7
       nvm use 7
+      set +x
     fi
 
   # turn off fancy npm stuff
@@ -126,8 +128,10 @@ before_install:
   # make sure to use ruby 2.3
   - |
     if [[ $android || $ios ]]; then
+      set -x
       rvm use 2.3 --install --binary --fuzzy
       gem install bundler
+      set +x
     fi
 
 
@@ -143,12 +147,14 @@ before_script:
   # Fire up the Android emulator
   - |
     if [[ $android && $emulator ]]; then
+      set -x
       EmuName="react-native"
       mkdir -p "$HOME/.android/avd/$EmuName.avd/"
       echo no | android create avd --force -n "$EmuName" -t android-23 --abi google_apis/armeabi-v7a
       emulator -avd "$EmuName" -no-audio -no-window &
       android-wait-for-emulator
       adb shell input keyevent 82 &
+      set +x
     fi
 
   # Fix keychain issues for iOS signing
@@ -161,7 +167,6 @@ script:
 
   # Make sure that a failing command in a pipe fails the build
   - set -o pipefail
-  - set -x
 
   # ensure the env file exists and fill it out
   - touch .env.js
@@ -175,8 +180,10 @@ script:
   # Ensure prettiness
   - |
     if [[ $js ]]; then
+      set -x
       npm run prettier
       git diff --exit-code *.js source/ | tee logs/prettier
+      set +x
     fi
   # Lint
   - if [[ $js ]]; then npm run lint | tee logs/eslint; fi
@@ -185,6 +192,7 @@ script:
   # Ensure that the data files have been updated
   - |
     if [[ $js ]]; then
+      set -x
       npm run bundle-data
       if ! git diff --quiet docs/; then
         git checkout "$BRANCH"
@@ -192,6 +200,7 @@ script:
         git commit -m "update docs [skip ci]"
         git checkout "$TRAVIS_COMMIT"
       fi
+      set +x
     fi
   # Type check
   - if [[ $js ]]; then npm run flow -- check --quiet | tee logs/flow; fi
@@ -211,16 +220,19 @@ script:
 
 
 after_success:
-  - set -x
   - |
     # todo: test this on a forked build w/maintainer access to the branch
     if [[ $js && $TRAVIS_PULL_REQUEST != "false" ]]; then
+      set -x
       git checkout "$BRANCH"
       git push "$SSH_REPO" "$BRANCH"
       git checkout "$TRAVIS_COMMIT"
+      set +x
     fi
   - |
     if [[ $js ]]; then
+      set -x
       npm install coveralls
       ./node_modules/.bin/coveralls < ./coverage/lcov.info
+      set +x
     fi
