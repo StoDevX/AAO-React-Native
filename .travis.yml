@@ -91,6 +91,11 @@ before_install:
   - export REPO=$(git config remote.origin.url)
   - export SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 
+  # ensure that the PR branch exists locally
+  - git config --add remote.origin.fetch "+refs/heads/$BRANCH:refs/remotes/origin/$BRANCH"
+  - git fetch --depth 10
+  - git branch "$BRANCH"
+
   # only deploy from the once-daily cron-triggered jobs
   - run_deploy=0
   - if [[ $can_deploy && $TRAVIS_EVENT_TYPE == "cron" ]]; then run_deploy=1; fi
