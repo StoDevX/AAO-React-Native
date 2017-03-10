@@ -11,15 +11,11 @@ let iosOnDismissListener = null
 function startStatusBarColorChanger() {
   SafariView.isAvailable()
     .then(() => {
-      iosOnShowListener = SafariView.addEventListener(
-        'onShow',
-        () => StatusBar.setBarStyle('dark-content'),
-      )
+      iosOnShowListener = SafariView.addEventListener('onShow', () =>
+        StatusBar.setBarStyle('dark-content'))
 
-      iosOnDismissListener = SafariView.addEventListener(
-        'onDismiss',
-        () => StatusBar.setBarStyle('light-content'),
-      )
+      iosOnDismissListener = SafariView.addEventListener('onDismiss', () =>
+        StatusBar.setBarStyle('light-content'))
     })
     .catch(() => {})
 }
@@ -50,11 +46,13 @@ function genericOpen(url: string) {
 }
 
 function iosOpen(url: string) {
-  return SafariView.isAvailable()
-    // if it's around, open in safari
-    .then(() => SafariView.show({url}))
-    // fall back to opening in default browser
-    .catch(() => genericOpen(url))
+  return (
+    SafariView.isAvailable()
+      // if it's around, open in safari
+      .then(() => SafariView.show({url}))
+      // fall back to opening in default browser
+      .catch(() => genericOpen(url))
+  )
 }
 
 function androidOpen(url: string) {

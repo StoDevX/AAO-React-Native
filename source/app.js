@@ -24,7 +24,6 @@ import {
 import CalendarView from './views/calendar'
 import {ContactsView} from './views/contacts'
 import {DictionaryView, DictionaryDetailView} from './views/dictionary'
-import {DirectoryView} from './views/directory'
 import {HomeView, EditHomeView} from './views/home'
 import StreamingView from './views/streaming'
 import {MenusView} from './views/menus'
@@ -61,8 +60,6 @@ function renderScene(route, navigator) {
       return <BonAppHostedMenu {...props} />
     case 'FilterView':
       return <FilterView {...props} />
-    case 'DirectoryView':
-      return <DirectoryView {...props} />
     case 'CalendarView':
       return <CalendarView {...props} />
     case 'ContactsView':

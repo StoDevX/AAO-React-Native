@@ -43,10 +43,11 @@ export default function OtherModesView() {
             {data.description}
           </Text>
           <Button
-            onPress={() => trackedOpenUrl({
-              url: data.url,
-              id: `Transportation_OtherModes_${data.name.replace(' ', '')}View`,
-            })}
+            onPress={() =>
+              trackedOpenUrl({
+                url: data.url,
+                id: `Transportation_OtherModes_${data.name.replace(' ', '')}View`,
+              })}
             title="More info"
           />
         </View>

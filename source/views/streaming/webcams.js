@@ -25,7 +25,8 @@ import {data as webcams} from '../../../docs/webcams'
 //   </video>
 // `
 
-const videoAsThumbnail = url => `
+const videoAsThumbnail = url =>
+  `
   <style>
     body {margin: 0}
     * {box-sizing: border-box}
