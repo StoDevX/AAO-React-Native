@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e -x
+set -e -v -x
 
 # Make sure that a failing command in a pipe fails the build
 set -o pipefail

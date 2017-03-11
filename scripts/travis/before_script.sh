@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e -x
+set -e -v -x
 
 # Fire up the Android emulator
 if [[ $ANDROID && $USE_EMULATOR = yes ]]; then
