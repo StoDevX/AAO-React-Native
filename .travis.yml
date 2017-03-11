@@ -23,6 +23,7 @@ matrix:
       dist: trusty
       sudo: false
       language: node_js
+      node_js: 7
       env: [JS=yes]
 
     - &android-base
@@ -59,6 +60,7 @@ matrix:
     - os: osx
       language: objective-c
       osx_image: xcode8.1
+      node_js: 7
       env: [IOS=yes, CAN_DEPLOY=yes]
 
 
