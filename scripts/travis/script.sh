@@ -25,7 +25,9 @@ function commit-on-travis {
 if [[ $JS ]]; then
   # Ensure prettiness
   npm run prettier
-  git diff --exit-code ./*.js source/ | tee logs/prettier
+  if ! git diff --quiet ./*.js source/; then
+    commit-on-travis "prettify" ./*.js source/
+  fi
 
   # Lint
   npm run lint | tee logs/eslint
