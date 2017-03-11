@@ -13,10 +13,10 @@ env:
   global:
     # `match` keychain info – the values don't matter, they're defined
     # here so they're consistent throughout
-    MATCH_KEYCHAIN_NAME: travis-ios-keychain
-    MATCH_KEYCHAIN_PASSWORD: alpine
+    - MATCH_KEYCHAIN_NAME=travis-ios-keychain
+    - MATCH_KEYCHAIN_PASSWORD=alpine
     # this just gives us a nice label to use
-    ENCRYPTION_LABEL: 199c454344e1
+    - ENCRYPTION_LABEL=199c454344e1
 
 matrix:
   fast_finish: true
