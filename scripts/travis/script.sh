@@ -16,9 +16,9 @@ mkdir -p logs/
 
 function commit-on-travis {
   # shellcheck disable=SC2086
-  git add $1
+  git add "${@:2}"
   git checkout "$BRANCH"
-  git commit -m "$2 [skip ci]"
+  git commit -m "$1 [skip ci]"
   git checkout "$TRAVIS_COMMIT"
   PUSH_BRANCH=1
 }
@@ -38,7 +38,7 @@ if [[ $JS ]]; then
   # Ensure that the data files have been updated
   npm run bundle-data
   if ! git diff --quiet docs/; then
-    commit-on-travis "docs/" "update docs"
+    commit-on-travis "update docs" docs/
   fi
 
   # Type check
