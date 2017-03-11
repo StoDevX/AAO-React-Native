@@ -17,7 +17,7 @@ function commit-on-travis {
   git checkout "$BRANCH"
   git commit -m "$1 [skip ci]"
   git checkout "$TRAVIS_COMMIT"
-  PUSH_BRANCH=1
+  touch .needs-push
 }
 
 
