@@ -30,7 +30,7 @@ matrix:
       sudo: false
       language: node_js
       node_js: '7'
-      env: {js: true}
+      env: [JS=yes]
 
     - &android-base
       os: linux
@@ -38,7 +38,7 @@ matrix:
       sudo: required
       language: android
       jdk: oraclejdk8
-      env: [android=true, CAN_DEPLOY=yes]
+      env: [ANDROID=yes, CAN_DEPLOY=yes]
       android:
         components:
           - tools
@@ -53,7 +53,7 @@ matrix:
           - extra-android-support
 
     # - <<: *android-base
-    #   env: [android=true, USE_EMULATOR=yes]
+    #   env: [ANDROID=yes, USE_EMULATOR=yes]
     #   android:
     #     components:
     #       - tools
@@ -69,7 +69,7 @@ matrix:
       language: objective-c
       osx_image: xcode8.1
       node_js: '7'
-      env: [ios=true, CAN_DEPLOY=yes]
+      env: [IOS=yes, CAN_DEPLOY=yes]
 
 
 # As seen in http://stackoverflow.com/a/31882307/2347774
@@ -102,7 +102,7 @@ before_install:
 
   # force node 7 on the android builds
   - |
-    if [[ $android ]]; then
+    if [[ $ANDROID ]]; then
       set -x
       nvm install 7
       nvm use 7
@@ -131,7 +131,7 @@ before_install:
 
   # make sure to use ruby 2.3
   - |
-    if [[ $android || $ios ]]; then
+    if [[ $ANDROID || $IOS ]]; then
       set -x
       rvm use 2.3 --install --binary --fuzzy
       gem install bundler
@@ -144,13 +144,13 @@ install:
   # install packages
   - npm install
   # install fastlane
-  - if [[ $android || $ios ]]; then bundle install --deployment; fi
+  - if [[ $ANDROID || $IOS ]]; then bundle install --deployment; fi
 
 
 before_script:
   # Fire up the Android emulator
   - |
-    if [[ $android && $USE_EMULATOR ]]; then
+    if [[ $ANDROID && $USE_EMULATOR ]]; then
       set -x
       EmuName="react-native"
       mkdir -p "$HOME/.android/avd/$EmuName.avd/"
@@ -162,7 +162,7 @@ before_script:
     fi
 
   # Fix keychain issues for iOS signing
-  - if [[ $ios ]]; then bundle exec fastlane ios ci_keychains; fi
+  - if [[ $IOS ]]; then bundle exec fastlane ios ci_keychains; fi
 
 
 script:
@@ -183,19 +183,19 @@ script:
   # JS
   # Ensure prettiness
   - |
-    if [[ $js ]]; then
+    if [[ $JS ]]; then
       set -x
       npm run prettier
       git diff --exit-code *.js source/ | tee logs/prettier
       set +x
     fi
   # Lint
-  - if [[ $js ]]; then npm run lint | tee logs/eslint; fi
+  - if [[ $JS ]]; then npm run lint | tee logs/eslint; fi
   # Validate data
-  - if [[ $js ]]; then npm run validate-data -- --quiet | tee logs/validate-data; fi
+  - if [[ $JS ]]; then npm run validate-data -- --quiet | tee logs/validate-data; fi
   # Ensure that the data files have been updated
   - |
-    if [[ $js ]]; then
+    if [[ $JS ]]; then
       set -x
       npm run bundle-data
       if ! git diff --quiet docs/; then
@@ -208,26 +208,26 @@ script:
       set +x
     fi
   # Type check
-  - if [[ $js ]]; then npm run flow -- check --quiet | tee logs/flow; fi
+  - if [[ $JS ]]; then npm run flow -- check --quiet | tee logs/flow; fi
   # Build the bundles
-  - if [[ $js ]]; then npm run bundle:ios | tee logs/bundle-ios; fi
-  - if [[ $js ]]; then npm run bundle:android | tee logs/bundle-android; fi
+  - if [[ $JS ]]; then npm run bundle:ios | tee logs/bundle-ios; fi
+  - if [[ $JS ]]; then npm run bundle:android | tee logs/bundle-android; fi
   # Run tests + collect coverage info
-  - if [[ $js ]]; then npm run test -- --coverage 2>&1 | tee logs/jest; fi
+  - if [[ $JS ]]; then npm run test -- --coverage 2>&1 | tee logs/jest; fi
   # Danger?
-  - if [[ $js ]]; then npm run danger; fi
+  - if [[ $JS ]]; then npm run danger; fi
 
   # iOS
-  - if [[ $ios ]]; then bundle exec fastlane ios ci_run; fi
+  - if [[ $IOS ]]; then bundle exec fastlane ios ci_run; fi
 
   # Android
-  - if [[ $android ]]; then bundle exec fastlane android ci_run; fi
+  - if [[ $ANDROID ]]; then bundle exec fastlane android ci_run; fi
 
 
 after_success:
   # todo: test this on a forked build w/maintainer access to the branch
   - |
-    if [[ $js && $TRAVIS_PULL_REQUEST != false && $PUSH_BRANCH = 1 ]]; then
+    if [[ $JS && $TRAVIS_PULL_REQUEST != false && $PUSH_BRANCH = 1 ]]; then
       set -x
       git checkout "$BRANCH"
       git push "$SSH_REPO" "$BRANCH"
@@ -235,7 +235,7 @@ after_success:
       set +x
     fi
   - |
-    if [[ $js ]]; then
+    if [[ $JS ]]; then
       set -x
       npm install coveralls
       ./node_modules/.bin/coveralls < ./coverage/lcov.info
