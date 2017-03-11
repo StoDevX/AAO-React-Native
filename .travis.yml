@@ -44,7 +44,6 @@ matrix:
           - android-25
           - extra-android-m2repository
           - extra-google-m2repository
-          - extra-android-support
 
     # - <<: *android-base
     #   env: [ANDROID=yes, USE_EMULATOR=yes]
@@ -56,7 +55,6 @@ matrix:
     #       - android-23
     #       - extra-android-m2repository
     #       - extra-google-m2repository
-    #       - extra-android-support
     #       - sys-img-armeabi-v7a-google_apis-23
 
     # - os: osx
