@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+npm config get prefix
 npm config delete prefix
 
 # if any other scripts need nvm or rvm, they must be sourced in those scripts
