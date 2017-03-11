@@ -17,7 +17,7 @@ echo "loglevel=silent" >> .npmrc
 if [[ $JS ]]; then
   set -x
   npm run prettier
-  git diff --exit-code *.js source/ | tee logs/prettier
+  git diff --exit-code ./*.js source/ | tee logs/prettier
   set +x
 fi
 # Lint
