@@ -63,6 +63,6 @@ ssh-add "$DEPLOY_KEY"
 if [[ $ANDROID || $IOS ]]; then
   set +x +v
   rvm use 2.3 --install --binary --fuzzy
-  set -x -v
   gem install bundler
+  set -x -v
 fi
