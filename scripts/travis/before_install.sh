@@ -2,6 +2,10 @@
 # shellcheck source=/dev/null
 set -e -v -x
 
+# if any other scripts need nvm or rvm, they must be sourced
+source "$HOME/.nvm/nvm.sh"
+source "$HOME/.rvm/scripts/rvm"
+
 echo "Now testing on $TRAVIS_OS_NAME"
 echo "Using the android emulator? $USE_EMULATOR"
 echo "Travis branch is $TRAVIS_BRANCH"
@@ -28,7 +32,6 @@ if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
 # force node 7 on the android builds
 if [[ $ANDROID ]]; then
-  source "$HOME/.nvm/nvm.sh"
   nvm install 7
   nvm use 7
 fi
