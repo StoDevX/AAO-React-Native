@@ -1,10 +1,14 @@
 #!/bin/bash
 # shellcheck source=/dev/null
-set -e -v -x
+set -e
 
-# if any other scripts need nvm or rvm, they must be sourced
+# if any other scripts need nvm or rvm, they must be sourced in that script too
 source "$HOME/.nvm/nvm.sh"
 source "$HOME/.rvm/scripts/rvm"
+
+# we're enabling the verbose parts after the sourcing so that the sourced
+# scripts don't get put into the log too.
+set -v -x
 
 echo "Now testing on $TRAVIS_OS_NAME"
 echo "Using the android emulator? $USE_EMULATOR"
