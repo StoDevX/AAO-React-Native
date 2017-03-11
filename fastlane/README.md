@@ -28,65 +28,21 @@ xcode-select --install
 </tr>
 </table>
 # Available Actions
-### register
-```
-fastlane register
-```
-Adds any unregistered devices to the provisioning profile
 ### bump
 ```
 fastlane bump
 ```
 Bump the version string to a new version
-
-----
-
-## iOS
-### ios test
+### register
 ```
-fastlane ios test
+fastlane register
 ```
-Runs all the tests
-### ios screenshot
+Adds any unregistered devices to the provisioning profile
+### release_notes
 ```
-fastlane ios screenshot
+fastlane release_notes
 ```
-Take screenshots
-### ios rogue
-```
-fastlane ios rogue
-```
-Go rogue
-### ios build
-```
-fastlane ios build
-```
-Provisions the profiles; bumps the build number; builds the app
-### ios beta
-```
-fastlane ios beta
-```
-Submit a new Beta Build to HockeyApp
-### ios auto_beta
-```
-fastlane ios auto_beta
-```
-Make a beta build if there have been new commits since the last beta
-### ios ci_keychains
-```
-fastlane ios ci_keychains
-```
-Do CI-system keychain setup
-### ios ci_run
-```
-fastlane ios ci_run
-```
-Run iOS builds or tests, as appropriate
-### ios update_match
-```
-fastlane ios update_match
-```
-In case match needs to be updated - probably never needs to be run
+Build the release notes: branch, commit hash, changelog
 
 ----
 
@@ -101,16 +57,55 @@ Makes a build
 fastlane android beta
 ```
 Submit a new Beta Build to HockeyApp
-### android auto_beta
+### android ci-run
 ```
-fastlane android auto_beta
-```
-Make a beta build if there have been new commits since the last beta
-### android ci_run
-```
-fastlane android ci_run
+fastlane android ci-run
 ```
 Run the appropriate action on CI
+
+----
+
+## iOS
+### ios test
+```
+fastlane ios test
+```
+Runs all the tests
+### ios screenshot
+```
+fastlane ios screenshot
+```
+Take screenshots
+### ios go-rogue
+```
+fastlane ios go-rogue
+```
+Go rogue
+### ios build-rogue
+```
+fastlane ios build-rogue
+```
+Build, but rogue
+### ios build
+```
+fastlane ios build
+```
+Provisions the profiles; bumps the build number; builds the app
+### ios beta
+```
+fastlane ios beta
+```
+Submit a new Beta Build to HockeyApp
+### ios ci-run
+```
+fastlane ios ci-run
+```
+Run iOS builds or tests, as appropriate
+### ios update-match
+```
+fastlane ios update-match
+```
+In case match needs to be updated - probably never needs to be run
 
 ----
 

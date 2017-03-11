@@ -2,13 +2,13 @@ require 'json'
 
 module Fastlane
   module Actions
-    class SetPackageDataAction < Action
+    class PackageSetDataAction < Action
       def self.run(params)
         data_to_write = params[:data]
         package_path = params[:package_path]
 
         file = File.read(package_path)
-        data_hash = JSON.parse(file)
+        data_hash = JSON.parse(file, symbolize_names: true)
 
         data_hash.update(data_to_write)
 
@@ -21,22 +21,22 @@ module Fastlane
       end
 
       def self.description
-        "Change data in your package.json file."
+        'Change data in your package.json file.'
       end
 
       def self.authors
-        ["Hawken Rives"]
+        ['Hawken Rives']
       end
 
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :data,
-                               description: "The data to update",
-                                      type: Hash),
+                                       description: 'The data to update',
+                                       type: Hash),
           FastlaneCore::ConfigItem.new(key: :package_path,
-                               description: "The path to the package.json file",
-                                      type: String,
-                             default_value: "./package.json"),
+                                       description: 'The path to the package.json file',
+                                       type: String,
+                                       default_value: './package.json'),
         ]
       end
 

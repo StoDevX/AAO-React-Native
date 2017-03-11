@@ -151,9 +151,6 @@ before_script:
       adb shell input keyevent 82 &
     fi
 
-  # Fix keychain issues for iOS signing
-  - if [[ $ios ]]; then bundle exec fastlane ios ci_keychains; fi
-
 
 script:
   # These sections will grow over time.
@@ -204,10 +201,10 @@ script:
   - if [[ $js ]]; then npm run danger; fi
 
   # iOS
-  - if [[ $ios ]]; then bundle exec fastlane ios ci_run; fi
+  - if [[ $ios ]]; then bundle exec fastlane ios ci-run; fi
 
   # Android
-  - if [[ $android ]]; then bundle exec fastlane android ci_run; fi
+  - if [[ $android ]]; then bundle exec fastlane android ci-run; fi
 
 
 after_success:
