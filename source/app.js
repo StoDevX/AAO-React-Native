@@ -44,6 +44,7 @@ import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
+import {SnapshotsView} from './storybook'
 
 import NoRoute from './views/components/no-route'
 
@@ -51,6 +52,7 @@ import NoRoute from './views/components/no-route'
 function renderScene(route, navigator) {
   let props = {route, navigator, ...(route.props || {})}
   tracker.trackScreenView(route.id)
+
   switch (route.id) {
     case 'HomeView':
       return <HomeView {...props} />
@@ -100,6 +102,8 @@ function renderScene(route, navigator) {
       return <StudentOrgsDetailView {...props} />
     case 'FaqView':
       return <FaqView {...props} />
+    case 'SnapshotsView':
+      return <SnapshotsView {...props} />
     default:
       return <NoRoute {...props} />
   }

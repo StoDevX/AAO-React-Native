@@ -25,6 +25,9 @@ class OddsAndEndsSection extends React.Component {
   onCreditsButton = () => this.onPressButton('CreditsView', 'Credits');
   onPrivacyButton = () => this.onPressButton('PrivacyView', 'Privacy Policy');
   onLegalButton = () => this.onPressButton('LegalView', 'Legal');
+  onSnapshotsButton = () =>
+    this.onPressButton('SnapshotsView', 'Snapshot Time');
+
   render() {
     return (
       <Section header="ODDS &amp; ENDS">
@@ -43,6 +46,12 @@ class OddsAndEndsSection extends React.Component {
         <PushButtonCell title="Privacy Policy" onPress={this.onPrivacyButton} />
         <PushButtonCell title="Legal" onPress={this.onLegalButton} />
 
+        {__DEV__
+          ? <PushButtonCell
+              title="Snapshots"
+              onPress={this.onSnapshotsButton}
+            />
+          : null}
       </Section>
     )
   }
