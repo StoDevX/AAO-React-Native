@@ -58,7 +58,10 @@
   },
   "aliasify": {
     "aliases": {
-      "react-native": "react-native-web"
+      "react-native": "react-native-web",
+      "react-native-keychain": false,
+      "react-native-view-shot": false,
+      "react-native-safari-view": false
     }
   },
   "dependencies": {
