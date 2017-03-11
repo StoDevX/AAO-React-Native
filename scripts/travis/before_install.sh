@@ -33,8 +33,8 @@ fi
 if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
 # force the same version of node
-npm i -g n
-n "$TRAVIS_NODE_VERSION"
+sudo npm i -g n
+sudo n "$TRAVIS_NODE_VERSION"
 
 # turn off fancy npm stuff
 npm config set spin=false
