@@ -56,6 +56,11 @@
     ],
     "preset": "react-native"
   },
+  "aliasify": {
+    "aliases": {
+      "react-native": "react-native-web"
+    }
+  },
   "dependencies": {
     "buffer": "5.0.5",
     "css-select": "1.2.0",
