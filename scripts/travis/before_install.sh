@@ -27,6 +27,7 @@ if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
 # force node 7 on the android builds
 if [[ $ANDROID ]]; then
+  compgen -c
   nvm install 7
   nvm use 7
 fi
