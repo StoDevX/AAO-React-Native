@@ -57,8 +57,14 @@ ssh-add "$DEPLOY_KEY"
 
 # make sure to use ruby 2.3
 if [[ $ANDROID || $IOS ]]; then
-  set +x +v
-  rvm use 2.3 --install --binary --fuzzy
+  # install ruby-install
+  wget -O ruby-install-0.6.1.tar.gz https://github.com/postmodern/ruby-install/archive/v0.6.1.tar.gz
+  tar -xzvf ruby-install-0.6.1.tar.gz
+  cd ruby-install-0.6.1/ || exit 1
+  sudo make install
+  cd ..
+
+  ruby-install ruby 2.3
+  ruby -v
   gem install bundler
-  set -x -v
 fi
