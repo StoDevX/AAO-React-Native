@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-npm config get prefix
-npm config delete prefix
-
 # if any other scripts need nvm or rvm, they must be sourced in those scripts
 # shellcheck source=/dev/null
 source "$HOME/.nvm/nvm.sh"
@@ -17,6 +14,7 @@ echo "Using the android emulator? $USE_EMULATOR"
 echo "Travis branch is $TRAVIS_BRANCH"
 echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
 echo "Build triggered by $TRAVIS_EVENT_TYPE"
+echo "Using node $TRAVIS_NODE_VERSION"
 
 # get a single branch var for both pushes and PRs
 export BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
@@ -37,10 +35,12 @@ fi
 if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
 # force a consistent node version
-set +x +v
-nvm install "$TRAVIS_NODE_VERSION"
-nvm use "$TRAVIS_NODE_VERSION"
-set -x -v
+if [[ $ANDROID || $IOS ]]; then
+  set +x +v
+  nvm install "$TRAVIS_NODE_VERSION"
+  nvm use "$TRAVIS_NODE_VERSION"
+  set -x -v
+fi
 
 # turn off fancy npm stuff
 npm config set spin=false
