@@ -1,4 +1,5 @@
 // @flow
+import {Platform} from 'react-native'
 import * as Keychain from 'react-native-keychain'
 
 import * as storage from './storage'
@@ -8,24 +9,36 @@ import {OLECARD_AUTH_URL} from './financials/urls'
 const SIS_LOGIN_CREDENTIAL_KEY = 'stolaf.edu'
 
 export function saveLoginCredentials(username: string, password: string) {
+  if (Platform.OS === 'web') {
+    return Promise.resolve({})
+  }
+
   return Keychain.setInternetCredentials(
     SIS_LOGIN_CREDENTIAL_KEY,
     username,
     password,
-  ).catch(() => {})
+  ).catch(() => ({}))
 }
 export function loadLoginCredentials(): Promise<{
   username?: string,
   password?: string,
 }> {
+  if (Platform.OS === 'web') {
+    return Promise.resolve({})
+  }
+
   return Keychain.getInternetCredentials(
     SIS_LOGIN_CREDENTIAL_KEY,
-  ).catch(() => {})
+  ).catch(() => ({}))
 }
 export function clearLoginCredentials() {
+  if (Platform.OS === 'web') {
+    return Promise.resolve({})
+  }
+
   return Keychain.resetInternetCredentials(
     SIS_LOGIN_CREDENTIAL_KEY,
-  ).catch(() => {})
+  ).catch(() => ({}))
 }
 
 export async function isLoggedIn(): Promise<boolean> {

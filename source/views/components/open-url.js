@@ -9,6 +9,10 @@ import {CustomTabs} from 'react-native-custom-tabs'
 let iosOnShowListener = null
 let iosOnDismissListener = null
 function startStatusBarColorChanger() {
+  if (Platform.OS === 'web') {
+    return
+  }
+
   SafariView.isAvailable()
     .then(() => {
       iosOnShowListener = SafariView.addEventListener('onShow', () =>
@@ -23,6 +27,10 @@ startStatusBarColorChanger()
 
 // eslint-disable-next-line no-unused-vars
 function stopStatusBarColorChanger() {
+  if (Platform.OS === 'web') {
+    return
+  }
+
   SafariView.isAvailable()
     .then(() => {
       SafariView.removeEventListener('onShow', iosOnShowListener)
@@ -69,6 +77,7 @@ export default function openUrl(url: string) {
       return androidOpen(url)
     case 'ios':
       return iosOpen(url)
+    case 'web':
     default:
       return genericOpen(url)
   }

@@ -62,9 +62,6 @@ import {FaqView} from '../views/faqs'
 
 import {StudentOrgsView} from '../views/student-orgs'
 
-const {DocumentDir} = dirs
-const outputDir = `${DocumentDir}/aao-view-shots`
-
 type ViewCollectionType = {
   [key: string]: {
     [key: string]: {
@@ -163,7 +160,7 @@ export class SnapshotsView extends React.Component {
     const name = this.state.viewPath
     return takeSnapshot(this._ref, {
       format: 'png',
-      path: `${outputDir}/${name}.png`,
+      path: `${dirs.DocumentDir}/aao-view-shots/${name}.png`,
     }).then(
       uri => console.log('saved to', uri),
       err => console.error('snapstho failed', err),
