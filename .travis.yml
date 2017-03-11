@@ -54,7 +54,7 @@ matrix:
     #   sudo: required
     #   language: android
     #   jdk: oraclejdk8
-    #   env: [android=true, emulator=true]
+    #   env: [android=true, USE_EMULATOR=yes]
     #   android:
     #     components:
     #       - tools
@@ -83,7 +83,7 @@ branches:
 
 before_install:
   - echo "Now testing $type on $TRAVIS_OS_NAME"
-  - echo "Using the android emulator? $emulator"
+  - echo "Using the android emulator? $USE_EMULATOR"
   - echo "Travis branch is $TRAVIS_BRANCH"
   - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
   - echo "Build triggered by $TRAVIS_EVENT_TYPE"
@@ -154,7 +154,7 @@ install:
 before_script:
   # Fire up the Android emulator
   - |
-    if [[ $android && $emulator ]]; then
+    if [[ $android && $USE_EMULATOR ]]; then
       set -x
       EmuName="react-native"
       mkdir -p "$HOME/.android/avd/$EmuName.avd/"
