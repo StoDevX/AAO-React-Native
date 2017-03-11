@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+set -e -v
 
 # install packages
 npm install

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+set -e -v
 
 echo "Now testing on $TRAVIS_OS_NAME"
 echo "Using the android emulator? $USE_EMULATOR"
