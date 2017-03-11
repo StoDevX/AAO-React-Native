@@ -1,13 +1,16 @@
 #!/bin/bash
 set -e
 
-# shellcheck source=/dev/null
-source "$HOME/.nvm/nvm.sh"
-nvm use "$TRAVIS_NODE_VERSION"
-
-# shellcheck source=/dev/null
-source "$HOME/.rvm/scripts/rvm"
-rvm use 2.3 --fuzzy
+if [[ $ANDROID ]]; then
+  # shellcheck source=/dev/null
+  source "$HOME/.nvm/nvm.sh"
+  nvm use "$TRAVIS_NODE_VERSION"
+fi
+if [[ $ANDROID || $IOS ]]; then
+  # shellcheck source=/dev/null
+  source "$HOME/.rvm/scripts/rvm"
+  rvm use 2.3 --fuzzy
+fi
 
 set -v -x
 
