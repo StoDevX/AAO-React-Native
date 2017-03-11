@@ -19,6 +19,7 @@ env:
     - ENCRYPTION_LABEL=199c454344e1
     # variables that are used later on
     - PUSH_BRANCH=0
+    - run_deploy=0
 
 matrix:
   fast_finish: true
@@ -35,7 +36,7 @@ matrix:
     #   sudo: required
     #   language: android
     #   jdk: oraclejdk8
-    #   env: [android=true, can_deploy=true]
+    #   env: [android=true, CAN_DEPLOY=yes]
     #   android:
     #     components:
     #       - tools
@@ -70,7 +71,7 @@ matrix:
     #   language: objective-c
     #   osx_image: xcode8.1
     #   node_js: '7'
-    #   env: [ios=true, can_deploy=true]
+    #   env: [ios=true, CAN_DEPLOY=yes]
 
 
 # As seen in http://stackoverflow.com/a/31882307/2347774
@@ -99,9 +100,7 @@ before_install:
   - git branch "$BRANCH"
 
   # only deploy from the once-daily cron-triggered jobs
-  - run_deploy=0
-  - if [[ $can_deploy && $TRAVIS_EVENT_TYPE == "cron" ]]; then run_deploy=1; fi
-  - export run_deploy=$run_deploy
+  - if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
   # force node 7 on the android builds
   - |
