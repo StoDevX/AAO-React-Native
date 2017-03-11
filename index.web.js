@@ -1,9 +1,12 @@
 /* eslint-env browser */
 // @flow
 
-import { AppRegistry } from 'react-native'
+import {AppRegistry} from 'react-native'
+import 'babel-polyfill'
 
-import './source/root.js'
+import App from './source/app'
+
+AppRegistry.registerComponent('AllAboutOlaf', () => App)
 
 AppRegistry.runApplication('AllAboutOlaf', {
   initialProps: {},
