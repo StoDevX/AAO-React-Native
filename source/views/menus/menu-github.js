@@ -69,7 +69,7 @@ export class GitHubHostedMenu extends React.Component {
       corIcons = fallbackMenu.corIcons || {}
     }
 
-    if (__DEV__) {
+    if (process.env.NODE_ENV === 'development') {
       foodItems = fallbackMenu.foodItems
       stationMenus = fallbackMenu.stationMenus || []
       corIcons = fallbackMenu.corIcons || {}

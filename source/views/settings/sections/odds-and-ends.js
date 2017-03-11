@@ -46,7 +46,7 @@ class OddsAndEndsSection extends React.Component {
         <PushButtonCell title="Privacy Policy" onPress={this.onPrivacyButton} />
         <PushButtonCell title="Legal" onPress={this.onLegalButton} />
 
-        {__DEV__
+        {process.env.NODE_ENV === 'development'
           ? <PushButtonCell
               title="Snapshots"
               onPress={this.onSnapshotsButton}

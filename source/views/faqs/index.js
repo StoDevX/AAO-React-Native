@@ -38,7 +38,7 @@ export class FaqView extends React.Component {
       console.warn(err.message)
     }
 
-    if (__DEV__) {
+    if (process.env.NODE_ENV === 'development') {
       html = faqs
     }
 

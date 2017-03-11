@@ -74,7 +74,7 @@ export class BuildingHoursView extends React.Component {
       buildings = fallbackBuildingHours
     }
 
-    if (__DEV__) {
+    if (process.env.NODE_ENV === 'development') {
       buildings = fallbackBuildingHours
     }
 
