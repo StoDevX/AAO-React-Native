@@ -83,15 +83,21 @@ branches:
     - /^travis/
 
 
-before_install: bash scripts/travis/before_install.sh
+before_install:
+  # run our before_install sequence
+  - bash scripts/travis/before_install.sh
 
-install: bash scripts/travis/install.sh
+install:
+  - bash scripts/travis/install.sh
 
-before_script: bash scripts/travis/before_script.sh
+before_script:
+  - bash scripts/travis/before_script.sh
 
-script: bash scripts/travis/script.sh
+script:
+  - bash scripts/travis/script.sh
 
-after_success: bash scripts/travis/after_success.sh
+after_success:
+  - bash scripts/travis/after_success.sh
 
 before_cache:
   - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"
