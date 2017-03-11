@@ -20,6 +20,7 @@ env:
     # variables that are used later on
     - PUSH_BRANCH=0
     - CAN_DEPLOY=0
+    - USE_EMULATOR=no
     - run_deploy=0
 
 matrix:
@@ -150,7 +151,7 @@ install:
 before_script:
   # Fire up the Android emulator
   - |
-    if [[ $ANDROID && $USE_EMULATOR ]]; then
+    if [[ $ANDROID && $USE_EMULATOR = yes ]]; then
       set -x
       EmuName="react-native"
       mkdir -p "$HOME/.android/avd/$EmuName.avd/"
