@@ -18,7 +18,7 @@ function commit-on-travis {
   # shellcheck disable=SC2086
   git add $1
   git checkout "$BRANCH"
-  git commit "$2 [skip ci]"
+  git commit -m "$2 [skip ci]"
   git checkout "$TRAVIS_COMMIT"
   PUSH_BRANCH=1
 }
