@@ -201,11 +201,8 @@ script:
       set -x
       npm run bundle-data
       if ! git diff --quiet docs/; then
-        git stash
-        git checkout "$BRANCH"~1
-        git reset --hard "$(git rev-parse HEAD)"
-        git stash apply
         git add docs/
+        git checkout "$BRANCH"
         git commit -m "update docs [skip ci]"
         git checkout "$TRAVIS_COMMIT"
       fi
