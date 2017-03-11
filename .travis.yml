@@ -19,6 +19,7 @@ env:
     - ENCRYPTION_LABEL=199c454344e1
     # variables that are used later on
     - PUSH_BRANCH=0
+    - CAN_DEPLOY=0
     - run_deploy=0
 
 matrix:
