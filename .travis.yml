@@ -97,7 +97,8 @@ before_install:
   # ensure that the PR branch exists locally
   - git config --add remote.origin.fetch "+refs/heads/$BRANCH:refs/remotes/origin/$BRANCH"
   - git fetch --depth 10
-  - git branch "$BRANCH"
+  # if the branch doesn't exist, make it (the branch only exists on push builds, not PR ones)
+  - if ! git rev-parse --quiet --verify "$BRANCH" > /dev/null; then git branch "$BRANCH"; fi
 
   # only deploy from the once-daily cron-triggered jobs
   - if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
