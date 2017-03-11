@@ -1,14 +1,10 @@
 #!/bin/bash
 # shellcheck source=/dev/null
-set -e
+set -e -v -x
 
 # if any other scripts need nvm or rvm, they must be sourced in that script too
 source "$HOME/.nvm/nvm.sh"
 source "$HOME/.rvm/scripts/rvm"
-
-# we're enabling the verbose parts after the sourcing so that the sourced
-# scripts don't get put into the log too.
-set -v -x
 
 echo "Now testing on $TRAVIS_OS_NAME"
 echo "Using the android emulator? $USE_EMULATOR"
@@ -36,8 +32,10 @@ if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
 # force node 7 on the android builds
 if [[ $ANDROID ]]; then
+  set +x
   nvm install 7
   nvm use 7
+  set -x
 fi
 
 # turn off fancy npm stuff
@@ -61,6 +59,8 @@ ssh-add "$DEPLOY_KEY"
 
 # make sure to use ruby 2.3
 if [[ $ANDROID || $IOS ]]; then
+  set +x
   rvm use 2.3 --install --binary --fuzzy
+  set -x
   gem install bundler
 fi
