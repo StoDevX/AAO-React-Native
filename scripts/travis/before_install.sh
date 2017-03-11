@@ -23,9 +23,6 @@ if ! git rev-parse --quiet --verify "$BRANCH" > /dev/null; then
   git branch "$BRANCH"
 fi
 
-# only deploy from the once-daily cron-triggered jobs
-if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
-
 # turn off fancy npm stuff
 npm config set spin=false
 npm config set progress=false
