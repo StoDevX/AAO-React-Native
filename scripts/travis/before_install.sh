@@ -32,9 +32,13 @@ fi
 # only deploy from the once-daily cron-triggered jobs
 if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
-# force the same version of node
-sudo npm i -g n
-sudo n "$TRAVIS_NODE_VERSION"
+# force node 7 on the android builds
+if [[ $ANDROID ]]; then
+  set +x +v
+  nvm install "$TRAVIS_NODE_VERSION"
+  nvm use "$TRAVIS_NODE_VERSION"
+  set -x -v
+fi
 
 # turn off fancy npm stuff
 npm config set spin=false

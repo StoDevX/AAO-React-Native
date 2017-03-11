@@ -1,4 +1,7 @@
 #!/bin/bash
+# shellcheck source=/dev/null
+source "$HOME/.nvm/nvm.sh"
+
 set -e -v -x
 
 # Fire up the Android emulator

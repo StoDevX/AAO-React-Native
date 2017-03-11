@@ -1,4 +1,7 @@
 #!/bin/bash
+# shellcheck source=/dev/null
+source "$HOME/.nvm/nvm.sh"
+
 set -e -v -x
 
 # todo: test this on a forked build w/maintainer access to the branch
