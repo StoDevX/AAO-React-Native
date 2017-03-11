@@ -7,18 +7,18 @@ echo "Travis branch is $TRAVIS_BRANCH"
 echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
 echo "Build triggered by $TRAVIS_EVENT_TYPE"
 
-  # get a single branch var for both pushes and PRs
+# get a single branch var for both pushes and PRs
 export BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
 export REPO
 REPO=$(git config remote.origin.url)
 export SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 
-  # ensure that the PR branch exists locally
+# ensure that the PR branch exists locally
 git config --add remote.origin.fetch "+refs/heads/$BRANCH:refs/remotes/origin/$BRANCH"
 git fetch --depth 10
 git branch "$BRANCH"
 
-  # only deploy from the once-daily cron-triggered jobs
+# only deploy from the once-daily cron-triggered jobs
 if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
 # force node 7 on the android builds
@@ -27,16 +27,16 @@ if [[ $ANDROID ]]; then
   nvm use 7
 fi
 
-  # turn off fancy npm stuff
+# turn off fancy npm stuff
 npm config set spin=false
 npm config set progress=false
 
-  # Dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
+# Dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
 echo "$PATH"
 export PATH=${PATH/\.\/node_modules\/\.bin/}
 echo "$PATH"
 
-  # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
+# Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
 export ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
 export ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
 export ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
