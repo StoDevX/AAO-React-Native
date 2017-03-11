@@ -203,6 +203,7 @@ script:
       if ! git diff --quiet docs/; then
         git stash
         git checkout "$BRANCH"~1
+        git reset --hard "$(git rev-parse HEAD)"
         git stash apply
         git add docs/
         git commit -m "update docs [skip ci]"
