@@ -23,10 +23,8 @@ if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
 # force node 7 on the android builds
 if [[ $ANDROID ]]; then
-  set -x
   nvm install 7
   nvm use 7
-  set +x
 fi
 
   # turn off fancy npm stuff
@@ -50,8 +48,6 @@ ssh-add "$DEPLOY_KEY"
 
 # make sure to use ruby 2.3
 if [[ $ANDROID || $IOS ]]; then
-  set -x
   rvm use 2.3 --install --binary --fuzzy
   gem install bundler
-  set +x
 fi

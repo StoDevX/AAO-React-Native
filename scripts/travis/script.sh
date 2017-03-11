@@ -15,10 +15,8 @@ echo "loglevel=silent" >> .npmrc
 # JS
 # Ensure prettiness
 if [[ $JS ]]; then
-  set -x
   npm run prettier
   git diff --exit-code ./*.js source/ | tee logs/prettier
-  set +x
 fi
 # Lint
 if [[ $JS ]]; then npm run lint | tee logs/eslint; fi
@@ -26,7 +24,6 @@ if [[ $JS ]]; then npm run lint | tee logs/eslint; fi
 if [[ $JS ]]; then npm run validate-data -- --quiet | tee logs/validate-data; fi
 # Ensure that the data files have been updated
 if [[ $JS ]]; then
-  set -x
   npm run bundle-data
   if ! git diff --quiet docs/; then
     git add docs/
@@ -35,7 +32,6 @@ if [[ $JS ]]; then
     git checkout "$TRAVIS_COMMIT"
     PUSH_BRANCH=1
   fi
-  set +x
 fi
 # Type check
 if [[ $JS ]]; then npm run flow -- check --quiet | tee logs/flow; fi
