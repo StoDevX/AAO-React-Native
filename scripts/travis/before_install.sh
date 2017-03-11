@@ -1,9 +1,10 @@
 #!/bin/bash
-# shellcheck source=/dev/null
 set -e
 
-# if any other scripts need nvm or rvm, they must be sourced in that script too
+# if any other scripts need nvm or rvm, they must be sourced in those scripts
+# shellcheck source=/dev/null
 source "$HOME/.nvm/nvm.sh"
+# shellcheck source=/dev/null
 source "$HOME/.rvm/scripts/rvm"
 
 set -v -x

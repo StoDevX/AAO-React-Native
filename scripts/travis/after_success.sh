@@ -1,10 +1,15 @@
 #!/bin/bash
+set -e
+
 # shellcheck source=/dev/null
 source "$HOME/.nvm/nvm.sh"
 nvm use "$TRAVIS_NODE_VERSION"
+
+# shellcheck source=/dev/null
+source "$HOME/.rvm/scripts/rvm"
 rvm use 2.3 --fuzzy
 
-set -e -v -x
+set -v -x
 
 # todo: test this on a forked build w/maintainer access to the branch
 if [[ $JS && $TRAVIS_PULL_REQUEST != false && $PUSH_BRANCH = 1 ]]; then
