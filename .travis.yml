@@ -19,11 +19,11 @@ env:
 matrix:
   fast_finish: true
   include:
-    # - os: linux
-    #   dist: trusty
-    #   sudo: false
-    #   language: node_js
-    #   env: [JS=yes]
+    - os: linux
+      dist: trusty
+      sudo: false
+      language: node_js
+      env: [JS=yes]
 
     - &android-base
       os: linux
@@ -56,10 +56,10 @@ matrix:
     #       - extra-google-m2repository
     #       - sys-img-armeabi-v7a-google_apis-23
 
-    # - os: osx
-    #   language: objective-c
-    #   osx_image: xcode8.1
-    #   env: [IOS=yes, CAN_DEPLOY=yes]
+    - os: osx
+      language: objective-c
+      osx_image: xcode8.1
+      env: [IOS=yes, CAN_DEPLOY=yes]
 
 
 # As seen in http://stackoverflow.com/a/31882307/2347774
