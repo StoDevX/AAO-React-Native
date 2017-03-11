@@ -14,6 +14,15 @@ echo "loglevel=silent" >> .npmrc
 # ensure the log directory exists for danger
 mkdir -p logs/
 
+function commit-on-travis {
+  # shellcheck disable=SC2086
+  git add $1
+  git checkout "$BRANCH"
+  git commit "$2 [skip ci]"
+  git checkout "$TRAVIS_COMMIT"
+  PUSH_BRANCH=1
+}
+
 
 if [[ $JS ]]; then
   # Ensure prettiness
@@ -29,11 +38,7 @@ if [[ $JS ]]; then
   # Ensure that the data files have been updated
   npm run bundle-data
   if ! git diff --quiet docs/; then
-    git add docs/
-    git checkout "$BRANCH"
-    git commit -m "update docs [skip ci]"
-    git checkout "$TRAVIS_COMMIT"
-    PUSH_BRANCH=1
+    commit-on-travis "docs/" "update docs"
   fi
 
   # Type check
