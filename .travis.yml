@@ -9,6 +9,7 @@ env:
     # this just gives us a nice label to use
     - ENCRYPTION_LABEL=199c454344e1
     # variables that are used later on
+    - TRAVIS_NODE_VERSION=7
     - PUSH_BRANCH=0
     - CAN_DEPLOY=0
     - USE_EMULATOR=no
@@ -22,7 +23,6 @@ matrix:
     #   dist: trusty
     #   sudo: false
     #   language: node_js
-    #   node_js: '7'
     #   env: [JS=yes]
 
     - &android-base
@@ -31,7 +31,6 @@ matrix:
       sudo: required
       language: android
       jdk: oraclejdk8
-      node_js: '7'
       env: [ANDROID=yes, CAN_DEPLOY=yes]
       android:
         components:
@@ -60,7 +59,6 @@ matrix:
     # - os: osx
     #   language: objective-c
     #   osx_image: xcode8.1
-    #   node_js: '7'
     #   env: [IOS=yes, CAN_DEPLOY=yes]
 
 
