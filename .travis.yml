@@ -17,6 +17,8 @@ env:
     - MATCH_KEYCHAIN_PASSWORD=alpine
     # this just gives us a nice label to use
     - ENCRYPTION_LABEL=199c454344e1
+    # variables that are used later on
+    - PUSH_BRANCH=0
 
 matrix:
   fast_finish: true
@@ -205,6 +207,7 @@ script:
         git checkout "$BRANCH"
         git commit -m "update docs [skip ci]"
         git checkout "$TRAVIS_COMMIT"
+        PUSH_BRANCH=1
       fi
       set +x
     fi
@@ -228,7 +231,7 @@ script:
 after_success:
   # todo: test this on a forked build w/maintainer access to the branch
   - |
-    if [[ $js && $TRAVIS_PULL_REQUEST != "false" ]]; then
+    if [[ $js && $TRAVIS_PULL_REQUEST != false && $PUSH_BRANCH = 1 ]]; then
       set -x
       git checkout "$BRANCH"
       git push "$SSH_REPO" "$BRANCH"
