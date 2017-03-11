@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+npm config delete prefix
+
 # if any other scripts need nvm or rvm, they must be sourced in those scripts
 # shellcheck source=/dev/null
 source "$HOME/.nvm/nvm.sh"
