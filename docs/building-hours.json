@@ -1523,49 +1523,9 @@
       }
     },
     {
-      "name": "CHM",
-      "subtitle": "Christiansen Hall",
-      "image": "christiansen",
+      "name": "Center for Arts and Dance",
       "category": "Academia",
-      "schedule": [
-        {
-          "title": "Hours",
-          "hours": [
-            {
-              "days": [
-                "Mo",
-                "Tu",
-                "We",
-                "Th",
-                "Fr"
-              ],
-              "from": "7:00am",
-              "to": "12:00am"
-            },
-            {
-              "days": [
-                "Sa",
-                "Su"
-              ],
-              "from": "8:00am",
-              "to": "12:00am"
-            }
-          ]
-        }
-      ],
-      "breakSchedule": {
-        "fall": [],
-        "thanksgiving": [],
-        "winter": [],
-        "interim": [],
-        "spring": [],
-        "easter": [],
-        "summer": []
-      }
-    },
-    {
-      "name": "Dittmann Center",
-      "category": "Academia",
+      "image": "center-for-arts-and-dance",
       "schedule": [
         {
           "title": "Hours",
@@ -1609,8 +1569,50 @@
       }
     },
     {
+      "name": "CHM",
+      "subtitle": "Christiansen Hall",
+      "image": "christiansen",
+      "category": "Academia",
+      "schedule": [
+        {
+          "title": "Hours",
+          "hours": [
+            {
+              "days": [
+                "Mo",
+                "Tu",
+                "We",
+                "Th",
+                "Fr"
+              ],
+              "from": "7:00am",
+              "to": "12:00am"
+            },
+            {
+              "days": [
+                "Sa",
+                "Su"
+              ],
+              "from": "8:00am",
+              "to": "12:00am"
+            }
+          ]
+        }
+      ],
+      "breakSchedule": {
+        "fall": [],
+        "thanksgiving": [],
+        "winter": [],
+        "interim": [],
+        "spring": [],
+        "easter": [],
+        "summer": []
+      }
+    },
+    {
       "name": "Holland Hall",
-      "category": "Under Construction",
+      "subtitle": "Under Construction",
+      "category": "Academia",
       "schedule": [
         {
           "title": "Hours",
@@ -1717,6 +1719,7 @@
     {
       "name": "Regents Hall",
       "category": "Academia",
+      "image": "regents-hall",
       "schedule": [
         {
           "title": "Hours",
