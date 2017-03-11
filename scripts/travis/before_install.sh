@@ -26,16 +26,6 @@ fi
 # only deploy from the once-daily cron-triggered jobs
 if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
-# force a consistent node version on android
-if [[ $ANDROID ]]; then
-  set +x +v
-  # shellcheck source=/dev/null
-  source "$HOME/.nvm/nvm.sh"
-  nvm install "$TRAVIS_NODE_VERSION"
-  nvm use "$TRAVIS_NODE_VERSION"
-  set -x -v
-fi
-
 # turn off fancy npm stuff
 npm config set spin=false
 npm config set progress=false
@@ -54,13 +44,3 @@ openssl aes-256-cbc -K "$ENCRYPTED_KEY" -iv "$ENCRYPTED_IV" -in "$DEPLOY_KEY.enc
 chmod 600 "$DEPLOY_KEY"
 eval "$(ssh-agent -s)"
 ssh-add "$DEPLOY_KEY"
-
-# make sure to use ruby 2.3
-if [[ $ANDROID || $IOS ]]; then
-  set +x +v
-  # shellcheck source=/dev/null
-  source "$HOME/.rvm/scripts/rvm"
-  rvm use 2.3 --install --binary --fuzzy
-  gem install bundler
-  set -x -v
-fi

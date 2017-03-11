@@ -84,6 +84,18 @@ branches:
 
 
 before_install:
+  # force a consistent node version on android
+  - if [[ $ANDROID ]]; then
+      nvm install "$TRAVIS_NODE_VERSION";
+      nvm use "$TRAVIS_NODE_VERSION";
+    fi
+
+  # make sure to use ruby 2.3
+  - if [[ $ANDROID || $IOS ]]; then
+      rvm use 2.3 --install --binary --fuzzy;
+      gem install bundler;
+    fi
+
   # run our before_install sequence
   - bash scripts/travis/before_install.sh
 

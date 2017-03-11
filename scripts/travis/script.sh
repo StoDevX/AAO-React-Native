@@ -1,21 +1,5 @@
 #!/bin/bash
-set -e
-
-if [[ $ANDROID ]]; then
-  # shellcheck source=/dev/null
-  source "$HOME/.nvm/nvm.sh"
-  nvm use "$TRAVIS_NODE_VERSION"
-fi
-if [[ $ANDROID || $IOS ]]; then
-  # shellcheck source=/dev/null
-  source "$HOME/.rvm/scripts/rvm"
-  rvm use 2.3 --fuzzy
-fi
-
-set -v -x
-
-# Make sure that a failing command in a pipe fails the build
-set -o pipefail
+set -e -v -x -o pipefail
 
 # ensure the env file exists and fill it out
 touch .env.js

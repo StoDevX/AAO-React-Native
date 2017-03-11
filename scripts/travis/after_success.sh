@@ -1,18 +1,5 @@
 #!/bin/bash
-set -e
-
-if [[ $ANDROID ]]; then
-  # shellcheck source=/dev/null
-  source "$HOME/.nvm/nvm.sh"
-  nvm use "$TRAVIS_NODE_VERSION"
-fi
-if [[ $ANDROID || $IOS ]]; then
-  # shellcheck source=/dev/null
-  source "$HOME/.rvm/scripts/rvm"
-  rvm use 2.3 --fuzzy
-fi
-
-set -v -x
+set -e -v -x
 
 # todo: test this on a forked build w/maintainer access to the branch
 if [[ $JS && $TRAVIS_PULL_REQUEST != false && $PUSH_BRANCH = 1 ]]; then
