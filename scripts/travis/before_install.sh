@@ -1,10 +1,12 @@
 #!/bin/bash
 # shellcheck source=/dev/null
-set -e -v -x
+set -e
 
 # if any other scripts need nvm or rvm, they must be sourced in that script too
 source "$HOME/.nvm/nvm.sh"
 source "$HOME/.rvm/scripts/rvm"
+
+set -v -x
 
 echo "Now testing on $TRAVIS_OS_NAME"
 echo "Using the android emulator? $USE_EMULATOR"
@@ -32,10 +34,10 @@ if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
 # force node 7 on the android builds
 if [[ $ANDROID ]]; then
-  set +x
+  set +x +v
   nvm install 7
   nvm use 7
-  set -x
+  set -x -v
 fi
 
 # turn off fancy npm stuff
