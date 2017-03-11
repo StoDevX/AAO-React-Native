@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck source=/dev/null
 set -e -v -x
 
 echo "Now testing on $TRAVIS_OS_NAME"
@@ -27,8 +28,7 @@ if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
 # force node 7 on the android builds
 if [[ $ANDROID ]]; then
-  compgen -c
-  node -v
+  source "$HOME/.nvm/nvm.sh"
   nvm install 7
   nvm use 7
 fi
