@@ -5,7 +5,7 @@ import {TabBarIOS} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {tracker} from '../../../analytics'
 import {styles} from './styles'
-import type {TabbedViewPropsType} from './types'
+import type {TabbedViewPropsType, TabPropsType} from './types'
 import * as c from '../../components/colors'
 
 export class TabbedView extends React.Component {
@@ -29,29 +29,46 @@ export class TabbedView extends React.Component {
         tintColor={c.mandarin}
         style={[styles.container, this.props.style]}
       >
-        {Children.map(this.props.children, ({props: tab}) => {
-          const icon = tab.icon
-            ? {
-                iconName: `ios-${tab.icon}-outline`,
-                selectedIconName: `ios-${tab.icon}`,
-              }
-            : {}
-
-          return (
-            <Icon.TabBarItemIOS
-              {...icon}
-              key={tab.id}
-              title={tab.title}
-              style={styles.listViewStyle}
-              selected={this.state.selectedTab === tab.id}
-              translucent={true}
-              onPress={() => this.onChangeTab(tab.id)}
-            >
-              {tab.render()}
-            </Icon.TabBarItemIOS>
-          )
-        })}
+        {Children.map(this.props.children, ({props: tab}) => (
+          <TabBarItem tab={tab} onChangeTab={this.onChangeTab} />
+        ))}
       </TabBarIOS>
+    )
+  }
+}
+
+class TabBarItem extends React.Component {
+  props: {
+    tab: TabPropsType,
+    onChangeTab: (id: string) => any,
+  };
+
+  onChangeTab = () => {
+    this.props.onChangeTab(this.props.tab.id)
+  };
+
+  render() {
+    const {tab} = this.props
+
+    const icon = tab.icon
+      ? {
+          iconName: `ios-${tab.icon}-outline`,
+          selectedIconName: `ios-${tab.icon}`,
+        }
+      : {}
+
+    return (
+      <Icon.TabBarItemIOS
+        {...icon}
+        key={tab.id}
+        title={tab.title}
+        style={styles.listViewStyle}
+        selected={this.state.selectedTab === tab.id}
+        translucent={true}
+        onPress={this.onChangeTab}
+      >
+        {tab.render()}
+      </Icon.TabBarItemIOS>
     )
   }
 }
