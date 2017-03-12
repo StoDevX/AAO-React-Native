@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import React, {Children} from 'react'
 import {TabBarIOS} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {tracker} from '../../../analytics'
@@ -9,12 +9,16 @@ import type {TabbedViewPropsType} from './types'
 import {TabbedViewPropTypes} from './types'
 import * as c from '../../components/colors'
 
-export default class TabbedView extends React.Component {
-  static propTypes = TabbedViewPropTypes;
+export const Tab = (props: {id: string, icon: string, title: string, children?: () => React$Component<*, *, *>}) => props
 
+export class TabbedView extends React.Component {
   state = {
     selectedTab: this.props.tabs[0].id,
   };
+
+  componentWillMount() {
+    this.onChangeTab(this.props.tabs[0].id)
+  }
 
   componentWillMount() {
     this.onChangeTab(this.props.tabs[0].id)
@@ -28,36 +32,27 @@ export default class TabbedView extends React.Component {
   };
 
   render() {
-    let {navigator, route, tabs} = this.props
-    let baseProps = {navigator, route}
     return (
-      <TabBarIOS
-        tintColor={c.mandarin}
-        style={[styles.container, this.props.style]}
-      >
-        {tabs.map(tab => {
-          let icon = {}
-          if (tab.rnVectorIcon) {
-            let name = tab.rnVectorIcon.iconName
-            icon.iconName = `ios-${name}-outline`
-            icon.selectedIconName = `ios-${name}`
-          }
+      <TabBarIOS tintColor={c.mandarin} style={[styles.container, this.props.style]}>
+        {Children.map(this.props.children, ({props}) => {
+          const icon = props.icon
+            ? {
+              iconName: `ios-${props.icon}-outline`,
+              selectedIconName: `ios-${props.icon}`,
+            }
+            : {}
+
           return (
             <Icon.TabBarItemIOS
-              key={tab.id}
-              // apply either the vector icon, a given raster (base64) icon, or nothing.
               {...icon}
-              title={tab.title}
+              key={props.id}
+              title={props.title}
               style={styles.listViewStyle}
-              selected={this.state.selectedTab === tab.id}
+              selected={this.state.selectedTab === props.id}
               translucent={true}
-              onPress={() => this.onChangeTab(tab.id)}
+              onPress={() => this.onChangeTab(props.id)}
             >
-              <tab.component
-                {...this.props.childProps}
-                {...tab.props || {}}
-                {...baseProps}
-              />
+              {props.children()}
             </Icon.TabBarItemIOS>
           )
         })}

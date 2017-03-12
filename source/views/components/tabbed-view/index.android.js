@@ -1,10 +1,12 @@
 // @flow
-import React from 'react'
+import React, {Children} from 'react'
 import {StyleSheet, Platform, Dimensions} from 'react-native'
 import {TabViewAnimated, TabBar} from 'react-native-tab-view'
 import * as c from '../colors'
 import type {TabbedViewPropsType} from './types'
 import {tracker} from '../../../analytics'
+
+export const Tab = (props: {id: string, icon: string, title: string, children?: () => React$Component<*, *, *>}) => props
 
 const styles = StyleSheet.create({
   container: {
@@ -59,28 +61,24 @@ export default class TabbedView extends React.Component {
     )
   };
 
-  _renderScene = ({route}) => {
-    if (!route.component) {
+  _renderScene = ({route}: any) => {
+    if (!route.children) {
       return null
     }
 
-    return (
-      <route.component
-        {...this.props.childProps}
-        {...route.props || {}}
-        navigator={this.props.navigator}
-        route={this.props.route}
-      />
-    )
+    return route.children()
   };
 
   render() {
-    let routes = {routes: this.props.tabs.map(tab => ({...tab, key: tab.id}))}
+    const navState = {
+      ...this.state,
+      routes: Children.map(this.props.children, ({props}) => ({...props, key: props.id})),
+    }
 
     return (
       <TabViewAnimated
         style={styles.container}
-        navigationState={{...this.state, ...routes}}
+        navigationState={navState}
         renderScene={this._renderScene}
         renderHeader={this._renderHeader}
         onRequestChangeTab={this._handleChangeTab}
