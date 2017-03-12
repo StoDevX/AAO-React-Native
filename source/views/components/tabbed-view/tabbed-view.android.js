@@ -61,11 +61,11 @@ export class TabbedView extends React.Component {
       return null
     }
 
-    if (!route.children) {
+    if (!route.render) {
       return null
     }
 
-    return route.children()
+    return route.render()
   };
 
   render() {
