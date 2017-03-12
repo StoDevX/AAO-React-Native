@@ -4,7 +4,7 @@ import React, {Children} from 'react'
 import {TabBarIOS} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {tracker} from '../../../analytics'
-import styles from './styles'
+import {styles} from './styles'
 import type {TabbedViewPropsType} from './types'
 import * as c from '../../components/colors'
 

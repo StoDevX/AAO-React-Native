@@ -1,3 +1,3 @@
 export type TabbedViewPropsType = {
-  style: Object | number,
+  style?: Object | number | Array<Object | number>,
 };

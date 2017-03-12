@@ -2,14 +2,12 @@
 import React, {Children} from 'react'
 import {StyleSheet, Platform, Dimensions} from 'react-native'
 import {TabViewAnimated, TabBar} from 'react-native-tab-view'
+import {styles as defaultStyles} from './styles'
 import * as c from '../colors'
 import type {TabbedViewPropsType} from './types'
 import {tracker} from '../../../analytics'
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   tabbar: {
     height: 48,
     backgroundColor: c.mandarin,
@@ -80,7 +78,7 @@ export class TabbedView extends React.Component {
 
     return (
       <TabViewAnimated
-        style={styles.container}
+        style={[defaultStyles.container, this.props.style]}
         navigationState={navState}
         renderScene={this._renderScene}
         renderHeader={this._renderHeader}
