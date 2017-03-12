@@ -5,7 +5,15 @@
  */
 
 import React from 'react'
-import {StyleSheet, View, Text, ScrollView, Image, Dimensions} from 'react-native'
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  Image,
+  Dimensions,
+} from 'react-native'
+import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
 import {data as webcams} from '../../../docs/webcams.json'
 import {webcamImages} from '../../../images/webcam-images'
@@ -14,7 +22,11 @@ import {trackedOpenUrl} from '../components/open-url'
 export default class WebcamsView extends React.PureComponent {
   render() {
     return (
-      <ScrollView style={styles.container} contentContainerStyle={styles.gridWrapper}>
+      <ScrollView
+        automaticallyAdjustContentInsets={false}
+        contentInset={{bottom: 49}}
+        contentContainerStyle={styles.gridWrapper}
+      >
         {webcams.map(webcam => <Webcam key={webcam.name} info={webcam} />)}
       </ScrollView>
     )
@@ -39,41 +51,27 @@ class Webcam extends React.PureComponent {
     const {name, thumbnail} = this.props.info
 
     return (
-      <View style={styles.rectangle} onPress={trackedOpenUrl}>
-        <View style={styles.webCamTitleBox}>
-          <Text style={styles.webcamName}>{name}</Text>
-        </View>
-        <Image source={webcamImages[thumbnail]} />
+      <View style={[styles.cell, styles.rounded]}>
+        <Touchable onPress={this.open} style={[styles.rounded]}>
+          <Image
+            source={webcamImages[thumbnail]}
+            style={[styles.image, styles.rounded]}
+          >
+            <View style={styles.titleWrapper}>
+              <Text style={styles.titleText}>{name}</Text>
+            </View>
+          </Image>
+        </Touchable>
       </View>
     )
   }
 }
 
 const CELL_MARGIN = 10
-const cellVerticalPadding = 8
-const cellHorizontalPadding = 4
+const cellWidth = Dimensions.get('window').width / 2 - CELL_MARGIN * 1.5
 
 const styles = StyleSheet.create({
-  // Main buttons for actions on home screen
-  rectangle: {
-    width: Dimensions.get('window').width / 2 - CELL_MARGIN * 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: cellVerticalPadding,
-    paddingBottom: cellVerticalPadding / 2,
-    paddingHorizontal: cellHorizontalPadding,
-    borderRadius: 3,
-    elevation: 2,
-
-    marginTop: CELL_MARGIN / 2,
-    marginBottom: CELL_MARGIN / 2,
-    marginLeft: CELL_MARGIN / 2,
-    marginRight: CELL_MARGIN / 2,
-  },
-  container: {
-    flex: 1,
-  },
-  grid: {
+  gridWrapper: {
     marginHorizontal: CELL_MARGIN / 2,
     marginTop: CELL_MARGIN / 2,
     paddingBottom: CELL_MARGIN / 2,
@@ -83,17 +81,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  webCamTitleBox: {
-    backgroundColor: c.white,
-    paddingBottom: 5,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: c.iosGray,
+  rounded: {
+    borderRadius: 6,
   },
-  webcamName: {
-    paddingTop: 5,
-    paddingLeft: 20,
-    paddingBottom: 10,
+  cell: {
+    width: cellWidth,
+    height: 100,
+    margin: CELL_MARGIN / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    elevation: 2,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  titleWrapper: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  titleText: {
+    backgroundColor: c.transparent,
+    textShadowColor: c.black,
+    fontWeight: '500',
+    textShadowRadius: 5,
+    textShadowOffset: {width: 1, height: 1},
+    color: c.white,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    textAlign: 'center',
   },
 })
 
