@@ -6,10 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import {tracker} from '../../../analytics'
 import styles from './styles'
 import type {TabbedViewPropsType} from './types'
-import {TabbedViewPropTypes} from './types'
 import * as c from '../../components/colors'
-
-export const Tab = (props: {id: string, icon: string, title: string, children?: () => React$Component<*, *, *>}) => props
 
 export class TabbedView extends React.Component {
   state = {
@@ -18,11 +15,7 @@ export class TabbedView extends React.Component {
 
   componentWillMount() {
     this.onChangeTab(this.props.tabs[0].id)
-  }
-
-  componentWillMount() {
-    this.onChangeTab(this.props.tabs[0].id)
-  }
+  };
 
   props: TabbedViewPropsType;
 

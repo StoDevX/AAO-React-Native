@@ -6,8 +6,6 @@ import * as c from '../colors'
 import type {TabbedViewPropsType} from './types'
 import {tracker} from '../../../analytics'
 
-export const Tab = (props: {id: string, icon: string, title: string, children?: () => React$Component<*, *, *>}) => props
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -31,14 +29,10 @@ export default class TabbedView extends React.Component {
     index: 0,
   };
 
-  componentWillMount() {
-    this._handleChangeTab(0)
-  }
-
   props: TabbedViewPropsType;
 
   _handleChangeTab = index => {
-    tracker.trackScreenView(this.props.tabs[index].id)
+    tracker.trackScreenView(this.props.tabs[index].title)
     this.setState({
       index,
     })
