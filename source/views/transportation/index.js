@@ -7,13 +7,12 @@
 import React from 'react'
 import {StyleSheet} from 'react-native'
 
-import type {TopLevelViewPropsType} from '../types'
 import {TabbedView, Tab} from '../components/tabbed-view'
 
 import OtherModesView from './otherModes'
 import BusView from './bus'
 
-export default function TransportationPage({navigator, route}: TopLevelViewPropsType) {
+export default function TransportationPage() {
   return (
     <TabbedView style={styles.container}>
       <Tab id="ExpressLineBusView" title="Express Bus" icon="bus">
