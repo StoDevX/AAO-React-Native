@@ -30,7 +30,11 @@ export class TabbedView extends React.Component {
         style={[styles.container, this.props.style]}
       >
         {Children.map(this.props.children, ({props: tab}) => (
-          <TabBarItem tab={tab} onChangeTab={this.onChangeTab} />
+          <TabBarItem
+            tab={tab}
+            onChangeTab={this.onChangeTab}
+            isSelected={this.state.selectedTab === tab.id}
+          />
         ))}
       </TabBarIOS>
     )
@@ -40,6 +44,7 @@ export class TabbedView extends React.Component {
 class TabBarItem extends React.Component {
   props: {
     tab: TabPropsType,
+    isSelected: boolean,
     onChangeTab: (id: string) => any,
   };
 
@@ -63,7 +68,7 @@ class TabBarItem extends React.Component {
         key={tab.id}
         title={tab.title}
         style={styles.listViewStyle}
-        selected={this.state.selectedTab === tab.id}
+        selected={this.props.isSelected}
         translucent={true}
         onPress={this.onChangeTab}
       >
