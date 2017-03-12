@@ -23,9 +23,7 @@ const styles = StyleSheet.create({
 })
 
 export class TabbedView extends React.Component {
-  state = {
-    index: 0,
-  };
+  state: {index: number};
 
   componentWillMount() {
     this._handleChangeTab(0)
@@ -34,12 +32,9 @@ export class TabbedView extends React.Component {
   props: TabbedViewPropsType;
 
   _handleChangeTab = index => {
-    tracker.trackScreenView(
-      Children.toArray(this.props.children)[index].props.title,
-    )
-    this.setState({
-      index,
-    })
+    const childrenAsArray = Children.toArray(this.props.children)
+    tracker.trackScreenView(childrenAsArray[index].props.title)
+    this.setState({index})
   };
 
   _renderHeader = props => {
