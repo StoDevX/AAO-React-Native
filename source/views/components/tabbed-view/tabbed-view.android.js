@@ -33,7 +33,7 @@ export class TabbedView extends React.Component {
 
   _handleChangeTab = index => {
     const childrenAsArray = Children.toArray(this.props.children)
-    tracker.trackScreenView(childrenAsArray[index].props.title)
+    tracker.trackScreenView(childrenAsArray[index].props.id)
     this.setState({index})
   };
 
