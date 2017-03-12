@@ -9,4 +9,5 @@ export type TabPropsType = {
 
 export type TabbedViewPropsType = {
   style?: Object | number | Array<Object | number>,
+  tabs: Array<?TabPropsType>,
 };

@@ -1,5 +1,5 @@
 // @flow
-import React, {Children} from 'react'
+import React from 'react'
 import {StyleSheet, Platform, Dimensions} from 'react-native'
 import {TabViewAnimated, TabBar} from 'react-native-tab-view'
 import {styles as defaultStyles} from './styles'
@@ -32,8 +32,7 @@ export class TabbedView extends React.Component {
   props: TabbedViewPropsType;
 
   _handleChangeTab = index => {
-    const childrenAsArray = Children.toArray(this.props.children)
-    tracker.trackScreenView(childrenAsArray[index].props.id)
+    tracker.trackScreenView(this.props.tabs[index].id)
     this.setState({index})
   };
 
@@ -43,7 +42,7 @@ export class TabbedView extends React.Component {
         {...props}
         // TabBar renders the tabs to fill the width of the window
         // when scrollEnabled is false
-        scrollEnabled={Children.count(this.props.children) > 3}
+        scrollEnabled={this.props.tabs.length > 3}
         indicatorStyle={styles.indicator}
         style={styles.tabbar}
         labelStyle={styles.label}
@@ -52,7 +51,7 @@ export class TabbedView extends React.Component {
   };
 
   _renderScene = ({route}: any) => {
-    const thisTabIndex = Children.toArray(this.props.children).indexOf(route)
+    const thisTabIndex = this.props.tabs.findIndex(tab => tab.id === route.id)
     if (Math.abs(this.state.index - thisTabIndex) > 2) {
       return null
     }
@@ -69,10 +68,7 @@ export class TabbedView extends React.Component {
 
     const navState = {
       ...this.state,
-      routes: Children.map(this.props.children, ({props}) => ({
-        ...props,
-        key: props.id,
-      })),
+      routes: this.props.tabs.filter(Boolean).map(tab => ({...tab, key: tab.id})),
     }
 
     return (

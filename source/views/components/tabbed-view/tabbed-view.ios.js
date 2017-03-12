@@ -1,6 +1,6 @@
 // @flow
 
-import React, {Children} from 'react'
+import React from 'react'
 import {TabBarIOS} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {tracker} from '../../../analytics'
@@ -12,8 +12,7 @@ export class TabbedView extends React.Component {
   state: {selectedTab: string};
 
   componentWillMount() {
-    const childrenAsArray = Children.toArray(this.props.children)
-    this.onChangeTab(childrenAsArray[0].props.id)
+    this.onChangeTab(this.props.tabs.filter(Boolean)[0].id)
   }
 
   props: TabbedViewPropsType;
@@ -29,8 +28,9 @@ export class TabbedView extends React.Component {
         tintColor={c.mandarin}
         style={[styles.container, this.props.style]}
       >
-        {Children.map(this.props.children, ({props: tab}) => (
+        {this.props.tabs.filter(Boolean).map(tab => (
           <TabBarItem
+            key={tab.id}
             tab={tab}
             onChangeTab={this.onChangeTab}
             isSelected={this.state.selectedTab === tab.id}
@@ -65,7 +65,6 @@ class TabBarItem extends React.Component {
     return (
       <Icon.TabBarItemIOS
         {...icon}
-        key={tab.id}
         title={tab.title}
         style={styles.listViewStyle}
         selected={this.props.isSelected}
