@@ -38,19 +38,15 @@ export class TabbedView extends React.Component {
   };
 
   _renderHeader = props => {
-    // make the tabs fill the window's width when there are only two tabs
-    const tabStyle = Children.count(this.props.children) <= 2
-      ? {width: Dimensions.get('window').width / 2}
-      : undefined
-
     return (
       <TabBar
         {...props}
-        scrollEnabled={true}
-        indicatorStyle={[styles.indicator]}
+        // TabBar renders the tabs to fill the width of the window
+        // when scrollEnabled is false
+        scrollEnabled={Children.count(this.props.children) > 3}
+        indicatorStyle={styles.indicator}
         style={styles.tabbar}
         labelStyle={styles.label}
-        tabStyle={tabStyle}
       />
     )
   };
