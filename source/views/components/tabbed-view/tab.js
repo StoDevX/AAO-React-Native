@@ -4,7 +4,7 @@ type TabPropsType = {
   id: string,
   icon: string,
   title: string,
-  children?: () => ReactClass<*>,
+  render: () => ReactElement<*>,
 };
 
 export const Tab = (props: TabPropsType) =>
