@@ -29,25 +29,25 @@ export class TabbedView extends React.Component {
         tintColor={c.mandarin}
         style={[styles.container, this.props.style]}
       >
-        {Children.map(this.props.children, ({props}) => {
-          const icon = props.icon
+        {Children.map(this.props.children, ({props: tab}) => {
+          const icon = tab.icon
             ? {
-                iconName: `ios-${props.icon}-outline`,
-                selectedIconName: `ios-${props.icon}`,
+                iconName: `ios-${tab.icon}-outline`,
+                selectedIconName: `ios-${tab.icon}`,
               }
             : {}
 
           return (
             <Icon.TabBarItemIOS
               {...icon}
-              key={props.id}
-              title={props.title}
+              key={tab.id}
+              title={tab.title}
               style={styles.listViewStyle}
-              selected={this.state.selectedTab === props.id}
+              selected={this.state.selectedTab === tab.id}
               translucent={true}
-              onPress={() => this.onChangeTab(props.id)}
+              onPress={() => this.onChangeTab(tab.id)}
             >
-              {props.children()}
+              {tab.render()}
             </Icon.TabBarItemIOS>
           )
         })}
