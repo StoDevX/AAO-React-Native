@@ -104,6 +104,17 @@
 	</array>
 	<key>UIStatusBarHidden</key>
 	<true/>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeFavorite</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Menus</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>AllAboutOlaf.menus</string>
+		</dict>
+	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -3,6 +3,7 @@
 import {AppRegistry} from 'react-native'
 import App from './app'
 import codePush from 'react-native-code-push'
+import * as quickactions from './quick-actions'
 
 const codePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
