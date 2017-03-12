@@ -1,5 +1,6 @@
-// @flow
+/* eslint-disable camelcase */
 /**
+ * @flow
  * All About Olaf
  * News page
  */
