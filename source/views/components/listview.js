@@ -14,6 +14,9 @@ type PropsType = {
 };
 
 export default class SimpleListView extends React.Component {
+  static initialListSize = 6;
+  static pageSize = 6;
+
   state = {
     dataSource: new ListView.DataSource({
       rowHasChanged: () => true,
@@ -71,8 +74,8 @@ export default class SimpleListView extends React.Component {
       <ListView
         {...iosInset}
         {...refresher}
-        initialListSize={6}
-        pageSize={6}
+        initialListSize={SimpleListView.initialListSize}
+        pageSize={SimpleListView.pageSize}
         removeClippedSubviews={false}
         dataSource={this.state.dataSource}
         renderRow={rowData => renderRow(rowData)}

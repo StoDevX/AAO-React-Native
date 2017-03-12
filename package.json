@@ -7,7 +7,7 @@
     "bundle-data": "node scripts/bundle-data.js data/ docs/",
     "bundle:android": "react-native bundle --entry-file index.android.js --dev true --platform android --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/",
     "bundle:ios": "react-native bundle --entry-file index.ios.js --dev true --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios",
-    "check:": "npm run prettier && npm run flow && npm run test",
+    "check": "npm run prettier && npm run flow && npm run test",
     "danger": "danger",
     "data": "node scripts/bundle-data.js data/ docs/",
     "flow": "flow",
@@ -90,7 +90,7 @@
     "xml2js": "0.4.17"
   },
   "devDependencies": {
-    "ajv": "4.11.4",
+    "ajv": "4.11.5",
     "babel-eslint": "7.1.1",
     "babel-jest": "18.0.0",
     "babel-plugin-flow-react-proptypes": "0.21.0",
@@ -114,6 +114,7 @@
     "pify": "2.3.0",
     "prettier": "0.22.0",
     "react-native-mock": "0.3.1",
+    "react-native-view-shot": "1.9.0",
     "react-test-renderer": "15.4.2"
   }
 }

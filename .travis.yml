@@ -34,7 +34,7 @@ matrix:
       dist: trusty
       sudo: false
       language: node_js
-      node_js: 7
+      node_js: '7'
       env: [JS=yes]
 
     - &android-base
@@ -71,7 +71,7 @@ matrix:
     - os: osx
       language: objective-c
       osx_image: xcode8.1
-      node_js: 7
+      node_js: '7'
       env: [IOS=yes, CAN_DEPLOY=yes]
 
 
@@ -94,7 +94,6 @@ before_install:
   - if [[ $ANDROID || $IOS ]]; then
       rvm use 2.3 --install --binary --fuzzy;
       gem install bundler;
-    fi
 
   # only deploy from the once-daily cron-triggered jobs
   - if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi

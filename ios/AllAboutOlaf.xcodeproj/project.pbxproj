@@ -32,6 +32,7 @@
 		3A0CEA921DEA203F0036E739 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0CEA781DEA20340036E739 /* libRCTAnimation.a */; };
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
 		56DC65C1BF07427AA1F84CFC /* libSafariViewManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D530CE76BA714A59B2BECB28 /* libSafariViewManager.a */; };
+		570ACE6B68F941838FFABAA9 /* libRNViewShot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CBE5D51CAA854462BCB6C610 /* libRNViewShot.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		9304AFEA1BEF4D77A9BE9E47 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EFDF596D3434455B7F672D3 /* libRNVectorIcons.a */; };
 		A0102781BF874C25BD76AD1D /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2D51A8982104BF29657933B /* libRNDeviceInfo.a */; };
@@ -75,6 +76,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 5DBEB1501B18CEA900B34395;
 			remoteInfo = RNVectorIcons;
+		};
+		002D2C491E7216B2002F518B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 17311DD2DB1B4EE0AFAA0BC4 /* RNViewShot.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNViewShot;
 		};
 		0035C1021E4F59AE00768B84 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -322,6 +330,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = AllAboutOlaf/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		150D47C893AB4ACBA45D7AF8 /* RCTGoogleAnalyticsBridge.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTGoogleAnalyticsBridge.xcodeproj; path = "../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/RCTGoogleAnalyticsBridge.xcodeproj"; sourceTree = "<group>"; };
+		17311DD2DB1B4EE0AFAA0BC4 /* RNViewShot.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNViewShot.xcodeproj; path = "../node_modules/react-native-view-shot/ios/RNViewShot.xcodeproj"; sourceTree = "<group>"; };
 		203BE3D7758C4020A78210B2 /* libRCTOneSignal.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTOneSignal.a; sourceTree = "<group>"; };
 		209B4AAEEC3F4290A1ED9491 /* libRNKeychain.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNKeychain.a; sourceTree = "<group>"; };
 		2560C43708D64866AA01FCC8 /* RNKeychain.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeychain.xcodeproj; path = "../node_modules/react-native-keychain/RNKeychain.xcodeproj"; sourceTree = "<group>"; };
@@ -339,6 +348,7 @@
 		A2D51A8982104BF29657933B /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = "<group>"; };
 		A91038679F834707B769D282 /* RNKeychain.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeychain.xcodeproj; path = "../node_modules/react-native-keychain/RNKeychain.xcodeproj"; sourceTree = "<group>"; };
 		AECB3DDD098E445D8AB3555F /* CodePush.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = CodePush.xcodeproj; path = "../node_modules/react-native-code-push/ios/CodePush.xcodeproj"; sourceTree = "<group>"; };
+		CBE5D51CAA854462BCB6C610 /* libRNViewShot.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNViewShot.a; sourceTree = "<group>"; };
 		CE0A6E16923B40C9930B546C /* ReactNativeCustomTabs.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeCustomTabs.xcodeproj; path = "../node_modules/react-native-custom-tabs/ios/ReactNativeCustomTabs.xcodeproj"; sourceTree = "<group>"; };
 		D222CA78E6554BBB83448435 /* libDBCustomTabs.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libDBCustomTabs.a; sourceTree = "<group>"; };
 		D530CE76BA714A59B2BECB28 /* libSafariViewManager.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSafariViewManager.a; sourceTree = "<group>"; };
@@ -382,6 +392,7 @@
 				A3D56267BEA24AB583A6D2A2 /* libCodePush.a in Frameworks */,
 				56DC65C1BF07427AA1F84CFC /* libSafariViewManager.a in Frameworks */,
 				A90299E6C1BD45C385BBF8F0 /* libDBCustomTabs.a in Frameworks */,
+				570ACE6B68F941838FFABAA9 /* libRNViewShot.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,6 +435,14 @@
 			isa = PBXGroup;
 			children = (
 				0027B0A71D5C82AA00C2B4FD /* libRNVectorIcons.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		002D2C241E7216B2002F518B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				002D2C4A1E7216B2002F518B /* libRNViewShot.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -629,6 +648,7 @@
 				2560C43708D64866AA01FCC8 /* RNKeychain.xcodeproj */,
 				71D5CCADA66D45008D9A38F2 /* RNVectorIcons.xcodeproj */,
 				89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */,
+				17311DD2DB1B4EE0AFAA0BC4 /* RNViewShot.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -827,6 +847,10 @@
 					ProjectRef = 43E420DADB24468C9E296F25 /* RNVectorIcons.xcodeproj */;
 				},
 				{
+					ProductGroup = 002D2C241E7216B2002F518B /* Products */;
+					ProjectRef = 17311DD2DB1B4EE0AFAA0BC4 /* RNViewShot.xcodeproj */;
+				},
+				{
 					ProductGroup = 009845971E5DEE6800194E4A /* Products */;
 					ProjectRef = 89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */;
 				},
@@ -873,6 +897,13 @@
 			fileType = archive.ar;
 			path = libRNVectorIcons.a;
 			remoteRef = 0027B0A61D5C82AA00C2B4FD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		002D2C4A1E7216B2002F518B /* libRNViewShot.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNViewShot.a;
+			remoteRef = 002D2C491E7216B2002F518B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		0035C1031E4F59AE00768B84 /* libyoga.a */ = {
@@ -1222,6 +1253,7 @@
 					"$(SRCROOT)/../node_modules/react-native-code-push/ios/CodePush/**",
 					"$(SRCROOT)/../node_modules/react-native-safari-view",
 					"$(SRCROOT)/../node_modules/react-native-custom-tabs/ios/ReactNativeCustomTabs",
+					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
 				);
 				INFOPLIST_FILE = AllAboutOlaf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1257,6 +1289,7 @@
 					"$(SRCROOT)/../node_modules/react-native-code-push/ios/CodePush/**",
 					"$(SRCROOT)/../node_modules/react-native-safari-view",
 					"$(SRCROOT)/../node_modules/react-native-custom-tabs/ios/ReactNativeCustomTabs",
+					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
 				);
 				INFOPLIST_FILE = AllAboutOlaf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

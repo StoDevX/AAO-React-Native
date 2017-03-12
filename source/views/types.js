@@ -7,7 +7,7 @@ export type RouteType = {
   id: string,
   title: string,
   backButtonTitle?: string,
-  rightButton?: () => ReactComponent<any>,
+  rightButton?: () => ReactClass<*>,
   onDismiss?: (r: RouteType, n: Navigator) => any,
   sceneConfig?: Object | 'fromBottom' | string,
 };
