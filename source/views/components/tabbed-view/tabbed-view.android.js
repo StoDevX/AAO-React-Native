@@ -32,14 +32,14 @@ export default class TabbedView extends React.Component {
   props: TabbedViewPropsType;
 
   _handleChangeTab = index => {
-    tracker.trackScreenView(this.props.tabs[index].title)
+    tracker.trackScreenView(Children.toArray(this.props.children)[index].props.title)
     this.setState({
       index,
     })
   };
 
   _renderHeader = props => {
-    const tabStyle = this.props.tabs.length <= 2
+    const tabStyle = Children.count(this.props.children) <= 2
       ? {width: Dimensions.get('window').width / 2}
       : undefined
 

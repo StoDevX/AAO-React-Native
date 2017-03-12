@@ -10,11 +10,11 @@ import * as c from '../../components/colors'
 
 export class TabbedView extends React.Component {
   state = {
-    selectedTab: this.props.tabs[0].id,
+    selectedTab: Children.toArray(this.props.children)[0].props.id,
   };
 
   componentWillMount() {
-    this.onChangeTab(this.props.tabs[0].id)
+    this.onChangeTab(Children.toArray(this.props.children)[0].props.id)
   };
 
   props: TabbedViewPropsType;
