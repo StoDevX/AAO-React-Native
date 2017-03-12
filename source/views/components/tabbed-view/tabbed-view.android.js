@@ -38,6 +38,7 @@ export class TabbedView extends React.Component {
   };
 
   _renderHeader = props => {
+    // make the tabs fill the window's width when there are only two tabs
     const tabStyle = Children.count(this.props.children) <= 2
       ? {width: Dimensions.get('window').width / 2}
       : undefined
@@ -55,6 +56,11 @@ export class TabbedView extends React.Component {
   };
 
   _renderScene = ({route}: any) => {
+    const thisTabIndex = Children.toArray(this.props.children).indexOf(route)
+    if (Math.abs(this.state.index - thisTabIndex) > 2) {
+      return null
+    }
+
     if (!route.children) {
       return null
     }
@@ -63,6 +69,12 @@ export class TabbedView extends React.Component {
   };
 
   render() {
+    // see react-native-tab-view's readme for the rationale
+    const initialLayout = {
+      height: 0,
+      width: Dimensions.get('window').width,
+    }
+
     const navState = {
       ...this.state,
       routes: Children.map(this.props.children, ({props}) => ({
@@ -74,6 +86,7 @@ export class TabbedView extends React.Component {
     return (
       <TabViewAnimated
         style={[defaultStyles.container, this.props.style]}
+        initialLayout={initialLayout}
         navigationState={navState}
         renderScene={this._renderScene}
         renderHeader={this._renderHeader}
