@@ -5,7 +5,6 @@
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
 
 import {TabbedView, Tab} from '../components/tabbed-view'
 import {GoogleCalendarView} from './calendar-google'
@@ -13,7 +12,7 @@ import {PresenceCalendarView} from './calendar-presence'
 
 export default function CalendarPage() {
   return (
-    <TabbedView style={styles.container}>
+    <TabbedView>
       <Tab id="StOlafCalendarView" title="St. Olaf" icon="school">
         {() => (
           <GoogleCalendarView
@@ -52,9 +51,3 @@ export default function CalendarPage() {
     </TabbedView>
   )
 }
-
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})

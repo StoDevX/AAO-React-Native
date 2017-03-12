@@ -5,7 +5,6 @@
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
 
 import {TabbedView, Tab} from '../components/tabbed-view'
 
@@ -14,7 +13,7 @@ import BusView from './bus'
 
 export default function TransportationPage() {
   return (
-    <TabbedView style={styles.container}>
+    <TabbedView>
       <Tab id="ExpressLineBusView" title="Express Bus" icon="bus">
         {() => <BusView line="Express Bus" />}
       </Tab>
@@ -37,9 +36,3 @@ export default function TransportationPage() {
     </TabbedView>
   )
 }
-
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})

@@ -5,7 +5,6 @@
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
 
 import type {TopLevelViewPropsType} from '../types'
 import {TabbedView, Tab} from '../components/tabbed-view'
@@ -16,7 +15,7 @@ import {BonAppPickerView} from './dev-bonapp-picker'
 
 export function MenusView({navigator, route}: TopLevelViewPropsType) {
   return (
-    <TabbedView style={styles.container}>
+    <TabbedView>
       <Tab id="StavHallMenuView" title="Stav Hall" icon="nutrition">
         {() => (
           <BonAppHostedMenu
@@ -72,9 +71,3 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
     </TabbedView>
   )
 }
-
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
