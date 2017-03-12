@@ -36,7 +36,9 @@ export class TabbedView extends React.Component {
   props: TabbedViewPropsType;
 
   _handleChangeTab = index => {
-    tracker.trackScreenView(Children.toArray(this.props.children)[index].props.title)
+    tracker.trackScreenView(
+      Children.toArray(this.props.children)[index].props.title,
+    )
     this.setState({
       index,
     })
@@ -70,7 +72,10 @@ export class TabbedView extends React.Component {
   render() {
     const navState = {
       ...this.state,
-      routes: Children.map(this.props.children, ({props}) => ({...props, key: props.id})),
+      routes: Children.map(this.props.children, ({props}) => ({
+        ...props,
+        key: props.id,
+      })),
     }
 
     return (

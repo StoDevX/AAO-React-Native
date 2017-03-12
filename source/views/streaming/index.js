@@ -16,7 +16,7 @@ import WebcamsView from './webcams'
 export default function MediaPage() {
   return (
     <TabbedView style={styles.container}>
-      <Tab id='KSTORadioView' title='KSTO' icon='radio'>
+      <Tab id="KSTORadioView" title="KSTO" icon="radio">
         {() => <KSTOView />}
       </Tab>
 
@@ -24,7 +24,7 @@ export default function MediaPage() {
         {() => <WeeklyMovieView />}
       </Tab>*/}
 
-      <Tab id='LiveWebcamsView' title='Webcams' icon='videocam'>
+      <Tab id="LiveWebcamsView" title="Webcams" icon="videocam">
         {() => <WebcamsView />}
       </Tab>
     </TabbedView>

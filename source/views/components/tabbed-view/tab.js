@@ -7,4 +7,5 @@ type TabPropsType = {
   children?: () => ReactClass<*>,
 };
 
-export const Tab = (props: TabPropsType) => props.children ? props.children : null
+export const Tab = (props: TabPropsType) =>
+  props.children ? props.children : null

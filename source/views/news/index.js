@@ -14,63 +14,68 @@ import NewsContainer from './news-container'
 export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
   return (
     <TabbedView style={styles.container}>
-      <Tab id='StOlafNewsView' title='St. Olaf' icon='school'>
-        {() =>
+      <Tab id="StOlafNewsView" title="St. Olaf" icon="school">
+        {() => (
           <NewsContainer
             route={route}
             navigator={navigator}
-            mode='wp-json'
-            url='https://wp.stolaf.edu/wp-json/wp/v2/posts'
-            query={{'per_page': 10, _embed: true}}
-            name='St. Olaf'
-          />}
+            mode="wp-json"
+            url="https://wp.stolaf.edu/wp-json/wp/v2/posts"
+            query={{per_page: 10, _embed: true}}
+            name="St. Olaf"
+          />
+        )}
       </Tab>
 
-      <Tab id='OlevilleNewsView' title='Oleville' icon='happy'>
-        {() =>
+      <Tab id="OlevilleNewsView" title="Oleville" icon="happy">
+        {() => (
           <NewsContainer
             route={route}
             navigator={navigator}
-            mode='wp-json'
-            url='http://oleville.com/wp-json/wp/v2/posts/'
+            mode="wp-json"
+            url="http://oleville.com/wp-json/wp/v2/posts/"
             query={{per_page: 10, _embed: true}}
             embedFeaturedImage={true}
-            name='Oleville'
-          />}
+            name="Oleville"
+          />
+        )}
       </Tab>
 
-      <Tab id='TheMessNewsView' title='The Mess' icon='paper'>
-        {() =>
+      <Tab id="TheMessNewsView" title="The Mess" icon="paper">
+        {() => (
           <NewsContainer
             route={route}
             navigator={navigator}
-            mode='rss'
-            url='http://manitoumessenger.com/feed/'
-            name='The Mess'
-          />}
+            mode="rss"
+            url="http://manitoumessenger.com/feed/"
+            name="The Mess"
+          />
+        )}
       </Tab>
 
-      <Tab id='PoliticOleNewsView' title='PoliticOle' icon='megaphone'>
-        {() =>
+      <Tab id="PoliticOleNewsView" title="PoliticOle" icon="megaphone">
+        {() => (
           <NewsContainer
             route={route}
             navigator={navigator}
-            mode='rss'
-            url='http://oleville.com/politicole/feed/'
-            name='PoliticOle'
-          />}
+            mode="rss"
+            url="http://oleville.com/politicole/feed/"
+            name="PoliticOle"
+          />
+        )}
       </Tab>
 
-      <Tab id='KstoNewsView' title='KSTO' icon='radio'>
-        {() =>
+      <Tab id="KstoNewsView" title="KSTO" icon="radio">
+        {() => (
           <NewsContainer
             route={route}
             navigator={navigator}
-            mode='wp-json'
-            url='https://pages.stolaf.edu/ksto/wp-json/wp/v2/posts/'
+            mode="wp-json"
+            url="https://pages.stolaf.edu/ksto/wp-json/wp/v2/posts/"
             query={{per_page: 10, _embed: true}}
-            name='KSTO'
-          />}
+            name="KSTO"
+          />
+        )}
       </Tab>
     </TabbedView>
   )

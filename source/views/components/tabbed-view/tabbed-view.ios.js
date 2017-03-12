@@ -15,7 +15,7 @@ export class TabbedView extends React.Component {
 
   componentWillMount() {
     this.onChangeTab(Children.toArray(this.props.children)[0].props.id)
-  };
+  }
 
   props: TabbedViewPropsType;
 
@@ -26,13 +26,16 @@ export class TabbedView extends React.Component {
 
   render() {
     return (
-      <TabBarIOS tintColor={c.mandarin} style={[styles.container, this.props.style]}>
+      <TabBarIOS
+        tintColor={c.mandarin}
+        style={[styles.container, this.props.style]}
+      >
         {Children.map(this.props.children, ({props}) => {
           const icon = props.icon
             ? {
-              iconName: `ios-${props.icon}-outline`,
-              selectedIconName: `ios-${props.icon}`,
-            }
+                iconName: `ios-${props.icon}-outline`,
+                selectedIconName: `ios-${props.icon}`,
+              }
             : {}
 
           return (

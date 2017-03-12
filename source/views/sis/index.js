@@ -23,11 +23,11 @@ const styles = StyleSheet.create({
 export default function SISView({navigator, route}: TopLevelViewPropsType) {
   return (
     <TabbedView style={styles.container}>
-      <Tab id='BalancesView' title='Balances' icon='card'>
+      <Tab id="BalancesView" title="Balances" icon="card">
         {() => <BalancesView route={route} navigator={navigator} />}
       </Tab>
 
-      <Tab id='CoursesView' title='Courses' icon='archive'>
+      <Tab id="CoursesView" title="Courses" icon="archive">
         {() => <CoursesView route={route} navigator={navigator} />}
       </Tab>
 
