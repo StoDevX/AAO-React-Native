@@ -57,12 +57,6 @@ export class TabbedView extends React.Component {
       return null
     }
 
-    if (!route.render) {
-      console.warn('no render prop was defined on this tab')
-      console.warn('tab definition:', route)
-      return null
-    }
-
     return route.render()
   };
 
