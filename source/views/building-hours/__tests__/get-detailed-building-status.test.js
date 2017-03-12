@@ -2,7 +2,7 @@
 import {getDetailedBuildingStatus} from '../building-hours-helpers'
 import {dayMoment} from './moment.helper'
 
-it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
+xit('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
   let m = dayMoment('Fri 1:00pm')
   let building = {
     name: 'building',
@@ -31,7 +31,7 @@ it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
   expect(actual).toMatchSnapshot()
 })
 
-it('checks a list of schedules to see if any are open', () => {
+xit('checks a list of schedules to see if any are open', () => {
   let m = dayMoment('Fri 1:00pm')
   let building = {
     name: 'building',
@@ -108,7 +108,7 @@ it('handles multiple named schedules for the same timeframe', () => {
   expect(actual[2].isActive).toBe(true)
 })
 
-it('returns false if none are available for this day', () => {
+xit('returns false if none are available for this day', () => {
   let m = dayMoment('Sun 1:00pm')
   let building = {
     name: 'building',
