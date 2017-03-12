@@ -4,7 +4,7 @@ type TabPropsType = {
   id: string,
   icon: string,
   title: string,
-  children?: () => React$Component<*, *, *>,
-}
+  children?: () => ReactClass<*>,
+};
 
-export const Tab = (props: TabPropsType) => props
+export const Tab = (props: TabPropsType) => props.children ? props.children : null
