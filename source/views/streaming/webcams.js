@@ -33,6 +33,25 @@ export default class WebcamsView extends React.PureComponent {
   }
 }
 
+const colors = {
+  // 'Alumni Hall West': 'rgba(75, 66, 69, 0.85)',
+  'Alumni Hall West': 'rgba(48, 63, 102, 0.85)',
+  'Buntrock Plaza': 'rgba(93, 114, 72, 0.85)',
+  'East Quad': 'rgba(82, 87, 54, 0.85)',
+  'Hi Mom': 'rgba(137, 141, 150, 0.85)',
+  'Tomson East Lantern': 'rgba(89, 84, 82, 0.85)',
+  'Tomson West Lantern': 'rgba(110, 126, 91, 0.85)',
+}
+
+const fgcolors = {
+  'Alumni Hall West': c.white,
+  'Buntrock Plaza': c.white,
+  'East Quad': c.white,
+  'Hi Mom': c.white,
+  'Tomson East Lantern': c.white,
+  'Tomson West Lantern': c.white,
+}
+
 class Webcam extends React.PureComponent {
   props: {
     info: {
@@ -49,16 +68,18 @@ class Webcam extends React.PureComponent {
 
   render() {
     const {name, thumbnail} = this.props.info
+    const baseColor = colors[name]
+    const textColor = fgcolors[name]
 
     return (
       <View style={[styles.cell, styles.rounded]}>
-        <Touchable onPress={this.open} style={[styles.rounded]}>
+        <Touchable highlight underlayColor={c.black} onPress={this.open} style={[styles.rounded]}>
           <Image
             source={webcamImages[thumbnail]}
             style={[styles.image, styles.rounded]}
           >
             <View style={styles.titleWrapper}>
-              <Text style={styles.titleText}>{name}</Text>
+              <Text style={[styles.titleText, {backgroundColor: baseColor, color: textColor}]}>{name}</Text>
             </View>
           </Image>
         </Touchable>
@@ -69,6 +90,7 @@ class Webcam extends React.PureComponent {
 
 const CELL_MARGIN = 10
 const cellWidth = Dimensions.get('window').width / 2 - CELL_MARGIN * 1.5
+const cellHeight = 80
 
 const styles = StyleSheet.create({
   gridWrapper: {
@@ -85,8 +107,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   cell: {
+    overflow: 'hidden',
     width: cellWidth,
-    height: 100,
+    height: cellHeight,
     margin: CELL_MARGIN / 2,
     alignItems: 'center',
     justifyContent: 'center',
@@ -102,12 +125,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   titleText: {
-    backgroundColor: c.transparent,
-    textShadowColor: c.black,
-    fontWeight: '500',
-    textShadowRadius: 5,
-    textShadowOffset: {width: 1, height: 1},
-    color: c.white,
+    fontSize: 12,
     paddingHorizontal: 4,
     paddingVertical: 2,
     textAlign: 'center',
