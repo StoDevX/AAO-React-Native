@@ -3,32 +3,38 @@
     {
       "name": "Alumni Hall West",
       "url": "http://stolaf-flash.streamguys.net/webcams/alumniwest.stream/playlist.m3u8",
-      "thumbnail": "alumniwest"
+      "thumbnail": "alumniwest",
+      "tagline": "A view of the Ytterboe Hall and the wind turbine"
     },
     {
       "name": "Buntrock Plaza",
       "url": "http://stolaf-flash.streamguys.net/webcams/bcplaza.stream/playlist.m3u8",
-      "thumbnail": "bcplaza"
+      "thumbnail": "bcplaza",
+      "tagline": "Looking out to the plaza and campus green"
     },
     {
       "name": "East Quad",
       "url": "http://stolaf-flash.streamguys.net/webcams/eastquad.stream/playlist.m3u8",
-      "thumbnail": "eastquad"
+      "thumbnail": "eastquad",
+      "tagline": "Looking out to Regents, Holland Hall, and Old Main"
     },
     {
       "name": "Hi Mom",
       "url": "http://stolaf-flash.streamguys.net/webcams/himom.stream/playlist.m3u8",
-      "thumbnail": "himom"
+      "thumbnail": "himom",
+      "tagline": "Located in the Crossroads inside Buntrock Commons"
     },
     {
       "name": "Tomson East Lantern",
       "url": "http://stolaf-flash.streamguys.net/webcams/tomsoneast.stream/playlist.m3u8",
-      "thumbnail": "tomsoneast"
+      "thumbnail": "tomsoneast",
+      "tagline": "A view of the campus green and Wind Chime Memorial"
     },
     {
       "name": "Tomson West Lantern",
       "url": "http://stolaf-flash.streamguys.net/webcams/tomsonwest.stream/playlist.m3u8",
-      "thumbnail": "tomsonwest"
+      "thumbnail": "tomsonwest",
+      "tagline": "Looking out to Mellby Hall and the Theater Building"
     }
   ]
 }
