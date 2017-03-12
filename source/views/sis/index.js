@@ -16,17 +16,21 @@ import CoursesView from './courses'
 export default function SISView({navigator, route}: TopLevelViewPropsType) {
   return (
     <TabbedView>
-      <Tab id="BalancesView" title="Balances" icon="card">
-        {() => <BalancesView route={route} navigator={navigator} />}
-      </Tab>
+      <Tab
+        id="BalancesView"
+        title="Balances"
+        icon="card"
+        render={() => <BalancesView route={route} navigator={navigator} />}
+      />
 
-      <Tab id="CoursesView" title="Courses" icon="archive">
-        {() => <CoursesView route={route} navigator={navigator} />}
-      </Tab>
+      <Tab
+        id="CoursesView"
+        title="Courses"
+        icon="archive"
+        render={() => <CoursesView route={route} navigator={navigator} />}
+      />
 
-      {/*<Tab id='CourseSearchView' title='Search' icon='search'>
-        {() => <SearchView route={route} navigator={navigator} />}
-      </Tab>*/}
+      {/*<Tab id='CourseSearchView' title='Search' icon='search' render={() => <SearchView route={route} navigator={navigator} />} />*/}
     </TabbedView>
   )
 }

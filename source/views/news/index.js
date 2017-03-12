@@ -14,8 +14,11 @@ import NewsContainer from './news-container'
 export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
   return (
     <TabbedView>
-      <Tab id="StOlafNewsView" title="St. Olaf" icon="school">
-        {() => (
+      <Tab
+        id="StOlafNewsView"
+        title="St. Olaf"
+        icon="school"
+        render={() => (
           <NewsContainer
             route={route}
             navigator={navigator}
@@ -25,10 +28,13 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
             name="St. Olaf"
           />
         )}
-      </Tab>
+      />
 
-      <Tab id="OlevilleNewsView" title="Oleville" icon="happy">
-        {() => (
+      <Tab
+        id="OlevilleNewsView"
+        title="Oleville"
+        icon="happy"
+        render={() => (
           <NewsContainer
             route={route}
             navigator={navigator}
@@ -39,10 +45,13 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
             name="Oleville"
           />
         )}
-      </Tab>
+      />
 
-      <Tab id="TheMessNewsView" title="The Mess" icon="paper">
-        {() => (
+      <Tab
+        id="TheMessNewsView"
+        title="The Mess"
+        icon="paper"
+        render={() => (
           <NewsContainer
             route={route}
             navigator={navigator}
@@ -51,10 +60,13 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
             name="The Mess"
           />
         )}
-      </Tab>
+      />
 
-      <Tab id="PoliticOleNewsView" title="PoliticOle" icon="megaphone">
-        {() => (
+      <Tab
+        id="PoliticOleNewsView"
+        title="PoliticOle"
+        icon="megaphone"
+        render={() => (
           <NewsContainer
             route={route}
             navigator={navigator}
@@ -63,10 +75,13 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
             name="PoliticOle"
           />
         )}
-      </Tab>
+      />
 
-      <Tab id="KstoNewsView" title="KSTO" icon="radio">
-        {() => (
+      <Tab
+        id="KstoNewsView"
+        title="KSTO"
+        icon="radio"
+        render={() => (
           <NewsContainer
             route={route}
             navigator={navigator}
@@ -76,7 +91,7 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
             name="KSTO"
           />
         )}
-      </Tab>
+      />
     </TabbedView>
   )
 }

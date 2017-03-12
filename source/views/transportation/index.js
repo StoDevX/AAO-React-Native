@@ -14,25 +14,33 @@ import BusView from './bus'
 export default function TransportationPage() {
   return (
     <TabbedView>
-      <Tab id="ExpressLineBusView" title="Express Bus" icon="bus">
-        {() => <BusView line="Express Bus" />}
-      </Tab>
+      <Tab
+        id="ExpressLineBusView"
+        title="Express Bus"
+        icon="bus"
+        render={() => <BusView line="Express Bus" />}
+      />
 
-      <Tab id="RedLineBusView" title="Red Line" icon="bus">
-        {() => <BusView line="Red Line" />}
-      </Tab>
+      <Tab
+        id="RedLineBusView"
+        title="Red Line"
+        icon="bus"
+        render={() => <BusView line="Red Line" />}
+      />
 
-      <Tab id="BlueLineBusView" title="Blue Line" icon="bus">
-        {() => <BusView line="Blue Line" />}
-      </Tab>
+      <Tab
+        id="BlueLineBusView"
+        title="Blue Line"
+        icon="bus"
+        render={() => <BusView line="Blue Line" />}
+      />
 
       <Tab
         id="TransportationOtherModesListView"
         title="Other Modes"
         icon="boat"
-      >
-        {() => <OtherModesView line="Other Modes" />}
-      </Tab>
+        render={() => <OtherModesView line="Other Modes" />}
+      />
     </TabbedView>
   )
 }

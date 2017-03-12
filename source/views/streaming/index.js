@@ -15,17 +15,21 @@ import WebcamsView from './webcams'
 export default function MediaPage() {
   return (
     <TabbedView>
-      <Tab id="KSTORadioView" title="KSTO" icon="radio">
-        {() => <KSTOView />}
-      </Tab>
+      <Tab
+        id="KSTORadioView"
+        title="KSTO"
+        icon="radio"
+        render={() => <KSTOView />}
+      />
 
-      {/*<Tab id='WeeklyMovieView' title='Weekly Movie' icon='film'>
-        {() => <WeeklyMovieView />}
-      </Tab>*/}
+      {/*<Tab id='WeeklyMovieView' title='Weekly Movie' icon='film' render={() => <WeeklyMovieView />} />*/}
 
-      <Tab id="LiveWebcamsView" title="Webcams" icon="videocam">
-        {() => <WebcamsView />}
-      </Tab>
+      <Tab
+        id="LiveWebcamsView"
+        title="Webcams"
+        icon="videocam"
+        render={() => <WebcamsView />}
+      />
     </TabbedView>
   )
 }

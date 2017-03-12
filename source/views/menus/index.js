@@ -16,8 +16,11 @@ import {BonAppPickerView} from './dev-bonapp-picker'
 export function MenusView({navigator, route}: TopLevelViewPropsType) {
   return (
     <TabbedView>
-      <Tab id="StavHallMenuView" title="Stav Hall" icon="nutrition">
-        {() => (
+      <Tab
+        id="StavHallMenuView"
+        title="Stav Hall"
+        icon="nutrition"
+        render={() => (
           <BonAppHostedMenu
             route={route}
             navigator={navigator}
@@ -30,10 +33,13 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
             ]}
           />
         )}
-      </Tab>
+      />
 
-      <Tab id="TheCageMenuView" title="The Cage" icon="cafe">
-        {() => (
+      <Tab
+        id="TheCageMenuView"
+        title="The Cage"
+        icon="cafe"
+        render={() => (
           <BonAppHostedMenu
             route={route}
             navigator={navigator}
@@ -46,10 +52,13 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
             ]}
           />
         )}
-      </Tab>
+      />
 
-      <Tab id="ThePauseMenuView" title="The Pause" icon="paw">
-        {() => (
+      <Tab
+        id="ThePauseMenuView"
+        title="The Pause"
+        icon="paw"
+        render={() => (
           <GitHubHostedMenu
             route={route}
             navigator={navigator}
@@ -57,16 +66,26 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
             loadingMessage={['Mixing up a shake…', 'Spinning up pizzas…']}
           />
         )}
-      </Tab>
+      />
 
-      <Tab id="CarletonMenuList" title="Carleton" icon="pin">
-        {() => <CarletonMenuPicker route={route} navigator={navigator} />}
-      </Tab>
+      <Tab
+        id="CarletonMenuList"
+        title="Carleton"
+        icon="pin"
+        render={() => (
+          <CarletonMenuPicker route={route} navigator={navigator} />
+        )}
+      />
 
       {__DEV__
-        ? <Tab id="BonAppMenuPicker" title="BonApp" icon="ionic">
-            {() => <BonAppPickerView route={route} navigator={navigator} />}
-          </Tab>
+        ? <Tab
+            id="BonAppMenuPicker"
+            title="BonApp"
+            icon="ionic"
+            render={() => (
+              <BonAppPickerView route={route} navigator={navigator} />
+            )}
+          />
         : null}
     </TabbedView>
   )
