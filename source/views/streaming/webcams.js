@@ -18,6 +18,7 @@ import * as c from '../components/colors'
 import {data as webcams} from '../../../docs/webcams.json'
 import {webcamImages} from '../../../images/webcam-images'
 import {trackedOpenUrl} from '../components/open-url'
+import LinearGradient from 'react-native-linear-gradient'
 
 export default class WebcamsView extends React.PureComponent {
   render() {
@@ -69,17 +70,20 @@ class Webcam extends React.PureComponent {
     const {name, thumbnail} = this.props.info
     const [r,g,b] = colors[name]
     const baseColor = `rgba(${r}, ${g}, ${b}, 1)`
+    const startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
     const textColor = fgcolors[name]
 
     return (
       <View style={[styles.cell, styles.rounded]}>
-        <Touchable highlight underlayColor={c.black} onPress={this.open} style={[styles.rounded]}>
+        <Touchable highlight underlayColor={baseColor} activeOpacity={0.7} onPress={this.open} style={styles.rounded}>
           <Image
             source={webcamImages[thumbnail]}
             style={[styles.image, styles.rounded]}
           >
             <View style={styles.titleWrapper}>
-              <Text style={[styles.titleText, {backgroundColor: baseColor, color: textColor}]}>{name}</Text>
+              <LinearGradient colors={[startColor, baseColor]} locations={[0, 0.8]}>
+                <Text style={[styles.titleText, {color: textColor}]}>{name}</Text>
+              </LinearGradient>
             </View>
           </Image>
         </Touchable>
@@ -125,6 +129,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   titleText: {
+    backgroundColor: c.transparent,
     fontSize: 12,
     paddingHorizontal: 4,
     paddingVertical: 2,
