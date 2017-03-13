@@ -64,14 +64,7 @@ export default class TabbedView extends React.Component {
       return null
     }
 
-    return (
-      <route.component
-        {...this.props.childProps}
-        {...route.props || {}}
-        navigator={this.props.navigator}
-        route={this.props.route}
-      />
-    )
+    return route.component()
   };
 
   render() {
