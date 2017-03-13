@@ -147,6 +147,7 @@ dependencies {
     compile project(':react-native-device-info')
     compile project(':react-native-google-analytics-bridge')
     compile project(':react-native-keychain')
+    compile project(':react-native-linear-gradient')
     compile project(':react-native-onesignal')
     compile project(':react-native-vector-icons')
     compile project(':react-native-view-shot')
