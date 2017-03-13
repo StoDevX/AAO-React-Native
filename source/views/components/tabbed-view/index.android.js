@@ -55,6 +55,11 @@ export default class TabbedView extends React.Component {
   };
 
   _renderScene = ({route}) => {
+    const thisTabIndex = this.props.tabs.findIndex(tab => tab.id === route.id)
+    if (Math.abs(this.state.index - thisTabIndex) > 2) {
+      return null
+    }
+
     return route.component()
   };
 
