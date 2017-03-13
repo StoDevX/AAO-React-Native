@@ -7,6 +7,7 @@
 import React from 'react'
 import {StyleSheet} from 'react-native'
 
+import type {TopLevelViewPropsType} from '../types'
 import TabbedView from '../components/tabbed-view'
 import BalancesView from './balances'
 import CoursesView from './courses'
@@ -18,30 +19,30 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function SISView(props: {navigator: any, route: any}) {
+export default function SISView({navigator, route}: TopLevelViewPropsType) {
   return (
     <TabbedView
-      navigator={props.navigator}
-      route={props.route}
+      navigator={navigator}
+      route={route}
       style={styles.container}
       tabs={[
         {
           id: 'BalancesView',
           title: 'Balances',
           icon: 'card',
-          component: BalancesView,
+          component: () => <BalancesView navigator={navigator} route={route} />,
         },
         {
           id: 'CoursesView',
           title: 'Courses',
           icon: 'archive',
-          component: CoursesView,
+          component: () => <CoursesView navigator={navigator} route={route} />,
         },
         // {
         //   id: 'CourseSearchView',
         //   title: 'Search',
         //   icon: 'search',
-        //   component: SearchView,
+        //   component: () => <SearchView navigator={navigator} route={route} />,
         // },
       ]}
     />

@@ -23,60 +23,75 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
           id: 'StOlafNewsView',
           title: 'St. Olaf',
           icon: 'school',
-          component: NewsContainer,
-          props: {
-            mode: 'wp-json',
-            url: 'https://wp.stolaf.edu/wp-json/wp/v2/posts',
-            query: {per_page: 10, _embed: true},
-            name: 'St. Olaf',
-          },
+          component: () => (
+            <NewsContainer
+              navigator={navigator}
+              route={route}
+              mode="wp-json"
+              url="https://wp.stolaf.edu/wp-json/wp/v2/posts"
+              query={{per_page: 10, _embed: true}}
+              name="St. Olaf"
+            />
+          ),
         },
         {
           id: 'OlevilleNewsView',
           title: 'Oleville',
           icon: 'happy',
-          component: NewsContainer,
-          props: {
-            mode: 'wp-json',
-            url: 'http://oleville.com/wp-json/wp/v2/posts/',
-            query: {per_page: 10, _embed: true},
-            embedFeaturedImage: true,
-            name: 'Oleville',
-          },
+          component: () => (
+            <NewsContainer
+              navigator={navigator}
+              route={route}
+              mode="wp-json"
+              url="http://oleville.com/wp-json/wp/v2/posts/"
+              query={{per_page: 10, _embed: true}}
+              embedFeaturedImage={true}
+              name="Oleville"
+            />
+          ),
         },
         {
           id: 'MessNewsView',
           title: 'The Mess',
           icon: 'paper',
-          component: NewsContainer,
-          props: {
-            mode: 'rss',
-            url: 'http://manitoumessenger.com/feed/',
-            name: 'The Mess',
-          },
+          component: () => (
+            <NewsContainer
+              navigator={navigator}
+              route={route}
+              mode="rss"
+              url="http://manitoumessenger.com/feed/"
+              name="The Mess"
+            />
+          ),
         },
         {
           id: 'PoliticOleNewsView',
           title: 'PoliticOle',
           icon: 'megaphone',
-          component: NewsContainer,
-          props: {
-            mode: 'rss',
-            url: 'http://oleville.com/politicole/feed/',
-            name: 'PoliticOle',
-          },
+          component: () => (
+            <NewsContainer
+              navigator={navigator}
+              route={route}
+              mode="rss"
+              url="http://oleville.com/politicole/feed/"
+              name="PoliticOle"
+            />
+          ),
         },
         {
           id: 'KstoNewsView',
           title: 'KSTO',
           icon: 'radio',
-          component: NewsContainer,
-          props: {
-            mode: 'wp-json',
-            url: 'https://pages.stolaf.edu/ksto/wp-json/wp/v2/posts/',
-            query: {per_page: 10, _embed: true},
-            name: 'KSTO',
-          },
+          component: () => (
+            <NewsContainer
+              navigator={navigator}
+              route={route}
+              mode="wp-json"
+              url="https://pages.stolaf.edu/ksto/wp-json/wp/v2/posts/"
+              query={{per_page: 10, _embed: true}}
+              name="KSTO"
+            />
+          ),
         },
       ]}
       navigator={navigator}

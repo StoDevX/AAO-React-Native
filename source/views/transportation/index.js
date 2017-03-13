@@ -21,28 +21,25 @@ export default function TransportationPage() {
           id: 'ExpressLineBusView',
           title: 'Express Bus',
           icon: 'bus',
-          component: BusView,
-          props: {line: 'Express Bus'},
+          component: () => <BusView line="Express Bus" />,
         },
         {
           id: 'RedLineBusView',
           title: 'Red Line',
           icon: 'bus',
-          component: BusView,
-          props: {line: 'Red Line'},
+          component: () => <BusView line="Red Line" />,
         },
         {
           id: 'BlueLineBusView',
           title: 'Blue Line',
           icon: 'bus',
-          component: BusView,
-          props: {line: 'Blue Line'},
+          component: () => <BusView line="Blue Line" />,
         },
         {
           id: 'TransportationOtherModesListView',
           title: 'Other Modes',
           icon: 'boat',
-          component: OtherModesView,
+          component: () => <OtherModesView />,
         },
       ]}
     />

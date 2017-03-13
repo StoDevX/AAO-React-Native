@@ -22,19 +22,19 @@ export default function MediaPage() {
           id: 'KSTORadioView',
           title: 'KSTO',
           icons: 'radio',
-          component: KSTOView,
+          component: () => <KSTOView />,
         },
         // {
         //   id: 'WeeklyMovieView',
         //   title: 'Weekly Movie',
         //   icons: 'film',
-        //   component: WeeklyMovieView,
+        //   component: () => <WeeklyMovieView />,
         // },
         {
           id: 'LiveWebcamsView',
           title: 'Webcams',
           icons: 'videocam',
-          component: WebcamsView,
+          component: () => <WebcamsView />,
         },
       ]}
     />
