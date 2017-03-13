@@ -1,6 +1,8 @@
+// @flow
 import {StyleSheet} from 'react-native'
 
-export default StyleSheet.create({
-  container: {},
-  listViewStyle: {},
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
 })

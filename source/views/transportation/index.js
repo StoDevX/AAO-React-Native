@@ -5,17 +5,44 @@
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
 
-import TabbedView from '../components/tabbed-view'
-import tabs from './tabs'
+import {TabbedView} from '../components/tabbed-view'
+
+import OtherModesView from './otherModes'
+import BusView from './bus'
 
 export default function TransportationPage() {
-  return <TabbedView style={styles.container} tabs={tabs} />
-}
+  return (
+    <TabbedView
+      tabs={[
+        {
+          id: 'ExpressLineBusView',
+          title: 'Express Bus',
+          icon: 'bus',
+          render: () => <BusView line="Express Bus" />,
+        },
 
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
+        {
+          id: 'RedLineBusView',
+          title: 'Red Line',
+          icon: 'bus',
+          render: () => <BusView line="Red Line" />,
+        },
+
+        {
+          id: 'BlueLineBusView',
+          title: 'Blue Line',
+          icon: 'bus',
+          render: () => <BusView line="Blue Line" />,
+        },
+
+        {
+          id: 'TransportationOtherModesListView',
+          title: 'Other Modes',
+          icon: 'boat',
+          render: () => <OtherModesView line="Other Modes" />,
+        },
+      ]}
+    />
+  )
+}

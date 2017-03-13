@@ -5,18 +5,38 @@
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
 
-import TabbedView from '../components/tabbed-view'
-import tabs from './tabs'
+import {TabbedView} from '../components/tabbed-view'
+
+import KSTOView from './radio'
+// import WeeklyMovieView from './movie'
+import WebcamsView from './webcams'
 
 export default function MediaPage() {
-  return <TabbedView style={styles.container} tabs={tabs} />
-}
-MediaPage.propTypes = {}
+  return (
+    <TabbedView
+      tabs={[
+        {
+          id: 'KSTORadioView',
+          title: 'KSTO',
+          icon: 'radio',
+          render: () => <KSTOView />,
+        },
 
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
+        // {
+        //   id: 'WeeklyMovieView',
+        //   title: 'Weekly Movie',
+        //   icon: 'film',
+        //   render: () => <WeeklyMovieView />,
+        // },
+
+        {
+          id: 'LiveWebcamsView',
+          title: 'Webcams',
+          icon: 'videocam',
+          render: () => <WebcamsView />,
+        },
+      ]}
+    />
+  )
+}
