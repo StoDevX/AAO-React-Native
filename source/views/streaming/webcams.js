@@ -72,11 +72,11 @@ class Webcam extends React.PureComponent {
 
     return (
       <StreamThumbnail
-        url={url}
-        title={name}
-        thumbnail={webcamImages[thumbnail]}
         accentColor={colors[name]}
         textColor='white'
+        thumbnail={webcamImages[thumbnail]}
+        title={name}
+        url={url}
       />
     )
   }
@@ -98,6 +98,30 @@ class StreamThumbnail extends React.PureComponent {
   render() {
     const {title, thumbnail, accentColor, textColor} = this.props
 
+    return (
+      <RoundedThumbnail
+        accentColor={accentColor}
+        onPress={this.handlePress}
+        textColor={textColor}
+        thumbnail={thumbnail}
+        title={title}
+      />
+    )
+  }
+}
+
+class RoundedThumbnail extends React.PureComponent {
+  props: {
+    accentColor: [number, number, number],
+    onPress: () => any,
+    textColor: 'white' | 'black',
+    thumbnail: any,
+    title: string,
+  }
+
+  render() {
+    const {title, thumbnail, accentColor, textColor} = this.props
+
     const [r,g,b] = accentColor
     const baseColor = `rgba(${r}, ${g}, ${b}, 1)`
     const startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
@@ -105,7 +129,7 @@ class StreamThumbnail extends React.PureComponent {
 
     return (
       <View style={[styles.cell, styles.rounded]}>
-        <Touchable highlight underlayColor={baseColor} activeOpacity={0.7} onPress={this.handlePress} style={styles.rounded}>
+        <Touchable highlight underlayColor={baseColor} activeOpacity={0.7} onPress={this.props.onPress} style={styles.rounded}>
           <Image
             source={thumbnail}
             style={[styles.image, styles.rounded]}
