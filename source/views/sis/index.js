@@ -48,7 +48,3 @@ export default function SISView({navigator, route}: TopLevelViewPropsType) {
     />
   )
 }
-SISView.propTypes = {
-  navigator: React.PropTypes.object.isRequired,
-  route: React.PropTypes.object.isRequired,
-}

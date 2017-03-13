@@ -8,7 +8,6 @@ import React from 'react'
 import {StyleSheet} from 'react-native'
 
 import type {TopLevelViewPropsType} from '../types'
-import {TopLevelViewPropTypes} from '../types'
 import TabbedView from '../components/tabbed-view'
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
@@ -91,7 +90,6 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
     />
   )
 }
-MenusView.propTypes = TopLevelViewPropTypes
 
 let styles = StyleSheet.create({
   container: {

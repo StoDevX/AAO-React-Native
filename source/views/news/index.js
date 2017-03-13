@@ -11,7 +11,6 @@ import React from 'react'
 import {StyleSheet} from 'react-native'
 
 import type {TopLevelViewPropsType} from '../types'
-import {TopLevelViewPropTypes} from '../types'
 import TabbedView from '../components/tabbed-view'
 
 export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
@@ -99,7 +98,6 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
     />
   )
 }
-NewsPage.propTypes = TopLevelViewPropTypes
 
 let styles = StyleSheet.create({
   container: {

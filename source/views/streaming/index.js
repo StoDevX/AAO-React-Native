@@ -40,7 +40,6 @@ export default function MediaPage() {
     />
   )
 }
-MediaPage.propTypes = {}
 
 let styles = StyleSheet.create({
   container: {
