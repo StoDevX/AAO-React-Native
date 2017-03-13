@@ -68,22 +68,51 @@ class Webcam extends React.PureComponent {
   }
 
   render() {
-    const {name, thumbnail} = this.props.info
-    const [r,g,b] = colors[name]
+    const {name, thumbnail, url} = this.props.info
+
+    return (
+      <StreamThumbnail
+        url={url}
+        title={name}
+        thumbnail={webcamImages[thumbnail]}
+        accentColor={colors[name]}
+        textColor='white'
+      />
+    )
+  }
+}
+
+class StreamThumbnail extends React.PureComponent {
+  props: {
+    url: string,
+    title: string,
+    accentColor: [number, number, number],
+    textColor: 'white' | 'black',
+    thumbnail: any,
+  }
+
+  handlePress = () => {
+
+  }
+
+  render() {
+    const {title, thumbnail, accentColor, textColor} = this.props
+
+    const [r,g,b] = accentColor
     const baseColor = `rgba(${r}, ${g}, ${b}, 1)`
     const startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
-    const textColor = fgcolors[name]
+    const actualTextColor = c[textColor]
 
     return (
       <View style={[styles.cell, styles.rounded]}>
-        <Touchable highlight underlayColor={baseColor} activeOpacity={0.7} onPress={this.open} style={styles.rounded}>
+        <Touchable highlight underlayColor={baseColor} activeOpacity={0.7} onPress={this.handlePress} style={styles.rounded}>
           <Image
-            source={webcamImages[thumbnail]}
+            source={thumbnail}
             style={[styles.image, styles.rounded]}
           >
             <View style={styles.titleWrapper}>
               <LinearGradient colors={[startColor, baseColor]} locations={[0, 0.8]}>
-                <Text style={[styles.titleText, {color: textColor}]}>{name}</Text>
+                <Text style={[styles.titleText, {color: actualTextColor}]}>{title}</Text>
               </LinearGradient>
             </View>
           </Image>
