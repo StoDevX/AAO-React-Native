@@ -4,14 +4,11 @@ import React from 'react'
 import {TabBarIOS} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {tracker} from '../../../analytics'
-import styles from './styles'
+import {styles} from './styles'
 import type {TabbedViewPropsType} from './types'
-import {TabbedViewPropTypes} from './types'
 import * as c from '../../components/colors'
 
 export default class TabbedView extends React.Component {
-  static propTypes = TabbedViewPropTypes;
-
   state = {
     selectedTab: this.props.tabs[0].id,
   };
@@ -28,8 +25,7 @@ export default class TabbedView extends React.Component {
   };
 
   render() {
-    let {navigator, route, tabs} = this.props
-    let baseProps = {navigator, route}
+    let {tabs} = this.props
     return (
       <TabBarIOS
         tintColor={c.mandarin}
@@ -37,10 +33,9 @@ export default class TabbedView extends React.Component {
       >
         {tabs.map(tab => {
           let icon = {}
-          if (tab.rnVectorIcon) {
-            let name = tab.rnVectorIcon.iconName
-            icon.iconName = `ios-${name}-outline`
-            icon.selectedIconName = `ios-${name}`
+          if (tab.icon) {
+            icon.iconName = `ios-${tab.icon}-outline`
+            icon.selectedIconName = `ios-${tab.icon}`
           }
           return (
             <Icon.TabBarItemIOS
@@ -53,11 +48,7 @@ export default class TabbedView extends React.Component {
               translucent={true}
               onPress={() => this.onChangeTab(tab.id)}
             >
-              <tab.component
-                {...this.props.childProps}
-                {...tab.props || {}}
-                {...baseProps}
-              />
+              {tab.component()}
             </Icon.TabBarItemIOS>
           )
         })}

@@ -1,5 +1,4 @@
 // @flow
-import {PropTypes} from 'react'
 import {Navigator} from 'react-native'
 
 export type RouteType = {
@@ -20,8 +19,3 @@ export type TopLevelViewPropsType = {
   navigator: Navigator,
   route: RouteType,
 };
-
-export const TopLevelViewPropTypes = {
-  navigator: PropTypes.instanceOf(Navigator).isRequired,
-  route: PropTypes.object.isRequired,
-}

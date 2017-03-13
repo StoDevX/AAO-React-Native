@@ -61,6 +61,7 @@ rules:
   semi: [error, never]
 
   # react rules – https://github.com/yannickcr/eslint-plugin-react
+  react/display-name: off
   react/jsx-key: warn
   react/jsx-no-bind: [warn, {ignoreRefs: true, allowArrowFunctions: true}]
   react/no-did-mount-set-state: warn
