@@ -1,11 +1,13 @@
+// @flow
+
 export type TabDefinitionType = {
   id: string,
   title: string,
   icon: string,
-  component: () => ReactComponent<*>,
+  component: () => ReactElement<*>,
 };
 
 export type TabbedViewPropsType = {
-  style: Object | number,
+  style?: Object | number | Array<Object | number>,
   tabs: TabDefinitionType[],
 };
