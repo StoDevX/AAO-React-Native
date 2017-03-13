@@ -3,12 +3,7 @@ import {Navigator} from 'react-native'
 export type TabDefinitionType = {
   id: string,
   title: string,
-  rnVectorIcon: {
-    iconName: string,
-    selectedIconName?: string,
-    iconSize?: number,
-  },
-  rnRasterIcon?: {icon: {uri: string, scale: number}},
+  icon: string,
   component: () => any,
   props?: Object,
   navigator?: typeof Navigator,
