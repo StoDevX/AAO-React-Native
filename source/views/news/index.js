@@ -8,7 +8,6 @@
 import NewsContainer from './news-container'
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
 
 import type {TopLevelViewPropsType} from '../types'
 import TabbedView from '../components/tabbed-view'
@@ -16,7 +15,6 @@ import TabbedView from '../components/tabbed-view'
 export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
   return (
     <TabbedView
-      style={styles.container}
       tabs={[
         {
           id: 'StOlafNewsView',
@@ -98,9 +96,3 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
     />
   )
 }
-
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})

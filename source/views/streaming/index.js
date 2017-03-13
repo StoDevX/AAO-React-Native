@@ -5,7 +5,6 @@
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
 
 import TabbedView from '../components/tabbed-view'
 
@@ -16,7 +15,6 @@ import WebcamsView from './webcams'
 export default function MediaPage() {
   return (
     <TabbedView
-      style={styles.container}
       tabs={[
         {
           id: 'KSTORadioView',
@@ -40,9 +38,3 @@ export default function MediaPage() {
     />
   )
 }
-
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})

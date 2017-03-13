@@ -5,7 +5,6 @@
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
 
 import type {TopLevelViewPropsType} from '../types'
 import TabbedView from '../components/tabbed-view'
@@ -17,7 +16,6 @@ import {CarletonMenuPicker} from './carleton-list'
 export function MenusView({navigator, route}: TopLevelViewPropsType) {
   return (
     <TabbedView
-      style={styles.container}
       tabs={[
         {
           id: 'StavHallMenuView',
@@ -90,9 +88,3 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
     />
   )
 }
-
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})

@@ -5,7 +5,6 @@
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
 
 import TabbedView from '../components/tabbed-view'
 
@@ -15,7 +14,6 @@ import BusView from './bus'
 export default function TransportationPage() {
   return (
     <TabbedView
-      style={styles.container}
       tabs={[
         {
           id: 'ExpressLineBusView',
@@ -45,9 +43,3 @@ export default function TransportationPage() {
     />
   )
 }
-
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
