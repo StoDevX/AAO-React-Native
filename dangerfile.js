@@ -82,17 +82,12 @@ ${log}
   )
 }
 
-const prettierLog = readFile('logs/prettier').trim()
 const eslintLog = readFile('logs/eslint').trim()
 const dataValidationLog = readFile('logs/validate-data').trim()
 const flowLog = readFile('logs/flow').trim()
 const iosJsBundleLog = readFile('logs/bundle-ios').trim()
 const androidJsBundleLog = readFile('logs/bundle-android').trim()
 const jestLog = readFile('logs/jest').trim()
-
-if (prettierLog) {
-  fileLog('Prettier made some changes', prettierLog, 'diff')
-}
 
 if (eslintLog) {
   fileLog('Eslint had a thing to say!', eslintLog)
