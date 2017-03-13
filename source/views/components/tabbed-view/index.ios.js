@@ -37,10 +37,9 @@ export default class TabbedView extends React.Component {
       >
         {tabs.map(tab => {
           let icon = {}
-          if (tab.rnVectorIcon) {
-            let name = tab.rnVectorIcon.iconName
-            icon.iconName = `ios-${name}-outline`
-            icon.selectedIconName = `ios-${name}`
+          if (tab.icon) {
+            icon.iconName = `ios-${tab.icon}-outline`
+            icon.selectedIconName = `ios-${tab.icon}`
           }
           return (
             <Icon.TabBarItemIOS
