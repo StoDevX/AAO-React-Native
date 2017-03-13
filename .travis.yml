@@ -1,27 +1,30 @@
 language: generic
 
-before_cache:
-  - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"
-  - rm -rf "$TMPDIR/jest_preprocess_cache"
-
-cache:
-  bundler: true
-  directories:
-    - $HOME/.gradle
-
 env:
   global:
     # `match` keychain info – the values don't matter, they're defined
     # here so they're consistent throughout
     - MATCH_KEYCHAIN_NAME=travis-ios-keychain
     - MATCH_KEYCHAIN_PASSWORD=alpine
+    # dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
+    - PATH=${PATH/\.\/node_modules\/\.bin/}
+    # centralize some variables for pushing/committing
+    - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+    - REPO=$(git config remote.origin.url)
+    - SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
     # this just gives us a nice label to use
     - ENCRYPTION_LABEL=199c454344e1
+    # set some other variables for the pushing process
+    - ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
+    - ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
+    - ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
+    - ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
+    - DEPLOY_KEY=scripts/travisci_deploy_key
     # variables that are used later on
+    - TRAVIS_NODE_VERSION=7
     - PUSH_BRANCH=0
     - CAN_DEPLOY=0
     - USE_EMULATOR=no
-    - DEPLOY_KEY=scripts/travisci_deploy_key
     - run_deploy=0
 
 matrix:
@@ -52,7 +55,6 @@ matrix:
           - android-25
           - extra-android-m2repository
           - extra-google-m2repository
-          - extra-android-support
 
     # - <<: *android-base
     #   env: [ANDROID=yes, USE_EMULATOR=yes]
@@ -64,7 +66,6 @@ matrix:
     #       - android-23
     #       - extra-android-m2repository
     #       - extra-google-m2repository
-    #       - extra-android-support
     #       - sys-img-armeabi-v7a-google_apis-23
 
     - os: osx
@@ -83,163 +84,41 @@ branches:
 
 
 before_install:
-  - echo "Now testing $type on $TRAVIS_OS_NAME"
-  - echo "Using the android emulator? $USE_EMULATOR"
-  - echo "Travis branch is $TRAVIS_BRANCH"
-  - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
-  - echo "Build triggered by $TRAVIS_EVENT_TYPE"
+  # force a consistent node version on android
+  - if [[ $ANDROID ]]; then
+      nvm install "$TRAVIS_NODE_VERSION";
+      nvm use "$TRAVIS_NODE_VERSION";
+    fi
 
-  # get a single branch var for both pushes and PRs
-  - export BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
-  - export REPO=$(git config remote.origin.url)
-  - export SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
-
-  # ensure that the PR branch exists locally
-  - git config --add remote.origin.fetch "+refs/heads/$BRANCH:refs/remotes/origin/$BRANCH"
-  - git fetch --depth 10
-  # if the branch doesn't exist, make it (the branch only exists on push builds, not PR ones)
-  - if ! git rev-parse --quiet --verify "$BRANCH" > /dev/null; then git branch "$BRANCH"; fi
+  # make sure to use ruby 2.3
+  - if [[ $ANDROID || $IOS ]]; then
+      rvm use 2.3 --install --binary --fuzzy;
+      gem install bundler;
+    fi
 
   # only deploy from the once-daily cron-triggered jobs
   - if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
-  # force node 7 on the android builds
-  - |
-    if [[ $ANDROID ]]; then
-      set -x
-      nvm install 7
-      nvm use 7
-      set +x
-    fi
-
-  # turn off fancy npm stuff
-  - npm config set spin=false
-  - npm config set progress=false
-
-  # Dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
-  - echo $PATH
-  - export PATH=${PATH/\.\/node_modules\/\.bin/}
-  - echo $PATH
-
-  # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
-  - export ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
-  - export ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
-  - export ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
-  - export ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
-  - openssl aes-256-cbc -K "$ENCRYPTED_KEY" -iv "$ENCRYPTED_IV" -in "$DEPLOY_KEY.enc" -out "$DEPLOY_KEY" -d
-  - chmod 600 "$DEPLOY_KEY"
-  - eval $(ssh-agent -s)
-  - ssh-add "$DEPLOY_KEY"
-
-  # make sure to use ruby 2.3
-  - |
-    if [[ $ANDROID || $IOS ]]; then
-      set -x
-      rvm use 2.3 --install --binary --fuzzy
-      gem install bundler
-      set +x
-    fi
-
-
+  # run our before_install sequence
+  - bash scripts/travis/before_install.sh
 
 install:
-  # install packages
-  - npm install
-  # install fastlane
-  - if [[ $ANDROID || $IOS ]]; then bundle install --deployment; fi
-
+  - bash scripts/travis/install.sh
 
 before_script:
-  # Fire up the Android emulator
-  - |
-    if [[ $ANDROID && $USE_EMULATOR = yes ]]; then
-      set -x
-      EmuName="react-native"
-      mkdir -p "$HOME/.android/avd/$EmuName.avd/"
-      echo no | android create avd --force -n "$EmuName" -t android-23 --abi google_apis/armeabi-v7a
-      emulator -avd "$EmuName" -no-audio -no-window &
-      android-wait-for-emulator
-      adb shell input keyevent 82 &
-      set +x
-    fi
-
-  # Fix keychain issues for iOS signing
-  - if [[ $IOS ]]; then bundle exec fastlane ios ci_keychains; fi
-
+  - bash scripts/travis/before_script.sh
 
 script:
-  # These sections will grow over time.
-  # Each line is collapsed nicely in the travis output.
-
-  # Make sure that a failing command in a pipe fails the build
-  - set -o pipefail
-
-  # ensure the env file exists and fill it out
-  - touch .env.js
-  - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
-  - mkdir -p logs/
-
-  # disable npm wrapper for npm scripts
-  - echo "loglevel=silent" >> .npmrc
-
-  # JS
-  # Ensure prettiness
-  - |
-    if [[ $JS ]]; then
-      set -x
-      npm run prettier
-      git diff --exit-code *.js source/ | tee logs/prettier
-      set +x
-    fi
-  # Lint
-  - if [[ $JS ]]; then npm run lint | tee logs/eslint; fi
-  # Validate data
-  - if [[ $JS ]]; then npm run validate-data -- --quiet | tee logs/validate-data; fi
-  # Ensure that the data files have been updated
-  - |
-    if [[ $JS ]]; then
-      set -x
-      npm run bundle-data
-      if ! git diff --quiet docs/; then
-        git add docs/
-        git checkout "$BRANCH"
-        git commit -m "update docs [skip ci]"
-        git checkout "$TRAVIS_COMMIT"
-        PUSH_BRANCH=1
-      fi
-      set +x
-    fi
-  # Type check
-  - if [[ $JS ]]; then npm run flow -- check --quiet | tee logs/flow; fi
-  # Build the bundles
-  - if [[ $JS ]]; then npm run bundle:ios | tee logs/bundle-ios; fi
-  - if [[ $JS ]]; then npm run bundle:android | tee logs/bundle-android; fi
-  # Run tests + collect coverage info
-  - if [[ $JS ]]; then npm run test -- --coverage 2>&1 | tee logs/jest; fi
-  # Danger?
-  - if [[ $JS ]]; then npm run danger; fi
-
-  # iOS
-  - if [[ $IOS ]]; then bundle exec fastlane ios ci_run; fi
-
-  # Android
-  - if [[ $ANDROID ]]; then bundle exec fastlane android ci_run; fi
-
+  - bash scripts/travis/script.sh
 
 after_success:
-  # todo: test this on a forked build w/maintainer access to the branch
-  - |
-    if [[ $JS && $TRAVIS_PULL_REQUEST != false && $PUSH_BRANCH = 1 ]]; then
-      set -x
-      git checkout "$BRANCH"
-      git push "$SSH_REPO" "$BRANCH"
-      git checkout "$TRAVIS_COMMIT"
-      set +x
-    fi
-  - |
-    if [[ $JS ]]; then
-      set -x
-      npm install coveralls
-      ./node_modules/.bin/coveralls < ./coverage/lcov.info
-      set +x
-    fi
+  - bash scripts/travis/after_success.sh
+
+before_cache:
+  - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"
+  - rm -rf "$TMPDIR/jest_preprocess_cache"
+
+cache:
+  bundler: true
+  directories:
+    - $HOME/.gradle
