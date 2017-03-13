@@ -58,10 +58,6 @@ export default class TabbedView extends React.Component {
   };
 
   _renderScene = ({route}) => {
-    if (!route.component) {
-      return null
-    }
-
     return route.component()
   };
 
