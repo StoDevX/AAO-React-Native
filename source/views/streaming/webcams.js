@@ -94,8 +94,11 @@ class Webcam extends React.PureComponent {
 }
 
 const CELL_MARGIN = 10
-const cellWidth = Dimensions.get('window').width / 2 - CELL_MARGIN * 1.5
-const cellHeight = 80
+const screenWidth = Dimensions.get('window').width
+
+const cellWidth = screenWidth / 2 - CELL_MARGIN * 1.5
+const cellRatio = 2.15625
+const cellHeight = cellWidth / cellRatio
 
 const styles = StyleSheet.create({
   gridWrapper: {
