@@ -91,8 +91,6 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
           ),
         },
       ]}
-      navigator={navigator}
-      route={route}
     />
   )
 }

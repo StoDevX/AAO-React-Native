@@ -83,8 +83,6 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
         //   ),
         // },
       ]}
-      navigator={navigator}
-      route={route}
     />
   )
 }

@@ -15,8 +15,6 @@ import CoursesView from './courses'
 export default function SISView({navigator, route}: TopLevelViewPropsType) {
   return (
     <TabbedView
-      navigator={navigator}
-      route={route}
       tabs={[
         {
           id: 'BalancesView',
