@@ -28,20 +28,20 @@ export default function SISView(props: {navigator: any, route: any}) {
         {
           id: 'BalancesView',
           title: 'Balances',
-          rnVectorIcon: {iconName: 'card'},
+          icon: 'card',
           component: BalancesView,
         },
         {
           id: 'CoursesView',
           title: 'Courses',
-          rnVectorIcon: {iconName: 'archive'},
+          icon: 'archive',
           component: CoursesView,
         },
         // {
         //   id: 'CourseSearchView',
         //   title: 'Search',
-        //   icon: {uri: base64Icon, scale: 3},
-        //   component: () => <SearchView />,
+        //   icon: 'search',
+        //   component: SearchView,
         // },
       ]}
     />

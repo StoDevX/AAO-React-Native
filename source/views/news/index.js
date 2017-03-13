@@ -22,7 +22,7 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
         {
           id: 'StOlafNewsView',
           title: 'St. Olaf',
-          rnVectorIcon: {iconName: 'school'},
+          icon: 'school',
           component: NewsContainer,
           props: {
             mode: 'wp-json',
@@ -34,7 +34,7 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
         {
           id: 'OlevilleNewsView',
           title: 'Oleville',
-          rnVectorIcon: {iconName: 'happy'},
+          icon: 'happy',
           component: NewsContainer,
           props: {
             mode: 'wp-json',
@@ -47,7 +47,7 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
         {
           id: 'MessNewsView',
           title: 'The Mess',
-          rnVectorIcon: {iconName: 'paper'},
+          icon: 'paper',
           component: NewsContainer,
           props: {
             mode: 'rss',
@@ -58,7 +58,7 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
         {
           id: 'PoliticOleNewsView',
           title: 'PoliticOle',
-          rnVectorIcon: {iconName: 'megaphone'},
+          icon: 'megaphone',
           component: NewsContainer,
           props: {
             mode: 'rss',
@@ -69,7 +69,7 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
         {
           id: 'KstoNewsView',
           title: 'KSTO',
-          rnVectorIcon: {iconName: 'radio'},
+          icon: 'radio',
           component: NewsContainer,
           props: {
             mode: 'wp-json',

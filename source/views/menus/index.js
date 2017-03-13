@@ -23,7 +23,7 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
         {
           id: 'StavHallMenuView',
           title: 'Stav Hall',
-          rnVectorIcon: {iconName: 'nutrition'},
+          icon: 'nutrition',
           component: BonAppHostedMenu,
           props: {
             name: 'stav',
@@ -38,7 +38,7 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
         {
           id: 'TheCageMenuView',
           title: 'The Cage',
-          rnVectorIcon: {iconName: 'cafe'},
+          icon: 'cafe',
           component: BonAppHostedMenu,
           props: {
             name: 'cage',
@@ -53,7 +53,7 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
         {
           id: 'ThePauseMenuView',
           title: 'The Pause',
-          rnVectorIcon: {iconName: 'paw'},
+          icon: 'paw',
           component: GitHubHostedMenu,
           props: {
             name: 'pause',
@@ -63,7 +63,7 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
         {
           id: 'CarletonMenuListView',
           title: 'Carleton',
-          rnVectorIcon: {iconName: 'menu'},
+          icon: 'menu',
           component: CarletonMenuPicker,
           props: {
             name: 'carleton',
@@ -72,7 +72,7 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
         // {
         //   id: 'BonAppDevToolView',
         //   title: 'BonApp',
-        //   rnVectorIcon: {iconName: 'ionic'},
+        //   icon: 'ionic',
         //   component: BonAppPickerView,
         // },
       ]}
