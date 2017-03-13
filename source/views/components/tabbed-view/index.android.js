@@ -59,11 +59,18 @@ export default class TabbedView extends React.Component {
   };
 
   render() {
+    // see react-native-tab-view's readme for the rationale
+    const initialLayout = {
+      height: 0,
+      width: Dimensions.get('window').width,
+    }
+
     let routes = {routes: this.props.tabs.map(tab => ({...tab, key: tab.id}))}
 
     return (
       <TabViewAnimated
         style={[defaultStyles.container, this.props.style]}
+        initialLayout={initialLayout}
         navigationState={{...this.state, ...routes}}
         renderScene={this._renderScene}
         renderHeader={this._renderHeader}
