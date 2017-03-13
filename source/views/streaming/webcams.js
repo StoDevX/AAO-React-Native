@@ -34,13 +34,12 @@ export default class WebcamsView extends React.PureComponent {
 }
 
 const colors = {
-  // 'Alumni Hall West': 'rgba(75, 66, 69, 0.85)',
-  'Alumni Hall West': 'rgba(48, 63, 102, 0.85)',
-  'Buntrock Plaza': 'rgba(93, 114, 72, 0.85)',
-  'East Quad': 'rgba(82, 87, 54, 0.85)',
-  'Hi Mom': 'rgba(137, 141, 150, 0.85)',
-  'Tomson East Lantern': 'rgba(89, 84, 82, 0.85)',
-  'Tomson West Lantern': 'rgba(110, 126, 91, 0.85)',
+  'Alumni Hall West': [48, 63, 102],
+  'Buntrock Plaza': [93, 114, 72],
+  'East Quad': [82, 87, 54],
+  'Hi Mom': [137, 141, 150],
+  'Tomson East Lantern': [89, 84, 82],
+  'Tomson West Lantern': [110, 126, 91],
 }
 
 const fgcolors = {
@@ -68,7 +67,8 @@ class Webcam extends React.PureComponent {
 
   render() {
     const {name, thumbnail} = this.props.info
-    const baseColor = colors[name]
+    const [r,g,b] = colors[name]
+    const baseColor = `rgba(${r}, ${g}, ${b}, 1)`
     const textColor = fgcolors[name]
 
     return (
