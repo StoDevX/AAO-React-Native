@@ -12,6 +12,7 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  Platform,
 } from 'react-native'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
@@ -108,7 +109,9 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   rounded: {
-    borderRadius: 6,
+    // Android doesn't currently (0.42) respect both
+    // overflow:hidden and border-radius.
+    borderRadius: Platform.OS === 'android' ? 0 : 6,
   },
   cell: {
     overflow: 'hidden',
