@@ -6,12 +6,9 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import {tracker} from '../../../analytics'
 import styles from './styles'
 import type {TabbedViewPropsType} from './types'
-import {TabbedViewPropTypes} from './types'
 import * as c from '../../components/colors'
 
 export default class TabbedView extends React.Component {
-  static propTypes = TabbedViewPropTypes;
-
   state = {
     selectedTab: this.props.tabs[0].id,
   };
