@@ -94,6 +94,7 @@ before_install:
   - if [[ $ANDROID || $IOS ]]; then
       rvm use 2.3 --install --binary --fuzzy;
       gem install bundler;
+    fi
 
   # only deploy from the once-daily cron-triggered jobs
   - if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
