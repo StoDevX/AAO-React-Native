@@ -10,13 +10,72 @@ import {StyleSheet} from 'react-native'
 import type {TopLevelViewPropsType} from '../types'
 import {TopLevelViewPropTypes} from '../types'
 import TabbedView from '../components/tabbed-view'
-import tabs from './tabs'
+import {BonAppHostedMenu} from './menu-bonapp'
+import {GitHubHostedMenu} from './menu-github'
+import {CarletonMenuPicker} from './carleton-list'
+//import {BonAppPickerView} from './dev-bonapp-picker'
 
 export function MenusView({navigator, route}: TopLevelViewPropsType) {
   return (
     <TabbedView
       style={styles.container}
-      tabs={tabs}
+      tabs={[
+        {
+          id: 'StavHallMenuView',
+          title: 'Stav Hall',
+          rnVectorIcon: {iconName: 'nutrition'},
+          component: BonAppHostedMenu,
+          props: {
+            name: 'stav',
+            cafeId: '261',
+            loadingMessage: [
+              'Hunting Ferndale Turkey…',
+              'Tracking wild vegan burgers…',
+              '"Cooking" some lutefisk…',
+            ],
+          },
+        },
+        {
+          id: 'TheCageMenuView',
+          title: 'The Cage',
+          rnVectorIcon: {iconName: 'cafe'},
+          component: BonAppHostedMenu,
+          props: {
+            name: 'cage',
+            cafeId: '262',
+            ignoreProvidedMenus: true,
+            loadingMessage: [
+              'Checking for vegan cookies…',
+              'Serving up some shakes…',
+            ],
+          },
+        },
+        {
+          id: 'ThePauseMenuView',
+          title: 'The Pause',
+          rnVectorIcon: {iconName: 'paw'},
+          component: GitHubHostedMenu,
+          props: {
+            name: 'pause',
+            loadingMessage: ['Mixing up a shake…', 'Spinning up pizzas…'],
+          },
+        },
+        {
+          id: 'CarletonMenuListView',
+          title: 'Carleton',
+          rnVectorIcon: {iconName: 'menu'},
+          component: CarletonMenuPicker,
+          props: {
+            name: 'carleton',
+          },
+        },
+        // {
+        //   id: 'BonAppDevToolView',
+        //   title: 'BonApp',
+        //   rnVectorIcon: {iconName: 'ionic'},
+        //   component: BonAppPickerView,
+        // },
+      ]}
       navigator={navigator}
       route={route}
     />

@@ -8,7 +8,10 @@ import React from 'react'
 import {StyleSheet} from 'react-native'
 
 import TabbedView from '../components/tabbed-view'
-import tabs from './tabs'
+import BalancesView from './balances'
+import CoursesView from './courses'
+// import SearchView from './search'
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -21,7 +24,26 @@ export default function SISView(props: {navigator: any, route: any}) {
       navigator={props.navigator}
       route={props.route}
       style={styles.container}
-      tabs={tabs}
+      tabs={[
+        {
+          id: 'BalancesView',
+          title: 'Balances',
+          rnVectorIcon: {iconName: 'card'},
+          component: BalancesView,
+        },
+        {
+          id: 'CoursesView',
+          title: 'Courses',
+          rnVectorIcon: {iconName: 'archive'},
+          component: CoursesView,
+        },
+        // {
+        //   id: 'CourseSearchView',
+        //   title: 'Search',
+        //   icon: {uri: base64Icon, scale: 3},
+        //   component: () => <SearchView />,
+        // },
+      ]}
     />
   )
 }
