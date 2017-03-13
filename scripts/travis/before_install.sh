@@ -10,7 +10,7 @@ echo "Using node $TRAVIS_NODE_VERSION"
 
 # ensure that the PR branch exists locally
 git config --add remote.origin.fetch "+refs/heads/$BRANCH:refs/remotes/origin/$BRANCH"
-git fetch --depth 10
+git fetch
 
 # if the branch doesn't exist, make it (the branch only exists on push builds, not PR ones)
 if ! git rev-parse --quiet --verify "$BRANCH" > /dev/null; then
