@@ -7,6 +7,7 @@ import openUrl, {canOpenUrl} from '../components/open-url'
 export class HtmlView extends React.Component {
   props: {
     html: string,
+    baseUrl?: ?string,
   };
   _webview: WebView;
 
@@ -17,8 +18,16 @@ export class HtmlView extends React.Component {
       return
     }
 
-    this._webview.stopLoading()
+    // I had to disable the stopLoading call, because it was cancelling the
+    // image loads.
+    // this._webview.stopLoading()
     this._webview.goBack()
+
+    // We don't want to open the web browser unless the user actuall clicked
+    // on a link.
+    if (url === this.props.baseUrl) {
+      return
+    }
 
     return openUrl(url)
   };
@@ -27,7 +36,7 @@ export class HtmlView extends React.Component {
     return (
       <WebView
         ref={ref => this._webview = ref}
-        source={{html: this.props.html}}
+        source={{html: this.props.html, baseUrl: this.props.baseUrl}}
         onNavigationStateChange={this.onNavigationStateChange}
       />
     )

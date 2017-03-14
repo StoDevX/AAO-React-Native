@@ -50,5 +50,5 @@ export default function NewsItem(
     ${story.content}
   `
 
-  return <HtmlView html={content} />
+  return <HtmlView html={content} baseUrl={story.link} />
 }
