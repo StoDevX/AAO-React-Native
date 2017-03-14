@@ -50,6 +50,7 @@ export class PresenceCalendarView extends React.Component {
           extra: {type: 'presence', data: event},
         }
       })
+      .sort()
       .filter(event => event.endTime.isSameOrAfter(now))
   }
 
