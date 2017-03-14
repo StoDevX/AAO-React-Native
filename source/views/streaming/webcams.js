@@ -38,7 +38,8 @@ export default class WebcamsView extends React.PureComponent {
 class Webcam extends React.PureComponent {
   props: {
     info: {
-      url: string,
+      streamUrl: string,
+      pageUrl: string,
       name: string,
       thumbnail: string,
       accentColor: [number, number, number],
@@ -46,7 +47,7 @@ class Webcam extends React.PureComponent {
   };
 
   render() {
-    const {name, thumbnail, url, accentColor} = this.props.info
+    const {name, thumbnail, streamUrl, pageUrl, accentColor} = this.props.info
 
     return (
       <StreamThumbnail
@@ -54,7 +55,8 @@ class Webcam extends React.PureComponent {
         textColor="white"
         thumbnail={webcamImages[thumbnail]}
         title={name}
-        url={url}
+        url={streamUrl}
+        infoUrl={pageUrl}
       />
     )
   }
@@ -63,6 +65,7 @@ class Webcam extends React.PureComponent {
 class StreamThumbnail extends React.PureComponent {
   props: {
     url: string,
+    infoUrl: string,
     title: string,
     accentColor: [number, number, number],
     textColor: 'white' | 'black',
@@ -70,8 +73,12 @@ class StreamThumbnail extends React.PureComponent {
   };
 
   handlePress = () => {
-    const {url, title} = this.props
-    trackedOpenUrl({url, id: `${title}WebcamView`})
+    const {url, title, infoUrl} = this.props
+    if (Platform.OS === 'android') {
+      trackedOpenUrl({url: infoUrl, id: `${title}WebcamView`})
+    } else {
+      trackedOpenUrl({url, id: `${title}WebcamView`})
+    }
   };
 
   render() {

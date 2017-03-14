@@ -4,7 +4,8 @@ additionalProperties: false
 required: [name, url]
 properties:
   name: {type: string}
-  url: {type: string, format: uri}
+  pageUrl: {type: string, format: uri}
+  streamUrl: {type: string, format: uri}
   thumbnail: {type: string}
   tagline: {type: string}
   accentColor:
