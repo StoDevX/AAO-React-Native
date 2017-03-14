@@ -5,7 +5,7 @@ import {TabViewAnimated, TabBar} from 'react-native-tab-view'
 import * as c from '../colors'
 import type {TabbedViewPropsType} from './types'
 import {tracker} from '../../../analytics'
-import {style as defaultStyles} from './styles'
+import {styles as defaultStyles} from './styles'
 
 const styles = StyleSheet.create({
   tabbar: {
