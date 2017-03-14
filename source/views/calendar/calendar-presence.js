@@ -33,11 +33,7 @@ export class PresenceCalendarView extends React.Component {
     this.refresh()
   }
 
-  props:
-    & {
-      url: string,
-    }
-    & TopLevelViewPropsType;
+  props: {url: string} & TopLevelViewPropsType;
 
   convertEvents(data: PresenceEventType[], now: moment): EventType[] {
     return data

@@ -35,11 +35,7 @@ export class GoogleCalendarView extends React.Component {
     this.refresh()
   }
 
-  props:
-    & {
-      calendarId: string,
-    }
-    & TopLevelViewPropsType;
+  props: {calendarId: string} & TopLevelViewPropsType;
 
   buildCalendarUrl(calendarId: string) {
     let calendarUrl = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`
