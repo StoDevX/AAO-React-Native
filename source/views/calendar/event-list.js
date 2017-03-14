@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, Share} from 'react-native'
 import * as c from '../components/colors'
 import SimpleListView from '../components/listview'
 import type {TopLevelViewPropsType} from '../types'
@@ -43,6 +43,14 @@ export class EventList extends React.Component {
     })
   };
 
+  shareItem = (event: EventType) => {
+    Share.share({
+      message: `${event.summary}: ${event.startTime.toString()} – ${event.endTime.toString()}`,
+    })
+      .then(result => console.log(result))
+      .catch(error => console.log(error.message))
+  };
+
   onPressEvent = (title: string, event: EventType) => {
     this.props.navigator.push({
       id: 'EventDetailView',
@@ -50,6 +58,8 @@ export class EventList extends React.Component {
       title: title,
       backButtonTitle: 'Events',
       props: {event},
+      onRightButton: () => this.shareItem(event),
+      rightButton: 'share',
     })
   };
 
