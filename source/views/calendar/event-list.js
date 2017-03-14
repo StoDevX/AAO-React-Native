@@ -8,6 +8,7 @@ import React from 'react'
 import {StyleSheet} from 'react-native'
 import * as c from '../components/colors'
 import SimpleListView from '../components/listview'
+import type {TopLevelViewPropsType} from '../types'
 import type {EventType} from './types'
 import groupBy from 'lodash/groupBy'
 import size from 'lodash/size'
@@ -17,13 +18,15 @@ import {NoticeView} from '../components/notice'
 import EventRow from './event-row'
 
 export class EventList extends React.Component {
-  props: {
-    events: EventType[],
-    message: ?string,
-    refreshing: boolean,
-    onRefresh: () => any,
-    now: moment,
-  };
+  props:
+    & {
+      events: EventType[],
+      message: ?string,
+      refreshing: boolean,
+      onRefresh: () => any,
+      now: moment,
+    }
+    & TopLevelViewPropsType;
 
   groupEvents = (
     events: EventType[],

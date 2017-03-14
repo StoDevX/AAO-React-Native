@@ -7,6 +7,7 @@
 import React from 'react'
 import {EventList} from './event-list'
 import {tracker} from '../../analytics'
+import type {TopLevelViewPropsType} from '../types'
 import type {PresenceEventType, EventType} from './types'
 import moment from 'moment-timezone'
 import delay from 'delay'
@@ -32,9 +33,11 @@ export class PresenceCalendarView extends React.Component {
     this.refresh()
   }
 
-  props: {
-    url: string,
-  };
+  props:
+    & {
+      url: string,
+    }
+    & TopLevelViewPropsType;
 
   convertEvents(data: PresenceEventType[], now: moment): EventType[] {
     return data
@@ -94,6 +97,8 @@ export class PresenceCalendarView extends React.Component {
 
     return (
       <EventList
+        navigator={this.props.navigator}
+        route={this.props.route}
         events={this.state.events}
         refreshing={this.state.refreshing}
         onRefresh={this.refresh}

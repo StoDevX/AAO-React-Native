@@ -6,11 +6,14 @@
 
 import React from 'react'
 
+import type {TopLevelViewPropsType} from '../types'
 import TabbedView from '../components/tabbed-view'
 import {GoogleCalendarView} from './calendar-google'
 import {PresenceCalendarView} from './calendar-presence'
 
-export default function CalendarPage() {
+export default function CalendarPage(
+  {navigator, route}: TopLevelViewPropsType,
+) {
   return (
     <TabbedView
       tabs={[
@@ -20,6 +23,8 @@ export default function CalendarPage() {
           icon: 'school',
           component: () => (
             <GoogleCalendarView
+              navigator={navigator}
+              route={route}
               calendarId="le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com"
             />
           ),
@@ -30,6 +35,8 @@ export default function CalendarPage() {
           icon: 'happy',
           component: () => (
             <GoogleCalendarView
+              navigator={navigator}
+              route={route}
               calendarId="stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com"
             />
           ),
@@ -40,6 +47,8 @@ export default function CalendarPage() {
           icon: 'paw',
           component: () => (
             <GoogleCalendarView
+              navigator={navigator}
+              route={route}
               calendarId="stolaf.edu_qkrej5rm8c8582dlnc28nreboc@group.calendar.google.com"
             />
           ),
@@ -50,6 +59,8 @@ export default function CalendarPage() {
           icon: 'people',
           component: () => (
             <PresenceCalendarView
+              navigator={navigator}
+              route={route}
               url="https://api.presence.io/stolaf/v1/events"
             />
           ),
@@ -59,7 +70,11 @@ export default function CalendarPage() {
           title: 'Northfield',
           icon: 'pin',
           component: () => (
-            <GoogleCalendarView calendarId="thisisnorthfield%40gmail.com" />
+            <GoogleCalendarView
+              navigator={navigator}
+              route={route}
+              calendarId="thisisnorthfield%40gmail.com"
+            />
           ),
         },
       ]}
