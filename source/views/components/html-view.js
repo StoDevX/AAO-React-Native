@@ -18,7 +18,7 @@ export class HtmlView extends React.Component {
       return
     }
 
-    // We don't want to open the web browser unless the user actuall clicked
+    // We don't want to open the web browser unless the user actually clicked
     // on a link.
     if (url === this.props.baseUrl) {
       return
