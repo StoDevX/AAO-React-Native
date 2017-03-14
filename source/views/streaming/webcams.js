@@ -43,7 +43,7 @@ class Webcam extends React.PureComponent {
       thumbnail: string,
       accentColor: [number, number, number],
     },
-  }
+  };
 
   render() {
     const {name, thumbnail, url, accentColor} = this.props.info
@@ -51,7 +51,7 @@ class Webcam extends React.PureComponent {
     return (
       <StreamThumbnail
         accentColor={accentColor}
-        textColor='white'
+        textColor="white"
         thumbnail={webcamImages[thumbnail]}
         title={name}
         url={url}
@@ -67,12 +67,12 @@ class StreamThumbnail extends React.PureComponent {
     accentColor: [number, number, number],
     textColor: 'white' | 'black',
     thumbnail: any,
-  }
+  };
 
   handlePress = () => {
     const {url, title} = this.props
     trackedOpenUrl({url, id: `${title}WebcamView`})
-  }
+  };
 
   render() {
     const {title, thumbnail, accentColor, textColor} = this.props
@@ -96,26 +96,34 @@ class RoundedThumbnail extends React.PureComponent {
     textColor: 'white' | 'black',
     thumbnail: any,
     title: string,
-  }
+  };
 
   render() {
     const {title, thumbnail, accentColor, textColor} = this.props
 
-    const [r,g,b] = accentColor
+    const [r, g, b] = accentColor
     const baseColor = `rgba(${r}, ${g}, ${b}, 1)`
     const startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
     const actualTextColor = c[textColor]
 
     return (
       <View style={[styles.cell, styles.rounded]}>
-        <Touchable highlight underlayColor={baseColor} activeOpacity={0.7} onPress={this.props.onPress} style={styles.rounded}>
-          <Image
-            source={thumbnail}
-            style={[styles.image, styles.rounded]}
-          >
+        <Touchable
+          highlight
+          underlayColor={baseColor}
+          activeOpacity={0.7}
+          onPress={this.props.onPress}
+          style={styles.rounded}
+        >
+          <Image source={thumbnail} style={[styles.image, styles.rounded]}>
             <View style={styles.titleWrapper}>
-              <LinearGradient colors={[startColor, baseColor]} locations={[0, 0.8]}>
-                <Text style={[styles.titleText, {color: actualTextColor}]}>{title}</Text>
+              <LinearGradient
+                colors={[startColor, baseColor]}
+                locations={[0, 0.8]}
+              >
+                <Text style={[styles.titleText, {color: actualTextColor}]}>
+                  {title}
+                </Text>
               </LinearGradient>
             </View>
           </Image>
@@ -174,4 +182,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 })
-
