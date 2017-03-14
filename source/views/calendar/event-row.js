@@ -61,49 +61,35 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
     .asHours()
   const allDay = eventLength === 24
   const multiDay = eventLength > 24
+  const sillyZeroLength = event.startTime.isSame(event.endTime, 'minute')
 
-  let times = null
   if (allDay) {
-    times = <Text style={[styles.time, styles.start]}>all-day</Text>
-  } else if (event.isOngoing) {
-    times = [
-      <Text key={0} style={[styles.time, styles.start]}>
-        {event.startTime.format('MMM. D')}
-      </Text>,
-      <Text key={1} style={[styles.time, styles.end]}>
-        {event.endTime.format('MMM. D')}
-      </Text>,
-    ]
+    return (
+      <Column style={style}>
+        <Text style={[styles.time, styles.start]}>all-day</Text>
+      </Column>
+    )
+  }
+
+  let start, end
+  if (event.isOngoing) {
+    start = event.startTime.format('MMM. D')
+    end = event.endTime.format('MMM. D')
   } else if (multiDay) {
-    times = [
-      <Text key={0} style={[styles.time, styles.start]}>
-        {event.startTime.format('h:mm A')}
-      </Text>,
-      <Text key={1} style={[styles.time, styles.end]}>
-        to {event.endTime.format('MMM. D h:mm A')}
-      </Text>,
-    ]
-  } else if (event.startTime.isSame(event.endTime, 'minute')) {
-    times = [
-      <Text key={0} style={[styles.time, styles.start]}>
-        {event.startTime.format('h:mm A')}
-      </Text>,
-      <Text key={1} style={[styles.time, styles.end]}>until ???</Text>,
-    ]
+    start = event.startTime.format('h:mm A')
+    end = `to ${event.endTime.format('MMM. D h:mm A')}`
+  } else if (sillyZeroLength) {
+    start = event.startTime.format('h:mm A')
+    end = 'until ???'
   } else {
-    times = [
-      <Text key={0} style={[styles.time, styles.start]}>
-        {event.startTime.format('h:mm A')}
-      </Text>,
-      <Text key={1} style={[styles.time, styles.end]}>
-        {event.endTime.format('h:mm A')}
-      </Text>,
-    ]
+    start = event.startTime.format('h:mm A')
+    end = event.endTime.format('h:mm A')
   }
 
   return (
     <Column style={style}>
-      {times}
+      <Text style={[styles.time, styles.start]}>{start}</Text>
+      <Text style={[styles.time, styles.end]}>{end}</Text>
     </Column>
   )
 }
