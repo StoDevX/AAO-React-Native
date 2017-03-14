@@ -60,7 +60,7 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
     .duration(event.endTime.diff(event.startTime))
     .asHours()
   const allDay = eventLength === 24
-  const multiDay = eventLength > 24
+  const multiDay = event.startTime.dayOfYear() !== event.endTime.dayOfYear()
   const sillyZeroLength = event.startTime.isSame(event.endTime, 'minute')
 
   if (allDay) {
