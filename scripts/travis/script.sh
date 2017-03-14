@@ -17,7 +17,8 @@ function commit-on-travis {
   git add "${@:2}" # gets arguments 2 and after, leaving out argument 1
   git checkout "$BRANCH"
   git commit -m "$1 [skip ci]"
-  git checkout "$TRAVIS_COMMIT"
+  # FETCH_HEAD is not a variable
+  git checkout "FETCH_HEAD"
   touch .needs-push
 }
 
