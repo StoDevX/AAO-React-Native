@@ -18,16 +18,14 @@ export class HtmlView extends React.Component {
       return
     }
 
-    // I had to disable the stopLoading call, because it was cancelling the
-    // image loads.
-    // this._webview.stopLoading()
-    this._webview.goBack()
-
     // We don't want to open the web browser unless the user actuall clicked
     // on a link.
     if (url === this.props.baseUrl) {
       return
     }
+
+    this._webview.stopLoading()
+    this._webview.goBack()
 
     return openUrl(url)
   };
