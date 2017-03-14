@@ -10,6 +10,7 @@ import {tracker} from '../../analytics'
 import type {PresenceEventType, EventType} from './types'
 import moment from 'moment-timezone'
 import delay from 'delay'
+import sortBy from 'lodash/sortBy'
 import LoadingView from '../components/loading'
 const TIMEZONE = 'America/Winnipeg'
 
@@ -37,7 +38,7 @@ export class PresenceCalendarView extends React.Component {
   };
 
   convertEvents(data: PresenceEventType[], now: moment): EventType[] {
-    return data
+    const events = data
       .map(event => {
         const startTime = moment(event.startDateTimeUtc)
         const endTime = moment(event.endDateTimeUtc)
@@ -51,6 +52,8 @@ export class PresenceCalendarView extends React.Component {
         }
       })
       .filter(event => event.endTime.isSameOrAfter(now))
+
+    return sortBy(events, event => event.startTime.toISOString())
   }
 
   getEvents = async (now: moment = moment.tz(TIMEZONE)) => {
