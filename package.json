@@ -3,6 +3,7 @@
   "version": "2.1.2",
   "private": true,
   "config": {
+    "browserify": "--full-paths --debug --extension .web.js -t babelify -g [ babelify --ignore '\\/node_modules\\/(?!react-native)' ] -t aliasify -g aliasify -t imgurify -t loose-envify",
     "prettier_args": "--single-quote --trailing-comma all --no-bracket-spacing"
   },
   "scripts": {
@@ -11,8 +12,8 @@
     "bundle-data": "node scripts/bundle-data.js data/ docs/",
     "bundle:android": "react-native bundle --entry-file index.android.js --dev true --platform android --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/",
     "bundle:ios": "react-native bundle --entry-file index.ios.js --dev true --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios",
-    "bundle:web": "browserify --full-paths --debug --extension .web.js -t babelify -g [ babelify --ignore '\\/node_modules\\/(?!react-native)' ] -t aliasify -g aliasify -t imgurify -t loose-envify index.web.js -o bundle.web.js",
-    "bundle:web:watch": "watchify -v --full-paths --debug --extension .web.js -t babelify -g [ babelify --ignore '\\/node_modules\\/(?!react-native)' ] -t aliasify -g aliasify -t imgurify -t loose-envify index.web.js -o bundle.web.js",
+    "bundle:web": "browserify $npm_package_config_browserify index.web.js -o ./web/bundle.web.js",
+    "bundle:web:watch": "watchify -v $npm_package_config_browserify index.web.js -o ./web/bundle.web.js",
     "check": "npm run prettier && npm run flow && npm run test",
     "danger": "danger",
     "data": "node scripts/bundle-data.js data/ docs/",
