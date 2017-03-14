@@ -64,15 +64,15 @@ export default function KSTOView() {
   return (
     <View style={styles.container}>
       <Image source={image} style={styles.logo} />
-      <Text selectable={true} style={styles.kstoText}>
+      <Text selectable={true} style={styles.heading}>
         St. Olaf College Radio
       </Text>
-      <Text selectable={true} style={styles.kstoText}>KSTO 93.1 FM</Text>
+      <Text selectable={true} style={styles.heading}>KSTO 93.1 FM</Text>
       <Button
         onPress={openKsto}
         title="Listen to KSTO"
       />
-      <Text selectable={true} style={styles.kstoSubtext}>
+      <Text selectable={true} style={styles.subheading}>
         Look out for changes here soon!
       </Text>
     </View>
@@ -85,12 +85,12 @@ let styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 15,
   },
-  kstoText: {
+  heading: {
     marginTop: 5,
     color: c.kstoPrimaryDark,
     fontSize: 25,
   },
-  kstoSubtext: {
+  subheading: {
     marginTop: 5,
   },
   logo: {
