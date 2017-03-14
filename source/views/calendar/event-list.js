@@ -25,7 +25,10 @@ export class EventList extends React.Component {
     now: moment,
   };
 
-  groupEvents(events: EventType[], now: moment): {[key: string]: EventType[]} {
+  groupEvents = (
+    events: EventType[],
+    now: moment,
+  ): {[key: string]: EventType[]} => {
     return groupBy(events, event => {
       if (event.isOngoing) {
         return 'Ongoing'
@@ -35,7 +38,7 @@ export class EventList extends React.Component {
       }
       return event.startTime.format('ddd  MMM Do') // google returns events in CST
     })
-  }
+  };
 
   renderSectionHeader = (
     sectionData: EventType[],
