@@ -35,30 +35,13 @@ export default class WebcamsView extends React.PureComponent {
   }
 }
 
-const colors = {
-  'Alumni Hall West': [48, 63, 102],
-  'Buntrock Plaza': [93, 114, 72],
-  'East Quad': [82, 87, 54],
-  'Hi Mom': [137, 141, 150],
-  'Tomson East Lantern': [89, 84, 82],
-  'Tomson West Lantern': [110, 126, 91],
-}
-
-const fgcolors = {
-  'Alumni Hall West': c.white,
-  'Buntrock Plaza': c.white,
-  'East Quad': c.white,
-  'Hi Mom': c.white,
-  'Tomson East Lantern': c.white,
-  'Tomson West Lantern': c.white,
-}
-
 class Webcam extends React.PureComponent {
   props: {
     info: {
       url: string,
       name: string,
       thumbnail: string,
+      accentColor: [number, number, number],
     },
   }
 
@@ -68,11 +51,11 @@ class Webcam extends React.PureComponent {
   }
 
   render() {
-    const {name, thumbnail, url} = this.props.info
+    const {name, thumbnail, url, accentColor} = this.props.info
 
     return (
       <StreamThumbnail
-        accentColor={colors[name]}
+        accentColor={accentColor}
         textColor='white'
         thumbnail={webcamImages[thumbnail]}
         title={name}

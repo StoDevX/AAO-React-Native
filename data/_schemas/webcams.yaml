@@ -7,3 +7,7 @@ properties:
   url: {type: string, format: uri}
   thumbnail: {type: string}
   tagline: {type: string}
+  accentColor:
+    type: array
+    items: [{type: number}, {type: number}, {type: number}]
+    additionalItems: false
