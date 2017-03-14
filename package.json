@@ -24,8 +24,9 @@
     "prettier": "prettier --write $npm_package_config_prettier_args 'source/**/*.js' '*.js' && eslint --cache --fix 'source/' '*.js'",
     "prettier:changed": "FILES=$(git diff --name-only | grep '\\.js$'); prettier --write $npm_package_config_prettier_args $FILES; eslint --cache --fix $FILES",
     "prettier:since-master": "FILES=$(git diff --name-only master | grep '\\.js$'); prettier --write $npm_package_config_prettier_args $FILES; eslint --cache --fix $FILES",
+    "serve": "echo open localhost:8080; cd web && python3 -m http.server 8080",
     "start": "react-native start",
-    "start:web": "echo $ python3 -m http.server 8080; echo $ npm run bundle:web:watch; echo \\# go to http://localhost:8080 for AAO",
+    "web": "echo wait for the \\'... written to ...\\' message; npm run bundle:web:watch",
     "test": "jest",
     "validate-data": "node scripts/validate-data.js"
   },
