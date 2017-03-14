@@ -18,9 +18,9 @@ import {Button} from '../components/button'
 import * as c from '../components/colors'
 import {tracker} from '../../analytics'
 
-let kstoProtocol = 'KSTORadio://'
-let kstoAppStoreLink = 'itms://itunes.apple.com/us/app/ksto/id953916647'
-let kstoWebPage = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
+const kstoProtocol = 'KSTORadio://'
+const kstoAppStoreLink = 'itms://itunes.apple.com/us/app/ksto/id953916647'
+const kstoWebPage = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
 function kstoWebsite() {
