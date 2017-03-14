@@ -45,11 +45,6 @@ class Webcam extends React.PureComponent {
     },
   }
 
-  open = () => {
-    const {url, name} = this.props.info
-    trackedOpenUrl({url, id: `${name}WebcamView`})
-  }
-
   render() {
     const {name, thumbnail, url, accentColor} = this.props.info
 
@@ -75,7 +70,8 @@ class StreamThumbnail extends React.PureComponent {
   }
 
   handlePress = () => {
-
+    const {url, title} = this.props
+    trackedOpenUrl({url, id: `${title}WebcamView`})
   }
 
   render() {
