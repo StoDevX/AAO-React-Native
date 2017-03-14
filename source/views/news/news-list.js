@@ -63,9 +63,12 @@ export class NewsList extends React.Component {
   };
 
   render() {
-    // remove all entries with a <form> from the list
-    const entries = this.props.entries.filter(
-      entry => !entry.content.includes('<form>'),
+    // remove all entries with blank excerpts
+    // remove all entries with a <form from the list
+    const entries = (this.props.entries.filter(
+      entry => entry.excerpt.trim() !== '').filter(
+        entry => !entry.content.includes('<form')
+      )
     )
 
     if (!entries.length) {
