@@ -11,6 +11,8 @@ import TabbedView from '../components/tabbed-view'
 import {GoogleCalendarView} from './calendar-google'
 import {PresenceCalendarView} from './calendar-presence'
 
+export {EventDetail} from './event-detail'
+
 export default function CalendarPage(
   {navigator, route}: TopLevelViewPropsType,
 ) {

@@ -43,6 +43,16 @@ export class EventList extends React.Component {
     })
   };
 
+  onPressEvent = (title: string, event: EventType) => {
+    this.props.navigator.push({
+      id: 'EventDetailView',
+      index: this.props.route.index + 1,
+      title: title,
+      backButtonTitle: 'Events',
+      props: {event},
+    })
+  };
+
   renderSectionHeader = (
     sectionData: EventType[],
     sectionIdentifier: string,
@@ -77,6 +87,7 @@ export class EventList extends React.Component {
       >
         {(event: EventType) => (
           <EventRow
+            onPress={() => this.onPressEvent(event.summary, event)}
             event={event}
           />
         )}

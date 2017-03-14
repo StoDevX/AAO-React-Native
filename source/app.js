@@ -21,7 +21,7 @@ import {
   configureScene,
 } from './views/components/navigation'
 
-import CalendarView from './views/calendar'
+import CalendarView, {EventDetail as EventDetailView} from './views/calendar'
 import {ContactsView} from './views/contacts'
 import {DictionaryView, DictionaryDetailView} from './views/dictionary'
 import {HomeView, EditHomeView} from './views/home'
@@ -64,6 +64,8 @@ function renderScene(route, navigator) {
       return <FilterView {...props} />
     case 'CalendarView':
       return <CalendarView {...props} />
+    case 'EventDetailView':
+      return <EventDetailView {...props} />
     case 'ContactsView':
       return <ContactsView {...props} />
     case 'DictionaryView':
