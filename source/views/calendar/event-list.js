@@ -14,7 +14,7 @@ import size from 'lodash/size'
 import moment from 'moment-timezone'
 import {ListSeparator, ListSectionHeader} from '../components/list'
 import {NoticeView} from '../components/notice'
-import EventView from './event-row'
+import EventRow from './event-row'
 
 export class EventList extends React.Component {
   props: {
@@ -72,7 +72,11 @@ export class EventList extends React.Component {
         refreshing={this.props.refreshing}
         onRefresh={this.props.onRefresh}
       >
-        {(data: EventType) => <EventView {...data} />}
+        {(event: EventType) => (
+          <EventRow
+            event={event}
+          />
+        )}
       </SimpleListView>
     )
   }

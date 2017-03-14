@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function EventView(props: EventType) {
-  const title = fastGetTrimmedText(props.summary)
+export default function EventRow({event}: {event: EventType}) {
+  const title = fastGetTrimmedText(event.summary)
 
   return (
     <ListRow
@@ -42,13 +42,13 @@ export default function EventView(props: EventType) {
       fullWidth={true}
     >
       <Row>
-        <CalendarTimes event={props} style={styles.timeContainer} />
+        <CalendarTimes event={event} style={styles.timeContainer} />
 
         <Bar style={styles.bar} />
 
         <Column flex={1} paddingTop={2} paddingBottom={3}>
           <Title style={styles.title}>{title}</Title>
-          <Detail style={styles.detail}>{props.location}</Detail>
+          <Detail style={styles.detail}>{event.location}</Detail>
         </Column>
       </Row>
     </ListRow>
