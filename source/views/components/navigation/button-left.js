@@ -6,6 +6,7 @@
 import React from 'react'
 import {Text, Platform, Navigator, StyleSheet} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
+import * as c from '../colors'
 import {Touchable} from '../touchable'
 import {OpenSettingsButton} from './special-settings'
 import type {RouteType, NavStateType} from '../../types'
@@ -28,14 +29,15 @@ export function LeftButton(
     return null
   }
 
-  const backTitle = navState.routeStack[index].backButtonTitle || navState.routeStack[index-1].title
+  const backTitle = navState.routeStack[index].backButtonTitle ||
+    navState.routeStack[index - 1].title
 
   let contents = null
   if (Platform.OS === 'android') {
-    contents = <Icon style={styles.icon} name='md-arrow-back' />
+    contents = <Icon style={styles.icon} name="md-arrow-back" />
   } else {
     contents = [
-      <Icon key={0} style={styles.icon} name='ios-arrow-back' />,
+      <Icon key={0} style={styles.icon} name="ios-arrow-back" />,
       <Text key={1} style={styles.text}>{backTitle}</Text>,
     ]
   }
@@ -59,14 +61,13 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 17,
-    color: 'white',
+    color: c.white,
     ...Platform.select({
-      ios: {
-      },
+      ios: {},
     }),
   },
   icon: {
-    color: 'white',
+    color: c.white,
     paddingRight: 6,
     ...Platform.select({
       ios: {

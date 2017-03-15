@@ -46,8 +46,11 @@ function SolidBar({style}: {style?: any}) {
 
 export function Bar(props: Object) {
   switch (Platform.OS) {
-    case 'ios': return <SolidBar {...props} />
-    case 'android': return <DottedBar {...props} />
-    default: return <SolidBar {...props} />
+    case 'ios':
+      return <SolidBar {...props} />
+    case 'android':
+      return <DottedBar {...props} />
+    default:
+      return <SolidBar {...props} />
   }
 }

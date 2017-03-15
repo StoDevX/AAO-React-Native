@@ -4,6 +4,7 @@
  */
 
 import {StyleSheet, Platform} from 'react-native'
+import * as c from '../colors'
 
 export const commonStyles = StyleSheet.create({
   button: {
@@ -22,7 +23,7 @@ export const commonStyles = StyleSheet.create({
   },
   text: {
     fontSize: 17,
-    color: 'white',
+    color: c.white,
     ...Platform.select({
       android: {
         marginTop: 1,

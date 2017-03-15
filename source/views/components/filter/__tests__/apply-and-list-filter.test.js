@@ -12,5 +12,7 @@ it("should return `false` if the item's value is a subset of the needle", () => 
 })
 
 it('should convert objects into an array of values to act as the value', () => {
-  expect(applyAndListFilter(filterValue('1', '2'), {key: '1', alt: '2'})).toBeTruthy()
+  expect(
+    applyAndListFilter(filterValue('1', '2'), {key: '1', alt: '2'}),
+  ).toBeTruthy()
 })

@@ -10,9 +10,13 @@ import {parseHtml} from '../html'
 import {GRADES_PAGE, LANDING_PAGE} from './urls'
 import {parseStudentNumberFromDom} from './parse-student-number'
 
-type PromisedDataType = Promise<{error: true, value: Error}|{error: false, value: number}>;
+type PromisedDataType = Promise<
+  | {error: true, value: Error}
+  | {error: false, value: number}>;
 
-export async function loadStudentNumber({force, isConnected}: {force?: boolean, isConnected: boolean}): PromisedDataType {
+export async function loadStudentNumber(
+  {force, isConnected}: {force?: boolean, isConnected: boolean},
+): PromisedDataType {
   const {isExpired, isCached, value} = await cache.getStudentNumber()
 
   if (isConnected && (isExpired || !isCached || force)) {
@@ -28,12 +32,14 @@ export async function loadStudentNumber({force, isConnected}: {force?: boolean, 
   }
 
   if (value === null || value === undefined) {
-    return {error: true, value: new Error('Problem loading student information from the SIS')}
+    return {
+      error: true,
+      value: new Error('Problem loading student information from the SIS'),
+    }
   }
 
   return {error: false, value: value}
 }
-
 
 async function fetchStudentNumberFromServer(): PromisedDataType {
   const resp = await fetch(GRADES_PAGE)

@@ -1,25 +1,15 @@
 // @flow
 import React from 'react'
-import {
-  Text,
-  StyleSheet,
-  View,
-  ListView,
-  Linking,
-} from 'react-native'
+import {StyleSheet, Text, View} from 'react-native'
 import type {OtherModeType} from './types'
 import {data as modes} from '../../../docs/transportation.json'
 import * as c from '../components/colors'
-import Button from 'react-native-button' // the button
-import {tracker} from '../../analytics'
+import {Button} from '../components/button'
+import SimpleListView from '../components/listview'
+import {trackedOpenUrl} from '../components/open-url'
 
 let styles = StyleSheet.create({
   container: {
-    backgroundColor: c.white,
-  },
-  row: {
-    marginTop: 10,
-    marginBottom: 10,
     backgroundColor: c.white,
   },
   title: {
@@ -37,55 +27,31 @@ let styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: c.iosLightBackground,
   },
-  button: {
-    backgroundColor: c.denim,
-    width: 200,
-    color: c.white,
-    alignSelf: 'center',
-    height: 30,
-    paddingTop: 3,
-    marginBottom: 10,
-    marginTop: 10,
-    borderRadius: 6,
-    overflow: 'hidden',
-  },
 })
 
-export default class OtherModesView extends React.Component {
-  state = {
-    dataSource: new ListView.DataSource({
-      rowHasChanged: this._rowHasChanged,
-    }).cloneWithRows(modes),
-  }
-
-  _rowHasChanged(r1: OtherModeType, r2: OtherModeType) {
-    return r1.name !== r2.name
-  }
-
-  _renderRow(data: OtherModeType) {
-    return (
-      <View style={styles.mode}>
-        <Text style={styles.title}>{data.name}</Text>
-        <Text style={styles.content}>{data.description}</Text>
-        <Button
-          onPress={() => Linking.openURL(data.url).catch(err => {
-            tracker.trackException(err.message)
-            console.error('An error occurred', err)
-          })}
-          style={styles.button}>
-          More info
-        </Button>
-      </View>
-    )
-  }
-
-  render() {
-    return (
-      <ListView
-        contentContainerStyle={styles.container}
-        dataSource={this.state.dataSource}
-        renderRow={this._renderRow.bind(this)}
-      />
-    )
-  }
+export default function OtherModesView() {
+  return (
+    <SimpleListView
+      contentContainerStyle={styles.container}
+      forceBottomInset={true}
+      data={modes}
+    >
+      {(data: OtherModeType) => (
+        <View style={styles.mode}>
+          <Text selectable={true} style={styles.title}>{data.name}</Text>
+          <Text selectable={true} style={styles.content}>
+            {data.description}
+          </Text>
+          <Button
+            onPress={() =>
+              trackedOpenUrl({
+                url: data.url,
+                id: `Transportation_OtherModes_${data.name.replace(' ', '')}View`,
+              })}
+            title="More info"
+          />
+        </View>
+      )}
+    </SimpleListView>
+  )
 }

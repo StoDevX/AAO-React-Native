@@ -11,12 +11,24 @@ import type {BuildingType} from './types'
 import * as c from '../components/colors'
 import {Row, Column} from '../components/layout'
 import {ListRow, Detail, Title} from '../components/list'
-import {getDetailedBuildingStatus, getShortBuildingStatus} from './building-hours-helpers'
+import {
+  getDetailedBuildingStatus,
+  getShortBuildingStatus,
+} from './building-hours-helpers'
 
 const styles = StyleSheet.create({
   title: {
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  titleText: {
+    flex: 1,
+  },
+  detailWrapper: {
+    paddingTop: 3,
+  },
+  detailRow: {
+    paddingTop: 0,
   },
   subtitleText: {
     fontWeight: '400',
@@ -54,17 +66,15 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
   const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
 
   return (
-    <ListRow
-      onPress={onPress}
-      arrowPosition='center'
-      direction='column'
-    >
+    <ListRow onPress={onPress} arrowPosition="center" direction="column">
       <Column>
         <Row style={styles.title}>
-          <Title lines={1} style={{flex: 1}}>
+          <Title lines={1} style={styles.titleText}>
             <Text>{name}</Text>
             {info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
-            {info.subtitle ? <Text style={styles.subtitleText}>    {info.subtitle}</Text> : null}
+            {info.subtitle
+              ? <Text style={styles.subtitleText}> {info.subtitle}</Text>
+              : null}
           </Title>
 
           <Badge
@@ -75,29 +85,37 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
           />
         </Row>
 
-        <View style={{paddingTop: 3}}>
-          {hours.map(([isActive, label, status], i) =>
-            <Detail key={i} style={{paddingTop: 0}}>
+        <View style={styles.detailWrapper}>
+          {hours.map(({isActive, label, status}, i) => (
+            <Detail key={i} style={styles.detailRow}>
               <BuildingTimeSlot
                 highlight={hours.length > 1 && isActive}
                 label={label}
                 status={status}
               />
             </Detail>
-          )}
+          ))}
         </View>
       </Column>
     </ListRow>
   )
 }
 
-const BuildingTimeSlot = ({label, status, highlight}: {label: ?string, status: string, highlight: boolean}) => {
+const BuildingTimeSlot = (
+  {
+    label,
+    status,
+    highlight,
+  }: {label: ?string, status: string, highlight: boolean},
+) => {
   // we don't want to show the 'Hours' label, since almost every row has it
   const showLabel = label !== 'Hours'
 
   return (
     <Text>
-      {showLabel ? <Text style={highlight && styles.bold}>{label}: </Text> : null}
+      {showLabel
+        ? <Text style={highlight && styles.bold}>{label}: </Text>
+        : null}
       <Text style={highlight && styles.bold}>{status}</Text>
     </Text>
   )

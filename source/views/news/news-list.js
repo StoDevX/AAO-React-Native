@@ -1,20 +1,19 @@
 // @flow
 import React from 'react'
-import {
-  StyleSheet,
-  ListView,
-  Platform,
-  RefreshControl,
-} from 'react-native'
+import {StyleSheet, Platform, Share} from 'react-native'
+import * as c from '../components/colors'
+import SimpleListView from '../components/listview'
 import type {StoryType} from './types'
 import {ListSeparator} from '../components/list'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {NewsRow} from './news-row'
+import Icon from 'react-native-vector-icons/Ionicons'
+import {Touchable} from '../components/touchable'
 
 const styles = StyleSheet.create({
   listContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: c.white,
   },
 })
 
@@ -27,38 +26,20 @@ type NewsListPropsType = TopLevelViewPropsType & {
 };
 
 export class NewsList extends React.Component {
-  state = {
-    dataSource: new ListView.DataSource({
-      rowHasChanged: (r1: StoryType, r2: StoryType) => r1 != r2,
-    }),
-  }
-
-  componentWillMount() {
-    this.init(this.props)
-  }
-
-  componentWillReceiveProps(nextProps: NewsListPropsType) {
-    this.init(nextProps)
-  }
-
   props: NewsListPropsType;
-
-  init(props: NewsListPropsType) {
-    this.setState({dataSource: this.state.dataSource.cloneWithRows(props.entries)})
-  }
-
-  renderRow = (story: StoryType) => {
-    return (
-      <NewsRow
-        onPress={() => this.onPressNews(story.title, story)}
-        story={story}
-      />
-    )
-  }
 
   renderSeparator = (sectionId: string, rowId: string) => {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
-  }
+  };
+
+  shareItem = (story: StoryType) => {
+    Share.share({
+      url: story.link,
+      message: story.link,
+    })
+      .then(result => console.log(result))
+      .catch(error => console.log(error.message))
+  };
 
   onPressNews = (title: string, story: StoryType) => {
     this.props.navigator.push({
@@ -67,29 +48,47 @@ export class NewsList extends React.Component {
       title: title,
       backButtonTitle: this.props.name,
       props: {story, embedFeaturedImage: this.props.embedFeaturedImage},
+      rightButton: ({contentContainerStyle, style}) => (
+        <Touchable
+          highlight={false}
+          style={[contentContainerStyle]}
+          onPress={() => this.shareItem(story)}
+        >
+          {Platform.OS === 'ios'
+            ? <Icon style={[style]} name="ios-share-outline" />
+            : <Icon style={[style]} name="md-share" />}
+        </Touchable>
+      ),
     })
-  }
+  };
 
   render() {
-    if (!this.state.dataSource.getRowCount()) {
-      return <NoticeView text='No news.' />
+    // remove all entries with blank excerpts
+    // remove all entries with a <form from the list
+    const entries = this.props.entries
+      .filter(entry => entry.excerpt.trim() !== '')
+      .filter(entry => !entry.content.includes('<form'))
+
+    if (!entries.length) {
+      return <NoticeView text="No news." />
     }
 
     return (
-      <ListView
+      <SimpleListView
         style={styles.listContainer}
-        contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
-        dataSource={this.state.dataSource}
-        renderRow={this.renderRow}
+        forceBottomInset={true}
+        data={entries}
         renderSeparator={this.renderSeparator}
-        pageSize={6}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.props.loading}
-            onRefresh={this.props.onRefresh}
+        refreshing={this.props.loading}
+        onRefresh={this.props.onRefresh}
+      >
+        {(story: StoryType) => (
+          <NewsRow
+            onPress={() => this.onPressNews(story.title, story)}
+            story={story}
           />
-        }
-      />
+        )}
+      </SimpleListView>
     )
   }
 }

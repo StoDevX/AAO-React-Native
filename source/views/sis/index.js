@@ -5,22 +5,36 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-} from 'react-native'
 
+import type {TopLevelViewPropsType} from '../types'
 import TabbedView from '../components/tabbed-view'
-import tabs from './tabs'
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-})
+import BalancesView from './balances'
+import CoursesView from './courses'
+// import SearchView from './search'
 
-export default function SISView(props: {navigator: any, route: any}) {
-  return <TabbedView navigator={props.navigator} route={props.route} style={styles.container} tabs={tabs} />
-}
-SISView.propTypes = {
-  navigator: React.PropTypes.object.isRequired,
-  route: React.PropTypes.object.isRequired,
+export default function SISView({navigator, route}: TopLevelViewPropsType) {
+  return (
+    <TabbedView
+      tabs={[
+        {
+          id: 'BalancesView',
+          title: 'Balances',
+          icon: 'card',
+          component: () => <BalancesView navigator={navigator} route={route} />,
+        },
+        {
+          id: 'CoursesView',
+          title: 'Courses',
+          icon: 'archive',
+          component: () => <CoursesView navigator={navigator} route={route} />,
+        },
+        // {
+        //   id: 'CourseSearchView',
+        //   title: 'Search',
+        //   icon: 'search',
+        //   component: () => <SearchView navigator={navigator} route={route} />,
+        // },
+      ]}
+    />
+  )
 }

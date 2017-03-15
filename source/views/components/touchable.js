@@ -15,14 +15,16 @@ type PropsType = {
   borderless?: boolean,
   style?: any,
 };
-export const Touchable = ({
-  children,
-  style,
-  highlight=true,
-  borderless=false,
-  onPress=() => {},
-  ...props
-}: PropsType) => {
+export const Touchable = (
+  {
+    children,
+    style,
+    highlight = true,
+    borderless = false,
+    onPress = () => {},
+    ...props
+  }: PropsType,
+) => {
   // The child <View> is required; the Touchable needs a View as its direct child.
   const content = <View style={style}>{children}</View>
 
@@ -30,7 +32,9 @@ export const Touchable = ({
     default:
     case 'ios': {
       const Component = highlight ? TouchableHighlight : TouchableOpacity
-      const innerProps = highlight ? {underlayColor: '#d9d9d9'} : {activeOpacity: 0.65}
+      const innerProps = highlight
+        ? {underlayColor: '#d9d9d9'}
+        : {activeOpacity: 0.65}
       return (
         <Component onPress={onPress} {...innerProps} {...props}>
           {content}
@@ -43,7 +47,11 @@ export const Touchable = ({
         ? TouchableNativeFeedback.SelectableBackgroundBorderless()
         : TouchableNativeFeedback.SelectableBackground()
       return (
-        <TouchableNativeFeedback onPress={onPress} background={background} {...props}>
+        <TouchableNativeFeedback
+          onPress={onPress}
+          background={background}
+          {...props}
+        >
           {content}
         </TouchableNativeFeedback>
       )

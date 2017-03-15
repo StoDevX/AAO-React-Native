@@ -14,7 +14,7 @@
 ; Ignore unexpected extra "@providesModule"
 .*/node_modules/.*/node_modules/fbjs/.*
 
-; Ignore the vendor/ folder, since CIs appear to stuck ruby deps in there
+; Ignore the vendor/ folder, since CIs appear to stick ruby deps in there
 <PROJECT_ROOT>/vendor/
 
 ; Ignore duplicate module providers
@@ -27,6 +27,7 @@
 .*/node_modules/jest-runtime/build/__tests__/.*
 .*/node_modules/babel-plugin-flow-react-proptypes/src/__test__/.*
 .*/node_modules/.*/examples/.*
+.*/node_modules/react-native-mock/.*
 
 [include]
 
@@ -36,6 +37,8 @@ node_modules/react-native/flow
 flow-typed/
 
 [options]
+emoji=true
+
 module.system=haste
 
 experimental.strict_type_args=true
@@ -54,8 +57,8 @@ suppress_type=$FlowIssue
 suppress_type=$FlowFixMe
 suppress_type=$FixMe
 
-suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(3[0-7]\\|[1-2][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
-suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(3[0-7]\\|1[0-9]\\|[1-2][0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(3[0-8]\\|[1-2][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
+suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(3[0-8]\\|1[0-9]\\|[1-2][0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 
 unsafe.enable_getters_and_setters=true

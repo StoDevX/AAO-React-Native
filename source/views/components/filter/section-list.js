@@ -2,9 +2,8 @@
 import React from 'react'
 import {Text, Image, StyleSheet} from 'react-native'
 import type {ListType, ListItemSpecType} from './types'
-import {Section, Cell, CustomCell} from 'react-native-tableview-simple'
-import {Row, Column} from '../layout'
-import {Checkmark} from '../checkmark'
+import {Section, Cell} from 'react-native-tableview-simple'
+import {Column} from '../layout'
 import includes from 'lodash/includes'
 import without from 'lodash/without'
 import concat from 'lodash/concat'
@@ -16,8 +15,9 @@ type PropsType = {
 
 export function ListSection({filter, onChange}: PropsType) {
   const {spec} = filter
-  const {title='', options, selected, mode} = spec
-  const {caption=`Show items with ${mode === 'AND' ? 'all' : 'any'} of these options.`} = spec
+  const {title = '', options, selected, mode} = spec
+  const quantifier = mode === 'AND' ? 'all' : 'any'
+  const {caption = `Show items with ${quantifier} of these options.`} = spec
 
   function buttonPushed(tappedValue: ListItemSpecType) {
     let result
@@ -63,33 +63,31 @@ export function ListSection({filter, onChange}: PropsType) {
     })
   }
 
-  let buttons = options.map(val =>
-    <CustomCell
+  const hasImageColumn = options.some(val => Boolean(val.image))
+  let buttons = options.map(val => (
+    <Cell
       key={val.title}
       onPress={() => buttonPushed(val)}
-    >
-      <Row style={styles.row}>
-        {spec.showImages
-          ? <Image style={styles.icon} source={val.image} />
-          : null}
-
-        <Column flex={1}>
+      disableImageResize={true}
+      image={
+        spec.showImages && <Image style={styles.icon} source={val.image} />
+      }
+      accessory={!includes(selected, val) && 'Checkmark'}
+      cellStyle="RightDetail"
+      cellContentView={
+        <Column style={styles.content}>
           <Text style={styles.title}>{val.title}</Text>
-          {val.detail
-            ? <Text style={styles.detail}>{val.detail}</Text>
-            : null}
+          {val.detail ? <Text style={styles.detail}>{val.detail}</Text> : null}
         </Column>
-
-        <Checkmark transparent={!includes(selected, val)} />
-      </Row>
-    </CustomCell>
-  )
+      }
+    />
+  ))
 
   if (mode === 'OR') {
     const showAllButton = (
       <Cell
-        key='__show_all'
-        title='Show All'
+        key="__show_all"
+        title="Show All"
         onPress={showAll}
         accessory={selected.length === options.length ? 'Checkmark' : null}
       />
@@ -98,16 +96,20 @@ export function ListSection({filter, onChange}: PropsType) {
   }
 
   return (
-    <Section header={title.toUpperCase()} footer={caption}>
+    <Section
+      header={title.toUpperCase()}
+      footer={caption}
+      separatorInsetLeft={hasImageColumn ? 45 : undefined}
+    >
       {buttons}
     </Section>
   )
 }
 
 const styles = StyleSheet.create({
-  row: {
-    alignItems: 'center',
-    minHeight: 24, // 24 (px?) is somehow equivalent to 44pt…
+  content: {
+    flex: 1,
+    paddingVertical: 10,
   },
   title: {
     fontSize: 16,
@@ -118,6 +120,5 @@ const styles = StyleSheet.create({
   icon: {
     width: 16,
     height: 16,
-    marginRight: 15,
   },
 })

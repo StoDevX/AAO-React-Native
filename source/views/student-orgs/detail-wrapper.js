@@ -18,7 +18,7 @@ export class StudentOrgsDetailView extends React.Component {
     refreshing: false,
     loaded: false,
     error: false,
-  }
+  };
 
   componentWillMount() {
     this.fetchData()
@@ -26,7 +26,7 @@ export class StudentOrgsDetailView extends React.Component {
 
   props: TopLevelViewPropsType & {
     item: StudentOrgAbridgedType,
-  }
+  };
 
   fetchData = async () => {
     let orgUrl = orgsUrl + '/' + this.props.item.uri
@@ -41,14 +41,14 @@ export class StudentOrgsDetailView extends React.Component {
     }
 
     this.setState({loaded: true})
-  }
+  };
 
   cleanResponseData = (data: StudentOrgInfoType) => {
     let {
-      contactName='',
-      description='',
-      regularMeetingTime='',
-      regularMeetingLocation='',
+      contactName = '',
+      description = '',
+      regularMeetingTime = '',
+      regularMeetingLocation = '',
     } = data
 
     contactName = contactName.trim()
@@ -65,7 +65,7 @@ export class StudentOrgsDetailView extends React.Component {
       regularMeetingTime,
       regularMeetingLocation,
     }
-  }
+  };
 
   render() {
     return (

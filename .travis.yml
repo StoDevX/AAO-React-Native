@@ -1,20 +1,31 @@
 language: generic
 
-before_cache:
-  - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"
-  - rm -rf "$TMPDIR/jest_preprocess_cache"
-
-cache:
-  bundler: true
-  directories:
-    - $HOME/.gradle
-
 env:
   global:
     # `match` keychain info – the values don't matter, they're defined
     # here so they're consistent throughout
-    MATCH_KEYCHAIN_NAME: travis-ios-keychain
-    MATCH_KEYCHAIN_PASSWORD: alpine
+    - MATCH_KEYCHAIN_NAME=travis-ios-keychain
+    - MATCH_KEYCHAIN_PASSWORD=alpine
+    # dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
+    - PATH=${PATH/\.\/node_modules\/\.bin/}
+    # centralize some variables for pushing/committing
+    - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+    - REPO=$(git config remote.origin.url)
+    - SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
+    # this just gives us a nice label to use
+    - ENCRYPTION_LABEL=199c454344e1
+    # set some other variables for the pushing process
+    - ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
+    - ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
+    - ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
+    - ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
+    - DEPLOY_KEY=scripts/travisci_deploy_key
+    # variables that are used later on
+    - TRAVIS_NODE_VERSION=7
+    - PUSH_BRANCH=0
+    - CAN_DEPLOY=0
+    - USE_EMULATOR=no
+    - run_deploy=0
 
 matrix:
   fast_finish: true
@@ -24,31 +35,29 @@ matrix:
       sudo: false
       language: node_js
       node_js: '7'
-      env: {type: 'js'}
+      env: [JS=yes]
 
-    - os: linux
+    - &android-base
+      os: linux
       dist: precise
       sudo: required
       language: android
       jdk: oraclejdk8
-      env: {type: 'android', can_deploy: 'yes'}
+      env: [ANDROID=yes, CAN_DEPLOY=yes]
       android:
         components:
           - tools
           - platform-tools
           - build-tools-23.0.1
           - build-tools-23.0.2
+          - build-tools-25.0.2
           - android-23
+          - android-25
           - extra-android-m2repository
           - extra-google-m2repository
-          - extra-android-support
 
-    # - os: linux
-    #   dist: precise
-    #   sudo: required
-    #   language: android
-    #   jdk: oraclejdk8
-    #   env: {type: 'android', emulator: 'yes'}
+    # - <<: *android-base
+    #   env: [ANDROID=yes, USE_EMULATOR=yes]
     #   android:
     #     components:
     #       - tools
@@ -57,14 +66,13 @@ matrix:
     #       - android-23
     #       - extra-android-m2repository
     #       - extra-google-m2repository
-    #       - extra-android-support
     #       - sys-img-armeabi-v7a-google_apis-23
 
     - os: osx
       language: objective-c
       osx_image: xcode8.1
       node_js: '7'
-      env: {type: 'ios', can_deploy: 'yes'}
+      env: [IOS=yes, CAN_DEPLOY=yes]
 
 
 # As seen in http://stackoverflow.com/a/31882307/2347774
@@ -76,113 +84,41 @@ branches:
 
 
 before_install:
-  - echo "Now testing $type on $TRAVIS_OS_NAME"
-  - echo "Using the android emulator? $emulator"
-  - echo "Travis branch is $TRAVIS_BRANCH"
-  - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
-  - echo "Build triggered by $TRAVIS_EVENT_TYPE"
-
-  # only deploy from the once-daily cron-triggered jobs
-  - run_deploy="no"
-  - if [[ "$can_deploy" == "yes" && "$TRAVIS_EVENT_TYPE" == "cron" ]]; then run_deploy="yes"; fi
-  - export run_deploy=$run_deploy
-
-  # force node 7 on the android builds
-  - |
-    if [[ "$type" == "android" ]]; then
-      nvm install 7
-      nvm use 7
+  # force a consistent node version on android
+  - if [[ $ANDROID ]]; then
+      nvm install "$TRAVIS_NODE_VERSION";
+      nvm use "$TRAVIS_NODE_VERSION";
     fi
-
-  # turn off fancy npm stuff
-  - npm config set spin=false
-  - npm config set progress=false
-
-  # Dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
-  - PATH=`echo $PATH | sed "s/\.\/node_modules\/\.bin//g"`
-  - export PATH=$PATH
-  - echo $PATH
 
   # make sure to use ruby 2.3
-  - |
-    if [[ "$type" == "android" || "$type" == "ios" ]]; then
-      rvm use 2.3 --install --binary --fuzzy
-      gem install bundler
+  - if [[ $ANDROID || $IOS ]]; then
+      rvm use 2.3 --install --binary --fuzzy;
+      gem install bundler;
     fi
 
+  # only deploy from the once-daily cron-triggered jobs
+  - if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
 
+  # run our before_install sequence
+  - bash scripts/travis/before_install.sh
 
 install:
-  # install packages
-  - npm install
-  # install fastlane
-  - if [[ "$type" == "android" || "$type" == "ios" ]]; then bundle install --deployment; fi
-
+  - bash scripts/travis/install.sh
 
 before_script:
-  # Fire up the Android emulator
-  - |
-    if [[ "$type" == "android" && "$emulator" == "yes" ]]; then
-      EmuName="react-native"
-      mkdir -p "$HOME/.android/avd/$EmuName.avd/"
-      echo no | android create avd --force -n "$EmuName" -t android-23 --abi google_apis/armeabi-v7a
-      emulator -avd "$EmuName" -no-audio -no-window &
-      android-wait-for-emulator
-      adb shell input keyevent 82 &
-    fi
-
-  # Fix keychain issues for iOS signing
-  - if [[ "$type" == "ios" ]]; then bundle exec fastlane ios ci_keychains; fi
-
+  - bash scripts/travis/before_script.sh
 
 script:
-  # These sections will grow over time.
-  # Each line is collapsed nicely in the travis output.
-
-  # ensure the env file exists and fill it out
-  - touch .env.js
-  - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
-
-  # JS
-  # Danger?
-  - if [[ "$type" == "js" ]]; then npm run danger; fi
-  # Lint
-  - if [[ "$type" == "js" ]]; then npm run lint; fi
-  # Validate data
-  - if [[ "$type" == "js" ]]; then npm run validate-data; fi
-  # Ensure that the data files have been updated
-  - |
-    if [[ "$type" == "js" ]]; then
-      # Run the data-bundling process
-      npm run bundle-data
-      # If there are any changes in the output folder, kill the build.
-      # We must commit the changes ourselves, before CI runs.
-      git diff --quiet docs/
-    fi
-  # Type check
-  - if [[ "$type" == "js" ]]; then npm run flow; fi
-  # Build the bundles
-  - if [[ "$type" == "js" ]]; then npm run bundle:ios; fi
-  - if [[ "$type" == "js" ]]; then npm run bundle:android; fi
-  # Run tests + collect coverage info
-  - if [[ "$type" == "js" ]]; then npm run test -- --coverage; fi
-
-  # iOS
-  - if [[ "$type" == "ios" ]]; then bundle exec fastlane ios ci_run; fi
-
-  # Android
-  - if [[ "$type" == "android" ]]; then bundle exec fastlane android ci_run; fi
-
+  - bash scripts/travis/script.sh
 
 after_success:
-  - |
-    if [[ "$type" == "js" ]]; then
-      npm install coveralls
-      ./node_modules/.bin/coveralls < ./coverage/lcov.info
-    fi
+  - bash scripts/travis/after_success.sh
 
+before_cache:
+  - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"
+  - rm -rf "$TMPDIR/jest_preprocess_cache"
 
-# ping slack with status
-notifications:
-  slack:
-    secure: fmOwJp9Xj5dJanJsdUcoJwCpHzoGEmP32zfUF+EfvHmNNkkiCiPGuXa2vt829655rjopfjm1sILfagEYr1CcnjI4fa6zIY6fQkWgii0Acy+vIEB3GZ1h46Uj8vLYOjOBC6tgNqGZvfFhtfo67hmhfRxXpP1jY6Ta0eAtxjqQ/cgGI3vUXstI3HN9eLsTa8Ejf8YiIkfV6dAPZkxDdbiQuO5+4ZbZdPYEke/QC4a/a14l4IzPntusS/8ebD5mYDavkW1+gtjZmYrqMn9aWSh+R0L1KwkqoQq5USjDw6gg4/H9L8OEj/tnCwyUQ9jyyvSLvCMTjAPGWzVvvtQKHULPuCUoH6dLAAn6HeyAPpj5rJbyVgb6voj3jfHvcOGIO2o81l4g/4JKxzN9m2tCeR8I83aPboIMUT2d1F7trfFZLWzxPUroTIWVhEoa3mRneKcQU4IY2+cATFLQnrG+iu7G3q3mNXt3figRXP76fgmdAIvdeBvN1jdmY4148DhXZVkk/Fkddd8BEJ2l/5qHlCGEKKYhM5q//+GdFOnnAiFzjbPIKixF4c1B6itEfrWo+slu3IFsd7Wsc7pb5yaW9dHaiQwlhrk5mYH0getws8fmufT1BY/Qg9pp9XJxLDos9cd24QNF3ACpKxvB9k48M4Ez0Pe5khruq+0YK04rHO+xJVw=
+cache:
+  bundler: true
+  directories:
+    - $HOME/.gradle

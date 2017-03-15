@@ -5,16 +5,20 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  Platform,
-  ListView,
-  RefreshControl,
-} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {connect} from 'react-redux'
 import delay from 'delay'
+import size from 'lodash/size'
+import * as c from '../components/colors'
+import SimpleListView from '../components/listview'
 import {Column} from '../components/layout'
-import {ListRow, ListSeparator, ListSectionHeader, Detail, Title} from '../components/list'
+import {
+  ListRow,
+  ListSeparator,
+  ListSectionHeader,
+  Detail,
+  Title,
+} from '../components/list'
 import LoadingScreen from '../components/loading'
 import {NoticeView} from '../components/notice'
 import type {CourseType, CoursesByTermType} from '../../lib/courses'
@@ -31,28 +35,11 @@ type CoursesViewPropsType = TopLevelViewPropsType & {
 class CoursesView extends React.Component {
   state: {
     loading: boolean,
-    dataSource: ListView.DataSource,
   } = {
-    dataSource: new ListView.DataSource({
-      rowHasChanged: (r1: any, r2: any) => r1 !== r2,
-      sectionHeaderHasChanged: (h1: any, h2: any) => h1 !== h2,
-    }),
     loading: false,
-  }
-
-  componentWillMount() {
-    this.updateListview(this.props.coursesByTerm)
-  }
-
-  componentWillReceiveProps(nextProps: CoursesViewPropsType) {
-    this.updateListview(nextProps.coursesByTerm)
-  }
+  };
 
   props: CoursesViewPropsType;
-
-  updateListview(coursesByTerm) {
-    this.setState({dataSource: this.state.dataSource.cloneWithRowsAndSections(coursesByTerm)})
-  }
 
   refresh = async () => {
     let start = Date.now()
@@ -65,27 +52,15 @@ class CoursesView extends React.Component {
     await delay(500 - elapsed)
 
     this.setState({loading: false})
-  }
-
-  renderRow = (course: CourseType) => {
-    return (
-      <ListRow style={styles.rowContainer}>
-        <Column>
-          <Title>{course.name}</Title>
-          <Detail>{course.deptnum}</Detail>
-          {course.instructors ? <Detail>{course.instructors}</Detail> : null}
-        </Column>
-      </ListRow>
-    )
-  }
+  };
 
   renderSectionHeader = (courses: CourseType[], term: string) => {
     return <ListSectionHeader style={styles.rowSectionHeader} title={term} />
-  }
+  };
 
   renderSeparator = (sectionId: string, rowId: string) => {
-    return <ListSeparator key={`${sectionId}-${rowId}`} style={styles.separator} />
-  }
+    return <ListSeparator key={`${sectionId}-${rowId}`} />
+  };
 
   render() {
     if (this.props.error) {
@@ -95,8 +70,8 @@ class CoursesView extends React.Component {
     if (!this.props.loggedIn) {
       return (
         <NoticeView
-          text='Sorry, it looks like your SIS session timed out. Could you set up the Google login in Settings?'
-          buttonText='Open Settings'
+          text="Sorry, it looks like your SIS session timed out. Could you set up the Google login in Settings?"
+          buttonText="Open Settings"
           onPress={() =>
             this.props.navigator.push({
               id: 'SettingsView',
@@ -104,8 +79,7 @@ class CoursesView extends React.Component {
               index: this.props.route.index + 1,
               onDismiss: (route, navigator) => navigator.pop(),
               sceneConfig: 'fromBottom',
-            })
-          }
+            })}
         />
       )
     }
@@ -114,29 +88,38 @@ class CoursesView extends React.Component {
       return <LoadingScreen />
     }
 
-    if (!this.state.dataSource.getRowCount()) {
-      return <NoticeView text='No courses found.' buttonText='Try again?' onPress={this.refresh} />
+    if (!size(this.props.coursesByTerm)) {
+      return (
+        <NoticeView
+          text="No courses found."
+          buttonText="Try again?"
+          onPress={this.refresh}
+        />
+      )
     }
 
     return (
-      <ListView
+      <SimpleListView
         style={styles.listContainer}
-        automaticallyAdjustContentInsets={false}
-        contentInset={{bottom: Platform.OS === 'ios' ? 49 : 0}}
-        dataSource={this.state.dataSource}
-        renderRow={this.renderRow}
+        forceBottomInset={true}
+        data={this.props.coursesByTerm}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
-        removeClippedSubviews={false}
-        enableEmptySections={true}
-        pageSize={5}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.loading}
-            onRefresh={this.refresh}
-          />
-        }
-      />
+        refreshing={this.state.loading}
+        onRefresh={this.refresh}
+      >
+        {(course: CourseType) => (
+          <ListRow style={styles.rowContainer}>
+            <Column>
+              <Title>{course.name}</Title>
+              <Detail>{course.deptnum}</Detail>
+              {course.instructors
+                ? <Detail>{course.instructors}</Detail>
+                : null}
+            </Column>
+          </ListRow>
+        )}}
+      </SimpleListView>
     )
   }
 }
@@ -159,6 +142,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(CoursesView)
 
 const styles = StyleSheet.create({
   listContainer: {
-    backgroundColor: '#ffffff',
+    backgroundColor: c.white,
   },
 })

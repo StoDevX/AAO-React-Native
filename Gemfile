@@ -1,6 +1,5 @@
 source "https://rubygems.org"
 
-gem "cocoapods"
 gem "fastlane"
 gem "hockeyapp"
 gem "json"

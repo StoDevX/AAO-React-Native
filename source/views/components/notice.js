@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
+import * as c from './colors'
 import {Button} from './button'
 
 const styles = StyleSheet.create({
@@ -9,7 +10,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: c.white,
   },
   text: {
     textAlign: 'center',
@@ -21,18 +22,28 @@ const styles = StyleSheet.create({
   },
 })
 
-export function NoticeView({text, style, spinner, buttonText, onPress}: {
-  text: string,
-  style?: any,
-  spinner?: boolean,
-  buttonText?: string,
-  onPress?: () => any,
-}) {
-  let activityIndicator = spinner ? <ActivityIndicator style={styles.spinner} /> : null
+export function NoticeView(
+  {
+    text,
+    style,
+    spinner,
+    buttonText,
+    onPress,
+  }: {
+    text?: string,
+    style?: any,
+    spinner?: boolean,
+    buttonText?: string,
+    onPress?: () => any,
+  },
+) {
+  let activityIndicator = spinner
+    ? <ActivityIndicator style={styles.spinner} />
+    : null
   return (
     <View style={[styles.container, style]}>
       {activityIndicator}
-      <Text style={styles.text}>
+      <Text selectable={true} style={styles.text}>
         {text || 'Notice!'}
       </Text>
       {buttonText ? <Button onPress={onPress} title={buttonText} /> : null}
