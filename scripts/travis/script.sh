@@ -53,7 +53,7 @@ if [[ $JS ]]; then
   npm run test -- --coverage 2>&1 | tee logs/jest
 
   # Danger?
-  npm run danger
+  # npm run danger
 fi
 
 
