@@ -17,7 +17,7 @@ jsFiles
     const content = readFile(filepath)
     return !content.includes('@flow')
   })
-  .forEach(file => fail(`${file} will not be checked by Flow!`))
+  .forEach(file => warn(`<code>${file}</code> has no <code>@flow</code> annotation!`))
 
 // revisit this when we move to yarn
 // const packageChanged = danger.git.modified_files.includes('package.json')
@@ -36,7 +36,7 @@ jsFiles
     return content.includes('it.only') || content.includes('describe.only')
   })
   .forEach(file =>
-    fail(`An <code>only</code> was left in ${file} – no other tests can run.`))
+    warn(`An <code>only</code> was left in ${file} – no other tests can run.`))
 
 // Warn when PR size is large (mainly for hawken)
 const bigPRThreshold = 400 // lines
