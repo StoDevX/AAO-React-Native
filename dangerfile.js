@@ -12,12 +12,12 @@ const readFile = filename => {
 const jsFiles = danger.git.created_files.filter(path => path.endsWith('.js'))
 
 // new js files should have `@flow` at the top
-// jsFiles
-//   .filter(filepath => {
-//     const content = readFile(filepath)
-//     return !content.includes('@flow')
-//   })
-//   .forEach(file => warn(`<code>${file}</code> has no <code>@flow</code> annotation!`))
+jsFiles
+  .filter(filepath => {
+    const content = readFile(filepath)
+    return !content.includes('@flow')
+  })
+  .forEach(file => warn(`<code>${file}</code> has no <code>@flow</code> annotation!`))
 
 // revisit this when we move to yarn
 // const packageChanged = danger.git.modified_files.includes('package.json')
@@ -29,14 +29,14 @@ const jsFiles = danger.git.created_files.filter(path => path.endsWith('.js'))
 // }
 
 // Be careful of leaving testing shortcuts in the codebase
-// jsFiles
-//   .filter(filepath => filepath.endsWith('test.js'))
-//   .filter(filepath => {
-//     const content = readFile(filepath)
-//     return content.includes('it.only') || content.includes('describe.only')
-//   })
-//   .forEach(file =>
-//     warn(`An <code>only</code> was left in ${file} – no other tests can run.`))
+jsFiles
+  .filter(filepath => filepath.endsWith('test.js'))
+  .filter(filepath => {
+    const content = readFile(filepath)
+    return content.includes('it.only') || content.includes('describe.only')
+  })
+  .forEach(file =>
+    warn(`An <code>only</code> was left in ${file} – no other tests can run.`))
 
 // Warn when PR size is large (mainly for hawken)
 const bigPRThreshold = 400 // lines
