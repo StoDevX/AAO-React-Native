@@ -4,4 +4,11 @@ additionalProperties: false
 required: [name, url]
 properties:
   name: {type: string}
-  url: {type: string, format: uri}
+  pageUrl: {type: string, format: uri}
+  streamUrl: {type: string, format: uri}
+  thumbnail: {type: string}
+  tagline: {type: string}
+  accentColor:
+    type: array
+    items: [{type: number}, {type: number}, {type: number}]
+    additionalItems: false
