@@ -29,7 +29,7 @@ if [[ $JS ]]; then
   npm run prettier
   if ! git diff --quiet ./*.js source/; then
     git diff ./*.js source/ > logs/prettier
-    commit-on-travis "prettify" ./*.js source/
+    # commit-on-travis "prettify" ./*.js source/
   fi
 
   # Lint
@@ -44,7 +44,7 @@ if [[ $JS ]]; then
   echo "npm run bundle-data"
   npm run bundle-data
   if ! git diff --quiet docs/; then
-    commit-on-travis "update docs" docs/
+    # commit-on-travis "update docs" docs/
   fi
 
   # Type check
