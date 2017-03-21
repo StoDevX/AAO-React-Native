@@ -101,7 +101,10 @@ before_install:
 
   # run our before_install sequence
   - bash scripts/travis/before_install.sh
-
+  
+  # test
+  - cat ./data/_schemas/webcams.yaml
+  
 install:
   - bash scripts/travis/install.sh
 
