@@ -71,6 +71,9 @@ const isBadBundleLog = log => {
   ]
   return requiredLines.some(line => !allLines.includes(line))
 }
+const isBadDataValidationLog = log => {
+  return log.split('\n').some(l => !l.endsWith('is valid'))
+}
 
 const fileLog = (name, log, {lang = null}={}) => {
   message(
@@ -104,9 +107,7 @@ if (eslintLog) {
   fileLog('Eslint had a thing to say!', eslintLog)
 }
 
-const dataHadIssues = dataValidationLog &&
-  dataValidationLog.split('\n').some(l => !l.endsWith('is valid'))
-if (dataHadIssues) {
+if (isBadDataValidationLog(dataValidationLog)) {
   fileLog("Something's up with the data.", dataValidationLog)
 }
 
