@@ -109,37 +109,39 @@ console.log('iosJsBundleLog', Buffer.from(iosJsBundleLog))
 console.log('androidJsBundleLog', Buffer.from(androidJsBundleLog))
 console.log('jestLog', Buffer.from(jestLog))
 
-if (prettierLog) {
+if (prettierLog.length) {
   fileLog('Prettier made some changes', prettierLog, {lang: 'diff'})
-  message('prettier infos', JSON.stringify(Array.from(Buffer.from(dataValidationLog))))
-  message(`prettierLog is ${prettierLog.length} chars long`)
+  message(`prettierLog is ${prettierLog.length} chars long and is ${JSON.stringify(Boolean(prettierLog))}`)
 }
 
 if (eslintLog) {
   fileLog('Eslint had a thing to say!', eslintLog)
-  message(`eslintLog is ${eslintLog.length} chars long`)
+  message(`eslintLog is ${eslintLog.length} chars long and is ${JSON.stringify(Boolean(eslintLog))}`)
 }
 
 if (isBadDataValidationLog(dataValidationLog)) {
   fileLog("Something's up with the data.", dataValidationLog)
-  fileLog('data infos', JSON.stringify(Array.from(Buffer.from(dataValidationLog))))
-  message(`dataValidationLog is ${dataValidationLog.length} chars long`)
+  message(`dataValidationLog is ${dataValidationLog.length} chars long and is ${JSON.stringify(Boolean(dataValidationLog))}`)
 }
 
 if (dataBundlingLog) {
   fileLog('Some files need to be re-bundled', dataBundlingLog, {lang: 'diff'})
+  message(`dataBundlingLog is ${dataBundlingLog.length} chars long and is ${JSON.stringify(Boolean(dataBundlingLog))}`)
 }
 
 if (flowLog !== 'Found 0 errors') {
   fileLog('Flow would like to interject about types…', flowLog)
+  message(`flowLog is ${flowLog.length} chars long and is ${JSON.stringify(Boolean(flowLog))}`)
 }
 
 if (isBadBundleLog(iosJsBundleLog)) {
   fileLog('The iOS bundle ran into an issue.', iosJsBundleLog)
+  message(`iosJsBundleLog is ${iosJsBundleLog.length} chars long and is ${JSON.stringify(Boolean(iosJsBundleLog))}`)
 }
 
 if (isBadBundleLog(androidJsBundleLog)) {
   fileLog('The Android bundle ran into an issue.', androidJsBundleLog)
+  message(`androidJsBundleLog is ${androidJsBundleLog.length} chars long and is ${JSON.stringify(Boolean(androidJsBundleLog))}`)
 }
 
 if (jestLog.includes('FAIL')) {
