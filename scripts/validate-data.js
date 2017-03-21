@@ -38,7 +38,6 @@ if (args.data) {
 // iterate!
 for (const multitudes of iterator) {
   for (const [filename, schema, data] of multitudes) {
-    console.log(filename, schema)
     const validate = validator.compile(schema)
     const isValid = validate(data)
     if (!isValid) {
