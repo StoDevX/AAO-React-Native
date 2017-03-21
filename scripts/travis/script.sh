@@ -14,13 +14,11 @@ mkdir -p logs/
 # arguments: [message, ...paths-to-add]
 function commit-on-travis {
   # shellcheck disable=SC2086
-  # store the current HEAD
-  SHA="$(git rev-parse HEAD)"
   git add "${@:2}" # gets arguments 2 and after, leaving out argument 1
   git checkout "$BRANCH"
   git commit -m "$1 [skip ci]"
-  # FETCH_HEAD is not a variable
-  git checkout "$SHA"
+  # "checkout -" works like "cd -": it checks out the previous tip
+  git checkout -
   touch .needs-push
 }
 
