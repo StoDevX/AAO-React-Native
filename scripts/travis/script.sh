@@ -29,22 +29,30 @@ if [[ $JS ]]; then
   npm run prettier
   if ! git diff --quiet ./*.js source/; then
     git diff ./*.js source/ | tee logs/prettier
+    echo "cat"
+    cat logs/prettier
     # commit-on-travis "prettify" ./*.js source/
   fi
 
   # Lint
   echo "npm run lint"
   npm run lint | tee logs/eslint
+  echo "cat"
+  cat logs/eslint
 
   # Validate data
   echo "npm run validate-data"
   npm run validate-data -- --quiet | tee logs/validate-data
+  echo "cat"
+  cat logs/validate-data
 
   # Ensure that the data files have been updated
   echo "npm run bundle-data"
   npm run bundle-data
   if ! git diff --quiet docs/; then
     git diff docs/ > logs/bundle-data
+    echo "cat"
+    cat logs/bundle-data
     # commit-on-travis "update docs" docs/
   fi
 
