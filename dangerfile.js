@@ -5,6 +5,9 @@ const readFile = filename => {
   try {
     return readFileSync(filename, 'utf-8')
   } catch (err) {
+    if (err.code === 'ENOENT') {
+      return ''
+    }
     return err.message
   }
 }
