@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {StyleSheet, Platform, Share} from 'react-native'
+import {StyleSheet, Share} from 'react-native'
 import * as c from '../components/colors'
 import SimpleListView from '../components/listview'
 import type {StoryType} from './types'
@@ -8,8 +8,6 @@ import {ListSeparator} from '../components/list'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {NewsRow} from './news-row'
-import Icon from 'react-native-vector-icons/Ionicons'
-import {Touchable} from '../components/touchable'
 
 const styles = StyleSheet.create({
   listContainer: {
@@ -48,17 +46,8 @@ export class NewsList extends React.Component {
       title: title,
       backButtonTitle: this.props.name,
       props: {story, embedFeaturedImage: this.props.embedFeaturedImage},
-      rightButton: ({contentContainerStyle, style}) => (
-        <Touchable
-          highlight={false}
-          style={[contentContainerStyle]}
-          onPress={() => this.shareItem(story)}
-        >
-          {Platform.OS === 'ios'
-            ? <Icon style={[style]} name="ios-share-outline" />
-            : <Icon style={[style]} name="md-share" />}
-        </Touchable>
-      ),
+      onRightButton: () => this.shareItem(story),
+      rightButton: 'share',
     })
   };
 

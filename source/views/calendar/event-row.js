@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function EventView(props: EventType) {
-  const title = fastGetTrimmedText(props.summary)
+export default function EventRow({event}: {event: EventType}) {
+  const title = fastGetTrimmedText(event.summary)
 
   return (
     <ListRow
@@ -42,13 +42,13 @@ export default function EventView(props: EventType) {
       fullWidth={true}
     >
       <Row>
-        <CalendarTimes event={props} style={styles.timeContainer} />
+        <CalendarTimes event={event} style={styles.timeContainer} />
 
         <Bar style={styles.bar} />
 
         <Column flex={1} paddingTop={2} paddingBottom={3}>
           <Title style={styles.title}>{title}</Title>
-          <Detail style={styles.detail}>{props.location}</Detail>
+          <Detail style={styles.detail}>{event.location}</Detail>
         </Column>
       </Row>
     </ListRow>
@@ -59,51 +59,38 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
   const eventLength = moment
     .duration(event.endTime.diff(event.startTime))
     .asHours()
-  const allDay = eventLength === 24
-  const multiDay = eventLength > 24
 
-  let times = null
+  const allDay = eventLength === 24
+  const multiDay = event.startTime.dayOfYear() !== event.endTime.dayOfYear()
+  const sillyZeroLength = event.startTime.isSame(event.endTime, 'minute')
+
   if (allDay) {
-    times = <Text style={[styles.time, styles.start]}>all-day</Text>
-  } else if (event.isOngoing) {
-    times = [
-      <Text key={0} style={[styles.time, styles.start]}>
-        {event.startTime.format('MMM. D')}
-      </Text>,
-      <Text key={1} style={[styles.time, styles.end]}>
-        {event.endTime.format('MMM. D')}
-      </Text>,
-    ]
+    return (
+      <Column style={style}>
+        <Text style={[styles.time, styles.start]}>all-day</Text>
+      </Column>
+    )
+  }
+
+  let start, end
+  if (event.isOngoing) {
+    start = event.startTime.format('MMM. D')
+    end = event.endTime.format('MMM. D')
   } else if (multiDay) {
-    times = [
-      <Text key={0} style={[styles.time, styles.start]}>
-        {event.startTime.format('h:mm A')}
-      </Text>,
-      <Text key={1} style={[styles.time, styles.end]}>
-        to {event.endTime.format('MMM. D h:mm A')}
-      </Text>,
-    ]
-  } else if (event.startTime.isSame(event.endTime, 'minute')) {
-    times = [
-      <Text key={0} style={[styles.time, styles.start]}>
-        {event.startTime.format('h:mm A')}
-      </Text>,
-      <Text key={1} style={[styles.time, styles.end]}>until ???</Text>,
-    ]
+    start = event.startTime.format('h:mm A')
+    end = `to ${event.endTime.format('MMM. D h:mm A')}`
+  } else if (sillyZeroLength) {
+    start = event.startTime.format('h:mm A')
+    end = 'until ???'
   } else {
-    times = [
-      <Text key={0} style={[styles.time, styles.start]}>
-        {event.startTime.format('h:mm A')}
-      </Text>,
-      <Text key={1} style={[styles.time, styles.end]}>
-        {event.endTime.format('h:mm A')}
-      </Text>,
-    ]
+    start = event.startTime.format('h:mm A')
+    end = event.endTime.format('h:mm A')
   }
 
   return (
     <Column style={style}>
-      {times}
+      <Text style={[styles.time, styles.start]}>{start}</Text>
+      <Text style={[styles.time, styles.end]}>{end}</Text>
     </Column>
   )
 }
