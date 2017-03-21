@@ -28,6 +28,7 @@ if [[ $JS ]]; then
   echo "npm run prettier"
   npm run prettier
   if ! git diff --quiet ./*.js source/; then
+    git diff ./*.js source/ > logs/prettier
     commit-on-travis "prettify" ./*.js source/
   fi
 
