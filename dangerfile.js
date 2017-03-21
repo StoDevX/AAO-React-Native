@@ -1,4 +1,4 @@
-import {danger, fail, warn, message} from 'danger'
+import {danger, warn, message} from 'danger'
 import {readFileSync} from 'fs'
 import dedent from 'dedent'
 const readFile = filename => {
