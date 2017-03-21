@@ -44,6 +44,7 @@ if [[ $JS ]]; then
   echo "npm run bundle-data"
   npm run bundle-data
   if ! git diff --quiet docs/; then
+    git diff docs/ > logs/bundle-data
     # commit-on-travis "update docs" docs/
   fi
 

@@ -85,6 +85,7 @@ ${log}
 const prettierLog = readFile('logs/prettier').trim()
 const eslintLog = readFile('logs/eslint').trim()
 const dataValidationLog = readFile('logs/validate-data').trim()
+const dataBundlingLog = readFile('logs/bundle-data').trim()
 const flowLog = readFile('logs/flow').trim()
 const iosJsBundleLog = readFile('logs/bundle-ios').trim()
 const androidJsBundleLog = readFile('logs/bundle-android').trim()
@@ -102,6 +103,10 @@ const dataHadIssues = dataValidationLog &&
   dataValidationLog.split('\n').some(l => !l.endsWith('is valid'))
 if (dataHadIssues) {
   fileLog("Something's up with the data.", dataValidationLog)
+}
+
+if (dataBundlingLog) {
+  fileLog('Some files need to be re-bundled', dataBundlingLog, {lang: 'diff'})
 }
 
 if (flowLog !== 'Found 0 errors') {
