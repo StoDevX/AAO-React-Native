@@ -13,6 +13,8 @@ mkdir -p logs/
 
 # arguments: [message, ...paths-to-add]
 function commit-on-travis {
+  git branch
+  git rev-parse HEAD
   # shellcheck disable=SC2086
   git add "${@:2}" # gets arguments 2 and after, leaving out argument 1
   git checkout "$BRANCH"
