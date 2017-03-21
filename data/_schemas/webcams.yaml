@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-04/schema#
 
 additionalProperties: false
-required: [name, url]
+required: [name, pageUrl, streamUrl, thumbnail, tagline, accentColor]
 properties:
   name: {type: string}
   pageUrl: {type: string, format: uri}
