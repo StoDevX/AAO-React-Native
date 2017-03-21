@@ -102,6 +102,7 @@ const jestLog = readLogFile('logs/jest')
 
 if (prettierLog) {
   fileLog('Prettier made some changes', eslintLog, {lang: 'diff'})
+  fileLog('prettier infos', JSON.stringify(Array.from(Buffer.from(dataValidationLog))))
 }
 
 if (eslintLog) {
@@ -110,6 +111,7 @@ if (eslintLog) {
 
 if (isBadDataValidationLog(dataValidationLog)) {
   fileLog("Something's up with the data.", dataValidationLog)
+  fileLog('data infos', JSON.stringify(Array.from(Buffer.from(dataValidationLog))))
 }
 
 if (dataBundlingLog) {
