@@ -46,8 +46,10 @@ if (thisPRSize > bigPRThreshold) {
     dedent`
     <details>
       <summary>:exclamation: Big PR!</summary>
-      <blockquote>We like to try and keep PRs under ${bigPRThreshold} lines per PR, and this one was ${thisPRSize} lines.</blockquote>
-      <blockquote>If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.</blockquote>
+      <blockquote>
+        <p>We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.</p>
+        <p>If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.</p>
+      </blockquote>
     </details>
   `,
   )
