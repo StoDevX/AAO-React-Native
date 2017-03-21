@@ -80,7 +80,7 @@ const fileLog = (name, log, {lang = null}={}) => {
   message(
     dedent`
     <details>
-      <summary>${name} (${log.length} chars)</summary>
+      <summary>${name}</summary>
 
 \`\`\`${lang || ''}
 ${log}
@@ -99,15 +99,6 @@ const flowLog = readLogFile('logs/flow')
 const iosJsBundleLog = readLogFile('logs/bundle-ios')
 const androidJsBundleLog = readLogFile('logs/bundle-android')
 const jestLog = readLogFile('logs/jest')
-
-console.log('prettierLog', Buffer.from(prettierLog))
-console.log('eslintLog', Buffer.from(eslintLog))
-console.log('dataValidationLog', Buffer.from(dataValidationLog))
-console.log('dataBundlingLog', Buffer.from(dataBundlingLog))
-console.log('flowLog', Buffer.from(flowLog))
-console.log('iosJsBundleLog', Buffer.from(iosJsBundleLog))
-console.log('androidJsBundleLog', Buffer.from(androidJsBundleLog))
-console.log('jestLog', Buffer.from(jestLog))
 
 if (prettierLog) {
   fileLog('Prettier made some changes', prettierLog, {lang: 'diff'})
