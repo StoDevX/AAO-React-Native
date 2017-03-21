@@ -110,7 +110,7 @@ console.log('androidJsBundleLog', Buffer.from(androidJsBundleLog))
 console.log('jestLog', Buffer.from(jestLog))
 
 if (prettierLog) {
-  fileLog('Prettier made some changes', eslintLog, {lang: 'diff'})
+  fileLog('Prettier made some changes', prettierLog, {lang: 'diff'})
   message('prettier infos', JSON.stringify(Array.from(Buffer.from(dataValidationLog))))
   message(`prettierLog is ${prettierLog.length} chars long`)
 }
