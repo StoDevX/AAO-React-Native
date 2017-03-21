@@ -37,7 +37,6 @@ if [[ $JS ]]; then
 
   # Validate data
   echo "npm run validate-data"
-  cat data/_schemas/webcams.yaml
   npm run validate-data -- --quiet | tee logs/validate-data
 
   # Ensure that the data files have been updated
