@@ -11,6 +11,7 @@ const readFile = filename => {
     return err.message
   }
 }
+const readLogFile = filename => readFile(filename).trim()
 
 const jsFiles = danger.git.created_files.filter(path => path.endsWith('.js'))
 
@@ -90,14 +91,14 @@ ${log}
   )
 }
 
-const prettierLog = readFile('logs/prettier').trim()
-const eslintLog = readFile('logs/eslint').trim()
-const dataValidationLog = readFile('logs/validate-data').trim()
-const dataBundlingLog = readFile('logs/bundle-data').trim()
-const flowLog = readFile('logs/flow').trim()
-const iosJsBundleLog = readFile('logs/bundle-ios').trim()
-const androidJsBundleLog = readFile('logs/bundle-android').trim()
-const jestLog = readFile('logs/jest').trim()
+const prettierLog = readLogFile('logs/prettier')
+const eslintLog = readLogFile('logs/eslint')
+const dataValidationLog = readLogFile('logs/validate-data')
+const dataBundlingLog = readLogFile('logs/bundle-data')
+const flowLog = readLogFile('logs/flow')
+const iosJsBundleLog = readLogFile('logs/bundle-ios')
+const androidJsBundleLog = readLogFile('logs/bundle-android')
+const jestLog = readLogFile('logs/jest')
 
 if (prettierLog) {
   fileLog('Prettier made some changes', eslintLog, {lang: 'diff'})
