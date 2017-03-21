@@ -1,4 +1,4 @@
-import {danger, fail, warn, message} from 'danger'
+import {danger, warn, message} from 'danger'
 import {readFileSync} from 'fs'
 import dedent from 'dedent'
 const readFile = filename => {
@@ -67,7 +67,7 @@ const isBadBundleLog = log => {
   return requiredLines.some(line => !allLines.includes(line))
 }
 
-const fileLog = (name, log, lang = null) => {
+const fileLog = (name, log, {lang = null}={}) => {
   message(
     dedent`
     <details>
@@ -82,12 +82,18 @@ ${log}
   )
 }
 
+const prettierLog = readFile('logs/prettier').trim()
 const eslintLog = readFile('logs/eslint').trim()
 const dataValidationLog = readFile('logs/validate-data').trim()
+const dataBundlingLog = readFile('logs/bundle-data').trim()
 const flowLog = readFile('logs/flow').trim()
 const iosJsBundleLog = readFile('logs/bundle-ios').trim()
 const androidJsBundleLog = readFile('logs/bundle-android').trim()
 const jestLog = readFile('logs/jest').trim()
+
+if (prettierLog) {
+  fileLog('Prettier made some changes', eslintLog, {lang: 'diff'})
+}
 
 if (eslintLog) {
   fileLog('Eslint had a thing to say!', eslintLog)
@@ -97,6 +103,10 @@ const dataHadIssues = dataValidationLog &&
   dataValidationLog.split('\n').some(l => !l.endsWith('is valid'))
 if (dataHadIssues) {
   fileLog("Something's up with the data.", dataValidationLog)
+}
+
+if (dataBundlingLog) {
+  fileLog('Some files need to be re-bundled', dataBundlingLog, {lang: 'diff'})
 }
 
 if (flowLog !== 'Found 0 errors') {
