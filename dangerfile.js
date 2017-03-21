@@ -21,7 +21,8 @@ jsFiles
     const content = readFile(filepath)
     return !content.includes('@flow')
   })
-  .forEach(file => warn(`<code>${file}</code> has no <code>@flow</code> annotation!`))
+  .forEach(file =>
+    warn(`<code>${file}</code> has no <code>@flow</code> annotation!`))
 
 // revisit this when we move to yarn
 // const packageChanged = danger.git.modified_files.includes('package.json')
@@ -76,7 +77,7 @@ const isBadDataValidationLog = log => {
   return log.split('\n').some(l => !l.endsWith('is valid'))
 }
 
-const fileLog = (name, log, {lang = null}={}) => {
+const fileLog = (name, log, {lang = null} = {}) => {
   message(
     dedent`
     <details>

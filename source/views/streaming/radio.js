@@ -68,10 +68,7 @@ export default function KSTOView() {
         St. Olaf College Radio
       </Text>
       <Text selectable={true} style={styles.heading}>KSTO 93.1 FM</Text>
-      <Button
-        onPress={openKsto}
-        title="Listen to KSTO"
-      />
+      <Button onPress={openKsto} title="Listen to KSTO" />
       <Text selectable={true} style={styles.subheading}>
         Look out for changes here soon!
       </Text>
