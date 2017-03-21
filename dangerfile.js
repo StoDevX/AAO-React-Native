@@ -120,15 +120,15 @@ if (flowLog !== 'Found 0 errors') {
   fileLog('Flow would like to interject about types…', flowLog)
 }
 
-if (iosJsBundleLog && isBadBundleLog(iosJsBundleLog)) {
+if (isBadBundleLog(iosJsBundleLog)) {
   fileLog('The iOS bundle ran into an issue.', iosJsBundleLog)
 }
 
-if (androidJsBundleLog && isBadBundleLog(androidJsBundleLog)) {
+if (isBadBundleLog(androidJsBundleLog)) {
   fileLog('The Android bundle ran into an issue.', androidJsBundleLog)
 }
 
-if (jestLog && jestLog.includes('FAIL')) {
+if (jestLog.includes('FAIL')) {
   const lines = jestLog.split('\n')
   const startIndex = lines.findIndex(l =>
     l.includes('Summary of all failing tests'))
