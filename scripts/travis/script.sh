@@ -49,18 +49,18 @@ if [[ $JS ]]; then
   fi
 
   # Type check
-  # echo "npm run flow"
-  # npm run flow -- check --quiet | tee logs/flow
+  echo "npm run flow"
+  npm run flow -- check --quiet | tee logs/flow
 
   # Build the bundles
-  # echo "npm run bundle:ios"
-  # npm run bundle:ios | tee logs/bundle-ios
-  # echo "npm run bundle:android"
-  # npm run bundle:android | tee logs/bundle-android
+  echo "npm run bundle:ios"
+  npm run bundle:ios | tee logs/bundle-ios
+  echo "npm run bundle:android"
+  npm run bundle:android | tee logs/bundle-android
 
   # Run tests + collect coverage info
-  # echo "npm run test"
-  # npm run test -- --coverage 2>&1 | tee logs/jest
+  echo "npm run test"
+  npm run test -- --coverage 2>&1 | tee logs/jest
 
   # Danger?
   echo "npm run danger"
