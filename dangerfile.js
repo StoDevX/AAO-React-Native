@@ -80,7 +80,7 @@ const fileLog = (name, log, {lang = null}={}) => {
   message(
     dedent`
     <details>
-      <summary>${name}</summary>
+      <summary>${name} (${log.length} chars)</summary>
 
 \`\`\`${lang || ''}
 ${log}
@@ -111,16 +111,19 @@ console.log('jestLog', Buffer.from(jestLog))
 
 if (prettierLog) {
   fileLog('Prettier made some changes', eslintLog, {lang: 'diff'})
-  fileLog('prettier infos', JSON.stringify(Array.from(Buffer.from(dataValidationLog))))
+  message('prettier infos', JSON.stringify(Array.from(Buffer.from(dataValidationLog))))
+  message(`prettierLog is ${prettierLog.length} chars long`)
 }
 
 if (eslintLog) {
   fileLog('Eslint had a thing to say!', eslintLog)
+  message(`eslintLog is ${eslintLog.length} chars long`)
 }
 
 if (isBadDataValidationLog(dataValidationLog)) {
   fileLog("Something's up with the data.", dataValidationLog)
   fileLog('data infos', JSON.stringify(Array.from(Buffer.from(dataValidationLog))))
+  message(`dataValidationLog is ${dataValidationLog.length} chars long`)
 }
 
 if (dataBundlingLog) {
