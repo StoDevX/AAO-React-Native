@@ -14,7 +14,7 @@ import size from 'lodash/size'
 import moment from 'moment-timezone'
 import {ListSeparator, ListSectionHeader} from '../components/list'
 import {NoticeView} from '../components/notice'
-import EventView from './event-row'
+import EventRow from './event-row'
 
 export class EventList extends React.Component {
   props: {
@@ -25,7 +25,10 @@ export class EventList extends React.Component {
     now: moment,
   };
 
-  groupEvents(events: EventType[], now: moment): {[key: string]: EventType[]} {
+  groupEvents = (
+    events: EventType[],
+    now: moment,
+  ): {[key: string]: EventType[]} => {
     return groupBy(events, event => {
       if (event.isOngoing) {
         return 'Ongoing'
@@ -35,7 +38,7 @@ export class EventList extends React.Component {
       }
       return event.startTime.format('ddd  MMM Do') // google returns events in CST
     })
-  }
+  };
 
   renderSectionHeader = (
     sectionData: EventType[],
@@ -69,7 +72,7 @@ export class EventList extends React.Component {
         refreshing={this.props.refreshing}
         onRefresh={this.props.onRefresh}
       >
-        {(data: EventType) => <EventView {...data} />}
+        {(event: EventType) => <EventRow event={event} />}
       </SimpleListView>
     )
   }
