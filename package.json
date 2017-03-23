@@ -85,7 +85,7 @@
     "react-native-google-analytics-bridge": "5.0.1",
     "react-native-keychain": "1.2.0",
     "react-native-linear-gradient": "2.0.0",
-    "react-native-maps": "^0.13.1",
+    "react-native-maps": "0.13.1",
     "react-native-onesignal": "3.0.3",
     "react-native-parallax-view": "2.0.6",
     "react-native-safari-view": "2.0.0",
