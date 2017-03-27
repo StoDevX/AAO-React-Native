@@ -5,7 +5,7 @@ set -e -v -x
 if [[ $ANDROID && $USE_EMULATOR = yes ]]; then
   EmuName="react-native"
   mkdir -p "$HOME/.android/avd/$EmuName.avd/"
-  echo no | android create avd --force -n "$EmuName" -t android-23 --abi google_apis/armeabi-v7a
+  echo no | android create avd --force -n "$EmuName" -t android-25 --abi google_apis/armeabi-v7a
   emulator -avd "$EmuName" -no-audio -no-window &
   android-wait-for-emulator
   adb shell input keyevent 82 &
