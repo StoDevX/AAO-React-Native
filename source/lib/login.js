@@ -12,7 +12,7 @@ export function saveLoginCredentials(username: string, password: string) {
     SIS_LOGIN_CREDENTIAL_KEY,
     username,
     password,
-  ).catch(() => {})
+  ).catch(() => ({}))
 }
 export function loadLoginCredentials(): Promise<{
   username?: string,
@@ -20,12 +20,12 @@ export function loadLoginCredentials(): Promise<{
 }> {
   return Keychain.getInternetCredentials(
     SIS_LOGIN_CREDENTIAL_KEY,
-  ).catch(() => {})
+  ).catch(() => ({}))
 }
 export function clearLoginCredentials() {
   return Keychain.resetInternetCredentials(
     SIS_LOGIN_CREDENTIAL_KEY,
-  ).catch(() => {})
+  ).catch(() => ({}))
 }
 
 export async function isLoggedIn(): Promise<boolean> {
