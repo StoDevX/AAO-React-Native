@@ -36,6 +36,7 @@ node_modules/
 npm-debug.log
 yarn-error.log
 .eslintcache
+bundle.web.js
 
 # BUCK
 buck-out/
