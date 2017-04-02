@@ -3,7 +3,6 @@
 
 project "ios/AllAboutOlaf.xcodeproj"
 scheme "AllAboutOlaf"
-sdk "iphoneos10.1"
 
 export_method "ad-hoc"
 
