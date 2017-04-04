@@ -42,6 +42,11 @@
       "react-native"
     ]
   },
+  "greenkeeper": {
+    "ignore": [
+      "flow-bin"
+    ]
+  },
   "jest": {
     "testRegex": "/__tests__/.*\\.(test|spec)\\.js$",
     "collectCoverageFrom": [
