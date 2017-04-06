@@ -62,7 +62,7 @@
     "preset": "react-native"
   },
   "dependencies": {
-    "buffer": "5.0.5",
+    "buffer": "5.0.6",
     "css-select": "1.2.0",
     "dedent": "0.7.0",
     "delay": "2.0.0",
