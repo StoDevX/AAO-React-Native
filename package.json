@@ -73,8 +73,8 @@
     "moment": "2.18.1",
     "moment-timezone": "0.5.12",
     "querystring": "0.2.0",
-    "react": "15.4.2",
-    "react-addons-shallow-compare": "15.4.2",
+    "react": "15.5.3",
+    "react-addons-shallow-compare": "15.5.2",
     "react-native": "0.42.3",
     "react-native-alphabetlistview": "github:sunnylqm/react-native-alphabetlistview#aea5d61fdd9034c7178d73ce8b2ee104da6941cc",
     "react-native-button": "1.8.2",
@@ -127,6 +127,6 @@
     "prettier": "0.22.0",
     "react-native-mock": "0.3.1",
     "react-native-view-shot": "1.9.1",
-    "react-test-renderer": "15.4.2"
+    "react-test-renderer": "15.5.4"
   }
 }
