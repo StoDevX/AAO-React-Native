@@ -73,7 +73,7 @@
     "moment": "2.18.1",
     "moment-timezone": "0.5.12",
     "querystring": "0.2.0",
-    "react": "15.5.3",
+    "react": "15.5.4",
     "react-addons-shallow-compare": "15.5.2",
     "react-native": "0.42.3",
     "react-native-alphabetlistview": "github:sunnylqm/react-native-alphabetlistview#aea5d61fdd9034c7178d73ce8b2ee104da6941cc",
