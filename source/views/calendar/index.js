@@ -8,7 +8,6 @@ import React from 'react'
 
 import TabbedView from '../components/tabbed-view'
 import {GoogleCalendarView} from './calendar-google'
-import {PresenceCalendarView} from './calendar-presence'
 
 export default function CalendarPage() {
   return (
@@ -41,16 +40,6 @@ export default function CalendarPage() {
           component: () => (
             <GoogleCalendarView
               calendarId="stolaf.edu_qkrej5rm8c8582dlnc28nreboc@group.calendar.google.com"
-            />
-          ),
-        },
-        {
-          id: 'StudentOrgsCalendarView',
-          title: 'Student Orgs',
-          icon: 'people',
-          component: () => (
-            <PresenceCalendarView
-              url="https://api.presence.io/stolaf/v1/events"
             />
           ),
         },
