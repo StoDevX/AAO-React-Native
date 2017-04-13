@@ -3,7 +3,7 @@
   "version": "2.1.2",
   "private": true,
   "config": {
-    "prettier_args": "--single-quote --trailing-comma all --no-bracket-spacing"
+    "prettier_args": "--single-quote --trailing-comma all --no-bracket-spacing --no-semi"
   },
   "scripts": {
     "android": "react-native run-android",
@@ -18,9 +18,9 @@
     "ios": "react-native run-ios",
     "ios-simulator": "xcrun instruments -s devices | peco --select-1 --query 'Simulator iPhone' --on-cancel error | sed  's~.*\\[\\(.*\\)\\].*~\\1~' | xargs open -n -a Simulator --args -CurrentDeviceUDID",
     "lint": "eslint --cache source/ *.js",
-    "prettier": "prettier --write $npm_package_config_prettier_args 'source/**/*.js' '*.js' && eslint --cache --fix 'source/' '*.js'",
-    "prettier:changed": "FILES=$(git diff --name-only | grep '\\.js$'); prettier --write $npm_package_config_prettier_args $FILES; eslint --cache --fix $FILES",
-    "prettier:since-master": "FILES=$(git diff --name-only master | grep '\\.js$'); prettier --write $npm_package_config_prettier_args $FILES; eslint --cache --fix $FILES",
+    "prettier": "prettier --write $npm_package_config_prettier_args 'source/**/*.js' '*.js'",
+    "prettier:changed": "FILES=$(git diff --name-only | grep '\\.js$'); prettier --write $npm_package_config_prettier_args $FILES",
+    "prettier:since-master": "FILES=$(git diff --name-only master | grep '\\.js$'); prettier --write $npm_package_config_prettier_args $FILES",
     "start": "react-native start",
     "test": "jest",
     "validate-data": "node scripts/validate-data.js"
