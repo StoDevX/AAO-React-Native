@@ -22,7 +22,7 @@ type PropsType = {
 export function FilterViewComponent(props: PropsType) {
   const onFilterChanged = (filter: FilterType) => {
     // replace the changed filter in the array, maintaining position
-    let result = props.filters.map(f => f.key !== filter.key ? f : filter)
+    let result = props.filters.map(f => (f.key !== filter.key ? f : filter))
     props.onChange(result)
   }
 

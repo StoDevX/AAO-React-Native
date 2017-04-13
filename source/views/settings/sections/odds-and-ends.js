@@ -57,9 +57,10 @@ class OddsAndEndsSection extends React.Component {
   }
 }
 
-const PushButtonCell = (
-  {title, onPress}: {title: string, onPress: () => any},
-) => {
+const PushButtonCell = ({
+  title,
+  onPress,
+}: {title: string, onPress: () => any}) => {
   return (
     <Cell
       cellStyle="Basic"

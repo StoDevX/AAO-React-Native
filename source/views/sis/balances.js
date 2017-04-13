@@ -244,19 +244,17 @@ function getFormattedMealsRemaining(value: ?number): string {
   return (value: any).toString()
 }
 
-function FinancialBalancesCell(
-  {
-    indeterminate,
-    label,
-    value,
-    style,
-  }: {
-    indeterminate: boolean,
-    label: string,
-    value: ?number,
-    style?: any,
-  },
-) {
+function FinancialBalancesCell({
+  indeterminate,
+  label,
+  value,
+  style,
+}: {
+  indeterminate: boolean,
+  label: string,
+  value: ?number,
+  style?: any,
+}) {
   return (
     <View style={[styles.rectangle, styles.common, styles.balances, style]}>
       <Text

@@ -43,8 +43,8 @@ export function convertRssItemToStory(item: RssFeedItemType): StoryType {
   const title = entities.decode(item.title[0] || '<no title>')
   const datePublished = (item.pubDate || [])[0] || null
 
-  let content = (item['content:encoded'] || item.description || [])[0] ||
-    '<No content>'
+  let content =
+    (item['content:encoded'] || item.description || [])[0] || '<No content>'
 
   let excerpt = (item.description || [])[0] || content.substr(0, 250)
   excerpt = entities.decode(fastGetTrimmedText(excerpt))
@@ -78,7 +78,8 @@ export function convertWpJsonItemToStory(item: WpJsonItemType): StoryType {
 
     if (featuredMediaInfo) {
       if (featuredMediaInfo.media_details.sizes.medium_large) {
-        featuredImage = featuredMediaInfo.media_details.sizes.medium_large.source_url
+        featuredImage =
+          featuredMediaInfo.media_details.sizes.medium_large.source_url
       } else {
         featuredImage = featuredMediaInfo.source_url
       }

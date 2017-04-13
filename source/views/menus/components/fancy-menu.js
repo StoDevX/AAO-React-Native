@@ -109,13 +109,7 @@ class FancyMenuView extends React.Component {
   };
 
   render() {
-    const {
-      applyFilters,
-      filters,
-      foodItems,
-      now,
-      meals,
-    } = this.props
+    const {applyFilters, filters, foodItems, now, meals} = this.props
 
     const {label: mealName, stations: stationMenus} = chooseMeal(
       meals,
