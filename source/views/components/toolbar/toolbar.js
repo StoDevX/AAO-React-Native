@@ -25,7 +25,7 @@ const toolbarStyles = StyleSheet.create({
 type ToolbarPropsType = {
   children?: any,
   onPress: () => any,
-};
+}
 
 export function Toolbar({children, onPress}: ToolbarPropsType) {
   return (

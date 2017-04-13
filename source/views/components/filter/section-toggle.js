@@ -7,7 +7,7 @@ import {CellToggle} from '../../components/cell-toggle'
 type PropsType = {
   filter: ToggleType,
   onChange: (filterSpec: ToggleType) => any,
-};
+}
 
 export function SingleToggleSection({filter, onChange}: PropsType) {
   const {spec, enabled} = filter

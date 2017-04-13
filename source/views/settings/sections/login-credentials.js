@@ -22,31 +22,31 @@ type CredentialsSectionPropsType = {
   logOut: () => any,
   validateCredentials: (username: string, password: string) => any,
   setCredentials: (username: string, password: string) => any,
-};
+}
 
 class CredentialsLoginSection extends React.Component {
   state = {
     loading: false,
     username: this.props.username,
     password: this.props.password,
-  };
+  }
 
-  props: CredentialsSectionPropsType;
+  props: CredentialsSectionPropsType
 
-  _usernameInput: any;
-  _passwordInput: any;
-  focusUsername = () => this._usernameInput.focus();
-  focusPassword = () => this._passwordInput.focus();
+  _usernameInput: any
+  _passwordInput: any
+  focusUsername = () => this._usernameInput.focus()
+  focusPassword = () => this._passwordInput.focus()
 
   logIn = async () => {
     this.setState({loading: true})
     await this.props.logIn(this.state.username, this.state.password)
     this.setState({loading: false})
-  };
+  }
 
   logOut = () => {
     this.props.logOut()
-  };
+  }
 
   render() {
     let {loggedIn, message} = this.props

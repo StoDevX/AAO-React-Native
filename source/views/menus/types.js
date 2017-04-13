@@ -1,9 +1,9 @@
 // @flow
-export type CurrencyStringType = string;
-export type HtmlStringType = string;
-export type ItemIdReferenceStringType = string;
-export type MilitaryTimeStringType = string; // H:mm
-export type NumericStringType = string;
+export type CurrencyStringType = string
+export type HtmlStringType = string
+export type ItemIdReferenceStringType = string
+export type MilitaryTimeStringType = string // H:mm
+export type NumericStringType = string
 
 export type MenuItemType = {
   connector: string,
@@ -37,7 +37,7 @@ export type MenuItemType = {
   sub_station_order: NumericStringType,
   tier3: boolean,
   zero_entree: NumericStringType,
-};
+}
 
 export type StationMenuType = {
   order_id: string, // sort on order_id instead of sorting on id
@@ -47,7 +47,7 @@ export type StationMenuType = {
   note: string,
   soup: boolean,
   items: ItemIdReferenceStringType[],
-};
+}
 
 export type DayPartMenuType = {|
   starttime: MilitaryTimeStringType,
@@ -56,48 +56,48 @@ export type DayPartMenuType = {|
   label: string,
   abbreviation: string,
   stations: StationMenuType[],
-|};
+|}
 
-export type DayPartsCollectionType = Array<Array<DayPartMenuType>>;
+export type DayPartsCollectionType = Array<Array<DayPartMenuType>>
 
 export type CafeMenuType = {
   name: string,
   menu_id: NumericStringType,
   dayparts: DayPartsCollectionType,
-};
+}
 
 export type CarletonDetailMenuType = {
   component: any,
   id: string,
   props: {cafeId: string, loadingMessage: Array<string>},
   title: string,
-};
+}
 
 export type MenuForDayType = {
   date: string,
   cafes: {[key: string]: CafeMenuType},
-};
+}
 
 export type BonAppMenuInfoType = {
   cor_icons: {[key: string]: Object},
   days: MenuForDayType[],
   items: MenuItemContainerType,
-};
+}
 
 export type CorIconType = {
   sort: string,
   label: string,
   description: string,
   image: string,
-};
+}
 
 export type MenuItemContainerType = {
   [key: ItemIdReferenceStringType]: MenuItemType,
-};
+}
 export type ItemCorIconMapType =
   | {[key: NumericStringType]: string}
-  | Array<void>;
-export type MasterCorIconMapType = {[key: NumericStringType]: CorIconType};
+  | Array<void>
+export type MasterCorIconMapType = {[key: NumericStringType]: CorIconType}
 
 export type BonAppCafeInfoType = {
   cafes: {
@@ -134,11 +134,11 @@ export type BonAppCafeInfoType = {
       ],
     },
   },
-};
+}
 
 export type ProcessedMealType = {|
   starttime: MilitaryTimeStringType,
   endtime: MilitaryTimeStringType,
   label: string,
   stations: StationMenuType[],
-|};
+|}

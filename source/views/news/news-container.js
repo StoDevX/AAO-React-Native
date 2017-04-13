@@ -20,7 +20,7 @@ export default class NewsContainer extends React.Component {
     loading: true,
     error: null,
     refreshing: false,
-  };
+  }
 
   componentWillMount() {
     this.fetchData().then(() => this.setState({loading: false}))
@@ -32,7 +32,7 @@ export default class NewsContainer extends React.Component {
     query?: Object,
     embedFeaturedImage?: boolean,
     mode: 'rss' | 'wp-json',
-  };
+  }
 
   fetchData = async () => {
     try {
@@ -61,7 +61,7 @@ export default class NewsContainer extends React.Component {
         this.setState({error})
       }
     }
-  };
+  }
 
   refresh = async () => {
     let start = Date.now()
@@ -75,7 +75,7 @@ export default class NewsContainer extends React.Component {
       await delay(500 - elapsed)
     }
     this.setState({refreshing: false})
-  };
+  }
 
   render() {
     if (this.state.error) {

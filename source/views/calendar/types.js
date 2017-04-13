@@ -3,13 +3,13 @@ import type moment from 'moment'
 
 type GoogleTimeType = {
   dateTime: string,
-};
+}
 export type GoogleEventType = {
   summary: string,
   start: GoogleTimeType,
   end: GoogleTimeType,
   location: string,
-};
+}
 
 export type PresenceEventType = {
   uri: string,
@@ -27,11 +27,11 @@ export type PresenceEventType = {
   startDateTimeUtc: string,
   endDateTimeUtc: string,
   tags: string[],
-};
+}
 
 type EmbeddedEventDetailType =
   | {type: 'google', data: GoogleEventType}
-  | {type: 'presence', data: PresenceEventType};
+  | {type: 'presence', data: PresenceEventType}
 
 export type EventType = {
   summary: string,
@@ -40,4 +40,4 @@ export type EventType = {
   endTime: moment,
   isOngoing: boolean,
   extra: EmbeddedEventDetailType,
-};
+}

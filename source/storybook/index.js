@@ -72,7 +72,7 @@ type ViewCollectionType = {
       delay: number,
     },
   },
-};
+}
 
 const Nav = ({children}: {children?: Function}) => (
   <Navigator
@@ -83,9 +83,9 @@ const Nav = ({children}: {children?: Function}) => (
 export class SnapshotsView extends React.Component {
   state = {
     viewPath: 'streaming.radio',
-  };
+  }
 
-  _ref: any;
+  _ref: any
 
   views: ViewCollectionType = {
     buildinghours: {
@@ -157,7 +157,7 @@ export class SnapshotsView extends React.Component {
     transit: {
       tabs: {view: () => <TransportationView />, delay: 100},
     },
-  };
+  }
 
   saveSnapshot = () => {
     const name = this.state.viewPath
@@ -168,7 +168,7 @@ export class SnapshotsView extends React.Component {
       uri => console.log('saved to', uri),
       err => console.error('snapstho failed', err),
     )
-  };
+  }
 
   saveAll = async () => {
     for (const [parent, child] of this.viewsAsList()) {
@@ -179,7 +179,7 @@ export class SnapshotsView extends React.Component {
       await delay(args.delay || 1000)
       await this.saveSnapshot()
     }
-  };
+  }
 
   viewsAsList = () => {
     // goes from {name: {inner: {}}} to [[name, inner]]
@@ -188,11 +188,11 @@ export class SnapshotsView extends React.Component {
     )
 
     return flatten(choices)
-  };
+  }
 
   onChangeView = (value: string) => {
     this.setState({viewPath: value})
-  };
+  }
 
   render() {
     const selected = get(this.views, this.state.viewPath, {})

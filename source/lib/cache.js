@@ -8,9 +8,9 @@ type BaseCacheResultType<T> = {
   isExpired: boolean,
   isCached: boolean,
   value: ?T,
-};
+}
 
-type CacheResultType<T> = Promise<BaseCacheResultType<T>>;
+type CacheResultType<T> = Promise<BaseCacheResultType<T>>
 
 function needsUpdate(time: Date, [count, unit]: [number, string]): boolean {
   return moment(time).isBefore(moment().subtract(count, unit))
@@ -128,7 +128,7 @@ type BalancesInputType = {
   print: ?number,
   daily: ?string,
   weekly: ?string,
-};
+}
 export function setBalances({
   flex,
   ole,
@@ -153,7 +153,7 @@ type BalancesOutputType = {
   weekly: BaseCacheResultType<?string>,
   _isExpired: boolean,
   _isCached: boolean,
-};
+}
 export async function getBalances(): Promise<BalancesOutputType> {
   const [flex, ole, print, daily, weekly] = await Promise.all([
     getFlexBalance(),

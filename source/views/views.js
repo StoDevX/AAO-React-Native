@@ -19,7 +19,7 @@ export type ViewType =
       icon: string,
       tint: string,
       gradient?: [string, string],
-    };
+    }
 
 export const allViews: ViewType[] = [
   {

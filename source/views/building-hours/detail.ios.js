@@ -63,7 +63,7 @@ export class BuildingHoursDetailView extends React.Component {
     intervalId: 0,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
-  };
+  }
 
   componentWillMount() {
     // This updates the screen every ten seconds, so that the building
@@ -75,11 +75,11 @@ export class BuildingHoursDetailView extends React.Component {
     clearTimeout(this.state.intervalId)
   }
 
-  props: BuildingType;
+  props: BuildingType
 
   updateTime = () => {
     this.setState({now: moment.tz(CENTRAL_TZ)})
-  };
+  }
 
   render() {
     const bgColors = {

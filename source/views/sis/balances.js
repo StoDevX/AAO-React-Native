@@ -28,7 +28,7 @@ import type {TopLevelViewPropsType} from '../types'
 class BalancesView extends React.Component {
   state = {
     loading: false,
-  };
+  }
 
   props: TopLevelViewPropsType & {
     flex: ?number,
@@ -40,7 +40,7 @@ class BalancesView extends React.Component {
     message: ?string,
 
     updateBalances: () => any,
-  };
+  }
 
   refresh = async () => {
     let start = Date.now()
@@ -53,11 +53,11 @@ class BalancesView extends React.Component {
     await delay(500 - elapsed)
 
     this.setState({loading: false})
-  };
+  }
 
   fetchData = async () => {
     await Promise.all([this.props.updateBalances(true)])
-  };
+  }
 
   openSettings = () => {
     this.props.navigator.push({
@@ -67,7 +67,7 @@ class BalancesView extends React.Component {
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
       onDismiss: () => this.props.navigator.pop(),
     })
-  };
+  }
 
   render() {
     let {flex, ole, print, dailyMeals, weeklyMeals} = this.props
