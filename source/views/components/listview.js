@@ -8,7 +8,7 @@ type DataType = Array<any> | {[key: string]: any};
 type PropsType = {
   data: DataType,
   forceBottomInset?: boolean,
-  children?: (any) => React$Component<*, *, *>,
+  children?: any => React$Component<*, *, *>,
   onRefresh?: () => any,
   refreshing?: boolean,
 };

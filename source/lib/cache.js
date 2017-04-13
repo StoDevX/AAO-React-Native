@@ -51,7 +51,8 @@ function setItem(key: string, value: any, cacheTime?: [number, string]) {
 }
 function getItem(key: string): CacheResultType<any> {
   return AsyncStorage.getItem(`aao:${key}`).then(stored =>
-    annotateCacheEntry(JSON.parse(stored)))
+    annotateCacheEntry(JSON.parse(stored)),
+  )
 }
 
 /// MARK: courses
@@ -128,9 +129,13 @@ type BalancesInputType = {
   daily: ?string,
   weekly: ?string,
 };
-export function setBalances(
-  {flex, ole, print, daily, weekly}: BalancesInputType,
-) {
+export function setBalances({
+  flex,
+  ole,
+  print,
+  daily,
+  weekly,
+}: BalancesInputType) {
   return Promise.all([
     setFlexBalance(flex),
     setOleBalance(ole),
@@ -158,12 +163,14 @@ export async function getBalances(): Promise<BalancesOutputType> {
     getWeeklyMealInfo(),
   ])
 
-  const _isExpired = flex.isExpired ||
+  const _isExpired =
+    flex.isExpired ||
     ole.isExpired ||
     print.isExpired ||
     daily.isExpired ||
     weekly.isExpired
-  const _isCached = flex.isCached ||
+  const _isCached =
+    flex.isCached ||
     ole.isCached ||
     print.isCached ||
     daily.isCached ||

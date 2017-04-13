@@ -164,7 +164,8 @@ export function getDetailedBuildingStatus(
     }
 
     let filteredSchedules = set.hours.filter(sched =>
-      sched.days.includes(dayOfWeek))
+      sched.days.includes(dayOfWeek),
+    )
     if (!filteredSchedules.length) {
       return [{isActive: false, label, status: 'Closed today'}]
     }
@@ -200,13 +201,15 @@ export function getShortBuildingStatus(info: BuildingType, m: momentT): string {
     }
 
     let filteredSchedules = set.hours.filter(sched =>
-      sched.days.includes(dayOfWeek))
+      sched.days.includes(dayOfWeek),
+    )
     if (!filteredSchedules.length) {
       return 'Closed'
     }
 
     return filteredSchedules.map(schedule =>
-      getStatusOfBuildingAtMoment(schedule, m))
+      getStatusOfBuildingAtMoment(schedule, m),
+    )
   })
 
   return flatten(statuses).find(status => status !== 'Closed') || 'Closed'
@@ -229,13 +232,15 @@ export function isBuildingOpen(info: BuildingType, m: momentT): boolean {
     }
 
     let filteredSchedules = set.hours.filter(sched =>
-      sched.days.includes(dayOfWeek))
+      sched.days.includes(dayOfWeek),
+    )
     if (!filteredSchedules.length) {
       return false
     }
 
     return filteredSchedules.map(schedule =>
-      isBuildingOpenAtMoment(schedule, m))
+      isBuildingOpenAtMoment(schedule, m),
+    )
   })
 
   return flatten(results).find(status => status !== false) || false

@@ -10,13 +10,11 @@ import noop from 'lodash/noop'
 import type {RouteType} from '../../types'
 import {commonStyles} from './styles'
 
-export function CloseScreenButton(
-  {
-    route,
-    navigator,
-    buttonStyle,
-  }: {route: RouteType, navigator: Navigator, buttonStyle?: any},
-) {
+export function CloseScreenButton({
+  route,
+  navigator,
+  buttonStyle,
+}: {route: RouteType, navigator: Navigator, buttonStyle?: any}) {
   const onDismiss = route.onDismiss ? route.onDismiss : noop
   return (
     <Touchable

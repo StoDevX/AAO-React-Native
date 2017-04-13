@@ -174,9 +174,7 @@ export class BonAppHostedMenu extends React.Component {
         `Something went wrong loading BonApp cafe ${this.props.cafeId}`,
       )
       return (
-        <NoticeView
-          text="Something went wrong. Email odt@stolaf.edu to let them know?"
-        />
+        <NoticeView text="Something went wrong. Email odt@stolaf.edu to let them know?" />
       )
     }
 
@@ -218,7 +216,8 @@ export class BonAppHostedMenu extends React.Component {
         ]
     const ignoreMenus = dayparts[0].length ? ignoreProvidedMenus : true
     const allMeals = mealInfoItems.map(mealInfo =>
-      this.prepareSingleMenu(mealInfo, foodItems, ignoreMenus))
+      this.prepareSingleMenu(mealInfo, foodItems, ignoreMenus),
+    )
 
     return (
       <FancyMenu

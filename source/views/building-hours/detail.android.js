@@ -179,13 +179,11 @@ export class BuildingHoursDetailView extends React.Component {
   }
 }
 
-const ScheduleRow = (
-  {
-    schedule,
-    isActive,
-    now,
-  }: {schedule: SingleBuildingScheduleType, isActive: boolean, now: momentT},
-) => {
+const ScheduleRow = ({
+  schedule,
+  isActive,
+  now,
+}: {schedule: SingleBuildingScheduleType, isActive: boolean, now: momentT}) => {
   return (
     <View style={styles.scheduleRow}>
       <Text

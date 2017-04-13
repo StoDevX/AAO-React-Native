@@ -184,7 +184,8 @@ export class SnapshotsView extends React.Component {
   viewsAsList = () => {
     // goes from {name: {inner: {}}} to [[name, inner]]
     const choices = toPairs(this.views).map(([key, val]) =>
-      toPairs(val).map(([innerKey]) => [key, innerKey]))
+      toPairs(val).map(([innerKey]) => [key, innerKey]),
+    )
 
     return flatten(choices)
   };

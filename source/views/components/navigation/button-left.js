@@ -29,7 +29,8 @@ export function LeftButton(
     return null
   }
 
-  const backTitle = navState.routeStack[index].backButtonTitle ||
+  const backTitle =
+    navState.routeStack[index].backButtonTitle ||
     navState.routeStack[index - 1].title
 
   let contents = null

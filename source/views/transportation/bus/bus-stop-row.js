@@ -26,27 +26,25 @@ const styles = StyleSheet.create({
   },
 })
 
-export function BusStopRow(
-  {
-    time,
-    now,
-    barColor,
-    currentStopColor,
-    place,
-    times,
-    isFirstRow,
-    isLastRow,
-  }: {
-    time: moment,
-    now: moment,
-    barColor: string,
-    currentStopColor: string,
-    place: string,
-    times: FancyBusTimeListType,
-    isFirstRow: boolean,
-    isLastRow: boolean,
-  },
-) {
+export function BusStopRow({
+  time,
+  now,
+  barColor,
+  currentStopColor,
+  place,
+  times,
+  isFirstRow,
+  isLastRow,
+}: {
+  time: moment,
+  now: moment,
+  barColor: string,
+  currentStopColor: string,
+  place: string,
+  times: FancyBusTimeListType,
+  isFirstRow: boolean,
+  isLastRow: boolean,
+}) {
   const afterStop = time && now.isAfter(time, 'minute')
   const atStop = time && now.isSame(time, 'minute')
   const beforeStop = !afterStop && !atStop && time !== false
@@ -88,20 +86,18 @@ export function BusStopRow(
   )
 }
 
-const ScheduleTimes = (
-  {
-    times,
-    skippingStop,
-  }: {
-    skippingStop: boolean,
-    times: FancyBusTimeListType,
-  },
-) => {
+const ScheduleTimes = ({
+  times,
+  skippingStop,
+}: {
+  skippingStop: boolean,
+  times: FancyBusTimeListType,
+}) => {
   return (
     <Text style={skippingStop && styles.skippingStopDetail}>
       {times
         // and format the times
-        .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
+        .map(time => (time === false ? 'None' : time.format(TIME_FORMAT)))
         .join(' • ')}
     </Text>
   )

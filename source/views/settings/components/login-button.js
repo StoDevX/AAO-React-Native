@@ -19,21 +19,19 @@ const styles = StyleSheet.create({
   },
 })
 
-export function LoginButton(
-  {
-    loading,
-    disabled,
-    loggedIn,
-    onPress,
-    label,
-  }: {
-    loading: boolean,
-    disabled?: boolean,
-    loggedIn: boolean,
-    onPress: () => any,
-    label: string,
-  },
-) {
+export function LoginButton({
+  loading,
+  disabled,
+  loggedIn,
+  onPress,
+  label,
+}: {
+  loading: boolean,
+  disabled?: boolean,
+  loggedIn: boolean,
+  onPress: () => any,
+  label: string,
+}) {
   let loginTextStyle = loading || disabled ? styles.disabled : styles.active
 
   const contents = (

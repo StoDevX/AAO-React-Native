@@ -18,9 +18,7 @@ export default function CalendarPage() {
           title: 'St. Olaf',
           icon: 'school',
           component: () => (
-            <GoogleCalendarView
-              calendarId="le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com"
-            />
+            <GoogleCalendarView calendarId="le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com" />
           ),
         },
         {
@@ -28,9 +26,7 @@ export default function CalendarPage() {
           title: 'Oleville',
           icon: 'happy',
           component: () => (
-            <GoogleCalendarView
-              calendarId="stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com"
-            />
+            <GoogleCalendarView calendarId="stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com" />
           ),
         },
         {
@@ -38,9 +34,7 @@ export default function CalendarPage() {
           title: 'The Pause',
           icon: 'paw',
           component: () => (
-            <GoogleCalendarView
-              calendarId="stolaf.edu_qkrej5rm8c8582dlnc28nreboc@group.calendar.google.com"
-            />
+            <GoogleCalendarView calendarId="stolaf.edu_qkrej5rm8c8582dlnc28nreboc@group.calendar.google.com" />
           ),
         },
         {

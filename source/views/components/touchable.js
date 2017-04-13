@@ -15,16 +15,14 @@ type PropsType = {
   borderless?: boolean,
   style?: any,
 };
-export const Touchable = (
-  {
-    children,
-    style,
-    highlight = true,
-    borderless = false,
-    onPress = () => {},
-    ...props
-  }: PropsType,
-) => {
+export const Touchable = ({
+  children,
+  style,
+  highlight = true,
+  borderless = false,
+  onPress = () => {},
+  ...props
+}: PropsType) => {
   // The child <View> is required; the Touchable needs a View as its direct child.
   const content = <View style={style}>{children}</View>
 

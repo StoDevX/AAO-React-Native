@@ -116,18 +116,22 @@ export type BonAppCafeInfoType = {
       menu_type: string,
       menu_html: string,
       weekly_schedule: string,
-      days: [{
-        date: string,
-        dayparts: [{
-          id: string,
-          starttime: string,
-          endtime: string,
-          message: string,
-          label: string,
-        }],
-        status: 'open' | 'closed' | string,
-        message: false | string,
-      }],
+      days: [
+        {
+          date: string,
+          dayparts: [
+            {
+              id: string,
+              starttime: string,
+              endtime: string,
+              message: string,
+              label: string,
+            },
+          ],
+          status: 'open' | 'closed' | string,
+          message: false | string,
+        },
+      ],
     },
   },
 };

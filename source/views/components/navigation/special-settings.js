@@ -10,13 +10,11 @@ import {Touchable} from '../touchable'
 import Icon from 'react-native-vector-icons/Ionicons'
 import type {RouteType} from '../../types'
 
-export function OpenSettingsButton(
-  {
-    route,
-    navigator,
-    buttonStyle,
-  }: {route: RouteType, navigator: Navigator, buttonStyle?: any},
-) {
+export function OpenSettingsButton({
+  route,
+  navigator,
+  buttonStyle,
+}: {route: RouteType, navigator: Navigator, buttonStyle?: any}) {
   return (
     <Touchable
       borderless

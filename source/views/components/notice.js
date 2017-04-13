@@ -22,21 +22,19 @@ const styles = StyleSheet.create({
   },
 })
 
-export function NoticeView(
-  {
-    text,
-    style,
-    spinner,
-    buttonText,
-    onPress,
-  }: {
-    text?: string,
-    style?: any,
-    spinner?: boolean,
-    buttonText?: string,
-    onPress?: () => any,
-  },
-) {
+export function NoticeView({
+  text,
+  style,
+  spinner,
+  buttonText,
+  onPress,
+}: {
+  text?: string,
+  style?: any,
+  spinner?: boolean,
+  buttonText?: string,
+  onPress?: () => any,
+}) {
   let activityIndicator = spinner
     ? <ActivityIndicator style={styles.spinner} />
     : null
