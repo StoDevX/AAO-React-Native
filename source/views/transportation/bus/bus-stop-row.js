@@ -14,8 +14,7 @@ const styles = StyleSheet.create({
   skippingStopTitle: {
     color: c.iosDisabledText,
   },
-  skippingStopDetail: {
-  },
+  skippingStopDetail: {},
   internalPadding: {
     paddingVertical: Platform.OS === 'ios' ? 8 : 15,
   },
@@ -52,13 +51,17 @@ export function BusStopRow({
   const skippingStop = time === false
 
   return (
-    <ListRow
-      fullWidth={true}
-      fullHeight={true}
-    >
+    <ListRow fullWidth={true} fullHeight={true}>
       <Row>
         <ProgressChunk
-          {...{barColor, afterStop, beforeStop, atStop, skippingStop, currentStopColor}}
+          {...{
+            barColor,
+            afterStop,
+            beforeStop,
+            atStop,
+            skippingStop,
+            currentStopColor,
+          }}
           isFirstChunk={isFirstRow}
           isLastChunk={isLastRow}
         />
@@ -83,7 +86,10 @@ export function BusStopRow({
   )
 }
 
-const ScheduleTimes = ({times, skippingStop}: {
+const ScheduleTimes = ({
+  times,
+  skippingStop,
+}: {
   skippingStop: boolean,
   times: FancyBusTimeListType,
 }) => {
@@ -91,7 +97,7 @@ const ScheduleTimes = ({times, skippingStop}: {
     <Text style={skippingStop && styles.skippingStopDetail}>
       {times
         // and format the times
-        .map(time => time === false ? 'None' : time.format(TIME_FORMAT))
+        .map(time => (time === false ? 'None' : time.format(TIME_FORMAT)))
         .join(' • ')}
     </Text>
   )

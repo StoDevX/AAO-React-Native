@@ -26,7 +26,7 @@ type PropsType = {
   children?: any,
   style?: any,
   lines?: number,
-};
+}
 export function Detail(props: PropsType) {
   return (
     <Text numberOfLines={props.lines} style={[styles.detail, props.style]}>

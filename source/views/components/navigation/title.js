@@ -5,24 +5,28 @@
 
 import React from 'react'
 import {Text, Dimensions, StyleSheet, Platform} from 'react-native'
+import * as c from '../colors'
 import type {RouteType} from '../../types'
 
 export function Title(route: RouteType) {
+  const maxWidth = Platform.OS === 'ios'
+    ? Dimensions.get('window').width / 2.5
+    : Dimensions.get('window').width - 100
+
   return (
     <Text
-      style={[styles.text, {maxWidth: Dimensions.get('window').width / 2.5}]}
+      style={[styles.text, {maxWidth}]}
       numberOfLines={1}
-      ellipsizeMode='tail'
+      ellipsizeMode="tail"
     >
       {route.title}
     </Text>
   )
 }
 
-
 const styles = StyleSheet.create({
   text: {
-    color: 'white',
+    color: c.white,
     ...Platform.select({
       ios: {
         fontFamily: 'System',

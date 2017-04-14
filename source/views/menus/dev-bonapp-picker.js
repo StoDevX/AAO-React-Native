@@ -1,15 +1,19 @@
 // @flow
 import React from 'react'
 import {View, TextInput, StyleSheet} from 'react-native'
+import * as c from '../components/colors'
 import {Toolbar, ToolbarButton} from '../components/toolbar'
 import type {TopLevelViewPropsType} from '../types'
 import {BonAppHostedMenu} from './menu-bonapp'
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   default: {
     height: 44,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#0f0f0f',
+    borderColor: c.black,
     flex: 1,
     fontSize: 13,
     paddingVertical: 4,
@@ -30,7 +34,7 @@ export class BonAppPickerView extends React.Component {
     this.chooseMenu()
   }
 
-  props: TopLevelViewPropsType;
+  props: TopLevelViewPropsType
 
   chooseCafe = (cafeId: string) => {
     if (!/^\d*$/.test(cafeId)) {
@@ -45,7 +49,7 @@ export class BonAppPickerView extends React.Component {
         route={this.props.route}
         navigator={this.props.navigator}
         cafeId={this.state.cafeId}
-        name='BonApp'
+        name="BonApp"
         loadingMessage={['Loading…']}
       />
     )
@@ -54,16 +58,16 @@ export class BonAppPickerView extends React.Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <View style={styles.container}>
         <Toolbar onPress={this.chooseMenu}>
           <TextInput
-            keyboardType='numeric'
+            keyboardType="numeric"
             onChangeText={this.chooseCafe}
             value={this.state.cafeId}
             style={styles.default}
             onBlur={this.chooseMenu}
           />
-          <ToolbarButton title='Go' isActive />
+          <ToolbarButton title="Go" isActive />
         </Toolbar>
         {this.state.menu}
       </View>

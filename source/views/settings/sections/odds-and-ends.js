@@ -1,86 +1,85 @@
 // @flow
 import React from 'react'
-import {Text, Switch} from 'react-native'
-import {Cell, CustomCell, Section} from 'react-native-tableview-simple'
+import {Cell, Section} from 'react-native-tableview-simple'
 import {version} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
+import {setFeedbackStatus} from '../../../flux/parts/settings'
+import {connect} from 'react-redux'
+import {CellToggle} from '../../components/cell-toggle'
 
-export class OddsAndEndsSection extends React.Component {
+class OddsAndEndsSection extends React.Component {
   props: TopLevelViewPropsType & {
     onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
     feedbackDisabled: boolean,
-  };
+  }
 
-  onPressLegalButton = () => {
+  onPressButton = (id: string, title: string) => {
     this.props.navigator.push({
-      id: 'LegalView',
-      title: 'Legal',
+      id: id,
+      title: title,
       index: this.props.route.index + 1,
     })
-  };
+  }
 
-  onPressCreditsButton = () => {
-    this.props.navigator.push({
-      id: 'CreditsView',
-      title: 'Credits',
-      index: this.props.route.index + 1,
-    })
-  };
+  onFaqButton = () => this.onPressButton('FaqView', 'FAQs')
+  onCreditsButton = () => this.onPressButton('CreditsView', 'Credits')
+  onPrivacyButton = () => this.onPressButton('PrivacyView', 'Privacy Policy')
+  onLegalButton = () => this.onPressButton('LegalView', 'Legal')
+  onSnapshotsButton = () => this.onPressButton('SnapshotsView', 'Snapshot Time')
 
-  onPressPrivacyButton = () => {
-    this.props.navigator.push({
-      id: 'PrivacyView',
-      title: 'Privacy Policy',
-      index: this.props.route.index + 1,
-    })
-  };
-
-  onPressFaqButton = () => {
-    this.props.navigator.push({
-      id: 'FaqView',
-      title: 'FAQs',
-      index: this.props.route.index + 1,
-    })
-  };
-
-  render () {
+  render() {
     return (
-      <Section header='ODDS & ENDS'>
-        <Cell cellStyle='RightDetail'
-          title='Version'
-          detail={version}
+      <Section header="ODDS &amp; ENDS">
+        <Cell cellStyle="RightDetail" title="Version" detail={version} />
+
+        <CellToggle
+          label="Share Analytics"
+          // These are both inverted because the toggle makes more sense as
+          // optout/optin, but the code works better as optin/optout.
+          value={!this.props.feedbackDisabled}
+          onChange={val => this.props.onChangeFeedbackToggle(!val)}
         />
 
-        <CustomCell>
-          <Text style={{flex: 1, fontSize: 16}}>Share Analytics</Text>
-          {/*These are both inverted because the toggle makes more sense as optout/optin, but the code works better as optin/optout */}
-          <Switch value={!this.props.feedbackDisabled} onValueChange={val => this.props.onChangeFeedbackToggle(!val)} />
-        </CustomCell>
+        <PushButtonCell title="FAQ" onPress={this.onFaqButton} />
+        <PushButtonCell title="Credits" onPress={this.onCreditsButton} />
+        <PushButtonCell title="Privacy Policy" onPress={this.onPrivacyButton} />
+        <PushButtonCell title="Legal" onPress={this.onLegalButton} />
 
-        <Cell cellStyle='Basic'
-          title='FAQ'
-          accessory='DisclosureIndicator'
-          onPress={this.onPressFaqButton}
-        />
-
-        <Cell cellStyle='Basic'
-          title='Credits'
-          accessory='DisclosureIndicator'
-          onPress={this.onPressCreditsButton}
-        />
-
-        <Cell cellStyle='Basic'
-          title='Privacy Policy'
-          accessory='DisclosureIndicator'
-          onPress={this.onPressPrivacyButton}
-        />
-
-        <Cell cellStyle='Basic'
-          title='Legal'
-          accessory='DisclosureIndicator'
-          onPress={this.onPressLegalButton}
-        />
+        {process.env.NODE_ENV === 'development'
+          ? <PushButtonCell
+              title="Snapshots"
+              onPress={this.onSnapshotsButton}
+            />
+          : null}
       </Section>
     )
   }
 }
+
+const PushButtonCell = ({
+  title,
+  onPress,
+}: {title: string, onPress: () => any}) => {
+  return (
+    <Cell
+      cellStyle="Basic"
+      title={title}
+      accessory="DisclosureIndicator"
+      onPress={onPress}
+    />
+  )
+}
+
+function mapStateToProps(state) {
+  return {
+    feedbackDisabled: state.settings.feedbackDisabled,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onChangeFeedbackToggle: s => dispatch(setFeedbackStatus(s)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(OddsAndEndsSection)

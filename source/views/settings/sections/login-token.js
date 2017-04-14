@@ -1,11 +1,12 @@
 // @flow
 import React from 'react'
-import {Cell} from 'react-native-tableview-simple'
-import {SectionWithNullChildren} from '../../components/section-with-null-children'
+import {Cell, Section} from 'react-native-tableview-simple'
 import type {TopLevelViewPropsType} from '../../types'
 import {LoginButton} from '../components/login-button'
+import {logInViaToken, logOutViaToken} from '../../../flux/parts/settings'
+import {connect} from 'react-redux'
 
-export class TokenLoginSection extends React.Component {
+class TokenLoginSection extends React.Component {
   state = {
     loading: false,
   }
@@ -38,19 +39,35 @@ export class TokenLoginSection extends React.Component {
     let {loading} = this.state
 
     return (
-      <SectionWithNullChildren
-        header='GOOGLE LOGIN'
-        footer='Google login allows SIS access, which enables flex dollars, ole dollars, and course information.'
+      <Section
+        header="GOOGLE LOGIN"
+        footer="Google login allows SIS access, which enables flex dollars, ole dollars, and course information."
       >
         {message ? <Cell title={'⚠️ ' + message} /> : null}
 
         <LoginButton
           loading={loading}
           loggedIn={loggedIn}
-          label='Google'
+          label="Google"
           onPress={loggedIn ? this.logOut : this.logIn}
         />
-      </SectionWithNullChildren>
+      </Section>
     )
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    loggedIn: state.settings.token.valid,
+    message: state.settings.token.error,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    logIn: s => dispatch(logInViaToken(s)),
+    logOut: () => dispatch(logOutViaToken()),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TokenLoginSection)

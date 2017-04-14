@@ -7,16 +7,12 @@ import * as c from '../components/colors'
 import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 6,
-    paddingHorizontal: 18,
-  },
   name: {
     textAlign: 'center',
     marginTop: 20,
     marginBottom: 15,
     paddingHorizontal: 5,
-    color: 'black',
+    color: c.black,
     fontSize: 32,
     fontWeight: '300',
   },
@@ -41,20 +37,20 @@ export class StudentOrgsDetailRenderView extends React.Component {
     loaded: boolean,
     base: StudentOrgAbridgedType,
     full: ?StudentOrgInfoType,
-  };
+  }
 
   displayContact(contactInfo: string) {
     return (
-      <Section header='CONTACT'>
-        <Cell cellStyle='Basic' title={contactInfo} />
+      <Section header="CONTACT">
+        <Cell cellStyle="Basic" title={contactInfo} />
       </Section>
     )
   }
 
   displayDescription(description: string) {
     return (
-      <Section header='DESCRIPTION'>
-        <Text style={styles.description}>{description}</Text>
+      <Section header="DESCRIPTION">
+        <Text selectable={true} style={styles.description}>{description}</Text>
       </Section>
     )
   }
@@ -62,15 +58,23 @@ export class StudentOrgsDetailRenderView extends React.Component {
   displayMeetings(meetingTime: string, meetingLocation: string) {
     let contents = null
     if (meetingTime && meetingLocation) {
-      contents = <Cell cellStyle='Subtitle' title={meetingTime} detail={meetingLocation} />
+      contents = (
+        <Cell
+          cellStyle="Subtitle"
+          title={meetingTime}
+          detail={meetingLocation}
+        />
+      )
     } else if (meetingTime) {
-      contents = <Cell cellStyle='Basic' title={meetingTime} detail={meetingLocation} />
+      contents = (
+        <Cell cellStyle="Basic" title={meetingTime} detail={meetingLocation} />
+      )
     } else if (meetingLocation) {
-      contents = <Cell cellStyle='Basic' title={meetingLocation} />
+      contents = <Cell cellStyle="Basic" title={meetingLocation} />
     }
 
     return (
-      <Section header='MEETINGS'>
+      <Section header="MEETINGS">
         {contents}
       </Section>
     )
@@ -82,17 +86,19 @@ export class StudentOrgsDetailRenderView extends React.Component {
 
   renderBody = (data: StudentOrgInfoType) => {
     const {
-      regularMeetingTime='',
-      regularMeetingLocation='',
-      description='',
-      contactName='',
+      regularMeetingTime = '',
+      regularMeetingLocation = '',
+      description = '',
+      contactName = '',
     } = data
 
     const showMeetingSection = regularMeetingTime && regularMeetingLocation
 
     return (
       <View>
-        {showMeetingSection ? this.displayMeetings(regularMeetingTime, regularMeetingLocation) : null}
+        {showMeetingSection
+          ? this.displayMeetings(regularMeetingTime, regularMeetingLocation)
+          : null}
         {contactName ? this.displayContact(contactName) : null}
         {description ? this.displayDescription(description) : null}
       </View>
@@ -107,14 +113,14 @@ export class StudentOrgsDetailRenderView extends React.Component {
     let contents
     if (!this.props.loaded) {
       contents = (
-        <Section header='ORGANIZATION'>
-          <Cell cellStyle='Basic' title='Loading…' />
+        <Section header="ORGANIZATION">
+          <Cell cellStyle="Basic" title="Loading…" />
         </Section>
       )
     } else if (!this.props.full) {
       contents = (
-        <Section header='ORGANIZATION'>
-          <Cell cellStyle='Basic' title='No information found.' />
+        <Section header="ORGANIZATION">
+          <Cell cellStyle="Basic" title="No information found." />
         </Section>
       )
     } else {
@@ -124,10 +130,10 @@ export class StudentOrgsDetailRenderView extends React.Component {
     return (
       <ScrollView>
         <TableView>
-          <Text style={styles.name}>{orgName}</Text>
+          <Text selectable={true} style={styles.name}>{orgName}</Text>
 
-          <Section header='CATEGORY'>
-            <Cell cellStyle='Basic' title={orgCategory} />
+          <Section header="CATEGORY">
+            <Cell cellStyle="Basic" title={orgCategory} />
           </Section>
 
           {contents}

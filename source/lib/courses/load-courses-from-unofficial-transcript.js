@@ -12,9 +12,13 @@ import {GRADES_PAGE, LANDING_PAGE} from './urls'
 import {parseCoursesFromDom} from './parse-courses'
 import type {CourseCollectionType} from './types'
 
-type PromisedDataType = Promise<CourseCollectionType>;
+type PromisedDataType = Promise<CourseCollectionType>
 
-export async function loadCoursesFromUnofficialTranscript({stnum, force, isConnected}: {
+export async function loadCoursesFromUnofficialTranscript({
+  stnum,
+  force,
+  isConnected,
+}: {
   stnum: number,
   isConnected: boolean,
   force?: boolean,
@@ -36,8 +40,9 @@ export async function loadCoursesFromUnofficialTranscript({stnum, force, isConne
   return {error: false, value: value || {}}
 }
 
-
-async function fetchAllCoursesFromServer({stnum}: {stnum: number}): PromisedDataType {
+async function fetchAllCoursesFromServer({
+  stnum,
+}: {stnum: number}): PromisedDataType {
   const form = buildFormData({stnum: String(stnum), searchyearterm: '0'})
   const resp = await fetch(GRADES_PAGE, {method: 'POST', body: form})
   if (startsWith(resp.url, LANDING_PAGE)) {

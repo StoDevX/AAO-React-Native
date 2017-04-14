@@ -69,28 +69,34 @@ export class GitHubHostedMenu extends React.Component {
       corIcons = fallbackMenu.corIcons || {}
     }
 
-    if (__DEV__) {
+    if (process.env.NODE_ENV === 'development') {
       foodItems = fallbackMenu.foodItems
       stationMenus = fallbackMenu.stationMenus || []
       corIcons = fallbackMenu.corIcons || {}
     }
 
-    foodItems = fromPairs(foodItems.map(upgradeMenuItem).map(item => [item.id, item]))
+    foodItems = fromPairs(
+      foodItems.map(upgradeMenuItem).map(item => [item.id, item]),
+    )
     stationMenus = stationMenus.map((menu, index) => ({
       ...upgradeStation(menu, index),
-      items: filter(foodItems, item => item.station === menu.label).map(item => item.id),
+      items: filter(foodItems, item => item.station === menu.label).map(
+        item => item.id,
+      ),
     }))
 
     this.setState({
       loading: false,
       corIcons,
       foodItems,
-      meals: [{
-        label: 'Menu',
-        stations: stationMenus,
-        starttime: '0:00',
-        endtime: '23:59',
-      }],
+      meals: [
+        {
+          label: 'Menu',
+          stations: stationMenus,
+          starttime: '0:00',
+          endtime: '23:59',
+        },
+      ],
       now: moment.tz(CENTRAL_TZ),
     })
   }

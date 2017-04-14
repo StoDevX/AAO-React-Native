@@ -1,17 +1,29 @@
-import { danger, fail, warn, markdown } from 'danger'
-import { readFileSync } from 'fs'
+import {danger, warn, message} from 'danger'
+import {readFileSync} from 'fs'
+import dedent from 'dedent'
+const readFile = filename => {
+  try {
+    return readFileSync(filename, 'utf-8')
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      return ''
+    }
+    return err.message
+  }
+}
+const readLogFile = filename => readFile(filename).trim()
 
-const jsFiles = danger.git.created_files.filter(path => path.endsWith('js'))
+const jsFiles = danger.git.created_files.filter(path => path.endsWith('.js'))
 
 // new js files should have `@flow` at the top
-const unFlowedFiles = jsFiles.filter(filepath => {
-  const content = readFileSync(filepath, 'utf-8')
-  return !content.includes('@flow')
-})
-
-if (unFlowedFiles.length > 0) {
-  warn(`These new JS files do not have Flow enabled: ${unFlowedFiles.join(', ')}`)
-}
+jsFiles
+  .filter(filepath => {
+    const content = readFile(filepath)
+    return !content.includes('@flow')
+  })
+  .forEach(file =>
+    warn(`<code>${file}</code> has no <code>@flow</code> annotation!`),
+  )
 
 // revisit this when we move to yarn
 // const packageChanged = danger.git.modified_files.includes('package.json')
@@ -23,78 +35,110 @@ if (unFlowedFiles.length > 0) {
 // }
 
 // Be careful of leaving testing shortcuts in the codebase
-const jsTests = jsFiles.filter(filepath => filepath.endsWith('test.js'))
-jsTests.forEach(file => {
-  const content = readFileSync(file, 'utf-8')
-  if (content.includes('it.only') || content.includes('describe.only')) {
-    fail(`An <code>only</code> was left in ${file} – that prevents any other tests from running.`)
-  }
-})
+jsFiles
+  .filter(filepath => filepath.endsWith('test.js'))
+  .filter(filepath => {
+    const content = readFile(filepath)
+    return content.includes('it.only') || content.includes('describe.only')
+  })
+  .forEach(file =>
+    warn(`An <code>only</code> was left in ${file} – no other tests can run.`),
+  )
 
 // Warn when PR size is large (mainly for hawken)
-const bigPRThreshold = 400
+const bigPRThreshold = 400 // lines
 const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
 if (thisPRSize > bigPRThreshold) {
-  warn(':exclamation: Big PR!')
-  markdown(`> The Pull Request size is a bit big. We like to try and keep PRs under ${bigPRThreshold} lines per PR, and this one was ${thisPRSize} lines. If the PR contains multiple logical changes, splitting each into separate PRs will allow a faster, easier, and more thorough review.`)
+  warn(
+    dedent`
+    <details>
+      <summary>:exclamation: Big PR!</summary>
+      <blockquote>
+        <p>We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.</p>
+        <p>If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.</p>
+      </blockquote>
+    </details>
+  `,
+  )
 }
-
 
 //
 // Check for and report errors from our tools
 //
-
-const codeBlock = (contents, lang=null) => markdown(`\`\`\`${lang || ''}\n${contents}\n\`\`\``)
 const isBadBundleLog = log => {
-  const lines = log.split('\n')
-  const startsGood = lines[0] === 'Loading dependency graph, done.'
-  const endsGood = lines[lines.length-1] === 'bundle: Done copying assets'
-  if (startsGood && endsGood && lines.length === 7) {
-    return false
-  }
-  return true
+  const allLines = log.split('\n')
+  const requiredLines = [
+    'bundle: start',
+    'bundle: finish',
+    'bundle: Done writing bundle output',
+    'bundle: Done copying assets',
+  ]
+  return requiredLines.some(line => !allLines.includes(line))
+}
+const isBadDataValidationLog = log => {
+  return log.split('\n').some(l => !l.endsWith('is valid'))
 }
 
-// Eslint
-const eslintLog = readFileSync('logs/eslint', 'utf-8').trim()
-const dataValidationLog = readFileSync('logs/validate-data', 'utf-8').trim()
-const dataBundlingStatusLog = readFileSync('logs/bundle-data', 'utf-8').trim()
-const flowLog = readFileSync('logs/flow', 'utf-8').trim()
-const iosJsBundleLog = readFileSync('logs/bundle-ios', 'utf-8').trim()
-const androidJsBundleLog = readFileSync('logs/bundle-android', 'utf-8').trim()
-const jestLog = readFileSync('logs/jest', 'utf-8').trim()
+const fileLog = (name, log, {lang = null} = {}) => {
+  message(
+    dedent`
+    <details>
+      <summary>${name}</summary>
+
+\`\`\`${lang || ''}
+${log}
+\`\`\`
+
+    </details>
+  `,
+  )
+}
+
+const prettierLog = readLogFile('logs/prettier')
+const eslintLog = readLogFile('logs/eslint')
+const dataValidationLog = readLogFile('logs/validate-data')
+const dataBundlingLog = readLogFile('logs/bundle-data')
+const flowLog = readLogFile('logs/flow')
+const iosJsBundleLog = readLogFile('logs/bundle-ios')
+const androidJsBundleLog = readLogFile('logs/bundle-android')
+const jestLog = readLogFile('logs/jest')
+
+if (prettierLog) {
+  fileLog('Prettier made some changes', prettierLog, {lang: 'diff'})
+}
 
 if (eslintLog) {
-  warn('Eslint had a thing to say!')
-  codeBlock(eslintLog)
+  fileLog('Eslint had a thing to say!', eslintLog)
 }
 
-if (dataValidationLog && dataValidationLog.split('\n').some(l => !l.endsWith("is valid"))) {
-  warn("Something's up with the data.")
-  codeBlock(dataValidationLog)
+if (dataValidationLog && isBadDataValidationLog(dataValidationLog)) {
+  fileLog("Something's up with the data.", dataValidationLog)
 }
 
-if (dataBundlingStatusLog) {
-  fail("The data changed when it was re-bundled. You'll need to bundle it manually.")
-  codeBlock(dataBundlingStatusLog)
+if (dataBundlingLog) {
+  fileLog('Some files need to be re-bundled', dataBundlingLog, {lang: 'diff'})
 }
 
-if (flowLog !== 'Found 0 errors') {
-  warn('Flow would like to interject about types…')
-  codeBlock(flowLog)
+if (flowLog && flowLog !== 'Found 0 errors') {
+  fileLog('Flow would like to interject about types…', flowLog)
 }
 
 if (iosJsBundleLog && isBadBundleLog(iosJsBundleLog)) {
-  warn('The iOS bundle ran into an issue.')
-  codeBlock(iosJsBundleLog)
+  fileLog('The iOS bundle ran into an issue.', iosJsBundleLog)
 }
 
 if (androidJsBundleLog && isBadBundleLog(androidJsBundleLog)) {
-  warn('The Android bundle ran into an issue.')
-  codeBlock(androidJsBundleLog)
+  fileLog('The Android bundle ran into an issue.', androidJsBundleLog)
 }
 
-if (!jestLog.split('\n')[0].startsWith('----------')) {
-  warn('Some Jest tests failed. Take a peek?')
-  codeBlock(jestLog)
+if (jestLog && jestLog.includes('FAIL')) {
+  const lines = jestLog.split('\n')
+  const startIndex = lines.findIndex(l =>
+    l.includes('Summary of all failing tests'),
+  )
+
+  fileLog(
+    'Some Jest tests failed. Take a peek?',
+    lines.slice(startIndex).join('\n'),
+  )
 }

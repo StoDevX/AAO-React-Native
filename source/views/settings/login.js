@@ -11,9 +11,9 @@ const HOME_URL = 'https://www.stolaf.edu/sis/index.cfm'
 const LOGIN_URL = 'https://www.stolaf.edu/sis/login.cfm'
 
 export default class SISLoginView extends React.Component {
-  state = {complete: false};
+  state = {complete: false}
 
-  props: TopLevelViewPropsType & {onLoginComplete: (status: boolean) => any};
+  props: TopLevelViewPropsType & {onLoginComplete: (status: boolean) => any}
 
   onNavigationStateChange = (navState: {url: string}) => {
     console.info(navState.url)
@@ -30,7 +30,13 @@ export default class SISLoginView extends React.Component {
 
   render() {
     if (this.state.complete) {
-      return <NoticeView text="You're logged in!" onPress={this.onComplete} buttonText='Done' />
+      return (
+        <NoticeView
+          text="You're logged in!"
+          onPress={this.onComplete}
+          buttonText="Done"
+        />
+      )
     }
 
     return (

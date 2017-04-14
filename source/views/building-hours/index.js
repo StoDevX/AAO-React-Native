@@ -23,8 +23,8 @@ export {BuildingHoursDetailView} from './detail'
 
 const githubBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
 
-const groupBuildings = (buildings: BuildingType[]) => groupBy(buildings, b => b.category || 'Other')
-
+const groupBuildings = (buildings: BuildingType[]) =>
+  groupBy(buildings, b => b.category || 'Other')
 
 export class BuildingHoursView extends React.Component {
   state: {
@@ -54,7 +54,7 @@ export class BuildingHoursView extends React.Component {
     clearTimeout(this.state.intervalId)
   }
 
-  props: TopLevelViewPropsType;
+  props: TopLevelViewPropsType
 
   updateTime = () => {
     this.setState({now: moment.tz(CENTRAL_TZ)})
@@ -74,7 +74,7 @@ export class BuildingHoursView extends React.Component {
       buildings = fallbackBuildingHours
     }
 
-    if (__DEV__) {
+    if (process.env.NODE_ENV === 'development') {
       buildings = fallbackBuildingHours
     }
 

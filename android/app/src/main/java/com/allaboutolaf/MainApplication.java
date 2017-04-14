@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 // keep these sorted alphabetically
+import com.BV.LinearGradient.LinearGradientPackage;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
@@ -19,6 +20,7 @@ import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.microsoft.codepush.react.CodePush;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
+import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,8 +49,10 @@ public class MainApplication extends Application implements ReactApplication {
         new CustomTabsPackage(),
         new GoogleAnalyticsBridgePackage(),
         new KeychainPackage(),
+        new LinearGradientPackage(),
         new ReactNativeOneSignalPackage(),
         new RNDeviceInfo(),
+        new RNViewShotPackage(),
         new VectorIconsPackage()
       );
     }

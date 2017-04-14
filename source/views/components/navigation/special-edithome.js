@@ -9,9 +9,11 @@ import {Touchable} from '../touchable'
 import type {RouteType} from '../../types'
 import {commonStyles} from './styles'
 
-export function EditHomeButton(
-  {route, navigator, buttonStyle}: {route: RouteType, navigator: Navigator, buttonStyle?: any}
-) {
+export function EditHomeButton({
+  route,
+  navigator,
+  buttonStyle,
+}: {route: RouteType, navigator: Navigator, buttonStyle?: any}) {
   return (
     <Touchable
       borderless
@@ -23,7 +25,6 @@ export function EditHomeButton(
     </Touchable>
   )
 }
-
 
 let editHomeButtonActive = false
 function openEditHome(route, navigator: Navigator) {

@@ -45,10 +45,10 @@ export class StudentOrgsDetailView extends React.Component {
 
   cleanResponseData = (data: StudentOrgInfoType) => {
     let {
-      contactName='',
-      description='',
-      regularMeetingTime='',
-      regularMeetingLocation='',
+      contactName = '',
+      description = '',
+      regularMeetingTime = '',
+      regularMeetingLocation = '',
     } = data
 
     contactName = contactName.trim()

@@ -16,13 +16,12 @@ const styles = StyleSheet.create({
   },
 })
 
-
 type PropsType = {
   date: momentT,
   title?: string,
   onPress: () => any,
   filters: FilterType[],
-};
+}
 
 export function FilterMenuToolbar({date, title, filters, onPress}: PropsType) {
   const appliedFilterCount = filters
@@ -41,7 +40,11 @@ export function FilterMenuToolbar({date, title, filters, onPress}: PropsType) {
 
       <ToolbarButton
         isActive={isFiltered}
-        title={isFiltered ? `${appliedFilterCount} ${appliedFilterCount === 1 ? 'Filter' : 'Filters'}` : 'No Filters'}
+        title={
+          isFiltered
+            ? `${appliedFilterCount} ${appliedFilterCount === 1 ? 'Filter' : 'Filters'}`
+            : 'No Filters'
+        }
         iconName={Platform.OS === 'ios' ? 'ios-funnel' : 'md-funnel'}
       />
     </Toolbar>

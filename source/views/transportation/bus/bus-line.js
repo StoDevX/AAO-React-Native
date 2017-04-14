@@ -39,9 +39,9 @@ const stopColors = {
 function makeSubtitle({now, moments, isLastBus}) {
   let lineDetail = 'Running'
 
-  if (now.isBefore(head(moments), 'minute')) {
-    lineDetail = `Starts ${now.to(head(moments))}`
-  } else if (now.isAfter(last(moments), 'minute')) {
+  if (now.isBefore(head(moments))) {
+    lineDetail = `Starts ${now.clone().seconds(0).to(head(moments))}`
+  } else if (now.isAfter(last(moments))) {
     lineDetail = 'Over for Today'
   } else if (isLastBus) {
     lineDetail = 'Last Bus'
@@ -61,22 +61,31 @@ export function BusLine({line, now}: {line: BusLineType, now: moment}) {
     return (
       <View>
         <ListSectionHeader title={line.line} titleStyle={androidColor} />
-        <ListRow title='This line is not running today.' />
+        <ListRow title="This line is not running today." />
       </View>
     )
   }
 
-  const scheduledMoments: FancyBusTimeListType[] = schedule.times.map(timeset => {
-    return timeset.map(time =>
-      // either pass `false` through or return a parsed time
-      time === false ? false : moment
-        // interpret in Central time
-        .tz(time, TIME_FORMAT, true, TIMEZONE)
-        // and set the date to today
-        .dayOfYear(now.dayOfYear()))
-  })
+  const scheduledMoments: FancyBusTimeListType[] = schedule.times.map(
+    timeset => {
+      return timeset.map(
+        time =>
+          (time === false
+            ? // either pass `false` through or return a parsed time
+              false
+            : moment
+                // interpret in Central time
+                .tz(time, TIME_FORMAT, true, TIMEZONE)
+                // and set the date to today
+                .dayOfYear(now.dayOfYear())),
+      )
+    },
+  )
 
-  const moments: FancyBusTimeListType = getSetOfStopsForNow(scheduledMoments, now)
+  const moments: FancyBusTimeListType = getSetOfStopsForNow(
+    scheduledMoments,
+    now,
+  )
   const pairs: [[string, moment]] = zip(schedule.stops, moments)
 
   const timesIndex = scheduledMoments.indexOf(moments)
@@ -91,25 +100,23 @@ export function BusLine({line, now}: {line: BusLineType, now: moment}) {
         titleStyle={androidColor}
       />
 
-      {pairs.map(([placeTitle, moment], i, list) =>
+      {pairs.map(([placeTitle, moment], i, list) => (
         <View key={i}>
           <BusStopRow
             // get the arrival time for this stop from each bus loop after
             // the current time (as given by `now`)
             times={scheduledMoments.slice(timesIndex).map(set => set[i])}
             place={placeTitle}
-
             now={now}
             time={moment}
-
             barColor={barColor}
             currentStopColor={currentStopColor}
-
             isFirstRow={i === 0}
             isLastRow={i === list.length - 1}
           />
           {i < list.length - 1 ? <Separator style={styles.separator} /> : null}
-        </View>)}
+        </View>
+      ))}
     </View>
   )
 }

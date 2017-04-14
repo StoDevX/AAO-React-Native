@@ -23,8 +23,7 @@ export default class NewsContainer extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchData().then(() =>
-      this.setState({loading: false}))
+    this.fetchData().then(() => this.setState({loading: false}))
   }
 
   props: TopLevelViewPropsType & {
@@ -32,8 +31,8 @@ export default class NewsContainer extends React.Component {
     url: string,
     query?: Object,
     embedFeaturedImage?: boolean,
-    mode: 'rss'|'wp-json',
-  };
+    mode: 'rss' | 'wp-json',
+  }
 
   fetchData = async () => {
     try {
@@ -51,7 +50,11 @@ export default class NewsContainer extends React.Component {
     } catch (error) {
       if (error.message.startsWith('Unexpected token <')) {
         tracker.trackEvent('news', 'St. Olaf WPDefender strikes again')
-        this.setState({error: new Error("Oops. Looks like we've triggered a St. Olaf website defense mechanism. Try again in 5 minutes.")})
+        this.setState({
+          error: new Error(
+            "Oops. Looks like we've triggered a St. Olaf website defense mechanism. Try again in 5 minutes.",
+          ),
+        })
       } else {
         tracker.trackException(error.message)
         console.warn(error)

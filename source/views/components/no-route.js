@@ -1,22 +1,35 @@
+// @flow
 import React from 'react'
-import {View, Text, Navigator} from 'react-native'
+import {View, Text, StyleSheet} from 'react-native'
 import {Touchable} from './touchable'
+import type {TopLevelViewPropsType} from '../types'
+import * as c from './colors'
 
-export default function NoRoute({navigator}) {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'stretch',
+    justifyContent: 'center',
+  },
+  touchable: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    color: c.salmon,
+    fontWeight: 'bold',
+  },
+})
+
+export default function NoRoute({navigator}: TopLevelViewPropsType) {
   return (
-    <View style={{flex: 1, alignItems: 'stretch', justifyContent: 'center'}}>
-      <Touchable
-        style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
-        onPress={() => navigator.pop()}
-      >
-        <Text style={{color: 'red', fontWeight: 'bold'}}>
+    <View style={styles.container}>
+      <Touchable style={styles.touchable} onPress={() => navigator.pop()}>
+        <Text style={styles.text}>
           No Route Found
         </Text>
       </Touchable>
     </View>
   )
-}
-
-NoRoute.propTypes = {
-  navigator: React.PropTypes.instanceOf(Navigator),
 }

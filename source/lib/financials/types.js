@@ -1,11 +1,8 @@
 // @flow
-export type FinancialDataShapeType = {
+export type BalancesShapeType = {
   flex: ?number,
   ole: ?number,
   print: ?number,
-};
-
-export type MealsShapeType = {
   weekly: ?string,
   daily: ?string,
-};
+}

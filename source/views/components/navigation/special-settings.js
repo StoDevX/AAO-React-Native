@@ -5,14 +5,16 @@
 
 import React from 'react'
 import {Navigator, StyleSheet, Platform} from 'react-native'
+import * as c from '../colors'
 import {Touchable} from '../touchable'
 import Icon from 'react-native-vector-icons/Ionicons'
 import type {RouteType} from '../../types'
 
-
-export function OpenSettingsButton(
-  {route, navigator, buttonStyle}: {route: RouteType, navigator: Navigator, buttonStyle?: any}
-) {
+export function OpenSettingsButton({
+  route,
+  navigator,
+  buttonStyle,
+}: {route: RouteType, navigator: Navigator, buttonStyle?: any}) {
   return (
     <Touchable
       borderless
@@ -20,11 +22,10 @@ export function OpenSettingsButton(
       style={[styles.button, buttonStyle]}
       onPress={() => openSettings(route, navigator)}
     >
-      <Icon style={styles.icon} name='ios-settings' />
+      <Icon style={styles.icon} name="ios-settings" />
     </Touchable>
   )
 }
-
 
 let settingsButtonActive = false
 function openSettings(route, navigator) {
@@ -49,7 +50,7 @@ function openSettings(route, navigator) {
 
 const styles = StyleSheet.create({
   icon: {
-    color: 'white',
+    color: c.white,
     fontSize: 24,
   },
   button: {

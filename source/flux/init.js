@@ -13,11 +13,7 @@ import {
   validateLoginCredentials,
   loadFeedbackStatus,
 } from './parts/settings'
-import {
-  updateFinancialData,
-  updateMealsRemaining,
-  updateCourses,
-} from './parts/sis'
+import {updateBalances, updateCourses} from './parts/sis'
 import {FINANCIALS_URL} from '../lib/financials/urls'
 
 function homescreen(store) {
@@ -29,7 +25,7 @@ function feedbackOptOutStatus(store) {
 }
 
 function sisLoginCredentials(store) {
-  loadLoginCredentials().then(({username, password}={}) => {
+  loadLoginCredentials().then(({username, password} = {}) => {
     if (!username || !password) return
 
     let action = setLoginCredentials(username, password)
@@ -37,32 +33,37 @@ function sisLoginCredentials(store) {
   })
 }
 
-function checkSisLogin(store) {
+async function checkSisLogin(store) {
+  const online = await NetInfo.isConnected.fetch()
+  if (!online) {
+    return
+  }
+
   // check if we can log in to the SIS
-  fetch(FINANCIALS_URL).then(r => {
-    if (r.url !== FINANCIALS_URL) {
-      return
-    }
-    const action = logInViaToken(true)
-    store.dispatch(action)
-  })
+  const r = await fetch(FINANCIALS_URL)
+  if (r.url !== FINANCIALS_URL) {
+    return
+  }
+  const action = logInViaToken(true)
+  store.dispatch(action)
 }
 
-function validateOlafCredentials(store) {
-  loadLoginCredentials().then(({username, password}={}) => {
-    const action = validateLoginCredentials(username, password)
-    store.dispatch(action)
-  })
+async function validateOlafCredentials(store) {
+  const online = await NetInfo.isConnected.fetch()
+  if (!online) {
+    return
+  }
+
+  const {username, password} = await loadLoginCredentials()
+  const action = validateLoginCredentials(username, password)
+  store.dispatch(action)
 }
 
 function loadBalances(store) {
-  store.dispatch(updateFinancialData(false, false))
-}
-function loadMeals(store) {
-  store.dispatch(updateMealsRemaining(false, false))
+  store.dispatch(updateBalances(false))
 }
 function loadCourses(store) {
-  store.dispatch(updateCourses(false, false))
+  store.dispatch(updateCourses(false))
 }
 
 function netInfoIsConnected(store) {
@@ -81,7 +82,6 @@ export function init(store: {dispatch: any}) {
   checkSisLogin(store)
   validateOlafCredentials(store)
   loadBalances(store)
-  loadMeals(store)
   loadCourses(store)
   netInfoIsConnected(store)
 }

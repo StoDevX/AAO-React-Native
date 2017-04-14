@@ -11,7 +11,13 @@ import LoadingView from '../components/loading'
 import delay from 'delay'
 import {NoticeView} from '../components/notice'
 import {Row, Column} from '../components/layout'
-import {ListRow, ListSectionHeader, ListSeparator, Detail, Title} from '../components/list'
+import {
+  ListRow,
+  ListSectionHeader,
+  ListSeparator,
+  Detail,
+  Title,
+} from '../components/list'
 import {tracker} from '../../analytics'
 import size from 'lodash/size'
 import map from 'lodash/map'
@@ -30,17 +36,23 @@ const headerHeight = Platform.OS === 'ios' ? 33 : 41
 const styles = StyleSheet.create({
   row: {
     height: rowHeight,
+    paddingRight: 2,
   },
   rowSectionHeader: {
     height: headerHeight,
   },
-  badge: {
+  badgeContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'flex-start',
+    width: leftSideSpacing,
   },
-  badgeIcon: {
-    fontSize: Platform.OS === 'ios' ? 24: 28,
-    color: 'transparent',
+  badge: {
+    fontSize: Platform.OS === 'ios' ? 24 : 28,
+    color: c.transparent,
+  },
+  newOrgBadge: {
+    color: c.infoBlue,
   },
 })
 
@@ -77,9 +89,14 @@ export class StudentOrgsView extends React.Component {
           $groupableName: head(startCase(sortableName)),
         }
       })
+
       let sorted = sortBy(withSortableNames, '$sortableName')
       let grouped = groupBy(sorted, '$groupableName')
-      this.setState({orgs: grouped})
+
+      let newOrgs = sorted.filter(org => org.newOrg)
+      let orgs = {New: newOrgs, ...grouped}
+
+      this.setState({orgs: orgs})
     } catch (error) {
       tracker.trackException(error.message)
       this.setState({error: true})
@@ -113,17 +130,23 @@ export class StudentOrgsView extends React.Component {
     )
   }
 
+  getSectionListTitle = (name: string) => {
+    return name === 'New' ? '•' : name
+  }
+
   renderRow = ({item}: {item: StudentOrgAbridgedType}) => {
     return (
       <ListRow
         onPress={() => this.onPressRow(item)}
-        contentContainerStyle={[styles.row, {paddingRight: 2}]}
-        arrowPosition='none'
+        contentContainerStyle={[styles.row]}
+        arrowPosition="none"
         fullWidth={true}
       >
-        <Row alignItems='flex-start'>
-          <View style={[styles.badge, {width: leftSideSpacing, alignSelf: 'flex-start'}]}>
-            <Text style={[styles.badgeIcon, item.newOrg && {color: c.infoBlue}]}>•</Text>
+        <Row alignItems="flex-start">
+          <View style={styles.badgeContainer}>
+            <Text style={[styles.badge, item.newOrg && styles.newOrgBadge]}>
+              •
+            </Text>
           </View>
 
           <Column flex={1}>
@@ -136,7 +159,12 @@ export class StudentOrgsView extends React.Component {
   }
 
   renderSeparator = (sectionId: string, rowId: string) => {
-    return <ListSeparator key={`${sectionId}-${rowId}`} spacing={{left: leftSideSpacing}} />
+    return (
+      <ListSeparator
+        key={`${sectionId}-${rowId}`}
+        spacing={{left: leftSideSpacing}}
+      />
+    )
   }
 
   onPressRow = (data: StudentOrgAbridgedType) => {
@@ -156,15 +184,19 @@ export class StudentOrgsView extends React.Component {
     }
 
     if (!size(this.state.orgs)) {
-      return <NoticeView text='No organizations found.' />
+      return <NoticeView text="No organizations found." />
     }
 
     return (
       <StyledAlphabetListView
         data={this.state.orgs}
         cell={this.renderRow}
+        getSectionListTitle={this.getSectionListTitle}
         // just setting cellHeight sends the wrong values on iOS.
-        cellHeight={rowHeight + (Platform.OS === 'ios' ? (11/12 * StyleSheet.hairlineWidth) : 0)}
+        cellHeight={
+          rowHeight +
+            (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
+        }
         sectionHeader={this.renderSectionHeader}
         sectionHeaderHeight={headerHeight}
         renderSeparator={this.renderSeparator}

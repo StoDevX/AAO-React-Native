@@ -59,6 +59,7 @@ platform :ios do
     build_number = get_current_build_number(platform: "iOS")
     increment_version_number(version_number: "#{version}.#{build_number}", xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
     increment_build_number(build_number: build_number, xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
+    set_package_data(data: {"version" => "#{version}.#{build_number}"})
 
     # Build the app
     gym
@@ -115,11 +116,11 @@ platform :ios do
   lane :ci_run do
     # I'd like to test, instead of just building, but… Xcode's tests keep
     # failing on us. So, we just build, if we're not deploying.
-    should_deploy = ENV["run_deploy"] == "yes"
-    unless should_deploy
-      build
-    else
+    should_deploy = ENV["run_deploy"] == "1"
+    if should_deploy
       auto_beta
+    else
+      build
     end
   end
 
@@ -138,6 +139,7 @@ platform :android do
 
     set_version_name(version_name: "#{version}.#{build_number}", gradle_path: "android/app/build.gradle")
     set_version_code(version_code: build_number, gradle_path: "./android/app/build.gradle")
+    set_package_data(data: {"version" => "#{version}.#{build_number}"})
 
     gradle(
       task: "assemble",
@@ -174,11 +176,11 @@ platform :android do
 
   desc "Run the appropriate action on CI"
   lane :ci_run do
-    should_deploy = ENV["run_deploy"] == "yes"
-    unless should_deploy
-      build
-    else
+    should_deploy = ENV["run_deploy"] == "1"
+    if should_deploy
       auto_beta
+    else
+      build
     end
   end
 end

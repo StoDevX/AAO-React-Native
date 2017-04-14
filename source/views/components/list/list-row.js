@@ -1,16 +1,20 @@
 // @flow
 import React from 'react'
 import {Platform, StyleSheet, View} from 'react-native'
+import * as c from '../colors'
 import {Touchable} from '../touchable'
 import {DisclosureArrow} from './disclosure-arrow'
 import noop from 'lodash/noop'
 import isNil from 'lodash/isNil'
 
 const styles = StyleSheet.create({
+  childWrapper: {
+    flex: 1,
+  },
   container: {
     flexDirection: 'row',
     paddingLeft: 15,
-    backgroundColor: 'white',
+    backgroundColor: c.white,
     ...Platform.select({
       ios: {
         paddingVertical: 8,
@@ -33,13 +37,13 @@ const styles = StyleSheet.create({
 type PropsType = {
   style?: any,
   contentContainerStyle?: any,
-  arrowPosition?: 'center'|'top'|'none',
+  arrowPosition?: 'center' | 'top' | 'none',
   fullWidth?: boolean,
   fullHeight?: boolean,
   spacing?: {left?: number, right?: number},
   onPress?: () => any,
   children?: any,
-};
+}
 export function ListRow(props: PropsType) {
   const {
     style,
@@ -47,15 +51,17 @@ export function ListRow(props: PropsType) {
     children,
     onPress,
     spacing: {left: leftSpacing = 15, right: rightSpacing = null} = {},
-    fullWidth=false,
-    fullHeight=false,
+    fullWidth = false,
+    fullHeight = false,
   } = props
 
   const Component = onPress ? Touchable : View
   const callback = onPress || noop
 
   const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
-  const arrowPositionStyle = {alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start'}
+  const arrowPositionStyle = {
+    alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start',
+  }
   const arrow = arrowPosition === 'none' || Platform.OS === 'android'
     ? null
     : <DisclosureArrow style={arrowPositionStyle} />
@@ -72,7 +78,7 @@ export function ListRow(props: PropsType) {
       ]}
       onPress={callback}
     >
-      <View style={[{flex: 1}, style]}>
+      <View style={[styles.childWrapper, style]}>
         {children}
       </View>
       {arrow}

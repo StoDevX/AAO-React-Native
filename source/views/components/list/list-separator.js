@@ -12,8 +12,8 @@ const styles = StyleSheet.create({
 type PropsType = {
   styles?: any,
   fullWidth?: boolean,
-  spacing?: {left?: number, right?: number}
-};
+  spacing?: {left?: number, right?: number},
+}
 export function ListSeparator(props: PropsType) {
   if (Platform.OS === 'android') {
     return null

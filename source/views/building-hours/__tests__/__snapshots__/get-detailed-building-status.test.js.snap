@@ -1,74 +1,46 @@
-exports[`test checks a list of schedules to see if any are open 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`handles multiple internal schedules for the same timeframe 1`] = `
 Array [
-  Array [
-    true,
-    "Hours",
-    "10:30am — 2:00am",
-  ],
+  Object {
+    "isActive": false,
+    "label": "Hours",
+    "status": "10:30am — 12:00pm",
+  },
+  Object {
+    "isActive": true,
+    "label": "Hours",
+    "status": "1:00pm — 3:00pm",
+  },
 ]
 `;
 
-exports[`test handles multiple internal schedules for the same timeframe 1`] = `
+exports[`handles multiple named schedules for the same timeframe 1`] = `
 Array [
-  Array [
-    false,
-    "Hours",
-    "10:30am — 12:00pm",
-  ],
-  Array [
-    true,
-    "Hours",
-    "1:00pm — 3:00pm",
-  ],
+  Object {
+    "isActive": false,
+    "label": "Hours",
+    "status": "10:30am — 12:00pm",
+  },
+  Object {
+    "isActive": false,
+    "label": "Hours2",
+    "status": "10:30am — 12:00pm",
+  },
+  Object {
+    "isActive": true,
+    "label": "Hours2",
+    "status": "1:00pm — 3:00pm",
+  },
 ]
 `;
 
-exports[`test handles multiple named schedules for the same timeframe 1`] = `
+exports[`returns false if none are open 1`] = `
 Array [
-  Array [
-    false,
-    "Hours",
-    "10:30am — 12:00pm",
-  ],
-  Array [
-    false,
-    "Hours2",
-    "10:30am — 12:00pm",
-  ],
-  Array [
-    true,
-    "Hours2",
-    "1:00pm — 3:00pm",
-  ],
-]
-`;
-
-exports[`test returns a list of [isOpen, scheduleName, verboseStatus] tuples 1`] = `
-Array [
-  Array [
-    true,
-    "Hours",
-    "10:30am — 2:00am",
-  ],
-]
-`;
-
-exports[`test returns false if none are available for this day 1`] = `
-Array [
-  Array [
-    false,
-    "Hours",
-    "Closed today",
-  ],
-]
-`;
-
-exports[`test returns false if none are open 1`] = `
-Array [
-  Array [
-    false,
-    "Hours",
-    "10:30am — 2:00pm",
-  ],
+  Object {
+    "isActive": false,
+    "label": "Hours",
+    "status": "10:30am — 2:00pm",
+  },
 ]
 `;
