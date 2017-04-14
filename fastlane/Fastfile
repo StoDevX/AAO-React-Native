@@ -49,6 +49,9 @@ platform :ios do
 
   desc "Provisions the profiles; bumps the build number; builds the app"
   lane :build do
+    # make sure we have a copy of the data files
+    bundle_data
+
     # Set up code signing correctly
     # (more information: https://codesigning.guide)
     match(readonly: true)
@@ -134,6 +137,9 @@ end
 platform :android do
   desc "Makes a build"
   lane :build do
+    # make sure we have a copy of the data files
+    bundle_data
+
     version = get_current_bundle_version(platform: "Android")
     build_number = get_current_build_number(platform: "Android")
 
@@ -230,4 +236,8 @@ private_lane :get_current_bundle_version do |options|
   elsif options[:platform] == 'iOS'
     get_info_plist_value(path: "ios/AllAboutOlaf/Info.plist", key: "CFBundleShortVersionString")
   end
+end
+
+lane :bundle_data do |options|
+  sh("npm run bundle-data")
 end
