@@ -10,8 +10,8 @@ platform :ios do
   end
 
   desc "Go rogue"
-  lane :rogue do
-    go_rogue
+  lane :"go-rogue" do
+    activate_rogue_team
   end
 
   desc "Provisions the profiles; bumps the build number; builds the app"
