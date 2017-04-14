@@ -58,3 +58,18 @@ end
 lane :bundle_data do |options|
   sh("npm run bundle-data")
 end
+
+# It doesn't make sense to duplicate this in both platforms, and fastlane is smart
+# enough to call the appropriate platform's "beta" lane.
+desc "Make a beta build if there have been new commits since the last beta"
+private_lane :auto_beta do |options|
+  last_commit = hockeyapp_version_commit(platform: options[:platform])
+  current_commit = last_git_commit[:commit_hash]
+
+  UI.message "In faux-git terms:"
+  UI.message "origin/hockeyapp: #{last_commit}"
+  UI.message "HEAD: #{current_commit}"
+  UI.message "Thus, will we beta? #{last_commit != current_commit ? "yes" : "no"}"
+
+  beta if last_commit != current_commit
+end

@@ -33,24 +33,13 @@ platform :android do
     )
   end
 
-  desc "Make a beta build if there have been new commits since the last beta"
-  lane :auto_beta do
-    last_commit = get_hockeyapp_version_commit(platform: 'Android')
-    current_commit = last_git_commit[:commit_hash]
-    UI.message "In faux-git terms:"
-    UI.message "origin/hockeyapp: #{last_commit}"
-    UI.message "HEAD: #{current_commit}"
-    UI.message "Thus, will we beta? #{last_commit != current_commit}"
-    beta unless last_commit == current_commit
-  end
-
   desc "Run the appropriate action on CI"
   lane :ci_run do
     authorize_ci_for_keys
 
     should_deploy = ENV["run_deploy"] == "1"
     if should_deploy
-      auto_beta
+      auto_beta(platform: "Android")
     else
       build
     end

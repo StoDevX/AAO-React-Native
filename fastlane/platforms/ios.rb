@@ -47,17 +47,6 @@ platform :ios do
     )
   end
 
-  desc "Make a beta build if there have been new commits since the last beta"
-  lane :auto_beta do
-    last_commit = get_hockeyapp_version_commit(platform: 'iOS')
-    current_commit = last_git_commit[:commit_hash]
-    UI.message "In faux-git terms:"
-    UI.message "origin/hockeyapp: #{last_commit}"
-    UI.message "HEAD: #{current_commit}"
-    UI.message "Thus, will we beta? #{last_commit != current_commit}"
-    beta unless last_commit == current_commit
-  end
-
   # Lanes specifically for the CIs
   desc "Do CI-system keychain setup"
   lane :ci_keychains do
@@ -83,7 +72,7 @@ platform :ios do
     # failing on us. So, we just build, if we're not deploying.
     should_deploy = ENV["run_deploy"] == "1"
     if should_deploy
-      auto_beta
+      auto_beta(platform: 'iOS')
     else
       build
     end
