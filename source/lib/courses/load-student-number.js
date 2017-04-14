@@ -12,7 +12,7 @@ import {parseStudentNumberFromDom} from './parse-student-number'
 
 type PromisedDataType = Promise<
   {error: true, value: Error} | {error: false, value: number}
->;
+>
 
 export async function loadStudentNumber({
   force,

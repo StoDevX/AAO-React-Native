@@ -44,7 +44,7 @@ class Webcam extends React.PureComponent {
       thumbnail: string,
       accentColor: [number, number, number],
     },
-  };
+  }
 
   render() {
     const {name, thumbnail, streamUrl, pageUrl, accentColor} = this.props.info
@@ -70,7 +70,7 @@ class StreamThumbnail extends React.PureComponent {
     accentColor: [number, number, number],
     textColor: 'white' | 'black',
     thumbnail: any,
-  };
+  }
 
   handlePress = () => {
     const {url, title, infoUrl} = this.props
@@ -79,7 +79,7 @@ class StreamThumbnail extends React.PureComponent {
     } else {
       trackedOpenUrl({url, id: `${title}WebcamView`})
     }
-  };
+  }
 
   render() {
     const {title, thumbnail, accentColor, textColor} = this.props
@@ -103,7 +103,7 @@ class RoundedThumbnail extends React.PureComponent {
     textColor: 'white' | 'black',
     thumbnail: any,
     title: string,
-  };
+  }
 
   render() {
     const {title, thumbnail, accentColor, textColor} = this.props

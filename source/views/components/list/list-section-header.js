@@ -72,7 +72,7 @@ type PropsType = {
   separator?: string,
   style?: any,
   spacing?: {left?: number, right?: number},
-};
+}
 export function ListSectionHeader(props: PropsType) {
   const {
     style,

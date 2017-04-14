@@ -17,7 +17,7 @@ type PropsType = {
   pathToFilters: string[],
   filters: FilterType[],
   onChange: (x: FilterType[]) => any,
-};
+}
 
 export function FilterViewComponent(props: PropsType) {
   const onFilterChanged = (filter: FilterType) => {

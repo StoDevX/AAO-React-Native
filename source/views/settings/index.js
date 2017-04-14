@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   },
 })
 
-type SettingsViewPropsType = TopLevelViewPropsType;
+type SettingsViewPropsType = TopLevelViewPropsType
 
 export default function SettingsView(props: SettingsViewPropsType) {
   return (

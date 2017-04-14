@@ -25,18 +25,18 @@ const styles = StyleSheet.create({
 export default class TabbedView extends React.Component {
   state = {
     index: 0,
-  };
+  }
 
   componentWillMount() {
     this._handleChangeTab(0)
   }
 
-  props: TabbedViewPropsType;
+  props: TabbedViewPropsType
 
   _handleChangeTab = index => {
     tracker.trackScreenView(this.props.tabs[index].id)
     this.setState({index})
-  };
+  }
 
   _renderHeader = props => {
     return (
@@ -50,7 +50,7 @@ export default class TabbedView extends React.Component {
         labelStyle={styles.label}
       />
     )
-  };
+  }
 
   _renderScene = ({route}) => {
     const thisTabIndex = this.props.tabs.findIndex(tab => tab.id === route.id)
@@ -59,7 +59,7 @@ export default class TabbedView extends React.Component {
     }
 
     return route.component()
-  };
+  }
 
   render() {
     // see react-native-tab-view's readme for the rationale

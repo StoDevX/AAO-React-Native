@@ -8,7 +8,7 @@ import {Section} from 'react-native-tableview-simple'
 type PropsType = {
   filter: PickerType,
   onChange: (filter: PickerType) => any,
-};
+}
 
 export function PickerSection({filter, onChange}: PropsType) {
   const {spec} = filter

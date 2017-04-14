@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
 })
 
 export class CarletonMenuPicker extends React.Component {
-  props: TopLevelViewPropsType;
+  props: TopLevelViewPropsType
 
   onPressRow = (data: CarletonDetailMenuType) => {
     this.props.navigator.push({
@@ -75,7 +75,7 @@ export class CarletonMenuPicker extends React.Component {
         cafeId: data.props.cafeId,
       },
     })
-  };
+  }
 
   render() {
     if (!carleton) {

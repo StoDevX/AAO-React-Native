@@ -40,7 +40,7 @@ export class BuildingHoursView extends React.Component {
     now: moment.tz(CENTRAL_TZ),
     buildings: groupBuildings(fallbackBuildingHours),
     intervalId: 0,
-  };
+  }
 
   componentWillMount() {
     this.fetchData()
@@ -54,11 +54,11 @@ export class BuildingHoursView extends React.Component {
     clearTimeout(this.state.intervalId)
   }
 
-  props: TopLevelViewPropsType;
+  props: TopLevelViewPropsType
 
   updateTime = () => {
     this.setState({now: moment.tz(CENTRAL_TZ)})
-  };
+  }
 
   fetchData = async () => {
     this.setState({loading: true})
@@ -83,7 +83,7 @@ export class BuildingHoursView extends React.Component {
       buildings: groupBuildings(buildings),
       now: moment.tz(CENTRAL_TZ),
     })
-  };
+  }
 
   render() {
     if (this.state.error) {

@@ -9,7 +9,7 @@ type PropsType = {
   textColor?: string,
   style?: Number | Object | Array<Number | Object>,
   textStyle?: Number | Object | Array<Number | Object>,
-};
+}
 
 let styles = StyleSheet.create({
   accessoryBadge: {

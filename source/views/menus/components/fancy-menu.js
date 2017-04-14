@@ -35,7 +35,7 @@ type FancyMenuPropsType = TopLevelViewPropsType & {
   meals: ProcessedMealType[],
   menuCorIcons: MasterCorIconMapType,
   onFiltersChange: (f: FilterType[]) => any,
-};
+}
 
 const leftSideSpacing = 28
 const styles = StyleSheet.create({
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
 class FancyMenuView extends React.Component {
   static defaultProps = {
     applyFilters: applyFiltersToItem,
-  };
+  }
 
   componentWillMount() {
     let {foodItems, menuCorIcons, filters, meals, now} = this.props
@@ -67,7 +67,7 @@ class FancyMenuView extends React.Component {
     )
   }
 
-  props: FancyMenuPropsType;
+  props: FancyMenuPropsType
 
   openFilterView = () => {
     this.props.navigator.push({
@@ -81,7 +81,7 @@ class FancyMenuView extends React.Component {
         onChange: filters => this.props.onFiltersChange(filters),
       },
     })
-  };
+  }
 
   renderSectionHeader = (sectionData: MenuItemType[], sectionName: string) => {
     const {filters, now, meals} = this.props
@@ -96,7 +96,7 @@ class FancyMenuView extends React.Component {
         spacing={{left: leftSideSpacing}}
       />
     )
-  };
+  }
 
   renderSeparator = (sectionId: string, rowId: string) => {
     return (
@@ -106,7 +106,7 @@ class FancyMenuView extends React.Component {
         style={styles.separator}
       />
     )
-  };
+  }
 
   render() {
     const {applyFilters, filters, foodItems, now, meals} = this.props

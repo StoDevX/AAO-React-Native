@@ -16,7 +16,7 @@ import sortBy from 'lodash/sortBy'
 import {data as chapelData} from '../../../docs/chapel.json'
 const {chapelSchedule} = chapelData
 
-type HourPairType = {open: momentT, close: momentT};
+type HourPairType = {open: momentT, close: momentT}
 
 export function parseHours(
   {from: fromTime, to: toTime}: SingleBuildingScheduleType,

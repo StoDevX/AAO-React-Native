@@ -14,7 +14,7 @@ type PropsType = {
   children?: any,
   borderless?: boolean,
   style?: any,
-};
+}
 export const Touchable = ({
   children,
   style,

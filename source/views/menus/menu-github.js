@@ -38,7 +38,7 @@ export class GitHubHostedMenu extends React.Component {
     foodItems: {},
     corIcons: {},
     meals: [],
-  };
+  }
 
   componentWillMount() {
     this.fetchData()
@@ -47,7 +47,7 @@ export class GitHubHostedMenu extends React.Component {
   props: TopLevelViewPropsType & {
     name: string,
     loadingMessage: string[],
-  };
+  }
 
   fetchData = async () => {
     this.setState({loading: true})
@@ -99,7 +99,7 @@ export class GitHubHostedMenu extends React.Component {
       ],
       now: moment.tz(CENTRAL_TZ),
     })
-  };
+  }
 
   render() {
     if (this.state.loading) {

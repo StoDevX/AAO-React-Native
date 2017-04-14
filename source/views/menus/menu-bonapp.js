@@ -37,7 +37,7 @@ type BonAppPropsType = TopLevelViewPropsType & {
   ignoreProvidedMenus?: boolean,
   loadingMessage: string[],
   name: string,
-};
+}
 
 export class BonAppHostedMenu extends React.Component {
   state: {
@@ -52,7 +52,7 @@ export class BonAppHostedMenu extends React.Component {
     now: moment.tz(CENTRAL_TZ),
     cafeMenu: null,
     cafeInfo: null,
-  };
+  }
 
   componentWillMount() {
     this.fetchData(this.props)
@@ -62,7 +62,7 @@ export class BonAppHostedMenu extends React.Component {
     this.props.cafeId !== newProps.cafeId && this.fetchData(newProps)
   }
 
-  props: BonAppPropsType;
+  props: BonAppPropsType
 
   fetchData = async (props: BonAppPropsType) => {
     this.setState({loading: true})
@@ -88,7 +88,7 @@ export class BonAppHostedMenu extends React.Component {
       cafeInfo,
       now: moment.tz(CENTRAL_TZ),
     })
-  };
+  }
 
   findCafeMessage = (
     cafeId: string,
@@ -109,7 +109,7 @@ export class BonAppHostedMenu extends React.Component {
     }
 
     return null
-  };
+  }
 
   prepareSingleMenu(
     mealInfo: DayPartMenuType,

@@ -39,7 +39,7 @@ export class DictionaryView extends React.Component {
   static propTypes = {
     navigator: React.PropTypes.object.isRequired,
     route: React.PropTypes.object.isRequired,
-  };
+  }
 
   onPressRow = (data: WordType) => {
     tracker.trackEvent('dictionary', data.word)
@@ -50,7 +50,7 @@ export class DictionaryView extends React.Component {
       backButtonTitle: 'Dictionary',
       props: {item: data},
     })
-  };
+  }
 
   renderRow = ({item}: {item: WordType}) => {
     return (
@@ -67,15 +67,15 @@ export class DictionaryView extends React.Component {
         </Column>
       </ListRow>
     )
-  };
+  }
 
   renderHeader = ({title}: {title: string}) => {
     return <ListSectionHeader title={title} style={styles.rowSectionHeader} />
-  };
+  }
 
   renderSeparator = (sectionId: string, rowId: string) => {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
-  };
+  }
 
   render() {
     return (

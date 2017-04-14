@@ -11,18 +11,18 @@ import * as c from '../../components/colors'
 export default class TabbedView extends React.Component {
   state = {
     selectedTab: this.props.tabs[0].id,
-  };
+  }
 
   componentWillMount() {
     this.onChangeTab(this.props.tabs[0].id)
   }
 
-  props: TabbedViewPropsType;
+  props: TabbedViewPropsType
 
   onChangeTab = (tabId: string) => {
     tracker.trackScreenView(tabId)
     this.setState({selectedTab: tabId})
-  };
+  }
 
   render() {
     let {tabs} = this.props
@@ -49,11 +49,11 @@ class TabBarItem extends React.PureComponent {
     isSelected: boolean,
     onChangeTab: (id: string) => any,
     tab: TabDefinitionType,
-  };
+  }
 
   onChange = () => {
     this.props.onChangeTab(this.props.tab.id)
-  };
+  }
 
   render() {
     const {isSelected, tab} = this.props

@@ -7,7 +7,7 @@ type PropsType = {
   label: string,
   value: boolean,
   onChange: (val: boolean) => any,
-};
+}
 
 export function CellToggle({value, onChange, label}: PropsType) {
   return (

@@ -15,11 +15,11 @@ export default class SupportSection extends React.Component {
       ${DeviceInfo.getReadableVersion()}
       Codepush: ${version}
     `
-  };
+  }
 
   getSupportBody = () => {
     return '\n' + this.getDeviceInfo()
-  };
+  }
 
   openEmail = () => {
     Communications.email(
@@ -29,7 +29,7 @@ export default class SupportSection extends React.Component {
       'Support: All About Olaf',
       this.getSupportBody(),
     )
-  };
+  }
 
   render() {
     return (

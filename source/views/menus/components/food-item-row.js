@@ -18,7 +18,7 @@ type FoodItemPropsType = {|
   style?: any,
   badgeSpecials?: boolean,
   spacing: {left: number},
-|};
+|}
 
 export function FoodItemRow({
   data,

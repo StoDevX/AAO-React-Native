@@ -41,7 +41,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
     loaded: boolean,
     base: StudentOrgAbridgedType,
     full: ?StudentOrgInfoType,
-  };
+  }
 
   displayContact(contactInfo: string) {
     return (
@@ -109,7 +109,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
         {description ? this.displayDescription(description) : null}
       </View>
     )
-  };
+  }
 
   render() {
     let knownData = this.props.base

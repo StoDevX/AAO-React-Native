@@ -10,13 +10,13 @@ export type RouteType = {
   onRightButton?: () => any,
   onDismiss?: (r: RouteType, n: Navigator) => any,
   sceneConfig?: Object | 'fromBottom' | string,
-};
+}
 
 export type NavStateType = {
   routeStack: RouteType[],
-};
+}
 
 export type TopLevelViewPropsType = {
   navigator: Navigator,
   route: RouteType,
-};
+}

@@ -47,7 +47,7 @@ type PropsType = {
   name: string,
   now: momentT,
   onPress: () => any,
-};
+}
 
 export function BuildingRow({info, name, now, onPress}: PropsType) {
   let bgColors = {

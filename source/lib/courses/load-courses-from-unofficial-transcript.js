@@ -12,7 +12,7 @@ import {GRADES_PAGE, LANDING_PAGE} from './urls'
 import {parseCoursesFromDom} from './parse-courses'
 import type {CourseCollectionType} from './types'
 
-type PromisedDataType = Promise<CourseCollectionType>;
+type PromisedDataType = Promise<CourseCollectionType>
 
 export async function loadCoursesFromUnofficialTranscript({
   stnum,

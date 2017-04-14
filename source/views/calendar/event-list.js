@@ -23,7 +23,7 @@ export class EventList extends React.Component {
     refreshing: boolean,
     onRefresh: () => any,
     now: moment,
-  };
+  }
 
   groupEvents = (
     events: EventType[],
@@ -38,18 +38,18 @@ export class EventList extends React.Component {
       }
       return event.startTime.format('ddd  MMM Do') // google returns events in CST
     })
-  };
+  }
 
   renderSectionHeader = (
     sectionData: EventType[],
     sectionIdentifier: string,
   ) => {
     return <ListSectionHeader title={sectionIdentifier} spacing={{left: 10}} />
-  };
+  }
 
   renderSeparator = (sectionID: any, rowID: any) => {
     return <ListSeparator fullWidth={true} key={`${sectionID}-${rowID}`} />
-  };
+  }
 
   render() {
     if (this.props.message) {
