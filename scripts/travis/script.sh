@@ -40,13 +40,9 @@ if [[ $JS ]]; then
   echo "npm run validate-data"
   npm run validate-data -- --quiet | tee logs/validate-data
 
-  # Ensure that the data files have been updated
+  # Update the data files
   echo "npm run bundle-data"
   npm run bundle-data
-  if ! git diff --quiet docs/; then
-    git diff docs/ > logs/bundle-data
-    # commit-on-travis "update docs" docs/
-  fi
 
   # Type check
   echo "npm run flow"
