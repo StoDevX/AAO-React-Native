@@ -49,7 +49,7 @@ platform :ios do
 
   # Lanes specifically for the CIs
   desc "Do CI-system keychain setup"
-  lane :ci_keychains do
+  private_lane :ci_keychains do
     keychain = ENV["MATCH_KEYCHAIN_NAME"]
     password = ENV["MATCH_KEYCHAIN_PASSWORD"]
 
@@ -65,8 +65,9 @@ platform :ios do
   end
 
   desc "Run iOS builds or tests, as appropriate"
-  lane :ci_run do
+  lane :"ci-run" do
     authorize_ci_for_keys
+    ci_keychains
 
     # I'd like to test, instead of just building, but… Xcode's tests keep
     # failing on us. So, we just build, if we're not deploying.
@@ -79,7 +80,7 @@ platform :ios do
   end
 
   desc "In case match needs to be updated - probably never needs to be run"
-  lane :update_match do
+  lane :"update-match" do
     match(readonly: false)
   end
 end

@@ -65,10 +65,10 @@ fi
 
 
 if [[ $IOS ]]; then
-  bundle exec fastlane ios ci_run
+  bundle exec fastlane ios ci-run
 fi
 
 
 if [[ $ANDROID ]]; then
-  bundle exec fastlane android ci_run
+  bundle exec fastlane android ci-run
 fi
