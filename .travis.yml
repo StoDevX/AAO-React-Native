@@ -114,6 +114,14 @@ script:
 after_success:
   - bash scripts/travis/after_success.sh
 
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_PAGES_TOKEN
+  local_dir: docs/
+  on:
+    branch: master
+
 before_cache:
   - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"
   - rm -rf "$TMPDIR/jest_preprocess_cache"
