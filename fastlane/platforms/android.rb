@@ -8,7 +8,7 @@ platform :android do
     build_number = get_current_build_number(platform: "Android")
 
     set_version_name(version_name: "#{version}.#{build_number}", gradle_path: "android/app/build.gradle")
-    set_version_code(version_code: build_number, gradle_path: "./android/app/build.gradle")
+    set_gradle_version_code(version_code: build_number, gradle_path: "./android/app/build.gradle")
     set_package_data(data: {"version" => "#{version}.#{build_number}"})
 
     gradle(

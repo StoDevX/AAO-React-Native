@@ -1,6 +1,6 @@
 module Fastlane
   module Actions
-    class GetVersionNameAction < Action
+    class GetGradleVersionNameAction < Action
       def self.run(params)
         gradle_path = params[:gradle_path]
         version_name = nil
@@ -8,7 +8,7 @@ module Fastlane
         File.foreach(gradle_path) do |line|
           if line.include? "versionName "
             components = line.strip.split(" ")
-            version_name = components[1].tr("\"","")
+            version_name = components[1].tr("\"", "")
           end
         end
 
@@ -32,7 +32,6 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :gradle_path,
-                                  env_name: "GETVERSIONNAME_GRADLE_PATH",
                                description: "The path to the build.gradle file",
                                       type: String),
         ]

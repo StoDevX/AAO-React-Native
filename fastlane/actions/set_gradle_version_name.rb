@@ -3,7 +3,7 @@ require "fileutils"
 
 module Fastlane
   module Actions
-    class SetVersionNameAction < Action
+    class SetGradleVersionNameAction < Action
       def self.run(params)
         gradle_path = params[:gradle_path]
 
@@ -45,11 +45,9 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :gradle_path,
-                                  env_name: "SETVERSIONNAME_GRADLE_PATH",
                                description: "The path to the build.gradle file",
                                       type: String),
           FastlaneCore::ConfigItem.new(key: :version_name,
-                                  env_name: "SETVERSIONNAME_VERSION_NAME",
                                description: "The version to change to",
                                       type: String)
         ]
