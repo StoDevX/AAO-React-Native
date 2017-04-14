@@ -1,6 +1,6 @@
 module Fastlane
   module Actions
-    class ParsedLatestHockeyappNotesAction < Action
+    class LatestHockeyappNotesAction < Action
       def self.run(params)
         require 'hockeyapp'
 
@@ -20,9 +20,9 @@ module Fastlane
         changelog = lines.drop(2).join "\n"
 
         data = {
-          :branch => branch,
-          :commit_hash => commit_hash,
-          :changelog => changelog,
+          branch: branch,
+          commit_hash: commit_hash,
+          changelog: changelog,
         }
 
         UI.message "Last build branch: #{data[:branch]}"
@@ -43,25 +43,16 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :app_name,
-                                       env_name: "FL_LATEST_HOCKEYAPP_VERSION_NUMBER_APP_NAME",
                                        description: "The app name to use when fetching the version number",
-                                       optional: false,
-                                       verify_block: proc do |value|
-                                         UI.user_error!("No App Name for LatestHockeyappVersionNumberAction given, pass using `app_name: 'name'`") unless value and !value.empty?
-                                       end),
+                                       optional: false),
           FastlaneCore::ConfigItem.new(key: :api_token,
-                                       env_name: "FL_HOCKEY_API_TOKEN",
+                                       env_name: "HOCKEYAPP_TOKEN",
                                        description: "API Token for Hockey Access",
-                                       optional: false,
-                                       verify_block: proc do |value|
-                                         UI.user_error!("No API token for LatestHockeyappVersionNumberAction given, pass using `api_token: 'token'`") unless value and !value.empty?
-                                       end),
+                                       optional: false),
           FastlaneCore::ConfigItem.new(key: :release_type,
-                                       env_name: "FL_LATEST_HOCKEYAPP_VERSION_NUMBER_RELEASE_TYPE",
                                        description: "The release type to use when fetching the version number: Beta=0, Store=1, Alpha=2, Enterprise=3",
                                        default_value: "0"),
           FastlaneCore::ConfigItem.new(key: :platform,
-                                       env_name: "FL_LATEST_HOCKEYAPP_VERSION_NUMBER_PLATFORM",
                                        description: "The platform to use when fetching the version number: iOS, Android, Mac OS, Windows Phone, Custom",
                                        default_value: "iOS")
         ]

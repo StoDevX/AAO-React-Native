@@ -10,8 +10,8 @@ platform :ios do
   end
 
   desc "Go rogue"
-  lane :rogue do
-    go_rogue
+  lane :"go-rogue" do
+    activate_rogue_team
   end
 
   desc "Provisions the profiles; bumps the build number; builds the app"
@@ -29,7 +29,7 @@ platform :ios do
     build_number = get_current_build_number(platform: "iOS")
     increment_version_number(version_number: "#{version}.#{build_number}", xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
     increment_build_number(build_number: build_number, xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
-    set_package_data(data: {"version" => "#{version}.#{build_number}"})
+    set_package_data(data: {"version": "#{version}.#{build_number}"})
 
     # Build the app
     gym
@@ -47,29 +47,11 @@ platform :ios do
     )
   end
 
-  desc "Make a beta build if there have been new commits since the last beta"
-  lane :auto_beta do
-    last_commit = get_hockeyapp_version_commit(platform: 'iOS')
-    current_commit = last_git_commit[:commit_hash]
-    UI.message "In faux-git terms:"
-    UI.message "origin/hockeyapp: #{last_commit}"
-    UI.message "HEAD: #{current_commit}"
-    UI.message "Thus, will we beta? #{last_commit != current_commit}"
-    beta unless last_commit == current_commit
-  end
-
   # Lanes specifically for the CIs
   desc "Do CI-system keychain setup"
-  lane :ci_keychains do
-    token = ENV["CI_USER_TOKEN"]
+  private_lane :ci_keychains do
     keychain = ENV["MATCH_KEYCHAIN_NAME"]
     password = ENV["MATCH_KEYCHAIN_PASSWORD"]
-
-    # see macoscope.com/blog/simplify-your-life-with-fastlane-match
-    # we're allowing the CI access to the keys repo
-    File.open("#{ENV['HOME']}/.netrc", "a+") do |file|
-      file << "machine github.com\n  login #{token}"
-    end
 
     create_keychain(
       name: keychain,
@@ -83,19 +65,22 @@ platform :ios do
   end
 
   desc "Run iOS builds or tests, as appropriate"
-  lane :ci_run do
+  lane :"ci-run" do
+    authorize_ci_for_keys
+    ci_keychains
+
     # I'd like to test, instead of just building, but… Xcode's tests keep
     # failing on us. So, we just build, if we're not deploying.
     should_deploy = ENV["run_deploy"] == "1"
     if should_deploy
-      auto_beta
+      auto_beta(platform: 'iOS')
     else
       build
     end
   end
 
   desc "In case match needs to be updated - probably never needs to be run"
-  lane :update_match do
+  lane :"update-match" do
     match(readonly: false)
   end
 end

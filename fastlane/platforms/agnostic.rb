@@ -17,7 +17,7 @@ lane :bump do |options|
   # update iOS version
   increment_version_number(version_number: version, xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
   # update Android version
-  set_version_name(version_name: version, gradle_path: "android/app/build.gradle")
+  set_gradle_version_name(version_name: version, gradle_path: "android/app/build.gradle")
   # update package.json version
-  set_package_data(data: {"version" => version})
+  set_package_data(data: {"version": version})
 end
