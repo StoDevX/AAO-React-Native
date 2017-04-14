@@ -61,15 +61,8 @@ platform :ios do
   # Lanes specifically for the CIs
   desc "Do CI-system keychain setup"
   lane :ci_keychains do
-    token = ENV["CI_USER_TOKEN"]
     keychain = ENV["MATCH_KEYCHAIN_NAME"]
     password = ENV["MATCH_KEYCHAIN_PASSWORD"]
-
-    # see macoscope.com/blog/simplify-your-life-with-fastlane-match
-    # we're allowing the CI access to the keys repo
-    File.open("#{ENV['HOME']}/.netrc", "a+") do |file|
-      file << "machine github.com\n  login #{token}"
-    end
 
     create_keychain(
       name: keychain,
@@ -84,6 +77,8 @@ platform :ios do
 
   desc "Run iOS builds or tests, as appropriate"
   lane :ci_run do
+    authorize_ci_for_keys
+
     # I'd like to test, instead of just building, but… Xcode's tests keep
     # failing on us. So, we just build, if we're not deploying.
     should_deploy = ENV["run_deploy"] == "1"

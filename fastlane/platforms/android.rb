@@ -46,6 +46,8 @@ platform :android do
 
   desc "Run the appropriate action on CI"
   lane :ci_run do
+    authorize_ci_for_keys
+
     should_deploy = ENV["run_deploy"] == "1"
     if should_deploy
       auto_beta

@@ -1,3 +1,13 @@
+desc "Add the github token for stodevx-bot to the CI machine"
+lane :authorize_ci_for_keys do
+  token = ENV["CI_USER_TOKEN"]
+
+  # see macoscope.com/blog/simplify-your-life-with-fastlane-match
+  # we're allowing the CI access to the keys repo
+  File.open("#{ENV['HOME']}/.netrc", "a+") do |file|
+    file << "machine github.com\n  login #{token}"
+  end
+end
 
 desc "Get the hockeyapp version"
 private_lane :get_hockeyapp_version do |options|
