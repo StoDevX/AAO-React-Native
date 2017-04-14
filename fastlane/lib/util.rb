@@ -10,7 +10,7 @@ end
 
 desc "Get the commit of the latest build on HockeyApp"
 private_lane :get_hockeyapp_version_commit do |options|
-  parsed_latest_hockeyapp_notes(
+  latest_hockeyapp_notes(
     api_token: ENV["HOCKEYAPP_TOKEN"],
     app_name: "All About Olaf",
     platform: options[:platform],
