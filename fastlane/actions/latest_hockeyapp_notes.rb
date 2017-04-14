@@ -20,9 +20,9 @@ module Fastlane
         changelog = lines.drop(2).join "\n"
 
         data = {
-          :branch => branch,
-          :commit_hash => commit_hash,
-          :changelog => changelog,
+          branch: branch,
+          commit_hash: commit_hash,
+          changelog: changelog,
         }
 
         UI.message "Last build branch: #{data[:branch]}"

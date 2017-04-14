@@ -29,7 +29,7 @@ platform :ios do
     build_number = get_current_build_number(platform: "iOS")
     increment_version_number(version_number: "#{version}.#{build_number}", xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
     increment_build_number(build_number: build_number, xcodeproj: "./ios/AllAboutOlaf.xcodeproj")
-    set_package_data(data: {"version" => "#{version}.#{build_number}"})
+    set_package_data(data: {"version": "#{version}.#{build_number}"})
 
     # Build the app
     gym
