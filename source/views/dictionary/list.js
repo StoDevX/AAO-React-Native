@@ -4,7 +4,7 @@
  * Dictionary page
  */
 import React from 'react'
-import {StyleSheet, Platform} from 'react-native'
+import {StyleSheet, View, Platform} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
 import {Column} from '../components/layout'
 import {
@@ -14,16 +14,32 @@ import {
   ListSectionHeader,
   ListSeparator,
 } from '../components/list'
+import LoadingView from '../components/loading'
 import type {WordType} from './types'
 import {tracker} from '../../analytics'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import {data as terms} from '../../../docs/dictionary.json'
+import * as c from '../components/colors'
+import Icon from 'react-native-vector-icons/Ionicons'
+import SearchBar from 'react-native-searchbar'
 
 const rowHeight = Platform.OS === 'ios' ? 76 : 89
 const headerHeight = Platform.OS === 'ios' ? 33 : 41
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
+  alphabetList: {
+    paddingTop: 52,
+  },
+  closeIcon: {
+    color: c.iosDisabledText,
+    marginTop: -12,
+    fontSize: 47,
+    fontWeight: '800',
+  },
   row: {
     height: rowHeight,
   },
@@ -39,6 +55,12 @@ export class DictionaryView extends React.Component {
   static propTypes = {
     navigator: React.PropTypes.object.isRequired,
     route: React.PropTypes.object.isRequired,
+  }
+
+  state: {
+    results: {[key: string]: Object},
+  } = {
+    results: terms,
   }
 
   onPressRow = (data: WordType) => {
@@ -77,21 +99,44 @@ export class DictionaryView extends React.Component {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
   }
 
+  handleResults = (results: Object) => {
+    this.setState({results: results})
+  }
+
   render() {
+    if (!terms) {
+      return <LoadingView />
+    }
+
     return (
-      <StyledAlphabetListView
-        data={groupBy(terms, item => head(item.word))}
-        cell={this.renderRow}
-        // just setting cellHeight sends the wrong values on iOS.
-        cellHeight={
-          rowHeight +
-            (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
-        }
-        sectionHeader={this.renderHeader}
-        sectionHeaderHeight={headerHeight}
-        showsVerticalScrollIndicator={false}
-        renderSeparator={this.renderSeparator}
-      />
+      <View style={styles.wrapper}>
+        <SearchBar
+          ref={(ref) => this.searchBar = ref}
+          data={terms}
+          handleResults={(results) => this.handleResults(results)}
+          closeButton={<Icon style={styles.closeIcon} name="ios-close" />}
+          showOnLoad={true}
+          hideBack={true}
+          allDataOnEmptySearch={true}
+          autoCorrect={false}
+          focusOnLayout={true}
+          iOSPadding={false}
+        />
+        <StyledAlphabetListView
+          data={groupBy(this.state.results, item => head(item.word))}
+          style={styles.alphabetList}
+          cell={this.renderRow}
+          // just setting cellHeight sends the wrong values on iOS.
+          cellHeight={
+            rowHeight +
+              (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
+          }
+          sectionHeader={this.renderHeader}
+          sectionHeaderHeight={headerHeight}
+          showsVerticalScrollIndicator={false}
+          renderSeparator={this.renderSeparator}
+        />
+      </View>
     )
   }
 }

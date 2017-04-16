@@ -26,6 +26,8 @@ import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
 import startCase from 'lodash/startCase'
+import Icon from 'react-native-vector-icons/Ionicons'
+import SearchBar from 'react-native-searchbar'
 import type {StudentOrgAbridgedType} from './types'
 
 const orgsUrl = 'https://api.presence.io/stolaf/v1/organizations'
@@ -34,6 +36,18 @@ const rowHeight = Platform.OS === 'ios' ? 58 : 74
 const headerHeight = Platform.OS === 'ios' ? 33 : 41
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
+  alphabetList: {
+    paddingTop: 52,
+  },
+  closeIcon: {
+    color: c.iosDisabledText,
+    marginTop: -12,
+    fontSize: 47,
+    fontWeight: '800',
+  },
   row: {
     height: rowHeight,
     paddingRight: 2,
@@ -64,11 +78,15 @@ export class StudentOrgsView extends React.Component {
 
   state: {
     orgs: {[key: string]: StudentOrgAbridgedType[]},
+    justOrgs: Array<StudentOrgAbridgedType>,
+    results: Array<StudentOrgAbridgedType>,
     refreshing: boolean,
     error: boolean,
     loaded: boolean,
   } = {
     orgs: {},
+    justOrgs: [],
+    results: [],
     refreshing: false,
     loaded: false,
     error: false,
@@ -97,6 +115,8 @@ export class StudentOrgsView extends React.Component {
       let orgs = {New: newOrgs, ...grouped}
 
       this.setState({orgs: orgs})
+      this.setState({justOrgs: responseData})
+      this.setState({results: responseData})
     } catch (error) {
       tracker.trackException(error.message)
       this.setState({error: true})
@@ -178,6 +198,10 @@ export class StudentOrgsView extends React.Component {
     })
   }
 
+  handleResults = (results: Object) => {
+    this.setState({results: results})
+  }
+
   render() {
     if (!this.state.loaded) {
       return <LoadingView />
@@ -186,22 +210,36 @@ export class StudentOrgsView extends React.Component {
     if (!size(this.state.orgs)) {
       return <NoticeView text="No organizations found." />
     }
-
     return (
-      <StyledAlphabetListView
-        data={this.state.orgs}
-        cell={this.renderRow}
-        getSectionListTitle={this.getSectionListTitle}
-        // just setting cellHeight sends the wrong values on iOS.
-        cellHeight={
-          rowHeight +
-            (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
-        }
-        sectionHeader={this.renderSectionHeader}
-        sectionHeaderHeight={headerHeight}
-        renderSeparator={this.renderSeparator}
-        showsVerticalScrollIndicator={false}
-      />
+      <View style={styles.wrapper}>
+        <SearchBar
+          ref={(ref) => this.searchBar = ref}
+          data={this.state.justOrgs}
+          handleResults={(results) => this.handleResults(results)}
+          closeButton={<Icon style={styles.closeIcon} name="ios-close" />}
+          showOnLoad={true}
+          hideBack={true}
+          allDataOnEmptySearch={true}
+          autoCorrect={false}
+          focusOnLayout={true}
+          iOSPadding={false}
+        />
+        <StyledAlphabetListView
+          data={groupBy(this.state.results, item => head(item.name))}
+          style={styles.alphabetList}
+          cell={this.renderRow}
+          getSectionListTitle={this.getSectionListTitle}
+          // just setting cellHeight sends the wrong values on iOS.
+          cellHeight={
+            rowHeight +
+              (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
+          }
+          sectionHeader={this.renderSectionHeader}
+          sectionHeaderHeight={headerHeight}
+          renderSeparator={this.renderSeparator}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
     )
   }
 }
