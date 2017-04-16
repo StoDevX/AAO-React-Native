@@ -78,8 +78,8 @@ export class StudentOrgsView extends React.Component {
 
   state: {
     orgs: {[key: string]: StudentOrgAbridgedType[]},
-    justOrgs: Array<StudentOrgAbridgedType>,
-    results: Array<StudentOrgAbridgedType>,
+    justOrgs: StudentOrgAbridgedType[],
+    results: StudentOrgAbridgedType[],
     refreshing: boolean,
     error: boolean,
     loaded: boolean,
@@ -198,7 +198,7 @@ export class StudentOrgsView extends React.Component {
     })
   }
 
-  handleResults = (results: Object) => {
+  handleResults = (results: StudentOrgAbridgedType[]) => {
     this.setState({results: results})
   }
 
@@ -213,7 +213,6 @@ export class StudentOrgsView extends React.Component {
     return (
       <View style={styles.wrapper}>
         <SearchBar
-          ref={(ref) => this.searchBar = ref}
           data={this.state.justOrgs}
           handleResults={(results) => this.handleResults(results)}
           closeButton={<Icon style={styles.closeIcon} name="ios-close" />}
