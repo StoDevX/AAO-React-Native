@@ -1,5 +1,5 @@
 desc "Add the github token for stodevx-bot to the CI machine"
-lane :authorize_ci_for_keys do
+private_lane :authorize_ci_for_keys do
   token = ENV["CI_USER_TOKEN"]
 
   # see macoscope.com/blog/simplify-your-life-with-fastlane-match
