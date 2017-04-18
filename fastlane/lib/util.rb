@@ -55,7 +55,10 @@ def make_changelog(options)
   to_ref = ENV['TRAVIS_COMMIT'] || 'HEAD'
   from_ref = get_hockeyapp_version_commit(platform: options[:platform]) || 'HEAD~3'
 
-  sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n' | sed 's/^/    /'")
+  sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n'")
+    .lines
+    .map { |line| '    ' + line }
+    .join
 end
 
 # It doesn't make sense to duplicate this in both platforms, and fastlane is
