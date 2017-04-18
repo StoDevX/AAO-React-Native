@@ -27,7 +27,13 @@ end
 
 # Gets the version, either from Travis or from Hockey
 def get_current_build_number(options)
-  ENV['TRAVIS_BUILD_NUMBER'] || get_hockeyapp_version(platform: options[:platform]) + 1
+  ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
+
+  begin
+    get_hockeyapp_version(platform: options[:platform]) + 1
+  rescue
+    1
+  end
 end
 
 # Get the current "app bundle" version
