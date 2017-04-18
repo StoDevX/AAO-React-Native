@@ -29,7 +29,6 @@ platform :android do
     # Upload to HockeyApp
     hockey(
       apk: './android/app/build/outputs/apk/app-release-unsigned.apk',
-      commit_sha: ENV['TRAVIS_COMMIT'],
       notes: release_notes(platform: :android)
     )
   end

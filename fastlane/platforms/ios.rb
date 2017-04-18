@@ -43,7 +43,6 @@ platform :ios do
 
     hockey(
       ipa: './ios/build/AllAboutOlaf.ipa',
-      commit_sha: ENV['TRAVIS_COMMIT'],
       notes: release_notes(platform: :ios)
     )
   end
