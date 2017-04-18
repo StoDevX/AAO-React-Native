@@ -9,9 +9,7 @@ module Fastlane
         end
 
         UI.message "Fetching metadata for #{params[:app_name]} from HockeyApp"
-        client = HockeyApp.build_client
-        apps = client.get_apps
-        app = apps.find do |a|
+        app = HockeyApp.build_client.get_apps.find do |a|
           a.title == params[:app_name] &&
             a.platform == params[:platform] &&
             a.release_type == params[:release_type].to_i
