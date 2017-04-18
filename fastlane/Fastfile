@@ -4,11 +4,11 @@
 # https://github.com/fastlane/fastlane/tree/master/fastlane/docs
 
 # Set a minimum version for fastlane
-fastlane_version "2.19.0"
+fastlane_version '2.19.0'
 
-import "lib/before_all.rb"
-import "lib/util.rb"
+import 'lib/before_all.rb'
+import 'lib/util.rb'
 
-import "platforms/agnostic.rb"
-import "platforms/android.rb"
-import "platforms/ios.rb"
+import 'platforms/agnostic.rb'
+import 'platforms/android.rb'
+import 'platforms/ios.rb'

@@ -34,31 +34,38 @@ module Fastlane
       end
 
       def self.description
-        "Activate the rogue signing team"
+        'Activate the rogue signing team'
       end
 
       def self.details
-        "Activate the rogue signing team"
+        'Activate the rogue signing team'
       end
 
       def self.available_options
         [
-          FastlaneCore::ConfigItem.new(key: :xcodeproj, default_value: "./ios/AllAboutOlaf.xcodeproj"),
-          FastlaneCore::ConfigItem.new(key: :target, default_value: "AllAboutOlaf"),
-          FastlaneCore::ConfigItem.new(key: :team_id, default_value: "NFMTHAZVS"),
-          FastlaneCore::ConfigItem.new(key: :devteam, default_value: "NFMTHAZVS9"),
-          FastlaneCore::ConfigItem.new(key: :bundle_id, default_value: "com.volz.drew.aao.rogue"),
-          FastlaneCore::ConfigItem.new(key: :profile_id, default_value: "41adf2d3-cb22-4a24-80c3-b4fe83539aa1"),
-          FastlaneCore::ConfigItem.new(key: :profile_name, default_value: "match Development com.volz.drew.aao.rogue"),
+          FastlaneCore::ConfigItem.new(key: :xcodeproj,
+                                       default_value: './ios/AllAboutOlaf.xcodeproj'),
+          FastlaneCore::ConfigItem.new(key: :target,
+                                       default_value: 'AllAboutOlaf'),
+          FastlaneCore::ConfigItem.new(key: :team_id,
+                                       default_value: 'NFMTHAZVS'),
+          FastlaneCore::ConfigItem.new(key: :devteam,
+                                       default_value: 'NFMTHAZVS9'),
+          FastlaneCore::ConfigItem.new(key: :bundle_id,
+                                       default_value: 'com.volz.drew.aao.rogue'),
+          FastlaneCore::ConfigItem.new(key: :profile_id,
+                                       default_value: '41adf2d3-cb22-4a24-80c3-b4fe83539aa1'),
+          FastlaneCore::ConfigItem.new(key: :profile_name,
+                                       default_value: 'match Development com.volz.drew.aao.rogue'),
         ]
       end
 
       def self.return_value
-        "None"
+        'None'
       end
 
       def self.authors
-        ["Hawken Rives"]
+        ['Hawken Rives']
       end
 
       def self.is_supported?(platform)

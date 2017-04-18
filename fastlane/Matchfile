@@ -1,10 +1,10 @@
-git_url "https://github.com/hawkrives/aao-keys"
+git_url 'https://github.com/hawkrives/aao-keys'
 
 # The default type, can be: appstore, adhoc or development
-type "development"
+type 'development'
 
 # Your Apple Developer Portal username
-username "magneticpapergarden@gmail.com"
+username 'magneticpapergarden@gmail.com'
 
 # The app identifiers to get profiles for
-app_identifier ["com.volz.drew.aao.rogue"]
+app_identifier ['com.volz.drew.aao.rogue']
