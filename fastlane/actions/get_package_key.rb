@@ -8,9 +8,9 @@ module Fastlane
         package_path = params[:package_path]
 
         file = File.read(package_path)
-        data_hash = JSON.parse(file)
+        data_hash = JSON.parse(file, symbolize_names: true)
 
-        data_hash[key]
+        data_hash[key.to_sym]
       end
 
       def self.description
@@ -25,15 +25,15 @@ module Fastlane
         [
           FastlaneCore::ConfigItem.new(key: :key,
                                        description: 'The key to fetch',
-                                       type: String),
+                                       type: Symbol),
           FastlaneCore::ConfigItem.new(key: :package_path,
                                        description: 'The path to the package.json file',
-                                       type: String,
-                                       default_value: './package.json'),
+                                       default_value: './package.json',
+                                       type: String),
         ]
       end
 
-      def self.is_supported?(platform)
+      def self.is_supported?
         true
       end
     end
