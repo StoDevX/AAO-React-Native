@@ -23,3 +23,8 @@ lane :bump do |options|
   # update package.json version
   set_package_data(data: { version: version })
 end
+
+desc 'run `npm run bundle-data`'
+lane :bundle_data do
+  sh('npm run bundle-data')
+end

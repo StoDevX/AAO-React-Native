@@ -56,10 +56,6 @@ private_lane :make_changelog do |options|
   sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n' | sed 's/^/    /'")
 end
 
-lane :bundle_data do
-  sh('npm run bundle-data')
-end
-
 # It doesn't make sense to duplicate this in both platforms, and fastlane is
 # smart enough to call the appropriate platform's "beta" lane.
 desc 'Make a beta build if there have been new commits since the last beta'
