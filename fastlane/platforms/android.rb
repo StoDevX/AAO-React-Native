@@ -9,7 +9,7 @@ platform :android do
 
     set_version_name(version_name: "#{version}.#{build_number}", gradle_path: "android/app/build.gradle")
     set_gradle_version_code(version_code: build_number, gradle_path: "./android/app/build.gradle")
-    set_package_data(data: {"version": "#{version}.#{build_number}"})
+    set_package_data(data: {"version" => "#{version}.#{build_number}"})
 
     gradle(
       task: "assemble",
