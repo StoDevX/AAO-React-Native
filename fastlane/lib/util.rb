@@ -32,14 +32,6 @@ def get_current_build_number(options)
   ENV['TRAVIS_BUILD_NUMBER'] || get_hockeyapp_version(platform: options[:platform]) + 1
 end
 
-# Build up the release notes for Hockey
-def build_notes(options)
-  branch = git_branch
-  sha = last_git_commit[:commit_hash]
-  changelog = make_changelog(platform: options[:platform])
-  "branch: #{branch}\ngit commit: #{sha}\n\n## Changelog\n#{changelog}"
-end
-
 # Get the current "app bundle" version
 def get_current_bundle_version(options)
   if options[:platform] == 'Android'

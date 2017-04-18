@@ -31,7 +31,7 @@ platform :android do
       api_token: ENV['HOCKEYAPP_TOKEN'],
       apk: './android/app/build/outputs/apk/app-release-unsigned.apk',
       commit_sha: ENV['TRAVIS_COMMIT'],
-      notes: build_notes(platform: 'Android')
+      notes: release_notes(platform: 'Android')
     )
   end
 

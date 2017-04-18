@@ -45,7 +45,7 @@ platform :ios do
       api_token: ENV['HOCKEYAPP_TOKEN'],
       ipa: './ios/build/AllAboutOlaf.ipa',
       commit_sha: ENV['TRAVIS_COMMIT'],
-      notes: build_notes(platform: 'iOS')
+      notes: release_notes(platform: 'iOS')
     )
   end
 
