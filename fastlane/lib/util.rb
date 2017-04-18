@@ -1,5 +1,5 @@
-desc 'Add the github token for stodevx-bot to the CI machine'
-private_lane :authorize_ci_for_keys do
+# Adds the github token for stodevx-bot to the CI machine
+def authorize_ci_for_keys
   token = ENV['CI_USER_TOKEN']
 
   # see macoscope.com/blog/simplify-your-life-with-fastlane-match
@@ -9,8 +9,8 @@ private_lane :authorize_ci_for_keys do
   end
 end
 
-desc 'Get the hockeyapp version'
-private_lane :get_hockeyapp_version do |options|
+# Get the hockeyapp version
+def get_hockeyapp_version(options)
   latest_hockeyapp_version_number(
     api_token: ENV['HOCKEYAPP_TOKEN'],
     app_name: 'All About Olaf',
@@ -18,8 +18,8 @@ private_lane :get_hockeyapp_version do |options|
   )
 end
 
-desc 'Get the commit of the latest build on HockeyApp'
-private_lane :get_hockeyapp_version_commit do |options|
+# Get the commit of the latest build on HockeyApp
+def get_hockeyapp_version_commit(options)
   latest_hockeyapp_notes(
     api_token: ENV['HOCKEYAPP_TOKEN'],
     app_name: 'All About Olaf',
@@ -27,43 +27,36 @@ private_lane :get_hockeyapp_version_commit do |options|
   )[:commit_hash]
 end
 
-desc 'Gets the version, either from Travis or from Hockey'
-private_lane :get_current_build_number do |options|
+# Gets the version, either from Travis or from Hockey
+def get_current_build_number(options)
   ENV['TRAVIS_BUILD_NUMBER'] || get_hockeyapp_version(platform: options[:platform]) + 1
 end
 
-private_lane :build_notes do |options|
-  branch = git_branch
-  sha = last_git_commit[:commit_hash]
-  changelog = make_changelog(platform: options[:platform])
-  "branch: #{branch}\ngit commit: #{sha}\n\n## Changelog\n#{changelog}"
-end
-
-private_lane :get_current_bundle_version do |options|
-  if options[:platform] == 'Android'
+# Get the current "app bundle" version
+def get_current_bundle_version(options)
+  if options[:platform] == :android
     get_gradle_version_name(gradle_path: 'android/app/build.gradle')
-  elsif options[:platform] == 'iOS'
+  elsif options[:platform] == :ios
     get_info_plist_value(path: 'ios/AllAboutOlaf/Info.plist',
                          key: 'CFBundleShortVersionString')
   end
 end
 
-desc 'Makes a changelog from the timespan passed'
-private_lane :make_changelog do |options|
+# Makes a changelog from the timespan passed
+def make_changelog(options)
   to_ref = ENV['TRAVIS_COMMIT'] || 'HEAD'
   from_ref = get_hockeyapp_version_commit(platform: options[:platform]) || 'HEAD~3'
 
-  sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n' | sed 's/^/    /'")
-end
-
-lane :bundle_data do
-  sh('npm run bundle-data')
+  sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n'")
+    .lines
+    .map { |line| '    ' + line }
+    .join
 end
 
 # It doesn't make sense to duplicate this in both platforms, and fastlane is
-# smart enough to call the appropriate platform's "beta" lane.
-desc 'Make a beta build if there have been new commits since the last beta'
-private_lane :auto_beta do |options|
+# smart enough to call the appropriate platform's "beta" lane. So, let's make
+# a beta build if there have been new commits since the last beta.
+def auto_beta(options)
   last_commit = hockeyapp_version_commit(platform: options[:platform])
   current_commit = last_git_commit[:commit_hash]
 

@@ -23,3 +23,21 @@ lane :bump do |options|
   # update package.json version
   set_package_data(data: { version: version })
 end
+
+desc 'Build the release notes: branch, commit hash, changelog'
+lane :release_notes do |options|
+  notes = <<~END
+    branch: #{git_branch}
+    git commit: #{last_git_commit[:commit_hash]}
+
+    ## Changelog
+    #{make_changelog(platform: options[:platform])}
+  END
+  UI.message notes
+  notes
+end
+
+desc 'run `npm run bundle-data`'
+lane :bundle_data do
+  sh('npm run bundle-data')
+end
