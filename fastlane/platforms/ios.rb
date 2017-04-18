@@ -42,7 +42,6 @@ platform :ios do
     build
 
     hockey(
-      api_token: ENV['HOCKEYAPP_TOKEN'],
       ipa: './ios/build/AllAboutOlaf.ipa',
       commit_sha: ENV['TRAVIS_COMMIT'],
       notes: release_notes(platform: :ios)

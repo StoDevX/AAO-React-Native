@@ -12,7 +12,6 @@ end
 # Get the hockeyapp version
 def get_hockeyapp_version(options)
   latest_hockeyapp_version_number(
-    api_token: ENV['HOCKEYAPP_TOKEN'],
     app_name: 'All About Olaf',
     platform: options[:platform]
   )
@@ -21,7 +20,6 @@ end
 # Get the commit of the latest build on HockeyApp
 def get_hockeyapp_version_commit(options)
   latest_hockeyapp_notes(
-    api_token: ENV['HOCKEYAPP_TOKEN'],
     app_name: 'All About Olaf',
     platform: options[:platform]
   )[:commit_hash]
