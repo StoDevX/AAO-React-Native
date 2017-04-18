@@ -23,7 +23,7 @@ platform :ios do
     # (more information: https://codesigning.guide)
     match(readonly: true)
 
-    go_rogue
+    activate_rogue_team
 
     version = get_current_bundle_version(platform: "iOS")
     build_number = get_current_build_number(platform: "iOS")
