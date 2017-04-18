@@ -57,10 +57,6 @@ if [[ $JS ]]; then
   # Run tests + collect coverage info
   echo "npm run test"
   npm run test -- --coverage 2>&1 | tee logs/jest
-
-  # Danger?
-  echo "npm run danger"
-  npm run danger
 fi
 
 
