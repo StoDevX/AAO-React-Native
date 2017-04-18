@@ -59,7 +59,7 @@ module Fastlane
                                        description: 'The app name to use when fetching the version number',
                                        optional: false),
           FastlaneCore::ConfigItem.new(key: :api_token,
-                                       env_name: 'HOCKEYAPP_TOKEN',
+                                       env_name: 'FL_HOCKEY_API_TOKEN',
                                        description: 'API Token for Hockey Access',
                                        optional: false),
           FastlaneCore::ConfigItem.new(key: :release_type,
