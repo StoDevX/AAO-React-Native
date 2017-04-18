@@ -55,7 +55,7 @@ private_lane :make_changelog do |options|
   sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n' | sed 's/^/    /'")
 end
 
-lane :bundle_data do |options|
+lane :bundle_data do
   sh("npm run bundle-data")
 end
 
