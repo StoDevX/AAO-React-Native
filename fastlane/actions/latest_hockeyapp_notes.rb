@@ -13,28 +13,47 @@ module Fastlane
         apps = client.get_apps
         app = apps.find { |a| a.title == params[:app_name] && a.platform == params[:platform] && a.release_type == params[:release_type].to_i }
 
-        if not app
-          return {branch: 'master', commit_hash: nil, changelog: ''}
+        if app.nil?
+          return {
+            branch: params[:release_branch],
+            commit_hash: nil,
+            changelog: ''
+          }
         end
 
-        notes = app.versions.first.notes
+        parsed = app.versions
+                    .map { |version| parse_notes(version.notes) }
+                    .reject(&:nil?)
 
-        lines = notes.split "\n"
-        branch = lines[0].split(/: +/).last.split('<').first
-        commit_hash = lines[1].split(/: +/).last.split('<').first
-        changelog = lines.drop(2).join "\n"
-
-        data = {
-          branch: branch,
-          commit_hash: commit_hash,
-          changelog: changelog,
-        }
+        # First, try to find a previous set of notes from this branch
+        data = parsed.find { |v| v[:branch] == params[:release_branch] }
+        # If we can't find any, grab the most recent notes from `master`
+        data = parsed.find { |v| v[:branch] == 'master' } unless data
+        # If none of those exist either, grab the most recent notes
+        data = parsed.first unless data
 
         UI.message "Last build branch: #{data[:branch]}"
         UI.message "Last build hash: #{data[:commit_hash]}"
         UI.message "Last changelog: #{data[:changelog]}"
 
         data
+      end
+
+      def self.parse_notes(notes)
+        lines = notes.split("\n").reject(&:empty?)
+        return nil unless lines.size > 3
+
+        {
+          branch: parse_html_line(lines[0]),
+          commit_hash: parse_html_line(lines[1]),
+          changelog: lines.drop(2).join("\n")
+        }
+      end
+
+      def self.parse_html_line(line)
+        # `line` looks like "<tag>key: value</tag>", where both parts of
+        # <tag> may or may not exist.
+        line.split(/: +/).last.split('<').first
       end
 
       def self.description
