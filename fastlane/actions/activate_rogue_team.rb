@@ -1,6 +1,6 @@
 module Fastlane
   module Actions
-    class GoRogueAction < Action
+    class ActivateRogueTeamAction < Action
       def self.run(params)
         require 'xcodeproj'
 

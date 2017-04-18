@@ -57,18 +57,14 @@ if [[ $JS ]]; then
   # Run tests + collect coverage info
   echo "npm run test"
   npm run test -- --coverage 2>&1 | tee logs/jest
-
-  # Danger?
-  echo "npm run danger"
-  npm run danger
 fi
 
 
 if [[ $IOS ]]; then
-  bundle exec fastlane ios ci_run
+  bundle exec fastlane ios ci-run
 fi
 
 
 if [[ $ANDROID ]]; then
-  bundle exec fastlane android ci_run
+  bundle exec fastlane android ci-run
 fi

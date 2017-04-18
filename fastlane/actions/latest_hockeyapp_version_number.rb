@@ -1,6 +1,6 @@
 module Fastlane
   module Actions
-    class ParsedLatestHockeyappNotesAction < Action
+    class LatestHockeyappVersionNumberAction < Action
       def self.run(params)
         require 'hockeyapp'
 
@@ -12,38 +12,30 @@ module Fastlane
         client = HockeyApp.build_client
         apps = client.get_apps
         app = apps.find { |a| a.title == params[:app_name] && a.platform == params[:platform] && a.release_type == params[:release_type].to_i }
-        notes = app.versions.first.notes
 
-        lines = notes.split "\n"
-        branch = lines[0].split(/: +/).last.split('<').first
-        commit_hash = lines[1].split(/: +/).last.split('<').first
-        changelog = lines.drop(2).join "\n"
+        if not app
+          version = 1
+        else
+          version = app.versions.first.version.to_i
+        end
 
-        data = {
-          :branch => branch,
-          :commit_hash => commit_hash,
-          :changelog => changelog,
-        }
+        UI.message "Found version #{version}"
 
-        UI.message "Last build branch: #{data[:branch]}"
-        UI.message "Last build hash: #{data[:commit_hash]}"
-        UI.message "Last changelog: #{data[:changelog]}"
-
-        data
+        version
       end
 
       def self.description
-        "Easily fetch the most recent HockeyApp version for your app"
+        "Easily fetch the most recent HockeyApp version number for your app"
       end
 
       def self.details
-        "Allows increment_build_number to increment from the latest HockeyApp version"
+        "Provides a way to have increment_build_number be based on the latest HockeyApp version"
       end
 
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :app_name,
-                                       env_name: "FL_LATEST_HOCKEYAPP_VERSION_NUMBER_APP_NAME",
+                                       env_name: "FL_HOCKEY_PUBLIC_IDENTIFIER",
                                        description: "The app name to use when fetching the version number",
                                        optional: false,
                                        verify_block: proc do |value|
@@ -57,7 +49,7 @@ module Fastlane
                                          UI.user_error!("No API token for LatestHockeyappVersionNumberAction given, pass using `api_token: 'token'`") unless value and !value.empty?
                                        end),
           FastlaneCore::ConfigItem.new(key: :release_type,
-                                       env_name: "FL_LATEST_HOCKEYAPP_VERSION_NUMBER_RELEASE_TYPE",
+                                       env_name: "FL_HOCKEY_RELEASE_TYPE",
                                        description: "The release type to use when fetching the version number: Beta=0, Store=1, Alpha=2, Enterprise=3",
                                        default_value: "0"),
           FastlaneCore::ConfigItem.new(key: :platform,
@@ -68,11 +60,11 @@ module Fastlane
       end
 
       def self.return_value
-        "Parsed notes field for the most recent version of the specified app"
+        "The most recent version number for the specified app"
       end
 
       def self.authors
-        ["Hawken Rives"]
+        ["Travis Palmer", "Hawken Rives"]
       end
 
       def self.is_supported?(platform)
