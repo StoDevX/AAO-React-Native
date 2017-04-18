@@ -34,9 +34,9 @@ end
 
 # Get the current "app bundle" version
 def get_current_bundle_version(options)
-  if options[:platform] == 'Android'
+  if options[:platform] == :android
     get_gradle_version_name(gradle_path: 'android/app/build.gradle')
-  elsif options[:platform] == 'iOS'
+  elsif options[:platform] == :ios
     get_info_plist_value(path: 'ios/AllAboutOlaf/Info.plist',
                          key: 'CFBundleShortVersionString')
   end

@@ -11,8 +11,8 @@ module Fastlane
         UI.message "Fetching metadata for #{params[:app_name]} from HockeyApp"
         app = HockeyApp.build_client.get_apps.find do |a|
           a.title == params[:app_name] &&
-            a.platform == params[:platform] &&
-            a.release_type == params[:release_type].to_i
+            a.platform == platforms[params[:platform]] &&
+            a.release_type == release_types[params[:release_type]]
         end
 
         version = if app.nil?
@@ -34,6 +34,25 @@ module Fastlane
         'Provides a way to have increment_build_number be based on the latest HockeyApp version'
       end
 
+      def self.release_types
+        {
+          beta: 0,
+          store: 1,
+          alpha: 2,
+          enterprise: 3
+        }
+      end
+
+      def self.platforms
+        {
+          ios: 'iOS',
+          android: 'Android',
+          macos: 'Mac OS',
+          windows_phone: 'Windows Phone',
+          custom: 'Custom'
+        }
+      end
+
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :app_name,
@@ -44,11 +63,13 @@ module Fastlane
                                        description: 'API Token for Hockey Access',
                                        optional: false),
           FastlaneCore::ConfigItem.new(key: :release_type,
-                                       description: 'The release type to use when fetching the version number: Beta=0, Store=1, Alpha=2, Enterprise=3',
-                                       default_value: '0'),
+                                       description: 'The release type to fetch: beta, store, alpha, enterprise',
+                                       default_value: :beta,
+                                       type: Symbol),
           FastlaneCore::ConfigItem.new(key: :platform,
-                                       description: 'The platform to use when fetching the version number: iOS, Android, Mac OS, Windows Phone, Custom',
-                                       default_value: 'iOS')
+                                       description: 'The platform to fetch: ios, android, macos, windows_phone, custom',
+                                       default_value: :ios,
+                                       type: Symbol),
         ]
       end
 

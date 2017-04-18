@@ -4,8 +4,8 @@ platform :android do
     # make sure we have a copy of the data files
     bundle_data
 
-    version = get_current_bundle_version(platform: 'Android')
-    build_number = get_current_build_number(platform: 'Android')
+    version = get_current_bundle_version(platform: :android)
+    build_number = get_current_build_number(platform: :android)
 
     set_gradle_version_name(version_name: "#{version}.#{build_number}",
                             gradle_path: 'android/app/build.gradle')
@@ -31,7 +31,7 @@ platform :android do
       api_token: ENV['HOCKEYAPP_TOKEN'],
       apk: './android/app/build/outputs/apk/app-release-unsigned.apk',
       commit_sha: ENV['TRAVIS_COMMIT'],
-      notes: release_notes(platform: 'Android')
+      notes: release_notes(platform: :android)
     )
   end
 
@@ -41,7 +41,7 @@ platform :android do
 
     should_deploy = ENV['run_deploy'] == '1'
     if should_deploy
-      auto_beta(platform: 'Android')
+      auto_beta(platform: :android)
     else
       build
     end

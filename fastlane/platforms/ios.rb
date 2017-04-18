@@ -25,8 +25,8 @@ platform :ios do
 
     activate_rogue_team
 
-    version = get_current_bundle_version(platform: 'iOS')
-    build_number = get_current_build_number(platform: 'iOS')
+    version = get_current_bundle_version(platform: :ios)
+    build_number = get_current_build_number(platform: :ios)
     increment_version_number(version_number: "#{version}.#{build_number}",
                              xcodeproj: './ios/AllAboutOlaf.xcodeproj')
     increment_build_number(build_number: build_number,
@@ -45,7 +45,7 @@ platform :ios do
       api_token: ENV['HOCKEYAPP_TOKEN'],
       ipa: './ios/build/AllAboutOlaf.ipa',
       commit_sha: ENV['TRAVIS_COMMIT'],
-      notes: release_notes(platform: 'iOS')
+      notes: release_notes(platform: :ios)
     )
   end
 
@@ -75,7 +75,7 @@ platform :ios do
     # failing on us. So, we just build, if we're not deploying.
     should_deploy = ENV['run_deploy'] == '1'
     if should_deploy
-      auto_beta(platform: 'iOS')
+      auto_beta(platform: :ios)
     else
       build
     end
