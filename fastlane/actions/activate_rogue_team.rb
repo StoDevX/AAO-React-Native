@@ -24,7 +24,6 @@ module Fastlane
           # puts config.build_settings
           config.build_settings['DEVELOPMENT_TEAM'] = params[:devteam]
           config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = params[:bundle_id]
-          config.build_settings['PROVISIONING_PROFILE'] = params[:profile_id]
           config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = params[:profile_name]
           # puts "#{config.name}: After"
           # puts config.build_settings
@@ -53,8 +52,6 @@ module Fastlane
                                        default_value: 'NFMTHAZVS9'),
           FastlaneCore::ConfigItem.new(key: :bundle_id,
                                        default_value: 'com.volz.drew.aao.rogue'),
-          FastlaneCore::ConfigItem.new(key: :profile_id,
-                                       default_value: '41adf2d3-cb22-4a24-80c3-b4fe83539aa1'),
           FastlaneCore::ConfigItem.new(key: :profile_name,
                                        default_value: 'match Development com.volz.drew.aao.rogue'),
         ]
