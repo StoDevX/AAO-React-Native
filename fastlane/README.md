@@ -68,6 +68,11 @@ Submit a new Beta Build to HockeyApp
 fastlane android ci-run
 ```
 Run the appropriate action on CI
+### android set_version
+```
+fastlane android set_version
+```
+Include the build number in the version string
 
 ----
 
@@ -91,7 +96,7 @@ Go rogue
 ```
 fastlane ios update-match
 ```
-In case match needs to be updated - probably never needs to be run
+In case match needs to be updated - rarely needs to be run
 ### ios build
 ```
 fastlane ios build
@@ -107,6 +112,11 @@ Submit a new Beta Build to HockeyApp
 fastlane ios ci-run
 ```
 Run iOS builds or tests, as appropriate
+### ios set_version
+```
+fastlane ios set_version
+```
+Include the build number in the version string
 
 ----
 
