@@ -28,8 +28,6 @@ platform :ios do
     # (more information: https://codesigning.guide)
     match(readonly: true)
 
-    activate_rogue_team
-
     set_version(version: current_bundle_version,
                 build_number: current_build_number)
 
@@ -52,6 +50,8 @@ platform :ios do
     # set up things so they can run
     authorize_ci_for_keys
     ci_keychains
+    activate_rogue_team
+
 
     # and run
     should_deploy = ENV['run_deploy'] == '1'
