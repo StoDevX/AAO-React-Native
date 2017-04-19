@@ -1,12 +1,16 @@
 platform :ios do
   desc 'Runs all the tests'
   lane :test do
-    scan
+    scan(scheme: ENV['GYM_SCHEME'],
+         project: ENV['GYM_PROJECT'])
   end
 
   desc 'Take screenshots'
   lane :screenshot do
-    snapshot
+    snapshot(devices: ['iPhone 7 Plus', 'iPhone 6', 'iPhone 5s', 'iPhone 4s'],
+             languages: ['en-US'],
+             scheme: ENV['GYM_SCHEME'],
+             project: ENV['GYM_PROJECT'])
   end
 
   desc 'Go rogue'
