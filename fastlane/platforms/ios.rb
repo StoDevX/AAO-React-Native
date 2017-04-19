@@ -29,7 +29,7 @@ platform :ios do
     match(readonly: true)
 
     # Build the app
-    gym
+    gym(export_method: 'ad-hoc')
   end
 
   desc 'Submit a new Beta Build to HockeyApp'
