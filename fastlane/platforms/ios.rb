@@ -25,13 +25,8 @@ platform :ios do
 
     activate_rogue_team
 
-    version = current_bundle_version
-    build_number = current_build_number
-    increment_version_number(version_number: "#{version}.#{build_number}",
-                             xcodeproj: './ios/AllAboutOlaf.xcodeproj')
-    increment_build_number(build_number: build_number,
-                           xcodeproj: './ios/AllAboutOlaf.xcodeproj')
-    set_package_data(data: { version: "#{version}.#{build_number}" })
+    set_version(version: current_bundle_version,
+                build_number: current_build_number)
 
     # Build the app
     gym
@@ -45,6 +40,16 @@ platform :ios do
       ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
       notes: release_notes
     )
+  end
+
+  private_lane :set_version do |options|
+    version = options[:version]
+    build = options[:build_number]
+    increment_version_number(version_number: "#{version}.#{build}",
+                             xcodeproj: './ios/AllAboutOlaf.xcodeproj')
+    increment_build_number(build_number: build,
+                           xcodeproj: './ios/AllAboutOlaf.xcodeproj')
+    set_package_data(data: { version: "#{version}.#{build}" })
   end
 
   # Lanes specifically for the CIs
