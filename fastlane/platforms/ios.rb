@@ -43,7 +43,7 @@ platform :ios do
 
     hockey(
       ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
-      notes: release_notes(platform: :ios)
+      notes: release_notes
     )
   end
 

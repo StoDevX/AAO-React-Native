@@ -4,8 +4,8 @@ platform :android do
     # make sure we have a copy of the data files
     bundle_data
 
-    version = get_current_bundle_version(platform: :android)
-    build_number = get_current_build_number(platform: :android)
+    version = get_current_bundle_version
+    build_number = get_current_build_number
 
     set_gradle_version_name(version_name: "#{version}.#{build_number}",
                             gradle_path: 'android/app/build.gradle')
@@ -29,7 +29,7 @@ platform :android do
     # Upload to HockeyApp
     hockey(
       apk: lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH],
-      notes: release_notes(platform: :android)
+      notes: release_notes
     )
   end
 
@@ -39,7 +39,7 @@ platform :android do
 
     should_deploy = ENV['run_deploy'] == '1'
     if should_deploy
-      auto_beta(platform: :android)
+      auto_beta
     else
       build
     end

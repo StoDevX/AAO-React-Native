@@ -10,27 +10,25 @@ def authorize_ci_for_keys
 end
 
 # Get the hockeyapp version
-def get_hockeyapp_version(options)
+def get_hockeyapp_version(_)
   latest_hockeyapp_version_number(
     app_name: 'All About Olaf',
-    platform: options[:platform]
   )
 end
 
 # Get the commit of the latest build on HockeyApp
-def get_hockeyapp_version_commit(options)
+def get_hockeyapp_version_commit(_)
   latest_hockeyapp_notes(
     app_name: 'All About Olaf',
-    platform: options[:platform]
   )[:commit_hash]
 end
 
 # Gets the version, either from Travis or from Hockey
-def get_current_build_number(options)
+def get_current_build_number(_)
   ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
 
   begin
-    (get_hockeyapp_version(platform: options[:platform]) + 1).to_s
+    (get_hockeyapp_version + 1).to_s
   rescue
     '1'
   end
@@ -47,9 +45,9 @@ def get_current_bundle_version(_)
 end
 
 # Makes a changelog from the timespan passed
-def make_changelog(options)
+def make_changelog(_)
   to_ref = ENV['TRAVIS_COMMIT'] || 'HEAD'
-  from_ref = get_hockeyapp_version_commit(platform: options[:platform]) || 'HEAD~3'
+  from_ref = get_hockeyapp_version_commit || 'HEAD~3'
 
   sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n'")
     .lines
@@ -60,8 +58,8 @@ end
 # It doesn't make sense to duplicate this in both platforms, and fastlane is
 # smart enough to call the appropriate platform's "beta" lane. So, let's make
 # a beta build if there have been new commits since the last beta.
-def auto_beta(options)
-  last_commit = get_hockeyapp_version_commit(platform: options[:platform])
+def auto_beta(_)
+  last_commit = get_hockeyapp_version_commit
   current_commit = last_git_commit[:commit_hash]
 
   UI.message 'In faux-git terms:'
