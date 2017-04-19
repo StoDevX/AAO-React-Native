@@ -30,9 +30,9 @@ def get_current_build_number(options)
   ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
 
   begin
-    get_hockeyapp_version(platform: options[:platform]) + 1
+    (get_hockeyapp_version(platform: options[:platform]) + 1).to_s
   rescue
-    1
+    '1'
   end
 end
 
