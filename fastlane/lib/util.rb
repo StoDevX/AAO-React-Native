@@ -39,7 +39,7 @@ def current_bundle_version
     get_info_plist_value(path: 'ios/AllAboutOlaf/Info.plist',
                          key: 'CFBundleShortVersionString')
   else
-    package_get_data(key: :version)
+    get_package_key(key: :version)
   end
 end
 
