@@ -37,10 +37,10 @@ def get_current_build_number(options)
 end
 
 # Get the current "app bundle" version
-def get_current_bundle_version(options)
-  if options[:platform] == :android
+def get_current_bundle_version(_)
+  if lane_context[:PLATFORM_NAME] == :android
     get_gradle_version_name(gradle_path: 'android/app/build.gradle')
-  elsif options[:platform] == :ios
+  elsif lane_context[:PLATFORM_NAME] == :ios
     get_info_plist_value(path: 'ios/AllAboutOlaf/Info.plist',
                          key: 'CFBundleShortVersionString')
   end
