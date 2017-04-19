@@ -28,9 +28,6 @@ platform :ios do
     # (more information: https://codesigning.guide)
     match(readonly: true)
 
-    set_version(version: current_bundle_version,
-                build_number: current_build_number)
-
     # Build the app
     gym
   end
@@ -52,6 +49,9 @@ platform :ios do
     ci_keychains
     activate_rogue_team
 
+    # bump the app version
+    set_version(version: current_bundle_version,
+                build_number: current_build_number)
 
     # and run
     should_deploy = ENV['run_deploy'] == '1'
