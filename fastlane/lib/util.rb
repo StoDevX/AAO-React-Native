@@ -9,11 +9,6 @@ def authorize_ci_for_keys
   end
 end
 
-# Get the hockeyapp version
-def hockeyapp_version
-  latest_hockeyapp_version_number
-end
-
 # Get the commit of the latest build on HockeyApp
 def hockeyapp_version_commit
   latest_hockeyapp_notes[:commit_hash]
@@ -24,7 +19,7 @@ def current_build_number
   ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
 
   begin
-    (hockeyapp_version + 1).to_s
+    (latest_hockeyapp_version_number + 1).to_s
   rescue
     '1'
   end
