@@ -10,46 +10,43 @@ def authorize_ci_for_keys
 end
 
 # Get the hockeyapp version
-def get_hockeyapp_version(options)
-  latest_hockeyapp_version_number(
-    app_name: 'All About Olaf',
-    platform: options[:platform]
-  )
+def hockeyapp_version
+  latest_hockeyapp_version_number(app_name: 'All About Olaf')
 end
 
 # Get the commit of the latest build on HockeyApp
-def get_hockeyapp_version_commit(options)
-  latest_hockeyapp_notes(
-    app_name: 'All About Olaf',
-    platform: options[:platform]
-  )[:commit_hash]
+def hockeyapp_version_commit
+  latest_hockeyapp_notes(app_name: 'All About Olaf')[:commit_hash]
 end
 
 # Gets the version, either from Travis or from Hockey
-def get_current_build_number(options)
+def current_build_number
   ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
 
   begin
-    (get_hockeyapp_version(platform: options[:platform]) + 1).to_s
+    (hockeyapp_version + 1).to_s
   rescue
     '1'
   end
 end
 
 # Get the current "app bundle" version
-def get_current_bundle_version(options)
-  if options[:platform] == :android
+def current_bundle_version
+  case lane_context[:PLATFORM_NAME]
+  when :android
     get_gradle_version_name(gradle_path: 'android/app/build.gradle')
-  elsif options[:platform] == :ios
+  when :ios
     get_info_plist_value(path: 'ios/AllAboutOlaf/Info.plist',
                          key: 'CFBundleShortVersionString')
+  else
+    get_package_key(key: :version)
   end
 end
 
 # Makes a changelog from the timespan passed
-def make_changelog(options)
+def make_changelog
   to_ref = ENV['TRAVIS_COMMIT'] || 'HEAD'
-  from_ref = get_hockeyapp_version_commit(platform: options[:platform]) || 'HEAD~3'
+  from_ref = hockeyapp_version_commit || 'HEAD~3'
 
   sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n'")
     .lines
@@ -60,8 +57,8 @@ end
 # It doesn't make sense to duplicate this in both platforms, and fastlane is
 # smart enough to call the appropriate platform's "beta" lane. So, let's make
 # a beta build if there have been new commits since the last beta.
-def auto_beta(options)
-  last_commit = get_hockeyapp_version_commit(platform: options[:platform])
+def auto_beta
+  last_commit = hockeyapp_version_commit
   current_commit = last_git_commit[:commit_hash]
 
   UI.message 'In faux-git terms:'

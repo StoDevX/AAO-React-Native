@@ -31,7 +31,7 @@ lane :release_notes do |options|
     git commit: #{last_git_commit[:commit_hash]}
 
     ## Changelog
-    #{make_changelog(platform: options[:platform])}
+    #{make_changelog}
   END
   UI.message notes
   notes

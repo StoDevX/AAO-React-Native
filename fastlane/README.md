@@ -87,6 +87,11 @@ Take screenshots
 fastlane ios go-rogue
 ```
 Go rogue
+### ios update-match
+```
+fastlane ios update-match
+```
+In case match needs to be updated - probably never needs to be run
 ### ios build
 ```
 fastlane ios build
@@ -102,11 +107,6 @@ Submit a new Beta Build to HockeyApp
 fastlane ios ci-run
 ```
 Run iOS builds or tests, as appropriate
-### ios update-match
-```
-fastlane ios update-match
-```
-In case match needs to be updated - probably never needs to be run
 
 ----
 

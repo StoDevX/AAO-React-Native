@@ -14,6 +14,11 @@ platform :ios do
     activate_rogue_team
   end
 
+  desc 'In case match needs to be updated - rarely needs to be run'
+  lane :"update-match" do
+    match(readonly: false)
+  end
+
   desc 'Provisions the profiles; bumps the build number; builds the app'
   lane :build do
     # make sure we have a copy of the data files
@@ -25,13 +30,8 @@ platform :ios do
 
     activate_rogue_team
 
-    version = get_current_bundle_version(platform: :ios)
-    build_number = get_current_build_number(platform: :ios)
-    increment_version_number(version_number: "#{version}.#{build_number}",
-                             xcodeproj: './ios/AllAboutOlaf.xcodeproj')
-    increment_build_number(build_number: build_number,
-                           xcodeproj: './ios/AllAboutOlaf.xcodeproj')
-    set_package_data(data: { version: "#{version}.#{build_number}" })
+    set_version(version: current_bundle_version,
+                build_number: current_build_number)
 
     # Build the app
     gym
@@ -43,11 +43,35 @@ platform :ios do
 
     hockey(
       ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
-      notes: release_notes(platform: :ios)
+      notes: release_notes
     )
   end
 
-  # Lanes specifically for the CIs
+  desc 'Run iOS builds or tests, as appropriate'
+  lane :'ci-run' do
+    # set up things so they can run
+    authorize_ci_for_keys
+    ci_keychains
+
+    # and run
+    should_deploy = ENV['run_deploy'] == '1'
+    if should_deploy
+      auto_beta
+    else
+      build
+    end
+  end
+
+  private_lane :set_version do |options|
+    version = options[:version]
+    build = options[:build_number]
+    increment_version_number(version_number: "#{version}.#{build}",
+                             xcodeproj: './ios/AllAboutOlaf.xcodeproj')
+    increment_build_number(build_number: build,
+                           xcodeproj: './ios/AllAboutOlaf.xcodeproj')
+    set_package_data(data: { version: "#{version}.#{build}" })
+  end
+
   desc 'Do CI-system keychain setup'
   private_lane :ci_keychains do
     keychain = ENV['MATCH_KEYCHAIN_NAME']
@@ -62,25 +86,5 @@ platform :ios do
     match(readonly: true)
 
     sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain}")
-  end
-
-  desc 'Run iOS builds or tests, as appropriate'
-  lane :"ci-run" do
-    authorize_ci_for_keys
-    ci_keychains
-
-    # I'd like to test, instead of just building, but... Xcode's tests keep
-    # failing on us. So, we just build, if we're not deploying.
-    should_deploy = ENV['run_deploy'] == '1'
-    if should_deploy
-      auto_beta(platform: :ios)
-    else
-      build
-    end
-  end
-
-  desc 'In case match needs to be updated - probably never needs to be run'
-  lane :"update-match" do
-    match(readonly: false)
   end
 end

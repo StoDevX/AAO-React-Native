@@ -4,14 +4,8 @@ platform :android do
     # make sure we have a copy of the data files
     bundle_data
 
-    version = get_current_bundle_version(platform: :android)
-    build_number = get_current_build_number(platform: :android)
-
-    set_gradle_version_name(version_name: "#{version}.#{build_number}",
-                            gradle_path: 'android/app/build.gradle')
-    set_gradle_version_code(version_code: build_number,
-                            gradle_path: './android/app/build.gradle')
-    set_package_data(data: { version: "#{version}.#{build_number}" })
+    set_version(version: current_bundle_version,
+                build_number: current_build_number)
 
     gradle(
       task: 'assemble',
@@ -29,17 +23,29 @@ platform :android do
     # Upload to HockeyApp
     hockey(
       apk: lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH],
-      notes: release_notes(platform: :android)
+      notes: release_notes
     )
+  end
+
+  private_lane :set_version do |options|
+    version = options[:version]
+    build = options[:build_number]
+    set_gradle_version_name(version_name: "#{version}.#{build}",
+                            gradle_path: 'android/app/build.gradle')
+    set_gradle_version_code(version_code: build,
+                            gradle_path: './android/app/build.gradle')
+    set_package_data(data: { version: "#{version}.#{build}" })
   end
 
   desc 'Run the appropriate action on CI'
   lane :'ci-run' do
+    # prepare for the bright future with signed android betas
     authorize_ci_for_keys
 
+    # and run
     should_deploy = ENV['run_deploy'] == '1'
     if should_deploy
-      auto_beta(platform: :android)
+      auto_beta
     else
       build
     end
