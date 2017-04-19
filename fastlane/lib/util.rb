@@ -10,21 +10,21 @@ def authorize_ci_for_keys
 end
 
 # Get the hockeyapp version
-def get_hockeyapp_version(_)
+def get_hockeyapp_version
   latest_hockeyapp_version_number(
     app_name: 'All About Olaf',
   )
 end
 
 # Get the commit of the latest build on HockeyApp
-def get_hockeyapp_version_commit(_)
+def get_hockeyapp_version_commit
   latest_hockeyapp_notes(
     app_name: 'All About Olaf',
   )[:commit_hash]
 end
 
 # Gets the version, either from Travis or from Hockey
-def get_current_build_number(_)
+def get_current_build_number
   ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
 
   begin
@@ -35,7 +35,7 @@ def get_current_build_number(_)
 end
 
 # Get the current "app bundle" version
-def get_current_bundle_version(_)
+def get_current_bundle_version
   if lane_context[:PLATFORM_NAME] == :android
     get_gradle_version_name(gradle_path: 'android/app/build.gradle')
   elsif lane_context[:PLATFORM_NAME] == :ios
@@ -45,7 +45,7 @@ def get_current_bundle_version(_)
 end
 
 # Makes a changelog from the timespan passed
-def make_changelog(_)
+def make_changelog
   to_ref = ENV['TRAVIS_COMMIT'] || 'HEAD'
   from_ref = get_hockeyapp_version_commit || 'HEAD~3'
 
@@ -58,7 +58,7 @@ end
 # It doesn't make sense to duplicate this in both platforms, and fastlane is
 # smart enough to call the appropriate platform's "beta" lane. So, let's make
 # a beta build if there have been new commits since the last beta.
-def auto_beta(_)
+def auto_beta
   last_commit = get_hockeyapp_version_commit
   current_commit = last_git_commit[:commit_hash]
 
