@@ -11,12 +11,12 @@ end
 
 # Get the hockeyapp version
 def hockeyapp_version
-  latest_hockeyapp_version_number(app_name: 'All About Olaf')
+  latest_hockeyapp_version_number
 end
 
 # Get the commit of the latest build on HockeyApp
 def hockeyapp_version_commit
-  latest_hockeyapp_notes(app_name: 'All About Olaf')[:commit_hash]
+  latest_hockeyapp_notes[:commit_hash]
 end
 
 # Gets the version, either from Travis or from Hockey
