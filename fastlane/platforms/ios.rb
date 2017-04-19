@@ -18,11 +18,6 @@ platform :ios do
     activate_rogue_team
   end
 
-  desc 'In case match needs to be updated - rarely needs to be run'
-  lane :"update-match" do
-    match(readonly: false)
-  end
-
   desc 'Provisions the profiles; bumps the build number; builds the app'
   lane :build do
     # make sure we have a copy of the data files
