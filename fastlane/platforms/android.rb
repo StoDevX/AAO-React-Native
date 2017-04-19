@@ -7,7 +7,6 @@ platform :android do
     gradle(
       task: 'assemble',
       build_type: 'Release',
-      project_dir: './android',
       print_command: true,
       print_command_output: true
     )
