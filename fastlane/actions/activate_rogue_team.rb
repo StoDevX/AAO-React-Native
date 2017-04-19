@@ -47,7 +47,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :target,
                                        default_value: ENV['GYM_SCHEME']),
           FastlaneCore::ConfigItem.new(key: :team_id,
-                                       default_value: 'NFMTHAZVS'),
+                                       default_value: 'NFMTHAZVS9'),
           FastlaneCore::ConfigItem.new(key: :devteam,
                                        default_value: 'NFMTHAZVS9'),
           FastlaneCore::ConfigItem.new(key: :bundle_id,
