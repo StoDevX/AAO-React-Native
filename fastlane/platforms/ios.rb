@@ -32,6 +32,8 @@ platform :ios do
     # (more information: https://codesigning.guide)
     match(readonly: true)
 
+    sh('security find-identity -v -p codesigning')
+
     # Build the app
     gym(export_method: 'ad-hoc')
   end
