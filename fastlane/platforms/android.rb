@@ -4,12 +4,10 @@ platform :android do
     # make sure we have a copy of the data files
     bundle_data
 
-    gradle(
-      task: 'assemble',
-      build_type: 'Release',
-      print_command: true,
-      print_command_output: true
-    )
+    gradle(task: 'assemble',
+           build_type: 'Release',
+           print_command: true,
+           print_command_output: true)
   end
 
   desc 'Submit a new Beta Build to HockeyApp'
@@ -17,10 +15,8 @@ platform :android do
     build
 
     # Upload to HockeyApp
-    hockey(
-      apk: lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH],
-      notes: release_notes
-    )
+    hockey(apk: lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH],
+           notes: release_notes)
   end
 
   desc 'Run the appropriate action on CI'

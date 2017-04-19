@@ -40,10 +40,8 @@ platform :ios do
   lane :beta do
     build
 
-    hockey(
-      ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
-      notes: release_notes
-    )
+    hockey(ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
+           notes: release_notes)
   end
 
   desc 'Run iOS builds or tests, as appropriate'
@@ -81,11 +79,9 @@ platform :ios do
     keychain = ENV['MATCH_KEYCHAIN_NAME']
     password = ENV['MATCH_KEYCHAIN_PASSWORD']
 
-    create_keychain(
-      name: keychain,
-      password: password,
-      timeout: 3600
-    )
+    create_keychain(name: keychain,
+                    password: password,
+                    timeout: 3600)
 
     match(readonly: true)
 
