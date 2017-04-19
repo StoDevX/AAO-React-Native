@@ -34,7 +34,7 @@ end
 def current_bundle_version
   case lane_context[:PLATFORM_NAME]
   when :android
-    get_gradle_version_name(gradle_path: 'android/app/build.gradle')
+    get_gradle_version_name(gradle_path: lane_context[:GRADLE_FILE])
   when :ios
     get_info_plist_value(path: 'ios/AllAboutOlaf/Info.plist',
                          key: 'CFBundleShortVersionString')
