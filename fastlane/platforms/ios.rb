@@ -25,8 +25,8 @@ platform :ios do
 
     activate_rogue_team
 
-    version = get_current_bundle_version(platform: :ios)
-    build_number = get_current_build_number(platform: :ios)
+    version = current_bundle_version
+    build_number = current_build_number
     increment_version_number(version_number: "#{version}.#{build_number}",
                              xcodeproj: './ios/AllAboutOlaf.xcodeproj')
     increment_build_number(build_number: build_number,
@@ -73,7 +73,7 @@ platform :ios do
     # failing on us. So, we just build, if we're not deploying.
     should_deploy = ENV['run_deploy'] == '1'
     if should_deploy
-      auto_beta(platform: :ios)
+      auto_beta
     else
       build
     end

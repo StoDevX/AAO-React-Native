@@ -4,8 +4,8 @@ platform :android do
     # make sure we have a copy of the data files
     bundle_data
 
-    version = get_current_bundle_version
-    build_number = get_current_build_number
+    version = current_bundle_version
+    build_number = current_build_number
 
     set_gradle_version_name(version_name: "#{version}.#{build_number}",
                             gradle_path: 'android/app/build.gradle')
