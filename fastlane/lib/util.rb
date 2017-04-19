@@ -12,7 +12,6 @@ end
 # Get the hockeyapp version
 def get_hockeyapp_version(options)
   latest_hockeyapp_version_number(
-    api_token: ENV['HOCKEYAPP_TOKEN'],
     app_name: 'All About Olaf',
     platform: options[:platform]
   )
@@ -21,7 +20,6 @@ end
 # Get the commit of the latest build on HockeyApp
 def get_hockeyapp_version_commit(options)
   latest_hockeyapp_notes(
-    api_token: ENV['HOCKEYAPP_TOKEN'],
     app_name: 'All About Olaf',
     platform: options[:platform]
   )[:commit_hash]
@@ -29,7 +27,13 @@ end
 
 # Gets the version, either from Travis or from Hockey
 def get_current_build_number(options)
-  ENV['TRAVIS_BUILD_NUMBER'] || get_hockeyapp_version(platform: options[:platform]) + 1
+  ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
+
+  begin
+    (get_hockeyapp_version(platform: options[:platform]) + 1).to_s
+  rescue
+    '1'
+  end
 end
 
 # Get the current "app bundle" version
@@ -57,7 +61,7 @@ end
 # smart enough to call the appropriate platform's "beta" lane. So, let's make
 # a beta build if there have been new commits since the last beta.
 def auto_beta(options)
-  last_commit = hockeyapp_version_commit(platform: options[:platform])
+  last_commit = get_hockeyapp_version_commit(platform: options[:platform])
   current_commit = last_git_commit[:commit_hash]
 
   UI.message 'In faux-git terms:'

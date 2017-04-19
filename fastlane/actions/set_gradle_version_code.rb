@@ -25,7 +25,7 @@ module Fastlane
         FileUtils.mv(temp_file.path, gradle_path)
         temp_file.unlink
 
-        if old_version_code == '0' || new_version_code == '1'
+        if old_version_code == '0'
           UI.user_error!("Could not find the version code in #{gradle_path}")
         else
           UI.success("#{old_version_code} changed to #{new_version_code}")

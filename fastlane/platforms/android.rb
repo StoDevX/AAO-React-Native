@@ -28,9 +28,7 @@ platform :android do
 
     # Upload to HockeyApp
     hockey(
-      api_token: ENV['HOCKEYAPP_TOKEN'],
-      apk: './android/app/build/outputs/apk/app-release-unsigned.apk',
-      commit_sha: ENV['TRAVIS_COMMIT'],
+      apk: lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH],
       notes: release_notes(platform: :android)
     )
   end
