@@ -23,10 +23,6 @@ platform :ios do
     # make sure we have a copy of the data files
     bundle_data
 
-    # Set up code signing correctly
-    # (more information: https://codesigning.guide)
-    match(readonly: true)
-
     sh('security find-identity -v -p codesigning')
 
     # Build the app
@@ -47,6 +43,10 @@ platform :ios do
     authorize_ci_for_keys
     ci_keychains
     activate_rogue_team
+
+    # Set up code signing correctly
+    # (more information: https://codesigning.guide)
+    match(type: 'adhoc', readonly: true)
 
     # set the app version
     set_version
