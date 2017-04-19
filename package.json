@@ -114,7 +114,7 @@
     "eslint": "3.19.0",
     "eslint-config-prettier": "1.7.0",
     "eslint-plugin-babel": "4.1.1",
-    "eslint-plugin-flowtype": "2.31.0",
+    "eslint-plugin-flowtype": "2.32.1",
     "eslint-plugin-react": "6.10.3",
     "eslint-plugin-react-native": "2.3.2",
     "flow-bin": "0.38.0",
