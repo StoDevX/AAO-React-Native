@@ -16,16 +16,6 @@ platform :android do
     )
   end
 
-  private_lane :set_version do |options|
-    version = options[:version]
-    build = options[:build_number]
-    set_gradle_version_name(version_name: "#{version}.#{build}",
-                            gradle_path: 'android/app/build.gradle')
-    set_gradle_version_code(version_code: build,
-                            gradle_path: './android/app/build.gradle')
-    set_package_data(data: { version: "#{version}.#{build}" })
-  end
-
   desc 'Submit a new Beta Build to HockeyApp'
   lane :beta do
     build
@@ -35,6 +25,16 @@ platform :android do
       apk: lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH],
       notes: release_notes
     )
+  end
+
+  private_lane :set_version do |options|
+    version = options[:version]
+    build = options[:build_number]
+    set_gradle_version_name(version_name: "#{version}.#{build}",
+                            gradle_path: 'android/app/build.gradle')
+    set_gradle_version_code(version_code: build,
+                            gradle_path: './android/app/build.gradle')
+    set_package_data(data: { version: "#{version}.#{build}" })
   end
 
   desc 'Run the appropriate action on CI'

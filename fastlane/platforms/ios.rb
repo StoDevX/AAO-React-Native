@@ -14,6 +14,11 @@ platform :ios do
     activate_rogue_team
   end
 
+  desc 'In case match needs to be updated - probably never needs to be run'
+  lane :"update-match" do
+    match(readonly: false)
+  end
+
   desc 'Provisions the profiles; bumps the build number; builds the app'
   lane :build do
     # make sure we have a copy of the data files
@@ -42,33 +47,6 @@ platform :ios do
     )
   end
 
-  private_lane :set_version do |options|
-    version = options[:version]
-    build = options[:build_number]
-    increment_version_number(version_number: "#{version}.#{build}",
-                             xcodeproj: './ios/AllAboutOlaf.xcodeproj')
-    increment_build_number(build_number: build,
-                           xcodeproj: './ios/AllAboutOlaf.xcodeproj')
-    set_package_data(data: { version: "#{version}.#{build}" })
-  end
-
-  # Lanes specifically for the CIs
-  desc 'Do CI-system keychain setup'
-  private_lane :ci_keychains do
-    keychain = ENV['MATCH_KEYCHAIN_NAME']
-    password = ENV['MATCH_KEYCHAIN_PASSWORD']
-
-    create_keychain(
-      name: keychain,
-      password: password,
-      timeout: 3600
-    )
-
-    match(readonly: true)
-
-    sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain}")
-  end
-
   desc 'Run iOS builds or tests, as appropriate'
   lane :"ci-run" do
     authorize_ci_for_keys
@@ -84,8 +62,29 @@ platform :ios do
     end
   end
 
-  desc 'In case match needs to be updated - probably never needs to be run'
-  lane :"update-match" do
-    match(readonly: false)
+  private_lane :set_version do |options|
+    version = options[:version]
+    build = options[:build_number]
+    increment_version_number(version_number: "#{version}.#{build}",
+                             xcodeproj: './ios/AllAboutOlaf.xcodeproj')
+    increment_build_number(build_number: build,
+                           xcodeproj: './ios/AllAboutOlaf.xcodeproj')
+    set_package_data(data: { version: "#{version}.#{build}" })
+  end
+
+  desc 'Do CI-system keychain setup'
+  private_lane :ci_keychains do
+    keychain = ENV['MATCH_KEYCHAIN_NAME']
+    password = ENV['MATCH_KEYCHAIN_PASSWORD']
+
+    create_keychain(
+      name: keychain,
+      password: password,
+      timeout: 3600
+    )
+
+    match(readonly: true)
+
+    sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain}")
   end
 end
