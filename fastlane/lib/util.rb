@@ -32,9 +32,10 @@ end
 
 # Get the current "app bundle" version
 def current_bundle_version
-  if lane_context[:PLATFORM_NAME] == :android
+  case lane_context[:PLATFORM_NAME]
+  when :android
     get_gradle_version_name(gradle_path: 'android/app/build.gradle')
-  elsif lane_context[:PLATFORM_NAME] == :ios
+  when :ios
     get_info_plist_value(path: 'ios/AllAboutOlaf/Info.plist',
                          key: 'CFBundleShortVersionString')
   end
