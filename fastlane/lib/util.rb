@@ -61,7 +61,7 @@ end
 # smart enough to call the appropriate platform's "beta" lane. So, let's make
 # a beta build if there have been new commits since the last beta.
 def auto_beta(options)
-  last_commit = hockeyapp_version_commit(platform: options[:platform])
+  last_commit = get_hockeyapp_version_commit(platform: options[:platform])
   current_commit = last_git_commit[:commit_hash]
 
   UI.message 'In faux-git terms:'
