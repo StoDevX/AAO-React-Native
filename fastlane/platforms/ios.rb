@@ -28,11 +28,6 @@ platform :ios do
     # (more information: https://codesigning.guide)
     match(readonly: true)
 
-    activate_rogue_team
-
-    set_version(version: current_bundle_version,
-                build_number: current_build_number)
-
     # Build the app
     gym
   end
@@ -52,6 +47,10 @@ platform :ios do
     # set up things so they can run
     authorize_ci_for_keys
     ci_keychains
+    activate_rogue_team
+
+    # set the app version
+    set_version
 
     # and run
     should_deploy = ENV['run_deploy'] == '1'
@@ -62,14 +61,15 @@ platform :ios do
     end
   end
 
-  private_lane :set_version do |options|
-    version = options[:version]
-    build = options[:build_number]
-    increment_version_number(version_number: "#{version}.#{build}",
+  desc 'Include the build number in the version string'
+  lane :set_version do |options|
+    version = options[:version] || current_bundle_version
+    build = options[:build_number] || current_build_number
+    increment_version_number(version_number: "#{version}-build.#{build}",
                              xcodeproj: './ios/AllAboutOlaf.xcodeproj')
     increment_build_number(build_number: build,
                            xcodeproj: './ios/AllAboutOlaf.xcodeproj')
-    set_package_data(data: { version: "#{version}.#{build}" })
+    set_package_data(data: { version: "#{version}-build.#{build}" })
   end
 
   desc 'Do CI-system keychain setup'
