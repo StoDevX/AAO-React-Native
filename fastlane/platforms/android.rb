@@ -28,7 +28,7 @@ platform :android do
 
     # Upload to HockeyApp
     hockey(
-      apk: './android/app/build/outputs/apk/app-release-unsigned.apk',
+      apk: lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH],
       notes: release_notes(platform: :android)
     )
   end
