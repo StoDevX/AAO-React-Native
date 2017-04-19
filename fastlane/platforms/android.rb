@@ -4,13 +4,10 @@ platform :android do
     # make sure we have a copy of the data files
     bundle_data
 
-    gradle(
-      task: 'assemble',
-      build_type: 'Release',
-      project_dir: './android',
-      print_command: true,
-      print_command_output: true
-    )
+    gradle(task: 'assemble',
+           build_type: 'Release',
+           print_command: true,
+           print_command_output: true)
   end
 
   desc 'Submit a new Beta Build to HockeyApp'
@@ -18,10 +15,8 @@ platform :android do
     build
 
     # Upload to HockeyApp
-    hockey(
-      apk: lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH],
-      notes: release_notes
-    )
+    hockey(apk: lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH],
+           notes: release_notes)
   end
 
   desc 'Run the appropriate action on CI'
@@ -46,9 +41,9 @@ platform :android do
     version = options[:version] || current_bundle_version
     build = options[:build_number] || current_build_number
     set_gradle_version_name(version_name: "#{version}-build.#{build}",
-                            gradle_path: 'android/app/build.gradle')
+                            gradle_path: lane_context[:GRADLE_FILE])
     set_gradle_version_code(version_code: build,
-                            gradle_path: './android/app/build.gradle')
+                            gradle_path: lane_context[:GRADLE_FILE])
     set_package_data(data: { version: "#{version}-build.#{build}" })
   end
 end

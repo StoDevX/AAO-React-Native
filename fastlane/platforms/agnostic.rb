@@ -16,10 +16,10 @@ lane :bump do |options|
 
   # update iOS version
   increment_version_number(version_number: new_version,
-                           xcodeproj: './ios/AllAboutOlaf.xcodeproj')
+                           xcodeproj: ENV['GYM_PROJECT'])
   # update Android version
   set_gradle_version_name(version_name: new_version,
-                          gradle_path: 'android/app/build.gradle')
+                          gradle_path: lane_context[:GRADLE_FILE])
   # update package.json version
   set_package_data(data: { version: new_version })
 end

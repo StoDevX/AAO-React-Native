@@ -89,7 +89,8 @@ module Fastlane
         [
           FastlaneCore::ConfigItem.new(key: :app_name,
                                        description: 'The app name to fetch',
-                                       optional: false),
+                                       optional: false,
+                                       default_value: lane_context[:PRETTY_APP_NAME]),
           FastlaneCore::ConfigItem.new(key: :api_token,
                                        env_name: 'FL_HOCKEY_API_TOKEN',
                                        description: 'API Token for Hockey access',

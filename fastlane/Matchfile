@@ -1,8 +1,5 @@
 git_url 'https://github.com/hawkrives/aao-keys'
 
-# The default type, can be: appstore, adhoc or development
-type 'development'
-
 # Your Apple Developer Portal username
 username 'magneticpapergarden@gmail.com'
 

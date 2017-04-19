@@ -9,14 +9,9 @@ def authorize_ci_for_keys
   end
 end
 
-# Get the hockeyapp version
-def hockeyapp_version
-  latest_hockeyapp_version_number(app_name: 'All About Olaf')
-end
-
 # Get the commit of the latest build on HockeyApp
 def hockeyapp_version_commit
-  latest_hockeyapp_notes(app_name: 'All About Olaf')[:commit_hash]
+  latest_hockeyapp_notes[:commit_hash]
 end
 
 # Gets the version, either from Travis or from Hockey
@@ -24,7 +19,7 @@ def current_build_number
   ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
 
   begin
-    (hockeyapp_version + 1).to_s
+    (latest_hockeyapp_version_number + 1).to_s
   rescue
     '1'
   end
@@ -34,7 +29,7 @@ end
 def current_bundle_version
   case lane_context[:PLATFORM_NAME]
   when :android
-    get_gradle_version_name(gradle_path: 'android/app/build.gradle')
+    get_gradle_version_name(gradle_path: lane_context[:GRADLE_FILE])
   when :ios
     get_info_plist_value(path: 'ios/AllAboutOlaf/Info.plist',
                          key: 'CFBundleShortVersionString')
