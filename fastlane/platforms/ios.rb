@@ -49,9 +49,8 @@ platform :ios do
     ci_keychains
     activate_rogue_team
 
-    # bump the app version
-    set_version(version: current_bundle_version,
-                build_number: current_build_number)
+    # set the app version
+    set_version
 
     # and run
     should_deploy = ENV['run_deploy'] == '1'
@@ -62,9 +61,10 @@ platform :ios do
     end
   end
 
-  private_lane :set_version do |options|
-    version = options[:version]
-    build = options[:build_number]
+  desc 'Include the build number in the version string'
+  lane :set_version do |options|
+    version = options[:version] || current_bundle_version
+    build = options[:build_number] || current_build_number
     increment_version_number(version_number: "#{version}-build.#{build}",
                              xcodeproj: './ios/AllAboutOlaf.xcodeproj')
     increment_build_number(build_number: build,

@@ -24,24 +24,13 @@ platform :android do
     )
   end
 
-  private_lane :set_version do |options|
-    version = options[:version]
-    build = options[:build_number]
-    set_gradle_version_name(version_name: "#{version}-build.#{build}",
-                            gradle_path: 'android/app/build.gradle')
-    set_gradle_version_code(version_code: build,
-                            gradle_path: './android/app/build.gradle')
-    set_package_data(data: { version: "#{version}-build.#{build}" })
-  end
-
   desc 'Run the appropriate action on CI'
   lane :'ci-run' do
     # prepare for the bright future with signed android betas
     authorize_ci_for_keys
 
-    # bump the app version
-    set_version(version: current_bundle_version,
-                build_number: current_build_number)
+    # set the app version
+    set_version
 
     # and run
     should_deploy = ENV['run_deploy'] == '1'
@@ -50,5 +39,16 @@ platform :android do
     else
       build
     end
+  end
+
+  desc 'Include the build number in the version string'
+  lane :set_version do |options|
+    version = options[:version] || current_bundle_version
+    build = options[:build_number] || current_build_number
+    set_gradle_version_name(version_name: "#{version}-build.#{build}",
+                            gradle_path: 'android/app/build.gradle')
+    set_gradle_version_code(version_code: build,
+                            gradle_path: './android/app/build.gradle')
+    set_package_data(data: { version: "#{version}-build.#{build}" })
   end
 end
