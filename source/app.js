@@ -192,7 +192,7 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <Navigator
-          ref={nav => this._navigator = nav}
+          ref={nav => (this._navigator = nav)}
           navigationBar={
             <Navigator.NavigationBar
               style={styles.navigationBar}

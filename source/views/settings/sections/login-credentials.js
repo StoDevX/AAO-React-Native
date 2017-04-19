@@ -59,7 +59,7 @@ class CredentialsLoginSection extends React.Component {
       >
         <LoginField
           label="Username"
-          _ref={ref => this._usernameInput = ref}
+          _ref={ref => (this._usernameInput = ref)}
           disabled={loading}
           onChangeText={(text = '') => this.setState({username: text})}
           onSubmitEditing={this.focusPassword}
@@ -71,7 +71,7 @@ class CredentialsLoginSection extends React.Component {
 
         <LoginField
           label="Password"
-          _ref={ref => this._passwordInput = ref}
+          _ref={ref => (this._passwordInput = ref)}
           disabled={loading}
           onChangeText={(text = '') => this.setState({password: text})}
           onSubmitEditing={loggedIn ? noop : this.logIn}
