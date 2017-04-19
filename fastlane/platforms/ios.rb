@@ -42,7 +42,7 @@ platform :ios do
     build
 
     hockey(
-      ipa: './ios/build/AllAboutOlaf.ipa',
+      ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
       notes: release_notes(platform: :ios)
     )
   end
