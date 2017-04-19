@@ -65,11 +65,11 @@ platform :ios do
   private_lane :set_version do |options|
     version = options[:version]
     build = options[:build_number]
-    increment_version_number(version_number: "#{version}.#{build}",
+    increment_version_number(version_number: "#{version}-build.#{build}",
                              xcodeproj: './ios/AllAboutOlaf.xcodeproj')
     increment_build_number(build_number: build,
                            xcodeproj: './ios/AllAboutOlaf.xcodeproj')
-    set_package_data(data: { version: "#{version}.#{build}" })
+    set_package_data(data: { version: "#{version}-build.#{build}" })
   end
 
   desc 'Do CI-system keychain setup'

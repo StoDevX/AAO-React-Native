@@ -27,11 +27,11 @@ platform :android do
   private_lane :set_version do |options|
     version = options[:version]
     build = options[:build_number]
-    set_gradle_version_name(version_name: "#{version}.#{build}",
+    set_gradle_version_name(version_name: "#{version}-build.#{build}",
                             gradle_path: 'android/app/build.gradle')
     set_gradle_version_code(version_code: build,
                             gradle_path: './android/app/build.gradle')
-    set_package_data(data: { version: "#{version}.#{build}" })
+    set_package_data(data: { version: "#{version}-build.#{build}" })
   end
 
   desc 'Run the appropriate action on CI'
