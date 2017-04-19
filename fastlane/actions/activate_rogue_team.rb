@@ -44,9 +44,9 @@ module Fastlane
       def self.available_options
         [
           FastlaneCore::ConfigItem.new(key: :xcodeproj,
-                                       default_value: './ios/AllAboutOlaf.xcodeproj'),
+                                       default_value: ENV['GYM_PROJECT']),
           FastlaneCore::ConfigItem.new(key: :target,
-                                       default_value: 'AllAboutOlaf'),
+                                       default_value: ENV['GYM_SCHEME']),
           FastlaneCore::ConfigItem.new(key: :team_id,
                                        default_value: 'NFMTHAZVS'),
           FastlaneCore::ConfigItem.new(key: :devteam,
