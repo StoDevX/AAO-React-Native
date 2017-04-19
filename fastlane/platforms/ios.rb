@@ -14,7 +14,7 @@ platform :ios do
     activate_rogue_team
   end
 
-  desc 'In case match needs to be updated - probably never needs to be run'
+  desc 'In case match needs to be updated - rarely needs to be run'
   lane :"update-match" do
     match(readonly: false)
   end
@@ -48,12 +48,12 @@ platform :ios do
   end
 
   desc 'Run iOS builds or tests, as appropriate'
-  lane :"ci-run" do
+  lane :'ci-run' do
+    # set up things so they can run
     authorize_ci_for_keys
     ci_keychains
 
-    # I'd like to test, instead of just building, but... Xcode's tests keep
-    # failing on us. So, we just build, if we're not deploying.
+    # and run
     should_deploy = ENV['run_deploy'] == '1'
     if should_deploy
       auto_beta
