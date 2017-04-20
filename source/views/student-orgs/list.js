@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {StyleSheet, TouchableOpactiy, View, Text, Platform} from 'react-native'
+import {StyleSheet, View, Text, Platform} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
 import LoadingView from '../components/loading'
 import delay from 'delay'
@@ -36,9 +36,6 @@ const rowHeight = Platform.OS === 'ios' ? 58 : 74
 const headerHeight = Platform.OS === 'ios' ? 33 : 41
 
 const styles = StyleSheet.create({
-  searchbar: {
-    backgroundColor: 'red',
-  },
   wrapper: {
     flex: 1,
   },
