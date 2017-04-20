@@ -96,7 +96,9 @@ export class StudentOrgsView extends React.Component {
 
   fetchData = async () => {
     try {
-      let responseData: {[key: string]: StudentOrgAbridgedType[]} = await fetchJson(orgsUrl)
+      let responseData: {
+        [key: string]: StudentOrgAbridgedType[],
+      } = await fetchJson(orgsUrl)
       this.setState({data: responseData, pureData: responseData})
     } catch (error) {
       tracker.trackException(error.message)
@@ -219,7 +221,7 @@ export class StudentOrgsView extends React.Component {
     return (
       <View style={styles.wrapper}>
         <SearchBar
-          ref={(ref) => this.searchBar = ref}
+          ref={ref => this.searchBar = ref}
           style={styles.searchbar}
           data={this.state.pureData}
           handleResults={results => this.handleResults(results)}
