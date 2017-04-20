@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {StyleSheet, View, Text, Platform} from 'react-native'
+import {StyleSheet, TouchableOpactiy, View, Text, Platform} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
 import LoadingView from '../components/loading'
 import delay from 'delay'
@@ -36,6 +36,9 @@ const rowHeight = Platform.OS === 'ios' ? 58 : 74
 const headerHeight = Platform.OS === 'ios' ? 33 : 41
 
 const styles = StyleSheet.create({
+  searchbar: {
+    backgroundColor: 'red',
+  },
   wrapper: {
     flex: 1,
   },
@@ -77,16 +80,14 @@ export class StudentOrgsView extends React.Component {
   }
 
   state: {
-    orgs: {[key: string]: StudentOrgAbridgedType[]},
-    justOrgs: StudentOrgAbridgedType[],
-    results: StudentOrgAbridgedType[],
+    data: {[key: string]: StudentOrgAbridgedType[]},
+    pureData: {[key: string]: StudentOrgAbridgedType[]},
     refreshing: boolean,
     error: boolean,
     loaded: boolean,
   } = {
-    orgs: {},
-    justOrgs: [],
-    results: [],
+    data: {},
+    pureData: {},
     refreshing: false,
     loaded: false,
     error: false,
@@ -98,23 +99,8 @@ export class StudentOrgsView extends React.Component {
 
   fetchData = async () => {
     try {
-      let responseData: StudentOrgAbridgedType[] = await fetchJson(orgsUrl)
-      let withSortableNames = map(responseData, item => {
-        let sortableName = item.name.replace(/^(St\.? Olaf|The) +/i, '')
-        return {
-          ...item,
-          $sortableName: sortableName,
-          $groupableName: head(startCase(sortableName)),
-        }
-      })
-
-      let sorted = sortBy(withSortableNames, '$sortableName')
-      let grouped = groupBy(sorted, '$groupableName')
-
-      let newOrgs = sorted.filter(org => org.newOrg)
-      let orgs = {New: newOrgs, ...grouped}
-
-      this.setState({orgs: orgs, justOrgs: responseData, results: responseData})
+      let responseData: {[key: string]: StudentOrgAbridgedType[]} = await fetchJson(orgsUrl)
+      this.setState({data: responseData, pureData: responseData})
     } catch (error) {
       tracker.trackException(error.message)
       this.setState({error: true})
@@ -196,8 +182,27 @@ export class StudentOrgsView extends React.Component {
     })
   }
 
-  handleResults = (results: StudentOrgAbridgedType[]) => {
-    this.setState({results: results})
+  handleResults = (results: {[key: string]: StudentOrgAbridgedType[]}) => {
+    this.setState({data: results})
+  }
+
+  groupData = (data: {[key: string]: StudentOrgAbridgedType[]}) => {
+    let withSortableNames = map(data, item => {
+      let sortableName = item.name.replace(/^(St\.? Olaf|The) +/i, '')
+      return {
+        ...item,
+        $sortableName: sortableName,
+        $groupableName: head(startCase(sortableName)),
+      }
+    })
+
+    let sorted = sortBy(withSortableNames, '$sortableName')
+    let grouped = groupBy(sorted, '$groupableName')
+
+    let newOrgs = sorted.filter(org => org.newOrg)
+    let orgs = {New: newOrgs, ...grouped}
+
+    return orgs
   }
 
   render() {
@@ -205,13 +210,18 @@ export class StudentOrgsView extends React.Component {
       return <LoadingView />
     }
 
-    if (!size(this.state.orgs)) {
+    // prepare the data for the searchbar and the listview
+    const grouped = this.groupData(this.state.data)
+
+    if (!size(grouped)) {
       return <NoticeView text="No organizations found." />
     }
+
     return (
       <View style={styles.wrapper}>
         <SearchBar
-          data={this.state.justOrgs}
+          style={styles.searchbar}
+          data={this.state.pureData}
           handleResults={results => this.handleResults(results)}
           closeButton={<Icon style={styles.closeIcon} name="ios-close" />}
           showOnLoad={true}
@@ -220,9 +230,10 @@ export class StudentOrgsView extends React.Component {
           autoCorrect={false}
           focusOnLayout={true}
           iOSPadding={false}
+          autoCapitalize={'none'}
         />
         <StyledAlphabetListView
-          data={groupBy(this.state.results, item => head(item.name))}
+          data={grouped}
           style={styles.alphabetList}
           cell={this.renderRow}
           getSectionListTitle={this.getSectionListTitle}
