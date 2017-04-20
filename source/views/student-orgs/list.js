@@ -214,7 +214,7 @@ export class StudentOrgsView extends React.Component {
       <View style={styles.wrapper}>
         <SearchBar
           data={this.state.justOrgs}
-          handleResults={(results) => this.handleResults(results)}
+          handleResults={results => this.handleResults(results)}
           closeButton={<Icon style={styles.closeIcon} name="ios-close" />}
           showOnLoad={true}
           hideBack={true}

@@ -112,7 +112,7 @@ export class DictionaryView extends React.Component {
       <View style={styles.wrapper}>
         <SearchBar
           data={terms}
-          handleResults={(results) => this.handleResults(results)}
+          handleResults={results => this.handleResults(results)}
           closeButton={<Icon style={styles.closeIcon} name="ios-close" />}
           showOnLoad={true}
           hideBack={true}
