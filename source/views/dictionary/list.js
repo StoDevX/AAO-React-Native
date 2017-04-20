@@ -103,6 +103,8 @@ export class DictionaryView extends React.Component {
     this.setState({results: results})
   }
 
+  searchBar: SearchBar
+
   render() {
     if (!terms) {
       return <LoadingView />
@@ -111,6 +113,7 @@ export class DictionaryView extends React.Component {
     return (
       <View style={styles.wrapper}>
         <SearchBar
+          ref={(ref) => this.searchBar = ref}
           data={terms}
           handleResults={results => this.handleResults(results)}
           closeButton={<Icon style={styles.closeIcon} name="ios-close" />}
@@ -118,8 +121,9 @@ export class DictionaryView extends React.Component {
           hideBack={true}
           allDataOnEmptySearch={true}
           autoCorrect={false}
-          focusOnLayout={true}
+          focusOnLayout={false}
           iOSPadding={false}
+          autoCapitalize={'none'}
         />
         <StyledAlphabetListView
           data={groupBy(this.state.results, item => head(item.word))}
