@@ -8,6 +8,8 @@
 import './globalize-fetch'
 import {tracker} from './analytics'
 import OneSignal from 'react-native-onesignal'
+import codePush from 'react-native-code-push'
+import pkg from '../package.json'
 
 import React from 'react'
 import {Navigator, BackAndroid, StyleSheet, Platform} from 'react-native'
@@ -145,6 +147,8 @@ export default class App extends React.Component {
     OneSignal.addEventListener('opened', this.onOpened)
     OneSignal.addEventListener('registered', this.onRegistered)
     OneSignal.addEventListener('ids', this.onIds)
+
+    codePush.sync({ deploymentKey: pkg.codepush[Platform.OS].release })
   }
 
   componentWillUnmount() {
