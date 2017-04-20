@@ -58,7 +58,7 @@ export class DictionaryView extends React.Component {
   }
 
   state: {
-    results: {[key: string]: Object},
+    results: {[key: string]: Array<WordType>},
   } = {
     results: terms,
   }
@@ -99,7 +99,7 @@ export class DictionaryView extends React.Component {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
   }
 
-  handleResults = (results: Object) => {
+  handleResults = (results: {[key: string]: Array<WordType>}) => {
     this.setState({results: results})
   }
 
