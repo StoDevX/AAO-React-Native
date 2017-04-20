@@ -116,8 +116,8 @@ script:
   - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
   - if [[ $JS ]]; then npm run danger; fi
   - if [[ $JS ]]; then
-      code-push release-react AllAboutOlaf-iOS -d release --targetBinaryVersion '2.*';
-      code-push release-react AllAboutOlaf-Android -d release --targetBinaryVersion '2.*';
+      code-push release-react AllAboutOlaf-iOS ios -d release --targetBinaryVersion '2.*';
+      code-push release-react AllAboutOlaf-Android android -d release --targetBinaryVersion '2.*';
     fi
 
 after_success:
