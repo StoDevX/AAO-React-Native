@@ -114,9 +114,7 @@ export class StudentOrgsView extends React.Component {
       let newOrgs = sorted.filter(org => org.newOrg)
       let orgs = {New: newOrgs, ...grouped}
 
-      this.setState({orgs: orgs})
-      this.setState({justOrgs: responseData})
-      this.setState({results: responseData})
+      this.setState({orgs: orgs, justOrgs: responseData, results: responseData})
     } catch (error) {
       tracker.trackException(error.message)
       this.setState({error: true})
