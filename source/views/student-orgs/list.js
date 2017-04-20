@@ -205,6 +205,8 @@ export class StudentOrgsView extends React.Component {
     return orgs
   }
 
+  searchBar: SearchBar
+
   render() {
     if (!this.state.loaded) {
       return <LoadingView />
@@ -220,6 +222,7 @@ export class StudentOrgsView extends React.Component {
     return (
       <View style={styles.wrapper}>
         <SearchBar
+          ref={(ref) => this.searchBar = ref}
           style={styles.searchbar}
           data={this.state.pureData}
           handleResults={results => this.handleResults(results)}
@@ -228,7 +231,7 @@ export class StudentOrgsView extends React.Component {
           hideBack={true}
           allDataOnEmptySearch={true}
           autoCorrect={false}
-          focusOnLayout={true}
+          focusOnLayout={false}
           iOSPadding={false}
           autoCapitalize={'none'}
         />
