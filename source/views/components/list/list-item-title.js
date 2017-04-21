@@ -26,7 +26,7 @@ type PropsType = {
   style?: any,
   lines?: number,
   bold?: boolean,
-};
+}
 export function Title(props: PropsType) {
   return (
     <Text

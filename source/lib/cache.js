@@ -8,9 +8,9 @@ type BaseCacheResultType<T> = {
   isExpired: boolean,
   isCached: boolean,
   value: ?T,
-};
+}
 
-type CacheResultType<T> = Promise<BaseCacheResultType<T>>;
+type CacheResultType<T> = Promise<BaseCacheResultType<T>>
 
 function needsUpdate(time: Date, [count, unit]: [number, string]): boolean {
   return moment(time).isBefore(moment().subtract(count, unit))
@@ -51,7 +51,8 @@ function setItem(key: string, value: any, cacheTime?: [number, string]) {
 }
 function getItem(key: string): CacheResultType<any> {
   return AsyncStorage.getItem(`aao:${key}`).then(stored =>
-    annotateCacheEntry(JSON.parse(stored)))
+    annotateCacheEntry(JSON.parse(stored)),
+  )
 }
 
 /// MARK: courses
@@ -127,10 +128,14 @@ type BalancesInputType = {
   print: ?number,
   daily: ?string,
   weekly: ?string,
-};
-export function setBalances(
-  {flex, ole, print, daily, weekly}: BalancesInputType,
-) {
+}
+export function setBalances({
+  flex,
+  ole,
+  print,
+  daily,
+  weekly,
+}: BalancesInputType) {
   return Promise.all([
     setFlexBalance(flex),
     setOleBalance(ole),
@@ -148,7 +153,7 @@ type BalancesOutputType = {
   weekly: BaseCacheResultType<?string>,
   _isExpired: boolean,
   _isCached: boolean,
-};
+}
 export async function getBalances(): Promise<BalancesOutputType> {
   const [flex, ole, print, daily, weekly] = await Promise.all([
     getFlexBalance(),
@@ -158,12 +163,14 @@ export async function getBalances(): Promise<BalancesOutputType> {
     getWeeklyMealInfo(),
   ])
 
-  const _isExpired = flex.isExpired ||
+  const _isExpired =
+    flex.isExpired ||
     ole.isExpired ||
     print.isExpired ||
     daily.isExpired ||
     weekly.isExpired
-  const _isCached = flex.isCached ||
+  const _isCached =
+    flex.isCached ||
     ole.isCached ||
     print.isCached ||
     daily.isCached ||

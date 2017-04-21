@@ -30,16 +30,16 @@ type CoursesViewPropsType = TopLevelViewPropsType & {
   loggedIn: true,
   updateCourses: (force: boolean) => {},
   coursesByTerm: CoursesByTermType,
-};
+}
 
 class CoursesView extends React.Component {
   state: {
     loading: boolean,
   } = {
     loading: false,
-  };
+  }
 
-  props: CoursesViewPropsType;
+  props: CoursesViewPropsType
 
   refresh = async () => {
     let start = Date.now()
@@ -52,15 +52,15 @@ class CoursesView extends React.Component {
     await delay(500 - elapsed)
 
     this.setState({loading: false})
-  };
+  }
 
   renderSectionHeader = (courses: CourseType[], term: string) => {
     return <ListSectionHeader style={styles.rowSectionHeader} title={term} />
-  };
+  }
 
   renderSeparator = (sectionId: string, rowId: string) => {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
-  };
+  }
 
   render() {
     if (this.props.error) {

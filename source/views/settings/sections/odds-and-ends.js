@@ -11,7 +11,7 @@ class OddsAndEndsSection extends React.Component {
   props: TopLevelViewPropsType & {
     onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
     feedbackDisabled: boolean,
-  };
+  }
 
   onPressButton = (id: string, title: string) => {
     this.props.navigator.push({
@@ -19,14 +19,13 @@ class OddsAndEndsSection extends React.Component {
       title: title,
       index: this.props.route.index + 1,
     })
-  };
+  }
 
-  onFaqButton = () => this.onPressButton('FaqView', 'FAQs');
-  onCreditsButton = () => this.onPressButton('CreditsView', 'Credits');
-  onPrivacyButton = () => this.onPressButton('PrivacyView', 'Privacy Policy');
-  onLegalButton = () => this.onPressButton('LegalView', 'Legal');
-  onSnapshotsButton = () =>
-    this.onPressButton('SnapshotsView', 'Snapshot Time');
+  onFaqButton = () => this.onPressButton('FaqView', 'FAQs')
+  onCreditsButton = () => this.onPressButton('CreditsView', 'Credits')
+  onPrivacyButton = () => this.onPressButton('PrivacyView', 'Privacy Policy')
+  onLegalButton = () => this.onPressButton('LegalView', 'Legal')
+  onSnapshotsButton = () => this.onPressButton('SnapshotsView', 'Snapshot Time')
 
   render() {
     return (
@@ -57,9 +56,10 @@ class OddsAndEndsSection extends React.Component {
   }
 }
 
-const PushButtonCell = (
-  {title, onPress}: {title: string, onPress: () => any},
-) => {
+const PushButtonCell = ({
+  title,
+  onPress,
+}: {title: string, onPress: () => any}) => {
   return (
     <Cell
       cellStyle="Basic"

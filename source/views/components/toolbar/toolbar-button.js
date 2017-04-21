@@ -37,7 +37,7 @@ type ButtonPropsType = {
   iconName?: string,
   title: string,
   isActive: boolean,
-};
+}
 
 export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
   let icon

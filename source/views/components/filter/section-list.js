@@ -11,7 +11,7 @@ import concat from 'lodash/concat'
 type PropsType = {
   filter: ListType,
   onChange: (filter: ListType) => any,
-};
+}
 
 export function ListSection({filter, onChange}: PropsType) {
   const {spec} = filter

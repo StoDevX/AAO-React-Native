@@ -37,15 +37,15 @@ export class LoginField extends React.Component {
     returnKeyType: 'done' | 'next',
     secureTextEntry: boolean,
     value: string,
-  };
+  }
 
-  _input: any;
-  focusInput = () => this._input.focus();
+  _input: any
+  focusInput = () => this._input.focus()
 
   cacheRef = (ref: any) => {
     this._input = ref
     this.props._ref(ref)
-  };
+  }
 
   render() {
     const label = (

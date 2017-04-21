@@ -47,7 +47,7 @@ type PropsType = {
   name: string,
   now: momentT,
   onPress: () => any,
-};
+}
 
 export function BuildingRow({info, name, now, onPress}: PropsType) {
   let bgColors = {
@@ -101,13 +101,11 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
   )
 }
 
-const BuildingTimeSlot = (
-  {
-    label,
-    status,
-    highlight,
-  }: {label: ?string, status: string, highlight: boolean},
-) => {
+const BuildingTimeSlot = ({
+  label,
+  status,
+  highlight,
+}: {label: ?string, status: string, highlight: boolean}) => {
   // we don't want to show the 'Hours' label, since almost every row has it
   const showLabel = label !== 'Hours'
 

@@ -18,11 +18,14 @@ type FoodItemPropsType = {|
   style?: any,
   badgeSpecials?: boolean,
   spacing: {left: number},
-|};
+|}
 
-export function FoodItemRow(
-  {data, corIcons, badgeSpecials = true, ...props}: FoodItemPropsType,
-) {
+export function FoodItemRow({
+  data,
+  corIcons,
+  badgeSpecials = true,
+  ...props
+}: FoodItemPropsType) {
   const {left = 0} = props.spacing
   return (
     <ListRow

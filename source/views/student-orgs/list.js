@@ -60,7 +60,7 @@ export class StudentOrgsView extends React.Component {
   static propTypes = {
     navigator: React.PropTypes.object.isRequired,
     route: React.PropTypes.object.isRequired,
-  };
+  }
 
   state: {
     orgs: {[key: string]: StudentOrgAbridgedType[]},
@@ -72,7 +72,7 @@ export class StudentOrgsView extends React.Component {
     refreshing: false,
     loaded: false,
     error: false,
-  };
+  }
 
   componentWillMount() {
     this.refresh()
@@ -104,7 +104,7 @@ export class StudentOrgsView extends React.Component {
     }
 
     this.setState({loaded: true})
-  };
+  }
 
   refresh = async () => {
     let start = Date.now()
@@ -118,7 +118,7 @@ export class StudentOrgsView extends React.Component {
       await delay(500 - elapsed)
     }
     this.setState(() => ({refreshing: false}))
-  };
+  }
 
   renderSectionHeader = ({title}: {title: string}) => {
     return (
@@ -128,11 +128,11 @@ export class StudentOrgsView extends React.Component {
         style={styles.rowSectionHeader}
       />
     )
-  };
+  }
 
   getSectionListTitle = (name: string) => {
     return name === 'New' ? '•' : name
-  };
+  }
 
   renderRow = ({item}: {item: StudentOrgAbridgedType}) => {
     return (
@@ -156,7 +156,7 @@ export class StudentOrgsView extends React.Component {
         </Row>
       </ListRow>
     )
-  };
+  }
 
   renderSeparator = (sectionId: string, rowId: string) => {
     return (
@@ -165,7 +165,7 @@ export class StudentOrgsView extends React.Component {
         spacing={{left: leftSideSpacing}}
       />
     )
-  };
+  }
 
   onPressRow = (data: StudentOrgAbridgedType) => {
     tracker.trackEvent('student-org', data.name)
@@ -176,7 +176,7 @@ export class StudentOrgsView extends React.Component {
       backButtonTitle: 'Orgs',
       props: {item: data},
     })
-  };
+  }
 
   render() {
     if (!this.state.loaded) {

@@ -10,6 +10,3 @@ if [[ $ANDROID && $USE_EMULATOR = yes ]]; then
   android-wait-for-emulator
   adb shell input keyevent 82 &
 fi
-
-# Fix keychain issues for iOS signing
-if [[ $IOS ]]; then bundle exec fastlane ios ci_keychains; fi

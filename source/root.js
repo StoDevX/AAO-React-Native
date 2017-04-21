@@ -14,4 +14,5 @@ const codePushOptions = {
 }
 
 AppRegistry.registerComponent('AllAboutOlaf', () =>
-  codePush(codePushOptions)(App))
+  codePush(codePushOptions)(App),
+)

@@ -19,15 +19,13 @@ const styles = StyleSheet.create({
   },
 })
 
-export function Button(
-  {
-    title,
-    onPress,
-  }: {
-    title?: string,
-    onPress?: () => any,
-  },
-) {
+export function Button({
+  title,
+  onPress,
+}: {
+  title?: string,
+  onPress?: () => any,
+}) {
   return (
     <BasicButton onPress={onPress || noop} style={styles.button}>
       {title || 'Push me!'}

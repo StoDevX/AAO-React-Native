@@ -10,7 +10,7 @@ import * as cache from '../cache'
 
 type BalancesOrErrorType =
   | {error: true, value: Error}
-  | {error: false, value: BalancesShapeType};
+  | {error: false, value: BalancesShapeType}
 
 export async function getBalances(
   isConnected: boolean,

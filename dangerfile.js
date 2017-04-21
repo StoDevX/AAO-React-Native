@@ -1,13 +1,17 @@
-import {danger, fail, warn, message} from 'danger'
+import {danger, warn, message} from 'danger'
 import {readFileSync} from 'fs'
 import dedent from 'dedent'
 const readFile = filename => {
   try {
     return readFileSync(filename, 'utf-8')
   } catch (err) {
+    if (err.code === 'ENOENT') {
+      return ''
+    }
     return err.message
   }
 }
+const readLogFile = filename => readFile(filename).trim()
 
 const jsFiles = danger.git.created_files.filter(path => path.endsWith('.js'))
 
@@ -17,7 +21,9 @@ jsFiles
     const content = readFile(filepath)
     return !content.includes('@flow')
   })
-  .forEach(file => warn(`<code>${file}</code> has no <code>@flow</code> annotation!`))
+  .forEach(file =>
+    warn(`<code>${file}</code> has no <code>@flow</code> annotation!`),
+  )
 
 // revisit this when we move to yarn
 // const packageChanged = danger.git.modified_files.includes('package.json')
@@ -36,7 +42,8 @@ jsFiles
     return content.includes('it.only') || content.includes('describe.only')
   })
   .forEach(file =>
-    warn(`An <code>only</code> was left in ${file} – no other tests can run.`))
+    warn(`An <code>only</code> was left in ${file} – no other tests can run.`),
+  )
 
 // Warn when PR size is large (mainly for hawken)
 const bigPRThreshold = 400 // lines
@@ -46,8 +53,10 @@ if (thisPRSize > bigPRThreshold) {
     dedent`
     <details>
       <summary>:exclamation: Big PR!</summary>
-      <blockquote>We like to try and keep PRs under ${bigPRThreshold} lines per PR, and this one was ${thisPRSize} lines.</blockquote>
-      <blockquote>If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.</blockquote>
+      <blockquote>
+        <p>We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.</p>
+        <p>If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.</p>
+      </blockquote>
     </details>
   `,
   )
@@ -66,8 +75,11 @@ const isBadBundleLog = log => {
   ]
   return requiredLines.some(line => !allLines.includes(line))
 }
+const isBadDataValidationLog = log => {
+  return log.split('\n').some(l => !l.endsWith('is valid'))
+}
 
-const fileLog = (name, log, lang = null) => {
+const fileLog = (name, log, {lang = null} = {}) => {
   message(
     dedent`
     <details>
@@ -82,24 +94,27 @@ ${log}
   )
 }
 
-const eslintLog = readFile('logs/eslint').trim()
-const dataValidationLog = readFile('logs/validate-data').trim()
-const flowLog = readFile('logs/flow').trim()
-const iosJsBundleLog = readFile('logs/bundle-ios').trim()
-const androidJsBundleLog = readFile('logs/bundle-android').trim()
-const jestLog = readFile('logs/jest').trim()
+const prettierLog = readLogFile('logs/prettier')
+const eslintLog = readLogFile('logs/eslint')
+const dataValidationLog = readLogFile('logs/validate-data')
+const flowLog = readLogFile('logs/flow')
+const iosJsBundleLog = readLogFile('logs/bundle-ios')
+const androidJsBundleLog = readLogFile('logs/bundle-android')
+const jestLog = readLogFile('logs/jest')
+
+if (prettierLog) {
+  fileLog('Prettier made some changes', prettierLog, {lang: 'diff'})
+}
 
 if (eslintLog) {
   fileLog('Eslint had a thing to say!', eslintLog)
 }
 
-const dataHadIssues = dataValidationLog &&
-  dataValidationLog.split('\n').some(l => !l.endsWith('is valid'))
-if (dataHadIssues) {
+if (dataValidationLog && isBadDataValidationLog(dataValidationLog)) {
   fileLog("Something's up with the data.", dataValidationLog)
 }
 
-if (flowLog !== 'Found 0 errors') {
+if (flowLog && flowLog !== 'Found 0 errors') {
   fileLog('Flow would like to interject about types…', flowLog)
 }
 
@@ -114,7 +129,8 @@ if (androidJsBundleLog && isBadBundleLog(androidJsBundleLog)) {
 if (jestLog && jestLog.includes('FAIL')) {
   const lines = jestLog.split('\n')
   const startIndex = lines.findIndex(l =>
-    l.includes('Summary of all failing tests'))
+    l.includes('Summary of all failing tests'),
+  )
 
   fileLog(
     'Some Jest tests failed. Take a peek?',

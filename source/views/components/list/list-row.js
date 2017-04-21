@@ -43,7 +43,7 @@ type PropsType = {
   spacing?: {left?: number, right?: number},
   onPress?: () => any,
   children?: any,
-};
+}
 export function ListRow(props: PropsType) {
   const {
     style,

@@ -49,7 +49,8 @@ matrix:
           - tools
           - platform-tools
           - build-tools-23.0.1
-          - build-tools-23.0.2
+          - build-tools-23.0.3
+          - build-tools-25.0.0
           - build-tools-25.0.2
           - android-23
           - android-25
@@ -70,7 +71,7 @@ matrix:
 
     - os: osx
       language: objective-c
-      osx_image: xcode8.1
+      osx_image: xcode8.3
       node_js: '7'
       env: [IOS=yes, CAN_DEPLOY=yes]
 
@@ -110,9 +111,20 @@ before_script:
 
 script:
   - bash scripts/travis/script.sh
+  # we run `danger` out here to ensure that it is run,
+  # even if another task in script.sh fails.
+  - if [[ $JS ]]; then npm run danger; fi
 
 after_success:
   - bash scripts/travis/after_success.sh
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_PAGES_TOKEN
+  local_dir: docs/
+  on:
+    branch: master
 
 before_cache:
   - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"

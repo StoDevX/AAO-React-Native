@@ -21,7 +21,7 @@ type PropsType = {
   title?: string,
   onPress: () => any,
   filters: FilterType[],
-};
+}
 
 export function FilterMenuToolbar({date, title, filters, onPress}: PropsType) {
   const appliedFilterCount = filters

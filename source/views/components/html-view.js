@@ -8,8 +8,8 @@ export class HtmlView extends React.Component {
   props: {
     html: string,
     baseUrl?: ?string,
-  };
-  _webview: WebView;
+  }
+  _webview: WebView
 
   onNavigationStateChange = ({url}: {url: string}) => {
     // iOS navigates to about:blank when you provide raw HTML to a webview.
@@ -28,12 +28,12 @@ export class HtmlView extends React.Component {
     this._webview.goBack()
 
     return openUrl(url)
-  };
+  }
 
   render() {
     return (
       <WebView
-        ref={ref => this._webview = ref}
+        ref={ref => (this._webview = ref)}
         source={{html: this.props.html, baseUrl: this.props.baseUrl}}
         onNavigationStateChange={this.onNavigationStateChange}
       />

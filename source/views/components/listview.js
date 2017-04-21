@@ -4,25 +4,25 @@ import React from 'react'
 import {ListView, Platform, RefreshControl} from 'react-native'
 import isFunction from 'lodash/isFunction'
 
-type DataType = Array<any> | {[key: string]: any};
+type DataType = Array<any> | {[key: string]: any}
 type PropsType = {
   data: DataType,
   forceBottomInset?: boolean,
-  children?: (any) => React$Component<*, *, *>,
+  children?: any => React$Component<*, *, *>,
   onRefresh?: () => any,
   refreshing?: boolean,
-};
+}
 
 export default class SimpleListView extends React.Component {
-  static initialListSize = 6;
-  static pageSize = 6;
+  static initialListSize = 6
+  static pageSize = 6
 
   state = {
     dataSource: new ListView.DataSource({
       rowHasChanged: () => true,
       sectionHeaderHasChanged: () => true,
     }),
-  };
+  }
 
   componentWillMount() {
     this.setup(this.props)
@@ -32,13 +32,13 @@ export default class SimpleListView extends React.Component {
     this.setup(nextProps)
   }
 
-  props: PropsType;
+  props: PropsType
 
   setup = (props: PropsType) => {
     this.setState(state => ({
       dataSource: this.cloneDatasource(state.dataSource, props.data),
     }))
-  };
+  }
 
   cloneDatasource(dataSource: ListView.DataSource, data: DataType) {
     return Array.isArray(data)

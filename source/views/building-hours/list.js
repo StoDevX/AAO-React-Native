@@ -30,10 +30,10 @@ type BuildingHoursPropsType = TopLevelViewPropsType & {
   loading: boolean,
   onRefresh: () => any,
   buildings: {[key: string]: BuildingType[]},
-};
+}
 
 export class BuildingHoursList extends React.Component {
-  props: BuildingHoursPropsType;
+  props: BuildingHoursPropsType
 
   onPressRow = (data: BuildingType) => {
     tracker.trackEvent('building-hours', data.name)
@@ -45,15 +45,15 @@ export class BuildingHoursList extends React.Component {
       props: data,
       sceneConfig: Platform.OS === 'android' ? 'fromBottom' : undefined,
     })
-  };
+  }
 
   renderSectionHeader = (data: any, id: string) => {
     return <ListSectionHeader style={styles.rowSectionHeader} title={id} />
-  };
+  }
 
   renderSeparator = (sectionID: any, rowID: any) => {
     return <ListSeparator key={`${sectionID}-${rowID}`} />
-  };
+  }
 
   render() {
     return (

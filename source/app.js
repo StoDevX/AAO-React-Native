@@ -178,7 +178,7 @@ export default class App extends React.Component {
     console.log('Device info:', device)
   }
 
-  _navigator: Navigator;
+  _navigator: Navigator
 
   registerAndroidBackButton = () => {
     if (this._navigator && this._navigator.getCurrentRoutes().length > 1) {
@@ -186,7 +186,7 @@ export default class App extends React.Component {
       return true
     }
     return false
-  };
+  }
 
   render() {
     Promise.reject('bugsnag test 2')
@@ -194,7 +194,7 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <Navigator
-          ref={nav => this._navigator = nav}
+          ref={nav => (this._navigator = nav)}
           navigationBar={
             <Navigator.NavigationBar
               style={styles.navigationBar}
