@@ -8,11 +8,11 @@ import {Button} from '../components/button'
 import {ReportWifiProblemView} from './wifi'
 
 export default class HelpView extends React.Component {
-    render() {
-        return (
-            <View>
-                <ReportWifiProblemView />
-            </View>
-        )
-    }
+  render() {
+    return (
+      <View>
+        <ReportWifiProblemView />
+      </View>
+    )
+  }
 }

@@ -25,15 +25,18 @@ const styles = StyleSheet.create({
 
 export function Button({
   title,
-  onPress=noop,
-  disabled=false,
+  onPress = noop,
+  disabled = false,
 }: {
   title?: string,
   onPress?: () => any,
   disabled?: boolean,
 }) {
   return (
-    <BasicButton onPress={disabled ? noop : onPress} style={[styles.button, disabled && styles.disabled]}>
+    <BasicButton
+      onPress={disabled ? noop : onPress}
+      style={[styles.button, disabled && styles.disabled]}
+    >
       {title || 'Push me!'}
     </BasicButton>
   )
