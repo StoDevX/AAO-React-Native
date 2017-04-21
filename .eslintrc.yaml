@@ -17,6 +17,7 @@ extends:
 env:
   es6: true
   node: true
+  browser: true
 
 globals:
   fetch: true
