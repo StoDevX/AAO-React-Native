@@ -33,8 +33,7 @@ platform :ios do
   lane :beta do
     build
 
-    hockey(ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
-           notes: release_notes)
+    hockey(notes: release_notes)
   end
 
   desc 'Run iOS builds or tests, as appropriate'
