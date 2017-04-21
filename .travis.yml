@@ -113,7 +113,6 @@ script:
   - bash scripts/travis/script.sh
   # we run `danger` out here to ensure that it is run,
   # even if another task in script.sh fails.
-  - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
   - if [[ $JS ]]; then npm run danger; fi
   - if [[ $JS ]]; then
       code-push release-react AllAboutOlaf-iOS ios -d release --targetBinaryVersion '2.*';
