@@ -97,6 +97,11 @@ Go rogue
 fastlane ios build
 ```
 Provisions the profiles; bumps the build number; builds the app
+### ios rogue-build
+```
+fastlane ios rogue-build
+```
+
 ### ios beta
 ```
 fastlane ios beta

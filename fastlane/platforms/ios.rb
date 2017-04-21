@@ -29,12 +29,18 @@ platform :ios do
     gym(export_method: 'ad-hoc')
   end
 
+  desc 'Build, but for the rogue devs'
+  lane :'rogue-build' do
+    activate_rogue_team
+    match(type: 'adhoc', readonly: true)
+    build
+  end
+
   desc 'Submit a new Beta Build to HockeyApp'
   lane :beta do
     build
 
-    hockey(ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
-           notes: release_notes)
+    hockey(notes: release_notes)
   end
 
   desc 'Run iOS builds or tests, as appropriate'
