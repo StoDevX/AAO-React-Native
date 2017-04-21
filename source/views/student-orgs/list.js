@@ -19,6 +19,7 @@ import {
   Title,
 } from '../components/list'
 import {tracker} from '../../analytics'
+import bugsnag from '../../bugsnag'
 import size from 'lodash/size'
 import map from 'lodash/map'
 import sortBy from 'lodash/sortBy'
@@ -97,10 +98,11 @@ export class StudentOrgsView extends React.Component {
       let orgs = {New: newOrgs, ...grouped}
 
       this.setState({orgs: orgs})
-    } catch (error) {
-      tracker.trackException(error.message)
+    } catch (err) {
+      tracker.trackException(err.message)
+      bugsnag.notify(err)
       this.setState({error: true})
-      console.error(error)
+      console.error(err)
     }
 
     this.setState({loaded: true})

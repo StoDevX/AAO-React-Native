@@ -6,6 +6,7 @@ import LoadingView from '../components/loading'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {tracker} from '../../analytics'
+import bugsnag from '../../bugsnag'
 import {NewsList} from './news-list'
 import {fetchRssFeed, fetchWpJson} from './fetch-feed'
 
@@ -57,6 +58,7 @@ export default class NewsContainer extends React.Component {
         })
       } else {
         tracker.trackException(error.message)
+        bugsnag.notify(error)
         console.warn(error)
         this.setState({error})
       }
