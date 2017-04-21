@@ -33,10 +33,9 @@ function collectData() {
 const URL = 'https://www.stolaf.edu/apps/aao/wifi.cfm?fuseaction=Submit'
 
 function reportToServer(data) {
-  // Alert.alert('data', JSON.stringify(data))
   // return fetch(URL, {
-  //     method: 'POST',
-  //     body: JSON.stringify(data),
+  //   method: 'POST',
+  //   body: JSON.stringify(data),
   // })
 }
 
