@@ -92,11 +92,6 @@ Take screenshots
 fastlane ios go-rogue
 ```
 Go rogue
-### ios update-match
-```
-fastlane ios update-match
-```
-In case match needs to be updated - rarely needs to be run
 ### ios build
 ```
 fastlane ios build
