@@ -6,6 +6,7 @@
 
 import React from 'react'
 import {EventList} from './event-list'
+import bugsnag from '../../bugsnag'
 import {tracker} from '../../analytics'
 import type {EventType, GoogleEventType} from './types'
 import moment from 'moment-timezone'
@@ -75,14 +76,16 @@ export class GoogleCalendarView extends React.Component {
       const error = result.error
       if (error) {
         tracker.trackException(error.message)
+        bugsnag.notify(error)
         this.setState({error: error})
       }
 
       data = result.items
-    } catch (error) {
-      tracker.trackException(error.message)
-      this.setState({error: error.message})
-      console.warn(error)
+    } catch (err) {
+      tracker.trackException(err.message)
+      bugsnag.notify(err)
+      this.setState({error: err.message})
+      console.warn(err)
     }
 
     this.setState({
