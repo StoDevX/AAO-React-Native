@@ -189,8 +189,6 @@ export default class App extends React.Component {
   }
 
   render() {
-    Promise.reject('bugsnag test 2')
-
     return (
       <Provider store={store}>
         <Navigator
