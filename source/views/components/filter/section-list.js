@@ -72,7 +72,7 @@ export function ListSection({filter, onChange}: PropsType) {
       image={
         spec.showImages && <Image style={styles.icon} source={val.image} />
       }
-      accessory={!includes(selected, val) && 'Checkmark'}
+      accessory={includes(selected, val) && 'Checkmark'}
       cellStyle="RightDetail"
       cellContentView={
         <Column style={styles.content}>
