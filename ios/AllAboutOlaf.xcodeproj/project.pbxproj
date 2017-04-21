@@ -129,6 +129,13 @@
 			remoteGlobalIDString = 3D3CD9181DE5FBD800167DC4;
 			remoteInfo = "jschelpers-tvOS";
 		};
+		0043E4071EA999400082F25E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B6CB9D341488452B9A1FDF5E /* AirMaps.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 11FA5C511C4A1296003AC2EE;
+			remoteInfo = AirMaps;
+		};
 		008413781D5C3AC30034750D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 43E420DADB24468C9E296F25 /* RNVectorIcons.xcodeproj */;
@@ -473,6 +480,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		0043E4041EA999400082F25E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0043E4081EA999400082F25E /* libAirMaps.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		008413661D5C3AC30034750D /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -812,6 +827,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 0043E4041EA999400082F25E /* Products */;
+					ProjectRef = B6CB9D341488452B9A1FDF5E /* AirMaps.xcodeproj */;
+				},
+				{
 					ProductGroup = 00DE0C311E7C3087005F3CE3 /* Products */;
 					ProjectRef = 59C781128E0B476A8826CD12 /* BugsnagReactNative.xcodeproj */;
 				},
@@ -999,6 +1018,13 @@
 			fileType = archive.ar;
 			path = libjschelpers.a;
 			remoteRef = 0035C10C1E4F59AE00768B84 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0043E4081EA999400082F25E /* libAirMaps.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libAirMaps.a;
+			remoteRef = 0043E4071EA999400082F25E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		008413791D5C3AC30034750D /* libRNVectorIcons.a */ = {
