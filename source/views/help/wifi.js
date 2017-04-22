@@ -5,35 +5,41 @@ import {View, Text} from 'react-native'
 import {Card} from '../components/card'
 import {Button} from '../components/button'
 import deviceInfo from 'react-native-device-info'
+import networkInfo from 'react-native-network-info'
 
-function getPosition(args = {}) {
-  return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, reject, {
+const getIpAddress = () =>
+  new Promise(resolve => {
+    try {
+      networkInfo.getIPAddress(resolve)
+    } catch (err) {
+      resolve(null)
+    }
+  })
+
+const getPosition = (args = {}) =>
+  new Promise(resolve => {
+    navigator.geolocation.getCurrentPosition(resolve, () => resolve({}), {
       ...args,
       enableHighAccuracy: true,
       maximumAge: 1000 /*ms*/,
       timeout: 5000 /*ms*/,
     })
   })
-}
 
-function collectData() {
-  return {
-    id: deviceInfo.getUniqueID(),
-    brand: deviceInfo.getBrand(),
-    model: deviceInfo.getModel(),
-    deviceKind: deviceInfo.getDeviceId(),
-    os: deviceInfo.getSystemName(),
-    osVersion: deviceInfo.getSystemVersion(),
-    appVersion: deviceInfo.getReadableVersion(),
-    ua: deviceInfo.getUserAgent(),
-  }
-}
-
-const URL = 'https://www.stolaf.edu/apps/aao/wifi.cfm?fuseaction=Submit'
+const collectData = async () => ({
+  id: deviceInfo.getUniqueID(),
+  brand: deviceInfo.getBrand(),
+  model: deviceInfo.getModel(),
+  deviceKind: deviceInfo.getDeviceId(),
+  os: deviceInfo.getSystemName(),
+  osVersion: deviceInfo.getSystemVersion(),
+  appVersion: deviceInfo.getReadableVersion(),
+  ua: deviceInfo.getUserAgent(),
+  ip: await getIpAddress(),
+})
 
 function reportToServer(data) {
-  // return fetch(URL, {
+  // return fetch('https://www.stolaf.edu/apps/aao/wifi.cfm?fuseaction=Submit', {
   //   method: 'POST',
   //   body: JSON.stringify(data),
   // })
