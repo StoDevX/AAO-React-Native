@@ -26,8 +26,7 @@ import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
 import startCase from 'lodash/startCase'
-import Icon from 'react-native-vector-icons/Ionicons'
-import SearchBar from 'react-native-searchbar'
+import {Searchbar} from '../components/searchbar'
 import type {StudentOrgAbridgedType} from './types'
 
 const orgsUrl = 'https://api.presence.io/stolaf/v1/organizations'
@@ -38,15 +37,6 @@ const headerHeight = Platform.OS === 'ios' ? 33 : 41
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-  },
-  alphabetList: {
-    paddingTop: 52,
-  },
-  closeIcon: {
-    color: c.iosDisabledText,
-    marginTop: -12,
-    fontSize: 47,
-    fontWeight: '800',
   },
   row: {
     height: rowHeight,
@@ -83,7 +73,6 @@ export class StudentOrgsView extends React.Component {
     error: boolean,
     searching: boolean,
     loaded: boolean,
-    hideClear: boolean,
   } = {
     data: {},
     pureData: {},
@@ -91,7 +80,6 @@ export class StudentOrgsView extends React.Component {
     searching: false,
     loaded: false,
     error: false,
-    hideClear: true,
   }
 
   componentWillMount() {
@@ -213,11 +201,11 @@ export class StudentOrgsView extends React.Component {
 
   checkIfSearching = (text: string) => {
     return text === ''
-      ? this.setState({searching: false, hideClear: true})
-      : this.setState({searching: true, hideClear: false})
+      ? this.setState({searching: false})
+      : this.setState({searching: true})
   }
 
-  searchBar: SearchBar
+  searchbar: Searchbar
 
   render() {
     if (!this.state.loaded) {
@@ -235,17 +223,12 @@ export class StudentOrgsView extends React.Component {
 
     return (
       <View style={styles.wrapper}>
-        <SearchBar
+        {/*<SearchBar
           ref={ref => this.searchBar = ref}
           style={styles.searchbar}
           data={this.state.pureData}
           handleChangeText={this.checkIfSearching}
           handleResults={this.handleResults}
-          closeButton={
-            this.state.hideClear
-              ? <View />
-              : <Icon style={styles.closeIcon} name="ios-close" />
-          }
           showOnLoad={true}
           hideBack={true}
           allDataOnEmptySearch={true}
@@ -253,10 +236,9 @@ export class StudentOrgsView extends React.Component {
           focusOnLayout={false}
           iOSPadding={false}
           autoCapitalize={'none'}
-        />
+        />*/}
         <StyledAlphabetListView
           data={grouped}
-          style={styles.alphabetList}
           cell={this.renderRow}
           getSectionListTitle={this.getSectionListTitle}
           // just setting cellHeight sends the wrong values on iOS.
