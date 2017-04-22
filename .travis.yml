@@ -115,7 +115,9 @@ script:
   # even if another task in script.sh fails.
   - if [[ $JS ]]; then npm run danger; fi
   - if [[ $JS && $run_deploy = "1" ]]; then
+      echo "releasing codepush for ios";
       code-push release-react AllAboutOlaf-iOS ios -d release --targetBinaryVersion '2.*';
+      echo "releasing codepush for android";
       code-push release-react AllAboutOlaf-Android android -d release --targetBinaryVersion '2.*';
     fi
 
