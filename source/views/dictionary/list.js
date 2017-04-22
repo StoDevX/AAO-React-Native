@@ -84,7 +84,7 @@ export class DictionaryView extends React.Component {
         <Column>
           <Title lines={1}>{item.word}</Title>
           <Detail lines={2} style={styles.rowDetailText}>
-            {item.definition}
+            {item.definition.trim()}
           </Detail>
         </Column>
       </ListRow>
