@@ -39,7 +39,3 @@ export type StudentOrgInfoType = {
   twitter: string,
   uri: string,
 }
-
-export type GroupingArgsType = {
-  searching: boolean,
-}

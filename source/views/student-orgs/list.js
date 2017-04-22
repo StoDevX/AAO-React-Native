@@ -28,7 +28,7 @@ import * as c from '../components/colors'
 import startCase from 'lodash/startCase'
 import Icon from 'react-native-vector-icons/Ionicons'
 import SearchBar from 'react-native-searchbar'
-import type {GroupingArgsType, StudentOrgAbridgedType} from './types'
+import type {StudentOrgAbridgedType} from './types'
 
 const orgsUrl = 'https://api.presence.io/stolaf/v1/organizations'
 const leftSideSpacing = 20
@@ -191,7 +191,7 @@ export class StudentOrgsView extends React.Component {
 
   groupData = (
     data: {[key: string]: StudentOrgAbridgedType[]},
-    groupingArgs: GroupingArgsType,
+    {searching}: {searching: boolean},
   ) => {
     let withSortableNames = map(data, item => {
       let sortableName = item.name.replace(/^(St\.? Olaf|The) +/i, '')
@@ -206,7 +206,7 @@ export class StudentOrgsView extends React.Component {
     let grouped = groupBy(sorted, '$groupableName')
 
     let newOrgs = sorted.filter(org => org.newOrg)
-    let orgs = groupingArgs.searching ? grouped : {New: newOrgs, ...grouped}
+    let orgs = searching ? grouped : {New: newOrgs, ...grouped}
 
     return orgs
   }
@@ -225,13 +225,7 @@ export class StudentOrgsView extends React.Component {
     }
 
     // prepare the data for the searchbar and the listview
-    let groupingArgs: {
-      searching: boolean,
-    } = {
-      searching: this.state.searching,
-    }
-
-    const grouped = this.groupData(this.state.data, groupingArgs)
+    const grouped = this.groupData(this.state.data, {searching: this.state.searching})
 
     if (!size(this.state.pureData)) {
       return <NoticeView text="No organizations found." />
@@ -243,8 +237,8 @@ export class StudentOrgsView extends React.Component {
           ref={ref => this.searchBar = ref}
           style={styles.searchbar}
           data={this.state.pureData}
-          handleChangeText={text => this.checkIfSearching(text)}
-          handleResults={results => this.handleResults(results)}
+          handleChangeText={this.checkIfSearching}
+          handleResults={this.handleResults}
           closeButton={
             this.state.hideClear
               ? <View />

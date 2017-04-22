@@ -123,8 +123,8 @@ export class DictionaryView extends React.Component {
         <SearchBar
           ref={ref => this.searchBar = ref}
           data={terms}
-          handleChangeText={text => this.checkIfSearching(text)}
-          handleResults={results => this.handleResults(results)}
+          handleChangeText={this.checkIfSearching}
+          handleResults={this.handleResults}
           closeButton={
             this.state.hideClear
               ? <View />
