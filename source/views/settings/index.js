@@ -6,7 +6,7 @@ import type {TopLevelViewPropsType} from '../types'
 import * as c from '../components/colors'
 
 import CredentialsLoginSection from './sections/login-credentials'
-import TokenLoginSection from './sections/login-token'
+// import TokenLoginSection from './sections/login-token'
 import OddsAndEndsSection from './sections/odds-and-ends'
 import SupportSection from './sections/support'
 
