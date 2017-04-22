@@ -125,7 +125,11 @@ export class DictionaryView extends React.Component {
           data={terms}
           handleChangeText={text => this.checkIfSearching(text)}
           handleResults={results => this.handleResults(results)}
-          closeButton={this.state.hideClear ? <View/> : <Icon style={styles.closeIcon} name="ios-close" />}
+          closeButton={
+            this.state.hideClear
+              ? <View />
+              : <Icon style={styles.closeIcon} name="ios-close" />
+          }
           showOnLoad={true}
           hideBack={true}
           allDataOnEmptySearch={true}
