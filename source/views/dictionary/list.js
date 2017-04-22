@@ -19,10 +19,11 @@ import type {WordType} from './types'
 import {tracker} from '../../analytics'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
+import uniq from 'lodash/uniq'
+import words from 'lodash/words'
+import deburr from 'lodash/deburr'
 import {data as terms} from '../../../docs/dictionary.json'
-import * as c from '../components/colors'
-import Icon from 'react-native-vector-icons/Ionicons'
-import SearchBar from 'react-native-searchbar'
+import {SearchBar} from '../components/searchbar'
 
 const rowHeight = Platform.OS === 'ios' ? 76 : 89
 const headerHeight = Platform.OS === 'ios' ? 33 : 41
@@ -30,15 +31,6 @@ const headerHeight = Platform.OS === 'ios' ? 33 : 41
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-  },
-  alphabetList: {
-    paddingTop: 52,
-  },
-  closeIcon: {
-    color: c.iosDisabledText,
-    marginTop: -12,
-    fontSize: 47,
-    fontWeight: '800',
   },
   row: {
     height: rowHeight,
@@ -101,17 +93,27 @@ export class DictionaryView extends React.Component {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
   }
 
-  handleResults = (results: {[key: string]: Array<WordType>}) => {
-    this.setState({results: results})
+  splitToArray = (str: string) => {
+    return words(deburr(str.toLowerCase()))
   }
 
-  checkIfSearching = (text: string) => {
-    return text === ''
-      ? this.setState({hideClear: true})
-      : this.setState({hideClear: false})
+  termToArray = (term: WordType) => {
+    return uniq([
+      ...this.splitToArray(term.word),
+      ...this.splitToArray(term.definition),
+    ])
   }
 
-  searchBar: SearchBar
+  performSearch = (text: string) => {
+    const query = text.toLowerCase()
+    this.setState(() => ({
+      results: terms.filter(term =>
+        this.termToArray(term)
+          .some(word => word.startsWith(query))),
+    }))
+  }
+
+  searchBar: any
 
   render() {
     if (!terms) {
@@ -121,26 +123,11 @@ export class DictionaryView extends React.Component {
     return (
       <View style={styles.wrapper}>
         <SearchBar
-          ref={ref => this.searchBar = ref}
-          data={terms}
-          handleChangeText={this.checkIfSearching}
-          handleResults={this.handleResults}
-          closeButton={
-            this.state.hideClear
-              ? <View />
-              : <Icon style={styles.closeIcon} name="ios-close" />
-          }
-          showOnLoad={true}
-          hideBack={true}
-          allDataOnEmptySearch={true}
-          autoCorrect={false}
-          focusOnLayout={false}
-          iOSPadding={false}
-          autoCapitalize={'none'}
+          getRef={ref => this.searchBar = ref}
+          onChangeText={this.performSearch}
         />
         <StyledAlphabetListView
           data={groupBy(this.state.results, item => head(item.word))}
-          style={styles.alphabetList}
           cell={this.renderRow}
           // just setting cellHeight sends the wrong values on iOS.
           cellHeight={
