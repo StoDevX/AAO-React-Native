@@ -1,12 +1,8 @@
 // @flow
 import React from 'react'
 import {View} from 'react-native'
-import SearchBar from 'react-native-searchbar'
+// import MaterialSearchBar from 'react-native-material-search-bar'
 
-export const Searchbar = ({children, ...props}: PropsType) => {
-  return (
-    <View {...props}>
-      {children}
-    </View>
-  )
+export const SearchBar = (props: PropsType) => {
+  return <View />
 }
