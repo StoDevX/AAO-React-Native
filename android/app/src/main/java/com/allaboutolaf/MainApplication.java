@@ -7,9 +7,9 @@ import android.util.Log;
 
 // keep these sorted alphabetically
 import com.airbnb.android.react.maps.MapsPackage;
+import com.bugsnag.BugsnagReactNative;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.facebook.react.ReactApplication;
-import com.bugsnag.BugsnagReactNative;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -22,6 +22,7 @@ import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.microsoft.codepush.react.CodePush;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.pusherman.networkinfo.RNNetworkInfoPackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 
 import java.io.File;
@@ -56,6 +57,7 @@ public class MainApplication extends Application implements ReactApplication {
         new MapsPackage(),
         new ReactNativeOneSignalPackage(),
         new RNDeviceInfo(),
+        new RNNetworkInfoPackage(),
         new RNViewShotPackage(),
         new VectorIconsPackage()
       );
