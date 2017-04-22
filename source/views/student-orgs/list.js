@@ -28,7 +28,7 @@ import * as c from '../components/colors'
 import startCase from 'lodash/startCase'
 import Icon from 'react-native-vector-icons/Ionicons'
 import SearchBar from 'react-native-searchbar'
-import type {StudentOrgAbridgedType} from './types'
+import type {GroupingArgsType, StudentOrgAbridgedType} from './types'
 
 const orgsUrl = 'https://api.presence.io/stolaf/v1/organizations'
 const leftSideSpacing = 20
@@ -81,11 +81,13 @@ export class StudentOrgsView extends React.Component {
     pureData: {[key: string]: StudentOrgAbridgedType[]},
     refreshing: boolean,
     error: boolean,
+    searching: boolean,
     loaded: boolean,
   } = {
     data: {},
     pureData: {},
     refreshing: false,
+    searching: false,
     loaded: false,
     error: false,
   }
@@ -185,7 +187,10 @@ export class StudentOrgsView extends React.Component {
     this.setState({data: results})
   }
 
-  groupData = (data: {[key: string]: StudentOrgAbridgedType[]}) => {
+  groupData = (
+    data: {[key: string]: StudentOrgAbridgedType[]},
+    groupingArgs: GroupingArgsType,
+  ) => {
     let withSortableNames = map(data, item => {
       let sortableName = item.name.replace(/^(St\.? Olaf|The) +/i, '')
       return {
@@ -199,9 +204,15 @@ export class StudentOrgsView extends React.Component {
     let grouped = groupBy(sorted, '$groupableName')
 
     let newOrgs = sorted.filter(org => org.newOrg)
-    let orgs = {New: newOrgs, ...grouped}
+    let orgs = groupingArgs.searching ? grouped : {New: newOrgs, ...grouped}
 
     return orgs
+  }
+
+  checkIfSearching = (text: string) => {
+    return text === ''
+      ? this.setState({searching: false})
+      : this.setState({searching: true})
   }
 
   searchBar: SearchBar
@@ -212,9 +223,15 @@ export class StudentOrgsView extends React.Component {
     }
 
     // prepare the data for the searchbar and the listview
-    const grouped = this.groupData(this.state.data)
+    let groupingArgs: {
+      searching: boolean,
+    } = {
+      searching: this.state.searching,
+    }
 
-    if (!size(grouped)) {
+    const grouped = this.groupData(this.state.data, groupingArgs)
+
+    if (!size(this.state.pureData)) {
       return <NoticeView text="No organizations found." />
     }
 
@@ -224,6 +241,7 @@ export class StudentOrgsView extends React.Component {
           ref={ref => this.searchBar = ref}
           style={styles.searchbar}
           data={this.state.pureData}
+          handleChangeText={text => this.checkIfSearching(text)}
           handleResults={results => this.handleResults(results)}
           closeButton={<Icon style={styles.closeIcon} name="ios-close" />}
           showOnLoad={true}
