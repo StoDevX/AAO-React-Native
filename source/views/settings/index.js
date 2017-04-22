@@ -31,8 +31,6 @@ export default function SettingsView(props: SettingsViewPropsType) {
       <TableView>
         <CredentialsLoginSection />
 
-        <TokenLoginSection navigator={props.navigator} route={props.route} />
-
         <SupportSection />
 
         <OddsAndEndsSection navigator={props.navigator} route={props.route} />
