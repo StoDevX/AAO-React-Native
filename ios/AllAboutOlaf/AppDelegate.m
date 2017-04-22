@@ -67,4 +67,8 @@
   [RCTOneSignal didReceiveRemoteNotification:notification];
 }
 
+- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application {
+  [[NSURLCache sharedURLCache] removeAllCachedResponses];
+}
+
 @end
