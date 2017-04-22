@@ -1,12 +1,30 @@
 // @flow
 
 import React from 'react'
-import {View} from 'react-native'
+import {StyleSheet} from 'react-native'
+import NativeSearchBar from 'react-native-search-bar'
+import * as c from '../colors'
 
-export const Searchbar = ({children, ...props}: PropsType) => {
-  return (
-    <View {...props}>
-      {children}
-    </View>
-  )
-}
+const styles = StyleSheet.create({
+  searchbar: {
+    backgroundColor: c.iosGray,
+    height: 44,
+  },
+})
+
+type PropsType = {
+  getRef?: any,
+  style?: any,
+  placeholder?: string,
+  onChangeText: (string) => any,
+};
+
+export const SearchBar = (props: PropsType) => (
+  <NativeSearchBar
+    ref={props.getRef}
+    style={styles.searchbar}
+    hideBackground={true}
+    placeholder={props.placeholder || 'Search'}
+    onChangeText={props.onChangeText || null}
+  />
+)
