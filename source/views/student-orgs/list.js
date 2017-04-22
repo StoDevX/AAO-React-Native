@@ -83,6 +83,7 @@ export class StudentOrgsView extends React.Component {
     error: boolean,
     searching: boolean,
     loaded: boolean,
+    hideClear: boolean,
   } = {
     data: {},
     pureData: {},
@@ -90,6 +91,7 @@ export class StudentOrgsView extends React.Component {
     searching: false,
     loaded: false,
     error: false,
+    hideClear: true,
   }
 
   componentWillMount() {
@@ -211,8 +213,8 @@ export class StudentOrgsView extends React.Component {
 
   checkIfSearching = (text: string) => {
     return text === ''
-      ? this.setState({searching: false})
-      : this.setState({searching: true})
+      ? this.setState({searching: false, hideClear: true})
+      : this.setState({searching: true, hideClear: false})
   }
 
   searchBar: SearchBar
@@ -243,7 +245,7 @@ export class StudentOrgsView extends React.Component {
           data={this.state.pureData}
           handleChangeText={text => this.checkIfSearching(text)}
           handleResults={results => this.handleResults(results)}
-          closeButton={<Icon style={styles.closeIcon} name="ios-close" />}
+          closeButton={this.state.hideClear ? <View/> : <Icon style={styles.closeIcon} name="ios-close" />}
           showOnLoad={true}
           hideBack={true}
           allDataOnEmptySearch={true}

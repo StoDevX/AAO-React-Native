@@ -59,8 +59,10 @@ export class DictionaryView extends React.Component {
 
   state: {
     results: {[key: string]: Array<WordType>},
+    hideClear: boolean,
   } = {
     results: terms,
+    hideClear: true,
   }
 
   onPressRow = (data: WordType) => {
@@ -103,6 +105,12 @@ export class DictionaryView extends React.Component {
     this.setState({results: results})
   }
 
+  checkIfSearching = (text: string) => {
+    return text === ''
+      ? this.setState({hideClear: true})
+      : this.setState({hideClear: false})
+  }
+
   searchBar: SearchBar
 
   render() {
@@ -115,8 +123,9 @@ export class DictionaryView extends React.Component {
         <SearchBar
           ref={ref => this.searchBar = ref}
           data={terms}
+          handleChangeText={text => this.checkIfSearching(text)}
           handleResults={results => this.handleResults(results)}
-          closeButton={<Icon style={styles.closeIcon} name="ios-close" />}
+          closeButton={this.state.hideClear ? <View/> : <Icon style={styles.closeIcon} name="ios-close" />}
           showOnLoad={true}
           hideBack={true}
           allDataOnEmptySearch={true}
