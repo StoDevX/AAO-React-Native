@@ -225,7 +225,9 @@ export class StudentOrgsView extends React.Component {
     }
 
     // prepare the data for the searchbar and the listview
-    const grouped = this.groupData(this.state.data, {searching: this.state.searching})
+    const grouped = this.groupData(this.state.data, {
+      searching: this.state.searching,
+    })
 
     if (!size(this.state.pureData)) {
       return <NoticeView text="No organizations found." />

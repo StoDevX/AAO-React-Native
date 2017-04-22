@@ -1,9 +1,12 @@
 // @flow
 import React from 'react'
 import {View} from 'react-native'
+import SearchBar from 'react-native-searchbar'
 
-export default class SearchBarView extends React.Component {
-  render() {
-    return <View />
-  }
+export const Searchbar = ({children, ...props}: PropsType) => {
+  return (
+    <View {...props}>
+      {children}
+    </View>
+  )
 }
