@@ -22,6 +22,7 @@ import head from 'lodash/head'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
+import isString from 'lodash/isString'
 import {data as terms} from '../../../docs/dictionary.json'
 import {SearchBar} from '../components/searchbar'
 
@@ -105,11 +106,17 @@ export class DictionaryView extends React.Component {
   }
 
   performSearch = (text: string) => {
+    // Android clear button returns an object
+    if (!isString(text)) {
+      this.setState({results: terms})
+      return
+    }
+
     const query = text.toLowerCase()
     this.setState(() => ({
       results: terms.filter(term =>
-        this.termToArray(term)
-          .some(word => word.startsWith(query))),
+        this.termToArray(term).some(word => word.startsWith(query)),
+      ),
     }))
   }
 
