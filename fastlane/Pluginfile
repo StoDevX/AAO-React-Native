@@ -2,5 +2,4 @@
 #
 # Ensure this file is checked in to source control!
 
-gem 'fastlane-plugin-latest_hockeyapp_version_number'
 gem 'fastlane-plugin-get_unprovisioned_devices_from_hockey'

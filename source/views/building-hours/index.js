@@ -8,6 +8,7 @@
 import React from 'react'
 import {NoticeView} from '../components/notice'
 import {tracker} from '../../analytics'
+import bugsnag from '../../bugsnag'
 import {BuildingHoursList} from './list'
 
 import type momentT from 'moment'
@@ -70,6 +71,7 @@ export class BuildingHoursView extends React.Component {
       buildings = data
     } catch (err) {
       tracker.trackException(err.message)
+      bugsnag.notify(err)
       console.warn(err)
       buildings = fallbackBuildingHours
     }

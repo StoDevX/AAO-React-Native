@@ -4,6 +4,7 @@ set -e -v -x -o pipefail
 # ensure the env file exists and fill it out
 touch .env.js
 echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
+echo "export const GOOGLE_MAPS_API_KEY = '$GMAPS_KEY'" >> .env.js
 
 # disable npm wrapper for npm scripts
 echo "loglevel=silent" >> .npmrc
@@ -57,18 +58,14 @@ if [[ $JS ]]; then
   # Run tests + collect coverage info
   echo "npm run test"
   npm run test -- --coverage 2>&1 | tee logs/jest
-
-  # Danger?
-  echo "npm run danger"
-  npm run danger
 fi
 
 
 if [[ $IOS ]]; then
-  bundle exec fastlane ios ci_run
+  bundle exec fastlane ios ci-run
 fi
 
 
 if [[ $ANDROID ]]; then
-  bundle exec fastlane android ci_run
+  bundle exec fastlane android ci-run
 fi

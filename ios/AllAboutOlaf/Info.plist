@@ -112,5 +112,7 @@
 	<false/>
 	<key>CodePushDeploymentKey</key>
 	<string>oSozdf5RtDr2j8T7PFz-oWgNmoBIEJN_nzUOz</string>
+	<key>BugsnagAPIKey</key>
+	<string>aae3a01c545dfa73bc5f1b2d5d661a3e</string>
 </dict>
 </plist>

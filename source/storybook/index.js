@@ -231,7 +231,7 @@ export class SnapshotsView extends React.Component {
         </View>
 
         <View
-          ref={ref => this._ref = ref}
+          ref={ref => (this._ref = ref)}
           style={[styles.viewContainer, childStyle]}
         >
           {selected.view()}

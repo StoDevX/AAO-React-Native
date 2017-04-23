@@ -24,6 +24,7 @@ import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
 import {AllHtmlEntities} from 'html-entities'
 import {toLaxTitleCase} from 'titlecase'
 import {tracker} from '../../analytics'
+import bugsnag from '../../bugsnag'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
@@ -79,6 +80,7 @@ export class BonAppHostedMenu extends React.Component {
       cafeInfo = (requests[1]: BonAppCafeInfoType)
     } catch (err) {
       tracker.trackException(err.message)
+      bugsnag.notify(err)
       this.setState({error: err})
     }
 
@@ -170,9 +172,11 @@ export class BonAppHostedMenu extends React.Component {
     }
 
     if (!this.state.cafeMenu || !this.state.cafeInfo) {
-      tracker.trackException(
+      let err = new Error(
         `Something went wrong loading BonApp cafe ${this.props.cafeId}`,
       )
+      tracker.trackException(err)
+      bugsnag.notify(err)
       return (
         <NoticeView text="Something went wrong. Email odt@stolaf.edu to let them know?" />
       )

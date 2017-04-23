@@ -49,10 +49,11 @@ matrix:
           - tools
           - platform-tools
           - build-tools-23.0.1
-          - build-tools-23.0.2
           - build-tools-23.0.3
+          - build-tools-25.0.0
           - build-tools-25.0.2
           - android-23
+          - android-25
           - extra-android-m2repository
           - extra-google-m2repository
 
@@ -110,6 +111,15 @@ before_script:
 
 script:
   - bash scripts/travis/script.sh
+  # we run `danger` out here to ensure that it is run,
+  # even if another task in script.sh fails.
+  - if [[ $JS ]]; then npm run danger; fi
+  - if [[ $JS && $run_deploy = "1" ]]; then
+      echo "releasing codepush for ios";
+      code-push release-react AllAboutOlaf-iOS ios -d release --targetBinaryVersion '2.*';
+      echo "releasing codepush for android";
+      code-push release-react AllAboutOlaf-Android android -d release --targetBinaryVersion '2.*';
+    fi
 
 after_success:
   - bash scripts/travis/after_success.sh

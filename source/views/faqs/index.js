@@ -5,6 +5,7 @@ import * as c from '../components/colors'
 import LoadingView from '../components/loading'
 import {text as faqs} from '../../../docs/faqs.json'
 import {tracker} from '../../analytics'
+import bugsnag from '../../bugsnag'
 
 const styles = StyleSheet.create({
   container: {
@@ -35,6 +36,7 @@ export class FaqView extends React.Component {
     } catch (err) {
       html = faqs
       tracker.trackException(err.message)
+      bugsnag.notify(err)
       console.warn(err.message)
     }
 
