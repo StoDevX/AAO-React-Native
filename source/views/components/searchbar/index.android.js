@@ -1,8 +1,16 @@
 // @flow
 import React from 'react'
-import {View} from 'react-native'
-// import MaterialSearchBar from 'react-native-material-search-bar'
+import MaterialSearchBar from 'react-native-material-design-searchbar'
 
-export const SearchBar = (props: PropsType) => {
-  return <View />
+type PropsType = {
+  placeholder?: string,
+  onChangeText: string => any,
 }
+
+export const SearchBar = (props: PropsType) => (
+  <MaterialSearchBar
+    height={40}
+    placeholder={props.placeholder || 'Search'}
+    onSearchChange={props.onChangeText || null}
+  />
+)
