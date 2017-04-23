@@ -16,8 +16,8 @@ type PropsType = {
   getRef?: any,
   style?: any,
   placeholder?: string,
-  onChangeText: (string) => any,
-};
+  onChangeText: string => any,
+}
 
 export const SearchBar = (props: PropsType) => (
   <NativeSearchBar
