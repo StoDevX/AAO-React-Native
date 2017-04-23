@@ -8,6 +8,8 @@
 import './globalize-fetch'
 import {tracker} from './analytics'
 import OneSignal from 'react-native-onesignal'
+import codePush from 'react-native-code-push'
+import pkg from '../package.json'
 
 import React from 'react'
 import {Navigator, BackAndroid, StyleSheet, Platform} from 'react-native'
@@ -147,6 +149,8 @@ export default class App extends React.Component {
     OneSignal.addEventListener('opened', this.onOpened)
     OneSignal.addEventListener('registered', this.onRegistered)
     OneSignal.addEventListener('ids', this.onIds)
+
+    codePush.sync({deploymentKey: pkg.codepush[Platform.OS].release})
   }
 
   componentWillUnmount() {
@@ -180,7 +184,7 @@ export default class App extends React.Component {
     console.log('Device info:', device)
   }
 
-  _navigator: Navigator;
+  _navigator: Navigator
 
   registerAndroidBackButton = () => {
     if (this._navigator && this._navigator.getCurrentRoutes().length > 1) {
@@ -188,13 +192,13 @@ export default class App extends React.Component {
       return true
     }
     return false
-  };
+  }
 
   render() {
     return (
       <Provider store={store}>
         <Navigator
-          ref={nav => this._navigator = nav}
+          ref={nav => (this._navigator = nav)}
           navigationBar={
             <Navigator.NavigationBar
               style={styles.navigationBar}

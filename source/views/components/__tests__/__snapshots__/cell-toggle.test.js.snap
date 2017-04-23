@@ -1,4 +1,6 @@
-exports[`test renders 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
 <Cell
   accessory={false}
   accessoryColor="#007AFF"
@@ -8,7 +10,8 @@ exports[`test renders 1`] = `
     <Switch
       disabled={false}
       onValueChange={[Function]}
-      value={true} />
+      value={true}
+    />
   }
   cellContentView={null}
   cellImageView={null}
@@ -29,5 +32,6 @@ exports[`test renders 1`] = `
   title="Label"
   titleTextColor="#000"
   titleTextStyle={Object {}}
-  titleTextStyleDisabled={Object {}} />
+  titleTextStyleDisabled={Object {}}
+/>
 `;

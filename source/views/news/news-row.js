@@ -9,7 +9,7 @@ import type {StoryType} from './types'
 type NewsRowPropsType = {
   onPress: () => any,
   story: StoryType,
-};
+}
 
 export function NewsRow({onPress, story}: NewsRowPropsType) {
   return (

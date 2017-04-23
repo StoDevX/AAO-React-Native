@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 
 // keep these sorted alphabetically
+import com.airbnb.android.react.maps.MapsPackage;
+import com.BV.LinearGradient.LinearGradientPackage;
 import com.facebook.react.ReactApplication;
+import com.bugsnag.BugsnagReactNative;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -44,10 +47,13 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
         // please keep these sorted alphabetically
+        BugsnagReactNative.getPackage(),
         new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
         new CustomTabsPackage(),
         new GoogleAnalyticsBridgePackage(),
         new KeychainPackage(),
+        new LinearGradientPackage(),
+        new MapsPackage(),
         new ReactNativeOneSignalPackage(),
         new RNDeviceInfo(),
         new RNViewShotPackage(),

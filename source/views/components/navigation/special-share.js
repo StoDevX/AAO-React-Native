@@ -9,7 +9,7 @@ import {rightButtonStyles as styles} from './styles'
 export class ShareButton extends React.PureComponent {
   props: {
     onPress: () => any,
-  };
+  }
 
   render() {
     return (

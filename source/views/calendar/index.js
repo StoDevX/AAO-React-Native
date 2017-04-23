@@ -9,7 +9,6 @@ import React from 'react'
 import type {TopLevelViewPropsType} from '../types'
 import TabbedView from '../components/tabbed-view'
 import {GoogleCalendarView} from './calendar-google'
-import {PresenceCalendarView} from './calendar-presence'
 
 export {EventDetail} from './event-detail'
 
@@ -52,18 +51,6 @@ export default function CalendarPage(
               navigator={navigator}
               route={route}
               calendarId="stolaf.edu_qkrej5rm8c8582dlnc28nreboc@group.calendar.google.com"
-            />
-          ),
-        },
-        {
-          id: 'StudentOrgsCalendarView',
-          title: 'Student Orgs',
-          icon: 'people',
-          component: () => (
-            <PresenceCalendarView
-              navigator={navigator}
-              route={route}
-              url="https://api.presence.io/stolaf/v1/events"
             />
           ),
         },

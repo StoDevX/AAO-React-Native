@@ -6,6 +6,7 @@
 
 import React from 'react'
 import {EventList} from './event-list'
+import bugsnag from '../../bugsnag'
 import {tracker} from '../../analytics'
 import type {TopLevelViewPropsType} from '../types'
 import type {EventType, GoogleEventType} from './types'
@@ -29,7 +30,7 @@ export class GoogleCalendarView extends React.Component {
     refreshing: true,
     error: null,
     now: moment.tz(TIMEZONE),
-  };
+  }
 
   componentWillMount() {
     this.refresh()
@@ -74,14 +75,16 @@ export class GoogleCalendarView extends React.Component {
       const error = result.error
       if (error) {
         tracker.trackException(error.message)
+        bugsnag.notify(error)
         this.setState({error: error})
       }
 
       data = result.items
-    } catch (error) {
-      tracker.trackException(error.message)
-      this.setState({error: error.message})
-      console.warn(error)
+    } catch (err) {
+      tracker.trackException(err.message)
+      bugsnag.notify(err)
+      this.setState({error: err.message})
+      console.warn(err)
     }
 
     this.setState({
@@ -89,7 +92,7 @@ export class GoogleCalendarView extends React.Component {
       loaded: true,
       events: this.convertEvents(data, now),
     })
-  };
+  }
 
   refresh = async () => {
     let start = Date.now()
@@ -104,7 +107,7 @@ export class GoogleCalendarView extends React.Component {
     }
 
     this.setState({refreshing: false})
-  };
+  }
 
   render() {
     if (!this.state.loaded) {

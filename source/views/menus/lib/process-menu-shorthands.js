@@ -7,11 +7,11 @@ type BasicMenuItemType = {
   station: string,
   special?: boolean,
   description?: string,
-};
+}
 
 type BasicStationMenuType = {
   label: string,
-};
+}
 
 export function upgradeMenuItem(
   item: BasicMenuItemType,

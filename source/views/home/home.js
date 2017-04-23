@@ -16,14 +16,12 @@ import {allViews} from '../views'
 import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl} from '../components/open-url'
 
-function HomePage(
-  {
-    navigator,
-    route,
-    order,
-    views = allViews,
-  }: {order: string[], views: ViewType[]} & TopLevelViewPropsType,
-) {
+function HomePage({
+  navigator,
+  route,
+  order,
+  views = allViews,
+}: {order: string[], views: ViewType[]} & TopLevelViewPropsType) {
   const sortedViews = sortBy(views, view => order.indexOf(view.view))
 
   return (

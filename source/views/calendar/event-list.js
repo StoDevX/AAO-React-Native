@@ -41,7 +41,7 @@ export class EventList extends React.Component {
       }
       return event.startTime.format('ddd  MMM Do') // google returns events in CST
     })
-  };
+  }
 
   shareItem = (event: EventType) => {
     Share.share({
@@ -68,11 +68,11 @@ export class EventList extends React.Component {
     sectionIdentifier: string,
   ) => {
     return <ListSectionHeader title={sectionIdentifier} spacing={{left: 10}} />
-  };
+  }
 
   renderSeparator = (sectionID: any, rowID: any) => {
     return <ListSeparator fullWidth={true} key={`${sectionID}-${rowID}`} />
-  };
+  }
 
   render() {
     if (this.props.message) {

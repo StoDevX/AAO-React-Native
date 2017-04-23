@@ -3,9 +3,10 @@ import React from 'react'
 import {HtmlView} from '../components/html-view'
 import type {StoryType} from './types'
 
-export default function NewsItem(
-  {story, embedFeaturedImage}: {story: StoryType, embedFeaturedImage: ?boolean},
-) {
+export default function NewsItem({
+  story,
+  embedFeaturedImage,
+}: {story: StoryType, embedFeaturedImage: ?boolean}) {
   const content = `
     <style>
       body {
@@ -50,5 +51,5 @@ export default function NewsItem(
     ${story.content}
   `
 
-  return <HtmlView html={content} />
+  return <HtmlView html={content} baseUrl={story.link} />
 }

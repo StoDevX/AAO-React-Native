@@ -45,27 +45,25 @@ const styles = StyleSheet.create({
   },
 })
 
-export const ProgressChunk = (
-  {
-    afterStop,
-    atStop,
-    barColor,
-    beforeStop,
-    currentStopColor,
-    skippingStop,
-    isFirstChunk,
-    isLastChunk,
-  }: {
-    afterStop: boolean,
-    atStop: boolean,
-    barColor: string,
-    beforeStop: boolean,
-    currentStopColor: string,
-    skippingStop: boolean,
-    isFirstChunk: boolean,
-    isLastChunk: boolean,
-  },
-) => {
+export const ProgressChunk = ({
+  afterStop,
+  atStop,
+  barColor,
+  beforeStop,
+  currentStopColor,
+  skippingStop,
+  isFirstChunk,
+  isLastChunk,
+}: {
+  afterStop: boolean,
+  atStop: boolean,
+  barColor: string,
+  beforeStop: boolean,
+  currentStopColor: string,
+  skippingStop: boolean,
+  isFirstChunk: boolean,
+  isLastChunk: boolean,
+}) => {
   // To draw the bar, we draw a chunk of the bar, then we draw the dot, then
   // we draw the last chunk of the bar.
   const startBarColor = isAndroid && isFirstChunk ? c.transparent : barColor

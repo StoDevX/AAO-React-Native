@@ -9,7 +9,7 @@ type PropsType = {
   textColor?: string,
   style?: Number | Object | Array<Number | Object>,
   textStyle?: Number | Object | Array<Number | Object>,
-};
+}
 
 let styles = StyleSheet.create({
   accessoryBadge: {
@@ -24,15 +24,13 @@ let styles = StyleSheet.create({
   },
 })
 
-export function Badge(
-  {
-    text,
-    style,
-    textStyle,
-    accentColor = c.goldenrod,
-    textColor = 'hsl(26, 49%, 34%)',
-  }: PropsType,
-) {
+export function Badge({
+  text,
+  style,
+  textStyle,
+  accentColor = c.goldenrod,
+  textColor = 'hsl(26, 49%, 34%)',
+}: PropsType) {
   const bgaccent = accentColor.replace('rgb', 'rgba').replace(')', ', 0.1)')
 
   return (

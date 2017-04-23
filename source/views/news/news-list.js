@@ -21,14 +21,14 @@ type NewsListPropsType = TopLevelViewPropsType & {
   entries: StoryType[],
   loading: boolean,
   embedFeaturedImage: ?boolean,
-};
+}
 
 export class NewsList extends React.Component {
-  props: NewsListPropsType;
+  props: NewsListPropsType
 
   renderSeparator = (sectionId: string, rowId: string) => {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
-  };
+  }
 
   shareItem = (story: StoryType) => {
     Share.share({
@@ -37,7 +37,7 @@ export class NewsList extends React.Component {
     })
       .then(result => console.log(result))
       .catch(error => console.log(error.message))
-  };
+  }
 
   onPressNews = (title: string, story: StoryType) => {
     this.props.navigator.push({
@@ -49,13 +49,14 @@ export class NewsList extends React.Component {
       onRightButton: () => this.shareItem(story),
       rightButton: 'share',
     })
-  };
+  }
 
   render() {
-    // remove all entries with a <form> from the list
-    const entries = this.props.entries.filter(
-      entry => !entry.content.includes('<form>'),
-    )
+    // remove all entries with blank excerpts
+    // remove all entries with a <form from the list
+    const entries = this.props.entries
+      .filter(entry => entry.excerpt.trim() !== '')
+      .filter(entry => !entry.content.includes('<form'))
 
     if (!entries.length) {
       return <NoticeView text="No news." />

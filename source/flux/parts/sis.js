@@ -31,10 +31,7 @@ export function updateBalances(forceFromServer: boolean = false) {
 export function updateCourses(forceFromServer: boolean = false) {
   return async (dispatch: () => {}, getState: any) => {
     const state = getState()
-    const courses = await loadAllCourses(
-      state.app.isConnected,
-      forceFromServer,
-    )
+    const courses = await loadAllCourses(state.app.isConnected, forceFromServer)
     dispatch({
       type: UPDATE_COURSES,
       error: courses.error,

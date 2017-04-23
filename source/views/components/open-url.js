@@ -12,10 +12,12 @@ function startStatusBarColorChanger() {
   SafariView.isAvailable()
     .then(() => {
       iosOnShowListener = SafariView.addEventListener('onShow', () =>
-        StatusBar.setBarStyle('dark-content'))
+        StatusBar.setBarStyle('dark-content'),
+      )
 
       iosOnDismissListener = SafariView.addEventListener('onDismiss', () =>
-        StatusBar.setBarStyle('light-content'))
+        StatusBar.setBarStyle('light-content'),
+      )
     })
     .catch(() => {})
 }
@@ -82,7 +84,7 @@ export function trackedOpenUrl({url, id}: {url: string, id?: string}) {
 export function canOpenUrl(url: string) {
   // iOS navigates to about:blank when you provide raw HTML to a webview.
   // Android navigates to data:text/html;$stuff (that is, the document you passed) instead.
-  if (/^about|data:/.test(url)) {
+  if (/^(?:about|data):/.test(url)) {
     return false
   }
   return true

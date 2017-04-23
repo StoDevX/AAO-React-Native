@@ -53,7 +53,7 @@ class Row extends React.Component {
       opacity: new Animated.Value(1.0),
       elevation: new Animated.Value(2),
     },
-  };
+  }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.active !== nextProps.active) {
@@ -68,7 +68,7 @@ class Row extends React.Component {
   props: {
     data: ViewType,
     active: boolean,
-  };
+  }
 
   startActivationAnimation = () => {
     const {style} = this.state
@@ -94,7 +94,7 @@ class Row extends React.Component {
         toValue: 4,
       }),
     ]).start()
-  };
+  }
 
   startDeactivationAnimation = () => {
     const {style} = this.state
@@ -120,7 +120,7 @@ class Row extends React.Component {
         toValue: 2,
       }),
     ]).start()
-  };
+  }
 
   render() {
     return (

@@ -41,14 +41,12 @@ function promptCall(buttonText: string, phoneNumber: string) {
   ])
 }
 
-export default function ContactCard(
-  {
-    title,
-    phoneNumber,
-    text,
-    buttonText,
-  }: {title: string, phoneNumber: string, text: string, buttonText: string},
-) {
+export default function ContactCard({
+  title,
+  phoneNumber,
+  text,
+  buttonText,
+}: {title: string, phoneNumber: string, text: string, buttonText: string}) {
   return (
     <View style={styles.container}>
       <Text selectable={true} style={styles.title}>{title}</Text>

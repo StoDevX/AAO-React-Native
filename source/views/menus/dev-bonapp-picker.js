@@ -28,20 +28,20 @@ export class BonAppPickerView extends React.Component {
   } = {
     cafeId: '34',
     menu: null,
-  };
+  }
 
   componentWillMount() {
     this.chooseMenu()
   }
 
-  props: TopLevelViewPropsType;
+  props: TopLevelViewPropsType
 
   chooseCafe = (cafeId: string) => {
     if (!/^\d*$/.test(cafeId)) {
       return
     }
     this.setState({cafeId})
-  };
+  }
 
   chooseMenu = () => {
     const menu = (
@@ -54,7 +54,7 @@ export class BonAppPickerView extends React.Component {
       />
     )
     this.setState({menu})
-  };
+  }
 
   render() {
     return (

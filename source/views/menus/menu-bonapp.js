@@ -24,6 +24,7 @@ import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
 import {AllHtmlEntities} from 'html-entities'
 import {toLaxTitleCase} from 'titlecase'
 import {tracker} from '../../analytics'
+import bugsnag from '../../bugsnag'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
@@ -37,7 +38,7 @@ type BonAppPropsType = TopLevelViewPropsType & {
   ignoreProvidedMenus?: boolean,
   loadingMessage: string[],
   name: string,
-};
+}
 
 export class BonAppHostedMenu extends React.Component {
   state: {
@@ -52,7 +53,7 @@ export class BonAppHostedMenu extends React.Component {
     now: moment.tz(CENTRAL_TZ),
     cafeMenu: null,
     cafeInfo: null,
-  };
+  }
 
   componentWillMount() {
     this.fetchData(this.props)
@@ -62,7 +63,7 @@ export class BonAppHostedMenu extends React.Component {
     this.props.cafeId !== newProps.cafeId && this.fetchData(newProps)
   }
 
-  props: BonAppPropsType;
+  props: BonAppPropsType
 
   fetchData = async (props: BonAppPropsType) => {
     this.setState({loading: true})
@@ -79,6 +80,7 @@ export class BonAppHostedMenu extends React.Component {
       cafeInfo = (requests[1]: BonAppCafeInfoType)
     } catch (err) {
       tracker.trackException(err.message)
+      bugsnag.notify(err)
       this.setState({error: err})
     }
 
@@ -88,7 +90,7 @@ export class BonAppHostedMenu extends React.Component {
       cafeInfo,
       now: moment.tz(CENTRAL_TZ),
     })
-  };
+  }
 
   findCafeMessage = (
     cafeId: string,
@@ -109,7 +111,7 @@ export class BonAppHostedMenu extends React.Component {
     }
 
     return null
-  };
+  }
 
   prepareSingleMenu(
     mealInfo: DayPartMenuType,
@@ -170,13 +172,13 @@ export class BonAppHostedMenu extends React.Component {
     }
 
     if (!this.state.cafeMenu || !this.state.cafeInfo) {
-      tracker.trackException(
+      let err = new Error(
         `Something went wrong loading BonApp cafe ${this.props.cafeId}`,
       )
+      tracker.trackException(err)
+      bugsnag.notify(err)
       return (
-        <NoticeView
-          text="Something went wrong. Email odt@stolaf.edu to let them know?"
-        />
+        <NoticeView text="Something went wrong. Email odt@stolaf.edu to let them know?" />
       )
     }
 
@@ -218,7 +220,8 @@ export class BonAppHostedMenu extends React.Component {
         ]
     const ignoreMenus = dayparts[0].length ? ignoreProvidedMenus : true
     const allMeals = mealInfoItems.map(mealInfo =>
-      this.prepareSingleMenu(mealInfo, foodItems, ignoreMenus))
+      this.prepareSingleMenu(mealInfo, foodItems, ignoreMenus),
+    )
 
     return (
       <FancyMenu

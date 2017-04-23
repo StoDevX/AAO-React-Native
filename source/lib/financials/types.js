@@ -5,4 +5,4 @@ export type BalancesShapeType = {
   print: ?number,
   weekly: ?string,
   daily: ?string,
-};
+}

@@ -17,58 +17,63 @@ import {
 import {Button} from '../components/button'
 import * as c from '../components/colors'
 import {tracker} from '../../analytics'
+import bugsnag from '../../bugsnag'
 
-let kstoApp = 'KSTORadio://'
-let kstoDownload = 'itms://itunes.apple.com/us/app/ksto/id953916647'
-let kstoWeb = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
+const kstoProtocol = 'KSTORadio://'
+const kstoAppStoreLink = 'itms://itunes.apple.com/us/app/ksto/id953916647'
+const kstoWebPage = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
+
+function kstoWebsite() {
+  Linking.openURL(kstoWebPage).catch(err => {
+    tracker.trackException(`opening Android KSTO url: ${err.message}`)
+    bugsnag.notify(err)
+    console.warn('An error occurred opening the Android KSTO url', err)
+  })
+}
+
+function iosKstoAppDownload() {
+  Linking.openURL(kstoAppStoreLink).catch(err => {
+    tracker.trackException(`opening KSTO download url: ${err.message}`)
+    bugsnag.notify(err)
+    console.warn('An error occurred opening the KSTO download url', err)
+  })
+}
+
+function iosKstoApp() {
+  Linking.canOpenURL(kstoProtocol)
+    .then(installed => {
+      if (!installed) {
+        return iosKstoAppDownload()
+      }
+
+      return Linking.openURL(kstoProtocol)
+    })
+    .catch(err => {
+      tracker.trackException(`opening iOS KSTO url: ${err.message}`)
+      bugsnag.notify(err)
+      console.warn('An error occurred opening the iOS KSTO url', err)
+    })
+}
+
+function openKsto() {
+  if (Platform.OS === 'android') {
+    return kstoWebsite()
+  } else {
+    return iosKstoApp()
+  }
+}
 
 export default function KSTOView() {
   return (
     <View style={styles.container}>
       <Image source={image} style={styles.logo} />
-      <Text selectable={true} style={styles.kstoText}>
+      <Text selectable={true} style={styles.heading}>
         St. Olaf College Radio
       </Text>
-      <Text selectable={true} style={styles.kstoText}>KSTO 93.1 FM</Text>
-      <Button
-        onPress={() => {
-          if (Platform.OS === 'android') {
-            Linking.openURL(kstoWeb).catch(err => {
-              tracker.trackException(
-                'opening Android KSTO url: ' + err.message,
-              )
-              console.warn(
-                'An error occurred opening the Android KSTO url',
-                err,
-              )
-            })
-          } else {
-            Linking.canOpenURL(kstoApp)
-              .then(supported => {
-                if (!supported) {
-                  Linking.openURL(kstoDownload).catch(err => {
-                    tracker.trackException(
-                      'opening KSTO download url: ' + err.message,
-                    )
-                    console.warn(
-                      'An error occurred opening the KSTO download url',
-                      err,
-                    )
-                  })
-                } else {
-                  return Linking.openURL(kstoApp)
-                }
-              })
-              .catch(err => {
-                tracker.trackException('opening iOS KSTO url: ' + err.message)
-                console.warn('An error occurred opening the iOS KSTO url', err)
-              })
-          }
-        }}
-        title="Listen to KSTO"
-      />
-      <Text selectable={true} style={styles.kstoSubtext}>
+      <Text selectable={true} style={styles.heading}>KSTO 93.1 FM</Text>
+      <Button onPress={openKsto} title="Listen to KSTO" />
+      <Text selectable={true} style={styles.subheading}>
         Look out for changes here soon!
       </Text>
     </View>
@@ -81,12 +86,12 @@ let styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 15,
   },
-  kstoText: {
+  heading: {
     marginTop: 5,
     color: c.kstoPrimaryDark,
     fontSize: 25,
   },
-  kstoSubtext: {
+  subheading: {
     marginTop: 5,
   },
   logo: {

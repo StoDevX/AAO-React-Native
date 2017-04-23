@@ -63,3 +63,6 @@ fastlane/test_output
 
 # deploy key
 scripts/travisci_deploy_key
+
+# generated files
+docs/

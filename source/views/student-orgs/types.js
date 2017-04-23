@@ -14,7 +14,7 @@ export type StudentOrgAbridgedType = {
   photoVersion: string,
   subdomain: string,
   uri: string,
-};
+}
 
 export type StudentOrgInfoType = {
   campusName: string,
@@ -38,4 +38,4 @@ export type StudentOrgInfoType = {
   subdomain: string,
   twitter: string,
   uri: string,
-};
+}

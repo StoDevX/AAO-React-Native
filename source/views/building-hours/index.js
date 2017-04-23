@@ -8,6 +8,7 @@
 import React from 'react'
 import {NoticeView} from '../components/notice'
 import {tracker} from '../../analytics'
+import bugsnag from '../../bugsnag'
 import {BuildingHoursList} from './list'
 
 import type momentT from 'moment'
@@ -40,7 +41,7 @@ export class BuildingHoursView extends React.Component {
     now: moment.tz(CENTRAL_TZ),
     buildings: groupBuildings(fallbackBuildingHours),
     intervalId: 0,
-  };
+  }
 
   componentWillMount() {
     this.fetchData()
@@ -54,11 +55,11 @@ export class BuildingHoursView extends React.Component {
     clearTimeout(this.state.intervalId)
   }
 
-  props: TopLevelViewPropsType;
+  props: TopLevelViewPropsType
 
   updateTime = () => {
     this.setState({now: moment.tz(CENTRAL_TZ)})
-  };
+  }
 
   fetchData = async () => {
     this.setState({loading: true})
@@ -70,11 +71,12 @@ export class BuildingHoursView extends React.Component {
       buildings = data
     } catch (err) {
       tracker.trackException(err.message)
+      bugsnag.notify(err)
       console.warn(err)
       buildings = fallbackBuildingHours
     }
 
-    if (__DEV__) {
+    if (process.env.NODE_ENV === 'development') {
       buildings = fallbackBuildingHours
     }
 
@@ -83,7 +85,7 @@ export class BuildingHoursView extends React.Component {
       buildings: groupBuildings(buildings),
       now: moment.tz(CENTRAL_TZ),
     })
-  };
+  }
 
   render() {
     if (this.state.error) {

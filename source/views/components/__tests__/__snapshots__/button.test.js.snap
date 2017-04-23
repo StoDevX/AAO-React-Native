@@ -1,4 +1,6 @@
-exports[`test calls the callback 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`calls the callback 1`] = `
 <Button
   onPress={[Function]}
   style={
@@ -12,12 +14,13 @@ exports[`test calls the callback 1`] = `
       "paddingVertical": 10,
       "width": 200,
     }
-  }>
+  }
+>
   Push me!
 </Button>
 `;
 
-exports[`test calls the callback 2`] = `
+exports[`calls the callback 2`] = `
 <Button
   onPress={[Function]}
   style={
@@ -31,12 +34,13 @@ exports[`test calls the callback 2`] = `
       "paddingVertical": 10,
       "width": 200,
     }
-  }>
+  }
+>
   Push me!
 </Button>
 `;
 
-exports[`test can change the title 1`] = `
+exports[`can change the title 1`] = `
 <Button
   onPress={[Function]}
   style={
@@ -50,12 +54,13 @@ exports[`test can change the title 1`] = `
       "paddingVertical": 10,
       "width": 200,
     }
-  }>
+  }
+>
   Title
 </Button>
 `;
 
-exports[`test renders 1`] = `
+exports[`renders 1`] = `
 <Button
   onPress={[Function]}
   style={
@@ -69,7 +74,8 @@ exports[`test renders 1`] = `
       "paddingVertical": 10,
       "width": 200,
     }
-  }>
+  }
+>
   Push me!
 </Button>
 `;

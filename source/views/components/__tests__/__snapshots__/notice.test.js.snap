@@ -1,4 +1,6 @@
-exports[`test renders 1`] = `
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
 <View
   style={
     Array [
@@ -11,7 +13,8 @@ exports[`test renders 1`] = `
       },
       undefined,
     ]
-  }>
+  }
+>
   <Text
     accessible={true}
     allowFontScaling={true}
@@ -21,7 +24,8 @@ exports[`test renders 1`] = `
       Object {
         "textAlign": "center",
       }
-    }>
+    }
+  >
     A Message
   </Text>
 </View>
