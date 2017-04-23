@@ -52,10 +52,8 @@ export class DictionaryView extends React.Component {
 
   state: {
     results: {[key: string]: Array<WordType>},
-    hideClear: boolean,
   } = {
     results: terms,
-    hideClear: true,
   }
 
   onPressRow = (data: WordType) => {
@@ -79,7 +77,7 @@ export class DictionaryView extends React.Component {
         <Column>
           <Title lines={1}>{item.word}</Title>
           <Detail lines={2} style={styles.rowDetailText}>
-            {item.definition.trim()}
+            {item.definition}
           </Detail>
         </Column>
       </ListRow>
