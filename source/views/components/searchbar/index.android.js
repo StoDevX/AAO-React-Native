@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {View} from 'react-native'
-import MaterialSearchBar from 'react-native-material-design-searchbar'
+// import MaterialSearchBar from 'react-native-material-design-searchbar'
 
 type PropsType = {
   placeholder?: string,
@@ -10,10 +10,10 @@ type PropsType = {
 
 export const SearchBar = () => <View />
 
-export const temp = (props: PropsType) => (
-  <MaterialSearchBar
-    height={40}
-    placeholder={props.placeholder || 'Search'}
-    onSearchChange={props.onChangeText || null}
-  />
-)
+// export const temp = (props: PropsType) => (
+//   <MaterialSearchBar
+//     height={40}
+//     placeholder={props.placeholder || 'Search'}
+//     onSearchChange={props.onChangeText || null}
+//   />
+// )
