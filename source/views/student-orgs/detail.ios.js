@@ -69,24 +69,33 @@ export class StudentOrgsDetailRenderView extends React.Component {
         <TableView>
           <Text selectable={true} style={styles.name}>{name}</Text>
 
-          {category.trim() ? <Section header="CATEGORY">
-            <Cell cellStyle="Basic" title={category} />
-          </Section> : null}
+          {category.trim()
+            ? <Section header="CATEGORY">
+                <Cell cellStyle="Basic" title={category} />
+              </Section>
+            : null}
 
-          {meetings.trim() ? <Section header="MEETINGS">
-            <Cell cellContentView={
-                <Text style={styles.meetings}>{meetings}</Text>
-              } cellStyle="Basic" />
-          </Section> : null}
+          {meetings.trim()
+            ? <Section header="MEETINGS">
+                <Cell
+                  cellContentView={
+                    <Text style={styles.meetings}>{meetings}</Text>
+                  }
+                  cellStyle="Basic"
+                />
+              </Section>
+            : null}
 
-          {website.trim() ? <Section header="WEBSITE">
-            <Cell
-              cellStyle="Basic"
-              accessory="DisclosureIndicator"
-              title={website}
-              onPress={() => openUrl(`http://${website}`)}
-            />
-          </Section> : null}
+          {website.trim()
+            ? <Section header="WEBSITE">
+                <Cell
+                  cellStyle="Basic"
+                  accessory="DisclosureIndicator"
+                  title={website}
+                  onPress={() => openUrl(`http://${website}`)}
+                />
+              </Section>
+            : null}
 
           <Section header="CONTACT">
             {contacts.map((c, i) => (
@@ -101,22 +110,26 @@ export class StudentOrgsDetailRenderView extends React.Component {
             ))}
           </Section>
 
-          {(advisors.length) ?
-            <Section header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
-              {advisors.map((c, i) => (
-                <Cell
-                  key={i}
-                  cellStyle="Basic"
-                  accessory="DisclosureIndicator"
-                  title={c.name.trim()}
-                  onPress={() => Linking.openURL(`mailto:${c.email}`)}
-                />
-              ))}
-            </Section> : null
-          }
+          {advisors.length
+            ? <Section header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
+                {advisors.map((c, i) => (
+                  <Cell
+                    key={i}
+                    cellStyle="Basic"
+                    accessory="DisclosureIndicator"
+                    title={c.name.trim()}
+                    onPress={() => Linking.openURL(`mailto:${c.email}`)}
+                  />
+                ))}
+              </Section>
+            : null}
 
-          {description.trim() ? <Section header="DESCRIPTION">
-            <WebView style={styles.description} source={{html: `
+          {description.trim()
+            ? <Section header="DESCRIPTION">
+                <WebView
+                  style={styles.description}
+                  source={{
+                    html: `
               <style>
                 body {
                   margin: 10px 15px 10px;
@@ -127,11 +140,16 @@ export class StudentOrgsDetailRenderView extends React.Component {
                 }
               </style>
               ${description.trim()}
-            `}} />
-          </Section> : null}
+            `,
+                  }}
+                />
+              </Section>
+            : null}
 
           <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-            Last updated: {moment(lastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
+            Last updated:
+            {' '}
+            {moment(lastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
           </Text>
 
           <Text selectable={true} style={[styles.footer, styles.poweredBy]}>

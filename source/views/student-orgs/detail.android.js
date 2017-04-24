@@ -74,17 +74,23 @@ export class StudentOrgsDetailRenderView extends React.Component {
       <ScrollView>
         <Text style={styles.name}>{name}</Text>
 
-        {category.trim() ? <Card header="Category" style={styles.card}>
-          <Text style={styles.cardBody}>{category}</Text>
-        </Card> : null}
+        {category.trim()
+          ? <Card header="Category" style={styles.card}>
+              <Text style={styles.cardBody}>{category}</Text>
+            </Card>
+          : null}
 
-        {meetings.trim() ? <Card header="Meetings" style={styles.card}>
-          <Cell cellStyle="Basic" title={meetings} />
-        </Card> : null}
+        {meetings.trim()
+          ? <Card header="Meetings" style={styles.card}>
+              <Cell cellStyle="Basic" title={meetings} />
+            </Card>
+          : null}
 
-        {website.trim() ? <Card header="Website" style={styles.card}>
-          <Text style={styles.cardBody}>{website}</Text>
-        </Card> : null}
+        {website.trim()
+          ? <Card header="Website" style={styles.card}>
+              <Text style={styles.cardBody}>{website}</Text>
+            </Card>
+          : null}
 
         <Card header="Contact" style={styles.card}>
           {contacts.map((c, i) => (
@@ -94,16 +100,26 @@ export class StudentOrgsDetailRenderView extends React.Component {
           ))}
         </Card>
 
-        {advisors.length ? <Card header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'} style={styles.card}>
-          {advisors.map((c, i) => (
-            <Text key={i} selectable={true} style={styles.cardBody}>
-              {c.name} ({c.email})
-            </Text>
-          ))}
-        </Card> : null}
+        {advisors.length
+          ? <Card
+              header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}
+              style={styles.card}
+            >
+              {advisors.map((c, i) => (
+                <Text key={i} selectable={true} style={styles.cardBody}>
+                  {c.name} ({c.email})
+                </Text>
+              ))}
+            </Card>
+          : null}
 
-        {description.trim() ? <Card header="Description" style={styles.card}>
-          <WebView scrollEnabled={true} style={styles.description} source={{html: `
+        {description.trim()
+          ? <Card header="Description" style={styles.card}>
+              <WebView
+                scrollEnabled={true}
+                style={styles.description}
+                source={{
+                  html: `
               <style>
                 body {
                   margin: 10px 15px 10px;
@@ -114,16 +130,21 @@ export class StudentOrgsDetailRenderView extends React.Component {
                 }
               </style>
               ${description.trim()}
-            `}} />
-        </Card> : null}
+            `,
+                }}
+              />
+            </Card>
+          : null}
 
         <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-            Last updated: {moment(lastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
-          </Text>
+          Last updated:
+          {' '}
+          {moment(lastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
+        </Text>
 
-          <Text selectable={true} style={[styles.footer, styles.poweredBy]}>
-            Powered by the St. Olaf Student Orgs Database
-          </Text>
+        <Text selectable={true} style={[styles.footer, styles.poweredBy]}>
+          Powered by the St. Olaf Student Orgs Database
+        </Text>
       </ScrollView>
     )
   }
