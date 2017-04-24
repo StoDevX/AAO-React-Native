@@ -1,10 +1,12 @@
 // @flow
 import React from 'react'
-import {ScrollView, Text, View, StyleSheet} from 'react-native'
+import {ScrollView, Text, WebView, StyleSheet, Linking} from 'react-native'
+import moment from 'moment'
 
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
-import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
+import type {StudentOrgType} from './types'
+import openUrl from '../components/open-url'
 
 const styles = StyleSheet.create({
   name: {
@@ -16,128 +18,125 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '300',
   },
+  meetings: {
+    flex: 1,
+    paddingVertical: 8,
+    fontSize: 16,
+  },
   description: {
     paddingTop: 13,
     paddingBottom: 13,
     paddingLeft: 16,
     paddingRight: 16,
-    fontSize: 16,
     backgroundColor: c.white,
+    height: 200,
   },
   footer: {
     fontSize: 10,
     color: c.iosDisabledText,
     textAlign: 'center',
+  },
+  lastUpdated: {
+    paddingBottom: 10,
+  },
+  poweredBy: {
     paddingBottom: 20,
   },
 })
 
 export class StudentOrgsDetailRenderView extends React.Component {
   props: {
-    loaded: boolean,
-    base: StudentOrgAbridgedType,
-    full: ?StudentOrgInfoType,
-  }
-
-  displayContact(contactInfo: string) {
-    return (
-      <Section header="CONTACT">
-        <Cell cellStyle="Basic" title={contactInfo} />
-      </Section>
-    )
-  }
-
-  displayDescription(description: string) {
-    return (
-      <Section header="DESCRIPTION">
-        <Text selectable={true} style={styles.description}>{description}</Text>
-      </Section>
-    )
-  }
-
-  displayMeetings(meetingTime: string, meetingLocation: string) {
-    let contents = null
-    if (meetingTime && meetingLocation) {
-      contents = (
-        <Cell
-          cellStyle="Subtitle"
-          title={meetingTime}
-          detail={meetingLocation}
-        />
-      )
-    } else if (meetingTime) {
-      contents = (
-        <Cell cellStyle="Basic" title={meetingTime} detail={meetingLocation} />
-      )
-    } else if (meetingLocation) {
-      contents = <Cell cellStyle="Basic" title={meetingLocation} />
-    }
-
-    return (
-      <Section header="MEETINGS">
-        {contents}
-      </Section>
-    )
-  }
-
-  displayFooter() {
-    return <Text style={styles.footer}>Powered by Presence</Text>
-  }
-
-  renderBody = (data: StudentOrgInfoType) => {
-    const {
-      regularMeetingTime = '',
-      regularMeetingLocation = '',
-      description = '',
-      contactName = '',
-    } = data
-
-    const showMeetingSection = regularMeetingTime && regularMeetingLocation
-
-    return (
-      <View>
-        {showMeetingSection
-          ? this.displayMeetings(regularMeetingTime, regularMeetingLocation)
-          : null}
-        {contactName ? this.displayContact(contactName) : null}
-        {description ? this.displayDescription(description) : null}
-      </View>
-    )
+    org: StudentOrgType,
   }
 
   render() {
-    let knownData = this.props.base
-    let orgName = knownData.name.trim()
-    let orgCategory = knownData.categories.join(', ')
+    const data = this.props.org
+    const name = data.name.trim()
+    let {
+      category,
+      meetings,
+      contacts,
+      description,
+      advisors,
+      lastUpdated,
+      website,
+    } = data
 
-    let contents
-    if (!this.props.loaded) {
-      contents = (
-        <Section header="ORGANIZATION">
-          <Cell cellStyle="Basic" title="Loading…" />
-        </Section>
-      )
-    } else if (!this.props.full) {
-      contents = (
-        <Section header="ORGANIZATION">
-          <Cell cellStyle="Basic" title="No information found." />
-        </Section>
-      )
-    } else {
-      contents = this.renderBody(this.props.full)
-    }
+    advisors = advisors.filter(c => c.name.trim().length)
 
     return (
       <ScrollView>
         <TableView>
-          <Text selectable={true} style={styles.name}>{orgName}</Text>
+          <Text selectable={true} style={styles.name}>{name}</Text>
 
-          <Section header="CATEGORY">
-            <Cell cellStyle="Basic" title={orgCategory} />
+          {category.trim() ? <Section header="CATEGORY">
+            <Cell cellStyle="Basic" title={category} />
+          </Section> : null}
+
+          {meetings.trim() ? <Section header="MEETINGS">
+            <Cell cellContentView={
+                <Text style={styles.meetings}>{meetings}</Text>
+              } cellStyle="Basic" />
+          </Section> : null}
+
+          {website.trim() ? <Section header="WEBSITE">
+            <Cell
+              cellStyle="Basic"
+              accessory="DisclosureIndicator"
+              title={website}
+              onPress={() => openUrl(`http://${website}`)}
+            />
+          </Section> : null}
+
+          <Section header="CONTACT">
+            {contacts.map((c, i) => (
+              <Cell
+                key={i}
+                cellStyle={c.title ? 'Subtitle' : 'Basic'}
+                accessory="DisclosureIndicator"
+                title={`${c.firstName.trim()} ${c.lastName.trim()}`}
+                detail={c.title.trim()}
+                onPress={() => Linking.openURL(`mailto:${c.email}@stolaf.edu`)}
+              />
+            ))}
           </Section>
 
-          {contents}
-          {this.displayFooter()}
+          {(advisors.length) ?
+            <Section header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
+              {advisors.map((c, i) => (
+                <Cell
+                  key={i}
+                  cellStyle="Basic"
+                  accessory="DisclosureIndicator"
+                  title={c.name.trim()}
+                  onPress={() => Linking.openURL(`mailto:${c.email}`)}
+                />
+              ))}
+            </Section> : null
+          }
+
+          {description.trim() ? <Section header="DESCRIPTION">
+            <WebView style={styles.description} source={{html: `
+              <style>
+                body {
+                  margin: 10px 15px 10px;
+                  font-family: -apple-system;
+                }
+                * {
+                  max-width: 100%;
+                }
+              </style>
+              ${description.trim()}
+            `}} />
+          </Section> : null}
+
+          <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
+            Last updated: {moment(lastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
+          </Text>
+
+          <Text selectable={true} style={[styles.footer, styles.poweredBy]}>
+            Powered by the St. Olaf Student Orgs Database
+          </Text>
         </TableView>
       </ScrollView>
     )

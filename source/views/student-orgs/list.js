@@ -21,15 +21,15 @@ import {
 import {tracker} from '../../analytics'
 import bugsnag from '../../bugsnag'
 import size from 'lodash/size'
-import map from 'lodash/map'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
 import startCase from 'lodash/startCase'
-import type {StudentOrgAbridgedType} from './types'
+import type {StudentOrgType} from './types'
 
-const orgsUrl = 'https://api.presence.io/stolaf/v1/organizations'
+const orgsUrl =
+  'https://www.stolaf.edu/orgs/list/index.cfm?fuseaction=getall&nostructure=1'
 const leftSideSpacing = 20
 const rowHeight = Platform.OS === 'ios' ? 58 : 74
 const headerHeight = Platform.OS === 'ios' ? 33 : 41
@@ -52,9 +52,6 @@ const styles = StyleSheet.create({
     fontSize: Platform.OS === 'ios' ? 24 : 28,
     color: c.transparent,
   },
-  newOrgBadge: {
-    color: c.infoBlue,
-  },
 })
 
 export class StudentOrgsView extends React.Component {
@@ -64,7 +61,7 @@ export class StudentOrgsView extends React.Component {
   }
 
   state: {
-    orgs: {[key: string]: StudentOrgAbridgedType[]},
+    orgs: {[key: string]: StudentOrgType[]},
     refreshing: boolean,
     error: boolean,
     loaded: boolean,
@@ -81,9 +78,9 @@ export class StudentOrgsView extends React.Component {
 
   fetchData = async () => {
     try {
-      let responseData: StudentOrgAbridgedType[] = await fetchJson(orgsUrl)
-      let withSortableNames = map(responseData, item => {
-        let sortableName = item.name.replace(/^(St\.? Olaf|The) +/i, '')
+      let responseData: StudentOrgType[] = await fetchJson(orgsUrl)
+      let withSortableNames = responseData.map(item => {
+        let sortableName = item.name.replace(/^(St\.? Olaf(?: College)?|The) +/i, '')
         return {
           ...item,
           $sortableName: sortableName,
@@ -94,10 +91,7 @@ export class StudentOrgsView extends React.Component {
       let sorted = sortBy(withSortableNames, '$sortableName')
       let grouped = groupBy(sorted, '$groupableName')
 
-      let newOrgs = sorted.filter(org => org.newOrg)
-      let orgs = {New: newOrgs, ...grouped}
-
-      this.setState({orgs: orgs})
+      this.setState({orgs: grouped})
     } catch (err) {
       tracker.trackException(err.message)
       bugsnag.notify(err)
@@ -136,7 +130,7 @@ export class StudentOrgsView extends React.Component {
     return name === 'New' ? '•' : name
   }
 
-  renderRow = ({item}: {item: StudentOrgAbridgedType}) => {
+  renderRow = ({item}: {item: StudentOrgType}) => {
     return (
       <ListRow
         onPress={() => this.onPressRow(item)}
@@ -146,14 +140,12 @@ export class StudentOrgsView extends React.Component {
       >
         <Row alignItems="flex-start">
           <View style={styles.badgeContainer}>
-            <Text style={[styles.badge, item.newOrg && styles.newOrgBadge]}>
-              •
-            </Text>
+            <Text style={styles.badge}>•</Text>
           </View>
 
           <Column flex={1}>
             <Title lines={1}>{item.name}</Title>
-            <Detail lines={1}>{item.categories.join(', ')}</Detail>
+            <Detail lines={1}>{item.category}</Detail>
           </Column>
         </Row>
       </ListRow>
@@ -169,14 +161,14 @@ export class StudentOrgsView extends React.Component {
     )
   }
 
-  onPressRow = (data: StudentOrgAbridgedType) => {
+  onPressRow = (data: StudentOrgType) => {
     tracker.trackEvent('student-org', data.name)
     this.props.navigator.push({
       id: 'StudentOrgsDetailView',
       index: this.props.route.index + 1,
       title: data.name,
       backButtonTitle: 'Orgs',
-      props: {item: data},
+      props: {org: data},
     })
   }
 
