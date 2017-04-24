@@ -114,23 +114,23 @@ script:
   # we run `danger` out here to ensure that it is run,
   # even if another task in script.sh fails.
   - if [[ $JS ]]; then npm run danger; fi
-  - if [[ $JS && $run_deploy -eq 1 ]]; then
-      echo "releasing codepush for ios";
-      code-push release-react AllAboutOlaf-iOS ios -d release --targetBinaryVersion '2.*';
-      echo "releasing codepush for android";
-      code-push release-react AllAboutOlaf-Android android -d release --targetBinaryVersion '2.*';
-    fi
 
 after_success:
   - bash scripts/travis/after_success.sh
 
 deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_PAGES_TOKEN
-  local_dir: docs/
-  on:
-    branch: master
+  - provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_PAGES_TOKEN
+    local_dir: docs/
+    on:
+      branch: master
+  - provider: script
+    skip_cleanup: true
+    script: scripts/travis/deploy-codepush.sh
+    on:
+      branch: master
+      condition: $JS && $run_deploy -eq 1
 
 before_cache:
   - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"
