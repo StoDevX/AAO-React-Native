@@ -128,7 +128,7 @@ export class DictionaryView extends React.Component {
     return (
       <View style={styles.wrapper}>
         <SearchBar
-          getRef={ref => this.searchBar = ref}
+          getRef={ref => (this.searchBar = ref)}
           onChangeText={this.performSearch}
         />
         <StyledAlphabetListView
