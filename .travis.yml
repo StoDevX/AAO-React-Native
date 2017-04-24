@@ -114,7 +114,7 @@ script:
   # we run `danger` out here to ensure that it is run,
   # even if another task in script.sh fails.
   - if [[ $JS ]]; then npm run danger; fi
-  - if [[ $JS && $TRAVIS_BRANCH = master ]]; then
+  - if [[ $JS && $run_deploy -eq 1 ]]; then
       echo "releasing codepush for ios";
       code-push release-react AllAboutOlaf-iOS ios -d release --targetBinaryVersion '2.*';
       echo "releasing codepush for android";
