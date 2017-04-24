@@ -27,7 +27,6 @@ import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import * as c from '../components/colors'
 import startCase from 'lodash/startCase'
-import {Searchbar} from '../components/searchbar'
 import type {StudentOrgAbridgedType} from './types'
 
 const orgsUrl = 'https://api.presence.io/stolaf/v1/organizations'
@@ -36,9 +35,6 @@ const rowHeight = Platform.OS === 'ios' ? 58 : 74
 const headerHeight = Platform.OS === 'ios' ? 33 : 41
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-  },
   row: {
     height: rowHeight,
     paddingRight: 2,
@@ -68,17 +64,13 @@ export class StudentOrgsView extends React.Component {
   }
 
   state: {
-    data: {[key: string]: StudentOrgAbridgedType[]},
-    pureData: {[key: string]: StudentOrgAbridgedType[]},
+    orgs: {[key: string]: StudentOrgAbridgedType[]},
     refreshing: boolean,
     error: boolean,
-    searching: boolean,
     loaded: boolean,
   } = {
-    data: {},
-    pureData: {},
+    orgs: {},
     refreshing: false,
-    searching: false,
     loaded: false,
     error: false,
   }
@@ -89,10 +81,23 @@ export class StudentOrgsView extends React.Component {
 
   fetchData = async () => {
     try {
-      let responseData: {
-        [key: string]: StudentOrgAbridgedType[],
-      } = await fetchJson(orgsUrl)
-      this.setState({data: responseData, pureData: responseData})
+      let responseData: StudentOrgAbridgedType[] = await fetchJson(orgsUrl)
+      let withSortableNames = map(responseData, item => {
+        let sortableName = item.name.replace(/^(St\.? Olaf|The) +/i, '')
+        return {
+          ...item,
+          $sortableName: sortableName,
+          $groupableName: head(startCase(sortableName)),
+        }
+      })
+
+      let sorted = sortBy(withSortableNames, '$sortableName')
+      let grouped = groupBy(sorted, '$groupableName')
+
+      let newOrgs = sorted.filter(org => org.newOrg)
+      let orgs = {New: newOrgs, ...grouped}
+
+      this.setState({orgs: orgs})
     } catch (err) {
       tracker.trackException(err.message)
       bugsnag.notify(err)
@@ -175,85 +180,30 @@ export class StudentOrgsView extends React.Component {
     })
   }
 
-  handleResults = (results: {[key: string]: StudentOrgAbridgedType[]}) => {
-    this.setState({data: results})
-  }
-
-  groupData = (
-    data: {[key: string]: StudentOrgAbridgedType[]},
-    {searching}: {searching: boolean},
-  ) => {
-    let withSortableNames = map(data, item => {
-      let sortableName = item.name.replace(/^(St\.? Olaf|The) +/i, '')
-      return {
-        ...item,
-        $sortableName: sortableName,
-        $groupableName: head(startCase(sortableName)),
-      }
-    })
-
-    let sorted = sortBy(withSortableNames, '$sortableName')
-    let grouped = groupBy(sorted, '$groupableName')
-
-    let newOrgs = sorted.filter(org => org.newOrg)
-    let orgs = searching ? grouped : {New: newOrgs, ...grouped}
-
-    return orgs
-  }
-
-  checkIfSearching = (text: string) => {
-    return text === ''
-      ? this.setState({searching: false})
-      : this.setState({searching: true})
-  }
-
-  searchbar: Searchbar
-
   render() {
     if (!this.state.loaded) {
       return <LoadingView />
     }
 
-    // prepare the data for the searchbar and the listview
-    const grouped = this.groupData(this.state.data, {
-      searching: this.state.searching,
-    })
-
-    if (!size(this.state.pureData)) {
+    if (!size(this.state.orgs)) {
       return <NoticeView text="No organizations found." />
     }
 
     return (
-      <View style={styles.wrapper}>
-        {/*<SearchBar
-          ref={ref => this.searchBar = ref}
-          style={styles.searchbar}
-          data={this.state.pureData}
-          handleChangeText={this.checkIfSearching}
-          handleResults={this.handleResults}
-          showOnLoad={true}
-          hideBack={true}
-          allDataOnEmptySearch={true}
-          autoCorrect={false}
-          focusOnLayout={false}
-          iOSPadding={false}
-          autoCapitalize={'none'}
-        />*/}
-        <StyledAlphabetListView
-          data={grouped}
-          cell={this.renderRow}
-          getSectionListTitle={this.getSectionListTitle}
-          // just setting cellHeight sends the wrong values on iOS.
-          cellHeight={
-            rowHeight +
-              (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
-          }
-          sectionHeader={this.renderSectionHeader}
-          sectionHeaderHeight={headerHeight}
-          renderSeparator={this.renderSeparator}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
+      <StyledAlphabetListView
+        data={this.state.orgs}
+        cell={this.renderRow}
+        getSectionListTitle={this.getSectionListTitle}
+        // just setting cellHeight sends the wrong values on iOS.
+        cellHeight={
+          rowHeight +
+            (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
+        }
+        sectionHeader={this.renderSectionHeader}
+        sectionHeaderHeight={headerHeight}
+        renderSeparator={this.renderSeparator}
+        showsVerticalScrollIndicator={false}
+      />
     )
   }
 }
