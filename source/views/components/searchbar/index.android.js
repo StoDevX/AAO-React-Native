@@ -3,10 +3,10 @@ import React from 'react'
 import {View} from 'react-native'
 // import MaterialSearchBar from 'react-native-material-design-searchbar'
 
-type PropsType = {
-  placeholder?: string,
-  onChangeText: string => any,
-}
+// type PropsType = {
+//   placeholder?: string,
+//   onChangeText: string => any,
+// }
 
 export const SearchBar = () => <View />
 
