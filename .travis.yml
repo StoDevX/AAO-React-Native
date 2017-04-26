@@ -130,7 +130,7 @@ deploy:
     script: scripts/travis/deploy-codepush.sh
     on:
       branch: master
-      condition: $JS && $run_deploy -eq 1
+      condition: $JS
 
 before_cache:
   - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"
