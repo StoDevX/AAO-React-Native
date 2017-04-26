@@ -2,6 +2,7 @@
 set -ev
 set -o pipefail
 
+bundle exec fastlane set-build "build:$TRAVIS_BUILD_NUMBER"
 target_version="~2.1"
 
 echo "releasing codepush for ios"
