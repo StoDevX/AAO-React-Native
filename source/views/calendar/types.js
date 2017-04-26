@@ -5,10 +5,10 @@ type GoogleTimeType = {
   dateTime: string,
 }
 export type GoogleEventType = {
-  summary: string,
+  summary?: string,
   start: GoogleTimeType,
   end: GoogleTimeType,
-  location: string,
+  location?: string,
 }
 
 type EmbeddedEventDetailType =
