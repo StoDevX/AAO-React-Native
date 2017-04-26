@@ -11,6 +11,4 @@ if [[ $JS ]]; then
 fi
 
 # install fastlane
-if [[ $ANDROID || $IOS ]]; then
-  bundle install --deployment
-fi
+bundle install --deployment
