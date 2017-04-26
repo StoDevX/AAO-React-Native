@@ -70,11 +70,11 @@ platform :ios do
   lane :set_version do |options|
     version = options[:version] || current_bundle_version
     build = options[:build_number] || current_build_number
-    increment_version_number(version_number: "#{version}-build.#{build}",
+    increment_version_number(version_number: "#{version}+#{build}",
                              xcodeproj: ENV['GYM_PROJECT'])
     increment_build_number(build_number: build,
                            xcodeproj: ENV['GYM_PROJECT'])
-    set_package_data(data: { version: "#{version}-build.#{build}" })
+    set_package_data(data: { version: "#{version}+#{build}" })
   end
 
   desc 'Do CI-system keychain setup'
