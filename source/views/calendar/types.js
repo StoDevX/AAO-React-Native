@@ -11,8 +11,7 @@ export type GoogleEventType = {
   location?: string,
 }
 
-type EmbeddedEventDetailType =
-  | {type: 'google', data: GoogleEventType}
+type EmbeddedEventDetailType = {type: 'google', data: GoogleEventType}
 
 export type EventType = {
   summary: string,
