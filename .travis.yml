@@ -97,6 +97,7 @@ before_install:
 
   # only deploy from the once-daily cron-triggered jobs
   - if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
+  - run_deploy=1
 
   # run our before_install sequence
   - bash scripts/travis/before_install.sh
@@ -123,13 +124,6 @@ deploy:
     local_dir: docs/
     on:
       branch: master
-
-  - provider: script
-    skip_cleanup: true
-    script: rvm 2.3 do bundle exec fastlane codepush
-    # on:
-      # branch: master
-      # condition: $JS && $run_deploy == 1
 
 before_cache:
   - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"

@@ -24,24 +24,6 @@ lane :bump do |options|
   set_package_data(data: { version: new_version })
 end
 
-desc 'Set the build number without changing the version'
-lane :'set_build' do |options|
-  old_version = get_package_key(key: :version)
-  UI.message("Current version: #{old_version}")
-  build = options[:build] || UI.input('Build number to set: ').strip
-  new_version = "#{old_version}+#{build}"
-  UI.message("Setting build number to #{new_version}")
-
-  # update iOS version
-  increment_version_number(version_number: new_version,
-                           xcodeproj: ENV['GYM_PROJECT'])
-  # update Android version
-  set_gradle_version_name(version_name: new_version,
-                          gradle_path: lane_context[:GRADLE_FILE])
-  # update package.json version
-  set_package_data(data: { version: new_version })
-end
-
 desc 'Build the release notes: branch, commit hash, changelog'
 lane :release_notes do |options|
   notes = <<~END
@@ -58,16 +40,4 @@ end
 desc 'run `npm run bundle-data`'
 lane :bundle_data do
   sh('npm run bundle-data')
-end
-
-lane :codepush do
-  set_build(build: ENV['TRAVIS_BUILD_NUMBER'])
-
-  install_target = '~2.1'
-  channel = 'release'
-  target = "--targetBinaryVersion #{install_target}"
-
-  ['AllAboutOlaf-iOS', 'AllAboutOlaf-Android'].each do |app|
-    sh("code-push release-react #{app} ios -d #{channel} #{target}")
-  end
 end

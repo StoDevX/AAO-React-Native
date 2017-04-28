@@ -61,9 +61,14 @@ platform :ios do
     should_deploy = ENV['run_deploy'] == '1'
     if should_deploy
       auto_beta
+      codepush
     else
       build
     end
+  end
+
+  lane :codepush do
+    codepush_cli(app: 'AllAboutOlaf-iOS')
   end
 
   desc 'Include the build number in the version string'

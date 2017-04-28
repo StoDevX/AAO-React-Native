@@ -64,3 +64,8 @@ def auto_beta
 
   beta if last_commit != current_commit
 end
+
+def codepush_cli(app:, channel: 'release', install_target: '~2.1')
+  target = "--targetBinaryVersion #{install_target}"
+  sh("code-push release-react #{app} ios -d #{channel} #{target}")
+end
