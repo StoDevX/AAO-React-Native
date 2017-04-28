@@ -5,7 +5,7 @@ set -e -v
 npm install
 
 # install code-push
-if [[ $JS ]]; then
+if [[ $IOS || $ANDROID ]]; then
   npm install -g code-push-cli@latest
   code-push login --accessKey "$CODEPUSH_TOKEN"
 fi
