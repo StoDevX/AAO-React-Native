@@ -12,3 +12,6 @@ fi
 
 # install fastlane
 bundle install --deployment
+
+# test fastlane
+bundle exec fastlane help
