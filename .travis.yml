@@ -97,7 +97,6 @@ before_install:
 
   # only deploy from the once-daily cron-triggered jobs
   - if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
-  - run_deploy=1
 
   # run our before_install sequence
   - bash scripts/travis/before_install.sh
