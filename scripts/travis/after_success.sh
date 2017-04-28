@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e -v -x
+set -e -v
 
 # todo: test this on a forked build w/maintainer access to the branch
 if [[ $JS && $TRAVIS_PULL_REQUEST != false && -f .needs-push ]]; then

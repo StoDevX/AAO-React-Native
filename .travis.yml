@@ -123,12 +123,13 @@ deploy:
     local_dir: docs/
     on:
       branch: master
+
   - provider: script
     skip_cleanup: true
-    script: scripts/travis/deploy-codepush.sh
-    on:
-      branch: master
-      condition: $JS && $run_deploy == 1
+    script: rvm 2.3 do bundle exec fastlane codepush
+    # on:
+      # branch: master
+      # condition: $JS && $run_deploy == 1
 
 before_cache:
   - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"
