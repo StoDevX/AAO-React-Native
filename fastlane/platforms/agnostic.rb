@@ -25,7 +25,7 @@ lane :bump do |options|
 end
 
 desc 'Set the build number without changing the version'
-lane :'set-build' do |options|
+lane :'set_build' do |options|
   old_version = get_package_key(key: :version)
   UI.message("Current version: #{old_version}")
   build = options[:build] || UI.input('Build number to set: ').strip
@@ -58,4 +58,16 @@ end
 desc 'run `npm run bundle-data`'
 lane :bundle_data do
   sh('npm run bundle-data')
+end
+
+lane :codepush do
+  set_build(build: ENV['TRAVIS_BUILD_NUMBER'])
+
+  install_target = '~2.1'
+  channel = 'release'
+  target = "--targetBinaryVersion #{install_target}"
+
+  ['AllAboutOlaf-iOS', 'AllAboutOlaf-Android'].each do |app|
+    sh("code-push release-react #{app} ios -d #{channel} #{target}")
+  end
 end
