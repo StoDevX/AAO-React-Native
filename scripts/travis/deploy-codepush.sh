@@ -2,6 +2,10 @@
 set -ev
 set -o pipefail
 
+rvm use 2.3 --install --binary --fuzzy
+gem install bundler
+bundle install --deployment
+
 bundle exec fastlane set-build "build:$TRAVIS_BUILD_NUMBER"
 target_version="~2.1"
 
