@@ -130,6 +130,7 @@ export class DictionaryView extends React.Component {
         <SearchBar
           getRef={ref => (this.searchBar = ref)}
           onChangeText={this.performSearch}
+          onSearchButtonPress={() => this.searchBar.unFocus()}
         />
         <StyledAlphabetListView
           data={groupBy(this.state.results, item => head(item.word))}
@@ -143,6 +144,8 @@ export class DictionaryView extends React.Component {
           sectionHeaderHeight={headerHeight}
           showsVerticalScrollIndicator={false}
           renderSeparator={this.renderSeparator}
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="never"
         />
       </View>
     )
