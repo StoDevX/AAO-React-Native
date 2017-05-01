@@ -17,6 +17,7 @@ type PropsType = {
   style?: any,
   placeholder?: string,
   onChangeText: string => any,
+  onSearchButtonPress: string => any,
 }
 
 export const SearchBar = (props: PropsType) => (
@@ -26,5 +27,6 @@ export const SearchBar = (props: PropsType) => (
     hideBackground={true}
     placeholder={props.placeholder || 'Search'}
     onChangeText={props.onChangeText || null}
+    onSearchButtonPress={props.onSearchButtonPress || null}
   />
 )
