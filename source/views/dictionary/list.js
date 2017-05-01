@@ -130,6 +130,7 @@ export class DictionaryView extends React.Component {
         <SearchBar
           getRef={ref => (this.searchBar = ref)}
           onChangeText={this.performSearch}
+          // if we don't use the arrow function here, searchBar ref is null...
           onSearchButtonPress={() => this.searchBar.unFocus()}
         />
         <StyledAlphabetListView
