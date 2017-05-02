@@ -122,7 +122,7 @@ export const allViews: ViewType[] = [
   },
   {
     type: 'url',
-    url: 'https://papercut.stolaf.edu:9192',
+    url: 'https://papercut.stolaf.edu/app?service=page/UserReleaseJobs',
     view: 'PrintReleaseView',
     title: 'StoPrint',
     icon: 'print',
