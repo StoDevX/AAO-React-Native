@@ -88,7 +88,9 @@ export class StudentOrgsDetailRenderView extends React.Component {
 
         {website.trim()
           ? <Card header="Website" style={styles.card}>
-              <Text style={styles.cardBody}>{website}</Text>
+              <Text style={styles.cardBody}>
+                {/^https?:\/\//.test(website) ? website : `http://${website}`)
+              </Text>
             </Card>
           : null}
 

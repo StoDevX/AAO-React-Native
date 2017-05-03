@@ -92,7 +92,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
                   cellStyle="Basic"
                   accessory="DisclosureIndicator"
                   title={website}
-                  onPress={() => openUrl(`http://${website}`)}
+                  onPress={() => openUrl(/^https?:\/\//.test(website) ? website : `http://${website}`)}
                 />
               </Section>
             : null}
