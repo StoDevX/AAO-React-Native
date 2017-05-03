@@ -41,16 +41,19 @@ const collectData = async () => ({
 })
 
 function reportToServer(data) {
-  return fetch('https://www.stolaf.edu/apps/all-about-olaf/index.cfm?fuseaction=Submit', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  }).then(async r => {
-      let text = await r.text()
-      try {
-          return JSON.parse(text)
-      } catch (err) {
-          return text
-      }
+  return fetch(
+    'https://www.stolaf.edu/apps/all-about-olaf/index.cfm?fuseaction=Submit',
+    {
+      method: 'POST',
+      body: JSON.stringify(data),
+    },
+  ).then(async r => {
+    let text = await r.text()
+    try {
+      return JSON.parse(text)
+    } catch (err) {
+      return text
+    }
   })
 }
 
@@ -65,18 +68,18 @@ export class ReportWifiProblemView extends React.Component {
     const [position, device] = await Promise.all([getPosition(), collectData()])
     this.setState(() => ({status: 'Reporting data…'}))
     try {
-        let data = {position, device, version: 1};
-        let resp = await reportToServer(data)
-        if (resp.status === 'success') {
-            this.setState(() => ({data}))
-            this.setState(() => ({status: 'Thanks!'}))
-        } else {
-            console.error(resp)
-            this.setState(() => ({status: 'Server error'}))
-        }
+      let data = {position, device, version: 1}
+      let resp = await reportToServer(data)
+      if (resp.status === 'success') {
+        this.setState(() => ({data}))
+        this.setState(() => ({status: 'Thanks!'}))
+      } else {
+        console.error(resp)
+        this.setState(() => ({status: 'Server error'}))
+      }
     } catch (err) {
-        console.warn(err)
-        this.setState(() => ({status: err.message}))
+      console.warn(err)
+      this.setState(() => ({status: err.message}))
     }
   }
 
