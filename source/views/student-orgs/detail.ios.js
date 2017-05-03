@@ -105,7 +105,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
                 accessory="DisclosureIndicator"
                 title={`${c.firstName.trim()} ${c.lastName.trim()}`}
                 detail={c.title.trim()}
-                onPress={() => Linking.openURL(`mailto:${c.email}@stolaf.edu`)}
+                onPress={() => Linking.openURL(`mailto:${c.email}`)}
               />
             ))}
           </Section>

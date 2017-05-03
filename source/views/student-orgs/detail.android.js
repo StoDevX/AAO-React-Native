@@ -95,7 +95,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
         <Card header="Contact" style={styles.card}>
           {contacts.map((c, i) => (
             <Text key={i} selectable={true} style={styles.cardBody}>
-              {c.title}: {c.firstName} {c.lastName} ({c.email}@stolaf.edu)
+              {c.title}: {c.firstName} {c.lastName} ({c.email})
             </Text>
           ))}
         </Card>
