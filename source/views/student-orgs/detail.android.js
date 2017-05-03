@@ -104,7 +104,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
 
         {advisors.length
           ? <Card
-              header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}
+              header={advisors.length === 1 ? 'Advisor' : 'Advisors'}
               style={styles.card}
             >
               {advisors.map((c, i) => (
