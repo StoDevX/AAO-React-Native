@@ -8,7 +8,7 @@ const config = new Configuration()
 config.autoNotify = PRODUCTION
 config.codeBundleId = pkg.version
 if (!PRODUCTION) {
-  // disable bugsnag in dev builds 
+  // disable bugsnag in dev builds
   config.beforeSendCallbacks.push(() => false)
 }
 
