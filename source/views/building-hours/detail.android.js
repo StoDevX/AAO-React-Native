@@ -183,7 +183,11 @@ const ScheduleRow = ({
   schedule,
   isActive,
   now,
-}: {schedule: SingleBuildingScheduleType, isActive: boolean, now: momentT}) => {
+}: {
+  schedule: SingleBuildingScheduleType,
+  isActive: boolean,
+  now: momentT,
+}) => {
   return (
     <View style={styles.scheduleRow}>
       <Text

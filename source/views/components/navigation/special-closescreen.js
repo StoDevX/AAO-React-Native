@@ -14,7 +14,11 @@ export function CloseScreenButton({
   route,
   navigator,
   buttonStyle,
-}: {route: RouteType, navigator: Navigator, buttonStyle?: any}) {
+}: {
+  route: RouteType,
+  navigator: Navigator,
+  buttonStyle?: any,
+}) {
   const onDismiss = route.onDismiss ? route.onDismiss : noop
   return (
     <Touchable

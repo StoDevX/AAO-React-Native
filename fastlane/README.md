@@ -101,7 +101,7 @@ Provisions the profiles; bumps the build number; builds the app
 ```
 fastlane ios rogue-build
 ```
-
+Build, but for the rogue devs
 ### ios beta
 ```
 fastlane ios beta
