@@ -1,12 +1,17 @@
 // @flow
-import {Client} from 'bugsnag-react-native'
-import noop from 'lodash/noop'
+import {Client, Configuration} from 'bugsnag-react-native'
+import pkg from '../package.json'
 
-// We will need to add any other methods we eventually use in Bugsnag to this
-// faux-bugsnag object, I believe.
-let client = {notify: noop}
-if (process.env.NODE_ENV === 'production') {
-  client = new Client()
+const PRODUCTION = process.env.NODE_ENV === 'production'
+
+const config = new Configuration()
+config.autoNotify = PRODUCTION
+config.codeBundleId = pkg.version
+if (!PRODUCTION) {
+  // disable bugsnag in dev builds 
+  config.beforeSendCallbacks.push(() => false)
 }
+
+const client = new Client(config)
 
 export default client
