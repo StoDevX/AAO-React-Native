@@ -30,9 +30,7 @@ export async function fetchWpJson(
   url: string,
   query?: Object,
 ): Promise<StoryType[]> {
-  const feed: WpJsonResponseType = await fetchJson(
-    `${url}?${qs.stringify(query)}`,
-  )
+  const feed: WpJsonResponseType = await fetchJson(`${url}?${qs.stringify(query)}`)
   return feed.map(convertWpJsonItemToStory)
 }
 
