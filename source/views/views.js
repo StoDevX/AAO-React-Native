@@ -120,6 +120,15 @@ export const allViews: ViewType[] = [
     tint: c.periwinkle,
     gradient: c.lightBlueToBlueDark,
   },
+  {
+    type: 'url',
+    url: 'https://papercut.stolaf.edu/app?service=page/UserReleaseJobs',
+    view: 'PrintReleaseView',
+    title: 'StoPrint',
+    icon: 'print',
+    tint: c.chartreuse,
+    gradient: c.tealToSeafoam,
+  },
 ]
 
 export const allViewNames = allViews.map(v => v.view)
