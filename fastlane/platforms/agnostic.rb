@@ -3,8 +3,10 @@ desc 'Adds any unregistered devices to the provisioning profile'
 lane :register do
   id = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
   new_devices = get_unprovisioned_devices_from_hockey(app_bundle_id: id)
+  UI.message new_devices
   register_devices(devices: new_devices)
-  match(force: true)
+  match(type: 'development', force: true)
+  match(type: 'adhoc', force: true)
 end
 
 desc 'Bump the version string to a new version'
