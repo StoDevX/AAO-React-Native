@@ -96,7 +96,7 @@ function parseBalancesFromDom(dom: mixed): BalancesOrErrorType {
 }
 
 const lookupHash: Map<RegExp, string> = new Map([
-  [/flex/i, 'flex'],
+  [/sto flex/i, 'flex'],
   [/ole/i, 'ole'],
   [/print/i, 'print'],
   [/meals.*day/i, 'daily'],
