@@ -73,6 +73,11 @@ Run the appropriate action on CI
 fastlane android set_version
 ```
 Include the build number in the version string
+### android codepush
+```
+fastlane android codepush
+```
+
 
 ----
 
@@ -102,6 +107,11 @@ Provisions the profiles; bumps the build number; builds the app
 fastlane ios rogue-build
 ```
 Build, but for the rogue devs
+### ios rogue-beta
+```
+fastlane ios rogue-beta
+```
+Make a beta, but for the rogue devs
 ### ios beta
 ```
 fastlane ios beta
@@ -112,6 +122,11 @@ Submit a new Beta Build to HockeyApp
 fastlane ios ci-run
 ```
 Run iOS builds or tests, as appropriate
+### ios codepush
+```
+fastlane ios codepush
+```
+
 ### ios set_version
 ```
 fastlane ios set_version

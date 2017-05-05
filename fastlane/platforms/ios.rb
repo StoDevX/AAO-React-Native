@@ -36,7 +36,7 @@ platform :ios do
     build
   end
 
-  desc 'Build, but for the rogue devs'
+  desc 'Make a beta, but for the rogue devs'
   lane :'rogue-beta' do
     activate_rogue_team
     match(type: 'adhoc', readonly: true)
