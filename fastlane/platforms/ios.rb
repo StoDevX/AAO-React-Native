@@ -36,6 +36,14 @@ platform :ios do
     build
   end
 
+  desc 'Build, but for the rogue devs'
+  lane :'rogue-beta' do
+    activate_rogue_team
+    match(type: 'adhoc', readonly: true)
+    set_version
+    beta
+  end
+
   desc 'Submit a new Beta Build to HockeyApp'
   lane :beta do
     build
