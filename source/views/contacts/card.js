@@ -58,7 +58,9 @@ export default function ContactCard({
       <Text selectable={true} style={styles.content}>{text}</Text>
       <Button
         onPress={() => {
-          tracker.trackScreenView(`ImportantContacts_${title.replace(' ', '')}View`)
+          tracker.trackScreenView(
+            `ImportantContacts_${title.replace(' ', '')}View`,
+          )
           promptCall(buttonText, phoneNumber)
         }}
         title={buttonText}
