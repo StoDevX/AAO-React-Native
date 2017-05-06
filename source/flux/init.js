@@ -8,6 +8,7 @@ import {loadLoginCredentials} from '../lib/login'
 import {updateOnlineStatus} from './parts/app'
 import {loadHomescreenOrder} from './parts/homescreen'
 import {
+  setLoginCredentials,
   validateLoginCredentials,
   loadFeedbackStatus,
 } from './parts/settings'
@@ -19,6 +20,15 @@ function homescreen(store) {
 
 function feedbackOptOutStatus(store) {
   store.dispatch(loadFeedbackStatus())
+}
+
+function loginCredentials(store) {
+  loadLoginCredentials().then(({username, password} = {}) => {
+    if (!username || !password) return
+
+    let action = setLoginCredentials(username, password)
+    store.dispatch(action)
+  })
 }
 
 async function validateOlafCredentials(store) {
@@ -50,6 +60,7 @@ export async function init(store: {dispatch: any, getState: () => any}) {
   // kick off the parts that don't care about network
   homescreen(store)
   feedbackOptOutStatus(store)
+  loginCredentials(store)
 
   // wait for our first connection check to happen
   await netInfoIsConnected(store)
