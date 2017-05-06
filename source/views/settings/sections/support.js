@@ -4,6 +4,7 @@ import {Cell, Section} from 'react-native-tableview-simple'
 import Communications from 'react-native-communications'
 import DeviceInfo from 'react-native-device-info'
 import {version} from '../../../../package.json'
+import {PushButtonCell} from '../components/push-button'
 
 export default class SupportSection extends React.Component {
   getDeviceInfo = () => {
@@ -34,12 +35,7 @@ export default class SupportSection extends React.Component {
   render() {
     return (
       <Section header="SUPPORT">
-        <Cell
-          cellStyle="RightDetail"
-          title="Contact Us"
-          accessory="DisclosureIndicator"
-          onPress={this.openEmail}
-        />
+        <PushButtonCell title="Contact Us" onPress={this.openEmail} />
       </Section>
     )
   }

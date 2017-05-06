@@ -6,6 +6,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import {setFeedbackStatus} from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
 import {CellToggle} from '../../components/cell-toggle'
+import {PushButtonCell} from '../components/push-button'
 
 class OddsAndEndsSection extends React.Component {
   props: TopLevelViewPropsType & {
@@ -54,23 +55,6 @@ class OddsAndEndsSection extends React.Component {
       </Section>
     )
   }
-}
-
-const PushButtonCell = ({
-  title,
-  onPress,
-}: {
-  title: string,
-  onPress: () => any,
-}) => {
-  return (
-    <Cell
-      cellStyle="Basic"
-      title={title}
-      accessory="DisclosureIndicator"
-      onPress={onPress}
-    />
-  )
 }
 
 function mapStateToProps(state) {
