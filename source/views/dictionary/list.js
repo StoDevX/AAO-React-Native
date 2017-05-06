@@ -6,6 +6,7 @@
 import React from 'react'
 import {StyleSheet, View, Platform} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
+import debounce from 'lodash/debounce'
 import {Column} from '../components/layout'
 import {
   Detail,
@@ -103,7 +104,7 @@ export class DictionaryView extends React.Component {
     ])
   }
 
-  performSearch = (text: string) => {
+  _performSearch = (text: string) => {
     // Android clear button returns an object
     if (!isString(text)) {
       this.setState({results: terms})
@@ -117,6 +118,11 @@ export class DictionaryView extends React.Component {
       ),
     }))
   }
+
+  // We need to make the search run slightly behind the UI,
+  // so I'm slowing it down by 50ms. 0ms also works, but seems
+  // rather pointless.
+  performSearch = debounce(this._performSearch, 50)
 
   searchBar: any
 
