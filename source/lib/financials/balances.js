@@ -53,7 +53,7 @@ export async function getBalances(
 async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {
   const {username, password} = await loadLoginCredentials()
   if (!username || !password) {
-    throw new Error('not logged in!')
+    return {error: true, value: new Error('not logged in!')}
   }
 
   const form = buildFormData({
