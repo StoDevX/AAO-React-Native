@@ -1,5 +1,5 @@
 // @flow
-import React from 'react-native'
+import React from 'react'
 import {Cell} from 'react-native-tableview-simple'
 
 export const PushButtonCell = ({
