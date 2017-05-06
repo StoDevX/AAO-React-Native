@@ -190,7 +190,7 @@ let styles = StyleSheet.create({
 
   balances: {
     borderRightWidth: StyleSheet.hairlineWidth,
-    borderRightColor: c.iosGray,
+    borderRightColor: c.iosSeparator,
   },
 
   finalCell: {
