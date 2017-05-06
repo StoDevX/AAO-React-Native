@@ -9,8 +9,8 @@ import {PushButtonCell} from '../components/push-button'
 import {refreshApp} from '../../../lib/refresh'
 
 export default class SupportSection extends React.Component {
-  getDeviceInfo = () => {
-    return `
+  getDeviceInfo = () => `
+
       ----- Please do not edit below here -----
       ${DeviceInfo.getBrand()} ${DeviceInfo.getModel()}
       ${DeviceInfo.getDeviceId()}
@@ -18,11 +18,6 @@ export default class SupportSection extends React.Component {
       ${DeviceInfo.getReadableVersion()}
       Codepush: ${version}
     `
-  }
-
-  getSupportBody = () => {
-    return '\n' + this.getDeviceInfo()
-  }
 
   openEmail = () => {
     Communications.email(
@@ -30,7 +25,7 @@ export default class SupportSection extends React.Component {
       null,
       null,
       'Support: All About Olaf',
-      this.getSupportBody(),
+      this.getDeviceInfo(),
     )
   }
 
