@@ -42,19 +42,20 @@ export default class SupportSection extends React.Component {
 
   onFaqButton = () => this.onPressButton('FaqView', 'FAQs')
 
-  onResetButton = () =>
+  onResetButton = () => {
     Alert.alert(
       'Reset Everything',
       'Are you sure you want to clear everything?',
       [
+        {text: 'Nope!', style: 'cancel'},
         {
           text: 'Reset it!',
           style: 'destructive',
           onPress: () => refreshApp(),
         },
-        {text: 'Nope!', style: 'cancel'},
       ],
     )
+  }
 
   render() {
     return (
