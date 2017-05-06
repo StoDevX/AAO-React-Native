@@ -22,19 +22,14 @@ function feedbackOptOutStatus(store) {
 }
 
 async function validateOlafCredentials(store) {
-  const online = await NetInfo.isConnected.fetch()
-  if (!online) {
-    return
-  }
-
   const {username, password} = await loadLoginCredentials()
-  const action = validateLoginCredentials(username, password)
-  store.dispatch(action)
+  store.dispatch(validateLoginCredentials(username, password))
 }
 
 function loadBalances(store) {
   store.dispatch(updateBalances(false))
 }
+
 function loadCourses(store) {
   store.dispatch(updateCourses(false))
 }
@@ -45,14 +40,22 @@ function netInfoIsConnected(store) {
   }
 
   NetInfo.isConnected.addEventListener('change', updateConnectionStatus)
-  NetInfo.isConnected.fetch().then(updateConnectionStatus)
+  return NetInfo.isConnected.fetch().then(updateConnectionStatus)
 }
 
-export function init(store: {dispatch: any}) {
+export async function init(store: {dispatch: any, getState: () => any}) {
+  // this function runs in two parts: the things that don't care about network,
+  // and those that do.
+
+  // kick off the parts that don't care about network
   homescreen(store)
   feedbackOptOutStatus(store)
+
+  // wait for our first connection check to happen
+  await netInfoIsConnected(store)
+
+  // then go do the network stuff
   validateOlafCredentials(store)
   loadBalances(store)
   loadCourses(store)
-  netInfoIsConnected(store)
 }
