@@ -37,6 +37,16 @@ class OddsAndEndsSection extends React.Component {
   render() {
     return (
       <View>
+        <Section header="MISCELLANY">
+          <PushButtonCell title="Credits" onPress={this.onCreditsButton} />
+          <PushButtonCell
+            title="Privacy Policy"
+            onPress={this.onPrivacyButton}
+          />
+          <PushButtonCell title="Legal" onPress={this.onLegalButton} />
+          <PushButtonCell title="Contributing" onPress={this.onSourceButton} />
+        </Section>
+
         <Section header="ODDS &amp; ENDS">
           <Cell cellStyle="RightDetail" title="Version" detail={version} />
 
@@ -47,16 +57,6 @@ class OddsAndEndsSection extends React.Component {
             value={!this.props.feedbackDisabled}
             onChange={val => this.props.onChangeFeedbackToggle(!val)}
           />
-        </Section>
-
-        <Section header="MISCELLANY">
-          <PushButtonCell title="Credits" onPress={this.onCreditsButton} />
-          <PushButtonCell
-            title="Privacy Policy"
-            onPress={this.onPrivacyButton}
-          />
-          <PushButtonCell title="Legal" onPress={this.onLegalButton} />
-          <PushButtonCell title="Contributing" onPress={this.onSourceButton} />
         </Section>
 
         {process.env.NODE_ENV === 'development'
