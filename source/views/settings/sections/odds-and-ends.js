@@ -1,5 +1,6 @@
 // @flow
 import React from 'react'
+import {View} from 'react-native'
 import {Cell, Section} from 'react-native-tableview-simple'
 import {version} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
@@ -35,29 +36,38 @@ class OddsAndEndsSection extends React.Component {
 
   render() {
     return (
-      <Section header="ODDS &amp; ENDS">
-        <Cell cellStyle="RightDetail" title="Version" detail={version} />
+      <View>
+        <Section header="ODDS &amp; ENDS">
+          <Cell cellStyle="RightDetail" title="Version" detail={version} />
 
-        <CellToggle
-          label="Share Analytics"
-          // These are both inverted because the toggle makes more sense as
-          // optout/optin, but the code works better as optin/optout.
-          value={!this.props.feedbackDisabled}
-          onChange={val => this.props.onChangeFeedbackToggle(!val)}
-        />
+          <CellToggle
+            label="Share Analytics"
+            // These are both inverted because the toggle makes more sense as
+            // optout/optin, but the code works better as optin/optout.
+            value={!this.props.feedbackDisabled}
+            onChange={val => this.props.onChangeFeedbackToggle(!val)}
+          />
+        </Section>
 
-        <PushButtonCell title="Credits" onPress={this.onCreditsButton} />
-        <PushButtonCell title="Privacy Policy" onPress={this.onPrivacyButton} />
-        <PushButtonCell title="Legal" onPress={this.onLegalButton} />
-        <PushButtonCell title="Contributing" onPress={this.onSourceButton} />
+        <Section header="MISCELLANY">
+          <PushButtonCell title="Credits" onPress={this.onCreditsButton} />
+          <PushButtonCell
+            title="Privacy Policy"
+            onPress={this.onPrivacyButton}
+          />
+          <PushButtonCell title="Legal" onPress={this.onLegalButton} />
+          <PushButtonCell title="Contributing" onPress={this.onSourceButton} />
+        </Section>
 
         {process.env.NODE_ENV === 'development'
-          ? <PushButtonCell
-              title="Snapshots"
-              onPress={this.onSnapshotsButton}
-            />
+          ? <Section header="UTILITIES">
+              <PushButtonCell
+                title="Snapshots"
+                onPress={this.onSnapshotsButton}
+              />
+            </Section>
           : null}
-      </Section>
+      </View>
     )
   }
 }
