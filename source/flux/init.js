@@ -8,13 +8,10 @@ import {loadLoginCredentials} from '../lib/login'
 import {updateOnlineStatus} from './parts/app'
 import {loadHomescreenOrder} from './parts/homescreen'
 import {
-  setLoginCredentials,
-  logInViaToken,
   validateLoginCredentials,
   loadFeedbackStatus,
 } from './parts/settings'
 import {updateBalances, updateCourses} from './parts/sis'
-import {FINANCIALS_URL} from '../lib/financials/urls'
 
 function homescreen(store) {
   store.dispatch(loadHomescreenOrder())
@@ -22,30 +19,6 @@ function homescreen(store) {
 
 function feedbackOptOutStatus(store) {
   store.dispatch(loadFeedbackStatus())
-}
-
-function sisLoginCredentials(store) {
-  loadLoginCredentials().then(({username, password} = {}) => {
-    if (!username || !password) return
-
-    let action = setLoginCredentials(username, password)
-    store.dispatch(action)
-  })
-}
-
-async function checkSisLogin(store) {
-  const online = await NetInfo.isConnected.fetch()
-  if (!online) {
-    return
-  }
-
-  // check if we can log in to the SIS
-  const r = await fetch(FINANCIALS_URL)
-  if (r.url !== FINANCIALS_URL) {
-    return
-  }
-  const action = logInViaToken(true)
-  store.dispatch(action)
 }
 
 async function validateOlafCredentials(store) {
@@ -78,8 +51,6 @@ function netInfoIsConnected(store) {
 export function init(store: {dispatch: any}) {
   homescreen(store)
   feedbackOptOutStatus(store)
-  sisLoginCredentials(store)
-  checkSisLogin(store)
   validateOlafCredentials(store)
   loadBalances(store)
   loadCourses(store)
