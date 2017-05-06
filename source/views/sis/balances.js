@@ -105,19 +105,6 @@ class BalancesView extends React.Component {
                 style={styles.finalCell}
               />
             </View>
-
-            {this.props.credentialsValid
-              ? null
-              : <Cell
-                  cellStyle="Basic"
-                  title="Log in with St. Olaf"
-                  accessory="DisclosureIndicator"
-                  onPress={this.openSettings}
-                />}
-
-            {this.props.message
-              ? <Cell cellStyle="Basic" title={this.props.message} />
-              : null}
           </Section>
 
           <Section header="MEAL PLAN">
@@ -133,19 +120,24 @@ class BalancesView extends React.Component {
               detail={loading ? '…' : getFormattedMealsRemaining(weeklyMeals)}
             />
 
-            {this.props.credentialsValid
-              ? null
-              : <Cell
-                  cellStyle="Basic"
-                  title="Log in with St. Olaf"
-                  accessory="DisclosureIndicator"
-                  onPress={this.openSettings}
-                />}
-
-            {this.props.message
-              ? <Cell cellStyle="Basic" title={this.props.message} />
-              : null}
           </Section>
+
+          {!this.props.credentialsValid || this.props.message
+            ? <Section footer="You'll need to log in again so we can update these numbers.">
+                {!this.props.credentialsValid
+                  ? <Cell
+                      cellStyle="Basic"
+                      title="Log in with St. Olaf"
+                      accessory="DisclosureIndicator"
+                      onPress={this.openSettings}
+                    />
+                  : null}
+
+                {this.props.message
+                  ? <Cell cellStyle="Basic" title={this.props.message} />
+                  : null}
+              </Section>
+            : null}
         </TableView>
       </ScrollView>
     )
