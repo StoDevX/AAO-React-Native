@@ -12,6 +12,7 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 - `cd` into the folder
 - [Install React Native](http://facebook.github.io/react-native/docs/getting-started.html#content)
 - `npm install`
+- `npm run bundle-docs`
 - `npm run ios`
 
 ## Note
