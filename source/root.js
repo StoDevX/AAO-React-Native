@@ -10,14 +10,14 @@ import './bugsnag'
 
 let codePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
-  installMode: codePush.InstallMode.ON_NEXT_RESUME,
+  installMode: codePush.InstallMode.ON_NEXT_RESTART,
 }
 
 if (process.env.NODE_ENV !== 'production') {
   // essentially disable codepush on dev mode
   codePushOptions = {
     checkFrequency: codePush.CheckFrequency.MANUAL,
-    installMode: codePush.InstallMode.ON_NEXT_RESUME,
+    installMode: codePush.InstallMode.ON_NEXT_RESTART,
   }
 }
 
