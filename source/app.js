@@ -47,6 +47,7 @@ import LegalView from './views/settings/legal'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
 import {SnapshotsView} from './storybook'
+import HelpView from './views/help'
 
 import NoRoute from './views/components/no-route'
 
@@ -106,6 +107,8 @@ function renderScene(route, navigator) {
       return <FaqView {...props} />
     case 'SnapshotsView':
       return <SnapshotsView {...props} />
+    case 'HelpView':
+      return <HelpView {...props} />
     default:
       return <NoRoute {...props} />
   }
