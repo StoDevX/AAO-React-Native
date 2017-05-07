@@ -2,6 +2,9 @@
   "name": "AllAboutOlaf",
   "version": "2.1.2",
   "private": true,
+  "allaboutolaf": {
+    "source": ""
+  },
   "config": {
     "prettier_args": "--single-quote --trailing-comma all --no-bracket-spacing --no-semi"
   },

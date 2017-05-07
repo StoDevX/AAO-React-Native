@@ -136,8 +136,14 @@ export class SnapshotsView extends React.Component {
         delay: 100,
       },
       'section-token': {view: () => <TokenLoginSection />, delay: 100},
-      'section-support': {view: () => <SupportSection />, delay: 100},
-      'section-odds and ends': {view: () => <OddsAndEndsSection />, delay: 100},
+      'section-support': {
+        view: () => <Nav>{props => <SupportSection {...props} />}</Nav>,
+        delay: 100,
+      },
+      'section-odds and ends': {
+        view: () => <Nav>{props => <OddsAndEndsSection {...props} />}</Nav>,
+        delay: 100,
+      },
     },
     sis: {
       tabs: {

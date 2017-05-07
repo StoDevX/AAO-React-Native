@@ -65,6 +65,13 @@ platform :ios do
     # set the app version
     set_version
 
+    # set where this build came from
+    set_package_data(data: {
+      allaboutolaf: {
+        source: 'beta',
+      },
+    })
+
     # and run
     should_deploy = ENV['run_deploy'] == '1'
     if should_deploy

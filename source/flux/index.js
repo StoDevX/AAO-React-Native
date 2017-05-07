@@ -8,6 +8,7 @@ import {createLogger} from 'redux-logger'
 import reduxPromise from 'redux-promise'
 import reduxThunk from 'redux-thunk'
 import {init} from './init'
+import identity from 'lodash/identity'
 
 import {app} from './parts/app'
 import {homescreen} from './parts/homescreen'
@@ -25,7 +26,11 @@ export function aao(state: Object = {}, action: Object) {
   }
 }
 
-const logger = createLogger({collapsed: () => true})
+// only enable the logger in dev mode
+const logger = process.env.NODE_ENV !== 'production'
+  ? createLogger({collapsed: () => true})
+  : identity
+
 const store = createStore(
   aao,
   applyMiddleware(reduxPromise, reduxThunk, logger),
