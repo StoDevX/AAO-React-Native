@@ -53,7 +53,7 @@ function netInfoIsConnected(store) {
   return NetInfo.isConnected.fetch().then(updateConnectionStatus)
 }
 
-export async function init(store: {dispatch: any, getState: () => any}) {
+export async function init(store: {dispatch: any}) {
   // this function runs in two parts: the things that don't care about network,
   // and those that do.
 
