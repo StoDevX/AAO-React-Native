@@ -98,7 +98,7 @@
     "react-native-sortable-list": "github:hawkrives/react-native-sortable-list#a46c78161e0a1a8d3a45f2fef69d98af3e911b6d",
     "react-native-tab-view": "0.0.62",
     "react-native-tableview-simple": "0.16.4",
-    "react-native-vector-icons": "4.1.0",
+    "react-native-vector-icons": "4.1.1",
     "react-redux": "5.0.4",
     "redux": "3.6.0",
     "redux-logger": "3.0.1",
