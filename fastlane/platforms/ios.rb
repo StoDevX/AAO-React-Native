@@ -25,8 +25,6 @@ platform :ios do
 
     sh('security find-identity -v -p codesigning')
 
-    badge
-
     # Build the app
     gym(export_method: 'ad-hoc')
   end
@@ -48,6 +46,8 @@ platform :ios do
 
   desc 'Submit a new Beta Build to HockeyApp'
   lane :beta do
+    badge
+
     build
 
     hockey(notes: release_notes)
