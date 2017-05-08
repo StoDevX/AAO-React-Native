@@ -12,6 +12,8 @@ platform :android do
 
   desc 'Submit a new Beta Build to HockeyApp'
   lane :beta do
+    badge
+
     build
 
     # Upload to HockeyApp
