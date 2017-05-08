@@ -4,6 +4,8 @@ platform :android do
     # make sure we have a copy of the data files
     bundle_data
 
+    badge
+
     gradle(task: 'assemble',
            build_type: 'Release',
            print_command: true,
