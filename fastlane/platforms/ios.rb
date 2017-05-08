@@ -46,6 +46,8 @@ platform :ios do
 
   desc 'Submit a new Beta Build to HockeyApp'
   lane :beta do
+    badge
+
     build
 
     hockey(notes: release_notes)
