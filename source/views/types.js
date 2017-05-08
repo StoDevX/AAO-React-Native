@@ -10,6 +10,7 @@ export type RouteType = {
   onRightButton?: () => any,
   onDismiss?: (r: RouteType, n: Navigator) => any,
   sceneConfig?: Object | 'fromBottom' | string,
+  props?: any,
 }
 
 export type NavStateType = {

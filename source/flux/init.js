@@ -9,12 +9,10 @@ import {updateOnlineStatus} from './parts/app'
 import {loadHomescreenOrder} from './parts/homescreen'
 import {
   setLoginCredentials,
-  logInViaToken,
   validateLoginCredentials,
   loadFeedbackStatus,
 } from './parts/settings'
 import {updateBalances, updateCourses} from './parts/sis'
-import {FINANCIALS_URL} from '../lib/financials/urls'
 
 function homescreen(store) {
   store.dispatch(loadHomescreenOrder())
@@ -24,7 +22,7 @@ function feedbackOptOutStatus(store) {
   store.dispatch(loadFeedbackStatus())
 }
 
-function sisLoginCredentials(store) {
+function loginCredentials(store) {
   loadLoginCredentials().then(({username, password} = {}) => {
     if (!username || !password) return
 
@@ -33,35 +31,15 @@ function sisLoginCredentials(store) {
   })
 }
 
-async function checkSisLogin(store) {
-  const online = await NetInfo.isConnected.fetch()
-  if (!online) {
-    return
-  }
-
-  // check if we can log in to the SIS
-  const r = await fetch(FINANCIALS_URL)
-  if (r.url !== FINANCIALS_URL) {
-    return
-  }
-  const action = logInViaToken(true)
-  store.dispatch(action)
-}
-
 async function validateOlafCredentials(store) {
-  const online = await NetInfo.isConnected.fetch()
-  if (!online) {
-    return
-  }
-
   const {username, password} = await loadLoginCredentials()
-  const action = validateLoginCredentials(username, password)
-  store.dispatch(action)
+  store.dispatch(validateLoginCredentials(username, password))
 }
 
 function loadBalances(store) {
   store.dispatch(updateBalances(false))
 }
+
 function loadCourses(store) {
   store.dispatch(updateCourses(false))
 }
@@ -72,16 +50,23 @@ function netInfoIsConnected(store) {
   }
 
   NetInfo.isConnected.addEventListener('change', updateConnectionStatus)
-  NetInfo.isConnected.fetch().then(updateConnectionStatus)
+  return NetInfo.isConnected.fetch().then(updateConnectionStatus)
 }
 
-export function init(store: {dispatch: any}) {
+export async function init(store: {dispatch: any}) {
+  // this function runs in two parts: the things that don't care about network,
+  // and those that do.
+
+  // kick off the parts that don't care about network
   homescreen(store)
   feedbackOptOutStatus(store)
-  sisLoginCredentials(store)
-  checkSisLogin(store)
+  loginCredentials(store)
+
+  // wait for our first connection check to happen
+  await netInfoIsConnected(store)
+
+  // then go do the network stuff
   validateOlafCredentials(store)
   loadBalances(store)
   loadCourses(store)
-  netInfoIsConnected(store)
 }
