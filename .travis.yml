@@ -95,8 +95,8 @@ before_install:
   - rvm use 2.3 --install --binary --fuzzy
   - gem install bundler
 
-  # only deploy from the once-daily cron-triggered jobs
-  - if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
+  # only deploy from the once-daily cron-triggered jobs or from tagged commits
+  - if [[ $CAN_DEPLOY = yes && ( $TRAVIS_EVENT_TYPE = cron || $TRAVIS_TAG != "" ) ]]; then run_deploy=1; fi
 
   # run our before_install sequence
   - bash scripts/travis/before_install.sh
