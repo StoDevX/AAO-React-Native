@@ -17,6 +17,7 @@ import {
 } from '../components/list'
 import LoadingView from '../components/loading'
 import type {WordType} from './types'
+import type {TopLevelViewPropsType} from '../types'
 import {tracker} from '../../analytics'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
@@ -46,16 +47,13 @@ const styles = StyleSheet.create({
 })
 
 export class DictionaryView extends React.Component {
-  static propTypes = {
-    navigator: React.PropTypes.object.isRequired,
-    route: React.PropTypes.object.isRequired,
-  }
-
   state: {
     results: {[key: string]: Array<WordType>},
   } = {
     results: terms,
   }
+
+  props: TopLevelViewPropsType
 
   onPressRow = (data: WordType) => {
     tracker.trackEvent('dictionary', data.word)
