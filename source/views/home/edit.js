@@ -135,12 +135,7 @@ class Row extends React.Component {
   }
 }
 
-function EditHomeView(
-  props: {
-    onSaveOrder: () => any,
-    order: string[],
-  },
-) {
+function EditHomeView(props: {onSaveOrder: () => any, order: string[]}) {
   return (
     <SortableList
       contentContainerStyle={styles.contentContainer}

@@ -13,7 +13,11 @@ export function EditHomeButton({
   route,
   navigator,
   buttonStyle,
-}: {route: RouteType, navigator: Navigator, buttonStyle?: any}) {
+}: {
+  route: RouteType,
+  navigator: Navigator,
+  buttonStyle?: any,
+}) {
   return (
     <Touchable
       borderless

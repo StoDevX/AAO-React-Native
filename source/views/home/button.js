@@ -12,7 +12,10 @@ const Viewport = Dimensions.get('window')
 export function HomeScreenButton({
   view,
   onPress,
-}: {view: ViewType, onPress: () => any}) {
+}: {
+  view: ViewType,
+  onPress: () => any,
+}) {
   return (
     <Touchable
       highlight={false}

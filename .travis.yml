@@ -35,7 +35,7 @@ matrix:
       sudo: false
       language: node_js
       node_js: '7'
-      env: [JS=yes]
+      env: [JS=yes, CAN_DEPLOY=yes]
 
     - &android-base
       os: linux
@@ -82,6 +82,7 @@ branches:
   only:
     - master
     - /^travis/
+    - /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[\da-z\-]+(?:\.[\da-z\-]+)*)?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?$/
 
 
 before_install:
@@ -92,13 +93,11 @@ before_install:
     fi
 
   # make sure to use ruby 2.3
-  - if [[ $ANDROID || $IOS ]]; then
-      rvm use 2.3 --install --binary --fuzzy;
-      gem install bundler;
-    fi
+  - rvm use 2.3 --install --binary --fuzzy
+  - gem install bundler
 
-  # only deploy from the once-daily cron-triggered jobs
-  - if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
+  # only deploy from the once-daily cron-triggered jobs or from tagged commits
+  - if [[ $CAN_DEPLOY = yes && ( $TRAVIS_EVENT_TYPE = cron || $TRAVIS_TAG != "" ) ]]; then run_deploy=1; fi
 
   # run our before_install sequence
   - bash scripts/travis/before_install.sh
@@ -114,21 +113,17 @@ script:
   # we run `danger` out here to ensure that it is run,
   # even if another task in script.sh fails.
   - if [[ $JS ]]; then npm run danger; fi
-  - if [[ $JS && $run_deploy = "1" ]]; then
-      code-push release-react AllAboutOlaf-iOS ios -d release --targetBinaryVersion '2.*';
-      code-push release-react AllAboutOlaf-Android android -d release --targetBinaryVersion '2.*';
-    fi
 
 after_success:
   - bash scripts/travis/after_success.sh
 
 deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_PAGES_TOKEN
-  local_dir: docs/
-  on:
-    branch: master
+  - provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_PAGES_TOKEN
+    local_dir: docs/
+    on:
+      branch: master
 
 before_cache:
   - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"

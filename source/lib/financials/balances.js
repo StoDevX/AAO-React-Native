@@ -53,7 +53,7 @@ export async function getBalances(
 async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {
   const {username, password} = await loadLoginCredentials()
   if (!username || !password) {
-    throw new Error('not logged in!')
+    return {error: true, value: new Error('not logged in!')}
   }
 
   const form = buildFormData({
@@ -96,11 +96,11 @@ function parseBalancesFromDom(dom: mixed): BalancesOrErrorType {
 }
 
 const lookupHash: Map<RegExp, string> = new Map([
-  [/ flex /i, 'flex'],
-  [/ ole /i, 'ole'],
-  [/ print/i, 'print'],
-  [/daily/i, 'daily'],
-  [/weekly/i, 'weekly'],
+  [/sto flex/i, 'flex'],
+  [/ole/i, 'ole'],
+  [/print/i, 'print'],
+  [/meals.*day/i, 'daily'],
+  [/meals.*week/i, 'weekly'],
 ])
 
 function rowIntoNamedAmount(row: string): ?[string, string] {

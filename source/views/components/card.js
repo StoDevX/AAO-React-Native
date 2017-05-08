@@ -33,7 +33,12 @@ export function Card({
   footer,
   children,
   style,
-}: {header?: string, footer?: string, children?: any, style?: any}) {
+}: {
+  header?: string,
+  footer?: string,
+  children?: any,
+  style?: any,
+}) {
   return (
     <View style={[cardStyles.card, style]}>
       <View style={cardStyles.title}>
