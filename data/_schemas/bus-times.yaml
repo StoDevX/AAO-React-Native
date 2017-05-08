@@ -1,4 +1,4 @@
-$schema: http://json-schema.org/draft-04/schema#
+$schema: http://json-schema.org/draft-06/schema#
 
 additionalProperties: false
 required: [line, schedules]
@@ -36,7 +36,7 @@ definitions:
   time-value:
     oneOf:
       - {$ref: '_defs.json#/definitions/time'}
-      - {enum: [false]}
+      - {const: false}
 
   coord-pair:
     additionalProperties: false
