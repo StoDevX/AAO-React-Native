@@ -10,6 +10,7 @@
   },
   "scripts": {
     "android": "react-native run-android",
+    "android:release": "react-native run-android --variant=release",
     "android-emulator": "VBoxManage list vms | peco --select-1 --query API --on-cancel error | sed  's~.*{\\(.*\\)}.*~\\1~' | xargs /Applications/Genymotion.app/Contents/MacOS/player.app/Contents/MacOS/player --vm-name",
     "bundle-data": "node scripts/bundle-data.js data/ docs/",
     "bundle:android": "react-native bundle --entry-file index.android.js --dev true --platform android --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/",
@@ -19,6 +20,7 @@
     "data": "node scripts/bundle-data.js data/ docs/",
     "flow": "flow",
     "ios": "react-native run-ios",
+    "ios:release": "react-native run-ios --configuration Release",
     "ios-simulator": "xcrun instruments -s devices | peco --select-1 --query 'Simulator iPhone' --on-cancel error | sed  's~.*\\[\\(.*\\)\\].*~\\1~' | xargs open -n -a Simulator --args -CurrentDeviceUDID",
     "lint": "eslint --cache source/ *.js",
     "prettier": "prettier --write $npm_package_config_prettier_args 'source/**/*.js' '*.js'",
