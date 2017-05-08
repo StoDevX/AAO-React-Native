@@ -39,6 +39,11 @@ Adds any unregistered devices to the provisioning profile
 fastlane bump
 ```
 Bump the version string to a new version
+### propagate-version
+```
+fastlane propagate-version
+```
+Copy the package.json version into the other version locations
 ### release_notes
 ```
 fastlane release_notes
