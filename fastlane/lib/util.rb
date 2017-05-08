@@ -69,6 +69,6 @@ def codepush_cli(app:, channel: 'nightly', install_target: '~2.2')
   target = "--targetBinaryVersion #{install_target}"
   # `fastlane x` runs in the ./fastlane folder, so we have to go up a level
   Dir.chdir("..") do
-    sh("code-push release-react #{app} ios -d #{channel} #{target}")
+    sh("code-push release-react '#{app}' ios -d '#{channel}' '#{target}'")
   end
 end
