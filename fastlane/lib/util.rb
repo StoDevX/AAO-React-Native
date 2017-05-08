@@ -65,7 +65,7 @@ def auto_beta
   beta if last_commit != current_commit
 end
 
-def codepush_cli(app:, channel: 'release', install_target: '~2.1')
+def codepush_cli(app:, channel: 'nightly', install_target: '~2.2')
   target = "--targetBinaryVersion #{install_target}"
   # `fastlane x` runs in the ./fastlane folder, so we have to go up a level
   Dir.chdir("..") do
