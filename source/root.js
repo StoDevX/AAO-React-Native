@@ -8,17 +8,9 @@ import codePush from 'react-native-code-push'
 // the file here.
 import './bugsnag'
 
-let codePushOptions = {
+const codePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
-  installMode: codePush.InstallMode.ON_NEXT_RESTART,
-}
-
-if (process.env.NODE_ENV !== 'production') {
-  // essentially disable codepush on dev mode
-  codePushOptions = {
-    checkFrequency: codePush.CheckFrequency.MANUAL,
-    installMode: codePush.InstallMode.ON_NEXT_RESTART,
-  }
+  installMode: codePush.InstallMode.ON_NEXT_RESUME,
 }
 
 AppRegistry.registerComponent('AllAboutOlaf', () =>

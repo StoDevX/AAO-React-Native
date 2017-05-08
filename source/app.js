@@ -151,7 +151,7 @@ export default class App extends React.Component {
     OneSignal.addEventListener('registered', this.onRegistered)
     OneSignal.addEventListener('ids', this.onIds)
 
-    // codePush.sync({deploymentKey: pkg.codepush[Platform.OS].release})
+    codePush.sync({deploymentKey: pkg.codepush[Platform.OS].release})
   }
 
   componentWillUnmount() {

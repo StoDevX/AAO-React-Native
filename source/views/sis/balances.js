@@ -86,65 +86,66 @@ class BalancesView extends React.Component {
         <TableView>
           <Section header="BALANCES">
             <View style={styles.balancesRow}>
-              <FormattedValueCell
+              <FinancialBalancesCell
                 label="Flex"
                 value={flex}
                 indeterminate={loading}
-                formatter={getFormattedCurrency}
               />
 
-              <FormattedValueCell
+              <FinancialBalancesCell
                 label="Ole"
                 value={ole}
                 indeterminate={loading}
-                formatter={getFormattedCurrency}
               />
 
-              <FormattedValueCell
+              <FinancialBalancesCell
                 label="Copy/Print"
                 value={print}
                 indeterminate={loading}
-                formatter={getFormattedCurrency}
                 style={styles.finalCell}
               />
             </View>
+
+            {this.props.credentialsValid
+              ? null
+              : <Cell
+                  cellStyle="Basic"
+                  title="Log in with St. Olaf"
+                  accessory="DisclosureIndicator"
+                  onPress={this.openSettings}
+                />}
+
+            {this.props.message
+              ? <Cell cellStyle="Basic" title={this.props.message} />
+              : null}
           </Section>
 
           <Section header="MEAL PLAN">
-            <View style={styles.balancesRow}>
-              <FormattedValueCell
-                label="Daily Meals Left"
-                value={dailyMeals}
-                indeterminate={loading}
-                formatter={getFormattedMealsRemaining}
-              />
+            <Cell
+              cellStyle="RightDetail"
+              title="Daily Meals Left"
+              detail={loading ? '…' : getFormattedMealsRemaining(dailyMeals)}
+            />
 
-              <FormattedValueCell
-                label="Weekly Meals Left"
-                value={weeklyMeals}
-                indeterminate={loading}
-                formatter={getFormattedMealsRemaining}
-                style={styles.finalCell}
-              />
-            </View>
+            <Cell
+              cellStyle="RightDetail"
+              title="Weekly Meals Left"
+              detail={loading ? '…' : getFormattedMealsRemaining(weeklyMeals)}
+            />
+
+            {this.props.credentialsValid
+              ? null
+              : <Cell
+                  cellStyle="Basic"
+                  title="Log in with St. Olaf"
+                  accessory="DisclosureIndicator"
+                  onPress={this.openSettings}
+                />}
+
+            {this.props.message
+              ? <Cell cellStyle="Basic" title={this.props.message} />
+              : null}
           </Section>
-
-          {!this.props.credentialsValid || this.props.message
-            ? <Section footer="You'll need to log in again so we can update these numbers.">
-                {!this.props.credentialsValid
-                  ? <Cell
-                      cellStyle="Basic"
-                      title="Log in with St. Olaf"
-                      accessory="DisclosureIndicator"
-                      onPress={this.openSettings}
-                    />
-                  : null}
-
-                {this.props.message
-                  ? <Cell cellStyle="Basic" title={this.props.message} />
-                  : null}
-              </Section>
-            : null}
         </TableView>
       </ScrollView>
     )
@@ -189,7 +190,7 @@ let styles = StyleSheet.create({
 
   balances: {
     borderRightWidth: StyleSheet.hairlineWidth,
-    borderRightColor: c.iosSeparator,
+    borderRightColor: c.iosGray,
   },
 
   finalCell: {
@@ -243,18 +244,16 @@ function getFormattedMealsRemaining(value: ?number): string {
   return (value: any).toString()
 }
 
-function FormattedValueCell({
+function FinancialBalancesCell({
   indeterminate,
   label,
   value,
   style,
-  formatter,
 }: {
   indeterminate: boolean,
   label: string,
   value: ?number,
   style?: any,
-  formatter: (?number) => string,
 }) {
   return (
     <View style={[styles.rectangle, styles.common, styles.balances, style]}>
@@ -263,7 +262,7 @@ function FormattedValueCell({
         style={styles.financialText}
         autoAdjustsFontSize={true}
       >
-        {indeterminate ? '…' : formatter(value)}
+        {indeterminate ? '…' : getFormattedCurrency(value)}
       </Text>
       <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
         {label}
