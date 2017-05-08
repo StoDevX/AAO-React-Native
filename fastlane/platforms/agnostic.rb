@@ -26,6 +26,20 @@ lane :bump do |options|
   set_package_data(data: { version: new_version })
 end
 
+desc 'Copy the package.json version into the other version locations'
+lane :'propagate-version' do |options|
+  version = get_package_key(key: :version)
+  UI.message "Propagating version: #{version}"
+  UI.message "into the Info.plist and build.gradle files" 
+
+  # update iOS version
+  increment_version_number(version_number: version,
+                           xcodeproj: ENV['GYM_PROJECT'])
+  # update Android version
+  set_gradle_version_name(version_name: version,
+                          gradle_path: lane_context[:GRADLE_FILE])
+end
+
 desc 'Build the release notes: branch, commit hash, changelog'
 lane :release_notes do |options|
   notes = <<~END
