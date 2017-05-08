@@ -39,9 +39,7 @@ class OddsAndEndsSection extends React.Component {
     // allows us to show [dev], [beta], or nothing for release builds
     const versionMoniker = process.env.NODE_ENV === 'development'
       ? '[dev] '
-      : allaboutolaf.source
-        ? `[${allaboutolaf.source}]`
-        : ''
+      : allaboutolaf.source ? `[${allaboutolaf.source}]` : ''
 
     //    native (codepush)
     // eg, 2.1.2 (2.1.2+2957)
@@ -62,7 +60,11 @@ class OddsAndEndsSection extends React.Component {
         </Section>
 
         <Section header="ODDS &amp; ENDS">
-          <Cell cellStyle="RightDetail" title="Version" detail={`${versionMoniker}${versionString}`} />
+          <Cell
+            cellStyle="RightDetail"
+            title="Version"
+            detail={`${versionMoniker}${versionString}`}
+          />
 
           <CellToggle
             label="Share Analytics"
