@@ -104,7 +104,7 @@ export class SnapshotsView extends React.Component {
       list: {view: () => <ContactsView />, delay: 100},
     },
     dictionary: {
-      list: {view: () => <DictionaryView />, delay: 1000},
+      list: {view: () => <Nav>{props => <DictionaryView {...props} />}</Nav>, delay: 1000},
     },
     home: {
       home: {view: () => <HomeView />, delay: 100},
@@ -158,7 +158,7 @@ export class SnapshotsView extends React.Component {
       webcams: {view: () => <WebcamsView />, delay: 1000},
     },
     studentorgs: {
-      list: {view: () => <StudentOrgsView />, delay: 2500},
+      list: {view: () => <Nav>{props => <StudentOrgsView {...props} />}</Nav>, delay: 2500},
     },
     transit: {
       tabs: {view: () => <TransportationView />, delay: 100},
