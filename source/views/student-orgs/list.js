@@ -7,6 +7,7 @@
 import React from 'react'
 import {StyleSheet, View, Text, Platform} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
+import type {TopLevelViewPropsType} from '../types'
 import LoadingView from '../components/loading'
 import delay from 'delay'
 import {NoticeView} from '../components/notice'
@@ -58,11 +59,6 @@ const styles = StyleSheet.create({
 })
 
 export class StudentOrgsView extends React.Component {
-  static propTypes = {
-    navigator: React.PropTypes.object.isRequired,
-    route: React.PropTypes.object.isRequired,
-  }
-
   state: {
     orgs: {[key: string]: StudentOrgAbridgedType[]},
     refreshing: boolean,
@@ -78,6 +74,8 @@ export class StudentOrgsView extends React.Component {
   componentWillMount() {
     this.refresh()
   }
+
+  props: TopLevelViewPropsType
 
   fetchData = async () => {
     try {

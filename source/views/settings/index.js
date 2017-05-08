@@ -19,9 +19,7 @@ const styles = StyleSheet.create({
   },
 })
 
-type SettingsViewPropsType = TopLevelViewPropsType
-
-export default function SettingsView(props: SettingsViewPropsType) {
+export default function SettingsView(props: TopLevelViewPropsType) {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
