@@ -10,5 +10,9 @@ if [[ $IOS || $ANDROID ]]; then
   code-push login --accessKey "$CODEPUSH_TOKEN"
 fi
 
+if [[ $TRAVIS_OS_NAME == "osx" ]]; then
+  brew install imagemagick
+fi
+
 # install fastlane
 bundle install --deployment
