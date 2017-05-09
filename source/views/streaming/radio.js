@@ -16,8 +16,8 @@ import {
 } from 'react-native'
 import {Button} from '../components/button'
 import * as c from '../components/colors'
-import {tracker} from '../../analytics'
-import bugsnag from '../../bugsnag'
+//import {tracker} from '../../analytics'
+//import bugsnag from '../../bugsnag'
 
 const kstoProtocol = 'KSTORadio://'
 const kstoAppStoreLink = 'itms://itunes.apple.com/us/app/ksto/id953916647'
