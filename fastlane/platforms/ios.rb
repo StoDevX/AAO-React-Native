@@ -36,8 +36,18 @@ platform :ios do
     build
   end
 
+  desc 'Make a beta, but for the rogue devs'
+  lane :'rogue-beta' do
+    activate_rogue_team
+    match(type: 'adhoc', readonly: true)
+    set_version
+    beta
+  end
+
   desc 'Submit a new Beta Build to HockeyApp'
   lane :beta do
+    badge
+
     build
 
     hockey(notes: release_notes)
@@ -57,24 +67,36 @@ platform :ios do
     # set the app version
     set_version
 
+    # set where this build came from
+    set_package_data(data: {
+      allaboutolaf: {
+        source: 'beta',
+      },
+    })
+
     # and run
     should_deploy = ENV['run_deploy'] == '1'
     if should_deploy
       auto_beta
+      codepush
     else
       build
     end
+  end
+
+  lane :codepush do
+    codepush_cli(app: 'AllAboutOlaf-iOS')
   end
 
   desc 'Include the build number in the version string'
   lane :set_version do |options|
     version = options[:version] || current_bundle_version
     build = options[:build_number] || current_build_number
-    increment_version_number(version_number: "#{version}-build.#{build}",
+    increment_version_number(version_number: "#{version}+#{build}",
                              xcodeproj: ENV['GYM_PROJECT'])
     increment_build_number(build_number: build,
                            xcodeproj: ENV['GYM_PROJECT'])
-    set_package_data(data: { version: "#{version}-build.#{build}" })
+    set_package_data(data: { version: "#{version}+#{build}" })
   end
 
   desc 'Do CI-system keychain setup'

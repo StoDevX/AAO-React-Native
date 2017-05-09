@@ -1,6 +1,10 @@
 // @flow
 import {AsyncStorage} from 'react-native'
 
+export function clearAsyncStorage() {
+  return AsyncStorage.clear()
+}
+
 /// MARK: Utilities
 
 function setItem(key: string, value: any) {

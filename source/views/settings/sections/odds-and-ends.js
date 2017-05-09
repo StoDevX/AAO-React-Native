@@ -1,11 +1,15 @@
 // @flow
 import React from 'react'
+import {View} from 'react-native'
+import {getVersion} from 'react-native-device-info'
 import {Cell, Section} from 'react-native-tableview-simple'
-import {version} from '../../../../package.json'
+import {version, allaboutolaf} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
 import {setFeedbackStatus} from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
 import {CellToggle} from '../../components/cell-toggle'
+import {PushButtonCell} from '../components/push-button'
+import {trackedOpenUrl} from '../../components/open-url'
 
 class OddsAndEndsSection extends React.Component {
   props: TopLevelViewPropsType & {
@@ -21,53 +25,67 @@ class OddsAndEndsSection extends React.Component {
     })
   }
 
-  onFaqButton = () => this.onPressButton('FaqView', 'FAQs')
   onCreditsButton = () => this.onPressButton('CreditsView', 'Credits')
   onPrivacyButton = () => this.onPressButton('PrivacyView', 'Privacy Policy')
   onLegalButton = () => this.onPressButton('LegalView', 'Legal')
   onSnapshotsButton = () => this.onPressButton('SnapshotsView', 'Snapshot Time')
+  onSourceButton = () =>
+    trackedOpenUrl({
+      url: 'https://github.com/StoDevX/AAO-React-Native',
+      id: 'ContributingView',
+    })
 
   render() {
+    // allows us to show [dev], [beta], or nothing for release builds
+    const versionMoniker = process.env.NODE_ENV === 'development'
+      ? '[dev] '
+      : allaboutolaf.source ? `[${allaboutolaf.source}] ` : ''
+
+    //    native (codepush)
+    // eg, 2.1.2 (2.1.2+2957)
+    const versionString = getVersion() === version
+      ? getVersion()
+      : `${getVersion()} (${version})`
+
     return (
-      <Section header="ODDS &amp; ENDS">
-        <Cell cellStyle="RightDetail" title="Version" detail={version} />
+      <View>
+        <Section header="MISCELLANY">
+          <PushButtonCell title="Credits" onPress={this.onCreditsButton} />
+          <PushButtonCell
+            title="Privacy Policy"
+            onPress={this.onPrivacyButton}
+          />
+          <PushButtonCell title="Legal" onPress={this.onLegalButton} />
+          <PushButtonCell title="Contributing" onPress={this.onSourceButton} />
+        </Section>
 
-        <CellToggle
-          label="Share Analytics"
-          // These are both inverted because the toggle makes more sense as
-          // optout/optin, but the code works better as optin/optout.
-          value={!this.props.feedbackDisabled}
-          onChange={val => this.props.onChangeFeedbackToggle(!val)}
-        />
+        <Section header="ODDS &amp; ENDS">
+          <Cell
+            cellStyle="RightDetail"
+            title="Version"
+            detail={`${versionMoniker}${versionString}`}
+          />
 
-        <PushButtonCell title="FAQ" onPress={this.onFaqButton} />
-        <PushButtonCell title="Credits" onPress={this.onCreditsButton} />
-        <PushButtonCell title="Privacy Policy" onPress={this.onPrivacyButton} />
-        <PushButtonCell title="Legal" onPress={this.onLegalButton} />
+          <CellToggle
+            label="Share Analytics"
+            // These are both inverted because the toggle makes more sense as
+            // optout/optin, but the code works better as optin/optout.
+            value={!this.props.feedbackDisabled}
+            onChange={val => this.props.onChangeFeedbackToggle(!val)}
+          />
+        </Section>
 
         {process.env.NODE_ENV === 'development'
-          ? <PushButtonCell
-              title="Snapshots"
-              onPress={this.onSnapshotsButton}
-            />
+          ? <Section header="UTILITIES">
+              <PushButtonCell
+                title="Snapshots"
+                onPress={this.onSnapshotsButton}
+              />
+            </Section>
           : null}
-      </Section>
+      </View>
     )
   }
-}
-
-const PushButtonCell = ({
-  title,
-  onPress,
-}: {title: string, onPress: () => any}) => {
-  return (
-    <Cell
-      cellStyle="Basic"
-      title={title}
-      accessory="DisclosureIndicator"
-      onPress={onPress}
-    />
-  )
 }
 
 function mapStateToProps(state) {

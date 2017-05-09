@@ -42,7 +42,9 @@ export async function loadCoursesFromUnofficialTranscript({
 
 async function fetchAllCoursesFromServer({
   stnum,
-}: {stnum: number}): PromisedDataType {
+}: {
+  stnum: number,
+}): PromisedDataType {
   const form = buildFormData({stnum: String(stnum), searchyearterm: '0'})
   const resp = await fetch(GRADES_PAGE, {method: 'POST', body: form})
   if (startsWith(resp.url, LANDING_PAGE)) {

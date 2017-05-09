@@ -19,9 +19,7 @@ const styles = StyleSheet.create({
   },
 })
 
-type SettingsViewPropsType = TopLevelViewPropsType
-
-export default function SettingsView(props: SettingsViewPropsType) {
+export default function SettingsView(props: TopLevelViewPropsType) {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
@@ -31,7 +29,7 @@ export default function SettingsView(props: SettingsViewPropsType) {
       <TableView>
         <CredentialsLoginSection />
 
-        <SupportSection />
+        <SupportSection navigator={props.navigator} route={props.route} />
 
         <OddsAndEndsSection navigator={props.navigator} route={props.route} />
       </TableView>

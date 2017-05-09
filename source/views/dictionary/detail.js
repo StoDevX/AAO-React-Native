@@ -1,5 +1,7 @@
+// @flow
 import React from 'react'
 import {ScrollView, Text, StyleSheet} from 'react-native'
+import type {WordType} from './types'
 
 const styles = StyleSheet.create({
   container: {
@@ -15,7 +17,7 @@ const styles = StyleSheet.create({
   definition: {},
 })
 
-export function DictionaryDetailView(props) {
+export function DictionaryDetailView(props: {item: WordType}) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text selectable={true} style={styles.term}>{props.item.word}</Text>
@@ -24,10 +26,4 @@ export function DictionaryDetailView(props) {
       </Text>
     </ScrollView>
   )
-}
-DictionaryDetailView.propTypes = {
-  item: React.PropTypes.shape({
-    word: React.PropTypes.string.isRequired,
-    definition: React.PropTypes.string.isRequired,
-  }).isRequired,
 }
