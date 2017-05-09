@@ -1,8 +1,8 @@
 // @flow
 import React from 'react'
-import {ScrollView, Text, WebView, StyleSheet} from 'react-native'
+import {ScrollView, Text, StyleSheet} from 'react-native'
 import moment from 'moment'
-
+import {HtmlView} from '../components/html-view'
 import {Cell} from 'react-native-tableview-simple'
 import {Card} from '../components/card'
 import * as c from '../components/colors'
@@ -117,23 +117,21 @@ export class StudentOrgsDetailRenderView extends React.Component {
 
         {description.trim()
           ? <Card header="Description" style={styles.card}>
-              <WebView
+              <HtmlView
                 scrollEnabled={true}
                 style={styles.description}
-                source={{
-                  html: `
-              <style>
-                body {
-                  margin: 10px 15px 10px;
-                  font-family: -apple-system;
-                }
-                * {
-                  max-width: 100%;
-                }
-              </style>
-              ${description.trim()}
-            `,
-                }}
+                html={`
+                  <style>
+                    body {
+                      margin: 10px 15px 10px;
+                      font-family: -apple-system;
+                    }
+                    * {
+                      max-width: 100%;
+                    }
+                  </style>
+                  ${description.trim()}
+                `}
               />
             </Card>
           : null}

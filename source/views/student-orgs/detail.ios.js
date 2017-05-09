@@ -1,8 +1,8 @@
 // @flow
 import React from 'react'
-import {ScrollView, Text, WebView, StyleSheet, Linking} from 'react-native'
+import {ScrollView, Text, StyleSheet, Linking} from 'react-native'
 import moment from 'moment'
-
+import {HtmlView} from '../components/html-view' 
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
@@ -131,22 +131,20 @@ export class StudentOrgsDetailRenderView extends React.Component {
 
           {description.trim()
             ? <Section header="DESCRIPTION">
-                <WebView
+                <HtmlView
                   style={styles.description}
-                  source={{
-                    html: `
-              <style>
-                body {
-                  margin: 10px 15px 10px;
-                  font-family: -apple-system;
-                }
-                * {
-                  max-width: 100%;
-                }
-              </style>
-              ${description.trim()}
-            `,
-                  }}
+                  html={`
+                    <style>
+                      body {
+                        margin: 10px 15px 10px;
+                        font-family: -apple-system;
+                      }
+                      * {
+                        max-width: 100%;
+                      }
+                    </style>
+                    ${description.trim()}
+                  `}
                 />
               </Section>
             : null}
