@@ -18,15 +18,13 @@ import {NoticeView} from '../components/notice'
 import EventRow from './event-row'
 
 export class EventList extends React.Component {
-  props:
-    & {
-      events: EventType[],
-      message: ?string,
-      refreshing: boolean,
-      onRefresh: () => any,
-      now: moment,
-    }
-    & TopLevelViewPropsType;
+  props: {
+    events: EventType[],
+    message: ?string,
+    refreshing: boolean,
+    onRefresh: () => any,
+    now: moment,
+  } & TopLevelViewPropsType
 
   groupEvents = (
     events: EventType[],
@@ -49,7 +47,7 @@ export class EventList extends React.Component {
     })
       .then(result => console.log(result))
       .catch(error => console.log(error.message))
-  };
+  }
 
   onPressEvent = (title: string, event: EventType) => {
     this.props.navigator.push({
@@ -61,7 +59,7 @@ export class EventList extends React.Component {
       onRightButton: () => this.shareItem(event),
       rightButton: 'share',
     })
-  };
+  }
 
   renderSectionHeader = (
     sectionData: EventType[],

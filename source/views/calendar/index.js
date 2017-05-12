@@ -12,9 +12,10 @@ import {GoogleCalendarView} from './calendar-google'
 
 export {EventDetail} from './event-detail'
 
-export default function CalendarPage(
-  {navigator, route}: TopLevelViewPropsType,
-) {
+export default function CalendarPage({
+  navigator,
+  route,
+}: TopLevelViewPropsType) {
   return (
     <TabbedView
       tabs={[
