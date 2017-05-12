@@ -26,14 +26,14 @@ export const androidTextColor = 'rgb(113, 113, 118)'
 export const androidTabAccentColor = '#ffeb3b'
 
 export const iosLightBackground = 'rgb(240, 239, 245)'
-export const iosLightBorder = 'rgb(199, 199, 201)'
-export const iosText = 'rgb(199, 198, 206)'
+export const iosSeparator = '#C8C7CC'
+export const iosLightBorder = iosSeparator
 export const iosDisabledText = 'rgb(143, 143, 143)'
-export const iosNavbarBottomBorder = 'rgb(200, 200, 202)'
+export const iosText = iosSeparator
+export const iosNavbarBottomBorder = iosSeparator
 export const iosListSectionHeader = 'rgb(248, 248, 248)'
-export const iosPlaceholderText = 'rgb(199, 199, 204)'
-export const iosSeparator = 'rgb(199, 199, 204)'
-export const iosHeaderTopBorder = 'rgb(199, 199, 199)'
+export const iosPlaceholderText = iosSeparator
+export const iosHeaderTopBorder = iosSeparator
 export const iosHeaderBottomBorder = 'rgb(224, 224, 224)'
 
 export const tableviewAccessoryColor = 'rgb(0, 122, 255)'

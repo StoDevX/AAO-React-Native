@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e -v -x -o pipefail
+set -e -v -o pipefail
 
 # ensure the env file exists and fill it out
 touch .env.js

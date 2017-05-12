@@ -6,7 +6,10 @@ import type {StoryType} from './types'
 export default function NewsItem({
   story,
   embedFeaturedImage,
-}: {story: StoryType, embedFeaturedImage: ?boolean}) {
+}: {
+  story: StoryType,
+  embedFeaturedImage: ?boolean,
+}) {
   const content = `
     <style>
       body {

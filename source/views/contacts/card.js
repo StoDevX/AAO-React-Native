@@ -46,7 +46,12 @@ export default function ContactCard({
   phoneNumber,
   text,
   buttonText,
-}: {title: string, phoneNumber: string, text: string, buttonText: string}) {
+}: {
+  title: string,
+  phoneNumber: string,
+  text: string,
+  buttonText: string,
+}) {
   return (
     <View style={styles.container}>
       <Text selectable={true} style={styles.title}>{title}</Text>

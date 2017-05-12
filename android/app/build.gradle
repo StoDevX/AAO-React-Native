@@ -95,9 +95,9 @@ android {
     defaultConfig {
         applicationId "com.allaboutolaf"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 25
         versionCode 1
-        versionName "2.1.2"
+        versionName "2.2.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -153,6 +153,7 @@ dependencies {
     compile project(':react-native-keychain')
     compile project(':react-native-linear-gradient')
     compile project(':react-native-maps')
+    compile project(':react-native-network-info')
     compile project(':react-native-onesignal')
     compile project(':react-native-vector-icons')
     compile project(':react-native-view-shot')

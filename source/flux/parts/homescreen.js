@@ -8,7 +8,7 @@ import difference from 'lodash/difference'
 import {trackHomescreenOrder} from '../../analytics'
 import * as storage from '../../lib/storage'
 
-export const SAVE_HOMESCREEN_ORDER = 'SAVE_HOMESCREEN_ORDER'
+export const SAVE_HOMESCREEN_ORDER = 'homescreen/SAVE_HOMESCREEN_ORDER'
 
 export const updateViewOrder = (
   currentOrder: string[],

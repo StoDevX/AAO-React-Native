@@ -8,8 +8,6 @@
 import './globalize-fetch'
 import {tracker} from './analytics'
 import OneSignal from 'react-native-onesignal'
-import codePush from 'react-native-code-push'
-import pkg from '../package.json'
 
 import React from 'react'
 import {Navigator, BackAndroid, StyleSheet, Platform} from 'react-native'
@@ -47,6 +45,7 @@ import LegalView from './views/settings/legal'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
 import {SnapshotsView} from './storybook'
+import HelpView from './views/help'
 
 import NoRoute from './views/components/no-route'
 
@@ -108,6 +107,8 @@ function renderScene(route, navigator) {
       return <FaqView {...props} />
     case 'SnapshotsView':
       return <SnapshotsView {...props} />
+    case 'HelpView':
+      return <HelpView {...props} />
     default:
       return <NoRoute {...props} />
   }
@@ -149,8 +150,6 @@ export default class App extends React.Component {
     OneSignal.addEventListener('opened', this.onOpened)
     OneSignal.addEventListener('registered', this.onRegistered)
     OneSignal.addEventListener('ids', this.onIds)
-
-    codePush.sync({deploymentKey: pkg.codepush[Platform.OS].release})
   }
 
   componentWillUnmount() {

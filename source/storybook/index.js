@@ -104,7 +104,10 @@ export class SnapshotsView extends React.Component {
       list: {view: () => <ContactsView />, delay: 100},
     },
     dictionary: {
-      list: {view: () => <DictionaryView />, delay: 1000},
+      list: {
+        view: () => <Nav>{props => <DictionaryView {...props} />}</Nav>,
+        delay: 1000,
+      },
     },
     home: {
       home: {view: () => <HomeView />, delay: 100},
@@ -136,8 +139,14 @@ export class SnapshotsView extends React.Component {
         delay: 100,
       },
       'section-token': {view: () => <TokenLoginSection />, delay: 100},
-      'section-support': {view: () => <SupportSection />, delay: 100},
-      'section-odds and ends': {view: () => <OddsAndEndsSection />, delay: 100},
+      'section-support': {
+        view: () => <Nav>{props => <SupportSection {...props} />}</Nav>,
+        delay: 100,
+      },
+      'section-odds and ends': {
+        view: () => <Nav>{props => <OddsAndEndsSection {...props} />}</Nav>,
+        delay: 100,
+      },
     },
     sis: {
       tabs: {
@@ -152,7 +161,10 @@ export class SnapshotsView extends React.Component {
       webcams: {view: () => <WebcamsView />, delay: 1000},
     },
     studentorgs: {
-      list: {view: () => <StudentOrgsView />, delay: 2500},
+      list: {
+        view: () => <Nav>{props => <StudentOrgsView {...props} />}</Nav>,
+        delay: 2500,
+      },
     },
     transit: {
       tabs: {view: () => <TransportationView />, delay: 100},

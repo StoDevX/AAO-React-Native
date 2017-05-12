@@ -19,6 +19,8 @@ public class MainActivity extends ReactActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BugsnagReactNative.start(this);
+        if (!BuildConfig.DEBUG) {
+            BugsnagReactNative.start(this);
+        }
     }
 }
