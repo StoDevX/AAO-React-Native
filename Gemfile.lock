@@ -162,7 +162,7 @@ GEM
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
     slack-notifier (1.5.1)
-    terminal-notifier (1.7.2)
+    terminal-notifier (1.8.0)
     terminal-table (1.7.3)
       unicode-display_width (~> 1.1.1)
     thread_safe (0.3.6)
