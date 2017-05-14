@@ -30,14 +30,6 @@ export default function CalendarPage() {
           ),
         },
         {
-          id: 'PauseCalendarView',
-          title: 'The Pause',
-          icon: 'paw',
-          component: () => (
-            <GoogleCalendarView calendarId="stolaf.edu_qkrej5rm8c8582dlnc28nreboc@group.calendar.google.com" />
-          ),
-        },
-        {
           id: 'NorthfieldCalendarView',
           title: 'Northfield',
           icon: 'pin',
