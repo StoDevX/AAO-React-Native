@@ -2,7 +2,7 @@
 import React from 'react'
 import {ScrollView, Text, StyleSheet, Linking} from 'react-native'
 import moment from 'moment'
-import {HtmlView} from '../components/html-view' 
+import {HtmlView} from '../components/html-view'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     backgroundColor: c.white,
-    height: 200,
   },
   footer: {
     fontSize: 10,
@@ -45,8 +44,19 @@ const styles = StyleSheet.create({
 })
 
 export class StudentOrgsDetailRenderView extends React.Component {
+  state: {
+    webViewHeight: number,
+  } = {
+    webViewHeight: 0,
+  }
+
   props: {
     org: StudentOrgType,
+  }
+
+  _updateWebViewHeight = (event: any) => {
+    //jsEvaluationValue contains result of injected JS
+    this.setState({webViewHeight: parseInt(event.jsEvaluationValue)})
   }
 
   render() {
@@ -132,7 +142,12 @@ export class StudentOrgsDetailRenderView extends React.Component {
           {description.trim()
             ? <Section header="DESCRIPTION">
                 <HtmlView
-                  style={styles.description}
+                  style={
+                    (styles.description, {height: this.state.webViewHeight})
+                  }
+                  javaScriptEnabled={true}
+                  injectedJavaScript="document.body.scrollHeight;"
+                  onNavigationStateChange={e => this._updateWebViewHeight(e)}
                   html={`
                     <style>
                       body {
