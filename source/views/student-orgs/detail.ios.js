@@ -2,7 +2,7 @@
 import React from 'react'
 import {ScrollView, Text, StyleSheet, Linking} from 'react-native'
 import moment from 'moment'
-import {HtmlView} from '../components/html-view' 
+import {HtmlView} from '../components/html-view'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
