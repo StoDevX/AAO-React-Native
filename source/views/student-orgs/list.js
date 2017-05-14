@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
 export class StudentOrgsView extends React.Component {
   state: {
     orgs: {[key: string]: StudentOrgType[]},
-    results: {[key: string]: Array<StudentOrgType>},
+    results: {[key: string]: StudentOrgType[]},
     refreshing: boolean,
     error: boolean,
     loaded: boolean,

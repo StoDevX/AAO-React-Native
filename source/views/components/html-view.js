@@ -8,7 +8,7 @@ export class HtmlView extends React.Component {
   props: {
     html: string,
     baseUrl?: ?string,
-    style?: Object,
+    style?: number | Object | Array<number | Object>,
   }
   _webview: WebView
 
