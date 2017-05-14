@@ -1,14 +1,14 @@
 // @flow
 
 import React from 'react'
-import {WebView, StyleSheet} from 'react-native'
+import {WebView} from 'react-native'
 import openUrl, {canOpenUrl} from '../components/open-url'
 
 export class HtmlView extends React.Component {
   props: {
     html: string,
     baseUrl?: ?string,
-    style?: ?any,
+    style?: ?Object,
     injectedJavaScript?: ?string,
     javaScriptEnabled?: ?boolean,
     onNavigationStateChange?: ?any,
