@@ -47,7 +47,7 @@ export class StudentOrgsDetailRenderView extends React.Component {
   state: {
     webViewHeight: number,
   } = {
-    webViewHeight: 200,
+    webViewHeight: 0,
   }
 
   props: {
