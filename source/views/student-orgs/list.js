@@ -7,6 +7,7 @@
 import React from 'react'
 import {StyleSheet, View, Text, Platform} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
+import debounce from 'lodash/debounce'
 import type {TopLevelViewPropsType} from '../types'
 import LoadingView from '../components/loading'
 import delay from 'delay'
@@ -25,8 +26,14 @@ import size from 'lodash/size'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
+import uniq from 'lodash/uniq'
+import words from 'lodash/words'
+import deburr from 'lodash/deburr'
+import filter from 'lodash/filter'
+import isString from 'lodash/isString'
 import * as c from '../components/colors'
 import startCase from 'lodash/startCase'
+import {SearchBar} from '../components/searchbar'
 import type {StudentOrgType} from './types'
 
 const orgsUrl =
@@ -36,6 +43,9 @@ const rowHeight = Platform.OS === 'ios' ? 58 : 74
 const headerHeight = Platform.OS === 'ios' ? 33 : 41
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
   row: {
     height: rowHeight,
     paddingRight: 2,
@@ -58,11 +68,13 @@ const styles = StyleSheet.create({
 export class StudentOrgsView extends React.Component {
   state: {
     orgs: {[key: string]: StudentOrgType[]},
+    results: {[key: string]: StudentOrgType[]},
     refreshing: boolean,
     error: boolean,
     loaded: boolean,
   } = {
     orgs: {},
+    results: {},
     refreshing: false,
     loaded: false,
     error: false,
@@ -91,8 +103,7 @@ export class StudentOrgsView extends React.Component {
 
       let sorted = sortBy(withSortableNames, '$sortableName')
       let grouped = groupBy(sorted, '$groupableName')
-
-      this.setState({orgs: grouped})
+      this.setState({orgs: sorted, results: grouped})
     } catch (err) {
       tracker.trackException(err.message)
       bugsnag.notify(err)
@@ -173,6 +184,43 @@ export class StudentOrgsView extends React.Component {
     })
   }
 
+  splitToArray = (str: string) => {
+    return words(deburr(str.toLowerCase()))
+  }
+
+  orgToArray = (term: StudentOrgType) => {
+    return uniq([
+      ...this.splitToArray(term.name),
+      ...this.splitToArray(term.category),
+      ...this.splitToArray(term.description),
+    ])
+  }
+
+  _performSearch = (text: string) => {
+    // Android clear button returns an object...
+    // ...and we need to check if the query exists
+    if (!isString(text) || !text) {
+      this.setState({
+        results: groupBy(this.state.orgs, '$groupableName'),
+      })
+      return
+    }
+
+    const query = text.toLowerCase()
+    let filteredResults = filter(this.state.orgs, org =>
+      this.orgToArray(org).some(word => word.startsWith(query)),
+    )
+
+    this.setState({results: groupBy(filteredResults, '$groupableName')})
+  }
+
+  // We need to make the search run slightly behind the UI,
+  // so I'm slowing it down by 50ms. 0ms also works, but seems
+  // rather pointless.
+  performSearch = debounce(this._performSearch, 50)
+
+  searchBar: any
+
   render() {
     if (!this.state.loaded) {
       return <LoadingView />
@@ -183,20 +231,30 @@ export class StudentOrgsView extends React.Component {
     }
 
     return (
-      <StyledAlphabetListView
-        data={this.state.orgs}
-        cell={this.renderRow}
-        getSectionListTitle={this.getSectionListTitle}
-        // just setting cellHeight sends the wrong values on iOS.
-        cellHeight={
-          rowHeight +
-            (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
-        }
-        sectionHeader={this.renderSectionHeader}
-        sectionHeaderHeight={headerHeight}
-        renderSeparator={this.renderSeparator}
-        showsVerticalScrollIndicator={false}
-      />
+      <View style={styles.wrapper}>
+        <SearchBar
+          getRef={ref => (this.searchBar = ref)}
+          onChangeText={this.performSearch}
+          // if we don't use the arrow function here, searchBar ref is null...
+          onSearchButtonPress={() => this.searchBar.unFocus()}
+        />
+        <StyledAlphabetListView
+          data={this.state.results}
+          cell={this.renderRow}
+          getSectionListTitle={this.getSectionListTitle}
+          // just setting cellHeight sends the wrong values on iOS.
+          cellHeight={
+            rowHeight +
+              (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
+          }
+          sectionHeader={this.renderSectionHeader}
+          sectionHeaderHeight={headerHeight}
+          renderSeparator={this.renderSeparator}
+          showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="never"
+        />
+      </View>
     )
   }
 }
