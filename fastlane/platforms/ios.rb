@@ -7,7 +7,7 @@ platform :ios do
 
   desc 'Take screenshots'
   lane :screenshot do
-    snapshot(devices: ['iPhone 7 Plus', 'iPhone 6', 'iPhone 5s', 'iPhone 4s'],
+    snapshot(devices: ['iPhone 7 Plus', 'iPhone 6', 'iPhone 5s'],
              languages: ['en-US'],
              scheme: ENV['GYM_SCHEME'],
              project: ENV['GYM_PROJECT'])
