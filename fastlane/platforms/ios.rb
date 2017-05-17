@@ -30,6 +30,13 @@ platform :ios do
     testflight
   end
 
+  desc 'Upload dYSM symbols to Bugsnag from Apple'
+  lane :refresh_dsyms do
+    download_dsyms
+    upload_symbols_to_bugsnag
+    clean_build_artifacts
+  end
+
   desc 'Run iOS builds or tests, as appropriate'
   lane :'ci-run' do
     # set up things so they can run
