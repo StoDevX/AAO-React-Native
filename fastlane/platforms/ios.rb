@@ -41,6 +41,7 @@ platform :ios do
     # Set up code signing correctly
     # (more information: https://codesigning.guide)
     match(type: 'appstore', readonly: true)
+    match(type: 'adhoc', readonly: true)
 
     # set the app version
     set_version
