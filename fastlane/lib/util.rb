@@ -20,7 +20,7 @@ def current_build_number
     return ENV['TRAVIS_BUILD_NUMBER']
 
   begin
-    (latest_hockeyapp_version_number + 1).to_s
+    (latest_testflight_build_number + 1).to_s
   rescue
     '1'
   end
