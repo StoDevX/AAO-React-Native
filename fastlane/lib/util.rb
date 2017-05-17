@@ -18,6 +18,7 @@ end
 def current_build_number
   if ENV.key?('TRAVIS_BUILD_NUMBER')
     return ENV['TRAVIS_BUILD_NUMBER']
+  end
 
   begin
     (latest_testflight_build_number + 1).to_s
