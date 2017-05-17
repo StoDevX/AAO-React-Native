@@ -29,11 +29,6 @@ xcode-select --install
 </table>
 
 # Available Actions
-### register
-```
-fastlane register
-```
-Adds any unregistered devices to the provisioning profile
 ### bump
 ```
 fastlane bump
@@ -107,6 +102,11 @@ Provisions the profiles; bumps the build number; builds the app
 fastlane ios beta
 ```
 Submit a new Beta Build to Testflight
+### ios refresh_dsyms
+```
+fastlane ios refresh_dsyms
+```
+Upload dYSM symbols to Bugsnag from Apple
 ### ios ci-run
 ```
 fastlane ios ci-run
