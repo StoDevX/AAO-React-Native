@@ -20,9 +20,6 @@ platform :ios do
 
   desc 'Provisions the profiles; bumps the build number; builds the app'
   lane :build do
-    # make sure we have a copy of the data files
-    bundle_data
-
     sh('security find-identity -v -p codesigning')
 
     # Build the app
