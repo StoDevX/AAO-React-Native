@@ -37,6 +37,8 @@
 	<string>1</string>
 	<key>CodePushDeploymentKey</key>
 	<string>oSozdf5RtDr2j8T7PFz-oWgNmoBIEJN_nzUOz</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>KSTORadio</string>
