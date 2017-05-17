@@ -60,8 +60,7 @@ platform :ios do
 
     gym(export_method: 'app-store')
 
-    testflight(changelog: changelog_from_git_commits, 
-               skip_submission: true)
+    testflight
   end
 
   desc 'Run iOS builds or tests, as appropriate'
