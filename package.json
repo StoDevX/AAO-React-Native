@@ -128,7 +128,7 @@
     "eslint-plugin-react": "7.0.1",
     "eslint-plugin-react-native": "2.3.2",
     "flow-bin": "0.38.0",
-    "jest": "20.0.1",
+    "jest": "20.0.2",
     "js-yaml": "3.8.4",
     "junk": "2.1.0",
     "marked": "0.3.6",
