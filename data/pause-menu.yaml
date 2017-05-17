@@ -1,0 +1,10 @@
+stationMenus:
+  - {label: Notice}
+
+foodItems:
+  - label: Closed for the summer!
+    station: Notice
+    description: Have a great summer! We'll be open again come fall. 🍃
+    special: false
+
+corIcons: {}
