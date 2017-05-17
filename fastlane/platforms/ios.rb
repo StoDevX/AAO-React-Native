@@ -50,6 +50,20 @@ platform :ios do
     hockey(notes: release_notes)
   end
 
+  desc 'Submit a new Beta Build to HockeyApp'
+  lane :'beta-testflight' do
+    badge
+
+    match(type: 'appstore', readonly: true)
+    increment_build_number(build_number: latest_testflight_build_number + 1,
+                           xcodeproj: ENV['GYM_PROJECT'])
+
+    gym(export_method: 'app-store')
+
+    testflight(changelog: changelog_from_git_commits, 
+               skip_submission: true)
+  end
+
   desc 'Run iOS builds or tests, as appropriate'
   lane :'ci-run' do
     # set up things so they can run

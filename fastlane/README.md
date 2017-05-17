@@ -122,6 +122,11 @@ Make a beta, but for the rogue devs
 fastlane ios beta
 ```
 Submit a new Beta Build to HockeyApp
+### ios beta-testflight
+```
+fastlane ios beta-testflight
+```
+Submit a new Beta Build to HockeyApp
 ### ios ci-run
 ```
 fastlane ios ci-run
