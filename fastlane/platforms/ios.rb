@@ -15,10 +15,8 @@ platform :ios do
 
   desc 'Provisions the profiles; bumps the build number; builds the app'
   lane :build do
-    sh('security find-identity -v -p codesigning')
-
-    # Build the app
-    gym(export_method: 'ad-hoc')
+    gym(include_bitcode: true,
+        include_symbols: true)
   end
 
   desc 'Submit a new Beta Build to Testflight'
@@ -27,9 +25,16 @@ platform :ios do
     increment_build_number(build_number: latest_testflight_build_number + 1,
                            xcodeproj: ENV['GYM_PROJECT'])
 
-    gym(export_method: 'app-store')
+    build
 
     testflight
+  end
+
+  desc 'Upload dYSM symbols to Bugsnag from Apple'
+  lane :refresh_dsyms do
+    download_dsyms
+    upload_symbols_to_bugsnag
+    clean_build_artifacts
   end
 
   desc 'Run iOS builds or tests, as appropriate'
@@ -37,11 +42,6 @@ platform :ios do
     # set up things so they can run
     authorize_ci_for_keys
     ci_keychains
-
-    # Set up code signing correctly
-    # (more information: https://codesigning.guide)
-    match(type: 'appstore', readonly: true)
-    match(type: 'adhoc', readonly: true)
 
     # set the app version
     set_version
@@ -86,9 +86,13 @@ platform :ios do
     create_keychain(name: keychain,
                     password: password,
                     timeout: 3600)
-
-    match(readonly: true)
+    
+    # Set up code signing correctly
+    # (more information: https://codesigning.guide)
+    match(type: 'appstore', readonly: true)
 
     sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain}")
+
+    sh('security find-identity -v -p codesigning')
   end
 end
