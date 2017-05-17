@@ -97,31 +97,16 @@ Runs all the tests
 fastlane ios screenshot
 ```
 Take screenshots
-### ios go-rogue
-```
-fastlane ios go-rogue
-```
-Go rogue
 ### ios build
 ```
 fastlane ios build
 ```
 Provisions the profiles; bumps the build number; builds the app
-### ios rogue-build
-```
-fastlane ios rogue-build
-```
-Build, but for the rogue devs
-### ios rogue-beta
-```
-fastlane ios rogue-beta
-```
-Make a beta, but for the rogue devs
 ### ios beta
 ```
 fastlane ios beta
 ```
-Submit a new Beta Build to HockeyApp
+Submit a new Beta Build to Testflight
 ### ios ci-run
 ```
 fastlane ios ci-run

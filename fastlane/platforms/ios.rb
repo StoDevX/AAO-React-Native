@@ -13,44 +13,23 @@ platform :ios do
              project: ENV['GYM_PROJECT'])
   end
 
-  desc 'Go rogue'
-  lane :'go-rogue' do
-    activate_rogue_team
-  end
-
   desc 'Provisions the profiles; bumps the build number; builds the app'
   lane :build do
-    # make sure we have a copy of the data files
-    bundle_data
-
     sh('security find-identity -v -p codesigning')
 
     # Build the app
     gym(export_method: 'ad-hoc')
   end
 
-  desc 'Build, but for the rogue devs'
-  lane :'rogue-build' do
-    activate_rogue_team
-    match(type: 'adhoc', readonly: true)
-    build
-  end
-
-  desc 'Make a beta, but for the rogue devs'
-  lane :'rogue-beta' do
-    activate_rogue_team
-    match(type: 'adhoc', readonly: true)
-    set_version
-    beta
-  end
-
-  desc 'Submit a new Beta Build to HockeyApp'
+  desc 'Submit a new Beta Build to Testflight'
   lane :beta do
-    badge
+    match(type: 'appstore', readonly: true)
+    increment_build_number(build_number: latest_testflight_build_number + 1,
+                           xcodeproj: ENV['GYM_PROJECT'])
 
-    build
+    gym(export_method: 'app-store')
 
-    hockey(notes: release_notes)
+    testflight
   end
 
   desc 'Run iOS builds or tests, as appropriate'
@@ -58,10 +37,10 @@ platform :ios do
     # set up things so they can run
     authorize_ci_for_keys
     ci_keychains
-    activate_rogue_team
 
     # Set up code signing correctly
     # (more information: https://codesigning.guide)
+    match(type: 'appstore', readonly: true)
     match(type: 'adhoc', readonly: true)
 
     # set the app version
