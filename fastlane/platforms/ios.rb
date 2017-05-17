@@ -43,12 +43,6 @@ platform :ios do
     authorize_ci_for_keys
     ci_keychains
 
-    # Set up code signing correctly
-    # (more information: https://codesigning.guide)
-    match(type: 'appstore', readonly: true)
-
-    sh('security find-identity -v -p codesigning')
-
     # set the app version
     set_version
 
@@ -92,7 +86,13 @@ platform :ios do
     create_keychain(name: keychain,
                     password: password,
                     timeout: 3600)
+    
+    # Set up code signing correctly
+    # (more information: https://codesigning.guide)
+    match(type: 'appstore', readonly: true)
 
     sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain}")
+
+    sh('security find-identity -v -p codesigning')
   end
 end
