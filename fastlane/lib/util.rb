@@ -16,7 +16,8 @@ end
 
 # Gets the version, either from Travis or from Hockey
 def current_build_number
-  ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
+  if ENV.key?('TRAVIS_BUILD_NUMBER')
+    return ENV['TRAVIS_BUILD_NUMBER']
 
   begin
     (latest_hockeyapp_version_number + 1).to_s
