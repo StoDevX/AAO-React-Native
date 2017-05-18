@@ -9,6 +9,8 @@
 import XCTest
 
 class AllAboutOlafUITests: XCTestCase {
+    var app = XCUIApplication()
+
     override func setUp() {
         super.setUp()
         // In UI tests it is usually best to stop immediately when a failure
@@ -17,7 +19,6 @@ class AllAboutOlafUITests: XCTestCase {
 
         // UI tests must launch the application that they test. Doing this in
         // setup will make sure it happens for each test method.
-        let app = XCUIApplication()
         setupSnapshot(app)
         app.launch()
 
@@ -33,78 +34,85 @@ class AllAboutOlafUITests: XCTestCase {
     }
 
     func testMainMenuScreen() {
-        sleep(15)
+        sleep(1)
         snapshot("00MainMenuScreen")
     }
 
     func testOpenMenusScreen() {
-        XCUIApplication().otherElements["   Menus"].tap()
+        app.otherElements["   Menus"].tap()
         sleep(5)
         snapshot("01MenusScreenStavMenu")
     }
 
     func testOpenSisScreen() {
-        XCUIApplication().otherElements["   SIS"].tap()
+        app.otherElements["   SIS"].tap()
         sleep(1)
         snapshot("02SisScreen")
     }
 
     func testOpenBuildingHoursScreen() {
-        XCUIApplication().otherElements["   Building Hours"].tap()
+        app.otherElements["   Building Hours"].tap()
         sleep(1)
         snapshot("03BuildingHoursScreen")
     }
 
+    func testOpenWebcamsScreen() {
+        app.otherElements["   Streaming Media"].tap()
+        app.tabBars.buttons["Webcams"].tap()
+        sleep(1)
+        snapshot("04WebcamsScreen")
+    }
+
     func testOpenCalendarScreen() {
-        XCUIApplication().otherElements["   Calendar"].tap()
+        app.otherElements["   Calendar"].tap()
         sleep(5)
-        snapshot("04CalendarScreen")
+        snapshot("05CalendarScreen")
     }
 
     func testOpenDirectoryScreen() {
-        XCUIApplication().otherElements["   Directory"].tap()
+        app.otherElements["   Directory"].tap()
         sleep(5)
-        snapshot("05DirectoryScreen")
+        snapshot("06DirectoryScreen")
     }
 
     func testOpenStreamingMediaScreen() {
-        XCUIApplication().otherElements["   Streaming Media"].tap()
+        app.otherElements["   Streaming Media"].tap()
         sleep(1)
-        snapshot("06StreamingMediaScreen")
+        snapshot("07StreamingMediaScreen")
     }
 
     func testOpenNewsScreen() {
-        XCUIApplication().otherElements["   News"].tap()
+        app.otherElements["   News"].tap()
         sleep(5)
-        snapshot("07NewsScreen")
+        snapshot("08NewsScreen")
     }
 
     func testOpenCampusMapScreen() {
-        XCUIApplication().otherElements["   Campus Map"].tap()
+        app.otherElements["   Campus Map"].tap()
         sleep(5)
-        snapshot("08CampusMapScreen")
+        snapshot("09CampusMapScreen")
     }
 
     func testOpenImportantContactsScreen() {
-        XCUIApplication().otherElements["   Important Contacts"].tap()
+        app.otherElements["   Important Contacts"].tap()
         sleep(1)
-        snapshot("09ImportantContactsScreen")
+        snapshot("10ImportantContactsScreen")
     }
 
     func testOpenTransportationScreen() {
-        XCUIApplication().otherElements["   Transportation"].tap()
+        app.otherElements["   Transportation"].tap()
         sleep(1)
-        snapshot("10TransportationScreen")
+        snapshot("11TransportationScreen")
     }
 
     func testOpenCampusDictionaryScreen() {
-        XCUIApplication().otherElements["   Campus Dictionary"].tap()
+        app.otherElements["   Campus Dictionary"].tap()
         sleep(1)
-        snapshot("11CampusDictionaryScreen")
+        snapshot("12CampusDictionaryScreen")
     }
 
     func testOpenStudentOrgsScreen() {
-        XCUIApplication().otherElements["   Student Orgs"].tap()
+        app.otherElements["   Student Orgs"].tap()
         sleep(5)
         snapshot("13StudentOrgsScreen")
     }
