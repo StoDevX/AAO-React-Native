@@ -18,7 +18,7 @@ DIRECTORY
 Find email addresses, match names with faces, and keep track of all the amazing people on the Hill.
 
 STREAMING MEDIA
-Browse the many St. Olaf webcams, watch the sunset from your bedroom, check out the goings-on in Buntrock Commons with the Hi Mom cam!
+Browse the many St. Olaf webcams, watch the sunset from your bedroom, and check out the goings-on in Buntrock Commons with the Hi Mom cam!
 
 NEWS
 Keep track of the happenings in academic departments, follow the PoliticOle, and read articles from the student newspaper, the Manitou Mess! Also includes Oleville, with the latest from all of SGA, including the famous weekly #HillHappenings emails.
