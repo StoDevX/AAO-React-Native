@@ -20,7 +20,6 @@ import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import {data as fallbackMenu} from '../../../docs/pause-menu.json'
 import {tracker} from '../../analytics'
 import bugsnag from '../../bugsnag'
-const CENTRAL_TZ = 'America/Winnipeg'
 
 const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
 
@@ -35,7 +34,7 @@ export class GitHubHostedMenu extends React.Component {
   } = {
     error: null,
     loading: true,
-    now: moment.tz(CENTRAL_TZ),
+    now: moment(),
     foodItems: {},
     corIcons: {},
     meals: [],
@@ -99,7 +98,7 @@ export class GitHubHostedMenu extends React.Component {
           endtime: '23:59',
         },
       ],
-      now: moment.tz(CENTRAL_TZ),
+      now: moment(),
     })
   }
 

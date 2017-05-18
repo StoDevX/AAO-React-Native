@@ -22,8 +22,6 @@ import {
 
 const transparentPixel = require('../../../images/transparent.png')
 
-const CENTRAL_TZ = 'America/Winnipeg'
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -86,8 +84,8 @@ const styles = StyleSheet.create({
 export class BuildingHoursDetailView extends React.Component {
   state: {intervalId: number, now: momentT} = {
     intervalId: 0,
-    // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
-    now: moment.tz(CENTRAL_TZ),
+    // now: moment('Wed 7:25pm', 'ddd h:mma', null),
+    now: moment(),
   }
 
   componentWillMount() {
@@ -103,7 +101,7 @@ export class BuildingHoursDetailView extends React.Component {
   props: BuildingType
 
   updateTime = () => {
-    this.setState({now: moment.tz(CENTRAL_TZ)})
+    this.setState({now: moment()})
   }
 
   render() {

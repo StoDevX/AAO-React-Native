@@ -15,7 +15,6 @@ import {ListRow} from '../../components/list'
 import {ListSectionHeader} from '../../components/list'
 
 const TIME_FORMAT = 'h:mma'
-const TIMEZONE = 'America/Winnipeg'
 
 const styles = StyleSheet.create({
   separator: {
@@ -73,11 +72,8 @@ export function BusLine({line, now}: {line: BusLineType, now: moment}) {
           time === false
             ? // either pass `false` through or return a parsed time
               false
-            : moment
-                // interpret in Central time
-                .tz(time, TIME_FORMAT, true, TIMEZONE)
-                // and set the date to today
-                .dayOfYear(now.dayOfYear()),
+            : // set the date to today
+              moment(time, TIME_FORMAT, true).dayOfYear(now.dayOfYear()),
       )
     },
   )

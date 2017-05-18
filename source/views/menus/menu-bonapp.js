@@ -25,7 +25,6 @@ import {AllHtmlEntities} from 'html-entities'
 import {toLaxTitleCase} from 'titlecase'
 import {tracker} from '../../analytics'
 import bugsnag from '../../bugsnag'
-const CENTRAL_TZ = 'America/Winnipeg'
 
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
 const bonappCafeBaseUrl = 'http://legacy.cafebonappetit.com/api/2/cafes'
@@ -50,7 +49,7 @@ export class BonAppHostedMenu extends React.Component {
   } = {
     error: null,
     loading: true,
-    now: moment.tz(CENTRAL_TZ),
+    now: moment(),
     cafeMenu: null,
     cafeInfo: null,
   }
@@ -88,7 +87,7 @@ export class BonAppHostedMenu extends React.Component {
       loading: false,
       cafeMenu,
       cafeInfo,
-      now: moment.tz(CENTRAL_TZ),
+      now: moment(),
     })
   }
 
