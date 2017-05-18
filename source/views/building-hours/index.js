@@ -18,7 +18,6 @@ import {data as fallbackBuildingHours} from '../../../docs/building-hours'
 import groupBy from 'lodash/groupBy'
 
 import moment from 'moment-timezone'
-const CENTRAL_TZ = 'America/Winnipeg'
 
 export {BuildingHoursDetailView} from './detail'
 
@@ -37,8 +36,8 @@ export class BuildingHoursView extends React.Component {
   } = {
     error: null,
     loading: true,
-    // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
-    now: moment.tz(CENTRAL_TZ),
+    // now: moment('Wed 7:25pm', 'ddd h:mma', null),
+    now: moment(),
     buildings: groupBuildings(fallbackBuildingHours),
     intervalId: 0,
   }
@@ -58,7 +57,7 @@ export class BuildingHoursView extends React.Component {
   props: TopLevelViewPropsType
 
   updateTime = () => {
-    this.setState({now: moment.tz(CENTRAL_TZ)})
+    this.setState({now: moment()})
   }
 
   fetchData = async () => {
@@ -83,7 +82,7 @@ export class BuildingHoursView extends React.Component {
     this.setState({
       loading: false,
       buildings: groupBuildings(buildings),
-      now: moment.tz(CENTRAL_TZ),
+      now: moment(),
     })
   }
 

@@ -14,7 +14,6 @@ import delay from 'delay'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
 import {GOOGLE_CALENDAR_API_KEY} from '../../lib/config'
-const TIMEZONE = 'America/Winnipeg'
 
 export class GoogleCalendarView extends React.Component {
   state: {
@@ -28,7 +27,7 @@ export class GoogleCalendarView extends React.Component {
     loaded: false,
     refreshing: true,
     error: null,
-    now: moment.tz(TIMEZONE),
+    now: moment(),
   }
 
   componentWillMount() {
@@ -67,7 +66,7 @@ export class GoogleCalendarView extends React.Component {
     })
   }
 
-  getEvents = async (now: moment = moment.tz(TIMEZONE)) => {
+  getEvents = async (now: moment = moment()) => {
     let url = this.buildCalendarUrl(this.props.calendarId)
 
     let data: GoogleEventType[] = []

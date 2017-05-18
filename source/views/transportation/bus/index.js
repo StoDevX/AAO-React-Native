@@ -8,8 +8,6 @@ import {NoticeView} from '../../components/notice'
 
 import {data as defaultBusLines} from '../../../../docs/bus-times.json'
 
-const TIMEZONE = 'America/Winnipeg'
-
 export default class BusView extends React.Component {
   static defaultProps = {
     busLines: defaultBusLines,
@@ -17,7 +15,7 @@ export default class BusView extends React.Component {
 
   state = {
     intervalId: 0,
-    now: moment.tz(TIMEZONE),
+    now: moment(),
   }
 
   componentWillMount() {
@@ -36,12 +34,12 @@ export default class BusView extends React.Component {
   }
 
   updateTime = () => {
-    this.setState({now: moment.tz(TIMEZONE)})
+    this.setState({now: moment()})
   }
 
   render() {
     let {now} = this.state
-    // now = moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE)
+    // now = moment('Fri 8:13pm', 'ddd h:mma', true)
     const busLines = this.props.busLines
     const activeBusLine = busLines.find(({line}) => line === this.props.line)
 
