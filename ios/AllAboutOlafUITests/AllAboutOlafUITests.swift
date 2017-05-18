@@ -103,12 +103,6 @@ class AllAboutOlafUITests: XCTestCase {
         snapshot("11CampusDictionaryScreen")
     }
 
-    func testOpenOlevilleScreen() {
-        XCUIApplication().otherElements["   Oleville"].tap()
-        sleep(10)
-        snapshot("12OlevilleScreen")
-    }
-
     func testOpenStudentOrgsScreen() {
         XCUIApplication().otherElements["   Student Orgs"].tap()
         sleep(5)
