@@ -4,5 +4,7 @@ app_identifier 'NFMTHAZVS9.com.drewvolz.stolaf'
 # Your Apple email address
 apple_id 'sgawebmaster@stolaf.edu'
 
-# you can even provide different app identifiers, Apple IDs and team names per lane:
-# More information: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Appfile.md
+# This is a private key. It is not included in the repository.
+# Contact odt@stolaf.edu or another admin if you need access.
+json_key_file 'fastlane/play-private-key.json'
+package_name 'com.allaboutolaf'
