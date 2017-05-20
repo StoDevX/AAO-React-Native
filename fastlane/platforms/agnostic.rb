@@ -28,6 +28,10 @@ lane :'propagate-version' do |options|
   # update Android version
   set_gradle_version_name(version_name: version,
                           gradle_path: lane_context[:GRADLE_FILE])
+  
+  current_version_code = get_gradle_version_code(gradle_path: lane_context[:GRADLE_FILE])
+  set_gradle_version_code(version_code: current_version_code + 1,
+                          gradle_path: lane_context[:GRADLE_FILE])
 end
 
 desc 'Build the release notes: branch, commit hash, changelog'
