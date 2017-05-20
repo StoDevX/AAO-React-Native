@@ -12,12 +12,9 @@ platform :android do
 
   desc 'Submit a new Beta Build to HockeyApp'
   lane :beta do
-    badge
-
     build
 
-    # Upload to HockeyApp
-    hockey(notes: release_notes)
+    supply(track: 'beta')
   end
 
   desc 'Run the appropriate action on CI'
