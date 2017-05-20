@@ -49,7 +49,7 @@ platform :android do
   lane :set_version do |options|
     version = options[:version] || current_bundle_version
     build = options[:build_number] || current_build_number
-    set_gradle_version_name(version_name: "#{version}+#{build}",
+    set_gradle_version_name(version_name: version,
                             gradle_path: lane_context[:GRADLE_FILE])
     set_gradle_version_code(version_code: build,
                             gradle_path: lane_context[:GRADLE_FILE])
