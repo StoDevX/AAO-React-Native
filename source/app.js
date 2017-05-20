@@ -44,9 +44,9 @@ import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
+import {AthleticsView} from './views/athletics'
 import {SnapshotsView} from './storybook'
 import HelpView from './views/help'
-import {AthleticsView} from './views/athletics'
 
 import NoRoute from './views/components/no-route'
 
