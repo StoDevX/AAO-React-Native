@@ -8,6 +8,8 @@ platform :android do
            build_type: 'Release',
            print_command: true,
            print_command_output: true)
+    
+    UI.message lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS]
   end
 
   desc 'Submit a new Beta Build to HockeyApp'
