@@ -1,8 +1,9 @@
 // @flow
 import React from 'react'
-import {Text, ScrollView, StyleSheet} from 'react-native'
+import {Text, View, ScrollView, StyleSheet} from 'react-native'
 import {fastGetTrimmedText} from '../../../lib/html'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
+import {Card} from '../../components/card'
 import moment from 'moment'
 import openUrl from '../../components/open-url'
 import Communications from 'react-native-communications'
@@ -12,6 +13,34 @@ import type {JobType} from './types'
 const styles = StyleSheet.create({
   selectable: {
     paddingVertical: 10,
+  },
+  name: {
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 15,
+    paddingHorizontal: 5,
+    color: c.black,
+    fontSize: 32,
+    fontWeight: '300',
+  },
+  subtitle: {
+    textAlign: 'center',
+    marginBottom: 15,
+    paddingHorizontal: 5,
+    color: c.black,
+    fontSize: 16,
+    fontWeight: '300',
+  },
+  card: {
+    marginBottom: 20,
+  },
+  cardBody: {
+    color: c.black,
+    paddingTop: 13,
+    paddingBottom: 13,
+    paddingLeft: 16,
+    paddingRight: 16,
+    fontSize: 16,
   },
   lastUpdated: {
     paddingBottom: 20,
@@ -27,13 +56,10 @@ function renderTitle(title: string, category: string) {
   const trimmedTitle = fastGetTrimmedText(title)
   const trimmedDetail = fastGetTrimmedText(category)
   return trimmedTitle || trimmedDetail
-    ? <Section header="JOB">
-        <Cell
-          cellStyle="Subtitle"
-          title={trimmedTitle}
-          detail={trimmedDetail}
-        />
-      </Section>
+    ? <View>
+        <Text style={styles.name}>{trimmedTitle}</Text>
+        <Text style={styles.subtitle}>{trimmedDetail}</Text>
+      </View>
     : null
 }
 
@@ -47,15 +73,16 @@ function renderContact(
   const trimmedContact =
     fastGetTrimmedText(contact) || fastGetTrimmedText(email)
   return trimmedOffice || trimmedContact
-    ? <Section header="CONTACT">
-        <Cell
-          cellStyle="Subtitle"
-          title={trimmedContact}
-          detail={trimmedOffice}
-          accessory="DisclosureIndicator"
+    ? <Card header="Contact" style={styles.card}>
+        <Text
+          style={styles.cardBody}
           onPress={() => openEmail(email, title)}
-        />
-      </Section>
+        >
+          {trimmedContact} {email ? `(${fixupEmailFormat(email)})` : ''}
+          {'\n'}
+          {trimmedOffice}
+        </Text>
+      </Card>
     : null
 }
 
@@ -64,75 +91,73 @@ function renderHours(timeOfHours: string, hoursPerWeek: string) {
   const hours = fastGetTrimmedText(hoursPerWeek)
   const ending = hours == 'Full-time' ? '' : ' hrs/week'
   return time && hours
-    ? <Section header="HOURS">
-        <Cell
-          cellStyle="Subtitle"
-          title={time}
-          detail={hoursPerWeek + ending}
-        />
-      </Section>
+    ? <Card header="Hours" style={styles.card}>
+        <Text style={styles.cardBody}>
+          {time}
+          {'\n'}
+          {hoursPerWeek + ending}
+        </Text>
+      </Card>
     : null
 }
 
 function renderDescription(description: string) {
   const trimmedDescription = description.replace(/\t/g, ' ')
   return trimmedDescription
-    ? <Section header="DESCRIPTION">
-        <Cell
-          cellContentView={
-            <Text selectable={true} style={styles.selectable}>
-              {trimmedDescription}
-            </Text>
-          }
-        />
-      </Section>
+    ? <Card header="Description" style={styles.card}>
+        <Text style={styles.cardBody}>
+          {trimmedDescription}
+        </Text>
+      </Card>
     : null
 }
 
 function renderSkills(skills: string) {
   const trimmedSkills = skills.replace(/\t/g, ' ')
   return trimmedSkills
-    ? <Section header="SKILLS">
-        <Cell
-          cellContentView={
-            <Text selectable={true} style={styles.selectable}>
-              {trimmedSkills}
-            </Text>
-          }
-        />
-      </Section>
+    ? <Card header="Skills" style={styles.card}>
+        <Text style={styles.cardBody}>
+          {trimmedSkills}
+        </Text>
+      </Card>
     : null
 }
 
 function renderComments(comments: string) {
   const trimmedComments = comments.replace(/\t/g, ' ')
   return trimmedComments
-    ? <Section header="COMMENTS">
-        <Cell
-          cellContentView={
-            <Text selectable={true} style={styles.selectable}>
-              {trimmedComments}
-            </Text>
-          }
-        />
-      </Section>
+    ? <Card header="Comments" style={styles.card}>
+        <Text style={styles.cardBody}>
+          {trimmedComments}
+        </Text>
+      </Card>
     : null
 }
 
 function renderLinks(links: string[]) {
   return links.length
-    ? <Section header="LINKS">
+    ? <Card header="LINKS" style={styles.card}>
         {links.map((url, i) => (
-          <Cell
+          <Text
             key={i}
-            cellStyle="Title"
-            title={url}
-            accessory="DisclosureIndicator"
+            style={styles.cardBody}
             onPress={() =>
               openUrl(/^https?:\/\//.test(url) ? url : `http://${url}`)}
-          />
+          >
+            {url}
+          </Text>
         ))}
-      </Section>
+      </Card>
+    : null
+}
+
+function renderLastUpdated(lastModified: string) {
+  return lastModified
+    ? <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
+        Last updated:
+        {' '}
+        {moment(lastModified, 'YYYY/MM/DD').calendar()}
+      </Text>
     : null
 }
 
@@ -187,20 +212,14 @@ export default function JobDetailView({job}: {job: JobType}) {
 
   return (
     <ScrollView>
-      <TableView>
-        {renderTitle(title, type)}
-        {renderContact(title, office, name, contactEmail)}
-        {renderHours(timeOfHours, hoursPerWeek)}
-        {renderDescription(description)}
-        {renderSkills(skills)}
-        {renderComments(comments)}
-        {renderLinks(links)}
-      </TableView>
-      <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-        Last updated:
-        {' '}
-        {moment(lastModified, 'YYYY/MM/DD').calendar()}
-      </Text>
+      {renderTitle(title, type)}
+      {renderContact(title, office, name, contactEmail)}
+      {renderHours(timeOfHours, hoursPerWeek)}
+      {renderDescription(description)}
+      {renderSkills(skills)}
+      {renderComments(comments)}
+      {renderLinks(links)}
+      {renderLastUpdated(lastModified)}
     </ScrollView>
   )
 }
