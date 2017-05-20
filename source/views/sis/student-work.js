@@ -30,7 +30,6 @@ const jobSort = new Map([
   ['Off-campus Community Service Work Study', 2],
   ['On-campus Summer Employment', 3],
   ['Off-campus Summer Employment', 4],
-  ['Unknown', Infinity],
 ])
 
 const styles = StyleSheet.create({
