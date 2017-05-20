@@ -137,8 +137,8 @@ function renderLinks(links: string[]) {
 }
 
 function fixupEmailFormat(email: string) {
-  // No @ in address ... e.g. smith
   if (!/@/.test(email)) {
+    // No @ in address ... e.g. smith
     return `${email}@stolaf.edu`
   } else if (/@$/.test(email)) {
     // @ at end ... e.g. smith@
