@@ -64,7 +64,7 @@ export default class StudentWorkView extends React.Component {
       const data: {[key: string]: JobType[]} = await fetchJson(jobsUrl)
 
       const sorted = sortBy(data, [
-        j => jobSort.get(j.type) || jobSort.get('Unknown'),
+        j => jobSort.get(j.type) || Infinity,
         j => j.lastModified,
       ])
 

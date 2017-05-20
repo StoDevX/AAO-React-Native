@@ -163,19 +163,19 @@ function parseLinks(data: string) {
 }
 
 export default function JobDetailView({job}: {job: JobType}) {
-  const title = job.title.trim() || ''
-  const description = job.description.trim() || ''
-  const office = job.office.trim() || ''
-  const type = job.type.trim() || ''
+  const title = job.title.trim()
+  const description = job.description.trim()
+  const office = job.office.trim()
+  const type = job.type.trim()
   const comments = job.comments || ''
   const skills = job.skills || ''
-  const hoursPerWeek = job.hoursPerWeek || ''
+  const hoursPerWeek = job.hoursPerWeek.trim()
   const timeOfHours = job.timeOfHours.toString() || ''
-  const lastModified = job.lastModified.trim() || ''
-  const firstName = job.contactFirstName.trim() || ''
-  const lastName = job.contactLastName.trim() || ''
+  const lastModified = job.lastModified.trim()
+  const firstName = job.contactFirstName.trim()
+  const lastName = job.contactLastName.trim()
   const name = `${firstName} ${lastName}` || ''
-  const contactEmail = job.contactEmail.trim() || ''
+  const contactEmail = job.contactEmail.trim()
 
   // Clean up returns, newlines, tabs, and misc symbols...
   // ...and search for application links in the text
