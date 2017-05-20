@@ -10,5 +10,3 @@ In this version:
 - There's a new FAQs section in Settings! Check it out.
 - The Pause Events calendar is now included!
 - Numerous Bug Fixes
-
-Found an issue? Got a feature idea? Let us know and we'll see what we can do.
