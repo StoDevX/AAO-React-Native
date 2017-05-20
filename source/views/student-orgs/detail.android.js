@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {ScrollView, Text, StyleSheet, Linking} from 'react-native'
+import {ScrollView, Text, StyleSheet} from 'react-native'
 import moment from 'moment'
 import {HtmlView} from '../components/html-view'
 import {Cell} from 'react-native-tableview-simple'
@@ -10,6 +10,7 @@ import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import Communications from 'react-native-communications'
 import openUrl from '../components/open-url'
+import cleanOrg from './clean-org'
 
 const styles = StyleSheet.create({
   name: {
@@ -65,67 +66,56 @@ export class StudentOrgsDetailView extends React.Component {
   }
 
   render() {
-    const data = this.props.org
-    const name = data.name.trim()
-    let {
+    const {
+      name: orgName,
       category,
       meetings,
-      contacts,
-      description,
-      advisors,
-      lastUpdated,
       website,
-    } = data
-
-    advisors = advisors.filter(c => c.name.trim().length)
+      contacts,
+      advisors,
+      description,
+      lastUpdated: orgLastUpdated,
+    } = cleanOrg(this.props.org)
 
     return (
       <ScrollView>
-        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.name}>{orgName}</Text>
 
-        {category.trim()
+        {category
           ? <Card header="Category" style={styles.card}>
               <Text style={styles.cardBody}>{category}</Text>
             </Card>
           : null}
 
-        {meetings.trim()
+        {meetings
           ? <Card header="Meetings" style={styles.card}>
-              <Cell cellStyle="Basic" title={meetings.trim()} />
+              <Cell cellStyle="Basic" title={meetings} />
             </Card>
           : null}
 
-        {website.trim()
+        {website
           ? <Card header="Website" style={styles.card}>
-              <Text
-                onPress={() =>
-                  openUrl(
-                    /^https?:\/\//.test(website.trim())
-                      ? website
-                      : `http://${website.trim()}`,
-                  )}
-                style={styles.cardBody}
-              >
-                {/^https?:\/\//.test(website.trim())
-                  ? website.trim()
-                  : `http://${website.trim()}`}
+              <Text onPress={() => openUrl(website)} style={styles.cardBody}>
+                {website}
               </Text>
             </Card>
           : null}
 
-        <Card header="Contact" style={styles.card}>
-          {contacts.map((c, i) => (
-            <Text
-              key={i}
-              selectable={true}
-              style={styles.cardBody}
-              onPress={() => this.openEmail(c.email.trim(), name)}
-            >
-              {c.title.trim() ? c.title.trim() + ': ' : ''}
-              {c.firstName.trim()} {c.lastName.trim()} ({c.email.trim()})
-            </Text>
-          ))}
-        </Card>
+        {contacts.length
+          ? <Card header="Contact" style={styles.card}>
+              {contacts.map((c, i) => (
+                <Text
+                  key={i}
+                  selectable={true}
+                  style={styles.cardBody}
+                  onPress={() => this.openEmail(c.email, orgName)}
+                >
+                  {c.title ? c.title + ': ' : ''}
+                  {c.firstName} {c.lastName} ({c.email})
+                </Text>
+              ))}
+            </Card>
+          : null}
 
         {advisors.length
           ? <Card
@@ -137,18 +127,17 @@ export class StudentOrgsDetailView extends React.Component {
                   key={i}
                   selectable={true}
                   style={styles.cardBody}
-                  onPress={() => this.openEmail(c.email.trim(), name)}
+                  onPress={() => this.openEmail(c.email, orgName)}
                 >
-                  {c.name.trim()} ({c.email.trim()})
+                  {c.name} ({c.email})
                 </Text>
               ))}
             </Card>
           : null}
 
-        {description.trim()
+        {description
           ? <Card header="Description" style={styles.card}>
               <HtmlView
-                scrollEnabled={true}
                 style={styles.description}
                 html={`
                   <style>
@@ -160,7 +149,7 @@ export class StudentOrgsDetailView extends React.Component {
                       max-width: 100%;
                     }
                   </style>
-                  ${description.trim()}
+                  ${description}
                 `}
               />
             </Card>
@@ -169,7 +158,7 @@ export class StudentOrgsDetailView extends React.Component {
         <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
           Last updated:
           {' '}
-          {moment(lastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
+          {moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
         </Text>
 
         <Text selectable={true} style={[styles.footer, styles.poweredBy]}>

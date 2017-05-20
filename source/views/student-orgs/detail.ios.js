@@ -8,6 +8,7 @@ import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import openUrl from '../components/open-url'
+import cleanOrg from './clean-org'
 
 const styles = StyleSheet.create({
   name: {
@@ -51,32 +52,29 @@ export class StudentOrgsDetailView extends React.Component {
   }
 
   render() {
-    const data = this.props.org
-    const name = data.name.trim()
-    let {
+    const {
+      name: orgName,
       category,
       meetings,
-      contacts,
-      description,
-      advisors,
-      lastUpdated,
       website,
-    } = data
-
-    advisors = advisors.filter(c => c.name.trim().length)
+      contacts,
+      advisors,
+      description,
+      lastUpdated: orgLastUpdated,
+    } = cleanOrg(this.props.org)
 
     return (
       <ScrollView>
         <TableView>
-          <Text selectable={true} style={styles.name}>{name}</Text>
+          <Text selectable={true} style={styles.name}>{orgName}</Text>
 
-          {category.trim()
+          {category
             ? <Section header="CATEGORY">
                 <Cell cellStyle="Basic" title={category} />
               </Section>
             : null}
 
-          {meetings.trim()
+          {meetings
             ? <Section header="MEETINGS">
                 <Cell
                   cellContentView={
@@ -87,34 +85,31 @@ export class StudentOrgsDetailView extends React.Component {
               </Section>
             : null}
 
-          {website.trim()
+          {website
             ? <Section header="WEBSITE">
                 <Cell
                   cellStyle="Basic"
                   accessory="DisclosureIndicator"
                   title={website}
-                  onPress={() =>
-                    openUrl(
-                      /^https?:\/\//.test(website)
-                        ? website
-                        : `http://${website}`,
-                    )}
+                  onPress={() => openUrl(website)}
                 />
               </Section>
             : null}
 
-          <Section header="CONTACT">
-            {contacts.map((c, i) => (
-              <Cell
-                key={i}
-                cellStyle={c.title ? 'Subtitle' : 'Basic'}
-                accessory="DisclosureIndicator"
-                title={`${c.firstName.trim()} ${c.lastName.trim()}`}
-                detail={c.title.trim()}
-                onPress={() => Linking.openURL(`mailto:${c.email}`)}
-              />
-            ))}
-          </Section>
+          {contacts.length
+            ? <Section header="CONTACT">
+                {contacts.map((c, i) => (
+                  <Cell
+                    key={i}
+                    cellStyle={c.title ? 'Subtitle' : 'Basic'}
+                    accessory="DisclosureIndicator"
+                    title={`${c.firstName} ${c.lastName}`}
+                    detail={c.title}
+                    onPress={() => Linking.openURL(`mailto:${c.email}`)}
+                  />
+                ))}
+              </Section>
+            : null}
 
           {advisors.length
             ? <Section header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
@@ -123,14 +118,14 @@ export class StudentOrgsDetailView extends React.Component {
                     key={i}
                     cellStyle="Basic"
                     accessory="DisclosureIndicator"
-                    title={c.name.trim()}
+                    title={c.name}
                     onPress={() => Linking.openURL(`mailto:${c.email}`)}
                   />
                 ))}
               </Section>
             : null}
 
-          {description.trim()
+          {description
             ? <Section header="DESCRIPTION">
                 <HtmlView
                   style={styles.description}
@@ -144,7 +139,7 @@ export class StudentOrgsDetailView extends React.Component {
                         max-width: 100%;
                       }
                     </style>
-                    ${description.trim()}
+                    ${description}
                   `}
                 />
               </Section>
@@ -153,7 +148,7 @@ export class StudentOrgsDetailView extends React.Component {
           <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
             Last updated:
             {' '}
-            {moment(lastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
+            {moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
           </Text>
 
           <Text selectable={true} style={[styles.footer, styles.poweredBy]}>
