@@ -12,7 +12,7 @@ export type JobType = {
   lastModified: string,
   office: string,
   skills: string,
-  timeOfHours: any,
+  timeOfHours: string | number,
   title: string,
   type: string,
 }
