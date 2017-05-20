@@ -95,7 +95,7 @@ android {
     defaultConfig {
         applicationId "com.allaboutolaf"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 23
         versionCode 1
         versionName "2.2.3"
         ndk {
