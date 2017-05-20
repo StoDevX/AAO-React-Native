@@ -136,7 +136,7 @@ function fixupEmailFormat(email: string) {
   if (!/@/.test(email)) {
     return `${email}@stolaf.edu`
   }
-  // @ near end ... e.g. smith@
+  // @ at end ... e.g. smith@
   else if (/@$/.test(email)) {
     return `${email}stolaf.edu`
   }
