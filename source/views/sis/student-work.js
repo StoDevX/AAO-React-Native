@@ -25,6 +25,14 @@ const jobsUrl =
 
 const headerHeight = Platform.OS === 'ios' ? 33 : 41
 
+const jobSort = new Map([
+  ['On-campus Work Study', 1],
+  ['Off-campus Community Service Work Study', 2],
+  ['On-campus Summer Employment', 3],
+  ['Off-campus Summer Employment', 4],
+  ['Unknown', Infinity],
+])
+
 const styles = StyleSheet.create({
   listContainer: {
     backgroundColor: c.white,
@@ -37,11 +45,13 @@ const styles = StyleSheet.create({
 export default class StudentWorkView extends React.Component {
   state: {
     jobs: {[key: string]: JobType[]},
-    loaded: boolean,
+    loading: boolean,
+    refreshing: boolean,
     error: boolean,
   } = {
     jobs: {},
-    loaded: false,
+    loading: false,
+    refreshing: false,
     error: false,
   }
 
@@ -52,14 +62,6 @@ export default class StudentWorkView extends React.Component {
   fetchData = async () => {
     try {
       const data: {[key: string]: JobType[]} = await fetchJson(jobsUrl)
-
-      let jobSort = new Map([
-        ['On-campus Work Study', 1],
-        ['Off-campus Community Service Work Study', 2],
-        ['On-campus Summer Employment', 3],
-        ['Off-campus Summer Employment', 4],
-        ['Unknown', Infinity],
-      ])
 
       const sorted = sortBy(data, [
         j => jobSort.get(j.type) || jobSort.get('Unknown'),
@@ -75,7 +77,7 @@ export default class StudentWorkView extends React.Component {
       console.error(err)
     }
 
-    this.setState({loaded: true})
+    this.setState({loading: true})
   }
 
   refresh = async () => {
@@ -115,7 +117,7 @@ export default class StudentWorkView extends React.Component {
       return <Text selectable={true}>{this.state.error}</Text>
     }
 
-    if (!this.state.loaded) {
+    if (!this.state.loading) {
       return <LoadingView />
     }
 
@@ -130,8 +132,8 @@ export default class StudentWorkView extends React.Component {
         data={this.state.jobs}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
-        refreshing={this.props.loading}
-        onRefresh={this.props.onRefresh}
+        refreshing={this.state.refreshing}
+        onRefresh={this.refresh}
       >
         {(job: JobType) => (
           <JobRow onPress={() => this.onPressJob(job.title, job)} job={job} />
