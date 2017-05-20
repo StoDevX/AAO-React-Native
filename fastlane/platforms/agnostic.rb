@@ -76,3 +76,19 @@ private_lane :remove_match_clone do |options|
   UI.command "removing #{options[:dir]}"
   FileUtils.remove_entry_secure options[:dir]
 end
+
+desc 'Set up the private keys + environment variables for local development'
+lane :keys do
+  match_dir = clone_match
+
+  # copy play-private-key.json
+  play_key = 'play-private-key.json'
+  UI.command "cp #{match_dir}/android/#{play_key} ../fastlane/#{play_key}"
+  FileUtils.cp("#{match_dir}/android/#{play_key}", "../fastlane/#{play_key}")
+
+  # copy .env.js
+  UI.command "cp #{match_dir}/js/env.js ../.env.js"
+  FileUtils.cp("#{match_dir}/js/env.js", "../.env.js")
+
+  remove_match_clone(dir: match_dir)
+end
