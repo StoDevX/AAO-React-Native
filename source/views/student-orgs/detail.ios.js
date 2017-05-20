@@ -6,6 +6,7 @@ import {HtmlView} from '../components/html-view'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
+import type {TopLevelViewPropsType} from '../types'
 import openUrl from '../components/open-url'
 
 const styles = StyleSheet.create({
@@ -44,8 +45,8 @@ const styles = StyleSheet.create({
   },
 })
 
-export class StudentOrgsDetailRenderView extends React.Component {
-  props: {
+export class StudentOrgsDetailView extends React.Component {
+  props: TopLevelViewPropsType & {
     org: StudentOrgType,
   }
 
