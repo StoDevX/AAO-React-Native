@@ -132,12 +132,15 @@ function renderLinks(links: string[]) {
 }
 
 function fixupEmailFormat(email: string) {
+  // No @ in address ... e.g. smith
   if (!/@/.test(email)) {
     return `${email}@stolaf.edu`
   }
+  // @ near end ... e.g. smith@
   else if (/@$/.test(email)) {
     return `${email}stolaf.edu`
   }
+  // Defined address ... e.g. smith@stolaf.edu
   else {
     return email
   }
