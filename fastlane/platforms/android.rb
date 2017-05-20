@@ -21,6 +21,7 @@ platform :android do
   lane :'ci-run' do
     # prepare for the bright future with signed android betas
     authorize_ci_for_keys
+    matchesque
 
     # set the app version
     set_version
@@ -55,5 +56,25 @@ platform :android do
 
   lane :codepush do
     codepush_cli(app: 'AllAboutOlaf-Android')
+  end
+
+  desc 'extract the android keys from the match repo'
+  lane :matchesque do
+    match_dir = clone_match
+
+    # don't forget – lanes run inside of ./fastlane
+    gradle_file = 'signing.properties'
+    keystore_name = 'my-release-key.keystore'
+
+    src_dir = "#{match_dir}/android"
+    dest_dir = '../android/app'
+
+    # FastlaneCore::CommandExecutor.execute(command: "pwd", print_all: true, print_command: true)
+    UI.command "cp #{src_dir}/#{gradle_file} #{dest_dir}/#{gradle_file}"
+    FileUtils.cp("#{src_dir}/#{gradle_file}", "#{dest_dir}/#{gradle_file}")
+    UI.command "cp #{src_dir}/#{keystore_name} #{dest_dir}/#{keystore_name}"
+    FileUtils.cp("#{src_dir}/#{keystore_name}", "#{dest_dir}/#{keystore_name}")
+
+    remove_match_clone(dir: match_dir)
   end
 end
