@@ -69,15 +69,15 @@ export default class StudentWorkView extends React.Component {
       ])
 
       const grouped = groupBy(sorted, j => j.type)
-      this.setState({jobs: grouped})
+      this.setState(() => ({jobs: grouped}))
     } catch (err) {
       tracker.trackException(err.message)
       bugsnag.notify(err)
-      this.setState({error: true})
+      this.setState(() => ({error: true}))
       console.error(err)
     }
 
-    this.setState({loading: true})
+    this.setState(() => ({loading: true}))
   }
 
   refresh = async () => {
