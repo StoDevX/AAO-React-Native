@@ -1,12 +1,14 @@
 // @flow
 import React from 'react'
-import {ScrollView, Text, StyleSheet} from 'react-native'
+import {ScrollView, Text, StyleSheet, Linking} from 'react-native'
 import moment from 'moment'
 import {HtmlView} from '../components/html-view'
 import {Cell} from 'react-native-tableview-simple'
 import {Card} from '../components/card'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
+import Communications from 'react-native-communications'
+import openUrl from '../components/open-url'
 
 const styles = StyleSheet.create({
   name: {
@@ -55,6 +57,12 @@ export class StudentOrgsDetailRenderView extends React.Component {
     org: StudentOrgType,
   }
 
+  // Using Communications because `mailTo` complains about
+  // the lack of an available Activity...
+  openEmail = (email: string, org: string) => {
+    Communications.email([email], null, null, org, '')
+  }
+
   render() {
     const data = this.props.org
     const name = data.name.trim()
@@ -82,22 +90,38 @@ export class StudentOrgsDetailRenderView extends React.Component {
 
         {meetings.trim()
           ? <Card header="Meetings" style={styles.card}>
-              <Cell cellStyle="Basic" title={meetings} />
+              <Cell cellStyle="Basic" title={meetings.trim()} />
             </Card>
           : null}
 
         {website.trim()
           ? <Card header="Website" style={styles.card}>
-              <Text style={styles.cardBody}>
-                {/^https?:\/\//.test(website) ? website : `http://${website}`}
+              <Text
+                onPress={() =>
+                  openUrl(
+                    /^https?:\/\//.test(website.trim())
+                      ? website
+                      : `http://${website.trim()}`,
+                  )}
+                style={styles.cardBody}
+              >
+                {/^https?:\/\//.test(website.trim())
+                  ? website.trim()
+                  : `http://${website.trim()}`}
               </Text>
             </Card>
           : null}
 
         <Card header="Contact" style={styles.card}>
           {contacts.map((c, i) => (
-            <Text key={i} selectable={true} style={styles.cardBody}>
-              {c.title}: {c.firstName} {c.lastName} ({c.email})
+            <Text
+              key={i}
+              selectable={true}
+              style={styles.cardBody}
+              onPress={() => this.openEmail(c.email.trim(), name)}
+            >
+              {c.title.trim() ? c.title.trim() + ': ' : ''}
+              {c.firstName.trim()} {c.lastName.trim()} ({c.email.trim()})
             </Text>
           ))}
         </Card>
@@ -108,8 +132,13 @@ export class StudentOrgsDetailRenderView extends React.Component {
               style={styles.card}
             >
               {advisors.map((c, i) => (
-                <Text key={i} selectable={true} style={styles.cardBody}>
-                  {c.name} ({c.email})
+                <Text
+                  key={i}
+                  selectable={true}
+                  style={styles.cardBody}
+                  onPress={() => this.openEmail(c.email.trim(), name)}
+                >
+                  {c.name.trim()} ({c.email.trim()})
                 </Text>
               ))}
             </Card>
