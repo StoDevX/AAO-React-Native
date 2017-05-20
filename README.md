@@ -23,7 +23,7 @@ The Calendar might nag you for a Google Calendar API key. You can either ask som
 
 ## Todo
 * Bugs! All bugs should have the [`bug`](https://github.com/StoDevX/AAO-React-Native/issues?q=is%3Aopen+is%3Aissue+label%3Abug) label in the issues
-* Enhancements! All ideas for improvement that are not being worked on should be [`closed` and labelled as `discussion`](https://github.com/StoDevX/AAO-React-Native/issues?utf8=%E2%9C%93&q=is%3Aclosed%20is%3Aissue%20label%3Adiscussion)
+* Enhancements! All ideas for improvement that are not being worked on should be [`closed` and labelled as `discussion`](https://github.com/StoDevX/AAO-React-Native/issues?utf8=%E2%9C%93&q=is%3Aclosed%20is%3Aissue%20label%3Astatus%2Fdiscussion)
 * [3D touch actions](https://github.com/jordanbyron/react-native-quick-actions) for icon and within
 * [Touch-ID](https://github.com/naoufal/react-native-touch-id) for SIS
 

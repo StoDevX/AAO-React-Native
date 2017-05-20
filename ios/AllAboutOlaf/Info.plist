@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.2.0-beta.6</string>
+	<string>2.2.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -37,6 +37,8 @@
 	<string>1</string>
 	<key>CodePushDeploymentKey</key>
 	<string>oSozdf5RtDr2j8T7PFz-oWgNmoBIEJN_nzUOz</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>KSTORadio</string>
@@ -82,7 +84,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We only use your location when you would expect us to, and never when you aren't using the app.</string>
+	<string>We only use your location when you would expect us to, and never when you aren&apos;t using the app.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>

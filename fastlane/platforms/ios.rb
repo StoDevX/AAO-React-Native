@@ -7,50 +7,34 @@ platform :ios do
 
   desc 'Take screenshots'
   lane :screenshot do
-    snapshot(devices: ['iPhone 7 Plus', 'iPhone 6', 'iPhone 5s', 'iPhone 4s'],
+    snapshot(devices: ['iPhone 7 Plus', 'iPhone 6', 'iPhone 5s'],
              languages: ['en-US'],
              scheme: ENV['GYM_SCHEME'],
              project: ENV['GYM_PROJECT'])
   end
 
-  desc 'Go rogue'
-  lane :'go-rogue' do
-    activate_rogue_team
-  end
-
   desc 'Provisions the profiles; bumps the build number; builds the app'
   lane :build do
-    # make sure we have a copy of the data files
-    bundle_data
-
-    sh('security find-identity -v -p codesigning')
-
-    # Build the app
-    gym(export_method: 'ad-hoc')
+    gym(include_bitcode: true,
+        include_symbols: true)
   end
 
-  desc 'Build, but for the rogue devs'
-  lane :'rogue-build' do
-    activate_rogue_team
-    match(type: 'adhoc', readonly: true)
-    build
-  end
-
-  desc 'Make a beta, but for the rogue devs'
-  lane :'rogue-beta' do
-    activate_rogue_team
-    match(type: 'adhoc', readonly: true)
-    set_version
-    beta
-  end
-
-  desc 'Submit a new Beta Build to HockeyApp'
+  desc 'Submit a new Beta Build to Testflight'
   lane :beta do
-    badge
+    match(type: 'appstore', readonly: true)
+    increment_build_number(build_number: latest_testflight_build_number + 1,
+                           xcodeproj: ENV['GYM_PROJECT'])
 
     build
 
-    hockey(notes: release_notes)
+    testflight
+  end
+
+  desc 'Upload dYSM symbols to Bugsnag from Apple'
+  lane :refresh_dsyms do
+    download_dsyms
+    upload_symbols_to_bugsnag
+    clean_build_artifacts
   end
 
   desc 'Run iOS builds or tests, as appropriate'
@@ -58,11 +42,6 @@ platform :ios do
     # set up things so they can run
     authorize_ci_for_keys
     ci_keychains
-    activate_rogue_team
-
-    # Set up code signing correctly
-    # (more information: https://codesigning.guide)
-    match(type: 'adhoc', readonly: true)
 
     # set the app version
     set_version
@@ -92,7 +71,7 @@ platform :ios do
   lane :set_version do |options|
     version = options[:version] || current_bundle_version
     build = options[:build_number] || current_build_number
-    increment_version_number(version_number: "#{version}+#{build}",
+    increment_version_number(version_number: version,
                              xcodeproj: ENV['GYM_PROJECT'])
     increment_build_number(build_number: build,
                            xcodeproj: ENV['GYM_PROJECT'])
@@ -107,9 +86,13 @@ platform :ios do
     create_keychain(name: keychain,
                     password: password,
                     timeout: 3600)
-
-    match(readonly: true)
+    
+    # Set up code signing correctly
+    # (more information: https://codesigning.guide)
+    match(type: 'appstore', readonly: true)
 
     sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain}")
+
+    sh('security find-identity -v -p codesigning')
   end
 end

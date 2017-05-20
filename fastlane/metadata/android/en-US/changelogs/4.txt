@@ -1,0 +1,14 @@
+NEW
+• Allow switching between today's menus!
+• Enable links in News articles!
+• Add thumbnails to the News article lists!
+• Enabled the Maps screen!
+• Add a "Share" button to News articles!
+• Solved the login issues for Balances!
+
+FIXES
+• Add an analytics opt-out switch
+• Update the Northfield Lines store link
+• Let the screen title expand
+• Improve the anti-code filters for the menus
+• Many more bug fixes and improvements
