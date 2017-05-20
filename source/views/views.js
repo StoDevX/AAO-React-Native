@@ -120,14 +120,6 @@ export const allViews: ViewType[] = [
     tint: c.periwinkle,
     gradient: c.lightBlueToBlueDark,
   },
-  {
-    type: 'view',
-    view: 'AthleticsView',
-    title: 'Athletics',
-    icon: 'trophy',
-    tint: c.red,
-    gradient: c.purpleToIndigo,
-  },
   // {
   //   type: 'view',
   //   view: 'HelpView',
@@ -136,6 +128,14 @@ export const allViews: ViewType[] = [
   //   tint: c.lavender,
   //   gradient: c.purpleToIndigo,
   // },
+  {
+    type: 'view',
+    view: 'AthleticsView',
+    title: 'Athletics',
+    icon: 'trophy',
+    tint: c.red,
+    gradient: c.purpleToIndigo,
+  },
 ]
 
 export const allViewNames = allViews.map(v => v.view)
