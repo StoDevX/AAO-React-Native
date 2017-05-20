@@ -37,7 +37,12 @@ function renderTitle(title: string, category: string) {
     : null
 }
 
-function renderContact(title: string, office: string, contact: string, email: string) {
+function renderContact(
+  title: string,
+  office: string,
+  contact: string,
+  email: string,
+) {
   const trimmedOffice = fastGetTrimmedText(office)
   const trimmedContact =
     fastGetTrimmedText(contact) || fastGetTrimmedText(email)
@@ -135,26 +140,18 @@ function fixupEmailFormat(email: string) {
   // No @ in address ... e.g. smith
   if (!/@/.test(email)) {
     return `${email}@stolaf.edu`
-  }
-  // @ at end ... e.g. smith@
-  else if (/@$/.test(email)) {
+  } else if (/@$/.test(email)) {
+    // @ at end ... e.g. smith@
     return `${email}stolaf.edu`
-  }
-  // Defined address ... e.g. smith@stolaf.edu
-  else {
+  } else {
+    // Defined address ... e.g. smith@stolaf.edu
     return email
   }
 }
 
 function openEmail(email: string, subject: string) {
   let address = fixupEmailFormat(email)
-  Communications.email(
-    [address],
-    null,
-    null,
-    subject,
-    '',
-  )
+  Communications.email([address], null, null, subject, '')
 }
 
 function parseLinks(data: string) {
