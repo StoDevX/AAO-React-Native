@@ -88,12 +88,11 @@ export class StudentOrgsView extends React.Component {
 
   fetchData = async () => {
     try {
-      let responseData: StudentOrgType[] = await fetchJson(orgsUrl)
-      let withSortableNames = responseData.map(item => {
-        let sortableName = item.name.replace(
-          /^(St\.? Olaf(?: College)?|The) +/i,
-          '',
-        )
+      const responseData: StudentOrgType[] = await fetchJson(orgsUrl)
+      const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/i
+      const withSortableNames = responseData.map(item => {
+        const sortableName = item.name.replace(sortableRegex, '')
+
         return {
           ...item,
           $sortableName: sortableName,
@@ -101,8 +100,8 @@ export class StudentOrgsView extends React.Component {
         }
       })
 
-      let sorted = sortBy(withSortableNames, '$sortableName')
-      let grouped = groupBy(sorted, '$groupableName')
+      const sorted = sortBy(withSortableNames, '$sortableName')
+      const grouped = groupBy(sorted, '$groupableName')
       this.setState({orgs: sorted, results: grouped})
     } catch (err) {
       tracker.trackException(err.message)
@@ -115,13 +114,13 @@ export class StudentOrgsView extends React.Component {
   }
 
   refresh = async () => {
-    let start = Date.now()
+    const start = Date.now()
     this.setState(() => ({refreshing: true}))
 
     await this.fetchData()
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    let elapsed = start - Date.now()
+    const elapsed = start - Date.now()
     if (elapsed < 500) {
       await delay(500 - elapsed)
     }
@@ -203,7 +202,7 @@ export class StudentOrgsView extends React.Component {
     }
 
     const query = text.toLowerCase()
-    let filteredResults = filter(this.state.orgs, org =>
+    const filteredResults = filter(this.state.orgs, org =>
       this.orgToArray(org).some(word => word.startsWith(query)),
     )
 
