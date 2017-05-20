@@ -4,8 +4,8 @@ import {Text, ScrollView, StyleSheet} from 'react-native'
 import {fastGetTrimmedText} from '../../../lib/html'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import moment from 'moment'
-import size from 'lodash/size'
 import openUrl from '../../components/open-url'
+import Communications from 'react-native-communications'
 import * as c from '../../components/colors'
 import type {JobType} from './types'
 
@@ -37,7 +37,7 @@ function renderTitle(title: string, category: string) {
     : null
 }
 
-function renderContact(office: string, contact: string, email: string) {
+function renderContact(title: string, office: string, contact: string, email: string) {
   const trimmedOffice = fastGetTrimmedText(office)
   const trimmedContact =
     fastGetTrimmedText(contact) || fastGetTrimmedText(email)
@@ -47,6 +47,8 @@ function renderContact(office: string, contact: string, email: string) {
           cellStyle="Subtitle"
           title={trimmedContact}
           detail={trimmedOffice}
+          accessory="DisclosureIndicator"
+          onPress={() => openEmail(email, title)}
         />
       </Section>
     : null
@@ -129,6 +131,29 @@ function renderLinks(links: string[]) {
     : null
 }
 
+function fixupEmailFormat(email: string) {
+  if (!/@/.test(email)) {
+    return `${email}@stolaf.edu`
+  }
+  else if (/@$/.test(email)) {
+    return `${email}stolaf.edu`
+  }
+  else {
+    return email
+  }
+}
+
+function openEmail(email: string, subject: string) {
+  let address = fixupEmailFormat(email)
+  Communications.email(
+    [address],
+    null,
+    null,
+    subject,
+    '',
+  )
+}
+
 function parseLinks(data: string) {
   const allLinks = data.split(' ')
   if (!allLinks.length) {
@@ -164,7 +189,7 @@ export default function JobDetailView({job}: {job: JobType}) {
     <ScrollView>
       <TableView>
         {renderTitle(title, type)}
-        {renderContact(office, name, contactEmail)}
+        {renderContact(title, office, name, contactEmail)}
         {renderHours(timeOfHours, hoursPerWeek)}
         {renderDescription(description)}
         {renderSkills(skills)}
