@@ -108,7 +108,7 @@ function renderScene(route, navigator) {
       return <SnapshotsView {...props} />
     case 'HelpView':
       return <HelpView {...props} />
-    case 'AthleticsView': return <AthleticsView {...props} />
+    case 'AthleticsView':
       return <AthleticsView {...props} />
     default:
       return <NoRoute {...props} />
