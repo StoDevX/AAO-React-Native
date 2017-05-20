@@ -3,7 +3,6 @@ import React from 'react'
 import {ScrollView, Text, StyleSheet} from 'react-native'
 import moment from 'moment'
 import {HtmlView} from '../components/html-view'
-import {Cell} from 'react-native-tableview-simple'
 import {Card} from '../components/card'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
@@ -89,7 +88,7 @@ export class StudentOrgsDetailView extends React.Component {
 
         {meetings
           ? <Card header="Meetings" style={styles.card}>
-              <Cell cellStyle="Basic" title={meetings} />
+              <Text style={styles.cardBody}>{meetings}</Text>
             </Card>
           : null}
 
