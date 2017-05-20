@@ -22,7 +22,9 @@ export default function cleanOrg(org: StudentOrgType): StudentOrgType {
   const meetings = org.meetings.trim()
   const description = org.description.trim()
   let website = org.website.trim()
-  website = /^https?:\/\//.test(website) ? website : `http://${website}`
+  if (website && /^https?:\/\//.test(website)) {
+    website = `http://${website}`
+  }
 
   return {
     ...org,
