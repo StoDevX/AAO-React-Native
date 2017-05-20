@@ -192,14 +192,14 @@ export default function JobDetailView({job}: {job: JobType}) {
   const description = job.description.trim()
   const office = job.office.trim()
   const type = job.type.trim()
-  const comments = job.comments || ''
-  const skills = job.skills || ''
+  const comments = job.comments
+  const skills = job.skills
   const hoursPerWeek = job.hoursPerWeek.trim()
   const timeOfHours = job.timeOfHours.toString() || ''
   const lastModified = job.lastModified.trim()
   const firstName = job.contactFirstName.trim()
   const lastName = job.contactLastName.trim()
-  const name = `${firstName} ${lastName}` || ''
+  const name = `${firstName} ${lastName}`
   const contactEmail = job.contactEmail.trim()
 
   // Clean up returns, newlines, tabs, and misc symbols...
