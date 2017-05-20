@@ -9,11 +9,6 @@ def authorize_ci_for_keys
   end
 end
 
-# Get the commit of the latest build on HockeyApp
-def hockeyapp_version_commit
-  latest_hockeyapp_notes[:commit_hash]
-end
-
 # Gets the version, either from Travis or from Hockey
 def current_build_number
   if ENV.key?('TRAVIS_BUILD_NUMBER')
