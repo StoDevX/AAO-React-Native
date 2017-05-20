@@ -162,7 +162,7 @@ export default function JobDetailView({job}: {job: JobType}) {
     <ScrollView>
       <TableView>
         {renderTitle(title, type)}
-        {renderContact(office, name, contactEmail, false)}
+        {renderContact(office, name, contactEmail)}
         {renderHours(timeOfHours, hoursPerWeek)}
         {renderDescription(description)}
         {renderSkills(skills)}
