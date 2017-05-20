@@ -159,7 +159,7 @@ if (propFile.canRead()) {
             && props.containsKey('KEY_ALIAS')
             && props.containsKey('KEY_PASSWORD')
     ) {
-        println 'android/app/signing.properties is fully functional.'
+        logger.info 'android/app/signing.properties is fully functional.'
         android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
         android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
         android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
@@ -167,18 +167,18 @@ if (propFile.canRead()) {
     } else {
         println 'android/app/signing.properties found, but some entries are missing.'
         if (props == null) {
-            println '`props` was null'
+            logger.warn '`props` was null'
         } else {
-            println "has STORE_FILE: ${props.containsKey('STORE_FILE')}"
-            println "has STORE_PASSWORD: ${props.containsKey('STORE_PASSWORD')}"
-            println "has KEY_ALIAS: ${props.containsKey('KEY_ALIAS')}"
-            println "has KEY_PASSWORD: ${props.containsKey('KEY_PASSWORD')}"
+            logger.warn "has STORE_FILE: ${props.containsKey('STORE_FILE')}"
+            logger.warn "has STORE_PASSWORD: ${props.containsKey('STORE_PASSWORD')}"
+            logger.warn "has KEY_ALIAS: ${props.containsKey('KEY_ALIAS')}"
+            logger.warn "has KEY_PASSWORD: ${props.containsKey('KEY_PASSWORD')}"
         }
         android.buildTypes.release.signingConfig = null
     }
 } else {
-    println 'android/app/signing.properties not found.'
-    println 'cwd: ', new File(".").absolutePath
+    logger.warn 'android/app/signing.properties not found.'
+    logger.warn "cwd: ${new File(".").absolutePath}"
     android.buildTypes.release.signingConfig = null
 }
 
