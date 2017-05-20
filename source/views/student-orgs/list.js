@@ -138,10 +138,6 @@ export class StudentOrgsView extends React.Component {
     )
   }
 
-  getSectionListTitle = (name: string) => {
-    return name === 'New' ? '•' : name
-  }
-
   renderRow = ({item}: {item: StudentOrgType}) => {
     return (
       <ListRow
@@ -241,7 +237,6 @@ export class StudentOrgsView extends React.Component {
         <StyledAlphabetListView
           data={this.state.results}
           cell={this.renderRow}
-          getSectionListTitle={this.getSectionListTitle}
           // just setting cellHeight sends the wrong values on iOS.
           cellHeight={
             rowHeight +
