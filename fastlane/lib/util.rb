@@ -21,7 +21,14 @@ def current_build_number
   end
 
   begin
-    (latest_testflight_build_number + 1).to_s
+    case lane_context[:PLATFORM_NAME]
+    when :android
+      UI.input "Please enter a build number: "
+    when :ios
+      (latest_testflight_build_number + 1).to_s
+    else
+      UI.input "Please enter a build number: "
+    end
   rescue
     '1'
   end
