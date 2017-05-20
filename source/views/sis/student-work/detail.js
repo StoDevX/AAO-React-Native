@@ -113,7 +113,7 @@ function renderComments(comments: string) {
 }
 
 function renderLinks(links: string[]) {
-  return size(links)
+  return links.length
     ? <Section header="LINKS">
         {links.map((url, i) => (
           <Cell
@@ -131,7 +131,9 @@ function renderLinks(links: string[]) {
 
 function parseLinks(data: string) {
   const allLinks = data.split(' ')
-  if (!allLinks.length) return []
+  if (!allLinks.length) {
+    return []
+  }
   return allLinks.filter(w => /^https?:\/\//.test(w))
 }
 
@@ -147,7 +149,7 @@ export default function JobDetailView({job}: {job: JobType}) {
   const lastModified = job.lastModified.trim() || ''
   const firstName = job.contactFirstName.trim() || ''
   const lastName = job.contactLastName.trim() || ''
-  const name = firstName.trim() + ' ' + lastName.trim() || ''
+  const name = `${firstName} ${lastName}` || ''
   const contactEmail = job.contactEmail.trim() || ''
 
   // Clean up returns, newlines, tabs, and misc symbols...
