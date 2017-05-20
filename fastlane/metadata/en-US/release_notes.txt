@@ -7,7 +7,7 @@ NEW FEATURES
 • Solved the login issues for Balances!
   - You'll now stay logged in until your password changes.
   - We had to disable the Courses view, though.
-• Add a search bar to the Dictionary! (iOS only, sorry.)
+• Add a search bar to the Dictionary!
 
 BUG FIXES
 • Add an analytics opt-out switch
