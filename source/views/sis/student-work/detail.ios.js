@@ -45,7 +45,7 @@ function renderContact(
 ) {
   const trimmedOffice = fastGetTrimmedText(office)
   const trimmedContact =
-    fastGetTrimmedText(contact) || fastGetTrimmedText(email)
+    fastGetTrimmedText(contact) || email
   return trimmedOffice || trimmedContact
     ? <Section header="CONTACT">
         <Cell
