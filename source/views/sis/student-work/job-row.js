@@ -12,9 +12,9 @@ type JobRowPropsType = {
 }
 
 export function JobRow({onPress, job}: JobRowPropsType) {
-  const title = fastGetTrimmedText(job.title || '')
-  const office = fastGetTrimmedText(job.office || '')
-  const hours = fastGetTrimmedText(job.hoursPerWeek || '')
+  const title = fastGetTrimmedText(job.title)
+  const office = fastGetTrimmedText(job.office)
+  const hours = fastGetTrimmedText(job.hoursPerWeek)
   const ending = hours == 'Full-time' ? '' : 'hrs/week'
   return (
     <ListRow onPress={onPress} arrowPosition="top">
