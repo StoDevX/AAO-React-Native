@@ -33,6 +33,7 @@ import {FilterView} from './views/components/filter'
 import NewsView from './views/news'
 import NewsItemView from './views/news/news-item'
 import SISView from './views/sis'
+import JobDetailView from './views/sis/student-work/detail'
 import {
   BuildingHoursView,
   BuildingHoursDetailView,
@@ -84,6 +85,8 @@ function renderScene(route, navigator) {
       return <BuildingHoursDetailView {...props} />
     case 'SISView':
       return <SISView {...props} />
+    case 'JobDetailView':
+      return <JobDetailView {...props} />
     case 'TransportationView':
       return <TransportationView {...props} />
     case 'SettingsView':
