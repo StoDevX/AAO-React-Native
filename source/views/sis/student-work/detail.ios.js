@@ -8,11 +8,9 @@ import openUrl from '../../components/open-url'
 import * as c from '../../components/colors'
 import type {JobType} from './types'
 import {cleanJob, getContactName, getLinksFromJob} from './clean-job'
+import {SelectableCell} from './selectable'
 
 const styles = StyleSheet.create({
-  selectable: {
-    paddingVertical: 10,
-  },
   lastUpdated: {
     paddingBottom: 20,
   },
@@ -22,16 +20,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 })
-
-const SelectableCell = ({text}: {text: string}) => (
-  <Cell
-    cellContentView={
-      <Text selectable={true} style={styles.selectable}>
-        {text}
-      </Text>
-    }
-  />
-)
 
 function Title({job}: {job: JobType}) {
   return job.title || job.type
