@@ -5,9 +5,10 @@ import {fastGetTrimmedText} from '../../../lib/html'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import moment from 'moment'
 import openUrl from '../../components/open-url'
-import Communications from 'react-native-communications'
 import * as c from '../../components/colors'
 import type {JobType} from './types'
+import {openEmail} from './email'
+import {parseLinks} from './links'
 
 const styles = StyleSheet.create({
   selectable: {
@@ -146,31 +147,6 @@ function renderLastUpdated(lastModified: string) {
     : null
 }
 
-function fixupEmailFormat(email: string) {
-  if (!/@/.test(email)) {
-    // No @ in address ... e.g. smith
-    return `${email}@stolaf.edu`
-  } else if (/@$/.test(email)) {
-    // @ at end ... e.g. smith@
-    return `${email}stolaf.edu`
-  } else {
-    // Defined address ... e.g. smith@stolaf.edu
-    return email
-  }
-}
-
-function openEmail(email: string, subject: string) {
-  let address = fixupEmailFormat(email)
-  Communications.email([address], null, null, subject, '')
-}
-
-function parseLinks(data: string) {
-  const allLinks = data.split(' ')
-  if (!allLinks.length) {
-    return []
-  }
-  return allLinks.filter(w => /^https?:\/\//.test(w))
-}
 
 export default function JobDetailView({job}: {job: JobType}) {
   const title = job.title.trim()
