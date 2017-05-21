@@ -21,8 +21,8 @@ export function getText(elem: Object | Object[]): string {
 }
 
 function getTextWithSpaces(elem: Object | Object[]): string {
-  if (Array.isArray(elem)) return elem.map(getText).join(' ')
-  if (elem.type === 'tag') return getText(elem.children)
+  if (Array.isArray(elem)) return elem.map(getTextWithSpaces).join(' ')
+  if (elem.type === 'tag') return getTextWithSpaces(elem.children)
   if (elem.type === 'text') return elem.data
   return ''
 }

@@ -1,14 +1,13 @@
 // @flow
 import React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
-import {fastGetTrimmedText} from '../../../lib/html'
+import {email} from 'react-native-communications'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import moment from 'moment'
 import openUrl from '../../components/open-url'
 import * as c from '../../components/colors'
 import type {JobType} from './types'
-import {openEmail} from './email'
-import {parseLinks} from './links'
+import {cleanJob, getContactName, getLinksFromJob} from './clean-job'
 
 const styles = StyleSheet.create({
   selectable: {
@@ -25,50 +24,40 @@ const styles = StyleSheet.create({
 })
 
 function renderTitle(title: string, category: string) {
-  const trimmedTitle = fastGetTrimmedText(title)
-  const trimmedDetail = fastGetTrimmedText(category)
-  return trimmedTitle || trimmedDetail
+  return title || category
     ? <Section header="JOB">
-        <Cell
-          cellStyle="Subtitle"
-          title={trimmedTitle}
-          detail={trimmedDetail}
-        />
+        <Cell cellStyle="Subtitle" title={title} detail={category} />
       </Section>
     : null
 }
 
 function renderContact(
-  title: string,
+  jobTitle: string,
   office: string,
-  contact: string,
-  email: string,
+  contactName: string,
+  emailAddress: string,
 ) {
-  const trimmedOffice = fastGetTrimmedText(office)
-  const trimmedContact =
-    fastGetTrimmedText(contact) || email
-  return trimmedOffice || trimmedContact
+  contactName = contactName || email
+  return office || contactName
     ? <Section header="CONTACT">
         <Cell
           cellStyle="Subtitle"
-          title={trimmedContact}
-          detail={trimmedOffice}
+          title={contactName}
+          detail={office}
           accessory="DisclosureIndicator"
-          onPress={() => openEmail(email, title)}
+          onPress={() => email([emailAddress], null, null, jobTitle, '')}
         />
       </Section>
     : null
 }
 
 function renderHours(timeOfHours: string, hoursPerWeek: string) {
-  const time = fastGetTrimmedText(timeOfHours)
-  const hours = fastGetTrimmedText(hoursPerWeek)
-  const ending = hours == 'Full-time' ? '' : ' hrs/week'
-  return time && hours
+  const ending = hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
+  return timeOfHours && hoursPerWeek
     ? <Section header="HOURS">
         <Cell
           cellStyle="Subtitle"
-          title={time}
+          title={timeOfHours}
           detail={hoursPerWeek + ending}
         />
       </Section>
@@ -76,13 +65,12 @@ function renderHours(timeOfHours: string, hoursPerWeek: string) {
 }
 
 function renderDescription(description: string) {
-  const trimmedDescription = description.replace(/\t/g, ' ')
-  return trimmedDescription
+  return description
     ? <Section header="DESCRIPTION">
         <Cell
           cellContentView={
             <Text selectable={true} style={styles.selectable}>
-              {trimmedDescription}
+              {description}
             </Text>
           }
         />
@@ -91,13 +79,12 @@ function renderDescription(description: string) {
 }
 
 function renderSkills(skills: string) {
-  const trimmedSkills = skills.replace(/\t/g, ' ')
-  return trimmedSkills
+  return skills
     ? <Section header="SKILLS">
         <Cell
           cellContentView={
             <Text selectable={true} style={styles.selectable}>
-              {trimmedSkills}
+              {skills}
             </Text>
           }
         />
@@ -106,13 +93,12 @@ function renderSkills(skills: string) {
 }
 
 function renderComments(comments: string) {
-  const trimmedComments = comments.replace(/\t/g, ' ')
-  return trimmedComments
+  return comments
     ? <Section header="COMMENTS">
         <Cell
           cellContentView={
             <Text selectable={true} style={styles.selectable}>
-              {trimmedComments}
+              {comments}
             </Text>
           }
         />
@@ -129,8 +115,7 @@ function renderLinks(links: string[]) {
             cellStyle="Title"
             title={url}
             accessory="DisclosureIndicator"
-            onPress={() =>
-              openUrl(/^https?:\/\//.test(url) ? url : `http://${url}`)}
+            onPress={() => openUrl(url)}
           />
         ))}
       </Section>
@@ -147,35 +132,28 @@ function renderLastUpdated(lastModified: string) {
     : null
 }
 
-
 export default function JobDetailView({job}: {job: JobType}) {
-  const title = job.title.trim()
-  const description = job.description.trim()
-  const office = job.office.trim()
-  const type = job.type.trim()
-  const comments = job.comments
-  const skills = job.skills
-  const hoursPerWeek = job.hoursPerWeek.trim()
-  const timeOfHours = job.timeOfHours.toString() || ''
-  const lastModified = job.lastModified.trim()
-  const firstName = job.contactFirstName.trim()
-  const lastName = job.contactLastName.trim()
-  const name = `${firstName} ${lastName}`
-  const contactEmail = job.contactEmail.trim()
-
-  // Clean up returns, newlines, tabs, and misc symbols...
-  // ...and search for application links in the text
-  const links = [
-    ...parseLinks(fastGetTrimmedText(description)),
-    ...parseLinks(fastGetTrimmedText(comments)),
-    ...parseLinks(fastGetTrimmedText(skills)),
-  ]
+  const cleaned = cleanJob(job)
+  const contactName = getContactName(cleaned)
+  const links = getLinksFromJob(cleaned)
+  const {
+    title,
+    type,
+    office,
+    contactEmail,
+    timeOfHours,
+    hoursPerWeek,
+    description,
+    skills,
+    comments,
+    lastModified,
+  } = cleaned
 
   return (
     <ScrollView>
       <TableView>
         {renderTitle(title, type)}
-        {renderContact(title, office, name, contactEmail)}
+        {renderContact(title, office, contactName, contactEmail)}
         {renderHours(timeOfHours, hoursPerWeek)}
         {renderDescription(description)}
         {renderSkills(skills)}

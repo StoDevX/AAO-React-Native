@@ -1,14 +1,13 @@
 // @flow
 import React from 'react'
 import {Text, View, ScrollView, StyleSheet} from 'react-native'
-import {fastGetTrimmedText} from '../../../lib/html'
+import {email} from 'react-native-communications'
 import {Card} from '../../components/card'
 import moment from 'moment'
 import openUrl from '../../components/open-url'
 import * as c from '../../components/colors'
 import type {JobType} from './types'
-import {openEmail, fixupEmailFormat} from './email'
-import {parseLinks} from './links'
+import {cleanJob, getContactName, getLinksFromJob} from './clean-job'
 
 const styles = StyleSheet.create({
   name: {
@@ -50,33 +49,28 @@ const styles = StyleSheet.create({
 })
 
 function renderTitle(title: string, category: string) {
-  const trimmedTitle = fastGetTrimmedText(title)
-  const trimmedDetail = fastGetTrimmedText(category)
-  return trimmedTitle || trimmedDetail
+  return title || category
     ? <View>
-        <Text style={styles.name}>{trimmedTitle}</Text>
-        <Text style={styles.subtitle}>{trimmedDetail}</Text>
+        <Text style={styles.name}>{title}</Text>
+        <Text style={styles.subtitle}>{category}</Text>
       </View>
     : null
 }
 
 function renderContact(
-  title: string,
+  jobTitle: string,
   office: string,
   contactName: string,
-  email: string,
+  emailAddress: string,
 ) {
-  office = fastGetTrimmedText(office)
-  email = fixupEmailFormat(email)
-  contactName =
-    fastGetTrimmedText(contactName) || email
-  return (office || contactName)
+  contactName = contactName || email
+  return office || contactName
     ? <Card header="Contact" style={styles.card}>
         <Text
           style={styles.cardBody}
-          onPress={() => openEmail(email, title)}
+          onPress={() => email([emailAddress], null, null, jobTitle, '')}
         >
-          {contactName} {email ? `(${email})` : ''}
+          {contactName} {emailAddress ? `(${emailAddress})` : ''}
           {'\n'}
           {office}
         </Text>
@@ -85,13 +79,11 @@ function renderContact(
 }
 
 function renderHours(timeOfHours: string, hoursPerWeek: string) {
-  const time = fastGetTrimmedText(timeOfHours)
-  const hours = fastGetTrimmedText(hoursPerWeek)
-  const ending = hours == 'Full-time' ? '' : ' hrs/week'
-  return time && hours
+  const ending = hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
+  return timeOfHours && hoursPerWeek
     ? <Card header="Hours" style={styles.card}>
         <Text style={styles.cardBody}>
-          {time}
+          {timeOfHours}
           {'\n'}
           {hoursPerWeek + ending}
         </Text>
@@ -100,33 +92,30 @@ function renderHours(timeOfHours: string, hoursPerWeek: string) {
 }
 
 function renderDescription(description: string) {
-  const trimmedDescription = description.replace(/\t/g, ' ')
-  return trimmedDescription
+  return description
     ? <Card header="Description" style={styles.card}>
         <Text style={styles.cardBody}>
-          {trimmedDescription}
+          {description}
         </Text>
       </Card>
     : null
 }
 
 function renderSkills(skills: string) {
-  const trimmedSkills = skills.replace(/\t/g, ' ')
-  return trimmedSkills
+  return skills
     ? <Card header="Skills" style={styles.card}>
         <Text style={styles.cardBody}>
-          {trimmedSkills}
+          {skills}
         </Text>
       </Card>
     : null
 }
 
 function renderComments(comments: string) {
-  const trimmedComments = comments.replace(/\t/g, ' ')
-  return trimmedComments
+  return comments
     ? <Card header="Comments" style={styles.card}>
         <Text style={styles.cardBody}>
-          {trimmedComments}
+          {comments}
         </Text>
       </Card>
     : null
@@ -136,12 +125,7 @@ function renderLinks(links: string[]) {
   return links.length
     ? <Card header="LINKS" style={styles.card}>
         {links.map((url, i) => (
-          <Text
-            key={i}
-            style={styles.cardBody}
-            onPress={() =>
-              openUrl(/^https?:\/\//.test(url) ? url : `http://${url}`)}
-          >
+          <Text key={i} style={styles.cardBody} onPress={() => openUrl(url)}>
             {url}
           </Text>
         ))}
@@ -160,32 +144,26 @@ function renderLastUpdated(lastModified: string) {
 }
 
 export default function JobDetailView({job}: {job: JobType}) {
-  const title = job.title.trim()
-  const description = job.description.trim()
-  const office = job.office.trim()
-  const type = job.type.trim()
-  const comments = job.comments
-  const skills = job.skills
-  const hoursPerWeek = job.hoursPerWeek.trim()
-  const timeOfHours = job.timeOfHours.toString() || ''
-  const lastModified = job.lastModified.trim()
-  const firstName = job.contactFirstName.trim()
-  const lastName = job.contactLastName.trim()
-  const name = `${firstName} ${lastName}`
-  const contactEmail = job.contactEmail.trim()
-
-  // Clean up returns, newlines, tabs, and misc symbols...
-  // ...and search for application links in the text
-  const links = [
-    ...parseLinks(fastGetTrimmedText(description)),
-    ...parseLinks(fastGetTrimmedText(comments)),
-    ...parseLinks(fastGetTrimmedText(skills)),
-  ]
+  const cleaned = cleanJob(job)
+  const contactName = getContactName(cleaned)
+  const links = getLinksFromJob(cleaned)
+  const {
+    title,
+    type,
+    office,
+    contactEmail,
+    timeOfHours,
+    hoursPerWeek,
+    description,
+    skills,
+    comments,
+    lastModified,
+  } = cleaned
 
   return (
     <ScrollView>
       {renderTitle(title, type)}
-      {renderContact(title, office, name, contactEmail)}
+      {renderContact(title, office, contactName, contactEmail)}
       {renderHours(timeOfHours, hoursPerWeek)}
       {renderDescription(description)}
       {renderSkills(skills)}
