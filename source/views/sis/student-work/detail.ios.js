@@ -23,6 +23,16 @@ const styles = StyleSheet.create({
   },
 })
 
+const SelectableCell = ({text}: {text: string}) => (
+  <Cell
+    cellContentView={
+      <Text selectable={true} style={styles.selectable}>
+        {text}
+      </Text>
+    }
+  />
+)
+
 function Title({job}: {job: JobType}) {
   return job.title || job.type
     ? <Section header="JOB">
@@ -62,13 +72,7 @@ function Hours({job}: {job: JobType}) {
 function Description({job}: {job: JobType}) {
   return job.description
     ? <Section header="DESCRIPTION">
-        <Cell
-          cellContentView={
-            <Text selectable={true} style={styles.selectable}>
-              {job.description}
-            </Text>
-          }
-        />
+        <SelectableCell text={job.description} />
       </Section>
     : null
 }
@@ -76,13 +80,7 @@ function Description({job}: {job: JobType}) {
 function Skills({job}: {job: JobType}) {
   return job.skills
     ? <Section header="SKILLS">
-        <Cell
-          cellContentView={
-            <Text selectable={true} style={styles.selectable}>
-              {job.skills}
-            </Text>
-          }
-        />
+        <SelectableCell text={job.skills} />
       </Section>
     : null
 }
@@ -90,13 +88,7 @@ function Skills({job}: {job: JobType}) {
 function Comments({job}: {job: JobType}) {
   return job.comments
     ? <Section header="COMMENTS">
-        <Cell
-          cellContentView={
-            <Text selectable={true} style={styles.selectable}>
-              {job.comments}
-            </Text>
-          }
-        />
+        <SelectableCell text={job.comments} />
       </Section>
     : null
 }
