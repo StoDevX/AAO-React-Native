@@ -1,5 +1,6 @@
-// @flow
 /**
+ * @flow
+ * 
  * All About Olaf
  * Student Work page
  */
