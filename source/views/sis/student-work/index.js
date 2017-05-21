@@ -62,13 +62,16 @@ export default class StudentWorkView extends React.Component {
     try {
       const data: {[key: string]: JobType[]} = await fetchJson(jobsUrl)
 
+      // We have predefined orders for some job types, but we want all
+      // unknown types to show up at the end of the view, so we make
+      // them sort as Infinity
       const sorted = sortBy(data, [
-        j => jobSort.get(j.type) || Infinity,
-        j => j.lastModified,
+        j => jobSort.get(j.type) || Infinity, // apply predefined group orderings
+        j => j.type, // sort any groups with the same sort index alphabetically
+        j => j.lastModified, // sort all jobs by date-last-modified
       ])
 
-      const grouped = groupBy(sorted, j => j.type)
-      this.setState(() => ({jobs: grouped}))
+      this.setState(() => ({jobs: groupBy(sorted, j => j.type)}))
     } catch (err) {
       tracker.trackException(err.message)
       bugsnag.notify(err)
