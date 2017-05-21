@@ -1,15 +1,20 @@
 // @flow
 import type {JobType} from './types'
 
-import {fastGetTrimmedText} from '../../../lib/html'
+import {
+  fastGetTrimmedText,
+  removeHtmlWithRegex,
+} from '../../../lib/html'
 
 export function cleanJob(job: JobType): JobType {
   const title = fastGetTrimmedText(job.title)
-  const description = fastGetTrimmedText(job.description)
   const office = fastGetTrimmedText(job.office)
   const type = fastGetTrimmedText(job.type)
-  const comments = fastGetTrimmedText(job.comments)
-  const skills = fastGetTrimmedText(job.skills)
+
+  // these all need to retain their newlines
+  const description = removeHtmlWithRegex(job.description).replace('\t', ' ')
+  const comments = removeHtmlWithRegex(job.comments).replace('\t', ' ')
+  const skills = removeHtmlWithRegex(job.skills).replace('\t', ' ')
 
   const hoursPerWeek = job.hoursPerWeek.trim()
   const lastModified = job.lastModified.trim()
