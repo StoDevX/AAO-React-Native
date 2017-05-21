@@ -2,7 +2,6 @@
 import React from 'react'
 import {Text, View, ScrollView, StyleSheet} from 'react-native'
 import {fastGetTrimmedText} from '../../../lib/html'
-import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import {Card} from '../../components/card'
 import moment from 'moment'
 import openUrl from '../../components/open-url'
@@ -11,9 +10,6 @@ import * as c from '../../components/colors'
 import type {JobType} from './types'
 
 const styles = StyleSheet.create({
-  selectable: {
-    paddingVertical: 10,
-  },
   name: {
     textAlign: 'center',
     marginTop: 20,
