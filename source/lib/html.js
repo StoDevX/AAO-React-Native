@@ -31,6 +31,10 @@ export function getTrimmedTextWithSpaces(elem: Object | Object[]): string {
   return getTextWithSpaces(elem).split(/\s+/).join(' ').trim()
 }
 
+export function removeHtmlWithRegex(str: string): string {
+  return str.replace(/<[^>]*>|\s+/g, ' ')
+}
+
 export function fastGetTrimmedText(str: string): string {
-  return str.replace(/<[^>]*>|\s+/g, ' ').replace(/\s+/g, ' ').trim()
+  return removeHtmlWithRegex(str).replace(/\s+/g, ' ').trim()
 }
