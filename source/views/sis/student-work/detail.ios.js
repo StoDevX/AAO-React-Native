@@ -23,54 +23,49 @@ const styles = StyleSheet.create({
   },
 })
 
-function renderTitle(title: string, category: string) {
-  return title || category
+function Title({job}: {job: JobType}) {
+  return job.title || job.type
     ? <Section header="JOB">
-        <Cell cellStyle="Subtitle" title={title} detail={category} />
+        <Cell cellStyle="Subtitle" title={job.title} detail={job.type} />
       </Section>
     : null
 }
 
-function renderContact(
-  jobTitle: string,
-  office: string,
-  contactName: string,
-  emailAddress: string,
-) {
-  contactName = contactName || email
-  return office || contactName
+function Contact({job}: {job: JobType}) {
+  const contactName = getContactName(job).trim() || job.contactEmail
+  return job.office || contactName
     ? <Section header="CONTACT">
         <Cell
           cellStyle="Subtitle"
           title={contactName}
-          detail={office}
+          detail={job.office}
           accessory="DisclosureIndicator"
-          onPress={() => email([emailAddress], null, null, jobTitle, '')}
+          onPress={() => email([job.contactEmail], null, null, job.title, '')}
         />
       </Section>
     : null
 }
 
-function renderHours(timeOfHours: number | string, hoursPerWeek: string) {
-  const ending = hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
-  return timeOfHours && hoursPerWeek
+function Hours({job}: {job: JobType}) {
+  const ending = job.hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
+  return job.timeOfHours && job.hoursPerWeek
     ? <Section header="HOURS">
         <Cell
           cellStyle="Subtitle"
-          title={timeOfHours}
-          detail={hoursPerWeek + ending}
+          title={job.timeOfHours}
+          detail={job.hoursPerWeek + ending}
         />
       </Section>
     : null
 }
 
-function renderDescription(description: string) {
-  return description
+function Description({job}: {job: JobType}) {
+  return job.description
     ? <Section header="DESCRIPTION">
         <Cell
           cellContentView={
             <Text selectable={true} style={styles.selectable}>
-              {description}
+              {job.description}
             </Text>
           }
         />
@@ -78,13 +73,13 @@ function renderDescription(description: string) {
     : null
 }
 
-function renderSkills(skills: string) {
-  return skills
+function Skills({job}: {job: JobType}) {
+  return job.skills
     ? <Section header="SKILLS">
         <Cell
           cellContentView={
             <Text selectable={true} style={styles.selectable}>
-              {skills}
+              {job.skills}
             </Text>
           }
         />
@@ -92,13 +87,13 @@ function renderSkills(skills: string) {
     : null
 }
 
-function renderComments(comments: string) {
-  return comments
+function Comments({job}: {job: JobType}) {
+  return job.comments
     ? <Section header="COMMENTS">
         <Cell
           cellContentView={
             <Text selectable={true} style={styles.selectable}>
-              {comments}
+              {job.comments}
             </Text>
           }
         />
@@ -106,12 +101,13 @@ function renderComments(comments: string) {
     : null
 }
 
-function renderLinks(links: string[]) {
+function Links({job}: {job: JobType}) {
+  const links = getLinksFromJob(job)
   return links.length
     ? <Section header="LINKS">
-        {links.map((url, i) => (
+        {links.map(url => (
           <Cell
-            key={i}
+            key={url}
             cellStyle="Title"
             title={url}
             accessory="DisclosureIndicator"
@@ -122,45 +118,31 @@ function renderLinks(links: string[]) {
     : null
 }
 
-function renderLastUpdated(lastModified: string) {
-  return lastModified
+function LastUpdated({when}: {when: string}) {
+  return when
     ? <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
         Last updated:
         {' '}
-        {moment(lastModified, 'YYYY/MM/DD').calendar()}
+        {moment(when, 'YYYY/MM/DD').calendar()}
       </Text>
     : null
 }
 
 export default function JobDetailView({job}: {job: JobType}) {
-  const cleaned = cleanJob(job)
-  const contactName = getContactName(cleaned)
-  const links = getLinksFromJob(cleaned)
-  const {
-    title,
-    type,
-    office,
-    contactEmail,
-    timeOfHours,
-    hoursPerWeek,
-    description,
-    skills,
-    comments,
-    lastModified,
-  } = cleaned
+  job = cleanJob(job)
 
   return (
     <ScrollView>
       <TableView>
-        {renderTitle(title, type)}
-        {renderContact(title, office, contactName, contactEmail)}
-        {renderHours(timeOfHours, hoursPerWeek)}
-        {renderDescription(description)}
-        {renderSkills(skills)}
-        {renderComments(comments)}
-        {renderLinks(links)}
+        <Title job={job} />
+        <Contact job={job} />
+        <Hours job={job} />
+        <Description job={job} />
+        <Skills job={job} />
+        <Comments job={job} />
+        <Links job={job} />
       </TableView>
-      {renderLastUpdated(lastModified)}
+      <LastUpdated when={job.lastModified} />
     </ScrollView>
   )
 }

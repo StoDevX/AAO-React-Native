@@ -48,84 +48,80 @@ const styles = StyleSheet.create({
   },
 })
 
-function renderTitle(title: string, category: string) {
-  return title || category
+function Title({job}: {job: JobType}) {
+  return job.title || job.type
     ? <View>
-        <Text style={styles.name}>{title}</Text>
-        <Text style={styles.subtitle}>{category}</Text>
+        <Text style={styles.name}>{job.title}</Text>
+        <Text style={styles.subtitle}>{job.type}</Text>
       </View>
     : null
 }
 
-function renderContact(
-  jobTitle: string,
-  office: string,
-  contactName: string,
-  emailAddress: string,
-) {
-  contactName = contactName || email
-  return office || contactName
+function Contact({job}: {job: JobType}) {
+  const contactName = getContactName(job).trim() || job.contactEmail
+  return job.office || contactName
     ? <Card header="Contact" style={styles.card}>
         <Text
           style={styles.cardBody}
-          onPress={() => email([emailAddress], null, null, jobTitle, '')}
+          onPress={() => email([job.contactEmail], null, null, job.title, '')}
         >
-          {contactName} {emailAddress ? `(${emailAddress})` : ''}
+          {contactName} {job.title ? `(${job.title})` : ''}
           {'\n'}
-          {office}
+          {job.office}
         </Text>
       </Card>
     : null
 }
 
-function renderHours(timeOfHours: number | string, hoursPerWeek: string) {
-  const ending = hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
-  return timeOfHours && hoursPerWeek
+function Hours({job}: {job: JobType}) {
+  const ending = job.hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
+  return job.timeOfHours && job.hoursPerWeek
     ? <Card header="Hours" style={styles.card}>
         <Text style={styles.cardBody}>
-          {timeOfHours}
+          {job.timeOfHours}
           {'\n'}
-          {hoursPerWeek + ending}
+          {job.hoursPerWeek + ending}
         </Text>
       </Card>
     : null
 }
 
-function renderDescription(description: string) {
-  return description
+function Description({job}: {job: JobType}) {
+  return job.description
     ? <Card header="Description" style={styles.card}>
         <Text style={styles.cardBody}>
-          {description}
+          {job.description}
         </Text>
       </Card>
     : null
 }
 
-function renderSkills(skills: string) {
-  return skills
+function Skills({job}: {job: JobType}) {
+  return job.skills
     ? <Card header="Skills" style={styles.card}>
         <Text style={styles.cardBody}>
-          {skills}
+          {job.skills}
         </Text>
       </Card>
     : null
 }
 
-function renderComments(comments: string) {
-  return comments
+function Comments({job}: {job: JobType}) {
+  return job.comments
     ? <Card header="Comments" style={styles.card}>
         <Text style={styles.cardBody}>
-          {comments}
+          {job.comments}
         </Text>
       </Card>
     : null
 }
 
-function renderLinks(links: string[]) {
+function Links({job}: {job: JobType}) {
+  const links = getLinksFromJob(job)
   return links.length
     ? <Card header="LINKS" style={styles.card}>
-        {links.map((url, i) => (
-          <Text key={i} style={styles.cardBody} onPress={() => openUrl(url)}>
+        {links.map(url => (
+          <Text key={url} style={styles.cardBody} onPress={() => openUrl(url)}>
             {url}
           </Text>
         ))}
@@ -133,43 +129,29 @@ function renderLinks(links: string[]) {
     : null
 }
 
-function renderLastUpdated(lastModified: string) {
-  return lastModified
+function LastUpdated({when}: {when: string}) {
+  return when
     ? <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
         Last updated:
         {' '}
-        {moment(lastModified, 'YYYY/MM/DD').calendar()}
+        {moment(when, 'YYYY/MM/DD').calendar()}
       </Text>
     : null
 }
 
 export default function JobDetailView({job}: {job: JobType}) {
-  const cleaned = cleanJob(job)
-  const contactName = getContactName(cleaned)
-  const links = getLinksFromJob(cleaned)
-  const {
-    title,
-    type,
-    office,
-    contactEmail,
-    timeOfHours,
-    hoursPerWeek,
-    description,
-    skills,
-    comments,
-    lastModified,
-  } = cleaned
+  job = cleanJob(job)
 
   return (
     <ScrollView>
-      {renderTitle(title, type)}
-      {renderContact(title, office, contactName, contactEmail)}
-      {renderHours(timeOfHours, hoursPerWeek)}
-      {renderDescription(description)}
-      {renderSkills(skills)}
-      {renderComments(comments)}
-      {renderLinks(links)}
-      {renderLastUpdated(lastModified)}
+      <Title job={job} />
+      <Contact job={job} />
+      <Hours job={job} />
+      <Description job={job} />
+      <Skills job={job} />
+      <Comments job={job} />
+      <Links job={job} />
+      <LastUpdated when={job.lastModified} />
     </ScrollView>
   )
 }
