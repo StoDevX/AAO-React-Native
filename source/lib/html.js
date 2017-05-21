@@ -32,7 +32,7 @@ export function getTrimmedTextWithSpaces(elem: Object | Object[]): string {
 }
 
 export function removeHtmlWithRegex(str: string): string {
-  return str.replace(/<[^>]*>|\s+/g, ' ')
+  return str.replace(/<[^>]*>/g, ' ')
 }
 
 export function fastGetTrimmedText(str: string): string {
