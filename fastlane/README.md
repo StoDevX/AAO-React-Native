@@ -49,6 +49,11 @@ Build the release notes: branch, commit hash, changelog
 fastlane bundle_data
 ```
 run `npm run bundle-data`
+### keys
+```
+fastlane keys
+```
+Set up the private keys + environment variables for local development
 
 ----
 
@@ -78,6 +83,11 @@ Include the build number in the version string
 fastlane android codepush
 ```
 
+### android matchesque
+```
+fastlane android matchesque
+```
+extract the android keys from the match repo
 
 ----
 
