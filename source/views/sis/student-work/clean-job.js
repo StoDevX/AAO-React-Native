@@ -11,7 +11,6 @@ export function cleanJob(job: JobType): JobType {
   const comments = fastGetTrimmedText(job.comments)
   const skills = fastGetTrimmedText(job.skills)
 
-  const timeOfHours = job.timeOfHours.toString()
   const hoursPerWeek = job.hoursPerWeek.trim()
   const lastModified = job.lastModified.trim()
   const contactEmail = fixupEmailFormat(job.contactEmail.trim())
@@ -28,7 +27,6 @@ export function cleanJob(job: JobType): JobType {
     comments,
     skills,
     hoursPerWeek,
-    timeOfHours,
     lastModified,
     contactEmail,
     contactFirstName,

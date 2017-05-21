@@ -78,7 +78,7 @@ function renderContact(
     : null
 }
 
-function renderHours(timeOfHours: string, hoursPerWeek: string) {
+function renderHours(timeOfHours: number | string, hoursPerWeek: string) {
   const ending = hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
   return timeOfHours && hoursPerWeek
     ? <Card header="Hours" style={styles.card}>
