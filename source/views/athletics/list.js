@@ -1,8 +1,4 @@
 // @flow
-/**
- * All About Olaf
- * Athletics view
- */
 
 import React from 'react'
 //import {View, Text, ScrollView} from 'react-native'
