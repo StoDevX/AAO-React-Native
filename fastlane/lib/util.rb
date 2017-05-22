@@ -9,17 +9,21 @@ def authorize_ci_for_keys
   end
 end
 
-# Get the commit of the latest build on HockeyApp
-def hockeyapp_version_commit
-  latest_hockeyapp_notes[:commit_hash]
-end
-
 # Gets the version, either from Travis or from Hockey
 def current_build_number
-  ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
+  if ENV.key?('TRAVIS_BUILD_NUMBER')
+    return ENV['TRAVIS_BUILD_NUMBER']
+  end
 
   begin
-    (latest_hockeyapp_version_number + 1).to_s
+    case lane_context[:PLATFORM_NAME]
+    when :android
+      UI.input "Please enter a build number: "
+    when :ios
+      (latest_testflight_build_number + 1).to_s
+    else
+      UI.input "Please enter a build number: "
+    end
   rescue
     '1'
   end

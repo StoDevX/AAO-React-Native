@@ -29,11 +29,6 @@ xcode-select --install
 </table>
 
 # Available Actions
-### register
-```
-fastlane register
-```
-Adds any unregistered devices to the provisioning profile
 ### bump
 ```
 fastlane bump
@@ -54,6 +49,11 @@ Build the release notes: branch, commit hash, changelog
 fastlane bundle_data
 ```
 run `npm run bundle-data`
+### keys
+```
+fastlane keys
+```
+Set up the private keys + environment variables for local development
 
 ----
 
@@ -83,6 +83,11 @@ Include the build number in the version string
 fastlane android codepush
 ```
 
+### android matchesque
+```
+fastlane android matchesque
+```
+extract the android keys from the match repo
 
 ----
 
@@ -97,31 +102,21 @@ Runs all the tests
 fastlane ios screenshot
 ```
 Take screenshots
-### ios go-rogue
-```
-fastlane ios go-rogue
-```
-Go rogue
 ### ios build
 ```
 fastlane ios build
 ```
 Provisions the profiles; bumps the build number; builds the app
-### ios rogue-build
-```
-fastlane ios rogue-build
-```
-Build, but for the rogue devs
-### ios rogue-beta
-```
-fastlane ios rogue-beta
-```
-Make a beta, but for the rogue devs
 ### ios beta
 ```
 fastlane ios beta
 ```
-Submit a new Beta Build to HockeyApp
+Submit a new Beta Build to Testflight
+### ios refresh_dsyms
+```
+fastlane ios refresh_dsyms
+```
+Upload dYSM symbols to Bugsnag from Apple
 ### ios ci-run
 ```
 fastlane ios ci-run
