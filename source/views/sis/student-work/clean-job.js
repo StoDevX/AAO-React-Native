@@ -12,9 +12,9 @@ export function cleanJob(job: JobType): JobType {
   const type = fastGetTrimmedText(job.type)
 
   // these all need to retain their newlines
-  const description = removeHtmlWithRegex(job.description).replace('\t', ' ')
-  const comments = removeHtmlWithRegex(job.comments).replace('\t', ' ')
-  const skills = removeHtmlWithRegex(job.skills).replace('\t', ' ')
+  const description = removeHtmlWithRegex(job.description).replace(/\t/g, ' ')
+  const comments = removeHtmlWithRegex(job.comments).replace(/\t/g, ' ')
+  const skills = removeHtmlWithRegex(job.skills).replace(/\t/g, ' ')
 
   const hoursPerWeek = job.hoursPerWeek.trim()
   const lastModified = job.lastModified.trim()
