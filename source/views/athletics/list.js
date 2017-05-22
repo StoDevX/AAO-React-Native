@@ -14,8 +14,8 @@ import {NoticeView} from '../components/notice'
 //import {Column} from '../components/layout'
 //import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
 
-
-let athleticsUrl = 'http://athletics.stolaf.edu/services/scores_chris.aspx?format=json'
+let athleticsUrl =
+  'http://athletics.stolaf.edu/services/scores_chris.aspx?format=json'
 
 export class AthleticsView extends React.Component {
   state = {
@@ -40,7 +40,6 @@ export class AthleticsView extends React.Component {
         refreshing: false,
         error: null,
       })
-
     } catch (error) {
       this.setState({error: error.message})
       console.warn(error)
@@ -48,7 +47,6 @@ export class AthleticsView extends React.Component {
   }
 
   render() {
-
     if (!this.state.loaded) {
       return <LoadingView />
     }
@@ -62,8 +60,6 @@ export class AthleticsView extends React.Component {
     }
 
     let athleticsData = this.state.data
-    return (
-      <AthleticsRow data={athleticsData} />
-    )
+    return <AthleticsRow data={athleticsData} />
   }
 }

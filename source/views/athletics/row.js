@@ -1,11 +1,17 @@
 // @flow
 import React from 'react'
-import {StyleSheet, ScrollView, View, Text, Image, PixelRatio} from 'react-native'
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  Text,
+  Image,
+  PixelRatio,
+} from 'react-native'
 
 import * as c from '../components/colors'
 
 export function AthleticsRow({data}) {
-
   // fields
   //
   // id, timestamp, date, dateFormatted, time, location[location, HAN, facilitiy]
@@ -41,7 +47,6 @@ export function AthleticsRow({data}) {
    * - ask hawken about his dual column idea again
    */
 
-
   // function evaluateGameType(game) {
   //   let gameProcess = ''
   //   let cssType = ''
@@ -64,33 +69,48 @@ export function AthleticsRow({data}) {
 
   return (
     <ScrollView>
-      {data.map((d, i) =>
+      {data.map((d, i) => (
         <View key={`${i}`}>
           <Text style={styles.sportName}>{d.sport.trim()}</Text>
-          <View style={styles.container} >
+          <View style={styles.container}>
             <View style={styles.team}>
-              {d.hometeam_logo ? <Image style={styles.teamLogo} source={{uri: d.hometeam_logo}} /> : null}
-              <Text style={styles.teamName}>{d.hometeam.trim().toUpperCase()}</Text>
+              {d.hometeam_logo
+                ? <Image
+                    style={styles.teamLogo}
+                    source={{uri: d.hometeam_logo}}
+                  />
+                : null}
+              <Text style={styles.teamName}>
+                {d.hometeam.trim().toUpperCase()}
+              </Text>
             </View>
 
             <View style={styles.gameInfo}>
-              <Text style={styles.infoProcess}>{d.prescore_info ? d.prescore_info : d.status.indicator}</Text>
+              <Text style={styles.infoProcess}>
+                {d.prescore_info ? d.prescore_info : d.status.indicator}
+              </Text>
               {d.status.indicator !== 'A' &&
                 <View style={styles.infoScorePanel}>
                   <Text style={styles.infoScore}>{d.team_score}</Text>
                   <View style={styles.infoDivider} />
                   <Text style={styles.infoScore}>{d.opponent_score}</Text>
-                </View>
-              }
+                </View>}
             </View>
 
             <View style={styles.team}>
-              {d.opponent_logo ? <Image style={styles.teamLogo} source={{uri: d.opponent_logo}} /> : null}
-              <Text style={styles.teamName}>{d.opponent.trim().toUpperCase()}</Text>
+              {d.opponent_logo
+                ? <Image
+                    style={styles.teamLogo}
+                    source={{uri: d.opponent_logo}}
+                  />
+                : null}
+              <Text style={styles.teamName}>
+                {d.opponent.trim().toUpperCase()}
+              </Text>
             </View>
           </View>
-      </View>
-      )}
+        </View>
+      ))}
     </ScrollView>
   )
 }
