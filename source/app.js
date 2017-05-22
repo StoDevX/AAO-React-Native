@@ -6,6 +6,7 @@
 
 // Tweak the global fetch
 import './globalize-fetch'
+import './setup-moment'
 import {tracker} from './analytics'
 import OneSignal from 'react-native-onesignal'
 

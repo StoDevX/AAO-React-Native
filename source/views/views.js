@@ -56,7 +56,7 @@ export const allViews: ViewType[] = [
   },
   {
     type: 'url',
-    url: 'https://www.stolaf.edu/personal/directory/index.cfm',
+    url: 'https://www.stolaf.edu/personal/index.cfm',
     view: 'DirectoryView',
     title: 'Directory',
     icon: 'v-card',

@@ -7,7 +7,7 @@ schedule:
     hours:
       - {days: [Mo, We, Fr], from: '10:10am', to: '10:30am'}
       - {days: [Tu], from: '11:10am', to: '11:30am'}
-      - {days: [Th], from: '11:00am', to: '12:35am'}
+      - {days: [Th], from: '11:00am', to: '12:35pm'}
       - {days: [Tu, Su], from: '7:00pm', to: '8:00pm'}
 
   - title: Phone

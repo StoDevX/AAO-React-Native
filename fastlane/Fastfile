@@ -6,6 +6,8 @@
 # Set a minimum version for fastlane
 fastlane_version '2.19.0'
 
+require 'fileutils'
+
 import 'lib/before_all.rb'
 import 'lib/util.rb'
 
