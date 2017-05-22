@@ -9,6 +9,7 @@ import React from 'react'
 import type {TopLevelViewPropsType} from '../types'
 import TabbedView from '../components/tabbed-view'
 import BalancesView from './balances'
+import StudentWorkView from './student-work'
 // import CoursesView from './courses'
 // import SearchView from './search'
 
@@ -21,6 +22,14 @@ export default function SISView({navigator, route}: TopLevelViewPropsType) {
           title: 'Balances',
           icon: 'card',
           component: () => <BalancesView navigator={navigator} route={route} />,
+        },
+        {
+          id: 'StudentWorkView',
+          title: 'Open Jobs',
+          icon: 'briefcase',
+          component: () => (
+            <StudentWorkView navigator={navigator} route={route} />
+          ),
         },
         // {
         //   id: 'CoursesView',
