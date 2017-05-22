@@ -19,3 +19,18 @@ breakSchedule:
   summer:
     - {days: [Mo, Tu, We, Th], from: '7:45am', to: '4:30pm'}
     - {days: [Fr], from: '7:45am', to: '12:00pm'}
+
+overrideSchedules:
+  - {day: 2017/05/18, title: Hours, from: 7:45am, to: 12:00am}
+  - {day: 2017/05/19, title: Hours, from: 7:45am, to: 12:00am}
+  - {day: 2017/05/20, title: Hours, from: 8:30am, to: 12:00am}
+  - {day: 2017/05/21, title: Hours, from: 12:00pm, to: 12:00am}
+  - {day: 2017/05/22, title: Hours, from: 7:45am, to: 12:00am}
+  - {day: 2017/05/23, title: Hours, from: 7:45am, to: 5:00pm}
+  - {day: 2017/05/24, title: Hours, from: 8:00am, to: 5:00pm}
+  - {day: 2017/05/25, title: Hours, from: 8:00am, to: 5:00pm}
+  - {day: 2017/05/26, title: Hours, from: 8:00am, to: 5:00pm}
+  - {day: 2017/05/27, title: Hours, from: 12:00pm, to: 5:00pm}
+  - {day: 2017/05/28, title: Hours, closed: true}
+  - {day: 2017/05/29, title: Hours, closed: true}
+  - {day: 2017/05/30, title: Hours, from: 8:00am, to: 5:00pm}
