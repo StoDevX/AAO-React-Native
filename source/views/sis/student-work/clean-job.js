@@ -54,7 +54,7 @@ export function getLinksFromJob(job: JobType) {
 }
 
 function parseLinks(data: string) {
-  const allLinks = data.split(' ')
+  const allLinks = data.split(/\s/)
   if (!allLinks.length) {
     return []
   }
