@@ -1,5 +1,6 @@
 // @flow
 import type {StudentOrgType} from './types'
+import {fastGetTrimmedText} from '../../lib/html'
 
 export default function cleanOrg(org: StudentOrgType): StudentOrgType {
   const name = org.name.trim()
@@ -20,7 +21,7 @@ export default function cleanOrg(org: StudentOrgType): StudentOrgType {
 
   const category = org.category.trim()
   const meetings = org.meetings.trim()
-  const description = org.description.trim()
+  const description = fastGetTrimmedText(org.description)
   let website = org.website.trim()
   if (website && /^https?:\/\//.test(website)) {
     website = `http://${website}`
