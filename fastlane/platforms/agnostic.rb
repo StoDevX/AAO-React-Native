@@ -25,6 +25,8 @@ lane :'propagate-version' do |options|
   # update iOS version
   increment_version_number(version_number: version,
                            xcodeproj: ENV['GYM_PROJECT'])
+  increment_build_number(xcodeproj: ENV['GYM_PROJECT'])
+
   # update Android version
   set_gradle_version_name(version_name: version,
                           gradle_path: lane_context[:GRADLE_FILE])
