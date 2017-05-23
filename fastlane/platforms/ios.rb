@@ -22,8 +22,6 @@ platform :ios do
   desc 'Submit a new Beta Build to Testflight'
   lane :beta do
     match(type: 'appstore', readonly: true)
-    increment_build_number(build_number: latest_testflight_build_number + 1,
-                           xcodeproj: ENV['GYM_PROJECT'])
 
     build
 
