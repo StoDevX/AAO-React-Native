@@ -1,10 +1,7 @@
 // @flow
 import type {JobType} from './types'
 
-import {
-  fastGetTrimmedText,
-  removeHtmlWithRegex,
-} from '../../../lib/html'
+import {fastGetTrimmedText, removeHtmlWithRegex} from '../../../lib/html'
 
 export function cleanJob(job: JobType): JobType {
   const title = fastGetTrimmedText(job.title)
