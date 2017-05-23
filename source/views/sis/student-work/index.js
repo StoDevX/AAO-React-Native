@@ -1,12 +1,12 @@
 /**
  * @flow
- * 
+ *
  * All About Olaf
  * Student Work page
  */
 
 import React from 'react'
-import {StyleSheet, Platform, Text} from 'react-native'
+import {StyleSheet, Text} from 'react-native'
 import * as c from '../../components/colors'
 import SimpleListView from '../../components/listview'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
@@ -24,8 +24,6 @@ import type {JobType} from './types'
 const jobsUrl =
   'https://www.stolaf.edu/apps/stuwork/index.cfm?fuseaction=getall&nostructure=1'
 
-const headerHeight = Platform.OS === 'ios' ? 33 : 41
-
 const jobSort = new Map([
   ['On-campus Work Study', 1],
   ['Off-campus Community Service Work Study', 2],
@@ -36,9 +34,6 @@ const jobSort = new Map([
 const styles = StyleSheet.create({
   listContainer: {
     backgroundColor: c.white,
-  },
-  rowSectionHeader: {
-    height: headerHeight,
   },
 })
 
@@ -112,7 +107,7 @@ export default class StudentWorkView extends React.Component {
   }
 
   renderSectionHeader = (data: any, id: string) => {
-    return <ListSectionHeader style={styles.rowSectionHeader} title={id} />
+    return <ListSectionHeader title={id} />
   }
 
   render() {
