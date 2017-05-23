@@ -1,8 +1,7 @@
 // @flow
 import React from 'react'
-import {ScrollView, Text, StyleSheet} from 'react-native'
+import {ScrollView, Text, View, StyleSheet} from 'react-native'
 import moment from 'moment'
-import {HtmlView} from '../components/html-view'
 import {Card} from '../components/card'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
@@ -38,7 +37,9 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     backgroundColor: c.white,
-    height: 200,
+  },
+  descriptionText: {
+    fontSize: 16,
   },
   footer: {
     fontSize: 10,
@@ -136,21 +137,9 @@ export class StudentOrgsDetailView extends React.Component {
 
         {description
           ? <Card header="Description" style={styles.card}>
-              <HtmlView
-                style={styles.description}
-                html={`
-                  <style>
-                    body {
-                      margin: 10px 15px 10px;
-                      font-family: -apple-system;
-                    }
-                    * {
-                      max-width: 100%;
-                    }
-                  </style>
-                  ${description}
-                `}
-              />
+              <View style={styles.description}>
+                <Text style={styles.descriptionText}>{description}</Text>
+              </View>
             </Card>
           : null}
 
