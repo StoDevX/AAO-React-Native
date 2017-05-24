@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {StyleSheet, Text} from 'react-native'
-import type {EventType} from './types'
+import {type EventType, formatTimes} from '../../lib/calendar'
 import moment from 'moment-timezone'
 import * as c from '../components/colors'
 import {Row, Column} from '../components/layout'
@@ -32,7 +32,11 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function EventRow({event}: {event: EventType}) {
+type EventRowPropsType = {
+  event: EventType,
+  now: moment,
+}
+export default function EventRow({event, now}: EventRowPropsType) {
   const title = fastGetTrimmedText(event.summary)
 
   return (
@@ -42,7 +46,7 @@ export default function EventRow({event}: {event: EventType}) {
       fullWidth={true}
     >
       <Row>
-        <CalendarTimes event={event} style={styles.timeContainer} />
+        <CalendarTimes event={event} style={styles.timeContainer} now={now} />
 
         <Bar style={styles.bar} />
 
@@ -55,14 +59,13 @@ export default function EventRow({event}: {event: EventType}) {
   )
 }
 
-function CalendarTimes({event, style}: {event: EventType, style: any}) {
-  const eventLength = moment
-    .duration(event.endTime.diff(event.startTime))
-    .asHours()
-
-  const allDay = eventLength === 24
-  const multiDay = event.startTime.dayOfYear() !== event.endTime.dayOfYear()
-  const sillyZeroLength = event.startTime.isSame(event.endTime, 'minute')
+type CalendarTimesPropsType = {
+  event: EventType,
+  style: number | Object | Array<number | Object>,
+  now: moment,
+}
+function CalendarTimes({event, style, now}: CalendarTimesPropsType) {
+  const {start, end, allDay} = formatTimes(event, now)
 
   if (allDay) {
     return (
@@ -70,21 +73,6 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
         <Text style={[styles.time, styles.start]}>all-day</Text>
       </Column>
     )
-  }
-
-  let start, end
-  if (event.isOngoing) {
-    start = event.startTime.format('MMM. D')
-    end = event.endTime.format('MMM. D')
-  } else if (multiDay) {
-    start = event.startTime.format('h:mm A')
-    end = `to ${event.endTime.format('MMM. D h:mm A')}`
-  } else if (sillyZeroLength) {
-    start = event.startTime.format('h:mm A')
-    end = 'until ???'
-  } else {
-    start = event.startTime.format('h:mm A')
-    end = event.endTime.format('h:mm A')
   }
 
   return (

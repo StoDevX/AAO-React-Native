@@ -8,12 +8,10 @@ import React from 'react'
 import {EventList} from './event-list'
 import bugsnag from '../../bugsnag'
 import {tracker} from '../../analytics'
-import type {EventType, GoogleEventType} from './types'
 import moment from 'moment-timezone'
 import delay from 'delay'
 import LoadingView from '../components/loading'
-import qs from 'querystring'
-import {GOOGLE_CALENDAR_API_KEY} from '../../lib/config'
+import {fetchGoogleCalendar, type EventType} from '../../lib/calendar'
 const TIMEZONE = 'America/Winnipeg'
 
 export class GoogleCalendarView extends React.Component {
@@ -39,59 +37,21 @@ export class GoogleCalendarView extends React.Component {
     calendarId: string,
   }
 
-  buildCalendarUrl(calendarId: string) {
-    let calendarUrl = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`
-    let params = {
-      maxResults: 50,
-      orderBy: 'startTime',
-      showDeleted: false,
-      singleEvents: true,
-      timeMin: new Date().toISOString(),
-      key: GOOGLE_CALENDAR_API_KEY,
-    }
-    return `${calendarUrl}?${qs.stringify(params)}`
-  }
-
-  convertEvents(data: GoogleEventType[], now: moment): EventType[] {
-    return data.map(event => {
-      const startTime = moment(event.start.date || event.start.dateTime)
-      const endTime = moment(event.end.date || event.end.dateTime)
-      return {
-        startTime,
-        endTime,
-        summary: event.summary || '',
-        location: event.location || '',
-        isOngoing: startTime.isBefore(now, 'day'),
-        extra: {type: 'google', data: event},
-      }
-    })
-  }
-
   getEvents = async (now: moment = moment.tz(TIMEZONE)) => {
-    let url = this.buildCalendarUrl(this.props.calendarId)
-
-    let data: GoogleEventType[] = []
+    let data: EventType[] = []
     try {
-      let result = await fetchJson(url)
-      const error = result.error
-      if (error) {
-        tracker.trackException(error.message)
-        bugsnag.notify(error)
-        this.setState({error: error})
-      }
-
-      data = result.items
+      data = await fetchGoogleCalendar(this.props.calendarId)
     } catch (err) {
       tracker.trackException(err.message)
       bugsnag.notify(err)
-      this.setState({error: err.message})
       console.warn(err)
+      this.setState({error: err.message})
     }
 
     this.setState({
       now,
       loaded: true,
-      events: this.convertEvents(data, now),
+      events: data,
     })
   }
 

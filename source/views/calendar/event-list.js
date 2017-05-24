@@ -8,10 +8,9 @@ import React from 'react'
 import {StyleSheet} from 'react-native'
 import * as c from '../components/colors'
 import SimpleListView from '../components/listview'
-import type {EventType} from './types'
-import groupBy from 'lodash/groupBy'
+import {groupEvents, type EventType} from '../../lib/calendar'
 import size from 'lodash/size'
-import moment from 'moment-timezone'
+import type moment from 'moment-timezone'
 import {ListSeparator, ListSectionHeader} from '../components/list'
 import {NoticeView} from '../components/notice'
 import EventRow from './event-row'
@@ -25,21 +24,6 @@ export class EventList extends React.Component {
     now: moment,
   }
 
-  groupEvents = (
-    events: EventType[],
-    now: moment,
-  ): {[key: string]: EventType[]} => {
-    return groupBy(events, event => {
-      if (event.isOngoing) {
-        return 'Ongoing'
-      }
-      if (event.startTime.isSame(now, 'day')) {
-        return 'Today'
-      }
-      return event.startTime.format('ddd  MMM Do') // google returns events in CST
-    })
-  }
-
   renderSectionHeader = (
     sectionData: EventType[],
     sectionIdentifier: string,
@@ -47,7 +31,7 @@ export class EventList extends React.Component {
     return <ListSectionHeader title={sectionIdentifier} spacing={{left: 10}} />
   }
 
-  renderSeparator = (sectionID: any, rowID: any) => {
+  renderSeparator = (sectionID: string, rowID: string) => {
     return <ListSeparator fullWidth={true} key={`${sectionID}-${rowID}`} />
   }
 
@@ -60,19 +44,17 @@ export class EventList extends React.Component {
       return <NoticeView text="No events." />
     }
 
-    const events = this.groupEvents(this.props.events, this.props.now)
-
     return (
       <SimpleListView
         style={styles.container}
         forceBottomInset={true}
-        data={events}
+        data={groupEvents(this.props.events, this.props.now)}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
         refreshing={this.props.refreshing}
         onRefresh={this.props.onRefresh}
       >
-        {(event: EventType) => <EventRow event={event} />}
+        {(event: EventType) => <EventRow event={event} now={this.props.now} />}
       </SimpleListView>
     )
   }

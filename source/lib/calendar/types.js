@@ -18,6 +18,5 @@ export type EventType = {
   location: string,
   startTime: moment,
   endTime: moment,
-  isOngoing: boolean,
   extra: EmbeddedEventDetailType,
 }
