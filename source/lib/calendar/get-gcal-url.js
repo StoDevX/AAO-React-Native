@@ -6,7 +6,6 @@ import type {GcalArgsType} from './types'
 
 const defaultArgs = (): GcalArgsType => ({
   maxResults: 50,
-  orderBy: 'startTime',
   singleEvents: true,
   timeMin: new Date().toISOString(),
   key: GOOGLE_CALENDAR_API_KEY,

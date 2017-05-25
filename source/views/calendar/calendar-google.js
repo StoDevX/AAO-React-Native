@@ -11,7 +11,7 @@ import {tracker} from '../../analytics'
 import moment from 'moment-timezone'
 import delay from 'delay'
 import LoadingView from '../components/loading'
-import {fetchGoogleCalendar, type EventType} from '../../lib/calendar'
+import {fetchGoogleCalendarEvents, type EventType} from '../../lib/calendar'
 const TIMEZONE = 'America/Winnipeg'
 
 export class GoogleCalendarView extends React.Component {
@@ -40,7 +40,7 @@ export class GoogleCalendarView extends React.Component {
   getEvents = async (now: moment = moment.tz(TIMEZONE)) => {
     let data: EventType[] = []
     try {
-      data = await fetchGoogleCalendar(this.props.calendarId)
+      data = await fetchGoogleCalendarEvents(this.props.calendarId)
     } catch (err) {
       tracker.trackException(err.message)
       bugsnag.notify(err)

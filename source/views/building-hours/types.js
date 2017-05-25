@@ -1,5 +1,7 @@
 // @flow
 
+import type moment from 'moment'
+
 export type BuildingStatusType =
   | 'Open'
   | 'Closed'
@@ -9,40 +11,30 @@ export type BuildingStatusType =
 
 export type DayOfWeekEnumType = 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa' | 'Su'
 
-export type BreakNameEnumType =
-  | 'fall'
-  | 'thanksgiving'
-  | 'christmasfest'
-  | 'winter'
-  | 'interim'
-  | 'spring'
-  | 'easter'
-  | 'summer'
-
-export type SingleBuildingScheduleType = {|
-  days: DayOfWeekEnumType[],
-  from: string,
-  to: string,
-|}
-
-export type NamedBuildingScheduleType = {|
-  title: 'Hours' | string,
-  notes?: string,
-  isPhysicallyOpen?: boolean,
-  closedForChapelTime?: boolean,
-  hours: SingleBuildingScheduleType[],
-|}
-
-export type BreakScheduleContainerType = {
-  [key: BreakNameEnumType]: SingleBuildingScheduleType[],
+export type DayScheduleType = {
+  open: moment,
+  close: moment,
+  title: string,
+  location: string,
+  notes: string,
+  tags: {
+    chapel?: boolean,
+    'physically-open'?: boolean,
+  },
 }
 
-export type BuildingType = {|
+export type ScheduleType = {
   name: string,
-  subtitle?: string,
-  abbreviation?: string,
-  image?: string,
+  instances: Array<DayScheduleType>,
+}
+
+export type BuildingType = {
+  // schedule names to list of schedules
+  name: string,
   category: string,
-  schedule: NamedBuildingScheduleType[],
-  breakSchedule?: BreakScheduleContainerType,
-|}
+  schedules: Array<ScheduleType>,
+}
+
+export type BuildingGroupType = {
+  [key: string]: Array<BuildingType>,
+}

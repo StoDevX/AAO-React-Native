@@ -12,7 +12,7 @@ import {tracker} from '../../analytics'
 
 import type momentT from 'moment'
 import type {TopLevelViewPropsType} from '../types'
-import type {BuildingType} from './types'
+import type {BuildingGroupType, BuildingType} from './types'
 
 import * as c from '../components/colors'
 import {ListSeparator, ListSectionHeader} from '../components/list'
@@ -29,22 +29,22 @@ type BuildingHoursPropsType = TopLevelViewPropsType & {
   now: momentT,
   loading: boolean,
   onRefresh: () => any,
-  buildings: {[key: string]: BuildingType[]},
+  buildings: BuildingGroupType,
 }
 
 export class BuildingHoursList extends React.Component {
   props: BuildingHoursPropsType
 
   onPressRow = (data: BuildingType) => {
-    tracker.trackEvent('building-hours', data.name)
-    this.props.navigator.push({
-      id: 'BuildingHoursDetailView',
-      index: this.props.route.index + 1,
-      title: data.name,
-      backButtonTitle: 'Hours',
-      props: data,
-      sceneConfig: Platform.OS === 'android' ? 'fromBottom' : undefined,
-    })
+    // tracker.trackEvent('building-hours', data.name)
+    // this.props.navigator.push({
+    //   id: 'BuildingHoursDetailView',
+    //   index: this.props.route.index + 1,
+    //   title: data.name,
+    //   backButtonTitle: 'Hours',
+    //   props: data,
+    //   sceneConfig: Platform.OS === 'android' ? 'fromBottom' : undefined,
+    // })
   }
 
   renderSectionHeader = (data: any, id: string) => {

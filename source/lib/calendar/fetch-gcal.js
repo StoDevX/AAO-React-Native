@@ -16,7 +16,7 @@ export class GoogleCalendarError extends Error {}
 export async function fetchGoogleCalendar(
   calendarId: string,
   args?: GcalArgsType,
-): Promise<EventType[]> {
+): Promise<GoogleResponseType> {
   const url = getGoogleCalendarUrl(calendarId, args)
 
   // google makes you opt-in to gzip
@@ -34,7 +34,14 @@ export async function fetchGoogleCalendar(
     }
   }
 
-  const result: GoogleResponseType = await req.json()
+  return req.json()
+}
+
+export async function fetchGoogleCalendarEvents(
+  calendarId: string,
+  args?: GcalArgsType,
+): Promise<EventType[]> {
+  const result = await fetchGoogleCalendar(calendarId, args)
 
   if (result.error) {
     throw new GoogleCalendarError(result.error.message)

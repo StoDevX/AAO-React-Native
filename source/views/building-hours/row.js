@@ -59,6 +59,8 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
     Closed: c.brickRed,
   }
 
+  console.log(info)
+
   const openStatus = getShortBuildingStatus(info, now)
   const hours = getDetailedBuildingStatus(info, now)
 

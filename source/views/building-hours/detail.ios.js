@@ -10,7 +10,6 @@ import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import ParallaxView from 'react-native-parallax-view'
 import * as c from '../components/colors'
 import {
-  normalizeBuildingSchedule,
   formatBuildingTimes,
   summarizeDays,
   getShortBuildingStatus,
@@ -91,7 +90,7 @@ export class BuildingHoursDetailView extends React.Component {
       ? buildingImages[this.props.image]
       : transparentPixel
     const openStatus = getShortBuildingStatus(this.props, this.state.now)
-    const schedules = normalizeBuildingSchedule(this.props, this.state.now)
+    const schedules = this.props.schedule
     const dayOfWeek = ((this.state.now.format('dd'): any): DayOfWeekEnumType)
 
     const abbr = this.props.abbreviation
