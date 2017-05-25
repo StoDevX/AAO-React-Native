@@ -1,22 +1,39 @@
 // @flow
 import type moment from 'moment'
 
-type GoogleTimeType = {
-  dateTime: string,
+export type GcalArgsType = {
+  key?: string,
+  timeMin?: string,
+  timeMax?: string,
+  singleEvents?: boolean,
+  orderBy?: 'startTime' | 'updated',
+  maxResults?: number,
 }
+
 export type GoogleEventType = {
   summary?: string,
-  start: GoogleTimeType,
-  end: GoogleTimeType,
+  start: {date?: string, dateTime?: string},
+  end: {date?: string, dateTime?: string},
+  id: string,
   location?: string,
+  description?: string,
+}
+export type GoogleResponseType = {
+  summary?: string,
+  description?: string,
+  error?: {
+    code: number,
+    errors: any[],
+    message: string,
+  },
+  items?: GoogleEventType[],
 }
 
-type EmbeddedEventDetailType = {type: 'google', data: GoogleEventType}
-
 export type EventType = {
-  summary: string,
-  location: string,
   startTime: moment,
   endTime: moment,
-  extra: EmbeddedEventDetailType,
+  summary: string,
+  location: string,
+  id: string,
+  description: string,
 }

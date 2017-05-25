@@ -15,8 +15,8 @@ export function formatTimes(event: EventType, now: moment) {
 
   let start, end
   if (ongoing) {
-    start = event.startTime.format('MMM. D')
-    end = event.endTime.format('MMM. D')
+    start = event.startTime.format('MMM D')
+    end = event.endTime.format('MMM D')
   } else if (multiDay) {
     start = event.startTime.format('h:mm A')
     end = `to ${event.endTime.format('MMM D h:mm A')}`
