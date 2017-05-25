@@ -56,13 +56,13 @@ export class GoogleCalendarView extends React.Component {
   }
 
   refresh = async () => {
-    let start = Date.now()
+    const start = Date.now()
     this.setState({refreshing: true})
 
     await this.getEvents()
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    let elapsed = start - Date.now()
+    const elapsed = start - Date.now()
     if (elapsed < 500) {
       await delay(500 - elapsed)
     }
