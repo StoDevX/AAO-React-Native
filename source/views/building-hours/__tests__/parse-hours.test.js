@@ -1,4 +1,3 @@
-// @flow
 import {parseHours} from '../building-hours-helpers'
 import {dayMoment, hourMoment, moment} from './moment.helper'
 

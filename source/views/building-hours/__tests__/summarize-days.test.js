@@ -1,4 +1,3 @@
-// @flow
 import {summarizeDays} from '../building-hours-helpers'
 
 describe('returns a single day if only a single day is given', () => {
