@@ -20,8 +20,9 @@ definitions:
 
   day:
     additionalProperties: false
-    required: [days, from, to]
+    required: [days]
     properties:
       days: {$ref: '#/definitions/days-of-week'}
       from: {$ref: '#/definitions/time'}
       to: {$ref: '#/definitions/time'}
+      closed: {type: boolean}
