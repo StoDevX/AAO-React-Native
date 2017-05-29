@@ -7,7 +7,6 @@ properties:
   subtitle: {type: string}
   abbreviation: {type: string}
   category: {type: string}
-  image: {type: string}
   schedule:
     type: array
     items: {$ref: '#/definitions/schedule'}
