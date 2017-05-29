@@ -93,7 +93,7 @@ before_install:
     fi
 
   # make sure to use ruby 2.3
-  - rvm use ruby-2.4.1 --install --binary --create
+  - rvm use ruby-2.3.1 --install --binary --create
   - gem install bundler
 
   # only deploy from:
