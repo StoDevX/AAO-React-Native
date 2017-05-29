@@ -4,7 +4,8 @@ category: Academia
 
 schedule:
   - title: Hours
-    hours: []
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], closed: true}
 
 breakSchedule:
   fall: []

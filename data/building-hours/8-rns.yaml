@@ -9,31 +9,38 @@ schedule:
 
 breakSchedule:
   fall:
-    - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
-    - {days: [Sa, Su], from: '8:00am', to: '12:00am'}
+    - title: Fall Break
+      hours:
+        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
+        - {days: [Sa, Su], from: '8:00am', to: '12:00am'}
 
   thanksgiving:
-    - {days: [Tu, We], from: '7:00am', to: '10:00pm'}
-    - {days: [Sa], from: '8:00pm', to: '5:00pm'}
-    - {days: [Su], from: '8:00am', to: '12:00am'}
+    - title: Thanksgiving Break
+      hours:
+        - {days: [Tu, We], from: '7:00am', to: '10:00pm'}
+        - {days: [Sa], from: '8:00pm', to: '5:00pm'}
+        - {days: [Su], from: '8:00am', to: '12:00am'}
 
   winter:
-    - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '8:00pm'}
+    - title: Winter Break
+      hours:
+        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '8:00pm'}
 
   interim:
-    - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
+    - title: Interim Break
+      hours:
+        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
 
   spring:
-    - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
-    - {days: [Sa], from: '8:00pm', to: '5:00pm'}
-    - {days: [Su], from: '8:00am', to: '12:00am'}
-
-  easter:
-    - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
-    - {days: [Sa], from: '8:00pm', to: '5:00pm'}
-    - {days: [Su], from: '8:00am', to: '12:00am'}
+    - title: Spring Break
+      hours:
+        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
+        - {days: [Sa], from: '8:00pm', to: '5:00pm'}
+        - {days: [Su], from: '8:00am', to: '12:00am'}
 
   summer:
-    - {days: [Mo, Tu, We, Th], from: '7:00am', to: '10:00pm'}
-    - {days: [Fr], from: '7:00am', to: '8:00pm'}
-    - {days: [Sa, Su], from: '10:00am', to: '10:00pm'}
+    - title: Summer
+      hours:
+        - {days: [Mo, Tu, We, Th], from: '7:00am', to: '10:00pm'}
+        - {days: [Fr], from: '7:00am', to: '8:00pm'}
+        - {days: [Sa, Su], from: '10:00am', to: '10:00pm'}
