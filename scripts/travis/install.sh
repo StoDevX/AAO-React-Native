@@ -15,4 +15,4 @@ if [[ $TRAVIS_OS_NAME == "osx" ]]; then
 fi
 
 # install fastlane
-bundle install --deployment
+bundle install
