@@ -93,7 +93,7 @@ before_install:
     fi
 
   # make sure to use ruby 2.3
-  - rvm use 2.3 --install --binary --fuzzy
+  - rvm use ruby-2.3.1 --install --binary --create
   - gem install bundler
 
   # only deploy from the once-daily cron-triggered jobs or from tagged commits
