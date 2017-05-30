@@ -21,7 +21,7 @@ env:
     - ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
     - DEPLOY_KEY=scripts/travisci_deploy_key
     # variables that are used later on
-    - TRAVIS_NODE_VERSION=7
+    - TRAVIS_NODE_VERSION=8
     - PUSH_BRANCH=0
     - CAN_DEPLOY=0
     - USE_EMULATOR=no
@@ -34,7 +34,7 @@ matrix:
       dist: trusty
       sudo: false
       language: node_js
-      node_js: '7'
+      node_js: '8'
       env: [JS=yes, CAN_DEPLOY=yes]
 
     - &android-base
@@ -72,7 +72,7 @@ matrix:
     - os: osx
       language: objective-c
       osx_image: xcode8.3
-      node_js: '7'
+      node_js: '8'
       env: [IOS=yes, CAN_DEPLOY=yes]
 
 
