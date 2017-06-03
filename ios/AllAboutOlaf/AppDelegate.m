@@ -23,7 +23,7 @@
 {
   NSURL *jsCodeLocation;
 
-    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios"
+  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios"
                                                                     fallbackResource:nil];
 #ifndef DEBUG
   [BugsnagReactNative start];
