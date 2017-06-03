@@ -8,7 +8,6 @@
  */
 
 #import "AppDelegate.h"
-#import <CodePush/CodePush.h>
 #import <BugsnagReactNative/BugsnagReactNative.h>
 
 #import <React/RCTBundleURLProvider.h>
@@ -24,13 +23,8 @@
 {
   NSURL *jsCodeLocation;
 
-#ifdef DEBUG
     jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios"
                                                                     fallbackResource:nil];
-#else
-    jsCodeLocation = [CodePush bundleURL];
-#endif
-
 #ifndef DEBUG
   [BugsnagReactNative start];
 #endif
