@@ -3,7 +3,7 @@ import React from 'react'
 import {View} from 'react-native'
 import {getVersion} from 'react-native-device-info'
 import {Cell, Section} from 'react-native-tableview-simple'
-import {version, allaboutolaf} from '../../../../package.json'
+import {allaboutolaf} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
 import {setFeedbackStatus} from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
@@ -41,11 +41,7 @@ class OddsAndEndsSection extends React.Component {
       ? '[dev] '
       : allaboutolaf.source ? `[${allaboutolaf.source}] ` : ''
 
-    //    native (codepush)
-    // eg, 2.1.2 (2.1.2+2957)
-    const versionString = getVersion() === version
-      ? getVersion()
-      : `${getVersion()} (${version})`
+    const versionString = getVersion()
 
     return (
       <View>

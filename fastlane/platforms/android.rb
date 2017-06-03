@@ -39,7 +39,6 @@ platform :android do
     should_deploy = ENV['run_deploy'] == '1'
     if should_deploy
       auto_beta
-      codepush
     else
       build
     end
@@ -54,9 +53,5 @@ platform :android do
     set_gradle_version_code(version_code: build,
                             gradle_path: lane_context[:GRADLE_FILE])
     set_package_data(data: { version: "#{version}+#{build}" })
-  end
-
-  lane :codepush do
-    codepush_cli(app: 'AllAboutOlaf-Android')
   end
 end
