@@ -1,9 +1,8 @@
 // @flow
 import React from 'react'
 import {View} from 'react-native'
-import {getVersion} from 'react-native-device-info'
 import {Cell, Section} from 'react-native-tableview-simple'
-import {allaboutolaf} from '../../../../package.json'
+import {version, allaboutolaf} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
 import {setFeedbackStatus} from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
@@ -41,8 +40,6 @@ class OddsAndEndsSection extends React.Component {
       ? '[dev] '
       : allaboutolaf.source ? `[${allaboutolaf.source}] ` : ''
 
-    const versionString = getVersion()
-
     return (
       <View>
         <Section header="MISCELLANY">
@@ -59,7 +56,7 @@ class OddsAndEndsSection extends React.Component {
           <Cell
             cellStyle="RightDetail"
             title="Version"
-            detail={`${versionMoniker}${versionString}`}
+            detail={`${versionMoniker}${version}`}
           />
 
           <CellToggle
