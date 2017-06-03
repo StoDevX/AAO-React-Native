@@ -5,6 +5,7 @@ import {Section} from 'react-native-tableview-simple'
 import type {TopLevelViewPropsType} from '../../types'
 import Communications from 'react-native-communications'
 import DeviceInfo from 'react-native-device-info'
+import {version} from '../../../../package.json'
 import {PushButtonCell} from '../components/push-button'
 import {refreshApp} from '../../../lib/refresh'
 
@@ -24,7 +25,7 @@ export default class SupportSection extends React.Component {
       ----- Please do not edit below here -----
       ${DeviceInfo.getBrand()} ${DeviceInfo.getModel()}
       ${DeviceInfo.getDeviceId()}
-      ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}
+      ${DeviceInfo.getSystemName()} ${version}
       ${DeviceInfo.getReadableVersion()}
     `
 
