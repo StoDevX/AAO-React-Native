@@ -8,7 +8,7 @@ platform :android do
            build_type: 'Release',
            print_command: true,
            print_command_output: true)
-    
+
     UI.message lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS]
   end
 
@@ -31,18 +31,10 @@ platform :android do
     # set the app version
     set_version
 
-    # set where this build came from
-    set_package_data(data: {
-      allaboutolaf: {
-        source: 'beta',
-      },
-    })
-
     # and run
     should_deploy = ENV['run_deploy'] == '1'
     if should_deploy
       auto_beta
-      codepush
     else
       build
     end
@@ -54,10 +46,6 @@ platform :android do
     set_gradle_version_name(version_name: version,
                             gradle_path: lane_context[:GRADLE_FILE])
     set_package_data(data: { version: "#{version}" })
-  end
-
-  lane :codepush do
-    codepush_cli(app: 'AllAboutOlaf-Android')
   end
 
   desc 'extract the android keys from the match repo'

@@ -44,25 +44,13 @@ platform :ios do
     # set the app version
     set_version
 
-    # set where this build came from
-    set_package_data(data: {
-      allaboutolaf: {
-        source: 'beta',
-      },
-    })
-
     # and run
     should_deploy = ENV['run_deploy'] == '1'
     if should_deploy
       auto_beta
-      codepush
     else
       build
     end
-  end
-
-  lane :codepush do
-    codepush_cli(app: 'AllAboutOlaf-iOS')
   end
 
   desc 'Include the build number in the version string'
@@ -84,7 +72,7 @@ platform :ios do
     create_keychain(name: keychain,
                     password: password,
                     timeout: 3600)
-    
+
     # Set up code signing correctly
     # (more information: https://codesigning.guide)
     match(type: 'appstore', readonly: true)
