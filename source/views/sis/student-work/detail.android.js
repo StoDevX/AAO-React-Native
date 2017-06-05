@@ -120,11 +120,11 @@ function Links({job}: {job: JobType}) {
   const links = getLinksFromJob(job)
   return links.length
     ? <Card header="LINKS" style={styles.card}>
-        {links.map(url => (
+        {links.map(url =>
           <Text key={url} style={styles.cardBody} onPress={() => openUrl(url)}>
             {url}
-          </Text>
-        ))}
+          </Text>,
+        )}
       </Card>
     : null
 }

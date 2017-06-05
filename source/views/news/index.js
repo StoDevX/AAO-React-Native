@@ -20,7 +20,7 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
           id: 'StOlafNewsView',
           title: 'St. Olaf',
           icon: 'school',
-          component: () => (
+          component: () =>
             <NewsContainer
               navigator={navigator}
               route={route}
@@ -28,14 +28,13 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
               url="https://wp.stolaf.edu/wp-json/wp/v2/posts"
               query={{per_page: 10, _embed: true}}
               name="St. Olaf"
-            />
-          ),
+            />,
         },
         {
           id: 'OlevilleNewsView',
           title: 'Oleville',
           icon: 'happy',
-          component: () => (
+          component: () =>
             <NewsContainer
               navigator={navigator}
               route={route}
@@ -44,42 +43,39 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
               query={{per_page: 10, _embed: true}}
               embedFeaturedImage={true}
               name="Oleville"
-            />
-          ),
+            />,
         },
         {
           id: 'MessNewsView',
           title: 'The Mess',
           icon: 'paper',
-          component: () => (
+          component: () =>
             <NewsContainer
               navigator={navigator}
               route={route}
               mode="rss"
               url="http://manitoumessenger.com/feed/"
               name="The Mess"
-            />
-          ),
+            />,
         },
         {
           id: 'PoliticOleNewsView',
           title: 'PoliticOle',
           icon: 'megaphone',
-          component: () => (
+          component: () =>
             <NewsContainer
               navigator={navigator}
               route={route}
               mode="rss"
               url="http://oleville.com/politicole/feed/"
               name="PoliticOle"
-            />
-          ),
+            />,
         },
         {
           id: 'KstoNewsView',
           title: 'KSTO',
           icon: 'radio',
-          component: () => (
+          component: () =>
             <NewsContainer
               navigator={navigator}
               route={route}
@@ -87,8 +83,7 @@ export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
               url="https://pages.stolaf.edu/ksto/wp-json/wp/v2/posts/"
               query={{per_page: 10, _embed: true}}
               name="KSTO"
-            />
-          ),
+            />,
         },
       ]}
     />

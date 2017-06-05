@@ -31,14 +31,14 @@ export default class TabbedView extends React.Component {
         tintColor={c.mandarin}
         style={[styles.container, this.props.style]}
       >
-        {tabs.map(tab => (
+        {tabs.map(tab =>
           <TabBarItem
             key={tab.id}
             tab={tab}
             onChangeTab={this.onChangeTab}
             isSelected={this.state.selectedTab === tab.id}
-          />
-        ))}
+          />,
+        )}
       </TabBarIOS>
     )
   }

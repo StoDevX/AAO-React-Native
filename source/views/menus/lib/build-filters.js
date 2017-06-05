@@ -56,7 +56,8 @@ export function buildFilters(
       enabled: shouldShowSpecials,
       spec: {
         label: 'Only Show Specials',
-        caption: 'Allows you to either see only the "specials" for today, or everything the location has to offer (e.g., condiments.)',
+        caption:
+          'Allows you to either see only the "specials" for today, or everything the location has to offer (e.g., condiments.)',
       },
       apply: {
         key: 'special',

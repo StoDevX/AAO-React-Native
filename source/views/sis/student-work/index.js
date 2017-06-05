@@ -133,9 +133,8 @@ export default class StudentWorkView extends React.Component {
         refreshing={this.state.refreshing}
         onRefresh={this.refresh}
       >
-        {(job: JobType) => (
-          <JobRow onPress={() => this.onPressJob(job.title, job)} job={job} />
-        )}
+        {(job: JobType) =>
+          <JobRow onPress={() => this.onPressJob(job.title, job)} job={job} />}
       </SimpleListView>
     )
   }

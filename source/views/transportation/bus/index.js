@@ -48,7 +48,8 @@ export default class BusView extends React.Component {
     if (!activeBusLine) {
       return (
         <NoticeView
-          text={`The line "${this.props.line}" was not found among ${busLines
+          text={`The line "${this.props
+            .line}" was not found among ${busLines
             .map(({line}) => line)
             .join(', ')}`}
         />

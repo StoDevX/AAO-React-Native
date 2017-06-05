@@ -103,7 +103,7 @@ export class StudentOrgsDetailView extends React.Component {
 
         {contacts.length
           ? <Card header="Contact" style={styles.card}>
-              {contacts.map((c, i) => (
+              {contacts.map((c, i) =>
                 <Text
                   key={i}
                   selectable={true}
@@ -112,8 +112,8 @@ export class StudentOrgsDetailView extends React.Component {
                 >
                   {c.title ? c.title + ': ' : ''}
                   {c.firstName} {c.lastName} ({c.email})
-                </Text>
-              ))}
+                </Text>,
+              )}
             </Card>
           : null}
 
@@ -122,7 +122,7 @@ export class StudentOrgsDetailView extends React.Component {
               header={advisors.length === 1 ? 'Advisor' : 'Advisors'}
               style={styles.card}
             >
-              {advisors.map((c, i) => (
+              {advisors.map((c, i) =>
                 <Text
                   key={i}
                   selectable={true}
@@ -130,8 +130,8 @@ export class StudentOrgsDetailView extends React.Component {
                   onPress={() => this.openEmail(c.email, orgName)}
                 >
                   {c.name} ({c.email})
-                </Text>
-              ))}
+                </Text>,
+              )}
             </Card>
           : null}
 

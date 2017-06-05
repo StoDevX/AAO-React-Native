@@ -42,7 +42,9 @@ export function FilterMenuToolbar({date, title, filters, onPress}: PropsType) {
         isActive={isFiltered}
         title={
           isFiltered
-            ? `${appliedFilterCount} ${appliedFilterCount === 1 ? 'Filter' : 'Filters'}`
+            ? `${appliedFilterCount} ${appliedFilterCount === 1
+                ? 'Filter'
+                : 'Filters'}`
             : 'No Filters'
         }
         iconName={Platform.OS === 'ios' ? 'ios-funnel' : 'md-funnel'}

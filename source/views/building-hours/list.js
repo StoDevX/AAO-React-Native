@@ -66,14 +66,13 @@ export class BuildingHoursList extends React.Component {
         refreshing={this.props.loading}
         onRefresh={this.props.onRefresh}
       >
-        {(data: BuildingType) => (
+        {(data: BuildingType) =>
           <BuildingRow
             name={data.name}
             info={data}
             now={this.props.now}
             onPress={() => this.onPressRow(data)}
-          />
-        )}
+          />}
       </SimpleListView>
     )
   }

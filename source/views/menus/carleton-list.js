@@ -84,7 +84,7 @@ export class CarletonMenuPicker extends React.Component {
 
     return (
       <ScrollView style={styles.container}>
-        {carleton.map((loc: CarletonDetailMenuType, i, collection) => (
+        {carleton.map((loc: CarletonDetailMenuType, i, collection) =>
           <View key={i}>
             <ListRow
               onPress={() => this.onPressRow(loc)}
@@ -97,8 +97,8 @@ export class CarletonMenuPicker extends React.Component {
             {i < collection.length - 1
               ? <ListSeparator spacing={{left: 15}} />
               : null}
-          </View>
-        ))}
+          </View>,
+        )}
       </ScrollView>
     )
   }

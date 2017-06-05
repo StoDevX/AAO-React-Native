@@ -128,7 +128,7 @@ export class BuildingHoursDetailView extends React.Component {
           </View>
 
           <TableView>
-            {schedules.map(set => (
+            {schedules.map(set =>
               <Section
                 key={set.title}
                 header={set.title.toUpperCase()}
@@ -151,8 +151,8 @@ export class BuildingHoursDetailView extends React.Component {
                     />
                   )
                 })}
-              </Section>
-            ))}
+              </Section>,
+            )}
           </TableView>
         </View>
       </ParallaxView>

@@ -99,7 +99,7 @@ export class StudentOrgsDetailView extends React.Component {
 
           {contacts.length
             ? <Section header="CONTACT">
-                {contacts.map((c, i) => (
+                {contacts.map((c, i) =>
                   <Cell
                     key={i}
                     cellStyle={c.title ? 'Subtitle' : 'Basic'}
@@ -107,22 +107,22 @@ export class StudentOrgsDetailView extends React.Component {
                     title={`${c.firstName} ${c.lastName}`}
                     detail={c.title}
                     onPress={() => Linking.openURL(`mailto:${c.email}`)}
-                  />
-                ))}
+                  />,
+                )}
               </Section>
             : null}
 
           {advisors.length
             ? <Section header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
-                {advisors.map((c, i) => (
+                {advisors.map((c, i) =>
                   <Cell
                     key={i}
                     cellStyle="Basic"
                     accessory="DisclosureIndicator"
                     title={c.name}
                     onPress={() => Linking.openURL(`mailto:${c.email}`)}
-                  />
-                ))}
+                  />,
+                )}
               </Section>
             : null}
 
