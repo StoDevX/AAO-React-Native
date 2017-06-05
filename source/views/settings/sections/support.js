@@ -25,9 +25,8 @@ export default class SupportSection extends React.Component {
       ----- Please do not edit below here -----
       ${DeviceInfo.getBrand()} ${DeviceInfo.getModel()}
       ${DeviceInfo.getDeviceId()}
-      ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}
+      ${DeviceInfo.getSystemName()} ${version}
       ${DeviceInfo.getReadableVersion()}
-      Codepush: ${version}
     `
 
   openEmail = () => {
