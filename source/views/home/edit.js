@@ -29,21 +29,19 @@ import {allViews} from '../views'
 const window = Dimensions.get('window')
 const objViews = fromPairs(allViews.map(v => [v.view, v]))
 
-const ReorderIcon = () => (
+const ReorderIcon = () =>
   <IonIcon
     name={Platform.OS === 'ios' ? 'ios-reorder' : 'md-reorder'}
     size={32}
     style={styles.listButtonIcon}
   />
-)
 
-const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
+const MenuIcon = ({icon, tint}: {icon: string, tint: string}) =>
   <EntypoIcon
     name={icon}
     size={32}
     style={[styles.rectangleButtonIcon, {color: tint}]}
   />
-)
 
 class Row extends React.Component {
   state = {
@@ -142,9 +140,8 @@ function EditHomeView(props: {onSaveOrder: () => any, order: string[]}) {
       data={objViews}
       order={props.order}
       onChangeOrder={(order: ViewType[]) => props.onSaveOrder(order)}
-      renderRow={({data, active}: {data: ViewType, active: boolean}) => (
-        <Row data={data} active={active} />
-      )}
+      renderRow={({data, active}: {data: ViewType, active: boolean}) =>
+        <Row data={data} active={active} />}
     />
   )
 }

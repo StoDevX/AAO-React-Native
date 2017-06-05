@@ -85,15 +85,15 @@ function Links({job}: {job: JobType}) {
   const links = getLinksFromJob(job)
   return links.length
     ? <Section header="LINKS">
-        {links.map(url => (
+        {links.map(url =>
           <Cell
             key={url}
             cellStyle="Title"
             title={url}
             accessory="DisclosureIndicator"
             onPress={() => openUrl(url)}
-          />
-        ))}
+          />,
+        )}
       </Section>
     : null
 }

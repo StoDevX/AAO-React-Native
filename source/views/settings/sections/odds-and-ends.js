@@ -48,11 +48,7 @@ class OddsAndEndsSection extends React.Component {
         </Section>
 
         <Section header="ODDS &amp; ENDS">
-          <Cell
-            cellStyle="RightDetail"
-            title="Version"
-            detail={version}
-          />
+          <Cell cellStyle="RightDetail" title="Version" detail={version} />
 
           <CellToggle
             label="Share Analytics"

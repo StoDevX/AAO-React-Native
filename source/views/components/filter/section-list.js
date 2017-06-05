@@ -64,7 +64,7 @@ export function ListSection({filter, onChange}: PropsType) {
   }
 
   const hasImageColumn = options.some(val => Boolean(val.image))
-  let buttons = options.map(val => (
+  let buttons = options.map(val =>
     <Cell
       key={val.title}
       onPress={() => buttonPushed(val)}
@@ -80,8 +80,8 @@ export function ListSection({filter, onChange}: PropsType) {
           {val.detail ? <Text style={styles.detail}>{val.detail}</Text> : null}
         </Column>
       }
-    />
-  ))
+    />,
+  )
 
   if (mode === 'OR') {
     const showAllButton = (

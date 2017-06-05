@@ -27,9 +27,8 @@ export default function SISView({navigator, route}: TopLevelViewPropsType) {
           id: 'StudentWorkView',
           title: 'Open Jobs',
           icon: 'briefcase',
-          component: () => (
-            <StudentWorkView navigator={navigator} route={route} />
-          ),
+          component: () =>
+            <StudentWorkView navigator={navigator} route={route} />,
         },
         // {
         //   id: 'CoursesView',

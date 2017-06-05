@@ -108,7 +108,7 @@ class CoursesView extends React.Component {
         refreshing={this.state.loading}
         onRefresh={this.refresh}
       >
-        {(course: CourseType) => (
+        {(course: CourseType) =>
           <ListRow style={styles.rowContainer}>
             <Column>
               <Title>{course.name}</Title>
@@ -117,8 +117,7 @@ class CoursesView extends React.Component {
                 ? <Detail>{course.instructors}</Detail>
                 : null}
             </Column>
-          </ListRow>
-        )}}
+          </ListRow>}}
       </SimpleListView>
     )
   }

@@ -71,12 +71,11 @@ export class NewsList extends React.Component {
         refreshing={this.props.loading}
         onRefresh={this.props.onRefresh}
       >
-        {(story: StoryType) => (
+        {(story: StoryType) =>
           <NewsRow
             onPress={() => this.onPressNews(story.title, story)}
             story={story}
-          />
-        )}
+          />}
       </SimpleListView>
     )
   }

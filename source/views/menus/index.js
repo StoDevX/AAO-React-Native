@@ -21,7 +21,7 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
           id: 'StavHallMenuView',
           title: 'Stav Hall',
           icon: 'nutrition',
-          component: () => (
+          component: () =>
             <BonAppHostedMenu
               navigator={navigator}
               route={route}
@@ -32,14 +32,13 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
                 'Tracking wild vegan burgers…',
                 '"Cooking" some lutefisk…',
               ]}
-            />
-          ),
+            />,
         },
         {
           id: 'TheCageMenuView',
           title: 'The Cage',
           icon: 'cafe',
-          component: () => (
+          component: () =>
             <BonAppHostedMenu
               navigator={navigator}
               route={route}
@@ -50,29 +49,26 @@ export function MenusView({navigator, route}: TopLevelViewPropsType) {
                 'Checking for vegan cookies…',
                 'Serving up some shakes…',
               ]}
-            />
-          ),
+            />,
         },
         {
           id: 'ThePauseMenuView',
           title: 'The Pause',
           icon: 'paw',
-          component: () => (
+          component: () =>
             <GitHubHostedMenu
               navigator={navigator}
               route={route}
               name="pause"
               loadingMessage={['Mixing up a shake…', 'Spinning up pizzas…']}
-            />
-          ),
+            />,
         },
         {
           id: 'CarletonMenuListView',
           title: 'Carleton',
           icon: 'menu',
-          component: () => (
-            <CarletonMenuPicker navigator={navigator} route={route} />
-          ),
+          component: () =>
+            <CarletonMenuPicker navigator={navigator} route={route} />,
         },
         // {
         //   id: 'BonAppDevToolView',
