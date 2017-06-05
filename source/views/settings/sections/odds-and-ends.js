@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import {View} from 'react-native'
-import {getVersion} from 'react-native-device-info'
 import {Cell, Section} from 'react-native-tableview-simple'
 import {version} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
@@ -36,12 +35,6 @@ class OddsAndEndsSection extends React.Component {
     })
 
   render() {
-    //    native (codepush)
-    // eg, 2.1.2 (2.1.2+2957)
-    const versionString = getVersion() === version
-      ? getVersion()
-      : `${getVersion()} (${version})`
-
     return (
       <View>
         <Section header="MISCELLANY">
@@ -58,7 +51,7 @@ class OddsAndEndsSection extends React.Component {
           <Cell
             cellStyle="RightDetail"
             title="Version"
-            detail={versionString}
+            detail={version}
           />
 
           <CellToggle
