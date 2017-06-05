@@ -7,6 +7,7 @@ import android.util.Log;
 
 // keep these sorted alphabetically
 import com.airbnb.android.react.maps.MapsPackage;
+import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.bugsnag.BugsnagReactNative;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.facebook.react.ReactApplication;
@@ -49,6 +50,7 @@ public class MainApplication extends Application implements ReactApplication {
         new LinearGradientPackage(),
         new MapsPackage(),
         new ReactNativeOneSignalPackage(),
+        new ReactNativeRestartPackage(),
         new RNDeviceInfo(),
         new RNNetworkInfoPackage(),
         new RNViewShotPackage(),
