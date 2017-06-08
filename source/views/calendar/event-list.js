@@ -93,12 +93,11 @@ export class EventList extends React.Component {
         refreshing={this.props.refreshing}
         onRefresh={this.props.onRefresh}
       >
-        {(event: EventType) => (
+        {(event: EventType) =>
           <EventRow
             onPress={() => this.onPressEvent(event.summary, event)}
             event={event}
-          />
-        )}
+          />}
       </SimpleListView>
     )
   }
