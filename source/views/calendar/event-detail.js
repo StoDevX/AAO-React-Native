@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
-import {Text, ScrollView, StyleSheet, View} from 'react-native'
-import * as c from '../components/colors'
+import {Text, ScrollView, StyleSheet} from 'react-native'
 import moment from 'moment-timezone'
 import {fastGetTrimmedText} from '../../lib/html'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
