@@ -95,7 +95,7 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
     // 12:00 PM to Jun. 25 3:00pm
     // Midnight to Jun. 25 <-- assuming the end time is also midnight
     start = event.startTime.format('h:mm A')
-    const endFormat = endTime === midnightTime ? 'MMM. D' : 'MMM. D h:mm A''
+    const endFormat = endTime === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
     end = `to ${event.endTime.format(endFormat)}`
   } else if (sillyZeroLength) {
     start = event.startTime.format('h:mm A')
