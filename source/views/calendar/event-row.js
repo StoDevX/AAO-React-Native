@@ -32,14 +32,21 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function EventRow({event}: {event: EventType}) {
+export default function EventRow({
+  event,
+  onPress,
+}: {
+  event: EventType,
+  onPress: () => any,
+}) {
   const title = fastGetTrimmedText(event.summary)
 
   return (
     <ListRow
       contentContainerStyle={styles.row}
-      arrowPosition="none"
+      arrowPosition="top"
       fullWidth={true}
+      onPress={onPress}
     >
       <Row>
         <CalendarTimes event={event} style={styles.timeContainer} />
