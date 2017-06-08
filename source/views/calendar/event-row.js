@@ -40,6 +40,10 @@ export default function EventRow({
   onPress: () => any,
 }) {
   const title = fastGetTrimmedText(event.summary)
+  
+  const location = event.location && event.location.trim().length
+    ? <Detail style={styles.detail}>{event.location}</Detail>
+    : null
 
   return (
     <ListRow
@@ -53,9 +57,9 @@ export default function EventRow({
 
         <Bar style={styles.bar} />
 
-        <Column flex={1} paddingTop={2} paddingBottom={3}>
+        <Column flex={1} paddingTop={2} paddingBottom={3} justifyContent="space-between">
           <Title style={styles.title}>{title}</Title>
-          <Detail style={styles.detail}>{event.location}</Detail>
+          {location}
         </Column>
       </Row>
     </ListRow>
@@ -78,14 +82,21 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
       </Column>
     )
   }
+  
+  let startTime = event.startTime.format('h:mm A')
+  let endTime = event.endTime.format('h:mm A')
+  let midnightTime = '12:00 AM'
 
   let start, end
   if (event.isOngoing) {
     start = event.startTime.format('MMM. D')
     end = event.endTime.format('MMM. D')
   } else if (multiDay) {
+    // 12:00 PM to Jun. 25 3:00pm
+    // Midnight to Jun. 25 <-- assuming the end time is also midnight
     start = event.startTime.format('h:mm A')
-    end = `to ${event.endTime.format('MMM. D h:mm A')}`
+    const endFormat = endTime === midnightTime ? 'MMM. D' : 'MMM. D h:mm A''
+    end = `to ${event.endTime.format(endFormat)}`
   } else if (sillyZeroLength) {
     start = event.startTime.format('h:mm A')
     end = 'until ???'
@@ -93,6 +104,9 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
     start = event.startTime.format('h:mm A')
     end = event.endTime.format('h:mm A')
   }
+  
+  start = start === midnightTime ? 'Midnight' : start
+  end = end === midnightTime ? 'Midnight' : end
 
   return (
     <Column style={style}>
