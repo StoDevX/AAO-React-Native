@@ -100,7 +100,7 @@ export function BusLine({line, now}: {line: BusLineType, now: moment}) {
         titleStyle={androidColor}
       />
 
-      {pairs.map(([placeTitle, moment], i, list) => (
+      {pairs.map(([placeTitle, moment], i, list) =>
         <View key={i}>
           <BusStopRow
             // get the arrival time for this stop from each bus loop after
@@ -115,8 +115,8 @@ export function BusLine({line, now}: {line: BusLineType, now: moment}) {
             isLastRow={i === list.length - 1}
           />
           {i < list.length - 1 ? <Separator style={styles.separator} /> : null}
-        </View>
-      ))}
+        </View>,
+      )}
     </View>
   )
 }

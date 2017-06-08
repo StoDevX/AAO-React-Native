@@ -182,7 +182,7 @@ class FancyMenuView extends React.Component {
               renderSeparator={this.renderSeparator}
               renderSectionHeader={this.renderSectionHeader}
             >
-              {(rowData: MenuItemType) => (
+              {(rowData: MenuItemType) =>
                 <FoodItemRow
                   data={rowData}
                   corIcons={this.props.menuCorIcons}
@@ -191,8 +191,7 @@ class FancyMenuView extends React.Component {
                   //badgeSpecials={!specialsFilterEnabled}
                   badgeSpecials={true}
                   spacing={{left: leftSideSpacing}}
-                />
-              )}
+                />}
             </SimpleListView>}
       </View>
     )

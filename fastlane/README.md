@@ -78,11 +78,6 @@ Run the appropriate action on CI
 fastlane android set_version
 ```
 Include the build number in the version string
-### android codepush
-```
-fastlane android codepush
-```
-
 ### android matchesque
 ```
 fastlane android matchesque
@@ -122,11 +117,6 @@ Upload dYSM symbols to Bugsnag from Apple
 fastlane ios ci-run
 ```
 Run iOS builds or tests, as appropriate
-### ios codepush
-```
-fastlane ios codepush
-```
-
 ### ios set_version
 ```
 fastlane ios set_version

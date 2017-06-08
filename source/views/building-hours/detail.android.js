@@ -150,7 +150,7 @@ export class BuildingHoursDetailView extends React.Component {
             <Text style={styles.badgeText}>{openStatus}</Text>
           </View>
 
-          {schedules.map(set => (
+          {schedules.map(set =>
             <Card
               key={set.title}
               style={styles.scheduleContainer}
@@ -158,21 +158,21 @@ export class BuildingHoursDetailView extends React.Component {
               footer={set.notes}
             >
               <View style={styles.scheduleHoursWrapper}>
-                {set.hours.map((schedule, i) => (
+                {set.hours.map((schedule, i) =>
                   <ScheduleRow
                     key={i}
                     now={this.state.now}
                     schedule={schedule}
                     isActive={
                       set.isPhysicallyOpen !== false &&
-                        schedule.days.includes(dayOfWeek) &&
-                        isBuildingOpenAtMoment(schedule, this.state.now)
+                      schedule.days.includes(dayOfWeek) &&
+                      isBuildingOpenAtMoment(schedule, this.state.now)
                     }
-                  />
-                ))}
+                  />,
+                )}
               </View>
-            </Card>
-          ))}
+            </Card>,
+          )}
         </View>
       </ParallaxView>
     )

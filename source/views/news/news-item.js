@@ -50,7 +50,9 @@ export default function NewsItem({
     <header class="aao-header">
       <h1>${story.title}</h1>
     </header>
-    ${embedFeaturedImage && story.featuredImage ? `<img src="${story.featuredImage}">` : ''}
+    ${embedFeaturedImage && story.featuredImage
+      ? `<img src="${story.featuredImage}">`
+      : ''}
     ${story.content}
   `
 

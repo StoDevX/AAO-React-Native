@@ -23,8 +23,11 @@ lane :'propagate-version' do |options|
   UI.message "into the Info.plist and build.gradle files" 
 
   # update iOS version
-  increment_version_number(version_number: version,
+  # we're splitting here because iTC can't handle versions with dashes in them
+  increment_version_number(version_number: version.split('-')[0],
                            xcodeproj: ENV['GYM_PROJECT'])
+  increment_build_number(xcodeproj: ENV['GYM_PROJECT'])
+
   # update Android version
   set_gradle_version_name(version_name: version,
                           gradle_path: lane_context[:GRADLE_FILE])

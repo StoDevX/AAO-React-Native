@@ -1,9 +1,8 @@
 // @flow
 import React from 'react'
 import {View} from 'react-native'
-import {getVersion} from 'react-native-device-info'
 import {Cell, Section} from 'react-native-tableview-simple'
-import {version, allaboutolaf} from '../../../../package.json'
+import {version} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
 import {setFeedbackStatus} from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
@@ -36,17 +35,6 @@ class OddsAndEndsSection extends React.Component {
     })
 
   render() {
-    // allows us to show [dev], [beta], or nothing for release builds
-    const versionMoniker = process.env.NODE_ENV === 'development'
-      ? '[dev] '
-      : allaboutolaf.source ? `[${allaboutolaf.source}] ` : ''
-
-    //    native (codepush)
-    // eg, 2.1.2 (2.1.2+2957)
-    const versionString = getVersion() === version
-      ? getVersion()
-      : `${getVersion()} (${version})`
-
     return (
       <View>
         <Section header="MISCELLANY">
@@ -60,11 +48,7 @@ class OddsAndEndsSection extends React.Component {
         </Section>
 
         <Section header="ODDS &amp; ENDS">
-          <Cell
-            cellStyle="RightDetail"
-            title="Version"
-            detail={`${versionMoniker}${versionString}`}
-          />
+          <Cell cellStyle="RightDetail" title="Version" detail={version} />
 
           <CellToggle
             label="Share Analytics"

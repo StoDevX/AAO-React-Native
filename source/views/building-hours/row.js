@@ -86,15 +86,15 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
         </Row>
 
         <View style={styles.detailWrapper}>
-          {hours.map(({isActive, label, status}, i) => (
+          {hours.map(({isActive, label, status}, i) =>
             <Detail key={i} style={styles.detailRow}>
               <BuildingTimeSlot
                 highlight={hours.length > 1 && isActive}
                 label={label}
                 status={status}
               />
-            </Detail>
-          ))}
+            </Detail>,
+          )}
         </View>
       </Column>
     </ListRow>

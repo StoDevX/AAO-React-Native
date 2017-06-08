@@ -34,7 +34,7 @@ function HomePage({
     >
       <StatusBar barStyle="light-content" backgroundColor={c.gold} />
 
-      {sortedViews.map(view => (
+      {sortedViews.map(view =>
         <HomeScreenButton
           view={view}
           key={view.view}
@@ -51,8 +51,8 @@ function HomePage({
               })
             }
           }}
-        />
-      ))}
+        />,
+      )}
     </ScrollView>
   )
 }

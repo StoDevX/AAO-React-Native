@@ -1,8 +1,7 @@
 // @flow
 import React from 'react'
-import {ScrollView, Text, StyleSheet, Linking} from 'react-native'
+import {ScrollView, Text, View, StyleSheet, Linking} from 'react-native'
 import moment from 'moment'
-import {HtmlView} from '../components/html-view'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
@@ -31,7 +30,9 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     backgroundColor: c.white,
-    height: 200,
+  },
+  descriptionText: {
+    fontSize: 16,
   },
   footer: {
     fontSize: 10,
@@ -98,7 +99,7 @@ export class StudentOrgsDetailView extends React.Component {
 
           {contacts.length
             ? <Section header="CONTACT">
-                {contacts.map((c, i) => (
+                {contacts.map((c, i) =>
                   <Cell
                     key={i}
                     cellStyle={c.title ? 'Subtitle' : 'Basic'}
@@ -106,42 +107,30 @@ export class StudentOrgsDetailView extends React.Component {
                     title={`${c.firstName} ${c.lastName}`}
                     detail={c.title}
                     onPress={() => Linking.openURL(`mailto:${c.email}`)}
-                  />
-                ))}
+                  />,
+                )}
               </Section>
             : null}
 
           {advisors.length
             ? <Section header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
-                {advisors.map((c, i) => (
+                {advisors.map((c, i) =>
                   <Cell
                     key={i}
                     cellStyle="Basic"
                     accessory="DisclosureIndicator"
                     title={c.name}
                     onPress={() => Linking.openURL(`mailto:${c.email}`)}
-                  />
-                ))}
+                  />,
+                )}
               </Section>
             : null}
 
           {description
             ? <Section header="DESCRIPTION">
-                <HtmlView
-                  style={styles.description}
-                  html={`
-                    <style>
-                      body {
-                        margin: 10px 15px 10px;
-                        font-family: -apple-system;
-                      }
-                      * {
-                        max-width: 100%;
-                      }
-                    </style>
-                    ${description}
-                  `}
-                />
+                <View style={styles.description}>
+                  <Text style={styles.descriptionText}>{description}</Text>
+                </View>
               </Section>
             : null}
 

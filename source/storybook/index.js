@@ -53,8 +53,7 @@ import SettingsView from '../views/settings'
 import CreditsView from '../views/settings/credits'
 import PrivacyView from '../views/settings/privacy'
 import LegalView from '../views/settings/legal'
-import CredentialsLoginSection
-  from '../views/settings/sections/login-credentials'
+import CredentialsLoginSection from '../views/settings/sections/login-credentials'
 import TokenLoginSection from '../views/settings/sections/login-token'
 import OddsAndEndsSection from '../views/settings/sections/odds-and-ends'
 import SupportSection from '../views/settings/sections/support'
@@ -74,11 +73,10 @@ type ViewCollectionType = {
   },
 }
 
-const Nav = ({children}: {children?: Function}) => (
+const Nav = ({children}: {children?: Function}) =>
   <Navigator
     renderScene={(route, navigator) => children && children({route, navigator})}
   />
-)
 
 export class SnapshotsView extends React.Component {
   state = {
@@ -209,13 +207,13 @@ export class SnapshotsView extends React.Component {
   render() {
     const selected = get(this.views, this.state.viewPath, {})
 
-    const options = this.viewsAsList().map(([parent, child]) => (
+    const options = this.viewsAsList().map(([parent, child]) =>
       <Picker.Item
         key={`${parent}.${child}`}
         label={`${parent} ❯ ${child}`}
         value={`${parent}.${child}`}
-      />
-    ))
+      />,
+    )
 
     const height = Dimensions.get('window').height
     const heightDiff = Platform.OS === 'ios' ? 64 : 56
