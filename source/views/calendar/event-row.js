@@ -88,8 +88,8 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
     )
   }
 
-  let startTime = event.startTime.format('h:mm A')
-  let endTime = event.endTime.format('h:mm A')
+  let startTimeFormatted = event.startTime.format('h:mm A')
+  let endTimeFormatted = event.endTime.format('h:mm A')
   let midnightTime = '12:00 AM'
 
   let start, end
@@ -99,15 +99,17 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
   } else if (multiDay) {
     // 12:00 PM to Jun. 25 3:00pm
     // Midnight to Jun. 25 <-- assuming the end time is also midnight
-    start = event.startTime.format('h:mm A')
-    const endFormat = endTime === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
+    start = startTimeFormatted
+    const endFormat = endTimeFormatted === midnightTime
+      ? 'MMM. D'
+      : 'MMM. D h:mm A'
     end = `to ${event.endTime.format(endFormat)}`
   } else if (sillyZeroLength) {
-    start = event.startTime.format('h:mm A')
+    start = startTimeFormatted
     end = 'until ???'
   } else {
-    start = event.startTime.format('h:mm A')
-    end = event.endTime.format('h:mm A')
+    start = startTimeFormatted
+    end = endTimeFormatted
   }
 
   start = start === midnightTime ? 'Midnight' : start
