@@ -40,7 +40,7 @@ export default function EventRow({
   onPress: () => any,
 }) {
   const title = fastGetTrimmedText(event.summary)
-  
+
   const location = event.location && event.location.trim().length
     ? <Detail style={styles.detail}>{event.location}</Detail>
     : null
@@ -57,7 +57,12 @@ export default function EventRow({
 
         <Bar style={styles.bar} />
 
-        <Column flex={1} paddingTop={2} paddingBottom={3} justifyContent="space-between">
+        <Column
+          flex={1}
+          paddingTop={2}
+          paddingBottom={3}
+          justifyContent="space-between"
+        >
           <Title style={styles.title}>{title}</Title>
           {location}
         </Column>
@@ -82,7 +87,7 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
       </Column>
     )
   }
-  
+
   let startTime = event.startTime.format('h:mm A')
   let endTime = event.endTime.format('h:mm A')
   let midnightTime = '12:00 AM'
@@ -104,7 +109,7 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
     start = event.startTime.format('h:mm A')
     end = event.endTime.format('h:mm A')
   }
-  
+
   start = start === midnightTime ? 'Midnight' : start
   end = end === midnightTime ? 'Midnight' : end
 
