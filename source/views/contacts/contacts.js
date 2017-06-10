@@ -22,3 +22,7 @@ export default function ContactView() {
     </SimpleListView>
   )
 }
+ContactView.navigationOptions = {
+  title: 'Important Contacts',
+  headerBackTitle: 'Contacts',
+}
