@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
 
 export class StudentOrgsDetailView extends React.Component {
   props: TopLevelViewPropsType & {
-    org: StudentOrgType,
+    navigation: {state: {params: {org: StudentOrgType}}},
   }
 
   // Using Communications because `mailTo` complains about
@@ -75,7 +75,7 @@ export class StudentOrgsDetailView extends React.Component {
       advisors,
       description,
       lastUpdated: orgLastUpdated,
-    } = cleanOrg(this.props.org)
+    } = cleanOrg(this.props.navigation.state.params.org)
 
     return (
       <ScrollView>

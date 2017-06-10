@@ -66,6 +66,11 @@ const styles = StyleSheet.create({
 })
 
 export class StudentOrgsView extends React.Component {
+  static navigationOptions = {
+    title: 'Student Orgs',
+    headerBackTitle: 'Orgs',
+  }
+
   state: {
     orgs: {[key: string]: StudentOrgType[]},
     results: {[key: string]: StudentOrgType[]},
@@ -170,13 +175,7 @@ export class StudentOrgsView extends React.Component {
 
   onPressRow = (data: StudentOrgType) => {
     tracker.trackEvent('student-org', data.name)
-    this.props.navigator.push({
-      id: 'StudentOrgsDetailView',
-      index: this.props.route.index + 1,
-      title: data.name,
-      backButtonTitle: 'Orgs',
-      props: {org: data},
-    })
+    this.props.navigation.navigate('StudentOrgsDetailView', {org: data})
   }
 
   splitToArray = (str: string) => {
