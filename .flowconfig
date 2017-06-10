@@ -21,8 +21,7 @@
 .*/Libraries/react-native/ReactNative.js
 
 ; Ignore other things
-.*/node_modules/jest-runtime/build/__tests__/.*
-.*/node_modules/babel-plugin-flow-react-proptypes/src/__test__/.*
+.*/node_modules/.*/__tests?__/.*
 .*/node_modules/.*/examples/.*
 .*/node_modules/react-native-mock/.*
 
