@@ -84,6 +84,12 @@ const styles = StyleSheet.create({
 })
 
 export class BuildingHoursDetailView extends React.Component {
+  static navigationOptions = props => {
+    return {
+      title: props.navigation.state.params.building.name,
+    }
+  }
+
   state: {intervalId: number, now: momentT} = {
     intervalId: 0,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
@@ -100,7 +106,7 @@ export class BuildingHoursDetailView extends React.Component {
     clearTimeout(this.state.intervalId)
   }
 
-  props: BuildingType
+  props: {navigation: {state: {params: {building: BuildingType}}}}
 
   updateTime = () => {
     this.setState({now: moment.tz(CENTRAL_TZ)})
@@ -112,21 +118,23 @@ export class BuildingHoursDetailView extends React.Component {
       Closed: c.salmon,
     }
 
-    const headerImage = this.props.image
-      ? buildingImages[this.props.image]
+    const info = this.props.navigation.state.params.building
+
+    const headerImage = info.image
+      ? buildingImages[info.image]
       : transparentPixel
-    const openStatus = getShortBuildingStatus(this.props, this.state.now)
-    const schedules = normalizeBuildingSchedule(this.props, this.state.now)
+    const openStatus = getShortBuildingStatus(info, this.state.now)
+    const schedules = normalizeBuildingSchedule(info, this.state.now)
     const dayOfWeek = ((this.state.now.format('dd'): any): DayOfWeekEnumType)
 
-    const abbr = this.props.abbreviation
-      ? <Text style={styles.abbr}> ({this.props.abbreviation})</Text>
+    const abbr = info.abbreviation
+      ? <Text style={styles.abbr}> ({info.abbreviation})</Text>
       : null
-    const title = <Text style={styles.name}>{this.props.name}{abbr}</Text>
-    const subtitle = this.props.subtitle
+    const title = <Text style={styles.name}>{info.name}{abbr}</Text>
+    const subtitle = info.subtitle
       ? <View style={styles.subtitle}>
           <Text style={[styles.name, styles.subtitleText]}>
-            {this.props.subtitle}
+            {info.subtitle}
           </Text>
         </View>
       : null

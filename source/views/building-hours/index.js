@@ -28,6 +28,10 @@ const groupBuildings = (buildings: BuildingType[]) =>
   groupBy(buildings, b => b.category || 'Other')
 
 export class BuildingHoursView extends React.Component {
+  static navigationOptions = {
+    title: 'Building Hours',
+  }
+
   state: {
     error: ?Error,
     loading: boolean,
@@ -94,8 +98,7 @@ export class BuildingHoursView extends React.Component {
 
     return (
       <BuildingHoursList
-        route={this.props.route}
-        navigator={this.props.navigator}
+        navigation={this.props.navigation}
         buildings={this.state.buildings}
         now={this.state.now}
         onRefresh={this.fetchData}
