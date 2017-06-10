@@ -6,40 +6,47 @@
 
 import React from 'react'
 
-import TabbedView from '../components/tabbed-view'
+import {TabNavigator} from 'react-navigation'
+import {TabBarIcon} from '../components/tabbar-icon'
+import * as c from '../components/colors'
 
 import OtherModesView from './otherModes'
 import BusView from './bus'
 
-export default function TransportationPage() {
-  return (
-    <TabbedView
-      tabs={[
-        {
-          id: 'ExpressLineBusView',
-          title: 'Express Bus',
-          icon: 'bus',
-          component: () => <BusView line="Express Bus" />,
-        },
-        {
-          id: 'RedLineBusView',
-          title: 'Red Line',
-          icon: 'bus',
-          component: () => <BusView line="Red Line" />,
-        },
-        {
-          id: 'BlueLineBusView',
-          title: 'Blue Line',
-          icon: 'bus',
-          component: () => <BusView line="Blue Line" />,
-        },
-        {
-          id: 'TransportationOtherModesListView',
-          title: 'Other Modes',
-          icon: 'boat',
-          component: () => <OtherModesView />,
-        },
-      ]}
-    />
-  )
+const ExpressLineTab = () => <BusView line="Express Bus" />
+ExpressLineTab.navigationOptions = {
+  tabBarLabel: 'Express Bus',
+  tabBarIcon: TabBarIcon('bus'),
 }
+
+const RedLineTab = () => <BusView line="Red Line" />
+RedLineTab.navigationOptions = {
+  tabBarLabel: 'Red Line',
+  tabBarIcon: TabBarIcon('bus'),
+}
+
+const BlueLineTab = () => <BusView line="Blue Line" />
+BlueLineTab.navigationOptions = {
+  tabBarLabel: 'Blue Line',
+  tabBarIcon: TabBarIcon('bus'),
+}
+
+const OtherModesTab = () => <OtherModesView />
+OtherModesTab.navigationOptions = {
+  tabBarLabel: 'Other Modes',
+  tabBarIcon: TabBarIcon('boat'),
+}
+
+export default TabNavigator({
+  ExpressLineBusView: {screen: ExpressLineTab},
+  RedLineBusView: {screen: RedLineTab},
+  BlueLineBusView: {screen: BlueLineTab},
+  TransportationOtherModesListView: {screen: OtherModesTab},
+}, {
+  navigationOptions: {
+    title: 'Transportation',
+  },
+  tabBarOptions: {
+    activeTintColor: c.mandarin,
+  }
+})
