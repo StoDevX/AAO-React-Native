@@ -30,6 +30,7 @@ const groupBuildings = (buildings: BuildingType[]) =>
 export class BuildingHoursView extends React.Component {
   static navigationOptions = {
     title: 'Building Hours',
+    headerBackTitle: 'Hours',
   }
 
   state: {

@@ -84,9 +84,9 @@ const styles = StyleSheet.create({
 })
 
 export class BuildingHoursDetailView extends React.Component {
-  static navigationOptions = props => {
+  static navigationOptions = ({navigation}) => {
     return {
-      title: props.navigation.state.params.building.name,
+      title: navigation.state.params.building.name,
     }
   }
 
