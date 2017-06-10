@@ -108,8 +108,8 @@ function LastUpdated({when}: {when: string}) {
     : null
 }
 
-export default function JobDetailView({job}: {job: JobType}) {
-  job = cleanJob(job)
+export default function JobDetailView(props: {navigation: {state: {params: {job: JobType}}}}) {
+  const job = cleanJob(props.navigation.state.params.job)
 
   return (
     <ScrollView>
