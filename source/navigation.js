@@ -26,42 +26,45 @@ import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
-import {SnapshotsView} from './storybook'
+// import {SnapshotsView} from './storybook'
 import HelpView from './views/help'
 
-export const AppNavigator = StackNavigator({
-  Home: {screen: HomeView},
-  BuildingHours: {screen: BuildingHoursView},
-  BuildingHoursDetail: {screen: BuildingHoursDetailView},
-  Calendar: {screen: CalendarView},
-  Credits: {screen: CreditsView},
-  Dictionary: {screen: DictionaryView},
-  DictionaryDetail: {screen: DictionaryDetailView},
-  EditHome: {screen: EditHomeView},
-  EventDetail: {screen: EventDetailView},
-  Faq: {screen: FaqView},
-  Filter: {screen: FilterView},
-  Help: {screen: HelpView},
-  ImportantContacts: {screen: ContactsView},
-  JobDetail: {screen: JobDetailView},
-  Legal: {screen: LegalView},
-  Menus: {screen: MenusView},
-  News: {screen: NewsView},
-  NewsItem: {screen: NewsItemView},
-  Privacy: {screen: PrivacyView},
-  Settings: {screen: SettingsView},
-  SIS: {screen: SISView},
-  SISLogin: {screen: SISLoginView},
-  Snapshots: {screen: SnapshotsView},
-  Streaming: {screen: StreamingView},
-  StudentOrgs: {screen: StudentOrgsView},
-  StudentOrgsDetail: {screen: StudentOrgsDetailView},
-  Transportation: {screen: TransportationView},
-}, {
-  navigationOptions: {
-    headerStyle: {
-      backgroundColor: c.olevilleGold,
+export const AppNavigator = StackNavigator(
+  {
+    HomeView: {screen: HomeView},
+    BuildingHoursView: {screen: BuildingHoursView},
+    BuildingHoursDetailView: {screen: BuildingHoursDetailView},
+    CalendarView: {screen: CalendarView},
+    CreditsView: {screen: CreditsView},
+    DictionaryView: {screen: DictionaryView},
+    DictionaryDetailView: {screen: DictionaryDetailView},
+    EditHomeView: {screen: EditHomeView},
+    EventDetailView: {screen: EventDetailView},
+    FaqView: {screen: FaqView},
+    FilterView: {screen: FilterView},
+    HelpView: {screen: HelpView},
+    ImportantContactsView: {screen: ContactsView},
+    JobDetailView: {screen: JobDetailView},
+    LegalView: {screen: LegalView},
+    MenusView: {screen: MenusView},
+    NewsView: {screen: NewsView},
+    NewsItemView: {screen: NewsItemView},
+    PrivacyView: {screen: PrivacyView},
+    SettingsView: {screen: SettingsView},
+    SISView: {screen: SISView},
+    SISLoginView: {screen: SISLoginView},
+    // Snapshots: {screen: SnapshotsView},
+    StreamingView: {screen: StreamingView},
+    StudentOrgsView: {screen: StudentOrgsView},
+    StudentOrgsDetailView: {screen: StudentOrgsDetailView},
+    TransportationView: {screen: TransportationView},
+  },
+  {
+    navigationOptions: {
+      headerStyle: {
+        backgroundColor: c.olevilleGold,
+      },
+      headerTintColor: c.white,
     },
-    headerTintColor: c.white,
-  }
-})
+  },
+)
