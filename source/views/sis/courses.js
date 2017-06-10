@@ -6,6 +6,7 @@
 
 import React from 'react'
 import {StyleSheet} from 'react-native'
+import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import delay from 'delay'
 import size from 'lodash/size'
@@ -33,6 +34,11 @@ type CoursesViewPropsType = TopLevelViewPropsType & {
 }
 
 class CoursesView extends React.Component {
+  static navigationOptions = {
+    tabBarLabel: 'Courses',
+    tabBarIcon: TabBarIcon('archive'),
+  }
+
   state: {
     loading: boolean,
   } = {

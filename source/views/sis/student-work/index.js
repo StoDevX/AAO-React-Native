@@ -7,6 +7,7 @@
 
 import React from 'react'
 import {StyleSheet, Text} from 'react-native'
+import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import SimpleListView from '../../components/listview'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
@@ -38,6 +39,11 @@ const styles = StyleSheet.create({
 })
 
 export default class StudentWorkView extends React.Component {
+  static navigationOptions = {
+    tabBarLabel: 'Open Jobs',
+    tabBarIcon: TabBarIcon('briefcase'),
+  }
+
   state: {
     jobs: {[key: string]: JobType[]},
     loading: boolean,

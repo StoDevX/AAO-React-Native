@@ -13,7 +13,7 @@ import {
   RefreshControl,
   Navigator,
 } from 'react-native'
-
+import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
 
@@ -26,6 +26,11 @@ import * as c from '../components/colors'
 import type {TopLevelViewPropsType} from '../types'
 
 class BalancesView extends React.Component {
+  static navigationOptions = {
+    tabBarLabel: 'Balances',
+    tabBarIcon: TabBarIcon('card'),
+  }
+
   state = {
     loading: false,
   }

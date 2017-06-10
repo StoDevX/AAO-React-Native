@@ -5,6 +5,7 @@
  */
 
 import React from 'react'
+import {TabBarIcon} from '../components/tabbar-icon'
 import {
   // StyleSheet,
   View,
@@ -12,6 +13,11 @@ import {
 } from 'react-native'
 
 export default class SearchView extends React.Component {
+  static navigationOptions = {
+    tabBarLabel: 'Search',
+    tabBarIcon: TabBarIcon('search'),
+  }
+
   state = {
     loaded: false,
     error: null,
