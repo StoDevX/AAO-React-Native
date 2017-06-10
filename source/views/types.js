@@ -1,5 +1,6 @@
 // @flow
-import {Navigator} from 'react-native'
+import type {Navigator} from 'react-native'
+export type {Navigator}
 
 export type RouteType = {
   index: number,
