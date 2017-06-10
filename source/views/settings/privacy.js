@@ -17,3 +17,6 @@ const styles = StyleSheet.create({
 export default function PrivacyView() {
   return <WebView style={styles.container} source={{html: privacy}} />
 }
+PrivacyView.navigationOptions = {
+  title: 'Privacy Policy',
+}
