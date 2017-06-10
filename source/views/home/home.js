@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {Navigator, ScrollView, StyleSheet, StatusBar} from 'react-native'
+import {ScrollView, StyleSheet, StatusBar} from 'react-native'
 
 import {connect} from 'react-redux'
 import * as c from '../components/colors'
@@ -17,8 +17,7 @@ import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl} from '../components/open-url'
 
 function HomePage({
-  navigator,
-  route,
+  navigation,
   order,
   views = allViews,
 }: {order: string[], views: ViewType[]} & TopLevelViewPropsType) {
@@ -42,19 +41,18 @@ function HomePage({
             if (view.type === 'url') {
               return trackedOpenUrl({url: view.url, id: view.view})
             } else {
-              return navigator.push({
-                id: view.view,
-                index: route.index + 1,
-                title: view.title,
-                backButtonTitle: 'Home',
-                sceneConfig: Navigator.SceneConfigs.PushFromRight,
-              })
+              return navigation.navigate(view.view)
             }
           }}
         />,
       )}
     </ScrollView>
   )
+}
+HomePage.navigationOptions = {
+  title: 'All About Olaf',
+  headerBackTitle: 'Home',
+  // TODO: add right-hand edit button
 }
 
 function mapStateToProps(state) {
