@@ -18,6 +18,10 @@ const styles = StyleSheet.create({
 })
 
 export class FaqView extends React.Component {
+  static navigationOptions = {
+    title: 'FAQs',
+  }
+
   state = {
     html: faqs,
   }
