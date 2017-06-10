@@ -13,18 +13,19 @@ import {Provider} from 'react-redux'
 import {store} from './flux'
 import {tracker} from './analytics'
 import {AppNavigator} from './navigation'
+import type {NavigationState} from 'react-navigation'
 
 // gets the current screen from navigation state
-function getCurrentRouteName(navigationState): ?string {
+function getCurrentRouteName(navigationState: NavigationState): ?string {
   if (!navigationState) {
-    return null;
+    return null
   }
-  const route = navigationState.routes[navigationState.index];
+  const route = navigationState.routes[navigationState.index]
   // dive into nested navigators
   if (route.routes) {
-    return getCurrentRouteName(route);
+    return getCurrentRouteName(route)
   }
-  return route.routeName;
+  return route.routeName
 }
 
 export default class App extends React.Component {
@@ -61,7 +62,10 @@ export default class App extends React.Component {
     console.log('Device info:', device)
   }
 
-  trackScreenChanges(prevState: any, currentState: any) {
+  trackScreenChanges(
+    prevState: NavigationState,
+    currentState: NavigationState,
+  ) {
     const currentScreen = getCurrentRouteName(currentState)
     const prevScreen = getCurrentRouteName(prevState)
 
