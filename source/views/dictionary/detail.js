@@ -17,7 +17,9 @@ const styles = StyleSheet.create({
   definition: {},
 })
 
-export function DictionaryDetailView(props: {navigation: {state: {params: {item: WordType}}}}) {
+export function DictionaryDetailView(props: {
+  navigation: {state: {params: {item: WordType}}},
+}) {
   const item = props.navigation.state.params.item
   return (
     <ScrollView contentContainerStyle={styles.container}>
