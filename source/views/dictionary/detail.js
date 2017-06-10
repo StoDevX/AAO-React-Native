@@ -17,13 +17,19 @@ const styles = StyleSheet.create({
   definition: {},
 })
 
-export function DictionaryDetailView(props: {item: WordType}) {
+export function DictionaryDetailView(props: {navigation: {state: {params: {item: WordType}}}}) {
+  const item = props.navigation.state.params.item
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text selectable={true} style={styles.term}>{props.item.word}</Text>
+      <Text selectable={true} style={styles.term}>{item.word}</Text>
       <Text selectable={true} style={styles.definition}>
-        {props.item.definition}
+        {item.definition}
       </Text>
     </ScrollView>
   )
+}
+DictionaryDetailView.navigationOptions = ({navigation}) => {
+  return {
+    title: navigation.state.params.item.word,
+  }
 }
