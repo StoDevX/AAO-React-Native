@@ -145,6 +145,10 @@ function EditHomeView(props: {onSaveOrder: () => any, order: string[]}) {
     />
   )
 }
+EditHomeView.navigationOptions = {
+  title: 'Edit Home',
+  // TODO: add "close" button
+}
 
 function mapStateToProps(state) {
   return {
