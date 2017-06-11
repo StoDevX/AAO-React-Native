@@ -113,31 +113,15 @@ export class BuildingHoursDetailView extends React.Component {
   }
 
   render() {
-    const bgColors = {
-      Open: c.moneyGreen,
-      Closed: c.salmon,
-    }
-
     const info = this.props.navigation.state.params.building
+    const {now} = this.state
 
     const headerImage = info.image
       ? buildingImages[info.image]
       : transparentPixel
-    const openStatus = getShortBuildingStatus(info, this.state.now)
-    const schedules = normalizeBuildingSchedule(info, this.state.now)
-    const dayOfWeek = ((this.state.now.format('dd'): any): DayOfWeekEnumType)
-
-    const abbr = info.abbreviation
-      ? <Text style={styles.abbr}> ({info.abbreviation})</Text>
-      : null
-    const title = <Text style={styles.name}>{info.name}{abbr}</Text>
-    const subtitle = info.subtitle
-      ? <View style={styles.subtitle}>
-          <Text style={[styles.name, styles.subtitleText]}>
-            {info.subtitle}
-          </Text>
-        </View>
-      : null
+    const openStatus = getShortBuildingStatus(info, now)
+    const schedules = normalizeBuildingSchedule(info, now)
+    const dayOfWeek = ((now.format('dd'): any): DayOfWeekEnumType)
 
     return (
       <ParallaxView
@@ -146,40 +130,25 @@ export class BuildingHoursDetailView extends React.Component {
         scrollableViewStyle={styles.scrollableStyle}
       >
         <View style={styles.container}>
-          <View style={styles.title}>{title}</View>
-          {subtitle}
+          <Header building={info} />
 
-          <View
-            style={[
-              styles.badge,
-              {backgroundColor: bgColors[openStatus] || c.goldenrod},
-            ]}
-          >
-            <Text style={styles.badgeText}>{openStatus}</Text>
-          </View>
+          <Badge status={openStatus} />
 
           {schedules.map(set =>
-            <Card
-              key={set.title}
-              style={styles.scheduleContainer}
-              header={set.title}
-              footer={set.notes}
-            >
-              <View style={styles.scheduleHoursWrapper}>
-                {set.hours.map((schedule, i) =>
-                  <ScheduleRow
-                    key={i}
-                    now={this.state.now}
-                    schedule={schedule}
-                    isActive={
-                      set.isPhysicallyOpen !== false &&
-                      schedule.days.includes(dayOfWeek) &&
-                      isBuildingOpenAtMoment(schedule, this.state.now)
-                    }
-                  />,
-                )}
-              </View>
-            </Card>,
+            <Schedule key={set.title} set={set}>
+              {set.hours.map((schedule, i) =>
+                <ScheduleRow
+                  key={i}
+                  now={now}
+                  schedule={schedule}
+                  isActive={
+                    set.isPhysicallyOpen !== false &&
+                    schedule.days.includes(dayOfWeek) &&
+                    isBuildingOpenAtMoment(schedule, this.state.now)
+                  }
+                />,
+              )}
+            </Schedule>,
           )}
         </View>
       </ParallaxView>
@@ -187,7 +156,59 @@ export class BuildingHoursDetailView extends React.Component {
   }
 }
 
-const ScheduleRow = ({
+function Header({building}) {
+  const abbr = building.abbreviation
+    ? <Text style={styles.abbr}> ({building.abbreviation})</Text>
+    : null
+
+  const title = <Text style={styles.name}>{building.name}{abbr}</Text>
+
+  const subtitle = building.subtitle
+    ? <View style={styles.subtitle}>
+        <Text style={[styles.name, styles.subtitleText]}>
+          {building.subtitle}
+        </Text>
+      </View>
+    : null
+
+  return (
+    <View>
+      <View style={styles.title}>{title}</View>
+      {subtitle}
+    </View>
+  )
+}
+
+function Badge({status}) {
+  const bgColors = {
+    Open: c.moneyGreen,
+    Closed: c.salmon,
+  }
+
+  return (
+    <View
+      style={[styles.badge, {backgroundColor: bgColors[status] || c.goldenrod}]}
+    >
+      <Text selectable={true} style={styles.badgeText}>{status}</Text>
+    </View>
+  )
+}
+
+function Schedule({children, set}) {
+  return (
+    <Card
+      style={styles.scheduleContainer}
+      header={set.title}
+      footer={set.notes}
+    >
+      <View style={styles.scheduleHoursWrapper}>
+        {children}
+      </View>
+    </Card>
+  )
+}
+
+function ScheduleRow({
   schedule,
   isActive,
   now,
@@ -195,7 +216,7 @@ const ScheduleRow = ({
   schedule: SingleBuildingScheduleType,
   isActive: boolean,
   now: momentT,
-}) => {
+}) {
   return (
     <View style={styles.scheduleRow}>
       <Text

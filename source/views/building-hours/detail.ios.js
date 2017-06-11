@@ -3,7 +3,11 @@
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {buildingImages} from '../../../images/building-images'
-import type {BuildingType, DayOfWeekEnumType} from './types'
+import type {
+  BuildingType,
+  DayOfWeekEnumType,
+  SingleBuildingScheduleType,
+} from './types'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
@@ -88,12 +92,8 @@ export class BuildingHoursDetailView extends React.Component {
   }
 
   render() {
-    const bgColors = {
-      Open: c.moneyGreen,
-      Closed: c.salmon,
-    }
-
     const info = this.props.navigation.state.params.building
+    const {now} = this.state
 
     const headerImage = info.image
       ? buildingImages[info.image]
@@ -102,20 +102,6 @@ export class BuildingHoursDetailView extends React.Component {
     const schedules = normalizeBuildingSchedule(info, this.state.now)
     const dayOfWeek = ((this.state.now.format('dd'): any): DayOfWeekEnumType)
 
-    const abbr = info.abbreviation
-      ? <Text style={styles.abbr}> ({info.abbreviation})</Text>
-      : null
-    const title = (
-      <Text selectable={true} style={styles.name}>{info.name}{abbr}</Text>
-    )
-    const subtitle = info.subtitle
-      ? <View style={styles.subtitle}>
-          <Text selectable={true} style={[styles.name, styles.subtitleText]}>
-            {info.subtitle}
-          </Text>
-        </View>
-      : null
-
     return (
       <ParallaxView
         backgroundSource={headerImage}
@@ -123,17 +109,9 @@ export class BuildingHoursDetailView extends React.Component {
         scrollableViewStyle={styles.scrollableStyle}
       >
         <View>
-          <View style={styles.title}>{title}</View>
-          {subtitle}
+          <Header building={info} />
 
-          <View
-            style={[
-              styles.badge,
-              {backgroundColor: bgColors[openStatus] || c.goldenrod},
-            ]}
-          >
-            <Text selectable={true} style={styles.badgeText}>{openStatus}</Text>
-          </View>
+          <Badge status={openStatus} />
 
           <TableView>
             {schedules.map(set =>
@@ -142,23 +120,18 @@ export class BuildingHoursDetailView extends React.Component {
                 header={set.title.toUpperCase()}
                 footer={set.notes}
               >
-                {set.hours.map((schedule, i) => {
-                  let isActiveSchedule =
-                    set.isPhysicallyOpen !== false &&
-                    schedule.days.includes(dayOfWeek) &&
-                    isBuildingOpenAtMoment(schedule, this.state.now)
-
-                  return (
-                    <Cell
-                      key={i}
-                      cellStyle="RightDetail"
-                      title={summarizeDays(schedule.days)}
-                      titleTextStyle={isActiveSchedule ? styles.bold : null}
-                      detail={formatBuildingTimes(schedule, this.state.now)}
-                      detailTextStyle={isActiveSchedule ? styles.bold : null}
-                    />
-                  )
-                })}
+                {set.hours.map((schedule, i) =>
+                  <ScheduleRow
+                    key={i}
+                    now={now}
+                    schedule={schedule}
+                    isActive={
+                      set.isPhysicallyOpen !== false &&
+                      schedule.days.includes(dayOfWeek) &&
+                      isBuildingOpenAtMoment(schedule, this.state.now)
+                    }
+                  />,
+                )}
               </Section>,
             )}
           </TableView>
@@ -166,4 +139,64 @@ export class BuildingHoursDetailView extends React.Component {
       </ParallaxView>
     )
   }
+}
+
+function Header({building}) {
+  const abbr = building.abbreviation
+    ? <Text style={styles.abbr}> ({building.abbreviation})</Text>
+    : null
+
+  const title = (
+    <Text selectable={true} style={styles.name}>{building.name}{abbr}</Text>
+  )
+
+  const subtitle = building.subtitle
+    ? <View style={styles.subtitle}>
+        <Text selectable={true} style={[styles.name, styles.subtitleText]}>
+          {building.subtitle}
+        </Text>
+      </View>
+    : null
+
+  return (
+    <View>
+      <View style={styles.title}>{title}</View>
+      {subtitle}
+    </View>
+  )
+}
+
+function Badge({status}) {
+  const bgColors = {
+    Open: c.moneyGreen,
+    Closed: c.salmon,
+  }
+
+  return (
+    <View
+      style={[styles.badge, {backgroundColor: bgColors[status] || c.goldenrod}]}
+    >
+      <Text selectable={true} style={styles.badgeText}>{status}</Text>
+    </View>
+  )
+}
+
+function ScheduleRow({
+  schedule,
+  isActive,
+  now,
+}: {
+  schedule: SingleBuildingScheduleType,
+  isActive: boolean,
+  now: momentT,
+}) {
+  return (
+    <Cell
+      cellStyle="RightDetail"
+      title={summarizeDays(schedule.days)}
+      titleTextStyle={isActive ? styles.bold : null}
+      detail={formatBuildingTimes(schedule, now)}
+      detailTextStyle={isActive ? styles.bold : null}
+    />
+  )
 }
