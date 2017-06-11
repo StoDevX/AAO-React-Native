@@ -25,10 +25,6 @@ const StavHallTab = ({navigation}) =>
       '"Cooking" some lutefisk…',
     ]}
   />
-StavHallTab.navigationOptions = {
-  tabBarLabel: 'Stav Hall',
-  tabBarIcon: TabBarIcon('nutrition'),
-}
 
 const TheCageTab = ({navigation}) =>
   <BonAppHostedMenu
@@ -38,10 +34,6 @@ const TheCageTab = ({navigation}) =>
     ignoreProvidedMenus={true}
     loadingMessage={['Checking for vegan cookies…', 'Serving up some shakes…']}
   />
-TheCageTab.navigationOptions = {
-  tabBarLabel: 'The Cage',
-  tabBarIcon: TabBarIcon('cafe'),
-}
 
 const ThePauseTab = ({navigation}) =>
   <GitHubHostedMenu
@@ -49,17 +41,33 @@ const ThePauseTab = ({navigation}) =>
     name="pause"
     loadingMessage={['Mixing up a shake…', 'Spinning up pizzas…']}
   />
-ThePauseTab.navigationOptions = {
-  tabBarLabel: 'The Pause',
-  tabBarIcon: TabBarIcon('paw'),
-}
 
 export const MenusView = TabNavigator(
   {
-    StavHallMenuView: {screen: StavHallTab},
-    TheCageMenuView: {screen: TheCageTab},
-    ThePauseMenuView: {screen: ThePauseTab},
-    CarletonMenuListView: {screen: CarletonMenuPicker},
+    StavHallMenuView: {
+      screen: StavHallTab,
+      navigationOptions: {
+        tabBarLabel: 'Stav Hall',
+        tabBarIcon: TabBarIcon('nutrition'),
+      },
+    },
+    TheCageMenuView: {
+      screen: TheCageTab,
+      navigationOptions: {
+        tabBarLabel: 'The Cage',
+        tabBarIcon: TabBarIcon('cafe'),
+      },
+    },
+    ThePauseMenuView: {
+      screen: ThePauseTab,
+      navigationOptions: {
+        tabBarLabel: 'The Pause',
+        tabBarIcon: TabBarIcon('paw'),
+      },
+    },
+    CarletonMenuListView: {
+      screen: CarletonMenuPicker,
+    },
     // BonAppDevToolView: {screen: BonAppPickerView},
   },
   {
