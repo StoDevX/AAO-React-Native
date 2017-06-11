@@ -20,7 +20,7 @@ import {Badge} from './badge'
 import {Header} from './header'
 import {ScheduleTable} from './schedule-table'
 
-const transparentPixel = require('../../../images/transparent.png')
+const transparentPixel = require('../../../../images/transparent.png')
 
 const styles = StyleSheet.create({
   scrollableStyle: {
