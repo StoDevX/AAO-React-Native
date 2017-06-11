@@ -5,6 +5,8 @@ import type {
   NavigationAction,
 } from 'react-navigation'
 
+export type NavType = NavigationScreenProp<NavigationRoute, NavigationAction>
+
 export type TopLevelViewPropsType = {
-  navigation: NavigationScreenProp<NavigationRoute, NavigationAction>,
+  navigation: NavType,
 }

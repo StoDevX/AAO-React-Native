@@ -4,28 +4,24 @@
  */
 
 import React from 'react'
-import {Text, Navigator, Platform, StyleSheet} from 'react-native'
+import {Text, Platform, StyleSheet} from 'react-native'
 import {Touchable} from '../touchable'
-import noop from 'lodash/noop'
-import type {RouteType} from '../../types'
+import type {NavType} from '../../types'
 import {commonStyles} from './styles'
 
 export function CloseScreenButton({
-  route,
-  navigator,
+  navigation,
   buttonStyle,
 }: {
-  route: RouteType,
-  navigator: Navigator,
+  navigation: NavType,
   buttonStyle?: any,
 }) {
-  const onDismiss = route.onDismiss ? route.onDismiss : noop
   return (
     <Touchable
       borderless
       highlight={false}
       style={[commonStyles.button, buttonStyle]}
-      onPress={() => onDismiss(route, navigator)}
+      onPress={() => navigation.goBack()}
     >
       <Text style={[commonStyles.text, styles.text]}>Done</Text>
     </Touchable>

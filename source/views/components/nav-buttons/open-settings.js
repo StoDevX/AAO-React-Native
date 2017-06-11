@@ -4,19 +4,17 @@
  */
 
 import React from 'react'
-import {Navigator, StyleSheet, Platform} from 'react-native'
+import {StyleSheet, Platform} from 'react-native'
 import * as c from '../colors'
 import {Touchable} from '../touchable'
 import Icon from 'react-native-vector-icons/Ionicons'
-import type {RouteType} from '../../types'
+import type {NavType} from '../../types'
 
 export function OpenSettingsButton({
-  route,
-  navigator,
+  navigation,
   buttonStyle,
 }: {
-  route: RouteType,
-  navigator: Navigator,
+  navigation: NavType,
   buttonStyle?: any,
 }) {
   return (
@@ -24,32 +22,11 @@ export function OpenSettingsButton({
       borderless
       highlight={false}
       style={[styles.button, buttonStyle]}
-      onPress={() => openSettings(route, navigator)}
+      onPress={() => navigation.push('SettingsView')}
     >
       <Icon style={styles.icon} name="ios-settings" />
     </Touchable>
   )
-}
-
-let settingsButtonActive = false
-function openSettings(route, navigator) {
-  if (settingsButtonActive) {
-    return
-  }
-
-  function closeSettings(route, navigator) {
-    settingsButtonActive = false
-    navigator.pop()
-  }
-
-  settingsButtonActive = true
-  navigator.push({
-    id: 'SettingsView',
-    title: 'Settings',
-    index: route.index + 1,
-    sceneConfig: 'fromBottom',
-    onDismiss: closeSettings,
-  })
 }
 
 const styles = StyleSheet.create({
