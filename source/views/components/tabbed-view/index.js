@@ -17,9 +17,9 @@ type ComponentType = (
 export const TabNavigator: ComponentType = (screens, options) => TabNav(
   screens,
   {
+    backBehavior: 'none',
     tabBarOptions: {
       activeTintColor: c.mandarin,
-      backBehavior: 'none',
       ...(options.tabBarOptions || {}),
     },
     ...options,
