@@ -2,7 +2,7 @@
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 const TIME_FORMAT = 'h:mma'
-const RESULT_FORMAT = 'h:mma'
+const RESULT_FORMAT = 'LT'
 
 import type {
   BuildingType,
