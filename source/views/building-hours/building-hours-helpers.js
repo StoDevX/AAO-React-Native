@@ -6,7 +6,6 @@ const RESULT_FORMAT = 'h:mma'
 
 import type {
   BuildingType,
-  NamedBuildingScheduleType,
   SingleBuildingScheduleType,
   DayOfWeekEnumType,
 } from './types'
