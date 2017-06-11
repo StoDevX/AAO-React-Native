@@ -65,13 +65,7 @@ class BalancesView extends React.Component {
   }
 
   openSettings = () => {
-    this.props.navigator.push({
-      id: 'SettingsView',
-      title: 'Settings',
-      index: this.props.route.index + 1,
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-      onDismiss: () => this.props.navigator.pop(),
-    })
+    this.props.navigation.navigate('SettingsView')
   }
 
   render() {
