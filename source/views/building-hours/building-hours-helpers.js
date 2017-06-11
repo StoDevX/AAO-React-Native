@@ -146,7 +146,7 @@ export function getDetailedBuildingStatus(
 
   let dayOfWeek = getDayOfWeek(m)
 
-  let schedules = normalizeBuildingSchedule(info)
+  let schedules = info.schedule || []
   if (!schedules.length) {
     return [{isActive: false, label: null, status: 'Hours unknown'}]
   }
@@ -186,7 +186,7 @@ export function getDetailedBuildingStatus(
 export function getShortBuildingStatus(info: BuildingType, m: momentT): string {
   let dayOfWeek = getDayOfWeek(m)
 
-  let schedules = normalizeBuildingSchedule(info)
+  let schedules = info.schedule || []
   if (!schedules.length) {
     return 'Closed'
   }
@@ -218,7 +218,7 @@ export function getShortBuildingStatus(info: BuildingType, m: momentT): string {
 export function isBuildingOpen(info: BuildingType, m: momentT): boolean {
   let dayOfWeek = getDayOfWeek(m)
 
-  let schedules = normalizeBuildingSchedule(info)
+  let schedules = info.schedule || []
   if (!schedules.length) {
     return false
   }
@@ -299,15 +299,4 @@ export function summarizeDays(days: DayOfWeekEnumType[]): string {
   let end = moment(endDay, 'dd').format('ddd')
 
   return `${start} — ${end}`
-}
-
-export function normalizeBuildingSchedule(
-  info: BuildingType,
-): NamedBuildingScheduleType[] {
-  let schedules = info.schedule
-  if (!schedules) {
-    return []
-  }
-
-  return schedules
 }
