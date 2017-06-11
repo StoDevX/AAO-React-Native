@@ -12,40 +12,34 @@ import {TabBarIcon} from '../components/tabbar-icon'
 import OtherModesView from './otherModes'
 import BusView from './bus'
 
-const ExpressLineTab = () => <BusView line="Express Bus" />
-
-const RedLineTab = () => <BusView line="Red Line" />
-
-const BlueLineTab = () => <BusView line="Blue Line" />
-
-const OtherModesTab = () => <OtherModesView />
-
 export default TabNavigator(
   {
     ExpressLineBusView: {
-      screen: ExpressLineTab,
+      screen: () => <BusView line="Express Bus" />,
       navigationOptions: {
         tabBarLabel: 'Express Bus',
         tabBarIcon: TabBarIcon('bus'),
       },
     },
+
     RedLineBusView: {
-      screen: RedLineTab,
+      screen: () => <BusView line="Red Line" />,
       navigationOptions: {
         tabBarLabel: 'Red Line',
         tabBarIcon: TabBarIcon('bus'),
       },
     },
-    BlueLineBusView: {
-      screen: BlueLineTab,
 
+    BlueLineBusView: {
+      screen: () => <BusView line="Blue Line" />,
       navigationOptions: {
         tabBarLabel: 'Blue Line',
         tabBarIcon: TabBarIcon('bus'),
       },
     },
+
     TransportationOtherModesListView: {
-      screen: OtherModesTab,
+      screen: OtherModesView,
       navigationOptions: {
         tabBarLabel: 'Other Modes',
         tabBarIcon: TabBarIcon('boat'),

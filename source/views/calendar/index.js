@@ -12,42 +12,38 @@ import {GoogleCalendarView} from './calendar-google'
 
 export {EventDetail} from './event-detail'
 
-const StOlafTab = ({navigation}) =>
-  <GoogleCalendarView
-    navigation={navigation}
-    calendarId="le6tdd9i38vgb7fcmha0hu66u9gjus2e@import.calendar.google.com"
-  />
-
-const OlevilleTab = ({navigation}) =>
-  <GoogleCalendarView
-    navigation={navigation}
-    calendarId="stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com"
-  />
-
-const NorthfieldTab = ({navigation}) =>
-  <GoogleCalendarView
-    navigation={navigation}
-    calendarId="thisisnorthfield@gmail.com"
-  />
-
 export default TabNavigator(
   {
     StOlafCalendarView: {
-      screen: StOlafTab,
+      screen: ({navigation}) =>
+        <GoogleCalendarView
+          navigation={navigation}
+          calendarId="le6tdd9i38vgb7fcmha0hu66u9gjus2e@import.calendar.google.com"
+        />,
       navigationOptions: {
         tabBarLabel: 'St. Olaf',
         tabBarIcon: TabBarIcon('school'),
       },
     },
+
     OlevilleCalendarView: {
-      screen: OlevilleTab,
+      screen: ({navigation}) =>
+        <GoogleCalendarView
+          navigation={navigation}
+          calendarId="stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com"
+        />,
       navigationOptions: {
         tabBarLabel: 'Oleville',
         tabBarIcon: TabBarIcon('happy'),
       },
     },
+
     NorthfieldCalendarView: {
-      screen: NorthfieldTab,
+      screen: ({navigation}) =>
+        <GoogleCalendarView
+          navigation={navigation}
+          calendarId="thisisnorthfield@gmail.com"
+        />,
       navigationOptions: {
         tabBarLabel: 'Northfield',
         tabBarIcon: TabBarIcon('pin'),
