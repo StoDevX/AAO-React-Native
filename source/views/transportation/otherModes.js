@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import {StyleSheet, Text, View} from 'react-native'
+import {TabBarIcon} from '../components/tabbar-icon'
 import type {OtherModeType} from './types'
 import {data as modes} from '../../../docs/transportation.json'
 import * as c from '../components/colors'
