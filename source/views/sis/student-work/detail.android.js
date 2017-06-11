@@ -157,3 +157,9 @@ export default function JobDetailView(props: {
     </ScrollView>
   )
 }
+JobDetailView.navigationOptions = ({navigation}) => {
+  const {job} = navigation.state.params
+  return {
+    title: job.title,
+  }
+}
