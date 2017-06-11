@@ -13,35 +13,44 @@ import OtherModesView from './otherModes'
 import BusView from './bus'
 
 const ExpressLineTab = () => <BusView line="Express Bus" />
-ExpressLineTab.navigationOptions = {
-  tabBarLabel: 'Express Bus',
-  tabBarIcon: TabBarIcon('bus'),
-}
 
 const RedLineTab = () => <BusView line="Red Line" />
-RedLineTab.navigationOptions = {
-  tabBarLabel: 'Red Line',
-  tabBarIcon: TabBarIcon('bus'),
-}
 
 const BlueLineTab = () => <BusView line="Blue Line" />
-BlueLineTab.navigationOptions = {
-  tabBarLabel: 'Blue Line',
-  tabBarIcon: TabBarIcon('bus'),
-}
 
 const OtherModesTab = () => <OtherModesView />
-OtherModesTab.navigationOptions = {
-  tabBarLabel: 'Other Modes',
-  tabBarIcon: TabBarIcon('boat'),
-}
 
 export default TabNavigator(
   {
-    ExpressLineBusView: {screen: ExpressLineTab},
-    RedLineBusView: {screen: RedLineTab},
-    BlueLineBusView: {screen: BlueLineTab},
-    TransportationOtherModesListView: {screen: OtherModesTab},
+    ExpressLineBusView: {
+      screen: ExpressLineTab,
+      navigationOptions: {
+        tabBarLabel: 'Express Bus',
+        tabBarIcon: TabBarIcon('bus'),
+      },
+    },
+    RedLineBusView: {
+      screen: RedLineTab,
+      navigationOptions: {
+        tabBarLabel: 'Red Line',
+        tabBarIcon: TabBarIcon('bus'),
+      },
+    },
+    BlueLineBusView: {
+      screen: BlueLineTab,
+
+      navigationOptions: {
+        tabBarLabel: 'Blue Line',
+        tabBarIcon: TabBarIcon('bus'),
+      },
+    },
+    TransportationOtherModesListView: {
+      screen: OtherModesTab,
+      navigationOptions: {
+        tabBarLabel: 'Other Modes',
+        tabBarIcon: TabBarIcon('boat'),
+      },
+    },
   },
   {
     navigationOptions: {

@@ -19,10 +19,6 @@ const StOlafTab = ({navigation}) =>
     query={{per_page: 10, _embed: true}}
     name="St. Olaf"
   />
-StOlafTab.navigationOptions = {
-  tabBarLabel: 'St. Olaf',
-  tabBarIcon: TabBarIcon('school'),
-}
 
 const OlevilleTab = ({navigation}) =>
   <NewsContainer
@@ -33,10 +29,6 @@ const OlevilleTab = ({navigation}) =>
     embedFeaturedImage={true}
     name="Oleville"
   />
-OlevilleTab.navigationOptions = {
-  tabBarLabel: 'Oleville',
-  tabBarIcon: TabBarIcon('happy'),
-}
 
 const MessTab = ({navigation}) =>
   <NewsContainer
@@ -45,10 +37,6 @@ const MessTab = ({navigation}) =>
     url="http://manitoumessenger.com/feed/"
     name="The Mess"
   />
-MessTab.navigationOptions = {
-  tabBarLabel: 'The Mess',
-  tabBarIcon: TabBarIcon('paper'),
-}
 
 const PoliticOleTab = ({navigation}) =>
   <NewsContainer
@@ -57,10 +45,6 @@ const PoliticOleTab = ({navigation}) =>
     url="http://oleville.com/politicole/feed/"
     name="PoliticOle"
   />
-PoliticOleTab.navigationOptions = {
-  tabBarLabel: 'PoliticOle',
-  tabBarIcon: TabBarIcon('megaphone'),
-}
 
 const KstoTab = ({navigation}) =>
   <NewsContainer
@@ -70,18 +54,44 @@ const KstoTab = ({navigation}) =>
     query={{per_page: 10, _embed: true}}
     name="KSTO"
   />
-KstoTab.navigationOptions = {
-  tabBarLabel: 'KSTO',
-  tabBarIcon: TabBarIcon('radio'),
-}
 
 export default TabNavigator(
   {
-    StOlafNewsView: {screen: StOlafTab},
-    OlevilleNewsView: {screen: OlevilleTab},
-    MessNewsView: {screen: MessTab},
-    PoliticOleNewsView: {screen: PoliticOleTab},
-    KstoNewsView: {screen: KstoTab},
+    StOlafNewsView: {
+      screen: StOlafTab,
+      navigationOptions: {
+        tabBarLabel: 'St. Olaf',
+        tabBarIcon: TabBarIcon('school'),
+      },
+    },
+    OlevilleNewsView: {
+      screen: OlevilleTab,
+      navigationOptions: {
+        tabBarLabel: 'Oleville',
+        tabBarIcon: TabBarIcon('happy'),
+      },
+    },
+    MessNewsView: {
+      screen: MessTab,
+      navigationOptions: {
+        tabBarLabel: 'The Mess',
+        tabBarIcon: TabBarIcon('paper'),
+      },
+    },
+    PoliticOleNewsView: {
+      screen: PoliticOleTab,
+      navigationOptions: {
+        tabBarLabel: 'PoliticOle',
+        tabBarIcon: TabBarIcon('megaphone'),
+      },
+    },
+    KstoNewsView: {
+      screen: KstoTab,
+      navigationOptions: {
+        tabBarLabel: 'KSTO',
+        tabBarIcon: TabBarIcon('radio'),
+      },
+    },
   },
   {
     navigationOptions: {
