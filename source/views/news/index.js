@@ -21,7 +21,6 @@ const StOlafTab = ({navigation}) =>
     name="St. Olaf"
   />
 StOlafTab.navigationOptions = {
-  headerBackTitle: 'St. Olaf',
   tabBarLabel: 'St. Olaf',
   tabBarIcon: TabBarIcon('school'),
 }
@@ -36,7 +35,6 @@ const OlevilleTab = ({navigation}) =>
     name="Oleville"
   />
 OlevilleTab.navigationOptions = {
-  headerBackTitle: 'Oleville',
   tabBarLabel: 'Oleville',
   tabBarIcon: TabBarIcon('happy'),
 }
@@ -49,7 +47,6 @@ const MessTab = ({navigation}) =>
     name="The Mess"
   />
 MessTab.navigationOptions = {
-  headerBackTitle: 'Mess',
   tabBarLabel: 'The Mess',
   tabBarIcon: TabBarIcon('paper'),
 }
@@ -62,7 +59,6 @@ const PoliticOleTab = ({navigation}) =>
     name="PoliticOle"
   />
 PoliticOleTab.navigationOptions = {
-  headerBackTitle: 'PoliticOle',
   tabBarLabel: 'PoliticOle',
   tabBarIcon: TabBarIcon('megaphone'),
 }
@@ -76,7 +72,6 @@ const KstoTab = ({navigation}) =>
     name="KSTO"
   />
 KstoTab.navigationOptions = {
-  headerBackTitle: 'KSTO',
   tabBarLabel: 'KSTO',
   tabBarIcon: TabBarIcon('radio'),
 }
