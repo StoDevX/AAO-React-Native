@@ -8,7 +8,6 @@ import React from 'react'
 
 import {TabNavigator} from '../components/tabbed-view'
 import {TabBarIcon} from '../components/tabbar-icon'
-import * as c from '../components/colors'
 
 import OtherModesView from './otherModes'
 import BusView from './bus'

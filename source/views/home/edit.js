@@ -18,7 +18,6 @@ import {saveHomescreenOrder} from '../../flux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from '../components/colors'
 import fromPairs from 'lodash/fromPairs'
-import {CloseScreenButton} from '../components/nav-buttons'
 
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'

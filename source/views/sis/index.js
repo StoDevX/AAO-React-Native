@@ -5,7 +5,6 @@
  */
 
 import {TabNavigator} from '../components/tabbed-view'
-import * as c from '../components/colors'
 
 import BalancesView from './balances'
 import StudentWorkView from './student-work'

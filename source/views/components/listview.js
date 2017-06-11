@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {ListView, Platform, RefreshControl} from 'react-native'
+import {ListView, RefreshControl} from 'react-native'
 import isFunction from 'lodash/isFunction'
 
 type DataType = Array<any> | {[key: string]: any}

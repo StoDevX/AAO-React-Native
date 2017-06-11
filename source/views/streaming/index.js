@@ -5,7 +5,6 @@
  */
 
 import {TabNavigator} from '../components/tabbed-view'
-import * as c from '../components/colors'
 
 import KSTOView from './radio'
 // import WeeklyMovieView from './movie'

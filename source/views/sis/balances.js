@@ -5,14 +5,7 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  RefreshControl,
-  Navigator,
-} from 'react-native'
+import {StyleSheet, ScrollView, View, Text, RefreshControl} from 'react-native'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
