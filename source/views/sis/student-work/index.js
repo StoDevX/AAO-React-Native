@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
 
 export default class StudentWorkView extends React.Component {
   static navigationOptions = {
+    headerBackTitle: 'Open Jobs',
     tabBarLabel: 'Open Jobs',
     tabBarIcon: TabBarIcon('briefcase'),
   }
