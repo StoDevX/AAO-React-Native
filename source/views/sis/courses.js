@@ -100,7 +100,6 @@ class CoursesView extends React.Component {
     return (
       <SimpleListView
         style={styles.listContainer}
-        forceBottomInset={true}
         data={this.props.coursesByTerm}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}

@@ -51,7 +51,6 @@ export class NewsList extends React.Component {
     return (
       <SimpleListView
         style={styles.listContainer}
-        forceBottomInset={true}
         data={entries}
         renderSeparator={this.renderSeparator}
         refreshing={this.props.loading}

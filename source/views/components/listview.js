@@ -52,13 +52,6 @@ export default class SimpleListView extends React.Component {
       throw new Error('SimpleListView requires a function as the child')
     }
 
-    const iosInset = this.props.forceBottomInset && Platform.OS === 'ios'
-      ? {
-          automaticallyAdjustContentInsets: false,
-          contentInset: {bottom: 49},
-        }
-      : {}
-
     const refresher = this.props.onRefresh && 'refreshing' in this.props
       ? {
           refreshControl: (
@@ -72,7 +65,6 @@ export default class SimpleListView extends React.Component {
 
     return (
       <ListView
-        {...iosInset}
         {...refresher}
         initialListSize={SimpleListView.initialListSize}
         pageSize={SimpleListView.pageSize}

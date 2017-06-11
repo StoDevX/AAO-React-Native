@@ -33,7 +33,6 @@ export default function OtherModesView() {
   return (
     <SimpleListView
       contentContainerStyle={styles.container}
-      forceBottomInset={true}
       data={modes}
     >
       {(data: OtherModeType) =>

@@ -130,7 +130,6 @@ export default class StudentWorkView extends React.Component {
     return (
       <SimpleListView
         style={styles.listContainer}
-        forceBottomInset={true}
         data={this.state.jobs}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}

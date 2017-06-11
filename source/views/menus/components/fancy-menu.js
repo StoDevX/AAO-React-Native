@@ -170,7 +170,6 @@ class FancyMenuView extends React.Component {
           ? messageView
           : <SimpleListView
               style={styles.inner}
-              forceBottomInset={true}
               data={grouped}
               renderSeparator={this.renderSeparator}
               renderSectionHeader={this.renderSectionHeader}
