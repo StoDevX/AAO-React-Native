@@ -70,16 +70,9 @@ class FancyMenuView extends React.Component {
   props: FancyMenuPropsType
 
   openFilterView = () => {
-    this.props.navigator.push({
-      id: 'FilterView',
-      index: this.props.route.index + 1,
-      title: 'Filter',
-      sceneConfig: 'fromBottom',
-      onDismiss: (route: any, navigator: any) => navigator.pop(),
-      props: {
-        pathToFilters: ['menus', this.props.name],
-        onChange: filters => this.props.onFiltersChange(filters),
-      },
+    this.props.navigation.navigate('FilterView', {
+      pathToFilters: ['menus', this.props.name],
+      onChange: filters => this.props.onFiltersChange(filters),
     })
   }
 

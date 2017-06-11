@@ -114,8 +114,7 @@ export class GitHubHostedMenu extends React.Component {
 
     return (
       <FancyMenu
-        route={this.props.route}
-        navigator={this.props.navigator}
+        navigation={this.props.navigation}
         foodItems={this.state.foodItems}
         menuCorIcons={this.state.corIcons}
         meals={this.state.meals}

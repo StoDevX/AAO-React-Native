@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import {View, Platform, ScrollView, StyleSheet} from 'react-native'
+import {TabBarIcon} from '../components/tabbar-icon'
 import type {TopLevelViewPropsType} from '../types'
 import type {CarletonDetailMenuType} from './types'
 import {Row} from '../components/layout'
@@ -61,19 +62,18 @@ const styles = StyleSheet.create({
 })
 
 export class CarletonMenuPicker extends React.Component {
+  static navigationOptions = {
+    tabBarLabel: 'Carleton',
+    tabBarIcon: TabBarIcon('menu'),
+  }
+
   props: TopLevelViewPropsType
 
   onPressRow = (data: CarletonDetailMenuType) => {
-    this.props.navigator.push({
-      id: 'BonAppHostedMenu',
-      title: data.title,
-      backButtonTitle: 'Carleton',
-      index: this.props.route.index + 1,
-      props: {
-        name: data.title,
-        loadingMessage: data.props.loadingMessage,
-        cafeId: data.props.cafeId,
-      },
+    this.props.navigation.navigate('BonAppHostedMenu', {
+      name: data.title,
+      loadingMessage: data.props.loadingMessage,
+      cafeId: data.props.cafeId,
     })
   }
 
