@@ -17,7 +17,7 @@ import type {BuildingType} from './types'
 import {data as fallbackBuildingHours} from '../../../docs/building-hours'
 import groupBy from 'lodash/groupBy'
 
-const CENTRAL_TZ = 'America/Winnipeg'
+import {CENTRAL_TZ} from './lib'
 const githubBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
 
 const groupBuildings = (buildings: BuildingType[]) =>

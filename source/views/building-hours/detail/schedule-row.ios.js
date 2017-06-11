@@ -9,7 +9,7 @@ import {StyleSheet} from 'react-native'
 import type {SingleBuildingScheduleType} from '../types'
 import moment from 'moment-timezone'
 import {Cell} from 'react-native-tableview-simple'
-import {formatBuildingTimes, summarizeDays} from '../building-hours-helpers'
+import {formatBuildingTimes, summarizeDays} from '../lib'
 
 export class ScheduleRow extends React.PureComponent {
   props: {

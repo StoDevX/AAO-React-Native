@@ -10,8 +10,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import type {BuildingType} from '../types'
 import moment from 'moment-timezone'
 import {BuildingDetail} from './building'
-
-const CENTRAL_TZ = 'America/Winnipeg'
+import {CENTRAL_TZ} from '../lib'
 
 export class BuildingHoursDetailView extends React.PureComponent {
   static navigationOptions = ({navigation}) => {
