@@ -16,5 +16,7 @@ breakSchedule:
   spring: []
   easter: []
   summer:
-    - {days: [Mo, Tu, We, Th], from: '7:30am', to: '4:30pm'}
-    - {days: [Fr], from: '7:45am', to: '12:00pm'}
+    - title: Hours
+      hours:
+        - {days: [Mo, Tu, We, Th], from: '7:30am', to: '4:30pm'}
+        - {days: [Fr], from: '7:45am', to: '12:00pm'}
