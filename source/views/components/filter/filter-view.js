@@ -14,19 +14,19 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
+  filters: FilterType[],
   navigation: {
     state: {
       params: {
         pathToFilters: string[],
-        filters: FilterType[],
         onChange: (x: FilterType[]) => any,
       },
     },
   },
 }
 
-export function FilterViewComponent(props: PropsType) {
-  const {filters, onChange} = props.navigation.state.params
+export function FilterViewComponent({filters, navigation}: PropsType) {
+  const {onChange} = navigation.state.params
 
   const onFilterChanged = (filter: FilterType) => {
     // replace the changed filter in the array, maintaining position
