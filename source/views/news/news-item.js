@@ -78,6 +78,6 @@ NewsItem.navigationOptions = ({navigation}) => {
   const {story} = navigation.state.params
   return {
     title: story.title,
-    headerRight: <ShareButton onPress={() => shareItem(story)} />
+    headerRight: <ShareButton onPress={() => shareItem(story)} />,
   }
 }

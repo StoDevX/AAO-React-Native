@@ -31,10 +31,7 @@ let styles = StyleSheet.create({
 
 export default function OtherModesView() {
   return (
-    <SimpleListView
-      contentContainerStyle={styles.container}
-      data={modes}
-    >
+    <SimpleListView contentContainerStyle={styles.container} data={modes}>
       {(data: OtherModeType) =>
         <View style={styles.mode}>
           <Text selectable={true} style={styles.title}>{data.name}</Text>

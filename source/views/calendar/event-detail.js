@@ -89,6 +89,6 @@ EventDetail.navigationOptions = ({navigation}) => {
   const {event} = navigation.state.params
   return {
     title: event.summary,
-    headerRight: <ShareButton onPress={() => shareItem(event)} />
+    headerRight: <ShareButton onPress={() => shareItem(event)} />,
   }
 }

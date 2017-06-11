@@ -14,14 +14,12 @@ type ComponentType = (
   // arg of TabNavigator.
 ) => TabNav
 
-export const TabNavigator: ComponentType = (screens, options) => TabNav(
-  screens,
-  {
+export const TabNavigator: ComponentType = (screens, options) =>
+  TabNav(screens, {
     backBehavior: 'none',
     tabBarOptions: {
       activeTintColor: c.mandarin,
       ...(options.tabBarOptions || {}),
     },
     ...options,
-  },
-)
+  })
