@@ -54,19 +54,12 @@ ThePauseTab.navigationOptions = {
   tabBarIcon: TabBarIcon('paw'),
 }
 
-const CarletonTab = ({navigation}) =>
-  <CarletonMenuPicker navigation={navigation} />
-CarletonTab.navigationOptions = {
-  tabBarLabel: 'Carleton',
-  tabBarIcon: TabBarIcon('menu'),
-}
-
-export default TabNavigator(
+export const MenusView = TabNavigator(
   {
     StavHallMenuView: {screen: StavHallTab},
     TheCageMenuView: {screen: TheCageTab},
     ThePauseMenuView: {screen: ThePauseTab},
-    CarletonMenuListView: {screen: CarletonTab},
+    CarletonMenuListView: {screen: CarletonMenuPicker},
     // BonAppDevToolView: {screen: BonAppPickerView},
   },
   {
