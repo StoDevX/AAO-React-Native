@@ -5,87 +5,96 @@
  * News page
  */
 
+import React from 'react'
+import {TabNavigator} from 'react-navigation'
+import {TabBarIcon} from '../components/tabbar-icon'
+import * as c from '../components/colors'
+
 import NewsContainer from './news-container'
 
-import React from 'react'
-
-import type {TopLevelViewPropsType} from '../types'
-import TabbedView from '../components/tabbed-view'
-
-export default function NewsPage({navigator, route}: TopLevelViewPropsType) {
-  return (
-    <TabbedView
-      tabs={[
-        {
-          id: 'StOlafNewsView',
-          title: 'St. Olaf',
-          icon: 'school',
-          component: () =>
-            <NewsContainer
-              navigator={navigator}
-              route={route}
-              mode="wp-json"
-              url="https://wp.stolaf.edu/wp-json/wp/v2/posts"
-              query={{per_page: 10, _embed: true}}
-              name="St. Olaf"
-            />,
-        },
-        {
-          id: 'OlevilleNewsView',
-          title: 'Oleville',
-          icon: 'happy',
-          component: () =>
-            <NewsContainer
-              navigator={navigator}
-              route={route}
-              mode="wp-json"
-              url="http://oleville.com/wp-json/wp/v2/posts/"
-              query={{per_page: 10, _embed: true}}
-              embedFeaturedImage={true}
-              name="Oleville"
-            />,
-        },
-        {
-          id: 'MessNewsView',
-          title: 'The Mess',
-          icon: 'paper',
-          component: () =>
-            <NewsContainer
-              navigator={navigator}
-              route={route}
-              mode="rss"
-              url="http://manitoumessenger.com/feed/"
-              name="The Mess"
-            />,
-        },
-        {
-          id: 'PoliticOleNewsView',
-          title: 'PoliticOle',
-          icon: 'megaphone',
-          component: () =>
-            <NewsContainer
-              navigator={navigator}
-              route={route}
-              mode="rss"
-              url="http://oleville.com/politicole/feed/"
-              name="PoliticOle"
-            />,
-        },
-        {
-          id: 'KstoNewsView',
-          title: 'KSTO',
-          icon: 'radio',
-          component: () =>
-            <NewsContainer
-              navigator={navigator}
-              route={route}
-              mode="wp-json"
-              url="https://pages.stolaf.edu/ksto/wp-json/wp/v2/posts/"
-              query={{per_page: 10, _embed: true}}
-              name="KSTO"
-            />,
-        },
-      ]}
-    />
-  )
+const StOlafTab = ({navigation}) =>
+  <NewsContainer
+    navigation={navigation}
+    mode="wp-json"
+    url="https://wp.stolaf.edu/wp-json/wp/v2/posts"
+    query={{per_page: 10, _embed: true}}
+    name="St. Olaf"
+  />
+StOlafTab.navigationOptions = {
+  headerBackTitle: 'St. Olaf',
+  tabBarLabel: 'St. Olaf',
+  tabBarIcon: TabBarIcon('school'),
 }
+
+const OlevilleTab = ({navigation}) =>
+  <NewsContainer
+    navigation={navigation}
+    mode="wp-json"
+    url="http://oleville.com/wp-json/wp/v2/posts/"
+    query={{per_page: 10, _embed: true}}
+    embedFeaturedImage={true}
+    name="Oleville"
+  />
+OlevilleTab.navigationOptions = {
+  headerBackTitle: 'Oleville',
+  tabBarLabel: 'Oleville',
+  tabBarIcon: TabBarIcon('happy'),
+}
+
+const MessTab = ({navigation}) =>
+  <NewsContainer
+    navigation={navigation}
+    mode="rss"
+    url="http://manitoumessenger.com/feed/"
+    name="The Mess"
+  />
+MessTab.navigationOptions = {
+  headerBackTitle: 'Mess',
+  tabBarLabel: 'The Mess',
+  tabBarIcon: TabBarIcon('paper'),
+}
+
+const PoliticOleTab = ({navigation}) =>
+  <NewsContainer
+    navigation={navigation}
+    mode="rss"
+    url="http://oleville.com/politicole/feed/"
+    name="PoliticOle"
+  />
+PoliticOleTab.navigationOptions = {
+  headerBackTitle: 'PoliticOle',
+  tabBarLabel: 'PoliticOle',
+  tabBarIcon: TabBarIcon('megaphone'),
+}
+
+const KstoTab = ({navigation}) =>
+  <NewsContainer
+    navigation={navigation}
+    mode="wp-json"
+    url="https://pages.stolaf.edu/ksto/wp-json/wp/v2/posts/"
+    query={{per_page: 10, _embed: true}}
+    name="KSTO"
+  />
+KstoTab.navigationOptions = {
+  headerBackTitle: 'KSTO',
+  tabBarLabel: 'KSTO',
+  tabBarIcon: TabBarIcon('radio'),
+}
+
+export default TabNavigator(
+  {
+    StOlafNewsView: {screen: StOlafTab},
+    OlevilleNewsView: {screen: OlevilleTab},
+    MessNewsView: {screen: MessTab},
+    PoliticOleNewsView: {screen: PoliticOleTab},
+    KstoNewsView: {screen: KstoTab},
+  },
+  {
+    navigationOptions: {
+      title: 'News',
+    },
+    tabBarOptions: {
+      activeTintColor: c.mandarin,
+    },
+  },
+)
