@@ -5,54 +5,56 @@
  */
 
 import React from 'react'
+import {TabNavigator} from 'react-navigation'
+import {TabBarIcon} from '../components/tabbar-icon'
+import * as c from '../components/colors'
 
-import type {TopLevelViewPropsType} from '../types'
-import TabbedView from '../components/tabbed-view'
 import {GoogleCalendarView} from './calendar-google'
 
 export {EventDetail} from './event-detail'
 
-export default function CalendarPage({
-  navigator,
-  route,
-}: TopLevelViewPropsType) {
-  return (
-    <TabbedView
-      tabs={[
-        {
-          id: 'StOlafCalendarView',
-          title: 'St. Olaf',
-          icon: 'school',
-          component: () =>
-            <GoogleCalendarView
-              navigator={navigator}
-              route={route}
-              calendarId="le6tdd9i38vgb7fcmha0hu66u9gjus2e%40import.calendar.google.com"
-            />,
-        },
-        {
-          id: 'OlevilleCalendarView',
-          title: 'Oleville',
-          icon: 'happy',
-          component: () =>
-            <GoogleCalendarView
-              navigator={navigator}
-              route={route}
-              calendarId="stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com"
-            />,
-        },
-        {
-          id: 'NorthfieldCalendarView',
-          title: 'Northfield',
-          icon: 'pin',
-          component: () =>
-            <GoogleCalendarView
-              navigator={navigator}
-              route={route}
-              calendarId="thisisnorthfield%40gmail.com"
-            />,
-        },
-      ]}
-    />
-  )
+const StOlafTab = ({navigation}) =>
+  <GoogleCalendarView
+    navigation={navigation}
+    calendarId="le6tdd9i38vgb7fcmha0hu66u9gjus2e@import.calendar.google.com"
+  />
+StOlafTab.navigationOptions = {
+  tabBarLabel: 'St. Olaf',
+  tabBarIcon: TabBarIcon('school'),
 }
+
+const OlevilleTab = ({navigation}) =>
+  <GoogleCalendarView
+    navigation={navigation}
+    calendarId="stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com"
+  />
+OlevilleTab.navigationOptions = {
+  tabBarLabel: 'Oleville',
+  tabBarIcon: TabBarIcon('happy'),
+}
+
+const NorthfieldTab = ({navigation}) =>
+  <GoogleCalendarView
+    navigation={navigation}
+    calendarId="thisisnorthfield@gmail.com"
+  />
+NorthfieldTab.navigationOptions = {
+  tabBarLabel: 'Northfield',
+  tabBarIcon: TabBarIcon('pin'),
+}
+
+export default TabNavigator(
+  {
+    StOlafCalendarView: {screen: StOlafTab},
+    OlevilleCalendarView: {screen: OlevilleTab},
+    NorthfieldCalendarView: {screen: NorthfieldTab},
+  },
+  {
+    navigationOptions: {
+      title: 'Calendar',
+    },
+    tabBarOptions: {
+      activeTintColor: c.mandarin,
+    },
+  },
+)

@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {Text, ScrollView, StyleSheet} from 'react-native'
+import {Text, ScrollView, StyleSheet, Share} from 'react-native'
 import moment from 'moment-timezone'
 import {fastGetTrimmedText} from '../../lib/html'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
@@ -11,6 +11,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
 })
+
+const shareItem = (event: EventType) => {
+  Share.share({
+    message: `${event.summary}: ${event.startTime.toString()} – ${event.endTime.toString()}`,
+  })
+    .then(result => console.log(result))
+    .catch(error => console.log(error.message))
+}
 
 function display(title: string, data: string) {
   return data.trim()
@@ -57,7 +65,10 @@ function displayTimes(title: string, event: EventType) {
   return display(title, start + ' — ' + end)
 }
 
-export function EventDetail({event}: {event: EventType}) {
+export function EventDetail(props: {
+  navigation: {state: {params: {event: EventType}}},
+}) {
+  const {event} = props.navigation.state.params
   let title = fastGetTrimmedText(event.summary || '')
   let summary = fastGetTrimmedText(event.extra.data.description || '')
   let location = fastGetTrimmedText(event.location || '')
@@ -72,4 +83,10 @@ export function EventDetail({event}: {event: EventType}) {
       </TableView>
     </ScrollView>
   )
+}
+EventDetail.navigationOptions = ({navigation}) => {
+  return {
+    title: navigation.state.params.event.summary,
+    // TODO: enable share
+  }
 }
