@@ -55,6 +55,13 @@ const styles = StyleSheet.create({
 })
 
 export class StudentOrgsDetailView extends React.Component {
+  static navigationOptions = ({navigation}) => {
+    const {org} = navigation.state.params
+    return {
+      title: org.name,
+    }
+  }
+
   props: TopLevelViewPropsType & {
     navigation: {state: {params: {org: StudentOrgType}}},
   }
