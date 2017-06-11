@@ -4,7 +4,7 @@
  * iOS SIS page
  */
 
-import {TabNavigator} from 'react-navigation'
+import {TabNavigator} from '../components/tabbed-view'
 import * as c from '../components/colors'
 
 import BalancesView from './balances'
@@ -22,9 +22,6 @@ export default TabNavigator(
   {
     navigationOptions: {
       title: 'SIS',
-    },
-    tabBarOptions: {
-      activeTintColor: c.mandarin,
     },
   },
 )

@@ -4,7 +4,7 @@
  * Media page
  */
 
-import {TabNavigator} from 'react-navigation'
+import {TabNavigator} from '../components/tabbed-view'
 import * as c from '../components/colors'
 
 import KSTOView from './radio'
@@ -20,9 +20,6 @@ export default TabNavigator(
   {
     navigationOptions: {
       title: 'Streaming Media',
-    },
-    tabBarOptions: {
-      activeTintColor: c.mandarin,
     },
   },
 )

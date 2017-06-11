@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {TabNavigator} from 'react-navigation'
+import {TabNavigator} from '../components/tabbed-view'
 import {TabBarIcon} from '../components/tabbar-icon'
 import * as c from '../components/colors'
 
@@ -52,9 +52,6 @@ export default TabNavigator(
   {
     navigationOptions: {
       title: 'Calendar',
-    },
-    tabBarOptions: {
-      activeTintColor: c.mandarin,
     },
   },
 )
