@@ -1,7 +1,13 @@
 // @flow
-// eslint-disable react-native/no-inline-styles
 import React from 'react'
+import {StyleSheet} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
+
+const styles = StyleSheet.create({
+  icon: {
+    fontSize: 30,
+  },
+})
 
 export const TabBarIcon = (icon: string) => ({
   tintColor,
@@ -11,6 +17,6 @@ export const TabBarIcon = (icon: string) => ({
   focused: boolean,
 }) =>
   <Icon
-    style={[{color: tintColor, fontSize: 30}]}
+    style={[styles.icon, {color: tintColor}]}
     name={focused ? `ios-${icon}` : `ios-${icon}-outline`}
   />
