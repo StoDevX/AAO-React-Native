@@ -11,15 +11,18 @@ import KSTOView from './radio'
 // import WeeklyMovieView from './movie'
 import WebcamsView from './webcams'
 
-export default TabNavigator({
-  KSTORadioView: {screen: KSTOView},
-  // WeeklyMovieView: {screen: WeeklyMovieView},
-  LiveWebcamsView: {screen: WebcamsView},
-}, {
-  navigationOptions: {
-    title: 'Streaming Media',
+export default TabNavigator(
+  {
+    KSTORadioView: {screen: KSTOView},
+    // WeeklyMovieView: {screen: WeeklyMovieView},
+    LiveWebcamsView: {screen: WebcamsView},
   },
-  tabBarOptions: {
-    activeTintColor: c.mandarin,
-  }
-})
+  {
+    navigationOptions: {
+      title: 'Streaming Media',
+    },
+    tabBarOptions: {
+      activeTintColor: c.mandarin,
+    },
+  },
+)

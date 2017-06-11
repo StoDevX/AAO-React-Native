@@ -37,16 +37,19 @@ OtherModesTab.navigationOptions = {
   tabBarIcon: TabBarIcon('boat'),
 }
 
-export default TabNavigator({
-  ExpressLineBusView: {screen: ExpressLineTab},
-  RedLineBusView: {screen: RedLineTab},
-  BlueLineBusView: {screen: BlueLineTab},
-  TransportationOtherModesListView: {screen: OtherModesTab},
-}, {
-  navigationOptions: {
-    title: 'Transportation',
+export default TabNavigator(
+  {
+    ExpressLineBusView: {screen: ExpressLineTab},
+    RedLineBusView: {screen: RedLineTab},
+    BlueLineBusView: {screen: BlueLineTab},
+    TransportationOtherModesListView: {screen: OtherModesTab},
   },
-  tabBarOptions: {
-    activeTintColor: c.mandarin,
-  }
-})
+  {
+    navigationOptions: {
+      title: 'Transportation',
+    },
+    tabBarOptions: {
+      activeTintColor: c.mandarin,
+    },
+  },
+)

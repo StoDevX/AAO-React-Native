@@ -12,16 +12,19 @@ import StudentWorkView from './student-work'
 // import CoursesView from './courses'
 // import SearchView from './search'
 
-export default TabNavigator({
-  BalancesView: {screen: BalancesView},
-  StudentWorkView: {screen: StudentWorkView},
-  // CoursesView: {screen: CoursesView},
-  // CourseSearchView: {screen: CourseSearchView},
-}, {
-  navigationOptions: {
-    title: 'SIS',
+export default TabNavigator(
+  {
+    BalancesView: {screen: BalancesView},
+    StudentWorkView: {screen: StudentWorkView},
+    // CoursesView: {screen: CoursesView},
+    // CourseSearchView: {screen: CourseSearchView},
   },
-  tabBarOptions: {
-    activeTintColor: c.mandarin,
-  }
-})
+  {
+    navigationOptions: {
+      title: 'SIS',
+    },
+    tabBarOptions: {
+      activeTintColor: c.mandarin,
+    },
+  },
+)
