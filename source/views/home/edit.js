@@ -146,11 +146,8 @@ function EditHomeView(props: {onSaveOrder: () => any, order: string[]}) {
     />
   )
 }
-EditHomeView.navigationOptions = ({navigation}) => {
-  return {
-    title: 'Edit Home',
-    headerRight: <CloseScreenButton navigation={navigation} />
-  }
+EditHomeView.navigationOptions = {
+  title: 'Edit Home'
 }
 
 function mapStateToProps(state) {
