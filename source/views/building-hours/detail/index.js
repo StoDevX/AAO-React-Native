@@ -46,7 +46,7 @@ export class BuildingHoursDetailView extends React.PureComponent {
 
   reportProblem = () => {
     this.props.navigation.navigate('BuildingHoursProblemReportView', {
-      building: this.props.navigation.state.params.building,
+      initialBuilding: this.props.navigation.state.params.building,
     })
   }
 
