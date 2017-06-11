@@ -29,7 +29,7 @@ import {FaqView} from './views/faqs'
 // import {SnapshotsView} from './storybook'
 import HelpView from './views/help'
 
-export const ScreenNavigator = StackNavigator(
+export const AppNavigator = StackNavigator(
   {
     HomeView: {screen: HomeView},
     BuildingHoursDetailView: {screen: BuildingHoursDetailView},
@@ -39,6 +39,7 @@ export const ScreenNavigator = StackNavigator(
     CreditsView: {screen: CreditsView},
     DictionaryDetailView: {screen: DictionaryDetailView},
     DictionaryView: {screen: DictionaryView},
+    EditHomeView: {screen: EditHomeView},
     EventDetailView: {screen: EventDetailView},
     FaqView: {screen: FaqView},
     FilterView: {screen: FilterView},
@@ -65,16 +66,5 @@ export const ScreenNavigator = StackNavigator(
       },
       headerTintColor: c.white,
     },
-  },
-)
-
-export const AppNavigator = StackNavigator(
-  {
-    MainCardNavigator: { screen: ScreenNavigator },
-    EditHomeView: {screen: EditHomeView},
-  },
-  {
-    mode: 'modal',
-    headerMode: 'none',
   },
 )
