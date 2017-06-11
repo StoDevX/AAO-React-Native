@@ -6,9 +6,11 @@
 
 import React from 'react'
 import {ScrollView, Text, StyleSheet} from 'react-native'
+import moment from 'moment-timezone'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import type {BuildingType, NamedBuildingScheduleType} from '../types'
 import type {TopLevelViewPropsType} from '../../types'
+import {summarizeDays, formatBuildingTimes} from '../lib'
 
 export class BuildingHoursProblemReportView extends React.PureComponent {
   static navigationOptions = {
@@ -25,7 +27,10 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
     navigation: {state: {params: {initialBuilding: BuildingType}}},
   }
 
-  onChangeSchedule = (index: number, newSchedule: NamedBuildingScheduleType) => {
+  onChangeSchedule = (
+    index: number,
+    newSchedule: NamedBuildingScheduleType,
+  ) => {
     this.setState(state => {
       const schedule = [...state.building.schedule]
       schedule.splice(index, 1, newSchedule)
@@ -34,7 +39,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
   }
 
   render() {
-    console.log(this.state.building)
+    const schedules = this.state.building.schedule || []
 
     return (
       <ScrollView>
@@ -44,8 +49,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
         </Text>
 
         <TableView>
-          {this.state.building.schedule}
-          <EditableSchedule schedule={{}} />
+          {schedules.map(s => <EditableSchedule key={s.title} schedule={s} />)}
         </TableView>
       </ScrollView>
     )
@@ -53,20 +57,29 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
 }
 
 class EditableSchedule extends React.PureComponent {
+  props: {
+    schedule: NamedBuildingScheduleType,
+  }
+
   render() {
+    const {schedule} = this.props
+    const now = moment()
+
     return (
-      <Section header="KITCHEN">
+      <Section header={schedule.title.toUpperCase()} footer={schedule.notes}>
+        <TitleCell text={schedule.title} />
 
-        <TitleCell text="Kitchen" />
-
-        <TimesCell days="Mon-Thu" times="7:30AM — 8PM" />
-        <TimesCell days="Friday" times="7:30AM — 8PM" />
-        <TimesCell days="Saturday" times="9AM — 8PM" />
-        <TimesCell days="Sunday" times="9AM — 8PM" />
+        {schedule.hours.map((set, i) =>
+          <TimesCell
+            key={i}
+            days={summarizeDays(set.days)}
+            times={formatBuildingTimes(set, now)}
+          />,
+        )}
 
         <AddScheduleCell />
 
-        <NotesCell text="The kitchen stops cooking at 8 p.m." />
+        <NotesCell text={schedule.notes} />
       </Section>
     )
   }
