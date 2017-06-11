@@ -52,3 +52,7 @@ export default function OtherModesView() {
     </SimpleListView>
   )
 }
+OtherModesView.navigationOptions = {
+  tabBarLabel: 'Other Modes',
+  tabBarIcon: TabBarIcon('boat'),
+}

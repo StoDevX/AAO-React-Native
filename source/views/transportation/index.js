@@ -40,10 +40,6 @@ export default TabNavigator(
 
     TransportationOtherModesListView: {
       screen: OtherModesView,
-      navigationOptions: {
-        tabBarLabel: 'Other Modes',
-        tabBarIcon: TabBarIcon('boat'),
-      },
     },
   },
   {
