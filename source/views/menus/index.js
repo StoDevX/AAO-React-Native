@@ -5,13 +5,19 @@
  */
 
 import React from 'react'
+import {StackNavigator} from 'react-navigation'
 import {TabNavigator} from '../components/tabbed-view'
 import {TabBarIcon} from '../components/tabbar-icon'
-import * as c from '../components/colors'
 
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
-import {CarletonMenuPicker} from './carleton-list'
+import {
+  CarletonCafeIndex,
+  CarletonBurtonMenuScreen,
+  CarletonLDCMenuScreen,
+  CarletonWeitzMenuScreen,
+  CarletonSaylesMenuScreen,
+} from './carleton-menus'
 // import {BonAppPickerView} from './dev-bonapp-picker'
 
 const StavHallTab = ({navigation}) =>
@@ -42,6 +48,19 @@ const ThePauseTab = ({navigation}) =>
     loadingMessage={['Mixing up a shake…', 'Spinning up pizzas…']}
   />
 
+const CarletonMenuPicker = StackNavigator(
+  {
+    CarletonCafeIndex: {screen: CarletonCafeIndex},
+    CarletonBurtonMenuView: {screen: CarletonBurtonMenuScreen},
+    CarletonLDCMenuView: {screen: CarletonLDCMenuScreen},
+    CarletonWeitzMenuView: {screen: CarletonWeitzMenuScreen},
+    CarletonSaylesMenuView: {screen: CarletonSaylesMenuScreen},
+  },
+  {
+    headerMode: 'none',
+  },
+)
+
 export const MenusView = TabNavigator(
   {
     StavHallMenuView: {
@@ -67,6 +86,10 @@ export const MenusView = TabNavigator(
     },
     CarletonMenuListView: {
       screen: CarletonMenuPicker,
+      navigationOptions: {
+        title: 'Carleton',
+        tabBarIcon: TabBarIcon('menu'),
+      },
     },
     // BonAppDevToolView: {screen: BonAppPickerView},
   },
