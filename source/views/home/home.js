@@ -15,6 +15,7 @@ import type {ViewType} from '../views'
 import {allViews} from '../views'
 import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl} from '../components/open-url'
+import {EditHomeButton} from '../components/nav-buttons'
 
 function HomePage({
   navigation,
@@ -49,10 +50,12 @@ function HomePage({
     </ScrollView>
   )
 }
-HomePage.navigationOptions = {
-  title: 'All About Olaf',
-  headerBackTitle: 'Home',
-  // TODO: add right-hand edit button
+HomePage.navigationOptions = ({navigation}) => {
+  return {
+    title: 'All About Olaf',
+    headerBackTitle: 'Home',
+    headerRight: <EditHomeButton navigation={navigation} />,
+  }
 }
 
 function mapStateToProps(state) {

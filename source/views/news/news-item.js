@@ -3,6 +3,7 @@ import React from 'react'
 import {HtmlView} from '../components/html-view'
 import {Share} from 'react-native'
 import type {StoryType} from './types'
+import {ShareButton} from '../components/nav-buttons'
 
 const shareItem = (story: StoryType) => {
   Share.share({
@@ -74,8 +75,9 @@ export default function NewsItem(props: {
   return <HtmlView html={content} baseUrl={story.link} />
 }
 NewsItem.navigationOptions = ({navigation}) => {
+  const {story} = navigation.state.params
   return {
-    title: navigation.state.params.story.title,
-    // TODO: enable share
+    title: story.title,
+    headerRight: <ShareButton onPress={() => shareItem(story)} />
   }
 }

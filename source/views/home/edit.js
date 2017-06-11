@@ -18,6 +18,7 @@ import {saveHomescreenOrder} from '../../flux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from '../components/colors'
 import fromPairs from 'lodash/fromPairs'
+import {CloseScreenButton} from '../components/nav-buttons'
 
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
@@ -145,9 +146,11 @@ function EditHomeView(props: {onSaveOrder: () => any, order: string[]}) {
     />
   )
 }
-EditHomeView.navigationOptions = {
-  title: 'Edit Home',
-  // TODO: add "close" button
+EditHomeView.navigationOptions = ({navigation}) => {
+  return {
+    title: 'Edit Home',
+    headerRight: <CloseScreenButton navigation={navigation} />
+  }
 }
 
 function mapStateToProps(state) {

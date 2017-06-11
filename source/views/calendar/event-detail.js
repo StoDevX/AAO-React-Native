@@ -5,6 +5,7 @@ import moment from 'moment-timezone'
 import {fastGetTrimmedText} from '../../lib/html'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import type {EventType} from './types'
+import {ShareButton} from '../components/nav-buttons'
 
 const styles = StyleSheet.create({
   chunk: {
@@ -85,8 +86,9 @@ export function EventDetail(props: {
   )
 }
 EventDetail.navigationOptions = ({navigation}) => {
+  const {event} = navigation.state.params
   return {
-    title: navigation.state.params.event.summary,
-    // TODO: enable share
+    title: event.summary,
+    headerRight: <ShareButton onPress={() => shareItem(event)} />
   }
 }
