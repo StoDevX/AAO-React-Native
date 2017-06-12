@@ -4,7 +4,7 @@
 import React from 'react'
 import {shallow} from 'enzyme'
 
-import {CellToggle} from '../cell-toggle'
+import {CellToggle} from '../toggle'
 import noop from 'lodash/noop'
 
 test('renders', () => {

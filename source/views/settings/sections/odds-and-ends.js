@@ -6,7 +6,7 @@ import {version} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
 import {setFeedbackStatus} from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
-import {CellToggle} from '../../components/cell-toggle'
+import {CellToggle} from '../../components/cells/toggle'
 import {PushButtonCell} from '../components/push-button'
 import {trackedOpenUrl} from '../../components/open-url'
 
