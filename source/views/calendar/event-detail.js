@@ -1,7 +1,6 @@
 // @flow
 import React from 'react'
 import {Text, ScrollView, StyleSheet, Share} from 'react-native'
-import moment from 'moment-timezone'
 import {fastGetTrimmedText} from '../../lib/html'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import type {EventType} from './types'
@@ -15,20 +14,19 @@ const styles = StyleSheet.create({
 })
 
 const shareItem = (event: EventType) => {
-  Share.share({
-    message: `${event.summary}: ${event.startTime.toString()} – ${event.endTime.toString()}`,
-  })
+  const message = `${event.summary}: ${event.startTime.toString()} – ${event.endTime.toString()}`
+  Share.share({message})
     .then(result => console.log(result))
     .catch(error => console.log(error.message))
 }
 
-function display(title: string, data: string) {
-  return data.trim()
-    ? <Section header={title}>
+function MaybeSection({header, content}: {header: string, content: string}) {
+  return content.trim()
+    ? <Section header={header}>
         <Cell
-          cellContentView={
+          title={
             <Text selectable={true} style={styles.chunk}>
-              {data}
+              {content}
             </Text>
           }
         />
@@ -36,31 +34,32 @@ function display(title: string, data: string) {
     : null
 }
 
-function displayTimes(title: string, event: EventType) {
+function getTimes(event: EventType) {
   const {allDay, start, end} = times(event)
 
   if (allDay) {
-    return display(title, 'All-Day')
+    return 'All-Day'
   }
 
-  return display(title, start + ' — ' + end)
+  return `${start} — ${end}`
 }
 
 export function EventDetail(props: {
   navigation: {state: {params: {event: EventType}}},
 }) {
   const {event} = props.navigation.state.params
-  let title = fastGetTrimmedText(event.summary || '')
-  let summary = fastGetTrimmedText(event.extra.data.description || '')
-  let location = fastGetTrimmedText(event.location || '')
+  const title = fastGetTrimmedText(event.summary || '')
+  const summary = fastGetTrimmedText(event.extra.data.description || '')
+  const location = fastGetTrimmedText(event.location || '')
+  const times = getTimes(event)
 
   return (
     <ScrollView>
       <TableView>
-        {display('EVENT', title)}
-        {displayTimes('TIME', event)}
-        {display('LOCATION', location)}
-        {display('DESCRIPTION', summary)}
+        <MaybeSection header="EVENT" content={title} />
+        <MaybeSection header="TIME" content={times} />
+        <MaybeSection header="LOCATION" content={location} />
+        <MaybeSection header="DESCRIPTION" content={summary} />
       </TableView>
     </ScrollView>
   )
