@@ -7,7 +7,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import {setFeedbackStatus} from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
 import {CellToggle} from '../../components/cells/toggle'
-import {PushButtonCell} from '../components/push-button'
+import {PushButtonCell} from '../../components/cells/push-button'
 import {trackedOpenUrl} from '../../components/open-url'
 
 class OddsAndEndsSection extends React.Component {
