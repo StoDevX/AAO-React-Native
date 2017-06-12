@@ -1,6 +1,7 @@
 // @flow
 
 import moment from 'moment-timezone'
+import type {EventType} from './types'
 
 export function times(event: EventType) {
   const eventLength = moment
