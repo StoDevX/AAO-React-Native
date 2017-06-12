@@ -1,5 +1,5 @@
 // @flow
-import {isBuildingOpen} from '../building-hours-helpers'
+import {isBuildingOpen} from '../is-building-open'
 import {dayMoment} from './moment.helper'
 
 it('checks a list of schedules to see if any are open', () => {
