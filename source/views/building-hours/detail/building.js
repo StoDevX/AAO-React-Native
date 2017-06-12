@@ -11,10 +11,7 @@ import type {BuildingType} from '../types'
 import moment from 'moment-timezone'
 import ParallaxView from 'react-native-parallax-view'
 import * as c from '../../components/colors'
-import {
-  normalizeBuildingSchedule,
-  getShortBuildingStatus,
-} from '../building-hours-helpers'
+import {getShortBuildingStatus} from '../lib'
 
 import {Badge} from './badge'
 import {Header} from './header'
@@ -36,16 +33,20 @@ const styles = StyleSheet.create({
 })
 
 export class BuildingDetail extends React.PureComponent {
-  props: {info: BuildingType, now: moment}
+  props: {
+    info: BuildingType,
+    now: moment,
+    onProblemReport: () => any,
+  }
 
   render() {
-    const {info, now} = this.props
+    const {info, now, onProblemReport} = this.props
 
     const headerImage = info.image && buildingImages.hasOwnProperty(info.image)
       ? buildingImages[info.image]
       : transparentPixel
     const openStatus = getShortBuildingStatus(info, now)
-    const schedules = normalizeBuildingSchedule(info, now)
+    const schedules = info.schedule || []
 
     return (
       <ParallaxView
@@ -58,7 +59,11 @@ export class BuildingDetail extends React.PureComponent {
 
           <Badge status={openStatus} />
 
-          <ScheduleTable schedules={schedules} now={now} />
+          <ScheduleTable
+            schedules={schedules}
+            now={now}
+            onProblemReport={onProblemReport}
+          />
         </View>
       </ParallaxView>
     )

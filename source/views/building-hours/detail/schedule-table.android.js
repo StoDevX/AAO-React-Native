@@ -6,10 +6,10 @@
 
 import React from 'react'
 import {View, StyleSheet} from 'react-native'
-import type {DayOfWeekEnumType} from '../types'
 import {Card} from '../../components/card'
 import moment from 'moment-timezone'
-import {isBuildingOpenAtMoment} from '../building-hours-helpers'
+import type {NamedBuildingScheduleType} from '../types'
+import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
 import {ScheduleRow} from './schedule-row'
 
 export class ScheduleTable extends React.PureComponent {
@@ -20,26 +20,26 @@ export class ScheduleTable extends React.PureComponent {
 
   render() {
     const {now, schedules} = this.props
-    const dayOfWeek = ((now.format('dd'): any): DayOfWeekEnumType)
+    const dayOfWeek = getDayOfWeek(now)
 
     return (
       <View>
-        {schedules.map(set =>
+        {schedules.map(schedule =>
           <Card
-            key={set.title}
+            key={schedule.title}
             style={styles.scheduleContainer}
-            header={set.title}
-            footer={set.notes}
+            header={schedule.title}
+            footer={schedule.notes}
           >
-            {set.hours.map((schedule, i) =>
+            {schedule.hours.map((set, i) =>
               <ScheduleRow
                 key={i}
                 now={now}
-                schedule={schedule}
+                set={set}
                 isActive={
-                  set.isPhysicallyOpen !== false &&
-                  schedule.days.includes(dayOfWeek) &&
-                  isBuildingOpenAtMoment(schedule, this.state.now)
+                  schedule.isPhysicallyOpen !== false &&
+                  set.days.includes(dayOfWeek) &&
+                  isScheduleOpenAtMoment(set, this.state.now)
                 }
               />,
             )}

@@ -6,12 +6,11 @@
  */
 
 import React from 'react'
+import type {TopLevelViewPropsType} from '../../types'
 import type {BuildingType} from '../types'
-import type momentT from 'moment'
 import moment from 'moment-timezone'
 import {BuildingDetail} from './building'
-
-const CENTRAL_TZ = 'America/Winnipeg'
+import {CENTRAL_TZ} from '../lib'
 
 export class BuildingHoursDetailView extends React.PureComponent {
   static navigationOptions = ({navigation}) => {
@@ -20,7 +19,7 @@ export class BuildingHoursDetailView extends React.PureComponent {
     }
   }
 
-  state: {intervalId: number, now: momentT} = {
+  state: {intervalId: number, now: moment} = {
     intervalId: 0,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
@@ -36,16 +35,30 @@ export class BuildingHoursDetailView extends React.PureComponent {
     clearTimeout(this.state.intervalId)
   }
 
-  props: {navigation: {state: {params: {building: BuildingType}}}}
+  props: TopLevelViewPropsType & {
+    navigation: {state: {params: {building: BuildingType}}},
+  }
 
   updateTime = () => {
     this.setState({now: moment.tz(CENTRAL_TZ)})
+  }
+
+  reportProblem = () => {
+    this.props.navigation.navigate('BuildingHoursProblemReportView', {
+      initialBuilding: this.props.navigation.state.params.building,
+    })
   }
 
   render() {
     const info = this.props.navigation.state.params.building
     const {now} = this.state
 
-    return <BuildingDetail info={info} now={now} />
+    return (
+      <BuildingDetail
+        info={info}
+        now={now}
+        onProblemReport={this.reportProblem}
+      />
+    )
   }
 }
