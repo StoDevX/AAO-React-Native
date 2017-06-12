@@ -11,8 +11,7 @@ import moment from 'moment-timezone'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
 import {BusStopRow} from './bus-stop-row'
-import {ListRow} from '../../components/list'
-import {ListSectionHeader} from '../../components/list'
+import {ListRow, ListSectionHeader} from '../../components/list'
 
 const TIME_FORMAT = 'h:mma'
 const TIMEZONE = 'America/Winnipeg'
@@ -50,6 +49,21 @@ function makeSubtitle({now, moments, isLastBus}) {
   return lineDetail
 }
 
+const parseTime = (now: moment) => time => {
+  // either pass `false` through or return a parsed time
+  if (time === false) {
+    return false
+  }
+
+  return (
+    moment
+      // interpret in Central time
+      .tz(time, TIME_FORMAT, true, TIMEZONE)
+      // and set the date to today
+      .dayOfYear(now.dayOfYear())
+  )
+}
+
 export function BusLine({line, now}: {line: BusLineType, now: moment}) {
   // grab the colors (with fallbacks) via _.get
   const barColor = get(barColors, line.line, c.black)
@@ -66,20 +80,8 @@ export function BusLine({line, now}: {line: BusLineType, now: moment}) {
     )
   }
 
-  const scheduledMoments: FancyBusTimeListType[] = schedule.times.map(
-    timeset => {
-      return timeset.map(
-        time =>
-          time === false
-            ? // either pass `false` through or return a parsed time
-              false
-            : moment
-                // interpret in Central time
-                .tz(time, TIME_FORMAT, true, TIMEZONE)
-                // and set the date to today
-                .dayOfYear(now.dayOfYear()),
-      )
-    },
+  const scheduledMoments: FancyBusTimeListType[] = schedule.times.map(timeset =>
+    timeset.map(parseTime(now)),
   )
 
   const moments: FancyBusTimeListType = getSetOfStopsForNow(
