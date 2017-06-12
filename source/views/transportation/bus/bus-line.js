@@ -82,7 +82,9 @@ export class BusLine extends React.PureComponent {
       return (
         <View>
           <ListSectionHeader title={line.line} titleStyle={androidColor} />
-          <ListRow title="This line is not running today." />
+          <ListRow>
+            <Title><Text>This line is not running today.</Text></Title>
+          </ListRow>
         </View>
       )
     }

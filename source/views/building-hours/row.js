@@ -66,7 +66,7 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
   const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
 
   return (
-    <ListRow onPress={onPress} arrowPosition="center" direction="column">
+    <ListRow onPress={onPress} arrowPosition="center">
       <Column>
         <Row style={styles.title}>
           <Title lines={1} style={styles.titleText}>
