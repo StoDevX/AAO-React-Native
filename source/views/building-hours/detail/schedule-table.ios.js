@@ -23,6 +23,14 @@ export class ScheduleTable extends React.PureComponent {
 
     return (
       <TableView>
+        <Section>
+          <Cell
+            accessory="DisclosureIndicator"
+            title="Suggest an Edit"
+            onPress={onProblemReport}
+          />
+        </Section>
+
         {schedules.map(set =>
           <Section
             key={set.title}
