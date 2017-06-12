@@ -44,6 +44,7 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent {
 
   delete = () => {
     this.props.navigation.state.params.onDeleteSet()
+    this.props.navigation.goBack()
   }
 
   onChangeDays = (newDays: DayOfWeekEnumType[]) => {
