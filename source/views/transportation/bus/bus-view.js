@@ -6,6 +6,7 @@ import type {BusLineType} from './types'
 import {BusLine} from './bus-line'
 import moment from 'moment-timezone'
 import {NoticeView} from '../../components/notice'
+import type {TopLevelViewPropsType} from '../../types'
 
 import {data as defaultBusLines} from '../../../../docs/bus-times.json'
 
@@ -31,13 +32,17 @@ export class BusView extends React.PureComponent {
     clearTimeout(this.state.intervalId)
   }
 
-  props: {
+  props: TopLevelViewPropsType & {
     busLines: BusLineType[],
     line: string,
   }
 
   updateTime = () => {
     this.setState(() => ({now: moment.tz(TIMEZONE)}))
+  }
+
+  openMap = () => {
+    this.props.navigation.navigate('BusMapView', {line: this.props.line})
   }
 
   render() {
@@ -56,7 +61,7 @@ export class BusView extends React.PureComponent {
 
     return (
       <ScrollView>
-        <BusLine line={activeBusLine} now={now} />
+        <BusLine line={activeBusLine} now={now} openMap={this.openMap} />
       </ScrollView>
     )
   }

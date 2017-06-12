@@ -12,10 +12,13 @@ import {TabBarIcon} from '../components/tabbar-icon'
 import OtherModesView from './otherModes'
 import BusView from './bus'
 
+export {BusMapView} from './bus/map'
+
 export default TabNavigator(
   {
     ExpressLineBusView: {
-      screen: () => <BusView line="Express Bus" />,
+      screen: ({navigation}) =>
+        <BusView line="Express Bus" navigation={navigation} />,
       navigationOptions: {
         tabBarLabel: 'Express Bus',
         tabBarIcon: TabBarIcon('bus'),
@@ -23,7 +26,8 @@ export default TabNavigator(
     },
 
     RedLineBusView: {
-      screen: () => <BusView line="Red Line" />,
+      screen: ({navigation}) =>
+        <BusView line="Red Line" navigation={navigation} />,
       navigationOptions: {
         tabBarLabel: 'Red Line',
         tabBarIcon: TabBarIcon('bus'),
@@ -31,7 +35,8 @@ export default TabNavigator(
     },
 
     BlueLineBusView: {
-      screen: () => <BusView line="Blue Line" />,
+      screen: ({navigation}) =>
+        <BusView line="Blue Line" navigation={navigation} />,
       navigationOptions: {
         tabBarLabel: 'Blue Line',
         tabBarIcon: TabBarIcon('bus'),
