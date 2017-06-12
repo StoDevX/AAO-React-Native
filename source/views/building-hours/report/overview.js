@@ -10,6 +10,7 @@ import moment from 'moment-timezone'
 import {CellTextField} from '../../components/cells/textfield'
 import {CellToggle} from '../../components/cells/toggle'
 import {DeleteButtonCell} from '../../components/cells/delete-button'
+import {ButtonCell} from '../../components/cells/button'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import type {
   BuildingType,
@@ -156,6 +157,10 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
     })
   }
 
+  submit = () => {
+    console.log(JSON.stringify(this.state.building))
+  }
+
   render() {
     const {schedule: schedules = []} = this.state.building
 
@@ -184,6 +189,13 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
               title="Add New Schedule"
               accessory="DisclosureIndicator"
               onPress={this.addSchedule}
+            />
+          </Section>
+
+          <Section footer="Thanks for reporting!">
+            <ButtonCell
+              title="Submit Report"
+              onPress={this.submit}
             />
           </Section>
         </TableView>
