@@ -13,19 +13,19 @@ import {formatBuildingTimes, summarizeDays} from '../building-hours-helpers'
 
 export class ScheduleRow extends React.PureComponent {
   props: {
-    schedule: SingleBuildingScheduleType,
+    set: SingleBuildingScheduleType,
     isActive: boolean,
     now: moment,
   }
 
   render() {
-    const {schedule, isActive, now} = this.props
+    const {set, isActive, now} = this.props
     return (
       <Cell
         cellStyle="RightDetail"
-        title={summarizeDays(schedule.days)}
+        title={summarizeDays(set.days)}
         titleTextStyle={isActive ? styles.bold : null}
-        detail={formatBuildingTimes(schedule, now)}
+        detail={formatBuildingTimes(set, now)}
         detailTextStyle={isActive ? styles.bold : null}
       />
     )

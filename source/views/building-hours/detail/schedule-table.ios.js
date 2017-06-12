@@ -23,21 +23,21 @@ export class ScheduleTable extends React.PureComponent {
 
     return (
       <TableView>
-        {schedules.map(set =>
+        {schedules.map(schedule =>
           <Section
-            key={set.title}
-            header={set.title.toUpperCase()}
-            footer={set.notes}
+            key={schedule.title}
+            header={schedule.title.toUpperCase()}
+            footer={schedule.notes}
           >
-            {set.hours.map((schedule, i) =>
+            {schedule.hours.map((set, i) =>
               <ScheduleRow
                 key={i}
                 now={now}
-                schedule={schedule}
+                set={set}
                 isActive={
-                  set.isPhysicallyOpen !== false &&
-                  schedule.days.includes(dayOfWeek) &&
-                  isBuildingOpenAtMoment(schedule, now)
+                  schedule.isPhysicallyOpen !== false &&
+                  set.days.includes(dayOfWeek) &&
+                  isBuildingOpenAtMoment(set, now)
                 }
               />,
             )}
