@@ -163,7 +163,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
       <ScrollView>
         <Text>
           Thanks for spotting a problem! If you could tell us what the new times
-          are, we'd greatly appreciate it.
+          are, we&rsquo;d greatly appreciate it.
         </Text>
 
         <TableView>
