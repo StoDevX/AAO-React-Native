@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {View, StyleSheet, Platform} from 'react-native'
+import {View, StyleSheet, Platform, Text} from 'react-native'
 import type {BusLineType, FancyBusTimeListType} from './types'
 import {getScheduleForNow, getSetOfStopsForNow} from './lib'
 import get from 'lodash/get'
@@ -11,7 +11,7 @@ import moment from 'moment-timezone'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
 import {BusStopRow} from './bus-stop-row'
-import {ListRow, ListSectionHeader} from '../../components/list'
+import {ListRow, ListSectionHeader, Title} from '../../components/list'
 
 const TIME_FORMAT = 'h:mma'
 const TIMEZONE = 'America/Winnipeg'
@@ -80,7 +80,9 @@ export class BusLine extends React.PureComponent {
       return (
         <View>
           <ListSectionHeader title={line.line} titleStyle={androidColor} />
-          <ListRow title="This line is not running today." />
+          <ListRow>
+            <Title><Text>This line is not running today.</Text></Title>
+          </ListRow>
         </View>
       )
     }
