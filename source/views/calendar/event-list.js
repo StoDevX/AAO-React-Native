@@ -5,9 +5,10 @@
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, Share} from 'react-native'
 import * as c from '../components/colors'
 import SimpleListView from '../components/listview'
+import type {TopLevelViewPropsType} from '../types'
 import type {EventType} from './types'
 import groupBy from 'lodash/groupBy'
 import size from 'lodash/size'
@@ -23,7 +24,7 @@ export class EventList extends React.Component {
     refreshing: boolean,
     onRefresh: () => any,
     now: moment,
-  }
+  } & TopLevelViewPropsType
 
   groupEvents = (
     events: EventType[],
@@ -37,6 +38,26 @@ export class EventList extends React.Component {
         return 'Today'
       }
       return event.startTime.format('ddd  MMM Do') // google returns events in CST
+    })
+  }
+
+  shareItem = (event: EventType) => {
+    Share.share({
+      message: `${event.summary}: ${event.startTime.toString()} – ${event.endTime.toString()}`,
+    })
+      .then(result => console.log(result))
+      .catch(error => console.log(error.message))
+  }
+
+  onPressEvent = (title: string, event: EventType) => {
+    this.props.navigator.push({
+      id: 'EventDetailView',
+      index: this.props.route.index + 1,
+      title: title,
+      backButtonTitle: 'Events',
+      props: {event},
+      onRightButton: () => this.shareItem(event),
+      rightButton: 'share',
     })
   }
 
@@ -72,7 +93,11 @@ export class EventList extends React.Component {
         refreshing={this.props.refreshing}
         onRefresh={this.props.onRefresh}
       >
-        {(event: EventType) => <EventRow event={event} />}
+        {(event: EventType) =>
+          <EventRow
+            onPress={() => this.onPressEvent(event.summary, event)}
+            event={event}
+          />}
       </SimpleListView>
     )
   }

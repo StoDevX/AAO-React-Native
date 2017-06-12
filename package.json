@@ -1,6 +1,6 @@
 {
   "name": "all-about-olaf",
-  "version": "2.3.0-beta.7",
+  "version": "2.4.0-beta.3",
   "private": true,
   "config": {
     "prettier_args": "--single-quote --trailing-comma all --no-bracket-spacing --no-semi"
@@ -101,7 +101,7 @@
     "ajv": "5.1.5",
     "babel-eslint": "7.2.3",
     "babel-jest": "20.0.3",
-    "babel-plugin-flow-react-proptypes": "3.2.0",
+    "babel-plugin-flow-react-proptypes": "3.2.1",
     "babel-preset-react-native": "1.9.2",
     "danger": "0.18.0",
     "enzyme": "2.8.2",
@@ -119,7 +119,7 @@
     "marked": "0.3.6",
     "minimist": "1.2.0",
     "pify": "2.3.0",
-    "prettier": "1.4.2",
+    "prettier": "1.4.4",
     "react-native-mock": "0.3.1",
     "react-native-view-shot": "1.9.1",
     "react-test-renderer": "15.5.4"
