@@ -6,6 +6,7 @@ import {fastGetTrimmedText} from '../../lib/html'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import type {EventType} from './types'
 import {ShareButton} from '../components/nav-buttons'
+import {times} from './times'
 
 const styles = StyleSheet.create({
   chunk: {
@@ -36,31 +37,10 @@ function display(title: string, data: string) {
 }
 
 function displayTimes(title: string, event: EventType) {
-  const eventLength = moment
-    .duration(event.endTime.diff(event.startTime))
-    .asHours()
-
-  const allDay = eventLength === 24
-  const multiDay = event.startTime.dayOfYear() !== event.endTime.dayOfYear()
-  const sillyZeroLength = event.startTime.isSame(event.endTime, 'minute')
+  const {allDay, start, end} = times(event)
 
   if (allDay) {
     return display(title, 'All-Day')
-  }
-
-  let start, end
-  if (event.isOngoing) {
-    start = event.startTime.format('MMM. D')
-    end = event.endTime.format('MMM. D')
-  } else if (multiDay) {
-    start = event.startTime.format('h:mm A')
-    end = `${event.endTime.format('MMM. D h:mm A')}`
-  } else if (sillyZeroLength) {
-    start = event.startTime.format('h:mm A')
-    end = '???'
-  } else {
-    start = event.startTime.format('h:mm A')
-    end = event.endTime.format('h:mm A')
   }
 
   return display(title, start + ' — ' + end)
