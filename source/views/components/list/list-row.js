@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
 })
 
-type PropsType = {
+type PropsType = {|
   style?: any,
   contentContainerStyle?: any,
   arrowPosition?: 'center' | 'top' | 'none',
@@ -43,7 +43,7 @@ type PropsType = {
   spacing?: {left?: number, right?: number},
   onPress?: () => any,
   children?: any,
-}
+|}
 export function ListRow(props: PropsType) {
   const {
     style,

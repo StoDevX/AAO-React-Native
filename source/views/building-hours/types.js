@@ -34,7 +34,7 @@ export type NamedBuildingScheduleType = {|
 |}
 
 export type BreakScheduleContainerType = {
-  [key: BreakNameEnumType]: SingleBuildingScheduleType[],
+  [key: BreakNameEnumType]: NamedBuildingScheduleType[],
 }
 
 export type BuildingType = {|
