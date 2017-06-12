@@ -64,61 +64,69 @@ const parseTime = (now: moment) => time => {
   )
 }
 
-export function BusLine({line, now}: {line: BusLineType, now: moment}) {
-  // grab the colors (with fallbacks) via _.get
-  const barColor = get(barColors, line.line, c.black)
-  const currentStopColor = get(stopColors, line.line, c.gray)
-  const androidColor = Platform.OS === 'android' ? {color: barColor} : null
+export class BusLine extends React.PureComponent {
+  props: {line: BusLineType, now: moment}
 
-  const schedule = getScheduleForNow(line.schedules, now)
-  if (!schedule) {
+  render() {
+    const {line, now} = this.props
+
+    // grab the colors (with fallbacks) via _.get
+    const barColor = get(barColors, line.line, c.black)
+    const currentStopColor = get(stopColors, line.line, c.gray)
+    const androidColor = Platform.OS === 'android' ? {color: barColor} : null
+
+    const schedule = getScheduleForNow(line.schedules, now)
+    if (!schedule) {
+      return (
+        <View>
+          <ListSectionHeader title={line.line} titleStyle={androidColor} />
+          <ListRow title="This line is not running today." />
+        </View>
+      )
+    }
+
+    const scheduledMoments: FancyBusTimeListType[] = schedule.times.map(
+      timeset => timeset.map(parseTime(now)),
+    )
+
+    const moments: FancyBusTimeListType = getSetOfStopsForNow(
+      scheduledMoments,
+      now,
+    )
+    const pairs: [[string, moment]] = zip(schedule.stops, moments)
+
+    const timesIndex = scheduledMoments.indexOf(moments)
+    const isLastBus = timesIndex === scheduledMoments.length - 1
+    const subtitle = makeSubtitle({now, moments, isLastBus})
+
     return (
       <View>
-        <ListSectionHeader title={line.line} titleStyle={androidColor} />
-        <ListRow title="This line is not running today." />
+        <ListSectionHeader
+          title={line.line}
+          subtitle={subtitle}
+          titleStyle={androidColor}
+        />
+
+        {pairs.map(([placeTitle, moment], i, list) =>
+          <View key={i}>
+            <BusStopRow
+              // get the arrival time for this stop from each bus loop after
+              // the current time (as given by `now`)
+              times={scheduledMoments.slice(timesIndex).map(set => set[i])}
+              place={placeTitle}
+              now={now}
+              time={moment}
+              barColor={barColor}
+              currentStopColor={currentStopColor}
+              isFirstRow={i === 0}
+              isLastRow={i === list.length - 1}
+            />
+            {i < list.length - 1
+              ? <Separator style={styles.separator} />
+              : null}
+          </View>,
+        )}
       </View>
     )
   }
-
-  const scheduledMoments: FancyBusTimeListType[] = schedule.times.map(timeset =>
-    timeset.map(parseTime(now)),
-  )
-
-  const moments: FancyBusTimeListType = getSetOfStopsForNow(
-    scheduledMoments,
-    now,
-  )
-  const pairs: [[string, moment]] = zip(schedule.stops, moments)
-
-  const timesIndex = scheduledMoments.indexOf(moments)
-  const isLastBus = timesIndex === scheduledMoments.length - 1
-  const subtitle = makeSubtitle({now, moments, isLastBus})
-
-  return (
-    <View>
-      <ListSectionHeader
-        title={line.line}
-        subtitle={subtitle}
-        titleStyle={androidColor}
-      />
-
-      {pairs.map(([placeTitle, moment], i, list) =>
-        <View key={i}>
-          <BusStopRow
-            // get the arrival time for this stop from each bus loop after
-            // the current time (as given by `now`)
-            times={scheduledMoments.slice(timesIndex).map(set => set[i])}
-            place={placeTitle}
-            now={now}
-            time={moment}
-            barColor={barColor}
-            currentStopColor={currentStopColor}
-            isFirstRow={i === 0}
-            isLastRow={i === list.length - 1}
-          />
-          {i < list.length - 1 ? <Separator style={styles.separator} /> : null}
-        </View>,
-      )}
-    </View>
-  )
 }
