@@ -1444,6 +1444,7 @@
 				PRODUCT_NAME = "All About Olaf";
 				PROVISIONING_PROFILE = "328dc8bb-bb74-41f9-826a-ef2abd098c6a";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore NFMTHAZVS9.com.drewvolz.stolaf";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -1490,6 +1491,7 @@
 				PRODUCT_NAME = "All About Olaf";
 				PROVISIONING_PROFILE = "328dc8bb-bb74-41f9-826a-ef2abd098c6a";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore NFMTHAZVS9.com.drewvolz.stolaf";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
