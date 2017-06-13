@@ -4,8 +4,9 @@ category: Gym
 
 schedule:
   - title: Hours
-    hours: []
-    notes: STORP is closed for the summer.
+    hours:
+      - {days: [Mo, Th], from: '4:00pm', to: '6:00pm'}
+
   # - title: Hours
   #   hours:
   #     - {days: [Mo, Th, Fr], from: '4:00pm', to: '6:00pm'}
