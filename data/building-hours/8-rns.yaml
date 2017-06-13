@@ -5,10 +5,10 @@ image: regents-hall
 
 schedule:
   - title: Hours
-      hours:
-        - {days: [Mo, Tu, We, Th], from: '7:00am', to: '10:00pm'}
-        - {days: [Fr], from: '7:00am', to: '8:00pm'}
-        - {days: [Sa, Su], from: '9:00am', to: '8:00pm'}
+    hours:
+      - {days: [Mo, Tu, We, Th], from: '7:00am', to: '10:00pm'}
+      - {days: [Fr], from: '7:00am', to: '8:00pm'}
+      - {days: [Sa, Su], from: '9:00am', to: '8:00pm'}
 
   # - title: Hours
   #   hours:

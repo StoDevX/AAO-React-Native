@@ -3,9 +3,9 @@ image: rolvaag-library
 category: Libraries
 schedule:
   - title: Hours
-      hours:
-        - {days: [Mo, Tu, We, Th], from: '7:30am', to: '5:00pm'}
-        - {days: [Fr], from: '7:30am', to: '1:00pm'}
+    hours:
+      - {days: [Mo, Tu, We, Th], from: '7:30am', to: '5:00pm'}
+      - {days: [Fr], from: '7:30am', to: '1:00pm'}
 
   # - title: Hours
   #   hours:

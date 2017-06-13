@@ -3,7 +3,7 @@ category: Academia
 image: center-for-arts-and-dance
 
 schedule:
-- title: Hours
+  - title: Hours
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '8:00pm'}
 
