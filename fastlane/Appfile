@@ -1,0 +1,10 @@
+# The bundle identifier of your app
+app_identifier 'NFMTHAZVS9.com.drewvolz.stolaf'
+
+# Your Apple email address
+apple_id 'sgawebmaster@stolaf.edu'
+
+# This is a private key. It is not included in the repository.
+# Contact odt@stolaf.edu or another admin if you need access.
+json_key_file 'fastlane/play-private-key.json'
+package_name 'com.allaboutolaf'

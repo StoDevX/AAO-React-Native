@@ -1,0 +1,16 @@
+# All fastlane files are Ruby files.
+
+# Customise this file! Documentation can be found here:
+# https://github.com/fastlane/fastlane/tree/master/fastlane/docs
+
+# Set a minimum version for fastlane
+fastlane_version '2.19.0'
+
+require 'fileutils'
+
+import 'lib/before_all.rb'
+import 'lib/util.rb'
+
+import 'platforms/agnostic.rb'
+import 'platforms/android.rb'
+import 'platforms/ios.rb'

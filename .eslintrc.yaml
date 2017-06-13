@@ -1,100 +1,88 @@
 parser: babel-eslint
-extends: eslint:recommended
-installedESLint: true
+
+plugins:
+  - babel
+  - react
+  - react-native
+  - flowtype
+
+extends:
+  - eslint:recommended
+  - plugin:flowtype/recommended
+  - plugin:react/recommended
+  - prettier
+  - prettier/flowtype
+  - prettier/react
 
 env:
   es6: true
   node: true
-
-parserOptions:
-  sourceType: module
-  ecmaFeatures:
-    experimentalObjectRestSpread: true
-    jsx: true
-
-plugins: [babel, react, flowtype]
+  browser: true
 
 globals:
   fetch: true
   FormData: true
+  fetchJson: true
+  rawFetch: true
 
 rules:
-  array-callback-return: warn
-  arrow-spacing: ['warn', {before: true, after: true}]
-  brace-style: [warn, 1tbs]
-  camelcase: error
-  comma-dangle: [warn, always-multiline]
-  comma-spacing: ['warn', {before: false, after: true}]
-  comma-style: [warn, last]
-  consistent-this: [warn, self]
-  curly: [error, multi-line]
+  array-callback-return: error
+  camelcase: warn
+  consistent-this: [error, self]
+  curly: [warn, multi-line]
   default-case: error
   guard-for-in: error
-  indent: [error, 2, {SwitchCase: 1, MemberExpression: 1}]
-  key-spacing: ['error', {beforeColon: false, afterColon: true}]
-  keyword-spacing: warn
   linebreak-style: [error, unix]
-  new-cap: 'off'
+  new-cap: off
+  no-await-in-loop: warn
   no-case-declarations: error
-  no-class-assign: error
-  no-confusing-arrow: error
-  no-console: 'off'
-  no-const-assign: error
+  no-confusing-arrow: off
+  no-console: off
   no-div-regex: error
-  no-eq-null: error
+  no-eq-null: warn
   no-extra-label: error
-  no-fallthrough: error
-  no-implicit-coercion: ['error', {boolean: true, number: true, string: true}]
+  no-implicit-coercion: [error, {boolean: true, number: true, string: true}]
   no-implicit-globals: error
+  no-multi-assign: error
   no-new-symbol: error
-  no-redeclare: ['error', {builtinGlobals: true}]
   no-restricted-syntax: [error, WithStatement]
-  no-self-assign: warn
-  no-undef-init: 'off'
-  no-underscore-dangle: 'off'
+  no-return-await: error
+  no-throw-literal: error
+  no-undef-init: off
+  no-underscore-dangle: off
   no-unmodified-loop-condition: error
-  no-unused-labels: error
-  no-unused-vars: ['warn', {args: 'after-used', argsIgnorePattern: '^_$'}]
+  no-unused-vars: [warn, {args: 'after-used', argsIgnorePattern: '^_$'}]
   no-useless-constructor: error
   no-var: error
-  no-whitespace-before-property: error
-  one-var-declaration-per-line: error
-  prefer-spread: warn
-  quotes: [error, single, avoid-escape]
-  semi: [error, never]
-  wrap-iife: error
-  babel/arrow-parens: [warn, as-needed]
-  babel/no-await-in-loop: warn
+  prefer-promise-reject-errors: error
+  prefer-spread: error
+  quotes: [warn, single, avoid-escape]
+  require-await: warn
+  semi: off
 
   # react rules – https://github.com/yannickcr/eslint-plugin-react
-  jsx-quotes: [warn, prefer-single]
-  react/display-name: 'off'
-  react/jsx-curly-spacing: [warn, never]
-  react/jsx-indent-props: [warn, 2]
-  react/jsx-no-duplicate-props: warn
-  react/jsx-no-undef: error
-  react/jsx-space-before-closing: error
-  react/jsx-uses-react: error
-  react/jsx-uses-vars: error
-  react/no-deprecated: error
+  react/display-name: off
+  react/jsx-key: warn
+  react/jsx-no-bind: [warn, {ignoreRefs: true, allowArrowFunctions: true}]
   react/no-did-mount-set-state: warn
   react/no-did-update-set-state: warn
-  react/no-direct-mutation-state: error
-  react/no-multi-comp: 'off'  # prevent multiple component definition per file
+  react/no-multi-comp: off  # prevent multiple component definition per file
+  react/no-string-refs: error
+  react/no-unescaped-entities: off
   react/no-unknown-property: warn
-  react/prefer-stateless-function: warn
-  react/prop-types: error  # prevent missing proptypes in a react component definition
-  react/react-in-jsx-scope: error
+  react/prop-types: off
   react/self-closing-comp: warn  # prevent extra closing tags for components without children
   react/sort-comp: warn
   react/sort-prop-types: warn
-  react/wrap-multilines: 'off'
+  react/wrap-multilines: off
 
   # flow rules
-  flowtype/define-flow-type: error
-  # flowtype/require-valid-file-annotation: [error, always]
-  flowtype/space-after-type-colon: [warn, always]
-  flowtype/space-before-type-colon: [warn, never]
-  flowtype/type-id-match: error
+  flowtype/define-flow-type: warn
   flowtype/use-flow-type: error
-  flowtype/valid-syntax: warn
+  flowtype/valid-syntax: error
+  flowtype/no-types-missing-file-annotation: off
+
+  # react-native rules
+  react-native/no-unused-styles: warn
+  react-native/no-inline-styles: warn
+  react-native/no-color-literals: warn

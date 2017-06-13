@@ -1,0 +1,44 @@
+$schema: http://json-schema.org/draft-06/schema#
+
+additionalProperties: false
+required: [line, schedules]
+properties:
+  line: {type: string}
+  schedules:
+    type: array
+    items: {$ref: '#/definitions/schedule'}
+
+
+definitions:
+  schedule:
+    additionalProperties: false
+    required: [days, stops, times]
+    properties:
+      days: {$ref: '_defs.json#/definitions/days-of-week'}
+      coordinates: {$ref: '#/definitions/coordinates'}
+      stops: {$ref: '#/definitions/stops'}
+      times: {$ref: '#/definitions/times'}
+
+  coordinates:
+    type: array
+    items: {$ref: '#/definitions/coord-pair'}
+
+  stops:
+    type: array
+    items: {type: string}
+
+  times:
+    type: array
+    items:
+      type: array
+      items: {$ref: '#/definitions/time-value'}
+
+  time-value:
+    oneOf:
+      - {$ref: '_defs.json#/definitions/time'}
+      - {const: false}
+
+  coord-pair:
+    additionalProperties: false
+    type: array
+    items: [{type: number}, {type: number}]

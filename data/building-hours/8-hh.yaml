@@ -1,0 +1,16 @@
+name: Holland Hall
+subtitle: Under Construction
+category: Academia
+
+schedule:
+  - title: Hours
+    hours: []
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

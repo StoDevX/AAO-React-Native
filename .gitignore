@@ -22,24 +22,52 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
-# Android/IJ
+# Android/IntelliJ
 #
-*.iml
+build/
 .idea
 .gradle
 local.properties
+*.iml
 
 # node.js
 #
 node_modules/
 npm-debug.log
+yarn-error.log
+.eslintcache
 
 # BUCK
 buck-out/
 \.buckd/
 android/app/libs
-android/keystores/debug.keystore
+*.keystore
 
 # KEYS
-keys.js
 .env.js
+
+# Tests and code coverage
+coverage
+
+# fastlane specific
+fastlane/report.xml
+
+# deliver's temporary files
+Preview.html
+
+# snapshot's generated screenshots
+fastlane/screenshots
+
+# scan's temporary files
+fastlane/test_output
+
+# deploy key
+scripts/travisci_deploy_key
+fastlane/play-private-key.json
+
+# generated files
+docs/
+
+# android keystores
+android/app/signing.properties
+*.keystore
