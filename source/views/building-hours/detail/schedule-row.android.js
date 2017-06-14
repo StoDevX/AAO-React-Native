@@ -12,21 +12,21 @@ import {formatBuildingTimes, summarizeDays} from '../building-hours-helpers'
 
 export class ScheduleRow extends React.PureComponent {
   props: {
-    schedule: SingleBuildingScheduleType,
+    set: SingleBuildingScheduleType,
     isActive: boolean,
     now: moment,
   }
 
   render() {
-    const {schedule, isActive, now} = this.props
+    const {set, isActive, now} = this.props
     return (
       <View style={styles.scheduleRow}>
         <StyledText style={[styles.scheduleDays, isActive && styles.bold]}>
-          {summarizeDays(schedule.days)}
+          {summarizeDays(set.days)}
         </StyledText>
 
         <StyledText style={[styles.scheduleHours, isActive && styles.bold]}>
-          {formatBuildingTimes(schedule, now)}
+          {formatBuildingTimes(set, now)}
         </StyledText>
       </View>
     )
