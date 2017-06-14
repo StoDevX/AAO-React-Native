@@ -138,9 +138,7 @@ export class BusLine extends React.PureComponent {
             <Column alignItems="center" width={45} paddingRight={5}>
               <Icon
                 name={
-                  Platform.OS === 'ios'
-                    ? 'ios-navigate-outline'
-                    : 'md-navigate'
+                  Platform.OS === 'ios' ? 'ios-navigate-outline' : 'md-navigate'
                 }
                 size={24}
                 style={{color: c.iosDisabledText}}
