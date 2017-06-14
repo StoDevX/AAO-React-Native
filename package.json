@@ -102,7 +102,7 @@
     "babel-eslint": "7.2.3",
     "babel-jest": "20.0.3",
     "babel-plugin-flow-react-proptypes": "3.3.0",
-    "babel-preset-react-native": "1.9.2",
+    "babel-preset-react-native": "2.0.0",
     "danger": "0.18.0",
     "enzyme": "2.8.2",
     "enzyme-to-json": "1.5.1",
