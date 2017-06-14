@@ -11,7 +11,7 @@ import type {BuildingType} from '../types'
 import moment from 'moment-timezone'
 import ParallaxView from 'react-native-parallax-view'
 import * as c from '../../components/colors'
-import {getShortBuildingStatus} from '../building-hours-helpers'
+import {getShortBuildingStatus} from '../lib'
 
 import {Badge} from './badge'
 import {Header} from './header'

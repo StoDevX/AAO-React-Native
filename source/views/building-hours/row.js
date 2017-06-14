@@ -11,10 +11,7 @@ import type {BuildingType} from './types'
 import * as c from '../components/colors'
 import {Row, Column} from '../components/layout'
 import {ListRow, Detail, Title} from '../components/list'
-import {
-  getDetailedBuildingStatus,
-  getShortBuildingStatus,
-} from './building-hours-helpers'
+import {getDetailedBuildingStatus, getShortBuildingStatus} from './lib'
 
 const styles = StyleSheet.create({
   title: {

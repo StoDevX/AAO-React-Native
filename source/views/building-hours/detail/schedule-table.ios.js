@@ -7,8 +7,8 @@
 import React from 'react'
 import {TableView, Section} from 'react-native-tableview-simple'
 import moment from 'moment-timezone'
-import type {NamedBuildingScheduleType, DayOfWeekEnumType} from '../types'
-import {isBuildingOpenAtMoment} from '../building-hours-helpers'
+import type {NamedBuildingScheduleType} from '../types'
+import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
 import {ScheduleRow} from './schedule-row'
 
 export class ScheduleTable extends React.PureComponent {
@@ -19,30 +19,38 @@ export class ScheduleTable extends React.PureComponent {
 
   render() {
     const {now, schedules} = this.props
-    const dayOfWeek = ((now.format('dd'): any): DayOfWeekEnumType)
+    const dayOfWeek = getDayOfWeek(now)
 
     return (
       <TableView>
-        {schedules.map(set =>
+        {schedules.map(schedule =>
           <Section
-            key={set.title}
-            header={set.title.toUpperCase()}
-            footer={set.notes}
+            key={schedule.title}
+            header={schedule.title.toUpperCase()}
+            footer={schedule.notes}
           >
-            {set.hours.map((schedule, i) =>
+            {schedule.hours.map((set, i) =>
               <ScheduleRow
                 key={i}
                 now={now}
-                schedule={schedule}
+                set={set}
                 isActive={
-                  set.isPhysicallyOpen !== false &&
-                  schedule.days.includes(dayOfWeek) &&
-                  isBuildingOpenAtMoment(schedule, now)
+                  schedule.isPhysicallyOpen !== false &&
+                  set.days.includes(dayOfWeek) &&
+                  isBuildingOpenAtMoment(set, now)
                 }
               />,
             )}
           </Section>,
         )}
+        
+        <Section>
+          <Cell
+            accessory="DisclosureIndicator"
+            title="Suggest an Edit"
+            onPress={onProblemReport}
+          />
+        </Section>
       </TableView>
     )
   }
