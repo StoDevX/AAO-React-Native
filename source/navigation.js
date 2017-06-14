@@ -18,7 +18,7 @@ import {
   BuildingHoursView,
   BuildingHoursDetailView,
 } from './views/building-hours'
-import TransportationView from './views/transportation'
+import TransportationView, {BusMapView} from './views/transportation'
 import SettingsView from './views/settings'
 import SISLoginView from './views/settings/login'
 import CreditsView from './views/settings/credits'
@@ -58,6 +58,7 @@ export const AppNavigator = StackNavigator(
     StudentOrgsDetailView: {screen: StudentOrgsDetailView},
     StudentOrgsView: {screen: StudentOrgsView},
     TransportationView: {screen: TransportationView},
+    BusMapView: {screen: BusMapView},
   },
   {
     navigationOptions: {

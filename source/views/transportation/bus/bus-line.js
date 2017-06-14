@@ -1,17 +1,19 @@
 // @flow
 import React from 'react'
-import {View, StyleSheet, Platform, Text} from 'react-native'
+import {View, Text, StyleSheet, Platform} from 'react-native'
 import type {BusLineType, FancyBusTimeListType} from './types'
 import {getScheduleForNow, getSetOfStopsForNow} from './lib'
 import get from 'lodash/get'
 import zip from 'lodash/zip'
 import head from 'lodash/head'
 import last from 'lodash/last'
+import Icon from 'react-native-vector-icons/Ionicons'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
 import {BusStopRow} from './bus-stop-row'
-import {ListRow, ListSectionHeader, Title} from '../../components/list'
+import {ListRow, ListSectionHeader, Title, Detail} from '../../components/list'
+import {Row, Column} from '../../components/layout'
 
 const TIME_FORMAT = 'h:mma'
 const TIMEZONE = 'America/Winnipeg'
@@ -65,7 +67,7 @@ const parseTime = (now: moment) => time => {
 }
 
 export class BusLine extends React.PureComponent {
-  props: {line: BusLineType, now: moment}
+  props: {line: BusLineType, now: moment, openMap: () => any}
 
   render() {
     const {line, now} = this.props
@@ -123,11 +125,39 @@ export class BusLine extends React.PureComponent {
               isFirstRow={i === 0}
               isLastRow={i === list.length - 1}
             />
-            {i < list.length - 1
-              ? <Separator style={styles.separator} />
-              : null}
+            <Separator style={styles.separator} />
           </View>,
         )}
+
+        <ListRow
+          onPress={this.props.openMap}
+          fullWidth={true}
+          spacing={{left: 45}}
+        >
+          <Row alignItems="center">
+            <Column alignItems="center" width={45} paddingRight={5}>
+              <Icon
+                name={
+                  Platform.OS === 'ios'
+                    ? 'ios-navigate-outline'
+                    : 'md-navigate'
+                }
+                size={24}
+                style={{color: c.iosDisabledText}}
+              />
+            </Column>
+
+            <Column>
+              <Title>
+                <Text>Open Map</Text>
+              </Title>
+
+              <Detail>
+                <Text>See the planned bus route on a map!</Text>
+              </Detail>
+            </Column>
+          </Row>
+        </ListRow>
       </View>
     )
   }
