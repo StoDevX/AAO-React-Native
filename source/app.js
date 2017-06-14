@@ -46,6 +46,7 @@ import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
+import {AthleticsView} from './views/athletics'
 import {SnapshotsView} from './storybook'
 import HelpView from './views/help'
 
@@ -113,6 +114,8 @@ function renderScene(route, navigator) {
       return <SnapshotsView {...props} />
     case 'HelpView':
       return <HelpView {...props} />
+    case 'AthleticsView':
+      return <AthleticsView {...props} />
     default:
       return <NoRoute {...props} />
   }
