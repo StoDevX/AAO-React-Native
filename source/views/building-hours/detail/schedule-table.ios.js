@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {TableView, Section} from 'react-native-tableview-simple'
+import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import moment from 'moment-timezone'
 import type {NamedBuildingScheduleType} from '../types'
 import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
@@ -15,10 +15,11 @@ export class ScheduleTable extends React.PureComponent {
   props: {
     now: moment,
     schedules: NamedBuildingScheduleType[],
+    onProblemReport: () => any,
   }
 
   render() {
-    const {now, schedules} = this.props
+    const {now, schedules, onProblemReport} = this.props
     const dayOfWeek = getDayOfWeek(now)
 
     return (
@@ -37,13 +38,13 @@ export class ScheduleTable extends React.PureComponent {
                 isActive={
                   schedule.isPhysicallyOpen !== false &&
                   set.days.includes(dayOfWeek) &&
-                  isBuildingOpenAtMoment(set, now)
+                  isScheduleOpenAtMoment(set, now)
                 }
               />,
             )}
           </Section>,
         )}
-        
+
         <Section>
           <Cell
             accessory="DisclosureIndicator"

@@ -33,10 +33,10 @@ const styles = StyleSheet.create({
 })
 
 export class BuildingDetail extends React.PureComponent {
-  props: {info: BuildingType, now: moment}
+  props: {info: BuildingType, now: moment, onProblemReport: () => any}
 
   render() {
-    const {info, now} = this.props
+    const {info, now, onProblemReport} = this.props
 
     const headerImage = info.image && buildingImages.hasOwnProperty(info.image)
       ? buildingImages[info.image]
@@ -55,7 +55,11 @@ export class BuildingDetail extends React.PureComponent {
 
           <Badge status={openStatus} />
 
-          <ScheduleTable schedules={schedules} now={now} />
+          <ScheduleTable
+            schedules={schedules}
+            now={now}
+            onProblemReport={onProblemReport}
+          />
         </View>
       </ParallaxView>
     )

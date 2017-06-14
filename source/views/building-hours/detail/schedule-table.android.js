@@ -16,6 +16,7 @@ export class ScheduleTable extends React.PureComponent {
   props: {
     now: moment,
     schedules: NamedBuildingScheduleType[],
+    onProblemReport: () => any,
   }
 
   render() {
@@ -39,7 +40,7 @@ export class ScheduleTable extends React.PureComponent {
                 isActive={
                   schedule.isPhysicallyOpen !== false &&
                   set.days.includes(dayOfWeek) &&
-                  isBuildingOpenAtMoment(set, this.state.now)
+                  isScheduleOpenAtMoment(set, this.state.now)
                 }
               />,
             )}
