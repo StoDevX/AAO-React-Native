@@ -41,6 +41,12 @@ export class BuildingHoursDetailView extends React.PureComponent {
     this.setState({now: moment.tz(CENTRAL_TZ)})
   }
 
+  reportProblem = () => {
+    this.props.navigation.navigate('BuildingHoursProblemReportView', {
+      initialBuilding: this.props.navigation.state.params.building,
+    })
+  }
+
   render() {
     const info = this.props.navigation.state.params.building
     const {now} = this.state
