@@ -1,5 +1,5 @@
 // @flow
-import {isChapelTime} from '../building-hours-helpers'
+import {isChapelTime} from '../chapel'
 import {dayMoment} from './moment.helper'
 
 it('checks if a moment is during chapel time', () => {

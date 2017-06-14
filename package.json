@@ -72,6 +72,7 @@
     "react-native-button": "1.8.2",
     "react-native-communications": "2.2.1",
     "react-native-custom-tabs": "0.1.4",
+    "react-native-datepicker": "1.5.1",
     "react-native-device-info": "0.10.2",
     "react-native-google-analytics-bridge": "5.0.1",
     "react-native-keychain": "1.2.0",

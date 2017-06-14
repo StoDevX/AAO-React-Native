@@ -8,7 +8,7 @@ import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import type {SingleBuildingScheduleType} from '../types'
 
-import {formatBuildingTimes, summarizeDays} from '../building-hours-helpers'
+import {formatBuildingTimes, summarizeDays} from '../lib'
 
 export class ScheduleRow extends React.PureComponent {
   props: {

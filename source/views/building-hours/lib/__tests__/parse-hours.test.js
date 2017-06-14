@@ -1,5 +1,5 @@
 // @flow
-import {parseHours} from '../building-hours-helpers'
+import {parseHours} from '../parse-hours'
 import {dayMoment, hourMoment, moment} from './moment.helper'
 
 it('returns an {open, close} tuple', () => {

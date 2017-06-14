@@ -17,6 +17,8 @@ import JobDetailView from './views/sis/student-work/detail'
 import {
   BuildingHoursView,
   BuildingHoursDetailView,
+  BuildingHoursProblemReportView,
+  BuildingHoursScheduleEditorView,
 } from './views/building-hours'
 import TransportationView from './views/transportation'
 import SettingsView from './views/settings'
@@ -34,6 +36,8 @@ export const AppNavigator = StackNavigator(
     HomeView: {screen: HomeView},
     BuildingHoursDetailView: {screen: BuildingHoursDetailView},
     BuildingHoursView: {screen: BuildingHoursView},
+    BuildingHoursProblemReportView: {screen: BuildingHoursProblemReportView},
+    BuildingHoursScheduleEditorView: {screen: BuildingHoursScheduleEditorView},
     CalendarView: {screen: CalendarView},
     ContactsView: {screen: ContactsView},
     CreditsView: {screen: CreditsView},

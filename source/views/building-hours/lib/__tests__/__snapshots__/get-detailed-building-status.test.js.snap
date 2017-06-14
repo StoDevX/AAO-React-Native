@@ -5,12 +5,12 @@ Array [
   Object {
     "isActive": false,
     "label": "Hours",
-    "status": "10:30am — 12:00pm",
+    "status": "10:30 AM — 12:00 PM",
   },
   Object {
     "isActive": true,
     "label": "Hours",
-    "status": "1:00pm — 3:00pm",
+    "status": "1:00 PM — 3:00 PM",
   },
 ]
 `;
@@ -20,17 +20,17 @@ Array [
   Object {
     "isActive": false,
     "label": "Hours",
-    "status": "10:30am — 12:00pm",
+    "status": "10:30 AM — 12:00 PM",
   },
   Object {
     "isActive": false,
     "label": "Hours2",
-    "status": "10:30am — 12:00pm",
+    "status": "10:30 AM — 12:00 PM",
   },
   Object {
     "isActive": true,
     "label": "Hours2",
-    "status": "1:00pm — 3:00pm",
+    "status": "1:00 PM — 3:00 PM",
   },
 ]
 `;
@@ -40,7 +40,7 @@ Array [
   Object {
     "isActive": false,
     "label": "Hours",
-    "status": "10:30am — 2:00pm",
+    "status": "10:30 AM — 2:00 PM",
   },
 ]
 `;

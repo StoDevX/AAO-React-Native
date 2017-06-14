@@ -7,8 +7,8 @@
 import React from 'react'
 import {TableView, Section} from 'react-native-tableview-simple'
 import moment from 'moment-timezone'
-import type {NamedBuildingScheduleType, DayOfWeekEnumType} from '../types'
-import {isBuildingOpenAtMoment} from '../building-hours-helpers'
+import type {NamedBuildingScheduleType} from '../types'
+import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
 import {ScheduleRow} from './schedule-row'
 
 export class ScheduleTable extends React.PureComponent {
@@ -19,7 +19,7 @@ export class ScheduleTable extends React.PureComponent {
 
   render() {
     const {now, schedules} = this.props
-    const dayOfWeek = ((now.format('dd'): any): DayOfWeekEnumType)
+    const dayOfWeek = getDayOfWeek(now)
 
     return (
       <TableView>
@@ -43,6 +43,14 @@ export class ScheduleTable extends React.PureComponent {
             )}
           </Section>,
         )}
+        
+        <Section>
+          <Cell
+            accessory="DisclosureIndicator"
+            title="Suggest an Edit"
+            onPress={onProblemReport}
+          />
+        </Section>
       </TableView>
     )
   }

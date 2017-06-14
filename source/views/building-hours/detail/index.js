@@ -10,8 +10,7 @@ import type {BuildingType} from '../types'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import {BuildingDetail} from './building'
-
-const CENTRAL_TZ = 'America/Winnipeg'
+import {CENTRAL_TZ} from '../lib'
 
 export class BuildingHoursDetailView extends React.PureComponent {
   static navigationOptions = ({navigation}) => {
@@ -40,6 +39,12 @@ export class BuildingHoursDetailView extends React.PureComponent {
 
   updateTime = () => {
     this.setState({now: moment.tz(CENTRAL_TZ)})
+  }
+
+  reportProblem = () => {
+    this.props.navigation.navigate('BuildingHoursProblemReportView', {
+      initialBuilding: this.props.navigation.state.params.building,
+    })
   }
 
   render() {
