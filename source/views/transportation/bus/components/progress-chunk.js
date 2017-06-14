@@ -45,46 +45,52 @@ const styles = StyleSheet.create({
   },
 })
 
-export const ProgressChunk = ({
-  afterStop,
-  atStop,
-  barColor,
-  beforeStop,
-  currentStopColor,
-  skippingStop,
-  isFirstChunk,
-  isLastChunk,
-}: {
-  afterStop: boolean,
-  atStop: boolean,
-  barColor: string,
-  beforeStop: boolean,
-  currentStopColor: string,
-  skippingStop: boolean,
-  isFirstChunk: boolean,
-  isLastChunk: boolean,
-}) => {
-  // To draw the bar, we draw a chunk of the bar, then we draw the dot, then
-  // we draw the last chunk of the bar.
-  const startBarColor = isAndroid && isFirstChunk ? c.transparent : barColor
-  const endBarColor = isAndroid && isLastChunk ? c.transparent : barColor
+export class ProgressChunk extends React.PureComponent {
+  props: {
+    afterStop: boolean,
+    atStop: boolean,
+    barColor: string,
+    beforeStop: boolean,
+    currentStopColor: string,
+    skippingStop: boolean,
+    isFirstChunk: boolean,
+    isLastChunk: boolean,
+  }
 
-  return (
-    <View style={styles.barContainer}>
-      <View style={[styles.bar, {backgroundColor: startBarColor}]} />
-      <View
-        style={[
-          styles.dot,
-          afterStop && [
-            styles.passedStop,
-            {borderColor: barColor, backgroundColor: barColor},
-          ],
-          beforeStop && [styles.beforeStop, {borderColor: barColor}],
-          atStop && [styles.atStop, {borderColor: currentStopColor}],
-          skippingStop && styles.skippingStop,
-        ]}
-      />
-      <View style={[styles.bar, {backgroundColor: endBarColor}]} />
-    </View>
-  )
+  render() {
+    const {
+      afterStop,
+      atStop,
+      barColor,
+      beforeStop,
+      currentStopColor,
+      skippingStop,
+      isFirstChunk,
+      isLastChunk,
+    } = this.props
+
+    // To draw the bar, we draw a chunk of the bar, then we draw the dot, then
+    // we draw the last chunk of the bar.
+    const startBarColor = isAndroid && isFirstChunk ? c.transparent : barColor
+    const endBarColor = isAndroid && isLastChunk ? c.transparent : barColor
+
+    return (
+      <View style={styles.barContainer}>
+        <View style={[styles.bar, {backgroundColor: startBarColor}]} />
+        <View
+          style={[
+            styles.dot,
+            afterStop && [
+              styles.passedStop,
+              {borderColor: barColor, backgroundColor: barColor},
+            ],
+            beforeStop && [styles.beforeStop, {borderColor: barColor}],
+            atStop && [styles.atStop, {borderColor: currentStopColor}],
+            skippingStop && styles.skippingStop,
+          ]}
+        />
+        <View style={[styles.bar, {backgroundColor: endBarColor}]} />
+      </View>
+    )
+  }
 }
