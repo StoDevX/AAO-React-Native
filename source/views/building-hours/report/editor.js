@@ -6,7 +6,6 @@
 
 import React from 'react'
 import xor from 'lodash/xor'
-import fromPairs from 'lodash/fromPairs'
 import {ScrollView, Text, StyleSheet} from 'react-native'
 import moment from 'moment-timezone'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
