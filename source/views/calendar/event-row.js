@@ -2,12 +2,12 @@
 import React from 'react'
 import {StyleSheet, Text} from 'react-native'
 import type {EventType} from './types'
-import moment from 'moment-timezone'
 import * as c from '../components/colors'
 import {Row, Column} from '../components/layout'
 import {ListRow, Detail, Title} from '../components/list'
 import {fastGetTrimmedText} from '../../lib/html'
 import {Bar} from './vertical-bar'
+import {times} from './times'
 
 const styles = StyleSheet.create({
   row: {
@@ -72,13 +72,7 @@ export default function EventRow({
 }
 
 function CalendarTimes({event, style}: {event: EventType, style: any}) {
-  const eventLength = moment
-    .duration(event.endTime.diff(event.startTime))
-    .asHours()
-
-  const allDay = eventLength === 24
-  const multiDay = event.startTime.dayOfYear() !== event.endTime.dayOfYear()
-  const sillyZeroLength = event.startTime.isSame(event.endTime, 'minute')
+  const {allDay, start, end} = times(event)
 
   if (allDay) {
     return (
@@ -87,33 +81,6 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
       </Column>
     )
   }
-
-  let startTimeFormatted = event.startTime.format('h:mm A')
-  let endTimeFormatted = event.endTime.format('h:mm A')
-  let midnightTime = '12:00 AM'
-
-  let start, end
-  if (event.isOngoing) {
-    start = event.startTime.format('MMM. D')
-    end = event.endTime.format('MMM. D')
-  } else if (multiDay) {
-    // 12:00 PM to Jun. 25 3:00pm
-    // Midnight to Jun. 25 <-- assuming the end time is also midnight
-    start = startTimeFormatted
-    const endFormat = endTimeFormatted === midnightTime
-      ? 'MMM. D'
-      : 'MMM. D h:mm A'
-    end = `to ${event.endTime.format(endFormat)}`
-  } else if (sillyZeroLength) {
-    start = startTimeFormatted
-    end = 'until ???'
-  } else {
-    start = startTimeFormatted
-    end = endTimeFormatted
-  }
-
-  start = start === midnightTime ? 'Midnight' : start
-  end = end === midnightTime ? 'Midnight' : end
 
   return (
     <Column style={style}>
