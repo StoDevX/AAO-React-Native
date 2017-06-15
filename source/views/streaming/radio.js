@@ -14,6 +14,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native'
+import {TabBarIcon} from '../components/tabbar-icon'
 import {Button} from '../components/button'
 import * as c from '../components/colors'
 //import {tracker} from '../../analytics'
@@ -83,6 +84,10 @@ export default function KSTOView() {
       </Text>
     </View>
   )
+}
+KSTOView.navigationOptions = {
+  tabBarLabel: 'KSTO',
+  tabBarIcon: TabBarIcon('radio'),
 }
 
 let styles = StyleSheet.create({

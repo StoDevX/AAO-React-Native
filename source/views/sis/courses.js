@@ -6,6 +6,7 @@
 
 import React from 'react'
 import {StyleSheet} from 'react-native'
+import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import delay from 'delay'
 import size from 'lodash/size'
@@ -33,6 +34,11 @@ type CoursesViewPropsType = TopLevelViewPropsType & {
 }
 
 class CoursesView extends React.Component {
+  static navigationOptions = {
+    tabBarLabel: 'Courses',
+    tabBarIcon: TabBarIcon('archive'),
+  }
+
   state: {
     loading: boolean,
   } = {
@@ -72,14 +78,7 @@ class CoursesView extends React.Component {
         <NoticeView
           text="Sorry, it looks like your SIS session timed out. Could you set up the Google login in Settings?"
           buttonText="Open Settings"
-          onPress={() =>
-            this.props.navigator.push({
-              id: 'SettingsView',
-              title: 'Settings',
-              index: this.props.route.index + 1,
-              onDismiss: (route, navigator) => navigator.pop(),
-              sceneConfig: 'fromBottom',
-            })}
+          onPress={() => this.props.navigation.navigate('SettingsView')}
         />
       )
     }
@@ -101,7 +100,6 @@ class CoursesView extends React.Component {
     return (
       <SimpleListView
         style={styles.listContainer}
-        forceBottomInset={true}
         data={this.props.coursesByTerm}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}

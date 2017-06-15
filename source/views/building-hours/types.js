@@ -25,13 +25,13 @@ export type SingleBuildingScheduleType = {|
   to: string,
 |}
 
-export type NamedBuildingScheduleType = {|
+export type NamedBuildingScheduleType = {
   title: 'Hours' | string,
   notes?: string,
   isPhysicallyOpen?: boolean,
   closedForChapelTime?: boolean,
   hours: SingleBuildingScheduleType[],
-|}
+}
 
 export type BreakScheduleContainerType = {
   [key: BreakNameEnumType]: NamedBuildingScheduleType[],

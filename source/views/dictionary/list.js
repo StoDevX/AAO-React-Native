@@ -47,6 +47,11 @@ const styles = StyleSheet.create({
 })
 
 export class DictionaryView extends React.Component {
+  static navigationOptions = {
+    title: 'Campus Dictionary',
+    headerBackTitle: 'Dictionary',
+  }
+
   state: {
     results: {[key: string]: Array<WordType>},
   } = {
@@ -57,13 +62,7 @@ export class DictionaryView extends React.Component {
 
   onPressRow = (data: WordType) => {
     tracker.trackEvent('dictionary', data.word)
-    this.props.navigator.push({
-      id: 'DictionaryDetailView',
-      index: this.props.route.index + 1,
-      title: data.word,
-      backButtonTitle: 'Dictionary',
-      props: {item: data},
-    })
+    this.props.navigation.navigate('DictionaryDetailView', {item: data})
   }
 
   renderRow = ({item}: {item: WordType}) => {

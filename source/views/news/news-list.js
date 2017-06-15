@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {StyleSheet, Share} from 'react-native'
+import {StyleSheet} from 'react-native'
 import * as c from '../components/colors'
 import SimpleListView from '../components/listview'
 import type {StoryType} from './types'
@@ -30,24 +30,10 @@ export class NewsList extends React.Component {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
   }
 
-  shareItem = (story: StoryType) => {
-    Share.share({
-      url: story.link,
-      message: story.link,
-    })
-      .then(result => console.log(result))
-      .catch(error => console.log(error.message))
-  }
-
   onPressNews = (title: string, story: StoryType) => {
-    this.props.navigator.push({
-      id: 'NewsItemView',
-      index: this.props.route.index + 1,
-      title: title,
-      backButtonTitle: this.props.name,
-      props: {story, embedFeaturedImage: this.props.embedFeaturedImage},
-      onRightButton: () => this.shareItem(story),
-      rightButton: 'share',
+    this.props.navigation.navigate('NewsItemView', {
+      story,
+      embedFeaturedImage: this.props.embedFeaturedImage,
     })
   }
 
@@ -65,7 +51,6 @@ export class NewsList extends React.Component {
     return (
       <SimpleListView
         style={styles.listContainer}
-        forceBottomInset={true}
         data={entries}
         renderSeparator={this.renderSeparator}
         refreshing={this.props.loading}

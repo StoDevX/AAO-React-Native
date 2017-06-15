@@ -116,8 +116,7 @@ export class GoogleCalendarView extends React.Component {
 
     return (
       <EventList
-        navigator={this.props.navigator}
-        route={this.props.route}
+        navigation={this.props.navigation}
         events={this.state.events}
         refreshing={this.state.refreshing}
         onRefresh={this.refresh}

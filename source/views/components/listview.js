@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {ListView, Platform, RefreshControl} from 'react-native'
+import {ListView, RefreshControl} from 'react-native'
 import isFunction from 'lodash/isFunction'
 
 type DataType = Array<any> | {[key: string]: any}
@@ -52,13 +52,6 @@ export default class SimpleListView extends React.Component {
       throw new Error('SimpleListView requires a function as the child')
     }
 
-    const iosInset = this.props.forceBottomInset && Platform.OS === 'ios'
-      ? {
-          automaticallyAdjustContentInsets: false,
-          contentInset: {bottom: 49},
-        }
-      : {}
-
     const refresher = this.props.onRefresh && 'refreshing' in this.props
       ? {
           refreshControl: (
@@ -72,7 +65,6 @@ export default class SimpleListView extends React.Component {
 
     return (
       <ListView
-        {...iosInset}
         {...refresher}
         initialListSize={SimpleListView.initialListSize}
         pageSize={SimpleListView.pageSize}

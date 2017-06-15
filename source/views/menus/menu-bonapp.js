@@ -225,8 +225,7 @@ export class BonAppHostedMenu extends React.Component {
 
     return (
       <FancyMenu
-        route={this.props.route}
-        navigator={this.props.navigator}
+        navigation={this.props.navigation}
         foodItems={foodItems}
         menuCorIcons={cafeMenu.cor_icons}
         meals={allMeals}

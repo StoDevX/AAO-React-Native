@@ -7,6 +7,8 @@
 
 import React from 'react'
 import {StyleSheet, Text} from 'react-native'
+import {TabBarIcon} from '../../components/tabbar-icon'
+import type {TopLevelViewPropsType} from '../../types'
 import * as c from '../../components/colors'
 import SimpleListView from '../../components/listview'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
@@ -38,6 +40,12 @@ const styles = StyleSheet.create({
 })
 
 export default class StudentWorkView extends React.Component {
+  static navigationOptions = {
+    headerBackTitle: 'Open Jobs',
+    tabBarLabel: 'Open Jobs',
+    tabBarIcon: TabBarIcon('briefcase'),
+  }
+
   state: {
     jobs: {[key: string]: JobType[]},
     loading: boolean,
@@ -53,6 +61,8 @@ export default class StudentWorkView extends React.Component {
   componentWillMount() {
     this.refresh()
   }
+
+  props: TopLevelViewPropsType
 
   fetchData = async () => {
     try {
@@ -93,13 +103,7 @@ export default class StudentWorkView extends React.Component {
   }
 
   onPressJob = (title: string, job: JobType) => {
-    this.props.navigator.push({
-      id: 'JobDetailView',
-      index: this.props.route.index + 1,
-      title: title,
-      backButtonTitle: 'Jobs',
-      props: {job},
-    })
+    this.props.navigation.navigate('JobDetailView', {job})
   }
 
   renderSeparator = (sectionId: string, rowId: string) => {
@@ -126,7 +130,6 @@ export default class StudentWorkView extends React.Component {
     return (
       <SimpleListView
         style={styles.listContainer}
-        forceBottomInset={true}
         data={this.state.jobs}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}

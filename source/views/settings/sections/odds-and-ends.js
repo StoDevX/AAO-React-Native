@@ -6,8 +6,8 @@ import {version} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
 import {setFeedbackStatus} from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
-import {CellToggle} from '../../components/cell-toggle'
-import {PushButtonCell} from '../components/push-button'
+import {CellToggle} from '../../components/cells/toggle'
+import {PushButtonCell} from '../../components/cells/push-button'
 import {trackedOpenUrl} from '../../components/open-url'
 
 class OddsAndEndsSection extends React.Component {
@@ -16,18 +16,14 @@ class OddsAndEndsSection extends React.Component {
     feedbackDisabled: boolean,
   }
 
-  onPressButton = (id: string, title: string) => {
-    this.props.navigator.push({
-      id: id,
-      title: title,
-      index: this.props.route.index + 1,
-    })
+  onPressButton = (id: string) => {
+    this.props.navigation.push(id)
   }
 
-  onCreditsButton = () => this.onPressButton('CreditsView', 'Credits')
-  onPrivacyButton = () => this.onPressButton('PrivacyView', 'Privacy Policy')
-  onLegalButton = () => this.onPressButton('LegalView', 'Legal')
-  onSnapshotsButton = () => this.onPressButton('SnapshotsView', 'Snapshot Time')
+  onCreditsButton = () => this.onPressButton('CreditsView')
+  onPrivacyButton = () => this.onPressButton('PrivacyView')
+  onLegalButton = () => this.onPressButton('LegalView')
+  onSnapshotsButton = () => this.onPressButton('SnapshotsView')
   onSourceButton = () =>
     trackedOpenUrl({
       url: 'https://github.com/StoDevX/AAO-React-Native',

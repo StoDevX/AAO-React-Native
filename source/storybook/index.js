@@ -79,6 +79,10 @@ const Nav = ({children}: {children?: Function}) =>
   />
 
 export class SnapshotsView extends React.Component {
+  static navigationOptions = {
+    title: 'Snapshot Time',
+  }
+
   state = {
     viewPath: 'streaming.radio',
   }

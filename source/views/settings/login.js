@@ -25,7 +25,7 @@ export default class SISLoginView extends React.Component {
   }
 
   onComplete = () => {
-    this.props.navigator.pop()
+    this.props.navigation.goBack()
   }
 
   render() {
