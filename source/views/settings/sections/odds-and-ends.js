@@ -17,7 +17,7 @@ class OddsAndEndsSection extends React.Component {
   }
 
   onPressButton = (id: string) => {
-    this.props.navigation.push(id)
+    this.props.navigation.navigate(id)
   }
 
   onCreditsButton = () => this.onPressButton('CreditsView')

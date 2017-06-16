@@ -19,7 +19,7 @@ class TokenLoginSection extends React.Component {
   }
 
   logIn = () => {
-    this.props.navigation.push('SISLoginView', {
+    this.props.navigation.navigate('SISLoginView', {
       onLoginComplete: this.props.logIn,
     })
   }

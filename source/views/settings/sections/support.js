@@ -13,7 +13,7 @@ export default class SupportSection extends React.Component {
   props: TopLevelViewPropsType
 
   onPressButton = (id: string) => {
-    this.props.navigation.push(id)
+    this.props.navigation.navigate(id)
   }
 
   getDeviceInfo = () => `
