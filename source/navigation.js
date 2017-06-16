@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
       android: {
         backgroundColor: c.androidLightBackground,
       },
-    })
+    }),
   },
 })
 
