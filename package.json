@@ -99,7 +99,7 @@
     "xml2js": "0.4.17"
   },
   "devDependencies": {
-    "ajv": "5.1.5",
+    "ajv": "5.1.6",
     "babel-eslint": "7.2.3",
     "babel-jest": "20.0.3",
     "babel-plugin-flow-react-proptypes": "3.3.0",
