@@ -113,7 +113,7 @@ install:
   - bash scripts/travis/install.sh
 
 before_script:
-  - bash scripts/travis/before_script.sh
+  - bash scripts/travis/init_android_emulator.sh
 
 script:
   - bash scripts/travis/script.sh
