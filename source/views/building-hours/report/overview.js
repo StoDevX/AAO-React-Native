@@ -5,12 +5,13 @@
  */
 
 import React from 'react'
-import {ScrollView, View, Text} from 'react-native'
+import {ScrollView, View, StyleSheet, Text} from 'react-native'
 import moment from 'moment-timezone'
 import {CellTextField} from '../../components/cells/textfield'
 import {CellToggle} from '../../components/cells/toggle'
 import {DeleteButtonCell} from '../../components/cells/delete-button'
 import {ButtonCell} from '../../components/cells/button'
+import * as c from '../../components/colors'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import type {
   BuildingType,
@@ -19,6 +20,27 @@ import type {
 } from '../types'
 import type {TopLevelViewPropsType} from '../../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
+
+const styles = StyleSheet.create({
+  helpWrapper: {
+    backgroundColor: c.white,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#ebebeb',
+    marginBottom: 10,
+  },
+  helpTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    paddingTop: 15,
+    paddingHorizontal: 15,
+  },
+  helpDescription: {
+    fontSize: 14,
+    paddingTop: 5,
+    paddingBottom: 15,
+    paddingHorizontal: 15,
+  },
+})
 
 export class BuildingHoursProblemReportView extends React.PureComponent {
   static navigationOptions = {
@@ -166,10 +188,13 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
 
     return (
       <ScrollView>
-        <Text>
-          Thanks for spotting a problem! If you could tell us what the new times
-          are, we&rsquo;d greatly appreciate it.
-        </Text>
+        <View style={styles.helpWrapper}>
+          <Text style={styles.helpTitle}>Thanks for spotting a problem!</Text>
+          <Text style={styles.helpDescription}>
+            If you could tell us what the new times are, we&rsquo;d greatly
+            appreciate it.
+          </Text>
+        </View>
 
         <TableView>
           {schedules.map((s, i) =>
@@ -192,7 +217,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
             />
           </Section>
 
-          <Section footer="Thanks for reporting!">
+          <Section>
             <ButtonCell title="Submit Report" onPress={this.submit} />
           </Section>
         </TableView>
