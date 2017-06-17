@@ -37,8 +37,7 @@ function MaybeSection({header, content}: {header: string, content: string}) {
 }
 
 function Links({header, content}: {header: string, content: string}) {
-  const rawUrls = getUrls(content)
-  const links = Array.from(rawUrls)
+  const links = Array.from(getUrls(content))
 
   return links.length
     ? <Section header={header}>
