@@ -14,7 +14,10 @@ const styles = StyleSheet.create({
 })
 
 const shareItem = (event: EventType) => {
-  const message = `${event.summary}: ${event.startTime.toString()} – ${event.endTime.toString()}`
+  const summary = event.summary ? event.summary : ''
+  const times = getTimes(event) ? getTimes(event) : ''
+  const location = event.location ? event.location : ''
+  const message = `${summary}\n\n${times}\n\n${location}`
   Share.share({message})
     .then(result => console.log(result))
     .catch(error => console.log(error.message))
