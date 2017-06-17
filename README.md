@@ -13,11 +13,11 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 - `cd` into the folder
 - [Install React Native](http://facebook.github.io/react-native/docs/getting-started.html#content)
 - `npm install`
-- `npm run bundle-docs`
 - `npm run ios`
+    - Android setup is trickier: you'll want to launch your Android emulator first, then run `npm run android`.
 
 ## Note
-The Calendar might nag you for a Google Calendar API key. You can either ask someone involved with this project for a key, or you may [create one yourself](https://console.developers.google.com/projectselector/apis/credentials) for use during development.
+The Calendar won't work until you give it a Google Calendar API key. You should  [create one yourself](https://console.developers.google.com/projectselector/apis/credentials)!
 
 1. Create a copy of the `.env.sample.js` file and rename it to `.env.js`
 2. Insert your API key in place of the `key goes here` text
