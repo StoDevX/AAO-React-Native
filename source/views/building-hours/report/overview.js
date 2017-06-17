@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
   helpWrapper: {
     backgroundColor: c.white,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#ebebeb',
+    borderTopColor: c.iosHeaderTopBorder,
+    borderBottomColor: c.iosHeaderBottomBorder,
     marginBottom: 10,
   },
   helpTitle: {
