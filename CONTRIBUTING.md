@@ -19,3 +19,11 @@ We have a special command that runs all four of those for you: `npm run check`. 
 [prettier]: https://github.com/prettier/prettier
 
 As always, please keep the [Code of Conduct](https://github.com/StoDevX/AAO-React-Native/blob/master/CodeOfConduct.md) in mind.
+
+
+## Maintainers
+Before you release a new version to the app store, you'll want to use the `npm version` command. That will automatically bump the version numbers and tag the commit.
+
+You should use Release Candidates generously – do, for example, `npm version 2.2.0-rc.1`, then make sure it builds, and run it on the simulators / devices / whatever you would do before you upload it to iTunes Connect / the Play Store. Then, once it's passed all your manual checks, you can do `npm version 2.2.0`, and build that commit, because the only thing that will have changed is the numbers. That way, if something goes wrong while you're testing it, you can do 2.2.0-rc.2, instead of … having 2.0.0-rc.2 be _newer_ than 2.0.0 (final).
+
+Anyway. TL;DR: `npm version` is your friend! Use it.
