@@ -80,7 +80,7 @@ export function EventDetail(props: {
   const {event} = props.navigation.state.params
   const title = fastGetTrimmedText(event.summary || '')
   const summary = event.extra.data.description || ''
-  const trimmedSummary = cleanDescription(event.extra.data.description || '')
+  const rawSummary = cleanDescription(event.extra.data.description || '')
   const location = fastGetTrimmedText(event.location || '')
   const times = getTimes(event)
 
@@ -90,7 +90,7 @@ export function EventDetail(props: {
         <MaybeSection header="EVENT" content={title} />
         <MaybeSection header="TIME" content={times} />
         <MaybeSection header="LOCATION" content={location} />
-        <MaybeSection header="DESCRIPTION" content={trimmedSummary} />
+        <MaybeSection header="DESCRIPTION" content={rawSummary} />
         <Links header="LINKS" content={summary} />
       </TableView>
     </ScrollView>
