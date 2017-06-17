@@ -218,7 +218,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
             />
           </Section>
 
-          <Section>
+          <Section footer="Thanks for reporting!">
             <ButtonCell title="Submit Report" onPress={this.submit} />
           </Section>
         </TableView>
