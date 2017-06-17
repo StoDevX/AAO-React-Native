@@ -24,7 +24,7 @@ function MaybeSection({header, content}: {header: string, content: string}) {
   return content.trim()
     ? <Section header={header}>
         <Cell
-          title={
+          cellContentView={
             <Text selectable={true} style={styles.chunk}>
               {content}
             </Text>
