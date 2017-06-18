@@ -12,9 +12,6 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import delay from 'delay'
 import Video from 'react-native-video'
 import {Touchable} from '../components/touchable'
-
-const dynamicHeight = Dimensions.get('window').height
-const dynamicWidth = Dimensions.get('window').width
 import {TabBarIcon} from '../components/tabbar-icon'
 
 const kstoStream =
