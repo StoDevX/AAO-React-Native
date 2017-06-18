@@ -22,7 +22,7 @@ const kstoStream =
 const kstoStatus = 'http://stolaf-flash.streamguys.net:8091/radio'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
-export default class KSTOView extends React.Component {
+export default class KSTOView extends React.PureComponent {
   static navigationOptions = {
     tabBarLabel: 'KSTO',
     tabBarIcon: TabBarIcon('radio'),
