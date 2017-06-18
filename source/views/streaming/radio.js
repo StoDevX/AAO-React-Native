@@ -78,9 +78,9 @@ export default class KSTOView extends React.PureComponent {
 
     try {
       let data = await fetchJson(kstoStatus)
-      this.setState({uplinkStatus: data.uplink, uplinkError: false})
+      this.setState(() => ({uplinkStatus: data.uplink, uplinkError: false}))
     } catch (err) {
-      this.setState({uplinkStatus: false, uplinkError: true})
+      this.setState(() => ({uplinkStatus: false, uplinkError: true}))
       console.error(err)
     }
 
