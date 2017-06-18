@@ -15,6 +15,7 @@ import {Touchable} from '../components/touchable'
 
 const dynamicHeight = Dimensions.get('window').height
 const dynamicWidth = Dimensions.get('window').width
+import {TabBarIcon} from '../components/tabbar-icon'
 
 const kstoStream =
   'http://stolaf-flash.streamguys.net/radio/ksto1.stream/playlist.m3u8'
