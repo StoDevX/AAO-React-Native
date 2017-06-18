@@ -11,10 +11,7 @@ import type {BuildingType} from './types'
 import * as c from '../components/colors'
 import {Row, Column} from '../components/layout'
 import {ListRow, Detail, Title} from '../components/list'
-import {
-  getDetailedBuildingStatus,
-  getShortBuildingStatus,
-} from './building-hours-helpers'
+import {getDetailedBuildingStatus, getShortBuildingStatus} from './lib'
 
 const styles = StyleSheet.create({
   title: {
@@ -66,7 +63,7 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
   const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
 
   return (
-    <ListRow onPress={onPress} arrowPosition="center" direction="column">
+    <ListRow onPress={onPress} arrowPosition="center">
       <Column>
         <Row style={styles.title}>
           <Title lines={1} style={styles.titleText}>

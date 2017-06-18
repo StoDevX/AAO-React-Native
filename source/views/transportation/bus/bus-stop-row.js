@@ -26,79 +26,88 @@ const styles = StyleSheet.create({
   },
 })
 
-export function BusStopRow({
-  time,
-  now,
-  barColor,
-  currentStopColor,
-  place,
-  times,
-  isFirstRow,
-  isLastRow,
-}: {
-  time: moment,
-  now: moment,
-  barColor: string,
-  currentStopColor: string,
-  place: string,
-  times: FancyBusTimeListType,
-  isFirstRow: boolean,
-  isLastRow: boolean,
-}) {
-  const afterStop = time && now.isAfter(time, 'minute')
-  const atStop = time && now.isSame(time, 'minute')
-  const beforeStop = !afterStop && !atStop && time !== false
-  const skippingStop = time === false
+export class BusStopRow extends React.PureComponent {
+  props: {
+    time: moment,
+    now: moment,
+    barColor: string,
+    currentStopColor: string,
+    place: string,
+    times: FancyBusTimeListType,
+    isFirstRow: boolean,
+    isLastRow: boolean,
+  }
 
-  return (
-    <ListRow fullWidth={true} fullHeight={true}>
-      <Row>
-        <ProgressChunk
-          {...{
-            barColor,
-            afterStop,
-            beforeStop,
-            atStop,
-            skippingStop,
-            currentStopColor,
-          }}
-          isFirstChunk={isFirstRow}
-          isLastChunk={isLastRow}
-        />
+  render() {
+    const {
+      time,
+      now,
+      barColor,
+      currentStopColor,
+      place,
+      times,
+      isFirstRow,
+      isLastRow,
+    } = this.props
 
-        <Column flex={1} style={styles.internalPadding}>
-          <Title
-            bold={false}
-            style={[
-              skippingStop && styles.skippingStopTitle,
-              afterStop && styles.passedStopTitle,
-              atStop && styles.atStopTitle,
-            ]}
-          >
-            {place}
-          </Title>
-          <Detail lines={1}>
-            <ScheduleTimes {...{times, skippingStop}} />
-          </Detail>
-        </Column>
-      </Row>
-    </ListRow>
-  )
+    const afterStop = time && now.isAfter(time, 'minute')
+    const atStop = time && now.isSame(time, 'minute')
+    const beforeStop = !afterStop && !atStop && time !== false
+    const skippingStop = time === false
+
+    return (
+      <ListRow fullWidth={true} fullHeight={true}>
+        <Row>
+          <ProgressChunk
+            {...{
+              barColor,
+              afterStop,
+              beforeStop,
+              atStop,
+              skippingStop,
+              currentStopColor,
+            }}
+            isFirstChunk={isFirstRow}
+            isLastChunk={isLastRow}
+          />
+
+          <Column flex={1} style={styles.internalPadding}>
+            <Title
+              bold={false}
+              style={[
+                skippingStop && styles.skippingStopTitle,
+                afterStop && styles.passedStopTitle,
+                atStop && styles.atStopTitle,
+              ]}
+            >
+              {place}
+            </Title>
+            <Detail lines={1}>
+              <ScheduleTimes {...{times, skippingStop}} />
+            </Detail>
+          </Column>
+        </Row>
+      </ListRow>
+    )
+  }
 }
 
-const ScheduleTimes = ({
-  times,
-  skippingStop,
-}: {
-  skippingStop: boolean,
-  times: FancyBusTimeListType,
-}) => {
-  return (
-    <Text style={skippingStop && styles.skippingStopDetail}>
-      {times
-        // and format the times
-        .map(time => (time === false ? 'None' : time.format(TIME_FORMAT)))
-        .join(' • ')}
-    </Text>
-  )
+class ScheduleTimes extends React.PureComponent {
+  props: {
+    skippingStop: boolean,
+    times: FancyBusTimeListType,
+  }
+
+  render() {
+    const {times, skippingStop} = this.props
+
+    return (
+      <Text style={skippingStop && styles.skippingStopDetail}>
+        {times
+          // and format the times
+          .map(time => (time === false ? 'None' : time.format(TIME_FORMAT)))
+          .join(' • ')}
+      </Text>
+    )
+  }
 }

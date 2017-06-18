@@ -19,14 +19,8 @@ class TokenLoginSection extends React.Component {
   }
 
   logIn = () => {
-    this.props.navigator.push({
-      id: 'SISLoginView',
-      index: this.props.route.index + 1,
-      sceneConfig: 'fromBottom',
-      onDismiss: (route, navigator) => navigator.pop(),
-      props: {
-        onLoginComplete: this.props.logIn,
-      },
+    this.props.navigation.navigate('SISLoginView', {
+      onLoginComplete: this.props.logIn,
     })
   }
 

@@ -1,23 +1,12 @@
 // @flow
-import {Navigator} from 'react-native'
+import type {
+  NavigationRoute,
+  NavigationScreenProp,
+  NavigationAction,
+} from 'react-navigation'
 
-export type RouteType = {
-  index: number,
-  id: string,
-  title: string,
-  backButtonTitle?: string,
-  rightButton?: () => ReactClass<*> | 'share',
-  onRightButton?: () => any,
-  onDismiss?: (r: RouteType, n: Navigator) => any,
-  sceneConfig?: Object | 'fromBottom' | string,
-  props?: any,
-}
-
-export type NavStateType = {
-  routeStack: RouteType[],
-}
+export type NavType = NavigationScreenProp<NavigationRoute, NavigationAction>
 
 export type TopLevelViewPropsType = {
-  navigator: Navigator,
-  route: RouteType,
+  navigation: NavType,
 }

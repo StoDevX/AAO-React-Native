@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {StyleSheet, Share} from 'react-native'
+import {StyleSheet} from 'react-native'
 import * as c from '../components/colors'
 import SimpleListView from '../components/listview'
 import type {TopLevelViewPropsType} from '../types'
@@ -18,13 +18,13 @@ import {NoticeView} from '../components/notice'
 import EventRow from './event-row'
 
 export class EventList extends React.Component {
-  props: {
+  props: TopLevelViewPropsType & {
     events: EventType[],
     message: ?string,
     refreshing: boolean,
     onRefresh: () => any,
     now: moment,
-  } & TopLevelViewPropsType
+  }
 
   groupEvents = (
     events: EventType[],
@@ -41,24 +41,8 @@ export class EventList extends React.Component {
     })
   }
 
-  shareItem = (event: EventType) => {
-    Share.share({
-      message: `${event.summary}: ${event.startTime.toString()} – ${event.endTime.toString()}`,
-    })
-      .then(result => console.log(result))
-      .catch(error => console.log(error.message))
-  }
-
   onPressEvent = (title: string, event: EventType) => {
-    this.props.navigator.push({
-      id: 'EventDetailView',
-      index: this.props.route.index + 1,
-      title: title,
-      backButtonTitle: 'Events',
-      props: {event},
-      onRightButton: () => this.shareItem(event),
-      rightButton: 'share',
-    })
+    this.props.navigation.navigate('EventDetailView', {event})
   }
 
   renderSectionHeader = (
@@ -86,7 +70,6 @@ export class EventList extends React.Component {
     return (
       <SimpleListView
         style={styles.container}
-        forceBottomInset={true}
         data={events}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}

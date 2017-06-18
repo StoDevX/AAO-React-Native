@@ -17,3 +17,6 @@ const styles = StyleSheet.create({
 export default function LegalView() {
   return <WebView style={styles.container} source={{html: legal}} />
 }
+LegalView.navigationOptions = {
+  title: 'Legal',
+}

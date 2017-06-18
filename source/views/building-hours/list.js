@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {StyleSheet, Platform} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {BuildingRow} from './row'
 import SimpleListView from '../components/listview'
 import {tracker} from '../../analytics'
@@ -37,14 +37,7 @@ export class BuildingHoursList extends React.Component {
 
   onPressRow = (data: BuildingType) => {
     tracker.trackEvent('building-hours', data.name)
-    this.props.navigator.push({
-      id: 'BuildingHoursDetailView',
-      index: this.props.route.index + 1,
-      title: data.name,
-      backButtonTitle: 'Hours',
-      props: data,
-      sceneConfig: Platform.OS === 'android' ? 'fromBottom' : undefined,
-    })
+    this.props.navigation.navigate('BuildingHoursDetailView', {building: data})
   }
 
   renderSectionHeader = (data: any, id: string) => {
