@@ -5,6 +5,8 @@ import {fastGetTrimmedText} from '../../lib/html'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import type {EventType} from './types'
 import {ShareButton} from '../components/nav-buttons'
+import getUrls from 'get-urls'
+import openUrl from '../components/open-url'
 import {times} from './times'
 
 const styles = StyleSheet.create({
@@ -37,6 +39,33 @@ function MaybeSection({header, content}: {header: string, content: string}) {
     : null
 }
 
+function Links({header, content}: {header: string, content: string}) {
+  const links = Array.from(getUrls(content))
+
+  return links.length
+    ? <Section header={header}>
+        {links.map(url =>
+          <Cell
+            key={url}
+            cellStyle="Title"
+            title={url}
+            accessory="DisclosureIndicator"
+            onPress={() => openUrl(url)}
+          />,
+        )}
+      </Section>
+    : null
+}
+
+function cleanDescription(desc: string) {
+  const description = fastGetTrimmedText(desc || '')
+  if (description == 'See more details') {
+    return ''
+  }
+
+  return description
+}
+
 function getTimes(event: EventType) {
   const {allDay, start, end} = times(event)
 
@@ -52,7 +81,8 @@ export function EventDetail(props: {
 }) {
   const {event} = props.navigation.state.params
   const title = fastGetTrimmedText(event.summary || '')
-  const summary = fastGetTrimmedText(event.extra.data.description || '')
+  const summary = event.extra.data.description || ''
+  const rawSummary = cleanDescription(event.extra.data.description || '')
   const location = fastGetTrimmedText(event.location || '')
   const times = getTimes(event)
 
@@ -62,7 +92,8 @@ export function EventDetail(props: {
         <MaybeSection header="EVENT" content={title} />
         <MaybeSection header="TIME" content={times} />
         <MaybeSection header="LOCATION" content={location} />
-        <MaybeSection header="DESCRIPTION" content={summary} />
+        <MaybeSection header="DESCRIPTION" content={rawSummary} />
+        <Links header="LINKS" content={summary} />
       </TableView>
     </ScrollView>
   )

@@ -59,6 +59,7 @@
     "dedent": "0.7.0",
     "delay": "2.0.0",
     "events": "1.1.1",
+    "get-urls": "7.0.0",
     "html-entities": "1.2.1",
     "htmlparser2": "3.9.2",
     "lodash": "4.17.4",
@@ -96,6 +97,7 @@
     "stream": "0.0.2",
     "timers": "0.1.1",
     "titlecase": "1.1.2",
+    "url": "0.11.0",
     "xml2js": "0.4.17"
   },
   "devDependencies": {
