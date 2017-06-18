@@ -111,38 +111,20 @@ export default class KSTOView extends React.Component {
   player: any
 
   render() {
+    const button = this.state.uplinkStatus
+      ? <PlayPauseButton
+          onPress={this.changeControl}
+          paused={this.state.paused}
+        />
+      : <Text style={styles.status}>The KSTO stream is down. Sorry!</Text>
+
     return (
       <View style={styles.container}>
-        <View style={styles.wrapper}>
-          <Image source={image} style={styles.logo} />
-        </View>
+        <Logo />
+        {button}
+        {/*<Song />*/}
+        <Title />
 
-        {this.state.uplinkStatus
-          ? <Touchable
-              style={styles.button}
-              hightlight={false}
-              onPress={() => this.changeControl(!this.state.paused)}
-            >
-              <View style={styles.buttonWrapper}>
-                <Icon
-                  style={styles.icon}
-                  name={this.state.paused ? 'ios-play' : 'ios-pause'}
-                />
-                <Text style={styles.action}>
-                  {this.state.paused ? 'Listen' : 'Pause'}
-                </Text>
-              </View>
-            </Touchable>
-          : <Text style={styles.status}>The KSTO stream is down. Sorry!</Text>}
-        {/*{this.state.metadata.length
-        ? <Metadata song={this.state.metadata.CHANGEME} />
-        : null} */}
-        <View style={styles.container}>
-          <Text selectable={true} style={styles.heading}>
-            St. Olaf College Radio
-          </Text>
-          <Text selectable={true} style={styles.subHeading}>KSTO 93.1 FM</Text>
-        </View>
         <Video
           ref={ref => (this.player = ref)}
           source={{uri: kstoStream}}
@@ -157,7 +139,52 @@ export default class KSTOView extends React.Component {
   }
 }
 
-let styles = StyleSheet.create({
+const Logo = () =>
+  <View style={styles.wrapper}>
+    <Image source={image} style={styles.logo} />
+  </View>
+
+const Title = () =>
+  <View style={styles.container}>
+    <Text selectable={true} style={styles.heading}>
+      St. Olaf College Radio
+    </Text>
+    <Text selectable={true} style={styles.subHeading}>KSTO 93.1 FM</Text>
+  </View>
+
+// const song = this.state.metadata.length
+//     ? <Metadata song={this.state.metadata.CHANGEME} />
+//     : null
+
+class PlayPauseButton extends React.PureComponent {
+  props: {
+    paused: boolean,
+    onPress: () => any,
+  }
+
+  render() {
+    const {paused, onPress} = this.props
+    return (
+      <Touchable
+        style={buttonStyles.button}
+        hightlight={false}
+        onPress={onPress}
+      >
+        <View style={buttonStyles.buttonWrapper}>
+          <Icon
+            style={buttonStyles.icon}
+            name={paused ? 'ios-play' : 'ios-pause'}
+          />
+          <Text style={buttonStyles.action}>
+            {paused ? 'Listen' : 'Pause'}
+          </Text>
+        </View>
+      </Touchable>
+    )
+  }
+}
+
+const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
   },
@@ -168,39 +195,41 @@ let styles = StyleSheet.create({
     marginTop: 10,
     color: c.kstoPrimaryDark,
     fontWeight: '500',
-    fontSize: dynamicHeight / 30,
+    fontSize: Dimensions.get('window').height / 30,
   },
   subHeading: {
     marginTop: 5,
     marginBottom: 10,
     color: c.kstoPrimaryDark,
     fontWeight: '300',
-    fontSize: dynamicHeight / 30,
+    fontSize: Dimensions.get('window').height / 30,
   },
   status: {
     paddingTop: 10,
-    fontSize: dynamicHeight / 40,
+    fontSize: Dimensions.get('window').height / 40,
     fontWeight: '500',
     color: c.grapefruit,
   },
-  action: {
-    color: c.white,
-    paddingLeft: 10,
-    paddingTop: 7,
-    fontWeight: '900',
-  },
   // nowPlaying: {
   //   paddingTop: 10,
-  //   fontSize: dynamicHeight / 40,
+  //   fontSize: Dimensions.get('window').height / 40,
   //   fontWeight: '500',
   //   color: c.red,
   // },
   // metadata: {
-  //   fontSize: dynamicHeight / 40,
+  //   fontSize: Dimensions.get('window').height / 40,
   //   paddingHorizontal: 13,
   //   paddingTop: 5,
   //   color: c.red,
   // },
+
+  logo: {
+    maxWidth: Dimensions.get('window').width / 1.2,
+    maxHeight: Dimensions.get('window').height / 2.0,
+  },
+})
+
+const buttonStyles = StyleSheet.create({
   button: {
     alignItems: 'center',
     paddingVertical: 5,
@@ -216,8 +245,10 @@ let styles = StyleSheet.create({
     color: c.white,
     fontSize: 30,
   },
-  logo: {
-    maxWidth: dynamicWidth / 1.2,
-    maxHeight: dynamicHeight / 2.0,
+  action: {
+    color: c.white,
+    paddingLeft: 10,
+    paddingTop: 7,
+    fontWeight: '900',
   },
 })
