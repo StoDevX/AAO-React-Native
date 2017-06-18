@@ -55,18 +55,18 @@ export default class KSTOView extends React.PureComponent {
     clearTimeout(this.state.intervalId)
   }
 
-  changeControl() {
+  changeControl = () => {
     this.setState(state => ({paused: !state.paused}))
   }
 
   // callback when HLS ID3 tags change
-  onTimedMetadata(data: any) {
+  onTimedMetadata = (data: any) => {
     this.setState(() => ({metadata: data}))
     console.log(data)
   }
 
   // error from react-native-video
-  onError(e: any) {
+  onError = (e: any) => {
     this.setState(() => ({streamError: e, paused: true}))
     console.log(e)
   }
