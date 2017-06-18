@@ -97,7 +97,7 @@ export default class KSTOView extends React.PureComponent {
     this.setState(() => ({refreshing: false}))
   }
 
-  player: any
+  player: Video
 
   render() {
     const button = this.state.uplinkStatus
