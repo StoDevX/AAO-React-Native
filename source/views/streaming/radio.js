@@ -29,7 +29,7 @@ export default class KSTOView extends React.PureComponent {
     paused: boolean,
     uplinkStatus: boolean,
     uplinkError: boolean,
-    streamError: Object[],
+    streamError: ?Object,
     metadata: Object[],
     intervalId: number,
   } = {
@@ -37,7 +37,7 @@ export default class KSTOView extends React.PureComponent {
     paused: true,
     uplinkStatus: true,
     uplinkError: false,
-    streamError: [],
+    streamError: null,
     metadata: [],
     intervalId: 0,
   }
