@@ -7,7 +7,6 @@
 import React from 'react'
 import {StyleSheet, View, Text, Dimensions, Image} from 'react-native'
 import * as c from '../components/colors'
-// import size from 'lodash/size'
 import Icon from 'react-native-vector-icons/Ionicons'
 import delay from 'delay'
 import Video from 'react-native-video'
