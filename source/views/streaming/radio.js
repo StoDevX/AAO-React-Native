@@ -47,23 +47,19 @@ export default class KSTOView extends React.Component {
 
   componentWillMount() {
     // Fetch the uplink status for the first mount
-    this.refresh()
+    this.fetchUplinkStatus()
 
     // This updates the screen every ten seconds, so that the uplink
     // status is updated without needing to leave and come back.
-    this.setState({intervalId: setInterval(this.updateUplink, 10000)})
+    this.setState({intervalId: setInterval(this.fetchUplinkStatus, 10000)})
   }
 
   componentWillUnmount() {
     clearTimeout(this.state.intervalId)
   }
 
-  updateUplink = () => {
-    this.refresh()
-  }
-
-  changeControl(value: boolean) {
-    this.setState(() => ({paused: value}))
+  changeControl() {
+    this.setState(state => ({paused: !state.paused}))
   }
 
   // callback when HLS ID3 tags change
@@ -80,6 +76,9 @@ export default class KSTOView extends React.Component {
 
   // check the stream uplink status
   fetchUplinkStatus = async () => {
+    let start = Date.now()
+    this.setState(() => ({refreshing: true}))
+
     try {
       let data = await fetchJson(kstoStatus)
       this.setState({uplinkStatus: data.uplink, uplinkError: false})
@@ -87,13 +86,6 @@ export default class KSTOView extends React.Component {
       this.setState({uplinkStatus: false, uplinkError: true})
       console.error(err)
     }
-  }
-
-  refresh = async () => {
-    let start = Date.now()
-    this.setState(() => ({refreshing: true}))
-
-    await this.fetchUplinkStatus()
 
     // If the stream is down or we had an error, pause the player
     if (!this.state.uplinkStatus || this.state.uplinkError) {
