@@ -95,8 +95,8 @@ android {
         applicationId "com.allaboutolaf"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 19
-        versionName "2.4.0-beta.8"
+        versionCode 20
+        versionName "2.4.0-beta.9"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
