@@ -1,6 +1,8 @@
 // flow-typed signature: d916d5f731b562dc8f43492510e541f5
 // flow-typed version: <<STUB>>/react-native-tableview-simple_v0.13.0/flow_v0.35.0
 
+import {Image} from 'react-native'
+
 type Style = Object | number | Array<Style>;
 
 type TableviewProps = {||};
@@ -21,29 +23,29 @@ type SectionProps = {|
 |};
 
 type CellProps = {|
-  accessory?: ('DisclosureIndicator' | 'Detail' | 'DetailDisclosure' | 'Checkmark'),
+  accessory?: 'DisclosureIndicator' | 'Detail' | 'DetailDisclosure' | 'Checkmark',
   accessoryColor?: string,
   allowFontScaling?: boolean,
   backgroundColor?: string,
-  cellStyle?: ('Basic' | 'RightDetail' | 'LeftDetail' | 'Subtitle'),
+  cellStyle?: 'Basic' | 'RightDetail' | 'LeftDetail' | 'Subtitle',
   cellAccessoryView?: React$Element<*>,
   cellContentView?: React$Element<*>,
   cellImageView?: React$Element<*>,
   contentContainerStyle?: Style,
-  detail?: any,
+  detail?: string | number | React$Element<*>,
   detailTextStyle?: Style,
   disableImageResize?: boolean,
   highlightActiveOpacity?: number,
   highlightUnderlayColor?: string,
   isDisabled?: boolean,
-  image?: false | ?Image,
+  image?: Image,
   leftDetailColor?: string,
   rightDetailColor?: string,
-  title?: any,
+  title?: string | number | React$Element<*>,
   titleTextColor?: string,
   titleTextStyle?: Style,
   titleTextStyleDisabled?: Style,
-  onPress?: (false | (e: any) => any),
+  onPress?: (e: any) => any,
 |};
 
 /**
