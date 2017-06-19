@@ -24,9 +24,9 @@ export class ScheduleRow extends React.PureComponent {
       <Cell
         cellStyle="RightDetail"
         title={summarizeDays(set.days)}
-        titleTextStyle={isActive ? styles.bold : null}
+        titleTextStyle={isActive ? styles.bold : undefined}
         detail={formatBuildingTimes(set, now)}
-        detailTextStyle={isActive ? styles.bold : null}
+        detailTextStyle={isActive ? styles.bold : undefined}
       />
     )
   }
