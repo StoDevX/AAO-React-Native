@@ -50,6 +50,12 @@ export async function getBalances(
   }
 }
 
+async function updateBalancesInFileSystem() {
+  let balances = await getBalances()
+  
+
+}
+
 async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {
   const {username, password} = await loadLoginCredentials()
   if (!username || !password) {

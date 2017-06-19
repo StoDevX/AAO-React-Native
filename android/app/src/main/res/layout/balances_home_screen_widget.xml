@@ -4,16 +4,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/widget_background">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/aao_gold">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@mipmap/ic_launcher" />
+        <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:srcCompat="" />-->
 
         <TextView
             android:id="@+id/widget_home_screen_title"
@@ -23,14 +25,15 @@
             android:text="@string/all_about_olaf"
             android:paddingLeft="8dp"
             android:textAppearance="@android:style/TextAppearance.Material.Large"
-            android:gravity="center_vertical"/>
+            android:gravity="center_vertical"
+            android:textColor="@color/white"/>
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            app:srcCompat="@android:drawable/ic_popup_sync"
-            android:layout_weight="0.09" />
+        <!--<ImageView-->
+            <!--android:id="@+id/imageView"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--app:srcCompat=""-->
+            <!--android:layout_weight="0.09" />-->
 
     </LinearLayout>
 
@@ -44,7 +47,8 @@
             android:layout_height="wrap_content"
             android:text="@string/balances"
             android:textAllCaps="true"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:textColor="@color/black"/>
 
     </LinearLayout>
 
@@ -55,14 +59,16 @@
         <TextView
             android:id="@+id/widget_home_screen_flex_amount"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"/>
 
         <TextView
             android:id="@+id/widget_home_screen_flex_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/flex"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:textColor="@color/black"/>
 
     </LinearLayout>
 
@@ -73,14 +79,16 @@
         <TextView
             android:id="@+id/widget_home_screen_ole_amount"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"/>
 
         <TextView
             android:id="@+id/widget_home_screen_ole_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ole"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:textColor="@color/black"/>
 
     </LinearLayout>
 
@@ -91,30 +99,33 @@
         <TextView
             android:id="@+id/widget_home_screen_print_amount"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"/>
 
         <TextView
             android:id="@+id/widget_home_screen_print_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/print_copy"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:textColor="@color/black"/>
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:padding="8dp"
-        android:layout_margin="8dp"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:padding="8dp"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="@android:color/darker_gray"/>-->
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:textAllCaps="true"
-        android:text="@string/meals"/>
+        android:text="@string/meals"
+        android:textColor="@color/black"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -126,24 +137,26 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/meals_today_amount"
+                android:id="@+id/widget_meals_today_amount"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"/>
 
             <TextView
-                android:id="@+id/meals_today_label"
+                android:id="@+id/widget_meals_today_label"
                 android:text="@string/today"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"/>
 
         </LinearLayout>
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            android:layout_margin="8dp"
-            android:background="@android:color/darker_gray"/>
+        <!--<View-->
+            <!--android:layout_width="1dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:padding="8dp"-->
+            <!--android:layout_margin="8dp"-->
+            <!--android:background="@android:color/darker_gray"/>-->
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -151,17 +164,18 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/meals_this_week_amount"
+                android:id="@+id/widget_meals_this_week_amount"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"/>
 
             <TextView
-                android:id="@+id/meals_this_week_label"
+                android:id="@+id/widget_meals_this_week_label"
                 android:text="@string/this_week"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"/>
 
         </LinearLayout>
-
     </LinearLayout>
 </LinearLayout>
