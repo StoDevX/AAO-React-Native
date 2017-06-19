@@ -70,7 +70,9 @@ export function ListSection({filter, onChange}: PropsType) {
       onPress={() => buttonPushed(val)}
       disableImageResize={true}
       image={
-        spec.showImages ? <Image style={styles.icon} source={val.image} /> : undefined
+        spec.showImages
+          ? <Image style={styles.icon} source={val.image} />
+          : undefined
       }
       accessory={includes(selected, val) ? 'Checkmark' : undefined}
       cellStyle="RightDetail"
