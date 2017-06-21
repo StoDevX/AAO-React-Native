@@ -316,6 +316,7 @@ class EditableSchedule extends React.PureComponent {
 const TitleCell = ({text, onChange = () => {}}) =>
   <CellTextField
     hideLabel={true}
+    autoCapitalize="words"
     returnKeyType="done"
     placeholder="Title"
     value={text}
@@ -327,6 +328,7 @@ const TitleCell = ({text, onChange = () => {}}) =>
 const NotesCell = ({text, onChange}) =>
   <CellTextField
     hideLabel={true}
+    autoCapitalize="sentences"
     returnKeyType="done"
     placeholder="Notes"
     value={text}

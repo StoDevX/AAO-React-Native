@@ -43,6 +43,7 @@ export class CellTextField extends React.Component {
     placeholder: string,
     returnKeyType: 'done' | 'next' | 'default',
     secureTextEntry: boolean,
+    autoCapitalize: string,
     value: string,
     labelWidth?: number,
   }
@@ -78,7 +79,7 @@ export class CellTextField extends React.Component {
         cellAccessoryView={
           <TextInput
             ref={this.cacheRef}
-            autoCapitalize="none"
+            autoCapitalize={this.props.autoCapitalize || 'none'}
             autoCorrect={false}
             clearButtonMode="while-editing"
             disabled={this.props.disabled}
