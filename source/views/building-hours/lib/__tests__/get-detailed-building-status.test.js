@@ -1,9 +1,9 @@
 // @flow
 import {getDetailedBuildingStatus} from '../get-detailed-status'
-import {dayMoment} from './moment.helper'
+import {plainMoment} from './moment.helper'
 
 xit('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
-  let m = dayMoment('Fri 1:00pm')
+  let m = plainMoment('06-23-2017 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
     category: '???',
@@ -32,7 +32,7 @@ xit('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
 })
 
 xit('checks a list of schedules to see if any are open', () => {
-  let m = dayMoment('Fri 1:00pm')
+  let m = plainMoment('06-23-2017 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
     category: '???',
@@ -56,7 +56,7 @@ xit('checks a list of schedules to see if any are open', () => {
 })
 
 it('handles multiple internal schedules for the same timeframe', () => {
-  let m = dayMoment('Mon 1:00pm')
+  let m = plainMoment('06-19-2017 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
     category: '???',
@@ -80,7 +80,7 @@ it('handles multiple internal schedules for the same timeframe', () => {
 })
 
 it('handles multiple named schedules for the same timeframe', () => {
-  let m = dayMoment('Mon 1:00pm')
+  let m = plainMoment('06-19-2017 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
     category: '???',
@@ -109,7 +109,7 @@ it('handles multiple named schedules for the same timeframe', () => {
 })
 
 xit('returns false if none are available for this day', () => {
-  let m = dayMoment('Sun 1:00pm')
+  let m = plainMoment('06-18-2017 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
     category: '???',
@@ -132,7 +132,7 @@ xit('returns false if none are available for this day', () => {
 })
 
 it('returns false if none are open', () => {
-  let m = dayMoment('Mon 3:00pm')
+  let m = plainMoment('06-19-2017 3:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
     category: '???',
