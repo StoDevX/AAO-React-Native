@@ -44,7 +44,7 @@ export class CellTextField extends React.Component {
     placeholder: string,
     returnKeyType: 'done' | 'next' | 'default',
     secureTextEntry: boolean,
-    autoCapitalize: string,
+    autoCapitalize: 'characters' | 'words' | 'sentences' | 'none',
     value: string,
     labelWidth?: number,
   }
