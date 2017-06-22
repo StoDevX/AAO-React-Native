@@ -2,7 +2,7 @@
 import {getDetailedBuildingStatus} from '../get-detailed-status'
 import {plainMoment} from './moment.helper'
 
-xit('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
+it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
   let m = plainMoment('06-23-2017 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
@@ -31,7 +31,7 @@ xit('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
   expect(actual).toMatchSnapshot()
 })
 
-xit('checks a list of schedules to see if any are open', () => {
+it('checks a list of schedules to see if any are open', () => {
   let m = plainMoment('06-23-2017 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
@@ -108,7 +108,7 @@ it('handles multiple named schedules for the same timeframe', () => {
   expect(actual[2].isActive).toBe(true)
 })
 
-xit('returns false if none are available for this day', () => {
+it('returns false if none are available for this day', () => {
   let m = plainMoment('06-18-2017 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',

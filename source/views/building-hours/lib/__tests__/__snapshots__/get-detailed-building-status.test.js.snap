@@ -1,5 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`checks a list of schedules to see if any are open 1`] = `
+Array [
+  Object {
+    "isActive": true,
+    "label": "Hours",
+    "status": "10:30 AM — 2:00 AM",
+  },
+]
+`;
+
 exports[`handles multiple internal schedules for the same timeframe 1`] = `
 Array [
   Object {
@@ -31,6 +41,26 @@ Array [
     "isActive": true,
     "label": "Hours2",
     "status": "1:00 PM — 3:00 PM",
+  },
+]
+`;
+
+exports[`returns a list of [isOpen, scheduleName, verboseStatus] tuples 1`] = `
+Array [
+  Object {
+    "isActive": true,
+    "label": "Hours",
+    "status": "10:30 AM — 2:00 AM",
+  },
+]
+`;
+
+exports[`returns false if none are available for this day 1`] = `
+Array [
+  Object {
+    "isActive": false,
+    "label": "Hours",
+    "status": "Closed today",
   },
 ]
 `;
