@@ -1,6 +1,6 @@
 // @flow
 import {parseHours} from '../parse-hours'
-import {dayMoment, hourMoment, moment} from './moment.helper'
+import {dayMoment, plainMoment, hourMoment, moment} from './moment.helper'
 
 it('returns an {open, close} tuple', () => {
   const now = hourMoment('10:01am')
@@ -50,5 +50,30 @@ describe('handles wierd times', () => {
     const {open, close} = parseHours(input, now)
 
     expect(now.isBetween(open, close)).toBe(true)
+  })
+})
+
+describe('checks a list of schedules to see if any are open', () => {
+  const schedule = {days: ['Fr', 'Sa'], from: '10:30am', to: '2:00am'}
+
+  it('in normal, non-dst situations', () => {
+    const now = plainMoment('06-24-2017 12:00am', 'MM-DD-YYYY h:mma')
+    const {open, close} = parseHours(schedule, now)
+    expect(open.format('HH:mm')).toBe('10:30')
+    expect(close.format('HH:mm')).toBe('02:00')
+  })
+
+  it('during the spring-forward dst', () => {
+    const now = plainMoment('03-12-2017 12:00am', 'MM-DD-YYYY h:mma')
+    const {open, close} = parseHours(schedule, now)
+    expect(open.format('HH:mm')).toBe('10:30')
+    expect(close.format('HH:mm')).toBe('01:00')
+  })
+
+  it('during the fall-back dst', () => {
+    const now = plainMoment('11-4-2017 12:00am', 'MM-DD-YYYY h:mma')
+    const {open, close} = parseHours(schedule, now)
+    expect(open.format('HH:mm')).toBe('10:30')
+    expect(close.format('HH:mm')).toBe('02:00')
   })
 })
