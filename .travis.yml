@@ -21,7 +21,7 @@ env:
     - ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
     - DEPLOY_KEY=scripts/travisci_deploy_key
     # variables that are used later on
-    - TRAVIS_NODE_VERSION=7
+    - TRAVIS_NODE_VERSION=8
     - PUSH_BRANCH=0
     - CAN_DEPLOY=0
     - USE_EMULATOR=no
@@ -34,8 +34,8 @@ matrix:
       dist: trusty
       sudo: false
       language: node_js
-      node_js: '7'
-      env: [JS=yes]
+      node_js: '8'
+      env: [JS=yes, CAN_DEPLOY=yes]
 
     - &android-base
       os: linux
@@ -51,7 +51,9 @@ matrix:
           - build-tools-23.0.1
           - build-tools-23.0.2
           - build-tools-25.0.1
+          - build-tools-23.0.3
           - build-tools-25.0.2
+          - build-tools-25.0.3
           - android-23
           - android-25
           - extra-android-m2repository
@@ -72,7 +74,7 @@ matrix:
     - os: osx
       language: objective-c
       osx_image: xcode8.3
-      node_js: '7'
+      node_js: '8'
       env: [IOS=yes, CAN_DEPLOY=yes]
 
 
@@ -82,6 +84,7 @@ branches:
   only:
     - master
     - /^travis/
+    - /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[\da-z\-]+(?:\.[\da-z\-]+)*)?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?$/
 
 
 before_install:
@@ -92,13 +95,18 @@ before_install:
     fi
 
   # make sure to use ruby 2.3
-  - if [[ $ANDROID || $IOS ]]; then
-      rvm use 2.3 --install --binary --fuzzy;
-      gem install bundler;
-    fi
+  - rvm use ruby-2.3.1 --install --binary --create
+  - gem install bundler
 
-  # only deploy from the once-daily cron-triggered jobs
-  - if [[ $CAN_DEPLOY = yes && $TRAVIS_EVENT_TYPE = cron ]]; then run_deploy=1; fi
+  # only deploy from:
+  # - cron-triggered jobs
+  # - tagged commits
+  # - commits whose messages contain the string [ci run beta]
+  - if [[ $CAN_DEPLOY = yes && (
+      $TRAVIS_EVENT_TYPE == "cron" ||
+      $TRAVIS_TAG != "" ||
+      $TRAVIS_COMMIT_MESSAGE == *"[ci run beta]"*
+    ) ]]; then run_deploy=1; fi
 
   # run our before_install sequence
   - bash scripts/travis/before_install.sh
@@ -107,13 +115,29 @@ install:
   - bash scripts/travis/install.sh
 
 before_script:
-  - bash scripts/travis/before_script.sh
+  - bash scripts/travis/init_android_emulator.sh
+  - greenkeeper-lockfile-update
 
 script:
   - bash scripts/travis/script.sh
+  # we run `danger` out here to ensure that it is run,
+  # even if another task in script.sh fails.
+  - if [[ $JS ]]; then npm run danger; fi
+
+after_script:
+  - greenkeeper-lockfile-upload
 
 after_success:
   - bash scripts/travis/after_success.sh
+
+deploy:
+  - provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_PAGES_TOKEN
+    local_dir: docs/
+    on:
+      branch: master
+      condition: $JS
 
 before_cache:
   - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"

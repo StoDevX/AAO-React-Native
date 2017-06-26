@@ -1,11 +1,14 @@
 // @flow
 import React from 'react'
 import {ScrollView, Text, View, StyleSheet} from 'react-native'
-
-import {Cell} from 'react-native-tableview-simple'
+import moment from 'moment'
 import {Card} from '../components/card'
 import * as c from '../components/colors'
-import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
+import type {StudentOrgType} from './types'
+import type {TopLevelViewPropsType} from '../types'
+import Communications from 'react-native-communications'
+import openUrl from '../components/open-url'
+import cleanOrg from './clean-org'
 
 const styles = StyleSheet.create({
   name: {
@@ -28,123 +31,134 @@ const styles = StyleSheet.create({
     paddingRight: 16,
     fontSize: 16,
   },
+  description: {
+    paddingTop: 13,
+    paddingBottom: 13,
+    paddingLeft: 16,
+    paddingRight: 16,
+    backgroundColor: c.white,
+  },
+  descriptionText: {
+    fontSize: 16,
+  },
   footer: {
     fontSize: 10,
     color: c.iosDisabledText,
     textAlign: 'center',
+  },
+  lastUpdated: {
+    paddingBottom: 10,
+  },
+  poweredBy: {
     paddingBottom: 20,
   },
 })
 
-export class StudentOrgsDetailRenderView extends React.Component {
-  props: {
-    loaded: boolean,
-    base: StudentOrgAbridgedType,
-    full: ?StudentOrgInfoType,
-  };
-
-  displayContact(contactInfo: string) {
-    return (
-      <Card header="Contact" style={styles.card}>
-        <Text selectable={true} style={styles.cardBody}>{contactInfo}</Text>
-      </Card>
-    )
-  }
-
-  displayDescription(description: string) {
-    return (
-      <Card header="Description" style={styles.card}>
-        <Text selectable={true} style={styles.cardBody}>{description}</Text>
-      </Card>
-    )
-  }
-
-  displayMeetings(meetingTime: string, meetingLocation: string) {
-    let contents = null
-    if (meetingTime && meetingLocation) {
-      contents = (
-        <Cell
-          cellStyle="Subtitle"
-          title={meetingTime}
-          detail={meetingLocation}
-        />
-      )
-    } else if (meetingTime) {
-      contents = (
-        <Cell cellStyle="Basic" title={meetingTime} detail={meetingLocation} />
-      )
-    } else if (meetingLocation) {
-      contents = <Cell cellStyle="Basic" title={meetingLocation} />
+export class StudentOrgsDetailView extends React.Component {
+  static navigationOptions = ({navigation}) => {
+    const {org} = navigation.state.params
+    return {
+      title: org.name,
     }
-
-    return (
-      <Card header="Meetings" style={styles.card}>
-        {contents}
-      </Card>
-    )
   }
 
-  displayFooter() {
-    return (
-      <Text selectable={true} style={styles.footer}>Powered by Presence</Text>
-    )
+  props: TopLevelViewPropsType & {
+    navigation: {state: {params: {org: StudentOrgType}}},
   }
 
-  renderBody = (data: StudentOrgInfoType) => {
-    const {
-      regularMeetingTime = '',
-      regularMeetingLocation = '',
-      description = '',
-      contactName = '',
-    } = data
-
-    const showMeetingSection = regularMeetingTime && regularMeetingLocation
-
-    return (
-      <View>
-        {showMeetingSection
-          ? this.displayMeetings(regularMeetingTime, regularMeetingLocation)
-          : null}
-        {contactName ? this.displayContact(contactName) : null}
-        {description ? this.displayDescription(description) : null}
-      </View>
-    )
-  };
+  // Using Communications because `mailTo` complains about
+  // the lack of an available Activity...
+  openEmail = (email: string, org: string) => {
+    Communications.email([email], null, null, org, '')
+  }
 
   render() {
-    let knownData = this.props.base
-    let orgName = knownData.name.trim()
-    let orgCategory = knownData.categories.join(', ')
-
-    let contents
-    if (!this.props.loaded) {
-      contents = (
-        <Card header="Organization" style={styles.card}>
-          <Text selectable={true} style={styles.cardBody}>Loading…</Text>
-        </Card>
-      )
-    } else if (!this.props.full) {
-      contents = (
-        <Card header="Organization" style={styles.card}>
-          <Text selectable={true} style={styles.cardBody}>
-            No information found.
-          </Text>
-        </Card>
-      )
-    } else {
-      contents = this.renderBody(this.props.full)
-    }
+    const {
+      name: orgName,
+      category,
+      meetings,
+      website,
+      contacts,
+      advisors,
+      description,
+      lastUpdated: orgLastUpdated,
+    } = cleanOrg(this.props.navigation.state.params.org)
 
     return (
       <ScrollView>
         <Text style={styles.name}>{orgName}</Text>
 
-        <Card header="Category" style={styles.card}>
-          <Text style={styles.cardBody}>{orgCategory}</Text>
-        </Card>
+        {category
+          ? <Card header="Category" style={styles.card}>
+              <Text style={styles.cardBody}>{category}</Text>
+            </Card>
+          : null}
 
-        {contents}
-        {this.displayFooter()}
+        {meetings
+          ? <Card header="Meetings" style={styles.card}>
+              <Text style={styles.cardBody}>{meetings}</Text>
+            </Card>
+          : null}
+
+        {website
+          ? <Card header="Website" style={styles.card}>
+              <Text onPress={() => openUrl(website)} style={styles.cardBody}>
+                {website}
+              </Text>
+            </Card>
+          : null}
+
+        {contacts.length
+          ? <Card header="Contact" style={styles.card}>
+              {contacts.map((c, i) =>
+                <Text
+                  key={i}
+                  selectable={true}
+                  style={styles.cardBody}
+                  onPress={() => this.openEmail(c.email, orgName)}
+                >
+                  {c.title ? c.title + ': ' : ''}
+                  {c.firstName} {c.lastName} ({c.email})
+                </Text>,
+              )}
+            </Card>
+          : null}
+
+        {advisors.length
+          ? <Card
+              header={advisors.length === 1 ? 'Advisor' : 'Advisors'}
+              style={styles.card}
+            >
+              {advisors.map((c, i) =>
+                <Text
+                  key={i}
+                  selectable={true}
+                  style={styles.cardBody}
+                  onPress={() => this.openEmail(c.email, orgName)}
+                >
+                  {c.name} ({c.email})
+                </Text>,
+              )}
+            </Card>
+          : null}
+
+        {description
+          ? <Card header="Description" style={styles.card}>
+              <View style={styles.description}>
+                <Text style={styles.descriptionText}>{description}</Text>
+              </View>
+            </Card>
+          : null}
+
+        <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
+          Last updated:
+          {' '}
+          {moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
+        </Text>
+
+        <Text selectable={true} style={[styles.footer, styles.poweredBy]}>
+          Powered by the St. Olaf Student Orgs Database
+        </Text>
       </ScrollView>
     )
   }

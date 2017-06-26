@@ -1,4 +1,4 @@
-$schema: http://json-schema.org/draft-04/schema#
+$schema: http://json-schema.org/draft-06/schema#
 
 additionalProperties: false
 required: [name, content, contributors, acknowledgements]

@@ -2,12 +2,9 @@
 
 import {AppRegistry} from 'react-native'
 import App from './app'
-import codePush from 'react-native-code-push'
 
-const codePushOptions = {
-  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
-  installMode: codePush.InstallMode.ON_NEXT_RESUME,
-}
+// I'm not importing the exported variable because I just want to initialize
+// the file here.
+import './bugsnag'
 
-AppRegistry.registerComponent('AllAboutOlaf', () =>
-  codePush(codePushOptions)(App))
+AppRegistry.registerComponent('AllAboutOlaf', () => App)

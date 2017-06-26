@@ -1,3 +1,3 @@
 // @flow
 export {StudentOrgsView} from './list'
-export {StudentOrgsDetailView} from './detail-wrapper'
+export {StudentOrgsDetailView} from './detail'

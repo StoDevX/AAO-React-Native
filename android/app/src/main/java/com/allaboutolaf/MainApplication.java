@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.util.Log;
 
 // keep these sorted alphabetically
+import com.airbnb.android.react.maps.MapsPackage;
+import com.avishayil.rnrestart.ReactNativeRestartPackage;
+import com.bugsnag.BugsnagReactNative;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
@@ -17,9 +20,9 @@ import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.github.droibit.android.reactnative.customtabs.CustomTabsPackage;
 import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import com.microsoft.codepush.react.CodePush;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.pusherman.networkinfo.RNNetworkInfoPackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 
 import java.io.File;
@@ -31,11 +34,6 @@ public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
-    protected String getJSBundleFile() {
-      return CodePush.getJSBundleFile();
-    }
-
-    @Override
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
     }
@@ -45,13 +43,16 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
         // please keep these sorted alphabetically
-        new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
+        BugsnagReactNative.getPackage(),
         new CustomTabsPackage(),
         new GoogleAnalyticsBridgePackage(),
         new KeychainPackage(),
         new LinearGradientPackage(),
+        new MapsPackage(),
         new ReactNativeOneSignalPackage(),
+        new ReactNativeRestartPackage(),
         new RNDeviceInfo(),
+        new RNNetworkInfoPackage(),
         new RNViewShotPackage(),
         new VectorIconsPackage()
       );

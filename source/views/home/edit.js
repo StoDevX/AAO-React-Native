@@ -29,21 +29,19 @@ import {allViews} from '../views'
 const window = Dimensions.get('window')
 const objViews = fromPairs(allViews.map(v => [v.view, v]))
 
-const ReorderIcon = () => (
+const ReorderIcon = () =>
   <IonIcon
     name={Platform.OS === 'ios' ? 'ios-reorder' : 'md-reorder'}
     size={32}
     style={styles.listButtonIcon}
   />
-)
 
-const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
+const MenuIcon = ({icon, tint}: {icon: string, tint: string}) =>
   <EntypoIcon
     name={icon}
     size={32}
     style={[styles.rectangleButtonIcon, {color: tint}]}
   />
-)
 
 class Row extends React.Component {
   state = {
@@ -53,7 +51,7 @@ class Row extends React.Component {
       opacity: new Animated.Value(1.0),
       elevation: new Animated.Value(2),
     },
-  };
+  }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.active !== nextProps.active) {
@@ -68,7 +66,7 @@ class Row extends React.Component {
   props: {
     data: ViewType,
     active: boolean,
-  };
+  }
 
   startActivationAnimation = () => {
     const {style} = this.state
@@ -94,7 +92,7 @@ class Row extends React.Component {
         toValue: 4,
       }),
     ]).start()
-  };
+  }
 
   startDeactivationAnimation = () => {
     const {style} = this.state
@@ -120,7 +118,7 @@ class Row extends React.Component {
         toValue: 2,
       }),
     ]).start()
-  };
+  }
 
   render() {
     return (
@@ -135,23 +133,20 @@ class Row extends React.Component {
   }
 }
 
-function EditHomeView(
-  props: {
-    onSaveOrder: () => any,
-    order: string[],
-  },
-) {
+function EditHomeView(props: {onSaveOrder: () => any, order: string[]}) {
   return (
     <SortableList
       contentContainerStyle={styles.contentContainer}
       data={objViews}
       order={props.order}
       onChangeOrder={(order: ViewType[]) => props.onSaveOrder(order)}
-      renderRow={({data, active}: {data: ViewType, active: boolean}) => (
-        <Row data={data} active={active} />
-      )}
+      renderRow={({data, active}: {data: ViewType, active: boolean}) =>
+        <Row data={data} active={active} />}
     />
   )
+}
+EditHomeView.navigationOptions = {
+  title: 'Edit Home',
 }
 
 function mapStateToProps(state) {

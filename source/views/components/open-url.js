@@ -12,10 +12,12 @@ function startStatusBarColorChanger() {
   SafariView.isAvailable()
     .then(() => {
       iosOnShowListener = SafariView.addEventListener('onShow', () =>
-        StatusBar.setBarStyle('dark-content'))
+        StatusBar.setBarStyle('dark-content'),
+      )
 
       iosOnDismissListener = SafariView.addEventListener('onDismiss', () =>
-        StatusBar.setBarStyle('light-content'))
+        StatusBar.setBarStyle('light-content'),
+      )
     })
     .catch(() => {})
 }

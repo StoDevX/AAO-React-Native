@@ -53,8 +53,7 @@ import SettingsView from '../views/settings'
 import CreditsView from '../views/settings/credits'
 import PrivacyView from '../views/settings/privacy'
 import LegalView from '../views/settings/legal'
-import CredentialsLoginSection
-  from '../views/settings/sections/login-credentials'
+import CredentialsLoginSection from '../views/settings/sections/login-credentials'
 import TokenLoginSection from '../views/settings/sections/login-token'
 import OddsAndEndsSection from '../views/settings/sections/odds-and-ends'
 import SupportSection from '../views/settings/sections/support'
@@ -72,20 +71,23 @@ type ViewCollectionType = {
       delay: number,
     },
   },
-};
+}
 
-const Nav = ({children}: {children?: Function}) => (
+const Nav = ({children}: {children?: Function}) =>
   <Navigator
     renderScene={(route, navigator) => children && children({route, navigator})}
   />
-)
 
 export class SnapshotsView extends React.Component {
+  static navigationOptions = {
+    title: 'Snapshot Time',
+  }
+
   state = {
     viewPath: 'streaming.radio',
-  };
+  }
 
-  _ref: any;
+  _ref: any
 
   views: ViewCollectionType = {
     buildinghours: {
@@ -104,7 +106,10 @@ export class SnapshotsView extends React.Component {
       list: {view: () => <ContactsView />, delay: 100},
     },
     dictionary: {
-      list: {view: () => <DictionaryView />, delay: 1000},
+      list: {
+        view: () => <Nav>{props => <DictionaryView {...props} />}</Nav>,
+        delay: 1000,
+      },
     },
     home: {
       home: {view: () => <HomeView />, delay: 100},
@@ -136,8 +141,14 @@ export class SnapshotsView extends React.Component {
         delay: 100,
       },
       'section-token': {view: () => <TokenLoginSection />, delay: 100},
-      'section-support': {view: () => <SupportSection />, delay: 100},
-      'section-odds and ends': {view: () => <OddsAndEndsSection />, delay: 100},
+      'section-support': {
+        view: () => <Nav>{props => <SupportSection {...props} />}</Nav>,
+        delay: 100,
+      },
+      'section-odds and ends': {
+        view: () => <Nav>{props => <OddsAndEndsSection {...props} />}</Nav>,
+        delay: 100,
+      },
     },
     sis: {
       tabs: {
@@ -152,12 +163,15 @@ export class SnapshotsView extends React.Component {
       webcams: {view: () => <WebcamsView />, delay: 1000},
     },
     studentorgs: {
-      list: {view: () => <StudentOrgsView />, delay: 2500},
+      list: {
+        view: () => <Nav>{props => <StudentOrgsView {...props} />}</Nav>,
+        delay: 2500,
+      },
     },
     transit: {
       tabs: {view: () => <TransportationView />, delay: 100},
     },
-  };
+  }
 
   saveSnapshot = () => {
     const name = this.state.viewPath
@@ -168,7 +182,7 @@ export class SnapshotsView extends React.Component {
       uri => console.log('saved to', uri),
       err => console.error('snapstho failed', err),
     )
-  };
+  }
 
   saveAll = async () => {
     for (const [parent, child] of this.viewsAsList()) {
@@ -179,30 +193,31 @@ export class SnapshotsView extends React.Component {
       await delay(args.delay || 1000)
       await this.saveSnapshot()
     }
-  };
+  }
 
   viewsAsList = () => {
     // goes from {name: {inner: {}}} to [[name, inner]]
     const choices = toPairs(this.views).map(([key, val]) =>
-      toPairs(val).map(([innerKey]) => [key, innerKey]))
+      toPairs(val).map(([innerKey]) => [key, innerKey]),
+    )
 
     return flatten(choices)
-  };
+  }
 
   onChangeView = (value: string) => {
     this.setState({viewPath: value})
-  };
+  }
 
   render() {
     const selected = get(this.views, this.state.viewPath, {})
 
-    const options = this.viewsAsList().map(([parent, child]) => (
+    const options = this.viewsAsList().map(([parent, child]) =>
       <Picker.Item
         key={`${parent}.${child}`}
         label={`${parent} ❯ ${child}`}
         value={`${parent}.${child}`}
-      />
-    ))
+      />,
+    )
 
     const height = Dimensions.get('window').height
     const heightDiff = Platform.OS === 'ios' ? 64 : 56
@@ -230,7 +245,7 @@ export class SnapshotsView extends React.Component {
         </View>
 
         <View
-          ref={ref => this._ref = ref}
+          ref={ref => (this._ref = ref)}
           style={[styles.viewContainer, childStyle]}
         >
           {selected.view()}

@@ -5,9 +5,9 @@ export type BuildingStatusType =
   | 'Closed'
   | 'Almost Closed'
   | 'Almost Open'
-  | 'Chapel';
+  | 'Chapel'
 
-export type DayOfWeekEnumType = 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa' | 'Su';
+export type DayOfWeekEnumType = 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa' | 'Su'
 
 export type BreakNameEnumType =
   | 'fall'
@@ -17,25 +17,25 @@ export type BreakNameEnumType =
   | 'interim'
   | 'spring'
   | 'easter'
-  | 'summer';
+  | 'summer'
 
 export type SingleBuildingScheduleType = {|
   days: DayOfWeekEnumType[],
   from: string,
   to: string,
-|};
+|}
 
-export type NamedBuildingScheduleType = {|
+export type NamedBuildingScheduleType = {
   title: 'Hours' | string,
   notes?: string,
   isPhysicallyOpen?: boolean,
   closedForChapelTime?: boolean,
   hours: SingleBuildingScheduleType[],
-|};
+}
 
 export type BreakScheduleContainerType = {
-  [key: BreakNameEnumType]: SingleBuildingScheduleType[],
-};
+  [key: BreakNameEnumType]: NamedBuildingScheduleType[],
+}
 
 export type BuildingType = {|
   name: string,
@@ -45,4 +45,4 @@ export type BuildingType = {|
   category: string,
   schedule: NamedBuildingScheduleType[],
   breakSchedule?: BreakScheduleContainerType,
-|};
+|}

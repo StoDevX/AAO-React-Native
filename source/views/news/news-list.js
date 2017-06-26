@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {StyleSheet, Share} from 'react-native'
+import {StyleSheet} from 'react-native'
 import * as c from '../components/colors'
 import SimpleListView from '../components/listview'
 import type {StoryType} from './types'
@@ -21,35 +21,21 @@ type NewsListPropsType = TopLevelViewPropsType & {
   entries: StoryType[],
   loading: boolean,
   embedFeaturedImage: ?boolean,
-};
+}
 
 export class NewsList extends React.Component {
-  props: NewsListPropsType;
+  props: NewsListPropsType
 
   renderSeparator = (sectionId: string, rowId: string) => {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
-  };
-
-  shareItem = (story: StoryType) => {
-    Share.share({
-      url: story.link,
-      message: story.link,
-    })
-      .then(result => console.log(result))
-      .catch(error => console.log(error.message))
-  };
+  }
 
   onPressNews = (title: string, story: StoryType) => {
-    this.props.navigator.push({
-      id: 'NewsItemView',
-      index: this.props.route.index + 1,
-      title: title,
-      backButtonTitle: this.props.name,
-      props: {story, embedFeaturedImage: this.props.embedFeaturedImage},
-      onRightButton: () => this.shareItem(story),
-      rightButton: 'share',
+    this.props.navigation.navigate('NewsItemView', {
+      story,
+      embedFeaturedImage: this.props.embedFeaturedImage,
     })
-  };
+  }
 
   render() {
     // remove all entries with blank excerpts
@@ -65,18 +51,16 @@ export class NewsList extends React.Component {
     return (
       <SimpleListView
         style={styles.listContainer}
-        forceBottomInset={true}
         data={entries}
         renderSeparator={this.renderSeparator}
         refreshing={this.props.loading}
         onRefresh={this.props.onRefresh}
       >
-        {(story: StoryType) => (
+        {(story: StoryType) =>
           <NewsRow
             onPress={() => this.onPressNews(story.title, story)}
             story={story}
-          />
-        )}
+          />}
       </SimpleListView>
     )
   }

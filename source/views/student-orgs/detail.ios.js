@@ -1,10 +1,13 @@
 // @flow
 import React from 'react'
-import {ScrollView, Text, View, StyleSheet} from 'react-native'
-
+import {ScrollView, Text, View, StyleSheet, Linking} from 'react-native'
+import moment from 'moment'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
-import type {StudentOrgInfoType, StudentOrgAbridgedType} from './types'
+import type {StudentOrgType} from './types'
+import type {TopLevelViewPropsType} from '../types'
+import openUrl from '../components/open-url'
+import cleanOrg from './clean-org'
 
 const styles = StyleSheet.create({
   name: {
@@ -16,128 +19,137 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '300',
   },
+  meetings: {
+    flex: 1,
+    paddingVertical: 8,
+    fontSize: 16,
+  },
   description: {
     paddingTop: 13,
     paddingBottom: 13,
     paddingLeft: 16,
     paddingRight: 16,
-    fontSize: 16,
     backgroundColor: c.white,
+  },
+  descriptionText: {
+    fontSize: 16,
   },
   footer: {
     fontSize: 10,
     color: c.iosDisabledText,
     textAlign: 'center',
+  },
+  lastUpdated: {
+    paddingBottom: 10,
+  },
+  poweredBy: {
     paddingBottom: 20,
   },
 })
 
-export class StudentOrgsDetailRenderView extends React.Component {
-  props: {
-    loaded: boolean,
-    base: StudentOrgAbridgedType,
-    full: ?StudentOrgInfoType,
-  };
-
-  displayContact(contactInfo: string) {
-    return (
-      <Section header="CONTACT">
-        <Cell cellStyle="Basic" title={contactInfo} />
-      </Section>
-    )
-  }
-
-  displayDescription(description: string) {
-    return (
-      <Section header="DESCRIPTION">
-        <Text selectable={true} style={styles.description}>{description}</Text>
-      </Section>
-    )
-  }
-
-  displayMeetings(meetingTime: string, meetingLocation: string) {
-    let contents = null
-    if (meetingTime && meetingLocation) {
-      contents = (
-        <Cell
-          cellStyle="Subtitle"
-          title={meetingTime}
-          detail={meetingLocation}
-        />
-      )
-    } else if (meetingTime) {
-      contents = (
-        <Cell cellStyle="Basic" title={meetingTime} detail={meetingLocation} />
-      )
-    } else if (meetingLocation) {
-      contents = <Cell cellStyle="Basic" title={meetingLocation} />
+export class StudentOrgsDetailView extends React.Component {
+  static navigationOptions = ({navigation}) => {
+    const {org} = navigation.state.params
+    return {
+      title: org.name,
     }
-
-    return (
-      <Section header="MEETINGS">
-        {contents}
-      </Section>
-    )
   }
 
-  displayFooter() {
-    return <Text style={styles.footer}>Powered by Presence</Text>
+  props: TopLevelViewPropsType & {
+    navigation: {state: {params: {org: StudentOrgType}}},
   }
-
-  renderBody = (data: StudentOrgInfoType) => {
-    const {
-      regularMeetingTime = '',
-      regularMeetingLocation = '',
-      description = '',
-      contactName = '',
-    } = data
-
-    const showMeetingSection = regularMeetingTime && regularMeetingLocation
-
-    return (
-      <View>
-        {showMeetingSection
-          ? this.displayMeetings(regularMeetingTime, regularMeetingLocation)
-          : null}
-        {contactName ? this.displayContact(contactName) : null}
-        {description ? this.displayDescription(description) : null}
-      </View>
-    )
-  };
 
   render() {
-    let knownData = this.props.base
-    let orgName = knownData.name.trim()
-    let orgCategory = knownData.categories.join(', ')
-
-    let contents
-    if (!this.props.loaded) {
-      contents = (
-        <Section header="ORGANIZATION">
-          <Cell cellStyle="Basic" title="Loading…" />
-        </Section>
-      )
-    } else if (!this.props.full) {
-      contents = (
-        <Section header="ORGANIZATION">
-          <Cell cellStyle="Basic" title="No information found." />
-        </Section>
-      )
-    } else {
-      contents = this.renderBody(this.props.full)
-    }
+    const {
+      name: orgName,
+      category,
+      meetings,
+      website,
+      contacts,
+      advisors,
+      description,
+      lastUpdated: orgLastUpdated,
+    } = cleanOrg(this.props.navigation.state.params.org)
 
     return (
       <ScrollView>
         <TableView>
           <Text selectable={true} style={styles.name}>{orgName}</Text>
 
-          <Section header="CATEGORY">
-            <Cell cellStyle="Basic" title={orgCategory} />
-          </Section>
+          {category
+            ? <Section header="CATEGORY">
+                <Cell cellStyle="Basic" title={category} />
+              </Section>
+            : null}
 
-          {contents}
-          {this.displayFooter()}
+          {meetings
+            ? <Section header="MEETINGS">
+                <Cell
+                  cellContentView={
+                    <Text style={styles.meetings}>{meetings}</Text>
+                  }
+                  cellStyle="Basic"
+                />
+              </Section>
+            : null}
+
+          {website
+            ? <Section header="WEBSITE">
+                <Cell
+                  cellStyle="Basic"
+                  accessory="DisclosureIndicator"
+                  title={website}
+                  onPress={() => openUrl(website)}
+                />
+              </Section>
+            : null}
+
+          {contacts.length
+            ? <Section header="CONTACT">
+                {contacts.map((c, i) =>
+                  <Cell
+                    key={i}
+                    cellStyle={c.title ? 'Subtitle' : 'Basic'}
+                    accessory="DisclosureIndicator"
+                    title={`${c.firstName} ${c.lastName}`}
+                    detail={c.title}
+                    onPress={() => Linking.openURL(`mailto:${c.email}`)}
+                  />,
+                )}
+              </Section>
+            : null}
+
+          {advisors.length
+            ? <Section header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
+                {advisors.map((c, i) =>
+                  <Cell
+                    key={i}
+                    cellStyle="Basic"
+                    accessory="DisclosureIndicator"
+                    title={c.name}
+                    onPress={() => Linking.openURL(`mailto:${c.email}`)}
+                  />,
+                )}
+              </Section>
+            : null}
+
+          {description
+            ? <Section header="DESCRIPTION">
+                <View style={styles.description}>
+                  <Text style={styles.descriptionText}>{description}</Text>
+                </View>
+              </Section>
+            : null}
+
+          <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
+            Last updated:
+            {' '}
+            {moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
+          </Text>
+
+          <Text selectable={true} style={[styles.footer, styles.poweredBy]}>
+            Powered by the St. Olaf Student Orgs Database
+          </Text>
         </TableView>
       </ScrollView>
     )

@@ -19,7 +19,7 @@ export type ViewType =
       icon: string,
       tint: string,
       gradient?: [string, string],
-    };
+    }
 
 export const allViews: ViewType[] = [
   {
@@ -56,7 +56,7 @@ export const allViews: ViewType[] = [
   },
   {
     type: 'url',
-    url: 'https://www.stolaf.edu/personal/directory/index.cfm',
+    url: 'https://www.stolaf.edu/personal/index.cfm',
     view: 'DirectoryView',
     title: 'Directory',
     icon: 'v-card',
@@ -120,6 +120,14 @@ export const allViews: ViewType[] = [
     tint: c.periwinkle,
     gradient: c.lightBlueToBlueDark,
   },
+  //   {
+  //     type: 'view',
+  //     view: 'HelpView',
+  //     title: 'Report A Problem',
+  //     icon: 'help',
+  //     tint: c.lavender,
+  //     gradient: c.purpleToIndigo,
+  //   },
 ]
 
 export const allViewNames = allViews.map(v => v.view)

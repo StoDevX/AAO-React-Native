@@ -14,25 +14,34 @@ import {
   Dimensions,
   Image,
 } from 'react-native'
+import {TabBarIcon} from '../components/tabbar-icon'
 import {Button} from '../components/button'
 import * as c from '../components/colors'
-import {tracker} from '../../analytics'
+//import {tracker} from '../../analytics'
+//import bugsnag from '../../bugsnag'
 
 const kstoProtocol = 'KSTORadio://'
 const kstoAppStoreLink = 'itms://itunes.apple.com/us/app/ksto/id953916647'
 const kstoWebPage = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
+/*
+ * I disabled the ga/bugsnag tracking here because dismissing the dialogs
+ * causes us to get an error... and I can't really see how these would fail?
+ */
+
 function kstoWebsite() {
   Linking.openURL(kstoWebPage).catch(err => {
-    tracker.trackException(`opening Android KSTO url: ${err.message}`)
+    //tracker.trackException(`opening Android KSTO url: ${err.message}`)
+    //bugsnag.notify(err)
     console.warn('An error occurred opening the Android KSTO url', err)
   })
 }
 
 function iosKstoAppDownload() {
   Linking.openURL(kstoAppStoreLink).catch(err => {
-    tracker.trackException(`opening KSTO download url: ${err.message}`)
+    //tracker.trackException(`opening KSTO download url: ${err.message}`)
+    //bugsnag.notify(err)
     console.warn('An error occurred opening the KSTO download url', err)
   })
 }
@@ -47,7 +56,8 @@ function iosKstoApp() {
       return Linking.openURL(kstoProtocol)
     })
     .catch(err => {
-      tracker.trackException(`opening iOS KSTO url: ${err.message}`)
+      //tracker.trackException(`opening iOS KSTO url: ${err.message}`)
+      //bugsnag.notify(err)
       console.warn('An error occurred opening the iOS KSTO url', err)
     })
 }
@@ -74,6 +84,10 @@ export default function KSTOView() {
       </Text>
     </View>
   )
+}
+KSTOView.navigationOptions = {
+  tabBarLabel: 'KSTO',
+  tabBarIcon: TabBarIcon('radio'),
 }
 
 let styles = StyleSheet.create({

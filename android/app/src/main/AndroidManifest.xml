@@ -1,16 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.allaboutolaf"
-    android:versionCode="1"
-    android:versionName="1.0">
+    package="com.allaboutolaf">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> <!--  Precise location to use promptLocation for letting OneSignal know the user location. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> <!-- FINE_LOCATION is used for wifi reporting, and can be used for targetted OneSignal notifications -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-
-    <uses-sdk
-        android:minSdkVersion="16"
-        android:targetSdkVersion="22" />
 
     <application
       android:name=".MainApplication"
@@ -30,6 +24,13 @@
         </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+
+      <meta-data
+          android:name="com.bugsnag.android.API_KEY"
+          android:value="aae3a01c545dfa73bc5f1b2d5d661a3e" />
+      <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="${gmaps_key}" />
     </application>
 
 </manifest>

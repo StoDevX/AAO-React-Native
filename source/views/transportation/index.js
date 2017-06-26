@@ -6,40 +6,50 @@
 
 import React from 'react'
 
-import TabbedView from '../components/tabbed-view'
+import {TabNavigator} from '../components/tabbed-view'
+import {TabBarIcon} from '../components/tabbar-icon'
 
-import OtherModesView from './otherModes'
+import OtherModesView from './other-modes'
 import BusView from './bus'
 
-export default function TransportationPage() {
-  return (
-    <TabbedView
-      tabs={[
-        {
-          id: 'ExpressLineBusView',
-          title: 'Express Bus',
-          icon: 'bus',
-          component: () => <BusView line="Express Bus" />,
-        },
-        {
-          id: 'RedLineBusView',
-          title: 'Red Line',
-          icon: 'bus',
-          component: () => <BusView line="Red Line" />,
-        },
-        {
-          id: 'BlueLineBusView',
-          title: 'Blue Line',
-          icon: 'bus',
-          component: () => <BusView line="Blue Line" />,
-        },
-        {
-          id: 'TransportationOtherModesListView',
-          title: 'Other Modes',
-          icon: 'boat',
-          component: () => <OtherModesView />,
-        },
-      ]}
-    />
-  )
-}
+export {BusMapView} from './bus/map'
+
+export default TabNavigator(
+  {
+    ExpressLineBusView: {
+      screen: ({navigation}) =>
+        <BusView line="Express Bus" navigation={navigation} />,
+      navigationOptions: {
+        tabBarLabel: 'Express Bus',
+        tabBarIcon: TabBarIcon('bus'),
+      },
+    },
+
+    RedLineBusView: {
+      screen: ({navigation}) =>
+        <BusView line="Red Line" navigation={navigation} />,
+      navigationOptions: {
+        tabBarLabel: 'Red Line',
+        tabBarIcon: TabBarIcon('bus'),
+      },
+    },
+
+    BlueLineBusView: {
+      screen: ({navigation}) =>
+        <BusView line="Blue Line" navigation={navigation} />,
+      navigationOptions: {
+        tabBarLabel: 'Blue Line',
+        tabBarIcon: TabBarIcon('bus'),
+      },
+    },
+
+    TransportationOtherModesListView: {
+      screen: OtherModesView,
+    },
+  },
+  {
+    navigationOptions: {
+      title: 'Transportation',
+    },
+  },
+)

@@ -4,16 +4,19 @@ exports[`calls the callback 1`] = `
 <Button
   onPress={[Function]}
   style={
-    Object {
-      "alignSelf": "center",
-      "backgroundColor": "rgb(67, 114, 170)",
-      "borderRadius": 6,
-      "color": "#FFFFFF",
-      "marginVertical": 10,
-      "overflow": "hidden",
-      "paddingVertical": 10,
-      "width": 200,
-    }
+    Array [
+      Object {
+        "alignSelf": "center",
+        "backgroundColor": "rgb(67, 114, 170)",
+        "borderRadius": 6,
+        "color": "#FFFFFF",
+        "marginVertical": 10,
+        "overflow": "hidden",
+        "paddingVertical": 10,
+        "width": 200,
+      },
+      false,
+    ]
   }
 >
   Push me!
@@ -24,16 +27,19 @@ exports[`calls the callback 2`] = `
 <Button
   onPress={[Function]}
   style={
-    Object {
-      "alignSelf": "center",
-      "backgroundColor": "rgb(67, 114, 170)",
-      "borderRadius": 6,
-      "color": "#FFFFFF",
-      "marginVertical": 10,
-      "overflow": "hidden",
-      "paddingVertical": 10,
-      "width": 200,
-    }
+    Array [
+      Object {
+        "alignSelf": "center",
+        "backgroundColor": "rgb(67, 114, 170)",
+        "borderRadius": 6,
+        "color": "#FFFFFF",
+        "marginVertical": 10,
+        "overflow": "hidden",
+        "paddingVertical": 10,
+        "width": 200,
+      },
+      false,
+    ]
   }
 >
   Push me!
@@ -44,16 +50,19 @@ exports[`can change the title 1`] = `
 <Button
   onPress={[Function]}
   style={
-    Object {
-      "alignSelf": "center",
-      "backgroundColor": "rgb(67, 114, 170)",
-      "borderRadius": 6,
-      "color": "#FFFFFF",
-      "marginVertical": 10,
-      "overflow": "hidden",
-      "paddingVertical": 10,
-      "width": 200,
-    }
+    Array [
+      Object {
+        "alignSelf": "center",
+        "backgroundColor": "rgb(67, 114, 170)",
+        "borderRadius": 6,
+        "color": "#FFFFFF",
+        "marginVertical": 10,
+        "overflow": "hidden",
+        "paddingVertical": 10,
+        "width": 200,
+      },
+      false,
+    ]
   }
 >
   Title
@@ -64,16 +73,19 @@ exports[`renders 1`] = `
 <Button
   onPress={[Function]}
   style={
-    Object {
-      "alignSelf": "center",
-      "backgroundColor": "rgb(67, 114, 170)",
-      "borderRadius": 6,
-      "color": "#FFFFFF",
-      "marginVertical": 10,
-      "overflow": "hidden",
-      "paddingVertical": 10,
-      "width": 200,
-    }
+    Array [
+      Object {
+        "alignSelf": "center",
+        "backgroundColor": "rgb(67, 114, 170)",
+        "borderRadius": 6,
+        "color": "#FFFFFF",
+        "marginVertical": 10,
+        "overflow": "hidden",
+        "paddingVertical": 10,
+        "width": 200,
+      },
+      false,
+    ]
   }
 >
   Push me!

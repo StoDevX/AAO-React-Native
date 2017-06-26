@@ -22,7 +22,8 @@ jsFiles
     return !content.includes('@flow')
   })
   .forEach(file =>
-    warn(`<code>${file}</code> has no <code>@flow</code> annotation!`))
+    warn(`<code>${file}</code> has no <code>@flow</code> annotation!`),
+  )
 
 // revisit this when we move to yarn
 // const packageChanged = danger.git.modified_files.includes('package.json')
@@ -41,7 +42,8 @@ jsFiles
     return content.includes('it.only') || content.includes('describe.only')
   })
   .forEach(file =>
-    warn(`An <code>only</code> was left in ${file} – no other tests can run.`))
+    warn(`An <code>only</code> was left in ${file} – no other tests can run.`),
+  )
 
 // Warn when PR size is large (mainly for hawken)
 const bigPRThreshold = 400 // lines
@@ -95,7 +97,6 @@ ${log}
 const prettierLog = readLogFile('logs/prettier')
 const eslintLog = readLogFile('logs/eslint')
 const dataValidationLog = readLogFile('logs/validate-data')
-const dataBundlingLog = readLogFile('logs/bundle-data')
 const flowLog = readLogFile('logs/flow')
 const iosJsBundleLog = readLogFile('logs/bundle-ios')
 const androidJsBundleLog = readLogFile('logs/bundle-android')
@@ -113,10 +114,6 @@ if (dataValidationLog && isBadDataValidationLog(dataValidationLog)) {
   fileLog("Something's up with the data.", dataValidationLog)
 }
 
-if (dataBundlingLog) {
-  fileLog('Some files need to be re-bundled', dataBundlingLog, {lang: 'diff'})
-}
-
 if (flowLog && flowLog !== 'Found 0 errors') {
   fileLog('Flow would like to interject about types…', flowLog)
 }
@@ -132,7 +129,8 @@ if (androidJsBundleLog && isBadBundleLog(androidJsBundleLog)) {
 if (jestLog && jestLog.includes('FAIL')) {
   const lines = jestLog.split('\n')
   const startIndex = lines.findIndex(l =>
-    l.includes('Summary of all failing tests'))
+    l.includes('Summary of all failing tests'),
+  )
 
   fileLog(
     'Some Jest tests failed. Take a peek?',

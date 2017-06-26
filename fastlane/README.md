@@ -23,70 +23,37 @@ xcode-select --install
 </tr>
 <tr>
 <td width="33%"><code>brew cask install fastlane</code></td>
-<td width="33%"><a href="https://download.fastlane.tools/fastlane.zip">Download the zip file</a>. Then double click on the <code>install</code> script (or run it in a terminal window).</td>
+<td width="33%"><a href="https://download.fastlane.tools">Download the zip file</a>. Then double click on the <code>install</code> script (or run it in a terminal window).</td>
 <td width="33%"><code>sudo gem install fastlane -NV</code></td>
 </tr>
 </table>
+
 # Available Actions
-### register
-```
-fastlane register
-```
-Adds any unregistered devices to the provisioning profile
 ### bump
 ```
 fastlane bump
 ```
 Bump the version string to a new version
-
-----
-
-## iOS
-### ios test
+### propagate-version
 ```
-fastlane ios test
+fastlane propagate-version
 ```
-Runs all the tests
-### ios screenshot
+Copy the package.json version into the other version locations
+### release_notes
 ```
-fastlane ios screenshot
+fastlane release_notes
 ```
-Take screenshots
-### ios rogue
+Build the release notes: branch, commit hash, changelog
+### bundle_data
 ```
-fastlane ios rogue
+fastlane bundle_data
 ```
-Go rogue
-### ios build
+run `npm run bundle-data`
+### keys
 ```
-fastlane ios build
+fastlane keys
 ```
-Provisions the profiles; bumps the build number; builds the app
-### ios beta
-```
-fastlane ios beta
-```
-Submit a new Beta Build to HockeyApp
-### ios auto_beta
-```
-fastlane ios auto_beta
-```
-Make a beta build if there have been new commits since the last beta
-### ios ci_keychains
-```
-fastlane ios ci_keychains
-```
-Do CI-system keychain setup
-### ios ci_run
-```
-fastlane ios ci_run
-```
-Run iOS builds or tests, as appropriate
-### ios update_match
-```
-fastlane ios update_match
-```
-In case match needs to be updated - probably never needs to be run
+Set up the private keys + environment variables for local development
 
 ----
 
@@ -101,16 +68,60 @@ Makes a build
 fastlane android beta
 ```
 Submit a new Beta Build to HockeyApp
-### android auto_beta
+### android ci-run
 ```
-fastlane android auto_beta
-```
-Make a beta build if there have been new commits since the last beta
-### android ci_run
-```
-fastlane android ci_run
+fastlane android ci-run
 ```
 Run the appropriate action on CI
+### android set_version
+```
+fastlane android set_version
+```
+Include the build number in the version string
+### android matchesque
+```
+fastlane android matchesque
+```
+extract the android keys from the match repo
+
+----
+
+## iOS
+### ios test
+```
+fastlane ios test
+```
+Runs all the tests
+### ios screenshot
+```
+fastlane ios screenshot
+```
+Take screenshots
+### ios build
+```
+fastlane ios build
+```
+Provisions the profiles; bumps the build number; builds the app
+### ios beta
+```
+fastlane ios beta
+```
+Submit a new Beta Build to Testflight
+### ios refresh_dsyms
+```
+fastlane ios refresh_dsyms
+```
+Upload dYSM symbols to Bugsnag from Apple
+### ios ci-run
+```
+fastlane ios ci-run
+```
+Run iOS builds or tests, as appropriate
+### ios set_version
+```
+fastlane ios set_version
+```
+Include the build number in the version string
 
 ----
 

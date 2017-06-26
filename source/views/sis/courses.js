@@ -6,6 +6,7 @@
 
 import React from 'react'
 import {StyleSheet} from 'react-native'
+import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import delay from 'delay'
 import size from 'lodash/size'
@@ -30,16 +31,21 @@ type CoursesViewPropsType = TopLevelViewPropsType & {
   loggedIn: true,
   updateCourses: (force: boolean) => {},
   coursesByTerm: CoursesByTermType,
-};
+}
 
 class CoursesView extends React.Component {
+  static navigationOptions = {
+    tabBarLabel: 'Courses',
+    tabBarIcon: TabBarIcon('archive'),
+  }
+
   state: {
     loading: boolean,
   } = {
     loading: false,
-  };
+  }
 
-  props: CoursesViewPropsType;
+  props: CoursesViewPropsType
 
   refresh = async () => {
     let start = Date.now()
@@ -52,15 +58,15 @@ class CoursesView extends React.Component {
     await delay(500 - elapsed)
 
     this.setState({loading: false})
-  };
+  }
 
   renderSectionHeader = (courses: CourseType[], term: string) => {
     return <ListSectionHeader style={styles.rowSectionHeader} title={term} />
-  };
+  }
 
   renderSeparator = (sectionId: string, rowId: string) => {
     return <ListSeparator key={`${sectionId}-${rowId}`} />
-  };
+  }
 
   render() {
     if (this.props.error) {
@@ -72,14 +78,7 @@ class CoursesView extends React.Component {
         <NoticeView
           text="Sorry, it looks like your SIS session timed out. Could you set up the Google login in Settings?"
           buttonText="Open Settings"
-          onPress={() =>
-            this.props.navigator.push({
-              id: 'SettingsView',
-              title: 'Settings',
-              index: this.props.route.index + 1,
-              onDismiss: (route, navigator) => navigator.pop(),
-              sceneConfig: 'fromBottom',
-            })}
+          onPress={() => this.props.navigation.navigate('SettingsView')}
         />
       )
     }
@@ -101,14 +100,13 @@ class CoursesView extends React.Component {
     return (
       <SimpleListView
         style={styles.listContainer}
-        forceBottomInset={true}
         data={this.props.coursesByTerm}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
         refreshing={this.state.loading}
         onRefresh={this.refresh}
       >
-        {(course: CourseType) => (
+        {(course: CourseType) =>
           <ListRow style={styles.rowContainer}>
             <Column>
               <Title>{course.name}</Title>
@@ -117,8 +115,7 @@ class CoursesView extends React.Component {
                 ? <Detail>{course.instructors}</Detail>
                 : null}
             </Column>
-          </ListRow>
-        )}}
+          </ListRow>}}
       </SimpleListView>
     )
   }

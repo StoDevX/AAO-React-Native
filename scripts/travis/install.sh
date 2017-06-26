@@ -1,10 +1,12 @@
 #!/bin/bash
-set -e -v -x
+set -e -v
 
 # install packages
 npm install
 
-# install fastlane
-if [[ $ANDROID || $IOS ]]; then
-  bundle install --deployment
+if [[ $TRAVIS_OS_NAME == "osx" ]]; then
+  brew install imagemagick
 fi
+
+# install fastlane
+bundle install

@@ -14,6 +14,7 @@ import {
   Dimensions,
   Platform,
 } from 'react-native'
+import {TabBarIcon} from '../components/tabbar-icon'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
 import {data as webcams} from '../../../docs/webcams.json'
@@ -22,6 +23,11 @@ import {trackedOpenUrl} from '../components/open-url'
 import LinearGradient from 'react-native-linear-gradient'
 
 export default class WebcamsView extends React.PureComponent {
+  static navigationOptions = {
+    tabBarLabel: 'Webcams',
+    tabBarIcon: TabBarIcon('videocam'),
+  }
+
   render() {
     return (
       <ScrollView
@@ -44,7 +50,7 @@ class Webcam extends React.PureComponent {
       thumbnail: string,
       accentColor: [number, number, number],
     },
-  };
+  }
 
   render() {
     const {name, thumbnail, streamUrl, pageUrl, accentColor} = this.props.info
@@ -70,7 +76,7 @@ class StreamThumbnail extends React.PureComponent {
     accentColor: [number, number, number],
     textColor: 'white' | 'black',
     thumbnail: any,
-  };
+  }
 
   handlePress = () => {
     const {url, title, infoUrl} = this.props
@@ -79,7 +85,7 @@ class StreamThumbnail extends React.PureComponent {
     } else {
       trackedOpenUrl({url, id: `${title}WebcamView`})
     }
-  };
+  }
 
   render() {
     const {title, thumbnail, accentColor, textColor} = this.props
@@ -103,7 +109,7 @@ class RoundedThumbnail extends React.PureComponent {
     textColor: 'white' | 'black',
     thumbnail: any,
     title: string,
-  };
+  }
 
   render() {
     const {title, thumbnail, accentColor, textColor} = this.props

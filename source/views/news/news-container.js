@@ -6,6 +6,7 @@ import LoadingView from '../components/loading'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {tracker} from '../../analytics'
+import bugsnag from '../../bugsnag'
 import {NewsList} from './news-list'
 import {fetchRssFeed, fetchWpJson} from './fetch-feed'
 
@@ -20,7 +21,7 @@ export default class NewsContainer extends React.Component {
     loading: true,
     error: null,
     refreshing: false,
-  };
+  }
 
   componentWillMount() {
     this.fetchData().then(() => this.setState({loading: false}))
@@ -32,7 +33,7 @@ export default class NewsContainer extends React.Component {
     query?: Object,
     embedFeaturedImage?: boolean,
     mode: 'rss' | 'wp-json',
-  };
+  }
 
   fetchData = async () => {
     try {
@@ -57,11 +58,12 @@ export default class NewsContainer extends React.Component {
         })
       } else {
         tracker.trackException(error.message)
+        bugsnag.notify(error)
         console.warn(error)
         this.setState({error})
       }
     }
-  };
+  }
 
   refresh = async () => {
     let start = Date.now()
@@ -75,7 +77,7 @@ export default class NewsContainer extends React.Component {
       await delay(500 - elapsed)
     }
     this.setState({refreshing: false})
-  };
+  }
 
   render() {
     if (this.state.error) {
@@ -91,8 +93,7 @@ export default class NewsContainer extends React.Component {
         entries={this.state.entries}
         onRefresh={this.refresh}
         loading={this.state.refreshing}
-        navigator={this.props.navigator}
-        route={this.props.route}
+        navigation={this.props.navigation}
         name={this.props.name}
         mode={this.props.mode}
         embedFeaturedImage={this.props.embedFeaturedImage}

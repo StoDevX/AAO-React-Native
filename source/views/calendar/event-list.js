@@ -8,6 +8,7 @@ import React from 'react'
 import {StyleSheet} from 'react-native'
 import * as c from '../components/colors'
 import SimpleListView from '../components/listview'
+import type {TopLevelViewPropsType} from '../types'
 import type {EventType} from './types'
 import groupBy from 'lodash/groupBy'
 import size from 'lodash/size'
@@ -17,13 +18,13 @@ import {NoticeView} from '../components/notice'
 import EventRow from './event-row'
 
 export class EventList extends React.Component {
-  props: {
+  props: TopLevelViewPropsType & {
     events: EventType[],
     message: ?string,
     refreshing: boolean,
     onRefresh: () => any,
     now: moment,
-  };
+  }
 
   groupEvents = (
     events: EventType[],
@@ -38,18 +39,22 @@ export class EventList extends React.Component {
       }
       return event.startTime.format('ddd  MMM Do') // google returns events in CST
     })
-  };
+  }
+
+  onPressEvent = (title: string, event: EventType) => {
+    this.props.navigation.navigate('EventDetailView', {event})
+  }
 
   renderSectionHeader = (
     sectionData: EventType[],
     sectionIdentifier: string,
   ) => {
     return <ListSectionHeader title={sectionIdentifier} spacing={{left: 10}} />
-  };
+  }
 
   renderSeparator = (sectionID: any, rowID: any) => {
     return <ListSeparator fullWidth={true} key={`${sectionID}-${rowID}`} />
-  };
+  }
 
   render() {
     if (this.props.message) {
@@ -65,14 +70,17 @@ export class EventList extends React.Component {
     return (
       <SimpleListView
         style={styles.container}
-        forceBottomInset={true}
         data={events}
         renderSectionHeader={this.renderSectionHeader}
         renderSeparator={this.renderSeparator}
         refreshing={this.props.refreshing}
         onRefresh={this.props.onRefresh}
       >
-        {(event: EventType) => <EventRow event={event} />}
+        {(event: EventType) =>
+          <EventRow
+            onPress={() => this.onPressEvent(event.summary, event)}
+            event={event}
+          />}
       </SimpleListView>
     )
   }

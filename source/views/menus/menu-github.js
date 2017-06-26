@@ -19,6 +19,7 @@ import type {
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import {data as fallbackMenu} from '../../../docs/pause-menu.json'
 import {tracker} from '../../analytics'
+import bugsnag from '../../bugsnag'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
@@ -38,7 +39,7 @@ export class GitHubHostedMenu extends React.Component {
     foodItems: {},
     corIcons: {},
     meals: [],
-  };
+  }
 
   componentWillMount() {
     this.fetchData()
@@ -47,7 +48,7 @@ export class GitHubHostedMenu extends React.Component {
   props: TopLevelViewPropsType & {
     name: string,
     loadingMessage: string[],
-  };
+  }
 
   fetchData = async () => {
     this.setState({loading: true})
@@ -63,6 +64,7 @@ export class GitHubHostedMenu extends React.Component {
       corIcons = data.corIcons || {}
     } catch (err) {
       tracker.trackException(err.message)
+      bugsnag.notify(err)
       console.warn(err)
       foodItems = fallbackMenu.foodItems || []
       stationMenus = fallbackMenu.stationMenus || []
@@ -99,7 +101,7 @@ export class GitHubHostedMenu extends React.Component {
       ],
       now: moment.tz(CENTRAL_TZ),
     })
-  };
+  }
 
   render() {
     if (this.state.loading) {
@@ -112,8 +114,7 @@ export class GitHubHostedMenu extends React.Component {
 
     return (
       <FancyMenu
-        route={this.props.route}
-        navigator={this.props.navigator}
+        navigation={this.props.navigation}
         foodItems={this.state.foodItems}
         menuCorIcons={this.state.corIcons}
         meals={this.state.meals}

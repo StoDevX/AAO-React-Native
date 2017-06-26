@@ -1,6 +1,8 @@
 package com.allaboutolaf;
 
 import com.facebook.react.ReactActivity;
+import com.bugsnag.BugsnagReactNative;
+import android.os.Bundle;
 
 public class MainActivity extends ReactActivity {
 
@@ -11,5 +13,14 @@ public class MainActivity extends ReactActivity {
     @Override
     protected String getMainComponentName() {
         return "AllAboutOlaf";
+    }
+
+    // Set up Bugsnag
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (!BuildConfig.DEBUG) {
+            BugsnagReactNative.start(this);
+        }
     }
 }

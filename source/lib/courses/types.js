@@ -13,10 +13,10 @@ export type CourseType = {
   instructors: string,
   // clbid: number,
   // term: number,
-};
+}
 
 export type CourseCollectionType =
   | {error: true, value: Error}
-  | {error: false, value: CoursesByTermType};
+  | {error: false, value: CoursesByTermType}
 
-export type CoursesByTermType = {[key: string]: CourseType[]};
+export type CoursesByTermType = {[key: string]: CourseType[]}

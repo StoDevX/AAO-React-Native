@@ -43,10 +43,11 @@ export function buildFilters(
 
   // Check if there is at least one special in order to show the specials-only filter
   const stationNames = selectedMeal.stations.map(s => s.label)
-  const shouldShowSpecials = filter(
-    foodItems,
-    item => item.special && stationNames.includes(item.station),
-  ).length >= 1
+  const shouldShowSpecials =
+    filter(
+      foodItems,
+      item => item.special && stationNames.includes(item.station),
+    ).length >= 1
 
   return [
     {
@@ -55,7 +56,8 @@ export function buildFilters(
       enabled: shouldShowSpecials,
       spec: {
         label: 'Only Show Specials',
-        caption: 'Allows you to either see only the "specials" for today, or everything the location has to offer (e.g., condiments.)',
+        caption:
+          'Allows you to either see only the "specials" for today, or everything the location has to offer (e.g., condiments.)',
       },
       apply: {
         key: 'special',

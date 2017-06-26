@@ -11,10 +11,7 @@ import type {BuildingType} from './types'
 import * as c from '../components/colors'
 import {Row, Column} from '../components/layout'
 import {ListRow, Detail, Title} from '../components/list'
-import {
-  getDetailedBuildingStatus,
-  getShortBuildingStatus,
-} from './building-hours-helpers'
+import {getDetailedBuildingStatus, getShortBuildingStatus} from './lib'
 
 const styles = StyleSheet.create({
   title: {
@@ -47,7 +44,7 @@ type PropsType = {
   name: string,
   now: momentT,
   onPress: () => any,
-};
+}
 
 export function BuildingRow({info, name, now, onPress}: PropsType) {
   let bgColors = {
@@ -66,7 +63,7 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
   const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
 
   return (
-    <ListRow onPress={onPress} arrowPosition="center" direction="column">
+    <ListRow onPress={onPress} arrowPosition="center">
       <Column>
         <Row style={styles.title}>
           <Title lines={1} style={styles.titleText}>
@@ -86,28 +83,30 @@ export function BuildingRow({info, name, now, onPress}: PropsType) {
         </Row>
 
         <View style={styles.detailWrapper}>
-          {hours.map(({isActive, label, status}, i) => (
+          {hours.map(({isActive, label, status}, i) =>
             <Detail key={i} style={styles.detailRow}>
               <BuildingTimeSlot
                 highlight={hours.length > 1 && isActive}
                 label={label}
                 status={status}
               />
-            </Detail>
-          ))}
+            </Detail>,
+          )}
         </View>
       </Column>
     </ListRow>
   )
 }
 
-const BuildingTimeSlot = (
-  {
-    label,
-    status,
-    highlight,
-  }: {label: ?string, status: string, highlight: boolean},
-) => {
+const BuildingTimeSlot = ({
+  label,
+  status,
+  highlight,
+}: {
+  label: ?string,
+  status: string,
+  highlight: boolean,
+}) => {
   // we don't want to show the 'Hours' label, since almost every row has it
   const showLabel = label !== 'Hours'
 

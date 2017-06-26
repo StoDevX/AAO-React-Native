@@ -71,7 +71,6 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -81,7 +80,7 @@ apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
  * Upload all the APKs to the Play Store and people will download
  * the correct one based on the CPU architecture of their device.
  */
-def enableSeparateBuildPerCPUArchitecture = false
+def enableSeparateBuildPerCPUArchitecture = true
 
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
@@ -90,20 +89,27 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "25.0.3"
 
     defaultConfig {
         applicationId "com.allaboutolaf"
         minSdkVersion 16
-        targetSdkVersion 22
-        versionCode 1
-        versionName "2.1.2"
+        targetSdkVersion 23
+        versionCode 20
+        versionName "2.4.0-beta.9"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
-        manifestPlaceholders = [manifestApplicationId: "${applicationId}",
-                        onesignal_app_id: "aa46a500-ab1c-4127-b9ff-e7373da3ce35",
-                        onesignal_google_project_number: "185558680648"]
+        manifestPlaceholders = [
+            manifestApplicationId: "${applicationId}",
+            onesignal_app_id: "aa46a500-ab1c-4127-b9ff-e7373da3ce35",
+            onesignal_google_project_number: "185558680648",
+            gmaps_key: System.getenv("GMAPS_KEY") ?: "",
+        ]
+    }
+    signingConfigs {
+        // the signingConfig is configured below
+        release
     }
     splits {
         abi {
@@ -117,6 +123,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -140,15 +147,52 @@ android {
     }
 }
 
+// borrowed from https://gist.github.com/gabrielemariotti/6856974
+def propFile = new File('android/app//signing.properties')
+if (propFile.canRead()) {
+    def Properties props = new Properties()
+    props.load(new FileInputStream(propFile))
+    if (props != null
+            && props.containsKey('STORE_FILE')
+            && props.containsKey('STORE_PASSWORD')
+            && props.containsKey('KEY_ALIAS')
+            && props.containsKey('KEY_PASSWORD')
+    ) {
+        logger.info 'android/app/signing.properties is fully functional.'
+        android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
+        android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
+        android.signingConfigs.release.keyPassword = props['KEY_PASSWORD']
+    } else {
+        println 'android/app/signing.properties found, but some entries are missing.'
+        if (props == null) {
+            logger.warn '`props` was null'
+        } else {
+            logger.warn "has STORE_FILE: ${props.containsKey('STORE_FILE')}"
+            logger.warn "has STORE_PASSWORD: ${props.containsKey('STORE_PASSWORD')}"
+            logger.warn "has KEY_ALIAS: ${props.containsKey('KEY_ALIAS')}"
+            logger.warn "has KEY_PASSWORD: ${props.containsKey('KEY_PASSWORD')}"
+        }
+        android.buildTypes.release.signingConfig = null
+    }
+} else {
+    logger.warn 'android/app/signing.properties not found.'
+    logger.warn "cwd: ${new File(".").absolutePath}"
+    android.buildTypes.release.signingConfig = null
+}
+
 dependencies {
     // please keep this list sorted
-    compile project(':react-native-code-push')
+    compile project(':bugsnag-react-native')
     compile project(':react-native-custom-tabs')
     compile project(':react-native-device-info')
     compile project(':react-native-google-analytics-bridge')
     compile project(':react-native-keychain')
     compile project(':react-native-linear-gradient')
+    compile project(':react-native-maps')
+    compile project(':react-native-network-info')
     compile project(':react-native-onesignal')
+    compile project(':react-native-restart')
     compile project(':react-native-vector-icons')
     compile project(':react-native-view-shot')
     // this is for react-native itself

@@ -5,6 +5,7 @@ import * as c from '../components/colors'
 import LoadingView from '../components/loading'
 import {text as faqs} from '../../../docs/faqs.json'
 import {tracker} from '../../analytics'
+import bugsnag from '../../bugsnag'
 
 const styles = StyleSheet.create({
   container: {
@@ -17,15 +18,19 @@ const styles = StyleSheet.create({
 })
 
 export class FaqView extends React.Component {
+  static navigationOptions = {
+    title: 'FAQs',
+  }
+
   state = {
     html: faqs,
-  };
+  }
 
   componentWillMount() {
     this.fetchData()
   }
 
-  url = 'https://stodevx.github.io/AAO-React-Native/faqs.json';
+  url = 'https://stodevx.github.io/AAO-React-Native/faqs.json'
 
   fetchData = async () => {
     let html = faqs
@@ -35,6 +40,7 @@ export class FaqView extends React.Component {
     } catch (err) {
       html = faqs
       tracker.trackException(err.message)
+      bugsnag.notify(err)
       console.warn(err.message)
     }
 
@@ -43,14 +49,12 @@ export class FaqView extends React.Component {
     }
 
     this.setState({html: html})
-  };
+  }
 
   render() {
     if (!this.state.html) {
       return <LoadingView />
     }
-    return (
-      <WebView style={styles.container} source={{html: this.state.html}} />
-    )
+    return <WebView style={styles.container} source={{html: this.state.html}} />
   }
 }

@@ -2,6 +2,7 @@
 const fs = require('fs')
 const junk = require('junk')
 const path = require('path')
+const mkdirp = require('mkdirp')
 const bundleDataDir = require('./bundle-data-dir')
 const convertDataFile = require('./convert-data-file')
 
@@ -19,11 +20,14 @@ if (!fromDir || !toDir || fromDir === '-h' || fromDir === '--help') {
   process.exit(1)
 }
 
+mkdirp.sync(toDir)
+
 // Bundle each directory of yaml files into one big json file
 const dirs = findDirsIn(fromDir)
 dirs.forEach(dirname => {
   const input = path.join(fromDir, dirname)
   const output = path.join(toDir, dirname) + '.json'
+  console.log(`bundle-data-dir ${input} ${output}`)
   console.time(`bundle-data-dir ${input} ${output}`)
   bundleDataDir({fromDir: input, toFile: output})
   console.timeEnd(`bundle-data-dir ${input} ${output}`)
@@ -34,6 +38,7 @@ const files = findFilesIn(fromDir)
 files.forEach(file => {
   const input = path.join(fromDir, file)
   const output = path.join(toDir, file).replace(/\.(.*)$/, '.json')
+  console.log(`convert-data-file ${input} ${output}`)
   console.time(`convert-data-file ${input} ${output}`)
   convertDataFile({fromFile: input, toFile: output})
   console.timeEnd(`convert-data-file ${input} ${output}`)

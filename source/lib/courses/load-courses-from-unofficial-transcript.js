@@ -12,19 +12,17 @@ import {GRADES_PAGE, LANDING_PAGE} from './urls'
 import {parseCoursesFromDom} from './parse-courses'
 import type {CourseCollectionType} from './types'
 
-type PromisedDataType = Promise<CourseCollectionType>;
+type PromisedDataType = Promise<CourseCollectionType>
 
-export async function loadCoursesFromUnofficialTranscript(
-  {
-    stnum,
-    force,
-    isConnected,
-  }: {
-    stnum: number,
-    isConnected: boolean,
-    force?: boolean,
-  },
-): PromisedDataType {
+export async function loadCoursesFromUnofficialTranscript({
+  stnum,
+  force,
+  isConnected,
+}: {
+  stnum: number,
+  isConnected: boolean,
+  force?: boolean,
+}): PromisedDataType {
   const {isExpired, isCached, value} = await cache.getAllCourses()
 
   if (isConnected && (isExpired || !isCached || force)) {
@@ -42,9 +40,11 @@ export async function loadCoursesFromUnofficialTranscript(
   return {error: false, value: value || {}}
 }
 
-async function fetchAllCoursesFromServer(
-  {stnum}: {stnum: number},
-): PromisedDataType {
+async function fetchAllCoursesFromServer({
+  stnum,
+}: {
+  stnum: number,
+}): PromisedDataType {
   const form = buildFormData({stnum: String(stnum), searchyearterm: '0'})
   const resp = await fetch(GRADES_PAGE, {method: 'POST', body: form})
   if (startsWith(resp.url, LANDING_PAGE)) {
