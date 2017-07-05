@@ -76,7 +76,7 @@
     "react-native-datepicker": "1.5.1",
     "react-native-device-info": "0.10.2",
     "react-native-google-analytics-bridge": "5.1.0",
-    "react-native-keychain": "1.2.0",
+    "react-native-keychain": "2.0.0-rc",
     "react-native-linear-gradient": "2.0.0",
     "react-native-maps": "0.15.2",
     "react-native-network-info": "2.2.0",
