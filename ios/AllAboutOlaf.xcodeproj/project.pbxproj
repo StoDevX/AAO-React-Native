@@ -322,7 +322,7 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 3A3CB9031EF76B01008DAC6D;
-			remoteInfo = "All About Olaf Widget";
+			remoteInfo = "AllAboutOlafWidget";
 		};
 		3A9B26581DE3709F00B6A428 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -716,7 +716,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3A3CB9071EF76B01008DAC6D /* All About Olaf Widget */ = {
+		3A3CB9071EF76B01008DAC6D /* AllAboutOlafWidget */ = {
 			isa = PBXGroup;
 			children = (
 				3A3CB9081EF76B01008DAC6D /* TodayViewController.h */,
@@ -724,7 +724,8 @@
 				3A3CB90B1EF76B01008DAC6D /* MainInterface.storyboard */,
 				3A3CB90E1EF76B01008DAC6D /* Info.plist */,
 			);
-			path = "All About Olaf Widget";
+			name = AllAboutOlafWidget;
+			path = "AllAboutOlafWidget";
 			sourceTree = "<group>";
 		};
 		3A9B26421DE3709F00B6A428 /* Products */ = {
@@ -821,7 +822,7 @@
 				13B07FAE1A68108700A75B9A /* AllAboutOlaf */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00D33BE01DDA58A8001E830E /* AllAboutOlafUITests */,
-				3A3CB9071EF76B01008DAC6D /* All About Olaf Widget */,
+				3A3CB9071EF76B01008DAC6D /* AllAboutOlafWidget */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				5A41494DACBB4D2795B46DE0 /* Resources */,
 				3C5BFA21338636E7EB4E5E0D /* Frameworks */,
@@ -1629,7 +1630,7 @@
 				CODE_SIGN_ENTITLEMENTS = AllAboutOlafWidget.entitlements;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 363G7T9TGX;
-				INFOPLIST_FILE = "All About Olaf Widget/Info.plist";
+				INFOPLIST_FILE = "AllAboutOlafWidget/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf.widget;
@@ -1648,7 +1649,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 363G7T9TGX;
-				INFOPLIST_FILE = "All About Olaf Widget/Info.plist";
+				INFOPLIST_FILE = "AllAboutOlafWidget/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf.widget;
