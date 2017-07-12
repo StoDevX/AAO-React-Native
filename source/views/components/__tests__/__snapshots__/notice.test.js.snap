@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders 1`] = `
+exports[`renders a button, if given 1`] = `
 <View
   style={
     Array [
@@ -26,7 +26,86 @@ exports[`renders 1`] = `
       }
     }
   >
-    A Message
+    Label
+  </Text>
+  <Button
+    onPress={undefined}
+    title="Button"
+  />
+</View>
+`;
+
+exports[`renders the given text 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "backgroundColor": "#FFFFFF",
+        "flex": 1,
+        "justifyContent": "center",
+        "paddingHorizontal": 16,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    accessible={true}
+    allowFontScaling={true}
+    ellipsizeMode="tail"
+    selectable={true}
+    style={
+      Object {
+        "textAlign": "center",
+      }
+    }
+  >
+    A Label I Am
+  </Text>
+</View>
+`;
+
+exports[`shows an ActivityIndicator if given [spinner] 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "backgroundColor": "#FFFFFF",
+        "flex": 1,
+        "justifyContent": "center",
+        "paddingHorizontal": 16,
+      },
+      undefined,
+    ]
+  }
+>
+  <ActivityIndicator
+    animating={true}
+    color="#999999"
+    hidesWhenStopped={true}
+    size="small"
+    style={
+      Object {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "padding": 8,
+      }
+    }
+  />
+  <Text
+    accessible={true}
+    allowFontScaling={true}
+    ellipsizeMode="tail"
+    selectable={true}
+    style={
+      Object {
+        "textAlign": "center",
+      }
+    }
+  >
+    Label
   </Text>
 </View>
 `;
