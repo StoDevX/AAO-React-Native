@@ -22,7 +22,6 @@ npm config set spin=false
 npm config set progress=false
 
 npm install -g npm@latest
-npm install -g greenkeeper-lockfile@1
 
 # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
 openssl aes-256-cbc -K "$ENCRYPTED_KEY" -iv "$ENCRYPTED_IV" -in "$DEPLOY_KEY.enc" -out "$DEPLOY_KEY" -d
