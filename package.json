@@ -1,6 +1,6 @@
 {
   "name": "all-about-olaf",
-  "version": "2.4.0-beta.8",
+  "version": "2.4.0-beta.9",
   "private": true,
   "config": {
     "prettier_args": "--single-quote --trailing-comma all --no-bracket-spacing --no-semi"
@@ -44,12 +44,6 @@
       "source/**/*.js",
       "!**/node_modules/**"
     ],
-    "setupFiles": [
-      "react-native-mock"
-    ],
-    "snapshotSerializers": [
-      "enzyme-to-json/serializer"
-    ],
     "preset": "react-native"
   },
   "dependencies": {
@@ -72,13 +66,13 @@
     "react-native-alphabetlistview": "github:sunnylqm/react-native-alphabetlistview#aea5d61fdd9034c7178d73ce8b2ee104da6941cc",
     "react-native-button": "1.8.2",
     "react-native-communications": "2.2.1",
-    "react-native-custom-tabs": "0.1.4",
+    "react-native-custom-tabs": "0.1.5",
     "react-native-datepicker": "1.5.1",
     "react-native-device-info": "0.10.2",
-    "react-native-google-analytics-bridge": "5.0.1",
-    "react-native-keychain": "1.2.0",
+    "react-native-google-analytics-bridge": "5.1.0",
+    "react-native-keychain": "2.0.0-rc",
     "react-native-linear-gradient": "2.0.0",
-    "react-native-maps": "0.15.2",
+    "react-native-maps": "0.15.3",
     "react-native-network-info": "2.2.0",
     "react-native-onesignal": "3.0.4",
     "react-native-parallax-view": "2.0.6",
@@ -91,7 +85,7 @@
     "react-native-video": "1.0.0",
     "react-navigation": "1.0.0-beta.11",
     "react-redux": "5.0.5",
-    "redux": "3.7.0",
+    "redux": "3.7.1",
     "redux-logger": "3.0.6",
     "redux-promise": "0.5.3",
     "redux-thunk": "2.2.0",
@@ -102,30 +96,27 @@
     "xml2js": "0.4.17"
   },
   "devDependencies": {
-    "ajv": "5.2.0",
+    "ajv": "5.2.2",
     "babel-eslint": "7.2.3",
     "babel-jest": "20.0.3",
-    "babel-plugin-flow-react-proptypes": "3.3.0",
-    "babel-preset-react-native": "2.0.0",
+    "babel-plugin-flow-react-proptypes": "3.4.1",
+    "babel-preset-react-native": "2.1.0",
     "danger": "0.18.0",
-    "enzyme": "2.8.2",
-    "enzyme-to-json": "1.5.1",
-    "eslint": "3.19.0",
-    "eslint-config-prettier": "2.2.0",
+    "eslint": "4.2.0",
+    "eslint-config-prettier": "2.3.0",
     "eslint-plugin-babel": "4.1.1",
-    "eslint-plugin-flowtype": "2.34.0",
+    "eslint-plugin-flowtype": "2.34.1",
     "eslint-plugin-react": "7.1.0",
     "eslint-plugin-react-native": "2.3.2",
     "flow-bin": "0.38.0",
     "jest": "20.0.4",
-    "js-yaml": "3.8.4",
+    "js-yaml": "3.9.0",
     "junk": "2.1.0",
     "marked": "0.3.6",
     "minimist": "1.2.0",
     "pify": "2.3.0",
     "prettier": "1.4.4",
-    "react-native-mock": "0.3.1",
-    "react-native-view-shot": "1.9.1",
+    "react-native-view-shot": "1.10.1",
     "react-test-renderer": "15.6.1"
   }
 }

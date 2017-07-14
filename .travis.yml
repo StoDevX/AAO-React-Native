@@ -49,6 +49,8 @@ matrix:
           - tools
           - platform-tools
           - build-tools-23.0.1
+          - build-tools-23.0.2
+          - build-tools-25.0.1
           - build-tools-23.0.3
           - build-tools-25.0.2
           - build-tools-25.0.3
@@ -114,16 +116,12 @@ install:
 
 before_script:
   - bash scripts/travis/init_android_emulator.sh
-  - greenkeeper-lockfile-update
 
 script:
   - bash scripts/travis/script.sh
   # we run `danger` out here to ensure that it is run,
   # even if another task in script.sh fails.
   - if [[ $JS ]]; then npm run danger; fi
-
-after_script:
-  - greenkeeper-lockfile-upload
 
 after_success:
   - bash scripts/travis/after_success.sh
