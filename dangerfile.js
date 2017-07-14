@@ -138,4 +138,4 @@ if (jestLog && jestLog.includes('FAIL')) {
   )
 }
 
-message('And that\'s all!')
+message("And that's all!")
