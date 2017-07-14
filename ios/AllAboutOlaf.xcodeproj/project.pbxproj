@@ -322,7 +322,7 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 3A3CB9031EF76B01008DAC6D;
-			remoteInfo = "AllAboutOlafWidget";
+			remoteInfo = AllAboutOlafWidget;
 		};
 		3A9B26581DE3709F00B6A428 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -724,8 +724,7 @@
 				3A3CB90B1EF76B01008DAC6D /* MainInterface.storyboard */,
 				3A3CB90E1EF76B01008DAC6D /* Info.plist */,
 			);
-			name = AllAboutOlafWidget;
-			path = "AllAboutOlafWidget";
+			path = AllAboutOlafWidget;
 			sourceTree = "<group>";
 		};
 		3A9B26421DE3709F00B6A428 /* Products */ = {
@@ -1630,7 +1629,7 @@
 				CODE_SIGN_ENTITLEMENTS = AllAboutOlafWidget.entitlements;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 363G7T9TGX;
-				INFOPLIST_FILE = "AllAboutOlafWidget/Info.plist";
+				INFOPLIST_FILE = AllAboutOlafWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf.widget;
@@ -1649,7 +1648,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 363G7T9TGX;
-				INFOPLIST_FILE = "AllAboutOlafWidget/Info.plist";
+				INFOPLIST_FILE = AllAboutOlafWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf.widget;
