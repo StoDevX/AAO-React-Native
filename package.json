@@ -44,12 +44,6 @@
       "source/**/*.js",
       "!**/node_modules/**"
     ],
-    "setupFiles": [
-      "react-native-mock"
-    ],
-    "snapshotSerializers": [
-      "enzyme-to-json/serializer"
-    ],
     "preset": "react-native"
   },
   "dependencies": {
@@ -107,8 +101,6 @@
     "babel-plugin-flow-react-proptypes": "3.4.1",
     "babel-preset-react-native": "2.1.0",
     "danger": "0.18.0",
-    "enzyme": "2.9.1",
-    "enzyme-to-json": "1.5.1",
     "eslint": "4.2.0",
     "eslint-config-prettier": "2.3.0",
     "eslint-plugin-babel": "4.1.1",
@@ -123,7 +115,6 @@
     "minimist": "1.2.0",
     "pify": "2.3.0",
     "prettier": "1.4.4",
-    "react-native-mock": "0.3.1",
     "react-native-view-shot": "1.10.1",
     "react-test-renderer": "15.6.1"
   }
