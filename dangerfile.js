@@ -137,3 +137,5 @@ if (jestLog && jestLog.includes('FAIL')) {
     lines.slice(startIndex).join('\n'),
   )
 }
+
+message("And that's all!")
