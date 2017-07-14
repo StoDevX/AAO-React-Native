@@ -44,12 +44,6 @@
       "source/**/*.js",
       "!**/node_modules/**"
     ],
-    "setupFiles": [
-      "react-native-mock"
-    ],
-    "snapshotSerializers": [
-      "enzyme-to-json/serializer"
-    ],
     "preset": "react-native"
   },
   "dependencies": {
@@ -76,9 +70,9 @@
     "react-native-datepicker": "1.5.1",
     "react-native-device-info": "0.10.2",
     "react-native-google-analytics-bridge": "5.1.0",
-    "react-native-keychain": "1.2.0",
+    "react-native-keychain": "2.0.0-rc",
     "react-native-linear-gradient": "2.0.0",
-    "react-native-maps": "0.15.2",
+    "react-native-maps": "0.15.3",
     "react-native-network-info": "2.2.0",
     "react-native-onesignal": "3.0.4",
     "react-native-parallax-view": "2.0.6",
@@ -101,30 +95,27 @@
     "xml2js": "0.4.17"
   },
   "devDependencies": {
-    "ajv": "5.2.0",
+    "ajv": "5.2.2",
     "babel-eslint": "7.2.3",
     "babel-jest": "20.0.3",
-    "babel-plugin-flow-react-proptypes": "3.4.0",
-    "babel-preset-react-native": "2.0.0",
-    "danger": "0.21.2",
-    "enzyme": "2.9.0",
-    "enzyme-to-json": "1.5.1",
-    "eslint": "4.1.1",
-    "eslint-config-prettier": "2.2.0",
+    "babel-plugin-flow-react-proptypes": "3.4.1",
+    "babel-preset-react-native": "2.1.0",
+    "danger": "0.18.0",
+    "eslint": "4.2.0",
+    "eslint-config-prettier": "2.3.0",
     "eslint-plugin-babel": "4.1.1",
-    "eslint-plugin-flowtype": "2.34.0",
+    "eslint-plugin-flowtype": "2.34.1",
     "eslint-plugin-react": "7.1.0",
     "eslint-plugin-react-native": "2.3.2",
     "flow-bin": "0.38.0",
     "jest": "20.0.4",
-    "js-yaml": "3.8.4",
+    "js-yaml": "3.9.0",
     "junk": "2.1.0",
     "marked": "0.3.6",
     "minimist": "1.2.0",
     "pify": "2.3.0",
     "prettier": "1.5.2",
-    "react-native-mock": "0.3.1",
-    "react-native-view-shot": "1.9.1",
+    "react-native-view-shot": "1.10.1",
     "react-test-renderer": "15.6.1"
   }
 }
