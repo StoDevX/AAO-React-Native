@@ -408,7 +408,7 @@
 		3A3CB9091EF76B01008DAC6D /* TodayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodayViewController.m; sourceTree = "<group>"; };
 		3A3CB90C1EF76B01008DAC6D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		3A3CB90E1EF76B01008DAC6D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3AAE48C61F0F297E009D4D3E /* AllAboutOlafWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AllAboutOlafWidget.entitlements; sourceTree = "<group>"; };
+		3AAE48C61F0F297E009D4D3E /* AllAboutOlafWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AllAboutOlafWidget.entitlements; sourceTree = SOURCE_ROOT; };
 		3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AllAboutOlaf/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		43E420DADB24468C9E296F25 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		59C781128E0B476A8826CD12 /* BugsnagReactNative.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = BugsnagReactNative.xcodeproj; path = "../node_modules/bugsnag-react-native/cocoa/BugsnagReactNative.xcodeproj"; sourceTree = "<group>"; };
@@ -719,6 +719,7 @@
 		3A3CB9071EF76B01008DAC6D /* AllAboutOlafWidget */ = {
 			isa = PBXGroup;
 			children = (
+				3AAE48C61F0F297E009D4D3E /* AllAboutOlafWidget.entitlements */,
 				3A3CB9081EF76B01008DAC6D /* TodayViewController.h */,
 				3A3CB9091EF76B01008DAC6D /* TodayViewController.m */,
 				3A3CB90B1EF76B01008DAC6D /* MainInterface.storyboard */,
@@ -817,7 +818,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				3AAE48C61F0F297E009D4D3E /* AllAboutOlafWidget.entitlements */,
 				13B07FAE1A68108700A75B9A /* AllAboutOlaf */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00D33BE01DDA58A8001E830E /* AllAboutOlafUITests */,
