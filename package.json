@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "buffer": "5.0.6",
-    "bugsnag-react-native": "2.2.3",
+    "bugsnag-react-native": "2.2.4",
     "css-select": "1.2.0",
     "dedent": "0.7.0",
     "delay": "2.0.0",
