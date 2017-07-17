@@ -3,7 +3,7 @@
  * Reducer for app settings
  */
 
-import {getBalances} from '../../lib/financials'
+import {getBalances, updateBalancesInFileSystem} from '../../lib/financials'
 
 import {loadAllCourses} from '../../lib/courses'
 
@@ -20,6 +20,7 @@ export function updateBalances(forceFromServer: boolean = false) {
   return async (dispatch: () => {}, getState: any) => {
     const state = getState()
     const balances = await getBalances(state.app.isConnected, forceFromServer)
+    updateBalancesInFileSystem(balances)
     dispatch({
       type: UPDATE_BALANCES,
       error: balances.error,

@@ -7,6 +7,7 @@ import type {BalancesShapeType} from './types'
 import fromPairs from 'lodash/fromPairs'
 import isNil from 'lodash/isNil'
 import * as cache from '../cache'
+import rnfs from 'react-native-fs'
 
 type BalancesOrErrorType =
   | {error: true, value: Error}
@@ -50,10 +51,20 @@ export async function getBalances(
   }
 }
 
-async function updateBalancesInFileSystem() {
-  let balances = await getBalances()
-  
-
+export function updateBalancesInFileSystem(balances): Promise {
+  let path = rnfs.DocumentDirectoryPath + '/balancesWidgetData.json'
+  rnfs.writeFile(path, JSON.stringify(balances), 0, 'utf8')
+    .then((success) => {
+	    console.log('wrote balances to file' + path)
+            // read files for testing
+	    let fileContents = await rnfs.readFile(rnfs.DocumentDirectoryPath, 'utf8')
+	    console.log(fileContents)
+            return {error: false}
+    })
+    .catch((err) => {
+	    console.log('error writing to file system')
+            return {error: true}
+    })
 }
 
 async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {
