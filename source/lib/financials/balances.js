@@ -53,18 +53,22 @@ export async function getBalances(
 
 export function updateBalancesInFileSystem(balances): Promise {
   let path = rnfs.DocumentDirectoryPath + '/balancesWidgetData.json'
-  rnfs.writeFile(path, JSON.stringify(balances), 0, 'utf8')
-    .then((success) => {
-	    console.log('wrote balances to file' + path)
-            // read files for testing
-	    let fileContents = await rnfs.readFile(rnfs.DocumentDirectoryPath, 'utf8')
-	    console.log(fileContents)
-            return {error: false}
+
+  // delete the file if it exists
+  rnfs.unlink(path)
+    .then(() => {
+	  console.log('deleted existing file')
+	  // write the new file
+	  rnfs.writeFile(path, JSON.stringify(balances), 'utf8')
+	    .then((success) => {
+		    console.log('wrote balances to file' + path)
+		    return {error: false}
+	    })
     })
     .catch((err) => {
-	    console.log('error writing to file system')
-            return {error: true}
+	    console.log(err.message)
     })
+
 }
 
 async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {

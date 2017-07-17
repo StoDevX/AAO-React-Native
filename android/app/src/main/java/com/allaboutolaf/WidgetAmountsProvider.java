@@ -1,21 +1,15 @@
 package com.allaboutolaf;
 
-import android.util.JsonReader;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 
 /**
- * Created by everdoorn on 6/18/17.
+ * All About Olaf
+ * App widget provider
  */
 
 public class WidgetAmountsProvider {
@@ -26,6 +20,9 @@ public class WidgetAmountsProvider {
     private String printAmount;
     private String mealsTodayAmount;
     private String mealsThisWeekAmount;
+
+    private static final String DEFAULT_MONEY_AMOUNT = "$?.?? ";
+    private static final String DEFAULT_MEALS_AMOUNT = "? ";
 
     public WidgetAmountsProvider(String file) {
         fileName = file;
@@ -45,11 +42,7 @@ public class WidgetAmountsProvider {
             this.mealsThisWeekAmount = jsonObject.getString("daily");
             this.mealsTodayAmount = jsonObject.getString("weekly");
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }
@@ -59,22 +52,47 @@ public class WidgetAmountsProvider {
     }
 
     public String getFlexAmount() {
-        return flexAmount;
+        if (flexAmount != null) {
+            if (!flexAmount.isEmpty()) {
+                return flexAmount;
+            }
+        }
+        return DEFAULT_MONEY_AMOUNT;
     }
 
     public String getOleAmount() {
-        return oleAmount;
+         if (oleAmount != null) {
+            if (!oleAmount.isEmpty()) {
+                return oleAmount;
+            }
+        }
+        return DEFAULT_MONEY_AMOUNT;
     }
 
     public String getPrintAmount() {
-        return printAmount;
+        if (printAmount != null) {
+            if (!printAmount.isEmpty()) {
+                return printAmount;
+            }
+        }
+        return DEFAULT_MONEY_AMOUNT;
     }
 
     public String getMealsTodayAmount() {
-        return mealsTodayAmount;
+        if (mealsTodayAmount != null) {
+            if (!mealsTodayAmount.isEmpty()) {
+                return mealsTodayAmount;
+            }
+        }
+        return DEFAULT_MEALS_AMOUNT;
     }
 
     public String getMealsThisWeekAmount() {
-        return mealsThisWeekAmount;
+        if (mealsThisWeekAmount != null) {
+            if (!mealsThisWeekAmount.isEmpty()) {
+                return mealsThisWeekAmount;
+            }
+        }
+        return DEFAULT_MEALS_AMOUNT;
     }
 }
