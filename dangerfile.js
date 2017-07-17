@@ -1,4 +1,4 @@
-import {danger, warn, message} from 'danger'
+/* global danger: 0, warn: 0, message: 0 */
 import {readFileSync} from 'fs'
 import dedent from 'dedent'
 const readFile = filename => {
@@ -137,3 +137,5 @@ if (jestLog && jestLog.includes('FAIL')) {
     lines.slice(startIndex).join('\n'),
   )
 }
+
+message("And that's all!")

@@ -88,7 +88,6 @@ function Links({job}: {job: JobType}) {
         {links.map(url =>
           <Cell
             key={url}
-            cellStyle="Title"
             title={url}
             accessory="DisclosureIndicator"
             onPress={() => openUrl(url)}
