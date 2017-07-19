@@ -50,8 +50,8 @@ android_build_config(
 
 android_resource(
     name = "res",
-    res = "src/main/res",
     package = "com.allaboutolaf",
+    res = "src/main/res",
 )
 
 android_binary(
