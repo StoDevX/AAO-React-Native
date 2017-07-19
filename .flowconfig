@@ -24,6 +24,8 @@
 .*/node_modules/.*/__tests?__/.*
 .*/node_modules/.*/examples/.*
 .*/node_modules/react-native-mock/.*
+; try removing this line in react-native 0.45
+.*/node_modules/react-native/local-cli/server/util/attachHMRServer.js
 
 [include]
 
