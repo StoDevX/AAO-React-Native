@@ -7,8 +7,8 @@ type PropsType = {
   text: string,
   accentColor?: string,
   textColor?: string,
-  style?: Number | Object | Array<Number | Object>,
-  textStyle?: Number | Object | Array<Number | Object>,
+  style?: number | Object | Array<number | Object>,
+  textStyle?: number | Object | Array<number | Object>,
 }
 
 let styles = StyleSheet.create({
