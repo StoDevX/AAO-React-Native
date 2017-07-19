@@ -18,6 +18,7 @@ exports[`renders a button, if given 1`] = `
   <Text
     accessible={true}
     allowFontScaling={true}
+    disabled={false}
     ellipsizeMode="tail"
     selectable={true}
     style={
@@ -53,6 +54,7 @@ exports[`renders the given text 1`] = `
   <Text
     accessible={true}
     allowFontScaling={true}
+    disabled={false}
     ellipsizeMode="tail"
     selectable={true}
     style={
@@ -97,6 +99,7 @@ exports[`shows an ActivityIndicator if given [spinner] 1`] = `
   <Text
     accessible={true}
     allowFontScaling={true}
+    disabled={false}
     ellipsizeMode="tail"
     selectable={true}
     style={
