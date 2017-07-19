@@ -609,14 +609,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		00D33BE01DDA58A8001E830E /* AllAboutOlafUITests */ = {
+		00D33BE01DDA58A8001E830E /* UI Tests */ = {
 			isa = PBXGroup;
 			children = (
+				00D33BE31DDA58A8001E830E /* Info.plist */,
 				00D33C011DDA5958001E830E /* SnapshotHelper.swift */,
 				00D33BE11DDA58A8001E830E /* AllAboutOlafUITests.swift */,
-				00D33BE31DDA58A8001E830E /* Info.plist */,
 				00D33C001DDA5958001E830E /* AllAboutOlaf-Bridging-Header.h */,
 			);
+			name = "UI Tests";
 			path = AllAboutOlafUITests;
 			sourceTree = "<group>";
 		};
@@ -665,13 +666,14 @@
 		13B07FAE1A68108700A75B9A /* AllAboutOlaf */ = {
 			isa = PBXGroup;
 			children = (
-				00C8CB4C1D6EBA1A00E66E20 /* All About Olaf.entitlements */,
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
+				00D33BE01DDA58A8001E830E /* UI Tests */,
+				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
-				13B07FB51A68108700A75B9A /* Images.xcassets */,
-				13B07FB61A68108700A75B9A /* Info.plist */,
 				3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */,
+				13B07FB51A68108700A75B9A /* Images.xcassets */,
+				00C8CB4C1D6EBA1A00E66E20 /* All About Olaf.entitlements */,
+				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
 			name = AllAboutOlaf;
@@ -770,9 +772,11 @@
 				78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */,
 				00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */,
 				916377371C784A9B8A7A1F5C /* RCTOneSignal.xcodeproj */,
+				DBE3B3C3883845C787D391C2 /* RCTRestart.xcodeproj */,
 				139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */,
 				832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */,
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
+				6B75437AADD646929F73CBA8 /* RCTVideo.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				CE0A6E16923B40C9930B546C /* ReactNativeCustomTabs.xcodeproj */,
@@ -783,8 +787,6 @@
 				71D5CCADA66D45008D9A38F2 /* RNVectorIcons.xcodeproj */,
 				17311DD2DB1B4EE0AFAA0BC4 /* RNViewShot.xcodeproj */,
 				89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */,
-				DBE3B3C3883845C787D391C2 /* RCTRestart.xcodeproj */,
-				6B75437AADD646929F73CBA8 /* RCTVideo.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -803,7 +805,6 @@
 			children = (
 				13B07FAE1A68108700A75B9A /* AllAboutOlaf */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00D33BE01DDA58A8001E830E /* AllAboutOlafUITests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				5A41494DACBB4D2795B46DE0 /* Resources */,
 				3C5BFA21338636E7EB4E5E0D /* Frameworks */,
