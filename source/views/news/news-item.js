@@ -11,7 +11,6 @@ const shareItem = (story: StoryType) => {
   }
   Share.share({
     url: story.link,
-    title: story.title,
   })
     .then(result => console.log(result))
     .catch(error => console.log(error.message))
