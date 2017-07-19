@@ -17,7 +17,7 @@ export const UPDATE_MEALS_REMAINING = 'sis/UPDATE_MEALS_REMAINING'
 export const UPDATE_COURSES = 'sis/UPDATE_COURSES'
 
 export function updateBalances(forceFromServer: boolean = false) {
-  return async (dispatch: () => {}, getState: any) => {
+  return async (dispatch: any => any, getState: any) => {
     const state = getState()
     const balances = await getBalances(state.app.isConnected, forceFromServer)
     dispatch({
@@ -29,7 +29,7 @@ export function updateBalances(forceFromServer: boolean = false) {
 }
 
 export function updateCourses(forceFromServer: boolean = false) {
-  return async (dispatch: () => {}, getState: any) => {
+  return async (dispatch: any => any, getState: any) => {
     const state = getState()
     const courses = await loadAllCourses(state.app.isConnected, forceFromServer)
     dispatch({

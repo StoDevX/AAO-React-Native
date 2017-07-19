@@ -37,7 +37,7 @@ class BalancesView extends React.Component {
     credentialsValid: boolean,
     message: ?string,
 
-    updateBalances: () => any,
+    updateBalances: boolean => any,
   }
 
   refresh = async () => {
