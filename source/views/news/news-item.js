@@ -6,9 +6,12 @@ import type {StoryType} from './types'
 import {ShareButton} from '../components/nav-buttons'
 
 const shareItem = (story: StoryType) => {
+  if (!story.link) {
+    return
+  }
   Share.share({
     url: story.link,
-    message: story.link,
+    title: story.title,
   })
     .then(result => console.log(result))
     .catch(error => console.log(error.message))
