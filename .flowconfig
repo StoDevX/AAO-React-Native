@@ -24,8 +24,10 @@
 .*/node_modules/.*/__tests?__/.*
 .*/node_modules/.*/examples/.*
 .*/node_modules/react-native-mock/.*
-; try removing this line in react-native 0.45
+; try removing this line in react-native 0.46
 .*/node_modules/react-native/local-cli/server/util/attachHMRServer.js
+; remove this after rn-linear-gradient updates
+.*/node_modules/react-native-linear-gradient/.*
 
 [include]
 
