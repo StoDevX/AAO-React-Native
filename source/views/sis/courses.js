@@ -61,7 +61,7 @@ class CoursesView extends React.Component {
   }
 
   renderSectionHeader = (courses: CourseType[], term: string) => {
-    return <ListSectionHeader style={styles.rowSectionHeader} title={term} />
+    return <ListSectionHeader title={term} />
   }
 
   renderSeparator = (sectionId: string, rowId: string) => {
@@ -107,7 +107,7 @@ class CoursesView extends React.Component {
         onRefresh={this.refresh}
       >
         {(course: CourseType) =>
-          <ListRow style={styles.rowContainer}>
+          <ListRow>
             <Column>
               <Title>{course.name}</Title>
               <Detail>{course.deptnum}</Detail>

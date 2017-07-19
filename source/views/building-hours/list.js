@@ -41,7 +41,7 @@ export class BuildingHoursList extends React.Component {
   }
 
   renderSectionHeader = (data: any, id: string) => {
-    return <ListSectionHeader style={styles.rowSectionHeader} title={id} />
+    return <ListSectionHeader title={id} />
   }
 
   renderSeparator = (sectionID: any, rowID: any) => {
