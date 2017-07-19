@@ -37,7 +37,7 @@ export class CellTextField extends React.Component {
 
   props: {
     label?: string,
-    _ref: () => any,
+    _ref: any => any,
     disabled: boolean,
     onChangeText: string => any,
     onSubmitEditing: string => any,

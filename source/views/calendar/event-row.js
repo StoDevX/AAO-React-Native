@@ -42,7 +42,7 @@ export default function EventRow({
   const title = fastGetTrimmedText(event.summary)
 
   const location = event.location && event.location.trim().length
-    ? <Detail style={styles.detail}>{event.location}</Detail>
+    ? <Detail>{event.location}</Detail>
     : null
 
   return (
@@ -63,7 +63,7 @@ export default function EventRow({
           paddingBottom={3}
           justifyContent="space-between"
         >
-          <Title style={styles.title}>{title}</Title>
+          <Title>{title}</Title>
           {location}
         </Column>
       </Row>

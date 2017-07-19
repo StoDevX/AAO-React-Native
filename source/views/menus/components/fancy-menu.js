@@ -96,7 +96,6 @@ class FancyMenuView extends React.Component {
       <ListSeparator
         spacing={{left: leftSideSpacing}}
         key={`${sectionId}-${rowId}`}
-        style={styles.separator}
       />
     )
   }
