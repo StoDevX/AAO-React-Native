@@ -34,6 +34,10 @@
 		24C1AB28D1424CD095CB8582 /* libRNKeychain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 209B4AAEEC3F4290A1ED9491 /* libRNKeychain.a */; };
 		37755BD2F66641FB97979B7E /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 203BE3D7758C4020A78210B2 /* libRCTOneSignal.a */; };
 		3A0CEA921DEA203F0036E739 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0CEA781DEA20340036E739 /* libRCTAnimation.a */; };
+		3A3CB9061EF76B01008DAC6D /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A3CB9051EF76B01008DAC6D /* NotificationCenter.framework */; };
+		3A3CB90A1EF76B01008DAC6D /* TodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3CB9091EF76B01008DAC6D /* TodayViewController.m */; };
+		3A3CB90D1EF76B01008DAC6D /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A3CB90B1EF76B01008DAC6D /* MainInterface.storyboard */; };
+		3A3CB9111EF76B01008DAC6D /* AllAboutOlafWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 3A3CB9041EF76B01008DAC6D /* AllAboutOlafWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
 		56DC65C1BF07427AA1F84CFC /* libSafariViewManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D530CE76BA714A59B2BECB28 /* libSafariViewManager.a */; };
 		570ACE6B68F941838FFABAA9 /* libRNViewShot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CBE5D51CAA854462BCB6C610 /* libRNViewShot.a */; };
@@ -328,6 +332,13 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
+		3A3CB90F1EF76B01008DAC6D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3A3CB9031EF76B01008DAC6D;
+			remoteInfo = AllAboutOlafWidget;
+		};
 		3A9B26581DE3709F00B6A428 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 828A2E49D4E3430FB2853AFF /* RNDeviceInfo.xcodeproj */;
@@ -365,6 +376,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		3A3CB93E1EF76B01008DAC6D /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				3A3CB9111EF76B01008DAC6D /* AllAboutOlafWidget.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0002961C1E270BD1000909F2 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		0002961E1E270BD9000909F2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -400,6 +425,13 @@
 		2560C43708D64866AA01FCC8 /* RNKeychain.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeychain.xcodeproj; path = "../node_modules/react-native-keychain/RNKeychain.xcodeproj"; sourceTree = "<group>"; };
 		36AB9BDB6CF1449E997C6D74 /* AirMaps.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = AirMaps.xcodeproj; path = "../node_modules/react-native-maps/lib/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; };
 		3A0CEA711DEA20340036E739 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+		3A3CB9041EF76B01008DAC6D /* AllAboutOlafWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = AllAboutOlafWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A3CB9051EF76B01008DAC6D /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
+		3A3CB9081EF76B01008DAC6D /* TodayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TodayViewController.h; sourceTree = "<group>"; };
+		3A3CB9091EF76B01008DAC6D /* TodayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodayViewController.m; sourceTree = "<group>"; };
+		3A3CB90C1EF76B01008DAC6D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		3A3CB90E1EF76B01008DAC6D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3AAE48C61F0F297E009D4D3E /* AllAboutOlafWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = AllAboutOlafWidget.entitlements; path = AllAboutOlafWidget/AllAboutOlafWidget.entitlements; sourceTree = SOURCE_ROOT; };
 		3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AllAboutOlaf/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		43E420DADB24468C9E296F25 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		59C781128E0B476A8826CD12 /* BugsnagReactNative.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = BugsnagReactNative.xcodeproj; path = "../node_modules/bugsnag-react-native/cocoa/BugsnagReactNative.xcodeproj"; sourceTree = "<group>"; };
@@ -473,6 +505,14 @@
 				1F80C8072BCE4729A1D62A16 /* libAirMaps.a in Frameworks */,
 				C05E29F9598A4CA284DE922A /* libRCTRestart.a in Frameworks */,
 				57193485510D411980D95DDA /* libRCTVideo.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3A3CB9011EF76B01008DAC6D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A3CB9061EF76B01008DAC6D /* NotificationCenter.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +743,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		3A3CB9071EF76B01008DAC6D /* AllAboutOlafWidget */ = {
+			isa = PBXGroup;
+			children = (
+				3AAE48C61F0F297E009D4D3E /* AllAboutOlafWidget.entitlements */,
+				3A3CB9081EF76B01008DAC6D /* TodayViewController.h */,
+				3A3CB9091EF76B01008DAC6D /* TodayViewController.m */,
+				3A3CB90B1EF76B01008DAC6D /* MainInterface.storyboard */,
+				3A3CB90E1EF76B01008DAC6D /* Info.plist */,
+			);
+			path = AllAboutOlafWidget;
+			sourceTree = "<group>";
+		};
 		3A9B26421DE3709F00B6A428 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -718,6 +770,7 @@
 				000296201E270BE4000909F2 /* libz.tbd */,
 				0002961E1E270BD9000909F2 /* SystemConfiguration.framework */,
 				0002961C1E270BD1000909F2 /* CoreData.framework */,
+				3A3CB9051EF76B01008DAC6D /* NotificationCenter.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -804,6 +857,7 @@
 				13B07FAE1A68108700A75B9A /* AllAboutOlaf */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00D33BE01DDA58A8001E830E /* AllAboutOlafUITests */,
+				3A3CB9071EF76B01008DAC6D /* AllAboutOlafWidget */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				5A41494DACBB4D2795B46DE0 /* Resources */,
 				3C5BFA21338636E7EB4E5E0D /* Frameworks */,
@@ -817,6 +871,7 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* All About Olaf.app */,
 				00D33BDF1DDA58A8001E830E /* AllAboutOlafUITests.xctest */,
+				3A3CB9041EF76B01008DAC6D /* AllAboutOlafWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -851,15 +906,34 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				6776346D1ECC93FA00C6F018 /* Bundle Data Files */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				3A3CB93E1EF76B01008DAC6D /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				3A3CB9101EF76B01008DAC6D /* PBXTargetDependency */,
 			);
 			name = AllAboutOlaf;
 			productName = "Hello World";
 			productReference = 13B07F961A680F5B00A75B9A /* All About Olaf.app */;
 			productType = "com.apple.product-type.application";
+		};
+		3A3CB9031EF76B01008DAC6D /* AllAboutOlafWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3A3CB93D1EF76B01008DAC6D /* Build configuration list for PBXNativeTarget "AllAboutOlafWidget" */;
+			buildPhases = (
+				3A3CB9001EF76B01008DAC6D /* Sources */,
+				3A3CB9011EF76B01008DAC6D /* Frameworks */,
+				3A3CB9021EF76B01008DAC6D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AllAboutOlafWidget;
+			productName = "All About Olaf Widget";
+			productReference = 3A3CB9041EF76B01008DAC6D /* AllAboutOlafWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -881,11 +955,27 @@
 						LastSwiftMigration = 0810;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 0;
+							};
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
+							com.apple.Keychain = {
+								enabled = 0;
+							};
 							com.apple.Push = {
 								enabled = 1;
+							};
+						};
+					};
+					3A3CB9031EF76B01008DAC6D = {
+						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = 363G7T9TGX;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 0;
 							};
 						};
 					};
@@ -1020,6 +1110,7 @@
 			targets = (
 				13B07F861A680F5B00A75B9A /* AllAboutOlaf */,
 				00D33BDE1DDA58A8001E830E /* AllAboutOlafUITests */,
+				3A3CB9031EF76B01008DAC6D /* AllAboutOlafWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -1354,6 +1445,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3A3CB9021EF76B01008DAC6D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A3CB90D1EF76B01008DAC6D /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -1406,6 +1505,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3A3CB9001EF76B01008DAC6D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A3CB90A1EF76B01008DAC6D /* TodayViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1414,7 +1521,23 @@
 			target = 13B07F861A680F5B00A75B9A /* AllAboutOlaf */;
 			targetProxy = 00D33BE41DDA58A8001E830E /* PBXContainerItemProxy */;
 		};
+		3A3CB9101EF76B01008DAC6D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3A3CB9031EF76B01008DAC6D /* AllAboutOlafWidget */;
+			targetProxy = 3A3CB90F1EF76B01008DAC6D /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		3A3CB90B1EF76B01008DAC6D /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3A3CB90C1EF76B01008DAC6D /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		00D33BE61DDA58A8001E830E /* Debug */ = {
@@ -1467,7 +1590,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "AllAboutOlaf/All About Olaf.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEAD_CODE_STRIPPING = NO;
@@ -1507,7 +1629,6 @@
 				PROVISIONING_PROFILE = "328dc8bb-bb74-41f9-826a-ef2abd098c6a";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore NFMTHAZVS9.com.drewvolz.stolaf";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1517,7 +1638,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "AllAboutOlaf/All About Olaf.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = 363G7T9TGX;
@@ -1557,6 +1677,30 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		3A3CB9121EF76B01008DAC6D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 363G7T9TGX;
+				INFOPLIST_FILE = AllAboutOlafWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		3A3CB9131EF76B01008DAC6D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 363G7T9TGX;
+				INFOPLIST_FILE = AllAboutOlafWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -1615,6 +1759,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1689,6 +1834,15 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
 				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3A3CB93D1EF76B01008DAC6D /* Build configuration list for PBXNativeTarget "AllAboutOlafWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3A3CB9121EF76B01008DAC6D /* Debug */,
+				3A3CB9131EF76B01008DAC6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
