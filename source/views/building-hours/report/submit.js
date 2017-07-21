@@ -20,7 +20,6 @@ export function submitReport(current: BuildingType, suggestion: BuildingType) {
   )
 }
 
-
 function makeEmailBody(before: string, after: string, title: string): string {
   return dedent`
     Hi! Thanks for letting us know about an hour change.
