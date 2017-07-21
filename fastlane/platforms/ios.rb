@@ -45,12 +45,7 @@ platform :ios do
     set_version
 
     # and run
-    should_deploy = ENV['run_deploy'] == '1'
-    if should_deploy
-      auto_beta
-    else
-      build
-    end
+    auto_beta
   end
 
   desc 'Include the build number in the version string'
