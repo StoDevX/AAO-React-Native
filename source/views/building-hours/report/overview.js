@@ -20,6 +20,7 @@ import type {
 } from '../types'
 import type {TopLevelViewPropsType} from '../../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
+import {submitReport} from './submit'
 
 const styles = StyleSheet.create({
   helpWrapper: {
@@ -182,6 +183,10 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
 
   submit = () => {
     console.log(JSON.stringify(this.state.building))
+    submitReport(
+      this.props.navigation.state.params.initialBuilding,
+      this.state.building,
+    )
   }
 
   render() {
