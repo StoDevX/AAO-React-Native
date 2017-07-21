@@ -21,7 +21,7 @@
     "ios-simulator": "xcrun instruments -s devices | peco --select-1 --query 'Simulator iPhone' --on-cancel error | sed  's~.*\\[\\(.*\\)\\].*~\\1~' | xargs open -n -a Simulator --args -CurrentDeviceUDID",
     "lint": "eslint --cache source/ *.js",
     "prettier": "prettier --write $npm_package_config_prettier_args 'source/**/*.js' '*.js'",
-    "prettier:changed": "FILES=$(git diff --name-only | grep '\\.js$'); prettier --write $npm_package_config_prettier_args $FILES",
+    "prettier:changed": "FILES=$(git status -u --porcelain | cut -c4- | grep '\\.js$'); prettier --write $npm_package_config_prettier_args $FILES",
     "prettier:since-master": "FILES=$(git diff --name-only master | grep '\\.js$'); prettier --write $npm_package_config_prettier_args $FILES",
     "start": "react-native start",
     "test": "jest",
