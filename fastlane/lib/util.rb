@@ -57,14 +57,24 @@ end
 # smart enough to call the appropriate platform's "beta" lane. So, let's make
 # a beta build if there have been new commits since the last beta.
 def auto_beta
-  #last_commit = hockeyapp_version_commit
-  #current_commit = last_git_commit[:commit_hash]
+  # last_commit = hockeyapp_version_commit
+  # current_commit = last_git_commit[:commit_hash]
 
-  #UI.message 'In faux-git terms:'
-  #UI.message "origin/hockeyapp: #{last_commit}"
-  #UI.message "HEAD: #{current_commit}"
-  #will_beta = last_commit != current_commit ? 'yes' : 'no'
-  #UI.message "Thus, will we beta? #{will_beta}"
+  # UI.message 'In faux-git terms:'
+  # UI.message "origin/hockeyapp: #{last_commit}"
+  # UI.message "HEAD: #{current_commit}"
+  # will_beta = last_commit != current_commit ? 'yes' : 'no'
+  # UI.message "Thus, will we beta? #{will_beta}"
 
-  beta #if last_commit != current_commit
+  # beta # if last_commit != current_commit
+
+  if ENV['run_deploy'] == '1'
+    if ENV['TRAVIS_EVENT_TYPE'] == 'cron'
+      nightly
+    else
+      beta
+    end
+  else
+    build
+  end
 end

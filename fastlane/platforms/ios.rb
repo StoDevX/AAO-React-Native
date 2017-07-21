@@ -28,6 +28,15 @@ platform :ios do
     testflight
   end
 
+  desc 'Submit a new nightly Beta Build to Testflight'
+  lane :nightly do
+    match(type: 'appstore', readonly: true)
+
+    build
+
+    testflight(distribute_external: false)
+  end
+
   desc 'Upload dYSM symbols to Bugsnag from Apple'
   lane :refresh_dsyms do
     download_dsyms
@@ -45,12 +54,7 @@ platform :ios do
     set_version
 
     # and run
-    should_deploy = ENV['run_deploy'] == '1'
-    if should_deploy
-      auto_beta
-    else
-      build
-    end
+    auto_beta
   end
 
   desc 'Include the build number in the version string'

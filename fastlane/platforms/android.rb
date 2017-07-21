@@ -1,3 +1,4 @@
+# coding: utf-8
 platform :android do
   desc 'Makes a build'
   lane :build do
@@ -16,10 +17,24 @@ platform :android do
   lane :beta do
     build
 
-    lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS] =
-      lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].select{ |apk| apk.end_with? "-release.apk" }
+      lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS] =
+      lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].select do |apk|
+        apk.end_with? '-release.apk'
+      end
 
     supply(track: 'beta')
+  end
+
+  desc 'Submit a new nightly Build to Google Play'
+  lane :nightly do
+    build
+
+    lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS] =
+      lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].select do |apk|
+        apk.end_with? '-release.apk'
+      end
+
+    supply(track: 'alpha')
   end
 
   desc 'Run the appropriate action on CI'
@@ -32,12 +47,7 @@ platform :android do
     set_version
 
     # and run
-    should_deploy = ENV['run_deploy'] == '1'
-    if should_deploy
-      auto_beta
-    else
-      build
-    end
+    auto_beta
   end
 
   desc 'Include the build number in the version string'
