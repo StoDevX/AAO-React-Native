@@ -28,6 +28,15 @@ platform :ios do
     testflight
   end
 
+  desc 'Submit a new nightly Beta Build to Testflight'
+  lane :nightly do
+    match(type: 'appstore', readonly: true)
+
+    build
+
+    testflight(distribute_external: false)
+  end
+
   desc 'Upload dYSM symbols to Bugsnag from Apple'
   lane :refresh_dsyms do
     download_dsyms

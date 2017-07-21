@@ -1,3 +1,4 @@
+# coding: utf-8
 platform :android do
   desc 'Makes a build'
   lane :build do
@@ -22,6 +23,18 @@ platform :android do
       end
 
     supply(track: 'beta')
+  end
+
+  desc 'Submit a new nightly Build to Google Play'
+  lane :nightly do
+    build
+
+    lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS] =
+      lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].select do |apk|
+        apk.end_with? '-release.apk'
+      end
+
+    supply(track: 'alpha')
   end
 
   desc 'Run the appropriate action on CI'

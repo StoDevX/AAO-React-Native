@@ -69,7 +69,11 @@ def auto_beta
   # beta # if last_commit != current_commit
 
   if ENV['run_deploy'] == '1'
+    if ENV['TRAVIS_EVENT_TYPE'] == 'cron'
+      nightly
+    else
       beta
+    end
   else
     build
   end
