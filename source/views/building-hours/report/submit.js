@@ -2,7 +2,6 @@
 
 import jsYaml from 'js-yaml'
 import type {BuildingType} from '../types'
-import {GITHUB_TOKEN} from '../../../lib/config.js'
 import {email} from 'react-native-communications'
 import dedent from 'dedent'
 
@@ -39,6 +38,7 @@ function makeIssueBody(before: string, after: string): string {
 
 function stringifyBuilding(building: BuildingType): string {
   let res = ''
+  let prev = null
   let data = jsYaml.safeDump(building, {flowLevel: 4}).split('\n')
   for (let line of data) {
     if (['schedule:', 'breakSchedule:'].includes(line)) {
