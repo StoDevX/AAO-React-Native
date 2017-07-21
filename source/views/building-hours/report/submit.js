@@ -4,6 +4,7 @@ import jsYaml from 'js-yaml'
 import type {BuildingType} from '../types'
 import {email} from 'react-native-communications'
 import dedent from 'dedent'
+import querystring from 'querystring'
 
 export function submitReport(current: BuildingType, suggestion: BuildingType) {
   const before = stringifyBuilding(current)
