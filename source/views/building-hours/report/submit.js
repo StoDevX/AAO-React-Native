@@ -7,8 +7,9 @@ import dedent from 'dedent'
 import querystring from 'querystring'
 
 export function submitReport(current: BuildingType, suggestion: BuildingType) {
-  const before = stringifyBuilding(current)
-  const after = stringifyBuilding(suggestion)
+  // calling trim() on these to remove the trailing newlines
+  const before = stringifyBuilding(current).trim()
+  const after = stringifyBuilding(suggestion).trim()
 
   const body = makeEmailBody(before, after, current.name)
 
@@ -23,29 +24,44 @@ export function submitReport(current: BuildingType, suggestion: BuildingType) {
 
 function makeEmailBody(before: string, after: string, title: string): string {
   return dedent`
-    Hi! Thanks for letting us know about a schedule change.
+  Hi! Thanks for letting us know about a schedule change.
 
-    Please do not change anything below this line.
+  Please do not change anything below this line.
 
-    ------------
+  ------------
 
-    Project maintainers: ${makeIssueLink(before, after, title)}
+  Project maintainers: ${makeIssueLink(before, after, title)}
 
-    ${makeBody(before, after)}
+  ${makeHtmlBody(before, after)}
   `
 }
 
-function makeBody(before, after) {
+function makeMarkdownBody(before, after) {
+  // dedent works by removing all common whitespace at the beginning
+  // of lines, so the closing backtick has to be at the same level
+  // as the text.
   return dedent`
-    Before:
-    \`\`\`yaml
-    ${before}
-    \`\`\`
+  ## Before:
 
-    After:
-    \`\`\`yaml
-    ${after}
-    \`\`\`
+  \`\`\`yaml
+  ${before}
+  \`\`\`
+
+  ## After:
+
+  \`\`\`yaml
+  ${after}
+  \`\`\`
+  `
+}
+
+function makeHtmlBody(before, after) {
+  return `
+  <p>Before:</p>
+  <pre><code>${before}</code></pre>
+
+  <p>After:</p>
+  <pre><code>${after}</code></pre>
   `
 }
 
@@ -53,7 +69,7 @@ function makeIssueLink(before: string, after: string, title: string): string {
   const q = querystring.stringify({
     'labels[]': 'data/building',
     title: `Building hours update for ${title}`,
-    body: makeBody(before, after),
+    body: makeMarkdownBody(before, after),
   })
   return `https://github.com/StoDevX/AAO-React-Native/issues/new?${q}`
 }
