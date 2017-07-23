@@ -47,8 +47,7 @@ ${before}
 \`\`\`yaml
 ${after}
 \`\`\`
-
-`.trim()
+`
 
 const makeHtmlBody = (before, after) => `
 <p>Before:</p>
