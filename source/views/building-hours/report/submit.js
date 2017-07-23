@@ -67,7 +67,7 @@ function makeHtmlBody(before, after) {
 
 function makeIssueLink(before: string, after: string, title: string): string {
   const q = querystring.stringify({
-    'labels[]': 'data/building',
+    'labels[]': 'data/hours',
     title: `Building hours update for ${title}`,
     body: makeMarkdownBody(before, after),
   })
