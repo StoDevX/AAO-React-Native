@@ -35,7 +35,8 @@ ${makeHtmlBody(before, after)}
 `
 }
 
-const makeMarkdownBody = (before, after) => `
+const makeMarkdownBody = (before, after) => 
+  `
 ## Before:
 
 \`\`\`yaml
