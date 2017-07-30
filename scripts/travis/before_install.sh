@@ -29,7 +29,7 @@ npm install -g npm@latest
 # eval "$(ssh-agent -s)"
 # ssh-add "$DEPLOY_KEY"
 
-# Adding this to accept ConstraintLayout's license... see https://git.io/v7lhM
+# Adding this to accept ConstraintLayout's license... see https://github.com/travis-ci/travis-ci/issues/6617
 if [[ $ANDROID ]]; then
   mkdir -p "$ANDROID_HOME/licenses"
   echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
