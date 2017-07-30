@@ -81,7 +81,7 @@
     "react-native-search-bar": "3.0.0",
     "react-native-sortable-list": "github:hawkrives/react-native-sortable-list#a46c78161e0a1a8d3a45f2fef69d98af3e911b6d",
     "react-native-tableview-simple": "0.16.8",
-    "react-native-vector-icons": "4.2.0",
+    "react-native-vector-icons": "4.3.0",
     "react-native-video": "1.0.0",
     "react-navigation": "1.0.0-beta.11",
     "react-redux": "5.0.5",
