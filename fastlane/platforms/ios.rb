@@ -48,7 +48,6 @@ platform :ios do
   lane :'ci-run' do
     # set up things so they can run
     authorize_ci_for_keys
-    ci_keychains
 
     # set the app version
     set_version
@@ -66,23 +65,5 @@ platform :ios do
     increment_build_number(build_number: build,
                            xcodeproj: ENV['GYM_PROJECT'])
     set_package_data(data: { version: "#{version}+#{build}" })
-  end
-
-  desc 'Do CI-system keychain setup'
-  private_lane :ci_keychains do
-    keychain = ENV['MATCH_KEYCHAIN_NAME']
-    password = ENV['MATCH_KEYCHAIN_PASSWORD']
-
-    create_keychain(name: keychain,
-                    password: password,
-                    timeout: 3600)
-
-    # Set up code signing correctly
-    # (more information: https://codesigning.guide)
-    match(type: 'appstore', readonly: true)
-
-    sh("security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k #{password} #{keychain}")
-
-    sh('security find-identity -v -p codesigning')
   end
 end
