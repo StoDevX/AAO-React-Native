@@ -25,8 +25,7 @@
     "prettier:since-master": "FILES=$(git diff --name-only master | grep '\\.js$'); prettier --write $npm_package_config_prettier_args $FILES",
     "start": "react-native start",
     "test": "jest",
-    "validate-data": "node scripts/validate-data.js",
-    "version": "bundle exec fastlane propagate-version && git add ios/ android/"
+    "validate-data": "node scripts/validate-data.js"
   },
   "babel": {
     "presets": [
