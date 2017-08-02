@@ -105,7 +105,10 @@ install:
   - bash scripts/travis/install.sh
 
 before_script:
-  - bash scripts/travis/init_android_emulator.sh
+  # Fire up the Android emulator
+  - if [[ $ANDROID && $USE_EMULATOR = yes ]]; then
+      bundle exec fastlane android ci-emulator;
+    fi
 
 script:
   - bash scripts/travis/script.sh
