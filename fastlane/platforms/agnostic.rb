@@ -38,7 +38,7 @@ lane :'propagate-version' do |options|
 end
 
 desc 'Build the release notes: branch, commit hash, changelog'
-lane :release_notes do |options|
+private_lane :release_notes do |options|
   notes = <<~END
     branch: #{git_branch}
     git commit: #{last_git_commit[:commit_hash]}
