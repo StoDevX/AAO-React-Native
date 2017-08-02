@@ -50,11 +50,6 @@ private_lane :release_notes do |options|
   notes
 end
 
-desc 'run `npm run bundle-data`'
-lane :bundle_data do
-  sh('npm run bundle-data')
-end
-
 desc 'clone the match repo'
 private_lane :clone_match do
   git_url = 'https://github.com/hawkrives/aao-keys'

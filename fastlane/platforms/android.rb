@@ -3,7 +3,7 @@ platform :android do
   desc 'Makes a build'
   lane :build do |options|
     # make sure we have a copy of the data files
-    bundle_data
+    sh('npm run bundle-data')
 
     gradle(task: 'assemble',
            build_type: 'Release',
