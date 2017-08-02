@@ -14,6 +14,7 @@ platform :ios do
 
   desc 'Builds the app'
   lane :build do
+    propagate_version
     gym(include_bitcode: true,
         include_symbols: true)
   end
@@ -44,21 +45,7 @@ platform :ios do
     # set up things so they can run
     authorize_ci_for_keys
 
-    # set the app version
-    set_version
-
     # and run
     auto_beta
-  end
-
-  desc 'Include the build number in the version string'
-  lane :set_version do |options|
-    version = options[:version] || current_bundle_version
-    build = options[:build_number] || current_build_number
-    increment_version_number(version_number: version,
-                             xcodeproj: ENV['GYM_PROJECT'])
-    increment_build_number(build_number: build,
-                           xcodeproj: ENV['GYM_PROJECT'])
-    set_package_data(data: { version: "#{version}+#{build}" })
   end
 end

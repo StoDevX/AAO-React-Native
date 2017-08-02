@@ -5,6 +5,8 @@ platform :android do
     # make sure we have a copy of the data files
     sh('npm run bundle-data')
 
+    propagate_version(track: options[:track])
+
     gradle(task: 'assemble',
            build_type: 'Release',
            print_command: true,
@@ -37,9 +39,6 @@ platform :android do
     authorize_ci_for_keys
     matchesque
 
-    # set the app version
-    set_version
-
     # and run
     auto_beta
   end
@@ -52,14 +51,6 @@ platform :android do
     sh("emulator -avd '#{emulator_name}' -no-audio -no-window &")
     sh('android-wait-for-emulator')
     sh('adb shell input keyevent 82 &')
-  end
-
-  desc 'Include the build number in the version string'
-  lane :set_version do |options|
-    version = options[:version] || current_bundle_version
-    set_gradle_version_name(version_name: version,
-                            gradle_path: lane_context[:GRADLE_FILE])
-    set_package_data(data: { version: "#{version}" })
   end
 
   desc 'extract the android keys from the match repo'

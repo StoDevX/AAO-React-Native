@@ -16,27 +16,6 @@ lane :bump do |options|
   set_package_data(data: { version: new_version })
 end
 
-desc 'Copy the package.json version into the other version locations'
-lane :'propagate-version' do |options|
-  version = get_package_key(key: :version)
-  UI.message "Propagating version: #{version}"
-  UI.message "into the Info.plist and build.gradle files"
-
-  # update iOS version
-  # we're splitting here because iTC can't handle versions with dashes in them
-  increment_version_number(version_number: version.split('-')[0],
-                           xcodeproj: ENV['GYM_PROJECT'])
-  increment_build_number(xcodeproj: ENV['GYM_PROJECT'])
-
-  # update Android version
-  set_gradle_version_name(version_name: version,
-                          gradle_path: lane_context[:GRADLE_FILE])
-
-  current_version_code = get_gradle_version_code(gradle_path: lane_context[:GRADLE_FILE])
-  set_gradle_version_code(version_code: current_version_code + 1,
-                          gradle_path: lane_context[:GRADLE_FILE])
-end
-
 desc 'Build the release notes: branch, commit hash, changelog'
 private_lane :release_notes do |options|
   notes = <<~END
