@@ -1,21 +1,3 @@
-# These lanes are non-platform-specific
-desc 'Bump the version string to a new version'
-lane :bump do |options|
-  old_version = get_package_key(key: :version)
-  UI.message("Current version: #{old_version}")
-  new_version = options[:version] || UI.input('New version: ').strip
-  UI.message("Upgrading from #{old_version} to #{new_version}")
-
-  # update iOS version
-  increment_version_number(version_number: new_version,
-                           xcodeproj: ENV['GYM_PROJECT'])
-  # update Android version
-  set_gradle_version_name(version_name: new_version,
-                          gradle_path: lane_context[:GRADLE_FILE])
-  # update package.json version
-  set_package_data(data: { version: new_version })
-end
-
 desc 'Build the release notes: branch, commit hash, changelog'
 private_lane :release_notes do |options|
   notes = <<~END
