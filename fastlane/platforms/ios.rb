@@ -1,8 +1,7 @@
 platform :ios do
   desc 'Runs all the tests'
   lane :test do
-    scan(scheme: ENV['GYM_SCHEME'],
-         project: ENV['GYM_PROJECT'])
+    scan(scheme: ENV['GYM_SCHEME'], project: ENV['GYM_PROJECT'])
   end
 
   desc 'Take screenshots'
@@ -13,7 +12,7 @@ platform :ios do
              project: ENV['GYM_PROJECT'])
   end
 
-  desc 'Provisions the profiles; bumps the build number; builds the app'
+  desc 'Builds the app'
   lane :build do
     gym(include_bitcode: true,
         include_symbols: true)
@@ -22,18 +21,14 @@ platform :ios do
   desc 'Submit a new Beta Build to Testflight'
   lane :beta do
     match(type: 'appstore', readonly: true)
-
     build
-
     testflight
   end
 
   desc 'Submit a new nightly Beta Build to Testflight'
   lane :nightly do
     match(type: 'appstore', readonly: true)
-
     build
-
     testflight(distribute_external: false)
   end
 
