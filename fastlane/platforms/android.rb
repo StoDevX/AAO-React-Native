@@ -1,7 +1,7 @@
 # coding: utf-8
 platform :android do
   desc 'Makes a build'
-  lane :build do
+  lane :build do |options|
     # make sure we have a copy of the data files
     bundle_data
 
@@ -13,28 +13,22 @@ platform :android do
     UI.message lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS]
   end
 
-  desc 'Submit a new Beta Build to HockeyApp'
-  lane :beta do
-    build
+  desc 'Submit a new Beta Build to Google Play'
+  lane :beta do |options|
+    track = options[:track] || 'beta'
+    build(track: track)
 
     lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS] =
       lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].select do |apk|
         apk.end_with? '-release.apk'
       end
 
-    supply(track: 'beta')
+    supply(track: track)
   end
 
   desc 'Submit a new nightly Build to Google Play'
   lane :nightly do
-    build
-
-    lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS] =
-      lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].select do |apk|
-        apk.end_with? '-release.apk'
-      end
-
-    supply(track: 'alpha')
+    beta(track: 'alpha')
   end
 
   desc 'Run the appropriate action on CI'
