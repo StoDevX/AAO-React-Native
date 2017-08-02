@@ -10,7 +10,7 @@ def authorize_ci_for_keys
 end
 
 # Gets the version, either from Travis or from Hockey
-def current_build_number
+def current_build_number(**args)
   if ENV.key?('TRAVIS_BUILD_NUMBER')
     return ENV['TRAVIS_BUILD_NUMBER']
   end
@@ -18,7 +18,7 @@ def current_build_number
   begin
     case lane_context[:PLATFORM_NAME]
     when :android
-      UI.input "Please enter a build number: "
+      (google_play_track_version_codes(track: args[:track]) + 1).to_s
     when :ios
       (latest_testflight_build_number + 1).to_s
     else
