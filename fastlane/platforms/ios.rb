@@ -14,6 +14,7 @@ platform :ios do
 
   desc 'Builds the app'
   lane :build do
+    match(type: 'appstore', readonly: true)
     propagate_version
     gym(include_bitcode: true,
         include_symbols: true)
@@ -21,14 +22,12 @@ platform :ios do
 
   desc 'Submit a new Beta Build to Testflight'
   lane :beta do
-    match(type: 'appstore', readonly: true)
     build
     testflight
   end
 
   desc 'Submit a new nightly Beta Build to Testflight'
   lane :nightly do
-    match(type: 'appstore', readonly: true)
     build
     testflight(distribute_external: false)
   end
