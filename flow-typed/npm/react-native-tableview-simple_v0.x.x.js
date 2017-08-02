@@ -5,10 +5,13 @@ import {Image} from 'react-native'
 
 type Style = Object | number | Array<Style>;
 
-type TableviewProps = {||};
+type TableviewProps = {|
+  children: React$Element<*>,
+|};
 
 type SectionProps = {|
   allowFontScaling?: boolean,
+  children: React$Element<*>,
   footerComponent?: React$Element<*>,
   headerComponent?: React$Element<*>,
   footer?: string,
