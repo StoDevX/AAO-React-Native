@@ -6,8 +6,8 @@
 
 import React from 'react'
 import SimpleListView from '../components/listview'
-import ContactCard from './card'
 import {data as numbers} from '../../../docs/contact-info.json'
+import {ContactCard} from './card'
 
 export default function ContactView() {
   return (
