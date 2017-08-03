@@ -8,9 +8,8 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: c.iosDisabledText,
     textAlign: 'center',
-  },
-  poweredBy: {
-    paddingBottom: 20,
+    paddingVertical: 20,
+    paddingBottom: 25,
   },
 })
 
@@ -23,7 +22,7 @@ export class ListFooter extends React.PureComponent {
   render() {
     const {title} = this.props
     return (
-      <Text selectable={true} style={[styles.footer, styles.poweredBy]}>
+      <Text selectable={true} style={[styles.footer]}>
         {title}
       </Text>
     )
