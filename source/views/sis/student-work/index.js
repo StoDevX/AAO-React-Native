@@ -18,7 +18,7 @@ import {NoticeView} from '../../components/notice'
 import LoadingView from '../../components/loading'
 import delay from 'delay'
 import size from 'lodash/size'
-import sortBy from 'lodash/sortBy'
+import orderBy from 'lodash/orderBy'
 import groupBy from 'lodash/groupBy'
 import {toLaxTitleCase as titleCase} from 'titlecase'
 import {JobRow} from './job-row'
@@ -26,13 +26,6 @@ import type {JobType} from './types'
 
 const jobsUrl =
   'https://www.stolaf.edu/apps/stuwork/index.cfm?fuseaction=getall&nostructure=1'
-
-const jobSort = new Map([
-  ['On-campus Work Study', 1],
-  ['Off-campus Community Service Work Study', 2],
-  ['On-campus Summer Employment', 3],
-  ['Off-campus Summer Employment', 4],
-])
 
 const styles = StyleSheet.create({
   listContainer: {
@@ -72,13 +65,16 @@ export default class StudentWorkView extends React.Component {
       // force title-case on the job types, to prevent not-actually-duplicate headings
       const processed = data.map(job => ({...job, type: titleCase(job.type)}))
 
-      // We have predefined orders for some job types, but we want all
-      // unknown types to show up at the end of the view, so we make
-      // them sort as Infinity
-      const sorted = sortBy(data, [
-        j => jobSort.get(j.type) || Infinity, // apply predefined group orderings
+      // Turns out that, for our data, we really just want to sort the categories
+      // _backwards_ - that is, On-Campus Work Study should come before 
+      // Off-Campus Work Study, and the Work Studies should come before the 
+      // Summer Employments
+      const sorted = orderBy(data, [
         j => j.type, // sort any groups with the same sort index alphabetically
         j => j.lastModified, // sort all jobs by date-last-modified
+      ], [
+        'desc',
+        'asc',
       ])
 
       this.setState(() => ({jobs: groupBy(sorted, j => j.type)}))
