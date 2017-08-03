@@ -70,7 +70,7 @@ export default class StudentWorkView extends React.Component {
       const data: {[key: string]: JobType[]} = await fetchJson(jobsUrl)
 
       // force title-case on the job types, to prevent not-actually-duplicate headings
-      const processed = data.map(job => ({...job, type: titleCase(job.type)})
+      const processed = data.map(job => ({...job, type: titleCase(job.type)}))
 
       // We have predefined orders for some job types, but we want all
       // unknown types to show up at the end of the view, so we make
