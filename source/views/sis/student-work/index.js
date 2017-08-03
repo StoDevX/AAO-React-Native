@@ -20,6 +20,7 @@ import delay from 'delay'
 import size from 'lodash/size'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
+import {toLaxTitleCase as titleCase} from 'titlecase'
 import {JobRow} from './job-row'
 import type {JobType} from './types'
 
@@ -67,6 +68,9 @@ export default class StudentWorkView extends React.Component {
   fetchData = async () => {
     try {
       const data: {[key: string]: JobType[]} = await fetchJson(jobsUrl)
+
+      // force title-case on the job types, to prevent not-actually-duplicate headings
+      const processed = data.map(job => ({...job, type: titleCase(job.type)})
 
       // We have predefined orders for some job types, but we want all
       // unknown types to show up at the end of the view, so we make
