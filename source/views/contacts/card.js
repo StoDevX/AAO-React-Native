@@ -11,9 +11,6 @@ import * as c from '../components/colors'
 
 const styles = StyleSheet.create({
   container: {
-    marginLeft: 5,
-    marginRight: 5,
-    marginBottom: 5,
     backgroundColor: c.white,
   },
   title: {
@@ -22,10 +19,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   content: {
-    marginTop: 5,
-    marginBottom: 5,
-    marginLeft: 10,
-    marginRight: 10,
+    marginHorizontal: 10,
   },
 })
 
