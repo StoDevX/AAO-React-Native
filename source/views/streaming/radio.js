@@ -14,7 +14,6 @@ import {Touchable} from '../components/touchable'
 import {TabBarIcon} from '../components/tabbar-icon'
 
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
-const kstoStatus = 'http://stolaf-flash.streamguys.net:8091/radio'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
 export default class KSTOView extends React.PureComponent {
@@ -26,32 +25,13 @@ export default class KSTOView extends React.PureComponent {
   state: {
     refreshing: boolean,
     paused: boolean,
-    uplinkStatus: boolean,
-    uplinkError: boolean,
     streamError: ?Object,
     metadata: Object[],
-    intervalId: number,
   } = {
     refreshing: false,
     paused: true,
-    uplinkStatus: true,
-    uplinkError: false,
     streamError: null,
     metadata: [],
-    intervalId: 0,
-  }
-
-  componentWillMount() {
-    // Fetch the uplink status for the first mount
-    this.fetchUplinkStatus()
-
-    // This updates the screen every ten seconds, so that the uplink
-    // status is updated without needing to leave and come back.
-    this.setState({intervalId: setInterval(this.fetchUplinkStatus, 10000)})
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this.state.intervalId)
   }
 
   changeControl = () => {
@@ -70,41 +50,13 @@ export default class KSTOView extends React.PureComponent {
     console.log(e)
   }
 
-  // check the stream uplink status
-  fetchUplinkStatus = async () => {
-    let start = Date.now()
-    this.setState(() => ({refreshing: true}))
-
-    try {
-      let data = await fetchJson(kstoStatus)
-      this.setState(() => ({uplinkStatus: data.uplink, uplinkError: false}))
-    } catch (err) {
-      this.setState(() => ({uplinkStatus: false, uplinkError: true}))
-      console.error(err)
-    }
-
-    // If the stream is down or we had an error, pause the player
-    if (!this.state.uplinkStatus || this.state.uplinkError) {
-      this.setState(() => ({paused: true}))
-    }
-
-    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    let elapsed = start - Date.now()
-    if (elapsed < 500) {
-      await delay(500 - elapsed)
-    }
-    this.setState(() => ({refreshing: false}))
-  }
-
   player: Video
 
   render() {
-    const button = this.state.uplinkStatus
-      ? <PlayPauseButton
-          onPress={this.changeControl}
-          paused={this.state.paused}
-        />
-      : <Text style={styles.status}>The KSTO stream is down. Sorry!</Text>
+    <PlayPauseButton
+      onPress={this.changeControl}
+      paused={this.state.paused}
+    />
 
     return (
       <View style={styles.container}>
@@ -191,12 +143,6 @@ const styles = StyleSheet.create({
     color: c.kstoPrimaryDark,
     fontWeight: '300',
     fontSize: Dimensions.get('window').height / 30,
-  },
-  status: {
-    paddingTop: 10,
-    fontSize: Dimensions.get('window').height / 40,
-    fontWeight: '500',
-    color: c.grapefruit,
   },
   // nowPlaying: {
   //   paddingTop: 10,
