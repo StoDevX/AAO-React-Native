@@ -13,8 +13,7 @@ import Video from 'react-native-video'
 import {Touchable} from '../components/touchable'
 import {TabBarIcon} from '../components/tabbar-icon'
 
-const kstoStream =
-  'http://stolaf-flash.streamguys.net/radio/ksto1.stream/playlist.m3u8'
+const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
 const kstoStatus = 'http://stolaf-flash.streamguys.net:8091/radio'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
