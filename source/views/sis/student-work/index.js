@@ -20,6 +20,7 @@ import delay from 'delay'
 import size from 'lodash/size'
 import orderBy from 'lodash/orderBy'
 import groupBy from 'lodash/groupBy'
+import map from 'lodash/map'
 import {toLaxTitleCase as titleCase} from 'titlecase'
 import {JobRow} from './job-row'
 import type {JobType} from './types'
@@ -63,7 +64,7 @@ export default class StudentWorkView extends React.Component {
       const data: {[key: string]: JobType[]} = await fetchJson(jobsUrl)
 
       // force title-case on the job types, to prevent not-actually-duplicate headings
-      const processed = data.map(job => ({...job, type: titleCase(job.type)}))
+      const processed = map(data, job => ({...job, type: titleCase(job.type)}))
 
       // Turns out that, for our data, we really just want to sort the categories
       // _backwards_ - that is, On-Campus Work Study should come before
