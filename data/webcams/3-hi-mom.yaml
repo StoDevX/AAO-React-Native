@@ -1,6 +1,6 @@
 name: Hi Mom
 pageUrl: https://www.stolaf.edu/multimedia/webcams?cam=himom
-streamUrl: http://stolaf-flash.streamguys.net/webcams/himom.stream/playlist.m3u8
+streamUrl: https://cdn.stobcm.com/webcams/himom.stream/master.m3u8
 thumbnail: himom
 tagline: Located in the Crossroads inside Buntrock Commons
 accentColor: [137, 141, 150]

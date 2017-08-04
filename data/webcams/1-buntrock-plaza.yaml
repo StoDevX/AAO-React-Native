@@ -1,6 +1,6 @@
 name: Buntrock Plaza
 pageUrl: https://www.stolaf.edu/multimedia/webcams?cam=bcplaza
-streamUrl: http://stolaf-flash.streamguys.net/webcams/bcplaza.stream/playlist.m3u8
+streamUrl: https://cdn.stobcm.com/webcams/bcplaza.stream/master.m3u8
 thumbnail: bcplaza
 tagline: Looking out to the plaza and campus green
 accentColor: [93, 114, 72]
