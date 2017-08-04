@@ -70,7 +70,7 @@ export default class StudentWorkView extends React.Component {
       // Off-Campus Work Study, and the Work Studies should come before the
       // Summer Employments
       const sorted = orderBy(
-        data,
+        processed,
         [
           j => j.type, // sort any groups with the same sort index alphabetically
           j => j.lastModified, // sort all jobs by date-last-modified
