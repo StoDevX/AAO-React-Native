@@ -33,6 +33,13 @@ import com.android.build.OutputFile
  *   // bundleInPaidRelease: true,
  *   // bundleInBeta: true,
  *
+ *   // whether to disable dev mode in custom build variants (by default only disabled in release)
+ *   // for example: to disable dev mode in the staging build type (if configured)
+ *   devDisabledInStaging: true,
+ *   // The configuration property can be in the following formats
+ *   //         'devDisabledIn${productFlavor}${buildType}'
+ *   //         'devDisabledIn${buildType}'
+ *
  *   // the root of your project, i.e. where "package.json" lives
  *   root: "../../",
  *
@@ -58,7 +65,7 @@ import com.android.build.OutputFile
  *   inputExcludes: ["android/**", "ios/**"],
  *
  *   // override which node gets called and with what additional arguments
- *   nodeExecutableAndArgs: ["node"]
+ *   nodeExecutableAndArgs: ["node"],
  *
  *   // supply additional arguments to the packager
  *   extraPackagerArgs: []
@@ -80,7 +87,7 @@ apply from: "../../node_modules/react-native/react.gradle"
  * Upload all the APKs to the Play Store and people will download
  * the correct one based on the CPU architecture of their device.
  */
-def enableSeparateBuildPerCPUArchitecture = false
+def enableSeparateBuildPerCPUArchitecture = true
 
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
@@ -94,9 +101,9 @@ android {
     defaultConfig {
         applicationId "com.allaboutolaf"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 23
         versionCode 1
-        versionName "2.2.5-rc.3"
+        versionName "1.0.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -106,6 +113,10 @@ android {
             onesignal_google_project_number: "185558680648",
             gmaps_key: System.getenv("GMAPS_KEY") ?: "",
         ]
+    }
+    signingConfigs {
+        // the signingConfig is configured below
+        release
     }
     splits {
         abi {
@@ -119,6 +130,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -140,6 +152,40 @@ android {
             preDexLibraries = preDexEnabled && !travisBuild
         }
     }
+}
+
+// borrowed from https://gist.github.com/gabrielemariotti/6856974
+def propFile = new File('android/app//signing.properties')
+if (propFile.canRead()) {
+    def Properties props = new Properties()
+    props.load(new FileInputStream(propFile))
+    if (props != null
+            && props.containsKey('STORE_FILE')
+            && props.containsKey('STORE_PASSWORD')
+            && props.containsKey('KEY_ALIAS')
+            && props.containsKey('KEY_PASSWORD')
+    ) {
+        logger.info 'android/app/signing.properties is fully functional.'
+        android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
+        android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
+        android.signingConfigs.release.keyPassword = props['KEY_PASSWORD']
+    } else {
+        println 'android/app/signing.properties found, but some entries are missing.'
+        if (props == null) {
+            logger.warn '`props` was null'
+        } else {
+            logger.warn "has STORE_FILE: ${props.containsKey('STORE_FILE')}"
+            logger.warn "has STORE_PASSWORD: ${props.containsKey('STORE_PASSWORD')}"
+            logger.warn "has KEY_ALIAS: ${props.containsKey('KEY_ALIAS')}"
+            logger.warn "has KEY_PASSWORD: ${props.containsKey('KEY_PASSWORD')}"
+        }
+        android.buildTypes.release.signingConfig = null
+    }
+} else {
+    logger.warn 'android/app/signing.properties not found.'
+    logger.warn "cwd: ${new File(".").absolutePath}"
+    android.buildTypes.release.signingConfig = null
 }
 
 dependencies {
