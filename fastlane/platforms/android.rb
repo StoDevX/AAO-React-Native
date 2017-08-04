@@ -25,7 +25,7 @@ platform :android do
         apk.end_with? '-release.apk'
       end
 
-    supply(track: track)
+    supply(track: track, check_superseded_tracks: true)
   end
 
   desc 'Submit a new nightly Build to Google Play'
