@@ -8,7 +8,6 @@ import React from 'react'
 import {StyleSheet, View, Text, Dimensions, Image} from 'react-native'
 import * as c from '../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
-import delay from 'delay'
 import Video from 'react-native-video'
 import {Touchable} from '../components/touchable'
 import {TabBarIcon} from '../components/tabbar-icon'
@@ -53,15 +52,13 @@ export default class KSTOView extends React.PureComponent {
   player: Video
 
   render() {
-    <PlayPauseButton
-      onPress={this.changeControl}
-      paused={this.state.paused}
-    />
-
     return (
       <View style={styles.container}>
         <Logo />
-        {button}
+        <PlayPauseButton
+          onPress={this.changeControl}
+          paused={this.state.paused}
+        />
         {/*<Song />*/}
         <Title />
 
