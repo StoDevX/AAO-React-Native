@@ -66,16 +66,17 @@ export default class StudentWorkView extends React.Component {
       const processed = data.map(job => ({...job, type: titleCase(job.type)}))
 
       // Turns out that, for our data, we really just want to sort the categories
-      // _backwards_ - that is, On-Campus Work Study should come before 
-      // Off-Campus Work Study, and the Work Studies should come before the 
+      // _backwards_ - that is, On-Campus Work Study should come before
+      // Off-Campus Work Study, and the Work Studies should come before the
       // Summer Employments
-      const sorted = orderBy(data, [
-        j => j.type, // sort any groups with the same sort index alphabetically
-        j => j.lastModified, // sort all jobs by date-last-modified
-      ], [
-        'desc',
-        'asc',
-      ])
+      const sorted = orderBy(
+        data,
+        [
+          j => j.type, // sort any groups with the same sort index alphabetically
+          j => j.lastModified, // sort all jobs by date-last-modified
+        ],
+        ['desc', 'asc'],
+      )
 
       this.setState(() => ({jobs: groupBy(sorted, j => j.type)}))
     } catch (err) {
