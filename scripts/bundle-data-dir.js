@@ -26,6 +26,7 @@ function bundleDataDir({fromDir, toFile}) {
   }
 
   const loaded = files.map(fpath => {
+    console.log(fpath)
     let contents = fs.readFileSync(fpath, 'utf-8')
     return yaml.safeLoad(contents)
   })

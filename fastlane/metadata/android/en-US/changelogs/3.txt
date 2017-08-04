@@ -1,0 +1,3 @@
+Turns out that v2.1.0 had a problem with BonApp's "Humane" dietary filter; we had a talk with the app and came to an understanding about "humane" meat products. We also talked about not crashing when you see something you don't expect, so when BonApp rolls out another new dietary type we should be 💯.
+
+We also added menus for Carleton's campus – go see the other side of the river! Your Ole Card will let you in, and it just uses your meal plan. (It won't let you in their doors, though.)

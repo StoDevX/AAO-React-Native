@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e -v
 
-# install packages
-npm install
+# install packages (if the first fails, try once more)
+npm install || npm install
 
 if [[ $TRAVIS_OS_NAME == "osx" ]]; then
   brew install imagemagick
 fi
 
 # install fastlane
-bundle install --deployment
+bundle install

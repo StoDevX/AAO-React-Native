@@ -8,20 +8,8 @@ env:
     - MATCH_KEYCHAIN_PASSWORD=alpine
     # dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
     - PATH=${PATH/\.\/node_modules\/\.bin/}
-    # centralize some variables for pushing/committing
-    - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
-    - REPO=$(git config remote.origin.url)
-    - SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
-    # this just gives us a nice label to use
-    - ENCRYPTION_LABEL=199c454344e1
-    # set some other variables for the pushing process
-    - ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
-    - ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
-    - ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
-    - ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
-    - DEPLOY_KEY=scripts/travisci_deploy_key
     # variables that are used later on
-    - TRAVIS_NODE_VERSION=7
+    - TRAVIS_NODE_VERSION=8
     - PUSH_BRANCH=0
     - CAN_DEPLOY=0
     - USE_EMULATOR=no
@@ -34,7 +22,7 @@ matrix:
       dist: trusty
       sudo: false
       language: node_js
-      node_js: '7'
+      node_js: '8'
       env: [JS=yes, CAN_DEPLOY=yes]
 
     - &android-base
@@ -49,11 +37,15 @@ matrix:
           - tools
           - platform-tools
           - build-tools-23.0.1
+          - build-tools-23.0.2
+          - build-tools-25.0.1
           - build-tools-23.0.3
           - build-tools-25.0.2
           - build-tools-25.0.3
+          - build-tools-26.0.1
           - android-23
           - android-25
+          - android-26
           - extra-android-m2repository
           - extra-google-m2repository
 
@@ -72,7 +64,7 @@ matrix:
     - os: osx
       language: objective-c
       osx_image: xcode8.3
-      node_js: '7'
+      node_js: '8'
       env: [IOS=yes, CAN_DEPLOY=yes]
 
 
@@ -96,8 +88,15 @@ before_install:
   - rvm use ruby-2.3.1 --install --binary --create
   - gem install bundler
 
-  # only deploy from the once-daily cron-triggered jobs or from tagged commits
-  - if [[ $CAN_DEPLOY = yes && ( $TRAVIS_EVENT_TYPE = cron || $TRAVIS_TAG != "" ) ]]; then run_deploy=1; fi
+  # only deploy from:
+  # - cron-triggered jobs
+  # - tagged commits
+  # - commits whose messages contain the string [ci run beta]
+  - if [[ $CAN_DEPLOY = yes && (
+      $TRAVIS_EVENT_TYPE == "cron" ||
+      $TRAVIS_TAG != "" ||
+      $TRAVIS_COMMIT_MESSAGE == *"[ci run beta]"*
+    ) ]]; then run_deploy=1; fi
 
   # run our before_install sequence
   - bash scripts/travis/before_install.sh
@@ -106,7 +105,10 @@ install:
   - bash scripts/travis/install.sh
 
 before_script:
-  - bash scripts/travis/before_script.sh
+  # Fire up the Android emulator
+  - if [[ $ANDROID && $USE_EMULATOR = yes ]]; then
+      bundle exec fastlane android ci-emulator;
+    fi
 
 script:
   - bash scripts/travis/script.sh
@@ -124,6 +126,7 @@ deploy:
     local_dir: docs/
     on:
       branch: master
+      condition: $JS
 
 before_cache:
   - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"

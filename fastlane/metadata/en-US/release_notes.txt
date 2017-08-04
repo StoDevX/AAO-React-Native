@@ -1,0 +1,29 @@
+NEW FEATURES
+• Allow switching between today's menus!
+• Enable links in News articles!
+• Add thumbnails to the News article lists!
+• Enable Maps on Android!
+• Add a "Share" button to News articles!
+• Solved the login issues for Balances!
+  - You'll now stay logged in until your password changes.
+  - We had to disable the Courses view, though.
+• Add a search bar to the Dictionary!
+
+BUG FIXES
+• Add an analytics opt-out switch
+• Allow clearing of the username and password fields
+• Round time comparisons to the minute, instead of the second (which just looked _weird_)
+• Update the Northfield Lines store link
+• Let the Android app's screen title take up as much space as it needs
+• Improve the anti-code filters for the menus
+• Hide blank stories from News articles
+
+INTERNAL STUFFS
+• Move Oleville into the News section
+• Open Directory and Maps in a faster browser
+• Rework the iOS Building Hours detail view for clarity
+• Make the webcams less buggy
+• Reorganized the Settings screen
+
+THANKS
+We love feedback! Email us at odt@stolaf.edu with ideas! suggestions! complaints! problems! We can't really answer homework questions, though; you might want to swing by the Academic Support Center for that.
