@@ -9,10 +9,10 @@ import * as c from './colors'
 const styles = StyleSheet.create({
   button: {
     backgroundColor: c.denim,
-    width: 200,
     color: c.white,
     alignSelf: 'center',
     paddingVertical: 10,
+    paddingHorizontal: 20,
     marginVertical: 10,
     borderRadius: 6,
     overflow: 'hidden',
