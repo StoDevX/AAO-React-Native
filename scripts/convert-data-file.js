@@ -9,7 +9,9 @@ if (process.mainModule === module) {
   const fromFile = args[0]
   const toFile = args[1] || '-'
   if (!fromFile || fromFile === '-h' || fromFile === '--help') {
-    console.error('usage: node convert-data-file.js <from-file.{md,yaml}> [to-file]')
+    console.error(
+      'usage: node convert-data-file.js <from-file.{md,yaml}> [to-file]',
+    )
     process.exit(1)
   }
   convertDataFile({fromFile, toFile})
@@ -27,7 +29,9 @@ function convert({contents, fileType}) {
       output = processYaml(contents)
       break
     default:
-      throw new Error(`unexpected filetype "${fileType}; expected "md" or "yaml"`)
+      throw new Error(
+        `unexpected filetype "${fileType}; expected "md" or "yaml"`,
+      )
   }
 
   return output + '\n'
@@ -41,7 +45,9 @@ function convertDataFile({fromFile, toFile}) {
   const fileType = fromFile.split('.').slice(-1)[0]
   let output = convert({contents, fileType})
 
-  const outStream = toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
+  const outStream = toFile === '-'
+    ? process.stdout
+    : fs.createWriteStream(toFile)
   outStream.write(output)
 }
 
