@@ -1,5 +1,7 @@
+---
 word: AmCon
-definition: |
+---
+
   Short for American Conversations, an interdisciplinary General Education program and learning community in which students analyze America’s history and culture.
 
   Over four successive semesters in their first and sophomore years, AmCon students encounter many of the texts, topics, and historical developments that have defined “America” from its earliest colonization to the present.

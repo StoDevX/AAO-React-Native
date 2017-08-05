@@ -1,3 +1,5 @@
+---
 word: Kierkegaard
-definition: |
+---
+
   Søren Aabye Kierkegaard (pronounced Kier·ke·gaard) was a 19th-century Danish philosopher. In Rolvaag Memorial Library, The Howard V. and Edna H. Hong Kierkegaard Library began as the private collection of its founders who used it to support their work translating the writings of Søren Kierkegaard from Danish into English. In 1976, the Hongs gave the Library to St. Olaf College with the understanding that it would exist as a study and publication center, a place where students and scholars of varied experience could come and have access to materials in an environment enhancing their intellectual work.
