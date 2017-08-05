@@ -1,8 +1,9 @@
 // @flow
 
 import glamorous from 'glamorous-native'
+import {SelectableText} from './selectable'
 
-export const Paragraph = glamorous.text({
+export const Paragraph = glamorous(SelectableText)({
   marginVertical: 3,
 })
 
