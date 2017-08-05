@@ -15,13 +15,10 @@ if (process.mainModule === module) {
   convertDataFile({fromFile, toFile})
 }
 
-// exported module
-module.exports = convertDataFile
-function convertDataFile({fromFile, toFile}) {
-  const contents = fs.readFileSync(fromFile, 'utf-8')
+module.exports.convert = convert
+function convert({contents, fileType}) {
   let output = contents
 
-  const fileType = fromFile.split('.').slice(-1)[0]
   switch (fileType) {
     case 'md':
       output = processMarkdown(contents)
@@ -33,7 +30,16 @@ function convertDataFile({fromFile, toFile}) {
       throw new Error(`unexpected filetype "${fileType}; expected "md" or "yaml"`)
   }
 
-  output = output + '\n'
+  return output + '\n'
+}
+
+// exported module
+module.exports = convertDataFile
+function convertDataFile({fromFile, toFile}) {
+  const contents = fs.readFileSync(fromFile, 'utf-8')
+
+  const fileType = fromFile.split('.').slice(-1)[0]
+  let output = convert({contents, fileType})
 
   const outStream = toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
   outStream.write(output)
