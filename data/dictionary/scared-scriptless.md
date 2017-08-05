@@ -2,4 +2,4 @@
 word: Scared Scriptless
 ---
 
-  The student improv group at St. Olaf. Their mission is to entertain the community through improvisational theater. In addition, Scared Scriptless gives students the opportunity to perform improv theater regardless of their amount of previous experience.
+The student improv group at St. Olaf. Their mission is to entertain the community through improvisational theater. In addition, Scared Scriptless gives students the opportunity to perform improv theater regardless of their amount of previous experience.

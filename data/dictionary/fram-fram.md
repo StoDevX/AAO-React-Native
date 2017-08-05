@@ -2,4 +2,4 @@
 word: Fram! Fram!
 ---
 
-  King Olav’s (Olaf’s) battle cry, “Fram, Fram, Kristmenn, Krossmen” can be found on the St. Olaf College crest.
+King Olav’s (Olaf’s) battle cry, “Fram, Fram, Kristmenn, Krossmen” can be found on the St. Olaf College crest.

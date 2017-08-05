@@ -2,4 +2,4 @@
 word: Urness
 ---
 
-  Opera and musical theater productions are staged in this hall in the Christiansen Hall of Music.
+Opera and musical theater productions are staged in this hall in the Christiansen Hall of Music.

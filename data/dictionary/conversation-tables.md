@@ -2,4 +2,4 @@
 word: Conversation Tables
 ---
 
-  As part of the Foreign Language GE, students attend weekly dinner tables to work on their “conversation” skills in the language they are studying.
+As part of the Foreign Language GE, students attend weekly dinner tables to work on their “conversation” skills in the language they are studying.

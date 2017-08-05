@@ -2,4 +2,4 @@
 word: Gospel Choir
 ---
 
-  A choir open to any student who wants to join! Rehearsals are held once a week.
+A choir open to any student who wants to join! Rehearsals are held once a week.

@@ -2,4 +2,4 @@
 word: IT
 ---
 
-  For all things technical, The Information and Instructional Technologies offers a campus-wide network of computing facilities that includes Macintosh, PC-compatibles, and UNIX/Linux-based systems. The Helpdesk in Rolvaag Memorial Library is available for students and faculty alike.
+For all things technical, The Information and Instructional Technologies offers a campus-wide network of computing facilities that includes Macintosh, PC-compatibles, and UNIX/Linux-based systems. The Helpdesk in Rolvaag Memorial Library is available for students and faculty alike.
