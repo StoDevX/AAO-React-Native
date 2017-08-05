@@ -66,6 +66,19 @@ function androidOpen(url: string) {
 }
 
 export default function openUrl(url: string) {
+  const protocol = /^(.*?):?\/\//.exec(url)
+
+  if (protocol.length) {
+    switch (protocol[1]) {
+      case 'tel':
+        return genericOpen(url)
+      case 'mailto':
+        return genericOpen(url)
+      default:
+        break
+    }
+  }
+
   switch (Platform.OS) {
     case 'android':
       return androidOpen(url)
