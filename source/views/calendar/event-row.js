@@ -35,13 +35,10 @@ const styles = StyleSheet.create({
 export default class EventRow extends React.PureComponent {
   props: {
     event: EventType,
-    onPress: (string, EventType) => any,
+    onPress: EventType => any,
   }
 
-  _onPress = () => {
-    const {event} = this.props
-    this.props.onPress(event.summary, event)
-  }
+  _onPress = () => this.props.onPress(this.props.event)
 
   render() {
     const {event} = this.props

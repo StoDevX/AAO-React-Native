@@ -46,7 +46,7 @@ export class EventList extends React.PureComponent {
     }))
   }
 
-  onPressEvent = (title: string, event: EventType) => {
+  onPressEvent = (event: EventType) => {
     this.props.navigation.navigate('EventDetailView', {event})
   }
 
