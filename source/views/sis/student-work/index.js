@@ -6,18 +6,17 @@
  */
 
 import React from 'react'
-import {StyleSheet, Text} from 'react-native'
+import {StyleSheet, Text, SectionList} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import type {TopLevelViewPropsType} from '../../types'
 import * as c from '../../components/colors'
-import SimpleListView from '../../components/listview'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
 import {tracker} from '../../../analytics'
 import bugsnag from '../../../bugsnag'
 import {NoticeView} from '../../components/notice'
 import LoadingView from '../../components/loading'
 import delay from 'delay'
-import size from 'lodash/size'
+import toPairs from 'lodash/toPairs'
 import orderBy from 'lodash/orderBy'
 import groupBy from 'lodash/groupBy'
 import {toLaxTitleCase as titleCase} from 'titlecase'
@@ -33,7 +32,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export default class StudentWorkView extends React.Component {
+export default class StudentWorkView extends React.PureComponent {
   static navigationOptions = {
     headerBackTitle: 'Open Jobs',
     tabBarLabel: 'Open Jobs',
@@ -41,13 +40,13 @@ export default class StudentWorkView extends React.Component {
   }
 
   state: {
-    jobs: {[key: string]: JobType[]},
-    loading: boolean,
+    jobs: Array<{title: string, data: Array<JobType>}>,
+    loaded: boolean,
     refreshing: boolean,
     error: boolean,
   } = {
-    jobs: {},
-    loading: false,
+    jobs: [],
+    loaded: false,
     refreshing: false,
     error: false,
   }
@@ -78,7 +77,9 @@ export default class StudentWorkView extends React.Component {
         ['desc', 'asc'],
       )
 
-      this.setState(() => ({jobs: groupBy(sorted, j => j.type)}))
+      const grouped = groupBy(sorted, j => j.type)
+      const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
+      this.setState(() => ({jobs: mapped}))
     } catch (err) {
       tracker.trackException(err.message)
       bugsnag.notify(err)
@@ -86,7 +87,7 @@ export default class StudentWorkView extends React.Component {
       console.error(err)
     }
 
-    this.setState(() => ({loading: true}))
+    this.setState(() => ({loaded: true}))
   }
 
   refresh = async () => {
@@ -103,43 +104,41 @@ export default class StudentWorkView extends React.Component {
     this.setState(() => ({refreshing: false}))
   }
 
-  onPressJob = (title: string, job: JobType) => {
+  onPressJob = (job: JobType) => {
     this.props.navigation.navigate('JobDetailView', {job})
   }
 
-  renderSeparator = (sectionId: string, rowId: string) => {
-    return <ListSeparator key={`${sectionId}-${rowId}`} />
-  }
+  keyExtractor = (item: JobType, index: number) => index.toString()
 
-  renderSectionHeader = (data: any, id: string) => {
-    return <ListSectionHeader title={id} />
-  }
+  renderSectionHeader = ({section: {title}}: any) =>
+    <ListSectionHeader title={title} />
+
+  renderItem = ({item}: {item: JobType}) =>
+    <JobRow job={item} onPress={this.onPressJob} />
 
   render() {
     if (this.state.error) {
       return <Text selectable={true}>{this.state.error}</Text>
     }
 
-    if (!this.state.loading) {
+    if (!this.state.loaded) {
       return <LoadingView />
     }
 
-    if (!size(this.state.jobs)) {
-      return <NoticeView text="There are no open job postings." />
-    }
-
     return (
-      <SimpleListView
+      <SectionList
+        ListEmptyComponent={
+          <NoticeView text="There are no open job postings." />
+        }
+        keyExtractor={this.keyExtractor}
         style={styles.listContainer}
-        data={this.state.jobs}
+        sections={(this.state.jobs: any)}
         renderSectionHeader={this.renderSectionHeader}
-        renderSeparator={this.renderSeparator}
+        ItemSeparatorComponent={ListSeparator}
         refreshing={this.state.refreshing}
         onRefresh={this.refresh}
-      >
-        {(job: JobType) =>
-          <JobRow onPress={() => this.onPressJob(job.title, job)} job={job} />}
-      </SimpleListView>
+        renderItem={this.renderItem}
+      />
     )
   }
 }
