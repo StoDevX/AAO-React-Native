@@ -58,8 +58,8 @@ exports[`can change the title 1`] = `
         "color": "#FFFFFF",
         "marginVertical": 10,
         "overflow": "hidden",
+        "paddingHorizontal": 20,
         "paddingVertical": 10,
-        "width": 200,
       },
       false,
     ]
@@ -81,8 +81,8 @@ exports[`renders 1`] = `
         "color": "#FFFFFF",
         "marginVertical": 10,
         "overflow": "hidden",
+        "paddingHorizontal": 20,
         "paddingVertical": 10,
-        "width": 200,
       },
       false,
     ]
