@@ -47,12 +47,12 @@ Makes a build
 ```
 fastlane android beta
 ```
-Submit a new Beta Build to Google Play
+Submit a new beta build to Google Play
 ### android nightly
 ```
 fastlane android nightly
 ```
-Submit a new nightly Build to Google Play
+Submit a new nightly build to Google Play
 ### android ci-run
 ```
 fastlane android ci-run
