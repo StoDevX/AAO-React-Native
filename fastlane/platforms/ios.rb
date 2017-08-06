@@ -23,13 +23,14 @@ platform :ios do
   desc 'Submit a new Beta Build to Testflight'
   lane :beta do
     build
-    testflight
+    testflight(changelog: make_changelog)
   end
 
   desc 'Submit a new nightly Beta Build to Testflight'
   lane :nightly do
     build
-    testflight(distribute_external: false)
+    testflight(changelog: make_changelog,
+               distribute_external: false)
   end
 
   desc 'Upload dYSM symbols to Bugsnag from Apple'
