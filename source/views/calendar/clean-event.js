@@ -4,7 +4,7 @@ import {fastGetTrimmedText} from '../../lib/html'
 import getUrls from 'get-urls'
 import {times} from './times'
 
-export function cleanEvent(event: EventType): EventType {
+export function cleanEvent(event: EventType) {
   const title = fastGetTrimmedText(event.summary || '')
   const summary = fastGetTrimmedText(event.extra.data.description || '')
   const rawSummary = cleanDescription(event.extra.data.description || '')
