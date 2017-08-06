@@ -1,15 +1,14 @@
 // @flow
 import React from 'react'
-import {StyleSheet, Text, View} from 'react-native'
+import {StyleSheet, Text, View, FlatList} from 'react-native'
 import {TabBarIcon} from '../components/tabbar-icon'
 import type {OtherModeType} from './types'
 import {data as modes} from '../../../docs/transportation.json'
 import * as c from '../components/colors'
 import {Button} from '../components/button'
-import SimpleListView from '../components/listview'
 import {trackedOpenUrl} from '../components/open-url'
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     backgroundColor: c.white,
   },
@@ -30,30 +29,54 @@ let styles = StyleSheet.create({
   },
 })
 
-export default function OtherModesView() {
-  return (
-    <SimpleListView contentContainerStyle={styles.container} data={modes}>
-      {(data: OtherModeType) =>
-        <View style={styles.mode}>
-          <Text selectable={true} style={styles.title}>{data.name}</Text>
-          <Text selectable={true} style={styles.content}>
-            {data.description}
-          </Text>
-          <Button
-            onPress={() => {
-              const modeName = data.name.replace(' ', '')
-              return trackedOpenUrl({
-                url: data.url,
-                id: `Transportation_OtherModes_${modeName}View`,
-              })
-            }}
-            title="More info"
-          />
-        </View>}
-    </SimpleListView>
-  )
+class OtherModeCard extends React.PureComponent {
+  props: {
+    data: OtherModeType,
+  }
+
+  _onPress = () => {
+    const {data} = this.props
+    const modeName = data.name.replace(' ', '')
+    return trackedOpenUrl({
+      url: data.url,
+      id: `Transportation_OtherModes_${modeName}View`,
+    })
+  }
+
+  render() {
+    const {data} = this.props
+    return (
+      <View style={styles.mode}>
+        <Text selectable={true} style={styles.title}>
+          {data.name}
+        </Text>
+        <Text selectable={true} style={styles.content}>
+          {data.description}
+        </Text>
+        <Button onPress={this._onPress} title="More info" />
+      </View>
+    )
+  }
 }
-OtherModesView.navigationOptions = {
-  tabBarLabel: 'Other Modes',
-  tabBarIcon: TabBarIcon('boat'),
+
+export default class OtherModesView extends React.PureComponent {
+  static navigationOptions = {
+    tabBarLabel: 'Other Modes',
+    tabBarIcon: TabBarIcon('boat'),
+  }
+
+  renderItem = ({item}: {item: OtherModeType}) => <OtherModeCard data={item} />
+
+  keyExtractor = (item: OtherModeType) => item.name
+
+  render() {
+    return (
+      <FlatList
+        contentContainerStyle={styles.container}
+        keyExtractor={this.keyExtractor}
+        renderItem={this.renderItem}
+        data={modes}
+      />
+    )
+  }
 }
