@@ -23,7 +23,7 @@ platform :ios do
   desc 'Submit a new Beta Build to Testflight'
   lane :beta do
     build
-    testflight(changelog: make_changelog)
+    testflight
   end
 
   desc 'Submit a new nightly Beta Build to Testflight'
