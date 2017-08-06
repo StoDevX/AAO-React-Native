@@ -64,15 +64,19 @@ def propagate_version(**args)
   end
 end
 
+# last_git_tag returns the most recent tag, chronologically.
+# newest_tag returns the most recent tag *on this branch*.
+def newest_tag
+  # we chomp to remove the newline
+  sh('git describe --tags --abbrev=0').chomp
+end
+
 # Makes a changelog from the timespan passed
 def make_changelog
   to_ref = ENV['TRAVIS_COMMIT'] || 'HEAD'
-  from_ref = hockeyapp_version_commit || 'HEAD~3'
+  from_ref = newest_tag
 
-  sh("git log #{from_ref}..#{to_ref} --pretty='%an, %aD (%h)%n> %s%n'")
-    .lines
-    .map { |line| '    ' + line }
-    .join
+  sh("git log #{from_ref}..#{to_ref} --oneline --graph")
 end
 
 # It doesn't make sense to duplicate this in both platforms, and fastlane is

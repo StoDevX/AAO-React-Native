@@ -1,16 +1,3 @@
-desc 'Build the release notes: branch, commit hash, changelog'
-private_lane :release_notes do |options|
-  notes = <<~END
-    branch: #{git_branch}
-    git commit: #{last_git_commit[:commit_hash]}
-
-    ## Changelog
-    (empty)
-  END
-  UI.message notes
-  notes
-end
-
 desc 'clone the match repo'
 private_lane :clone_match do
   git_url = 'https://github.com/hawkrives/aao-keys'
