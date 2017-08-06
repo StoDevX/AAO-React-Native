@@ -61,7 +61,7 @@ function androidOpen(url: string) {
 }
 
 export default function openUrl(url: string) {
-  const protocol = /^(.*?):?\/\//.exec(url)
+  const protocol = /^(.*?):/.exec(url)
 
   if (protocol.length) {
     switch (protocol[1]) {
