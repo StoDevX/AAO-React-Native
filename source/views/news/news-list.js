@@ -23,7 +23,7 @@ export class NewsList extends React.Component {
     embedFeaturedImage: ?boolean,
   }
 
-  onPressNews = (title: string, story: StoryType) => {
+  onPressNews = (story: StoryType) => {
     this.props.navigation.navigate('NewsItemView', {
       story,
       embedFeaturedImage: this.props.embedFeaturedImage,

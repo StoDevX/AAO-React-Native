@@ -8,13 +8,11 @@ import type {StoryType} from './types'
 
 export class NewsRow extends React.PureComponent {
   props: {
-    onPress: (string, StoryType) => any,
+    onPress: StoryType => any,
     story: StoryType,
   }
 
-  _onPress = () => {
-    this.props.onPress(this.props.story.title, this.props.story)
-  }
+  _onPress = () => this.props.onPress(this.props.story)
 
   render() {
     const {story} = this.props
