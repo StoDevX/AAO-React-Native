@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {View, StyleSheet} from 'react-native'
+import {View, StyleSheet, SectionList} from 'react-native'
 import * as c from '../../components/colors'
 import {connect} from 'react-redux'
 import {updateMenuFilters} from '../../../flux'
@@ -13,13 +13,11 @@ import type {
   ProcessedMealType,
   MenuItemContainerType,
 } from '../types'
-import fromPairs from 'lodash/fromPairs'
 import size from 'lodash/size'
 import values from 'lodash/values'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
 import type {FilterType} from '../../components/filter'
 import {applyFiltersToItem} from '../../components/filter'
-import SimpleListView from '../../components/listview'
 import {NoticeView} from '../../components/notice'
 import {FilterMenuToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
@@ -48,7 +46,10 @@ const styles = StyleSheet.create({
   },
 })
 
-class FancyMenuView extends React.Component {
+const CustomSeparator = () =>
+  <ListSeparator spacing={{left: leftSideSpacing}} />
+
+class FancyMenuView extends React.PureComponent {
   static defaultProps = {
     applyFilters: applyFiltersToItem,
   }
@@ -76,29 +77,22 @@ class FancyMenuView extends React.Component {
     })
   }
 
-  renderSectionHeader = (sectionData: MenuItemType[], sectionName: string) => {
+  renderSectionHeader = ({section: {title}}: any) => {
     const {filters, now, meals} = this.props
     const {stations} = chooseMeal(meals, filters, now)
-    const menu = stations.find(m => m.label === sectionName)
+    const menu = stations.find(m => m.label === title)
     const note = menu ? menu.note : ''
 
     return (
       <ListSectionHeader
-        title={sectionName}
+        title={title}
         subtitle={note}
         spacing={{left: leftSideSpacing}}
       />
     )
   }
 
-  renderSeparator = (sectionId: string, rowId: string) => {
-    return (
-      <ListSeparator
-        spacing={{left: leftSideSpacing}}
-        key={`${sectionId}-${rowId}`}
-      />
-    )
-  }
+  keyExtractor = (item, index) => index.toString()
 
   render() {
     const {applyFilters, filters, foodItems, now, meals} = this.props
@@ -123,8 +117,8 @@ class FancyMenuView extends React.Component {
       // we only want to show stations with at least one item in them
       .filter(([_, items]) => items.length)
 
-    // group the tuples into an object (because ListView wants {key: value} not [key, value])
-    const grouped = fromPairs(filteredByMenu)
+    // map the tuples into objects for SectionList
+    const grouped = filteredByMenu.map(([title, data]) => ({title, data}))
 
     const anyFiltersEnabled = filters.some(f => f.enabled)
     const specialsFilterEnabled = Boolean(
@@ -152,9 +146,7 @@ class FancyMenuView extends React.Component {
         />
       )
     } else if (!size(grouped)) {
-      messageView = (
-        <NoticeView style={styles.container} text="No items to show." />
-      )
+      messageView = <NoticeView style={styles.inner} text="No items to show." />
     }
 
     return (
@@ -167,23 +159,21 @@ class FancyMenuView extends React.Component {
         />
         {messageView
           ? messageView
-          : <SimpleListView
+          : <SectionList
+              ItemSeparatorComponent={CustomSeparator}
+              ListEmptyComponent={messageView}
+              keyExtractor={this.keyExtractor}
               style={styles.inner}
-              data={grouped}
-              renderSeparator={this.renderSeparator}
+              sections={grouped}
               renderSectionHeader={this.renderSectionHeader}
-            >
-              {(rowData: MenuItemType) =>
+              renderItem={({item}: {item: MenuItemType}) =>
                 <FoodItemRow
-                  data={rowData}
+                  data={item}
                   corIcons={this.props.menuCorIcons}
-                  // We can't conditionally show the star – wierd things happen, like
-                  // the first two items having a star and none of the rest.
-                  //badgeSpecials={!specialsFilterEnabled}
-                  badgeSpecials={true}
+                  badgeSpecials={!specialsFilterEnabled}
                   spacing={{left: leftSideSpacing}}
                 />}
-            </SimpleListView>}
+            />}
       </View>
     )
   }
