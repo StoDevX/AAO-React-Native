@@ -21,12 +21,6 @@ const Container = glamorous.view({
   paddingHorizontal: 10,
 })
 
-const styles = StyleSheet.create({
-  heading: {
-    color: 'red',
-  },
-})
-
 function formatNumber(phoneNumber: string) {
   const re = /(\d{3})-?(\d{3})-?(\d{4})/g
   return phoneNumber.replace(re, '($1) $2-$3')
@@ -54,12 +48,7 @@ export class ContactCard extends React.PureComponent {
     return (
       <Container>
         <Title selectable={true}>{title}</Title>
-        <Markdown
-          styles={{
-            Strong: styles.heading,
-          }}
-          source={text}
-        />
+        <Markdown source={text} />
         <Button onPress={this.onPress} title={buttonText} />
       </Container>
     )
