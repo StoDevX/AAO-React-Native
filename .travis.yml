@@ -136,3 +136,8 @@ cache:
   bundler: true
   directories:
     - $HOME/.gradle
+
+notifications:
+  webhooks:
+    # trigger Buildtime Trend Service to parse Travis CI log
+    - https://stormy-cliffs-59913.herokuapp.com/travis
