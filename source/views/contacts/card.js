@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {Alert, StyleSheet} from 'react-native'
+import {Alert} from 'react-native'
 import {Button} from '../components/button'
 import {phonecall} from 'react-native-communications'
 import {tracker} from '../../analytics'
