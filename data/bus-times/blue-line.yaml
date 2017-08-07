@@ -1,6 +1,19 @@
 line: Blue Line
 schedules:
   - days: [Su, Mo, Tu, We, Th, Fr, Sa]
+    coordinates:
+      - [44.451472, -93.158529]
+      - [44.453983, -93.159477]
+      - [44.460753, -93.155708]
+      - [44.439669, -93.159831]
+      - [44.469744, -93.163290]
+      - [44.463705, -93.163021]
+      - [] # I can't find South Oaks Apartments
+      - [] # or Ensley Apartments
+      - [44.468945, -93.179970]
+      - [44.462210, -93.183006]
+      - [44.457857, -93.158634]
+      - [44.451472, -93.158529]
     stops:
       - City Hall on Washington
       - Econo Foods
