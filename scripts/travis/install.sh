@@ -8,5 +8,5 @@ if [[ $TRAVIS_OS_NAME == "osx" ]]; then
   brew install imagemagick
 fi
 
-# install fastlane
-bundle install
+# install fastlane (if at first you don't succeed, try once more)
+bundle install || bundle install
