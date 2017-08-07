@@ -31,12 +31,12 @@ platform :android do
 
   desc 'Submit a new beta build to Google Play'
   lane :beta do
-    beta(track: 'beta')
+    submit(track: 'beta')
   end
 
   desc 'Submit a new nightly build to Google Play'
   lane :nightly do
-    beta(track: 'alpha')
+    submit(track: 'alpha')
   end
 
   desc 'Run the appropriate action on CI'
