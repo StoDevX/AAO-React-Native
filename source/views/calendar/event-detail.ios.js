@@ -1,13 +1,11 @@
 // @flow
 import React from 'react'
 import {Text, ScrollView, StyleSheet, Share} from 'react-native'
-import {fastGetTrimmedText} from '../../lib/html'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import type {EventType} from './types'
 import {ShareButton} from '../components/nav-buttons'
-import getUrls from 'get-urls'
 import openUrl from '../components/open-url'
-import {times} from './times'
+import {cleanEvent, getTimes, getLinksFromEvent} from './clean-event'
 
 const styles = StyleSheet.create({
   chunk: {
@@ -39,8 +37,8 @@ function MaybeSection({header, content}: {header: string, content: string}) {
     : null
 }
 
-function Links({header, content}: {header: string, content: string}) {
-  const links = Array.from(getUrls(content))
+function Links({header, event}: {header: string, event: EventType}) {
+  const links = getLinksFromEvent(event)
 
   return links.length
     ? <Section header={header}>
@@ -56,43 +54,18 @@ function Links({header, content}: {header: string, content: string}) {
     : null
 }
 
-function cleanDescription(desc: string) {
-  const description = fastGetTrimmedText(desc || '')
-  if (description == 'See more details') {
-    return ''
-  }
-
-  return description
-}
-
-function getTimes(event: EventType) {
-  const {allDay, start, end} = times(event)
-
-  if (allDay) {
-    return 'All-Day'
-  }
-
-  return `${start} — ${end}`
-}
-
-export function EventDetail(props: {
-  navigation: {state: {params: {event: EventType}}},
-}) {
-  const {event} = props.navigation.state.params
-  const title = fastGetTrimmedText(event.summary || '')
-  const summary = event.extra.data.description || ''
-  const rawSummary = cleanDescription(event.extra.data.description || '')
-  const location = fastGetTrimmedText(event.location || '')
-  const times = getTimes(event)
+type PropsType = {navigation: {state: {params: {event: EventType}}}}
+export function EventDetail(props: PropsType) {
+  const event = cleanEvent(props.navigation.state.params.event)
 
   return (
     <ScrollView>
       <TableView>
-        <MaybeSection header="EVENT" content={title} />
-        <MaybeSection header="TIME" content={times} />
-        <MaybeSection header="LOCATION" content={location} />
-        <MaybeSection header="DESCRIPTION" content={rawSummary} />
-        <Links header="LINKS" content={summary} />
+        <MaybeSection header="EVENT" content={event.title} />
+        <MaybeSection header="TIME" content={event.times} />
+        <MaybeSection header="LOCATION" content={event.location} />
+        <MaybeSection header="DESCRIPTION" content={event.rawSummary} />
+        <Links header="LINKS" event={event} />
       </TableView>
     </ScrollView>
   )
