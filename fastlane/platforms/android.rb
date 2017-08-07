@@ -15,9 +15,9 @@ platform :android do
     UI.message lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS]
   end
 
-  desc 'Submit a new Beta Build to Google Play'
-  lane :beta do |options|
-    track = options[:track] || 'beta'
+  desc 'Submit a new build to Google Play'
+  private_lane :submit do |options|
+    track = options[:track]
     build(track: track)
 
     lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS] =
@@ -25,10 +25,16 @@ platform :android do
         apk.end_with? '-release.apk'
       end
 
-    supply(track: track, check_superseded_tracks: true)
+    supply(track: track,
+           check_superseded_tracks: true)
   end
 
-  desc 'Submit a new nightly Build to Google Play'
+  desc 'Submit a new beta build to Google Play'
+  lane :beta do
+    beta(track: 'beta')
+  end
+
+  desc 'Submit a new nightly build to Google Play'
   lane :nightly do
     beta(track: 'alpha')
   end
