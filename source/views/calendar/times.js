@@ -82,4 +82,3 @@ export function detailTimes(event: EventType) {
 
   return {start, end, allDay}
 }
-
