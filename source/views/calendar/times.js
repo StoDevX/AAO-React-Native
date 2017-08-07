@@ -70,7 +70,7 @@ export function detailTimes(event: EventType) {
       : 'MMM. D h:mm A'
     end = `${event.endTime.format(endFormat)}`
   } else if (sillyZeroLength) {
-    start = `Starts at ${startTimeFormatted}`
+    start = `Starts on ${startTimeFormatted}`
     end = ''
   } else {
     start = startTimeFormatted
