@@ -62,15 +62,17 @@ export default class KSTOView extends React.PureComponent {
         {/*<Song />*/}
         <Title />
 
-        <Video
-          ref={ref => (this.player = ref)}
-          source={{uri: kstoStream}}
-          playInBackground={true}
-          playWhenInactive={true}
-          paused={this.state.paused}
-          onTimedMetadata={this.onTimedMetadata}
-          onError={this.onError}
-        />
+        {!this.state.paused
+          ? <Video
+              ref={ref => (this.player = ref)}
+              source={{uri: kstoStream}}
+              playInBackground={true}
+              playWhenInactive={true}
+              paused={this.state.paused}
+              onTimedMetadata={this.onTimedMetadata}
+              onError={this.onError}
+            />
+          : null}
       </View>
     )
   }
