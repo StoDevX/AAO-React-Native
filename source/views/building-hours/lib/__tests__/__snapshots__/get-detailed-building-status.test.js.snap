@@ -15,7 +15,7 @@ Array [
   Object {
     "isActive": false,
     "label": "Hours",
-    "status": "10:30 AM — 12:00 PM",
+    "status": "10:30 AM — Noon",
   },
   Object {
     "isActive": true,
@@ -30,12 +30,12 @@ Array [
   Object {
     "isActive": false,
     "label": "Hours",
-    "status": "10:30 AM — 12:00 PM",
+    "status": "10:30 AM — Noon",
   },
   Object {
     "isActive": false,
     "label": "Hours2",
-    "status": "10:30 AM — 12:00 PM",
+    "status": "10:30 AM — Noon",
   },
   Object {
     "isActive": true,
