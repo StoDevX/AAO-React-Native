@@ -72,7 +72,7 @@
     "react-native-keychain": "2.0.0-rc",
     "react-native-linear-gradient": "2.1.0",
     "react-native-maps": "0.15.3",
-    "react-native-network-info": "2.2.0",
+    "react-native-network-info": "3.0.0",
     "react-native-onesignal": "3.0.4",
     "react-native-parallax-view": "2.0.6",
     "react-native-restart": "0.0.2",
