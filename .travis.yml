@@ -169,7 +169,6 @@ before_cache:
 cache:
   bundler: true
   directories:
-    - node_modules
     - $HOME/.gradle
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
