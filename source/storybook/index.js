@@ -21,8 +21,6 @@ import flatten from 'lodash/flatten'
 import toPairs from 'lodash/toPairs'
 
 import * as c from '../views/components/colors'
-import SimpleListView from '../views/components/listview'
-SimpleListView.initialListSize = 18
 import {StyledAlphabetListView} from '../views/components/alphabet-listview'
 StyledAlphabetListView.initialListSize = 18
 

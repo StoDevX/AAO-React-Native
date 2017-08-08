@@ -1,8 +1,11 @@
+# coding: utf-8
 platform :android do
   desc 'Makes a build'
-  lane :build do
+  lane :build do |options|
     # make sure we have a copy of the data files
-    bundle_data
+    sh('npm run bundle-data')
+
+    propagate_version(track: options[:track])
 
     gradle(task: 'assemble',
            build_type: 'Release',
@@ -12,14 +15,28 @@ platform :android do
     UI.message lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS]
   end
 
-  desc 'Submit a new Beta Build to HockeyApp'
-  lane :beta do
-    build
+  desc 'Submit a new build to Google Play'
+  private_lane :submit do |options|
+    track = options[:track]
+    build(track: track)
 
     lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS] =
-      lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].select{ |apk| apk.end_with? "-release.apk" }
+      lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].select do |apk|
+        apk.end_with? '-release.apk'
+      end
 
-    supply(track: 'beta')
+    supply(track: track,
+           check_superseded_tracks: true)
+  end
+
+  desc 'Submit a new beta build to Google Play'
+  lane :beta do
+    submit(track: 'beta')
+  end
+
+  desc 'Submit a new nightly build to Google Play'
+  lane :nightly do
+    submit(track: 'alpha')
   end
 
   desc 'Run the appropriate action on CI'
@@ -28,24 +45,18 @@ platform :android do
     authorize_ci_for_keys
     matchesque
 
-    # set the app version
-    set_version
-
     # and run
-    should_deploy = ENV['run_deploy'] == '1'
-    if should_deploy
-      auto_beta
-    else
-      build
-    end
+    auto_beta
   end
 
-  desc 'Include the build number in the version string'
-  lane :set_version do |options|
-    version = options[:version] || current_bundle_version
-    set_gradle_version_name(version_name: version,
-                            gradle_path: lane_context[:GRADLE_FILE])
-    set_package_data(data: { version: "#{version}" })
+  desc 'Set up an android emulator on TravisCI'
+  lane :'ci-emulator' do
+    emulator_name = "react-native"
+    Dir.mkdir("$HOME/.android/avd/#{emulator_name}.avd/")
+    sh("echo no | android create avd --force -n '#{emulator_name}' -t android-23 --abi google_apis/armeabi-v7a")
+    sh("emulator -avd '#{emulator_name}' -no-audio -no-window &")
+    sh('android-wait-for-emulator')
+    sh('adb shell input keyevent 82 &')
   end
 
   desc 'extract the android keys from the match repo'

@@ -1,6 +1,6 @@
 name: Tomson East Lantern
 pageUrl: https://www.stolaf.edu/multimedia/webcams?cam=tomsoneast
-streamUrl: http://stolaf-flash.streamguys.net/webcams/tomsoneast.stream/playlist.m3u8
+streamUrl: https://cdn.stobcm.com/webcams/tomsoneast.stream/master.m3u8
 thumbnail: tomsoneast
 tagline: A view of the campus green and Wind Chime Memorial
 accentColor: [89, 84, 82]

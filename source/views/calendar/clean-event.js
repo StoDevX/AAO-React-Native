@@ -2,9 +2,9 @@
 import type {EventType} from './types'
 import {fastGetTrimmedText} from '../../lib/html'
 import getUrls from 'get-urls'
-import {times} from './times'
+import {detailTimes} from './times'
 
-export function cleanEvent(event: EventType): EventType {
+export function cleanEvent(event: EventType) {
   const title = fastGetTrimmedText(event.summary || '')
   const summary = fastGetTrimmedText(event.extra.data.description || '')
   const rawSummary = cleanDescription(event.extra.data.description || '')
@@ -31,13 +31,13 @@ function cleanDescription(desc: string) {
 }
 
 export function getTimes(event: EventType) {
-  const {allDay, start, end} = times(event)
+  const {allDay, start, end} = detailTimes(event)
 
   if (allDay) {
-    return 'All-Day'
+    return `All-Day on ${event.startTime.format('MMM D.')}`
   }
 
-  return `${start} — ${end}`
+  return `${start}${end ? ' to ' + end : ''}`
 }
 
 export function getLinksFromEvent(event: EventType) {

@@ -6,18 +6,13 @@ import {tracker} from '../../analytics'
 import SafariView from 'react-native-safari-view'
 import {CustomTabs} from 'react-native-custom-tabs'
 
-let iosOnShowListener = null
-let iosOnDismissListener = null
+let iosOnShowListener = () => StatusBar.setBarStyle('dark-content')
+let iosOnDismissListener = () => StatusBar.setBarStyle('light-content')
 function startStatusBarColorChanger() {
   SafariView.isAvailable()
     .then(() => {
-      iosOnShowListener = SafariView.addEventListener('onShow', () =>
-        StatusBar.setBarStyle('dark-content'),
-      )
-
-      iosOnDismissListener = SafariView.addEventListener('onDismiss', () =>
-        StatusBar.setBarStyle('light-content'),
-      )
+      SafariView.addEventListener('onShow', iosOnShowListener)
+      SafariView.addEventListener('onDismiss', iosOnDismissListener)
     })
     .catch(() => {})
 }
@@ -66,6 +61,19 @@ function androidOpen(url: string) {
 }
 
 export default function openUrl(url: string) {
+  const protocol = /^(.*?):/.exec(url)
+
+  if (protocol.length) {
+    switch (protocol[1]) {
+      case 'tel':
+        return genericOpen(url)
+      case 'mailto':
+        return genericOpen(url)
+      default:
+        break
+    }
+  }
+
   switch (Platform.OS) {
     case 'android':
       return androidOpen(url)

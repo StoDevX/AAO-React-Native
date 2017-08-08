@@ -1,6 +1,6 @@
 name: East Quad
 pageUrl: https://www.stolaf.edu/multimedia/webcams?cam=eastquad
-streamUrl: http://stolaf-flash.streamguys.net/webcams/eastquad.stream/playlist.m3u8
+streamUrl: https://cdn.stobcm.com/webcams/eastquad.stream/master.m3u8
 thumbnail: eastquad
 tagline: Looking out to Regents, Holland Hall, and Old Main
 accentColor: [82, 87, 54]
