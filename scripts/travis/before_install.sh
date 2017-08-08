@@ -14,6 +14,8 @@ npm config set progress=false
 
 npm install -g npm@latest
 
-# Adding this to accept ConstraintLayout's license... see https://github.com/travis-ci/travis-ci/issues/6617
-echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
-echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
+if [[ $ANDROID ]]; then
+  # Adding this to accept ConstraintLayout's license... see https://github.com/travis-ci/travis-ci/issues/6617
+  echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
+  echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
+fi
