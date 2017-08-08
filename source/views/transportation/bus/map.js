@@ -10,6 +10,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import {getScheduleForNow} from './lib'
 import zip from 'lodash/zip'
 import uniqBy from 'lodash/uniqBy'
+import isEqual from 'lodash/isEqual'
 
 import {data as defaultBusLines} from '../../../../docs/bus-times.json'
 
@@ -31,7 +32,7 @@ export class BusMapView extends React.PureComponent {
   state = {
     intervalId: 0,
     now: moment.tz(TIMEZONE),
-    region: {
+    initialRegion: {
       latitude: 44.44946671480875,
       latitudeDelta: 0.06175530810822494,
       longitude: -93.17014753996669,
@@ -60,13 +61,21 @@ export class BusMapView extends React.PureComponent {
     },
   }
 
-  onRegionChange = (region: {
+  onRegionChangeComplete = (region: {
     latitude: number,
     latitudeDelta: number,
     longitude: number,
     longitudeDelta: number,
   }) => {
-    this.setState(() => ({region}))
+    this.setState(state => {
+      const initialRegion = state.initialRegion
+
+      if (initialRegion && isEqual(initialRegion, region)) {
+        return state
+      }
+
+      return {initialRegion: region}
+    })
   }
 
   updateTime = () => {
@@ -107,9 +116,9 @@ export class BusMapView extends React.PureComponent {
 
     return (
       <MapView
-        region={this.state.region}
+        region={this.state.initialRegion}
         style={styles.map}
-        onRegionChange={this.onRegionChange}
+        onRegionChangeComplete={this.onRegionChangeComplete}
         loadingEnabled={true}
       >
         {markers.map(([[latitude, longitude], title], i) =>
