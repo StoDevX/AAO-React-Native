@@ -83,7 +83,7 @@ before_install:
   - echo "Travis branch is $TRAVIS_BRANCH"
   - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
   - echo "Build triggered by $TRAVIS_EVENT_TYPE"
-  - echo "Using node $TRAVIS_NODE_VERSION"
+  - echo "Using node $TRAVIS_NODE_VERSION (node -v says $(node -v)"
 
   # make sure to use ruby 2.4
   - rvm use ruby-2.4.1 --install --binary --create
