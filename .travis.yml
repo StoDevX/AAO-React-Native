@@ -110,11 +110,13 @@ before_install:
   - npm config set progress=false
 
   - npm install -g npm@5
+  - if [[ $JS ]]; then npm install -g greenkeeper-lockfile@1; fi
 
 install:
   - bash scripts/travis/install.sh
 
 before_script:
+  - if [[ $JS ]]; then greenkeeper-lockfile-update; fi
   # Fire up the Android emulator
   - if [[ $ANDROID && $USE_EMULATOR = yes ]]; then
       bundle exec fastlane android ci-emulator;
