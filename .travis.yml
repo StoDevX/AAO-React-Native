@@ -84,8 +84,8 @@ before_install:
       nvm use "$TRAVIS_NODE_VERSION";
     fi
 
-  # make sure to use ruby 2.3
-  - rvm use ruby-2.3.1 --install --binary --create
+  # make sure to use ruby 2.4
+  - rvm use ruby-2.4.1 --install --binary --create
   - gem install bundler
 
   # only deploy from:
