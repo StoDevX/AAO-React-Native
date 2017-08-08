@@ -61,20 +61,18 @@ export class BusMapView extends React.PureComponent {
     },
   }
 
-  onRegionChangeComplete = (region: {
+  onRegionChangeComplete = (newRegion: {
     latitude: number,
     latitudeDelta: number,
     longitude: number,
     longitudeDelta: number,
   }) => {
     this.setState(state => {
-      const newRegion = state.region
-
-      if (newRegion && isEqual(newRegion, region)) {
-        return state
+      if (isEqual(state.region, newRegion)) {
+        return
       }
 
-      return {newRegion: region}
+      return {region: newRegion}
     })
   }
 
