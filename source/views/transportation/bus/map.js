@@ -68,13 +68,13 @@ export class BusMapView extends React.PureComponent {
     longitudeDelta: number,
   }) => {
     this.setState(state => {
-      const initialRegion = state.initialRegion
+      const newRegion = state.region
 
-      if (initialRegion && isEqual(initialRegion, region)) {
+      if (newRegion && isEqual(newRegion, region)) {
         return state
       }
 
-      return {initialRegion: region}
+      return {newRegion: region}
     })
   }
 
