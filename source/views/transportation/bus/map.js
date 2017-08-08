@@ -116,7 +116,7 @@ export class BusMapView extends React.PureComponent {
 
     return (
       <MapView
-        region={this.state.initialRegion}
+        region={this.state.region}
         style={styles.map}
         onRegionChangeComplete={this.onRegionChangeComplete}
         loadingEnabled={true}
