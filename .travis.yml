@@ -119,7 +119,7 @@ install:
   # install fastlane (if at first you don't succeed, try once more)
   - bundle install || bundle install
 
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then; brew install imagemagick; fi
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install imagemagick; fi
 
 before_script:
   - if [[ $JS ]]; then greenkeeper-lockfile-update; fi
