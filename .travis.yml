@@ -144,13 +144,16 @@ deploy:
       condition: $JS
 
 before_cache:
-  - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"
-  - rm -rf "$TMPDIR/jest_preprocess_cache"
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -rf $TMPDIR/jest_preprocess_cache
 
 cache:
   bundler: true
   directories:
     - $HOME/.gradle
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
 
 notifications:
   webhooks:
