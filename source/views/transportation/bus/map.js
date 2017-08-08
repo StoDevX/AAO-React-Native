@@ -32,7 +32,7 @@ export class BusMapView extends React.PureComponent {
   state = {
     intervalId: 0,
     now: moment.tz(TIMEZONE),
-    initialRegion: {
+    region: {
       latitude: 44.44946671480875,
       latitudeDelta: 0.06175530810822494,
       longitude: -93.17014753996669,
