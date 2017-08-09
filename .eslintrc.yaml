@@ -105,7 +105,6 @@ rules:
   flowtype/define-flow-type: warn
   flowtype/use-flow-type: error
   flowtype/valid-syntax: error
-  flowtype/no-types-missing-file-annotation: off
 
   # react-native rules
   react-native/no-unused-styles: warn
