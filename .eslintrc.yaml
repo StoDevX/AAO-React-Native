@@ -43,7 +43,11 @@ rules:
   no-div-regex: error
   no-eq-null: warn
   no-extra-label: error
-  no-implicit-coercion: [error, {boolean: true, number: true, string: true}]
+  no-implicit-coercion:
+    - error
+    - boolean: true
+      number: true
+      string: true
   no-implicit-globals: error
   no-multi-assign: error
   no-new-symbol: error
@@ -53,7 +57,10 @@ rules:
   no-undef-init: off
   no-underscore-dangle: off
   no-unmodified-loop-condition: error
-  no-unused-vars: [warn, {args: 'after-used', argsIgnorePattern: '^_$'}]
+  no-unused-vars:
+    - warn
+    - args: 'after-used'
+      argsIgnorePattern: '^_$'
   no-useless-constructor: error
   no-var: error
   prefer-promise-reject-errors: error
@@ -65,7 +72,10 @@ rules:
   # react rules – https://github.com/yannickcr/eslint-plugin-react
   react/display-name: off
   react/jsx-key: warn
-  react/jsx-no-bind: [warn, {ignoreRefs: true, allowArrowFunctions: true}]
+  react/jsx-no-bind:
+    - warn
+    - ignoreRefs: true
+      allowArrowFunctions: true
   react/jsx-sort-props:
     - warn
     - reservedFirst: true
