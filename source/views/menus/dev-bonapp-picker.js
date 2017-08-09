@@ -72,7 +72,7 @@ export class BonAppPickerView extends React.Component {
             style={styles.default}
             onBlur={this.chooseMenu}
           />
-          <ToolbarButton title="Go" isActive />
+          <ToolbarButton title="Go" isActive={true} />
         </Toolbar>
         {this.state.menu}
       </View>

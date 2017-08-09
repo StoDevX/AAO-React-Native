@@ -30,7 +30,7 @@ type ToolbarPropsType = {
 export function Toolbar({children, onPress}: ToolbarPropsType) {
   return (
     <View style={toolbarStyles.shadow}>
-      <Touchable onPress={onPress} style={toolbarStyles.container} borderless>
+      <Touchable onPress={onPress} style={toolbarStyles.container} borderless={true}>
         {children}
       </Touchable>
     </View>

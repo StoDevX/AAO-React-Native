@@ -77,6 +77,7 @@ rules:
   react/sort-comp: warn
   react/sort-prop-types: warn
   react/wrap-multilines: off
+  react/jsx-boolean-value: [error, always]
 
   # flow rules
   flowtype/define-flow-type: warn
