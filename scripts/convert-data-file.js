@@ -10,7 +10,7 @@ if (process.mainModule === module) {
   const toFile = args[1] || '-'
   if (!fromFile || fromFile === '-h' || fromFile === '--help') {
     console.error(
-      'usage: node convert-data-file.js <from-file.{md,yaml}> [to-file]',
+      'usage: node convert-data-file.js <from-file.{md,yaml}> [to-file]'
     )
     process.exit(1)
   }
@@ -33,7 +33,7 @@ function convertDataFile({fromFile, toFile}) {
       break
     default:
       throw new Error(
-        `unexpected filetype "${fileType}; expected "md" or "yaml"`,
+        `unexpected filetype "${fileType}; expected "md" or "yaml"`
       )
   }
 
