@@ -66,6 +66,11 @@ rules:
   react/display-name: off
   react/jsx-key: warn
   react/jsx-no-bind: [warn, {ignoreRefs: true, allowArrowFunctions: true}]
+  react/jsx-sort-props:
+    - warn
+    - reservedFirst: true
+      ignoreCase: true
+      callbacksLast: true
   react/no-did-mount-set-state: warn
   react/no-did-update-set-state: warn
   react/no-multi-comp: off  # prevent multiple component definition per file
