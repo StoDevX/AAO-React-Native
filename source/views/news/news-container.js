@@ -11,6 +11,14 @@ import {NewsList} from './news-list'
 import {fetchRssFeed, fetchWpJson} from './fetch-feed'
 
 export default class NewsContainer extends React.Component {
+  props: TopLevelViewPropsType & {
+    name: string,
+    url: string,
+    query?: Object,
+    embedFeaturedImage?: boolean,
+    mode: 'rss' | 'wp-json',
+  }
+
   state: {
     entries: StoryType[],
     loading: boolean,
@@ -25,14 +33,6 @@ export default class NewsContainer extends React.Component {
 
   componentWillMount() {
     this.fetchData().then(() => this.setState({loading: false}))
-  }
-
-  props: TopLevelViewPropsType & {
-    name: string,
-    url: string,
-    query?: Object,
-    embedFeaturedImage?: boolean,
-    mode: 'rss' | 'wp-json',
   }
 
   fetchData = async () => {

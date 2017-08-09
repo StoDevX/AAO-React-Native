@@ -51,18 +51,18 @@ class CoursesView extends React.PureComponent {
     tabBarIcon: TabBarIcon('archive'),
   }
 
-  state: {
-    loading: boolean,
-  } = {
-    loading: false,
-  }
-
   props: {
     error: null,
     loggedIn: true,
     updateCourses: (force: boolean) => {},
     coursesByTerm: CoursesByTermType,
   } & TopLevelViewPropsType
+
+  state: {
+    loading: boolean,
+  } = {
+    loading: false,
+  }
 
   refresh = async () => {
     let start = Date.now()

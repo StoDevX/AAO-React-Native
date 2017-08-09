@@ -28,6 +28,8 @@ export class BonAppPickerView extends React.Component {
     tabBarIcon: TabBarIcon('ionic'),
   }
 
+  props: TopLevelViewPropsType
+
   state: {
     cafeId: string,
     menu: ?any,
@@ -39,8 +41,6 @@ export class BonAppPickerView extends React.Component {
   componentWillMount() {
     this.chooseMenu()
   }
-
-  props: TopLevelViewPropsType
 
   chooseCafe = (cafeId: string) => {
     if (!/^\d*$/.test(cafeId)) {

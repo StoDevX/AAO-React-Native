@@ -21,6 +21,8 @@ export default class KSTOView extends React.PureComponent {
     tabBarIcon: TabBarIcon('radio'),
   }
 
+  player: Video
+
   state: {
     refreshing: boolean,
     paused: boolean,
@@ -48,8 +50,6 @@ export default class KSTOView extends React.PureComponent {
     this.setState(() => ({streamError: e, paused: true}))
     console.log(e)
   }
-
-  player: Video
 
   render() {
     return (

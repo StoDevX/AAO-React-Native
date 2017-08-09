@@ -18,6 +18,8 @@ import {GOOGLE_CALENDAR_API_KEY} from '../../lib/config'
 const TIMEZONE = 'America/Winnipeg'
 
 export class GoogleCalendarView extends React.Component {
+  props: {calendarId: string} & TopLevelViewPropsType
+
   state: {
     events: EventType[],
     loaded: boolean,
@@ -35,8 +37,6 @@ export class GoogleCalendarView extends React.Component {
   componentWillMount() {
     this.refresh()
   }
-
-  props: {calendarId: string} & TopLevelViewPropsType
 
   buildCalendarUrl(calendarId: string) {
     let calendarUrl = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`

@@ -74,7 +74,14 @@ rules:
   react/no-unknown-property: warn
   react/prop-types: off
   react/self-closing-comp: warn  # prevent extra closing tags for components without children
-  react/sort-comp: warn
+  react/sort-comp:
+    - warn
+    - order:
+      - static-methods
+      - type-annotations
+      - lifecycle
+      - everything-else
+      - render
   react/sort-prop-types: warn
   react/wrap-multilines: off
   react/jsx-boolean-value: [error, always]

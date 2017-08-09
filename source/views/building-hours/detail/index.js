@@ -19,6 +19,10 @@ export class BuildingHoursDetailView extends React.PureComponent {
     }
   }
 
+  props: TopLevelViewPropsType & {
+    navigation: {state: {params: {building: BuildingType}}},
+  }
+
   state: {intervalId: number, now: moment} = {
     intervalId: 0,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
@@ -33,10 +37,6 @@ export class BuildingHoursDetailView extends React.PureComponent {
 
   componentWillUnmount() {
     clearTimeout(this.state.intervalId)
-  }
-
-  props: TopLevelViewPropsType & {
-    navigation: {state: {params: {building: BuildingType}}},
   }
 
   updateTime = () => {

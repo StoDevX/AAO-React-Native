@@ -23,12 +23,6 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent {
     title: 'Edit Schedule',
   }
 
-  state: {
-    set: ?SingleBuildingScheduleType,
-  } = {
-    set: this.props.navigation.state.params.initialSet,
-  }
-
   props: TopLevelViewPropsType & {
     navigation: {
       state: {
@@ -39,6 +33,12 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent {
         },
       },
     },
+  }
+
+  state: {
+    set: ?SingleBuildingScheduleType,
+  } = {
+    set: this.props.navigation.state.params.initialSet,
   }
 
   delete = () => {

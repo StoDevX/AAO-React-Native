@@ -81,11 +81,11 @@ export class SnapshotsView extends React.Component {
     title: 'Snapshot Time',
   }
 
+  _ref: any
+
   state = {
     viewPath: 'streaming.radio',
   }
-
-  _ref: any
 
   views: ViewCollectionType = {
     buildinghours: {

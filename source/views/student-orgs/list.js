@@ -71,6 +71,9 @@ export class StudentOrgsView extends React.Component {
     headerBackTitle: 'Orgs',
   }
 
+  props: TopLevelViewPropsType
+  searchBar: any
+
   state: {
     orgs: {[key: string]: StudentOrgType[]},
     results: {[key: string]: StudentOrgType[]},
@@ -88,8 +91,6 @@ export class StudentOrgsView extends React.Component {
   componentWillMount() {
     this.refresh()
   }
-
-  props: TopLevelViewPropsType
 
   fetchData = async () => {
     try {
@@ -212,8 +213,6 @@ export class StudentOrgsView extends React.Component {
   // so I'm slowing it down by 50ms. 0ms also works, but seems
   // rather pointless.
   performSearch = debounce(this._performSearch, 50)
-
-  searchBar: any
 
   render() {
     if (!this.state.loaded) {
