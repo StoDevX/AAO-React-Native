@@ -188,6 +188,15 @@ if (propFile.canRead()) {
     android.buildTypes.release.signingConfig = null
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.getRequested().getGroup() == 'com.google.android.gms') {
+            // check for an update to this whenever we update react-native-maps
+            details.useVersion('10.2.4')
+        }
+    }
+}
+
 dependencies {
     // please keep this list sorted
     compile project(':bugsnag-react-native')
