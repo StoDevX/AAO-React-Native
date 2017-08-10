@@ -201,6 +201,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules
     compile 'com.android.support.constraint:constraint-layout:1.0.2' // For android home screen widget
+    compile 'com.squareup.okhttp3:okhttp:3.8.1' // Make requests from android code
 }
 
 // Run this once to be able to run the application with BUCK

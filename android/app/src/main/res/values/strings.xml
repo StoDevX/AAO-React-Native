@@ -8,4 +8,5 @@
     <string name="meals">Meals</string>
     <string name="this_week">This Week</string>
     <string name="today">Today</string>
+    <string name="balances_url">test.com</string>
 </resources>
