@@ -5,7 +5,14 @@
  */
 
 import React from 'react'
-import {StyleSheet, View, Text, Dimensions, Image} from 'react-native'
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  Dimensions,
+  Image,
+} from 'react-native'
 import * as c from '../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 import Video from 'react-native-video'
@@ -53,27 +60,29 @@ export default class KSTOView extends React.PureComponent {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Logo />
-        <PlayPauseButton
-          onPress={this.changeControl}
-          paused={this.state.paused}
-        />
-        {/*<Song />*/}
-        <Title />
+      <ScrollView>
+        <View style={styles.container}>
+          <Logo />
+          <PlayPauseButton
+            onPress={this.changeControl}
+            paused={this.state.paused}
+          />
+          {/*<Song />*/}
+          <Title />
 
-        {!this.state.paused
-          ? <Video
-              ref={ref => (this.player = ref)}
-              source={{uri: kstoStream}}
-              playInBackground={true}
-              playWhenInactive={true}
-              paused={this.state.paused}
-              onTimedMetadata={this.onTimedMetadata}
-              onError={this.onError}
-            />
-          : null}
-      </View>
+          {!this.state.paused
+            ? <Video
+                ref={ref => (this.player = ref)}
+                source={{uri: kstoStream}}
+                playInBackground={true}
+                playWhenInactive={true}
+                paused={this.state.paused}
+                onTimedMetadata={this.onTimedMetadata}
+                onError={this.onError}
+              />
+            : null}
+        </View>
+      </ScrollView>
     )
   }
 }
