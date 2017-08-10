@@ -69,3 +69,6 @@ docs/
 # android keystores
 android/app/signing.properties
 *.keystore
+
+# vim temp files
+*.swp
