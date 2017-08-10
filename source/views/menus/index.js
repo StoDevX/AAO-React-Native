@@ -3,7 +3,6 @@
  * All About Olaf
  * Menus page
  */
-
 import React from 'react'
 import {StackNavigator} from 'react-navigation'
 import {TabNavigator} from '../components/tabbed-view'
@@ -19,6 +18,7 @@ import {
   CarletonSaylesMenuScreen,
 } from './carleton-menus'
 // import {BonAppPickerView} from './dev-bonapp-picker'
+import {data} from '../../../docs/menus.json'
 
 const CarletonMenuPicker = StackNavigator(
   {
@@ -41,14 +41,7 @@ export const MenusView = TabNavigator(
           navigation={navigation}
           name="stav"
           cafeId="261"
-          loadingMessage={[
-            'Hunting Ferndale Turkey…',
-            'Tracking wild vegan burgers…',
-            '"Cooking" some lutefisk…',
-            'Finding more mugs…',
-            'Waiting for omlets…',
-            'Putting out more cookies…',
-          ]}
+          loadingMessage={data[0].bonappLoading}
         />,
       navigationOptions: {
         tabBarLabel: 'Stav Hall',
@@ -63,13 +56,7 @@ export const MenusView = TabNavigator(
           name="cage"
           cafeId="262"
           ignoreProvidedMenus={true}
-          loadingMessage={[
-            'Checking for vegan cookies…',
-            'Serving up some shakes…',
-            'Waiting for menu screens to change…',
-            'Frying chicken…',
-            'Brewing coffee…',
-          ]}
+          loadingMessage={data[1].cageLoading}
         />,
       navigationOptions: {
         tabBarLabel: 'The Cage',
@@ -82,13 +69,7 @@ export const MenusView = TabNavigator(
         <GitHubHostedMenu
           navigation={navigation}
           name="pause"
-          loadingMessage={[
-            'Mixing up a shake…',
-            'Spinning up pizzas…',
-            'Turning up the music…',
-            'Putting ice cream on the cookies…',
-            'Fixing the oven…',
-          ]}
+          loadingMessage={data[2].pauseLoading}
         />,
       navigationOptions: {
         tabBarLabel: 'The Pause',
