@@ -17,6 +17,11 @@ export class BusView extends React.PureComponent {
     busLines: defaultBusLines,
   }
 
+  props: TopLevelViewPropsType & {
+    busLines: BusLineType[],
+    line: string,
+  }
+
   state = {
     intervalId: 0,
     now: moment.tz(TIMEZONE),
@@ -30,11 +35,6 @@ export class BusView extends React.PureComponent {
 
   componentWillUnmount() {
     clearTimeout(this.state.intervalId)
-  }
-
-  props: TopLevelViewPropsType & {
-    busLines: BusLineType[],
-    line: string,
   }
 
   updateTime = () => {

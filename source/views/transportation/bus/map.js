@@ -29,6 +29,17 @@ export class BusMapView extends React.PureComponent {
     busLines: defaultBusLines,
   }
 
+  props: TopLevelViewPropsType & {
+    busLines: BusLineType[],
+    navigation: {
+      state: {
+        params: {
+          line: string,
+        },
+      },
+    },
+  }
+
   state = {
     intervalId: 0,
     now: moment.tz(TIMEZONE),
@@ -48,17 +59,6 @@ export class BusMapView extends React.PureComponent {
 
   componentWillUnmount() {
     clearTimeout(this.state.intervalId)
-  }
-
-  props: TopLevelViewPropsType & {
-    busLines: BusLineType[],
-    navigation: {
-      state: {
-        params: {
-          line: string,
-        },
-      },
-    },
   }
 
   onRegionChangeComplete = (newRegion: {

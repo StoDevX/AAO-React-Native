@@ -43,7 +43,11 @@ rules:
   no-div-regex: error
   no-eq-null: warn
   no-extra-label: error
-  no-implicit-coercion: [error, {boolean: true, number: true, string: true}]
+  no-implicit-coercion:
+    - error
+    - boolean: true
+      number: true
+      string: true
   no-implicit-globals: error
   no-multi-assign: error
   no-new-symbol: error
@@ -53,7 +57,10 @@ rules:
   no-undef-init: off
   no-underscore-dangle: off
   no-unmodified-loop-condition: error
-  no-unused-vars: [warn, {args: 'after-used', argsIgnorePattern: '^_$'}]
+  no-unused-vars:
+    - warn
+    - args: 'after-used'
+      argsIgnorePattern: '^_$'
   no-useless-constructor: error
   no-var: error
   prefer-promise-reject-errors: error
@@ -65,24 +72,35 @@ rules:
   # react rules – https://github.com/yannickcr/eslint-plugin-react
   react/display-name: off
   react/jsx-key: warn
-  react/jsx-no-bind: [warn, {ignoreRefs: true, allowArrowFunctions: true}]
-  react/no-did-mount-set-state: warn
-  react/no-did-update-set-state: warn
+  react/jsx-no-bind:
+    - warn
+    - ignoreRefs: true
+      allowArrowFunctions: true
+  react/jsx-sort-props:
+    - warn
+    - reservedFirst: true
+      ignoreCase: true
+      callbacksLast: true
   react/no-multi-comp: off  # prevent multiple component definition per file
-  react/no-string-refs: error
-  react/no-unescaped-entities: off
-  react/no-unknown-property: warn
+  react/no-redundant-should-component-update: warn
+  react/no-typos: error
   react/prop-types: off
   react/self-closing-comp: warn  # prevent extra closing tags for components without children
-  react/sort-comp: warn
+  react/sort-comp:
+    - warn
+    - order:
+      - static-methods
+      - type-annotations
+      - lifecycle
+      - everything-else
+      - render
   react/sort-prop-types: warn
   react/wrap-multilines: off
+  react/jsx-boolean-value: [error, always]
 
   # flow rules
-  flowtype/define-flow-type: warn
+  flowtype/no-dupe-keys: error
   flowtype/use-flow-type: error
-  flowtype/valid-syntax: error
-  flowtype/no-types-missing-file-annotation: off
 
   # react-native rules
   react-native/no-unused-styles: warn

@@ -19,7 +19,7 @@ export function OpenSettingsButton({
 }) {
   return (
     <Touchable
-      borderless
+      borderless={true}
       highlight={false}
       style={[styles.button, buttonStyle]}
       onPress={() => navigation.navigate('SettingsView')}
