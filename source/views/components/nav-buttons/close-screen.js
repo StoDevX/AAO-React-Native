@@ -18,7 +18,7 @@ export function CloseScreenButton({
 }) {
   return (
     <Touchable
-      borderless
+      borderless={true}
       highlight={false}
       style={[commonStyles.button, buttonStyle]}
       onPress={() => navigation.goBack()}

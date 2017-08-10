@@ -44,6 +44,11 @@ const MenuIcon = ({icon, tint}: {icon: string, tint: string}) =>
   />
 
 class Row extends React.Component {
+  props: {
+    data: ViewType,
+    active: boolean,
+  }
+
   state = {
     style: {
       shadowRadius: new Animated.Value(2),
@@ -61,11 +66,6 @@ class Row extends React.Component {
         this.startDeactivationAnimation()
       }
     }
-  }
-
-  props: {
-    data: ViewType,
-    active: boolean,
   }
 
   startActivationAnimation = () => {

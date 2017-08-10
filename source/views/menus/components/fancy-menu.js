@@ -54,6 +54,8 @@ class FancyMenuView extends React.PureComponent {
     applyFilters: applyFiltersToItem,
   }
 
+  props: FancyMenuPropsType
+
   componentWillMount() {
     let {foodItems, menuCorIcons, filters, meals, now} = this.props
 
@@ -67,8 +69,6 @@ class FancyMenuView extends React.PureComponent {
       buildFilters(foodItemsArray, menuCorIcons, meals, now),
     )
   }
-
-  props: FancyMenuPropsType
 
   openFilterView = () => {
     this.props.navigation.navigate('FilterView', {

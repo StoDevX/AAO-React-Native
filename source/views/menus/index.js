@@ -45,6 +45,9 @@ export const MenusView = TabNavigator(
             'Hunting Ferndale Turkey…',
             'Tracking wild vegan burgers…',
             '"Cooking" some lutefisk…',
+            'Finding more mugs…',
+            'Waiting for omlets…',
+            'Putting out more cookies…',
           ]}
         />,
       navigationOptions: {
@@ -63,6 +66,9 @@ export const MenusView = TabNavigator(
           loadingMessage={[
             'Checking for vegan cookies…',
             'Serving up some shakes…',
+            'Waiting for menu screens to change…',
+            'Frying chicken…',
+            'Brewing coffee…',
           ]}
         />,
       navigationOptions: {
@@ -76,7 +82,13 @@ export const MenusView = TabNavigator(
         <GitHubHostedMenu
           navigation={navigation}
           name="pause"
-          loadingMessage={['Mixing up a shake…', 'Spinning up pizzas…']}
+          loadingMessage={[
+            'Mixing up a shake…',
+            'Spinning up pizzas…',
+            'Turning up the music…',
+            'Putting ice cream on the cookies…',
+            'Fixing the oven…',
+          ]}
         />,
       navigationOptions: {
         tabBarLabel: 'The Pause',
