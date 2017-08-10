@@ -1,37 +1,49 @@
 // @flow
 import React from 'react'
-import {ScrollView, Text, StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
+import {Markdown} from '../components/markdown'
+import glamorous from 'glamorous-native'
 import type {WordType} from './types'
 
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 6,
-    paddingHorizontal: 18,
-  },
-  term: {
-    fontWeight: 'bold',
-    fontSize: 24,
-    textAlign: 'center',
-    marginVertical: 10,
-  },
-  definition: {},
+const Term = glamorous.text({
+  fontSize: 36,
+  textAlign: 'center',
+  marginHorizontal: 18,
+  marginVertical: 10,
 })
 
-export function DictionaryDetailView(props: {
-  navigation: {state: {params: {item: WordType}}},
-}) {
-  const item = props.navigation.state.params.item
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text selectable={true} style={styles.term}>{item.word}</Text>
-      <Text selectable={true} style={styles.definition}>
-        {item.definition}
-      </Text>
-    </ScrollView>
-  )
-}
-DictionaryDetailView.navigationOptions = ({navigation}) => {
-  return {
-    title: navigation.state.params.item.word,
+const Container = glamorous.scrollView({
+  paddingHorizontal: 18,
+  paddingVertical: 6,
+})
+
+const styles = StyleSheet.create({
+  paragraph: {
+    fontSize: 16,
+  },
+})
+
+export class DictionaryDetailView extends React.PureComponent {
+  static navigationOptions = ({navigation}) => {
+    return {
+      title: navigation.state.params.item.word,
+    }
+  }
+
+  props: {
+    navigation: {state: {params: {item: WordType}}},
+  }
+
+  render() {
+    const item = this.props.navigation.state.params.item
+    return (
+      <Container>
+        <Term selectable={true}>{item.word}</Term>
+        <Markdown
+          styles={{Paragraph: styles.paragraph}}
+          source={item.definition}
+        />
+      </Container>
+    )
   }
 }

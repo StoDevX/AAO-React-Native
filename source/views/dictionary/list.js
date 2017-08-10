@@ -52,13 +52,14 @@ export class DictionaryView extends React.Component {
     headerBackTitle: 'Dictionary',
   }
 
+  props: TopLevelViewPropsType
+  searchBar: any
+
   state: {
     results: {[key: string]: Array<WordType>},
   } = {
     results: terms,
   }
-
-  props: TopLevelViewPropsType
 
   onPressRow = (data: WordType) => {
     tracker.trackEvent('dictionary', data.word)
@@ -120,8 +121,6 @@ export class DictionaryView extends React.Component {
   // so I'm slowing it down by 50ms. 0ms also works, but seems
   // rather pointless.
   performSearch = debounce(this._performSearch, 50)
-
-  searchBar: any
 
   render() {
     if (!terms) {

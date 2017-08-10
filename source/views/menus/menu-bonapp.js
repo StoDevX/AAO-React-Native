@@ -41,6 +41,8 @@ type BonAppPropsType = TopLevelViewPropsType & {
 }
 
 export class BonAppHostedMenu extends React.Component {
+  props: BonAppPropsType
+
   state: {
     error: ?Error,
     loading: boolean,
@@ -62,8 +64,6 @@ export class BonAppHostedMenu extends React.Component {
   componentWillReceiveProps(newProps: BonAppPropsType) {
     this.props.cafeId !== newProps.cafeId && this.fetchData(newProps)
   }
-
-  props: BonAppPropsType
 
   fetchData = async (props: BonAppPropsType) => {
     this.setState({loading: true})

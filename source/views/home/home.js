@@ -36,8 +36,8 @@ function HomePage({
 
       {sortedViews.map(view =>
         <HomeScreenButton
-          view={view}
           key={view.view}
+          view={view}
           onPress={() => {
             if (view.type === 'url') {
               return trackedOpenUrl({url: view.url, id: view.view})

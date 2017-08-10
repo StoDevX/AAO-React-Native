@@ -32,6 +32,8 @@ export class BuildingHoursView extends React.Component {
     headerBackTitle: 'Hours',
   }
 
+  props: TopLevelViewPropsType
+
   state: {
     error: ?Error,
     loading: boolean,
@@ -58,8 +60,6 @@ export class BuildingHoursView extends React.Component {
   componentWillUnmount() {
     clearTimeout(this.state.intervalId)
   }
-
-  props: TopLevelViewPropsType
 
   updateTime = () => {
     this.setState({now: moment.tz(CENTRAL_TZ)})

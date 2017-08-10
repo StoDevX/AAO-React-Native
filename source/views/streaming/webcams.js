@@ -122,7 +122,7 @@ class RoundedThumbnail extends React.PureComponent {
     return (
       <View style={[styles.cell, styles.rounded]}>
         <Touchable
-          highlight
+          highlight={true}
           underlayColor={baseColor}
           activeOpacity={0.7}
           onPress={this.props.onPress}

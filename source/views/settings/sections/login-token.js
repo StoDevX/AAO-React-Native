@@ -7,15 +7,15 @@ import {logInViaToken, logOutViaToken} from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
 
 class TokenLoginSection extends React.Component {
-  state = {
-    loading: false,
-  }
-
   props: TopLevelViewPropsType & {
     loggedIn: boolean,
     logIn: (tokenStatus: boolean) => any,
     logOut: () => any,
     message: ?string,
+  }
+
+  state = {
+    loading: false,
   }
 
   logIn = () => {

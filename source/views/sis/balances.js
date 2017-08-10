@@ -24,10 +24,6 @@ class BalancesView extends React.Component {
     tabBarIcon: TabBarIcon('card'),
   }
 
-  state = {
-    loading: false,
-  }
-
   props: TopLevelViewPropsType & {
     flex: ?number,
     ole: ?number,
@@ -38,6 +34,10 @@ class BalancesView extends React.Component {
     message: ?string,
 
     updateBalances: boolean => any,
+  }
+
+  state = {
+    loading: false,
   }
 
   refresh = async () => {

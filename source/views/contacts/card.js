@@ -1,26 +1,24 @@
 // @flow
 
 import React from 'react'
-import {StyleSheet, View, Text, Alert} from 'react-native'
+import {Alert} from 'react-native'
 import {Button} from '../components/button'
 import {phonecall} from 'react-native-communications'
 import {tracker} from '../../analytics'
 import type {CardType} from './types'
-
+import {Markdown} from '../components/markdown'
+import glamorous from 'glamorous-native'
 import * as c from '../components/colors'
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: c.white,
-  },
-  title: {
-    fontSize: 30,
-    alignSelf: 'center',
-    marginTop: 10,
-  },
-  content: {
-    marginHorizontal: 10,
-  },
+const Title = glamorous.text({
+  fontSize: 30,
+  alignSelf: 'center',
+  marginTop: 10,
+})
+
+const Container = glamorous.view({
+  backgroundColor: c.white,
+  paddingHorizontal: 10,
 })
 
 function formatNumber(phoneNumber: string) {
@@ -38,7 +36,7 @@ function promptCall(buttonText: string, phoneNumber: string) {
 export class ContactCard extends React.PureComponent {
   props: CardType
 
-  _onPress = () => {
+  onPress = () => {
     const {title, phoneNumber, buttonText} = this.props
     tracker.trackScreenView(`ImportantContacts_${title.replace(' ', '')}View`)
     promptCall(buttonText, phoneNumber)
@@ -48,11 +46,11 @@ export class ContactCard extends React.PureComponent {
     const {title, text, buttonText} = this.props
 
     return (
-      <View style={styles.container}>
-        <Text selectable={true} style={styles.title}>{title}</Text>
-        <Text selectable={true} style={styles.content}>{text}</Text>
-        <Button onPress={this._onPress} title={buttonText} />
-      </View>
+      <Container>
+        <Title selectable={true}>{title}</Title>
+        <Markdown source={text} />
+        <Button onPress={this.onPress} title={buttonText} />
+      </Container>
     )
   }
 }

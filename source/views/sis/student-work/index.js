@@ -39,6 +39,8 @@ export default class StudentWorkView extends React.PureComponent {
     tabBarIcon: TabBarIcon('briefcase'),
   }
 
+  props: TopLevelViewPropsType
+
   state: {
     jobs: Array<{title: string, data: Array<JobType>}>,
     loaded: boolean,
@@ -54,8 +56,6 @@ export default class StudentWorkView extends React.PureComponent {
   componentWillMount() {
     this.refresh()
   }
-
-  props: TopLevelViewPropsType
 
   fetchData = async () => {
     try {

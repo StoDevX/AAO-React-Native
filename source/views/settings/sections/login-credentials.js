@@ -25,16 +25,17 @@ type CredentialsSectionPropsType = {
 }
 
 class CredentialsLoginSection extends React.Component {
+  props: CredentialsSectionPropsType
+
+  _usernameInput: any
+  _passwordInput: any
+
   state = {
     loading: false,
     username: this.props.username,
     password: this.props.password,
   }
 
-  props: CredentialsSectionPropsType
-
-  _usernameInput: any
-  _passwordInput: any
   focusUsername = () => this._usernameInput.focus()
   focusPassword = () => this._passwordInput.focus()
 

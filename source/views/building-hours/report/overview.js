@@ -49,14 +49,14 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
     title: 'Report a Problem',
   }
 
+  props: TopLevelViewPropsType & {
+    navigation: {state: {params: {initialBuilding: BuildingType}}},
+  }
+
   state: {
     building: BuildingType,
   } = {
     building: this.props.navigation.state.params.initialBuilding,
-  }
-
-  props: TopLevelViewPropsType & {
-    navigation: {state: {params: {initialBuilding: BuildingType}}},
   }
 
   openEditor = (
