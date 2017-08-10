@@ -187,6 +187,8 @@ export class BonAppHostedMenu extends React.Component {
 
     // We grab the "today" info from here because BonApp returns special
     // messages in this response, like "Closed for Christmas Break"
+    // TODO: Figure out how to pass this down to FancyMenu, so we can render
+    //       the filterbar to let people change meals if a meal/day isn't available.
     let specialMessage = this.findCafeMessage(cafeId, cafeInfo, now)
     if (specialMessage) {
       return <NoticeView text={specialMessage} />

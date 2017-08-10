@@ -5,13 +5,12 @@
  */
 
 import React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, SectionList} from 'react-native'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import delay from 'delay'
-import size from 'lodash/size'
+import toPairs from 'lodash/toPairs'
 import * as c from '../components/colors'
-import SimpleListView from '../components/listview'
 import {Column} from '../components/layout'
 import {
   ListRow,
@@ -26,14 +25,27 @@ import type {CourseType, CoursesByTermType} from '../../lib/courses'
 import type {TopLevelViewPropsType} from '../types'
 import {updateCourses} from '../../flux/parts/sis'
 
-type CoursesViewPropsType = TopLevelViewPropsType & {
-  error: null,
-  loggedIn: true,
-  updateCourses: (force: boolean) => {},
-  coursesByTerm: CoursesByTermType,
+class CourseRow extends React.PureComponent {
+  props: {
+    course: CourseType,
+  }
+
+  render() {
+    const {course} = this.props
+
+    return (
+      <ListRow>
+        <Column>
+          <Title>{course.name}</Title>
+          <Detail>{course.deptnum}</Detail>
+          {course.instructors ? <Detail>{course.instructors}</Detail> : null}
+        </Column>
+      </ListRow>
+    )
+  }
 }
 
-class CoursesView extends React.Component {
+class CoursesView extends React.PureComponent {
   static navigationOptions = {
     tabBarLabel: 'Courses',
     tabBarIcon: TabBarIcon('archive'),
@@ -45,7 +57,12 @@ class CoursesView extends React.Component {
     loading: false,
   }
 
-  props: CoursesViewPropsType
+  props: {
+    error: null,
+    loggedIn: true,
+    updateCourses: (force: boolean) => {},
+    coursesByTerm: CoursesByTermType,
+  } & TopLevelViewPropsType
 
   refresh = async () => {
     let start = Date.now()
@@ -60,13 +77,10 @@ class CoursesView extends React.Component {
     this.setState({loading: false})
   }
 
-  renderSectionHeader = (courses: CourseType[], term: string) => {
-    return <ListSectionHeader style={styles.rowSectionHeader} title={term} />
-  }
+  renderSectionHeader = ({section: {title}}: any) =>
+    <ListSectionHeader title={title} />
 
-  renderSeparator = (sectionId: string, rowId: string) => {
-    return <ListSeparator key={`${sectionId}-${rowId}`} />
-  }
+  renderItem = ({item}: {item: CourseType}) => <CourseRow course={item} />
 
   render() {
     if (this.props.error) {
@@ -87,36 +101,26 @@ class CoursesView extends React.Component {
       return <LoadingScreen />
     }
 
-    if (!size(this.props.coursesByTerm)) {
-      return (
-        <NoticeView
-          text="No courses found."
-          buttonText="Try again?"
-          onPress={this.refresh}
-        />
-      )
-    }
+    const toSections = ([title, data]) => ({title, data})
+    const sections = toPairs(this.props.coursesByTerm).map(toSections)
 
     return (
-      <SimpleListView
+      <SectionList
+        ItemSeparatorComponent={ListSeparator}
+        ListEmptyComponent={
+          <NoticeView
+            text="No courses found."
+            buttonText="Try again?"
+            onPress={this.refresh}
+          />
+        }
         style={styles.listContainer}
-        data={this.props.coursesByTerm}
+        sections={sections}
         renderSectionHeader={this.renderSectionHeader}
-        renderSeparator={this.renderSeparator}
         refreshing={this.state.loading}
         onRefresh={this.refresh}
-      >
-        {(course: CourseType) =>
-          <ListRow style={styles.rowContainer}>
-            <Column>
-              <Title>{course.name}</Title>
-              <Detail>{course.deptnum}</Detail>
-              {course.instructors
-                ? <Detail>{course.instructors}</Detail>
-                : null}
-            </Column>
-          </ListRow>}}
-      </SimpleListView>
+        renderItem={this.renderItem}
+      />
     )
   }
 }

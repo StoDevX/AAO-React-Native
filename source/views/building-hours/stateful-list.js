@@ -15,13 +15,16 @@ import moment from 'moment-timezone'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 import {data as fallbackBuildingHours} from '../../../docs/building-hours'
+import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 
 import {CENTRAL_TZ} from './lib'
 const githubBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
 
-const groupBuildings = (buildings: BuildingType[]) =>
-  groupBy(buildings, b => b.category || 'Other')
+const groupBuildings = (buildings: BuildingType[]) => {
+  const grouped = groupBy(buildings, b => b.category || 'Other')
+  return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
+}
 
 export class BuildingHoursView extends React.Component {
   static navigationOptions = {
@@ -33,7 +36,7 @@ export class BuildingHoursView extends React.Component {
     error: ?Error,
     loading: boolean,
     now: moment,
-    buildings: {[key: string]: BuildingType[]},
+    buildings: Array<{title: string, data: BuildingType[]}>,
     intervalId: number,
   } = {
     error: null,

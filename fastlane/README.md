@@ -29,26 +29,6 @@ xcode-select --install
 </table>
 
 # Available Actions
-### bump
-```
-fastlane bump
-```
-Bump the version string to a new version
-### propagate-version
-```
-fastlane propagate-version
-```
-Copy the package.json version into the other version locations
-### release_notes
-```
-fastlane release_notes
-```
-Build the release notes: branch, commit hash, changelog
-### bundle_data
-```
-fastlane bundle_data
-```
-run `npm run bundle-data`
 ### keys
 ```
 fastlane keys
@@ -67,17 +47,22 @@ Makes a build
 ```
 fastlane android beta
 ```
-Submit a new Beta Build to HockeyApp
+Submit a new beta build to Google Play
+### android nightly
+```
+fastlane android nightly
+```
+Submit a new nightly build to Google Play
 ### android ci-run
 ```
 fastlane android ci-run
 ```
 Run the appropriate action on CI
-### android set_version
+### android ci-emulator
 ```
-fastlane android set_version
+fastlane android ci-emulator
 ```
-Include the build number in the version string
+Set up an android emulator on TravisCI
 ### android matchesque
 ```
 fastlane android matchesque
@@ -101,12 +86,17 @@ Take screenshots
 ```
 fastlane ios build
 ```
-Provisions the profiles; bumps the build number; builds the app
+Builds the app
 ### ios beta
 ```
 fastlane ios beta
 ```
 Submit a new Beta Build to Testflight
+### ios nightly
+```
+fastlane ios nightly
+```
+Submit a new nightly Beta Build to Testflight
 ### ios refresh_dsyms
 ```
 fastlane ios refresh_dsyms
@@ -117,11 +107,6 @@ Upload dYSM symbols to Bugsnag from Apple
 fastlane ios ci-run
 ```
 Run iOS builds or tests, as appropriate
-### ios set_version
-```
-fastlane ios set_version
-```
-Include the build number in the version string
 
 ----
 

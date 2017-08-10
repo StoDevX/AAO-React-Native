@@ -4,7 +4,7 @@
 # https://github.com/fastlane/fastlane/tree/master/fastlane/docs
 
 # Set a minimum version for fastlane
-fastlane_version '2.19.0'
+fastlane_version '2.50.1'
 
 require 'fileutils'
 

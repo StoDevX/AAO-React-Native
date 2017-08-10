@@ -1,8 +1,7 @@
 // @flow
 import React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, FlatList} from 'react-native'
 import * as c from '../components/colors'
-import SimpleListView from '../components/listview'
 import type {StoryType} from './types'
 import {ListSeparator} from '../components/list'
 import {NoticeView} from '../components/notice'
@@ -15,27 +14,26 @@ const styles = StyleSheet.create({
   },
 })
 
-type NewsListPropsType = TopLevelViewPropsType & {
-  name: string,
-  onRefresh: () => any,
-  entries: StoryType[],
-  loading: boolean,
-  embedFeaturedImage: ?boolean,
-}
-
 export class NewsList extends React.Component {
-  props: NewsListPropsType
-
-  renderSeparator = (sectionId: string, rowId: string) => {
-    return <ListSeparator key={`${sectionId}-${rowId}`} />
+  props: TopLevelViewPropsType & {
+    name: string,
+    onRefresh: () => any,
+    entries: StoryType[],
+    loading: boolean,
+    embedFeaturedImage: ?boolean,
   }
 
-  onPressNews = (title: string, story: StoryType) => {
+  onPressNews = (story: StoryType) => {
     this.props.navigation.navigate('NewsItemView', {
       story,
       embedFeaturedImage: this.props.embedFeaturedImage,
     })
   }
+
+  renderItem = ({item}: {item: StoryType}) =>
+    <NewsRow onPress={this.onPressNews} story={item} />
+
+  keyExtractor = (item: StoryType) => item.title
 
   render() {
     // remove all entries with blank excerpts
@@ -44,24 +42,17 @@ export class NewsList extends React.Component {
       .filter(entry => entry.excerpt.trim() !== '')
       .filter(entry => !entry.content.includes('<form'))
 
-    if (!entries.length) {
-      return <NoticeView text="No news." />
-    }
-
     return (
-      <SimpleListView
+      <FlatList
+        ItemSeparatorComponent={ListSeparator}
+        ListEmptyComponent={<NoticeView text="No news." />}
+        keyExtractor={this.keyExtractor}
         style={styles.listContainer}
         data={entries}
-        renderSeparator={this.renderSeparator}
         refreshing={this.props.loading}
         onRefresh={this.props.onRefresh}
-      >
-        {(story: StoryType) =>
-          <NewsRow
-            onPress={() => this.onPressNews(story.title, story)}
-            story={story}
-          />}
-      </SimpleListView>
+        renderItem={this.renderItem}
+      />
     )
   }
 }

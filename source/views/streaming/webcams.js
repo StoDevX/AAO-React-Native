@@ -174,7 +174,6 @@ const styles = StyleSheet.create({
     width: cellWidth,
     height: cellHeight,
     margin: CELL_MARGIN / 2,
-    alignItems: 'center',
     justifyContent: 'center',
 
     elevation: 2,

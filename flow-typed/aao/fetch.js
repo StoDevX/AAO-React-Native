@@ -1,2 +1,2 @@
-declare function rawFetch(): any;
-declare function fetchJson(): any;
+declare function rawFetch(...any[]): any;
+declare function fetchJson(...any[]): any;

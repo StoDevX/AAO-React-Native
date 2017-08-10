@@ -9,6 +9,7 @@ import android.util.Log;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.bugsnag.BugsnagReactNative;
+import com.brentvatne.react.ReactVideoPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
@@ -52,6 +53,7 @@ public class MainApplication extends Application implements ReactApplication {
         new MapsPackage(),
         new ReactNativeOneSignalPackage(),
         new ReactNativeRestartPackage(),
+        new ReactVideoPackage(),
         new RNDeviceInfo(),
         new RNNetworkInfoPackage(),
         new RNViewShotPackage(),
