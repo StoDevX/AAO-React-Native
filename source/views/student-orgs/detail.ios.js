@@ -5,6 +5,7 @@ import moment from 'moment'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
+import type {ContactPersonType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import openUrl from '../components/open-url'
 import cleanOrg from './clean-org'
@@ -59,6 +60,14 @@ export class StudentOrgsDetailView extends React.Component {
     navigation: {state: {params: {org: StudentOrgType}}},
   }
 
+  showNameOrEmail = ({c}: {c: ContactPersonType}) => {
+    if (!c.firstName.trim() && !c.lastName.trim()) {
+      return `${c.email}`
+    }
+
+    return `${c.firstName} ${c.lastName}`
+  }
+
   render() {
     const {
       name: orgName,
@@ -111,7 +120,7 @@ export class StudentOrgsDetailView extends React.Component {
                     key={i}
                     cellStyle={c.title ? 'Subtitle' : 'Basic'}
                     accessory="DisclosureIndicator"
-                    title={`${c.firstName} ${c.lastName}`}
+                    title={this.showNameOrEmail({c})}
                     detail={c.title}
                     onPress={() => Linking.openURL(`mailto:${c.email}`)}
                   />,

@@ -5,6 +5,7 @@ import moment from 'moment'
 import {Card} from '../components/card'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
+import type {ContactPersonType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import Communications from 'react-native-communications'
 import openUrl from '../components/open-url'
@@ -66,6 +67,14 @@ export class StudentOrgsDetailView extends React.Component {
     navigation: {state: {params: {org: StudentOrgType}}},
   }
 
+  showNameOrEmail = ({c}: {c: ContactPersonType}) => {
+    if (!c.firstName.trim() && !c.lastName.trim()) {
+      return `${c.email}`
+    }
+
+    return `${c.firstName} ${c.lastName} (${c.email})`
+  }
+
   // Using Communications because `mailTo` complains about
   // the lack of an available Activity...
   openEmail = (email: string, org: string) => {
@@ -118,7 +127,7 @@ export class StudentOrgsDetailView extends React.Component {
                   onPress={() => this.openEmail(c.email, orgName)}
                 >
                   {c.title ? c.title + ': ' : ''}
-                  {c.firstName} {c.lastName} ({c.email})
+                  {this.showNameOrEmail({c})}
                 </Text>,
               )}
             </Card>
