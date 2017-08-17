@@ -21,7 +21,7 @@ export class NewsList extends React.Component {
     entries: StoryType[],
     loading: boolean,
     embedFeaturedImage: ?boolean,
-    thumb: number,
+    thumbnail: number,
   }
 
   onPressNews = (story: StoryType) => {
@@ -34,7 +34,7 @@ export class NewsList extends React.Component {
   renderSeparator = () => <ListSeparator spacing={{left: 101}} />
 
   renderItem = ({item}: {item: StoryType}) =>
-    <NewsRow onPress={this.onPressNews} story={item} blank={this.props.thumb} />
+    <NewsRow onPress={this.onPressNews} story={item} thumbnail={this.props.thumbnail} />
 
   keyExtractor = (item: StoryType) => item.title
 

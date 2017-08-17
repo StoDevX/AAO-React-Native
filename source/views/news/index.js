@@ -22,7 +22,7 @@ export default TabNavigator(
           url="https://wp.stolaf.edu/wp-json/wp/v2/posts"
           query={{per_page: 10, _embed: true}}
           name="St. Olaf"
-          thumb={newsImages.stolaf}
+          thumbnail={newsImages.stolaf}
         />,
       navigationOptions: {
         tabBarLabel: 'St. Olaf',
@@ -39,7 +39,7 @@ export default TabNavigator(
           query={{per_page: 10, _embed: true}}
           embedFeaturedImage={true}
           name="Oleville"
-          thumb={newsImages.oleville}
+          thumbnail={newsImages.oleville}
         />,
       navigationOptions: {
         tabBarLabel: 'Oleville',
@@ -54,7 +54,7 @@ export default TabNavigator(
           mode="rss"
           url="http://manitoumessenger.com/feed/"
           name="The Mess"
-          thumb={newsImages.mess}
+          thumbnail={newsImages.mess}
         />,
       navigationOptions: {
         tabBarLabel: 'The Mess',
@@ -69,7 +69,7 @@ export default TabNavigator(
           mode="rss"
           url="http://oleville.com/politicole/feed/"
           name="PoliticOle"
-          thumb={newsImages.politicole}
+          thumbnail={newsImages.politicole}
         />,
       navigationOptions: {
         tabBarLabel: 'PoliticOle',
@@ -85,7 +85,7 @@ export default TabNavigator(
           url="https://pages.stolaf.edu/ksto/wp-json/wp/v2/posts/"
           query={{per_page: 10, _embed: true}}
           name="KSTO"
-          thumb={newsImages.ksto}
+          thumbnail={newsImages.ksto}
         />,
       navigationOptions: {
         tabBarLabel: 'KSTO',
