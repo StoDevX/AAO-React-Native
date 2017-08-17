@@ -1,8 +1,9 @@
 // @flow
 import type {StudentOrgType} from './types'
+import type {ContactPersonType} from './types'
 import {fastGetTrimmedText} from '../../lib/html'
 
-export default function cleanOrg(org: StudentOrgType): StudentOrgType {
+export function cleanOrg(org: StudentOrgType): StudentOrgType {
   const name = org.name.trim()
 
   const advisors = org.advisors
@@ -37,4 +38,12 @@ export default function cleanOrg(org: StudentOrgType): StudentOrgType {
     description,
     website,
   }
+}
+
+export function showNameOrEmail(c: ContactPersonType) {
+  if (!c.firstName.trim() && !c.lastName.trim()) {
+    return `${c.email}`
+  }
+
+  return `${c.firstName} ${c.lastName}`
 }
