@@ -6,7 +6,7 @@ import {Card} from '../components/card'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import Communications from 'react-native-communications'
+import {email} from 'react-native-communications'
 import openUrl from '../components/open-url'
 import cleanOrg from './clean-org'
 
@@ -68,8 +68,8 @@ export class StudentOrgsDetailView extends React.Component {
 
   // Using the Communications library because `mailTo` complains about
   // the lack of an available Activity...
-  openEmail = (email: string, org: string) => {
-    email([email], null, null, org, '')
+  openEmail = (to: string, org: string) => {
+    email([to], null, null, org, '')
   }
 
   render() {
