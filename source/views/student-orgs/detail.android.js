@@ -8,8 +8,7 @@ import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import Communications from 'react-native-communications'
 import openUrl from '../components/open-url'
-import {cleanOrg} from './util'
-import {showNameOrEmail} from './util'
+import {cleanOrg, showNameOrEmail} from './util'
 
 const styles = StyleSheet.create({
   name: {
