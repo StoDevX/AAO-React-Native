@@ -66,10 +66,10 @@ export class StudentOrgsDetailView extends React.Component {
     navigation: {state: {params: {org: StudentOrgType}}},
   }
 
-  // Using Communications because `mailTo` complains about
+  // Using the Communications library because `mailTo` complains about
   // the lack of an available Activity...
   openEmail = (email: string, org: string) => {
-    Communications.email([email], null, null, org, '')
+    email([email], null, null, org, '')
   }
 
   render() {
