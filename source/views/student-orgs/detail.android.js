@@ -8,7 +8,7 @@ import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {email} from 'react-native-communications'
 import openUrl from '../components/open-url'
-import cleanOrg from './clean-org'
+import {cleanOrg, showNameOrEmail} from './util'
 
 const styles = StyleSheet.create({
   name: {
@@ -118,7 +118,7 @@ export class StudentOrgsDetailView extends React.Component {
                   onPress={() => this.openEmail(c.email, orgName)}
                 >
                   {c.title ? c.title + ': ' : ''}
-                  {c.firstName} {c.lastName} ({c.email})
+                  {showNameOrEmail(c)}
                 </Text>,
               )}
             </Card>
