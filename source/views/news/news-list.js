@@ -21,6 +21,7 @@ export class NewsList extends React.Component {
     entries: StoryType[],
     loading: boolean,
     embedFeaturedImage: ?boolean,
+    thumbnail: number,
   }
 
   onPressNews = (story: StoryType) => {
@@ -30,8 +31,10 @@ export class NewsList extends React.Component {
     })
   }
 
+  renderSeparator = () => <ListSeparator spacing={{left: 101}} />
+
   renderItem = ({item}: {item: StoryType}) =>
-    <NewsRow onPress={this.onPressNews} story={item} />
+    <NewsRow onPress={this.onPressNews} story={item} thumbnail={this.props.thumbnail} />
 
   keyExtractor = (item: StoryType) => item.title
 
@@ -44,7 +47,7 @@ export class NewsList extends React.Component {
 
     return (
       <FlatList
-        ItemSeparatorComponent={ListSeparator}
+        ItemSeparatorComponent={this.renderSeparator}
         ListEmptyComponent={<NoticeView text="No news." />}
         keyExtractor={this.keyExtractor}
         style={styles.listContainer}
