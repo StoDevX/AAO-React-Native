@@ -72,6 +72,7 @@ export default class StudentWorkView extends React.PureComponent {
         processed,
         [
           j => j.type, // sort any groups with the same sort index alphabetically
+          j => j.office, // sort all jobs with the same office
           j => j.lastModified, // sort all jobs by date-last-modified
         ],
         ['desc', 'asc'],
