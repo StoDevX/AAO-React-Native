@@ -52,10 +52,8 @@ coverage
 # fastlane specific
 fastlane/report.xml
 
-# deliver's temporary files
-Preview.html
-
 # snapshot's generated screenshots
+fastlane/Preview.html
 fastlane/screenshots
 
 # scan's temporary files
@@ -71,3 +69,6 @@ docs/
 # android keystores
 android/app/signing.properties
 *.keystore
+
+# vim temp files
+*.swp

@@ -29,10 +29,13 @@ export default function SettingsView(props: TopLevelViewPropsType) {
       <TableView>
         <CredentialsLoginSection />
 
-        <SupportSection navigator={props.navigator} route={props.route} />
+        <SupportSection navigation={props.navigation} />
 
-        <OddsAndEndsSection navigator={props.navigator} route={props.route} />
+        <OddsAndEndsSection navigation={props.navigation} />
       </TableView>
     </ScrollView>
   )
+}
+SettingsView.navigationOptions = {
+  title: 'Settings',
 }

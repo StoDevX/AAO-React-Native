@@ -3,8 +3,12 @@ category: Food
 
 schedule:
   - title: Hours
-    hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '2:00pm'}
+    hours: []
+    notes: The Bag Lunch line is closed for the summer.
+
+  # - title: Hours
+  #   hours:
+  #     - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '2:00pm'}
 
 breakSchedule:
   fall: []

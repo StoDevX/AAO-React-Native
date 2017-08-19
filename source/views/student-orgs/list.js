@@ -66,6 +66,14 @@ const styles = StyleSheet.create({
 })
 
 export class StudentOrgsView extends React.Component {
+  static navigationOptions = {
+    title: 'Student Orgs',
+    headerBackTitle: 'Orgs',
+  }
+
+  props: TopLevelViewPropsType
+  searchBar: any
+
   state: {
     orgs: {[key: string]: StudentOrgType[]},
     results: {[key: string]: StudentOrgType[]},
@@ -83,8 +91,6 @@ export class StudentOrgsView extends React.Component {
   componentWillMount() {
     this.refresh()
   }
-
-  props: TopLevelViewPropsType
 
   fetchData = async () => {
     try {
@@ -170,13 +176,7 @@ export class StudentOrgsView extends React.Component {
 
   onPressRow = (data: StudentOrgType) => {
     tracker.trackEvent('student-org', data.name)
-    this.props.navigator.push({
-      id: 'StudentOrgsDetailView',
-      index: this.props.route.index + 1,
-      title: data.name,
-      backButtonTitle: 'Orgs',
-      props: {org: data},
-    })
+    this.props.navigation.navigate('StudentOrgsDetailView', {org: data})
   }
 
   splitToArray = (str: string) => {
@@ -214,8 +214,6 @@ export class StudentOrgsView extends React.Component {
   // rather pointless.
   performSearch = debounce(this._performSearch, 50)
 
-  searchBar: any
-
   render() {
     if (!this.state.loaded) {
       return <LoadingView />
@@ -239,7 +237,7 @@ export class StudentOrgsView extends React.Component {
           // just setting cellHeight sends the wrong values on iOS.
           cellHeight={
             rowHeight +
-              (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
+            (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
           }
           sectionHeader={this.renderSectionHeader}
           sectionHeaderHeight={headerHeight}

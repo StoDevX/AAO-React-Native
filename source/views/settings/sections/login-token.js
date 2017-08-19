@@ -7,10 +7,6 @@ import {logInViaToken, logOutViaToken} from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
 
 class TokenLoginSection extends React.Component {
-  state = {
-    loading: false,
-  }
-
   props: TopLevelViewPropsType & {
     loggedIn: boolean,
     logIn: (tokenStatus: boolean) => any,
@@ -18,15 +14,13 @@ class TokenLoginSection extends React.Component {
     message: ?string,
   }
 
+  state = {
+    loading: false,
+  }
+
   logIn = () => {
-    this.props.navigator.push({
-      id: 'SISLoginView',
-      index: this.props.route.index + 1,
-      sceneConfig: 'fromBottom',
-      onDismiss: (route, navigator) => navigator.pop(),
-      props: {
-        onLoginComplete: this.props.logIn,
-      },
+    this.props.navigation.navigate('SISLoginView', {
+      onLoginComplete: this.props.logIn,
     })
   }
 

@@ -1,4 +1,5 @@
-# AAO-React-Native [![Build Status](https://travis-ci.org/StoDevX/AAO-React-Native.svg?branch=master)](https://travis-ci.org/StoDevX/AAO-React-Native) [![Coverage Status](https://coveralls.io/repos/github/StoDevX/AAO-React-Native/badge.svg)](https://coveralls.io/github/StoDevX/AAO-React-Native)
+# AAO-React-Native
+[![Build Status](https://travis-ci.org/StoDevX/AAO-React-Native.svg?branch=master)](https://travis-ci.org/StoDevX/AAO-React-Native) [![Coverage Status](https://coveralls.io/repos/github/StoDevX/AAO-React-Native/badge.svg)](https://coveralls.io/github/StoDevX/AAO-React-Native)
 
 ## About
 The St. Olaf community, now in pocket size… rewritten in React Native.
@@ -12,11 +13,11 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 - `cd` into the folder
 - [Install React Native](http://facebook.github.io/react-native/docs/getting-started.html#content)
 - `npm install`
-- `npm run bundle-docs`
 - `npm run ios`
+    - Android setup is trickier: you'll want to launch your Android emulator first, then run `npm run android`.
 
 ## Note
-The Calendar might nag you for a Google Calendar API key. You can either ask someone involved with this project for a key, or you may [create one yourself](https://console.developers.google.com/projectselector/apis/credentials) for use during development.
+The Calendar won't work until you give it a Google Calendar API key. You should  [create one yourself](https://console.developers.google.com/projectselector/apis/credentials)!
 
 1. Create a copy of the `.env.sample.js` file and rename it to `.env.js`
 2. Insert your API key in place of the `key goes here` text
@@ -29,10 +30,3 @@ The Calendar might nag you for a Google Calendar API key. You can either ask som
 
 ## Contributing
 Please see [CONTRIBUTING](CONTRIBUTING.md)
-
-## Maintainers
-Before you release a new version to the app store, you'll want to use the `npm version` command. That will automatically bump the version numbers and tag the commit. 
-
-You should use Release Candidates generously – do, for example, `npm version 2.2.0-rc.1`, then make sure it builds, and run it on the simulators / devices / whatever you would do before you upload it to iTunes Connect / the Play Store. Then, once it's passed all your manual checks, you can do `npm version 2.2.0`, and build that commit, because the only thing that will have changed is the numbers. That way, if something goes wrong while you're testing it, you can do 2.2.0-rc.2, instead of … having 2.0.0-rc.2 be _newer_ than 2.0.0 (final).
-
-Anyway. TL;DR: `npm version` is your friend! Use it.

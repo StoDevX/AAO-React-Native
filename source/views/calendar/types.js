@@ -6,6 +6,7 @@ type GoogleTimeType = {
 }
 export type GoogleEventType = {
   summary?: string,
+  description?: string,
   start: GoogleTimeType,
   end: GoogleTimeType,
   location?: string,

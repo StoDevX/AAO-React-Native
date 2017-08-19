@@ -14,6 +14,7 @@ type PropsType = {
   children?: any,
   borderless?: boolean,
   style?: any,
+  containerStyle?: any,
 }
 export const Touchable = ({
   children,
@@ -21,6 +22,7 @@ export const Touchable = ({
   highlight = true,
   borderless = false,
   onPress = () => {},
+  containerStyle,
   ...props
 }: PropsType) => {
   // The child <View> is required; the Touchable needs a View as its direct child.
@@ -34,7 +36,12 @@ export const Touchable = ({
         ? {underlayColor: '#d9d9d9'}
         : {activeOpacity: 0.65}
       return (
-        <Component onPress={onPress} {...innerProps} {...props}>
+        <Component
+          onPress={onPress}
+          {...innerProps}
+          style={containerStyle}
+          {...props}
+        >
           {content}
         </Component>
       )
@@ -48,6 +55,7 @@ export const Touchable = ({
         <TouchableNativeFeedback
           onPress={onPress}
           background={background}
+          style={containerStyle}
           {...props}
         >
           {content}

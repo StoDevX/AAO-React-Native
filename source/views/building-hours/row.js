@@ -11,10 +11,7 @@ import type {BuildingType} from './types'
 import * as c from '../components/colors'
 import {Row, Column} from '../components/layout'
 import {ListRow, Detail, Title} from '../components/list'
-import {
-  getDetailedBuildingStatus,
-  getShortBuildingStatus,
-} from './building-hours-helpers'
+import {getDetailedBuildingStatus, getShortBuildingStatus} from './lib'
 
 const styles = StyleSheet.create({
   title: {
@@ -42,63 +39,71 @@ const styles = StyleSheet.create({
   },
 })
 
-type PropsType = {
-  info: BuildingType,
-  name: string,
-  now: momentT,
-  onPress: () => any,
-}
-
-export function BuildingRow({info, name, now, onPress}: PropsType) {
-  let bgColors = {
-    Open: c.moneyGreen,
-    Closed: c.salmon,
-  }
-  let foregroundColors = {
-    Open: c.hollyGreen,
-    Closed: c.brickRed,
+export class BuildingRow extends React.PureComponent {
+  props: {
+    info: BuildingType,
+    name: string,
+    now: momentT,
+    onPress: BuildingType => any,
   }
 
-  const openStatus = getShortBuildingStatus(info, now)
-  const hours = getDetailedBuildingStatus(info, now)
+  onPress = () => {
+    this.props.onPress(this.props.info)
+  }
 
-  const accent = bgColors[openStatus] || c.goldenrod
-  const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
+  render() {
+    const {info, name, now} = this.props
 
-  return (
-    <ListRow onPress={onPress} arrowPosition="center" direction="column">
-      <Column>
-        <Row style={styles.title}>
-          <Title lines={1} style={styles.titleText}>
-            <Text>{name}</Text>
-            {info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
-            {info.subtitle
-              ? <Text style={styles.subtitleText}> {info.subtitle}</Text>
-              : null}
-          </Title>
+    const bgColors = {
+      Open: c.moneyGreen,
+      Closed: c.salmon,
+    }
+    const foregroundColors = {
+      Open: c.hollyGreen,
+      Closed: c.brickRed,
+    }
 
-          <Badge
-            text={openStatus}
-            accentColor={accent}
-            textColor={textaccent}
-            style={styles.accessoryBadge}
-          />
-        </Row>
+    const openStatus = getShortBuildingStatus(info, now)
+    const hours = getDetailedBuildingStatus(info, now)
 
-        <View style={styles.detailWrapper}>
-          {hours.map(({isActive, label, status}, i) => (
-            <Detail key={i} style={styles.detailRow}>
-              <BuildingTimeSlot
-                highlight={hours.length > 1 && isActive}
-                label={label}
-                status={status}
-              />
-            </Detail>
-          ))}
-        </View>
-      </Column>
-    </ListRow>
-  )
+    const accent = bgColors[openStatus] || c.goldenrod
+    const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
+
+    return (
+      <ListRow onPress={this.onPress} arrowPosition="center">
+        <Column>
+          <Row style={styles.title}>
+            <Title lines={1} style={styles.titleText}>
+              <Text>{name}</Text>
+              {info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
+              {info.subtitle
+                ? <Text style={styles.subtitleText}> {info.subtitle}</Text>
+                : null}
+            </Title>
+
+            <Badge
+              text={openStatus}
+              accentColor={accent}
+              textColor={textaccent}
+              style={styles.accessoryBadge}
+            />
+          </Row>
+
+          <View style={styles.detailWrapper}>
+            {hours.map(({isActive, label, status}, i) =>
+              <Detail key={i} style={styles.detailRow}>
+                <BuildingTimeSlot
+                  highlight={hours.length > 1 && isActive}
+                  label={label}
+                  status={status}
+                />
+              </Detail>,
+            )}
+          </View>
+        </Column>
+      </ListRow>
+    )
+  }
 }
 
 const BuildingTimeSlot = ({

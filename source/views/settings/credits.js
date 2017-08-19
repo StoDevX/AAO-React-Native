@@ -66,3 +66,6 @@ export default function CreditsView() {
     </ScrollView>
   )
 }
+CreditsView.navigationOptions = {
+  title: 'Credits',
+}

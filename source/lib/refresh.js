@@ -1,10 +1,10 @@
 // @flow
 import {clearAsyncStorage} from './storage'
-import codePush from 'react-native-code-push'
+import restart from 'react-native-restart'
 import {clearLoginCredentials} from './login'
 
 export async function refreshApp() {
   await clearAsyncStorage()
   await clearLoginCredentials()
-  codePush.restartApp()
+  restart.Restart()
 }

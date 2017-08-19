@@ -3,13 +3,17 @@ category: Help and Support
 
 schedule:
   - title: Hours
-    notes: Times by appointment.
-    hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '10:00am', to: '5:00pm'}
-      - {days: [Mo, Tu, We, Th], from: '7:00pm', to: '10:00pm'}
-      - {days: [Sa], from: '11:30am', to: '5:00pm'}
-      - {days: [Su], from: '1:00pm', to: '5:00pm'}
-      - {days: [Su], from: '7:00pm', to: '10:00pm'}
+    hours: []
+    notes: The Writing Desk is closed for the summer.
+
+  # - title: Hours
+  #   notes: Times by appointment.
+  #   hours:
+  #     - {days: [Mo, Tu, We, Th, Fr], from: '10:00am', to: '5:00pm'}
+  #     - {days: [Mo, Tu, We, Th], from: '7:00pm', to: '10:00pm'}
+  #     - {days: [Sa], from: '11:30am', to: '5:00pm'}
+  #     - {days: [Su], from: '1:00pm', to: '5:00pm'}
+  #     - {days: [Su], from: '7:00pm', to: '10:00pm'}
 
 breakSchedule:
   fall: []

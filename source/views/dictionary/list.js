@@ -47,23 +47,23 @@ const styles = StyleSheet.create({
 })
 
 export class DictionaryView extends React.Component {
+  static navigationOptions = {
+    title: 'Campus Dictionary',
+    headerBackTitle: 'Dictionary',
+  }
+
+  props: TopLevelViewPropsType
+  searchBar: any
+
   state: {
     results: {[key: string]: Array<WordType>},
   } = {
     results: terms,
   }
 
-  props: TopLevelViewPropsType
-
   onPressRow = (data: WordType) => {
     tracker.trackEvent('dictionary', data.word)
-    this.props.navigator.push({
-      id: 'DictionaryDetailView',
-      index: this.props.route.index + 1,
-      title: data.word,
-      backButtonTitle: 'Dictionary',
-      props: {item: data},
-    })
+    this.props.navigation.navigate('DictionaryDetailView', {item: data})
   }
 
   renderRow = ({item}: {item: WordType}) => {
@@ -122,8 +122,6 @@ export class DictionaryView extends React.Component {
   // rather pointless.
   performSearch = debounce(this._performSearch, 50)
 
-  searchBar: any
-
   render() {
     if (!terms) {
       return <LoadingView />
@@ -143,7 +141,7 @@ export class DictionaryView extends React.Component {
           // just setting cellHeight sends the wrong values on iOS.
           cellHeight={
             rowHeight +
-              (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
+            (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
           }
           sectionHeader={this.renderHeader}
           sectionHeaderHeight={headerHeight}

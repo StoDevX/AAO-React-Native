@@ -14,6 +14,7 @@ import {
   Dimensions,
   Platform,
 } from 'react-native'
+import {TabBarIcon} from '../components/tabbar-icon'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
 import {data as webcams} from '../../../docs/webcams.json'
@@ -22,6 +23,11 @@ import {trackedOpenUrl} from '../components/open-url'
 import LinearGradient from 'react-native-linear-gradient'
 
 export default class WebcamsView extends React.PureComponent {
+  static navigationOptions = {
+    tabBarLabel: 'Webcams',
+    tabBarIcon: TabBarIcon('videocam'),
+  }
+
   render() {
     return (
       <ScrollView
@@ -116,7 +122,7 @@ class RoundedThumbnail extends React.PureComponent {
     return (
       <View style={[styles.cell, styles.rounded]}>
         <Touchable
-          highlight
+          highlight={true}
           underlayColor={baseColor}
           activeOpacity={0.7}
           onPress={this.props.onPress}
@@ -168,7 +174,6 @@ const styles = StyleSheet.create({
     width: cellWidth,
     height: cellHeight,
     margin: CELL_MARGIN / 2,
-    alignItems: 'center',
     justifyContent: 'center',
 
     elevation: 2,

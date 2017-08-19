@@ -14,25 +14,33 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
-  pathToFilters: string[],
   filters: FilterType[],
-  onChange: (x: FilterType[]) => any,
+  navigation: {
+    state: {
+      params: {
+        pathToFilters: string[],
+        onChange: (x: FilterType[]) => any,
+      },
+    },
+  },
 }
 
-export function FilterViewComponent(props: PropsType) {
+export function FilterViewComponent({filters, navigation}: PropsType) {
+  const {onChange} = navigation.state.params
+
   const onFilterChanged = (filter: FilterType) => {
     // replace the changed filter in the array, maintaining position
-    let result = props.filters.map(f => (f.key !== filter.key ? f : filter))
-    props.onChange(result)
+    let result = filters.map(f => (f.key !== filter.key ? f : filter))
+    onChange(result)
   }
 
-  const contents = props.filters.map(filter => (
+  const contents = filters.map(filter =>
     <FilterSection
       key={filter.key}
       filter={filter}
       onChange={onFilterChanged}
-    />
-  ))
+    />,
+  )
 
   return (
     <ScrollView style={styles.container}>
@@ -45,7 +53,7 @@ export function FilterViewComponent(props: PropsType) {
 
 const mapStateToProps = (state, actualProps) => {
   return {
-    filters: get(state, actualProps.pathToFilters, []),
+    filters: get(state, actualProps.navigation.state.params.pathToFilters, []),
   }
 }
 

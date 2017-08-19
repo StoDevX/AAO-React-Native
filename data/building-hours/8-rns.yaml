@@ -1,40 +1,61 @@
-name: Regents Hall
+name: RNS
+subtitle: Regents Hall of Natural Sciences
 category: Academia
 image: regents-hall
 
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
-      - {days: [Sa, Su], from: '8:00am', to: '12:00am'}
+      - {days: [Mo, Tu, We, Th], from: '7:00am', to: '10:00pm'}
+      - {days: [Fr], from: '7:00am', to: '8:00pm'}
+      - {days: [Sa, Su], from: '9:00am', to: '8:00pm'}
+
+  # - title: Hours
+  #   hours:
+  #     - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
+  #     - {days: [Sa, Su], from: '8:00am', to: '12:00am'}
 
 breakSchedule:
   fall:
-    - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
-    - {days: [Sa, Su], from: '8:00am', to: '12:00am'}
+    - title: Hours
+      hours:
+        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
+        - {days: [Sa, Su], from: '8:00am', to: '12:00am'}
 
   thanksgiving:
-    - {days: [Tu, We], from: '7:00am', to: '10:00pm'}
-    - {days: [Sa], from: '8:00pm', to: '5:00pm'}
-    - {days: [Su], from: '8:00am', to: '12:00am'}
+    - title: Hours
+      hours:
+        - {days: [Tu, We], from: '7:00am', to: '10:00pm'}
+        - {days: [Sa], from: '8:00pm', to: '5:00pm'}
+        - {days: [Su], from: '8:00am', to: '12:00am'}
 
   winter:
-    - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '8:00pm'}
+    - title: Hours
+      hours:
+        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '8:00pm'}
 
   interim:
-    - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
+    - title: Hours
+      hours:
+        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
 
   spring:
-    - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
-    - {days: [Sa], from: '8:00pm', to: '5:00pm'}
-    - {days: [Su], from: '8:00am', to: '12:00am'}
+    - title: Hours
+      hours:
+        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
+        - {days: [Sa], from: '8:00pm', to: '5:00pm'}
+        - {days: [Su], from: '8:00am', to: '12:00am'}
 
   easter:
-    - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
-    - {days: [Sa], from: '8:00pm', to: '5:00pm'}
-    - {days: [Su], from: '8:00am', to: '12:00am'}
+    - title: Hours
+      hours:
+        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
+        - {days: [Sa], from: '8:00pm', to: '5:00pm'}
+        - {days: [Su], from: '8:00am', to: '12:00am'}
 
   summer:
-    - {days: [Mo, Tu, We, Th], from: '7:00am', to: '10:00pm'}
-    - {days: [Fr], from: '7:00am', to: '8:00pm'}
-    - {days: [Sa, Su], from: '10:00am', to: '10:00pm'}
+    - title: Hours
+      hours:
+        - {days: [Mo, Tu, We, Th], from: '7:00am', to: '10:00pm'}
+        - {days: [Fr], from: '7:00am', to: '8:00pm'}
+        - {days: [Sa, Su], from: '9:00am', to: '8:00pm'}

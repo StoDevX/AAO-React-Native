@@ -33,6 +33,13 @@ import com.android.build.OutputFile
  *   // bundleInPaidRelease: true,
  *   // bundleInBeta: true,
  *
+ *   // whether to disable dev mode in custom build variants (by default only disabled in release)
+ *   // for example: to disable dev mode in the staging build type (if configured)
+ *   devDisabledInStaging: true,
+ *   // The configuration property can be in the following formats
+ *   //         'devDisabledIn${productFlavor}${buildType}'
+ *   //         'devDisabledIn${buildType}'
+ *
  *   // the root of your project, i.e. where "package.json" lives
  *   root: "../../",
  *
@@ -58,7 +65,7 @@ import com.android.build.OutputFile
  *   inputExcludes: ["android/**", "ios/**"],
  *
  *   // override which node gets called and with what additional arguments
- *   nodeExecutableAndArgs: ["node"]
+ *   nodeExecutableAndArgs: ["node"],
  *
  *   // supply additional arguments to the packager
  *   extraPackagerArgs: []
@@ -71,7 +78,6 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -96,8 +102,8 @@ android {
         applicationId "com.allaboutolaf"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 12
-        versionName "2.3.0-beta.7"
+        versionCode 1
+        versionName "1.0.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -185,7 +191,6 @@ if (propFile.canRead()) {
 dependencies {
     // please keep this list sorted
     compile project(':bugsnag-react-native')
-    compile project(':react-native-code-push')
     compile project(':react-native-custom-tabs')
     compile project(':react-native-device-info')
     compile project(':react-native-google-analytics-bridge')
@@ -194,7 +199,9 @@ dependencies {
     compile project(':react-native-maps')
     compile project(':react-native-network-info')
     compile project(':react-native-onesignal')
+    compile project(':react-native-restart')
     compile project(':react-native-vector-icons')
+    compile project(':react-native-video-exoplayer')
     compile project(':react-native-view-shot')
     // this is for react-native itself
     compile fileTree(dir: "libs", include: ["*.jar"])

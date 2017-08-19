@@ -8,20 +8,8 @@ env:
     - MATCH_KEYCHAIN_PASSWORD=alpine
     # dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
     - PATH=${PATH/\.\/node_modules\/\.bin/}
-    # centralize some variables for pushing/committing
-    - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
-    - REPO=$(git config remote.origin.url)
-    - SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
-    # this just gives us a nice label to use
-    - ENCRYPTION_LABEL=199c454344e1
-    # set some other variables for the pushing process
-    - ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
-    - ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
-    - ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
-    - ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
-    - DEPLOY_KEY=scripts/travisci_deploy_key
     # variables that are used later on
-    - TRAVIS_NODE_VERSION=7
+    - TRAVIS_NODE_VERSION=8
     - PUSH_BRANCH=0
     - CAN_DEPLOY=0
     - USE_EMULATOR=no
@@ -34,7 +22,7 @@ matrix:
       dist: trusty
       sudo: false
       language: node_js
-      node_js: '7'
+      node_js: '8'
       env: [JS=yes, CAN_DEPLOY=yes]
 
     - &android-base
@@ -49,11 +37,15 @@ matrix:
           - tools
           - platform-tools
           - build-tools-23.0.1
+          - build-tools-23.0.2
+          - build-tools-25.0.1
           - build-tools-23.0.3
           - build-tools-25.0.2
           - build-tools-25.0.3
+          - build-tools-26.0.1
           - android-23
           - android-25
+          - android-26
           - extra-android-m2repository
           - extra-google-m2repository
 
@@ -72,7 +64,7 @@ matrix:
     - os: osx
       language: objective-c
       osx_image: xcode8.3
-      node_js: '7'
+      node_js: '8'
       env: [IOS=yes, CAN_DEPLOY=yes]
 
 
@@ -86,14 +78,15 @@ branches:
 
 
 before_install:
-  # force a consistent node version on android
-  - if [[ $ANDROID ]]; then
-      nvm install "$TRAVIS_NODE_VERSION";
-      nvm use "$TRAVIS_NODE_VERSION";
-    fi
+  - echo "Now testing on $TRAVIS_OS_NAME"
+  - echo "Using the android emulator? $USE_EMULATOR"
+  - echo "Travis branch is $TRAVIS_BRANCH"
+  - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
+  - echo "Build triggered by $TRAVIS_EVENT_TYPE"
+  - echo "Using node $TRAVIS_NODE_VERSION (node -v says $(node -v))"
 
-  # make sure to use ruby 2.3
-  - rvm use 2.3 --install --binary --fuzzy
+  # make sure to use ruby 2.4
+  - rvm use ruby-2.4.1 --install --binary --create
   - gem install bundler
 
   # only deploy from:
@@ -106,17 +99,54 @@ before_install:
       $TRAVIS_COMMIT_MESSAGE == *"[ci run beta]"*
     ) ]]; then run_deploy=1; fi
 
-  # run our before_install sequence
-  - bash scripts/travis/before_install.sh
+  # force a consistent node version
+  - if [[ $ANDROID || $IOS ]]; then
+      nvm install "$TRAVIS_NODE_VERSION";
+      nvm use "$TRAVIS_NODE_VERSION";
+    fi
+  
+  - echo "node -v is now $(node -v)"
+
+  # turn off fancy npm stuff
+  - npm config set spin=false
+  - npm config set progress=false
+
+  - npm install -g npm@5
+  - if [[ $JS ]]; then npm install -g greenkeeper-lockfile@1; fi
 
 install:
-  - bash scripts/travis/install.sh
+  # install packages (if the first fails, try once more)
+  - npm install || npm install
+
+  # install fastlane (if at first you don't succeed, try once more)
+  - bundle install || bundle install
+
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install imagemagick; fi
 
 before_script:
-  - bash scripts/travis/before_script.sh
+  - if [[ $JS ]]; then greenkeeper-lockfile-update; fi
+  # Fire up the Android emulator
+  - if [[ $ANDROID && $USE_EMULATOR = yes ]]; then
+      bundle exec fastlane android ci-emulator;
+    fi
 
 script:
-  - bash scripts/travis/script.sh
+  # ensure the env file exists and fill it out
+  - touch .env.js
+  - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
+  - echo "export const GOOGLE_MAPS_API_KEY = '$GMAPS_KEY'" >> .env.js
+
+  # disable npm wrapper for npm scripts
+  - echo "loglevel=silent" >> .npmrc
+
+  # ensure the log directory exists for danger
+  - mkdir -p logs/
+
+  # run the platform-specific "script" sections
+  - if [[ $JS ]]; then bash scripts/travis/script-js.sh; fi
+  - if [[ $IOS ]]; then bundle exec fastlane ios ci-run; fi
+  - if [[ $ANDROID ]]; then bundle exec fastlane android ci-run; fi
+
   # we run `danger` out here to ensure that it is run,
   # even if another task in script.sh fails.
   - if [[ $JS ]]; then npm run danger; fi
@@ -131,12 +161,21 @@ deploy:
     local_dir: docs/
     on:
       branch: master
+      condition: $JS
 
 before_cache:
-  - rm -f "$HOME/.gradle/caches/modules-2/modules-2.lock"
-  - rm -rf "$TMPDIR/jest_preprocess_cache"
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -rf $TMPDIR/jest_preprocess_cache
 
 cache:
   bundler: true
   directories:
     - $HOME/.gradle
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
+
+notifications:
+  webhooks:
+    # trigger Buildtime Trend Service to parse Travis CI log
+    - https://stormy-cliffs-59913.herokuapp.com/travis

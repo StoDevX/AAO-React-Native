@@ -25,6 +25,11 @@ const CENTRAL_TZ = 'America/Winnipeg'
 const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
 
 export class GitHubHostedMenu extends React.Component {
+  props: TopLevelViewPropsType & {
+    name: string,
+    loadingMessage: string[],
+  }
+
   state: {
     error: ?Error,
     loading: boolean,
@@ -43,11 +48,6 @@ export class GitHubHostedMenu extends React.Component {
 
   componentWillMount() {
     this.fetchData()
-  }
-
-  props: TopLevelViewPropsType & {
-    name: string,
-    loadingMessage: string[],
   }
 
   fetchData = async () => {
@@ -114,8 +114,7 @@ export class GitHubHostedMenu extends React.Component {
 
     return (
       <FancyMenu
-        route={this.props.route}
-        navigator={this.props.navigator}
+        navigation={this.props.navigation}
         foodItems={this.state.foodItems}
         menuCorIcons={this.state.corIcons}
         meals={this.state.meals}

@@ -5,15 +5,8 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  RefreshControl,
-  Navigator,
-} from 'react-native'
-
+import {StyleSheet, ScrollView, View, Text, RefreshControl} from 'react-native'
+import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
 
@@ -26,8 +19,9 @@ import * as c from '../components/colors'
 import type {TopLevelViewPropsType} from '../types'
 
 class BalancesView extends React.Component {
-  state = {
-    loading: false,
+  static navigationOptions = {
+    tabBarLabel: 'Balances',
+    tabBarIcon: TabBarIcon('card'),
   }
 
   props: TopLevelViewPropsType & {
@@ -39,7 +33,11 @@ class BalancesView extends React.Component {
     credentialsValid: boolean,
     message: ?string,
 
-    updateBalances: () => any,
+    updateBalances: boolean => any,
+  }
+
+  state = {
+    loading: false,
   }
 
   refresh = async () => {
@@ -60,13 +58,7 @@ class BalancesView extends React.Component {
   }
 
   openSettings = () => {
-    this.props.navigator.push({
-      id: 'SettingsView',
-      title: 'Settings',
-      index: this.props.route.index + 1,
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-      onDismiss: () => this.props.navigator.pop(),
-    })
+    this.props.navigation.navigate('SettingsView')
   }
 
   render() {

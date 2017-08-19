@@ -4,10 +4,15 @@ category: Libraries
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th], from: '7:45am', to: '2:00am'}
-      - {days: [Fr], from: '7:45am', to: '9:00pm'}
-      - {days: [Sa], from: '9:00am', to: '9:00pm'}
-      - {days: [Su], from: '12:00pm', to: '2:00am'}
+      - {days: [Mo, Tu, We, Th], from: '7:30am', to: '5:00pm'}
+      - {days: [Fr], from: '7:30am', to: '1:00pm'}
+
+  # - title: Hours
+  #   hours:
+  #     - {days: [Mo, Tu, We, Th], from: '7:45am', to: '2:00am'}
+  #     - {days: [Fr], from: '7:45am', to: '9:00pm'}
+  #     - {days: [Sa], from: '9:00am', to: '9:00pm'}
+  #     - {days: [Su], from: '12:00pm', to: '2:00am'}
 
 breakSchedule:
   fall: []
@@ -17,5 +22,7 @@ breakSchedule:
   spring: []
   easter: []
   summer:
-    - {days: [Mo, Tu, We, Th], from: '7:45am', to: '4:30pm'}
-    - {days: [Fr], from: '7:45am', to: '12:00pm'}
+    - title: Hours
+      hours:
+        - {days: [Mo, Tu, We, Th], from: '7:30am', to: '5:00pm'}
+        - {days: [Fr], from: '7:30am', to: '1:00pm'}

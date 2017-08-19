@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
 import {View, TextInput, StyleSheet} from 'react-native'
+import {TabBarIcon} from '../components/tabbar-icon'
 import * as c from '../components/colors'
 import {Toolbar, ToolbarButton} from '../components/toolbar'
 import type {TopLevelViewPropsType} from '../types'
@@ -22,6 +23,13 @@ const styles = StyleSheet.create({
 })
 
 export class BonAppPickerView extends React.Component {
+  static navigationOptions = {
+    tabBarLabel: 'BonApp',
+    tabBarIcon: TabBarIcon('ionic'),
+  }
+
+  props: TopLevelViewPropsType
+
   state: {
     cafeId: string,
     menu: ?any,
@@ -34,8 +42,6 @@ export class BonAppPickerView extends React.Component {
     this.chooseMenu()
   }
 
-  props: TopLevelViewPropsType
-
   chooseCafe = (cafeId: string) => {
     if (!/^\d*$/.test(cafeId)) {
       return
@@ -46,8 +52,7 @@ export class BonAppPickerView extends React.Component {
   chooseMenu = () => {
     const menu = (
       <BonAppHostedMenu
-        route={this.props.route}
-        navigator={this.props.navigator}
+        navigation={this.props.navigation}
         cafeId={this.state.cafeId}
         name="BonApp"
         loadingMessage={['Loading…']}
@@ -67,7 +72,7 @@ export class BonAppPickerView extends React.Component {
             style={styles.default}
             onBlur={this.chooseMenu}
           />
-          <ToolbarButton title="Go" isActive />
+          <ToolbarButton title="Go" isActive={true} />
         </Toolbar>
         {this.state.menu}
       </View>

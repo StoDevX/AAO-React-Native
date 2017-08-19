@@ -6,9 +6,9 @@ import {Card} from '../components/card'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import Communications from 'react-native-communications'
+import {email} from 'react-native-communications'
 import openUrl from '../components/open-url'
-import cleanOrg from './clean-org'
+import {cleanOrg, showNameOrEmail} from './util'
 
 const styles = StyleSheet.create({
   name: {
@@ -55,14 +55,21 @@ const styles = StyleSheet.create({
 })
 
 export class StudentOrgsDetailView extends React.Component {
-  props: TopLevelViewPropsType & {
-    org: StudentOrgType,
+  static navigationOptions = ({navigation}) => {
+    const {org} = navigation.state.params
+    return {
+      title: org.name,
+    }
   }
 
-  // Using Communications because `mailTo` complains about
+  props: TopLevelViewPropsType & {
+    navigation: {state: {params: {org: StudentOrgType}}},
+  }
+
+  // Using the Communications library because `mailTo` complains about
   // the lack of an available Activity...
-  openEmail = (email: string, org: string) => {
-    Communications.email([email], null, null, org, '')
+  openEmail = (to: string, org: string) => {
+    email([to], null, null, org, '')
   }
 
   render() {
@@ -75,7 +82,7 @@ export class StudentOrgsDetailView extends React.Component {
       advisors,
       description,
       lastUpdated: orgLastUpdated,
-    } = cleanOrg(this.props.org)
+    } = cleanOrg(this.props.navigation.state.params.org)
 
     return (
       <ScrollView>
@@ -103,7 +110,7 @@ export class StudentOrgsDetailView extends React.Component {
 
         {contacts.length
           ? <Card header="Contact" style={styles.card}>
-              {contacts.map((c, i) => (
+              {contacts.map((c, i) =>
                 <Text
                   key={i}
                   selectable={true}
@@ -111,9 +118,9 @@ export class StudentOrgsDetailView extends React.Component {
                   onPress={() => this.openEmail(c.email, orgName)}
                 >
                   {c.title ? c.title + ': ' : ''}
-                  {c.firstName} {c.lastName} ({c.email})
-                </Text>
-              ))}
+                  {showNameOrEmail(c)}
+                </Text>,
+              )}
             </Card>
           : null}
 
@@ -122,7 +129,7 @@ export class StudentOrgsDetailView extends React.Component {
               header={advisors.length === 1 ? 'Advisor' : 'Advisors'}
               style={styles.card}
             >
-              {advisors.map((c, i) => (
+              {advisors.map((c, i) =>
                 <Text
                   key={i}
                   selectable={true}
@@ -130,8 +137,8 @@ export class StudentOrgsDetailView extends React.Component {
                   onPress={() => this.openEmail(c.email, orgName)}
                 >
                   {c.name} ({c.email})
-                </Text>
-              ))}
+                </Text>,
+              )}
             </Card>
           : null}
 

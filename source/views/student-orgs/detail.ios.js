@@ -7,7 +7,7 @@ import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import openUrl from '../components/open-url'
-import cleanOrg from './clean-org'
+import {cleanOrg, showNameOrEmail} from './util'
 
 const styles = StyleSheet.create({
   name: {
@@ -48,8 +48,15 @@ const styles = StyleSheet.create({
 })
 
 export class StudentOrgsDetailView extends React.Component {
+  static navigationOptions = ({navigation}) => {
+    const {org} = navigation.state.params
+    return {
+      title: org.name,
+    }
+  }
+
   props: TopLevelViewPropsType & {
-    org: StudentOrgType,
+    navigation: {state: {params: {org: StudentOrgType}}},
   }
 
   render() {
@@ -62,7 +69,7 @@ export class StudentOrgsDetailView extends React.Component {
       advisors,
       description,
       lastUpdated: orgLastUpdated,
-    } = cleanOrg(this.props.org)
+    } = cleanOrg(this.props.navigation.state.params.org)
 
     return (
       <ScrollView>
@@ -99,30 +106,30 @@ export class StudentOrgsDetailView extends React.Component {
 
           {contacts.length
             ? <Section header="CONTACT">
-                {contacts.map((c, i) => (
+                {contacts.map((c, i) =>
                   <Cell
                     key={i}
                     cellStyle={c.title ? 'Subtitle' : 'Basic'}
                     accessory="DisclosureIndicator"
-                    title={`${c.firstName} ${c.lastName}`}
+                    title={showNameOrEmail(c)}
                     detail={c.title}
                     onPress={() => Linking.openURL(`mailto:${c.email}`)}
-                  />
-                ))}
+                  />,
+                )}
               </Section>
             : null}
 
           {advisors.length
             ? <Section header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
-                {advisors.map((c, i) => (
+                {advisors.map((c, i) =>
                   <Cell
                     key={i}
                     cellStyle="Basic"
                     accessory="DisclosureIndicator"
                     title={c.name}
                     onPress={() => Linking.openURL(`mailto:${c.email}`)}
-                  />
-                ))}
+                  />,
+                )}
               </Section>
             : null}
 

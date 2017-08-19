@@ -6,18 +6,14 @@ import type {TopLevelViewPropsType} from '../../types'
 import Communications from 'react-native-communications'
 import DeviceInfo from 'react-native-device-info'
 import {version} from '../../../../package.json'
-import {PushButtonCell} from '../components/push-button'
+import {PushButtonCell} from '../../components/cells/push-button'
 import {refreshApp} from '../../../lib/refresh'
 
 export default class SupportSection extends React.Component {
   props: TopLevelViewPropsType
 
-  onPressButton = (id: string, title: string) => {
-    this.props.navigator.push({
-      id: id,
-      title: title,
-      index: this.props.route.index + 1,
-    })
+  onPressButton = (id: string) => {
+    this.props.navigation.navigate(id)
   }
 
   getDeviceInfo = () => `
@@ -25,9 +21,8 @@ export default class SupportSection extends React.Component {
       ----- Please do not edit below here -----
       ${DeviceInfo.getBrand()} ${DeviceInfo.getModel()}
       ${DeviceInfo.getDeviceId()}
-      ${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}
+      ${DeviceInfo.getSystemName()} ${version}
       ${DeviceInfo.getReadableVersion()}
-      Codepush: ${version}
     `
 
   openEmail = () => {
@@ -40,7 +35,7 @@ export default class SupportSection extends React.Component {
     )
   }
 
-  onFaqButton = () => this.onPressButton('FaqView', 'FAQs')
+  onFaqButton = () => this.onPressButton('FaqView')
 
   onResetButton = () => {
     Alert.alert(

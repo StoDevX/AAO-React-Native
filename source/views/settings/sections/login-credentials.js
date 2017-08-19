@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {Cell, Section} from 'react-native-tableview-simple'
-import {LoginField} from '../components/login-field'
+import {CellTextField} from '../../components/cells/textfield'
 import {LoginButton} from '../components/login-button'
 import {
   logInViaCredentials,
@@ -25,16 +25,17 @@ type CredentialsSectionPropsType = {
 }
 
 class CredentialsLoginSection extends React.Component {
+  props: CredentialsSectionPropsType
+
+  _usernameInput: any
+  _passwordInput: any
+
   state = {
     loading: false,
     username: this.props.username,
     password: this.props.password,
   }
 
-  props: CredentialsSectionPropsType
-
-  _usernameInput: any
-  _passwordInput: any
   focusUsername = () => this._usernameInput.focus()
   focusPassword = () => this._passwordInput.focus()
 
@@ -57,7 +58,7 @@ class CredentialsLoginSection extends React.Component {
         header="ST. OLAF LOGIN"
         footer="St. Olaf login enables the &quot;meals remaining&quot; feature."
       >
-        <LoginField
+        <CellTextField
           label="Username"
           _ref={ref => (this._usernameInput = ref)}
           disabled={loading}
@@ -69,7 +70,7 @@ class CredentialsLoginSection extends React.Component {
           value={username}
         />
 
-        <LoginField
+        <CellTextField
           label="Password"
           _ref={ref => (this._passwordInput = ref)}
           disabled={loading}

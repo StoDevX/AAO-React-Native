@@ -1,56 +1,54 @@
 // @flow
 import React from 'react'
-import {WebView, StyleSheet} from 'react-native'
-import * as c from '../components/colors'
+import {ScrollView} from 'glamorous-native'
+import {Markdown} from '../components/markdown'
 import LoadingView from '../components/loading'
-import {text as faqs} from '../../../docs/faqs.json'
+import {text} from '../../../docs/faqs.json'
 import {tracker} from '../../analytics'
 import bugsnag from '../../bugsnag'
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 30,
-    paddingTop: 10,
-    paddingBottom: 20,
-    backgroundColor: c.transparent,
-  },
-})
+const faqsUrl = 'https://stodevx.github.io/AAO-React-Native/faqs.json'
 
-export class FaqView extends React.Component {
+export class FaqView extends React.PureComponent {
+  static navigationOptions = {
+    title: 'FAQs',
+  }
+
   state = {
-    html: faqs,
+    text: text,
   }
 
   componentWillMount() {
     this.fetchData()
   }
 
-  url = 'https://stodevx.github.io/AAO-React-Native/faqs.json'
-
   fetchData = async () => {
-    let html = faqs
+    let fetched = text
     try {
-      let blob: {text: string} = await fetchJson(this.url)
-      html = blob.text
+      let blob: {text: string} = await fetchJson(faqsUrl)
+      fetched = blob.text
     } catch (err) {
-      html = faqs
       tracker.trackException(err.message)
       bugsnag.notify(err)
       console.warn(err.message)
     }
 
     if (process.env.NODE_ENV === 'development') {
-      html = faqs
+      fetched = text
     }
 
-    this.setState({html: html})
+    this.setState({text: fetched})
   }
 
   render() {
-    if (!this.state.html) {
+    if (!this.state.text) {
       return <LoadingView />
     }
-    return <WebView style={styles.container} source={{html: this.state.html}} />
+
+    return (
+      <ScrollView paddingHorizontal={15}>
+        <Markdown source={text} />
+      </ScrollView>
+    )
   }
 }

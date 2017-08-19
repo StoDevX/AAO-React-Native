@@ -85,15 +85,14 @@ function Links({job}: {job: JobType}) {
   const links = getLinksFromJob(job)
   return links.length
     ? <Section header="LINKS">
-        {links.map(url => (
+        {links.map(url =>
           <Cell
             key={url}
-            cellStyle="Title"
             title={url}
             accessory="DisclosureIndicator"
             onPress={() => openUrl(url)}
-          />
-        ))}
+          />,
+        )}
       </Section>
     : null
 }
@@ -108,8 +107,10 @@ function LastUpdated({when}: {when: string}) {
     : null
 }
 
-export default function JobDetailView({job}: {job: JobType}) {
-  job = cleanJob(job)
+export default function JobDetailView(props: {
+  navigation: {state: {params: {job: JobType}}},
+}) {
+  const job = cleanJob(props.navigation.state.params.job)
 
   return (
     <ScrollView>
@@ -125,4 +126,10 @@ export default function JobDetailView({job}: {job: JobType}) {
       <LastUpdated when={job.lastModified} />
     </ScrollView>
   )
+}
+JobDetailView.navigationOptions = ({navigation}) => {
+  const {job} = navigation.state.params
+  return {
+    title: job.title,
+  }
 }

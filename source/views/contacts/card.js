@@ -1,70 +1,56 @@
 // @flow
 
 import React from 'react'
-import {StyleSheet, View, Text, Alert} from 'react-native'
+import {Alert} from 'react-native'
 import {Button} from '../components/button'
-import Communications from 'react-native-communications'
+import {phonecall} from 'react-native-communications'
 import {tracker} from '../../analytics'
-
+import type {CardType} from './types'
+import {Markdown} from '../components/markdown'
+import glamorous from 'glamorous-native'
 import * as c from '../components/colors'
 
-let styles = StyleSheet.create({
-  container: {
-    marginLeft: 5,
-    marginRight: 5,
-    marginBottom: 5,
-    backgroundColor: c.white,
-  },
-  title: {
-    fontSize: 30,
-    alignSelf: 'center',
-    marginTop: 10,
-  },
-  content: {
-    marginTop: 5,
-    marginBottom: 5,
-    marginLeft: 10,
-    marginRight: 10,
-  },
+const Title = glamorous.text({
+  fontSize: 30,
+  alignSelf: 'center',
+  marginTop: 10,
+})
+
+const Container = glamorous.view({
+  backgroundColor: c.white,
+  paddingHorizontal: 10,
 })
 
 function formatNumber(phoneNumber: string) {
-  let re = /\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})/g
-  let subst = '($1) $2-$3'
-  return phoneNumber.replace(re, subst)
+  const re = /(\d{3})-?(\d{3})-?(\d{4})/g
+  return phoneNumber.replace(re, '($1) $2-$3')
 }
 
 function promptCall(buttonText: string, phoneNumber: string) {
   Alert.alert(buttonText, formatNumber(phoneNumber), [
     {text: 'Cancel', onPress: () => console.log('Call cancel pressed')},
-    {text: 'Call', onPress: () => Communications.phonecall(phoneNumber, false)},
+    {text: 'Call', onPress: () => phonecall(phoneNumber, false)},
   ])
 }
 
-export default function ContactCard({
-  title,
-  phoneNumber,
-  text,
-  buttonText,
-}: {
-  title: string,
-  phoneNumber: string,
-  text: string,
-  buttonText: string,
-}) {
-  return (
-    <View style={styles.container}>
-      <Text selectable={true} style={styles.title}>{title}</Text>
-      <Text selectable={true} style={styles.content}>{text}</Text>
-      <Button
-        onPress={() => {
-          tracker.trackScreenView(
-            `ImportantContacts_${title.replace(' ', '')}View`,
-          )
-          promptCall(buttonText, phoneNumber)
-        }}
-        title={buttonText}
-      />
-    </View>
-  )
+export class ContactCard extends React.PureComponent {
+  props: CardType
+
+  onPress = () => {
+    const {title, phoneNumber, buttonText} = this.props
+    tracker.trackScreenView(`ImportantContacts_${title.replace(' ', '')}View`)
+    promptCall(buttonText, phoneNumber)
+  }
+
+  render() {
+    const {title, text, buttonText} = this.props
+
+    return (
+      <Container>
+        <Title selectable={true}>{title}</Title>
+        <Markdown source={text} />
+        <Button onPress={this.onPress} title={buttonText} />
+      </Container>
+    )
+  }
 }

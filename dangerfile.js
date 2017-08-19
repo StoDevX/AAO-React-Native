@@ -1,6 +1,5 @@
-import {danger, warn, message} from 'danger'
+/* global danger: 0, warn: 0, message: 0 */
 import {readFileSync} from 'fs'
-import dedent from 'dedent'
 const readFile = filename => {
   try {
     return readFileSync(filename, 'utf-8')
@@ -50,15 +49,14 @@ const bigPRThreshold = 400 // lines
 const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
 if (thisPRSize > bigPRThreshold) {
   warn(
-    dedent`
-    <details>
-      <summary>:exclamation: Big PR!</summary>
-      <blockquote>
-        <p>We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.</p>
-        <p>If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.</p>
-      </blockquote>
-    </details>
-  `,
+    `
+<details>
+  <summary>:exclamation: Big PR!</summary>
+  <blockquote>
+    <p>We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.</p>
+    <p>If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.</p>
+  </blockquote>
+</details>`,
   )
 }
 
@@ -81,16 +79,15 @@ const isBadDataValidationLog = log => {
 
 const fileLog = (name, log, {lang = null} = {}) => {
   message(
-    dedent`
-    <details>
-      <summary>${name}</summary>
+    `
+<details>
+  <summary>${name}</summary>
 
 \`\`\`${lang || ''}
 ${log}
 \`\`\`
 
-    </details>
-  `,
+</details>`,
   )
 }
 

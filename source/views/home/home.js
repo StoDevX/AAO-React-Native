@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {Navigator, ScrollView, StyleSheet, StatusBar} from 'react-native'
+import {ScrollView, StyleSheet, StatusBar} from 'react-native'
 
 import {connect} from 'react-redux'
 import * as c from '../components/colors'
@@ -15,10 +15,10 @@ import type {ViewType} from '../views'
 import {allViews} from '../views'
 import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl} from '../components/open-url'
+import {EditHomeButton, OpenSettingsButton} from '../components/nav-buttons'
 
 function HomePage({
-  navigator,
-  route,
+  navigation,
   order,
   views = allViews,
 }: {order: string[], views: ViewType[]} & TopLevelViewPropsType) {
@@ -34,27 +34,29 @@ function HomePage({
     >
       <StatusBar barStyle="light-content" backgroundColor={c.gold} />
 
-      {sortedViews.map(view => (
+      {sortedViews.map(view =>
         <HomeScreenButton
-          view={view}
           key={view.view}
+          view={view}
           onPress={() => {
             if (view.type === 'url') {
               return trackedOpenUrl({url: view.url, id: view.view})
             } else {
-              return navigator.push({
-                id: view.view,
-                index: route.index + 1,
-                title: view.title,
-                backButtonTitle: 'Home',
-                sceneConfig: Navigator.SceneConfigs.PushFromRight,
-              })
+              return navigation.navigate(view.view)
             }
           }}
-        />
-      ))}
+        />,
+      )}
     </ScrollView>
   )
+}
+HomePage.navigationOptions = ({navigation}) => {
+  return {
+    title: 'All About Olaf',
+    headerBackTitle: 'Home',
+    headerLeft: <OpenSettingsButton navigation={navigation} />,
+    headerRight: <EditHomeButton navigation={navigation} />,
+  }
 }
 
 function mapStateToProps(state) {

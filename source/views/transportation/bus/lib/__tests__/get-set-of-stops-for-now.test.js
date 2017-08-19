@@ -1,3 +1,4 @@
+// @flow
 import {getSetOfStopsForNow} from '../get-set-of-stops-for-now'
 import moment from 'moment'
 
@@ -18,6 +19,7 @@ function makeSchedule(): BusScheduleType {
 xit('returns the schedule for the given time', () => {
   let now = moment('Mon 16:57', 'dddd H:mm')
   let input = makeSchedule()
+  // $FlowExpectedError
   let actual = getSetOfStopsForNow(input, now)
 
   expect(actual).toEqual([
@@ -37,6 +39,7 @@ xit(
   () => {
     let now = moment('Mon 12:00', 'dddd H:mm')
     let input = makeSchedule()
+    // $FlowExpectedError
     let actual = getSetOfStopsForNow(input, now)
 
     expect(actual).toEqual([
@@ -57,6 +60,7 @@ xit(
   () => {
     let now = moment('Mon 23:30', 'dddd H:mm')
     let input = makeSchedule()
+    // $FlowExpectedError
     let actual = getSetOfStopsForNow(input, now)
 
     expect(actual).toEqual([

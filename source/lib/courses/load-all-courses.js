@@ -6,9 +6,7 @@
 
 import type {CourseCollectionType} from './types'
 import {loadStudentNumber} from './load-student-number'
-import {
-  loadCoursesFromUnofficialTranscript,
-} from './load-courses-from-unofficial-transcript'
+import {loadCoursesFromUnofficialTranscript} from './load-courses-from-unofficial-transcript'
 
 export async function loadAllCourses(
   isConnected: boolean,

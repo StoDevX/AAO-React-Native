@@ -6,30 +6,25 @@
  */
 
 import React from 'react'
-import {StyleSheet, Text} from 'react-native'
+import {StyleSheet, Text, SectionList} from 'react-native'
+import {TabBarIcon} from '../../components/tabbar-icon'
+import type {TopLevelViewPropsType} from '../../types'
 import * as c from '../../components/colors'
-import SimpleListView from '../../components/listview'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
 import {tracker} from '../../../analytics'
 import bugsnag from '../../../bugsnag'
 import {NoticeView} from '../../components/notice'
 import LoadingView from '../../components/loading'
 import delay from 'delay'
-import size from 'lodash/size'
-import sortBy from 'lodash/sortBy'
+import toPairs from 'lodash/toPairs'
+import orderBy from 'lodash/orderBy'
 import groupBy from 'lodash/groupBy'
+import {toLaxTitleCase as titleCase} from 'titlecase'
 import {JobRow} from './job-row'
 import type {JobType} from './types'
 
 const jobsUrl =
   'https://www.stolaf.edu/apps/stuwork/index.cfm?fuseaction=getall&nostructure=1'
-
-const jobSort = new Map([
-  ['On-campus Work Study', 1],
-  ['Off-campus Community Service Work Study', 2],
-  ['On-campus Summer Employment', 3],
-  ['Off-campus Summer Employment', 4],
-])
 
 const styles = StyleSheet.create({
   listContainer: {
@@ -37,15 +32,23 @@ const styles = StyleSheet.create({
   },
 })
 
-export default class StudentWorkView extends React.Component {
+export default class StudentWorkView extends React.PureComponent {
+  static navigationOptions = {
+    headerBackTitle: 'Open Jobs',
+    tabBarLabel: 'Open Jobs',
+    tabBarIcon: TabBarIcon('briefcase'),
+  }
+
+  props: TopLevelViewPropsType
+
   state: {
-    jobs: {[key: string]: JobType[]},
-    loading: boolean,
+    jobs: Array<{title: string, data: Array<JobType>}>,
+    loaded: boolean,
     refreshing: boolean,
     error: boolean,
   } = {
-    jobs: {},
-    loading: false,
+    jobs: [],
+    loaded: false,
     refreshing: false,
     error: false,
   }
@@ -56,18 +59,27 @@ export default class StudentWorkView extends React.Component {
 
   fetchData = async () => {
     try {
-      const data: {[key: string]: JobType[]} = await fetchJson(jobsUrl)
+      const data: Array<JobType> = await fetchJson(jobsUrl)
 
-      // We have predefined orders for some job types, but we want all
-      // unknown types to show up at the end of the view, so we make
-      // them sort as Infinity
-      const sorted = sortBy(data, [
-        j => jobSort.get(j.type) || Infinity, // apply predefined group orderings
-        j => j.type, // sort any groups with the same sort index alphabetically
-        j => j.lastModified, // sort all jobs by date-last-modified
-      ])
+      // force title-case on the job types, to prevent not-actually-duplicate headings
+      const processed = data.map(job => ({...job, type: titleCase(job.type)}))
 
-      this.setState(() => ({jobs: groupBy(sorted, j => j.type)}))
+      // Turns out that, for our data, we really just want to sort the categories
+      // _backwards_ - that is, On-Campus Work Study should come before
+      // Off-Campus Work Study, and the Work Studies should come before the
+      // Summer Employments
+      const sorted = orderBy(
+        processed,
+        [
+          j => j.type, // sort any groups with the same sort index alphabetically
+          j => j.lastModified, // sort all jobs by date-last-modified
+        ],
+        ['desc', 'asc'],
+      )
+
+      const grouped = groupBy(sorted, j => j.type)
+      const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
+      this.setState(() => ({jobs: mapped}))
     } catch (err) {
       tracker.trackException(err.message)
       bugsnag.notify(err)
@@ -75,7 +87,7 @@ export default class StudentWorkView extends React.Component {
       console.error(err)
     }
 
-    this.setState(() => ({loading: true}))
+    this.setState(() => ({loaded: true}))
   }
 
   refresh = async () => {
@@ -92,51 +104,41 @@ export default class StudentWorkView extends React.Component {
     this.setState(() => ({refreshing: false}))
   }
 
-  onPressJob = (title: string, job: JobType) => {
-    this.props.navigator.push({
-      id: 'JobDetailView',
-      index: this.props.route.index + 1,
-      title: title,
-      backButtonTitle: 'Jobs',
-      props: {job},
-    })
+  onPressJob = (job: JobType) => {
+    this.props.navigation.navigate('JobDetailView', {job})
   }
 
-  renderSeparator = (sectionId: string, rowId: string) => {
-    return <ListSeparator key={`${sectionId}-${rowId}`} />
-  }
+  keyExtractor = (item: JobType, index: number) => index.toString()
 
-  renderSectionHeader = (data: any, id: string) => {
-    return <ListSectionHeader title={id} />
-  }
+  renderSectionHeader = ({section: {title}}: any) =>
+    <ListSectionHeader title={title} />
+
+  renderItem = ({item}: {item: JobType}) =>
+    <JobRow job={item} onPress={this.onPressJob} />
 
   render() {
     if (this.state.error) {
       return <Text selectable={true}>{this.state.error}</Text>
     }
 
-    if (!this.state.loading) {
+    if (!this.state.loaded) {
       return <LoadingView />
     }
 
-    if (!size(this.state.jobs)) {
-      return <NoticeView text="There are no open job postings." />
-    }
-
     return (
-      <SimpleListView
+      <SectionList
+        ListEmptyComponent={
+          <NoticeView text="There are no open job postings." />
+        }
+        keyExtractor={this.keyExtractor}
         style={styles.listContainer}
-        forceBottomInset={true}
-        data={this.state.jobs}
+        sections={(this.state.jobs: any)}
         renderSectionHeader={this.renderSectionHeader}
-        renderSeparator={this.renderSeparator}
+        ItemSeparatorComponent={ListSeparator}
         refreshing={this.state.refreshing}
         onRefresh={this.refresh}
-      >
-        {(job: JobType) => (
-          <JobRow onPress={() => this.onPressJob(job.title, job)} job={job} />
-        )}
-      </SimpleListView>
+        renderItem={this.renderItem}
+      />
     )
   }
 }

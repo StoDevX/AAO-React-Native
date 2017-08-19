@@ -42,7 +42,7 @@ export async function setLoginCredentials(username: string, password: string) {
 }
 
 export function logInViaCredentials(username: string, password: string) {
-  return async (dispatch: () => {}) => {
+  return async (dispatch: any => any) => {
     const result = await performLogin(username, password)
     dispatch({type: CREDENTIALS_LOGIN, payload: {username, password, result}})
 
@@ -54,7 +54,7 @@ export function logInViaCredentials(username: string, password: string) {
 }
 
 export function logInViaToken(tokenStatus: boolean) {
-  return async (dispatch: () => {}) => {
+  return async (dispatch: any => any) => {
     await setTokenValid(tokenStatus)
     dispatch({type: TOKEN_LOGIN, payload: tokenStatus})
 
