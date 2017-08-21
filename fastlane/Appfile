@@ -2,7 +2,11 @@
 app_identifier 'NFMTHAZVS9.com.drewvolz.stolaf'
 
 # Your Apple email address
-apple_id 'sgawebmaster@stolaf.edu'
+apple_id 'hawkrives@gmail.com'
+
+# Your Apple Developer Team ID, if you are in multiple teams
+team_id 'TMK6S7TPX2'
+itc_team_id '118781268'
 
 # This is a private key. It is not included in the repository.
 # Contact odt@stolaf.edu or another admin if you need access.
