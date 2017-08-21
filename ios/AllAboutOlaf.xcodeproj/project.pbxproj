@@ -886,7 +886,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 363G7T9TGX;
+						DevelopmentTeam = TMK6S7TPX2;
 						LastSwiftMigration = 0810;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
@@ -1487,7 +1487,7 @@
 				CODE_SIGN_ENTITLEMENTS = "AllAboutOlaf/All About Olaf.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 363G7T9TGX;
+				DEVELOPMENT_TEAM = TMK6S7TPX2;
 				ENABLE_TESTABILITY = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1520,7 +1520,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf;
 				PRODUCT_NAME = AllAboutOlaf;
-				PROVISIONING_PROFILE = "328dc8bb-bb74-41f9-826a-ef2abd098c6a";
+				PROVISIONING_PROFILE = "45ccdf67-2e41-4323-b343-0c4623b75249";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore NFMTHAZVS9.com.drewvolz.stolaf";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1536,7 +1536,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "AllAboutOlaf/All About Olaf.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				DEVELOPMENT_TEAM = 363G7T9TGX;
+				DEVELOPMENT_TEAM = TMK6S7TPX2;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1568,7 +1568,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf;
 				PRODUCT_NAME = AllAboutOlaf;
-				PROVISIONING_PROFILE = "328dc8bb-bb74-41f9-826a-ef2abd098c6a";
+				PROVISIONING_PROFILE = "45ccdf67-2e41-4323-b343-0c4623b75249";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore NFMTHAZVS9.com.drewvolz.stolaf";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
