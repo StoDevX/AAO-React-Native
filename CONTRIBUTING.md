@@ -18,7 +18,7 @@ We have a special command that runs all four of those for you: `npm run check`. 
 [jest]: https://facebook.github.io/jest/
 [prettier]: https://github.com/prettier/prettier
 
-As always, please keep the [Code of Conduct](https://github.com/StoDevX/AAO-React-Native/blob/master/CodeOfConduct.md) in mind.
+As always, please keep the [Code of Conduct](https://github.com/StoDevX/AAO-React-Native/blob/master/CODE_OF_CONDUCT.md) in mind.
 
 
 ## Maintainers
