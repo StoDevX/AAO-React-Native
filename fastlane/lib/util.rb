@@ -87,7 +87,7 @@ end
 
 # Makes a changelog from the timespan passed
 def make_changelog
-  sh('git fetch --tags')
+  sh('git fetch --unshallow')
   log = git_changelog
 
   limit = 4_000

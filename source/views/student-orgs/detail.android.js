@@ -6,9 +6,9 @@ import {Card} from '../components/card'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import Communications from 'react-native-communications'
+import {email} from 'react-native-communications'
 import openUrl from '../components/open-url'
-import cleanOrg from './clean-org'
+import {cleanOrg, showNameOrEmail} from './util'
 
 const styles = StyleSheet.create({
   name: {
@@ -66,10 +66,10 @@ export class StudentOrgsDetailView extends React.Component {
     navigation: {state: {params: {org: StudentOrgType}}},
   }
 
-  // Using Communications because `mailTo` complains about
+  // Using the Communications library because `mailTo` complains about
   // the lack of an available Activity...
-  openEmail = (email: string, org: string) => {
-    Communications.email([email], null, null, org, '')
+  openEmail = (to: string, org: string) => {
+    email([to], null, null, org, '')
   }
 
   render() {
@@ -118,7 +118,7 @@ export class StudentOrgsDetailView extends React.Component {
                   onPress={() => this.openEmail(c.email, orgName)}
                 >
                   {c.title ? c.title + ': ' : ''}
-                  {c.firstName} {c.lastName} ({c.email})
+                  {showNameOrEmail(c)}
                 </Text>,
               )}
             </Card>

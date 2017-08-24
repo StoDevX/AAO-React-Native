@@ -7,7 +7,7 @@ import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import openUrl from '../components/open-url'
-import cleanOrg from './clean-org'
+import {cleanOrg, showNameOrEmail} from './util'
 
 const styles = StyleSheet.create({
   name: {
@@ -111,7 +111,7 @@ export class StudentOrgsDetailView extends React.Component {
                     key={i}
                     cellStyle={c.title ? 'Subtitle' : 'Basic'}
                     accessory="DisclosureIndicator"
-                    title={`${c.firstName} ${c.lastName}`}
+                    title={showNameOrEmail(c)}
                     detail={c.title}
                     onPress={() => Linking.openURL(`mailto:${c.email}`)}
                   />,

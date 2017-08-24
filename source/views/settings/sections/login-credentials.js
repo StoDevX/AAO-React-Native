@@ -22,7 +22,7 @@ type CredentialsSectionPropsType = {
   logOut: () => any,
   validateCredentials: (username: string, password: string) => any,
   setCredentials: (username: string, password: string) => any,
-};
+}
 
 class CredentialsLoginSection extends React.Component {
   props: CredentialsSectionPropsType

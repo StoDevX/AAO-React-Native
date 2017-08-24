@@ -335,6 +335,13 @@
 			remoteGlobalIDString = DA5891D81BA9A9FC002B4DB2;
 			remoteInfo = RNDeviceInfo;
 		};
+		6737CDF21F4B09F900976A4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6B75437AADD646929F73CBA8 /* RCTVideo.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 641E28441F0EEC8500443AF6;
+			remoteInfo = "RCTVideo-tvOS";
+		};
 		67990B491EC0FE7A001F5261 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 36AB9BDB6CF1449E997C6D74 /* AirMaps.xcodeproj */;
@@ -745,6 +752,7 @@
 			isa = PBXGroup;
 			children = (
 				67C0A18B1EF6E13D004B9D62 /* libRCTVideo.a */,
+				6737CDF31F4B09F900976A4F /* libRCTVideo.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -878,7 +886,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 363G7T9TGX;
+						DevelopmentTeam = TMK6S7TPX2;
 						LastSwiftMigration = 0810;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
@@ -1306,6 +1314,13 @@
 			remoteRef = 3A9B26581DE3709F00B6A428 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		6737CDF31F4B09F900976A4F /* libRCTVideo.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTVideo.a;
+			remoteRef = 6737CDF21F4B09F900976A4F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		67990B4A1EC0FE7A001F5261 /* libAirMaps.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1472,7 +1487,7 @@
 				CODE_SIGN_ENTITLEMENTS = "AllAboutOlaf/All About Olaf.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 363G7T9TGX;
+				DEVELOPMENT_TEAM = TMK6S7TPX2;
 				ENABLE_TESTABILITY = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1505,7 +1520,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf;
 				PRODUCT_NAME = AllAboutOlaf;
-				PROVISIONING_PROFILE = "328dc8bb-bb74-41f9-826a-ef2abd098c6a";
+				PROVISIONING_PROFILE = "45ccdf67-2e41-4323-b343-0c4623b75249";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore NFMTHAZVS9.com.drewvolz.stolaf";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1521,7 +1536,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "AllAboutOlaf/All About Olaf.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				DEVELOPMENT_TEAM = 363G7T9TGX;
+				DEVELOPMENT_TEAM = TMK6S7TPX2;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1553,7 +1568,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf;
 				PRODUCT_NAME = AllAboutOlaf;
-				PROVISIONING_PROFILE = "328dc8bb-bb74-41f9-826a-ef2abd098c6a";
+				PROVISIONING_PROFILE = "45ccdf67-2e41-4323-b343-0c4623b75249";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore NFMTHAZVS9.com.drewvolz.stolaf";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
