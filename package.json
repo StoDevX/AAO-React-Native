@@ -115,7 +115,7 @@
     "junk": "2.1.0",
     "marked": "0.3.6",
     "minimist": "1.2.0",
-    "pify": "2.3.0",
+    "pify": "3.0.0",
     "prettier": "1.4.4",
     "react-native-view-shot": "1.10.1",
     "react-test-renderer": "16.0.0-alpha.12"
