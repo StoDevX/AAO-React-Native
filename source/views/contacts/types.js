@@ -1,5 +1,5 @@
 // @flow
-export type CardType = {
+export type ContactType = {
   title: string,
   phoneNumber: string,
   buttonText: string,
