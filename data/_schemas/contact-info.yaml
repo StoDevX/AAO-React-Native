@@ -1,10 +1,11 @@
 $schema: http://json-schema.org/draft-06/schema#
 
 additionalProperties: false
-required: [title, phoneNumber, buttonText, image, text]
+required: [title, phoneNumber, buttonText, category, image, text]
 properties:
   title: {type: string}
   phoneNumber: {$ref: '_defs.json#/definitions/phone'}
   buttonText: {type: string}
+  category: {type: string}
   image: {type: string}
   text: {type: string}
