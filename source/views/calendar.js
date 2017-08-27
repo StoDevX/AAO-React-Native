@@ -60,7 +60,7 @@ const CalendarView = TabNavigator(
 
 export const navigation: AppNavigationType = {
   CalendarView: {screen: CalendarView},
-  EventDetail: {screen: EventDetail},
+  EventDetailView: {screen: EventDetail},
 }
 
 export const view: HomescreenViewType = {
