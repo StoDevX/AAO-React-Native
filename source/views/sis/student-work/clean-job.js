@@ -1,6 +1,7 @@
 // @flow
 import type {JobType} from './types'
 
+import getUrls from 'get-urls'
 import {fastGetTrimmedText, removeHtmlWithRegex} from '../../../lib/html'
 
 export function cleanJob(job: JobType): JobType {
@@ -44,18 +45,10 @@ export function getLinksFromJob(job: JobType) {
   // Clean up returns, newlines, tabs, and misc symbols...
   // ...and search for application links in the text
   return [
-    ...parseLinks(job.description),
-    ...parseLinks(job.comments),
-    ...parseLinks(job.skills),
+    ...getUrls(job.description),
+    ...getUrls(job.comments),
+    ...getUrls(job.skills),
   ]
-}
-
-function parseLinks(data: string) {
-  const allLinks = data.split(/\s/)
-  if (!allLinks.length) {
-    return []
-  }
-  return allLinks.filter(w => /^https?:\/\//.test(w))
 }
 
 function fixupEmailFormat(email: string) {
