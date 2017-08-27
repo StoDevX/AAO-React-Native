@@ -6,8 +6,6 @@ import type {VisibleHomescreenViewType, AppNavigationType} from './types'
 
 import * as appViews from '../views'
 
-console.log(appViews)
-
 // export everything … just because we can
 export const theExports = appViews
 
