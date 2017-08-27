@@ -1,10 +1,12 @@
 // @flow
 
 import React from 'react'
-import {Animated, Easing, StyleSheet, Text} from 'react-native'
+import {Animated, Easing, StyleSheet, Dimensions, Text} from 'react-native'
 import * as c from '../../components/colors'
 import {MenuIcon, ReorderIcon} from './icons'
 import type {VisibleHomescreenViewType} from '../../app/types'
+
+const window = Dimensions.get('window')
 
 type RowProps = {
   data: VisibleHomescreenViewType,
