@@ -26,7 +26,6 @@ import SortableList from 'react-native-sortable-list'
 import type {ViewType} from '../views'
 import {allViews} from '../views'
 
-const window = Dimensions.get('window')
 const objViews = fromPairs(allViews.map(v => [v.view, v]))
 
 const ReorderIcon = () =>
@@ -121,8 +120,9 @@ class Row extends React.Component {
   }
 
   render() {
+    const style = {width: Dimensions.get('window').width - 15 * 2}
     return (
-      <Animated.View style={[styles.row, this.state.style]}>
+      <Animated.View style={[styles.row, style, this.state.style]}>
         <MenuIcon icon={this.props.data.icon} tint={this.props.data.tint} />
         <Text style={[styles.text, {color: this.props.data.tint}]}>
           {this.props.data.title}
@@ -137,9 +137,10 @@ function EditHomeView(props: {
   onSaveOrder: (ViewType[]) => any,
   order: string[],
 }) {
+  const style = {width: Dimensions.get('window').width}
   return (
     <SortableList
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={[styles.contentContainer, style]}
       data={objViews}
       order={props.order}
       onChangeOrder={(order: ViewType[]) => props.onSaveOrder(order)}
@@ -166,7 +167,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(EditHomeView)
 
 let styles = StyleSheet.create({
   contentContainer: {
-    width: window.width,
     backgroundColor: c.iosLightBackground,
     paddingTop: 10,
     paddingBottom: 20,
@@ -175,7 +175,6 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: c.white,
-    width: window.width - 15 * 2,
     marginVertical: 5,
     marginHorizontal: 15,
     paddingVertical: 12,
