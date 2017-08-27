@@ -95,7 +95,7 @@ const Logo = () => {
   }
   return (
     <View style={styles.wrapper}>
-      <Image source={image} style={[styles.logo, style]} />
+      <Image source={image} style={style} />
     </View>
   )
 }
