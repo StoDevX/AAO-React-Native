@@ -87,18 +87,32 @@ export default class KSTOView extends React.PureComponent {
   }
 }
 
-const Logo = () =>
-  <View style={styles.wrapper}>
-    <Image source={image} style={styles.logo} />
-  </View>
+const Logo = () => {
+  const viewport = Dimensions.get('window')
+  const style = {
+    maxWidth: viewport.width / 1.2,
+    maxHeight: viewport.height / 2.0,
+  }
+  return (
+    <View style={styles.wrapper}>
+      <Image source={image} style={[styles.logo, style]} />
+    </View>
+  )
+}
 
-const Title = () =>
-  <View style={styles.container}>
-    <Text selectable={true} style={styles.heading}>
-      St. Olaf College Radio
-    </Text>
-    <Text selectable={true} style={styles.subHeading}>KSTO 93.1 FM</Text>
-  </View>
+const Title = () => {
+  const style = {fontSize: Dimensions.get('window').height / 30}
+  return (
+    <View style={styles.container}>
+      <Text selectable={true} style={[styles.heading, style]}>
+        St. Olaf College Radio
+      </Text>
+      <Text selectable={true} style={[styles.subHeading, style]}>
+        KSTO 93.1 FM
+      </Text>
+    </View>
+  )
+}
 
 // const song = this.state.metadata.length
 //     ? <Metadata song={this.state.metadata.CHANGEME} />
@@ -143,14 +157,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: c.kstoPrimaryDark,
     fontWeight: '500',
-    fontSize: Dimensions.get('window').height / 30,
   },
   subHeading: {
     marginTop: 5,
     marginBottom: 10,
     color: c.kstoPrimaryDark,
     fontWeight: '300',
-    fontSize: Dimensions.get('window').height / 30,
   },
   // nowPlaying: {
   //   paddingTop: 10,
@@ -164,11 +176,6 @@ const styles = StyleSheet.create({
   //   paddingTop: 5,
   //   color: c.red,
   // },
-
-  logo: {
-    maxWidth: Dimensions.get('window').width / 1.2,
-    maxHeight: Dimensions.get('window').height / 2.0,
-  },
 })
 
 const buttonStyles = StyleSheet.create({
