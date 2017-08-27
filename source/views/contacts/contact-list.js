@@ -28,11 +28,12 @@ const styles = StyleSheet.create({
   },
 })
 
-const listFooter =
+const listFooter = (
   <ListFooter
     title="Collected by the humans of All About Olaf"
     href={AAO_URL}
   />
+)
 
 export default class ContactsListView extends React.PureComponent {
   static navigationOptions = {
