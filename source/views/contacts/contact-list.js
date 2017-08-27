@@ -1,7 +1,7 @@
 /**
  * @flow
  * All About Olaf
- * iOS Contact page
+ * Contact page
  */
 
 import React from 'react'
