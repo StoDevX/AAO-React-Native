@@ -18,7 +18,7 @@ import type {ContactType} from './types'
 const AAO_URL = 'https://github.com/StoDevX/AAO-React-Native/issues/new'
 
 const groupContacts = (contacts: ContactType[]) => {
-  const grouped = groupBy(contacts, b => b.category || 'Other')
+  const grouped = groupBy(contacts, c => c.category)
   return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
 }
 
