@@ -3,10 +3,12 @@
  * Reducer for state for the homescreen
  */
 
-import {allViewNames as defaultViewOrder} from '../../views/views'
+import {homeViews} from '../../app/views'
 import difference from 'lodash/difference'
-import {trackHomescreenOrder} from '../../analytics'
+import {trackHomescreenOrder} from '../../init/analytics'
 import * as storage from '../../lib/storage'
+
+const defaultViewOrder = homeViews.map(v => v.view)
 
 export const SAVE_HOMESCREEN_ORDER = 'homescreen/SAVE_HOMESCREEN_ORDER'
 

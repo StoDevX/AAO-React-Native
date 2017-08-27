@@ -3,7 +3,7 @@
  * Reducer for menus state info
  */
 
-import {trackMenuFilters} from '../../analytics'
+import {trackMenuFilters} from '../../init/analytics'
 
 export const UPDATE_MENU_FILTERS = 'menus/UPDATE_MENU_FILTERS'
 
