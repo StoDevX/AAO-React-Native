@@ -119,8 +119,16 @@ class RoundedThumbnail extends React.PureComponent {
     const startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
     const actualTextColor = c[textColor]
 
+    const screenWidth = Dimensions.get('window').width
+
+    const width = screenWidth / 2 - CELL_MARGIN * 1.5
+    const cellRatio = 2.15625
+    const height = width / cellRatio
+
+    const style = {width, height}
+
     return (
-      <View style={[styles.cell, styles.rounded]}>
+      <View style={[style, styles.cell, styles.rounded]}>
         <Touchable
           highlight={true}
           underlayColor={baseColor}
@@ -147,11 +155,6 @@ class RoundedThumbnail extends React.PureComponent {
 }
 
 const CELL_MARGIN = 10
-const screenWidth = Dimensions.get('window').width
-
-const cellWidth = screenWidth / 2 - CELL_MARGIN * 1.5
-const cellRatio = 2.15625
-const cellHeight = cellWidth / cellRatio
 
 const styles = StyleSheet.create({
   gridWrapper: {
@@ -165,14 +168,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   rounded: {
-    // Android doesn't currently (0.42) respect both
+    // TODO: Android doesn't currently (0.42) respect both
     // overflow:hidden and border-radius.
     borderRadius: Platform.OS === 'android' ? 0 : 6,
   },
   cell: {
     overflow: 'hidden',
-    width: cellWidth,
-    height: cellHeight,
     margin: CELL_MARGIN / 2,
     justifyContent: 'center',
 
