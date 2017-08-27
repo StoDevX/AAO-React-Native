@@ -1,7 +1,6 @@
 // @flow
 
 import toPairs from 'lodash/toPairs'
-import fromPairs from 'lodash/fromPairs'
 
 import type {VisibleHomescreenViewType, AppNavigationType} from './types'
 
@@ -29,4 +28,6 @@ export const homeViews: Array<VisibleHomescreenViewType> = viewDefs
 
 // The navigation views are expected to be an object, so we turn the pairs
 // back into an object.
-export const navViews: AppNavigationType = fromPairs(viewDefs.filter(isNavDef))
+export const navViews: AppNavigationType = viewDefs
+  .filter(isNavDef)
+  .reduce((obj, [_, nav]) => ({...obj, ...nav}), {})
