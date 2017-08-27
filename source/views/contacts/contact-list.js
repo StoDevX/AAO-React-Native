@@ -28,6 +28,12 @@ const styles = StyleSheet.create({
   },
 })
 
+const listFooter =
+  <ListFooter
+    title="Collected by the humans of All About Olaf"
+    href={AAO_URL}
+  />
+
 export default class ContactsListView extends React.PureComponent {
   static navigationOptions = {
     title: 'Important Contacts',
@@ -45,12 +51,6 @@ export default class ContactsListView extends React.PureComponent {
   renderSectionHeader = ({section: {title}}: any) =>
     <ListSectionHeader title={title} spacing={{left: 10}} />
 
-  renderFooter = () =>
-    <ListFooter
-      title="Collected by the humans of All About Olaf"
-      href={AAO_URL}
-    />
-
   renderItem = ({item}: {item: ContactType}) =>
     <ContactRow contact={item} onPress={this.onPressContact} />
 
@@ -64,7 +64,7 @@ export default class ContactsListView extends React.PureComponent {
       <SectionList
         ItemSeparatorComponent={this.renderSeparator}
         ListEmptyComponent={<ListEmpty mode="bug" />}
-        ListFooterComponent={this.renderFooter}
+        ListFooterComponent={listFooter}
         style={styles.listContainer}
         data={groupedData}
         sections={groupedData}
