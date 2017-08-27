@@ -118,6 +118,5 @@ let styles = StyleSheet.create({
   text: {
     flex: 1,
     fontSize: 18,
-    color: c.white,
   },
 })
