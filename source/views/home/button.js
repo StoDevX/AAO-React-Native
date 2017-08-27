@@ -7,8 +7,6 @@ import type {ViewType} from '../views'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
 
-const Viewport = Dimensions.get('window')
-
 export function HomeScreenButton({
   view,
   onPress,
@@ -16,11 +14,17 @@ export function HomeScreenButton({
   view: ViewType,
   onPress: () => any,
 }) {
+  const screenWidth = Dimensions.get('window').width
+  const style = {
+    width: screenWidth / 2 - CELL_MARGIN * 1.5,
+    backgroundColor: view.tint,
+  }
+
   return (
     <Touchable
       highlight={false}
       onPress={onPress}
-      style={[styles.rectangle, {backgroundColor: view.tint}]}
+      style={[styles.rectangle, style]}
     >
       <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
       <Text style={styles.rectangleButtonText}>
@@ -33,12 +37,10 @@ export function HomeScreenButton({
 export const CELL_MARGIN = 10
 const cellVerticalPadding = 8
 const cellHorizontalPadding = 4
-const cellWidth = Viewport.width / 2 - CELL_MARGIN * 1.5
 
 const styles = StyleSheet.create({
   // Main buttons for actions on home screen
   rectangle: {
-    width: cellWidth,
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: cellVerticalPadding,
