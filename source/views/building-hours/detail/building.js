@@ -5,11 +5,10 @@
  */
 
 import React from 'react'
-import {View, StyleSheet, Platform} from 'react-native'
+import {ScrollView, StyleSheet, Platform, Image} from 'react-native'
 import {buildingImages} from '../../../../images/building-images'
 import type {BuildingType} from '../types'
 import moment from 'moment-timezone'
-import ParallaxView from 'react-native-parallax-view'
 import * as c from '../../components/colors'
 import {getShortBuildingStatus} from '../lib'
 
@@ -20,7 +19,7 @@ import {ScheduleTable} from './schedule-table'
 const transparentPixel = require('../../../../images/transparent.png')
 
 const styles = StyleSheet.create({
-  scrollableStyle: {
+  container: {
     ...Platform.select({
       android: {
         backgroundColor: c.androidLightBackground,
@@ -29,6 +28,9 @@ const styles = StyleSheet.create({
         backgroundColor: c.iosLightBackground,
       },
     }),
+  },
+  image: {
+    height: 100,
   },
 })
 
@@ -45,23 +47,18 @@ export class BuildingDetail extends React.PureComponent {
     const schedules = info.schedule || []
 
     return (
-      <ParallaxView
-        backgroundSource={headerImage}
-        windowHeight={100}
-        scrollableViewStyle={styles.scrollableStyle}
-      >
-        <View>
-          <Header building={info} />
+      <ScrollView contentContainerStyle={styles.container}>
+        <Image source={headerImage} style={styles.image} />
+        <Header building={info} />
 
-          <Badge status={openStatus} />
+        <Badge status={openStatus} />
 
-          <ScheduleTable
-            schedules={schedules}
-            now={now}
-            onProblemReport={onProblemReport}
-          />
-        </View>
-      </ParallaxView>
+        <ScheduleTable
+          schedules={schedules}
+          now={now}
+          onProblemReport={onProblemReport}
+        />
+      </ScrollView>
     )
   }
 }
