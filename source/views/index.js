@@ -29,7 +29,7 @@ export {view as CampusMapView, navigation as CampusMapNav} from './campus-map'
 export {view as DirectoryView, navigation as DirectoryNav} from './directory'
 
 // prettier-ignore
-export {view as HelpView, navigation as HelpNav} from './help'
+// export {view as HelpView, navigation as HelpNav} from './help'
 
 // prettier-ignore
 export {view as EditHomeView, navigation as EditHomeNav} from './home-edit'
