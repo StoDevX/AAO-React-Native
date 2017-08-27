@@ -1,1 +1,1 @@
-import './source/root.js'
+import './source/app'
