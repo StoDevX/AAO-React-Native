@@ -3,7 +3,7 @@
 import toPairs from 'lodash/toPairs'
 import fromPairs from 'lodash/fromPairs'
 
-import type {VisibleHomescreenViewType} from './types'
+import type {VisibleHomescreenViewType, AppNavigationType} from './types'
 
 import * as appViews from '../views'
 
@@ -12,9 +12,10 @@ export const theExports = appViews
 
 // We need to partition the exports based on the name:
 // `ThingView` is a homescreen view, but `ThingNav` is a navigation item.
+const isNavDef = ([key]) => key.endsWith('Nav')
+
 const isHomeDef = ([key, value]) =>
   key.endsWith('View') && value.type !== 'hidden'
-const isNavDef = ([key]) => key.endsWith('Nav')
 
 const viewDefs = toPairs(appViews)
 
@@ -26,4 +27,4 @@ export const homeViews: Array<VisibleHomescreenViewType> = viewDefs
 
 // The navigation views are expected to be an object, so we turn the pairs
 // back into an object.
-export const navViews = fromPairs(viewDefs.filter(isNavDef))
+export const navViews: AppNavigationType = fromPairs(viewDefs.filter(isNavDef))

@@ -14,26 +14,23 @@ import type {VisibleHomescreenViewType} from '../../app/types'
 import {homeViews} from '../../app/views'
 
 const window = Dimensions.get('window')
-const objViews = fromPairs(homeViews.map(v => [v.view, v]))
 
-function EditHomeView(props: {
+type EditHomeProps = {
   onSaveOrder: (VisibleHomescreenViewType[]) => any,
   order: string[],
-}) {
+}
+type RowProps = {data: VisibleHomescreenViewType, active: boolean}
+
+function EditHomeView(props: EditHomeProps) {
+  const objViews = fromPairs(homeViews.map(v => [v.view, v]))
   return (
     <SortableList
       contentContainerStyle={styles.contentContainer}
       data={objViews}
       order={props.order}
-      onChangeOrder={(order: VisibleHomescreenViewType[]) =>
-        props.onSaveOrder(order)}
-      renderRow={({
-        data,
-        active,
-      }: {
-        data: VisibleHomescreenViewType,
-        active: boolean,
-      }) => <Row data={data} active={active} />}
+      onChangeOrder={props.onSaveOrder}
+      renderRow={({data, active}: RowProps) =>
+        <Row data={data} active={active} />}
     />
   )
 }
@@ -48,7 +45,8 @@ function mapStateToProps(state) {
 }
 function mapDispatchToProps(dispatch) {
   return {
-    onSaveOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
+    onSaveOrder: (newOrder: string[]) =>
+      dispatch(saveHomescreenOrder(newOrder)),
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(EditHomeView)
