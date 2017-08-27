@@ -6,11 +6,9 @@ import {StyleSheet, Image} from 'react-native'
 import {ListRow, Detail, Title} from '../../components/list'
 import {Column, Row} from '../../components/layout'
 import * as c from '../../components/colors'
-import moment from 'moment'
 import {getTrimmedTextWithSpaces, parseHtml} from '../../../lib/html'
 import {trackedOpenUrl} from '../../components/open-url'
 import type {StreamType} from './types'
-import Video from 'react-native-video'
 
 const styles = StyleSheet.create({
   listContainer: {
@@ -52,7 +50,6 @@ export class StreamRow extends React.PureComponent {
   //props: StreamType
 
   onPressStream = () => {
-    //tracker.trackScreenView(`StreamingMedia_${title.replace(' ', '')}View`)
     const {stream} = this.props
     trackedOpenUrl({url: stream.player, id: 'StreamingMedia_StreamView'})
   }
