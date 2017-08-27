@@ -13,9 +13,6 @@ import {Row} from './row'
 import type {VisibleHomescreenViewType} from '../../app/types'
 import {homeViews} from '../../app/views'
 
-import * as foo from '../../app/views'
-console.log(foo)
-
 const window = Dimensions.get('window')
 
 type EditHomeProps = {
