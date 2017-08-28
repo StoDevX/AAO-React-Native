@@ -38,9 +38,10 @@ export class BuildingDetail extends React.PureComponent {
   render() {
     const {info, now, onProblemReport} = this.props
 
-    const headerImage = info.image && buildingImages.hasOwnProperty(info.image)
-      ? buildingImages[info.image]
-      : transparentPixel
+    const headerImage =
+      info.image && buildingImages.hasOwnProperty(info.image)
+        ? buildingImages[info.image]
+        : transparentPixel
     const openStatus = getShortBuildingStatus(info, now)
     const schedules = info.schedule || []
 

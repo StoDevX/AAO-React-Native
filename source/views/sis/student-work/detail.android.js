@@ -49,94 +49,86 @@ const styles = StyleSheet.create({
 })
 
 function Title({job}: {job: JobType}) {
-  return job.title || job.type
-    ? <View>
-        <Text style={styles.name}>{job.title}</Text>
-        <Text style={styles.subtitle}>{job.type}</Text>
-      </View>
-    : null
+  return job.title || job.type ? (
+    <View>
+      <Text style={styles.name}>{job.title}</Text>
+      <Text style={styles.subtitle}>{job.type}</Text>
+    </View>
+  ) : null
 }
 
 function Contact({job}: {job: JobType}) {
   const contactName = getContactName(job).trim() || job.contactEmail
-  return job.office || contactName
-    ? <Card header="Contact" style={styles.card}>
-        <Text
-          style={styles.cardBody}
-          onPress={() => email([job.contactEmail], null, null, job.title, '')}
-        >
-          {contactName} {job.title ? `(${job.title})` : ''}
-          {'\n'}
-          {job.office}
-        </Text>
-      </Card>
-    : null
+  return job.office || contactName ? (
+    <Card header="Contact" style={styles.card}>
+      <Text
+        style={styles.cardBody}
+        onPress={() => email([job.contactEmail], null, null, job.title, '')}
+      >
+        {contactName} {job.title ? `(${job.title})` : ''}
+        {'\n'}
+        {job.office}
+      </Text>
+    </Card>
+  ) : null
 }
 
 function Hours({job}: {job: JobType}) {
   const ending = job.hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
-  return job.timeOfHours && job.hoursPerWeek
-    ? <Card header="Hours" style={styles.card}>
-        <Text style={styles.cardBody}>
-          {job.timeOfHours}
-          {'\n'}
-          {job.hoursPerWeek + ending}
-        </Text>
-      </Card>
-    : null
+  return job.timeOfHours && job.hoursPerWeek ? (
+    <Card header="Hours" style={styles.card}>
+      <Text style={styles.cardBody}>
+        {job.timeOfHours}
+        {'\n'}
+        {job.hoursPerWeek + ending}
+      </Text>
+    </Card>
+  ) : null
 }
 
 function Description({job}: {job: JobType}) {
-  return job.description
-    ? <Card header="Description" style={styles.card}>
-        <Text style={styles.cardBody}>
-          {job.description}
-        </Text>
-      </Card>
-    : null
+  return job.description ? (
+    <Card header="Description" style={styles.card}>
+      <Text style={styles.cardBody}>{job.description}</Text>
+    </Card>
+  ) : null
 }
 
 function Skills({job}: {job: JobType}) {
-  return job.skills
-    ? <Card header="Skills" style={styles.card}>
-        <Text style={styles.cardBody}>
-          {job.skills}
-        </Text>
-      </Card>
-    : null
+  return job.skills ? (
+    <Card header="Skills" style={styles.card}>
+      <Text style={styles.cardBody}>{job.skills}</Text>
+    </Card>
+  ) : null
 }
 
 function Comments({job}: {job: JobType}) {
-  return job.comments
-    ? <Card header="Comments" style={styles.card}>
-        <Text style={styles.cardBody}>
-          {job.comments}
-        </Text>
-      </Card>
-    : null
+  return job.comments ? (
+    <Card header="Comments" style={styles.card}>
+      <Text style={styles.cardBody}>{job.comments}</Text>
+    </Card>
+  ) : null
 }
 
 function Links({job}: {job: JobType}) {
   const links = getLinksFromJob(job)
-  return links.length
-    ? <Card header="LINKS" style={styles.card}>
-        {links.map(url =>
-          <Text key={url} style={styles.cardBody} onPress={() => openUrl(url)}>
-            {url}
-          </Text>,
-        )}
-      </Card>
-    : null
+  return links.length ? (
+    <Card header="LINKS" style={styles.card}>
+      {links.map(url => (
+        <Text key={url} style={styles.cardBody} onPress={() => openUrl(url)}>
+          {url}
+        </Text>
+      ))}
+    </Card>
+  ) : null
 }
 
 function LastUpdated({when}: {when: string}) {
-  return when
-    ? <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-        Last updated:
-        {' '}
-        {moment(when, 'YYYY/MM/DD').calendar()}
-      </Text>
-    : null
+  return when ? (
+    <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
+      Last updated: {moment(when, 'YYYY/MM/DD').calendar()}
+    </Text>
+  ) : null
 }
 
 export default function JobDetailView(props: {

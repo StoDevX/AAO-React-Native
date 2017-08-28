@@ -41,7 +41,10 @@ function makeSubtitle({now, moments, isLastBus}) {
   let lineDetail = 'Running'
 
   if (now.isBefore(head(moments))) {
-    lineDetail = `Starts ${now.clone().seconds(0).to(head(moments))}`
+    lineDetail = `Starts ${now
+      .clone()
+      .seconds(0)
+      .to(head(moments))}`
   } else if (now.isAfter(last(moments))) {
     lineDetail = 'Over for Today'
   } else if (isLastBus) {
@@ -83,7 +86,9 @@ export class BusLine extends React.PureComponent {
         <View>
           <ListSectionHeader title={line.line} titleStyle={androidColor} />
           <ListRow>
-            <Title><Text>This line is not running today.</Text></Title>
+            <Title>
+              <Text>This line is not running today.</Text>
+            </Title>
           </ListRow>
         </View>
       )
@@ -111,7 +116,7 @@ export class BusLine extends React.PureComponent {
           titleStyle={androidColor}
         />
 
-        {pairs.map(([placeTitle, moment], i, list) =>
+        {pairs.map(([placeTitle, moment], i, list) => (
           <View key={i}>
             <BusStopRow
               // get the arrival time for this stop from each bus loop after
@@ -126,8 +131,8 @@ export class BusLine extends React.PureComponent {
               isLastRow={i === list.length - 1}
             />
             <Separator style={styles.separator} />
-          </View>,
-        )}
+          </View>
+        ))}
 
         <ListRow
           onPress={this.props.openMap}

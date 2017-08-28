@@ -16,8 +16,9 @@ import {ListSeparator, ListSectionHeader} from '../components/list'
 import {NoticeView} from '../components/notice'
 import EventRow from './event-row'
 
-const FullWidthSeparator = props =>
+const FullWidthSeparator = props => (
   <ListSeparator fullWidth={true} {...props} />
+)
 
 export class EventList extends React.PureComponent {
   props: TopLevelViewPropsType & {
@@ -50,12 +51,14 @@ export class EventList extends React.PureComponent {
     this.props.navigation.navigate('EventDetailView', {event})
   }
 
-  renderSectionHeader = ({section: {title}}: any) =>
+  renderSectionHeader = ({section: {title}}: any) => (
     // the proper type is ({section: {title}}: {section: {title: string}})
     <ListSectionHeader title={title} spacing={{left: 10}} />
+  )
 
-  renderItem = ({item}: {item: EventType}) =>
+  renderItem = ({item}: {item: EventType}) => (
     <EventRow onPress={this.onPressEvent} event={item} />
+  )
 
   keyExtractor = (item: EventType, index: number) => index.toString()
 

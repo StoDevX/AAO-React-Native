@@ -46,8 +46,9 @@ const styles = StyleSheet.create({
   },
 })
 
-const CustomSeparator = () =>
+const CustomSeparator = () => (
   <ListSeparator spacing={{left: leftSideSpacing}} />
+)
 
 class FancyMenuView extends React.PureComponent {
   static defaultProps = {
@@ -157,23 +158,26 @@ class FancyMenuView extends React.PureComponent {
           filters={filters}
           onPress={this.openFilterView}
         />
-        {messageView
-          ? messageView
-          : <SectionList
-              ItemSeparatorComponent={CustomSeparator}
-              ListEmptyComponent={messageView}
-              keyExtractor={this.keyExtractor}
-              style={styles.inner}
-              sections={grouped}
-              renderSectionHeader={this.renderSectionHeader}
-              renderItem={({item}: {item: MenuItemType}) =>
-                <FoodItemRow
-                  data={item}
-                  corIcons={this.props.menuCorIcons}
-                  badgeSpecials={!specialsFilterEnabled}
-                  spacing={{left: leftSideSpacing}}
-                />}
-            />}
+        {messageView ? (
+          messageView
+        ) : (
+          <SectionList
+            ItemSeparatorComponent={CustomSeparator}
+            ListEmptyComponent={messageView}
+            keyExtractor={this.keyExtractor}
+            style={styles.inner}
+            sections={grouped}
+            renderSectionHeader={this.renderSectionHeader}
+            renderItem={({item}: {item: MenuItemType}) => (
+              <FoodItemRow
+                data={item}
+                corIcons={this.props.menuCorIcons}
+                badgeSpecials={!specialsFilterEnabled}
+                spacing={{left: leftSideSpacing}}
+              />
+            )}
+          />
+        )}
       </View>
     )
   }

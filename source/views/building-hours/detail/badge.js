@@ -22,7 +22,9 @@ export class Badge extends React.PureComponent {
 
     return (
       <View style={[styles.badge, {backgroundColor: bgColor}]}>
-        <Text selectable={true} style={styles.badgeText}>{status}</Text>
+        <Text selectable={true} style={styles.badgeText}>
+          {status}
+        </Text>
       </View>
     )
   }

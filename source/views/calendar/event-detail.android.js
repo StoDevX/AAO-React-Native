@@ -36,46 +36,40 @@ function Title({event}: {event: EventType}) {
 }
 
 function Description({event}: {event: EventType}) {
-  return event.rawSummary
-    ? <Card header="Description" style={styles.card}>
-        <Text style={styles.cardBody}>
-          {event.rawSummary}
-        </Text>
-      </Card>
-    : null
+  return event.rawSummary ? (
+    <Card header="Description" style={styles.card}>
+      <Text style={styles.cardBody}>{event.rawSummary}</Text>
+    </Card>
+  ) : null
 }
 
 function When({event}: {event: EventType}) {
-  return event.times
-    ? <Card header="When" style={styles.card}>
-        <Text style={styles.cardBody}>
-          {event.times}
-        </Text>
-      </Card>
-    : null
+  return event.times ? (
+    <Card header="When" style={styles.card}>
+      <Text style={styles.cardBody}>{event.times}</Text>
+    </Card>
+  ) : null
 }
 
 function Location({event}: {event: EventType}) {
-  return event.location
-    ? <Card header="Location" style={styles.card}>
-        <Text style={styles.cardBody}>
-          {event.location}
-        </Text>
-      </Card>
-    : null
+  return event.location ? (
+    <Card header="Location" style={styles.card}>
+      <Text style={styles.cardBody}>{event.location}</Text>
+    </Card>
+  ) : null
 }
 
 function Links({event}: {event: EventType}) {
   const links = getLinksFromEvent(event)
-  return links.length
-    ? <Card header="Links" style={styles.card}>
-        {links.map(url =>
-          <Text key={url} style={styles.cardBody} onPress={() => openUrl(url)}>
-            {url}
-          </Text>,
-        )}
-      </Card>
-    : null
+  return links.length ? (
+    <Card header="Links" style={styles.card}>
+      {links.map(url => (
+        <Text key={url} style={styles.cardBody} onPress={() => openUrl(url)}>
+          {url}
+        </Text>
+      ))}
+    </Card>
+  ) : null
 }
 
 const shareItem = (event: EventType) => {

@@ -17,8 +17,9 @@ export {BusMapView} from './bus/map'
 export default TabNavigator(
   {
     ExpressLineBusView: {
-      screen: ({navigation}) =>
-        <BusView line="Express Bus" navigation={navigation} />,
+      screen: ({navigation}) => (
+        <BusView line="Express Bus" navigation={navigation} />
+      ),
       navigationOptions: {
         tabBarLabel: 'Express Bus',
         tabBarIcon: TabBarIcon('bus'),
@@ -26,8 +27,9 @@ export default TabNavigator(
     },
 
     RedLineBusView: {
-      screen: ({navigation}) =>
-        <BusView line="Red Line" navigation={navigation} />,
+      screen: ({navigation}) => (
+        <BusView line="Red Line" navigation={navigation} />
+      ),
       navigationOptions: {
         tabBarLabel: 'Red Line',
         tabBarIcon: TabBarIcon('bus'),
@@ -35,8 +37,9 @@ export default TabNavigator(
     },
 
     BlueLineBusView: {
-      screen: ({navigation}) =>
-        <BusView line="Blue Line" navigation={navigation} />,
+      screen: ({navigation}) => (
+        <BusView line="Blue Line" navigation={navigation} />
+      ),
       navigationOptions: {
         tabBarLabel: 'Blue Line',
         tabBarIcon: TabBarIcon('bus'),

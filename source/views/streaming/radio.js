@@ -70,35 +70,39 @@ export default class KSTOView extends React.PureComponent {
           {/*<Song />*/}
           <Title />
 
-          {!this.state.paused
-            ? <Video
-                ref={ref => (this.player = ref)}
-                source={{uri: kstoStream}}
-                playInBackground={true}
-                playWhenInactive={true}
-                paused={this.state.paused}
-                onTimedMetadata={this.onTimedMetadata}
-                onError={this.onError}
-              />
-            : null}
+          {!this.state.paused ? (
+            <Video
+              ref={ref => (this.player = ref)}
+              source={{uri: kstoStream}}
+              playInBackground={true}
+              playWhenInactive={true}
+              paused={this.state.paused}
+              onTimedMetadata={this.onTimedMetadata}
+              onError={this.onError}
+            />
+          ) : null}
         </View>
       </ScrollView>
     )
   }
 }
 
-const Logo = () =>
+const Logo = () => (
   <View style={styles.wrapper}>
     <Image source={image} style={styles.logo} />
   </View>
+)
 
-const Title = () =>
+const Title = () => (
   <View style={styles.container}>
     <Text selectable={true} style={styles.heading}>
       St. Olaf College Radio
     </Text>
-    <Text selectable={true} style={styles.subHeading}>KSTO 93.1 FM</Text>
+    <Text selectable={true} style={styles.subHeading}>
+      KSTO 93.1 FM
+    </Text>
   </View>
+)
 
 // const song = this.state.metadata.length
 //     ? <Metadata song={this.state.metadata.CHANGEME} />
@@ -123,9 +127,7 @@ class PlayPauseButton extends React.PureComponent {
             style={buttonStyles.icon}
             name={paused ? 'ios-play' : 'ios-pause'}
           />
-          <Text style={buttonStyles.action}>
-            {paused ? 'Listen' : 'Pause'}
-          </Text>
+          <Text style={buttonStyles.action}>{paused ? 'Listen' : 'Pause'}</Text>
         </View>
       </Touchable>
     )

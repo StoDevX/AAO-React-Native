@@ -74,76 +74,77 @@ export class StudentOrgsDetailView extends React.Component {
     return (
       <ScrollView>
         <TableView>
-          <Text selectable={true} style={styles.name}>{orgName}</Text>
+          <Text selectable={true} style={styles.name}>
+            {orgName}
+          </Text>
 
-          {category
-            ? <Section header="CATEGORY">
-                <Cell cellStyle="Basic" title={category} />
-              </Section>
-            : null}
+          {category ? (
+            <Section header="CATEGORY">
+              <Cell cellStyle="Basic" title={category} />
+            </Section>
+          ) : null}
 
-          {meetings
-            ? <Section header="MEETINGS">
+          {meetings ? (
+            <Section header="MEETINGS">
+              <Cell
+                cellContentView={
+                  <Text style={styles.meetings}>{meetings}</Text>
+                }
+                cellStyle="Basic"
+              />
+            </Section>
+          ) : null}
+
+          {website ? (
+            <Section header="WEBSITE">
+              <Cell
+                cellStyle="Basic"
+                accessory="DisclosureIndicator"
+                title={website}
+                onPress={() => openUrl(website)}
+              />
+            </Section>
+          ) : null}
+
+          {contacts.length ? (
+            <Section header="CONTACT">
+              {contacts.map((c, i) => (
                 <Cell
-                  cellContentView={
-                    <Text style={styles.meetings}>{meetings}</Text>
-                  }
-                  cellStyle="Basic"
+                  key={i}
+                  cellStyle={c.title ? 'Subtitle' : 'Basic'}
+                  accessory="DisclosureIndicator"
+                  title={showNameOrEmail(c)}
+                  detail={c.title}
+                  onPress={() => Linking.openURL(`mailto:${c.email}`)}
                 />
-              </Section>
-            : null}
+              ))}
+            </Section>
+          ) : null}
 
-          {website
-            ? <Section header="WEBSITE">
+          {advisors.length ? (
+            <Section header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
+              {advisors.map((c, i) => (
                 <Cell
+                  key={i}
                   cellStyle="Basic"
                   accessory="DisclosureIndicator"
-                  title={website}
-                  onPress={() => openUrl(website)}
+                  title={c.name}
+                  onPress={() => Linking.openURL(`mailto:${c.email}`)}
                 />
-              </Section>
-            : null}
+              ))}
+            </Section>
+          ) : null}
 
-          {contacts.length
-            ? <Section header="CONTACT">
-                {contacts.map((c, i) =>
-                  <Cell
-                    key={i}
-                    cellStyle={c.title ? 'Subtitle' : 'Basic'}
-                    accessory="DisclosureIndicator"
-                    title={showNameOrEmail(c)}
-                    detail={c.title}
-                    onPress={() => Linking.openURL(`mailto:${c.email}`)}
-                  />,
-                )}
-              </Section>
-            : null}
-
-          {advisors.length
-            ? <Section header={advisors.length === 1 ? 'ADVISOR' : 'ADVISORS'}>
-                {advisors.map((c, i) =>
-                  <Cell
-                    key={i}
-                    cellStyle="Basic"
-                    accessory="DisclosureIndicator"
-                    title={c.name}
-                    onPress={() => Linking.openURL(`mailto:${c.email}`)}
-                  />,
-                )}
-              </Section>
-            : null}
-
-          {description
-            ? <Section header="DESCRIPTION">
-                <View style={styles.description}>
-                  <Text style={styles.descriptionText}>{description}</Text>
-                </View>
-              </Section>
-            : null}
+          {description ? (
+            <Section header="DESCRIPTION">
+              <View style={styles.description}>
+                <Text style={styles.descriptionText}>{description}</Text>
+              </View>
+            </Section>
+          ) : null}
 
           <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-            Last updated:
-            {' '}
+            Last updated:{' '}
             {moment(orgLastUpdated, 'MMMM, DD YYYY HH:mm:ss').calendar()}
           </Text>
 

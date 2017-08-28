@@ -21,9 +21,11 @@ export class NewsRow extends React.PureComponent {
     return (
       <ListRow onPress={this._onPress} arrowPosition="top">
         <Row alignItems="center">
-          {story.featuredImage
-            ? <Image source={{uri: story.featuredImage}} style={styles.image} />
-            : <Image source={thumbnail} style={styles.image} />}
+          {story.featuredImage ? (
+            <Image source={{uri: story.featuredImage}} style={styles.image} />
+          ) : (
+            <Image source={thumbnail} style={styles.image} />
+          )}
           <Column flex={1}>
             <Title lines={1}>{story.title}</Title>
             <Detail lines={2}>{story.excerpt}</Detail>

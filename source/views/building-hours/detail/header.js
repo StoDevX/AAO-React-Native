@@ -18,13 +18,13 @@ export class Header extends React.PureComponent {
 
     const abbr = building.abbreviation ? ` (${building.abbreviation})` : ''
 
-    const subtitle = building.subtitle
-      ? <View style={styles.subtitle}>
-          <Text selectable={true} style={[styles.name, styles.subtitleText]}>
-            {building.subtitle}
-          </Text>
-        </View>
-      : null
+    const subtitle = building.subtitle ? (
+      <View style={styles.subtitle}>
+        <Text selectable={true} style={[styles.name, styles.subtitleText]}>
+          {building.subtitle}
+        </Text>
+      </View>
+    ) : null
 
     return (
       <View>

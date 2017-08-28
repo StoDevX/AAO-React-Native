@@ -27,7 +27,9 @@ export class JobRow extends React.PureComponent {
           <Column flex={1}>
             <Title lines={1}>{title}</Title>
             <Detail lines={1}>{office}</Detail>
-            <Detail lines={1}>{hours} {ending}</Detail>
+            <Detail lines={1}>
+              {hours} {ending}
+            </Detail>
           </Column>
         </Row>
       </ListRow>

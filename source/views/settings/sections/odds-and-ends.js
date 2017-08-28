@@ -55,14 +55,14 @@ class OddsAndEndsSection extends React.Component {
           />
         </Section>
 
-        {process.env.NODE_ENV === 'development'
-          ? <Section header="UTILITIES">
-              <PushButtonCell
-                title="Snapshots"
-                onPress={this.onSnapshotsButton}
-              />
-            </Section>
-          : null}
+        {process.env.NODE_ENV === 'development' ? (
+          <Section header="UTILITIES">
+            <PushButtonCell
+              title="Snapshots"
+              onPress={this.onSnapshotsButton}
+            />
+          </Section>
+        ) : null}
       </View>
     )
   }

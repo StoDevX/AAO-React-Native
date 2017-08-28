@@ -23,9 +23,7 @@ export function HomeScreenButton({
       style={[styles.rectangle, {backgroundColor: view.tint}]}
     >
       <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
-      <Text style={styles.rectangleButtonText}>
-        {view.title}
-      </Text>
+      <Text style={styles.rectangleButtonText}>{view.title}</Text>
     </Touchable>
   )
 }
