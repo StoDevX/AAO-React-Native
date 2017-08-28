@@ -29,7 +29,8 @@ platform :ios do
   desc 'Submit a new nightly Beta Build to Testflight'
   lane :nightly do
     build
-    testflight(changelog: make_changelog,
+    # TestFliht is returning 500 errors when we upload changelogs again.
+    testflight(#changelog: make_changelog,
                distribute_external: false)
   end
 
