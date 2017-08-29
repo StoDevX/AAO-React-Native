@@ -53,7 +53,7 @@
     "delay": "2.0.0",
     "events": "1.1.1",
     "get-urls": "7.0.0",
-    "glamorous-native": "1.1.1",
+    "glamorous-native": "1.1.2",
     "html-entities": "1.2.1",
     "htmlparser2": "3.9.2",
     "lodash": "4.17.4",
