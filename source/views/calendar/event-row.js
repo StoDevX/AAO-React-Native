@@ -55,7 +55,7 @@ export default class EventRow extends React.PureComponent {
         fullWidth={true}
         onPress={this._onPress}
       >
-        <Row>
+        <Row minHeight={46}>
           <CalendarTimes event={event} style={styles.timeContainer} />
 
           <Bar style={styles.bar} />
