@@ -28,43 +28,18 @@ export default function NewsItem(props: {
 }) {
   const {story, embedFeaturedImage} = props.navigation.state.params
 
+  // Use local or remote styles
+  let newsCSS = ''
+  if (process.env.NODE_ENV === 'development') {
+    let css = require('../../../docs/news-styles.json')
+    newsCSS = `<Style>${css}</Style>`
+  } else {
+    newsCSS =
+      '<link rel="stylesheet" href="https://stodevx.github.io/aao-react-native/news-styles.css">'
+  }
+
   const content = `
-    <style>
-      body {
-        font-family: -apple-system, Roboto, sans-serif;
-        font-size: 16px;
-        margin: 0;
-        padding: 1em;
-      }
-      div {
-        width: auto !important;
-      }
-      img {
-        max-width: 100%;
-        height: auto;
-        display: block;
-        margin: 12px auto;
-      }
-      p {
-        line-height: 1.2em;
-        margin-bottom: 0.25em;
-      }
-      iframe {
-        max-width: 100%;
-      }
-      .aao-header {
-        border-bottom: solid 2px #eaeaea;
-        margin: 0 0 1em;
-        padding-bottom: 1em;
-        font-weight: bold;
-        text-align: center;
-      }
-      .aao-header h1 {
-        line-height: 1.1em;
-        font-size: 1.5em;
-        margin-bottom: 0;
-      }
-    </style>
+    ${newsCSS}
     <header class="aao-header">
       <h1>${story.title}</h1>
     </header>
