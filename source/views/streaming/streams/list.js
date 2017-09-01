@@ -62,7 +62,9 @@ export class StreamListView extends React.PureComponent {
       let params = {
         class: 'upcoming',
         sort: 'ascending',
+        // eslint-disable-next-line camelcase
         date_from: dateFrom,
+        // eslint-disable-next-line camelcase
         date_to: dateTo,
       }
 

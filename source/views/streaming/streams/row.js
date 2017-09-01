@@ -28,7 +28,7 @@ function Name({item}: {item: StreamType}) {
 
 function Info({item}: {item: StreamType}) {
   const detail = getTrimmedTextWithSpaces(
-    parseHtml(item.subtitle || item.performer),
+    parseHtml(item.subtitle || item.performer || ''),
   )
   return detail ? <Detail>{detail}</Detail> : null
 }
