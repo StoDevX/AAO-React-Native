@@ -11,9 +11,6 @@ import {trackedOpenUrl} from '../../components/open-url'
 import type {StreamType} from './types'
 
 const styles = StyleSheet.create({
-  listContainer: {
-    backgroundColor: c.white,
-  },
   image: {
     marginRight: 12,
     height: 40,
