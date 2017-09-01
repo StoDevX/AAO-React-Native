@@ -4,6 +4,7 @@ import {HtmlView} from '../components/html-view'
 import {Share} from 'react-native'
 import type {StoryType} from './types'
 import {ShareButton} from '../components/nav-buttons'
+import {css as newsStyles} from '../../../docs/news-styles.json'
 
 const shareItem = (story: StoryType) => {
   if (!story.link) {
@@ -31,8 +32,7 @@ export default function NewsItem(props: {
   // Use local or remote styles
   let newsCSS = ''
   if (process.env.NODE_ENV === 'development') {
-    let css = require('../../../docs/news-styles.json')
-    newsCSS = `<Style>${css}</Style>`
+    newsCSS = `<style>${newsStyles}</style>`
   } else {
     newsCSS =
       '<link rel="stylesheet" href="https://stodevx.github.io/aao-react-native/news-styles.css">'
