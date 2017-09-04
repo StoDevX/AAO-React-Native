@@ -99,7 +99,7 @@
   "devDependencies": {
     "ajv": "5.2.2",
     "babel-eslint": "7.2.3",
-    "babel-jest": "20.0.3",
+    "babel-jest": "21.0.0",
     "babel-plugin-flow-react-proptypes": "5.1.2",
     "babel-preset-react-native": "3.0.1",
     "danger": "2.0.0-alpha.13",
@@ -110,7 +110,7 @@
     "eslint-plugin-react": "7.3.0",
     "eslint-plugin-react-native": "3.1.0",
     "flow-bin": "0.45.0",
-    "jest": "20.0.4",
+    "jest": "21.0.1",
     "js-yaml": "3.9.1",
     "junk": "2.1.0",
     "marked": "0.3.6",
