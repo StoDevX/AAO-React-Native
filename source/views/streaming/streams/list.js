@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
 export class StreamListView extends React.PureComponent {
   static navigationOptions = {
     tabBarLabel: 'Streaming',
-    tabBarIcon: TabBarIcon('star'),
+    tabBarIcon: TabBarIcon('recording'),
   }
 
   state: {
