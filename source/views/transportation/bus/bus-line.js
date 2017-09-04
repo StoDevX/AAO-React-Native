@@ -129,6 +129,7 @@ export class BusLine extends React.PureComponent {
           </View>,
         )}
 
+        {/*
         <ListRow
           onPress={this.props.openMap}
           fullWidth={true}
@@ -156,6 +157,7 @@ export class BusLine extends React.PureComponent {
             </Column>
           </Row>
         </ListRow>
+        */}
       </View>
     )
   }
