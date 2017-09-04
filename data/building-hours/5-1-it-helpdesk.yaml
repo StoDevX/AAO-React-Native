@@ -4,14 +4,9 @@ category: Help and Support
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th], from: '7:30am', to: '4:00pm'}
-      - {days: [Fr], from: '7:30am', to: '12:00pm'}
-
-  # - title: Hours
-  #   hours:
-  #     - {days: [Mo, Tu, We, Th], from: '7:45am', to: '11:00pm'}
-  #     - {days: [Fr], from: '7:45am', to: '5:00pm'}
-  #     - {days: [Su], from: '1:30pm', to: '11:00pm'}
+      - {days: [Mo, Tu, We, Th], from: '7:45am', to: '11:00pm'}
+      - {days: [Fr], from: '7:45am', to: '5:00pm'}
+      - {days: [Su], from: '1:30pm', to: '11:00pm'}
 
 breakSchedule:
   fall: []
