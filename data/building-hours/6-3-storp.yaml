@@ -5,11 +5,7 @@ category: Gym
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Th], from: '4:00pm', to: '6:00pm'}
-
-  # - title: Hours
-  #   hours:
-  #     - {days: [Mo, Th, Fr], from: '4:00pm', to: '6:00pm'}
+      - {days: [Mo, Th, Fr], from: '4:00pm', to: '6:00pm'}
 
 breakSchedule:
   fall: []
@@ -18,4 +14,7 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer: []
+  summer:
+    - title: Hours
+      hours:
+        - {days: [Mo, Th], from: '4:00pm', to: '6:00pm'}

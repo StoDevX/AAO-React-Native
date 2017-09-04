@@ -5,15 +5,10 @@ category: Academia
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th], from: '9:00am', to: '4:00pm'}
-      - {days: [Fr], from: '9:00am', to: '12:00pm'}
-
-  # - title: Hours
-  #   hours:
-  #     - {days: [Mo, Tu, We, Th], from: '8:00am', to: '9:00pm'}
-  #     - {days: [Fr], from: '8:00am', to: '5:00pm'}
-  #     - {days: [Sa], from: '10:00am', to: '3:00pm'}
-  #     - {days: [Su], from: '4:00pm', to: '10:00pm'}
+      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '9:00pm'}
+      - {days: [Fr], from: '8:00am', to: '5:00pm'}
+      - {days: [Sa], from: '10:00am', to: '3:00pm'}
+      - {days: [Su], from: '4:00pm', to: '10:00pm'}
 
 breakSchedule:
   fall: []
@@ -22,4 +17,8 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer: []
+  summer:
+    - title: Hours
+      hours:
+        - {days: [Mo, Tu, We, Th], from: '9:00am', to: '4:00pm'}
+        - {days: [Fr], from: '9:00am', to: '12:00pm'}

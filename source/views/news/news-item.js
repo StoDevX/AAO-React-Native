@@ -30,12 +30,10 @@ export default function NewsItem(props: {
   const {story, embedFeaturedImage} = props.navigation.state.params
 
   // Use local or remote styles
-  let newsCSS = ''
+  let newsCSS =
+    '<link rel="stylesheet" href="https://stodevx.github.io/aao-react-native/news-styles.css">'
   if (process.env.NODE_ENV === 'development') {
     newsCSS = `<style>${newsStyles}</style>`
-  } else {
-    newsCSS =
-      '<link rel="stylesheet" href="https://stodevx.github.io/aao-react-native/news-styles.css">'
   }
 
   const content = `

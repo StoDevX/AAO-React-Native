@@ -5,15 +5,10 @@ category: Gym
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '7:00pm'}
-      - {days: [Fr], from: '8:00am', to: '2:00pm'}
-
-  # - title: Hours
-  #   hours:
-  #     - {days: [Mo, Tu, We, Th], from: '6:30am', to: '10:45pm'}
-  #     - {days: [Fr], from: '6:30am', to: '8:45pm'}
-  #     - {days: [Sa], from: '9:00am', to: '8:45pm'}
-  #     - {days: [Su], from: '12:00pm', to: '10:30pm'}
+      - {days: [Mo, Tu, We, Th], from: '6:30am', to: '10:45pm'}
+      - {days: [Fr], from: '6:30am', to: '8:45pm'}
+      - {days: [Sa], from: '9:00am', to: '8:45pm'}
+      - {days: [Su], from: '12:00pm', to: '10:30pm'}
 
 breakSchedule:
   fall: []
@@ -22,4 +17,8 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer: []
+  summer:
+    - title: Hours
+      hours:
+        - {days: [Mo, Tu, We, Th], from: '8:00am', to: '7:00pm'}
+        - {days: [Fr], from: '8:00am', to: '2:00pm'}
