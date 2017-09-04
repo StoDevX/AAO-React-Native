@@ -4,17 +4,11 @@ category: Libraries
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th], from: '10:00am', to: '12:00pm'}
-      - {days: [Mo, Tu, We, Th], from: '2:00pm', to: '5:00pm'}
-      - {days: [Fr], from: '10:00am', to: '12:00pm'}
-
-  # - title: Hours
-  #   hours:
-  #     - {days: [Mo, Tu, We, Th], from: '10:00am', to: '5:00pm'}
-  #     - {days: [Mo, Tu, We, Th], from: '7:00pm', to: '9:00pm'}
-  #     - {days: [Fr], from: '10:00am', to: '5:00pm'}
-  #     - {days: [Su], from: '1:30pm', to: '5:00pm'}
-  #     - {days: [Su], from: '7:00pm', to: '9:00pm'}
+      - {days: [Mo, Tu, We, Th], from: '10:00am', to: '5:00pm'}
+      - {days: [Mo, Tu, We, Th], from: '7:00pm', to: '9:00pm'}
+      - {days: [Fr], from: '10:00am', to: '5:00pm'}
+      - {days: [Su], from: '1:30pm', to: '5:00pm'}
+      - {days: [Su], from: '7:00pm', to: '9:00pm'}
 
 breakSchedule:
   fall: []
@@ -23,4 +17,9 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer: []
+  summer:
+    - title: Hours
+      hours:
+        - {days: [Mo, Tu, We, Th], from: '10:00am', to: '12:00pm'}
+        - {days: [Mo, Tu, We, Th], from: '2:00pm', to: '5:00pm'}
+        - {days: [Fr], from: '10:00am', to: '12:00pm'}
