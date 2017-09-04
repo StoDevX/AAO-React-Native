@@ -5,7 +5,6 @@ import {StyleSheet, Image} from 'react-native'
 
 import {ListRow, Detail, Title} from '../../components/list'
 import {Column, Row} from '../../components/layout'
-import * as c from '../../components/colors'
 import {getTrimmedTextWithSpaces, parseHtml} from '../../../lib/html'
 import {trackedOpenUrl} from '../../components/open-url'
 import type {StreamType} from './types'
