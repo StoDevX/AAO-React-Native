@@ -15,6 +15,7 @@ export type GoogleEventType = {
 type EmbeddedEventDetailType = {type: 'google', data: GoogleEventType}
 
 export type EventType = {
+  title?: string,
   summary: string,
   location: string,
   startTime: moment,
