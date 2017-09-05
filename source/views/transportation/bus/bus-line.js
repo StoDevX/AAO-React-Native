@@ -123,8 +123,8 @@ export class BusLine extends React.PureComponent {
               isFirstRow={i === 0}
               isLastRow={i === list.length - 1}
             />
-            {i < list.length - 1 ? 
-              <Separator style={styles.separator} />
+            {i < list.length - 1
+              ? <Separator style={styles.separator} />
               : null}
           </View>,
         )}
