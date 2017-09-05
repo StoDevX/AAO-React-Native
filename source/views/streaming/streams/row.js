@@ -43,7 +43,7 @@ function Thumbnail({item}: {item: StreamType}) {
 }
 
 export class StreamRow extends React.PureComponent {
-  //props: StreamType
+  props: {stream: StreamType}
 
   onPressStream = () => {
     const {stream} = this.props
