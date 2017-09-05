@@ -230,8 +230,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 2,
     backgroundColor: c.white,
-    borderRightWidth: StyleSheet.hairlineWidth,
-    borderRightColor: c.iosSeparator,
+    //borderRightWidth: StyleSheet.hairlineWidth,
+    //borderRightColor: c.iosSeparator,
   },
   finalCell: {
     borderRightWidth: 0,
