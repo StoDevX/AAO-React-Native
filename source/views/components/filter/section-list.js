@@ -64,15 +64,17 @@ export function ListSection({filter, onChange}: PropsType) {
   }
 
   const hasImageColumn = options.some(val => Boolean(val.image))
-  let buttons = options.map(val =>
+  let buttons = options.map(val => (
     <Cell
       key={val.title}
       onPress={() => buttonPushed(val)}
       disableImageResize={true}
       image={
-        spec.showImages
-          ? <Image style={styles.icon} source={val.image} />
-          : undefined
+        spec.showImages ? (
+          <Image style={styles.icon} source={val.image} />
+        ) : (
+          undefined
+        )
       }
       accessory={includes(selected, val) ? 'Checkmark' : undefined}
       cellStyle="RightDetail"
@@ -82,8 +84,8 @@ export function ListSection({filter, onChange}: PropsType) {
           {val.detail ? <Text style={styles.detail}>{val.detail}</Text> : null}
         </Column>
       }
-    />,
-  )
+    />
+  ))
 
   if (mode === 'OR') {
     const showAllButton = (

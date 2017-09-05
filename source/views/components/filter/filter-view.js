@@ -34,19 +34,17 @@ export function FilterViewComponent({filters, navigation}: PropsType) {
     onChange(result)
   }
 
-  const contents = filters.map(filter =>
+  const contents = filters.map(filter => (
     <FilterSection
       key={filter.key}
       filter={filter}
       onChange={onFilterChanged}
-    />,
-  )
+    />
+  ))
 
   return (
     <ScrollView style={styles.container}>
-      <TableView>
-        {contents}
-      </TableView>
+      <TableView>{contents}</TableView>
     </ScrollView>
   )
 }

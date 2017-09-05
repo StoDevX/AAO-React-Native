@@ -113,15 +113,15 @@ class WeekToggles extends React.PureComponent {
 
     return (
       <Row justifyContent="center">
-        {allDays.map((day, i) =>
+        {allDays.map((day, i) => (
           <ToggleButton
             key={day}
             text={day}
             active={this.props.days.includes(day)}
             onPress={this.toggleDay}
             style={i === allDays.length - 1 && styles.finalCell}
-          />,
-        )}
+          />
+        ))}
       </Row>
     )
   }

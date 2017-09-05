@@ -36,7 +36,7 @@ const CarletonMenuPicker = StackNavigator(
 export const MenusView = TabNavigator(
   {
     StavHallMenuView: {
-      screen: ({navigation}) =>
+      screen: ({navigation}) => (
         <BonAppHostedMenu
           navigation={navigation}
           name="stav"
@@ -49,7 +49,8 @@ export const MenusView = TabNavigator(
             'Waiting for omlets…',
             'Putting out more cookies…',
           ]}
-        />,
+        />
+      ),
       navigationOptions: {
         tabBarLabel: 'Stav Hall',
         tabBarIcon: TabBarIcon('nutrition'),
@@ -57,7 +58,7 @@ export const MenusView = TabNavigator(
     },
 
     TheCageMenuView: {
-      screen: ({navigation}) =>
+      screen: ({navigation}) => (
         <BonAppHostedMenu
           navigation={navigation}
           name="cage"
@@ -70,7 +71,8 @@ export const MenusView = TabNavigator(
             'Frying chicken…',
             'Brewing coffee…',
           ]}
-        />,
+        />
+      ),
       navigationOptions: {
         tabBarLabel: 'The Cage',
         tabBarIcon: TabBarIcon('cafe'),
@@ -78,7 +80,7 @@ export const MenusView = TabNavigator(
     },
 
     ThePauseMenuView: {
-      screen: ({navigation}) =>
+      screen: ({navigation}) => (
         <GitHubHostedMenu
           navigation={navigation}
           name="pause"
@@ -89,7 +91,8 @@ export const MenusView = TabNavigator(
             'Putting ice cream on the cookies…',
             'Fixing the oven…',
           ]}
-        />,
+        />
+      ),
       navigationOptions: {
         tabBarLabel: 'The Pause',
         tabBarIcon: TabBarIcon('paw'),

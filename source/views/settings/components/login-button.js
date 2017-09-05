@@ -22,9 +22,13 @@ export function LoginButton({
       indeterminate={loading}
       onPress={onPress}
       title={
-        loading
-          ? `Logging in to ${label}…`
-          : loggedIn ? `Sign Out of ${label}` : `Sign In to ${label}`
+        loading ? (
+          `Logging in to ${label}…`
+        ) : loggedIn ? (
+          `Sign Out of ${label}`
+        ) : (
+          `Sign In to ${label}`
+        )
       }
     />
   )

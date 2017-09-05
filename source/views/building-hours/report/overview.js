@@ -203,7 +203,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
         </View>
 
         <TableView>
-          {schedules.map((s, i) =>
+          {schedules.map((s, i) => (
             <EditableSchedule
               key={i}
               schedule={s}
@@ -212,8 +212,8 @@ export class BuildingHoursProblemReportView extends React.PureComponent {
               editRow={this.openEditor}
               onEditSchedule={this.editSchedule}
               onDelete={this.deleteSchedule}
-            />,
-          )}
+            />
+          ))}
 
           <Section>
             <Cell
@@ -294,15 +294,15 @@ class EditableSchedule extends React.PureComponent {
             onChange={this.toggleChapel}
           />
 
-          {schedule.hours.map((set, i) =>
+          {schedule.hours.map((set, i) => (
             <TimesCell
               key={i}
               set={set}
               setIndex={i}
               onPress={this.openEditor}
               now={now}
-            />,
-          )}
+            />
+          ))}
 
           <Cell
             title="Add More Hours"
@@ -318,7 +318,7 @@ class EditableSchedule extends React.PureComponent {
 }
 
 // "Title" will become a textfield like the login form
-const TitleCell = ({text, onChange = () => {}}) =>
+const TitleCell = ({text, onChange = () => {}}) => (
   <CellTextField
     hideLabel={true}
     autoCapitalize="words"
@@ -328,9 +328,10 @@ const TitleCell = ({text, onChange = () => {}}) =>
     onChangeText={onChange}
     onSubmitEditing={onChange}
   />
+)
 
 // "Notes" will become a big textarea
-const NotesCell = ({text, onChange}) =>
+const NotesCell = ({text, onChange}) => (
   <CellTextField
     hideLabel={true}
     autoCapitalize="sentences"
@@ -340,6 +341,7 @@ const NotesCell = ({text, onChange}) =>
     onChangeText={onChange}
     onSubmitEditing={onChange}
   />
+)
 
 class TimesCell extends React.PureComponent {
   props: {

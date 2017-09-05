@@ -33,12 +33,13 @@ export class NewsList extends React.Component {
 
   renderSeparator = () => <ListSeparator spacing={{left: 101}} />
 
-  renderItem = ({item}: {item: StoryType}) =>
+  renderItem = ({item}: {item: StoryType}) => (
     <NewsRow
       onPress={this.onPressNews}
       story={item}
       thumbnail={this.props.thumbnail}
     />
+  )
 
   keyExtractor = (item: StoryType) => item.title
 

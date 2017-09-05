@@ -91,11 +91,12 @@ export function ListSectionHeader(props: PropsType) {
         <Text style={[styles.title, titleStyle, bold ? styles.bold : null]}>
           {title}
         </Text>
-        {subtitle
-          ? <Text style={[styles.subtitle, subtitleStyle]}>
-              {separator}{subtitle}
-            </Text>
-          : null}
+        {subtitle ? (
+          <Text style={[styles.subtitle, subtitleStyle]}>
+            {separator}
+            {subtitle}
+          </Text>
+        ) : null}
       </Text>
     </View>
   )

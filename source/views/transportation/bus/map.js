@@ -119,15 +119,15 @@ export class BusMapView extends React.PureComponent {
         onRegionChangeComplete={this.onRegionChangeComplete}
         loadingEnabled={true}
       >
-        {markers.map(([[latitude, longitude], title], i) =>
+        {markers.map(([[latitude, longitude], title], i) => (
           <MapView.Marker
             key={i}
             coordinate={{latitude, longitude}}
             title={title}
             // description={marker.description}
             // TODO: add "next arrival" time as the description
-          />,
-        )}
+          />
+        ))}
       </MapView>
     )
   }

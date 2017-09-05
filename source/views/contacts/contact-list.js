@@ -49,11 +49,13 @@ export default class ContactsListView extends React.PureComponent {
 
   renderSeparator = () => <ListSeparator />
 
-  renderSectionHeader = ({section: {title}}: any) =>
+  renderSectionHeader = ({section: {title}}: any) => (
     <ListSectionHeader title={title} spacing={{left: 10}} />
+  )
 
-  renderItem = ({item}: {item: ContactType}) =>
+  renderItem = ({item}: {item: ContactType}) => (
     <ContactRow contact={item} onPress={this.onPressContact} />
+  )
 
   keyExtractor = (item: ContactType) => {
     return item.title

@@ -76,9 +76,9 @@ export class BuildingRow extends React.PureComponent {
             <Title lines={1} style={styles.titleText}>
               <Text>{name}</Text>
               {info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
-              {info.subtitle
-                ? <Text style={styles.subtitleText}> {info.subtitle}</Text>
-                : null}
+              {info.subtitle ? (
+                <Text style={styles.subtitleText}> {info.subtitle}</Text>
+              ) : null}
             </Title>
 
             <Badge
@@ -90,15 +90,15 @@ export class BuildingRow extends React.PureComponent {
           </Row>
 
           <View style={styles.detailWrapper}>
-            {hours.map(({isActive, label, status}, i) =>
+            {hours.map(({isActive, label, status}, i) => (
               <Detail key={i} style={styles.detailRow}>
                 <BuildingTimeSlot
                   highlight={hours.length > 1 && isActive}
                   label={label}
                   status={status}
                 />
-              </Detail>,
-            )}
+              </Detail>
+            ))}
           </View>
         </Column>
       </ListRow>
@@ -120,9 +120,9 @@ const BuildingTimeSlot = ({
 
   return (
     <Text>
-      {showLabel
-        ? <Text style={highlight && styles.bold}>{label}: </Text>
-        : null}
+      {showLabel ? (
+        <Text style={highlight && styles.bold}>{label}: </Text>
+      ) : null}
       <Text style={highlight && styles.bold}>{status}</Text>
     </Text>
   )
