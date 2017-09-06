@@ -4,7 +4,11 @@ category: Academia
 
 schedule:
   - title: Hours
-    hours: []
+    hours:
+      - {days: [Mo, Tu, We, Th], from: '7:00am', to: '10:00pm'}
+      - {days: [Fr], from: '7:00am', to: '6:00pm'}
+      # closed on Sat.
+      - {days: [Su], from: '12:00pm', to: '10:00pm'}
 
 breakSchedule:
   fall: []
