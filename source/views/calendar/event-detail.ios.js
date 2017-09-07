@@ -106,7 +106,7 @@ export class EventDetail extends React.PureComponent {
 
   CalendarButton = ({event}: {event: EventType}) => {
     return (
-      <Section header="" footer={this.state.message}>
+      <Section footer={this.state.message}>
         <ButtonCell
           title="Add to calendar"
           disabled={this.state.disabled}
