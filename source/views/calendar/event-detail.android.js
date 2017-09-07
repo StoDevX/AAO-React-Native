@@ -163,7 +163,8 @@ export class EventDetail extends React.PureComponent {
         <CalendarButton
           onPress={this.onPressButton}
           message={this.state.message}
-          disabled={this.state.disabled} />
+          disabled={this.state.disabled}
+        />
       </ScrollView>
     )
   }
