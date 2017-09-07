@@ -45,7 +45,11 @@ function promptSettings(): any {
       `We use your calendar to add events to your calendar so that you remember
        what you wanted to attend.`,
       [
-        {text: 'Don\'t Allow', onPress: () => console.log('cancel pressed'), style: 'cancel'},
+        {
+          text: "Don't Allow",
+          onPress: () => console.log('cancel pressed'),
+          style: 'cancel',
+        },
         {text: 'Settings', onPress: () => Linking.openURL('app-settings:')},
       ],
     )
