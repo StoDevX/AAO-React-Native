@@ -63,7 +63,7 @@
     "react": "16.0.0-alpha.12",
     "react-addons-shallow-compare": "15.6.0",
     "react-markdown": "2.5.0",
-    "react-native": "0.45.1",
+    "react-native": "0.48.2",
     "react-native-alphabetlistview": "github:sunnylqm/react-native-alphabetlistview#aea5d61fdd9034c7178d73ce8b2ee104da6941cc",
     "react-native-button": "2.1.0",
     "react-native-communications": "2.2.1",
