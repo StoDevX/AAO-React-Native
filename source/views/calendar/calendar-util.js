@@ -39,11 +39,13 @@ async function saveEventToCalendar(event: EventType): Promise<boolean> {
 
 function promptSettings(): any {
   if (Platform.OS === 'ios') {
+    // Note: remember to change this text in the iOS plist, too.
     return Alert.alert(
-      'Enable Calendar Access',
-      'Please enable calendar access in device settings.',
+      '"All About Olaf" Would Like to Access Your Calendar',
+      `We use your calendar to add events to your calendar so that you remember
+       what you wanted to attend.`,
       [
-        {text: 'OK', onPress: () => console.log('OK Pressed'), style: 'cancel'},
+        {text: 'Don\'t Allow', onPress: () => console.log('cancel pressed'), style: 'cancel'},
         {text: 'Settings', onPress: () => Linking.openURL('app-settings:')},
       ],
     )
