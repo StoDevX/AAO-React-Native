@@ -2,11 +2,11 @@
 
 import {Platform, Alert, Linking} from 'react-native'
 import RNCalendarEvents from 'react-native-calendar-events'
-import type {EventType} from './types'
+import type {CleanedEventType} from './types'
 import bugsnag from '../../bugsnag'
 import {tracker} from '../../analytics'
 
-export function addToCalendar(event: EventType): Promise<boolean> {
+export function addToCalendar(event: CleanedEventType): Promise<boolean> {
   return RNCalendarEvents.authorizationStatus()
     .then(authStatus => {
       if (authStatus !== 'authorized') {
@@ -28,7 +28,7 @@ export function addToCalendar(event: EventType): Promise<boolean> {
     })
 }
 
-async function saveEventToCalendar(event: EventType): Promise<boolean> {
+async function saveEventToCalendar(event: CleanedEventType): Promise<boolean> {
   try {
     await RNCalendarEvents.saveEvent(event.title, {
       location: event.location,
