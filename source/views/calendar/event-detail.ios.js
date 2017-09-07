@@ -2,7 +2,7 @@
 import React from 'react'
 import {Text, ScrollView, StyleSheet, Share} from 'react-native'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
-import type {EventType} from './types'
+import type {CleanedEventType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../components/nav-buttons'
 import openUrl from '../components/open-url'
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
 })
 
-const shareItem = (event: EventType) => {
+const shareItem = (event: CleanedEventType) => {
   const summary = event.summary ? event.summary : ''
   const times = getTimes(event) ? getTimes(event) : ''
   const location = event.location ? event.location : ''
@@ -41,7 +41,7 @@ function MaybeSection({header, content}: {header: string, content: string}) {
     : null
 }
 
-function Links({header, event}: {header: string, event: EventType}) {
+function Links({header, event}: {header: string, event: CleanedEventType}) {
   const links = getLinksFromEvent(event)
 
   return links.length
@@ -80,7 +80,7 @@ export class EventDetail extends React.PureComponent {
   }
 
   props: TopLevelViewPropsType & {
-    navigation: {state: {params: {event: EventType}}},
+    navigation: {state: {params: {event: CleanedEventType}}},
   }
 
   state: {
@@ -91,7 +91,7 @@ export class EventDetail extends React.PureComponent {
     disabled: false,
   }
 
-  addEvent = async (event: EventType) => {
+  addEvent = async (event: CleanedEventType) => {
     const start = Date.now()
     this.setState(() => ({message: 'Adding event to calendar…'}))
 
