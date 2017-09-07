@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {Text, ScrollView, StyleSheet, Share} from 'react-native'
-import type {EventType} from './types'
+import type {CleanedEventType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../components/nav-buttons'
 import openUrl from '../components/open-url'
@@ -35,11 +35,11 @@ const styles = StyleSheet.create({
   },
 })
 
-function Title({event}: {event: EventType}) {
+function Title({event}: {event: CleanedEventType}) {
   return event.title ? <Text style={styles.name}>{event.title}</Text> : null
 }
 
-function Description({event}: {event: EventType}) {
+function Description({event}: {event: CleanedEventType}) {
   return event.rawSummary
     ? <Card header="Description" style={styles.card}>
         <Text style={styles.cardBody}>
@@ -49,7 +49,7 @@ function Description({event}: {event: EventType}) {
     : null
 }
 
-function When({event}: {event: EventType}) {
+function When({event}: {event: CleanedEventType}) {
   return event.times
     ? <Card header="When" style={styles.card}>
         <Text style={styles.cardBody}>
@@ -59,7 +59,7 @@ function When({event}: {event: EventType}) {
     : null
 }
 
-function Location({event}: {event: EventType}) {
+function Location({event}: {event: CleanedEventType}) {
   return event.location
     ? <Card header="Location" style={styles.card}>
         <Text style={styles.cardBody}>
@@ -69,7 +69,7 @@ function Location({event}: {event: EventType}) {
     : null
 }
 
-function Links({event}: {event: EventType}) {
+function Links({event}: {event: CleanedEventType}) {
   const links = getLinksFromEvent(event)
   return links.length
     ? <Card header="Links" style={styles.card}>
@@ -94,7 +94,7 @@ const CalendarButton = ({message, disabled, onPress}) => {
   )
 }
 
-const shareItem = (event: EventType) => {
+const shareItem = (event: CleanedEventType) => {
   const times = getTimes(event)
   const message = `${event.summary}\n\n${times}\n\n${event.location}`
   Share.share({message})
@@ -112,7 +112,7 @@ export class EventDetail extends React.PureComponent {
   }
 
   props: TopLevelViewPropsType & {
-    navigation: {state: {params: {event: EventType}}},
+    navigation: {state: {params: {event: CleanedEventType}}},
   }
 
   state: {
@@ -123,7 +123,7 @@ export class EventDetail extends React.PureComponent {
     disabled: false,
   }
 
-  addEvent = async (event: EventType) => {
+  addEvent = async (event: CleanedEventType) => {
     const start = Date.now()
     this.setState(() => ({message: 'Adding event to calendar…'}))
 
