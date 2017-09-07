@@ -6,7 +6,7 @@ import type {EventType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../components/nav-buttons'
 import openUrl from '../components/open-url'
-import {cleanEvent, getTimes, getLinksFromEvent} from './clean-event'
+import {getTimes, getLinksFromEvent} from './clean-event'
 import {ButtonCell} from '../components/cells/button'
 import {addToCalendar} from './calendar-util'
 import delay from 'delay'
@@ -58,6 +58,19 @@ function Links({header, event}: {header: string, event: EventType}) {
     : null
 }
 
+
+const CalendarButton = ({message, disabled, onPress}) => {
+  return (
+    <Section footer={message}>
+      <ButtonCell
+        title="Add to calendar"
+        disabled={disabled}
+        onPress={onPress}
+      />
+    </Section>
+  )
+}
+
 export class EventDetail extends React.PureComponent {
   static navigationOptions = ({navigation}) => {
     const {event} = navigation.state.params
@@ -79,7 +92,7 @@ export class EventDetail extends React.PureComponent {
     disabled: false,
   }
 
-  addPressed = async ({event}: {event: EventType}) => {
+  addEvent = async (event: EventType) => {
     const start = Date.now()
     this.setState(() => ({message: 'Adding event to calendar…'}))
 
@@ -104,20 +117,10 @@ export class EventDetail extends React.PureComponent {
     })
   }
 
-  CalendarButton = ({event}: {event: EventType}) => {
-    return (
-      <Section footer={this.state.message}>
-        <ButtonCell
-          title="Add to calendar"
-          disabled={this.state.disabled}
-          onPress={() => this.addPressed({event})}
-        />
-      </Section>
-    )
-  }
+  onPressButton = () => this.addEvent(this.props.navigation.state.params.event)
 
   render() {
-    const event = cleanEvent(this.props.navigation.state.params.event)
+    const event = this.props.navigation.state.params.event
 
     return (
       <ScrollView>
@@ -127,7 +130,10 @@ export class EventDetail extends React.PureComponent {
           <MaybeSection header="LOCATION" content={event.location} />
           <MaybeSection header="DESCRIPTION" content={event.rawSummary} />
           <Links header="LINKS" event={event} />
-          {this.CalendarButton({event})}
+          <CalendarButton
+            onPress={this.onPressButton}
+            message={this.state.message}
+            disabled={this.state.disabled} />
         </TableView>
       </ScrollView>
     )

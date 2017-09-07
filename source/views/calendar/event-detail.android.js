@@ -6,7 +6,7 @@ import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../components/nav-buttons'
 import openUrl from '../components/open-url'
 import {Card} from '../components/card'
-import {cleanEvent, getTimes, getLinksFromEvent} from './clean-event'
+import {getTimes, getLinksFromEvent} from './clean-event'
 import * as c from '../components/colors'
 import {ButtonCell} from '../components/cells/button'
 import {addToCalendar} from './calendar-util'
@@ -82,6 +82,18 @@ function Links({event}: {event: EventType}) {
     : null
 }
 
+const CalendarButton = ({message, disabled, onPress}) => {
+  return (
+    <Card footer={message} style={styles.card}>
+      <ButtonCell
+        title="Add to calendar"
+        disabled={disabled}
+        onPress={onPress}
+      />
+    </Card>
+  )
+}
+
 const shareItem = (event: EventType) => {
   const times = getTimes(event)
   const message = `${event.summary}\n\n${times}\n\n${event.location}`
@@ -111,7 +123,7 @@ export class EventDetail extends React.PureComponent {
     disabled: false,
   }
 
-  addPressed = async ({event}: {event: EventType}) => {
+  addEvent = async (event: EventType) => {
     const start = Date.now()
     this.setState(() => ({message: 'Adding event to calendar…'}))
 
@@ -136,20 +148,10 @@ export class EventDetail extends React.PureComponent {
     })
   }
 
-  CalendarButton = ({event}: {event: EventType}) => {
-    return (
-      <Card footer={this.state.message} style={styles.card}>
-        <ButtonCell
-          title="Add to calendar"
-          disabled={this.state.disabled}
-          onPress={() => this.addPressed({event})}
-        />
-      </Card>
-    )
-  }
+  onPressButton = () => this.addEvent(this.props.navigation.state.params.event)
 
   render() {
-    const event = cleanEvent(this.props.navigation.state.params.event)
+    const event = this.props.navigation.state.params.event
 
     return (
       <ScrollView>
@@ -158,7 +160,10 @@ export class EventDetail extends React.PureComponent {
         <Location event={event} />
         <Description event={event} />
         <Links event={event} />
-        {this.CalendarButton({event})}
+        <CalendarButton
+          onPress={this.onPressButton}
+          message={this.state.message}
+          disabled={this.state.disabled} />
       </ScrollView>
     )
   }
