@@ -3,6 +3,8 @@
 import {Platform, Alert, Linking} from 'react-native'
 import RNCalendarEvents from 'react-native-calendar-events'
 import type {EventType} from './types'
+import bugsnag from '../../bugsnag'
+import {tracker} from '../../analytics'
 
 export function addToCalendar(event: EventType): Promise<boolean> {
   return RNCalendarEvents.authorizationStatus()
@@ -19,7 +21,9 @@ export function addToCalendar(event: EventType): Promise<boolean> {
       return saveEventToCalendar(event)
     })
     .catch(err => {
-      alert(err)
+      tracker.trackException(err.message)
+      bugsnag.notify(err)
+      console.error(err)
       return false
     })
 }
@@ -33,6 +37,9 @@ async function saveEventToCalendar(event: EventType): Promise<boolean> {
     })
     return true
   } catch (err) {
+    tracker.trackException(err.message)
+    bugsnag.notify(err)
+    console.error(err)
     return false
   }
 }

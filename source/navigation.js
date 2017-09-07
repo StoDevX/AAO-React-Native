@@ -50,12 +50,12 @@ const styles = StyleSheet.create({
 
 export const AppNavigator = StackNavigator(
   {
-    CalendarView: {screen: CalendarView},
     HomeView: {screen: HomeView},
     BuildingHoursDetailView: {screen: BuildingHoursDetailView},
     BuildingHoursView: {screen: BuildingHoursView},
     BuildingHoursProblemReportView: {screen: BuildingHoursProblemReportView},
     BuildingHoursScheduleEditorView: {screen: BuildingHoursScheduleEditorView},
+    CalendarView: {screen: CalendarView},
     ContactsView: {screen: ContactsView},
     ContactsDetailView: {screen: ContactsDetailView},
     CreditsView: {screen: CreditsView},
