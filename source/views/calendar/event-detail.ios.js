@@ -58,7 +58,6 @@ function Links({header, event}: {header: string, event: EventType}) {
     : null
 }
 
-
 const CalendarButton = ({message, disabled, onPress}) => {
   return (
     <Section footer={message}>
@@ -133,7 +132,8 @@ export class EventDetail extends React.PureComponent {
           <CalendarButton
             onPress={this.onPressButton}
             message={this.state.message}
-            disabled={this.state.disabled} />
+            disabled={this.state.disabled}
+          />
         </TableView>
       </ScrollView>
     )
