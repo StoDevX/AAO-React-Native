@@ -17,7 +17,7 @@ foodItems:
     description: Welcome back to campus! Fall has come, classes have begun. 🍂
     special: true
 
-- label: Single Slice
+  - label: Single Slice
     station: Pizza
     description: 'One (1) slice of pizza pie'
     special: true
