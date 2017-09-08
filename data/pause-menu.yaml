@@ -1,253 +1,242 @@
 stationMenus:
-  - {label: Notice}
+  - {label: Pizza, note: 'To order 4+ pizzas, please visit Oleville 24 hours in advance.'}
+  - {label: Specialty Pizza}
+  - {label: Toppings}
+  - {label: Quesadilla, note: 'Salsa & Sour Cream are extra'}
+  - {label: Pita}
+  - {label: Savory}
+  - {label: Shakes, note: 'Mixins: M&Ms, Oreos, Reese’s Peanut Butter Cups'}
+  - {label: Soft-Serve, note: 'Hand-swirled in a cup or a cone'}
+  - {label: Late-Night Feast}
+  - {label: Fountain & Bottled Drinks}
 
 foodItems:
-  - label: Closed for the summer!
-    station: Notice
-    description: Have a great summer! We'll be open again come fall. 🍃
-    special: false
+  - label: Single Slice
+    station: Pizza
+    description: 'One (1) slice of pizza pie'
+    special: true
+
+  - label: Small Pizza (12 in)
+    station: Pizza
+    description: 'Includes two toppings'
+    special: true
+
+  - label: Large Pizza (16 in)
+    station: Pizza
+    description: 'Includes two toppings'
+    special: true
+
+  - label: Side of Sauce
+    station: Pizza
+    description: 'Marinara, Ranch, BBQ, Honey Mustard'
+
+  - label: BBQ Chicken
+    station: Specialty Pizza
+    special: true
+
+  - label: Buffalo Chicken
+    station: Specialty Pizza
+    special: true
+
+  - label: Chicken Bacon Ranch
+    station: Specialty Pizza
+    special: true
+
+  - label: Chicken Pesto
+    station: Specialty Pizza
+    description: 'Includes tomatoes'
+    special: true
+
+  - label: Ole Pizza
+    station: Specialty Pizza
+    description: 'Includes pepperoni, sausage, onions, green peppers, and black olives'
+    special: true
+
+  - label: Bacon
+    station: Toppings
+
+  - label: Canadian Bacon
+    station: Toppings
+
+  - label: Chicken
+    station: Toppings
+
+  - label: Pepperoni
+    station: Toppings
+
+  - label: Sausage
+    station: Toppings
+
+  - label: Black Olives
+    station: Toppings
+
+  - label: Green Peppers
+    station: Toppings
+
+  - label: Jalapeños
+    station: Toppings
+
+  - label: Mushrooms
+    station: Toppings
+
+  - label: Onions
+    station: Toppings
+
+  - label: Pineapple
+    station: Toppings
+
+  - label: Spinach
+    station: Toppings
+
+  - label: Tomatoes
+    station: Toppings
+
+  - label: Cheese Quesadilla (Half / Whole)
+    station: Quesadilla
+    special: true
+
+  - label: Chicken Quesadilla (Half / Whole)
+    station: Quesadilla
+    special: true
+
+  - label: Ultimate Quesadilla (Half / Whole)
+    station: Quesadilla
+    description: 'Includes tomatoes, onions, green peppers, and jalapeños'
+    special: true
+
+  - label: Ultimate Chicken Quesadilla (Half / Whole)
+    station: Quesadilla
+    description: 'Includes tomatoes, onions, green peppers, and jalapeños'
+    special: true
+
+  - label: Pita Pizza
+    station: Pita
+    description: 'Pizza built on pita bread; includes two toppings'
+    special: true
+
+  - label: Specialty Pita Pizza
+    station: Pita
+    description: 'Pizza built on pita bread'
+    special: true
+
+  - label: Garden Pita
+    station: Pita
+    description: 'Pita bread with choice of hummus and cooked vegetable toppings'
+    special: true
+
+  - label: Toasted Pita and Hummus
+    station: Pita
+    description: 'Choice of Garlic, Red Pepper, or Feisty Feta Hummus'
+    special: true
+
+  - label: Pizza Bagel
+    station: Savory
+    special: true
+
+  - label: Specialty Pizza Bagel
+    station: Savory
+    special: true
+
+  - label: Garlic Cheesy Bread
+    station: Savory
+    special: true
+
+  - label: Nachos
+    station: Savory
+    description: 'Includes both chips and a cheese cup'
+    special: true
+
+  - label: Chips & Salsa
+    station: Savory
+    description: 'Includes both chips and salsa'
+    special: true
+
+  - label: Bosco Sticks
+    station: Savory
+    special: true
+
+  - label: Soft Pretzel
+    station: Savory
+    special: true
+
+  - label: Chicken Strips
+    station: Savory
+    description: 'Dipping sauces: BBQ, Honey Mustard, Marinara, Ranch, Blue Cheese, or Hot Sauce'
+    special: true
+
+  - label: Vanilla
+    station: Shakes
+    description: 'Vanilla (adj): having no special or extra features; ordinary or standard'
+    special: true
+
+  - label: Chocolate
+    station: Shakes
+    description: 'A plain flavor to layer onto the plain shake'
+    special: true
+
+  - label: Strawberry
+    station: Shakes
+    description: "The wild child – you've left the realm of safety now"
+    special: true
+
+  - label: Butter Pecan
+    station: Shakes
+    description: 'Butter + pecan. *crunch crunch*'
+    special: true
+
+  - label: Butterscotch
+    station: Shakes
+    description: 'Butter + scotch? Whatever happened to a "dry campus"?'
+    special: true
+
+  - label: Mocha
+    station: Shakes
+    description: 'Hot coffee leads to iced coffee leads to coffee shakes…'
+    special: true
+
+  - label: Mint
+    station: Shakes
+    description: 'Pale green and perfect for springtime, or fall, or winter'
+    special: true
+
+  - label: Cheesecake
+    station: Shakes
+    description: 'Creamy goodness in distilled, shaken form'
+    special: true
+
+  - label: Vanilla
+    station: Soft-Serve
+    description: 'Vanilla (adj): having no special or extra features; ordinary or standard'
+    special: true
+
+  - label: Chocolate
+    station: Soft-Serve
+    description: 'If you need more flavor to go with the cold sweetness'
+    special: true
+
+  - label: Twist
+    station: Soft-Serve
+    description: 'The ultimate answer to the age-old question: "either/or? why not both?"'
+    special: true
+
+  - label: Pause Cookie
+    station: Late-Night Feast
+    description: 'A delectable fusion of cookie dough and chocolate chunks, in cookie form'
+    special: true
+
+  - label: Fountain Drinks
+    station: Fountain & Bottled Drinks
+    description: 'Refills are extra'
+    special: true
+
+  - label: Bottled Beverages
+    station: Fountain & Bottled Drinks
+    description: 'No refills'
+    special: true
+
+  - label: Root Beer Float
+    station: Fountain & Bottled Drinks
+    description: 'Available in Small or Large sizes'
+    special: true
 
 corIcons: {}
-
-# stationMenus:
-#   - {label: Pizza, note: 'To order 4+ pizzas, please visit Oleville 24 hours in advance.'}
-#   - {label: Specialty Pizza}
-#   - {label: Toppings}
-#   - {label: Quesadilla, note: 'Salsa & Sour Cream are extra'}
-#   - {label: Pita}
-#   - {label: Savory}
-#   - {label: Shakes, note: 'Mixins: M&Ms, Oreos, Reese’s Peanut Butter Cups'}
-#   - {label: Soft-Serve, note: 'Hand-swirled in a cup or a cone'}
-#   - {label: Late-Night Feast}
-#   - {label: Fountain & Bottled Drinks}
-# 
-# foodItems:
-#   - label: Single Slice
-#     station: Pizza
-#     description: 'One (1) slice of pizza pie'
-#     special: true
-# 
-#   - label: Small Pizza (12 in)
-#     station: Pizza
-#     description: 'Includes two toppings'
-#     special: true
-# 
-#   - label: Large Pizza (16 in)
-#     station: Pizza
-#     description: 'Includes two toppings'
-#     special: true
-# 
-#   - label: Side of Sauce
-#     station: Pizza
-#     description: 'Marinara, Ranch, BBQ, Honey Mustard'
-# 
-#   - label: BBQ Chicken
-#     station: Specialty Pizza
-#     special: true
-# 
-#   - label: Buffalo Chicken
-#     station: Specialty Pizza
-#     special: true
-# 
-#   - label: Chicken Bacon Ranch
-#     station: Specialty Pizza
-#     special: true
-# 
-#   - label: Chicken Pesto
-#     station: Specialty Pizza
-#     description: 'Includes tomatoes'
-#     special: true
-# 
-#   - label: Ole Pizza
-#     station: Specialty Pizza
-#     description: 'Includes pepperoni, sausage, onions, green peppers, and black olives'
-#     special: true
-# 
-#   - label: Bacon
-#     station: Toppings
-# 
-#   - label: Canadian Bacon
-#     station: Toppings
-# 
-#   - label: Chicken
-#     station: Toppings
-# 
-#   - label: Pepperoni
-#     station: Toppings
-# 
-#   - label: Sausage
-#     station: Toppings
-# 
-#   - label: Black Olives
-#     station: Toppings
-# 
-#   - label: Green Peppers
-#     station: Toppings
-# 
-#   - label: Jalapeños
-#     station: Toppings
-# 
-#   - label: Mushrooms
-#     station: Toppings
-# 
-#   - label: Onions
-#     station: Toppings
-# 
-#   - label: Pineapple
-#     station: Toppings
-# 
-#   - label: Spinach
-#     station: Toppings
-# 
-#   - label: Tomatoes
-#     station: Toppings
-# 
-#   - label: Cheese Quesadilla (Half / Whole)
-#     station: Quesadilla
-#     special: true
-# 
-#   - label: Chicken Quesadilla (Half / Whole)
-#     station: Quesadilla
-#     special: true
-# 
-#   - label: Ultimate Quesadilla (Half / Whole)
-#     station: Quesadilla
-#     description: 'Includes tomatoes, onions, green peppers, and jalapeños'
-#     special: true
-# 
-#   - label: Ultimate Chicken Quesadilla (Half / Whole)
-#     station: Quesadilla
-#     description: 'Includes tomatoes, onions, green peppers, and jalapeños'
-#     special: true
-# 
-#   - label: Pita Pizza
-#     station: Pita
-#     description: 'Pizza built on pita bread; includes two toppings'
-#     special: true
-# 
-#   - label: Specialty Pita Pizza
-#     station: Pita
-#     description: 'Pizza built on pita bread'
-#     special: true
-# 
-#   - label: Garden Pita
-#     station: Pita
-#     description: 'Pita bread with choice of hummus and cooked vegetable toppings'
-#     special: true
-# 
-#   - label: Toasted Pita and Hummus
-#     station: Pita
-#     description: 'Choice of Garlic, Red Pepper, or Feisty Feta Hummus'
-#     special: true
-# 
-#   - label: Pizza Bagel
-#     station: Savory
-#     special: true
-# 
-#   - label: Specialty Pizza Bagel
-#     station: Savory
-#     special: true
-# 
-#   - label: Garlic Cheesy Bread
-#     station: Savory
-#     special: true
-# 
-#   - label: Nachos
-#     station: Savory
-#     description: 'Includes both chips and a cheese cup'
-#     special: true
-# 
-#   - label: Chips & Salsa
-#     station: Savory
-#     description: 'Includes both chips and salsa'
-#     special: true
-# 
-#   - label: Bosco Sticks
-#     station: Savory
-#     special: true
-# 
-#   - label: Soft Pretzel
-#     station: Savory
-#     special: true
-# 
-#   - label: Chicken Strips
-#     station: Savory
-#     description: 'Dipping sauces: BBQ, Honey Mustard, Marinara, Ranch, Blue Cheese, or Hot Sauce'
-#     special: true
-# 
-#   - label: Vanilla
-#     station: Shakes
-#     description: 'Vanilla (adj): having no special or extra features; ordinary or standard'
-#     special: true
-# 
-#   - label: Chocolate
-#     station: Shakes
-#     description: 'A plain flavor to layer onto the plain shake'
-#     special: true
-# 
-#   - label: Strawberry
-#     station: Shakes
-#     description: "The wild child – you've left the realm of safety now"
-#     special: true
-# 
-#   - label: Butter Pecan
-#     station: Shakes
-#     description: 'Butter + pecan. *crunch crunch*'
-#     special: true
-# 
-#   - label: Butterscotch
-#     station: Shakes
-#     description: 'Butter + scotch? Whatever happened to a "dry campus"?'
-#     special: true
-# 
-#   - label: Mocha
-#     station: Shakes
-#     description: 'Hot coffee leads to iced coffee leads to coffee shakes…'
-#     special: true
-# 
-#   - label: Mint
-#     station: Shakes
-#     description: 'Pale green and perfect for springtime, or fall, or winter'
-#     special: true
-# 
-#   - label: Cheesecake
-#     station: Shakes
-#     description: 'Creamy goodness in distilled, shaken form'
-#     special: true
-# 
-#   - label: Vanilla
-#     station: Soft-Serve
-#     description: 'Vanilla (adj): having no special or extra features; ordinary or standard'
-#     special: true
-# 
-#   - label: Chocolate
-#     station: Soft-Serve
-#     description: 'If you need more flavor to go with the cold sweetness'
-#     special: true
-# 
-#   - label: Twist
-#     station: Soft-Serve
-#     description: 'The ultimate answer to the age-old question: "either/or? why not both?"'
-#     special: true
-# 
-#   - label: Pause Cookie
-#     station: Late-Night Feast
-#     description: 'A delectable fusion of cookie dough and chocolate chunks, in cookie form'
-#     special: true
-# 
-#   - label: Fountain Drinks
-#     station: Fountain & Bottled Drinks
-#     description: 'Refills are extra'
-#     special: true
-# 
-#   - label: Bottled Beverages
-#     station: Fountain & Bottled Drinks
-#     description: 'No refills'
-#     special: true
-# 
-#   - label: Root Beer Float
-#     station: Fountain & Bottled Drinks
-#     description: 'Available in Small or Large sizes'
-#     special: true
-# 
-# corIcons: {}
