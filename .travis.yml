@@ -111,7 +111,7 @@ before_install:
   - npm config set spin=false
   - npm config set progress=false
 
-  - npm install -g npm@5.3
+  - npm install -g npm@5.4
   - if [[ $JS ]]; then npm install -g greenkeeper-lockfile@1; fi
 
 install:
