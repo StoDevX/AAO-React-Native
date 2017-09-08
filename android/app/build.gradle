@@ -191,6 +191,7 @@ if (propFile.canRead()) {
 dependencies {
     // please keep this list sorted
     compile project(':bugsnag-react-native')
+    compile project(':react-native-calendar-events')
     compile project(':react-native-custom-tabs')
     compile project(':react-native-device-info')
     compile project(':react-native-google-analytics-bridge')

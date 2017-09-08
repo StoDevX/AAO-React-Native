@@ -66,6 +66,7 @@
     "react-native": "0.45.1",
     "react-native-alphabetlistview": "github:sunnylqm/react-native-alphabetlistview#aea5d61fdd9034c7178d73ce8b2ee104da6941cc",
     "react-native-button": "2.1.0",
+    "react-native-calendar-events": "1.4.1",
     "react-native-communications": "2.2.1",
     "react-native-custom-tabs": "0.1.6",
     "react-native-datepicker": "1.6.0",

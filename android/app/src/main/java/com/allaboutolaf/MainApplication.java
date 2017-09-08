@@ -8,9 +8,10 @@ import android.util.Log;
 // keep these sorted alphabetically
 import com.airbnb.android.react.maps.MapsPackage;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
-import com.bugsnag.BugsnagReactNative;
 import com.brentvatne.react.ReactVideoPackage;
+import com.bugsnag.BugsnagReactNative;
 import com.BV.LinearGradient.LinearGradientPackage;
+import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
@@ -45,6 +46,7 @@ public class MainApplication extends Application implements ReactApplication {
         new MainReactPackage(),
         // please keep these sorted alphabetically
         BugsnagReactNative.getPackage(),
+        new CalendarEventsPackage(),
         new CustomTabsPackage(),
         new GoogleAnalyticsBridgePackage(),
         new KeychainPackage(),
