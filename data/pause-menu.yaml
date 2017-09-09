@@ -1,4 +1,5 @@
 stationMenus:
+  - {label: Notice}
   - {label: Pizza, note: 'To order 4+ pizzas, please visit Oleville 24 hours in advance.'}
   - {label: Specialty Pizza}
   - {label: Toppings}
@@ -11,6 +12,11 @@ stationMenus:
   - {label: Fountain & Bottled Drinks}
 
 foodItems:
+  - label: Welcome, and welcome back!
+    station: Notice
+    description: Welcome back to campus! Fall has come, classes have begun. 🍂
+    special: true
+
   - label: Single Slice
     station: Pizza
     description: 'One (1) slice of pizza pie'
