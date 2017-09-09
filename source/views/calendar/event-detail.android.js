@@ -106,7 +106,7 @@ export class EventDetail extends React.PureComponent {
   static navigationOptions = ({navigation}) => {
     const {event} = navigation.state.params
     return {
-      title: event.summary,
+      title: event.title,
       headerRight: <ShareButton onPress={() => shareItem(event)} />,
     }
   }
