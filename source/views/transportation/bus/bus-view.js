@@ -24,6 +24,7 @@ export class BusView extends React.PureComponent {
   state = {
     busLines: defaultData.data,
     intervalId: 0,
+    loading: false,
     now: moment.tz(TIMEZONE),
   }
 
