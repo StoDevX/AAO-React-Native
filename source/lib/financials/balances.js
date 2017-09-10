@@ -7,6 +7,7 @@ import type {BalancesShapeType} from './types'
 import fromPairs from 'lodash/fromPairs'
 import isNil from 'lodash/isNil'
 import * as cache from '../cache'
+import rnfs from 'react-native-fs'
 
 type BalancesOrErrorType =
   | {error: true, value: Error}
@@ -48,6 +49,26 @@ export async function getBalances(
       weekly: weekly.value,
     },
   }
+}
+
+export function updateBalancesInFileSystem(balances): Promise {
+  let path = rnfs.DocumentDirectoryPath + '/balancesWidgetData.json'
+
+  // delete the file if it exists
+  rnfs.unlink(path)
+    .then(() => {
+	  console.log('deleted existing file')
+	  // write the new file
+	  rnfs.writeFile(path, JSON.stringify(balances), 'utf8')
+	    .then((success) => {
+		    console.log('wrote balances to file' + path)
+		    return {error: false}
+	    })
+    })
+    .catch((err) => {
+	    console.log(err.message)
+    })
+
 }
 
 async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {

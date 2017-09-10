@@ -1,2 +1,2 @@
 // @flow
-export {getBalances} from './balances'
+export {getBalances, updateBalancesInFileSystem} from './balances'

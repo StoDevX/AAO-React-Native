@@ -26,6 +26,7 @@ import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
 import fr.greweb.reactnativeviewshot.RNViewShotPackage;
+import com.rnfs.RNFSPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +59,8 @@ public class MainApplication extends Application implements ReactApplication {
         new RNDeviceInfo(),
         new RNNetworkInfoPackage(),
         new RNViewShotPackage(),
-        new VectorIconsPackage()
+        new VectorIconsPackage(),
+              new RNFSPackage()
       );
     }
   };

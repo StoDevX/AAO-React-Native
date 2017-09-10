@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">All About Olaf</string>
+    <string name="all_about_olaf">All About Olaf</string>
+    <string name="balances">Balances</string>
+    <string name="flex">Flex</string>
+    <string name="ole">Ole</string>
+    <string name="print_copy">Print/Copy</string>
+    <string name="meals">Meals</string>
+    <string name="this_week">This Week</string>
+    <string name="today">Today</string>
+    <string name="balances_url">test.com</string>
 </resources>
