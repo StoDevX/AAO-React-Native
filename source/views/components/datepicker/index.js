@@ -523,7 +523,7 @@ export class DatePicker extends React.PureComponent<any, Props, State> {
 
 const defaultStyle = StyleSheet.create({
   dateTouch: {
-    width: 142,
+    flexDirection: 'row',
   },
   flex: {
     flex: 1,
