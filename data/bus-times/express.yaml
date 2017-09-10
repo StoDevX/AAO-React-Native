@@ -21,7 +21,7 @@ schedules:
     stops:
         [St. Olaf,  Carleton,  Food Co-op, Cub/Target, El Tequila, Food Co-op, Carleton,  St. Olaf]
     times:
-      - ['1:15pm',  '1:22pm',  '1:23pm',   '1:33pm',   '1:37pm',   '1:43pm',   '1:44pm',  '1:52pm']
-      - ['1:55pm',  '2:02pm',  '2:03pm',   '2:13pm',   '2:17pm',   '2:23pm',   '2:24pm',  '2:32pm']
-      - ['2:35pm',  '2:42pm',  '2:43pm',   '2:53pm',   '2:57pm',   '3:03pm',   '3:04pm',  '3:12pm']
       - ['3:15pm',  '3:22pm',  '3:23pm',   '3:33pm',   '3:37pm',   '3:43pm',   '3:44pm',  '3:52pm']
+      - ['3:55pm',  '4:02pm',  '4:03pm',   '4:13pm',   '4:17pm',   '4:23pm',   '4:24pm',  '4:32pm']
+      - ['4:35pm',  '4:42pm',  '4:43pm',   '4:53pm',   '4:57pm',   '4:03pm',   '5:04pm',  '5:12pm']
+      - ['5:15pm',  '5:22pm',  '5:23pm',   '5:33pm',   '5:37pm',   '5:43pm',   '5:44pm',  '5:52pm']
