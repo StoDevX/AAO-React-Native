@@ -14,7 +14,7 @@ import {Row} from '../../components/layout'
 import type {TopLevelViewPropsType} from '../../types'
 import {parseHours, blankSchedule} from '../lib'
 import * as c from '../../components/colors'
-import DatePicker from 'react-native-datepicker'
+import {DatePicker} from '../../components/datepicker'
 import {Touchable} from '../../components/touchable'
 import {DeleteButtonCell} from '../../components/cells/delete-button'
 
