@@ -7,29 +7,30 @@ import {BusLine} from './bus-line'
 import moment from 'moment-timezone'
 import {NoticeView} from '../../components/notice'
 import type {TopLevelViewPropsType} from '../../types'
+import delay from 'delay'
+import {reportNetworkProblem} from '../../../lib/report-network-problem'
 
-import {data as defaultBusLines} from '../../../../docs/bus-times.json'
+import * as defaultData from '../../../../docs/bus-times.json'
 
 const TIMEZONE = 'America/Winnipeg'
 
-export class BusView extends React.PureComponent {
-  static defaultProps = {
-    busLines: defaultBusLines,
-  }
+const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/bus-times.json'
 
+export class BusView extends React.PureComponent {
   props: TopLevelViewPropsType & {
-    busLines: BusLineType[],
     line: string,
   }
 
   state = {
+    busLines: defaultData.data,
     intervalId: 0,
     now: moment.tz(TIMEZONE),
   }
 
   componentWillMount() {
-    // This updates the screen every second, so that the "next bus" times are
-    // updated without needing to leave and come back.
+    this.fetchData()
+    // This updates the screen every five seconds, so that the "next bus"
+    // times are updated without needing to leave and come back.
     this.setState(() => ({intervalId: setInterval(this.updateTime, 5000)}))
   }
 
@@ -37,25 +38,56 @@ export class BusView extends React.PureComponent {
     clearTimeout(this.state.intervalId)
   }
 
+  fetchData = async () => {
+    const start = Date.now()
+    this.setState(() => ({loading: true}))
+
+    let {data: busLines} = await fetchJson(GITHUB_URL).catch(err => {
+      reportNetworkProblem(err)
+      return defaultData
+    })
+
+    // if (process.env.NODE_ENV === 'development') {
+    //   busLines = defaultData.data
+    // }
+
+    this.updateTime()
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    const elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState(() => ({busLines, loading: false}))
+  }
+
   updateTime = () => {
     this.setState(() => ({now: moment.tz(TIMEZONE)}))
   }
 
   openMap = () => {
-    this.props.navigation.navigate('BusMapView', {line: this.props.line})
+    const activeBusLine = this.findLine()
+    this.props.navigation.navigate('BusMapView', {line: activeBusLine})
+  }
+
+  findLine = (): ?BusLineType => {
+    let {busLines} = this.state
+    const {line: thisLine} = this.props
+    return busLines.find(({line}) => line === thisLine)
   }
 
   render() {
     let {now} = this.state
     // now = moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE)
-    const busLines = this.props.busLines
-    const activeBusLine = busLines.find(({line}) => line === this.props.line)
+    const activeBusLine = this.findLine()
 
     if (!activeBusLine) {
-      const {line} = this.props
-      const lines = busLines.map(({line}) => line).join(', ')
+      const lines = this.state.busLines.map(({line}) => line).join(', ')
       return (
-        <NoticeView text={`The line "${line}" was not found among ${lines}`} />
+        <NoticeView
+          text={`The line "${this.props.line}" was not found among ${lines}`}
+        />
       )
     }
 
