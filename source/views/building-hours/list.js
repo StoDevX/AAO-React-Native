@@ -47,7 +47,13 @@ export class BuildingHoursList extends React.PureComponent {
     return (
       <SectionList
         ItemSeparatorComponent={ListSeparator}
-        ListFooterComponent={<ListFooter title={'Building hours subject to change without notice\n\nData collected by the humans of All About Olaf'} />}
+        ListFooterComponent={
+          <ListFooter
+            title={
+              'Building hours subject to change without notice\n\nData collected by the humans of All About Olaf'
+            }
+          />
+        }
         sections={(this.props.buildings: any)}
         keyExtractor={this.keyExtractor}
         renderSectionHeader={this.renderSectionHeader}
