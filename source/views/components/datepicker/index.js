@@ -521,6 +521,7 @@ export class DatePicker extends React.PureComponent<any, Props, State> {
   }
 }
 
+/* eslint-disable react-native/no-color-literals */
 const defaultStyle = StyleSheet.create({
   dateTouch: {
     flexDirection: 'row',
@@ -590,3 +591,4 @@ const defaultStyle = StyleSheet.create({
     backgroundColor: '#eee',
   },
 })
+/* eslint-enable react-native/no-color-literals */
