@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {ScrollView} from 'react-native'
+import {ScrollView, RefreshControl} from 'react-native'
 import type {BusLineType} from './types'
 import {BusLine} from './bus-line'
 import moment from 'moment-timezone'
@@ -66,6 +66,17 @@ export class BusView extends React.PureComponent {
     this.setState(() => ({now: moment.tz(TIMEZONE)}))
   }
 
+  refreshTime = async () => {
+    const start = Date.now()
+    this.setState(() => ({loading: true}))
+    this.updateTime()
+    const elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+    this.setState(() => ({loading: false}))
+  }
+
   openMap = () => {
     const activeBusLine = this.findLine()
     this.props.navigation.navigate('BusMapView', {line: activeBusLine})
@@ -92,7 +103,14 @@ export class BusView extends React.PureComponent {
     }
 
     return (
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            onRefresh={this.refreshTime}
+            refreshing={this.state.loading}
+          />
+        }
+      >
         <BusLine line={activeBusLine} now={now} openMap={this.openMap} />
       </ScrollView>
     )
