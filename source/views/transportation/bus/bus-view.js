@@ -48,9 +48,9 @@ export class BusView extends React.PureComponent {
       return defaultData
     })
 
-    // if (process.env.NODE_ENV === 'development') {
-    //   busLines = defaultData.data
-    // }
+    if (process.env.NODE_ENV === 'development') {
+      busLines = defaultData.data
+    }
 
     this.updateTime()
 
