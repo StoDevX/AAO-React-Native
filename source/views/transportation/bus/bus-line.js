@@ -6,6 +6,7 @@ import {getScheduleForNow, getSetOfStopsForNow} from './lib'
 import get from 'lodash/get'
 import zip from 'lodash/zip'
 import head from 'lodash/head'
+import isEqual from 'lodash/isEqual'
 import last from 'lodash/last'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'
@@ -83,6 +84,7 @@ export class BusLine extends React.Component<void, Props, State> {
     scheduledMoments: [],
     currentMoments: [],
     stopTitleTimePairs: [],
+    firstUpdate: true,
   }
 
   componentWillMount() {
@@ -93,17 +95,26 @@ export class BusLine extends React.Component<void, Props, State> {
     this.setStateFromProps(nextProps)
   }
 
-  shouldComponentUpdate(nextProps: Props) {
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    // We won't check the time in shouldComponentUpdate, because we really
+    // only care if the bus information has changed, and this is called after
+    // setStateFromProps runs.
+
     return (
-      this.props.now.minute() !== nextProps.now.minute() ||
-      this.props.now.hour() !== nextProps.now.hour() ||
-      this.props.now.dayOfYear() !== nextProps.now.dayOfYear() ||
       this.props.line !== nextProps.line ||
-      this.props.openMap !== nextProps.openMap
+      this.props.openMap !== nextProps.openMap ||
+      !isEqual(this.state.currentMoments, nextState.currentMoments)
     )
   }
 
   setStateFromProps = (nextProps: Props) => {
+    if (
+      this.props.now.isSame(nextProps.now, 'minute') &&
+      !this.state.firstUpdate
+    ) {
+      return
+    }
+
     const {line, now} = nextProps
 
     const schedule = getScheduleForNow(line.schedules, now)
@@ -131,6 +142,7 @@ export class BusLine extends React.Component<void, Props, State> {
       scheduledMoments,
       currentMoments,
       stopTitleTimePairs,
+      firstUpdate: false,
     }))
   }
 
