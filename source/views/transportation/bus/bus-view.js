@@ -85,7 +85,7 @@ export class BusView extends React.PureComponent {
   }
 
   findLine = (): ?BusLineType => {
-    let {busLines} = this.state
+    const {busLines} = this.state
     const {line: thisLine} = this.props
     return busLines.find(({line}) => line === thisLine)
   }
