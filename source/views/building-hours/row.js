@@ -117,7 +117,7 @@ const BuildingTimeSlot = ({
   highlight: boolean,
 }) => {
   // we don't want to show the 'Hours' label, since almost every row has it
-  const showLabel = label !== 'Hours'
+  const showLabel = label && label !== 'Hours'
 
   return (
     <Text>
