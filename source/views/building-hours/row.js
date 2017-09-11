@@ -6,6 +6,7 @@
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {Badge} from '../components/badge'
+import isEqual from 'lodash/isEqual'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
 import * as c from '../components/colors'
@@ -56,19 +57,80 @@ type Props = {
   onPress: BuildingType => any,
 }
 
-export class BuildingRow extends React.PureComponent<void, Props, void> {
+type State = {
+  openStatus: string,
+  hours: Array<any>,
+  accentBg: string,
+  accentText: string,
+}
+
+export class BuildingRow extends React.Component<void, Props, State> {
+  state = {
+    openStatus: 'Unknown',
+    hours: [],
+    firstUpdate: true,
+
+    // when changing these, make sure to change the fallbacks in setStateFromProps
+    accentBg: c.goldenrod,
+    accentText: 'rgb(130, 82, 45)',
+  }
+
+  componentWillMount() {
+    this.setStateFromProps(this.props)
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    this.setStateFromProps(nextProps)
+  }
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    // We won't check the time in shouldComponentUpdate, because we really
+    // only care if the building status has changed, and this is called after
+    // setStateFromProps runs.
+    return (
+      this.props.name !== nextProps.name ||
+      this.props.info !== nextProps.info ||
+      this.props.onPress !== nextProps.onPress ||
+      this.state.openStatus !== nextState.openStatus ||
+      !isEqual(this.state.hours, nextState.hours)
+    )
+  }
+
+  setStateFromProps = (nextProps: Props) => {
+    // we check the time in setStateFromProps, because shouldComponentUpdate
+    // runs _after_ setStateFromProps.
+    if (
+      this.props.now.isSame(nextProps.now, 'minute') &&
+      !this.state.firstUpdate
+    ) {
+      return
+    }
+
+    const {info, now} = nextProps
+
+    const openStatus = getShortBuildingStatus(info, now)
+    const hours = getDetailedBuildingStatus(info, now)
+
+    // when changing these, make sure to change the initial values in `state`
+    const accentBg = BG_COLORS[openStatus] || c.goldenrod
+    const accentText = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
+
+    this.setState(() => ({
+      openStatus,
+      hours,
+      accentBg,
+      accentText,
+      firstUpdate: false,
+    }))
+  }
+
   onPress = () => {
     this.props.onPress(this.props.info)
   }
 
   render() {
-    const {info, name, now} = this.props
-
-    const openStatus = getShortBuildingStatus(info, now)
-    const hours = getDetailedBuildingStatus(info, now)
-
-    const accentBg = BG_COLORS[openStatus] || c.goldenrod
-    const accentText = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
+    const {info, name} = this.props
+    const {openStatus, hours, accentBg, accentText} = this.state
 
     return (
       <ListRow onPress={this.onPress} arrowPosition="center">
