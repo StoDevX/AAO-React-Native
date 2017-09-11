@@ -13,7 +13,7 @@ import moment from 'moment-timezone'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 import * as defaultData from '../../../docs/building-hours'
-import {reportNetworkProblem} from '../components/report-network-problem'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 
