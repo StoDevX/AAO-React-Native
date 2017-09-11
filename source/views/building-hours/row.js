@@ -39,6 +39,16 @@ const styles = StyleSheet.create({
   },
 })
 
+const BG_COLORS = {
+  Open: c.moneyGreen,
+  Closed: c.salmon,
+}
+
+const FG_COLORS = {
+  Open: c.hollyGreen,
+  Closed: c.brickRed,
+}
+
 export class BuildingRow extends React.PureComponent {
   props: {
     info: BuildingType,
@@ -54,20 +64,11 @@ export class BuildingRow extends React.PureComponent {
   render() {
     const {info, name, now} = this.props
 
-    const bgColors = {
-      Open: c.moneyGreen,
-      Closed: c.salmon,
-    }
-    const foregroundColors = {
-      Open: c.hollyGreen,
-      Closed: c.brickRed,
-    }
-
     const openStatus = getShortBuildingStatus(info, now)
     const hours = getDetailedBuildingStatus(info, now)
 
-    const accent = bgColors[openStatus] || c.goldenrod
-    const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
+    const accent = BG_COLORS[openStatus] || c.goldenrod
+    const textaccent = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
 
     return (
       <ListRow onPress={this.onPress} arrowPosition="center">
