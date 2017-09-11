@@ -103,7 +103,7 @@ export class BusLine extends React.Component<void, Props, State> {
     )
   }
 
-  setStateFromProps(nextProps: Props) {
+  setStateFromProps = (nextProps: Props) => {
     const {line, now} = nextProps
 
     const schedule = getScheduleForNow(line.schedules, now)
