@@ -12,7 +12,12 @@ import moment from 'moment-timezone'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
 import {BusStopRow} from './bus-stop-row'
-import {ListRow, ListSectionHeader, Title} from '../../components/list'
+import {
+  ListRow,
+  ListSectionHeader,
+  Title,
+  ListFooter,
+} from '../../components/list'
 
 const TIME_FORMAT = 'h:mma'
 const TIMEZONE = 'America/Winnipeg'
@@ -230,6 +235,12 @@ export class BusLine extends React.Component<void, Props, State> {
             </Column>
           </Row>
         </ListRow>*/}
+
+        <ListFooter
+          title={
+            'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
+          }
+        />
       </View>
     )
   }
