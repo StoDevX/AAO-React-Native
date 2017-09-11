@@ -14,6 +14,9 @@ import {ListRow, Detail, Title} from '../components/list'
 import {getDetailedBuildingStatus, getShortBuildingStatus} from './lib'
 
 const styles = StyleSheet.create({
+  row: {
+    backgroundColor: c.white,
+  },
   title: {
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -70,7 +73,7 @@ export class BuildingRow extends React.PureComponent {
     const textaccent = foregroundColors[openStatus] || 'rgb(130, 82, 45)'
 
     return (
-      <ListRow onPress={this.onPress} arrowPosition="center">
+      <ListRow onPress={this.onPress} arrowPosition="center" style={styles.row}>
         <Column>
           <Row style={styles.title}>
             <Title lines={1} style={styles.titleText}>
