@@ -32,7 +32,7 @@ export class BuildingHoursDetailView extends React.PureComponent {
   componentWillMount() {
     // This updates the screen every ten seconds, so that the building
     // info statuses are updated without needing to leave and come back.
-    this.setState({intervalId: setInterval(this.updateTime, 10000)})
+    this.setState({intervalId: setInterval(this.updateTime, 1000)})
   }
 
   componentWillUnmount() {
