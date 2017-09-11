@@ -40,7 +40,7 @@ export class BuildingHoursDetailView extends React.PureComponent {
   }
 
   updateTime = () => {
-    this.setState({now: moment.tz(CENTRAL_TZ)})
+    this.setState(() => ({now: moment.tz(CENTRAL_TZ)}))
   }
 
   reportProblem = () => {
