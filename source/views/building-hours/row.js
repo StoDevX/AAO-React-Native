@@ -49,14 +49,14 @@ const FG_COLORS = {
   Closed: c.brickRed,
 }
 
-export class BuildingRow extends React.PureComponent {
-  props: {
-    info: BuildingType,
-    name: string,
-    now: momentT,
-    onPress: BuildingType => any,
-  }
+type Props = {
+  info: BuildingType,
+  name: string,
+  now: momentT,
+  onPress: BuildingType => any,
+}
 
+export class BuildingRow extends React.PureComponent<void, Props, void> {
   onPress = () => {
     this.props.onPress(this.props.info)
   }
