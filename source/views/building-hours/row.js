@@ -67,8 +67,8 @@ export class BuildingRow extends React.PureComponent {
     const openStatus = getShortBuildingStatus(info, now)
     const hours = getDetailedBuildingStatus(info, now)
 
-    const accent = BG_COLORS[openStatus] || c.goldenrod
-    const textaccent = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
+    const accentBg = BG_COLORS[openStatus] || c.goldenrod
+    const accentText = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
 
     return (
       <ListRow onPress={this.onPress} arrowPosition="center">
@@ -84,8 +84,8 @@ export class BuildingRow extends React.PureComponent {
 
             <Badge
               text={openStatus}
-              accentColor={accent}
-              textColor={textaccent}
+              accentColor={accentBg}
+              textColor={accentText}
               style={styles.accessoryBadge}
             />
           </Row>
