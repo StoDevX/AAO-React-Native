@@ -51,6 +51,10 @@ export function FilterViewComponent({filters, navigation}: PropsType) {
   )
 }
 
+FilterViewComponent.navigationOptions = {
+  title: 'Filter',
+}
+
 const mapStateToProps = (state, actualProps) => {
   return {
     filters: get(state, actualProps.navigation.state.params.pathToFilters, []),
