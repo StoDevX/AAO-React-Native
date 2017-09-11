@@ -18,6 +18,7 @@ type PropsType = {
   navigation: {
     state: {
       params: {
+        title: string,
         pathToFilters: string[],
         onChange: (x: FilterType[]) => any,
       },
