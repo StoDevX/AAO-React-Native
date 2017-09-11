@@ -51,11 +51,10 @@ export function FilterViewComponent({filters, navigation}: PropsType) {
     </ScrollView>
   )
 }
-
-FilterViewComponent.navigationOptions = ({navigation}) => { 
-  return { 
+FilterViewComponent.navigationOptions = ({navigation}) => {
+  return {
     title: navigation.state.params.title,
-  } 
+  }
 }
 
 const mapStateToProps = (state, actualProps) => {
