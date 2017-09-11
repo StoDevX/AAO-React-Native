@@ -72,6 +72,7 @@ class FancyMenuView extends React.PureComponent {
 
   openFilterView = () => {
     this.props.navigation.navigate('FilterView', {
+      title: this.props.name,
       pathToFilters: ['menus', this.props.name],
       onChange: filters => this.props.onFiltersChange(filters),
     })
