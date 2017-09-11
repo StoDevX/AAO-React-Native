@@ -52,7 +52,7 @@ export function FilterViewComponent({filters, navigation}: PropsType) {
   )
 }
 
-FilterView.navigationOptions = ({navigation}) => { 
+FilterViewComponent.navigationOptions = ({navigation}) => { 
   return { 
     title: navigation.state.params.title,
   } 
