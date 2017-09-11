@@ -9,7 +9,7 @@ import {Badge} from '../components/badge'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
 import * as c from '../components/colors'
-import {Row, Column} from '../components/layout'
+import {Row} from '../components/layout'
 import {ListRow, Detail, Title} from '../components/list'
 import {getDetailedBuildingStatus, getShortBuildingStatus} from './lib'
 
@@ -72,36 +72,34 @@ export class BuildingRow extends React.PureComponent<void, Props, void> {
 
     return (
       <ListRow onPress={this.onPress} arrowPosition="center">
-        <Column>
-          <Row style={styles.title}>
-            <Title lines={1} style={styles.titleText}>
-              <Text>{name}</Text>
-              {info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
-              {info.subtitle
-                ? <Text style={styles.subtitleText}> {info.subtitle}</Text>
-                : null}
-            </Title>
+        <Row style={styles.title}>
+          <Title lines={1} style={styles.titleText}>
+            <Text>{name}</Text>
+            {info.abbreviation ? <Text> ({info.abbreviation})</Text> : null}
+            {info.subtitle
+              ? <Text style={styles.subtitleText}> {info.subtitle}</Text>
+              : null}
+          </Title>
 
-            <Badge
-              text={openStatus}
-              accentColor={accentBg}
-              textColor={accentText}
-              style={styles.accessoryBadge}
-            />
-          </Row>
+          <Badge
+            text={openStatus}
+            accentColor={accentBg}
+            textColor={accentText}
+            style={styles.accessoryBadge}
+          />
+        </Row>
 
-          <View style={styles.detailWrapper}>
-            {hours.map(({isActive, label, status}, i) =>
-              <Detail key={i} style={styles.detailRow}>
-                <BuildingTimeSlot
-                  highlight={hours.length > 1 && isActive}
-                  label={label}
-                  status={status}
-                />
-              </Detail>,
-            )}
-          </View>
-        </Column>
+        <View style={styles.detailWrapper}>
+          {hours.map(({isActive, label, status}, i) =>
+            <Detail key={i} style={styles.detailRow}>
+              <BuildingTimeSlot
+                highlight={hours.length > 1 && isActive}
+                label={label}
+                status={status}
+              />
+            </Detail>,
+          )}
+        </View>
       </ListRow>
     )
   }
