@@ -13,10 +13,10 @@ import {StreamListView} from './streams'
 
 export default TabNavigator(
   {
+    StreamingView: {screen: StreamListView},
+    LiveWebcamsView: {screen: WebcamsView},
     KSTORadioView: {screen: KSTOView},
     // WeeklyMovieView: {screen: WeeklyMovieView},
-    LiveWebcamsView: {screen: WebcamsView},
-    StreamingView: {screen: StreamListView},
   },
   {
     navigationOptions: {
