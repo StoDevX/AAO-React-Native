@@ -1,9 +1,11 @@
 // @flow
 import React from 'react'
 import {FlatList} from 'react-native'
+import delay from 'delay'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {TabBarIcon} from '../components/tabbar-icon'
 import type {OtherModeType} from './types'
-import {data as modes} from '../../../docs/transportation.json'
+import * as defaultData from '../../../docs/transportation.json'
 import * as c from '../components/colors'
 import {Button} from '../components/button'
 import {trackedOpenUrl} from '../components/open-url'
@@ -24,6 +26,9 @@ const Container = glamorous.view({
   borderTopWidth: 1,
   borderColor: c.iosLightBackground,
 })
+
+const GITHUB_URL =
+  'https://stodevx.github.io/AAO-React-Native/transportation.json'
 
 class OtherModeCard extends React.PureComponent {
   props: {
@@ -57,6 +62,37 @@ export default class OtherModesView extends React.PureComponent {
     tabBarIcon: TabBarIcon('boat'),
   }
 
+  state = {
+    modes: defaultData.data,
+    loading: false,
+  }
+
+  componentWillMount() {
+    this.fetchData()
+  }
+
+  fetchData = async () => {
+    const start = Date.now()
+    this.setState(() => ({loading: true}))
+
+    let {data: modes} = await fetchJson(GITHUB_URL).catch(err => {
+      reportNetworkProblem(err)
+      return defaultData
+    })
+
+    if (process.env.NODE_ENV === 'development') {
+      modes = defaultData.data
+    }
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    const elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState(() => ({modes, loading: false}))
+  }
+
   renderItem = ({item}: {item: OtherModeType}) => <OtherModeCard data={item} />
 
   keyExtractor = (item: OtherModeType) => item.name
@@ -66,7 +102,9 @@ export default class OtherModesView extends React.PureComponent {
       <FlatList
         keyExtractor={this.keyExtractor}
         renderItem={this.renderItem}
-        data={modes}
+        refreshing={this.state.loading}
+        onRefresh={this.fetchData}
+        data={this.state.modes}
       />
     )
   }
