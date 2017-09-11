@@ -16,6 +16,7 @@ import {getShortBuildingStatus} from '../lib'
 import {Badge} from './badge'
 import {Header} from './header'
 import {ScheduleTable} from './schedule-table'
+import {ListFooter} from '../../components/list'
 
 const transparentPixel = require('../../../../images/transparent.png')
 
@@ -71,6 +72,12 @@ export class BuildingDetail extends React.Component<void, Props, void> {
             schedules={schedules}
             now={now}
             onProblemReport={onProblemReport}
+          />
+
+          <ListFooter
+            title={
+              'Building hours subject to change without notice\n\nData collected by the humans of All About Olaf'
+            }
           />
         </View>
       </ParallaxView>
