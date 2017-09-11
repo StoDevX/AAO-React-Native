@@ -26,6 +26,7 @@ export class BusView extends React.PureComponent {
     intervalId: 0,
     loading: false,
     now: moment.tz(TIMEZONE),
+    // now: moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE),
   }
 
   componentWillMount() {
@@ -91,7 +92,6 @@ export class BusView extends React.PureComponent {
 
   render() {
     let {now} = this.state
-    // now = moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE)
     const activeBusLine = this.findLine()
 
     if (!activeBusLine) {
