@@ -55,6 +55,7 @@ export class BuildingHoursList extends React.PureComponent {
       <SectionList
         ItemSeparatorComponent={ListSeparator}
         sections={(this.props.buildings: any)}
+        extraData={this.props}
         keyExtractor={this.keyExtractor}
         renderSectionHeader={this.renderSectionHeader}
         renderItem={this.renderItem}
