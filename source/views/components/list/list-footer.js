@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
 export class ListFooter extends React.PureComponent {
   props: {
     title: string,
-    href: string,
+    href?: string,
   }
 
   render() {
