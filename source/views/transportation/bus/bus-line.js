@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
-import type {BusLineType, FancyBusTimeListType} from './types'
+import type {BusLineType, FancyBusTimeListType, BusScheduleType} from './types'
 import {getScheduleForNow, getSetOfStopsForNow} from './lib'
 import get from 'lodash/get'
 import zip from 'lodash/zip'
@@ -49,7 +49,7 @@ function makeSubtitle({now, moments, isLastBus}) {
   return lineDetail
 }
 
-const parseTime = (now: moment) => time => {
+const parseTime = (now: moment) => (time: string | false) => {
   // either pass `false` through or return a parsed time
   if (time === false) {
     return false
@@ -64,18 +64,90 @@ const parseTime = (now: moment) => time => {
   )
 }
 
-export class BusLine extends React.PureComponent {
-  props: {line: BusLineType, now: moment, openMap: () => any}
+type Props = {
+  line: BusLineType,
+  now: moment,
+  openMap: () => any,
+}
+
+type State = {
+  schedule: ?BusScheduleType,
+  scheduledMoments: Array<FancyBusTimeListType>,
+  currentMoments: FancyBusTimeListType,
+  stopTitleTimePairs: Array<[string, moment]>,
+}
+
+export class BusLine extends React.Component<void, Props, State> {
+  state = {
+    schedule: null,
+    scheduledMoments: [],
+    currentMoments: [],
+    stopTitleTimePairs: [],
+  }
+
+  componentWillMount() {
+    this.setStateFromProps(this.props)
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    this.setStateFromProps(nextProps)
+  }
+
+  shouldComponentUpdate(nextProps: Props) {
+    return (
+      this.props.now.minute() !== nextProps.now.minute() ||
+      this.props.now.hour() !== nextProps.now.hour() ||
+      this.props.now.dayOfYear() !== nextProps.now.dayOfYear() ||
+      this.props.line !== nextProps.line ||
+      this.props.openMap !== nextProps.openMap
+    )
+  }
+
+  setStateFromProps(nextProps: Props) {
+    const {line, now} = nextProps
+
+    const schedule = getScheduleForNow(line.schedules, now)
+    if (!schedule) {
+      return
+    }
+
+    const parseTimes = timeset => timeset.map(parseTime(now))
+    const scheduledMoments: Array<FancyBusTimeListType> = schedule.times.map(
+      parseTimes,
+    )
+
+    const currentMoments: FancyBusTimeListType = getSetOfStopsForNow(
+      scheduledMoments,
+      now,
+    )
+
+    const stopTitleTimePairs: Array<[string, moment]> = zip(
+      schedule.stops,
+      currentMoments,
+    )
+
+    this.setState(() => ({
+      schedule,
+      scheduledMoments,
+      currentMoments,
+      stopTitleTimePairs,
+    }))
+  }
 
   render() {
     const {line, now} = this.props
+    const {
+      schedule,
+      scheduledMoments,
+      currentMoments,
+      stopTitleTimePairs,
+    } = this.state
 
     // grab the colors (with fallbacks) via _.get
     const barColor = get(barColors, line.line, c.black)
     const currentStopColor = get(stopColors, line.line, c.gray)
     const androidColor = Platform.OS === 'android' ? {color: barColor} : null
 
-    const schedule = getScheduleForNow(line.schedules, now)
     if (!schedule) {
       return (
         <View>
@@ -87,19 +159,9 @@ export class BusLine extends React.PureComponent {
       )
     }
 
-    const scheduledMoments: FancyBusTimeListType[] = schedule.times.map(
-      timeset => timeset.map(parseTime(now)),
-    )
-
-    const moments: FancyBusTimeListType = getSetOfStopsForNow(
-      scheduledMoments,
-      now,
-    )
-    const pairs: [[string, moment]] = zip(schedule.stops, moments)
-
-    const timesIndex = scheduledMoments.indexOf(moments)
+    const timesIndex = scheduledMoments.indexOf(currentMoments)
     const isLastBus = timesIndex === scheduledMoments.length - 1
-    const subtitle = makeSubtitle({now, moments, isLastBus})
+    const subtitle = makeSubtitle({now, moments: currentMoments, isLastBus})
 
     return (
       <View>
@@ -109,7 +171,7 @@ export class BusLine extends React.PureComponent {
           titleStyle={androidColor}
         />
 
-        {pairs.map(([placeTitle, moment], i, list) =>
+        {stopTitleTimePairs.map(([placeTitle, moment], i, list) =>
           <View key={i}>
             <BusStopRow
               // get the arrival time for this stop from each bus loop after
