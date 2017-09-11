@@ -53,7 +53,7 @@ export function FilterViewComponent({filters, navigation}: PropsType) {
 }
 
 FilterViewComponent.navigationOptions = {
-  title: 'Filter',
+  title: `Filter ${this.props.title}`,
 }
 
 const mapStateToProps = (state, actualProps) => {
