@@ -31,9 +31,9 @@ export class BusView extends React.PureComponent {
 
   componentWillMount() {
     this.fetchData()
-    // This updates the screen every five seconds, so that the "next bus"
-    // times are updated without needing to leave and come back.
-    this.setState(() => ({intervalId: setInterval(this.updateTime, 5000)}))
+    // This updates the screen every second, so that the "next bus" times
+    // are updated without needing to leave and come back.
+    this.setState(() => ({intervalId: setInterval(this.updateTime, 1000)}))
   }
 
   componentWillUnmount() {
