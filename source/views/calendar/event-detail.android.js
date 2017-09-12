@@ -1,12 +1,16 @@
 // @flow
 import React from 'react'
 import {Text, ScrollView, StyleSheet, Share} from 'react-native'
-import type {EventType} from './types'
+import type {CleanedEventType} from './types'
+import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../components/nav-buttons'
 import openUrl from '../components/open-url'
 import {Card} from '../components/card'
-import {cleanEvent, getTimes, getLinksFromEvent} from './clean-event'
+import {getTimes, getLinksFromEvent} from './clean-event'
 import * as c from '../components/colors'
+import {ButtonCell} from '../components/cells/button'
+import {addToCalendar} from './calendar-util'
+import delay from 'delay'
 
 const styles = StyleSheet.create({
   name: {
@@ -31,11 +35,11 @@ const styles = StyleSheet.create({
   },
 })
 
-function Title({event}: {event: EventType}) {
+function Title({event}: {event: CleanedEventType}) {
   return event.title ? <Text style={styles.name}>{event.title}</Text> : null
 }
 
-function Description({event}: {event: EventType}) {
+function Description({event}: {event: CleanedEventType}) {
   return event.rawSummary
     ? <Card header="Description" style={styles.card}>
         <Text style={styles.cardBody}>
@@ -45,7 +49,7 @@ function Description({event}: {event: EventType}) {
     : null
 }
 
-function When({event}: {event: EventType}) {
+function When({event}: {event: CleanedEventType}) {
   return event.times
     ? <Card header="When" style={styles.card}>
         <Text style={styles.cardBody}>
@@ -55,7 +59,7 @@ function When({event}: {event: EventType}) {
     : null
 }
 
-function Location({event}: {event: EventType}) {
+function Location({event}: {event: CleanedEventType}) {
   return event.location
     ? <Card header="Location" style={styles.card}>
         <Text style={styles.cardBody}>
@@ -65,7 +69,7 @@ function Location({event}: {event: EventType}) {
     : null
 }
 
-function Links({event}: {event: EventType}) {
+function Links({event}: {event: CleanedEventType}) {
   const links = getLinksFromEvent(event)
   return links.length
     ? <Card header="Links" style={styles.card}>
@@ -78,7 +82,19 @@ function Links({event}: {event: EventType}) {
     : null
 }
 
-const shareItem = (event: EventType) => {
+const CalendarButton = ({message, disabled, onPress}) => {
+  return (
+    <Card footer={message} style={styles.card}>
+      <ButtonCell
+        title="Add to calendar"
+        disabled={disabled}
+        onPress={onPress}
+      />
+    </Card>
+  )
+}
+
+const shareItem = (event: CleanedEventType) => {
   const times = getTimes(event)
   const message = `${event.summary}\n\n${times}\n\n${event.location}`
   Share.share({message})
@@ -86,25 +102,70 @@ const shareItem = (event: EventType) => {
     .catch(error => console.log(error.message))
 }
 
-export function EventDetail(props: {
-  navigation: {state: {params: {event: EventType}}},
-}) {
-  const event = cleanEvent(props.navigation.state.params.event)
-  return (
-    <ScrollView>
-      <Title event={event} />
-      <When event={event} />
-      <Location event={event} />
-      <Description event={event} />
-      <Links event={event} />
-    </ScrollView>
-  )
-}
+export class EventDetail extends React.PureComponent {
+  static navigationOptions = ({navigation}) => {
+    const {event} = navigation.state.params
+    return {
+      title: event.title,
+      headerRight: <ShareButton onPress={() => shareItem(event)} />,
+    }
+  }
 
-EventDetail.navigationOptions = ({navigation}) => {
-  const {event} = navigation.state.params
-  return {
-    title: event.summary,
-    headerRight: <ShareButton onPress={() => shareItem(event)} />,
+  props: TopLevelViewPropsType & {
+    navigation: {state: {params: {event: CleanedEventType}}},
+  }
+
+  state: {
+    message: string,
+    disabled: boolean,
+  } = {
+    message: '',
+    disabled: false,
+  }
+
+  addEvent = async (event: CleanedEventType) => {
+    const start = Date.now()
+    this.setState(() => ({message: 'Adding event to calendar…'}))
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    const elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    await addToCalendar(event).then(result => {
+      if (result) {
+        this.setState({
+          message: 'Event has been added to your calendar',
+          disabled: true,
+        })
+      } else {
+        this.setState({
+          message: 'Could not add event to your calendar',
+          disabled: false,
+        })
+      }
+    })
+  }
+
+  onPressButton = () => this.addEvent(this.props.navigation.state.params.event)
+
+  render() {
+    const event = this.props.navigation.state.params.event
+
+    return (
+      <ScrollView>
+        <Title event={event} />
+        <When event={event} />
+        <Location event={event} />
+        <Description event={event} />
+        <Links event={event} />
+        <CalendarButton
+          onPress={this.onPressButton}
+          message={this.state.message}
+          disabled={this.state.disabled}
+        />
+      </ScrollView>
+    )
   }
 }

@@ -5,12 +5,7 @@ category: Offices
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th], from: '7:30am', to: '4:00pm'}
-      - {days: [Fr], from: '7:30am', to: '12:00pm'}
-
-  # - title: Hours
-  #   hours:
-  #     - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}
 
 breakSchedule:
   fall: []
@@ -19,4 +14,8 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer: []
+  summer:
+    - title: Hours
+      hours:
+        - {days: [Mo, Tu, We, Th], from: '7:30am', to: '4:30pm'}
+        - {days: [Fr], from: '7:30am', to: '12:00pm'}

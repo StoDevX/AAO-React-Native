@@ -29,8 +29,14 @@ platform :ios do
   desc 'Submit a new nightly Beta Build to Testflight'
   lane :nightly do
     build
-    testflight(changelog: make_changelog,
-               distribute_external: false)
+    # TestFlight is returning 500 errors when we upload changelogs again.
+    begin
+      testflight(changelog: make_changelog,
+                 distribute_external: false)
+    rescue => error
+      puts "Changelog failed to upload:"
+      puts error
+    end
   end
 
   desc 'Upload dYSM symbols to Bugsnag from Apple'

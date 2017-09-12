@@ -16,6 +16,7 @@ import {getShortBuildingStatus} from '../lib'
 import {Badge} from './badge'
 import {Header} from './header'
 import {ScheduleTable} from './schedule-table'
+import {ListFooter} from '../../components/list'
 
 const transparentPixel = require('../../../../images/transparent.png')
 
@@ -32,8 +33,20 @@ const styles = StyleSheet.create({
   },
 })
 
-export class BuildingDetail extends React.PureComponent {
-  props: {info: BuildingType, now: moment, onProblemReport: () => any}
+type Props = {
+  info: BuildingType,
+  now: moment,
+  onProblemReport: () => any,
+}
+
+export class BuildingDetail extends React.Component<void, Props, void> {
+  shouldComponentUpdate(nextProps: Props) {
+    return (
+      !this.props.now.isSame(nextProps.now, 'minute') ||
+      this.props.info !== nextProps.info ||
+      this.props.onProblemReport !== nextProps.onProblemReport
+    )
+  }
 
   render() {
     const {info, now, onProblemReport} = this.props
@@ -59,6 +72,12 @@ export class BuildingDetail extends React.PureComponent {
             schedules={schedules}
             now={now}
             onProblemReport={onProblemReport}
+          />
+
+          <ListFooter
+            title={
+              'Building hours subject to change without notice\n\nData collected by the humans of All About Olaf'
+            }
           />
         </View>
       </ParallaxView>

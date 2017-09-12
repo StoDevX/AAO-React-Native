@@ -7,19 +7,19 @@
 
 import React from 'react'
 import {NoticeView} from '../components/notice'
-import {tracker} from '../../analytics'
-import bugsnag from '../../bugsnag'
 import {BuildingHoursList} from './list'
 
 import moment from 'moment-timezone'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
-import {data as fallbackBuildingHours} from '../../../docs/building-hours'
+import * as defaultData from '../../../docs/building-hours'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 
 import {CENTRAL_TZ} from './lib'
-const githubBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
+const githubBaseUrl =
+  'https://stodevx.github.io/AAO-React-Native/building-hours.json'
 
 const groupBuildings = (buildings: BuildingType[]) => {
   const grouped = groupBy(buildings, b => b.category || 'Other')
@@ -42,10 +42,10 @@ export class BuildingHoursView extends React.Component {
     intervalId: number,
   } = {
     error: null,
-    loading: true,
+    loading: false,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
-    buildings: groupBuildings(fallbackBuildingHours),
+    buildings: groupBuildings(defaultData.data),
     intervalId: 0,
   }
 
@@ -54,7 +54,7 @@ export class BuildingHoursView extends React.Component {
 
     // This updates the screen every ten seconds, so that the building
     // info statuses are updated without needing to leave and come back.
-    this.setState({intervalId: setInterval(this.updateTime, 10000)})
+    this.setState({intervalId: setInterval(this.updateTime, 1000)})
   }
 
   componentWillUnmount() {
@@ -62,38 +62,28 @@ export class BuildingHoursView extends React.Component {
   }
 
   updateTime = () => {
-    this.setState({now: moment.tz(CENTRAL_TZ)})
+    this.setState(() => ({now: moment.tz(CENTRAL_TZ)}))
   }
 
   fetchData = async () => {
-    this.setState({loading: true})
-
-    let buildings: BuildingType[] = []
-    try {
-      let container = await fetchJson(`${githubBaseUrl}/building-hours.json`)
-      let data = container.data
-      buildings = data
-    } catch (err) {
-      tracker.trackException(err.message)
-      bugsnag.notify(err)
-      console.warn(err)
-      buildings = fallbackBuildingHours
-    }
-
+    this.setState(() => ({loading: true}))
+    let {data: buildings} = await fetchJson(githubBaseUrl).catch(err => {
+      reportNetworkProblem(err)
+      return defaultData
+    })
     if (process.env.NODE_ENV === 'development') {
-      buildings = fallbackBuildingHours
+      buildings = defaultData.data
     }
-
-    this.setState({
+    this.setState(() => ({
       loading: false,
       buildings: groupBuildings(buildings),
       now: moment.tz(CENTRAL_TZ),
-    })
+    }))
   }
 
   render() {
     if (this.state.error) {
-      return <NoticeView text={'Error: ' + this.state.error.message} />
+      return <NoticeView text={`Error: ${this.state.error.message}`} />
     }
 
     return (

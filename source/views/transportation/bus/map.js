@@ -12,8 +12,6 @@ import zip from 'lodash/zip'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
 
-import {data as defaultBusLines} from '../../../../docs/bus-times.json'
-
 const TIMEZONE = 'America/Winnipeg'
 
 const styles = StyleSheet.create({
@@ -22,19 +20,14 @@ const styles = StyleSheet.create({
 
 export class BusMapView extends React.PureComponent {
   static navigationOptions = ({navigation}) => ({
-    title: `${navigation.state.params.line} Map`,
+    title: `${navigation.state.params.line.name} Map`,
   })
 
-  static defaultProps = {
-    busLines: defaultBusLines,
-  }
-
   props: TopLevelViewPropsType & {
-    busLines: BusLineType[],
     navigation: {
       state: {
         params: {
-          line: string,
+          line: BusLineType,
         },
       },
     },
@@ -83,17 +76,9 @@ export class BusMapView extends React.PureComponent {
   render() {
     let {now} = this.state
     // now = moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE)
-    const busLines = this.props.busLines
     const lineToDisplay = this.props.navigation.state.params.line
-    const activeBusLine = busLines.find(({line}) => line === lineToDisplay)
 
-    if (!activeBusLine) {
-      const lines = busLines.map(({line}) => line).join(', ')
-      const notice = `The line "${lineToDisplay}" was not found among ${lines}`
-      return <NoticeView text={notice} />
-    }
-
-    const schedule = getScheduleForNow(activeBusLine.schedules, now)
+    const schedule = getScheduleForNow(lineToDisplay.schedules, now)
     if (!schedule) {
       const notice = `No schedule was found for today, ${now.format('dddd')}`
       return <NoticeView text={notice} />
@@ -101,10 +86,12 @@ export class BusMapView extends React.PureComponent {
 
     const coords = schedule.coordinates || []
     if (!coords.length) {
-      const notice = `No coordinates have been provided for today's (${now.format(
-        'dddd',
-      )}) schedule on the "${lineToDisplay}" line`
-      return <NoticeView text={notice} />
+      const today = now.format('dddd')
+      return (
+        <NoticeView
+          text={`No coordinates have been provided for today's (${today}) schedule on the "${lineToDisplay}" line`}
+        />
+      )
     }
 
     const markers = uniqBy(
