@@ -14,9 +14,10 @@ export function HomeScreenButton({
   view: ViewType,
   onPress: () => any,
 }) {
-  const screenWidth = Dimensions.get('window').width
+  // const screenWidth = Dimensions.get('window').width
   const style = {
-    width: screenWidth / 2 - CELL_MARGIN * 1.5,
+    // width: screenWidth / 2 - CELL_MARGIN * 1.5,
+    // flex: 1,
     backgroundColor: view.tint,
   }
 
@@ -41,12 +42,16 @@ const cellHorizontalPadding = 4
 const styles = StyleSheet.create({
   // Main buttons for actions on home screen
   rectangle: {
+    flex: 1,
+
     alignItems: 'center',
     justifyContent: 'center',
+
     paddingTop: cellVerticalPadding,
     paddingBottom: cellVerticalPadding / 2,
     paddingHorizontal: cellHorizontalPadding,
     borderRadius: Platform.OS === 'ios' ? 6 : 3,
+
     elevation: 2,
 
     marginTop: CELL_MARGIN / 2,
@@ -61,9 +66,9 @@ const styles = StyleSheet.create({
   },
   rectangleButtonText: {
     color: c.white,
-    marginTop: cellVerticalPadding / 2,
+    // marginTop: cellVerticalPadding / 2,
     fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
-    textAlign: 'center',
+    // textAlign: 'center',
     fontSize: 14,
   },
 })
