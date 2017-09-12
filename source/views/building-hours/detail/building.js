@@ -33,8 +33,20 @@ const styles = StyleSheet.create({
   },
 })
 
-export class BuildingDetail extends React.PureComponent {
-  props: {info: BuildingType, now: moment, onProblemReport: () => any}
+type Props = {
+  info: BuildingType,
+  now: moment,
+  onProblemReport: () => any,
+}
+
+export class BuildingDetail extends React.Component<void, Props, void> {
+  shouldComponentUpdate(nextProps: Props) {
+    return (
+      !this.props.now.isSame(nextProps.now, 'minute') ||
+      this.props.info !== nextProps.info ||
+      this.props.onProblemReport !== nextProps.onProblemReport
+    )
+  }
 
   render() {
     const {info, now, onProblemReport} = this.props
