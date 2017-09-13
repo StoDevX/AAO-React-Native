@@ -21,6 +21,7 @@ const transparentPixel = require('../../../../images/transparent.png')
 
 const styles = StyleSheet.create({
   container: {
+    alignItems: 'stretch',
     ...Platform.select({
       android: {
         backgroundColor: c.androidLightBackground,
@@ -31,6 +32,7 @@ const styles = StyleSheet.create({
     }),
   },
   image: {
+    width: null,
     height: 100,
   },
 })
@@ -61,15 +63,16 @@ export class BuildingDetail extends React.Component<void, Props, void> {
 
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <Image source={headerImage} style={styles.image} />
-        <Header building={info} />
+        <Image source={headerImage} resizeMode="cover" style={styles.image} />
 
+        <Header building={info} />
         <Badge status={openStatus} />
         <ScheduleTable
           schedules={schedules}
           now={now}
           onProblemReport={onProblemReport}
         />
+
         <ListFooter
           title={
             'Building hours subject to change without notice\n\nData collected by the humans of All About Olaf'
