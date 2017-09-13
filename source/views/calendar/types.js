@@ -22,3 +22,13 @@ export type EventType = {
   isOngoing: boolean,
   extra: EmbeddedEventDetailType,
 }
+
+export type CleanedEventType = {
+  title: string,
+  summary: string,
+  location: string,
+  startTime: moment,
+  endTime: moment,
+  isOngoing: boolean,
+  extra: EmbeddedEventDetailType,
+}

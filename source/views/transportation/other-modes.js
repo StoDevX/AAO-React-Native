@@ -1,40 +1,41 @@
 // @flow
 import React from 'react'
-import {StyleSheet, Text, View, FlatList} from 'react-native'
+import {FlatList} from 'react-native'
+import delay from 'delay'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {TabBarIcon} from '../components/tabbar-icon'
 import type {OtherModeType} from './types'
-import {data as modes} from '../../../docs/transportation.json'
+import * as defaultData from '../../../docs/transportation.json'
 import * as c from '../components/colors'
 import {Button} from '../components/button'
 import {trackedOpenUrl} from '../components/open-url'
+import {Markdown} from '../components/markdown'
+import glamorous from 'glamorous-native'
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: c.white,
-  },
-  title: {
-    fontSize: 30,
-    alignSelf: 'center',
-    marginTop: 10,
-  },
-  content: {
-    marginBottom: 5,
-    marginLeft: 10,
-    marginRight: 10,
-  },
-  mode: {
-    borderWidth: 5,
-    borderTopWidth: 1,
-    borderColor: c.iosLightBackground,
-  },
+const Title = glamorous.text({
+  fontSize: 30,
+  alignSelf: 'center',
+  marginTop: 10,
 })
+
+const Container = glamorous.view({
+  backgroundColor: c.white,
+  paddingHorizontal: 10,
+
+  borderWidth: 5,
+  borderTopWidth: 1,
+  borderColor: c.iosLightBackground,
+})
+
+const GITHUB_URL =
+  'https://stodevx.github.io/AAO-React-Native/transportation.json'
 
 class OtherModeCard extends React.PureComponent {
   props: {
     data: OtherModeType,
   }
 
-  _onPress = () => {
+  onPress = () => {
     const {data} = this.props
     const modeName = data.name.replace(' ', '')
     return trackedOpenUrl({
@@ -46,15 +47,11 @@ class OtherModeCard extends React.PureComponent {
   render() {
     const {data} = this.props
     return (
-      <View style={styles.mode}>
-        <Text selectable={true} style={styles.title}>
-          {data.name}
-        </Text>
-        <Text selectable={true} style={styles.content}>
-          {data.description}
-        </Text>
-        <Button onPress={this._onPress} title="More info" />
-      </View>
+      <Container>
+        <Title selectable={true}>{data.name}</Title>
+        <Markdown source={data.description} />
+        <Button onPress={this.onPress} title="More Info" />
+      </Container>
     )
   }
 }
@@ -65,6 +62,37 @@ export default class OtherModesView extends React.PureComponent {
     tabBarIcon: TabBarIcon('boat'),
   }
 
+  state = {
+    modes: defaultData.data,
+    loading: false,
+  }
+
+  componentWillMount() {
+    this.fetchData()
+  }
+
+  fetchData = async () => {
+    const start = Date.now()
+    this.setState(() => ({loading: true}))
+
+    let {data: modes} = await fetchJson(GITHUB_URL).catch(err => {
+      reportNetworkProblem(err)
+      return defaultData
+    })
+
+    if (process.env.NODE_ENV === 'development') {
+      modes = defaultData.data
+    }
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    const elapsed = start - Date.now()
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState(() => ({modes, loading: false}))
+  }
+
   renderItem = ({item}: {item: OtherModeType}) => <OtherModeCard data={item} />
 
   keyExtractor = (item: OtherModeType) => item.name
@@ -72,10 +100,11 @@ export default class OtherModesView extends React.PureComponent {
   render() {
     return (
       <FlatList
-        contentContainerStyle={styles.container}
         keyExtractor={this.keyExtractor}
         renderItem={this.renderItem}
-        data={modes}
+        refreshing={this.state.loading}
+        onRefresh={this.fetchData}
+        data={this.state.modes}
       />
     )
   }

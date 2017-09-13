@@ -4,14 +4,11 @@ image: tom-porter
 
 schedule:
   - title: Hours
-    hours: [] # closed for the summer
-
-  # - title: Hours
-  #   hours:
-  #     - {days: [Mo, Tu, We, Th], from: '10:00am', to: '8:00pm'}
-  #     - {days: [Fr], from: '7:00am', to: '5:00pm'}
-  #     - {days: [Sa], from: '8:00am', to: '9:00pm'}
-  #     - {days: [Su], from: '12:00pm', to: '9:00pm'}
+    hours:
+      - {days: [Mo, Tu, We, Th], from: '10:00am', to: '8:00pm'}
+      - {days: [Fr], from: '7:00am', to: '5:00pm'}
+      - {days: [Sa], from: '8:00am', to: '9:00pm'}
+      - {days: [Su], from: '12:00pm', to: '9:00pm'}
 
 breakSchedule:
   fall: []
@@ -20,4 +17,6 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer: []
+  summer:
+    - title: Hours
+      hours: [] # closed for the summer

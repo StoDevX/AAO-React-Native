@@ -4,21 +4,13 @@ category: Gym
 schedule:
   - title: Lap Swim
     hours:
-      - {days: [Mo, Tu, We, Th], from: '1:00pm', to: '2:00pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '12:00pm', to: '2:00pm'}
 
-  # - title: Fac/Staff Swim
-  #   hours:
-  #     - {days: [Mo, Tu, We, Th, Fr, Sa], from: '7:00am', to: '9:45am'}
-  #     - {days: [Su], from: '8:30am', to: '10:15am'}
-
-  # - title: Lap Swim
-  #   hours:
-  #     - {days: [Mo, Tu, We, Th, Fr], from: '12:45pm', to: '2:00pm'}
-  #     - {days: [Mo, Tu, We, Th, Fr], from: '6:00pm', to: '8:00pm'}
-
-  # - title: Open Swim
-  #   hours:
-  #     - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '2:00pm'}
+  - title: Open Swim
+    hours:
+      - {days: [Mo, We, Fr], from: '6:30pm', to: '8:30pm'}
+      - {days: [Tu, Th], from: '8:00pm', to: '10:00pm'}
+      - {days: [Sa, Su], from: '2:00pm', to: '4:30pm'}
 
 breakSchedule:
   fall: []
@@ -27,4 +19,7 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer: []
+  summer:
+    - title: Lap Swim
+      hours:
+        - {days: [Mo, Tu, We, Th], from: '1:00pm', to: '2:00pm'}

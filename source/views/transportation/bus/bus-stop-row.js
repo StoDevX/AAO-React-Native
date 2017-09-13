@@ -59,14 +59,12 @@ export class BusStopRow extends React.PureComponent {
       <ListRow fullWidth={true} fullHeight={true}>
         <Row>
           <ProgressChunk
-            {...{
-              barColor,
-              afterStop,
-              beforeStop,
-              atStop,
-              skippingStop,
-              currentStopColor,
-            }}
+            barColor={barColor}
+            afterStop={afterStop}
+            beforeStop={beforeStop}
+            atStop={atStop}
+            skippingStop={skippingStop}
+            currentStopColor={currentStopColor}
             isFirstChunk={isFirstRow}
             isLastChunk={isLastRow}
           />
@@ -83,7 +81,7 @@ export class BusStopRow extends React.PureComponent {
               {place}
             </Title>
             <Detail lines={1}>
-              <ScheduleTimes {...{times, skippingStop}} />
+              <ScheduleTimes times={times} skippingStop={skippingStop} />
             </Detail>
           </Column>
         </Row>

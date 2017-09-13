@@ -10,7 +10,7 @@ if (process.mainModule === module) {
   const toFile = args[1] || '-'
   if (!fromFile || fromFile === '-h' || fromFile === '--help') {
     console.error(
-      'usage: node convert-data-file.js <from-file.{md,yaml}> [to-file]',
+      'usage: node convert-data-file.js <from-file.{md,yaml,css}> [to-file]',
     )
     process.exit(1)
   }
@@ -19,7 +19,7 @@ if (process.mainModule === module) {
 
 // exported module
 module.exports = convertDataFile
-function convertDataFile({fromFile, toFile}) {
+function convertDataFile({fromFile, toFile, toFileType="json"}) {
   const contents = fs.readFileSync(fromFile, 'utf-8')
   let output = contents
 
@@ -31,9 +31,16 @@ function convertDataFile({fromFile, toFile}) {
     case 'yaml':
       output = processYaml(contents)
       break
+    case 'css':
+      if (toFileType === "css") {
+        output = contents
+      } else {
+        output = processCSS(contents)
+      }
+      break
     default:
       throw new Error(
-        `unexpected filetype "${fileType}; expected "md" or "yaml"`,
+        `unexpected filetype "${fileType}; expected "md", "yaml", or "css"`,
       )
   }
 
@@ -52,4 +59,8 @@ function processYaml(fileContents) {
 
 function processMarkdown(fileContents) {
   return JSON.stringify({text: fileContents}, null, 2)
+}
+
+function processCSS(fileContents) {
+  return JSON.stringify({css: fileContents}, null, 2)
 }

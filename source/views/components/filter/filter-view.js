@@ -18,6 +18,7 @@ type PropsType = {
   navigation: {
     state: {
       params: {
+        title: string,
         pathToFilters: string[],
         onChange: (x: FilterType[]) => any,
       },
@@ -49,6 +50,11 @@ export function FilterViewComponent({filters, navigation}: PropsType) {
       </TableView>
     </ScrollView>
   )
+}
+FilterViewComponent.navigationOptions = ({navigation}) => {
+  return {
+    title: navigation.state.params.title,
+  }
 }
 
 const mapStateToProps = (state, actualProps) => {

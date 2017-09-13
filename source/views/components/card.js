@@ -41,9 +41,11 @@ export function Card({
 }) {
   return (
     <View style={[cardStyles.card, style]}>
-      <View style={cardStyles.title}>
-        <Text selectable={true} style={cardStyles.titleText}>{header}</Text>
-      </View>
+      {header
+        ? <View style={cardStyles.title}>
+            <Text selectable={true} style={cardStyles.titleText}>{header}</Text>
+          </View>
+        : null}
 
       <View>
         {children}

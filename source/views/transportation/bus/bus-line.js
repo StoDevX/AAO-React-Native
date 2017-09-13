@@ -1,19 +1,23 @@
 // @flow
 import React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
-import type {BusLineType, FancyBusTimeListType} from './types'
+import type {BusLineType, FancyBusTimeListType, BusScheduleType} from './types'
 import {getScheduleForNow, getSetOfStopsForNow} from './lib'
 import get from 'lodash/get'
 import zip from 'lodash/zip'
 import head from 'lodash/head'
+import isEqual from 'lodash/isEqual'
 import last from 'lodash/last'
-import Icon from 'react-native-vector-icons/Ionicons'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
 import {BusStopRow} from './bus-stop-row'
-import {ListRow, ListSectionHeader, Title, Detail} from '../../components/list'
-import {Row, Column} from '../../components/layout'
+import {
+  ListRow,
+  ListSectionHeader,
+  Title,
+  ListFooter,
+} from '../../components/list'
 
 const TIME_FORMAT = 'h:mma'
 const TIMEZONE = 'America/Winnipeg'
@@ -51,7 +55,7 @@ function makeSubtitle({now, moments, isLastBus}) {
   return lineDetail
 }
 
-const parseTime = (now: moment) => time => {
+const parseTime = (now: moment) => (time: string | false) => {
   // either pass `false` through or return a parsed time
   if (time === false) {
     return false
@@ -66,18 +70,101 @@ const parseTime = (now: moment) => time => {
   )
 }
 
-export class BusLine extends React.PureComponent {
-  props: {line: BusLineType, now: moment, openMap: () => any}
+type Props = {
+  line: BusLineType,
+  now: moment,
+  openMap: () => any,
+}
+
+type State = {
+  schedule: ?BusScheduleType,
+  scheduledMoments: Array<FancyBusTimeListType>,
+  currentMoments: FancyBusTimeListType,
+  stopTitleTimePairs: Array<[string, moment]>,
+}
+
+export class BusLine extends React.Component<void, Props, State> {
+  state = {
+    schedule: null,
+    scheduledMoments: [],
+    currentMoments: [],
+    stopTitleTimePairs: [],
+    firstUpdate: true,
+  }
+
+  componentWillMount() {
+    this.setStateFromProps(this.props)
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    this.setStateFromProps(nextProps)
+  }
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    // We won't check the time in shouldComponentUpdate, because we really
+    // only care if the bus information has changed, and this is called after
+    // setStateFromProps runs.
+
+    return (
+      this.props.line !== nextProps.line ||
+      this.props.openMap !== nextProps.openMap ||
+      !isEqual(this.state.currentMoments, nextState.currentMoments)
+    )
+  }
+
+  setStateFromProps = (nextProps: Props) => {
+    if (
+      this.props.now.isSame(nextProps.now, 'minute') &&
+      !this.state.firstUpdate
+    ) {
+      return
+    }
+
+    const {line, now} = nextProps
+
+    const schedule = getScheduleForNow(line.schedules, now)
+    if (!schedule) {
+      return
+    }
+
+    const parseTimes = timeset => timeset.map(parseTime(now))
+    const scheduledMoments: Array<FancyBusTimeListType> = schedule.times.map(
+      parseTimes,
+    )
+
+    const currentMoments: FancyBusTimeListType = getSetOfStopsForNow(
+      scheduledMoments,
+      now,
+    )
+
+    const stopTitleTimePairs: Array<[string, moment]> = zip(
+      schedule.stops,
+      currentMoments,
+    )
+
+    this.setState(() => ({
+      schedule,
+      scheduledMoments,
+      currentMoments,
+      stopTitleTimePairs,
+      firstUpdate: false,
+    }))
+  }
 
   render() {
     const {line, now} = this.props
+    const {
+      schedule,
+      scheduledMoments,
+      currentMoments,
+      stopTitleTimePairs,
+    } = this.state
 
     // grab the colors (with fallbacks) via _.get
     const barColor = get(barColors, line.line, c.black)
     const currentStopColor = get(stopColors, line.line, c.gray)
     const androidColor = Platform.OS === 'android' ? {color: barColor} : null
 
-    const schedule = getScheduleForNow(line.schedules, now)
     if (!schedule) {
       return (
         <View>
@@ -89,19 +176,9 @@ export class BusLine extends React.PureComponent {
       )
     }
 
-    const scheduledMoments: FancyBusTimeListType[] = schedule.times.map(
-      timeset => timeset.map(parseTime(now)),
-    )
-
-    const moments: FancyBusTimeListType = getSetOfStopsForNow(
-      scheduledMoments,
-      now,
-    )
-    const pairs: [[string, moment]] = zip(schedule.stops, moments)
-
-    const timesIndex = scheduledMoments.indexOf(moments)
+    const timesIndex = scheduledMoments.indexOf(currentMoments)
     const isLastBus = timesIndex === scheduledMoments.length - 1
-    const subtitle = makeSubtitle({now, moments, isLastBus})
+    const subtitle = makeSubtitle({now, moments: currentMoments, isLastBus})
 
     return (
       <View>
@@ -111,7 +188,7 @@ export class BusLine extends React.PureComponent {
           titleStyle={androidColor}
         />
 
-        {pairs.map(([placeTitle, moment], i, list) =>
+        {stopTitleTimePairs.map(([placeTitle, moment], i, list) =>
           <View key={i}>
             <BusStopRow
               // get the arrival time for this stop from each bus loop after
@@ -125,11 +202,13 @@ export class BusLine extends React.PureComponent {
               isFirstRow={i === 0}
               isLastRow={i === list.length - 1}
             />
-            <Separator style={styles.separator} />
+            {i < list.length - 1
+              ? <Separator style={styles.separator} />
+              : null}
           </View>,
         )}
 
-        <ListRow
+        {/*<ListRow
           onPress={this.props.openMap}
           fullWidth={true}
           spacing={{left: 45}}
@@ -155,7 +234,13 @@ export class BusLine extends React.PureComponent {
               </Detail>
             </Column>
           </Row>
-        </ListRow>
+        </ListRow>*/}
+
+        <ListFooter
+          title={
+            'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
+          }
+        />
       </View>
     )
   }
