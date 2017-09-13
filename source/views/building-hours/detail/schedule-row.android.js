@@ -6,6 +6,7 @@
 
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
+import moment from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
 
 import {formatBuildingTimes, summarizeDays} from '../lib'
