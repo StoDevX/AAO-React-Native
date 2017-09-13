@@ -57,13 +57,16 @@ export class BuildingDetail extends React.Component<void, Props, void> {
 
     const headerImage = info.image && buildingImages.hasOwnProperty(info.image)
       ? buildingImages[info.image]
-      : transparentPixel
+      : null
     const openStatus = getShortBuildingStatus(info, now)
     const schedules = info.schedule || []
 
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <Image source={headerImage} resizeMode="cover" style={styles.image} />
+        {headerImage
+          ? <Image source={headerImage} resizeMode="cover" style={styles.image} />
+          : null
+        }
 
         <Header building={info} />
         <Badge status={openStatus} />
