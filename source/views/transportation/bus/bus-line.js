@@ -6,7 +6,6 @@ import {getScheduleForNow, getSetOfStopsForNow} from './lib'
 import get from 'lodash/get'
 import zip from 'lodash/zip'
 import head from 'lodash/head'
-import isEqual from 'lodash/isEqual'
 import last from 'lodash/last'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'
@@ -108,8 +107,7 @@ export class BusLine extends React.Component<void, Props, State> {
     return (
       this.props.now.isSame(nextProps.now, 'minute') ||
       this.props.line !== nextProps.line ||
-      this.props.openMap !== nextProps.openMap ||
-      !isEqual(this.state.currentMoments, nextState.currentMoments)
+      this.props.openMap !== nextProps.openMap
     )
   }
 
