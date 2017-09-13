@@ -73,33 +73,10 @@ type Props = {
   line: BusLineType,
   now: moment,
   openMap: () => any,
-}
+};
 
-type State = {
-  schedule: ?BusScheduleType,
-  scheduledMoments: Array<FancyBusTimeListType>,
-  currentMoments: FancyBusTimeListType,
-  stopTitleTimePairs: Array<[string, moment]>,
-}
-
-export class BusLine extends React.Component<void, Props, State> {
-  state = {
-    schedule: null,
-    scheduledMoments: [],
-    currentMoments: [],
-    stopTitleTimePairs: [],
-    firstUpdate: true,
-  }
-
-  componentWillMount() {
-    this.setStateFromProps(this.props)
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    this.setStateFromProps(nextProps)
-  }
-
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
+export class BusLine extends React.Component<void, Props, void> {
+  shouldComponentUpdate(nextProps: Props) {
     // We won't check the time in shouldComponentUpdate, because we really
     // only care if the bus information has changed, and this is called after
     // setStateFromProps runs.
@@ -111,21 +88,7 @@ export class BusLine extends React.Component<void, Props, State> {
     )
   }
 
-  setStateFromProps = (nextProps: Props) => {
-    if (
-      this.props.now.isSame(nextProps.now, 'minute') &&
-      !this.state.firstUpdate
-    ) {
-      return
-    }
-
-    const {line, now} = nextProps
-
-    const schedule = getScheduleForNow(line.schedules, now)
-    if (!schedule) {
-      return
-    }
-
+  generateScheduleInfo = (schedules: Array<BusScheduleType>, now: moment) => {
     const parseTimes = timeset => timeset.map(parseTime(now))
     const scheduledMoments: Array<FancyBusTimeListType> = schedule.times.map(
       parseTimes,
@@ -141,23 +104,17 @@ export class BusLine extends React.Component<void, Props, State> {
       currentMoments,
     )
 
-    this.setState(() => ({
-      schedule,
+    return {
       scheduledMoments,
       currentMoments,
       stopTitleTimePairs,
-      firstUpdate: false,
-    }))
+    }
   }
 
   render() {
     const {line, now} = this.props
-    const {
-      schedule,
-      scheduledMoments,
-      currentMoments,
-      stopTitleTimePairs,
-    } = this.state
+
+    const schedule = getScheduleForNow(line.schedules, now)
 
     // grab the colors (with fallbacks) via _.get
     const barColor = get(barColors, line.line, c.black)
@@ -174,6 +131,12 @@ export class BusLine extends React.Component<void, Props, State> {
         </View>
       )
     }
+
+    const {
+      scheduledMoments,
+      currentMoments,
+      stopTitleTimePairs,
+    } = this.generateScheduleInfo(schedule, now)
 
     const timesIndex = scheduledMoments.indexOf(currentMoments)
     const isLastBus = timesIndex === scheduledMoments.length - 1
