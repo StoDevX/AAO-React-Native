@@ -51,14 +51,26 @@ export class StreamListView extends React.PureComponent {
   }
 
   componentWillMount() {
-    this.getData()
+    this.getStreams()
   }
 
-  getData = async () => {
-    try {
-      const start = Date.now()
-      this.setState(() => ({refreshing: true}))
+  refresh = async () => {
+    let start = Date.now()
+    this.setState(() => ({refreshing: true}))
 
+    await this.getStreams()
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    const elapsed = Date.now() - start
+    if (elapsed < 1500) {
+      await delay(1500 - elapsed)
+    }
+
+    this.setState(() => ({refreshing: false}))
+  }
+
+  getStreams = async () => {
+    try {
       const date = moment.tz(CENTRAL_TZ)
       const dateFrom = date.format('YYYY-MM-DD')
       const dateTo = date.add(1, 'month').format('YYYY-MM-DD')
@@ -96,16 +108,9 @@ export class StreamListView extends React.PureComponent {
       const grouped = groupBy(processed, j => j.$groupBy)
       const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
 
-      // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-      const elapsed = Date.now() - start
-      if (elapsed < 500) {
-        await delay(500 - elapsed)
-      }
-
       this.setState(() => ({
         error: null,
         loaded: true,
-        refreshing: false,
         streams: mapped,
       }))
     } catch (error) {
@@ -139,7 +144,7 @@ export class StreamListView extends React.PureComponent {
         keyExtractor={this.keyExtractor}
         style={styles.listContainer}
         refreshing={this.state.refreshing}
-        onRefresh={this.getData}
+        onRefresh={this.refresh}
         renderItem={this.renderItem}
       />
     )
