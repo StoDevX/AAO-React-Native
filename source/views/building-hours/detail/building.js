@@ -64,9 +64,12 @@ export class BuildingDetail extends React.Component<void, Props, void> {
     return (
       <ScrollView contentContainerStyle={styles.container}>
         {headerImage
-          ? <Image source={headerImage} resizeMode="cover" style={styles.image} />
-          : null
-        }
+          ? <Image
+              source={headerImage}
+              resizeMode="cover"
+              style={styles.image}
+            />
+          : null}
 
         <Header building={info} />
         <Badge status={openStatus} />
