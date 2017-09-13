@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {Text, StyleSheet, Platform, Dimensions} from 'react-native'
+import {Text, StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import {Touchable} from '../components/touchable'
@@ -14,12 +14,7 @@ export function HomeScreenButton({
   view: ViewType,
   onPress: () => any,
 }) {
-  // const screenWidth = Dimensions.get('window').width
-  const style = {
-    // width: screenWidth / 2 - CELL_MARGIN * 1.5,
-    // flex: 1,
-    backgroundColor: view.tint,
-  }
+  const style = {backgroundColor: view.tint}
 
   return (
     <Touchable
