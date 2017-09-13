@@ -17,8 +17,6 @@ import {Header} from './header'
 import {ScheduleTable} from './schedule-table'
 import {ListFooter} from '../../components/list'
 
-const transparentPixel = require('../../../../images/transparent.png')
-
 const styles = StyleSheet.create({
   container: {
     alignItems: 'stretch',
