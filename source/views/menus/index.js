@@ -39,7 +39,7 @@ export const MenusView = TabNavigator(
       screen: ({navigation}) =>
         <BonAppHostedMenu
           navigation={navigation}
-          name="stav"
+          name="Stav Hall"
           cafeId="261"
           loadingMessage={[
             'Hunting Ferndale Turkey…',
@@ -60,7 +60,7 @@ export const MenusView = TabNavigator(
       screen: ({navigation}) =>
         <BonAppHostedMenu
           navigation={navigation}
-          name="cage"
+          name="The Cage"
           cafeId="262"
           ignoreProvidedMenus={true}
           loadingMessage={[
@@ -81,7 +81,7 @@ export const MenusView = TabNavigator(
       screen: ({navigation}) =>
         <GitHubHostedMenu
           navigation={navigation}
-          name="pause"
+          name="The Pause"
           loadingMessage={[
             'Mixing up a shake…',
             'Spinning up pizzas…',
