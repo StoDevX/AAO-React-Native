@@ -106,6 +106,7 @@ export class BusLine extends React.Component<void, Props, State> {
     // setStateFromProps runs.
 
     return (
+      this.props.now.isSame(nextProps.now, 'minute') ||
       this.props.line !== nextProps.line ||
       this.props.openMap !== nextProps.openMap ||
       !isEqual(this.state.currentMoments, nextState.currentMoments)
