@@ -49,8 +49,12 @@ export class ContactsDetailView extends React.PureComponent {
   props: {navigation: {state: {params: {contact: ContactType}}}}
 
   onPress = () => {
-    const item = this.props.navigation.state.params.contact
-    const {title, phoneNumber, buttonText, buttonLink} = item
+    const {
+      title,
+      phoneNumber,
+      buttonText,
+      buttonLink,
+    } = this.props.navigation.state.params.contact
     tracker.trackScreenView(`ImportantContacts_${title.replace(' ', '')}View`)
     if (buttonLink) {
       openUrl(buttonLink)
