@@ -73,7 +73,7 @@ type Props = {
   line: BusLineType,
   now: moment,
   openMap: () => any,
-};
+}
 
 export class BusLine extends React.Component<void, Props, void> {
   shouldComponentUpdate(nextProps: Props) {
@@ -88,7 +88,7 @@ export class BusLine extends React.Component<void, Props, void> {
     )
   }
 
-  generateScheduleInfo = (schedules: Array<BusScheduleType>, now: moment) => {
+  generateScheduleInfo = (schedule: BusScheduleType, now: moment) => {
     const parseTimes = timeset => timeset.map(parseTime(now))
     const scheduledMoments: Array<FancyBusTimeListType> = schedule.times.map(
       parseTimes,
