@@ -6,7 +6,6 @@ import {getScheduleForNow, getSetOfStopsForNow} from './lib'
 import get from 'lodash/get'
 import zip from 'lodash/zip'
 import head from 'lodash/head'
-import isEqual from 'lodash/isEqual'
 import last from 'lodash/last'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'
@@ -76,57 +75,20 @@ type Props = {
   openMap: () => any,
 }
 
-type State = {
-  schedule: ?BusScheduleType,
-  scheduledMoments: Array<FancyBusTimeListType>,
-  currentMoments: FancyBusTimeListType,
-  stopTitleTimePairs: Array<[string, moment]>,
-}
-
-export class BusLine extends React.Component<void, Props, State> {
-  state = {
-    schedule: null,
-    scheduledMoments: [],
-    currentMoments: [],
-    stopTitleTimePairs: [],
-    firstUpdate: true,
-  }
-
-  componentWillMount() {
-    this.setStateFromProps(this.props)
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    this.setStateFromProps(nextProps)
-  }
-
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
+export class BusLine extends React.Component<void, Props, void> {
+  shouldComponentUpdate(nextProps: Props) {
     // We won't check the time in shouldComponentUpdate, because we really
     // only care if the bus information has changed, and this is called after
     // setStateFromProps runs.
 
     return (
+      this.props.now.isSame(nextProps.now, 'minute') ||
       this.props.line !== nextProps.line ||
-      this.props.openMap !== nextProps.openMap ||
-      !isEqual(this.state.currentMoments, nextState.currentMoments)
+      this.props.openMap !== nextProps.openMap
     )
   }
 
-  setStateFromProps = (nextProps: Props) => {
-    if (
-      this.props.now.isSame(nextProps.now, 'minute') &&
-      !this.state.firstUpdate
-    ) {
-      return
-    }
-
-    const {line, now} = nextProps
-
-    const schedule = getScheduleForNow(line.schedules, now)
-    if (!schedule) {
-      return
-    }
-
+  generateScheduleInfo = (schedule: BusScheduleType, now: moment) => {
     const parseTimes = timeset => timeset.map(parseTime(now))
     const scheduledMoments: Array<FancyBusTimeListType> = schedule.times.map(
       parseTimes,
@@ -142,23 +104,17 @@ export class BusLine extends React.Component<void, Props, State> {
       currentMoments,
     )
 
-    this.setState(() => ({
-      schedule,
+    return {
       scheduledMoments,
       currentMoments,
       stopTitleTimePairs,
-      firstUpdate: false,
-    }))
+    }
   }
 
   render() {
     const {line, now} = this.props
-    const {
-      schedule,
-      scheduledMoments,
-      currentMoments,
-      stopTitleTimePairs,
-    } = this.state
+
+    const schedule = getScheduleForNow(line.schedules, now)
 
     // grab the colors (with fallbacks) via _.get
     const barColor = get(barColors, line.line, c.black)
@@ -175,6 +131,12 @@ export class BusLine extends React.Component<void, Props, State> {
         </View>
       )
     }
+
+    const {
+      scheduledMoments,
+      currentMoments,
+      stopTitleTimePairs,
+    } = this.generateScheduleInfo(schedule, now)
 
     const timesIndex = scheduledMoments.indexOf(currentMoments)
     const isLastBus = timesIndex === scheduledMoments.length - 1
