@@ -16,6 +16,7 @@ import * as defaultData from '../../../docs/building-hours'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
+import delay from 'delay'
 
 import {CENTRAL_TZ} from './lib'
 const githubBaseUrl =
@@ -65,8 +66,22 @@ export class BuildingHoursView extends React.Component {
     this.setState(() => ({now: moment.tz(CENTRAL_TZ)}))
   }
 
-  fetchData = async () => {
+  refresh = async () => {
+    let start = Date.now()
     this.setState(() => ({loading: true}))
+
+    await this.fetchData()
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    let elapsed = Date.now() - start
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState(() => ({loading: false}))
+  }
+
+  fetchData = async () => {
     let {data: buildings} = await fetchJson(githubBaseUrl).catch(err => {
       reportNetworkProblem(err)
       return defaultData
@@ -75,7 +90,6 @@ export class BuildingHoursView extends React.Component {
       buildings = defaultData.data
     }
     this.setState(() => ({
-      loading: false,
       buildings: groupBuildings(buildings),
       now: moment.tz(CENTRAL_TZ),
     }))
@@ -91,7 +105,7 @@ export class BuildingHoursView extends React.Component {
         navigation={this.props.navigation}
         buildings={this.state.buildings}
         now={this.state.now}
-        onRefresh={this.fetchData}
+        onRefresh={this.refresh}
         loading={this.state.loading}
       />
     )
