@@ -74,7 +74,7 @@ export class BusView extends React.PureComponent {
     const start = Date.now()
     this.setState(() => ({loading: true}))
     this.updateTime()
-    const elapsed = start - Date.now()
+    const elapsed = Date.now() - start
     if (elapsed < 500) {
       await delay(500 - elapsed)
     }
