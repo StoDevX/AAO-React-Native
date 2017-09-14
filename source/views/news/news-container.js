@@ -5,6 +5,7 @@ import type {StoryType} from './types'
 import LoadingView from '../components/loading'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
+import {tracker} from '../../analytics'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {NewsList} from './news-list'
 import {fetchRssFeed, fetchWpJson} from './fetch-feed'
@@ -34,7 +35,7 @@ export default class NewsContainer extends React.Component {
   componentWillMount() {
     this.loadInitialData()
   }
-                          
+
   loadInitialData = async () => {
     await this.fetchData()
     this.setState(() => ({loading: false}))
