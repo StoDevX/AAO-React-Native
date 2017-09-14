@@ -35,7 +35,7 @@ export class GoogleCalendarView extends React.Component {
   }
 
   componentWillMount() {
-    this.getEvent()
+    this.getEvents()
   }
 
   buildCalendarUrl(calendarId: string) {
