@@ -3,6 +3,7 @@ const yaml = require('js-yaml')
 const fs = require('fs')
 const junk = require('junk')
 const path = require('path')
+const natsort = require('string-natural-compare')
 
 // run cli
 if (process.mainModule === module) {
@@ -24,6 +25,9 @@ function bundleDataDir({fromDir, toFile}) {
   if (!files.length) {
     return
   }
+
+  // sort the files so that 9 comes before 10
+  files.sort(natsort)
 
   const loaded = files.map(fpath => {
     console.log(fpath)
