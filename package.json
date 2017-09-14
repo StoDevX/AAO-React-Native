@@ -101,7 +101,7 @@
     "babel-eslint": "8.0.0",
     "babel-jest": "21.0.2",
     "babel-plugin-flow-react-proptypes": "5.1.2",
-    "babel-preset-react-native": "3.0.1",
+    "babel-preset-react-native": "4.0.0",
     "danger": "2.0.0-alpha.15",
     "eslint": "4.6.1",
     "eslint-config-prettier": "2.4.0",
