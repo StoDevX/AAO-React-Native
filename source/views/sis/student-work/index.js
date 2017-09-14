@@ -54,7 +54,7 @@ export default class StudentWorkView extends React.PureComponent {
   }
 
   componentWillMount() {
-    this.refresh()
+    this.fetchData()
   }
 
   fetchData = async () => {
