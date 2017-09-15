@@ -193,5 +193,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 2,
     textAlign: 'center',
+    fontWeight: 'bold',
   },
 })
