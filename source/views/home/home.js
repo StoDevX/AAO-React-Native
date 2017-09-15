@@ -14,26 +14,17 @@ import type {TopLevelViewPropsType} from '../types'
 import type {ViewType} from '../views'
 import {allViews} from '../views'
 import {Column} from '../components/layout'
+import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl} from '../components/open-url'
 import {EditHomeButton, OpenSettingsButton} from '../components/nav-buttons'
 
-function partitionByIndex<T>(arr: T[]): [T[], T[]] {
-  return arr.reduce(
-    (acc, val, idx) => {
-      return idx % 2 === 0
-        ? [acc[0].concat(val), acc[1]]
-        : [acc[0], acc[1].concat(val)]
-    },
-    [[], []],
-  )
+type Props = TopLevelViewPropsType & {
+  order: string[],
+  views: ViewType[],
 }
 
-function HomePage({
-  navigation,
-  order,
-  views = allViews,
-}: {order: string[], views: ViewType[]} & TopLevelViewPropsType) {
+function HomePage({navigation, order, views = allViews}: Props) {
   const sortedViews = sortBy(views, view => order.indexOf(view.view))
 
   const columns = partitionByIndex(sortedViews)
