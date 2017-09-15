@@ -14,136 +14,129 @@ import {
   Dimensions,
   Platform,
 } from 'react-native'
+import {Column} from '../components/layout'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
-import {data as webcams} from '../../../docs/webcams.json'
+import * as defaultData from '../../../docs/webcams.json'
 import {webcamImages} from '../../../images/webcam-images'
 import {trackedOpenUrl} from '../components/open-url'
 import LinearGradient from 'react-native-linear-gradient'
+import {partitionByIndex} from '../../lib/partition-by-index'
 
-export default class WebcamsView extends React.PureComponent {
+type WebcamType = {
+  streamUrl: string,
+  pageUrl: string,
+  name: string,
+  thumbnail: string,
+  accentColor: [number, number, number],
+}
+
+type DProps = {
+  webcams: Array<WebcamType>,
+}
+
+type Props = {
+  webcams: Array<WebcamType>,
+}
+
+type State = {
+  width: number,
+}
+
+export class WebcamsView extends React.PureComponent<DProps, Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Webcams',
     tabBarIcon: TabBarIcon('videocam'),
   }
 
+  static defaultProps = {
+    webcams: defaultData.data,
+  }
+
+  state = {
+    width: Dimensions.get('window').width,
+  }
+
+  componentWillMount() {
+    Dimensions.addEventListener('change', this.handleResizeEvent)
+  }
+
+  componentWillUnmount() {
+    Dimensions.removeEventListener('change', this.handleResizeEvent)
+  }
+
+  handleResizeEvent = (event: {window: {width: number}}) => {
+    this.setState(() => ({width: event.window.width}))
+  }
+
   render() {
+    const columns = partitionByIndex(this.props.webcams)
+
     return (
-      <ScrollView
-        automaticallyAdjustContentInsets={false}
-        contentInset={{bottom: 49}}
-        contentContainerStyle={styles.gridWrapper}
-      >
-        {webcams.map(webcam => <Webcam key={webcam.name} info={webcam} />)}
+      <ScrollView contentContainerStyle={styles.gridWrapper}>
+        {columns.map((contents, i) =>
+          <Column key={i} style={styles.column}>
+            {contents.map(webcam =>
+              <StreamThumbnail
+                key={webcam.name}
+                webcam={webcam}
+                textColor="white"
+                viewportWidth={this.state.width}
+              />,
+            )}
+          </Column>,
+        )}
       </ScrollView>
-    )
-  }
-}
-
-class Webcam extends React.PureComponent {
-  props: {
-    info: {
-      streamUrl: string,
-      pageUrl: string,
-      name: string,
-      thumbnail: string,
-      accentColor: [number, number, number],
-    },
-  }
-
-  render() {
-    const {name, thumbnail, streamUrl, pageUrl, accentColor} = this.props.info
-
-    return (
-      <StreamThumbnail
-        accentColor={accentColor}
-        textColor="white"
-        thumbnail={webcamImages[thumbnail]}
-        title={name}
-        url={streamUrl}
-        infoUrl={pageUrl}
-      />
     )
   }
 }
 
 class StreamThumbnail extends React.PureComponent {
   props: {
-    url: string,
-    infoUrl: string,
-    title: string,
-    accentColor: [number, number, number],
+    webcam: WebcamType,
     textColor: 'white' | 'black',
-    thumbnail: any,
+    viewportWidth: number,
   }
 
   handlePress = () => {
-    const {url, title, infoUrl} = this.props
+    const {streamUrl, name, pageUrl} = this.props.webcam
     if (Platform.OS === 'android') {
-      trackedOpenUrl({url: infoUrl, id: `${title}WebcamView`})
+      trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
     } else {
-      trackedOpenUrl({url, id: `${title}WebcamView`})
+      trackedOpenUrl({url: streamUrl, id: `${name}WebcamView`})
     }
   }
 
   render() {
-    const {title, thumbnail, accentColor, textColor} = this.props
-
-    return (
-      <RoundedThumbnail
-        accentColor={accentColor}
-        onPress={this.handlePress}
-        textColor={textColor}
-        thumbnail={thumbnail}
-        title={title}
-      />
-    )
-  }
-}
-
-class RoundedThumbnail extends React.PureComponent {
-  props: {
-    accentColor: [number, number, number],
-    onPress: () => any,
-    textColor: 'white' | 'black',
-    thumbnail: any,
-    title: string,
-  }
-
-  render() {
-    const {title, thumbnail, accentColor, textColor} = this.props
+    const {textColor, viewportWidth} = this.props
+    const {name, thumbnail, accentColor} = this.props.webcam
 
     const [r, g, b] = accentColor
     const baseColor = `rgba(${r}, ${g}, ${b}, 1)`
     const startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
     const actualTextColor = c[textColor]
 
-    const screenWidth = Dimensions.get('window').width
-
-    const width = screenWidth / 2 - CELL_MARGIN * 1.5
+    const width = viewportWidth / 2 - CELL_MARGIN * 1.5
     const cellRatio = 2.15625
     const height = width / cellRatio
 
-    const style = {width, height}
-
     return (
-      <View style={[style, styles.cell, styles.rounded]}>
+      <View style={[styles.cell, styles.rounded, {width, height}]}>
         <Touchable
           highlight={true}
           underlayColor={baseColor}
           activeOpacity={0.7}
-          onPress={this.props.onPress}
-          style={styles.rounded}
+          onPress={this.handlePress}
         >
-          <Image source={thumbnail} style={[styles.image, styles.rounded]}>
+          <Image source={webcamImages[thumbnail]} style={[styles.image]}>
             <View style={styles.titleWrapper}>
               <LinearGradient
                 colors={[startColor, baseColor]}
                 locations={[0, 0.8]}
               >
                 <Text style={[styles.titleText, {color: actualTextColor}]}>
-                  {title}
+                  {name}
                 </Text>
               </LinearGradient>
             </View>
@@ -157,12 +150,15 @@ class RoundedThumbnail extends React.PureComponent {
 const CELL_MARGIN = 10
 
 const styles = StyleSheet.create({
+  column: {
+    flex: 1,
+  },
   gridWrapper: {
     marginHorizontal: CELL_MARGIN / 2,
     marginTop: CELL_MARGIN / 2,
     paddingBottom: CELL_MARGIN / 2,
 
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
