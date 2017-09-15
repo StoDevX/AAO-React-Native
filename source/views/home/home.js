@@ -40,7 +40,7 @@ function HomePage({navigation, order, views = allViews}: Props) {
       <StatusBar barStyle="light-content" backgroundColor={c.gold} />
 
       {columns.map((contents, i) =>
-        <Column key={i} flex={1}>
+        <Column key={i} style={styles.column}>
           {contents.map(view =>
             <HomeScreenButton
               key={view.view}
@@ -82,5 +82,8 @@ const styles = StyleSheet.create({
     paddingBottom: CELL_MARGIN / 2,
 
     flexDirection: 'row',
+  },
+  column: {
+    flex: 1,
   },
 })
