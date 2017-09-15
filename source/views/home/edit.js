@@ -26,130 +26,230 @@ import SortableList from 'react-native-sortable-list'
 import type {ViewType} from '../views'
 import {allViews} from '../views'
 
-const window = Dimensions.get('window')
 const objViews = fromPairs(allViews.map(v => [v.view, v]))
 
-const ReorderIcon = () =>
+const ROW_HORIZONTAL_MARGIN = 15
+const styles = StyleSheet.create({
+  contentContainer: {
+    backgroundColor: c.iosLightBackground,
+    paddingTop: 10,
+    paddingBottom: 20,
+    flexDirection: 'column',
+    alignItems: 'stretch',
+  },
+  row: {
+    flex: 1,
+
+    flexDirection: 'row',
+    alignItems: 'center',
+
+    backgroundColor: c.white,
+
+    marginVertical: 5,
+    marginHorizontal: ROW_HORIZONTAL_MARGIN,
+    paddingVertical: 12,
+
+    borderRadius: 4,
+
+    shadowColor: c.semitransparentGray,
+    shadowOpacity: 1,
+    shadowOffset: {height: 0, width: 0},
+  },
+  icon: {
+    paddingLeft: 10,
+    paddingRight: 10,
+    color: c.black,
+  },
+  viewIcon: {
+    marginRight: 20,
+  },
+  text: {
+    flex: 1,
+    flexShrink: 0,
+    fontSize: 18,
+    color: c.white,
+  },
+})
+
+const reorderIcon = (
   <IonIcon
     name={Platform.OS === 'ios' ? 'ios-reorder' : 'md-reorder'}
     size={32}
-    style={styles.listButtonIcon}
+    style={[styles.icon]}
   />
+)
 
 const MenuIcon = ({icon, tint}: {icon: string, tint: string}) =>
   <EntypoIcon
     name={icon}
     size={32}
-    style={[styles.rectangleButtonIcon, {color: tint}]}
+    style={[styles.icon, styles.viewIcon, {color: tint}]}
   />
 
-class Row extends React.Component {
-  props: {
-    data: ViewType,
-    active: boolean,
+type RowProps = {
+  data: ViewType,
+  active: boolean,
+  width: number,
+}
+
+type RowState = {
+  style: {
+    shadowRadius: Animated.Value,
+    transform: Array<{[key: string]: Animated.Value}>,
+    opacity: Animated.Value,
+    elevation: Animated.Value,
+  },
+}
+
+class Row extends React.Component<void, RowProps, RowState> {
+  static startStyle = {
+    shadowRadius: 2,
+    transform: [{scale: 1}],
+    opacity: 1,
+    elevation: 2,
+  }
+
+  static endStyle = {
+    shadowRadius: 10,
+    transform: [{scale: 1.05}],
+    opacity: 0.65,
+    elevation: 4,
   }
 
   state = {
     style: {
-      shadowRadius: new Animated.Value(2),
-      transform: [{scale: new Animated.Value(1)}],
-      opacity: new Animated.Value(1.0),
-      elevation: new Animated.Value(2),
+      shadowRadius: new Animated.Value(Row.startStyle.shadowRadius),
+      transform: [
+        {scale: new Animated.Value(Row.startStyle.transform[0].scale)},
+      ],
+      opacity: new Animated.Value(Row.startStyle.opacity),
+      elevation: new Animated.Value(Row.startStyle.elevation),
     },
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.active !== nextProps.active) {
-      if (nextProps.active) {
-        this.startActivationAnimation()
-      } else {
-        this.startDeactivationAnimation()
-      }
+    if (this.props.active === nextProps.active) {
+      return
+    }
+
+    if (nextProps.active) {
+      this.startActivationAnimation()
+    } else {
+      this.startDeactivationAnimation()
     }
   }
 
   startActivationAnimation = () => {
-    const {style} = this.state
+    const {transform, shadowRadius, opacity, elevation} = this.state.style
     Animated.parallel([
-      Animated.timing(style.transform[0].scale, {
+      Animated.timing(transform[0].scale, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 1.05,
+        toValue: Row.endStyle.transform[0].scale,
       }),
-      Animated.timing(style.shadowRadius, {
+      Animated.timing(shadowRadius, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 10,
+        toValue: Row.endStyle.shadowRadius,
       }),
-      Animated.timing(style.opacity, {
+      Animated.timing(opacity, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 0.65,
+        toValue: Row.endStyle.opacity,
       }),
-      Animated.timing(style.elevation, {
+      Animated.timing(elevation, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 4,
+        toValue: Row.endStyle.elevation,
       }),
     ]).start()
   }
 
   startDeactivationAnimation = () => {
-    const {style} = this.state
+    const {transform, shadowRadius, opacity, elevation} = this.state.style
     Animated.parallel([
-      Animated.timing(style.transform[0].scale, {
+      Animated.timing(transform[0].scale, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 1,
+        toValue: Row.startStyle.transform[0].scale,
       }),
-      Animated.timing(style.shadowRadius, {
+      Animated.timing(shadowRadius, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 2,
+        toValue: Row.startStyle.shadowRadius,
       }),
-      Animated.timing(style.opacity, {
+      Animated.timing(opacity, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 1.0,
+        toValue: Row.startStyle.opacity,
       }),
-      Animated.timing(style.elevation, {
+      Animated.timing(elevation, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 2,
+        toValue: Row.startStyle.elevation,
       }),
     ]).start()
   }
 
   render() {
+    const width = this.props.width - ROW_HORIZONTAL_MARGIN * 2
+
     return (
-      <Animated.View style={[styles.row, this.state.style]}>
+      <Animated.View style={[styles.row, this.state.style, {width}]}>
         <MenuIcon icon={this.props.data.icon} tint={this.props.data.tint} />
         <Text style={[styles.text, {color: this.props.data.tint}]}>
           {this.props.data.title}
         </Text>
-        <ReorderIcon />
+        {reorderIcon}
       </Animated.View>
     )
   }
 }
 
-function EditHomeView(props: {
+type Props = {
   onSaveOrder: (ViewType[]) => any,
   order: string[],
-}) {
-  return (
-    <SortableList
-      contentContainerStyle={styles.contentContainer}
-      data={objViews}
-      order={props.order}
-      onChangeOrder={(order: ViewType[]) => props.onSaveOrder(order)}
-      renderRow={({data, active}: {data: ViewType, active: boolean}) =>
-        <Row data={data} active={active} />}
-    />
-  )
 }
-EditHomeView.navigationOptions = {
-  title: 'Edit Home',
+type State = {
+  width: number,
+}
+
+class EditHomeView extends React.PureComponent<void, Props, State> {
+  static navigationOptions = {
+    title: 'Edit Home',
+  }
+
+  state = {
+    width: Dimensions.get('window').width,
+  }
+
+  componentWillMount() {
+    Dimensions.addEventListener('change', this.handleResizeEvent)
+  }
+
+  componentWillUnmount() {
+    Dimensions.removeEventListener('change', this.handleResizeEvent)
+  }
+
+  handleResizeEvent = event => {
+    this.setState(() => ({width: event.window.width}))
+  }
+
+  render() {
+    return (
+      <SortableList
+        contentContainerStyle={[
+          styles.contentContainer,
+          {width: this.state.width},
+        ]}
+        data={objViews}
+        order={this.props.order}
+        onChangeOrder={(order: ViewType[]) => this.props.onSaveOrder(order)}
+        renderRow={({data, active}: {data: ViewType, active: boolean}) =>
+          <Row data={data} active={active} width={this.state.width} />}
+      />
+    )
+  }
 }
 
 function mapStateToProps(state) {
@@ -163,44 +263,3 @@ function mapDispatchToProps(dispatch) {
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(EditHomeView)
-
-let styles = StyleSheet.create({
-  contentContainer: {
-    width: window.width,
-    backgroundColor: c.iosLightBackground,
-    paddingTop: 10,
-    paddingBottom: 20,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: c.white,
-    width: window.width - 15 * 2,
-    marginVertical: 5,
-    marginHorizontal: 15,
-    paddingVertical: 12,
-    borderRadius: 4,
-    shadowColor: c.semitransparentGray,
-    shadowOpacity: 1,
-    shadowOffset: {height: 2, width: 2},
-    shadowRadius: 2,
-    opacity: 1.0,
-    elevation: 2,
-  },
-  rectangleButtonIcon: {
-    marginRight: 20,
-    color: c.white,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  listButtonIcon: {
-    color: c.black,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  text: {
-    flex: 1,
-    fontSize: 18,
-    color: c.white,
-  },
-})

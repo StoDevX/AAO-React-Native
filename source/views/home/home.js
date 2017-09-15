@@ -13,16 +13,21 @@ import sortBy from 'lodash/sortBy'
 import type {TopLevelViewPropsType} from '../types'
 import type {ViewType} from '../views'
 import {allViews} from '../views'
+import {Column} from '../components/layout'
+import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl} from '../components/open-url'
 import {EditHomeButton, OpenSettingsButton} from '../components/nav-buttons'
 
-function HomePage({
-  navigation,
-  order,
-  views = allViews,
-}: {order: string[], views: ViewType[]} & TopLevelViewPropsType) {
+type Props = TopLevelViewPropsType & {
+  order: string[],
+  views: ViewType[],
+}
+
+function HomePage({navigation, order, views = allViews}: Props) {
   const sortedViews = sortBy(views, view => order.indexOf(view.view))
+
+  const columns = partitionByIndex(sortedViews)
 
   return (
     <ScrollView
@@ -34,18 +39,22 @@ function HomePage({
     >
       <StatusBar barStyle="light-content" backgroundColor={c.gold} />
 
-      {sortedViews.map(view =>
-        <HomeScreenButton
-          key={view.view}
-          view={view}
-          onPress={() => {
-            if (view.type === 'url') {
-              return trackedOpenUrl({url: view.url, id: view.view})
-            } else {
-              return navigation.navigate(view.view)
-            }
-          }}
-        />,
+      {columns.map((contents, i) =>
+        <Column key={i} style={styles.column}>
+          {contents.map(view =>
+            <HomeScreenButton
+              key={view.view}
+              view={view}
+              onPress={() => {
+                if (view.type === 'url') {
+                  return trackedOpenUrl({url: view.url, id: view.view})
+                } else {
+                  return navigation.navigate(view.view)
+                }
+              }}
+            />,
+          )}
+        </Column>,
       )}
     </ScrollView>
   )
@@ -72,9 +81,9 @@ const styles = StyleSheet.create({
     marginTop: CELL_MARGIN / 2,
     paddingBottom: CELL_MARGIN / 2,
 
-    alignItems: 'flex-start',
-    justifyContent: 'center',
     flexDirection: 'row',
-    flexWrap: 'wrap',
+  },
+  column: {
+    flex: 1,
   },
 })
