@@ -89,7 +89,7 @@ export class StudentOrgsView extends React.Component {
   }
 
   componentWillMount() {
-    this.refresh()
+    this.fetchData()
   }
 
   fetchData = async () => {
@@ -108,15 +108,15 @@ export class StudentOrgsView extends React.Component {
 
       const sorted = sortBy(withSortableNames, '$sortableName')
       const grouped = groupBy(sorted, '$groupableName')
-      this.setState({orgs: sorted, results: grouped})
+      this.setState(() => ({orgs: sorted, results: grouped}))
     } catch (err) {
       tracker.trackException(err.message)
       bugsnag.notify(err)
-      this.setState({error: true})
+      this.setState(() => ({error: true}))
       console.error(err)
     }
 
-    this.setState({loaded: true})
+    this.setState(() => ({loaded: true}))
   }
 
   refresh = async () => {
@@ -126,7 +126,7 @@ export class StudentOrgsView extends React.Component {
     await this.fetchData()
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    const elapsed = start - Date.now()
+    const elapsed = Date.now() - start
     if (elapsed < 500) {
       await delay(500 - elapsed)
     }
@@ -195,18 +195,19 @@ export class StudentOrgsView extends React.Component {
     // Android clear button returns an object...
     // ...and we need to check if the query exists
     if (!isString(text) || !text) {
-      this.setState({
-        results: groupBy(this.state.orgs, '$groupableName'),
-      })
+      this.setState(state => ({
+        results: groupBy(state.orgs, '$groupableName'),
+      }))
       return
     }
 
-    const query = text.toLowerCase()
-    const filteredResults = filter(this.state.orgs, org =>
-      this.orgToArray(org).some(word => word.startsWith(query)),
-    )
-
-    this.setState({results: groupBy(filteredResults, '$groupableName')})
+    this.setState(state => {
+      const query = text.toLowerCase()
+      const filteredResults = filter(state.orgs, org =>
+        this.orgToArray(org).some(word => word.startsWith(query)),
+      )
+      return {results: groupBy(filteredResults, '$groupableName')}
+    })
   }
 
   // We need to make the search run slightly behind the UI,

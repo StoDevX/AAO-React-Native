@@ -19,6 +19,7 @@ import moment from 'moment-timezone'
 import qs from 'querystring'
 import {toLaxTitleCase as titleCase} from 'titlecase'
 import type {StreamType} from './types'
+import delay from 'delay'
 
 const CENTRAL_TZ = 'America/Winnipeg'
 const url = 'https://www.stolaf.edu/multimedia/api/collection'
@@ -45,17 +46,31 @@ export class StreamListView extends React.PureComponent {
     error: null,
     loaded: false,
     noStreams: false,
-    refreshing: true,
+    refreshing: false,
     streams: [],
   }
 
   componentWillMount() {
-    this.getData()
+    this.getStreams()
   }
 
-  getData = async () => {
+  refresh = async () => {
+    let start = Date.now()
+    this.setState(() => ({refreshing: true}))
+
+    await this.getStreams()
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    const elapsed = Date.now() - start
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState(() => ({refreshing: false}))
+  }
+
+  getStreams = async (date: moment = moment.tz(CENTRAL_TZ)) => {
     try {
-      const date = moment.tz(CENTRAL_TZ)
       const dateFrom = date.format('YYYY-MM-DD')
       const dateTo = date.add(1, 'month').format('YYYY-MM-DD')
 
@@ -95,7 +110,6 @@ export class StreamListView extends React.PureComponent {
       this.setState(() => ({
         error: null,
         loaded: true,
-        refreshing: false,
         streams: mapped,
       }))
     } catch (error) {
@@ -128,8 +142,8 @@ export class StreamListView extends React.PureComponent {
         ItemSeparatorComponent={ListSeparator}
         keyExtractor={this.keyExtractor}
         style={styles.listContainer}
-        refreshing={this.props.loading}
-        onRefresh={this.props.onRefresh}
+        refreshing={this.state.refreshing}
+        onRefresh={this.refresh}
         renderItem={this.renderItem}
       />
     )

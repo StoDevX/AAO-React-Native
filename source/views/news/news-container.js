@@ -6,7 +6,7 @@ import LoadingView from '../components/loading'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {tracker} from '../../analytics'
-import bugsnag from '../../bugsnag'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {NewsList} from './news-list'
 import {fetchRssFeed, fetchWpJson} from './fetch-feed'
 
@@ -33,7 +33,12 @@ export default class NewsContainer extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchData().then(() => this.setState({loading: false}))
+    this.loadInitialData()
+  }
+
+  loadInitialData = async () => {
+    await this.fetchData()
+    this.setState(() => ({loading: false}))
   }
 
   fetchData = async () => {
@@ -48,36 +53,34 @@ export default class NewsContainer extends React.Component {
         throw new Error(`unknown mode ${this.props.mode}`)
       }
 
-      this.setState({entries})
+      this.setState(() => ({entries}))
     } catch (error) {
       if (error.message.startsWith('Unexpected token <')) {
         tracker.trackEvent('news', 'St. Olaf WPDefender strikes again')
-        this.setState({
+        this.setState(() => ({
           error: new Error(
             "Oops. Looks like we've triggered a St. Olaf website defense mechanism. Try again in 5 minutes.",
           ),
-        })
+        }))
       } else {
-        tracker.trackException(error.message)
-        bugsnag.notify(error)
-        console.warn(error)
-        this.setState({error})
+        reportNetworkProblem(error)
+        this.setState(() => ({error}))
       }
     }
   }
 
   refresh = async () => {
     let start = Date.now()
-    this.setState({refreshing: true})
+    this.setState(() => ({refreshing: true}))
 
     await this.fetchData()
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    let elapsed = start - Date.now()
+    let elapsed = Date.now() - start
     if (elapsed < 500) {
       await delay(500 - elapsed)
     }
-    this.setState({refreshing: false})
+    this.setState(() => ({refreshing: false}))
   }
 
   render() {

@@ -6,7 +6,7 @@ import glamorous from 'glamorous-native'
 import {phonecall} from 'react-native-communications'
 import {tracker} from '../../analytics'
 import {Button} from '../components/button'
-import {formatNumber} from './contact-helper'
+import openUrl from '../components/open-url'
 import type {ContactType} from './types'
 
 const Title = glamorous.text({
@@ -27,6 +27,11 @@ const styles = StyleSheet.create({
   },
 })
 
+function formatNumber(phoneNumber: string) {
+  const re = /(\d{3})-?(\d{3})-?(\d{4})/g
+  return phoneNumber.replace(re, '($1) $2-$3')
+}
+
 function promptCall(buttonText: string, phoneNumber: string) {
   Alert.alert(buttonText, formatNumber(phoneNumber), [
     {text: 'Cancel', onPress: () => console.log('Call cancel pressed')},
@@ -41,14 +46,21 @@ export class ContactsDetailView extends React.PureComponent {
     }
   }
 
-  navigation: {state: {params: {contact: ContactType}}}
+  props: {navigation: {state: {params: {contact: ContactType}}}}
 
   onPress = () => {
-    const item = this.props.navigation.state.params.contact
-    tracker.trackScreenView(
-      `ImportantContacts_${item.title.replace(' ', '')}View`,
-    )
-    promptCall(item.buttonText, item.phoneNumber)
+    const {
+      title,
+      phoneNumber,
+      buttonText,
+      buttonLink,
+    } = this.props.navigation.state.params.contact
+    tracker.trackScreenView(`ImportantContacts_${title.replace(' ', '')}View`)
+    if (buttonLink) {
+      openUrl(buttonLink)
+    } else if (phoneNumber) {
+      promptCall(buttonText, phoneNumber)
+    }
   }
 
   render() {

@@ -10,7 +10,7 @@ import {BonAppHostedMenu} from './menu-bonapp'
 export const CarletonBurtonMenuScreen = ({navigation}: TopLevelViewPropsType) =>
   <BonAppHostedMenu
     navigation={navigation}
-    name="burton"
+    name="Burton"
     cafeId="35"
     loadingMessage={['Searching for Schiller…']}
   />
@@ -22,7 +22,7 @@ CarletonBurtonMenuScreen.navigationOptions = {
 export const CarletonLDCMenuScreen = ({navigation}: TopLevelViewPropsType) =>
   <BonAppHostedMenu
     navigation={navigation}
-    name="ldc"
+    name="LDC"
     cafeId="36"
     loadingMessage={['Tracking down empty seats…']}
   />
@@ -34,7 +34,7 @@ CarletonLDCMenuScreen.navigationOptions = {
 export const CarletonWeitzMenuScreen = ({navigation}: TopLevelViewPropsType) =>
   <BonAppHostedMenu
     navigation={navigation}
-    name="weitz"
+    name="Weitz Center"
     cafeId="458"
     loadingMessage={['Observing the artwork…', 'Previewing performances…']}
   />
@@ -46,7 +46,7 @@ CarletonWeitzMenuScreen.navigationOptions = {
 export const CarletonSaylesMenuScreen = ({navigation}: TopLevelViewPropsType) =>
   <BonAppHostedMenu
     navigation={navigation}
-    name="sayles"
+    name="Sayles Hill"
     cafeId="34"
     loadingMessage={['Engaging in people-watching…', 'Checking the mail…']}
   />

@@ -5,11 +5,10 @@
  */
 
 import React from 'react'
-import {View, StyleSheet, Platform} from 'react-native'
+import {ScrollView, StyleSheet, Platform, Image} from 'react-native'
 import {buildingImages} from '../../../../images/building-images'
 import type {BuildingType} from '../types'
 import moment from 'moment-timezone'
-import ParallaxView from 'react-native-parallax-view'
 import * as c from '../../components/colors'
 import {getShortBuildingStatus} from '../lib'
 
@@ -18,10 +17,9 @@ import {Header} from './header'
 import {ScheduleTable} from './schedule-table'
 import {ListFooter} from '../../components/list'
 
-const transparentPixel = require('../../../../images/transparent.png')
-
 const styles = StyleSheet.create({
-  scrollableStyle: {
+  container: {
+    alignItems: 'stretch',
     ...Platform.select({
       android: {
         backgroundColor: c.androidLightBackground,
@@ -30,6 +28,10 @@ const styles = StyleSheet.create({
         backgroundColor: c.iosLightBackground,
       },
     }),
+  },
+  image: {
+    width: null,
+    height: 100,
   },
 })
 
@@ -53,34 +55,34 @@ export class BuildingDetail extends React.Component<void, Props, void> {
 
     const headerImage = info.image && buildingImages.hasOwnProperty(info.image)
       ? buildingImages[info.image]
-      : transparentPixel
+      : null
     const openStatus = getShortBuildingStatus(info, now)
     const schedules = info.schedule || []
 
     return (
-      <ParallaxView
-        backgroundSource={headerImage}
-        windowHeight={100}
-        scrollableViewStyle={styles.scrollableStyle}
-      >
-        <View>
-          <Header building={info} />
+      <ScrollView contentContainerStyle={styles.container}>
+        {headerImage
+          ? <Image
+              source={headerImage}
+              resizeMode="cover"
+              style={styles.image}
+            />
+          : null}
 
-          <Badge status={openStatus} />
+        <Header building={info} />
+        <Badge status={openStatus} />
+        <ScheduleTable
+          schedules={schedules}
+          now={now}
+          onProblemReport={onProblemReport}
+        />
 
-          <ScheduleTable
-            schedules={schedules}
-            now={now}
-            onProblemReport={onProblemReport}
-          />
-
-          <ListFooter
-            title={
-              'Building hours subject to change without notice\n\nData collected by the humans of All About Olaf'
-            }
-          />
-        </View>
-      </ParallaxView>
+        <ListFooter
+          title={
+            'Building hours subject to change without notice\n\nData collected by the humans of All About Olaf'
+          }
+        />
+      </ScrollView>
     )
   }
 }
