@@ -34,7 +34,7 @@ import {HomeView, EditHomeView} from '../views/home'
 
 import StreamingView from '../views/streaming'
 import KSTOView from '../views/streaming/radio'
-import WebcamsView from '../views/streaming/webcams'
+import {WebcamsView} from '../views/streaming/webcams'
 
 import {MenusView} from '../views/menus'
 
