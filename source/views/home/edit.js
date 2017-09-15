@@ -28,18 +28,62 @@ import {allViews} from '../views'
 
 const objViews = fromPairs(allViews.map(v => [v.view, v]))
 
-const ReorderIcon = () =>
+const ROW_HORIZONTAL_MARGIN = 15
+const styles = StyleSheet.create({
+  contentContainer: {
+    backgroundColor: c.iosLightBackground,
+    paddingTop: 10,
+    paddingBottom: 20,
+    flexDirection: 'column',
+    alignItems: 'stretch',
+  },
+  row: {
+    flex: 1,
+
+    flexDirection: 'row',
+    alignItems: 'center',
+
+    backgroundColor: c.white,
+
+    marginVertical: 5,
+    marginHorizontal: ROW_HORIZONTAL_MARGIN,
+    paddingVertical: 12,
+
+    borderRadius: 4,
+
+    shadowColor: c.semitransparentGray,
+    shadowOpacity: 1,
+    shadowOffset: {height: 0, width: 0},
+  },
+  icon: {
+    paddingLeft: 10,
+    paddingRight: 10,
+    color: c.black,
+  },
+  viewIcon: {
+    marginRight: 20,
+  },
+  text: {
+    flex: 1,
+    flexShrink: 0,
+    fontSize: 18,
+    color: c.white,
+  },
+})
+
+const reorderIcon = (
   <IonIcon
     name={Platform.OS === 'ios' ? 'ios-reorder' : 'md-reorder'}
     size={32}
-    style={styles.listButtonIcon}
+    style={[styles.icon]}
   />
+)
 
 const MenuIcon = ({icon, tint}: {icon: string, tint: string}) =>
   <EntypoIcon
     name={icon}
     size={32}
-    style={[styles.rectangleButtonIcon, {color: tint}]}
+    style={[styles.icon, styles.viewIcon, {color: tint}]}
   />
 
 type RowProps = {
@@ -148,37 +192,64 @@ class Row extends React.Component<void, RowProps, RowState> {
   }
 
   render() {
-    const style = {width: Dimensions.get('window').width - 15 * 2}
+    const width = this.props.width - ROW_HORIZONTAL_MARGIN * 2
+
     return (
-      <Animated.View style={[styles.row, style, this.state.style]}>
+      <Animated.View style={[styles.row, this.state.style, {width}]}>
         <MenuIcon icon={this.props.data.icon} tint={this.props.data.tint} />
         <Text style={[styles.text, {color: this.props.data.tint}]}>
           {this.props.data.title}
         </Text>
-        <ReorderIcon />
+        {reorderIcon}
       </Animated.View>
     )
   }
 }
 
-function EditHomeView(props: {
+type Props = {
   onSaveOrder: (ViewType[]) => any,
   order: string[],
-}) {
-  const style = {width: Dimensions.get('window').width}
-  return (
-    <SortableList
-      contentContainerStyle={[styles.contentContainer, style]}
-      data={objViews}
-      order={props.order}
-      onChangeOrder={(order: ViewType[]) => props.onSaveOrder(order)}
-      renderRow={({data, active}: {data: ViewType, active: boolean}) =>
-        <Row data={data} active={active} />}
-    />
-  )
 }
-EditHomeView.navigationOptions = {
-  title: 'Edit Home',
+type State = {
+  width: number,
+}
+
+class EditHomeView extends React.PureComponent<void, Props, State> {
+  static navigationOptions = {
+    title: 'Edit Home',
+  }
+
+  state = {
+    width: Dimensions.get('window').width,
+  }
+
+  componentWillMount() {
+    Dimensions.addEventListener('change', this.handleResizeEvent)
+  }
+
+  componentWillUnmount() {
+    Dimensions.removeEventListener('change', this.handleResizeEvent)
+  }
+
+  handleResizeEvent = event => {
+    this.setState(() => ({width: event.window.width}))
+  }
+
+  render() {
+    return (
+      <SortableList
+        contentContainerStyle={[
+          styles.contentContainer,
+          {width: this.state.width},
+        ]}
+        data={objViews}
+        order={this.props.order}
+        onChangeOrder={(order: ViewType[]) => this.props.onSaveOrder(order)}
+        renderRow={({data, active}: {data: ViewType, active: boolean}) =>
+          <Row data={data} active={active} width={this.state.width} />}
+      />
+    )
+  }
 }
 
 function mapStateToProps(state) {
@@ -192,42 +263,3 @@ function mapDispatchToProps(dispatch) {
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(EditHomeView)
-
-let styles = StyleSheet.create({
-  contentContainer: {
-    backgroundColor: c.iosLightBackground,
-    paddingTop: 10,
-    paddingBottom: 20,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: c.white,
-    marginVertical: 5,
-    marginHorizontal: 15,
-    paddingVertical: 12,
-    borderRadius: 4,
-    shadowColor: c.semitransparentGray,
-    shadowOpacity: 1,
-    shadowOffset: {height: 2, width: 2},
-    shadowRadius: 2,
-    opacity: 1.0,
-    elevation: 2,
-  },
-  rectangleButtonIcon: {
-    marginRight: 20,
-    color: c.white,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  listButtonIcon: {
-    color: c.black,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  text: {
-    flex: 1,
-    fontSize: 18,
-    color: c.white,
-  },
-})
