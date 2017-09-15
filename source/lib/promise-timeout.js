@@ -1,4 +1,6 @@
-export function promiseTimeout(ms, promise) {
+// @flow
+
+export function promiseTimeout(ms: number, promise: Promise<any>) {
   return new Promise(function(resolve, reject) {
     // create a timeout to reject promise if not resolved
     let timer = setTimeout(function() {
