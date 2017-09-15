@@ -18,8 +18,10 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import Video from 'react-native-video'
 import {Touchable} from '../components/touchable'
 import {TabBarIcon} from '../components/tabbar-icon'
+import {promiseTimeout} from '../../lib/promise-timeout'
 
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
+const kstoStatus = 'https://cdn.stobcm.com/radio/ksto1.stream/chunklist.3mu8'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
 export default class KSTOView extends React.PureComponent {
@@ -34,31 +36,61 @@ export default class KSTOView extends React.PureComponent {
     refreshing: boolean,
     paused: boolean,
     streamError: ?Object,
+    uplinkError: boolean,
+    message: string,
     metadata: Object[],
   } = {
     refreshing: false,
     paused: true,
     streamError: null,
+    uplinkError: false,
+    message: '',
     metadata: [],
+  }
+
+  // check the stream uplink status
+  fetchUplinkStatus = async () => {
+    try {
+      await promiseTimeout(6000, fetch(kstoStatus))
+      this.setState(() => ({uplinkError: false, message: ''}))
+    } catch (err) {
+      this.setState(() => ({
+        uplinkError: true,
+        message: 'The KSTO stream is down. Sorry!',
+      }))
+    }
+
+    // If the stream is down or we had an error, pause the player
+    if (this.state.uplinkError) {
+      this.setState(() => ({paused: true}))
+    }
   }
 
   changeControl = () => {
     this.setState(state => ({paused: !state.paused}))
+
+    // If we try to play...
+    if (this.state.paused) {
+      // Fetch the uplink status
+      this.fetchUplinkStatus()
+    }
   }
 
   // callback when HLS ID3 tags change
   onTimedMetadata = (data: any) => {
     this.setState(() => ({metadata: data}))
-    console.log(data)
   }
 
   // error from react-native-video
   onError = (e: any) => {
     this.setState(() => ({streamError: e, paused: true}))
-    console.log(e)
   }
 
   render() {
+    const ErrorMessage = this.state.uplinkError
+      ? <Text style={styles.status}>{this.state.message}</Text>
+      : null
+
     return (
       <ScrollView>
         <View style={styles.container}>
@@ -67,6 +99,7 @@ export default class KSTOView extends React.PureComponent {
             onPress={this.changeControl}
             paused={this.state.paused}
           />
+          {ErrorMessage}
           {/*<Song />*/}
           <Title />
 
@@ -168,6 +201,12 @@ const styles = StyleSheet.create({
   logo: {
     maxWidth: Dimensions.get('window').width / 1.2,
     maxHeight: Dimensions.get('window').height / 2.0,
+  },
+  status: {
+    paddingTop: 10,
+    fontSize: Dimensions.get('window').height / 40,
+    fontWeight: '500',
+    color: c.grapefruit,
   },
 })
 
