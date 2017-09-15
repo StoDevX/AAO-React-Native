@@ -87,8 +87,9 @@ export default class KSTOView extends React.PureComponent {
   }
 
   render() {
+    const statusStyle = {fontSize: Dimensions.get('window').height / 40}
     const ErrorMessage = this.state.uplinkError
-      ? <Text style={styles.status}>{this.state.message}</Text>
+      ? <Text style={[styles.status, statusStyle]}>{this.state.message}</Text>
       : null
 
     return (
@@ -209,6 +210,11 @@ const styles = StyleSheet.create({
   //   paddingTop: 5,
   //   color: c.red,
   // },
+  status: {
+    paddingTop: 10,
+    fontWeight: '500',
+    color: c.grapefruit,
+  },
 })
 
 const buttonStyles = StyleSheet.create({
