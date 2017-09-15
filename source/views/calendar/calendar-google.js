@@ -29,7 +29,7 @@ export class GoogleCalendarView extends React.Component {
   } = {
     events: [],
     loaded: false,
-    refreshing: true,
+    refreshing: false,
     error: null,
     now: moment.tz(TIMEZONE),
   }
