@@ -42,79 +42,107 @@ const MenuIcon = ({icon, tint}: {icon: string, tint: string}) =>
     style={[styles.rectangleButtonIcon, {color: tint}]}
   />
 
-class Row extends React.Component {
-  props: {
-    data: ViewType,
-    active: boolean,
+type RowProps = {
+  data: ViewType,
+  active: boolean,
+  width: number,
+}
+
+type RowState = {
+  style: {
+    shadowRadius: Animated.Value,
+    transform: Array<{[key: string]: Animated.Value}>,
+    opacity: Animated.Value,
+    elevation: Animated.Value,
+  },
+}
+
+class Row extends React.Component<void, RowProps, RowState> {
+  static startStyle = {
+    shadowRadius: 2,
+    transform: [{scale: 1}],
+    opacity: 1,
+    elevation: 2,
+  }
+
+  static endStyle = {
+    shadowRadius: 10,
+    transform: [{scale: 1.05}],
+    opacity: 0.65,
+    elevation: 4,
   }
 
   state = {
     style: {
-      shadowRadius: new Animated.Value(2),
-      transform: [{scale: new Animated.Value(1)}],
-      opacity: new Animated.Value(1.0),
-      elevation: new Animated.Value(2),
+      shadowRadius: new Animated.Value(Row.startStyle.shadowRadius),
+      transform: [
+        {scale: new Animated.Value(Row.startStyle.transform[0].scale)},
+      ],
+      opacity: new Animated.Value(Row.startStyle.opacity),
+      elevation: new Animated.Value(Row.startStyle.elevation),
     },
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.active !== nextProps.active) {
-      if (nextProps.active) {
-        this.startActivationAnimation()
-      } else {
-        this.startDeactivationAnimation()
-      }
+    if (this.props.active === nextProps.active) {
+      return
+    }
+
+    if (nextProps.active) {
+      this.startActivationAnimation()
+    } else {
+      this.startDeactivationAnimation()
     }
   }
 
   startActivationAnimation = () => {
-    const {style} = this.state
+    const {transform, shadowRadius, opacity, elevation} = this.state.style
     Animated.parallel([
-      Animated.timing(style.transform[0].scale, {
+      Animated.timing(transform[0].scale, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 1.05,
+        toValue: Row.endStyle.transform[0].scale,
       }),
-      Animated.timing(style.shadowRadius, {
+      Animated.timing(shadowRadius, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 10,
+        toValue: Row.endStyle.shadowRadius,
       }),
-      Animated.timing(style.opacity, {
+      Animated.timing(opacity, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 0.65,
+        toValue: Row.endStyle.opacity,
       }),
-      Animated.timing(style.elevation, {
+      Animated.timing(elevation, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 4,
+        toValue: Row.endStyle.elevation,
       }),
     ]).start()
   }
 
   startDeactivationAnimation = () => {
-    const {style} = this.state
+    const {transform, shadowRadius, opacity, elevation} = this.state.style
     Animated.parallel([
-      Animated.timing(style.transform[0].scale, {
+      Animated.timing(transform[0].scale, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 1,
+        toValue: Row.startStyle.transform[0].scale,
       }),
-      Animated.timing(style.shadowRadius, {
+      Animated.timing(shadowRadius, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 2,
+        toValue: Row.startStyle.shadowRadius,
       }),
-      Animated.timing(style.opacity, {
+      Animated.timing(opacity, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 1.0,
+        toValue: Row.startStyle.opacity,
       }),
-      Animated.timing(style.elevation, {
+      Animated.timing(elevation, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: 2,
+        toValue: Row.startStyle.elevation,
       }),
     ]).start()
   }
