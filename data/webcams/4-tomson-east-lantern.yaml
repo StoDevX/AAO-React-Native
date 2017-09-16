@@ -4,3 +4,4 @@ streamUrl: https://cdn.stobcm.com/webcams/tomsoneast.stream/master.m3u8
 thumbnail: tomsoneast
 tagline: A view of the campus green and Wind Chime Memorial
 accentColor: [89, 84, 82]
+textColor: '#fff'

@@ -4,3 +4,4 @@ streamUrl: https://cdn.stobcm.com/webcams/tomsonwest.stream/master.m3u8
 thumbnail: tomsonwest
 tagline: Looking out to Mellby Hall and the Theater Building
 accentColor: [110, 126, 91]
+textColor: '#fff'

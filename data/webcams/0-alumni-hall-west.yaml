@@ -4,3 +4,4 @@ streamUrl: https://cdn.stobcm.com/webcams/alumniwest.stream/master.m3u8
 thumbnail: alumniwest
 tagline: A view of the Ytterboe Hall and the wind turbine
 accentColor: [48, 63, 102]
+textColor: '#fff'

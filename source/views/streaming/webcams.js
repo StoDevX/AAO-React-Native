@@ -5,16 +5,9 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  Image,
-  Dimensions,
-  Platform,
-} from 'react-native'
-import {Column} from '../components/layout'
+import {StyleSheet, View, Text, FlatList, Image, Platform} from 'react-native'
+import delay from 'delay'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
@@ -22,72 +15,91 @@ import * as defaultData from '../../../docs/webcams.json'
 import {webcamImages} from '../../../images/webcam-images'
 import {trackedOpenUrl} from '../components/open-url'
 import LinearGradient from 'react-native-linear-gradient'
-import {partitionByIndex} from '../../lib/partition-by-index'
+
+const transparentPixel = require('../../../images/transparent.png')
+const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/webcams.json'
 
 type WebcamType = {
   streamUrl: string,
   pageUrl: string,
   name: string,
   thumbnail: string,
+  thumbnailUrl?: string,
+  textColor: string,
   accentColor: [number, number, number],
 }
 
-type DProps = {
-  webcams: Array<WebcamType>,
-}
-
-type Props = {
-  webcams: Array<WebcamType>,
-}
+type Props = {}
 
 type State = {
-  width: number,
+  webcams: Array<WebcamType>,
+  loading: boolean,
+  refreshing: boolean,
 }
 
-export class WebcamsView extends React.PureComponent<DProps, Props, State> {
+export class WebcamsView extends React.PureComponent<void, Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Webcams',
     tabBarIcon: TabBarIcon('videocam'),
   }
 
-  static defaultProps = {
-    webcams: defaultData.data,
-  }
-
   state = {
-    width: Dimensions.get('window').width,
+    webcams: defaultData.data,
+    loading: false,
+    refreshing: false,
   }
 
   componentWillMount() {
-    Dimensions.addEventListener('change', this.handleResizeEvent)
+    this.fetchData()
   }
 
-  componentWillUnmount() {
-    Dimensions.removeEventListener('change', this.handleResizeEvent)
+  refresh = async () => {
+    const start = Date.now()
+    this.setState(() => ({refreshing: true}))
+
+    await this.fetchData()
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    const elapsed = Date.now() - start
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState(() => ({refreshing: false}))
   }
 
-  handleResizeEvent = (event: {window: {width: number}}) => {
-    this.setState(() => ({width: event.window.width}))
+  fetchData = async () => {
+    this.setState(() => ({loading: true}))
+
+    let {data: webcams} = await fetchJson(GITHUB_URL).catch(err => {
+      reportNetworkProblem(err)
+      return defaultData
+    })
+
+    if (process.env.NODE_ENV === 'development') {
+      webcams = defaultData.data
+    }
+
+    this.setState(() => ({webcams, loading: false}))
   }
+
+  renderItem = ({item}: {item: WebcamType}) =>
+    <StreamThumbnail key={item.name} webcam={item} />
+
+  keyExtractor = (item: WebcamType) => item.name
 
   render() {
-    const columns = partitionByIndex(this.props.webcams)
-
     return (
-      <ScrollView contentContainerStyle={styles.gridWrapper}>
-        {columns.map((contents, i) =>
-          <Column key={i} style={styles.column}>
-            {contents.map(webcam =>
-              <StreamThumbnail
-                key={webcam.name}
-                webcam={webcam}
-                textColor="white"
-                viewportWidth={this.state.width}
-              />,
-            )}
-          </Column>,
-        )}
-      </ScrollView>
+      <FlatList
+        keyExtractor={this.keyExtractor}
+        renderItem={this.renderItem}
+        refreshing={this.state.refreshing}
+        onRefresh={this.refresh}
+        data={this.state.webcams}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={styles.container}
+      />
     )
   }
 }
@@ -95,54 +107,59 @@ export class WebcamsView extends React.PureComponent<DProps, Props, State> {
 class StreamThumbnail extends React.PureComponent {
   props: {
     webcam: WebcamType,
-    textColor: 'white' | 'black',
-    viewportWidth: number,
   }
 
   handlePress = () => {
     const {streamUrl, name, pageUrl} = this.props.webcam
-    if (Platform.OS === 'android') {
+    if (Platform.OS === 'ios') {
+      trackedOpenUrl({url: streamUrl, id: `${name}WebcamView`})
+    } else if (Platform.OS === 'android') {
       trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
     } else {
-      trackedOpenUrl({url: streamUrl, id: `${name}WebcamView`})
+      trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
     }
   }
 
   render() {
-    const {textColor, viewportWidth} = this.props
-    const {name, thumbnail, accentColor} = this.props.webcam
+    const {
+      name,
+      thumbnail,
+      accentColor,
+      textColor,
+      thumbnailUrl,
+    } = this.props.webcam
 
     const [r, g, b] = accentColor
     const baseColor = `rgba(${r}, ${g}, ${b}, 1)`
     const startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
-    const actualTextColor = c[textColor]
 
-    const width = viewportWidth / 2 - CELL_MARGIN * 1.5
-    const cellRatio = 2.15625
-    const height = width / cellRatio
+    const img = thumbnailUrl
+      ? {uri: thumbnailUrl}
+      : webcamImages.hasOwnProperty(thumbnail)
+        ? webcamImages[thumbnail]
+        : transparentPixel
 
     return (
-      <View style={[styles.cell, styles.rounded, {width, height}]}>
-        <Touchable
-          highlight={true}
-          underlayColor={baseColor}
-          activeOpacity={0.7}
-          onPress={this.handlePress}
-        >
-          <Image source={webcamImages[thumbnail]} style={[styles.image]}>
-            <View style={styles.titleWrapper}>
-              <LinearGradient
-                colors={[startColor, baseColor]}
-                locations={[0, 0.8]}
-              >
-                <Text style={[styles.titleText, {color: actualTextColor}]}>
-                  {name}
-                </Text>
-              </LinearGradient>
-            </View>
-          </Image>
-        </Touchable>
-      </View>
+      <Touchable
+        highlight={true}
+        underlayColor={baseColor}
+        activeOpacity={0.7}
+        onPress={this.handlePress}
+        containerStyle={styles.cell}
+      >
+        <Image source={img} style={styles.image}>
+          <View style={styles.titleWrapper}>
+            <LinearGradient
+              colors={[startColor, baseColor]}
+              locations={[0, 0.8]}
+            >
+              <Text style={[styles.titleText, {color: textColor}]}>
+                {name}
+              </Text>
+            </LinearGradient>
+          </View>
+        </Image>
+      </Touchable>
     )
   }
 }
@@ -150,30 +167,24 @@ class StreamThumbnail extends React.PureComponent {
 const CELL_MARGIN = 10
 
 const styles = StyleSheet.create({
-  column: {
-    flex: 1,
+  container: {
+    marginVertical: CELL_MARGIN / 2,
   },
-  gridWrapper: {
-    marginHorizontal: CELL_MARGIN / 2,
-    marginTop: CELL_MARGIN / 2,
-    paddingBottom: CELL_MARGIN / 2,
-
-    alignItems: 'center',
+  row: {
     justifyContent: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  rounded: {
-    // TODO: Android doesn't currently (0.42) respect both
-    // overflow:hidden and border-radius.
-    borderRadius: Platform.OS === 'android' ? 0 : 6,
+    marginHorizontal: CELL_MARGIN / 2,
   },
   cell: {
+    flex: 1,
     overflow: 'hidden',
     margin: CELL_MARGIN / 2,
     justifyContent: 'center',
 
     elevation: 2,
+
+    // TODO: Android doesn't currently (0.42) respect both
+    // overflow:hidden and border-radius.
+    borderRadius: Platform.OS === 'android' ? 0 : 6,
   },
   image: {
     width: '100%',

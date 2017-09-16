@@ -1,13 +1,15 @@
 $schema: http://json-schema.org/draft-06/schema#
 
 additionalProperties: false
-required: [name, pageUrl, streamUrl, thumbnail, tagline, accentColor]
+required: [name, pageUrl, streamUrl, thumbnail, tagline, textColor, accentColor]
 properties:
   name: {type: string}
   pageUrl: {type: string, format: uri}
   streamUrl: {type: string, format: uri}
   thumbnail: {type: string}
+  thumbnailUrl: {type: string}
   tagline: {type: string}
+  textColor: {type: string}
   accentColor:
     type: array
     items: [{type: number}, {type: number}, {type: number}]
