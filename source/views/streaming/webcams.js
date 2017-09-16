@@ -9,12 +9,10 @@ import {
   StyleSheet,
   View,
   Text,
-  ScrollView,
+  FlatList,
   Image,
-  Dimensions,
   Platform,
 } from 'react-native'
-import {Column} from '../components/layout'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
@@ -22,7 +20,6 @@ import * as defaultData from '../../../docs/webcams.json'
 import {webcamImages} from '../../../images/webcam-images'
 import {trackedOpenUrl} from '../components/open-url'
 import LinearGradient from 'react-native-linear-gradient'
-import {partitionByIndex} from '../../lib/partition-by-index'
 
 type WebcamType = {
   streamUrl: string,
@@ -55,39 +52,29 @@ export class WebcamsView extends React.PureComponent<DProps, Props, State> {
   }
 
   state = {
-    width: Dimensions.get('window').width,
   }
 
   componentWillMount() {
-    Dimensions.addEventListener('change', this.handleResizeEvent)
   }
 
-  componentWillUnmount() {
-    Dimensions.removeEventListener('change', this.handleResizeEvent)
-  }
 
-  handleResizeEvent = (event: {window: {width: number}}) => {
-    this.setState(() => ({width: event.window.width}))
-  }
+
+
+  renderItem = ({item}: {item: WebcamType}) =>
+    <StreamThumbnail key={item.name} webcam={item} />
+
+  keyExtractor = (item: WebcamType) => item.name
 
   render() {
-    const columns = partitionByIndex(this.props.webcams)
-
     return (
-      <ScrollView contentContainerStyle={styles.gridWrapper}>
-        {columns.map((contents, i) =>
-          <Column key={i} style={styles.column}>
-            {contents.map(webcam =>
-              <StreamThumbnail
-                key={webcam.name}
-                webcam={webcam}
-                textColor="white"
-                viewportWidth={this.state.width}
-              />,
-            )}
-          </Column>,
-        )}
-      </ScrollView>
+      <FlatList
+        keyExtractor={this.keyExtractor}
+        renderItem={this.renderItem}
+        data={this.props.webcams}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={styles.container}
+      />
     )
   }
 }
@@ -96,7 +83,6 @@ class StreamThumbnail extends React.PureComponent {
   props: {
     webcam: WebcamType,
     textColor: 'white' | 'black',
-    viewportWidth: number,
   }
 
   handlePress = () => {
@@ -109,7 +95,7 @@ class StreamThumbnail extends React.PureComponent {
   }
 
   render() {
-    const {textColor, viewportWidth} = this.props
+    const {textColor} = this.props
     const {name, thumbnail, accentColor} = this.props.webcam
 
     const [r, g, b] = accentColor
@@ -117,12 +103,9 @@ class StreamThumbnail extends React.PureComponent {
     const startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
     const actualTextColor = c[textColor]
 
-    const width = viewportWidth / 2 - CELL_MARGIN * 1.5
-    const cellRatio = 2.15625
-    const height = width / cellRatio
 
     return (
-      <View style={[styles.cell, styles.rounded, {width, height}]}>
+      <View style={styles.cell}>
         <Touchable
           highlight={true}
           underlayColor={baseColor}
@@ -150,30 +133,24 @@ class StreamThumbnail extends React.PureComponent {
 const CELL_MARGIN = 10
 
 const styles = StyleSheet.create({
-  column: {
-    flex: 1,
+  container: {
+    marginVertical: CELL_MARGIN / 2,
   },
-  gridWrapper: {
-    marginHorizontal: CELL_MARGIN / 2,
-    marginTop: CELL_MARGIN / 2,
-    paddingBottom: CELL_MARGIN / 2,
-
-    alignItems: 'center',
+  row: {
     justifyContent: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  rounded: {
-    // TODO: Android doesn't currently (0.42) respect both
-    // overflow:hidden and border-radius.
-    borderRadius: Platform.OS === 'android' ? 0 : 6,
+    marginHorizontal: CELL_MARGIN / 2,
   },
   cell: {
+    flex: 1,
     overflow: 'hidden',
     margin: CELL_MARGIN / 2,
     justifyContent: 'center',
 
     elevation: 2,
+
+    // TODO: Android doesn't currently (0.42) respect both
+    // overflow:hidden and border-radius.
+    borderRadius: Platform.OS === 'android' ? 0 : 6,
   },
   image: {
     width: '100%',
