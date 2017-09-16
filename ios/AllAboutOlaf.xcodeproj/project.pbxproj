@@ -767,6 +767,29 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		67931A0E1F6DC20F00FD517A /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				8EFDF596D3434455B7F672D3 /* libRNVectorIcons.a */,
+				A2D51A8982104BF29657933B /* libRNDeviceInfo.a */,
+				F803FE6585F04E9F8D3C053F /* libRCTGoogleAnalyticsBridge.a */,
+				203BE3D7758C4020A78210B2 /* libRCTOneSignal.a */,
+				209B4AAEEC3F4290A1ED9491 /* libRNKeychain.a */,
+				D530CE76BA714A59B2BECB28 /* libSafariViewManager.a */,
+				D222CA78E6554BBB83448435 /* libDBCustomTabs.a */,
+				CBE5D51CAA854462BCB6C610 /* libRNViewShot.a */,
+				C3C50E3D9F6041BA8D55A4F5 /* libBVLinearGradient.a */,
+				BC36B827687E41ADA029DA16 /* libRNSearchBar.a */,
+				B4920CEFDAA947C8B63B7C8B /* libBugsnagReactNative.a */,
+				9C476D4877F945308C96FF0F /* libRNNetworkInfo.a */,
+				77E1B7C6D93445288673021A /* libAirMaps.a */,
+				14483BC863F7489F8369E21B /* libRCTRestart.a */,
+				11DF4AC996924028A2FDCF4E /* libRCTVideo.a */,
+				0C8A1DA8409E4F03B55E7E2F /* libRNCalendarEvents.a */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		67990B461EC0FE7A001F5261 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -844,6 +867,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				5A41494DACBB4D2795B46DE0 /* Resources */,
 				3C5BFA21338636E7EB4E5E0D /* Frameworks */,
+				67931A0E1F6DC20F00FD517A /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
