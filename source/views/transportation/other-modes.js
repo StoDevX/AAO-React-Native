@@ -64,7 +64,8 @@ export default class OtherModesView extends React.PureComponent {
 
   state = {
     modes: defaultData.data,
-    loading: false,
+    loading: true,
+    refreshing: false,
   }
 
   componentWillMount() {
