@@ -7,15 +7,13 @@
 import React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {ListSeparator, ListSectionHeader} from '../components/list'
-import {ListEmpty, ListFooter} from '../components/list'
+import {ListEmpty} from '../components/list'
 import {ContactRow} from './contact-row'
 import {data} from './data'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import * as c from '../components/colors'
 import type {ContactType} from './types'
-
-const AAO_URL = 'https://github.com/StoDevX/AAO-React-Native/issues/new'
 
 const groupContacts = (contacts: ContactType[]) => {
   const grouped = groupBy(contacts, c => c.category)
@@ -56,12 +54,6 @@ export default class ContactsListView extends React.PureComponent {
       <SectionList
         ItemSeparatorComponent={ListSeparator}
         ListEmptyComponent={<ListEmpty mode="bug" />}
-        ListFooterComponent={
-          <ListFooter
-            title="Collected by the humans of All About Olaf"
-            href={AAO_URL}
-          />
-        }
         style={styles.listContainer}
         data={groupedData}
         sections={groupedData}
