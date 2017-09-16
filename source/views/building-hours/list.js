@@ -13,7 +13,7 @@ import type momentT from 'moment'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 
-import {ListSeparator, ListSectionHeader, ListFooter} from '../components/list'
+import {ListSeparator, ListSectionHeader} from '../components/list'
 
 export {BuildingHoursDetailView} from './detail'
 
@@ -47,13 +47,6 @@ export class BuildingHoursList extends React.PureComponent {
     return (
       <SectionList
         ItemSeparatorComponent={ListSeparator}
-        ListFooterComponent={
-          <ListFooter
-            title={
-              'Building hours subject to change without notice\n\nData collected by the humans of All About Olaf'
-            }
-          />
-        }
         sections={(this.props.buildings: any)}
         extraData={this.props}
         keyExtractor={this.keyExtractor}

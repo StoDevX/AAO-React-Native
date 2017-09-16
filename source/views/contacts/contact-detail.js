@@ -2,12 +2,15 @@
 import React from 'react'
 import {Alert, StyleSheet} from 'react-native'
 import {Markdown} from '../components/markdown'
+import {ListFooter} from '../components/list'
 import glamorous from 'glamorous-native'
 import {phonecall} from 'react-native-communications'
 import {tracker} from '../../analytics'
 import {Button} from '../components/button'
 import openUrl from '../components/open-url'
 import type {ContactType} from './types'
+
+const AAO_URL = 'https://github.com/StoDevX/AAO-React-Native/issues/new'
 
 const Title = glamorous.text({
   fontSize: 36,
@@ -68,11 +71,18 @@ export class ContactsDetailView extends React.PureComponent {
     return (
       <Container>
         <Title selectable={true}>{contact.title}</Title>
+
         <Markdown
           styles={{Paragraph: styles.paragraph}}
           source={contact.text}
         />
+
         <Button onPress={this.onPress} title={contact.buttonText} />
+
+        <ListFooter
+          title="Collected by the humans of All About Olaf"
+          href={AAO_URL}
+        />
       </Container>
     )
   }

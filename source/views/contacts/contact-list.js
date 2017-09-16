@@ -7,7 +7,7 @@
 import React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {ListSeparator, ListSectionHeader} from '../components/list'
-import {ListEmpty, ListFooter} from '../components/list'
+import {ListEmpty} from '../components/list'
 import {ContactRow} from './contact-row'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
@@ -18,7 +18,6 @@ import * as c from '../components/colors'
 import type {ContactType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 
-const AAO_URL = 'https://github.com/StoDevX/AAO-React-Native/issues/new'
 const GITHUB_URL =
   'https://stodevx.github.io/AAO-React-Native/contact-info.json'
 
@@ -107,12 +106,6 @@ export class ContactsListView extends React.PureComponent<void, Props, State> {
       <SectionList
         ItemSeparatorComponent={ListSeparator}
         ListEmptyComponent={<ListEmpty mode="bug" />}
-        ListFooterComponent={
-          <ListFooter
-            title="Collected by the humans of All About Olaf"
-            href={AAO_URL}
-          />
-        }
         style={styles.listContainer}
         data={groupedData}
         sections={groupedData}
