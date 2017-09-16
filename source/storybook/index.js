@@ -52,7 +52,6 @@ import CreditsView from '../views/settings/credits'
 import PrivacyView from '../views/settings/privacy'
 import LegalView from '../views/settings/legal'
 import CredentialsLoginSection from '../views/settings/sections/login-credentials'
-import TokenLoginSection from '../views/settings/sections/login-token'
 import OddsAndEndsSection from '../views/settings/sections/odds-and-ends'
 import SupportSection from '../views/settings/sections/support'
 import {FaqView} from '../views/faqs'
@@ -141,7 +140,6 @@ export class SnapshotsView extends React.Component {
         view: () => <CredentialsLoginSection />,
         delay: 100,
       },
-      'section-token': {view: () => <TokenLoginSection />, delay: 100},
       'section-support': {
         view: () => <Nav>{props => <SupportSection {...props} />}</Nav>,
         delay: 100,
