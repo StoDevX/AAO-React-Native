@@ -118,13 +118,12 @@ export default class KSTOView extends React.PureComponent<void, void, State> {
 }
 
 const Title = () => {
-  const style = {fontSize: Dimensions.get('window').height / 30}
   return (
-    <View style={styles.container}>
-      <Text selectable={true} style={[styles.heading, style]}>
+    <View style={styles.titleWrapper}>
+      <Text selectable={true} style={styles.heading}>
         St. Olaf College Radio
       </Text>
-      <Text selectable={true} style={[styles.subHeading, style]}>
+      <Text selectable={true} style={styles.subHeading}>
         KSTO 93.1 FM
       </Text>
     </View>
@@ -175,16 +174,22 @@ const styles = StyleSheet.create({
     borderColor: c.kstoSecondaryDark,
     borderWidth: 3,
   },
+  titleWrapper: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   heading: {
-    marginTop: 10,
     color: c.kstoPrimaryDark,
-    fontWeight: '500',
+    fontWeight: '600',
+    fontSize: 28,
+    textAlign: 'center',
   },
   subHeading: {
     marginTop: 5,
-    marginBottom: 10,
     color: c.kstoPrimaryDark,
     fontWeight: '300',
+    fontSize: 28,
+    textAlign: 'center',
   },
 })
 
