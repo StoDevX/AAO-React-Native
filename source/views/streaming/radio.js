@@ -162,9 +162,16 @@ class PlayPauseButton extends React.PureComponent {
 
 const styles = StyleSheet.create({
   root: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    justifyContent: 'space-between',
+    padding: 20,
   },
   container: {
     alignItems: 'center',
+    flex: 1,
+    marginTop: 20,
+    marginBottom: 20,
   },
   logoWrapper: {
     alignItems: 'center',
