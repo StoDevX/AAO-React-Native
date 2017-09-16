@@ -67,7 +67,6 @@ export default class KSTOView extends React.PureComponent {
             onPress={this.changeControl}
             paused={this.state.paused}
           />
-          {/*<Song />*/}
           <Title />
 
           {!this.state.paused
@@ -113,10 +112,6 @@ const Title = () => {
     </View>
   )
 }
-
-// const song = this.state.metadata.length
-//     ? <Metadata song={this.state.metadata.CHANGEME} />
-//     : null
 
 class PlayPauseButton extends React.PureComponent {
   props: {
@@ -164,18 +159,6 @@ const styles = StyleSheet.create({
     color: c.kstoPrimaryDark,
     fontWeight: '300',
   },
-  // nowPlaying: {
-  //   paddingTop: 10,
-  //   fontSize: Dimensions.get('window').height / 40,
-  //   fontWeight: '500',
-  //   color: c.red,
-  // },
-  // metadata: {
-  //   fontSize: Dimensions.get('window').height / 40,
-  //   paddingHorizontal: 13,
-  //   paddingTop: 5,
-  //   color: c.red,
-  // },
 })
 
 const buttonStyles = StyleSheet.create({
