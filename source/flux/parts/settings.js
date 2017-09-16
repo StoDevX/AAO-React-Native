@@ -125,46 +125,6 @@ function credentialsReducer(state = initialCredentialsState, action) {
   }
 }
 
-const initialTokenState = {
-  status: false,
-  error: null,
-  valid: false,
-}
-function tokenReducer(state = initialTokenState, action) {
-  const {type, payload, error} = action
-  switch (type) {
-    case TOKEN_LOGIN: {
-      if (error === true) {
-        return {
-          ...state,
-          valid: false,
-          error: payload,
-          status: false,
-        }
-      }
-
-      return {
-        ...state,
-        valid: payload === true,
-        error: null,
-        status: payload,
-      }
-    }
-
-    case TOKEN_LOGOUT: {
-      return {
-        ...state,
-        valid: false,
-        error: null,
-        status: false,
-      }
-    }
-
-    default:
-      return state
-  }
-}
-
 const initialSettingsState = {
   theme: 'All About Olaf',
   dietaryPreferences: [],
@@ -178,7 +138,6 @@ export function settings(state: Object = initialSettingsState, action: Object) {
   state = {
     ...state,
     credentials: credentialsReducer(state.credentials, action),
-    token: tokenReducer(state.token, action),
   }
 
   const {type, payload} = action
