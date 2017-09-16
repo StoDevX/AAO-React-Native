@@ -50,6 +50,12 @@ class CredentialsLoginSection extends React.Component {
     this.props.logOut()
   }
 
+  getUsernameRef = ref => (this._usernameInput = ref)
+  getPasswordRef = ref => (this._passwordInput = ref)
+
+  onChangeUsername = (text = '') => this.setState(() => ({username: text}))
+  onChangePassword = (text = '') => this.setState(() => ({password: text}))
+
   render() {
     let {loggedIn, message} = this.props
     let {loading, username, password} = this.state
@@ -61,9 +67,9 @@ class CredentialsLoginSection extends React.Component {
       >
         <CellTextField
           label="Username"
-          _ref={ref => (this._usernameInput = ref)}
+          _ref={this.getUsernameRef}
           disabled={loading}
-          onChangeText={(text = '') => this.setState({username: text})}
+          onChangeText={this.onChangeUsername}
           onSubmitEditing={this.focusPassword}
           placeholder="username"
           returnKeyType="next"
@@ -73,9 +79,9 @@ class CredentialsLoginSection extends React.Component {
 
         <CellTextField
           label="Password"
-          _ref={ref => (this._passwordInput = ref)}
+          _ref={this.getPasswordRef}
           disabled={loading}
-          onChangeText={(text = '') => this.setState({password: text})}
+          onChangeText={this.onChangePassword}
           onSubmitEditing={loggedIn ? noop : this.logIn}
           placeholder="password"
           returnKeyType="done"
