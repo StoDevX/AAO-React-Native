@@ -16,6 +16,7 @@ import {webcamImages} from '../../../images/webcam-images'
 import {trackedOpenUrl} from '../components/open-url'
 import LinearGradient from 'react-native-linear-gradient'
 
+const transparentPixel = require('../../../images/transparent.png')
 const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/webcams.json'
 
 type WebcamType = {
@@ -124,12 +125,18 @@ class StreamThumbnail extends React.PureComponent {
       thumbnail,
       accentColor,
       textColor,
+      thumbnailUrl,
     } = this.props.webcam
 
     const [r, g, b] = accentColor
     const baseColor = `rgba(${r}, ${g}, ${b}, 1)`
     const startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
 
+    const img = thumbnailUrl
+      ? {uri: thumbnailUrl}
+      : webcamImages.hasOwnProperty(thumbnail)
+        ? webcamImages[thumbnail]
+        : transparentPixel
 
     return (
       <View style={styles.cell}>
@@ -139,7 +146,7 @@ class StreamThumbnail extends React.PureComponent {
           activeOpacity={0.7}
           onPress={this.handlePress}
         >
-          <Image source={webcamImages[thumbnail]} style={[styles.image]}>
+          <Image source={img} style={styles.image}>
             <View style={styles.titleWrapper}>
               <LinearGradient
                 colors={[startColor, baseColor]}
