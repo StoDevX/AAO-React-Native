@@ -27,6 +27,8 @@ type Viewport = {
   height: number,
 }
 
+type Props = {}
+
 type State = {
   refreshing: boolean,
   paused: boolean,
@@ -34,7 +36,7 @@ type State = {
   viewport: Viewport,
 }
 
-export default class KSTOView extends React.PureComponent<void, void, State> {
+export default class KSTOView extends React.PureComponent<void, Props, State> {
   static navigationOptions = {
     tabBarLabel: 'KSTO',
     tabBarIcon: TabBarIcon('radio'),
