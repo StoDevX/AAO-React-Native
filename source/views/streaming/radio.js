@@ -22,7 +22,14 @@ import {TabBarIcon} from '../components/tabbar-icon'
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
-export default class KSTOView extends React.PureComponent {
+type State = {
+  refreshing: boolean,
+  paused: boolean,
+  streamError: ?Object,
+  metadata: Object[],
+}
+
+export default class KSTOView extends React.PureComponent<void, void, State> {
   static navigationOptions = {
     tabBarLabel: 'KSTO',
     tabBarIcon: TabBarIcon('radio'),
@@ -30,12 +37,7 @@ export default class KSTOView extends React.PureComponent {
 
   player: Video
 
-  state: {
-    refreshing: boolean,
-    paused: boolean,
-    streamError: ?Object,
-    metadata: Object[],
-  } = {
+  state = {
     refreshing: false,
     paused: true,
     streamError: null,
