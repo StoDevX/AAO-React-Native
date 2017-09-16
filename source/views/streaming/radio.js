@@ -48,12 +48,6 @@ export default class KSTOView extends React.PureComponent<void, void, State> {
     this.setState(state => ({paused: !state.paused}))
   }
 
-  // callback when HLS ID3 tags change
-  onTimedMetadata = (data: any) => {
-    this.setState(() => ({metadata: data}))
-    console.log(data)
-  }
-
   // error from react-native-video
   onError = (e: any) => {
     this.setState(() => ({streamError: e, paused: true}))
@@ -78,7 +72,6 @@ export default class KSTOView extends React.PureComponent<void, void, State> {
                 playInBackground={true}
                 playWhenInactive={true}
                 paused={this.state.paused}
-                onTimedMetadata={this.onTimedMetadata}
                 onError={this.onError}
               />
             : null}
