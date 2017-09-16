@@ -143,15 +143,25 @@ function credentialsReducer(
   }
 }
 
-const initialSettingsState = {
+export type SettingsState = {
+  theme: string,
+  dietaryPreferences: [],
+  credentials: CredentialsState,
+  feedbackDisabled: boolean,
+}
+
+const initialSettingsState: SettingsState = {
   theme: 'All About Olaf',
   dietaryPreferences: [],
 
-  credentials: undefined,
-  token: undefined,
+  credentials: initialCredentialsState,
   feedbackDisabled: false,
 }
-export function settings(state: Object = initialSettingsState, action: Object) {
+
+export function settings(
+  state: SettingsState = initialSettingsState,
+  action: Object,
+) {
   // start out by running the reducers for the complex chunks of the state
   state = {
     ...state,
