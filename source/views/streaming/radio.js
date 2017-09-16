@@ -94,7 +94,7 @@ export default class KSTOView extends React.PureComponent<void, void, State> {
           />
         </View>
 
-        <View style={[styles.container, sideways && landscape.container]}>
+        <View style={styles.container}>
           <Title />
 
           <PlayPauseButton
@@ -199,8 +199,6 @@ const landscape = StyleSheet.create({
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  container: {
   },
   logoWrapper: {
     flex: 0,
