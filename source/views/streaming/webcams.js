@@ -24,6 +24,8 @@ type WebcamType = {
   pageUrl: string,
   name: string,
   thumbnail: string,
+  thumbnailUrl?: string,
+  textColor: string,
   accentColor: [number, number, number],
 }
 
@@ -31,7 +33,6 @@ type Props = {}
 
 type State = {
   webcams: Array<WebcamType>,
-  width: number,
   loading: boolean,
   refreshing: boolean,
 }
