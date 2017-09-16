@@ -4,3 +4,4 @@ streamUrl: https://cdn.stobcm.com/webcams/eastquad.stream/master.m3u8
 thumbnail: eastquad
 tagline: Looking out to Regents, Holland Hall, and Old Main
 accentColor: [82, 87, 54]
+textColor: '#fff'

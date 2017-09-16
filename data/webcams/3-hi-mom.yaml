@@ -4,3 +4,4 @@ streamUrl: https://cdn.stobcm.com/webcams/himom.stream/master.m3u8
 thumbnail: himom
 tagline: Located in the Crossroads inside Buntrock Commons
 accentColor: [137, 141, 150]
+textColor: '#fff'
