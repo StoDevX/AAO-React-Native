@@ -11,6 +11,9 @@ import * as c from '../components/colors'
 import {ButtonCell} from '../components/cells/button'
 import {addToCalendar} from './calendar-util'
 import delay from 'delay'
+import {ListFooter} from '../components/list'
+
+const STO_CALENDAR_URL = 'https://www.stolaf.edu/calendar'
 
 const styles = StyleSheet.create({
   name: {
@@ -164,6 +167,11 @@ export class EventDetail extends React.PureComponent {
           onPress={this.onPressButton}
           message={this.state.message}
           disabled={this.state.disabled}
+        />
+
+        <ListFooter
+          title="Powered by the St. Olaf Calendar"
+          href={STO_CALENDAR_URL}
         />
       </ScrollView>
     )
