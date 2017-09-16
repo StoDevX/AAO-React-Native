@@ -166,33 +166,20 @@ const Title = () => {
   )
 }
 
-class PlayPauseButton extends React.PureComponent {
-  props: {
-    paused: boolean,
-    onPress: () => any,
-  }
-
-  render() {
-    const {paused, onPress} = this.props
-    return (
-      <Touchable
-        style={buttonStyles.button}
-        hightlight={false}
-        onPress={onPress}
-      >
-        <View style={buttonStyles.buttonWrapper}>
-          <Icon
-            style={buttonStyles.icon}
-            name={paused ? 'ios-play' : 'ios-pause'}
-          />
-          <Text style={buttonStyles.action}>
-            {paused ? 'Listen' : 'Pause'}
-          </Text>
-        </View>
-      </Touchable>
-    )
-  }
+type ActionButtonProps = {
+  icon: string,
+  text: string,
+  onPress: () => any,
 }
+const ActionButton = ({icon, text, onPress}: ActionButtonProps) =>
+  <Touchable style={buttonStyles.button} hightlight={false} onPress={onPress}>
+    <View style={buttonStyles.buttonWrapper}>
+      <Icon style={buttonStyles.icon} name={icon} />
+      <Text style={buttonStyles.action}>
+        {text}
+      </Text>
+    </View>
+  </Touchable>
 
 const styles = StyleSheet.create({
   root: {
