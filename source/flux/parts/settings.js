@@ -14,9 +14,15 @@ import {setAnalyticsOptOut, getAnalyticsOptOut} from '../../lib/storage'
 import {updateBalances} from './sis'
 
 export const SET_LOGIN_CREDENTIALS = 'settings/SET_LOGIN_CREDENTIALS'
-export const CREDENTIALS_LOGIN = 'settings/CREDENTIALS_LOGIN'
+export const CREDENTIALS_LOGIN_START = 'settings/CREDENTIALS_LOGIN_START'
+export const CREDENTIALS_LOGIN_SUCCESS = 'settings/CREDENTIALS_LOGIN_SUCCESS'
+export const CREDENTIALS_LOGIN_FAILURE = 'settings/CREDENTIALS_LOGIN_FAILURE'
 export const CREDENTIALS_LOGOUT = 'settings/CREDENTIALS_LOGOUT'
-export const CREDENTIALS_VALIDATE = 'settings/CREDENTIALS_VALIDATE'
+export const CREDENTIALS_VALIDATE_START = 'settings/CREDENTIALS_VALIDATE_START'
+export const CREDENTIALS_VALIDATE_SUCCESS =
+  'settings/CREDENTIALS_VALIDATE_SUCCESS'
+export const CREDENTIALS_VALIDATE_FAILURE =
+  'settings/CREDENTIALS_VALIDATE_FAILURE'
 export const SET_FEEDBACK = 'settings/SET_FEEDBACK'
 export const CHANGE_THEME = 'settings/CHANGE_THEME'
 
@@ -36,12 +42,15 @@ export async function setLoginCredentials(username: string, password: string) {
 
 export function logInViaCredentials(username: string, password: string) {
   return async (dispatch: any => any) => {
+    dispatch({type: CREDENTIALS_LOGIN_START})
     const result = await performLogin(username, password)
-    dispatch({type: CREDENTIALS_LOGIN, payload: {username, password, result}})
 
-    // if we logged in successfully, go ahead and fetch the meals remaining number
     if (result) {
+      dispatch({type: CREDENTIALS_LOGIN_SUCCESS, payload: {username, password}})
+      // since we logged in successfully, go ahead and fetch the meals info
       dispatch(updateBalances())
+    } else {
+      dispatch({type: CREDENTIALS_LOGIN_FAILURE})
     }
   }
 }
@@ -50,37 +59,74 @@ export function logOutViaCredentials() {
   return {type: CREDENTIALS_LOGOUT, payload: clearLoginCredentials()}
 }
 
-export async function validateLoginCredentials(
-  username?: string,
-  password?: string,
-) {
-  const result = await performLogin(username, password)
-  return {type: CREDENTIALS_VALIDATE, payload: {result}}
+export function validateLoginCredentials(username?: string, password?: string) {
+  return async (dispatch: any => any) => {
+    if (!username || !password) {
+      return
+    }
+
+    dispatch({type: CREDENTIALS_VALIDATE_START})
+
+
+    const result = await performLogin(username, password)
+    if (result) {
+      dispatch({type: CREDENTIALS_VALIDATE_SUCCESS})
+    } else {
+      dispatch({type: CREDENTIALS_VALIDATE_FAILURE})
+    }
+  }
 }
 
-const initialCredentialsState = {
+export type LoginStateType = 'logged-out' | 'logged-in' | 'checking' | 'invalid'
+export type CredentialsState = {
+  username: string,
+  password: string,
+  state: LoginStateType,
+}
+
+const initialCredentialsState: CredentialsState = {
   username: '',
   password: '',
-  error: null,
-  valid: false,
+  state: 'logged-out',
 }
-function credentialsReducer(state = initialCredentialsState, action) {
-  const {type, payload, error} = action
+
+function credentialsReducer(
+  state: CredentialsState = initialCredentialsState,
+  action,
+) {
+  const {type, payload} = action
 
   switch (type) {
-    case CREDENTIALS_VALIDATE: {
-      if (error === true || payload.result === false) {
-        return {
-          ...state,
-          valid: false,
-          error: payload.message,
-        }
-      }
+    case CREDENTIALS_VALIDATE_START:
+      return {...state, state: 'checking'}
 
+    case CREDENTIALS_VALIDATE_SUCCESS:
+      return {...state, state: 'logged-in'}
+
+    case CREDENTIALS_VALIDATE_FAILURE:
+      return {...state, state: 'invalid'}
+
+    case CREDENTIALS_LOGIN_START:
+      return {...state, state: 'checking'}
+
+    case CREDENTIALS_LOGIN_SUCCESS: {
       return {
         ...state,
-        valid: true,
-        error: null,
+        state: 'logged-in',
+        username: payload.username,
+        password: payload.password,
+      }
+    }
+
+    case CREDENTIALS_LOGIN_FAILURE:
+      return {...state, state: 'invalid'}
+
+    case CREDENTIALS_LOGOUT: {
+      return {
+        ...state,
+        state: 'logged-out',
+        username: '',
+        password: '',
       }
     }
 
@@ -89,34 +135,6 @@ function credentialsReducer(state = initialCredentialsState, action) {
         ...state,
         username: payload.username,
         password: payload.password,
-      }
-    }
-
-    case CREDENTIALS_LOGIN: {
-      if (error === true || payload.result === false) {
-        return {
-          ...state,
-          valid: false,
-          error: payload.message,
-        }
-      }
-
-      return {
-        ...state,
-        valid: true,
-        error: null,
-        username: payload.username,
-        password: payload.password,
-      }
-    }
-
-    case CREDENTIALS_LOGOUT: {
-      return {
-        ...state,
-        username: '',
-        password: '',
-        valid: false,
-        error: null,
       }
     }
 
