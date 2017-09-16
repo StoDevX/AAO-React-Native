@@ -70,10 +70,31 @@ export default class KSTOView extends React.PureComponent<void, void, State> {
   }
 
   render() {
+    const sideways = this.state.viewport.width > this.state.viewport.height
+
+    const logoWidth = Math.min(
+      this.state.viewport.width / 1.5,
+      this.state.viewport.height / 1.75,
+    )
+
+    const logoSize = {
+      width: logoWidth,
+      height: logoWidth,
+    }
+
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          <Logo />
+      <ScrollView
+        contentContainerStyle={[styles.root, sideways && landscape.root]}
+      >
+        <View style={[styles.logoWrapper, sideways && landscape.logoWrapper]}>
+          <Image
+            source={image}
+            style={[styles.logo, logoSize]}
+            resizeMode="contain"
+          />
+        </View>
+
+        <View style={[styles.container, sideways && landscape.container]}>
           <PlayPauseButton
             onPress={this.changeControl}
             paused={this.state.paused}
@@ -93,19 +114,6 @@ export default class KSTOView extends React.PureComponent<void, void, State> {
       </ScrollView>
     )
   }
-}
-
-const Logo = () => {
-  const viewport = Dimensions.get('window')
-  const style = {
-    maxWidth: viewport.width / 1.2,
-    maxHeight: viewport.height / 2.0,
-  }
-  return (
-    <View style={styles.wrapper}>
-      <Image source={image} style={style} />
-    </View>
-  )
 }
 
 const Title = () => {
@@ -151,11 +159,20 @@ class PlayPauseButton extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  root: {
+  },
   container: {
     alignItems: 'center',
   },
-  wrapper: {
-    padding: 10,
+  logoWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  logo: {
+    borderRadius: 6,
+    borderColor: c.kstoSecondaryDark,
+    borderWidth: 3,
   },
   heading: {
     marginTop: 10,
