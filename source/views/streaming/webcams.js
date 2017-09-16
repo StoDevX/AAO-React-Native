@@ -110,10 +110,12 @@ class StreamThumbnail extends React.PureComponent {
 
   handlePress = () => {
     const {streamUrl, name, pageUrl} = this.props.webcam
-    if (Platform.OS === 'android') {
+    if (Platform.OS === 'ios') {
+      trackedOpenUrl({url: streamUrl, id: `${name}WebcamView`})
+    } else if (Platform.OS === 'android') {
       trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
     } else {
-      trackedOpenUrl({url: streamUrl, id: `${name}WebcamView`})
+      trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
     }
   }
 
