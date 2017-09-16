@@ -17,7 +17,7 @@ import noop from 'lodash/noop'
 type Props = {
   initialUsername: string,
   initialPassword: string,
-  state: LoginStateType,
+  loginState: LoginStateType,
 
   logIn: (username: string, password: string) => any,
   logOut: () => any,
@@ -43,9 +43,7 @@ class CredentialsLoginSection extends React.PureComponent<void, Props, State> {
   focusPassword = () => this._passwordInput.focus()
 
   logIn = async () => {
-    this.setState({loading: true})
     await this.props.logIn(this.state.username, this.state.password)
-    this.setState({loading: false})
   }
 
   logOut = () => {
