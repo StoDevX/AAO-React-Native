@@ -139,27 +139,26 @@ class StreamThumbnail extends React.PureComponent {
         : transparentPixel
 
     return (
-      <View style={styles.cell}>
-        <Touchable
-          highlight={true}
-          underlayColor={baseColor}
-          activeOpacity={0.7}
-          onPress={this.handlePress}
-        >
-          <Image source={img} style={styles.image}>
-            <View style={styles.titleWrapper}>
-              <LinearGradient
-                colors={[startColor, baseColor]}
-                locations={[0, 0.8]}
-              >
-                <Text style={[styles.titleText, {color: textColor}]}>
-                  {name}
-                </Text>
-              </LinearGradient>
-            </View>
-          </Image>
-        </Touchable>
-      </View>
+      <Touchable
+        highlight={true}
+        underlayColor={baseColor}
+        activeOpacity={0.7}
+        onPress={this.handlePress}
+        containerStyle={styles.cell}
+      >
+        <Image source={img} style={styles.image}>
+          <View style={styles.titleWrapper}>
+            <LinearGradient
+              colors={[startColor, baseColor]}
+              locations={[0, 0.8]}
+            >
+              <Text style={[styles.titleText, {color: textColor}]}>
+                {name}
+              </Text>
+            </LinearGradient>
+          </View>
+        </Image>
+      </Touchable>
     )
   }
 }
