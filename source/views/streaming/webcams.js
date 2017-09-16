@@ -5,14 +5,9 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  Image,
-  Platform,
-} from 'react-native'
+import {StyleSheet, View, Text, FlatList, Image, Platform} from 'react-native'
+import delay from 'delay'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
@@ -20,6 +15,8 @@ import * as defaultData from '../../../docs/webcams.json'
 import {webcamImages} from '../../../images/webcam-images'
 import {trackedOpenUrl} from '../components/open-url'
 import LinearGradient from 'react-native-linear-gradient'
+
+const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/webcams.json'
 
 type WebcamType = {
   streamUrl: string,
@@ -29,36 +26,60 @@ type WebcamType = {
   accentColor: [number, number, number],
 }
 
-type DProps = {
-  webcams: Array<WebcamType>,
-}
-
-type Props = {
-  webcams: Array<WebcamType>,
-}
+type Props = {}
 
 type State = {
+  webcams: Array<WebcamType>,
   width: number,
+  loading: boolean,
+  refreshing: boolean,
 }
 
-export class WebcamsView extends React.PureComponent<DProps, Props, State> {
+export class WebcamsView extends React.PureComponent<void, Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Webcams',
     tabBarIcon: TabBarIcon('videocam'),
   }
 
-  static defaultProps = {
-    webcams: defaultData.data,
-  }
-
   state = {
+    webcams: defaultData.data,
+    loading: false,
+    refreshing: false,
   }
 
   componentWillMount() {
+    this.fetchData()
   }
 
+  refresh = async () => {
+    const start = Date.now()
+    this.setState(() => ({refreshing: true}))
 
+    await this.fetchData()
 
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    const elapsed = Date.now() - start
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState(() => ({refreshing: false}))
+  }
+
+  fetchData = async () => {
+    this.setState(() => ({loading: true}))
+
+    let {data: webcams} = await fetchJson(GITHUB_URL).catch(err => {
+      reportNetworkProblem(err)
+      return defaultData
+    })
+
+    if (process.env.NODE_ENV === 'development') {
+      webcams = defaultData.data
+    }
+
+    this.setState(() => ({webcams, loading: false}))
+  }
 
   renderItem = ({item}: {item: WebcamType}) =>
     <StreamThumbnail key={item.name} webcam={item} />
@@ -70,6 +91,8 @@ export class WebcamsView extends React.PureComponent<DProps, Props, State> {
       <FlatList
         keyExtractor={this.keyExtractor}
         renderItem={this.renderItem}
+        refreshing={this.state.refreshing}
+        onRefresh={this.refresh}
         data={this.props.webcams}
         numColumns={2}
         columnWrapperStyle={styles.row}
