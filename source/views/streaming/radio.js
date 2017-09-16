@@ -35,8 +35,6 @@ export default class KSTOView extends React.PureComponent<void, void, State> {
     tabBarIcon: TabBarIcon('radio'),
   }
 
-  player: Video
-
   state = {
     refreshing: false,
     paused: true,
@@ -67,7 +65,6 @@ export default class KSTOView extends React.PureComponent<void, void, State> {
 
           {!this.state.paused
             ? <Video
-                ref={ref => (this.player = ref)}
                 source={{uri: kstoStream}}
                 playInBackground={true}
                 playWhenInactive={true}
