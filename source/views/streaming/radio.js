@@ -153,18 +153,15 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
   }
 }
 
-const Title = () => {
-  return (
-    <View style={styles.titleWrapper}>
-      <Text selectable={true} style={styles.heading}>
-        St. Olaf College Radio
-      </Text>
-      <Text selectable={true} style={styles.subHeading}>
-        KSTO 93.1 FM
-      </Text>
-    </View>
-  )
-}
+const Title = () =>
+  <View style={styles.titleWrapper}>
+    <Text selectable={true} style={styles.heading}>
+      St. Olaf College Radio
+    </Text>
+    <Text selectable={true} style={styles.subHeading}>
+      KSTO 93.1 FM
+    </Text>
+  </View>
 
 type ActionButtonProps = {
   icon: string,
