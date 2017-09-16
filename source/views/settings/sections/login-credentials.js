@@ -8,6 +8,7 @@ import {
   logOutViaCredentials,
   validateLoginCredentials,
   setLoginCredentials,
+  type SettingsState,
 } from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
@@ -96,12 +97,11 @@ class CredentialsLoginSection extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state: {settings: SettingsState}) {
   return {
-    username: state.settings.credentials.username,
-    password: state.settings.credentials.password,
-    loggedIn: state.settings.credentials.valid,
-    message: state.settings.credentials.error,
+    initialUsername: state.settings.credentials.username,
+    initialPassword: state.settings.credentials.password,
+    loginState: state.settings.credentials.state,
   }
 }
 
