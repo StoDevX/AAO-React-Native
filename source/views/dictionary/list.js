@@ -15,6 +15,8 @@ import {
   ListSectionHeader,
   ListSeparator,
 } from '../components/list'
+import delay from 'delay'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 import LoadingView from '../components/loading'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
@@ -25,9 +27,10 @@ import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import isString from 'lodash/isString'
-import {data as terms} from '../../../docs/dictionary.json'
+import * as defaultData from '../../../docs/dictionary.json'
 import {SearchBar} from '../components/searchbar'
 
+const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/dictionary.json'
 const rowHeight = Platform.OS === 'ios' ? 76 : 89
 const headerHeight = Platform.OS === 'ios' ? 33 : 41
 
@@ -46,19 +49,59 @@ const styles = StyleSheet.create({
   },
 })
 
-export class DictionaryView extends React.Component {
+type Props = TopLevelViewPropsType
+
+type State = {
+  results: {[key: string]: Array<WordType>},
+}
+
+export class DictionaryView extends React.PureComponent<void, Props, State> {
   static navigationOptions = {
     title: 'Campus Dictionary',
     headerBackTitle: 'Dictionary',
   }
 
-  props: TopLevelViewPropsType
   searchBar: any
 
-  state: {
-    results: {[key: string]: Array<WordType>},
-  } = {
-    results: terms,
+  state = {
+    results: defaultData.data,
+    allTerms: defaultData.data,
+    loading: true,
+    refreshing: false,
+  }
+
+  componentWillMount() {
+    this.fetchData()
+  }
+
+  refresh = async () => {
+    const start = Date.now()
+    this.setState(() => ({refreshing: true}))
+
+    await this.fetchData()
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    const elapsed = Date.now() - start
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState(() => ({refreshing: false}))
+  }
+
+  fetchData = async () => {
+    this.setState(() => ({loading: true}))
+
+    let {data: allTerms} = await fetchJson(GITHUB_URL).catch(err => {
+      reportNetworkProblem(err)
+      return defaultData
+    })
+
+    if (process.env.NODE_ENV === 'development') {
+      allTerms = defaultData.data
+    }
+
+    this.setState(() => ({allTerms, loading: false}))
   }
 
   onPressRow = (data: WordType) => {
@@ -105,13 +148,13 @@ export class DictionaryView extends React.Component {
   _performSearch = (text: string) => {
     // Android clear button returns an object
     if (!isString(text)) {
-      this.setState({results: terms})
+      this.setState(state => ({results: state.allTerms}))
       return
     }
 
     const query = text.toLowerCase()
-    this.setState(() => ({
-      results: terms.filter(term =>
+    this.setState(state => ({
+      results: state.allTerms.filter(term =>
         this.termToArray(term).some(word => word.startsWith(query)),
       ),
     }))
@@ -123,7 +166,7 @@ export class DictionaryView extends React.Component {
   performSearch = debounce(this._performSearch, 50)
 
   render() {
-    if (!terms) {
+    if (this.state.loading) {
       return <LoadingView />
     }
 

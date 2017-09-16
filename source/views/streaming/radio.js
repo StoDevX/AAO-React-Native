@@ -18,8 +18,10 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import Video from 'react-native-video'
 import {Touchable} from '../components/touchable'
 import {TabBarIcon} from '../components/tabbar-icon'
+import {promiseTimeout} from '../../lib/promise-timeout'
 
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
+const kstoStatus = 'https://cdn.stobcm.com/radio/ksto1.stream/chunklist.3mu8'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
 type Viewport = {
@@ -27,12 +29,14 @@ type Viewport = {
   height: number,
 }
 
+type PlayState = 'paused' | 'playing' | 'checking'
+
 type Props = {}
 
 type State = {
-  refreshing: boolean,
-  paused: boolean,
+  playState: PlayState,
   streamError: ?Object,
+  uplinkError: ?string,
   viewport: Viewport,
 }
 
@@ -43,9 +47,9 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
   }
 
   state = {
-    refreshing: false,
-    paused: true,
+    playState: 'paused',
     streamError: null,
+    uplinkError: null,
     viewport: Dimensions.get('window'),
   }
 
@@ -61,14 +65,67 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
     this.setState(() => ({viewport: event.window}))
   }
 
-  changeControl = () => {
-    this.setState(state => ({paused: !state.paused}))
+  // check the stream uplink status
+  isUplinkUp = async () => {
+    try {
+      await promiseTimeout(6000, fetch(kstoStatus))
+      return true
+    } catch (err) {
+      return false
+    }
+  }
+
+  onPlay = async () => {
+    this.setState(() => ({playState: 'checking'}))
+
+    const uplinkStatus = await this.isUplinkUp()
+
+    if (uplinkStatus) {
+      this.setState(() => ({playState: 'playing'}))
+    } else {
+      this.setState(() => ({
+        playState: 'paused',
+        uplinkError: 'The KSTO stream is down. Sorry!',
+      }))
+    }
+  }
+
+  onPause = () => {
+    this.setState(() => ({
+      playState: 'paused',
+      uplinkError: null,
+    }))
   }
 
   // error from react-native-video
   onError = (e: any) => {
-    this.setState(() => ({streamError: e, paused: true}))
-    console.log(e)
+    this.setState(() => ({streamError: e, playState: 'paused'}))
+  }
+
+  renderButton = (state: PlayState) => {
+    switch (state) {
+      case 'paused':
+        return (
+          <ActionButton icon="ios-play" text="Listen" onPress={this.onPlay} />
+        )
+
+      case 'checking':
+        return (
+          <ActionButton
+            icon="ios-more"
+            text="Starting"
+            onPress={this.onPause}
+          />
+        )
+
+      case 'playing':
+        return (
+          <ActionButton icon="ios-pause" text="Pause" onPress={this.onPause} />
+        )
+
+      default:
+        return <ActionButton icon="ios-bug" text="Error" onPress={() => {}} />
+    }
   }
 
   render() {
@@ -83,6 +140,12 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
       width: logoWidth,
       height: logoWidth,
     }
+
+    const error = this.state.uplinkError
+      ? <Text style={styles.status}>{this.state.uplinkError}</Text>
+      : null
+
+    const button = this.renderButton(this.state.playState)
 
     return (
       <ScrollView
@@ -99,17 +162,15 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
         <View style={styles.container}>
           <Title />
 
-          <PlayPauseButton
-            onPress={this.changeControl}
-            paused={this.state.paused}
-          />
+          {error}
+          {button}
 
-          {!this.state.paused
+          {this.state.playState === 'playing'
             ? <Video
                 source={{uri: kstoStream}}
                 playInBackground={true}
                 playWhenInactive={true}
-                paused={this.state.paused}
+                paused={this.state.playState !== 'playing'}
                 onError={this.onError}
               />
             : null}
@@ -119,46 +180,30 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
   }
 }
 
-const Title = () => {
-  return (
-    <View style={styles.titleWrapper}>
-      <Text selectable={true} style={styles.heading}>
-        St. Olaf College Radio
-      </Text>
-      <Text selectable={true} style={styles.subHeading}>
-        KSTO 93.1 FM
+const Title = () =>
+  <View style={styles.titleWrapper}>
+    <Text selectable={true} style={styles.heading}>
+      St. Olaf College Radio
+    </Text>
+    <Text selectable={true} style={styles.subHeading}>
+      KSTO 93.1 FM
+    </Text>
+  </View>
+
+type ActionButtonProps = {
+  icon: string,
+  text: string,
+  onPress: () => any,
+}
+const ActionButton = ({icon, text, onPress}: ActionButtonProps) =>
+  <Touchable style={buttonStyles.button} hightlight={false} onPress={onPress}>
+    <View style={buttonStyles.buttonWrapper}>
+      <Icon style={buttonStyles.icon} name={icon} />
+      <Text style={buttonStyles.action}>
+        {text}
       </Text>
     </View>
-  )
-}
-
-class PlayPauseButton extends React.PureComponent {
-  props: {
-    paused: boolean,
-    onPress: () => any,
-  }
-
-  render() {
-    const {paused, onPress} = this.props
-    return (
-      <Touchable
-        style={buttonStyles.button}
-        hightlight={false}
-        onPress={onPress}
-      >
-        <View style={buttonStyles.buttonWrapper}>
-          <Icon
-            style={buttonStyles.icon}
-            name={paused ? 'ios-play' : 'ios-pause'}
-          />
-          <Text style={buttonStyles.action}>
-            {paused ? 'Listen' : 'Pause'}
-          </Text>
-        </View>
-      </Touchable>
-    )
-  }
-}
+  </Touchable>
 
 const styles = StyleSheet.create({
   root: {
@@ -199,6 +244,12 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     fontSize: 28,
     textAlign: 'center',
+  },
+  status: {
+    paddingTop: 10,
+    fontWeight: '400',
+    fontSize: 24,
+    color: c.grapefruit,
   },
 })
 

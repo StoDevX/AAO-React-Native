@@ -23,7 +23,6 @@ import {
 } from './views/building-hours'
 import TransportationView, {BusMapView} from './views/transportation'
 import SettingsView from './views/settings'
-import SISLoginView from './views/settings/login'
 import CreditsView from './views/settings/credits'
 import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
@@ -73,7 +72,6 @@ export const AppNavigator = StackNavigator(
     NewsView: {screen: NewsView},
     PrivacyView: {screen: PrivacyView},
     SettingsView: {screen: SettingsView},
-    SISLoginView: {screen: SISLoginView},
     SISView: {screen: SISView},
     // SnapshotsView: {screen: SnapshotsView},
     StreamingView: {screen: StreamingView},

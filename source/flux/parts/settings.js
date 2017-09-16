@@ -9,22 +9,21 @@ import {
   clearLoginCredentials,
 } from '../../lib/login'
 
-import {
-  setTokenValid,
-  clearTokenValid,
-  setAnalyticsOptOut,
-  getAnalyticsOptOut,
-} from '../../lib/storage'
+import {setAnalyticsOptOut, getAnalyticsOptOut} from '../../lib/storage'
 
-import {updateBalances, updateCourses} from './sis'
+import {updateBalances} from './sis'
 
 export const SET_LOGIN_CREDENTIALS = 'settings/SET_LOGIN_CREDENTIALS'
-export const CREDENTIALS_LOGIN = 'settings/CREDENTIALS_LOGIN'
+export const CREDENTIALS_LOGIN_START = 'settings/CREDENTIALS_LOGIN_START'
+export const CREDENTIALS_LOGIN_SUCCESS = 'settings/CREDENTIALS_LOGIN_SUCCESS'
+export const CREDENTIALS_LOGIN_FAILURE = 'settings/CREDENTIALS_LOGIN_FAILURE'
 export const CREDENTIALS_LOGOUT = 'settings/CREDENTIALS_LOGOUT'
-export const CREDENTIALS_VALIDATE = 'settings/CREDENTIALS_VALIDATE'
+export const CREDENTIALS_VALIDATE_START = 'settings/CREDENTIALS_VALIDATE_START'
+export const CREDENTIALS_VALIDATE_SUCCESS =
+  'settings/CREDENTIALS_VALIDATE_SUCCESS'
+export const CREDENTIALS_VALIDATE_FAILURE =
+  'settings/CREDENTIALS_VALIDATE_FAILURE'
 export const SET_FEEDBACK = 'settings/SET_FEEDBACK'
-export const TOKEN_LOGIN = 'settings/TOKEN_LOGIN'
-export const TOKEN_LOGOUT = 'settings/TOKEN_LOGOUT'
 export const CHANGE_THEME = 'settings/CHANGE_THEME'
 
 export async function setFeedbackStatus(feedbackEnabled: boolean) {
@@ -43,24 +42,15 @@ export async function setLoginCredentials(username: string, password: string) {
 
 export function logInViaCredentials(username: string, password: string) {
   return async (dispatch: any => any) => {
+    dispatch({type: CREDENTIALS_LOGIN_START})
     const result = await performLogin(username, password)
-    dispatch({type: CREDENTIALS_LOGIN, payload: {username, password, result}})
 
-    // if we logged in successfully, go ahead and fetch the meals remaining number
     if (result) {
+      dispatch({type: CREDENTIALS_LOGIN_SUCCESS, payload: {username, password}})
+      // since we logged in successfully, go ahead and fetch the meals info
       dispatch(updateBalances())
-    }
-  }
-}
-
-export function logInViaToken(tokenStatus: boolean) {
-  return async (dispatch: any => any) => {
-    await setTokenValid(tokenStatus)
-    dispatch({type: TOKEN_LOGIN, payload: tokenStatus})
-
-    // if we logged in successfully, go ahead and fetch the data that requires a valid token
-    if (tokenStatus) {
-      dispatch(updateCourses())
+    } else {
+      dispatch({type: CREDENTIALS_LOGIN_FAILURE})
     }
   }
 }
@@ -69,42 +59,73 @@ export function logOutViaCredentials() {
   return {type: CREDENTIALS_LOGOUT, payload: clearLoginCredentials()}
 }
 
-export async function validateLoginCredentials(
-  username?: string,
-  password?: string,
-) {
-  const result = await performLogin(username, password)
-  return {type: CREDENTIALS_VALIDATE, payload: {result}}
+export function validateLoginCredentials(username?: string, password?: string) {
+  return async (dispatch: any => any) => {
+    if (!username || !password) {
+      return
+    }
+
+    dispatch({type: CREDENTIALS_VALIDATE_START})
+
+    const result = await performLogin(username, password)
+    if (result) {
+      dispatch({type: CREDENTIALS_VALIDATE_SUCCESS})
+    } else {
+      dispatch({type: CREDENTIALS_VALIDATE_FAILURE})
+    }
+  }
 }
 
-export async function logOutViaToken() {
-  await clearTokenValid()
-  return {type: TOKEN_LOGOUT}
+export type LoginStateType = 'logged-out' | 'logged-in' | 'checking' | 'invalid'
+export type CredentialsState = {
+  username: string,
+  password: string,
+  state: LoginStateType,
 }
 
-const initialCredentialsState = {
+const initialCredentialsState: CredentialsState = {
   username: '',
   password: '',
-  error: null,
-  valid: false,
+  state: 'logged-out',
 }
-function credentialsReducer(state = initialCredentialsState, action) {
-  const {type, payload, error} = action
+
+function credentialsReducer(
+  state: CredentialsState = initialCredentialsState,
+  action,
+) {
+  const {type, payload} = action
 
   switch (type) {
-    case CREDENTIALS_VALIDATE: {
-      if (error === true || payload.result === false) {
-        return {
-          ...state,
-          valid: false,
-          error: payload.message,
-        }
-      }
+    case CREDENTIALS_VALIDATE_START:
+      return {...state, state: 'checking'}
 
+    case CREDENTIALS_VALIDATE_SUCCESS:
+      return {...state, state: 'logged-in'}
+
+    case CREDENTIALS_VALIDATE_FAILURE:
+      return {...state, state: 'invalid'}
+
+    case CREDENTIALS_LOGIN_START:
+      return {...state, state: 'checking'}
+
+    case CREDENTIALS_LOGIN_SUCCESS: {
       return {
         ...state,
-        valid: true,
-        error: null,
+        state: 'logged-in',
+        username: payload.username,
+        password: payload.password,
+      }
+    }
+
+    case CREDENTIALS_LOGIN_FAILURE:
+      return {...state, state: 'invalid'}
+
+    case CREDENTIALS_LOGOUT: {
+      return {
+        ...state,
+        state: 'logged-out',
+        username: '',
+        password: '',
       }
     }
 
@@ -116,93 +137,34 @@ function credentialsReducer(state = initialCredentialsState, action) {
       }
     }
 
-    case CREDENTIALS_LOGIN: {
-      if (error === true || payload.result === false) {
-        return {
-          ...state,
-          valid: false,
-          error: payload.message,
-        }
-      }
-
-      return {
-        ...state,
-        valid: true,
-        error: null,
-        username: payload.username,
-        password: payload.password,
-      }
-    }
-
-    case CREDENTIALS_LOGOUT: {
-      return {
-        ...state,
-        username: '',
-        password: '',
-        valid: false,
-        error: null,
-      }
-    }
-
     default:
       return state
   }
 }
 
-const initialTokenState = {
-  status: false,
-  error: null,
-  valid: false,
-}
-function tokenReducer(state = initialTokenState, action) {
-  const {type, payload, error} = action
-  switch (type) {
-    case TOKEN_LOGIN: {
-      if (error === true) {
-        return {
-          ...state,
-          valid: false,
-          error: payload,
-          status: false,
-        }
-      }
-
-      return {
-        ...state,
-        valid: payload === true,
-        error: null,
-        status: payload,
-      }
-    }
-
-    case TOKEN_LOGOUT: {
-      return {
-        ...state,
-        valid: false,
-        error: null,
-        status: false,
-      }
-    }
-
-    default:
-      return state
-  }
+export type SettingsState = {
+  theme: string,
+  dietaryPreferences: [],
+  credentials: CredentialsState,
+  feedbackDisabled: boolean,
 }
 
-const initialSettingsState = {
+const initialSettingsState: SettingsState = {
   theme: 'All About Olaf',
   dietaryPreferences: [],
 
-  credentials: undefined,
-  token: undefined,
+  credentials: initialCredentialsState,
   feedbackDisabled: false,
 }
-export function settings(state: Object = initialSettingsState, action: Object) {
+
+export function settings(
+  state: SettingsState = initialSettingsState,
+  action: Object,
+) {
   // start out by running the reducers for the complex chunks of the state
   state = {
     ...state,
     credentials: credentialsReducer(state.credentials, action),
-    token: tokenReducer(state.token, action),
   }
 
   const {type, payload} = action
