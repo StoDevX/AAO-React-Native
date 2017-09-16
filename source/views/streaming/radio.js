@@ -95,11 +95,12 @@ export default class KSTOView extends React.PureComponent<void, void, State> {
         </View>
 
         <View style={[styles.container, sideways && landscape.container]}>
+          <Title />
+
           <PlayPauseButton
             onPress={this.changeControl}
             paused={this.state.paused}
           />
-          <Title />
 
           {!this.state.paused
             ? <Video
