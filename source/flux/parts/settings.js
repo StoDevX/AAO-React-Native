@@ -9,22 +9,15 @@ import {
   clearLoginCredentials,
 } from '../../lib/login'
 
-import {
-  setTokenValid,
-  clearTokenValid,
-  setAnalyticsOptOut,
-  getAnalyticsOptOut,
-} from '../../lib/storage'
+import {setAnalyticsOptOut, getAnalyticsOptOut} from '../../lib/storage'
 
-import {updateBalances, updateCourses} from './sis'
+import {updateBalances} from './sis'
 
 export const SET_LOGIN_CREDENTIALS = 'settings/SET_LOGIN_CREDENTIALS'
 export const CREDENTIALS_LOGIN = 'settings/CREDENTIALS_LOGIN'
 export const CREDENTIALS_LOGOUT = 'settings/CREDENTIALS_LOGOUT'
 export const CREDENTIALS_VALIDATE = 'settings/CREDENTIALS_VALIDATE'
 export const SET_FEEDBACK = 'settings/SET_FEEDBACK'
-export const TOKEN_LOGIN = 'settings/TOKEN_LOGIN'
-export const TOKEN_LOGOUT = 'settings/TOKEN_LOGOUT'
 export const CHANGE_THEME = 'settings/CHANGE_THEME'
 
 export async function setFeedbackStatus(feedbackEnabled: boolean) {
@@ -53,18 +46,6 @@ export function logInViaCredentials(username: string, password: string) {
   }
 }
 
-export function logInViaToken(tokenStatus: boolean) {
-  return async (dispatch: any => any) => {
-    await setTokenValid(tokenStatus)
-    dispatch({type: TOKEN_LOGIN, payload: tokenStatus})
-
-    // if we logged in successfully, go ahead and fetch the data that requires a valid token
-    if (tokenStatus) {
-      dispatch(updateCourses())
-    }
-  }
-}
-
 export function logOutViaCredentials() {
   return {type: CREDENTIALS_LOGOUT, payload: clearLoginCredentials()}
 }
@@ -75,11 +56,6 @@ export async function validateLoginCredentials(
 ) {
   const result = await performLogin(username, password)
   return {type: CREDENTIALS_VALIDATE, payload: {result}}
-}
-
-export async function logOutViaToken() {
-  await clearTokenValid()
-  return {type: TOKEN_LOGOUT}
 }
 
 const initialCredentialsState = {
