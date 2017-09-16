@@ -67,7 +67,6 @@ export function validateLoginCredentials(username?: string, password?: string) {
 
     dispatch({type: CREDENTIALS_VALIDATE_START})
 
-
     const result = await performLogin(username, password)
     if (result) {
       dispatch({type: CREDENTIALS_VALIDATE_SUCCESS})
