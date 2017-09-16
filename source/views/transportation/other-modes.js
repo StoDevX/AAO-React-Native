@@ -112,7 +112,7 @@ export default class OtherModesView extends React.PureComponent {
         keyExtractor={this.keyExtractor}
         renderItem={this.renderItem}
         refreshing={this.state.refreshing}
-        onRefresh={this.refreshing}
+        onRefresh={this.refresh}
         data={this.state.modes}
       />
     )
