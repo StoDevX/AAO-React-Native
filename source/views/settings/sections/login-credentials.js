@@ -9,15 +9,15 @@ import {
   validateLoginCredentials,
   setLoginCredentials,
   type SettingsState,
+  type LoginStateType,
 } from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
 
-type CredentialsSectionPropsType = {
-  username: string,
-  password: string,
-  loggedIn: boolean,
-  message: ?string,
+type Props = {
+  initialUsername: string,
+  initialPassword: string,
+  state: LoginStateType,
 
   logIn: (username: string, password: string) => any,
   logOut: () => any,
@@ -25,16 +25,18 @@ type CredentialsSectionPropsType = {
   setCredentials: (username: string, password: string) => any,
 }
 
-class CredentialsLoginSection extends React.Component {
-  props: CredentialsSectionPropsType
+type State = {
+  username: string,
+  password: string,
+}
 
+class CredentialsLoginSection extends React.PureComponent<void, Props, State> {
   _usernameInput: any
   _passwordInput: any
 
   state = {
-    loading: false,
-    username: this.props.username,
-    password: this.props.password,
+    username: this.props.initialUsername,
+    password: this.props.initialPassword,
   }
 
   focusUsername = () => this._usernameInput.focus()
@@ -57,8 +59,16 @@ class CredentialsLoginSection extends React.Component {
   onChangePassword = (text = '') => this.setState(() => ({password: text}))
 
   render() {
-    let {loggedIn, message} = this.props
-    let {loading, username, password} = this.state
+    const {loginState} = this.props
+    const {username, password} = this.state
+
+    const loading = loginState === 'checking'
+    const loggedIn = loginState === 'logged-in'
+
+    let message
+    if (loginState === 'invalid') {
+      message = 'Login failed'
+    }
 
     return (
       <Section
@@ -89,7 +99,7 @@ class CredentialsLoginSection extends React.Component {
           value={password}
         />
 
-        {message ? <Cell title={'⚠️ ' + message} /> : null}
+        {message ? <Cell title={`⚠️ ${message}`} /> : null}
 
         <LoginButton
           loggedIn={loggedIn}
