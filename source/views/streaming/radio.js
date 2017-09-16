@@ -22,11 +22,16 @@ import {TabBarIcon} from '../components/tabbar-icon'
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
+type Viewport = {
+  width: number,
+  height: number,
+}
+
 type State = {
   refreshing: boolean,
   paused: boolean,
   streamError: ?Object,
-  metadata: Object[],
+  viewport: Viewport,
 }
 
 export default class KSTOView extends React.PureComponent<void, void, State> {
@@ -39,7 +44,19 @@ export default class KSTOView extends React.PureComponent<void, void, State> {
     refreshing: false,
     paused: true,
     streamError: null,
-    metadata: [],
+    viewport: Dimensions.get('window'),
+  }
+
+  componentWillMount() {
+    Dimensions.addEventListener('change', this.handleResizeEvent)
+  }
+
+  componentWillUnmount() {
+    Dimensions.removeEventListener('change', this.handleResizeEvent)
+  }
+
+  handleResizeEvent = (event: {window: {width: number}}) => {
+    this.setState(() => ({viewport: event.window}))
   }
 
   changeControl = () => {
