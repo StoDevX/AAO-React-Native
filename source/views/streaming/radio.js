@@ -29,14 +29,14 @@ type Viewport = {
   height: number,
 }
 
+type PlayState = 'paused' | 'playing' | 'checking'
+
 type Props = {}
 
 type State = {
-  refreshing: boolean,
-  paused: boolean,
+  playState: PlayState,
   streamError: ?Object,
-  uplinkError: boolean,
-  message: string,
+  uplinkError: ?string,
   viewport: Viewport,
 }
 
@@ -47,11 +47,9 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
   }
 
   state = {
-    refreshing: false,
-    paused: true,
+    playState: 'paused',
     streamError: null,
-    uplinkError: false,
-    message: '',
+    uplinkError: null,
     viewport: Dimensions.get('window'),
   }
 
@@ -68,36 +66,66 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
   }
 
   // check the stream uplink status
-  fetchUplinkStatus = async () => {
+  isUplinkUp = async () => {
     try {
       await promiseTimeout(6000, fetch(kstoStatus))
-      this.setState(() => ({uplinkError: false, message: ''}))
+      return true
     } catch (err) {
-      this.setState(() => ({
-        uplinkError: true,
-        message: 'The KSTO stream is down. Sorry!',
-      }))
-    }
-
-    // If the stream is down or we had an error, pause the player
-    if (this.state.uplinkError) {
-      this.setState(() => ({paused: true}))
+      return false
     }
   }
 
-  changeControl = () => {
-    this.setState(state => ({paused: !state.paused}))
+  onPlay = async () => {
+    this.setState(() => ({playState: 'checking'}))
 
-    // If we try to play...
-    if (this.state.paused) {
-      // Fetch the uplink status
-      this.fetchUplinkStatus()
+    const uplinkStatus = await this.isUplinkUp()
+
+    if (uplinkStatus) {
+      this.setState(() => ({playState: 'playing'}))
+    } else {
+      this.setState(() => ({
+        playState: 'paused',
+        uplinkError: 'The KSTO stream is down. Sorry!',
+      }))
     }
+  }
+
+  onPause = () => {
+    this.setState(() => ({
+      playState: 'paused',
+      uplinkError: null,
+    }))
   }
 
   // error from react-native-video
   onError = (e: any) => {
-    this.setState(() => ({streamError: e, paused: true}))
+    this.setState(() => ({streamError: e, playState: 'paused'}))
+  }
+
+  renderButton = (state: PlayState) => {
+    switch (state) {
+      case 'paused':
+        return (
+          <ActionButton icon="ios-play" text="Listen" onPress={this.onPlay} />
+        )
+
+      case 'checking':
+        return (
+          <ActionButton
+            icon="ios-more"
+            text="Starting"
+            onPress={this.onPause}
+          />
+        )
+
+      case 'playing':
+        return (
+          <ActionButton icon="ios-pause" text="Pause" onPress={this.onPause} />
+        )
+
+      default:
+        return <ActionButton icon="ios-bug" text="Error" onPress={() => {}} />
+    }
   }
 
   render() {
@@ -113,9 +141,11 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
       height: logoWidth,
     }
 
-    const ErrorMessage = this.state.uplinkError
-      ? <Text style={styles.status}>{this.state.message}</Text>
+    const error = this.state.uplinkError
+      ? <Text style={styles.status}>{this.state.uplinkError}</Text>
       : null
+
+    const button = this.renderButton(this.state.playState)
 
     return (
       <ScrollView
@@ -130,20 +160,17 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
         </View>
 
         <View style={styles.container}>
-          {ErrorMessage}
           <Title />
 
-          <PlayPauseButton
-            onPress={this.changeControl}
-            paused={this.state.paused}
-          />
+          {error}
+          {button}
 
-          {!this.state.paused
+          {this.state.playState === 'playing'
             ? <Video
                 source={{uri: kstoStream}}
                 playInBackground={true}
                 playWhenInactive={true}
-                paused={this.state.paused}
+                paused={this.state.playState !== 'playing'}
                 onError={this.onError}
               />
             : null}
