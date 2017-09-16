@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   },
   status: {
     paddingTop: 10,
-    fontWeight: '500',
+    fontWeight: '400',
     fontSize: 24,
     color: c.grapefruit,
   },
