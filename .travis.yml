@@ -27,10 +27,9 @@ matrix:
 
     - &android-base
       os: linux
-      dist: precise
+      dist: trusty
       sudo: required
       language: android
-      jdk: oraclejdk8
       env: [ANDROID=yes, CAN_DEPLOY=yes]
       android:
         components:
