@@ -153,6 +153,20 @@ const styles = StyleSheet.create({
   },
 })
 
+const landscape = StyleSheet.create({
+  root: {
+    flex: 1,
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  container: {
+  },
+  logoWrapper: {
+    flex: 0,
+  },
+})
+
 const buttonStyles = StyleSheet.create({
   button: {
     alignItems: 'center',
