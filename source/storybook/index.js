@@ -101,7 +101,10 @@ export class SnapshotsView extends React.Component {
       },
     },
     contacts: {
-      list: {view: () => <ContactsView />, delay: 100},
+      list: {
+        view: () => <Nav>{props => <ContactsView {...props} />}</Nav>,
+        delay: 100,
+      },
     },
     dictionary: {
       list: {
