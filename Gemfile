@@ -1,6 +1,5 @@
 source "https://rubygems.org"
 
-gem "badge"
 gem "fastlane"
 gem "hockeyapp"
 gem "json"
