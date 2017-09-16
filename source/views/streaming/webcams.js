@@ -94,7 +94,7 @@ export class WebcamsView extends React.PureComponent<void, Props, State> {
         renderItem={this.renderItem}
         refreshing={this.state.refreshing}
         onRefresh={this.refresh}
-        data={this.props.webcams}
+        data={this.state.webcams}
         numColumns={2}
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.container}
