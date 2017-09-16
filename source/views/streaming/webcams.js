@@ -105,7 +105,6 @@ export class WebcamsView extends React.PureComponent<void, Props, State> {
 class StreamThumbnail extends React.PureComponent {
   props: {
     webcam: WebcamType,
-    textColor: 'white' | 'black',
   }
 
   handlePress = () => {
@@ -120,13 +119,16 @@ class StreamThumbnail extends React.PureComponent {
   }
 
   render() {
-    const {textColor} = this.props
-    const {name, thumbnail, accentColor} = this.props.webcam
+    const {
+      name,
+      thumbnail,
+      accentColor,
+      textColor,
+    } = this.props.webcam
 
     const [r, g, b] = accentColor
     const baseColor = `rgba(${r}, ${g}, ${b}, 1)`
     const startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
-    const actualTextColor = c[textColor]
 
 
     return (
@@ -143,7 +145,7 @@ class StreamThumbnail extends React.PureComponent {
                 colors={[startColor, baseColor]}
                 locations={[0, 0.8]}
               >
-                <Text style={[styles.titleText, {color: actualTextColor}]}>
+                <Text style={[styles.titleText, {color: textColor}]}>
                   {name}
                 </Text>
               </LinearGradient>
