@@ -1,11 +1,7 @@
-/**
- * @flow
- *
- * <ScheduleTable/> renders the table of schedules.
- */
+// @flow
 
 import React from 'react'
-import {View, StyleSheet} from 'react-native'
+import {Button, View, StyleSheet} from 'react-native'
 import {Card} from '../../components/card'
 import moment from 'moment-timezone'
 import type {NamedBuildingScheduleType} from '../types'
@@ -20,7 +16,7 @@ export class ScheduleTable extends React.PureComponent {
   }
 
   render() {
-    const {now, schedules} = this.props
+    const {now, schedules, onProblemReport} = this.props
     const dayOfWeek = getDayOfWeek(now)
 
     return (
@@ -46,6 +42,12 @@ export class ScheduleTable extends React.PureComponent {
             )}
           </Card>,
         )}
+
+        <Button
+          style={{marginHorizontal: 10}}
+          title="Suggest an Edit"
+          onPress={onProblemReport}
+        />
       </View>
     )
   }
