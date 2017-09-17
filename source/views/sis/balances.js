@@ -9,7 +9,7 @@ import {StyleSheet, ScrollView, View, Text, RefreshControl} from 'react-native'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
-import type {LoginStateType} from '../../../flux/parts/settings'
+import type {LoginStateType} from '../../flux/parts/settings'
 
 import {updateBalances} from '../../flux/parts/sis'
 
@@ -124,7 +124,7 @@ class BalancesView extends React.Component {
 
           {this.props.loginState !== 'logged-in' || this.props.message
             ? <Section footer="You'll need to log in again so we can update these numbers.">
-                {!this.props.credentialsValid
+                {this.props.loginState !== 'logged-in'
                   ? <Cell
                       cellStyle="Basic"
                       title="Log in with St. Olaf"
