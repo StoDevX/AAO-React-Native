@@ -30,7 +30,7 @@ class BalancesView extends React.Component {
     print: ?number,
     weeklyMeals: ?number,
     dailyMeals: ?number,
-    credentialsValid: boolean,
+    loginState: LoginState,
     message: ?string,
 
     updateBalances: boolean => any,
@@ -121,7 +121,7 @@ class BalancesView extends React.Component {
             </View>
           </Section>
 
-          {!this.props.credentialsValid || this.props.message
+          {this.props.loginState !== 'logged-in' || this.props.message
             ? <Section footer="You'll need to log in again so we can update these numbers.">
                 {!this.props.credentialsValid
                   ? <Cell
@@ -152,7 +152,7 @@ function mapStateToProps(state) {
     dailyMeals: state.sis.balances.daily,
     message: state.sis.balances.message,
 
-    credentialsValid: state.settings.credentials.valid,
+    loginState: state.settings.credentials.state,
   }
 }
 
