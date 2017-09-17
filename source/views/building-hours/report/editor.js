@@ -158,15 +158,6 @@ class DatePickerCell extends React.PureComponent {
     date: moment,
     title: string,
     onChange?: (date: moment) => any,
-    _ref?: (ref: any) => any,
-  }
-
-  _picker: any
-  openPicker = () => {} //this._picker.onPressDate()
-
-  setRef = (ref: any) => {
-    this._picker = ref
-    this.props._ref && this.props._ref(ref)
   }
 
   onChange = (newDate: moment) => {
@@ -177,7 +168,7 @@ class DatePickerCell extends React.PureComponent {
   render() {
     const {date, title} = this.props
     const accessory = (
-      <Date ref={this.setRef} date={date.toDate()} onChange={this.onChange} />
+      <Date date={date.toDate()} onChange={this.onChange} />
     )
 
     return (
