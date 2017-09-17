@@ -96,7 +96,7 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "25.0.3"
+    buildToolsVersion "26.0.1"
 
     defaultConfig {
         applicationId "com.allaboutolaf"
@@ -108,7 +108,7 @@ android {
             abiFilters "armeabi-v7a", "x86"
         }
         manifestPlaceholders = [
-            manifestApplicationId: "${applicationId}",
+            manifestApplicationId: applicationId,
             onesignal_app_id: "aa46a500-ab1c-4127-b9ff-e7373da3ce35",
             onesignal_google_project_number: "185558680648",
             gmaps_key: System.getenv("GMAPS_KEY") ?: "",
@@ -157,7 +157,7 @@ android {
 // borrowed from https://gist.github.com/gabrielemariotti/6856974
 def propFile = new File('android/app//signing.properties')
 if (propFile.canRead()) {
-    def Properties props = new Properties()
+    Properties props = new Properties()
     props.load(new FileInputStream(propFile))
     if (props != null
             && props.containsKey('STORE_FILE')
