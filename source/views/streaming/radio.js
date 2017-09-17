@@ -6,36 +6,33 @@
 
 import React from 'react'
 import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Text,
   Dimensions,
   Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  WebView,
 } from 'react-native'
 import * as c from '../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
-import Video from 'react-native-video'
 import {Touchable} from '../components/touchable'
 import {TabBarIcon} from '../components/tabbar-icon'
-import {promiseTimeout} from '../../lib/promise-timeout'
 
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
-const kstoStatus = 'https://cdn.stobcm.com/radio/ksto1.stream/chunklist.3mu8'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
-type Viewport = {
-  width: number,
-  height: number,
-}
+type Viewport = {width: number, height: number, }
 
-type PlayState = 'paused' | 'playing' | 'checking'
+type HtmlAudioError = {code: number, message: string}
+
+type PlayState = 'paused' | 'playing' | 'checking' | 'loading'
 
 type Props = {}
 
 type State = {
   playState: PlayState,
-  streamError: ?Object,
+  streamError: ?HtmlAudioError,
   uplinkError: ?string,
   viewport: Viewport,
 }
@@ -65,40 +62,27 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
     this.setState(() => ({viewport: event.window}))
   }
 
-  // check the stream uplink status
-  isUplinkUp = async () => {
-    try {
-      await promiseTimeout(6000, fetch(kstoStatus))
-      return true
-    } catch (err) {
-      return false
-    }
-  }
-
-  onPlay = async () => {
+  play = () => {
     this.setState(() => ({playState: 'checking'}))
-
-    const uplinkStatus = await this.isUplinkUp()
-
-    if (uplinkStatus) {
-      this.setState(() => ({playState: 'playing'}))
-    } else {
-      this.setState(() => ({
-        playState: 'paused',
-        uplinkError: 'The KSTO stream is down. Sorry!',
-      }))
-    }
   }
 
-  onPause = () => {
-    this.setState(() => ({
-      playState: 'paused',
-      uplinkError: null,
-    }))
+  pause = () => {
+    this.setState(() => ({playState: 'paused'}))
   }
 
-  // error from react-native-video
-  onError = (e: any) => {
+  handleStreamPlay = () => {
+    this.setState(() => ({playState: 'playing'}))
+  }
+
+  handleStreamPause = () => {
+    this.setState(() => ({playState: 'paused'}))
+  }
+
+  handleStreamEnd = () => {
+    this.setState(() => ({playState: 'paused'}))
+  }
+
+  handleStreamError = (e: {code: number, message: string}) => {
     this.setState(() => ({streamError: e, playState: 'paused'}))
   }
 
@@ -106,21 +90,17 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
     switch (state) {
       case 'paused':
         return (
-          <ActionButton icon="ios-play" text="Listen" onPress={this.onPlay} />
+          <ActionButton icon="ios-play" text="Listen" onPress={this.play} />
         )
 
       case 'checking':
         return (
-          <ActionButton
-            icon="ios-more"
-            text="Starting"
-            onPress={this.onPause}
-          />
+          <ActionButton icon="ios-more" text="Starting" onPress={this.pause} />
         )
 
       case 'playing':
         return (
-          <ActionButton icon="ios-pause" text="Pause" onPress={this.onPause} />
+          <ActionButton icon="ios-pause" text="Pause" onPress={this.pause} />
         )
 
       default:
@@ -143,7 +123,12 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
 
     const error = this.state.uplinkError
       ? <Text style={styles.status}>{this.state.uplinkError}</Text>
-      : null
+      : this.state.streamError
+        ? <Text style={styles.status}>
+            Error Code {this.state.streamError.code}:{' '}
+            {this.state.streamError.message}
+          </Text>
+        : null
 
     const button = this.renderButton(this.state.playState)
 
@@ -165,15 +150,15 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
           {error}
           {button}
 
-          {this.state.playState === 'playing'
-            ? <Video
-                source={{uri: kstoStream}}
-                playInBackground={true}
-                playWhenInactive={true}
-                paused={this.state.playState !== 'playing'}
-                onError={this.onError}
-              />
-            : null}
+          <StreamPlayer
+            playState={this.state.playState}
+            // onWaiting={this.handleStreamWait}
+            onEnded={this.handleStreamEnd}
+            // onStalled={this.handleStreamStall}
+            onPlay={this.handleStreamPlay}
+            onPause={this.handleStreamPause}
+            onError={this.handleStreamError}
+          />
         </View>
       </ScrollView>
     )
@@ -190,11 +175,200 @@ const Title = () =>
     </Text>
   </View>
 
+type StreamPlayerProps = {
+  playState: PlayState,
+  onWaiting?: () => any,
+  onEnded?: () => any,
+  onStalled?: () => any,
+  onPlay?: () => any,
+  onPause?: () => any,
+  onError?: HtmlAudioError => any,
+}
+
+type HtmlAudioState =
+  | 'waiting'
+  | 'ended'
+  | 'stalled'
+  | 'playing'
+  | 'play'
+  | 'pause'
+type HtmlAudioEvent =
+  | {type: HtmlAudioState}
+  | {type: 'error', error: HtmlAudioError}
+
+class StreamPlayer extends React.PureComponent<void, StreamPlayerProps, void> {
+  _webview: WebView
+
+  componentWillReceiveProps(nextProps: StreamPlayerProps) {
+    this.dispatchEvent(nextProps.playState)
+  }
+
+  componentWillUnmount() {
+    this.pause()
+  }
+
+  dispatchEvent = (nextPlayState: PlayState) => {
+    // console.log('<StreamPlayer> state changed to', nextPlayState)
+
+    switch (nextPlayState) {
+      case 'paused':
+        return this.pause()
+
+      case 'loading':
+      case 'checking':
+      case 'playing':
+        return this.play()
+
+      default:
+        return
+    }
+  }
+
+  handleMessage = (event: any) => {
+    const data: HtmlAudioEvent = JSON.parse(event.nativeEvent.data)
+
+    // console.log('<audio> dispatched event', data.type)
+
+    switch (data.type) {
+      case 'waiting':
+        return this.props.onWaiting && this.props.onWaiting()
+
+      case 'ended':
+        return this.props.onEnded && this.props.onEnded()
+
+      case 'stalled':
+        return this.props.onStalled && this.props.onStalled()
+
+      case 'pause':
+        return this.props.onPause && this.props.onPause()
+
+      case 'playing':
+      case 'play':
+        return this.props.onPlay && this.props.onPlay()
+
+      case 'error':
+        return this.props.onError && this.props.onError(data.error)
+
+      default:
+        return
+    }
+  }
+
+  pause = () => {
+    // console.log('sent "pause" message to <audio>')
+    this._webview.postMessage('pause')
+  }
+
+  play = () => {
+    // console.log('sent "play" message to <audio>')
+    this._webview.postMessage('play')
+  }
+
+  setRef = (ref: WebView) => (this._webview = ref)
+
+  html = url => `
+    <style>body {background-color: white;}</style>
+
+    <title>KSTO Stream</title>
+
+    <audio id="player" webkit-playsinline>
+      <source src="${url}" />
+    </audio>
+
+    <script>
+      var player = document.getElementById('player')
+
+      /////
+      /////
+
+      document.addEventListener('message', function(event) {
+        switch (event.data) {
+          case 'play':
+            player.play()
+            break
+
+          case 'pause':
+            player.pause()
+            break
+        }
+      })
+
+      /////
+      /////
+
+      function message(data) {
+        window.postMessage(JSON.stringify(data))
+      }
+
+      function send(event) {
+        message({type: event.type})
+      }
+
+      function error(event) {
+        message({
+          type: event.type,
+          error: {
+            code: event.target.error.code,
+            message: event.target.error.message,
+          },
+        })
+      }
+
+      /////
+      /////
+
+      // "waiting" is fired when playback has stopped because of a temporary
+      // lack of data.
+      player.addEventListener('waiting', send)
+
+      // "ended" is fired when playback or streaming has stopped because the
+      // end of the media was reached or because no further data is
+      // available.
+      player.addEventListener('ended', send)
+
+      // "stalled" is fired when the user agent is trying to fetch media data,
+      // but data is unexpectedly not forthcoming.
+      player.addEventListener('stalled', send)
+
+      // "playing" is fired when playback is ready to start after having been
+      // paused or delayed due to lack of data.
+      player.addEventListener('playing', send)
+
+      // "pause" is fired when playback has been paused.
+      player.addEventListener('pause', send)
+
+      // "play" is fired when playback has begun.
+      player.addEventListener('play', send)
+
+      // "error" is fired when an error occurs.
+      player.addEventListener('error', error)
+
+      /////
+      /////
+
+      player.play()
+    </script>`
+
+  render() {
+    return (
+      <WebView
+        ref={this.setRef}
+        mediaPlaybackRequiresUserAction={false}
+        allowsInlineMediaPlayback={true}
+        source={{html: this.html(kstoStream)}}
+        onMessage={this.handleMessage}
+        style={styles.webview}
+      />
+    )
+  }
+}
+
 type ActionButtonProps = {
   icon: string,
   text: string,
   onPress: () => any,
 }
+
 const ActionButton = ({icon, text, onPress}: ActionButtonProps) =>
   <Touchable style={buttonStyles.button} hightlight={false} onPress={onPress}>
     <View style={buttonStyles.buttonWrapper}>
@@ -250,6 +424,9 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 24,
     color: c.grapefruit,
+  },
+  webview: {
+    display: 'none',
   },
 })
 
