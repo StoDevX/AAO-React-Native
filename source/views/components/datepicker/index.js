@@ -61,9 +61,9 @@ type StyleSheetRules = Object | number | false | Array<StyleSheetRules>
 type Props = {
   androidMode: 'calendar' | 'spinner' | 'default',
   initialDate: Date,
-  duration?: number,
+  duration: number,
   format?: string,
-  height?: number,
+  height: number,
   minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
   mode: 'date' | 'datetime' | 'time',
   onDateChange: Date => any,

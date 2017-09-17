@@ -210,7 +210,6 @@ const Date = ({date, onChange, getRef}) => {
     <DatePicker
       ref={getRef}
       initialDate={date}
-      style={styles.datePicker}
       minuteInterval={5}
       mode="time"
       format={format}
