@@ -112,14 +112,13 @@ class WeekToggles extends React.PureComponent {
     const allDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
     return (
-      <Row justifyContent="center">
-        {allDays.map((day, i) =>
+      <Row justifyContent="center" alignItems="stretch">
+        {allDays.map(day =>
           <ToggleButton
             key={day}
             text={day}
             active={this.props.days.includes(day)}
             onPress={this.toggleDay}
-            style={i === allDays.length - 1 && styles.finalCell}
           />,
         )}
       </Row>
@@ -132,17 +131,16 @@ class ToggleButton extends React.PureComponent {
     active: boolean,
     text: string,
     onPress: (newState: string) => any,
-    style?: any,
   }
 
   onPress = () => this.props.onPress(this.props.text)
 
   render() {
-    const {text, style, active} = this.props
+    const {text, active} = this.props
     return (
       <Touchable
         highlight={false}
-        containerStyle={[style, styles.dayWrapper, active && styles.activeDay]}
+        containerStyle={[styles.dayWrapper, active && styles.activeDay]}
         onPress={this.onPress}
       >
         <Text style={[styles.dayText, active && styles.activeDayText]}>
@@ -229,9 +227,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 2,
     backgroundColor: c.white,
-  },
-  finalCell: {
-    borderRightWidth: 0,
   },
   activeDay: {
     backgroundColor: c.brickRed,
