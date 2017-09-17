@@ -182,8 +182,8 @@ export class StudentOrgsView extends React.Component {
       return
     }
 
+    const query = text.toLowerCase()
     this.setState(state => {
-      const query = text.toLowerCase()
       const filteredResults = filter(state.orgs, org =>
         orgToArray(org).some(word => word.startsWith(query)),
       )
