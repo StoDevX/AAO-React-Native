@@ -145,9 +145,17 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
         </View>
 
         <View style={styles.container}>
-          <Title />
+          <View style={styles.titleWrapper}>
+            <Text selectable={true} style={styles.heading}>
+              St. Olaf College Radio
+            </Text>
+            <Text selectable={true} style={styles.subHeading}>
+              KSTO 93.1 FM
+            </Text>
 
-          {error}
+            {error}
+          </View>
+
           {button}
 
           <StreamPlayer
@@ -164,16 +172,6 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
     )
   }
 }
-
-const Title = () =>
-  <View style={styles.titleWrapper}>
-    <Text selectable={true} style={styles.heading}>
-      St. Olaf College Radio
-    </Text>
-    <Text selectable={true} style={styles.subHeading}>
-      KSTO 93.1 FM
-    </Text>
-  </View>
 
 type StreamPlayerProps = {
   playState: PlayState,
@@ -420,10 +418,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   status: {
-    paddingTop: 10,
     fontWeight: '400',
-    fontSize: 24,
+    fontSize: 18,
+    textAlign: 'center',
     color: c.grapefruit,
+    marginTop: 15,
+    marginBottom: 5,
   },
   webview: {
     display: 'none',

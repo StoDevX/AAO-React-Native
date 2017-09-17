@@ -27,10 +27,9 @@ matrix:
 
     - &android-base
       os: linux
-      dist: precise
+      dist: trusty
       sudo: required
       language: android
-      jdk: oraclejdk8
       env: [ANDROID=yes, CAN_DEPLOY=yes]
       android:
         components:
@@ -39,7 +38,6 @@ matrix:
           - build-tools-23.0.1
           - build-tools-23.0.2
           - build-tools-25.0.1
-          - build-tools-23.0.3
           - build-tools-25.0.2
           - build-tools-25.0.3
           - build-tools-26.0.1
@@ -120,8 +118,6 @@ install:
 
   # install fastlane (if at first you don't succeed, try once more)
   - bundle install || bundle install
-
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install imagemagick; fi
 
 before_script:
   - if [[ $JS ]]; then greenkeeper-lockfile-update; fi
