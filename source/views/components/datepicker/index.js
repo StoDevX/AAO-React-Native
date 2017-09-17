@@ -66,7 +66,7 @@ type Props = {
   height?: number,
   minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
   mode: 'date' | 'datetime' | 'time',
-  onDateChange: (Date) => any,
+  onDateChange: Date => any,
   style?: StyleSheetRules,
 }
 
@@ -89,7 +89,7 @@ type TimePickerResponse = {
   hour: number,
   minute: number,
 }
-;[]
+
 export class DatePicker extends React.Component<any, Props, State> {
   static defaultProps = {
     mode: 'date',
@@ -221,10 +221,7 @@ export class DatePicker extends React.Component<any, Props, State> {
   }
 
   showAndroidPicker = () => {
-    const {
-      mode,
-      androidMode,
-    } = this.props
+    const {mode, androidMode} = this.props
 
     switch (mode) {
       case 'date': {
@@ -236,7 +233,7 @@ export class DatePicker extends React.Component<any, Props, State> {
       }
 
       case 'time': {
-        let timeMoment = moment(this.state.date)
+        const timeMoment = moment(this.state.date)
 
         TimePickerAndroid.open({
           hour: timeMoment.hour(),
@@ -271,20 +268,8 @@ export class DatePicker extends React.Component<any, Props, State> {
     }
   }
 
-  _renderios = () => {
+  _ios = () => {
     const {mode, minuteInterval} = this.props
-
-    const picker = (
-      <View pointerEvents={this.state.allowPointerEvents ? 'auto' : 'none'}>
-        <DatePickerIOS
-          date={this.state.date}
-          mode={mode}
-          onDateChange={this.onDateChange}
-          minuteInterval={minuteInterval}
-          style={[defaultStyle.datePicker]}
-        />
-      </View>
-    )
 
     const cancel = (
       <TouchableHighlight
@@ -332,7 +317,17 @@ export class DatePicker extends React.Component<any, Props, State> {
                   {height: this.state.animatedHeight},
                 ]}
               >
-                {picker}
+                <DatePickerIOS
+                  date={this.state.date}
+                  mode={mode}
+                  onDateChange={this.onDateChange}
+                  minuteInterval={minuteInterval}
+                  style={defaultStyle.datePicker}
+                  pointerEvents={
+                    this.state.allowPointerEvents ? 'auto' : 'none'
+                  }
+                />
+
                 {cancel}
                 {confirm}
               </Animated.View>
@@ -357,7 +352,7 @@ export class DatePicker extends React.Component<any, Props, State> {
             </Text>
           </View>
 
-          {Platform.OS === 'ios' && this._renderios()}
+          {Platform.OS === 'ios' && this._ios()}
         </View>
       </TouchableHighlight>
     )
