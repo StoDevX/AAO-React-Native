@@ -166,7 +166,6 @@ class StreamThumbnail extends React.PureComponent<void, ThumbnailProps, void> {
         underlayColor={baseColor}
         activeOpacity={0.7}
         onPress={this.handlePress}
-        containerStyle={[styles.cell]}
       >
         <Image source={img} style={[styles.image, {width, height}]}>
           <View style={styles.titleWrapper}>
