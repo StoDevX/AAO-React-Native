@@ -158,17 +158,30 @@ class DatePickerCell extends React.PureComponent {
     date: moment,
     title: string,
     onChange?: (date: moment) => any,
+    _ref?: (ref: any) => any,
+  }
+
+  _picker: any
+  openPicker = () => this._picker.onPressDate()
+
+  setRef = (ref: any) => {
+    this._picker = ref
+    this.props._ref && this.props._ref(ref)
   }
 
   onChange = (newDate: moment) => {
-    console.log(newDate)
     this.props.onChange && this.props.onChange(newDate)
   }
 
   render() {
     const {date, title} = this.props
     const accessory = (
-      <Date date={date.toDate()} onChange={this.onChange} />
+      <Date
+        getRef={this.setRef}
+        date={date.toDate()}
+        minuteInterval={5}
+        onChange={this.onChange}
+      />
     )
 
     return (
@@ -182,7 +195,7 @@ class DatePickerCell extends React.PureComponent {
   }
 }
 
-const Date = ({date, onChange}) => {
+const Date = ({date, onChange, getRef}) => {
   const format = 'h:mma'
 
   const callback = (newDate: Date) => {
@@ -197,8 +210,10 @@ const Date = ({date, onChange}) => {
 
   return (
     <DatePicker
+      ref={getRef}
       initialDate={date}
       style={styles.datePicker}
+      minuteInterval={5}
       mode="time"
       format={format}
       is24Hour={false}
@@ -214,8 +229,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 2,
     backgroundColor: c.white,
-    //borderRightWidth: StyleSheet.hairlineWidth,
-    //borderRightColor: c.iosSeparator,
   },
   finalCell: {
     borderRightWidth: 0,
