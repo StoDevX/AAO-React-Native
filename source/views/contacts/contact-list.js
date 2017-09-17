@@ -93,7 +93,7 @@ export class ContactsListView extends React.PureComponent<void, Props, State> {
   }
 
   renderSectionHeader = ({section: {title}}: any) =>
-    <ListSectionHeader title={title} spacing={{left: 10}} />
+    <ListSectionHeader title={title} />
 
   renderItem = ({item}: {item: ContactType}) =>
     <ContactRow contact={item} onPress={this.onPressContact} />
