@@ -22,7 +22,7 @@ import {TabBarIcon} from '../components/tabbar-icon'
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
-type Viewport = {width: number, height: number, }
+type Viewport = {width: number, height: number}
 
 type HtmlAudioError = {code: number, message: string}
 
