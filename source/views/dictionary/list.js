@@ -1,20 +1,10 @@
 // @flow
-/**
- * All About Olaf
- * Dictionary page
- */
+
 import React from 'react'
-import {StyleSheet, View, Platform} from 'react-native'
-import {StyledAlphabetListView} from '../components/alphabet-listview'
+import {StyleSheet, ScrollView, RefreshControl} from 'react-native'
+import {AlphabetSectionList} from '../components/alphabet-sectionlist'
 import debounce from 'lodash/debounce'
-import {Column} from '../components/layout'
-import {
-  Detail,
-  Title,
-  ListRow,
-  ListSectionHeader,
-  ListSeparator,
-} from '../components/list'
+import {ListSectionHeader, ListSeparator} from '../components/list'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import LoadingView from '../components/loading'
@@ -23,29 +13,19 @@ import type {TopLevelViewPropsType} from '../types'
 import {tracker} from '../../analytics'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
-import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
-import isString from 'lodash/isString'
-import * as defaultData from '../../../docs/dictionary.json'
+import toPairs from 'lodash/toPairs'
+import {DictionaryRow} from './row'
 import {SearchBar} from '../components/searchbar'
+import {NoticeView} from '../components/notice'
+import * as defaultData from '../../../docs/dictionary.json'
 
 const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/dictionary.json'
-const rowHeight = Platform.OS === 'ios' ? 76 : 89
-const headerHeight = Platform.OS === 'ios' ? 33 : 41
 
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-  },
-  row: {
-    height: rowHeight,
-  },
-  rowSectionHeader: {
-    height: headerHeight,
-  },
-  rowDetailText: {
-    fontSize: 14,
   },
 })
 
@@ -53,6 +33,28 @@ type Props = TopLevelViewPropsType
 
 type State = {
   results: {[key: string]: Array<WordType>},
+  allTerms: {[key: string]: Array<WordType>},
+  loading: boolean,
+  refreshing: boolean,
+}
+;[]
+
+const splitToArray = (str: string) => words(deburr(str.toLowerCase()))
+
+const termToArray = (term: WordType) =>
+  Array.from(
+    new Set([
+      ...splitToArray(term.word.toLowerCase()),
+      ...splitToArray(term.definition.toLowerCase()),
+    ]),
+  )
+
+const groupEntries = entries => {
+  const grouped = groupBy(entries, item => head(item.word))
+  return toPairs(grouped).map(([key, value]) => ({
+    title: key,
+    data: value,
+  }))
 }
 
 export class DictionaryView extends React.PureComponent<void, Props, State> {
@@ -104,50 +106,23 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
     this.setState(() => ({allTerms, loading: false}))
   }
 
-  onPressRow = (data: WordType) => {
-    tracker.trackEvent('dictionary', data.word)
-    this.props.navigation.navigate('DictionaryDetailView', {item: data})
+  onPressRow = (entry: WordType) => {
+    tracker.trackEvent('dictionary', entry.word)
+    this.props.navigation.navigate('DictionaryDetailView', {item: entry})
   }
 
-  renderRow = ({item}: {item: WordType}) => {
-    return (
-      <ListRow
-        onPress={() => this.onPressRow(item)}
-        contentContainerStyle={styles.row}
-        arrowPosition="none"
-      >
-        <Column>
-          <Title lines={1}>{item.word}</Title>
-          <Detail lines={2} style={styles.rowDetailText}>
-            {item.definition}
-          </Detail>
-        </Column>
-      </ListRow>
-    )
-  }
+  renderSectionHeader = ({section: {title}}: any) =>
+    // the proper type is ({section: {title}}: {section: {title: string}})
+    <ListSectionHeader title={title} />
 
-  renderHeader = ({title}: {title: string}) => {
-    return <ListSectionHeader title={title} style={styles.rowSectionHeader} />
-  }
+  renderItem = ({item}: {item: WordType}) =>
+    <DictionaryRow onPress={this.onPressRow} entry={item} />
 
-  renderSeparator = (sectionId: string, rowId: string) => {
-    return <ListSeparator key={`${sectionId}-${rowId}`} />
-  }
+  keyExtractor = (item: WordType) => item.word
 
-  splitToArray = (str: string) => {
-    return words(deburr(str.toLowerCase()))
-  }
-
-  termToArray = (term: WordType) => {
-    return uniq([
-      ...this.splitToArray(term.word),
-      ...this.splitToArray(term.definition),
-    ])
-  }
-
-  _performSearch = (text: string) => {
+  _performSearch = (text: string | Object) => {
     // Android clear button returns an object
-    if (!isString(text)) {
+    if (typeof text !== 'string') {
       this.setState(state => ({results: state.allTerms}))
       return
     }
@@ -155,7 +130,7 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
     const query = text.toLowerCase()
     this.setState(state => ({
       results: state.allTerms.filter(term =>
-        this.termToArray(term).some(word => word.startsWith(query)),
+        termToArray(term).some(word => word.startsWith(query)),
       ),
     }))
   }
@@ -171,29 +146,34 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
     }
 
     return (
-      <View style={styles.wrapper}>
+      <ScrollView
+        style={styles.wrapper}
+        keyboardDismissMode="interactive"
+        keyboardShouldPersistTaps="never"
+        refreshControl={
+          <RefreshControl
+            onRefresh={this.refresh}
+            refreshing={this.state.refreshing}
+          />
+        }
+        //stickyHeaderIndices={[0]}
+      >
         <SearchBar
           getRef={ref => (this.searchBar = ref)}
           onChangeText={this.performSearch}
           // if we don't use the arrow function here, searchBar ref is null...
           onSearchButtonPress={() => this.searchBar.unFocus()}
         />
-        <StyledAlphabetListView
-          data={groupBy(this.state.results, item => head(item.word))}
-          cell={this.renderRow}
-          // just setting cellHeight sends the wrong values on iOS.
-          cellHeight={
-            rowHeight +
-            (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
-          }
-          sectionHeader={this.renderHeader}
-          sectionHeaderHeight={headerHeight}
+        <AlphabetSectionList
+          ItemSeparatorComponent={ListSeparator}
+          ListEmptyComponent={<NoticeView text="No definitions." />}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderItem}
+          renderSectionHeader={this.renderSectionHeader}
+          sections={groupEntries(this.state.results)}
           showsVerticalScrollIndicator={false}
-          renderSeparator={this.renderSeparator}
-          keyboardDismissMode="on-drag"
-          keyboardShouldPersistTaps="never"
         />
-      </View>
+      </ScrollView>
     )
   }
 }
