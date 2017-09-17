@@ -9,6 +9,7 @@ import {StyleSheet, ScrollView, View, Text, RefreshControl} from 'react-native'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
+import type {LoginStateType} from '../../../flux/parts/settings'
 
 import {updateBalances} from '../../flux/parts/sis'
 
@@ -30,7 +31,7 @@ class BalancesView extends React.Component {
     print: ?number,
     weeklyMeals: ?number,
     dailyMeals: ?number,
-    loginState: LoginState,
+    loginState: LoginStateType,
     message: ?string,
 
     updateBalances: boolean => any,
