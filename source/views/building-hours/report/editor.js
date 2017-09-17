@@ -185,9 +185,9 @@ class DatePickerCell extends React.PureComponent {
 const Date = ({date, onChange}) => {
   const format = 'h:mma'
 
-  const callback = (newDateString: string) => {
+  const callback = (newDate: Date) => {
     const oldMoment = moment(date)
-    const newMoment = moment(newDateString, format)
+    const newMoment = moment(newDate)
 
     oldMoment.hours(newMoment.hours())
     oldMoment.minutes(newMoment.minutes())
@@ -197,19 +197,12 @@ const Date = ({date, onChange}) => {
 
   return (
     <DatePicker
-      date={date}
+      initialDate={date}
       style={styles.datePicker}
       mode="time"
       format={format}
       is24Hour={false}
-      confirmBtnText="Confirm"
-      cancelBtnText="Cancel"
-      showIcon={false}
       onDateChange={callback}
-      customStyles={{
-        dateInput: styles.datePickerInput,
-        dateText: styles.datePickerText,
-      }}
     />
   )
 }
@@ -235,16 +228,5 @@ const styles = StyleSheet.create({
   },
   activeDayText: {
     color: c.white,
-  },
-  datePicker: {
-    width: null,
-  },
-  datePickerInput: {
-    flex: 0,
-    borderWidth: 0,
-  },
-  datePickerText: {
-    color: c.iosDisabledText,
-    fontSize: 16,
   },
 })
