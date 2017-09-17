@@ -9,7 +9,6 @@ import {SearchBar} from '../components/searchbar'
 export const LIST_HEADER_HEIGHT = Platform.OS === 'ios' ? 42 : 0
 
 type Props = any
-;[]
 
 export class SearchableAlphabetListView extends React.PureComponent<
   void,

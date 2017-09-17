@@ -54,7 +54,6 @@ type State = {
   allTerms: Array<WordType>,
   loading: boolean,
 }
-;[]
 
 export class DictionaryView extends React.PureComponent<void, Props, State> {
   static navigationOptions = {
