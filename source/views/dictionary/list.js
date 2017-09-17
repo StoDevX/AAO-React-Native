@@ -2,8 +2,7 @@
 
 import React from 'react'
 import {StyleSheet, RefreshControl, Platform} from 'react-native'
-import {StyledAlphabetListView} from '../components/alphabet-listview'
-import debounce from 'lodash/debounce'
+import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
 import {Column} from '../components/layout'
 import {
   Detail,
@@ -22,13 +21,10 @@ import head from 'lodash/head'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
-import isString from 'lodash/isString'
 import * as defaultData from '../../../docs/dictionary.json'
-import {SearchBar} from '../components/searchbar'
 
 const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/dictionary.json'
 const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
-const LIST_HEADER_HEIGHT = Platform.OS === 'ios' ? 42 : 0
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
 
 const splitToArray = (str: string) => words(deburr(str.toLowerCase()))
@@ -55,15 +51,16 @@ type Props = TopLevelViewPropsType
 
 type State = {
   results: {[key: string]: Array<WordType>},
+  allTerms: Array<WordType>,
+  loading: boolean,
 }
+;[]
 
 export class DictionaryView extends React.PureComponent<void, Props, State> {
   static navigationOptions = {
     title: 'Campus Dictionary',
     headerBackTitle: 'Dictionary',
   }
-
-  searchBar: any
 
   state = {
     results: defaultData.data,
@@ -122,23 +119,14 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
       </Column>
     </ListRow>
 
-  renderListHeader = () =>
-    <SearchBar
-      getRef={ref => (this.searchBar = ref)}
-      onChangeText={this.performSearch}
-      // if we don't use the arrow function here, searchBar ref is null...
-      onSearchButtonPress={() => this.searchBar.unFocus()}
-    />
-
-  renderHeader = ({title}: {title: string}) =>
+  renderSectionHeader = ({title}: {title: string}) =>
     <ListSectionHeader title={title} style={styles.rowSectionHeader} />
 
   renderSeparator = (sectionId: string, rowId: string) =>
     <ListSeparator key={`${sectionId}-${rowId}`} />
 
-  _performSearch = (text: string) => {
-    // Android clear button returns an object
-    if (!isString(text)) {
+  performSearch = (text: ?string) => {
+    if (!text) {
       this.setState(state => ({results: state.allTerms}))
       return
     }
@@ -151,11 +139,6 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
     }))
   }
 
-  // We need to make the search run slightly behind the UI,
-  // so I'm slowing it down by 50ms. 0ms also works, but seems
-  // rather pointless.
-  performSearch = debounce(this._performSearch, 50)
-
   render() {
     const refreshControl = (
       <RefreshControl
@@ -165,27 +148,19 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
     )
 
     return (
-      <StyledAlphabetListView
-        style={styles.wrapper}
-        data={groupBy(this.state.results, item => head(item.word))}
+      <SearchableAlphabetListView
         cell={this.renderRow}
         cellHeight={
           ROW_HEIGHT +
           (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
         }
-        header={this.renderListHeader}
-        headerHeight={
-          Platform.OS === 'ios'
-            ? LIST_HEADER_HEIGHT + StyleSheet.hairlineWidth * 12
-            : 0
-        }
-        sectionHeader={this.renderHeader}
+        data={groupBy(this.state.results, item => head(item.word))}
+        onSearch={this.performSearch}
         refreshControl={refreshControl}
-        sectionHeaderHeight={SECTION_HEADER_HEIGHT}
-        showsVerticalScrollIndicator={false}
         renderSeparator={this.renderSeparator}
-        keyboardDismissMode="on-drag"
-        keyboardShouldPersistTaps="never"
+        sectionHeader={this.renderSectionHeader}
+        sectionHeaderHeight={SECTION_HEADER_HEIGHT}
+        style={styles.wrapper}
       />
     )
   }
