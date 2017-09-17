@@ -188,7 +188,6 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
   }
 }
 
-
 type ActionButtonProps = {
   icon: string,
   text: string,
