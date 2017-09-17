@@ -2,12 +2,15 @@
 import React from 'react'
 import {Alert, StyleSheet} from 'react-native'
 import {Markdown} from '../components/markdown'
+import {ListFooter} from '../components/list'
 import glamorous from 'glamorous-native'
 import {phonecall} from 'react-native-communications'
 import {tracker} from '../../analytics'
 import {Button} from '../components/button'
-import {formatNumber} from './contact-helper'
+import openUrl from '../components/open-url'
 import type {ContactType} from './types'
+
+const AAO_URL = 'https://github.com/StoDevX/AAO-React-Native/issues/new'
 
 const Title = glamorous.text({
   fontSize: 36,
@@ -27,6 +30,11 @@ const styles = StyleSheet.create({
   },
 })
 
+function formatNumber(phoneNumber: string) {
+  const re = /(\d{3})-?(\d{3})-?(\d{4})/g
+  return phoneNumber.replace(re, '($1) $2-$3')
+}
+
 function promptCall(buttonText: string, phoneNumber: string) {
   Alert.alert(buttonText, formatNumber(phoneNumber), [
     {text: 'Cancel', onPress: () => console.log('Call cancel pressed')},
@@ -41,14 +49,21 @@ export class ContactsDetailView extends React.PureComponent {
     }
   }
 
-  navigation: {state: {params: {contact: ContactType}}}
+  props: {navigation: {state: {params: {contact: ContactType}}}}
 
   onPress = () => {
-    const item = this.props.navigation.state.params.contact
-    tracker.trackScreenView(
-      `ImportantContacts_${item.title.replace(' ', '')}View`,
-    )
-    promptCall(item.buttonText, item.phoneNumber)
+    const {
+      title,
+      phoneNumber,
+      buttonText,
+      buttonLink,
+    } = this.props.navigation.state.params.contact
+    tracker.trackScreenView(`ImportantContacts_${title.replace(' ', '')}View`)
+    if (buttonLink) {
+      openUrl(buttonLink)
+    } else if (phoneNumber) {
+      promptCall(buttonText, phoneNumber)
+    }
   }
 
   render() {
@@ -56,11 +71,18 @@ export class ContactsDetailView extends React.PureComponent {
     return (
       <Container>
         <Title selectable={true}>{contact.title}</Title>
+
         <Markdown
           styles={{Paragraph: styles.paragraph}}
           source={contact.text}
         />
+
         <Button onPress={this.onPress} title={contact.buttonText} />
+
+        <ListFooter
+          title="Collected by the humans of All About Olaf"
+          href={AAO_URL}
+        />
       </Container>
     )
   }

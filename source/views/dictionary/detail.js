@@ -2,8 +2,13 @@
 import React from 'react'
 import {StyleSheet} from 'react-native'
 import {Markdown} from '../components/markdown'
+import {ListFooter} from '../components/list'
 import glamorous from 'glamorous-native'
 import type {WordType} from './types'
+
+// TODO: This doesn't point at the SA dictionary because they don't have an
+// overview page.
+const STO_SA_DICT_URL = 'https://github.com/StoDevX/AAO-React-Native/issues/new'
 
 const Term = glamorous.text({
   fontSize: 36,
@@ -42,6 +47,13 @@ export class DictionaryDetailView extends React.PureComponent {
         <Markdown
           styles={{Paragraph: styles.paragraph}}
           source={item.definition}
+        />
+
+        <ListFooter
+          title={
+            'Collected by the humans of All About Olaf,\nfrom the Student Activities dictionary'
+          }
+          href={STO_SA_DICT_URL}
         />
       </Container>
     )

@@ -11,6 +11,9 @@ import * as c from '../components/colors'
 import {ButtonCell} from '../components/cells/button'
 import {addToCalendar} from './calendar-util'
 import delay from 'delay'
+import {ListFooter} from '../components/list'
+
+const STO_CALENDAR_URL = 'https://www.stolaf.edu/calendar'
 
 const styles = StyleSheet.create({
   name: {
@@ -128,7 +131,7 @@ export class EventDetail extends React.PureComponent {
     this.setState(() => ({message: 'Adding event to calendar…'}))
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    const elapsed = start - Date.now()
+    const elapsed = Date.now() - start
     if (elapsed < 500) {
       await delay(500 - elapsed)
     }
@@ -164,6 +167,11 @@ export class EventDetail extends React.PureComponent {
           onPress={this.onPressButton}
           message={this.state.message}
           disabled={this.state.disabled}
+        />
+
+        <ListFooter
+          title="Powered by the St. Olaf Calendar"
+          href={STO_CALENDAR_URL}
         />
       </ScrollView>
     )

@@ -18,66 +18,167 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import Video from 'react-native-video'
 import {Touchable} from '../components/touchable'
 import {TabBarIcon} from '../components/tabbar-icon'
+import {promiseTimeout} from '../../lib/promise-timeout'
 
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
+const kstoStatus = 'https://cdn.stobcm.com/radio/ksto1.stream/chunklist.3mu8'
 const image = require('../../../images/streaming/ksto/ksto-logo.png')
 
-export default class KSTOView extends React.PureComponent {
+type Viewport = {
+  width: number,
+  height: number,
+}
+
+type PlayState = 'paused' | 'playing' | 'checking'
+
+type Props = {}
+
+type State = {
+  playState: PlayState,
+  streamError: ?Object,
+  uplinkError: ?string,
+  viewport: Viewport,
+}
+
+export default class KSTOView extends React.PureComponent<void, Props, State> {
   static navigationOptions = {
     tabBarLabel: 'KSTO',
     tabBarIcon: TabBarIcon('radio'),
   }
 
-  player: Video
-
-  state: {
-    refreshing: boolean,
-    paused: boolean,
-    streamError: ?Object,
-    metadata: Object[],
-  } = {
-    refreshing: false,
-    paused: true,
+  state = {
+    playState: 'paused',
     streamError: null,
-    metadata: [],
+    uplinkError: null,
+    viewport: Dimensions.get('window'),
   }
 
-  changeControl = () => {
-    this.setState(state => ({paused: !state.paused}))
+  componentWillMount() {
+    Dimensions.addEventListener('change', this.handleResizeEvent)
   }
 
-  // callback when HLS ID3 tags change
-  onTimedMetadata = (data: any) => {
-    this.setState(() => ({metadata: data}))
-    console.log(data)
+  componentWillUnmount() {
+    Dimensions.removeEventListener('change', this.handleResizeEvent)
+  }
+
+  handleResizeEvent = (event: {window: {width: number}}) => {
+    this.setState(() => ({viewport: event.window}))
+  }
+
+  // check the stream uplink status
+  isUplinkUp = async () => {
+    try {
+      await promiseTimeout(6000, fetch(kstoStatus))
+      return true
+    } catch (err) {
+      return false
+    }
+  }
+
+  onPlay = async () => {
+    this.setState(() => ({playState: 'checking'}))
+
+    const uplinkStatus = await this.isUplinkUp()
+
+    if (uplinkStatus) {
+      this.setState(() => ({playState: 'playing'}))
+    } else {
+      this.setState(() => ({
+        playState: 'paused',
+        uplinkError: 'The KSTO stream is down. Sorry!',
+      }))
+    }
+  }
+
+  onPause = () => {
+    this.setState(() => ({
+      playState: 'paused',
+      uplinkError: null,
+    }))
   }
 
   // error from react-native-video
   onError = (e: any) => {
-    this.setState(() => ({streamError: e, paused: true}))
-    console.log(e)
+    this.setState(() => ({streamError: e, playState: 'paused'}))
+  }
+
+  renderButton = (state: PlayState) => {
+    switch (state) {
+      case 'paused':
+        return (
+          <ActionButton icon="ios-play" text="Listen" onPress={this.onPlay} />
+        )
+
+      case 'checking':
+        return (
+          <ActionButton
+            icon="ios-more"
+            text="Starting"
+            onPress={this.onPause}
+          />
+        )
+
+      case 'playing':
+        return (
+          <ActionButton icon="ios-pause" text="Pause" onPress={this.onPause} />
+        )
+
+      default:
+        return <ActionButton icon="ios-bug" text="Error" onPress={() => {}} />
+    }
   }
 
   render() {
-    return (
-      <ScrollView>
-        <View style={styles.container}>
-          <Logo />
-          <PlayPauseButton
-            onPress={this.changeControl}
-            paused={this.state.paused}
-          />
-          {/*<Song />*/}
-          <Title />
+    const sideways = this.state.viewport.width > this.state.viewport.height
 
-          {!this.state.paused
+    const logoWidth = Math.min(
+      this.state.viewport.width / 1.5,
+      this.state.viewport.height / 1.75,
+    )
+
+    const logoSize = {
+      width: logoWidth,
+      height: logoWidth,
+    }
+
+    const error = this.state.uplinkError
+      ? <Text style={styles.status}>{this.state.uplinkError}</Text>
+      : null
+
+    const button = this.renderButton(this.state.playState)
+
+    return (
+      <ScrollView
+        contentContainerStyle={[styles.root, sideways && landscape.root]}
+      >
+        <View style={[styles.logoWrapper, sideways && landscape.logoWrapper]}>
+          <Image
+            source={image}
+            style={[styles.logo, logoSize]}
+            resizeMode="contain"
+          />
+        </View>
+
+        <View style={styles.container}>
+          <View style={styles.titleWrapper}>
+            <Text selectable={true} style={styles.heading}>
+              St. Olaf College Radio
+            </Text>
+            <Text selectable={true} style={styles.subHeading}>
+              KSTO 93.1 FM
+            </Text>
+
+            {error}
+          </View>
+
+          {button}
+
+          {this.state.playState === 'playing'
             ? <Video
-                ref={ref => (this.player = ref)}
                 source={{uri: kstoStream}}
                 playInBackground={true}
                 playWhenInactive={true}
-                paused={this.state.paused}
-                onTimedMetadata={this.onTimedMetadata}
+                paused={this.state.playState !== 'playing'}
                 onError={this.onError}
               />
             : null}
@@ -87,87 +188,80 @@ export default class KSTOView extends React.PureComponent {
   }
 }
 
-const Logo = () =>
-  <View style={styles.wrapper}>
-    <Image source={image} style={styles.logo} />
-  </View>
-
-const Title = () =>
-  <View style={styles.container}>
-    <Text selectable={true} style={styles.heading}>
-      St. Olaf College Radio
-    </Text>
-    <Text selectable={true} style={styles.subHeading}>KSTO 93.1 FM</Text>
-  </View>
-
-// const song = this.state.metadata.length
-//     ? <Metadata song={this.state.metadata.CHANGEME} />
-//     : null
-
-class PlayPauseButton extends React.PureComponent {
-  props: {
-    paused: boolean,
-    onPress: () => any,
-  }
-
-  render() {
-    const {paused, onPress} = this.props
-    return (
-      <Touchable
-        style={buttonStyles.button}
-        hightlight={false}
-        onPress={onPress}
-      >
-        <View style={buttonStyles.buttonWrapper}>
-          <Icon
-            style={buttonStyles.icon}
-            name={paused ? 'ios-play' : 'ios-pause'}
-          />
-          <Text style={buttonStyles.action}>
-            {paused ? 'Listen' : 'Pause'}
-          </Text>
-        </View>
-      </Touchable>
-    )
-  }
+type ActionButtonProps = {
+  icon: string,
+  text: string,
+  onPress: () => any,
 }
+const ActionButton = ({icon, text, onPress}: ActionButtonProps) =>
+  <Touchable style={buttonStyles.button} hightlight={false} onPress={onPress}>
+    <View style={buttonStyles.buttonWrapper}>
+      <Icon style={buttonStyles.icon} name={icon} />
+      <Text style={buttonStyles.action}>
+        {text}
+      </Text>
+    </View>
+  </Touchable>
 
 const styles = StyleSheet.create({
+  root: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    justifyContent: 'space-between',
+    padding: 20,
+  },
   container: {
     alignItems: 'center',
+    flex: 1,
+    marginTop: 20,
+    marginBottom: 20,
   },
-  wrapper: {
-    padding: 10,
+  logoWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  logo: {
+    borderRadius: 6,
+    borderColor: c.kstoSecondaryDark,
+    borderWidth: 3,
+  },
+  titleWrapper: {
+    alignItems: 'center',
+    marginBottom: 20,
   },
   heading: {
-    marginTop: 10,
     color: c.kstoPrimaryDark,
-    fontWeight: '500',
-    fontSize: Dimensions.get('window').height / 30,
+    fontWeight: '600',
+    fontSize: 28,
+    textAlign: 'center',
   },
   subHeading: {
     marginTop: 5,
-    marginBottom: 10,
     color: c.kstoPrimaryDark,
     fontWeight: '300',
-    fontSize: Dimensions.get('window').height / 30,
+    fontSize: 28,
+    textAlign: 'center',
   },
-  // nowPlaying: {
-  //   paddingTop: 10,
-  //   fontSize: Dimensions.get('window').height / 40,
-  //   fontWeight: '500',
-  //   color: c.red,
-  // },
-  // metadata: {
-  //   fontSize: Dimensions.get('window').height / 40,
-  //   paddingHorizontal: 13,
-  //   paddingTop: 5,
-  //   color: c.red,
-  // },
+  status: {
+    fontWeight: '400',
+    fontSize: 18,
+    textAlign: 'center',
+    color: c.grapefruit,
+    marginTop: 15,
+    marginBottom: 5,
+  },
+})
 
-  logo: {
-    maxWidth: Dimensions.get('window').width / 1.2,
-    maxHeight: Dimensions.get('window').height / 2.0,
+const landscape = StyleSheet.create({
+  root: {
+    flex: 1,
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoWrapper: {
+    flex: 0,
   },
 })
 

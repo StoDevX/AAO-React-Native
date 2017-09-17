@@ -40,7 +40,7 @@ export class ScheduleTable extends React.PureComponent {
                 isActive={
                   schedule.isPhysicallyOpen !== false &&
                   set.days.includes(dayOfWeek) &&
-                  isScheduleOpenAtMoment(set, this.state.now)
+                  isScheduleOpenAtMoment(set, now)
                 }
               />,
             )}

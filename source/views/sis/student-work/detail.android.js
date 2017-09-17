@@ -135,6 +135,8 @@ function LastUpdated({when}: {when: string}) {
         Last updated:
         {' '}
         {moment(when, 'YYYY/MM/DD').calendar()}
+        {'\n'}
+        Powered by St. Olaf Student Employment job postings
       </Text>
     : null
 }

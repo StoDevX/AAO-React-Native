@@ -6,6 +6,7 @@ import type {CleanedEventType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../components/nav-buttons'
 import openUrl from '../components/open-url'
+import {ListFooter} from '../components/list'
 import {getTimes, getLinksFromEvent} from './clean-event'
 import {ButtonCell} from '../components/cells/button'
 import {addToCalendar} from './calendar-util'
@@ -16,6 +17,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
 })
+
+const STO_CALENDAR_URL = 'https://www.stolaf.edu/calendar'
 
 const shareItem = (event: CleanedEventType) => {
   const summary = event.summary ? event.summary : ''
@@ -96,7 +99,7 @@ export class EventDetail extends React.PureComponent {
     this.setState(() => ({message: 'Adding event to calendar…'}))
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    const elapsed = start - Date.now()
+    const elapsed = Date.now() - start
     if (elapsed < 500) {
       await delay(500 - elapsed)
     }
@@ -133,6 +136,11 @@ export class EventDetail extends React.PureComponent {
             onPress={this.onPressButton}
             message={this.state.message}
             disabled={this.state.disabled}
+          />
+
+          <ListFooter
+            title="Powered by the St. Olaf Calendar"
+            href={STO_CALENDAR_URL}
           />
         </TableView>
       </ScrollView>

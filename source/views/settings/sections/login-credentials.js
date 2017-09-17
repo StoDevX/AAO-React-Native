@@ -8,15 +8,16 @@ import {
   logOutViaCredentials,
   validateLoginCredentials,
   setLoginCredentials,
+  type SettingsState,
+  type LoginStateType,
 } from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
 
-type CredentialsSectionPropsType = {
-  username: string,
-  password: string,
-  loggedIn: boolean,
-  message: ?string,
+type Props = {
+  initialUsername: string,
+  initialPassword: string,
+  loginState: LoginStateType,
 
   logIn: (username: string, password: string) => any,
   logOut: () => any,
@@ -24,34 +25,48 @@ type CredentialsSectionPropsType = {
   setCredentials: (username: string, password: string) => any,
 }
 
-class CredentialsLoginSection extends React.Component {
-  props: CredentialsSectionPropsType
+type State = {
+  username: string,
+  password: string,
+}
 
+class CredentialsLoginSection extends React.PureComponent<void, Props, State> {
   _usernameInput: any
   _passwordInput: any
 
   state = {
-    loading: false,
-    username: this.props.username,
-    password: this.props.password,
+    username: this.props.initialUsername,
+    password: this.props.initialPassword,
   }
 
   focusUsername = () => this._usernameInput.focus()
   focusPassword = () => this._passwordInput.focus()
 
   logIn = async () => {
-    this.setState({loading: true})
     await this.props.logIn(this.state.username, this.state.password)
-    this.setState({loading: false})
   }
 
   logOut = () => {
     this.props.logOut()
   }
 
+  getUsernameRef = ref => (this._usernameInput = ref)
+  getPasswordRef = ref => (this._passwordInput = ref)
+
+  onChangeUsername = (text = '') => this.setState(() => ({username: text}))
+  onChangePassword = (text = '') => this.setState(() => ({password: text}))
+
   render() {
-    let {loggedIn, message} = this.props
-    let {loading, username, password} = this.state
+    const {loginState} = this.props
+    const {username, password} = this.state
+
+    const loading = loginState === 'checking'
+    const loggedIn = loginState === 'logged-in'
+
+    let message
+    if (loginState === 'invalid') {
+      message = 'Login failed'
+    }
 
     return (
       <Section
@@ -60,9 +75,9 @@ class CredentialsLoginSection extends React.Component {
       >
         <CellTextField
           label="Username"
-          _ref={ref => (this._usernameInput = ref)}
+          _ref={this.getUsernameRef}
           disabled={loading}
-          onChangeText={(text = '') => this.setState({username: text})}
+          onChangeText={this.onChangeUsername}
           onSubmitEditing={this.focusPassword}
           placeholder="username"
           returnKeyType="next"
@@ -72,9 +87,9 @@ class CredentialsLoginSection extends React.Component {
 
         <CellTextField
           label="Password"
-          _ref={ref => (this._passwordInput = ref)}
+          _ref={this.getPasswordRef}
           disabled={loading}
-          onChangeText={(text = '') => this.setState({password: text})}
+          onChangeText={this.onChangePassword}
           onSubmitEditing={loggedIn ? noop : this.logIn}
           placeholder="password"
           returnKeyType="done"
@@ -82,7 +97,7 @@ class CredentialsLoginSection extends React.Component {
           value={password}
         />
 
-        {message ? <Cell title={'⚠️ ' + message} /> : null}
+        {message ? <Cell title={`⚠️ ${message}`} /> : null}
 
         <LoginButton
           loggedIn={loggedIn}
@@ -96,12 +111,11 @@ class CredentialsLoginSection extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state: {settings: SettingsState}) {
   return {
-    username: state.settings.credentials.username,
-    password: state.settings.credentials.password,
-    loggedIn: state.settings.credentials.valid,
-    message: state.settings.credentials.error,
+    initialUsername: state.settings.credentials.username,
+    initialPassword: state.settings.credentials.password,
+    loginState: state.settings.credentials.state,
   }
 }
 

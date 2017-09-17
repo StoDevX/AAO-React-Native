@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
+import {SectionList} from 'react-native'
 import {BuildingRow} from './row'
 import {tracker} from '../../analytics'
 
@@ -13,16 +13,9 @@ import type momentT from 'moment'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 
-import * as c from '../components/colors'
 import {ListSeparator, ListSectionHeader} from '../components/list'
 
 export {BuildingHoursDetailView} from './detail'
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: c.white,
-  },
-})
 
 export class BuildingHoursList extends React.PureComponent {
   props: TopLevelViewPropsType & {
@@ -55,10 +48,10 @@ export class BuildingHoursList extends React.PureComponent {
       <SectionList
         ItemSeparatorComponent={ListSeparator}
         sections={(this.props.buildings: any)}
+        extraData={this.props}
         keyExtractor={this.keyExtractor}
         renderSectionHeader={this.renderSectionHeader}
         renderItem={this.renderItem}
-        contentContainerStyle={styles.container}
         refreshing={this.props.loading}
         onRefresh={this.props.onRefresh}
       />

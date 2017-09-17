@@ -71,7 +71,7 @@ class CoursesView extends React.PureComponent {
     await this.props.updateCourses(true)
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    let elapsed = start - Date.now()
+    let elapsed = Date.now() - start
     await delay(500 - elapsed)
 
     this.setState({loading: false})

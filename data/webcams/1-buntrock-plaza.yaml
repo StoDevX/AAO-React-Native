@@ -4,3 +4,4 @@ streamUrl: https://cdn.stobcm.com/webcams/bcplaza.stream/master.m3u8
 thumbnail: bcplaza
 tagline: Looking out to the plaza and campus green
 accentColor: [93, 114, 72]
+textColor: '#fff'

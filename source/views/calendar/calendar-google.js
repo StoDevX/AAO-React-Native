@@ -29,13 +29,13 @@ export class GoogleCalendarView extends React.Component {
   } = {
     events: [],
     loaded: false,
-    refreshing: true,
+    refreshing: false,
     error: null,
     now: moment.tz(TIMEZONE),
   }
 
   componentWillMount() {
-    this.refresh()
+    this.getEvents()
   }
 
   buildCalendarUrl(calendarId: string) {
@@ -96,17 +96,17 @@ export class GoogleCalendarView extends React.Component {
 
   refresh = async () => {
     let start = Date.now()
-    this.setState({refreshing: true})
+    this.setState(() => ({refreshing: true}))
 
     await this.getEvents()
 
     // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    let elapsed = start - Date.now()
+    let elapsed = Date.now() - start
     if (elapsed < 500) {
       await delay(500 - elapsed)
     }
 
-    this.setState({refreshing: false})
+    this.setState(() => ({refreshing: false}))
   }
 
   render() {

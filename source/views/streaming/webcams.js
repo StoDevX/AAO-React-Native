@@ -5,64 +5,100 @@
  */
 
 import React from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  Image,
-  Dimensions,
-  Platform,
-} from 'react-native'
+import {StyleSheet, View, Text, FlatList, Image, Platform} from 'react-native'
+import delay from 'delay'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
-import {data as webcams} from '../../../docs/webcams.json'
+import * as defaultData from '../../../docs/webcams.json'
 import {webcamImages} from '../../../images/webcam-images'
 import {trackedOpenUrl} from '../components/open-url'
 import LinearGradient from 'react-native-linear-gradient'
 
-export default class WebcamsView extends React.PureComponent {
+const transparentPixel = require('../../../images/transparent.png')
+const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/webcams.json'
+
+type WebcamType = {
+  streamUrl: string,
+  pageUrl: string,
+  name: string,
+  thumbnail: string,
+  thumbnailUrl?: string,
+  textColor: string,
+  accentColor: [number, number, number],
+}
+
+type Props = {}
+
+type State = {
+  webcams: Array<WebcamType>,
+  loading: boolean,
+  refreshing: boolean,
+}
+
+export class WebcamsView extends React.PureComponent<void, Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Webcams',
     tabBarIcon: TabBarIcon('videocam'),
   }
 
-  render() {
-    return (
-      <ScrollView
-        automaticallyAdjustContentInsets={false}
-        contentInset={{bottom: 49}}
-        contentContainerStyle={styles.gridWrapper}
-      >
-        {webcams.map(webcam => <Webcam key={webcam.name} info={webcam} />)}
-      </ScrollView>
-    )
-  }
-}
-
-class Webcam extends React.PureComponent {
-  props: {
-    info: {
-      streamUrl: string,
-      pageUrl: string,
-      name: string,
-      thumbnail: string,
-      accentColor: [number, number, number],
-    },
+  state = {
+    webcams: defaultData.data,
+    loading: false,
+    refreshing: false,
   }
 
-  render() {
-    const {name, thumbnail, streamUrl, pageUrl, accentColor} = this.props.info
+  componentWillMount() {
+    this.fetchData()
+  }
 
+  refresh = async () => {
+    const start = Date.now()
+    this.setState(() => ({refreshing: true}))
+
+    await this.fetchData()
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    const elapsed = Date.now() - start
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
+
+    this.setState(() => ({refreshing: false}))
+  }
+
+  fetchData = async () => {
+    this.setState(() => ({loading: true}))
+
+    let {data: webcams} = await fetchJson(GITHUB_URL).catch(err => {
+      reportNetworkProblem(err)
+      return defaultData
+    })
+
+    if (process.env.NODE_ENV === 'development') {
+      webcams = defaultData.data
+    }
+
+    this.setState(() => ({webcams, loading: false}))
+  }
+
+  renderItem = ({item}: {item: WebcamType}) =>
+    <StreamThumbnail key={item.name} webcam={item} />
+
+  keyExtractor = (item: WebcamType) => item.name
+
+  render() {
     return (
-      <StreamThumbnail
-        accentColor={accentColor}
-        textColor="white"
-        thumbnail={webcamImages[thumbnail]}
-        title={name}
-        url={streamUrl}
-        infoUrl={pageUrl}
+      <FlatList
+        keyExtractor={this.keyExtractor}
+        renderItem={this.renderItem}
+        refreshing={this.state.refreshing}
+        onRefresh={this.refresh}
+        data={this.state.webcams}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={styles.container}
       />
     )
   }
@@ -70,113 +106,85 @@ class Webcam extends React.PureComponent {
 
 class StreamThumbnail extends React.PureComponent {
   props: {
-    url: string,
-    infoUrl: string,
-    title: string,
-    accentColor: [number, number, number],
-    textColor: 'white' | 'black',
-    thumbnail: any,
+    webcam: WebcamType,
   }
 
   handlePress = () => {
-    const {url, title, infoUrl} = this.props
-    if (Platform.OS === 'android') {
-      trackedOpenUrl({url: infoUrl, id: `${title}WebcamView`})
+    const {streamUrl, name, pageUrl} = this.props.webcam
+    if (Platform.OS === 'ios') {
+      trackedOpenUrl({url: streamUrl, id: `${name}WebcamView`})
+    } else if (Platform.OS === 'android') {
+      trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
     } else {
-      trackedOpenUrl({url, id: `${title}WebcamView`})
+      trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
     }
   }
 
   render() {
-    const {title, thumbnail, accentColor, textColor} = this.props
-
-    return (
-      <RoundedThumbnail
-        accentColor={accentColor}
-        onPress={this.handlePress}
-        textColor={textColor}
-        thumbnail={thumbnail}
-        title={title}
-      />
-    )
-  }
-}
-
-class RoundedThumbnail extends React.PureComponent {
-  props: {
-    accentColor: [number, number, number],
-    onPress: () => any,
-    textColor: 'white' | 'black',
-    thumbnail: any,
-    title: string,
-  }
-
-  render() {
-    const {title, thumbnail, accentColor, textColor} = this.props
+    const {
+      name,
+      thumbnail,
+      accentColor,
+      textColor,
+      thumbnailUrl,
+    } = this.props.webcam
 
     const [r, g, b] = accentColor
     const baseColor = `rgba(${r}, ${g}, ${b}, 1)`
     const startColor = `rgba(${r}, ${g}, ${b}, 0.1)`
-    const actualTextColor = c[textColor]
+
+    const img = thumbnailUrl
+      ? {uri: thumbnailUrl}
+      : webcamImages.hasOwnProperty(thumbnail)
+        ? webcamImages[thumbnail]
+        : transparentPixel
 
     return (
-      <View style={[styles.cell, styles.rounded]}>
-        <Touchable
-          highlight={true}
-          underlayColor={baseColor}
-          activeOpacity={0.7}
-          onPress={this.props.onPress}
-          style={styles.rounded}
-        >
-          <Image source={thumbnail} style={[styles.image, styles.rounded]}>
-            <View style={styles.titleWrapper}>
-              <LinearGradient
-                colors={[startColor, baseColor]}
-                locations={[0, 0.8]}
-              >
-                <Text style={[styles.titleText, {color: actualTextColor}]}>
-                  {title}
-                </Text>
-              </LinearGradient>
-            </View>
-          </Image>
-        </Touchable>
-      </View>
+      <Touchable
+        highlight={true}
+        underlayColor={baseColor}
+        activeOpacity={0.7}
+        onPress={this.handlePress}
+        containerStyle={styles.cell}
+      >
+        <Image source={img} style={styles.image}>
+          <View style={styles.titleWrapper}>
+            <LinearGradient
+              colors={[startColor, baseColor]}
+              locations={[0, 0.8]}
+            >
+              <Text style={[styles.titleText, {color: textColor}]}>
+                {name}
+              </Text>
+            </LinearGradient>
+          </View>
+        </Image>
+      </Touchable>
     )
   }
 }
 
 const CELL_MARGIN = 10
-const screenWidth = Dimensions.get('window').width
-
-const cellWidth = screenWidth / 2 - CELL_MARGIN * 1.5
-const cellRatio = 2.15625
-const cellHeight = cellWidth / cellRatio
 
 const styles = StyleSheet.create({
-  gridWrapper: {
-    marginHorizontal: CELL_MARGIN / 2,
-    marginTop: CELL_MARGIN / 2,
-    paddingBottom: CELL_MARGIN / 2,
-
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  container: {
+    marginVertical: CELL_MARGIN / 2,
   },
-  rounded: {
-    // Android doesn't currently (0.42) respect both
-    // overflow:hidden and border-radius.
-    borderRadius: Platform.OS === 'android' ? 0 : 6,
+  row: {
+    justifyContent: 'center',
+    marginHorizontal: CELL_MARGIN / 2,
   },
   cell: {
+    flex: 1,
     overflow: 'hidden',
-    width: cellWidth,
-    height: cellHeight,
     margin: CELL_MARGIN / 2,
     justifyContent: 'center',
 
     elevation: 2,
+
+    // TODO: Android doesn't currently (0.42) respect both
+    // overflow:hidden and border-radius.
+    borderRadius: Platform.OS === 'android' ? 0 : 6,
   },
   image: {
     width: '100%',
@@ -192,5 +200,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 2,
     textAlign: 'center',
+    fontWeight: 'bold',
   },
 })
