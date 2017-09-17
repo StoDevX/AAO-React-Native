@@ -1,9 +1,8 @@
 // @flow
 
 import React from 'react'
-import {StyleSheet, ScrollView, RefreshControl} from 'react-native'
-import {AlphabetSectionList} from '../components/alphabet-sectionlist'
-import debounce from 'lodash/debounce'
+import {Platform, StyleSheet} from 'react-native'
+import {SearchableAlphabetSectionList} from '../components/alphabet-sectionlist'
 import {ListSectionHeader, ListSeparator} from '../components/list'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
@@ -11,23 +10,20 @@ import LoadingView from '../components/loading'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {tracker} from '../../analytics'
+import fuzzysearch from 'fuzzysearch'
 import groupBy from 'lodash/groupBy'
 import head from 'lodash/head'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import toPairs from 'lodash/toPairs'
 import {DictionaryRow} from './row'
-import {SearchBar} from '../components/searchbar'
 import {NoticeView} from '../components/notice'
 import * as defaultData from '../../../docs/dictionary.json'
 
+const ITEM_HEIGHT = (Platform.OS === 'ios' ? 76 : 89) + StyleSheet.hairlineWidth
+const HEADER_HEIGHT =
+  (Platform.OS === 'ios' ? 33 : 41) + StyleSheet.hairlineWidth * 2
 const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/dictionary.json'
-
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-  },
-})
 
 type Props = TopLevelViewPropsType
 
@@ -62,8 +58,6 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
     title: 'Campus Dictionary',
     headerBackTitle: 'Dictionary',
   }
-
-  searchBar: any
 
   state = {
     results: defaultData.data,
@@ -120,9 +114,8 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
 
   keyExtractor = (item: WordType) => item.word
 
-  _performSearch = (text: string | Object) => {
-    // Android clear button returns an object
-    if (typeof text !== 'string') {
+  performSearch = (text: ?string) => {
+    if (!text) {
       this.setState(state => ({results: state.allTerms}))
       return
     }
@@ -135,10 +128,11 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
     }))
   }
 
-  // We need to make the search run slightly behind the UI,
-  // so I'm slowing it down by 50ms. 0ms also works, but seems
-  // rather pointless.
-  performSearch = debounce(this._performSearch, 50)
+  getItemLayout = (data, index) => ({
+    length: ITEM_HEIGHT,
+    offset: ITEM_HEIGHT * index,
+    index,
+  })
 
   render() {
     if (this.state.loading) {
@@ -146,34 +140,18 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
     }
 
     return (
-      <ScrollView
-        style={styles.wrapper}
-        keyboardDismissMode="interactive"
-        keyboardShouldPersistTaps="never"
-        refreshControl={
-          <RefreshControl
-            onRefresh={this.refresh}
-            refreshing={this.state.refreshing}
-          />
-        }
-        //stickyHeaderIndices={[0]}
-      >
-        <SearchBar
-          getRef={ref => (this.searchBar = ref)}
-          onChangeText={this.performSearch}
-          // if we don't use the arrow function here, searchBar ref is null...
-          onSearchButtonPress={() => this.searchBar.unFocus()}
-        />
-        <AlphabetSectionList
-          ItemSeparatorComponent={ListSeparator}
-          ListEmptyComponent={<NoticeView text="No definitions." />}
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderItem}
-          renderSectionHeader={this.renderSectionHeader}
-          sections={groupEntries(this.state.results)}
-          showsVerticalScrollIndicator={false}
-        />
-      </ScrollView>
+      <SearchableAlphabetSectionList
+        ItemSeparatorComponent={ListSeparator}
+        ListEmptyComponent={<NoticeView text="No definitions." />}
+        getItemLayout={this.getItemLayout}
+        keyExtractor={this.keyExtractor}
+        onRefresh={this.refresh}
+        onSearch={this.performSearch}
+        refreshing={this.state.refreshing}
+        renderItem={this.renderItem}
+        renderSectionHeader={this.renderSectionHeader}
+        sections={groupEntries(this.state.results)}
+      />
     )
   }
 }
