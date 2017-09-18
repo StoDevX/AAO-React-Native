@@ -1563,7 +1563,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "AllAboutOlaf/All About Olaf.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Hawken Rives (TMK6S7TPX2)";
+				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = TMK6S7TPX2;
 				ENABLE_TESTABILITY = YES;
@@ -1599,8 +1600,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf;
 				PRODUCT_NAME = AllAboutOlaf;
-				PROVISIONING_PROFILE = "45ccdf67-2e41-4323-b343-0c4623b75249";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore NFMTHAZVS9.com.drewvolz.stolaf";
+				PROVISIONING_PROFILE = "1519411d-0c35-4ef5-b2f9-d7524a9f28f3";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc NFMTHAZVS9.com.drewvolz.stolaf";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -1614,7 +1615,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "AllAboutOlaf/All About Olaf.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Hawken Rives (TMK6S7TPX2)";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = TMK6S7TPX2;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1648,7 +1650,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = NFMTHAZVS9.com.drewvolz.stolaf;
 				PRODUCT_NAME = AllAboutOlaf;
-				PROVISIONING_PROFILE = "45ccdf67-2e41-4323-b343-0c4623b75249";
+				PROVISIONING_PROFILE = "3dea0c24-d70a-4b26-b754-f41ac50c2358";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore NFMTHAZVS9.com.drewvolz.stolaf";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllAboutOlafUITests/AllAboutOlaf-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
