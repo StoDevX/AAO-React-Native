@@ -340,11 +340,6 @@ class StreamPlayer extends React.PureComponent<void, StreamPlayerProps, void> {
 
       // "error" is fired when an error occurs.
       player.addEventListener('error', error)
-
-      /////
-      /////
-
-      player.play()
     </script>`
 
   render() {
