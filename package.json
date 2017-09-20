@@ -25,7 +25,9 @@
     "prettier:since-master": "FILES=$(git diff --name-only master | grep '\\.js$'); prettier --write $npm_package_config_prettier_args $FILES",
     "start": "react-native start",
     "test": "jest",
-    "validate-data": "node scripts/validate-data.js"
+    "validate-data": "node scripts/validate-data.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "babel": {
     "presets": [
@@ -93,7 +95,8 @@
     "timers": "0.1.1",
     "titlecase": "1.1.2",
     "url": "0.11.0",
-    "xml2js": "0.4.19"
+    "xml2js": "0.4.19",
+    "snyk": "^1.40.4"
   },
   "devDependencies": {
     "ajv": "5.2.2",
@@ -119,5 +122,6 @@
     "react-native-view-shot": "1.12.0",
     "react-test-renderer": "16.0.0-alpha.12",
     "string-natural-compare": "2.0.2"
-  }
+  },
+  "snyk": true
 }

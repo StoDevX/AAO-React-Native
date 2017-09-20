@@ -1,0 +1,35 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.7.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:ms:20170412':
+    - react-native > connect > compression > debug > ms:
+        patched: '2017-09-20T19:26:38.150Z'
+    - react-native > connect > connect-timeout > ms:
+        patched: '2017-09-20T19:26:38.150Z'
+    - react-native > connect > express-session > debug > ms:
+        patched: '2017-09-20T19:26:38.150Z'
+    - react-native > connect > finalhandler > debug > ms:
+        patched: '2017-09-20T19:26:38.150Z'
+    - react-native > connect > morgan > debug > ms:
+        patched: '2017-09-20T19:26:38.150Z'
+    - react-native > connect > serve-index > debug > ms:
+        patched: '2017-09-20T19:26:38.150Z'
+    - react-native > connect > body-parser > debug > ms:
+        patched: '2017-09-20T19:26:38.150Z'
+    - react-native > connect > debug > ms:
+        patched: '2017-09-20T19:26:38.150Z'
+    - react-native > connect > connect-timeout > debug > ms:
+        patched: '2017-09-20T19:26:38.150Z'
+    - react-native > connect > serve-static > send > debug > ms:
+        patched: '2017-09-20T19:26:38.150Z'
+    - react-native > connect > serve-static > send > ms:
+        patched: '2017-09-20T19:26:38.150Z'
+    - react-native > connect > serve-favicon > ms:
+        patched: '2017-09-20T19:26:38.150Z'
+  'npm:negotiator:20160616':
+    - react-native > connect > compression > accepts > negotiator:
+        patched: '2017-09-20T19:26:38.150Z'
+    - react-native > connect > serve-index > accepts > negotiator:
+        patched: '2017-09-20T19:26:38.150Z'
