@@ -202,7 +202,6 @@ dependencies {
     compile project(':react-native-onesignal')
     compile project(':react-native-restart')
     compile project(':react-native-vector-icons')
-    compile project(':react-native-video-exoplayer')
     compile project(':react-native-view-shot')
     // this is for react-native itself
     compile fileTree(dir: "libs", include: ["*.jar"])
