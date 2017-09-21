@@ -114,7 +114,7 @@ class WeekTogglesIOS extends React.PureComponent {
     const allDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
     return (
-      <Row flexDirection="column">
+      <Row justifyContent="center">
         {allDays.map((day, i) =>
           <ToggleButton
             key={day}
