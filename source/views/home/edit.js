@@ -21,7 +21,8 @@ import fromPairs from 'lodash/fromPairs'
 
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
-import SortableList from 'react-native-sortable-list'
+import {Touchable} from '../components/touchable'
+import SortableListView from 'react-native-sortable-listview'
 
 import type {ViewType} from '../views'
 import {allViews} from '../views'
@@ -38,8 +39,6 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
   },
   row: {
-    flex: 1,
-
     flexDirection: 'row',
     alignItems: 'center',
 
@@ -200,7 +199,9 @@ class Row extends React.Component<void, RowProps, RowState> {
         <Text style={[styles.text, {color: this.props.data.tint}]}>
           {this.props.data.title}
         </Text>
-        {reorderIcon}
+        <Touchable highlight={false} {...this.props.sortHandlers}>
+          {reorderIcon}
+        </Touchable>
       </Animated.View>
     )
   }
@@ -212,6 +213,7 @@ type Props = {
 }
 type State = {
   width: number,
+  activeRowView: string,
 }
 
 class EditHomeView extends React.PureComponent<void, Props, State> {
@@ -221,6 +223,7 @@ class EditHomeView extends React.PureComponent<void, Props, State> {
 
   state = {
     width: Dimensions.get('window').width,
+    activeRowView: '',
   }
 
   componentWillMount() {
@@ -235,18 +238,35 @@ class EditHomeView extends React.PureComponent<void, Props, State> {
     this.setState(() => ({width: event.window.width}))
   }
 
+  onRowActive = event => {
+    this.setState(() => ({activeRowView: event.rowData.index}))
+  }
+
+  onRowMoved = event => {
+    this.setState(() => ({activeRowView: ''}))
+    let order = [...this.props.order]
+    order.splice(event.to, 0, order.splice(event.from, 1)[0])
+    this.props.onSaveOrder(order)
+  }
+
   render() {
     return (
-      <SortableList
+      <SortableListView
         contentContainerStyle={[
           styles.contentContainer,
           {width: this.state.width},
         ]}
         data={objViews}
         order={this.props.order}
-        onChangeOrder={(order: ViewType[]) => this.props.onSaveOrder(order)}
-        renderRow={({data, active}: {data: ViewType, active: boolean}) =>
-          <Row data={data} active={active} width={this.state.width} />}
+        activeOpacity={0.5}
+        onRowActive={this.onRowActive}
+        onRowMoved={this.onRowMoved}
+        renderRow={(view: ViewType) =>
+          <Row
+            data={view}
+            active={this.state.activeRowView === view.view}
+            width={this.state.width}
+          />}
       />
     )
   }
