@@ -243,10 +243,13 @@ class EditHomeView extends React.PureComponent<void, Props, State> {
   }
 
   onRowMoved = event => {
-    this.setState(() => ({activeRowView: ''}))
     let order = [...this.props.order]
     order.splice(event.to, 0, order.splice(event.from, 1)[0])
     this.props.onSaveOrder(order)
+  }
+
+  onMoveEnd = () => {
+    this.setState(() => ({activeRowView: ''}))
   }
 
   render() {
@@ -261,6 +264,7 @@ class EditHomeView extends React.PureComponent<void, Props, State> {
         activeOpacity={0.5}
         onRowActive={this.onRowActive}
         onRowMoved={this.onRowMoved}
+        onMoveEnd={this.onMoveEnd}
         renderRow={(view: ViewType) =>
           <Row
             data={view}
