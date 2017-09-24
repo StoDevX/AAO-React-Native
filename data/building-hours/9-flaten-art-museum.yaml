@@ -1,0 +1,19 @@
+name: Flaten Art Museum
+category: Museums
+
+schedule:
+  - title: Hours
+    notes: Located in the Center for Art and Dance. Closed during the summer, holidays, and college breaks.
+    hours:
+      - {days: [Mo, Tu, We], from: '10:00am', to: '5:00pm'}
+      - {days: [Th], from: '10:00am', to: '8:00pm'}
+      - {days: [Sa, Su], from: '12:00pm', to: '4:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []
