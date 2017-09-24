@@ -22,6 +22,7 @@ import {
   BuildingHoursScheduleEditorView,
 } from './views/building-hours'
 import TransportationView, {BusMapView} from './views/transportation'
+import {OtherModesDetailView} from './views/transportation/other-modes'
 import SettingsView from './views/settings'
 import CreditsView from './views/settings/credits'
 import PrivacyView from './views/settings/privacy'
@@ -78,6 +79,7 @@ export const AppNavigator = StackNavigator(
     StudentOrgsDetailView: {screen: StudentOrgsDetailView},
     StudentOrgsView: {screen: StudentOrgsView},
     TransportationView: {screen: TransportationView},
+    OtherModesDetailView: {screen: OtherModesDetailView},
     BusMapView: {screen: BusMapView},
   },
   {
