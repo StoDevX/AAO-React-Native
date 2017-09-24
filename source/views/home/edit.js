@@ -240,7 +240,7 @@ class EditHomeView extends React.PureComponent<void, Props, State> {
   }
 
   onRowActive = event => {
-    this.setState(() => ({activeRowView: event.rowData.index}))
+    this.setState(() => ({activeRowView: event.rowData.data.view}))
   }
 
   onRowMoved = event => {
