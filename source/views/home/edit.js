@@ -89,6 +89,7 @@ type RowProps = {
   data: ViewType,
   active: boolean,
   width: number,
+  sortHandlers?: any,
 }
 
 type RowState = {
@@ -209,7 +210,7 @@ class Row extends React.Component<void, RowProps, RowState> {
 
 type Props = {
   onSaveOrder: (ViewType[]) => any,
-  order: string[],
+  order: ViewType[],
 }
 type State = {
   width: number,
