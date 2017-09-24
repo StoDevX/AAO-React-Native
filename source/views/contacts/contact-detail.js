@@ -1,6 +1,7 @@
 // @flow
 import React from 'react'
-import {Alert, StyleSheet} from 'react-native'
+import {Alert, StyleSheet, ScrollView, Image} from 'react-native'
+import {contactImages} from '../../../images/contact-images'
 import {Markdown} from '../components/markdown'
 import {ListFooter} from '../components/list'
 import glamorous from 'glamorous-native'
@@ -19,7 +20,7 @@ const Title = glamorous.text({
   marginVertical: 10,
 })
 
-const Container = glamorous.scrollView({
+const Container = glamorous.view({
   paddingHorizontal: 18,
   paddingVertical: 6,
 })
@@ -27,6 +28,10 @@ const Container = glamorous.scrollView({
 const styles = StyleSheet.create({
   paragraph: {
     fontSize: 16,
+  },
+  image: {
+    width: null,
+    height: 100,
   },
 })
 
@@ -68,22 +73,35 @@ export class ContactsDetailView extends React.PureComponent {
 
   render() {
     const contact = this.props.navigation.state.params.contact
+    const headerImage = contact.image &&
+      contactImages.hasOwnProperty(contact.image)
+      ? contactImages[contact.image]
+      : null
     return (
-      <Container>
-        <Title selectable={true}>{contact.title}</Title>
+      <ScrollView>
+        {headerImage
+          ? <Image
+              source={headerImage}
+              resizeMode="cover"
+              style={styles.image}
+            />
+          : null}
+        <Container>
+          <Title selectable={true}>{contact.title}</Title>
 
-        <Markdown
-          styles={{Paragraph: styles.paragraph}}
-          source={contact.text}
-        />
+          <Markdown
+            styles={{Paragraph: styles.paragraph}}
+            source={contact.text}
+          />
 
-        <Button onPress={this.onPress} title={contact.buttonText} />
+          <Button onPress={this.onPress} title={contact.buttonText} />
 
-        <ListFooter
-          title="Collected by the humans of All About Olaf"
-          href={AAO_URL}
-        />
-      </Container>
+          <ListFooter
+            title="Collected by the humans of All About Olaf"
+            href={AAO_URL}
+          />
+        </Container>
+      </ScrollView>
     )
   }
 }
