@@ -9,6 +9,7 @@ import * as c from '../../components/colors'
 import type {JobType} from './types'
 import {cleanJob, getContactName, getLinksFromJob} from './clean-job'
 import {SelectableCell} from './selectable'
+import glamorous from 'glamorous-native'
 
 const styles = StyleSheet.create({
   lastUpdated: {
@@ -21,18 +22,23 @@ const styles = StyleSheet.create({
   },
 })
 
-function Information({job}: {job: JobType}) {
-  const title = job.title ? <Cell cellStyle="Basic" title={job.title} /> : null
+const Title = glamorous.text({
+  fontSize: 36,
+  textAlign: 'center',
+  marginHorizontal: 18,
+  marginVertical: 10,
+})
 
+function Information({job}: {job: JobType}) {
   const office = job.office
-    ? <Cell cellStyle="RightDetail" title="Office" detail={job.office} />
+    ? <Cell cellStyle="LeftDetail" detail="Office" title={job.office} />
     : null
 
   const contact = job.contactEmail
     ? <Cell
-        cellStyle="RightDetail"
-        title={'Contact'}
-        detail={getContactName(job).trim() || job.contactEmail}
+        cellStyle="LeftDetail"
+        detail={'Contact'}
+        title={getContactName(job).trim() || job.contactEmail}
         accessory="DisclosureIndicator"
         onPress={() => email([job.contactEmail], null, null, job.title, '')}
       />
@@ -41,45 +47,31 @@ function Information({job}: {job: JobType}) {
   const ending = job.hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
   const hours = job.hoursPerWeek
     ? <Cell
-        cellStyle="RightDetail"
-        title={'Hours'}
-        detail={job.hoursPerWeek + ending}
+        cellStyle="LeftDetail"
+        detail={'Hours'}
+        title={job.hoursPerWeek + ending}
       />
     : null
 
   const amount = job.timeOfHours
-    ? <Cell cellStyle="RightDetail" title={'Time'} detail={job.timeOfHours} />
-    : null
-
-  const modified = job.lastModified
     ? <Cell
-        cellStyle="RightDetail"
-        title="Modified"
-        detail={moment(job.lastModified, 'YYYY/MM/DD').calendar()}
+        cellStyle="LeftDetail"
+        detail={'Time of Day'}
+        title={job.timeOfHours}
       />
     : null
 
-  const allLinks = getLinksFromJob(job)
-  const links = allLinks.length
-    ? allLinks.map(url =>
-        <Cell
-          key={url}
-          title={url}
-          accessory="DisclosureIndicator"
-          onPress={() => openUrl(url)}
-        />,
-      )
+  const category = job.type
+    ? <Cell cellStyle="LeftDetail" detail={'Category'} title={job.type} />
     : null
 
   return (
     <Section header="INFORMATION">
-      {title}
       {office}
       {contact}
       {hours}
       {amount}
-      {modified}
-      {links}
+      {category}
     </Section>
   )
 }
@@ -108,6 +100,34 @@ function Comments({job}: {job: JobType}) {
     : null
 }
 
+function Links({job}: {job: JobType}) {
+  const links = getLinksFromJob(job)
+  return links.length
+    ? <Section header="LINKS">
+        {links.map(url =>
+          <Cell
+            key={url}
+            title={url}
+            accessory="DisclosureIndicator"
+            onPress={() => openUrl(url)}
+          />,
+        )}
+      </Section>
+    : null
+}
+
+function LastUpdated({when}: {when: string}) {
+  return when
+    ? <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
+        Last updated:
+        {' '}
+        {moment(when, 'YYYY/MM/DD').calendar()}
+        {'\n'}
+        Powered by St. Olaf Student Employment job postings
+      </Text>
+    : null
+}
+
 export default function JobDetailView(props: {
   navigation: {state: {params: {job: JobType}}},
 }) {
@@ -115,15 +135,15 @@ export default function JobDetailView(props: {
 
   return (
     <ScrollView>
+      <Title selectable={true}>{job.title}</Title>
       <TableView>
         <Information job={job} />
         <Description job={job} />
         <Skills job={job} />
         <Comments job={job} />
+        <Links job={job} />
       </TableView>
-      <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-        Powered by St. Olaf Student Employment job postings
-      </Text>
+      <LastUpdated when={job.lastModified} />
     </ScrollView>
   )
 }
