@@ -109,7 +109,6 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
         renderSectionHeader={this.renderSectionHeader}
         renderItem={this.renderItem}
         refreshing={this.state.refreshing}
-        onRefresh={this.refresh}
       />
     )
   }
