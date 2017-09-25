@@ -21,40 +21,67 @@ const styles = StyleSheet.create({
   },
 })
 
-function Title({job}: {job: JobType}) {
-  return job.title || job.type
-    ? <Section header="JOB">
-        <Cell cellStyle="Subtitle" title={job.title} detail={job.type} />
-      </Section>
-    : null
-}
+function Information({job}: {job: JobType}) {
+  const title = job.title ? <Cell cellStyle="Basic" title={job.title} /> : null
 
-function Contact({job}: {job: JobType}) {
-  const contactName = getContactName(job).trim() || job.contactEmail
-  return job.office || contactName
-    ? <Section header="CONTACT">
-        <Cell
-          cellStyle="Subtitle"
-          title={contactName}
-          detail={job.office}
-          accessory="DisclosureIndicator"
-          onPress={() => email([job.contactEmail], null, null, job.title, '')}
-        />
-      </Section>
+  const office = job.office
+    ? <Cell cellStyle="RightDetail" title="Office" detail={job.office} />
     : null
-}
 
-function Hours({job}: {job: JobType}) {
+  const contact = job.contactEmail
+    ? <Cell
+        cellStyle="RightDetail"
+        title={'Contact'}
+        detail={getContactName(job).trim() || job.contactEmail}
+        accessory="DisclosureIndicator"
+        onPress={() => email([job.contactEmail], null, null, job.title, '')}
+      />
+    : null
+
   const ending = job.hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
-  return job.timeOfHours && job.hoursPerWeek
-    ? <Section header="HOURS">
-        <Cell
-          cellStyle="Subtitle"
-          title={job.timeOfHours}
-          detail={job.hoursPerWeek + ending}
-        />
-      </Section>
+  const hours = job.hoursPerWeek
+    ? <Cell
+        cellStyle="RightDetail"
+        title={'Hours'}
+        detail={job.hoursPerWeek + ending}
+      />
     : null
+
+  const amount = job.timeOfHours
+    ? <Cell cellStyle="RightDetail" title={'Time'} detail={job.timeOfHours} />
+    : null
+
+  const modified = job.lastModified
+    ? <Cell
+        cellStyle="RightDetail"
+        title="Modified"
+        detail={moment(job.lastModified, 'YYYY/MM/DD').calendar()}
+      />
+    : null
+
+  const allLinks = getLinksFromJob(job)
+  const links = allLinks.length
+    ? allLinks.map(url =>
+        <Cell
+          key={url}
+          title={url}
+          accessory="DisclosureIndicator"
+          onPress={() => openUrl(url)}
+        />,
+      )
+    : null
+
+  return (
+    <Section header="INFORMATION">
+      {title}
+      {office}
+      {contact}
+      {hours}
+      {amount}
+      {modified}
+      {links}
+    </Section>
+  )
 }
 
 function Description({job}: {job: JobType}) {
@@ -81,34 +108,6 @@ function Comments({job}: {job: JobType}) {
     : null
 }
 
-function Links({job}: {job: JobType}) {
-  const links = getLinksFromJob(job)
-  return links.length
-    ? <Section header="LINKS">
-        {links.map(url =>
-          <Cell
-            key={url}
-            title={url}
-            accessory="DisclosureIndicator"
-            onPress={() => openUrl(url)}
-          />,
-        )}
-      </Section>
-    : null
-}
-
-function LastUpdated({when}: {when: string}) {
-  return when
-    ? <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-        Last updated:
-        {' '}
-        {moment(when, 'YYYY/MM/DD').calendar()}
-        {'\n'}
-        Powered by St. Olaf Student Employment job postings
-      </Text>
-    : null
-}
-
 export default function JobDetailView(props: {
   navigation: {state: {params: {job: JobType}}},
 }) {
@@ -117,15 +116,14 @@ export default function JobDetailView(props: {
   return (
     <ScrollView>
       <TableView>
-        <Title job={job} />
-        <Contact job={job} />
-        <Hours job={job} />
+        <Information job={job} />
         <Description job={job} />
         <Skills job={job} />
         <Comments job={job} />
-        <Links job={job} />
       </TableView>
-      <LastUpdated when={job.lastModified} />
+      <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
+        Powered by St. Olaf Student Employment job postings
+      </Text>
     </ScrollView>
   )
 }
