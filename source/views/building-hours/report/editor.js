@@ -148,7 +148,7 @@ class WeekTogglesAndroid extends React.PureComponent {
               value={this.props.days.includes(day)}
               onChange={() => this.toggleDay(day)}
             />
-            {i === allDays.length - 1 && styles.finalCell
+            {i === allDays.length - 1
               ? null
               : <ListSeparator force={true} />}
           </View>,
