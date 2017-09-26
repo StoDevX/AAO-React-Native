@@ -190,66 +190,46 @@ class DatePickerCell extends React.PureComponent {
     date: moment,
     title: string,
     onChange?: (date: moment) => any,
-    _ref?: (ref: any) => any,
   }
 
   _picker: any
   openPicker = () => this._picker.onPressDate()
 
-  getRef = (ref: any) => {
-    this._picker = ref
-    this.props._ref && this.props._ref(ref)
-  }
+  getRef = (ref: any) => (this._picker = ref)
 
-  onChange = (newDate: moment) => {
+  onChange = (newDate: Date) => {
+    const oldMoment = moment(this.props.date)
+    const newMoment = moment(newDate)
+
+    oldMoment.hours(newMoment.hours())
+    oldMoment.minutes(newMoment.minutes())
+
     this.props.onChange && this.props.onChange(newDate)
   }
 
   render() {
-    const {date, title} = this.props
+    const format = 'h:mma'
+
     const accessory = (
-      <Date
-        _ref={this.getRef}
-        date={date.toDate()}
+      <DatePicker
+        ref={this.getRef}
+        date={this.props.date.toDate()}
         minuteInterval={5}
-        onChange={this.onChange}
+        mode="time"
+        format={format}
+        onDateChange={this.onChange}
       />
     )
 
     return (
       <Cell
-        title={title}
+        title={this.props.title}
         cellStyle="RightDetail"
         cellAccessoryView={accessory}
         onPress={this.openPicker}
       />
     )
   }
-}
-
-const Date = ({date, onChange, _ref}) => {
-  const format = 'h:mma'
-
-  const callback = (newDate: Date) => {
-    const oldMoment = moment(date)
-    const newMoment = moment(newDate)
-
-    oldMoment.hours(newMoment.hours())
-    oldMoment.minutes(newMoment.minutes())
-
-    onChange(oldMoment)
-  }
-
-  return (
-    <DatePicker
-      ref={_ref}
-      date={date}
-      minuteInterval={5}
-      mode="time"
-      format={format}
-      onDateChange={callback}
-    />
-  )
 }
 
 const styles = StyleSheet.create({
