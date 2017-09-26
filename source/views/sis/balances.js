@@ -37,14 +37,14 @@ class BalancesView extends React.Component {
     updateBalances: boolean => any,
   }
 
+  state = {
+    loading: false,
+  }
+
   componentWillMount() {
     // calling "refresh" here, to make clear to the user
     // that the data is being updated
     this.refresh()
-  }
-
-  state = {
-    loading: false,
   }
 
   refresh = async () => {
