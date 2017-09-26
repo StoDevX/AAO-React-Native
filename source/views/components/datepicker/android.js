@@ -59,7 +59,7 @@ export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
     this.props.onDateChange(moment().hour(hour).minute(minute).toDate())
   }
 
-  onDateTimePicked = ({action, year, month, day}: DatePickerResponse) => {
+  onDatetimeDatePicked = ({action, year, month, day}: DatePickerResponse) => {
     if (action === DatePickerAndroid.dismissedAction) {
       return
     }
@@ -110,7 +110,7 @@ export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
         return DatePickerAndroid.open({
           date: this.props.date,
           mode: androidMode,
-        }).then(this.onDateTimePicked)
+        }).then(this.onDatetimeDatePicked)
       }
 
       default:
