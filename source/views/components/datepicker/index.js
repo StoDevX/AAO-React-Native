@@ -26,6 +26,7 @@ type Props = {
   mode: 'date' | 'datetime' | 'time',
   onDateChange: Date => any,
   style?: StyleSheetRules,
+  timeZoneOffsetInMinutes: number,
 }
 
 type State = {
@@ -78,6 +79,7 @@ export class DatePicker extends React.Component<any, Props, State> {
           duration={this.props.duration}
           height={this.props.height}
           minuteInterval={this.props.minuteInterval}
+          timeZoneOffsetInMinutes={this.props.timeZoneOffsetInMinutes}
           {...propsToPass}
         />
       )

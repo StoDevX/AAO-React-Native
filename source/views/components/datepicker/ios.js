@@ -24,6 +24,7 @@ type Props = {
   mode: 'date' | 'datetime' | 'time',
   onDateChange: Date => any,
   style?: StyleSheetRules,
+  timeZoneOffsetInMinutes: number,
 }
 
 type State = {
@@ -103,6 +104,7 @@ export class IosDatePicker extends React.Component<any, Props, State> {
             onDateChange={this.props.onDateChange}
             onHide={this.hideModal}
             visible={this.state.modalVisible}
+            timeZoneOffsetInMinutes={this.props.timeZoneOffsetInMinutes}
           />
         </View>
       </TouchableHighlight>
@@ -119,6 +121,7 @@ type ModalProps = {
   visible: boolean,
   onDateChange: Date => any,
   onHide: () => any,
+  timeZoneOffsetInMinutes: number,
 }
 ;[]
 
@@ -141,6 +144,7 @@ class DatePickerModal extends React.PureComponent<void, ModalProps, void> {
       onDateChange,
       onHide,
       visible,
+      timeZoneOffsetInMinutes,
     } = this.props
 
     return (
@@ -166,6 +170,7 @@ class DatePickerModal extends React.PureComponent<void, ModalProps, void> {
                   onDateChange={onDateChange}
                   minuteInterval={minuteInterval}
                   style={defaultStyle.datePicker}
+                  timeZoneOffsetInMinutes={timeZoneOffsetInMinutes}
                   pointerEvents={allowPointerEvents ? 'auto' : 'none'}
                 />
 

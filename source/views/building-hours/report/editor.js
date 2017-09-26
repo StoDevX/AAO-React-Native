@@ -207,6 +207,10 @@ class DatePickerCell extends React.PureComponent {
 
   render() {
     const format = 'h:mma'
+    // We need to negate the offset, because moment inverts the offset for
+    // POSIX compatability. So, GMT-5 (CST) is shown to be GMT+5.
+    const dateInUnixMs = this.props.date.valueOf()
+    const tzOffset = -moment.tz.zone('America/Winnipeg').offset(dateInUnixMs)
 
     const accessory = (
       <DatePicker
@@ -215,6 +219,7 @@ class DatePickerCell extends React.PureComponent {
         minuteInterval={5}
         mode="time"
         format={format}
+        timeZoneOffsetInMinutes={tzOffset}
         onDateChange={this.onChange}
       />
     )
