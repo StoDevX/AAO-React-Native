@@ -47,38 +47,32 @@ export class IosDatePicker extends React.Component<any, Props, State> {
   }
 
   showModal = () => {
-    const {height, duration} = this.props
-
     // slide animation
     this.setState(() => ({modalVisible: true}))
     return Animated.timing(this.state.animatedHeight, {
-      toValue: height,
-      duration: duration,
+      toValue: this.props.height,
+      duration: this.props.duration,
     }).start()
   }
 
   hideModal = () => {
-    const {duration} = this.props
-
     return Animated.timing(this.state.animatedHeight, {
       toValue: 0,
-      duration: duration,
+      duration: this.props.duration,
     }).start(() => {
       this.setState(() => ({modalVisible: false}))
     })
   }
 
   onDateChange = (date: Date) => {
-    this.setState(() => ({
-      allowPointerEvents: false,
-    }))
+    this.setState(() => ({allowPointerEvents: false}))
 
     this.props.onDateChange(date)
 
     const timeoutId = setTimeout(() => {
       this.setState(() => ({allowPointerEvents: true}))
       clearTimeout(timeoutId)
-    }, 200)
+    }, this.props.duration)
   }
 
   onPressDate = () => {
