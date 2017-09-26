@@ -1,13 +1,8 @@
 // @flow
-/**
- * All About Olaf
- * StudentOrgs page
- */
 
 import React from 'react'
-import {StyleSheet, View, Text, Platform} from 'react-native'
-import {StyledAlphabetListView} from '../components/alphabet-listview'
-import debounce from 'lodash/debounce'
+import {StyleSheet, View, Text, Platform, RefreshControl} from 'react-native'
+import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
 import type {TopLevelViewPropsType} from '../types'
 import LoadingView from '../components/loading'
 import delay from 'delay'
@@ -21,7 +16,7 @@ import {
   Title,
 } from '../components/list'
 import {tracker} from '../../analytics'
-import bugsnag from '../../bugsnag'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 import size from 'lodash/size'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
@@ -30,28 +25,35 @@ import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import filter from 'lodash/filter'
-import isString from 'lodash/isString'
-import * as c from '../components/colors'
 import startCase from 'lodash/startCase'
-import {SearchBar} from '../components/searchbar'
+import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
 
 const orgsUrl =
   'https://www.stolaf.edu/orgs/list/index.cfm?fuseaction=getall&nostructure=1'
 const leftSideSpacing = 20
-const rowHeight = Platform.OS === 'ios' ? 58 : 74
-const headerHeight = Platform.OS === 'ios' ? 33 : 41
+const ROW_HEIGHT = Platform.OS === 'ios' ? 58 : 74
+const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
+
+const splitToArray = (str: string) => words(deburr(str.toLowerCase()))
+
+const orgToArray = (term: StudentOrgType) =>
+  uniq([
+    ...splitToArray(term.name),
+    ...splitToArray(term.category),
+    ...splitToArray(term.description),
+  ])
 
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
   },
   row: {
-    height: rowHeight,
+    height: ROW_HEIGHT,
     paddingRight: 2,
   },
   rowSectionHeader: {
-    height: headerHeight,
+    height: SECTION_HEADER_HEIGHT,
   },
   badgeContainer: {
     alignItems: 'center',
@@ -79,12 +81,12 @@ export class StudentOrgsView extends React.Component {
     results: {[key: string]: StudentOrgType[]},
     refreshing: boolean,
     error: boolean,
-    loaded: boolean,
+    loading: boolean,
   } = {
     orgs: {},
     results: {},
     refreshing: false,
-    loaded: false,
+    loading: true,
     error: false,
   }
 
@@ -93,30 +95,32 @@ export class StudentOrgsView extends React.Component {
   }
 
   fetchData = async () => {
-    try {
-      const responseData: StudentOrgType[] = await fetchJson(orgsUrl)
-      const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/i
-      const withSortableNames = responseData.map(item => {
-        const sortableName = item.name.replace(sortableRegex, '')
+    this.setState(() => ({loading: true}))
 
-        return {
-          ...item,
-          $sortableName: sortableName,
-          $groupableName: head(startCase(sortableName)),
-        }
-      })
-
-      const sorted = sortBy(withSortableNames, '$sortableName')
-      const grouped = groupBy(sorted, '$groupableName')
-      this.setState(() => ({orgs: sorted, results: grouped}))
-    } catch (err) {
-      tracker.trackException(err.message)
-      bugsnag.notify(err)
+    const responseData: StudentOrgType[] = await fetchJson(
+      orgsUrl,
+    ).catch(err => {
+      reportNetworkProblem(err)
       this.setState(() => ({error: true}))
-      console.error(err)
-    }
+      return []
+    })
 
-    this.setState(() => ({loaded: true}))
+    const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/i
+    const withSortableNames = responseData.map(item => {
+      const sortableName = item.name.replace(sortableRegex, '')
+
+      return {
+        ...item,
+        $sortableName: sortableName,
+        $groupableName: head(startCase(sortableName)),
+      }
+    })
+
+    const sorted = sortBy(withSortableNames, '$sortableName')
+    const grouped = groupBy(sorted, '$groupableName')
+    this.setState(() => ({orgs: sorted, results: grouped}))
+
+    this.setState(() => ({loading: false}))
   }
 
   refresh = async () => {
@@ -133,90 +137,62 @@ export class StudentOrgsView extends React.Component {
     this.setState(() => ({refreshing: false}))
   }
 
-  renderSectionHeader = ({title}: {title: string}) => {
-    return (
-      <ListSectionHeader
-        title={title}
-        spacing={{left: leftSideSpacing}}
-        style={styles.rowSectionHeader}
-      />
-    )
-  }
+  renderSectionHeader = ({title}: {title: string}) =>
+    <ListSectionHeader
+      title={title}
+      spacing={{left: leftSideSpacing}}
+      style={styles.rowSectionHeader}
+    />
 
-  renderRow = ({item}: {item: StudentOrgType}) => {
-    return (
-      <ListRow
-        onPress={() => this.onPressRow(item)}
-        contentContainerStyle={[styles.row]}
-        arrowPosition="none"
-        fullWidth={true}
-      >
-        <Row alignItems="flex-start">
-          <View style={styles.badgeContainer}>
-            <Text style={styles.badge}>•</Text>
-          </View>
+  renderRow = ({item}: {item: StudentOrgType}) =>
+    <ListRow
+      onPress={() => this.onPressRow(item)}
+      contentContainerStyle={[styles.row]}
+      arrowPosition="none"
+      fullWidth={true}
+    >
+      <Row alignItems="flex-start">
+        <View style={styles.badgeContainer}>
+          <Text style={styles.badge}>•</Text>
+        </View>
 
-          <Column flex={1}>
-            <Title lines={1}>{item.name}</Title>
-            <Detail lines={1}>{item.category}</Detail>
-          </Column>
-        </Row>
-      </ListRow>
-    )
-  }
+        <Column flex={1}>
+          <Title lines={1}>{item.name}</Title>
+          <Detail lines={1}>{item.category}</Detail>
+        </Column>
+      </Row>
+    </ListRow>
 
-  renderSeparator = (sectionId: string, rowId: string) => {
-    return (
-      <ListSeparator
-        key={`${sectionId}-${rowId}`}
-        spacing={{left: leftSideSpacing}}
-      />
-    )
-  }
+  renderSeparator = (sectionId: string, rowId: string) =>
+    <ListSeparator
+      key={`${sectionId}-${rowId}`}
+      spacing={{left: leftSideSpacing}}
+    />
 
   onPressRow = (data: StudentOrgType) => {
     tracker.trackEvent('student-org', data.name)
     this.props.navigation.navigate('StudentOrgsDetailView', {org: data})
   }
 
-  splitToArray = (str: string) => {
-    return words(deburr(str.toLowerCase()))
-  }
-
-  orgToArray = (term: StudentOrgType) => {
-    return uniq([
-      ...this.splitToArray(term.name),
-      ...this.splitToArray(term.category),
-      ...this.splitToArray(term.description),
-    ])
-  }
-
-  _performSearch = (text: string) => {
-    // Android clear button returns an object...
-    // ...and we need to check if the query exists
-    if (!isString(text) || !text) {
+  performSearch = (text: ?string) => {
+    if (!text) {
       this.setState(state => ({
         results: groupBy(state.orgs, '$groupableName'),
       }))
       return
     }
 
+    const query = text.toLowerCase()
     this.setState(state => {
-      const query = text.toLowerCase()
       const filteredResults = filter(state.orgs, org =>
-        this.orgToArray(org).some(word => word.startsWith(query)),
+        orgToArray(org).some(word => word.startsWith(query)),
       )
       return {results: groupBy(filteredResults, '$groupableName')}
     })
   }
 
-  // We need to make the search run slightly behind the UI,
-  // so I'm slowing it down by 50ms. 0ms also works, but seems
-  // rather pointless.
-  performSearch = debounce(this._performSearch, 50)
-
   render() {
-    if (!this.state.loaded) {
+    if (this.state.loading) {
       return <LoadingView />
     }
 
@@ -224,30 +200,28 @@ export class StudentOrgsView extends React.Component {
       return <NoticeView text="No organizations found." />
     }
 
+    const refreshControl = (
+      <RefreshControl
+        refreshing={this.state.loading}
+        onRefresh={this.refresh}
+      />
+    )
+
     return (
-      <View style={styles.wrapper}>
-        <SearchBar
-          getRef={ref => (this.searchBar = ref)}
-          onChangeText={this.performSearch}
-          // if we don't use the arrow function here, searchBar ref is null...
-          onSearchButtonPress={() => this.searchBar.unFocus()}
-        />
-        <StyledAlphabetListView
-          data={this.state.results}
-          cell={this.renderRow}
-          // just setting cellHeight sends the wrong values on iOS.
-          cellHeight={
-            rowHeight +
-            (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
-          }
-          sectionHeader={this.renderSectionHeader}
-          sectionHeaderHeight={headerHeight}
-          renderSeparator={this.renderSeparator}
-          showsVerticalScrollIndicator={false}
-          keyboardDismissMode="on-drag"
-          keyboardShouldPersistTaps="never"
-        />
-      </View>
+      <SearchableAlphabetListView
+        cell={this.renderRow}
+        cellHeight={
+          ROW_HEIGHT +
+          (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
+        }
+        data={this.state.results}
+        onSearch={this.performSearch}
+        refreshControl={refreshControl}
+        renderSeparator={this.renderSeparator}
+        sectionHeader={this.renderSectionHeader}
+        sectionHeaderHeight={SECTION_HEADER_HEIGHT}
+        style={styles.wrapper}
+      />
     )
   }
 }

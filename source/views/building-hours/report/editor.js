@@ -196,7 +196,7 @@ class DatePickerCell extends React.PureComponent {
   _picker: any
   openPicker = () => this._picker.onPressDate()
 
-  setRef = (ref: any) => {
+  getRef = (ref: any) => {
     this._picker = ref
     this.props._ref && this.props._ref(ref)
   }
@@ -209,7 +209,7 @@ class DatePickerCell extends React.PureComponent {
     const {date, title} = this.props
     const accessory = (
       <Date
-        getRef={this.setRef}
+        _ref={this.getRef}
         date={date.toDate()}
         minuteInterval={5}
         onChange={this.onChange}
@@ -227,7 +227,7 @@ class DatePickerCell extends React.PureComponent {
   }
 }
 
-const Date = ({date, onChange, getRef}) => {
+const Date = ({date, onChange, _ref}) => {
   const format = 'h:mma'
 
   const callback = (newDate: Date) => {
@@ -242,12 +242,11 @@ const Date = ({date, onChange, getRef}) => {
 
   return (
     <DatePicker
-      ref={getRef}
-      initialDate={date}
+      ref={_ref}
+      date={date}
       minuteInterval={5}
       mode="time"
       format={format}
-      is24Hour={false}
       onDateChange={callback}
     />
   )
