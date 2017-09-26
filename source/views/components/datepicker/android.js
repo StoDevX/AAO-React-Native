@@ -86,7 +86,7 @@ export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
     this.props.onDateChange(new Date(year, month, day, hour, minute))
   }
 
-  showPicker = () => {
+  showModal = () => {
     const {mode, androidMode} = this.props
 
     switch (mode) {
@@ -120,7 +120,7 @@ export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
 
   onPressDate = () => {
     Keyboard.dismiss()
-    this.showPicker()
+    this.showModal()
   }
 
   render() {

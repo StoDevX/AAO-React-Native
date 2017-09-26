@@ -2,7 +2,7 @@
 // Copied from https://github.com/xgfe/react-native-datepicker
 
 import React from 'react'
-import {Platform} from 'react-native'
+import {Platform, Keyboard} from 'react-native'
 import moment from 'moment'
 
 import {IosDatePicker} from './ios'
@@ -40,6 +40,8 @@ export class DatePicker extends React.Component<any, Props, State> {
     onDateChange: () => null,
   }
 
+  _ref: any
+
   state = {
     date: this.props.initialDate,
   }
@@ -60,7 +62,17 @@ export class DatePicker extends React.Component<any, Props, State> {
   }
 
   onDateChange = (newDate: Date) => {
-    this.setState(() => ({date: newDate}))
+    this.setState(
+      () => ({date: newDate}),
+      () => this.props.onDateChange(this.state.date),
+    )
+  }
+
+  setRef = (ref: any) => (this._ref = ref)
+
+  onPressDate = () => {
+    Keyboard.dismiss()
+    this._ref.showModal()
   }
 
   render() {
@@ -70,6 +82,7 @@ export class DatePicker extends React.Component<any, Props, State> {
       mode: this.props.mode,
       onDateChange: this.onDateChange,
       style: this.props.style,
+      ref: this.setRef,
     }
 
     if (Platform.OS === 'ios') {
