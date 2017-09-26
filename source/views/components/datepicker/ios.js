@@ -87,8 +87,6 @@ export class IosDatePicker extends React.Component<any, Props, State> {
   }
 
   render() {
-    const {formattedDate, mode, minuteInterval} = this.props
-
     return (
       <TouchableHighlight
         style={defaultStyle.dateTouch}
@@ -98,15 +96,15 @@ export class IosDatePicker extends React.Component<any, Props, State> {
         <View style={defaultStyle.dateTouchBody}>
           <View style={defaultStyle.dateInput}>
             <Text style={defaultStyle.dateText}>
-              {formattedDate}
+              {this.props.formattedDate}
             </Text>
           </View>
 
           <DatePickerModal
             date={this.props.date}
-            mode={mode}
+            mode={this.props.mode}
             height={this.state.animatedHeight}
-            minuteInterval={minuteInterval}
+            minuteInterval={this.props.minuteInterval}
             allowPointerEvents={this.state.allowPointerEvents}
             onDateChange={this.props.onDateChange}
             onHide={this.hideModal}
