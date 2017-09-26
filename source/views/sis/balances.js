@@ -9,6 +9,7 @@ import {StyleSheet, ScrollView, View, Text, RefreshControl} from 'react-native'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
+import type {LoginStateType} from '../../flux/parts/settings'
 
 import {updateBalances} from '../../flux/parts/sis'
 
@@ -30,7 +31,7 @@ class BalancesView extends React.Component {
     print: ?number,
     weeklyMeals: ?number,
     dailyMeals: ?number,
-    credentialsValid: boolean,
+    loginState: LoginStateType,
     message: ?string,
 
     updateBalances: boolean => any,
@@ -121,9 +122,9 @@ class BalancesView extends React.Component {
             </View>
           </Section>
 
-          {!this.props.credentialsValid || this.props.message
+          {this.props.loginState !== 'logged-in' || this.props.message
             ? <Section footer="You'll need to log in again so we can update these numbers.">
-                {!this.props.credentialsValid
+                {this.props.loginState !== 'logged-in'
                   ? <Cell
                       cellStyle="Basic"
                       title="Log in with St. Olaf"
@@ -152,7 +153,7 @@ function mapStateToProps(state) {
     dailyMeals: state.sis.balances.daily,
     message: state.sis.balances.message,
 
-    credentialsValid: state.settings.credentials.valid,
+    loginState: state.settings.credentials.state,
   }
 }
 

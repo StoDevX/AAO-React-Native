@@ -37,8 +37,6 @@ const cellHorizontalPadding = 4
 const styles = StyleSheet.create({
   // Main buttons for actions on home screen
   rectangle: {
-    flex: 1,
-
     alignItems: 'center',
     justifyContent: 'center',
 

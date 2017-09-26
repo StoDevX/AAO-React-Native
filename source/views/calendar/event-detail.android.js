@@ -1,15 +1,15 @@
 // @flow
 import React from 'react'
-import {Text, ScrollView, StyleSheet, Share} from 'react-native'
+import {Text, ScrollView, StyleSheet} from 'react-native'
 import type {CleanedEventType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../components/nav-buttons'
 import openUrl from '../components/open-url'
 import {Card} from '../components/card'
-import {getTimes, getLinksFromEvent} from './clean-event'
+import {getLinksFromEvent} from './clean-event'
 import * as c from '../components/colors'
 import {ButtonCell} from '../components/cells/button'
-import {addToCalendar} from './calendar-util'
+import {addToCalendar, shareEvent} from './calendar-util'
 import delay from 'delay'
 import {ListFooter} from '../components/list'
 
@@ -97,20 +97,12 @@ const CalendarButton = ({message, disabled, onPress}) => {
   )
 }
 
-const shareItem = (event: CleanedEventType) => {
-  const times = getTimes(event)
-  const message = `${event.summary}\n\n${times}\n\n${event.location}`
-  Share.share({message})
-    .then(result => console.log(result))
-    .catch(error => console.log(error.message))
-}
-
 export class EventDetail extends React.PureComponent {
   static navigationOptions = ({navigation}) => {
     const {event} = navigation.state.params
     return {
       title: event.title,
-      headerRight: <ShareButton onPress={() => shareItem(event)} />,
+      headerRight: <ShareButton onPress={() => shareEvent(event)} />,
     }
   }
 

@@ -120,6 +120,15 @@ export const allViews: ViewType[] = [
     tint: c.periwinkle,
     gradient: c.lightBlueToBlueDark,
   },
+  {
+    type: 'url',
+    url: 'https://moodle.stolaf.edu/',
+    view: 'MoodleView',
+    title: 'Moodle',
+    icon: 'graduation-cap',
+    tint: c.cantaloupe,
+    gradient: c.yellowToGoldDark,
+  },
   //   {
   //     type: 'view',
   //     view: 'HelpView',

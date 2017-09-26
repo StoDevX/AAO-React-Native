@@ -13,9 +13,11 @@ type PropsType = {
   styles?: any,
   fullWidth?: boolean,
   spacing?: {left?: number, right?: number},
+  force?: boolean,
 }
+
 export function ListSeparator(props: PropsType) {
-  if (Platform.OS === 'android') {
+  if (Platform.OS === 'android' && !props.force) {
     return null
   }
 
