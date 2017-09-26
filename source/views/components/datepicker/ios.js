@@ -32,7 +32,7 @@ type State = {
   animatedHeight: Animated.Value,
   allowPointerEvents: boolean,
 }
-;[]
+
 export class IosDatePicker extends React.Component<any, Props, State> {
   static defaultProps = {
     mode: 'date',
@@ -123,7 +123,6 @@ type ModalProps = {
   onHide: () => any,
   timeZoneOffsetInMinutes: number,
 }
-;[]
 
 class DatePickerModal extends React.PureComponent<void, ModalProps, void> {
   static SUPPORTED_ORIENTATIONS = [

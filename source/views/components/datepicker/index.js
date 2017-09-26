@@ -32,7 +32,6 @@ type Props = {
 type State = {
   date: Date,
 }
-;[]
 
 export class DatePicker extends React.Component<any, Props, State> {
   static defaultProps = {
