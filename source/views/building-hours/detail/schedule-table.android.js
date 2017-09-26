@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {Button, View, StyleSheet} from 'react-native'
+import {View, StyleSheet} from 'react-native'
 import {Card} from '../../components/card'
 import moment from 'moment-timezone'
 import type {NamedBuildingScheduleType} from '../types'

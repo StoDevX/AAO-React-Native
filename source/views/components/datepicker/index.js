@@ -2,7 +2,7 @@
 // Copied from https://github.com/xgfe/react-native-datepicker
 
 import React from 'react'
-import {Platform, Animated} from 'react-native'
+import {Platform} from 'react-native'
 import moment from 'moment'
 
 import {IosDatePicker} from './ios'
