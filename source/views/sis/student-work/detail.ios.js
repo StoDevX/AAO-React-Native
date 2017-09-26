@@ -9,6 +9,7 @@ import * as c from '../../components/colors'
 import type {JobType} from './types'
 import {cleanJob, getContactName, getLinksFromJob} from './clean-job'
 import {SelectableCell} from './selectable'
+import glamorous from 'glamorous-native'
 
 const styles = StyleSheet.create({
   lastUpdated: {
@@ -21,40 +22,58 @@ const styles = StyleSheet.create({
   },
 })
 
-function Title({job}: {job: JobType}) {
-  return job.title || job.type
-    ? <Section header="JOB">
-        <Cell cellStyle="Subtitle" title={job.title} detail={job.type} />
-      </Section>
-    : null
-}
+const Title = glamorous.text({
+  fontSize: 36,
+  textAlign: 'center',
+  marginHorizontal: 18,
+  marginVertical: 10,
+})
 
-function Contact({job}: {job: JobType}) {
-  const contactName = getContactName(job).trim() || job.contactEmail
-  return job.office || contactName
-    ? <Section header="CONTACT">
-        <Cell
-          cellStyle="Subtitle"
-          title={contactName}
-          detail={job.office}
-          accessory="DisclosureIndicator"
-          onPress={() => email([job.contactEmail], null, null, job.title, '')}
-        />
-      </Section>
+function Information({job}: {job: JobType}) {
+  const office = job.office
+    ? <Cell cellStyle="LeftDetail" detail="Office" title={job.office} />
     : null
-}
 
-function Hours({job}: {job: JobType}) {
+  const contact = job.contactEmail
+    ? <Cell
+        cellStyle="LeftDetail"
+        detail={'Contact'}
+        title={getContactName(job).trim() || job.contactEmail}
+        accessory="DisclosureIndicator"
+        onPress={() => email([job.contactEmail], null, null, job.title, '')}
+      />
+    : null
+
   const ending = job.hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
-  return job.timeOfHours && job.hoursPerWeek
-    ? <Section header="HOURS">
-        <Cell
-          cellStyle="Subtitle"
-          title={job.timeOfHours}
-          detail={job.hoursPerWeek + ending}
-        />
-      </Section>
+  const hours = job.hoursPerWeek
+    ? <Cell
+        cellStyle="LeftDetail"
+        detail={'Hours'}
+        title={job.hoursPerWeek + ending}
+      />
     : null
+
+  const amount = job.timeOfHours
+    ? <Cell
+        cellStyle="LeftDetail"
+        detail={'Time of Day'}
+        title={job.timeOfHours}
+      />
+    : null
+
+  const category = job.type
+    ? <Cell cellStyle="LeftDetail" detail={'Category'} title={job.type} />
+    : null
+
+  return (
+    <Section header="INFORMATION">
+      {office}
+      {contact}
+      {hours}
+      {amount}
+      {category}
+    </Section>
+  )
 }
 
 function Description({job}: {job: JobType}) {
@@ -116,10 +135,9 @@ export default function JobDetailView(props: {
 
   return (
     <ScrollView>
+      <Title selectable={true}>{job.title}</Title>
       <TableView>
-        <Title job={job} />
-        <Contact job={job} />
-        <Hours job={job} />
+        <Information job={job} />
         <Description job={job} />
         <Skills job={job} />
         <Comments job={job} />

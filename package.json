@@ -61,7 +61,7 @@
     "moment-timezone": "0.5.13",
     "querystring": "0.2.0",
     "react": "16.0.0-alpha.12",
-    "react-addons-shallow-compare": "15.6.0",
+    "react-addons-shallow-compare": "15.6.2",
     "react-markdown": "2.5.0",
     "react-native": "0.45.1",
     "react-native-alphabetlistview": "github:sunnylqm/react-native-alphabetlistview#aea5d61fdd9034c7178d73ce8b2ee104da6941cc",
@@ -96,7 +96,7 @@
     "xml2js": "0.4.19"
   },
   "devDependencies": {
-    "ajv": "5.2.2",
+    "ajv": "5.2.3",
     "babel-eslint": "8.0.0",
     "babel-jest": "21.0.2",
     "babel-plugin-flow-react-proptypes": "5.2.0",
@@ -105,8 +105,8 @@
     "eslint": "4.7.2",
     "eslint-config-prettier": "2.6.0",
     "eslint-plugin-babel": "4.1.2",
-    "eslint-plugin-flowtype": "2.35.1",
-    "eslint-plugin-react": "7.3.0",
+    "eslint-plugin-flowtype": "2.36.0",
+    "eslint-plugin-react": "7.4.0",
     "eslint-plugin-react-native": "3.1.0",
     "flow-bin": "0.45.0",
     "jest": "21.1.0",
