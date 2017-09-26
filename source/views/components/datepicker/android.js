@@ -7,7 +7,6 @@ import {
   TouchableHighlight,
   DatePickerAndroid,
   TimePickerAndroid,
-  Animated,
   Keyboard,
   StyleSheet,
 } from 'react-native'
@@ -19,8 +18,6 @@ type Props = {
   androidMode: 'calendar' | 'spinner' | 'default',
   date: Date,
   formattedDate: string,
-  format?: string,
-  minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
   mode: 'date' | 'datetime' | 'time',
   onDateChange: Date => any,
   style?: StyleSheetRules,
