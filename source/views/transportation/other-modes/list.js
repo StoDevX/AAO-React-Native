@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import delay from 'delay'
-import {OtherModesRow} from './other-modes-row'
+import {OtherModesRow} from './row'
 import {reportNetworkProblem} from '../../../lib/report-network-problem'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as defaultData from '../../../../docs/transportation.json'

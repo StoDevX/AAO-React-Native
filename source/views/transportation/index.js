@@ -13,6 +13,7 @@ import {OtherModesView} from './other-modes'
 import BusView from './bus'
 
 export {BusMapView} from './bus/map'
+export {OtherModesDetailView} from './other-modes'
 
 export default TabNavigator(
   {

@@ -21,8 +21,10 @@ import {
   BuildingHoursProblemReportView,
   BuildingHoursScheduleEditorView,
 } from './views/building-hours'
-import TransportationView, {BusMapView} from './views/transportation'
-import {OtherModesDetailView} from './views/transportation/other-modes'
+import TransportationView, {
+  BusMapView,
+  OtherModesDetailView,
+} from './views/transportation'
 import SettingsView from './views/settings'
 import CreditsView from './views/settings/credits'
 import PrivacyView from './views/settings/privacy'
