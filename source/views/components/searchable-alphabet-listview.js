@@ -1,12 +1,18 @@
 // @flow
 
 import React from 'react'
-import {StyleSheet, Platform} from 'react-native'
+import {StyleSheet, Platform, View} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
 import debounce from 'lodash/debounce'
 import {SearchBar} from '../components/searchbar'
 
 export const LIST_HEADER_HEIGHT = Platform.OS === 'ios' ? 42 : 0
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
+})
 
 type Props = any
 
@@ -31,28 +37,27 @@ export class SearchableAlphabetListView extends React.PureComponent<
   // rather pointless.
   performSearch = debounce(this._performSearch, 50)
 
-  renderListHeader = () =>
-    <SearchBar
-      getRef={ref => (this.searchBar = ref)}
-      onChangeText={this.performSearch}
-      // if we don't use the arrow function here, searchBar ref is null...
-      onSearchButtonPress={() => this.searchBar.unFocus()}
-    />
-
   render() {
     return (
-      <StyledAlphabetListView
-        header={this.renderListHeader}
-        headerHeight={
-          Platform.OS === 'ios'
-            ? LIST_HEADER_HEIGHT + StyleSheet.hairlineWidth * 12
-            : 0
-        }
-        showsVerticalScrollIndicator={false}
-        keyboardDismissMode="on-drag"
-        keyboardShouldPersistTaps="never"
-        {...this.props}
-      />
+      <View style={styles.wrapper}>
+        <SearchBar
+          getRef={ref => (this.searchBar = ref)}
+          onChangeText={this.performSearch}
+          // if we don't use the arrow function here, searchBar ref is null...
+          onSearchButtonPress={() => this.searchBar.unFocus()}
+        />
+        <StyledAlphabetListView
+          headerHeight={
+            Platform.OS === 'ios'
+              ? LIST_HEADER_HEIGHT + StyleSheet.hairlineWidth * 12
+              : 0
+          }
+          showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="never"
+          {...this.props}
+        />
+      </View>
     )
   }
 }

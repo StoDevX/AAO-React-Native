@@ -33,9 +33,6 @@ const termToArray = (term: WordType) =>
   uniq([...splitToArray(term.word), ...splitToArray(term.definition)])
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-  },
   row: {
     height: ROW_HEIGHT,
   },
@@ -159,7 +156,6 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
         renderSeparator={this.renderSeparator}
         sectionHeader={this.renderSectionHeader}
         sectionHeaderHeight={SECTION_HEADER_HEIGHT}
-        style={styles.wrapper}
       />
     )
   }
