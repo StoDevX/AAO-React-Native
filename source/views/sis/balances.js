@@ -41,6 +41,12 @@ class BalancesView extends React.Component {
     loading: false,
   }
 
+  componentWillMount() {
+    // calling "refresh" here, to make clear to the user
+    // that the data is being updated
+    this.refresh()
+  }
+
   refresh = async () => {
     let start = Date.now()
     this.setState({loading: true})
