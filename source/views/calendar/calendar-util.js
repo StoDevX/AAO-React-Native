@@ -1,10 +1,21 @@
 // @flow
 
-import {Platform, Alert, Linking} from 'react-native'
+import {Platform, Alert, Linking, Share} from 'react-native'
 import RNCalendarEvents from 'react-native-calendar-events'
 import type {CleanedEventType} from './types'
 import bugsnag from '../../bugsnag'
 import {tracker} from '../../analytics'
+import {getTimes} from './clean-event'
+
+export function shareEvent(event: CleanedEventType): Promise<any> {
+  const title = event.title
+  const times = getTimes(event)
+  const location = event.location
+  const message = `${title}\n\n${times}\n\n${location}`
+  return Share.share({message})
+    .then(result => console.log(result))
+    .catch(error => console.log(error.message))
+}
 
 export function addToCalendar(event: CleanedEventType): Promise<boolean> {
   return RNCalendarEvents.authorizationStatus()

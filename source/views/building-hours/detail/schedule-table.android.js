@@ -7,6 +7,7 @@ import moment from 'moment-timezone'
 import type {NamedBuildingScheduleType} from '../types'
 import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
 import {ScheduleRow} from './schedule-row'
+import {ButtonCell} from '../../components/cells/button'
 
 export class ScheduleTable extends React.PureComponent {
   props: {
@@ -43,11 +44,9 @@ export class ScheduleTable extends React.PureComponent {
           </Card>,
         )}
 
-        <Button
-          style={{marginHorizontal: 10}}
-          title="Suggest an Edit"
-          onPress={onProblemReport}
-        />
+        <Card style={styles.scheduleContainer}>
+          <ButtonCell title="Suggest an Edit" onPress={onProblemReport} />
+        </Card>
       </View>
     )
   }

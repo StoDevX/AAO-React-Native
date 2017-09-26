@@ -1,6 +1,6 @@
 {
   "name": "all-about-olaf",
-  "version": "2.4.0-beta.13",
+  "version": "2.4.0-beta.16",
   "private": true,
   "config": {
     "prettier_args": "--single-quote --trailing-comma all --no-bracket-spacing --no-semi"
@@ -61,7 +61,7 @@
     "moment-timezone": "0.5.13",
     "querystring": "0.2.0",
     "react": "16.0.0-alpha.12",
-    "react-addons-shallow-compare": "15.6.0",
+    "react-addons-shallow-compare": "15.6.2",
     "react-markdown": "2.5.0",
     "react-native": "0.45.1",
     "react-native-alphabetlistview": "github:sunnylqm/react-native-alphabetlistview#aea5d61fdd9034c7178d73ce8b2ee104da6941cc",
@@ -82,7 +82,6 @@
     "react-native-sortable-list": "github:hawkrives/react-native-sortable-list#7b72cc8e16cc71751836b49b3ea4bbc9e8e9cb99",
     "react-native-tableview-simple": "0.16.11",
     "react-native-vector-icons": "4.4.0",
-    "react-native-video": "github:drewvolz/react-native-video#f73b7a04843fb5b17fb4fbedbe593c225594ab3b",
     "react-navigation": "1.0.0-beta.11",
     "react-redux": "5.0.6",
     "redux": "3.7.2",
@@ -96,17 +95,17 @@
     "xml2js": "0.4.19"
   },
   "devDependencies": {
-    "ajv": "5.2.2",
+    "ajv": "5.2.3",
     "babel-eslint": "8.0.0",
     "babel-jest": "21.0.2",
-    "babel-plugin-flow-react-proptypes": "5.1.3",
+    "babel-plugin-flow-react-proptypes": "5.2.0",
     "babel-preset-react-native": "3.0.1",
     "danger": "2.0.0-alpha.15",
-    "eslint": "4.7.0",
-    "eslint-config-prettier": "2.5.0",
+    "eslint": "4.7.2",
+    "eslint-config-prettier": "2.6.0",
     "eslint-plugin-babel": "4.1.2",
-    "eslint-plugin-flowtype": "2.35.1",
-    "eslint-plugin-react": "7.3.0",
+    "eslint-plugin-flowtype": "2.36.0",
+    "eslint-plugin-react": "7.4.0",
     "eslint-plugin-react-native": "3.1.0",
     "flow-bin": "0.45.0",
     "jest": "21.1.0",

@@ -1,0 +1,17 @@
+name: Gender & Sexuality Center
+category: Health and Wellness
+
+schedule:
+  - title: Office
+    hours:
+      - {days: [Tu], from: '1:00pm', to: '5:00pm'}
+      - {days: [Fr], from: '8:00am', to: '12:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

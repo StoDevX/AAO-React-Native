@@ -6,7 +6,7 @@
 
 import React from 'react'
 import xor from 'lodash/xor'
-import {ScrollView, Text, StyleSheet} from 'react-native'
+import {View, ScrollView, Platform, Text, StyleSheet} from 'react-native'
 import moment from 'moment-timezone'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import type {SingleBuildingScheduleType, DayOfWeekEnumType} from '../types'
@@ -17,6 +17,8 @@ import * as c from '../../components/colors'
 import {DatePicker} from '../../components/datepicker'
 import {Touchable} from '../../components/touchable'
 import {DeleteButtonCell} from '../../components/cells/delete-button'
+import {CellToggle} from '../../components/cells/toggle'
+import {ListSeparator} from '../../components/list'
 
 export class BuildingHoursScheduleEditorView extends React.PureComponent {
   static navigationOptions = {
@@ -101,7 +103,7 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent {
   }
 }
 
-class WeekToggles extends React.PureComponent {
+class WeekTogglesIOS extends React.PureComponent {
   props: {days: DayOfWeekEnumType[], onChangeDays: (DayOfWeekEnumType[]) => any}
 
   toggleDay = day => {
@@ -122,6 +124,36 @@ class WeekToggles extends React.PureComponent {
           />,
         )}
       </Row>
+    )
+  }
+}
+
+class WeekTogglesAndroid extends React.PureComponent {
+  props: {days: DayOfWeekEnumType[], onChangeDays: (DayOfWeekEnumType[]) => any}
+
+  toggleDay = day => {
+    this.props.onChangeDays(xor(this.props.days, [day]))
+  }
+
+  render() {
+    const allDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+
+    return (
+      <View>
+        {allDays.map((day, i) =>
+          <View key={day}>
+            <CellToggle
+              key={day}
+              label={day}
+              value={this.props.days.includes(day)}
+              onChange={() => this.toggleDay(day)}
+            />
+            {i === allDays.length - 1 && styles.finalCell
+              ? null
+              : <ListSeparator force={true} />}
+          </View>,
+        )}
+      </View>
     )
   }
 }
@@ -150,6 +182,8 @@ class ToggleButton extends React.PureComponent {
     )
   }
 }
+
+const WeekToggles = Platform.OS === 'ios' ? WeekTogglesIOS : WeekTogglesAndroid
 
 class DatePickerCell extends React.PureComponent {
   props: {
