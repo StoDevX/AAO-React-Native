@@ -254,7 +254,7 @@ const defaultStyle = StyleSheet.create({
   },
   btnTextText: {
     fontSize: 16,
-    color: '#46cf98',
+    color: c.infoBlue,
   },
   btnTextCancel: {
     color: '#666',
