@@ -6,27 +6,17 @@ import {
   Text,
   Modal,
   TouchableHighlight,
-  DatePickerAndroid,
   DatePickerIOS,
   Animated,
   Keyboard,
   StyleSheet,
 } from 'react-native'
 import * as c from '../colors'
-
-const SUPPORTED_ORIENTATIONS = [
-  'portrait',
-  'portrait-upside-down',
-  'landscape',
-  'landscape-left',
-  'landscape-right',
-]
-
-type StyleSheetRules = Object | number | false | Array<StyleSheetRules>
+import type {StyleSheetRules} from './types'
 
 type Props = {
-  androidMode: 'calendar' | 'spinner' | 'default',
-  initialDate: Date,
+  date: Date,
+  formattedDate: string,
   duration: number,
   format?: string,
   height: number,
@@ -37,19 +27,10 @@ type Props = {
 }
 
 type State = {
-  date: Date,
   modalVisible: boolean,
   animatedHeight: Animated.Value,
   allowPointerEvents: boolean,
 }
-
-type DatePickerResponse = {
-  action: string,
-  year: number,
-  month: number,
-  day: number,
-}
-
 ;[]
 export class IosDatePicker extends React.Component<any, Props, State> {
   static defaultProps = {
@@ -65,7 +46,7 @@ export class IosDatePicker extends React.Component<any, Props, State> {
     allowPointerEvents: true,
   }
 
-  setModalVisible = () => {
+  showModal = () => {
     const {height, duration} = this.props
 
     // slide animation
@@ -76,7 +57,7 @@ export class IosDatePicker extends React.Component<any, Props, State> {
     }).start()
   }
 
-  setModalHidden = () => {
+  hideModal = () => {
     const {duration} = this.props
 
     return Animated.timing(this.state.animatedHeight, {
@@ -85,19 +66,6 @@ export class IosDatePicker extends React.Component<any, Props, State> {
     }).start(() => {
       this.setState(() => ({modalVisible: false}))
     })
-  }
-
-  onPressMask = () => {
-    this.onPressCancel()
-  }
-
-  onPressCancel = () => {
-    this.setModalHidden()
-  }
-
-  onPressConfirm = () => {
-    this.props.onDatePicked()
-    this.setModalHidden()
   }
 
   onDateChange = (date: Date) => {
@@ -115,36 +83,11 @@ export class IosDatePicker extends React.Component<any, Props, State> {
 
   onPressDate = () => {
     Keyboard.dismiss()
-
-    this.setModalVisible()
+    this.showModal()
   }
 
   render() {
     const {formattedDate, mode, minuteInterval} = this.props
-
-    const cancel = (
-      <TouchableHighlight
-        underlayColor="transparent"
-        onPress={this.onPressCancel}
-        style={[defaultStyle.btnText, defaultStyle.btnCancel]}
-      >
-        <Text style={[defaultStyle.btnTextText, defaultStyle.btnTextCancel]}>
-          Cancel
-        </Text>
-      </TouchableHighlight>
-    )
-
-    const confirm = (
-      <TouchableHighlight
-        underlayColor="transparent"
-        onPress={this.onPressConfirm}
-        style={[defaultStyle.btnText, defaultStyle.btnConfirm]}
-      >
-        <Text style={defaultStyle.btnTextText}>
-          Confirm
-        </Text>
-      </TouchableHighlight>
-    )
 
     return (
       <TouchableHighlight
@@ -159,53 +102,111 @@ export class IosDatePicker extends React.Component<any, Props, State> {
             </Text>
           </View>
 
-          <Modal
-            transparent={true}
-            animationType="none"
+          <DatePickerModal
+            date={this.props.date}
+            mode={mode}
+            height={this.state.animatedHeight}
+            minuteInterval={minuteInterval}
+            allowPointerEvents={this.state.allowPointerEvents}
+            onDateChange={this.props.onDateChange}
+            onHide={this.hideModal}
             visible={this.state.modalVisible}
-            supportedOrientations={SUPPORTED_ORIENTATIONS}
-            onRequestClose={this.setModalHidden}
-          >
-            <View style={defaultStyle.flex}>
-              <TouchableHighlight
-                style={defaultStyle.datePickerMask}
-                activeOpacity={1}
-                underlayColor="#00000077"
-                onPress={this.onPressMask}
-              >
-                <TouchableHighlight
-                  underlayColor="#fff"
-                  style={defaultStyle.flex}
-                >
-                  <Animated.View
-                    style={[
-                      defaultStyle.datePickerCon,
-                      {height: this.state.animatedHeight},
-                    ]}
-                  >
-                    <DatePickerIOS
-                      date={this.state.date}
-                      mode={mode}
-                      onDateChange={this.onDateChange}
-                      minuteInterval={minuteInterval}
-                      style={defaultStyle.datePicker}
-                      pointerEvents={
-                        this.state.allowPointerEvents ? 'auto' : 'none'
-                      }
-                    />
-
-                    {cancel}
-                    {confirm}
-                  </Animated.View>
-                </TouchableHighlight>
-              </TouchableHighlight>
-            </View>
-          </Modal>
+          />
         </View>
       </TouchableHighlight>
     )
   }
 }
+
+type ModalProps = {
+  date: Date,
+  height: any, // actually AnimatedValue
+  minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
+  mode: 'date' | 'datetime' | 'time',
+  allowPointerEvents: boolean,
+  visible: boolean,
+  onDateChange: Date => any,
+  onHide: () => any,
+}
+;[]
+
+class DatePickerModal extends React.PureComponent<void, ModalProps, void> {
+  static SUPPORTED_ORIENTATIONS = [
+    'portrait',
+    'portrait-upside-down',
+    'landscape',
+    'landscape-left',
+    'landscape-right',
+  ]
+
+  render() {
+    const {
+      mode,
+      date,
+      minuteInterval,
+      height,
+      allowPointerEvents,
+      onDateChange,
+      onHide,
+      visible,
+    } = this.props
+
+    return (
+      <Modal
+        transparent={true}
+        animationType="none"
+        visible={visible}
+        supportedOrientations={DatePickerModal.SUPPORTED_ORIENTATIONS}
+        onRequestClose={onHide}
+      >
+        <View style={defaultStyle.flex}>
+          <TouchableHighlight
+            style={defaultStyle.datePickerMask}
+            activeOpacity={1}
+            underlayColor="#00000077"
+            onPress={onHide}
+          >
+            <TouchableHighlight underlayColor="#fff" style={defaultStyle.flex}>
+              <Animated.View style={[defaultStyle.datePickerCon, {height}]}>
+                <DatePickerIOS
+                  date={date}
+                  mode={mode}
+                  onDateChange={onDateChange}
+                  minuteInterval={minuteInterval}
+                  style={defaultStyle.datePicker}
+                  pointerEvents={allowPointerEvents ? 'auto' : 'none'}
+                />
+
+                <Button
+                  text="Cancel"
+                  onPress={onHide}
+                  style={defaultStyle.btnCancel}
+                  textStyle={defaultStyle.btnTextCancel}
+                />
+                <Button
+                  text="Confirm"
+                  onPress={onHide}
+                  style={defaultStyle.btnConfirm}
+                />
+              </Animated.View>
+            </TouchableHighlight>
+          </TouchableHighlight>
+        </View>
+      </Modal>
+    )
+  }
+}
+
+const Button = ({style, textStyle, onPress, text}) =>
+  <TouchableHighlight
+    underlayColor="transparent"
+    onPress={onPress}
+    style={[defaultStyle.btnText, style]}
+  >
+    <Text style={[defaultStyle.btnTextText, textStyle]}>
+      {text}
+    </Text>
+  </TouchableHighlight>
 
 /* eslint-disable react-native/no-color-literals */
 const defaultStyle = StyleSheet.create({

@@ -13,32 +13,17 @@ import {
 } from 'react-native'
 import moment from 'moment'
 import * as c from '../colors'
-
-const FORMATS = {
-  date: 'YYYY-MM-DD',
-  datetime: 'YYYY-MM-DD HH:mm',
-  time: 'HH:mm',
-}
-
-type StyleSheetRules = Object | number | false | Array<StyleSheetRules>
+import type {StyleSheetRules} from './types'
 
 type Props = {
   androidMode: 'calendar' | 'spinner' | 'default',
-  initialDate: Date,
-  duration: number,
+  date: Date,
+  formattedDate: string,
   format?: string,
-  height: number,
   minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
   mode: 'date' | 'datetime' | 'time',
   onDateChange: Date => any,
   style?: StyleSheetRules,
-}
-
-type State = {
-  date: Date,
-  modalVisible: boolean,
-  animatedHeight: Animated.Value,
-  allowPointerEvents: boolean,
 }
 
 type DatePickerResponse = {
@@ -52,148 +37,94 @@ type TimePickerResponse = {
   action: string,
   hour: number,
   minute: number,
-};[]
+}
+;[]
 
-export class AndroidDatePicker extends React.Component<any, Props, State> {
+export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
   static defaultProps = {
     mode: 'date',
     androidMode: 'default',
     onDateChange: () => null,
   }
 
-  state = {
-    date: this.props.initialDate,
-  }
-
-  componentWillMount() {
-    this.setState(() => ({date: this.props.initialDate}))
-  }
-
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.initialDate !== this.props.initialDate) {
-      this.setState(() => ({date: nextProps.initialDate}))
-    }
-  }
-
-  onPressCancel = () => {
-    this.setModalHidden()
-  }
-
-  onPressConfirm = () => {
-    this.datePicked()
-    this.setModalHidden()
-  }
-
-  formatDate = () => {
-    const {mode, format = FORMATS[mode]} = this.props
-    return moment(this.state.date).format(format)
-  }
-
-  datePicked = () => {
-    this.props.onDateChange(this.state.date)
-  }
-
-  onDateChange = (date: Date) => {
-    this.setState(() => ({
-      allowPointerEvents: false,
-      date: date,
-    }))
-
-    const timeoutId = setTimeout(() => {
-      this.setState(() => ({allowPointerEvents: true}))
-      clearTimeout(timeoutId)
-    }, 200)
-  }
-
   onDatePicked = ({action, year, month, day}: DatePickerResponse) => {
-    if (action !== DatePickerAndroid.dismissedAction) {
-      this.setState(() => ({date: new Date(year, month, day)}))
-      this.datePicked()
-    } else {
-      this.onPressCancel()
+    if (action === DatePickerAndroid.dismissedAction) {
+      return
     }
+
+    this.props.onDateChange(new Date(year, month, day))
   }
 
   onTimePicked = ({action, hour, minute}: TimePickerResponse) => {
-    if (action !== DatePickerAndroid.dismissedAction) {
-      this.setState(() => ({date: moment().hour(hour).minute(minute).toDate()}))
-      this.datePicked()
-    } else {
-      this.onPressCancel()
+    if (action === DatePickerAndroid.dismissedAction) {
+      return
     }
+
+    this.props.onDateChange(moment().hour(hour).minute(minute).toDate())
   }
 
   onDateTimePicked = ({action, year, month, day}: DatePickerResponse) => {
-    const {androidMode} = this.props
-
-    if (action !== DatePickerAndroid.dismissedAction) {
-      let timeMoment = moment(this.state.date)
-
-      TimePickerAndroid.open({
-        hour: timeMoment.hour(),
-        minute: timeMoment.minutes(),
-        mode: androidMode,
-      }).then(this.onDatetimeTimePicked.bind(this, year, month, day))
-    } else {
-      this.onPressCancel()
+    if (action === DatePickerAndroid.dismissedAction) {
+      return
     }
+
+    const {androidMode, date} = this.props
+    const timeMoment = moment(date)
+
+    TimePickerAndroid.open({
+      hour: timeMoment.hour(),
+      minute: timeMoment.minutes(),
+      mode: androidMode,
+    }).then(this.onDatetimeTimePicked(year, month, day))
   }
 
-  onDatetimeTimePicked = (
-    year: number,
-    month: number,
-    day: number,
-    {action, hour, minute}: TimePickerResponse,
-  ) => {
-    if (action !== DatePickerAndroid.dismissedAction) {
-      this.props.onDateChange(new Date(year, month, day, hour, minute))
-      this.props.datePicked()
-    } else {
-      this.onPressCancel()
+  onDatetimeTimePicked = (year: number, month: number, day: number) => ({
+    action,
+    hour,
+    minute,
+  }: TimePickerResponse) => {
+    if (action === DatePickerAndroid.dismissedAction) {
+      return
     }
+
+    this.props.onDateChange(new Date(year, month, day, hour, minute))
   }
 
-  showAndroidPicker = () => {
+  showPicker = () => {
     const {mode, androidMode} = this.props
 
     switch (mode) {
       case 'date': {
-        DatePickerAndroid.open({
-          date: this.state.date,
+        return DatePickerAndroid.open({
+          date: this.props.date,
           mode: androidMode,
         }).then(this.onDatePicked)
-        break
       }
 
       case 'time': {
-        const timeMoment = moment(this.state.date)
+        const timeMoment = moment(this.props.date)
 
-        TimePickerAndroid.open({
+        return TimePickerAndroid.open({
           hour: timeMoment.hour(),
           minute: timeMoment.minutes(),
         }).then(this.onTimePicked)
-        break
       }
 
       case 'datetime': {
-        DatePickerAndroid.open({
-          date: this.state.date,
+        return DatePickerAndroid.open({
+          date: this.props.date,
           mode: androidMode,
         }).then(this.onDateTimePicked)
-        break
       }
 
       default:
-        break
+        return
     }
   }
 
   onPressDate = () => {
     Keyboard.dismiss()
-
-    this.setState(() => ({date: this.props.initialDate}))
-
-    this.showAndroidPicker()
+    this.showPicker()
   }
 
   render() {
@@ -206,7 +137,7 @@ export class AndroidDatePicker extends React.Component<any, Props, State> {
         <View style={defaultStyle.dateTouchBody}>
           <View style={defaultStyle.dateInput}>
             <Text style={defaultStyle.dateText}>
-              {this.formatDate()}
+              {this.props.formattedDate}
             </Text>
           </View>
         </View>

@@ -19,9 +19,9 @@ type StyleSheetRules = Object | number | false | Array<StyleSheetRules>
 type Props = {
   androidMode: 'calendar' | 'spinner' | 'default',
   initialDate: Date,
-  duration: number,
+  duration?: number,
   format?: string,
-  height: number,
+  height?: number,
   minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
   mode: 'date' | 'datetime' | 'time',
   onDateChange: Date => any,
@@ -30,7 +30,6 @@ type Props = {
 
 type State = {
   date: Date,
-  formattedDate: string,
 }
 ;[]
 
@@ -38,16 +37,11 @@ export class DatePicker extends React.Component<any, Props, State> {
   static defaultProps = {
     mode: 'date',
     androidMode: 'default',
-    height: 259, // 216 (DatePickerIOS) + 1 (borderTop) + 42 (marginTop), iOS only
-    duration: 300, // slide animation duration time, default to 300ms, iOS only
     onDateChange: () => null,
   }
 
   state = {
     date: this.props.initialDate,
-    modalVisible: false,
-    animatedHeight: new Animated.Value(0),
-    allowPointerEvents: true,
   }
 
   componentWillMount() {
@@ -66,36 +60,36 @@ export class DatePicker extends React.Component<any, Props, State> {
   }
 
   onDateChange = (newDate: Date) => {
-    this.setState(() => ({
-      date: newDate,
-      formattedDate: this.formatDate(newDate),
-    }))
+    this.setState(() => ({date: newDate}))
   }
 
   render() {
-    return Platform.OS === 'ios'
-      ? <IosDatePicker
-          date={this.state.date}
-          formattedDate={this.state.formattedDate}
+    const propsToPass = {
+      date: this.state.date,
+      formattedDate: this.formatDate(this.state.date),
+      mode: this.props.mode,
+      onDateChange: this.onDateChange,
+      style: this.props.style,
+    }
+
+    if (Platform.OS === 'ios') {
+      return (
+        <IosDatePicker
           duration={this.props.duration}
-          format={this.props.format}
           height={this.props.height}
           minuteInterval={this.props.minuteInterval}
-          mode={this.props.mode}
-          onDateChange={this.onDateChange}
-          style={this.props.style}
+          {...propsToPass}
         />
-      : <AndroidDatePicker
-          date={this.state.date}
-          formattedDate={this.state.formattedDate}
-          duration={this.props.duration}
-          format={this.props.format}
-          height={this.props.height}
-          minuteInterval={this.props.minuteInterval}
+      )
+    } else if (Platform.OS === 'android') {
+      return (
+        <AndroidDatePicker
           androidMode={this.props.androidMode}
-          mode={this.props.mode}
-          onDateChange={this.onDateChange}
-          style={this.props.style}
+          {...propsToPass}
         />
+      )
+    } else {
+      throw new Error(`Platform ${Platform.OS} is not supported!`)
+    }
   }
 }
