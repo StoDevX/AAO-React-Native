@@ -43,9 +43,7 @@ export class OtherModesDetailView extends React.PureComponent {
     tracker.trackScreenView(
       `Transportation_OtherModes_${name.replace(' ', '')}View`,
     )
-    if (url) {
-      openUrl(url)
-    }
+    openUrl(url)
   }
 
   render() {
