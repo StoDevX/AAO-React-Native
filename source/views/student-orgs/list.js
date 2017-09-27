@@ -192,7 +192,7 @@ export class StudentOrgsView extends React.Component {
   }
 
   render() {
-    if (this.state.loading) {
+    if (this.state.loading && !this.state.refreshing) {
       return <LoadingView />
     }
 
