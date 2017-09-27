@@ -53,7 +53,6 @@ export class ContactsListView extends React.PureComponent<void, Props, State> {
     this.fetchData()
   }
 
-
   fetchData = async () => {
     this.setState(() => ({loading: true}))
 
