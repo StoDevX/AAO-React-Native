@@ -255,7 +255,7 @@ Metrics/PerceivedComplexity:
   Description: >-
                  A complexity metric geared towards measuring complexity for a
                  human reader.
-  Enabled: false
+  Enabled: true
 
 ##################### Performance #############################
 
