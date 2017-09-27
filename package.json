@@ -98,7 +98,7 @@
   "devDependencies": {
     "ajv": "5.2.3",
     "babel-eslint": "8.0.1",
-    "babel-jest": "21.0.2",
+    "babel-jest": "21.2.0",
     "babel-plugin-flow-react-proptypes": "5.2.0",
     "babel-preset-react-native": "3.0.1",
     "danger": "2.0.0-alpha.15",
