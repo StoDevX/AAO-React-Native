@@ -25,6 +25,7 @@ type Props = {
   mode: 'date' | 'datetime' | 'time',
   onDateChange: moment => any,
   style?: StyleSheetRules,
+  timezone: string,
 }
 
 type State = {
@@ -68,7 +69,7 @@ export class IosDatePicker extends React.Component<any, Props, State> {
   onDateChange = (date: Date) => {
     this.setState(() => ({allowPointerEvents: false}))
 
-    this.props.onDateChange(moment(date))
+    this.props.onDateChange(moment.tz(date, this.props.timezone))
 
     const timeoutId = setTimeout(() => {
       this.setState(() => ({allowPointerEvents: true}))
@@ -104,6 +105,7 @@ export class IosDatePicker extends React.Component<any, Props, State> {
             onDateChange={this.onDateChange}
             onHide={this.hideModal}
             visible={this.state.modalVisible}
+            timezone={this.props.timezone}
           />
         </View>
       </TouchableHighlight>
@@ -120,6 +122,7 @@ type ModalProps = {
   visible: boolean,
   onDateChange: moment => any,
   onHide: () => any,
+  timezone: string,
 }
 
 class DatePickerModal extends React.PureComponent<void, ModalProps, void> {
@@ -141,6 +144,7 @@ class DatePickerModal extends React.PureComponent<void, ModalProps, void> {
       onDateChange,
       onHide,
       visible,
+      timezone,
     } = this.props
 
     let tzOffset = 0
@@ -148,8 +152,7 @@ class DatePickerModal extends React.PureComponent<void, ModalProps, void> {
       // We need to negate the offset, because moment inverts the offset for
       // POSIX compatability. So, GMT-5 (CST) is shown to be GMT+5.
       const dateInUnixMs = date.valueOf()
-      const tzName = date.tz()
-      tzOffset = -moment.tz.zone(tzName).offset(dateInUnixMs)
+      tzOffset = -moment.tz.zone(timezone).offset(dateInUnixMs)
     }
 
     return (

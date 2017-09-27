@@ -30,6 +30,7 @@ type Props = {
 
 type State = {
   date: moment,
+  timezone: string,
 }
 
 export class DatePicker extends React.Component<any, Props, State> {
@@ -43,15 +44,22 @@ export class DatePicker extends React.Component<any, Props, State> {
 
   state = {
     date: this.props.initialDate,
+    timezone: this.props.initialDate.tz(),
   }
 
   componentWillMount() {
-    this.setState(() => ({date: this.props.initialDate}))
+    this.setState(() => ({
+      date: this.props.initialDate,
+      timezone: this.props.initialDate.tz(),
+    }))
   }
 
   componentWillReceiveProps(nextProps: Props) {
     if (nextProps.initialDate !== this.props.initialDate) {
-      this.setState(() => ({date: nextProps.initialDate}))
+      this.setState(() => ({
+        date: nextProps.initialDate,
+        timezone: nextProps.initialDate.tz(),
+      }))
     }
   }
 
@@ -90,6 +98,7 @@ export class DatePicker extends React.Component<any, Props, State> {
           duration={this.props.duration}
           height={this.props.height}
           minuteInterval={this.props.minuteInterval}
+          timezone={this.state.timezone}
           {...propsToPass}
         />
       )
