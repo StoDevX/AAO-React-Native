@@ -10,7 +10,7 @@ import {
   Keyboard,
   StyleSheet,
 } from 'react-native'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import * as c from '../colors'
 import type {StyleSheetRules} from './types'
 
@@ -21,6 +21,7 @@ type Props = {
   mode: 'date' | 'datetime' | 'time',
   onDateChange: moment => any,
   style?: StyleSheetRules,
+  timezone: string,
 }
 
 type DatePickerResponse = {
@@ -48,7 +49,7 @@ export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
       return
     }
 
-    this.props.onDateChange(moment({year, month, day}))
+    this.props.onDateChange(moment.tz({year, month, day}, this.props.timezone))
   }
 
   onTimePicked = ({action, hour, minute}: TimePickerResponse) => {
@@ -56,7 +57,7 @@ export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
       return
     }
 
-    this.props.onDateChange(moment({hour, minute}))
+    this.props.onDateChange(moment.tz({hour, minute}, this.props.timezone))
   }
 
   onDatetimeDatePicked = ({action, year, month, day}: DatePickerResponse) => {
@@ -83,7 +84,9 @@ export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
       return
     }
 
-    this.props.onDateChange(moment({year, month, day, hour, minute}))
+    this.props.onDateChange(
+      moment.tz({year, month, day, hour, minute}, this.props.timezone),
+    )
   }
 
   showModal = () => {
