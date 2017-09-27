@@ -1,8 +1,4 @@
-/**
- * @flow
- *
- * <ScheduleTable/> renders the table of schedules.
- */
+// @flow
 
 import React from 'react'
 import {View, StyleSheet} from 'react-native'
@@ -47,6 +43,7 @@ export class ScheduleTable extends React.PureComponent {
             )}
           </Card>,
         )}
+
         <Card style={styles.scheduleContainer}>
           <ButtonCell title="Suggest an Edit" onPress={onProblemReport} />
         </Card>

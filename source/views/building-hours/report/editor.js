@@ -14,7 +14,7 @@ import {Row} from '../../components/layout'
 import type {TopLevelViewPropsType} from '../../types'
 import {parseHours, blankSchedule} from '../lib'
 import * as c from '../../components/colors'
-import DatePicker from 'react-native-datepicker'
+import {DatePicker} from '../../components/datepicker'
 import {Touchable} from '../../components/touchable'
 import {DeleteButtonCell} from '../../components/cells/delete-button'
 import {CellToggle} from '../../components/cells/toggle'
@@ -114,14 +114,13 @@ class WeekTogglesIOS extends React.PureComponent {
     const allDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
     return (
-      <Row justifyContent="center">
-        {allDays.map((day, i) =>
+      <Row justifyContent="center" alignItems="stretch">
+        {allDays.map(day =>
           <ToggleButton
             key={day}
             text={day}
             active={this.props.days.includes(day)}
             onPress={this.toggleDay}
-            style={i === allDays.length - 1 && styles.finalCell}
           />,
         )}
       </Row>
@@ -149,9 +148,7 @@ class WeekTogglesAndroid extends React.PureComponent {
               value={this.props.days.includes(day)}
               onChange={() => this.toggleDay(day)}
             />
-            {i === allDays.length - 1 && styles.finalCell
-              ? null
-              : <ListSeparator force={true} />}
+            {i === allDays.length - 1 ? null : <ListSeparator force={true} />}
           </View>,
         )}
       </View>
@@ -164,17 +161,16 @@ class ToggleButton extends React.PureComponent {
     active: boolean,
     text: string,
     onPress: (newState: string) => any,
-    style?: any,
   }
 
   onPress = () => this.props.onPress(this.props.text)
 
   render() {
-    const {text, style, active} = this.props
+    const {text, active} = this.props
     return (
       <Touchable
         highlight={false}
-        containerStyle={[style, styles.dayWrapper, active && styles.activeDay]}
+        containerStyle={[styles.dayWrapper, active && styles.activeDay]}
         onPress={this.onPress}
       >
         <Text style={[styles.dayText, active && styles.activeDayText]}>
@@ -191,71 +187,46 @@ class DatePickerCell extends React.PureComponent {
   props: {
     date: moment,
     title: string,
-    onChange?: (date: moment) => any,
-    _ref?: (ref: any) => any,
+    onChange: (date: moment) => any,
   }
 
   _picker: any
   openPicker = () => this._picker.onPressDate()
 
-  getRef = (ref: any) => {
-    this._picker = ref
-    this.props._ref && this.props._ref(ref)
-  }
+  getRef = (ref: any) => (this._picker = ref)
 
   onChange = (newDate: moment) => {
-    console.log(newDate)
-    this.props.onChange && this.props.onChange(newDate)
+    const oldMoment = moment()
+
+    oldMoment.hours(newDate.hours())
+    oldMoment.minutes(newDate.minutes())
+
+    this.props.onChange(oldMoment)
   }
 
   render() {
-    const {date, title} = this.props
+    const format = 'h:mm A'
+
     const accessory = (
-      <Date _ref={this.getRef} date={date.toDate()} onChange={this.onChange} />
+      <DatePicker
+        ref={this.getRef}
+        initialDate={this.props.date}
+        minuteInterval={5}
+        mode="time"
+        format={format}
+        onDateChange={this.onChange}
+      />
     )
 
     return (
       <Cell
-        title={title}
+        title={this.props.title}
         cellStyle="RightDetail"
         cellAccessoryView={accessory}
         onPress={this.openPicker}
       />
     )
   }
-}
-
-const Date = ({date, onChange, _ref}) => {
-  const format = 'h:mma'
-
-  const callback = (newDateString: string) => {
-    const oldMoment = moment(date)
-    const newMoment = moment(newDateString, format)
-
-    oldMoment.hours(newMoment.hours())
-    oldMoment.minutes(newMoment.minutes())
-
-    onChange(oldMoment)
-  }
-
-  return (
-    <DatePicker
-      ref={_ref}
-      date={date}
-      style={styles.datePicker}
-      mode="time"
-      format={format}
-      is24Hour={false}
-      confirmBtnText="Confirm"
-      cancelBtnText="Cancel"
-      showIcon={false}
-      onDateChange={callback}
-      customStyles={{
-        dateInput: styles.datePickerInput,
-        dateText: styles.datePickerText,
-      }}
-    />
-  )
 }
 
 const styles = StyleSheet.create({
@@ -265,11 +236,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 2,
     backgroundColor: c.white,
-    //borderRightWidth: StyleSheet.hairlineWidth,
-    //borderRightColor: c.iosSeparator,
-  },
-  finalCell: {
-    borderRightWidth: 0,
   },
   activeDay: {
     backgroundColor: c.brickRed,
@@ -279,16 +245,5 @@ const styles = StyleSheet.create({
   },
   activeDayText: {
     color: c.white,
-  },
-  datePicker: {
-    width: null,
-  },
-  datePickerInput: {
-    flex: 0,
-    borderWidth: 0,
-  },
-  datePickerText: {
-    color: c.iosDisabledText,
-    fontSize: 16,
   },
 })
