@@ -11,18 +11,19 @@ import {
   Keyboard,
   StyleSheet,
 } from 'react-native'
+import moment from 'moment-timezone'
 import * as c from '../colors'
 import type {StyleSheetRules} from './types'
 
 type Props = {
-  date: Date,
+  date: moment,
   formattedDate: string,
   duration: number,
   format?: string,
   height: number,
   minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
   mode: 'date' | 'datetime' | 'time',
-  onDateChange: Date => any,
+  onDateChange: moment => any,
   style?: StyleSheetRules,
   timeZoneOffsetInMinutes: number,
 }
@@ -65,7 +66,7 @@ export class IosDatePicker extends React.Component<any, Props, State> {
     })
   }
 
-  onDateChange = (date: Date) => {
+  onDateChange = (date: moment) => {
     this.setState(() => ({allowPointerEvents: false}))
 
     this.props.onDateChange(date)
@@ -113,13 +114,13 @@ export class IosDatePicker extends React.Component<any, Props, State> {
 }
 
 type ModalProps = {
-  date: Date,
+  date: moment,
   height: any, // actually AnimatedValue
   minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
   mode: 'date' | 'datetime' | 'time',
   allowPointerEvents: boolean,
   visible: boolean,
-  onDateChange: Date => any,
+  onDateChange: moment => any,
   onHide: () => any,
   timeZoneOffsetInMinutes: number,
 }
@@ -164,7 +165,7 @@ class DatePickerModal extends React.PureComponent<void, ModalProps, void> {
             <TouchableHighlight underlayColor="#fff" style={defaultStyle.flex}>
               <Animated.View style={[defaultStyle.datePickerCon, {height}]}>
                 <DatePickerIOS
-                  date={date}
+                  date={date.toDate()}
                   mode={mode}
                   onDateChange={onDateChange}
                   minuteInterval={minuteInterval}

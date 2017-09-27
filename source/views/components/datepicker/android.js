@@ -16,10 +16,10 @@ import type {StyleSheetRules} from './types'
 
 type Props = {
   androidMode: 'calendar' | 'spinner' | 'default',
-  date: Date,
+  date: moment,
   formattedDate: string,
   mode: 'date' | 'datetime' | 'time',
-  onDateChange: Date => any,
+  onDateChange: moment => any,
   style?: StyleSheetRules,
 }
 
@@ -48,7 +48,7 @@ export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
       return
     }
 
-    this.props.onDateChange(new Date(year, month, day))
+    this.props.onDateChange(moment({year, month, day}))
   }
 
   onTimePicked = ({action, hour, minute}: TimePickerResponse) => {
@@ -56,7 +56,7 @@ export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
       return
     }
 
-    this.props.onDateChange(moment().hour(hour).minute(minute).toDate())
+    this.props.onDateChange(moment({hour, minute}))
   }
 
   onDatetimeDatePicked = ({action, year, month, day}: DatePickerResponse) => {
@@ -83,7 +83,7 @@ export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
       return
     }
 
-    this.props.onDateChange(new Date(year, month, day, hour, minute))
+    this.props.onDateChange(moment({year, month, day, hour, minute}))
   }
 
   showModal = () => {
@@ -92,7 +92,7 @@ export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
     switch (mode) {
       case 'date': {
         return DatePickerAndroid.open({
-          date: this.props.date,
+          date: this.props.date.toDate(),
           mode: androidMode,
         }).then(this.onDatePicked)
       }
@@ -108,7 +108,7 @@ export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
 
       case 'datetime': {
         return DatePickerAndroid.open({
-          date: this.props.date,
+          date: this.props.date.toDate(),
           mode: androidMode,
         }).then(this.onDatetimeDatePicked)
       }

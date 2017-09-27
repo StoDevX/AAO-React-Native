@@ -3,7 +3,7 @@
 
 import React from 'react'
 import {Platform, Keyboard} from 'react-native'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 import {IosDatePicker} from './ios'
 import {AndroidDatePicker} from './android'
@@ -18,19 +18,19 @@ type StyleSheetRules = Object | number | false | Array<StyleSheetRules>
 
 type Props = {
   androidMode: 'calendar' | 'spinner' | 'default',
-  initialDate: Date,
+  initialDate: moment,
   duration?: number,
   format?: string,
   height?: number,
   minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
   mode: 'date' | 'datetime' | 'time',
-  onDateChange: Date => any,
+  onDateChange: moment => any,
   style?: StyleSheetRules,
   timeZoneOffsetInMinutes: number,
 }
 
 type State = {
-  date: Date,
+  date: moment,
 }
 
 export class DatePicker extends React.Component<any, Props, State> {
@@ -56,12 +56,12 @@ export class DatePicker extends React.Component<any, Props, State> {
     }
   }
 
-  formatDate = (date: Date) => {
+  formatDate = (date: moment) => {
     const {mode, format = FORMATS[mode]} = this.props
     return moment(date).format(format)
   }
 
-  onDateChange = (newDate: Date) => {
+  onDateChange = (newDate: moment) => {
     this.setState(
       () => ({date: newDate}),
       () => this.props.onDateChange(this.state.date),
