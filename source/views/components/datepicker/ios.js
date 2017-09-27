@@ -101,7 +101,7 @@ export class IosDatePicker extends React.Component<any, Props, State> {
             height={this.state.animatedHeight}
             minuteInterval={this.props.minuteInterval}
             allowPointerEvents={this.state.allowPointerEvents}
-            onDateChange={this.props.onDateChange}
+            onDateChange={this.onDateChange}
             onHide={this.hideModal}
             visible={this.state.modalVisible}
           />
