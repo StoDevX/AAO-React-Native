@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {StyleSheet, RefreshControl, Platform} from 'react-native'
+import {StyleSheet, Platform} from 'react-native'
 import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
 import {Column} from '../components/layout'
 import {
