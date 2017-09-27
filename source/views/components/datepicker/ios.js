@@ -65,10 +65,10 @@ export class IosDatePicker extends React.Component<any, Props, State> {
     })
   }
 
-  onDateChange = (date: moment) => {
+  onDateChange = (date: Date) => {
     this.setState(() => ({allowPointerEvents: false}))
 
-    this.props.onDateChange(date)
+    this.props.onDateChange(moment(date))
 
     const timeoutId = setTimeout(() => {
       this.setState(() => ({allowPointerEvents: true}))
