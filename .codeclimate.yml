@@ -20,6 +20,7 @@ engines:
     enabled: true
   rubocop:
     enabled: true
+
 ratings:
   paths:
   - Gemfile.lock
@@ -31,5 +32,6 @@ ratings:
   - "**.php"
   - "**.py"
   - "**.rb"
+
 exclude_paths:
 - node_modules/
