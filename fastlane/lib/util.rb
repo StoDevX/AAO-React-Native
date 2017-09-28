@@ -1,3 +1,4 @@
+# coding: utf-8
 # Adds the github token for stodevx-bot to the CI machine
 def authorize_ci_for_keys
   token = ENV['CI_USER_TOKEN']
