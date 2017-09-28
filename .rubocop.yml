@@ -1,4 +1,6 @@
 AllCops:
+  Exclude:
+    - 'node_modules/**/*'
   DisabledByDefault: true
 
 #################### Lint ################################
