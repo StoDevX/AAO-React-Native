@@ -34,7 +34,7 @@ platform :ios do
       testflight(changelog: make_changelog,
                  distribute_external: false)
     rescue => error
-      puts "Changelog failed to upload:"
+      puts 'Changelog failed to upload:'
       puts error
     end
   end

@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {StyleSheet, RefreshControl, Platform} from 'react-native'
+import {StyleSheet, Platform} from 'react-native'
 import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
 import {Column} from '../components/layout'
 import {
@@ -139,13 +139,6 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
   }
 
   render() {
-    const refreshControl = (
-      <RefreshControl
-        refreshing={this.state.loading}
-        onRefresh={this.refresh}
-      />
-    )
-
     return (
       <SearchableAlphabetListView
         cell={this.renderRow}
@@ -155,7 +148,6 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
         }
         data={groupBy(this.state.results, item => head(item.word))}
         onSearch={this.performSearch}
-        refreshControl={refreshControl}
         renderSeparator={this.renderSeparator}
         sectionHeader={this.renderSectionHeader}
         sectionHeaderHeight={SECTION_HEADER_HEIGHT}
