@@ -95,8 +95,6 @@ export class StudentOrgsView extends React.Component {
   }
 
   fetchData = async () => {
-    this.setState(() => ({loading: true}))
-
     const responseData: StudentOrgType[] = await fetchJson(
       orgsUrl,
     ).catch(err => {
@@ -118,9 +116,7 @@ export class StudentOrgsView extends React.Component {
 
     const sorted = sortBy(withSortableNames, '$sortableName')
     const grouped = groupBy(sorted, '$groupableName')
-    this.setState(() => ({orgs: sorted, results: grouped}))
-
-    this.setState(() => ({loading: false}))
+    this.setState(() => ({orgs: sorted, results: grouped, loading: false}))
   }
 
   refresh = async () => {
@@ -192,7 +188,7 @@ export class StudentOrgsView extends React.Component {
   }
 
   render() {
-    if (this.state.loading && !this.state.refreshing) {
+    if (this.state.loading) {
       return <LoadingView />
     }
 
