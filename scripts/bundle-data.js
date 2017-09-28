@@ -8,9 +8,18 @@ const convertDataFile = require('./convert-data-file')
 
 const isDir = pth => fs.statSync(pth).isDirectory()
 const isFile = pth => fs.statSync(pth).isFile()
-const readDir = pth => fs.readdirSync(pth).filter(junk.not).filter(entry => !entry.startsWith('_'))
-const findDirsIn = pth => readDir(pth).filter(entry => isDir(path.join(pth, entry)))
-const findFilesIn = pth => readDir(pth).filter(entry => isFile(path.join(pth, entry)))
+
+const readDir = pth =>
+  fs
+    .readdirSync(pth)
+    .filter(junk.not)
+    .filter(entry => !entry.startsWith('_'))
+
+const findDirsIn = pth =>
+  readDir(pth).filter(entry => isDir(path.join(pth, entry)))
+
+const findFilesIn = pth =>
+  readDir(pth).filter(entry => isFile(path.join(pth, entry)))
 
 const args = process.argv.slice(2)
 const fromDir = args[0]

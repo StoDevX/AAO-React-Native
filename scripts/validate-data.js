@@ -11,8 +11,18 @@ const SCHEMA_BASE = path.join(__dirname, '..', 'data', '_schemas')
 const DATA_BASE = path.join(__dirname, '..', 'data')
 
 const isDir = pth => tryBoolean(() => fs.statSync(pth).isDirectory())
-const readYaml = pth => JSON.parse(JSON.stringify(yaml.safeLoad(fs.readFileSync(pth, 'utf-8'), {filename: pth})))
-const readDir = pth => fs.readdirSync(pth).filter(junk.not).filter(entry => !entry.startsWith('_'))
+const readYaml = pth =>
+  JSON.parse(
+    JSON.stringify(
+      yaml.safeLoad(fs.readFileSync(pth, 'utf-8'), {filename: pth}),
+    ),
+  )
+
+const readDir = pth =>
+  fs
+    .readdirSync(pth)
+    .filter(junk.not)
+    .filter(entry => !entry.startsWith('_'))
 
 /// MARK: program
 
@@ -78,20 +88,26 @@ function parseArgs(argv) {
     console.error()
     console.error('Arguments:')
     console.error('  <blank>: validates all schemas and data')
-    console.error('  [schema-name]+: validates the schema and data for the given schema')
+    console.error(
+      '  [schema-name]+: validates the schema and data for the given schema',
+    )
     console.error()
     console.error('Options:')
     console.error('  --no-bail: continue past the first error')
     console.error('  -d, --data: use this as the data file (requires --schema)')
     console.error('  -s, --schema: use this as the schema (requires --data)')
     console.error()
-    console.error(`By default, the program looks for schema files in ${SCHEMA_BASE}`)
+    console.error(
+      `By default, the program looks for schema files in ${SCHEMA_BASE}`,
+    )
     process.exit(1)
   }
 
   if ((args.data && !args.schema) || (args.schema && !args.data)) {
     console.error('Usage: node validate-compiled-data.js [options] [args]')
-    console.error('If either --data or --schema are provided, both are required')
+    console.error(
+      'If either --data or --schema are provided, both are required',
+    )
     process.exit(1)
   }
 
@@ -145,7 +161,9 @@ function formatError(err, data) {
   const dataPath = err.dataPath.replace(/^\./, '')
   switch (err.keyword) {
     case 'enum': {
-      contents = `Given value "${get(data, dataPath)}" ${err.message} [${err.params.allowedValues.join(', ')}]`
+      const value = get(data, dataPath)
+      const allowed = err.params.allowedValues.join(', ')
+      contents = `Given value "${value}" ${err.message} [${allowed}]`
       break
     }
     case 'type': {
@@ -156,8 +174,5 @@ function formatError(err, data) {
       return JSON.stringify(err, null, 2)
     }
   }
-  return [
-    `Error at ${err.dataPath}:`,
-    contents,
-  ].join('\n')
+  return [`Error at ${err.dataPath}:`, contents].join('\n')
 }
