@@ -5,7 +5,8 @@ body {
   padding: 1em;
   word-wrap: break-word;
 }
-div, figure {
+div,
+figure {
   width: auto !important;
 }
 img {
