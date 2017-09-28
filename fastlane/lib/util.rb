@@ -50,7 +50,7 @@ def propagate_version(**args)
   UI.message 'into the Info.plist and build.gradle files'
 
   # encode build number into js-land
-  set_package_data(data: {version: "#{version}+#{build}"})
+  set_package_data(data: { version: "#{version}+#{build}" })
 
   case lane_context[:PLATFORM_NAME]
   when :android
