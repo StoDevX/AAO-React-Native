@@ -120,8 +120,9 @@ export class StreamListView extends React.PureComponent {
 
   keyExtractor = (item: StreamType) => item.eid
 
-  renderSectionHeader = ({section: {title}}: any) =>
+  renderSectionHeader = ({section: {title}}: any) => (
     <ListSectionHeader title={title} />
+  )
 
   renderItem = ({item}: {item: StreamType}) => <StreamRow stream={item} />
 

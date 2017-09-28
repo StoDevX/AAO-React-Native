@@ -24,9 +24,8 @@ export function times(event: EventType) {
     // 12:00 PM to Jun. 25 3:00pm
     // Midnight to Jun. 25 <-- assuming the end time is also midnight
     start = startTimeFormatted
-    const endFormat = endTimeFormatted === midnightTime
-      ? 'MMM. D'
-      : 'MMM. D h:mm A'
+    const endFormat =
+      endTimeFormatted === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
     end = `to ${event.endTime.format(endFormat)}`
   } else if (sillyZeroLength) {
     start = startTimeFormatted
@@ -65,9 +64,8 @@ export function detailTimes(event: EventType) {
     // 12:00 PM to Jun. 25 3:00pm
     // Midnight to Jun. 25 <-- assuming the end time is also midnight
     start = startTimeFormatted
-    const endFormat = endTimeFormatted === midnightTime
-      ? 'MMM. D'
-      : 'MMM. D h:mm A'
+    const endFormat =
+      endTimeFormatted === midnightTime ? 'MMM. D' : 'MMM. D h:mm A'
     end = `${event.endTime.format(endFormat)}`
   } else if (sillyZeroLength) {
     start = `Starts on ${startTimeFormatted}`

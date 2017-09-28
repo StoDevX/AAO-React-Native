@@ -70,10 +70,11 @@ type ViewCollectionType = {
   },
 }
 
-const Nav = ({children}: {children?: Function}) =>
+const Nav = ({children}: {children?: Function}) => (
   <Navigator
     renderScene={(route, navigator) => children && children({route, navigator})}
   />
+)
 
 export class SnapshotsView extends React.Component {
   static navigationOptions = {
@@ -210,13 +211,13 @@ export class SnapshotsView extends React.Component {
   render() {
     const selected = get(this.views, this.state.viewPath, {})
 
-    const options = this.viewsAsList().map(([parent, child]) =>
+    const options = this.viewsAsList().map(([parent, child]) => (
       <Picker.Item
         key={`${parent}.${child}`}
         label={`${parent} ❯ ${child}`}
         value={`${parent}.${child}`}
-      />,
-    )
+      />
+    ))
 
     const height = Dimensions.get('window').height
     const heightDiff = Platform.OS === 'ios' ? 64 : 56

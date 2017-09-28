@@ -41,13 +41,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   inner: {
-    flex: 1,
     backgroundColor: c.white,
+  },
+  message: {
+    paddingVertical: 16,
   },
 })
 
-const CustomSeparator = () =>
+const CustomSeparator = () => (
   <ListSeparator spacing={{left: leftSideSpacing}} />
+)
 
 class FancyMenuView extends React.PureComponent {
   static defaultProps = {
@@ -131,23 +134,23 @@ class FancyMenuView extends React.PureComponent {
       ),
     )
 
-    let messageView = null
+    let messageView = (
+      <NoticeView style={styles.message} text="No items to show." />
+    )
     if (specialsFilterEnabled && stationMenus.length === 0) {
       messageView = (
         <NoticeView
-          style={styles.inner}
+          style={styles.message}
           text="No items to show. There may be no specials today. Try changing the filters."
         />
       )
     } else if (anyFiltersEnabled && !size(grouped)) {
       messageView = (
         <NoticeView
-          style={styles.inner}
+          style={styles.message}
           text="No items to show. Try changing the filters."
         />
       )
-    } else if (!size(grouped)) {
-      messageView = <NoticeView style={styles.inner} text="No items to show." />
     }
 
     return (
@@ -158,23 +161,22 @@ class FancyMenuView extends React.PureComponent {
           filters={filters}
           onPress={this.openFilterView}
         />
-        {messageView
-          ? messageView
-          : <SectionList
-              ItemSeparatorComponent={CustomSeparator}
-              ListEmptyComponent={messageView}
-              keyExtractor={this.keyExtractor}
-              style={styles.inner}
-              sections={grouped}
-              renderSectionHeader={this.renderSectionHeader}
-              renderItem={({item}: {item: MenuItemType}) =>
-                <FoodItemRow
-                  data={item}
-                  corIcons={this.props.menuCorIcons}
-                  badgeSpecials={!specialsFilterEnabled}
-                  spacing={{left: leftSideSpacing}}
-                />}
-            />}
+        <SectionList
+          ItemSeparatorComponent={CustomSeparator}
+          ListEmptyComponent={messageView}
+          keyExtractor={this.keyExtractor}
+          style={styles.inner}
+          sections={grouped}
+          renderSectionHeader={this.renderSectionHeader}
+          renderItem={({item}: {item: MenuItemType}) => (
+            <FoodItemRow
+              data={item}
+              corIcons={this.props.menuCorIcons}
+              badgeSpecials={!specialsFilterEnabled}
+              spacing={{left: leftSideSpacing}}
+            />
+          )}
+        />
       </View>
     )
   }

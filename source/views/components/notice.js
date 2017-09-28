@@ -35,9 +35,9 @@ export function NoticeView({
   buttonText?: string,
   onPress?: () => any,
 }) {
-  let activityIndicator = spinner
-    ? <ActivityIndicator style={styles.spinner} />
-    : null
+  let activityIndicator = spinner ? (
+    <ActivityIndicator style={styles.spinner} />
+  ) : null
   return (
     <View style={[styles.container, style]}>
       {activityIndicator}

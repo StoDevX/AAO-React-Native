@@ -19,7 +19,7 @@ if (process.mainModule === module) {
 
 // exported module
 module.exports = convertDataFile
-function convertDataFile({fromFile, toFile, toFileType="json"}) {
+function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
   const contents = fs.readFileSync(fromFile, 'utf-8')
   let output = contents
 
@@ -32,7 +32,7 @@ function convertDataFile({fromFile, toFile, toFileType="json"}) {
       output = processYaml(contents)
       break
     case 'css':
-      if (toFileType === "css") {
+      if (toFileType === 'css') {
         output = contents
       } else {
         output = processCSS(contents)
@@ -46,9 +46,8 @@ function convertDataFile({fromFile, toFile, toFileType="json"}) {
 
   output = output + '\n'
 
-  const outStream = toFile === '-'
-    ? process.stdout
-    : fs.createWriteStream(toFile)
+  const outStream =
+    toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
   outStream.write(output)
 }
 

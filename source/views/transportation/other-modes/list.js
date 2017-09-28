@@ -88,11 +88,13 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
     })
   }
 
-  renderSectionHeader = ({section: {title}}: any) =>
+  renderSectionHeader = ({section: {title}}: any) => (
     <ListSectionHeader title={title} />
+  )
 
-  renderItem = ({item}: {item: OtherModeType}) =>
+  renderItem = ({item}: {item: OtherModeType}) => (
     <OtherModesRow mode={item} onPress={this.onPress} />
+  )
 
   keyExtractor = (item: OtherModeType) => item.name
 

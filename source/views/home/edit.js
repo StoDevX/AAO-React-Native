@@ -79,12 +79,13 @@ const reorderIcon = (
   />
 )
 
-const MenuIcon = ({icon, tint}: {icon: string, tint: string}) =>
+const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
   <EntypoIcon
     name={icon}
     size={32}
     style={[styles.icon, styles.viewIcon, {color: tint}]}
   />
+)
 
 type RowProps = {
   data: ViewType,
@@ -245,8 +246,9 @@ class EditHomeView extends React.PureComponent<void, Props, State> {
         data={objViews}
         order={this.props.order}
         onChangeOrder={(order: ViewType[]) => this.props.onSaveOrder(order)}
-        renderRow={({data, active}: {data: ViewType, active: boolean}) =>
-          <Row data={data} active={active} width={this.state.width} />}
+        renderRow={({data, active}: {data: ViewType, active: boolean}) => (
+          <Row data={data} active={active} width={this.state.width} />
+        )}
       />
     )
   }

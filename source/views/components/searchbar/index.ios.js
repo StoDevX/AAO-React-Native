@@ -20,7 +20,7 @@ type PropsType = {
   onSearchButtonPress: string => any,
 }
 
-export const SearchBar = (props: PropsType) =>
+export const SearchBar = (props: PropsType) => (
   <NativeSearchBar
     ref={props.getRef}
     style={styles.searchbar}
@@ -29,3 +29,4 @@ export const SearchBar = (props: PropsType) =>
     onChangeText={props.onChangeText || null}
     onSearchButtonPress={props.onSearchButtonPress || null}
   />
+)

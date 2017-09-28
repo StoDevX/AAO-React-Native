@@ -74,11 +74,13 @@ export class ContactsListView extends React.PureComponent<void, Props, State> {
     })
   }
 
-  renderSectionHeader = ({section: {title}}: any) =>
+  renderSectionHeader = ({section: {title}}: any) => (
     <ListSectionHeader title={title} />
+  )
 
-  renderItem = ({item}: {item: ContactType}) =>
+  renderItem = ({item}: {item: ContactType}) => (
     <ContactRow contact={item} onPress={this.onPressContact} />
+  )
 
   keyExtractor = (item: ContactType) => item.title
 

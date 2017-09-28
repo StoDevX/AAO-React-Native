@@ -37,7 +37,10 @@ xtest('calls the given function when the Switch is pressed', () => {
 
   const tree = shallow(<CellToggle label="Label" value={true} onChange={cb} />)
 
-  tree.find('Cell').prop('cellAccessoryView').props.onValueChange()
+  tree
+    .find('Cell')
+    .prop('cellAccessoryView')
+    .props.onValueChange()
 
   expect(cb).toHaveBeenCalled()
 })

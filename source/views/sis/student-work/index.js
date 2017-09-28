@@ -111,11 +111,13 @@ export default class StudentWorkView extends React.PureComponent {
 
   keyExtractor = (item: JobType, index: number) => index.toString()
 
-  renderSectionHeader = ({section: {title}}: any) =>
+  renderSectionHeader = ({section: {title}}: any) => (
     <ListSectionHeader title={title} />
+  )
 
-  renderItem = ({item}: {item: JobType}) =>
+  renderItem = ({item}: {item: JobType}) => (
     <JobRow job={item} onPress={this.onPressJob} />
+  )
 
   render() {
     if (this.state.error) {

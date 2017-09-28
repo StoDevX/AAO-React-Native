@@ -43,46 +43,40 @@ function Title({event}: {event: CleanedEventType}) {
 }
 
 function Description({event}: {event: CleanedEventType}) {
-  return event.rawSummary
-    ? <Card header="Description" style={styles.card}>
-        <Text style={styles.cardBody}>
-          {event.rawSummary}
-        </Text>
-      </Card>
-    : null
+  return event.rawSummary ? (
+    <Card header="Description" style={styles.card}>
+      <Text style={styles.cardBody}>{event.rawSummary}</Text>
+    </Card>
+  ) : null
 }
 
 function When({event}: {event: CleanedEventType}) {
-  return event.times
-    ? <Card header="When" style={styles.card}>
-        <Text style={styles.cardBody}>
-          {event.times}
-        </Text>
-      </Card>
-    : null
+  return event.times ? (
+    <Card header="When" style={styles.card}>
+      <Text style={styles.cardBody}>{event.times}</Text>
+    </Card>
+  ) : null
 }
 
 function Location({event}: {event: CleanedEventType}) {
-  return event.location
-    ? <Card header="Location" style={styles.card}>
-        <Text style={styles.cardBody}>
-          {event.location}
-        </Text>
-      </Card>
-    : null
+  return event.location ? (
+    <Card header="Location" style={styles.card}>
+      <Text style={styles.cardBody}>{event.location}</Text>
+    </Card>
+  ) : null
 }
 
 function Links({event}: {event: CleanedEventType}) {
   const links = getLinksFromEvent(event)
-  return links.length
-    ? <Card header="Links" style={styles.card}>
-        {links.map(url =>
-          <Text key={url} style={styles.cardBody} onPress={() => openUrl(url)}>
-            {url}
-          </Text>,
-        )}
-      </Card>
-    : null
+  return links.length ? (
+    <Card header="Links" style={styles.card}>
+      {links.map(url => (
+        <Text key={url} style={styles.cardBody} onPress={() => openUrl(url)}>
+          {url}
+        </Text>
+      ))}
+    </Card>
+  ) : null
 }
 
 const CalendarButton = ({message, disabled, onPress}) => {

@@ -133,14 +133,15 @@ export class StudentOrgsView extends React.Component {
     this.setState(() => ({refreshing: false}))
   }
 
-  renderSectionHeader = ({title}: {title: string}) =>
+  renderSectionHeader = ({title}: {title: string}) => (
     <ListSectionHeader
       title={title}
       spacing={{left: leftSideSpacing}}
       style={styles.rowSectionHeader}
     />
+  )
 
-  renderRow = ({item}: {item: StudentOrgType}) =>
+  renderRow = ({item}: {item: StudentOrgType}) => (
     <ListRow
       onPress={() => this.onPressRow(item)}
       contentContainerStyle={[styles.row]}
@@ -158,12 +159,14 @@ export class StudentOrgsView extends React.Component {
         </Column>
       </Row>
     </ListRow>
+  )
 
-  renderSeparator = (sectionId: string, rowId: string) =>
+  renderSeparator = (sectionId: string, rowId: string) => (
     <ListSeparator
       key={`${sectionId}-${rowId}`}
       spacing={{left: leftSideSpacing}}
     />
+  )
 
   onPressRow = (data: StudentOrgType) => {
     tracker.trackEvent('student-org', data.name)

@@ -8,9 +8,8 @@ import type {MenuItemType, MasterCorIconMapType} from '../types'
 import * as c from '../../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 
-const specialsIcon = Platform.OS === 'ios'
-  ? 'ios-star-outline'
-  : 'md-star-outline'
+const specialsIcon =
+  Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'
 
 type FoodItemPropsType = {|
   corIcons: MasterCorIconMapType,
@@ -35,9 +34,9 @@ export function FoodItemRow({
     >
       <Row alignItems="center">
         <View style={[styles.badge, {width: left}]}>
-          {badgeSpecials && data.special
-            ? <Icon style={styles.badgeIcon} name={specialsIcon} />
-            : null}
+          {badgeSpecials && data.special ? (
+            <Icon style={styles.badgeIcon} name={specialsIcon} />
+          ) : null}
         </View>
 
         <Column flex={1}>
