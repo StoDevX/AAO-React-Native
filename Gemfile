@@ -7,3 +7,7 @@ gem 'xcodeproj'
 
 plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
 eval(File.read(plugins_path), binding) if File.exist?(plugins_path)
+
+group :development do
+  gem 'rubocop', '= 0.46'
+end
