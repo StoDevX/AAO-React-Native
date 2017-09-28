@@ -12,9 +12,7 @@ end
 
 # Gets the version, either from Travis or from Hockey
 def current_build_number(**args)
-  if ENV.key?('TRAVIS_BUILD_NUMBER')
-    return ENV['TRAVIS_BUILD_NUMBER']
-  end
+  return ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
 
   begin
     case lane_context[:PLATFORM_NAME]
