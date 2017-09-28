@@ -49,7 +49,7 @@ module Fastlane
                                        description: 'The path to the build.gradle file'),
           FastlaneCore::ConfigItem.new(key: :version_code,
                                        description: 'The version to change to',
-                                       type: Integer)
+                                       type: Integer),
         ]
       end
 

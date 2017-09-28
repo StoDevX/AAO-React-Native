@@ -105,7 +105,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :platform,
                                        description: 'The platform to fetch: ios, android, macos, windows_phone, custom',
                                        type: Symbol,
-                                       default_value: lane_context[:PLATFORM_NAME] || :ios)
+                                       default_value: lane_context[:PLATFORM_NAME] || :ios),
         ]
       end
 

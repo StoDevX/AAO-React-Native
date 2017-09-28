@@ -33,7 +33,7 @@ module Fastlane
         [
           FastlaneCore::ConfigItem.new(key: :gradle_path,
                                        description: 'The path to the build.gradle file',
-                                       type: String)
+                                       type: String),
         ]
       end
 
