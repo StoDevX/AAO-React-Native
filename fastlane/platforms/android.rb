@@ -63,7 +63,7 @@ platform :android do
   lane :matchesque do
     match_dir = clone_match
 
-    # don't forget – lanes run inside of ./fastlane
+    # don't forget --- lanes run inside of ./fastlane
     gradle_file = 'signing.properties'
     keystore_name = 'my-release-key.keystore'
     play_store_key = 'play-private-key.json'
