@@ -114,7 +114,7 @@
     "marked": "0.3.6",
     "minimist": "1.2.0",
     "pify": "3.0.0",
-    "prettier": "1.4.4",
+    "prettier": "1.7.2",
     "react-native-view-shot": "1.12.0",
     "react-test-renderer": "16.0.0-alpha.12",
     "string-natural-compare": "2.0.2"
