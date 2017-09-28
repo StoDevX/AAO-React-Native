@@ -12,7 +12,3 @@ if [[ $JS ]]; then
   npm install coveralls
   ./node_modules/.bin/coveralls < ./coverage/lcov.info
 fi
-
-if [[ $JS ]]; then
-  greenkeeper-lockfile-upload
-fi
