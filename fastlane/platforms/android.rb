@@ -51,7 +51,7 @@ platform :android do
 
   desc 'Set up an android emulator on TravisCI'
   lane :'ci-emulator' do
-    emulator_name = "react-native"
+    emulator_name = 'react-native'
     Dir.mkdir("$HOME/.android/avd/#{emulator_name}.avd/")
     sh("echo no | android create avd --force -n '#{emulator_name}' -t android-23 --abi google_apis/armeabi-v7a")
     sh("emulator -avd '#{emulator_name}' -no-audio -no-window &")

@@ -1,3 +1,4 @@
+# coding: utf-8
 # Adds the github token for stodevx-bot to the CI machine
 def authorize_ci_for_keys
   token = ENV['CI_USER_TOKEN']
@@ -11,9 +12,7 @@ end
 
 # Gets the version, either from Travis or from Hockey
 def current_build_number(**args)
-  if ENV.key?('TRAVIS_BUILD_NUMBER')
-    return ENV['TRAVIS_BUILD_NUMBER']
-  end
+  return ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
 
   begin
     case lane_context[:PLATFORM_NAME]
@@ -22,7 +21,7 @@ def current_build_number(**args)
     when :ios
       (latest_testflight_build_number + 1).to_s
     else
-      UI.input "Please enter a build number: "
+      UI.input 'Please enter a build number: '
     end
   rescue
     '1'
@@ -48,10 +47,10 @@ def propagate_version(**args)
   build = current_build_number(track: args[:track] || nil)
 
   UI.message "Propagating version: #{version}"
-  UI.message "into the Info.plist and build.gradle files"
+  UI.message 'into the Info.plist and build.gradle files'
 
   # encode build number into js-land
-  set_package_data(data: {version: "#{version}+#{build}"})
+  set_package_data(data: { version: "#{version}+#{build}" })
 
   case lane_context[:PLATFORM_NAME]
   when :android
