@@ -53,7 +53,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :bundle_id,
                                        default_value: 'com.volz.drew.aao.rogue'),
           FastlaneCore::ConfigItem.new(key: :profile_name,
-                                       default_value: 'match Development com.volz.drew.aao.rogue'),
+                                       default_value: 'match Development com.volz.drew.aao.rogue')
         ]
       end
 

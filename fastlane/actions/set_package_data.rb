@@ -36,7 +36,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :package_path,
                                        description: 'The path to the package.json file',
                                        default_value: './package.json',
-                                       type: String),
+                                       type: String)
         ]
       end
 
