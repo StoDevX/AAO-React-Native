@@ -1017,7 +1017,7 @@ Style/SymbolLiteral:
 
 Style/SymbolProc:
   Description: 'Use symbols as procs instead of blocks when possible.'
-  Enabled: true
+  Enabled: false
 
 Style/Tab:
   Description: 'No hard tabs.'
