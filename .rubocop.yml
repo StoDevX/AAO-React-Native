@@ -811,7 +811,7 @@ Style/PerlBackrefs:
 Style/PredicateName:
   Description: 'Check the names of predicate methods.'
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#bool-methods-qmark'
-  Enabled: true
+  Enabled: false
 
 Style/Proc:
   Description: 'Use proc instead of Proc.new.'
