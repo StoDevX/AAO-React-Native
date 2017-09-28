@@ -34,10 +34,11 @@ export class ScheduleRow extends React.PureComponent {
   }
 }
 
-const StyledText = ({children, style}) =>
+const StyledText = ({children, style}) => (
   <Text selectable={true} numberOfLines={1} style={style}>
     {children}
   </Text>
+)
 
 const styles = StyleSheet.create({
   bold: {

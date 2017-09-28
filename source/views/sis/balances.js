@@ -128,22 +128,22 @@ class BalancesView extends React.Component {
             </View>
           </Section>
 
-          {this.props.loginState !== 'logged-in' || this.props.message
-            ? <Section footer="You'll need to log in again so we can update these numbers.">
-                {this.props.loginState !== 'logged-in'
-                  ? <Cell
-                      cellStyle="Basic"
-                      title="Log in with St. Olaf"
-                      accessory="DisclosureIndicator"
-                      onPress={this.openSettings}
-                    />
-                  : null}
+          {this.props.loginState !== 'logged-in' || this.props.message ? (
+            <Section footer="You'll need to log in again so we can update these numbers.">
+              {this.props.loginState !== 'logged-in' ? (
+                <Cell
+                  cellStyle="Basic"
+                  title="Log in with St. Olaf"
+                  accessory="DisclosureIndicator"
+                  onPress={this.openSettings}
+                />
+              ) : null}
 
-                {this.props.message
-                  ? <Cell cellStyle="Basic" title={this.props.message} />
-                  : null}
-              </Section>
-            : null}
+              {this.props.message ? (
+                <Cell cellStyle="Basic" title={this.props.message} />
+              ) : null}
+            </Section>
+          ) : null}
         </TableView>
       </ScrollView>
     )

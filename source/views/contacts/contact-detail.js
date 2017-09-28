@@ -73,19 +73,15 @@ export class ContactsDetailView extends React.PureComponent {
 
   render() {
     const contact = this.props.navigation.state.params.contact
-    const headerImage = contact.image &&
-      contactImages.hasOwnProperty(contact.image)
-      ? contactImages[contact.image]
-      : null
+    const headerImage =
+      contact.image && contactImages.hasOwnProperty(contact.image)
+        ? contactImages[contact.image]
+        : null
     return (
       <ScrollView>
-        {headerImage
-          ? <Image
-              source={headerImage}
-              resizeMode="cover"
-              style={styles.image}
-            />
-          : null}
+        {headerImage ? (
+          <Image source={headerImage} resizeMode="cover" style={styles.image} />
+        ) : null}
         <Container>
           <Title selectable={true}>{contact.title}</Title>
 

@@ -202,16 +202,15 @@ class DatePickerModal extends React.PureComponent<void, ModalProps, void> {
   }
 }
 
-const Button = ({style, textStyle, onPress, text}) =>
+const Button = ({style, textStyle, onPress, text}) => (
   <TouchableHighlight
     underlayColor="transparent"
     onPress={onPress}
     style={[defaultStyle.btnText, style]}
   >
-    <Text style={[defaultStyle.btnTextText, textStyle]}>
-      {text}
-    </Text>
+    <Text style={[defaultStyle.btnTextText, textStyle]}>{text}</Text>
   </TouchableHighlight>
+)
 
 /* eslint-disable react-native/no-color-literals */
 const defaultStyle = StyleSheet.create({

@@ -46,8 +46,9 @@ const styles = StyleSheet.create({
   },
 })
 
-const CustomSeparator = () =>
+const CustomSeparator = () => (
   <ListSeparator spacing={{left: leftSideSpacing}} />
+)
 
 class FancyMenuView extends React.PureComponent {
   static defaultProps = {

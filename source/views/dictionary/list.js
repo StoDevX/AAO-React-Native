@@ -101,7 +101,7 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
     this.props.navigation.navigate('DictionaryDetailView', {item: data})
   }
 
-  renderRow = ({item}: {item: WordType}) =>
+  renderRow = ({item}: {item: WordType}) => (
     <ListRow
       onPress={() => this.onPressRow(item)}
       contentContainerStyle={styles.row}
@@ -114,12 +114,15 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
         </Detail>
       </Column>
     </ListRow>
+  )
 
-  renderSectionHeader = ({title}: {title: string}) =>
+  renderSectionHeader = ({title}: {title: string}) => (
     <ListSectionHeader title={title} style={styles.rowSectionHeader} />
+  )
 
-  renderSeparator = (sectionId: string, rowId: string) =>
+  renderSeparator = (sectionId: string, rowId: string) => (
     <ListSeparator key={`${sectionId}-${rowId}`} />
+  )
 
   performSearch = (text: ?string) => {
     if (!text) {

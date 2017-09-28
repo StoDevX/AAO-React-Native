@@ -8,6 +8,10 @@ export class ListEmpty extends React.PureComponent {
   }
 
   render() {
-    return <View><Text>List is empty</Text></View>
+    return (
+      <View>
+        <Text>List is empty</Text>
+      </View>
+    )
   }
 }

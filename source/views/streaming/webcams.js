@@ -109,17 +109,17 @@ export class WebcamsView extends React.PureComponent<void, Props, State> {
 
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        {columns.map((contents, i) =>
+        {columns.map((contents, i) => (
           <Column key={i} style={styles.column}>
-            {contents.map(webcam =>
+            {contents.map(webcam => (
               <StreamThumbnail
                 key={webcam.name}
                 webcam={webcam}
                 viewportWidth={this.state.width}
-              />,
-            )}
-          </Column>,
-        )}
+              />
+            ))}
+          </Column>
+        ))}
       </ScrollView>
     )
   }
@@ -173,9 +173,7 @@ class StreamThumbnail extends React.PureComponent<void, ThumbnailProps, void> {
               colors={[startColor, baseColor]}
               locations={[0, 0.8]}
             >
-              <Text style={[styles.titleText, {color: textColor}]}>
-                {name}
-              </Text>
+              <Text style={[styles.titleText, {color: textColor}]}>{name}</Text>
             </LinearGradient>
           </View>
         </Image>

@@ -39,9 +39,9 @@ function HomePage({navigation, order, views = allViews}: Props) {
     >
       <StatusBar barStyle="light-content" backgroundColor={c.gold} />
 
-      {columns.map((contents, i) =>
+      {columns.map((contents, i) => (
         <Column key={i} style={styles.column}>
-          {contents.map(view =>
+          {contents.map(view => (
             <HomeScreenButton
               key={view.view}
               view={view}
@@ -52,10 +52,10 @@ function HomePage({navigation, order, views = allViews}: Props) {
                   return navigation.navigate(view.view)
                 }
               }}
-            />,
-          )}
-        </Column>,
-      )}
+            />
+          ))}
+        </Column>
+      ))}
     </ScrollView>
   )
 }
