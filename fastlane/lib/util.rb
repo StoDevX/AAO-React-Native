@@ -23,7 +23,7 @@ def current_build_number(**args)
     when :ios
       (latest_testflight_build_number + 1).to_s
     else
-      UI.input "Please enter a build number: "
+      UI.input 'Please enter a build number: '
     end
   rescue
     '1'
@@ -49,7 +49,7 @@ def propagate_version(**args)
   build = current_build_number(track: args[:track] || nil)
 
   UI.message "Propagating version: #{version}"
-  UI.message "into the Info.plist and build.gradle files"
+  UI.message 'into the Info.plist and build.gradle files'
 
   # encode build number into js-land
   set_package_data(data: {version: "#{version}+#{build}"})
