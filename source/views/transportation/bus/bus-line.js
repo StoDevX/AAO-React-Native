@@ -44,7 +44,11 @@ function makeSubtitle({now, moments, isLastBus}) {
   let lineDetail = 'Running'
 
   if (now.isBefore(head(moments))) {
-    lineDetail = `Starts ${now.clone().seconds(0).to(head(moments))}`
+    const startsIn = now
+      .clone()
+      .seconds(0)
+      .to(head(moments))
+    lineDetail = `Starts ${startsIn}`
   } else if (now.isAfter(last(moments))) {
     lineDetail = 'Over for Today'
   } else if (isLastBus) {
