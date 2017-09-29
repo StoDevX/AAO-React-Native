@@ -49,7 +49,7 @@
     "semi": false
   },
   "dependencies": {
-    "buffer": "5.0.7",
+    "buffer": "5.0.8",
     "bugsnag-react-native": "2.3.2",
     "css-select": "1.2.0",
     "dedent": "0.7.0",
