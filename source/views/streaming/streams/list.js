@@ -72,7 +72,10 @@ export class StreamListView extends React.PureComponent {
   getStreams = async (date: moment = moment.tz(CENTRAL_TZ)) => {
     try {
       const dateFrom = date.format('YYYY-MM-DD')
-      const dateTo = date.add(1, 'month').format('YYYY-MM-DD')
+      const dateTo = date
+        .clone()
+        .add(1, 'month')
+        .format('YYYY-MM-DD')
 
       let params = {
         class: 'upcoming',
@@ -96,11 +99,16 @@ export class StreamListView extends React.PureComponent {
         .filter(stream => stream.category !== 'athletics')
         .map(stream => {
           const date = moment(stream.starttime, 'YYYY-MM-DD HH:mm')
+          const group =
+            stream.status.toLowerCase() != 'live'
+              ? date.format('dddd, MMMM Do')
+              : 'Live'
+
           return {
             ...stream,
             category: titleCase(stream.category),
             date: date,
-            $groupBy: date.format('dddd, MMMM Do'),
+            $groupBy: group,
           }
         })
 
