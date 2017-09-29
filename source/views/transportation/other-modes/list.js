@@ -44,12 +44,14 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
 
   state = {
     modes: defaultData.data,
-    loading: false,
+    loading: true,
     refreshing: false,
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData().then(() => {
+      this.setState(() => ({loading: false}))
+    })
   }
 
   refresh = async () => {
@@ -77,7 +79,7 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
       modes = defaultData.data
     }
 
-    this.setState(() => ({modes, loading: false}))
+    this.setState(() => ({modes}))
   }
 
   onPress = (mode: OtherModeType) => {
