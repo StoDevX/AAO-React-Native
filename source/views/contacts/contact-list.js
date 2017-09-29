@@ -53,7 +53,9 @@ export class ContactsListView extends React.PureComponent<void, Props, State> {
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData().then(() => {
+      this.setState(() => ({loading: false}))
+    })
   }
 
   refresh = async () => {
@@ -72,8 +74,6 @@ export class ContactsListView extends React.PureComponent<void, Props, State> {
   }
 
   fetchData = async () => {
-    this.setState(() => ({loading: true}))
-
     let {data: contacts} = await fetchJson(GITHUB_URL).catch(err => {
       reportNetworkProblem(err)
       return defaultData
@@ -83,7 +83,7 @@ export class ContactsListView extends React.PureComponent<void, Props, State> {
       contacts = defaultData.data
     }
 
-    this.setState(() => ({contacts, loading: false}))
+    this.setState(() => ({contacts}))
   }
 
   onPressContact = (contact: ContactType) => {
