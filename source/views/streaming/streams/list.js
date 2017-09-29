@@ -37,7 +37,7 @@ export class StreamListView extends React.PureComponent {
   }
 
   state: {
-    error: ?Error,
+    error: ?string,
     loading: boolean,
     refreshing: boolean,
     streams: Array<{title: string, data: Array<StreamType>}>,
@@ -124,7 +124,7 @@ export class StreamListView extends React.PureComponent {
     }
 
     if (this.state.error) {
-      return <NoticeView text={'Error: ' + this.state.error.message} />
+      return <NoticeView text={'Error: ' + this.state.error} />
     }
 
     return (
