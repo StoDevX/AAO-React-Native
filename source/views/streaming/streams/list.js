@@ -38,18 +38,20 @@ export class StreamListView extends React.PureComponent {
 
   state: {
     error: ?Error,
-    loaded: boolean,
+    loading: boolean,
     refreshing: boolean,
     streams: Array<{title: string, data: Array<StreamType>}>,
   } = {
     error: null,
-    loaded: false,
+    loading: true,
     refreshing: false,
     streams: [],
   }
 
   componentWillMount() {
-    this.getStreams()
+    this.getStreams().then(() => {
+      this.setState(() => ({loading: false}))
+    })
   }
 
   refresh = async () => {
@@ -101,11 +103,7 @@ export class StreamListView extends React.PureComponent {
       const grouped = groupBy(processed, j => j.$groupBy)
       const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
 
-      this.setState(() => ({
-        error: null,
-        loaded: true,
-        streams: mapped,
-      }))
+      this.setState(() => ({error: null, streams: mapped}))
     } catch (error) {
       this.setState(() => ({error: error.message}))
       console.warn(error)
@@ -121,7 +119,7 @@ export class StreamListView extends React.PureComponent {
   renderItem = ({item}: {item: StreamType}) => <StreamRow stream={item} />
 
   render() {
-    if (!this.state.loaded) {
+    if (this.state.loading) {
       return <LoadingView />
     }
 
