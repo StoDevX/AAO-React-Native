@@ -161,7 +161,7 @@ class StreamThumbnail extends React.PureComponent<void, ThumbnailProps, void> {
         : transparentPixel
 
     return (
-      <View style={[styles.cell, styles.rounded]}>
+      <View style={styles.cell}>
         <Touchable
           highlight={true}
           underlayColor={baseColor}
