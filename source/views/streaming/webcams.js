@@ -161,23 +161,27 @@ class StreamThumbnail extends React.PureComponent<void, ThumbnailProps, void> {
         : transparentPixel
 
     return (
-      <Touchable
-        highlight={true}
-        underlayColor={baseColor}
-        activeOpacity={0.7}
-        onPress={this.handlePress}
-      >
-        <Image source={img} style={[styles.image, {width, height}]}>
-          <View style={styles.titleWrapper}>
-            <LinearGradient
-              colors={[startColor, baseColor]}
-              locations={[0, 0.8]}
-            >
-              <Text style={[styles.titleText, {color: textColor}]}>{name}</Text>
-            </LinearGradient>
-          </View>
-        </Image>
-      </Touchable>
+      <View style={[styles.cell, styles.rounded]}>
+        <Touchable
+          highlight={true}
+          underlayColor={baseColor}
+          activeOpacity={0.7}
+          onPress={this.handlePress}
+        >
+          <Image source={img} style={{width, height}}>
+            <View style={styles.titleWrapper}>
+              <LinearGradient
+                colors={[startColor, baseColor]}
+                locations={[0, 0.8]}
+              >
+                <Text style={[styles.titleText, {color: textColor}]}>
+                  {name}
+                </Text>
+              </LinearGradient>
+            </View>
+          </Image>
+        </Touchable>
+      </View>
     )
   }
 }
@@ -189,13 +193,14 @@ const styles = StyleSheet.create({
     padding: CELL_MARGIN / 2,
     flexDirection: 'row',
   },
+  cell: {
+    overflow: 'hidden',
+    margin: CELL_MARGIN / 2,
+    borderRadius: 6,
+  },
   column: {
     flex: 1,
     alignItems: 'center',
-  },
-  image: {
-    margin: CELL_MARGIN / 2,
-    borderRadius: 6,
   },
   titleWrapper: {
     flex: 1,
