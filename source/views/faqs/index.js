@@ -3,10 +3,9 @@ import React from 'react'
 import {RefreshControl} from 'react-native'
 import {ScrollView} from 'glamorous-native'
 import {Markdown} from '../components/markdown'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 import LoadingView from '../components/loading'
-import {text} from '../../../docs/faqs.json'
-import {tracker} from '../../analytics'
-import bugsnag from '../../bugsnag'
+import * as defaultData from '../../../docs/faqs.json'
 import delay from 'delay'
 
 const faqsUrl = 'https://stodevx.github.io/AAO-React-Native/faqs.json'
@@ -17,30 +16,28 @@ export class FaqView extends React.PureComponent {
   }
 
   state = {
-    text: text,
+    text: defaultData.text,
+    loading: true,
     refreshing: false,
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData().then(() => {
+      this.setState(() => ({loading: false}))
+    })
   }
 
   fetchData = async () => {
-    let fetched = text
-    try {
-      let blob: {text: string} = await fetchJson(faqsUrl)
-      fetched = blob.text
-    } catch (err) {
-      tracker.trackException(err.message)
-      bugsnag.notify(err)
-      console.warn(err.message)
-    }
+    let {text} = await fetchJson(faqsUrl).catch(err => {
+      reportNetworkProblem(err)
+      return {text: 'There was a problem loading the FAQs'}
+    })
 
     if (process.env.NODE_ENV === 'development') {
-      fetched = text
+      text = defaultData.text
     }
 
-    this.setState({text: fetched})
+    this.setState(() => ({text}))
   }
 
   refresh = async () => {
@@ -58,7 +55,7 @@ export class FaqView extends React.PureComponent {
   }
 
   render() {
-    if (!this.state.text) {
+    if (this.state.loading) {
       return <LoadingView />
     }
 
@@ -71,7 +68,7 @@ export class FaqView extends React.PureComponent {
 
     return (
       <ScrollView refreshControl={refreshControl} paddingHorizontal={15}>
-        <Markdown source={text} />
+        <Markdown source={this.state.text} />
       </ScrollView>
     )
   }
