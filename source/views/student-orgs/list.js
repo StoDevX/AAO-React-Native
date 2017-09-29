@@ -201,7 +201,7 @@ export class StudentOrgsView extends React.Component {
 
     const refreshControl = (
       <RefreshControl
-        refreshing={this.state.loading}
+        refreshing={this.state.refreshing}
         onRefresh={this.refresh}
       />
     )
