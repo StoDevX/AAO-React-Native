@@ -71,7 +71,7 @@ export class StreamListView extends React.PureComponent {
 
   getStreams = async (date: moment = moment.tz(CENTRAL_TZ)) => {
     try {
-      const dateFrom = date.clone().format('YYYY-MM-DD')
+      const dateFrom = date.format('YYYY-MM-DD')
       const dateTo = date
         .clone()
         .add(1, 'month')
