@@ -5,7 +5,7 @@
  */
 
 import React from 'react'
-import {StyleSheet, View, Text, Platform} from 'react-native'
+import {StyleSheet, View, Text, Image, Platform} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
 import debounce from 'lodash/debounce'
 import type {TopLevelViewPropsType} from '../types'
@@ -20,6 +20,7 @@ import {
   Detail,
   Title,
 } from '../components/list'
+import qs from 'querystring'
 import {tracker} from '../../analytics'
 import bugsnag from '../../bugsnag'
 import size from 'lodash/size'
@@ -36,8 +37,8 @@ import startCase from 'lodash/startCase'
 import {SearchBar} from '../components/searchbar'
 import type {StudentOrgType} from './types'
 
-const directoryUrl =
-  'https://www.stolaf.edu/directory/index.cfm?fuseaction=SearchResults&format=json&query=student'
+const url = 'https://www.stolaf.edu/directory/index.cfm'
+
 const leftSideSpacing = 20
 const rowHeight = Platform.OS === 'ios' ? 58 : 74
 const headerHeight = Platform.OS === 'ios' ? 33 : 41
@@ -48,20 +49,14 @@ const styles = StyleSheet.create({
   },
   row: {
     height: rowHeight,
-    paddingRight: 2,
+    marginLeft: 22,
   },
   rowSectionHeader: {
     height: headerHeight,
   },
-  badgeContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'flex-start',
-    width: leftSideSpacing,
-  },
-  badge: {
-    fontSize: Platform.OS === 'ios' ? 24 : 28,
-    color: c.transparent,
+  image: {
+    width: 45,
+    marginRight: 10,
   },
 })
 
@@ -83,52 +78,43 @@ export class DirectoryView extends React.Component {
     error: false,
   }
 
-  componentWillMount() {
-    this.refresh()
-  }
-
   props: TopLevelViewPropsType
 
-  fetchData = async () => {
+  fetchData = async (query: string) => {
     try {
-      const responseData: StudentOrgType[] = await fetchJson(directoryUrl)
+      let params = {
+        fuseaction: 'SearchResults',
+        format: 'json',
+        query: query,
+      }
+
+      const responseData: StudentOrgType[] = await fetchJson(
+        `${url}?${qs.stringify(params)}`,
+      )
       const results = responseData.results
-      // const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/i
-      // const withSortableNames = responseData.map(item => {
-      //   const sortableName = item.name.replace(sortableRegex, '')
 
-      //   return {
-      //     ...item,
-      //     $sortableName: sortableName,
-      //     $groupableName: head(startCase(sortableName)),
-      //   }
-      // })
+      const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/i
+      const withSortableNames = results.map(item => {
+        const sortableName = item.lastName.replace(sortableRegex, '')
 
-      // const sorted = sortBy(withSortableNames, '$sortableName')
-      // const grouped = groupBy(sorted, '$groupableName')
-      this.setState({results: results})
+        return {
+          ...item,
+          $sortableName: sortableName,
+          $groupableName: head(startCase(sortableName)),
+        }
+      })
+
+      const sorted = sortBy(withSortableNames, '$sortableName')
+      const grouped = groupBy(sorted, '$groupableName')
+      this.setState({results: grouped})
     } catch (err) {
       // tracker.trackException(err.message)
-      bugsnag.notify(err)
+      // bugsnag.notify(err)
       this.setState({error: true})
       console.error(err)
     }
 
     this.setState({loaded: true})
-  }
-
-  refresh = async () => {
-    const start = Date.now()
-    this.setState(() => ({refreshing: true}))
-
-    await this.fetchData()
-
-    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    const elapsed = start - Date.now()
-    if (elapsed < 500) {
-      await delay(500 - elapsed)
-    }
-    this.setState(() => ({refreshing: false}))
   }
 
   renderSectionHeader = ({title}: {title: string}) => {
@@ -149,11 +135,8 @@ export class DirectoryView extends React.Component {
         arrowPosition="none"
         fullWidth={true}
       >
-        <Row alignItems="flex-start">
-          <View style={styles.badgeContainer}>
-            <Text style={styles.badge}>•</Text>
-          </View>
-
+        <Row>
+          <Image source={{uri: item.thumbnail}} style={styles.image} />
           <Column flex={1}>
             <Title lines={1}>
               {item.firstName.trim()} {item.lastName.trim()}
@@ -183,15 +166,21 @@ export class DirectoryView extends React.Component {
     return words(deburr(str.toLowerCase()))
   }
 
-  orgToArray = (term: StudentOrgType) => {
+  // add department name from array
+  orgToArray = (word: StudentOrgType) => {
     return uniq([
-      ...this.splitToArray(term.name),
-      ...this.splitToArray(term.category),
-      ...this.splitToArray(term.description),
+      ...this.splitToArray(word.firstName),
+      ...this.splitToArray(word.lastName),
+      ...this.splitToArray(word.email),
+      ...this.splitToArray(word.title),
+      ...this.splitToArray(word.officePhone),
+      ...this.splitToArray(word.extension),
+      ...this.splitToArray(word.classYear),
+      ...this.splitToArray(word.building),
     ])
   }
 
-  _performSearch = (text: string) => {
+  _performSearch = async (text: string) => {
     // Android clear button returns an object...
     // ...and we need to check if the query exists
     if (!isString(text) || !text) {
@@ -202,6 +191,8 @@ export class DirectoryView extends React.Component {
     }
 
     const query = text.toLowerCase()
+    await this.fetchData(query)
+
     const filteredResults = filter(this.state.results, org =>
       this.orgToArray(org).some(word => word.startsWith(query)),
     )
@@ -212,17 +203,13 @@ export class DirectoryView extends React.Component {
   // We need to make the search run slightly behind the UI,
   // so I'm slowing it down by 50ms. 0ms also works, but seems
   // rather pointless.
-  performSearch = debounce(this._performSearch, 50)
+  performSearch = debounce(this._performSearch, 250)
 
   searchBar: any
 
   render() {
-    // if (!this.state.loaded) {
-    //   return <LoadingView />
-    // }
-
     // if (!size(this.state.results)) {
-    //   return <NoticeView text="No contact found." />
+    //   return <NoticeView text="No Results" />
     // }
 
     return (
