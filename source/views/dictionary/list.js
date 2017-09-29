@@ -49,7 +49,7 @@ type Props = TopLevelViewPropsType
 type State = {
   results: {[key: string]: Array<WordType>},
   allTerms: Array<WordType>,
-  loading: boolean,
+  refreshing: boolean,
 }
 
 export class DictionaryView extends React.PureComponent<void, Props, State> {
@@ -61,18 +61,16 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
   state = {
     results: defaultData.data,
     allTerms: defaultData.data,
-    loading: false,
+    refreshing: false,
   }
 
   componentWillMount() {
-    this.fetchData().then(() => {
-      this.setState(() => ({loading: false}))
-    })
+    this.fetchData()
   }
 
   refresh = async () => {
     const start = Date.now()
-    this.setState(() => ({loading: true}))
+    this.setState(() => ({refreshing: true}))
 
     await this.fetchData()
 
@@ -82,7 +80,7 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
       await delay(500 - elapsed)
     }
 
-    this.setState(() => ({loading: false}))
+    this.setState(() => ({refreshing: false}))
   }
 
   fetchData = async () => {
@@ -143,7 +141,7 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
   render() {
     const refreshControl = (
       <RefreshControl
-        refreshing={this.state.loading}
+        refreshing={this.state.refreshing}
         onRefresh={this.refresh}
       />
     )
