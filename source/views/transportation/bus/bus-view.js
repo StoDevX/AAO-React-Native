@@ -41,9 +41,6 @@ export class BusView extends React.PureComponent {
   }
 
   fetchData = async () => {
-    const start = Date.now()
-    this.setState(() => ({loading: true}))
-
     let {data: busLines} = await fetchJson(GITHUB_URL).catch(err => {
       reportNetworkProblem(err)
       return defaultData
@@ -51,12 +48,6 @@ export class BusView extends React.PureComponent {
 
     if (process.env.NODE_ENV === 'development') {
       busLines = defaultData.data
-    }
-
-    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    const elapsed = Date.now() - start
-    if (elapsed < 500) {
-      await delay(500 - elapsed)
     }
 
     this.setState(() => ({

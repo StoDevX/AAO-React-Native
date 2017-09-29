@@ -44,7 +44,7 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
 
   state = {
     modes: defaultData.data,
-    loading: true,
+    loading: false,
     refreshing: false,
   }
 
@@ -68,8 +68,6 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
   }
 
   fetchData = async () => {
-    this.setState(() => ({loading: true}))
-
     let {data: modes} = await fetchJson(GITHUB_URL).catch(err => {
       reportNetworkProblem(err)
       return defaultData
@@ -111,6 +109,7 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
         renderSectionHeader={this.renderSectionHeader}
         renderItem={this.renderItem}
         refreshing={this.state.refreshing}
+        onRefresh={this.refresh}
       />
     )
   }
