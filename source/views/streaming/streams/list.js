@@ -39,13 +39,11 @@ export class StreamListView extends React.PureComponent {
   state: {
     error: ?Error,
     loaded: boolean,
-    noStreams: boolean,
     refreshing: boolean,
     streams: Array<{title: string, data: Array<StreamType>}>,
   } = {
     error: null,
     loaded: false,
-    noStreams: false,
     refreshing: false,
     streams: [],
   }
@@ -86,10 +84,6 @@ export class StreamListView extends React.PureComponent {
       const streamsAPI = `${url}?${qs.stringify(params)}`
       const data = await fetchJson(streamsAPI)
       const streams = data.results
-
-      if (streams.length > 1) {
-        this.setState(() => ({noStreams: true}))
-      }
 
       // force title-case on the stream types, to prevent not-actually-duplicate headings
       const processed = streams
