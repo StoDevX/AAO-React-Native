@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {StyleSheet, Platform} from 'react-native'
+import {StyleSheet, RefreshControl, Platform} from 'react-native'
 import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
 import {Column} from '../components/layout'
 import {
@@ -49,7 +49,7 @@ type Props = TopLevelViewPropsType
 type State = {
   results: {[key: string]: Array<WordType>},
   allTerms: Array<WordType>,
-  loading: boolean,
+  refreshing: boolean,
 }
 
 export class DictionaryView extends React.PureComponent<void, Props, State> {
@@ -61,16 +61,16 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
   state = {
     results: defaultData.data,
     allTerms: defaultData.data,
-    loading: true,
+    refreshing: false,
   }
 
   componentWillMount() {
-    this.refresh()
+    this.fetchData()
   }
 
   refresh = async () => {
     const start = Date.now()
-    this.setState(() => ({loading: true}))
+    this.setState(() => ({refreshing: true}))
 
     await this.fetchData()
 
@@ -80,7 +80,7 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
       await delay(500 - elapsed)
     }
 
-    this.setState(() => ({loading: false}))
+    this.setState(() => ({refreshing: false}))
   }
 
   fetchData = async () => {
@@ -139,6 +139,13 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
   }
 
   render() {
+    const refreshControl = (
+      <RefreshControl
+        refreshing={this.state.refreshing}
+        onRefresh={this.refresh}
+      />
+    )
+
     return (
       <SearchableAlphabetListView
         cell={this.renderRow}
@@ -148,6 +155,7 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
         }
         data={groupBy(this.state.results, item => head(item.word))}
         onSearch={this.performSearch}
+        refreshControl={refreshControl}
         renderSeparator={this.renderSeparator}
         sectionHeader={this.renderSectionHeader}
         sectionHeaderHeight={SECTION_HEADER_HEIGHT}

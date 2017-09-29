@@ -43,18 +43,20 @@ export default class StudentWorkView extends React.PureComponent {
 
   state: {
     jobs: Array<{title: string, data: Array<JobType>}>,
-    loaded: boolean,
+    loading: boolean,
     refreshing: boolean,
     error: boolean,
   } = {
     jobs: [],
-    loaded: false,
+    loading: true,
     refreshing: false,
     error: false,
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData().then(() => {
+      this.setState(() => ({loading: false}))
+    })
   }
 
   fetchData = async () => {
@@ -87,8 +89,6 @@ export default class StudentWorkView extends React.PureComponent {
       this.setState(() => ({error: true}))
       console.error(err)
     }
-
-    this.setState(() => ({loaded: true}))
   }
 
   refresh = async () => {
@@ -124,7 +124,7 @@ export default class StudentWorkView extends React.PureComponent {
       return <Text selectable={true}>{this.state.error}</Text>
     }
 
-    if (!this.state.loaded) {
+    if (this.state.loading) {
       return <LoadingView />
     }
 

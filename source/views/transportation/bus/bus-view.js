@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {ScrollView} from 'react-native'
+import {ScrollView, RefreshControl} from 'react-native'
 import type {BusLineType} from './types'
 import {BusLine} from './bus-line'
 import moment from 'moment-timezone'
@@ -24,13 +24,17 @@ export class BusView extends React.PureComponent {
   state = {
     busLines: defaultData.data,
     intervalId: 0,
-    loading: false,
+    loading: true,
+    refreshing: false,
     now: moment.tz(TIMEZONE),
     // now: moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE),
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData().then(() => {
+      this.setState(() => ({loading: false}))
+    })
+
     // This updates the screen every second, so that the "next bus" times
     // are updated without needing to leave and come back.
     this.setState(() => ({intervalId: setInterval(this.updateTime, 1000)}))
@@ -41,9 +45,6 @@ export class BusView extends React.PureComponent {
   }
 
   fetchData = async () => {
-    const start = Date.now()
-    this.setState(() => ({loading: true}))
-
     let {data: busLines} = await fetchJson(GITHUB_URL).catch(err => {
       reportNetworkProblem(err)
       return defaultData
@@ -53,21 +54,25 @@ export class BusView extends React.PureComponent {
       busLines = defaultData.data
     }
 
-    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    this.setState(() => ({busLines, now: moment.tz(TIMEZONE)}))
+  }
+
+  updateTime = () => {
+    this.setState(() => ({now: moment.tz(TIMEZONE)}))
+  }
+
+  refreshTime = async () => {
+    const start = Date.now()
+    this.setState(() => ({refreshing: true}))
+
+    this.updateTime()
+
     const elapsed = Date.now() - start
     if (elapsed < 500) {
       await delay(500 - elapsed)
     }
 
-    this.setState(() => ({
-      busLines,
-      now: moment.tz(TIMEZONE),
-      loading: false,
-    }))
-  }
-
-  updateTime = () => {
-    this.setState(() => ({now: moment.tz(TIMEZONE)}))
+    this.setState(() => ({refreshing: false}))
   }
 
   openMap = () => {
@@ -94,8 +99,15 @@ export class BusView extends React.PureComponent {
       )
     }
 
+    const refreshControl = (
+      <RefreshControl
+        onRefresh={this.refreshTime}
+        refreshing={this.state.refreshing}
+      />
+    )
+
     return (
-      <ScrollView>
+      <ScrollView refreshControl={refreshControl}>
         <BusLine line={activeBusLine} now={now} openMap={this.openMap} />
       </ScrollView>
     )

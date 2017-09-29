@@ -91,7 +91,9 @@ export class StudentOrgsView extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData().then(() => {
+      this.setState(() => ({loading: false}))
+    })
   }
 
   fetchData = async () => {
@@ -116,7 +118,7 @@ export class StudentOrgsView extends React.Component {
 
     const sorted = sortBy(withSortableNames, '$sortableName')
     const grouped = groupBy(sorted, '$groupableName')
-    this.setState(() => ({orgs: sorted, results: grouped, loading: false}))
+    this.setState(() => ({orgs: sorted, results: grouped}))
   }
 
   refresh = async () => {
@@ -201,7 +203,7 @@ export class StudentOrgsView extends React.Component {
 
     const refreshControl = (
       <RefreshControl
-        refreshing={this.state.loading}
+        refreshing={this.state.refreshing}
         onRefresh={this.refresh}
       />
     )
