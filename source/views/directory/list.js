@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     height: headerHeight,
   },
   image: {
-    width: 45,
+    width: 35,
     marginRight: 10,
   },
 })
