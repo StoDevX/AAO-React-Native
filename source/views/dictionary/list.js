@@ -61,11 +61,13 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
   state = {
     results: defaultData.data,
     allTerms: defaultData.data,
-    loading: true,
+    loading: false,
   }
 
   componentWillMount() {
-    this.refresh()
+    this.fetchData().then(() => {
+      this.setState(() => ({loading: false}))
+    })
   }
 
   refresh = async () => {
