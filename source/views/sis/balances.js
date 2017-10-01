@@ -25,7 +25,7 @@ import type {TopLevelViewPropsType} from '../types'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 const LONG_DISCLAIMER =
-  'This data may be inaccurate.\nBon Appetit is always right.\nThis app is unofficial.'
+  'This data may be inaccurate.\nBon Appétit is always right.\nThis app is unofficial.'
 
 class BalancesView extends React.Component {
   static navigationOptions = {
