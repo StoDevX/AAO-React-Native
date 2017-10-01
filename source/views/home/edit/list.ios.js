@@ -30,6 +30,7 @@ type Props = {
   onSaveOrder: (ViewType[]) => any,
   order: string[],
 }
+
 type State = {
   width: number,
 }

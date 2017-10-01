@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {Animated, Easing, StyleSheet, Text, Platform} from 'react-native'
+import {Animated, Easing, StyleSheet, Text} from 'react-native'
 
 import * as c from '../../components/colors'
 
@@ -45,14 +45,6 @@ const styles = StyleSheet.create({
     color: c.white,
   },
 })
-
-const reorderIcon = (
-  <IonIcon
-    name={Platform.OS === 'ios' ? 'ios-reorder' : 'md-reorder'}
-    size={32}
-    style={[styles.icon]}
-  />
-)
 
 const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
   <EntypoIcon
@@ -173,10 +165,12 @@ export class EditHomeRow extends React.Component<void, Props, State> {
     return (
       <Animated.View style={[styles.row, this.state.style, {width}]}>
         <MenuIcon icon={this.props.data.icon} tint={this.props.data.tint} />
+
         <Text style={[styles.text, {color: this.props.data.tint}]}>
           {this.props.data.title}
         </Text>
-        {reorderIcon}
+
+        <IonIcon name="ios-reorder" size={32} style={[styles.icon]} />
       </Animated.View>
     )
   }
