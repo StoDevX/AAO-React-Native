@@ -44,11 +44,7 @@ const styles = StyleSheet.create({
 })
 
 const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
-  <EntypoIcon
-    name={icon}
-    size={32}
-    style={[styles.icon, {color: tint}]}
-  />
+  <EntypoIcon name={icon} size={32} style={[styles.icon, {color: tint}]} />
 )
 
 type Props = {
