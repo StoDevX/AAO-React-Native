@@ -35,9 +35,6 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     color: c.black,
   },
-  viewIcon: {
-    marginRight: 20,
-  },
   text: {
     flex: 1,
     flexShrink: 0,
@@ -50,7 +47,7 @@ const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
   <EntypoIcon
     name={icon}
     size={32}
-    style={[styles.icon, styles.viewIcon, {color: tint}]}
+    style={[styles.icon, {color: tint}]}
   />
 )
 
