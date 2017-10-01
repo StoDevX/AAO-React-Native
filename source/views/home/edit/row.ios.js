@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexShrink: 0,
     fontSize: 18,
-    color: c.white,
+    color: c.black,
   },
 })
 
