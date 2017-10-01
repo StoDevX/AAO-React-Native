@@ -27,6 +27,7 @@ import {AllHtmlEntities} from 'html-entities'
 import {toLaxTitleCase} from 'titlecase'
 import {tracker} from '../../analytics'
 import bugsnag from '../../bugsnag'
+import delay from 'delay'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
@@ -102,9 +103,16 @@ export class BonAppHostedMenu extends React.Component<void, Props, State> {
   }
 
   refresh = async () => {
+    const start = Date.now()
     this.setState(() => ({refreshing: true}))
 
     await this.fetchData(this.props)
+
+    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+    const elapsed = Date.now() - start
+    if (elapsed < 500) {
+      await delay(500 - elapsed)
+    }
 
     this.setState(() => ({refreshing: false}))
   }
