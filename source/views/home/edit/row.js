@@ -1,42 +1,23 @@
-/**
- * @flow
- * All About Olaf
- * Edit Home page
- */
+// @flow
 
 import React from 'react'
 import {
   Animated,
-  Dimensions,
   Easing,
   StyleSheet,
   Text,
   Platform,
 } from 'react-native'
 
-import {saveHomescreenOrder} from '../../flux/parts/homescreen'
-import {connect} from 'react-redux'
-import * as c from '../components/colors'
-import fromPairs from 'lodash/fromPairs'
+import * as c from '../../components/colors'
 
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
-import SortableList from 'react-native-sortable-list'
 
-import type {ViewType} from '../views'
-import {allViews} from '../views'
-
-const objViews = fromPairs(allViews.map(v => [v.view, v]))
+import type {ViewType} from '../../views'
 
 const ROW_HORIZONTAL_MARGIN = 15
 const styles = StyleSheet.create({
-  contentContainer: {
-    backgroundColor: c.iosLightBackground,
-    paddingTop: 10,
-    paddingBottom: 20,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-  },
   row: {
     flex: 1,
 
@@ -87,13 +68,13 @@ const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
   />
 )
 
-type RowProps = {
+type Props = {
   data: ViewType,
   active: boolean,
   width: number,
 }
 
-type RowState = {
+type State = {
   style: {
     shadowRadius: Animated.Value,
     transform: Array<{[key: string]: Animated.Value}>,
@@ -102,7 +83,7 @@ type RowState = {
   },
 }
 
-class Row extends React.Component<void, RowProps, RowState> {
+export class EditHomeRow extends React.Component<void, Props, State> {
   static startStyle = {
     shadowRadius: 2,
     transform: [{scale: 1}],
@@ -119,16 +100,16 @@ class Row extends React.Component<void, RowProps, RowState> {
 
   state = {
     style: {
-      shadowRadius: new Animated.Value(Row.startStyle.shadowRadius),
+      shadowRadius: new Animated.Value(EditHomeRow.startStyle.shadowRadius),
       transform: [
-        {scale: new Animated.Value(Row.startStyle.transform[0].scale)},
+        {scale: new Animated.Value(EditHomeRow.startStyle.transform[0].scale)},
       ],
-      opacity: new Animated.Value(Row.startStyle.opacity),
-      elevation: new Animated.Value(Row.startStyle.elevation),
+      opacity: new Animated.Value(EditHomeRow.startStyle.opacity),
+      elevation: new Animated.Value(EditHomeRow.startStyle.elevation),
     },
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     if (this.props.active === nextProps.active) {
       return
     }
@@ -146,22 +127,22 @@ class Row extends React.Component<void, RowProps, RowState> {
       Animated.timing(transform[0].scale, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: Row.endStyle.transform[0].scale,
+        toValue: EditHomeRow.endStyle.transform[0].scale,
       }),
       Animated.timing(shadowRadius, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: Row.endStyle.shadowRadius,
+        toValue: EditHomeRow.endStyle.shadowRadius,
       }),
       Animated.timing(opacity, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: Row.endStyle.opacity,
+        toValue: EditHomeRow.endStyle.opacity,
       }),
       Animated.timing(elevation, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: Row.endStyle.elevation,
+        toValue: EditHomeRow.endStyle.elevation,
       }),
     ]).start()
   }
@@ -172,22 +153,22 @@ class Row extends React.Component<void, RowProps, RowState> {
       Animated.timing(transform[0].scale, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: Row.startStyle.transform[0].scale,
+        toValue: EditHomeRow.startStyle.transform[0].scale,
       }),
       Animated.timing(shadowRadius, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: Row.startStyle.shadowRadius,
+        toValue: EditHomeRow.startStyle.shadowRadius,
       }),
       Animated.timing(opacity, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: Row.startStyle.opacity,
+        toValue: EditHomeRow.startStyle.opacity,
       }),
       Animated.timing(elevation, {
         duration: 100,
         easing: Easing.out(Easing.quad),
-        toValue: Row.startStyle.elevation,
+        toValue: EditHomeRow.startStyle.elevation,
       }),
     ]).start()
   }
@@ -206,62 +187,3 @@ class Row extends React.Component<void, RowProps, RowState> {
     )
   }
 }
-
-type Props = {
-  onSaveOrder: (ViewType[]) => any,
-  order: string[],
-}
-type State = {
-  width: number,
-}
-
-class EditHomeView extends React.PureComponent<void, Props, State> {
-  static navigationOptions = {
-    title: 'Edit Home',
-  }
-
-  state = {
-    width: Dimensions.get('window').width,
-  }
-
-  componentWillMount() {
-    Dimensions.addEventListener('change', this.handleResizeEvent)
-  }
-
-  componentWillUnmount() {
-    Dimensions.removeEventListener('change', this.handleResizeEvent)
-  }
-
-  handleResizeEvent = event => {
-    this.setState(() => ({width: event.window.width}))
-  }
-
-  render() {
-    return (
-      <SortableList
-        contentContainerStyle={[
-          styles.contentContainer,
-          {width: this.state.width},
-        ]}
-        data={objViews}
-        order={this.props.order}
-        onChangeOrder={(order: ViewType[]) => this.props.onSaveOrder(order)}
-        renderRow={({data, active}: {data: ViewType, active: boolean}) => (
-          <Row data={data} active={active} width={this.state.width} />
-        )}
-      />
-    )
-  }
-}
-
-function mapStateToProps(state) {
-  return {
-    order: state.homescreen.order,
-  }
-}
-function mapDispatchToProps(dispatch) {
-  return {
-    onSaveOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
-  }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(EditHomeView)
