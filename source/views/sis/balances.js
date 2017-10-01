@@ -1,16 +1,20 @@
-/**
- * @flow
- * All About Olaf
- * Balances page
- */
+// @flow
 
 import React from 'react'
-import {StyleSheet, ScrollView, View, Text, RefreshControl} from 'react-native'
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  Text,
+  RefreshControl,
+  Alert,
+} from 'react-native'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
 import type {LoginStateType} from '../../flux/parts/settings'
 
+import {hasSeenAcknowledgement} from '../../flux/parts/settings'
 import {updateBalances} from '../../flux/parts/sis'
 
 import delay from 'delay'
@@ -18,6 +22,10 @@ import isNil from 'lodash/isNil'
 import * as c from '../components/colors'
 
 import type {TopLevelViewPropsType} from '../types'
+
+const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
+const LONG_DISCLAIMER =
+  'This data may be inaccurate.\nBon Appetit is always right.\nThis app is unofficial.'
 
 class BalancesView extends React.Component {
   static navigationOptions = {
@@ -33,7 +41,9 @@ class BalancesView extends React.Component {
     dailyMeals: ?number,
     loginState: LoginStateType,
     message: ?string,
+    alertSeen: boolean,
 
+    hasSeenAcknowledgement: () => any,
     updateBalances: boolean => any,
   }
 
@@ -45,6 +55,15 @@ class BalancesView extends React.Component {
     // calling "refresh" here, to make clear to the user
     // that the data is being updated
     this.refresh()
+  }
+
+  componentDidMount() {
+    if (!this.props.alertSeen) {
+      Alert.alert(LONG_DISCLAIMER, '', [
+        {text: 'I Disagree', onPress: this.goBack, style: 'cancel'},
+        {text: 'Okay', onPress: this.props.hasSeenAcknowledgement},
+      ])
+    }
   }
 
   refresh = async () => {
@@ -68,6 +87,10 @@ class BalancesView extends React.Component {
     this.props.navigation.navigate('SettingsView')
   }
 
+  goBack = () => {
+    this.props.navigation.goBack(null)
+  }
+
   render() {
     let {flex, ole, print, dailyMeals, weeklyMeals} = this.props
     let {loading} = this.state
@@ -83,7 +106,7 @@ class BalancesView extends React.Component {
         }
       >
         <TableView>
-          <Section header="BALANCES">
+          <Section header="BALANCES" footer={DISCLAIMER}>
             <View style={styles.balancesRow}>
               <FormattedValueCell
                 label="Flex"
@@ -109,7 +132,7 @@ class BalancesView extends React.Component {
             </View>
           </Section>
 
-          <Section header="MEAL PLAN">
+          <Section header="MEAL PLAN" footer={DISCLAIMER}>
             <View style={styles.balancesRow}>
               <FormattedValueCell
                 label="Daily Meals Left"
@@ -158,6 +181,7 @@ function mapState(state) {
     weeklyMeals: state.sis.balances.weekly,
     dailyMeals: state.sis.balances.daily,
     message: state.sis.balances.message,
+    alertSeen: state.settings.unofficiallyAcknowledged,
 
     loginState: state.settings.credentials.state,
   }
@@ -166,6 +190,7 @@ function mapState(state) {
 function mapDispatch(dispatch) {
   return {
     updateBalances: force => dispatch(updateBalances(force)),
+    hasSeenAcknowledgement: () => dispatch(hasSeenAcknowledgement()),
   }
 }
 
