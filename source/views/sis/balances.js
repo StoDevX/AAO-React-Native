@@ -150,7 +150,7 @@ class BalancesView extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapState(state) {
   return {
     flex: state.sis.balances.flex,
     ole: state.sis.balances.ole,
@@ -163,13 +163,13 @@ function mapStateToProps(state) {
   }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatch(dispatch) {
   return {
     updateBalances: force => dispatch(updateBalances(force)),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(BalancesView)
+export default connect(mapState, mapDispatch)(BalancesView)
 
 let cellMargin = 10
 let cellSidePadding = 10
