@@ -5,33 +5,20 @@
  */
 
 import React from 'react'
-import {StackNavigator} from 'react-navigation'
 import {TabNavigator} from '../components/tabbed-view'
 import {TabBarIcon} from '../components/tabbar-icon'
 
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
-import {
-  CarletonCafeIndex,
+import {CarletonCafeIndex} from './carleton-menus'
+// import {BonAppPickerView} from './dev-bonapp-picker'
+
+export {
   CarletonBurtonMenuScreen,
   CarletonLDCMenuScreen,
   CarletonWeitzMenuScreen,
   CarletonSaylesMenuScreen,
 } from './carleton-menus'
-// import {BonAppPickerView} from './dev-bonapp-picker'
-
-const CarletonMenuPicker = StackNavigator(
-  {
-    CarletonCafeIndex: {screen: CarletonCafeIndex},
-    CarletonBurtonMenuView: {screen: CarletonBurtonMenuScreen},
-    CarletonLDCMenuView: {screen: CarletonLDCMenuScreen},
-    CarletonWeitzMenuView: {screen: CarletonWeitzMenuScreen},
-    CarletonSaylesMenuView: {screen: CarletonSaylesMenuScreen},
-  },
-  {
-    headerMode: 'none',
-  },
-)
 
 export const MenusView = TabNavigator(
   {
@@ -100,9 +87,9 @@ export const MenusView = TabNavigator(
     },
 
     CarletonMenuListView: {
-      screen: CarletonMenuPicker,
+      screen: CarletonCafeIndex,
       navigationOptions: {
-        title: 'Carleton',
+        tabBarLabel: 'Carleton',
         tabBarIcon: TabBarIcon('menu'),
       },
     },
