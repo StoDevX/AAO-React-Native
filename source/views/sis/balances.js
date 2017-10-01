@@ -49,7 +49,7 @@ class BalancesView extends React.Component {
 
   refresh = async () => {
     let start = Date.now()
-    this.setState({loading: true})
+    this.setState(() => ({loading: true}))
 
     await this.fetchData()
 
@@ -57,11 +57,11 @@ class BalancesView extends React.Component {
     let elapsed = Date.now() - start
     await delay(500 - elapsed)
 
-    this.setState({loading: false})
+    this.setState(() => ({loading: false}))
   }
 
   fetchData = async () => {
-    await Promise.all([this.props.updateBalances(true)])
+    await this.props.updateBalances(true)
   }
 
   openSettings = () => {
