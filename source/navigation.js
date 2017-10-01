@@ -9,7 +9,13 @@ import {ContactsView, ContactsDetailView} from './views/contacts'
 import {DictionaryView, DictionaryDetailView} from './views/dictionary'
 import {HomeView, EditHomeView} from './views/home'
 import StreamingView from './views/streaming'
-import {MenusView} from './views/menus'
+import {
+  MenusView,
+  CarletonBurtonMenuScreen,
+  CarletonLDCMenuScreen,
+  CarletonWeitzMenuScreen,
+  CarletonSaylesMenuScreen,
+} from './views/menus'
 import {FilterView} from './views/components/filter'
 import NewsView from './views/news'
 import NewsItemView from './views/news/news-item'
@@ -83,6 +89,10 @@ export const AppNavigator = StackNavigator(
     TransportationView: {screen: TransportationView},
     OtherModesDetailView: {screen: OtherModesDetailView},
     BusMapView: {screen: BusMapView},
+    CarletonBurtonMenuView: {screen: CarletonBurtonMenuScreen},
+    CarletonLDCMenuView: {screen: CarletonLDCMenuScreen},
+    CarletonWeitzMenuView: {screen: CarletonWeitzMenuScreen},
+    CarletonSaylesMenuView: {screen: CarletonSaylesMenuScreen},
   },
   {
     navigationOptions: {
