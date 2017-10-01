@@ -59,7 +59,7 @@ class BalancesView extends React.Component {
 
   componentDidMount() {
     if (!this.props.alertSeen) {
-      Alert.alert(LONG_DISCLAIMER, '', [
+      Alert.alert('', LONG_DISCLAIMER, [
         {text: 'I Disagree', onPress: this.goBack, style: 'cancel'},
         {text: 'Okay', onPress: this.props.hasSeenAcknowledgement},
       ])
