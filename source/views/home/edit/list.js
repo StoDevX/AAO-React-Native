@@ -1,10 +1,7 @@
 // @flow
 
 import React from 'react'
-import {
-  Dimensions,
-  StyleSheet,
-} from 'react-native'
+import {Dimensions, StyleSheet} from 'react-native'
 
 import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
 import {connect} from 'react-redux'
@@ -59,8 +56,8 @@ class EditHomeView extends React.PureComponent<void, Props, State> {
   }
 
   renderRow = ({data, active}: {data: ViewType, active: boolean}) => (
-          <EditHomeRow data={data} active={active} width={this.state.width} />
-        )
+    <EditHomeRow data={data} active={active} width={this.state.width} />
+  )
 
   onChangeOrder = (order: ViewType[]) => this.props.onSaveOrder(order)
 
@@ -80,16 +77,18 @@ class EditHomeView extends React.PureComponent<void, Props, State> {
   }
 }
 
-function mapStateToProps(state) {
+function mapState(state) {
   return {
     order: state.homescreen.order,
   }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatch(dispatch) {
   return {
     onSaveOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
   }
 }
 
-export const ConnectedEditHomeView = connect(mapStateToProps, mapDispatchToProps)(EditHomeView)
+export const ConnectedEditHomeView = connect(mapState, mapDispatch)(
+  EditHomeView,
+)

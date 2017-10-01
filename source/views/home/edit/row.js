@@ -1,13 +1,7 @@
 // @flow
 
 import React from 'react'
-import {
-  Animated,
-  Easing,
-  StyleSheet,
-  Text,
-  Platform,
-} from 'react-native'
+import {Animated, Easing, StyleSheet, Text, Platform} from 'react-native'
 
 import * as c from '../../components/colors'
 
