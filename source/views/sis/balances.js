@@ -27,24 +27,28 @@ const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 const LONG_DISCLAIMER =
   'This data may be inaccurate.\nBon Appétit is always right.\nThis app is unofficial.'
 
-class BalancesView extends React.Component {
+type Props = TopLevelViewPropsType & {
+  flex: ?number,
+  ole: ?number,
+  print: ?number,
+  weeklyMeals: ?number,
+  dailyMeals: ?number,
+  loginState: LoginStateType,
+  message: ?string,
+  alertSeen: boolean,
+
+  hasSeenAcknowledgement: () => any,
+  updateBalances: boolean => any,
+}
+
+type State = {
+  loading: boolean,
+}
+
+class BalancesView extends React.PureComponent<void, Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Balances',
     tabBarIcon: TabBarIcon('card'),
-  }
-
-  props: TopLevelViewPropsType & {
-    flex: ?number,
-    ole: ?number,
-    print: ?number,
-    weeklyMeals: ?number,
-    dailyMeals: ?number,
-    loginState: LoginStateType,
-    message: ?string,
-    alertSeen: boolean,
-
-    hasSeenAcknowledgement: () => any,
-    updateBalances: boolean => any,
   }
 
   state = {
