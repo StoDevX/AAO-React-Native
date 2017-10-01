@@ -1,12 +1,11 @@
 // @flow
 
 import React from 'react'
-import {Dimensions, StyleSheet} from 'react-native'
+import {StyleSheet, FlatList} from 'react-native'
 
 import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from '../../components/colors'
-import fromPairs from 'lodash/fromPairs'
 import sortBy from 'lodash/sortBy'
 
 import type {ViewType} from '../../views'
@@ -22,28 +21,54 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-  onSaveOrder: (ViewType[]) => any,
+  onChangeOrder: (string[]) => any,
   order: string[],
 }
-;[]
 
-type State = {
-  width: number,
-}
-;[]
-
-class EditHomeView extends React.PureComponent<void, Props, State> {
+class EditHomeView extends React.PureComponent<void, Props, void> {
   static navigationOptions = {
     title: 'Edit Home',
   }
 
-  renderRow = ({data, active}: {data: ViewType, active: boolean}) => (
-    <EditHomeRow data={data} active={active} width={this.state.width} />
-  )
+  handleMoveUp = (currentOrder: string[], viewName: string) => {
+    const currentIndex = currentOrder.indexOf(viewName)
+    const newIndex = Math.max(0, currentIndex - 1)
+    this.onChangeOrder(currentOrder, viewName, newIndex)
+  }
 
-  onChangeOrder = (order: ViewType[]) => this.props.onSaveOrder(order)
+  handleMoveDown = (currentOrder: string[], viewName: string) => {
+    const currentIndex = currentOrder.indexOf(viewName)
+    const newIndex = Math.min(currentOrder.length - 1, currentIndex + 1)
+    this.onChangeOrder(currentOrder, viewName, newIndex)
+  }
 
-  keyExtractor = (item: ViewType) => view.view
+  onChangeOrder = (
+    currentOrder: string[],
+    viewName: string,
+    newIndex: number,
+  ) => {
+    const newOrder = currentOrder.filter(v => v !== viewName)
+    newOrder.splice(newIndex, 0, viewName)
+
+    this.props.onChangeOrder(newOrder)
+  }
+
+  renderItem = ({item}: {item: ViewType}) => {
+    const index = this.props.order.indexOf(item.view)
+    const last = this.props.order.length - 1
+    return (
+      <EditHomeRow
+        item={item}
+        isFirst={index === 0}
+        isLast={index === last}
+        order={this.props.order}
+        onMoveUp={this.handleMoveUp}
+        onMoveDown={this.handleMoveDown}
+      />
+    )
+  }
+
+  keyExtractor = (item: ViewType) => item.view
 
   render() {
     const data = sortBy(allViews, (item: ViewType) =>
@@ -53,24 +78,22 @@ class EditHomeView extends React.PureComponent<void, Props, State> {
     return (
       <FlatList
         contentContainerStyle={styles.contentContainer}
-        data={allViews}
+        data={data}
         keyExtractor={this.keyExtractor}
         onChangeOrder={this.onChangeOrder}
-        renderRow={this.renderRow}
+        renderItem={this.renderItem}
       />
     )
   }
 }
 
 function mapState(state) {
-  return {
-    order: state.homescreen.order,
-  }
+  return {order: state.homescreen.order}
 }
 
 function mapDispatch(dispatch) {
   return {
-    onSaveOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
+    onChangeOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
   }
 }
 
