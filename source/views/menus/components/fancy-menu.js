@@ -48,12 +48,10 @@ const styles = StyleSheet.create({
   },
 })
 
-class FancyMenu extends React.PureComponent<any, Props, void> {
-  static leftSideSpacing = 28
-  static separator = () => (
-    <ListSeparator spacing={{left: FancyMenu.leftSideSpacing}} />
-  )
+const LEFT_MARGIN = 28
+const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
+class FancyMenu extends React.PureComponent<any, Props, void> {
   static defaultProps = {
     applyFilters: applyFiltersToItem,
   }
@@ -121,7 +119,7 @@ class FancyMenu extends React.PureComponent<any, Props, void> {
       <ListSectionHeader
         title={title}
         subtitle={menu ? menu.note : ''}
-        spacing={{left: FancyMenu.leftSideSpacing}}
+        spacing={{left: LEFT_MARGIN}}
       />
     )
   }
@@ -133,7 +131,7 @@ class FancyMenu extends React.PureComponent<any, Props, void> {
         data={item}
         corIcons={this.props.menuCorIcons}
         badgeSpecials={!specialsFilterEnabled}
-        spacing={{left: FancyMenu.leftSideSpacing}}
+        spacing={{left: LEFT_MARGIN}}
       />
     )
   }
@@ -171,7 +169,7 @@ class FancyMenu extends React.PureComponent<any, Props, void> {
 
     return (
       <SectionList
-        ItemSeparatorComponent={FancyMenu.separator}
+        ItemSeparatorComponent={Separator}
         ListEmptyComponent={messageView}
         ListHeaderComponent={header}
         data={filters}
