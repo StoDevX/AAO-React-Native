@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-  onSaveOrder: (ViewType[]) => any,
+  onSaveOrder: (string[]) => any,
   order: string[],
 }
 
@@ -60,7 +60,7 @@ class EditHomeView extends React.PureComponent<void, Props, State> {
     <EditHomeRow data={data} active={active} width={this.state.width} />
   )
 
-  onChangeOrder = (order: ViewType[]) => this.props.onSaveOrder(order)
+  onChangeOrder = (order: string[]) => this.props.onSaveOrder(order)
 
   render() {
     return (
