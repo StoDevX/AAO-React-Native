@@ -1,16 +1,20 @@
-/**
- * @flow
- * All About Olaf
- * Balances page
- */
+// @flow
 
 import React from 'react'
-import {StyleSheet, ScrollView, View, Text, RefreshControl} from 'react-native'
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  Text,
+  RefreshControl,
+  Alert,
+} from 'react-native'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
 import type {LoginStateType} from '../../flux/parts/settings'
 
+import {hasSeenAcknowledgement} from '../../flux/parts/settings'
 import {updateBalances} from '../../flux/parts/sis'
 
 import delay from 'delay'
@@ -19,22 +23,32 @@ import * as c from '../components/colors'
 
 import type {TopLevelViewPropsType} from '../types'
 
-class BalancesView extends React.Component {
+const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
+const LONG_DISCLAIMER =
+  'This data may be inaccurate.\nBon Appétit is always right.\nThis app is unofficial.'
+
+type Props = TopLevelViewPropsType & {
+  flex: ?number,
+  ole: ?number,
+  print: ?number,
+  weeklyMeals: ?number,
+  dailyMeals: ?number,
+  loginState: LoginStateType,
+  message: ?string,
+  alertSeen: boolean,
+
+  hasSeenAcknowledgement: () => any,
+  updateBalances: boolean => any,
+}
+
+type State = {
+  loading: boolean,
+}
+
+class BalancesView extends React.PureComponent<void, Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Balances',
     tabBarIcon: TabBarIcon('card'),
-  }
-
-  props: TopLevelViewPropsType & {
-    flex: ?number,
-    ole: ?number,
-    print: ?number,
-    weeklyMeals: ?number,
-    dailyMeals: ?number,
-    loginState: LoginStateType,
-    message: ?string,
-
-    updateBalances: boolean => any,
   }
 
   state = {
@@ -47,9 +61,18 @@ class BalancesView extends React.Component {
     this.refresh()
   }
 
+  componentDidMount() {
+    if (!this.props.alertSeen) {
+      Alert.alert('', LONG_DISCLAIMER, [
+        {text: 'I Disagree', onPress: this.goBack, style: 'cancel'},
+        {text: 'Okay', onPress: this.props.hasSeenAcknowledgement},
+      ])
+    }
+  }
+
   refresh = async () => {
     let start = Date.now()
-    this.setState({loading: true})
+    this.setState(() => ({loading: true}))
 
     await this.fetchData()
 
@@ -57,15 +80,19 @@ class BalancesView extends React.Component {
     let elapsed = Date.now() - start
     await delay(500 - elapsed)
 
-    this.setState({loading: false})
+    this.setState(() => ({loading: false}))
   }
 
   fetchData = async () => {
-    await Promise.all([this.props.updateBalances(true)])
+    await this.props.updateBalances(true)
   }
 
   openSettings = () => {
     this.props.navigation.navigate('SettingsView')
+  }
+
+  goBack = () => {
+    this.props.navigation.goBack(null)
   }
 
   render() {
@@ -83,7 +110,7 @@ class BalancesView extends React.Component {
         }
       >
         <TableView>
-          <Section header="BALANCES">
+          <Section header="BALANCES" footer={DISCLAIMER}>
             <View style={styles.balancesRow}>
               <FormattedValueCell
                 label="Flex"
@@ -109,7 +136,7 @@ class BalancesView extends React.Component {
             </View>
           </Section>
 
-          <Section header="MEAL PLAN">
+          <Section header="MEAL PLAN" footer={DISCLAIMER}>
             <View style={styles.balancesRow}>
               <FormattedValueCell
                 label="Daily Meals Left"
@@ -150,7 +177,7 @@ class BalancesView extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapState(state) {
   return {
     flex: state.sis.balances.flex,
     ole: state.sis.balances.ole,
@@ -158,18 +185,20 @@ function mapStateToProps(state) {
     weeklyMeals: state.sis.balances.weekly,
     dailyMeals: state.sis.balances.daily,
     message: state.sis.balances.message,
+    alertSeen: state.settings.unofficiallyAcknowledged,
 
     loginState: state.settings.credentials.state,
   }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatch(dispatch) {
   return {
     updateBalances: force => dispatch(updateBalances(force)),
+    hasSeenAcknowledgement: () => dispatch(hasSeenAcknowledgement()),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(BalancesView)
+export default connect(mapState, mapDispatch)(BalancesView)
 
 let cellMargin = 10
 let cellSidePadding = 10

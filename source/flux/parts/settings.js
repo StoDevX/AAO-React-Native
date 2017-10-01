@@ -9,7 +9,12 @@ import {
   clearLoginCredentials,
 } from '../../lib/login'
 
-import {setAnalyticsOptOut, getAnalyticsOptOut} from '../../lib/storage'
+import {
+  setAnalyticsOptOut,
+  getAnalyticsOptOut,
+  getAcknowledgementStatus,
+  setAcknowledgementStatus,
+} from '../../lib/storage'
 
 import {updateBalances} from './sis'
 
@@ -25,6 +30,7 @@ export const CREDENTIALS_VALIDATE_FAILURE =
   'settings/CREDENTIALS_VALIDATE_FAILURE'
 export const SET_FEEDBACK = 'settings/SET_FEEDBACK'
 export const CHANGE_THEME = 'settings/CHANGE_THEME'
+export const SIS_ALERT_SEEN = 'settings/SIS_ALERT_SEEN'
 
 export async function setFeedbackStatus(feedbackEnabled: boolean) {
   await setAnalyticsOptOut(feedbackEnabled)
@@ -33,6 +39,15 @@ export async function setFeedbackStatus(feedbackEnabled: boolean) {
 
 export function loadFeedbackStatus() {
   return {type: SET_FEEDBACK, payload: getAnalyticsOptOut()}
+}
+
+export function loadAcknowledgement() {
+  return {type: SIS_ALERT_SEEN, payload: getAcknowledgementStatus()}
+}
+
+export async function hasSeenAcknowledgement() {
+  await setAcknowledgementStatus(true)
+  return {type: SIS_ALERT_SEEN, payload: true}
 }
 
 export async function setLoginCredentials(username: string, password: string) {
@@ -155,6 +170,7 @@ const initialSettingsState: SettingsState = {
 
   credentials: initialCredentialsState,
   feedbackDisabled: false,
+  unofficiallyAcknowledged: false,
 }
 
 export function settings(
@@ -175,6 +191,9 @@ export function settings(
 
     case SET_FEEDBACK:
       return {...state, feedbackDisabled: payload}
+
+    case SIS_ALERT_SEEN:
+      return {...state, unofficiallyAcknowledged: payload}
 
     default:
       return state

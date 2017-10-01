@@ -35,6 +35,14 @@ export function getHomescreenOrder(): Promise<string[]> {
   return getItem(homescreenOrderKey)
 }
 
+const acknowledgementStatusKey = 'settings:ackd'
+export function setAcknowledgementStatus(status: boolean) {
+  return setItem(acknowledgementStatusKey, status)
+}
+export function getAcknowledgementStatus(): Promise<?boolean> {
+  return getItem(acknowledgementStatusKey)
+}
+
 /// MARK: Credentials
 
 const tokenValidKey = 'credentials:valid'

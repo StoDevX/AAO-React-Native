@@ -11,16 +11,9 @@ import {
   setLoginCredentials,
   validateLoginCredentials,
   loadFeedbackStatus,
+  loadAcknowledgement,
 } from './parts/settings'
 import {updateBalances, updateCourses} from './parts/sis'
-
-function homescreen(store) {
-  store.dispatch(loadHomescreenOrder())
-}
-
-function feedbackOptOutStatus(store) {
-  store.dispatch(loadFeedbackStatus())
-}
 
 function loginCredentials(store) {
   loadLoginCredentials().then(({username, password} = {}) => {
@@ -34,14 +27,6 @@ function loginCredentials(store) {
 async function validateOlafCredentials(store) {
   const {username, password} = await loadLoginCredentials()
   store.dispatch(validateLoginCredentials(username, password))
-}
-
-function loadBalances(store) {
-  store.dispatch(updateBalances(false))
-}
-
-function loadCourses(store) {
-  store.dispatch(updateCourses(false))
 }
 
 function netInfoIsConnected(store) {
@@ -58,8 +43,9 @@ export async function init(store: {dispatch: any}) {
   // and those that do.
 
   // kick off the parts that don't care about network
-  homescreen(store)
-  feedbackOptOutStatus(store)
+  store.dispatch(loadHomescreenOrder())
+  store.dispatch(loadFeedbackStatus())
+  store.dispatch(loadAcknowledgement())
   loginCredentials(store)
 
   // wait for our first connection check to happen
@@ -67,6 +53,6 @@ export async function init(store: {dispatch: any}) {
 
   // then go do the network stuff
   validateOlafCredentials(store)
-  loadBalances(store)
-  loadCourses(store)
+  store.dispatch(updateBalances(false))
+  store.dispatch(updateCourses(false))
 }
