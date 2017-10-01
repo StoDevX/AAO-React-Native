@@ -1,4 +1,4 @@
-# AAO-React-Native
+# All About Olaf
 [![Build Status](https://travis-ci.org/StoDevX/AAO-React-Native.svg?branch=master)](https://travis-ci.org/StoDevX/AAO-React-Native) [![Coverage Status](https://coveralls.io/repos/github/StoDevX/AAO-React-Native/badge.svg)](https://coveralls.io/github/StoDevX/AAO-React-Native)
 
 ## About
@@ -13,8 +13,8 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 - `cd` into the folder
 - [Install React Native](http://facebook.github.io/react-native/docs/getting-started.html#content)
 - `npm install`
-- `npm run ios`
-    - Android setup is trickier: you'll want to launch your Android emulator first, then run `npm run android`.
+- For iOS: `npm run ios`
+- For Android: launch your Android emulator first, then run `npm run android`.
 
 ## Note
 The Calendar won't work until you give it a Google Calendar API key. You should  [create one yourself](https://console.developers.google.com/projectselector/apis/credentials)!
@@ -26,4 +26,4 @@ The Calendar won't work until you give it a Google Calendar API key. You should 
 * Bugs! All bugs should have the [`bug/general`](https://github.com/StoDevX/AAO-React-Native/labels/bug%2Fgeneral) or [`bug/layout`](https://github.com/StoDevX/AAO-React-Native/labels/bug%2Flayout) label in the issues
 * Enhancements! All ideas for improvement that are not being worked on should be [`closed` and labelled as `discussion`](https://github.com/StoDevX/AAO-React-Native/issues?utf8=%E2%9C%93&q=is%3Aclosed%20is%3Aissue%20label%3Astatus%2Fdiscussion)
 
-For full information, see [CONTRIBUTING](CONTRIBUTING.md)
+For full information, see [CONTRIBUTING.md](CONTRIBUTING.md).
