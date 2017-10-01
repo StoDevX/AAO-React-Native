@@ -11,6 +11,7 @@ import {
   setLoginCredentials,
   validateLoginCredentials,
   loadFeedbackStatus,
+  loadAcknowledgement,
 } from './parts/settings'
 import {updateBalances, updateCourses} from './parts/sis'
 
@@ -44,6 +45,7 @@ export async function init(store: {dispatch: any}) {
   // kick off the parts that don't care about network
   store.dispatch(loadHomescreenOrder())
   store.dispatch(loadFeedbackStatus())
+  store.dispatch(loadAcknowledgement())
   loginCredentials(store)
 
   // wait for our first connection check to happen
