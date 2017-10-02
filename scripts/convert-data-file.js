@@ -53,13 +53,13 @@ function convertDataFile({fromFile, toFile, toFileType = 'json'}) {
 
 function processYaml(fileContents) {
   let loaded = yaml.safeLoad(fileContents)
-  return JSON.stringify({data: loaded}, null, 2)
+  return JSON.stringify({data: loaded})
 }
 
 function processMarkdown(fileContents) {
-  return JSON.stringify({text: fileContents}, null, 2)
+  return JSON.stringify({text: fileContents})
 }
 
 function processCSS(fileContents) {
-  return JSON.stringify({css: fileContents}, null, 2)
+  return JSON.stringify({css: fileContents})
 }
