@@ -38,7 +38,7 @@ function bundleDataDir({fromDir, toFile}) {
     return yaml.safeLoad(contents)
   })
   const dated = {data: loaded}
-  const output = JSON.stringify(dated, null, 2) + '\n'
+  const output = JSON.stringify(dated, null, 0) + '\n'
 
   const outStream =
     toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
