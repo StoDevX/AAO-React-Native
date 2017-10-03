@@ -7,13 +7,12 @@ import type {ViewType} from '../views'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
 
-export function HomeScreenButton({
-  view,
-  onPress,
-}: {
+type Props = {
   view: ViewType,
   onPress: () => any,
-}) {
+}
+
+export function HomeScreenButton({view, onPress}: Props) {
   const style = {backgroundColor: view.tint}
 
   return (
@@ -21,6 +20,9 @@ export function HomeScreenButton({
       highlight={false}
       onPress={onPress}
       style={[styles.rectangle, style]}
+      accessibilityLabel={view.title}
+      accessibilityTraits="button"
+      accessibilityComponentType="button"
     >
       <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
       <Text style={styles.rectangleButtonText}>{view.title}</Text>
