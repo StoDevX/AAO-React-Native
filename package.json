@@ -83,7 +83,7 @@
     "react-native-safari-view": "2.0.0",
     "react-native-search-bar": "3.0.0",
     "react-native-sortable-list": "github:hawkrives/react-native-sortable-list#7b72cc8e16cc71751836b49b3ea4bbc9e8e9cb99",
-    "react-native-tableview-simple": "0.16.12",
+    "react-native-tableview-simple": "0.16.13",
     "react-native-vector-icons": "4.4.0",
     "react-navigation": "1.0.0-beta.11",
     "react-redux": "5.0.6",
