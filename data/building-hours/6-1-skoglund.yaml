@@ -19,6 +19,6 @@ breakSchedule:
   easter: []
   summer:
     - title: Hours
-      hours: 
+      hours:
         - {days: [Mo, Tu, We, Th], from: '8:00am', to: '7:00pm'}
         - {days: [Fr], from: '8:00am', to: '2:00pm'}
