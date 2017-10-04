@@ -27,21 +27,23 @@ const groupBuildings = (buildings: BuildingType[]) => {
   return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
 }
 
-export class BuildingHoursView extends React.Component {
+type Props = TopLevelViewPropsType
+
+type State = {
+  error: ?Error,
+  loading: boolean,
+  now: moment,
+  buildings: Array<{title: string, data: BuildingType[]}>,
+  intervalId: number,
+}
+
+export class BuildingHoursView extends React.Component<Props, State> {
   static navigationOptions = {
     title: 'Building Hours',
     headerBackTitle: 'Hours',
   }
 
-  props: TopLevelViewPropsType
-
-  state: {
-    error: ?Error,
-    loading: boolean,
-    now: moment,
-    buildings: Array<{title: string, data: BuildingType[]}>,
-    intervalId: number,
-  } = {
+  state = {
     error: null,
     loading: false,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
@@ -66,7 +68,7 @@ export class BuildingHoursView extends React.Component {
     this.setState(() => ({now: moment.tz(CENTRAL_TZ)}))
   }
 
-  refresh = async () => {
+  refresh = async (): any => {
     let start = Date.now()
     this.setState(() => ({loading: true}))
 
