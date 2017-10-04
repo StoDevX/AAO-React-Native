@@ -18,20 +18,31 @@ const styles = StyleSheet.create({
   map: {...StyleSheet.absoluteFillObject},
 })
 
-export class BusMapView extends React.PureComponent {
+type Props = TopLevelViewPropsType & {
+  navigation: {
+    state: {
+      params: {
+        line: BusLineType,
+      },
+    },
+  },
+}
+
+type State = {
+  intervalId: number,
+  now: moment,
+  region: {
+    latitude: number,
+    latitudeDelta: number,
+    longitude: number,
+    longitudeDelta: number,
+  },
+}
+
+export class BusMapView extends React.PureComponent<Props, State> {
   static navigationOptions = ({navigation}) => ({
     title: `${navigation.state.params.line.name} Map`,
   })
-
-  props: TopLevelViewPropsType & {
-    navigation: {
-      state: {
-        params: {
-          line: BusLineType,
-        },
-      },
-    },
-  }
 
   state = {
     intervalId: 0,
