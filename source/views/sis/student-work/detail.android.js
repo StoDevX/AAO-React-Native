@@ -133,27 +133,32 @@ function LastUpdated({when}: {when: string}) {
   ) : null
 }
 
-export default function JobDetailView(props: {
+type Props = {
   navigation: {state: {params: {job: JobType}}},
-}) {
-  const job = cleanJob(props.navigation.state.params.job)
-
-  return (
-    <ScrollView>
-      <Title job={job} />
-      <Contact job={job} />
-      <Hours job={job} />
-      <Description job={job} />
-      <Skills job={job} />
-      <Comments job={job} />
-      <Links job={job} />
-      <LastUpdated when={job.lastModified} />
-    </ScrollView>
-  )
 }
-JobDetailView.navigationOptions = ({navigation}) => {
-  const {job} = navigation.state.params
-  return {
-    title: job.title,
+
+export class JobDetailView extends React.PureComponent<Props> {
+  static navigationOptions = ({navigation}) => {
+    const {job} = navigation.state.params
+    return {
+      title: job.title,
+    }
+  }
+
+  render() {
+    const job = cleanJob(this.props.navigation.state.params.job)
+
+    return (
+      <ScrollView>
+        <Title job={job} />
+        <Contact job={job} />
+        <Hours job={job} />
+        <Description job={job} />
+        <Skills job={job} />
+        <Comments job={job} />
+        <Links job={job} />
+        <LastUpdated when={job.lastModified} />
+      </ScrollView>
+    )
   }
 }
