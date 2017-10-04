@@ -51,6 +51,7 @@ export default function CreditsView() {
   let formattedAcks = credits.acknowledgements
     .map(w => w.replace(' ', ' '))
     .join(' • ')
+
   return (
     <ScrollView style={styles.container}>
       <Image source={image} style={styles.logo} />
