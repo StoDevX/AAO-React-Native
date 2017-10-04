@@ -1,12 +1,11 @@
 // @flow
 // Copied from https://github.com/xgfe/react-native-datepicker
 
-import React from 'react'
+import * as React from 'react'
 import {Platform, Keyboard} from 'react-native'
 import moment from 'moment-timezone'
 
-import {IosDatePicker} from './ios'
-import {AndroidDatePicker} from './android'
+import {DatePicker as ActualDatePicker} from './datepicker'
 
 const FORMATS = {
   date: 'YYYY-MM-DD',
@@ -33,7 +32,7 @@ type State = {
   timezone: string,
 }
 
-export class DatePicker extends React.Component<any, Props, State> {
+export class DatePicker extends React.Component<Props, State> {
   static defaultProps = {
     mode: 'date',
     androidMode: 'default',
@@ -83,34 +82,20 @@ export class DatePicker extends React.Component<any, Props, State> {
   }
 
   render() {
-    const propsToPass = {
-      date: this.state.date,
-      formattedDate: this.formatDate(this.state.date),
-      mode: this.props.mode,
-      onDateChange: this.onDateChange,
-      style: this.props.style,
-      ref: this.setRef,
-    }
-
-    if (Platform.OS === 'ios') {
       return (
-        <IosDatePicker
+        <ActualDatePicker
+          androidMode={this.props.androidMode}
           duration={this.props.duration}
           height={this.props.height}
           minuteInterval={this.props.minuteInterval}
           timezone={this.state.timezone}
-          {...propsToPass}
+          date={this.state.date}
+          formattedDate={this.formatDate(this.state.date)}
+          mode={this.props.mode}
+          onDateChange={this.onDateChange}
+          style={this.props.style}
+          ref={this.setRef}
         />
       )
-    } else if (Platform.OS === 'android') {
-      return (
-        <AndroidDatePicker
-          androidMode={this.props.androidMode}
-          {...propsToPass}
-        />
-      )
-    } else {
-      throw new Error(`Platform ${Platform.OS} is not supported!`)
-    }
   }
 }
