@@ -37,7 +37,7 @@ type State = {
   viewport: Viewport,
 }
 
-export default class KSTOView extends React.PureComponent<void, Props, State> {
+export default class KSTOView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     tabBarLabel: 'KSTO',
     tabBarIcon: TabBarIcon('radio'),
@@ -58,7 +58,7 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
     Dimensions.removeEventListener('change', this.handleResizeEvent)
   }
 
-  handleResizeEvent = (event: {window: {width: number}}) => {
+  handleResizeEvent = (event: {window: {width: number, height: number}}) => {
     this.setState(() => ({viewport: event.window}))
   }
 
@@ -194,7 +194,7 @@ type HtmlAudioEvent =
   | {type: HtmlAudioState}
   | {type: 'error', error: HtmlAudioError}
 
-class StreamPlayer extends React.PureComponent<void, StreamPlayerProps, void> {
+class StreamPlayer extends React.PureComponent<StreamPlayerProps> {
   _webview: WebView
 
   componentWillReceiveProps(nextProps: StreamPlayerProps) {
