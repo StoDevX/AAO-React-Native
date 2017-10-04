@@ -57,7 +57,14 @@ function reportToServer(data) {
   })
 }
 
-export class ReportWifiProblemView extends React.Component {
+type Props = {}
+
+type State = {
+  status: string,
+  data: ?any,
+}
+
+export class ReportWifiProblemView extends React.Component<Props, State> {
   state = {
     status: '',
     data: null,
