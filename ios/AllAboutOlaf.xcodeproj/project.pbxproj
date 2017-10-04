@@ -37,7 +37,6 @@
 		37755BD2F66641FB97979B7E /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 203BE3D7758C4020A78210B2 /* libRCTOneSignal.a */; };
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
 		56DC65C1BF07427AA1F84CFC /* libSafariViewManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D530CE76BA714A59B2BECB28 /* libSafariViewManager.a */; };
-		570ACE6B68F941838FFABAA9 /* libRNViewShot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CBE5D51CAA854462BCB6C610 /* libRNViewShot.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		9304AFEA1BEF4D77A9BE9E47 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EFDF596D3434455B7F672D3 /* libRNVectorIcons.a */; };
 		9E5D73F8D3CC4F7499359624 /* libRNNetworkInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C476D4877F945308C96FF0F /* libRNNetworkInfo.a */; };
@@ -91,13 +90,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 5DBEB1501B18CEA900B34395;
 			remoteInfo = RNVectorIcons;
-		};
-		002D2C491E7216B2002F518B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 17311DD2DB1B4EE0AFAA0BC4 /* RNViewShot.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNViewShot;
 		};
 		006118571EE51CD100638440 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -447,7 +439,6 @@
 		14483BC863F7489F8369E21B /* libRCTRestart.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTRestart.a; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		150D47C893AB4ACBA45D7AF8 /* RCTGoogleAnalyticsBridge.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTGoogleAnalyticsBridge.xcodeproj; path = "../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/RCTGoogleAnalyticsBridge.xcodeproj"; sourceTree = "<group>"; };
-		17311DD2DB1B4EE0AFAA0BC4 /* RNViewShot.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNViewShot.xcodeproj; path = "../node_modules/react-native-view-shot/ios/RNViewShot.xcodeproj"; sourceTree = "<group>"; };
 		203BE3D7758C4020A78210B2 /* libRCTOneSignal.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTOneSignal.a; sourceTree = "<group>"; };
 		209B4AAEEC3F4290A1ED9491 /* libRNKeychain.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNKeychain.a; sourceTree = "<group>"; };
 		23880A5682F24328A190720F /* RNCalendarEvents.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCalendarEvents.xcodeproj; path = "../node_modules/react-native-calendar-events/RNCalendarEvents.xcodeproj"; sourceTree = "<group>"; };
@@ -475,7 +466,6 @@
 		BC36B827687E41ADA029DA16 /* libRNSearchBar.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSearchBar.a; sourceTree = "<group>"; };
 		C1122D5F37D247E09037EE31 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
 		C3C50E3D9F6041BA8D55A4F5 /* libBVLinearGradient.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libBVLinearGradient.a; sourceTree = "<group>"; };
-		CBE5D51CAA854462BCB6C610 /* libRNViewShot.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNViewShot.a; sourceTree = "<group>"; };
 		CE0A6E16923B40C9930B546C /* ReactNativeCustomTabs.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeCustomTabs.xcodeproj; path = "../node_modules/react-native-custom-tabs/ios/ReactNativeCustomTabs.xcodeproj"; sourceTree = "<group>"; };
 		D222CA78E6554BBB83448435 /* libDBCustomTabs.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libDBCustomTabs.a; sourceTree = "<group>"; };
 		D530CE76BA714A59B2BECB28 /* libSafariViewManager.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSafariViewManager.a; sourceTree = "<group>"; };
@@ -521,7 +511,6 @@
 				24C1AB28D1424CD095CB8582 /* libRNKeychain.a in Frameworks */,
 				56DC65C1BF07427AA1F84CFC /* libSafariViewManager.a in Frameworks */,
 				A90299E6C1BD45C385BBF8F0 /* libDBCustomTabs.a in Frameworks */,
-				570ACE6B68F941838FFABAA9 /* libRNViewShot.a in Frameworks */,
 				102400B4EA274C97864D797E /* libBVLinearGradient.a in Frameworks */,
 				08F7F607DE694E23AA8238FF /* libRNSearchBar.a in Frameworks */,
 				24A24E891B0D46F784E47912 /* libBugsnagReactNative.a in Frameworks */,
@@ -579,14 +568,6 @@
 			isa = PBXGroup;
 			children = (
 				0027B0A71D5C82AA00C2B4FD /* libRNVectorIcons.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		002D2C241E7216B2002F518B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				002D2C4A1E7216B2002F518B /* libRNViewShot.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -814,7 +795,6 @@
 				209B4AAEEC3F4290A1ED9491 /* libRNKeychain.a */,
 				D530CE76BA714A59B2BECB28 /* libSafariViewManager.a */,
 				D222CA78E6554BBB83448435 /* libDBCustomTabs.a */,
-				CBE5D51CAA854462BCB6C610 /* libRNViewShot.a */,
 				C3C50E3D9F6041BA8D55A4F5 /* libBVLinearGradient.a */,
 				BC36B827687E41ADA029DA16 /* libRNSearchBar.a */,
 				B4920CEFDAA947C8B63B7C8B /* libBugsnagReactNative.a */,
@@ -870,7 +850,6 @@
 				7CEE763ECB05435E8CD79870 /* RNNetworkInfo.xcodeproj */,
 				E288E9E30083441F948E40BF /* RNSearchBar.xcodeproj */,
 				71D5CCADA66D45008D9A38F2 /* RNVectorIcons.xcodeproj */,
-				17311DD2DB1B4EE0AFAA0BC4 /* RNViewShot.xcodeproj */,
 				89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */,
 				23880A5682F24328A190720F /* RNCalendarEvents.xcodeproj */,
 			);
@@ -1110,10 +1089,6 @@
 					ProjectRef = 43E420DADB24468C9E296F25 /* RNVectorIcons.xcodeproj */;
 				},
 				{
-					ProductGroup = 002D2C241E7216B2002F518B /* Products */;
-					ProjectRef = 17311DD2DB1B4EE0AFAA0BC4 /* RNViewShot.xcodeproj */;
-				},
-				{
 					ProductGroup = 009845971E5DEE6800194E4A /* Products */;
 					ProjectRef = 89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */;
 				},
@@ -1167,13 +1142,6 @@
 			fileType = archive.ar;
 			path = libRNVectorIcons.a;
 			remoteRef = 0027B0A61D5C82AA00C2B4FD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		002D2C4A1E7216B2002F518B /* libRNViewShot.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNViewShot.a;
-			remoteRef = 002D2C491E7216B2002F518B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		006118581EE51CD100638440 /* libRCTRestart.a */ = {
@@ -1638,7 +1606,6 @@
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-safari-view",
 					"$(SRCROOT)/../node_modules/react-native-custom-tabs/ios/ReactNativeCustomTabs",
-					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-search-bar",
 					"$(SRCROOT)/../node_modules/bugsnag-react-native/cocoa/**",
@@ -1687,7 +1654,6 @@
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-safari-view",
 					"$(SRCROOT)/../node_modules/react-native-custom-tabs/ios/ReactNativeCustomTabs",
-					"$(SRCROOT)/../node_modules/react-native-view-shot/ios",
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-search-bar",
 					"$(SRCROOT)/../node_modules/bugsnag-react-native/cocoa/**",

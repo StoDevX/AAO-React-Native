@@ -24,7 +24,6 @@ import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
-import fr.greweb.reactnativeviewshot.RNViewShotPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +54,6 @@ public class MainApplication extends Application implements ReactApplication {
         new ReactNativeRestartPackage(),
         new RNDeviceInfo(),
         new RNNetworkInfoPackage(),
-        new RNViewShotPackage(),
         new VectorIconsPackage()
       );
     }
