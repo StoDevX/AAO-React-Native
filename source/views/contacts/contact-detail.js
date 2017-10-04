@@ -47,14 +47,14 @@ function promptCall(buttonText: string, phoneNumber: string) {
   ])
 }
 
-export class ContactsDetailView extends React.PureComponent {
+type Props = {navigation: {state: {params: {contact: ContactType}}}}
+
+export class ContactsDetailView extends React.PureComponent<Props> {
   static navigationOptions = ({navigation}) => {
     return {
       title: navigation.state.params.contact.title,
     }
   }
-
-  props: {navigation: {state: {params: {contact: ContactType}}}}
 
   onPress = () => {
     const {

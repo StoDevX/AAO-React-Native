@@ -40,7 +40,7 @@ type State = {
   refreshing: boolean,
 }
 
-export class ContactsListView extends React.PureComponent<void, Props, State> {
+export class ContactsListView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Important Contacts',
     headerBackTitle: 'Contacts',
@@ -58,7 +58,7 @@ export class ContactsListView extends React.PureComponent<void, Props, State> {
     })
   }
 
-  refresh = async () => {
+  refresh = async (): any => {
     const start = Date.now()
     this.setState(() => ({refreshing: true}))
 
