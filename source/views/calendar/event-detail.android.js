@@ -91,7 +91,15 @@ const CalendarButton = ({message, disabled, onPress}) => {
   )
 }
 
-export class EventDetail extends React.PureComponent {
+type Props = TopLevelViewPropsType & {
+  navigation: {state: {params: {event: CleanedEventType}}},
+}
+
+type State = {
+  message: string,
+  disabled: boolean,
+}
+export class EventDetail extends React.PureComponent<Props, State> {
   static navigationOptions = ({navigation}) => {
     const {event} = navigation.state.params
     return {
@@ -100,14 +108,7 @@ export class EventDetail extends React.PureComponent {
     }
   }
 
-  props: TopLevelViewPropsType & {
-    navigation: {state: {params: {event: CleanedEventType}}},
-  }
-
-  state: {
-    message: string,
-    disabled: boolean,
-  } = {
+  state = {
     message: '',
     disabled: false,
   }
@@ -124,15 +125,15 @@ export class EventDetail extends React.PureComponent {
 
     await addToCalendar(event).then(result => {
       if (result) {
-        this.setState({
+        this.setState(() => ({
           message: 'Event has been added to your calendar',
           disabled: true,
-        })
+        }))
       } else {
-        this.setState({
+        this.setState(() => ({
           message: 'Could not add event to your calendar',
           disabled: false,
-        })
+        }))
       }
     })
   }
