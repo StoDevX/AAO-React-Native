@@ -67,22 +67,25 @@ const styles = StyleSheet.create({
   },
 })
 
-export class StudentOrgsView extends React.Component {
+type Props = TopLevelViewPropsType
+
+type State = {
+  orgs: {[key: string]: StudentOrgType[]},
+  results: {[key: string]: StudentOrgType[]},
+  refreshing: boolean,
+  error: boolean,
+  loading: boolean,
+}
+
+export class StudentOrgsView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Student Orgs',
     headerBackTitle: 'Orgs',
   }
 
-  props: TopLevelViewPropsType
   searchBar: any
 
-  state: {
-    orgs: {[key: string]: StudentOrgType[]},
-    results: {[key: string]: StudentOrgType[]},
-    refreshing: boolean,
-    error: boolean,
-    loading: boolean,
-  } = {
+  state = {
     orgs: {},
     results: {},
     refreshing: false,
