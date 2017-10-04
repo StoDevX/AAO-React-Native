@@ -8,19 +8,17 @@ import {CustomTabs} from 'react-native-custom-tabs'
 
 let iosOnShowListener = () => StatusBar.setBarStyle('dark-content')
 let iosOnDismissListener = () => StatusBar.setBarStyle('light-content')
-function startStatusBarColorChanger() {
-  SafariView.isAvailable()
+export function startStatusBarColorChanger() {
+  return SafariView.isAvailable()
     .then(() => {
       SafariView.addEventListener('onShow', iosOnShowListener)
       SafariView.addEventListener('onDismiss', iosOnDismissListener)
     })
     .catch(() => {})
 }
-startStatusBarColorChanger()
 
-// eslint-disable-next-line no-unused-vars
-function stopStatusBarColorChanger() {
-  SafariView.isAvailable()
+export function stopStatusBarColorChanger() {
+  return SafariView.isAvailable()
     .then(() => {
       SafariView.removeEventListener('onShow', iosOnShowListener)
       SafariView.removeEventListener('onDismiss', iosOnDismissListener)
@@ -42,14 +40,15 @@ function genericOpen(url: string) {
     })
 }
 
-function iosOpen(url: string) {
-  return (
-    SafariView.isAvailable()
-      // if it's around, open in safari
-      .then(() => SafariView.show({url}))
-      // fall back to opening in default browser
-      .catch(() => genericOpen(url))
-  )
+async function iosOpen(url: string) {
+  await startStatusBarColorChanger()
+  const retval = await SafariView.isAvailable()
+    // if it's around, open in safari
+    .then(() => SafariView.show({url}))
+    // fall back to opening in default browser
+    .catch(() => genericOpen(url))
+  await stopStatusBarColorChanger()
+  return retval
 }
 
 function androidOpen(url: string) {
