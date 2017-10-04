@@ -6,8 +6,8 @@ import {tracker} from '../../analytics'
 import SafariView from 'react-native-safari-view'
 import {CustomTabs} from 'react-native-custom-tabs'
 
-let iosOnShowListener = () => StatusBar.setBarStyle('dark-content')
-let iosOnDismissListener = () => StatusBar.setBarStyle('light-content')
+const iosOnShowListener = () => StatusBar.setBarStyle('dark-content')
+const iosOnDismissListener = () => StatusBar.setBarStyle('light-content')
 export function startStatusBarColorChanger() {
   return SafariView.isAvailable()
     .then(() => {
