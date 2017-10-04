@@ -25,11 +25,11 @@ import type {CourseType, CoursesByTermType} from '../../lib/courses'
 import type {TopLevelViewPropsType} from '../types'
 import {updateCourses} from '../../flux/parts/sis'
 
-class CourseRow extends React.PureComponent {
-  props: {
-    course: CourseType,
-  }
+type CourseRowProps = {
+  course: CourseType,
+}
 
+class CourseRow extends React.PureComponent<CourseRowProps> {
   render() {
     const {course} = this.props
 
@@ -45,26 +45,28 @@ class CourseRow extends React.PureComponent {
   }
 }
 
-class CoursesView extends React.PureComponent {
+type Props = {
+  error: null,
+  loggedIn: true,
+  updateCourses: (force: boolean) => {},
+  coursesByTerm: CoursesByTermType,
+} & TopLevelViewPropsType
+
+type State = {
+  loading: boolean,
+}
+
+class CoursesView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Courses',
     tabBarIcon: TabBarIcon('archive'),
   }
 
-  props: {
-    error: null,
-    loggedIn: true,
-    updateCourses: (force: boolean) => {},
-    coursesByTerm: CoursesByTermType,
-  } & TopLevelViewPropsType
-
-  state: {
-    loading: boolean,
-  } = {
+  state = {
     loading: false,
   }
 
-  refresh = async () => {
+  refresh = async (): any => {
     let start = Date.now()
     this.setState({loading: true})
 

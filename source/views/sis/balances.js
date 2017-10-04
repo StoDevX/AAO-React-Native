@@ -45,7 +45,7 @@ type State = {
   loading: boolean,
 }
 
-class BalancesView extends React.PureComponent<void, Props, State> {
+class BalancesView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Balances',
     tabBarIcon: TabBarIcon('card'),
