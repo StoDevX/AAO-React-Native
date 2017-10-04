@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
 const LEFT_MARGIN = 28
 const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
-class FancyMenu extends React.PureComponent<any, Props, void> {
+class FancyMenu extends React.PureComponent<Props> {
   static defaultProps = {
     applyFilters: applyFiltersToItem,
   }
