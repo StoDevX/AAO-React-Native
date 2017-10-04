@@ -25,7 +25,21 @@ const styles = StyleSheet.create({
   },
 })
 
-export class CellTextField extends React.Component {
+type Props = {
+  label?: string,
+  _ref: any => any,
+  disabled: boolean,
+  onChangeText: string => any,
+  onSubmitEditing: string => any,
+  placeholder: string,
+  returnKeyType: 'done' | 'next' | 'default',
+  secureTextEntry: boolean,
+  autoCapitalize: 'characters' | 'words' | 'sentences' | 'none',
+  value: string,
+  labelWidth?: number,
+}
+
+export class CellTextField extends React.Component<Props> {
   static defaultProps = {
     disabled: false,
     placeholder: '',
@@ -33,20 +47,6 @@ export class CellTextField extends React.Component {
     returnKeyType: 'default',
     secureTextEntry: false,
     autoCapitalize: 'none',
-  }
-
-  props: {
-    label?: string,
-    _ref: any => any,
-    disabled: boolean,
-    onChangeText: string => any,
-    onSubmitEditing: string => any,
-    placeholder: string,
-    returnKeyType: 'done' | 'next' | 'default',
-    secureTextEntry: boolean,
-    autoCapitalize: 'characters' | 'words' | 'sentences' | 'none',
-    value: string,
-    labelWidth?: number,
   }
 
   _input: any

@@ -24,7 +24,28 @@ const HorizontalRule = glamorous.view({
   backgroundColor: 'black',
 })
 
-export class Markdown extends React.PureComponent {
+type MarkdownBlockEnum =
+  | 'BlockQuote'
+  | 'Code'
+  | 'CodeBlock'
+  | 'Emph'
+  | 'Heading'
+  | 'Image'
+  | 'ListItem'
+  | 'Link'
+  | 'List'
+  | 'Paragraph'
+  | 'Strong'
+  | 'ThematicBreak'
+
+type StyleSheetRule = number | Object | Array<StyleSheetRule>
+
+type Props = {
+  styles?: {[key: MarkdownBlockEnum]: ?StyleSheetRule},
+  source: string,
+}
+
+export class Markdown extends React.PureComponent<Props> {
   render() {
     const {styles = {}, source} = this.props
     return (

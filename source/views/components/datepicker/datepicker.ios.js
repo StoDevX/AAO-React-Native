@@ -204,7 +204,12 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 
 type StyleSheetRule = number | Object | Array<StyleSheetRule>
 
-type ButtonProps = {style?: StyleSheetRule, textStyle?: StyleSheetRule, onPress: () => any, text: string}
+type ButtonProps = {
+  style?: StyleSheetRule,
+  textStyle?: StyleSheetRule,
+  onPress: () => any,
+  text: string,
+}
 
 const Button = ({style, textStyle, onPress, text}: ButtonProps) => (
   <TouchableHighlight
