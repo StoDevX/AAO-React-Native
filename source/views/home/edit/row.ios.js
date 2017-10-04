@@ -62,7 +62,7 @@ type State = {
   },
 }
 
-export class EditHomeRow extends React.Component<void, Props, State> {
+export class EditHomeRow extends React.Component<Props, State> {
   static startStyle = {
     shadowRadius: 2,
     transform: [{scale: 1}],
