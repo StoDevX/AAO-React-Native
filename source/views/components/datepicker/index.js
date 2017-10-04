@@ -2,7 +2,7 @@
 // Copied from https://github.com/xgfe/react-native-datepicker
 
 import * as React from 'react'
-import {Platform, Keyboard} from 'react-native'
+import {Keyboard} from 'react-native'
 import moment from 'moment-timezone'
 
 import {DatePicker as ActualDatePicker} from './datepicker'
@@ -84,6 +84,7 @@ export class DatePicker extends React.Component<Props, State> {
   render() {
     return (
       <ActualDatePicker
+        ref={this.setRef}
         androidMode={this.props.androidMode}
         duration={this.props.duration}
         height={this.props.height}
@@ -94,7 +95,6 @@ export class DatePicker extends React.Component<Props, State> {
         mode={this.props.mode}
         onDateChange={this.onDateChange}
         style={this.props.style}
-        ref={this.setRef}
       />
     )
   }
