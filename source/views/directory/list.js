@@ -36,6 +36,8 @@ import * as c from '../components/colors'
 import startCase from 'lodash/startCase'
 import {SearchBar} from '../components/searchbar'
 import type {StudentOrgType} from './types'
+import Icon from 'react-native-vector-icons/Ionicons'
+import isEmpty from 'lodash/isEmpty'
 
 const url = 'https://www.stolaf.edu/directory/index.cfm'
 
@@ -57,6 +59,18 @@ const styles = StyleSheet.create({
   image: {
     width: 35,
     marginRight: 10,
+  },
+  emptySearch: {
+    flex: 1,
+    top: -150,
+    alignItems: 'center',
+  },
+  emptySearchText: {
+    fontSize: 18,
+    color: c.black,
+    textAlign: 'center',
+    paddingTop: 20,
+    paddingBottom: 10,
   },
 })
 
@@ -183,10 +197,8 @@ export class DirectoryView extends React.Component {
   _performSearch = async (text: string) => {
     // Android clear button returns an object...
     // ...and we need to check if the query exists
-    if (!isString(text) || !text) {
-      this.setState({
-        results: groupBy(this.state.results, '$groupableName'),
-      })
+    if (!isString(text) || !text || isEmpty(text)) {
+      this.setState(() => ({results: []}))
       return
     }
 
@@ -197,20 +209,24 @@ export class DirectoryView extends React.Component {
       this.orgToArray(org).some(word => word.startsWith(query)),
     )
 
-    this.setState({results: groupBy(filteredResults, '$groupableName')})
+    this.setState({results: groupBy(uniq(filteredResults), '$groupableName')})
   }
 
   // We need to make the search run slightly behind the UI,
   // so I'm slowing it down by 50ms. 0ms also works, but seems
   // rather pointless.
-  performSearch = debounce(this._performSearch, 250)
+  performSearch = debounce(this._performSearch, 1000)
 
   searchBar: any
 
   render() {
-    // if (!size(this.state.results)) {
-    //   return <NoticeView text="No Results" />
-    // }
+
+    const emptyNotice = !size(this.state.results) ? (
+      <View style={styles.emptySearch}>
+        <Icon name="ios-search" color={c.black} size={54} />
+        <Text style={styles.emptySearchText}>Search St. Olaf</Text>
+      </View>
+    ) : null
 
     return (
       <View style={styles.wrapper}>
@@ -235,6 +251,7 @@ export class DirectoryView extends React.Component {
           keyboardDismissMode="on-drag"
           keyboardShouldPersistTaps="never"
         />
+        {emptyNotice}
       </View>
     )
   }
