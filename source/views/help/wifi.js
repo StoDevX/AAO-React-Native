@@ -47,7 +47,7 @@ function reportToServer(data) {
     {
       method: 'POST',
       body: JSON.stringify(data),
-      headers: new Headers(('User-Agent': AAO_USER_AGENT)),
+      headers: new Headers({'User-Agent': AAO_USER_AGENT}),
     },
   ).then(async r => {
     let text = await r.text()
