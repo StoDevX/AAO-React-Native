@@ -16,6 +16,7 @@ import {
 } from 'react-native'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
+import {AAO_USER_AGENT} from '../../user-agent'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
@@ -92,7 +93,9 @@ export class WebcamsView extends React.PureComponent<void, Props, State> {
   fetchData = async () => {
     this.setState(() => ({loading: true}))
 
-    let {data: webcams} = await fetchJson(GITHUB_URL).catch(err => {
+    let {data: webcams} = await fetchJson(GITHUB_URL, {
+      headers: new Headers({'User-Agent': AAO_USER_AGENT}),
+    }).catch(err => {
       reportNetworkProblem(err)
       return defaultData
     })
