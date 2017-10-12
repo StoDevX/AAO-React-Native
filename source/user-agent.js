@@ -6,4 +6,4 @@ import {Platform} from 'react-native'
 const platformString = Platform.OS == 'ios' ? 'iOS' : 'Android'
 const platformVersion = Platform.getVersion()
 
-global.AAO_USER_AGENT = `AllAboutOlaf/${version} (${platformString}/${platformVersion})`
+const AAO_USER_AGENT = `AllAboutOlaf/${version} (${platformString}/${platformVersion})`
