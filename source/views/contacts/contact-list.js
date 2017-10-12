@@ -11,6 +11,7 @@ import {ListEmpty} from '../components/list'
 import {ContactRow} from './contact-row'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
+import {AAO_USER_AGENT} from '../../user-agent'
 import * as defaultData from '../../../docs/contact-info.json'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
@@ -74,7 +75,9 @@ export class ContactsListView extends React.PureComponent<void, Props, State> {
   }
 
   fetchData = async () => {
-    let {data: contacts} = await fetchJson(GITHUB_URL).catch(err => {
+    let {data: contacts} = await fetchJson(GITHUB_URL, {
+      headers: new Headers({'User-Agent': AAO_USER_AGENT}),
+    }).catch(err => {
       reportNetworkProblem(err)
       return defaultData
     })
