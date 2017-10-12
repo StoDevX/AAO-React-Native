@@ -4,6 +4,7 @@ import {RefreshControl} from 'react-native'
 import {ScrollView} from 'glamorous-native'
 import {Markdown} from '../components/markdown'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
+import {AAO_USER_AGENT} from '../../user-agent'
 import LoadingView from '../components/loading'
 import * as defaultData from '../../../docs/faqs.json'
 import delay from 'delay'
@@ -28,7 +29,9 @@ export class FaqView extends React.PureComponent {
   }
 
   fetchData = async () => {
-    let {text} = await fetchJson(faqsUrl).catch(err => {
+    let {text} = await fetchJson(faqsUrl, {
+      headers: new Headers({'User-Agent': AAO_USER_AGENT}),
+    }).catch(err => {
       reportNetworkProblem(err)
       return {text: 'There was a problem loading the FAQs'}
     })
