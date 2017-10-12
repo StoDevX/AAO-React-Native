@@ -1,3 +1,4 @@
+import {AAO_USER_AGENT} from '../user-agent'
 import qs from 'querystring'
 import uniqBy from 'lodash/uniqBy'
 import xml2js from 'xml2js'
@@ -77,7 +78,9 @@ function parseStalkernetResults(data) {
 
 export function query(query) {
   let queryString = buildStalkernetQueryString(query)
-  return fetch(`${STALKERNET_URL}?${queryString}`)
+  return fetch(`${STALKERNET_URL}?${queryString}`, {
+    headers: new Headers({'User-Agent': AAO_USER_AGENT}),
+  })
     .then(r => r.text())
     .then(parseStalkernetResults)
     .catch(err => {
