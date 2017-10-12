@@ -18,10 +18,12 @@ import * as c from '../../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {Touchable} from '../../components/touchable'
 import {TabBarIcon} from '../../components/tabbar-icon'
+import {phonecall} from 'react-native-communications'
 import type {TopLevelViewPropsType} from '../../types'
 
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
 const image = require('../../../../images/streaming/ksto/ksto-logo.png')
+const stationNumber = '5077863602'
 
 type Viewport = {width: number, height: number}
 
@@ -88,6 +90,10 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
 
   openSchedule = () => {
     this.props.navigation.navigate('KSTOSchedule')
+  }
+
+  callStation = () => {
+    phonecall(stationNumber, false)
   }
 
   renderPlayButton = (state: PlayState) => {
@@ -165,12 +171,22 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
 
             <View style={buttonStyles.space} />
 
-            <ScheduleButton
+            <SmallActionButton
+              icon="ios-call"
+              text=""
+              style={buttonStyles.smallButton}
+              onPress={this.callStation}
+            />
+
+            <View style={buttonStyles.space} />
+
+            <SmallActionButton
               icon="ios-calendar"
               text=""
-              style={buttonStyles.schedule}
+              style={buttonStyles.smallButton}
               onPress={this.openSchedule}
             />
+
           </View>
 
           <StreamPlayer
@@ -377,7 +393,7 @@ type ActionButtonProps = {
   onPress: () => any,
 }
 
-type ScheduleActionButtonProps = {
+type SmallActionButtonProps = {
   icon: string,
   text: string,
   onPress: () => any,
@@ -392,11 +408,11 @@ const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
   </Touchable>
 )
 
-const ScheduleButton = ({icon, text, onPress}: ScheduleActionButtonProps) => (
-  <Touchable style={buttonStyles.schedule} hightlight={false} onPress={onPress}>
+const SmallActionButton = ({icon, text, onPress}: SmallActionButtonProps) => (
+  <Touchable style={buttonStyles.smallButton} hightlight={false} onPress={onPress}>
     <View style={buttonStyles.buttonWrapper}>
       <Icon style={buttonStyles.icon} name={icon} />
-      <Text style={buttonStyles.scheduleAction}>{text}</Text>
+      <Text style={buttonStyles.smallAction}>{text}</Text>
     </View>
   </Touchable>
 )
@@ -471,11 +487,11 @@ const buttonStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 5,
     backgroundColor: c.denim,
-    width: 200,
+    width: 180,
     borderRadius: 8,
     overflow: 'hidden',
   },
-  schedule: {
+  smallButton: {
     alignItems: 'center',
     paddingVertical: 5,
     backgroundColor: c.denim,
@@ -499,7 +515,7 @@ const buttonStyles = StyleSheet.create({
     paddingTop: 7,
     fontWeight: '900',
   },
-  scheduleAction: {
+  smallAction: {
     color: c.white,
     paddingTop: 7,
     fontWeight: '900',
