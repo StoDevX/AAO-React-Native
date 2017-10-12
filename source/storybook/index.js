@@ -159,7 +159,10 @@ export class SnapshotsView extends React.Component {
     },
     streaming: {
       tabs: {view: () => <StreamingView />, delay: 100},
-      radio: {view: () => <KSTOView />, delay: 100},
+      radio: {
+        view: () => <Nav>{props => <KSTOView {...props} />}</Nav>,
+        delay: 100,
+      },
       webcams: {view: () => <WebcamsView />, delay: 1000},
     },
     studentorgs: {

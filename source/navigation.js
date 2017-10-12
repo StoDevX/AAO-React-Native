@@ -35,6 +35,7 @@ import SettingsView from './views/settings'
 import CreditsView from './views/settings/credits'
 import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
+import KSTOSchedule from './views/streaming/radio/schedule'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
 // import {SnapshotsView} from './storybook'
@@ -84,6 +85,7 @@ export const AppNavigator = StackNavigator(
     SISView: {screen: SISView},
     // SnapshotsView: {screen: SnapshotsView},
     StreamingView: {screen: StreamingView},
+    KSTOSchedule: {screen: KSTOSchedule},
     StudentOrgsDetailView: {screen: StudentOrgsDetailView},
     StudentOrgsView: {screen: StudentOrgsView},
     TransportationView: {screen: TransportationView},

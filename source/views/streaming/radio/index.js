@@ -14,13 +14,14 @@ import {
   View,
   WebView,
 } from 'react-native'
-import * as c from '../components/colors'
+import * as c from '../../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {Touchable} from '../components/touchable'
-import {TabBarIcon} from '../components/tabbar-icon'
+import {Touchable} from '../../components/touchable'
+import {TabBarIcon} from '../../components/tabbar-icon'
+import type {TopLevelViewPropsType} from '../../types'
 
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
-const image = require('../../../images/streaming/ksto/ksto-logo.png')
+const image = require('../../../../images/streaming/ksto/ksto-logo.png')
 
 type Viewport = {width: number, height: number}
 
@@ -28,7 +29,7 @@ type HtmlAudioError = {code: number, message: string}
 
 type PlayState = 'paused' | 'playing' | 'checking' | 'loading'
 
-type Props = {}
+type Props = TopLevelViewPropsType
 
 type State = {
   playState: PlayState,
@@ -36,7 +37,6 @@ type State = {
   uplinkError: ?string,
   viewport: Viewport,
 }
-
 export default class KSTOView extends React.PureComponent<void, Props, State> {
   static navigationOptions = {
     tabBarLabel: 'KSTO',
@@ -86,7 +86,11 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
     this.setState(() => ({streamError: e, playState: 'paused'}))
   }
 
-  renderButton = (state: PlayState) => {
+  openSchedule = () => {
+    this.props.navigation.navigate('KSTOSchedule')
+  }
+
+  renderPlayButton = (state: PlayState) => {
     switch (state) {
       case 'paused':
         return (
@@ -130,7 +134,7 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
       </Text>
     ) : null
 
-    const button = this.renderButton(this.state.playState)
+    const playButton = this.renderPlayButton(this.state.playState)
 
     return (
       <ScrollView
@@ -156,7 +160,18 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
             {error}
           </View>
 
-          {button}
+          <View style={buttonStyles.buttonWrapper}>
+            {playButton}
+
+            <View style={buttonStyles.space} />
+
+            <ScheduleButton
+              icon="ios-calendar"
+              text=""
+              style={buttonStyles.schedule}
+              onPress={this.openSchedule}
+            />
+          </View>
 
           <StreamPlayer
             playState={this.state.playState}
@@ -362,11 +377,26 @@ type ActionButtonProps = {
   onPress: () => any,
 }
 
+type ScheduleActionButtonProps = {
+  icon: string,
+  text: string,
+  onPress: () => any,
+}
+
 const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
   <Touchable style={buttonStyles.button} hightlight={false} onPress={onPress}>
     <View style={buttonStyles.buttonWrapper}>
       <Icon style={buttonStyles.icon} name={icon} />
       <Text style={buttonStyles.action}>{text}</Text>
+    </View>
+  </Touchable>
+)
+
+const ScheduleButton = ({icon, text, onPress}: ScheduleActionButtonProps) => (
+  <Touchable style={buttonStyles.schedule} hightlight={false} onPress={onPress}>
+    <View style={buttonStyles.buttonWrapper}>
+      <Icon style={buttonStyles.icon} name={icon} />
+      <Text style={buttonStyles.scheduleAction}>{text}</Text>
     </View>
   </Touchable>
 )
@@ -445,8 +475,19 @@ const buttonStyles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
   },
+  schedule: {
+    alignItems: 'center',
+    paddingVertical: 5,
+    backgroundColor: c.denim,
+    width: 50,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
   buttonWrapper: {
     flexDirection: 'row',
+  },
+  space: {
+    width: 5,
   },
   icon: {
     color: c.white,
@@ -455,6 +496,11 @@ const buttonStyles = StyleSheet.create({
   action: {
     color: c.white,
     paddingLeft: 10,
+    paddingTop: 7,
+    fontWeight: '900',
+  },
+  scheduleAction: {
+    color: c.white,
     paddingTop: 7,
     fontWeight: '900',
   },
