@@ -3,6 +3,7 @@ import React from 'react'
 import delay from 'delay'
 import {OtherModesRow} from './row'
 import {reportNetworkProblem} from '../../../lib/report-network-problem'
+import {AAO_USER_AGENT} from '../../../user-agent'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as defaultData from '../../../../docs/transportation.json'
 import * as c from '../../components/colors'
@@ -70,7 +71,9 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
   }
 
   fetchData = async () => {
-    let {data: modes} = await fetchJson(GITHUB_URL).catch(err => {
+    let {data: modes} = await fetchJson(GITHUB_URL, {
+      headers: new Headers({'User-Agent': AAO_USER_AGENT}),
+    }).catch(err => {
       reportNetworkProblem(err)
       return defaultData
     })
