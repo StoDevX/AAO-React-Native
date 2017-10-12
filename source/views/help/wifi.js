@@ -4,6 +4,7 @@ import React from 'react'
 import {ScrollView, Text} from 'react-native'
 import {Card} from '../components/card'
 import {Button} from '../components/button'
+import {AAO_USER_AGENT} from '../../user-agent'
 import deviceInfo from 'react-native-device-info'
 import networkInfo from 'react-native-network-info'
 import pkg from '../../../package.json'
@@ -46,6 +47,7 @@ function reportToServer(data) {
     {
       method: 'POST',
       body: JSON.stringify(data),
+      headers: new Headers(('User-Agent': AAO_USER_AGENT)),
     },
   ).then(async r => {
     let text = await r.text()
