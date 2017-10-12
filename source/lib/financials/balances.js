@@ -1,5 +1,6 @@
 // @flow
 import {loadLoginCredentials} from '../login'
+import {AAO_USER_AGENT} from '../../user-agent'
 import buildFormData from '../formdata'
 import {parseHtml, cssSelect, getTrimmedTextWithSpaces} from '../html'
 import {OLECARD_AUTH_URL} from './urls'
@@ -60,7 +61,11 @@ async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {
     username: username,
     password: password,
   })
-  const result = await fetch(OLECARD_AUTH_URL, {method: 'POST', body: form})
+  const result = await fetch(OLECARD_AUTH_URL, {
+    method: 'POST',
+    body: form,
+    headers: new Headers({'User-Agent': AAO_USER_AGENT}),
+  })
   const page = await result.text()
   const dom = parseHtml(page)
 
