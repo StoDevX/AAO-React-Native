@@ -2,6 +2,7 @@
 import {fastGetTrimmedText} from '../../lib/html'
 import qs from 'querystring'
 import {AllHtmlEntities} from 'html-entities'
+import {AAO_USER_AGENT} from '../../user-agent'
 import {parseString} from 'xml2js'
 import pify from 'pify'
 import type {
@@ -15,7 +16,10 @@ import type {
 const parseXml = pify(parseString)
 const entities = new AllHtmlEntities()
 
-const fetchText = url => fetch(url).then(r => r.text())
+const fetchText = url =>
+  fetch(url, {
+    headers: new Headers({'User-Agent': AAO_USER_AGENT}),
+  }).then(r => r.text())
 
 export async function fetchRssFeed(
   url: string,
