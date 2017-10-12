@@ -9,6 +9,7 @@ import React from 'react'
 import {StyleSheet, Text, SectionList} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import type {TopLevelViewPropsType} from '../../types'
+import {AAO_USER_AGENT} from '../../../user-agent'
 import * as c from '../../components/colors'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
 import {tracker} from '../../../analytics'
@@ -61,7 +62,9 @@ export default class StudentWorkView extends React.PureComponent {
 
   fetchData = async () => {
     try {
-      const data: Array<JobType> = await fetchJson(jobsUrl)
+      const data: Array<JobType> = await fetchJson(jobsUrl, {
+        headers: new Headers({'User-Agent': AAO_USER_AGENT}),
+      })
 
       // force title-case on the job types, to prevent not-actually-duplicate headings
       const processed = data.map(job => ({...job, type: titleCase(job.type)}))
