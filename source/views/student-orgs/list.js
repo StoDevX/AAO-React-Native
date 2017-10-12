@@ -17,6 +17,7 @@ import {
 } from '../components/list'
 import {tracker} from '../../analytics'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
+import {AAO_USER_AGENT} from '../../user-agent'
 import size from 'lodash/size'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
@@ -97,9 +98,9 @@ export class StudentOrgsView extends React.Component {
   }
 
   fetchData = async () => {
-    const responseData: StudentOrgType[] = await fetchJson(
-      orgsUrl,
-    ).catch(err => {
+    const responseData: StudentOrgType[] = await fetchJson(orgsUrl, {
+      headers: new Headers({'User-Agent': AAO_USER_AGENT}),
+    }).catch(err => {
       reportNetworkProblem(err)
       this.setState(() => ({error: true}))
       return []
