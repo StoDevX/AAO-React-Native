@@ -1,6 +1,6 @@
 line: Blue Line
 schedules:
-  - days: [Su, Mo, Tu, We, Th, Fr, Sa]
+  - days: [Mo, Tu, We, Th, Fr]
     coordinates:
       - [44.451472, -93.158529]
       - [44.453983, -93.159477]
