@@ -1,5 +1,7 @@
 // @flow
 
+import {AAO_USER_AGENT} from './user-agent'
+
 global.rawFetch = global.fetch
 
 function status(response) {
@@ -17,7 +19,14 @@ function json(response) {
 }
 
 // make fetch() calls throw if the server returns a non-200 status code
-global.fetch = (...args: any[]) => global.rawFetch(...args).then(status)
+global.fetch = function(input, init = {}) {
+  if (typeof init == 'object') {
+    init.headers = init.headers || new Headers({})
+    init.headers.set('User-Agent', AAO_USER_AGENT)
+  }
+
+  return global.rawFetch(input, init).then(status)
+}
 
 // add a global fetchJson wrapper
 global.fetchJson = (...args: any[]) => fetch(...args).then(json)
