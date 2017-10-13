@@ -9,7 +9,6 @@ import {StyleSheet, SectionList} from 'react-native'
 
 import * as c from '../../components/colors'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
-import {AAO_USER_AGENT} from '../../../user-agent'
 import LoadingView from '../../components/loading'
 import {NoticeView} from '../../components/notice'
 import {TabBarIcon} from '../../components/tabbar-icon'
@@ -88,9 +87,7 @@ export class StreamListView extends React.PureComponent {
       }
 
       const streamsAPI = `${url}?${qs.stringify(params)}`
-      const data = await fetchJson(streamsAPI, {
-        headers: new Headers({'User-Agent': AAO_USER_AGENT}),
-      })
+      const data = await fetchJson(streamsAPI)
       const streams = data.results
 
       // force title-case on the stream types, to prevent not-actually-duplicate headings

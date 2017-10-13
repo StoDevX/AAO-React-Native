@@ -9,7 +9,7 @@ import {NoticeView} from '../../components/notice'
 import type {TopLevelViewPropsType} from '../../types'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../../lib/report-network-problem'
-import {AAO_USER_AGENT} from '../../../user-agent'
+
 import * as defaultData from '../../../../docs/bus-times.json'
 
 const TIMEZONE = 'America/Winnipeg'
@@ -45,9 +45,7 @@ export class BusView extends React.PureComponent {
   }
 
   fetchData = async () => {
-    let {data: busLines} = await fetchJson(GITHUB_URL, {
-      headers: new Headers({'User-Agent': AAO_USER_AGENT}),
-    }).catch(err => {
+    let {data: busLines} = await fetchJson(GITHUB_URL).catch(err => {
       reportNetworkProblem(err)
       return defaultData
     })

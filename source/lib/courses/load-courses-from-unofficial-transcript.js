@@ -6,7 +6,6 @@
 import startsWith from 'lodash/startsWith'
 
 import * as cache from '../cache'
-import {AAO_USER_AGENT} from '../../user-agent'
 import buildFormData from '../formdata'
 import {parseHtml} from '../html'
 import {GRADES_PAGE, LANDING_PAGE} from './urls'
@@ -47,11 +46,7 @@ async function fetchAllCoursesFromServer({
   stnum: number,
 }): PromisedDataType {
   const form = buildFormData({stnum: String(stnum), searchyearterm: '0'})
-  const resp = await fetch(GRADES_PAGE, {
-    method: 'POST',
-    body: form,
-    headers: new Headers({'User-Agent': AAO_USER_AGENT}),
-  })
+  const resp = await fetch(GRADES_PAGE, {method: 'POST', body: form})
   if (startsWith(resp.url, LANDING_PAGE)) {
     return {error: true, value: new Error('Authentication Error')}
   }

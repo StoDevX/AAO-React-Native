@@ -7,7 +7,6 @@
 import React from 'react'
 import {EventList} from './event-list'
 import bugsnag from '../../bugsnag'
-import {AAO_USER_AGENT} from '../../user-agent'
 import {tracker} from '../../analytics'
 import type {TopLevelViewPropsType} from '../types'
 import type {EventType, GoogleEventType} from './types'
@@ -74,9 +73,7 @@ export class GoogleCalendarView extends React.Component {
 
     let data: GoogleEventType[] = []
     try {
-      let result = await fetchJson(url, {
-        headers: new Headers({'User-Agent': AAO_USER_AGENT}),
-      })
+      let result = await fetchJson(url)
       const error = result.error
       if (error) {
         tracker.trackException(error.message)

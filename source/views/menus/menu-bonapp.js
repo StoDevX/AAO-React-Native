@@ -6,7 +6,6 @@ import qs from 'querystring'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {ConnectedFancyMenu as FancyMenu} from './components/fancy-menu'
-import {AAO_USER_AGENT} from '../../user-agent'
 import type {
   BonAppMenuInfoType as MenuInfoType,
   BonAppCafeInfoType as CafeInfoType,
@@ -34,9 +33,7 @@ const CENTRAL_TZ = 'America/Winnipeg'
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
 const bonappCafeBaseUrl = 'http://legacy.cafebonappetit.com/api/2/cafes'
 const fetchJsonQuery = (url, query) =>
-  fetchJson(`${url}?${qs.stringify(query)}`, {
-    headers: new Headers({'User-Agent': AAO_USER_AGENT}),
-  })
+  fetchJson(`${url}?${qs.stringify(query)}`)
 const entities = new AllHtmlEntities()
 
 const DEFAULT_MENU = [

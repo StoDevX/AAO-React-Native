@@ -7,7 +7,6 @@ import startsWith from 'lodash/startsWith'
 
 import * as cache from '../cache'
 import {parseHtml} from '../html'
-import {AAO_USER_AGENT} from '../../user-agent'
 import {GRADES_PAGE, LANDING_PAGE} from './urls'
 import {parseStudentNumberFromDom} from './parse-student-number'
 
@@ -47,9 +46,7 @@ export async function loadStudentNumber({
 }
 
 async function fetchStudentNumberFromServer(): PromisedDataType {
-  const resp = await fetch(GRADES_PAGE, {
-    headers: new Headers({'User-Agent': AAO_USER_AGENT}),
-  })
+  const resp = await fetch(GRADES_PAGE)
   if (startsWith(resp.url, LANDING_PAGE)) {
     return {error: true, value: new Error('Authentication Error')}
   }

@@ -13,7 +13,6 @@ import moment from 'moment-timezone'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 import * as defaultData from '../../../docs/building-hours.json'
-import {AAO_USER_AGENT} from '../../user-agent'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
@@ -83,9 +82,7 @@ export class BuildingHoursView extends React.Component {
   }
 
   fetchData = async () => {
-    let {data: buildings} = await fetchJson(githubBaseUrl, {
-      headers: new Headers({'User-Agent': AAO_USER_AGENT}),
-    }).catch(err => {
+    let {data: buildings} = await fetchJson(githubBaseUrl).catch(err => {
       reportNetworkProblem(err)
       return defaultData
     })

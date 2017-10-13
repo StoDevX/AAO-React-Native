@@ -13,7 +13,6 @@ import {
 } from '../components/list'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
-import {AAO_USER_AGENT} from '../../user-agent'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {tracker} from '../../analytics'
@@ -85,9 +84,7 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
   }
 
   fetchData = async () => {
-    let {data: allTerms} = await fetchJson(GITHUB_URL, {
-      headers: new Headers({'User-Agent': AAO_USER_AGENT}),
-    }).catch(err => {
+    let {data: allTerms} = await fetchJson(GITHUB_URL).catch(err => {
       reportNetworkProblem(err)
       return defaultData
     })
