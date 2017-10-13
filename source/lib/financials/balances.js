@@ -60,10 +60,7 @@ async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {
     username: username,
     password: password,
   })
-  const result = await fetch(OLECARD_AUTH_URL, {
-    method: 'POST',
-    body: form,
-  })
+  const result = await fetch(OLECARD_AUTH_URL, {method: 'POST', body: form})
   const page = await result.text()
   const dom = parseHtml(page)
 
