@@ -18,7 +18,7 @@ export default TabNavigator(
       screen: ({navigation}) => (
         <GoogleCalendarView
           navigation={navigation}
-          calendarId=" 5g91il39n0sv4c2bjdv1jrvcpq4ulm4r@import.calendar.google.com"
+          calendarId="5g91il39n0sv4c2bjdv1jrvcpq4ulm4r@import.calendar.google.com"
         />
       ),
       navigationOptions: {
