@@ -40,6 +40,14 @@ export function updateCourses(forceFromServer: boolean = false) {
   }
 }
 
+export type BalancesState = {
+  message: ?string,
+  flex: ?string,
+  ole: ?string,
+  print: ?string,
+  daily: ?string,
+  weekly: ?string,
+}
 const initialBalancesState = {
   message: null,
   flex: null,
@@ -48,7 +56,7 @@ const initialBalancesState = {
   daily: null,
   weekly: null,
 }
-function balances(state = initialBalancesState, action) {
+function balances(state: BalancesState = initialBalancesState, action) {
   const {type, payload, error} = action
 
   switch (type) {
