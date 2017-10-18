@@ -1,10 +1,8 @@
 // @flow
 import {loadLoginCredentials} from '../login'
 import buildFormData from '../formdata'
-import {parseHtml, cssSelect, getTrimmedTextWithSpaces} from '../html'
-import {OLECARD_AUTH_URL} from './urls'
-import type {BalancesShapeType} from './types'
-import fromPairs from 'lodash/fromPairs'
+import {OLECARD_AUTH_URL, OLECARD_DATA_ENDPOINT} from './urls'
+import type {BalancesShapeType, OleCardBalancesType} from './types'
 import isNil from 'lodash/isNil'
 import * as cache from '../cache'
 
@@ -22,6 +20,7 @@ export async function getBalances(
     print,
     daily,
     weekly,
+    plan,
     _isExpired,
     _isCached,
   } = await cache.getBalances()
@@ -46,6 +45,7 @@ export async function getBalances(
       print: print.value,
       daily: daily.value,
       weekly: weekly.value,
+      plan: plan.value,
     },
   }
 }
@@ -60,70 +60,44 @@ async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {
     username: username,
     password: password,
   })
-  const result = await fetch(OLECARD_AUTH_URL, {method: 'POST', body: form})
-  const page = await result.text()
-  const dom = parseHtml(page)
+  await fetch(OLECARD_AUTH_URL, {method: 'POST', body: form})
 
-  return parseBalancesFromDom(dom)
+  const resp: OleCardBalancesType = await fetchJson(OLECARD_DATA_ENDPOINT)
+
+  return getBalancesFromData(resp)
 }
 
-function parseBalancesFromDom(dom: mixed): BalancesOrErrorType {
-  // .accountrow is the name of the row, and it's immediate sibling is a cell with id=value
-  const elements = cssSelect('.accountrow', dom)
-    .map(el => el.parent)
-    .map(getTrimmedTextWithSpaces)
-    .map(rowIntoNamedAmount)
-    .filter(Boolean)
+const accounts = {
+  flex: 'STO Flex',
+  ole: 'STO Ole Dollars',
+  print: 'STO Student Printing',
+}
 
-  const namedValues = fromPairs(elements)
+function getBalancesFromData(resp: OleCardBalancesType): BalancesOrErrorType {
+  if (resp.error) {
+    return {
+      error: true,
+      value: new Error(resp.error),
+    }
+  }
 
-  const flex = dollarAmountToInteger(namedValues.flex)
-  const ole = dollarAmountToInteger(namedValues.ole)
-  const print = dollarAmountToInteger(namedValues.print)
-  const daily = namedValues.daily
-  const weekly = namedValues.weekly
+  const flex = resp.data.accounts.find(a => a.account === accounts.flex)
+  const ole = resp.data.accounts.find(a => a.account === accounts.ole)
+  const print = resp.data.accounts.find(a => a.account === accounts.print)
+
+  const daily = resp.data.meals && resp.data.meals.leftDaily
+  const weekly = resp.data.meals && resp.data.meals.leftWeekly
+  const plan = resp.data.meals && resp.data.meals.plan
 
   return {
     error: false,
     value: {
-      flex: isNil(flex) ? null : flex,
-      ole: isNil(ole) ? null : ole,
-      print: isNil(print) ? null : print,
+      flex: flex || flex === 0 ? flex.formatted : null,
+      ole: ole || ole === 0 ? ole.formatted : null,
+      print: print || print === 0 ? print.formatted : null,
       daily: isNil(daily) ? null : daily,
       weekly: isNil(weekly) ? null : weekly,
+      plan: isNil(plan) ? null : plan,
     },
   }
-}
-
-const lookupHash: Map<RegExp, string> = new Map([
-  [/sto flex/i, 'flex'],
-  [/ole/i, 'ole'],
-  [/print/i, 'print'],
-  [/meals.*day/i, 'daily'],
-  [/meals.*week/i, 'weekly'],
-])
-
-function rowIntoNamedAmount(row: string): ?[string, string] {
-  const chunks = row.split(' ')
-  const name = chunks.slice(0, -1).join(' ')
-  const amount = chunks[chunks.length - 1]
-
-  // We have a list of regexes that check the row names for keywords.
-  // Those keywords are associated with the actual key names.
-  for (const [lookup, key] of lookupHash.entries()) {
-    if (lookup.test(name)) {
-      return [key, amount]
-    }
-  }
-}
-
-function dollarAmountToInteger(amount: ?string): ?number {
-  const amountString = amount || ''
-  // remove the /[$.]/, and put the numbers into big strings (eg, $3.14 -> '314')
-  const nonDenominationalAmount = amountString
-    .replace('$', '')
-    .split('.')
-    .join('')
-  const num = parseInt(nonDenominationalAmount, 10)
-  return Number.isNaN(num) ? null : num
 }

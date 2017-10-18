@@ -14,11 +14,13 @@ import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
 import type {LoginStateType} from '../../flux/parts/settings'
 
-import {hasSeenAcknowledgement} from '../../flux/parts/settings'
-import {updateBalances} from '../../flux/parts/sis'
+import {
+  hasSeenAcknowledgement,
+  type SettingsState,
+} from '../../flux/parts/settings'
+import {updateBalances, type BalancesState} from '../../flux/parts/sis'
 
 import delay from 'delay'
-import isNil from 'lodash/isNil'
 import * as c from '../components/colors'
 
 import type {TopLevelViewPropsType} from '../types'
@@ -28,11 +30,12 @@ const LONG_DISCLAIMER =
   'This data may be inaccurate.\nBon Appétit is always right.\nThis app is unofficial.'
 
 type Props = TopLevelViewPropsType & {
-  flex: ?number,
-  ole: ?number,
-  print: ?number,
-  weeklyMeals: ?number,
-  dailyMeals: ?number,
+  flex: ?string,
+  ole: ?string,
+  print: ?string,
+  weeklyMeals: ?string,
+  dailyMeals: ?string,
+  mealPlan: ?string,
   loginState: LoginStateType,
   message: ?string,
   alertSeen: boolean,
@@ -96,7 +99,7 @@ class BalancesView extends React.PureComponent<void, Props, State> {
   }
 
   render() {
-    let {flex, ole, print, dailyMeals, weeklyMeals} = this.props
+    let {flex, ole, print, dailyMeals, weeklyMeals, mealPlan} = this.props
     let {loading} = this.state
 
     return (
@@ -116,21 +119,21 @@ class BalancesView extends React.PureComponent<void, Props, State> {
                 label="Flex"
                 value={flex}
                 indeterminate={loading}
-                formatter={getFormattedCurrency}
+                formatter={getValueOrNa}
               />
 
               <FormattedValueCell
                 label="Ole"
                 value={ole}
                 indeterminate={loading}
-                formatter={getFormattedCurrency}
+                formatter={getValueOrNa}
               />
 
               <FormattedValueCell
                 label="Copy/Print"
                 value={print}
                 indeterminate={loading}
-                formatter={getFormattedCurrency}
+                formatter={getValueOrNa}
                 style={styles.finalCell}
               />
             </View>
@@ -142,17 +145,20 @@ class BalancesView extends React.PureComponent<void, Props, State> {
                 label="Daily Meals Left"
                 value={dailyMeals}
                 indeterminate={loading}
-                formatter={getFormattedMealsRemaining}
+                formatter={getValueOrNa}
               />
 
               <FormattedValueCell
                 label="Weekly Meals Left"
                 value={weeklyMeals}
                 indeterminate={loading}
-                formatter={getFormattedMealsRemaining}
+                formatter={getValueOrNa}
                 style={styles.finalCell}
               />
             </View>
+            {mealPlan && (
+              <Cell cellStyle="Subtitle" title="Meal Plan" detail={mealPlan} />
+            )}
           </Section>
 
           {this.props.loginState !== 'logged-in' || this.props.message ? (
@@ -177,13 +183,17 @@ class BalancesView extends React.PureComponent<void, Props, State> {
   }
 }
 
-function mapState(state) {
+function mapState(state: {
+  sis: {balances: BalancesState},
+  settings: SettingsState,
+}) {
   return {
     flex: state.sis.balances.flex,
     ole: state.sis.balances.ole,
     print: state.sis.balances.print,
     weeklyMeals: state.sis.balances.weekly,
     dailyMeals: state.sis.balances.daily,
+    mealPlan: state.sis.balances.plan,
     message: state.sis.balances.message,
     alertSeen: state.settings.unofficiallyAcknowledged,
 
@@ -257,18 +267,12 @@ let styles = StyleSheet.create({
   },
 })
 
-function getFormattedCurrency(value: ?number): string {
-  if (isNil(value)) {
+function getValueOrNa(value: ?string): string {
+  // eslint-disable-next-line no-eq-null
+  if (value == null) {
     return 'N/A'
   }
-  return '$' + (((value: any): number) / 100).toFixed(2)
-}
-
-function getFormattedMealsRemaining(value: ?number): string {
-  if (isNil(value)) {
-    return 'N/A'
-  }
-  return (value: any).toString()
+  return value
 }
 
 function FormattedValueCell({
@@ -280,9 +284,9 @@ function FormattedValueCell({
 }: {
   indeterminate: boolean,
   label: string,
-  value: ?number,
+  value: ?string,
   style?: any,
-  formatter: (?number) => string,
+  formatter: (?string) => string,
 }) {
   return (
     <View style={[styles.rectangle, styles.common, styles.balances, style]}>
