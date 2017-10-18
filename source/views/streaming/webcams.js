@@ -11,7 +11,6 @@ import {
   Text,
   ScrollView,
   Image,
-  Platform,
   Dimensions,
 } from 'react-native'
 import delay from 'delay'
@@ -132,14 +131,8 @@ type ThumbnailProps = {
 
 class StreamThumbnail extends React.PureComponent<void, ThumbnailProps, void> {
   handlePress = () => {
-    const {streamUrl, name, pageUrl} = this.props.webcam
-    if (Platform.OS === 'ios') {
-      trackedOpenUrl({url: streamUrl, id: `${name}WebcamView`})
-    } else if (Platform.OS === 'android') {
-      trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
-    } else {
-      trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
-    }
+    const {name, pageUrl} = this.props.webcam
+    trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
   }
 
   render() {
