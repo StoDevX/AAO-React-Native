@@ -11,7 +11,6 @@ import {
   Text,
   ScrollView,
   Image,
-  Platform,
   Dimensions,
 } from 'react-native'
 import delay from 'delay'
