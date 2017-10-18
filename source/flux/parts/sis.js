@@ -14,6 +14,7 @@ export const UPDATE_BALANCES = 'sis/UPDATE_BALANCES'
 export const UPDATE_MEALS_DAILY = 'sis/UPDATE_MEALS_DAILY'
 export const UPDATE_MEALS_WEEKLY = 'sis/UPDATE_MEALS_WEEKLY'
 export const UPDATE_MEALS_REMAINING = 'sis/UPDATE_MEALS_REMAINING'
+export const UPDATE_MEAL_PLAN = 'sis/UPDATE_MEAL_PLAN'
 export const UPDATE_COURSES = 'sis/UPDATE_COURSES'
 
 export function updateBalances(forceFromServer: boolean = false) {
@@ -40,6 +41,15 @@ export function updateCourses(forceFromServer: boolean = false) {
   }
 }
 
+export type BalancesState = {
+  message: ?string,
+  flex: ?string,
+  ole: ?string,
+  print: ?string,
+  daily: ?string,
+  weekly: ?string,
+  plan: ?string,
+}
 const initialBalancesState = {
   message: null,
   flex: null,
@@ -47,8 +57,9 @@ const initialBalancesState = {
   print: null,
   daily: null,
   weekly: null,
+  plan: null,
 }
-function balances(state = initialBalancesState, action) {
+function balances(state: BalancesState = initialBalancesState, action) {
   const {type, payload, error} = action
 
   switch (type) {
@@ -62,6 +73,8 @@ function balances(state = initialBalancesState, action) {
       return {...state, daily: payload.mealsRemaining}
     case UPDATE_MEALS_WEEKLY:
       return {...state, weekly: payload.mealsRemaining}
+    case UPDATE_MEAL_PLAN:
+      return {...state, plan: payload.mealPlan}
 
     case UPDATE_BALANCES: {
       if (error) {
