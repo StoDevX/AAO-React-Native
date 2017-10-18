@@ -1,4 +1,4 @@
-# Oleville.com and All About Olaf Privacy Policy
+# All About Olaf Privacy Policy
 
 This privacy policy has been compiled to better serve those who are concerned with how their 'Personally Identifiable Information' (PII) is being used online. PII, as described in US privacy law and information security, is information that can be used on its own or with other information to identify, contact, or locate a single person, or to identify an individual in context. Please read our privacy policy carefully to get a clear understanding of how we collect, use, protect or otherwise handle your Personally Identifiable Information in accordance with our website.
 
@@ -83,7 +83,7 @@ To be in accordance with CANSPAM, we agree to the following:
 - Honor opt-out/unsubscribe requests quickly.
 - Allow users to unsubscribe by using the link at the bottom of each email.
 
-If at any time you would like to unsubscribe from receiving future emails, you can email us at <sgawebmaster@stolaf.edu> and we will promptly remove you from ALL correspondence.
+If at any time you would like to unsubscribe from receiving future emails, you can email us at <allaboutolaf@stolaf.edu> and we will promptly remove you from ALL correspondence.
 
 ## Google Analytics
 
@@ -94,8 +94,8 @@ The app also uses Google Analytics to see how people use the app, which allow us
 If there are any questions regarding this privacy policy, you may contact us using the information below.
 
 Student Government Assoc. ATTN: Webmaster
-1520 St. Olaf Ave.
+1500 St. Olaf Ave.
 Northfield, MN 55057 USA
-<sgawebmaster@stolaf.edu>
+<allaboutolaf@stolaf.edu>
 
-Last Edited on 2017-08-05
+Last Edited on 2017-10-02

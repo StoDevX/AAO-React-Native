@@ -32,9 +32,9 @@ export function DietaryTags({
   let filtered = pick(corIcons, keys(dietary))
 
   // turn the remaining items into images
-  let tags = map(filtered, (dietaryIcon, key) =>
-    <Image key={key} source={{uri: dietaryIcon.image}} style={styles.icons} />,
-  )
+  let tags = map(filtered, (dietaryIcon, key) => (
+    <Image key={key} source={{uri: dietaryIcon.image}} style={styles.icons} />
+  ))
 
   return <View style={[styles.container, style]}>{tags}</View>
 }

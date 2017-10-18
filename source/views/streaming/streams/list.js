@@ -37,21 +37,21 @@ export class StreamListView extends React.PureComponent {
   }
 
   state: {
-    error: ?Error,
-    loaded: boolean,
-    noStreams: boolean,
+    error: ?string,
+    loading: boolean,
     refreshing: boolean,
     streams: Array<{title: string, data: Array<StreamType>}>,
   } = {
     error: null,
-    loaded: false,
-    noStreams: false,
+    loading: true,
     refreshing: false,
     streams: [],
   }
 
   componentWillMount() {
-    this.getStreams()
+    this.getStreams().then(() => {
+      this.setState(() => ({loading: false}))
+    })
   }
 
   refresh = async () => {
@@ -72,7 +72,10 @@ export class StreamListView extends React.PureComponent {
   getStreams = async (date: moment = moment.tz(CENTRAL_TZ)) => {
     try {
       const dateFrom = date.format('YYYY-MM-DD')
-      const dateTo = date.add(1, 'month').format('YYYY-MM-DD')
+      const dateTo = date
+        .clone()
+        .add(1, 'month')
+        .format('YYYY-MM-DD')
 
       let params = {
         class: 'upcoming',
@@ -87,31 +90,28 @@ export class StreamListView extends React.PureComponent {
       const data = await fetchJson(streamsAPI)
       const streams = data.results
 
-      if (streams.length > 1) {
-        this.setState(() => ({noStreams: true}))
-      }
-
       // force title-case on the stream types, to prevent not-actually-duplicate headings
       const processed = streams
         .filter(stream => stream.category !== 'athletics')
         .map(stream => {
           const date = moment(stream.starttime, 'YYYY-MM-DD HH:mm')
+          const group =
+            stream.status.toLowerCase() != 'live'
+              ? date.format('dddd, MMMM Do')
+              : 'Live'
+
           return {
             ...stream,
             category: titleCase(stream.category),
             date: date,
-            $groupBy: date.format('dddd, MMMM Do'),
+            $groupBy: group,
           }
         })
 
       const grouped = groupBy(processed, j => j.$groupBy)
       const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
 
-      this.setState(() => ({
-        error: null,
-        loaded: true,
-        streams: mapped,
-      }))
+      this.setState(() => ({error: null, streams: mapped}))
     } catch (error) {
       this.setState(() => ({error: error.message}))
       console.warn(error)
@@ -120,18 +120,19 @@ export class StreamListView extends React.PureComponent {
 
   keyExtractor = (item: StreamType) => item.eid
 
-  renderSectionHeader = ({section: {title}}: any) =>
+  renderSectionHeader = ({section: {title}}: any) => (
     <ListSectionHeader title={title} />
+  )
 
   renderItem = ({item}: {item: StreamType}) => <StreamRow stream={item} />
 
   render() {
-    if (!this.state.loaded) {
+    if (this.state.loading) {
       return <LoadingView />
     }
 
     if (this.state.error) {
-      return <NoticeView text={'Error: ' + this.state.error.message} />
+      return <NoticeView text={'Error: ' + this.state.error} />
     }
 
     return (

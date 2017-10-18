@@ -6,12 +6,17 @@ const spawn = (cmd, ...args) => {
   childSpawn(cmd, args)
 }
 
-const resize = (img, width, toFile) => spawn('convert', img, '-resize', `${width}x${width}`, toFile)
+const resize = (img, width, toFile) =>
+  spawn('convert', img, '-resize', `${width}x${width}`, toFile)
 
 // iOS app icons
 const iosSizes = [[29, 1], [29, 2], [29, 3], [40, 2], [40, 3], [60, 2], [60, 3]]
 for (const [width, density] of iosSizes) {
-  resize(source, width * density, `icons/ios/AppIcon.appiconset/Icon-${width}@${density}x.png`)
+  resize(
+    source,
+    width * density,
+    `icons/ios/AppIcon.appiconset/Icon-${width}@${density}x.png`,
+  )
 }
 
 // iTunes icons

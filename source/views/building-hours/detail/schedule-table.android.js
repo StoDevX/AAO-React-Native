@@ -22,14 +22,14 @@ export class ScheduleTable extends React.PureComponent {
 
     return (
       <View>
-        {schedules.map(schedule =>
+        {schedules.map(schedule => (
           <Card
             key={schedule.title}
             style={styles.scheduleContainer}
             header={schedule.title}
             footer={schedule.notes}
           >
-            {schedule.hours.map((set, i) =>
+            {schedule.hours.map((set, i) => (
               <ScheduleRow
                 key={i}
                 now={now}
@@ -39,10 +39,10 @@ export class ScheduleTable extends React.PureComponent {
                   set.days.includes(dayOfWeek) &&
                   isScheduleOpenAtMoment(set, now)
                 }
-              />,
-            )}
-          </Card>,
-        )}
+              />
+            ))}
+          </Card>
+        ))}
 
         <Card style={styles.scheduleContainer}>
           <ButtonCell title="Suggest an Edit" onPress={onProblemReport} />

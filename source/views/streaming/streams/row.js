@@ -31,15 +31,15 @@ function Info({item}: {item: StreamType}) {
 
 function Time({item}: {item: StreamType}) {
   const showTime = item.status != 'archived'
-  return showTime
-    ? <Detail>{item.date.format('h:mm A – ddd, MMM. Do, YYYY')}</Detail>
-    : null
+  return showTime ? (
+    <Detail>{item.date.format('h:mm A – ddd, MMM. Do, YYYY')}</Detail>
+  ) : null
 }
 
 function Thumbnail({item}: {item: StreamType}) {
-  return item.thumb
-    ? <Image source={{uri: item.thumb}} style={styles.image} />
-    : null
+  return item.thumb ? (
+    <Image source={{uri: item.thumb}} style={styles.image} />
+  ) : null
 }
 
 export class StreamRow extends React.PureComponent {

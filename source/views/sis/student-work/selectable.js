@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export const SelectableCell = ({text}: {text: string}) =>
+export const SelectableCell = ({text}: {text: string}) => (
   <Cell
     cellContentView={
       <Text selectable={true} style={styles.cell}>
@@ -17,3 +17,4 @@ export const SelectableCell = ({text}: {text: string}) =>
       </Text>
     }
   />
+)

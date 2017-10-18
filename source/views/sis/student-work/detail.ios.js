@@ -30,40 +30,40 @@ const Title = glamorous.text({
 })
 
 function Information({job}: {job: JobType}) {
-  const office = job.office
-    ? <Cell cellStyle="LeftDetail" detail="Office" title={job.office} />
-    : null
+  const office = job.office ? (
+    <Cell cellStyle="LeftDetail" detail="Office" title={job.office} />
+  ) : null
 
-  const contact = job.contactEmail
-    ? <Cell
-        cellStyle="LeftDetail"
-        detail={'Contact'}
-        title={getContactName(job).trim() || job.contactEmail}
-        accessory="DisclosureIndicator"
-        onPress={() => email([job.contactEmail], null, null, job.title, '')}
-      />
-    : null
+  const contact = job.contactEmail ? (
+    <Cell
+      cellStyle="LeftDetail"
+      detail={'Contact'}
+      title={getContactName(job).trim() || job.contactEmail}
+      accessory="DisclosureIndicator"
+      onPress={() => email([job.contactEmail], null, null, job.title, '')}
+    />
+  ) : null
 
   const ending = job.hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
-  const hours = job.hoursPerWeek
-    ? <Cell
-        cellStyle="LeftDetail"
-        detail={'Hours'}
-        title={job.hoursPerWeek + ending}
-      />
-    : null
+  const hours = job.hoursPerWeek ? (
+    <Cell
+      cellStyle="LeftDetail"
+      detail={'Hours'}
+      title={job.hoursPerWeek + ending}
+    />
+  ) : null
 
-  const amount = job.timeOfHours
-    ? <Cell
-        cellStyle="LeftDetail"
-        detail={'Time of Day'}
-        title={job.timeOfHours}
-      />
-    : null
+  const amount = job.timeOfHours ? (
+    <Cell
+      cellStyle="LeftDetail"
+      detail={'Time of Day'}
+      title={job.timeOfHours}
+    />
+  ) : null
 
-  const category = job.type
-    ? <Cell cellStyle="LeftDetail" detail={'Category'} title={job.type} />
-    : null
+  const category = job.type ? (
+    <Cell cellStyle="LeftDetail" detail={'Category'} title={job.type} />
+  ) : null
 
   return (
     <Section header="INFORMATION">
@@ -77,55 +77,53 @@ function Information({job}: {job: JobType}) {
 }
 
 function Description({job}: {job: JobType}) {
-  return job.description
-    ? <Section header="DESCRIPTION">
-        <SelectableCell text={job.description} />
-      </Section>
-    : null
+  return job.description ? (
+    <Section header="DESCRIPTION">
+      <SelectableCell text={job.description} />
+    </Section>
+  ) : null
 }
 
 function Skills({job}: {job: JobType}) {
-  return job.skills
-    ? <Section header="SKILLS">
-        <SelectableCell text={job.skills} />
-      </Section>
-    : null
+  return job.skills ? (
+    <Section header="SKILLS">
+      <SelectableCell text={job.skills} />
+    </Section>
+  ) : null
 }
 
 function Comments({job}: {job: JobType}) {
-  return job.comments
-    ? <Section header="COMMENTS">
-        <SelectableCell text={job.comments} />
-      </Section>
-    : null
+  return job.comments ? (
+    <Section header="COMMENTS">
+      <SelectableCell text={job.comments} />
+    </Section>
+  ) : null
 }
 
 function Links({job}: {job: JobType}) {
   const links = getLinksFromJob(job)
-  return links.length
-    ? <Section header="LINKS">
-        {links.map(url =>
-          <Cell
-            key={url}
-            title={url}
-            accessory="DisclosureIndicator"
-            onPress={() => openUrl(url)}
-          />,
-        )}
-      </Section>
-    : null
+  return links.length ? (
+    <Section header="LINKS">
+      {links.map(url => (
+        <Cell
+          key={url}
+          title={url}
+          accessory="DisclosureIndicator"
+          onPress={() => openUrl(url)}
+        />
+      ))}
+    </Section>
+  ) : null
 }
 
 function LastUpdated({when}: {when: string}) {
-  return when
-    ? <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
-        Last updated:
-        {' '}
-        {moment(when, 'YYYY/MM/DD').calendar()}
-        {'\n'}
-        Powered by St. Olaf Student Employment job postings
-      </Text>
-    : null
+  return when ? (
+    <Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
+      Last updated: {moment(when, 'YYYY/MM/DD').calendar()}
+      {'\n'}
+      Powered by St. Olaf Student Employment job postings
+    </Text>
+  ) : null
 }
 
 export default function JobDetailView(props: {

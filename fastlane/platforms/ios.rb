@@ -6,10 +6,20 @@ platform :ios do
 
   desc 'Take screenshots'
   lane :screenshot do
-    snapshot(devices: ['iPhone 7 Plus', 'iPhone 6', 'iPhone 5s'],
+    devices = [
+      'iPhone 7 Plus',
+      'iPhone 6',
+      'iPhone 5s',
+      # 'iPhone 4s',
+      'iPad Pro (9.7-inch)',
+      'iPad Pro (12.9-inch)',
+   ]
+    snapshot(devices: devices,
              languages: ['en-US'],
              scheme: ENV['GYM_SCHEME'],
-             project: ENV['GYM_PROJECT'])
+             project: ENV['GYM_PROJECT'],
+             # concurrent_simulators: false,
+             number_of_retries: 0)
   end
 
   desc 'Builds the app'
@@ -34,7 +44,7 @@ platform :ios do
       testflight(changelog: make_changelog,
                  distribute_external: false)
     rescue => error
-      puts "Changelog failed to upload:"
+      puts 'Changelog failed to upload:'
       puts error
     end
   end

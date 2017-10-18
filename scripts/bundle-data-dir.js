@@ -21,7 +21,10 @@ if (process.mainModule === module) {
 // exported module
 module.exports = bundleDataDir
 function bundleDataDir({fromDir, toFile}) {
-  const files = fs.readdirSync(fromDir).filter(junk.not).map(f => path.join(fromDir, f))
+  const files = fs
+    .readdirSync(fromDir)
+    .filter(junk.not)
+    .map(f => path.join(fromDir, f))
   if (!files.length) {
     return
   }
@@ -35,8 +38,9 @@ function bundleDataDir({fromDir, toFile}) {
     return yaml.safeLoad(contents)
   })
   const dated = {data: loaded}
-  const output = JSON.stringify(dated, null, 2) + '\n'
+  const output = JSON.stringify(dated) + '\n'
 
-  const outStream = toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
+  const outStream =
+    toFile === '-' ? process.stdout : fs.createWriteStream(toFile)
   outStream.write(output)
 }

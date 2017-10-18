@@ -44,9 +44,10 @@ export default class EventRow extends React.PureComponent {
     const {event} = this.props
     const title = fastGetTrimmedText(event.summary)
 
-    const location = event.location && event.location.trim().length
-      ? <Detail>{event.location}</Detail>
-      : null
+    const location =
+      event.location && event.location.trim().length ? (
+        <Detail>{event.location}</Detail>
+      ) : null
 
     return (
       <ListRow

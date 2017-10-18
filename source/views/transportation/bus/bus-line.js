@@ -44,7 +44,11 @@ function makeSubtitle({now, moments, isLastBus}) {
   let lineDetail = 'Running'
 
   if (now.isBefore(head(moments))) {
-    lineDetail = `Starts ${now.clone().seconds(0).to(head(moments))}`
+    const startsIn = now
+      .clone()
+      .seconds(0)
+      .to(head(moments))
+    lineDetail = `Starts ${startsIn}`
   } else if (now.isAfter(last(moments))) {
     lineDetail = 'Over for Today'
   } else if (isLastBus) {
@@ -126,7 +130,9 @@ export class BusLine extends React.Component<void, Props, void> {
         <View>
           <ListSectionHeader title={line.line} titleStyle={androidColor} />
           <ListRow>
-            <Title><Text>This line is not running today.</Text></Title>
+            <Title>
+              <Text>This line is not running today.</Text>
+            </Title>
           </ListRow>
         </View>
       )
@@ -150,7 +156,7 @@ export class BusLine extends React.Component<void, Props, void> {
           titleStyle={androidColor}
         />
 
-        {stopTitleTimePairs.map(([placeTitle, moment], i, list) =>
+        {stopTitleTimePairs.map(([placeTitle, moment], i, list) => (
           <View key={i}>
             <BusStopRow
               // get the arrival time for this stop from each bus loop after
@@ -164,11 +170,11 @@ export class BusLine extends React.Component<void, Props, void> {
               isFirstRow={i === 0}
               isLastRow={i === list.length - 1}
             />
-            {i < list.length - 1
-              ? <Separator style={styles.separator} />
-              : null}
-          </View>,
-        )}
+            {i < list.length - 1 ? (
+              <Separator style={styles.separator} />
+            ) : null}
+          </View>
+        ))}
 
         {/*<ListRow
           onPress={this.props.openMap}

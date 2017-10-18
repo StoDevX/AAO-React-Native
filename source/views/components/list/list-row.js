@@ -62,9 +62,10 @@ export function ListRow(props: PropsType) {
   const arrowPositionStyle = {
     alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start',
   }
-  const arrow = arrowPosition === 'none' || Platform.OS === 'android'
-    ? null
-    : <DisclosureArrow style={arrowPositionStyle} />
+  const arrow =
+    arrowPosition === 'none' || Platform.OS === 'android' ? null : (
+      <DisclosureArrow style={arrowPositionStyle} />
+    )
 
   return (
     <Component
@@ -78,9 +79,7 @@ export function ListRow(props: PropsType) {
       ]}
       onPress={callback}
     >
-      <View style={[styles.childWrapper, style]}>
-        {children}
-      </View>
+      <View style={[styles.childWrapper, style]}>{children}</View>
       {arrow}
     </Component>
   )

@@ -49,7 +49,9 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData().then(() => {
+      this.setState(() => ({loading: false}))
+    })
   }
 
   refresh = async () => {
@@ -68,8 +70,6 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
   }
 
   fetchData = async () => {
-    this.setState(() => ({loading: true}))
-
     let {data: modes} = await fetchJson(GITHUB_URL).catch(err => {
       reportNetworkProblem(err)
       return defaultData
@@ -79,7 +79,7 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
       modes = defaultData.data
     }
 
-    this.setState(() => ({modes, loading: false}))
+    this.setState(() => ({modes}))
   }
 
   onPress = (mode: OtherModeType) => {
@@ -88,11 +88,13 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
     })
   }
 
-  renderSectionHeader = ({section: {title}}: any) =>
+  renderSectionHeader = ({section: {title}}: any) => (
     <ListSectionHeader title={title} />
+  )
 
-  renderItem = ({item}: {item: OtherModeType}) =>
+  renderItem = ({item}: {item: OtherModeType}) => (
     <OtherModesRow mode={item} onPress={this.onPress} />
+  )
 
   keyExtractor = (item: OtherModeType) => item.name
 
@@ -109,6 +111,7 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
         renderSectionHeader={this.renderSectionHeader}
         renderItem={this.renderItem}
         refreshing={this.state.refreshing}
+        onRefresh={this.refresh}
       />
     )
   }

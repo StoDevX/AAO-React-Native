@@ -121,14 +121,14 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
       height: logoWidth,
     }
 
-    const error = this.state.uplinkError
-      ? <Text style={styles.status}>{this.state.uplinkError}</Text>
-      : this.state.streamError
-        ? <Text style={styles.status}>
-            Error Code {this.state.streamError.code}:{' '}
-            {this.state.streamError.message}
-          </Text>
-        : null
+    const error = this.state.uplinkError ? (
+      <Text style={styles.status}>{this.state.uplinkError}</Text>
+    ) : this.state.streamError ? (
+      <Text style={styles.status}>
+        Error Code {this.state.streamError.code}:{' '}
+        {this.state.streamError.message}
+      </Text>
+    ) : null
 
     const button = this.renderButton(this.state.playState)
 
@@ -362,15 +362,14 @@ type ActionButtonProps = {
   onPress: () => any,
 }
 
-const ActionButton = ({icon, text, onPress}: ActionButtonProps) =>
+const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
   <Touchable style={buttonStyles.button} hightlight={false} onPress={onPress}>
     <View style={buttonStyles.buttonWrapper}>
       <Icon style={buttonStyles.icon} name={icon} />
-      <Text style={buttonStyles.action}>
-        {text}
-      </Text>
+      <Text style={buttonStyles.action}>{text}</Text>
     </View>
   </Touchable>
+)
 
 const styles = StyleSheet.create({
   root: {

@@ -147,6 +147,9 @@ script:
   # even if another task in script.sh fails.
   - if [[ $JS ]]; then npm run danger; fi
 
+after_script:
+  - if [[ $JS ]]; then greenkeeper-lockfile-upload; fi
+
 after_success:
   - bash scripts/travis/after_success.sh
 

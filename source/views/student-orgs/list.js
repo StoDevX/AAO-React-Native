@@ -91,12 +91,12 @@ export class StudentOrgsView extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchData()
+    this.fetchData().then(() => {
+      this.setState(() => ({loading: false}))
+    })
   }
 
   fetchData = async () => {
-    this.setState(() => ({loading: true}))
-
     const responseData: StudentOrgType[] = await fetchJson(
       orgsUrl,
     ).catch(err => {
@@ -119,8 +119,6 @@ export class StudentOrgsView extends React.Component {
     const sorted = sortBy(withSortableNames, '$sortableName')
     const grouped = groupBy(sorted, '$groupableName')
     this.setState(() => ({orgs: sorted, results: grouped}))
-
-    this.setState(() => ({loading: false}))
   }
 
   refresh = async () => {
@@ -137,14 +135,15 @@ export class StudentOrgsView extends React.Component {
     this.setState(() => ({refreshing: false}))
   }
 
-  renderSectionHeader = ({title}: {title: string}) =>
+  renderSectionHeader = ({title}: {title: string}) => (
     <ListSectionHeader
       title={title}
       spacing={{left: leftSideSpacing}}
       style={styles.rowSectionHeader}
     />
+  )
 
-  renderRow = ({item}: {item: StudentOrgType}) =>
+  renderRow = ({item}: {item: StudentOrgType}) => (
     <ListRow
       onPress={() => this.onPressRow(item)}
       contentContainerStyle={[styles.row]}
@@ -162,12 +161,14 @@ export class StudentOrgsView extends React.Component {
         </Column>
       </Row>
     </ListRow>
+  )
 
-  renderSeparator = (sectionId: string, rowId: string) =>
+  renderSeparator = (sectionId: string, rowId: string) => (
     <ListSeparator
       key={`${sectionId}-${rowId}`}
       spacing={{left: leftSideSpacing}}
     />
+  )
 
   onPressRow = (data: StudentOrgType) => {
     tracker.trackEvent('student-org', data.name)
@@ -202,7 +203,7 @@ export class StudentOrgsView extends React.Component {
 
     const refreshControl = (
       <RefreshControl
-        refreshing={this.state.loading}
+        refreshing={this.state.refreshing}
         onRefresh={this.refresh}
       />
     )

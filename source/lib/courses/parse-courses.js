@@ -80,9 +80,8 @@ function parseDeptNum(deptNumString: string): Error | string {
     return new Error(`Problem parsing ${deptNumString}: no matches found`)
   }
 
-  let department = matches[1].indexOf('/') !== -1
-    ? [matches[2], matches[3]]
-    : [matches[1]]
+  let department =
+    matches[1].indexOf('/') !== -1 ? [matches[2], matches[3]] : [matches[1]]
   department = department.join('/')
 
   let number = parseInt(matches[4], 10)

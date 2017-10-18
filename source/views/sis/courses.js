@@ -77,8 +77,9 @@ class CoursesView extends React.PureComponent {
     this.setState({loading: false})
   }
 
-  renderSectionHeader = ({section: {title}}: any) =>
+  renderSectionHeader = ({section: {title}}: any) => (
     <ListSectionHeader title={title} />
+  )
 
   renderItem = ({item}: {item: CourseType}) => <CourseRow course={item} />
 

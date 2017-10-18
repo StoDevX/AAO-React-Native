@@ -33,9 +33,9 @@ export function PickerSection({filter, onChange}: PropsType) {
         selectedValue={JSON.stringify(selected || options[0])}
         style={styles.picker}
       >
-        {options.map((val, i) =>
-          <Picker.Item key={i} label={val.label} value={JSON.stringify(val)} />,
-        )}
+        {options.map((val, i) => (
+          <Picker.Item key={i} label={val.label} value={JSON.stringify(val)} />
+        ))}
       </Picker>
     </Section>
   )

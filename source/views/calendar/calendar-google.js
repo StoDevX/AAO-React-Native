@@ -22,20 +22,22 @@ export class GoogleCalendarView extends React.Component {
 
   state: {
     events: EventType[],
-    loaded: boolean,
+    loading: boolean,
     refreshing: boolean,
     error: ?Error,
     now: moment,
   } = {
     events: [],
-    loaded: false,
+    loading: true,
     refreshing: false,
     error: null,
     now: moment.tz(TIMEZONE),
   }
 
   componentWillMount() {
-    this.getEvents()
+    this.getEvents().then(() => {
+      this.setState(() => ({loading: false}))
+    })
   }
 
   buildCalendarUrl(calendarId: string) {
@@ -87,11 +89,7 @@ export class GoogleCalendarView extends React.Component {
       console.warn(err)
     }
 
-    this.setState({
-      now,
-      loaded: true,
-      events: this.convertEvents(data, now),
-    })
+    this.setState({now, events: this.convertEvents(data, now)})
   }
 
   refresh = async () => {
@@ -110,7 +108,7 @@ export class GoogleCalendarView extends React.Component {
   }
 
   render() {
-    if (!this.state.loaded) {
+    if (this.state.loading) {
       return <LoadingView />
     }
 

@@ -115,14 +115,14 @@ class WeekTogglesIOS extends React.PureComponent {
 
     return (
       <Row justifyContent="center" alignItems="stretch">
-        {allDays.map(day =>
+        {allDays.map(day => (
           <ToggleButton
             key={day}
             text={day}
             active={this.props.days.includes(day)}
             onPress={this.toggleDay}
-          />,
-        )}
+          />
+        ))}
       </Row>
     )
   }
@@ -140,7 +140,7 @@ class WeekTogglesAndroid extends React.PureComponent {
 
     return (
       <View>
-        {allDays.map((day, i) =>
+        {allDays.map((day, i) => (
           <View key={day}>
             <CellToggle
               key={day}
@@ -149,8 +149,8 @@ class WeekTogglesAndroid extends React.PureComponent {
               onChange={() => this.toggleDay(day)}
             />
             {i === allDays.length - 1 ? null : <ListSeparator force={true} />}
-          </View>,
-        )}
+          </View>
+        ))}
       </View>
     )
   }

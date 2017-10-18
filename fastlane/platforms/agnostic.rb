@@ -38,7 +38,7 @@ lane :keys do
 
   # copy .env.js
   UI.command "cp #{match_dir}/js/env.js ../.env.js"
-  FileUtils.cp("#{match_dir}/js/env.js", "../.env.js")
+  FileUtils.cp("#{match_dir}/js/env.js", '../.env.js')
 
   remove_match_clone(dir: match_dir)
 end

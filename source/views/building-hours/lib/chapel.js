@@ -50,5 +50,9 @@ export function getTimeUntilChapelCloses(
   }
 
   let {close} = parseHours(sched, m)
-  return m.clone().seconds(0).to(close)
+
+  return m
+    .clone()
+    .seconds(0)
+    .to(close)
 }

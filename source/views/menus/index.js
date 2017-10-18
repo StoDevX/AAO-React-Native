@@ -5,38 +5,25 @@
  */
 
 import React from 'react'
-import {StackNavigator} from 'react-navigation'
 import {TabNavigator} from '../components/tabbed-view'
 import {TabBarIcon} from '../components/tabbar-icon'
 
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
-import {
-  CarletonCafeIndex,
+import {CarletonCafeIndex} from './carleton-menus'
+// import {BonAppPickerView} from './dev-bonapp-picker'
+
+export {
   CarletonBurtonMenuScreen,
   CarletonLDCMenuScreen,
   CarletonWeitzMenuScreen,
   CarletonSaylesMenuScreen,
 } from './carleton-menus'
-// import {BonAppPickerView} from './dev-bonapp-picker'
-
-const CarletonMenuPicker = StackNavigator(
-  {
-    CarletonCafeIndex: {screen: CarletonCafeIndex},
-    CarletonBurtonMenuView: {screen: CarletonBurtonMenuScreen},
-    CarletonLDCMenuView: {screen: CarletonLDCMenuScreen},
-    CarletonWeitzMenuView: {screen: CarletonWeitzMenuScreen},
-    CarletonSaylesMenuView: {screen: CarletonSaylesMenuScreen},
-  },
-  {
-    headerMode: 'none',
-  },
-)
 
 export const MenusView = TabNavigator(
   {
     StavHallMenuView: {
-      screen: ({navigation}) =>
+      screen: ({navigation}) => (
         <BonAppHostedMenu
           navigation={navigation}
           name="Stav Hall"
@@ -49,7 +36,8 @@ export const MenusView = TabNavigator(
             'Waiting for omlets…',
             'Putting out more cookies…',
           ]}
-        />,
+        />
+      ),
       navigationOptions: {
         tabBarLabel: 'Stav Hall',
         tabBarIcon: TabBarIcon('nutrition'),
@@ -57,7 +45,7 @@ export const MenusView = TabNavigator(
     },
 
     TheCageMenuView: {
-      screen: ({navigation}) =>
+      screen: ({navigation}) => (
         <BonAppHostedMenu
           navigation={navigation}
           name="The Cage"
@@ -70,7 +58,8 @@ export const MenusView = TabNavigator(
             'Frying chicken…',
             'Brewing coffee…',
           ]}
-        />,
+        />
+      ),
       navigationOptions: {
         tabBarLabel: 'The Cage',
         tabBarIcon: TabBarIcon('cafe'),
@@ -78,7 +67,7 @@ export const MenusView = TabNavigator(
     },
 
     ThePauseMenuView: {
-      screen: ({navigation}) =>
+      screen: ({navigation}) => (
         <GitHubHostedMenu
           navigation={navigation}
           name="The Pause"
@@ -89,7 +78,8 @@ export const MenusView = TabNavigator(
             'Putting ice cream on the cookies…',
             'Fixing the oven…',
           ]}
-        />,
+        />
+      ),
       navigationOptions: {
         tabBarLabel: 'The Pause',
         tabBarIcon: TabBarIcon('paw'),
@@ -97,9 +87,9 @@ export const MenusView = TabNavigator(
     },
 
     CarletonMenuListView: {
-      screen: CarletonMenuPicker,
+      screen: CarletonCafeIndex,
       navigationOptions: {
-        title: 'Carleton',
+        tabBarLabel: 'Carleton',
         tabBarIcon: TabBarIcon('menu'),
       },
     },

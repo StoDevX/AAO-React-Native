@@ -21,34 +21,34 @@ const styles = StyleSheet.create({
 const STO_CALENDAR_URL = 'https://www.stolaf.edu/calendar'
 
 function MaybeSection({header, content}: {header: string, content: string}) {
-  return content.trim()
-    ? <Section header={header}>
-        <Cell
-          cellContentView={
-            <Text selectable={true} style={styles.chunk}>
-              {content}
-            </Text>
-          }
-        />
-      </Section>
-    : null
+  return content.trim() ? (
+    <Section header={header}>
+      <Cell
+        cellContentView={
+          <Text selectable={true} style={styles.chunk}>
+            {content}
+          </Text>
+        }
+      />
+    </Section>
+  ) : null
 }
 
 function Links({header, event}: {header: string, event: CleanedEventType}) {
   const links = getLinksFromEvent(event)
 
-  return links.length
-    ? <Section header={header}>
-        {links.map(url =>
-          <Cell
-            key={url}
-            title={url}
-            accessory="DisclosureIndicator"
-            onPress={() => openUrl(url)}
-          />,
-        )}
-      </Section>
-    : null
+  return links.length ? (
+    <Section header={header}>
+      {links.map(url => (
+        <Cell
+          key={url}
+          title={url}
+          accessory="DisclosureIndicator"
+          onPress={() => openUrl(url)}
+        />
+      ))}
+    </Section>
+  ) : null
 }
 
 const CalendarButton = ({message, disabled, onPress}) => {
