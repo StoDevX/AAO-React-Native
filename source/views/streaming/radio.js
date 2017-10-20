@@ -269,7 +269,7 @@ class StreamPlayer extends React.PureComponent<void, StreamPlayerProps, void> {
 
     <title>KSTO Stream</title>
 
-    <audio id="player" webkit-playsinline>
+    <audio id="player" webkit-playsinline playsinline>
       <source src="${url}" />
     </audio>
 
