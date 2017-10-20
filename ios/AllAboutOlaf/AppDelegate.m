@@ -9,6 +9,7 @@
 
 #import "AppDelegate.h"
 #import <BugsnagReactNative/BugsnagReactNative.h>
+#import <AVFoundation/AVFoundation.h>
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
@@ -54,6 +55,9 @@
                                                        diskCapacity:20 * 1024 * 1024  // 20 MiB
                                                            diskPath:nil];
   [NSURLCache setSharedURLCache:URLCache];
+
+  // ignore vibrate/silent switch when playing audio
+  [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error: nil];
 
   return YES;
 }
