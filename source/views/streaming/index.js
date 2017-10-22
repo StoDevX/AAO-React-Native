@@ -4,14 +4,20 @@ import * as React from 'react'
 import {TabNavigator} from '../components/tabbed-view'
 import {TabBarIcon} from '../components/tabbar-icon'
 
+<<<<<<< HEAD
 import {RadioControllerView} from './radio'
 // import WeeklyMovieView from './movie'
+=======
+import KSTOView from './radio'
+import {WeeklyMovieView} from './movie'
+>>>>>>> activate the movie view
 import {WebcamsView} from './webcams'
 import {StreamListView} from './streams'
 
 export {KSTOScheduleView, KRLXScheduleView} from './radio'
 
 export default TabNavigator(
+<<<<<<< HEAD
 	{
 		StreamingView: {screen: StreamListView},
 		LiveWebcamsView: {screen: WebcamsView},
@@ -67,4 +73,17 @@ export default TabNavigator(
 			title: 'Streaming Media',
 		},
 	},
+=======
+  {
+    StreamingView: {screen: StreamListView},
+    LiveWebcamsView: {screen: WebcamsView},
+    KSTORadioView: {screen: KSTOView},
+    WeeklyMovieView: {screen: WeeklyMovieView},
+  },
+  {
+    navigationOptions: {
+      title: 'Streaming Media',
+    },
+  },
+>>>>>>> activate the movie view
 )
