@@ -30,6 +30,7 @@ export type MovieInfo = {
   DVD: string,
   BoxOffice: string,
   Production: string,
+  imdbID: string,
   Website: string,
 }
 

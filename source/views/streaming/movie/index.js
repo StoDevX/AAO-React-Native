@@ -8,6 +8,7 @@ import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
 import moment from 'moment-timezone'
 import map from 'lodash/map'
+import openUrl from '../../components/open-url'
 import type {Movie} from './types'
 
 const MOVIE_URL = 'https://stodevx.github.io/sga-weekly-movies/next.json'
@@ -88,6 +89,7 @@ export class WeeklyMovieView extends React.Component<any, Props, State> {
     const plot = movie.info.Plot
     const cast = movie.info.Actors
     const showings = movie.showings
+    const imdbID = movie.info.imdbID
 
     return (
       <ScrollView contentContainerStyle={styles.contentContainer}>
@@ -120,6 +122,8 @@ export class WeeklyMovieView extends React.Component<any, Props, State> {
         <Cast actors={cast} />
         <View style={styles.separator} />
         <Showings showings={showings} />
+        <View style={styles.separator} />
+        <IMDB imdbID={imdbID} />
       </ScrollView>
     )
   }
@@ -212,6 +216,23 @@ class Showings extends React.Component {
   }
 }
 
+class IMDB extends React.Component {
+  render() {
+    if (!this.props.imdbID) {
+      return null
+    }
+
+    const url = `https://www.imdb.com/title/${this.props.imdbID}`
+
+    return (
+      <View>
+        <Text style={styles.imdbTitle}>IMDB Page</Text>
+        <Text style={styles.imdb} onPress={() => openUrl(url)}>{url}</Text>
+      </View>
+    )
+  }
+}
+
 const styles = StyleSheet.create({
   contentContainer: {
     padding: 10,
@@ -292,5 +313,13 @@ const styles = StyleSheet.create({
   },
   showings: {
     marginLeft: 2,
+  },
+  imdbTitle: {
+    fontWeight: '700',
+    marginBottom: 3,
+  },
+  imdb: {
+    marginLeft: 2,
+    color: c.infoBlue,
   },
 })
