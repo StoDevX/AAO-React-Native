@@ -73,7 +73,7 @@
     "react-native-communications": "2.2.1",
     "react-native-custom-tabs": "0.1.7",
     "react-native-device-info": "0.12.1",
-    "react-native-dynamic-icon": "github:drewvolz/react-native-dynamic-icon#any-icon-name",
+    "react-native-dynamic-icon": "1.0.1",
     "react-native-google-analytics-bridge": "5.3.3",
     "react-native-keychain": "2.0.0-rc",
     "react-native-linear-gradient": "2.3.0",
