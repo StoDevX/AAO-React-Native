@@ -5,7 +5,7 @@ import {StyleSheet, ScrollView, Text, Image} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import LoadingView from '../../components/loading'
 import {NoticeView} from '../../components/notice'
-import type {Movie} from './types'
+import type {Movie, RGBTuple} from './types'
 
 const MOVIE_URL = 'https://stodevx.github.io/sga-weekly-movies/next.json'
 
@@ -15,6 +15,8 @@ type State = {
   movie: ?Movie,
 }
 ;[]
+
+const makeRgb = ([r, g, b]: RGBTuple) => `rgb(${r}, ${g}, ${b})`
 
 export class WeeklyMovieView extends React.Component<any, Props, State> {
   static navigationOptions = {
@@ -56,7 +58,10 @@ export class WeeklyMovieView extends React.Component<any, Props, State> {
           <Image
             style={[
               styles.poster,
-              {width: poster.width / 2, height: poster.height / 2},
+              {
+                width: poster.width / 2, height: poster.height / 2,
+                borderColor: makeRgb(movie.posterColors.dominant),
+              },
             ]}
             resizeMode="contain"
             source={{uri: poster.url}}
@@ -77,6 +82,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginTop: 12,
     marginBottom: 18,
+    borderWidth: 4,
+    borderStyle: 'solid',
   },
   title: {
     fontWeight: 'bold',
