@@ -10,6 +10,21 @@
 	<string>All About Olaf</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundleAlternateIcons</key>
+		<dict>
+			<key>icon_type_windmill</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>windmill</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -76,7 +91,7 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>We use your calendar to add events to your calendar so that you remember what you wanted to attend.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We only use your location when you would expect us to, and never when you aren&apos;t using the app.</string>
+	<string>We only use your location when you would expect us to, and never when you aren't using the app.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
