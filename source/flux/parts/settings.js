@@ -162,6 +162,7 @@ export type SettingsState = {
   dietaryPreferences: [],
   credentials: CredentialsState,
   feedbackDisabled: boolean,
+  unofficiallyAcknowledged: boolean,
 }
 
 const initialSettingsState: SettingsState = {
