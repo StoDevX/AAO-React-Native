@@ -27,7 +27,7 @@ stages:
     if: branch =~ ^greenkeeper\/
   - name: Test
   - name: Deploy Data
-    if: branch = master AND env(JS) = yes
+    if: branch = master
   - name: Build + Deploy App
 
 
