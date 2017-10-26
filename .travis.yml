@@ -91,6 +91,7 @@ jobs:
       distro: trusty
       language: node_js
       node_js: $TRAVIS_NODE_VERSION
+      env: [GH_PAGES=yes]
       before_install: skip
       install: skip
       before_script: skip
