@@ -23,7 +23,7 @@ branches:
 
 
 stages:
-  - name: Init
+  - name: Greenkeeper
     if: branch =~ ^greenkeeper\/
   - name: Test
   - name: Deploy Data
@@ -36,7 +36,7 @@ jobs:
   # To skip the default step, use `step_name: skip`.
   include:
     # Run greenkeeper stuff
-    - stage: Init
+    - stage: Greenkeeper
       os: linux
       sudo: false
       language: node_js
