@@ -92,8 +92,10 @@ jobs:
       language: node_js
       node_js: $TRAVIS_NODE_VERSION
       env: [GH_PAGES=yes]
-      before_install: skip
-      install: skip
+      before_install:
+        - npm install -g npm@5
+      install:
+        - npm install || npm install
       before_script: skip
       script: npm run bundle-data
       deploy:
