@@ -41,6 +41,7 @@ jobs:
       sudo: false
       language: node_js
       node_js: node # install the latest node
+      env: [GREENKEEPER=yes]
       before_install: skip
       install: npm install -g greenkeeper-lockfile@1
       before_script: skip
