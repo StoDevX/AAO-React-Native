@@ -35,19 +35,7 @@ jobs:
   # We define default before_install, install, and before_script steps.
   # To skip the default step, use `step_name: skip`.
   include:
-    # Run greenkeeper stuff
-    - stage: Init
-      os: linux
-      sudo: false
-      language: node_js
-      node_js: node # install the latest node
-      before_install: skip
-      install: npm install -g greenkeeper-lockfile@1
-      before_script: skip
-      script: greenkeeper-lockfile-update
-      after_script: greenkeeper-lockfile-upload
-
-    # Do node "tests"
+    # Do node "tests" and greenkeeper stuff
     - stage: Test
       os: linux
       sudo: false
@@ -56,16 +44,18 @@ jobs:
       node_js: $TRAVIS_NODE_VERSION
       env: [JS=yes]
       before_install:
-        - npm install -g npm@5 coveralls
+        - npm install -g npm@5 coveralls greenkeeper-lockfile@1
       install:
         - npm install || npm install
       before_script:
         - echo "loglevel=silent" >> .npmrc
         - mkdir -p logs/
       script:
+        - greenkeeper-lockfile-update
         - bash scripts/travis/script-js.sh
       after_script:
         - npm run danger
+        - greenkeeper-lockfile-upload
       after_success:
         - coveralls < ./coverage/lcov.info
 
