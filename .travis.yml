@@ -108,7 +108,7 @@ jobs:
           - android-26
           - extra-android-m2repository
           - extra-google-m2repository
-      script: 
+      script:
         - bundle exec fastlane android ci-run
 
     # Build/deploy the iOS binary
@@ -117,12 +117,12 @@ jobs:
       language: objective-c
       osx_image: xcode9
       env: [IOS=yes]
-      script: 
+      script:
         - bundle exec fastlane ios ci-run
 
-# 
+#
 # All of the keys down here are used in each build stage, unless they're overridden.
-# 
+#
 
 before_install:
   # print some travis debugging info
