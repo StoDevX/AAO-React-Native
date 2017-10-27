@@ -49,6 +49,8 @@
     "semi": false
   },
   "dependencies": {
+    "@hawkrives/react-native-alphabetlistview": "1.0.0",
+    "@hawkrives/react-native-sortable-list": "1.0.1",
     "buffer": "5.0.8",
     "bugsnag-react-native": "2.5.1",
     "css-select": "1.2.0",
@@ -67,7 +69,6 @@
     "react-addons-shallow-compare": "15.6.2",
     "react-markdown": "2.5.0",
     "react-native": "0.45.1",
-    "react-native-alphabetlistview": "github:sunnylqm/react-native-alphabetlistview#aea5d61fdd9034c7178d73ce8b2ee104da6941cc",
     "react-native-button": "2.1.0",
     "react-native-calendar-events": "1.4.1",
     "react-native-communications": "2.2.1",
@@ -82,7 +83,6 @@
     "react-native-restart": "0.0.4",
     "react-native-safari-view": "2.0.0",
     "react-native-search-bar": "3.0.0",
-    "react-native-sortable-list": "github:hawkrives/react-native-sortable-list#7b72cc8e16cc71751836b49b3ea4bbc9e8e9cb99",
     "react-native-tableview-simple": "0.17.1",
     "react-native-vector-icons": "4.4.2",
     "react-navigation": "1.0.0-beta.11",
