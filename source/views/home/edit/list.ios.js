@@ -8,7 +8,7 @@ import {connect} from 'react-redux'
 import * as c from '../../components/colors'
 import fromPairs from 'lodash/fromPairs'
 
-import SortableList from 'react-native-sortable-list'
+import SortableList from '@hawkrives/react-native-sortable-list'
 
 import type {ViewType} from '../../views'
 import {allViews} from '../../views'
