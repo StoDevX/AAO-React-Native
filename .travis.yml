@@ -57,7 +57,7 @@ jobs:
       node_js: $TRAVIS_NODE_VERSION
       env: [JS=yes]
       before_install:
-        - npm install -g npm@5 coveralls
+        - npm install -g coveralls
       install:
         - npm install || npm install
       before_script:
@@ -92,8 +92,7 @@ jobs:
       language: node_js
       node_js: $TRAVIS_NODE_VERSION
       env: [GH_PAGES=yes]
-      before_install:
-        - npm install -g npm@5
+      before_install: skip
       install:
         - npm install || npm install
       before_script: skip
@@ -170,9 +169,6 @@ before_install:
   - nvm install "$TRAVIS_NODE_VERSION"
   - nvm use "$TRAVIS_NODE_VERSION"
   - echo "node -v is now $(node -v)"
-
-  # force latest npm
-  - npm install -g npm@5
 
 
 install:
