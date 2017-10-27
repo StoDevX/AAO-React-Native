@@ -9,7 +9,7 @@ env:
     # sets our node version in one nice place
     - TRAVIS_NODE_VERSION=8
     # set the ruby version up top
-    - TRAVIS_RUBY_VERSION=ruby-2.4.1
+    - TRAVIS_RUBY_VERSION=ruby-2.4.2
 
 
 # As seen in http://stackoverflow.com/a/31882307/2347774
