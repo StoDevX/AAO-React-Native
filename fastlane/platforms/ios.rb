@@ -24,7 +24,7 @@ platform :ios do
 
   desc 'Builds the app'
   lane :build do
-    match(type: 'appstore', readonly: true)
+    match(type: 'appstore', readonly: true) if ENV['TRAVIS_PULL_REQUEST'] == 'false'
     propagate_version
     gym(include_bitcode: true,
         include_symbols: true)
