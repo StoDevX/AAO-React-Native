@@ -105,11 +105,14 @@ end
 def auto_beta
   if ENV['run_deploy'] == '1'
     if ENV['TRAVIS_EVENT_TYPE'] == 'cron'
+      UI.message 'nightly'
       nightly
     else
+      UI.message 'beta'
       beta
     end
   else
+    UI.message 'just build'
     build
   end
 end
