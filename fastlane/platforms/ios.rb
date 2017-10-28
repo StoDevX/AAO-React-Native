@@ -24,7 +24,11 @@ platform :ios do
 
   desc 'Builds the app'
   lane :build do
-    match(type: 'appstore', readonly: true) if ENV['TRAVIS_PULL_REQUEST'] == 'false'
+    if ENV['TRAVIS_PULL_REQUEST'] == 'false'
+      match(type: 'appstore', readonly: true)
+    else
+      export_options(method: 'development')
+    end
     propagate_version
     gym(include_bitcode: true,
         include_symbols: true)
