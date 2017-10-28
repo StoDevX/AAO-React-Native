@@ -103,6 +103,8 @@ end
 # smart enough to call the appropriate platform's "beta" lane. So, let's make
 # a beta build if there have been new commits since the last beta.
 def auto_beta
+  UI.message "run_deploy: #{ENV['run_deploy']}"
+  UI.message "TRAVIS_EVENT_TYPE: #{ENV['TRAVIS_EVENT_TYPE']}"
   if ENV['run_deploy'] == '1'
     if ENV['TRAVIS_EVENT_TYPE'] == 'cron'
       UI.message 'nightly'
