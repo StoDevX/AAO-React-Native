@@ -105,7 +105,7 @@ end
 def auto_beta
   UI.message "TRAVIS_EVENT_TYPE: #{ENV['TRAVIS_EVENT_TYPE']}"
   if should_deploy?
-	  if cron?
+    if cron?
       UI.message 'building nightly'
       nightly
     else
@@ -119,11 +119,11 @@ def auto_beta
 end
 
 def should_deploy?
-	cron? ||
-		!ENV['TRAVIS_TAG'].empty? ||
-		ENV['TRAVIS_COMMIT_MESSAGE'] =~ /\[ci run beta\]/
+  cron? ||
+    !ENV['TRAVIS_TAG'].empty? ||
+    ENV['TRAVIS_COMMIT_MESSAGE'] =~ /\[ci run beta\]/
 end
 
 def cron?
-	ENV['TRAVIS_EVENT_TYPE'] == 'cron'
+  ENV['TRAVIS_EVENT_TYPE'] == 'cron'
 end
