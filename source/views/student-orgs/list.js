@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
 type Props = TopLevelViewPropsType
 
 type State = {
-  orgs: {[key: string]: StudentOrgType[]},
+  orgs: Array<StudentOrgType>,
   results: {[key: string]: StudentOrgType[]},
   refreshing: boolean,
   error: boolean,
@@ -85,7 +85,7 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
   searchBar: any
 
   state = {
-    orgs: {},
+    orgs: [],
     results: {},
     refreshing: false,
     loading: true,
