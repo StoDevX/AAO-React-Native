@@ -3,7 +3,7 @@
 .*/*[.]android.js
 
 ; Ignore json files from flow
-*.json
+;*.json
 
 ; Ignore "BUCK" generated dirs
 <PROJECT_ROOT>/\.buckd/
