@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {StyleSheet} from 'react-native'
-import AlphabetListView from 'react-native-alphabetlistview'
+import AlphabetListView from '@hawkrives/react-native-alphabetlistview'
 import * as c from '../components/colors'
 
 const styles = StyleSheet.create({
