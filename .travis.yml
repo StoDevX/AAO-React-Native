@@ -159,16 +159,6 @@ before_install:
   - echo "ruby -v is now $(ruby -v)"
   - gem install bundler
 
-  # only deploy from:
-  # - cron-triggered jobs
-  # - tagged commits
-  # - commits whose messages contain the string [ci run beta]
-  - if [[
-      $TRAVIS_EVENT_TYPE == "cron" ||
-      $TRAVIS_TAG != "" ||
-      $TRAVIS_COMMIT_MESSAGE == *"[ci run beta]"*
-    ]]; then run_deploy=1; fi
-
   # force a consistent node version
   - echo "Using node $TRAVIS_NODE_VERSION (node -v says $(node -v))"
   - nvm install "$TRAVIS_NODE_VERSION"
