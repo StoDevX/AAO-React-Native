@@ -16,10 +16,9 @@ function makeSchedule(): BusScheduleType {
   }
 }
 
-xit('returns the schedule for the given time', () => {
+it('returns the schedule for the given time', () => {
   let now = moment('Mon 16:57', 'dddd H:mm')
-  let input = makeSchedule()
-  // $FlowExpectedError
+  let input = makeSchedule().times
   let actual = getSetOfStopsForNow(input, now)
 
   expect(actual).toEqual([

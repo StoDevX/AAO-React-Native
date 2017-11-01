@@ -1,12 +1,15 @@
 // @flow
 import React from 'react'
-import {View, Text, StyleSheet, Platform} from 'react-native'
+import {View, Text, StyleSheet, Platform, FlatList} from 'react-native'
 import type {BusLineType, FancyBusTimeListType, BusScheduleType} from './types'
-import {getScheduleForNow, getSetOfStopsForNow} from './lib'
+import {
+  getScheduleForNow,
+  getSetOfStopsForNow,
+  parseTime,
+  makeSubtitle,
+} from './lib'
 import get from 'lodash/get'
 import zip from 'lodash/zip'
-import head from 'lodash/head'
-import last from 'lodash/last'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
@@ -17,9 +20,6 @@ import {
   Title,
   ListFooter,
 } from '../../components/list'
-
-const TIME_FORMAT = 'h:mma'
-const TIMEZONE = 'America/Winnipeg'
 
 const styles = StyleSheet.create({
   separator: {
@@ -40,44 +40,14 @@ const stopColors = {
   'Red Line': c.brickRed,
 }
 
-function makeSubtitle({now, moments, isLastBus}) {
-  let lineDetail = 'Running'
-
-  if (now.isBefore(head(moments))) {
-    const startsIn = now
-      .clone()
-      .seconds(0)
-      .to(head(moments))
-    lineDetail = `Starts ${startsIn}`
-  } else if (now.isAfter(last(moments))) {
-    lineDetail = 'Over for Today'
-  } else if (isLastBus) {
-    lineDetail = 'Last Bus'
-  }
-
-  return lineDetail
-}
-
-const parseTime = (now: moment) => (time: string | false) => {
-  // either pass `false` through or return a parsed time
-  if (time === false) {
-    return false
-  }
-
-  return (
-    moment
-      // interpret in Central time
-      .tz(time, TIME_FORMAT, true, TIMEZONE)
-      // and set the date to today
-      .dayOfYear(now.dayOfYear())
-  )
-}
+const BusLineSeparator = () => <Separator style={styles.separator} />
 
 type Props = {
   line: BusLineType,
   now: moment,
   openMap: () => any,
 }
+;[]
 
 export class BusLine extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
@@ -103,7 +73,7 @@ export class BusLine extends React.Component<Props> {
       now,
     )
 
-    const stopTitleTimePairs: Array<[string, moment]> = zip(
+    const stopTitleTimePairs: Array<[string, moment | false]> = zip(
       schedule.stops,
       currentMoments,
     )
@@ -113,6 +83,24 @@ export class BusLine extends React.Component<Props> {
       currentMoments,
       stopTitleTimePairs,
     }
+  }
+
+  renderItem = ({item, index}) => {
+    const [placeTitle, moment] = item
+    return (
+      <BusStopRow
+        // get the arrival time for this stop from each bus loop after
+        // the current time (as given by `now`)
+        times={scheduledMoments.slice(timesIndex).map(set => set[index])}
+        place={placeTitle}
+        now={now}
+        time={moment}
+        barColor={barColor}
+        currentStopColor={currentStopColor}
+        isFirstRow={index === 0}
+        isLastRow={index === list.length - 1}
+      />
+    )
   }
 
   render() {
@@ -148,68 +136,26 @@ export class BusLine extends React.Component<Props> {
     const isLastBus = timesIndex === scheduledMoments.length - 1
     const subtitle = makeSubtitle({now, moments: currentMoments, isLastBus})
 
+    const headerEl = (
+      <ListSectionHeader
+        title={line.line}
+        subtitle={subtitle}
+        titleStyle={androidColor}
+      />
+    )
+
+    const footerMsg =
+      'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
+    const footerEl = <ListFooter title={footerMsg} />
+
     return (
-      <View>
-        <ListSectionHeader
-          title={line.line}
-          subtitle={subtitle}
-          titleStyle={androidColor}
-        />
-
-        {stopTitleTimePairs.map(([placeTitle, moment], i, list) => (
-          <View key={i}>
-            <BusStopRow
-              // get the arrival time for this stop from each bus loop after
-              // the current time (as given by `now`)
-              times={scheduledMoments.slice(timesIndex).map(set => set[i])}
-              place={placeTitle}
-              now={now}
-              time={moment}
-              barColor={barColor}
-              currentStopColor={currentStopColor}
-              isFirstRow={i === 0}
-              isLastRow={i === list.length - 1}
-            />
-            {i < list.length - 1 ? (
-              <Separator style={styles.separator} />
-            ) : null}
-          </View>
-        ))}
-
-        {/*<ListRow
-          onPress={this.props.openMap}
-          fullWidth={true}
-          spacing={{left: 45}}
-        >
-          <Row alignItems="center">
-            <Column alignItems="center" width={45} paddingRight={5}>
-              <Icon
-                name={
-                  Platform.OS === 'ios' ? 'ios-navigate-outline' : 'md-navigate'
-                }
-                size={24}
-                style={{color: c.iosDisabledText}}
-              />
-            </Column>
-
-            <Column>
-              <Title>
-                <Text>Open Map</Text>
-              </Title>
-
-              <Detail>
-                <Text>See the planned bus route on a map!</Text>
-              </Detail>
-            </Column>
-          </Row>
-        </ListRow>*/}
-
-        <ListFooter
-          title={
-            'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
-          }
-        />
-      </View>
+      <FlatList
+        ListHeaderComponent={headerEl}
+        ListFooterComponent={footerEl}
+        ItemSeparatorComponent={BusLineSeparator}
+        data={stopTitleTimePairs}
+        renderItem={this.renderItem}
+      />
     )
   }
 }

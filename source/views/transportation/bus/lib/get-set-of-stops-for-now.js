@@ -13,20 +13,31 @@ export function getSetOfStopsForNow(
 
   // We might be checking before the first bus has run;
   const firstBus = head(head(scheduledMoments))
-  if (now.isSameOrBefore(firstBus, 'minute')) {
+  if (firstBus !== false && now.isSameOrBefore(firstBus, 'minute')) {
+    console.log('early return')
     return head(scheduledMoments)
   }
 
   // We might be checking while the bus is running;
   let previousEnd = firstBus
-  for (let moments of scheduledMoments) {
+  for (const moments of scheduledMoments) {
     const startTime = previousEnd
     const endTime = last(moments)
+
+    console.log(startTime, endTime)
+    if (startTime === false || endTime === false) {
+      continue
+    }
 
     // A note on Momentjs inclusivity: A [ indicates inclusion of a value. A (
     // indicates exclusion. If the inclusivity parameter is used, both
     // indicators must be passed.
     if (now.isBetween(startTime, endTime, null, '[]')) {
+      console.log(
+        `middle return: startTime "${String(startTime)}", endTime "${String(
+          endTime,
+        )}"`,
+      )
       return moments
     }
 
@@ -34,5 +45,6 @@ export function getSetOfStopsForNow(
   }
 
   // Or we might be after the bus has quit for the day
+  console.log('final return')
   return last(scheduledMoments)
 }
