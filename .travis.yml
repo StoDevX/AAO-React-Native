@@ -12,8 +12,6 @@ env:
     - TRAVIS_NODE_VERSION=8
     # set the ruby version up top
     - TRAVIS_RUBY_VERSION=ruby-2.4.2
-    # always set run_deploy
-    - run_deploy=0
     # GH_TOKEN:
     # - used by greenkeeper to update package-lock.json
     - secure: s2HicpDrioxVuS/1KyDMgFkgbM3eVxp1FVF1R922oKeUGhtNFERufXp+nXaG98trqmJhfjfx243i7qP8oEX1DoGtFAHAuILBG0KTXoY1HZG/ZlVpc2pjRQmfCt3tJCs8Trovv2q2yM21JtTKXJ6wZ+XUGK0zqXbd4IH7k30Q649CIZ+l/pcU4cVqoLojekFWMQuW9onPOiTGtBckdPngmJ9GgAGDQesYjZ/p5RTaggCleD4oFmgkUdPZtityr+6TYe6cU9fFIVHyxe5F4JsiXB2aKk0qbX86tXUdlneOTYAw0YsxzVbpjtjVeedG3lm+UDAABznaqyuj4EI2+ERIXEMXtDzG+knQuQIF1P9E5ZWRanuSbfwFRJecPXyw03AtT+lBEHls1klRFep0yYzSKPunuqyeFZG+QFFtiegPnk7C4R2KfJhghB8kr8Ysgwg1YJXP77AaTBET0YsEvhMNNqEGK0LsXhZJUCWUnZfINFwp8ggEB8ZHWqWmTD2SxufqWXCzcMBnNdyuoDAH8//myA/09UcxzRpQwBqy3wH/Nlb47n+RydQxxiSmpTw0xAa5f9/qRjy0DrIT0PowDN1VGLgy6wQIqzAN6Ex4Y7AIyaTZrga7cbpfHE7lKee8XTTfDJnfGywJ1+3CqpZpA1jQhRzeGQbxPfghaOxzI46i4p4=
@@ -160,16 +158,6 @@ before_install:
   - rvm use $TRAVIS_RUBY_VERSION --install --binary --create
   - echo "ruby -v is now $(ruby -v)"
   - gem install bundler
-
-  # only deploy from:
-  # - cron-triggered jobs
-  # - tagged commits
-  # - commits whose messages contain the string [ci run beta]
-  - if [[
-      $TRAVIS_EVENT_TYPE == "cron" ||
-      $TRAVIS_TAG != "" ||
-      $TRAVIS_COMMIT_MESSAGE == *"[ci run beta]"*
-    ]]; then run_deploy=1; fi
 
   # force a consistent node version
   - echo "Using node $TRAVIS_NODE_VERSION (node -v says $(node -v))"
