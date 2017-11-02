@@ -5,6 +5,7 @@ import * as Icons from 'react-native-alternate-icons'
 import {Section, Cell} from 'react-native-tableview-simple'
 import {Column} from '../components/layout'
 import includes from 'lodash/includes'
+import * as c from '../colors'
 
 const styles = StyleSheet.create({
   content: {
@@ -17,8 +18,9 @@ const styles = StyleSheet.create({
   icon: {
     width: 16,
     height: 16,
+    borderColor: c.black,
     borderRadius: 5,
-    borderWidth: 0.5,
+    borderWidth: Stylesheet.hairlineWidth,
   },
 })
 
