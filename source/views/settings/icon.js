@@ -31,7 +31,7 @@ const icons = [
   {
     type: 'icon_type_windmill',
     src: require('../../../ios/AllAboutOlaf/windmill.png'),
-    title: 'Windmill',
+    title: 'Wind Turbine (Big Ole)',
   },
 ]
 
