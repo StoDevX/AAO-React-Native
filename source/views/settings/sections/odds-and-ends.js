@@ -45,7 +45,12 @@ class OddsAndEndsSection extends React.Component {
         </Section>
 
         <Section header="ODDS &amp; ENDS">
-          <Cell cellStyle="RightDetail" title="App Icon" accessory="DisclosureIndicator" onPress={this.onAppIconButton} />
+          <Cell
+            cellStyle="RightDetail"
+            title="App Icon"
+            accessory="DisclosureIndicator"
+            onPress={this.onAppIconButton}
+          />
 
           <Cell cellStyle="RightDetail" title="Version" detail={version} />
 
