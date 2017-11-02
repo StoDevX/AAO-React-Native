@@ -44,15 +44,22 @@ test('returns `false` if there is no schedule for today', () => {
 
 test('returns `false` if there are no times in the schedule for today', () => {
   let now = moment('Su 10:01pm', 'ddd h:mma')
-  let actual = getCurrentBusIteration([{
-    days: ['Su'],
-    coordinates: {},
-    stops: ['St. Olaf'],
-    times: [[]],
-    timetable: [{
-      name: 'None',
-      departures: [],
-    }],
-  }], now)
+  let actual = getCurrentBusIteration(
+    [
+      {
+        days: ['Su'],
+        coordinates: {},
+        stops: ['St. Olaf'],
+        times: [[]],
+        timetable: [
+          {
+            name: 'None',
+            departures: [],
+          },
+        ],
+      },
+    ],
+    now,
+  )
   expect(actual).toBe(false)
 })
