@@ -99,6 +99,7 @@
   },
   "devDependencies": {
     "ajv": "5.3.0",
+    "babel-core": "6.26.0",
     "babel-eslint": "8.0.1",
     "babel-jest": "21.2.0",
     "babel-plugin-flow-react-proptypes": "7.0.1",
