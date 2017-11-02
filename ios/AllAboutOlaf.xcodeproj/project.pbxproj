@@ -339,13 +339,6 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
-		3A43B0761F9ED56E006512B7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 828A2E49D4E3430FB2853AFF /* RNDeviceInfo.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E72EC1401F7ABB5A0001BC90;
-			remoteInfo = "RNDeviceInfo-tvOS";
-		};
 		3A9B26581DE3709F00B6A428 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 828A2E49D4E3430FB2853AFF /* RNDeviceInfo.xcodeproj */;
@@ -744,7 +737,6 @@
 			isa = PBXGroup;
 			children = (
 				3A9B26591DE3709F00B6A428 /* libRNDeviceInfo.a */,
-				3A43B0771F9ED56E006512B7 /* libRNDeviceInfo-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -923,8 +915,8 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 810;
-				LastUpgradeCheck = 810;
+				LastSwiftUpdateCheck = 0810;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					00D33BDE1DDA58A8001E830E = {
@@ -934,7 +926,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = TMK6S7TPX2;
-						LastSwiftMigration = 810;
+						LastSwiftMigration = 0810;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1359,13 +1351,6 @@
 			fileType = archive.ar;
 			path = libRCTAnimation.a;
 			remoteRef = 3A0CEA791DEA20340036E739 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3A43B0771F9ED56E006512B7 /* libRNDeviceInfo-tvOS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libRNDeviceInfo-tvOS.a";
-			remoteRef = 3A43B0761F9ED56E006512B7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		3A9B26591DE3709F00B6A428 /* libRNDeviceInfo.a */ = {
