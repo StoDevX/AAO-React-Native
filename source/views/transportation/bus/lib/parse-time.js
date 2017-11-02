@@ -4,10 +4,10 @@ const TIME_FORMAT = 'h:mma'
 const TIMEZONE = 'America/Winnipeg'
 import moment from 'moment-timezone'
 
-export const parseTime = (now: moment) => (time: string | false) => {
+export const parseTime = (now: moment) => (time: string | false): ?moment => {
   // either pass `false` through or return a parsed time
   if (time === false) {
-    return false
+    return null
   }
 
   // interpret in Central time

@@ -1,11 +1,11 @@
 // @flow
 
 import React from 'react'
-import {ScrollView, RefreshControl} from 'react-native'
-import type {BusLineType} from './types'
+import type {UnprocessedBusLine} from './types'
 import {BusLine} from './bus-line'
 import moment from 'moment-timezone'
 import {NoticeView} from '../../components/notice'
+import LoadingView from '../../components/loading'
 import type {TopLevelViewPropsType} from '../../types'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../../lib/report-network-problem'
@@ -21,7 +21,8 @@ type Props = TopLevelViewPropsType & {
 }
 
 type State = {
-  busLines: Array<BusLineType>,
+  busLines: Array<UnprocessedBusLine>,
+  activeBusLine: ?UnprocessedBusLine,
   intervalId: number,
   loading: boolean,
   refreshing: boolean,
@@ -31,6 +32,7 @@ type State = {
 export class BusView extends React.PureComponent<Props, State> {
   state = {
     busLines: defaultData.data,
+    activeBusLine: null,
     intervalId: 0,
     loading: true,
     refreshing: false,
@@ -44,7 +46,7 @@ export class BusView extends React.PureComponent<Props, State> {
     })
 
     // This updates the screen every second, so that the "next bus" times
-    // are updated without needing to leave and come back.
+    // update without needing to leave and come back.
     this.setState(() => ({intervalId: setInterval(this.updateTime, 1000)}))
   }
 
@@ -62,7 +64,10 @@ export class BusView extends React.PureComponent<Props, State> {
       busLines = defaultData.data
     }
 
-    this.setState(() => ({busLines, now: moment.tz(TIMEZONE)}))
+    const activeBusLine = busLines.find(({line}) => line === this.props.line)
+    const now = moment.tz(TIMEZONE)
+
+    this.setState(() => ({busLines, activeBusLine, now}))
   }
 
   updateTime = () => {
@@ -84,40 +89,32 @@ export class BusView extends React.PureComponent<Props, State> {
   }
 
   openMap = () => {
-    const activeBusLine = this.findLine()
-    this.props.navigation.navigate('BusMapView', {line: activeBusLine})
-  }
-
-  findLine = (): ?BusLineType => {
-    const {busLines} = this.state
-    const {line: thisLine} = this.props
-    return busLines.find(({line}) => line === thisLine)
+    this.props.navigation.navigate('BusMapView', {
+      line: this.state.activeBusLine,
+    })
   }
 
   render() {
-    let {now} = this.state
-    const activeBusLine = this.findLine()
-
-    if (!activeBusLine) {
-      const lines = this.state.busLines.map(({line}) => line).join(', ')
-      return (
-        <NoticeView
-          text={`The line "${this.props.line}" was not found among ${lines}`}
-        />
-      )
+    if (this.state.loading) {
+      return <LoadingView />
     }
 
-    const refreshControl = (
-      <RefreshControl
+    const {now, activeBusLine} = this.state
+
+    if (!activeBusLine) {
+      const lines = this.state.busLines.map(({name}) => name).join(', ')
+      const msg = `The line "${this.props.line}" was not found among ${lines}`
+      return <NoticeView text={msg} />
+    }
+
+    return (
+      <BusLine
+        line={activeBusLine}
+        now={now}
+        openMap={this.openMap}
         onRefresh={this.refreshTime}
         refreshing={this.state.refreshing}
       />
-    )
-
-    return (
-      <ScrollView refreshControl={refreshControl}>
-        <BusLine line={activeBusLine} now={now} openMap={this.openMap} />
-      </ScrollView>
     )
   }
 }

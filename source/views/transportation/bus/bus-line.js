@@ -1,25 +1,17 @@
 // @flow
 import React from 'react'
-import {View, Text, StyleSheet, Platform, FlatList} from 'react-native'
-import type {BusLineType, FancyBusTimeListType, BusScheduleType} from './types'
+import {Text, StyleSheet, Platform, FlatList} from 'react-native'
+import type {BusTimetableEntry, UnprocessedBusLine, BusSchedule} from './types'
 import {
-  getScheduleForNow,
-  getSetOfStopsForNow,
-  parseTime,
   makeSubtitle,
+  processBusLine,
+  getScheduleForNow,
+  getCurrentBusIteration,
 } from './lib'
-import get from 'lodash/get'
-import zip from 'lodash/zip'
 import moment from 'moment-timezone'
-import * as c from '../../components/colors'
 import {Separator} from '../../components/separator'
 import {BusStopRow} from './bus-stop-row'
-import {
-  ListRow,
-  ListSectionHeader,
-  Title,
-  ListFooter,
-} from '../../components/list'
+import {ListSectionHeader, ListFooter} from '../../components/list'
 
 const styles = StyleSheet.create({
   separator: {
@@ -29,132 +21,94 @@ const styles = StyleSheet.create({
   },
 })
 
-const barColors = {
-  'Blue Line': c.steelBlue,
-  'Express Bus': c.moneyGreen,
-  'Red Line': c.salmon,
-}
-const stopColors = {
-  'Blue Line': c.midnightBlue,
-  'Express Bus': c.hollyGreen,
-  'Red Line': c.brickRed,
-}
-
 const BusLineSeparator = () => <Separator style={styles.separator} />
+const EMPTY_SCHEDULE_MESSAGE = <Text>This line is not running today.</Text>
+const FOOTER_MSG =
+  'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
+const FOOTER_EL = <ListFooter title={FOOTER_MSG} />
 
 type Props = {
-  line: BusLineType,
+  line: UnprocessedBusLine,
   now: moment,
   openMap: () => any,
+  onRefresh: () => any,
+  refreshing: boolean,
 }
-;[]
 
-export class BusLine extends React.Component<Props> {
+type State = {
+  subtitle: string,
+  schedule: BusSchedule,
+  currentBusIteration: false | number,
+}
+
+export class BusLine extends React.Component<Props, State> {
+  componentWillReceiveProps(nextProps: Props) {
+    this.updateFromProps(nextProps)
+  }
+
   shouldComponentUpdate(nextProps: Props) {
-    // We won't check the time in shouldComponentUpdate, because we really
-    // only care if the bus information has changed, and this is called after
-    // setStateFromProps runs.
-
     return (
       this.props.now.isSame(nextProps.now, 'minute') ||
-      this.props.line !== nextProps.line ||
-      this.props.openMap !== nextProps.openMap
+      this.props.line !== nextProps.line
     )
   }
 
-  generateScheduleInfo = (schedule: BusScheduleType, now: moment) => {
-    const parseTimes = timeset => timeset.map(parseTime(now))
-    const scheduledMoments: Array<FancyBusTimeListType> = schedule.times.map(
-      parseTimes,
-    )
+  updateFromProps = (props: Props) => {
+    // Finds the stuff that's shared between FlatList and renderItem
 
-    const currentMoments: FancyBusTimeListType = getSetOfStopsForNow(
-      scheduledMoments,
-      now,
-    )
+    const {line, now} = props
 
-    const stopTitleTimePairs: Array<[string, moment | false]> = zip(
-      schedule.stops,
-      currentMoments,
-    )
+    const processedLine = processBusLine(line, now)
+    const scheduleForToday = getScheduleForNow(processedLine.schedules, now)
 
-    return {
-      scheduledMoments,
-      currentMoments,
-      stopTitleTimePairs,
-    }
+    const busIndex = getCurrentBusIteration(processedLine.schedules, now)
+
+    const isLastBus = busIndex === scheduleForToday.times.length - 1
+    const stopTimes = busIndex === false ? [] : scheduleForToday.times[busIndex]
+    const subtitle = makeSubtitle({now, stopTimes, isLastBus})
+
+    this.setState(() => ({
+      subtitle: subtitle,
+      schedule: scheduleForToday,
+      currentBusIteration: busIndex,
+    }))
   }
 
-  renderItem = ({item, index}) => {
-    const [placeTitle, moment] = item
-    return (
-      <BusStopRow
-        // get the arrival time for this stop from each bus loop after
-        // the current time (as given by `now`)
-        times={scheduledMoments.slice(timesIndex).map(set => set[index])}
-        place={placeTitle}
-        now={now}
-        time={moment}
-        barColor={barColor}
-        currentStopColor={currentStopColor}
-        isFirstRow={index === 0}
-        isLastRow={index === list.length - 1}
-      />
-    )
-  }
+  renderItem = ({item, index}: {index: number, item: BusTimetableEntry}) => (
+    <BusStopRow
+      stop={item}
+      departureIndex={this.state.currentBusIteration}
+      now={this.props.now}
+      barColor={this.props.line.colors.bar}
+      currentStopColor={this.props.line.colors.dot}
+      isFirstRow={index === 0}
+      isLastRow={index === this.state.schedule.timetable.length - 1}
+    />
+  )
 
   render() {
-    const {line, now} = this.props
-
-    const schedule = getScheduleForNow(line.schedules, now)
-
-    // grab the colors (with fallbacks) via _.get
-    const barColor = get(barColors, line.line, c.black)
-    const currentStopColor = get(stopColors, line.line, c.gray)
-    const androidColor = Platform.OS === 'android' ? {color: barColor} : null
-
-    if (!schedule) {
-      return (
-        <View>
-          <ListSectionHeader title={line.line} titleStyle={androidColor} />
-          <ListRow>
-            <Title>
-              <Text>This line is not running today.</Text>
-            </Title>
-          </ListRow>
-        </View>
-      )
-    }
-
-    const {
-      scheduledMoments,
-      currentMoments,
-      stopTitleTimePairs,
-    } = this.generateScheduleInfo(schedule, now)
-
-    const timesIndex = scheduledMoments.indexOf(currentMoments)
-    const isLastBus = timesIndex === scheduledMoments.length - 1
-    const subtitle = makeSubtitle({now, moments: currentMoments, isLastBus})
+    const {line} = this.props
+    const {schedule, subtitle} = this.state
 
     const headerEl = (
       <ListSectionHeader
-        title={line.line}
+        title={line.name}
         subtitle={subtitle}
-        titleStyle={androidColor}
+        titleStyle={Platform.OS === 'android' ? {color: line.colors.bar} : null}
       />
     )
-
-    const footerMsg =
-      'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
-    const footerEl = <ListFooter title={footerMsg} />
 
     return (
       <FlatList
         ListHeaderComponent={headerEl}
-        ListFooterComponent={footerEl}
+        ListFooterComponent={FOOTER_EL}
+        ListEmptyComponent={EMPTY_SCHEDULE_MESSAGE}
         ItemSeparatorComponent={BusLineSeparator}
-        data={stopTitleTimePairs}
+        data={schedule.timetable}
+        extraData={this.state}
         renderItem={this.renderItem}
+        onRefresh={this.props.onRefresh}
+        refreshing={this.props.refreshing}
       />
     )
   }

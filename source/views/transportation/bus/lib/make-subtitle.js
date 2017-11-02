@@ -1,34 +1,41 @@
 // @flow
 
-import head from 'lodash/head'
-import last from 'lodash/last'
+import find from 'lodash/find'
 import findLast from 'lodash/findLast'
 import type moment from 'moment'
-import {type FancyBusTimeListType} from '../types'
+import type {DepartureTimeList} from '../types'
+
+const isTruthy = x => x
 
 type Args = {
   now: moment,
-  moments: FancyBusTimeListType,
+  stopTimes: DepartureTimeList,
   isLastBus: boolean,
 }
-;[]
 
-export function makeSubtitle({now, moments, isLastBus}: Args) {
-  let lineDetail = 'Running'
+export function makeSubtitle({now, stopTimes, isLastBus}: Args) {
+  const first = find(stopTimes, isTruthy)
+  const last = findLast(stopTimes, isTruthy)
 
-  const onlyMoments = moments.filter(m => m !== false)
+  if (!first || !last) {
+    return 'Not running today'
+  }
 
-  if (now.isBefore(head(onlyMoments))) {
+  if (now.isBefore(first)) {
     const startsIn = now
       .clone()
       .seconds(0)
-      .to(head(onlyMoments))
-    lineDetail = `Starts ${startsIn}`
-  } else if (now.isAfter(last(onlyMoments))) {
-    lineDetail = 'Over for Today'
-  } else if (isLastBus) {
-    lineDetail = 'Last Bus'
+      .to(first)
+    return `Starts ${startsIn}`
   }
 
-  return lineDetail
+  if (now.isAfter(last)) {
+    return 'Over for Today'
+  }
+
+  if (isLastBus) {
+    return 'Last Bus'
+  }
+
+  return 'Running'
 }

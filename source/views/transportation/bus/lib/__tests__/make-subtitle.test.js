@@ -1,9 +1,10 @@
 // @flow
+
 import {makeSubtitle} from '../make-subtitle'
 import {parseTime} from '../parse-time'
 import moment from 'moment'
 
-const getTimes = () =>
+const getTimes = (now: moment) =>
   [
     '4:15pm',
     '4:22pm',
@@ -13,48 +14,39 @@ const getTimes = () =>
     '4:43pm',
     '4:44pm',
     '4:52pm',
-  ].map(parseTime)
+  ].map(parseTime(now))
 
-it('handles "now" being before the first bus', () => {
-  let now = moment('13:00pm', 'hh:mma')
-  console.log(now)
-  let actual = makeSubtitle({now, moments: getTimes(), isLastBus: false})
+test('returns "running" when the bus is running', () => {
+  let now = moment('4:30pm', 'h:mma')
+  let actual = makeSubtitle({now, stopTimes: getTimes(now), isLastBus: false})
 
-  expect(actual).toEqual('Starts in 1')
+  expect(actual).toEqual('Running')
 })
 
-xit('returns the first schedule if the current time is before the first loop', () => {
-  let now = moment('Mon 12:00', 'dddd H:mm')
-  let input = makeSchedule()
-  // $FlowExpectedError
-  let actual = getSetOfStopsForNow(input, now)
+test('returns "not running" when the bus has no stops', () => {
+  let now = moment('4:30pm', 'h:mma')
+  let actual = makeSubtitle({now, stopTimes: [], isLastBus: false})
 
-  expect(actual).toEqual([
-    '4:15pm',
-    '4:22pm',
-    '4:23pm',
-    '4:33pm',
-    '4:37pm',
-    '4:43pm',
-    '4:44pm',
-    '4:52pm',
-  ])
+  expect(actual).toEqual('Not running today')
 })
 
-xit('returns the last schedule if the current time is after the last loop', () => {
-  let now = moment('Mon 23:30', 'dddd H:mm')
-  let input = makeSchedule()
-  // $FlowExpectedError
-  let actual = getSetOfStopsForNow(input, now)
+test('handles "now" being before the first bus', () => {
+  let now = moment('1:00pm', 'h:mma')
+  let actual = makeSubtitle({now, stopTimes: getTimes(now), isLastBus: false})
 
-  expect(actual).toEqual([
-    '5:35pm',
-    '5:42pm',
-    '5:43pm',
-    '5:53pm',
-    '5:57pm',
-    '6:03pm',
-    '6:04pm',
-    '6:12pm',
-  ])
+  expect(actual).toEqual('Starts in 3 hours')
+})
+
+test('handles "now" being after the last bus', () => {
+  let now = moment('5:00pm', 'h:mma')
+  let actual = makeSubtitle({now, stopTimes: getTimes(now), isLastBus: false})
+
+  expect(actual).toEqual('Over for Today')
+})
+
+test('returns "last bus" during the last bus round', () => {
+  let now = moment('4:52pm', 'h:mma')
+  let actual = makeSubtitle({now, stopTimes: getTimes(now), isLastBus: true})
+
+  expect(actual).toEqual('Last Bus')
 })
