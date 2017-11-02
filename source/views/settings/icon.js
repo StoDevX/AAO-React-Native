@@ -53,7 +53,12 @@ export default class IconSettingsView extends React.PureComponent {
   }
 
   setIcon(iconType: string) {
-    iconType == 'default' ? Icons.reset() : Icons.setIconName(iconType)
+    if (iconType === 'default') {
+      Icons.reset()
+    } else {
+      Icons.setIconName(iconType)
+    }
+
     this.getIcon()
   }
 
