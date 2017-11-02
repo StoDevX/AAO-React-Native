@@ -69,7 +69,7 @@ export default class IconSettingsView extends React.PureComponent {
               onPress={() => this.setIcon(val.type)}
               disableImageResize={false}
               image={
-                val.type ? (
+                val.src ? (
                   <Image style={styles.icon} source={val.src} />
                 ) : (
                   undefined
