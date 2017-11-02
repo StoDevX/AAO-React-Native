@@ -57,7 +57,7 @@ class OddsAndEndsSection extends React.Component {
           {this.state.supported ? (
             <Cell
               cellStyle="RightDetail"
-              title="App Icon"
+              title="Change App Icon"
               accessory="DisclosureIndicator"
               onPress={this.onAppIconButton}
             />
