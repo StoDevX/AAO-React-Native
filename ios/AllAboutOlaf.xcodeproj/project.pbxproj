@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		0002961D1E270BD1000909F2 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0002961C1E270BD1000909F2 /* CoreData.framework */; };
 		0002961F1E270BD9000909F2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0002961E1E270BD9000909F2 /* SystemConfiguration.framework */; };
@@ -780,6 +781,7 @@
 				9C476D4877F945308C96FF0F /* libRNNetworkInfo.a */,
 				77E1B7C6D93445288673021A /* libAirMaps.a */,
 				14483BC863F7489F8369E21B /* libRCTRestart.a */,
+        11DF4AC996924028A2FDCF4E /* libRCTVideo.a */,
 				0C8A1DA8409E4F03B55E7E2F /* libRNCalendarEvents.a */,
 			);
 			name = "Recovered References";
