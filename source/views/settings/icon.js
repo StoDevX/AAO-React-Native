@@ -1,6 +1,6 @@
 // @flow
 import React from 'react'
-import {View, Image, StyleSheet, Text} from 'react-native'
+import {ScrollView, Image, StyleSheet, Text} from 'react-native'
 import Icons from 'react-native-alternate-icons'
 import {Section, Cell} from 'react-native-tableview-simple'
 import {Column} from '../components/layout'
@@ -61,7 +61,7 @@ export default class IconSettingsView extends React.PureComponent {
 
   render() {
     return (
-      <View>
+      <ScrollView>
         <Section header={'CHANGE YOUR APP ICON'} separatorInsetLeft={58}>
           {icons.map(val => (
             <Cell
@@ -89,7 +89,7 @@ export default class IconSettingsView extends React.PureComponent {
             />
           ))}
         </Section>
-      </View>
+      </ScrollView>
     )
   }
 }
