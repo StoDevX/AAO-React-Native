@@ -9,11 +9,26 @@ import {connect} from 'react-redux'
 import {CellToggle} from '../../components/cells/toggle'
 import {PushButtonCell} from '../../components/cells/push-button'
 import {trackedOpenUrl} from '../../components/open-url'
+import Icons from 'react-native-alternate-icons'
 
 class OddsAndEndsSection extends React.Component {
   props: TopLevelViewPropsType & {
     onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
     feedbackDisabled: boolean,
+  }
+
+  state: {
+    supported: false,
+    loading: true,
+  }
+
+  componentWillMount() {
+    this.checkIfSupported()
+    this.setState(() => ({loading: false}))
+  }
+
+  checkIfSupported() {
+    Icons.supportDevice(result => this.setState(() => ({supported: result})))
   }
 
   onPressButton = (id: string) => {
@@ -32,9 +47,21 @@ class OddsAndEndsSection extends React.Component {
   onAppIconButton = () => this.onPressButton('IconSettingsView')
 
   render() {
+    if (this.state.loading) {
+      return <View />
+    }
+
     return (
       <View>
         <Section header="MISCELLANY">
+          {this.state.supported ? (
+            <Cell
+              cellStyle="RightDetail"
+              title="App Icon"
+              accessory="DisclosureIndicator"
+              onPress={this.onAppIconButton}
+            />
+          ) : null}
           <PushButtonCell title="Credits" onPress={this.onCreditsButton} />
           <PushButtonCell
             title="Privacy Policy"
@@ -45,13 +72,6 @@ class OddsAndEndsSection extends React.Component {
         </Section>
 
         <Section header="ODDS &amp; ENDS">
-          <Cell
-            cellStyle="RightDetail"
-            title="App Icon"
-            accessory="DisclosureIndicator"
-            onPress={this.onAppIconButton}
-          />
-
           <Cell cellStyle="RightDetail" title="Version" detail={version} />
 
           <CellToggle

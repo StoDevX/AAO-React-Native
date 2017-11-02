@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		0002961D1E270BD1000909F2 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0002961C1E270BD1000909F2 /* CoreData.framework */; };
 		0002961F1E270BD9000909F2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0002961E1E270BD9000909F2 /* SystemConfiguration.framework */; };
