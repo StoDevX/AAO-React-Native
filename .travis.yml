@@ -1,6 +1,6 @@
-language: generic
-
 env:
+  # To update the secure tokens, run `travis encrypt NAME='VALUE' --add` after
+  # installing the travis gem with `gem install travis`.
   global:
     # `match` keychain info – the values don't matter, they're defined
     # here so they're consistent throughout
@@ -8,29 +8,113 @@ env:
     - MATCH_KEYCHAIN_PASSWORD=alpine
     # dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
     - PATH=${PATH/\.\/node_modules\/\.bin/}
-    # variables that are used later on
+    # sets our node version in one nice place
     - TRAVIS_NODE_VERSION=8
-    - PUSH_BRANCH=0
-    - CAN_DEPLOY=0
-    - USE_EMULATOR=no
-    - run_deploy=0
+    # set the ruby version up top
+    - TRAVIS_RUBY_VERSION=ruby-2.4.2
+    # GH_TOKEN:
+    # - used by greenkeeper to update package-lock.json
+    - secure: s2HicpDrioxVuS/1KyDMgFkgbM3eVxp1FVF1R922oKeUGhtNFERufXp+nXaG98trqmJhfjfx243i7qP8oEX1DoGtFAHAuILBG0KTXoY1HZG/ZlVpc2pjRQmfCt3tJCs8Trovv2q2yM21JtTKXJ6wZ+XUGK0zqXbd4IH7k30Q649CIZ+l/pcU4cVqoLojekFWMQuW9onPOiTGtBckdPngmJ9GgAGDQesYjZ/p5RTaggCleD4oFmgkUdPZtityr+6TYe6cU9fFIVHyxe5F4JsiXB2aKk0qbX86tXUdlneOTYAw0YsxzVbpjtjVeedG3lm+UDAABznaqyuj4EI2+ERIXEMXtDzG+knQuQIF1P9E5ZWRanuSbfwFRJecPXyw03AtT+lBEHls1klRFep0yYzSKPunuqyeFZG+QFFtiegPnk7C4R2KfJhghB8kr8Ysgwg1YJXP77AaTBET0YsEvhMNNqEGK0LsXhZJUCWUnZfINFwp8ggEB8ZHWqWmTD2SxufqWXCzcMBnNdyuoDAH8//myA/09UcxzRpQwBqy3wH/Nlb47n+RydQxxiSmpTw0xAa5f9/qRjy0DrIT0PowDN1VGLgy6wQIqzAN6Ex4Y7AIyaTZrga7cbpfHE7lKee8XTTfDJnfGywJ1+3CqpZpA1jQhRzeGQbxPfghaOxzI46i4p4=
 
-matrix:
-  fast_finish: true
+
+# As seen in http://stackoverflow.com/a/31882307/2347774
+# Prevent travis from building twice for PRs
+branches:
+  only:
+    - master
+    - /^travis/
+    - /^greenkeeper\//
+    - /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[\da-z\-]+(?:\.[\da-z\-]+)*)?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?$/
+
+
+stages:
+  - name: Greenkeeper
+    if: branch =~ ^greenkeeper\/
+  - name: Test
+  - name: Deploy Data
+    if: branch = master AND type != pull_request
+  - name: Build + Deploy App
+
+
+jobs:
+  # We define default before_install, install, and before_script steps.
+  # To skip the default step, use `step_name: skip`.
   include:
-    - os: linux
-      dist: trusty
+    # Run greenkeeper stuff
+    - stage: Greenkeeper
+      os: linux
       sudo: false
       language: node_js
-      node_js: '8'
-      env: [JS=yes, CAN_DEPLOY=yes]
+      node_js: node # install the latest node
+      env: [GREENKEEPER=yes]
+      before_install: skip
+      install: npm install -g greenkeeper-lockfile@1
+      before_script: skip
+      script: greenkeeper-lockfile-update
+      after_script: greenkeeper-lockfile-upload
 
-    - &android-base
+    # Do node "tests"
+    - stage: Test
       os: linux
-      dist: trusty
+      sudo: false
+      distro: trusty
+      language: node_js
+      node_js: $TRAVIS_NODE_VERSION
+      env: [JS=yes]
+      before_install:
+        - npm install -g coveralls
+      install:
+        - npm install || npm install
+      before_script:
+        - echo "loglevel=silent" >> .npmrc
+        - mkdir -p logs/
+      script:
+        # Ensure failing status in the pipes
+        - set -o pipefail
+        # Ensure prettiness
+        - npm run prettier
+        - if ! git diff --quiet ./*.js source/; then
+            git diff ./*.js source/ > logs/prettier;
+          fi
+        # Lint
+        - npm run lint | tee logs/eslint
+        # Validate data
+        - npm run validate-data -- --quiet | tee logs/validate-data
+        - npm run bundle-data
+        # Type check and run tests
+        - npm run flow -- check --quiet | tee logs/flow
+        - npm run test -- --coverage 2>&1 | tee logs/jest
+      after_script:
+        - npm run danger
+      after_success:
+        - coveralls < ./coverage/lcov.info
+
+    # Deploy the gh-pages data
+    - stage: Deploy Data
+      os: linux
+      sudo: false
+      distro: trusty
+      language: node_js
+      node_js: $TRAVIS_NODE_VERSION
+      env: [GH_PAGES=yes]
+      before_install: skip
+      install:
+        - npm install || npm install
+      before_script: skip
+      script: npm run bundle-data
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        github_token: $GITHUB_PAGES_TOKEN
+        local_dir: docs/
+
+    # Build/deploy the Android binary
+    - stage: Build + Deploy
+      os: linux
       sudo: required
+      distro: trusty
       language: android
-      env: [ANDROID=yes, CAN_DEPLOY=yes]
+      env: [ANDROID=yes]
       android:
         components:
           - tools
@@ -46,71 +130,41 @@ matrix:
           - android-26
           - extra-android-m2repository
           - extra-google-m2repository
+      script:
+        - bundle exec fastlane android ci-run
 
-    # - <<: *android-base
-    #   env: [ANDROID=yes, USE_EMULATOR=yes]
-    #   android:
-    #     components:
-    #       - tools
-    #       - platform-tools
-    #       - build-tools-23.0.1
-    #       - android-23
-    #       - extra-android-m2repository
-    #       - extra-google-m2repository
-    #       - sys-img-armeabi-v7a-google_apis-23
-
-    - os: osx
+    # Build/deploy the iOS binary
+    - stage: Build + Deploy
+      os: osx
       language: objective-c
       osx_image: xcode9
-      node_js: '8'
-      env: [IOS=yes, CAN_DEPLOY=yes]
+      env: [IOS=yes]
+      script:
+        - bundle exec fastlane ios ci-run
 
-
-# As seen in http://stackoverflow.com/a/31882307/2347774
-# Prevent travis from building twice for PRs
-branches:
-  only:
-    - master
-    - /^travis/
-    - /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[\da-z\-]+(?:\.[\da-z\-]+)*)?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?$/
-
+#
+# All of the keys down here are used in each build stage, unless they're overridden.
+#
 
 before_install:
+  # print some travis debugging info
   - echo "Now testing on $TRAVIS_OS_NAME"
-  - echo "Using the android emulator? $USE_EMULATOR"
   - echo "Travis branch is $TRAVIS_BRANCH"
   - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
   - echo "Build triggered by $TRAVIS_EVENT_TYPE"
-  - echo "Using node $TRAVIS_NODE_VERSION (node -v says $(node -v))"
 
-  # make sure to use ruby 2.4
-  - rvm use ruby-2.4.1 --install --binary --create
+  # force the ruby we want
+  - echo "Using ruby $TRAVIS_RUBY_VERSION (ruby -v says $(ruby -v))"
+  - rvm use $TRAVIS_RUBY_VERSION --install --binary --create
+  - echo "ruby -v is now $(ruby -v)"
   - gem install bundler
 
-  # only deploy from:
-  # - cron-triggered jobs
-  # - tagged commits
-  # - commits whose messages contain the string [ci run beta]
-  - if [[ $CAN_DEPLOY = yes && (
-      $TRAVIS_EVENT_TYPE == "cron" ||
-      $TRAVIS_TAG != "" ||
-      $TRAVIS_COMMIT_MESSAGE == *"[ci run beta]"*
-    ) ]]; then run_deploy=1; fi
-
   # force a consistent node version
-  - if [[ $ANDROID || $IOS ]]; then
-      nvm install "$TRAVIS_NODE_VERSION";
-      nvm use "$TRAVIS_NODE_VERSION";
-    fi
-
+  - echo "Using node $TRAVIS_NODE_VERSION (node -v says $(node -v))"
+  - nvm install "$TRAVIS_NODE_VERSION"
+  - nvm use "$TRAVIS_NODE_VERSION"
   - echo "node -v is now $(node -v)"
 
-  # turn off fancy npm stuff
-  - npm config set spin=false
-  - npm config set progress=false
-
-  - npm install -g npm@5.4
-  - if [[ $JS ]]; then npm install -g greenkeeper-lockfile@1; fi
 
 install:
   # install packages (if the first fails, try once more)
@@ -119,14 +173,8 @@ install:
   # install fastlane (if at first you don't succeed, try once more)
   - bundle install || bundle install
 
-before_script:
-  - if [[ $JS ]]; then greenkeeper-lockfile-update; fi
-  # Fire up the Android emulator
-  - if [[ $ANDROID && $USE_EMULATOR = yes ]]; then
-      bundle exec fastlane android ci-emulator;
-    fi
 
-script:
+before_script:
   # ensure the env file exists and fill it out
   - touch .env.js
   - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
@@ -135,32 +183,6 @@ script:
   # disable npm wrapper for npm scripts
   - echo "loglevel=silent" >> .npmrc
 
-  # ensure the log directory exists for danger
-  - mkdir -p logs/
-
-  # run the platform-specific "script" sections
-  - if [[ $JS ]]; then bash scripts/travis/script-js.sh; fi
-  - if [[ $IOS ]]; then bundle exec fastlane ios ci-run; fi
-  - if [[ $ANDROID ]]; then bundle exec fastlane android ci-run; fi
-
-  # we run `danger` out here to ensure that it is run,
-  # even if another task in script.sh fails.
-  - if [[ $JS ]]; then npm run danger; fi
-
-after_script:
-  - if [[ $JS ]]; then greenkeeper-lockfile-upload; fi
-
-after_success:
-  - bash scripts/travis/after_success.sh
-
-deploy:
-  - provider: pages
-    skip_cleanup: true
-    github_token: $GITHUB_PAGES_TOKEN
-    local_dir: docs/
-    on:
-      branch: master
-      condition: $JS
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -173,8 +195,3 @@ cache:
     - $HOME/.gradle
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
-
-notifications:
-  webhooks:
-    # trigger Buildtime Trend Service to parse Travis CI log
-    - https://stormy-cliffs-59913.herokuapp.com/travis

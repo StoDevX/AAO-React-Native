@@ -103,13 +103,27 @@ end
 # smart enough to call the appropriate platform's "beta" lane. So, let's make
 # a beta build if there have been new commits since the last beta.
 def auto_beta
-  if ENV['run_deploy'] == '1'
-    if ENV['TRAVIS_EVENT_TYPE'] == 'cron'
+  UI.message "TRAVIS_EVENT_TYPE: #{ENV['TRAVIS_EVENT_TYPE']}"
+  if should_deploy?
+    if cron?
+      UI.message 'building nightly'
       nightly
     else
+      UI.message 'building beta'
       beta
     end
   else
+    UI.message 'just building'
     build
   end
+end
+
+def should_deploy?
+  cron? ||
+    !ENV['TRAVIS_TAG'].empty? ||
+    ENV['TRAVIS_COMMIT_MESSAGE'] =~ /\[ci run beta\]/
+end
+
+def cron?
+  ENV['TRAVIS_EVENT_TYPE'] == 'cron'
 end
