@@ -1,4 +1,7 @@
 line: Express Bus
+colors:
+  bar: rgb(134, 198, 124)
+  dot: rgb(32, 87, 14)
 schedules:
   - days: [Mo, Tu, We, Th, Fr, Sa]
     coordinates:
