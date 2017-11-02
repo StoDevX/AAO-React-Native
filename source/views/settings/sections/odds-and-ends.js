@@ -46,14 +46,10 @@ class OddsAndEndsSection extends React.Component {
   onAppIconButton = () => this.onPressButton('IconSettingsView')
 
   render() {
-    if (this.state.loading) {
-      return <View />
-    }
-
     return (
       <View>
         <Section header="MISCELLANY">
-          {this.state.supported ? (
+          {!this.state.loading && this.state.supported ? (
             <Cell
               cellStyle="RightDetail"
               title="Change App Icon"
