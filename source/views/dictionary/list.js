@@ -47,12 +47,12 @@ const styles = StyleSheet.create({
 type Props = TopLevelViewPropsType
 
 type State = {
-  results: {[key: string]: Array<WordType>},
+  results: Array<WordType>,
   allTerms: Array<WordType>,
   refreshing: boolean,
 }
 
-export class DictionaryView extends React.PureComponent<void, Props, State> {
+export class DictionaryView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Campus Dictionary',
     headerBackTitle: 'Dictionary',

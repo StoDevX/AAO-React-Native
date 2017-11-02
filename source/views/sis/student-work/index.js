@@ -32,21 +32,23 @@ const styles = StyleSheet.create({
   },
 })
 
-export default class StudentWorkView extends React.PureComponent {
+type Props = TopLevelViewPropsType
+
+type State = {
+  jobs: Array<{title: string, data: Array<JobType>}>,
+  loading: boolean,
+  refreshing: boolean,
+  error: boolean,
+}
+
+export default class StudentWorkView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     headerBackTitle: 'Open Jobs',
     tabBarLabel: 'Open Jobs',
     tabBarIcon: TabBarIcon('briefcase'),
   }
 
-  props: TopLevelViewPropsType
-
-  state: {
-    jobs: Array<{title: string, data: Array<JobType>}>,
-    loading: boolean,
-    refreshing: boolean,
-    error: boolean,
-  } = {
+  state = {
     jobs: [],
     loading: true,
     refreshing: false,
@@ -91,7 +93,7 @@ export default class StudentWorkView extends React.PureComponent {
     }
   }
 
-  refresh = async () => {
+  refresh = async (): any => {
     const start = Date.now()
     this.setState(() => ({refreshing: true}))
 

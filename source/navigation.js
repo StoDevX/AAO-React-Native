@@ -20,7 +20,7 @@ import {FilterView} from './views/components/filter'
 import NewsView from './views/news'
 import NewsItemView from './views/news/news-item'
 import SISView from './views/sis'
-import JobDetailView from './views/sis/student-work/detail'
+import {JobDetailView} from './views/sis/student-work/detail'
 import {
   BuildingHoursView,
   BuildingHoursDetailView,
@@ -37,7 +37,6 @@ import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
-// import {SnapshotsView} from './storybook'
 import HelpView from './views/help'
 
 const styles = StyleSheet.create({
@@ -82,7 +81,6 @@ export const AppNavigator = StackNavigator(
     PrivacyView: {screen: PrivacyView},
     SettingsView: {screen: SettingsView},
     SISView: {screen: SISView},
-    // SnapshotsView: {screen: SnapshotsView},
     StreamingView: {screen: StreamingView},
     StudentOrgsDetailView: {screen: StudentOrgsDetailView},
     StudentOrgsView: {screen: StudentOrgsView},

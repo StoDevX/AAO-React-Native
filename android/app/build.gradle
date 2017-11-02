@@ -75,6 +75,7 @@ import com.android.build.OutputFile
 project.ext.react = [
     // ignore the ruby deps
     inputExcludes: ["android/**", "ios/**", "vendor/**"],
+    entryFile: "index.js"
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -202,7 +203,6 @@ dependencies {
     compile project(':react-native-onesignal')
     compile project(':react-native-restart')
     compile project(':react-native-vector-icons')
-    compile project(':react-native-view-shot')
     // this is for react-native itself
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"

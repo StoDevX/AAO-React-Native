@@ -17,16 +17,18 @@ import qs from 'querystring'
 import {GOOGLE_CALENDAR_API_KEY} from '../../lib/config'
 const TIMEZONE = 'America/Winnipeg'
 
-export class GoogleCalendarView extends React.Component {
-  props: {calendarId: string} & TopLevelViewPropsType
+type Props = {calendarId: string} & TopLevelViewPropsType
 
-  state: {
-    events: EventType[],
-    loading: boolean,
-    refreshing: boolean,
-    error: ?Error,
-    now: moment,
-  } = {
+type State = {
+  events: EventType[],
+  loading: boolean,
+  refreshing: boolean,
+  error: ?Error,
+  now: moment,
+}
+
+export class GoogleCalendarView extends React.Component<Props, State> {
+  state = {
     events: [],
     loading: true,
     refreshing: false,

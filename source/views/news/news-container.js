@@ -10,22 +10,23 @@ import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {NewsList} from './news-list'
 import {fetchRssFeed, fetchWpJson} from './fetch-feed'
 
-export default class NewsContainer extends React.Component {
-  props: TopLevelViewPropsType & {
-    name: string,
-    url: string,
-    query?: Object,
-    embedFeaturedImage?: boolean,
-    mode: 'rss' | 'wp-json',
-    thumbnail: number,
-  }
+type Props = TopLevelViewPropsType & {
+  name: string,
+  url: string,
+  query?: Object,
+  embedFeaturedImage?: boolean,
+  mode: 'rss' | 'wp-json',
+  thumbnail: number,
+}
 
-  state: {
-    entries: StoryType[],
-    loading: boolean,
-    refreshing: boolean,
-    error: ?Error,
-  } = {
+type State = {
+  entries: StoryType[],
+  loading: boolean,
+  refreshing: boolean,
+  error: ?Error,
+}
+export default class NewsContainer extends React.PureComponent<Props, State> {
+  state = {
     entries: [],
     loading: true,
     error: null,
@@ -33,12 +34,9 @@ export default class NewsContainer extends React.Component {
   }
 
   componentWillMount() {
-    this.loadInitialData()
-  }
-
-  loadInitialData = async () => {
-    await this.fetchData()
-    this.setState(() => ({loading: false}))
+    this.fetchData().then(() => {
+      this.setState(() => ({loading: false}))
+    })
   }
 
   fetchData = async () => {
@@ -69,7 +67,7 @@ export default class NewsContainer extends React.Component {
     }
   }
 
-  refresh = async () => {
+  refresh = async (): any => {
     let start = Date.now()
     this.setState(() => ({refreshing: true}))
 

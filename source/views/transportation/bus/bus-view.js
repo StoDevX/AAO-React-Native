@@ -16,11 +16,19 @@ const TIMEZONE = 'America/Winnipeg'
 
 const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/bus-times.json'
 
-export class BusView extends React.PureComponent {
-  props: TopLevelViewPropsType & {
-    line: string,
-  }
+type Props = TopLevelViewPropsType & {
+  line: string,
+}
 
+type State = {
+  busLines: Array<BusLineType>,
+  intervalId: number,
+  loading: boolean,
+  refreshing: boolean,
+  now: moment,
+}
+
+export class BusView extends React.PureComponent<Props, State> {
   state = {
     busLines: defaultData.data,
     intervalId: 0,

@@ -25,7 +25,7 @@ type Props = {
   order: string[],
 }
 
-class EditHomeView extends React.PureComponent<void, Props, void> {
+class EditHomeView extends React.PureComponent<Props> {
   static navigationOptions = {
     title: 'Edit Home',
   }

@@ -24,20 +24,22 @@ const CENTRAL_TZ = 'America/Winnipeg'
 
 const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
 
-export class GitHubHostedMenu extends React.Component {
-  props: TopLevelViewPropsType & {
-    name: string,
-    loadingMessage: string[],
-  }
+type Props = TopLevelViewPropsType & {
+  name: string,
+  loadingMessage: string[],
+}
 
-  state: {
-    error: ?Error,
-    loading: boolean,
-    now: momentT,
-    foodItems: MenuItemContainerType,
-    corIcons: MasterCorIconMapType,
-    meals: ProcessedMealType[],
-  } = {
+type State = {
+  error: ?Error,
+  loading: boolean,
+  now: momentT,
+  foodItems: MenuItemContainerType,
+  corIcons: MasterCorIconMapType,
+  meals: ProcessedMealType[],
+}
+
+export class GitHubHostedMenu extends React.PureComponent<Props, State> {
+  state = {
     error: null,
     loading: true,
     now: moment.tz(CENTRAL_TZ),

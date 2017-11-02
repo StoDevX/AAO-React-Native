@@ -45,18 +45,18 @@ const styles = StyleSheet.create({
   },
 })
 
-export class ProgressChunk extends React.PureComponent {
-  props: {
-    afterStop: boolean,
-    atStop: boolean,
-    barColor: string,
-    beforeStop: boolean,
-    currentStopColor: string,
-    skippingStop: boolean,
-    isFirstChunk: boolean,
-    isLastChunk: boolean,
-  }
+type Props = {
+  afterStop: boolean,
+  atStop: boolean,
+  barColor: string,
+  beforeStop: boolean,
+  currentStopColor: string,
+  skippingStop: boolean,
+  isFirstChunk: boolean,
+  isLastChunk: boolean,
+}
 
+export class ProgressChunk extends React.PureComponent<Props> {
   render() {
     const {
       afterStop,

@@ -79,7 +79,7 @@ type Props = {
   openMap: () => any,
 }
 
-export class BusLine extends React.Component<void, Props, void> {
+export class BusLine extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
     // We won't check the time in shouldComponentUpdate, because we really
     // only care if the bus information has changed, and this is called after

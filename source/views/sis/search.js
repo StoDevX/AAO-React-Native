@@ -6,20 +6,19 @@
 
 import React from 'react'
 import {TabBarIcon} from '../components/tabbar-icon'
-import {
-  // StyleSheet,
-  View,
-  Text,
-} from 'react-native'
+import {View, Text} from 'react-native'
 
-export default class SearchView extends React.Component {
+type Props = {}
+type State = {loading: boolean, error: ?Error}
+
+export default class SearchView extends React.Component<Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Search',
     tabBarIcon: TabBarIcon('search'),
   }
 
   state = {
-    loaded: false,
+    loading: true,
     error: null,
   }
 

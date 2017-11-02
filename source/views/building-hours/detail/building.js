@@ -41,7 +41,7 @@ type Props = {
   onProblemReport: () => any,
 }
 
-export class BuildingDetail extends React.Component<void, Props, void> {
+export class BuildingDetail extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
     return (
       !this.props.now.isSame(nextProps.now, 'minute') ||

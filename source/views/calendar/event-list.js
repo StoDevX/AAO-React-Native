@@ -21,15 +21,15 @@ const FullWidthSeparator = props => (
   <ListSeparator fullWidth={true} {...props} />
 )
 
-export class EventList extends React.PureComponent {
-  props: TopLevelViewPropsType & {
-    events: EventType[],
-    message: ?string,
-    refreshing: boolean,
-    onRefresh: () => any,
-    now: moment,
-  }
+type Props = TopLevelViewPropsType & {
+  events: EventType[],
+  message: ?string,
+  refreshing: boolean,
+  onRefresh: () => any,
+  now: moment,
+}
 
+export class EventList extends React.PureComponent<Props> {
   groupEvents = (events: EventType[], now: moment): any => {
     // the proper return type is $ReadOnlyArray<{title: string, data: $ReadOnlyArray<EventType>}>
     const grouped = groupBy(events, event => {

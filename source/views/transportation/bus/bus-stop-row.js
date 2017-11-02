@@ -26,18 +26,18 @@ const styles = StyleSheet.create({
   },
 })
 
-export class BusStopRow extends React.PureComponent {
-  props: {
-    time: moment,
-    now: moment,
-    barColor: string,
-    currentStopColor: string,
-    place: string,
-    times: FancyBusTimeListType,
-    isFirstRow: boolean,
-    isLastRow: boolean,
-  }
+type Props = {
+  time: moment,
+  now: moment,
+  barColor: string,
+  currentStopColor: string,
+  place: string,
+  times: FancyBusTimeListType,
+  isFirstRow: boolean,
+  isLastRow: boolean,
+}
 
+export class BusStopRow extends React.PureComponent<Props> {
   render() {
     const {
       time,
@@ -90,12 +90,12 @@ export class BusStopRow extends React.PureComponent {
   }
 }
 
-class ScheduleTimes extends React.PureComponent {
-  props: {
-    skippingStop: boolean,
-    times: FancyBusTimeListType,
-  }
+type ScheduleTimesProps = {
+  skippingStop: boolean,
+  times: FancyBusTimeListType,
+}
 
+class ScheduleTimes extends React.PureComponent<ScheduleTimesProps> {
   render() {
     const {times, skippingStop} = this.props
 

@@ -36,7 +36,7 @@ type State = {
   refreshing: boolean,
 }
 
-export class OtherModesView extends React.PureComponent<void, Props, State> {
+export class OtherModesView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Other Modes',
     tabBarIcon: TabBarIcon('boat'),
@@ -54,7 +54,7 @@ export class OtherModesView extends React.PureComponent<void, Props, State> {
     })
   }
 
-  refresh = async () => {
+  refresh = async (): any => {
     const start = Date.now()
     this.setState(() => ({refreshing: true}))
 

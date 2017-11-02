@@ -5,12 +5,12 @@ import type {ContactType} from './types'
 import {ListRow, Detail, Title} from '../components/list'
 import {Column, Row} from '../components/layout'
 
-export class ContactRow extends React.PureComponent {
-  props: {
-    onPress: ContactType => any,
-    contact: ContactType,
-  }
+type Props = {
+  onPress: ContactType => any,
+  contact: ContactType,
+}
 
+export class ContactRow extends React.PureComponent<Props> {
   _onPress = () => this.props.onPress(this.props.contact)
 
   render() {
