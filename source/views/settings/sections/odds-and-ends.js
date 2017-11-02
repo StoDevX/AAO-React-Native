@@ -27,7 +27,9 @@ class OddsAndEndsSection extends React.Component {
   }
 
   checkIfSupported() {
-    Icons.supportDevice(result => this.setState(() => ({supported: result, loading: false})))
+    Icons.supportDevice(result =>
+      this.setState(() => ({supported: result, loading: false})),
+    )
   }
 
   onPressButton = (id: string) => {
