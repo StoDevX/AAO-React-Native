@@ -1,7 +1,7 @@
 // @flow
 import React from 'react'
 import {ScrollView, Image, StyleSheet, Text} from 'react-native'
-import Icons from 'react-native-alternate-icons'
+import * as Icons from 'react-native-alternate-icons'
 import {Section, Cell} from 'react-native-tableview-simple'
 import {Column} from '../components/layout'
 import includes from 'lodash/includes'
