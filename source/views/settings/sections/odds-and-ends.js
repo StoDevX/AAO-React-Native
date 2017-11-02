@@ -9,7 +9,7 @@ import {connect} from 'react-redux'
 import {CellToggle} from '../../components/cells/toggle'
 import {PushButtonCell} from '../../components/cells/push-button'
 import {trackedOpenUrl} from '../../components/open-url'
-import Icons from 'react-native-alternate-icons'
+import * as Icons from 'react-native-alternate-icons'
 
 class OddsAndEndsSection extends React.Component {
   props: TopLevelViewPropsType & {
