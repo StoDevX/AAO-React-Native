@@ -1130,9 +1130,9 @@ buffer@5.0.8:
     base64-js "^1.0.2"
     ieee754 "^1.1.4"
 
-bugsnag-react-native@2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/bugsnag-react-native/-/bugsnag-react-native-2.5.1.tgz#d7617febd8ae692c5f92ce6d06890c6c0a2def12"
+bugsnag-react-native@2.5.2:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/bugsnag-react-native/-/bugsnag-react-native-2.5.2.tgz#b4f8409946f24f6aa4749bb32896752cb517f93c"
   dependencies:
     prop-types "^15.6.0"
 
@@ -5312,7 +5312,7 @@ vinyl@^0.5.0:
     clone-stats "^0.0.1"
     replace-ext "0.0.1"
 
-"vm2@github:patriksimek/vm2#custom_files":
+vm2@patriksimek/vm2#custom_files:
   version "3.5.0"
   resolved "https://codeload.github.com/patriksimek/vm2/tar.gz/7e82f90ac705fc44fad044147cb0df09b4c79a57"
 
