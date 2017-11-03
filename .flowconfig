@@ -28,6 +28,9 @@
 .*/node_modules/.*/Example/.*
 .*/node_modules/react-native-mock/.*
 .*/node_modules/react-native-linear-gradient/.*
+; ignore unknown duplicate spots in react-navigation
+.*/node_modules/react-navigation/lib-rn
+.*/node_modules/react-navigation/lib
 
 [include]
 
