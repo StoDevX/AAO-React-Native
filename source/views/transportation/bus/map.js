@@ -2,13 +2,12 @@
 
 import React from 'react'
 import {StyleSheet} from 'react-native'
-import type {BusLineType} from './types'
+import type {UnprocessedBusLine} from './types'
 import MapView from 'react-native-maps'
 import moment from 'moment-timezone'
 import {NoticeView} from '../../components/notice'
 import type {TopLevelViewPropsType} from '../../types'
-import {getScheduleForNow} from './lib'
-import zip from 'lodash/zip'
+import {getScheduleForNow, processBusLine} from './lib'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
 
@@ -22,7 +21,7 @@ type Props = TopLevelViewPropsType & {
   navigation: {
     state: {
       params: {
-        line: BusLineType,
+        line: UnprocessedBusLine,
       },
     },
   },
@@ -40,7 +39,11 @@ type State = {
 }
 
 export class BusMapView extends React.PureComponent<Props, State> {
-  static navigationOptions = ({navigation}) => ({
+  static navigationOptions = ({
+    navigation,
+  }: {
+    navigation: {state: {params: {line: UnprocessedBusLine}}},
+  }) => ({
     title: `${navigation.state.params.line.name} Map`,
   })
 
@@ -85,30 +88,29 @@ export class BusMapView extends React.PureComponent<Props, State> {
   }
 
   render() {
-    let {now} = this.state
+    const {now} = this.state
     // now = moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE)
     const lineToDisplay = this.props.navigation.state.params.line
 
-    const schedule = getScheduleForNow(lineToDisplay.schedules, now)
-    if (!schedule) {
+    const processedLine = processBusLine(lineToDisplay, now)
+    const scheduleForToday = getScheduleForNow(processedLine.schedules, now)
+
+    if (!scheduleForToday) {
       const notice = `No schedule was found for today, ${now.format('dddd')}`
       return <NoticeView text={notice} />
     }
 
-    const coords = schedule.coordinates || []
-    if (!coords.length) {
+    const entriesWithCoordinates = scheduleForToday.timetable.filter(
+      entry => entry.coordinates,
+    )
+
+    if (!entriesWithCoordinates.length) {
       const today = now.format('dddd')
-      return (
-        <NoticeView
-          text={`No coordinates have been provided for today's (${today}) schedule on the "${lineToDisplay}" line`}
-        />
-      )
+      const msg = `No coordinates have been provided for today's (${today}) schedule on the "${lineToDisplay}" line`
+      return <NoticeView text={msg} />
     }
 
-    const markers = uniqBy(
-      zip(coords, schedule.stops),
-      ([[lat, lng]]) => `${lat},${lng}`,
-    )
+    const markers = uniqBy(entriesWithCoordinates, ({name}) => name)
 
     return (
       <MapView
@@ -117,11 +119,13 @@ export class BusMapView extends React.PureComponent<Props, State> {
         onRegionChangeComplete={this.onRegionChangeComplete}
         loadingEnabled={true}
       >
-        {markers.map(([[latitude, longitude], title], i) => (
+        {markers.map(({name, coordinates: [lat, lng] = []}, i) => (
+          // we know from entriesWithCoordinates that all of these will have
+          // coordinates; I just can't convince flow of that without a default value
           <MapView.Marker
             key={i}
-            coordinate={{latitude, longitude}}
-            title={title}
+            coordinate={{lat, lng}}
+            title={name}
             // description={marker.description}
             // TODO: add "next arrival" time as the description
           />

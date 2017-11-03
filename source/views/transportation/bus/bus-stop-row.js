@@ -1,9 +1,9 @@
 // @flow
 import React from 'react'
 import {Platform, StyleSheet, Text} from 'react-native'
-import {Row, Column} from '../../components/layout'
+import {Column} from '../../components/layout'
 import {ListRow, Detail, Title} from '../../components/list'
-import type {FancyBusTimeListType} from './types'
+import type {BusTimetableEntry, DepartureTimeList} from './types'
 import type moment from 'moment'
 import * as c from '../../components/colors'
 import {ProgressChunk} from './components/progress-chunk'
@@ -27,12 +27,11 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-  time: moment,
+  stop: BusTimetableEntry,
+  departureIndex: false | number,
   now: moment,
   barColor: string,
   currentStopColor: string,
-  place: string,
-  times: FancyBusTimeListType,
   isFirstRow: boolean,
   isLastRow: boolean,
 }
@@ -40,51 +39,54 @@ type Props = {
 export class BusStopRow extends React.PureComponent<Props> {
   render() {
     const {
-      time,
-      now,
       barColor,
       currentStopColor,
-      place,
-      times,
+      departureIndex,
       isFirstRow,
       isLastRow,
+      now,
+      stop,
     } = this.props
 
-    const afterStop = time && now.isAfter(time, 'minute')
-    const atStop = time && now.isSame(time, 'minute')
+    const time =
+      departureIndex === false ? false : stop.departures[departureIndex]
+
+    const afterStop = time ? now.isAfter(time, 'minute') : false
+    const atStop = time ? now.isSame(time, 'minute') : false
     const beforeStop = !afterStop && !atStop && time !== false
     const skippingStop = time === false
 
     return (
       <ListRow fullWidth={true} fullHeight={true}>
-        <Row>
-          <ProgressChunk
-            barColor={barColor}
-            afterStop={afterStop}
-            beforeStop={beforeStop}
-            atStop={atStop}
-            skippingStop={skippingStop}
-            currentStopColor={currentStopColor}
-            isFirstChunk={isFirstRow}
-            isLastChunk={isLastRow}
-          />
+        <ProgressChunk
+          barColor={barColor}
+          afterStop={afterStop}
+          beforeStop={beforeStop}
+          atStop={atStop}
+          skippingStop={skippingStop}
+          currentStopColor={currentStopColor}
+          isFirstChunk={isFirstRow}
+          isLastChunk={isLastRow}
+        />
 
-          <Column flex={1} style={styles.internalPadding}>
-            <Title
-              bold={false}
-              style={[
-                skippingStop && styles.skippingStopTitle,
-                afterStop && styles.passedStopTitle,
-                atStop && styles.atStopTitle,
-              ]}
-            >
-              {place}
-            </Title>
-            <Detail lines={1}>
-              <ScheduleTimes times={times} skippingStop={skippingStop} />
-            </Detail>
-          </Column>
-        </Row>
+        <Column flex={1} style={styles.internalPadding}>
+          <Title
+            bold={false}
+            style={[
+              skippingStop && styles.skippingStopTitle,
+              afterStop && styles.passedStopTitle,
+              atStop && styles.atStopTitle,
+            ]}
+          >
+            {stop.name}
+          </Title>
+          <Detail lines={1}>
+            <ScheduleTimes
+              times={stop.departures.slice(departureIndex || 0)}
+              skippingStop={skippingStop}
+            />
+          </Detail>
+        </Column>
       </ListRow>
     )
   }
@@ -92,7 +94,7 @@ export class BusStopRow extends React.PureComponent<Props> {
 
 type ScheduleTimesProps = {
   skippingStop: boolean,
-  times: FancyBusTimeListType,
+  times: DepartureTimeList,
 }
 
 class ScheduleTimes extends React.PureComponent<ScheduleTimesProps> {
@@ -103,7 +105,7 @@ class ScheduleTimes extends React.PureComponent<ScheduleTimesProps> {
       <Text style={skippingStop && styles.skippingStopDetail}>
         {times
           // and format the times
-          .map(time => (time === false ? 'None' : time.format(TIME_FORMAT)))
+          .map(time => (!time ? 'None' : time.format(TIME_FORMAT)))
           .join(' • ')}
       </Text>
     )
