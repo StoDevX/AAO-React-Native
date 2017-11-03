@@ -27,7 +27,6 @@
 .*/node_modules/.*/examples/.*
 .*/node_modules/.*/Example/.*
 .*/node_modules/react-native-mock/.*
-; remove this after rn-linear-gradient updates
 .*/node_modules/react-native-linear-gradient/.*
 
 [include]
