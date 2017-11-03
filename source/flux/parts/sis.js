@@ -1,7 +1,4 @@
-/**
- * @flow
- * Reducer for app settings
- */
+// @flow
 
 import {getBalances} from '../../lib/financials'
 

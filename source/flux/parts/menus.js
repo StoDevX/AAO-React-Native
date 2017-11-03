@@ -1,7 +1,4 @@
-/**
- * @flow
- * Reducer for menus state info
- */
+// @flow
 
 import {trackMenuFilters} from '../../analytics'
 

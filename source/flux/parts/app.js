@@ -1,7 +1,4 @@
-/**
- * @flow
- * Reducer for app-wide miscallaneous state
- */
+// @flow
 
 export const PUSH_VIEW = 'app/PUSH_VIEW'
 export const POP_VIEW = 'app/POP_VIEW'
