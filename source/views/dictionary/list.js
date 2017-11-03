@@ -153,7 +153,7 @@ export class DictionaryView extends React.PureComponent<Props, State> {
           ROW_HEIGHT +
           (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
         }
-        data={groupBy(this.state.results, item => head(item.word))}
+        data={groupBy(this.state.results, item => item.word[0])}
         onSearch={this.performSearch}
         refreshControl={refreshControl}
         renderSeparator={this.renderSeparator}
