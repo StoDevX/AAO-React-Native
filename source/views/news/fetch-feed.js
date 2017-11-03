@@ -19,7 +19,7 @@ const fetchText = url => fetch(url).then(r => r.text())
 
 export async function fetchRssFeed(
   url: string,
-  query?: Object,
+  query: Object = {},
 ): Promise<StoryType[]> {
   const responseText = await fetchText(`${url}?${qs.stringify(query)}`)
   const feed: FeedResponseType = await parseXml(responseText)
@@ -28,7 +28,7 @@ export async function fetchRssFeed(
 
 export async function fetchWpJson(
   url: string,
-  query?: Object,
+  query: Object = {},
 ): Promise<StoryType[]> {
   const feed: WpJsonResponseType = await fetchJson(
     `${url}?${qs.stringify(query)}`,
