@@ -29,7 +29,9 @@ export function DietaryTags({
   style?: any,
 }) {
   // filter the mapping of all icons by just the icons provided by this item
-  let filtered = pick(corIcons, keys(dietary))
+  let filtered = Array.isArray(dietary)
+    ? pick(corIcons, [])
+    : pick(corIcons, keys(dietary))
 
   // turn the remaining items into images
   let tags = map(filtered, (dietaryIcon, key) => (
