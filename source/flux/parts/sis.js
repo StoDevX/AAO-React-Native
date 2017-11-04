@@ -1,7 +1,4 @@
-/**
- * @flow
- * Reducer for app settings
- */
+// @flow
 
 import {getBalances} from '../../lib/financials'
 
@@ -105,8 +102,15 @@ function courses(state = initialCoursesState, action) {
   }
 }
 
-const initialSisPageState = {}
-export function sis(state: Object = initialSisPageState, action: Object) {
+export type SisState = {
+  balances: BalancesState,
+  courses: Object,
+}
+const initialSisPageState = {
+  balances: balances(undefined, {}),
+  courses: courses(undefined, {}),
+}
+export function sis(state: SisState = initialSisPageState, action: Object) {
   return {
     balances: balances(state.balances, action),
     courses: courses(state.courses, action),

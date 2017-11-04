@@ -12,11 +12,11 @@ import {
 import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
-import type {LoginStateType} from '../../flux/parts/settings'
 
 import {
   hasSeenAcknowledgement,
   type SettingsState,
+  type LoginStateType,
 } from '../../flux/parts/settings'
 import {updateBalances, type BalancesState} from '../../flux/parts/sis'
 

@@ -1,7 +1,4 @@
-/**
- * @flow
- * Reducer for menus state info
- */
+// @flow
 
 import {trackMenuFilters} from '../../analytics'
 
@@ -12,8 +9,12 @@ export const updateMenuFilters = (menuName: string, filters: any[]) => {
   return {type: UPDATE_MENU_FILTERS, payload: {menuName, filters}}
 }
 
-const initialMenusState = {}
-export function menus(state: Object = initialMenusState, action: Object) {
+export type MenusState = {
+  [key: string]: Array<any>,
+}
+
+const initialMenusState: MenusState = {}
+export function menus(state: MenusState = initialMenusState, action: Object) {
   const {type, payload} = action
 
   switch (type) {
