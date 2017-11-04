@@ -85,7 +85,7 @@
     "react-native-search-bar": "3.0.0",
     "react-native-tableview-simple": "0.17.1",
     "react-native-vector-icons": "4.4.2",
-    "react-navigation": "1.0.0-beta.16",
+    "react-navigation": "1.0.0-beta.17",
     "react-redux": "5.0.6",
     "redux": "3.7.2",
     "redux-logger": "3.0.6",
@@ -99,6 +99,7 @@
   },
   "devDependencies": {
     "ajv": "5.3.0",
+    "babel-core": "6.26.0",
     "babel-eslint": "8.0.1",
     "babel-jest": "21.2.0",
     "babel-plugin-flow-react-proptypes": "7.0.1",
@@ -118,6 +119,7 @@
     "minimist": "1.2.0",
     "pify": "3.0.0",
     "prettier": "1.7.4",
+    "prop-types": "15.6.0",
     "react-test-renderer": "16.0.0-alpha.12",
     "string-natural-compare": "2.0.2"
   }
