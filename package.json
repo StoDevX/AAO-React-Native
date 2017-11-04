@@ -68,7 +68,7 @@
     "react": "16.0.0-beta.5",
     "react-addons-shallow-compare": "15.6.2",
     "react-markdown": "2.5.0",
-    "react-native": "0.49.5",
+    "react-native": "0.50.1",
     "react-native-button": "2.1.0",
     "react-native-calendar-events": "1.4.3",
     "react-native-communications": "2.2.1",
