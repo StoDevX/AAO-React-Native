@@ -27,10 +27,10 @@
 .*/node_modules/.*/examples/.*
 .*/node_modules/.*/Example/.*
 .*/node_modules/react-native-mock/.*
-; try removing this line in react-native 0.46
-.*/node_modules/react-native/local-cli/server/util/attachHMRServer.js
-; remove this after rn-linear-gradient updates
 .*/node_modules/react-native-linear-gradient/.*
+; ignore unknown duplicate spots in react-navigation
+.*/node_modules/react-navigation/lib-rn
+.*/node_modules/react-navigation/lib
 
 [include]
 
@@ -48,6 +48,8 @@ munge_underscores=true
 
 ; from https://github.com/facebook/flow/issues/945
 module.file_ext=.ios.js
+module.file_ext=.android.js
+module.file_ext=.native.js
 module.file_ext=.js
 module.file_ext=.jsx
 module.file_ext=.json

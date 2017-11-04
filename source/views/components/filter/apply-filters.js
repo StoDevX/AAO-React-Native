@@ -63,7 +63,7 @@ export function applyAndListFilter(
   itemValue: string[] | {[key: string]: string},
 ): boolean {
   // In case the value is an object, instead of an array, convert it to an array
-  if (isPlainObject(itemValue)) {
+  if (!Array.isArray(itemValue)) {
     itemValue = values(itemValue)
   }
 

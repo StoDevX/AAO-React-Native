@@ -114,7 +114,7 @@ type WeekTogglesProps = {
 }
 
 class WeekTogglesIOS extends React.PureComponent<WeekTogglesProps> {
-  toggleDay = day => {
+  toggleDay = (day: DayOfWeekEnumType) => {
     this.props.onChangeDays(xor(this.props.days, [day]))
   }
 
@@ -164,8 +164,8 @@ class WeekTogglesAndroid extends React.PureComponent<WeekTogglesProps> {
 
 type ToggleButtonProps = {
   active: boolean,
-  text: string,
-  onPress: (newState: string) => any,
+  text: DayOfWeekEnumType,
+  onPress: (newState: DayOfWeekEnumType) => any,
 }
 
 class ToggleButton extends React.PureComponent<ToggleButtonProps> {
