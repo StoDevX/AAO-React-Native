@@ -3,7 +3,7 @@ import type {
   NavigationRoute,
   NavigationScreenProp,
   NavigationAction,
-} from 'react-navigation'
+} from 'react-navigation/src/TypeDefinition'
 
 export type NavType = NavigationScreenProp<NavigationRoute, NavigationAction>
 

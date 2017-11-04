@@ -9,7 +9,7 @@ import {Provider} from 'react-redux'
 import {store} from './flux'
 import {tracker} from './analytics'
 import {AppNavigator} from './navigation'
-import type {NavigationState} from 'react-navigation'
+import type {NavigationState, NavigationRoute, NavigationStateRoute} from 'react-navigation/src/TypeDefinition'
 
 // gets the current screen from navigation state
 function getCurrentRouteName(navigationState: NavigationState): ?string {
