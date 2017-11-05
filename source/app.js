@@ -9,7 +9,7 @@ import {Provider} from 'react-redux'
 import {store, initRedux} from './flux'
 import {tracker} from './analytics'
 import {AppNavigator} from './navigation'
-import type {NavigationState, NavigationRoute, NavigationStateRoute} from 'react-navigation/src/TypeDefinition'
+import type {NavigationState} from 'react-navigation/src/TypeDefinition'
 
 initRedux(store)
 
