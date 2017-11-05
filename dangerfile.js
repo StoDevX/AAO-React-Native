@@ -24,14 +24,14 @@ jsFiles
     warn(`<code>${file}</code> has no <code>@flow</code> annotation!`),
   )
 
-// revisit this when we move to yarn
-// const packageChanged = danger.git.modified_files.includes('package.json')
-// const lockfileChanged = danger.git.modified_files.includes('yarn.lock')
-// if (packageChanged && !lockfileChanged) {
-//   const message = 'Changes were made to package.json, but not to yarn.lock'
-//   const idea = 'Perhaps you need to run <code>yarn install</code>?'
-//   warn(`${message} - <i>${idea}</i>`)
-// }
+// warn when package.json changed and yarn.lock not
+const packageChanged = danger.git.modified_files.includes('package.json')
+const lockfileChanged = danger.git.modified_files.includes('yarn.lock')
+if (packageChanged && !lockfileChanged) {
+  const message = 'Changes were made to package.json, but not to yarn.lock'
+  const idea = 'Perhaps you need to run <code>yarn install</code>?'
+  warn(`${message} - <i>${idea}</i>`)
+}
 
 // Be careful of leaving testing shortcuts in the codebase
 jsFiles
