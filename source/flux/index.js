@@ -22,7 +22,7 @@ export type ReduxState = {
   sis?: SisState,
 }
 
-export const aao = combineReducers({
+export const aao: any = combineReducers({
   app,
   homescreen,
   menus,
