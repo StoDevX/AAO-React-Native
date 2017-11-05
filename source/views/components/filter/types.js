@@ -4,7 +4,6 @@ export type FilterFunctionType = {
   +key: string,
 }
 
-
 export type ToggleSpecType = {
   +label: string,
   +title?: string,
@@ -18,7 +17,6 @@ export type ToggleType = {
   +spec: ToggleSpecType,
   +apply: FilterFunctionType,
 }
-
 
 export type ListItemSpecType = {
   +title: string,
@@ -43,7 +41,6 @@ export type ListType = {
   +apply: FilterFunctionType,
 }
 
-
 export type PickerItemSpecType = {
   +label: string,
 }
@@ -62,6 +59,5 @@ export type PickerType = {
   +spec: PickerSpecType,
   +apply: FilterFunctionType,
 }
-
 
 export type FilterType = ToggleType | ListType | PickerType
