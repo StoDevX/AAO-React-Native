@@ -151,7 +151,7 @@ export type State = {
 
   +username: string,
   +password: string,
-  +state: LoginStateType,
+  +loginState: LoginStateType,
 }
 
 const initialState = {
@@ -163,7 +163,7 @@ const initialState = {
 
   username: '',
   password: '',
-  state: 'logged-out',
+  loginState: 'logged-out',
 }
 
 export function settings(state: State = initialState, action: Action) {
@@ -178,21 +178,21 @@ export function settings(state: State = initialState, action: Action) {
       return {...state, unofficiallyAcknowledged: action.payload}
 
     case CREDENTIALS_VALIDATE_START:
-      return {...state, state: 'checking'}
+      return {...state, loginState: 'checking'}
 
     case CREDENTIALS_VALIDATE_SUCCESS:
-      return {...state, state: 'logged-in'}
+      return {...state, loginState: 'logged-in'}
 
     case CREDENTIALS_VALIDATE_FAILURE:
-      return {...state, state: 'invalid'}
+      return {...state, loginState: 'invalid'}
 
     case CREDENTIALS_LOGIN_START:
-      return {...state, state: 'checking'}
+      return {...state, loginState: 'checking'}
 
     case CREDENTIALS_LOGIN_SUCCESS: {
       return {
         ...state,
-        state: 'logged-in',
+        loginState: 'logged-in',
         username: action.payload.username,
         password: action.payload.password,
       }
@@ -204,7 +204,7 @@ export function settings(state: State = initialState, action: Action) {
     case CREDENTIALS_LOGOUT: {
       return {
         ...state,
-        state: 'logged-out',
+        loginState: 'logged-out',
         username: '',
         password: '',
       }
