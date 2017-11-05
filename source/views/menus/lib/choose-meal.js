@@ -15,7 +15,11 @@ export function chooseMeal(
   )
 
   let selectedMeal = meals[0]
-  if (mealChooserFilter && mealChooserFilter.spec.selected && mealChooserFilter.spec.selected.label) {
+  if (
+    mealChooserFilter &&
+    mealChooserFilter.spec.selected &&
+    mealChooserFilter.spec.selected.label
+  ) {
     let label = mealChooserFilter.spec.selected.label
     selectedMeal = meals.find(meal => meal.label === label)
   } else {
