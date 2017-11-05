@@ -1,25 +1,39 @@
 // @flow
 
 import {trackMenuFilters} from '../../analytics'
+import {type FilterType} from '../../views/components/filter/types'
 
 export const UPDATE_MENU_FILTERS = 'menus/UPDATE_MENU_FILTERS'
 
-export const updateMenuFilters = (menuName: string, filters: any[]) => {
+export type UpdateMenuFiltersAction = {
+  type: 'menus/UPDATE_MENU_FILTERS',
+  payload: {
+    menuName: string,
+    filters: Array<FilterType>,
+  },
+}
+export function updateMenuFilters(
+  menuName: string,
+  filters: FilterType[],
+): UpdateMenuFiltersAction {
   trackMenuFilters(menuName, filters)
   return {type: UPDATE_MENU_FILTERS, payload: {menuName, filters}}
 }
 
-export type MenusState = {
-  [key: string]: Array<any>,
+export type Action = UpdateMenuFiltersAction
+
+export type State = {
+  +[key: string]: Array<FilterType>,
 }
 
-const initialMenusState: MenusState = {}
-export function menus(state: MenusState = initialMenusState, action: Object) {
-  const {type, payload} = action
-
-  switch (type) {
+export function menus(state: State = {}, action: Action) {
+  switch (action.type) {
     case UPDATE_MENU_FILTERS:
-      return {...state, [payload.menuName]: payload.filters}
+      return {
+        ...state,
+        [action.payload.menuName]: action.payload.filters,
+      }
+
     default:
       return state
   }
