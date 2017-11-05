@@ -79,12 +79,12 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
       corIcons = fallbackMenu.corIcons || {}
     }
 
-    foodItems = fromPairs(
+    const upgradedFoodItems = fromPairs(
       foodItems.map(upgradeMenuItem).map(item => [item.id, item]),
     )
     stationMenus = stationMenus.map((menu, index) => ({
       ...upgradeStation(menu, index),
-      items: filter(foodItems, item => item.station === menu.label).map(
+      items: filter(upgradedFoodItems, item => item.station === menu.label).map(
         item => item.id,
       ),
     }))
@@ -92,7 +92,7 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
     this.setState({
       loading: false,
       corIcons,
-      foodItems,
+      foodItems: upgradedFoodItems,
       meals: [
         {
           label: 'Menu',

@@ -12,24 +12,23 @@ import {
 import {TabBarIcon} from '../components/tabbar-icon'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
-
 import {
   hasSeenAcknowledgement,
-  type State as SettingsState,
   type LoginStateType,
 } from '../../flux/parts/settings'
-import {updateBalances, type State as BalancesState} from '../../flux/parts/sis'
-
+import {updateBalances} from '../../flux/parts/sis'
+import {type ReduxState} from '../../flux'
 import delay from 'delay'
 import * as c from '../components/colors'
-
 import type {TopLevelViewPropsType} from '../types'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 const LONG_DISCLAIMER =
   'This data may be inaccurate.\nBon Appétit is always right.\nThis app is unofficial.'
 
-type Props = TopLevelViewPropsType & {
+type ReactProps = TopLevelViewPropsType
+
+type ReduxStateProps = {
   flex: ?string,
   ole: ?string,
   print: ?string,
@@ -39,10 +38,14 @@ type Props = TopLevelViewPropsType & {
   loginState: LoginStateType,
   message: ?string,
   alertSeen: boolean,
+}
 
+type ReduxDispatchProps = {
   hasSeenAcknowledgement: () => any,
   updateBalances: boolean => any,
 }
+
+type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
 
 type State = {
   loading: boolean,
@@ -183,25 +186,22 @@ class BalancesView extends React.PureComponent<Props, State> {
   }
 }
 
-function mapState(state: {
-  sis: {balances: BalancesState},
-  settings: SettingsState,
-}) {
+function mapState(state: ReduxState): ReduxStateProps {
   return {
-    flex: state.sis.balances.flex,
-    ole: state.sis.balances.ole,
-    print: state.sis.balances.print,
-    weeklyMeals: state.sis.balances.weekly,
-    dailyMeals: state.sis.balances.daily,
-    mealPlan: state.sis.balances.plan,
-    message: state.sis.balances.message,
-    alertSeen: state.settings.unofficiallyAcknowledged,
+    flex: state.sis ? state.sis.flexBalance : null,
+    ole: state.sis ? state.sis.oleBalance : null,
+    print: state.sis ? state.sis.printBalance : null,
+    weeklyMeals: state.sis ? state.sis.mealsRemainingThisWeek : null,
+    dailyMeals: state.sis ? state.sis.mealsRemainingToday : null,
+    mealPlan: state.sis ? state.sis.mealPlanDescription : null,
+    message: state.sis ? state.sis.balancesErrorMessage : null,
+    alertSeen: state.settings ? state.settings.unofficiallyAcknowledged : false,
 
-    loginState: state.settings.credentials.state,
+    loginState: state.settings ? state.settings.loginState : 'logged-out',
   }
 }
 
-function mapDispatch(dispatch) {
+function mapDispatch(dispatch): ReduxDispatchProps {
   return {
     updateBalances: force => dispatch(updateBalances(force)),
     hasSeenAcknowledgement: () => dispatch(hasSeenAcknowledgement()),
