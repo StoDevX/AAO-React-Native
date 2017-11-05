@@ -1,6 +1,5 @@
 // @flow
 
-import {combineReducers} from 'redux'
 import {type ReduxState} from '../index'
 import {getBalances, type BalancesShapeType} from '../../lib/financials'
 
@@ -49,46 +48,55 @@ export function updateBalances(
 type Action = UpdateBalancesActions
 
 export type State = {
-  message: ?string,
-  flex: ?string,
-  ole: ?string,
-  print: ?string,
-  daily: ?string,
-  weekly: ?string,
-  plan: ?string,
+  balancesErrorMessage: ?string,
+  flexBalance: ?string,
+  oleBalance: ?string,
+  printBalance: ?string,
+  mealsRemainingToday: ?string,
+  mealsRemainingThisWeek: ?string,
+  mealPlanDescription: ?string,
 }
 const initialState = {
-  message: null,
-  flex: null,
-  ole: null,
-  print: null,
-  daily: null,
-  weekly: null,
-  plan: null,
+  balancesErrorMessage: null,
+  flexBalance: null,
+  oleBalance: null,
+  printBalance: null,
+  mealsRemainingToday: null,
+  mealsRemainingThisWeek: null,
+  mealPlanDescription: null,
 }
-function balances(state: State = initialState, action: Action) {
+export function sis(state: State = initialState, action: Action) {
   switch (action.type) {
     case UPDATE_OLE_DOLLARS:
-      return {...state, ole: action.payload.balance}
+      return {...state, oleBalance: action.payload.balance}
     case UPDATE_FLEX_DOLLARS:
-      return {...state, flex: action.payload.balance}
+      return {...state, flexBalance: action.payload.balance}
     case UPDATE_PRINT_DOLLARS:
-      return {...state, print: action.payload.balance}
+      return {...state, printBalance: action.payload.balance}
     case UPDATE_MEALS_DAILY:
-      return {...state, daily: action.payload.mealsRemaining}
+      return {...state, mealsRemainingToday: action.payload.mealsRemaining}
     case UPDATE_MEALS_WEEKLY:
-      return {...state, weekly: action.payload.mealsRemaining}
+      return {...state, mealsRemainingThisWeek: action.payload.mealsRemaining}
     case UPDATE_MEAL_PLAN:
-      return {...state, plan: action.payload.mealPlan}
+      return {...state, mealPlanDescription: action.payload.mealPlan}
 
     case UPDATE_BALANCES_FAILURE:
-      return {...state, message: action.payload.message}
-    case UPDATE_BALANCES_SUCCESS:
-      return {...state, ...action.payload, message: null}
+      return {...state, balancesErrorMessage: action.payload.message}
+    case UPDATE_BALANCES_SUCCESS: {
+      const p = action.payload
+      return {
+        ...state,
+        oleBalance: p.ole,
+        flexBalance: p.flex,
+        printBalance: p.print,
+        mealsRemainingThisWeek: p.weekly,
+        mealsRemainingToday: p.daily,
+        mealPlanDescription: p.plan,
+        balancesErrorMessage: null,
+      }
+    }
 
     default:
       return state
   }
 }
-
-export const sis = combineReducers({balances})
