@@ -7,7 +7,6 @@ import {createStore, applyMiddleware} from 'redux'
 import {createLogger} from 'redux-logger'
 import reduxPromise from 'redux-promise'
 import reduxThunk from 'redux-thunk'
-import {init} from './init'
 
 import {app} from './parts/app'
 import {homescreen} from './parts/homescreen'
@@ -24,14 +23,11 @@ export function aao(state: Object = {}, action: Object) {
     sis: sis(state.sis, action),
   }
 }
+export {init as initRedux} from './init'
+export {updateMenuFilters} from './parts/menus'
 
 const logger = createLogger({collapsed: () => true})
-const store = createStore(
+export const store = createStore(
   aao,
   applyMiddleware(reduxPromise, reduxThunk, logger),
 )
-
-init(store)
-
-export {store}
-export {updateMenuFilters} from './parts/menus'
