@@ -4,13 +4,13 @@
 import * as React from 'react'
 import {Image} from 'react-native'
 
-type Style = Object | number | Array<Style>;
+type $npm$react_native_tableview_simple$v0_x_x$Style = Object | number | Array<$npm$react_native_tableview_simple$v0_x_x$Style>;
 
-type TableviewProps = {|
+type $npm$react_native_tableview_simple$v0_x_x$TableviewProps = {|
   children: React.Node,
 |};
 
-type SectionProps = {|
+type $npm$react_native_tableview_simple$v0_x_x$SectionProps = {|
   allowFontScaling?: boolean,
   children: React.Node,
   footerComponent?: React.Element<typeof React.Component>,
@@ -26,7 +26,7 @@ type SectionProps = {|
   separatorTintColor?: string,
 |};
 
-type CellProps = {|
+type $npm$react_native_tableview_simple$v0_x_x$CellProps = {|
   accessory?: 'DisclosureIndicator' | 'Detail' | 'DetailDisclosure' | 'Checkmark',
   accessoryColor?: string,
   allowFontScaling?: boolean,
@@ -35,9 +35,9 @@ type CellProps = {|
   cellAccessoryView?: React.Element<typeof React.Component>,
   cellContentView?: React.Element<typeof React.Component>,
   cellImageView?: React.Element<typeof React.Component>,
-  contentContainerStyle?: Style,
+  contentContainerStyle?: $npm$react_native_tableview_simple$v0_x_x$Style,
   detail?: React.Node,
-  detailTextStyle?: Style,
+  detailTextStyle?: $npm$react_native_tableview_simple$v0_x_x$Style,
   disableImageResize?: boolean,
   highlightActiveOpacity?: number,
   highlightUnderlayColor?: string,
@@ -47,13 +47,13 @@ type CellProps = {|
   rightDetailColor?: string,
   title?: React.Node,
   titleTextColor?: string,
-  titleTextStyle?: Style,
-  titleTextStyleDisabled?: Style,
+  titleTextStyle?: $npm$react_native_tableview_simple$v0_x_x$Style,
+  titleTextStyleDisabled?: $npm$react_native_tableview_simple$v0_x_x$Style,
   onPress?: (e: any) => any,
 |};
 
 declare module 'react-native-tableview-simple' {
-  declare export var TableView: Class<React.Component<TableviewProps>>;
-  declare export var Section: Class<React.Component<SectionProps>>;
-  declare export var Cell: Class<React.Component<CellProps>>;
+  declare export var TableView: Class<React.Component<$npm$react_native_tableview_simple$v0_x_x$TableviewProps>>;
+  declare export var Section: Class<React.Component<$npm$react_native_tableview_simple$v0_x_x$SectionProps>>;
+  declare export var Cell: Class<React.Component<$npm$react_native_tableview_simple$v0_x_x$CellProps>>;
 }
