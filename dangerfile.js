@@ -16,6 +16,8 @@ const jsFiles = danger.git.created_files.filter(path => path.endsWith('.js'))
 
 // new js files should have `@flow` at the top
 jsFiles
+  // except for those in /flow-typed
+  .filter(filepath => !filepath.includes('flow-typed'))
   .filter(filepath => {
     const content = readFile(filepath)
     return !content.includes('@flow')
