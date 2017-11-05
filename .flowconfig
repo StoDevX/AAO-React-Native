@@ -32,6 +32,8 @@
 ; ignore unknown duplicate spots in react-navigation
 .*/node_modules/react-navigation/lib-rn
 .*/node_modules/react-navigation/lib
+; currently ignoring all type definitions in react-navigation
+.*/node_modules/react-navigation/.*
 
 [include]
 
