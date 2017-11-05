@@ -15,10 +15,10 @@ import {Cell, TableView, Section} from 'react-native-tableview-simple'
 
 import {
   hasSeenAcknowledgement,
-  type SettingsState,
+  type State as SettingsState,
   type LoginStateType,
 } from '../../flux/parts/settings'
-import {updateBalances, type BalancesState} from '../../flux/parts/sis'
+import {updateBalances, type State as BalancesState} from '../../flux/parts/sis'
 
 import delay from 'delay'
 import * as c from '../components/colors'

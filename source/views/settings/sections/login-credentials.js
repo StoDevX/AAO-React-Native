@@ -8,7 +8,7 @@ import {
   logOutViaCredentials,
   validateLoginCredentials,
   setLoginCredentials,
-  type SettingsState,
+  type State as SettingsState,
   type LoginStateType,
 } from '../../../flux/parts/settings'
 import {connect} from 'react-redux'
