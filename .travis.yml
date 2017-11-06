@@ -113,19 +113,17 @@ jobs:
         - echo "loglevel=silent" >> .npmrc
         - mkdir -p logs/
       script:
-        # Ensure failing status in the pipes
         - set -o pipefail
-        # Ensure prettiness
+        # task:lint
         - npm run prettier
         - if ! git diff --quiet ./*.js source/; then
             git diff ./*.js source/ > logs/prettier;
           fi
-        # Lint
         - npm run lint | tee logs/eslint
-        # Validate data
+        # task:check-data
         - npm run validate-data -- --quiet | tee logs/validate-data
         - npm run bundle-data
-        # Type check and run tests
+        # task:flow
         - npm run flow -- check --quiet | tee logs/flow
         # task:jest
         - npm run test -- --coverage --outputFile logs/jest.json --json
