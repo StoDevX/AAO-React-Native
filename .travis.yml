@@ -47,9 +47,7 @@ jobs:
       language: node_js
       node_js: node # install the latest node
       env: [GREENKEEPER=yes]
-      before_install: skip
       install: npm install -g greenkeeper-lockfile@1
-      before_script: skip
       script: greenkeeper-lockfile-update
       after_script: greenkeeper-lockfile-upload
 
@@ -96,11 +94,8 @@ jobs:
       distro: trusty
       language: node_js
       node_js: $TRAVIS_NODE_VERSION
-      env: [GH_PAGES=yes]
-      before_install: skip
-      install:
-        - yarn || yarn
-      before_script: skip
+      env: [TASK=gh_pages]
+      install: yarn || yarn
       script: npm run bundle-data
       deploy:
         provider: pages
