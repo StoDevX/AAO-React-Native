@@ -1,1 +1,1 @@
-rubocop.lint {report_danger: true}
+rubocop.lint(report_danger: true)
