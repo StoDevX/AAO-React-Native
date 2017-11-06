@@ -132,6 +132,21 @@ jobs:
         - npm run danger
       after_success: npx coveralls < ./coverage/lcov.info
 
+    # Lint the Ruby code
+    - stage: Test
+      os: linux
+      sudo: false
+      distro: trusty
+      language: ruby
+      env: [TASK=rubocop]
+      before_install:
+        # dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
+        - export PATH=${PATH/\.\/node_modules\/\.bin/}
+      install: bundle install || bundle install
+      before_script: mkdir -p logs/
+      script:  bundle exec rubocop --fail-level A | tee logs/rubocop
+      after_script: bundle exec danger --danger_id=rubocop
+
     # Deploy the gh-pages data
     - stage: Deploy Data
       os: linux
