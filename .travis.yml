@@ -94,7 +94,7 @@ jobs:
       sudo: false
       language: node_js
       node_js: node # install the latest node
-      env: [GREENKEEPER=yes]
+      env: [TASK=greenkeeper]
       install: npm install -g greenkeeper-lockfile@1
       script: greenkeeper-lockfile-update
       after_script: greenkeeper-lockfile-upload
@@ -106,7 +106,7 @@ jobs:
       distro: trusty
       language: node_js
       node_js: $TRAVIS_NODE_VERSION
-      env: [JS=yes]
+      env: ['TASK=lint,check-data,flow,jest']
       before_install: skip
       install:
         - yarn || yarn
