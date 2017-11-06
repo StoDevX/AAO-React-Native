@@ -109,7 +109,6 @@ jobs:
       env: [JS=yes]
       before_install: skip
       install:
-        - npm install -g coveralls
         - yarn || yarn
       before_script:
         - echo "loglevel=silent" >> .npmrc
@@ -132,8 +131,7 @@ jobs:
         - npm run test -- --coverage 2>&1 | tee logs/jest
       after_script:
         - npm run danger
-      after_success:
-        - coveralls < ./coverage/lcov.info
+      after_success: npx coveralls < ./coverage/lcov.info
 
     # Deploy the gh-pages data
     - stage: Deploy Data
