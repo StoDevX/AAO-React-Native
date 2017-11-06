@@ -2,6 +2,7 @@ AllCops:
   Exclude:
     - 'node_modules/**/*'
   DisabledByDefault: true
+  TargetRubyVersion: '2.4'
 
 #################### Lint ################################
 
