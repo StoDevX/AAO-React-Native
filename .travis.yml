@@ -127,9 +127,9 @@ jobs:
         - npm run bundle-data
         # Type check and run tests
         - npm run flow -- check --quiet | tee logs/flow
-        - npm run test -- --coverage 2>&1 | tee logs/jest
-      after_script:
-        - npm run danger
+        # task:jest
+        - npm run test -- --coverage --outputFile logs/jest.json --json
+      after_script: npm run danger
       after_success: npx coveralls < ./coverage/lcov.info
 
     # Lint the Ruby code
