@@ -1,6 +1,5 @@
 // @flow
 
-import {message} from 'danger'
 import {readFileSync} from 'fs'
 
 export const readFile = (filename: string) => {
@@ -22,7 +21,7 @@ export const isBadDataValidationLog = (log: string) => {
 }
 
 export const logDetailsEl = (name: string, log: string, args?: {lang?: string} = {}) => {
-  message(`
+  danger.message(`
 <details>
   <summary>${name}</summary>
 

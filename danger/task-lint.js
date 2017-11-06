@@ -1,6 +1,5 @@
 // @flow
 
-import {git, github, warn, schedule, markdown} from 'danger'
 import yarn from 'danger-plugin-yarn'
 import * as lib from './lib.js'
 
@@ -15,7 +14,7 @@ danger.git.created_files
     const content = lib.readFile(filepath)
     return !content.includes('@flow')
   })
-  .forEach(file => warn(`<code>${file}</code> has no <code>@flow</code> annotation!`))
+  .forEach(file => danger.warn(`<code>${file}</code> has no <code>@flow</code> annotation!`))
 
 
 //
@@ -25,7 +24,7 @@ danger.git.created_files
 // - Will warn you when there are dependencies or devDependencies changes without a yarn.lock change.
 //
 
-schedule(yarn())
+danger.schedule(yarn())
 
 
 //
@@ -38,7 +37,7 @@ schedule(yarn())
     const content = lib.readFile(filepath)
     return content.includes('.only()')
   })
-  .forEach(f => warn(`There's an <code>only</code> in ${f} – no other tests can run.`))
+  .forEach(f => danger.warn(`There's an <code>only</code> in ${f} – no other tests can run.`))
 
 
 //
@@ -48,7 +47,7 @@ schedule(yarn())
 const bigPRThreshold = 400 // lines
 const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
 if (thisPRSize > bigPRThreshold) {
-  markdown(`
+  danger.markdown(`
 :exclamation: Big PR!
 
 > We like to try and keep PRs under ${bigPRThreshold} lines, and this one was
