@@ -13,7 +13,7 @@ platform :ios do
       # 'iPhone 4s',
       'iPad Pro (9.7-inch)',
       'iPad Pro (12.9-inch)',
-   ]
+    ]
     snapshot(devices: devices,
              languages: ['en-US'],
              scheme: ENV['GYM_SCHEME'],
