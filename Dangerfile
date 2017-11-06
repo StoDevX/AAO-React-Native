@@ -1,9 +1,8 @@
-when ENV['TASK']
-case 'rubocop'
+case ENV['TASK']
+when 'rubocop'
     require './danger/task-rubocop.rb'
 
-case 'android'
-case 'ios'
+when 'android', 'ios'
     require './danger/task-native-build.rb'
 
 end
