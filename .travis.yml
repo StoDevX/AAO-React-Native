@@ -190,7 +190,9 @@ jobs:
           - extra-android-m2repository
           - extra-google-m2repository
       script:
-        - bundle exec fastlane android ci-run
+        - set -o pipefail
+        - bundle exec fastlane android ci-run | tee logs/fastlane
+      after_script: bundle exec danger --danger_id=android-build
 
     # Build/deploy the iOS binary
     - <<: *build-base
@@ -200,7 +202,9 @@ jobs:
       osx_image: xcode9
       env: [TASK=ios]
       script:
-        - bundle exec fastlane ios ci-run
+        - set -o pipefail
+        - bundle exec fastlane ios ci-run | tee logs/fastlane
+      after_script: bundle exec danger --danger_id=ios-build
 
 
 before_cache:
