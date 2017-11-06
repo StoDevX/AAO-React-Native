@@ -6,8 +6,6 @@ env:
     # here so they're consistent throughout
     - MATCH_KEYCHAIN_NAME=travis-ios-keychain
     - MATCH_KEYCHAIN_PASSWORD=alpine
-    # dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
-    - PATH=${PATH/\.\/node_modules\/\.bin/}
     # sets our node version in one nice place
     - TRAVIS_NODE_VERSION=8
     # set the ruby version up top
@@ -107,9 +105,10 @@ jobs:
       language: node_js
       node_js: $TRAVIS_NODE_VERSION
       env: ['TASK=lint,check-data,flow,jest']
-      before_install: skip
-      install:
-        - yarn || yarn
+      before_install:
+        # dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
+        - export PATH=${PATH/\.\/node_modules\/\.bin/}
+      install: yarn || yarn
       before_script:
         - echo "loglevel=silent" >> .npmrc
         - mkdir -p logs/
@@ -141,6 +140,9 @@ jobs:
       language: node_js
       node_js: $TRAVIS_NODE_VERSION
       env: [TASK=gh_pages]
+      before_install:
+        # dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
+        - export PATH=${PATH/\.\/node_modules\/\.bin/}
       install: yarn || yarn
       script: npm run bundle-data
       deploy:
