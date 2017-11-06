@@ -1,6 +1,6 @@
 // @flow
 
-import {danger, warn, schedule, markdown} from 'danger'
+import {git, github, warn, schedule, markdown} from 'danger'
 import yarn from 'danger-plugin-yarn'
 import * as lib from './lib.js'
 
@@ -9,7 +9,7 @@ import * as lib from './lib.js'
 // new js files should have `@flow` at the top
 //
 
-danger.git.created_files
+git.created_files
   .filter(path => path.endsWith('.js'))
   .filter(filepath => {
     const content = lib.readFile(filepath)
@@ -32,7 +32,7 @@ schedule(yarn())
 // Be careful of leaving testing shortcuts in the codebase
 //
 
-;[...danger.git.created_files, ...danger.git.modified_files]
+;[...git.created_files, ...git.modified_files]
   .filter(filepath => filepath.endsWith('test.js'))
   .filter(filepath => {
     const content = lib.readFile(filepath)
@@ -46,7 +46,7 @@ schedule(yarn())
 //
 
 const bigPRThreshold = 400 // lines
-const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
+const thisPRSize = github.pr.additions + github.pr.deletions
 if (thisPRSize > bigPRThreshold) {
   markdown(`
 :exclamation: Big PR!
