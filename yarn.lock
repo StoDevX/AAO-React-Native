@@ -1125,9 +1125,9 @@ buffer@5.0.8:
     base64-js "^1.0.2"
     ieee754 "^1.1.4"
 
-bugsnag-react-native@2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/bugsnag-react-native/-/bugsnag-react-native-2.5.1.tgz#d7617febd8ae692c5f92ce6d06890c6c0a2def12"
+bugsnag-react-native@2.5.4:
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/bugsnag-react-native/-/bugsnag-react-native-2.5.4.tgz#005c615337e21db62d9edc7c262e1aa842b3f966"
   dependencies:
     prop-types "^15.6.0"
 

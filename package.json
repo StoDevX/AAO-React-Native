@@ -52,7 +52,7 @@
     "@hawkrives/react-native-alphabetlistview": "1.0.0",
     "@hawkrives/react-native-sortable-list": "1.0.1",
     "buffer": "5.0.8",
-    "bugsnag-react-native": "2.5.1",
+    "bugsnag-react-native": "2.5.4",
     "css-select": "1.2.0",
     "dedent": "0.7.0",
     "delay": "2.0.0",
