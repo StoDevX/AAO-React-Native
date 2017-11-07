@@ -97,13 +97,13 @@ export class StudentOrgsView extends React.Component {
   }
 
   fetchData = async () => {
-    const responseData: StudentOrgType[] = await fetchJson(
-      orgsUrl,
-    ).catch(err => {
-      reportNetworkProblem(err)
-      this.setState(() => ({error: true}))
-      return []
-    })
+    const responseData: StudentOrgType[] = await fetchJson(orgsUrl).catch(
+      err => {
+        reportNetworkProblem(err)
+        this.setState(() => ({error: true}))
+        return []
+      },
+    )
 
     const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/i
     const withSortableNames = responseData.map(item => {
