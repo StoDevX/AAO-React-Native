@@ -1,15 +1,22 @@
-// flow-typed signature: c90996cf992c6684e783673c3d9e1e84
-// flow-typed version: <<STUB>>/pify_v3.0.0/flow_v0.56.0
+// flow-typed signature: 4e2c2165eabcf00092e6d9d2222940ac
+// flow-typed version: 2e22276b15/pify_v3.x.x/flow_>=v0.25.x
 
-type $npm$pify$3_x_x$options = {|
-    multiArgs: boolean,
-    include: Array<string|RegExp>,
-    exclude: Array<string|RegExp>,
-    excludeMain: boolean,
-    errorFirst: boolean,
-    promiseModule: Function,
-|}
+type $npm$pify$CPSFunction = (...args: any[]) => any;
 
-declare module 'pify' {
-  declare export default function pify<T: Function | Object>(input: T, options?: $npm$pify$3_x_x$options): T;
+type $npm$pify$Options = {
+  multiArgs?: boolean,
+  include?: Array<string | RegExp>,
+  exclude?: Array<string | RegExp>,
+  excludeMain?: boolean,
+  errorFirst?: boolean,
+  promiseModule?: () => any
+};
+
+type $npm$pify$PromisifiedFunction = (...args: any[]) => Promise<*>;
+
+declare module "pify" {
+  declare module.exports: (
+    input: $npm$pify$CPSFunction | Object,
+    options?: $npm$pify$Options
+  ) => (...args: any[]) => Promise<*> | Object;
 }
