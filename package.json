@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@hawkrives/react-native-alphabetlistview": "1.0.0",
+    "@hawkrives/react-native-search-bar": "3.0.0-3",
     "@hawkrives/react-native-sortable-list": "1.0.1",
     "buffer": "5.0.8",
     "bugsnag-react-native": "2.6.0",
@@ -82,7 +83,6 @@
     "react-native-onesignal": "3.0.6",
     "react-native-restart": "0.0.4",
     "react-native-safari-view": "2.0.0",
-    "react-native-search-bar": "3.0.0",
     "react-native-tableview-simple": "0.17.1",
     "react-native-vector-icons": "4.4.2",
     "react-navigation": "1.0.0-beta.11",
