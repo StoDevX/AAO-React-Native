@@ -106,7 +106,9 @@ export class BusMapView extends React.PureComponent<Props, State> {
 
     if (!entriesWithCoordinates.length) {
       const today = now.format('dddd')
-      const msg = `No coordinates have been provided for today's (${today}) schedule on the "${lineToDisplay}" line`
+      const msg = `No coordinates have been provided for today's (${
+        today
+      }) schedule on the "${lineToDisplay}" line`
       return <NoticeView text={msg} />
     }
 
