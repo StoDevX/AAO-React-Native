@@ -76,7 +76,7 @@ export default class App extends React.Component {
 
     bugsnag.leaveBreadcrumb(`Navigated from to ${currentScreen}.`, {
       type: 'navigation',
-      previousScreen: prevousScreen,
+      previousScreen: prevScreen,
     })
   }
 
