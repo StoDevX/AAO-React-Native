@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@hawkrives/react-native-alphabetlistview": "1.0.0",
-    "@hawkrives/react-native-search-bar": "3.0.0-2",
+    "@hawkrives/react-native-search-bar": "3.0.0-3",
     "@hawkrives/react-native-sortable-list": "1.0.1",
     "buffer": "5.0.8",
     "bugsnag-react-native": "2.6.0",

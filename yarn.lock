@@ -62,9 +62,9 @@
     merge "^1.2.0"
     prop-types "^15.6.0"
 
-"@hawkrives/react-native-search-bar@3.0.0-2":
-  version "3.0.0-2"
-  resolved "https://registry.yarnpkg.com/@hawkrives/react-native-search-bar/-/react-native-search-bar-3.0.0-2.tgz#ef64641664656bedc471ec31b44b5c7e28616b3a"
+"@hawkrives/react-native-search-bar@3.0.0-3":
+  version "3.0.0-3"
+  resolved "https://registry.yarnpkg.com/@hawkrives/react-native-search-bar/-/react-native-search-bar-3.0.0-3.tgz#44bfb8888962c1c444f5099bb96be115727431de"
   dependencies:
     prop-types "^15.6.0"
 
