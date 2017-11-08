@@ -62,6 +62,12 @@
     merge "^1.2.0"
     prop-types "^15.6.0"
 
+"@hawkrives/react-native-search-bar@3.0.0-2":
+  version "3.0.0-2"
+  resolved "https://registry.yarnpkg.com/@hawkrives/react-native-search-bar/-/react-native-search-bar-3.0.0-2.tgz#ef64641664656bedc471ec31b44b5c7e28616b3a"
+  dependencies:
+    prop-types "^15.6.0"
+
 "@hawkrives/react-native-sortable-list@1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@hawkrives/react-native-sortable-list/-/react-native-sortable-list-1.0.1.tgz#99a72271a56def44bc226532bf18b79fb3c6e63d"
@@ -4222,10 +4228,6 @@ react-native-restart@0.0.4:
 react-native-safari-view@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-native-safari-view/-/react-native-safari-view-2.0.0.tgz#3aeb40693b0765df16b9beaf8654b60c7ff1d7ed"
-
-react-native-search-bar@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-search-bar/-/react-native-search-bar-3.0.0.tgz#973b38276d06e1731ed52121e94f54b9aed2bfab"
 
 react-native-tab-view@^0.0.65:
   version "0.0.65"
