@@ -30,5 +30,9 @@ allprojects {
             // react-native-custom-tabs requires this maven repository
             url "https://jitpack.io"
         }
+        maven {
+            // currently used for bugsnag-react-native
+            url 'https://maven.google.com'
+        }
     }
 }
