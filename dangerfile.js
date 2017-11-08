@@ -55,7 +55,9 @@ if (thisPRSize > bigPRThreshold) {
 <details>
   <summary>:exclamation: Big PR!</summary>
   <blockquote>
-    <p>We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.</p>
+    <p>We like to try and keep PRs under ${
+      bigPRThreshold
+    } lines, and this one was ${thisPRSize} lines.</p>
     <p>If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.</p>
   </blockquote>
 </details>`,

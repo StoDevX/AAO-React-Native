@@ -43,7 +43,9 @@ export class GoogleCalendarView extends React.Component<Props, State> {
   }
 
   buildCalendarUrl(calendarId: string) {
-    let calendarUrl = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`
+    let calendarUrl = `https://www.googleapis.com/calendar/v3/calendars/${
+      calendarId
+    }/events`
     let params = {
       maxResults: 50,
       orderBy: 'startTime',
