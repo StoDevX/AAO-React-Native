@@ -70,14 +70,15 @@ export default class App extends React.Component {
     const currentScreen = getCurrentRouteName(currentState)
     const prevScreen = getCurrentRouteName(prevState)
 
+    if (!currentScreen) return
+    
     if (currentScreen !== prevScreen) {
       tracker.trackScreenView(currentScreen)
+      bugsnag.leaveBreadcrumb(currentScreen, {
+        type: 'navigation',
+        previousScreen: prevScreen,
+      })
     }
-
-    bugsnag.leaveBreadcrumb(`Navigated from to ${currentScreen}.`, {
-      type: 'navigation',
-      previousScreen: prevScreen,
-    })
   }
 
   render() {
