@@ -18,14 +18,14 @@ export function loadLoginCredentials(): Promise<{
   username?: string,
   password?: string,
 }> {
-  return Keychain.getInternetCredentials(
-    SIS_LOGIN_CREDENTIAL_KEY,
-  ).catch(() => ({}))
+  return Keychain.getInternetCredentials(SIS_LOGIN_CREDENTIAL_KEY).catch(
+    () => ({}),
+  )
 }
 export function clearLoginCredentials() {
-  return Keychain.resetInternetCredentials(
-    SIS_LOGIN_CREDENTIAL_KEY,
-  ).catch(() => ({}))
+  return Keychain.resetInternetCredentials(SIS_LOGIN_CREDENTIAL_KEY).catch(
+    () => ({}),
+  )
 }
 
 export async function isLoggedIn(): Promise<boolean> {
