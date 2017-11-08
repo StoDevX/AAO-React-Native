@@ -7,6 +7,7 @@ import OneSignal from 'react-native-onesignal'
 import React from 'react'
 import {Provider} from 'react-redux'
 import {store, initRedux} from './flux'
+import bugsnag from './bugsnag'
 import {tracker} from './analytics'
 import {AppNavigator} from './navigation'
 import type {NavigationState} from 'react-navigation'
@@ -69,8 +70,14 @@ export default class App extends React.Component<Props> {
     const currentScreen = getCurrentRouteName(currentState)
     const prevScreen = getCurrentRouteName(prevState)
 
+    if (!currentScreen) return
+
     if (currentScreen !== prevScreen) {
       tracker.trackScreenView(currentScreen)
+      bugsnag.leaveBreadcrumb(currentScreen, {
+        type: 'navigation',
+        previousScreen: prevScreen,
+      })
     }
   }
 
