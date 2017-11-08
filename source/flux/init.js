@@ -35,7 +35,10 @@ function netInfoIsConnected(store) {
     store.dispatch(updateOnlineStatus(isConnected))
   }
 
-  NetInfo.isConnected.addEventListener('connectionChange', updateConnectionStatus)
+  NetInfo.isConnected.addEventListener(
+    'connectionChange',
+    updateConnectionStatus,
+  )
   return NetInfo.isConnected.fetch().then(updateConnectionStatus)
 }
 

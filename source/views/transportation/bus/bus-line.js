@@ -90,7 +90,11 @@ export class BusLine extends React.Component<Props, State> {
       barColor={this.props.line.colors.bar}
       currentStopColor={this.props.line.colors.dot}
       isFirstRow={index === 0}
-      isLastRow={this.state.schedule ? index === this.state.schedule.timetable.length - 1 : true}
+      isLastRow={
+        this.state.schedule
+          ? index === this.state.schedule.timetable.length - 1
+          : true
+      }
     />
   )
 
