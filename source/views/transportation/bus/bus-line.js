@@ -37,11 +37,17 @@ type Props = {
 
 type State = {
   subtitle: string,
-  schedule: BusSchedule,
+  schedule: ?BusSchedule,
   currentBusIteration: false | number,
 }
 
 export class BusLine extends React.Component<Props, State> {
+  state = {
+    subtitle: 'Loading',
+    schedule: null,
+    currentBusIteration: false,
+  }
+
   componentWillReceiveProps(nextProps: Props) {
     this.updateFromProps(nextProps)
   }
@@ -74,6 +80,8 @@ export class BusLine extends React.Component<Props, State> {
     }))
   }
 
+  keyExtractor = (item: BusTimetableEntry, index: number) => index.toString()
+
   renderItem = ({item, index}: {index: number, item: BusTimetableEntry}) => (
     <BusStopRow
       stop={item}
@@ -82,7 +90,7 @@ export class BusLine extends React.Component<Props, State> {
       barColor={this.props.line.colors.bar}
       currentStopColor={this.props.line.colors.dot}
       isFirstRow={index === 0}
-      isLastRow={index === this.state.schedule.timetable.length - 1}
+      isLastRow={this.state.schedule ? index === this.state.schedule.timetable.length - 1 : true}
     />
   )
 
@@ -104,7 +112,8 @@ export class BusLine extends React.Component<Props, State> {
         ListFooterComponent={FOOTER_EL}
         ListEmptyComponent={EMPTY_SCHEDULE_MESSAGE}
         ItemSeparatorComponent={BusLineSeparator}
-        data={schedule.timetable}
+        data={schedule ? schedule.timetable : []}
+        keyExtractor={this.keyExtractor}
         extraData={this.state}
         renderItem={this.renderItem}
         onRefresh={this.props.onRefresh}
