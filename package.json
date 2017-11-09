@@ -121,7 +121,7 @@
     "prettier": "1.8.1",
     "prop-types": "15.6.0",
     "react-native-view-shot": "1.12.0",
-    "react-test-renderer": "16.0.0-alpha.12",
+    "react-test-renderer": "16.1.0",
     "string-natural-compare": "2.0.2"
   }
 }
