@@ -1,8 +1,4 @@
 // @flow
-/**
- * All About Olaf
- * Calendar page
- */
 
 import React from 'react'
 import {EventList} from './event-list'

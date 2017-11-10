@@ -1,13 +1,11 @@
 // @flow
 import {Client, Configuration} from 'bugsnag-react-native'
-import pkg from '../package.json'
 
-const PRODUCTION = process.env.NODE_ENV === 'production'
+const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 
 const config = new Configuration()
-config.autoNotify = PRODUCTION
-config.codeBundleId = pkg.version
-if (!PRODUCTION) {
+config.autoNotify = IS_PRODUCTION
+if (!IS_PRODUCTION) {
   // disable bugsnag in dev builds
   config.beforeSendCallbacks.push(() => false)
 }

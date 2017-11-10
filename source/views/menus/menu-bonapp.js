@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types, camelcase */
 // @flow
 import React from 'react'
 import LoadingView from '../components/loading'
@@ -151,6 +150,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 
     // then we make our own StationMenus list
     return toPairs(idsGroupedByStation).map(([name, items], i) => ({
+      // eslint-disable-next-line camelcase
       order_id: String(i),
       id: String(i),
       label: name,

@@ -164,7 +164,7 @@ before_install:
   - nvm install "$TRAVIS_NODE_VERSION"
   - nvm use "$TRAVIS_NODE_VERSION"
   - echo "node -v is now $(node -v)"
-  
+
   # travis doesn't install yarn automatically on osx
   - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install yarn --without-node; fi
 

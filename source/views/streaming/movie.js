@@ -1,8 +1,4 @@
 // @flow
-/**
- * All About Olaf
- * Weekly Movie page
- */
 
 import React from 'react'
 import {StyleSheet, View, Text} from 'react-native'

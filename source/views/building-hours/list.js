@@ -1,8 +1,4 @@
 // @flow
-/**
- * All About Olaf
- * Building Hours list page
- */
 
 import React from 'react'
 import {StyleSheet, SectionList} from 'react-native'

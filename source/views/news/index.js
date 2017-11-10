@@ -1,9 +1,5 @@
 /* eslint-disable camelcase */
-/**
- * @flow
- * All About Olaf
- * News page
- */
+// @flow
 
 import React from 'react'
 import {TabNavigator} from '../components/tabbed-view'

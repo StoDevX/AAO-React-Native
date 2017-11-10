@@ -1,8 +1,4 @@
 // @flow
-/**
- * All About Olaf
- * Webcams page
- */
 
 import React from 'react'
 import {

@@ -13,7 +13,7 @@ platform :ios do
       # 'iPhone 4s',
       'iPad Pro (9.7-inch)',
       'iPad Pro (12.9-inch)',
-   ]
+    ]
     snapshot(devices: devices,
              languages: ['en-US'],
              scheme: ENV['GYM_SCHEME'],
@@ -47,6 +47,13 @@ platform :ios do
       puts 'Changelog failed to upload:'
       puts error
     end
+    generate_sourcemap
+    upload_sourcemap_to_bugsnag
+  end
+
+  desc 'Bundle an iOS sourcemap'
+  lane :sourcemap do
+    generate_sourcemap
   end
 
   desc 'Upload dYSM symbols to Bugsnag from Apple'

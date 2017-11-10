@@ -1,8 +1,4 @@
 // @flow
-/**
- * All About Olaf
- * Transportation page
- */
 
 import React from 'react'
 
