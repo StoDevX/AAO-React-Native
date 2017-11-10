@@ -12,9 +12,9 @@ xcode-select --install
 
 <table width="100%" >
 <tr>
-<th width="33%"><a href="http://brew.sh">Homebrew</a></td>
-<th width="33%">Installer Script</td>
-<th width="33%">Rubygems</td>
+<th width="33%"><a href="http://brew.sh">Homebrew</a></th>
+<th width="33%">Installer Script</th>
+<th width="33%">RubyGems</th>
 </tr>
 <tr>
 <td width="33%" align="center">macOS</td>
@@ -53,6 +53,11 @@ Submit a new beta build to Google Play
 fastlane android nightly
 ```
 Submit a new nightly build to Google Play
+### android sourcemap
+```
+fastlane android sourcemap
+```
+Bundle an Android sourcemap
 ### android ci-run
 ```
 fastlane android ci-run
@@ -97,6 +102,11 @@ Submit a new Beta Build to Testflight
 fastlane ios nightly
 ```
 Submit a new nightly Beta Build to Testflight
+### ios sourcemap
+```
+fastlane ios sourcemap
+```
+Bundle an iOS sourcemap
 ### ios refresh_dsyms
 ```
 fastlane ios refresh_dsyms
