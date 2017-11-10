@@ -1,8 +1,4 @@
-/**
- * @flow
- * All About Olaf
- * Index view
- */
+// @flow
 
 import './globalize-fetch'
 import './setup-moment'

@@ -1,8 +1,4 @@
-/**
- * @flow
- * All About Olaf
- * iOS Home page
- */
+// @flow
 
 import React from 'react'
 import {ScrollView, StyleSheet, StatusBar} from 'react-native'

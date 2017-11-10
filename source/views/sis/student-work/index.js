@@ -1,9 +1,4 @@
-/**
- * @flow
- *
- * All About Olaf
- * Student Work page
- */
+// @flow
 
 import React from 'react'
 import {StyleSheet, Text, SectionList} from 'react-native'

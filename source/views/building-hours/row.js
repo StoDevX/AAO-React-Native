@@ -1,8 +1,5 @@
 // @flow
-/**
- * All About Olaf
- * Building Hours list element
- */
+
 import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {Badge} from '../components/badge'
