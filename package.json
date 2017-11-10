@@ -102,7 +102,6 @@
     "babel-core": "6.26.0",
     "babel-eslint": "8.0.2",
     "babel-jest": "21.2.0",
-    "babel-plugin-flow-react-proptypes": "9.0.0",
     "babel-preset-react-native": "3.0.1",
     "bugsnag-sourcemaps": "1.0.1",
     "danger": "2.0.1",
