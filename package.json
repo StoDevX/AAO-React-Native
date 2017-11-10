@@ -55,7 +55,6 @@
     "buffer": "5.0.8",
     "bugsnag-react-native": "2.6.0",
     "css-select": "1.2.0",
-    "dedent": "0.7.0",
     "delay": "2.0.0",
     "events": "1.1.1",
     "get-urls": "7.0.0",
