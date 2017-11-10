@@ -1,7 +1,7 @@
 // @flow
 
-import moment from 'moment'
 import {processBusSchedule} from '../process-bus-line'
+import {time} from './moment.helper'
 
 // prettier-ignore
 const line = {
@@ -28,6 +28,6 @@ const line = {
 }
 
 test('processBusSchedule returns a timetable property', () => {
-  let actual = processBusSchedule(moment())(line.schedules[0])
+  let actual = processBusSchedule(time('12:00pm'))(line.schedules[0])
   expect('timetable' in actual).toBe(true)
 })

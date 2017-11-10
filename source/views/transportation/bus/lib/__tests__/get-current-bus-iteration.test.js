@@ -1,7 +1,7 @@
 // @flow
 import {getCurrentBusIteration} from '../get-current-bus-iteration'
 import {processBusSchedule} from '../process-bus-line'
-import moment from 'moment'
+import {dayAndTime} from './moment.helper'
 
 import type {UnprocessedBusSchedule, BusSchedule} from '../../types'
 
@@ -22,28 +22,28 @@ function buildBusSchedules(now): Array<BusSchedule> {
 }
 
 test('returns the bus times index for the given time', () => {
-  let now = moment('Mo 4:16pm', 'ddd h:mma')
+  let now = dayAndTime('Mo 4:16pm')
   let input = buildBusSchedules(now)
   let actual = getCurrentBusIteration(input, now)
   expect(actual).toBe(0)
 })
 
 test('returns `false` if there is no bus running at the given time', () => {
-  let now = moment('Mo 3:00pm', 'ddd h:mma')
+  let now = dayAndTime('Mo 3:00pm')
   let input = buildBusSchedules(now)
   let actual = getCurrentBusIteration(input, now)
   expect(actual).toBe(false)
 })
 
 test('returns `false` if there is no schedule for today', () => {
-  let now = moment('Su 10:01pm', 'ddd h:mma')
+  let now = dayAndTime('Su 10:01pm')
   let input = buildBusSchedules(now)
   let actual = getCurrentBusIteration(input, now)
   expect(actual).toBe(false)
 })
 
 test('returns `false` if there are no times in the schedule for today', () => {
-  let now = moment('Su 10:01pm', 'ddd h:mma')
+  let now = dayAndTime('Su 10:01pm')
   let actual = getCurrentBusIteration(
     [
       {

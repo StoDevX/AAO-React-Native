@@ -1,7 +1,7 @@
 // @flow
 import {getScheduleForNow} from '../get-schedule-for-now'
 import {processBusSchedule} from '../process-bus-line'
-import moment from 'moment'
+import {dayAndTime} from './moment.helper'
 
 import type {UnprocessedBusSchedule, BusSchedule} from '../../types'
 
@@ -22,7 +22,7 @@ function buildBusSchedules(now): Array<BusSchedule> {
 }
 
 test('returns the bus schedule for today', () => {
-  let now = moment('Fri 10:01', 'dddd H:mm')
+  let now = dayAndTime('Fr 10:01am')
   let input = buildBusSchedules(now)
   let actual = getScheduleForNow(input, now)
 
@@ -30,7 +30,7 @@ test('returns the bus schedule for today', () => {
 })
 
 test('returns an empty schedule if there is no schedule for today', () => {
-  let now = moment('Sun 10:01', 'dddd H:mm')
+  let now = dayAndTime('Su 10:01am')
   let input = buildBusSchedules(now)
   let actual = getScheduleForNow(input, now)
 
