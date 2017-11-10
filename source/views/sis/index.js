@@ -1,8 +1,4 @@
 // @flow
-/**
- * All About Olaf
- * iOS SIS page
- */
 
 import {TabNavigator} from '../components/tabbed-view'
 
