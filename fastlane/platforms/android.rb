@@ -27,6 +27,9 @@ platform :android do
 
     supply(track: track,
            check_superseded_tracks: true)
+
+    generate_sourcemap
+    upload_sourcemaps_to_bugsnag
   end
 
   desc 'Submit a new beta build to Google Play'

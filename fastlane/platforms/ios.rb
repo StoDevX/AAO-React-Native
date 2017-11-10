@@ -47,6 +47,8 @@ platform :ios do
       puts 'Changelog failed to upload:'
       puts error
     end
+    generate_sourcemap
+    upload_sourcemaps_to_bugsnag
   end
 
   desc 'Bundle an iOS sourcemap'
