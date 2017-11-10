@@ -29,7 +29,7 @@ platform :android do
            check_superseded_tracks: true)
 
     generate_sourcemap
-    upload_sourcemaps_to_bugsnag
+    upload_sourcemap_to_bugsnag
   end
 
   desc 'Submit a new beta build to Google Play'
