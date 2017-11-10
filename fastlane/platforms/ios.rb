@@ -49,6 +49,11 @@ platform :ios do
     end
   end
 
+  desc 'Bundle an iOS sourcemap'
+  lane :sourcemap do
+    generate_sourcemap
+  end
+
   desc 'Upload dYSM symbols to Bugsnag from Apple'
   lane :refresh_dsyms do
     download_dsyms
