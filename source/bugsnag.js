@@ -1,6 +1,5 @@
 // @flow
 import {Client, Configuration} from 'bugsnag-react-native'
-import pkg from '../package.json'
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 
