@@ -71,7 +71,9 @@ export default class App extends React.Component<Props> {
     const currentScreen = getCurrentRouteName(currentState)
     const prevScreen = getCurrentRouteName(prevState)
 
-    if (!currentScreen) return
+    if (!currentScreen) {
+      return
+    }
 
     if (currentScreen !== prevScreen) {
       tracker.trackScreenView(currentScreen)
