@@ -48,7 +48,7 @@ platform :ios do
       puts error
     end
     generate_sourcemap
-    upload_sourcemaps_to_bugsnag
+    upload_sourcemap_to_bugsnag
   end
 
   desc 'Bundle an iOS sourcemap'
