@@ -83,7 +83,7 @@
     "react-native-safari-view": "2.0.0",
     "react-native-tableview-simple": "0.17.1",
     "react-native-vector-icons": "4.4.2",
-    "react-navigation": "1.0.0-beta.11",
+    "react-navigation": "1.0.0-beta.15",
     "react-redux": "5.0.6",
     "redux": "3.7.2",
     "redux-logger": "3.0.6",
