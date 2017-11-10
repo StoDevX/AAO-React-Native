@@ -49,7 +49,8 @@ def propagate_version(**args)
   UI.message "Propagating version: #{version}"
   UI.message 'into the Info.plist and build.gradle files'
 
-  # encode build number into js-land
+  # encode build number into js-land – we've already fetched it, so we'll
+  # never set the "+" into the binaries
   set_package_data(data: { version: "#{version}+#{build}" })
 
   case lane_context[:PLATFORM_NAME]
