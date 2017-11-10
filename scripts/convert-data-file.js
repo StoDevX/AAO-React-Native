@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs')
 const yaml = require('js-yaml')
-const marked = require('marked')
 
 // run cli
 if (process.mainModule === module) {
