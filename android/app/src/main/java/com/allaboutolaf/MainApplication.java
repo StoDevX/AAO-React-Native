@@ -54,7 +54,6 @@ public class MainApplication extends Application implements ReactApplication {
         new ReactNativeRestartPackage(),
         new RNDeviceInfo(),
         new RNNetworkInfoPackage(),
-        new RNViewShotPackage(),
         new VectorIconsPackage()
       );
     }
