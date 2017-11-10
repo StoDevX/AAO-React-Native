@@ -22,16 +22,15 @@ export type ReduxState = {
   sis?: SisState,
 }
 
-export const aao: any = combineReducers({
-  app,
-  homescreen,
-  menus,
-  settings,
-  sis,
-})
+export const makeStore = () => {
+  const aao: any = combineReducers({
+    app,
+    homescreen,
+    menus,
+    settings,
+    sis,
+  })
 
-const logger = createLogger({collapsed: () => true})
-export const store = createStore(
-  aao,
-  applyMiddleware(reduxPromise, reduxThunk, logger),
-)
+  const logger = createLogger({collapsed: () => true})
+  return createStore(aao, applyMiddleware(reduxPromise, reduxThunk, logger))
+}
