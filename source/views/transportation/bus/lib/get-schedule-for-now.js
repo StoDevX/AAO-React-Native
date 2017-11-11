@@ -1,26 +1,29 @@
 // @flow
-import type {BusScheduleType, DayOfWeekType} from '../types'
+import type {BusSchedule, DayOfWeek} from '../types'
 import moment from 'moment-timezone'
 
-const allDaysOfWeek: DayOfWeekType[] = [
-  'Su',
-  'Mo',
-  'Tu',
-  'We',
-  'Th',
-  'Fr',
-  'Sa',
-]
+const allDaysOfWeek: DayOfWeek[] = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 
 export function getScheduleForNow(
-  schedules: BusScheduleType[],
-  now: typeof moment,
-): BusScheduleType | void {
-  const thisWeekday = now.day() // 0-6, Sunday to Saturday.
+  schedules: BusSchedule[],
+  now: moment,
+): BusSchedule {
+  // now.day returns 0-6, Sunday to Saturday
+  const thisWeekday = allDaysOfWeek[now.day()]
 
-  return schedules.find(schedule => {
-    return schedule.days
-      .map(day => allDaysOfWeek.indexOf(day)) // turn days into numbers
-      .includes(thisWeekday)
-  })
+  const schedule = schedules.find(schedule =>
+    schedule.days.includes(thisWeekday),
+  )
+
+  if (!schedule) {
+    return {
+      days: [thisWeekday],
+      timetable: [],
+      coordinates: {},
+      stops: [],
+      times: [],
+    }
+  }
+
+  return schedule
 }
