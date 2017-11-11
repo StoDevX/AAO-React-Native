@@ -1,4 +1,7 @@
 line: Blue Line
+colors:
+  bar: rgb(103, 153, 170)
+  dot: rgb(13, 26, 35)
 schedules:
   - days: [Mo, Tu, We, Th, Fr]
     coordinates:

@@ -1,4 +1,7 @@
 line: Red Line
+colors:
+  bar: rgb(233, 87, 95)
+  dot: rgb(151, 27, 16)
 schedules:
   - days: [Mo, Tu, We, Th, Fr]
     stops:
