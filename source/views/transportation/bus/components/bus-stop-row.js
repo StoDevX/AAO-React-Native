@@ -7,9 +7,13 @@ import {ListRow, Detail, Title} from '../../../components/list'
 import type {BusTimetableEntry} from '../types'
 import type moment from 'moment'
 import * as c from '../../../components/colors'
-import {ProgressChunk, type BusStopStatusEnum} from './progress-chunk'
+import {ProgressChunk} from './progress-chunk'
 import {ScheduleTimes} from './times'
-import type {BusStateEnum} from '../lib'
+import {
+  findRemainingDeparturesForStop as findRemainingDepartures,
+  findBusStopStatus as findStopStatus,
+  type BusStateEnum,
+} from '../lib'
 
 const styles = StyleSheet.create({
   row: {
@@ -51,49 +55,11 @@ export class BusStopRow extends React.PureComponent<any, Props, void> {
       isLastRow,
       now,
       stop,
-      status,
+      status: busStatus,
     } = this.props
 
-    let stopStatus: BusStopStatusEnum = 'skip'
-    let arrivalTime: false | ?moment = false
-    let remainingDepartures = stop.departures.slice(0)
-
-    switch (status) {
-      case 'before-start': {
-        stopStatus = 'before'
-        arrivalTime = stop.departures[0]
-        break
-      }
-      case 'after-end': {
-        stopStatus = 'after'
-        arrivalTime = stop.departures[stop.departures.length - 1]
-        remainingDepartures = stop.departures.slice(-1)
-        break
-      }
-      default: {
-        arrivalTime =
-          departureIndex === null ? false : stop.departures[departureIndex]
-
-        if (arrivalTime && now.isAfter(arrivalTime, 'minute')) {
-          stopStatus = 'after'
-        } else if (arrivalTime && now.isSame(arrivalTime, 'minute')) {
-          stopStatus = 'at'
-        } else if (arrivalTime !== false) {
-          stopStatus = 'before'
-        } else {
-          stopStatus = 'skip'
-        }
-
-        remainingDepartures =
-          departureIndex !== null
-            ? stop.departures.slice(departureIndex)
-            : stop.departures.slice(0)
-      }
-    }
-
-    if (arrivalTime === false) {
-      stopStatus = 'skip'
-    }
+    const stopStatus = findStopStatus({stop, busStatus, departureIndex, now})
+    const times = findRemainingDepartures({stop, busStatus, departureIndex})
 
     const rowTextStyle = [
       stopStatus === 'skip' && styles.skippingStopTitle,
@@ -117,7 +83,7 @@ export class BusStopRow extends React.PureComponent<any, Props, void> {
           </Title>
           <Detail lines={1}>
             <ScheduleTimes
-              times={remainingDepartures}
+              times={times}
               style={stopStatus === 'skip' && styles.skippingStopDetail}
             />
           </Detail>

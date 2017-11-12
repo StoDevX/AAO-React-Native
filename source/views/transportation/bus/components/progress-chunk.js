@@ -2,9 +2,9 @@
 import React from 'react'
 import * as c from '../../../components/colors'
 import {View, StyleSheet, Platform} from 'react-native'
-const isAndroid = Platform.OS === 'android'
+import type {BusStopStatusEnum} from '../lib'
 
-export type BusStopStatusEnum = 'at' | 'before' | 'after' | 'skip'
+const isAndroid = Platform.OS === 'android'
 
 const styles = StyleSheet.create({
   barContainer: {
