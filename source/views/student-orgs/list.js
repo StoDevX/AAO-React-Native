@@ -20,7 +20,6 @@ import {reportNetworkProblem} from '../../lib/report-network-problem'
 import size from 'lodash/size'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
-import head from 'lodash/head'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
@@ -115,7 +114,7 @@ export class StudentOrgsView extends React.PureComponent<any, Props, State> {
       return {
         ...item,
         $sortableName: sortableName,
-        $groupableName: head(startCase(sortableName)),
+        $groupableName: startCase(sortableName)[0],
       }
     })
 
