@@ -32,7 +32,7 @@ type State = {
   timezone: string,
 }
 
-export class DatePicker extends React.Component<Props, State> {
+export class DatePicker extends React.Component<any, Props, State> {
   static defaultProps = {
     mode: 'date',
     androidMode: 'default',
