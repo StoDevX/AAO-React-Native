@@ -6,13 +6,13 @@ export const PUSH_VIEW = 'app/PUSH_VIEW'
 export const POP_VIEW = 'app/POP_VIEW'
 export const ONLINE_STATUS = 'app/ONLINE_STATUS'
 
-export type PushViewAction = {type: 'app/PUSH_VIEW', payload: ViewName}
-export type PopViewAction = {type: 'app/POP_VIEW'}
+export type PushViewAction = {|type: 'app/PUSH_VIEW', payload: ViewName|}
+export type PopViewAction = {|type: 'app/POP_VIEW'|}
 
-export type UpdateOnlineStatusAction = {
+export type UpdateOnlineStatusAction = {|
   type: 'app/ONLINE_STATUS',
   payload: boolean,
-}
+|}
 export function updateOnlineStatus(status: boolean): UpdateOnlineStatusAction {
   return {type: ONLINE_STATUS, payload: status}
 }
