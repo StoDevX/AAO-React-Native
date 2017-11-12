@@ -5,21 +5,21 @@ colors:
 schedules:
   - days: [Mo, Tu, We, Th, Fr, Sa]
     coordinates:
-      "Arby's":            [44.435250, -93.188399]
+      'Arby’s':            [44.435250, -93.188399]
       'Carleton College':  [44.460719, -93.155794]
       'Cub/Target':        [44.432471, -93.187155]
       'El Tequila':        [44.449219, -93.171813]
       'Food Co-op':        [44.454374, -93.162189]
       'Jesse James Lanes': [44.441209, -93.181852]
-      "Papa Murphy's":     [44.438107, -93.182720]
+      'Papa Murphy’s':     [44.438107, -93.182720]
       'St. Olaf College':  [44.462210, -93.183026]
     stops:
       - St. Olaf College
       - Carleton College
       - Food Co-op
-      - Papa Murphy's
+      - Papa Murphy’s
       - Cub/Target
-      - Arby's
+      - Arby’s
       - Jesse James Lanes
       - El Tequila
       - Food Co-op
@@ -41,18 +41,18 @@ schedules:
       'St. Olaf College':  [44.462210, -93.183026]
       'Carleton College':  [44.460719, -93.155794]
       'Food Co-op':        [44.454374, -93.162189]
-      "Papa Murphy's":     [44.438107, -93.182720]
+      'Papa Murphy’s':     [44.438107, -93.182720]
       'Cub/Target':        [44.432471, -93.187155]
-      "Arby's":            [44.435250, -93.188399]
+      'Arby’s':            [44.435250, -93.188399]
       'Jesse James Lanes': [44.441209, -93.181852]
       'El Tequila':        [44.449219, -93.171813]
     stops:
       - St. Olaf College
       - Carleton College
       - Food Co-op
-      - Papa Murphy's
+      - Papa Murphy’s
       - Cub/Target
-      - Arby's
+      - Arby’s
       - Jesse James Lanes
       - El Tequila
       - Food Co-op
