@@ -23,7 +23,6 @@ class OddsAndEndsSection extends React.Component {
   onCreditsButton = () => this.onPressButton('CreditsView')
   onPrivacyButton = () => this.onPressButton('PrivacyView')
   onLegalButton = () => this.onPressButton('LegalView')
-  onSnapshotsButton = () => this.onPressButton('SnapshotsView')
   onSourceButton = () =>
     trackedOpenUrl({
       url: 'https://github.com/StoDevX/AAO-React-Native',
@@ -54,15 +53,6 @@ class OddsAndEndsSection extends React.Component {
             onChange={val => this.props.onChangeFeedbackToggle(!val)}
           />
         </Section>
-
-        {process.env.NODE_ENV === 'development' ? (
-          <Section header="UTILITIES">
-            <PushButtonCell
-              title="Snapshots"
-              onPress={this.onSnapshotsButton}
-            />
-          </Section>
-        ) : null}
       </View>
     )
   }
