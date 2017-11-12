@@ -12,6 +12,10 @@ type Args = {|
 export function findRemainingDeparturesForStop(args: Args): DepartureTimeList {
   const {stop, busStatus, departureIndex} = args
 
+  if (!stop) {
+    return []
+  }
+
   switch (busStatus) {
     case 'before-start': {
       return stop.departures.slice(0)
