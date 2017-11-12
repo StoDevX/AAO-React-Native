@@ -120,7 +120,7 @@
     "pify": "3.0.0",
     "prettier": "1.8.2",
     "prop-types": "15.6.0",
-    "react-test-renderer": "16.0.0-alpha.12",
+    "react-test-renderer": "16.0.0",
     "string-natural-compare": "2.0.2"
   }
 }
