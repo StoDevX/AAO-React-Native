@@ -17,7 +17,7 @@ export type BusStateEnum =
 type ReturnVal = {
   status: BusStateEnum,
   times: DepartureTimeList,
-  index: ?number,
+  index: null | number,
   nextStart: ?moment,
 }
 
