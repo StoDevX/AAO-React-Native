@@ -2,7 +2,7 @@
 
 import React from 'react'
 import {Dimensions, StyleSheet} from 'react-native'
-
+import {type ReduxState} from '../../flux'
 import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from '../../components/colors'
@@ -26,10 +26,15 @@ const styles = StyleSheet.create({
   },
 })
 
-type Props = {
-  onSaveOrder: (string[]) => any,
+type ReduxStateProps = {
   order: string[],
 }
+
+type ReduxDispatchProps = {
+  onSaveOrder: (string[]) => any,
+}
+
+type Props = ReduxStateProps & ReduxDispatchProps
 
 type State = {
   width: number,
@@ -78,13 +83,13 @@ class EditHomeView extends React.PureComponent<void, Props, State> {
   }
 }
 
-function mapState(state) {
+function mapState(state: ReduxState): ReduxStateProps {
   return {
     order: state.homescreen.order,
   }
 }
 
-function mapDispatch(dispatch) {
+function mapDispatch(dispatch): ReduxDispatchProps {
   return {
     onSaveOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
   }
