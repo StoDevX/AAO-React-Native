@@ -33,7 +33,6 @@ test('returns the bus times index for the given time', () => {
   let actual = getCurrentBusIteration(input, now)
   expect(actual.status).toBe('running')
   expect(actual.index).toBe(1)
-  console.log(actual)
 })
 
 test('handles the given time being after the last bus', () => {
