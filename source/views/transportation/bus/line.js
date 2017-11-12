@@ -58,7 +58,7 @@ function startsIn(now, start: ?moment) {
   return `Starts ${nowCopy.seconds(0).to(start)}`
 }
 
-export class BusLine extends React.Component<any, Props, State> {
+export class BusLine extends React.Component<Props, State> {
   state = {
     subtitle: 'Loading',
     schedule: null,

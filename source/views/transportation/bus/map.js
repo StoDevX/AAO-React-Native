@@ -38,7 +38,7 @@ type State = {|
   },
 |}
 
-export class BusMap extends React.PureComponent<any, Props, State> {
+export class BusMap extends React.PureComponent<Props, State> {
   static navigationOptions = (args: {
     navigation: {state: {params: {line: UnprocessedBusLine}}},
   }) => ({

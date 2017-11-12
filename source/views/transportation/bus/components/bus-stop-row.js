@@ -41,7 +41,7 @@ type Props = {|
   +status: BusStateEnum,
 |}
 
-export class BusStopRow extends React.PureComponent<any, Props, void> {
+export class BusStopRow extends React.PureComponent<Props, void> {
   render() {
     const {
       barColor,
