@@ -6,11 +6,14 @@ import OneSignal from 'react-native-onesignal'
 
 import React from 'react'
 import {Provider} from 'react-redux'
-import {store} from './flux'
+import {makeStore, initRedux} from './flux'
 import bugsnag from './bugsnag'
 import {tracker} from './analytics'
 import {AppNavigator} from './navigation'
 import type {NavigationState} from 'react-navigation'
+
+const store = makeStore()
+initRedux(store)
 
 // gets the current screen from navigation state
 function getCurrentRouteName(navigationState: NavigationState): ?string {
