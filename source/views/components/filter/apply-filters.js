@@ -2,7 +2,6 @@
 import type {FilterType, ToggleType, ListType, ListItemSpecType} from './types'
 import values from 'lodash/values'
 import difference from 'lodash/difference'
-import isPlainObject from 'lodash/isPlainObject'
 
 export function applyFiltersToItem(filters: FilterType[], item: any): boolean {
   // Given a list of filters, return the result of running all of those
@@ -63,7 +62,7 @@ export function applyAndListFilter(
   itemValue: string[] | {[key: string]: string},
 ): boolean {
   // In case the value is an object, instead of an array, convert it to an array
-  if (isPlainObject(itemValue)) {
+  if (!Array.isArray(itemValue)) {
     itemValue = values(itemValue)
   }
 
