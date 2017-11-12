@@ -2,7 +2,7 @@
 import {parseTime} from '../parse-time'
 import moment from 'moment'
 
-it('returns `false` given `false`', () => {
+it('returns `null` given `false`', () => {
   let actual = parseTime(moment())(false)
   expect(actual).toEqual(null)
 })
