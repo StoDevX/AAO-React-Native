@@ -75,7 +75,7 @@ if (require.main === module) {
     for (let error of errors) {
       process.stdout.write('\n')
       fileHadError = true
-      process.stderr.write(error + '\n')
+      process.stdout.write(error + '\n')
     }
     if (!fileHadError) {
       process.stdout.write(' is valid\n')
