@@ -4252,9 +4252,9 @@ react-native-button@2.1.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-calendar-events@1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.4.1.tgz#637c13c43c0e4baa4b6a8f36611e4c7b0d65424d"
+react-native-calendar-events@1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.4.3.tgz#29804e8b44d6946e69ab5a20902d9449ed315c47"
 
 react-native-communications@2.2.1:
   version "2.2.1"
@@ -4302,9 +4302,9 @@ react-native-maps@0.17.1:
   version "0.17.1"
   resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.17.1.tgz#ab2236341fd984dac8864202ae55331bc262f60c"
 
-react-native-network-info@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-2.2.0.tgz#adce17f7f10ca48f3a479c91b0092a85a54fea9a"
+react-native-network-info@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-3.0.0.tgz#fafc0ccea2803ef3b6ba3e01c34e89df90ba1a87"
 
 react-native-onesignal@3.0.6:
   version "3.0.6"
@@ -4316,9 +4316,9 @@ react-native-restart@0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.4.tgz#e742c2f9833592214147bb39321d2cd5d172ad8c"
 
-react-native-safari-view@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-safari-view/-/react-native-safari-view-2.0.0.tgz#3aeb40693b0765df16b9beaf8654b60c7ff1d7ed"
+react-native-safari-view@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-safari-view/-/react-native-safari-view-2.1.0.tgz#1e0cd12c62bce79bc1759c7e281646b08b61c959"
 
 react-native-tab-view@^0.0.70:
   version "0.0.70"
