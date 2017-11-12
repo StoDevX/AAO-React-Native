@@ -1,6 +1,6 @@
 {
   "name": "all-about-olaf",
-  "version": "2.4.2-beta.2",
+  "version": "2.4.3-pre",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -62,11 +62,11 @@
     "html-entities": "1.2.1",
     "htmlparser2": "3.9.2",
     "lodash": "4.17.4",
-    "moment": "2.19.1",
+    "moment": "2.19.2",
     "moment-timezone": "0.5.14",
     "querystring": "0.2.0",
     "react": "16.0.0",
-    "react-markdown": "2.5.0",
+    "react-markdown": "2.5.1",
     "react-native": "0.50.3",
     "react-native-button": "2.1.0",
     "react-native-calendar-events": "1.4.3",
