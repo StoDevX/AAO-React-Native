@@ -4353,9 +4353,9 @@ react-native-network-info@2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-2.2.0.tgz#adce17f7f10ca48f3a479c91b0092a85a54fea9a"
 
-react-native-onesignal@3.0.6:
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-3.0.6.tgz#cbba9813fef876aa4c3b02977eda15a80abd8cb3"
+react-native-onesignal@3.0.7:
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-3.0.7.tgz#d4fd7cb8297aada7e1a11abef311fb577d3f8428"
   dependencies:
     invariant "^2.2.2"
 
