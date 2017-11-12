@@ -17,7 +17,7 @@ export function findBusStopStatus(args: Args): BusStopStatusEnum {
   const {stop, busStatus, departureIndex, now} = args
 
   let stopStatus: BusStopStatusEnum = 'skip'
-  let arrivalTime: false | ?moment = false
+  let arrivalTime: null | moment = null
 
   switch (busStatus) {
     case 'before-start': {
@@ -34,13 +34,13 @@ export function findBusStopStatus(args: Args): BusStopStatusEnum {
 
     default: {
       arrivalTime =
-        departureIndex === null ? false : stop.departures[departureIndex]
+        departureIndex === null ? null : stop.departures[departureIndex]
 
       if (arrivalTime && now.isAfter(arrivalTime, 'minute')) {
         stopStatus = 'after'
       } else if (arrivalTime && now.isSame(arrivalTime, 'minute')) {
         stopStatus = 'at'
-      } else if (arrivalTime !== false) {
+      } else if (arrivalTime !== null) {
         stopStatus = 'before'
       } else {
         stopStatus = 'skip'
@@ -48,7 +48,7 @@ export function findBusStopStatus(args: Args): BusStopStatusEnum {
     }
   }
 
-  if (arrivalTime === false) {
+  if (arrivalTime === null) {
     stopStatus = 'skip'
   }
 

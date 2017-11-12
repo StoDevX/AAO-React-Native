@@ -10,7 +10,7 @@ export type BusLineColors = {|
 |}
 
 export type UnprocessedDepartureTimeList = Array<string | false>
-export type DepartureTimeList = Array<?moment>
+export type DepartureTimeList = Array<null | moment>
 
 export type BusTimetableEntry = {|
   +name: string,
