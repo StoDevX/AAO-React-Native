@@ -4,6 +4,8 @@ import * as c from '../../../components/colors'
 import {View, StyleSheet, Platform} from 'react-native'
 const isAndroid = Platform.OS === 'android'
 
+export type BusStopStatusEnum = 'at' | 'before' | 'after' | 'skip'
+
 const styles = StyleSheet.create({
   barContainer: {
     paddingRight: 5,
@@ -46,25 +48,19 @@ const styles = StyleSheet.create({
 })
 
 type Props = {|
-  +afterStop: boolean,
-  +atStop: boolean,
   +barColor: string,
-  +beforeStop: boolean,
   +currentStopColor: string,
-  +skippingStop: boolean,
   +isFirstChunk: boolean,
   +isLastChunk: boolean,
+  +stopStatus: BusStopStatusEnum,
 |}
 
 export class ProgressChunk extends React.PureComponent<any, Props, void> {
   render() {
     const {
-      afterStop,
-      atStop,
+      stopStatus,
       barColor,
-      beforeStop,
       currentStopColor,
-      skippingStop,
       isFirstChunk,
       isLastChunk,
     } = this.props
@@ -80,13 +76,19 @@ export class ProgressChunk extends React.PureComponent<any, Props, void> {
         <View
           style={[
             styles.dot,
-            afterStop && [
+            stopStatus === 'after' && [
               styles.passedStop,
               {borderColor: barColor, backgroundColor: barColor},
             ],
-            beforeStop && [styles.beforeStop, {borderColor: barColor}],
-            atStop && [styles.atStop, {borderColor: currentStopColor}],
-            skippingStop && styles.skippingStop,
+            stopStatus === 'before' && [
+              styles.beforeStop,
+              {borderColor: barColor},
+            ],
+            stopStatus === 'at' && [
+              styles.atStop,
+              {borderColor: currentStopColor},
+            ],
+            stopStatus === 'skip' && styles.skippingStop,
           ]}
         />
         <View style={[styles.bar, {backgroundColor: endBarColor}]} />

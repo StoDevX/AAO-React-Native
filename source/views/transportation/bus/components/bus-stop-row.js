@@ -7,7 +7,7 @@ import {ListRow, Detail, Title} from '../../../components/list'
 import type {BusTimetableEntry} from '../types'
 import type moment from 'moment'
 import * as c from '../../../components/colors'
-import {ProgressChunk} from './progress-chunk'
+import {ProgressChunk, type BusStopStatusEnum} from './progress-chunk'
 import {ScheduleTimes} from './times'
 import type {BusStateEnum} from '../lib'
 
@@ -54,39 +54,58 @@ export class BusStopRow extends React.PureComponent<any, Props, void> {
       status,
     } = this.props
 
-    const time =
-      departureIndex === null ? false : stop.departures[departureIndex]
+    let stopStatus: BusStopStatusEnum = 'skip'
+    let arrivalTime: false | ?moment = false
+    let remainingDepartures = stop.departures.slice(0)
 
-    const afterStop =
-      status === 'after-end' || (time ? now.isAfter(time, 'minute') : false)
-    const atStop = time ? now.isSame(time, 'minute') : false
-    const beforeStop =
-      status === 'before-start' || (!afterStop && !atStop && time !== false)
-    const skippingStop = time === false
+    switch (status) {
+      case 'before-start': {
+        stopStatus = 'before'
+        arrivalTime = stop.departures[0]
+        break
+      }
+      case 'after-end': {
+        stopStatus = 'after'
+        arrivalTime = stop.departures[stop.departures.length - 1]
+        remainingDepartures = stop.departures.slice(-1)
+        break
+      }
+      default: {
+        arrivalTime =
+          departureIndex === null ? false : stop.departures[departureIndex]
 
-    const remainingDepartures =
-      status === 'before-start'
-        ? stop.departures.slice(0)
-        : status === 'after-end'
-          ? stop.departures.slice(-1)
-          : departureIndex !== null
+        if (arrivalTime && now.isAfter(arrivalTime, 'minute')) {
+          stopStatus = 'after'
+        } else if (arrivalTime && now.isSame(arrivalTime, 'minute')) {
+          stopStatus = 'at'
+        } else if (arrivalTime !== false) {
+          stopStatus = 'before'
+        } else {
+          stopStatus = 'skip'
+        }
+
+        remainingDepartures =
+          departureIndex !== null
             ? stop.departures.slice(departureIndex)
             : stop.departures.slice(0)
+      }
+    }
+
+    if (arrivalTime === false) {
+      stopStatus = 'skip'
+    }
 
     const rowTextStyle = [
-      skippingStop && styles.skippingStopTitle,
-      afterStop && styles.passedStopTitle,
-      atStop && styles.atStopTitle,
+      stopStatus === 'skip' && styles.skippingStopTitle,
+      stopStatus === 'after' && styles.passedStopTitle,
+      stopStatus === 'at' && styles.atStopTitle,
     ]
 
     return (
       <ListRow fullWidth={true} fullHeight={true} style={styles.row}>
         <ProgressChunk
           barColor={barColor}
-          afterStop={afterStop}
-          beforeStop={beforeStop}
-          atStop={atStop}
-          skippingStop={skippingStop}
+          stopStatus={stopStatus}
           currentStopColor={currentStopColor}
           isFirstChunk={isFirstRow}
           isLastChunk={isLastRow}
@@ -99,7 +118,7 @@ export class BusStopRow extends React.PureComponent<any, Props, void> {
           <Detail lines={1}>
             <ScheduleTimes
               times={remainingDepartures}
-              style={skippingStop ? styles.skippingStopDetail : null}
+              style={stopStatus === 'skip' && styles.skippingStopDetail}
             />
           </Detail>
         </Column>
