@@ -40,7 +40,7 @@ function genericOpen(url: string) {
     })
 }
 
-async function iosOpen(url: string) {
+function iosOpen(url: string) {
   // SafariView.isAvailable throws if it's not available
   return SafariView.isAvailable()
     .then(() => SafariView.show({url}))
