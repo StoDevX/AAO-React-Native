@@ -2,7 +2,7 @@
 
 import React from 'react'
 import {StyleSheet, FlatList} from 'react-native'
-import {type ReduxState} from '../../flux'
+import {type ReduxState} from '../../../flux'
 import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from '../../components/colors'
@@ -94,7 +94,7 @@ class EditHomeView extends React.PureComponent<any, Props, void> {
 
 function mapState(state: ReduxState): ReduxStateProps {
   return {
-    order: state.homescreen.order,
+    order: state.homescreen ? state.homescreen.order : [],
   }
 }
 
