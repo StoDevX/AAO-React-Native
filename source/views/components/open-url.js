@@ -41,14 +41,10 @@ function genericOpen(url: string) {
 }
 
 async function iosOpen(url: string) {
-  await startStatusBarColorChanger()
-  const retval = await SafariView.isAvailable()
-    // if it's around, open in safari
+  // SafariView.isAvailable throws if it's not available
+  return SafariView.isAvailable()
     .then(() => SafariView.show({url}))
-    // fall back to opening in default browser
     .catch(() => genericOpen(url))
-  await stopStatusBarColorChanger()
-  return retval
 }
 
 function androidOpen(url: string) {
