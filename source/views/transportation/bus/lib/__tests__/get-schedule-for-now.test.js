@@ -1,7 +1,7 @@
 // @flow
 import {getScheduleForNow} from '../get-schedule-for-now'
 import {processBusSchedule} from '../process-bus-line'
-import {dayAndTime} from './moment.helper'
+import moment from 'moment'
 
 import type {UnprocessedBusSchedule, BusSchedule} from '../../types'
 
@@ -22,23 +22,19 @@ function buildBusSchedules(now): Array<BusSchedule> {
 }
 
 test('returns the bus schedule for today', () => {
-  let now = dayAndTime('Fr 10:01am')
+  // a saturday
+  let now = moment.utc('2017-11-18T13:14:00.000-06:00', moment.ISO_8601)
   let input = buildBusSchedules(now)
   let actual = getScheduleForNow(input, now)
 
-  expect(actual.days).toEqual(['Fr', 'Sa'])
+  expect(actual).toMatchSnapshot()
 })
 
 test('returns an empty schedule if there is no schedule for today', () => {
-  let now = dayAndTime('Su 10:01am')
+  // a sunday
+  let now = moment.utc('2017-11-12T13:14:00.000Z', moment.ISO_8601)
   let input = buildBusSchedules(now)
   let actual = getScheduleForNow(input, now)
 
-  expect(actual).toEqual({
-    days: ['Su'],
-    timetable: [],
-    coordinates: {},
-    stops: [],
-    times: [],
-  })
+  expect(actual).toMatchSnapshot()
 })
