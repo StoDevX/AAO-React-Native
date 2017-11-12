@@ -28,7 +28,7 @@ import {
   BuildingHoursScheduleEditorView,
 } from './views/building-hours'
 import TransportationView, {
-  BusMapView,
+  BusMap as BusMapView,
   OtherModesDetailView,
 } from './views/transportation'
 import SettingsView from './views/settings'

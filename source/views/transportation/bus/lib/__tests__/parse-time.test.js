@@ -12,6 +12,6 @@ it("returns a time (set to now's DOY) given a string", () => {
   let now = moment().dayOfYear(doy)
   let actual = parseTime(now)('4:05pm')
   expect(actual).toBeTruthy()
-  // $FlowExpectedError
+  // $FlowExpectedError: Method cannot be called on possibly null value
   expect(actual.dayOfYear()).toBe(doy)
 })

@@ -1,65 +1,83 @@
 // @flow
 import {getCurrentBusIteration} from '../get-current-bus-iteration'
 import {processBusSchedule} from '../process-bus-line'
-import {dayAndTime} from './moment.helper'
+import {dayAndTime, time} from './moment.helper'
 
 import type {UnprocessedBusSchedule, BusSchedule} from '../../types'
 
-// prettier-ignore
-function buildBusSchedules(now): Array<BusSchedule> {
-  const schedules: Array<UnprocessedBusSchedule> = [
-    {
-      days: ['Mo', 'Tu'],
-      coordinates: {},
-      stops: ['St. Olaf', 'Carleton', 'Food Co-op', 'Cub/Target', 'El Tequila', 'Food Co-op', 'Carleton', 'St. Olaf'],
-      times: [['4:15pm',  '4:22pm',   '4:23pm',     '4:33pm',     '4:37pm',     '4:43pm',     '4:44pm',   '4:52pm'],
-              ['4:55pm',  '5:02pm',   '5:03pm',     '5:13pm',     '5:17pm',     '5:23pm',     '5:24pm',   '5:32pm'],
-              ['5:35pm',  '5:42pm',   '5:43pm',     '5:53pm',     '5:57pm',     '6:03pm',     '6:04pm',   '6:12pm'],
-      ],
-    },
-  ]
-  return schedules.map(processBusSchedule(now))
+function buildBusSchedules(now): BusSchedule {
+  // prettier-ignore
+  const schedules: UnprocessedBusSchedule = {
+    days: ['Mo', 'Tu'],
+    coordinates: {},
+    stops: ['St. Olaf', 'Carleton', 'Food Co-op', 'Cub/Target', 'El Tequila', 'Food Co-op', 'Carleton', 'St. Olaf'],
+    times: [['1:00pm',  '1:05pm',   '1:10pm',     '1:15pm',     '1:20pm',     '1:25pm',     '1:30pm',   '1:35pm'],
+            ['2:00pm',  '2:05pm',   '2:10pm',     '2:15pm',     '2:20pm',     '2:25pm',     '2:30pm',   '2:35pm'],
+            ['3:00pm',  '3:05pm',   '3:10pm',     '3:15pm',     '3:20pm',     '3:25pm',     '3:30pm',   '3:35pm'],
+    ],
+  }
+  return processBusSchedule(now)(schedules)
 }
 
 test('returns the bus times index for the given time', () => {
-  let now = dayAndTime('Mo 4:16pm')
+  let now = time('1:00pm')
   let input = buildBusSchedules(now)
   let actual = getCurrentBusIteration(input, now)
-  expect(actual).toBe(0)
+  expect(actual.status).toBe('running')
+  expect(actual.index).toBe(0)
 })
 
-test('returns `false` if there is no bus running at the given time', () => {
-  let now = dayAndTime('Mo 3:00pm')
+test('returns the bus times index for the given time', () => {
+  let now = time('2:05pm')
   let input = buildBusSchedules(now)
   let actual = getCurrentBusIteration(input, now)
-  expect(actual).toBe(false)
+  expect(actual.status).toBe('running')
+  expect(actual.index).toBe(1)
+  console.log(actual)
 })
 
-test('returns `false` if there is no schedule for today', () => {
-  let now = dayAndTime('Su 10:01pm')
+test('handles the given time being after the last bus', () => {
+  let now = time('5:00pm')
   let input = buildBusSchedules(now)
   let actual = getCurrentBusIteration(input, now)
-  expect(actual).toBe(false)
+  expect(actual.status).toBe('after-end')
+  expect(actual.index).toBe(null)
 })
 
-test('returns `false` if there are no times in the schedule for today', () => {
-  let now = dayAndTime('Su 10:01pm')
-  let actual = getCurrentBusIteration(
-    [
-      {
-        days: ['Su'],
-        coordinates: {},
-        stops: ['St. Olaf'],
-        times: [[]],
-        timetable: [
-          {
-            name: 'None',
-            departures: [],
-          },
-        ],
-      },
-    ],
-    now,
-  )
-  expect(actual).toBe(false)
+test('handles the given time being before the first bus', () => {
+  let now = time('12:00pm')
+  let input = buildBusSchedules(now)
+  let actual = getCurrentBusIteration(input, now)
+  expect(actual.status).toBe('before-start')
+  expect(actual.index).toBe(null)
+})
+
+test('ignores day-of-week', () => {
+  let now = dayAndTime('Su 1:00pm')
+  let input = buildBusSchedules(now)
+  let actual = getCurrentBusIteration(input, now)
+  expect(actual.status).toBe('running')
+  expect(actual.index).toBe(0)
+})
+
+test('handles a schedule with no times', () => {
+  let now = time('1:00pm')
+  let schedule = {
+    days: ['Su'],
+    coordinates: {},
+    stops: [],
+    times: [[]],
+  }
+  let input = processBusSchedule(now)(schedule)
+  let actual = getCurrentBusIteration(input, now)
+  expect(actual.status).toBe('none')
+  expect(actual.index).toBe(null)
+})
+
+test('handles the given time being between two iterations', () => {
+  let now = time('1:55pm')
+  let input = buildBusSchedules(now)
+  let actual = getCurrentBusIteration(input, now)
+  expect(actual.status).toBe('between-rounds')
+  expect(actual.index).toBe(1)
 })

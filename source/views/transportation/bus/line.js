@@ -3,15 +3,17 @@ import React from 'react'
 import {Text, StyleSheet, Platform, FlatList} from 'react-native'
 import type {BusTimetableEntry, UnprocessedBusLine, BusSchedule} from './types'
 import {
-  makeSubtitle,
   processBusLine,
   getScheduleForNow,
   getCurrentBusIteration,
+  type BusStateEnum,
 } from './lib'
 import moment from 'moment-timezone'
+import find from 'lodash/find'
+import findLast from 'lodash/findLast'
 import {Separator} from '../../components/separator'
-import {BusStopRow} from './bus-stop-row'
-import {ListSectionHeader, ListFooter} from '../../components/list'
+import {BusStopRow} from './components/bus-stop-row'
+import {ListSectionHeader, ListFooter, ListRow} from '../../components/list'
 
 const styles = StyleSheet.create({
   separator: {
@@ -21,31 +23,51 @@ const styles = StyleSheet.create({
   },
 })
 
+const isTruthy = x => Boolean(x)
 const BusLineSeparator = () => <Separator style={styles.separator} />
-const EMPTY_SCHEDULE_MESSAGE = <Text>This line is not running today.</Text>
+const EMPTY_SCHEDULE_MESSAGE = (
+  <ListRow>
+    <Text>This line is not running today.</Text>
+  </ListRow>
+)
 const FOOTER_MSG =
   'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
 const FOOTER_EL = <ListFooter title={FOOTER_MSG} />
 
 type Props = {
-  line: UnprocessedBusLine,
-  now: moment,
-  openMap: () => any,
-  onRefresh: () => any,
-  refreshing: boolean,
+  +line: UnprocessedBusLine,
+  +now: moment,
+  +openMap: () => any,
+  +onRefresh: () => any,
+  +refreshing: boolean,
 }
 
-type State = {
+type State = {|
   subtitle: string,
   schedule: ?BusSchedule,
-  currentBusIteration: false | number,
+  currentBusIteration: null | number,
+  status: BusStateEnum,
+|}
+
+function startsIn(now, start: ?moment) {
+  if (!start) {
+    return 'Error'
+  }
+
+  const nowCopy = now.clone()
+  return `Starts ${nowCopy.seconds(0).to(start)}`
 }
 
-export class BusLine extends React.Component<Props, State> {
+export class BusLine extends React.Component<any, Props, State> {
   state = {
     subtitle: 'Loading',
     schedule: null,
-    currentBusIteration: false,
+    currentBusIteration: null,
+    status: 'none',
+  }
+
+  componentWillMount() {
+    this.updateFromProps(this.props)
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -59,24 +81,61 @@ export class BusLine extends React.Component<Props, State> {
     )
   }
 
-  updateFromProps = (props: Props) => {
+  updateFromProps = ({line, now}: Props) => {
     // Finds the stuff that's shared between FlatList and renderItem
-
-    const {line, now} = props
-
     const processedLine = processBusLine(line, now)
+
     const scheduleForToday = getScheduleForNow(processedLine.schedules, now)
+    const {times, status, index, nextStart} = getCurrentBusIteration(
+      scheduleForToday,
+      now,
+    )
 
-    const busIndex = getCurrentBusIteration(processedLine.schedules, now)
+    const isLastBus = index === scheduleForToday.times.length - 1
 
-    const isLastBus = busIndex === scheduleForToday.times.length - 1
-    const stopTimes = busIndex === false ? [] : scheduleForToday.times[busIndex]
-    const subtitle = makeSubtitle({now, stopTimes, isLastBus})
+    let subtitle = 'Error'
+    switch (status) {
+      case 'none':
+        subtitle = 'Not running today'
+        break
+      case 'before-start':
+      case 'between-rounds':
+        subtitle = startsIn(now, nextStart)
+        break
+      case 'after-end':
+        subtitle = 'Over for today'
+        break
+      case 'running': {
+        if (isLastBus) {
+          subtitle = 'Last Bus'
+        } else {
+          const first = find(times, isTruthy)
+          const last = findLast(times, isTruthy)
+          if (!first || !last) {
+            subtitle = 'Not running today'
+          } else if (now.isBefore(first)) {
+            subtitle = startsIn(now, first)
+          } else if (now.isAfter(last)) {
+            subtitle = 'Running'
+          } else {
+            subtitle = 'Running'
+          }
+        }
+        break
+      }
+      default: {
+        ;(status: empty)
+      }
+    }
+
+    // for debugging
+    // subtitle += ` (${now.format('dd h:mma')})`
 
     this.setState(() => ({
       subtitle: subtitle,
+      status: status,
       schedule: scheduleForToday,
-      currentBusIteration: busIndex,
+      currentBusIteration: index,
     }))
   }
 
@@ -85,6 +144,7 @@ export class BusLine extends React.Component<Props, State> {
   renderItem = ({item, index}: {index: number, item: BusTimetableEntry}) => (
     <BusStopRow
       stop={item}
+      status={this.state.status}
       departureIndex={this.state.currentBusIteration}
       now={this.props.now}
       barColor={this.props.line.colors.bar}
@@ -104,7 +164,7 @@ export class BusLine extends React.Component<Props, State> {
 
     const headerEl = (
       <ListSectionHeader
-        title={line.name}
+        title={line.line}
         subtitle={subtitle}
         titleStyle={Platform.OS === 'android' ? {color: line.colors.bar} : null}
       />

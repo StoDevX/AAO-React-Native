@@ -42,7 +42,7 @@ export function processBusLine(
   now: moment,
 ): BusLine {
   return {
-    name: lineData.name,
+    line: lineData.line,
     colors: lineData.colors,
     schedules: lineData.schedules.map(processBusSchedule(now)),
   }

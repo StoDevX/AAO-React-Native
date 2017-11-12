@@ -2,7 +2,7 @@
 
 import React from 'react'
 import type {UnprocessedBusLine} from './types'
-import {BusLine} from './bus-line'
+import {BusLine} from './line'
 import moment from 'moment-timezone'
 import {NoticeView} from '../../components/notice'
 import LoadingView from '../../components/loading'
@@ -16,20 +16,20 @@ const TIMEZONE = 'America/Winnipeg'
 
 const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/bus-times.json'
 
-type Props = TopLevelViewPropsType & {
-  line: string,
-}
+type Props = TopLevelViewPropsType & {|
+  +line: string,
+|}
 
-type State = {
+type State = {|
   busLines: Array<UnprocessedBusLine>,
   activeBusLine: ?UnprocessedBusLine,
   intervalId: number,
   loading: boolean,
   refreshing: boolean,
   now: moment,
-}
+|}
 
-export class BusView extends React.PureComponent<Props, State> {
+export class BusView extends React.PureComponent<any, Props, State> {
   state = {
     busLines: defaultData.data,
     activeBusLine: null,
@@ -65,9 +65,8 @@ export class BusView extends React.PureComponent<Props, State> {
     }
 
     const activeBusLine = busLines.find(({line}) => line === this.props.line)
-    const now = moment.tz(TIMEZONE)
 
-    this.setState(() => ({busLines, activeBusLine, now}))
+    this.setState(() => ({busLines, activeBusLine}))
   }
 
   updateTime = () => {
@@ -102,7 +101,7 @@ export class BusView extends React.PureComponent<Props, State> {
     const {now, activeBusLine} = this.state
 
     if (!activeBusLine) {
-      const lines = this.state.busLines.map(({name}) => name).join(', ')
+      const lines = this.state.busLines.map(({line}) => line).join(', ')
       const msg = `The line "${this.props.line}" was not found among ${lines}`
       return <NoticeView text={msg} />
     }
