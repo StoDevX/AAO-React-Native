@@ -43,7 +43,7 @@ test('handles a time before the bus runs', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[0]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual(['1:00pm', '2:00pm', '3:00pm'])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
 
 test('handles a time right when the bus starts', () => {
@@ -51,7 +51,7 @@ test('handles a time right when the bus starts', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[0]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual(['1:00pm', '2:00pm', '3:00pm'])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
 
 test('handles a time between two stops', () => {
@@ -59,7 +59,7 @@ test('handles a time between two stops', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[1]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual(['1:05pm', null, '3:05pm'])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
 
 test('handles a time at the second stop', () => {
@@ -67,7 +67,7 @@ test('handles a time at the second stop', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[1]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual(['1:05pm', null, '3:05pm'])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
 
 test('handles a time at the last stop', () => {
@@ -75,7 +75,7 @@ test('handles a time at the last stop', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[schedule.timetable.length - 1]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual(['1:10pm', '2:10pm', '3:10pm'])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
 
 test('handles a time between two iterations', () => {
@@ -83,7 +83,7 @@ test('handles a time between two iterations', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[0]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual(['2:00pm', '3:00pm'])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
 
 test('handles the first stop of the second iteration', () => {
@@ -91,7 +91,7 @@ test('handles the first stop of the second iteration', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[0]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual(['2:00pm', '3:00pm'])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
 
 test('handles the first stop of the last iteration', () => {
@@ -99,7 +99,7 @@ test('handles the first stop of the last iteration', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[0]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual(['3:00pm'])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
 
 test('handles the last stop of the last iteration', () => {
@@ -107,7 +107,7 @@ test('handles the last stop of the last iteration', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[schedule.timetable.length - 1]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual(['3:10pm'])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
 
 test('handles a stop that will be skipped', () => {
@@ -115,7 +115,7 @@ test('handles a stop that will be skipped', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[1]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual([null, '3:05pm'])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
 
 test('handles a time after the bus runs', () => {
@@ -123,7 +123,7 @@ test('handles a time after the bus runs', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[0]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual(['3:00pm'])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
 
 test('handles a time on another day', () => {
@@ -131,7 +131,7 @@ test('handles a time on another day', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[0]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual(['12:00pm'])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
 
 test('handles a time when the bus is not running', () => {
@@ -139,5 +139,5 @@ test('handles a time when the bus is not running', () => {
   const {schedule, busStatus, departureIndex} = makeSchedule(now)
   const stop = schedule.timetable[0]
   const actual = findRemainingDeparturesForStop({stop, departureIndex, busStatus})
-  expect(actual.map(formatTime)).toEqual([])
+  expect(actual.map(formatTime)).toMatchSnapshot()
 })
