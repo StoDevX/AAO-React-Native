@@ -25,7 +25,11 @@ type State = {
   refreshing: boolean,
   error: ?Error,
 }
-export default class NewsContainer extends React.PureComponent<any, Props, State> {
+export default class NewsContainer extends React.PureComponent<
+  any,
+  Props,
+  State,
+> {
   state = {
     entries: [],
     loading: true,
