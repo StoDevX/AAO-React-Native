@@ -80,6 +80,7 @@ jobs:
         - npm run lint | tee logs/eslint
         # Validate data
         - npm run validate-data -- --quiet | tee logs/validate-data
+        - npm run validate-bus-data | tee logs/validate-bus-data
         - npm run bundle-data
         # Type check and run tests
         - npm run flow -- check --quiet | tee logs/flow

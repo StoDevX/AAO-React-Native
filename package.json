@@ -22,6 +22,7 @@
     "prettier:since-master": "FILES=$(git diff --name-only master | grep '\\.js$'); prettier --write $FILES",
     "start": "react-native start",
     "test": "jest",
+    "validate-bus-data": "node scripts/validate-bus-schedules.js",
     "validate-data": "node scripts/validate-data.js"
   },
   "babel": {
