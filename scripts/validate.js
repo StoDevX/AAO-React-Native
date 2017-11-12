@@ -5,8 +5,7 @@ const AJV = require('ajv')
 const yaml = require('js-yaml')
 const get = require('lodash/get')
 const memoize = require('lodash/memoize')
-
-const SCHEMA_BASE = path.join(__dirname, '..', 'data', '_schemas')
+const {SCHEMA_BASE} = require('./paths')
 
 function formatError(err, data) {
   // format some of the errors from ajv

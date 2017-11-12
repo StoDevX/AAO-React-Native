@@ -5,9 +5,7 @@ const yaml = require('js-yaml')
 const junk = require('junk')
 const minimist = require('minimist')
 const validate = require('./validate')
-
-const SCHEMA_BASE = path.join(__dirname, '..', 'data', '_schemas')
-const DATA_BASE = path.join(__dirname, '..', 'data')
+const {SCHEMA_BASE, DATA_BASE} = require('./paths')
 
 const isDir = pth => tryBoolean(() => fs.statSync(pth).isDirectory())
 const readYaml = pth =>
