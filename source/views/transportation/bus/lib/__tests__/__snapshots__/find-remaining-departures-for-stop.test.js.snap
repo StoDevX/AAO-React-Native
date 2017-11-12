@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`handles a stop that will be skipped 1`] = `
+Array [
+  null,
+  "3:05pm",
+]
+`;
+
+exports[`handles a time after the bus runs 1`] = `
+Array [
+  "3:00pm",
+]
+`;
+
+exports[`handles a time at the last stop 1`] = `
+Array [
+  "1:10pm",
+  "2:10pm",
+  "3:10pm",
+]
+`;
+
+exports[`handles a time at the second stop 1`] = `
+Array [
+  "1:05pm",
+  null,
+  "3:05pm",
+]
+`;
+
+exports[`handles a time before the bus runs 1`] = `
+Array [
+  "1:00pm",
+  "2:00pm",
+  "3:00pm",
+]
+`;
+
+exports[`handles a time between two iterations 1`] = `
+Array [
+  "2:00pm",
+  "3:00pm",
+]
+`;
+
+exports[`handles a time between two stops 1`] = `
+Array [
+  "1:05pm",
+  null,
+  "3:05pm",
+]
+`;
+
+exports[`handles a time on another day 1`] = `
+Array [
+  "12:00pm",
+]
+`;
+
+exports[`handles a time right when the bus starts 1`] = `
+Array [
+  "1:00pm",
+  "2:00pm",
+  "3:00pm",
+]
+`;
+
+exports[`handles a time when the bus is not running 1`] = `Array []`;
+
+exports[`handles the first stop of the last iteration 1`] = `
+Array [
+  "3:00pm",
+]
+`;
+
+exports[`handles the first stop of the second iteration 1`] = `
+Array [
+  "2:00pm",
+  "3:00pm",
+]
+`;
+
+exports[`handles the last stop of the last iteration 1`] = `
+Array [
+  "3:10pm",
+]
+`;
