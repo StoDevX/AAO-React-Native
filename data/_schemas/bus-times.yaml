@@ -21,8 +21,8 @@ definitions:
       times: {$ref: '#/definitions/times'}
 
   coordinates:
-    type: array
-    items: {$ref: '#/definitions/coord-pair'}
+    type: object
+    additionalProperties: {$ref: '#/definitions/coord-pair'}
 
   stops:
     type: array

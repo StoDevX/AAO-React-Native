@@ -4,6 +4,7 @@ colors:
   dot: rgb(151, 27, 16)
 schedules:
   - days: [Mo, Tu, We, Th, Fr]
+    coordinates: {}
     stops:
       - City Hall on Washington
       - Senior Center
