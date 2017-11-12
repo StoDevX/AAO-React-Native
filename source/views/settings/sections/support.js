@@ -3,7 +3,7 @@ import React from 'react'
 import {Alert} from 'react-native'
 import {Section} from 'react-native-tableview-simple'
 import type {TopLevelViewPropsType} from '../../types'
-import Communications from 'react-native-communications'
+import {email} from 'react-native-communications'
 import DeviceInfo from 'react-native-device-info'
 import {version} from '../../../../package.json'
 import {PushButtonCell} from '../../components/cells/push-button'
@@ -26,7 +26,7 @@ export default class SupportSection extends React.Component {
     `
 
   openEmail = () => {
-    Communications.email(
+    email(
       ['allaboutolaf@stolaf.edu'],
       null,
       null,
