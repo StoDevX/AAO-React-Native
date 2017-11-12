@@ -13,15 +13,16 @@ import {
   loadFeedbackStatus,
   loadAcknowledgement,
 } from './parts/settings'
-import {updateBalances, updateCourses} from './parts/sis'
+import {updateBalances} from './parts/sis'
 
-function loginCredentials(store) {
-  loadLoginCredentials().then(({username, password} = {}) => {
-    if (!username || !password) return
+async function loginCredentials(store) {
+  const {username, password} = await loadLoginCredentials()
 
-    let action = setLoginCredentials(username, password)
-    store.dispatch(action)
-  })
+  if (!username || !password) {
+    return
+  }
+
+  store.dispatch(setLoginCredentials(username, password))
 }
 
 async function validateOlafCredentials(store) {
@@ -38,21 +39,24 @@ function netInfoIsConnected(store) {
   return NetInfo.isConnected.fetch().then(updateConnectionStatus)
 }
 
-export async function init(store: {dispatch: any}) {
-  // this function runs in two parts: the things that don't care about network,
-  // and those that do.
+export async function init(store: {dispatch: any => any}) {
+  // this function runs in two parts: the things that don't care about
+  // network, and those that do.
 
-  // kick off the parts that don't care about network
-  store.dispatch(loadHomescreenOrder())
-  store.dispatch(loadFeedbackStatus())
-  store.dispatch(loadAcknowledgement())
-  loginCredentials(store)
+  // kick off the parts that don't care about network in parallel
+  await Promise.all([
+    store.dispatch(loadHomescreenOrder()),
+    store.dispatch(loadFeedbackStatus()),
+    store.dispatch(loadAcknowledgement()),
+    loginCredentials(store),
+  ])
 
   // wait for our first connection check to happen
   await netInfoIsConnected(store)
 
-  // then go do the network stuff
-  validateOlafCredentials(store)
-  store.dispatch(updateBalances(false))
-  store.dispatch(updateCourses(false))
+  // then go do the network stuff in parallel
+  await Promise.all([
+    validateOlafCredentials(store),
+    store.dispatch(updateBalances(false)),
+  ])
 }
