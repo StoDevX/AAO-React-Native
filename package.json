@@ -32,7 +32,8 @@
   },
   "greenkeeper": {
     "ignore": [
-      "flow-bin"
+      "flow-bin",
+      "react"
     ]
   },
   "jest": {
