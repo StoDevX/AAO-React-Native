@@ -35,7 +35,10 @@ const SET_FEEDBACK = 'settings/SET_FEEDBACK'
 const CHANGE_THEME = 'settings/CHANGE_THEME'
 const SIS_ALERT_SEEN = 'settings/SIS_ALERT_SEEN'
 
-type SetFeedbackStatusAction = {type: 'settings/SET_FEEDBACK', payload: boolean}
+type SetFeedbackStatusAction = {|
+  type: 'settings/SET_FEEDBACK',
+  payload: boolean,
+|}
 export async function setFeedbackStatus(
   feedbackEnabled: boolean,
 ): Promise<SetFeedbackStatusAction> {
@@ -47,7 +50,7 @@ export async function loadFeedbackStatus(): Promise<SetFeedbackStatusAction> {
   return {type: SET_FEEDBACK, payload: await getAnalyticsOptOut()}
 }
 
-type SisAlertSeenAction = {type: 'settings/SIS_ALERT_SEEN', payload: boolean}
+type SisAlertSeenAction = {|type: 'settings/SIS_ALERT_SEEN', payload: boolean|}
 export async function loadAcknowledgement(): Promise<SisAlertSeenAction> {
   return {type: SIS_ALERT_SEEN, payload: await getAcknowledgementStatus()}
 }
@@ -57,10 +60,10 @@ export async function hasSeenAcknowledgement(): Promise<SisAlertSeenAction> {
   return {type: SIS_ALERT_SEEN, payload: true}
 }
 
-type SetCredentialsAction = {
+type SetCredentialsAction = {|
   type: 'settings/SET_LOGIN_CREDENTIALS',
   payload: {username: string, password: string},
-}
+|}
 export async function setLoginCredentials(
   username: string,
   password: string,
@@ -69,12 +72,12 @@ export async function setLoginCredentials(
   return {type: SET_LOGIN_CREDENTIALS, payload: {username, password}}
 }
 
-type LoginStartAction = {type: 'settings/CREDENTIALS_LOGIN_START'}
-type LoginSuccessAction = {
+type LoginStartAction = {|type: 'settings/CREDENTIALS_LOGIN_START'|}
+type LoginSuccessAction = {|
   type: 'settings/CREDENTIALS_LOGIN_SUCCESS',
   payload: {username: string, password: string},
-}
-type LoginFailureAction = {type: 'settings/CREDENTIALS_LOGIN_FAILURE'}
+|}
+type LoginFailureAction = {|type: 'settings/CREDENTIALS_LOGIN_FAILURE'|}
 type LogInActions = LoginStartAction | LoginSuccessAction | LoginFailureAction
 export function logInViaCredentials(
   username: string,
@@ -94,19 +97,15 @@ export function logInViaCredentials(
   }
 }
 
-type LogOutAction = {type: 'settings/CREDENTIALS_LOGOUT'}
+type LogOutAction = {|type: 'settings/CREDENTIALS_LOGOUT'|}
 export async function logOutViaCredentials(): Promise<LogOutAction> {
   await clearLoginCredentials()
   return {type: CREDENTIALS_LOGOUT}
 }
 
-type ValidateStartAction = {type: 'settings/CREDENTIALS_VALIDATE_START'}
-type ValidateSuccessAction = {
-  type: 'settings/CREDENTIALS_VALIDATE_SUCCESS',
-}
-type ValidateFailureAction = {
-  type: 'settings/CREDENTIALS_VALIDATE_FAILURE',
-}
+type ValidateStartAction = {|type: 'settings/CREDENTIALS_VALIDATE_START'|}
+type ValidateSuccessAction = {|type: 'settings/CREDENTIALS_VALIDATE_SUCCESS'|}
+type ValidateFailureAction = {|type: 'settings/CREDENTIALS_VALIDATE_FAILURE'|}
 type ValidateCredentialsActions =
   | ValidateStartAction
   | ValidateSuccessAction

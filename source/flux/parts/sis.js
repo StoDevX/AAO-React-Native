@@ -12,14 +12,14 @@ const UPDATE_MEALS_DAILY = 'sis/UPDATE_MEALS_DAILY'
 const UPDATE_MEALS_WEEKLY = 'sis/UPDATE_MEALS_WEEKLY'
 const UPDATE_MEAL_PLAN = 'sis/UPDATE_MEAL_PLAN'
 
-type UpdateBalancesSuccessAction = {
+type UpdateBalancesSuccessAction = {|
   type: 'sis/UPDATE_BALANCES_SUCCESS',
   payload: BalancesShapeType,
-}
-type UpdateBalancesFailureAction = {
+|}
+type UpdateBalancesFailureAction = {|
   type: 'sis/UPDATE_BALANCES_FAILURE',
   payload: Error,
-}
+|}
 
 type UpdateBalancesActions =
   | UpdateBalancesSuccessAction
@@ -47,7 +47,7 @@ export function updateBalances(
 
 type Action = UpdateBalancesActions
 
-export type State = {
+export type State = {|
   balancesErrorMessage: ?string,
   flexBalance: ?string,
   oleBalance: ?string,
@@ -55,7 +55,7 @@ export type State = {
   mealsRemainingToday: ?string,
   mealsRemainingThisWeek: ?string,
   mealPlanDescription: ?string,
-}
+|}
 const initialState = {
   balancesErrorMessage: null,
   flexBalance: null,

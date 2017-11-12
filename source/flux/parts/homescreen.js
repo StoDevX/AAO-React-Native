@@ -61,9 +61,9 @@ export function saveHomescreenOrder(
 
 type Action = SaveViewOrderAction
 
-export type State = {
+export type State = {|
   order: Array<ViewName>,
-}
+|}
 
 const initialState: State = {
   order: [],
