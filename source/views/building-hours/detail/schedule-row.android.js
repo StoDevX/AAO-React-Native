@@ -11,13 +11,13 @@ import type {SingleBuildingScheduleType} from '../types'
 
 import {formatBuildingTimes, summarizeDays} from '../lib'
 
-export class ScheduleRow extends React.PureComponent {
-  props: {
-    set: SingleBuildingScheduleType,
-    isActive: boolean,
-    now: moment,
-  }
+type Props = {
+  set: SingleBuildingScheduleType,
+  isActive: boolean,
+  now: moment,
+}
 
+export class ScheduleRow extends React.PureComponent<Props> {
   render() {
     const {set, isActive, now} = this.props
     return (

@@ -40,7 +40,7 @@ type State = {
   width: number,
 }
 
-class EditHomeView extends React.PureComponent<void, Props, State> {
+class EditHomeView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Edit Home',
   }

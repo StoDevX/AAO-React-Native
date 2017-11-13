@@ -51,7 +51,7 @@ type Props = {
   onMoveDown: (string[], string) => any,
 }
 
-export class EditHomeRow extends React.PureComponent<void, Props, void> {
+export class EditHomeRow extends React.PureComponent<Props> {
   onMoveUp = () => {
     this.props.onMoveUp(this.props.order, this.props.item.view)
   }

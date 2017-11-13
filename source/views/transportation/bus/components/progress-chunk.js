@@ -55,7 +55,7 @@ type Props = {|
   +stopStatus: BusStopStatusEnum,
 |}
 
-export class ProgressChunk extends React.PureComponent<any, Props, void> {
+export class ProgressChunk extends React.PureComponent<Props, void> {
   render() {
     const {
       stopStatus,

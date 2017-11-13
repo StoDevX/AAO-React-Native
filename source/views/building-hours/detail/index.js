@@ -12,18 +12,20 @@ import {BuildingDetail} from './building'
 import {CENTRAL_TZ} from '../lib'
 import type {TopLevelViewPropsType} from '../../types'
 
-export class BuildingHoursDetailView extends React.PureComponent {
+type Props = TopLevelViewPropsType & {
+  navigation: {state: {params: {building: BuildingType}}},
+}
+
+type State = {intervalId: number, now: moment}
+
+export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
   static navigationOptions = ({navigation}) => {
     return {
       title: navigation.state.params.building.name,
     }
   }
 
-  props: TopLevelViewPropsType & {
-    navigation: {state: {params: {building: BuildingType}}},
-  }
-
-  state: {intervalId: number, now: moment} = {
+  state = {
     intervalId: 0,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),

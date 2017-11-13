@@ -23,7 +23,7 @@ type Props = TopLevelViewPropsType & {
   thumbnail: number,
 }
 
-export class NewsList extends React.PureComponent<any, Props, void> {
+export class NewsList extends React.PureComponent<Props> {
   onPressNews = (story: StoryType) => {
     this.props.navigation.navigate('NewsItemView', {
       story,

@@ -20,14 +20,14 @@ const styles = StyleSheet.create({
   },
 })
 
-export class BuildingHoursList extends React.PureComponent {
-  props: TopLevelViewPropsType & {
-    now: momentT,
-    loading: boolean,
-    onRefresh: () => any,
-    buildings: Array<{title: string, data: BuildingType[]}>,
-  }
+type Props = TopLevelViewPropsType & {
+  now: momentT,
+  loading: boolean,
+  onRefresh: () => any,
+  buildings: Array<{title: string, data: BuildingType[]}>,
+}
 
+export class BuildingHoursList extends React.PureComponent<Props> {
   onPressRow = (data: BuildingType) => {
     tracker.trackEvent('building-hours', data.name)
     this.props.navigation.navigate('BuildingHoursDetailView', {building: data})

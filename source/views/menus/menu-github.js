@@ -38,7 +38,7 @@ type State = {
   meals: ProcessedMealType[],
 }
 
-export class GitHubHostedMenu extends React.PureComponent<any, Props, State> {
+export class GitHubHostedMenu extends React.PureComponent<Props, State> {
   state = {
     error: null,
     loading: true,

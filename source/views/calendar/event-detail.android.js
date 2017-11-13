@@ -91,7 +91,15 @@ const CalendarButton = ({message, disabled, onPress}) => {
   )
 }
 
-export class EventDetail extends React.PureComponent {
+type Props = TopLevelViewPropsType & {
+  navigation: {state: {params: {event: CleanedEventType}}},
+}
+
+type State = {
+  message: string,
+  disabled: boolean,
+}
+export class EventDetail extends React.PureComponent<Props, State> {
   static navigationOptions = ({navigation}) => {
     const {event} = navigation.state.params
     return {
@@ -100,14 +108,7 @@ export class EventDetail extends React.PureComponent {
     }
   }
 
-  props: TopLevelViewPropsType & {
-    navigation: {state: {params: {event: CleanedEventType}}},
-  }
-
-  state: {
-    message: string,
-    disabled: boolean,
-  } = {
+  state = {
     message: '',
     disabled: false,
   }

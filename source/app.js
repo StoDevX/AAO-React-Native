@@ -32,7 +32,9 @@ function getCurrentRouteName(navigationState: NavigationState): ?string {
   return route.routeName
 }
 
-export default class App extends React.Component {
+type Props = {}
+
+export default class App extends React.Component<Props> {
   componentWillMount() {
     OneSignal.addEventListener('received', this.onReceived)
     OneSignal.addEventListener('opened', this.onOpened)

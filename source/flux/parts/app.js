@@ -13,6 +13,7 @@ export type UpdateOnlineStatusAction = {|
   type: 'app/ONLINE_STATUS',
   payload: boolean,
 |}
+
 export function updateOnlineStatus(status: boolean): UpdateOnlineStatusAction {
   return {type: ONLINE_STATUS, payload: status}
 }

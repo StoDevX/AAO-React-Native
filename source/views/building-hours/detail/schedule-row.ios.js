@@ -11,13 +11,13 @@ import moment from 'moment-timezone'
 import {Cell} from 'react-native-tableview-simple'
 import {formatBuildingTimes, summarizeDays} from '../lib'
 
-export class ScheduleRow extends React.PureComponent {
-  props: {
-    set: SingleBuildingScheduleType,
-    isActive: boolean,
-    now: moment,
-  }
+type Props = {
+  set: SingleBuildingScheduleType,
+  isActive: boolean,
+  now: moment,
+}
 
+export class ScheduleRow extends React.PureComponent<Props> {
   render() {
     const {set, isActive, now} = this.props
     return (

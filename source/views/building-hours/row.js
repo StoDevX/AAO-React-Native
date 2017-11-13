@@ -55,13 +55,14 @@ type Props = {
 }
 
 type State = {
+  firstUpdate: boolean,
   openStatus: string,
   hours: Array<any>,
   accentBg: string,
   accentText: string,
 }
 
-export class BuildingRow extends React.Component<void, Props, State> {
+export class BuildingRow extends React.Component<Props, State> {
   state = {
     openStatus: 'Unknown',
     hours: [],

@@ -75,6 +75,7 @@ import com.android.build.OutputFile
 project.ext.react = [
     // ignore the ruby deps
     inputExcludes: ["android/**", "ios/**", "vendor/**"],
+    entryFile: "index.js"
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"

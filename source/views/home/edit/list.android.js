@@ -30,7 +30,7 @@ type ReduxDispatchProps = {
 
 type Props = ReduxStateProps & ReduxDispatchProps
 
-class EditHomeView extends React.PureComponent<any, Props, void> {
+class EditHomeView extends React.PureComponent<Props> {
   static navigationOptions = {
     title: 'Edit Home',
   }
