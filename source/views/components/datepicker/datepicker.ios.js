@@ -34,7 +34,7 @@ type State = {
   allowPointerEvents: boolean,
 }
 
-export class IosDatePicker extends React.Component<any, Props, State> {
+export class DatePicker extends React.Component<any, Props, State> {
   static defaultProps = {
     mode: 'date',
     height: 259, // 216 (DatePickerIOS) + 1 (borderTop) + 42 (marginTop), iOS only
@@ -125,7 +125,7 @@ type ModalProps = {
   timezone: string,
 }
 
-class DatePickerModal extends React.PureComponent<void, ModalProps, void> {
+class DatePickerModal extends React.PureComponent<any, ModalProps, void> {
   static SUPPORTED_ORIENTATIONS = [
     'portrait',
     'portrait-upside-down',
@@ -202,7 +202,16 @@ class DatePickerModal extends React.PureComponent<void, ModalProps, void> {
   }
 }
 
-const Button = ({style, textStyle, onPress, text}) => (
+type StyleSheetRule = number | Object | Array<StyleSheetRule>
+
+type ButtonProps = {
+  style?: StyleSheetRule,
+  textStyle?: StyleSheetRule,
+  onPress: () => any,
+  text: string,
+}
+
+const Button = ({style, textStyle, onPress, text}: ButtonProps) => (
   <TouchableHighlight
     underlayColor="transparent"
     onPress={onPress}

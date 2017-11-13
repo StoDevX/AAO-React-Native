@@ -24,20 +24,22 @@ const CENTRAL_TZ = 'America/Winnipeg'
 
 const githubMenuBaseUrl = 'https://stodevx.github.io/AAO-React-Native'
 
-export class GitHubHostedMenu extends React.Component {
-  props: TopLevelViewPropsType & {
-    name: string,
-    loadingMessage: string[],
-  }
+type Props = TopLevelViewPropsType & {
+  name: string,
+  loadingMessage: string[],
+}
 
-  state: {
-    error: ?Error,
-    loading: boolean,
-    now: momentT,
-    foodItems: MenuItemContainerType,
-    corIcons: MasterCorIconMapType,
-    meals: ProcessedMealType[],
-  } = {
+type State = {
+  error: ?Error,
+  loading: boolean,
+  now: momentT,
+  foodItems: MenuItemContainerType,
+  corIcons: MasterCorIconMapType,
+  meals: ProcessedMealType[],
+}
+
+export class GitHubHostedMenu extends React.PureComponent<any, Props, State> {
+  state = {
     error: null,
     loading: true,
     now: moment.tz(CENTRAL_TZ),
@@ -77,12 +79,12 @@ export class GitHubHostedMenu extends React.Component {
       corIcons = fallbackMenu.corIcons || {}
     }
 
-    foodItems = fromPairs(
+    const upgradedFoodItems = fromPairs(
       foodItems.map(upgradeMenuItem).map(item => [item.id, item]),
     )
     stationMenus = stationMenus.map((menu, index) => ({
       ...upgradeStation(menu, index),
-      items: filter(foodItems, item => item.station === menu.label).map(
+      items: filter(upgradedFoodItems, item => item.station === menu.label).map(
         item => item.id,
       ),
     }))
@@ -90,7 +92,7 @@ export class GitHubHostedMenu extends React.Component {
     this.setState({
       loading: false,
       corIcons,
-      foodItems,
+      foodItems: upgradedFoodItems,
       meals: [
         {
           label: 'Menu',

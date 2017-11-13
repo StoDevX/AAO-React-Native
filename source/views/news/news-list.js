@@ -14,16 +14,16 @@ const styles = StyleSheet.create({
   },
 })
 
-export class NewsList extends React.Component {
-  props: TopLevelViewPropsType & {
-    name: string,
-    onRefresh: () => any,
-    entries: StoryType[],
-    loading: boolean,
-    embedFeaturedImage: ?boolean,
-    thumbnail: number,
-  }
+type Props = TopLevelViewPropsType & {
+  name: string,
+  onRefresh: () => any,
+  entries: StoryType[],
+  loading: boolean,
+  embedFeaturedImage: ?boolean,
+  thumbnail: number,
+}
 
+export class NewsList extends React.PureComponent<any, Props, void> {
   onPressNews = (story: StoryType) => {
     this.props.navigation.navigate('NewsItemView', {
       story,

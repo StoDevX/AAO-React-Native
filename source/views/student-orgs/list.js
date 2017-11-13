@@ -20,7 +20,6 @@ import {reportNetworkProblem} from '../../lib/report-network-problem'
 import size from 'lodash/size'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
-import head from 'lodash/head'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
@@ -67,23 +66,26 @@ const styles = StyleSheet.create({
   },
 })
 
-export class StudentOrgsView extends React.Component {
+type Props = TopLevelViewPropsType
+
+type State = {
+  orgs: Array<StudentOrgType>,
+  results: {[key: string]: StudentOrgType[]},
+  refreshing: boolean,
+  error: boolean,
+  loading: boolean,
+}
+
+export class StudentOrgsView extends React.PureComponent<any, Props, State> {
   static navigationOptions = {
     title: 'Student Orgs',
     headerBackTitle: 'Orgs',
   }
 
-  props: TopLevelViewPropsType
   searchBar: any
 
-  state: {
-    orgs: {[key: string]: StudentOrgType[]},
-    results: {[key: string]: StudentOrgType[]},
-    refreshing: boolean,
-    error: boolean,
-    loading: boolean,
-  } = {
-    orgs: {},
+  state = {
+    orgs: [],
     results: {},
     refreshing: false,
     loading: true,
@@ -112,7 +114,7 @@ export class StudentOrgsView extends React.Component {
       return {
         ...item,
         $sortableName: sortableName,
-        $groupableName: head(startCase(sortableName)),
+        $groupableName: startCase(sortableName)[0],
       }
     })
 

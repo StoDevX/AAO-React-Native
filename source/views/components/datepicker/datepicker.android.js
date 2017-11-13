@@ -37,7 +37,7 @@ type TimePickerResponse = {
   minute: number,
 }
 
-export class AndroidDatePicker extends React.PureComponent<any, Props, void> {
+export class DatePicker extends React.PureComponent<any, Props, void> {
   static defaultProps = {
     mode: 'date',
     androidMode: 'default',
