@@ -1,19 +1,18 @@
-/**
- * @flow
- * Reducer for state for the homescreen
- */
+// @flow
 
 import {allViewNames as defaultViewOrder} from '../../views/views'
 import difference from 'lodash/difference'
 import {trackHomescreenOrder} from '../../analytics'
 import * as storage from '../../lib/storage'
 
-export const SAVE_HOMESCREEN_ORDER = 'homescreen/SAVE_HOMESCREEN_ORDER'
+const SAVE_HOMESCREEN_ORDER = 'homescreen/SAVE_HOMESCREEN_ORDER'
 
-export const updateViewOrder = (
-  currentOrder: string[],
-  defaultOrder: string[] = defaultViewOrder,
-) => {
+type ViewName = string
+
+export function updateViewOrder(
+  currentOrder: Array<ViewName>,
+  defaultOrder: Array<ViewName> = defaultViewOrder,
+): Array<ViewName> {
   currentOrder = currentOrder || []
 
   // lodash/difference: Creates an array of array values _not included_ in the
@@ -33,7 +32,7 @@ export const updateViewOrder = (
   return currentOrder
 }
 
-export const loadHomescreenOrder = async () => {
+export async function loadHomescreenOrder() {
   // get the saved list from persistent storage
   let savedOrder = await storage.getHomescreenOrder()
 
@@ -44,29 +43,39 @@ export const loadHomescreenOrder = async () => {
   return saveHomescreenOrder(order, {noTrack: true})
 }
 
-export const saveHomescreenOrder = (
-  order: string[],
+type SaveViewOrderAction = {
+  type: 'homescreen/SAVE_HOMESCREEN_ORDER',
+  payload: Array<ViewName>,
+}
+export function saveHomescreenOrder(
+  order: Array<ViewName>,
   options: {noTrack?: boolean} = {},
-) => {
-  options.noTrack || trackHomescreenOrder(order)
+): SaveViewOrderAction {
+  if (!options.noTrack) {
+    trackHomescreenOrder(order)
+  }
+
   storage.setHomescreenOrder(order)
   return {type: SAVE_HOMESCREEN_ORDER, payload: order}
 }
 
-const initialHomescreenState = {
+type Action = SaveViewOrderAction
+
+export type State = {|
+  order: Array<ViewName>,
+|}
+
+const initialState: State = {
   order: [],
 }
-export function homescreen(
-  state: Object = initialHomescreenState,
-  action: Object,
-) {
-  const {type, payload} = action
 
-  switch (type) {
+export function homescreen(state: State = initialState, action: Action) {
+  switch (action.type) {
     case SAVE_HOMESCREEN_ORDER: {
-      return {...state, order: payload}
+      return {...state, order: action.payload}
     }
-    default:
+    default: {
       return state
+    }
   }
 }

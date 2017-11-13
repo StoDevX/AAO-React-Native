@@ -4,8 +4,8 @@ import React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import * as c from '../../components/colors'
 import {connect} from 'react-redux'
-import {updateMenuFilters} from '../../../flux'
-import type {TopLevelViewPropsType} from '../../types'
+import {updateMenuFilters, type ReduxState} from '../../../flux'
+import {type TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
 import type {
   MenuItemType,
@@ -17,27 +17,37 @@ import type {
 import size from 'lodash/size'
 import values from 'lodash/values'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
-import type {FilterType} from '../../components/filter'
-import {applyFiltersToItem} from '../../components/filter'
+import {applyFiltersToItem, type FilterType} from '../../components/filter'
 import {NoticeView} from '../../components/notice'
 import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
 import {chooseMeal} from '../lib/choose-meal'
 import {buildFilters} from '../lib/build-filters'
 
-type Props = TopLevelViewPropsType & {
-  applyFilters: (filters: FilterType[], item: MenuItemType) => boolean,
+type ReactProps = TopLevelViewPropsType & {
   cafeMessage?: ?string,
-  filters: FilterType[],
   foodItems: MenuItemContainerType,
   meals: ProcessedMealType[],
   menuCorIcons: MasterCorIconMapType,
   name: string,
   now: momentT,
-  onFiltersChange: (f: FilterType[]) => any,
   onRefresh?: ?() => any,
   refreshing?: ?boolean,
 }
+
+type ReduxDispatchProps = {
+  onFiltersChange: (f: FilterType[]) => any,
+}
+
+type ReduxStateProps = {
+  filters: FilterType[],
+}
+
+type DefaultProps = {
+  applyFilters: (filters: FilterType[], item: MenuItemType) => boolean,
+}
+
+type Props = ReactProps & ReduxStateProps & ReduxDispatchProps & DefaultProps
 
 const styles = StyleSheet.create({
   inner: {
@@ -185,13 +195,23 @@ class FancyMenu extends React.PureComponent<any, Props, void> {
   }
 }
 
-const mapState = (state, actualProps: Props) => ({
-  filters: state.menus[actualProps.name] || [],
-})
+const mapState = (
+  state: ReduxState,
+  actualProps: ReactProps,
+): ReduxStateProps => {
+  if (!state.menus) {
+    return {filters: []}
+  }
+  return {
+    filters: state.menus[actualProps.name] || [],
+  }
+}
 
-const mapDispatch = (dispatch, actualProps: Props) => ({
-  onFiltersChange: (filters: FilterType[]) =>
-    dispatch(updateMenuFilters(actualProps.name, filters)),
-})
+const mapDispatch = (dispatch, actualProps: ReactProps): ReduxDispatchProps => {
+  return {
+    onFiltersChange: (filters: FilterType[]) =>
+      dispatch(updateMenuFilters(actualProps.name, filters)),
+  }
+}
 
 export const ConnectedFancyMenu = connect(mapState, mapDispatch)(FancyMenu)
