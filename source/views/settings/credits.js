@@ -48,6 +48,7 @@ export default function CreditsView() {
   let formattedContributors = credits.contributors
     .map(w => w.replace(' ', ' '))
     .join(' • ')
+
   let formattedAcks = credits.acknowledgements
     .map(w => w.replace(' ', ' '))
     .join(' • ')

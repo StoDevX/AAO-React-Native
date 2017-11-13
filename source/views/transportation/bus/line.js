@@ -128,8 +128,10 @@ export class BusLine extends React.Component<Props, State> {
       }
     }
 
-    // for debugging
-    // subtitle += ` (${now.format('dd h:mma')})`
+    if (process.env.NODE_ENV !== 'production') {
+      // for debugging
+      subtitle += ` (${now.format('dd h:mma')})`
+    }
 
     this.setState(() => ({
       subtitle: subtitle,

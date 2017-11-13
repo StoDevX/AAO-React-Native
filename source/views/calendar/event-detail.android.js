@@ -123,19 +123,19 @@ export class EventDetail extends React.PureComponent<Props, State> {
       await delay(500 - elapsed)
     }
 
-    await addToCalendar(event).then(result => {
-      if (result) {
-        this.setState(() => ({
-          message: 'Event has been added to your calendar',
-          disabled: true,
-        }))
-      } else {
-        this.setState(() => ({
-          message: 'Could not add event to your calendar',
-          disabled: false,
-        }))
-      }
-    })
+    const result = await addToCalendar(event)
+
+    if (result) {
+      this.setState(() => ({
+        message: 'Event has been added to your calendar',
+        disabled: true,
+      }))
+    } else {
+      this.setState(() => ({
+        message: 'Could not add event to your calendar',
+        disabled: false,
+      }))
+    }
   }
 
   onPressButton = () => this.addEvent(this.props.navigation.state.params.event)

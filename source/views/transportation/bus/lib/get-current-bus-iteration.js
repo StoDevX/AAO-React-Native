@@ -17,7 +17,7 @@ export type BusStateEnum =
 type ReturnVal = {
   status: BusStateEnum,
   times: DepartureTimeList,
-  index: ?number,
+  index: null | number,
   nextStart: ?moment,
 }
 
@@ -79,7 +79,12 @@ export function getCurrentBusIteration(
 
     // Check if we're between two iterations
     if (lastStopTime && nextStart && now.isBetween(lastStopTime, nextStart)) {
-      return {status: 'between-rounds', times: nextTimes, index: index + 1, nextStart}
+      return {
+        status: 'between-rounds',
+        times: nextTimes,
+        index: index + 1,
+        nextStart,
+      }
     }
 
     // If we're not, then return "running"

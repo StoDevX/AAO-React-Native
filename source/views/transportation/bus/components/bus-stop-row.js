@@ -9,7 +9,11 @@ import type moment from 'moment'
 import * as c from '../../../components/colors'
 import {ProgressChunk} from './progress-chunk'
 import {ScheduleTimes} from './times'
-import type {BusStateEnum} from '../lib'
+import {
+  findRemainingDeparturesForStop as findRemainingDepartures,
+  findBusStopStatus as findStopStatus,
+  type BusStateEnum,
+} from '../lib'
 
 const styles = StyleSheet.create({
   row: {
@@ -51,42 +55,23 @@ export class BusStopRow extends React.PureComponent<Props, void> {
       isLastRow,
       now,
       stop,
-      status,
+      status: busStatus,
     } = this.props
 
-    const time =
-      departureIndex === null ? false : stop.departures[departureIndex]
-
-    const afterStop =
-      status === 'after-end' || (time ? now.isAfter(time, 'minute') : false)
-    const atStop = time ? now.isSame(time, 'minute') : false
-    const beforeStop =
-      status === 'before-start' || (!afterStop && !atStop && time !== false)
-    const skippingStop = time === false
-
-    const remainingDepartures =
-      status === 'before-start'
-        ? stop.departures.slice(0)
-        : status === 'after-end'
-          ? stop.departures.slice(-1)
-          : departureIndex !== null
-            ? stop.departures.slice(departureIndex)
-            : stop.departures.slice(0)
+    const stopStatus = findStopStatus({stop, busStatus, departureIndex, now})
+    const times = findRemainingDepartures({stop, busStatus, departureIndex})
 
     const rowTextStyle = [
-      skippingStop && styles.skippingStopTitle,
-      afterStop && styles.passedStopTitle,
-      atStop && styles.atStopTitle,
+      stopStatus === 'skip' && styles.skippingStopTitle,
+      stopStatus === 'after' && styles.passedStopTitle,
+      stopStatus === 'at' && styles.atStopTitle,
     ]
 
     return (
       <ListRow fullWidth={true} fullHeight={true} style={styles.row}>
         <ProgressChunk
           barColor={barColor}
-          afterStop={afterStop}
-          beforeStop={beforeStop}
-          atStop={atStop}
-          skippingStop={skippingStop}
+          stopStatus={stopStatus}
           currentStopColor={currentStopColor}
           isFirstChunk={isFirstRow}
           isLastChunk={isLastRow}
@@ -98,8 +83,8 @@ export class BusStopRow extends React.PureComponent<Props, void> {
           </Title>
           <Detail lines={1}>
             <ScheduleTimes
-              times={remainingDepartures}
-              style={skippingStop ? styles.skippingStopDetail : null}
+              times={times}
+              style={stopStatus === 'skip' && styles.skippingStopDetail}
             />
           </Detail>
         </Column>

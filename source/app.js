@@ -10,6 +10,10 @@ import {makeStore, initRedux} from './flux'
 import bugsnag from './bugsnag'
 import {tracker} from './analytics'
 import {AppNavigator} from './navigation'
+import {
+  startStatusBarColorChanger,
+  stopStatusBarColorChanger,
+} from './views/components/open-url'
 import type {NavigationState} from 'react-navigation'
 
 const store = makeStore()
@@ -31,11 +35,13 @@ function getCurrentRouteName(navigationState: NavigationState): ?string {
 type Props = {}
 
 export default class App extends React.Component<Props> {
-  componentDidMount() {
+  componentWillMount() {
     OneSignal.addEventListener('received', this.onReceived)
     OneSignal.addEventListener('opened', this.onOpened)
     OneSignal.addEventListener('registered', this.onRegistered)
     OneSignal.addEventListener('ids', this.onIds)
+
+    startStatusBarColorChanger()
   }
 
   componentWillUnmount() {
@@ -43,6 +49,8 @@ export default class App extends React.Component<Props> {
     OneSignal.removeEventListener('opened', this.onOpened)
     OneSignal.removeEventListener('registered', this.onRegistered)
     OneSignal.removeEventListener('ids', this.onIds)
+
+    stopStatusBarColorChanger()
   }
 
   onReceived(notification: any) {
