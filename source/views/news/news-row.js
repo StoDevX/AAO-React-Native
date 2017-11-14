@@ -12,7 +12,7 @@ type Props = {
   thumbnail: number,
 }
 
-export class NewsRow extends React.PureComponent<any, Props, void> {
+export class NewsRow extends React.PureComponent<Props> {
   _onPress = () => this.props.onPress(this.props.story)
 
   render() {

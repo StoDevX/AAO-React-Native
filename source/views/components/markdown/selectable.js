@@ -3,7 +3,9 @@
 import * as React from 'react'
 import {Text} from 'react-native'
 
-export class SelectableText extends React.PureComponent {
+type Props = {}
+
+export class SelectableText extends React.PureComponent<Props> {
   render() {
     return <Text selectable={true} {...this.props} />
   }

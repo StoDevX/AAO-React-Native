@@ -65,9 +65,9 @@ CarletonSaylesMenuScreen.navigationOptions = {
   tabBarIcon: TabBarIcon('menu'),
 }
 
-export class CarletonCafeIndex extends React.Component {
-  props: TopLevelViewPropsType
+type Props = TopLevelViewPropsType
 
+export class CarletonCafeIndex extends React.Component<Props> {
   render() {
     const carletonCafes = [
       {id: 'CarletonBurtonMenuView', title: 'Burton'},

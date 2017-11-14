@@ -76,7 +76,7 @@ type State = {
   loading: boolean,
 }
 
-export class StudentOrgsView extends React.PureComponent<any, Props, State> {
+export class StudentOrgsView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Student Orgs',
     headerBackTitle: 'Orgs',

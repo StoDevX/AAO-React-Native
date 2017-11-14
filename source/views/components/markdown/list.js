@@ -12,11 +12,11 @@ export const List = glamorous.view({})
 export const ListText = glamorous(Paragraph)({})
 
 // the list item's container box thing
-export class ListItem extends React.PureComponent {
-  props: {
-    children?: React$Element<*>,
-  }
+type Props = {
+  children?: React.Node,
+}
 
+export class ListItem extends React.PureComponent<Props> {
   render() {
     return (
       <glamorous.View flexDirection="row">

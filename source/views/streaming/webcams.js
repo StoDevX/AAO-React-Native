@@ -43,7 +43,7 @@ type State = {
   refreshing: boolean,
 }
 
-export class WebcamsView extends React.PureComponent<void, Props, State> {
+export class WebcamsView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Webcams',
     tabBarIcon: TabBarIcon('videocam'),
@@ -125,7 +125,7 @@ type ThumbnailProps = {
   viewportWidth: number,
 }
 
-class StreamThumbnail extends React.PureComponent<void, ThumbnailProps, void> {
+class StreamThumbnail extends React.PureComponent<ThumbnailProps> {
   handlePress = () => {
     const {name, pageUrl} = this.props.webcam
     trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})

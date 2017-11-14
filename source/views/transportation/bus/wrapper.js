@@ -29,7 +29,7 @@ type State = {|
   now: moment,
 |}
 
-export class BusView extends React.PureComponent<any, Props, State> {
+export class BusView extends React.PureComponent<Props, State> {
   state = {
     busLines: defaultData.data,
     activeBusLine: null,

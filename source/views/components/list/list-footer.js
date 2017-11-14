@@ -13,12 +13,12 @@ const styles = StyleSheet.create({
   },
 })
 
-export class ListFooter extends React.PureComponent {
-  props: {
-    title: string,
-    href?: string,
-  }
+type Props = {
+  title: string,
+  href?: string,
+}
 
+export class ListFooter extends React.PureComponent<Props> {
   render() {
     const {title} = this.props
     return (

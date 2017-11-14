@@ -10,9 +10,9 @@ import {View, Text, StyleSheet} from 'react-native'
 import type {BuildingType} from '../types'
 import * as c from '../../components/colors'
 
-export class Header extends React.PureComponent {
-  props: {building: BuildingType}
+type Props = {building: BuildingType}
 
+export class Header extends React.PureComponent<Props> {
   render() {
     const {building} = this.props
 

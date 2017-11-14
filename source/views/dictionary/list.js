@@ -51,7 +51,7 @@ type State = {
   refreshing: boolean,
 }
 
-export class DictionaryView extends React.PureComponent<void, Props, State> {
+export class DictionaryView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Campus Dictionary',
     headerBackTitle: 'Dictionary',

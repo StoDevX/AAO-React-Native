@@ -2,11 +2,11 @@
 import * as React from 'react'
 import {View, Text} from 'react-native'
 
-export class ListEmpty extends React.PureComponent {
-  props: {
-    mode: 'bug',
-  }
+type Props = {
+  mode: 'bug' | 'normal',
+}
 
+export class ListEmpty extends React.PureComponent<Props> {
   render() {
     return (
       <View>

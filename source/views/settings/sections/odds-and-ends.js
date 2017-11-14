@@ -10,12 +10,12 @@ import {CellToggle} from '../../components/cells/toggle'
 import {PushButtonCell} from '../../components/cells/push-button'
 import {trackedOpenUrl} from '../../components/open-url'
 
-class OddsAndEndsSection extends React.Component {
-  props: TopLevelViewPropsType & {
-    onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
-    feedbackDisabled: boolean,
-  }
+type Props = TopLevelViewPropsType & {
+  onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
+  feedbackDisabled: boolean,
+}
 
+class OddsAndEndsSection extends React.PureComponent<Props> {
   onPressButton = (id: string) => {
     this.props.navigation.navigate(id)
   }

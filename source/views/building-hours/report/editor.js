@@ -20,26 +20,31 @@ import {DeleteButtonCell} from '../../components/cells/delete-button'
 import {CellToggle} from '../../components/cells/toggle'
 import {ListSeparator} from '../../components/list'
 
-export class BuildingHoursScheduleEditorView extends React.PureComponent {
+type Props = TopLevelViewPropsType & {
+  navigation: {
+    state: {
+      params: {
+        set: SingleBuildingScheduleType,
+        onEditSet: (set: SingleBuildingScheduleType) => any,
+        onDeleteSet: () => any,
+      },
+    },
+  },
+}
+
+type State = {
+  set: ?SingleBuildingScheduleType,
+}
+
+export class BuildingHoursScheduleEditorView extends React.PureComponent<
+  Props,
+  State,
+> {
   static navigationOptions = {
     title: 'Edit Schedule',
   }
 
-  props: TopLevelViewPropsType & {
-    navigation: {
-      state: {
-        params: {
-          set: SingleBuildingScheduleType,
-          onEditSet: (set: SingleBuildingScheduleType) => any,
-          onDeleteSet: () => any,
-        },
-      },
-    },
-  }
-
-  state: {
-    set: ?SingleBuildingScheduleType,
-  } = {
+  state = {
     set: this.props.navigation.state.params.initialSet,
   }
 
@@ -103,10 +108,13 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent {
   }
 }
 
-class WeekTogglesIOS extends React.PureComponent {
-  props: {days: DayOfWeekEnumType[], onChangeDays: (DayOfWeekEnumType[]) => any}
+type WeekTogglesProps = {
+  days: DayOfWeekEnumType[],
+  onChangeDays: (DayOfWeekEnumType[]) => any,
+}
 
-  toggleDay = day => {
+class WeekTogglesIOS extends React.PureComponent<WeekTogglesProps> {
+  toggleDay = (day: DayOfWeekEnumType) => {
     this.props.onChangeDays(xor(this.props.days, [day]))
   }
 
@@ -128,9 +136,7 @@ class WeekTogglesIOS extends React.PureComponent {
   }
 }
 
-class WeekTogglesAndroid extends React.PureComponent {
-  props: {days: DayOfWeekEnumType[], onChangeDays: (DayOfWeekEnumType[]) => any}
-
+class WeekTogglesAndroid extends React.PureComponent<WeekTogglesProps> {
   toggleDay = day => {
     this.props.onChangeDays(xor(this.props.days, [day]))
   }
@@ -156,13 +162,13 @@ class WeekTogglesAndroid extends React.PureComponent {
   }
 }
 
-class ToggleButton extends React.PureComponent {
-  props: {
-    active: boolean,
-    text: string,
-    onPress: (newState: string) => any,
-  }
+type ToggleButtonProps = {
+  active: boolean,
+  text: DayOfWeekEnumType,
+  onPress: (newState: DayOfWeekEnumType) => any,
+}
 
+class ToggleButton extends React.PureComponent<ToggleButtonProps> {
   onPress = () => this.props.onPress(this.props.text)
 
   render() {
@@ -183,13 +189,13 @@ class ToggleButton extends React.PureComponent {
 
 const WeekToggles = Platform.OS === 'ios' ? WeekTogglesIOS : WeekTogglesAndroid
 
-class DatePickerCell extends React.PureComponent {
-  props: {
-    date: moment,
-    title: string,
-    onChange: (date: moment) => any,
-  }
+type DatePickerCellProps = {
+  date: moment,
+  title: string,
+  onChange: (date: moment) => any,
+}
 
+class DatePickerCell extends React.PureComponent<DatePickerCellProps> {
   _picker: any
   openPicker = () => this._picker.onPressDate()
 

@@ -10,7 +10,15 @@ import delay from 'delay'
 
 const faqsUrl = 'https://stodevx.github.io/AAO-React-Native/faqs.json'
 
-export class FaqView extends React.PureComponent {
+type Props = {}
+
+type State = {
+  text: string,
+  loading: boolean,
+  refreshing: boolean,
+}
+
+export class FaqView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'FAQs',
   }
@@ -40,7 +48,7 @@ export class FaqView extends React.PureComponent {
     this.setState(() => ({text}))
   }
 
-  refresh = async () => {
+  refresh = async (): any => {
     const start = Date.now()
     this.setState(() => ({refreshing: true}))
 

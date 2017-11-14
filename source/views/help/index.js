@@ -5,7 +5,9 @@ import {View} from 'react-native'
 
 import {ReportWifiProblemView} from './wifi'
 
-export default class HelpView extends React.Component {
+type Props = {}
+
+export default class HelpView extends React.Component<Props> {
   static navigationOptions = {
     title: 'Help',
   }
