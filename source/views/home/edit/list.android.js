@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, FlatList} from 'react-native'
 import {type ReduxState} from '../../../flux'
 import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
@@ -30,7 +30,7 @@ type ReduxDispatchProps = {
 
 type Props = ReduxStateProps & ReduxDispatchProps
 
-class EditHomeView extends React.PureComponent<any, Props, void> {
+class EditHomeView extends React.PureComponent<Props> {
   static navigationOptions = {
     title: 'Edit Home',
   }

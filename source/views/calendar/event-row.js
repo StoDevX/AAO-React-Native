@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, Text} from 'react-native'
 import type {EventType} from './types'
 import * as c from '../components/colors'
@@ -32,12 +32,12 @@ const styles = StyleSheet.create({
   },
 })
 
-export default class EventRow extends React.PureComponent {
-  props: {
-    event: EventType,
-    onPress: EventType => any,
-  }
+type Props = {
+  event: EventType,
+  onPress: EventType => any,
+}
 
+export default class EventRow extends React.PureComponent<Props> {
   _onPress = () => this.props.onPress(this.props.event)
 
   render() {

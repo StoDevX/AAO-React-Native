@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, RefreshControl, Platform} from 'react-native'
 import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
 import {Column} from '../components/layout'
@@ -51,7 +51,7 @@ type State = {
   refreshing: boolean,
 }
 
-export class DictionaryView extends React.PureComponent<void, Props, State> {
+export class DictionaryView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Campus Dictionary',
     headerBackTitle: 'Dictionary',

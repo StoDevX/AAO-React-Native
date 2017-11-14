@@ -3,7 +3,7 @@
  * Exports a button that opens the Settings screen
  */
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, Platform} from 'react-native'
 import * as c from '../colors'
 import {Touchable} from '../touchable'

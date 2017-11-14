@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {
   StyleSheet,
   ScrollView,
@@ -51,7 +51,7 @@ type State = {
   loading: boolean,
 }
 
-class BalancesView extends React.PureComponent<any, Props, State> {
+class BalancesView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Balances',
     tabBarIcon: TabBarIcon('card'),

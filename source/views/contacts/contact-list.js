@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {ListSeparator, ListSectionHeader} from '../components/list'
 import {ListEmpty} from '../components/list'
@@ -36,7 +36,7 @@ type State = {
   refreshing: boolean,
 }
 
-export class ContactsListView extends React.PureComponent<void, Props, State> {
+export class ContactsListView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Important Contacts',
     headerBackTitle: 'Contacts',
@@ -54,7 +54,7 @@ export class ContactsListView extends React.PureComponent<void, Props, State> {
     })
   }
 
-  refresh = async () => {
+  refresh = async (): any => {
     const start = Date.now()
     this.setState(() => ({refreshing: true}))
 

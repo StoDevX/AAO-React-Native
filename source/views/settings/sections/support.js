@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Alert} from 'react-native'
 import {Section} from 'react-native-tableview-simple'
 import type {TopLevelViewPropsType} from '../../types'
@@ -9,9 +9,9 @@ import {version} from '../../../../package.json'
 import {PushButtonCell} from '../../components/cells/push-button'
 import {refreshApp} from '../../../lib/refresh'
 
-export default class SupportSection extends React.Component {
-  props: TopLevelViewPropsType
+type Props = TopLevelViewPropsType
 
+export default class SupportSection extends React.PureComponent<Props> {
   onPressButton = (id: string) => {
     this.props.navigation.navigate(id)
   }

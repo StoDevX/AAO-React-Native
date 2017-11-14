@@ -1,17 +1,17 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {Column, Row} from '../../components/layout'
 import {ListRow, Detail, Title} from '../../components/list'
 import {fastGetTrimmedText} from '../../../lib/html'
 import type {JobType} from './types'
 
-export class JobRow extends React.PureComponent {
-  props: {
-    onPress: JobType => any,
-    job: JobType,
-  }
+type Props = {
+  onPress: JobType => any,
+  job: JobType,
+}
 
+export class JobRow extends React.PureComponent<Props> {
   _onPress = () => this.props.onPress(this.props.job)
 
   render() {

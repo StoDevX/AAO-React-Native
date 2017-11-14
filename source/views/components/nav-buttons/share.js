@@ -1,16 +1,16 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {Touchable} from '../touchable'
 import {rightButtonStyles as styles} from './styles'
 
-export class ShareButton extends React.PureComponent {
-  props: {
-    onPress: () => any,
-  }
+type Props = {
+  onPress: () => any,
+}
 
+export class ShareButton extends React.PureComponent<Props> {
   render() {
     return (
       <Touchable

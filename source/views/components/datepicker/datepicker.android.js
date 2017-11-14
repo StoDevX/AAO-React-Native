@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {
   View,
   Text,
@@ -37,7 +37,7 @@ type TimePickerResponse = {
   minute: number,
 }
 
-export class DatePicker extends React.PureComponent<any, Props, void> {
+export class DatePicker extends React.PureComponent<Props> {
   static defaultProps = {
     mode: 'date',
     androidMode: 'default',

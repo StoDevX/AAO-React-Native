@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import type {UnprocessedBusLine} from './types'
 import {BusLine} from './line'
 import moment from 'moment-timezone'
@@ -16,9 +16,9 @@ const TIMEZONE = 'America/Winnipeg'
 
 const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/bus-times.json'
 
-type Props = TopLevelViewPropsType & {|
+type Props = TopLevelViewPropsType & {
   +line: string,
-|}
+}
 
 type State = {|
   busLines: Array<UnprocessedBusLine>,
@@ -29,7 +29,7 @@ type State = {|
   now: moment,
 |}
 
-export class BusView extends React.PureComponent<any, Props, State> {
+export class BusView extends React.PureComponent<Props, State> {
   state = {
     busLines: defaultData.data,
     activeBusLine: null,
