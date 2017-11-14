@@ -54,7 +54,7 @@ export default class KSTOView extends React.PureComponent<Props, State> {
     Dimensions.removeEventListener('change', this.handleResizeEvent)
   }
 
-  handleResizeEvent = (event: {window: {width: number}}) => {
+  handleResizeEvent = (event: {window: {width: number, height: number}}) => {
     this.setState(() => ({viewport: event.window}))
   }
 
