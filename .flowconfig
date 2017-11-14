@@ -26,6 +26,8 @@
 .*/node_modules/react-native-restart/.*
 ; remove this after rn-linear-gradient updates
 .*/node_modules/react-native-linear-gradient/.*
+; ignore all of react-navigation for now
+.*/node_modules/react-navigation/.*
 
 [include]
 
