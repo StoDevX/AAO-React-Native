@@ -2,9 +2,6 @@
 ; We fork some components by platform
 .*/*[.]android.js
 
-; Ignore json files from flow
-*.json
-
 ; Ignore "BUCK" generated dirs
 <PROJECT_ROOT>/\.buckd/
 
@@ -26,8 +23,6 @@
 .*/node_modules/.*/__tests?__/.*
 .*/node_modules/.*/examples/.*
 .*/node_modules/react-native-mock/.*
-; try removing this line in react-native 0.46
-.*/node_modules/react-native/local-cli/server/util/attachHMRServer.js
 ; remove this after rn-linear-gradient updates
 .*/node_modules/react-native-linear-gradient/.*
 
