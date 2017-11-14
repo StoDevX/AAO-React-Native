@@ -16,9 +16,9 @@ const TIMEZONE = 'America/Winnipeg'
 
 const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/bus-times.json'
 
-type Props = TopLevelViewPropsType & {|
+type Props = TopLevelViewPropsType & {
   +line: string,
-|}
+}
 
 type State = {|
   busLines: Array<UnprocessedBusLine>,
