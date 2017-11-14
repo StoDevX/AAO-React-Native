@@ -71,13 +71,13 @@ def get_sourcemap_args
   case lane_context[:PLATFORM_NAME]
   when :android
     platform = 'android'
-    entry_file = 'index.android.js'
+    entry_file = 'index.js'
     bundle_output = '../android-release.bundle'
     sourcemap_output = '../android-release.bundle.map'
     bundle_url = 'index.android.bundle'
   when :ios
     platform = 'ios'
-    entry_file = 'index.ios.js'
+    entry_file = 'index.js'
     bundle_output = '../ios-release.bundle'
     sourcemap_output = '../ios-release.bundle.map'
     bundle_url = 'main.jsbundle'
