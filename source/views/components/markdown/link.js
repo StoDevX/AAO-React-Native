@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {ActionSheetIOS, Clipboard} from 'react-native'
 import glamorous from 'glamorous-native'
 import openUrl from '../open-url'

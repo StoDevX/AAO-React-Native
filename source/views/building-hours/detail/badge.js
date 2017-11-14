@@ -4,7 +4,7 @@
  * <Badge/> renders the [Open] / [Closed] / [IDK] badge on the detai view
  */
 
-import React from 'react'
+import * as React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
 import * as c from '../../components/colors'
 

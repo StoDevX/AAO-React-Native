@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {View} from 'react-native'
 import {Cell, Section} from 'react-native-tableview-simple'
 import {version} from '../../../../package.json'

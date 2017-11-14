@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, View, Platform} from 'react-native'
 import * as c from '../components/colors'
 

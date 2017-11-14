@@ -4,7 +4,7 @@
  * <ScheduleTable/> renders the table of schedules.
  */
 
-import React from 'react'
+import * as React from 'react'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import moment from 'moment-timezone'
 import type {NamedBuildingScheduleType} from '../types'

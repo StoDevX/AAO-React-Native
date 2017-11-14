@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {Dimensions, StyleSheet} from 'react-native'
 import {type ReduxState} from '../../../flux'
 import {saveHomescreenOrder} from '../../../flux/parts/homescreen'

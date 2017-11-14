@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import glamorous from 'glamorous-native'
 
 export const Code = glamorous.text({})

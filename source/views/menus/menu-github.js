@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import LoadingView from '../components/loading'
 import {NoticeView} from '../components/notice'
 import {ConnectedFancyMenu as FancyMenu} from './components/fancy-menu'

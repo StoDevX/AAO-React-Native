@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, Text} from 'react-native'
 import type {EventType} from './types'
 import * as c from '../components/colors'

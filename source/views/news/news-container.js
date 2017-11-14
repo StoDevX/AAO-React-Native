@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import delay from 'delay'
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'

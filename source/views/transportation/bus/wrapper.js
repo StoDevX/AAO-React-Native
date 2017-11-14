@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import type {UnprocessedBusLine} from './types'
 import {BusLine} from './line'
 import moment from 'moment-timezone'

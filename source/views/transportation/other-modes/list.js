@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import delay from 'delay'
 import {OtherModesRow} from './row'
 import {reportNetworkProblem} from '../../../lib/report-network-problem'

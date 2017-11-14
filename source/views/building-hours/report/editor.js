@@ -4,7 +4,7 @@
  * An editor for individual building schedules.
  */
 
-import React from 'react'
+import * as React from 'react'
 import xor from 'lodash/xor'
 import {View, ScrollView, Platform, Text, StyleSheet} from 'react-native'
 import moment from 'moment-timezone'

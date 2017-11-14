@@ -5,7 +5,7 @@
  * subtitle.
  */
 
-import React from 'react'
+import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import type {BuildingType} from '../types'
 import * as c from '../../components/colors'

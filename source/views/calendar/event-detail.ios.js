@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import type {CleanedEventType} from './types'

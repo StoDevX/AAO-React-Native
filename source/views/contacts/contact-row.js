@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import type {ContactType} from './types'
 import {ListRow, Detail, Title} from '../components/list'
 import {Column, Row} from '../components/layout'

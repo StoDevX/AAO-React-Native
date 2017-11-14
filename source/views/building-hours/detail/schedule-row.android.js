@@ -4,7 +4,7 @@
  * <ScheduleRow/> renders a single row of the schedule information.
  */
 
-import React from 'react'
+import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import moment from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'

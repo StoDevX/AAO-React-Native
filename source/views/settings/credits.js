@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Text, ScrollView, Image, StyleSheet} from 'react-native'
 import {data as credits} from '../../../docs/credits.json'
 

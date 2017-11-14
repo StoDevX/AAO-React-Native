@@ -4,7 +4,7 @@ import './globalize-fetch'
 import './setup-moment'
 import OneSignal from 'react-native-onesignal'
 
-import React from 'react'
+import * as React from 'react'
 import {Provider} from 'react-redux'
 import {makeStore, initRedux} from './flux'
 import bugsnag from './bugsnag'

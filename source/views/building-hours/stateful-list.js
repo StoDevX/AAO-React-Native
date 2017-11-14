@@ -5,7 +5,7 @@
  * the local copy as a fallback, and renders the list of buildings.
  */
 
-import React from 'react'
+import * as React from 'react'
 import {NoticeView} from '../components/notice'
 import {BuildingHoursList} from './list'
 

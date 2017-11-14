@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, Platform, View} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
 import debounce from 'lodash/debounce'

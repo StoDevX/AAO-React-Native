@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {ScrollView, Text, View, StyleSheet, Linking} from 'react-native'
 import moment from 'moment'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'

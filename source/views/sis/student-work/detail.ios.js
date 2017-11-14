@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {email} from 'react-native-communications'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'

@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import * as c from '../../../components/colors'
 import {View, StyleSheet, Platform} from 'react-native'
 import type {BusStopStatusEnum} from '../lib'

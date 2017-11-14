@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {View, TextInput, StyleSheet} from 'react-native'
 import {TabBarIcon} from '../components/tabbar-icon'
 import * as c from '../components/colors'

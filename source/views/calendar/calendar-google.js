@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {EventList} from './event-list'
 import bugsnag from '../../bugsnag'
 import {tracker} from '../../analytics'

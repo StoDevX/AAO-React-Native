@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {WebView} from 'react-native'
 import openUrl, {canOpenUrl} from '../components/open-url'
 

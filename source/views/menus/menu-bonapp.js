@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
 import {NoticeView} from '../components/notice'

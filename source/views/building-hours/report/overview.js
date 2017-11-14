@@ -4,7 +4,7 @@
  * Building Hours "report a problem" screen.
  */
 
-import React from 'react'
+import * as React from 'react'
 import {ScrollView, View, StyleSheet, Text} from 'react-native'
 import moment from 'moment-timezone'
 import {CellTextField} from '../../components/cells/textfield'

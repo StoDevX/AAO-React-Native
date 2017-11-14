@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {ScrollView} from 'glamorous-native'
 import {Markdown} from '../components/markdown'
 import {text} from '../../../docs/legal.json'

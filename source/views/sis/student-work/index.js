@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, Text, SectionList} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import type {TopLevelViewPropsType} from '../../types'

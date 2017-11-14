@@ -5,7 +5,7 @@
  * building.
  */
 
-import React from 'react'
+import * as React from 'react'
 import type {BuildingType} from '../types'
 import moment from 'moment-timezone'
 import {BuildingDetail} from './building'

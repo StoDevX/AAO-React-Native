@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {View, StyleSheet} from 'react-native'
 import {Card} from '../../components/card'
 import moment from 'moment-timezone'

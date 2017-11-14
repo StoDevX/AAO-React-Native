@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import {BuildingRow} from './row'
 import {tracker} from '../../analytics'

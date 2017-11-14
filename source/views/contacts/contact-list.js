@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {ListSeparator, ListSectionHeader} from '../components/list'
 import {ListEmpty} from '../components/list'

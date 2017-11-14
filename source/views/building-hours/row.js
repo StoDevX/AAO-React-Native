@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {Badge} from '../components/badge'
 import isEqual from 'lodash/isEqual'

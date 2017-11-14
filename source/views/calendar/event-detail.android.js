@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import type {CleanedEventType} from './types'
 import type {TopLevelViewPropsType} from '../types'

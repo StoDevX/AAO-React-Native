@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Markdown} from '../components/markdown'
 import {ListFooter} from '../components/list'

@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {RefreshControl} from 'react-native'
 import {ScrollView} from 'glamorous-native'
 import {Markdown} from '../components/markdown'

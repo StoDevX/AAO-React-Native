@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Text, StyleSheet, Platform, FlatList} from 'react-native'
 import type {BusTimetableEntry, UnprocessedBusLine, BusSchedule} from './types'
 import {
