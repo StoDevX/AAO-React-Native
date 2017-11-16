@@ -13,15 +13,18 @@ import {
   Text,
   View,
   WebView,
+  Platform,
 } from 'react-native'
 import * as c from '../../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {Touchable} from '../../components/touchable'
 import {TabBarIcon} from '../../components/tabbar-icon'
+import {phonecall} from 'react-native-communications'
 import type {TopLevelViewPropsType} from '../../types'
 
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
 const image = require('../../../../images/streaming/ksto/ksto-logo.png')
+const stationNumber = '+15077863602'
 
 type Viewport = {width: number, height: number}
 
@@ -90,6 +93,10 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
     this.props.navigation.navigate('KSTOSchedule')
   }
 
+  callStation = () => {
+    phonecall(stationNumber, false)
+  }
+
   renderPlayButton = (state: PlayState) => {
     switch (state) {
       case 'paused':
@@ -134,8 +141,6 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
       </Text>
     ) : null
 
-    const playButton = this.renderPlayButton(this.state.playState)
-
     return (
       <ScrollView
         contentContainerStyle={[styles.root, sideways && landscape.root]}
@@ -161,16 +166,11 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
           </View>
 
           <View style={buttonStyles.buttonWrapper}>
-            {playButton}
-
+            {this.renderPlayButton(this.state.playState)}
             <View style={buttonStyles.space} />
-
-            <ScheduleButton
-              icon="ios-calendar"
-              text=""
-              style={buttonStyles.schedule}
-              onPress={this.openSchedule}
-            />
+            <CallButton onPress={this.callStation} />
+            <View style={buttonStyles.space} />
+            <ShowCalendarButton onPress={this.openSchedule} />
           </View>
 
           <StreamPlayer
@@ -374,13 +374,12 @@ class StreamPlayer extends React.PureComponent<void, StreamPlayerProps, void> {
 type ActionButtonProps = {
   icon: string,
   text: string,
-  onPress: () => any,
+  onPress: () => mixed,
 }
 
-type ScheduleActionButtonProps = {
+type SmallActionButtonProps = {
   icon: string,
-  text: string,
-  onPress: () => any,
+  onPress: () => mixed,
 }
 
 const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
@@ -392,11 +391,28 @@ const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
   </Touchable>
 )
 
-const ScheduleButton = ({icon, text, onPress}: ScheduleActionButtonProps) => (
-  <Touchable style={buttonStyles.schedule} hightlight={false} onPress={onPress}>
+const CallButton = ({onPress}: {onPress: () => mixed}) => (
+  <SmallActionButton
+    icon={Platform.OS === 'ios' ? 'ios-call' : 'android-call'}
+    onPress={onPress}
+  />
+)
+
+const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
+  <SmallActionButton
+    icon={Platform.OS === 'ios' ? 'ios-calendar' : 'android-calendar'}
+    onPress={onPress}
+  />
+)
+
+const SmallActionButton = ({icon, onPress}: SmallActionButtonProps) => (
+  <Touchable
+    style={buttonStyles.smallButton}
+    hightlight={false}
+    onPress={onPress}
+  >
     <View style={buttonStyles.buttonWrapper}>
       <Icon style={buttonStyles.icon} name={icon} />
-      <Text style={buttonStyles.scheduleAction}>{text}</Text>
     </View>
   </Touchable>
 )
@@ -471,11 +487,11 @@ const buttonStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 5,
     backgroundColor: c.denim,
-    width: 200,
+    width: 180,
     borderRadius: 8,
     overflow: 'hidden',
   },
-  schedule: {
+  smallButton: {
     alignItems: 'center',
     paddingVertical: 5,
     backgroundColor: c.denim,
@@ -499,7 +515,7 @@ const buttonStyles = StyleSheet.create({
     paddingTop: 7,
     fontWeight: '900',
   },
-  scheduleAction: {
+  smallAction: {
     color: c.white,
     paddingTop: 7,
     fontWeight: '900',
