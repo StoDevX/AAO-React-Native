@@ -1,6 +1,5 @@
-/* eslint-disable react/prop-types, camelcase */
 // @flow
-import React from 'react'
+import * as React from 'react'
 import LoadingView from '../components/loading'
 import qs from 'querystring'
 import {NoticeView} from '../components/notice'
@@ -62,7 +61,7 @@ type State = {
   cafeMenu: ?MenuInfoType,
 }
 
-export class BonAppHostedMenu extends React.Component<void, Props, State> {
+export class BonAppHostedMenu extends React.PureComponent<Props, State> {
   state = {
     error: null,
     loading: true,
@@ -102,7 +101,7 @@ export class BonAppHostedMenu extends React.Component<void, Props, State> {
     this.setState(() => ({cafeMenu, cafeInfo, now: moment.tz(CENTRAL_TZ)}))
   }
 
-  refresh = async () => {
+  refresh = async (): any => {
     const start = Date.now()
     this.setState(() => ({refreshing: true}))
 
@@ -151,6 +150,7 @@ export class BonAppHostedMenu extends React.Component<void, Props, State> {
 
     // then we make our own StationMenus list
     return toPairs(idsGroupedByStation).map(([name, items], i) => ({
+      // eslint-disable-next-line camelcase
       order_id: String(i),
       id: String(i),
       label: name,

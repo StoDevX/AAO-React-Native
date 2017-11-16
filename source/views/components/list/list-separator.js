@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
 import {Separator} from '../separator'
 

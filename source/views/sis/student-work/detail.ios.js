@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {email} from 'react-native-communications'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
@@ -126,28 +126,33 @@ function LastUpdated({when}: {when: string}) {
   ) : null
 }
 
-export default function JobDetailView(props: {
+type Props = {
   navigation: {state: {params: {job: JobType}}},
-}) {
-  const job = cleanJob(props.navigation.state.params.job)
-
-  return (
-    <ScrollView>
-      <Title selectable={true}>{job.title}</Title>
-      <TableView>
-        <Information job={job} />
-        <Description job={job} />
-        <Skills job={job} />
-        <Comments job={job} />
-        <Links job={job} />
-      </TableView>
-      <LastUpdated when={job.lastModified} />
-    </ScrollView>
-  )
 }
-JobDetailView.navigationOptions = ({navigation}) => {
-  const {job} = navigation.state.params
-  return {
-    title: job.title,
+
+export class JobDetailView extends React.PureComponent<Props> {
+  static navigationOptions = ({navigation}) => {
+    const {job} = navigation.state.params
+    return {
+      title: job.title,
+    }
+  }
+
+  render() {
+    const job = cleanJob(this.props.navigation.state.params.job)
+
+    return (
+      <ScrollView>
+        <Title selectable={true}>{job.title}</Title>
+        <TableView>
+          <Information job={job} />
+          <Description job={job} />
+          <Skills job={job} />
+          <Comments job={job} />
+          <Links job={job} />
+        </TableView>
+        <LastUpdated when={job.lastModified} />
+      </ScrollView>
+    )
   }
 }

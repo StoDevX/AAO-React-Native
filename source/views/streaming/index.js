@@ -1,8 +1,4 @@
 // @flow
-/**
- * All About Olaf
- * Media page
- */
 
 import {TabNavigator} from '../components/tabbed-view'
 

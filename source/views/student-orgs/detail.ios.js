@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {ScrollView, Text, View, StyleSheet, Linking} from 'react-native'
 import moment from 'moment'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
@@ -47,16 +47,16 @@ const styles = StyleSheet.create({
   },
 })
 
-export class StudentOrgsDetailView extends React.Component {
+type Props = TopLevelViewPropsType & {
+  navigation: {state: {params: {org: StudentOrgType}}},
+}
+
+export class StudentOrgsDetailView extends React.PureComponent<Props> {
   static navigationOptions = ({navigation}) => {
     const {org} = navigation.state.params
     return {
       title: org.name,
     }
-  }
-
-  props: TopLevelViewPropsType & {
-    navigation: {state: {params: {org: StudentOrgType}}},
   }
 
   render() {

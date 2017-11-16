@@ -1,5 +1,6 @@
 // @flow
-import React from 'react'
+
+import * as React from 'react'
 import {Cell, Section} from 'react-native-tableview-simple'
 import {CellTextField} from '../../components/cells/textfield'
 import {LoginButton} from '../components/login-button'
@@ -8,29 +9,33 @@ import {
   logOutViaCredentials,
   validateLoginCredentials,
   setLoginCredentials,
-  type SettingsState,
   type LoginStateType,
 } from '../../../flux/parts/settings'
+import {type ReduxState} from '../../../flux'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
 
-type Props = {
+type ReduxStateProps = {
   initialUsername: string,
   initialPassword: string,
   loginState: LoginStateType,
+}
 
+type ReduxDispatchProps = {
   logIn: (username: string, password: string) => any,
   logOut: () => any,
   validateCredentials: (username: string, password: string) => any,
   setCredentials: (username: string, password: string) => any,
 }
 
+type Props = ReduxStateProps & ReduxDispatchProps
+
 type State = {
   username: string,
   password: string,
 }
 
-class CredentialsLoginSection extends React.PureComponent<void, Props, State> {
+class CredentialsLoginSection extends React.PureComponent<Props, State> {
   _usernameInput: any
   _passwordInput: any
 
@@ -111,15 +116,23 @@ class CredentialsLoginSection extends React.PureComponent<void, Props, State> {
   }
 }
 
-function mapStateToProps(state: {settings: SettingsState}) {
+function mapStateToProps(state: ReduxState): ReduxStateProps {
+  if (!state.settings) {
+    return {
+      initialUsername: '',
+      initialPassword: '',
+      loginState: 'logged-out',
+    }
+  }
+
   return {
-    initialUsername: state.settings.credentials.username,
-    initialPassword: state.settings.credentials.password,
-    loginState: state.settings.credentials.state,
+    initialUsername: state.settings.username,
+    initialPassword: state.settings.password,
+    loginState: state.settings.loginState,
   }
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch): ReduxDispatchProps {
   return {
     logIn: (u, p) => dispatch(logInViaCredentials(u, p)),
     logOut: () => dispatch(logOutViaCredentials()),

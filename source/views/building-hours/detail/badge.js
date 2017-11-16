@@ -4,7 +4,7 @@
  * <Badge/> renders the [Open] / [Closed] / [IDK] badge on the detai view
  */
 
-import React from 'react'
+import * as React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
 import * as c from '../../components/colors'
 
@@ -13,9 +13,9 @@ const BGCOLORS = {
   Closed: c.salmon,
 }
 
-export class Badge extends React.PureComponent {
-  props: {status: string}
+type Props = {status: string}
 
+export class Badge extends React.PureComponent<Props> {
   render() {
     const {status} = this.props
     const bgColor = BGCOLORS[status] || c.goldenrod

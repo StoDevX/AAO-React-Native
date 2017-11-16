@@ -20,7 +20,7 @@ import {FilterView} from './views/components/filter'
 import NewsView from './views/news'
 import NewsItemView from './views/news/news-item'
 import SISView from './views/sis'
-import JobDetailView from './views/sis/student-work/detail'
+import {JobDetailView} from './views/sis/student-work/detail'
 import {
   BuildingHoursView,
   BuildingHoursDetailView,
@@ -28,7 +28,7 @@ import {
   BuildingHoursScheduleEditorView,
 } from './views/building-hours'
 import TransportationView, {
-  BusMapView,
+  BusMap as BusMapView,
   OtherModesDetailView,
 } from './views/transportation'
 import SettingsView from './views/settings'
@@ -38,7 +38,6 @@ import LegalView from './views/settings/legal'
 import IconSettingsView from './views/settings/icon'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
-// import {SnapshotsView} from './storybook'
 import HelpView from './views/help'
 
 const styles = StyleSheet.create({
@@ -84,7 +83,6 @@ export const AppNavigator = StackNavigator(
     SettingsView: {screen: SettingsView},
     IconSettingsView: {screen: IconSettingsView},
     SISView: {screen: SISView},
-    // SnapshotsView: {screen: SnapshotsView},
     StreamingView: {screen: StreamingView},
     StudentOrgsDetailView: {screen: StudentOrgsDetailView},
     StudentOrgsView: {screen: StudentOrgsView},

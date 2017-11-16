@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, View, Text, Platform} from 'react-native'
 import type momentT from 'moment'
 import type {FilterType} from '../../components/filter'

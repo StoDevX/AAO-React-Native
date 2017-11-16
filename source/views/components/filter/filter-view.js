@@ -1,7 +1,8 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {ScrollView, StyleSheet} from 'react-native'
-import type {FilterType} from './types'
+import {type FilterType} from './types'
+import {type ReduxState} from '../../../flux'
 import {FilterSection} from './section'
 import {TableView} from 'react-native-tableview-simple'
 import {connect} from 'react-redux'
@@ -13,18 +14,25 @@ const styles = StyleSheet.create({
   },
 })
 
-type PropsType = {
-  filters: FilterType[],
-  navigation: {
-    state: {
-      params: {
-        title: string,
-        pathToFilters: string[],
-        onChange: (x: FilterType[]) => any,
-      },
-    },
+type NavigationState = {
+  params: {
+    title: string,
+    pathToFilters: string[],
+    onChange: (x: FilterType[]) => any,
   },
 }
+
+type ReactProps = {
+  navigation: {
+    state: NavigationState,
+  },
+}
+
+type ReduxStateProps = {
+  filters: FilterType[],
+}
+
+type PropsType = ReactProps & ReduxStateProps
 
 export function FilterViewComponent({filters, navigation}: PropsType) {
   const {onChange} = navigation.state.params
@@ -55,7 +63,10 @@ FilterViewComponent.navigationOptions = ({navigation}) => {
   }
 }
 
-const mapStateToProps = (state, actualProps) => {
+const mapStateToProps = (
+  state: ReduxState,
+  actualProps: ReactProps,
+): ReduxStateProps => {
   return {
     filters: get(state, actualProps.navigation.state.params.pathToFilters, []),
   }

@@ -1,14 +1,11 @@
 #!/usr/bin/env node
-const AJV = require('ajv')
 const fs = require('fs')
 const path = require('path')
-const get = require('lodash/get')
 const yaml = require('js-yaml')
 const junk = require('junk')
 const minimist = require('minimist')
-
-const SCHEMA_BASE = path.join(__dirname, '..', 'data', '_schemas')
-const DATA_BASE = path.join(__dirname, '..', 'data')
+const validate = require('./validate')
+const {SCHEMA_BASE, DATA_BASE} = require('./paths')
 
 const isDir = pth => tryBoolean(() => fs.statSync(pth).isDirectory())
 const readYaml = pth =>
@@ -26,12 +23,6 @@ const readDir = pth =>
 
 /// MARK: program
 
-// set up the validator
-const validator = new AJV()
-// load the common definitions
-const defs = readYaml(path.join(SCHEMA_BASE, '_defs.yaml'))
-validator.addSchema(defs)
-
 // get cli arguments
 const args = parseArgs(process.argv.slice(2))
 
@@ -48,11 +39,10 @@ if (args.data) {
 // iterate!
 for (const multitudes of iterator) {
   for (const [filename, schema, data] of multitudes) {
-    const validate = validator.compile(schema)
-    const isValid = validate(data)
-    if (!isValid) {
+    const [result, errors] = validate(schema, data)
+    if (!result) {
       console.log(`${filename} is invalid`)
-      console.log(validate.errors.map(e => formatError(e, data)).join('\n'))
+      console.log(errors.join('\n'))
       if (args.bail) {
         process.exit(1)
       }
@@ -153,26 +143,4 @@ function tryBoolean(cb) {
   } catch (err) {
     return false
   }
-}
-
-function formatError(err, data) {
-  // format some of the errors from ajv
-  let contents = ''
-  const dataPath = err.dataPath.replace(/^\./, '')
-  switch (err.keyword) {
-    case 'enum': {
-      const value = get(data, dataPath)
-      const allowed = err.params.allowedValues.join(', ')
-      contents = `Given value "${value}" ${err.message} [${allowed}]`
-      break
-    }
-    case 'type': {
-      contents = `${get(data, dataPath)} ${err.message}`
-      break
-    }
-    default: {
-      return JSON.stringify(err, null, 2)
-    }
-  }
-  return [`Error at ${err.dataPath}:`, contents].join('\n')
 }

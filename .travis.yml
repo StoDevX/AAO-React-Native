@@ -64,7 +64,7 @@ jobs:
       before_install:
         - npm install -g coveralls
       install:
-        - npm install || npm install
+        - yarn || yarn
       before_script:
         - echo "loglevel=silent" >> .npmrc
         - mkdir -p logs/
@@ -80,6 +80,7 @@ jobs:
         - npm run lint | tee logs/eslint
         # Validate data
         - npm run validate-data -- --quiet | tee logs/validate-data
+        - npm run validate-bus-data | tee logs/validate-bus-data
         - npm run bundle-data
         # Type check and run tests
         - npm run flow -- check --quiet | tee logs/flow
@@ -99,7 +100,7 @@ jobs:
       env: [GH_PAGES=yes]
       before_install: skip
       install:
-        - npm install || npm install
+        - yarn || yarn
       before_script: skip
       script: npm run bundle-data
       deploy:
@@ -165,10 +166,13 @@ before_install:
   - nvm use "$TRAVIS_NODE_VERSION"
   - echo "node -v is now $(node -v)"
 
+  # travis doesn't install yarn automatically on osx
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install yarn --without-node; fi
+
 
 install:
   # install packages (if the first fails, try once more)
-  - npm install || npm install
+  - yarn || yarn
 
   # install fastlane (if at first you don't succeed, try once more)
   - bundle install || bundle install

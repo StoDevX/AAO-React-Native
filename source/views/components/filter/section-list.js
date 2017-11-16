@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Text, Image, StyleSheet} from 'react-native'
 import type {ListType, ListItemSpecType} from './types'
 import {Section, Cell} from 'react-native-tableview-simple'

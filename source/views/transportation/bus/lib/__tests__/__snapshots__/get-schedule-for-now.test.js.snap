@@ -1,0 +1,131 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`returns an empty schedule if there is no schedule for today 1`] = `
+Object {
+  "coordinates": Object {},
+  "days": Array [
+    "Su",
+  ],
+  "stops": Array [],
+  "times": Array [],
+  "timetable": Array [],
+}
+`;
+
+exports[`returns the bus schedule for today 1`] = `
+Object {
+  "coordinates": Object {},
+  "days": Array [
+    "Fr",
+    "Sa",
+  ],
+  "stops": Array [
+    "St. Olaf",
+    "Carleton",
+    "Food Co-op",
+    "Cub/Target",
+    "El Tequila",
+    "Food Co-op",
+    "Carleton",
+    "St. Olaf",
+  ],
+  "times": Array [
+    Array [
+      "2017-11-19T02:15:00.000Z",
+      "2017-11-19T02:22:00.000Z",
+      "2017-11-19T02:23:00.000Z",
+      "2017-11-19T02:33:00.000Z",
+      "2017-11-19T02:37:00.000Z",
+      "2017-11-19T02:43:00.000Z",
+      "2017-11-19T02:44:00.000Z",
+      "2017-11-19T02:52:00.000Z",
+    ],
+    Array [
+      "2017-11-19T02:55:00.000Z",
+      "2017-11-19T03:02:00.000Z",
+      "2017-11-19T03:03:00.000Z",
+      "2017-11-19T03:13:00.000Z",
+      "2017-11-19T03:17:00.000Z",
+      "2017-11-19T03:23:00.000Z",
+      "2017-11-19T03:24:00.000Z",
+      "2017-11-19T03:32:00.000Z",
+    ],
+    Array [
+      "2017-11-19T03:35:00.000Z",
+      "2017-11-19T03:42:00.000Z",
+      "2017-11-19T03:43:00.000Z",
+      "2017-11-19T03:53:00.000Z",
+      "2017-11-19T03:57:00.000Z",
+      "2017-11-19T04:03:00.000Z",
+      "2017-11-19T04:04:00.000Z",
+      "2017-11-19T04:12:00.000Z",
+    ],
+  ],
+  "timetable": Array [
+    Object {
+      "departures": Array [
+        "2017-11-19T02:15:00.000Z",
+        "2017-11-19T02:55:00.000Z",
+        "2017-11-19T03:35:00.000Z",
+      ],
+      "name": "St. Olaf",
+    },
+    Object {
+      "departures": Array [
+        "2017-11-19T02:22:00.000Z",
+        "2017-11-19T03:02:00.000Z",
+        "2017-11-19T03:42:00.000Z",
+      ],
+      "name": "Carleton",
+    },
+    Object {
+      "departures": Array [
+        "2017-11-19T02:23:00.000Z",
+        "2017-11-19T03:03:00.000Z",
+        "2017-11-19T03:43:00.000Z",
+      ],
+      "name": "Food Co-op",
+    },
+    Object {
+      "departures": Array [
+        "2017-11-19T02:33:00.000Z",
+        "2017-11-19T03:13:00.000Z",
+        "2017-11-19T03:53:00.000Z",
+      ],
+      "name": "Cub/Target",
+    },
+    Object {
+      "departures": Array [
+        "2017-11-19T02:37:00.000Z",
+        "2017-11-19T03:17:00.000Z",
+        "2017-11-19T03:57:00.000Z",
+      ],
+      "name": "El Tequila",
+    },
+    Object {
+      "departures": Array [
+        "2017-11-19T02:43:00.000Z",
+        "2017-11-19T03:23:00.000Z",
+        "2017-11-19T04:03:00.000Z",
+      ],
+      "name": "Food Co-op",
+    },
+    Object {
+      "departures": Array [
+        "2017-11-19T02:44:00.000Z",
+        "2017-11-19T03:24:00.000Z",
+        "2017-11-19T04:04:00.000Z",
+      ],
+      "name": "Carleton",
+    },
+    Object {
+      "departures": Array [
+        "2017-11-19T02:52:00.000Z",
+        "2017-11-19T03:32:00.000Z",
+        "2017-11-19T04:12:00.000Z",
+      ],
+      "name": "St. Olaf",
+    },
+  ],
+}
+`;

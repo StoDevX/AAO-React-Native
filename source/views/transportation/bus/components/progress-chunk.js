@@ -1,7 +1,9 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import * as c from '../../../components/colors'
 import {View, StyleSheet, Platform} from 'react-native'
+import type {BusStopStatusEnum} from '../lib'
+
 const isAndroid = Platform.OS === 'android'
 
 const styles = StyleSheet.create({
@@ -45,26 +47,20 @@ const styles = StyleSheet.create({
   },
 })
 
-export class ProgressChunk extends React.PureComponent {
-  props: {
-    afterStop: boolean,
-    atStop: boolean,
-    barColor: string,
-    beforeStop: boolean,
-    currentStopColor: string,
-    skippingStop: boolean,
-    isFirstChunk: boolean,
-    isLastChunk: boolean,
-  }
+type Props = {|
+  +barColor: string,
+  +currentStopColor: string,
+  +isFirstChunk: boolean,
+  +isLastChunk: boolean,
+  +stopStatus: BusStopStatusEnum,
+|}
 
+export class ProgressChunk extends React.PureComponent<Props, void> {
   render() {
     const {
-      afterStop,
-      atStop,
+      stopStatus,
       barColor,
-      beforeStop,
       currentStopColor,
-      skippingStop,
       isFirstChunk,
       isLastChunk,
     } = this.props
@@ -80,13 +76,19 @@ export class ProgressChunk extends React.PureComponent {
         <View
           style={[
             styles.dot,
-            afterStop && [
+            stopStatus === 'after' && [
               styles.passedStop,
               {borderColor: barColor, backgroundColor: barColor},
             ],
-            beforeStop && [styles.beforeStop, {borderColor: barColor}],
-            atStop && [styles.atStop, {borderColor: currentStopColor}],
-            skippingStop && styles.skippingStop,
+            stopStatus === 'before' && [
+              styles.beforeStop,
+              {borderColor: barColor},
+            ],
+            stopStatus === 'at' && [
+              styles.atStop,
+              {borderColor: currentStopColor},
+            ],
+            stopStatus === 'skip' && styles.skippingStop,
           ]}
         />
         <View style={[styles.bar, {backgroundColor: endBarColor}]} />

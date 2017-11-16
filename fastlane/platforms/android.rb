@@ -27,6 +27,9 @@ platform :android do
 
     supply(track: track,
            check_superseded_tracks: true)
+
+    generate_sourcemap
+    upload_sourcemap_to_bugsnag
   end
 
   desc 'Submit a new beta build to Google Play'
@@ -37,6 +40,11 @@ platform :android do
   desc 'Submit a new nightly build to Google Play'
   lane :nightly do
     submit(track: 'alpha')
+  end
+
+  desc 'Bundle an Android sourcemap'
+  lane :sourcemap do
+    generate_sourcemap
   end
 
   desc 'Run the appropriate action on CI'

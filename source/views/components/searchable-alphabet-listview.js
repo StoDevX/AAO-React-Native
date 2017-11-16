@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, Platform, View} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
 import debounce from 'lodash/debounce'
@@ -16,11 +16,7 @@ const styles = StyleSheet.create({
 
 type Props = any
 
-export class SearchableAlphabetListView extends React.PureComponent<
-  void,
-  Props,
-  void,
-> {
+export class SearchableAlphabetListView extends React.PureComponent<Props> {
   searchBar: any = null
 
   _performSearch = (text: string | Object) => {

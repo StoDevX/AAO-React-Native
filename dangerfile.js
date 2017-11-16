@@ -16,6 +16,8 @@ const jsFiles = danger.git.created_files.filter(path => path.endsWith('.js'))
 
 // new js files should have `@flow` at the top
 jsFiles
+  // except for those in /flow-typed
+  .filter(filepath => !filepath.includes('flow-typed'))
   .filter(filepath => {
     const content = readFile(filepath)
     return !content.includes('@flow')
@@ -53,7 +55,9 @@ if (thisPRSize > bigPRThreshold) {
 <details>
   <summary>:exclamation: Big PR!</summary>
   <blockquote>
-    <p>We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.</p>
+    <p>We like to try and keep PRs under ${
+      bigPRThreshold
+    } lines, and this one was ${thisPRSize} lines.</p>
     <p>If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.</p>
   </blockquote>
 </details>`,
@@ -94,6 +98,7 @@ ${log}
 const prettierLog = readLogFile('logs/prettier')
 const eslintLog = readLogFile('logs/eslint')
 const dataValidationLog = readLogFile('logs/validate-data')
+const busDataValidationLog = readLogFile('logs/validate-bus-data')
 const flowLog = readLogFile('logs/flow')
 const iosJsBundleLog = readLogFile('logs/bundle-ios')
 const androidJsBundleLog = readLogFile('logs/bundle-android')
@@ -109,6 +114,10 @@ if (eslintLog) {
 
 if (dataValidationLog && isBadDataValidationLog(dataValidationLog)) {
   fileLog("Something's up with the data.", dataValidationLog)
+}
+
+if (busDataValidationLog && isBadDataValidationLog(busDataValidationLog)) {
+  fileLog("🚌 Something's up with the bus routes.", busDataValidationLog)
 }
 
 if (flowLog && flowLog !== 'Found 0 errors') {

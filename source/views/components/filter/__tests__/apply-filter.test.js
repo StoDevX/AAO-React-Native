@@ -9,7 +9,6 @@ it('should return `true` if the filter is disabled', () => {
     key: 'key',
     enabled: false,
     spec: {
-      label: 'label',
       options: filterValue('1', '2', '3'),
       selected: [],
       mode: 'OR',

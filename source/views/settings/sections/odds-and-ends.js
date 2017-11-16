@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {View} from 'react-native'
 import {Cell, Section} from 'react-native-tableview-simple'
 import {version} from '../../../../package.json'
@@ -11,25 +11,27 @@ import {PushButtonCell} from '../../components/cells/push-button'
 import {trackedOpenUrl} from '../../components/open-url'
 import * as Icons from 'react-native-alternate-icons'
 
-class OddsAndEndsSection extends React.Component {
-  props: TopLevelViewPropsType & {
-    onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
-    feedbackDisabled: boolean,
-  }
+type Props = TopLevelViewPropsType & {
+  onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
+  feedbackDisabled: boolean,
+}
 
-  state: {
+type State = {
+  supported: boolean,
+}
+
+class OddsAndEndsSection extends React.PureComponent<Props, State> {
+  state = {
     supported: false,
-    loading: true,
   }
 
   componentWillMount() {
-    this.checkIfSupported()
+    this.checkIfCustomIconsSupported()
   }
 
-  checkIfSupported() {
-    Icons.supportDevice(result =>
-      this.setState(() => ({supported: result, loading: false})),
-    )
+  checkIfCustomIconsSupported = async () => {
+    const supported = await Icons.supportDevice()
+    this.setState(() => ({supported}))
   }
 
   onPressButton = (id: string) => {
@@ -39,7 +41,6 @@ class OddsAndEndsSection extends React.Component {
   onCreditsButton = () => this.onPressButton('CreditsView')
   onPrivacyButton = () => this.onPressButton('PrivacyView')
   onLegalButton = () => this.onPressButton('LegalView')
-  onSnapshotsButton = () => this.onPressButton('SnapshotsView')
   onSourceButton = () =>
     trackedOpenUrl({
       url: 'https://github.com/StoDevX/AAO-React-Native',
@@ -51,7 +52,7 @@ class OddsAndEndsSection extends React.Component {
     return (
       <View>
         <Section header="MISCELLANY">
-          {!this.state.loading && this.state.supported ? (
+          {this.state.supported ? (
             <Cell
               cellStyle="RightDetail"
               title="Change App Icon"
@@ -79,15 +80,6 @@ class OddsAndEndsSection extends React.Component {
             onChange={val => this.props.onChangeFeedbackToggle(!val)}
           />
         </Section>
-
-        {process.env.NODE_ENV === 'development' ? (
-          <Section header="UTILITIES">
-            <PushButtonCell
-              title="Snapshots"
-              onPress={this.onSnapshotsButton}
-            />
-          </Section>
-        ) : null}
       </View>
     )
   }

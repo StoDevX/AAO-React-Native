@@ -1,17 +1,14 @@
-/**
- * @flow
- * All About Olaf
- * iOS Home page
- */
+// @flow
 
-import React from 'react'
+import * as React from 'react'
 import {ScrollView, StyleSheet, StatusBar} from 'react-native'
 
 import {connect} from 'react-redux'
 import * as c from '../components/colors'
 import sortBy from 'lodash/sortBy'
-import type {TopLevelViewPropsType} from '../types'
-import type {ViewType} from '../views'
+import {type TopLevelViewPropsType} from '../types'
+import {type ViewType} from '../views'
+import {type ReduxState} from '../../flux'
 import {allViews} from '../views'
 import {Column} from '../components/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
@@ -19,10 +16,14 @@ import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl} from '../components/open-url'
 import {EditHomeButton, OpenSettingsButton} from '../components/nav-buttons'
 
-type Props = TopLevelViewPropsType & {
-  order: string[],
-  views: ViewType[],
+type ReactProps = TopLevelViewPropsType & {
+  views: Array<ViewType>,
 }
+type ReduxStateProps = {
+  order: Array<string>,
+}
+
+type Props = ReactProps & ReduxStateProps
 
 function HomePage({navigation, order, views = allViews}: Props) {
   const sortedViews = sortBy(views, view => order.indexOf(view.view))
@@ -68,11 +69,16 @@ HomePage.navigationOptions = ({navigation}) => {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state: ReduxState): ReduxStateProps {
+  if (!state.homescreen) {
+    return {order: []}
+  }
+
   return {
     order: state.homescreen.order,
   }
 }
+
 export default connect(mapStateToProps)(HomePage)
 
 const styles = StyleSheet.create({
