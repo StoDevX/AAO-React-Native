@@ -2,8 +2,11 @@
 
 import React from 'react'
 import {GoogleCalendarView} from '../../calendar/calendar-google'
+import type {TopLevelViewPropsType} from '../../types'
 
-export default class KSTOSchedule extends React.PureComponent {
+type Props = TopLevelViewPropsType & {}
+
+export default class KSTOSchedule extends React.PureComponent<Props> {
   static navigationOptions = {
     title: 'Show Schedule',
   }
