@@ -512,9 +512,4 @@ const buttonStyles = StyleSheet.create({
     paddingTop: 7,
     fontWeight: '900',
   },
-  smallAction: {
-    color: c.white,
-    paddingTop: 7,
-    fontWeight: '900',
-  },
 })
