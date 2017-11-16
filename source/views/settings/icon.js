@@ -1,20 +1,13 @@
 // @flow
 import React from 'react'
-import {ScrollView, Image, StyleSheet, Text} from 'react-native'
+import {ScrollView, Image, StyleSheet} from 'react-native'
 import * as Icons from 'react-native-alternate-icons'
 import {Section, Cell} from 'react-native-tableview-simple'
-import {Column} from '../components/layout'
-import includes from 'lodash/includes'
+import {icons as appIcons} from '../../../images/icon-images'
 import * as c from '../colors'
+import type {TopLevelViewPropsType} from '../types'
 
 const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-    paddingVertical: 10,
-  },
-  title: {
-    fontSize: 16,
-  },
   icon: {
     width: 16,
     height: 16,
@@ -24,75 +17,76 @@ const styles = StyleSheet.create({
   },
 })
 
-const icons = [
+type IconTypeEnum = 'default' | 'icon_type_windmill'
+
+type Icon = {
+  type: IconTypeEnum,
+  src: any,
+  title: string,
+}
+
+export const icons: Array<Icon> = [
   {
     type: 'default',
-    src: require('../../../images/about/IconTrans.png'),
+    src: appIcons.oldMain,
     title: 'Old Main',
   },
   {
     type: 'icon_type_windmill',
-    src: require('../../../ios/AllAboutOlaf/windmill.png'),
+    src: appIcons.windmill,
     title: 'Wind Turbine (Big Ole)',
   },
 ]
 
-export default class IconSettingsView extends React.PureComponent {
+type Props = TopLevelViewPropsType & {}
+
+type State = {
+  iconType: ?IconTypeEnum,
+}
+
+export class IconSettingsView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'App Icon',
   }
 
-  state: {
-    iconType: string,
-  } = {
-    iconType: '',
+  state = {
+    iconType: null,
   }
 
   componentWillMount() {
     this.getIcon()
   }
 
-  setIcon(iconType: string) {
+  setIcon = async (iconType: IconTypeEnum) => {
     if (iconType === 'default') {
-      Icons.reset()
+      await Icons.reset()
     } else {
-      Icons.setIconName(iconType)
+      await Icons.setIconName(iconType)
     }
 
     this.getIcon()
   }
 
-  getIcon() {
-    Icons.getIconName(name => this.setState(() => ({iconType: name})))
+  getIcon = async () => {
+    const name = await Icons.getIconName()
+    this.setState(() => ({iconType: name}))
   }
 
   render() {
     return (
       <ScrollView>
         <Section header={'CHANGE YOUR APP ICON'} separatorInsetLeft={58}>
-          {icons.map(val => (
+          {icons.map(icon => (
             <Cell
-              key={val.title}
-              onPress={() => this.setIcon(val.type)}
+              key={icon.title}
+              onPress={() => this.setIcon(icon.type)}
               disableImageResize={false}
-              image={
-                val.src ? (
-                  <Image style={styles.icon} source={val.src} />
-                ) : (
-                  undefined
-                )
-              }
+              title={icon.title}
+              image={<Image style={styles.icon} source={icon.src} />}
               accessory={
-                includes(this.state.iconType, val.type)
-                  ? 'Checkmark'
-                  : undefined
+                this.state.iconType === icon.type ? 'Checkmark' : undefined
               }
               cellStyle="RightDetail"
-              cellContentView={
-                <Column style={styles.content}>
-                  <Text style={styles.title}>{val.title}</Text>
-                </Column>
-              }
             />
           ))}
         </Section>
