@@ -16,6 +16,7 @@ type Props = {
   onPlay?: () => any,
   onPause?: () => any,
   onError?: HtmlAudioError => any,
+  style: any,
 }
 
 type HtmlAudioState =
@@ -100,7 +101,7 @@ export class StreamPlayer extends React.PureComponent<Props> {
 
   setRef = (ref: WebView) => (this._webview = ref)
 
-  html = url => `
+  html = (url: string) => `
     <style>body {background-color: white;}</style>
 
     <title>KSTO Stream</title>
