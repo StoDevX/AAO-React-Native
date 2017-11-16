@@ -13,6 +13,7 @@ import {
   Text,
   View,
   WebView,
+  Platform,
 } from 'react-native'
 import * as c from '../../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -140,8 +141,6 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
       </Text>
     ) : null
 
-    const playButton = this.renderPlayButton(this.state.playState)
-
     return (
       <ScrollView
         contentContainerStyle={[styles.root, sideways && landscape.root]}
@@ -167,26 +166,11 @@ export default class KSTOView extends React.PureComponent<void, Props, State> {
           </View>
 
           <View style={buttonStyles.buttonWrapper}>
-            {playButton}
-
+            {this.renderPlayButton(this.state.playState)}
             <View style={buttonStyles.space} />
-
-            <SmallActionButton
-              icon="ios-call"
-              text=""
-              style={buttonStyles.smallButton}
-              onPress={this.callStation}
-            />
-
+            <CallButton onPress={this.callStation} />
             <View style={buttonStyles.space} />
-
-            <SmallActionButton
-              icon="ios-calendar"
-              text=""
-              style={buttonStyles.smallButton}
-              onPress={this.openSchedule}
-            />
-
+            <ShowCalendarButton onPress={this.openSchedule} />
           </View>
 
           <StreamPlayer
@@ -390,13 +374,12 @@ class StreamPlayer extends React.PureComponent<void, StreamPlayerProps, void> {
 type ActionButtonProps = {
   icon: string,
   text: string,
-  onPress: () => any,
+  onPress: () => mixed,
 }
 
 type SmallActionButtonProps = {
   icon: string,
-  text: string,
-  onPress: () => any,
+  onPress: () => mixed,
 }
 
 const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
@@ -408,11 +391,28 @@ const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
   </Touchable>
 )
 
-const SmallActionButton = ({icon, text, onPress}: SmallActionButtonProps) => (
-  <Touchable style={buttonStyles.smallButton} hightlight={false} onPress={onPress}>
+const CallButton = ({onPress}: {onPress: () => mixed}) => (
+  <SmallActionButton
+    icon={Platform.OS === 'ios' ? 'ios-call' : 'android-call'}
+    onPress={onPress}
+  />
+)
+
+const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
+  <SmallActionButton
+    icon={Platform.OS === 'ios' ? 'ios-calendar' : 'android-calendar'}
+    onPress={onPress}
+  />
+)
+
+const SmallActionButton = ({icon, onPress}: SmallActionButtonProps) => (
+  <Touchable
+    style={buttonStyles.smallButton}
+    hightlight={false}
+    onPress={onPress}
+  >
     <View style={buttonStyles.buttonWrapper}>
       <Icon style={buttonStyles.icon} name={icon} />
-      <Text style={buttonStyles.smallAction}>{text}</Text>
     </View>
   </Touchable>
 )
