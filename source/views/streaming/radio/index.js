@@ -8,16 +8,15 @@ import {
   StyleSheet,
   Text,
   View,
-  Platform,
 } from 'react-native'
 import * as c from '../../components/colors'
-import Icon from 'react-native-vector-icons/Ionicons'
-import {Touchable} from '../../components/touchable'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import {phonecall} from 'react-native-communications'
+import {Row} from '../../components/layout'
 import type {TopLevelViewPropsType} from '../../types'
 import {StreamPlayer} from './player'
 import type {PlayState, HtmlAudioError, Viewport} from './types'
+import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
 
 const image = require('../../../../images/streaming/ksto/ksto-logo.png')
 const stationNumber = '+15077863602'
@@ -156,13 +155,13 @@ export default class KSTOView extends React.PureComponent<Props, State> {
             {error}
           </View>
 
-          <View style={buttonStyles.buttonWrapper}>
+          <Row>
             {this.renderPlayButton(this.state.playState)}
-            <View style={buttonStyles.space} />
+            <View style={styles.spacer} />
             <CallButton onPress={this.callStation} />
-            <View style={buttonStyles.space} />
+            <View style={styles.spacer} />
             <ShowCalendarButton onPress={this.openSchedule} />
-          </View>
+          </Row>
 
           <StreamPlayer
             playState={this.state.playState}
@@ -179,52 +178,6 @@ export default class KSTOView extends React.PureComponent<Props, State> {
     )
   }
 }
-
-type ActionButtonProps = {
-  icon: string,
-  text: string,
-  onPress: () => mixed,
-}
-
-type SmallActionButtonProps = {
-  icon: string,
-  onPress: () => mixed,
-}
-
-const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
-  <Touchable style={buttonStyles.button} hightlight={false} onPress={onPress}>
-    <View style={buttonStyles.buttonWrapper}>
-      <Icon style={buttonStyles.icon} name={icon} />
-      <Text style={buttonStyles.action}>{text}</Text>
-    </View>
-  </Touchable>
-)
-
-const CallButton = ({onPress}: {onPress: () => mixed}) => (
-  <SmallActionButton
-    icon={Platform.OS === 'ios' ? 'ios-call' : 'android-call'}
-    onPress={onPress}
-  />
-)
-
-const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
-  <SmallActionButton
-    icon={Platform.OS === 'ios' ? 'ios-calendar' : 'android-calendar'}
-    onPress={onPress}
-  />
-)
-
-const SmallActionButton = ({icon, onPress}: SmallActionButtonProps) => (
-  <Touchable
-    style={buttonStyles.smallButton}
-    hightlight={false}
-    onPress={onPress}
-  >
-    <View style={buttonStyles.buttonWrapper}>
-      <Icon style={buttonStyles.icon} name={icon} />
-    </View>
-  </Touchable>
-)
 
 const styles = StyleSheet.create({
   root: {
@@ -277,6 +230,9 @@ const styles = StyleSheet.create({
   webview: {
     display: 'none',
   },
+  spacer: {
+    width: 5,
+  },
 })
 
 const landscape = StyleSheet.create({
@@ -288,40 +244,5 @@ const landscape = StyleSheet.create({
   },
   logoWrapper: {
     flex: 0,
-  },
-})
-
-const buttonStyles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    paddingVertical: 5,
-    backgroundColor: c.denim,
-    width: 180,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  smallButton: {
-    alignItems: 'center',
-    paddingVertical: 5,
-    backgroundColor: c.denim,
-    width: 50,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  buttonWrapper: {
-    flexDirection: 'row',
-  },
-  space: {
-    width: 5,
-  },
-  icon: {
-    color: c.white,
-    fontSize: 30,
-  },
-  action: {
-    color: c.white,
-    paddingLeft: 10,
-    paddingTop: 7,
-    fontWeight: '900',
   },
 })
