@@ -1,10 +1,10 @@
 // @flow
 import React from 'react'
 import {ScrollView, Image, StyleSheet} from 'react-native'
-import * as Icons from 'react-native-alternate-icons'
+import * as Icons from '@hawkrives/react-native-alternate-icons'
 import {Section, Cell} from 'react-native-tableview-simple'
 import {icons as appIcons} from '../../../images/icon-images'
-import * as c from '../colors'
+import * as c from '../components/colors'
 import type {TopLevelViewPropsType} from '../types'
 
 const styles = StyleSheet.create({
@@ -41,7 +41,7 @@ export const icons: Array<Icon> = [
 type Props = TopLevelViewPropsType & {}
 
 type State = {
-  iconType: ?IconTypeEnum,
+  iconType: ?string,
 }
 
 export class IconSettingsView extends React.PureComponent<Props, State> {
@@ -57,7 +57,7 @@ export class IconSettingsView extends React.PureComponent<Props, State> {
     this.getIcon()
   }
 
-  setIcon = async (iconType: IconTypeEnum) => {
+  setIcon = async (iconType: string) => {
     if (iconType === 'default') {
       await Icons.reset()
     } else {

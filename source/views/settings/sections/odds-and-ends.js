@@ -9,7 +9,7 @@ import {connect} from 'react-redux'
 import {CellToggle} from '../../components/cells/toggle'
 import {PushButtonCell} from '../../components/cells/push-button'
 import {trackedOpenUrl} from '../../components/open-url'
-import * as Icons from 'react-native-alternate-icons'
+import * as Icons from '@hawkrives/react-native-alternate-icons'
 
 type Props = TopLevelViewPropsType & {
   onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
@@ -30,7 +30,7 @@ class OddsAndEndsSection extends React.PureComponent<Props, State> {
   }
 
   checkIfCustomIconsSupported = async () => {
-    const supported = await Icons.supportDevice()
+    const supported = await Icons.isSupported()
     this.setState(() => ({supported}))
   }
 
