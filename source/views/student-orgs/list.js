@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, View, Text, Platform, RefreshControl} from 'react-native'
 import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
 import type {TopLevelViewPropsType} from '../types'
@@ -76,7 +76,7 @@ type State = {
   loading: boolean,
 }
 
-export class StudentOrgsView extends React.PureComponent<any, Props, State> {
+export class StudentOrgsView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Student Orgs',
     headerBackTitle: 'Orgs',

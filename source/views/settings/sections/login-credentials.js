@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {Cell, Section} from 'react-native-tableview-simple'
 import {CellTextField} from '../../components/cells/textfield'
 import {LoginButton} from '../components/login-button'
@@ -35,7 +35,7 @@ type State = {
   password: string,
 }
 
-class CredentialsLoginSection extends React.PureComponent<any, Props, State> {
+class CredentialsLoginSection extends React.PureComponent<Props, State> {
   _usernameInput: any
   _passwordInput: any
 

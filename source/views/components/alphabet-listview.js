@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import AlphabetListView from '@hawkrives/react-native-alphabetlistview'
 import * as c from '../components/colors'

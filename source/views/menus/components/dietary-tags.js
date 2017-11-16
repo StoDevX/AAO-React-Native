@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {View, StyleSheet, Image} from 'react-native'
 
 import keys from 'lodash/keys'

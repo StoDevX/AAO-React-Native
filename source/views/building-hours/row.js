@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import {Badge} from '../components/badge'
 import isEqual from 'lodash/isEqual'
@@ -55,13 +55,14 @@ type Props = {
 }
 
 type State = {
+  firstUpdate: boolean,
   openStatus: string,
   hours: Array<any>,
   accentBg: string,
   accentText: string,
 }
 
-export class BuildingRow extends React.Component<void, Props, State> {
+export class BuildingRow extends React.Component<Props, State> {
   state = {
     openStatus: 'Unknown',
     hours: [],

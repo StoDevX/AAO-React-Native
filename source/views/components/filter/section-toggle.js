@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import type {ToggleType} from './types'
 import {Section} from 'react-native-tableview-simple'
 import {CellToggle} from '../../components/cells/toggle'

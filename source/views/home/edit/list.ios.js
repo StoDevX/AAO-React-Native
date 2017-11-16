@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {Dimensions, StyleSheet} from 'react-native'
 import {type ReduxState} from '../../../flux'
 import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
@@ -40,7 +40,7 @@ type State = {
   width: number,
 }
 
-class EditHomeView extends React.PureComponent<void, Props, State> {
+class EditHomeView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Edit Home',
   }

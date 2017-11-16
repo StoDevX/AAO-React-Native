@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {
   View,
   Text,
@@ -34,7 +34,7 @@ type State = {
   allowPointerEvents: boolean,
 }
 
-export class DatePicker extends React.Component<any, Props, State> {
+export class DatePicker extends React.Component<Props, State> {
   static defaultProps = {
     mode: 'date',
     height: 259, // 216 (DatePickerIOS) + 1 (borderTop) + 42 (marginTop), iOS only
@@ -125,7 +125,7 @@ type ModalProps = {
   timezone: string,
 }
 
-class DatePickerModal extends React.PureComponent<any, ModalProps, void> {
+class DatePickerModal extends React.PureComponent<ModalProps> {
   static SUPPORTED_ORIENTATIONS = [
     'portrait',
     'portrait-upside-down',

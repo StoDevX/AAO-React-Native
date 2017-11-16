@@ -2,7 +2,7 @@
 // @flow
 
 import 'react-native'
-import React from 'react'
+import * as React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 
 import {Button} from '../button'

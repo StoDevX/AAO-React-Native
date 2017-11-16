@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Text, StyleSheet, Platform, FlatList} from 'react-native'
 import type {BusTimetableEntry, UnprocessedBusLine, BusSchedule} from './types'
 import {
@@ -58,7 +58,7 @@ function startsIn(now, start: ?moment) {
   return `Starts ${nowCopy.seconds(0).to(start)}`
 }
 
-export class BusLine extends React.Component<any, Props, State> {
+export class BusLine extends React.Component<Props, State> {
   state = {
     subtitle: 'Loading',
     schedule: null,

@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import delay from 'delay'
 import type {StoryType} from './types'
 import LoadingView from '../components/loading'
@@ -25,11 +25,7 @@ type State = {
   refreshing: boolean,
   error: ?Error,
 }
-export default class NewsContainer extends React.PureComponent<
-  any,
-  Props,
-  State,
-> {
+export default class NewsContainer extends React.PureComponent<Props, State> {
   state = {
     entries: [],
     loading: true,

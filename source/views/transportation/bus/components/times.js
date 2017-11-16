@@ -11,7 +11,7 @@ type Props = {|
   +style?: any,
 |}
 
-export class ScheduleTimes extends React.PureComponent<any, Props, void> {
+export class ScheduleTimes extends React.PureComponent<Props, void> {
   render() {
     const {times} = this.props
 

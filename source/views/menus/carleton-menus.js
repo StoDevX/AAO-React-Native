@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {TabBarIcon} from '../components/tabbar-icon'
 import {View, Platform, ScrollView, StyleSheet} from 'react-native'
 import type {TopLevelViewPropsType} from '../types'
@@ -65,9 +65,9 @@ CarletonSaylesMenuScreen.navigationOptions = {
   tabBarIcon: TabBarIcon('menu'),
 }
 
-export class CarletonCafeIndex extends React.Component {
-  props: TopLevelViewPropsType
+type Props = TopLevelViewPropsType
 
+export class CarletonCafeIndex extends React.Component<Props> {
   render() {
     const carletonCafes = [
       {id: 'CarletonBurtonMenuView', title: 'Burton'},

@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {email} from 'react-native-communications'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
@@ -130,7 +130,7 @@ type Props = {
   navigation: {state: {params: {job: JobType}}},
 }
 
-export class JobDetailView extends React.PureComponent<any, Props, void> {
+export class JobDetailView extends React.PureComponent<Props> {
   static navigationOptions = ({navigation}) => {
     const {job} = navigation.state.params
     return {

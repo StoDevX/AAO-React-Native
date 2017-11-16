@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Alert, StyleSheet, ScrollView, Image} from 'react-native'
 import {contactImages} from '../../../images/contact-images'
 import {Markdown} from '../components/markdown'
@@ -47,14 +47,14 @@ function promptCall(buttonText: string, phoneNumber: string) {
   ])
 }
 
-export class ContactsDetailView extends React.PureComponent {
+type Props = {navigation: {state: {params: {contact: ContactType}}}}
+
+export class ContactsDetailView extends React.PureComponent<Props> {
   static navigationOptions = ({navigation}) => {
     return {
       title: navigation.state.params.contact.title,
     }
   }
-
-  props: {navigation: {state: {params: {contact: ContactType}}}}
 
   onPress = () => {
     const {

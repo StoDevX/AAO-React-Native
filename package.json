@@ -1,5 +1,5 @@
 {
-  "name": "all-about-olaf",
+  "name": "AllAboutOlaf",
   "version": "2.4.3-pre",
   "private": true,
   "scripts": {
@@ -7,8 +7,8 @@
     "android:release": "react-native run-android --variant=release",
     "android-emulator": "VBoxManage list vms | peco --select-1 --query API --on-cancel error | sed  's~.*{\\(.*\\)}.*~\\1~' | xargs /Applications/Genymotion.app/Contents/MacOS/player.app/Contents/MacOS/player --vm-name",
     "bundle-data": "node scripts/bundle-data.js data/ docs/",
-    "bundle:android": "react-native bundle --entry-file index.android.js --dev true --platform android --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/",
-    "bundle:ios": "react-native bundle --entry-file index.ios.js --dev true --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios",
+    "bundle:android": "react-native bundle --entry-file index.js --dev true --platform android --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/",
+    "bundle:ios": "react-native bundle --entry-file index.js --dev true --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios",
     "check": "npm run prettier && npm run flow && npm run validate-data -- --quiet && npm run test",
     "danger": "danger",
     "data": "node scripts/bundle-data.js data/ docs/",
@@ -32,7 +32,8 @@
   },
   "greenkeeper": {
     "ignore": [
-      "flow-bin"
+      "flow-bin",
+      "react"
     ]
   },
   "jest": {
@@ -66,11 +67,11 @@
     "moment": "2.19.2",
     "moment-timezone": "0.5.14",
     "querystring": "0.2.0",
-    "react": "16.0.0-alpha.12",
+    "react": "16.0.0",
     "react-markdown": "2.5.1",
-    "react-native": "0.45.1",
+    "react-native": "0.50.3",
     "react-native-button": "2.1.0",
-    "react-native-calendar-events": "1.4.1",
+    "react-native-calendar-events": "1.4.3",
     "react-native-communications": "2.2.1",
     "react-native-custom-tabs": "0.1.7",
     "react-native-device-info": "0.12.1",
@@ -78,13 +79,13 @@
     "react-native-keychain": "2.0.0-rc",
     "react-native-linear-gradient": "2.3.0",
     "react-native-maps": "0.17.1",
-    "react-native-network-info": "2.2.0",
+    "react-native-network-info": "3.0.0",
     "react-native-onesignal": "3.0.6",
     "react-native-restart": "0.0.4",
-    "react-native-safari-view": "2.0.0",
+    "react-native-safari-view": "2.1.0",
     "react-native-tableview-simple": "0.17.1",
     "react-native-vector-icons": "4.4.2",
-    "react-navigation": "1.0.0-beta.11",
+    "react-navigation": "1.0.0-beta.19",
     "react-redux": "5.0.6",
     "redux": "3.7.2",
     "redux-logger": "3.0.6",
@@ -101,7 +102,7 @@
     "babel-core": "6.26.0",
     "babel-eslint": "8.0.2",
     "babel-jest": "21.2.0",
-    "babel-preset-react-native": "3.0.1",
+    "babel-preset-react-native": "4.0.0",
     "bugsnag-sourcemaps": "1.0.1",
     "danger": "2.0.1",
     "eslint": "4.11.0",
@@ -110,7 +111,7 @@
     "eslint-plugin-flowtype": "2.39.1",
     "eslint-plugin-react": "7.4.0",
     "eslint-plugin-react-native": "3.1.0",
-    "flow-bin": "0.45.0",
+    "flow-bin": "0.56.0",
     "jest": "21.2.1",
     "js-yaml": "3.10.0",
     "junk": "2.1.0",
@@ -119,7 +120,7 @@
     "pify": "3.0.0",
     "prettier": "1.8.2",
     "prop-types": "15.6.0",
-    "react-test-renderer": "16.0.0-alpha.12",
+    "react-test-renderer": "16.1.0",
     "string-natural-compare": "2.0.2"
   }
 }

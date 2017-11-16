@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import type {CleanedEventType} from './types'
@@ -63,7 +63,16 @@ const CalendarButton = ({message, disabled, onPress}) => {
   )
 }
 
-export class EventDetail extends React.PureComponent {
+type Props = TopLevelViewPropsType & {
+  navigation: {state: {params: {event: CleanedEventType}}},
+}
+
+type State = {
+  message: string,
+  disabled: boolean,
+}
+
+export class EventDetail extends React.PureComponent<Props, State> {
   static navigationOptions = ({navigation}) => {
     const {event} = navigation.state.params
     return {
@@ -72,14 +81,7 @@ export class EventDetail extends React.PureComponent {
     }
   }
 
-  props: TopLevelViewPropsType & {
-    navigation: {state: {params: {event: CleanedEventType}}},
-  }
-
-  state: {
-    message: string,
-    disabled: boolean,
-  } = {
+  state = {
     message: '',
     disabled: false,
   }

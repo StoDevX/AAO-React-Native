@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {View, StyleSheet, Text} from 'react-native'
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
@@ -51,7 +51,7 @@ type Props = {
   onMoveDown: (string[], string) => any,
 }
 
-export class EditHomeRow extends React.PureComponent<void, Props, void> {
+export class EditHomeRow extends React.PureComponent<Props> {
   onMoveUp = () => {
     this.props.onMoveUp(this.props.order, this.props.item.view)
   }

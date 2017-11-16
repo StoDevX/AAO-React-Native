@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {ScrollView, StyleSheet} from 'react-native'
 import {type FilterType} from './types'
 import {type ReduxState} from '../../../flux'

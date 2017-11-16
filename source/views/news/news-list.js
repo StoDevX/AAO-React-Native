@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, FlatList} from 'react-native'
 import * as c from '../components/colors'
 import type {StoryType} from './types'
@@ -23,7 +23,7 @@ type Props = TopLevelViewPropsType & {
   thumbnail: number,
 }
 
-export class NewsList extends React.PureComponent<any, Props, void> {
+export class NewsList extends React.PureComponent<Props> {
   onPressNews = (story: StoryType) => {
     this.props.navigation.navigate('NewsItemView', {
       story,
