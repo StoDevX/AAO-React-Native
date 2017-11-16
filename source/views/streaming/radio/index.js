@@ -23,7 +23,7 @@ import type {TopLevelViewPropsType} from '../../types'
 
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
 const image = require('../../../../images/streaming/ksto/ksto-logo.png')
-const stationNumber = '5077863602'
+const stationNumber = '+15077863602'
 
 type Viewport = {width: number, height: number}
 
