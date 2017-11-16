@@ -1,17 +1,12 @@
 // @flow
-/**
- * All About Olaf
- * Webcams page
- */
 
-import React from 'react'
+import * as React from 'react'
 import {
   StyleSheet,
   View,
   Text,
   ScrollView,
   Image,
-  Platform,
   Dimensions,
 } from 'react-native'
 import delay from 'delay'
@@ -48,7 +43,7 @@ type State = {
   refreshing: boolean,
 }
 
-export class WebcamsView extends React.PureComponent<void, Props, State> {
+export class WebcamsView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Webcams',
     tabBarIcon: TabBarIcon('videocam'),
@@ -130,16 +125,10 @@ type ThumbnailProps = {
   viewportWidth: number,
 }
 
-class StreamThumbnail extends React.PureComponent<void, ThumbnailProps, void> {
+class StreamThumbnail extends React.PureComponent<ThumbnailProps> {
   handlePress = () => {
-    const {streamUrl, name, pageUrl} = this.props.webcam
-    if (Platform.OS === 'ios') {
-      trackedOpenUrl({url: streamUrl, id: `${name}WebcamView`})
-    } else if (Platform.OS === 'android') {
-      trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
-    } else {
-      trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
-    }
+    const {name, pageUrl} = this.props.webcam
+    trackedOpenUrl({url: pageUrl, id: `${name}WebcamView`})
   }
 
   render() {

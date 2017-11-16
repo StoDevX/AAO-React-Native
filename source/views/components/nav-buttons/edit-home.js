@@ -3,7 +3,7 @@
  * Exports a button that opens the Edit Home screen
  */
 
-import React from 'react'
+import * as React from 'react'
 import {Text} from 'react-native'
 import {Touchable} from '../touchable'
 import type {NavType} from '../../types'

@@ -1,19 +1,15 @@
 // @flow
-/**
- * All About Olaf
- * Transportation page
- */
 
-import React from 'react'
+import * as React from 'react'
 
 import {TabNavigator} from '../components/tabbed-view'
 import {TabBarIcon} from '../components/tabbar-icon'
 
 import {OtherModesView} from './other-modes'
-import BusView from './bus'
+import {BusView} from './bus'
 
-export {BusMapView} from './bus/map'
 export {OtherModesDetailView} from './other-modes'
+export {BusMap} from './bus'
 
 export default TabNavigator(
   {

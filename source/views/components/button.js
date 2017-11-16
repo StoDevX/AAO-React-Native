@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import BasicButton from 'react-native-button'
 import noop from 'lodash/noop'

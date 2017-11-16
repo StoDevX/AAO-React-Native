@@ -79,28 +79,28 @@ export function getAllCourses(): CacheResultType<?CoursesByTermType> {
 
 const flexBalanceKey = 'financials:flex'
 const flexBalanceCacheTime = [5, 'minutes']
-export function setFlexBalance(balance: ?number) {
+export function setFlexBalance(balance: ?string) {
   return setItem(flexBalanceKey, balance, flexBalanceCacheTime)
 }
-export function getFlexBalance(): CacheResultType<?number> {
+export function getFlexBalance(): CacheResultType<?string> {
   return getItem(flexBalanceKey)
 }
 
 const oleBalanceKey = 'financials:ole'
 const oleBalanceCacheTime = [5, 'minutes']
-export function setOleBalance(balance: ?number) {
+export function setOleBalance(balance: ?string) {
   return setItem(oleBalanceKey, balance, oleBalanceCacheTime)
 }
-export function getOleBalance(): CacheResultType<?number> {
+export function getOleBalance(): CacheResultType<?string> {
   return getItem(oleBalanceKey)
 }
 
 const printBalanceKey = 'financials:print'
 const printBalanceCacheTime = [5, 'minutes']
-export function setPrintBalance(balance: ?number) {
+export function setPrintBalance(balance: ?string) {
   return setItem(printBalanceKey, balance, printBalanceCacheTime)
 }
-export function getPrintBalance(): CacheResultType<?number> {
+export function getPrintBalance(): CacheResultType<?string> {
   return getItem(printBalanceKey)
 }
 
@@ -122,12 +122,22 @@ export function getWeeklyMealInfo(): CacheResultType<?string> {
   return getItem(weeklyMealsKey)
 }
 
+const mealPlanKey = 'meals:plan'
+const mealPlanCacheTime = [5, 'minutes']
+export function setMealPlanInfo(mealPlanName: ?string) {
+  return setItem(mealPlanKey, mealPlanName, mealPlanCacheTime)
+}
+export function getMealPlanInfo(): CacheResultType<?string> {
+  return getItem(mealPlanKey)
+}
+
 type BalancesInputType = {
-  flex: ?number,
-  ole: ?number,
-  print: ?number,
+  flex: ?string,
+  ole: ?string,
+  print: ?string,
   daily: ?string,
   weekly: ?string,
+  plan: ?string,
 }
 export function setBalances({
   flex,
@@ -135,6 +145,7 @@ export function setBalances({
   print,
   daily,
   weekly,
+  plan,
 }: BalancesInputType) {
   return Promise.all([
     setFlexBalance(flex),
@@ -142,25 +153,28 @@ export function setBalances({
     setPrintBalance(print),
     setDailyMealInfo(daily),
     setWeeklyMealInfo(weekly),
+    setMealPlanInfo(plan),
   ])
 }
 
 type BalancesOutputType = {
-  flex: BaseCacheResultType<?number>,
-  ole: BaseCacheResultType<?number>,
-  print: BaseCacheResultType<?number>,
+  flex: BaseCacheResultType<?string>,
+  ole: BaseCacheResultType<?string>,
+  print: BaseCacheResultType<?string>,
   daily: BaseCacheResultType<?string>,
   weekly: BaseCacheResultType<?string>,
+  plan: BaseCacheResultType<?string>,
   _isExpired: boolean,
   _isCached: boolean,
 }
 export async function getBalances(): Promise<BalancesOutputType> {
-  const [flex, ole, print, daily, weekly] = await Promise.all([
+  const [flex, ole, print, daily, weekly, plan] = await Promise.all([
     getFlexBalance(),
     getOleBalance(),
     getPrintBalance(),
     getDailyMealInfo(),
     getWeeklyMealInfo(),
+    getMealPlanInfo(),
   ])
 
   const _isExpired =
@@ -168,13 +182,15 @@ export async function getBalances(): Promise<BalancesOutputType> {
     ole.isExpired ||
     print.isExpired ||
     daily.isExpired ||
-    weekly.isExpired
+    weekly.isExpired ||
+    plan.isExpired
   const _isCached =
     flex.isCached ||
     ole.isCached ||
     print.isCached ||
     daily.isCached ||
-    weekly.isCached
+    weekly.isCached ||
+    plan.isCached
 
-  return {flex, ole, print, daily, weekly, _isExpired, _isCached}
+  return {flex, ole, print, daily, weekly, plan, _isExpired, _isCached}
 }

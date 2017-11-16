@@ -1,19 +1,23 @@
-/**
- * @flow
- * All About Olaf
- * Index view
- */
+// @flow
 
 import './globalize-fetch'
 import './setup-moment'
 import OneSignal from 'react-native-onesignal'
 
-import React from 'react'
+import * as React from 'react'
 import {Provider} from 'react-redux'
-import {store} from './flux'
+import {makeStore, initRedux} from './flux'
+import bugsnag from './bugsnag'
 import {tracker} from './analytics'
 import {AppNavigator} from './navigation'
+import {
+  startStatusBarColorChanger,
+  stopStatusBarColorChanger,
+} from './views/components/open-url'
 import type {NavigationState} from 'react-navigation'
+
+const store = makeStore()
+initRedux(store)
 
 // gets the current screen from navigation state
 function getCurrentRouteName(navigationState: NavigationState): ?string {
@@ -28,12 +32,16 @@ function getCurrentRouteName(navigationState: NavigationState): ?string {
   return route.routeName
 }
 
-export default class App extends React.Component {
-  componentDidMount() {
+type Props = {}
+
+export default class App extends React.Component<Props> {
+  componentWillMount() {
     OneSignal.addEventListener('received', this.onReceived)
     OneSignal.addEventListener('opened', this.onOpened)
     OneSignal.addEventListener('registered', this.onRegistered)
     OneSignal.addEventListener('ids', this.onIds)
+
+    startStatusBarColorChanger()
   }
 
   componentWillUnmount() {
@@ -41,6 +49,8 @@ export default class App extends React.Component {
     OneSignal.removeEventListener('opened', this.onOpened)
     OneSignal.removeEventListener('registered', this.onRegistered)
     OneSignal.removeEventListener('ids', this.onIds)
+
+    stopStatusBarColorChanger()
   }
 
   onReceived(notification: any) {
@@ -69,8 +79,16 @@ export default class App extends React.Component {
     const currentScreen = getCurrentRouteName(currentState)
     const prevScreen = getCurrentRouteName(prevState)
 
+    if (!currentScreen) {
+      return
+    }
+
     if (currentScreen !== prevScreen) {
       tracker.trackScreenView(currentScreen)
+      bugsnag.leaveBreadcrumb(currentScreen, {
+        type: 'navigation',
+        previousScreen: prevScreen,
+      })
     }
   }
 

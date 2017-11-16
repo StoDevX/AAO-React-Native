@@ -1,14 +1,14 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {Dimensions, StyleSheet} from 'react-native'
-
+import {type ReduxState} from '../../../flux'
 import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from '../../components/colors'
 import fromPairs from 'lodash/fromPairs'
 
-import SortableList from 'react-native-sortable-list'
+import SortableList from '@hawkrives/react-native-sortable-list'
 
 import type {ViewType} from '../../views'
 import {allViews} from '../../views'
@@ -26,16 +26,21 @@ const styles = StyleSheet.create({
   },
 })
 
-type Props = {
-  onSaveOrder: (string[]) => any,
+type ReduxStateProps = {
   order: string[],
 }
+
+type ReduxDispatchProps = {
+  onSaveOrder: (string[]) => any,
+}
+
+type Props = ReduxStateProps & ReduxDispatchProps
 
 type State = {
   width: number,
 }
 
-class EditHomeView extends React.PureComponent<void, Props, State> {
+class EditHomeView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Edit Home',
   }
@@ -78,13 +83,13 @@ class EditHomeView extends React.PureComponent<void, Props, State> {
   }
 }
 
-function mapState(state) {
+function mapState(state: ReduxState): ReduxStateProps {
   return {
-    order: state.homescreen.order,
+    order: state.homescreen ? state.homescreen.order : [],
   }
 }
 
-function mapDispatch(dispatch) {
+function mapDispatch(dispatch): ReduxDispatchProps {
   return {
     onSaveOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
   }

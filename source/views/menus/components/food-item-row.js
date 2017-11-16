@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {View, StyleSheet, Platform} from 'react-native'
 import {DietaryTags} from './dietary-tags'
 import {Row, Column} from '../../components/layout'

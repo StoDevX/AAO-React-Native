@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, View, Text, Platform, RefreshControl} from 'react-native'
 import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
 import type {TopLevelViewPropsType} from '../types'
@@ -20,7 +20,6 @@ import {reportNetworkProblem} from '../../lib/report-network-problem'
 import size from 'lodash/size'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
-import head from 'lodash/head'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
@@ -67,23 +66,26 @@ const styles = StyleSheet.create({
   },
 })
 
-export class StudentOrgsView extends React.Component {
+type Props = TopLevelViewPropsType
+
+type State = {
+  orgs: Array<StudentOrgType>,
+  results: {[key: string]: StudentOrgType[]},
+  refreshing: boolean,
+  error: boolean,
+  loading: boolean,
+}
+
+export class StudentOrgsView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Student Orgs',
     headerBackTitle: 'Orgs',
   }
 
-  props: TopLevelViewPropsType
   searchBar: any
 
-  state: {
-    orgs: {[key: string]: StudentOrgType[]},
-    results: {[key: string]: StudentOrgType[]},
-    refreshing: boolean,
-    error: boolean,
-    loading: boolean,
-  } = {
-    orgs: {},
+  state = {
+    orgs: [],
     results: {},
     refreshing: false,
     loading: true,
@@ -97,13 +99,13 @@ export class StudentOrgsView extends React.Component {
   }
 
   fetchData = async () => {
-    const responseData: StudentOrgType[] = await fetchJson(
-      orgsUrl,
-    ).catch(err => {
-      reportNetworkProblem(err)
-      this.setState(() => ({error: true}))
-      return []
-    })
+    const responseData: StudentOrgType[] = await fetchJson(orgsUrl).catch(
+      err => {
+        reportNetworkProblem(err)
+        this.setState(() => ({error: true}))
+        return []
+      },
+    )
 
     const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/i
     const withSortableNames = responseData.map(item => {
@@ -112,7 +114,7 @@ export class StudentOrgsView extends React.Component {
       return {
         ...item,
         $sortableName: sortableName,
-        $groupableName: head(startCase(sortableName)),
+        $groupableName: startCase(sortableName)[0],
       }
     })
 

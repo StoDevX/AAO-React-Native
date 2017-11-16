@@ -1,16 +1,16 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import type {OtherModeType} from '../types'
 import {ListRow, Detail, Title} from '../../components/list'
 import {Column, Row} from '../../components/layout'
 
-export class OtherModesRow extends React.PureComponent {
-  props: {
-    onPress: OtherModeType => any,
-    mode: OtherModeType,
-  }
+type Props = {
+  onPress: OtherModeType => any,
+  mode: OtherModeType,
+}
 
+export class OtherModesRow extends React.PureComponent<Props> {
   _onPress = () => this.props.onPress(this.props.mode)
 
   render() {

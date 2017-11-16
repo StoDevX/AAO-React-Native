@@ -1,10 +1,6 @@
 // @flow
-/**
- * All About Olaf
- * Calendar page
- */
 
-import React from 'react'
+import * as React from 'react'
 import {TabNavigator} from '../components/tabbed-view'
 import {TabBarIcon} from '../components/tabbar-icon'
 
@@ -18,7 +14,7 @@ export default TabNavigator(
       screen: ({navigation}) => (
         <GoogleCalendarView
           navigation={navigation}
-          calendarId="le6tdd9i38vgb7fcmha0hu66u9gjus2e@import.calendar.google.com"
+          calendarId="5g91il39n0sv4c2bjdv1jrvcpq4ulm4r@import.calendar.google.com"
         />
       ),
       navigationOptions: {

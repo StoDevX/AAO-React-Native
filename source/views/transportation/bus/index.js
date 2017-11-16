@@ -1,4 +1,4 @@
 // @flow
 
-import {BusView} from './bus-view'
-export default BusView
+export {BusView} from './wrapper'
+export {BusMap} from './map'

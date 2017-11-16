@@ -45,7 +45,9 @@ describe('handles wierd times', () => {
   })
 
   it('handles Saturday at 1:30am', () => {
-    const now = dayMoment('Sat 1:30am')
+    // TODO: report a bug to moment-timezone that tz("Sat 1:30am", "ddd h:mma") is invalid (at least when `moment.now` = 2017-11-09)
+    const saturday = '2017-11-11T01:30:00'
+    const now = plainMoment(saturday, 'YYYY-MM-DD[T]HH:mm:ss')
     const input = {days: [], from: '10:00am', to: '2:00am'}
     const {open, close} = parseHours(input, now)
 

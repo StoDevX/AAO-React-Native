@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {ActionSheetIOS, Clipboard} from 'react-native'
 import glamorous from 'glamorous-native'
 import openUrl from '../open-url'
@@ -13,14 +13,16 @@ export const LinkText = glamorous.text({
   color: c.infoBlue,
 })
 
-export class Link extends React.PureComponent {
-  props: {
-    href: string,
-    title?: string,
-    children: Array<string>,
-  }
+type Props = {
+  href: string,
+  title?: string,
+  children: React.ChildrenArray<string>,
+}
 
-  options = [
+type Callback = ({title?: string, href: string}) => any
+
+export class Link extends React.PureComponent<Props> {
+  options: Array<[string, Callback]> = [
     ['Open', ({href}: {href: string}) => openUrl(href)],
     [
       'Copy',
