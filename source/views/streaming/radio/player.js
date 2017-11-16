@@ -1,9 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {
-  WebView,
-} from 'react-native'
+import {WebView} from 'react-native'
 import type {PlayState, HtmlAudioError} from './types'
 
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'

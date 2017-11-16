@@ -1,12 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {
-  StyleSheet,
-  Text,
-  View,
-  Platform,
-} from 'react-native'
+import {StyleSheet, Text, View, Platform} from 'react-native'
 import * as c from '../../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {Touchable} from '../../components/touchable'
@@ -46,11 +41,7 @@ type SmallActionButtonProps = {
 }
 
 const SmallActionButton = ({icon, onPress}: SmallActionButtonProps) => (
-  <Touchable
-    style={styles.smallButton}
-    hightlight={false}
-    onPress={onPress}
-  >
+  <Touchable style={styles.smallButton} hightlight={false} onPress={onPress}>
     <View style={styles.wrapper}>
       <Icon style={styles.icon} name={icon} />
     </View>
