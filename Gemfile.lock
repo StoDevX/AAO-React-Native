@@ -204,7 +204,7 @@ DEPENDENCIES
   fastlane-plugin-bugsnag
   hockeyapp
   json
-  rubocop (~> 0.51)
+  rubocop (~> 0.51.0)
   xcodeproj
 
 BUNDLED WITH
