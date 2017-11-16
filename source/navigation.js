@@ -8,7 +8,7 @@ import CalendarView, {EventDetail as EventDetailView} from './views/calendar'
 import {ContactsView, ContactsDetailView} from './views/contacts'
 import {DictionaryView, DictionaryDetailView} from './views/dictionary'
 import {HomeView, EditHomeView} from './views/home'
-import StreamingView from './views/streaming'
+import StreamingView, {KSTOScheduleView} from './views/streaming'
 import {
   MenusView,
   CarletonBurtonMenuScreen,
@@ -35,7 +35,6 @@ import SettingsView from './views/settings'
 import CreditsView from './views/settings/credits'
 import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
-import KSTOSchedule from './views/streaming/radio/schedule'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
 import HelpView from './views/help'
@@ -83,7 +82,7 @@ export const AppNavigator = StackNavigator(
     SettingsView: {screen: SettingsView},
     SISView: {screen: SISView},
     StreamingView: {screen: StreamingView},
-    KSTOSchedule: {screen: KSTOSchedule},
+    KSTOScheduleView: {screen: KSTOScheduleView},
     StudentOrgsDetailView: {screen: StudentOrgsDetailView},
     StudentOrgsView: {screen: StudentOrgsView},
     TransportationView: {screen: TransportationView},

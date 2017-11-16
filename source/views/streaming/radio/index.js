@@ -1,3 +1,4 @@
 // @flow
 
-export {KSTOView as default} from './controller'
+export {KSTOView} from './controller'
+export {KSTOScheduleView} from './schedule'

@@ -6,7 +6,7 @@ import type {TopLevelViewPropsType} from '../../types'
 
 type Props = TopLevelViewPropsType & {}
 
-export default class KSTOSchedule extends React.PureComponent<Props> {
+export class KSTOScheduleView extends React.PureComponent<Props> {
   static navigationOptions = {
     title: 'Show Schedule',
   }

@@ -80,7 +80,7 @@ export class KSTOView extends React.PureComponent<Props, State> {
   }
 
   openSchedule = () => {
-    this.props.navigation.navigate('KSTOSchedule')
+    this.props.navigation.navigate('KSTOScheduleView')
   }
 
   callStation = () => {
