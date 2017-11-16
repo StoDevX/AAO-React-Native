@@ -30,7 +30,7 @@ type State = {
   viewport: Viewport,
 }
 
-export default class KSTOView extends React.PureComponent<Props, State> {
+export class KSTOView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     tabBarLabel: 'KSTO',
     tabBarIcon: TabBarIcon('radio'),
