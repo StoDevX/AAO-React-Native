@@ -53,7 +53,7 @@ type Props = TopLevelViewPropsType & {
   name: string,
 }
 type State = {
-  error: ?Error,
+  errormsg: ?string,
   loading: boolean,
   refreshing: boolean,
   now: momentT,
@@ -63,7 +63,7 @@ type State = {
 
 export class BonAppHostedMenu extends React.PureComponent<Props, State> {
   state = {
-    error: null,
+    errormsg: null,
     loading: true,
     refreshing: false,
     now: moment.tz(CENTRAL_TZ),
@@ -95,7 +95,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
     } catch (error) {
       tracker.trackException(error.message)
       bugsnag.notify(error)
-      this.setState(() => ({error}))
+      this.setState(() => ({errormsg: error.message}))
     }
 
     this.setState(() => ({cafeMenu, cafeInfo, now: moment.tz(CENTRAL_TZ)}))
@@ -220,8 +220,8 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
       return <LoadingView text={sample(this.props.loadingMessage)} />
     }
 
-    if (this.state.error) {
-      return <NoticeView text={`Error: ${this.state.error.message}`} />
+    if (this.state.errormsg) {
+      return <NoticeView text={`Error: ${this.state.errormsg}`} />
     }
 
     if (!this.state.cafeMenu || !this.state.cafeInfo) {
