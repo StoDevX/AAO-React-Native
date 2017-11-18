@@ -35,6 +35,8 @@ const fetchJsonQuery = (url, query) =>
   fetchJson(`${url}?${qs.stringify(query)}`)
 const entities = new AllHtmlEntities()
 
+const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
+
 const DEFAULT_MENU = [
   {
     label: 'Menu',
@@ -93,9 +95,13 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
         fetchJsonQuery(bonappCafeBaseUrl, {cafe: props.cafeId}),
       ])
     } catch (error) {
-      tracker.trackException(error.message)
-      bugsnag.notify(error)
-      this.setState(() => ({errormsg: error.message}))
+      if (error.message === "JSON Parse error: Unrecognized token '<'") {
+        this.setState(() => ({errormsg: BONAPP_HTML_ERROR_CODE}))
+      } else {
+        tracker.trackException(error.message)
+        bugsnag.notify(error)
+        this.setState(() => ({errormsg: error.message}))
+      }
     }
 
     this.setState(() => ({cafeMenu, cafeInfo, now: moment.tz(CENTRAL_TZ)}))
@@ -221,7 +227,14 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
     }
 
     if (this.state.errormsg) {
-      return <NoticeView text={`Error: ${this.state.errormsg}`} />
+      let msg = ''
+      if (this.state.errormsg === BONAPP_HTML_ERROR_CODE) {
+        msg =
+          'Something between you and BonApp is having problems. Try again in a minute or two?'
+      } else {
+        msg = `Error: ${this.state.errormsg}`
+      }
+      return <NoticeView text={msg} />
     }
 
     if (!this.state.cafeMenu || !this.state.cafeInfo) {
