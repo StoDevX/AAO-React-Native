@@ -66,6 +66,7 @@
     "lodash": "4.17.4",
     "moment": "2.19.2",
     "moment-timezone": "0.5.14",
+    "p-retry": "1.0.0",
     "querystring": "0.2.0",
     "react": "16.0.0",
     "react-markdown": "2.5.1",
