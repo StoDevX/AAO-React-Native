@@ -27,6 +27,7 @@ import {toLaxTitleCase} from 'titlecase'
 import {tracker} from '../../analytics'
 import bugsnag from '../../bugsnag'
 import delay from 'delay'
+import retry from 'p-retry'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
@@ -85,14 +86,19 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
     }
   }
 
+  requestMenu = (cafeId: string) => () =>
+    fetchJsonQuery(bonappMenuBaseUrl, {cafe: cafeId})
+  requestCafe = (cafeId: string) => () =>
+    fetchJsonQuery(bonappCafeBaseUrl, {cafe: cafeId})
+
   fetchData = async (props: Props) => {
     let cafeMenu: ?MenuInfoType = null
     let cafeInfo: ?CafeInfoType = null
 
     try {
       ;[cafeMenu, cafeInfo] = await Promise.all([
-        fetchJsonQuery(bonappMenuBaseUrl, {cafe: props.cafeId}),
-        fetchJsonQuery(bonappCafeBaseUrl, {cafe: props.cafeId}),
+        retry(this.requestMenu(props.cafeId), {retries: 3}),
+        retry(this.requestCafe(props.cafeId), {retries: 3}),
       ])
     } catch (error) {
       if (error.message === "JSON Parse error: Unrecognized token '<'") {
