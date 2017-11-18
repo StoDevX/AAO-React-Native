@@ -10,18 +10,18 @@ import {
   Dimensions,
 } from 'react-native'
 import delay from 'delay'
-import {reportNetworkProblem} from '../../lib/report-network-problem'
-import {TabBarIcon} from '../components/tabbar-icon'
-import {Touchable} from '../components/touchable'
-import * as c from '../components/colors'
-import * as defaultData from '../../../docs/webcams.json'
-import {webcamImages} from '../../../images/webcam-images'
-import {trackedOpenUrl} from '../components/open-url'
+import {reportNetworkProblem} from '../../../lib/report-network-problem'
+import {TabBarIcon} from '../../components/tabbar-icon'
+import {Touchable} from '../../components/touchable'
+import * as c from '../../components/colors'
+import * as defaultData from '../../../../docs/webcams.json'
+import {webcamImages} from '../../../../images/webcam-images'
+import {trackedOpenUrl} from '../../components/open-url'
 import LinearGradient from 'react-native-linear-gradient'
-import {Column} from '../components/layout'
-import {partitionByIndex} from '../../lib/partition-by-index'
+import {Column} from '../../components/layout'
+import {partitionByIndex} from '../../../lib/partition-by-index'
 
-const transparentPixel = require('../../../images/transparent.png')
+const transparentPixel = require('../../../../images/transparent.png')
 const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/webcams.json'
 
 type WebcamType = {
