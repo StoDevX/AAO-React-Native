@@ -41,6 +41,9 @@ export default class App extends React.Component<Props> {
     OneSignal.addEventListener('registered', this.onRegistered)
     OneSignal.addEventListener('ids', this.onIds)
 
+    // When we finally want to ask for push notifications, enable this:
+    // OneSignal.registerForPushNotifications()
+
     startStatusBarColorChanger()
   }
 
