@@ -226,7 +226,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 
     if (!this.state.cafeMenu || !this.state.cafeInfo) {
       const err = new Error(
-        `Something went wrong loading BonApp cafe ${this.props.cafeId}`,
+        `Something went wrong loading BonApp cafe #${this.props.cafeId}`,
       )
       tracker.trackException(err)
       bugsnag.notify(err)
