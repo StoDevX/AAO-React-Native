@@ -77,9 +77,13 @@ export function convertWpJsonItemToStory(item: WpJsonItemType): StoryType {
     )
 
     if (featuredMediaInfo) {
-      if (featuredMediaInfo.media_details.sizes.medium_large) {
-        featuredImage =
-          featuredMediaInfo.media_details.sizes.medium_large.source_url
+      if (featuredMediaInfo.media_details.sizes) {
+        if (featuredMediaInfo.media_details.sizes.medium_large) {
+          featuredImage =
+            featuredMediaInfo.media_details.sizes.medium_large.source_url
+        } else {
+          featuredImage = featuredMediaInfo.source_url
+        }
       } else {
         featuredImage = featuredMediaInfo.source_url
       }
