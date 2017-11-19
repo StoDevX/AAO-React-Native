@@ -41,6 +41,7 @@ export class StreamThumbnail extends React.PureComponent<Props> {
         : transparentPixel
 
     return (
+      // do not remove this View; it is needed to prevent extra highlighting
       <View style={styles.cell}>
         <Touchable
           highlight={true}
