@@ -46,6 +46,7 @@
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		BBDFD91C684046CB9FD0CD55 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 742B362B86E443C09A7F9FD9 /* Entypo.ttf */; };
+		97E99623C967430A9D6E4EF1 /* libReactNativeAlternateIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB8D31E3E26A4F25B2036B2A /* libReactNativeAlternateIcons.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -465,6 +466,8 @@
 		DBE3B3C3883845C787D391C2 /* RCTRestart.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTRestart.xcodeproj; path = "../node_modules/react-native-restart/ios/RCTRestart.xcodeproj"; sourceTree = "<group>"; };
 		E288E9E30083441F948E40BF /* RNSearchBar.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSearchBar.xcodeproj; path = "../node_modules/@hawkrives/react-native-search-bar/RNSearchBar.xcodeproj"; sourceTree = "<group>"; };
 		E6FBE71A05CC43E2B4885180 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		DC6C2290929541198EEBEB60 /* ReactNativeAlternateIcons.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeAlternateIcons.xcodeproj"; path = "../node_modules/@hawkrives/react-native-alternate-icons/ReactNativeAlternateIcons.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		BB8D31E3E26A4F25B2036B2A /* libReactNativeAlternateIcons.a */ = {isa = PBXFileReference; name = "libReactNativeAlternateIcons.a"; path = "libReactNativeAlternateIcons.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -510,6 +513,7 @@
 				00E9BA6B1FBBB62100E0DFCD /* libAirMaps.a in Frameworks */,
 				00E9BA6C1FBBB62900E0DFCD /* libRCTRestart.a in Frameworks */,
 				00E9BA6D1FBBB63C00E0DFCD /* libRNCalendarEvents.a in Frameworks */,
+				97E99623C967430A9D6E4EF1 /* libReactNativeAlternateIcons.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -825,6 +829,7 @@
 				E288E9E30083441F948E40BF /* RNSearchBar.xcodeproj */,
 				71D5CCADA66D45008D9A38F2 /* RNVectorIcons.xcodeproj */,
 				89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */,
+				DC6C2290929541198EEBEB60 /* ReactNativeAlternateIcons.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1578,6 +1583,7 @@
 					"$(SRCROOT)/../node_modules/react-native-network-info/ios",
 					"$(SRCROOT)/../node_modules/react-native-restart/ios/RCTRestart",
 					"$(SRCROOT)/../node_modules/react-native-calendar-events",
+					"$(SRCROOT)/../node_modules/@hawkrives/react-native-alternate-icons/ios",
 				);
 				INFOPLIST_FILE = AllAboutOlaf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1626,6 +1632,7 @@
 					"$(SRCROOT)/../node_modules/react-native-network-info/ios",
 					"$(SRCROOT)/../node_modules/react-native-restart/ios/RCTRestart",
 					"$(SRCROOT)/../node_modules/react-native-calendar-events",
+					"$(SRCROOT)/../node_modules/@hawkrives/react-native-alternate-icons/ios",
 				);
 				INFOPLIST_FILE = AllAboutOlaf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
