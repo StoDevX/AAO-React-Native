@@ -233,12 +233,10 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
     }
 
     if (this.state.errormsg) {
-      let msg = ''
+      let msg = `Error: ${this.state.errormsg}`
       if (this.state.errormsg === BONAPP_HTML_ERROR_CODE) {
         msg =
           'Something between you and BonApp is having problems. Try again in a minute or two?'
-      } else {
-        msg = `Error: ${this.state.errormsg}`
       }
       return <NoticeView text={msg} />
     }
