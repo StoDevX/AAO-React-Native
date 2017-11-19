@@ -86,6 +86,12 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
     }
   }
 
+  retry = () => {
+    this.fetchData(this.props).then(() => {
+      this.setState(() => ({loading: false, errormsg: ''}))
+    })
+  }
+
   requestMenu = (cafeId: string) => () =>
     fetchJsonQuery(bonappMenuBaseUrl, {cafe: cafeId})
   requestCafe = (cafeId: string) => () =>
@@ -238,7 +244,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
         msg =
           'Something between you and BonApp is having problems. Try again in a minute or two?'
       }
-      return <NoticeView text={msg} />
+      return <NoticeView text={msg} buttonText="Again!" onPress={this.retry} />
     }
 
     if (!this.state.cafeMenu || !this.state.cafeInfo) {
