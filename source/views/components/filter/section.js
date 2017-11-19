@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import type {FilterType} from './types'
 import {SingleToggleSection} from './section-toggle'
 import {ListSection} from './section-list'

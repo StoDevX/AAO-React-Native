@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {Animated, Easing, StyleSheet, Text} from 'react-native'
 
 import * as c from '../../components/colors'
@@ -62,7 +62,7 @@ type State = {
   },
 }
 
-export class EditHomeRow extends React.Component<void, Props, State> {
+export class EditHomeRow extends React.Component<Props, State> {
   static startStyle = {
     shadowRadius: 2,
     transform: [{scale: 1}],

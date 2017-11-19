@@ -20,7 +20,7 @@ import {FilterView} from './views/components/filter'
 import NewsView from './views/news'
 import NewsItemView from './views/news/news-item'
 import SISView from './views/sis'
-import JobDetailView from './views/sis/student-work/detail'
+import {JobDetailView} from './views/sis/student-work/detail'
 import {
   BuildingHoursView,
   BuildingHoursDetailView,
@@ -28,7 +28,7 @@ import {
   BuildingHoursScheduleEditorView,
 } from './views/building-hours'
 import TransportationView, {
-  BusMapView,
+  BusMap as BusMapView,
   OtherModesDetailView,
 } from './views/transportation'
 import SettingsView from './views/settings'

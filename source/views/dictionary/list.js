@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, RefreshControl, Platform} from 'react-native'
 import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
 import {Column} from '../components/layout'
@@ -17,7 +17,6 @@ import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {tracker} from '../../analytics'
 import groupBy from 'lodash/groupBy'
-import head from 'lodash/head'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
@@ -47,12 +46,12 @@ const styles = StyleSheet.create({
 type Props = TopLevelViewPropsType
 
 type State = {
-  results: {[key: string]: Array<WordType>},
+  results: Array<WordType>,
   allTerms: Array<WordType>,
   refreshing: boolean,
 }
 
-export class DictionaryView extends React.PureComponent<void, Props, State> {
+export class DictionaryView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Campus Dictionary',
     headerBackTitle: 'Dictionary',
@@ -153,7 +152,7 @@ export class DictionaryView extends React.PureComponent<void, Props, State> {
           ROW_HEIGHT +
           (Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
         }
-        data={groupBy(this.state.results, item => head(item.word))}
+        data={groupBy(this.state.results, item => item.word[0])}
         onSearch={this.performSearch}
         refreshControl={refreshControl}
         renderSeparator={this.renderSeparator}

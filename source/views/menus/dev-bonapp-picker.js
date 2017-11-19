@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {View, TextInput, StyleSheet} from 'react-native'
 import {TabBarIcon} from '../components/tabbar-icon'
 import * as c from '../components/colors'
@@ -22,18 +22,20 @@ const styles = StyleSheet.create({
   },
 })
 
-export class BonAppPickerView extends React.Component {
+type Props = TopLevelViewPropsType
+
+type State = {
+  cafeId: string,
+  menu: ?any,
+}
+
+export class BonAppPickerView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     tabBarLabel: 'BonApp',
     tabBarIcon: TabBarIcon('ionic'),
   }
 
-  props: TopLevelViewPropsType
-
-  state: {
-    cafeId: string,
-    menu: ?any,
-  } = {
+  state = {
     cafeId: '34',
     menu: null,
   }

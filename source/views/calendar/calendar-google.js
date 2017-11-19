@@ -1,11 +1,11 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {EventList} from './event-list'
 import bugsnag from '../../bugsnag'
 import {tracker} from '../../analytics'
 import type {TopLevelViewPropsType} from '../types'
-import type {EventType, GoogleEventType} from './types'
+import type {EventType, GoogleEventType, PoweredBy} from './types'
 import moment from 'moment-timezone'
 import delay from 'delay'
 import LoadingView from '../components/loading'
@@ -13,16 +13,18 @@ import qs from 'querystring'
 import {GOOGLE_CALENDAR_API_KEY} from '../../lib/config'
 const TIMEZONE = 'America/Winnipeg'
 
-export class GoogleCalendarView extends React.Component {
-  props: {calendarId: string} & TopLevelViewPropsType
+type Props = TopLevelViewPropsType & {calendarId: string, poweredBy: ?PoweredBy}
 
-  state: {
-    events: EventType[],
-    loading: boolean,
-    refreshing: boolean,
-    error: ?Error,
-    now: moment,
-  } = {
+type State = {
+  events: EventType[],
+  loading: boolean,
+  refreshing: boolean,
+  error: ?Error,
+  now: moment,
+}
+
+export class GoogleCalendarView extends React.Component<Props, State> {
+  state = {
     events: [],
     loading: true,
     refreshing: false,
@@ -118,6 +120,7 @@ export class GoogleCalendarView extends React.Component {
         onRefresh={this.refresh}
         now={this.state.now}
         message={this.state.error ? this.state.error.message : null}
+        poweredBy={this.props.poweredBy}
       />
     )
   }

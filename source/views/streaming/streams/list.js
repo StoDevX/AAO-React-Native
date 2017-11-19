@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 
 import * as c from '../../components/colors'
@@ -26,18 +26,22 @@ const styles = StyleSheet.create({
   },
 })
 
-export class StreamListView extends React.PureComponent {
+type Props = {}
+
+type State = {
+  error: ?string,
+  loading: boolean,
+  refreshing: boolean,
+  streams: Array<{title: string, data: Array<StreamType>}>,
+}
+
+export class StreamListView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     tabBarLabel: 'Streaming',
     tabBarIcon: TabBarIcon('recording'),
   }
 
-  state: {
-    error: ?string,
-    loading: boolean,
-    refreshing: boolean,
-    streams: Array<{title: string, data: Array<StreamType>}>,
-  } = {
+  state = {
     error: null,
     loading: true,
     refreshing: false,
@@ -50,7 +54,7 @@ export class StreamListView extends React.PureComponent {
     })
   }
 
-  refresh = async () => {
+  refresh = async (): any => {
     let start = Date.now()
     this.setState(() => ({refreshing: true}))
 

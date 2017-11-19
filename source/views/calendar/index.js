@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {TabNavigator} from '../components/tabbed-view'
 import {TabBarIcon} from '../components/tabbar-icon'
 
@@ -15,6 +15,10 @@ export default TabNavigator(
         <GoogleCalendarView
           navigation={navigation}
           calendarId="5g91il39n0sv4c2bjdv1jrvcpq4ulm4r@import.calendar.google.com"
+          poweredBy={{
+            title: 'Powered by the St. Olaf calendar',
+            href: 'https://wp.stolaf.edu/calendar/',
+          }}
         />
       ),
       navigationOptions: {
@@ -28,6 +32,10 @@ export default TabNavigator(
         <GoogleCalendarView
           navigation={navigation}
           calendarId="stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com"
+          poweredBy={{
+            title: 'Powered by the Oleville calendar',
+            href: 'https://oleville.com/events/',
+          }}
         />
       ),
       navigationOptions: {
@@ -41,6 +49,10 @@ export default TabNavigator(
         <GoogleCalendarView
           navigation={navigation}
           calendarId="thisisnorthfield@gmail.com"
+          poweredBy={{
+            title: 'Powered by VisitingNorthfield.com',
+            href: 'http://visitingnorthfield.com/events/calendar/',
+          }}
         />
       ),
       navigationOptions: {

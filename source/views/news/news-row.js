@@ -1,18 +1,18 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, Image} from 'react-native'
 import {Column, Row} from '../components/layout'
 import {ListRow, Detail, Title} from '../components/list'
 import type {StoryType} from './types'
 
-export class NewsRow extends React.PureComponent {
-  props: {
-    onPress: StoryType => any,
-    story: StoryType,
-    thumbnail: number,
-  }
+type Props = {
+  onPress: StoryType => any,
+  story: StoryType,
+  thumbnail: number,
+}
 
+export class NewsRow extends React.PureComponent<Props> {
   _onPress = () => this.props.onPress(this.props.story)
 
   render() {

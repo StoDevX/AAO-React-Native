@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {HtmlView} from '../components/html-view'
 import {Share} from 'react-native'
 import type {StoryType} from './types'

@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, Platform, View} from 'react-native'
 import {Touchable} from '../touchable'
 import * as c from '../colors'

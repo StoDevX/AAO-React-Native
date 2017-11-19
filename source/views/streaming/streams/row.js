@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, Image} from 'react-native'
 
 import {ListRow, Detail, Title} from '../../components/list'
@@ -42,9 +42,9 @@ function Thumbnail({item}: {item: StreamType}) {
   ) : null
 }
 
-export class StreamRow extends React.PureComponent {
-  props: {stream: StreamType}
+type Props = {stream: StreamType}
 
+export class StreamRow extends React.PureComponent<Props> {
   onPressStream = () => {
     const {stream} = this.props
     trackedOpenUrl({url: stream.player, id: 'StreamingMedia_StreamView'})

@@ -4,7 +4,7 @@
  * <Building /> controls the structure of the detail view.
  */
 
-import React from 'react'
+import * as React from 'react'
 import {ScrollView, StyleSheet, Platform, Image} from 'react-native'
 import {buildingImages} from '../../../../images/building-images'
 import type {BuildingType} from '../types'
@@ -41,7 +41,7 @@ type Props = {
   onProblemReport: () => any,
 }
 
-export class BuildingDetail extends React.Component<void, Props, void> {
+export class BuildingDetail extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
     return (
       !this.props.now.isSame(nextProps.now, 'minute') ||

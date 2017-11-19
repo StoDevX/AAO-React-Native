@@ -3,7 +3,7 @@
  * Exports a button that closes the current overlay screen
  */
 
-import React from 'react'
+import * as React from 'react'
 import {Text, Platform, StyleSheet} from 'react-native'
 import {Touchable} from '../touchable'
 import type {NavType} from '../../types'

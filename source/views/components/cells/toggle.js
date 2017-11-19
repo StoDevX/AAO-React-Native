@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {Switch} from 'react-native'
 import {Cell} from 'react-native-tableview-simple'
 

@@ -1,5 +1,5 @@
 // @flow
-import React from 'react'
+import * as React from 'react'
 import {NoticeView} from './notice'
 
 export default function LoadingView({text = 'Loading…'}: {text?: string}) {

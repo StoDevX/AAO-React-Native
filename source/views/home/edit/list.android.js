@@ -1,8 +1,8 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, FlatList} from 'react-native'
-
+import {type ReduxState} from '../../../flux'
 import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from '../../components/colors'
@@ -20,12 +20,17 @@ const styles = StyleSheet.create({
   },
 })
 
-type Props = {
-  onChangeOrder: (string[]) => any,
+type ReduxStateProps = {
   order: string[],
 }
 
-class EditHomeView extends React.PureComponent<void, Props, void> {
+type ReduxDispatchProps = {
+  onSaveOrder: (string[]) => any,
+}
+
+type Props = ReduxStateProps & ReduxDispatchProps
+
+class EditHomeView extends React.PureComponent<Props> {
   static navigationOptions = {
     title: 'Edit Home',
   }
@@ -87,13 +92,15 @@ class EditHomeView extends React.PureComponent<void, Props, void> {
   }
 }
 
-function mapState(state) {
-  return {order: state.homescreen.order}
+function mapState(state: ReduxState): ReduxStateProps {
+  return {
+    order: state.homescreen ? state.homescreen.order : [],
+  }
 }
 
-function mapDispatch(dispatch) {
+function mapDispatch(dispatch): ReduxDispatchProps {
   return {
-    onChangeOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
+    onSaveOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
   }
 }
 

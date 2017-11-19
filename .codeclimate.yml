@@ -20,6 +20,7 @@ engines:
     enabled: true
   rubocop:
     enabled: true
+    channel: "rubocop-0-51"
 
 ratings:
   paths:
@@ -35,3 +36,4 @@ ratings:
 
 exclude_paths:
 - node_modules/
+- flow-typed/

@@ -1,9 +1,10 @@
 $schema: http://json-schema.org/draft-06/schema#
 
 additionalProperties: false
-required: [line, schedules]
+required: [line, schedules, colors]
 properties:
   line: {type: string}
+  colors: {$ref: '#/definitions/colors'}
   schedules:
     type: array
     items: {$ref: '#/definitions/schedule'}
@@ -20,8 +21,8 @@ definitions:
       times: {$ref: '#/definitions/times'}
 
   coordinates:
-    type: array
-    items: {$ref: '#/definitions/coord-pair'}
+    type: object
+    additionalProperties: {$ref: '#/definitions/coord-pair'}
 
   stops:
     type: array
@@ -42,3 +43,10 @@ definitions:
     additionalProperties: false
     type: array
     items: [{type: number}, {type: number}]
+
+  colors:
+    additionalProperties: false
+    required: [bar, dot]
+    properties:
+      bar: {type: string}
+      dot: {type: string}

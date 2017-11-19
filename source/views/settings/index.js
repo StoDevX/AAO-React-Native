@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {StyleSheet, ScrollView, Platform} from 'react-native'
 import {TableView} from 'react-native-tableview-simple'
 import type {TopLevelViewPropsType} from '../types'

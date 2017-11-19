@@ -24,7 +24,7 @@
 {
   NSURL *jsCodeLocation;
 
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios"
+  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"
                                                                     fallbackResource:nil];
 #ifndef DEBUG
   [BugsnagReactNative start];
@@ -48,7 +48,8 @@
   rootView.loadingView = loadingViewController.view;
 
   self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
-                                                         appId:@"aa46a500-ab1c-4127-b9ff-e7373da3ce35"];
+                                                         appId:@"aa46a500-ab1c-4127-b9ff-e7373da3ce35"
+                                                      settings:@{kOSSettingsKeyAutoPrompt: @false}];
 
   // set up the requests cacher
   NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024   // 4 MiB
