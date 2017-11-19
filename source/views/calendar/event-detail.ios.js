@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
-import type {CleanedEventType} from './types'
+import type {CleanedEventType, PoweredBy} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../components/nav-buttons'
 import openUrl from '../components/open-url'
@@ -17,8 +17,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
 })
-
-const STO_CALENDAR_URL = 'https://www.stolaf.edu/calendar'
 
 function MaybeSection({header, content}: {header: string, content: string}) {
   return content.trim() ? (
@@ -64,7 +62,9 @@ const CalendarButton = ({message, disabled, onPress}) => {
 }
 
 type Props = TopLevelViewPropsType & {
-  navigation: {state: {params: {event: CleanedEventType}}},
+  navigation: {
+    state: {params: {event: CleanedEventType, poweredBy: ?PoweredBy}},
+  },
 }
 
 type State = {
@@ -114,7 +114,7 @@ export class EventDetail extends React.PureComponent<Props, State> {
   onPressButton = () => this.addEvent(this.props.navigation.state.params.event)
 
   render() {
-    const event = this.props.navigation.state.params.event
+    const {event, poweredBy} = this.props.navigation.state.params
 
     return (
       <ScrollView>
@@ -130,10 +130,9 @@ export class EventDetail extends React.PureComponent<Props, State> {
             disabled={this.state.disabled}
           />
 
-          <ListFooter
-            title="Powered by the St. Olaf Calendar"
-            href={STO_CALENDAR_URL}
-          />
+          {poweredBy.title ? (
+            <ListFooter title={poweredBy.title} href={poweredBy.href} />
+          ) : null}
         </TableView>
       </ScrollView>
     )
