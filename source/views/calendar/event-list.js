@@ -5,7 +5,7 @@ import {StyleSheet, SectionList} from 'react-native'
 import * as c from '../components/colors'
 import toPairs from 'lodash/toPairs'
 import type {TopLevelViewPropsType} from '../types'
-import type {EventType} from './types'
+import type {EventType, PoweredBy} from './types'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
 import {ListSeparator, ListSectionHeader} from '../components/list'
@@ -23,6 +23,7 @@ type Props = TopLevelViewPropsType & {
   refreshing: boolean,
   onRefresh: () => any,
   now: moment,
+  poweredBy: ?PoweredBy,
 }
 
 export class EventList extends React.PureComponent<Props> {
@@ -46,7 +47,10 @@ export class EventList extends React.PureComponent<Props> {
 
   onPressEvent = (event: EventType) => {
     event = cleanEvent(event)
-    this.props.navigation.navigate('EventDetailView', {event})
+    this.props.navigation.navigate('EventDetailView', {
+      event,
+      poweredBy: this.props.poweredBy,
+    })
   }
 
   renderSectionHeader = ({section: {title}}: any) => (
