@@ -118,7 +118,7 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 
   render() {
     if (this.state.error) {
-      return <Text selectable={true}>{this.state.error}</Text>
+      return <NoticeView text="Could not get open jobs." />
     }
 
     if (this.state.loading) {
