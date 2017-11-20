@@ -4276,9 +4276,9 @@ react-native-onesignal@3.0.6:
   dependencies:
     invariant "^2.2.2"
 
-react-native-restart@0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.4.tgz#e742c2f9833592214147bb39321d2cd5d172ad8c"
+react-native-restart@0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.5.tgz#4445bebce87438d57e4c56e4fc81c1a36a5f8e9e"
 
 react-native-safari-view@2.1.0:
   version "2.1.0"
