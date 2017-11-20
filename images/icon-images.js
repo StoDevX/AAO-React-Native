@@ -2,5 +2,5 @@
 
 export const icons = {
   oldMain: require('./about/IconTrans.png'),
-  windmill: require('../ios/AllAboutOlaf/windmill.png'),
+  windmill: require('../ios/AllAboutOlaf/windmill-icon/windmill.png'),
 }
