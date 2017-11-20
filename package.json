@@ -69,7 +69,7 @@
     "p-retry": "1.0.0",
     "querystring": "0.2.0",
     "react": "16.0.0",
-    "react-markdown": "2.5.1",
+    "react-markdown": "3.0.0",
     "react-native": "0.50.3",
     "react-native-button": "2.1.0",
     "react-native-calendar-events": "1.4.3",
