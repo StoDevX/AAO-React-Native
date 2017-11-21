@@ -3,16 +3,16 @@ image: cage
 category: Food
 
 schedule:
-  - title: Kitchen
-    notes: The kitchen stops cooking at 8 p.m.
+  - title: Thanksgiving Hours
+    notes: Normal hours resume on Monday.
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '8:00pm'}
-      - {days: [Sa, Su], from: '9:00am', to: '8:00pm'}
-
-  - title: Late Night
-    hours:
-      - {days: [Mo, Tu, We, Th], from: '8:00pm', to: '10:00pm'}
-      - {days: [Su], from: '8:00pm', to: '10:00pm'}
+      - {days: [Mo], from: '7:30am', to: '8:00pm'}
+      - {days: [Tu], from: '7:30am', to: '8:00pm'}
+      - {days: [We], from: '7:30am', to: '3:00pm'}
+      - {days: [Th], from: '12:00am', to: '12:00pm'}
+      - {days: [Fr], from: '11:00am', to: '5:00pm'}
+      - {days: [Sa], from: '11:00am', to: '5:00pm'}
+      - {days: [Su], from: '9:00am', to: '10:00pm'}
 
 breakSchedule:
   fall: []
