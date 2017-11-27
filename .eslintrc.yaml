@@ -76,7 +76,11 @@ rules:
     - warn
     - ignoreRefs: true
       allowArrowFunctions: true
-  react/jsx-sort-props: off
+  react/jsx-sort-props:
+    - warn
+    - reservedFirst: true
+      ignoreCase: true
+      callbacksLast: true
   react/no-multi-comp: off  # prevent multiple component definition per file
   react/no-redundant-should-component-update: warn
   react/no-typos: error
