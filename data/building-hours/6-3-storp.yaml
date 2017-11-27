@@ -3,8 +3,9 @@ subtitle: St. Olaf Outdoor Recreation Program
 category: Gym
 
 schedule:
-  - title: Thanksgiving Hours
-    hours: []
+  - title: Hours
+    hours:
+      - {days: [Mo, Th, Fr], from: '4:00pm', to: '6:00pm'}
 
 breakSchedule:
   fall: []

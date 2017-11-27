@@ -2,15 +2,12 @@ name: Rølvaag Library
 image: rolvaag-library
 category: Libraries
 schedule:
-  - title: Break Hours
+  - title: Hours
     hours:
-      - {days: [Mo], from: '7:45am', to: '2:00am'}
-      - {days: [Tu], from: '7:45am', to: '5:00pm'}
-      - {days: [We], from: '8:00am', to: '5:00pm'}
-      - {days: [Th], from: '12:00am', to: '12:00am'}
-      - {days: [Fr], from: '12:00am', to: '12:00am'}
-      - {days: [Sa], from: '12:00am', to: '12:00am'}
-      - {days: [Su], from: '3:00pm', to: '12:00am'}
+      - {days: [Mo, Tu, We, Th], from: '7:45am', to: '2:00am'}
+      - {days: [Fr], from: '7:45am', to: '9:00pm'}
+      - {days: [Sa], from: '9:00am', to: '9:00pm'}
+      - {days: [Su], from: '12:00pm', to: '2:00am'}
 
 breakSchedule:
   fall: []
