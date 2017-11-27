@@ -23,10 +23,10 @@ export class ScheduleRow extends React.PureComponent<Props> {
     return (
       <Cell
         cellStyle="RightDetail"
-        title={summarizeDays(set.days)}
-        titleTextStyle={isActive ? styles.bold : undefined}
         detail={formatBuildingTimes(set, now)}
         detailTextStyle={isActive ? styles.bold : undefined}
+        title={summarizeDays(set.days)}
+        titleTextStyle={isActive ? styles.bold : undefined}
       />
     )
   }

@@ -244,7 +244,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
         msg =
           'Something between you and BonApp is having problems. Try again in a minute or two?'
       }
-      return <NoticeView text={msg} buttonText="Again!" onPress={this.retry} />
+      return <NoticeView buttonText="Again!" onPress={this.retry} text={msg} />
     }
 
     if (!this.state.cafeMenu || !this.state.cafeInfo) {

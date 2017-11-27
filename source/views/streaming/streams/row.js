@@ -54,7 +54,7 @@ export class StreamRow extends React.PureComponent<Props> {
     const {stream} = this.props
 
     return (
-      <ListRow onPress={this.onPressStream} arrowPosition="center">
+      <ListRow arrowPosition="center" onPress={this.onPressStream}>
         <Row alignItems="center">
           <Thumbnail item={stream} />
           <Column flex={1}>

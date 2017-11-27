@@ -22,7 +22,7 @@ export class JobRow extends React.PureComponent<Props> {
     const ending = hours == 'Full-time' ? '' : 'hrs/week'
 
     return (
-      <ListRow onPress={this._onPress} arrowPosition="top">
+      <ListRow arrowPosition="top" onPress={this._onPress}>
         <Row alignItems="center">
           <Column flex={1}>
             <Title lines={1}>{title}</Title>

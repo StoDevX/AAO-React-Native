@@ -139,18 +139,18 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 
   renderSectionHeader = ({title}: {title: string}) => (
     <ListSectionHeader
-      title={title}
       spacing={{left: leftSideSpacing}}
       style={styles.rowSectionHeader}
+      title={title}
     />
   )
 
   renderRow = ({item}: {item: StudentOrgType}) => (
     <ListRow
-      onPress={() => this.onPressRow(item)}
-      contentContainerStyle={[styles.row]}
       arrowPosition="none"
+      contentContainerStyle={[styles.row]}
       fullWidth={true}
+      onPress={() => this.onPressRow(item)}
     >
       <Row alignItems="flex-start">
         <View style={styles.badgeContainer}>
@@ -205,8 +205,8 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 
     const refreshControl = (
       <RefreshControl
-        refreshing={this.state.refreshing}
         onRefresh={this.refresh}
+        refreshing={this.state.refreshing}
       />
     )
 

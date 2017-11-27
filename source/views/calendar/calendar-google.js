@@ -114,13 +114,13 @@ export class GoogleCalendarView extends React.Component<Props, State> {
 
     return (
       <EventList
-        navigation={this.props.navigation}
         events={this.state.events}
-        refreshing={this.state.refreshing}
-        onRefresh={this.refresh}
-        now={this.state.now}
         message={this.state.error ? this.state.error.message : null}
+        navigation={this.props.navigation}
+        now={this.state.now}
+        onRefresh={this.refresh}
         poweredBy={this.props.poweredBy}
+        refreshing={this.state.refreshing}
       />
     )
   }

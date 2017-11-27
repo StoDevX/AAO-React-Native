@@ -19,7 +19,7 @@ export class NewsRow extends React.PureComponent<Props> {
     const {story, thumbnail} = this.props
 
     return (
-      <ListRow onPress={this._onPress} arrowPosition="top">
+      <ListRow arrowPosition="top" onPress={this._onPress}>
         <Row alignItems="center">
           {story.featuredImage ? (
             <Image source={{uri: story.featuredImage}} style={styles.image} />

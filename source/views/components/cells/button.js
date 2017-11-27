@@ -30,7 +30,6 @@ export function ButtonCell({
 }) {
   return (
     <Cell
-      titleTextStyle={styles.title}
       isDisabled={indeterminate || disabled}
       onPress={onPress}
       title={
@@ -40,6 +39,7 @@ export function ButtonCell({
           {title}
         </Text>
       }
+      titleTextStyle={styles.title}
     />
   )
 }

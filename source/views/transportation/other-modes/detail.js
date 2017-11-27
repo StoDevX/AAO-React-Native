@@ -53,15 +53,15 @@ export class OtherModesDetailView extends React.PureComponent<Props> {
         <Title selectable={true}>{mode.name}</Title>
 
         <Markdown
-          styles={{Paragraph: styles.paragraph}}
           source={mode.description}
+          styles={{Paragraph: styles.paragraph}}
         />
 
         <Button onPress={this.onPress} title={'More Info'} />
 
         <ListFooter
-          title="Collected by the humans of All About Olaf"
           href={AAO_URL}
+          title="Collected by the humans of All About Olaf"
         />
       </Container>
     )

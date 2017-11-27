@@ -88,8 +88,8 @@ export class WebcamsView extends React.PureComponent<Props, State> {
             {contents.map(webcam => (
               <StreamThumbnail
                 key={webcam.name}
-                webcam={webcam}
                 viewportWidth={this.state.width}
+                webcam={webcam}
               />
             ))}
           </Column>

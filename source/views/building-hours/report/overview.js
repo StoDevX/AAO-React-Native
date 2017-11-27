@@ -211,25 +211,25 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
           {schedules.map((s, i) => (
             <EditableSchedule
               key={i}
-              schedule={s}
-              scheduleIndex={i}
               addRow={this.addHoursRow}
               editRow={this.openEditor}
-              onEditSchedule={this.editSchedule}
               onDelete={this.deleteSchedule}
+              onEditSchedule={this.editSchedule}
+              schedule={s}
+              scheduleIndex={i}
             />
           ))}
 
           <Section>
             <Cell
-              title="Add New Schedule"
               accessory="DisclosureIndicator"
               onPress={this.addSchedule}
+              title="Add New Schedule"
             />
           </Section>
 
           <Section footer="Thanks for reporting!">
-            <ButtonCell title="Submit Report" onPress={this.submit} />
+            <ButtonCell onPress={this.submit} title="Submit Report" />
           </Section>
         </TableView>
       </ScrollView>
@@ -290,32 +290,32 @@ class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
     return (
       <View>
         <Section header="INFORMATION">
-          <TitleCell text={schedule.title || ''} onChange={this.editTitle} />
-          <NotesCell text={schedule.notes || ''} onChange={this.editNotes} />
+          <TitleCell onChange={this.editTitle} text={schedule.title || ''} />
+          <NotesCell onChange={this.editNotes} text={schedule.notes || ''} />
 
           <CellToggle
             label="Closes for Chapel"
-            value={Boolean(schedule.closedForChapelTime)}
             onChange={this.toggleChapel}
+            value={Boolean(schedule.closedForChapelTime)}
           />
 
           {schedule.hours.map((set, i) => (
             <TimesCell
               key={i}
+              now={now}
+              onPress={this.openEditor}
               set={set}
               setIndex={i}
-              onPress={this.openEditor}
-              now={now}
             />
           ))}
 
           <Cell
-            title="Add More Hours"
             accessory="DisclosureIndicator"
             onPress={this.addHoursRow}
+            title="Add More Hours"
           />
 
-          <DeleteButtonCell title="Delete Schedule" onPress={this.delete} />
+          <DeleteButtonCell onPress={this.delete} title="Delete Schedule" />
         </Section>
       </View>
     )
@@ -326,26 +326,26 @@ type TextFieldProps = {text: string, onChange: string => any}
 // "Title" will become a textfield like the login form
 const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
   <CellTextField
-    hideLabel={true}
     autoCapitalize="words"
-    returnKeyType="done"
-    placeholder="Title"
-    value={text}
+    hideLabel={true}
     onChangeText={onChange}
     onSubmitEditing={onChange}
+    placeholder="Title"
+    returnKeyType="done"
+    value={text}
   />
 )
 
 // "Notes" will become a big textarea
 const NotesCell = ({text, onChange}: TextFieldProps) => (
   <CellTextField
-    hideLabel={true}
     autoCapitalize="sentences"
-    returnKeyType="done"
-    placeholder="Notes"
-    value={text}
+    hideLabel={true}
     onChangeText={onChange}
     onSubmitEditing={onChange}
+    placeholder="Notes"
+    returnKeyType="done"
+    value={text}
   />
 )
 
@@ -366,11 +366,11 @@ class TimesCell extends React.PureComponent<TimesCellProps> {
 
     return (
       <Cell
-        title={set.days.length ? summarizeDays(set.days) : 'Days'}
         accessory="DisclosureIndicator"
         cellStyle="RightDetail"
         detail={formatBuildingTimes(set, now)}
         onPress={this.onPress}
+        title={set.days.length ? summarizeDays(set.days) : 'Days'}
       />
     )
   }

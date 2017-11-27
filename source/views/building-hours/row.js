@@ -131,7 +131,7 @@ export class BuildingRow extends React.Component<Props, State> {
     const {openStatus, hours, accentBg, accentText} = this.state
 
     return (
-      <ListRow onPress={this.onPress} arrowPosition="center">
+      <ListRow arrowPosition="center" onPress={this.onPress}>
         <Row style={styles.title}>
           <Title lines={1} style={styles.titleText}>
             <Text>{name}</Text>
@@ -142,10 +142,10 @@ export class BuildingRow extends React.Component<Props, State> {
           </Title>
 
           <Badge
-            text={openStatus}
             accentColor={accentBg}
-            textColor={accentText}
             style={styles.accessoryBadge}
+            text={openStatus}
+            textColor={accentText}
           />
         </Row>
 

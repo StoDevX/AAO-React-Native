@@ -11,10 +11,10 @@ export const CarletonBurtonMenuScreen = ({
   navigation,
 }: TopLevelViewPropsType) => (
   <BonAppHostedMenu
-    navigation={navigation}
-    name="Burton"
     cafeId="35"
     loadingMessage={['Searching for Schiller…']}
+    name="Burton"
+    navigation={navigation}
   />
 )
 CarletonBurtonMenuScreen.navigationOptions = {
@@ -24,10 +24,10 @@ CarletonBurtonMenuScreen.navigationOptions = {
 
 export const CarletonLDCMenuScreen = ({navigation}: TopLevelViewPropsType) => (
   <BonAppHostedMenu
-    navigation={navigation}
-    name="LDC"
     cafeId="36"
     loadingMessage={['Tracking down empty seats…']}
+    name="LDC"
+    navigation={navigation}
   />
 )
 CarletonLDCMenuScreen.navigationOptions = {
@@ -39,10 +39,10 @@ export const CarletonWeitzMenuScreen = ({
   navigation,
 }: TopLevelViewPropsType) => (
   <BonAppHostedMenu
-    navigation={navigation}
-    name="Weitz Center"
     cafeId="458"
     loadingMessage={['Observing the artwork…', 'Previewing performances…']}
+    name="Weitz Center"
+    navigation={navigation}
   />
 )
 CarletonWeitzMenuScreen.navigationOptions = {
@@ -54,10 +54,10 @@ export const CarletonSaylesMenuScreen = ({
   navigation,
 }: TopLevelViewPropsType) => (
   <BonAppHostedMenu
-    navigation={navigation}
-    name="Sayles Hill"
     cafeId="34"
     loadingMessage={['Engaging in people-watching…', 'Checking the mail…']}
+    name="Sayles Hill"
+    navigation={navigation}
   />
 )
 CarletonSaylesMenuScreen.navigationOptions = {
@@ -82,8 +82,8 @@ export class CarletonCafeIndex extends React.Component<Props> {
           (loc: {id: string, title: string}, i, collection) => (
             <View key={i}>
               <ListRow
-                onPress={() => this.props.navigation.navigate(loc.id)}
                 arrowPosition="center"
+                onPress={() => this.props.navigation.navigate(loc.id)}
               >
                 <Row alignItems="center">
                   <Title style={styles.rowText}>{loc.title}</Title>
