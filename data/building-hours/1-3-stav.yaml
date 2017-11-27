@@ -3,19 +3,35 @@ image: stav
 category: Food
 
 schedule:
-  - title: Breakfast
+  - title: Break - Breakfast
     hours:
-      - {days: [Mo, Tu, We, Th, Fr, Sa], from: '7:00am', to: '9:45am'}
-      - {days: [Su], from: '8:30am', to: '10:15am'}
+      - {days: [Mo], from: '7:00am', to: '9:45am'}
+      - {days: [Tu], from: '7:00am', to: '9:45am'}
+      - {days: [We], from: '12:00am', to: '12:00am'}
+      - {days: [Th], from: '12:00am', to: '12:00am'}
+      - {days: [Fr], from: '12:00am', to: '12:00am'}
+      - {days: [Sa], from: '12:00am', to: '12:00am'}
+      - {days: [Su], from: '12:00am', to: '12:00am'}
 
-  - title: Lunch
+  - title: Break - Lunch
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '10:30am', to: '2:00pm'}
-      - {days: [Sa, Su], from: '11:00am', to: '1:30pm'}
+      - {days: [Mo], from: '10:30am', to: '2:00pm'}
+      - {days: [Tu], from: '10:30am', to: '2:00pm'}
+      - {days: [We], from: '12:00am', to: '12:00am'}
+      - {days: [Th], from: '12:00am', to: '12:00am'}
+      - {days: [Fr], from: '12:00am', to: '12:00am'}
+      - {days: [Sa], from: '12:00am', to: '12:00am'}
+      - {days: [Su], from: '11:30am', to: '1:30pm'}
 
-  - title: Dinner
+  - title: Break - Dinner
     hours:
-      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:30pm'}
+      - {days: [Mo], from: '4:30pm', to: '7:30pm'}
+      - {days: [Tu], from: '4:30pm', to: '6:00pm'}
+      - {days: [We], from: '12:00am', to: '12:00am'}
+      - {days: [Th], from: '12:00am', to: '12:00am'}
+      - {days: [Fr], from: '12:00am', to: '12:00am'}
+      - {days: [Sa], from: '12:00am', to: '12:00am'}
+      - {days: [Su], from: '4:30pm', to: '7:30pm'}
 
 breakSchedule:
   fall: []

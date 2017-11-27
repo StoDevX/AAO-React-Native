@@ -1,9 +1,10 @@
 $schema: http://json-schema.org/draft-06/schema#
 
 additionalProperties: false
-required: [name, category, url, description]
+required: [name, category, url, synopsis, description]
 properties:
   name: {type: string}
   category: {type: string}
   url: {type: string, format: uri}
+  synopsis: {type: string}
   description: {type: string}

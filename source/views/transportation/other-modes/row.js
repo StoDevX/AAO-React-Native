@@ -21,7 +21,7 @@ export class OtherModesRow extends React.PureComponent<Props> {
         <Row alignItems="center">
           <Column flex={1}>
             <Title lines={1}>{mode.name}</Title>
-            <Detail lines={1}>{mode.description}</Detail>
+            <Detail lines={1}>{mode.synopsis}</Detail>
           </Column>
         </Row>
       </ListRow>
