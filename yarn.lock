@@ -4371,9 +4371,9 @@ react-native@0.50.4:
     xmldoc "^0.4.0"
     yargs "^9.0.0"
 
-react-navigation@1.0.0-beta.19:
-  version "1.0.0-beta.19"
-  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-1.0.0-beta.19.tgz#96e159c4b6760f51fc92d5c1c3690790cff4dbcf"
+react-navigation@1.0.0-beta.20:
+  version "1.0.0-beta.20"
+  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-1.0.0-beta.20.tgz#1bd7b74f536a523980f2aa1a0ce77daf5b3d3e9e"
   dependencies:
     babel-plugin-transform-define "^1.3.0"
     clamp "^1.0.1"
