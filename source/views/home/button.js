@@ -4,6 +4,7 @@ import * as React from 'react'
 import {Text, StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
+import LinearGradient from 'react-native-linear-gradient'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
 
@@ -14,6 +15,22 @@ type Props = {
 
 export function HomeScreenButton({view, onPress}: Props) {
   const style = {backgroundColor: view.tint}
+
+  if (view.gradient) {
+    return (
+      <Touchable onPress={onPress}>
+        <LinearGradient
+          start={{x: 0, y: 0.05}}
+          end={{x: 1, y: 0.85}}
+          colors={view.gradient}
+          style={[styles.rectangle]}
+        >
+          <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
+          <Text style={styles.rectangleButtonText}>{view.title}</Text>
+        </LinearGradient>
+      </Touchable>
+    )
+  }
 
   return (
     <Touchable
@@ -56,9 +73,11 @@ const styles = StyleSheet.create({
   // Text styling in buttons
   rectangleButtonIcon: {
     color: c.white,
+    backgroundColor: c.transparent,
   },
   rectangleButtonText: {
     color: c.white,
+    backgroundColor: c.transparent,
     // marginTop: cellVerticalPadding / 2,
     fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
     // textAlign: 'center',
