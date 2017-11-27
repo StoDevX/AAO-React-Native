@@ -54,10 +54,10 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
   chooseMenu = () => {
     const menu = (
       <BonAppHostedMenu
-        navigation={this.props.navigation}
         cafeId={this.state.cafeId}
-        name="BonApp"
         loadingMessage={['Loading…']}
+        name="BonApp"
+        navigation={this.props.navigation}
       />
     )
     this.setState({menu})
@@ -69,12 +69,12 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
         <Toolbar onPress={this.chooseMenu}>
           <TextInput
             keyboardType="numeric"
-            onChangeText={this.chooseCafe}
-            value={this.state.cafeId}
-            style={styles.default}
             onBlur={this.chooseMenu}
+            onChangeText={this.chooseCafe}
+            style={styles.default}
+            value={this.state.cafeId}
           />
-          <ToolbarButton title="Go" isActive={true} />
+          <ToolbarButton isActive={true} title="Go" />
         </Toolbar>
         {this.state.menu}
       </View>

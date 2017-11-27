@@ -31,9 +31,9 @@ export function Toolbar({children, onPress}: ToolbarPropsType) {
   return (
     <View style={toolbarStyles.shadow}>
       <Touchable
+        borderless={true}
         onPress={onPress}
         style={toolbarStyles.container}
-        borderless={true}
       >
         {children}
       </Touchable>

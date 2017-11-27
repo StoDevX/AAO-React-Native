@@ -127,17 +127,17 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 
     return (
       <SectionList
+        ItemSeparatorComponent={ListSeparator}
         ListEmptyComponent={
           <NoticeView text="There are no open job postings." />
         }
         keyExtractor={this.keyExtractor}
-        style={styles.listContainer}
-        sections={(this.state.jobs: any)}
-        renderSectionHeader={this.renderSectionHeader}
-        ItemSeparatorComponent={ListSeparator}
-        refreshing={this.state.refreshing}
         onRefresh={this.refresh}
+        refreshing={this.state.refreshing}
         renderItem={this.renderItem}
+        renderSectionHeader={this.renderSectionHeader}
+        sections={(this.state.jobs: any)}
+        style={styles.listContainer}
       />
     )
   }

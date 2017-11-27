@@ -54,12 +54,12 @@ export class NewsList extends React.PureComponent<Props> {
       <FlatList
         ItemSeparatorComponent={this.renderSeparator}
         ListEmptyComponent={<NoticeView text="No news." />}
-        keyExtractor={this.keyExtractor}
-        style={styles.listContainer}
         data={entries}
-        refreshing={this.props.loading}
+        keyExtractor={this.keyExtractor}
         onRefresh={this.props.onRefresh}
+        refreshing={this.props.loading}
         renderItem={this.renderItem}
+        style={styles.listContainer}
       />
     )
   }

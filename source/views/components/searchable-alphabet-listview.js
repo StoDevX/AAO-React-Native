@@ -48,9 +48,9 @@ export class SearchableAlphabetListView extends React.PureComponent<Props> {
               ? LIST_HEADER_HEIGHT + StyleSheet.hairlineWidth * 12
               : 0
           }
-          showsVerticalScrollIndicator={false}
           keyboardDismissMode="on-drag"
           keyboardShouldPersistTaps="never"
+          showsVerticalScrollIndicator={false}
           {...this.props}
         />
       </View>

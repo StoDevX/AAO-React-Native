@@ -49,7 +49,7 @@ export default function NewsItem(props: {
     ${story.content}
   `
 
-  return <HtmlView html={content} baseUrl={story.link} />
+  return <HtmlView baseUrl={story.link} html={content} />
 }
 NewsItem.navigationOptions = ({navigation}) => {
   const {story} = navigation.state.params

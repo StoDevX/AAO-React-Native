@@ -114,10 +114,10 @@ export class BusMap extends React.PureComponent<Props, State> {
 
     return (
       <MapView
+        loadingEnabled={true}
+        onRegionChangeComplete={this.onRegionChangeComplete}
         region={this.state.region}
         style={styles.map}
-        onRegionChangeComplete={this.onRegionChangeComplete}
-        loadingEnabled={true}
       >
         {markers.map(({name, coordinates: [lat, lng] = []}, i) => (
           // we know from entriesWithCoordinates that all of these will have

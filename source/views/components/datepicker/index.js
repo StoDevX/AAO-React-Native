@@ -86,15 +86,15 @@ export class DatePicker extends React.Component<Props, State> {
       <ActualDatePicker
         ref={this.setRef}
         androidMode={this.props.androidMode}
+        date={this.state.date}
         duration={this.props.duration}
+        formattedDate={this.formatDate(this.state.date)}
         height={this.props.height}
         minuteInterval={this.props.minuteInterval}
-        timezone={this.state.timezone}
-        date={this.state.date}
-        formattedDate={this.formatDate(this.state.date)}
         mode={this.props.mode}
         onDateChange={this.onDateChange}
         style={this.props.style}
+        timezone={this.state.timezone}
       />
     )
   }

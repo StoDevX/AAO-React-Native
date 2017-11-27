@@ -12,8 +12,8 @@ type PropsType = {
 export function CellToggle({value, onChange, label}: PropsType) {
   return (
     <Cell
+      cellAccessoryView={<Switch onValueChange={onChange} value={value} />}
       title={label}
-      cellAccessoryView={<Switch value={value} onValueChange={onChange} />}
     />
   )
 }

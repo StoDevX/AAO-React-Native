@@ -92,13 +92,13 @@ export default class NewsContainer extends React.PureComponent<Props, State> {
 
     return (
       <NewsList
-        entries={this.state.entries}
-        onRefresh={this.refresh}
-        loading={this.state.refreshing}
-        navigation={this.props.navigation}
-        name={this.props.name}
-        mode={this.props.mode}
         embedFeaturedImage={this.props.embedFeaturedImage}
+        entries={this.state.entries}
+        loading={this.state.refreshing}
+        mode={this.props.mode}
+        name={this.props.name}
+        navigation={this.props.navigation}
+        onRefresh={this.refresh}
         thumbnail={this.props.thumbnail}
       />
     )

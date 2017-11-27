@@ -68,7 +68,7 @@ export class Link extends React.PureComponent<Props> {
 
   render() {
     return (
-      <LinkText onPress={this.onPress} onLongPress={this.onLongPress}>
+      <LinkText onLongPress={this.onLongPress} onPress={this.onPress}>
         {this.props.children}
       </LinkText>
     )

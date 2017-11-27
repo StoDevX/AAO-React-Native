@@ -80,21 +80,21 @@ export class ContactsDetailView extends React.PureComponent<Props> {
     return (
       <ScrollView>
         {headerImage ? (
-          <Image source={headerImage} resizeMode="cover" style={styles.image} />
+          <Image resizeMode="cover" source={headerImage} style={styles.image} />
         ) : null}
         <Container>
           <Title selectable={true}>{contact.title}</Title>
 
           <Markdown
-            styles={{Paragraph: styles.paragraph}}
             source={contact.text}
+            styles={{Paragraph: styles.paragraph}}
           />
 
           <Button onPress={this.onPress} title={contact.buttonText} />
 
           <ListFooter
-            title="Collected by the humans of All About Olaf"
             href={AAO_URL}
+            title="Collected by the humans of All About Olaf"
           />
         </Container>
       </ScrollView>

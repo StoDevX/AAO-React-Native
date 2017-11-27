@@ -32,20 +32,19 @@ function HomePage({navigation, order, views = allViews}: Props) {
 
   return (
     <ScrollView
-      overflow="hidden"
       alwaysBounceHorizontal={false}
+      contentContainerStyle={styles.cells}
+      overflow="hidden"
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.cells}
     >
-      <StatusBar barStyle="light-content" backgroundColor={c.gold} />
+      <StatusBar backgroundColor={c.gold} barStyle="light-content" />
 
       {columns.map((contents, i) => (
         <Column key={i} style={styles.column}>
           {contents.map(view => (
             <HomeScreenButton
               key={view.view}
-              view={view}
               onPress={() => {
                 if (view.type === 'url') {
                   return trackedOpenUrl({url: view.url, id: view.view})
@@ -53,6 +52,7 @@ function HomePage({navigation, order, views = allViews}: Props) {
                   return navigation.navigate(view.view)
                 }
               }}
+              view={view}
             />
           ))}
         </Column>

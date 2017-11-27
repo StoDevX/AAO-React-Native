@@ -63,12 +63,12 @@ class EditHomeView extends React.PureComponent<Props> {
     const last = this.props.order.length - 1
     return (
       <EditHomeRow
-        item={item}
         isFirst={index === 0}
         isLast={index === last}
-        order={this.props.order}
-        onMoveUp={this.handleMoveUp}
+        item={item}
         onMoveDown={this.handleMoveDown}
+        onMoveUp={this.handleMoveUp}
+        order={this.props.order}
       />
     )
   }

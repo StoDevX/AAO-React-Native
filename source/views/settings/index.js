@@ -22,8 +22,8 @@ export default function SettingsView(props: TopLevelViewPropsType) {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="always"
       keyboardDismissMode="on-drag"
+      keyboardShouldPersistTaps="always"
     >
       <TableView>
         <CredentialsLoginSection />

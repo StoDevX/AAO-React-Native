@@ -51,7 +51,6 @@ export class Markdown extends React.PureComponent<Props> {
     return (
       <ReactMarkdown
         containerTagName={View}
-        skipHtml={true}
         renderers={{
           BlockQuote: glamorous(BlockQuote)(styles.BlockQuote),
           Code: glamorous(Code)(styles.Code),
@@ -68,6 +67,7 @@ export class Markdown extends React.PureComponent<Props> {
           Strong: glamorous(Strong)(styles.Strong),
           ThematicBreak: glamorous(HorizontalRule)(styles.ThematicBreak),
         }}
+        skipHtml={true}
         source={source}
       />
     )

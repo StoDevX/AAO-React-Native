@@ -35,7 +35,7 @@ export class ScheduleRow extends React.PureComponent<Props> {
 }
 
 const StyledText = ({children, style}) => (
-  <Text selectable={true} numberOfLines={1} style={style}>
+  <Text numberOfLines={1} selectable={true} style={style}>
     {children}
   </Text>
 )
