@@ -24,10 +24,17 @@ platform :ios do
 
   desc 'Builds the app'
   lane :build do
-    match(type: 'appstore', readonly: true)
+    if ENV['TRAVIS_PULL_REQUEST'] == 'false'
+      method = 'appstore'
+      match(type: method, readonly: true)
+    else
+      method = 'development'
+    end
+
     propagate_version
     gym(include_bitcode: true,
-        include_symbols: true)
+        include_symbols: true,
+        export_method: method)
   end
 
   desc 'Submit a new Beta Build to Testflight'

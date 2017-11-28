@@ -5,6 +5,9 @@ platform :android do
     # make sure we have a copy of the data files
     sh('npm run bundle-data')
 
+    # do our poor-man's `match` android equivalent
+    matchesque if ENV['TRAVIS_PULL_REQUEST'] == 'false'
+
     propagate_version(track: options[:track])
 
     gradle(task: 'assemble',
@@ -51,7 +54,6 @@ platform :android do
   lane :'ci-run' do
     # prepare for the bright future with signed android betas
     authorize_ci_for_keys
-    matchesque
 
     # and run
     auto_beta
