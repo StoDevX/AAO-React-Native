@@ -28,13 +28,14 @@ platform :ios do
       method = 'appstore'
       match(type: method, readonly: true)
     else
-      method = 'development'
+      method = 'package'
     end
 
     propagate_version
     gym(include_bitcode: true,
         include_symbols: true,
-        export_method: method)
+        export_method: method,
+        xcargs: 'CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS=""')
   end
 
   desc 'Submit a new Beta Build to Testflight'
