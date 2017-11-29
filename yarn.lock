@@ -4281,9 +4281,9 @@ react-native-linear-gradient@2.3.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-maps@0.17.1:
-  version "0.17.1"
-  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.17.1.tgz#ab2236341fd984dac8864202ae55331bc262f60c"
+react-native-maps@0.18.1:
+  version "0.18.1"
+  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.18.1.tgz#4ad370330ffb02c873c72020b6fc293359ef16dc"
 
 react-native-network-info@3.0.0:
   version "3.0.0"
@@ -5353,7 +5353,7 @@ vinyl@^0.5.0:
     clone-stats "^0.0.1"
     replace-ext "0.0.1"
 
-"vm2@github:patriksimek/vm2#custom_files":
+vm2@patriksimek/vm2#custom_files:
   version "3.5.0"
   resolved "https://codeload.github.com/patriksimek/vm2/tar.gz/7e82f90ac705fc44fad044147cb0df09b4c79a57"
 
