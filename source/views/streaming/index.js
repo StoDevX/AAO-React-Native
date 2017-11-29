@@ -2,10 +2,12 @@
 
 import {TabNavigator} from '../components/tabbed-view'
 
-import KSTOView from './radio'
+import {KSTOView} from './radio'
 // import WeeklyMovieView from './movie'
 import {WebcamsView} from './webcams'
 import {StreamListView} from './streams'
+
+export {KSTOScheduleView} from './radio'
 
 export default TabNavigator(
   {
