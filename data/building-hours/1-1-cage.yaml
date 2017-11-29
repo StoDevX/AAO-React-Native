@@ -11,8 +11,8 @@ schedule:
 
   - title: Late Night
     hours:
-      - {days: [Mo, Tu, We, Th], from: '8:00pm', to: '11:00pm'}
-      - {days: [Su], from: '8:00pm', to: '11:00pm'}
+      - {days: [Mo, Tu, We, Th], from: '8:00pm', to: '10:00pm'}
+      - {days: [Su], from: '8:00pm', to: '10:00pm'}
 
 breakSchedule:
   fall: []

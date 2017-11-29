@@ -5,7 +5,7 @@ import {EventList} from './event-list'
 import bugsnag from '../../bugsnag'
 import {tracker} from '../../analytics'
 import type {TopLevelViewPropsType} from '../types'
-import type {EventType, GoogleEventType} from './types'
+import type {EventType, GoogleEventType, PoweredBy} from './types'
 import moment from 'moment-timezone'
 import delay from 'delay'
 import LoadingView from '../components/loading'
@@ -13,7 +13,7 @@ import qs from 'querystring'
 import {GOOGLE_CALENDAR_API_KEY} from '../../lib/config'
 const TIMEZONE = 'America/Winnipeg'
 
-type Props = {calendarId: string} & TopLevelViewPropsType
+type Props = TopLevelViewPropsType & {calendarId: string, poweredBy: ?PoweredBy}
 
 type State = {
   events: EventType[],
@@ -114,12 +114,13 @@ export class GoogleCalendarView extends React.Component<Props, State> {
 
     return (
       <EventList
-        navigation={this.props.navigation}
         events={this.state.events}
-        refreshing={this.state.refreshing}
-        onRefresh={this.refresh}
-        now={this.state.now}
         message={this.state.error ? this.state.error.message : null}
+        navigation={this.props.navigation}
+        now={this.state.now}
+        onRefresh={this.refresh}
+        poweredBy={this.props.poweredBy}
+        refreshing={this.state.refreshing}
       />
     )
   }

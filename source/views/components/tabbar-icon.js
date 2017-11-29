@@ -17,7 +17,7 @@ export const TabBarIcon = (icon: string) => ({
   focused: boolean,
 }) => (
   <Icon
-    style={[styles.icon, {color: tintColor}]}
     name={focused ? `ios-${icon}` : `ios-${icon}-outline`}
+    style={[styles.icon, {color: tintColor}]}
   />
 )

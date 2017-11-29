@@ -88,19 +88,19 @@ export class BuildingHoursScheduleEditorView extends React.PureComponent<
 
           <Section header="TIMES">
             <DatePickerCell
-              title="Open"
               date={open}
               onChange={this.onChangeOpen}
+              title="Open"
             />
             <DatePickerCell
-              title="Close"
               date={close}
               onChange={this.onChangeClose}
+              title="Close"
             />
           </Section>
 
           <Section>
-            <DeleteButtonCell title="Delete Hours" onPress={this.delete} />
+            <DeleteButtonCell onPress={this.delete} title="Delete Hours" />
           </Section>
         </TableView>
       </ScrollView>
@@ -122,13 +122,13 @@ class WeekTogglesIOS extends React.PureComponent<WeekTogglesProps> {
     const allDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
     return (
-      <Row justifyContent="center" alignItems="stretch">
+      <Row alignItems="stretch" justifyContent="center">
         {allDays.map(day => (
           <ToggleButton
             key={day}
-            text={day}
             active={this.props.days.includes(day)}
             onPress={this.toggleDay}
+            text={day}
           />
         ))}
       </Row>
@@ -151,8 +151,8 @@ class WeekTogglesAndroid extends React.PureComponent<WeekTogglesProps> {
             <CellToggle
               key={day}
               label={day}
-              value={this.props.days.includes(day)}
               onChange={() => this.toggleDay(day)}
+              value={this.props.days.includes(day)}
             />
             {i === allDays.length - 1 ? null : <ListSeparator force={true} />}
           </View>
@@ -175,8 +175,8 @@ class ToggleButton extends React.PureComponent<ToggleButtonProps> {
     const {text, active} = this.props
     return (
       <Touchable
-        highlight={false}
         containerStyle={[styles.dayWrapper, active && styles.activeDay]}
+        highlight={false}
         onPress={this.onPress}
       >
         <Text style={[styles.dayText, active && styles.activeDayText]}>
@@ -216,20 +216,20 @@ class DatePickerCell extends React.PureComponent<DatePickerCellProps> {
     const accessory = (
       <DatePicker
         ref={this.getRef}
+        format={format}
         initialDate={this.props.date}
         minuteInterval={5}
         mode="time"
-        format={format}
         onDateChange={this.onChange}
       />
     )
 
     return (
       <Cell
-        title={this.props.title}
-        cellStyle="RightDetail"
         cellAccessoryView={accessory}
+        cellStyle="RightDetail"
         onPress={this.openPicker}
+        title={this.props.title}
       />
     )
   }

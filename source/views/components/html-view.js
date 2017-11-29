@@ -36,9 +36,9 @@ export class HtmlView extends React.Component<Props> {
     return (
       <WebView
         ref={ref => (this._webview = ref)}
-        style={this.props.style}
-        source={{html: this.props.html, baseUrl: this.props.baseUrl}}
         onNavigationStateChange={this.onNavigationStateChange}
+        source={{html: this.props.html, baseUrl: this.props.baseUrl}}
+        style={this.props.style}
       />
     )
   }

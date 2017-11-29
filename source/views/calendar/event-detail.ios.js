@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
-import type {CleanedEventType} from './types'
+import type {CleanedEventType, PoweredBy} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../components/nav-buttons'
 import openUrl from '../components/open-url'
@@ -17,8 +17,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
 })
-
-const STO_CALENDAR_URL = 'https://www.stolaf.edu/calendar'
 
 function MaybeSection({header, content}: {header: string, content: string}) {
   return content.trim() ? (
@@ -42,9 +40,9 @@ function Links({header, event}: {header: string, event: CleanedEventType}) {
       {links.map(url => (
         <Cell
           key={url}
-          title={url}
           accessory="DisclosureIndicator"
           onPress={() => openUrl(url)}
+          title={url}
         />
       ))}
     </Section>
@@ -55,16 +53,18 @@ const CalendarButton = ({message, disabled, onPress}) => {
   return (
     <Section footer={message}>
       <ButtonCell
-        title="Add to calendar"
         disabled={disabled}
         onPress={onPress}
+        title="Add to calendar"
       />
     </Section>
   )
 }
 
 type Props = TopLevelViewPropsType & {
-  navigation: {state: {params: {event: CleanedEventType}}},
+  navigation: {
+    state: {params: {event: CleanedEventType, poweredBy: ?PoweredBy}},
+  },
 }
 
 type State = {
@@ -114,26 +114,25 @@ export class EventDetail extends React.PureComponent<Props, State> {
   onPressButton = () => this.addEvent(this.props.navigation.state.params.event)
 
   render() {
-    const event = this.props.navigation.state.params.event
+    const {event, poweredBy} = this.props.navigation.state.params
 
     return (
       <ScrollView>
         <TableView>
-          <MaybeSection header="EVENT" content={event.title} />
-          <MaybeSection header="TIME" content={event.times} />
-          <MaybeSection header="LOCATION" content={event.location} />
-          <MaybeSection header="DESCRIPTION" content={event.rawSummary} />
-          <Links header="LINKS" event={event} />
+          <MaybeSection content={event.title} header="EVENT" />
+          <MaybeSection content={event.times} header="TIME" />
+          <MaybeSection content={event.location} header="LOCATION" />
+          <MaybeSection content={event.rawSummary} header="DESCRIPTION" />
+          <Links event={event} header="LINKS" />
           <CalendarButton
-            onPress={this.onPressButton}
-            message={this.state.message}
             disabled={this.state.disabled}
+            message={this.state.message}
+            onPress={this.onPressButton}
           />
 
-          <ListFooter
-            title="Powered by the St. Olaf Calendar"
-            href={STO_CALENDAR_URL}
-          />
+          {poweredBy.title ? (
+            <ListFooter href={poweredBy.href} title={poweredBy.title} />
+          ) : null}
         </TableView>
       </ScrollView>
     )

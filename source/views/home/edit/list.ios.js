@@ -62,7 +62,7 @@ class EditHomeView extends React.PureComponent<Props, State> {
   }
 
   renderRow = ({data, active}: {data: ViewType, active: boolean}) => (
-    <EditHomeRow data={data} active={active} width={this.state.width} />
+    <EditHomeRow active={active} data={data} width={this.state.width} />
   )
 
   onChangeOrder = (order: string[]) => this.props.onSaveOrder(order)
@@ -75,8 +75,8 @@ class EditHomeView extends React.PureComponent<Props, State> {
           {width: this.state.width},
         ]}
         data={objViews}
-        order={this.props.order}
         onChangeOrder={this.onChangeOrder}
+        order={this.props.order}
         renderRow={this.renderRow}
       />
     )

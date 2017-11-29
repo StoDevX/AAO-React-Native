@@ -29,6 +29,6 @@ export const DeleteButtonCell = ({
     : onPressCallback
 
   return (
-    <Cell title={title} titleTextStyle={deleteStyles.text} onPress={callback} />
+    <Cell onPress={callback} title={title} titleTextStyle={deleteStyles.text} />
   )
 }

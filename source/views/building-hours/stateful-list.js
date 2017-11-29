@@ -104,11 +104,11 @@ export class BuildingHoursView extends React.Component<Props, State> {
 
     return (
       <BuildingHoursList
-        navigation={this.props.navigation}
         buildings={this.state.buildings}
+        loading={this.state.loading}
+        navigation={this.props.navigation}
         now={this.state.now}
         onRefresh={this.refresh}
-        loading={this.state.loading}
       />
     )
   }

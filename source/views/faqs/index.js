@@ -69,13 +69,13 @@ export class FaqView extends React.PureComponent<Props, State> {
 
     const refreshControl = (
       <RefreshControl
-        refreshing={this.state.refreshing}
         onRefresh={this.refresh}
+        refreshing={this.state.refreshing}
       />
     )
 
     return (
-      <ScrollView refreshControl={refreshControl} paddingHorizontal={15}>
+      <ScrollView paddingHorizontal={15} refreshControl={refreshControl}>
         <Markdown source={this.state.text} />
       </ScrollView>
     )

@@ -85,9 +85,9 @@ export class DatePicker extends React.Component<Props, State> {
   render() {
     return (
       <TouchableHighlight
+        onPress={this.onPressDate}
         style={defaultStyle.dateTouch}
         underlayColor="transparent"
-        onPress={this.onPressDate}
       >
         <View style={defaultStyle.dateTouchBody}>
           <View style={defaultStyle.dateInput}>
@@ -97,15 +97,15 @@ export class DatePicker extends React.Component<Props, State> {
           </View>
 
           <DatePickerModal
+            allowPointerEvents={this.state.allowPointerEvents}
             date={this.props.date}
-            mode={this.props.mode}
             height={this.state.animatedHeight}
             minuteInterval={this.props.minuteInterval}
-            allowPointerEvents={this.state.allowPointerEvents}
+            mode={this.props.mode}
             onDateChange={this.onDateChange}
             onHide={this.hideModal}
-            visible={this.state.modalVisible}
             timezone={this.props.timezone}
+            visible={this.state.modalVisible}
           />
         </View>
       </TouchableHighlight>
@@ -157,41 +157,41 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 
     return (
       <Modal
-        transparent={true}
         animationType="none"
-        visible={visible}
-        supportedOrientations={DatePickerModal.SUPPORTED_ORIENTATIONS}
         onRequestClose={onHide}
+        supportedOrientations={DatePickerModal.SUPPORTED_ORIENTATIONS}
+        transparent={true}
+        visible={visible}
       >
         <View style={defaultStyle.flex}>
           <TouchableHighlight
-            style={defaultStyle.datePickerMask}
             activeOpacity={1}
-            underlayColor="#00000077"
             onPress={onHide}
+            style={defaultStyle.datePickerMask}
+            underlayColor="#00000077"
           >
-            <TouchableHighlight underlayColor="#fff" style={defaultStyle.flex}>
+            <TouchableHighlight style={defaultStyle.flex} underlayColor="#fff">
               <Animated.View style={[defaultStyle.datePickerCon, {height}]}>
                 <DatePickerIOS
                   date={date.toDate()}
+                  minuteInterval={minuteInterval}
                   mode={mode}
                   onDateChange={onDateChange}
-                  minuteInterval={minuteInterval}
+                  pointerEvents={allowPointerEvents ? 'auto' : 'none'}
                   style={defaultStyle.datePicker}
                   timeZoneOffsetInMinutes={tzOffset}
-                  pointerEvents={allowPointerEvents ? 'auto' : 'none'}
                 />
 
                 <Button
-                  text="Cancel"
                   onPress={onHide}
                   style={defaultStyle.btnCancel}
+                  text="Cancel"
                   textStyle={defaultStyle.btnTextCancel}
                 />
                 <Button
-                  text="Confirm"
                   onPress={onHide}
                   style={defaultStyle.btnConfirm}
+                  text="Confirm"
                 />
               </Animated.View>
             </TouchableHighlight>
@@ -213,9 +213,9 @@ type ButtonProps = {
 
 const Button = ({style, textStyle, onPress, text}: ButtonProps) => (
   <TouchableHighlight
-    underlayColor="transparent"
     onPress={onPress}
     style={[defaultStyle.btnText, style]}
+    underlayColor="transparent"
   >
     <Text style={[defaultStyle.btnTextText, textStyle]}>{text}</Text>
   </TouchableHighlight>

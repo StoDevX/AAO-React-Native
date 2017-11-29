@@ -36,11 +36,11 @@ function Information({job}: {job: JobType}) {
 
   const contact = job.contactEmail ? (
     <Cell
+      accessory="DisclosureIndicator"
       cellStyle="LeftDetail"
       detail={'Contact'}
-      title={getContactName(job).trim() || job.contactEmail}
-      accessory="DisclosureIndicator"
       onPress={() => email([job.contactEmail], null, null, job.title, '')}
+      title={getContactName(job).trim() || job.contactEmail}
     />
   ) : null
 
@@ -107,9 +107,9 @@ function Links({job}: {job: JobType}) {
       {links.map(url => (
         <Cell
           key={url}
-          title={url}
           accessory="DisclosureIndicator"
           onPress={() => openUrl(url)}
+          title={url}
         />
       ))}
     </Section>

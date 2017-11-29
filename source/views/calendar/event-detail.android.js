@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
-import type {CleanedEventType} from './types'
+import type {CleanedEventType, PoweredBy} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../components/nav-buttons'
 import openUrl from '../components/open-url'
@@ -12,8 +12,6 @@ import {ButtonCell} from '../components/cells/button'
 import {addToCalendar, shareEvent} from './calendar-util'
 import delay from 'delay'
 import {ListFooter} from '../components/list'
-
-const STO_CALENDAR_URL = 'https://www.stolaf.edu/calendar'
 
 const styles = StyleSheet.create({
   name: {
@@ -71,7 +69,7 @@ function Links({event}: {event: CleanedEventType}) {
   return links.length ? (
     <Card header="Links" style={styles.card}>
       {links.map(url => (
-        <Text key={url} style={styles.cardBody} onPress={() => openUrl(url)}>
+        <Text key={url} onPress={() => openUrl(url)} style={styles.cardBody}>
           {url}
         </Text>
       ))}
@@ -83,16 +81,18 @@ const CalendarButton = ({message, disabled, onPress}) => {
   return (
     <Card footer={message} style={styles.card}>
       <ButtonCell
-        title="Add to calendar"
         disabled={disabled}
         onPress={onPress}
+        title="Add to calendar"
       />
     </Card>
   )
 }
 
 type Props = TopLevelViewPropsType & {
-  navigation: {state: {params: {event: CleanedEventType}}},
+  navigation: {
+    state: {params: {event: CleanedEventType, poweredBy: ?PoweredBy}},
+  },
 }
 
 type State = {
@@ -142,7 +142,7 @@ export class EventDetail extends React.PureComponent<Props, State> {
   onPressButton = () => this.addEvent(this.props.navigation.state.params.event)
 
   render() {
-    const event = this.props.navigation.state.params.event
+    const {event, poweredBy} = this.props.navigation.state.params
 
     return (
       <ScrollView>
@@ -152,15 +152,14 @@ export class EventDetail extends React.PureComponent<Props, State> {
         <Description event={event} />
         <Links event={event} />
         <CalendarButton
-          onPress={this.onPressButton}
-          message={this.state.message}
           disabled={this.state.disabled}
+          message={this.state.message}
+          onPress={this.onPressButton}
         />
 
-        <ListFooter
-          title="Powered by the St. Olaf Calendar"
-          href={STO_CALENDAR_URL}
-        />
+        {poweredBy.title ? (
+          <ListFooter href={poweredBy.href} title={poweredBy.title} />
+        ) : null}
       </ScrollView>
     )
   }

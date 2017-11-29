@@ -110,57 +110,57 @@ class BalancesView extends React.PureComponent<Props, State> {
         contentContainerStyle={styles.stage}
         refreshControl={
           <RefreshControl
-            refreshing={this.state.loading}
             onRefresh={this.refresh}
+            refreshing={this.state.loading}
           />
         }
       >
         <TableView>
-          <Section header="BALANCES" footer={DISCLAIMER}>
+          <Section footer={DISCLAIMER} header="BALANCES">
             <View style={styles.balancesRow}>
               <FormattedValueCell
+                formatter={getValueOrNa}
+                indeterminate={loading}
                 label="Flex"
                 value={flex}
-                indeterminate={loading}
-                formatter={getValueOrNa}
               />
 
               <FormattedValueCell
+                formatter={getValueOrNa}
+                indeterminate={loading}
                 label="Ole"
                 value={ole}
-                indeterminate={loading}
-                formatter={getValueOrNa}
               />
 
               <FormattedValueCell
-                label="Copy/Print"
-                value={print}
-                indeterminate={loading}
                 formatter={getValueOrNa}
+                indeterminate={loading}
+                label="Copy/Print"
                 style={styles.finalCell}
+                value={print}
               />
             </View>
           </Section>
 
-          <Section header="MEAL PLAN" footer={DISCLAIMER}>
+          <Section footer={DISCLAIMER} header="MEAL PLAN">
             <View style={styles.balancesRow}>
               <FormattedValueCell
+                formatter={getValueOrNa}
+                indeterminate={loading}
                 label="Daily Meals Left"
                 value={dailyMeals}
-                indeterminate={loading}
-                formatter={getValueOrNa}
               />
 
               <FormattedValueCell
-                label="Weekly Meals Left"
-                value={weeklyMeals}
-                indeterminate={loading}
                 formatter={getValueOrNa}
+                indeterminate={loading}
+                label="Weekly Meals Left"
                 style={styles.finalCell}
+                value={weeklyMeals}
               />
             </View>
             {mealPlan && (
-              <Cell cellStyle="Subtitle" title="Meal Plan" detail={mealPlan} />
+              <Cell cellStyle="Subtitle" detail={mealPlan} title="Meal Plan" />
             )}
           </Section>
 
@@ -168,10 +168,10 @@ class BalancesView extends React.PureComponent<Props, State> {
             <Section footer="You'll need to log in again so we can update these numbers.">
               {this.props.loginState !== 'logged-in' ? (
                 <Cell
-                  cellStyle="Basic"
-                  title="Log in with St. Olaf"
                   accessory="DisclosureIndicator"
+                  cellStyle="Basic"
                   onPress={this.openSettings}
+                  title="Log in with St. Olaf"
                 />
               ) : null}
 
@@ -291,13 +291,13 @@ function FormattedValueCell({
   return (
     <View style={[styles.rectangle, styles.common, styles.balances, style]}>
       <Text
+        autoAdjustsFontSize={true}
         selectable={true}
         style={styles.financialText}
-        autoAdjustsFontSize={true}
       >
         {indeterminate ? '…' : formatter(value)}
       </Text>
-      <Text style={styles.rectangleButtonText} autoAdjustsFontSize={true}>
+      <Text autoAdjustsFontSize={true} style={styles.rectangleButtonText}>
         {label}
       </Text>
     </View>

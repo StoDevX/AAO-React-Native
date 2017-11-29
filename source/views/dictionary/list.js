@@ -102,9 +102,9 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 
   renderRow = ({item}: {item: WordType}) => (
     <ListRow
-      onPress={() => this.onPressRow(item)}
-      contentContainerStyle={styles.row}
       arrowPosition="none"
+      contentContainerStyle={styles.row}
+      onPress={() => this.onPressRow(item)}
     >
       <Column>
         <Title lines={1}>{item.word}</Title>
@@ -116,7 +116,7 @@ export class DictionaryView extends React.PureComponent<Props, State> {
   )
 
   renderSectionHeader = ({title}: {title: string}) => (
-    <ListSectionHeader title={title} style={styles.rowSectionHeader} />
+    <ListSectionHeader style={styles.rowSectionHeader} title={title} />
   )
 
   renderSeparator = (sectionId: string, rowId: string) => (
@@ -140,8 +140,8 @@ export class DictionaryView extends React.PureComponent<Props, State> {
   render() {
     const refreshControl = (
       <RefreshControl
-        refreshing={this.state.refreshing}
         onRefresh={this.refresh}
+        refreshing={this.state.refreshing}
       />
     )
 

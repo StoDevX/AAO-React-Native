@@ -93,7 +93,7 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
   render() {
     return (
       <ScrollView>
-        <Card header="Report a WiFi Problem!" footer={this.state.status}>
+        <Card footer={this.state.status} header="Report a WiFi Problem!">
           <Button
             disabled={this.state.status !== ''}
             onPress={this.start}

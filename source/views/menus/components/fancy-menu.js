@@ -127,9 +127,9 @@ class FancyMenu extends React.PureComponent<Props> {
 
     return (
       <ListSectionHeader
-        title={title}
-        subtitle={menu ? menu.note : ''}
         spacing={{left: LEFT_MARGIN}}
+        subtitle={menu ? menu.note : ''}
+        title={title}
       />
     )
   }
@@ -138,9 +138,9 @@ class FancyMenu extends React.PureComponent<Props> {
     const specialsFilterEnabled = this.areSpecialsFiltered(this.props.filters)
     return (
       <FoodItemRow
-        data={item}
-        corIcons={this.props.menuCorIcons}
         badgeSpecials={!specialsFilterEnabled}
+        corIcons={this.props.menuCorIcons}
+        data={item}
         spacing={{left: LEFT_MARGIN}}
       />
     )
@@ -171,9 +171,9 @@ class FancyMenu extends React.PureComponent<Props> {
     const header = (
       <FilterToolbar
         date={now}
-        title={mealName}
         filters={filters}
         onPress={this.openFilterView}
+        title={mealName}
       />
     )
 

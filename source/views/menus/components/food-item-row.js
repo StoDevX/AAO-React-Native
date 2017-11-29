@@ -28,14 +28,14 @@ export function FoodItemRow({
   const {left = 0} = props.spacing
   return (
     <ListRow
-      style={[styles.container, props.style]}
-      fullWidth={true}
       arrowPosition="none"
+      fullWidth={true}
+      style={[styles.container, props.style]}
     >
       <Row alignItems="center">
         <View style={[styles.badge, {width: left}]}>
           {badgeSpecials && data.special ? (
-            <Icon style={styles.badgeIcon} name={specialsIcon} />
+            <Icon name={specialsIcon} style={styles.badgeIcon} />
           ) : null}
         </View>
 

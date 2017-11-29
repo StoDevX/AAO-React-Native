@@ -75,13 +75,13 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
 
     return (
       <Section
-        header="ST. OLAF LOGIN"
         footer="St. Olaf login enables the &quot;meals remaining&quot; feature."
+        header="ST. OLAF LOGIN"
       >
         <CellTextField
-          label="Username"
           _ref={this.getUsernameRef}
           disabled={loading}
+          label="Username"
           onChangeText={this.onChangeUsername}
           onSubmitEditing={this.focusPassword}
           placeholder="username"
@@ -91,9 +91,9 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
         />
 
         <CellTextField
-          label="Password"
           _ref={this.getPasswordRef}
           disabled={loading}
+          label="Password"
           onChangeText={this.onChangePassword}
           onSubmitEditing={loggedIn ? noop : this.logIn}
           placeholder="password"
@@ -105,11 +105,11 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
         {message ? <Cell title={`⚠️ ${message}`} /> : null}
 
         <LoginButton
-          loggedIn={loggedIn}
-          loading={loading}
           disabled={loading || (!username || !password)}
-          onPress={loggedIn ? this.logOut : this.logIn}
           label="St. Olaf"
+          loading={loading}
+          loggedIn={loggedIn}
+          onPress={loggedIn ? this.logOut : this.logIn}
         />
       </Section>
     )

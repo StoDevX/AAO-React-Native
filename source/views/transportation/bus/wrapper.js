@@ -110,8 +110,8 @@ export class BusView extends React.PureComponent<Props, State> {
       <BusLine
         line={activeBusLine}
         now={now}
-        openMap={this.openMap}
         onRefresh={this.refreshTime}
+        openMap={this.openMap}
         refreshing={this.state.refreshing}
       />
     )

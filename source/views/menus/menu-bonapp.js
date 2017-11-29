@@ -27,6 +27,7 @@ import {toLaxTitleCase} from 'titlecase'
 import {tracker} from '../../analytics'
 import bugsnag from '../../bugsnag'
 import delay from 'delay'
+import retry from 'p-retry'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
@@ -34,6 +35,8 @@ const bonappCafeBaseUrl = 'http://legacy.cafebonappetit.com/api/2/cafes'
 const fetchJsonQuery = (url, query) =>
   fetchJson(`${url}?${qs.stringify(query)}`)
 const entities = new AllHtmlEntities()
+
+const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
 const DEFAULT_MENU = [
   {
@@ -53,7 +56,7 @@ type Props = TopLevelViewPropsType & {
   name: string,
 }
 type State = {
-  error: ?Error,
+  errormsg: ?string,
   loading: boolean,
   refreshing: boolean,
   now: momentT,
@@ -63,7 +66,7 @@ type State = {
 
 export class BonAppHostedMenu extends React.PureComponent<Props, State> {
   state = {
-    error: null,
+    errormsg: null,
     loading: true,
     refreshing: false,
     now: moment.tz(CENTRAL_TZ),
@@ -83,19 +86,34 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
     }
   }
 
+  retry = () => {
+    this.fetchData(this.props).then(() => {
+      this.setState(() => ({loading: false, errormsg: ''}))
+    })
+  }
+
+  requestMenu = (cafeId: string) => () =>
+    fetchJsonQuery(bonappMenuBaseUrl, {cafe: cafeId})
+  requestCafe = (cafeId: string) => () =>
+    fetchJsonQuery(bonappCafeBaseUrl, {cafe: cafeId})
+
   fetchData = async (props: Props) => {
     let cafeMenu: ?MenuInfoType = null
     let cafeInfo: ?CafeInfoType = null
 
     try {
       ;[cafeMenu, cafeInfo] = await Promise.all([
-        fetchJsonQuery(bonappMenuBaseUrl, {cafe: props.cafeId}),
-        fetchJsonQuery(bonappCafeBaseUrl, {cafe: props.cafeId}),
+        retry(this.requestMenu(props.cafeId), {retries: 3}),
+        retry(this.requestCafe(props.cafeId), {retries: 3}),
       ])
     } catch (error) {
-      tracker.trackException(error.message)
-      bugsnag.notify(error)
-      this.setState(() => ({error}))
+      if (error.message === "JSON Parse error: Unrecognized token '<'") {
+        this.setState(() => ({errormsg: BONAPP_HTML_ERROR_CODE}))
+      } else {
+        tracker.trackException(error.message)
+        bugsnag.notify(error)
+        this.setState(() => ({errormsg: error.message}))
+      }
     }
 
     this.setState(() => ({cafeMenu, cafeInfo, now: moment.tz(CENTRAL_TZ)}))
@@ -220,19 +238,24 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
       return <LoadingView text={sample(this.props.loadingMessage)} />
     }
 
-    if (this.state.error) {
-      return <NoticeView text={`Error: ${this.state.error.message}`} />
+    if (this.state.errormsg) {
+      let msg = `Error: ${this.state.errormsg}`
+      if (this.state.errormsg === BONAPP_HTML_ERROR_CODE) {
+        msg =
+          'Something between you and BonApp is having problems. Try again in a minute or two?'
+      }
+      return <NoticeView buttonText="Again!" onPress={this.retry} text={msg} />
     }
 
     if (!this.state.cafeMenu || !this.state.cafeInfo) {
       const err = new Error(
-        `Something went wrong loading BonApp cafe ${this.props.cafeId}`,
+        `Something went wrong loading BonApp cafe #${this.props.cafeId}`,
       )
       tracker.trackException(err)
       bugsnag.notify(err)
-      return (
-        <NoticeView text="Something went wrong. Email odt@stolaf.edu to let them know?" />
-      )
+
+      const msg = 'Something went wrong. Email odt@stolaf.edu to let them know?'
+      return <NoticeView text={msg} />
     }
 
     const {cafeId, ignoreProvidedMenus = false} = this.props

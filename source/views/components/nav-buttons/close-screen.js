@@ -20,8 +20,8 @@ export function CloseScreenButton({
     <Touchable
       borderless={true}
       highlight={false}
-      style={[commonStyles.button, buttonStyle]}
       onPress={() => navigation.goBack()}
+      style={[commonStyles.button, buttonStyle]}
     >
       <Text style={[commonStyles.text, styles.text]}>Done</Text>
     </Touchable>

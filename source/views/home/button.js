@@ -17,12 +17,12 @@ export function HomeScreenButton({view, onPress}: Props) {
 
   return (
     <Touchable
+      accessibilityComponentType="button"
+      accessibilityLabel={view.title}
+      accessibilityTraits="button"
       highlight={false}
       onPress={onPress}
       style={[styles.rectangle, style]}
-      accessibilityLabel={view.title}
-      accessibilityTraits="button"
-      accessibilityComponentType="button"
     >
       <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
       <Text style={styles.rectangleButtonText}>{view.title}</Text>

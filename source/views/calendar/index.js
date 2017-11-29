@@ -13,8 +13,12 @@ export default TabNavigator(
     StOlafCalendarView: {
       screen: ({navigation}) => (
         <GoogleCalendarView
-          navigation={navigation}
           calendarId="5g91il39n0sv4c2bjdv1jrvcpq4ulm4r@import.calendar.google.com"
+          navigation={navigation}
+          poweredBy={{
+            title: 'Powered by the St. Olaf calendar',
+            href: 'https://wp.stolaf.edu/calendar/',
+          }}
         />
       ),
       navigationOptions: {
@@ -26,8 +30,12 @@ export default TabNavigator(
     OlevilleCalendarView: {
       screen: ({navigation}) => (
         <GoogleCalendarView
-          navigation={navigation}
           calendarId="stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com"
+          navigation={navigation}
+          poweredBy={{
+            title: 'Powered by the Oleville calendar',
+            href: 'https://oleville.com/events/',
+          }}
         />
       ),
       navigationOptions: {
@@ -39,8 +47,12 @@ export default TabNavigator(
     NorthfieldCalendarView: {
       screen: ({navigation}) => (
         <GoogleCalendarView
-          navigation={navigation}
           calendarId="thisisnorthfield@gmail.com"
+          navigation={navigation}
+          poweredBy={{
+            title: 'Powered by VisitingNorthfield.com',
+            href: 'http://visitingnorthfield.com/events/calendar/',
+          }}
         />
       ),
       navigationOptions: {
