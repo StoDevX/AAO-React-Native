@@ -64,7 +64,7 @@
     "html-entities": "1.2.1",
     "htmlparser2": "3.9.2",
     "lodash": "4.17.4",
-    "moment": "2.19.2",
+    "moment": "2.19.3",
     "moment-timezone": "0.5.14",
     "p-retry": "1.0.0",
     "querystring": "0.2.0",
