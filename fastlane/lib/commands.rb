@@ -1,5 +1,37 @@
-desc 'clone the match repo'
-private_lane :clone_match do
+# coding: utf-8
+
+# It doesn't make sense to duplicate this in both platforms, and fastlane is
+# smart enough to call the appropriate platform's "beta" lane. So, let's make
+# a beta build if there have been new commits since the last beta.
+def auto_beta
+  UI.message "TRAVIS_EVENT_TYPE: #{ENV['TRAVIS_EVENT_TYPE']}"
+  if should_deploy?
+    if cron?
+      UI.message 'building nightly'
+      nightly
+    else
+      UI.message 'building beta'
+      beta
+    end
+  else
+    UI.message 'just building'
+    build
+  end
+end
+
+# Adds the github token for stodevx-bot to the CI machine
+def authorize_ci_for_keys
+  token = ENV['CI_USER_TOKEN']
+
+  # see macoscope.com/blog/simplify-your-life-with-fastlane-match
+  # we're allowing the CI access to the keys repo
+  File.open("#{ENV['HOME']}/.netrc", 'a+') do |file|
+    file << "machine github.com\n  login #{token}"
+  end
+end
+
+# Clone the match repo (for Android)
+def clone_match
   git_url = 'https://github.com/hawkrives/aao-keys'
   dir = Dir.mktmpdir
   command = "git clone --depth 1 '#{git_url}' '#{dir}'"
@@ -21,24 +53,8 @@ private_lane :clone_match do
   dir
 end
 
-desc 'remove the match cloned folder'
-private_lane :remove_match_clone do |options|
+# remove the match cloned folder
+def remove_match_clone(options)
   UI.command "removing #{options[:dir]}"
   FileUtils.remove_entry_secure options[:dir]
-end
-
-desc 'Set up the private keys + environment variables for local development'
-lane :keys do
-  match_dir = clone_match
-
-  # copy play-private-key.json
-  play_key = 'play-private-key.json'
-  UI.command "cp #{match_dir}/android/#{play_key} ../fastlane/#{play_key}"
-  FileUtils.cp("#{match_dir}/android/#{play_key}", "../fastlane/#{play_key}")
-
-  # copy .env.js
-  UI.command "cp #{match_dir}/js/env.js ../.env.js"
-  FileUtils.cp("#{match_dir}/js/env.js", '../.env.js')
-
-  remove_match_clone(dir: match_dir)
 end
