@@ -16,7 +16,10 @@ export class KSTOScheduleView extends React.PureComponent<Props> {
       <GoogleCalendarView
         calendarId="kstonarwhal@gmail.com"
         navigation={this.props.navigation}
-        poweredBy={{title: 'Powered by the KSTO team', href: 'https://pages.stolaf.edu/ksto/'}}
+        poweredBy={{
+          title: 'Powered by the KSTO team',
+          href: 'https://pages.stolaf.edu/ksto/',
+        }}
       />
     )
   }

@@ -7,7 +7,7 @@ engines:
   duplication:
     enabled: true
     exclude_patterns:
-    - "__tests__/"
+    - "**/__tests__/"
     config:
       languages:
       - ruby
