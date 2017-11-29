@@ -14,8 +14,8 @@ export class KSTOScheduleView extends React.PureComponent<Props> {
   render() {
     return (
       <GoogleCalendarView
-        navigation={this.props.navigation}
         calendarId="kstonarwhal@gmail.com"
+        navigation={this.props.navigation}
       />
     )
   }

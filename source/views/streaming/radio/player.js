@@ -181,10 +181,10 @@ export class StreamPlayer extends React.PureComponent<Props> {
     return (
       <WebView
         ref={this.setRef}
-        mediaPlaybackRequiresUserAction={false}
         allowsInlineMediaPlayback={true}
-        source={{html: this.html(kstoStream)}}
+        mediaPlaybackRequiresUserAction={false}
         onMessage={this.handleMessage}
+        source={{html: this.html(kstoStream)}}
         style={this.props.style}
       />
     )

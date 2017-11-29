@@ -13,9 +13,9 @@ type ActionButtonProps = {
 }
 
 export const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
-  <Touchable style={styles.button} hightlight={false} onPress={onPress}>
+  <Touchable hightlight={false} onPress={onPress} style={styles.button}>
     <View style={styles.wrapper}>
-      <Icon style={styles.icon} name={icon} />
+      <Icon name={icon} style={styles.icon} />
       <Text style={styles.action}>{text}</Text>
     </View>
   </Touchable>
@@ -41,9 +41,9 @@ type SmallActionButtonProps = {
 }
 
 const SmallActionButton = ({icon, onPress}: SmallActionButtonProps) => (
-  <Touchable style={styles.smallButton} hightlight={false} onPress={onPress}>
+  <Touchable hightlight={false} onPress={onPress} style={styles.smallButton}>
     <View style={styles.wrapper}>
-      <Icon style={styles.icon} name={icon} />
+      <Icon name={icon} style={styles.icon} />
     </View>
   </Touchable>
 )

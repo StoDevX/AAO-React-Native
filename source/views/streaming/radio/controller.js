@@ -91,21 +91,21 @@ export class KSTOView extends React.PureComponent<Props, State> {
     switch (state) {
       case 'paused':
         return (
-          <ActionButton icon="ios-play" text="Listen" onPress={this.play} />
+          <ActionButton icon="ios-play" onPress={this.play} text="Listen" />
         )
 
       case 'checking':
         return (
-          <ActionButton icon="ios-more" text="Starting" onPress={this.pause} />
+          <ActionButton icon="ios-more" onPress={this.pause} text="Starting" />
         )
 
       case 'playing':
         return (
-          <ActionButton icon="ios-pause" text="Pause" onPress={this.pause} />
+          <ActionButton icon="ios-pause" onPress={this.pause} text="Pause" />
         )
 
       default:
-        return <ActionButton icon="ios-bug" text="Error" onPress={() => {}} />
+        return <ActionButton icon="ios-bug" onPress={() => {}} text="Error" />
     }
   }
 
@@ -137,9 +137,9 @@ export class KSTOView extends React.PureComponent<Props, State> {
       >
         <View style={[styles.logoWrapper, sideways && landscape.logoWrapper]}>
           <Image
+            resizeMode="contain"
             source={image}
             style={[styles.logo, logoSize]}
-            resizeMode="contain"
           />
         </View>
 
@@ -164,13 +164,13 @@ export class KSTOView extends React.PureComponent<Props, State> {
           </Row>
 
           <StreamPlayer
-            playState={this.state.playState}
-            // onWaiting={this.handleStreamWait}
             onEnded={this.handleStreamEnd}
-            // onStalled={this.handleStreamStall}
-            onPlay={this.handleStreamPlay}
-            onPause={this.handleStreamPause}
+            // onWaiting={this.handleStreamWait}
             onError={this.handleStreamError}
+            // onStalled={this.handleStreamStall}
+            onPause={this.handleStreamPause}
+            onPlay={this.handleStreamPlay}
+            playState={this.state.playState}
             style={styles.webview}
           />
         </View>
