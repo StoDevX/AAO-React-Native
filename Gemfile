@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
 gem 'fastlane'
-gem 'hockeyapp'
 gem 'json'
 gem 'xcodeproj'
 
