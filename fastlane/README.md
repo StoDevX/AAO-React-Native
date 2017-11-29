@@ -29,14 +29,6 @@ xcode-select --install
 </table>
 
 # Available Actions
-### keys
-```
-fastlane keys
-```
-Set up the private keys + environment variables for local development
-
-----
-
 ## Android
 ### android build
 ```
@@ -63,11 +55,6 @@ Bundle an Android sourcemap
 fastlane android ci-run
 ```
 Run the appropriate action on CI
-### android ci-emulator
-```
-fastlane android ci-emulator
-```
-Set up an android emulator on TravisCI
 ### android matchesque
 ```
 fastlane android matchesque

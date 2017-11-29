@@ -57,16 +57,6 @@ platform :android do
     auto_beta
   end
 
-  desc 'Set up an android emulator on TravisCI'
-  lane :'ci-emulator' do
-    emulator_name = 'react-native'
-    Dir.mkdir("$HOME/.android/avd/#{emulator_name}.avd/")
-    sh("echo no | android create avd --force -n '#{emulator_name}' -t android-23 --abi google_apis/armeabi-v7a")
-    sh("emulator -avd '#{emulator_name}' -no-audio -no-window &")
-    sh('android-wait-for-emulator')
-    sh('adb shell input keyevent 82 &')
-  end
-
   desc 'extract the android keys from the match repo'
   lane :matchesque do
     match_dir = clone_match
