@@ -41,7 +41,7 @@ def propagate_version(**args)
 
   # encode build number into js-land – we've already fetched it, so we'll
   # never set the "+" into the binaries
-  if !version.include? '+'
+  unless version.include? '+'
     set_package_data(data: { version: "#{version}+#{build}" })
   end
 
