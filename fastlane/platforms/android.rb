@@ -2,9 +2,6 @@
 platform :android do
   desc 'Makes a build'
   lane :build do |options|
-    # make sure we have a copy of the data files
-    sh('npm run bundle-data')
-
     propagate_version(track: options[:track])
 
     gradle(task: 'assemble',

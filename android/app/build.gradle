@@ -216,3 +216,14 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+// Bundles the app's data for the build process
+task bundleData(type: Exec) {
+    commandLine 'npm', 'run', 'bundle-data'
+}
+
+gradle.projectsEvaluated {
+    // hook bundleData into the android build process
+    bundleDebugJsAndAssets.dependsOn bundleData
+    bundleReleaseJsAndAssets.dependsOn bundleData
+}
