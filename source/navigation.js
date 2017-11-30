@@ -1,8 +1,9 @@
 // @flow
 
 import {Platform, StyleSheet} from 'react-native'
-import {StackNavigator} from 'react-navigation'
+import {TabNavigator} from 'react-navigation'
 import * as c from './views/components/colors'
+import {TabBarIcon} from './views/components/tabbar-icon'
 
 import CalendarView, {EventDetail as EventDetailView} from './views/calendar'
 import {ContactsView, ContactsDetailView} from './views/contacts'
@@ -39,9 +40,15 @@ import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
 import HelpView from './views/help'
 
+import {AboutTab} from './tabs/about'
+import {NowTab} from './tabs/now'
+import {FoodTab} from './tabs/food'
+import {MeTab} from './tabs/me'
+import {WhereTab} from './tabs/where'
+
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: c.olevilleGold,
+    backgroundColor: c.white,
   },
   card: {
     ...Platform.select({
@@ -55,48 +62,53 @@ const styles = StyleSheet.create({
   },
 })
 
-export const AppNavigator = StackNavigator(
+export const AppNavigator = TabNavigator(
   {
-    HomeView: {screen: HomeView},
-    BuildingHoursDetailView: {screen: BuildingHoursDetailView},
-    BuildingHoursView: {screen: BuildingHoursView},
-    BuildingHoursProblemReportView: {screen: BuildingHoursProblemReportView},
-    BuildingHoursScheduleEditorView: {screen: BuildingHoursScheduleEditorView},
-    CalendarView: {screen: CalendarView},
-    ContactsView: {screen: ContactsView},
-    ContactsDetailView: {screen: ContactsDetailView},
-    CreditsView: {screen: CreditsView},
-    DictionaryDetailView: {screen: DictionaryDetailView},
-    DictionaryView: {screen: DictionaryView},
-    EditHomeView: {screen: EditHomeView},
-    EventDetailView: {screen: EventDetailView},
-    FaqView: {screen: FaqView},
-    FilterView: {screen: FilterView},
-    HelpView: {screen: HelpView},
-    JobDetailView: {screen: JobDetailView},
-    LegalView: {screen: LegalView},
-    MenusView: {screen: MenusView},
-    NewsItemView: {screen: NewsItemView},
-    NewsView: {screen: NewsView},
-    PrivacyView: {screen: PrivacyView},
-    SettingsView: {screen: SettingsView},
-    SISView: {screen: SISView},
-    StreamingView: {screen: StreamingView},
-    KSTOScheduleView: {screen: KSTOScheduleView},
-    StudentOrgsDetailView: {screen: StudentOrgsDetailView},
-    StudentOrgsView: {screen: StudentOrgsView},
-    TransportationView: {screen: TransportationView},
-    OtherModesDetailView: {screen: OtherModesDetailView},
-    BusMapView: {screen: BusMapView},
-    CarletonBurtonMenuView: {screen: CarletonBurtonMenuScreen},
-    CarletonLDCMenuView: {screen: CarletonLDCMenuScreen},
-    CarletonWeitzMenuView: {screen: CarletonWeitzMenuScreen},
-    CarletonSaylesMenuView: {screen: CarletonSaylesMenuScreen},
+    AboutTab: {
+      screen: AboutTab,
+      path: 'tab/about',
+      navigationOptions: {
+        tabBarLabel: 'About',
+        tabBarIcon: TabBarIcon('information-circle'),
+      },
+    },
+    NowTab: {
+      screen: NowTab,
+      path: 'tab/now',
+      navigationOptions: {
+        tabBarLabel: 'Now',
+        tabBarIcon: TabBarIcon('color-palette'),
+      },
+    },
+    FoodTab: {
+      screen: FoodTab,
+      path: 'tab/food',
+      navigationOptions: {
+        tabBarLabel: 'Food',
+        tabBarIcon: TabBarIcon('nutrition'),
+      },
+    },
+    MeTab: {
+      screen: MeTab,
+      path: 'tab/me',
+      navigationOptions: {
+        tabBarLabel: 'Me',
+        tabBarIcon: TabBarIcon('contact'),
+      },
+    },
+    WhereTab: {
+      screen: WhereTab,
+      path: 'tab/where',
+      navigationOptions: {
+        tabBarLabel: 'Where',
+        tabBarIcon: TabBarIcon('pin'),
+      },
+    },
   },
   {
     navigationOptions: {
       headerStyle: styles.header,
-      headerTintColor: c.white,
+      headerTintColor: c.black,
     },
     cardStyle: styles.card,
   },
