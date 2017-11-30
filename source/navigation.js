@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   card: {
     ...Platform.select({
       ios: {
-        backgroundColor: c.iosLightBackground,
+        backgroundColor: c.white,
       },
       android: {
         backgroundColor: c.androidLightBackground,

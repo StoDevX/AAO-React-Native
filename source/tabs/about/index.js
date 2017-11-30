@@ -1,7 +1,14 @@
 // @flow
 
 import * as React from 'react'
-import {ScrollView, View, Text, StyleSheet, Image} from 'react-native'
+import {
+  ScrollView,
+  TouchableWithoutFeedback,
+  View,
+  Text,
+  StyleSheet,
+  Image,
+} from 'react-native'
 import {StackNavigator} from 'react-navigation'
 
 import {TabBarIcon} from '../../views/components/tabbar-icon'
@@ -12,16 +19,19 @@ type State = {}
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    backgroundColor: 'white',
   },
   cardShape: {
-    borderRadius: 15,
-    shadowColor: '#bbb',
-    shadowOpacity: 0.2,
-    shadowRadius: 15,
+    borderRadius: 20,
+    shadowColor: '#808080',
+    shadowOpacity: 0.6,
+    shadowRadius: 14,
+  },
+  cardShapePressed: {
+    transform: [{scale: 0.95}],
   },
   cardLook: {
     backgroundColor: 'white',
-    overflow: 'hidden',
   },
   heading: {
     marginTop: 20,
@@ -31,18 +41,22 @@ const styles = StyleSheet.create({
     fontFamily: 'System',
     fontWeight: '900',
     fontSize: 24,
+    backgroundColor: 'transparent',
   },
   cardHeading: {
     fontFamily: 'System',
-    fontWeight: '200',
+    fontWeight: '500',
     fontSize: 18,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
+    backgroundColor: 'transparent',
   },
   cardContent: {
+    padding: '6%',
+    flex: 1,
+    overflow: 'hidden',
+  },
+  backgroundImage: {
     ...StyleSheet.absoluteFillObject,
-    padding: 15,
+    borderRadius: 14,
   },
 })
 
@@ -73,15 +87,41 @@ const cardStyles = StyleSheet.create({
   },
 })
 
-const Card = ({children, style}) => (
-  <View style={[styles.cardShape, styles.cardLook, style]}>
-    <View style={styles.cardContent}>{children}</View>
-  </View>
-)
+const Spacer = () => <View style={{flex: 1}} />
+
+class Card extends React.PureComponent<any, any> {
+  state = {pressed: false}
+
+  onPressIn = () => this.setState(() => ({pressed: true}))
+  onPressOut = () => this.setState(() => ({pressed: false}))
+
+  render() {
+    const {children, style} = this.props
+    const {pressed: isPressed} = this.state
+    return (
+      <TouchableWithoutFeedback
+        onPressIn={this.onPressIn}
+        onPressOut={this.onPressOut}
+      >
+        <View
+          style={[
+            styles.cardShape,
+            styles.cardLook,
+            isPressed && styles.cardShapePressed,
+            style,
+          ]}
+        >
+          <View style={styles.cardContent}>{children}</View>
+        </View>
+      </TouchableWithoutFeedback>
+    )
+  }
+}
 
 const ImageBackgroundCard = ({title, style, imageSrc}) => (
   <Card style={style}>
-    <Image source={imageSrc} />
+    <Image source={imageSrc} style={styles.backgroundImage} />
+    <Spacer />
     <Text style={styles.cardHeading}>{title}</Text>
   </Card>
 )
