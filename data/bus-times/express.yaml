@@ -12,9 +12,9 @@ schedules:
       'Food Co-op':        [44.454374, -93.162189]
       'Jesse James Lanes': [44.441209, -93.181852]
       'Papa Murphy’s':     [44.438107, -93.182720]
-      'St. Olaf College':  [44.462210, -93.183026]
+      'St. Olaf Pump House':  [44.462210, -93.183026]
     stops:
-      - St. Olaf College
+      - St. Olaf Pump House
       - Carleton College
       - Food Co-op
       - Papa Murphy’s
@@ -24,7 +24,7 @@ schedules:
       - El Tequila
       - Food Co-op
       - Carleton College
-      - St. Olaf College
+      - St. Olaf Pump House
     times:
       - ['4:15pm',  '4:23pm',  '4:27pm',  '4:32pm',  '4:35pm',  '4:37pm',  '4:39pm',  '4:42pm',  '4:45pm',  '4:48pm',  '4:55pm']
       - ['5:00pm',  '5:08pm',  '5:12pm',  '5:17pm',  '5:20pm',  '5:22pm',  '5:24pm',  '5:27pm',  '5:30pm',  '5:33pm',  '5:40pm']
@@ -38,7 +38,7 @@ schedules:
 
   - days: [Su]
     coordinates:
-      'St. Olaf College':  [44.462210, -93.183026]
+      'St. Olaf Pump House':  [44.462210, -93.183026]
       'Carleton College':  [44.460719, -93.155794]
       'Food Co-op':        [44.454374, -93.162189]
       'Papa Murphy’s':     [44.438107, -93.182720]
@@ -47,7 +47,7 @@ schedules:
       'Jesse James Lanes': [44.441209, -93.181852]
       'El Tequila':        [44.449219, -93.171813]
     stops:
-      - St. Olaf College
+      - St. Olaf Pump House
       - Carleton College
       - Food Co-op
       - Papa Murphy’s
@@ -57,7 +57,7 @@ schedules:
       - El Tequila
       - Food Co-op
       - Carleton College
-      - St. Olaf College
+      - St. Olaf Pump House
     times:
       - ['3:00pm', '3:08pm', '3:12pm', '3:17pm', '3:20pm', '3:22pm', '3:24pm', '3:27pm', '3:30pm', '3:33pm', '3:40pm']
       - ['3:45pm', '3:53pm', '3:57pm', '3:57pm', '4:05pm', '4:07pm', '4:09pm', '4:12pm', '4:15pm', '4:18pm', '4:25pm']
