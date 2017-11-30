@@ -13,20 +13,20 @@ schedules:
       'Library':                         [44.457857, -93.158634]
       'Northfield Estates':              [44.439669, -93.159831]
       'Northfield Retirement Community': [44.464560, -93.164263]
-      'St. Olaf Pump House':                [44.462210, -93.183006]
+      'St. Olaf College':                [44.462210, -93.183006]
       'Viking Terrace':                  [44.469744, -93.163290]
     stops:
       - City Hall on Washington
       - Econo Foods
       - Library
       - Carleton College
-      - St. Olaf Pump House
+      - St. Olaf College
       - Greenvale Apartments
       - Northfield Estates
       - Viking Terrace
       - Northfield Retirement Community
       - Ensley Apartments
-      - St. Olaf Pump House
+      - St. Olaf College
       - City Hall on Washington
     times:
       - [ '6:00am',  '6:01am',  '6:03am',  '6:05am',  '6:12am',  '6:17am',  '6:19am',  '6:21am',     false,  '6:25am',  '6:29am',  '6:40am']
