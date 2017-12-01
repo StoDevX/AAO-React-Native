@@ -4281,9 +4281,9 @@ react-native-linear-gradient@2.3.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-maps@0.18.2:
-  version "0.18.2"
-  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.18.2.tgz#4d9a8311a084f7d289e6bba5b1f15f95ca07e721"
+react-native-maps@0.18.3:
+  version "0.18.3"
+  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.18.3.tgz#85dee19596aff434ff65d69b5a218288c3363a3d"
 
 react-native-network-info@3.0.0:
   version "3.0.0"
