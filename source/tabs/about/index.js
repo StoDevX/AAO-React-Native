@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     shadowColor: '#808080',
     shadowOpacity: 0.6,
-    shadowRadius: 14,
+    shadowOffset: {height: 15},
+    shadowRadius: 15,
   },
   cardShapePressed: {
     transform: [{scale: 0.95}],
@@ -34,13 +35,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   heading: {
-    marginTop: 20,
-    marginBottom: 5,
+    marginTop: 40,
+    marginBottom: 16,
   },
   headingText: {
     fontFamily: 'System',
-    fontWeight: '900',
-    fontSize: 24,
+    fontWeight: '600',
+    fontSize: 32,
     backgroundColor: 'transparent',
   },
   cardHeading: {
@@ -66,7 +67,7 @@ const cardStyles = StyleSheet.create({
   },
   news: {
     height: 120,
-    width: 120,
+    width: 180,
     marginRight: 20,
   },
   termOfTheDay: {
@@ -79,6 +80,12 @@ const cardStyles = StyleSheet.create({
     height: 120,
     width: 120,
     marginRight: 20,
+  },
+  directoryInfo: {
+    width: 180,
+  },
+  webcamInfo: {
+    width: 180,
   },
   webcam: {
     height: 120,
@@ -118,11 +125,13 @@ class Card extends React.PureComponent<any, any> {
   }
 }
 
-const ImageBackgroundCard = ({title, style, imageSrc}) => (
+const ImageBackgroundCard = ({title, style, imageSrc, titleProps = {}}) => (
   <Card style={style}>
     <Image source={imageSrc} style={styles.backgroundImage} />
     <Spacer />
-    <Text style={styles.cardHeading}>{title}</Text>
+    <Text style={styles.cardHeading} {...titleProps}>
+      {title}
+    </Text>
   </Card>
 )
 
@@ -134,6 +143,7 @@ const AboutCard = ({title}) => (
       uri:
         'https://i2.wp.com/wp.stolaf.edu/wp-content/uploads/2012/10/Pop-up-6_01.jpg?resize=1600%2C900&ssl=1',
     }}
+    titleProps={{style: [styles.cardHeading, {color: 'black'}]}}
   />
 )
 
@@ -142,6 +152,12 @@ const NewsCard = ({title, image}) => (
     title={title}
     style={cardStyles.news}
     imageSrc={{uri: image}}
+    titleProps={{
+      numberOfLines: 3,
+      ellipsizeMode: 'tail',
+      fontVariant: ['oldstyle-nums'],
+      suppressHighlighting: false,
+    }}
   />
 )
 
@@ -160,7 +176,7 @@ const BuildingCard = ({building}) => (
 )
 
 const WebcamInfoCard = ({title}) => (
-  <Card style={cardStyles.webcam}>
+  <Card style={[cardStyles.webcam, cardStyles.webcamInfo]}>
     <Text style={styles.cardHeading}>{title}</Text>
   </Card>
 )
@@ -169,12 +185,12 @@ const WebcamThumbnailCard = ({stream}) => (
   <ImageBackgroundCard
     style={cardStyles.webcam}
     title={stream}
-    image="https://"
+    imageSrc={{uri: `https://www.stolaf.edu/multimedia/webcams/camthumb-${stream}.png`}}
   />
 )
 
 const DirectorySearchCard = ({title}) => (
-  <Card style={cardStyles.directory}>
+  <Card style={[cardStyles.directory, cardStyles.directoryInfo]}>
     <Text style={styles.cardHeading}>{title}</Text>
   </Card>
 )
@@ -191,7 +207,16 @@ const Heading = ({title}) => (
 )
 
 const HorizontalSwiper = ({children}) => (
-  <View style={{flexDirection: 'row'}}>{children}</View>
+  <ScrollView
+    contentContainerStyle={{overflow: 'visible'}}
+    style={{overflow: 'visible'}}
+    horizontal={true}
+    snapToAlignment="start"
+    decelerationRate="fast"
+    showsHorizontalScrollIndicator={false}
+  >
+    {children}
+  </ScrollView>
 )
 
 const Block = ({children}) => (
@@ -211,15 +236,15 @@ class AboutScreen extends React.PureComponent<Props, State> {
           <HorizontalSwiper>
             <NewsCard
               title="St. Olaf ranks #1 in study about things"
-              image="https://"
+              image="https://i1.wp.com/wp.stolaf.edu/wp-content/uploads/2017/11/StudyAbroadIcelandSculpture4-3.jpg?resize=400%2C300ssl=1"
             />
             <NewsCard
               title="Ringing in the season through stuff"
-              image="https://"
+              image="https://i2.wp.com/wp.stolaf.edu/wp-content/uploads/2017/11/PopUpPaulo4-3.jpg?resize=400%2C300&ssl=1"
             />
             <NewsCard
               title="Professor publishes new book; wows students"
-              image="https://"
+              image="https://i2.wp.com/wp.stolaf.edu/wp-content/uploads/2017/11/CollinsTim4-3.jpg?resize=400%2C300&ssl=1"
             />
           </HorizontalSwiper>
         </Block>
