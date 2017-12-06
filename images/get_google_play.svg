@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 155 60">
+  <title>Get it on Google Play</title>
   <defs>
     <linearGradient id="a" x1="31.8" y1="183.29" x2="15.02" y2="166.51" gradientTransform="matrix(1 0 0 -1 0 202)" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#00a0ff"/>
@@ -26,7 +27,6 @@
       <stop offset="1" stop-color="#00f076"/>
     </linearGradient>
   </defs>
-  <title>fil_get</title>
   <path fill="none" d="M0 0h155v60H0z"/>
   <rect x="10" y="10" width="135" height="40" rx="5" ry="5"/>
   <path d="M140 10.8a4.2 4.2 0 0 1 4.2 4.2v30a4.2 4.2 0 0 1-4.2 4.2H15a4.2 4.2 0 0 1-4.2-4.2V15a4.2 4.2 0 0 1 4.2-4.2h125m0-.8H15a5 5 0 0 0-5 5v30a5 5 0 0 0 5 5h125a5 5 0 0 0 5-5V15a5 5 0 0 0-5-5z" fill="#a6a6a6"/>
