@@ -3,8 +3,6 @@
 [![Get it on Google Play](images/get_google_play.svg)](https://play.google.com/store/apps/details?id=com.allaboutolaf)
 [![Download on the App Store](images/get_app_store.svg)](https://itunes.apple.com/us/app/all-about-olaf/id938588319)
 
-<!-- <img alt="Get it on Google Play" src="images/get_google_play.svg" /></a> <img alt="Download on the App Store" src="images/get_app_store.svg" /> -->
-
 ## About
 
 The St. Olaf community, now in pocket size… rewritten in React Native.
