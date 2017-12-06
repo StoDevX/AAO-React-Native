@@ -7,10 +7,10 @@
 
 The St. Olaf community, now in pocket size… rewritten in React Native.
 
-## Download
+## Join the Beta
 
-- [Android](https://play.google.com/store/apps/details?id=com.allaboutolaf) ([Sign up as a beta tester!](https://play.google.com/apps/testing/com.allaboutolaf))
-- [iOS](https://itunes.apple.com/us/app/all-about-olaf/id938588319) ([Sign up as a beta tester!](https://boarding-aao.herokuapp.com))
+- [Sign up for the Android Beta](https://play.google.com/apps/testing/com.allaboutolaf)
+- [Sign up for the iOS Beta](https://boarding-aao.herokuapp.com)
 
 ## Getting Started
 
