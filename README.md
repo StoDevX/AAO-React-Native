@@ -1,6 +1,9 @@
 # All About Olaf &middot; [![Build Status](https://travis-ci.org/StoDevX/AAO-React-Native.svg?branch=master)](https://travis-ci.org/StoDevX/AAO-React-Native) [![Coverage Status](https://coveralls.io/repos/github/StoDevX/AAO-React-Native/badge.svg)](https://coveralls.io/github/StoDevX/AAO-React-Native)
 
-<img alt="Get it on Google Play" src="images/get_google_play.svg" /></a> <img alt="Download on the App Store" src="images/get_app_store.svg" />
+[![Get it on Google Play](images/get_google_play.svg)](https://play.google.com/store/apps/details?id=com.allaboutolaf)
+[![Download on the App Store](images/get_app_store.svg)](https://itunes.apple.com/us/app/all-about-olaf/id938588319)
+
+<!-- <img alt="Get it on Google Play" src="images/get_google_play.svg" /></a> <img alt="Download on the App Store" src="images/get_app_store.svg" /> -->
 
 ## About
 
