@@ -16,12 +16,11 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 - For iOS: `npm run ios`.
 - For Android: launch your favorite Android emulator first, then run `npm run android`
 
-## Note
-The Calendar won't work until you give it a proper Google Calendar API key.
+### Notes
+- The Calendar won't work until you give it a proper Google Calendar API key.
 You should [create one yourself](https://console.developers.google.com/projectselector/apis/credentials)!
-
-1. Create a copy of the `.env.sample.js` file and rename it to `.env.js`.
-2. Insert your API key in place of the `key goes here` text.
+  1. Create a copy of the `.env.sample.js` file and rename it to `.env.js`.
+  2. Insert your API key in place of the `key goes here` text.
 
 ## Contributing
 - **Bugs:** All bugs should have the [`bug/general`](https://github.com/StoDevX/AAO-React-Native/labels/bug%2Fgeneral) or [`bug/layout`](https://github.com/StoDevX/AAO-React-Native/labels/bug%2Flayout) label in the issues
