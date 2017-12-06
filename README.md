@@ -15,7 +15,7 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 - [Install Yarn](https://yarnpkg.com/en/docs/install)
 - Clone the repository
 - `cd` into your clone
-- `yarn`
+- Run `yarn`
 - For iOS: `npm run ios`.
 - For Android: launch your favorite Android emulator first, then run `npm run android`
 
