@@ -1,6 +1,6 @@
 # All About Olaf &middot; [![Build Status](https://travis-ci.org/StoDevX/AAO-React-Native.svg?branch=master)](https://travis-ci.org/StoDevX/AAO-React-Native) [![Coverage Status](https://coveralls.io/repos/github/StoDevX/AAO-React-Native/badge.svg)](https://coveralls.io/github/StoDevX/AAO-React-Native)
 
-<img alt="Get it on Google Play" src="images/get_google_play.svg" height="40pt" /> <img alt="Download on the App Store" src="images/get_app_store.svg" height="40pt" />
+<img alt="Get it on Google Play" src="images/get_google_play.svg" width="125pt" /> <img alt="Download on the App Store" src="images/get_app_store.svg" height="40pt" />
 
 ## About
 
