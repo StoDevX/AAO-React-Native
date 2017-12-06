@@ -35,6 +35,5 @@ You should [create one yourself](https://console.developers.google.com/projectse
 
 For full information, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-<sub>Google Play and the Google Play logo are trademarks of Google LLC.</sub>
-
-<sub>Apple, the Apple logo, iPhone, and iPad are trademarks of Apple Inc., registered in the U.S. and other countries. App Store is a service mark of Apple Inc., registered in the U.S. and other countries.</sub>
+<sub>Google Play and the Google Play logo are trademarks of Google LLC.<br />
+Apple, the Apple logo, iPhone, and iPad are trademarks of Apple Inc., registered in the U.S. and other countries. App Store is a service mark of Apple Inc., registered in the U.S. and other countries.</sub>
