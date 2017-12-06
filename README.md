@@ -1,5 +1,7 @@
 # All About Olaf &middot; [![Build Status](https://travis-ci.org/StoDevX/AAO-React-Native.svg?branch=master)](https://travis-ci.org/StoDevX/AAO-React-Native) [![Coverage Status](https://coveralls.io/repos/github/StoDevX/AAO-React-Native/badge.svg)](https://coveralls.io/github/StoDevX/AAO-React-Native)
 
+<img alt="Get it on Google Play" src="images/get_google_play.svg" width="240pt" /> <img alt="Download on the App Store" src="images/get_app_store.svg" width="240pt" /> 
+
 ## About
 
 The St. Olaf community, now in pocket size… rewritten in React Native.
@@ -32,3 +34,7 @@ You should [create one yourself](https://console.developers.google.com/projectse
 - **Enhancements:** All ideas for improvement that are not being worked on should be [`closed` and labelled as `discussion`](https://github.com/StoDevX/AAO-React-Native/issues?utf8=%E2%9C%93&q=is%3Aclosed%20is%3Aissue%20label%3Astatus%2Fdiscussion)
 
 For full information, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+<sub>Google Play and the Google Play logo are trademarks of Google LLC.</sub>
+
+<sub>Apple, the Apple logo, iPhone, and iPad are trademarks of Apple Inc., registered in the U.S. and other countries. App Store is a service mark of Apple Inc., registered in the U.S. and other countries.</sub>
