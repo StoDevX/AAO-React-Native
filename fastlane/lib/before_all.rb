@@ -26,8 +26,11 @@ before_all do
   UI.message "GYM_SCHEME is #{ENV['GYM_SCHEME']}"
   UI.message "GYM_OUTPUT_DIRECTORY is #{ENV['GYM_OUTPUT_DIRECTORY']}"
   UI.message "GYM_OUTPUT_NAME is #{ENV['GYM_OUTPUT_NAME']}"
+
   UI.message "FL_GRADLE_PROJECT_DIR is #{ENV['FL_GRADLE_PROJECT_DIR']}"
+
   UI.message "PRETTY_APP_NAME is #{lane_context[:PRETTY_APP_NAME]}"
   UI.message "GRADLE_FILE is #{lane_context[:GRADLE_FILE]}"
+
   UI.message "PLATFORM_NAME is #{lane_context[:PLATFORM_NAME]}"
 end
