@@ -1,3 +1,4 @@
+# -*- ruby -*-
 # The bundle identifier of your app
 app_identifier 'NFMTHAZVS9.com.drewvolz.stolaf'
 
