@@ -14,6 +14,7 @@ import 'lib/commands.rb'
 import 'lib/git.rb'
 import 'lib/sourcemaps.rb'
 import 'lib/util.rb'
+import 'lib/build.rb'
 import 'lib/versions.rb'
 
 import 'platforms/android.rb'
