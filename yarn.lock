@@ -500,14 +500,7 @@ babel-helpers@^6.24.1:
     babel-runtime "^6.22.0"
     babel-template "^6.24.1"
 
-babel-jest@22.0.0:
-  version "22.0.0"
-  resolved "https://registry.yarnpkg.com/babel-jest/-/babel-jest-22.0.0.tgz#4da5fbaec0597d454430bd0166f09d1287c6fe39"
-  dependencies:
-    babel-plugin-istanbul "^4.1.5"
-    babel-preset-jest "^22.0.0"
-
-babel-jest@^22.0.3:
+babel-jest@22.0.3, babel-jest@^22.0.3:
   version "22.0.3"
   resolved "https://registry.yarnpkg.com/babel-jest/-/babel-jest-22.0.3.tgz#c9d7a786c57ee94cee15b5826468fd55f69d4b4c"
   dependencies:
@@ -539,10 +532,6 @@ babel-plugin-istanbul@^4.1.5:
     find-up "^2.1.0"
     istanbul-lib-instrument "^1.7.5"
     test-exclude "^4.1.1"
-
-babel-plugin-jest-hoist@^22.0.0:
-  version "22.0.0"
-  resolved "https://registry.yarnpkg.com/babel-plugin-jest-hoist/-/babel-plugin-jest-hoist-22.0.0.tgz#30859d15453a324aee01264be9c522802f8ba512"
 
 babel-plugin-jest-hoist@^22.0.3:
   version "22.0.3"
@@ -868,13 +857,6 @@ babel-preset-fbjs@^2.1.2, babel-preset-fbjs@^2.1.4:
     babel-plugin-transform-object-rest-spread "^6.8.0"
     babel-plugin-transform-react-display-name "^6.8.0"
     babel-plugin-transform-react-jsx "^6.8.0"
-
-babel-preset-jest@^22.0.0:
-  version "22.0.0"
-  resolved "https://registry.yarnpkg.com/babel-preset-jest/-/babel-preset-jest-22.0.0.tgz#6c93d9791030ba2b7ebb4c814b4c243bf29afb36"
-  dependencies:
-    babel-plugin-jest-hoist "^22.0.0"
-    babel-plugin-syntax-object-rest-spread "^6.13.0"
 
 babel-preset-jest@^22.0.3:
   version "22.0.3"
@@ -2915,7 +2897,7 @@ jest-changed-files@^22.0.3:
   dependencies:
     throat "^4.0.0"
 
-jest-cli@^22.0.2:
+jest-cli@^22.0.3:
   version "22.0.3"
   resolved "https://registry.yarnpkg.com/jest-cli/-/jest-cli-22.0.3.tgz#575c5257ae0c51c142dfaab9eed9914c40f62611"
   dependencies:
@@ -3164,11 +3146,11 @@ jest-worker@^22.0.3:
   dependencies:
     merge-stream "^1.0.1"
 
-jest@22.0.2:
-  version "22.0.2"
-  resolved "https://registry.yarnpkg.com/jest/-/jest-22.0.2.tgz#36ea804dc595ba6d6db9f0588477e30e877e9e03"
+jest@22.0.3:
+  version "22.0.3"
+  resolved "https://registry.yarnpkg.com/jest/-/jest-22.0.3.tgz#bbf5bb8fbae6acaf743bd1300d69bb12bae2f021"
   dependencies:
-    jest-cli "^22.0.2"
+    jest-cli "^22.0.3"
 
 js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
