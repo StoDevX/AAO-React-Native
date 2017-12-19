@@ -4511,9 +4511,9 @@ react-native-tableview-simple@0.17.1:
   dependencies:
     prop-types "^15.6.0"
 
-react-native-vector-icons@4.4.2:
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-4.4.2.tgz#090f42ee0396c4cc4eae0ddaa518028ba8df40c7"
+react-native-vector-icons@4.4.3:
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-4.4.3.tgz#9e847b8c432a17e5e0ffd60ccf09f3112a18b9df"
   dependencies:
     lodash "^4.0.0"
     prop-types "^15.5.10"
