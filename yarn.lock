@@ -500,7 +500,14 @@ babel-helpers@^6.24.1:
     babel-runtime "^6.22.0"
     babel-template "^6.24.1"
 
-babel-jest@22.0.0, babel-jest@^22.0.0:
+babel-jest@22.0.2:
+  version "22.0.2"
+  resolved "https://registry.yarnpkg.com/babel-jest/-/babel-jest-22.0.2.tgz#7d9fbc60fb4ff4415df4a16c884683904daf30a8"
+  dependencies:
+    babel-plugin-istanbul "^4.1.5"
+    babel-preset-jest "^22.0.2"
+
+babel-jest@^22.0.0:
   version "22.0.0"
   resolved "https://registry.yarnpkg.com/babel-jest/-/babel-jest-22.0.0.tgz#4da5fbaec0597d454430bd0166f09d1287c6fe39"
   dependencies:
@@ -536,6 +543,10 @@ babel-plugin-istanbul@^4.1.5:
 babel-plugin-jest-hoist@^22.0.0:
   version "22.0.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-jest-hoist/-/babel-plugin-jest-hoist-22.0.0.tgz#30859d15453a324aee01264be9c522802f8ba512"
+
+babel-plugin-jest-hoist@^22.0.2:
+  version "22.0.2"
+  resolved "https://registry.yarnpkg.com/babel-plugin-jest-hoist/-/babel-plugin-jest-hoist-22.0.2.tgz#1067ad72a359e0ba1f752cf8b347a8f8560b5243"
 
 babel-plugin-react-transform@^3.0.0:
   version "3.0.0"
@@ -863,6 +874,13 @@ babel-preset-jest@^22.0.0:
   resolved "https://registry.yarnpkg.com/babel-preset-jest/-/babel-preset-jest-22.0.0.tgz#6c93d9791030ba2b7ebb4c814b4c243bf29afb36"
   dependencies:
     babel-plugin-jest-hoist "^22.0.0"
+    babel-plugin-syntax-object-rest-spread "^6.13.0"
+
+babel-preset-jest@^22.0.2:
+  version "22.0.2"
+  resolved "https://registry.yarnpkg.com/babel-preset-jest/-/babel-preset-jest-22.0.2.tgz#d4a80171d0ea4b4ac39ac7272a033d59ffa9a6f1"
+  dependencies:
+    babel-plugin-jest-hoist "^22.0.2"
     babel-plugin-syntax-object-rest-spread "^6.13.0"
 
 babel-preset-react-native@4.0.0, babel-preset-react-native@^4.0.0:
