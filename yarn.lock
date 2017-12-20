@@ -4425,9 +4425,9 @@ react-markdown@2.5.1:
     commonmark-react-renderer "^4.3.4"
     prop-types "^15.5.1"
 
-react-native-button@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-button/-/react-native-button-2.1.0.tgz#a39e23292922afeea4f7be141dd43e18f1b51876"
+react-native-button@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-button/-/react-native-button-2.2.0.tgz#9d84c6baad3297df587a89bda04e5a678f7957e9"
   dependencies:
     prop-types "^15.5.10"
 
