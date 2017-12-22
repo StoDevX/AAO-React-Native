@@ -2341,9 +2341,9 @@ github@^13.0.1:
     proxy-from-env "^1.0.0"
     url-template "^2.0.8"
 
-glamorous-native@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/glamorous-native/-/glamorous-native-1.2.0.tgz#5cc576d81a50f0d72b839793b6e7c708bef1467b"
+glamorous-native@1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/glamorous-native/-/glamorous-native-1.2.1.tgz#205ce52cac20aebdb5ada755aa945cc27728e6ee"
   dependencies:
     brcast "^2.0.0"
 
