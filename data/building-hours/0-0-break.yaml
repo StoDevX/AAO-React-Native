@@ -1,0 +1,16 @@
+name: Christmas Break
+category: Break Notice
+
+schedule:
+  - title: We're on break! Hours may be wrong
+    notes: Okay, hours are probably wrong.
+    hours: []
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []
