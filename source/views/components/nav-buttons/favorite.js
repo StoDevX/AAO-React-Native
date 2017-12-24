@@ -10,7 +10,6 @@ type State = {
   favorited: boolean,
 }
 
-
 export class FavoriteButton extends React.PureComponent<Props, State> {
   constructor(props) {
     super(props);
@@ -23,7 +22,6 @@ export class FavoriteButton extends React.PureComponent<Props, State> {
 
   render() {
     if (this.state.favorited) {
-      // console.log("Favorited")
       return (
         <Touchable
           highlight={false}
@@ -38,7 +36,6 @@ export class FavoriteButton extends React.PureComponent<Props, State> {
         </Touchable>
       )
     } else {
-      // console.log("Not favorited")
       return (
         <Touchable
           highlight={false}
