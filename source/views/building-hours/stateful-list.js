@@ -27,6 +27,26 @@ const groupBuildings = (buildings: BuildingType[]) => {
   return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
 }
 
+const loadFavoriteBuildings = (buildings: BuildingType[]) => {
+  var favoriteBuildings = Array();
+  for (i=0; i < buildings.length; i++) {
+    if (buildings[i].favorited) {
+      favoriteBuildings.push(buildings[i]);
+    }
+  }
+  return favoriteBuildings;
+}
+
+const loadAllBuildings = (buildings: BuildingType[]) => {
+  var allBuildings = Array();
+  allBuildings.push({title: 'Favorites', data: loadFavoriteBuildings(buildings)});
+  var restOfGroups = groupBuildings(buildings)
+  for (i=0; i < restOfGroups.length; i++) {
+    allBuildings.push(restOfGroups[i]);
+  }
+  return allBuildings;
+}
+
 type Props = TopLevelViewPropsType
 
 type State = {
@@ -48,16 +68,16 @@ export class BuildingHoursView extends React.Component<Props, State> {
     loading: false,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
-    buildings: groupBuildings(defaultData.data),
+    buildings: loadAllBuildings(defaultData.data),
     intervalId: 0,
   }
 
   componentWillMount() {
     this.fetchData()
-
+    // console.log(this.state.buildings)
     // This updates the screen every ten seconds, so that the building
     // info statuses are updated without needing to leave and come back.
-    this.setState({intervalId: setInterval(this.updateTime, 1000)})
+    this.setState({intervalId: setInterval(this.updateTime, 10000)})
   }
 
   componentWillUnmount() {
@@ -92,7 +112,7 @@ export class BuildingHoursView extends React.Component<Props, State> {
       buildings = defaultData.data
     }
     this.setState(() => ({
-      buildings: groupBuildings(buildings),
+      buildings: loadAllBuildings(buildings),
       now: moment.tz(CENTRAL_TZ),
     }))
   }
@@ -101,7 +121,7 @@ export class BuildingHoursView extends React.Component<Props, State> {
     if (this.state.error) {
       return <NoticeView text={`Error: ${this.state.error.message}`} />
     }
-
+    console.log("render")
     return (
       <BuildingHoursList
         buildings={this.state.buildings}
@@ -109,6 +129,7 @@ export class BuildingHoursView extends React.Component<Props, State> {
         navigation={this.props.navigation}
         now={this.state.now}
         onRefresh={this.refresh}
+        onUpdate={this.fetchData}
       />
     )
   }

@@ -45,4 +45,5 @@ export type BuildingType = {
   category: string,
   schedule: NamedBuildingScheduleType[],
   breakSchedule?: BreakScheduleContainerType,
+  favorited?: boolean,
 }
