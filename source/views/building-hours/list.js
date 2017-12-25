@@ -25,12 +25,16 @@ type Props = TopLevelViewPropsType & {
   loading: boolean,
   onRefresh: () => any,
   buildings: Array<{title: string, data: BuildingType[]}>,
+  onUpdate: () => any,
 }
 
 export class BuildingHoursList extends React.PureComponent<Props> {
   onPressRow = (data: BuildingType) => {
     tracker.trackEvent('building-hours', data.name)
-    this.props.navigation.navigate('BuildingHoursDetailView', {building: data, onUpdate: this.props.onUpdate})
+    this.props.navigation.navigate('BuildingHoursDetailView', {
+      building: data,
+      onUpdate: this.props.onUpdate,
+    })
   }
 
   keyExtractor = (item: BuildingType) => item.name

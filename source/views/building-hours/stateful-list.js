@@ -28,23 +28,26 @@ const groupBuildings = (buildings: BuildingType[]) => {
 }
 
 const loadFavoriteBuildings = (buildings: BuildingType[]) => {
-  var favoriteBuildings = Array();
-  for (i=0; i < buildings.length; i++) {
+  let favoriteBuildings = Array()
+  for (let i = 0; i < buildings.length; i++) {
     if (buildings[i].favorited) {
-      favoriteBuildings.push(buildings[i]);
+      favoriteBuildings.push(buildings[i])
     }
   }
-  return favoriteBuildings;
+  return favoriteBuildings
 }
 
 const loadAllBuildings = (buildings: BuildingType[]) => {
-  var allBuildings = Array();
-  allBuildings.push({title: 'Favorites', data: loadFavoriteBuildings(buildings)});
-  var restOfGroups = groupBuildings(buildings)
-  for (i=0; i < restOfGroups.length; i++) {
-    allBuildings.push(restOfGroups[i]);
+  let allBuildings = Array()
+  allBuildings.push({
+    title: 'Favorites',
+    data: loadFavoriteBuildings(buildings),
+  })
+  let restOfGroups = groupBuildings(buildings)
+  for (let i = 0; i < restOfGroups.length; i++) {
+    allBuildings.push(restOfGroups[i])
   }
-  return allBuildings;
+  return allBuildings
 }
 
 type Props = TopLevelViewPropsType
@@ -121,7 +124,7 @@ export class BuildingHoursView extends React.Component<Props, State> {
     if (this.state.error) {
       return <NoticeView text={`Error: ${this.state.error.message}`} />
     }
-    console.log("render")
+    console.log('render')
     return (
       <BuildingHoursList
         buildings={this.state.buildings}

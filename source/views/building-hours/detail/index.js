@@ -23,20 +23,19 @@ export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
   static navigationOptions = ({navigation}) => {
     return {
       title: navigation.state.params.building.name,
-      headerRight:
+      headerRight: (
         <FavoriteButton
+          favorited={navigation.state.params.building.favorited}
           navigation={navigation}
-          favorited = {navigation.state.params.building.favorited}
-          onFavorite={
-            () => {
-              if (navigation.state.params.building.favorited) {
-                navigation.state.params.building.favorited = false;
-              } else {
-                navigation.state.params.building.favorited = true;
-              }
+          onFavorite={() => {
+            if (navigation.state.params.building.favorited) {
+              navigation.state.params.building.favorited = false
+            } else {
+              navigation.state.params.building.favorited = true
             }
-          }
-        />,
+          }}
+        />
+      ),
     }
   }
 
@@ -54,7 +53,7 @@ export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
 
   componentWillUnmount() {
     clearTimeout(this.state.intervalId)
-    this.props.navigation.state.params.onUpdate();
+    this.props.navigation.state.params.onUpdate()
   }
 
   updateTime = () => {

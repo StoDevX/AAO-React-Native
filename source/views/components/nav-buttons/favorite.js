@@ -10,14 +10,22 @@ type State = {
   favorited: boolean,
 }
 
-export class FavoriteButton extends React.PureComponent<Props, State> {
-  constructor(props) {
-    super(props);
-    this.onPress = this.onPress.bind(this);
-  }
+type Props = {
+  onFavorite: () => any,
+  favorited: boolean,
+}
 
+export class FavoriteButton extends React.PureComponent<Props, State> {
   state = {
     favorited: this.props.favorited,
+  }
+
+  onPress = () => {
+    if (this.state.favorited) {
+      this.setState({favorited: false})
+    } else {
+      this.setState({favorited: true})
+    }
   }
 
   render() {
@@ -25,7 +33,10 @@ export class FavoriteButton extends React.PureComponent<Props, State> {
       return (
         <Touchable
           highlight={false}
-          onPress={() => {this.onPress(); this.props.onFavorite();}}
+          onPress={() => {
+            this.onPress()
+            this.props.onFavorite()
+          }}
           style={styles.button}
         >
           {Platform.OS === 'ios' ? (
@@ -39,7 +50,10 @@ export class FavoriteButton extends React.PureComponent<Props, State> {
       return (
         <Touchable
           highlight={false}
-          onPress={() => {this.onPress(); this.props.onFavorite();}}
+          onPress={() => {
+            this.onPress()
+            this.props.onFavorite()
+          }}
           style={styles.button}
         >
           {Platform.OS === 'ios' ? (
@@ -49,13 +63,6 @@ export class FavoriteButton extends React.PureComponent<Props, State> {
           )}
         </Touchable>
       )
-    }
-  }
-  onPress () {
-    if (this.state.favorited) {
-      this.setState({favorited: false});
-    } else {
-      this.setState({favorited: true});
     }
   }
 }
