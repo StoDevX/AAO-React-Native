@@ -29,40 +29,27 @@ export class FavoriteButton extends React.PureComponent<Props, State> {
   }
 
   render() {
-    if (this.state.favorited) {
-      return (
-        <Touchable
-          highlight={false}
-          onPress={() => {
-            this.onPress()
-            this.props.onFavorite()
-          }}
-          style={styles.button}
-        >
-          {Platform.OS === 'ios' ? (
-            <Icon name="ios-heart" style={styles.icon} />
-          ) : (
-            <Icon name="md-heart" style={styles.icon} />
-          )}
-        </Touchable>
-      )
-    } else {
-      return (
-        <Touchable
-          highlight={false}
-          onPress={() => {
-            this.onPress()
-            this.props.onFavorite()
-          }}
-          style={styles.button}
-        >
-          {Platform.OS === 'ios' ? (
-            <Icon name="ios-heart-outline" style={styles.icon} />
-          ) : (
-            <Icon name="md-heart-outline" style={styles.icon} />
-          )}
-        </Touchable>
-      )
-    }
+    return (
+      <Touchable
+        highlight={false}
+        onPress={() => {
+          this.onPress()
+          this.props.onFavorite()
+        }}
+        style={styles.button}
+      >
+        {Platform.OS === 'ios' ? (
+          <Icon
+            name={this.state.favorited ? 'ios-heart' : 'ios-heart-outline'}
+            style={styles.icon}
+          />
+        ) : (
+          <Icon
+            name={this.state.favorited ? 'md-heart' : 'md-heart-outline'}
+            style={styles.icon}
+          />
+        )}
+      </Touchable>
+    )
   }
 }
