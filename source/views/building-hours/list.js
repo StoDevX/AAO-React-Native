@@ -26,6 +26,7 @@ type Props = TopLevelViewPropsType & {
   onRefresh: () => any,
   buildings: Array<{title: string, data: BuildingType[]}>,
   onUpdate: () => any,
+  favoriteBuildings: Array<BuildingType>,
 }
 
 export class BuildingHoursList extends React.PureComponent<Props> {

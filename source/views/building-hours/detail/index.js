@@ -13,14 +13,20 @@ import {CENTRAL_TZ} from '../lib'
 import type {TopLevelViewPropsType} from '../../types'
 import {FavoriteButton} from '../../components/nav-buttons'
 import {connect} from 'react-redux'
+import {type ReduxState} from '../../../flux'
 
 type ReduxStateProps = {
   favoriteBuildings: Array<BuildingType>,
 }
 
-type Props = TopLevelViewPropsType & ReduxStateProps & {
-  navigation: {state: {params: {building: BuildingType, favoriteBuildings: BuildingType[]}}},
-}
+type Props = TopLevelViewPropsType &
+  ReduxStateProps & {
+    navigation: {
+      state: {
+        params: {building: BuildingType, favoriteBuildings: BuildingType[]},
+      },
+    },
+  }
 
 type State = {intervalId: number, now: moment}
 
@@ -59,9 +65,7 @@ export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
     this.setState({intervalId: setInterval(this.updateTime, 1000)})
   }
 
-  componentDidMount() {
-
-  }
+  componentDidMount() {}
 
   componentWillUnmount() {
     clearTimeout(this.state.intervalId)
@@ -94,7 +98,7 @@ export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
   return {
-    favoriteBuildings: state.buildings ? state.buildings.favoriteBuildings : []
+    favoriteBuildings: state.buildings ? state.buildings.favoriteBuildings : [],
   }
 }
 

@@ -29,7 +29,10 @@ const groupBuildings = (buildings: BuildingType[]) => {
   return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
 }
 
-const loadAllBuildings = (buildings: BuildingType[], favoriteBuildings: BuildingType[]) => {
+const loadAllBuildings = (
+  buildings: BuildingType[],
+  favoriteBuildings: BuildingType[],
+) => {
   let allBuildings = Array()
   allBuildings.push({
     title: 'Favorites',
@@ -136,13 +139,13 @@ export class BuildingHoursView extends React.Component<Props, State> {
         now={this.state.now}
         onRefresh={this.refresh}
         onUpdate={this.onUpdate}
-        favoriteBuildings = {this.props.favoriteBuildings}
+        favoriteBuildings={this.props.favoriteBuildings}
       />
     )
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   if (!state.buildings) {
     return {favoriteBuildings: []}
   }
@@ -154,8 +157,11 @@ const mapStateToProps = (state) => {
 
 function mapDispatch(dispatch): ReduxDispatchProps {
   return {
-    onSaveFavorites: newFavorites => dispatch(saveFavoriteBuildings(newFavorites)),
+    onSaveFavorites: newFavorites =>
+      dispatch(saveFavoriteBuildings(newFavorites)),
   }
 }
 
-export const ConnectedBuildingHoursView = connect(mapStateToProps, mapDispatch)(BuildingHoursView)
+export const ConnectedBuildingHoursView = connect(mapStateToProps, mapDispatch)(
+  BuildingHoursView,
+)

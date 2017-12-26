@@ -1,6 +1,6 @@
 // @flow
 import {AsyncStorage} from 'react-native'
-import {BuildingType} from '../views/building-hours/types'
+import type {BuildingType} from '../views/building-hours/types'
 
 export function clearAsyncStorage() {
   return AsyncStorage.clear()
@@ -82,6 +82,6 @@ const favoriteBuildingsKey = 'buildings:favorited'
 export function setFavoriteBuildings(buildings: Array<BuildingType>) {
   return setItem(favoriteBuildingsKey, buildings)
 }
-export function getFavoriteBuildings(): Promise<Array<BuildingType>> {
+export function getFavoriteBuildings() {
   return getItemAsArray(favoriteBuildingsKey)
 }
