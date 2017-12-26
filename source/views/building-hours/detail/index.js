@@ -12,26 +12,34 @@ import {BuildingDetail} from './building'
 import {CENTRAL_TZ} from '../lib'
 import type {TopLevelViewPropsType} from '../../types'
 import {FavoriteButton} from '../../components/nav-buttons'
+import {connect} from 'react-redux'
 
-type Props = TopLevelViewPropsType & {
-  navigation: {state: {params: {building: BuildingType}}},
+type ReduxStateProps = {
+  favoriteBuildings: Array<BuildingType>,
+}
+
+type Props = TopLevelViewPropsType & ReduxStateProps & {
+  navigation: {state: {params: {building: BuildingType, favoriteBuildings: BuildingType[]}}},
 }
 
 type State = {intervalId: number, now: moment}
 
 export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
   static navigationOptions = ({navigation}) => {
+    const building = navigation.state.params.building
+    let favoriteBuildings = navigation.state.params.favoriteBuildings
     return {
-      title: navigation.state.params.building.name,
+      title: building.name,
       headerRight: (
         <FavoriteButton
-          favorited={navigation.state.params.building.favorited}
+          favorited={favoriteBuildings.includes(building)}
           navigation={navigation}
           onFavorite={() => {
-            if (navigation.state.params.building.favorited) {
-              navigation.state.params.building.favorited = false
+            if (favoriteBuildings.includes(building)) {
+              const index = favoriteBuildings.indexOf(building)
+              favoriteBuildings.splice(index, 1)
             } else {
-              navigation.state.params.building.favorited = true
+              favoriteBuildings.push(building)
             }
           }}
         />
@@ -49,6 +57,10 @@ export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
     // This updates the screen every ten seconds, so that the building
     // info statuses are updated without needing to leave and come back.
     this.setState({intervalId: setInterval(this.updateTime, 1000)})
+  }
+
+  componentDidMount() {
+
   }
 
   componentWillUnmount() {
@@ -79,3 +91,13 @@ export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
     )
   }
 }
+
+function mapStateToProps(state: ReduxState): ReduxStateProps {
+  return {
+    favoriteBuildings: state.buildings ? state.buildings.favoriteBuildings : []
+  }
+}
+
+export const ConnectedBuildingHoursDetailView = connect(mapStateToProps)(
+  BuildingHoursDetailView,
+)

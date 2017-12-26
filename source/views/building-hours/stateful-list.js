@@ -8,7 +8,9 @@
 import * as React from 'react'
 import {NoticeView} from '../components/notice'
 import {BuildingHoursList} from './list'
-
+import {type ReduxState} from '../../flux'
+import {saveFavoriteBuildings} from '../../flux/parts/buildings'
+import {connect} from 'react-redux'
 import moment from 'moment-timezone'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
@@ -27,21 +29,11 @@ const groupBuildings = (buildings: BuildingType[]) => {
   return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
 }
 
-const loadFavoriteBuildings = (buildings: BuildingType[]) => {
-  let favoriteBuildings = Array()
-  for (let i = 0; i < buildings.length; i++) {
-    if (buildings[i].favorited) {
-      favoriteBuildings.push(buildings[i])
-    }
-  }
-  return favoriteBuildings
-}
-
-const loadAllBuildings = (buildings: BuildingType[]) => {
+const loadAllBuildings = (buildings: BuildingType[], favoriteBuildings: BuildingType[]) => {
   let allBuildings = Array()
   allBuildings.push({
     title: 'Favorites',
-    data: loadFavoriteBuildings(buildings),
+    data: favoriteBuildings,
   })
   let restOfGroups = groupBuildings(buildings)
   for (let i = 0; i < restOfGroups.length; i++) {
@@ -50,7 +42,15 @@ const loadAllBuildings = (buildings: BuildingType[]) => {
   return allBuildings
 }
 
-type Props = TopLevelViewPropsType
+type ReduxStateProps = {
+  favoriteBuildings: Array<BuildingType>,
+}
+
+type ReduxDispatchProps = {
+  onSaveFavorites: (BuildingType[]) => any,
+}
+
+type Props = TopLevelViewPropsType & ReduxStateProps & ReduxDispatchProps
 
 type State = {
   error: ?Error,
@@ -71,13 +71,12 @@ export class BuildingHoursView extends React.Component<Props, State> {
     loading: false,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
-    buildings: loadAllBuildings(defaultData.data),
+    buildings: loadAllBuildings(defaultData.data, this.props.favoriteBuildings),
     intervalId: 0,
   }
 
   componentWillMount() {
     this.fetchData()
-    // console.log(this.state.buildings)
     // This updates the screen every ten seconds, so that the building
     // info statuses are updated without needing to leave and come back.
     this.setState({intervalId: setInterval(this.updateTime, 10000)})
@@ -115,16 +114,20 @@ export class BuildingHoursView extends React.Component<Props, State> {
       buildings = defaultData.data
     }
     this.setState(() => ({
-      buildings: loadAllBuildings(buildings),
+      buildings: loadAllBuildings(buildings, this.props.favoriteBuildings),
       now: moment.tz(CENTRAL_TZ),
     }))
+  }
+
+  onUpdate = () => {
+    this.fetchData()
+    this.props.onSaveFavorites(this.props.favoriteBuildings)
   }
 
   render() {
     if (this.state.error) {
       return <NoticeView text={`Error: ${this.state.error.message}`} />
     }
-    console.log('render')
     return (
       <BuildingHoursList
         buildings={this.state.buildings}
@@ -132,8 +135,27 @@ export class BuildingHoursView extends React.Component<Props, State> {
         navigation={this.props.navigation}
         now={this.state.now}
         onRefresh={this.refresh}
-        onUpdate={this.fetchData}
+        onUpdate={this.onUpdate}
+        favoriteBuildings = {this.props.favoriteBuildings}
       />
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  if (!state.buildings) {
+    return {favoriteBuildings: []}
+  }
+
+  return {
+    favoriteBuildings: state.buildings.favoriteBuildings,
+  }
+}
+
+function mapDispatch(dispatch): ReduxDispatchProps {
+  return {
+    onSaveFavorites: newFavorites => dispatch(saveFavoriteBuildings(newFavorites)),
+  }
+}
+
+export const ConnectedBuildingHoursView = connect(mapStateToProps, mapDispatch)(BuildingHoursView)

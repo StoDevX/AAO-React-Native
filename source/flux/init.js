@@ -7,6 +7,7 @@ import {NetInfo} from 'react-native'
 import {loadLoginCredentials} from '../lib/login'
 import {updateOnlineStatus} from './parts/app'
 import {loadHomescreenOrder} from './parts/homescreen'
+import {loadFavoriteBuildings} from './parts/buildings'
 import {
   setLoginCredentials,
   validateLoginCredentials,
@@ -51,6 +52,7 @@ export async function init(store: {dispatch: any => any}) {
     store.dispatch(loadHomescreenOrder()),
     store.dispatch(loadFeedbackStatus()),
     store.dispatch(loadAcknowledgement()),
+    store.dispatch(loadFavoriteBuildings()),
     loginCredentials(store),
   ])
 

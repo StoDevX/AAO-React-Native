@@ -33,6 +33,7 @@ export class BuildingHoursList extends React.PureComponent<Props> {
     tracker.trackEvent('building-hours', data.name)
     this.props.navigation.navigate('BuildingHoursDetailView', {
       building: data,
+      favoriteBuildings: this.props.favoriteBuildings,
       onUpdate: this.props.onUpdate,
     })
   }
