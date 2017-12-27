@@ -1,6 +1,5 @@
 // @flow
 import {AsyncStorage} from 'react-native'
-import type {BuildingType} from '../views/building-hours/types'
 
 export function clearAsyncStorage() {
   return AsyncStorage.clear()
@@ -79,9 +78,9 @@ export function getCredentialsValid(): Promise<boolean> {
 /// MARK: Favorite Buildings
 
 const favoriteBuildingsKey = 'buildings:favorited'
-export function setFavoriteBuildings(buildings: Array<BuildingType>) {
+export function setFavoriteBuildings(buildings: string[]) {
   return setItem(favoriteBuildingsKey, buildings)
 }
-export function getFavoriteBuildings() {
+export function getFavoriteBuildings(): Promise<Array<string>> {
   return getItemAsArray(favoriteBuildingsKey)
 }

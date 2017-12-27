@@ -1,23 +1,31 @@
 // @flow
 
 import * as storage from '../../lib/storage'
-import type {BuildingType} from '../../views/building-hours/types'
 
 const SAVE_FAVORITE_BUILDINGS = 'buildings/SAVE_FAVORITE_BUILDINGS'
 
 export async function loadFavoriteBuildings() {
   let favoriteBuildings = await storage.getFavoriteBuildings()
-  return saveFavoriteBuildings(favoriteBuildings)
+  return {type: SAVE_FAVORITE_BUILDINGS, payload: favoriteBuildings}
 }
 
 type SaveFavoriteBuildingsAction = {
   type: 'buildings/SAVE_FAVORITE_BUILDINGS',
-  payload: Array<BuildingType>,
+  payload: Array<string>,
 }
 
 export function saveFavoriteBuildings(
-  favoriteBuildings: Array<BuildingType>,
+  favoriteBuildings: Array<string>,
+  newBuilding: string,
+  navigation: Object,
 ): SaveFavoriteBuildingsAction {
+  if (!favoriteBuildings.includes(newBuilding)) {
+    favoriteBuildings.push(newBuilding)
+  } else {
+    const index = favoriteBuildings.indexOf(newBuilding)
+    favoriteBuildings.splice(index, 1)
+  }
+  navigation.setParams({favoriteBuildings: favoriteBuildings})
   storage.setFavoriteBuildings(favoriteBuildings)
   return {type: SAVE_FAVORITE_BUILDINGS, payload: favoriteBuildings}
 }
@@ -25,7 +33,7 @@ export function saveFavoriteBuildings(
 type Action = SaveFavoriteBuildingsAction
 
 export type State = {|
-  favoriteBuildings: Array<BuildingType>,
+  favoriteBuildings: Array<string>,
 |}
 
 const initialState: State = {

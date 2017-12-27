@@ -25,8 +25,7 @@ type Props = TopLevelViewPropsType & {
   loading: boolean,
   onRefresh: () => any,
   buildings: Array<{title: string, data: BuildingType[]}>,
-  onUpdate: () => any,
-  favoriteBuildings: Array<BuildingType>,
+  favoriteBuildings: Array<string>,
 }
 
 export class BuildingHoursList extends React.PureComponent<Props> {
@@ -35,7 +34,6 @@ export class BuildingHoursList extends React.PureComponent<Props> {
     this.props.navigation.navigate('BuildingHoursDetailView', {
       building: data,
       favoriteBuildings: this.props.favoriteBuildings,
-      onUpdate: this.props.onUpdate,
     })
   }
 

@@ -9,7 +9,6 @@ import * as React from 'react'
 import {NoticeView} from '../components/notice'
 import {BuildingHoursList} from './list'
 import {type ReduxState} from '../../flux'
-import {saveFavoriteBuildings} from '../../flux/parts/buildings'
 import {connect} from 'react-redux'
 import moment from 'moment-timezone'
 import type {TopLevelViewPropsType} from '../types'
@@ -24,36 +23,34 @@ import {CENTRAL_TZ} from './lib'
 const githubBaseUrl =
   'https://stodevx.github.io/AAO-React-Native/building-hours.json'
 
-const groupBuildings = (buildings: BuildingType[]) => {
-  const grouped = groupBy(buildings, b => b.category || 'Other')
-  return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
-}
-
-const loadAllBuildings = (
+const groupBuildings = (
   buildings: BuildingType[],
-  favoriteBuildings: BuildingType[],
+  favoriteBuildings: string[],
 ) => {
-  let allBuildings = Array()
-  allBuildings.push({
-    title: 'Favorites',
-    data: favoriteBuildings,
-  })
-  let restOfGroups = groupBuildings(buildings)
-  for (let i = 0; i < restOfGroups.length; i++) {
-    allBuildings.push(restOfGroups[i])
+  let favoriteBuildingsGroup = {title: 'Favorites', data: Array()}
+  for (let i = 0; i < buildings.length; i++) {
+    if (favoriteBuildings.includes(buildings[i].name)) {
+      favoriteBuildingsGroup.data.push(buildings[i])
+    }
   }
-  return allBuildings
+  const grouped = groupBy(buildings, b => b.category || 'Other')
+  const groupedBuildings = toPairs(grouped).map(([key, value]) => ({
+    title: key,
+    data: value,
+  }))
+  let allGroups = Array()
+  allGroups.push(favoriteBuildingsGroup)
+  for (let i = 0; i < groupedBuildings.length; i++) {
+    allGroups.push(groupedBuildings[i])
+  }
+  return allGroups
 }
 
 type ReduxStateProps = {
-  favoriteBuildings: Array<BuildingType>,
+  favoriteBuildings: Array<string>,
 }
 
-type ReduxDispatchProps = {
-  onSaveFavorites: (BuildingType[]) => any,
-}
-
-type Props = TopLevelViewPropsType & ReduxStateProps & ReduxDispatchProps
+type Props = TopLevelViewPropsType & ReduxStateProps
 
 type State = {
   error: ?Error,
@@ -74,15 +71,16 @@ export class BuildingHoursView extends React.Component<Props, State> {
     loading: false,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
-    buildings: loadAllBuildings(defaultData.data, this.props.favoriteBuildings),
+    buildings: groupBuildings(defaultData.data, this.props.favoriteBuildings),
     intervalId: 0,
   }
 
   componentWillMount() {
     this.fetchData()
-    // This updates the screen every ten seconds, so that the building
+
+    // This updates the screen every second, so that the building
     // info statuses are updated without needing to leave and come back.
-    this.setState({intervalId: setInterval(this.updateTime, 10000)})
+    this.setState({intervalId: setInterval(this.updateTime, 1000)})
   }
 
   componentWillUnmount() {
@@ -117,20 +115,17 @@ export class BuildingHoursView extends React.Component<Props, State> {
       buildings = defaultData.data
     }
     this.setState(() => ({
-      buildings: loadAllBuildings(buildings, this.props.favoriteBuildings),
+      buildings: groupBuildings(buildings, this.props.favoriteBuildings),
       now: moment.tz(CENTRAL_TZ),
     }))
   }
 
-  onUpdate = () => {
-    this.fetchData()
-    this.props.onSaveFavorites(this.props.favoriteBuildings)
-  }
-
   render() {
+    this.fetchData()
     if (this.state.error) {
       return <NoticeView text={`Error: ${this.state.error.message}`} />
     }
+
     return (
       <BuildingHoursList
         buildings={this.state.buildings}
@@ -139,29 +134,19 @@ export class BuildingHoursView extends React.Component<Props, State> {
         navigation={this.props.navigation}
         now={this.state.now}
         onRefresh={this.refresh}
-        onUpdate={this.onUpdate}
       />
     )
   }
 }
 
-function mapStateToProps(state: ReduxState) : ReduxStateProps {
-  if (!state.buildings) {
-    return {favoriteBuildings: []}
-  }
-
+function mapStateToProps(state: ReduxState): ReduxStateProps {
   return {
-    favoriteBuildings: state.buildings.favoriteBuildings,
+    favoriteBuildings: state.buildings.favoriteBuildings
+      ? state.buildings.favoriteBuildings
+      : [],
   }
 }
 
-function mapDispatch(dispatch): ReduxDispatchProps {
-  return {
-    onSaveFavorites: newFavorites =>
-      dispatch(saveFavoriteBuildings(newFavorites)),
-  }
-}
-
-export const ConnectedBuildingHoursView = connect(mapStateToProps, mapDispatch)(
+export const ConnectedBuildingHoursView = connect(mapStateToProps)(
   BuildingHoursView,
 )
