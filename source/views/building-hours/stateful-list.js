@@ -39,7 +39,9 @@ const groupBuildings = (
     data: value,
   }))
   let allGroups = Array()
-  allGroups.push(favoriteBuildingsGroup)
+  if (favoriteBuildings.length > 0) {
+    allGroups.push(favoriteBuildingsGroup)
+  }
   for (let i = 0; i < groupedBuildings.length; i++) {
     allGroups.push(groupedBuildings[i])
   }
