@@ -18,7 +18,6 @@ extends:
 
 env:
   es6: true
-  node: true
   browser: true
   react-native/react-native: true
 
