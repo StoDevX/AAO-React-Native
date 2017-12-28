@@ -9,13 +9,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import {ConnectedBuildingFavoriteButton as FavoriteButton} from './toolbar-button'
 
 type Props = TopLevelViewPropsType & {
-  navigation: {
-    state: {
-      params: {
-        building: BuildingType,
-      },
-    },
-  },
+  navigation: {state: {params: {building: BuildingType}}},
 }
 
 type State = {intervalId: number, now: moment}
