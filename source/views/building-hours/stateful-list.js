@@ -143,9 +143,7 @@ export class BuildingHoursView extends React.Component<Props, State> {
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
   return {
-    favoriteBuildings: state.buildings.favoriteBuildings
-      ? state.buildings.favoriteBuildings
-      : [],
+    favoriteBuildings: state.buildings ? state.buildings.favoriteBuildings : [],
   }
 }
 
