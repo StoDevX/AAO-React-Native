@@ -120,7 +120,6 @@ export class BuildingHoursView extends React.Component<Props, State> {
   }
 
   render() {
-    this.fetchData()
     if (this.state.error) {
       return <NoticeView text={`Error: ${this.state.error.message}`} />
     }
