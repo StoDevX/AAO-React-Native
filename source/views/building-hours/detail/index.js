@@ -6,28 +6,13 @@ import moment from 'moment-timezone'
 import {BuildingDetail} from './building'
 import {CENTRAL_TZ} from '../lib'
 import type {TopLevelViewPropsType} from '../../types'
-import {FavoriteButton} from '../../components/nav-buttons'
-import {connect} from 'react-redux'
-import {type ReduxState} from '../../../flux'
-import {saveFavoriteBuildings} from '../../../flux/parts/buildings'
+import {ConnectedBuildingFavoriteButton as FavoriteButton} from './toolbar-button'
 
-type ReduxStateProps = {
-  favoriteBuildings: Array<string>,
-}
-
-type ReduxDispatchProps = {
-  onSaveFavorites: (string[], string) => any,
-}
-
-type Props = TopLevelViewPropsType &
-  ReduxStateProps &
-  ReduxDispatchProps & {
+type Props = TopLevelViewPropsType & {
     navigation: {
       state: {
         params: {
           building: BuildingType,
-          favoriteBuildings: string[],
-          onSaveFavorites: (string[], string) => any,
         },
       },
     },
@@ -38,22 +23,9 @@ type State = {intervalId: number, now: moment}
 export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
   static navigationOptions = ({navigation}) => {
     const building = navigation.state.params.building
-    let favoriteBuildings = navigation.state.params.favoriteBuildings
     return {
       title: building.name,
-      headerRight: (
-        <FavoriteButton
-          favorited={favoriteBuildings.includes(building.name)}
-          navigation={navigation}
-          onFavorite={() => {
-            navigation.state.params.onSaveFavorites(
-              favoriteBuildings,
-              building.name,
-              navigation,
-            )
-          }}
-        />
-      ),
+      headerRight: <FavoriteButton buildingName={building.name} />,
     }
   }
 
@@ -67,9 +39,6 @@ export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
     // This updates the screen every second, so that the building
     // info statuses are updated without needing to leave and come back.
     this.setState({intervalId: setInterval(this.updateTime, 1000)})
-    this.props.navigation.setParams({
-      onSaveFavorites: this.props.onSaveFavorites,
-    })
   }
 
   componentWillUnmount() {
@@ -99,25 +68,3 @@ export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
     )
   }
 }
-
-function mapStateToProps(state: ReduxState): ReduxStateProps {
-  return {
-    favoriteBuildings: state.buildings.favoriteBuildings
-      ? state.buildings.favoriteBuildings
-      : [],
-  }
-}
-
-function mapDispatch(dispatch): ReduxDispatchProps {
-  return {
-    onSaveFavorites: (favoriteBuildings, newBuilding, navigation) =>
-      dispatch(
-        saveFavoriteBuildings(favoriteBuildings, newBuilding, navigation),
-      ),
-  }
-}
-
-export const ConnectedBuildingHoursDetailView = connect(
-  mapStateToProps,
-  mapDispatch,
-)(BuildingHoursDetailView)

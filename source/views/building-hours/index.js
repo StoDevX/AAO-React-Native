@@ -2,7 +2,7 @@
 
 export {ConnectedBuildingHoursView as BuildingHoursView} from './stateful-list'
 export {
-  ConnectedBuildingHoursDetailView as BuildingHoursDetailView,
+  BuildingHoursDetailView,
 } from './detail'
 export {
   BuildingHoursProblemReportView,
