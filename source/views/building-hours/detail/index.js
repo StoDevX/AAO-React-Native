@@ -1,9 +1,4 @@
-/**
- * @flow
- *
- * <BuildingDetail/> manages the time that's passed on to the rest of the
- * building.
- */
+// @flow
 
 import * as React from 'react'
 import type {BuildingType} from '../types'
