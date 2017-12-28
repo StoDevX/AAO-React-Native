@@ -76,17 +76,17 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
     this.setState({intervalId: setInterval(this.updateTime, 1000)})
   }
 
-  componentWillUnmount() {
-    clearTimeout(this.state.intervalId)
-  }
-
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     this.setState(state => ({
       buildings: groupBuildings(
         state.allBuildings,
         nextProps.favoriteBuildings,
       ),
     }))
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.state.intervalId)
   }
 
   updateTime = () => {
