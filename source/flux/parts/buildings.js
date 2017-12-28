@@ -1,36 +1,52 @@
 // @flow
 
 import * as storage from '../../lib/storage'
+import {type ReduxState} from '../index'
 
-const SAVE_FAVORITE_BUILDINGS = 'buildings/SAVE_FAVORITE_BUILDINGS'
+type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
+type GetState = () => ReduxState
+type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
+type Action = ToggleFavoriteAction | LoadFavoritesAction
 
-export async function loadFavoriteBuildings() {
-  let favoriteBuildings = await storage.getFavoriteBuildings()
-  return {type: SAVE_FAVORITE_BUILDINGS, payload: favoriteBuildings}
-}
+const LOAD_FAVORITE_BUILDINGS = 'buildings/LOAD_FAVORITE_BUILDINGS'
+const TOGGLE_FAVORITE_BUILDING = 'buildings/TOGGLE_FAVORITE_BUILDING'
 
-type SaveFavoriteBuildingsAction = {
-  type: 'buildings/SAVE_FAVORITE_BUILDINGS',
+type LoadFavoritesAction = {
+  type: 'buildings/LOAD_FAVORITE_BUILDINGS',
   payload: Array<string>,
 }
-
-export function saveFavoriteBuildings(
-  favoriteBuildings: Array<string>,
-  newBuilding: string,
-  navigation: Object,
-): SaveFavoriteBuildingsAction {
-  if (!favoriteBuildings.includes(newBuilding)) {
-    favoriteBuildings.push(newBuilding)
-  } else {
-    const index = favoriteBuildings.indexOf(newBuilding)
-    favoriteBuildings.splice(index, 1)
-  }
-  navigation.setParams({favoriteBuildings: favoriteBuildings})
-  storage.setFavoriteBuildings(favoriteBuildings)
-  return {type: SAVE_FAVORITE_BUILDINGS, payload: favoriteBuildings}
+export async function loadFavoriteBuildings(): Promise<LoadFavoritesAction> {
+  const favoriteBuildings = await storage.getFavoriteBuildings()
+  return {type: LOAD_FAVORITE_BUILDINGS, payload: favoriteBuildings}
 }
 
-type Action = SaveFavoriteBuildingsAction
+type ToggleFavoriteAction = {
+  type: 'buildings/TOGGLE_FAVORITE_BUILDING',
+  payload: Array<string>,
+}
+export function toggleFavoriteBuilding(
+  buildingName: string,
+): ThunkAction<ToggleFavoriteAction> {
+  return (dispatch, getState) => {
+    const state = getState()
+
+    const currentFavorites = state.buildings
+      ? state.buildings.favoriteBuildings
+      : []
+
+    const newFavorites = currentFavorites.includes(buildingName)
+      ? currentFavorites.filter(name => name !== buildingName)
+      : [...currentFavorites, buildingName]
+
+    // Sort the building names (localeCompare handles non-ASCII chars better)
+    newFavorites.sort((a, b) => a.localeCompare(b))
+
+    // TODO: remove saving logic from reducers
+    storage.setFavoriteBuildings(newFavorites)
+
+    return {type: TOGGLE_FAVORITE_BUILDING, payload: newFavorites}
+  }
+}
 
 export type State = {|
   favoriteBuildings: Array<string>,
@@ -42,7 +58,8 @@ const initialState: State = {
 
 export function buildings(state: State = initialState, action: Action) {
   switch (action.type) {
-    case SAVE_FAVORITE_BUILDINGS: {
+    case LOAD_FAVORITE_BUILDINGS:
+    case TOGGLE_FAVORITE_BUILDING: {
       return {...state, favoriteBuildings: action.payload}
     }
     default: {
