@@ -31,7 +31,7 @@ export function toggleFavoriteBuilding(
     const state = getState()
 
     const currentFavorites = state.buildings
-      ? state.buildings.favoriteBuildings
+      ? state.buildings.favorites
       : []
 
     const newFavorites = currentFavorites.includes(buildingName)
@@ -49,18 +49,18 @@ export function toggleFavoriteBuilding(
 }
 
 export type State = {|
-  favoriteBuildings: Array<string>,
+  favorites: Array<string>,
 |}
 
 const initialState: State = {
-  favoriteBuildings: [],
+  favorites: [],
 }
 
 export function buildings(state: State = initialState, action: Action) {
   switch (action.type) {
     case LOAD_FAVORITE_BUILDINGS:
     case TOGGLE_FAVORITE_BUILDING: {
-      return {...state, favoriteBuildings: action.payload}
+      return {...state, favorites: action.payload}
     }
     default: {
       return state

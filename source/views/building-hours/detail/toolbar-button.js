@@ -15,7 +15,7 @@ type ReduxDispatchProps = {
 }
 
 type ReduxStateProps = {
-  favoriteBuildings: Array<string>,
+  favorites: Array<string>,
 }
 
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
@@ -26,7 +26,7 @@ export class BuildingFavoriteButton extends React.Component<Props> {
   }
 
   render() {
-    const favorited = this.props.favoriteBuildings.includes(
+    const favorited = this.props.favorites.includes(
       this.props.buildingName,
     )
     return <FavoriteButton favorited={favorited} onFavorite={this.onFavorite} />
@@ -35,7 +35,7 @@ export class BuildingFavoriteButton extends React.Component<Props> {
 
 function mapState(state: ReduxState): ReduxStateProps {
   return {
-    favoriteBuildings: state.buildings ? state.buildings.favoriteBuildings : [],
+    favorites: state.buildings ? state.buildings.favorites : [],
   }
 }
 

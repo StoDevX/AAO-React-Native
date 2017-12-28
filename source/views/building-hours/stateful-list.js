@@ -25,11 +25,11 @@ const githubBaseUrl =
 
 const groupBuildings = (
   buildings: BuildingType[],
-  favoriteBuildings: string[],
+  favorites: string[],
 ) => {
   const favoritesGroup = {
     title: 'Favorites',
-    data: buildings.filter(b => favoriteBuildings.includes(b.name)),
+    data: buildings.filter(b => favorites.includes(b.name)),
   }
 
   const grouped = groupBy(buildings, b => b.category || 'Other')
@@ -139,7 +139,7 @@ export class BuildingHoursView extends React.Component<Props, State> {
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
   return {
-    favoriteBuildings: state.buildings ? state.buildings.favoriteBuildings : [],
+    favoriteBuildings: state.buildings ? state.buildings.favorites : [],
   }
 }
 
