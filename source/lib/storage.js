@@ -74,3 +74,13 @@ export function setCredentialsValid(valid: boolean) {
 export function getCredentialsValid(): Promise<boolean> {
   return getItemAsBoolean(credentialsValidKey)
 }
+
+/// MARK: Favorite Buildings
+
+const favoriteBuildingsKey = 'buildings:favorited'
+export function setFavoriteBuildings(buildings: string[]) {
+  return setItem(favoriteBuildingsKey, buildings)
+}
+export function getFavoriteBuildings(): Promise<Array<string>> {
+  return getItemAsArray(favoriteBuildingsKey)
+}
