@@ -16,7 +16,7 @@ export class FavoriteButton extends React.PureComponent<Props> {
     // (ios|md)-heart(-outline)
     const iconPlatform = Platform.OS === 'ios' ? 'ios' : 'md'
     const icon =
-      `${iconPlatform}-heart` + (this.props.favorited ? '-outline' : '')
+      `${iconPlatform}-heart` + (this.props.favorited ? '' : '-outline')
 
     return (
       <Touchable
