@@ -1,9 +1,4 @@
-/**
- * @flow
- *
- * Building Hours view. This component loads data from either GitHub or
- * the local copy as a fallback, and renders the list of buildings.
- */
+// @flow
 
 import * as React from 'react'
 import {NoticeView} from '../components/notice'
