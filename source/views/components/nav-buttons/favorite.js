@@ -13,23 +13,18 @@ type Props = {
 
 export class FavoriteButton extends React.PureComponent<Props> {
   render() {
+    // (ios|md)-heart(-outline)
+    const iconPlatform = Platform.OS === 'ios' ? 'ios' : 'md'
+    const icon =
+      `${iconPlatform}-heart` + (this.props.favorited ? '-outline' : '')
+
     return (
       <Touchable
         highlight={false}
         onPress={this.props.onFavorite}
         style={styles.button}
       >
-        {Platform.OS === 'ios' ? (
-          <Icon
-            name={this.props.favorited ? 'ios-heart' : 'ios-heart-outline'}
-            style={styles.icon}
-          />
-        ) : (
-          <Icon
-            name={this.props.favorited ? 'md-heart' : 'md-heart-outline'}
-            style={styles.icon}
-          />
-        )}
+        <Icon name={icon} style={styles.icon} />
       </Touchable>
     )
   }
