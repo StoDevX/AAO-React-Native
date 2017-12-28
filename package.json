@@ -9,7 +9,7 @@
     "bundle-data": "node scripts/bundle-data.js data/ docs/",
     "bundle:android": "react-native bundle --entry-file index.js --dev true --platform android --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/",
     "bundle:ios": "react-native bundle --entry-file index.js --dev true --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios",
-    "check": "npm run prettier && npm run flow && npm run validate-data -- --quiet && npm run test",
+    "check": "npm run prettier && npm run lint && npm run flow && npm run validate-data -- --quiet && npm run test",
     "danger": "danger",
     "data": "node scripts/bundle-data.js data/ docs/",
     "flow": "flow",
