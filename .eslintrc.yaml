@@ -18,6 +18,8 @@ extends:
 
 env:
   es6: true
+  # NOTE: `browser: true` is required for use of Headers in
+  # `source/globalize-fetch.js`; remove?
   browser: true
   react-native/react-native: true
 
