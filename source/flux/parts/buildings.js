@@ -42,7 +42,7 @@ export function toggleFavoriteBuilding(
     // TODO: remove saving logic from reducers
     storage.setFavoriteBuildings(newFavorites)
 
-    return {type: TOGGLE_FAVORITE_BUILDING, payload: newFavorites}
+    dispatch({type: TOGGLE_FAVORITE_BUILDING, payload: newFavorites})
   }
 }
 
