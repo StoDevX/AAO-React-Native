@@ -16,9 +16,7 @@ export class FavoriteButton extends React.PureComponent<Props> {
     return (
       <Touchable
         highlight={false}
-        onPress={() => {
-          this.props.onFavorite()
-        }}
+        onPress={this.props.onFavorite}
         style={styles.button}
       >
         {Platform.OS === 'ios' ? (
