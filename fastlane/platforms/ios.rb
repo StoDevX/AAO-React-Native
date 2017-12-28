@@ -22,6 +22,18 @@ platform :ios do
              number_of_retries: 0)
   end
 
+  desc 'Checks that the app can be built'
+  lane :check_build do
+    propagate_version
+    xcodebuild(
+      build: true,
+      scheme: ENV['GYM_SCHEME'],
+      project: ENV['GYM_PROJECT'],
+      destination: 'generic/platform=iOS',
+      xcargs: 'CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""'
+    )
+  end
+
   desc 'Builds and exports the app'
   lane :build do
     match(type: 'appstore', readonly: true)
