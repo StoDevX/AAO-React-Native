@@ -47,7 +47,7 @@ type State = {
   error: ?Error,
   loading: boolean,
   now: moment,
-  buildings: Array<{title: string, data: BuildingType[]}>,
+  buildings: Array<BuildingType>,
   intervalId: number,
 }
 
@@ -62,7 +62,7 @@ export class BuildingHoursView extends React.Component<Props, State> {
     loading: false,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
-    buildings: groupBuildings(defaultData.data, this.props.favoriteBuildings),
+    buildings: defaultData.data,
     intervalId: 0,
   }
 
@@ -106,7 +106,7 @@ export class BuildingHoursView extends React.Component<Props, State> {
       buildings = defaultData.data
     }
     this.setState(() => ({
-      buildings: groupBuildings(buildings, this.props.favoriteBuildings),
+      buildings: buildings,
       now: moment.tz(CENTRAL_TZ),
     }))
   }
@@ -116,9 +116,14 @@ export class BuildingHoursView extends React.Component<Props, State> {
       return <NoticeView text={`Error: ${this.state.error.message}`} />
     }
 
+    const grouped = groupBuildings(
+      this.state.buildings,
+      this.props.favoriteBuildings,
+    )
+
     return (
       <BuildingHoursList
-        buildings={this.state.buildings}
+        buildings={grouped}
         loading={this.state.loading}
         navigation={this.props.navigation}
         now={this.state.now}
