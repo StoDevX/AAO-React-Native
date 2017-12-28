@@ -119,7 +119,6 @@ export class BuildingHoursView extends React.Component<Props, State> {
     return (
       <BuildingHoursList
         buildings={this.state.buildings}
-        favoriteBuildings={this.props.favoriteBuildings}
         loading={this.state.loading}
         navigation={this.props.navigation}
         now={this.state.now}
