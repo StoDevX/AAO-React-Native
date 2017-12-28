@@ -27,25 +27,22 @@ const groupBuildings = (
   buildings: BuildingType[],
   favoriteBuildings: string[],
 ) => {
-  let favoriteBuildingsGroup = {title: 'Favorites', data: Array()}
-  for (let i = 0; i < buildings.length; i++) {
-    if (favoriteBuildings.includes(buildings[i].name)) {
-      favoriteBuildingsGroup.data.push(buildings[i])
-    }
+  const favoritesGroup = {
+    title: 'Favorites',
+    data: buildings.filter(b => favoriteBuildings.includes(b.name)),
   }
+
   const grouped = groupBy(buildings, b => b.category || 'Other')
-  const groupedBuildings = toPairs(grouped).map(([key, value]) => ({
+  let groupedBuildings = toPairs(grouped).map(([key, value]) => ({
     title: key,
     data: value,
   }))
-  let allGroups = Array()
-  if (favoriteBuildings.length > 0) {
-    allGroups.push(favoriteBuildingsGroup)
+
+  if (favoritesGroup.data.length > 0) {
+    groupedBuildings = [favoritesGroup, ...groupedBuildings]
   }
-  for (let i = 0; i < groupedBuildings.length; i++) {
-    allGroups.push(groupedBuildings[i])
-  }
-  return allGroups
+
+  return groupedBuildings
 }
 
 type ReduxStateProps = {
