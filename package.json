@@ -1,6 +1,6 @@
 {
   "name": "AllAboutOlaf",
-  "version": "2.4.3-pre",
+  "version": "2.5.0-pre",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
