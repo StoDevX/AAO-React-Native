@@ -22,7 +22,7 @@ platform :ios do
              number_of_retries: 0)
   end
 
-  desc 'Builds the app'
+  desc 'Builds and exports the app'
   lane :build do
     match(type: 'appstore', readonly: true)
     propagate_version

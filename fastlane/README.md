@@ -66,7 +66,7 @@ Take screenshots
 ```
 fastlane ios build
 ```
-Builds the app
+Builds and exports the app
 ### ios beta
 ```
 fastlane ios beta
