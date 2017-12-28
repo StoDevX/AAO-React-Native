@@ -82,7 +82,10 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 
   componentWillReceiveProps(nextProps) {
     this.setState(state => ({
-      buildings: groupBuildings(state.allBuildings, nextProps.favoriteBuildings),
+      buildings: groupBuildings(
+        state.allBuildings,
+        nextProps.favoriteBuildings,
+      ),
     }))
   }
 
