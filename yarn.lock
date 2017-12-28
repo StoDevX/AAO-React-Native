@@ -1508,9 +1508,9 @@ currently-unhandled@^0.4.1:
   dependencies:
     array-find-index "^1.0.1"
 
-danger@2.1.7:
-  version "2.1.7"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-2.1.7.tgz#e896393ea3a5845ac4fde5a110af285ddbf23d0c"
+danger@2.1.8:
+  version "2.1.8"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-2.1.8.tgz#11cb654831be528e068257846df2141f5b049b79"
   dependencies:
     babel-polyfill "7.0.0-alpha.19"
     chalk "^2.3.0"
