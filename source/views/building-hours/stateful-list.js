@@ -23,10 +23,7 @@ import {CENTRAL_TZ} from './lib'
 const githubBaseUrl =
   'https://stodevx.github.io/AAO-React-Native/building-hours.json'
 
-const groupBuildings = (
-  buildings: BuildingType[],
-  favorites: string[],
-) => {
+const groupBuildings = (buildings: BuildingType[], favorites: string[]) => {
   const favoritesGroup = {
     title: 'Favorites',
     data: buildings.filter(b => favorites.includes(b.name)),

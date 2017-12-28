@@ -30,9 +30,7 @@ export function toggleFavoriteBuilding(
   return (dispatch, getState) => {
     const state = getState()
 
-    const currentFavorites = state.buildings
-      ? state.buildings.favorites
-      : []
+    const currentFavorites = state.buildings ? state.buildings.favorites : []
 
     const newFavorites = currentFavorites.includes(buildingName)
       ? currentFavorites.filter(name => name !== buildingName)
