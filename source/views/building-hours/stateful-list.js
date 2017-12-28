@@ -47,11 +47,12 @@ type State = {
   error: ?Error,
   loading: boolean,
   now: moment,
-  buildings: Array<BuildingType>,
+  buildings: Array<{title: string, data: Array<BuildingType>}>,
+  allBuildings: Array<BuildingType>,
   intervalId: number,
 }
 
-export class BuildingHoursView extends React.Component<Props, State> {
+export class BuildingHoursView extends React.PureComponent<Props, State> {
   static navigationOptions = {
     title: 'Building Hours',
     headerBackTitle: 'Hours',
@@ -62,7 +63,8 @@ export class BuildingHoursView extends React.Component<Props, State> {
     loading: false,
     // now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
     now: moment.tz(CENTRAL_TZ),
-    buildings: defaultData.data,
+    buildings: groupBuildings(defaultData.data, this.props.favoriteBuildings),
+    allBuildings: defaultData.data,
     intervalId: 0,
   }
 
@@ -76,6 +78,12 @@ export class BuildingHoursView extends React.Component<Props, State> {
 
   componentWillUnmount() {
     clearTimeout(this.state.intervalId)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState(state => ({
+      buildings: groupBuildings(state.allBuildings, nextProps.favoriteBuildings),
+    }))
   }
 
   updateTime = () => {
@@ -106,7 +114,8 @@ export class BuildingHoursView extends React.Component<Props, State> {
       buildings = defaultData.data
     }
     this.setState(() => ({
-      buildings: buildings,
+      buildings: groupBuildings(buildings, this.props.favoriteBuildings),
+      allBuildings: buildings,
       now: moment.tz(CENTRAL_TZ),
     }))
   }
@@ -116,14 +125,9 @@ export class BuildingHoursView extends React.Component<Props, State> {
       return <NoticeView text={`Error: ${this.state.error.message}`} />
     }
 
-    const grouped = groupBuildings(
-      this.state.buildings,
-      this.props.favoriteBuildings,
-    )
-
     return (
       <BuildingHoursList
-        buildings={grouped}
+        buildings={this.state.buildings}
         loading={this.state.loading}
         navigation={this.props.navigation}
         now={this.state.now}
