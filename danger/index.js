@@ -1,27 +1,27 @@
-switch (process.env.task) {
-  case 'ANDROID':
+switch (process.env.task ? process.env.task.toLowercase() : null) {
+  case 'android':
     require('./tasks/android.js')
     break
-  case 'IOS':
+  case 'ios':
     require('./tasks/ios.js')
     break
-  case 'GREENKEEPER':
+  case 'greenkeeper':
     require('./tasks/general.js')
     require('./tasks/greenkeeper.js')
     break
-  case 'JS-data':
+  case 'js:data':
     require('./tasks/js-data.js')
     break
-  case 'JS-flow':
+  case 'js:flow':
     require('./tasks/js-flow.js')
     break
-  case 'JS-jest':
+  case 'js:jest':
     require('./tasks/js-jest.js')
     break
-  case 'JS-lint':
+  case 'js:lint':
     require('./tasks/js-lint.js')
     break
-  case 'JS-prettier':
+  case 'js:prettier':
     require('./tasks/js-prettier.js')
     break
   default:
