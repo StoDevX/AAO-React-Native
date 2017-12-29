@@ -17,6 +17,7 @@ import {type ReduxState} from '../index'
 import {type UpdateBalancesType} from './sis'
 import {updateBalances} from './sis'
 import {Alert} from 'react-native'
+import {updateOnlineStatus} from './app'
 
 export type LoginStateType = 'logged-out' | 'logged-in' | 'checking' | 'invalid'
 
@@ -103,10 +104,6 @@ export function logInViaCredentials(
     dispatch({type: CREDENTIALS_LOGIN_START})
     const state = getState()
     const isConnected = state.app ? state.app.isConnected : false
-    if (!isConnected) {
-      dispatch({type: CREDENTIALS_LOGIN_FAILURE})
-      showNetworkFailureMessage()
-    }
     const result = await performLogin(username, password)
     if (result) {
       dispatch({type: CREDENTIALS_LOGIN_SUCCESS, payload: {username, password}})
@@ -114,7 +111,11 @@ export function logInViaCredentials(
       dispatch(updateBalances())
     } else {
       dispatch({type: CREDENTIALS_LOGIN_FAILURE})
-      showInvalidLoginMessage()
+      if (isConnected) {
+        showInvalidLoginMessage()
+      } else {
+        showNetworkFailureMessage()
+      }
     }
   }
 }
