@@ -1,0 +1,14 @@
+parser: babel-eslint
+parserOptions:
+  sourceType: module
+
+extends:
+  - eslint:recommended
+
+env:
+  es6: true
+
+globals:
+  danger: true
+  warn: true
+  message: true

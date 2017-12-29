@@ -36,76 +36,141 @@ stages:
   - name: Build + Deploy App
 
 
+
+#
+# Definitions of dictionaries that are used by the machines below
+#
+
+x-definitions:
+  - &base
+    before_install:
+      # print some travis debugging info
+      - echo "Now testing on $TRAVIS_OS_NAME"
+      - echo "Travis branch is $TRAVIS_BRANCH"
+      - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
+      - echo "Build triggered by $TRAVIS_EVENT_TYPE"
+
+      # force the ruby we want
+      - echo "Using ruby $TRAVIS_RUBY_VERSION (ruby -v says $(ruby -v))"
+      - rvm use $TRAVIS_RUBY_VERSION --install --binary --create
+      - echo "ruby -v is now $(ruby -v)"
+      - gem install bundler
+
+      # force a consistent node version
+      - echo "Using node $TRAVIS_NODE_VERSION (node -v says $(node -v))"
+      - nvm install "$TRAVIS_NODE_VERSION"
+      - nvm use "$TRAVIS_NODE_VERSION"
+      - echo "node -v is now $(node -v)"
+
+      # travis doesn't install yarn automatically on osx
+      - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install yarn --without-node; fi
+
+    install:
+      # install packages (if the first fails, try once more)
+      - yarn || yarn
+
+      # install fastlane (if at first you don't succeed, try once more)
+      - bundle install || bundle install
+
+    before_script:
+      # ensure the env file exists and fill it out
+      - touch .env.js
+      - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
+      - echo "export const GOOGLE_MAPS_API_KEY = '$GMAPS_KEY'" >> .env.js
+
+      # disable npm wrapper for npm scripts
+      - echo "loglevel=silent" >> .npmrc
+
+    after_script:
+      - npm run danger -- --id $task
+
+    before_cache:
+      - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+      - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+      - rm -rf $TMPDIR/jest_preprocess_cache
+
+  - &js
+    <<: *base
+    os: linux
+    sudo: false
+    distro: trusty
+    language: node_js
+    node_js: $TRAVIS_NODE_VERSION
+    install: yarn || yarn
+    before_script:
+      - echo "loglevel=silent" >> .npmrc
+      - mkdir -p logs/
+      - set -o pipefail
+    env: [task=JS-unknown]
+
+  - &simplejs
+    os: linux
+    sudo: false
+    distro: trusty
+    language: node_js
+    node_js: $TRAVIS_NODE_VERSION
+
+
 jobs:
   # We define default before_install, install, and before_script steps.
   # To skip the default step, use `step_name: skip`.
   include:
     # Run greenkeeper stuff
-    - stage: Greenkeeper
-      os: linux
-      sudo: false
-      language: node_js
-      node_js: node # install the latest node
-      env: [GREENKEEPER=yes]
-      before_install: skip
+    - <<: *simplejs
+      stage: Greenkeeper
+      env: [task=GREENKEEPER]
       install: npm install -g greenkeeper-lockfile@1
-      before_script: skip
+      before_script: mkdir -p logs/
       script: greenkeeper-lockfile-update
-      after_script: greenkeeper-lockfile-upload
+      after_script:
+        - greenkeeper-lockfile-upload
+        - npm run danger -- --id $task
 
     # Do node "tests"
-    - stage: Test
-      os: linux
-      sudo: false
-      distro: trusty
-      language: node_js
-      node_js: $TRAVIS_NODE_VERSION
-      env: [JS=yes]
-      before_install:
-        - npm install -g coveralls
-      install:
-        - yarn || yarn
-      before_script:
-        - npm run report 'js:<everything>' 'pending' 'Running the JS build... stand by please.'
-        - echo "loglevel=silent" >> .npmrc
-        - mkdir -p logs/
+    - <<: *js
+      stage: Test
+      env: [task=JS-flow]
       script:
-        # Ensure failing status in the pipes
-        - set -o pipefail
+        - npm run bundle-data
+        - npm run flow -- check --quiet | tee logs/flow
+
+    - <<: *js
+      stage: Test
+      env: [task=JS-prettier]
+      script:
         # Ensure prettiness
         - npm run prettier
         - if ! git diff --quiet ./*.js source/; then
             git diff ./*.js source/ > logs/prettier;
           fi
-        # Lint
+
+    - <<: *js
+      stage: Test
+      env: [task=JS-lint]
+      script:
         - npm run lint | tee logs/eslint
-        # Validate data
+
+    - <<: *js
+      stage: Test
+      env: [task=JS-data]
+      script:
         - npm run validate-data -- --quiet | tee logs/validate-data
         - npm run validate-bus-data | tee logs/validate-bus-data
+
+    - <<: *js
+      stage: Test
+      env: [task=JS-jest]
+      before_install: npm install -g coveralls
+      script:
         - npm run bundle-data
-        # Type check and run tests
-        - npm run flow -- check --quiet | tee logs/flow
         - npm run test -- --coverage 2>&1 | tee logs/jest
-      after_script:
-        - npm run danger
-      after_success:
-        - coveralls < ./coverage/lcov.info
-        - npm run report 'js:<everything>' 'success' "All's good under the hood, boss!"
-      after_failure:
-        - npm run report 'js:<everything>' 'failure' 'Something broke. Fix it?'
+      after_success: coveralls < ./coverage/lcov.info
 
     # Deploy the gh-pages data
-    - stage: Deploy Data
-      os: linux
-      sudo: false
-      distro: trusty
-      language: node_js
-      node_js: $TRAVIS_NODE_VERSION
-      env: [GH_PAGES=yes]
-      before_install: skip
-      install:
-        - yarn || yarn
-      before_script: skip
+    - <<: *simplejs
+      stage: Deploy Data
+      env: [task=GH_PAGES]
+      install: yarn || yarn
       script: npm run bundle-data
       deploy:
         provider: pages
@@ -114,12 +179,13 @@ jobs:
         local_dir: docs/
 
     # Build/deploy the Android binary
-    - stage: Build + Deploy
+    - <<: *base
+      stage: Build + Deploy
       os: linux
       sudo: required
       distro: trusty
       language: android
-      env: [ANDROID=yes]
+      env: [task=ANDROID]
       android:
         components:
           - tools
@@ -140,66 +206,18 @@ jobs:
         - bundle exec fastlane android ci-run
 
     # Build/deploy the iOS binary
-    - stage: Build + Deploy
+    - <<: *base
+      stage: Build + Deploy
       os: osx
       language: objective-c
       osx_image: xcode9
-      env: [IOS=yes]
+      env: [task=IOS]
       script:
         - bundle exec fastlane ios ci-run
 
-#
-# All of the keys down here are used in each build stage, unless they're overridden.
-#
-
-before_install:
-  # print some travis debugging info
-  - echo "Now testing on $TRAVIS_OS_NAME"
-  - echo "Travis branch is $TRAVIS_BRANCH"
-  - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
-  - echo "Build triggered by $TRAVIS_EVENT_TYPE"
-
-  # force the ruby we want
-  - echo "Using ruby $TRAVIS_RUBY_VERSION (ruby -v says $(ruby -v))"
-  - rvm use $TRAVIS_RUBY_VERSION --install --binary --create
-  - echo "ruby -v is now $(ruby -v)"
-  - gem install bundler
-
-  # force a consistent node version
-  - echo "Using node $TRAVIS_NODE_VERSION (node -v says $(node -v))"
-  - nvm install "$TRAVIS_NODE_VERSION"
-  - nvm use "$TRAVIS_NODE_VERSION"
-  - echo "node -v is now $(node -v)"
-
-  # travis doesn't install yarn automatically on osx
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install yarn --without-node; fi
-
-
-install:
-  # install packages (if the first fails, try once more)
-  - yarn || yarn
-
-  # install fastlane (if at first you don't succeed, try once more)
-  - bundle install || bundle install
-
-
-before_script:
-  # ensure the env file exists and fill it out
-  - touch .env.js
-  - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
-  - echo "export const GOOGLE_MAPS_API_KEY = '$GMAPS_KEY'" >> .env.js
-
-  # disable npm wrapper for npm scripts
-  - echo "loglevel=silent" >> .npmrc
-
-
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-  - rm -rf $TMPDIR/jest_preprocess_cache
-
 cache:
   bundler: true
+  yarn: true
   directories:
     - $HOME/.gradle
     - $HOME/.gradle/wrapper/
