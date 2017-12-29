@@ -9,7 +9,6 @@ const fetch = require('node-fetch')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 
-console.log(process.argv)
 
 const jobContext = process.argv[2]
 const jobStatus = process.argv[3]
