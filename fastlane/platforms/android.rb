@@ -20,6 +20,8 @@ platform :android do
   desc 'Submit a new build to Google Play'
   private_lane :submit do |options|
     track = options[:track]
+
+    matchesque
     build(track: track)
 
     lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS] =
@@ -53,7 +55,6 @@ platform :android do
   lane :'ci-run' do
     # prepare for the bright future with signed android betas
     authorize_ci_for_keys
-    matchesque
 
     # and run
     auto_beta
