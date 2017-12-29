@@ -9,11 +9,25 @@ const fetch = require('node-fetch')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 
+const checkContext = (context) => {
+	if(!context) throw new Error("No context given, failing.")
+	return context
+}
 
-const jobContext = process.argv[2]
-const jobStatus = process.argv[3]
-const jobDescription = process.argv[4]
-const jobTargetURL = process.env['TRAVIS_JOB_ID'] ? `https://travis-ci.org/${REPO}/jobs/${process.env['TRAVIS_JOB_ID']}` : 'https://xn--b48h.com'
+const checkStatus = (status) => {
+	if(!status) throw new Error("No status passed, failing.")
+
+	switch(status) {
+		case 'pending':
+		case 'failure':
+		case 'success':
+		case 'error':
+			return status
+			break
+		default:
+			throw new Error(`Invalid status value '${status}'`)
+	}
+}
 
 // e.g. "js:lint" "pending" "Running `yarn run lint`... stand by." "https://travis.org"
 
@@ -28,6 +42,20 @@ function getSha() {
 }
 
 async function publishReport() {
+	let jobContext = undefined
+	let jobStatus = undefined
+
+	try {
+		jobStatus = checkStatus(process.argv[3])
+		jobContext = checkContext(process.argv[2])
+	} catch(error) {
+		throw error
+		process.exit(1)
+	}
+
+	const jobDescription = process.argv[4]
+	const jobTargetURL = process.env['TRAVIS_JOB_ID'] ? `https://travis-ci.org/${REPO}/jobs/${process.env['TRAVIS_JOB_ID']}` : 'https://xn--b48h.com'
+
 	let parameters = {
 		'state': jobStatus,
 		'target_url': jobTargetURL,
