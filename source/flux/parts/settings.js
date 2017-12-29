@@ -88,6 +88,20 @@ export function logInViaCredentials(
     dispatch({type: CREDENTIALS_LOGIN_START})
     const state = getState()
     const isConnected = state.app ? state.app.isConnected : false
+    function showNetworkFailureMessage() {
+      Alert.alert(
+        'Network Failure',
+        'You are not connected to the internet. Please connect if you want to access this feature.',
+        [{text: 'OK'}],
+      )
+    }
+    function showInvalidLoginMessage() {
+      Alert.alert(
+        'Invalid Login',
+        'The username and password you provided do not match a valid account. Please try again.',
+        [{text: 'OK'}],
+      )
+    }
     if (!isConnected) {
       dispatch({type: CREDENTIALS_LOGIN_FAILURE})
       showNetworkFailureMessage()
@@ -102,22 +116,6 @@ export function logInViaCredentials(
       showInvalidLoginMessage()
     }
   }
-}
-
-function showNetworkFailureMessage() {
-  Alert.alert(
-    'Network Failure',
-    'You are not connected to the internet. Please connect if you want to access this feature.',
-    [{text: 'OK'}],
-  )
-}
-
-function showInvalidLoginMessage() {
-  Alert.alert(
-    'Invalid Login',
-    'The username and password you provided do not match a valid account. Please try again.',
-    [{text: 'OK'}],
-  )
 }
 
 type LogOutAction = {|type: 'settings/CREDENTIALS_LOGOUT'|}
