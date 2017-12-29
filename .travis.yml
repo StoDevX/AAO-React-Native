@@ -66,6 +66,7 @@ jobs:
       install:
         - yarn || yarn
       before_script:
+        - npm run report 'js:<everything>' 'pending' 'Running the JS build... stand by please.'
         - echo "loglevel=silent" >> .npmrc
         - mkdir -p logs/
       script:
@@ -89,6 +90,9 @@ jobs:
         - npm run danger
       after_success:
         - coveralls < ./coverage/lcov.info
+        - npm run report 'js:<everything>' 'success' "All's good under the hood, boss!"
+      after_failure:
+        - npm run report 'js:<everything>' 'failure' 'Something broke. Fix it?'
 
     # Deploy the gh-pages data
     - stage: Deploy Data
