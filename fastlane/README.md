@@ -23,6 +23,11 @@ xcode-select --install
 fastlane android build
 ```
 Makes a build
+### android check_build
+```
+fastlane android check_build
+```
+Checks that the app builds
 ### android beta
 ```
 fastlane android beta
@@ -62,6 +67,11 @@ Runs all the tests
 fastlane ios screenshot
 ```
 Take screenshots
+### ios check_build
+```
+fastlane ios check_build
+```
+Checks that the app can be built
 ### ios build
 ```
 fastlane ios build
