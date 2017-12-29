@@ -1,6 +1,7 @@
 const {readFileSync} = require('fs')
 
-module.exports.readFile = filename => {
+module.exports.readFile = readFile
+function readFile(filename) {
   try {
     return readFileSync(filename, 'utf-8')
   } catch (err) {
