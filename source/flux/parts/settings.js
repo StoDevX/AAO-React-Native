@@ -87,7 +87,8 @@ export function logInViaCredentials(
   return async (dispatch, getState) => {
     dispatch({type: CREDENTIALS_LOGIN_START})
     const state = getState()
-    if (!state.app.isConnected) {
+    const isConnected = state.app ? state.app.isConnected : false
+    if (!isConnected) {
       dispatch({type: CREDENTIALS_LOGIN_FAILURE})
       showNetworkFailureMessage()
     }
