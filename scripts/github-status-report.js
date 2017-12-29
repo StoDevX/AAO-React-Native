@@ -83,10 +83,15 @@ async function publishReport() {
 					 .then(response => response.json())
 					 .then((slug) => {
 						 console.log(slug);
+					 }).catch((error) => {
+						 console.log(error);
+						 process.exit(1);
 					 });
 
 		// POST /repos/:owner/:repo/statuses/:sha
 	})
 }
 
-Promise.all([publishReport()])
+Promise.all([publishReport()]).catch((error) => {
+	console.log(error)
+})
