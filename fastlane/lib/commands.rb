@@ -14,8 +14,13 @@ def auto_beta
       beta
     end
   else
-    UI.message 'just building'
-    build
+    if pr?
+      UI.message 'just building (not signing)'
+      check_build
+    else
+      UI.message 'signing and building, but not deploying'
+      build
+    end
   end
 end
 
