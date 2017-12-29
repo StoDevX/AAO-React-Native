@@ -14,13 +14,14 @@ console.log(process.argv)
 const jobContext = process.argv[2]
 const jobStatus = process.argv[3]
 const jobDescription = process.argv[4]
-const jobTargetURL = process.argv[5] || 'https://xn--b48h.com'
+const jobTargetURL = process.env['TRAVIS_JOB_ID'] ? `https://travis-ci.org/${REPO}/jobs/${process.env['TRAVIS_JOB_ID']}` : 'https://xn--b48h.com'
 
 // e.g. "js:lint" "pending" "Running `yarn run lint`... stand by." "https://travis.org"
 
 function getSha() {
 	return new Promise((resolve) => {
 		if(process.env['TRAVIS_COMMIT']) resolve(process.env['TRAVIS_COMMIT'])
+
 		exec('git rev-parse HEAD').then(({stdout, stderr}) => {
 			resolve(stdout.trim())
 		})
