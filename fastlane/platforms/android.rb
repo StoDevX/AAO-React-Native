@@ -12,6 +12,11 @@ platform :android do
     UI.message lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS]
   end
 
+  desc 'Checks that the app builds'
+  lane :check_build do
+    build
+  end
+
   desc 'Submit a new build to Google Play'
   private_lane :submit do |options|
     track = options[:track]
