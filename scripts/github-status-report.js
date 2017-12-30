@@ -28,7 +28,6 @@ const checkStatus = (status) => {
 		case 'success':
 		case 'error':
 			return status
-			break
 		default:
 			throw new Error(`Invalid status value '${status}'`)
 	}
