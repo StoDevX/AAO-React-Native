@@ -130,12 +130,8 @@ jobs:
     - <<: *js
       stage: Test
       env: [{task: "js:flow"}]
-      before_script:
-        - echo "loglevel=silent" >> .npmrc
-        - mkdir -p logs/
-        - set -o pipefail
-        - npm run report $task "pending" "Checking the flow of things..."
       script:
+        - npm run report $task "pending" "Checking the flow of things..."
         - npm run bundle-data
         - npm run flow -- check --quiet | tee logs/flow
       after_success:
@@ -146,12 +142,8 @@ jobs:
     - <<: *js
       stage: Test
       env: [{task: "js:prettier"}]
-      before_script:
-        - echo "loglevel=silent" >> .npmrc
-        - mkdir -p logs/
-        - set -o pipefail
-        - npm run report $task "pending" "Prettier is examining the code..."
       script:
+        - npm run report $task "pending" "Prettier is examining the code..."
         # Ensure prettiness
         - npm run prettier
         - if ! git diff --quiet ./*.js source/; then
@@ -165,12 +157,8 @@ jobs:
     - <<: *js
       stage: Test
       env: [{task: "js:lint"}]
-      before_script:
-        - echo "loglevel=silent" >> .npmrc
-        - mkdir -p logs/
-        - set -o pipefail
-        - npm run report $task "pending" "Running lint..."
       script:
+        - npm run report $task "pending" "Running lint..."
         - npm run lint | tee logs/eslint
       after_success:
         - npm run report "$task" "success" "Nice, the linter approves."
@@ -180,12 +168,8 @@ jobs:
     - <<: *js
       stage: Test
       env: [{task: "js:data"}]
-      before_script:
-        - echo "loglevel=silent" >> .npmrc
-        - mkdir -p logs/
-        - set -o pipefail
-        - npm run report $task "pending" "Validating data..."
       script:
+        - npm run report $task "pending" "Validating data..."
         - npm run validate-data -- --quiet | tee logs/validate-data
         - npm run validate-bus-data | tee logs/validate-bus-data
       after_success:
@@ -197,12 +181,8 @@ jobs:
       stage: Test
       env: [{task: "js:jest"}]
       before_install: npm install -g coveralls
-      before_script:
-        - echo "loglevel=silent" >> .npmrc
-        - mkdir -p logs/
-        - set -o pipefail
-        - npm run report $task "pending" "Running Jest..."
       script:
+        - npm run report $task "pending" "Running Jest..."
         - npm run bundle-data
         - npm run test -- --coverage 2>&1 | tee logs/jest
       after_success:
