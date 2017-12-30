@@ -25,5 +25,7 @@ switch (process.env.task ? process.env.task.toLowercase() : null) {
     require('./tasks/js-prettier.js')
     break
   default:
-    warn(`Unknown task name ${process.env.task}; Danger cannot report anything.`)
+    warn(
+      `Unknown task name ${process.env.task}; Danger cannot report anything.`,
+    )
 }
