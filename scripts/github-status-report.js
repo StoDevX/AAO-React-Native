@@ -2,7 +2,7 @@
 
 'use strict'
 
-const GITHUB_API = 'https://api.github.com/'
+const GITHUB_API = 'https://api.github.com'
 const REPO = 'StoDevX/AAO-React-Native'
 
 const fetch = require('node-fetch')
@@ -77,8 +77,7 @@ async function publishReport() {
 	}
 
 	getSha().then((sha) => {
-		let url = `${GITHUB_API}repos/${REPO}/statuses/${sha}`
-		console.log(`Poking ${url} with parameters ${JSON.stringify(parameters)}`)
+		let url = `${GITHUB_API}/repos/${REPO}/statuses/${sha}`
 		fetch(url, options)
 					 .then(response => response.json())
 					 .then((slug) => {
