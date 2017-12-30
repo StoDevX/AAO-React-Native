@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-'use strict';
+'use strict'
 
 const GITHUB_API = 'https://api.github.com/'
 const REPO = 'StoDevX/AAO-React-Native'
