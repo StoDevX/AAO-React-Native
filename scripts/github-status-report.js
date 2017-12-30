@@ -9,9 +9,11 @@ const fetch = require('node-fetch')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 
-const GH_API_HEADERS = {
-	'Accept': 'application/vnd.github.v3+json,application/vnd.github.jean-grey-preview+json',
-	'Authorization': `token ${process.env['DANGER_GITHUB_API_TOKEN']}`
+const GH_API_HEADERS = (token) => {
+	return {
+		'Accept': 'application/vnd.github.v3+json,application/vnd.github.jean-grey-preview+json',
+		'Authorization': `token ${token}`
+	}
 }
 
 const checkContext = (context) => {
@@ -38,7 +40,7 @@ async function checkToken(token) {
 	let url = `${GITHUB_API}/rate_limit`
 	let options = {
 		mecthod: 'GET',
-		headers: GH_API_HEADERS
+		headers: GH_API_HEADERS(process.env['DANGER_GITHUB_API_TOKEN'])
 	}
 
 	let value = await fetch(url, options)
@@ -96,7 +98,7 @@ async function publishReport() {
 
 	let options = {
 		method: 'POST',
-		headers: GH_API_HEADERS,
+		headers: GH_API_HEADERS(process.env['DANGER_GITHUB_API_TOKEN']),
 		body: body
 	}
 
