@@ -1,0 +1,22 @@
+$schema: http://json-schema.org/draft-06/schema#
+
+additionalProperties: false
+required: [data]
+properties:
+  version: {type: number}
+  data:
+    type: object
+    additionalProperties: false
+    required: [title, buttonText, text, synopsis, category]
+    oneOf:
+      - required: [phoneNumber]
+      - required: [buttonLink]
+    properties:
+      title: {type: string}
+      phoneNumber: {$ref: '_defs.json#/definitions/phone'}
+      buttonText: {type: string}
+      buttonLink: {type: string}
+      category: {type: string}
+      synopsis: {type: string}
+      image: {type: string}
+      text: {type: string}

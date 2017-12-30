@@ -1,0 +1,35 @@
+$schema: http://json-schema.org/draft-06/schema#
+
+additionalProperties: false
+required: [data]
+properties:
+  version: {type: number}
+  data:
+    type: object
+    additionalProperties: false
+    required: [name, category, schedule]
+    properties:
+      name: {type: string}
+      subtitle: {type: string}
+      abbreviation: {type: string}
+      category: {type: string}
+      image: {type: string}
+      schedule:
+        type: array
+        items: {$ref: '#/definitions/schedule'}
+      breakSchedule:
+        type: object
+
+
+definitions:
+  schedule:
+    additionalProperties: false
+    required: [title, hours]
+    properties:
+      title: {type: string}
+      notes: {type: string}
+      closedForChapelTime: {type: boolean}
+      isPhysicallyOpen: {type: boolean}
+      hours:
+        type: array
+        items: {$ref: '_defs.json#/definitions/day'}

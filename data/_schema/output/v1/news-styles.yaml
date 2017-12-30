@@ -1,0 +1,8 @@
+$schema: http://json-schema.org/draft-06/schema#
+
+additionalProperties: false
+required: [css]
+properties:
+  version: {type: number}
+  css:
+    type: string

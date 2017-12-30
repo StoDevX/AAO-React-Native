@@ -1,0 +1,14 @@
+$schema: http://json-schema.org/draft-06/schema#
+
+additionalProperties: false
+required: [data]
+properties:
+  version: {type: number}
+  data:
+    type: object
+    additionalProperties: false
+    required: [chapelSchedule]
+    properties:
+      chapelSchedule:
+        type: array
+        items: {$ref: '_defs.json#/definitions/day'}

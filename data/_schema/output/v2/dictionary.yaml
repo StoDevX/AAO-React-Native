@@ -1,0 +1,13 @@
+$schema: http://json-schema.org/draft-06/schema#
+
+additionalProperties: false
+required: [data]
+properties:
+  version: {type: number}
+  data:
+    type: object
+    additionalProperties: false
+    required: [word, definition]
+    properties:
+      word: {type: string}
+      definition: {type: string}

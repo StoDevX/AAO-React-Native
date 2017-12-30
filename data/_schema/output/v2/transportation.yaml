@@ -1,0 +1,16 @@
+$schema: http://json-schema.org/draft-06/schema#
+
+additionalProperties: false
+required: [data]
+properties:
+  version: {type: number}
+  data:
+    type: object
+    additionalProperties: false
+    required: [name, category, url, synopsis, description]
+    properties:
+      name: {type: string}
+      category: {type: string}
+      url: {type: string, format: uri}
+      synopsis: {type: string}
+      description: {type: string}

@@ -1,0 +1,40 @@
+$schema: http://json-schema.org/draft-06/schema#
+
+additionalProperties: false
+required: [data]
+properties:
+  version: {type: number}
+  data:
+    type: object
+    additionalProperties: false
+    required: [stationMenus, foodItems, corIcons]
+    properties:
+      stationMenus:
+        type: array
+        item: {$ref: '#/definitions/menu'}
+
+      foodItems:
+        type: array
+        item: {$ref: '#/definitions/food-item'}
+
+      corIcons:
+        type: object
+        additionalProperties: false
+
+
+definitions:
+  menu:
+    additionalProperties: false
+    required: [label]
+    properties:
+      label: {type: string}
+      note: {type: string}
+
+  food-item:
+    additionalProperties: false
+    required: [label, station]
+    properties:
+      label: {type: string}
+      station: {type: string}
+      description: {type: string}
+      special: {type: boolean}
