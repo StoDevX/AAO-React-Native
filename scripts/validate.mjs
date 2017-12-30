@@ -1,11 +1,12 @@
-#!/usr/bin/env node
-const fs = require('fs')
-const path = require('path')
-const AJV = require('ajv')
-const yaml = require('js-yaml')
-const get = require('lodash/get')
-const memoize = require('lodash/memoize')
-const {SCHEMA_BASE} = require('./paths')
+// @flow
+
+import fs from 'fs'
+import path from 'path'
+import AJV from 'ajv'
+import yaml from 'js-yaml'
+import get from 'lodash/get'
+import memoize from 'lodash/memoize'
+import {SCHEMA_BASE} from './paths.mjs'
 
 function formatError(err, data) {
   // format some of the errors from ajv
@@ -23,10 +24,11 @@ function formatError(err, data) {
       break
     }
     default: {
-      return JSON.stringify(err, null, 2)
+      contents = JSON.stringify(err, null, 2)
     }
   }
-  return `Error at ${err.dataPath}:\n${contents}`
+
+  return new Error(`Error at ${err.dataPath}:\n${contents}`)
 }
 
 const init = memoize(() => {
@@ -41,15 +43,18 @@ const init = memoize(() => {
   return validator
 })
 
-module.exports = function validate(schema, data) {
+export function validate(
+  schema /*: Object */,
+  data /*: Object */,
+) /*: true | Array<Error>*/ {
   const validator = init()
 
   const validate = validator.compile(schema)
   const isValid = validate(data)
 
   if (!isValid) {
-    return [false, validate.errors.map(e => formatError(e, data))]
+    return validate.errors.map(e => formatError(e, data))
   }
 
-  return [true, []]
+  return true
 }
