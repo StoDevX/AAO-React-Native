@@ -58,13 +58,13 @@ function getSha() {
 	return new Promise((resolve) => {
 		if(process.env['TRAVIS_COMMIT']) resolve(process.env['TRAVIS_COMMIT'])
 
-		exec('git rev-parse HEAD').then(({stdout, stderr}) => {
+		exec('git rev-parse HEAD').then(({stdout, _stderr}) => {
 			resolve(stdout.trim())
 		})
 	})
 }
 
-const generateTargetUrlFromStatus = (status) => {
+const generateTargetUrlFromStatus = (_status) => {
 	let jobOrBuildUrl = (process.env['TRAVIS_JOB_ID'] ? `https://travis-ci.org/${REPO}/jobs/${process.env['TRAVIS_JOB_ID']}` : (process.env['TRAVIS_BUILD_ID'] ? `https://travis-ci.org/${REPO}/jobs/${process.env['TRAVIS_BUILD_ID']}` : 'about:blank'))
 	return jobOrBuildUrl
 }
