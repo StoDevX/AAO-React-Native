@@ -7,14 +7,15 @@ import findUp from 'find-up'
 import path from 'path'
 import memoize from 'lodash/memoize'
 import assert from 'assert'
-import {not as notJunk} from 'junk'
+import junk from 'junk'
 import fs from 'fs'
 import flattenDeep from 'lodash/flattenDeep'
 import yaml from 'js-yaml'
+import util from 'util'
 
 const getProjectRoot = memoize(() => path.dirname(findUp.sync('package.json')))
 
-function tryBoolean(cb) {
+function tryBoolean(cb: () => any) {
   // try a function; return a boolean version of success
   try {
     return Boolean(cb())
@@ -23,58 +24,65 @@ function tryBoolean(cb) {
   }
 }
 
+const readDirAsync = util.promisify(fs.readdir)
+const readFileAsync = util.promisify(fs.readFile)
+const writeFileAsync = util.promisify(fs.writeFile)
 const isDir = pth => tryBoolean(() => fs.statSync(pth).isDirectory())
 const isFile = pth => tryBoolean(() => fs.statSync(pth).isFile())
 
-const readFile = (pth /*: string */) =>
-  new Promise((resolve, reject) => {
-    fs.readFile(
-      pth,
-      'utf-8',
-      (err, data) => (err ? reject(err) : resolve(data)),
-    )
-  })
-
-const readYaml = async pth => {
-  const contents = await readFile(pth)
-  const obj = yaml.safeLoad(contents, {filename: pth})
-  return JSON.parse(JSON.stringify(obj))
-}
-
-const readJson = async pth => JSON.parse(await readFile(pth))
-
-function readDir(pth /*: string */) /*: Array<string>*/ {
-  return fs
-    .readdirSync(pth)
-    .filter(notJunk)
+async function readDir(pth: string): Promise<Array<string>> {
+  return (await readDirAsync(pth))
+    .filter(junk.not)
     .filter(entry => !entry.startsWith('_'))
     .filter(entry => !entry.startsWith('README'))
 }
 
-const writeJsonFile = (contents /*: any */, dest /*: string */) =>
-  fs.writeFileSync(
-    dest,
-    JSON.stringify(contents),
-    {encoding: 'utf-8'},
-  )
+async function readYaml(pth: string): Promise<Object> {
+  const contents = await readFileAsync(pth, 'utf-8')
+  const obj = yaml.safeLoad(contents, {filename: pth})
+  return JSON.parse(JSON.stringify(obj))
+}
 
-function removeExt(pth /*: string */) /*: string */ {
+async function readJson(pth: string): Promise<Object> {
+  return JSON.parse(await readFileAsync(pth, 'utf-8'))
+}
+
+function writeJson(contents: any, dest: string): Promise<any> {
+  const body = JSON.stringify(contents)
+  return writeFileAsync(dest, body, 'utf-8')
+}
+
+function removeExt(pth: string): string {
   return pth
     .split('.')
     .slice(0, -1)
     .join('.')
 }
 
-function resolvePathInProject(pth /*: string */) /*: string */ {
+function resolvePathInProject(pth: string): string {
   const root = getProjectRoot()
   return path.resolve(root, pth)
 }
 
-function printValidationErrors(errors /*: Array<Error> */) {
+function printValidationErrors(errors: Array<Error>) {
   errors.forEach(err => console.error(err.message))
 }
 
-async function loadSchema(type, {root}) /*: Promise<false | Object> */ {
+type Args = {
+  root: string,
+}
+
+type DataType = {
+  kind: 'folder' | 'single',
+  path: string,
+  filename: string,
+  name: string,
+}
+
+async function loadSchema(
+  type: DataType,
+  {root}: Args,
+): Promise<false | Object> {
   // Expects to find a schema file at $root/$type-name.yaml
   try {
     return await readYaml(path.join(root, `${type.name}.yaml`))
@@ -87,13 +95,30 @@ async function loadSchema(type, {root}) /*: Promise<false | Object> */ {
   }
 }
 
-async function findDataFiles(type) /*: Promise<Array<any>> */ {
+async function loadDataFile(args: {fullPath: string, filename: string}) {
+  const {fullPath, filename} = args
+  const ext = filename.split('.').slice(-1)[0]
+  switch (ext) {
+    case 'md':
+      // return readMarkdownAsData(fullPath)
+      return {text: await readFileAsync(fullPath, 'utf-8')}
+    case 'css':
+      return {css: await readFileAsync(fullPath, 'utf-8')}
+    case 'json':
+      return readJson(fullPath)
+    case 'yaml':
+      return readYaml(fullPath)
+    default:
+      throw new Error(`unhandled file type ${ext}`)
+  }
+}
+
+async function findDataFiles(type: DataType): Promise<Array<Object>> {
   // Loads all of the data files for a given type of data
 
   let files = []
   if (type.kind === 'folder') {
-    files = await readDir(type.path)
-    files = files.map(filename => ({
+    files = (await readDir(type.path)).map(filename => ({
       fullPath: path.join(type.path, filename),
       filename: filename,
     }))
@@ -103,44 +128,34 @@ async function findDataFiles(type) /*: Promise<Array<any>> */ {
     throw new Error(`unknown kind ${type.kind}`)
   }
 
-  const promises = files.map(async ({fullPath, filename}) => {
-    const ext = filename.split('.').slice(-1)[0]
-    switch (ext) {
-      case 'md':
-        // return readMarkdownAsData(fullPath)
-        return {text: await readFile(fullPath)}
-      case 'css':
-        return {css: await readFile(fullPath)}
-      case 'json':
-        return readJson(fullPath)
-      case 'yaml':
-        return readYaml(fullPath)
-      default:
-        throw new Error(`unhandled file type ${ext}`)
-    }
-  })
-
-  return Promise.all(promises)
+  return Promise.all(files.map(loadDataFile))
 }
 
-function findBundledFile(type, version, {root}) /*: Promise<string> */ {
-  // findBundledFile(type, version, {root: path.join(args.flags.output)})
-  const filepath = path.join(root, `v${version}`, `${type.name}.json`)
-  return Promise.resolve(filepath)
+function findBundledFile(
+  type: DataType,
+  version: number,
+  {root}: Args,
+): Promise<string> {
+  return Promise.resolve(path.join(root, `v${version}`, `${type.name}.json`))
 }
 
-async function loadBundledFile(type, version, {root}) /*: Promise<any> */ {
+async function loadBundledFile(
+  type: DataType,
+  version: number,
+  {root}: Args,
+): Promise<Object> {
   const filepath = await findBundledFile(type, version, {root})
   try {
-    const data = await readFile(filepath)
-    return JSON.parse(data)
+    return JSON.parse(await readFileAsync(filepath, 'utf-8'))
   } catch (err) {
     throw err
   }
 }
 
-async function findOutputVersions(type, {root}) /*: Promise<Array<number>> */ {
-  // findOutputVersions(type, {root: path.join(args.flags.meta, '_schema', 'output'), })
+async function findOutputVersions(
+  type: DataType,
+  {root}: Args,
+): Promise<Array<number>> {
   const allVersions = await readDir(root)
   return allVersions
     .filter(ver => isFile(path.join(root, ver, `${type.name}.yaml`)))
@@ -148,25 +163,30 @@ async function findOutputVersions(type, {root}) /*: Promise<Array<number>> */ {
 }
 
 async function findTransformer(
-  type,
-  version,
-  {root},
-) /*: Promise<(Object) => string> */ {
+  type: DataType,
+  version: number,
+  {root}: Args,
+): Promise<(Object) => string> {
   // Returns the transformer function for a given data type/version pair
   try {
     // two-step process here in case we want to offer shorthand transforms in the future
-    const transformerModule = await import(path.join(
-      root,
-      `v${version}`,
-      `${type.name}.mjs`,
-    ))
+    const filePath = path.join(root, `v${version}`, `${type.name}.mjs`)
+    const transformerModule = await import(filePath)
     return transformerModule.transform
   } catch (err) {
     throw err
   }
 }
 
-async function validateInput({args, dataTypes}) {
+type ProgramArgs = {
+  args: CliArgs,
+  dataTypes: Array<DataType>,
+}
+
+type ExitStatus = 0 | 1
+
+async function validateInput(params: ProgramArgs): Promise<ExitStatus> {
+  const {args, dataTypes} = params
   // for each data type:
   // verify that there is an input schema for that type
   // validate each data file of that given type against that type's input schema
@@ -207,7 +227,8 @@ async function validateInput({args, dataTypes}) {
   return 0
 }
 
-async function validateOutput({args, dataTypes}) {
+async function validateOutput(params: ProgramArgs): Promise<ExitStatus> {
+  const {args, dataTypes} = params
   // for each data type:
   // for each output schema version:
   // validate the bundled data file for that type against the equivalent output schema
@@ -244,10 +265,12 @@ async function validateOutput({args, dataTypes}) {
   return 0
 }
 
-async function bundleDataFiles({
-  args,
-  dataTypes,
-}) /*: Promise<Array<{type: string, contents: {data: mixed, version: number}}>> */ {
+type BundledDataFile = {type: string, contents: {data: mixed, version: number}}
+
+async function bundleDataFiles(
+  params: ProgramArgs,
+): Promise<Array<BundledDataFile>> {
+  const {args, dataTypes} = params
   // for each data type:
   // verify that a transformer exists
   // for each transformer version:
@@ -299,7 +322,8 @@ async function bundleDataFiles({
   return flattenDeep(results)
 }
 
-async function bundle({args, dataTypes}) {
+async function bundle(params: ProgramArgs): Promise<ExitStatus> {
+  const {args, dataTypes} = params
   const isInputValid = await validateInput({args, dataTypes})
   if (isInputValid === 1) {
     console.log('invalid input')
@@ -307,16 +331,16 @@ async function bundle({args, dataTypes}) {
   }
 
   const bundledData = await bundleDataFiles({args, dataTypes})
-  bundledData.forEach(dataVersion => {
+  const promises = bundledData.map(async dataVersion => {
     if (dataVersion.contents.version === 1) {
       // put a copy at the top level with the v1 format
-      writeJsonFile(
+      await writeJson(
         dataVersion.contents,
         path.join(args.flags.output, `${dataVersion.type}.json`),
       )
     }
 
-    writeJsonFile(
+    await writeJson(
       dataVersion.contents,
       path.join(
         args.flags.output,
@@ -326,16 +350,19 @@ async function bundle({args, dataTypes}) {
     )
   })
 
+  await Promise.all(promises)
+
   const isOutputValid = await validateOutput({args, dataTypes})
 
   if (isOutputValid === 1) {
     return 1
   }
+
+  return 0
 }
 
-async function discoverData({
-  args,
-}) /*: Promise<Array<{kind: 'single' | 'folder', name: string, filename: string, path: string}>> */ {
+async function discoverData(params: {args: CliArgs}): Promise<Array<DataType>> {
+  const {args} = params
   const items = await readDir(args.flags.input)
 
   return items.map(fileName => {
@@ -354,6 +381,14 @@ async function discoverData({
 const COMMANDS = {
   validate: validateInput,
   bundle,
+}
+
+type CliArgs = {
+  flags: {
+    input: string,
+    output: string,
+    meta: string,
+  },
 }
 
 async function main() {
@@ -376,14 +411,12 @@ async function main() {
 
   // eslint-disable-next-line no-return-await
   try {
-    let statusCode = await runnable({args, dataTypes})
-    process.exit(statusCode)
+    let exitCode = await runnable({args, dataTypes})
+    process.exit(exitCode)
   } catch (err) {
     console.error('unhandled error')
     console.error(err)
   }
 }
 
-if (require.main == module) {
-  main().then(exitCode => console.log(exitCode) && process.exit(exitCode))
-}
+main()
