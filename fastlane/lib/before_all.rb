@@ -10,6 +10,9 @@ before_all do
   ENV['GYM_OUTPUT_DIRECTORY'] = './ios/build'
   ENV['GYM_OUTPUT_NAME'] = 'AllAboutOlaf'
 
+  # set the testflight itunesconnect provider ID from Appfile
+  ENV['PILOT_ITC_PROVIDER'] = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
+
   # set up global info for `gradle`
   ENV['FL_GRADLE_PROJECT_DIR'] = './android'
 
