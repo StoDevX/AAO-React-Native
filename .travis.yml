@@ -130,41 +130,86 @@ jobs:
     - <<: *js
       stage: Test
       env: [{task: "js:flow"}]
+      before_script:
+        - echo "loglevel=silent" >> .npmrc
+        - mkdir -p logs/
+        - set -o pipefail
+        - npm run report $task "pending" "Checking the flow of things..."
       script:
         - npm run bundle-data
         - npm run flow -- check --quiet | tee logs/flow
+      after_success:
+        - npm run report "$task" "success" "Flow checks out."
+      after_failure:
+        - npm run report "$task" "failure" "Yikes! Flow got mad."
 
     - <<: *js
       stage: Test
       env: [{task: "js:prettier"}]
+      before_script:
+        - echo "loglevel=silent" >> .npmrc
+        - mkdir -p logs/
+        - set -o pipefail
+        - npm run report $task "pending" "Prettier is examining the code..."
       script:
         # Ensure prettiness
         - npm run prettier
         - if ! git diff --quiet ./*.js source/; then
             git diff ./*.js source/ > logs/prettier;
           fi
+      after_success:
+        - npm run report "$task" "success" "Couldn't be prettier!"
+      after_failure:
+        - npm run report "$task" "failure" "Prettier had something to say!"
 
     - <<: *js
       stage: Test
       env: [{task: "js:lint"}]
+      before_script:
+        - echo "loglevel=silent" >> .npmrc
+        - mkdir -p logs/
+        - set -o pipefail
+        - npm run report $task "pending" "Running lint..."
       script:
         - npm run lint | tee logs/eslint
+      after_success:
+        - npm run report "$task" "success" "Nice, the linter approves."
+      after_failure:
+        - npm run report "$task" "failure" "Found some code style issues."
 
     - <<: *js
       stage: Test
       env: [{task: "js:data"}]
+      before_script:
+        - echo "loglevel=silent" >> .npmrc
+        - mkdir -p logs/
+        - set -o pipefail
+        - npm run report $task "pending" "Validating data..."
       script:
         - npm run validate-data -- --quiet | tee logs/validate-data
         - npm run validate-bus-data | tee logs/validate-bus-data
+      after_success:
+        - npm run report "$task" "success" "Data looks good!"
+      after_failure:
+        - npm run report "$task" "failure" "Uh oh, something's wrong with the data."
 
     - <<: *js
       stage: Test
       env: [{task: "js:jest"}]
       before_install: npm install -g coveralls
+      before_script:
+        - echo "loglevel=silent" >> .npmrc
+        - mkdir -p logs/
+        - set -o pipefail
+        - npm run report $task "pending" "Running Jest..."
       script:
         - npm run bundle-data
         - npm run test -- --coverage 2>&1 | tee logs/jest
-      after_success: coveralls < ./coverage/lcov.info
+      after_success:
+        - coveralls < ./coverage/lcov.info
+        - npm run report "$task" "success" "Jest was happy!"
+      after_failure:
+        - npm run report "$task" "failure" "Some tests are failing!"
 
     # Deploy the gh-pages data
     - <<: *simplejs
