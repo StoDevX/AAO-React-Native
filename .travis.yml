@@ -31,32 +31,20 @@ stages:
   - name: Greenkeeper
 
 
-#
-# Definitions of dictionaries that are used by the machines below
-#
-
-x-definitions:
-  - &simplejs
-    os: linux
-    sudo: false
-    distro: trusty
-    language: node_js
-    node_js: $TRAVIS_NODE_VERSION
-
-
 jobs:
   # We define default before_install, install, and before_script steps.
   # To skip the default step, use `step_name: skip`.
   include:
     # Run greenkeeper stuff
-    - <<: *simplejs
-      stage: Greenkeeper
+    - os: linux
+      sudo: false
+      distro: trusty
+      language: node_js
+      node_js: $TRAVIS_NODE_VERSION
       env: [task=GREENKEEPER]
-      install: npm install -g greenkeeper-lockfile@1
+      install: yarn || yarn
       before_script: mkdir -p logs/
-      script: greenkeeper-lockfile-update
-      after_script:
-        - greenkeeper-lockfile-upload
+      script:
         - npm run danger -- --id $task
 
 cache:
