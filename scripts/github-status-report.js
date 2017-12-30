@@ -15,12 +15,12 @@ const GH_API_HEADERS = {
 }
 
 const checkContext = (context) => {
-	if(!context) throw new Error("No context given, failing.")
+	if(!context) throw new Error('No context given, failing.')
 	return context
 }
 
 const checkStatus = (status) => {
-	if(!status) throw new Error("No status passed, failing.")
+	if(!status) throw new Error('No status passed, failing.')
 
 	switch(status) {
 		case 'pending':
