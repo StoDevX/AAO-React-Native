@@ -101,7 +101,7 @@ x-definitions:
       - echo "loglevel=silent" >> .npmrc
       - mkdir -p logs/
       - set -o pipefail
-    env: [task="js:unknown"]
+    env: [{task: "js:unknown"}]
 
   - &simplejs
     os: linux
@@ -118,7 +118,7 @@ jobs:
     # Run greenkeeper stuff
     - <<: *simplejs
       stage: Greenkeeper
-      env: [task="greenkeeper"]
+      env: [{task: "greenkeeper"}]
       install: npm install -g greenkeeper-lockfile@1
       before_script: mkdir -p logs/
       script: greenkeeper-lockfile-update
@@ -129,14 +129,14 @@ jobs:
     # Do node "tests"
     - <<: *js
       stage: Test
-      env: [task="js:flow"]
+      env: [{task: "js:flow"}]
       script:
         - npm run bundle-data
         - npm run flow -- check --quiet | tee logs/flow
 
     - <<: *js
       stage: Test
-      env: [task="js:prettier"]
+      env: [{task: "js:prettier"}]
       script:
         # Ensure prettiness
         - npm run prettier
@@ -146,20 +146,20 @@ jobs:
 
     - <<: *js
       stage: Test
-      env: [task="js:lint"]
+      env: [{task: "js:lint"}]
       script:
         - npm run lint | tee logs/eslint
 
     - <<: *js
       stage: Test
-      env: [task="js:data"]
+      env: [{task: "js:data"}]
       script:
         - npm run validate-data -- --quiet | tee logs/validate-data
         - npm run validate-bus-data | tee logs/validate-bus-data
 
     - <<: *js
       stage: Test
-      env: [task='js:jest']
+      env: [{task: "js:jest"}]
       before_install: npm install -g coveralls
       script:
         - npm run bundle-data
@@ -169,7 +169,7 @@ jobs:
     # Deploy the gh-pages data
     - <<: *simplejs
       stage: Deploy Data
-      env: [task='deploy:data']
+      env: [{task: "deploy:data"}]
       install: yarn || yarn
       script: npm run bundle-data
       deploy:
@@ -185,7 +185,7 @@ jobs:
       sudo: required
       distro: trusty
       language: android
-      env: [task='android']
+      env: [{task: "android"}]
       android:
         components:
           - tools
@@ -211,7 +211,7 @@ jobs:
       os: osx
       language: objective-c
       osx_image: xcode9
-      env: [task='iOS']
+      env: [{task: "iOS"}]
       script:
         - bundle exec fastlane ios ci-run
 
