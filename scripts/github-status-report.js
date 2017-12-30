@@ -63,6 +63,11 @@ function getSha() {
 	})
 }
 
+const generateTargetUrlFromStatus = (status) => {
+	let jobOrBuildUrl = (process.env['TRAVIS_JOB_ID'] ? `https://travis-ci.org/${REPO}/jobs/${process.env['TRAVIS_JOB_ID']}` : (process.env['TRAVIS_BUILD_ID'] ? `https://travis-ci.org/${REPO}/jobs/${process.env['TRAVIS_BUILD_ID']}` : 'about:blank'))
+	return jobOrBuildUrl
+}
+
 async function publishReport() {
 	let rateLimit = await checkToken(process.env['DANGER_GITHUB_API_TOKEN'])
 	console.log(`Authentication successful.  Rate limit remaining: ${rateLimit.resources.core.remaining} of ${rateLimit.resources.core.limit}`)
@@ -74,12 +79,12 @@ async function publishReport() {
 		jobStatus = checkStatus(process.argv[3])
 		jobContext = checkContext(process.argv[2])
 	} catch(error) {
-		throw error
+		console.log(error)
 		process.exit(1)
 	}
 
 	const jobDescription = process.argv[4]
-	const jobTargetURL = process.env['TRAVIS_JOB_ID'] ? `https://travis-ci.org/${REPO}/jobs/${process.env['TRAVIS_JOB_ID']}` : 'https://xn--b48h.com'
+	const jobTargetURL = generateTargetUrlFromStatus(jobStatus)
 
 	let parameters = {
 		'state': jobStatus,
