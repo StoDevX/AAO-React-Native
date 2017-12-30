@@ -39,10 +39,10 @@ if (args.data) {
 // iterate!
 for (const multitudes of iterator) {
   for (const [filename, schema, data] of multitudes) {
-    const [result, errors] = validate(schema, data)
-    if (!result) {
+    const result = validate(schema, data)
+    if (result !== true) {
       console.log(`${filename} is invalid`)
-      console.log(errors.join('\n'))
+      console.log(result.join('\n'))
       if (args.bail) {
         process.exit(1)
       }
@@ -122,6 +122,7 @@ function* load(schemaName) {
   }
 
   const dirPath = path.join(DATA_BASE, schemaName)
+
   // check if we need to go over the contents of a folder
   if (isDir(dirPath)) {
     for (let file of readDir(dirPath)) {
