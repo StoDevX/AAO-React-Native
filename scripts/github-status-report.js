@@ -9,6 +9,11 @@ const fetch = require('node-fetch')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 
+const GH_API_HEADERS = {
+	'Accept': 'application/vnd.github.v3+json,application/vnd.github.jean-grey-preview+json',
+	'Authorization': `token ${process.env['DANGER_GITHUB_API_TOKEN']}`
+}
+
 const checkContext = (context) => {
 	if(!context) throw new Error("No context given, failing.")
 	return context
@@ -29,6 +34,23 @@ const checkStatus = (status) => {
 	}
 }
 
+async function checkToken(token) {
+	// this endpoint does not count against rate limit and has the added benefit of being a preflight check
+	let url = `${GITHUB_API}/rate_limit`
+	let options = {
+		mecthod: 'GET',
+		headers: GH_API_HEADERS
+	}
+
+	let value = await fetch(url, options)
+		.then(response => response.json())
+		.then((response) => {
+			return response
+		})
+
+	return value
+}
+
 // e.g. "js:lint" "pending" "Running `yarn run lint`... stand by." "https://travis.org"
 
 function getSha() {
@@ -42,6 +64,9 @@ function getSha() {
 }
 
 async function publishReport() {
+	let rateLimit = await checkToken(process.env['DANGER_GITHUB_API_TOKEN'])
+	console.log(`Authentication successful.  Rate limit remaining: ${rateLimit.resources.core.remaining} of ${rateLimit.resources.core.limit}`)
+
 	let jobContext = undefined
 	let jobStatus = undefined
 
@@ -65,32 +90,35 @@ async function publishReport() {
 
 	let body = JSON.stringify(parameters)
 
-	let headers = {
-		'Accept': 'application/vnd.github.v3+json,application/vnd.github.jean-grey-preview+json',
-		'Authorization': `token ${process.env['DANGER_GITHUB_API_TOKEN']}`
-	}
-
 	let options = {
 		method: 'POST',
-		headers: headers,
+		headers: GH_API_HEADERS,
 		body: body
 	}
 
 	getSha().then((sha) => {
 		let url = `${GITHUB_API}/repos/${REPO}/statuses/${sha}`
 		fetch(url, options)
-					 .then(response => response.json())
-					 .then((slug) => {
-						 console.log(slug);
-					 }).catch((error) => {
-						 console.log(error);
-						 process.exit(1);
-					 });
+			.then(response => {
+				if(response.status >= 400) {
+					response
+						.json()
+						.then(slug => {
+							console.log(`Uh oh! Anomaly in accessing GitHub: got response ${response.status} ${response.statusText}\n${JSON.stringify(slug)}`)
+							throw new Error(`Anomalous response code from GitHub: ${response.status} ${response.statusText}`)
+						})
+						.catch(error => {
+							console.log(error)
+							process.exit(1)
+						})
+				}
 
-		// POST /repos/:owner/:repo/statuses/:sha
+				return response
+			})
 	})
 }
 
-Promise.all([publishReport()]).catch((error) => {
+Promise.all([publishReport()]).catch(error => {
 	console.log(error)
+	process.exit(1)
 })
