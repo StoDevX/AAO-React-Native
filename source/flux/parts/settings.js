@@ -17,7 +17,6 @@ import {type ReduxState} from '../index'
 import {type UpdateBalancesType} from './sis'
 import {updateBalances} from './sis'
 import {Alert} from 'react-native'
-import {updateOnlineStatus} from './app'
 
 export type LoginStateType = 'logged-out' | 'logged-in' | 'checking' | 'invalid'
 

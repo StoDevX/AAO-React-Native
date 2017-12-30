@@ -4,7 +4,6 @@ import * as Keychain from 'react-native-keychain'
 import * as storage from './storage'
 import buildFormData from './formdata'
 import {OLECARD_AUTH_URL} from './financials/urls'
-import {Alert} from 'react-native'
 
 const SIS_LOGIN_CREDENTIAL_KEY = 'stolaf.edu'
 
@@ -46,16 +45,16 @@ export async function performLogin(
   }
 
   const form = buildFormData({username, password})
-  let loginFailed = false
-  const loginResult = await fetch(OLECARD_AUTH_URL, {
+  let loginResult = null
+  try {
+    loginResult = await fetch(OLECARD_AUTH_URL, {
     method: 'POST',
     body: form,
-  }).catch(() => {
-    loginFailed = true
-  })
-  if (loginFailed) {
+    })
+  } catch (err) {
     return false
   }
+  
   const page = await loginResult.text()
 
   if (page.includes('Password')) {
