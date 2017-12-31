@@ -216,12 +216,12 @@ async function runGeneral() {
     const parsed = plist.parse(readFileSync(infoPlistChanged, 'utf-8'))
     const descKeysWithEntities = Object.keys(parsed)
       .filter(key => key.endsWith('Description'))
-      .filter(key => /&.*;/.test(parsed[key])) // look for xml entities
+      .filter(key => parsed[key].includes("'")) // look for single quotes
     if (descKeysWithEntities.length) {
       const codedKeys = descKeysWithEntities.map(k => `<code>${k}</code>`)
       const keyNames = danger.utils.sentence(codedKeys)
       warn(
-        `Some Info.plist descriptions were rewritten by Xcode (${keyNames}).`,
+        `Some Info.plist descriptions were rewritten by something to include single quotes (${keyNames}). Xcode will rewrite them to use the &amp;apos; XML entity; would you please change them for us, so that Xcode doesn't have to?`,
       )
     }
   }
