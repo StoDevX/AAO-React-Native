@@ -5,12 +5,6 @@ const {danger, warn, message} = require('danger')
 const {readFileSync} = require('fs')
 
 //
-// Run danger
-//
-
-main()
-
-//
 // The entry point of this script
 //
 
@@ -272,3 +266,9 @@ function isBadDataValidationLog(log) {
 function fileLog(name, log, {lang = null} = {}) {
   return message(h.details(h.summary(name), m.code({language: lang}, log)))
 }
+
+//
+// Invoke the script
+//
+
+main()
