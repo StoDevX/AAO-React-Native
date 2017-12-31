@@ -123,6 +123,7 @@
     "mkdirp": "0.5.1",
     "pify": "3.0.0",
     "prettier": "1.9.2",
+    "pretty-bytes": "4.0.2",
     "prop-types": "15.6.0",
     "react-native-video": "2.0.0",
     "react-test-renderer": "16.1.0",
