@@ -173,11 +173,13 @@ async function runGeneral() {
       .filter(key => {
         const value = buildConfig[key]
         const searchPaths = value.buildSettings.LIBRARY_SEARCH_PATHS
+        message(h.code(JSON.stringify(searchPaths)))
+        return false
         return uniq(searchPaths).length === searchPaths.length
       })
     if (duplicateSearchPaths.length) {
       fail(
-        'Some of the Xcode <code>LIBRARY_SEARCH_PATHS</code> now have duplicate entries. Please remove the duplicates. Thanks!',
+        'Some of the Xcode <code>LIBRARY_SEARCH_PATHS</code> have duplicate entries. Please remove the duplicates. Thanks!',
       )
     }
 
