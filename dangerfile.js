@@ -241,12 +241,9 @@ async function runGeneral() {
               const val = entities.encode(parsed[key])
               const escaped = entities.encode(val.replace(/'/g, '&apos;'))
               return h.li(
-                h.code(key) + ':',
-                h.br(),
+                h.p(h.code(key) + ':'),
                 h.blockquote(val),
-                h.br(),
-                'should become',
-                h.br(),
+                h.p('should become'),
                 h.blockquote(escaped),
               )
             }),
