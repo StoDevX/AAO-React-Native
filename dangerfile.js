@@ -135,6 +135,8 @@ async function runGeneral() {
       )
     }
 
+    /*
+
     // Warn about numbers that `react-native link` removes leading 0s on
     const numericLines = [
       'LastSwiftMigration',
@@ -202,6 +204,7 @@ async function runGeneral() {
         "Some of the iOS frameworks aren't sorted alphabetically in the Xcode sidebar (under Libraries). Please sort them alphabetically. Thanks!",
       )
     }
+    */
   }
 
   //
