@@ -6,9 +6,11 @@ const {danger, warn, message, schedule, fail, markdown} = require('danger')
 // it leaves the rest of the imports alone, though
 import yarn from 'danger-plugin-yarn'
 const {readFileSync} = require('fs')
+const childProcess = require('child_process')
 const uniq = require('lodash/uniq')
 const isEqual = require('lodash/isEqual')
 const findIndex = require('lodash/findIndex')
+const bytes = require('pretty-bytes')
 const {XmlEntities} = require('html-entities')
 const entities = new XmlEntities()
 // depended on by react-native (and us)
@@ -57,14 +59,41 @@ function runAndroid() {
   message('android: nothing to do')
 }
 
-function runiOS() {
+async function runiOS() {
+  message('iOS: nothing to do')
+
+  const logFile = readFile('./logs/ios').split('\n')
+
   // ideas:
   // - tee the "fastlane" output to a log, and run the analysis script
   //   to report back the longest compilation units
   //   (maybe only on react-native / package.json changes?)
+  const analysisFile = readFile('./logs/analysis')
+  markdown(
+    h.details(
+      h.summary('Analysis of build times'),
+      m.code({lang: ''}, analysisFile),
+    ),
+  )
+
   // - report the .ipa size
   // - report the .ipa file list
-  message('iOS: nothing to do')
+  const getFromGymLog = key =>
+    (logFile.find(l => l.includes(key)) || '').split('|')[2].trim()
+  const ipaFolder = getFromGymLog('output_directory')
+  const ipaFile = getFromGymLog('output_name')
+  const info = await listZip(`${ipaFolder}/${ipaFile}.ipa`)
+  message(`IPA size: ${bytes(info.size)}`)
+  message(
+    h.details(
+      h.summary('IPA file list'),
+      h.ul(
+        ...info.files.map(file =>
+          h.li(h.code(file.filepath), bytes(file.size)),
+        ),
+      ),
+    ),
+  )
 }
 
 async function runGeneral() {
@@ -533,6 +562,30 @@ function parseXcodeProject(pbxprojPath) {
         reject(error)
       }
       resolve(data)
+    })
+  })
+}
+
+async function listZip(filepath) {
+  const [stdout] = await exec('unzip', '-l', filepath)
+  const lines = stdout.split('\n')
+  const parsed = lines.slice(2, -2).map(line => {
+    const length = parseInt(line.slice(0, 9).trim(), 10)
+    // const datetime = line.slice(12, 28)
+    const filepath = line.slice(30).trim()
+    return {size: length, filepath}
+  })
+  const zipSize = parsed.reduce((sum, current) => current.size + sum, 0)
+  return {files: parsed, size: zipSize}
+}
+
+function exec(cmd, ...args) {
+  return new Promise((resolve, reject) => {
+    childProcess.execFileSync(cmd, args, (err, stdout, stderr) => {
+      if (err) {
+        reject(err)
+      }
+      resolve([stdout, stderr])
     })
   })
 }
