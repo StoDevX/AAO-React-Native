@@ -476,58 +476,11 @@ function runJSのJest() {
 
   const lines = file.slice(startIndex + 1, endIndex - 1)
 
-  // const failures = [...segmentOn(/^FAIL\s/, /^(FAIL|Snapshot Summary)/, lines)]
-  // const summary = [...getLinesBetween(/^Snapshot Summary$/, Infinity, lines)]
-
   fileLog(
     'Some Jest tests failed. Take a peek?',
-    // h.details('')
-    // summary.join('\n')
     lines.join('\n'),
   )
 }
-
-// function* segmentOn(startLineRegex, endLineRegex, lines) {
-//   let thisSegment = []
-//   let inSegment = false
-//   for (const line of lines) {
-//     if (endLineRegex.test(line)) {
-//       if (thisSegment.length) {
-//         yield thisSegment
-//       }
-//       inSegment = false
-//       thisSegment = []
-//     }
-//     if (startLineRegex.test(line)) {
-//       inSegment = true
-//     }
-//     if (inSegment) {
-//       thisSegment.push(line)
-//     }
-//   }
-// }
-
-// function* enumerate(iter) {
-//   let i = 0
-//   for (const item of iter) {
-//     yield [i++, item]
-//   }
-// }
-
-// function* getLinesBetween(startRegex, endIndex, lines) {
-//   let inBetween = false
-//   for (const [index, line] of enumerate(lines)) {
-//     if (startRegex.test(line)) {
-//       inBetween = true
-//     }
-//     if (endIndex <= index) {
-//       inBetween = false
-//     }
-//     if (inBetween) {
-//       yield line
-//     }
-//   }
-// }
 
 function runJSのLint() {
   const eslintLog = readLogFile('./logs/eslint')
