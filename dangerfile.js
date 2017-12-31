@@ -419,8 +419,15 @@ function runJSのJest() {
   }
 
   const lines = jestLog.split('\n')
-  const startIndex = findIndex(lines, l => l.trim() === 'Summary of all failing tests')
-  const endIndex = findIndex(lines, l => l.trim() === 'Ran all test suites.', startIndex)
+  const startIndex = findIndex(
+    lines,
+    l => l.trim() === 'Summary of all failing tests',
+  )
+  const endIndex = findIndex(
+    lines,
+    l => l.trim() === 'Ran all test suites.',
+    startIndex,
+  )
 
   fileLog(
     'Some Jest tests failed. Take a peek?',
