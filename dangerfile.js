@@ -61,14 +61,11 @@ async function main() {
 function runAndroid() {
   markdown('android: nothing to do')
 
-  const logFile = readFile('./logs/android').split('\n').slice(0, 200)
+  const logFile = readFile('./logs/android')
+    .split('\n')
+    .slice(0, 200)
 
-  markdown(
-    h.details(
-      h.summary('Build log'),
-      h.pre(logFile.join('\n')),
-    ),
-  )
+  markdown(h.details(h.summary('Build log'), h.pre(logFile.join('\n'))))
 }
 
 function runiOS() {
@@ -80,10 +77,7 @@ function runiOS() {
   //   (maybe only on react-native / package.json changes?)
   const analysisFile = readFile('./logs/analysis')
   markdown(
-    h.details(
-      h.summary('Analysis of slow build times'),
-      h.pre(analysisFile),
-    ),
+    h.details(h.summary('Analysis of slow build times'), h.pre(analysisFile)),
   )
 
   // - report the .ipa size
@@ -100,13 +94,9 @@ function runiOS() {
 Total <code>.app</code> size: ${bytes(info.size)}
 
 ${h.details(
-h.summary('.app contents'),
-m.code(
-  {language: 'json'},
-  JSON.stringify(info.children, null, 2),
-),
-)}
-    `)
+      h.summary('.app contents'),
+      m.code({language: 'json'}, JSON.stringify(info.children, null, 2)),
+    )}`)
   } else {
     warn('Could not figure out path to .app folder')
   }
@@ -134,7 +124,9 @@ async function runGeneral() {
   const depsChanged =
     'dependencies' in packageDiff || 'devDependencies' in packageDiff
   if (packageChanged && depsChanged && !lockfileChanged) {
-    warn('Changes were made to <code>package.json</code>, but not to <code>yarn.lock</code>. Perhaps you need to run <code>yarn</code>?')
+    warn(
+      'Changes were made to <code>package.json</code>, but not to <code>yarn.lock</code>. Perhaps you need to run <code>yarn</code>?',
+    )
   }
 
   //
@@ -143,7 +135,10 @@ async function runGeneral() {
   danger.git.created_files
     .filter(filepath => filepath.endsWith('.test.js'))
     .map(filepath => ({filepath, content: readFile(filepath)}))
-    .filter(({content}) => content.includes('it.only') || content.includes('describe.only'))
+    .filter(
+      ({content}) =>
+        content.includes('it.only') || content.includes('describe.only'),
+    )
     .forEach(({filepath}) =>
       warn(
         `An <code>only</code> was left in ${filepath} – no other tests can run.`,
@@ -217,9 +212,12 @@ async function runGeneral() {
     const xcodeproj = await parseXcodeProject(pbxprojChanged)
     const buildConfig = xcodeproj.project.objects.XCBuildConfiguration
     const duplicateSearchPaths = Object.entries(buildConfig)
-      .filter(([_, val]/*: [string, any]*/) => typeof val === 'object')
-      .filter(([_, val]/*: [string, any]*/) => val.buildSettings.LIBRARY_SEARCH_PATHS)
-      .filter(([_, val]/*: [string, any]*/) => {
+      .filter(([_, val] /*: [string, any]*/) => typeof val === 'object')
+      .filter(
+        ([_, val] /*: [string, any]*/) =>
+          val.buildSettings.LIBRARY_SEARCH_PATHS,
+      )
+      .filter(([_, val] /*: [string, any]*/) => {
         const searchPaths = val.buildSettings.LIBRARY_SEARCH_PATHS
         return uniq(searchPaths).length !== searchPaths.length
       })
@@ -241,10 +239,10 @@ async function runGeneral() {
     // Warn about non-sorted frameworks in xcode sidebar
     const projectsInSidebar = xcodeproj.project.objects.PBXGroup
     const sidebarSorting = Object.entries(projectsInSidebar)
-      .filter(([_, val]/*: [string, any]*/) => typeof val === 'object')
-      .filter(([_, val]/*: [string, any]*/) => val.name === 'Libraries')
-      .filter(([_, val]/*: [string, any]*/) => val.files)
-      .filter(([_, val]/*: [string, any]*/) => {
+      .filter(([_, val] /*: [string, any]*/) => typeof val === 'object')
+      .filter(([_, val] /*: [string, any]*/) => val.name === 'Libraries')
+      .filter(([_, val] /*: [string, any]*/) => val.files)
+      .filter(([_, val] /*: [string, any]*/) => {
         const projects = val.files.map(file => file.comment)
         const sorted = [...projects].sort((a, b) => a.localeSort(b))
         return !isEqual(projects, sorted)
@@ -469,10 +467,7 @@ function runJSのJest() {
 
   const lines = file.slice(startIndex + 1, endIndex - 1)
 
-  fileLog(
-    'Some Jest tests failed. Take a peek?',
-    lines.join('\n'),
-  )
+  fileLog('Some Jest tests failed. Take a peek?', lines.join('\n'))
 }
 
 function runJSのLint() {
