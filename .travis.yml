@@ -129,6 +129,10 @@ jobs:
     # Do node "tests"
     - <<: *js
       stage: Test
+      env: [task=JS]
+
+    - <<: *js
+      stage: Test
       env: [task=JS-flow]
       script:
         - npm run bundle-data

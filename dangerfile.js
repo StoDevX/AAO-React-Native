@@ -28,8 +28,9 @@ async function main() {
   } else if (taskName === 'IOS') {
     schedule(runiOS())
   } else if (taskName === 'GREENKEEPER') {
-    await runGeneral()
     await runGreenkeeper()
+  } else if (taskName === 'JS') {
+    await runGeneral()
     await yarn()
   } else if (taskName === 'JS-data') {
     await runJSのData()
