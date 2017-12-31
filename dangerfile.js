@@ -645,7 +645,7 @@ function exec(cmd, ...args) {
   return new Promise((resolve, reject) => {
     childProcess.execFile(cmd, args, (err, stdout, stderr) => {
       if (err) {
-        error(h.p(`error executing <code>${cmd} ${args.join(' ')}</code>:`) + '\n\n' + m.code({language: 'json'}, JSON.stringify(err, null, 2)))
+        fail(h.p(`error executing <code>${cmd} ${args.join(' ')}</code>:`) + '\n\n' + m.code({language: 'json'}, JSON.stringify(err, null, 2)))
         reject(err)
       }
       resolve([stdout, stderr])
