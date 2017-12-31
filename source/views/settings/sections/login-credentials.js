@@ -14,6 +14,7 @@ import {
 import {type ReduxState} from '../../../flux'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
+import {View} from 'react-native'
 
 type ReduxStateProps = {
   initialUsername: string,
@@ -68,41 +69,40 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
     const loading = loginState === 'checking'
     const loggedIn = loginState === 'logged-in'
 
-    let message
-    if (loginState === 'invalid') {
-      message = 'Login failed'
-    }
-
     return (
       <Section
         footer="St. Olaf login enables the &quot;meals remaining&quot; feature."
         header="ST. OLAF LOGIN"
       >
-        <CellTextField
-          _ref={this.getUsernameRef}
-          disabled={loading}
-          label="Username"
-          onChangeText={this.onChangeUsername}
-          onSubmitEditing={this.focusPassword}
-          placeholder="username"
-          returnKeyType="next"
-          secureTextEntry={false}
-          value={username}
-        />
+        {loggedIn ? (
+          <Cell title={`Logged in as ${username}.`} />
+        ) : (
+          <View>
+            <CellTextField
+              _ref={this.getUsernameRef}
+              disabled={loading}
+              label="Username"
+              onChangeText={this.onChangeUsername}
+              onSubmitEditing={this.focusPassword}
+              placeholder="username"
+              returnKeyType="next"
+              secureTextEntry={false}
+              value={username}
+            />
 
-        <CellTextField
-          _ref={this.getPasswordRef}
-          disabled={loading}
-          label="Password"
-          onChangeText={this.onChangePassword}
-          onSubmitEditing={loggedIn ? noop : this.logIn}
-          placeholder="password"
-          returnKeyType="done"
-          secureTextEntry={true}
-          value={password}
-        />
-
-        {message ? <Cell title={`⚠️ ${message}`} /> : null}
+            <CellTextField
+              _ref={this.getPasswordRef}
+              disabled={loading}
+              label="Password"
+              onChangeText={this.onChangePassword}
+              onSubmitEditing={loggedIn ? noop : this.logIn}
+              placeholder="password"
+              returnKeyType="done"
+              secureTextEntry={true}
+              value={password}
+            />
+          </View>
+        )}
 
         <LoginButton
           disabled={loading || (!username || !password)}

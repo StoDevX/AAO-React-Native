@@ -4512,9 +4512,9 @@ react-native-tab-view@^0.0.70:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-tableview-simple@0.17.1:
-  version "0.17.1"
-  resolved "https://registry.yarnpkg.com/react-native-tableview-simple/-/react-native-tableview-simple-0.17.1.tgz#d27c0a6b454052e6ac265e7ed16733e00bafeed1"
+react-native-tableview-simple@0.17.2:
+  version "0.17.2"
+  resolved "https://registry.yarnpkg.com/react-native-tableview-simple/-/react-native-tableview-simple-0.17.2.tgz#f54c8131093566d518361238e3e0a71143cb5be8"
   dependencies:
     prop-types "^15.6.0"
 
@@ -5609,7 +5609,7 @@ vinyl@^0.5.0:
     clone-stats "^0.0.1"
     replace-ext "0.0.1"
 
-"vm2@github:patriksimek/vm2#custom_files":
+vm2@patriksimek/vm2#custom_files:
   version "3.5.0"
   resolved "https://codeload.github.com/patriksimek/vm2/tar.gz/7e82f90ac705fc44fad044147cb0df09b4c79a57"
 

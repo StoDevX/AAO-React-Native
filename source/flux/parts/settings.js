@@ -16,6 +16,7 @@ import {
 import {type ReduxState} from '../index'
 import {type UpdateBalancesType} from './sis'
 import {updateBalances} from './sis'
+import {Alert} from 'react-native'
 
 export type LoginStateType = 'logged-out' | 'logged-in' | 'checking' | 'invalid'
 
@@ -79,13 +80,29 @@ type LoginSuccessAction = {|
 |}
 type LoginFailureAction = {|type: 'settings/CREDENTIALS_LOGIN_FAILURE'|}
 type LogInActions = LoginStartAction | LoginSuccessAction | LoginFailureAction
+
+const showNetworkFailureMessage = () =>
+  Alert.alert(
+    'Network Failure',
+    'You are not connected to the internet. Please connect if you want to access this feature.',
+    [{text: 'OK'}],
+  )
+
+const showInvalidLoginMessage = () =>
+  Alert.alert(
+    'Invalid Login',
+    'The username and password you provided do not match a valid account. Please try again.',
+    [{text: 'OK'}],
+  )
+
 export function logInViaCredentials(
   username: string,
   password: string,
 ): ThunkAction<LogInActions | UpdateBalancesType> {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     dispatch({type: CREDENTIALS_LOGIN_START})
-
+    const state = getState()
+    const isConnected = state.app ? state.app.isConnected : false
     const result = await performLogin(username, password)
     if (result) {
       dispatch({type: CREDENTIALS_LOGIN_SUCCESS, payload: {username, password}})
@@ -93,6 +110,11 @@ export function logInViaCredentials(
       dispatch(updateBalances())
     } else {
       dispatch({type: CREDENTIALS_LOGIN_FAILURE})
+      if (isConnected) {
+        showInvalidLoginMessage()
+      } else {
+        showNetworkFailureMessage()
+      }
     }
   }
 }
@@ -198,7 +220,7 @@ export function settings(state: State = initialState, action: Action) {
     }
 
     case CREDENTIALS_LOGIN_FAILURE:
-      return {...state, state: 'invalid'}
+      return {...state, loginState: 'invalid'}
 
     case CREDENTIALS_LOGOUT: {
       return {
