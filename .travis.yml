@@ -41,10 +41,23 @@ jobs:
       distro: trusty
       language: node_js
       node_js: $TRAVIS_NODE_VERSION
-      env: [task=GREENKEEPER]
       install: yarn || yarn
+      env: [task=GREENKEEPER]
       before_script: mkdir -p logs/
       script:
+        - npm run danger -- --id $task
+
+    - os: linux
+      sudo: false
+      distro: trusty
+      language: node_js
+      node_js: $TRAVIS_NODE_VERSION
+      install: yarn || yarn
+      env: [task=JS-data]
+      before_script: mkdir -p logs/
+      script:
+        - npm run validate-data -- --quiet | tee logs/validate-data
+        - npm run validate-bus-data | tee logs/validate-bus-data
         - npm run danger -- --id $task
 
 cache:
