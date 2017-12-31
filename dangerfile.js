@@ -6,10 +6,12 @@ const {danger, warn, message, schedule, fail} = require('danger')
 // it leaves the rest of the imports alone, though
 import yarn from 'danger-plugin-yarn'
 const {readFileSync} = require('fs')
-const plist = require('simple-plist')
-const xcode = require('xcode')
 const uniq = require('lodash/uniq')
 const isEqual = require('lodash/isEqual')
+// depended on by react-native (and us)
+const xcode = require('xcode')
+// depended on by xcode (and us)
+const plist = require('simple-plist')
 
 //
 // The entry point of this script
@@ -123,7 +125,7 @@ async function runGeneral() {
   )
   message(`pbxprojChanged?: ${pbxprojChanged}`)
   message(`changed files: ${danger.git.modified_files.join('<br>')}`)
-  if (pbxprojChanged) {
+  if (pbxprojChanged === null) {
     warn('The Xcode project file changed. Double-check the changes!')
 
     // Warn about a blank line that Xcode will re-insert if we remove
@@ -209,8 +211,8 @@ async function runGeneral() {
   const infoPlistChanged = danger.git.modified_files.find(filepath =>
     filepath.endsWith('Info.plist'),
   )
-  if (infoPlistChanged) {
-    const parsed = plist.parse(readFileSync(infoPlistChanged))
+  if (infoPlistChanged === null) {
+    const parsed = plist.parse(readFileSync(infoPlistChanged, 'utf-8'))
     const descKeysWithEntities = Object.keys(parsed)
       .filter(key => key.endsWith('Description'))
       .filter(key => /&.*;/.test(parsed[key])) // look for xml entities
