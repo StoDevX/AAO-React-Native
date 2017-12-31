@@ -130,6 +130,7 @@ jobs:
     - <<: *js
       stage: Test
       env: [task=JS]
+      script: skip
 
     - <<: *js
       stage: Test
