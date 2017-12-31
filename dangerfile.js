@@ -1,7 +1,7 @@
 // @flow
 
 // danger removes this import, so don't do anything fancy with it
-const {danger, warn, message, schedule, fail} = require('danger')
+const {danger, warn, message, schedule, fail, markdown} = require('danger')
 
 // it leaves the rest of the imports alone, though
 import yarn from 'danger-plugin-yarn'
@@ -514,7 +514,7 @@ function isBadDataValidationLog(log) {
 }
 
 function fileLog(name, log, {lang = null} = {}) {
-  return message(
+  return markdown(
     h.details(h.summary(name), '', m.code({language: lang}, log), '\n'),
   )
 }
