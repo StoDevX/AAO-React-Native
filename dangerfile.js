@@ -56,11 +56,11 @@ async function main() {
 //
 
 function runAndroid() {
-  message('android: nothing to do')
+  markdown('android: nothing to do')
 }
 
 async function runiOS() {
-  message('iOS: nothing to do')
+  markdown('iOS: nothing to do')
 
   const logFile = readFile('./logs/ios').split('\n')
 
@@ -72,31 +72,35 @@ async function runiOS() {
   markdown(
     h.details(
       h.summary('Analysis of build times'),
-      m.code({lang: ''}, analysisFile),
+      h.pre(analysisFile),
     ),
   )
 
   // - report the .ipa size
   // - report the .ipa file list
-  const getFromGymLog = key =>
-    (logFile.find(l => l.includes(key)) || '').split(' is ')[1].trim()
-  const ipaFolder = getFromGymLog('GYM_OUTPUT_DIRECTORY')
-  const ipaFile = getFromGymLog('GYM_OUTPUT_NAME')
-  if (ipaFolder && ipaFile) {
-    const info = await listZip(`${ipaFolder}/${ipaFile}.ipa`)
-    message(`IPA size: ${bytes(info.size)}`)
-    message(
-      h.details(
-        h.summary('IPA file list'),
-        h.ul(
-          ...info.files.map(file =>
-            h.li(h.code(file.filepath), bytes(file.size)),
+  try {
+    const getFromGymLog = key =>
+      (logFile.find(l => l.includes(key)) || '').split(' is ')[1].trim()
+    const ipaFolder = getFromGymLog('GYM_OUTPUT_DIRECTORY')
+    const ipaFile = getFromGymLog('GYM_OUTPUT_NAME')
+    if (ipaFolder && ipaFile) {
+      const info = await listZip(`${ipaFolder}/${ipaFile}.ipa`)
+      message(`IPA size: ${bytes(info.size)}`)
+      message(
+        h.details(
+          h.summary('IPA file list'),
+          h.ul(
+            ...info.files.map(file =>
+              h.li(h.code(file.filepath), bytes(file.size)),
+            ),
           ),
         ),
-      ),
-    )
-  } else {
-    warn('could not figure out path to .ipa file')
+      )
+    } else {
+      warn('could not figure out path to .ipa file')
+    }
+  } catch (err) {
+    warn(m.code({language: 'json'}, JSON.stringify(err, null, 2)))
   }
 }
 
@@ -451,22 +455,71 @@ function runJSのJest() {
     return
   }
 
-  const lines = jestLog.split('\n')
+  const file = jestLog.split('\n')
   const startIndex = findIndex(
-    lines,
+    file,
     l => l.trim() === 'Summary of all failing tests',
   )
   const endIndex = findIndex(
-    lines,
+    file,
     l => l.trim() === 'Ran all test suites.',
     startIndex,
   )
 
+  const lines = file.slice(startIndex + 1, endIndex - 1)
+
+  // const failures = [...segmentOn(/^FAIL\s/, /^(FAIL|Snapshot Summary)/, lines)]
+  // const summary = [...getLinesBetween(/^Snapshot Summary$/, Infinity, lines)]
+
   fileLog(
     'Some Jest tests failed. Take a peek?',
-    lines.slice(startIndex + 1, endIndex - 1).join('\n'),
+    // h.details('')
+    // summary.join('\n')
+    lines.join('\n'),
   )
 }
+
+// function* segmentOn(startLineRegex, endLineRegex, lines) {
+//   let thisSegment = []
+//   let inSegment = false
+//   for (const line of lines) {
+//     if (endLineRegex.test(line)) {
+//       if (thisSegment.length) {
+//         yield thisSegment
+//       }
+//       inSegment = false
+//       thisSegment = []
+//     }
+//     if (startLineRegex.test(line)) {
+//       inSegment = true
+//     }
+//     if (inSegment) {
+//       thisSegment.push(line)
+//     }
+//   }
+// }
+
+// function* enumerate(iter) {
+//   let i = 0
+//   for (const item of iter) {
+//     yield [i++, item]
+//   }
+// }
+
+// function* getLinesBetween(startRegex, endIndex, lines) {
+//   let inBetween = false
+//   for (const [index, line] of enumerate(lines)) {
+//     if (startRegex.test(line)) {
+//       inBetween = true
+//     }
+//     if (endIndex <= index) {
+//       inBetween = false
+//     }
+//     if (inBetween) {
+//       yield line
+//     }
+//   }
+// }
 
 function runJSのLint() {
   const eslintLog = readLogFile('./logs/eslint')
@@ -548,7 +601,9 @@ function isBadDataValidationLog(log) {
 
 function fileLog(name, log, {lang = null} = {}) {
   return markdown(
-    h.details(h.summary(name), '', m.code({language: lang}, log), '\n'),
+    `## ${name}`,
+    '',
+    m.code({language: lang}, log),
   )
 }
 
@@ -573,11 +628,12 @@ function parseXcodeProject(pbxprojPath) {
 async function listZip(filepath) {
   const [stdout] = await exec('unzip', '-l', filepath)
   const lines = stdout.split('\n')
-  const parsed = lines.slice(2, -2).map(line => {
+  const parsed = lines.slice(3, -3).map(line => {
     const length = parseInt(line.slice(0, 9).trim(), 10)
     // const datetime = line.slice(12, 28)
     const filepath = line.slice(30).trim()
-    return {size: length, filepath}
+    const type = filepath.endsWith('/') ? 'folder' : 'file'
+    return {size: length, filepath, type}
   })
   const zipSize = parsed.reduce((sum, current) => current.size + sum, 0)
   return {files: parsed, size: zipSize}
