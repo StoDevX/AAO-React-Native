@@ -93,25 +93,22 @@ function runiOS() {
   const appFolder = getFromGymLog('XCBUILD_TARGET_BUILD_DIR')
   const appFile = getFromGymLog('GYM_OUTPUT_NAME')
   const appPath = `${appFolder}/${appFile}.app`
-  try {
-    if (appFolder && appFile) {
-      const info = directoryTree(appPath) // synchronous method
-      markdown(`## <code>.app</code>
+
+  if (appFolder && appFile) {
+    const info = directoryTree(appPath) // synchronous method
+    markdown(`## <code>.app</code>
 Total <code>.app</code> size: ${bytes(info.size)}
 
 ${h.details(
-  h.summary('.app contents'),
-  m.code(
-    {language: 'json'},
-    JSON.stringify(info.children, null, 2),
-  ),
+h.summary('.app contents'),
+m.code(
+  {language: 'json'},
+  JSON.stringify(info.children, null, 2),
+),
 )}
-      `)
-    } else {
-      warn('Could not figure out path to .app folder')
-    }
-  } catch (err) {
-    warn(h.p(`error reading .app folder <code>${appPath}</code>:`) + '\n\n' + m.code({language: 'json'}, JSON.stringify(err, null, 2)))
+    `)
+  } else {
+    warn('Could not figure out path to .app folder')
   }
 }
 
@@ -634,21 +631,6 @@ function parseXcodeProject(pbxprojPath) {
       resolve(data)
     })
   })
-}
-
-async function listZip(filepath) {
-  const {stdout} = await execFile('unzip', ['-l', filepath])
-  message(h.details(h.summary('zip list'), h.pre(stdout)))
-  const lines = stdout.split('\n')
-  const parsed = lines.slice(3, -3).map(line => {
-    const length = parseInt(line.slice(0, 9).trim(), 10)
-    // const datetime = line.slice(12, 28)
-    const filepath = line.slice(30).trim()
-    const type = filepath.endsWith('/') ? 'folder' : 'file'
-    return {size: length, filepath, type}
-  })
-  const zipSize = parsed.reduce((sum, current) => current.size + sum, 0)
-  return {files: parsed, size: zipSize}
 }
 
 //
