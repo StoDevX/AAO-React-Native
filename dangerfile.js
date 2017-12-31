@@ -8,6 +8,8 @@ import yarn from 'danger-plugin-yarn'
 const {readFileSync} = require('fs')
 const uniq = require('lodash/uniq')
 const isEqual = require('lodash/isEqual')
+const {XmlEntities} = require('html-entities')
+const entities = new XmlEntities();
 // depended on by react-native (and us)
 const xcode = require('xcode')
 // depended on by xcode (and us)
@@ -236,8 +238,8 @@ async function runGeneral() {
           ),
           h.ul(
             ...descKeysWithEntities.map(key => {
-              const val = parsed[key]
-              const escaped = val.replace(/'/g, '&amp;apos;')
+              const val = entities.encode(parsed[key])
+              const escaped = entities.encode(val.replace(/'/g, '&apos;'))
               return h.li(`${h.code(key)}:<br>"${val}"<br>should become<br>"${escaped}"`)
             }),
           ),
