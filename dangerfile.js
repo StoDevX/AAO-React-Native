@@ -78,13 +78,14 @@ async function runiOS() {
 
   // - report the .ipa size
   // - report the .ipa file list
+  const getFromGymLog = key =>
+    (logFile.find(l => l.includes(key)) || '').split(' is ')[1].trim()
+  const ipaFolder = getFromGymLog('GYM_OUTPUT_DIRECTORY')
+  const ipaFile = getFromGymLog('GYM_OUTPUT_NAME')
+  const ipaPath = `${ipaFolder}/${ipaFile}.ipa`
   try {
-    const getFromGymLog = key =>
-      (logFile.find(l => l.includes(key)) || '').split(' is ')[1].trim()
-    const ipaFolder = getFromGymLog('GYM_OUTPUT_DIRECTORY')
-    const ipaFile = getFromGymLog('GYM_OUTPUT_NAME')
     if (ipaFolder && ipaFile) {
-      const info = await listZip(`${ipaFolder}/${ipaFile}.ipa`)
+      const info = await listZip(ipaPath)
       message(`IPA size: ${bytes(info.size)}`)
       message(
         h.details(
@@ -100,7 +101,7 @@ async function runiOS() {
       warn('could not figure out path to .ipa file')
     }
   } catch (err) {
-    warn(m.code({language: 'json'}, JSON.stringify(err, null, 2)))
+    warn(h.p(`error reading .ipa file <code>${ipaPath}</code>:`) + '\n\n' + m.code({language: 'json'}, JSON.stringify(err, null, 2)))
   }
 }
 
@@ -627,6 +628,7 @@ function parseXcodeProject(pbxprojPath) {
 
 async function listZip(filepath) {
   const [stdout] = await exec('unzip', '-l', filepath)
+  message(h.details(h.summary('zip list'), h.pre(stdout)))
   const lines = stdout.split('\n')
   const parsed = lines.slice(3, -3).map(line => {
     const length = parseInt(line.slice(0, 9).trim(), 10)
@@ -643,6 +645,7 @@ function exec(cmd, ...args) {
   return new Promise((resolve, reject) => {
     childProcess.execFile(cmd, args, (err, stdout, stderr) => {
       if (err) {
+        error(h.p(`error executing <code>${cmd} ${args.join(' ')}</code>:`) + '\n\n' + m.code({language: 'json'}, JSON.stringify(err, null, 2)))
         reject(err)
       }
       resolve([stdout, stderr])
