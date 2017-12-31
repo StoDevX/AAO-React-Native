@@ -262,7 +262,7 @@ async function runGeneral() {
 }
 
 function runGreenkeeper() {
-  message('greenkeeper ran')
+  // message('greenkeeper ran')
 }
 
 function runJSのData() {
