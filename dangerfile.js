@@ -558,8 +558,8 @@ ${m.code({language: lang}, log)}`,
 }
 
 function parseXcodeProject(pbxprojPath) {
-  const project = xcode.project(pbxprojPath)
   return new Promise((resolve, reject) => {
+    const project = xcode.project(pbxprojPath)
     // I think this can be called twice from .parse, which is an error for a Promise
     let resolved = false
     project.parse((error, data) => {
