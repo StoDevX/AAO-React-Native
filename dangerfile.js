@@ -167,7 +167,6 @@ async function runGeneral() {
 
     // Warn about duplicate entries in the linking paths after a `react-native link`
     const xcodeproj = await parseXcodeProject(pbxprojChanged)
-    /*
     const buildConfig = xcodeproj.project.objects.XCBuildConfiguration
     const duplicateSearchPaths = Object.keys(buildConfig)
       .filter(key => typeof buildConfig[key] === 'object')
@@ -182,6 +181,7 @@ async function runGeneral() {
       )
     }
 
+    /*
     // Warn about non-sorted frameworks in the linking phase of the build
     const frameworksPhase = xcodeproj.project.objects.PBXFrameworksBuildPhase
     const alphabeticalFrameworkSorting = Object.keys(frameworksPhase)
