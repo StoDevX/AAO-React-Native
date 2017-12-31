@@ -545,17 +545,6 @@ function readLogFile(filename) {
   return readFile(filename).trim()
 }
 
-function isBadBundleLog(log) {
-  const allLines = log.split('\n')
-  const requiredLines = [
-    'bundle: start',
-    'bundle: finish',
-    'bundle: Done writing bundle output',
-    'bundle: Done copying assets',
-  ]
-  return requiredLines.some(line => !allLines.includes(line))
-}
-
 function isBadDataValidationLog(log) {
   return log.split('\n').some(l => !l.endsWith('is valid'))
 }
