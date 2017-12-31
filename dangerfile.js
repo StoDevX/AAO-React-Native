@@ -12,6 +12,8 @@ const isEqual = require('lodash/isEqual')
 const findIndex = require('lodash/findIndex')
 const bytes = require('pretty-bytes')
 const {XmlEntities} = require('html-entities')
+const util = require('util')
+const execFile = util.promisify(childProcess.execFile)
 const entities = new XmlEntities()
 // depended on by react-native (and us)
 const xcode = require('xcode')
@@ -636,7 +638,7 @@ function parseXcodeProject(pbxprojPath) {
 }
 
 async function listZip(filepath) {
-  const [stdout] = await exec('unzip', '-l', filepath)
+  const {stdout} = await execFile('unzip', ['-l', filepath])
   message(h.details(h.summary('zip list'), h.pre(stdout)))
   const lines = stdout.split('\n')
   const parsed = lines.slice(3, -3).map(line => {
@@ -648,18 +650,6 @@ async function listZip(filepath) {
   })
   const zipSize = parsed.reduce((sum, current) => current.size + sum, 0)
   return {files: parsed, size: zipSize}
-}
-
-function exec(cmd, ...args) {
-  return new Promise((resolve, reject) => {
-    childProcess.execFile(cmd, args, (err, stdout, stderr) => {
-      if (err) {
-        fail(h.p(`error executing <code>${cmd} ${args.join(' ')}</code>:`) + '\n\n' + m.code({language: 'json'}, JSON.stringify(err, null, 2)))
-        reject(err)
-      }
-      resolve([stdout, stderr])
-    })
-  })
 }
 
 //
