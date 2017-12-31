@@ -80,6 +80,7 @@ x-definitions:
 
       # disable npm wrapper for npm scripts
       - echo "loglevel=silent" >> .npmrc
+      - mkdir -p logs/
 
     after_script:
       - npm run danger -- --id $task
