@@ -213,7 +213,8 @@ function runJSのPrettier() {
 // Utilities
 //
 
-const h = new Proxy(
+// eslint-disable-next-line no-var
+var h = new Proxy(
   {},
   {
     get(_, property) {
@@ -224,7 +225,8 @@ const h = new Proxy(
   },
 )
 
-const m = new Proxy(
+// eslint-disable-next-line no-var
+var m = new Proxy(
   {},
   {
     get(_, property) {
@@ -259,7 +261,9 @@ function readFile(filename) {
   }
 }
 
-const readLogFile = filename => readFile(filename).trim()
+function readLogFile(filename) {
+  return readFile(filename).trim()
+}
 
 function isBadBundleLog(log) {
   const allLines = log.split('\n')
