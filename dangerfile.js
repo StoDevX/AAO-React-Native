@@ -121,6 +121,7 @@ async function runGeneral() {
   const pbxprojChanged = danger.git.modified_files.find(filepath =>
     filepath.endsWith('project.pbxproj'),
   )
+  message(`pbxprojChanged?: ${pbxprojChanged}`)
   if (pbxprojChanged) {
     warn('The Xcode project file changed. Double-check the changes!')
 
