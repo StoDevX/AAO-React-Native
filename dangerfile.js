@@ -264,7 +264,7 @@ function isBadDataValidationLog(log) {
 }
 
 function fileLog(name, log, {lang = null} = {}) {
-  return message(h.details(h.summary(name), m.code({language: lang}, log)))
+  return message(h.details(h.summary(name), '', m.code({language: lang}, log), '\n'))
 }
 
 //
