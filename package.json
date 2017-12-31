@@ -33,6 +33,7 @@
   "greenkeeper": {
     "ignore": [
       "flow-bin",
+      "xcode",
       "react"
     ]
   },
@@ -106,6 +107,7 @@
     "babel-preset-react-native": "4.0.0",
     "bugsnag-sourcemaps": "1.0.1",
     "danger": "2.1.8",
+    "danger-plugin-yarn": "1.2.0",
     "eslint": "4.14.0",
     "eslint-config-prettier": "2.9.0",
     "eslint-plugin-babel": "4.1.2",
@@ -121,7 +123,10 @@
     "pify": "3.0.0",
     "prettier": "1.9.2",
     "prop-types": "15.6.0",
+    "react-native-video": "2.0.0",
     "react-test-renderer": "16.1.0",
-    "string-natural-compare": "2.0.2"
+    "simple-plist": "0.2.1",
+    "string-natural-compare": "2.0.2",
+    "xcode": "0.9.3"
   }
 }

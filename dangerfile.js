@@ -1,10 +1,15 @@
 // @flow
 
 // danger removes this import, so don't do anything fancy with it
-const {danger, warn, message, schedule} = require('danger')
+const {danger, warn, message, schedule, fail} = require('danger')
 
 // it leaves the rest of the imports alone, though
+import yarn from 'danger-plugin-yarn'
 const {readFileSync} = require('fs')
+const plist = require('simple-plist')
+const xcode = require('xcode')
+const uniq = require('lodash/uniq')
+const isEqual = require('lodash/isEqual')
 
 //
 // The entry point of this script
@@ -16,10 +21,11 @@ async function main() {
   if (taskName === 'ANDROID') {
     await runAndroid()
   } else if (taskName === 'IOS') {
-    await runiOS()
+    schedule(runiOS())
   } else if (taskName === 'GREENKEEPER') {
     await runGeneral()
     await runGreenkeeper()
+    await yarn()
   } else if (taskName === 'JS-data') {
     await runJSのData()
     await runJSのBusData()
@@ -74,19 +80,20 @@ async function runGeneral() {
   const packageChanged = danger.git.modified_files.includes('package.json')
   const lockfileChanged = danger.git.modified_files.includes('yarn.lock')
   const packageDiff = await danger.git.JSONDiffForFile('package.json')
-  if (packageChanged && !lockfileChanged) {
-    const msg = 'Changes were made to package.json, but not to yarn.lock'
+  const depsChanged =
+    'dependencies' in packageDiff || 'devDependencies' in packageDiff
+  if (packageChanged && depsChanged && !lockfileChanged) {
+    const msg =
+      'Changes were made to <code>package.json</code>, but not to <code>yarn.lock</code>.'
     const idea = 'Perhaps you need to run <code>yarn install</code>?'
-    warn(`${msg} - <i>${idea}</i>`)
-    message(JSON.stringify(packageDiff, null, 2))
+    warn(`${msg} ${idea}`)
   }
 
   //
   // Warn if tests have been enabled to the exclusion of all others
   //
   danger.git.created_files
-    .filter(path => path.endsWith('.js'))
-    .filter(filepath => filepath.endsWith('test.js'))
+    .filter(filepath => filepath.endsWith('.test.js'))
     .filter(filepath => {
       const content = readFile(filepath)
       return content.includes('it.only') || content.includes('describe.only')
@@ -104,23 +111,107 @@ async function runGeneral() {
   const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
   if (thisPRSize > bigPRThreshold) {
     warn(
-      h.details(
-        h.summary('❗️ Big PR!'),
-        h.blockquote(
-          h.p(
-            `We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.`,
-          ),
-          h.p(
-            'If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.',
-          ),
-        ),
+      `❗️ Big PR! We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines. (If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.)`,
+    )
+  }
+
+  //
+  // Remind us to check the xcodeproj, if it's changed
+  //
+  const pbxprojChanged = danger.git.modified_files.find(filepath =>
+    filepath.endsWith('project.pbxproj'),
+  )
+  if (pbxprojChanged) {
+    warn('The Xcode project file changed. Double-check the changes!')
+
+    // Warn about a blank line that Xcode will re-insert if we remove
+    const pbxproj = readFileSync(pbxprojChanged, 'utf-8').split('\n')
+    if (pbxproj[7] !== '') {
+      fail(
+        "Line 8 of the .pbxproj needs to be an empty line to match Xcode's formatting",
+      )
+    }
+
+    // Warn about numbers that `react-native link` removes leading 0s on
+    const numericLines = [
+      'LastSwiftMigration',
+      'LastUpgradeCheck',
+      'LastSwiftMigration',
+    ]
+    const numericLinesWithoutLeadingZeros = pbxproj.filter(line =>
+      numericLines.some(
+        nline => line.startsWith(nline) && / [^0]\d*$/.test(line),
       ),
     )
+    if (numericLinesWithoutLeadingZeros.length) {
+      warn(
+        'Some lines in the .pbxproj lost their leading 0s. Xcode likes to put them back, so we try to keep them around.',
+      )
+    }
+
+    // Warn about duplicate entries in the linking paths after a `react-native link`
+    const xcodeproj = await parseXcodeProject(pbxprojChanged)
+    const buildConfig = xcodeproj.project.objects.XCBuildConfiguration
+    const duplicateSearchPaths = Object.keys(buildConfig)
+      .filter(key => typeof buildConfig[key] === 'object')
+      .filter(key => {
+        const value = buildConfig[key]
+        const searchPaths = value.buildSettings.LIBRARY_SEARCH_PATHS
+        return uniq(searchPaths).length === searchPaths.length
+      })
+    if (duplicateSearchPaths.length) {
+      fail('Some of the Xcode <code>LIBRARY_SEARCH_PATHS</code> now have duplicate entries. Please remove the duplicates. Thanks!')
+    }
+
+    // Warn about non-sorted frameworks in the linking phase of the build
+    const frameworksPhase = xcodeproj.project.objects.PBXFrameworksBuildPhase
+    const alphabeticalFrameworkSorting = Object.keys(frameworksPhase)
+      .filter(key => typeof frameworksPhase[key] === 'object')
+      .filter(key => {
+        const value = frameworksPhase[key]
+        const files = value.files.map(file => file.comment).filter(frameworkName => /^lib[A-Z]/.test(frameworkName))
+        const sorted = [...files].sort((a, b) => a.localeSort(b))
+        return isEqual(files, sorted)
+      })
+    if (alphabeticalFrameworkSorting.length) {
+      warn("Some of the iOS frameworks aren't sorted alphabetically in the linking phase. Please sort them alphabetically. Thanks!")
+    }
+
+    // Warn about non-sorted frameworks in xcode sidebar
+    const projectsInSidebar = xcodeproj.project.objects.PBXGroup
+    const sidebarSorting = Object.keys(projectsInSidebar)
+      .filter(key => typeof projectsInSidebar[key] === 'object')
+      .filter(key => projectsInSidebar[key].name === 'Libraries')
+      .filter(key => {
+        const value = projectsInSidebar[key]
+        const projects = value.files.map(file => file.comment)
+        const sorted = [...projects].sort((a, b) => a.localeSort(b))
+        return isEqual(projects, sorted)
+      })
+    if (sidebarSorting.length) {
+      warn("Some of the iOS frameworks aren't sorted alphabetically in the Xcode sidebar (under Libraries). Please sort them alphabetically. Thanks!")
+    }
+  }
+
+  //
+  // Make sure the Info.plist `NSLocationWhenInUseUsageDescription` didn't switch to entities
+  //
+  const infoPlistChanged = danger.git.modified_files.find(filepath =>
+    filepath.endsWith('Info.plist'),
+  )
+  const parsed = plist.parse(readFileSync(infoPlistChanged))
+  const descriptionKeysWithEntities = Object.keys(parsed)
+    .filter(key => key.endsWith('Description'))
+    .filter(key => /&.*;/.test(parsed[key])) // look for xml entities
+  if (infoPlistChanged && descriptionKeysWithEntities.length) {
+    const codedKeys = descriptionKeysWithEntities.map(k => `<code>${k}</code>`)
+    const keyNames = danger.utils.sentence(codedKeys)
+    warn(`Some Info.plist descriptions were rewritten by Xcode (${keyNames}).`)
   }
 }
 
 function runGreenkeeper() {
-  message('greenkeeper: nothing to do')
+  message('greenkeeper ran')
 }
 
 function runJSのData() {
@@ -225,14 +316,9 @@ var h = new Proxy(
 
 // eslint-disable-next-line no-var
 var m = {
-  code: function(attrs, ...children) {
+  code(attrs, ...children) {
     return (
-      '```' +
-      (attrs.language || '') +
-      '\n' +
-      children.join('\n') +
-      '\n' +
-      '```'
+      '```' + (attrs.language || '') + '\n' + children.join('\n') + '\n' + '```'
     )
   },
 }
@@ -268,7 +354,27 @@ function isBadDataValidationLog(log) {
 }
 
 function fileLog(name, log, {lang = null} = {}) {
-  return message(h.details(h.summary(name), '', m.code({language: lang}, log), '\n'))
+  return message(
+    h.details(h.summary(name), '', m.code({language: lang}, log), '\n'),
+  )
+}
+
+function parseXcodeProject(pbxprojPath) {
+  const project = xcode.project(pbxprojPath)
+  return new Promise((resolve, reject) => {
+    // I think this can be called twice from .parse, which is an error for a Promise
+    let resolved = false
+    project.parse((error, data) => {
+      if (resolved) {
+        return
+      }
+      resolved = true
+      if (error) {
+        reject(error)
+      }
+      resolve(data)
+    })
+  })
 }
 
 //
