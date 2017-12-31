@@ -79,9 +79,9 @@ async function runiOS() {
   // - report the .ipa size
   // - report the .ipa file list
   const getFromGymLog = key =>
-    (logFile.find(l => l.includes(key)) || '').split('|')[2].trim()
-  const ipaFolder = getFromGymLog('output_directory')
-  const ipaFile = getFromGymLog('output_name')
+    (logFile.find(l => l.includes(key)) || '').split(' is ')[1].trim()
+  const ipaFolder = getFromGymLog('GYM_OUTPUT_DIRECTORY')
+  const ipaFile = getFromGymLog('GYM_OUTPUT_NAME')
   const info = await listZip(`${ipaFolder}/${ipaFile}.ipa`)
   message(`IPA size: ${bytes(info.size)}`)
   message(
