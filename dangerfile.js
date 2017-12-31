@@ -160,7 +160,9 @@ async function runGeneral() {
         return uniq(searchPaths).length === searchPaths.length
       })
     if (duplicateSearchPaths.length) {
-      fail('Some of the Xcode <code>LIBRARY_SEARCH_PATHS</code> now have duplicate entries. Please remove the duplicates. Thanks!')
+      fail(
+        'Some of the Xcode <code>LIBRARY_SEARCH_PATHS</code> now have duplicate entries. Please remove the duplicates. Thanks!',
+      )
     }
 
     // Warn about non-sorted frameworks in the linking phase of the build
@@ -169,12 +171,16 @@ async function runGeneral() {
       .filter(key => typeof frameworksPhase[key] === 'object')
       .filter(key => {
         const value = frameworksPhase[key]
-        const files = value.files.map(file => file.comment).filter(frameworkName => /^lib[A-Z]/.test(frameworkName))
+        const files = value.files
+          .map(file => file.comment)
+          .filter(frameworkName => /^lib[A-Z]/.test(frameworkName))
         const sorted = [...files].sort((a, b) => a.localeSort(b))
         return isEqual(files, sorted)
       })
     if (alphabeticalFrameworkSorting.length) {
-      warn("Some of the iOS frameworks aren't sorted alphabetically in the linking phase. Please sort them alphabetically. Thanks!")
+      warn(
+        "Some of the iOS frameworks aren't sorted alphabetically in the linking phase. Please sort them alphabetically. Thanks!",
+      )
     }
 
     // Warn about non-sorted frameworks in xcode sidebar
@@ -189,7 +195,9 @@ async function runGeneral() {
         return isEqual(projects, sorted)
       })
     if (sidebarSorting.length) {
-      warn("Some of the iOS frameworks aren't sorted alphabetically in the Xcode sidebar (under Libraries). Please sort them alphabetically. Thanks!")
+      warn(
+        "Some of the iOS frameworks aren't sorted alphabetically in the Xcode sidebar (under Libraries). Please sort them alphabetically. Thanks!",
+      )
     }
   }
 
@@ -199,14 +207,18 @@ async function runGeneral() {
   const infoPlistChanged = danger.git.modified_files.find(filepath =>
     filepath.endsWith('Info.plist'),
   )
-  const parsed = plist.parse(readFileSync(infoPlistChanged))
-  const descriptionKeysWithEntities = Object.keys(parsed)
-    .filter(key => key.endsWith('Description'))
-    .filter(key => /&.*;/.test(parsed[key])) // look for xml entities
-  if (infoPlistChanged && descriptionKeysWithEntities.length) {
-    const codedKeys = descriptionKeysWithEntities.map(k => `<code>${k}</code>`)
-    const keyNames = danger.utils.sentence(codedKeys)
-    warn(`Some Info.plist descriptions were rewritten by Xcode (${keyNames}).`)
+  if (infoPlistChanged) {
+    const parsed = plist.parse(readFileSync(infoPlistChanged))
+    const descKeysWithEntities = Object.keys(parsed)
+      .filter(key => key.endsWith('Description'))
+      .filter(key => /&.*;/.test(parsed[key])) // look for xml entities
+    if (descKeysWithEntities.length) {
+      const codedKeys = descKeysWithEntities.map(k => `<code>${k}</code>`)
+      const keyNames = danger.utils.sentence(codedKeys)
+      warn(
+        `Some Info.plist descriptions were rewritten by Xcode (${keyNames}).`,
+      )
+    }
   }
 }
 
