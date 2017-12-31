@@ -1,3 +1,5 @@
+// @flow
+
 // danger removes this import, so don't do anything fancy with it
 const {danger, warn, message} = require('danger')
 
