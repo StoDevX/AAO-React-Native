@@ -271,11 +271,14 @@ async function runGeneral() {
     const file = readFileSync(buildDotGradle, 'utf-8').split('\n')
     const startLine = findIndex(file, line => line === 'dependencies {')
     const endLine = findIndex(file, line => line === '}', startLine)
+
     const linesToSort = file
       .slice(startLine + 1, endLine - 1)
       .map(line => line.trim())
       .filter(line => !line.startsWith('//'))
+
     const sorted = [...linesToSort].sort()
+
     if (!isEqual(linesToSort, sorted)) {
       const firstEntry = linesToSort[0]
       warn(
@@ -297,22 +300,24 @@ async function runGeneral() {
   )
   if (mainDotJava) {
     const file = readFileSync(mainDotJava, 'utf-8').split('\n')
-    const startLine = findIndex(
-      file,
-      line => line === '// keep these sorted alphabetically',
-    )
+    const startNeedle = '// keep these sorted alphabetically'
+    const startLine = findIndex(file, line => line === startNeedle)
     const endLine = findIndex(file, line => line === '', startLine)
-    const rnImportLine = findIndex(
-      file,
-      line => line === 'import com.facebook.react.ReactApplication;',
-    )
+
     const linesToSort = file
       .slice(startLine + 1, endLine - 1)
       .map(line => line.trim())
+
     const sorted = [...linesToSort].sort()
+
     if (!isEqual(linesToSort, sorted)) {
-      const problemEntry = linesToSort[rnImportLine + 1]
-      const problemLine = rnImportLine + 1 - startLine + 1
+      // react-native link inserts the new import right after the RN import
+      const rnImportLine = findIndex(
+        file,
+        line => line === 'import com.facebook.react.ReactApplication;',
+      )
+      const problemEntry = file[rnImportLine + 1]
+      const problemLine = rnImportLine - startLine + 1
       warn(
         h.details(
           h.summary(
@@ -338,6 +343,7 @@ async function runGeneral() {
     const firstInclusionLine = findIndex(file, line =>
       line.startsWith('include'),
     )
+
     if (firstInclusionLine < startLine) {
       const firstEntry = file[firstInclusionLine]
       warn(
