@@ -601,9 +601,9 @@ function isBadDataValidationLog(log) {
 
 function fileLog(name, log, {lang = null} = {}) {
   return markdown(
-    `## ${name}`,
-    '',
-    m.code({language: lang}, log),
+    `## ${name}
+
+${m.code({language: lang}, log)}`,
   )
 }
 
