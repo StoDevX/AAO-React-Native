@@ -75,9 +75,9 @@ function runGeneral() {
   const lockfileChanged = danger.git.modified_files.includes('yarn.lock')
   const packageDiff = danger.git.JSONDiffForFile('package.json')
   if (packageChanged && !lockfileChanged) {
-    const message = 'Changes were made to package.json, but not to yarn.lock'
+    const msg = 'Changes were made to package.json, but not to yarn.lock'
     const idea = 'Perhaps you need to run <code>yarn install</code>?'
-    warn(`${message} - <i>${idea}</i>`)
+    warn(`${msg} - <i>${idea}</i>`)
     message(JSON.stringify(packageDiff, null, 2))
   }
 
