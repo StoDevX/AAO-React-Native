@@ -82,18 +82,22 @@ async function runiOS() {
     (logFile.find(l => l.includes(key)) || '').split(' is ')[1].trim()
   const ipaFolder = getFromGymLog('GYM_OUTPUT_DIRECTORY')
   const ipaFile = getFromGymLog('GYM_OUTPUT_NAME')
-  const info = await listZip(`${ipaFolder}/${ipaFile}.ipa`)
-  message(`IPA size: ${bytes(info.size)}`)
-  message(
-    h.details(
-      h.summary('IPA file list'),
-      h.ul(
-        ...info.files.map(file =>
-          h.li(h.code(file.filepath), bytes(file.size)),
+  if (ipaFolder && ipaFile) {
+    const info = await listZip(`${ipaFolder}/${ipaFile}.ipa`)
+    message(`IPA size: ${bytes(info.size)}`)
+    message(
+      h.details(
+        h.summary('IPA file list'),
+        h.ul(
+          ...info.files.map(file =>
+            h.li(h.code(file.filepath), bytes(file.size)),
+          ),
         ),
       ),
-    ),
-  )
+    )
+  } else {
+    warn('could not figure out path to .ipa file')
+  }
 }
 
 async function runGeneral() {
