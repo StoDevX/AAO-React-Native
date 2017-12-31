@@ -57,6 +57,15 @@ async function main() {
 
 function runAndroid() {
   markdown('android: nothing to do')
+
+  const logFile = readFile('./logs/android')
+
+  markdown(
+    h.details(
+      h.summary('Build log'),
+      h.pre(logFile),
+    ),
+  )
 }
 
 async function runiOS() {
