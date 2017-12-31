@@ -229,10 +229,19 @@ async function runGeneral() {
       .filter(key => key.endsWith('Description'))
       .filter(key => parsed[key].includes("'")) // look for single quotes
     if (descKeysWithEntities.length) {
-      const codedKeys = descKeysWithEntities.map(k => `<code>${k}</code>`)
-      const keyNames = danger.utils.sentence(codedKeys)
       warn(
-        `Some Info.plist descriptions were rewritten by something to include single quotes (${keyNames}). Xcode will rewrite them to use the <code>&amp;apos;</code> XML entity; would you please change them for us, so that Xcode doesn't have to?`,
+        h.details(
+          h.summary(
+            "Some Info.plist descriptions were rewritten by something to include single quotes. Xcode will rewrite them to use the <code>&amp;apos;</code> XML entity; would you please change them for us, so that Xcode doesn't have to?",
+          ),
+          h.ul(
+            ...descKeysWithEntities.map(key => {
+              const val = parsed[key]
+              const escaped = val.replace(/'/g, '&apos;')
+              return h.li(`${h.code(key)}: "${val}" should become "${escaped}"`)
+            }),
+          ),
+        ),
       )
     }
   }
