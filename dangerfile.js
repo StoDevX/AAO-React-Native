@@ -237,8 +237,8 @@ async function runGeneral() {
           h.ul(
             ...descKeysWithEntities.map(key => {
               const val = parsed[key]
-              const escaped = val.replace(/'/g, '&apos;')
-              return h.li(`${h.code(key)}: "${val}" should become "${escaped}"`)
+              const escaped = val.replace(/'/g, '&amp;apos;')
+              return h.li(`${h.code(key)}:<br>"${val}"<br>should become<br>"${escaped}"`)
             }),
           ),
         ),
