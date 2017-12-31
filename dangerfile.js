@@ -174,6 +174,7 @@ async function runGeneral() {
         const value = buildConfig[key]
         const searchPaths = value.buildSettings.LIBRARY_SEARCH_PATHS
         message(h.code(JSON.stringify(searchPaths)))
+        message(h.code(JSON.stringify(uniq(searchPaths))))
         return false
         return uniq(searchPaths).length === searchPaths.length
       })
