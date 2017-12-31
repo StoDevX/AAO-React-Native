@@ -130,7 +130,7 @@ async function runGeneral() {
     const pbxproj = readFileSync(pbxprojChanged, 'utf-8').split('\n')
     if (pbxproj[7] !== '') {
       fail(
-        "Line 8 of the .pbxproj needs to be an empty line to match Xcode's formatting",
+        "Line 8 of the .pbxproj must be an empty line to match Xcode's formatting",
       )
     }
 
@@ -140,14 +140,20 @@ async function runGeneral() {
       'LastUpgradeCheck',
       'LastSwiftMigration',
     ]
-    const numericLinesWithoutLeadingZeros = pbxproj.some(line =>
+    const numericLinesWithoutLeadingZeros = pbxproj.filter(line =>
       numericLineNames.some(
         nline => line.startsWith(nline) && / [^0]\d*$/.test(line),
       ),
     )
-    if (numericLinesWithoutLeadingZeros) {
+    message(numericLinesWithoutLeadingZeros.join('<br>'))
+    if (numericLinesWithoutLeadingZeros.length) {
       warn(
-        'Some lines in the .pbxproj lost their leading 0s. Xcode likes to put them back, so we try to keep them around.',
+        h.details(
+          h.summary('Some lines in the .pbxproj lost their leading 0s. Xcode likes to put them back, so we try to keep them around.'),
+          h.ul(
+            ...numericLinesWithoutLeadingZeros.map(line => h.li(h.code(line)))
+          )
+        )
       )
     }
 
