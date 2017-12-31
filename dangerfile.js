@@ -184,29 +184,6 @@ async function runGeneral() {
       )
     }
 
-    // Warn about non-sorted frameworks in the linking phase of the build
-    // const frameworksPhase = xcodeproj.project.objects.PBXFrameworksBuildPhase
-    // const alphabeticalFrameworkSorting = Object.keys(frameworksPhase)
-    //   .filter(key => typeof frameworksPhase[key] === 'object')
-    //   .filter(key => {
-    //     const value = frameworksPhase[key]
-    //     const files = value.files
-    //       .map(file => file.comment)
-    //       .filter(frameworkName => /^lib[A-Z]/.test(frameworkName))
-    //     const sorted = [...files].sort((a, b) => a.localeSort(b))
-    //     return isEqual(files, sorted)
-    //   })
-    // if (alphabeticalFrameworkSorting.length) {
-    //   warn(
-    //     h.details(
-    //       h.summary(
-    //     "Some of the iOS frameworks aren't sorted alphabetically in the linking phase. Please sort them alphabetically. Thanks!",
-    //       ),
-    //       "Open Xcode to the app's target, and go to the Build Phases tab; then, drag the newly-linked library to its alphabetically-correct place."
-    //     )
-    //   )
-    // }
-
     // Warn about non-sorted frameworks in xcode sidebar
     const projectsInSidebar = xcodeproj.project.objects.PBXGroup
     const sidebarSorting = Object.keys(projectsInSidebar)
