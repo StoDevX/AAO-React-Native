@@ -185,10 +185,10 @@ async function runGeneral() {
             'Some of the Xcode <code>LIBRARY_SEARCH_PATHS</code> have duplicate entries. Please remove the duplicates. Thanks!',
           ),
           h.p(
-            'This is easiest to do by editing the project.pbxproj directly, IMHO.',
+            'This is easiest to do by editing the project.pbxproj directly, IMHO. These keys all live under the <code>XCBuildConfiguration</code> section.',
           ),
           h.ul(
-            ...duplicateSearchPaths.map(key => h.li(h.code(buildConfig[key]))),
+            ...duplicateSearchPaths.map(key => h.li(h.code(key))),
           ),
         ),
       )
