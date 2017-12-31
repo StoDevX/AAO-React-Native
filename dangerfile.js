@@ -123,7 +123,6 @@ async function runGeneral() {
   const pbxprojChanged = danger.git.modified_files.find(filepath =>
     filepath.endsWith('project.pbxproj'),
   )
-  message(`pbxprojChanged?: ${pbxprojChanged}`)
   if (pbxprojChanged) {
     warn('The Xcode project file changed. Double-check the changes!')
 
@@ -134,8 +133,6 @@ async function runGeneral() {
         "Line 8 of the .pbxproj needs to be an empty line to match Xcode's formatting",
       )
     }
-
-    /*
 
     // Warn about numbers that `react-native link` removes leading 0s on
     const numericLines = [
@@ -154,6 +151,7 @@ async function runGeneral() {
       )
     }
 
+    /*
     // Warn about duplicate entries in the linking paths after a `react-native link`
     const xcodeproj = await parseXcodeProject(pbxprojChanged)
     const buildConfig = xcodeproj.project.objects.XCBuildConfiguration
