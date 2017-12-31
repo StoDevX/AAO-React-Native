@@ -184,7 +184,6 @@ async function runGeneral() {
       )
     }
 
-    /*
     // Warn about non-sorted frameworks in the linking phase of the build
     // const frameworksPhase = xcodeproj.project.objects.PBXFrameworksBuildPhase
     // const alphabeticalFrameworkSorting = Object.keys(frameworksPhase)
@@ -221,10 +220,14 @@ async function runGeneral() {
       })
     if (sidebarSorting.length) {
       warn(
-        "Some of the iOS frameworks aren't sorted alphabetically in the Xcode sidebar (under Libraries). Please sort them alphabetically. Thanks!",
+        h.details(
+          h.summary(
+            "Some of the iOS frameworks aren't sorted alphabetically in the Xcode sidebar (under Libraries). Please sort them alphabetically. Thanks!",
+          ),
+          "If you right-click on the Libraries group in the sidebar, you can just pick 'Sort by Name' and Xcode will do it for you."
+        )
       )
     }
-    */
   }
 
   //
