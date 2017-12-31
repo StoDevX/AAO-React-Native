@@ -30,7 +30,7 @@ platform :ios do
       scheme: ENV['GYM_SCHEME'],
       project: ENV['GYM_PROJECT'],
       destination: 'generic/platform=iOS',
-      xcargs: 'CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""'
+      xcargs: "CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY='' TARGET_BUILD_DIR='#{ENV['XCBUILD_TARGET_BUILD_DIR']}'"
     )
   end
 

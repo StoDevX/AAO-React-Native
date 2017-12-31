@@ -8,6 +8,7 @@ before_all do
   ENV['GYM_PROJECT'] = './ios/AllAboutOlaf.xcodeproj'
   ENV['GYM_SCHEME'] = 'AllAboutOlaf'
   ENV['GYM_OUTPUT_DIRECTORY'] = './ios/build'
+  ENV['XCBUILD_TARGET_BUILD_DIR'] = './build' # relative to the ./ios folder
   ENV['GYM_OUTPUT_NAME'] = 'AllAboutOlaf'
 
   # set the testflight itunesconnect provider ID from Appfile
