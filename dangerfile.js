@@ -113,7 +113,7 @@ async function runGeneral() {
   const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
   if (thisPRSize > bigPRThreshold) {
     warn(
-      `❗️ Big PR! We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines. (If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.)`,
+      `Big PR! We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.<br>If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.`,
     )
   }
 
