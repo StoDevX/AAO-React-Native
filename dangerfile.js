@@ -8,6 +8,7 @@ import yarn from 'danger-plugin-yarn'
 const {readFileSync} = require('fs')
 const uniq = require('lodash/uniq')
 const isEqual = require('lodash/isEqual')
+const findIndex = require('lodash/findIndex')
 const {XmlEntities} = require('html-entities')
 const entities = new XmlEntities()
 // depended on by react-native (and us)
@@ -255,6 +256,84 @@ async function runGeneral() {
               )
             }),
           ),
+        ),
+      )
+    }
+  }
+
+  //
+  // Ensure that the build.gradle dependencies list is sorted
+  //
+  const buildDotGradle = danger.git.modified_files.find(
+    filepath => filepath === 'android/app/build.gradle',
+  )
+  if (buildDotGradle) {
+    const file = readFileSync(buildDotGradle, 'utf-8').split('\n')
+    const startLine = findIndex(file, line => line === 'dependencies {')
+    const endLine = findIndex(file, line => line === '}', startLine)
+    const linesToSort = file
+      .slice(startLine + 1, endLine - 1)
+      .map(line => line.trim())
+      .filter(line => !line.startsWith('//'))
+    const sorted = [...linesToSort].sort()
+    if (!isEqual(linesToSort, sorted)) {
+      const firstEntry = linesToSort[0]
+      warn(
+        h.details(
+          h.summary(
+            "We like to keep the <code>build.gradle</code>'s list of dependencies sorted alphabetically",
+          ),
+          h.p(`Was the first entry, <code>${firstEntry}</code>, out of place?`),
+        ),
+      )
+    }
+  }
+
+  //
+  // Ensure that the MainApplication.java imports list is sorted
+  //
+  const mainDotJava = danger.git.modified_files.find(filepath =>
+    filepath.endsWith('MainApplication.java'),
+  )
+  if (mainDotJava) {
+    const file = readFileSync(mainDotJava, 'utf-8').split('\n')
+    const startLine = findIndex(file, line => line === '// keep these sorted alphabetically')
+    const endLine = findIndex(file, line => line === '', startLine)
+    const linesToSort = file
+      .slice(startLine + 1, endLine - 1)
+      .map(line => line.trim())
+    const sorted = [...linesToSort].sort()
+    if (!isEqual(linesToSort, sorted)) {
+      const firstEntry = linesToSort[0]
+      warn(
+        h.details(
+          h.summary(
+            "We like to keep the <code>MainApplication.java</code>'s list of imports sorted alphabetically",
+          ),
+          h.p(`Was the first entry, <code>${firstEntry}</code>, out of place?`),
+        ),
+      )
+    }
+  }
+
+  //
+  // Enforce spacing in the settings.gradle file
+  //
+  const settingsDotGradle = danger.git.modified_files.find(
+    filepath => filepath === 'android/settings.gradle',
+  )
+  if (settingsDotGradle) {
+    const file = readFileSync(settingsDotGradle, 'utf-8').split('\n')
+    const startLine = findIndex(file, line => line.startsWith('//'))
+    const firstInclusionLine = findIndex(file, line => line.startsWith('include'))
+    if (firstInclusionLine < startLine) {
+      const firstEntry = file[firstInclusionLine]
+      warn(
+        h.details(
+          h.summary(
+            "We like to keep the <code>settings.gradle</code>'s list of imports sorted alphabetically",
+          ),
+          h.p(`It looks like the first entry, <code>${firstEntry}</code>, is out of place.`),
         ),
       )
     }
