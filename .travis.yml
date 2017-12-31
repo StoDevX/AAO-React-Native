@@ -34,6 +34,7 @@ stages:
   - name: Greenkeeper
     if: branch =~ ^greenkeeper\/
   - name: Test
+    if: branch =~ ^greenkeeper\/
   - name: Deploy Data
     if: branch = master AND type != pull_request
   - name: Build + Deploy App
