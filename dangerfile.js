@@ -212,7 +212,6 @@ async function runGeneral() {
     filepath.endsWith('Info.plist'),
   )
   if (infoPlistChanged) {
-    message('infoPlistChanged: ' + infoPlistChanged)
     const parsed = plist.parse(readFileSync(infoPlistChanged, 'utf-8'))
     const descKeysWithEntities = Object.keys(parsed)
       .filter(key => key.endsWith('Description'))
@@ -221,7 +220,7 @@ async function runGeneral() {
       const codedKeys = descKeysWithEntities.map(k => `<code>${k}</code>`)
       const keyNames = danger.utils.sentence(codedKeys)
       warn(
-        `Some Info.plist descriptions were rewritten by something to include single quotes (${keyNames}). Xcode will rewrite them to use the &amp;apos; XML entity; would you please change them for us, so that Xcode doesn't have to?`,
+        `Some Info.plist descriptions were rewritten by something to include single quotes (${keyNames}). Xcode will rewrite them to use the <code>&amp;apos;</code> XML entity; would you please change them for us, so that Xcode doesn't have to?`,
       )
     }
   }
