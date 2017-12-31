@@ -71,8 +71,8 @@ x-definitions:
 
       # instally python3 on osx builds
       - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install pyenv; fi
-      - pyenv install --list
       - pyenv install $TRAVIS_PYTHON_VERSION
+      - pyenv global $TRAVIS_PYTHON_VERSION
       - echo "python3 -V is $(python3 -V)"
 
     install:
