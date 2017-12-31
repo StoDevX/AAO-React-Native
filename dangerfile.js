@@ -134,10 +134,7 @@ async function runGeneral() {
   const depsChanged =
     'dependencies' in packageDiff || 'devDependencies' in packageDiff
   if (packageChanged && depsChanged && !lockfileChanged) {
-    const msg =
-      'Changes were made to <code>package.json</code>, but not to <code>yarn.lock</code>.'
-    const idea = 'Perhaps you need to run <code>yarn install</code>?'
-    warn(`${msg} ${idea}`)
+    warn('Changes were made to <code>package.json</code>, but not to <code>yarn.lock</code>. Perhaps you need to run <code>yarn</code>?')
   }
 
   //
@@ -220,14 +217,11 @@ async function runGeneral() {
     // Warn about duplicate entries in the linking paths after a `react-native link`
     const xcodeproj = await parseXcodeProject(pbxprojChanged)
     const buildConfig = xcodeproj.project.objects.XCBuildConfiguration
-    const duplicateSearchPaths = Object.keys(buildConfig)
-      .filter(key => typeof buildConfig[key] === 'object')
-      .filter(key => {
-        const value = buildConfig[key]
-        const searchPaths = value.buildSettings.LIBRARY_SEARCH_PATHS
-        if (!searchPaths) {
-          return false
-        }
+    const duplicateSearchPaths = Object.entries(buildConfig)
+      .filter(([_, val]/*: [string, any]*/) => typeof val === 'object')
+      .filter(([_, val]/*: [string, any]*/) => val.buildSettings.LIBRARY_SEARCH_PATHS)
+      .filter(([_, val]/*: [string, any]*/) => {
+        const searchPaths = val.buildSettings.LIBRARY_SEARCH_PATHS
         return uniq(searchPaths).length !== searchPaths.length
       })
     if (duplicateSearchPaths.length) {
@@ -239,22 +233,19 @@ async function runGeneral() {
           h.p(
             'This is easiest to do by editing the project.pbxproj directly, IMHO. These keys all live under the <code>XCBuildConfiguration</code> section.',
           ),
-          h.ul(...duplicateSearchPaths.map(key => h.li(h.code(key)))),
+          h.ul(...duplicateSearchPaths.map(([key]) => h.li(h.code(key)))),
         ),
       )
     }
 
     // Warn about non-sorted frameworks in xcode sidebar
     const projectsInSidebar = xcodeproj.project.objects.PBXGroup
-    const sidebarSorting = Object.keys(projectsInSidebar)
-      .filter(key => typeof projectsInSidebar[key] === 'object')
-      .filter(key => projectsInSidebar[key].name === 'Libraries')
-      .filter(key => {
-        const value = projectsInSidebar[key]
-        if (!value.files) {
-          return false
-        }
-        const projects = value.files.map(file => file.comment)
+    const sidebarSorting = Object.entries(projectsInSidebar)
+      .filter(([_, val]/*: [string, any]*/) => typeof val === 'object')
+      .filter(([_, val]/*: [string, any]*/) => val.name === 'Libraries')
+      .filter(([_, val]/*: [string, any]*/) => val.files)
+      .filter(([_, val]/*: [string, any]*/) => {
+        const projects = val.files.map(file => file.comment)
         const sorted = [...projects].sort((a, b) => a.localeSort(b))
         return !isEqual(projects, sorted)
       })
