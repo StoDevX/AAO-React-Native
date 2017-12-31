@@ -69,8 +69,7 @@ x-definitions:
       # travis doesn't install yarn automatically on osx
       - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install yarn --without-node; fi
 
-      # install python3 on osx builds
-      - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install pyenv; fi
+      # ensure we have python3
       - pyenv install $TRAVIS_PYTHON_VERSION
       - pyenv global $TRAVIS_PYTHON_VERSION
       - echo "python3 -V is $(python3 -V)"
