@@ -135,17 +135,17 @@ async function runGeneral() {
     }
 
     // Warn about numbers that `react-native link` removes leading 0s on
-    const numericLines = [
+    const numericLineNames = [
       'LastSwiftMigration',
       'LastUpgradeCheck',
       'LastSwiftMigration',
     ]
-    const numericLinesWithoutLeadingZeros = pbxproj.filter(line =>
-      numericLines.some(
+    const numericLinesWithoutLeadingZeros = pbxproj.some(line =>
+      numericLineNames.some(
         nline => line.startsWith(nline) && / [^0]\d*$/.test(line),
       ),
     )
-    if (numericLinesWithoutLeadingZeros.length) {
+    if (numericLinesWithoutLeadingZeros) {
       warn(
         'Some lines in the .pbxproj lost their leading 0s. Xcode likes to put them back, so we try to keep them around.',
       )
