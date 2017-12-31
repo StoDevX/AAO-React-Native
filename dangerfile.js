@@ -284,7 +284,7 @@ async function runGeneral() {
       warn(
         h.details(
           h.summary(
-            "We like to keep the <code>build.gradle</code>'s list of dependencies sorted alphabetically",
+            "We like to keep the <code>build.gradle</code>'s list of dependencies sorted alphabetically.",
           ),
           h.p(`Was the first entry, <code>${firstEntry}</code>, out of place?`),
         ),
@@ -321,7 +321,7 @@ async function runGeneral() {
       warn(
         h.details(
           h.summary(
-            "We like to keep the <code>MainApplication.java</code>'s list of imports sorted alphabetically",
+            "We like to keep the <code>MainApplication.java</code>'s list of imports sorted alphabetically.",
           ),
           h.p(
             `Was the number ${problemLine} entry, <code>${problemEntry}</code>, out of place?`,
@@ -349,7 +349,7 @@ async function runGeneral() {
       warn(
         h.details(
           h.summary(
-            "We like to keep the <code>settings.gradle</code>'s list of imports sorted alphabetically",
+            "We like to keep the <code>settings.gradle</code>'s list of imports sorted alphabetically.",
           ),
           h.p(
             `It looks like the first entry, <code>${firstEntry}</code>, is out of place.`,
