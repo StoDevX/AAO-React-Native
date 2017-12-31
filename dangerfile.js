@@ -115,7 +115,14 @@ async function runGeneral() {
   const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
   if (thisPRSize > bigPRThreshold) {
     warn(
-      `Big PR! We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.<br>If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.`,
+      h.details(
+        h.summary(
+          `Big PR! We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.`,
+        ),
+        h.p(
+          'If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.',
+        ),
+      ),
     )
   }
 
@@ -154,9 +161,8 @@ async function runGeneral() {
     if (numericLinesWithoutLeadingZeros.length) {
       warn(
         h.details(
-          h.summary(
-            'Some lines in the .pbxproj lost their leading 0s. Xcode likes to put them back, so we try to keep them around.',
-          ),
+          h.summary('Some lines in the .pbxproj lost their leading 0s.'),
+          h.p('Xcode likes to put them back, so we try to keep them around.'),
           h.ul(
             ...numericLinesWithoutLeadingZeros.map(line => h.li(h.code(line))),
           ),
@@ -186,9 +192,7 @@ async function runGeneral() {
           h.p(
             'This is easiest to do by editing the project.pbxproj directly, IMHO. These keys all live under the <code>XCBuildConfiguration</code> section.',
           ),
-          h.ul(
-            ...duplicateSearchPaths.map(key => h.li(h.code(key))),
-          ),
+          h.ul(...duplicateSearchPaths.map(key => h.li(h.code(key)))),
         ),
       )
     }
@@ -234,7 +238,10 @@ async function runGeneral() {
       warn(
         h.details(
           h.summary(
-            "Some Info.plist descriptions were rewritten by something to include single quotes. Xcode will rewrite them to use the <code>&amp;apos;</code> XML entity; would you please change them for us, so that Xcode doesn't have to?",
+            'Some Info.plist descriptions were rewritten by something to include single quotes.',
+          ),
+          h.p(
+            "Xcode will rewrite them to use the <code>&amp;apos;</code> XML entity; would you please change them for us, so that Xcode doesn't have to?",
           ),
           h.ul(
             ...descKeysWithEntities.map(key => {
