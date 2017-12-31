@@ -165,9 +165,9 @@ async function runGeneral() {
       )
     }
 
-    /*
     // Warn about duplicate entries in the linking paths after a `react-native link`
     const xcodeproj = await parseXcodeProject(pbxprojChanged)
+    /*
     const buildConfig = xcodeproj.project.objects.XCBuildConfiguration
     const duplicateSearchPaths = Object.keys(buildConfig)
       .filter(key => typeof buildConfig[key] === 'object')
