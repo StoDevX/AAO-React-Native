@@ -32,8 +32,9 @@
   },
   "greenkeeper": {
     "ignore": [
-      "flow-bin",
       "xcode",
+      "simple-plist",
+      "flow-bin",
       "react"
     ]
   },
