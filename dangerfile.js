@@ -180,7 +180,17 @@ async function runGeneral() {
       })
     if (duplicateSearchPaths.length) {
       fail(
-        'Some of the Xcode <code>LIBRARY_SEARCH_PATHS</code> have duplicate entries. Please remove the duplicates. Thanks!',
+        h.details(
+          h.summary(
+            'Some of the Xcode <code>LIBRARY_SEARCH_PATHS</code> have duplicate entries. Please remove the duplicates. Thanks!',
+          ),
+          h.p(
+            'This is easiest to do by editing the project.pbxproj directly, IMHO.',
+          ),
+          h.ul(
+            ...duplicateSearchPaths.map(key => h.li(h.code(buildConfig[key]))),
+          ),
+        ),
       )
     }
 
@@ -204,8 +214,8 @@ async function runGeneral() {
           h.summary(
             "Some of the iOS frameworks aren't sorted alphabetically in the Xcode sidebar (under Libraries). Please sort them alphabetically. Thanks!",
           ),
-          "If you right-click on the Libraries group in the sidebar, you can just pick 'Sort by Name' and Xcode will do it for you."
-        )
+          "If you right-click on the Libraries group in the sidebar, you can just pick 'Sort by Name' and Xcode will do it for you.",
+        ),
       )
     }
   }
