@@ -149,11 +149,13 @@ async function runGeneral() {
     if (numericLinesWithoutLeadingZeros.length) {
       warn(
         h.details(
-          h.summary('Some lines in the .pbxproj lost their leading 0s. Xcode likes to put them back, so we try to keep them around.'),
+          h.summary(
+            'Some lines in the .pbxproj lost their leading 0s. Xcode likes to put them back, so we try to keep them around.',
+          ),
           h.ul(
-            ...numericLinesWithoutLeadingZeros.map(line => h.li(h.code(line)))
-          )
-        )
+            ...numericLinesWithoutLeadingZeros.map(line => h.li(h.code(line))),
+          ),
+        ),
       )
     }
 
