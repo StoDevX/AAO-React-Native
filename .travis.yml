@@ -162,14 +162,14 @@ jobs:
         - npm run validate-data -- --quiet | tee logs/validate-data
         - npm run validate-bus-data | tee logs/validate-bus-data
 
-    - <<: *js
-      stage: Test
-      env: [task=JS-jest]
-      before_install: npm install -g coveralls
-      script:
-        - npm run bundle-data
-        - npm run test -- --coverage 2>&1 | tee logs/jest
-      after_success: coveralls < ./coverage/lcov.info
+    # - <<: *js
+    #   stage: Test
+    #   env: [task=JS-jest]
+    #   before_install: npm install -g coveralls
+    #   script:
+    #     - npm run bundle-data
+    #     - npm run test -- --coverage 2>&1 | tee logs/jest
+    #   after_success: coveralls < ./coverage/lcov.info
 
     # Deploy the gh-pages data
     - <<: *simplejs
