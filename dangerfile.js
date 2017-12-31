@@ -124,7 +124,9 @@ async function runGeneral() {
     filepath.endsWith('project.pbxproj'),
   )
   if (pbxprojChanged) {
-    warn('The Xcode project file changed. Maintainers, double-check the changes!')
+    warn(
+      'The Xcode project file changed. Maintainers, double-check the changes!',
+    )
 
     // Warn about a blank line that Xcode will re-insert if we remove
     const pbxproj = readFileSync(pbxprojChanged, 'utf-8').split('\n')
@@ -141,7 +143,9 @@ async function runGeneral() {
       /^\s+LastSwiftMigration\s/,
     ]
     const isLineWithoutLeadingZero = line =>
-      numericLineNames.some(nline => nline.test(line) && / [^0]\d+;$/.test(line))
+      numericLineNames.some(
+        nline => nline.test(line) && / [^0]\d+;$/.test(line),
+      )
     const numericLinesWithoutLeadingZeros = pbxproj
       .filter(isLineWithoutLeadingZero)
       .map(line => line.trim())
