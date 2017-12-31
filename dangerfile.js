@@ -12,6 +12,7 @@ const isEqual = require('lodash/isEqual')
 const findIndex = require('lodash/findIndex')
 const bytes = require('pretty-bytes')
 const {XmlEntities} = require('html-entities')
+const directoryTree = require('directory-tree')
 const util = require('util')
 const execFile = util.promisify(childProcess.execFile)
 const entities = new XmlEntities()
@@ -70,9 +71,7 @@ function runAndroid() {
   )
 }
 
-async function runiOS() {
-  markdown('iOS: nothing to do')
-
+function runiOS() {
   const logFile = readFile('./logs/ios').split('\n')
 
   // ideas:
@@ -82,7 +81,7 @@ async function runiOS() {
   const analysisFile = readFile('./logs/analysis')
   markdown(
     h.details(
-      h.summary('Analysis of build times'),
+      h.summary('Analysis of slow build times'),
       h.pre(analysisFile),
     ),
   )
@@ -91,28 +90,28 @@ async function runiOS() {
   // - report the .ipa file list
   const getFromGymLog = key =>
     (logFile.find(l => l.includes(key)) || '').split(' is ')[1].trim()
-  const ipaFolder = getFromGymLog('GYM_OUTPUT_DIRECTORY')
-  const ipaFile = getFromGymLog('GYM_OUTPUT_NAME')
-  const ipaPath = `${ipaFolder}/${ipaFile}.ipa`
+  const appFolder = getFromGymLog('XCBUILD_TARGET_BUILD_DIR')
+  const appFile = getFromGymLog('GYM_OUTPUT_NAME')
+  const appPath = `${appFolder}/${appFile}.app`
   try {
-    if (ipaFolder && ipaFile) {
-      const info = await listZip(ipaPath)
-      message(`IPA size: ${bytes(info.size)}`)
-      message(
-        h.details(
-          h.summary('IPA file list'),
-          h.ul(
-            ...info.files.map(file =>
-              h.li(h.code(file.filepath), bytes(file.size)),
-            ),
-          ),
-        ),
-      )
+    if (appFolder && appFile) {
+      const info = directoryTree(appPath) // synchronous method
+      markdown(`## <code>.app</code>
+Total <code>.app</code> size: ${bytes(info.size)}
+
+${h.details(
+  h.summary('.app contents'),
+  m.code(
+    {language: 'json'},
+    JSON.stringify(info.children, null, 2),
+  ),
+)}
+      `)
     } else {
-      warn('could not figure out path to .ipa file')
+      warn('Could not figure out path to .app folder')
     }
   } catch (err) {
-    warn(h.p(`error reading .ipa file <code>${ipaPath}</code>:`) + '\n\n' + m.code({language: 'json'}, JSON.stringify(err, null, 2)))
+    warn(h.p(`error reading .app folder <code>${appPath}</code>:`) + '\n\n' + m.code({language: 'json'}, JSON.stringify(err, null, 2)))
   }
 }
 
