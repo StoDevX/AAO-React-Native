@@ -219,6 +219,7 @@ jobs:
       env: [task=IOS]
       script:
         - bundle exec fastlane ios ci-run | tee ./logs/ios
+        - python3 scripts/analyze-gym.py -s 20 < ./logs/ios | tee ./logs/analysis || true
 
 cache:
   bundler: true
