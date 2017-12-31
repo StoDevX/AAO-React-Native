@@ -140,11 +140,11 @@ async function runGeneral() {
       /^\s+LastUpgradeCheck\s/,
       /^\s+LastSwiftMigration\s/,
     ]
-    const numericLinesWithoutLeadingZeros = pbxproj.filter(line =>
-      numericLineNames.some(
-        nline => nline.test(line) && / [^0]\d*$/.test(line),
-      ),
-    )
+    const isLineWithoutLeadingZero = line =>
+      numericLineNames.some(nline => nline.test(line) && / [^0]\d*$/.test(line))
+    const numericLinesWithoutLeadingZeros = pbxproj
+      .filter(isLineWithoutLeadingZero)
+      .map(line => line.trim())
     message(numericLinesWithoutLeadingZeros.join('<br>'))
     if (numericLinesWithoutLeadingZeros.length) {
       warn(
