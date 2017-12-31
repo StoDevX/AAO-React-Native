@@ -109,6 +109,7 @@
     "bugsnag-sourcemaps": "1.0.1",
     "danger": "2.1.8",
     "danger-plugin-yarn": "1.2.0",
+    "directory-tree": "2.0.0",
     "eslint": "4.14.0",
     "eslint-config-prettier": "2.9.0",
     "eslint-plugin-babel": "4.1.2",
