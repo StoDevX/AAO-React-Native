@@ -1,7 +1,7 @@
 // @flow
 
 // danger removes this import, so don't do anything fancy with it
-const {danger, warn, message} = require('danger')
+const {danger, warn, message, schedule} = require('danger')
 
 // it leaves the rest of the imports alone, though
 const {readFileSync} = require('fs')
@@ -10,27 +10,27 @@ const {readFileSync} = require('fs')
 // The entry point of this script
 //
 
-function main() {
+async function main() {
   const taskName = String(process.env.task)
 
   if (taskName === 'ANDROID') {
-    runAndroid()
+    await runAndroid()
   } else if (taskName === 'IOS') {
-    runiOS()
+    await runiOS()
   } else if (taskName === 'GREENKEEPER') {
-    runGeneral()
-    runGreenkeeper()
+    await runGeneral()
+    await runGreenkeeper()
   } else if (taskName === 'JS-data') {
-    runJSのData()
-    runJSのBusData()
+    await runJSのData()
+    await runJSのBusData()
   } else if (taskName === 'JS-flow') {
-    runJSのFlow()
+    await runJSのFlow()
   } else if (taskName === 'JS-jest') {
-    runJSのJest()
+    await runJSのJest()
   } else if (taskName === 'JS-lint') {
-    runJSのLint()
+    await runJSのLint()
   } else if (taskName === 'JS-prettier') {
-    runJSのPrettier()
+    await runJSのPrettier()
   } else {
     const taskName = String(process.env.task)
     warn(`Unknown task name "${taskName}"; Danger cannot report anything.`)
@@ -55,7 +55,7 @@ function runiOS() {
   message('iOS: nothing to do')
 }
 
-function runGeneral() {
+async function runGeneral() {
   //
   // New js files should have `@flow` at the top
   //
@@ -73,7 +73,7 @@ function runGeneral() {
   //
   const packageChanged = danger.git.modified_files.includes('package.json')
   const lockfileChanged = danger.git.modified_files.includes('yarn.lock')
-  const packageDiff = danger.git.JSONDiffForFile('package.json')
+  const packageDiff = await danger.git.JSONDiffForFile('package.json')
   if (packageChanged && !lockfileChanged) {
     const msg = 'Changes were made to package.json, but not to yarn.lock'
     const idea = 'Perhaps you need to run <code>yarn install</code>?'
@@ -275,4 +275,4 @@ function fileLog(name, log, {lang = null} = {}) {
 // Invoke the script
 //
 
-main()
+schedule(main)
