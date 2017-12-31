@@ -122,6 +122,7 @@ async function runGeneral() {
     filepath.endsWith('project.pbxproj'),
   )
   message(`pbxprojChanged?: ${pbxprojChanged}`)
+  message(`changed files: ${danger.git.modified_files.join('<br>')}`)
   if (pbxprojChanged) {
     warn('The Xcode project file changed. Double-check the changes!')
 
