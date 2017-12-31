@@ -133,7 +133,7 @@ async function runGeneral() {
     // Warn about a blank line that Xcode will re-insert if we remove
     const pbxproj = readFileSync(pbxprojChanged, 'utf-8').split('\n')
     if (pbxproj[7] !== '') {
-      fail(
+      warn(
         "Line 8 of the .pbxproj must be an empty line to match Xcode's formatting",
       )
     }
