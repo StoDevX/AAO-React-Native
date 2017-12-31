@@ -136,7 +136,7 @@ async function runGeneral() {
 
     // Warn about numbers that `react-native link` removes leading 0s on
     const numericLineNames = [
-      /^\s+LastSwiftMigration\s/,
+      /^\s+LastSwiftUpdateCheck\s/,
       /^\s+LastUpgradeCheck\s/,
       /^\s+LastSwiftMigration\s/,
     ]
