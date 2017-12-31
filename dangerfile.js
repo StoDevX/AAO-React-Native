@@ -9,7 +9,7 @@ const {readFileSync} = require('fs')
 const uniq = require('lodash/uniq')
 const isEqual = require('lodash/isEqual')
 const {XmlEntities} = require('html-entities')
-const entities = new XmlEntities();
+const entities = new XmlEntities()
 // depended on by react-native (and us)
 const xcode = require('xcode')
 // depended on by xcode (and us)
@@ -240,7 +240,15 @@ async function runGeneral() {
             ...descKeysWithEntities.map(key => {
               const val = entities.encode(parsed[key])
               const escaped = entities.encode(val.replace(/'/g, '&apos;'))
-              return h.li(`${h.code(key)}:<br>"${val}"<br>should become<br>"${escaped}"`)
+              return h.li(
+                h.code(key) + ':',
+                h.br(),
+                h.blockquote(val),
+                h.br(),
+                'should become',
+                h.br(),
+                h.blockquote(escaped),
+              )
             }),
           ),
         ),
@@ -347,6 +355,9 @@ var h = new Proxy(
   {
     get(_, property) {
       return function(...children) {
+        if (!children.length) {
+          return `<${property}>`
+        }
         return `<${property}>${children.join('\n')}</${property}>`
       }
     },
