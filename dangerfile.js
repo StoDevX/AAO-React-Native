@@ -585,7 +585,7 @@ async function listZip(filepath) {
 
 function exec(cmd, ...args) {
   return new Promise((resolve, reject) => {
-    childProcess.execFileSync(cmd, args, (err, stdout, stderr) => {
+    childProcess.execFile(cmd, args, (err, stdout, stderr) => {
       if (err) {
         reject(err)
       }
