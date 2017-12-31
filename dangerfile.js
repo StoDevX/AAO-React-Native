@@ -124,7 +124,7 @@ async function runGeneral() {
     filepath.endsWith('project.pbxproj'),
   )
   if (pbxprojChanged) {
-    warn('The Xcode project file changed. Double-check the changes!')
+    warn('The Xcode project file changed. Maintainers, double-check the changes!')
 
     // Warn about a blank line that Xcode will re-insert if we remove
     const pbxproj = readFileSync(pbxprojChanged, 'utf-8').split('\n')
