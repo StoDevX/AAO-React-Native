@@ -81,7 +81,7 @@ def extract_gym_log(stream):
     """Given a stream of text, extract the chunk that is the
     relevant `gym` log.
     """
-    start_gym_regex = re.compile(fltime_pattern + ': --- Step: gym ---')
+    start_gym_regex = re.compile(fltime_pattern + ': --- Step: (gym|xcodebuild) ---')
     stop_gym_regex = re.compile(fltime_pattern + ': Cruising back')
 
     reading = False
@@ -142,7 +142,7 @@ def process(stream, verbose=False):
             modules[current_module_name] = {
                 'start': to_timedelta(module_match['time']),
                 'end': None,
-                'duration': None,
+                'duration': timedelta(seconds=0),
                 'mode': module_match['mode'],
                 'steps': [],
             }
