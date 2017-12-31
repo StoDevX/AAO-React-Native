@@ -136,13 +136,13 @@ async function runGeneral() {
 
     // Warn about numbers that `react-native link` removes leading 0s on
     const numericLineNames = [
-      'LastSwiftMigration',
-      'LastUpgradeCheck',
-      'LastSwiftMigration',
+      /^\s+LastSwiftMigration\s/,
+      /^\s+LastUpgradeCheck\s/,
+      /^\s+LastSwiftMigration\s/,
     ]
     const numericLinesWithoutLeadingZeros = pbxproj.filter(line =>
       numericLineNames.some(
-        nline => line.startsWith(nline) && / [^0]\d*$/.test(line),
+        nline => nline.test(line) && / [^0]\d*$/.test(line),
       ),
     )
     message(numericLinesWithoutLeadingZeros.join('<br>'))
