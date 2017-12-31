@@ -226,29 +226,18 @@ var h = new Proxy(
 )
 
 // eslint-disable-next-line no-var
-var m = new Proxy(
-  {},
-  {
-    get(_, property) {
-      return function(attrs, ...children) {
-        switch (property) {
-          case 'code': {
-            return (
-              '```' +
-              (attrs.language || '') +
-              '\n' +
-              children.join('\n') +
-              '\n' +
-              '```'
-            )
-          }
-          default:
-            throw new Error(`unknown markdown thing requested: ${property}`)
-        }
-      }
-    },
+var m = {
+  code: function(attrs, ...children) {
+    return (
+      '```' +
+      (attrs.language || '') +
+      '\n' +
+      children.join('\n') +
+      '\n' +
+      '```'
+    )
   },
-)
+}
 
 function readFile(filename) {
   try {
