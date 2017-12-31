@@ -142,13 +142,11 @@ async function runGeneral() {
   //
   danger.git.created_files
     .filter(filepath => filepath.endsWith('.test.js'))
-    .filter(filepath => {
-      const content = readFile(filepath)
-      return content.includes('it.only') || content.includes('describe.only')
-    })
-    .forEach(file =>
+    .map(filepath => ({filepath, content: readFile(filepath)}))
+    .filter(({content}) => content.includes('it.only') || content.includes('describe.only'))
+    .forEach(({filepath}) =>
       warn(
-        `An <code>only</code> was left in ${file} – no other tests can run.`,
+        `An <code>only</code> was left in ${filepath} – no other tests can run.`,
       ),
     )
 
@@ -202,6 +200,7 @@ async function runGeneral() {
     const numericLinesWithoutLeadingZeros = pbxproj
       .filter(isLineWithoutLeadingZero)
       .map(line => line.trim())
+
     if (numericLinesWithoutLeadingZeros.length) {
       warn(
         h.details(
@@ -224,6 +223,7 @@ async function runGeneral() {
         const searchPaths = val.buildSettings.LIBRARY_SEARCH_PATHS
         return uniq(searchPaths).length !== searchPaths.length
       })
+
     if (duplicateSearchPaths.length) {
       fail(
         h.details(
@@ -249,6 +249,7 @@ async function runGeneral() {
         const sorted = [...projects].sort((a, b) => a.localeSort(b))
         return !isEqual(projects, sorted)
       })
+
     if (sidebarSorting.length) {
       warn(
         h.details(
@@ -272,6 +273,7 @@ async function runGeneral() {
     const descKeysWithEntities = Object.keys(parsed)
       .filter(key => key.endsWith('Description'))
       .filter(key => parsed[key].includes("'")) // look for single quotes
+
     if (descKeysWithEntities.length) {
       warn(
         h.details(
