@@ -151,7 +151,6 @@ async function runGeneral() {
     const numericLinesWithoutLeadingZeros = pbxproj
       .filter(isLineWithoutLeadingZero)
       .map(line => line.trim())
-    message(numericLinesWithoutLeadingZeros.join('<br>'))
     if (numericLinesWithoutLeadingZeros.length) {
       warn(
         h.details(
