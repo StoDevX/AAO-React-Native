@@ -60,12 +60,12 @@ async function main() {
 function runAndroid() {
   markdown('android: nothing to do')
 
-  const logFile = readFile('./logs/android')
+  const logFile = readFile('./logs/android').split('\n').slice(0, 200)
 
   markdown(
     h.details(
       h.summary('Build log'),
-      h.pre(logFile),
+      h.pre(logFile.join('\n')),
     ),
   )
 }
