@@ -13,7 +13,7 @@ env:
     # set the ruby version up top
     - TRAVIS_RUBY_VERSION=ruby-2.4.2
     # set the python version too
-    - TRAVIS_PYTHON_VERSION=3.6.1
+    - TRAVIS_PYTHON_VERSION=3.6.2
     - PYENV_VERSION=$TRAVIS_PYTHON_VERSION
     # GH_TOKEN:
     # - used by greenkeeper to update package-lock.json
