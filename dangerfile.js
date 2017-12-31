@@ -211,7 +211,8 @@ async function runGeneral() {
   const infoPlistChanged = danger.git.modified_files.find(filepath =>
     filepath.endsWith('Info.plist'),
   )
-  if (infoPlistChanged === null) {
+  if (infoPlistChanged) {
+    message('infoPlistChanged: ' + infoPlistChanged)
     const parsed = plist.parse(readFileSync(infoPlistChanged, 'utf-8'))
     const descKeysWithEntities = Object.keys(parsed)
       .filter(key => key.endsWith('Description'))
