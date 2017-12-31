@@ -214,9 +214,12 @@ async function runGeneral() {
       .filter(key => projectsInSidebar[key].name === 'Libraries')
       .filter(key => {
         const value = projectsInSidebar[key]
+        if (!value.files) {
+          return false
+        }
         const projects = value.files.map(file => file.comment)
         const sorted = [...projects].sort((a, b) => a.localeSort(b))
-        return isEqual(projects, sorted)
+        return !isEqual(projects, sorted)
       })
     if (sidebarSorting.length) {
       warn(
