@@ -69,31 +69,47 @@ async function main() {
 //
 
 function runAndroid() {
-  const logFile = readLogFile('./logs/android').split('\n')
+  const logFile = readLogFile('./logs/build').split('\n')
+  const buildStatus = readLogFile('./logs/build-status')
+
+  if (buildStatus !== '0') {
+    fail(h.details(h.summary('Android Build Failed'), h.pre(logFile.slice(-200))))
+    // returning early here because if the build fails, there's nothing to analyze
+    return
+  }
 
   const infoTest = /\[\d{2}:\d{2}:\d{2}\]: Generated files/
   const infoLine = findIndex(logFile, line => infoTest.test(line)) + 1
   const outputFilesInfo = JSON.parse(logFile[infoLine].split(': ')[1])
   const apkInfos = outputFilesInfo.map(listZip)
 
-  markdown(h.details(h.summary('contents of <code>apkInfos</code>'), m.json(apkInfos)))
+  markdown(
+    h.details(h.summary('contents of <code>apkInfos</code>'), m.json(apkInfos), m.json(outputFilesInfo)),
+  )
 
-//   markdown(`Generated ${apkInfos.length} APK${apkInfos.length !== 1 ? 's' : ''}
+  //   markdown(`Generated ${apkInfos.length} APK${apkInfos.length !== 1 ? 's' : ''}
 
-// ${outputFilesInfo
-//     .map((filename, i) => [filename, apkInfos[i]])
-//     .map(([filename, apk]) =>
-//       h.details(
-//         h.summary(`${filename} (${bytes(apk.size)})`),
-//         '',
-//         m.json(apk),
-//       ),
-//     )}
-//   `)
+  // ${outputFilesInfo
+  //     .map((filename, i) => [filename, apkInfos[i]])
+  //     .map(([filename, apk]) =>
+  //       h.details(
+  //         h.summary(`${filename} (${bytes(apk.size)})`),
+  //         '',
+  //         m.json(apk),
+  //       ),
+  //     )}
+  //   `)
 }
 
 function runiOS() {
-  const logFile = readLogFile('./logs/ios').split('\n')
+  const logFile = readLogFile('./logs/build').split('\n')
+  const buildStatus = readLogFile('./logs/build-status')
+
+  if (buildStatus !== '0') {
+    fail(h.details(h.summary('iOS Build Failed'), h.pre(logFile.slice(-200))))
+    // returning early here because if the build fails, there's nothing to analyze
+    return
+  }
 
   // ideas:
   // - tee the "fastlane" output to a log, and run the analysis script
@@ -101,31 +117,54 @@ function runiOS() {
   //   (maybe only on react-native / package.json changes?)
   const analysisFile = readFile('./logs/analysis')
   markdown(
-    h.details(h.summary('Analysis of slow build times'), h.pre(analysisFile)),
+    h.details(
+      h.summary('Analysis of slow build times (>20s)'),
+      h.pre(analysisFile),
+    ),
   )
 
   // - report the .ipa size
   // - report the .ipa file list
   const getFromGymLog = key =>
     (logFile.find(l => l.includes(key)) || '').split(' is ')[1].trim()
-  const appFolder = getFromGymLog('XCBUILD_TARGET_BUILD_DIR')
-  const appFile = getFromGymLog('GYM_OUTPUT_NAME')
-  const appPath = `${appFolder}/${appFile}.app`
 
-  if (appFolder && appFile) {
+  const appFolder = getFromGymLog('GYM_OUTPUT_DIRECTORY')
+  const appFile = getFromGymLog('GYM_OUTPUT_NAME')
+  const appPath = `./${appFolder}/${appFile}.app`
+
+  try {
+    const exists = fs.accessSync(appPath, fs.F_OK)
+    if (!exists) {
+      fail(
+        h.details(
+          h.summary(`Could not access ${h.code(appPath)}`),
+          h.pre(fs.readdirSync(appFolder)),
+        ),
+      )
+    }
+
     const info = directoryTree(appPath) // synchronous method
     console.log(info)
     message(m.json(info))
 
-//     markdown(`## <code>.app</code>
-// Total <code>.app</code> size: ${bytes(info.size)}
+    markdown(`## <code>.app</code>
+Total <code>.app</code> size: ${bytes(info.size)}
 
-// ${h.details(
-//       h.summary('.app contents'),
-//       m.json(info),
-//     )}`)
-  } else {
-    warn('Could not figure out path to .app folder')
+${h.details(h.summary('.app contents'), m.json(info))}
+`)
+  } catch (err) {
+    let dirContents = []
+    try {
+      dirContents = fs.readdirSync(appFolder)
+      fail(
+        h.details(
+          h.summary(`Could not access ${h.code(appPath)}`),
+          h.pre(dirContents.join('\n')),
+        ),
+      )
+    } catch (err) {
+      fail(`${h.code(appFolder)} does not exist`)
+    }
   }
 }
 
