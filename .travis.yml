@@ -222,7 +222,7 @@ jobs:
       stage: Build + Deploy
       os: osx
       language: objective-c
-      osx_image: xcode9
+      osx_image: xcode9.2
       env: [task=IOS]
       script:
         - bundle exec fastlane ios ci-run | tee ./logs/build
