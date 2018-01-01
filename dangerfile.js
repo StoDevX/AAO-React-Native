@@ -113,14 +113,14 @@ function runiOS() {
   if (appFolder && appFile) {
     const info = directoryTree(appPath) // synchronous method
     console.log(info)
-    message(m.code({language: 'json'}, JSON.stringify(info, null, 2)))
+    message(m.json(info))
 
 //     markdown(`## <code>.app</code>
 // Total <code>.app</code> size: ${bytes(info.size)}
 
 // ${h.details(
 //       h.summary('.app contents'),
-//       m.code({language: 'json'}, JSON.stringify(info.children, null, 2)),
+//       m.json(info),
 //     )}`)
   } else {
     warn('Could not figure out path to .app folder')
@@ -540,6 +540,9 @@ var m = {
     return (
       '```' + (attrs.language || '') + '\n' + children.join('\n') + '\n' + '```'
     )
+  },
+  json(blob) {
+    return m.code({language: 'json'}, JSON.stringify(blob, null, 2))
   },
 }
 
