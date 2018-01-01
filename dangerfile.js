@@ -5,7 +5,7 @@ const {danger, schedule, message, warn, fail, markdown} = require('danger')
 
 // it leaves the rest of the imports alone, though
 const yarn = require('danger-plugin-yarn')
-const {readFileSync} = require('fs')
+const fs = require('fs')
 const childProcess = require('child_process')
 const uniq = require('lodash/uniq')
 const isEqual = require('lodash/isEqual')
@@ -241,7 +241,7 @@ async function runGeneral() {
     )
 
     // Warn about a blank line that Xcode will re-insert if we remove
-    const pbxproj = readFileSync(pbxprojChanged, 'utf-8').split('\n')
+    const pbxproj = readFile(pbxprojChanged).split('\n')
     if (pbxproj[7] !== '') {
       warn(
         "Line 8 of the .pbxproj must be an empty line to match Xcode's formatting",
@@ -333,7 +333,7 @@ async function runGeneral() {
     filepath.endsWith('Info.plist'),
   )
   if (infoPlistChanged) {
-    const parsed = plist.parse(readFileSync(infoPlistChanged, 'utf-8'))
+    const parsed = plist.parse(readFile(infoPlistChanged))
     const descKeysWithEntities = Object.keys(parsed)
       .filter(key => key.endsWith('Description'))
       .filter(key => parsed[key].includes("'")) // look for single quotes
@@ -371,7 +371,7 @@ async function runGeneral() {
     filepath => filepath === 'android/app/build.gradle',
   )
   if (buildDotGradle) {
-    const file = readFileSync(buildDotGradle, 'utf-8').split('\n')
+    const file = readFile(buildDotGradle).split('\n')
     const startLine = findIndex(file, line => line === 'dependencies {')
     const endLine = findIndex(file, line => line === '}', startLine)
 
@@ -402,7 +402,7 @@ async function runGeneral() {
     filepath.endsWith('MainApplication.java'),
   )
   if (mainDotJava) {
-    const file = readFileSync(mainDotJava, 'utf-8').split('\n')
+    const file = readFile(mainDotJava).split('\n')
     const startNeedle = '// keep these sorted alphabetically'
     const startLine = findIndex(file, line => line === startNeedle)
     const endLine = findIndex(file, line => line === '', startLine)
@@ -441,7 +441,7 @@ async function runGeneral() {
     filepath => filepath === 'android/settings.gradle',
   )
   if (settingsDotGradle) {
-    const file = readFileSync(settingsDotGradle, 'utf-8').split('\n')
+    const file = readFile(settingsDotGradle).split('\n')
     const startLine = findIndex(file, line => line.startsWith('//'))
     const firstInclusionLine = findIndex(file, line =>
       line.startsWith('include'),
@@ -589,7 +589,7 @@ var m = {
 
 function readFile(filename) {
   try {
-    return readFileSync(filename, 'utf-8')
+    return fs.readFileSync(filename, 'utf-8')
   } catch (err) {
     if (err.code === 'ENOENT') {
       return ''
