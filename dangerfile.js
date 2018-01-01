@@ -113,7 +113,7 @@ function runiOS() {
   if (appFolder && appFile) {
     const info = directoryTree(appPath) // synchronous method
     console.log(info)
-    message(m.code({language: json}, JSON.stringify(info, null, 2)))
+    message(m.code({language: 'json'}, JSON.stringify(info, null, 2)))
 
 //     markdown(`## <code>.app</code>
 // Total <code>.app</code> size: ${bytes(info.size)}
