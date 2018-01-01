@@ -78,7 +78,7 @@ function runAndroid() {
       .slice(-200)
       .map(stripAnsi)
       .join('\n')
-    fail(h.details(h.summary('Android Build Failed'), h.pre(logToPost)))
+    fail(h.details(h.summary('Android Build Failed'), '', m.code({}, logToPost)))
     // returning early here because if the build fails, there's nothing to analyze
     return
   }
@@ -120,7 +120,7 @@ function runiOS() {
       .slice(-200)
       .map(stripAnsi)
       .join('\n')
-    fail(h.details(h.summary('iOS Build Failed'), h.pre(logToPost)))
+    fail(h.details(h.summary('iOS Build Failed'), '', m.code({}, logToPost)))
     // returning early here because if the build fails, there's nothing to analyze
     return
   }
@@ -133,7 +133,8 @@ function runiOS() {
   markdown(
     h.details(
       h.summary('Analysis of slow build times (>20s)'),
-      h.pre(analysisFile),
+      '',
+      m.code({}, analysisFile),
     ),
   )
 
@@ -154,7 +155,8 @@ function runiOS() {
       fail(
         h.details(
           h.summary(`Could not access ${h.code(appPath)}`),
-          h.pre(fs.readdirSync(appFolder)),
+          '',
+          m.code({}, fs.readdirSync(appFolder).join('\n')),
         ),
       )
     }
@@ -175,7 +177,8 @@ ${h.details(h.summary('.app contents'), m.json(info))}
       fail(
         h.details(
           h.summary(`Could not access ${h.code(appPath)}`),
-          h.pre(dirContents.join('\n')),
+          '',
+          m.code({}, dirContents.join('\n')),
         ),
       )
     } catch (err) {
