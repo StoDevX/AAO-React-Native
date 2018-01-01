@@ -100,7 +100,6 @@ function runAndroid() {
   //     .map(([filename, apk]) =>
   //       h.details(
   //         h.summary(`${filename} (${bytes(apk.size)})`),
-  //         '',
   //         m.json(apk),
   //       ),
   //     )}
@@ -125,7 +124,6 @@ function runiOS() {
   markdown(
     h.details(
       h.summary('Analysis of slow build times (>20s)'),
-      '',
       m.code({}, analysisFile),
     ),
   )
@@ -141,42 +139,12 @@ function runiOS() {
   const appFile = getFromGymLog('GYM_OUTPUT_NAME')
   const appPath = `./${appFolder}/${appFile}.app`
 
-  try {
-    const exists = fs.accessSync(appPath, fs.F_OK)
-    if (!exists) {
-      fail(
-        h.details(
-          h.summary(`Could not access ${h.code(appPath)}`),
-          '',
-          m.code({}, fs.readdirSync(appFolder).join('\n')),
-        ),
-      )
-    }
-
-    const info = directoryTree(appPath) // synchronous method
-    console.log(info)
-    message(m.json(info))
-
-    markdown(`## <code>.app</code>
+  const info = listDirectoryTree(appPath)
+  markdown(`## <code>.app</code>
 Total <code>.app</code> size: ${bytes(info.size)}
 
 ${h.details(h.summary('.app contents'), m.json(info))}
 `)
-  } catch (err) {
-    let dirContents = []
-    try {
-      dirContents = fs.readdirSync(appFolder)
-      fail(
-        h.details(
-          h.summary(`Could not access ${h.code(appPath)}`),
-          '',
-          m.code({}, dirContents.join('\n')),
-        ),
-      )
-    } catch (err) {
-      fail(`${h.code(appFolder)} does not exist`)
-    }
-  }
 }
 
 function fastlaneBuildLogTail(log, message) {
@@ -190,7 +158,6 @@ function fastlaneBuildLogTail(log, message) {
     h.details(
       h.summary(message),
       h.p(`Last ${n} lines`),
-      '',
       m.code({}, logToPost),
     ),
   )
@@ -607,7 +574,7 @@ var h = new Proxy(
 var m = {
   code(attrs, ...children) {
     return (
-      '```' + (attrs.language || '') + '\n' + children.join('\n') + '\n' + '```'
+      '\n' + '```' + (attrs.language || '') + '\n' + children.join('\n') + '\n' + '```' + '\n'
     )
   },
   json(blob) {
@@ -619,10 +586,13 @@ function readFile(filename) {
   try {
     return fs.readFileSync(filename, 'utf-8')
   } catch (err) {
-    if (err.code === 'ENOENT') {
-      return ''
-    }
-    return err.message
+    fail(
+      h.details(
+        h.summary(`Could not read <code>${filename}</code>`),
+        m.json(err),
+      ),
+    )
+    return ''
   }
 }
 
@@ -661,17 +631,65 @@ function parseXcodeProject(pbxprojPath) {
 }
 
 async function listZip(filepath) {
-  const {stdout} = await execFile('unzip', ['-l', filepath])
-  const lines = stdout.split('\n')
-  const parsed = lines.slice(3, -3).map(line => {
-    const length = parseInt(line.slice(0, 9).trim(), 10)
-    // const datetime = line.slice(12, 28)
-    const filepath = line.slice(30).trim()
-    const type = filepath.endsWith('/') ? 'folder' : 'file'
-    return {size: length, filepath, type}
-  })
-  const zipSize = parsed.reduce((sum, current) => current.size + sum, 0)
-  return {files: parsed, size: zipSize}
+  try {
+    const {stdout} = await execFile('unzip', ['-l', filepath])
+    const lines = stdout.split('\n')
+    const parsed = lines.slice(3, -3).map(line => {
+      const length = parseInt(line.slice(0, 9).trim(), 10)
+      // const datetime = line.slice(12, 28)
+      const filepath = line.slice(30).trim()
+      const type = filepath.endsWith('/') ? 'folder' : 'file'
+      return {size: length, filepath, type}
+    })
+    const zipSize = parsed.reduce((sum, current) => current.size + sum, 0)
+    return {files: parsed, size: zipSize}
+  } catch (err) {
+    fail(
+      h.details(
+        h.summary(`Could not examine the ZIP file at <code>${filepath}</code>`),
+        m.json(err),
+      ),
+    )
+  }
+}
+
+function listDirectory(dirpath) {
+  try {
+    return fs.readdirSync(dirpath)
+  } catch (err) {
+    fail(
+      h.details(
+        h.summary(`${h.code(dirpath)} does not exist`),
+        m.json(err),
+      ),
+    )
+    return []
+  }
+}
+
+function listDirectoryTree(dirpath) {
+  try {
+    const exists = fs.accessSync(dirpath, fs.F_OK)
+
+    if (!exists) {
+      fail(
+        h.details(
+          h.summary(`Could not access <code>${dirpath}</code>`),
+          m.code({}, listDirectory(dirpath).join('\n')),
+        ),
+      )
+    }
+
+    return directoryTree(dirpath)
+  } catch (err) {
+    fail(
+      h.details(
+        h.summary('<code>listDirectoryTree</code> threw an error'),
+        m.json(err),
+      ),
+    )
+    return {}
+  }
 }
 
 //
