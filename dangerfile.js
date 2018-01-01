@@ -74,11 +74,7 @@ function runAndroid() {
   const buildStatus = readLogFile('./logs/build-status')
 
   if (buildStatus !== '0') {
-    const logToPost = logFile
-      .slice(-200)
-      .map(stripAnsi)
-      .join('\n')
-    fail(h.details(h.summary('Android Build Failed'), '', m.code({}, logToPost)))
+    fastlaneBuildLogTail(logFile, 'Android Build Failed')
     // returning early here because if the build fails, there's nothing to analyze
     return
   }
@@ -116,11 +112,7 @@ function runiOS() {
   const buildStatus = readLogFile('./logs/build-status')
 
   if (buildStatus !== '0') {
-    const logToPost = logFile
-      .slice(-200)
-      .map(stripAnsi)
-      .join('\n')
-    fail(h.details(h.summary('iOS Build Failed'), '', m.code({}, logToPost)))
+    fastlaneBuildLogTail(logFile, 'iOS Build Failed')
     // returning early here because if the build fails, there's nothing to analyze
     return
   }
@@ -185,6 +177,23 @@ ${h.details(h.summary('.app contents'), m.json(info))}
       fail(`${h.code(appFolder)} does not exist`)
     }
   }
+}
+
+function fastlaneBuildLogTail(log, message) {
+  const n = 150
+  const logToPost = log
+    .slice(-n)
+    .map(stripAnsi)
+    .join('\n')
+
+  fail(
+    h.details(
+      h.summary(message),
+      h.p(`Last ${n} lines`),
+      '',
+      m.code({}, logToPost),
+    ),
+  )
 }
 
 async function runGeneral() {
