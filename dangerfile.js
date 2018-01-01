@@ -1,7 +1,7 @@
 // @flow
 
 // danger removes this import, so don't do anything fancy with it
-const {danger, schedule, warn, fail, markdown} = require('danger')
+const {danger, schedule, message, warn, fail, markdown} = require('danger')
 
 // it leaves the rest of the imports alone, though
 const yarn = require('danger-plugin-yarn')
@@ -82,7 +82,7 @@ ${outputFilesInfo
     .map((filename, i) => [filename, apkInfos[i]])
     .map(([filename, apk]) =>
       h.details(
-        h.summary(filename),
+        h.summary(`${filename} (${bytes(apk.size)})`),
         '',
         m.code({language: 'json'}, JSON.stringify(apk, null, 2)),
       ),
@@ -112,13 +112,16 @@ function runiOS() {
 
   if (appFolder && appFile) {
     const info = directoryTree(appPath) // synchronous method
-    markdown(`## <code>.app</code>
-Total <code>.app</code> size: ${bytes(info.size)}
+    console.log(info)
+    message(m.code({language: json}, JSON.stringify(info, null, 2)))
 
-${h.details(
-      h.summary('.app contents'),
-      m.code({language: 'json'}, JSON.stringify(info.children, null, 2)),
-    )}`)
+//     markdown(`## <code>.app</code>
+// Total <code>.app</code> size: ${bytes(info.size)}
+
+// ${h.details(
+//       h.summary('.app contents'),
+//       m.code({language: 'json'}, JSON.stringify(info.children, null, 2)),
+//     )}`)
   } else {
     warn('Could not figure out path to .app folder')
   }
