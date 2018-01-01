@@ -13,6 +13,7 @@ const findIndex = require('lodash/findIndex')
 const bytes = require('pretty-bytes')
 const {XmlEntities} = require('html-entities')
 const directoryTree = require('directory-tree')
+const stripAnsi = require('strip-ansi')
 const util = require('util')
 const execFile = util.promisify(childProcess.execFile)
 const entities = new XmlEntities()
@@ -73,18 +74,27 @@ function runAndroid() {
   const buildStatus = readLogFile('./logs/build-status')
 
   if (buildStatus !== '0') {
-    fail(h.details(h.summary('Android Build Failed'), h.pre(logFile.slice(-200))))
+    const logToPost = logFile
+      .slice(-200)
+      .map(stripAnsi)
+      .join('\n')
+    fail(h.details(h.summary('Android Build Failed'), h.pre(logToPost)))
     // returning early here because if the build fails, there's nothing to analyze
     return
   }
 
   const infoTest = /\[\d{2}:\d{2}:\d{2}\]: Generated files/
-  const infoLine = findIndex(logFile, line => infoTest.test(line)) + 1
-  const outputFilesInfo = JSON.parse(logFile[infoLine].split(': ')[1])
+  const infoLineNumber = findIndex(logFile, line => infoTest.test(line)) + 1
+  const infoLine = stripAnsi(logFile[infoLineNumber])
+  const outputFilesInfo = JSON.parse(infoLine.split(': ')[1])
   const apkInfos = outputFilesInfo.map(listZip)
 
   markdown(
-    h.details(h.summary('contents of <code>apkInfos</code>'), m.json(apkInfos), m.json(outputFilesInfo)),
+    h.details(
+      h.summary('contents of <code>apkInfos</code>'),
+      m.json(apkInfos),
+      m.json(outputFilesInfo),
+    ),
   )
 
   //   markdown(`Generated ${apkInfos.length} APK${apkInfos.length !== 1 ? 's' : ''}
@@ -106,7 +116,11 @@ function runiOS() {
   const buildStatus = readLogFile('./logs/build-status')
 
   if (buildStatus !== '0') {
-    fail(h.details(h.summary('iOS Build Failed'), h.pre(logFile.slice(-200))))
+    const logToPost = logFile
+      .slice(-200)
+      .map(stripAnsi)
+      .join('\n')
+    fail(h.details(h.summary('iOS Build Failed'), h.pre(logToPost)))
     // returning early here because if the build fails, there's nothing to analyze
     return
   }
@@ -126,7 +140,9 @@ function runiOS() {
   // - report the .ipa size
   // - report the .ipa file list
   const getFromGymLog = key =>
-    (logFile.find(l => l.includes(key)) || '').split(' is ')[1].trim()
+    (stripAnsi(logFile.find(l => l.includes(key))) || '')
+      .split(' is ')[1]
+      .trim()
 
   const appFolder = getFromGymLog('GYM_OUTPUT_DIRECTORY')
   const appFile = getFromGymLog('GYM_OUTPUT_NAME')
