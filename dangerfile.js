@@ -1,10 +1,10 @@
 // @flow
 
 // danger removes this import, so don't do anything fancy with it
-const {danger, warn, message, schedule, fail, markdown} = require('danger')
+const {danger, schedule, warn, fail, markdown} = require('danger')
 
 // it leaves the rest of the imports alone, though
-import yarn from 'danger-plugin-yarn'
+const yarn = require('danger-plugin-yarn')
 const {readFileSync} = require('fs')
 const childProcess = require('child_process')
 const uniq = require('lodash/uniq')
@@ -16,6 +16,7 @@ const directoryTree = require('directory-tree')
 const util = require('util')
 const execFile = util.promisify(childProcess.execFile)
 const entities = new XmlEntities()
+
 // depended on by react-native (and us)
 const xcode = require('xcode')
 // depended on by xcode (and us)
@@ -28,29 +29,38 @@ const plist = require('simple-plist')
 async function main() {
   const taskName = String(process.env.task)
 
-  if (taskName === 'ANDROID') {
-    await runAndroid()
-  } else if (taskName === 'IOS') {
-    schedule(runiOS())
-  } else if (taskName === 'GREENKEEPER') {
-    await runGreenkeeper()
-  } else if (taskName === 'JS') {
-    await runGeneral()
-    await yarn()
-  } else if (taskName === 'JS-data') {
-    await runJSのData()
-    await runJSのBusData()
-  } else if (taskName === 'JS-flow') {
-    await runJSのFlow()
-  } else if (taskName === 'JS-jest') {
-    await runJSのJest()
-  } else if (taskName === 'JS-lint') {
-    await runJSのLint()
-  } else if (taskName === 'JS-prettier') {
-    await runJSのPrettier()
-  } else {
-    const taskName = String(process.env.task)
-    warn(`Unknown task name "${taskName}"; Danger cannot report anything.`)
+  switch (taskName) {
+    case 'ANDROID':
+      await runAndroid()
+      break
+    case 'IOS':
+      await runiOS()
+      break
+    case 'GREENKEEPER':
+      await runGreenkeeper()
+      break
+    case 'JS':
+      await runGeneral()
+      await yarn()
+      break
+    case 'JS-data':
+      await runJSのData()
+      await runJSのBusData()
+      break
+    case 'JS-flow':
+      await runJSのFlow()
+      break
+    case 'JS-jest':
+      await runJSのJest()
+      break
+    case 'JS-lint':
+      await runJSのLint()
+      break
+    case 'JS-prettier':
+      await runJSのPrettier()
+      break
+    default:
+      warn(`Unknown task name "${taskName}"; Danger cannot report anything.`)
   }
 }
 
@@ -59,17 +69,29 @@ async function main() {
 //
 
 function runAndroid() {
-  markdown('android: nothing to do')
+  const logFile = readLogFile('./logs/android').split('\n')
 
-  const logFile = readFile('./logs/android')
-    .split('\n')
-    .slice(0, 200)
+  const infoTest = /\[\d{2}:\d{2}:\d{2}\]: Generated files/
+  const infoLine = findIndex(logFile, line => infoTest.test(line)) + 1
+  const outputFilesInfo = JSON.parse(logFile[infoLine].split(': ')[1])
+  const apkInfos = outputFilesInfo.map(listZip)
 
-  markdown(h.details(h.summary('Build log'), h.pre(logFile.join('\n'))))
+  markdown(`Generated ${apkInfos.length} APK${apkInfos.length !== 1 ? 's' : ''}
+
+${outputFilesInfo
+    .map((filename, i) => [filename, apkInfos[i]])
+    .map(([filename, apk]) =>
+      h.details(
+        h.summary(filename),
+        '',
+        m.code({language: 'json'}, JSON.stringify(apk, null, 2)),
+      ),
+    )}
+  `)
 }
 
 function runiOS() {
-  const logFile = readFile('./logs/ios').split('\n')
+  const logFile = readLogFile('./logs/ios').split('\n')
 
   // ideas:
   // - tee the "fastlane" output to a log, and run the analysis script
@@ -561,6 +583,20 @@ function parseXcodeProject(pbxprojPath) {
       resolve(data)
     })
   })
+}
+
+async function listZip(filepath) {
+  const {stdout} = await execFile('unzip', ['-l', filepath])
+  const lines = stdout.split('\n')
+  const parsed = lines.slice(3, -3).map(line => {
+    const length = parseInt(line.slice(0, 9).trim(), 10)
+    // const datetime = line.slice(12, 28)
+    const filepath = line.slice(30).trim()
+    const type = filepath.endsWith('/') ? 'folder' : 'file'
+    return {size: length, filepath, type}
+  })
+  const zipSize = parsed.reduce((sum, current) => current.size + sum, 0)
+  return {files: parsed, size: zipSize}
 }
 
 //
