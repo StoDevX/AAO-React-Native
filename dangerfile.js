@@ -76,18 +76,20 @@ function runAndroid() {
   const outputFilesInfo = JSON.parse(logFile[infoLine].split(': ')[1])
   const apkInfos = outputFilesInfo.map(listZip)
 
-  markdown(`Generated ${apkInfos.length} APK${apkInfos.length !== 1 ? 's' : ''}
+  markdown(h.details(h.summary('contents of <code>apkInfos</code>'), m.json(apkInfos)))
 
-${outputFilesInfo
-    .map((filename, i) => [filename, apkInfos[i]])
-    .map(([filename, apk]) =>
-      h.details(
-        h.summary(`${filename} (${bytes(apk.size)})`),
-        '',
-        m.code({language: 'json'}, JSON.stringify(apk, null, 2)),
-      ),
-    )}
-  `)
+//   markdown(`Generated ${apkInfos.length} APK${apkInfos.length !== 1 ? 's' : ''}
+
+// ${outputFilesInfo
+//     .map((filename, i) => [filename, apkInfos[i]])
+//     .map(([filename, apk]) =>
+//       h.details(
+//         h.summary(`${filename} (${bytes(apk.size)})`),
+//         '',
+//         m.json(apk),
+//       ),
+//     )}
+//   `)
 }
 
 function runiOS() {
