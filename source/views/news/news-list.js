@@ -7,6 +7,7 @@ import {ListSeparator} from '../components/list'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {NewsRow} from './news-row'
+import openUrl from '../components/open-url'
 
 const styles = StyleSheet.create({
   listContainer: {
@@ -24,11 +25,8 @@ type Props = TopLevelViewPropsType & {
 }
 
 export class NewsList extends React.PureComponent<Props> {
-  onPressNews = (story: StoryType) => {
-    this.props.navigation.navigate('NewsItemView', {
-      story,
-      embedFeaturedImage: this.props.embedFeaturedImage,
-    })
+  onPressNews = (url: string) => {
+    return openUrl(url)
   }
 
   renderSeparator = () => <ListSeparator spacing={{left: 101}} />
