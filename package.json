@@ -1,6 +1,6 @@
 {
   "name": "AllAboutOlaf",
-  "version": "2.5.0-pre",
+  "version": "2.5.0-pre+1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -10,7 +10,7 @@
     "bundle:android": "react-native bundle --entry-file index.js --dev true --platform android --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/",
     "bundle:ios": "react-native bundle --entry-file index.js --dev true --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios",
     "check": "npm run prettier && npm run lint && npm run flow && npm run validate-data -- --quiet && npm run test",
-    "danger": "node node_modules/danger/distribution/commands/danger-run.js",
+    "danger": "danger ci",
     "data": "node scripts/bundle-data.js data/ docs/",
     "flow": "flow",
     "ios": "react-native run-ios",
@@ -107,7 +107,7 @@
     "babel-jest": "22.0.4",
     "babel-preset-react-native": "4.0.0",
     "bugsnag-sourcemaps": "1.0.1",
-    "danger": "2.1.8",
+    "danger": "3.0.0-beta.2",
     "danger-plugin-yarn": "1.2.0",
     "directory-tree": "2.0.0",
     "eslint": "4.14.0",
