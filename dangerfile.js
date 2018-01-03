@@ -71,7 +71,7 @@ async function main() {
 
 function runAndroid() {
   const logFile = readLogFile('./logs/build').split('\n')
-  const buildStatus = String(process.env.TRAVIS_TEST_RESULT)
+  const buildStatus = readLogFile('./logs/build-status')
 
   warn(`buildStatus is ${buildStatus}`)
 
@@ -81,17 +81,14 @@ function runAndroid() {
     return
   }
 
-  const infoTest = /\[\d{2}:\d{2}:\d{2}\]: Generated files/
-  const infoLineNumber = findIndex(logFile, line => infoTest.test(line)) + 1
-  const infoLine = stripAnsi(logFile[infoLineNumber])
-  const outputFilesInfo = JSON.parse(infoLine.split(': ')[1])
-  const apkInfos = outputFilesInfo.map(listZip)
+  const appPaths = readJsonLogFile('./logs/products')
+  const apkInfos = appPaths.map(listZip)
 
   markdown(
     h.details(
       h.summary('contents of <code>apkInfos</code>'),
       m.json(apkInfos),
-      m.json(outputFilesInfo),
+      m.json(appPaths),
     ),
   )
 
@@ -110,7 +107,7 @@ function runAndroid() {
 
 function runiOS() {
   const logFile = readLogFile('./logs/build').split('\n')
-  const buildStatus = String(process.env.TRAVIS_TEST_RESULT)
+  const buildStatus = readLogFile('./logs/build-status')
 
   warn(`buildStatus is ${buildStatus}`)
 
@@ -134,21 +131,16 @@ function runiOS() {
 
   // - report the .ipa size
   // - report the .ipa file list
-  const getFromGymLog = key =>
-    (stripAnsi(logFile.find(l => l.includes(key))) || '')
-      .split(' is ')[1]
-      .trim()
+  const appPaths = readJsonLogFile('./logs/products')
 
-  const appFolder = getFromGymLog('GYM_OUTPUT_DIRECTORY')
-  const appFile = getFromGymLog('GYM_OUTPUT_NAME')
-  const appPath = `${appFolder}/${appFile}.app`
-
-  const info = listDirectoryTree(appPath)
-  markdown(`## <code>.app</code>
+  appPaths.forEach(appPath => {
+    const info = listDirectoryTree(appPath)
+    markdown(`## <code>.app</code>
 Total <code>.app</code> size: ${bytes(info.size)}
 
 ${h.details(h.summary('.app contents'), m.json(info))}
 `)
+  })
 }
 
 function fastlaneBuildLogTail(log, message) {
@@ -602,6 +594,20 @@ function readFile(filename) {
 
 function readLogFile(filename) {
   return readFile(filename).trim()
+}
+
+function readJsonLogFile(filename) {
+  try {
+    return JSON.parse(readFile(filename))
+  } catch (err) {
+    fail(
+      h.details(
+        h.summary(`Could not read the log file at <code>${filename}</code>`),
+        m.json(err),
+      ),
+    )
+    return []
+  }
 }
 
 function isBadDataValidationLog(log) {
