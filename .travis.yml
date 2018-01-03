@@ -135,7 +135,7 @@ jobs:
     # Do node "tests"
     - <<: *js
       stage: Test
-      env: [task=JS]
+      env: [task=JS-general]
       script: skip
 
     - <<: *js

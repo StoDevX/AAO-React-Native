@@ -40,7 +40,7 @@ async function main() {
     case 'GREENKEEPER':
       await runGreenkeeper()
       break
-    case 'JS':
+    case 'JS-general':
       await runGeneral()
       await yarn()
       break
