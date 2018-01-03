@@ -4,7 +4,7 @@
 const {danger, schedule, message, warn, fail, markdown} = require('danger')
 
 // it leaves the rest of the imports alone, though
-const yarn = require('danger-plugin-yarn')
+const {default: yarn} = require('danger-plugin-yarn')
 const fs = require('fs')
 const childProcess = require('child_process')
 const uniq = require('lodash/uniq')
@@ -141,7 +141,7 @@ function runiOS() {
 
   const appFolder = getFromGymLog('GYM_OUTPUT_DIRECTORY')
   const appFile = getFromGymLog('GYM_OUTPUT_NAME')
-  const appPath = `./${appFolder}/${appFile}.app`
+  const appPath = `${appFolder}/${appFile}.app`
 
   const info = listDirectoryTree(appPath)
   markdown(`## <code>.app</code>
