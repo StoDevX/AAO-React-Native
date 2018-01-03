@@ -132,7 +132,7 @@ function runiOS() {
   appPaths.forEach(appPath => {
     const info = listDirectoryTree(appPath)
     markdown(`## <code>.app</code>
-Total <code>.app</code> size: ${bytes(info.size || 0)}
+Total <code>.app</code> size: ${info.size}
 
 ${h.details(h.summary('.app contents'), m.json(info))}
 `)
