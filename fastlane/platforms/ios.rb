@@ -1,3 +1,6 @@
+# coding: utf-8
+require 'json'
+
 platform :ios do
   desc 'Runs all the tests'
   lane :test do
@@ -24,14 +27,24 @@ platform :ios do
 
   desc 'Checks that the app can be built'
   lane :check_build do
-    propagate_version
-    xcodebuild(
-      build: true,
-      scheme: ENV['GYM_SCHEME'],
-      project: ENV['GYM_PROJECT'],
-      destination: 'generic/platform=iOS',
-      xcargs: "CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=''"
-    )
+    FileUtils.mkdir_p('../logs')
+
+    # build the .app
+    build_status = 0
+    begin
+      propagate_version
+      xcodebuild(
+        build: true,
+        scheme: ENV['GYM_SCHEME'],
+        project: ENV['GYM_PROJECT'],
+        destination: 'generic/platform=iOS',
+        xcargs: %(CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="")
+      )
+    rescue IOError
+      build_status = 1
+    ensure
+      File.open('../logs/build-status', 'w') { |file| file.write(build_status.to_s) }
+    end
   end
 
   desc 'Builds and exports the app'
