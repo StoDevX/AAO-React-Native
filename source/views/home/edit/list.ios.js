@@ -12,7 +12,7 @@ import SortableList from '@hawkrives/react-native-sortable-list'
 
 import type {ViewType} from '../../views'
 import {allViews} from '../../views'
-import {EditHomeRow} from './row'
+import {ConnectedEditHomeRow as EditHomeRow} from './row'
 
 const objViews = fromPairs(allViews.map(v => [v.view, v]))
 

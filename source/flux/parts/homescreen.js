@@ -4,8 +4,19 @@ import {allViewNames as defaultViewOrder} from '../../views/views'
 import difference from 'lodash/difference'
 import {trackHomescreenOrder} from '../../analytics'
 import * as storage from '../../lib/storage'
+import {type ReduxState} from '../index'
+
+type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
+type GetState = () => ReduxState
+type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
+type Action =
+  | SaveViewOrderAction
+  | SaveEnabledViewsAction
+  | ToggleViewEnabledAction
 
 const SAVE_HOMESCREEN_ORDER = 'homescreen/SAVE_HOMESCREEN_ORDER'
+const SAVE_ENABLED_VIEWS = 'homescreen/SAVE_ENABLED_VIEWS'
+const TOGGLE_VIEW_ENABLED = 'homescreen/TOGGLE_VIEW_ENABLED'
 
 type ViewName = string
 
@@ -59,20 +70,71 @@ export function saveHomescreenOrder(
   return {type: SAVE_HOMESCREEN_ORDER, payload: order}
 }
 
-type Action = SaveViewOrderAction
+type SaveEnabledViewsAction = {
+  type: 'homescreen/SAVE_ENABLED_VIEWS',
+  payload: Array<ViewName>,
+}
+export function saveEnabledViews(
+  enabledViews: Array<ViewName>,
+): SaveEnabledViewsAction {
+  storage.setEnabledViews(enabledViews)
+  return {type: SAVE_ENABLED_VIEWS, payload: enabledViews}
+}
+export async function loadEnabledViews() {
+  let enabledViews = await storage.getEnabledViews()
+
+  if (enabledViews.length == 0) {
+    enabledViews = defaultViewOrder
+  }
+
+  return saveEnabledViews(enabledViews)
+}
+
+type ToggleViewEnabledAction = {
+  type: 'homescreen/TOGGLE_VIEW_ENABLED',
+  payload: Array<string>,
+}
+export function toggleViewEnabled(
+  viewName: string,
+): ThunkAction<ToggleViewEnabledAction> {
+  return (dispatch, getState) => {
+    const state = getState()
+
+    const currentEnabledViews = state.homescreen
+      ? state.homescreen.activeViews
+      : []
+
+    const newEnabledViews = currentEnabledViews.includes(viewName)
+      ? currentEnabledViews.filter(name => name !== viewName)
+      : [...currentEnabledViews, viewName]
+
+    // TODO: remove saving logic from reducers
+    storage.setEnabledViews(newEnabledViews)
+
+    dispatch({type: TOGGLE_VIEW_ENABLED, payload: newEnabledViews})
+  }
+}
 
 export type State = {|
   order: Array<ViewName>,
+  activeViews: Array<ViewName>,
 |}
 
 const initialState: State = {
   order: [],
+  activeViews: [],
 }
 
 export function homescreen(state: State = initialState, action: Action) {
   switch (action.type) {
     case SAVE_HOMESCREEN_ORDER: {
       return {...state, order: action.payload}
+    }
+    case SAVE_ENABLED_VIEWS: {
+      return {...state, activeViews: action.payload}
+    }
+    case TOGGLE_VIEW_ENABLED: {
+      return {...state, activeViews: action.payload}
     }
     default: {
       return state

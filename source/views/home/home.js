@@ -21,14 +21,19 @@ type ReactProps = TopLevelViewPropsType & {
 }
 type ReduxStateProps = {
   order: Array<string>,
+  activeViews: Array<string>,
 }
 
 type Props = ReactProps & ReduxStateProps
 
-function HomePage({navigation, order, views = allViews}: Props) {
+function HomePage({navigation, order, activeViews, views = allViews}: Props) {
   const sortedViews = sortBy(views, view => order.indexOf(view.view))
 
-  const columns = partitionByIndex(sortedViews)
+  const enabledViews = sortedViews.filter(view =>
+    activeViews.includes(view.view),
+  )
+
+  const columns = partitionByIndex(enabledViews)
 
   return (
     <ScrollView
@@ -71,11 +76,12 @@ HomePage.navigationOptions = ({navigation}) => {
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
   if (!state.homescreen) {
-    return {order: []}
+    return {order: [], activeViews: []}
   }
 
   return {
     order: state.homescreen.order,
+    activeViews: state.homescreen.activeViews,
   }
 }
 

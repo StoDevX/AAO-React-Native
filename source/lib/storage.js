@@ -46,6 +46,14 @@ export function getHomescreenOrder(): Promise<Array<string>> {
   return getItemAsArray(homescreenOrderKey)
 }
 
+const homescreenViewsKey = 'homescreen:enabled-views'
+export function setEnabledViews(enabledViews: string[]) {
+  return setItem(homescreenViewsKey, enabledViews)
+}
+export function getEnabledViews(): Promise<Array<string>> {
+  return getItemAsArray(homescreenViewsKey)
+}
+
 const acknowledgementStatusKey = 'settings:ackd'
 export function setAcknowledgementStatus(status: boolean) {
   return setItem(acknowledgementStatusKey, status)
