@@ -83,10 +83,11 @@ x-definitions:
       - echo "export const GOOGLE_MAPS_API_KEY = '$GMAPS_KEY'" >> .env.js
 
       # disable npm wrapper for npm scripts
-      - echo "loglevel=silent" >> .npmrc
+      - npm config set loglevel=silent
       - mkdir -p logs/
 
     after_script:
+      - npm config set loglevel=notice
       - npm run danger -- --id $task
 
     before_cache:

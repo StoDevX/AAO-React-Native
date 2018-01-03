@@ -73,8 +73,6 @@ function runAndroid() {
   const logFile = readLogFile('./logs/build').split('\n')
   const buildStatus = readLogFile('./logs/build-status')
 
-  warn(`buildStatus is ${buildStatus}`)
-
   if (buildStatus !== '0') {
     fastlaneBuildLogTail(logFile, 'Android Build Failed')
     // returning early here because if the build fails, there's nothing to analyze
@@ -109,8 +107,6 @@ function runiOS() {
   const logFile = readLogFile('./logs/build').split('\n')
   const buildStatus = readLogFile('./logs/build-status')
 
-  warn(`buildStatus is ${buildStatus}`)
-
   if (buildStatus !== '0') {
     fastlaneBuildLogTail(logFile, 'iOS Build Failed')
     // returning early here because if the build fails, there's nothing to analyze
@@ -136,7 +132,7 @@ function runiOS() {
   appPaths.forEach(appPath => {
     const info = listDirectoryTree(appPath)
     markdown(`## <code>.app</code>
-Total <code>.app</code> size: ${bytes(info.size)}
+Total <code>.app</code> size: ${bytes(info.size || 0)}
 
 ${h.details(h.summary('.app contents'), m.json(info))}
 `)
