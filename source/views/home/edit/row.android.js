@@ -1,12 +1,15 @@
 // @flow
 
 import * as React from 'react'
-import {View, StyleSheet, Text} from 'react-native'
+import {View, StyleSheet, Text, Switch} from 'react-native'
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
 import * as c from '../../components/colors'
 import {Touchable} from '../../components/touchable'
 import type {ViewType} from '../../views'
+import {type ReduxState} from '../../../flux'
+import {connect} from 'react-redux'
+import {toggleViewEnabled} from '../../../flux/parts/homescreen'
 
 const ROW_HORIZONTAL_MARGIN = 15
 const styles = StyleSheet.create({
@@ -42,14 +45,23 @@ const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
   <EntypoIcon name={icon} size={32} style={[styles.icon, {color: tint}]} />
 )
 
-type Props = {
-  item: ViewType,
-  isFirst: boolean,
-  isLast: boolean,
-  order: string[],
-  onMoveUp: (string[], string) => any,
-  onMoveDown: (string[], string) => any,
+type ReduxStateProps = {
+  activeViews: string[],
 }
+
+type ReduxDispatchProps = {
+  onToggleViewEnabled: string => any,
+}
+
+type Props = ReduxStateProps &
+  ReduxDispatchProps & {
+    item: ViewType,
+    isFirst: boolean,
+    isLast: boolean,
+    order: string[],
+    onMoveUp: (string[], string) => any,
+    onMoveDown: (string[], string) => any,
+  }
 
 export class EditHomeRow extends React.PureComponent<Props> {
   onMoveUp = () => {
@@ -60,13 +72,20 @@ export class EditHomeRow extends React.PureComponent<Props> {
     this.props.onMoveDown(this.props.order, this.props.item.view)
   }
 
+  onToggleSwitch = () => {
+    this.props.onToggleViewEnabled(this.props.data.view)
+  }
+
   render() {
     const {item, isFirst, isLast} = this.props
+    const enabled = this.props.activeViews.includes(this.props.data.view)
     return (
       <View style={styles.row}>
         <MenuIcon icon={this.props.item.icon} tint={item.tint} />
 
         <Text style={[styles.text, {color: item.tint}]}>{item.title}</Text>
+
+        <Switch onValueChange={this.onToggleSwitch} value={enabled} />
 
         <ArrowIcon dir="up" disabled={isFirst} onPress={this.onMoveUp} />
         <ArrowIcon dir="down" disabled={isLast} onPress={this.onMoveDown} />
@@ -100,3 +119,17 @@ const ArrowIcon = ({dir, disabled, onPress}: ArrowIconProps) => {
     </Touchable>
   )
 }
+
+function mapState(state: ReduxState): ReduxStateProps {
+  return {
+    activeViews: state.homescreen ? state.homescreen.activeViews : [],
+  }
+}
+
+function mapDispatch(dispatch): ReduxDispatchProps {
+  return {
+    onToggleViewEnabled: view => dispatch(toggleViewEnabled(view)),
+  }
+}
+
+export const ConnectedEditHomeRow = connect(mapState, mapDispatch)(EditHomeRow)
