@@ -22,6 +22,9 @@ platform :android do
 
     UI.message 'Generated files:'
     UI.message lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS]
+
+    output = lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].to_json
+    File.open('../logs/products', 'w') { |file| file.write(output) }
   end
 
   desc 'Checks that the app builds'
