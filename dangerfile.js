@@ -71,7 +71,7 @@ async function main() {
 
 function runAndroid() {
   const logFile = readLogFile('./logs/build').split('\n')
-  const buildStatus = readLogFile('./logs/build-status')
+  const buildStatus = String(process.env.TRAVIS_TEST_RESULT)
 
   warn(`buildStatus is ${buildStatus}`)
 
@@ -110,7 +110,7 @@ function runAndroid() {
 
 function runiOS() {
   const logFile = readLogFile('./logs/build').split('\n')
-  const buildStatus = readLogFile('./logs/build-status')
+  const buildStatus = String(process.env.TRAVIS_TEST_RESULT)
 
   warn(`buildStatus is ${buildStatus}`)
 
