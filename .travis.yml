@@ -215,8 +215,6 @@ jobs:
           - extra-google-m2repository
       script:
         - bundle exec fastlane android ci-run | tee ./logs/build
-        - echo $? > ./logs/build-status
-        - cat ./logs/build-status
 
     # Build/deploy the iOS binary
     - <<: *base
@@ -227,8 +225,6 @@ jobs:
       env: [task=IOS]
       script:
         - bundle exec fastlane ios ci-run | tee ./logs/build
-        - echo $? > ./logs/build-status
-        - cat ./logs/build-status
         - python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
 
 cache:
