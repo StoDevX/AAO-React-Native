@@ -13,8 +13,9 @@ platform :android do
              build_type: 'Release',
              print_command: true,
              print_command_output: true)
-    rescue IOError
+    rescue IOError => e
       build_status = 1
+      raise e
     ensure
       File.open('../logs/build-status', 'w') { |file| file.write(build_status.to_s) }
     end

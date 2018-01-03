@@ -40,8 +40,9 @@ platform :ios do
         destination: 'generic/platform=iOS',
         xcargs: %(CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="")
       )
-    rescue IOError
+    rescue IOError => e
       build_status = 1
+      raise e
     ensure
       File.open('../logs/build-status', 'w') { |file| file.write(build_status.to_s) }
     end
