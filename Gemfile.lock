@@ -25,7 +25,7 @@ GEM
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
     fastimage (2.1.1)
-    fastlane (2.71.0)
+    fastlane (2.72.0)
       CFPropertyList (>= 2.3, < 3.0.0)
       addressable (>= 2.3, < 3.0.0)
       babosa (>= 1.0.2, < 2.0.0)
@@ -53,7 +53,8 @@ GEM
       slack-notifier (>= 1.3, < 2.0.0)
       terminal-notifier (>= 1.6.2, < 2.0.0)
       terminal-table (>= 1.4.5, < 2.0.0)
-      tty-screen (~> 0.6.3)
+      tty-screen (>= 0.6.3, < 1.0.0)
+      tty-spinner (>= 0.7.0, < 1.0.0)
       word_wrap (~> 1.0.0)
       xcodeproj (>= 1.5.2, < 2.0.0)
       xcpretty (>= 0.2.4, < 1.0.0)
@@ -129,7 +130,10 @@ GEM
     terminal-notifier (1.8.0)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
+    tty-cursor (0.5.0)
     tty-screen (0.6.4)
+    tty-spinner (0.7.0)
+      tty-cursor (>= 0.5.0)
     uber (0.1.0)
     unf (0.1.4)
       unf_ext
@@ -155,6 +159,7 @@ DEPENDENCIES
   json
   rubocop (~> 0.51.0)
   xcodeproj
+
 
 BUNDLED WITH
    1.16.0
