@@ -21,16 +21,16 @@ type ReactProps = TopLevelViewPropsType & {
 }
 type ReduxStateProps = {
   order: Array<string>,
-  activeViews: Array<string>,
+  inactiveViews: Array<string>,
 }
 
 type Props = ReactProps & ReduxStateProps
 
-function HomePage({navigation, order, activeViews, views = allViews}: Props) {
+function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
   const sortedViews = sortBy(views, view => order.indexOf(view.view))
 
   const enabledViews = sortedViews.filter(view =>
-    activeViews.includes(view.view),
+    !inactiveViews.includes(view.view),
   )
 
   const columns = partitionByIndex(enabledViews)
@@ -76,12 +76,12 @@ HomePage.navigationOptions = ({navigation}) => {
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
   if (!state.homescreen) {
-    return {order: [], activeViews: []}
+    return {order: [], inactiveViews: []}
   }
 
   return {
     order: state.homescreen.order,
-    activeViews: state.homescreen.activeViews,
+    inactiveViews: state.homescreen.inactiveViews,
   }
 }
 

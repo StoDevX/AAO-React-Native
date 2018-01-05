@@ -46,11 +46,11 @@ export function getHomescreenOrder(): Promise<Array<string>> {
   return getItemAsArray(homescreenOrderKey)
 }
 
-const homescreenViewsKey = 'homescreen:enabled-views'
-export function setEnabledViews(enabledViews: string[]) {
-  return setItem(homescreenViewsKey, enabledViews)
+const homescreenViewsKey = 'homescreen:disabled-views'
+export function setDisabledViews(disabledViews: string[]) {
+  return setItem(homescreenViewsKey, disabledViews)
 }
-export function getEnabledViews(): Promise<Array<string>> {
+export function getDisabledViews(): Promise<Array<string>> {
   return getItemAsArray(homescreenViewsKey)
 }
 

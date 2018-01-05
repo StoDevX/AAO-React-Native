@@ -9,9 +9,6 @@ import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
 
 import type {ViewType} from '../../views'
-import {type ReduxState} from '../../../flux'
-import {connect} from 'react-redux'
-import {toggleViewEnabled} from '../../../flux/parts/homescreen'
 
 const ROW_HORIZONTAL_MARGIN = 15
 const styles = StyleSheet.create({
@@ -50,18 +47,11 @@ const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
   <EntypoIcon name={icon} size={32} style={[styles.icon, {color: tint}]} />
 )
 
-type ReduxStateProps = {
-  activeViews: string[],
-}
-
-type ReduxDispatchProps = {
-  onToggleViewEnabled: string => any,
-}
-
-type Props = ReduxStateProps &
-  ReduxDispatchProps & {
-    data: ViewType,
+type Props = {
     active: boolean,
+    data: ViewType,
+    isEnabled: boolean,
+    onToggle: () => any,
     width: number,
   }
 
@@ -164,13 +154,8 @@ export class EditHomeRow extends React.Component<Props, State> {
     ]).start()
   }
 
-  onToggleSwitch = () => {
-    this.props.onToggleViewEnabled(this.props.data.view)
-  }
-
   render() {
     const width = this.props.width - ROW_HORIZONTAL_MARGIN * 2
-    const enabled = this.props.activeViews.includes(this.props.data.view)
 
     return (
       <Animated.View style={[styles.row, this.state.style, {width}]}>
@@ -180,24 +165,10 @@ export class EditHomeRow extends React.Component<Props, State> {
           {this.props.data.title}
         </Text>
 
-        <Switch onValueChange={this.onToggleSwitch} value={enabled} />
+        <Switch onValueChange={this.props.onToggle} value={this.props.isEnabled} />
 
         <IonIcon name="ios-reorder" size={32} style={[styles.icon]} />
       </Animated.View>
     )
   }
 }
-
-function mapState(state: ReduxState): ReduxStateProps {
-  return {
-    activeViews: state.homescreen ? state.homescreen.activeViews : [],
-  }
-}
-
-function mapDispatch(dispatch): ReduxDispatchProps {
-  return {
-    onToggleViewEnabled: view => dispatch(toggleViewEnabled(view)),
-  }
-}
-
-export const ConnectedEditHomeRow = connect(mapState, mapDispatch)(EditHomeRow)

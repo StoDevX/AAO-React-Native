@@ -6,7 +6,7 @@
 import {NetInfo} from 'react-native'
 import {loadLoginCredentials} from '../lib/login'
 import {updateOnlineStatus} from './parts/app'
-import {loadHomescreenOrder, loadEnabledViews} from './parts/homescreen'
+import {loadHomescreenOrder, loadDisabledViews} from './parts/homescreen'
 import {loadFavoriteBuildings} from './parts/buildings'
 import {
   setLoginCredentials,
@@ -50,7 +50,7 @@ export async function init(store: {dispatch: any => any}) {
   // kick off the parts that don't care about network in parallel
   await Promise.all([
     store.dispatch(loadHomescreenOrder()),
-    store.dispatch(loadEnabledViews()),
+    store.dispatch(loadDisabledViews()),
     store.dispatch(loadFeedbackStatus()),
     store.dispatch(loadAcknowledgement()),
     store.dispatch(loadFavoriteBuildings()),

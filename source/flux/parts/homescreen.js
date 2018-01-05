@@ -11,12 +11,12 @@ type GetState = () => ReduxState
 type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
 type Action =
   | SaveViewOrderAction
-  | SaveEnabledViewsAction
-  | ToggleViewEnabledAction
+  | SaveDisabledViewsAction
+  | ToggleViewDisabledAction
 
 const SAVE_HOMESCREEN_ORDER = 'homescreen/SAVE_HOMESCREEN_ORDER'
-const SAVE_ENABLED_VIEWS = 'homescreen/SAVE_ENABLED_VIEWS'
-const TOGGLE_VIEW_ENABLED = 'homescreen/TOGGLE_VIEW_ENABLED'
+const SAVE_DISABLED_VIEWS = 'homescreen/SAVE_DISABLED_VIEWS'
+const TOGGLE_VIEW_DISABLED = 'homescreen/TOGGLE_VIEW_DISABLED'
 
 type ViewName = string
 
@@ -70,59 +70,60 @@ export function saveHomescreenOrder(
   return {type: SAVE_HOMESCREEN_ORDER, payload: order}
 }
 
-type SaveEnabledViewsAction = {
-  type: 'homescreen/SAVE_ENABLED_VIEWS',
+type SaveDisabledViewsAction = {
+  type: 'homescreen/SAVE_DISABLED_VIEWS',
   payload: Array<ViewName>,
 }
-export function saveEnabledViews(
-  enabledViews: Array<ViewName>,
-): SaveEnabledViewsAction {
-  storage.setEnabledViews(enabledViews)
-  return {type: SAVE_ENABLED_VIEWS, payload: enabledViews}
+export function saveDisabledViews(
+  disabledViews: Array<ViewName>,
+): SaveDisabledViewsAction {
+  storage.setDisabledViews(disabledViews)
+  return {type: SAVE_DISABLED_VIEWS, payload: disabledViews}
 }
-export async function loadEnabledViews() {
-  let enabledViews = await storage.getEnabledViews()
+export async function loadDisabledViews() {
+  let disabledViews = await storage.getDisabledViews()
 
-  if (enabledViews.length == 0) {
-    enabledViews = defaultViewOrder
+  if (disabledViews.length == 0) {
+    disabledViews = []
   }
 
-  return saveEnabledViews(enabledViews)
+  disabledViews = disabledViews.filter(view => defaultViewOrder.includes(view))
+
+  return saveDisabledViews(disabledViews)
 }
 
-type ToggleViewEnabledAction = {
-  type: 'homescreen/TOGGLE_VIEW_ENABLED',
+type ToggleViewDisabledAction = {
+  type: 'homescreen/TOGGLE_VIEW_DISABLED',
   payload: Array<string>,
 }
-export function toggleViewEnabled(
+export function toggleViewDisabled(
   viewName: string,
-): ThunkAction<ToggleViewEnabledAction> {
+): ThunkAction<ToggleViewDisabledAction> {
   return (dispatch, getState) => {
     const state = getState()
 
-    const currentEnabledViews = state.homescreen
-      ? state.homescreen.activeViews
+    const currentDisabledViews = state.homescreen
+      ? state.homescreen.inactiveViews
       : []
-
-    const newEnabledViews = currentEnabledViews.includes(viewName)
-      ? currentEnabledViews.filter(name => name !== viewName)
-      : [...currentEnabledViews, viewName]
+    const newDisabledViews = currentDisabledViews.includes(viewName)
+      ? currentDisabledViews.filter(name => name !== viewName)
+      : [...currentDisabledViews, viewName]
 
     // TODO: remove saving logic from reducers
-    storage.setEnabledViews(newEnabledViews)
+    storage.setDisabledViews(newDisabledViews)
 
-    dispatch({type: TOGGLE_VIEW_ENABLED, payload: newEnabledViews})
+    dispatch({type: TOGGLE_VIEW_DISABLED, payload: newDisabledViews})
   }
 }
 
 export type State = {|
   order: Array<ViewName>,
-  activeViews: Array<ViewName>,
+  inactiveViews: Array<ViewName>,
 |}
 
 const initialState: State = {
   order: [],
-  activeViews: [],
+  inactiveViews: [],
 }
 
 export function homescreen(state: State = initialState, action: Action) {
@@ -130,11 +131,11 @@ export function homescreen(state: State = initialState, action: Action) {
     case SAVE_HOMESCREEN_ORDER: {
       return {...state, order: action.payload}
     }
-    case SAVE_ENABLED_VIEWS: {
-      return {...state, activeViews: action.payload}
+    case SAVE_DISABLED_VIEWS: {
+      return {...state, inactiveViews: action.payload}
     }
-    case TOGGLE_VIEW_ENABLED: {
-      return {...state, activeViews: action.payload}
+    case TOGGLE_VIEW_DISABLED: {
+      return {...state, inactiveViews: action.payload}
     }
     default: {
       return state
