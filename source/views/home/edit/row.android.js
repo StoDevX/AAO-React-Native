@@ -50,7 +50,7 @@ type Props = {
   order: string[],
   onMoveUp: (string[], string) => any,
   onMoveDown: (string[], string) => any,
-  onToggle: () => any,
+  onToggle: string => any,
 }
 
 export class EditHomeRow extends React.PureComponent<Props> {

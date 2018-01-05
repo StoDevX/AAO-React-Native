@@ -51,7 +51,7 @@ type Props = {
   active: boolean,
   data: ViewType,
   isEnabled: boolean,
-  onToggle: () => any,
+  onToggle: string => any,
   width: number,
 }
 
