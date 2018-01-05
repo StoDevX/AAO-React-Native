@@ -43,15 +43,15 @@ const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
 )
 
 type Props = {
-    item: ViewType,
-    isEnabled: boolean,
-    isFirst: boolean,
-    isLast: boolean,
-    order: string[],
-    onMoveUp: (string[], string) => any,
-    onMoveDown: (string[], string) => any,
-    onToggle: () => any,
-  }
+  item: ViewType,
+  isEnabled: boolean,
+  isFirst: boolean,
+  isLast: boolean,
+  order: string[],
+  onMoveUp: (string[], string) => any,
+  onMoveDown: (string[], string) => any,
+  onToggle: () => any,
+}
 
 export class EditHomeRow extends React.PureComponent<Props> {
   onMoveUp = () => {
@@ -68,14 +68,16 @@ export class EditHomeRow extends React.PureComponent<Props> {
 
   render() {
     const {item, isFirst, isLast} = this.props
-    const enabled = this.props.activeViews.includes(this.props.data.view)
     return (
       <View style={styles.row}>
         <MenuIcon icon={this.props.item.icon} tint={item.tint} />
 
         <Text style={[styles.text, {color: item.tint}]}>{item.title}</Text>
 
-        <Switch onValueChange={this.onToggleSwitch} value={this.props.isEnabled} />
+        <Switch
+          onValueChange={this.onToggleSwitch}
+          value={this.props.isEnabled}
+        />
 
         <ArrowIcon dir="up" disabled={isFirst} onPress={this.onMoveUp} />
         <ArrowIcon dir="down" disabled={isLast} onPress={this.onMoveDown} />

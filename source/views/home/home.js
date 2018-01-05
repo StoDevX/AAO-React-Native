@@ -29,8 +29,8 @@ type Props = ReactProps & ReduxStateProps
 function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
   const sortedViews = sortBy(views, view => order.indexOf(view.view))
 
-  const enabledViews = sortedViews.filter(view =>
-    !inactiveViews.includes(view.view),
+  const enabledViews = sortedViews.filter(
+    view => !inactiveViews.includes(view.view),
   )
 
   const columns = partitionByIndex(enabledViews)

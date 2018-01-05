@@ -34,7 +34,7 @@ type ReduxStateProps = {
 
 type ReduxDispatchProps = {
   onSaveOrder: (string[]) => any,
-  onToggleViewDisabled: (string) => any,
+  onToggleViewDisabled: string => any,
 }
 
 type Props = ReduxStateProps & ReduxDispatchProps
@@ -71,7 +71,7 @@ class EditHomeView extends React.PureComponent<Props, State> {
         active={active}
         data={data}
         isEnabled={enabled}
-        onToggle={()=>{
+        onToggle={() => {
           this.props.onToggleViewDisabled(data.view)
         }}
         width={this.state.width}

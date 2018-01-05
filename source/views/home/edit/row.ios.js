@@ -48,12 +48,12 @@ const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
 )
 
 type Props = {
-    active: boolean,
-    data: ViewType,
-    isEnabled: boolean,
-    onToggle: () => any,
-    width: number,
-  }
+  active: boolean,
+  data: ViewType,
+  isEnabled: boolean,
+  onToggle: () => any,
+  width: number,
+}
 
 type State = {
   style: {
@@ -165,7 +165,10 @@ export class EditHomeRow extends React.Component<Props, State> {
           {this.props.data.title}
         </Text>
 
-        <Switch onValueChange={this.props.onToggle} value={this.props.isEnabled} />
+        <Switch
+          onValueChange={this.props.onToggle}
+          value={this.props.isEnabled}
+        />
 
         <IonIcon name="ios-reorder" size={32} style={[styles.icon]} />
       </Animated.View>
