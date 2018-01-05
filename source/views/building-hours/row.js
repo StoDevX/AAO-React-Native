@@ -154,17 +154,18 @@ export class BuildingRow extends React.Component<Props, State> {
         <View style={styles.detailWrapper}>
           {info.noticeMessage ? (
             <Detail style={styles.detailRow}>{info.noticeMessage}</Detail>
-          ) : (
-            hours.map(({isActive, label, status}, i) => (
-              <Detail key={i} style={styles.detailRow}>
-                <BuildingTimeSlot
-                  highlight={hours.length > 1 && isActive}
-                  label={label}
-                  status={status}
-                />
-              </Detail>
-            ))
-          )}
+          ) : null}
+          {!(info.noticeMessage && info.isNotice)
+            ? hours.map(({isActive, label, status}, i) => (
+                <Detail key={i} style={styles.detailRow}>
+                  <BuildingTimeSlot
+                    highlight={hours.length > 1 && isActive}
+                    label={label}
+                    status={status}
+                  />
+                </Detail>
+              ))
+            : null}
         </View>
       </ListRow>
     )
