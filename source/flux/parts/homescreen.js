@@ -83,7 +83,7 @@ export function saveDisabledViews(
 export async function loadDisabledViews() {
   let disabledViews = await storage.getDisabledViews()
 
-  if (disabledViews.length == 0) {
+  if (disabledViews.length === 0) {
     disabledViews = []
   }
 
