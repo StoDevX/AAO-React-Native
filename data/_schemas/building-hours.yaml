@@ -8,6 +8,8 @@ properties:
   abbreviation: {type: string}
   category: {type: string}
   image: {type: string}
+  isNotice: {type: boolean}
+  noticeMessage: {type: string}
   schedule:
     type: array
     items: {$ref: '#/definitions/schedule'}

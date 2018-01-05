@@ -141,24 +141,30 @@ export class BuildingRow extends React.Component<Props, State> {
             ) : null}
           </Title>
 
-          <Badge
-            accentColor={accentBg}
-            style={styles.accessoryBadge}
-            text={openStatus}
-            textColor={accentText}
-          />
+          {!info.isNotice ? (
+            <Badge
+              accentColor={accentBg}
+              style={styles.accessoryBadge}
+              text={openStatus}
+              textColor={accentText}
+            />
+          ) : null}
         </Row>
 
         <View style={styles.detailWrapper}>
-          {hours.map(({isActive, label, status}, i) => (
-            <Detail key={i} style={styles.detailRow}>
-              <BuildingTimeSlot
-                highlight={hours.length > 1 && isActive}
-                label={label}
-                status={status}
-              />
-            </Detail>
-          ))}
+          {info.noticeMessage ? (
+            <Detail style={styles.detailRow}>{info.noticeMessage}</Detail>
+          ) : (
+            hours.map(({isActive, label, status}, i) => (
+              <Detail key={i} style={styles.detailRow}>
+                <BuildingTimeSlot
+                  highlight={hours.length > 1 && isActive}
+                  label={label}
+                  status={status}
+                />
+              </Detail>
+            ))
+          )}
         </View>
       </ListRow>
     )
