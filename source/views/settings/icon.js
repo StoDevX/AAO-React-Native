@@ -84,7 +84,7 @@ export class IconSettingsView extends React.PureComponent<Props, State> {
               }
               cellStyle="RightDetail"
               disableImageResize={false}
-              image={<Image style={styles.icon} source={icon.src} />}
+              image={<Image source={icon.src} style={styles.icon} />}
               onPress={() => this.setIcon(icon.type)}
               title={icon.title}
             />
