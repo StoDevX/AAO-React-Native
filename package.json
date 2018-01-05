@@ -28,7 +28,12 @@
   "babel": {
     "presets": [
       "react-native"
-    ]
+    ],
+    "env": {
+      "production": {
+        "plugins": ["transform-remove-console"]
+      }
+    }
   },
   "greenkeeper": {
     "ignore": [
@@ -103,6 +108,7 @@
     "babel-core": "6.26.0",
     "babel-eslint": "8.1.2",
     "babel-jest": "22.0.4",
+    "babel-plugin-transform-remove-console": "6.8.5",
     "babel-preset-react-native": "4.0.0",
     "bugsnag-sourcemaps": "1.0.1",
     "danger": "2.1.8",
