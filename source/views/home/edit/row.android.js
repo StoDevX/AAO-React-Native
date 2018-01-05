@@ -63,7 +63,7 @@ export class EditHomeRow extends React.PureComponent<Props> {
   }
 
   onToggleSwitch = () => {
-    this.props.onToggleViewEnabled(this.props.data.view)
+    this.props.onToggle(this.props.data.view)
   }
 
   render() {
