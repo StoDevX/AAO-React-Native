@@ -2,13 +2,12 @@
 import * as React from 'react'
 import {Cell} from 'react-native-tableview-simple'
 
-export const PushButtonCell = ({
-  title,
-  onPress,
-}: {
+type Args = {
   title: string,
   onPress: () => any,
-}) => (
+}
+
+export const PushButtonCell = ({title, onPress}: Args) => (
   <Cell
     accessory="DisclosureIndicator"
     cellStyle="Basic"
