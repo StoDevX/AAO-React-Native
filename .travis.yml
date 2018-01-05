@@ -68,6 +68,8 @@ x-definitions:
 
       # travis doesn't install yarn automatically on osx
       - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install yarn --without-node; fi
+      # travis doesn't bundle git-lfs on osx
+      - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install git-lfs; fi
 
     install:
       # install packages (if the first fails, try once more)
@@ -85,6 +87,10 @@ x-definitions:
       # disable npm wrapper for npm scripts
       - npm config set loglevel=silent
       - mkdir -p logs/
+
+      # download the git-lfs assets
+      - git lfs install
+      - git lfs pull
 
     after_script:
       - npm config set loglevel=notice

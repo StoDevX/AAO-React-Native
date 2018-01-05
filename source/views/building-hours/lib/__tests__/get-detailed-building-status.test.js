@@ -3,7 +3,7 @@ import {getDetailedBuildingStatus} from '../get-detailed-status'
 import {plainMoment} from './moment.helper'
 
 it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
-  let m = plainMoment('06-23-2017 1:00pm', 'MM-DD-YYYY h:mma')
+  let m = plainMoment('06-23-2018 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
     category: '???',
@@ -32,7 +32,7 @@ it('returns a list of [isOpen, scheduleName, verboseStatus] tuples', () => {
 })
 
 it('checks a list of schedules to see if any are open', () => {
-  let m = plainMoment('06-23-2017 1:00pm', 'MM-DD-YYYY h:mma')
+  let m = plainMoment('06-23-2018 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
     category: '???',
@@ -56,7 +56,7 @@ it('checks a list of schedules to see if any are open', () => {
 })
 
 it('handles multiple internal schedules for the same timeframe', () => {
-  let m = plainMoment('06-19-2017 1:00pm', 'MM-DD-YYYY h:mma')
+  let m = plainMoment('06-18-2018 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
     category: '???',
@@ -80,7 +80,7 @@ it('handles multiple internal schedules for the same timeframe', () => {
 })
 
 it('handles multiple named schedules for the same timeframe', () => {
-  let m = plainMoment('06-19-2017 1:00pm', 'MM-DD-YYYY h:mma')
+  let m = plainMoment('06-18-2018 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
     category: '???',
@@ -109,7 +109,7 @@ it('handles multiple named schedules for the same timeframe', () => {
 })
 
 it('returns false if none are available for this day', () => {
-  let m = plainMoment('06-18-2017 1:00pm', 'MM-DD-YYYY h:mma')
+  let m = plainMoment('06-17-2018 1:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
     category: '???',
@@ -132,7 +132,7 @@ it('returns false if none are available for this day', () => {
 })
 
 it('returns false if none are open', () => {
-  let m = plainMoment('06-19-2017 3:00pm', 'MM-DD-YYYY h:mma')
+  let m = plainMoment('06-19-2018 3:00pm', 'MM-DD-YYYY h:mma')
   let building = {
     name: 'building',
     category: '???',

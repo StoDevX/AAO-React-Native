@@ -52,7 +52,7 @@ test('handles the given time being before the first bus', () => {
 })
 
 test('ignores day-of-week', () => {
-  let now = dayAndTime('Su 1:00pm')
+  let now = dayAndTime('Mo 1:00pm')
   let input = buildBusSchedules(now)
   let actual = getCurrentBusIteration(input, now)
   expect(actual.status).toBe('running')
