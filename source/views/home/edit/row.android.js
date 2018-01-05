@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {View, StyleSheet, Text} from 'react-native'
+import {View, StyleSheet, Text, Switch} from 'react-native'
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
 import * as c from '../../components/colors'
@@ -44,11 +44,13 @@ const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
 
 type Props = {
   item: ViewType,
+  isEnabled: boolean,
   isFirst: boolean,
   isLast: boolean,
   order: string[],
   onMoveUp: (string[], string) => any,
   onMoveDown: (string[], string) => any,
+  onToggle: string => any,
 }
 
 export class EditHomeRow extends React.PureComponent<Props> {
@@ -60,6 +62,10 @@ export class EditHomeRow extends React.PureComponent<Props> {
     this.props.onMoveDown(this.props.order, this.props.item.view)
   }
 
+  onToggleSwitch = () => {
+    this.props.onToggle(this.props.data.view)
+  }
+
   render() {
     const {item, isFirst, isLast} = this.props
     return (
@@ -67,6 +73,11 @@ export class EditHomeRow extends React.PureComponent<Props> {
         <MenuIcon icon={this.props.item.icon} tint={item.tint} />
 
         <Text style={[styles.text, {color: item.tint}]}>{item.title}</Text>
+
+        <Switch
+          onValueChange={this.onToggleSwitch}
+          value={this.props.isEnabled}
+        />
 
         <ArrowIcon dir="up" disabled={isFirst} onPress={this.onMoveUp} />
         <ArrowIcon dir="down" disabled={isLast} onPress={this.onMoveDown} />
