@@ -41,8 +41,8 @@ export class BuildingHoursList extends React.PureComponent<Props> {
 
   renderItem = ({item}: {item: BuildingType}) => (
     <BuildingRow
-      name={item.name}
       info={item}
+      name={item.name}
       now={this.props.now}
       onPress={this.onPressRow}
     />
@@ -52,14 +52,14 @@ export class BuildingHoursList extends React.PureComponent<Props> {
     return (
       <SectionList
         ItemSeparatorComponent={ListSeparator}
-        sections={(this.props.buildings: any)}
+        contentContainerStyle={styles.container}
         extraData={this.props}
         keyExtractor={this.keyExtractor}
-        renderSectionHeader={this.renderSectionHeader}
-        renderItem={this.renderItem}
-        contentContainerStyle={styles.container}
-        refreshing={this.props.loading}
         onRefresh={this.props.onRefresh}
+        refreshing={this.props.loading}
+        renderItem={this.renderItem}
+        renderSectionHeader={this.renderSectionHeader}
+        sections={(this.props.buildings: any)}
       />
     )
   }

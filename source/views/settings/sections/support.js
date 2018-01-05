@@ -55,9 +55,9 @@ export default class SupportSection extends React.PureComponent<Props> {
   render() {
     return (
       <Section header="SUPPORT">
-        <PushButtonCell title="Contact Us" onPress={this.openEmail} />
-        <PushButtonCell title="FAQs" onPress={this.onFaqButton} />
-        <PushButtonCell title="Reset Everything" onPress={this.onResetButton} />
+        <PushButtonCell onPress={this.openEmail} title="Contact Us" />
+        <PushButtonCell onPress={this.onFaqButton} title="FAQs" />
+        <PushButtonCell onPress={this.onResetButton} title="Reset Everything" />
       </Section>
     )
   }

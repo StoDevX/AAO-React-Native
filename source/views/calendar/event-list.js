@@ -55,11 +55,11 @@ export class EventList extends React.PureComponent<Props> {
 
   renderSectionHeader = ({section: {title}}: any) => (
     // the proper type is ({section: {title}}: {section: {title: string}})
-    <ListSectionHeader title={title} spacing={{left: 10}} />
+    <ListSectionHeader spacing={{left: 10}} title={title} />
   )
 
   renderItem = ({item}: {item: EventType}) => (
-    <EventRow onPress={this.onPressEvent} event={item} />
+    <EventRow event={item} onPress={this.onPressEvent} />
   )
 
   keyExtractor = (item: EventType, index: number) => index.toString()
@@ -73,13 +73,13 @@ export class EventList extends React.PureComponent<Props> {
       <SectionList
         ItemSeparatorComponent={FullWidthSeparator}
         ListEmptyComponent={<NoticeView text="No events." />}
-        style={styles.container}
-        sections={this.groupEvents(this.props.events, this.props.now)}
         keyExtractor={this.keyExtractor}
-        refreshing={this.props.refreshing}
         onRefresh={this.props.onRefresh}
-        renderSectionHeader={this.renderSectionHeader}
+        refreshing={this.props.refreshing}
         renderItem={this.renderItem}
+        renderSectionHeader={this.renderSectionHeader}
+        sections={this.groupEvents(this.props.events, this.props.now)}
+        style={styles.container}
       />
     )
   }

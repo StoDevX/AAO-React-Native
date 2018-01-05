@@ -69,6 +69,7 @@ export function ListRow(props: PropsType) {
 
   return (
     <Component
+      onPress={callback}
       style={[
         styles.container,
         !isNil(leftSpacing) && {paddingLeft: leftSpacing},
@@ -77,7 +78,6 @@ export function ListRow(props: PropsType) {
         fullHeight && styles.fullHeight,
         contentContainerStyle,
       ]}
-      onPress={callback}
     >
       <View style={[styles.childWrapper, style]}>{children}</View>
       {arrow}

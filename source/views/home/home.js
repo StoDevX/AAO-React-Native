@@ -21,31 +21,35 @@ type ReactProps = TopLevelViewPropsType & {
 }
 type ReduxStateProps = {
   order: Array<string>,
+  inactiveViews: Array<string>,
 }
 
 type Props = ReactProps & ReduxStateProps
 
-function HomePage({navigation, order, views = allViews}: Props) {
+function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
   const sortedViews = sortBy(views, view => order.indexOf(view.view))
 
-  const columns = partitionByIndex(sortedViews)
+  const enabledViews = sortedViews.filter(
+    view => !inactiveViews.includes(view.view),
+  )
+
+  const columns = partitionByIndex(enabledViews)
 
   return (
     <ScrollView
-      overflow="hidden"
       alwaysBounceHorizontal={false}
+      contentContainerStyle={styles.cells}
+      overflow="hidden"
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.cells}
     >
-      <StatusBar barStyle="light-content" backgroundColor={c.gold} />
+      <StatusBar backgroundColor={c.gold} barStyle="light-content" />
 
       {columns.map((contents, i) => (
         <Column key={i} style={styles.column}>
           {contents.map(view => (
             <HomeScreenButton
               key={view.view}
-              view={view}
               onPress={() => {
                 if (view.type === 'url') {
                   return trackedOpenUrl({url: view.url, id: view.view})
@@ -53,6 +57,7 @@ function HomePage({navigation, order, views = allViews}: Props) {
                   return navigation.navigate(view.view)
                 }
               }}
+              view={view}
             />
           ))}
         </Column>
@@ -71,11 +76,12 @@ HomePage.navigationOptions = ({navigation}) => {
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
   if (!state.homescreen) {
-    return {order: []}
+    return {order: [], inactiveViews: []}
   }
 
   return {
     order: state.homescreen.order,
+    inactiveViews: state.homescreen.inactiveViews,
   }
 }
 

@@ -98,10 +98,10 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
           {website ? (
             <Section header="WEBSITE">
               <Cell
-                cellStyle="Basic"
                 accessory="DisclosureIndicator"
-                title={website}
+                cellStyle="Basic"
                 onPress={() => openUrl(website)}
+                title={website}
               />
             </Section>
           ) : null}
@@ -111,11 +111,11 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
               {contacts.map((c, i) => (
                 <Cell
                   key={i}
-                  cellStyle={c.title ? 'Subtitle' : 'Basic'}
                   accessory="DisclosureIndicator"
-                  title={showNameOrEmail(c)}
+                  cellStyle={c.title ? 'Subtitle' : 'Basic'}
                   detail={c.title}
                   onPress={() => Linking.openURL(`mailto:${c.email}`)}
+                  title={showNameOrEmail(c)}
                 />
               ))}
             </Section>
@@ -126,10 +126,10 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
               {advisors.map((c, i) => (
                 <Cell
                   key={i}
-                  cellStyle="Basic"
                   accessory="DisclosureIndicator"
-                  title={c.name}
+                  cellStyle="Basic"
                   onPress={() => Linking.openURL(`mailto:${c.email}`)}
+                  title={c.name}
                 />
               ))}
             </Section>

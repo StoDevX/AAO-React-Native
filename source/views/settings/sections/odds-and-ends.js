@@ -60,24 +60,25 @@ class OddsAndEndsSection extends React.PureComponent<Props, State> {
               onPress={this.onAppIconButton}
             />
           ) : null}
-          <PushButtonCell title="Credits" onPress={this.onCreditsButton} />
+
+          <PushButtonCell onPress={this.onCreditsButton} title="Credits" />
           <PushButtonCell
-            title="Privacy Policy"
             onPress={this.onPrivacyButton}
+            title="Privacy Policy"
           />
-          <PushButtonCell title="Legal" onPress={this.onLegalButton} />
-          <PushButtonCell title="Contributing" onPress={this.onSourceButton} />
+          <PushButtonCell onPress={this.onLegalButton} title="Legal" />
+          <PushButtonCell onPress={this.onSourceButton} title="Contributing" />
         </Section>
 
         <Section header="ODDS &amp; ENDS">
-          <Cell cellStyle="RightDetail" title="Version" detail={version} />
+          <Cell cellStyle="RightDetail" detail={version} title="Version" />
 
           <CellToggle
             label="Share Analytics"
             // These are both inverted because the toggle makes more sense as
             // optout/optin, but the code works better as optin/optout.
-            value={!this.props.feedbackDisabled}
             onChange={val => this.props.onChangeFeedbackToggle(!val)}
+            value={!this.props.feedbackDisabled}
           />
         </Section>
       </View>

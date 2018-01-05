@@ -129,9 +129,9 @@ export class DatePicker extends React.PureComponent<Props> {
   render() {
     return (
       <TouchableHighlight
+        onPress={this.onPressDate}
         style={defaultStyle.dateTouch}
         underlayColor="transparent"
-        onPress={this.onPressDate}
       >
         <View style={defaultStyle.dateTouchBody}>
           <View style={defaultStyle.dateInput}>

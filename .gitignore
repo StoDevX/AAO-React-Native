@@ -72,3 +72,7 @@ android/app/signing.properties
 
 # vim temp files
 *.swp
+
+# rubygems bundle
+/vendor/bundle/
+/.bundle/

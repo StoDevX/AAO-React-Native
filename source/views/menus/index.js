@@ -21,8 +21,6 @@ export const MenusView = TabNavigator(
     StavHallMenuView: {
       screen: ({navigation}) => (
         <BonAppHostedMenu
-          navigation={navigation}
-          name="Stav Hall"
           cafeId="261"
           loadingMessage={[
             'Hunting Ferndale Turkey…',
@@ -32,6 +30,8 @@ export const MenusView = TabNavigator(
             'Waiting for omlets…',
             'Putting out more cookies…',
           ]}
+          name="Stav Hall"
+          navigation={navigation}
         />
       ),
       navigationOptions: {
@@ -43,8 +43,6 @@ export const MenusView = TabNavigator(
     TheCageMenuView: {
       screen: ({navigation}) => (
         <BonAppHostedMenu
-          navigation={navigation}
-          name="The Cage"
           cafeId="262"
           ignoreProvidedMenus={true}
           loadingMessage={[
@@ -54,6 +52,8 @@ export const MenusView = TabNavigator(
             'Frying chicken…',
             'Brewing coffee…',
           ]}
+          name="The Cage"
+          navigation={navigation}
         />
       ),
       navigationOptions: {
@@ -65,8 +65,6 @@ export const MenusView = TabNavigator(
     ThePauseMenuView: {
       screen: ({navigation}) => (
         <GitHubHostedMenu
-          navigation={navigation}
-          name="The Pause"
           loadingMessage={[
             'Mixing up a shake…',
             'Spinning up pizzas…',
@@ -74,6 +72,8 @@ export const MenusView = TabNavigator(
             'Putting ice cream on the cookies…',
             'Fixing the oven…',
           ]}
+          name="The Pause"
+          navigation={navigation}
         />
       ),
       navigationOptions: {

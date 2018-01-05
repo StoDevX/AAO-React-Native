@@ -68,13 +68,13 @@ export class BusStopRow extends React.PureComponent<Props, void> {
     ]
 
     return (
-      <ListRow fullWidth={true} fullHeight={true} style={styles.row}>
+      <ListRow fullHeight={true} fullWidth={true} style={styles.row}>
         <ProgressChunk
           barColor={barColor}
-          stopStatus={stopStatus}
           currentStopColor={currentStopColor}
           isFirstChunk={isFirstRow}
           isLastChunk={isLastRow}
+          stopStatus={stopStatus}
         />
 
         <Column flex={1} style={styles.internalPadding}>
@@ -83,8 +83,8 @@ export class BusStopRow extends React.PureComponent<Props, void> {
           </Title>
           <Detail lines={1}>
             <ScheduleTimes
-              times={times}
               style={stopStatus === 'skip' && styles.skippingStopDetail}
+              times={times}
             />
           </Detail>
         </Column>

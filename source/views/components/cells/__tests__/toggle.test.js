@@ -16,7 +16,7 @@ const shallow = component => {
 
 test('renders', () => {
   const tree = shallow(
-    <CellToggle label="Label" value={true} onChange={noop} />,
+    <CellToggle label="Label" onChange={noop} value={true} />,
   )
 
   expect(tree).toMatchSnapshot()
@@ -26,7 +26,7 @@ test('renders the given label into the Cell', () => {
   const label = 'A Label I Am'
 
   const tree = shallow(
-    <CellToggle label={label} value={true} onChange={noop} />,
+    <CellToggle label={label} onChange={noop} value={true} />,
   )
 
   expect(tree).toMatchSnapshot()
@@ -35,7 +35,7 @@ test('renders the given label into the Cell', () => {
 xtest('calls the given function when the Switch is pressed', () => {
   const cb = jest.fn()
 
-  const tree = shallow(<CellToggle label="Label" value={true} onChange={cb} />)
+  const tree = shallow(<CellToggle label="Label" onChange={cb} value={true} />)
 
   tree
     .find('Cell')

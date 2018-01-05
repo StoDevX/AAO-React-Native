@@ -21,10 +21,10 @@ export function OpenSettingsButton({
     <Touchable
       borderless={true}
       highlight={false}
-      style={[styles.button, buttonStyle]}
       onPress={() => navigation.navigate('SettingsView')}
+      style={[styles.button, buttonStyle]}
     >
-      <Icon style={styles.icon} name="ios-settings" />
+      <Icon name="ios-settings" style={styles.icon} />
     </Touchable>
   )
 }

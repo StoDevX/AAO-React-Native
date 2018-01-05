@@ -45,15 +45,15 @@ export class DictionaryDetailView extends React.PureComponent<Props> {
       <Container>
         <Term selectable={true}>{item.word}</Term>
         <Markdown
-          styles={{Paragraph: styles.paragraph}}
           source={item.definition}
+          styles={{Paragraph: styles.paragraph}}
         />
 
         <ListFooter
+          href={STO_SA_DICT_URL}
           title={
             'Collected by the humans of All About Olaf,\nfrom the Student Activities dictionary'
           }
-          href={STO_SA_DICT_URL}
         />
       </Container>
     )

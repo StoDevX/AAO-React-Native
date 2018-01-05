@@ -9,11 +9,6 @@ schedule:
       - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '8:00pm'}
       - {days: [Sa, Su], from: '9:00am', to: '8:00pm'}
 
-  - title: Late Night
-    hours:
-      - {days: [Mo, Tu, We, Th], from: '8:00pm', to: '10:00pm'}
-      - {days: [Su], from: '8:00pm', to: '10:00pm'}
-
 breakSchedule:
   fall: []
   thanksgiving: []

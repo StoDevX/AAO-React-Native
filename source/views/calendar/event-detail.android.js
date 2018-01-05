@@ -69,7 +69,7 @@ function Links({event}: {event: CleanedEventType}) {
   return links.length ? (
     <Card header="Links" style={styles.card}>
       {links.map(url => (
-        <Text key={url} style={styles.cardBody} onPress={() => openUrl(url)}>
+        <Text key={url} onPress={() => openUrl(url)} style={styles.cardBody}>
           {url}
         </Text>
       ))}
@@ -81,9 +81,9 @@ const CalendarButton = ({message, disabled, onPress}) => {
   return (
     <Card footer={message} style={styles.card}>
       <ButtonCell
-        title="Add to calendar"
         disabled={disabled}
         onPress={onPress}
+        title="Add to calendar"
       />
     </Card>
   )
@@ -152,13 +152,13 @@ export class EventDetail extends React.PureComponent<Props, State> {
         <Description event={event} />
         <Links event={event} />
         <CalendarButton
-          onPress={this.onPressButton}
-          message={this.state.message}
           disabled={this.state.disabled}
+          message={this.state.message}
+          onPress={this.onPressButton}
         />
 
         {poweredBy.title ? (
-          <ListFooter title={poweredBy.title} href={poweredBy.href} />
+          <ListFooter href={poweredBy.href} title={poweredBy.title} />
         ) : null}
       </ScrollView>
     )

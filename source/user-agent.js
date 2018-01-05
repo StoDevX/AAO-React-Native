@@ -10,6 +10,4 @@ const platformString =
     : Platform.OS == 'android' ? 'Android' : 'unknown'
 const platformVersion = Platform.Version || 'unknown'
 
-export const AAO_USER_AGENT = `AllAboutOlaf/${aaoVersion} (${platformString}/${
-  platformVersion
-})`
+export const AAO_USER_AGENT = `AllAboutOlaf/${aaoVersion} (${platformString}/${platformVersion})`

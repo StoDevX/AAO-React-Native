@@ -13,6 +13,7 @@ import SortableList from '@hawkrives/react-native-sortable-list'
 import type {ViewType} from '../../views'
 import {allViews} from '../../views'
 import {EditHomeRow} from './row'
+import {toggleViewDisabled} from '../../../flux/parts/homescreen'
 
 const objViews = fromPairs(allViews.map(v => [v.view, v]))
 
@@ -28,10 +29,12 @@ const styles = StyleSheet.create({
 
 type ReduxStateProps = {
   order: string[],
+  inactiveViews: string[],
 }
 
 type ReduxDispatchProps = {
   onSaveOrder: (string[]) => any,
+  onToggleViewDisabled: string => any,
 }
 
 type Props = ReduxStateProps & ReduxDispatchProps
@@ -61,9 +64,18 @@ class EditHomeView extends React.PureComponent<Props, State> {
     this.setState(() => ({width: event.window.width}))
   }
 
-  renderRow = ({data, active}: {data: ViewType, active: boolean}) => (
-    <EditHomeRow data={data} active={active} width={this.state.width} />
-  )
+  renderRow = ({data, active}: {data: ViewType, active: boolean}) => {
+    const enabled = !this.props.inactiveViews.includes(data.view)
+    return (
+      <EditHomeRow
+        active={active}
+        data={data}
+        isEnabled={enabled}
+        onToggle={this.props.onToggleViewDisabled}
+        width={this.state.width}
+      />
+    )
+  }
 
   onChangeOrder = (order: string[]) => this.props.onSaveOrder(order)
 
@@ -75,8 +87,8 @@ class EditHomeView extends React.PureComponent<Props, State> {
           {width: this.state.width},
         ]}
         data={objViews}
-        order={this.props.order}
         onChangeOrder={this.onChangeOrder}
+        order={this.props.order}
         renderRow={this.renderRow}
       />
     )
@@ -86,12 +98,14 @@ class EditHomeView extends React.PureComponent<Props, State> {
 function mapState(state: ReduxState): ReduxStateProps {
   return {
     order: state.homescreen ? state.homescreen.order : [],
+    inactiveViews: state.homescreen ? state.homescreen.inactiveViews : [],
   }
 }
 
 function mapDispatch(dispatch): ReduxDispatchProps {
   return {
     onSaveOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
+    onToggleViewDisabled: view => dispatch(toggleViewDisabled(view)),
   }
 }
 

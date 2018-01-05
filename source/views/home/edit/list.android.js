@@ -11,6 +11,7 @@ import sortBy from 'lodash/sortBy'
 import type {ViewType} from '../../views'
 import {allViews} from '../../views'
 import {EditHomeRow} from './row'
+import {toggleViewDisabled} from '../../../flux/parts/homescreen'
 
 const styles = StyleSheet.create({
   contentContainer: {
@@ -22,10 +23,12 @@ const styles = StyleSheet.create({
 
 type ReduxStateProps = {
   order: string[],
+  inactiveViews: string[],
 }
 
 type ReduxDispatchProps = {
   onSaveOrder: (string[]) => any,
+  onToggleViewDisabled: string => any,
 }
 
 type Props = ReduxStateProps & ReduxDispatchProps
@@ -61,14 +64,17 @@ class EditHomeView extends React.PureComponent<Props> {
   renderItem = ({item}: {item: ViewType}) => {
     const index = this.props.order.indexOf(item.view)
     const last = this.props.order.length - 1
+    const enabled = !this.props.inactiveViews.includes(item.view)
     return (
       <EditHomeRow
-        item={item}
+        isEnabled={enabled}
         isFirst={index === 0}
         isLast={index === last}
-        order={this.props.order}
-        onMoveUp={this.handleMoveUp}
+        item={item}
         onMoveDown={this.handleMoveDown}
+        onMoveUp={this.handleMoveUp}
+        onToggle={this.props.onToggleViewDisabled}
+        order={this.props.order}
       />
     )
   }
@@ -95,12 +101,14 @@ class EditHomeView extends React.PureComponent<Props> {
 function mapState(state: ReduxState): ReduxStateProps {
   return {
     order: state.homescreen ? state.homescreen.order : [],
+    inactiveViews: state.homescreen ? state.homescreen.inactiveViews : [],
   }
 }
 
 function mapDispatch(dispatch): ReduxDispatchProps {
   return {
     onSaveOrder: newOrder => dispatch(saveHomescreenOrder(newOrder)),
+    onToggleViewDisabled: view => dispatch(toggleViewDisabled(view)),
   }
 }
 

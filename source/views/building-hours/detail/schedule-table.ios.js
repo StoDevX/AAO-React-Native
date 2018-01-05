@@ -27,19 +27,19 @@ export class ScheduleTable extends React.PureComponent<Props> {
         {schedules.map(schedule => (
           <Section
             key={schedule.title}
-            header={schedule.title.toUpperCase()}
             footer={schedule.notes}
+            header={schedule.title.toUpperCase()}
           >
             {schedule.hours.map((set, i) => (
               <ScheduleRow
                 key={i}
-                now={now}
-                set={set}
                 isActive={
                   schedule.isPhysicallyOpen !== false &&
                   set.days.includes(dayOfWeek) &&
                   isScheduleOpenAtMoment(set, now)
                 }
+                now={now}
+                set={set}
               />
             ))}
           </Section>
@@ -48,8 +48,8 @@ export class ScheduleTable extends React.PureComponent<Props> {
         <Section>
           <Cell
             accessory="DisclosureIndicator"
-            title="Suggest an Edit"
             onPress={onProblemReport}
+            title="Suggest an Edit"
           />
         </Section>
       </TableView>

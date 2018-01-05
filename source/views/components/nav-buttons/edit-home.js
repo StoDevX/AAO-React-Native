@@ -20,8 +20,8 @@ export function EditHomeButton({
     <Touchable
       borderless={true}
       highlight={false}
-      style={[commonStyles.button, buttonStyle]}
       onPress={() => navigation.navigate('EditHomeView')}
+      style={[commonStyles.button, buttonStyle]}
     >
       <Text style={commonStyles.text}>Edit</Text>
     </Touchable>

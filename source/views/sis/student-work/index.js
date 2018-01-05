@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, Text, SectionList} from 'react-native'
+import {StyleSheet, SectionList} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import type {TopLevelViewPropsType} from '../../types'
 import * as c from '../../components/colors'
@@ -118,7 +118,7 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 
   render() {
     if (this.state.error) {
-      return <Text selectable={true}>{this.state.error}</Text>
+      return <NoticeView text="Could not get open jobs." />
     }
 
     if (this.state.loading) {
@@ -127,17 +127,17 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 
     return (
       <SectionList
+        ItemSeparatorComponent={ListSeparator}
         ListEmptyComponent={
           <NoticeView text="There are no open job postings." />
         }
         keyExtractor={this.keyExtractor}
-        style={styles.listContainer}
-        sections={(this.state.jobs: any)}
-        renderSectionHeader={this.renderSectionHeader}
-        ItemSeparatorComponent={ListSeparator}
-        refreshing={this.state.refreshing}
         onRefresh={this.refresh}
+        refreshing={this.state.refreshing}
         renderItem={this.renderItem}
+        renderSectionHeader={this.renderSectionHeader}
+        sections={(this.state.jobs: any)}
+        style={styles.listContainer}
       />
     )
   }
