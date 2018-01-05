@@ -10,12 +10,15 @@ schedule:
 
   - title: Lunch
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '10:30am', to: '2:00pm'}
+      # - {days: [Mo, Tu, We, Th, Fr], from: '10:30am', to: '2:00pm'}
+      # - {days: [Sa, Su], from: '11:00am', to: '1:30pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '10:45am', to: '1:30pm'}
       - {days: [Sa, Su], from: '11:00am', to: '1:30pm'}
 
   - title: Dinner
     hours:
-      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:30pm'}
+      # - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:30pm'}
+      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:00pm'}
 
 breakSchedule:
   fall: []
