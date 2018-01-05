@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {Animated, Easing, StyleSheet, Text} from 'react-native'
+import {Animated, Easing, StyleSheet, Text, Switch} from 'react-native'
 
 import * as c from '../../components/colors'
 
@@ -48,8 +48,10 @@ const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
 )
 
 type Props = {
-  data: ViewType,
   active: boolean,
+  data: ViewType,
+  isEnabled: boolean,
+  onToggle: string => any,
   width: number,
 }
 
@@ -152,6 +154,10 @@ export class EditHomeRow extends React.Component<Props, State> {
     ]).start()
   }
 
+  onToggleSwitch = () => {
+    this.props.onToggle(this.props.data.view)
+  }
+
   render() {
     const width = this.props.width - ROW_HORIZONTAL_MARGIN * 2
 
@@ -162,6 +168,11 @@ export class EditHomeRow extends React.Component<Props, State> {
         <Text style={[styles.text, {color: this.props.data.tint}]}>
           {this.props.data.title}
         </Text>
+
+        <Switch
+          onValueChange={this.onToggleSwitch}
+          value={this.props.isEnabled}
+        />
 
         <IonIcon name="ios-reorder" size={32} style={[styles.icon]} />
       </Animated.View>
