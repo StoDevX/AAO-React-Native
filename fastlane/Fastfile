@@ -9,8 +9,11 @@ fastlane_version '2.50.1'
 require 'fileutils'
 
 import 'lib/before_all.rb'
+import 'lib/commands.rb'
+import 'lib/git.rb'
+import 'lib/sourcemaps.rb'
 import 'lib/util.rb'
+import 'lib/versions.rb'
 
-import 'platforms/agnostic.rb'
 import 'platforms/android.rb'
 import 'platforms/ios.rb'

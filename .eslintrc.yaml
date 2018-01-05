@@ -18,11 +18,11 @@ extends:
 
 env:
   es6: true
-  node: true
-  browser: true
+  react-native/react-native: true
 
 globals:
   fetch: true
+  Headers: true
   FormData: true
   fetchJson: true
   rawFetch: true
@@ -79,7 +79,7 @@ rules:
   react/jsx-sort-props:
     - warn
     - reservedFirst: true
-      ignoreCase: true
+      ignoreCase: false
       callbacksLast: true
   react/no-multi-comp: off  # prevent multiple component definition per file
   react/no-redundant-should-component-update: warn

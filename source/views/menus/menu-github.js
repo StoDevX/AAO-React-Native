@@ -116,12 +116,12 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 
     return (
       <FancyMenu
-        navigation={this.props.navigation}
         foodItems={this.state.foodItems}
-        menuCorIcons={this.state.corIcons}
         meals={this.state.meals}
-        now={this.state.now}
+        menuCorIcons={this.state.corIcons}
         name={this.props.name}
+        navigation={this.props.navigation}
+        now={this.state.now}
       />
     )
   }

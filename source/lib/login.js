@@ -45,10 +45,16 @@ export async function performLogin(
   }
 
   const form = buildFormData({username, password})
-  const loginResult = await fetch(OLECARD_AUTH_URL, {
-    method: 'POST',
-    body: form,
-  })
+  let loginResult = null
+  try {
+    loginResult = await fetch(OLECARD_AUTH_URL, {
+      method: 'POST',
+      body: form,
+    })
+  } catch (err) {
+    return false
+  }
+
   const page = await loginResult.text()
 
   if (page.includes('Password')) {

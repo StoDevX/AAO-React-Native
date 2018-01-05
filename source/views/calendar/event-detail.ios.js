@@ -40,9 +40,9 @@ function Links({header, event}: {header: string, event: CleanedEventType}) {
       {links.map(url => (
         <Cell
           key={url}
-          title={url}
           accessory="DisclosureIndicator"
           onPress={() => openUrl(url)}
+          title={url}
         />
       ))}
     </Section>
@@ -53,9 +53,9 @@ const CalendarButton = ({message, disabled, onPress}) => {
   return (
     <Section footer={message}>
       <ButtonCell
-        title="Add to calendar"
         disabled={disabled}
         onPress={onPress}
+        title="Add to calendar"
       />
     </Section>
   )
@@ -119,19 +119,19 @@ export class EventDetail extends React.PureComponent<Props, State> {
     return (
       <ScrollView>
         <TableView>
-          <MaybeSection header="EVENT" content={event.title} />
-          <MaybeSection header="TIME" content={event.times} />
-          <MaybeSection header="LOCATION" content={event.location} />
-          <MaybeSection header="DESCRIPTION" content={event.rawSummary} />
-          <Links header="LINKS" event={event} />
+          <MaybeSection content={event.title} header="EVENT" />
+          <MaybeSection content={event.times} header="TIME" />
+          <MaybeSection content={event.location} header="LOCATION" />
+          <MaybeSection content={event.rawSummary} header="DESCRIPTION" />
+          <Links event={event} header="LINKS" />
           <CalendarButton
-            onPress={this.onPressButton}
-            message={this.state.message}
             disabled={this.state.disabled}
+            message={this.state.message}
+            onPress={this.onPressButton}
           />
 
           {poweredBy.title ? (
-            <ListFooter title={poweredBy.title} href={poweredBy.href} />
+            <ListFooter href={poweredBy.href} title={poweredBy.title} />
           ) : null}
         </TableView>
       </ScrollView>

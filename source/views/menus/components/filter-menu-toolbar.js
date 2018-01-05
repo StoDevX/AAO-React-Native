@@ -41,11 +41,11 @@ export function FilterMenuToolbar({date, title, filters, onPress}: PropsType) {
       </View>
 
       <ToolbarButton
+        iconName={Platform.OS === 'ios' ? 'ios-funnel' : 'md-funnel'}
         isActive={isFiltered}
         title={
           isFiltered ? `${appliedFilterCount} ${filterWord}` : 'No Filters'
         }
-        iconName={Platform.OS === 'ios' ? 'ios-funnel' : 'md-funnel'}
       />
     </Toolbar>
   )

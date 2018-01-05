@@ -45,8 +45,8 @@ describe('handles wierd times', () => {
   })
 
   it('handles Saturday at 1:30am', () => {
-    // TODO: report a bug to moment-timezone that tz("Sat 1:30am", "ddd h:mma") is invalid (at least when `moment.now` = 2017-11-09)
-    const saturday = '2017-11-11T01:30:00'
+    // TODO: report a bug to moment-timezone that tz("Sat 1:30am", "ddd h:mma") is invalid (at least when `moment.now` = 2018-11-09)
+    const saturday = '2018-11-11T01:30:00'
     const now = plainMoment(saturday, 'YYYY-MM-DD[T]HH:mm:ss')
     const input = {days: [], from: '10:00am', to: '2:00am'}
     const {open, close} = parseHours(input, now)
@@ -59,21 +59,21 @@ describe('checks a list of schedules to see if any are open', () => {
   const schedule = {days: ['Fr', 'Sa'], from: '10:30am', to: '2:00am'}
 
   it('in normal, non-dst situations', () => {
-    const now = plainMoment('06-24-2017 12:00am', 'MM-DD-YYYY h:mma')
+    const now = plainMoment('06-24-2018 12:00am', 'MM-DD-YYYY h:mma')
     const {open, close} = parseHours(schedule, now)
     expect(open.format('HH:mm')).toBe('10:30')
     expect(close.format('HH:mm')).toBe('02:00')
   })
 
   it('during the spring-forward dst', () => {
-    const now = plainMoment('03-12-2017 12:00am', 'MM-DD-YYYY h:mma')
+    const now = plainMoment('03-12-2018 12:00am', 'MM-DD-YYYY h:mma')
     const {open, close} = parseHours(schedule, now)
     expect(open.format('HH:mm')).toBe('10:30')
     expect(close.format('HH:mm')).toBe('01:00')
   })
 
   it('during the fall-back dst', () => {
-    const now = plainMoment('11-4-2017 12:00am', 'MM-DD-YYYY h:mma')
+    const now = plainMoment('11-4-2018 12:00am', 'MM-DD-YYYY h:mma')
     const {open, close} = parseHours(schedule, now)
     expect(open.format('HH:mm')).toBe('10:30')
     expect(close.format('HH:mm')).toBe('02:00')

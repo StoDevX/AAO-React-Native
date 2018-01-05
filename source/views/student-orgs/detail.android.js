@@ -113,9 +113,9 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
             {contacts.map((c, i) => (
               <Text
                 key={i}
+                onPress={() => this.openEmail(c.email, orgName)}
                 selectable={true}
                 style={styles.cardBody}
-                onPress={() => this.openEmail(c.email, orgName)}
               >
                 {c.title ? c.title + ': ' : ''}
                 {showNameOrEmail(c)}
@@ -132,9 +132,9 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
             {advisors.map((c, i) => (
               <Text
                 key={i}
+                onPress={() => this.openEmail(c.email, orgName)}
                 selectable={true}
                 style={styles.cardBody}
-                onPress={() => this.openEmail(c.email, orgName)}
               >
                 {c.name} ({c.email})
               </Text>

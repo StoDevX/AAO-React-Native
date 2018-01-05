@@ -51,8 +51,8 @@ export default class EventRow extends React.PureComponent<Props> {
 
     return (
       <ListRow
-        contentContainerStyle={styles.row}
         arrowPosition="top"
+        contentContainerStyle={styles.row}
         fullWidth={true}
         onPress={this._onPress}
       >
@@ -63,9 +63,9 @@ export default class EventRow extends React.PureComponent<Props> {
 
           <Column
             flex={1}
-            paddingTop={2}
-            paddingBottom={3}
             justifyContent="space-between"
+            paddingBottom={3}
+            paddingTop={2}
           >
             <Title>{title}</Title>
             {location}

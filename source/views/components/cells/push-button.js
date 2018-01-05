@@ -10,9 +10,9 @@ export const PushButtonCell = ({
   onPress: () => any,
 }) => (
   <Cell
-    cellStyle="Basic"
-    title={title}
     accessory="DisclosureIndicator"
+    cellStyle="Basic"
     onPress={onPress}
+    title={title}
   />
 )

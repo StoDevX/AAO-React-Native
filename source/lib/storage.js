@@ -46,6 +46,14 @@ export function getHomescreenOrder(): Promise<Array<string>> {
   return getItemAsArray(homescreenOrderKey)
 }
 
+const homescreenViewsKey = 'homescreen:disabled-views'
+export function setDisabledViews(disabledViews: string[]) {
+  return setItem(homescreenViewsKey, disabledViews)
+}
+export function getDisabledViews(): Promise<Array<string>> {
+  return getItemAsArray(homescreenViewsKey)
+}
+
 const acknowledgementStatusKey = 'settings:ackd'
 export function setAcknowledgementStatus(status: boolean) {
   return setItem(acknowledgementStatusKey, status)
@@ -73,4 +81,14 @@ export function setCredentialsValid(valid: boolean) {
 }
 export function getCredentialsValid(): Promise<boolean> {
   return getItemAsBoolean(credentialsValidKey)
+}
+
+/// MARK: Favorite Buildings
+
+const favoriteBuildingsKey = 'buildings:favorited'
+export function setFavoriteBuildings(buildings: string[]) {
+  return setItem(favoriteBuildingsKey, buildings)
+}
+export function getFavoriteBuildings(): Promise<Array<string>> {
+  return getItemAsArray(favoriteBuildingsKey)
 }

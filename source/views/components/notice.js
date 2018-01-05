@@ -22,28 +22,23 @@ const styles = StyleSheet.create({
   },
 })
 
-export function NoticeView({
-  text,
-  style,
-  spinner,
-  buttonText,
-  onPress,
-}: {
+type Props = {
   text?: string,
   style?: any,
   spinner?: boolean,
   buttonText?: string,
   onPress?: () => any,
-}) {
-  let activityIndicator = spinner ? (
-    <ActivityIndicator style={styles.spinner} />
-  ) : null
+}
+
+export function NoticeView({text, style, spinner, buttonText, onPress}: Props) {
   return (
     <View style={[styles.container, style]}>
-      {activityIndicator}
+      {spinner ? <ActivityIndicator style={styles.spinner} /> : null}
+
       <Text selectable={true} style={styles.text}>
         {text || 'Notice!'}
       </Text>
+
       {buttonText ? <Button onPress={onPress} title={buttonText} /> : null}
     </View>
   )

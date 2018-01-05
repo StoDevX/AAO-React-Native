@@ -27,7 +27,7 @@ export function PickerSection({filter, onChange}: PropsType) {
   }
 
   return (
-    <Section header={title.toUpperCase()} footer={caption}>
+    <Section footer={caption} header={title.toUpperCase()}>
       <Picker
         onValueChange={pickerPicked}
         selectedValue={JSON.stringify(selected || options[0])}

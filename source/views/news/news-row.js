@@ -1,31 +1,36 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, Image} from 'react-native'
+import {StyleSheet, Image, Alert} from 'react-native'
 import {Column, Row} from '../components/layout'
 import {ListRow, Detail, Title} from '../components/list'
 import type {StoryType} from './types'
 
 type Props = {
-  onPress: StoryType => any,
+  onPress: string => any,
   story: StoryType,
   thumbnail: number,
 }
 
 export class NewsRow extends React.PureComponent<Props> {
-  _onPress = () => this.props.onPress(this.props.story)
+  _onPress = () => {
+    if (!this.props.story.link) {
+      Alert.alert('There is nowhere to go for this story')
+      return
+    }
+    this.props.onPress(this.props.story.link)
+  }
 
   render() {
-    const {story, thumbnail} = this.props
+    const {story} = this.props
+    const thumb = story.featuredImage
+      ? {uri: story.featuredImage}
+      : this.props.thumbnail
 
     return (
-      <ListRow onPress={this._onPress} arrowPosition="top">
+      <ListRow arrowPosition="top" onPress={this._onPress}>
         <Row alignItems="center">
-          {story.featuredImage ? (
-            <Image source={{uri: story.featuredImage}} style={styles.image} />
-          ) : (
-            <Image source={thumbnail} style={styles.image} />
-          )}
+          <Image source={thumb} style={styles.image} />
           <Column flex={1}>
             <Title lines={1}>{story.title}</Title>
             <Detail lines={2}>{story.excerpt}</Detail>

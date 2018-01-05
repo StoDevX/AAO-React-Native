@@ -77,8 +77,6 @@ export class CellTextField extends React.Component<Props> {
 
     return (
       <Cell
-        contentContainerStyle={styles.loginCell}
-        cellContentView={label}
         cellAccessoryView={
           <TextInput
             ref={this.cacheRef}
@@ -96,6 +94,8 @@ export class CellTextField extends React.Component<Props> {
             value={this.props.value}
           />
         }
+        cellContentView={label}
+        contentContainerStyle={styles.loginCell}
       />
     )
   }

@@ -54,8 +54,8 @@ export const Touchable = ({
           : TouchableNativeFeedback.SelectableBackground()
       return (
         <TouchableNativeFeedback
-          onPress={onPress}
           background={background}
+          onPress={onPress}
           style={containerStyle}
           {...props}
         >

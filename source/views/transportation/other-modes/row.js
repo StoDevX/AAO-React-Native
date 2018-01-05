@@ -17,11 +17,11 @@ export class OtherModesRow extends React.PureComponent<Props> {
     const {mode} = this.props
 
     return (
-      <ListRow onPress={this._onPress} arrowPosition="top">
+      <ListRow arrowPosition="top" onPress={this._onPress}>
         <Row alignItems="center">
           <Column flex={1}>
             <Title lines={1}>{mode.name}</Title>
-            <Detail lines={1}>{mode.description}</Detail>
+            <Detail lines={1}>{mode.synopsis}</Detail>
           </Column>
         </Row>
       </ListRow>

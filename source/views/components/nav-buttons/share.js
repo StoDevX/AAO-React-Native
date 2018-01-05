@@ -15,13 +15,13 @@ export class ShareButton extends React.PureComponent<Props> {
     return (
       <Touchable
         highlight={false}
-        style={styles.button}
         onPress={this.props.onPress}
+        style={styles.button}
       >
         {Platform.OS === 'ios' ? (
-          <Icon style={styles.icon} name="ios-share-outline" />
+          <Icon name="ios-share-outline" style={styles.icon} />
         ) : (
-          <Icon style={styles.icon} name="md-share" />
+          <Icon name="md-share" style={styles.icon} />
         )}
       </Touchable>
     )

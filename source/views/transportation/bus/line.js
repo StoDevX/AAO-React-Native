@@ -145,18 +145,18 @@ export class BusLine extends React.Component<Props, State> {
 
   renderItem = ({item, index}: {index: number, item: BusTimetableEntry}) => (
     <BusStopRow
-      stop={item}
-      status={this.state.status}
-      departureIndex={this.state.currentBusIteration}
-      now={this.props.now}
       barColor={this.props.line.colors.bar}
       currentStopColor={this.props.line.colors.dot}
+      departureIndex={this.state.currentBusIteration}
       isFirstRow={index === 0}
       isLastRow={
         this.state.schedule
           ? index === this.state.schedule.timetable.length - 1
           : true
       }
+      now={this.props.now}
+      status={this.state.status}
+      stop={item}
     />
   )
 
@@ -166,24 +166,24 @@ export class BusLine extends React.Component<Props, State> {
 
     const headerEl = (
       <ListSectionHeader
-        title={line.line}
         subtitle={subtitle}
+        title={line.line}
         titleStyle={Platform.OS === 'android' ? {color: line.colors.bar} : null}
       />
     )
 
     return (
       <FlatList
-        ListHeaderComponent={headerEl}
-        ListFooterComponent={FOOTER_EL}
-        ListEmptyComponent={EMPTY_SCHEDULE_MESSAGE}
         ItemSeparatorComponent={BusLineSeparator}
+        ListEmptyComponent={EMPTY_SCHEDULE_MESSAGE}
+        ListFooterComponent={FOOTER_EL}
+        ListHeaderComponent={headerEl}
         data={schedule ? schedule.timetable : []}
-        keyExtractor={this.keyExtractor}
         extraData={this.state}
-        renderItem={this.renderItem}
+        keyExtractor={this.keyExtractor}
         onRefresh={this.props.onRefresh}
         refreshing={this.props.refreshing}
+        renderItem={this.renderItem}
       />
     )
   }

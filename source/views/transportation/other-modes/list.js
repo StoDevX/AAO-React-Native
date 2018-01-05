@@ -104,14 +104,14 @@ export class OtherModesView extends React.PureComponent<Props, State> {
       <SectionList
         ItemSeparatorComponent={ListSeparator}
         ListEmptyComponent={<ListEmpty mode="bug" />}
-        style={styles.listContainer}
         data={groupedData}
-        sections={groupedData}
         keyExtractor={this.keyExtractor}
-        renderSectionHeader={this.renderSectionHeader}
-        renderItem={this.renderItem}
-        refreshing={this.state.refreshing}
         onRefresh={this.refresh}
+        refreshing={this.state.refreshing}
+        renderItem={this.renderItem}
+        renderSectionHeader={this.renderSectionHeader}
+        sections={groupedData}
+        style={styles.listContainer}
       />
     )
   }

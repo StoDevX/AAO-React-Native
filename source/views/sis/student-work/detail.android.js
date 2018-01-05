@@ -62,8 +62,8 @@ function Contact({job}: {job: JobType}) {
   return job.office || contactName ? (
     <Card header="Contact" style={styles.card}>
       <Text
-        style={styles.cardBody}
         onPress={() => email([job.contactEmail], null, null, job.title, '')}
+        style={styles.cardBody}
       >
         {contactName} {job.title ? `(${job.title})` : ''}
         {'\n'}
@@ -115,7 +115,7 @@ function Links({job}: {job: JobType}) {
   return links.length ? (
     <Card header="LINKS" style={styles.card}>
       {links.map(url => (
-        <Text key={url} style={styles.cardBody} onPress={() => openUrl(url)}>
+        <Text key={url} onPress={() => openUrl(url)} style={styles.cardBody}>
           {url}
         </Text>
       ))}

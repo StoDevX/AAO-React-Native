@@ -4,15 +4,14 @@ before_all do
     setup_travis
   end
 
-  # too lazy to change the name in travis, so we jut copy it here
-  ENV['FL_HOCKEY_API_TOKEN'] = ENV['HOCKEYAPP_TOKEN']
-  ENV['FL_HOCKEY_COMMIT_SHA'] = ENV['TRAVIS_COMMIT']
-
   # set up global info for `gym`
   ENV['GYM_PROJECT'] = './ios/AllAboutOlaf.xcodeproj'
   ENV['GYM_SCHEME'] = 'AllAboutOlaf'
   ENV['GYM_OUTPUT_DIRECTORY'] = './ios/build'
   ENV['GYM_OUTPUT_NAME'] = 'AllAboutOlaf'
+
+  # set the testflight itunesconnect provider ID from Appfile
+  ENV['PILOT_ITC_PROVIDER'] = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
 
   # set up global info for `gradle`
   ENV['FL_GRADLE_PROJECT_DIR'] = './android'

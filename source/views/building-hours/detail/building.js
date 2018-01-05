@@ -63,15 +63,15 @@ export class BuildingDetail extends React.Component<Props> {
     return (
       <ScrollView contentContainerStyle={styles.container}>
         {headerImage ? (
-          <Image source={headerImage} resizeMode="cover" style={styles.image} />
+          <Image resizeMode="cover" source={headerImage} style={styles.image} />
         ) : null}
 
         <Header building={info} />
         <Badge status={openStatus} />
         <ScheduleTable
-          schedules={schedules}
           now={now}
           onProblemReport={onProblemReport}
+          schedules={schedules}
         />
 
         <ListFooter

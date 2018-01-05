@@ -10,39 +10,24 @@ xcode-select --install
 
 ## Choose your installation method:
 
-<table width="100%" >
-<tr>
-<th width="33%"><a href="http://brew.sh">Homebrew</a></th>
-<th width="33%">Installer Script</th>
-<th width="33%">RubyGems</th>
-</tr>
-<tr>
-<td width="33%" align="center">macOS</td>
-<td width="33%" align="center">macOS</td>
-<td width="33%" align="center">macOS or Linux with Ruby 2.0.0 or above</td>
-</tr>
-<tr>
-<td width="33%"><code>brew cask install fastlane</code></td>
-<td width="33%"><a href="https://download.fastlane.tools">Download the zip file</a>. Then double click on the <code>install</code> script (or run it in a terminal window).</td>
-<td width="33%"><code>sudo gem install fastlane -NV</code></td>
-</tr>
-</table>
+| Method                     | OS support                              | Description                                                                                                                           |
+|----------------------------|-----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| [Homebrew](http://brew.sh) | macOS                                   | `brew cask install fastlane`                                                                                                          |
+| Installer Script           | macOS                                   | [Download the zip file](https://download.fastlane.tools). Then double click on the `install` script (or run it in a terminal window). |
+| RubyGems                   | macOS or Linux with Ruby 2.0.0 or above | `sudo gem install fastlane -NV`                                                                                                       |
 
 # Available Actions
-### keys
-```
-fastlane keys
-```
-Set up the private keys + environment variables for local development
-
-----
-
 ## Android
 ### android build
 ```
 fastlane android build
 ```
 Makes a build
+### android check_build
+```
+fastlane android check_build
+```
+Checks that the app builds
 ### android beta
 ```
 fastlane android beta
@@ -63,11 +48,6 @@ Bundle an Android sourcemap
 fastlane android ci-run
 ```
 Run the appropriate action on CI
-### android ci-emulator
-```
-fastlane android ci-emulator
-```
-Set up an android emulator on TravisCI
 ### android matchesque
 ```
 fastlane android matchesque
@@ -87,11 +67,16 @@ Runs all the tests
 fastlane ios screenshot
 ```
 Take screenshots
+### ios check_build
+```
+fastlane ios check_build
+```
+Checks that the app can be built
 ### ios build
 ```
 fastlane ios build
 ```
-Builds the app
+Builds and exports the app
 ### ios beta
 ```
 fastlane ios beta
