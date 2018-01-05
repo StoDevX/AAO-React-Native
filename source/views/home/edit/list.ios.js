@@ -71,9 +71,7 @@ class EditHomeView extends React.PureComponent<Props, State> {
         active={active}
         data={data}
         isEnabled={enabled}
-        onToggle={() => {
-          this.props.onToggleViewDisabled(data.view)
-        }}
+        onToggle={this.props.onToggleViewDisabled}
         width={this.state.width}
       />
     )

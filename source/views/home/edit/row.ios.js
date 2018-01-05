@@ -154,6 +154,10 @@ export class EditHomeRow extends React.Component<Props, State> {
     ]).start()
   }
 
+  onToggleSwitch = () => {
+    this.props.onToggle(this.props.data.view)
+  }
+
   render() {
     const width = this.props.width - ROW_HORIZONTAL_MARGIN * 2
 
@@ -166,7 +170,7 @@ export class EditHomeRow extends React.Component<Props, State> {
         </Text>
 
         <Switch
-          onValueChange={this.props.onToggle}
+          onValueChange={this.onToggleSwitch}
           value={this.props.isEnabled}
         />
 
