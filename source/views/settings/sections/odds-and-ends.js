@@ -54,8 +54,8 @@ class OddsAndEndsSection extends React.PureComponent<Props, State> {
         <Section header="MISCELLANY">
           {this.state.supported ? (
             <PushButtonCell
-              title="Change App Icon"
               onPress={this.onAppIconButton}
+              title="Change App Icon"
             />
           ) : null}
 
