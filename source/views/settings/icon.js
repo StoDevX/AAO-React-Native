@@ -20,21 +20,21 @@ const styles = StyleSheet.create({
 type IconTypeEnum = 'default' | 'icon_type_windmill'
 
 type Icon = {
-  type: IconTypeEnum,
   src: any,
   title: string,
+  type: IconTypeEnum,
 }
 
 export const icons: Array<Icon> = [
   {
-    type: 'default',
     src: appIcons.oldMain,
     title: 'Old Main',
+    type: 'default',
   },
   {
-    type: 'icon_type_windmill',
     src: appIcons.windmill,
     title: 'Wind Turbine (Big Ole)',
+    type: 'icon_type_windmill',
   },
 ]
 
@@ -75,18 +75,18 @@ export class IconSettingsView extends React.PureComponent<Props, State> {
   render() {
     return (
       <ScrollView>
-        <Section header={'CHANGE YOUR APP ICON'} separatorInsetLeft={58}>
+        <Section header="CHANGE YOUR APP ICON" separatorInsetLeft={58}>
           {icons.map(icon => (
             <Cell
               key={icon.title}
-              onPress={() => this.setIcon(icon.type)}
-              disableImageResize={false}
-              title={icon.title}
-              image={<Image style={styles.icon} source={icon.src} />}
               accessory={
                 this.state.iconType === icon.type ? 'Checkmark' : undefined
               }
               cellStyle="RightDetail"
+              disableImageResize={false}
+              image={<Image style={styles.icon} source={icon.src} />}
+              onPress={() => this.setIcon(icon.type)}
+              title={icon.title}
             />
           ))}
         </Section>
