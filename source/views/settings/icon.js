@@ -78,12 +78,12 @@ export class IconSettingsView extends React.PureComponent<Props, State> {
         <Section header="CHANGE YOUR APP ICON" separatorInsetLeft={58}>
           {icons.map(icon => (
             <Cell
-              key={icon.title}
               accessory={
                 this.state.iconType === icon.type ? 'Checkmark' : undefined
               }
               cellStyle="RightDetail"
               disableImageResize={false}
+              key={icon.title}
               image={<Image style={styles.icon} source={icon.src} />}
               onPress={() => this.setIcon(icon.type)}
               title={icon.title}
