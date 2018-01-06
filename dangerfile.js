@@ -162,6 +162,136 @@ function bigPr() {
   }
 }
 
+// Remind us to check the xcodeproj, if it's changed
+async function xcodeproj() {
+  const pbxprojChanged = danger.git.modified_files.find(filepath =>
+    filepath.endsWith('project.pbxproj'),
+  )
+
+  if (!pbxprojChanged) {
+    return
+  }
+
+  warn('The Xcode project file changed. Maintainers, double-check the changes!')
+
+  await pbxprojBlankLine()
+  await pbxprojLeadingZeros()
+  await pbxprojDuplicateLinkingPaths()
+  await pbxprojSidebarSorting()
+}
+
+// Warn about a blank line that Xcode will re-insert if we remove
+function pbxprojBlankLine() {
+  const pbxprojPath = danger.git.modified_files.find(filepath =>
+    filepath.endsWith('project.pbxproj'),
+  )
+  const pbxproj = readFile(pbxprojPath).split('\n')
+
+  if (pbxproj[7] === '') {
+    return
+  }
+
+  warn('Line 8 of the .pbxproj must be an empty line to match Xcode')
+}
+
+// Warn about numbers that `react-native link` removes leading 0s on
+function pbxprojLeadingZeros() {
+  const pbxprojPath = danger.git.modified_files.find(filepath =>
+    filepath.endsWith('project.pbxproj'),
+  )
+  const pbxproj = readFile(pbxprojPath).split('\n')
+
+  const numericLineNames = [
+    /^\s+LastSwiftUpdateCheck\s/,
+    /^\s+LastUpgradeCheck\s/,
+    /^\s+LastSwiftMigration\s/,
+  ]
+  const isLineWithoutLeadingZero = line =>
+    numericLineNames.some(nline => nline.test(line) && / [^0]\d+;$/.test(line))
+
+  const numericLinesWithoutLeadingZeros = pbxproj
+    .filter(isLineWithoutLeadingZero)
+    .map(line => line.trim())
+
+  if (!numericLinesWithoutLeadingZeros.length) {
+    return
+  }
+
+  warn(
+    h.details(
+      h.summary('Some lines in the .pbxproj lost their leading 0s.'),
+      h.p('Xcode likes to put them back, so we try to keep them around.'),
+      h.ul(...numericLinesWithoutLeadingZeros.map(line => h.li(h.code(line)))),
+    ),
+  )
+}
+
+// Warn about duplicate entries in the linking paths after a `react-native link`
+async function pbxprojDuplicateLinkingPaths() {
+  const pbxprojPath = danger.git.modified_files.find(filepath =>
+    filepath.endsWith('project.pbxproj'),
+  )
+  const xcodeproj = await parseXcodeProject(pbxprojPath)
+
+  const buildConfig = xcodeproj.project.objects.XCBuildConfiguration
+  const duplicateSearchPaths = Object.entries(buildConfig)
+    .filter(([_, val] /*: [string, any]*/) => typeof val === 'object')
+    .filter(
+      ([_, val] /*: [string, any]*/) => val.buildSettings.LIBRARY_SEARCH_PATHS,
+    )
+    .filter(([_, val] /*: [string, any]*/) => {
+      const searchPaths = val.buildSettings.LIBRARY_SEARCH_PATHS
+      return uniq(searchPaths).length !== searchPaths.length
+    })
+
+  if (!duplicateSearchPaths.length) {
+    return
+  }
+
+  fail(
+    h.details(
+      h.summary(
+        'Some of the Xcode <code>LIBRARY_SEARCH_PATHS</code> have duplicate entries. Please remove the duplicates. Thanks!',
+      ),
+      h.p(
+        'This is easiest to do by editing the project.pbxproj directly, IMHO. These keys all live under the <code>XCBuildConfiguration</code> section.',
+      ),
+      h.ul(...duplicateSearchPaths.map(([key]) => h.li(h.code(key)))),
+    ),
+  )
+}
+
+// Warn about non-sorted frameworks in xcode sidebar
+async function pbxprojSidebarSorting() {
+  const pbxprojPath = danger.git.modified_files.find(filepath =>
+    filepath.endsWith('project.pbxproj'),
+  )
+  const xcodeproj = await parseXcodeProject(pbxprojPath)
+
+  const projectsInSidebar = xcodeproj.project.objects.PBXGroup
+  const sidebarSorting = Object.entries(projectsInSidebar)
+    .filter(([_, val] /*: [string, any]*/) => typeof val === 'object')
+    .filter(([_, val] /*: [string, any]*/) => val.name === 'Libraries')
+    .filter(([_, val] /*: [string, any]*/) => val.files)
+    .filter(([_, val] /*: [string, any]*/) => {
+      const projects = val.files.map(file => file.comment)
+      const sorted = [...projects].sort((a, b) => a.localeSort(b))
+      return !isEqual(projects, sorted)
+    })
+
+  if (sidebarSorting.length) {
+    return
+  }
+
+  warn(
+    h.details(
+      h.summary(
+        "Some of the iOS frameworks aren't sorted alphabetically in the Xcode sidebar (under Libraries). Please sort them alphabetically. Thanks!",
+      ),
+      "If you right-click on the Libraries group in the sidebar, you can just pick 'Sort by Name' and Xcode will do it for you.",
+    ),
+  )
+}
 
 // Make sure the Info.plist `NSLocationWhenInUseUsageDescription` didn't switch to entities
 function infoPlist() {
@@ -406,6 +536,7 @@ function runJSのPrettier() {
 //
 
 import fs from 'fs'
+import xcode from 'xcode'
 
 const {XmlEntities} = require('html-entities')
 export const entities = new XmlEntities()
@@ -488,6 +619,27 @@ export function fileLog(
 
 ${m.code({language: lang}, log)}`,
   )
+}
+
+export function parseXcodeProject(
+  pbxprojPath /*: string*/,
+) /*: Promise<Object>*/ {
+  return new Promise((resolve, reject) => {
+    const project = xcode.project(pbxprojPath)
+    // I think this can be called twice from .parse, which is an error for a Promise
+    let resolved = false
+    project.parse((error, data) => {
+      if (resolved) {
+        return
+      }
+      resolved = true
+
+      if (error) {
+        reject(error)
+      }
+      resolve(data)
+    })
+  })
 }
 
 //
