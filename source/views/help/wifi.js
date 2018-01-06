@@ -90,9 +90,14 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
               College Wi-Fi networks, please tap the button below.
             </Description>
             <Description selectable={true}>
-              We will record your current location and what device you are
-              using, then send it to a server that IT maintains. They are
-              planning to look closely at where people are having issues!
+              This information is anonymous, and we do not collect usernames. We
+              will record your current location and and some general information
+              about the device you are using, then send it to a server that IT
+              maintains.
+            </Description>
+            <Description selectable={true}>
+              The networking team can then use this information to identify
+              where people are having issues!
             </Description>
             <Button
               disabled={this.state.status !== ''}
