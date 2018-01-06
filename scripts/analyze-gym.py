@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 
 """Usage: analyze-gym.py < travis-ios-log.log
 
