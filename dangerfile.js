@@ -182,6 +182,17 @@ function settingsDotGradleSpacing() {
 //
 
 function runJSのFlow() {
+  const flowLog = readLogFile('./logs/flow')
+
+  if (!flowLog) {
+    return
+  }
+
+  if (flowLog === 'Found 0 errors') {
+    return
+  }
+
+  fileLog('Flow would like to interject about types…', flowLog)
 }
 
 //
