@@ -32,8 +32,6 @@
   },
   "greenkeeper": {
     "ignore": [
-      "xcode",
-      "simple-plist",
       "flow-bin",
       "react"
     ]
@@ -131,6 +129,6 @@
     "simple-plist": "0.2.1",
     "string-natural-compare": "2.0.2",
     "strip-ansi": "4.0.0",
-    "xcode": "0.9.3"
+    "xcode": "1.0.0"
   }
 }
