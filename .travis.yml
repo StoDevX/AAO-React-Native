@@ -196,6 +196,7 @@ before_cache:
 
 cache:
   bundler: true
+  yarn: true
   directories:
     - $HOME/.gradle
     - $HOME/.gradle/wrapper/
