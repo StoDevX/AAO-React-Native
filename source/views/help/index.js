@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {View} from 'react-native'
+import {ScrollView, StyleSheet} from 'react-native'
 
 import {ReportWifiProblemView} from './wifi'
 
@@ -14,9 +14,15 @@ export default class HelpView extends React.Component<Props> {
 
   render() {
     return (
-      <View>
+      <ScrollView style={styles.contentContainer}>
         <ReportWifiProblemView />
-      </View>
+      </ScrollView>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  contentContainer: {
+    padding: 10,
+  },
+})
