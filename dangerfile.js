@@ -17,10 +17,10 @@ async function main() {
 
   switch (taskName) {
     case 'ANDROID':
-      await runAndroid()
+      // await runAndroid()
       break
     case 'IOS':
-      await runiOS()
+      // await runiOS()
       break
     case 'GREENKEEPER':
       await runGreenkeeper()
