@@ -124,7 +124,6 @@
     "prettier": "1.9.2",
     "pretty-bytes": "4.0.2",
     "prop-types": "15.6.0",
-    "react-native-video": "2.0.0",
     "react-test-renderer": "16.1.0",
     "simple-plist": "0.2.1",
     "string-natural-compare": "2.0.2",

@@ -3454,10 +3454,6 @@ junk@2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/junk/-/junk-2.1.0.tgz#f431b4b7f072dc500a5f10ce7f4ec71930e70134"
 
-keymirror@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/keymirror/-/keymirror-0.1.1.tgz#918889ea13f8d0a42e7c557250eee713adc95c35"
-
 kind-of@^3.0.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.2.2.tgz#31ea21a734bab9bbb0f32466d893aea51e4a3c64"
@@ -4757,13 +4753,6 @@ react-native-vector-icons@4.4.3:
     lodash "^4.0.0"
     prop-types "^15.5.10"
     yargs "^8.0.2"
-
-react-native-video@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-video/-/react-native-video-2.0.0.tgz#f33fa6fb7e7e3c93ab5787944cefd58bf7355867"
-  dependencies:
-    keymirror "0.1.1"
-    prop-types "^15.5.10"
 
 react-native@0.51.0:
   version "0.51.0"
