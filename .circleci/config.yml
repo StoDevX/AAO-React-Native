@@ -22,7 +22,7 @@ workflows:
 
 jobs:
   danger:
-    docker: {image: circleci/node:8}
+    docker: {image: 'circleci/node:8'}
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -31,7 +31,7 @@ jobs:
       - run: echo yarn danger --id JS-general
 
   flow:
-    docker: {image: circleci/node:8}
+    docker: {image: 'circleci/node:8'}
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -41,7 +41,7 @@ jobs:
       - run: yarn flow check --quiet | tee logs/flow
 
   jest:
-    docker: {image: circleci/node:8}
+    docker: {image: 'circleci/node:8'}
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -51,7 +51,7 @@ jobs:
       - run: yarn test --coverage
 
   prettier:
-    docker: {image: circleci/node:8}
+    docker: {image: 'circleci/node:8'}
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -65,7 +65,7 @@ jobs:
           fi
 
   eslint:
-    docker: {image: circleci/node:8}
+    docker: {image: 'circleci/node:8'}
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -75,7 +75,7 @@ jobs:
       - run: yarn lint
 
   data:
-    docker: {image: circleci/node:8}
+    docker: {image: 'circleci/node:8'}
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
