@@ -71,7 +71,7 @@ async function runAndroid() {
     return
   }
 
-  if (!(await didNativeDependencyChange())) {
+  if (!await didNativeDependencyChange()) {
     // nothing changed to make this worth analyzing
     return
   }
@@ -117,7 +117,7 @@ async function runiOS() {
     return
   }
 
-  if (!(await didNativeDependencyChange())) {
+  if (!await didNativeDependencyChange()) {
     // nothing changed to make this worth analyzing
     return
   }
@@ -633,10 +633,7 @@ const execFile = util.promisify(childProcess.execFile)
 const {XmlEntities} = require('html-entities')
 const entities = new XmlEntities()
 
-function fastlaneBuildLogTail(
-  log /*: Array<string>*/,
-  message /*: string*/,
-) {
+function fastlaneBuildLogTail(log /*: Array<string>*/, message /*: string*/) {
   const n = 150
   const logToPost = log
     .slice(-n)
@@ -732,9 +729,7 @@ ${m.code({language: lang}, log)}`,
   )
 }
 
-function parseXcodeProject(
-  pbxprojPath /*: string*/,
-) /*: Promise<Object>*/ {
+function parseXcodeProject(pbxprojPath /*: string*/) /*: Promise<Object>*/ {
   return new Promise((resolve, reject) => {
     const project = xcode.project(pbxprojPath)
     // I think this can be called twice from .parse, which is an error for a Promise
@@ -753,6 +748,7 @@ function parseXcodeProject(
   })
 }
 
+// eslint-ignore-next-line no-unused-vars
 async function listZip(filepath /*: string*/) {
   try {
     const {stdout} = await execFile('unzip', ['-l', filepath])
@@ -778,6 +774,7 @@ async function listZip(filepath /*: string*/) {
   }
 }
 
+// eslint-ignore-next-line no-unused-vars
 function listDirectory(dirpath /*: string*/) {
   try {
     return fs.readdirSync(dirpath)
@@ -787,6 +784,7 @@ function listDirectory(dirpath /*: string*/) {
   }
 }
 
+// eslint-ignore-next-line no-unused-vars
 function listDirectoryTree(dirpath /*: string*/) /*: any*/ {
   try {
     const exists = fs.accessSync(dirpath, fs.F_OK)
@@ -812,7 +810,7 @@ function listDirectoryTree(dirpath /*: string*/) /*: any*/ {
   }
 }
 
-async function didNativeDependencyChange()/*: Promise<boolean>*/ {
+async function didNativeDependencyChange() /*: Promise<boolean>*/ {
   const diff = await danger.git.JSONDiffForFile('package.json')
 
   if (!diff.dependencies && !diff.devDependencies) {
