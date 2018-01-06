@@ -113,6 +113,8 @@ async function runJSのGeneral() {
   await flowAnnotated()
   await bigPr()
   await exclusionaryTests()
+  await xcodeproj()
+  await gradle()
   await infoPlist()
 }
 
