@@ -75,9 +75,31 @@ async function runJSのData() {
 }
 
 function runJSのDataのData() {
+  const dataValidationLog = readLogFile('./logs/validate-data')
+
+  if (!dataValidationLog) {
+    return
+  }
+
+  if (!isBadDataValidationLog(dataValidationLog)) {
+    return
+  }
+
+  fileLog("Something's up with the data.", dataValidationLog)
 }
 
 function runJSのDataのBusData() {
+  const busDataValidationLog = readLogFile('./logs/validate-bus-data')
+
+  if (!busDataValidationLog) {
+    return
+  }
+
+  if (!isBadDataValidationLog(busDataValidationLog)) {
+    return
+  }
+
+  fileLog("🚌 Something's up with the bus routes.", busDataValidationLog)
 }
 
 //
