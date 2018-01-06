@@ -105,7 +105,7 @@
     "babel-jest": "22.0.4",
     "babel-preset-react-native": "4.0.0",
     "bugsnag-sourcemaps": "1.0.1",
-    "danger": "3.0.0-beta.2",
+    "danger": "3.0.1",
     "danger-plugin-yarn": "1.2.0",
     "directory-tree": "2.0.0",
     "eslint": "4.14.0",
