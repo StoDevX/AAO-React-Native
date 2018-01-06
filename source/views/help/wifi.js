@@ -8,7 +8,7 @@ import deviceInfo from 'react-native-device-info'
 import networkInfo from 'react-native-network-info'
 import retry from 'p-retry'
 import delay from 'delay'
-import reportNetworkProblem from '../../lib/report-network-problem'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 import pkg from '../../../package.json'
 
 const getIpAddress = () =>
