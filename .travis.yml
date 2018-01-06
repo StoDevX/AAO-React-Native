@@ -155,7 +155,7 @@ jobs:
       stage: Test
       env: [task=JS-prettier]
       script:
-        # Ensure prettiness
+        - touch logs/prettier
         - npm run prettier
         - if ! git diff --quiet ./*.js source/; then
             git diff ./*.js source/ > logs/prettier;
