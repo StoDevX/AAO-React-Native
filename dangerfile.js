@@ -17,10 +17,10 @@ async function main() {
 
   switch (taskName) {
     case 'ANDROID':
-      // await runAndroid()
+      await runAndroid()
       break
     case 'IOS':
-      // await runiOS()
+      await runiOS()
       break
     case 'GREENKEEPER':
       await runGreenkeeper()
@@ -71,6 +71,7 @@ function runAndroid() {
     return
   }
 
+/*
   const appPaths = readJsonLogFile('./logs/products')
   const apkInfos = appPaths.map(listZip)
 
@@ -82,17 +83,18 @@ function runAndroid() {
     ),
   )
 
-  //   markdown(`Generated ${apkInfos.length} APK${apkInfos.length !== 1 ? 's' : ''}
+  markdown(`Generated ${apkInfos.length} APK${apkInfos.length !== 1 ? 's' : ''}
 
-  // ${outputFilesInfo
-  //     .map((filename, i) => [filename, apkInfos[i]])
-  //     .map(([filename, apk]) =>
-  //       h.details(
-  //         h.summary(`${filename} (${bytes(apk.size)})`),
-  //         m.json(apk),
-  //       ),
-  //     )}
-  //   `)
+${outputFilesInfo
+    .map((filename, i) => [filename, apkInfos[i]])
+    .map(([filename, apk]) =>
+      h.details(
+        h.summary(`${filename} (${bytes(apk.size)})`),
+        m.json(apk),
+      ),
+    )}
+  `)
+*/
 }
 
 //
@@ -121,6 +123,7 @@ function runiOS() {
     ),
   )
 
+/*
   // - report the .ipa size
   // - report the .ipa file list
   const appPaths = readJsonLogFile('./logs/products')
@@ -133,6 +136,7 @@ Total <code>.app</code> size: ${info.size}
 ${h.details(h.summary('.app contents'), m.json(info))}
 `)
   })
+*/
 }
 
 //
