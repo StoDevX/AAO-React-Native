@@ -181,6 +181,13 @@ function runJSのLint() {
 //
 
 function runJSのPrettier() {
+  const prettierLog = readLogFile('./logs/prettier')
+
+  if (!prettierLog) {
+    return
+  }
+
+  fileLog('Prettier made some changes', prettierLog, {lang: 'diff'})
 }
 
 //
