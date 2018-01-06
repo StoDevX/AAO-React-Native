@@ -187,6 +187,38 @@ function runJSのPrettier() {
 // Utilities
 //
 
+export const h /*: any*/ = new Proxy(
+  {},
+  {
+    get(_, property) {
+      return function(...children /*: Array<string>*/) {
+        if (!children.length) {
+          return `<${property}>`
+        }
+        return `<${property}>${children.join('\n')}</${property}>`
+      }
+    },
+  },
+)
+
+export const m = {
+  code(attrs /*: Object*/, ...children /*: Array<string>*/) {
+    return (
+      '\n' +
+      '```' +
+      (attrs.language || '') +
+      '\n' +
+      children.join('\n') +
+      '\n' +
+      '```' +
+      '\n'
+    )
+  },
+  json(blob /*: any*/) {
+    return m.code({language: 'json'}, JSON.stringify(blob, null, 2))
+  },
+}
+
 //
 // Run the file
 //
