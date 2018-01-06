@@ -1,5 +1,14 @@
 version: 2
 
+x-config:
+  - *restore-cache-yarn
+    keys:
+      - 'v2-dependencies-{{ checksum "yarn.lock" }}'
+      - 'v2-dependencies-'
+  - *save-cache-yarn
+    paths: [~/.cache/yarn]
+    key: 'v2-dependencies-{{ checksum "yarn.lock" }}'
+
 workflows:
   version: 2
   analyze:
@@ -16,15 +25,10 @@ jobs:
     docker: [{image: 'circleci/node:8'}]
     steps:
       - checkout
-      - restore_cache: &restore-cache-yarn
-          keys:
-            - 'v2-dependencies-{{ checksum "yarn.lock" }}'
-            - 'v2-dependencies-'
+      - restore_cache: *restore-cache-yarn
       - run: yarn install
-      - save_cache: &save-cache-yarn
-          paths: [~/.cache/yarn]
-          key: 'v2-dependencies-{{ checksum "yarn.lock" }}'
-      - run: echo yarn danger --id JS-general
+      - save_cache: *save-cache-yarn
+      - run: yarn danger --id JS-general
 
   flow:
     docker: [{image: 'circleci/node:8'}]
@@ -33,8 +37,10 @@ jobs:
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
       - run: yarn bundle-data
-      - run: yarn flow check --quiet
+      - run: yarn flow check --quiet | tee logs/flow
+      - run: yarn danger --id JS-flow
 
   jest:
     docker: [{image: 'circleci/node:8'}]
@@ -43,8 +49,12 @@ jobs:
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
       - run: yarn bundle-data
-      - run: yarn test --coverage
+      - run: yarn test --coverage 2>&1 | tee logs/jest
+      - run: yarn danger --id JS-jest
+      - run: npm install -g coveralls
+      - run: coveralls < ./coverage/lcov.info
 
   prettier:
     docker: [{image: 'circleci/node:8'}]
@@ -53,7 +63,13 @@ jobs:
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
       - run: yarn prettier
+      - run: |
+          if ! git diff --quiet *.js source/ scripts/; then
+            git diff *.js source/ scripts/ | tee logs/prettier
+          fi
+      - run: yarn danger --id JS-prettier
 
   eslint:
     docker: [{image: 'circleci/node:8'}]
@@ -62,8 +78,10 @@ jobs:
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
       - run: yarn bundle-data
-      - run: yarn lint
+      - run: yarn lint | tee logs/eslint
+      - run: yarn danger --id JS-lint
 
   data:
     docker: [{image: 'circleci/node:8'}]
@@ -72,5 +90,7 @@ jobs:
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
-      - run: yarn validate-data --quiet
-      - run: yarn validate-bus-data
+      - run: mkdir -p logs/
+      - run: yarn validate-data --quiet | tee logs/validate-data
+      - run: yarn validate-bus-data | tee logs/validate-bus-data
+      - run: yarn danger --id JS-data
