@@ -16,7 +16,7 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 
 - [Install React Native](http://facebook.github.io/react-native/docs/getting-started.html#content)
 - [Install Yarn](https://yarnpkg.com/en/docs/install)
-- [Install Git Large File Storage](https://help.github.com/articles/installing-git-large-file-storage/)
+- [Git Large File Storage (LFS)](https://help.github.com/articles/installing-git-large-file-storage/)
 - Clone the repository
 - `cd` into your clone
 - Run `yarn`
