@@ -71,7 +71,7 @@ function runAndroid() {
     return
   }
 
-/*
+  /*
   const appPaths = readJsonLogFile('./logs/products')
   const apkInfos = appPaths.map(listZip)
 
@@ -123,7 +123,7 @@ function runiOS() {
     ),
   )
 
-/*
+  /*
   // - report the .ipa size
   // - report the .ipa file list
   const appPaths = readJsonLogFile('./logs/products')
