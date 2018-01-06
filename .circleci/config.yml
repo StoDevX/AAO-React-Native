@@ -1,38 +1,111 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
 version: 2
+
+workflows:
+  version: 2
+  analyze:
+    jobs:
+      - danger
+      - flow
+      - jest
+      - prettier
+      - eslint
+      - data
+
 jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:8
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
+  danger:
+    docker: {image: circleci/node:8}
     working_directory: ~/repo
-
     steps:
       - checkout
-
-      # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
+          - 'v1-dependencies-{{ checksum "yarn.lock" }}'
           - v1-dependencies-
-
       - run: yarn install
-
       - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          paths: [node_modules]
+          key: 'v1-dependencies-{{ checksum "yarn.lock" }}'
+      - run: echo yarn danger --id JS-general
 
-      # run tests!
+  flow:
+    docker: {image: circleci/node:8}
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - 'v1-dependencies-{{ checksum "yarn.lock" }}'
+          - v1-dependencies-
+      - run: yarn install
+      - save_cache:
+          paths: [node_modules]
+          key: 'v1-dependencies-{{ checksum "yarn.lock" }}'
       - run: yarn bundle-data
-      - run: yarn test
+      - run: yarn flow check --quiet | tee logs/flow
+
+  jest:
+    docker: {image: circleci/node:8}
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - 'v1-dependencies-{{ checksum "yarn.lock" }}'
+          - v1-dependencies-
+      - run: yarn install
+      - save_cache:
+          paths: [node_modules]
+          key: 'v1-dependencies-{{ checksum "yarn.lock" }}'
+      - run: yarn bundle-data
+      - run: yarn test --coverage
+
+  prettier:
+    docker: {image: circleci/node:8}
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - 'v1-dependencies-{{ checksum "yarn.lock" }}'
+          - v1-dependencies-
+      - run: yarn install
+      - save_cache:
+          paths: [node_modules]
+          key: 'v1-dependencies-{{ checksum "yarn.lock" }}'
+      - touch logs/prettier
+      - yarn prettier
+      - if ! git diff --quiet ./*.js source/; then
+          git diff ./*.js source/ > logs/prettier;
+        fi
+
+  eslint:
+    docker: {image: circleci/node:8}
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - 'v1-dependencies-{{ checksum "yarn.lock" }}'
+          - v1-dependencies-
+      - run: yarn install
+      - save_cache:
+          paths: [node_modules]
+          key: 'v1-dependencies-{{ checksum "yarn.lock" }}'
+      - run: yarn bundle-data
+      - run: yarn lint
+
+  data:
+    docker: {image: circleci/node:8}
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - 'v1-dependencies-{{ checksum "yarn.lock" }}'
+          - v1-dependencies-
+      - run: yarn install
+      - save_cache:
+          paths: [node_modules]
+          key: 'v1-dependencies-{{ checksum "yarn.lock" }}'
+      - run: yarn validate-data --quiet
+      - run: yarn validate-bus-data
