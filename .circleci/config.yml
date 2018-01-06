@@ -78,6 +78,7 @@ jobs:
       - run:
           name: git diff
           command: |
+            touch logs/prettier  # to ensure that the file exists
             if ! git diff --quiet *.js source/ scripts/; then
               git diff *.js source/ scripts/ | tee logs/prettier
             fi
