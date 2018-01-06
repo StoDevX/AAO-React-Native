@@ -61,7 +61,7 @@ function runGreenkeeper() {
 // task=ANDROID
 //
 
-function runAndroid() {
+async function runAndroid() {
   const logFile = readLogFile('./logs/build').split('\n')
   const buildStatus = readLogFile('./logs/build-status')
 
@@ -107,7 +107,7 @@ ${outputFilesInfo
 // task=IOS
 //
 
-function runiOS() {
+async function runiOS() {
   const logFile = readLogFile('./logs/build').split('\n')
   const buildStatus = readLogFile('./logs/build-status')
 
