@@ -54,7 +54,7 @@ jobs:
       - run: yarn test --coverage 2>&1 | tee logs/jest
       - run: yarn danger --id JS-jest
       # install coveralls for code coverage
-      - run: export $PATH=$PATH:$(yarn global bin)
+      - run: export PATH=$PATH:$(yarn global bin)
       - run: yarn global add coveralls
       - run: coveralls < ./coverage/lcov.info
 
