@@ -65,7 +65,7 @@ function runAndroid() {
   const logFile = readLogFile('./logs/build').split('\n')
   const buildStatus = readLogFile('./logs/build-status')
 
-  markdown(`## Android Report`)
+  markdown('## Android Report')
 
   if (buildStatus !== '0') {
     fastlaneBuildLogTail(logFile, 'Android Build Failed')
@@ -107,7 +107,7 @@ function runiOS() {
   const logFile = readLogFile('./logs/build').split('\n')
   const buildStatus = readLogFile('./logs/build-status')
 
-  markdown(`## iOS Report`)
+  markdown('## iOS Report')
 
   if (buildStatus !== '0') {
     // returning early here because if the build fails, there's nothing to analyze
