@@ -57,7 +57,8 @@ jobs:
       - run: yarn run --silent test --coverage 2>&1 | tee logs/jest
       - run: yarn run danger --id $task
       - run: yarn global add coveralls
-      - run: |
+      - name: coveralls
+        run: |
           export PATH=$PATH:$(yarn global bin)
           export COVERALLS_SERVICE_NAME=CircleCI
           export COVERALLS_SERVICE_JOB_ID=$CIRCLE_BUILD_NUM
@@ -73,7 +74,8 @@ jobs:
       - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run prettier
-      - run: |
+      - name: git diff
+        run: |
           if ! git diff --quiet *.js source/ scripts/; then
             git diff *.js source/ scripts/ | tee logs/prettier
           fi
