@@ -196,6 +196,13 @@ function runJSのJest() {
 //
 
 function runJSのLint() {
+  const eslintLog = readLogFile('./logs/eslint')
+
+  if (!eslintLog) {
+    return
+  }
+
+  fileLog('Eslint had a thing to say!', eslintLog)
 }
 
 //
