@@ -7,6 +7,9 @@ import {danger, schedule, markdown, warn, fail} from 'danger'
 import yarn from 'danger-plugin-yarn'
 
 // utilities
+import uniq from 'lodash/uniq'
+import isEqual from 'lodash/isEqual'
+import findIndex from 'lodash/findIndex'
 import plist from 'simple-plist'
 
 async function main() {
@@ -538,10 +541,35 @@ function runJSのPrettier() {
 //
 
 import fs from 'fs'
+import childProcess from 'child_process'
+import stripAnsi from 'strip-ansi'
+import directoryTree from 'directory-tree'
 import xcode from 'xcode'
+import util from 'util'
+
+const execFile = util.promisify(childProcess.execFile)
 
 const {XmlEntities} = require('html-entities')
 export const entities = new XmlEntities()
+
+export function fastlaneBuildLogTail(
+  log /*: Array<string>*/,
+  message /*: string*/,
+) {
+  const n = 150
+  const logToPost = log
+    .slice(-n)
+    .map(stripAnsi)
+    .join('\n')
+
+  fail(
+    h.details(
+      h.summary(message),
+      h.p(`Last ${n} lines`),
+      m.code({}, logToPost),
+    ),
+  )
+}
 
 export const h /*: any*/ = new Proxy(
   {},
@@ -642,6 +670,65 @@ export function parseXcodeProject(
       resolve(data)
     })
   })
+}
+
+export async function listZip(filepath /*: string*/) {
+  try {
+    const {stdout} = await execFile('unzip', ['-l', filepath])
+    const lines = stdout.split('\n')
+
+    const parsed = lines.slice(3, -3).map(line => {
+      const length = parseInt(line.slice(0, 9).trim(), 10)
+      // const datetime = line.slice(12, 28)
+      const filepath = line.slice(30).trim()
+      const type = filepath.endsWith('/') ? 'folder' : 'file'
+      return {size: length, filepath, type}
+    })
+    const zipSize = parsed.reduce((sum, current) => current.size + sum, 0)
+
+    return {files: parsed, size: zipSize}
+  } catch (err) {
+    fail(
+      h.details(
+        h.summary(`Could not examine the ZIP file at <code>${filepath}</code>`),
+        m.json(err),
+      ),
+    )
+  }
+}
+
+export function listDirectory(dirpath /*: string*/) {
+  try {
+    return fs.readdirSync(dirpath)
+  } catch (err) {
+    fail(h.details(h.summary(`${h.code(dirpath)} does not exist`), m.json(err)))
+    return []
+  }
+}
+
+export function listDirectoryTree(dirpath /*: string*/) /*: any*/ {
+  try {
+    const exists = fs.accessSync(dirpath, fs.F_OK)
+
+    if (!exists) {
+      fail(
+        h.details(
+          h.summary(`Could not access <code>${dirpath}</code>`),
+          m.code({}, listDirectory(dirpath).join('\n')),
+        ),
+      )
+    }
+
+    return directoryTree(dirpath)
+  } catch (err) {
+    fail(
+      h.details(
+        h.summary('<code>listDirectoryTree</code> threw an error'),
+        m.json(err),
+      ),
+    )
+    return {}
+  }
 }
 
 //
