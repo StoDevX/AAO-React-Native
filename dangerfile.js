@@ -187,6 +187,7 @@ function runJSのPrettier() {
 // Utilities
 //
 
+import fs from 'fs'
 export const h /*: any*/ = new Proxy(
   {},
   {
@@ -217,6 +218,54 @@ export const m = {
   json(blob /*: any*/) {
     return m.code({language: 'json'}, JSON.stringify(blob, null, 2))
   },
+}
+
+export function readFile(filename /*: string*/) {
+  try {
+    return fs.readFileSync(filename, 'utf-8')
+  } catch (err) {
+    fail(
+      h.details(
+        h.summary(`Could not read <code>${filename}</code>`),
+        m.json(err),
+      ),
+    )
+    return ''
+  }
+}
+
+export function readLogFile(filename /*: string*/) {
+  return readFile(filename).trim()
+}
+
+export function readJsonLogFile(filename /*: string*/) {
+  try {
+    return JSON.parse(readFile(filename))
+  } catch (err) {
+    fail(
+      h.details(
+        h.summary(`Could not read the log file at <code>${filename}</code>`),
+        m.json(err),
+      ),
+    )
+    return []
+  }
+}
+
+export function isBadDataValidationLog(log /*: string*/) {
+  return log.split('\n').some(l => !l.endsWith('is valid'))
+}
+
+export function fileLog(
+  name /*: string*/,
+  log /*: string*/,
+  {lang = null} /*: any*/ = {},
+) {
+  return markdown(
+    `## ${name}
+
+${m.code({language: lang}, log)}`,
+  )
 }
 
 //
