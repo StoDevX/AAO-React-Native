@@ -30,11 +30,9 @@ branches:
 stages:
   - name: Greenkeeper
     if: branch =~ ^greenkeeper\/
-  - name: Test
   - name: Deploy Data
     if: branch = master AND type != pull_request
   - name: Build + Deploy App
-
 
 
 #
@@ -95,22 +93,6 @@ x-definitions:
     before_cache:
       - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
       - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-      - rm -rf $TMPDIR/jest_preprocess_cache
-
-  - &js
-    <<: *base
-    os: linux
-    sudo: false
-    distro: trusty
-    language: node_js
-    node_js: $TRAVIS_NODE_VERSION
-    before_install: skip
-    install: yarn || yarn
-    before_script:
-      - echo "loglevel=silent" >> .npmrc
-      - mkdir -p logs/
-      - set -o pipefail
-    env: [task=JS-unknown]
 
   - &simplejs
     os: linux
@@ -129,63 +111,18 @@ jobs:
       stage: Greenkeeper
       env: [task=GREENKEEPER]
       install: npm install -g greenkeeper-lockfile@1
-      before_script: mkdir -p logs/
       script: greenkeeper-lockfile-update
-      after_script:
-        - greenkeeper-lockfile-upload
-        - npm run danger -- --id $task
-
-    # Do node "tests"
-    - <<: *js
-      stage: Test
-      env: [task=JS-general]
-      script: skip
-
-    - <<: *js
-      stage: Test
-      env: [task=JS-flow]
-      script:
-        - npm run bundle-data
-        - npm run flow -- check --quiet | tee logs/flow
-
-    - <<: *js
-      stage: Test
-      env: [task=JS-prettier]
-      script:
-        - touch logs/prettier
-        - npm run prettier
-        - if ! git diff --quiet ./*.js source/; then
-            git diff ./*.js source/ > logs/prettier;
-          fi
-
-    - <<: *js
-      stage: Test
-      env: [task=JS-lint]
-      script:
-        - npm run lint | tee logs/eslint
-
-    - <<: *js
-      stage: Test
-      env: [task=JS-data]
-      script:
-        - npm run validate-data -- --quiet | tee logs/validate-data
-        - npm run validate-bus-data | tee logs/validate-bus-data
-
-    - <<: *js
-      stage: Test
-      env: [task=JS-jest]
-      before_install: npm install -g coveralls
-      script:
-        - npm run bundle-data
-        - npm run test -- --coverage 2>&1 | tee logs/jest
-      after_success: coveralls < ./coverage/lcov.info
+      after_script: greenkeeper-lockfile-upload
 
     # Deploy the gh-pages data
     - <<: *simplejs
       stage: Deploy Data
       env: [task=GH_PAGES]
       install: yarn || yarn
-      script: npm run bundle-data
+      script:
+        - npm run validate-bus-data
+        - npm run validate-data
+        - npm run bundle-data
       deploy:
         provider: pages
         skip_cleanup: true
