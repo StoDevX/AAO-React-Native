@@ -6,6 +6,9 @@ import {Card} from '../components/card'
 import {Button} from '../components/button'
 import deviceInfo from 'react-native-device-info'
 import networkInfo from 'react-native-network-info'
+import retry from 'p-retry'
+import delay from 'delay'
+import reportNetworkProblem from '../../lib/report-network-problem'
 import pkg from '../../../package.json'
 
 const getIpAddress = () =>
@@ -38,36 +41,24 @@ const collectData = async () => ({
   jsVersion: pkg.version,
   ua: deviceInfo.getUserAgent(),
   ip: await getIpAddress(),
+  dateRecorded: new Date().toJSON(),
 })
 
 function reportToServer(data) {
-  return fetch(
-    'https://www.stolaf.edu/apps/all-about-olaf/index.cfm?fuseaction=Submit',
-    {
-      method: 'POST',
-      body: JSON.stringify(data),
-    },
-  ).then(async r => {
-    let text = await r.text()
-    try {
-      return JSON.parse(text)
-    } catch (err) {
-      return text
-    }
-  })
+  const url =
+    'https://www.stolaf.edu/apps/all-about-olaf/index.cfm?fuseaction=Submit'
+  return fetch(url, {method: 'POST', body: JSON.stringify(data)})
 }
 
 type Props = {}
 
 type State = {
   status: string,
-  data: ?any,
 }
 
 export class ReportWifiProblemView extends React.Component<Props, State> {
   state = {
     status: '',
-    data: null,
   }
 
   start = async () => {
@@ -76,17 +67,14 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
     this.setState(() => ({status: 'Reporting data…'}))
     try {
       let data = {position, device, version: 1}
-      let resp = await reportToServer(data)
-      if (resp.status === 'success') {
-        this.setState(() => ({data}))
-        this.setState(() => ({status: 'Thanks!'}))
-      } else {
-        console.error(resp)
-        this.setState(() => ({status: 'Server error'}))
-      }
+      await retry(() => reportToServer(data), {retries: 10})
+      await delay(1000)
+      this.setState(() => ({status: 'Thanks!'}))
     } catch (err) {
-      console.warn(err)
-      this.setState(() => ({status: err.message}))
+      reportNetworkProblem(err)
+      this.setState(() => ({
+        status: 'Apologies; there was an error. Please try again later.',
+      }))
     }
   }
 
@@ -99,9 +87,6 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
             onPress={this.start}
             title="Report"
           />
-          <Text>
-            {this.state.data && JSON.stringify(this.state.data, null, 2)}
-          </Text>
         </Card>
       </ScrollView>
     )
