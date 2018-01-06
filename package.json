@@ -28,7 +28,12 @@
   "babel": {
     "presets": [
       "react-native"
-    ]
+    ],
+    "env": {
+      "production": {
+        "plugins": ["transform-remove-console"]
+      }
+    }
   },
   "greenkeeper": {
     "ignore": [
@@ -54,6 +59,7 @@
     "@hawkrives/react-native-alphabetlistview": "1.0.0",
     "@hawkrives/react-native-search-bar": "3.0.0-3",
     "@hawkrives/react-native-sortable-list": "1.0.1",
+    "@hawkrives/react-native-alternate-icons": "0.4.5",
     "buffer": "5.0.8",
     "bugsnag-react-native": "2.5.1",
     "css-select": "1.2.0",
@@ -103,6 +109,7 @@
     "babel-core": "6.26.0",
     "babel-eslint": "8.1.2",
     "babel-jest": "22.0.4",
+    "babel-plugin-transform-remove-console": "6.8.5",
     "babel-preset-react-native": "4.0.0",
     "bugsnag-sourcemaps": "1.0.1",
     "danger": "3.0.1",

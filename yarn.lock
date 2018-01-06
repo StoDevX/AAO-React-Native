@@ -70,6 +70,10 @@
     merge "^1.2.0"
     prop-types "^15.6.0"
 
+"@hawkrives/react-native-alternate-icons@0.4.5":
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/@hawkrives/react-native-alternate-icons/-/react-native-alternate-icons-0.4.5.tgz#1f8f79305e7343aad2e322bc29dfa090e7f14d35"
+
 "@hawkrives/react-native-search-bar@3.0.0-3":
   version "3.0.0-3"
   resolved "https://registry.yarnpkg.com/@hawkrives/react-native-search-bar/-/react-native-search-bar-3.0.0-3.tgz#44bfb8888962c1c444f5099bb96be115727431de"
@@ -819,6 +823,10 @@ babel-plugin-transform-regenerator@^6.5.0:
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-regenerator/-/babel-plugin-transform-regenerator-6.26.0.tgz#e0703696fbde27f0a3efcacf8b4dca2f7b3a8f2f"
   dependencies:
     regenerator-transform "^0.10.0"
+
+babel-plugin-transform-remove-console@6.8.5:
+  version "6.8.5"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-remove-console/-/babel-plugin-transform-remove-console-6.8.5.tgz#fde9d2d3d725530b0fadd8d31078402410386810"
 
 babel-plugin-transform-strict-mode@^6.24.1:
   version "6.24.1"

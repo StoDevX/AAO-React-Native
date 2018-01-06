@@ -34,6 +34,7 @@ import SettingsView from './views/settings'
 import CreditsView from './views/settings/credits'
 import PrivacyView from './views/settings/privacy'
 import LegalView from './views/settings/legal'
+import {IconSettingsView} from './views/settings/icon'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
 import HelpView from './views/help'
@@ -78,6 +79,7 @@ export const AppNavigator = StackNavigator(
     NewsView: {screen: NewsView},
     PrivacyView: {screen: PrivacyView},
     SettingsView: {screen: SettingsView},
+    IconSettingsView: {screen: IconSettingsView},
     SISView: {screen: SISView},
     StreamingView: {screen: StreamingView},
     KSTOScheduleView: {screen: KSTOScheduleView},

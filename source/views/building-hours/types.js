@@ -41,6 +41,8 @@ export type BuildingType = {
   name: string,
   subtitle?: string,
   abbreviation?: string,
+  isNotice?: boolean,
+  noticeMessage?: string,
   image?: string,
   category: string,
   schedule: NamedBuildingScheduleType[],

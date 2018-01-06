@@ -16,10 +16,13 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 
 - [Install React Native](http://facebook.github.io/react-native/docs/getting-started.html#content)
 - [Install Yarn](https://yarnpkg.com/en/docs/install)
+- [Install Git Large File Storage (LFS)](https://help.github.com/articles/installing-git-large-file-storage/)
 - Clone the repository
 - `cd` into your clone
 - Run `yarn`
-- For iOS: `npm run ios`.
+- Run `git lfs install`
+- Run `git lfs pull`
+- For iOS: `npm run ios`
 - For Android: launch your favorite Android emulator first, then run `npm run android`
 
 ### Notes
@@ -36,5 +39,4 @@ You should [create one yourself](https://console.developers.google.com/projectse
 
 For full information, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-<sub>Google Play and the Google Play logo are trademarks of Google LLC.<br />
-Apple, the Apple logo, iPhone, and iPad are trademarks of Apple Inc., registered in the U.S. and other countries. App Store is a service mark of Apple Inc., registered in the U.S. and other countries.</sub>
+<h6>Google Play and the Google Play logo are trademarks of Google LLC.<br>Apple, the Apple logo, iPhone, and iPad are trademarks of Apple Inc., registered in the U.S. and other countries.<br>App Store is a service mark of Apple Inc., registered in the U.S. and other countries.</h6>
