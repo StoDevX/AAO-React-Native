@@ -622,9 +622,9 @@ import util from 'util'
 const execFile = util.promisify(childProcess.execFile)
 
 const {XmlEntities} = require('html-entities')
-export const entities = new XmlEntities()
+const entities = new XmlEntities()
 
-export function fastlaneBuildLogTail(
+function fastlaneBuildLogTail(
   log /*: Array<string>*/,
   message /*: string*/,
 ) {
@@ -643,7 +643,7 @@ export function fastlaneBuildLogTail(
   )
 }
 
-export const h /*: any*/ = new Proxy(
+const h /*: any*/ = new Proxy(
   {},
   {
     get(_, property) {
@@ -657,7 +657,7 @@ export const h /*: any*/ = new Proxy(
   },
 )
 
-export const m = {
+const m = {
   code(attrs /*: Object*/, ...children /*: Array<string>*/) {
     return (
       '\n' +
@@ -675,7 +675,7 @@ export const m = {
   },
 }
 
-export function readFile(filename /*: string*/) {
+function readFile(filename /*: string*/) {
   try {
     return fs.readFileSync(filename, 'utf-8')
   } catch (err) {
@@ -689,11 +689,11 @@ export function readFile(filename /*: string*/) {
   }
 }
 
-export function readLogFile(filename /*: string*/) {
+function readLogFile(filename /*: string*/) {
   return readFile(filename).trim()
 }
 
-export function readJsonLogFile(filename /*: string*/) {
+function readJsonLogFile(filename /*: string*/) {
   try {
     return JSON.parse(readFile(filename))
   } catch (err) {
@@ -707,11 +707,11 @@ export function readJsonLogFile(filename /*: string*/) {
   }
 }
 
-export function isBadDataValidationLog(log /*: string*/) {
+function isBadDataValidationLog(log /*: string*/) {
   return log.split('\n').some(l => !l.endsWith('is valid'))
 }
 
-export function fileLog(
+function fileLog(
   name /*: string*/,
   log /*: string*/,
   {lang = null} /*: any*/ = {},
@@ -723,7 +723,7 @@ ${m.code({language: lang}, log)}`,
   )
 }
 
-export function parseXcodeProject(
+function parseXcodeProject(
   pbxprojPath /*: string*/,
 ) /*: Promise<Object>*/ {
   return new Promise((resolve, reject) => {
@@ -744,7 +744,7 @@ export function parseXcodeProject(
   })
 }
 
-export async function listZip(filepath /*: string*/) {
+async function listZip(filepath /*: string*/) {
   try {
     const {stdout} = await execFile('unzip', ['-l', filepath])
     const lines = stdout.split('\n')
@@ -769,7 +769,7 @@ export async function listZip(filepath /*: string*/) {
   }
 }
 
-export function listDirectory(dirpath /*: string*/) {
+function listDirectory(dirpath /*: string*/) {
   try {
     return fs.readdirSync(dirpath)
   } catch (err) {
@@ -778,7 +778,7 @@ export function listDirectory(dirpath /*: string*/) {
   }
 }
 
-export function listDirectoryTree(dirpath /*: string*/) /*: any*/ {
+function listDirectoryTree(dirpath /*: string*/) /*: any*/ {
   try {
     const exists = fs.accessSync(dirpath, fs.F_OK)
 
