@@ -82,7 +82,7 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
   render() {
     return (
       <View>
-        <Card footer={this.state.status}>
+        <Card>
           <Container>
             <Title selectable={true}>Report a Wi-Fi Problem</Title>
             <Description selectable={true}>
@@ -97,7 +97,7 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
             <Button
               disabled={this.state.status !== ''}
               onPress={this.start}
-              title="Report"
+              title={this.state.status || 'Report'}
             />
           </Container>
         </Card>
