@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {ScrollView, Text} from 'react-native'
+import {ScrollView} from 'react-native'
 import {Card} from '../components/card'
 import {Button} from '../components/button'
 import deviceInfo from 'react-native-device-info'
