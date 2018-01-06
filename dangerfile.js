@@ -65,11 +65,14 @@ function runAndroid() {
   const logFile = readLogFile('./logs/build').split('\n')
   const buildStatus = readLogFile('./logs/build-status')
 
-  markdown('## Android Report')
-
   if (buildStatus !== '0') {
     fastlaneBuildLogTail(logFile, 'Android Build Failed')
     // returning early here because if the build fails, there's nothing to analyze
+    return
+  }
+
+  if (!(await didNativeDependencyChange())) {
+    // nothing changed to make this worth analyzing
     return
   }
 
@@ -77,6 +80,7 @@ function runAndroid() {
   const appPaths = readJsonLogFile('./logs/products')
   const apkInfos = appPaths.map(listZip)
 
+  markdown('## Android Report')
   markdown(
     h.details(
       h.summary('contents of <code>apkInfos</code>'),
@@ -107,13 +111,18 @@ function runiOS() {
   const logFile = readLogFile('./logs/build').split('\n')
   const buildStatus = readLogFile('./logs/build-status')
 
-  markdown('## iOS Report')
-
   if (buildStatus !== '0') {
     // returning early here because if the build fails, there's nothing to analyze
     fastlaneBuildLogTail(logFile, 'iOS Build Failed')
     return
   }
+
+  if (!(await didNativeDependencyChange())) {
+    // nothing changed to make this worth analyzing
+    return
+  }
+
+  markdown('## iOS Report')
 
   // ideas:
   // - tee the "fastlane" output to a log, and run the analysis script
@@ -801,6 +810,17 @@ function listDirectoryTree(dirpath /*: string*/) /*: any*/ {
     )
     return {}
   }
+}
+
+async function didNativeDependencyChange()/*: Promise<boolean>*/ {
+  const diff = await danger.git.JSONDiffForFile('package.json')
+
+  if (!diff.dependencies && !diff.devDependencies) {
+    return false
+  }
+
+  // If we need to, we can add more heuristics here in the future
+  return true
 }
 
 //
