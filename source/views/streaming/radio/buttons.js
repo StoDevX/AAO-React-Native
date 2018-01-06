@@ -23,14 +23,14 @@ export const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
 
 export const CallButton = ({onPress}: {onPress: () => mixed}) => (
   <SmallActionButton
-    icon={Platform.OS === 'ios' ? 'ios-call' : 'android-call'}
+    icon={Platform.OS === 'ios' ? 'ios-call' : 'md-call'}
     onPress={onPress}
   />
 )
 
 export const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
   <SmallActionButton
-    icon={Platform.OS === 'ios' ? 'ios-calendar' : 'android-calendar'}
+    icon={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
     onPress={onPress}
   />
 )
