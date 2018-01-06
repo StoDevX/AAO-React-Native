@@ -30,10 +30,76 @@ branches:
 stages:
   - name: Greenkeeper
     if: branch =~ ^greenkeeper\/
-  - name: Test
   - name: Deploy Data
     if: branch = master AND type != pull_request
   - name: Build + Deploy App
+
+
+#
+# Definitions of dictionaries that are used by the machines below
+#
+
+x-definitions:
+  - &base
+    before_install:
+      # print some travis debugging info
+      - echo "Now testing on $TRAVIS_OS_NAME"
+      - echo "Travis branch is $TRAVIS_BRANCH"
+      - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
+      - echo "Build triggered by $TRAVIS_EVENT_TYPE"
+
+      # force the ruby we want
+      - echo "Using ruby $TRAVIS_RUBY_VERSION (ruby -v says $(ruby -v))"
+      - rvm use $TRAVIS_RUBY_VERSION --install --binary --create
+      - echo "ruby -v is now $(ruby -v)"
+      - gem install bundler
+
+      # force a consistent node version
+      - echo "Using node $TRAVIS_NODE_VERSION (node -v says $(node -v))"
+      - nvm install "$TRAVIS_NODE_VERSION"
+      - nvm use "$TRAVIS_NODE_VERSION"
+      - echo "node -v is now $(node -v)"
+
+      # travis doesn't install yarn automatically on osx
+      - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install yarn --without-node; fi
+      # travis doesn't bundle git-lfs on osx
+      - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install git-lfs; fi
+
+    install:
+      # install packages (if the first fails, try once more)
+      - yarn || yarn
+
+      # install fastlane (if at first you don't succeed, try once more)
+      - bundle install || bundle install
+
+    before_script:
+      # ensure the env file exists and fill it out
+      - touch .env.js
+      - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
+      - echo "export const GOOGLE_MAPS_API_KEY = '$GMAPS_KEY'" >> .env.js
+
+      # disable npm wrapper for npm scripts
+      - npm config set loglevel=silent
+      - mkdir -p logs/
+
+      # download the git-lfs assets
+      - git lfs install
+      - git lfs pull
+
+    after_script:
+      - npm config set loglevel=notice
+      - npm run danger -- --id $task
+
+    before_cache:
+      - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+      - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+  - &simplejs
+    os: linux
+    sudo: false
+    distro: trusty
+    language: node_js
+    node_js: $TRAVIS_NODE_VERSION
 
 
 jobs:
@@ -41,68 +107,22 @@ jobs:
   # To skip the default step, use `step_name: skip`.
   include:
     # Run greenkeeper stuff
-    - stage: Greenkeeper
-      os: linux
-      sudo: false
-      language: node_js
-      node_js: node # install the latest node
-      env: [GREENKEEPER=yes]
-      before_install: skip
+    - <<: *simplejs
+      stage: Greenkeeper
+      env: [task=GREENKEEPER]
       install: npm install -g greenkeeper-lockfile@1
-      before_script: skip
       script: greenkeeper-lockfile-update
       after_script: greenkeeper-lockfile-upload
 
-    # Do node "tests"
-    - stage: Test
-      os: linux
-      sudo: false
-      distro: trusty
-      language: node_js
-      node_js: $TRAVIS_NODE_VERSION
-      env: [JS=yes]
-      before_install:
-        - npm install -g coveralls
-      install:
-        - yarn || yarn
-      before_script:
-        - echo "loglevel=silent" >> .npmrc
-        - mkdir -p logs/
-      script:
-        # Ensure failing status in the pipes
-        - set -o pipefail
-        # Ensure prettiness
-        - npm run prettier
-        - if ! git diff --quiet ./*.js source/; then
-            git diff ./*.js source/ > logs/prettier;
-          fi
-        # Lint
-        - npm run lint | tee logs/eslint
-        # Validate data
-        - npm run validate-data -- --quiet | tee logs/validate-data
-        - npm run validate-bus-data | tee logs/validate-bus-data
-        - npm run bundle-data
-        # Type check and run tests
-        - npm run flow -- check --quiet | tee logs/flow
-        - npm run test -- --coverage 2>&1 | tee logs/jest
-      after_script:
-        - npm run danger
-      after_success:
-        - coveralls < ./coverage/lcov.info
-
     # Deploy the gh-pages data
-    - stage: Deploy Data
-      os: linux
-      sudo: false
-      distro: trusty
-      language: node_js
-      node_js: $TRAVIS_NODE_VERSION
-      env: [GH_PAGES=yes]
-      before_install: skip
-      install:
-        - yarn || yarn
-      before_script: skip
-      script: npm run bundle-data
+    - <<: *simplejs
+      stage: Deploy Data
+      env: [task=GH_PAGES]
+      install: yarn || yarn
+      script:
+        - npm run validate-bus-data
+        - npm run validate-data
+        - npm run bundle-data
       deploy:
         provider: pages
         skip_cleanup: true
@@ -110,12 +130,13 @@ jobs:
         local_dir: docs/
 
     # Build/deploy the Android binary
-    - stage: Build + Deploy
+    - <<: *base
+      stage: Build + Deploy
       os: linux
       sudo: required
       distro: trusty
       language: android
-      env: [ANDROID=yes]
+      env: [task=ANDROID]
       android:
         components:
           - tools
@@ -133,75 +154,22 @@ jobs:
           - extra-android-m2repository
           - extra-google-m2repository
       script:
-        - bundle exec fastlane android ci-run
+        - bundle exec fastlane android ci-run | tee ./logs/build
 
     # Build/deploy the iOS binary
-    - stage: Build + Deploy
+    - <<: *base
+      stage: Build + Deploy
       os: osx
       language: objective-c
-      osx_image: xcode9
-      env: [IOS=yes]
+      osx_image: xcode9.2
+      env: [task=IOS]
       script:
-        - bundle exec fastlane ios ci-run
-
-#
-# All of the keys down here are used in each build stage, unless they're overridden.
-#
-
-before_install:
-  # print some travis debugging info
-  - echo "Now testing on $TRAVIS_OS_NAME"
-  - echo "Travis branch is $TRAVIS_BRANCH"
-  - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
-  - echo "Build triggered by $TRAVIS_EVENT_TYPE"
-
-  # force the ruby we want
-  - echo "Using ruby $TRAVIS_RUBY_VERSION (ruby -v says $(ruby -v))"
-  - rvm use $TRAVIS_RUBY_VERSION --install --binary --create
-  - echo "ruby -v is now $(ruby -v)"
-  - gem install bundler
-
-  # force a consistent node version
-  - echo "Using node $TRAVIS_NODE_VERSION (node -v says $(node -v))"
-  - nvm install "$TRAVIS_NODE_VERSION"
-  - nvm use "$TRAVIS_NODE_VERSION"
-  - echo "node -v is now $(node -v)"
-
-  # travis doesn't install yarn automatically on osx
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install yarn --without-node; fi
-  # travis doesn't bundle git-lfs on osx
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install git-lfs; fi
-
-
-install:
-  # install packages (if the first fails, try once more)
-  - yarn || yarn
-
-  # install fastlane (if at first you don't succeed, try once more)
-  - bundle install || bundle install
-
-
-before_script:
-  # ensure the env file exists and fill it out
-  - touch .env.js
-  - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
-  - echo "export const GOOGLE_MAPS_API_KEY = '$GMAPS_KEY'" >> .env.js
-
-  # disable npm wrapper for npm scripts
-  - echo "loglevel=silent" >> .npmrc
-
-  # download the git-lfs assets
-  - git lfs install
-  - git lfs pull
-
-
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-  - rm -rf $TMPDIR/jest_preprocess_cache
+        - bundle exec fastlane ios ci-run | tee ./logs/build
+        - python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
 
 cache:
   bundler: true
+  yarn: true
   directories:
     - $HOME/.gradle
     - $HOME/.gradle/wrapper/
