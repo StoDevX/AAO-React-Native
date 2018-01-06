@@ -1,7 +1,8 @@
 // @flow
 
 import * as React from 'react'
-import {ScrollView} from 'react-native'
+import {View} from 'react-native'
+import glamorous from 'glamorous-native'
 import {Card} from '../components/card'
 import {Button} from '../components/button'
 import deviceInfo from 'react-native-device-info'
@@ -80,15 +81,45 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
 
   render() {
     return (
-      <ScrollView>
-        <Card footer={this.state.status} header="Report a WiFi Problem!">
-          <Button
-            disabled={this.state.status !== ''}
-            onPress={this.start}
-            title="Report"
-          />
+      <View>
+        <Card footer={this.state.status}>
+          <Container>
+            <Title selectable={true}>Report a Wi-Fi Problem</Title>
+            <Description selectable={true}>
+              If you are having an issue connecting to any of the St. Olaf
+              College Wi-Fi networks, please tap the button below.
+            </Description>
+            <Description selectable={true}>
+              We will record your current location and what device you are
+              using, then send it to a server that IT maintains. They are
+              planning to look closely at where people are having issues!
+            </Description>
+            <Button
+              disabled={this.state.status !== ''}
+              onPress={this.start}
+              title="Report"
+            />
+          </Container>
         </Card>
-      </ScrollView>
+      </View>
     )
   }
 }
+
+const Title = glamorous.text({
+  fontWeight: '700',
+  fontSize: 16,
+  marginVertical: 15,
+})
+
+const Description = glamorous.text({
+  fontSize: 14,
+  marginBottom: 15,
+  justifyContent: 'space-between',
+  alignItems: 'center',
+})
+
+const Container = glamorous.scrollView({
+  paddingHorizontal: 10,
+  paddingVertical: 5,
+})
