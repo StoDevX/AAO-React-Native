@@ -699,6 +699,7 @@ function readLogFile(filename /*: string*/) {
   return readFile(filename).trim()
 }
 
+// eslint-disable-next-line no-unused-vars
 function readJsonLogFile(filename /*: string*/) {
   try {
     return JSON.parse(readFile(filename))
@@ -748,7 +749,7 @@ function parseXcodeProject(pbxprojPath /*: string*/) /*: Promise<Object>*/ {
   })
 }
 
-// eslint-ignore-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
 async function listZip(filepath /*: string*/) {
   try {
     const {stdout} = await execFile('unzip', ['-l', filepath])
@@ -774,7 +775,6 @@ async function listZip(filepath /*: string*/) {
   }
 }
 
-// eslint-ignore-next-line no-unused-vars
 function listDirectory(dirpath /*: string*/) {
   try {
     return fs.readdirSync(dirpath)
@@ -784,7 +784,7 @@ function listDirectory(dirpath /*: string*/) {
   }
 }
 
-// eslint-ignore-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
 function listDirectoryTree(dirpath /*: string*/) /*: any*/ {
   try {
     const exists = fs.accessSync(dirpath, fs.F_OK)
