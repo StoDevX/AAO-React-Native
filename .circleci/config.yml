@@ -1,14 +1,5 @@
 version: 2
 
-x-config:
-  - &restore-cache-yarn
-    keys:
-      - 'v1-dependencies-{{ checksum "yarn.lock" }}'
-      - v1-dependencies-
-  - &save-cache-yarn
-    paths: [node_modules]
-    key: 'v1-dependencies-{{ checksum "yarn.lock" }}'
-
 workflows:
   version: 2
   analyze:
@@ -22,16 +13,21 @@ workflows:
 
 jobs:
   danger:
-    docker: {image: 'circleci/node:8'}
+    docker: [{image: 'circleci/node:8'}]
     steps:
       - checkout
-      - restore_cache: *restore-cache-yarn
+      - restore_cache: &restore-cache-yarn
+          keys:
+            - 'v1-dependencies-{{ checksum "yarn.lock" }}'
+            - v1-dependencies-
       - run: yarn install
-      - save_cache: *save-cache-yarn
+      - save_cache: &save-cache-yarn
+          paths: [node_modules]
+          key: 'v1-dependencies-{{ checksum "yarn.lock" }}'
       - run: echo yarn danger --id JS-general
 
   flow:
-    docker: {image: 'circleci/node:8'}
+    docker: [{image: 'circleci/node:8'}]
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -41,7 +37,7 @@ jobs:
       - run: yarn flow check --quiet | tee logs/flow
 
   jest:
-    docker: {image: 'circleci/node:8'}
+    docker: [{image: 'circleci/node:8'}]
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -51,7 +47,7 @@ jobs:
       - run: yarn test --coverage
 
   prettier:
-    docker: {image: 'circleci/node:8'}
+    docker: [{image: 'circleci/node:8'}]
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -65,7 +61,7 @@ jobs:
           fi
 
   eslint:
-    docker: {image: 'circleci/node:8'}
+    docker: [{image: 'circleci/node:8'}]
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -75,7 +71,7 @@ jobs:
       - run: yarn lint
 
   data:
-    docker: {image: 'circleci/node:8'}
+    docker: [{image: 'circleci/node:8'}]
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
