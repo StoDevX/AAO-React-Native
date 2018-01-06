@@ -34,7 +34,7 @@ jobs:
       - run: yarn install
       - save_cache: *save-cache-yarn
       - run: yarn bundle-data
-      - run: yarn flow check --quiet | tee logs/flow
+      - run: yarn flow check --quiet
 
   jest:
     docker: [{image: 'circleci/node:8'}]
@@ -53,12 +53,7 @@ jobs:
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
-      - run: touch logs/prettier
       - run: yarn prettier
-      - run: |
-          if ! git diff --quiet ./*.js source/; then
-            git diff ./*.js source/ > logs/prettier;
-          fi
 
   eslint:
     docker: [{image: 'circleci/node:8'}]
