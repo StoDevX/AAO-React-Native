@@ -6,6 +6,9 @@ import {danger, schedule, markdown, warn, fail} from 'danger'
 // danger plugins
 import yarn from 'danger-plugin-yarn'
 
+// utilities
+import plist from 'simple-plist'
+
 async function main() {
   const taskName = String(process.env.task)
 
@@ -110,6 +113,7 @@ async function runJSのGeneral() {
   await flowAnnotated()
   await bigPr()
   await exclusionaryTests()
+  await infoPlist()
 }
 
 // New js files should have `@flow` at the top
@@ -158,6 +162,48 @@ function bigPr() {
   }
 }
 
+
+// Make sure the Info.plist `NSLocationWhenInUseUsageDescription` didn't switch to entities
+function infoPlist() {
+  const infoPlistChanged = danger.git.modified_files.find(filepath =>
+    filepath.endsWith('Info.plist'),
+  )
+  if (!infoPlistChanged) {
+    return
+  }
+
+  const parsed = plist.parse(readFile(infoPlistChanged))
+  const descKeysWithEntities = Object.keys(parsed)
+    .filter(key => key.endsWith('Description'))
+    .filter(key => parsed[key].includes("'")) // look for single quotes
+
+  if (!descKeysWithEntities.length) {
+    return
+  }
+
+  warn(
+    h.details(
+      h.summary(
+        'Some Info.plist descriptions were rewritten by something to include single quotes.',
+      ),
+      h.p(
+        "Xcode will rewrite them to use the <code>&amp;apos;</code> XML entity; would you please change them for us, so that Xcode doesn't have to?",
+      ),
+      h.ul(
+        ...descKeysWithEntities.map(key => {
+          const val = entities.encode(parsed[key])
+          const escaped = entities.encode(val.replace(/'/g, '&apos;'))
+          return h.li(
+            h.p(h.code(key) + ':'),
+            h.blockquote(val),
+            h.p('should become'),
+            h.blockquote(escaped),
+          )
+        }),
+      ),
+    ),
+  )
+}
 
 async function gradle() {
   await buildDotGradle()
@@ -264,6 +310,10 @@ function runJSのPrettier() {
 //
 
 import fs from 'fs'
+
+const {XmlEntities} = require('html-entities')
+export const entities = new XmlEntities()
+
 export const h /*: any*/ = new Proxy(
   {},
   {
