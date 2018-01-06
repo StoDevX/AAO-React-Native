@@ -1,0 +1,193 @@
+// @flow
+
+// danger (removed by danger)
+import {danger, schedule, markdown, warn, fail} from 'danger'
+
+// danger plugins
+import yarn from 'danger-plugin-yarn'
+
+async function main() {
+  const taskName = String(process.env.task)
+
+  switch (taskName) {
+    case 'ANDROID':
+      await runAndroid()
+      break
+    case 'IOS':
+      await runiOS()
+      break
+    case 'GREENKEEPER':
+      await runGreenkeeper()
+      break
+    case 'JS-general':
+      await runJSのGeneral()
+      await yarn()
+      break
+    case 'JS-data':
+      await runJSのData()
+      break
+    case 'JS-flow':
+      await runJSのFlow()
+      break
+    case 'JS-jest':
+      await runJSのJest()
+      break
+    case 'JS-lint':
+      await runJSのLint()
+      break
+    case 'JS-prettier':
+      await runJSのPrettier()
+      break
+    default:
+      warn(`Unknown task name "${taskName}"; Danger cannot report anything.`)
+  }
+}
+
+//
+// task=GREENKEEPER
+//
+
+function runGreenkeeper() {
+  // message('greenkeeper ran')
+}
+
+//
+// task=ANDROID
+//
+
+function runAndroid() {
+}
+
+//
+// task=IOS
+//
+
+function runiOS() {
+}
+
+//
+// task=JS-data
+//
+
+async function runJSのData() {
+  await runJSのDataのData()
+  await runJSのDataのBusData()
+}
+
+function runJSのDataのData() {
+}
+
+function runJSのDataのBusData() {
+}
+
+//
+// task=JS-general
+//
+
+async function runJSのGeneral() {
+  await flowAnnotated()
+  await bigPr()
+  await exclusionaryTests()
+}
+
+// New js files should have `@flow` at the top
+function flowAnnotated() {
+  danger.git.created_files
+    .filter(path => path.endsWith('.js'))
+    // except for those in /flow-typed
+    .filter(filepath => !filepath.includes('flow-typed'))
+    .filter(filepath => !readFile(filepath).includes('@flow'))
+    .forEach(file =>
+      warn(`<code>${file}</code> has no <code>@flow</code> annotation!`),
+    )
+}
+
+// Warn if tests have been enabled to the exclusion of all others
+function exclusionaryTests() {
+  danger.git.created_files
+    .filter(filepath => filepath.endsWith('.test.js'))
+    .map(filepath => ({filepath, content: readFile(filepath)}))
+    .filter(
+      ({content}) =>
+        content.includes('it.only') || content.includes('describe.only'),
+    )
+    .forEach(({filepath}) =>
+      warn(
+        `An <code>only</code> was left in ${filepath} – no other tests can run.`,
+      ),
+    )
+}
+
+// Warn when PR size is large (mainly for hawken)
+function bigPr() {
+  const bigPRThreshold = 400 // lines
+  const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
+  if (thisPRSize > bigPRThreshold) {
+    warn(
+      h.details(
+        h.summary(
+          `Big PR! We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.`,
+        ),
+        h.p(
+          'If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.',
+        ),
+      ),
+    )
+  }
+}
+
+
+async function gradle() {
+  await buildDotGradle()
+  await mainDotJava()
+  await settingsDotGradleSpacing()
+}
+
+// Ensure that the build.gradle dependencies list is sorted
+function buildDotGradle() {
+}
+
+// Ensure that the MainApplication.java imports list is sorted
+function mainDotJava() {
+}
+
+// Enforce spacing in the settings.gradle file
+function settingsDotGradleSpacing() {
+}
+
+//
+// task=JS-flow
+//
+
+function runJSのFlow() {
+}
+
+//
+// JS-jest
+//
+
+function runJSのJest() {
+}
+
+//
+// JS-lint
+//
+
+function runJSのLint() {
+}
+
+//
+// JS-prettier
+//
+
+function runJSのPrettier() {
+}
+
+//
+// Utilities
+//
+
+//
+// Run the file
+//
+schedule(main)
