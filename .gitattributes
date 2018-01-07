@@ -1,6 +1,2 @@
 *.pbxproj -text
 flow-typed/npm/* linguist-vendored
-images/buildinghours/*/*.jpg filter=lfs diff=lfs merge=lfs -text
-images/buildinghours/*/*.png filter=lfs diff=lfs merge=lfs -text
-images/contacts/*/*.jpg filter=lfs diff=lfs merge=lfs -text
-images/contacts/*/*.png filter=lfs diff=lfs merge=lfs -text
