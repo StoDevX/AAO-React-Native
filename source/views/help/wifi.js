@@ -116,7 +116,7 @@ const Description = glamorous.text({
   fontSize: 14,
   marginBottom: 15,
   justifyContent: 'space-between',
-  alignItems: 'center',
+  textAlign: 'center',
 })
 
 const styles = StyleSheet.create({
