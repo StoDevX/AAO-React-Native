@@ -1,3 +1,6 @@
+# coding: utf-8
+require 'json'
+
 platform :ios do
   desc 'Runs all the tests'
   lane :test do
@@ -24,14 +27,33 @@ platform :ios do
 
   desc 'Checks that the app can be built'
   lane :check_build do
-    propagate_version
-    xcodebuild(
-      build: true,
-      scheme: ENV['GYM_SCHEME'],
-      project: ENV['GYM_PROJECT'],
-      destination: 'generic/platform=iOS',
-      xcargs: 'CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""'
-    )
+    # fetch the directory where Xcode will put the .app
+    settings = FastlaneCore::Helper.backticks(%(xcodebuild -showBuildSettings -configuration Debug -scheme "#{ENV['GYM_SCHEME']}" -project "../#{ENV['GYM_PROJECT']}" -destination 'generic/platform=iOS'))
+    products_dir = settings.split("\n").select { |line| line =~ /\bBUILT_PRODUCTS_DIR =/ }.uniq
+    products_dir = products_dir.map { |entry| entry.gsub(/.*BUILT_PRODUCTS_DIR = /, '') }
+    products = products_dir.map { |entry| entry + "/#{ENV['GYM_OUTPUT_NAME']}.app/" }
+
+    # save it to a log file for later use
+    FileUtils.mkdir_p('../logs')
+    File.open('../logs/products', 'w') { |file| file.write(products.to_json) }
+
+    # build the .app
+    build_status = 0
+    begin
+      propagate_version
+      xcodebuild(
+        build: true,
+        scheme: ENV['GYM_SCHEME'],
+        project: ENV['GYM_PROJECT'],
+        destination: 'generic/platform=iOS',
+        xcargs: %(CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="")
+      )
+    rescue IOError => e
+      build_status = 1
+      raise e
+    ensure
+      File.open('../logs/build-status', 'w') { |file| file.write(build_status.to_s) }
+    end
   end
 
   desc 'Builds and exports the app'

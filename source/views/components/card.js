@@ -28,17 +28,14 @@ const cardStyles = StyleSheet.create({
   },
 })
 
-export function Card({
-  header,
-  footer,
-  children,
-  style,
-}: {
+type Props = {
   header?: string,
   footer?: string,
   children?: any,
   style?: any,
-}) {
+}
+
+export function Card({header, footer, children, style}: Props) {
   return (
     <View style={[cardStyles.card, style]}>
       {header ? (
