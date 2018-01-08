@@ -1,13 +1,14 @@
+---
 version: 2
 
 x-config:
   - &restore-cache-yarn
-      keys:
-        - 'v2-dependencies-{{ checksum "yarn.lock" }}'
-        - 'v2-dependencies-'
+    keys:
+      - 'v2-dependencies-{{ checksum "yarn.lock" }}'
+      - 'v2-dependencies-'
   - &save-cache-yarn
-      paths: [~/.cache/yarn]
-      key: 'v2-dependencies-{{ checksum "yarn.lock" }}'
+    paths: [~/.cache/yarn]
+    key: 'v2-dependencies-{{ checksum "yarn.lock" }}'
 
 workflows:
   version: 2
