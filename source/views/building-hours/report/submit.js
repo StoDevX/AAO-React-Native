@@ -4,7 +4,7 @@ import jsYaml from 'js-yaml'
 import type {BuildingType} from '../types'
 import {email} from 'react-native-communications'
 import querystring from 'querystring'
-import {GH_NEW_ISSUE_URL} from '../../globals'
+import {GH_NEW_ISSUE_URL} from '../../../globals'
 
 export function submitReport(current: BuildingType, suggestion: BuildingType) {
   // calling trim() on these to remove the trailing newlines
