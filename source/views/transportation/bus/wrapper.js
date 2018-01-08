@@ -9,7 +9,6 @@ import LoadingView from '../../components/loading'
 import type {TopLevelViewPropsType} from '../../types'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../../lib/report-network-problem'
-
 import * as defaultData from '../../../../docs/bus-times.json'
 import {GH_PAGES_URL} from '../../../globals'
 

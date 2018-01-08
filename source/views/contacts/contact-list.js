@@ -13,7 +13,6 @@ import toPairs from 'lodash/toPairs'
 import * as c from '../components/colors'
 import type {ContactType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-
 import {GH_PAGES_URL} from '../../globals'
 
 const GITHUB_URL = GH_PAGES_URL('contact-info.json')
