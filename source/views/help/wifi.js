@@ -3,6 +3,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import glamorous from 'glamorous-native'
+import * as c from '../components/colors'
 import {Card} from '../components/card'
 import {Button} from '../components/button'
 import deviceInfo from 'react-native-device-info'
@@ -51,38 +52,54 @@ function reportToServer(data) {
   return fetch(url, {method: 'POST', body: JSON.stringify(data)})
 }
 
+const messages = {
+  init: 'Report',
+  collecting: 'Collecting data…',
+  reporting: 'Reporting data…',
+  done: 'Thanks!',
+  error: 'Try again?',
+}
+
 type Props = {}
 
 type State = {
-  status: string,
+  error: ?string,
+  status: $Keys<typeof messages>,
 }
 
 export class ReportWifiProblemView extends React.Component<Props, State> {
   state = {
-    status: '',
+    error: null,
+    status: 'init',
   }
 
   start = async () => {
-    this.setState(() => ({status: 'Collecting data…'}))
+    this.setState(() => ({status: 'collecting', error: ''}))
     const [position, device] = await Promise.all([getPosition(), collectData()])
-    this.setState(() => ({status: 'Reporting data…'}))
+    this.setState(() => ({status: 'reporting'}))
     try {
       let data = {position, device, version: 1}
       await retry(() => reportToServer(data), {retries: 10})
       await delay(1000)
-      this.setState(() => ({status: 'Thanks!'}))
+      this.setState(() => ({status: 'done'}))
     } catch (err) {
       reportNetworkProblem(err)
       this.setState(() => ({
-        status: 'Apologies; there was an error. Please try again later.',
+        error: 'Apologies; there was an error. Please try again later.',
+        status: 'error',
       }))
     }
   }
 
   render() {
+    const buttonMessage = messages[this.state.status] || 'Error'
+    const buttonEnabled =
+      this.state.status === 'init' || this.state.status === 'error'
+
     return (
       <Card style={styles.card}>
         <Title selectable={true}>Report a Wi-Fi Problem</Title>
+
         <Description selectable={true}>
           If you are having an issue connecting to any of the St. Olaf College
           Wi-Fi networks, please tap the button below.
@@ -92,14 +109,21 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
           will record your current location and some general information about
           the device you are using, then send it to a server that IT maintains.
         </Description>
-        <Description selectable={true}>
+        <Description selectable={true} style={styles.lastParagraph}>
           The networking team can then use this information to identify where
           people are having issues!
         </Description>
+
+        {this.state.error ? (
+          <Error>
+            <ErrorMessage selectable={true}>{this.state.error}</ErrorMessage>
+          </Error>
+        ) : null}
+
         <Button
-          disabled={this.state.status !== ''}
+          disabled={!buttonEnabled}
           onPress={this.start}
-          title={this.state.status || 'Report'}
+          title={buttonMessage}
         />
       </Card>
     )
@@ -109,19 +133,33 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
 const Title = glamorous.text({
   fontWeight: '700',
   fontSize: 16,
-  marginVertical: 15,
+  marginBottom: 10,
+  textAlign: 'center',
 })
 
 const Description = glamorous.text({
   fontSize: 14,
-  marginBottom: 15,
-  justifyContent: 'space-between',
-  alignItems: 'center',
+  marginBottom: 10,
+})
+
+const Error = glamorous.view({
+  backgroundColor: c.warning,
+  padding: 10,
+  borderRadius: 5,
+  marginTop: 10,
+  marginBottom: 0,
+})
+
+const ErrorMessage = glamorous.text({
+  fontSize: 14,
 })
 
 const styles = StyleSheet.create({
   card: {
     paddingHorizontal: 20,
-    paddingVertical: 5,
+    paddingVertical: 15,
+  },
+  lastParagraph: {
+    marginBottom: 0,
   },
 })
