@@ -3,6 +3,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import glamorous from 'glamorous-native'
+import * as c from '../components/colors'
 import {Card} from '../components/card'
 import {Button} from '../components/button'
 import deviceInfo from 'react-native-device-info'
@@ -104,6 +105,7 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
     return (
       <Card style={styles.card}>
         <Title selectable={true}>Report a Wi-Fi Problem</Title>
+
         <Description selectable={true}>
           If you are having an issue connecting to any of the St. Olaf College
           Wi-Fi networks, please tap the button below.
@@ -117,6 +119,13 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
           The networking team can then use this information to identify where
           people are having issues!
         </Description>
+
+        {this.state.error ? (
+          <Error>
+            <ErrorMessage selectable={true}>{this.state.error}</ErrorMessage>
+          </Error>
+        ) : null}
+
         <Button
           disabled={!buttonEnabled}
           onPress={this.start}
@@ -137,6 +146,18 @@ const Title = glamorous.text({
 const Description = glamorous.text({
   fontSize: 14,
   marginBottom: 10,
+})
+
+const Error = glamorous.view({
+  backgroundColor: c.warning,
+  padding: 10,
+  borderRadius: 5,
+  marginTop: 10,
+  marginBottom: 0,
+})
+
+const ErrorMessage = glamorous.text({
+  fontSize: 14,
 })
 
 const styles = StyleSheet.create({
