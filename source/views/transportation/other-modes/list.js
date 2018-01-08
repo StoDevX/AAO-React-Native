@@ -13,9 +13,9 @@ import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import type {TopLevelViewPropsType} from '../../types'
 import type {OtherModeType} from '../types'
+import {GH_PAGES_URL} from '../../../globals'
 
-const GITHUB_URL =
-  'https://stodevx.github.io/AAO-React-Native/transportation.json'
+const transportationUrl = GH_PAGES_URL('transportation.json')
 
 const groupModes = (modes: OtherModeType[]) => {
   const grouped = groupBy(modes, m => m.category)
@@ -70,7 +70,7 @@ export class OtherModesView extends React.PureComponent<Props, State> {
   }
 
   fetchData = async () => {
-    let {data: modes} = await fetchJson(GITHUB_URL).catch(err => {
+    let {data: modes} = await fetchJson(transportationUrl).catch(err => {
       reportNetworkProblem(err)
       return defaultData
     })

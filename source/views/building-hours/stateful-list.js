@@ -13,10 +13,10 @@ import {reportNetworkProblem} from '../../lib/report-network-problem'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import delay from 'delay'
-
 import {CENTRAL_TZ} from './lib'
-const githubBaseUrl =
-  'https://stodevx.github.io/AAO-React-Native/building-hours.json'
+import {GH_PAGES_URL} from '../../globals'
+
+const buildingHoursUrl = GH_PAGES_URL('building-hours.json')
 
 const groupBuildings = (buildings: BuildingType[], favorites: string[]) => {
   const favoritesGroup = {
@@ -109,7 +109,7 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
   }
 
   fetchData = async () => {
-    let {data: buildings} = await fetchJson(githubBaseUrl).catch(err => {
+    let {data: buildings} = await fetchJson(buildingHoursUrl).catch(err => {
       reportNetworkProblem(err)
       return defaultData
     })

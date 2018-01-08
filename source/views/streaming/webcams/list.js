@@ -10,8 +10,9 @@ import {Column} from '../../components/layout'
 import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
+import {GH_PAGES_URL} from '../../../globals'
 
-const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/webcams.json'
+const webcamsUrl = GH_PAGES_URL('webcams.json')
 
 type Props = {}
 
@@ -66,7 +67,7 @@ export class WebcamsView extends React.PureComponent<Props, State> {
   fetchData = async () => {
     this.setState(() => ({loading: true}))
 
-    let {data: webcams} = await fetchJson(GITHUB_URL).catch(err => {
+    let {data: webcams} = await fetchJson(webcamsUrl).catch(err => {
       reportNetworkProblem(err)
       return defaultData
     })
