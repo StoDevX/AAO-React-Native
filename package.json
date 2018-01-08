@@ -121,7 +121,7 @@
     "eslint-plugin-flowtype": "2.41.0",
     "eslint-plugin-react": "7.5.1",
     "eslint-plugin-react-native": "3.2.0",
-    "flow-bin": "0.57.3",
+    "flow-bin": "0.61.0",
     "jest": "22.0.4",
     "js-yaml": "3.10.0",
     "junk": "2.1.0",
