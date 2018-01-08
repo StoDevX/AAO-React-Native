@@ -1,15 +1,30 @@
 # coding: utf-8
+require 'json'
+
 platform :android do
   desc 'Makes a build'
   lane :build do |options|
-    propagate_version(track: options[:track])
+    FileUtils.mkdir_p('../logs')
 
-    gradle(task: 'assemble',
-           build_type: 'Release',
-           print_command: true,
-           print_command_output: true)
+    build_status = 0
+    begin
+      propagate_version(track: options[:track])
+      gradle(task: 'assemble',
+             build_type: 'Release',
+             print_command: true,
+             print_command_output: true)
+    rescue IOError => e
+      build_status = 1
+      raise e
+    ensure
+      File.open('../logs/build-status', 'w') { |file| file.write(build_status.to_s) }
+    end
 
+    UI.message 'Generated files:'
     UI.message lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS]
+
+    output = lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].to_json
+    File.open('../logs/products', 'w') { |file| file.write(output) }
   end
 
   desc 'Checks that the app builds'

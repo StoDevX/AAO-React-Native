@@ -1,0 +1,111 @@
+version: 2
+
+x-config:
+  - &restore-cache-yarn
+      keys:
+        - 'v2-dependencies-{{ checksum "yarn.lock" }}'
+        - 'v2-dependencies-'
+  - &save-cache-yarn
+      paths: [~/.cache/yarn]
+      key: 'v2-dependencies-{{ checksum "yarn.lock" }}'
+
+workflows:
+  version: 2
+  analyze:
+    jobs:
+      - danger
+      - flow
+      - jest
+      - prettier
+      - eslint
+      - data
+
+jobs:
+  danger:
+    docker: [{image: 'circleci/node:8'}]
+    environment: {task: JS-general}
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install
+      - save_cache: *save-cache-yarn
+      - run: yarn run danger --id $task
+
+  flow:
+    docker: [{image: 'circleci/node:8'}]
+    environment: {task: JS-flow}
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install
+      - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
+      - run: yarn run bundle-data
+      - run: yarn run --silent flow check --quiet | tee logs/flow
+      - run: yarn run danger --id $task
+
+  jest:
+    docker: [{image: 'circleci/node:8'}]
+    environment: {task: JS-jest}
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install
+      - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
+      - run: yarn run bundle-data
+      - run: yarn run --silent test --coverage 2>&1 | tee logs/jest
+      - run: yarn run danger --id $task
+      - run: yarn global add coveralls
+      - run:
+          name: coveralls
+          command: |
+            export PATH=$PATH:$(yarn global bin)
+            export COVERALLS_SERVICE_NAME=CircleCI
+            export COVERALLS_SERVICE_JOB_ID=$CIRCLE_BUILD_NUM
+            coveralls < ./coverage/lcov.info
+
+  prettier:
+    docker: [{image: 'circleci/node:8'}]
+    environment: {task: JS-prettier}
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install
+      - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
+      - run: yarn run prettier
+      - run:
+          name: git diff
+          command: |
+            touch logs/prettier  # to ensure that the file exists
+            if ! git diff --quiet *.js source/ scripts/; then
+              git diff *.js source/ scripts/ | tee logs/prettier
+            fi
+      - run: yarn run danger --id $task
+
+  eslint:
+    docker: [{image: 'circleci/node:8'}]
+    environment: {task: JS-lint}
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install
+      - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
+      - run: yarn run bundle-data
+      - run: yarn run --silent lint | tee logs/eslint
+      - run: yarn run danger --id $task
+
+  data:
+    docker: [{image: 'circleci/node:8'}]
+    environment: {task: JS-data}
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install
+      - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
+      - run: yarn run --silent validate-data --quiet | tee logs/validate-data
+      - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
+      - run: yarn run danger --id $task
