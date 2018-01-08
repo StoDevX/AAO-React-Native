@@ -13,9 +13,9 @@ import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import type {TopLevelViewPropsType} from '../../types'
 import type {OtherModeType} from '../types'
+import {GH_PAGES_URL} from '../../../globals'
 
-const GITHUB_URL =
-  'https://stodevx.github.io/AAO-React-Native/transportation.json'
+const GITHUB_URL = GH_PAGES_URL('transportation.json')
 
 const groupModes = (modes: OtherModeType[]) => {
   const grouped = groupBy(modes, m => m.category)
