@@ -1,11 +1,26 @@
 // @flow
 
 import * as React from 'react'
-import {ScrollView, StyleSheet} from 'react-native'
+import {ScrollView, StyleSheet, View, Text} from 'react-native'
+import * as wifi from './wifi'
+import * as helpdesk from './helpdesk'
+import * as facilities from './facilities'
 
-import {ReportWifiProblemView} from './wifi'
+export type ReportProblemToolNamesEnum =
+  | wifi.ToolName
+  | facilities.ToolName
+  | helpdesk.ToolName
 
-type Props = {}
+export type ReportProblemToolOptions = {
+  wifi?: wifi.ToolOptions,
+  'it-helpdesk'?: helpdesk.ToolOptions,
+  'facilities-work-order'?: facilities.ToolOptions,
+}
+
+type Props = {
+  enabledTools: Array<ReportProblemToolNamesEnum>,
+  toolOptions: ReportProblemToolOptions,
+}
 
 export default class HelpView extends React.Component<Props> {
   static navigationOptions = {
@@ -13,16 +28,32 @@ export default class HelpView extends React.Component<Props> {
   }
 
   render() {
+    const allTools = [wifi, helpdesk, facilities]
+    const enabled = allTools
+      .filter(tool => this.props.enabledTools.includes(tool.toolName))
+      .map(tool => (
+        <tool.ToolView
+          key={tool.toolName}
+          options={this.props.toolOptions[tool.toolName]}
+        />
+      ))
+
     return (
       <ScrollView style={styles.contentContainer}>
-        <ReportWifiProblemView />
+        {enabled.length ? enabled : <EmptyListView />}
       </ScrollView>
     )
   }
 }
 
+const EmptyListView = () => (
+  <View>
+    <Text>No tools are enabled.</Text>
+  </View>
+)
+
 const styles = StyleSheet.create({
   contentContainer: {
-    padding: 10,
+    paddingTop: 10,
   },
 })

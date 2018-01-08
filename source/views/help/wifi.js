@@ -2,55 +2,17 @@
 
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import glamorous from 'glamorous-native'
-import * as c from '../components/colors'
 import {Card} from '../components/card'
 import {Button} from '../components/button'
-import deviceInfo from 'react-native-device-info'
-import networkInfo from 'react-native-network-info'
 import retry from 'p-retry'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
-import pkg from '../../../package.json'
+import {Title, Description, Error, ErrorMessage} from './components'
+import {getPosition, collectData, reportToServer} from './wifi-tools'
 
-const getIpAddress = () =>
-  new Promise(resolve => {
-    try {
-      networkInfo.getIPAddress(resolve)
-    } catch (err) {
-      resolve(null)
-    }
-  })
-
-const getPosition = (args = {}) =>
-  new Promise(resolve => {
-    navigator.geolocation.getCurrentPosition(resolve, () => resolve({}), {
-      ...args,
-      enableHighAccuracy: true,
-      maximumAge: 1000 /*ms*/,
-      timeout: 5000 /*ms*/,
-    })
-  })
-
-const collectData = async () => ({
-  id: deviceInfo.getUniqueID(),
-  brand: deviceInfo.getBrand(),
-  model: deviceInfo.getModel(),
-  deviceKind: deviceInfo.getDeviceId(),
-  os: deviceInfo.getSystemName(),
-  osVersion: deviceInfo.getSystemVersion(),
-  appVersion: deviceInfo.getReadableVersion(),
-  jsVersion: pkg.version,
-  ua: deviceInfo.getUserAgent(),
-  ip: await getIpAddress(),
-  dateRecorded: new Date().toJSON(),
-})
-
-function reportToServer(data) {
-  const url =
-    'https://www.stolaf.edu/apps/all-about-olaf/index.cfm?fuseaction=Submit'
-  return fetch(url, {method: 'POST', body: JSON.stringify(data)})
-}
+export type ToolName = 'wifi'
+export const toolName: ToolName = 'wifi'
+export type ToolOptions = {||}
 
 const messages = {
   init: 'Report',
@@ -67,7 +29,7 @@ type State = {
   status: $Keys<typeof messages>,
 }
 
-export class ReportWifiProblemView extends React.Component<Props, State> {
+export class ToolView extends React.Component<Props, State> {
   state = {
     error: null,
     status: 'init',
@@ -130,34 +92,11 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
   }
 }
 
-const Title = glamorous.text({
-  fontWeight: '700',
-  fontSize: 16,
-  marginBottom: 10,
-  textAlign: 'center',
-})
-
-const Description = glamorous.text({
-  fontSize: 14,
-  marginBottom: 10,
-})
-
-const Error = glamorous.view({
-  backgroundColor: c.warning,
-  padding: 10,
-  borderRadius: 5,
-  marginTop: 10,
-  marginBottom: 0,
-})
-
-const ErrorMessage = glamorous.text({
-  fontSize: 14,
-})
-
 const styles = StyleSheet.create({
   card: {
     paddingHorizontal: 20,
     paddingVertical: 15,
+    marginBottom: 15,
   },
   lastParagraph: {
     marginBottom: 0,
