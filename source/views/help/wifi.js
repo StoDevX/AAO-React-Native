@@ -113,7 +113,7 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
           will record your current location and some general information about
           the device you are using, then send it to a server that IT maintains.
         </Description>
-        <Description selectable={true}>
+        <Description selectable={true} style={styles.lastParagraph}>
           The networking team can then use this information to identify where
           people are having issues!
         </Description>
@@ -130,19 +130,21 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
 const Title = glamorous.text({
   fontWeight: '700',
   fontSize: 16,
-  marginVertical: 15,
+  marginBottom: 10,
+  textAlign: 'center',
 })
 
 const Description = glamorous.text({
   fontSize: 14,
-  marginBottom: 15,
-  justifyContent: 'space-between',
-  textAlign: 'center',
+  marginBottom: 10,
 })
 
 const styles = StyleSheet.create({
   card: {
     paddingHorizontal: 20,
-    paddingVertical: 5,
+    paddingVertical: 15,
+  },
+  lastParagraph: {
+    marginBottom: 0,
   },
 })
