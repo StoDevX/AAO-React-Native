@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 
 """Usage: analyze-gym.py < travis-ios-log.log
 
@@ -16,14 +16,16 @@ Options:
   -d          Print the python object for each step
 """
 
+from __future__ import absolute_import
+from __future__ import print_function
 import sys
 import re
 import json
 from pprint import pprint
 from datetime import timedelta
 
-ansi_escape = re.compile(r'\x1b[^m]*m')
-fltime_pattern = r'\[(?P<hours>\d{1,2}):(?P<minutes>\d{1,2}):(?P<seconds>\d{1,2})\]'
+ansi_escape = re.compile(ur'\x1b[^m]*m')
+fltime_pattern = ur'\[(?P<hours>\d{1,2}):(?P<minutes>\d{1,2}):(?P<seconds>\d{1,2})\]'
 fltime_regex = re.compile(fltime_pattern)
 
 
@@ -40,7 +42,7 @@ def to_timedelta(fastlanetime):
     timedelta(days=0, seconds=75162)
     """
     groups = fltime_regex.match(fastlanetime).groupdict()
-    return timedelta(**{k: int(v) for k, v in groups.items()})
+    return timedelta(**dict((k, int(v)) for k, v in groups.items()))
 
 
 def pick(dictionary, *keys):
@@ -49,7 +51,7 @@ def pick(dictionary, *keys):
     >>> pick({1: 'a', 2: 'b'}, 1)
     {1: 'a'}
     """
-    return {k: v for k, v in dictionary.items() if k in keys}
+    return dict((k, v) for k, v in dictionary.items() if k in keys)
 
 
 def unpick(dictionary, *keys):
@@ -58,7 +60,7 @@ def unpick(dictionary, *keys):
     >>> pick({1: 'a', 2: 'b'}, 1)
     {2: 'b'}
     """
-    return {k: v for k, v in dictionary.items() if k not in keys}
+    return dict((k, v) for k, v in dictionary.items() if k not in keys)
 
 
 def pretty_td(delta):
@@ -72,14 +74,14 @@ def pretty_td(delta):
     minutes = (seconds % 3600) // 60
     seconds = (seconds % 60)
     # return days, hours, minutes, seconds
-    return f'{minutes}m {seconds:02}s'
+    return '{}m {:02}s'.format(minutes, seconds)
 
 
 def extract_gym_log(stream):
     """Given a stream of text, extract the chunk that is the
     relevant `gym` log.
     """
-    start_gym_regex = re.compile(fltime_pattern + ': --- Step: gym ---')
+    start_gym_regex = re.compile(fltime_pattern + ': --- Step: (gym|xcodebuild) ---')
     stop_gym_regex = re.compile(fltime_pattern + ': Cruising back')
 
     reading = False
@@ -96,23 +98,23 @@ def extract_gym_log(stream):
             yield line
 
 
-def process(stream, *, verbose=False):
+def process(stream, verbose=False):
     """Given a stream of text, process it into a data structure
     of how long various modules took to run.
     """
 
-    time_regex = r'^(?P<time>' + fltime_pattern + r'): [^ ]+ '
+    time_regex = ur'^(?P<time>' + fltime_pattern + ur'): [^ ]+ '
 
     # Indicates the start of a "module"
-    module_regex = re.compile(time_regex + r'Building (?P<file>.*) \[(?P<mode>.*)\]$')
+    module_regex = re.compile(time_regex + ur'Building (?P<file>.*) \[(?P<mode>.*)\]$')
 
     # The "verbs" are the different things that xcbuild? prints out as the steps go by
     verbs = ['Copying', 'Compiling', 'Building library', 'Linking', 'Processing', 'Generating', 'Running script', 'Touching', 'Signing']
-    action_regex = re.compile(time_regex + f'(?P<action>{"|".join(verbs)}) ' + r'(?P<file>.*)$')
+    action_regex = re.compile(time_regex + '(?P<action>{}) '.format("|".join(verbs)) + ur'(?P<file>.*)$')
 
     # Indicates the end of the log
     # (kinda a duplicate of stop_gym_regex)
-    done_regex = re.compile(time_regex + r'Archive Succeeded')
+    done_regex = re.compile(time_regex + ur'Archive Succeeded')
 
     modules = {}
     current_module_name = None
@@ -125,6 +127,7 @@ def process(stream, *, verbose=False):
         done_match = done_regex.match(line)
 
         if module_match:
+            module_match = module_match.groupdict()
             if current_module_name is not None:
                 # add the "end times" to the just-finished module
                 last_module = modules[current_module_name]
@@ -139,7 +142,7 @@ def process(stream, *, verbose=False):
             modules[current_module_name] = {
                 'start': to_timedelta(module_match['time']),
                 'end': None,
-                'duration': None,
+                'duration': timedelta(seconds=0),
                 'mode': module_match['mode'],
                 'steps': [],
             }
@@ -147,6 +150,7 @@ def process(stream, *, verbose=False):
             continue
 
         elif action_match:
+            action_match = action_match.groupdict()
             if modules[current_module_name].get('steps', None):
                 # add the "end times" to the previous step
                 prior_step = modules[current_module_name]['steps'][-1]
@@ -168,6 +172,7 @@ def process(stream, *, verbose=False):
             })
 
         elif done_match:
+            done_match = done_match.groupdict()
             m = modules[current_module_name]
             m['end'] = to_timedelta(done_match['time'])
             m['duration'] = m['end'] - m['start']
@@ -184,7 +189,7 @@ def process(stream, *, verbose=False):
     return modules
 
 
-def analyze(modules, *, module_duration_filter=10, step_duration_filter=1, debug=False):
+def analyze(modules, module_duration_filter=10, step_duration_filter=1, debug=False):
     """Pretty-print the analysis of how long the various modules
     took to build.
     """
@@ -192,13 +197,13 @@ def analyze(modules, *, module_duration_filter=10, step_duration_filter=1, debug
         if module['duration'] >= timedelta(seconds=module_duration_filter):
             if debug:
                 pprint({name: unpick(module, 'steps')})
-            print(f'{pretty_td(module["duration"])}: {name} [{module["mode"]}]')
+            print('{}: {} [{}]'.format(pretty_td(module["duration"]), name, module["mode"]))
 
             for step in module['steps']:
                 if step['duration'] >= timedelta(seconds=step_duration_filter):
                     if debug:
                         pprint(step)
-                    print(f'  {pretty_td(step["duration"])}: {step["action"]} {step["file"]}')
+                    print('  {}: {} {}'.format(pretty_td(step["duration"]), step["action"], step["file"]))
 
 
 if __name__ == '__main__':
