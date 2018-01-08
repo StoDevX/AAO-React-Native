@@ -10,8 +10,9 @@ import {Column} from '../../components/layout'
 import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
+import {GH_PAGES_URL} from '../../../globals'
 
-const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/webcams.json'
+const GITHUB_URL = GH_PAGES_URL('webcams.json')
 
 type Props = {}
 
