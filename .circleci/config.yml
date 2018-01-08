@@ -7,7 +7,8 @@ x-config:
       - 'v2-dependencies-{{ checksum "yarn.lock" }}'
       - 'v2-dependencies-'
   - &save-cache-yarn
-    paths: [~/.cache/yarn]
+    paths:
+      - ~/.cache/yarn
     key: 'v2-dependencies-{{ checksum "yarn.lock" }}'
 
 workflows:
