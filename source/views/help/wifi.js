@@ -53,11 +53,11 @@ function reportToServer(data) {
 }
 
 const messages = {
-  'init': 'Report',
-  'collecting': 'Collecting data…',
-  'reporting': 'Reporting data…',
-  'done': 'Thanks!',
-  'error': 'Try again?',
+  init: 'Report',
+  collecting: 'Collecting data…',
+  reporting: 'Reporting data…',
+  done: 'Thanks!',
+  error: 'Try again?',
 }
 
 type Props = {}
