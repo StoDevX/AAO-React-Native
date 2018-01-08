@@ -67,19 +67,6 @@ const initialState = {
 }
 export function sis(state: State = initialState, action: Action) {
   switch (action.type) {
-    case UPDATE_OLE_DOLLARS:
-      return {...state, oleBalance: action.payload.balance}
-    case UPDATE_FLEX_DOLLARS:
-      return {...state, flexBalance: action.payload.balance}
-    case UPDATE_PRINT_DOLLARS:
-      return {...state, printBalance: action.payload.balance}
-    case UPDATE_MEALS_DAILY:
-      return {...state, mealsRemainingToday: action.payload.mealsRemaining}
-    case UPDATE_MEALS_WEEKLY:
-      return {...state, mealsRemainingThisWeek: action.payload.mealsRemaining}
-    case UPDATE_MEAL_PLAN:
-      return {...state, mealPlanDescription: action.payload.mealPlan}
-
     case UPDATE_BALANCES_FAILURE:
       return {...state, balancesErrorMessage: action.payload.message}
     case UPDATE_BALANCES_SUCCESS: {
