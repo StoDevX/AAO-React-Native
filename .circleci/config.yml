@@ -9,6 +9,7 @@ x-config:
   - &save-cache-yarn
     paths:
       - ~/.cache/yarn
+      - ./node_modules
     key: 'v2-dependencies-{{ checksum "yarn.lock" }}'
 
 workflows:
