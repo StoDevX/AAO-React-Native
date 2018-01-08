@@ -15,8 +15,9 @@ import groupBy from 'lodash/groupBy'
 import delay from 'delay'
 
 import {CENTRAL_TZ} from './lib'
-const githubBaseUrl =
-  'https://stodevx.github.io/AAO-React-Native/building-hours.json'
+import {GH_PAGES_URL} from '../../globals'
+
+const githubBaseUrl = GH_PAGES_URL('building-hours.json')
 
 const groupBuildings = (buildings: BuildingType[], favorites: string[]) => {
   const favoritesGroup = {
