@@ -20,9 +20,9 @@ export function HomeScreenButton({view, onPress}: Props) {
     return (
       <Touchable onPress={onPress}>
         <LinearGradient
-          start={{x: 0, y: 0.05}}
-          end={{x: 1, y: 0.85}}
           colors={view.gradient}
+          end={{x: 1, y: 0.85}}
+          start={{x: 0, y: 0.05}}
           style={[styles.rectangle]}
         >
           <Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
