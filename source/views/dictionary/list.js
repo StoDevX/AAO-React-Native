@@ -23,7 +23,7 @@ import deburr from 'lodash/deburr'
 import * as defaultData from '../../../docs/dictionary.json'
 import {GH_PAGES_URL} from '../../globals'
 
-const GITHUB_URL = GH_PAGES_URL('dictionary.json')
+const dictionaryUrl = GH_PAGES_URL('dictionary.json')
 
 const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
@@ -85,7 +85,7 @@ export class DictionaryView extends React.PureComponent<Props, State> {
   }
 
   fetchData = async () => {
-    let {data: allTerms} = await fetchJson(GITHUB_URL).catch(err => {
+    let {data: allTerms} = await fetchJson(dictionaryUrl).catch(err => {
       reportNetworkProblem(err)
       return defaultData
     })

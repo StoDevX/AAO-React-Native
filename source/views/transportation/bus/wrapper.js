@@ -14,7 +14,7 @@ import {GH_PAGES_URL} from '../../../globals'
 
 const TIMEZONE = 'America/Winnipeg'
 
-const GITHUB_URL = GH_PAGES_URL('bus-times.json')
+const busTimesUrl = GH_PAGES_URL('bus-times.json')
 
 type Props = TopLevelViewPropsType & {
   +line: string,
@@ -55,7 +55,7 @@ export class BusView extends React.PureComponent<Props, State> {
   }
 
   fetchData = async () => {
-    let {data: busLines} = await fetchJson(GITHUB_URL).catch(err => {
+    let {data: busLines} = await fetchJson(busTimesUrl).catch(err => {
       reportNetworkProblem(err)
       return defaultData
     })
