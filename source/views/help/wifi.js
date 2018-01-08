@@ -54,32 +54,53 @@ function reportToServer(data) {
 type Props = {}
 
 type State = {
-  status: string,
+  error: ?string,
+  status: 'init' | 'collecting' | 'reporting' | 'done' | 'error',
 }
 
 export class ReportWifiProblemView extends React.Component<Props, State> {
   state = {
-    status: '',
+    error: null,
+    status: 'init',
   }
 
   start = async () => {
-    this.setState(() => ({status: 'Collecting data…'}))
+    this.setState(() => ({status: 'collecting', error: ''}))
     const [position, device] = await Promise.all([getPosition(), collectData()])
-    this.setState(() => ({status: 'Reporting data…'}))
+    this.setState(() => ({status: 'reporting'}))
     try {
       let data = {position, device, version: 1}
       await retry(() => reportToServer(data), {retries: 10})
       await delay(1000)
-      this.setState(() => ({status: 'Thanks!'}))
+      this.setState(() => ({status: 'done'}))
     } catch (err) {
       reportNetworkProblem(err)
       this.setState(() => ({
-        status: 'Apologies; there was an error. Please try again later.',
+        error: 'Apologies; there was an error. Please try again later.',
+        status: 'error',
       }))
     }
   }
 
   render() {
+    const buttonEnabled =
+      this.state.status === 'init' || this.state.status === 'error'
+
+    let buttonMessage = 'Error'
+    if (this.state.status === 'init') {
+      buttonMessage = 'Report'
+    } else if (this.state.status === 'collecting') {
+      buttonMessage = 'Collecting data…'
+    } else if (this.state.status === 'reporting') {
+      buttonMessage = 'Reporting data…'
+    } else if (this.state.status === 'done') {
+      buttonMessage = 'Thanks!'
+    } else if (this.state.status === 'error') {
+      buttonMessage = 'Try again?'
+    } else {
+      ;(this.state.status: empty)
+    }
+
     return (
       <Card style={styles.card}>
         <Title selectable={true}>Report a Wi-Fi Problem</Title>
@@ -97,9 +118,9 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
           people are having issues!
         </Description>
         <Button
-          disabled={this.state.status !== ''}
+          disabled={!buttonEnabled}
           onPress={this.start}
-          title={this.state.status || 'Report'}
+          title={buttonMessage}
         />
       </Card>
     )
