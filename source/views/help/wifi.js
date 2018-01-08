@@ -52,11 +52,19 @@ function reportToServer(data) {
   return fetch(url, {method: 'POST', body: JSON.stringify(data)})
 }
 
+const messages = {
+  'init': 'Report',
+  'collecting': 'Collecting data…',
+  'reporting': 'Reporting data…',
+  'done': 'Thanks!',
+  'error': 'Try again?',
+}
+
 type Props = {}
 
 type State = {
   error: ?string,
-  status: 'init' | 'collecting' | 'reporting' | 'done' | 'error',
+  status: $Keys<typeof messages>,
 }
 
 export class ReportWifiProblemView extends React.Component<Props, State> {
@@ -84,23 +92,9 @@ export class ReportWifiProblemView extends React.Component<Props, State> {
   }
 
   render() {
+    const buttonMessage = messages[this.state.status] || 'Error'
     const buttonEnabled =
       this.state.status === 'init' || this.state.status === 'error'
-
-    let buttonMessage = 'Error'
-    if (this.state.status === 'init') {
-      buttonMessage = 'Report'
-    } else if (this.state.status === 'collecting') {
-      buttonMessage = 'Collecting data…'
-    } else if (this.state.status === 'reporting') {
-      buttonMessage = 'Reporting data…'
-    } else if (this.state.status === 'done') {
-      buttonMessage = 'Thanks!'
-    } else if (this.state.status === 'error') {
-      buttonMessage = 'Try again?'
-    } else {
-      ;(this.state.status: empty)
-    }
 
     return (
       <Card style={styles.card}>
