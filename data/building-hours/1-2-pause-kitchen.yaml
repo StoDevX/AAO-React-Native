@@ -3,10 +3,27 @@ image: pause-kitchen
 category: Food
 
 schedule:
-  - title: Finals
+  - title: Daylight
     notes: The late night menu starts at 9 p.m.
     hours:
-      - {days: [Mo], from: '10:30am', to: '6:00pm'}
+      # - {days: [Mo], from: '10:30am', to: '12:00am'}
+      # - {days: [Tu], from: '11:30am', to: '12:00am'}
+      # - {days: [We], from: '10:30am', to: '12:00am'}
+      # - {days: [Th], from: '11:30am', to: '12:00am'}
+      # - {days: [Fr], from: '10:30am', to: '9:00pm'}
+      # - {days: [Sa], from: '11:30am', to: '9:00pm'}
+      # - {days: [Su], from: '11:30am', to: '12:00am'}
+      - {days: [Mo], from: '10:45am', to: '11:00pm'}
+      - {days: [Tu], from: '11:30am', to: '12:00am'}
+      - {days: [We], from: '10:45am', to: '12:00am'}
+      - {days: [Th], from: '11:30am', to: '11:00pm'}
+      - {days: [Fr], from: '11:30am', to: '9:00pm'}
+      - {days: [Sa], from: '11:30am', to: '9:00pm'}
+      - {days: [Su], from: '11:30am', to: '11:00pm'}
+
+  - title: Late Night
+    hours:
+      - {days: [Fr, Sa], from: '9:00pm', to: '2:00am'}
 
 breakSchedule:
   fall: []
