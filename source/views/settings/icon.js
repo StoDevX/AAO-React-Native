@@ -79,6 +79,7 @@ export class IconSettingsView extends React.PureComponent<Props, State> {
         <Section header="CHANGE YOUR APP ICON" separatorInsetLeft={58}>
           {icons.map(icon => (
             <IconCell
+              key={icon.type}
               icon={icon}
               isSelected={selectedIcon === icon.type}
               onPress={this.setIcon}
