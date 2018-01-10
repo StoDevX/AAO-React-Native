@@ -4710,9 +4710,9 @@ react-native-google-analytics-bridge@5.4.1:
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-5.4.1.tgz#fd5dacb86436b7e08f1972a8205229ada2ea2abf"
 
-react-native-keychain@2.0.0-rc:
-  version "2.0.0-rc"
-  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-2.0.0-rc.tgz#2446fc520bc630741e95eb722fe48e44988f4c12"
+react-native-keychain@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-2.0.0.tgz#5e6ae75d66d2737a0b38a95c903b6d6f966dd475"
 
 react-native-linear-gradient@2.4.0:
   version "2.4.0"
