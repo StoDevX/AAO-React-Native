@@ -29,7 +29,6 @@
 		00E9BA651FBBB5CF00E0DFCD /* libSafariViewManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 009845C11E5DEE6800194E4A /* libSafariViewManager.a */; };
 		00E9BA661FBBB5D900E0DFCD /* libDBCustomTabs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 009845B91E5DEE6800194E4A /* libDBCustomTabs.a */; };
 		00E9BA671FBBB5FC00E0DFCD /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00CF91EA1E770EF900DD9CBC /* libBVLinearGradient.a */; };
-		00E9BA681FBBB60400E0DFCD /* libRNSearchBar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00D4C3491EB97C9900733278 /* libRNSearchBar.a */; };
 		00E9BA691FBBB60C00E0DFCD /* libRNNetworkInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00F810AA1EABD6DB008316EB /* libRNNetworkInfo.a */; };
 		00E9BA6A1FBBB61500E0DFCD /* libBugsnagReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00DE0C351E7C3087005F3CE3 /* libBugsnagReactNative.a */; };
 		00E9BA6B1FBBB62100E0DFCD /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67990B4A1EC0FE7A001F5261 /* libAirMaps.a */; };
@@ -283,13 +282,6 @@
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = AllAboutOlaf;
 		};
-		00D4C3481EB97C9900733278 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E288E9E30083441F948E40BF /* RNSearchBar.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNSearchBar;
-		};
 		00DE0C341E7C3087005F3CE3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 59C781128E0B476A8826CD12 /* BugsnagReactNative.xcodeproj */;
@@ -476,7 +468,6 @@
 		CE0A6E16923B40C9930B546C /* ReactNativeCustomTabs.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeCustomTabs.xcodeproj; path = "../node_modules/react-native-custom-tabs/ios/ReactNativeCustomTabs.xcodeproj"; sourceTree = "<group>"; };
 		DBE3B3C3883845C787D391C2 /* RCTRestart.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTRestart.xcodeproj; path = "../node_modules/react-native-restart/ios/RCTRestart.xcodeproj"; sourceTree = "<group>"; };
 		DC6C2290929541198EEBEB60 /* ReactNativeAlternateIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeAlternateIcons.xcodeproj; path = "../node_modules/@hawkrives/react-native-alternate-icons/ReactNativeAlternateIcons.xcodeproj"; sourceTree = "<group>"; };
-		E288E9E30083441F948E40BF /* RNSearchBar.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSearchBar.xcodeproj; path = "../node_modules/@hawkrives/react-native-search-bar/RNSearchBar.xcodeproj"; sourceTree = "<group>"; };
 		E6FBE71A05CC43E2B4885180 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -518,7 +509,6 @@
 				00E9BA651FBBB5CF00E0DFCD /* libSafariViewManager.a in Frameworks */,
 				00E9BA661FBBB5D900E0DFCD /* libDBCustomTabs.a in Frameworks */,
 				00E9BA671FBBB5FC00E0DFCD /* libBVLinearGradient.a in Frameworks */,
-				00E9BA681FBBB60400E0DFCD /* libRNSearchBar.a in Frameworks */,
 				00E9BA6A1FBBB61500E0DFCD /* libBugsnagReactNative.a in Frameworks */,
 				00E9BA691FBBB60C00E0DFCD /* libRNNetworkInfo.a in Frameworks */,
 				00E9BA6B1FBBB62100E0DFCD /* libAirMaps.a in Frameworks */,
@@ -679,14 +669,6 @@
 			);
 			name = "UI Tests";
 			path = AllAboutOlafUITests;
-			sourceTree = "<group>";
-		};
-		00D4C3221EB97C9900733278 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				00D4C3491EB97C9900733278 /* libRNSearchBar.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		00DE0C311E7C3087005F3CE3 /* Products */ = {
@@ -855,7 +837,6 @@
 				828A2E49D4E3430FB2853AFF /* RNDeviceInfo.xcodeproj */,
 				2560C43708D64866AA01FCC8 /* RNKeychain.xcodeproj */,
 				7CEE763ECB05435E8CD79870 /* RNNetworkInfo.xcodeproj */,
-				E288E9E30083441F948E40BF /* RNSearchBar.xcodeproj */,
 				71D5CCADA66D45008D9A38F2 /* RNVectorIcons.xcodeproj */,
 				89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */,
 				DC6C2290929541198EEBEB60 /* ReactNativeAlternateIcons.xcodeproj */,
@@ -1071,10 +1052,6 @@
 				{
 					ProductGroup = 00F810831EABD6DB008316EB /* Products */;
 					ProjectRef = 7CEE763ECB05435E8CD79870 /* RNNetworkInfo.xcodeproj */;
-				},
-				{
-					ProductGroup = 00D4C3221EB97C9900733278 /* Products */;
-					ProjectRef = E288E9E30083441F948E40BF /* RNSearchBar.xcodeproj */;
 				},
 				{
 					ProductGroup = 0027B0951D5C82AA00C2B4FD /* Products */;
@@ -1320,13 +1297,6 @@
 			fileType = archive.ar;
 			path = libBVLinearGradient.a;
 			remoteRef = 00CF91E91E770EF900DD9CBC /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		00D4C3491EB97C9900733278 /* libRNSearchBar.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNSearchBar.a;
-			remoteRef = 00D4C3481EB97C9900733278 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		00DE0C351E7C3087005F3CE3 /* libBugsnagReactNative.a */ = {
@@ -1619,7 +1589,6 @@
 					"$(SRCROOT)/../node_modules/react-native-safari-view",
 					"$(SRCROOT)/../node_modules/react-native-custom-tabs/ios/ReactNativeCustomTabs",
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
-					"$(SRCROOT)/../node_modules/@hawkrives/react-native-search-bar",
 					"$(SRCROOT)/../node_modules/bugsnag-react-native/cocoa/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-network-info/ios",
@@ -1668,7 +1637,6 @@
 					"$(SRCROOT)/../node_modules/react-native-safari-view",
 					"$(SRCROOT)/../node_modules/react-native-custom-tabs/ios/ReactNativeCustomTabs",
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
-					"$(SRCROOT)/../node_modules/@hawkrives/react-native-search-bar",
 					"$(SRCROOT)/../node_modules/bugsnag-react-native/cocoa/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-network-info/ios",
