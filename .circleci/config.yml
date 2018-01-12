@@ -8,6 +8,13 @@ x-config:
   - &save-cache-yarn
     paths: [~/.cache/yarn]
     key: 'v2-dependencies-{{ checksum "yarn.lock" }}'
+  - &restore-cache-bundler
+    keys:
+      - 'v1-dependencies-{{ checksum "Gemfile.lock" }}'
+      - 'v1-dependencies-'
+  - &save-cache-bundler
+    paths: [./vendor/bundle]
+    key: 'v1-dependencies-{{ checksum "Gemfile.lock" }}'
   - &run-danger
     command: yarn run danger --id $task
     when: always
@@ -22,6 +29,8 @@ workflows:
       - prettier
       - eslint
       - data
+      - ios: {requires: [danger, flow, jest, prettier, eslint, data]}
+      - android: {requires: [danger, flow, jest, prettier, eslint, data]}
 
 jobs:
   danger:
@@ -111,4 +120,46 @@ jobs:
       - run: mkdir -p logs/
       - run: yarn run --silent validate-data --quiet | tee logs/validate-data
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
+      - run: *run-danger
+
+  android:
+    docker: {image: circleci/android:api-27-node8-alpha}
+    environment: {task: ANDROID}
+    steps:
+      - checkout
+      - run:
+          name: Set Ruby Version
+          command:  echo "ruby-2.4.2" > ~/.ruby-version
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install
+      - save_cache: *save-cache-yarn
+      - restore_cache: *restore-cache-bundler
+      - run: bundle check || bundle install --path ./vendor/bundle
+      - save_cache: *save-cache-bundler
+      - run: mkdir -p logs/
+      - run: touch .env.js
+      - run: bundle exec fastlane android ci-run | tee ./logs/build
+      - run: *run-danger
+
+  ios:
+    macos: {xcode: '9.2'}
+    environment: {task: IOS}
+    shell: /bin/bash --login -o pipefail
+    steps:
+      - checkout
+      - run:
+          name: Set Ruby Version
+          command:  echo "ruby-2.4.2" > ~/.ruby-version
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install
+      - save_cache: *save-cache-yarn
+      - restore_cache: *restore-cache-bundler
+      - run: bundle check || bundle install --path ./vendor/bundle
+      - save_cache: *save-cache-bundler
+      - run: mkdir -p logs/
+      - run: touch .env.js
+      - run: bundle exec fastlane ios ci-run | tee ./logs/build
+      - run:
+          name: Analyze Fastlane Logfile
+          commane: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
       - run: *run-danger
