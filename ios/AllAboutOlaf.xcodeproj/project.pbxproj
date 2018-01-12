@@ -150,6 +150,20 @@
 			remoteGlobalIDString = 3245CDED1BFEE35C00EABF68;
 			remoteInfo = RCTRestart;
 		};
+		0078609A2008587C00E493E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2560C43708D64866AA01FCC8 /* RNKeychain.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6478985F1F38BF9100DA1C12;
+			remoteInfo = "RNKeychain-tvOS";
+		};
+		0078609E2008587C00E493E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A91038679F834707B769D282 /* RNKeychain.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6478985F1F38BF9100DA1C12;
+			remoteInfo = "RNKeychain-tvOS";
+		};
 		008413781D5C3AC30034750D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 43E420DADB24468C9E296F25 /* RNVectorIcons.xcodeproj */;
@@ -542,6 +556,7 @@
 			isa = PBXGroup;
 			children = (
 				00158AA31E4FAE9E00F78C7B /* libRNKeychain.a */,
+				0078609B2008587C00E493E7 /* libRNKeychain.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -574,6 +589,7 @@
 			isa = PBXGroup;
 			children = (
 				00158AA61E4FAE9E00F78C7B /* libRNKeychain.a */,
+				0078609F2008587C00E493E7 /* libRNKeychain.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1194,6 +1210,20 @@
 			fileType = archive.ar;
 			path = libRCTRestart.a;
 			remoteRef = 006118571EE51CD100638440 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0078609B2008587C00E493E7 /* libRNKeychain.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNKeychain.a;
+			remoteRef = 0078609A2008587C00E493E7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0078609F2008587C00E493E7 /* libRNKeychain.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNKeychain.a;
+			remoteRef = 0078609E2008587C00E493E7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		008413791D5C3AC30034750D /* libRNVectorIcons.a */ = {
