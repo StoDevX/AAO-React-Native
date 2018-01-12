@@ -33,6 +33,7 @@ stages:
   - name: Deploy Data
     if: branch = master AND type != pull_request
   - name: Build + Deploy App
+    if: type = cron OR tag IS present
 
 
 #
