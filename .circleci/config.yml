@@ -123,7 +123,7 @@ jobs:
       - run: *run-danger
 
   android:
-    docker: {image: circleci/android:api-27-node8-alpha}
+    docker: [{image: 'circleci/android:api-27-node8-alpha'}]
     environment: {task: ANDROID}
     steps:
       - checkout
