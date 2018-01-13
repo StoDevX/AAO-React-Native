@@ -5,41 +5,19 @@ x-config:
   - &docker-node-8
     image: 'circleci/node:8'
   - &restore-cache-yarn
-    keys:
-      - 'v3-yarn-dependencies-{{ checksum "yarn.lock" }}'
-      - 'v3-yarn-dependencies-'
+    key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
   - &save-cache-yarn
-    key: 'v3-yarn-dependencies-{{ checksum "yarn.lock" }}'
-    paths: [~/.cache/yarn]
-  - &restore-cache-yarn-macos
-    keys:
-      - 'v3-yarn-dependencies-macos-{{ checksum "yarn.lock" }}'
-      - 'v3-yarn-dependencies-macos-'
-  - &save-cache-yarn-macos
-    key: 'v3-yarn-dependencies-macos-{{ checksum "yarn.lock" }}'
-    paths: [~/Library/Caches/Yarn]
+    key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+    paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
   - &restore-cache-bundler
-    keys:
-      - 'v2-ruby-dependencies-{{ checksum "Gemfile.lock" }}'
-      - 'v2-ruby-dependencies-'
+    key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
   - &save-cache-bundler
-    key: 'v2-ruby-dependencies-{{ checksum "Gemfile.lock" }}'
-    paths: [./vendor/bundle]
-  - &restore-cache-bundler-macos
-    keys:
-      - 'v2-ruby-dependencies-macos-{{ checksum "Gemfile.lock" }}'
-      - 'v2-ruby-dependencies-macos-'
-  - &save-cache-bundler-macos
-    key: 'v2-ruby-dependencies-macos-{{ checksum "Gemfile.lock" }}'
+    key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
     paths: [./vendor/bundle]
   - &restore-cache-gradle
-    keys:
-      - 'v1-gradle-dependencies-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
-      - 'v1-gradle-dependencies-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-'
-      - 'v1-gradle-dependencies-{{ checksum "android/build.gradle" }}-'
-      - 'v1-gradle-dependencies-'
+    key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
   - &save-cache-gradle
-    key: 'v1-gradle-dependencies-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+    key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
     paths: [~/.gradle]
   - &set-ruby-version
     name: Set Ruby Version
@@ -212,12 +190,12 @@ jobs:
       - checkout
       - run: yarn --version
       - run: *set-ruby-version
-      - restore_cache: *restore-cache-yarn-macos
+      - restore_cache: *restore-cache-yarn
       - run: yarn install
-      - save_cache: *save-cache-yarn-macos
-      - restore_cache: *restore-cache-bundler-macos
+      - save_cache: *save-cache-yarn
+      - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --path ./vendor/bundle
-      - save_cache: *save-cache-bundler-macos
+      - save_cache: *save-cache-bundler
       - run: mkdir -p logs/
       - run: touch .env.js
       - run: bundle exec fastlane ios ci-run | tee ./logs/build
