@@ -1,0 +1,14 @@
+---
+key: it-helpdesk
+enabled: true
+
+ticketSubmissionPage: ''
+
+emailAddress: ''
+
+emailTemplate: |
+  Thank you for contacting the IT Helpdesk!
+
+  Please include your name, phone number, and next of kin.
+
+  Have a wonderful day!
