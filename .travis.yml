@@ -2,8 +2,6 @@ env:
   # To update the secure tokens, run `travis encrypt NAME='VALUE' --add` after
   # installing the travis gem with `gem install travis`.
   global:
-    # dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
-    - PATH=${PATH/\.\/node_modules\/\.bin/}
     # sets our node version in one nice place
     - TRAVIS_NODE_VERSION=8
     # set the ruby version up top
@@ -41,6 +39,9 @@ stages:
 x-definitions:
   - &base
     before_install:
+      # dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
+      - export PATH="${PATH/\.\/node_modules\/\.bin/}"
+
       # print some travis debugging info
       - echo "Now testing on $TRAVIS_OS_NAME"
       - echo "Travis branch is $TRAVIS_BRANCH"
