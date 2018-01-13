@@ -154,7 +154,10 @@ jobs:
       - run: mkdir -p logs/
       - run: yarn run bundle-data
       - run: yarn run --silent lint | tee logs/eslint
+      - run: yarn run --silent lint --format > logs/eslint-junit.xml
       - run: *run-danger
+      - store_test_results:
+          path: ./logs/eslint-junit.xml
 
   data:
     docker: [*docker-node-8]
