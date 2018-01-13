@@ -32,7 +32,7 @@ stages:
     if: branch =~ ^greenkeeper\/
   - name: Deploy Data
     if: branch = master AND type != pull_request
-  - name: Build + Deploy App
+  - name: Build + Deploy
     if: type = cron OR tag IS present
 
 
