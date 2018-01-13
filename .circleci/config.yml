@@ -6,51 +6,41 @@ x-config:
     image: 'circleci/node:8'
   - &restore-cache-yarn
     keys:
-      - 'v2-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
-      - 'v2-dependencies-{{ arch }}-'
-      - 'v2-dependencies-'
+      - 'v2-yarn-dependencies-{{ checksum "yarn.lock" }}'
+      - 'v2-yarn-dependencies-'
   - &save-cache-yarn
-    key: 'v2-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
-    paths:
-      - ~/.cache/yarn
+    key: 'v2-yarn-dependencies-{{ checksum "yarn.lock" }}'
+    paths: [~/.cache/yarn]
   - &restore-cache-yarn-macos
     keys:
-      - 'v2-dependencies-macos-{{ arch }}-{{ checksum "yarn.lock" }}'
-      - 'v2-dependencies-macos-{{ arch }}-'
-      - 'v2-dependencies-macos-'
+      - 'v2-yarn-dependencies-macos-{{ checksum "yarn.lock" }}'
+      - 'v2-yarn-dependencies-macos-'
   - &save-cache-yarn-macos
-    key: 'v2-dependencies-macos-{{ arch }}-{{ checksum "yarn.lock" }}'
-    paths:
-      - ~/Library/Caches/Yarn
+    key: 'v2-yarn-dependencies-macos-{{ checksum "yarn.lock" }}'
+    paths: [~/Library/Caches/Yarn]
   - &restore-cache-bundler
     keys:
-      - 'v1-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
-      - 'v1-ruby-dependencies-{{ arch }}-'
+      - 'v1-ruby-dependencies-{{ checksum "Gemfile.lock" }}'
       - 'v1-ruby-dependencies-'
   - &save-cache-bundler
-    key: 'v1-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
-    paths:
-      - ./vendor/bundle
+    key: 'v1-ruby-dependencies-{{ checksum "Gemfile.lock" }}'
+    paths: [./vendor/bundle]
   - &restore-cache-bundler-macos
     keys:
-      - 'v1-ruby-dependencies-macos-{{ arch }}-{{ checksum "Gemfile.lock" }}'
-      - 'v1-ruby-dependencies-macos-{{ arch }}-'
+      - 'v1-ruby-dependencies-macos-{{ checksum "Gemfile.lock" }}'
       - 'v1-ruby-dependencies-macos-'
   - &save-cache-bundler-macos
-    key: 'v1-ruby-dependencies-macos-{{ arch }}-{{ checksum "Gemfile.lock" }}'
-    paths:
-      - ./vendor/bundle
+    key: 'v1-ruby-dependencies-macos-{{ checksum "Gemfile.lock" }}'
+    paths: [./vendor/bundle]
   - &restore-cache-gradle
     keys:
-      - 'v1-gradle-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
-      - 'v1-gradle-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-'
-      - 'v1-gradle-{{ arch }}-{{ checksum "android/build.gradle" }}-'
-      - 'v1-gradle-{{ arch }}-'
-      - 'v1-gradle-'
+      - 'v1-gradle-dependencies-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+      - 'v1-gradle-dependencies-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-'
+      - 'v1-gradle-dependencies-{{ checksum "android/build.gradle" }}-'
+      - 'v1-gradle-dependencies-'
   - &save-cache-gradle
-    key: 'v1-gradle-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
-    paths:
-      - ~/.gradle
+    key: 'v1-gradle-dependencies-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+    paths: [~/.gradle]
   - &set-ruby-version
     name: Set Ruby Version
     command: echo "ruby-2.4.2" > ~/.ruby-version
