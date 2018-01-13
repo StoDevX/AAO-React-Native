@@ -165,7 +165,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - restore_cache: *restore-cache-bundler
-      - run: bundle check || bundle install --path ./vendor/bundle
+      - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - save_cache: *save-cache-bundler
       - restore_cache: *restore-cache-gradle
       - run:
@@ -195,7 +195,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - restore_cache: *restore-cache-bundler
-      - run: bundle check || bundle install --path ./vendor/bundle
+      - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - save_cache: *save-cache-bundler
       - run: mkdir -p logs/
       - run: touch .env.js
