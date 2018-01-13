@@ -33,6 +33,16 @@ x-config:
     key: 'v1-gradle-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
     paths:
       - ~/.gradle
+  - &restore-cache-ios-third-party
+    keys:
+      - 'v1-ios-rn-third-party-{{ arch }}-{{ checksum "node_modules/react-native/package.json" }}'
+      - 'v1-ios-rn-third-party-{{ arch }}-'
+      - 'v1-ios-rn-third-party-'
+  - &save-cache-ios-third-party
+    key: 'v1-ios-rn-third-party-{{ arch }}-{{ checksum "node_modules/react-native/package.json" }}'
+    paths:
+      - ~/.rncache
+      - ./node_modules/react-native/third-party
   - &set-ruby-version
     name: Set Ruby Version
     command: echo "ruby-2.4.2" > ~/.ruby-version
@@ -198,7 +208,9 @@ jobs:
       - save_cache: *save-cache-bundler
       - run: mkdir -p logs/
       - run: touch .env.js
+      - restore_cache: *restore-cache-ios-third-party
       - run: bundle exec fastlane ios ci-run | tee ./logs/build
+      - save_cache: *restore-cache-ios-third-party
       - run:
           name: Analyze Fastlane Logfile
           command: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
