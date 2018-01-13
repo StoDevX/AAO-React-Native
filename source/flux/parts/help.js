@@ -112,7 +112,7 @@ const initialState = {
   lastFetchError: null,
 }
 
-export function app(state: State = initialState, action: Action) {
+export function help(state: State = initialState, action: Action) {
   switch (action.type) {
     case ENABLED_TOOLS_START:
       return {...state, fetching: true}
