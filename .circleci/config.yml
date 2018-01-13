@@ -210,7 +210,7 @@ jobs:
       - run: touch .env.js
       - restore_cache: *restore-cache-ios-third-party
       - run: bundle exec fastlane ios ci-run | tee ./logs/build
-      - save_cache: *restore-cache-ios-third-party
+      - save_cache: *save-cache-ios-third-party
       - run:
           name: Analyze Fastlane Logfile
           command: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
