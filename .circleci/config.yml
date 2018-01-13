@@ -21,6 +21,16 @@ x-config:
     paths:
       - ./vendor/bundle
     key: 'v1-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+  - &restore-cache-gradle
+    keys:
+      - 'v1-gradle-{{ checksum "android/build.gradle" }}-{{ checksum  "android/app/build.gradle" }}-{{ "android/react-native-version.txt" }}'
+      - 'v1-gradle-{{ checksum "android/build.gradle" }}-{{ checksum  "android/app/build.gradle" }}-'
+      - 'v1-gradle-{{ checksum "android/build.gradle" }}-'
+      - 'v1-gradle-'
+  - &save-cache-gradle
+      paths:
+        - ~/.gradle
+      key: gradle-{{ checksum "android/build.gradle" }}-{{ checksum  "android/app/build.gradle" }}-{{ "android/react-native-version.txt" }}
   - &set-ruby-version
     name: Set Ruby Version
     command:  echo "ruby-2.4.2" > ~/.ruby-version
@@ -157,6 +167,10 @@ jobs:
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --path ./vendor/bundle
       - save_cache: *save-cache-bundler
+      - restore_cache: *restore-cache-gradle
+      - command: cd android && ./gradlew androidDependencies
+      - command: grep '["]react-native["]:' < package.json > ./android/react-native-version.txt
+      - save_cache: *save-cache-gradle
       - run: mkdir -p logs/
       - run: touch .env.js
       - run: bundle exec fastlane android ci-run | tee ./logs/build
