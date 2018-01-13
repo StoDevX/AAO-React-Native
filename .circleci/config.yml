@@ -1,39 +1,70 @@
+---
 version: 2
 
 x-config:
-  - &restore-cache-yarn
-      keys:
-        - 'v2-dependencies-{{ checksum "yarn.lock" }}'
-        - 'v2-dependencies-'
-  - &save-cache-yarn
-      paths: [~/.cache/yarn]
-      key: 'v2-dependencies-{{ checksum "yarn.lock" }}'
+  x-caching: # caching instructions
+    - &save-cache-yarn
+      key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+      paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
+    - &restore-cache-yarn
+      key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+    - &save-cache-bundler
+      key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+      paths: [./vendor/bundle]
+    - &restore-cache-bundler
+      key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+    - &save-cache-gradle
+      key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+      paths: [~/.gradle]
+    - &restore-cache-gradle
+      key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+  x-commands: # command shorthands
+    - &set-ruby-version
+      name: Set Ruby Version
+      command: echo "ruby-2.4.2" > ~/.ruby-version
+    - &run-danger
+      command: yarn run danger --id $task
+      when: always
 
 workflows:
   version: 2
   analyze:
     jobs:
-      - danger
-      - flow
-      - jest
-      - prettier
-      - eslint
-      - data
+      - cache-yarn-linux
+      - danger: {requires: [cache-yarn-linux]}
+      - flow: {requires: [cache-yarn-linux]}
+      - jest: {requires: [cache-yarn-linux]}
+      - prettier: {requires: [cache-yarn-linux]}
+      - eslint: {requires: [cache-yarn-linux]}
+      - data: {requires: [cache-yarn-linux]}
+      - ios: {requires: [danger, flow, jest, prettier, eslint, data]}
+      - android: {requires: [danger, flow, jest, prettier, eslint, data]}
 
 jobs:
+  cache-yarn-linux:
+    docker: [{image: 'circleci/node:8'}]
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install
+      - run: yarn --version
+      - save_cache: *save-cache-yarn
+
   danger:
     docker: [{image: 'circleci/node:8'}]
-    environment: {task: JS-general}
+    environment:
+      task: JS-general
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
-      - run: yarn run danger --id $task
+      - run: *run-danger
 
   flow:
     docker: [{image: 'circleci/node:8'}]
-    environment: {task: JS-flow}
+    environment:
+      task: JS-flow
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -42,20 +73,24 @@ jobs:
       - run: mkdir -p logs/
       - run: yarn run bundle-data
       - run: yarn run --silent flow check --quiet | tee logs/flow
-      - run: yarn run danger --id $task
+      - run: *run-danger
 
   jest:
     docker: [{image: 'circleci/node:8'}]
-    environment: {task: JS-jest}
+    environment:
+      task: JS-jest
+      JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
-      - run: mkdir -p logs/
+      - run: mkdir -p logs/ test-results/jest/
       - run: yarn run bundle-data
-      - run: yarn run --silent test --coverage 2>&1 | tee logs/jest
-      - run: yarn run danger --id $task
+      - run: yarn run --silent test --coverage --testResultsProcessor="jest-junit" 2>&1 | tee logs/jest
+      - run: *run-danger
+      - store_test_results:
+          path: ./test-results
       - run: yarn global add coveralls
       - run:
           name: coveralls
@@ -67,7 +102,8 @@ jobs:
 
   prettier:
     docker: [{image: 'circleci/node:8'}]
-    environment: {task: JS-prettier}
+    environment:
+      task: JS-prettier
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -82,24 +118,29 @@ jobs:
             if ! git diff --quiet *.js source/ scripts/; then
               git diff *.js source/ scripts/ | tee logs/prettier
             fi
-      - run: yarn run danger --id $task
+      - run: *run-danger
 
   eslint:
     docker: [{image: 'circleci/node:8'}]
-    environment: {task: JS-lint}
+    environment:
+      task: JS-lint
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
-      - run: mkdir -p logs/
+      - run: mkdir -p logs/ test-results/eslint/
       - run: yarn run bundle-data
       - run: yarn run --silent lint | tee logs/eslint
-      - run: yarn run danger --id $task
+      - run: yarn run --silent lint --format junit > test-results/eslint/junit.xml
+      - run: *run-danger
+      - store_test_results:
+          path: ./test-results
 
   data:
     docker: [{image: 'circleci/node:8'}]
-    environment: {task: JS-data}
+    environment:
+      task: JS-data
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -108,4 +149,58 @@ jobs:
       - run: mkdir -p logs/
       - run: yarn run --silent validate-data --quiet | tee logs/validate-data
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
-      - run: yarn run danger --id $task
+      - run: *run-danger
+
+  android:
+    docker: [{image: 'circleci/android:api-27-node8-alpha'}]
+    environment:
+      task: ANDROID
+      FASTLANE_SKIP_UPDATE_CHECK: '1'
+      FASTLANE_DISABLE_ANIMATION: '1'
+    steps:
+      - checkout
+      - run: yarn --version
+      - run: *set-ruby-version
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install
+      - save_cache: *save-cache-yarn
+      - restore_cache: *restore-cache-bundler
+      - run: bundle check || bundle install --path ./vendor/bundle
+      - save_cache: *save-cache-bundler
+      - restore_cache: *restore-cache-gradle
+      - run:
+          name: Download Android dependencies
+          command: cd android && ./gradlew androidDependencies
+          environment: {TERM: xterm-256color}
+      - save_cache: *save-cache-gradle
+      - run: mkdir -p logs/
+      - run: touch .env.js
+      - run: bundle exec fastlane android ci-run | tee ./logs/build
+      - run: *run-danger
+
+  ios:
+    macos: {xcode: '9.0'}
+    environment:
+      task: IOS
+      FASTLANE_SKIP_UPDATE_CHECK: '1'
+      FASTLANE_DISABLE_ANIMATION: '1'
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+    shell: /bin/bash --login -o pipefail
+    steps:
+      - checkout
+      - run: yarn --version
+      - run: *set-ruby-version
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install
+      - save_cache: *save-cache-yarn
+      - restore_cache: *restore-cache-bundler
+      - run: bundle check || bundle install --path ./vendor/bundle
+      - save_cache: *save-cache-bundler
+      - run: mkdir -p logs/
+      - run: touch .env.js
+      - run: bundle exec fastlane ios ci-run | tee ./logs/build
+      - run:
+          name: Analyze Fastlane Logfile
+          command: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
+      - run: *run-danger
