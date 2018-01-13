@@ -32,13 +32,13 @@ workflows:
   version: 2
   analyze:
     jobs:
-      - yarn-linux-cache
-      - danger: {requires: [yarn-linux-cache]}
-      - flow: {requires: [yarn-linux-cache]}
-      - jest: {requires: [yarn-linux-cache]}
-      - prettier: {requires: [yarn-linux-cache]}
-      - eslint: {requires: [yarn-linux-cache]}
-      - data: {requires: [yarn-linux-cache]}
+      - cache-yarn-linux
+      - danger: {requires: [cache-yarn-linux]}
+      - flow: {requires: [cache-yarn-linux]}
+      - jest: {requires: [cache-yarn-linux]}
+      - prettier: {requires: [cache-yarn-linux]}
+      - eslint: {requires: [cache-yarn-linux]}
+      - data: {requires: [cache-yarn-linux]}
       - ios: {requires: [danger, flow, jest, prettier, eslint, data]}
       - android: {requires: [danger, flow, jest, prettier, eslint, data]}
 
