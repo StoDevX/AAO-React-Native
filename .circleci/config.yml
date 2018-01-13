@@ -23,14 +23,15 @@ x-config:
       - ./vendor/bundle
   - &restore-cache-gradle
     keys:
-      - 'v1-gradle-{{ checksum "android/build.gradle" }}-{{ checksum  "android/app/build.gradle" }}-{{ "android/react-native-version.txt" }}'
-      - 'v1-gradle-{{ checksum "android/build.gradle" }}-{{ checksum  "android/app/build.gradle" }}-'
-      - 'v1-gradle-{{ checksum "android/build.gradle" }}-'
+      - 'v1-gradle-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+      - 'v1-gradle-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-'
+      - 'v1-gradle-{{ arch }}-{{ checksum "android/build.gradle" }}-'
+      - 'v1-gradle-{{ arch }}-'
       - 'v1-gradle-'
   - &save-cache-gradle
-      paths:
-        - ~/.gradle
-      key: gradle-{{ checksum "android/build.gradle" }}-{{ checksum  "android/app/build.gradle" }}-{{ "android/react-native-version.txt" }}
+    key: 'v1-gradle-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+    paths:
+      - ~/.gradle
   - &set-ruby-version
     name: Set Ruby Version
     command:  echo "ruby-2.4.2" > ~/.ruby-version
@@ -168,8 +169,9 @@ jobs:
       - run: bundle check || bundle install --path ./vendor/bundle
       - save_cache: *save-cache-bundler
       - restore_cache: *restore-cache-gradle
-      - run: cd android && ./gradlew androidDependencies
-      - run: grep '["]react-native["]:' < package.json > ./android/react-native-version.txt
+      - run:
+          command: cd android && ./gradlew androidDependencies
+          environment: {TERM: xterm-256color}
       - save_cache: *save-cache-gradle
       - run: mkdir -p logs/
       - run: touch .env.js
