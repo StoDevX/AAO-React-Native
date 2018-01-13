@@ -74,7 +74,8 @@ jobs:
 
   danger:
     docker: [*docker-node-8]
-    environment: {task: JS-general}
+    environment:
+      task: JS-general
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -84,7 +85,8 @@ jobs:
 
   flow:
     docker: [*docker-node-8]
-    environment: {task: JS-flow}
+    environment:
+      task: JS-flow
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -97,7 +99,8 @@ jobs:
 
   jest:
     docker: [*docker-node-8]
-    environment: {task: JS-jest}
+    environment:
+      task: JS-jest
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -118,7 +121,8 @@ jobs:
 
   prettier:
     docker: [*docker-node-8]
-    environment: {task: JS-prettier}
+    environment:
+      task: JS-prettier
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -137,7 +141,8 @@ jobs:
 
   eslint:
     docker: [*docker-node-8]
-    environment: {task: JS-lint}
+    environment:
+      task: JS-lint
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -150,7 +155,8 @@ jobs:
 
   data:
     docker: [*docker-node-8]
-    environment: {task: JS-data}
+    environment:
+      task: JS-data
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
