@@ -6,17 +6,17 @@ x-config:
     image: 'circleci/node:8'
   - &restore-cache-yarn
     keys:
-      - 'v2-yarn-dependencies-{{ checksum "yarn.lock" }}'
-      - 'v2-yarn-dependencies-'
+      - 'v3-yarn-dependencies-{{ checksum "yarn.lock" }}'
+      - 'v3-yarn-dependencies-'
   - &save-cache-yarn
-    key: 'v2-yarn-dependencies-{{ checksum "yarn.lock" }}'
+    key: 'v3-yarn-dependencies-{{ checksum "yarn.lock" }}'
     paths: [~/.cache/yarn]
   - &restore-cache-yarn-macos
     keys:
-      - 'v2-yarn-dependencies-macos-{{ checksum "yarn.lock" }}'
-      - 'v2-yarn-dependencies-macos-'
+      - 'v3-yarn-dependencies-macos-{{ checksum "yarn.lock" }}'
+      - 'v3-yarn-dependencies-macos-'
   - &save-cache-yarn-macos
-    key: 'v2-yarn-dependencies-macos-{{ checksum "yarn.lock" }}'
+    key: 'v3-yarn-dependencies-macos-{{ checksum "yarn.lock" }}'
     paths: [~/Library/Caches/Yarn]
   - &restore-cache-bundler
     keys:
