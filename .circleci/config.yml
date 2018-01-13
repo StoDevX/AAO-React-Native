@@ -2,29 +2,29 @@
 version: 2
 
 x-config:
-  - &docker-node-8
-    image: 'circleci/node:8'
-  - &restore-cache-yarn
-    key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
-  - &save-cache-yarn
-    key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
-    paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
-  - &restore-cache-bundler
-    key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
-  - &save-cache-bundler
-    key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
-    paths: [./vendor/bundle]
-  - &restore-cache-gradle
-    key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
-  - &save-cache-gradle
-    key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
-    paths: [~/.gradle]
-  - &set-ruby-version
-    name: Set Ruby Version
-    command: echo "ruby-2.4.2" > ~/.ruby-version
-  - &run-danger
-    command: yarn run danger --id $task
-    when: always
+  x-caching: # caching instructions
+    - &save-cache-yarn
+      key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+      paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
+    - &restore-cache-yarn
+      key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+    - &save-cache-bundler
+      key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+      paths: [./vendor/bundle]
+    - &restore-cache-bundler
+      key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+    - &save-cache-gradle
+      key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+      paths: [~/.gradle]
+    - &restore-cache-gradle
+      key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+  x-commands: # command shorthands
+    - &set-ruby-version
+      name: Set Ruby Version
+      command: echo "ruby-2.4.2" > ~/.ruby-version
+    - &run-danger
+      command: yarn run danger --id $task
+      when: always
 
 workflows:
   version: 2
@@ -42,7 +42,7 @@ workflows:
 
 jobs:
   cache-yarn-linux:
-    docker: [*docker-node-8]
+    docker: [{image: 'circleci/node:8'}]
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -51,7 +51,7 @@ jobs:
       - save_cache: *save-cache-yarn
 
   danger:
-    docker: [*docker-node-8]
+    docker: [{image: 'circleci/node:8'}]
     environment:
       task: JS-general
     steps:
@@ -62,7 +62,7 @@ jobs:
       - run: *run-danger
 
   flow:
-    docker: [*docker-node-8]
+    docker: [{image: 'circleci/node:8'}]
     environment:
       task: JS-flow
     steps:
@@ -76,7 +76,7 @@ jobs:
       - run: *run-danger
 
   jest:
-    docker: [*docker-node-8]
+    docker: [{image: 'circleci/node:8'}]
     environment:
       task: JS-jest
       JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
@@ -85,11 +85,12 @@ jobs:
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
-      - run: mkdir -p logs/ test-results
+      - run: mkdir -p logs/ test-results/
       - run: yarn run bundle-data
       - run: yarn run --silent test --coverage --testResultsProcessor="jest-junit" 2>&1 | tee logs/jest
       - run: *run-danger
-      - store_test_results: {path: ./test-results}
+      - store_test_results:
+          path: ./test-results
       - run: yarn global add coveralls
       - run:
           name: coveralls
@@ -100,7 +101,7 @@ jobs:
             coveralls < ./coverage/lcov.info
 
   prettier:
-    docker: [*docker-node-8]
+    docker: [{image: 'circleci/node:8'}]
     environment:
       task: JS-prettier
     steps:
@@ -120,7 +121,7 @@ jobs:
       - run: *run-danger
 
   eslint:
-    docker: [*docker-node-8]
+    docker: [{image: 'circleci/node:8'}]
     environment:
       task: JS-lint
     steps:
@@ -133,10 +134,11 @@ jobs:
       - run: yarn run --silent lint | tee logs/eslint
       - run: yarn run --silent lint --format junit > test-results/eslint/junit.xml
       - run: *run-danger
-      - store_test_results: {path: ./test-results}
+      - store_test_results:
+          path: ./test-results
 
   data:
-    docker: [*docker-node-8]
+    docker: [{image: 'circleci/node:8'}]
     environment:
       task: JS-data
     steps:
@@ -167,6 +169,7 @@ jobs:
       - save_cache: *save-cache-bundler
       - restore_cache: *restore-cache-gradle
       - run:
+          name: Download Android dependencies
           command: cd android && ./gradlew androidDependencies
           environment: {TERM: xterm-256color}
       - save_cache: *save-cache-gradle
