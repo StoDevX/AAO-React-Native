@@ -38,4 +38,7 @@ export const collectData = async () => ({
 })
 
 export const reportToServer = (data: Object) =>
-  fetch('https://www.stolaf.edu/apps/all-about-olaf/index.cfm?fuseaction=Submit', {method: 'POST', body: JSON.stringify(data)})
+  fetch(
+    'https://www.stolaf.edu/apps/all-about-olaf/index.cfm?fuseaction=Submit',
+    {method: 'POST', body: JSON.stringify(data)},
+  )
