@@ -85,7 +85,7 @@ jobs:
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
-      - run: mkdir -p logs/ test-results/
+      - run: mkdir -p logs/ test-results/jest/
       - run: yarn run bundle-data
       - run: yarn run --silent test --coverage --testResultsProcessor="jest-junit" 2>&1 | tee logs/jest
       - run: *run-danger
@@ -129,7 +129,7 @@ jobs:
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
-      - run: mkdir -p logs/ test-results/
+      - run: mkdir -p logs/ test-results/eslint/
       - run: yarn run bundle-data
       - run: yarn run --silent lint | tee logs/eslint
       - run: yarn run --silent lint --format junit > test-results/eslint/junit.xml
