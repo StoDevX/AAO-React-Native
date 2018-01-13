@@ -20,17 +20,17 @@ x-config:
     paths: [~/Library/Caches/Yarn]
   - &restore-cache-bundler
     keys:
-      - 'v1-ruby-dependencies-{{ checksum "Gemfile.lock" }}'
-      - 'v1-ruby-dependencies-'
+      - 'v2-ruby-dependencies-{{ checksum "Gemfile.lock" }}'
+      - 'v2-ruby-dependencies-'
   - &save-cache-bundler
-    key: 'v1-ruby-dependencies-{{ checksum "Gemfile.lock" }}'
+    key: 'v2-ruby-dependencies-{{ checksum "Gemfile.lock" }}'
     paths: [./vendor/bundle]
   - &restore-cache-bundler-macos
     keys:
-      - 'v1-ruby-dependencies-macos-{{ checksum "Gemfile.lock" }}'
-      - 'v1-ruby-dependencies-macos-'
+      - 'v2-ruby-dependencies-macos-{{ checksum "Gemfile.lock" }}'
+      - 'v2-ruby-dependencies-macos-'
   - &save-cache-bundler-macos
-    key: 'v1-ruby-dependencies-macos-{{ checksum "Gemfile.lock" }}'
+    key: 'v2-ruby-dependencies-macos-{{ checksum "Gemfile.lock" }}'
     paths: [./vendor/bundle]
   - &restore-cache-gradle
     keys:
