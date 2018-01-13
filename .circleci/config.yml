@@ -9,18 +9,18 @@ x-config:
       - 'v2-dependencies-{{ arch }}-'
       - 'v2-dependencies-'
   - &save-cache-yarn
+    key: 'v2-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
     paths:
       - ~/.cache/yarn
-    key: 'v2-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
   - &restore-cache-bundler
     keys:
       - 'v1-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
       - 'v1-ruby-dependencies-{{ arch }}-'
       - 'v1-ruby-dependencies-'
   - &save-cache-bundler
+    key: 'v1-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
     paths:
       - ./vendor/bundle
-    key: 'v1-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
   - &restore-cache-gradle
     keys:
       - 'v1-gradle-{{ checksum "android/build.gradle" }}-{{ checksum  "android/app/build.gradle" }}-{{ "android/react-native-version.txt" }}'
