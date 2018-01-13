@@ -19,8 +19,8 @@ def current_build_number(**args)
 end
 
 # get the current build number from the environment
-def build_number()
-  return ENV['TRAVIS_BUILD_NUMBER'] || ENV['CIRCLE_BUILD_NUM']
+def build_number
+  ENV['TRAVIS_BUILD_NUMBER'] || ENV['CIRCLE_BUILD_NUM']
 end
 
 # Get the current "app bundle" version
