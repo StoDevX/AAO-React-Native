@@ -179,14 +179,14 @@ jobs:
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --path ./vendor/bundle
       - save_cache: *save-cache-bundler
-      - restore_cache: *restore-cache-gradle
-      - run:
-          command: cd android && ./gradlew androidDependencies
-          environment: {TERM: xterm-256color}
-      - save_cache: *save-cache-gradle
+      # - run:
+      #     command: cd android && ./gradlew androidDependencies
+      #     environment: {TERM: xterm-256color}
       - run: mkdir -p logs/
       - run: touch .env.js
+      - restore_cache: *restore-cache-gradle
       - run: bundle exec fastlane android ci-run | tee ./logs/build
+      - save_cache: *save-cache-gradle
       - run: *run-danger
 
   ios:
