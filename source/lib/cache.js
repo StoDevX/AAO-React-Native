@@ -1,8 +1,7 @@
 // @flow
 import {AsyncStorage} from 'react-native'
 import moment from 'moment'
-
-import type {CoursesByTermType} from './courses/types'
+import {GH_PAGES_URL} from '../globals'
 
 type BaseCacheResultType<T> = {
   isExpired: boolean,
@@ -68,6 +67,7 @@ export function getStudentNumber(): CacheResultType<number> {
 
 const coursesKey = 'courses'
 const coursesCacheTime = [1, 'hour']
+import {type CoursesByTermType} from './courses/types'
 export function setAllCourses(courses: CoursesByTermType) {
   return setItem(coursesKey, courses, coursesCacheTime)
 }
@@ -193,4 +193,40 @@ export async function getBalances(): Promise<BalancesOutputType> {
     plan.isCached
 
   return {flex, ole, print, daily, weekly, plan, _isExpired, _isCached}
+}
+
+/// MARK: Help tools
+
+const helpToolsKey = 'help:tools'
+const helpToolsCacheTime = [1, 'hour']
+import {type ReportProblemTools} from '../views/help/index'
+export function setHelpTools(tools: Array<ReportProblemTools>) {
+  return setItem(helpToolsKey, tools, helpToolsCacheTime)
+}
+export function getHelpTools(): CacheResultType<?Array<ReportProblemTools>> {
+  return getItem(helpToolsKey)
+}
+function fetchHelpToolsRemote(): Promise<{data: Array<ReportProblemTools>}> {
+  return fetchJson(GH_PAGES_URL('help.json'))
+}
+export async function fetchHelpTools(
+  isOnline: boolean,
+): Promise<Array<ReportProblemTools>> {
+  const cachedValue = await getHelpTools()
+
+  if (!isOnline) {
+    if (cachedValue.isCached && cachedValue.value) {
+      return cachedValue.value
+    }
+    return []
+  }
+
+  if (!cachedValue.isExpired && cachedValue.value) {
+    return cachedValue.value
+  }
+
+  const request = await fetchHelpToolsRemote()
+  await setHelpTools(request.data)
+
+  return request.data
 }
