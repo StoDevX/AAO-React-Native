@@ -9,7 +9,7 @@ def cron?
 end
 
 def tagged?
-  !ENV['TRAVIS_TAG'].empty?
+  ENV['TRAVIS_TAG'] && !ENV['TRAVIS_TAG'].empty?
 end
 
 def forced_deploy?
