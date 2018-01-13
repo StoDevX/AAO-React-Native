@@ -2,6 +2,18 @@ env:
   # To update the secure tokens, run `travis encrypt NAME='VALUE' --add` after
   # installing the travis gem with `gem install travis`.
   global:
+    # variables from the web interface:
+    # - BOT_ITC_PASSWORD_FOR_FASTLANE
+    # - BUGSNAG_KEY: api key for Bugsnag connection
+    # - CI_USER_TOKEN: unknown
+    # - DANGER_GITHUB_API_TOKEN: api key to let Danger write comments to github
+    # - FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: app-specific password for the iTMS Transporter (obselete)
+    # - FASTLANE_PASSWORD: password for apple id used by fastlane
+    # - FASTLANE_SESSION: if fastlane's apple ID has 2fa enabled, this is the 1-month 2fa session cookie
+    # - GCAL_KEY: google calendar API key
+    # - GH_TOKEN: unknown
+    # - GITHUB_PAGES_TOKEN: token to push to gh-pages
+    # - GMAPS_KEY: google maps API key
     # sets our node version in one nice place
     - TRAVIS_NODE_VERSION=8
     # set the ruby version up top
