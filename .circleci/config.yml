@@ -31,6 +31,15 @@ x-config:
     key: 'v1-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
     paths:
       - ./vendor/bundle
+  - &restore-cache-bundler-macos
+    keys:
+      - 'v1-ruby-dependencies-macos-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+      - 'v1-ruby-dependencies-macos-{{ arch }}-'
+      - 'v1-ruby-dependencies-macos-'
+  - &save-cache-bundler-macos
+    key: 'v1-ruby-dependencies-macos-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+    paths:
+      - ./vendor/bundle
   - &restore-cache-gradle
     keys:
       - 'v1-gradle-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
@@ -212,9 +221,9 @@ jobs:
       - restore_cache: *restore-cache-yarn-macos
       - run: yarn install
       - save_cache: *save-cache-yarn-macos
-      - restore_cache: *restore-cache-bundler
+      - restore_cache: *restore-cache-bundler-macos
       - run: bundle check || bundle install --path ./vendor/bundle
-      - save_cache: *save-cache-bundler
+      - save_cache: *save-cache-bundler-macos
       - run: mkdir -p logs/
       - run: touch .env.js
       - restore_cache: *restore-cache-ios-third-party
