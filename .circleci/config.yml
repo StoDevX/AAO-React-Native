@@ -49,6 +49,7 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install
+      - run: yarn --version
       - save_cache: *save-cache-yarn
 
   danger:
@@ -148,6 +149,7 @@ jobs:
       FASTLANE_DISABLE_ANIMATION: '1'
     steps:
       - checkout
+      - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
       - run: yarn install
@@ -169,6 +171,7 @@ jobs:
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
+      - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
       - run: yarn install
