@@ -131,7 +131,7 @@ jobs:
       - run: mkdir -p logs/ test-results/
       - run: yarn run bundle-data
       - run: yarn run --silent lint | tee logs/eslint
-      - run: yarn run --silent lint --format > test-results/eslint.xml
+      - run: yarn run --silent lint --format junit > test-results/eslint.xml
       - run: *run-danger
       - store_test_results: {path: ./test-results}
 
