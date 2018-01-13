@@ -12,7 +12,10 @@ import {getPosition, collectData, reportToServer} from './wifi-tools'
 
 export type ToolName = 'wifi'
 export const toolName: ToolName = 'wifi'
-export type ToolOptions = {||}
+export type ToolOptions = {|
+  key: ToolName,
+  enabled: boolean,
+|}
 
 const messages = {
   init: 'Report',

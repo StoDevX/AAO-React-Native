@@ -9,6 +9,9 @@ import {Title, Quote} from './components'
 export type ToolName = 'it-helpdesk'
 export const toolName: ToolName = 'it-helpdesk'
 export type ToolOptions = {|
+  key: ToolName,
+  enabled: boolean,
+  ticketSubmissionPage: string,
   emailTemplate: string,
   emailAddress: string,
 |}

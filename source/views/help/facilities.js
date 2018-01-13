@@ -9,6 +9,8 @@ import {Title, Description} from './components'
 export type ToolName = 'facilities-work-order'
 export const toolName: ToolName = 'facilities-work-order'
 export type ToolOptions = {|
+  key: ToolName,
+  enabled: boolean,
   formUrl: string,
 |}
 
