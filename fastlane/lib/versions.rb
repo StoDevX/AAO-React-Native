@@ -2,7 +2,7 @@
 
 # Gets the version, be it from Travis, Testflight, or Google Play
 def current_build_number(**args)
-  return ENV['TRAVIS_BUILD_NUMBER'] if ENV.key?('TRAVIS_BUILD_NUMBER')
+  return build_number if build_number != nil
 
   begin
     case lane_context[:PLATFORM_NAME]
@@ -16,6 +16,11 @@ def current_build_number(**args)
   rescue
     '1'
   end
+end
+
+# get the current build number from the environment
+def build_number
+  ENV['TRAVIS_BUILD_NUMBER'] || ENV['CIRCLE_BUILD_NUM']
 end
 
 # Get the current "app bundle" version

@@ -219,6 +219,7 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 // Bundles the app's data for the build process
 task bundleData(type: Exec) {
+    workingDir '../../'
     commandLine 'npm', 'run', 'bundle-data'
 }
 

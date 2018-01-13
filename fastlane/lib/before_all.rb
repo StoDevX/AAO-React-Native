@@ -1,7 +1,8 @@
 before_all do
   case lane_context[:PLATFORM_NAME]
   when :ios
-    setup_travis
+    setup_travis if travis?
+    setup_circle_ci if circle?
   end
 
   # set up global info for `gym`
