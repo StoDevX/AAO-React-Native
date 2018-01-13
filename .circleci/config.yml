@@ -79,18 +79,17 @@ jobs:
     docker: [*docker-node-8]
     environment:
       task: JS-jest
-      JEST_JUNIT_OUTPUT: ./logs/jest-junit.xml
+      JEST_JUNIT_OUTPUT: ./test-results/jest.xml
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
-      - run: mkdir -p logs/
+      - run: mkdir -p logs/ test-results
       - run: yarn run bundle-data
       - run: yarn run --silent test --coverage --testResultsProcessor="jest-junit" 2>&1 | tee logs/jest
       - run: *run-danger
-      - store_test_results:
-          path: ./logs/jest-junit.xml
+      - store_test_results: {path: ./test-results}
       - run: yarn global add coveralls
       - run:
           name: coveralls
@@ -129,13 +128,12 @@ jobs:
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
-      - run: mkdir -p logs/
+      - run: mkdir -p logs/ test-results/
       - run: yarn run bundle-data
       - run: yarn run --silent lint | tee logs/eslint
-      - run: yarn run --silent lint --format > logs/eslint-junit.xml
+      - run: yarn run --silent lint --format > test-results/eslint.xml
       - run: *run-danger
-      - store_test_results:
-          path: ./logs/eslint-junit.xml
+      - store_test_results: {path: ./test-results}
 
   data:
     docker: [*docker-node-8]
