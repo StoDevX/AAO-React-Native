@@ -187,48 +187,57 @@ type ExitStatus = 0 | 1
 
 async function validateInput(params: ProgramArgs): Promise<ExitStatus> {
   const {args, dataTypes} = params
+  console.log('[input] start')
   // for each data type:
   // verify that there is an input schema for that type
   // validate each data file of that given type against that type's input schema
   // run the js-language validator for the type, if any
 
   const promises = dataTypes.map(async type => {
-    console.log(`validating "${type.name}"`)
+    console.log(`[input] validating "${type.name}"`)
 
     const schemaRoot = path.join(args.flags.meta, '_schema', 'input')
     const schema = await loadSchema(type, {root: schemaRoot})
     if (!schema) {
-      return new Error(
+      console.error(
         `No input schema exists for ${type.name} (at ${schemaRoot})`,
       )
+      process.exit(1)
     }
 
     const dataFiles = await findDataFiles(type)
-    const results = dataFiles.map(dataFile => validate(schema, dataFile))
 
-    // console.log(type.name, results)
+    const start = Date.now()
+    const results = dataFiles.map(dataFile => validate(schema, dataFile))
+    const time = Date.now() - start
+    console.log(`[input] validated "${type.name}" in ~${time}ms`)
 
     // todo: discover and run the js-language validators
 
-    return results
+    for (const set of results.filter(set => set && set !== true)) {
+      console.log(`[input] errors in "${type.name}"`)
+      printValidationErrors(set)
+      return 1
+    }
+
+    return 0
   })
 
   // Array<true | Array<Error>>
   const results = await Promise.all(promises)
 
-  const problems = flattenDeep(results).filter(set => set && set !== true)
+  const problems = flattenDeep(results).filter(set => set === 1)
   if (problems.length) {
-    console.log(problems)
-    printValidationErrors(problems)
     return 1
   }
 
-  console.log('no problems')
+  console.log('[input] no problems')
   return 0
 }
 
 async function validateOutput(params: ProgramArgs): Promise<ExitStatus> {
   const {args, dataTypes} = params
+  console.log('[output] start')
   // for each data type:
   // for each output schema version:
   // validate the bundled data file for that type against the equivalent output schema
@@ -237,18 +246,30 @@ async function validateOutput(params: ProgramArgs): Promise<ExitStatus> {
     const schemaRoot = path.join(args.flags.meta, '_schema', 'output')
     const versions = await findOutputVersions(type, {root: schemaRoot})
 
+    if (!versions.length) {
+      console.log(`[output] no versions for "${type.name}"`)
+    }
+
     const pending = versions.map(async version => {
       const versionSchemaRoot = path.join(schemaRoot, `v${version}`)
       const schema = await loadSchema(type, {root: versionSchemaRoot})
       if (!schema) {
-        return new Error(`No input schema exists for ${type.name} (at %path)`)
+        console.error(`No input schema exists for ${type.name} (at %path)`)
+        process.exit(1)
       }
 
       const bundledData = await loadBundledFile(type, version, {
         root: path.join(args.flags.output),
       })
 
-      return validate(schema, bundledData)
+      const problems = validate(schema, bundledData)
+
+      if (problems.length) {
+        console.log(`[output] errors in "${type.name}" (v${version})`)
+        printValidationErrors(problems)
+        return 1
+      }
+      return 0
     })
 
     return Promise.all(pending)
@@ -256,12 +277,12 @@ async function validateOutput(params: ProgramArgs): Promise<ExitStatus> {
 
   const results = await Promise.all(promises)
 
-  const problems = flattenDeep(results).filter(set => set && set !== true)
+  const problems = flattenDeep(results).filter(set => set === 1)
   if (problems.length) {
-    printValidationErrors(problems)
     return 1
   }
 
+  console.log('[output] no problems')
   return 0
 }
 
@@ -271,36 +292,55 @@ async function bundleDataFiles(
   params: ProgramArgs,
 ): Promise<Array<BundledDataFile>> {
   const {args, dataTypes} = params
+  console.log('[bundle] start')
   // for each data type:
   // verify that a transformer exists
   // for each transformer version:
   // run the input data through the transformer to generate the versioned bundled output file
 
   const promises = dataTypes.map(async type => {
-    console.log(`bundling ${type.name}:`)
     const schemaRoot = path.join(args.flags.meta, '_schema', 'output')
     const versions = await findOutputVersions(type, {root: schemaRoot})
-    console.log(versions)
+
+    if (!versions.length) {
+      console.log(`[bundle] no versions for "${type.name}"`)
+    }
 
     const promises = versions.map(async version => {
-      console.log(`bundling ${type.name}, version ${version}`)
+      console.log(`[bundle] bundling ${type.name} (v${version})`)
       const tfRoot = path.join(args.flags.meta, '_transform')
       const transformer = await findTransformer(type, version, {root: tfRoot})
       if (!transformer) {
         const typeName = type.name
-        return new Error(
-          `No transformer exists for ${typeName} version ${version} (at %path)`,
-        )
+        console.error(`No transformer exists for ${typeName} version ${version} (at %path)`)
+        process.exit(1)
       }
 
       const dataFiles = await findDataFiles(type)
-      let bundledFiles = await Promise.all(dataFiles.map(transformer))
 
-      if (type.mode === 'single') {
+      const start = Date.now()
+      let bundledFiles = await Promise.all(dataFiles.map(transformer))
+      const time = Date.now() - start
+      console.log(`[bundle] bundled "${type.name}" (v${version}) in ~${time}ms`)
+
+      console.log(type.kind)
+      if (type.kind === 'single') {
         // if we have a single file, we store that file's contents in
         // the bundled file, instead of an array of file contents
         assert(bundledFiles.length === 1)
-        bundledFiles = bundledFiles[0]
+        const blob = bundledFiles[0]
+        if (typeof blob !== 'object') {
+          console.error('warning warning warning')
+          process.exit(1)
+          return
+        }
+        return {
+          contents: Object.assign(
+            {version: version},
+            blob
+          ),
+          type: type.name,
+        }
       }
 
       return {
@@ -317,8 +357,7 @@ async function bundleDataFiles(
 
   const results = await Promise.all(promises)
 
-  // console.log(flattenDeep(results))
-
+  console.log('[bundle] end')
   return flattenDeep(results)
 }
 
