@@ -6,6 +6,7 @@
 import {NetInfo} from 'react-native'
 import {loadLoginCredentials} from '../lib/login'
 import {updateOnlineStatus} from './parts/app'
+import {getEnabledTools} from './parts/help'
 import {loadHomescreenOrder, loadDisabledViews} from './parts/homescreen'
 import {loadFavoriteBuildings} from './parts/buildings'
 import {
@@ -64,5 +65,6 @@ export async function init(store: {dispatch: any => any}) {
   await Promise.all([
     validateOlafCredentials(store),
     store.dispatch(updateBalances(false)),
+    store.dispatch(getEnabledTools()),
   ])
 }
