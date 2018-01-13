@@ -168,8 +168,8 @@ jobs:
       - run: bundle check || bundle install --path ./vendor/bundle
       - save_cache: *save-cache-bundler
       - restore_cache: *restore-cache-gradle
-      - command: cd android && ./gradlew androidDependencies
-      - command: grep '["]react-native["]:' < package.json > ./android/react-native-version.txt
+      - run: cd android && ./gradlew androidDependencies
+      - run: grep '["]react-native["]:' < package.json > ./android/react-native-version.txt
       - save_cache: *save-cache-gradle
       - run: mkdir -p logs/
       - run: touch .env.js
