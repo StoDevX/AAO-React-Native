@@ -1,20 +1,29 @@
 version: 2
 
 x-config:
+  - &docker-node-8
+    image: 'circleci/node:8'
   - &restore-cache-yarn
     keys:
-      - 'v2-dependencies-{{ checksum "yarn.lock" }}'
+      - 'v2-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+      - 'v2-dependencies-{{ arch }}-'
       - 'v2-dependencies-'
   - &save-cache-yarn
-    paths: [~/.cache/yarn]
-    key: 'v2-dependencies-{{ checksum "yarn.lock" }}'
+    paths:
+      - ~/.cache/yarn
+    key: 'v2-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
   - &restore-cache-bundler
     keys:
-      - 'v1-dependencies-{{ checksum "Gemfile.lock" }}'
-      - 'v1-dependencies-'
+      - 'v1-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+      - 'v1-ruby-dependencies-{{ arch }}-'
+      - 'v1-ruby-dependencies-'
   - &save-cache-bundler
-    paths: [./vendor/bundle]
-    key: 'v1-dependencies-{{ checksum "Gemfile.lock" }}'
+    paths:
+      - ./vendor/bundle
+    key: 'v1-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+  - &set-ruby-version
+    name: Set Ruby Version
+    command:  echo "ruby-2.4.2" > ~/.ruby-version
   - &run-danger
     command: yarn run danger --id $task
     when: always
@@ -23,18 +32,27 @@ workflows:
   version: 2
   analyze:
     jobs:
-      - danger
-      - flow
-      - jest
-      - prettier
-      - eslint
-      - data
+      - yarn-linux-cache
+      - danger: {requires: [yarn-linux-cache]}
+      - flow: {requires: [yarn-linux-cache]}
+      - jest: {requires: [yarn-linux-cache]}
+      - prettier: {requires: [yarn-linux-cache]}
+      - eslint: {requires: [yarn-linux-cache]}
+      - data: {requires: [yarn-linux-cache]}
       - ios: {requires: [danger, flow, jest, prettier, eslint, data]}
       - android: {requires: [danger, flow, jest, prettier, eslint, data]}
 
 jobs:
+  cache-yarn-linux:
+    docker: [*docker-node-8]
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install
+      - save_cache: *save-cache-yarn
+
   danger:
-    docker: [{image: 'circleci/node:8'}]
+    docker: [*docker-node-8]
     environment: {task: JS-general}
     steps:
       - checkout
@@ -44,7 +62,7 @@ jobs:
       - run: *run-danger
 
   flow:
-    docker: [{image: 'circleci/node:8'}]
+    docker: [*docker-node-8]
     environment: {task: JS-flow}
     steps:
       - checkout
@@ -57,7 +75,7 @@ jobs:
       - run: *run-danger
 
   jest:
-    docker: [{image: 'circleci/node:8'}]
+    docker: [*docker-node-8]
     environment: {task: JS-jest}
     steps:
       - checkout
@@ -78,7 +96,7 @@ jobs:
             coveralls < ./coverage/lcov.info
 
   prettier:
-    docker: [{image: 'circleci/node:8'}]
+    docker: [*docker-node-8]
     environment: {task: JS-prettier}
     steps:
       - checkout
@@ -97,7 +115,7 @@ jobs:
       - run: *run-danger
 
   eslint:
-    docker: [{image: 'circleci/node:8'}]
+    docker: [*docker-node-8]
     environment: {task: JS-lint}
     steps:
       - checkout
@@ -110,7 +128,7 @@ jobs:
       - run: *run-danger
 
   data:
-    docker: [{image: 'circleci/node:8'}]
+    docker: [*docker-node-8]
     environment: {task: JS-data}
     steps:
       - checkout
@@ -124,12 +142,13 @@ jobs:
 
   android:
     docker: [{image: 'circleci/android:api-27-node8-alpha'}]
-    environment: {task: ANDROID}
+    environment:
+      task: ANDROID
+      FASTLANE_SKIP_UPDATE_CHECK: '1'
+      FASTLANE_DISABLE_ANIMATION: '1'
     steps:
       - checkout
-      - run:
-          name: Set Ruby Version
-          command:  echo "ruby-2.4.2" > ~/.ruby-version
+      - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
@@ -143,13 +162,14 @@ jobs:
 
   ios:
     macos: {xcode: '9.2'}
-    environment: {task: IOS}
+    environment:
+      task: IOS
+      FASTLANE_SKIP_UPDATE_CHECK: '1'
+      FASTLANE_DISABLE_ANIMATION: '1'
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
-      - run:
-          name: Set Ruby Version
-          command:  echo "ruby-2.4.2" > ~/.ruby-version
+      - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
       - run: yarn install
       - save_cache: *save-cache-yarn
