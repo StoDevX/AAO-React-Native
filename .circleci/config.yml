@@ -46,7 +46,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - run: yarn --version
       - save_cache: *save-cache-yarn
 
@@ -57,7 +57,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - run: *run-danger
 
@@ -68,7 +68,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run bundle-data
@@ -83,7 +83,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - run: mkdir -p logs/ test-results/jest/
       - run: yarn run bundle-data
@@ -107,7 +107,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run prettier
@@ -127,7 +127,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - run: mkdir -p logs/ test-results/eslint/
       - run: yarn run bundle-data
@@ -144,7 +144,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run --silent validate-data --quiet | tee logs/validate-data
@@ -162,7 +162,7 @@ jobs:
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --path ./vendor/bundle
@@ -192,7 +192,7 @@ jobs:
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --path ./vendor/bundle
