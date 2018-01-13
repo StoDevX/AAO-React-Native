@@ -13,6 +13,15 @@ x-config:
     key: 'v2-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
     paths:
       - ~/.cache/yarn
+  - &restore-cache-yarn-macos
+    keys:
+      - 'v2-dependencies-macos-{{ arch }}-{{ checksum "yarn.lock" }}'
+      - 'v2-dependencies-macos-{{ arch }}-'
+      - 'v2-dependencies-macos-'
+  - &save-cache-yarn-macos
+    key: 'v2-dependencies-macos-{{ arch }}-{{ checksum "yarn.lock" }}'
+    paths:
+      - ~/Library/Caches/Yarn
   - &restore-cache-bundler
     keys:
       - 'v1-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
@@ -200,9 +209,9 @@ jobs:
       - checkout
       - run: yarn --version
       - run: *set-ruby-version
-      - restore_cache: *restore-cache-yarn
+      - restore_cache: *restore-cache-yarn-macos
       - run: yarn install
-      - save_cache: *save-cache-yarn
+      - save_cache: *save-cache-yarn-macos
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --path ./vendor/bundle
       - save_cache: *save-cache-bundler
