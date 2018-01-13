@@ -101,6 +101,7 @@ jobs:
     docker: [*docker-node-8]
     environment:
       task: JS-jest
+      JEST_JUNIT_OUTPUT: ./logs/jest-junit.xml
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -108,8 +109,10 @@ jobs:
       - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run bundle-data
-      - run: yarn run --silent test --coverage 2>&1 | tee logs/jest
+      - run: yarn run --silent test --coverage --testResultsProcessor="jest-junit" 2>&1 | tee logs/jest
       - run: *run-danger
+      - store_test_results:
+          path: ./logs/jest-junit.xml
       - run: yarn global add coveralls
       - run:
           name: coveralls
