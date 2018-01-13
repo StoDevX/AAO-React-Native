@@ -1,7 +1,8 @@
 // @flow
 
 import {type ReduxState} from '../index'
-import {type ReportProblemToolNamesEnum, type ReportProblemToolOptions} from '../../views/help/index'
+import {type ReportProblemTools} from '../../views/help/index'
+import {fetchHelpTools} from '../../lib/cache'
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
@@ -11,57 +12,15 @@ type Action = GetEnabledToolsAction
 const ENABLED_TOOLS_START = 'help/ENABLED_TOOLS/start'
 const ENABLED_TOOLS_FAILURE = 'help/ENABLED_TOOLS/failure'
 const ENABLED_TOOLS_SUCCESS = 'help/ENABLED_TOOLS/success'
-const ENABLED_TOOLS_CACHED_SUCCESS = 'help/ENABLED_TOOLS/cache/success'
-
-const loadCachedHelpConfig = () => ({
-  lastFetchTime: Date.now() - 6701,
-  config: {
-    enabled: ['wifi'],
-    configs: {
-      wifi: {},
-      'it-helpdesk': {
-        emailTemplate: '',
-        emailAddress: '',
-      },
-      'facilities-work-order': {
-        formUrl: '',
-      },
-    },
-  },
-})
-const fetchHelpConfig = () => ({
-    enabled: ['wifi', 'it-helpdesk'],
-    configs: {
-      wifi: {},
-      'it-helpdesk': {
-        emailTemplate: '',
-        emailAddress: '',
-      },
-      'facilities-work-order': {
-        formUrl: '',
-      },
-    },
-  })
 
 type GetEnabledToolsStartAction = {type: 'help/ENABLED_TOOLS/start'}
-type GetEnabledToolsCachedSuccessAction = {
-  type: 'help/ENABLED_TOOLS/cache/success',
-  payload: {
-    enabled: Array<ReportProblemToolNamesEnum>,
-    configs: ReportProblemToolOptions,
-  },
-}
 type GetEnabledToolsSuccessAction = {
   type: 'help/ENABLED_TOOLS/success',
-  payload: {
-    enabled: Array<ReportProblemToolNamesEnum>,
-    configs: ReportProblemToolOptions,
-  },
+  payload: Array<ReportProblemTools>,
 }
 type GetEnabledToolsFailureAction = {type: 'help/ENABLED_TOOLS/failure'}
 type GetEnabledToolsAction =
   | GetEnabledToolsStartAction
-  | GetEnabledToolsCachedSuccessAction
   | GetEnabledToolsSuccessAction
   | GetEnabledToolsFailureAction
 
@@ -70,45 +29,29 @@ export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
     dispatch({type: ENABLED_TOOLS_START})
 
     const state = getState()
-    const forceUseCache = state.app && !state.app.isConnected
-
-    const cachedConfigAndInfo = await loadCachedHelpConfig()
-
-    const oneHour = 1000 * 60 * 60  // ms>s, s>m, m>h
-    const enoughTimeElapsed = Date.now() - cachedConfigAndInfo.lastFetchTime < oneHour
-    if (forceUseCache || enoughTimeElapsed) {
-      dispatch({
-        type: ENABLED_TOOLS_CACHED_SUCCESS,
-        payload: cachedConfigAndInfo.config,
-      })
-      return
-    }
+    const isOnline = Boolean(state.app && state.app.isConnected)
 
     try {
-      const config = await fetchHelpConfig()
+      const config = await fetchHelpTools(isOnline)
       dispatch({
         type: ENABLED_TOOLS_SUCCESS,
         payload: config,
       })
     } catch (err) {
-      dispatch({type: ENABLED_TOOLS_FAILURE, })
+      dispatch({type: ENABLED_TOOLS_FAILURE})
     }
   }
 }
 
 export type State = {|
   +fetching: boolean,
-  +enabledTools: Array<ReportProblemToolNamesEnum>,
-  +toolConfigs: ReportProblemToolOptions,
-  +lastFetchTime: ?number,
+  +tools: Array<ReportProblemTools>,
   +lastFetchError: ?boolean,
 |}
 
 const initialState = {
   fetching: false,
-  enabledTools: [],
-  toolConfigs: {},
-  lastFetchTime: null,
+  tools: [],
   lastFetchError: null,
 }
 
@@ -121,28 +64,15 @@ export function help(state: State = initialState, action: Action) {
       return {
         ...state,
         fetching: false,
-        lastFetchTime: Date.now(),
         lastFetchError: true,
-      }
-
-    case ENABLED_TOOLS_CACHED_SUCCESS:
-      return {
-        ...state,
-        fetching: false,
-        lastFetchTime: state.lastFetchTime,
-        lastFetchError: false,
-        enabledTools: action.payload.enabled,
-        toolConfigs: action.payload.configs,
       }
 
     case ENABLED_TOOLS_SUCCESS:
       return {
         ...state,
         fetching: false,
-        lastFetchTime: Date.now(),
         lastFetchError: false,
-        enabledTools: action.payload.enabled,
-        toolConfigs: action.payload.configs,
+        tools: action.payload,
       }
 
     default:
