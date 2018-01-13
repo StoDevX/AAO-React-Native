@@ -73,12 +73,6 @@
   version "0.4.5"
   resolved "https://registry.yarnpkg.com/@hawkrives/react-native-alternate-icons/-/react-native-alternate-icons-0.4.5.tgz#1f8f79305e7343aad2e322bc29dfa090e7f14d35"
 
-"@hawkrives/react-native-search-bar@3.0.0-3":
-  version "3.0.0-3"
-  resolved "https://registry.yarnpkg.com/@hawkrives/react-native-search-bar/-/react-native-search-bar-3.0.0-3.tgz#44bfb8888962c1c444f5099bb96be115727431de"
-  dependencies:
-    prop-types "^15.6.0"
-
 "@hawkrives/react-native-sortable-list@1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@hawkrives/react-native-sortable-list/-/react-native-sortable-list-1.0.1.tgz#99a72271a56def44bc226532bf18b79fb3c6e63d"
@@ -525,14 +519,7 @@ babel-helpers@^6.24.1:
     babel-runtime "^6.22.0"
     babel-template "^6.24.1"
 
-babel-jest@22.0.4:
-  version "22.0.4"
-  resolved "https://registry.yarnpkg.com/babel-jest/-/babel-jest-22.0.4.tgz#533c46de37d7c9d7612f408c76314be9277e0c26"
-  dependencies:
-    babel-plugin-istanbul "^4.1.5"
-    babel-preset-jest "^22.0.3"
-
-babel-jest@^22.0.6:
+babel-jest@22.0.6, babel-jest@^22.0.6:
   version "22.0.6"
   resolved "https://registry.yarnpkg.com/babel-jest/-/babel-jest-22.0.6.tgz#807a2a5f5fad7789c57174a955cd14b11045299f"
   dependencies:
@@ -564,10 +551,6 @@ babel-plugin-istanbul@^4.1.5:
     find-up "^2.1.0"
     istanbul-lib-instrument "^1.7.5"
     test-exclude "^4.1.1"
-
-babel-plugin-jest-hoist@^22.0.3:
-  version "22.0.3"
-  resolved "https://registry.yarnpkg.com/babel-plugin-jest-hoist/-/babel-plugin-jest-hoist-22.0.3.tgz#62cde5fe962fd41ae89c119f481ca5cd7dd48bb4"
 
 babel-plugin-jest-hoist@^22.0.6:
   version "22.0.6"
@@ -898,13 +881,6 @@ babel-preset-fbjs@^2.1.2, babel-preset-fbjs@^2.1.4:
     babel-plugin-transform-object-rest-spread "^6.8.0"
     babel-plugin-transform-react-display-name "^6.8.0"
     babel-plugin-transform-react-jsx "^6.8.0"
-
-babel-preset-jest@^22.0.3:
-  version "22.0.3"
-  resolved "https://registry.yarnpkg.com/babel-preset-jest/-/babel-preset-jest-22.0.3.tgz#e2bb6f6b4a509d3ea0931f013db78c5a84856693"
-  dependencies:
-    babel-plugin-jest-hoist "^22.0.3"
-    babel-plugin-syntax-object-rest-spread "^6.13.0"
 
 babel-preset-jest@^22.0.6:
   version "22.0.6"
@@ -4761,6 +4737,12 @@ react-native-restart@0.0.6:
 react-native-safari-view@2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/react-native-safari-view/-/react-native-safari-view-2.1.0.tgz#1e0cd12c62bce79bc1759c7e281646b08b61c959"
+
+react-native-search-bar@3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-search-bar/-/react-native-search-bar-3.3.1.tgz#e9e26c1df6e2e031d39bd389461594d3593fa1e9"
+  dependencies:
+    prop-types "^15.5.10"
 
 react-native-tab-view@^0.0.70:
   version "0.0.70"
