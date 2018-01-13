@@ -164,6 +164,7 @@ jobs:
       script:
         - bundle exec fastlane ios ci-run | tee ./logs/build
         - python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
+        - bundle exec fastlane ios refresh_dsyms
 
 cache:
   bundler: true
