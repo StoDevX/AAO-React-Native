@@ -59,9 +59,7 @@ const styles = StyleSheet.create({
   },
   rectangleButtonText: {
     color: c.white,
-    // marginTop: cellVerticalPadding / 2,
     fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
-    // textAlign: 'center',
     fontSize: 14,
   },
 })
