@@ -1,0 +1,104 @@
+---
+key: facilities-work-order
+enabled: true
+hidden: false
+
+title: Contact Facilities
+body: |
+  > Wild squirrels? Broken stairs? Missing doorframes?
+
+  > They're here to help!
+
+  Facilities "[…] provides and maintains a high-quality, clean, and safe environment that supports and enhances the residential liberal arts college experience."
+
+  Please be prepared to clearly explain the problem and where it is located in the box labeled “Description,” with a building name and room number or reference point. Let them know the time of the report, who you are, and how you can be reached.
+
+# x-defns:
+#   buildings: &buildings
+#     - {label: Christiansen Hall of Music, value: CHM}
+#     - {label: Tom Porter Hall (formerly Manitou Fieldhouse), value: TPH}
+#     - {label: Agnes Mellby Hall, value: AMH}
+#     - {label: Ansgar Sovik House, value: ASH}
+#     - {label: Felland House, value: FH}
+#     - {label: Flaten House, value: FLH}
+#     - {label: Lee House, value: LEE}
+#     - {label: Schmidt House, value: SCH}
+#     - {label: Swanson House, value: SW}
+#     - {label: Meyer House, value: MYH}
+#     - {label: 'TODO: add more', value: ''}
+#   form: &form
+#     action: http://dlweb.megamation.biz/stolaf/DLWEB.php/O4W_WO_NEW
+#     method: POST
+#     content-type: x-url-form/unencoded
+#     fieldsets:
+#       - label: Work Request Entry
+#         fields:
+#           - label: Submitted By
+#             type: text
+#             placeholder: Ole T. Lion
+#             required: true
+#             html-name: SUBMITTEDBY
+#           - label: Date
+#             type: date
+#             value: $today
+#             required: true
+#             html-name: SUBMITTEDDATE
+#             date-format: MM/DD/YYYY
+#           - label: Status
+#             type: label
+#             value: I (Initiated)
+#           - label: Type
+#             type: label
+#             value: WEB (HTML Work Request)
+#           - label: Job Type
+#             type: select
+#             html-name: JOBTYPE
+#             default: N/A
+#             options:
+#               - {label: N/A, value: ''}
+#               - {label: Delivery, value: DEL}
+#               - {label: Maintenance, value: MAI}
+#               - {label: Major Over Haul, value: MOH}
+#               - {label: Paint, value: PAI}
+#               - {label: Repair, value: REP}
+#               - {label: Set up, value: SET}
+#           - label: Email
+#             required: true
+#             type: email
+#             default: $sis-username
+#             html-name: SUBMITTED_BY_EMAIL
+#           - label: 'Phone #'
+#             type: phone
+#             required: true
+#             html-name: PHONE
+#           - label: Building
+#             type: select
+#             html-name: BUILDINGID
+#             options: *buildings
+#           - label: Room #
+#             description: or Location of Problem
+#             type: textarea
+#             placeholder: Stairs to the Theater Building
+#             html-name: ROOM_NO
+#           - label: Description
+#             type: textarea
+#             required: true
+#             placeholder: One of the stairs (on the left side as you walk up) is crumbling badly.
+#             html-name: DESCRIPTION
+#           - label: Department
+#             type: select
+#             enabled: false
+#             hidden: true
+#             html-name: DEPARTMENT
+#             options:
+#               - {label: 010-33367 - DOE Talent Search Match 12/17, value: 010-33367}
+#               - {label: 10-11465 - Russian Lang & Area Studies, value: 10-11465}
+
+buttons:
+  - title: Open the Form
+    action: open-url
+    params:
+      url: http://dlweb.megamation.biz/stolaf/DLWEB.php/O4W_WO_NEW
+    # action: open-form
+    # params:
+    #   form: &form

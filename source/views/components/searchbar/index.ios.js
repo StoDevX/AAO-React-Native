@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import NativeSearchBar from '@hawkrives/react-native-search-bar'
+import NativeSearchBar from 'react-native-search-bar'
 import * as c from '../colors'
 
 const styles = StyleSheet.create({

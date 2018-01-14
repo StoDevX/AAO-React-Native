@@ -73,24 +73,50 @@ export class IconSettingsView extends React.PureComponent<Props, State> {
   }
 
   render() {
+    const selectedIcon = this.state.iconType
     return (
       <ScrollView>
         <Section header="CHANGE YOUR APP ICON" separatorInsetLeft={58}>
           {icons.map(icon => (
-            <Cell
-              key={icon.title}
-              accessory={
-                this.state.iconType === icon.type ? 'Checkmark' : undefined
-              }
-              cellStyle="RightDetail"
-              disableImageResize={false}
-              image={<Image source={icon.src} style={styles.icon} />}
-              onPress={() => this.setIcon(icon.type)}
-              title={icon.title}
+            <IconCell
+              key={icon.type}
+              icon={icon}
+              isSelected={selectedIcon === icon.type}
+              onPress={this.setIcon}
             />
           ))}
         </Section>
       </ScrollView>
+    )
+  }
+}
+
+type IconCellProps = {|
+  +icon: Icon,
+  +isSelected: boolean,
+  +onPress: string => any,
+|}
+
+class IconCell extends React.Component<IconCellProps> {
+  setIcon = () => {
+    if (this.props.isSelected) {
+      return
+    }
+    this.props.onPress(this.props.icon.type)
+  }
+
+  render() {
+    const {isSelected, icon} = this.props
+    return (
+      <Cell
+        key={icon.title}
+        accessory={isSelected ? 'Checkmark' : undefined}
+        cellStyle="RightDetail"
+        disableImageResize={false}
+        image={<Image source={icon.src} style={styles.icon} />}
+        onPress={this.setIcon}
+        title={icon.title}
+      />
     )
   }
 }
