@@ -60,7 +60,11 @@ async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {
     username: username,
     password: password,
   })
-  await fetch(OLECARD_AUTH_URL, {method: 'POST', body: form})
+  let loginResponse = await fetch(OLECARD_AUTH_URL, {method: 'POST', body: form})
+
+  if (loginResponse.url.includes('message=')) {
+    return {error: true, value: new Error('login failed!')}
+  }
 
   const resp: OleCardBalancesType = await fetchJson(OLECARD_DATA_ENDPOINT)
 
