@@ -104,5 +104,8 @@ platform :ios do
 
     # and run
     auto_beta
+
+    # go ahead and download dSYMs for bugsnag too
+    refresh_dsyms
   end
 end
