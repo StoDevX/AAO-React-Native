@@ -48,6 +48,7 @@ exports[`calls the callback 2`] = `
 
 exports[`can change the title 1`] = `
 <Button
+  disabled={false}
   onPress={[Function]}
   style={
     Array [
@@ -71,6 +72,7 @@ exports[`can change the title 1`] = `
 
 exports[`renders 1`] = `
 <Button
+  disabled={false}
   onPress={[Function]}
   style={
     Array [
