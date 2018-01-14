@@ -131,7 +131,7 @@ type Props = {
 }
 
 export class JobDetailView extends React.PureComponent<Props> {
-  static navigationOptions = ({navigation}) => {
+  static navigationOptions = ({navigation}: any) => {
     const {job} = navigation.state.params
     return {
       title: job.title,

@@ -52,7 +52,7 @@ type Props = TopLevelViewPropsType & {
 }
 
 export class StudentOrgsDetailView extends React.PureComponent<Props> {
-  static navigationOptions = ({navigation}) => {
+  static navigationOptions = ({navigation}: any) => {
     const {org} = navigation.state.params
     return {
       title: org.name,

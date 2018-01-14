@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 type Props = {navigation: {state: {params: {mode: OtherModeType}}}}
 
 export class OtherModesDetailView extends React.PureComponent<Props> {
-  static navigationOptions = ({navigation}) => {
+  static navigationOptions = ({navigation}: any) => {
     return {
       title: navigation.state.params.mode.name,
     }
