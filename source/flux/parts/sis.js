@@ -3,14 +3,8 @@
 import {type ReduxState} from '../index'
 import {getBalances, type BalancesShapeType} from '../../lib/financials'
 
-const UPDATE_OLE_DOLLARS = 'sis/UPDATE_OLE_DOLLARS'
-const UPDATE_FLEX_DOLLARS = 'sis/UPDATE_FLEX_DOLLARS'
-const UPDATE_PRINT_DOLLARS = 'sis/UPDATE_PRINT_DOLLARS'
 const UPDATE_BALANCES_SUCCESS = 'sis/UPDATE_BALANCES_SUCCESS'
 const UPDATE_BALANCES_FAILURE = 'sis/UPDATE_BALANCES_FAILURE'
-const UPDATE_MEALS_DAILY = 'sis/UPDATE_MEALS_DAILY'
-const UPDATE_MEALS_WEEKLY = 'sis/UPDATE_MEALS_WEEKLY'
-const UPDATE_MEAL_PLAN = 'sis/UPDATE_MEAL_PLAN'
 
 type UpdateBalancesSuccessAction = {|
   type: 'sis/UPDATE_BALANCES_SUCCESS',
