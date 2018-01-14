@@ -6,6 +6,7 @@ properties:
   key: {type: string}
   enabled: {type: boolean}
   hidden: {type: boolean}
+  message: {type: string}
   versionRange: {type: string}
   title: {type: string}
   body: {type: string}

@@ -56,6 +56,7 @@ export class ToolView extends React.Component<Props, State> {
   }
 
   render() {
+    const toolEnabled = this.props.config.enabled
     let buttonMessage = messages[this.state.status] || 'Error'
     let buttonEnabled = this.state.status === 'init' || this.state.status === 'error'
 
@@ -65,13 +66,13 @@ export class ToolView extends React.Component<Props, State> {
       buttonMessage = this.state.status === 'init' ? btnConfig.title : buttonMessage
     }
 
-    if (!this.props.config.enabled) {
+    if (!toolEnabled) {
       buttonEnabled = false
     }
 
     return (
       <Card
-        footer={!this.props.config.enabled && 'This tool is disabled.'}
+        footer={!toolEnabled ? this.props.config.message || 'This tool is disabled.' : false}
         header={this.props.config.title}
         style={styles.card}
       >

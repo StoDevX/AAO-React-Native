@@ -10,8 +10,9 @@ import {email, phonecall} from 'react-native-communications'
 
 export type ToolOptions = {|
   key: string,
-  enabled: boolean,
-  hidden: boolean,
+  enabled?: boolean,
+  hidden?: boolean,
+  message?: string,
   versionRange?: string,
   title: string,
   body: string,
@@ -134,9 +135,11 @@ type Props = {
 
 export class ToolView extends React.Component<Props> {
   render() {
+    const toolEnabled = this.props.config.enabled
+
     return (
       <Card
-        footer={!this.props.config.enabled && 'This tool is disabled.'}
+        footer={!toolEnabled ? this.props.config.message || 'This tool is disabled.' : false}
         header={this.props.config.title}
         style={styles.card}
       >
@@ -147,7 +150,7 @@ export class ToolView extends React.Component<Props> {
           return (
             <Button
               key={title}
-              disabled={!this.props.config.enabled || !enabled}
+              disabled={!toolEnabled || !enabled}
               onPress={() => handleButtonPress(btn)}
               title={title}
             />
