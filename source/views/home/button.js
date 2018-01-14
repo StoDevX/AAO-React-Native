@@ -47,8 +47,7 @@ const styles = StyleSheet.create({
 
     elevation: 2,
 
-    marginTop: CELL_MARGIN / 2,
-    marginBottom: CELL_MARGIN / 2,
+    marginBottom: CELL_MARGIN,
     marginLeft: CELL_MARGIN / 2,
     marginRight: CELL_MARGIN / 2,
   },
