@@ -3,8 +3,16 @@
 import {Alert, Clipboard} from 'react-native'
 import {email} from 'react-native-communications'
 
-export function sendEmail(args: {to: Array<string>, cc: Array<string>, bcc: Array<string>, subject: string, body: string}) {
-  const {to, cc, bcc, subject, body} = args
+type Args = {|
+  to?: Array<string>,
+  cc?: Array<string>,
+  bcc?: Array<string>,
+  subject?: string,
+  body?: string,
+|}
+
+export function sendEmail(args: Args) {
+  const {to = [], cc = [], bcc = [], subject = '', body = ''} = args
   try {
     email(to, cc, bcc, subject, body)
   } catch (err) {
