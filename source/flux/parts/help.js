@@ -1,7 +1,7 @@
 // @flow
 
 import {type ReduxState} from '../index'
-import {type ReportProblemTools} from '../../views/help/index'
+import {type ToolOptions} from '../../views/help/types'
 import {fetchHelpTools} from '../../lib/cache'
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
@@ -16,7 +16,7 @@ const ENABLED_TOOLS_SUCCESS = 'help/ENABLED_TOOLS/success'
 type GetEnabledToolsStartAction = {type: 'help/ENABLED_TOOLS/start'}
 type GetEnabledToolsSuccessAction = {
   type: 'help/ENABLED_TOOLS/success',
-  payload: Array<ReportProblemTools>,
+  payload: Array<ToolOptions>,
 }
 type GetEnabledToolsFailureAction = {type: 'help/ENABLED_TOOLS/failure'}
 type GetEnabledToolsAction =
@@ -45,7 +45,7 @@ export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
 
 export type State = {|
   +fetching: boolean,
-  +tools: Array<ReportProblemTools>,
+  +tools: Array<ToolOptions>,
   +lastFetchError: ?boolean,
 |}
 

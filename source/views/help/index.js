@@ -11,10 +11,10 @@ import {type TopLevelViewPropsType} from '../types'
 import {type ReduxState} from '../../flux'
 import {getEnabledTools} from '../../flux/parts/help'
 import * as wifi from './wifi'
-import {ToolView, type ToolOptions} from './tool'
+import {ToolView} from './tool'
+import {type ToolOptions} from './types'
 
 const CUSTOM_TOOLS = [wifi]
-export type ReportProblemTools = wifi.ToolOptions | ToolOptions
 
 const shouldBeShown = conf =>
   !conf.hidden &&
@@ -30,7 +30,7 @@ const getToolView = config => {
 
 type ReduxStateProps = {
   fetching: boolean,
-  tools: Array<ReportProblemTools>,
+  tools: Array<ToolOptions>,
 }
 
 type ReduxDispatchProps = {

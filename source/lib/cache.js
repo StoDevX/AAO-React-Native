@@ -199,23 +199,23 @@ export async function getBalances(): Promise<BalancesOutputType> {
 
 const helpToolsKey = 'help:tools'
 const helpToolsCacheTime = [1, 'hour']
-import {type ReportProblemTools} from '../views/help/index'
+import {type ToolOptions} from '../views/help/types'
 const {data: helpData} = require('../../docs/help.json')
-export function setHelpTools(tools: Array<ReportProblemTools>) {
+export function setHelpTools(tools: Array<ToolOptions>) {
   return setItem(helpToolsKey, tools, helpToolsCacheTime)
 }
-export function getHelpTools(): CacheResultType<?Array<ReportProblemTools>> {
+export function getHelpTools(): CacheResultType<?Array<ToolOptions>> {
   return getItem(helpToolsKey)
 }
-function fetchHelpToolsBundled(): Promise<Array<ReportProblemTools>> {
+function fetchHelpToolsBundled(): Promise<Array<ToolOptions>> {
   return Promise.resolve(helpData)
 }
-function fetchHelpToolsRemote(): Promise<{data: Array<ReportProblemTools>}> {
+function fetchHelpToolsRemote(): Promise<{data: Array<ToolOptions>}> {
   return fetchJson(GH_PAGES_URL('help.json'))
 }
 export async function fetchHelpTools(
   isOnline: boolean,
-): Promise<Array<ReportProblemTools>> {
+): Promise<Array<ToolOptions>> {
   const cachedValue = await getHelpTools()
 
   if (process.env.NODE_ENV === 'development') {

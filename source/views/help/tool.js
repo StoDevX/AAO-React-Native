@@ -7,61 +7,12 @@ import {Button} from '../components/button'
 import {Markdown} from '../components/markdown'
 import actualOpenUrl from '../components/open-url'
 import {email, phonecall} from 'react-native-communications'
-
-export type ToolOptions = {|
-  key: string,
-  enabled?: boolean,
-  hidden?: boolean,
-  message?: string,
-  versionRange?: string,
-  title: string,
-  body: string,
-  buttons: Array<ButtonDef>,
-|}
-
-type EmailRecipient = string | Array<string>
-
-type SendEmailButtonParams = {
-  to: EmailRecipient,
-  cc?: EmailRecipient,
-  bcc?: EmailRecipient,
-  subject: string,
-  body: string,
-}
-type SendEmailButtonDef = {
-  title: string,
-  icon: string,
-  enabled?: boolean,
-  action: 'send-email',
-  params: SendEmailButtonParams,
-}
-
-type OpenUrlButtonParams = {
-  url: string,
-}
-type OpenUrlButtonDef = {
-  title: string,
-  icon: string,
-  enabled?: boolean,
-  action: 'open-url',
-  params: OpenUrlButtonParams,
-}
-
-type CallPhoneButtonParams = {
-  number: string,
-}
-type CallPhoneButtonDef = {
-  title: string,
-  icon: string,
-  enabled?: boolean,
-  action: 'call-phone',
-  params: CallPhoneButtonParams,
-}
-
-export type ButtonDef =
-  | SendEmailButtonDef
-  | OpenUrlButtonDef
-  | CallPhoneButtonDef
+import type {
+  ToolOptions,
+  CallPhoneButtonParams,
+  SendEmailButtonParams,
+  OpenUrlButtonParams,
+} from './types'
 
 function callPhone(params: CallPhoneButtonParams) {
   try {

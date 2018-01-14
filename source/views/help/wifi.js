@@ -9,10 +9,10 @@ import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {Error, ErrorMessage} from './components'
 import {getPosition, collectData, reportToServer} from './wifi-tools'
-import {type ToolOptions, styles} from './tool'
+import {styles} from './tool'
+import type {ToolOptions} from './types'
 
 export const toolName = 'wifi'
-export type {ToolOptions}
 
 const messages = {
   init: 'Report',
