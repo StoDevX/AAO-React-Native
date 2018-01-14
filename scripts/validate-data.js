@@ -117,8 +117,10 @@ function* load(schemaName) {
   try {
     schema = readYaml(path.join(SCHEMA_BASE, schemaName + '.yaml'))
   } catch (err) {
-    console.error(`Could not find "${schemaName}.yaml" in ${SCHEMA_BASE}`)
-    process.exit(1)
+    if (err.code === 'ENOENT') {
+      console.error(`Could not find "${schemaName}.yaml" in ${SCHEMA_BASE}`)
+      process.exit(1)
+    }
   }
 
   const dirPath = path.join(DATA_BASE, schemaName)
