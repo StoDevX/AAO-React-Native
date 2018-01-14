@@ -5,16 +5,9 @@
 ; Ignore "BUCK" generated dirs
 <PROJECT_ROOT>/\.buckd/
 
-; Ignore unexpected extra "@providesModule"
-.*/node_modules/.*/node_modules/fbjs/.*
-
 ; Ignore the vendor/ folder, since CIs appear to stick ruby deps in there
 <PROJECT_ROOT>/vendor/
-
-; Ignore duplicate module providers
-; For RN Apps installed via npm, "Libraries" folder is inside
-; "node_modules/react-native" but in the source repo it is in the root
-.*/Libraries/react-native/React.js
+<PROJECT_ROOT>/.bundle/
 
 ; Ignore polyfills
 .*/Libraries/polyfills/.*
