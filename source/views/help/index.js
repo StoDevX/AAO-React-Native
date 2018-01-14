@@ -1,26 +1,32 @@
 // @flow
 
 import * as React from 'react'
+import semver from 'semver'
+import pkg from '../../../package.json'
 import {connect} from 'react-redux'
-import {ScrollView, StyleSheet, View, Text} from 'react-native'
+import {ScrollView, StyleSheet} from 'react-native'
+import {NoticeView} from '../components/notice'
+import LoadingView from '../components/loading'
 import {type TopLevelViewPropsType} from '../types'
 import {type ReduxState} from '../../flux'
 import {getEnabledTools} from '../../flux/parts/help'
 import * as wifi from './wifi'
-import * as helpdesk from './helpdesk'
-import * as facilities from './facilities'
+import {ToolView, type ToolOptions} from './tool'
 
-const ALL_TOOLS = [wifi, helpdesk, facilities]
+const CUSTOM_TOOLS = [wifi]
+export type ReportProblemTools = wifi.ToolOptions | ToolOptions
 
-export type ReportProblemToolNamesEnum =
-  | wifi.ToolName
-  | facilities.ToolName
-  | helpdesk.ToolName
+const shouldBeShown = conf =>
+  !conf.hidden &&
+  (!conf.versionRange || semver.satisfies(pkg.version, conf.versionRange))
 
-export type ReportProblemTools =
-  | wifi.ToolOptions
-  | helpdesk.ToolOptions
-  | facilities.ToolOptions
+const getToolView = config => {
+  const customView = CUSTOM_TOOLS.find(tool => tool.toolName === config.key)
+  if (!customView) {
+    return [ToolView, config]
+  }
+  return [customView.ToolView, config]
+}
 
 type ReduxStateProps = {
   fetching: boolean,
@@ -44,39 +50,26 @@ export class HelpView extends React.Component<Props> {
 
   render() {
     if (this.props.fetching) {
-      return <LoadingScreen />
+      return <LoadingView text="Loading…" />
     }
 
-    const tools = ALL_TOOLS.map(tool => [
-      tool,
-      this.props.tools.find(conf => conf.key === tool.toolName),
-    ])
-
-    const views = tools.map(
-      ([tool, config]) =>
-        config ? <tool.ToolView key={config.key} options={config} /> : null,
-    )
+    const views = this.props.tools
+      .filter(shouldBeShown)
+      .map(getToolView)
+      .map(([Tool, conf]) => <Tool key={conf.key} config={conf} />)
 
     return (
-      <ScrollView style={styles.contentContainer}>
-        {views.length ? views : <EmptyListView />}
+      <ScrollView contentContainerStyle={styles.container}>
+        {views.length ? views : <NoticeView text="No tools are enabled." />}
       </ScrollView>
     )
   }
 }
 
 function mapState(state: ReduxState): ReduxStateProps {
-  if (!state.help) {
-    return {
-      fetching: false,
-      tools: [],
-    }
-  }
-
   return {
-    fetching: state.help.fetching,
-    tools: state.help.tools,
-    lastFetchError: state.help.lastFetchError,
+    fetching: state.help ? state.help.fetching : false,
+    tools: state.help ? state.help.tools : [],
   }
 }
 
@@ -88,20 +81,8 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 
 export default connect(mapState, mapDispatch)(HelpView)
 
-const EmptyListView = () => (
-  <View>
-    <Text>No tools are enabled.</Text>
-  </View>
-)
-
-const LoadingScreen = () => (
-  <View>
-    <Text>Loading…</Text>
-  </View>
-)
-
 const styles = StyleSheet.create({
-  contentContainer: {
+  container: {
     paddingTop: 10,
   },
 })

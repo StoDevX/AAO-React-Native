@@ -10,17 +10,6 @@ export const Title = glamorous.text({
   textAlign: 'center',
 })
 
-export const Description = glamorous.text({
-  fontSize: 14,
-  marginBottom: 10,
-})
-
-export const Quote = glamorous(Description)({
-  fontSize: 12,
-  fontStyle: 'italic',
-  textAlign: 'center',
-})
-
 export const Error = glamorous.view({
   backgroundColor: c.warning,
   padding: 10,

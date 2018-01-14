@@ -1,21 +1,18 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
 import {Card} from '../components/card'
 import {Button} from '../components/button'
+import {Markdown} from '../components/markdown'
 import retry from 'p-retry'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
-import {Title, Description, Error, ErrorMessage} from './components'
+import {Error, ErrorMessage} from './components'
 import {getPosition, collectData, reportToServer} from './wifi-tools'
+import {type ToolOptions, styles} from './tool'
 
-export type ToolName = 'wifi'
-export const toolName: ToolName = 'wifi'
-export type ToolOptions = {|
-  key: ToolName,
-  enabled: boolean,
-|}
+export const toolName = 'wifi'
+export type {ToolOptions}
 
 const messages = {
   init: 'Report',
@@ -25,7 +22,9 @@ const messages = {
   error: 'Try again?',
 }
 
-type Props = {}
+type Props = {
+  config: ToolOptions,
+}
 
 type State = {
   error: ?string,
@@ -50,34 +49,33 @@ export class ToolView extends React.Component<Props, State> {
     } catch (err) {
       reportNetworkProblem(err)
       this.setState(() => ({
-        error: 'Apologies; there was an error. Please try again later.',
+        error: this.props.config.errorMessage || 'Apologies; there was an error. Please try again later.',
         status: 'error',
       }))
     }
   }
 
   render() {
-    const buttonMessage = messages[this.state.status] || 'Error'
-    const buttonEnabled =
-      this.state.status === 'init' || this.state.status === 'error'
+    let buttonMessage = messages[this.state.status] || 'Error'
+    let buttonEnabled = this.state.status === 'init' || this.state.status === 'error'
+
+    if (this.props.config.buttons && this.props.config.buttons.length >= 1) {
+      const btnConfig = this.props.config.buttons[0]
+      buttonEnabled = buttonEnabled && btnConfig.enabled !== false
+      buttonMessage = this.state.status === 'init' ? btnConfig.title : buttonMessage
+    }
+
+    if (!this.props.config.enabled) {
+      buttonEnabled = false
+    }
 
     return (
-      <Card style={styles.card}>
-        <Title selectable={true}>Report a Wi-Fi Problem</Title>
-
-        <Description selectable={true}>
-          If you are having an issue connecting to any of the St. Olaf College
-          Wi-Fi networks, please tap the button below.
-        </Description>
-        <Description selectable={true}>
-          This information is anonymous, and we do not collect usernames. We
-          will record your current location and some general information about
-          the device you are using, then send it to a server that IT maintains.
-        </Description>
-        <Description selectable={true} style={styles.lastParagraph}>
-          The networking team can then use this information to identify where
-          people are having issues!
-        </Description>
+      <Card
+        footer={!this.props.config.enabled && 'This tool is disabled.'}
+        header={this.props.config.title}
+        style={styles.card}
+      >
+        <Markdown source={this.props.config.body} />
 
         {this.state.error ? (
           <Error>
@@ -94,14 +92,3 @@ export class ToolView extends React.Component<Props, State> {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  card: {
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    marginBottom: 15,
-  },
-  lastParagraph: {
-    marginBottom: 0,
-  },
-})
