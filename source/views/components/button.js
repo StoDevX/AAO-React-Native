@@ -32,7 +32,8 @@ type Props = {
 export function Button({title, onPress = noop, disabled = false}: Props) {
   return (
     <BasicButton
-      onPress={disabled ? noop : onPress}
+      disabled={disabled}
+      onPress={onPress}
       style={[styles.button, disabled && styles.disabled]}
     >
       {title || 'Push me!'}
