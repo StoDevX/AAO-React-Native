@@ -46,7 +46,7 @@ function Information({job}: {job: JobType}) {
     />
   ) : null
 
-  const ending = job.hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
+  const ending = job.hoursPerWeek === 'Full-time' ? '' : ' hrs/week'
   const hours = job.hoursPerWeek ? (
     <Cell
       cellStyle="LeftDetail"
