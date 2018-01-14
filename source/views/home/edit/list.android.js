@@ -58,7 +58,7 @@ class EditHomeView extends React.PureComponent<Props> {
     const newOrder = currentOrder.filter(v => v !== viewName)
     newOrder.splice(newIndex, 0, viewName)
 
-    this.props.onChangeOrder(newOrder)
+    this.props.onSaveOrder(newOrder)
   }
 
   renderItem = ({item}: {item: ViewType}) => {
