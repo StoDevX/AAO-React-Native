@@ -31,6 +31,7 @@ definitions:
       properties:
         title: {type: string}
         action: {const: open-url}
+        enabled: {type: boolean}
         params:
           type: object
           additionalProperties: false
@@ -44,6 +45,7 @@ definitions:
       properties:
         title: {type: string}
         action: {const: send-email}
+        enabled: {type: boolean}
         params:
           type: object
           additionalProperties: false
@@ -61,6 +63,7 @@ definitions:
       properties:
         title: {type: string}
         action: {const: call-phone}
+        enabled: {type: boolean}
         params:
           type: object
           additionalProperties: false
@@ -73,6 +76,7 @@ definitions:
       required: [title, action, params]
       properties:
         title: {type: string}
+        enabled: {type: boolean}
         action: {const: custom}
         params: {type: object}
 
