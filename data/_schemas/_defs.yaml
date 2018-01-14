@@ -8,7 +8,7 @@ definitions:
 
   phone:
     type: string
-    pattern: ^\d{10}$
+    pattern: ^\d{10,11}$
 
   day-of-week:
     type: string
