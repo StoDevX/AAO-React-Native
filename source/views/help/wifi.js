@@ -49,7 +49,9 @@ export class ToolView extends React.Component<Props, State> {
     } catch (err) {
       reportNetworkProblem(err)
       this.setState(() => ({
-        error: this.props.config.errorMessage || 'Apologies; there was an error. Please try again later.',
+        error:
+          this.props.config.errorMessage ||
+          'Apologies; there was an error. Please try again later.',
         status: 'error',
       }))
     }
@@ -58,12 +60,14 @@ export class ToolView extends React.Component<Props, State> {
   render() {
     const toolEnabled = this.props.config.enabled
     let buttonMessage = messages[this.state.status] || 'Error'
-    let buttonEnabled = this.state.status === 'init' || this.state.status === 'error'
+    let buttonEnabled =
+      this.state.status === 'init' || this.state.status === 'error'
 
     if (this.props.config.buttons && this.props.config.buttons.length >= 1) {
       const btnConfig = this.props.config.buttons[0]
       buttonEnabled = buttonEnabled && btnConfig.enabled !== false
-      buttonMessage = this.state.status === 'init' ? btnConfig.title : buttonMessage
+      buttonMessage =
+        this.state.status === 'init' ? btnConfig.title : buttonMessage
     }
 
     if (!toolEnabled) {
@@ -72,7 +76,11 @@ export class ToolView extends React.Component<Props, State> {
 
     return (
       <Card
-        footer={!toolEnabled ? this.props.config.message || 'This tool is disabled.' : false}
+        footer={
+          !toolEnabled
+            ? this.props.config.message || 'This tool is disabled.'
+            : false
+        }
         header={this.props.config.title}
         style={styles.card}
       >

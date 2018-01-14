@@ -139,7 +139,11 @@ export class ToolView extends React.Component<Props> {
 
     return (
       <Card
-        footer={!toolEnabled ? this.props.config.message || 'This tool is disabled.' : false}
+        footer={
+          !toolEnabled
+            ? this.props.config.message || 'This tool is disabled.'
+            : false
+        }
         header={this.props.config.title}
         style={styles.card}
       >
