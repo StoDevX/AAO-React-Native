@@ -100,6 +100,7 @@
     "redux-logger": "3.0.6",
     "redux-promise": "0.5.3",
     "redux-thunk": "2.2.0",
+    "semver": "5.4.1",
     "stream": "0.0.2",
     "timers": "0.1.1",
     "titlecase": "1.1.2",
