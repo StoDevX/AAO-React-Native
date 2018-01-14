@@ -1,10 +1,10 @@
 // @flow
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
-import {email} from 'react-native-communications'
+import {sendEmail} from '../../components/send-email'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import moment from 'moment'
-import openUrl from '../../components/open-url'
+import {openUrl} from '../../components/open-url'
 import * as c from '../../components/colors'
 import type {JobType} from './types'
 import {cleanJob, getContactName, getLinksFromJob} from './clean-job'
@@ -39,7 +39,9 @@ function Information({job}: {job: JobType}) {
       accessory="DisclosureIndicator"
       cellStyle="LeftDetail"
       detail={'Contact'}
-      onPress={() => email([job.contactEmail], null, null, job.title, '')}
+      onPress={() =>
+        sendEmail({to: [job.contactEmail], subject: job.title, body: ''})
+      }
       title={getContactName(job).trim() || job.contactEmail}
     />
   ) : null
