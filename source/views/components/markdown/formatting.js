@@ -5,6 +5,7 @@ import {SelectableText} from './selectable'
 
 export const Paragraph = glamorous(SelectableText)({
   marginVertical: 3,
+  paddingRight: 4,
 })
 
 export const BlockQuote = glamorous(Paragraph)({
