@@ -3,9 +3,14 @@
 import {Alert, Clipboard} from 'react-native'
 import {phonecall} from 'react-native-communications'
 
-export function callPhone(phoneNumber: string) {
+type Options = {|
+  prompt?: boolean,
+|}
+
+export function callPhone(phoneNumber: string, opts?: Options) {
+  const {prompt = true} = opts || {}
   try {
-    phonecall(phoneNumber, true)
+    phonecall(phoneNumber, prompt)
   } catch (err) {
     Alert.alert(
       "Apologies, we couldn't call that number",
