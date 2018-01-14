@@ -14,8 +14,8 @@ function formatError(err, data) {
   switch (err.keyword) {
     case 'enum': {
       const value = get(data, dataPath)
-      const allowed = err.params.allowedValues.join(', ')
-      contents = `Given value "${value}" ${err.message} [${allowed}]`
+      const allowed = err.params.allowedValues.map(v => JSON.stringify(v)).join(', ')
+      contents = `Given value "${JSON.stringify(value)}" ${err.message} [${allowed}]`
       break
     }
     case 'type': {
