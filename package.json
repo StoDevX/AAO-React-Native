@@ -21,6 +21,7 @@
     "prettier:changed": "pretty-quick",
     "prettier:since-master": "pretty-quick",
     "start": "react-native start",
+    "storybook": "storybook start -p 7007",
     "test": "jest",
     "validate-bus-data": "node scripts/validate-bus-schedules.js",
     "validate-data": "node scripts/validate-data.js"
@@ -108,6 +109,12 @@
     "xml2js": "0.4.19"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^3.3.9",
+    "@storybook/addon-console": "1.0.0",
+    "@storybook/addon-links": "^3.3.9",
+    "@storybook/addon-storyshots": "3.3.9",
+    "@storybook/addons": "^3.3.9",
+    "@storybook/react-native": "^3.3.9",
     "ajv": "6.0.1",
     "babel-core": "6.26.0",
     "babel-eslint": "8.2.1",
@@ -129,6 +136,7 @@
     "jest-junit": "3.4.1",
     "js-yaml": "3.10.0",
     "junk": "2.1.0",
+    "loki": "0.8.0",
     "minimist": "1.2.0",
     "mkdirp": "0.5.1",
     "pify": "3.0.0",
@@ -136,10 +144,18 @@
     "pretty-bytes": "4.0.2",
     "pretty-quick": "1.2.0",
     "prop-types": "15.6.0",
+    "react-dom": "16.2.0",
     "react-test-renderer": "16.2.0",
     "simple-plist": "0.2.1",
     "string-natural-compare": "2.0.2",
     "strip-ansi": "4.0.0",
     "xcode": "1.0.0"
+  },
+  "loki": {
+    "configurations": {
+      "ios.iphone7": {
+        "target": "ios.simulator"
+      }
+    }
   }
 }
