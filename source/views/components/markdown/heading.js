@@ -14,42 +14,42 @@ export const Header = glamorous(SelectableText)({
 const H1 = glamorous(Header)({
   ...Platform.select({
     ios: iOSUIKit.largeTitleEmphasizedObject,
-    android: material.display4Object,
+    android: material.display3Object,
   }),
 })
 
 const H2 = glamorous(Header)({
   ...Platform.select({
     ios: iOSUIKit.title3EmphasizedObject,
-    android: material.display3Object,
+    android: material.display2Object,
   }),
 })
 
 const H3 = glamorous(Header)({
   ...Platform.select({
     ios: iOSUIKit.title3Object,
-    android: material.display2Object,
+    android: material.display1Object,
   }),
 })
 
 const H4 = glamorous(Header)({
   ...Platform.select({
     ios: iOSUIKit.subheadObject,
-    android: material.display1Object,
+    android: material.headlineObject,
   }),
 })
 
 const H5 = glamorous(Header)({
   ...Platform.select({
     ios: iOSUIKit.subheadObject,
-    android: material.headlineObject,
+    android: material.titleObject
   }),
 })
 
 const H6 = glamorous(Header)({
   ...Platform.select({
     ios: iOSUIKit.subheadObject,
-    android: material.titleObject,
+    android: material.subheadingObject,
   }),
 })
 
