@@ -44,9 +44,9 @@ export const Heading = (props: any) => {
     case 1:
       return <Heading style={h1}>{props.children}</Heading>
     case 2:
-      return <Heading style={h2}>{props.children}</H2>
+      return <Heading style={h2}>{props.children}</Heading>
     case 3:
-      return <Heading style={h3}>{props.children}</H3>
+      return <Heading style={h3}>{props.children}</Heading>
     case 4:
     case 5:
     case 6:
