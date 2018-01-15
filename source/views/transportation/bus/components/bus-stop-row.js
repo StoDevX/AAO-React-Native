@@ -35,14 +35,14 @@ const styles = StyleSheet.create({
 })
 
 type Props = {|
-  +stop: BusTimetableEntry,
-  +departureIndex: null | number,
-  +now: moment,
   +barColor: string,
   +currentStopColor: string,
+  +departureIndex: null | number,
   +isFirstRow: boolean,
   +isLastRow: boolean,
+  +now: moment,
   +status: BusStateEnum,
+  +stop: BusTimetableEntry,
 |}
 
 export class BusStopRow extends React.PureComponent<Props, void> {
@@ -54,8 +54,8 @@ export class BusStopRow extends React.PureComponent<Props, void> {
       isFirstRow,
       isLastRow,
       now,
-      stop,
       status: busStatus,
+      stop,
     } = this.props
 
     const stopStatus = findStopStatus({stop, busStatus, departureIndex, now})
