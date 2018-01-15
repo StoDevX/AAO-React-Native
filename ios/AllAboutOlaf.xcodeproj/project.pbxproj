@@ -192,6 +192,20 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = SafariViewManager;
 		};
+		009C5FF9200C20C00070B6B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EBF21BDC1FC498900052F4D5;
+			remoteInfo = jsinspector;
+		};
+		009C5FFB200C20C00070B6B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EBF21BFA1FC4989A0052F4D5;
+			remoteInfo = "jsinspector-tvOS";
+		};
 		00C302AB1ABCB8CE00DB3ED1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
@@ -768,6 +782,8 @@
 				0035C1091E4F59AE00768B84 /* libcxxreact.a */,
 				0035C10B1E4F59AE00768B84 /* libjschelpers.a */,
 				0035C10D1E4F59AE00768B84 /* libjschelpers.a */,
+				009C5FFA200C20C00070B6B3 /* libjsinspector.a */,
+				009C5FFC200C20C00070B6B3 /* libjsinspector-tvOS.a */,
 				00CDE5501F1F041900FEA89E /* libthird-party.a */,
 				00E9BA4C1FBBB54C00E0DFCD /* libthird-party.a */,
 				00CDE5521F1F041900FEA89E /* libdouble-conversion.a */,
@@ -1252,6 +1268,20 @@
 			fileType = archive.ar;
 			path = libSafariViewManager.a;
 			remoteRef = 009845C01E5DEE6800194E4A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		009C5FFA200C20C00070B6B3 /* libjsinspector.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libjsinspector.a;
+			remoteRef = 009C5FF9200C20C00070B6B3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		009C5FFC200C20C00070B6B3 /* libjsinspector-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libjsinspector-tvOS.a";
+			remoteRef = 009C5FFB200C20C00070B6B3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */ = {
