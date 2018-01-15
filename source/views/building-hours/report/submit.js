@@ -4,6 +4,7 @@ import jsYaml from 'js-yaml'
 import type {BuildingType} from '../types'
 import {email} from 'react-native-communications'
 import querystring from 'querystring'
+import {GH_NEW_ISSUE_URL} from '../../../globals'
 
 export function submitReport(current: BuildingType, suggestion: BuildingType) {
   // calling trim() on these to remove the trailing newlines
@@ -64,7 +65,7 @@ function makeIssueLink(before: string, after: string, title: string): string {
     title: `Building hours update for ${title}`,
     body: makeMarkdownBody(before, after),
   })
-  return `https://github.com/StoDevX/AAO-React-Native/issues/new?${q}`
+  return `${GH_NEW_ISSUE_URL}?${q}`
 }
 
 function stringifyBuilding(building: BuildingType): string {

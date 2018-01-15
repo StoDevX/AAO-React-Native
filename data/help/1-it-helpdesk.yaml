@@ -1,0 +1,42 @@
+---
+key: it-helpdesk
+enabled: false
+hidden: false
+message: 'Disabled because reason'
+# versionRange: '1.x <1.3 >=1.2'
+
+title: Open a Helpdesk Ticket
+body: |
+  > If there’s something strange
+  > in you neighborhood
+  > Who you gonna call?
+
+  If you need help with general computing issues, please contact the IT Helpdesk.
+
+  Helpdesk requests are often related to accounts and passwords, classroom technologies, equipment checkout, Gmail migration, printer setup, network folder access, and network registration and connectivity, but are by no means limited to the aforementioned categories.
+
+  The online Helpdesk system is only available via the on-campus wifi, so you will need to use the phone or email methods if you are off-campus.
+
+buttons:
+  - title: File a Ticket
+    action: open-url
+    params:
+      url: https://help.stolaf.edu/
+
+  - title: Call the Helpdesk
+    enabled: false
+    action: call-phone
+    params:
+      number: '15077863830'
+
+  - title: Email a Ticket
+    action: send-email
+    params:
+      to: helpdesk@stolaf.edu
+      subject: I Haz A Problem
+      body: |
+        Thank you for contacting the IT Helpdesk!
+
+        Please include your name, phone number, and next of kin.
+
+        Have a wonderful day!

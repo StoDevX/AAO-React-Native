@@ -1,4 +1,4 @@
-$schema: http://json-schema.org/draft-06/schema#
+$schema: http://json-schema.org/draft-07/schema#
 $id: _defs.json
 
 definitions:
@@ -8,7 +8,7 @@ definitions:
 
   phone:
     type: string
-    pattern: ^\d{10}$
+    pattern: ^\d{10,11}$
 
   day-of-week:
     type: string

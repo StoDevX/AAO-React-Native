@@ -7,8 +7,9 @@ import {reportNetworkProblem} from '../../lib/report-network-problem'
 import LoadingView from '../components/loading'
 import * as defaultData from '../../../docs/faqs.json'
 import delay from 'delay'
+import {GH_PAGES_URL} from '../../globals'
 
-const faqsUrl = 'https://stodevx.github.io/AAO-React-Native/faqs.json'
+const faqsUrl = GH_PAGES_URL('faqs.json')
 
 type Props = {}
 

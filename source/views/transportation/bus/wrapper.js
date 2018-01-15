@@ -9,12 +9,12 @@ import LoadingView from '../../components/loading'
 import type {TopLevelViewPropsType} from '../../types'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../../lib/report-network-problem'
-
 import * as defaultData from '../../../../docs/bus-times.json'
+import {GH_PAGES_URL} from '../../../globals'
 
 const TIMEZONE = 'America/Winnipeg'
 
-const GITHUB_URL = 'https://stodevx.github.io/AAO-React-Native/bus-times.json'
+const busTimesUrl = GH_PAGES_URL('bus-times.json')
 
 type Props = TopLevelViewPropsType & {
   +line: string,
@@ -55,7 +55,7 @@ export class BusView extends React.PureComponent<Props, State> {
   }
 
   fetchData = async () => {
-    let {data: busLines} = await fetchJson(GITHUB_URL).catch(err => {
+    let {data: busLines} = await fetchJson(busTimesUrl).catch(err => {
       reportNetworkProblem(err)
       return defaultData
     })

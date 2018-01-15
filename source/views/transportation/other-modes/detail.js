@@ -8,8 +8,7 @@ import {tracker} from '../../../analytics'
 import {Button} from '../../components/button'
 import openUrl from '../../components/open-url'
 import type {OtherModeType} from '../types'
-
-const AAO_URL = 'https://github.com/StoDevX/AAO-React-Native/issues/new'
+import {GH_NEW_ISSUE_URL} from '../../../globals'
 
 const Title = glamorous.text({
   fontSize: 36,
@@ -32,7 +31,7 @@ const styles = StyleSheet.create({
 type Props = {navigation: {state: {params: {mode: OtherModeType}}}}
 
 export class OtherModesDetailView extends React.PureComponent<Props> {
-  static navigationOptions = ({navigation}) => {
+  static navigationOptions = ({navigation}: any) => {
     return {
       title: navigation.state.params.mode.name,
     }
@@ -57,10 +56,10 @@ export class OtherModesDetailView extends React.PureComponent<Props> {
           styles={{Paragraph: styles.paragraph}}
         />
 
-        <Button onPress={this.onPress} title={'More Info'} />
+        <Button onPress={this.onPress} title="More Info" />
 
         <ListFooter
-          href={AAO_URL}
+          href={GH_NEW_ISSUE_URL}
           title="Collected by the humans of All About Olaf"
         />
       </Container>

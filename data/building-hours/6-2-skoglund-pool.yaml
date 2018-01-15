@@ -5,10 +5,11 @@ schedule:
   - title: Lap Swim
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '12:00pm', to: '2:00pm'}
+      - {days: [Mo, We, Fr], from: '6:00pm', to: '8:30pm'}
 
   - title: Open Swim
     hours:
-      - {days: [Mo, We, Fr], from: '6:30pm', to: '8:30pm'}
+      # - {days: [Mo, We, Fr], from: '6:30pm', to: '8:30pm'}
       - {days: [Tu, Th], from: '8:00pm', to: '10:00pm'}
       - {days: [Sa, Su], from: '2:00pm', to: '4:30pm'}
 

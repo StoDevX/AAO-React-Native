@@ -5,10 +5,11 @@ import {Markdown} from '../components/markdown'
 import {ListFooter} from '../components/list'
 import glamorous from 'glamorous-native'
 import type {WordType} from './types'
+import {GH_NEW_ISSUE_URL} from '../../globals'
 
 // TODO: This doesn't point at the SA dictionary because they don't have an
 // overview page.
-const STO_SA_DICT_URL = 'https://github.com/StoDevX/AAO-React-Native/issues/new'
+const STO_SA_DICT_URL = GH_NEW_ISSUE_URL
 
 const Term = glamorous.text({
   fontSize: 36,
@@ -33,7 +34,7 @@ type Props = {
 }
 
 export class DictionaryDetailView extends React.PureComponent<Props> {
-  static navigationOptions = ({navigation}) => {
+  static navigationOptions = ({navigation}: any) => {
     return {
       title: navigation.state.params.item.word,
     }

@@ -29,8 +29,8 @@ const cardStyles = StyleSheet.create({
 })
 
 type Props = {
-  header?: string,
-  footer?: string,
+  header?: false | string,
+  footer?: false | string,
   children?: any,
   style?: any,
 }

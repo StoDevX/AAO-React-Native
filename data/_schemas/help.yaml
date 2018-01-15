@@ -1,0 +1,90 @@
+$schema: http://json-schema.org/draft-07/schema#
+
+additionalProperties: false
+required: [key, enabled, title, body]
+properties:
+  key: {type: string}
+  enabled: {type: boolean}
+  hidden: {type: boolean}
+  message: {type: string}
+  versionRange: {type: string}
+  title: {type: string}
+  body: {type: string}
+  buttons:
+    type: array
+    items:
+      # TODO: convert this to "enum" instead of "oneOf"
+      oneOf:
+        - $ref: '#/definitions/buttons/open-url'
+        - $ref: '#/definitions/buttons/send-email'
+        - $ref: '#/definitions/buttons/call-phone'
+        - $ref: '#/definitions/buttons/custom'
+  x-defns: {type: object}
+
+
+definitions:
+  buttons:
+    open-url:
+      type: object
+      additionalProperties: false
+      required: [title, action, params]
+      properties:
+        title: {type: string}
+        action: {const: open-url}
+        enabled: {type: boolean}
+        params:
+          type: object
+          additionalProperties: false
+          required: [url]
+          properties:
+            url: {type: string, format: uri}
+    send-email:
+      type: object
+      additionalProperties: false
+      required: [title, action, params]
+      properties:
+        title: {type: string}
+        action: {const: send-email}
+        enabled: {type: boolean}
+        params:
+          type: object
+          additionalProperties: false
+          required: [to, subject, body]
+          properties:
+            to: {$ref: '#/definitions/setOfEmails'}
+            cc: {$ref: '#/definitions/setOfEmails'}
+            bcc: {$ref: '#/definitions/setOfEmails'}
+            subject: {type: string}
+            body: {type: string}
+    call-phone:
+      type: object
+      additionalProperties: false
+      required: [title, action, params]
+      properties:
+        title: {type: string}
+        action: {const: call-phone}
+        enabled: {type: boolean}
+        params:
+          type: object
+          additionalProperties: false
+          required: [number]
+          properties:
+            number: {$ref: '_defs.json#/definitions/phone'}
+    custom:
+      type: object
+      additionalProperties: false
+      required: [title, action, params]
+      properties:
+        title: {type: string}
+        enabled: {type: boolean}
+        action: {const: custom}
+        params: {type: object}
+
+  setOfEmails:
+    oneOf:
+      - type: string
+        format: email
+      - type: array
+        items:
+          type: string
+          format: email

@@ -90,8 +90,7 @@ export default connect(mapStateToProps)(HomePage)
 const styles = StyleSheet.create({
   cells: {
     marginHorizontal: CELL_MARGIN / 2,
-    marginTop: CELL_MARGIN / 2,
-    paddingBottom: CELL_MARGIN / 2,
+    paddingTop: CELL_MARGIN,
 
     flexDirection: 'row',
   },

@@ -1,0 +1,18 @@
+---
+key: wifi
+enabled: true
+hidden: false
+versionRange: '>=2.5.0-beta'
+
+title: Report a Wi-Fi Problem
+body: |
+  If you are having an issue connecting to any of the St. Olaf College Wi-Fi networks, please tap the button below.
+
+  This information is anonymous, and we do not collect usernames. We will record your current location and some general information about the device you are using, then send it to a server that IT maintains.
+
+  The networking team can then use this information to identify where people are having issues!
+
+buttons:
+  - title: Report an Issue
+    action: custom
+    params: {}

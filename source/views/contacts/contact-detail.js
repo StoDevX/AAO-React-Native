@@ -10,8 +10,7 @@ import {tracker} from '../../analytics'
 import {Button} from '../components/button'
 import openUrl from '../components/open-url'
 import type {ContactType} from './types'
-
-const AAO_URL = 'https://github.com/StoDevX/AAO-React-Native/issues/new'
+import {GH_NEW_ISSUE_URL} from '../../globals'
 
 const Title = glamorous.text({
   fontSize: 36,
@@ -50,7 +49,7 @@ function promptCall(buttonText: string, phoneNumber: string) {
 type Props = {navigation: {state: {params: {contact: ContactType}}}}
 
 export class ContactsDetailView extends React.PureComponent<Props> {
-  static navigationOptions = ({navigation}) => {
+  static navigationOptions = ({navigation}: any) => {
     return {
       title: navigation.state.params.contact.title,
     }
@@ -93,7 +92,7 @@ export class ContactsDetailView extends React.PureComponent<Props> {
           <Button onPress={this.onPress} title={contact.buttonText} />
 
           <ListFooter
-            href={AAO_URL}
+            href={GH_NEW_ISSUE_URL}
             title="Collected by the humans of All About Olaf"
           />
         </Container>
