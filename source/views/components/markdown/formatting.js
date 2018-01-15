@@ -7,6 +7,7 @@ import {iOSUIKit, material} from 'react-native-typography'
 
 export const Paragraph = glamorous(SelectableText)({
   marginVertical: 3,
+  paddingRight: 4,
   ...Platform.select({
     ios: iOSUIKit.bodyObject,
     android: material.body1Object,

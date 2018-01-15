@@ -56,7 +56,7 @@ export class OtherModesDetailView extends React.PureComponent<Props> {
           styles={{Paragraph: styles.paragraph}}
         />
 
-        <Button onPress={this.onPress} title={'More Info'} />
+        <Button onPress={this.onPress} title="More Info" />
 
         <ListFooter
           href={GH_NEW_ISSUE_URL}
