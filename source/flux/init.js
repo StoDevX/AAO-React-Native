@@ -13,6 +13,8 @@ import {
   validateLoginCredentials,
   loadFeedbackStatus,
   loadAcknowledgement,
+  loadTouchIDStatus,
+  loadTouchIDAcknowledged,
 } from './parts/settings'
 import {updateBalances} from './parts/sis'
 
@@ -54,6 +56,8 @@ export async function init(store: {dispatch: any => any}) {
     store.dispatch(loadFeedbackStatus()),
     store.dispatch(loadAcknowledgement()),
     store.dispatch(loadFavoriteBuildings()),
+    store.dispatch(loadTouchIDStatus()),
+    store.dispatch(loadTouchIDAcknowledged()),
     loginCredentials(store),
   ])
 

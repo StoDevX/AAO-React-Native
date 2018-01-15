@@ -11,6 +11,10 @@ import {
   getAnalyticsOptOut,
   getAcknowledgementStatus,
   setAcknowledgementStatus,
+  getTouchIDStatus,
+  saveTouchIDStatus,
+  getTouchIDAcknowledged,
+  saveTouchIDAcknowledged,
 } from '../../lib/storage'
 
 import {type ReduxState} from '../index'
@@ -35,6 +39,9 @@ const CREDENTIALS_VALIDATE_FAILURE = 'settings/CREDENTIALS_VALIDATE_FAILURE'
 const SET_FEEDBACK = 'settings/SET_FEEDBACK'
 const CHANGE_THEME = 'settings/CHANGE_THEME'
 const SIS_ALERT_SEEN = 'settings/SIS_ALERT_SEEN'
+const SET_TOUCHID_STATUS = 'settings/SET_TOUCHID_STATUS'
+const LOAD_TOUCHID_STATUS = 'settings/LOAD_TOUCHID_STATUS'
+const TOUCHID_ALERT_SEEN = 'settings/TOUCHID_ALERT_SEEN'
 
 type SetFeedbackStatusAction = {|
   type: 'settings/SET_FEEDBACK',
@@ -71,6 +78,45 @@ export async function setLoginCredentials(
 ): Promise<SetCredentialsAction> {
   await saveLoginCredentials(username, password)
   return {type: SET_LOGIN_CREDENTIALS, payload: {username, password}}
+}
+
+type LoadTouchIDStatusAction = {
+  type: 'settings/LOAD_TOUCHID_STATUS',
+  payload: boolean,
+}
+export async function loadTouchIDStatus(): Promise<LoadTouchIDStatusAction> {
+  const touchIDEnabled = await getTouchIDStatus()
+  return {type: LOAD_TOUCHID_STATUS, payload: touchIDEnabled}
+}
+
+type SetTouchIDStatusAction = {
+  type: 'settings/SET_TOUCHID_STATUS',
+  payload: boolean,
+}
+export function setTouchIDStatus(
+  touchIDStatus: boolean,
+): ThunkAction<SetTouchIDStatusAction> {
+  return dispatch => {
+    // TODO: remove saving logic from reducers
+    saveTouchIDStatus(touchIDStatus)
+
+    dispatch({type: SET_TOUCHID_STATUS, payload: touchIDStatus})
+  }
+}
+
+type TouchIDAlertSeenAction = {|
+  type: 'settings/TOUCHID_ALERT_SEEN',
+  payload: boolean,
+|}
+export async function loadTouchIDAcknowledged(): Promise<
+  TouchIDAlertSeenAction,
+> {
+  return {type: TOUCHID_ALERT_SEEN, payload: await getTouchIDAcknowledged()}
+}
+
+export async function hasSeenTouchIDAlert(): Promise<TouchIDAlertSeenAction> {
+  await saveTouchIDAcknowledged(true)
+  return {type: TOUCHID_ALERT_SEEN, payload: true}
 }
 
 type LoginStartAction = {|type: 'settings/CREDENTIALS_LOGIN_START'|}
@@ -157,6 +203,9 @@ type Action =
   | SisAlertSeenAction
   | CredentialsActions
   | UpdateBalancesType
+  | SetTouchIDStatusAction
+  | LoadTouchIDStatusAction
+  | TouchIDAlertSeenAction
 
 type CredentialsActions =
   | LogInActions
@@ -169,6 +218,8 @@ export type State = {
   +dietaryPreferences: [],
   +feedbackDisabled: boolean,
   +unofficiallyAcknowledged: boolean,
+  +touchIDEnabled: boolean,
+  +touchIDAlertSeen: boolean,
 
   +username: string,
   +password: string,
@@ -181,6 +232,9 @@ const initialState = {
 
   feedbackDisabled: false,
   unofficiallyAcknowledged: false,
+
+  touchIDEnabled: false,
+  touchIDAlertSeen: false,
 
   username: '',
   password: '',
@@ -206,6 +260,15 @@ export function settings(state: State = initialState, action: Action) {
 
     case CREDENTIALS_VALIDATE_FAILURE:
       return {...state, loginState: 'invalid'}
+
+    case SET_TOUCHID_STATUS:
+      return {...state, touchIDEnabled: action.payload}
+
+    case LOAD_TOUCHID_STATUS:
+      return {...state, touchIDEnabled: action.payload}
+
+    case TOUCHID_ALERT_SEEN:
+      return {...state, touchIDAlertSeen: action.payload}
 
     case CREDENTIALS_LOGIN_START:
       return {...state, loginState: 'checking'}
