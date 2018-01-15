@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {RefreshControl} from 'react-native'
-import {ScrollView} from 'glamorous-native'
+import {View, ScrollView} from 'glamorous-native'
 import {Markdown} from '../components/markdown'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import LoadingView from '../components/loading'
@@ -77,7 +77,9 @@ export class FaqView extends React.PureComponent<Props, State> {
 
     return (
       <ScrollView paddingHorizontal={15} refreshControl={refreshControl}>
-        <Markdown source={this.state.text} />
+        <View paddingVertical={15}>
+          <Markdown source={this.state.text} />
+        </View>
       </ScrollView>
     )
   }
