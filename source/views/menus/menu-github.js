@@ -111,7 +111,7 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
     }
 
     if (this.state.error) {
-      return <NoticeView text={'Error: ' + this.state.error.message} />
+      return <NoticeView text={`Error: ${this.state.error.message}`} />
     }
 
     return (
