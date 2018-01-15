@@ -11,63 +11,46 @@ export const Header = glamorous(SelectableText)({
   marginBottom: 4,
 })
 
-const H1 = glamorous(Header)({
+const h1 = {
   ...Platform.select({
     ios: iOSUIKit.largeTitleEmphasizedObject,
-    android: material.display3Object,
-  }),
-})
-
-const H2 = glamorous(Header)({
-  ...Platform.select({
-    ios: iOSUIKit.title3EmphasizedObject,
-    android: material.display2Object,
-  }),
-})
-
-const H3 = glamorous(Header)({
-  ...Platform.select({
-    ios: iOSUIKit.title3Object,
-    android: material.display1Object,
-  }),
-})
-
-const H4 = glamorous(Header)({
-  ...Platform.select({
-    ios: iOSUIKit.subheadObject,
     android: material.headlineObject,
   }),
-})
+}
 
-const H5 = glamorous(Header)({
+const h2 = {
   ...Platform.select({
-    ios: iOSUIKit.subheadObject,
-    android: material.titleObject
+    ios: iOSUIKit.title3EmphasizedObject,
+    android: material.titleObject,
   }),
-})
+}
 
-const H6 = glamorous(Header)({
+const h3 = {
   ...Platform.select({
-    ios: iOSUIKit.subheadObject,
+    ios: iOSUIKit.title3Object,
     android: material.subheadingObject,
   }),
-})
+}
+
+const h4 = {
+  ...Platform.select({
+    ios: iOSUIKit.subheadObject,
+    android: material.buttonObject,
+  }),
+}
 
 export const Heading = (props: any) => {
   switch (props.level) {
     case 1:
-      return <H1>{props.children}</H1>
+      return <Heading style={h1}>{props.children}</Heading>
     case 2:
-      return <H2>{props.children}</H2>
+      return <Heading style={h2}>{props.children}</H2>
     case 3:
-      return <H3>{props.children}</H3>
+      return <Heading style={h3}>{props.children}</H3>
     case 4:
-      return <H4>{props.children}</H4>
     case 5:
-      return <H5>{props.children}</H5>
     case 6:
-      return <H6>{props.children}</H6>
     default:
-      return <Heading>{props.children}</Heading>
+      return <Heading style={h4}>{props.children}</Heading>
   }
 }
