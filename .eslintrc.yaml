@@ -71,6 +71,7 @@ rules:
 
   # react rules – https://github.com/yannickcr/eslint-plugin-react
   react/display-name: off
+  react/jsx-curly-brace-presence: [warn, never]
   react/jsx-key: warn
   react/jsx-no-bind:
     - warn
@@ -89,11 +90,11 @@ rules:
   react/sort-comp:
     - warn
     - order:
-      - static-methods
-      - type-annotations
-      - lifecycle
-      - everything-else
-      - render
+        - static-methods
+        - type-annotations
+        - lifecycle
+        - everything-else
+        - render
   react/sort-prop-types: warn
   react/wrap-multilines: off
   react/jsx-boolean-value: [error, always]
