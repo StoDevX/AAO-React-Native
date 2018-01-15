@@ -23,7 +23,7 @@ const Logo = glamorous.image({
 const Title = glamorous.text({
   ...Platform.select({
     ios: iOSUIKit.largeTitleEmphasizedObject,
-    material: material.display4Object,
+    material: material.titleObject,
   }),
   textAlign: 'center',
   marginTop: 10,
