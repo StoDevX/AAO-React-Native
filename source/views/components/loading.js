@@ -2,6 +2,13 @@
 import * as React from 'react'
 import {NoticeView} from './notice'
 
-export default function LoadingView({text = 'Loading…'}: {text?: string}) {
-  return <NoticeView spinner={true} text={text} />
+type Props = {
+    text?: string,
+    active?: boolean,
 }
+
+export default function LoadingView(props: Props) {
+    const {text = 'Loading…', active = true} = props
+    return <NoticeView spinner={true} spinnerActive={active} text={text} />
+}
+export {LoadingView}

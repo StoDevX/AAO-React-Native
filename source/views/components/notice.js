@@ -28,12 +28,26 @@ type Props = {
   spinner?: boolean,
   buttonText?: string,
   onPress?: () => any,
+  spinnerActive?: boolean,
 }
 
-export function NoticeView({text, style, spinner, buttonText, onPress}: Props) {
+export function NoticeView({
+  text,
+  style,
+  spinner,
+  buttonText,
+  onPress,
+  spinnerActive = true,
+}: Props) {
   return (
     <View style={[styles.container, style]}>
-      {spinner ? <ActivityIndicator style={styles.spinner} /> : null}
+      {spinner ? (
+        <ActivityIndicator
+          animating={spinnerActive}
+          hidesWhenStopped={spinnerActive}
+          style={styles.spinner}
+        />
+      ) : null}
 
       <Text selectable={true} style={styles.text}>
         {text || 'Notice!'}
