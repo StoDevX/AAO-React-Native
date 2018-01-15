@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import * as c from '../../components/colors'
 import {TabBarIcon} from '../../components/tabbar-icon'
-import {phonecall} from 'react-native-communications'
+import {callPhone} from '../../components/call-phone'
 import {Row} from '../../components/layout'
 import type {TopLevelViewPropsType} from '../../types'
 import {StreamPlayer} from './player'
@@ -84,7 +84,7 @@ export class KSTOView extends React.PureComponent<Props, State> {
   }
 
   callStation = () => {
-    phonecall(stationNumber, false)
+    callPhone(stationNumber)
   }
 
   renderPlayButton = (state: PlayState) => {

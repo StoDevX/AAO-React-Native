@@ -15,7 +15,7 @@ type Props = TopLevelViewPropsType & {
 type State = {intervalId: number, now: moment}
 
 export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
-  static navigationOptions = ({navigation}) => {
+  static navigationOptions = ({navigation}: any) => {
     const building = navigation.state.params.building
     return {
       title: building.name,

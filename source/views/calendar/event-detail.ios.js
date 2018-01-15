@@ -73,7 +73,7 @@ type State = {
 }
 
 export class EventDetail extends React.PureComponent<Props, State> {
-  static navigationOptions = ({navigation}) => {
+  static navigationOptions = ({navigation}: any) => {
     const {event} = navigation.state.params
     return {
       title: event.title,

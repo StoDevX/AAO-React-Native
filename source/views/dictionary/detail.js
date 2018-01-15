@@ -34,7 +34,7 @@ type Props = {
 }
 
 export class DictionaryDetailView extends React.PureComponent<Props> {
-  static navigationOptions = ({navigation}) => {
+  static navigationOptions = ({navigation}: any) => {
     return {
       title: navigation.state.params.item.word,
     }

@@ -11,6 +11,7 @@ import {menus, type State as MenusState} from './parts/menus'
 import {settings, type State as SettingsState} from './parts/settings'
 import {sis, type State as SisState} from './parts/sis'
 import {buildings, type State as BuildingsState} from './parts/buildings'
+import {help, type State as HelpState} from './parts/help'
 
 export {init as initRedux} from './init'
 export {updateMenuFilters} from './parts/menus'
@@ -22,6 +23,7 @@ export type ReduxState = {
   settings?: SettingsState,
   sis?: SisState,
   buildings?: BuildingsState,
+  help?: HelpState,
 }
 
 export const makeStore = () => {
@@ -32,6 +34,7 @@ export const makeStore = () => {
     settings,
     sis,
     buildings,
+    help,
   })
 
   const logger = createLogger({collapsed: () => true})

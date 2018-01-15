@@ -78,6 +78,7 @@ export default function openUrl(url: string) {
       return genericOpen(url)
   }
 }
+export {openUrl}
 
 export function trackedOpenUrl({url, id}: {url: string, id?: string}) {
   tracker.trackScreenView(id || url)

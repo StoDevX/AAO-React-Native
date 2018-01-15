@@ -1,15 +1,16 @@
 // @flow
 
 import * as React from 'react'
-import {Text} from 'react-native'
-import glamorous from 'glamorous-native'
+import glamorous, {View, Text} from 'glamorous-native'
 import {Paragraph} from './formatting'
 
 // the list itself
-export const List = glamorous.view({})
+export const List = glamorous(View)({})
 
 // the list item's text
-export const ListText = glamorous(Paragraph)({})
+export const ListText = glamorous(Paragraph)({
+  flex: 1,
+})
 
 // the list item's container box thing
 type Props = {
@@ -19,10 +20,10 @@ type Props = {
 export class ListItem extends React.PureComponent<Props> {
   render() {
     return (
-      <glamorous.View flexDirection="row">
-        <Text>• </Text>
+      <View alignItems="center" flexDirection="row">
+        <Text paddingRight={4}>• </Text>
         <ListText {...this.props} />
-      </glamorous.View>
+      </View>
     )
   }
 }
