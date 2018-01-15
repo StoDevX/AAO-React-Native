@@ -5,10 +5,10 @@ import {contactImages} from '../../../images/contact-images'
 import {Markdown} from '../components/markdown'
 import {ListFooter} from '../components/list'
 import glamorous from 'glamorous-native'
-import {phonecall} from 'react-native-communications'
+import {callPhone} from '../components/call-phone'
 import {tracker} from '../../analytics'
 import {Button} from '../components/button'
-import openUrl from '../components/open-url'
+import {openUrl} from '../components/open-url'
 import type {ContactType} from './types'
 import {GH_NEW_ISSUE_URL} from '../../globals'
 
@@ -41,8 +41,8 @@ function formatNumber(phoneNumber: string) {
 
 function promptCall(buttonText: string, phoneNumber: string) {
   Alert.alert(buttonText, formatNumber(phoneNumber), [
-    {text: 'Cancel', onPress: () => console.log('Call cancel pressed')},
-    {text: 'Call', onPress: () => phonecall(phoneNumber, false)},
+    {text: 'Cancel', onPress: () => {}},
+    {text: 'Call', onPress: () => callPhone(phoneNumber, {prompt: false})},
   ])
 }
 

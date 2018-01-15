@@ -1,12 +1,13 @@
 // @flow
 
 import * as React from 'react'
-import {Alert, StyleSheet, Clipboard} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {Card} from '../components/card'
 import {Button} from '../components/button'
 import {Markdown} from '../components/markdown'
-import actualOpenUrl from '../components/open-url'
-import {email, phonecall} from 'react-native-communications'
+import {openUrl} from '../components/open-url'
+import {sendEmail} from '../components/send-email'
+import {callPhone} from '../components/call-phone'
 import type {
   ToolOptions,
   CallPhoneButtonParams,
@@ -14,67 +15,30 @@ import type {
   OpenUrlButtonParams,
 } from './types'
 
-function callPhone(params: CallPhoneButtonParams) {
-  try {
-    phonecall(params.number, true)
-  } catch (err) {
-    Alert.alert(
-      "Apologies, we couldn't call that number",
-      `We were trying to call "${params.number}".`,
-      [
-        {
-          text: 'Darn',
-          onPress: () => {},
-        },
-        {
-          text: 'Copy addresses',
-          onPress: () => Clipboard.setString(params.number),
-        },
-      ],
-    )
-  }
+function handleCallPhone(params: CallPhoneButtonParams) {
+  callPhone(params.number)
 }
 
-function sendEmail(params: SendEmailButtonParams) {
+function handleSendEmail(params: SendEmailButtonParams) {
   let {to, cc = [], bcc = [], subject, body} = params
   to = Array.isArray(to) ? to : [to]
   cc = Array.isArray(cc) ? cc : [cc]
   bcc = Array.isArray(bcc) ? bcc : [bcc]
-
-  try {
-    email(to, cc, bcc, subject, body)
-  } catch (err) {
-    const toString = to.join(', ')
-
-    Alert.alert(
-      "Apologies, we couldn't open an email client",
-      `We were trying to email "${toString}".`,
-      [
-        {
-          text: 'Darn',
-          onPress: () => {},
-        },
-        {
-          text: 'Copy addresses',
-          onPress: () => Clipboard.setString(toString),
-        },
-      ],
-    )
-  }
+  sendEmail({to, cc, bcc, subject, body})
 }
 
-function openUrl(params: OpenUrlButtonParams) {
-  return actualOpenUrl(params.url)
+function handleOpenUrl(params: OpenUrlButtonParams) {
+  return openUrl(params.url)
 }
 
 function handleButtonPress(btn) {
   switch (btn.action) {
     case 'open-url':
-      return openUrl(btn.params)
+      return handleOpenUrl(btn.params)
     case 'send-email':
-      return sendEmail(btn.params)
+      return handleSendEmail(btn.params)
     case 'call-phone':
-      return callPhone(btn.params)
+      return handleCallPhone(btn.params)
     default:
       ;(btn.action: empty)
   }

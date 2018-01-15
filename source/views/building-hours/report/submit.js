@@ -2,7 +2,7 @@
 
 import jsYaml from 'js-yaml'
 import type {BuildingType} from '../types'
-import {email} from 'react-native-communications'
+import {sendEmail} from '../../components/send-email'
 import querystring from 'querystring'
 import {GH_NEW_ISSUE_URL} from '../../../globals'
 
@@ -13,13 +13,11 @@ export function submitReport(current: BuildingType, suggestion: BuildingType) {
 
   const body = makeEmailBody(before, after, current.name)
 
-  return email(
-    ['allaboutolaf@stolaf.edu'],
-    [],
-    [],
-    `[building] Suggestion for ${current.name}`,
+  return sendEmail({
+    to: ['allaboutolaf@stolaf.edu'],
+    subject: `[building] Suggestion for ${current.name}`,
     body,
-  )
+  })
 }
 
 function makeEmailBody(before: string, after: string, title: string): string {
