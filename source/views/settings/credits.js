@@ -30,7 +30,7 @@ const Title = glamorous.text({
   marginBottom: 5,
 })
 
-const Heading = glamorous.text({
+const Heading = glamorous(Title)({
   ...Platform.select({
     ios: iOSUIKit.subheadEmphasizedObject,
     android: material.titleObject,
