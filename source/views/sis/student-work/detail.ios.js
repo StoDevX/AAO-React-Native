@@ -38,7 +38,7 @@ function Information({job}: {job: JobType}) {
     <Cell
       accessory="DisclosureIndicator"
       cellStyle="LeftDetail"
-      detail={'Contact'}
+      detail="Contact"
       onPress={() => email([job.contactEmail], null, null, job.title, '')}
       title={getContactName(job).trim() || job.contactEmail}
     />
@@ -48,21 +48,17 @@ function Information({job}: {job: JobType}) {
   const hours = job.hoursPerWeek ? (
     <Cell
       cellStyle="LeftDetail"
-      detail={'Hours'}
+      detail="Hours"
       title={job.hoursPerWeek + ending}
     />
   ) : null
 
   const amount = job.timeOfHours ? (
-    <Cell
-      cellStyle="LeftDetail"
-      detail={'Time of Day'}
-      title={job.timeOfHours}
-    />
+    <Cell cellStyle="LeftDetail" detail="Time of Day" title={job.timeOfHours} />
   ) : null
 
   const category = job.type ? (
-    <Cell cellStyle="LeftDetail" detail={'Category'} title={job.type} />
+    <Cell cellStyle="LeftDetail" detail="Category" title={job.type} />
   ) : null
 
   return (

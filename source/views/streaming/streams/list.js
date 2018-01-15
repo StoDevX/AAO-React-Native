@@ -132,7 +132,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
     }
 
     if (this.state.error) {
-      return <NoticeView text={'Error: ' + this.state.error} />
+      return <NoticeView text={`Error: ${this.state.error}`} />
     }
 
     return (
