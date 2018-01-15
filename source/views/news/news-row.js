@@ -9,7 +9,7 @@ import type {StoryType} from './types'
 type Props = {
   onPress: string => any,
   story: StoryType,
-  thumbnail: number,
+  thumbnail?: number,
 }
 
 export class NewsRow extends React.PureComponent<Props> {

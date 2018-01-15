@@ -21,7 +21,7 @@ type Props = TopLevelViewPropsType & {
   entries: StoryType[],
   loading: boolean,
   embedFeaturedImage: ?boolean,
-  thumbnail: number,
+  thumbnail?: number,
 }
 
 export class NewsList extends React.PureComponent<Props> {

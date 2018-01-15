@@ -16,7 +16,7 @@ type Props = TopLevelViewPropsType & {
   query?: Object,
   embedFeaturedImage?: boolean,
   mode: 'rss' | 'wp-json',
-  thumbnail: number,
+  thumbnail?: number,
 }
 
 type State = {
