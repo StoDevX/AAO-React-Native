@@ -53,7 +53,6 @@ const H6 = glamorous(Header)({
   }),
 })
 
-
 export const Heading = (props: any) => {
   switch (props.level) {
     case 1:
