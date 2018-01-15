@@ -2,14 +2,25 @@
 
 import glamorous from 'glamorous-native'
 import {SelectableText} from './selectable'
+import {Platform} from 'react-native'
+import {iOSUIKit, material} from 'react-native-typography'
 
 export const Paragraph = glamorous(SelectableText)({
   marginVertical: 3,
+  ...Platform.select({
+    ios: iOSUIKit.bodyObject,
+    android: material.body1Object,
+  }),
 })
 
 export const BlockQuote = glamorous(Paragraph)({
+  marginHorizontal: 8,
+  marginVertical: 5,
   fontStyle: 'italic',
-  marginLeft: 8,
+  ...Platform.select({
+    ios: iOSUIKit.calloutObject,
+    android: material.captionObject,
+  }),
 })
 
 export const Strong = glamorous.text({
