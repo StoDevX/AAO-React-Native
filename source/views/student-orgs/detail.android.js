@@ -6,8 +6,8 @@ import {Card} from '../components/card'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {email} from 'react-native-communications'
-import openUrl from '../components/open-url'
+import {sendEmail} from '../components/send-email'
+import {openUrl} from '../components/open-url'
 import {cleanOrg, showNameOrEmail} from './util'
 
 const styles = StyleSheet.create({
@@ -66,12 +66,6 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
     }
   }
 
-  // Using the Communications library because `mailTo` complains about
-  // the lack of an available Activity...
-  openEmail = (to: string, org: string) => {
-    email([to], null, null, org, '')
-  }
-
   render() {
     const {
       name: orgName,
@@ -113,7 +107,7 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
             {contacts.map((c, i) => (
               <Text
                 key={i}
-                onPress={() => this.openEmail(c.email, orgName)}
+                onPress={() => sendEmail({to: [c.email], subject: orgName})}
                 selectable={true}
                 style={styles.cardBody}
               >
@@ -132,7 +126,7 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
             {advisors.map((c, i) => (
               <Text
                 key={i}
-                onPress={() => this.openEmail(c.email, orgName)}
+                onPress={() => sendEmail({to: [c.email], subject: orgName})}
                 selectable={true}
                 style={styles.cardBody}
               >
