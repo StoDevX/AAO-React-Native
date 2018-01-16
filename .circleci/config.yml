@@ -65,30 +65,30 @@ workflows:
           filters: &nightly-filters
             tags: {only: /.*/}
             branches: {only: [master, signed-circle]}
-      # - danger:
-      #     filters: *nightly-filters
-      #     requires: [cache-yarn-linux]
-      # - flow:
-      #     filters: *nightly-filters
-      #     requires: [cache-yarn-linux]
-      # - jest:
-      #     filters: *nightly-filters
-      #     requires: [cache-yarn-linux]
-      # - prettier:
-      #     filters: *nightly-filters
-      #     requires: [cache-yarn-linux]
-      # - eslint:
-      #     filters: *nightly-filters
-      #     requires: [cache-yarn-linux]
-      # - data:
-      #     filters: *nightly-filters
-      #     requires: [cache-yarn-linux]
-      # - ios:
-      #     filters: *nightly-filters
-      #     requires: [danger, flow, jest, prettier, eslint, data]
-      # - android:
-      #     filters: *nightly-filters
-      #     requires: [danger, flow, jest, prettier, eslint, data]
+      - danger:
+          filters: *nightly-filters
+          requires: [cache-yarn-linux]
+      - flow:
+          filters: *nightly-filters
+          requires: [cache-yarn-linux]
+      - jest:
+          filters: *nightly-filters
+          requires: [cache-yarn-linux]
+      - prettier:
+          filters: *nightly-filters
+          requires: [cache-yarn-linux]
+      - eslint:
+          filters: *nightly-filters
+          requires: [cache-yarn-linux]
+      - data:
+          filters: *nightly-filters
+          requires: [cache-yarn-linux]
+      - ios:
+          filters: *nightly-filters
+          requires: [danger, flow, jest, prettier, eslint, data]
+      - android:
+          filters: *nightly-filters
+          requires: [danger, flow, jest, prettier, eslint, data]
 
 jobs:
   cache-yarn-linux:
