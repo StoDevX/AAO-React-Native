@@ -48,22 +48,39 @@ exports[`calls the callback 2`] = `
 
 exports[`can change the title 1`] = `
 <Button
+  containerStyle={
+    Object {
+      "alignSelf": "center",
+      "backgroundColor": "rgb(67, 114, 170)",
+      "borderRadius": 6,
+      "marginVertical": 10,
+      "overflow": "hidden",
+      "paddingHorizontal": 20,
+      "paddingVertical": 10,
+    }
+  }
   disabled={false}
+  disabledContainerStyle={
+    Object {
+      "backgroundColor": "rgb(240, 239, 245)",
+    }
+  }
   onPress={[Function]}
   style={
-    Array [
-      Object {
-        "alignSelf": "center",
-        "backgroundColor": "rgb(67, 114, 170)",
-        "borderRadius": 6,
-        "color": "#FFFFFF",
-        "marginVertical": 10,
-        "overflow": "hidden",
-        "paddingHorizontal": 20,
-        "paddingVertical": 10,
-      },
-      false,
-    ]
+    Object {
+      "backgroundColor": "transparent",
+      "color": "#FFFFFF",
+      "fontFamily": "System",
+      "fontSize": 16,
+      "fontWeight": "400",
+      "letterSpacing": -0.32,
+      "lineHeight": 21,
+    }
+  }
+  styleDisabled={
+    Object {
+      "color": "rgb(143, 143, 143)",
+    }
   }
 >
   Title
@@ -72,22 +89,39 @@ exports[`can change the title 1`] = `
 
 exports[`renders 1`] = `
 <Button
+  containerStyle={
+    Object {
+      "alignSelf": "center",
+      "backgroundColor": "rgb(67, 114, 170)",
+      "borderRadius": 6,
+      "marginVertical": 10,
+      "overflow": "hidden",
+      "paddingHorizontal": 20,
+      "paddingVertical": 10,
+    }
+  }
   disabled={false}
+  disabledContainerStyle={
+    Object {
+      "backgroundColor": "rgb(240, 239, 245)",
+    }
+  }
   onPress={[Function]}
   style={
-    Array [
-      Object {
-        "alignSelf": "center",
-        "backgroundColor": "rgb(67, 114, 170)",
-        "borderRadius": 6,
-        "color": "#FFFFFF",
-        "marginVertical": 10,
-        "overflow": "hidden",
-        "paddingHorizontal": 20,
-        "paddingVertical": 10,
-      },
-      false,
-    ]
+    Object {
+      "backgroundColor": "transparent",
+      "color": "#FFFFFF",
+      "fontFamily": "System",
+      "fontSize": 16,
+      "fontWeight": "400",
+      "letterSpacing": -0.32,
+      "lineHeight": 21,
+    }
+  }
+  styleDisabled={
+    Object {
+      "color": "rgb(143, 143, 143)",
+    }
   }
 >
   Push me!
