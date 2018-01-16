@@ -4,8 +4,8 @@
 # smart enough to call the appropriate platform's "beta" lane. So, let's make
 # a beta build if there have been new commits since the last beta.
 def auto_beta
-  UI.message "TRAVIS_EVENT_TYPE: #{ENV['TRAVIS_EVENT_TYPE']}"
-  if should_deploy?
+  # UI.message "TRAVIS_EVENT_TYPE: #{ENV['TRAVIS_EVENT_TYPE']}"
+  # if should_deploy?
     # if cron?
       UI.message 'building nightly'
       nightly
@@ -13,15 +13,15 @@ def auto_beta
     #   UI.message 'building beta'
     #   beta
     # end
-  else
-    if pr?
-      UI.message 'just building (not signing)'
-      check_build
-    else
-      UI.message 'signing and building, but not deploying'
-      build
-    end
-  end
+  # else
+  #   if pr?
+  #     UI.message 'just building (not signing)'
+  #     check_build
+  #   else
+  #     UI.message 'signing and building, but not deploying'
+  #     build
+  #   end
+  # end
 end
 
 # Adds the github token for stodevx-bot to the CI machine
