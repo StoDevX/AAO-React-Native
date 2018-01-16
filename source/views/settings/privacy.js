@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react'
-import {ScrollView} from 'glamorous-native'
+import * as c from '../components/colors'
+import {View, ScrollView} from 'glamorous-native'
 import {Markdown} from '../components/markdown'
 import {text} from '../../../docs/privacy.json'
 
@@ -13,8 +14,14 @@ export default class PrivacyView extends React.PureComponent<Props> {
 
   render() {
     return (
-      <ScrollView paddingHorizontal={15}>
-        <Markdown source={text} />
+      <ScrollView
+        backgroundColor={c.white}
+        contentInsetAdjustmentBehavior="automatic"
+        paddingHorizontal={15}
+      >
+        <View paddingVertical={15}>
+          <Markdown source={text} />
+        </View>
       </ScrollView>
     )
   }

@@ -110,7 +110,7 @@ export const allViews: ViewType[] = [
     title: 'Campus Dictionary',
     icon: 'open-book',
     tint: c.olive,
-    gradient: c.yellowToGoldLight,
+    gradient: c.pinkToHotpink,
   },
   {
     type: 'view',
@@ -118,7 +118,7 @@ export const allViews: ViewType[] = [
     title: 'Student Orgs',
     icon: 'globe',
     tint: c.periwinkle,
-    gradient: c.lightBlueToBlueDark,
+    gradient: c.tealToSeafoam,
   },
   {
     type: 'url',
@@ -127,7 +127,7 @@ export const allViews: ViewType[] = [
     title: 'Moodle',
     icon: 'graduation-cap',
     tint: c.cantaloupe,
-    gradient: c.yellowToGoldDark,
+    gradient: c.yellowToGoldLight,
   },
   {
     type: 'view',
@@ -135,7 +135,7 @@ export const allViews: ViewType[] = [
     title: 'Report A Problem',
     icon: 'help',
     tint: c.lavender,
-    gradient: c.purpleToIndigo,
+    gradient: c.seafoamToGrass,
   },
 ]
 

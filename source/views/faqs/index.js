@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react'
-import {RefreshControl} from 'react-native'
-import {ScrollView} from 'glamorous-native'
+import {RefreshControl, StyleSheet} from 'react-native'
+import * as c from '../components/colors'
+import {View, ScrollView} from 'glamorous-native'
 import {Markdown} from '../components/markdown'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import LoadingView from '../components/loading'
@@ -10,6 +11,12 @@ import delay from 'delay'
 import {GH_PAGES_URL} from '../../globals'
 
 const faqsUrl = GH_PAGES_URL('faqs.json')
+
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 15,
+  },
+})
 
 type Props = {}
 
@@ -76,8 +83,15 @@ export class FaqView extends React.PureComponent<Props, State> {
     )
 
     return (
-      <ScrollView paddingHorizontal={15} refreshControl={refreshControl}>
-        <Markdown source={this.state.text} />
+      <ScrollView
+        backgroundColor={c.white}
+        contentContainerStyle={styles.container}
+        contentInsetAdjustmentBehavior="automatic"
+        refreshControl={refreshControl}
+      >
+        <View paddingVertical={15}>
+          <Markdown source={this.state.text} />
+        </View>
       </ScrollView>
     )
   }

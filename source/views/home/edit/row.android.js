@@ -68,19 +68,31 @@ export class EditHomeRow extends React.PureComponent<Props> {
 
   render() {
     const {item, isFirst, isLast} = this.props
+    const tint = item.gradient ? item.gradient[0] : item.tint
+
     return (
       <View style={styles.row}>
-        <MenuIcon icon={this.props.item.icon} tint={item.tint} />
+        <MenuIcon icon={this.props.item.icon} tint={tint} />
 
-        <Text style={[styles.text, {color: item.tint}]}>{item.title}</Text>
+        <Text style={[styles.text, {color: tint}]}>{item.title}</Text>
 
         <Switch
           onValueChange={this.onToggleSwitch}
           value={this.props.isEnabled}
         />
 
-        <ArrowIcon dir="up" disabled={isFirst} onPress={this.onMoveUp} />
-        <ArrowIcon dir="down" disabled={isLast} onPress={this.onMoveDown} />
+        <ArrowIcon
+          dir="up"
+          disabled={isFirst}
+          onPress={this.onMoveUp}
+          tint={tint}
+        />
+        <ArrowIcon
+          dir="down"
+          disabled={isLast}
+          onPress={this.onMoveDown}
+          tint={tint}
+        />
       </View>
     )
   }
@@ -90,8 +102,9 @@ type ArrowIconProps = {
   dir: 'up' | 'down',
   disabled: boolean,
   onPress: () => any,
+  tint: string,
 }
-const ArrowIcon = ({dir, disabled, onPress}: ArrowIconProps) => {
+const ArrowIcon = ({dir, disabled, onPress, tint}: ArrowIconProps) => {
   const icon = `md-arrow-${dir}`
   const size = 24
 
@@ -107,7 +120,7 @@ const ArrowIcon = ({dir, disabled, onPress}: ArrowIconProps) => {
 
   return (
     <Touchable borderless={true} onPress={onPress}>
-      <IonIcon name={icon} size={size} style={styles.icon} />
+      <IonIcon name={icon} size={size} style={[styles.icon, {color: tint}]} />
     </Touchable>
   )
 }
