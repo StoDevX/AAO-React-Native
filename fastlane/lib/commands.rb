@@ -6,13 +6,13 @@
 def auto_beta
   UI.message "TRAVIS_EVENT_TYPE: #{ENV['TRAVIS_EVENT_TYPE']}"
   if should_deploy?
-    if cron?
+    # if cron?
       UI.message 'building nightly'
       nightly
-    else
-      UI.message 'building beta'
-      beta
-    end
+    # else
+    #   UI.message 'building beta'
+    #   beta
+    # end
   else
     if pr?
       UI.message 'just building (not signing)'
