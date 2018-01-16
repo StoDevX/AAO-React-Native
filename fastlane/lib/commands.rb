@@ -19,7 +19,7 @@ end
 
 # Adds the github token for stodevx-bot to the CI machine
 def authorize_ci_for_keys
-  token = ENV['CI_USER_TOKEN']
+  token = ENV['GITHUB_KEYS_REPOSITORY_TOKEN']
 
   # see macoscope.com/blog/simplify-your-life-with-fastlane-match
   # we're allowing the CI access to the keys repo
