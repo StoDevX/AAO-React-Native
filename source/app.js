@@ -2,7 +2,6 @@
 
 import './globalize-fetch'
 import './setup-moment'
-import OneSignal from 'react-native-onesignal'
 
 import * as React from 'react'
 import {Provider} from 'react-redux'
@@ -36,43 +35,11 @@ type Props = {}
 
 export default class App extends React.Component<Props> {
   componentWillMount() {
-    OneSignal.addEventListener('received', this.onReceived)
-    OneSignal.addEventListener('opened', this.onOpened)
-    OneSignal.addEventListener('registered', this.onRegistered)
-    OneSignal.addEventListener('ids', this.onIds)
-
-    // When we finally want to ask for push notifications, enable this:
-    // OneSignal.registerForPushNotifications()
-
     startStatusBarColorChanger()
   }
 
   componentWillUnmount() {
-    OneSignal.removeEventListener('received', this.onReceived)
-    OneSignal.removeEventListener('opened', this.onOpened)
-    OneSignal.removeEventListener('registered', this.onRegistered)
-    OneSignal.removeEventListener('ids', this.onIds)
-
     stopStatusBarColorChanger()
-  }
-
-  onReceived(notification: any) {
-    console.log('Notification received:', notification)
-  }
-
-  onOpened(openResult: any) {
-    console.log('Message:', openResult.notification.payload.body)
-    console.log('Data:', openResult.notification.payload.additionalData)
-    console.log('isActive:', openResult.notification.isAppInFocus)
-    console.log('openResult:', openResult)
-  }
-
-  onRegistered(notifData: any) {
-    console.log('Device is now registered for push notifications!', notifData)
-  }
-
-  onIds(device: any) {
-    console.log('Device info:', device)
   }
 
   trackScreenChanges(

@@ -14,11 +14,7 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
-#import "RCTOneSignal.h"
-
 @implementation AppDelegate
-
-@synthesize oneSignal = _oneSignal;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -47,10 +43,6 @@
 
   rootView.loadingView = loadingViewController.view;
 
-  self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
-                                                         appId:@"aa46a500-ab1c-4127-b9ff-e7373da3ce35"
-                                                      settings:@{kOSSettingsKeyAutoPrompt: @false}];
-
   // set up the requests cacher
   NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024   // 4 MiB
                                                        diskCapacity:20 * 1024 * 1024  // 20 MiB
@@ -61,11 +53,6 @@
   [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error: nil];
 
   return YES;
-}
-
-// Required for the notification event.
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification {
-  [RCTOneSignal didReceiveRemoteNotification:notification];
 }
 
 @end
