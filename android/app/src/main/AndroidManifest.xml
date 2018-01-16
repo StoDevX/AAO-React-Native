@@ -28,7 +28,7 @@
 
       <meta-data
           android:name="com.bugsnag.android.API_KEY"
-          android:value="aae3a01c545dfa73bc5f1b2d5d661a3e" />
+          android:value="${BUGSNAG_KEY}" />
       <meta-data
         android:name="com.google.android.geo.API_KEY"
         android:value="${gmaps_key}" />
