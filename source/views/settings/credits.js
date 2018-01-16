@@ -21,13 +21,13 @@ const Logo = glamorous.image({
 })
 
 const Title = glamorous.text({
-  ...Platform.select({
-    ios: iOSUIKit.largeTitleEmphasizedObject,
-    material: material.titleObject,
-  }),
   textAlign: 'center',
   marginTop: 10,
   marginBottom: 5,
+  ...Platform.select({
+    ios: iOSUIKit.largeTitleEmphasizedObject,
+    android: material.headlineObject,
+  }),
 })
 
 const Heading = glamorous(Title)({
