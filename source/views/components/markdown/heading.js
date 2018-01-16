@@ -13,21 +13,21 @@ export const Header = glamorous(SelectableText)({
 
 const h1 = {
   ...Platform.select({
-    ios: iOSUIKit.largeTitleEmphasizedObject,
+    ios: iOSUIKit.title3EmphasizedObject,
     android: material.headlineObject,
   }),
 }
 
 const h2 = {
   ...Platform.select({
-    ios: iOSUIKit.title3EmphasizedObject,
+    ios: iOSUIKit.title3Object,
     android: material.titleObject,
   }),
 }
 
 const h3 = {
   ...Platform.select({
-    ios: iOSUIKit.title3Object,
+    ios: iOSUIKit.subheadEmphasizedObject,
     android: material.subheadingObject,
   }),
 }
@@ -42,15 +42,15 @@ const h4 = {
 export const Heading = (props: any) => {
   switch (props.level) {
     case 1:
-      return <Heading style={h1}>{props.children}</Heading>
+      return <Header style={h1}>{props.children}</Header>
     case 2:
-      return <Heading style={h2}>{props.children}</Heading>
+      return <Header style={h2}>{props.children}</Header>
     case 3:
-      return <Heading style={h3}>{props.children}</Heading>
+      return <Header style={h3}>{props.children}</Header>
     case 4:
     case 5:
     case 6:
     default:
-      return <Heading style={h4}>{props.children}</Heading>
+      return <Header style={h4}>{props.children}</Header>
   }
 }
