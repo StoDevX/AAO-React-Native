@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     fontSize: 18,
     color: c.black,
+    marginRight: 10,
   },
 })
 
@@ -161,11 +162,15 @@ export class EditHomeRow extends React.Component<Props, State> {
   render() {
     const width = this.props.width - ROW_HORIZONTAL_MARGIN * 2
 
+    const tint = this.props.data.gradient
+      ? this.props.data.gradient[0]
+      : this.props.data.tint
+
     return (
       <Animated.View style={[styles.row, this.state.style, {width}]}>
-        <MenuIcon icon={this.props.data.icon} tint={this.props.data.tint} />
+        <MenuIcon icon={this.props.data.icon} tint={tint} />
 
-        <Text style={[styles.text, {color: this.props.data.tint}]}>
+        <Text style={[styles.text, {color: tint}]}>
           {this.props.data.title}
         </Text>
 
@@ -174,7 +179,11 @@ export class EditHomeRow extends React.Component<Props, State> {
           value={this.props.isEnabled}
         />
 
-        <IonIcon name="ios-reorder" size={32} style={[styles.icon]} />
+        <IonIcon
+          name="ios-reorder"
+          size={32}
+          style={[styles.icon, {color: tint}]}
+        />
       </Animated.View>
     )
   }
