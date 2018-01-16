@@ -25,6 +25,12 @@ x-config:
     - &run-danger
       command: yarn run danger --id $task
       when: always
+    - &embed-env-vars
+      name: Embed environment variables into the app
+      command: |
+        touch .env.js
+        echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
+        echo "export const GOOGLE_MAPS_API_KEY = '$GMAPS_KEY'" >> .env.js
 
 workflows:
   version: 2
@@ -182,7 +188,7 @@ jobs:
           environment: {TERM: xterm-256color}
       - save_cache: *save-cache-gradle
       - run: mkdir -p logs/
-      - run: touch .env.js
+      - run: &embed-env-vars
       - run:
           name: Run Fastlane
           command: bundle exec fastlane android ci-run | tee ./logs/build
@@ -210,7 +216,7 @@ jobs:
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - save_cache: *save-cache-bundler
       - run: mkdir -p logs/
-      - run: touch .env.js
+      - run: &embed-env-vars
       - run:
           name: Run Fastlane
           command: bundle exec fastlane ios ci-run | tee ./logs/build
