@@ -9,17 +9,20 @@ def cron?
 end
 
 def tagged?
-  ENV['TRAVIS_TAG'] && !ENV['TRAVIS_TAG'].empty?
+  travis = ENV['TRAVIS_TAG'] && !ENV['TRAVIS_TAG'].empty?
+  circle = ENV['CIRCLE_TAG'] && !ENV['CIRCLE_TAG'].empty?
+  travis || circle
 end
 
 def forced_deploy?
-  ENV['TRAVIS_COMMIT_MESSAGE'] =~ /\[ci run beta\]/
+  commit = ENV['TRAVIS_COMMIT_MESSAGE'] || ENV['GIT_COMMIT_DESC']
+  commit =~ /\[ci run beta\]/
 end
 
 def pr?
-  # todo: figure out how to handle forked-pr/non-forked, or if we even want to
-  # ENV['TRAVIS_PULL_REQUEST'] != 'false' || ENV['CIRCLE_PR_NUMBER']
-  ENV['TRAVIS_PULL_REQUEST'] != 'false' || false
+  travis = ENV['TRAVIS_PULL_REQUEST'] != 'false'
+  circle = ENV['CIRCLE_PR_NUMBER'] && !ENV['CIRCLE_PR_NUMBER'].empty?
+  travis || circle
 end
 
 def travis?
