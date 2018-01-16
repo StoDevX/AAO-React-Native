@@ -53,6 +53,42 @@ workflows:
           requires: [danger, flow, jest, prettier, eslint, data]
       - android:
           requires: [danger, flow, jest, prettier, eslint, data]
+  nightly:
+    triggers:
+      - schedule:
+          cron: 0 6 * * *
+          filters:
+            branches:
+              only: master
+    jobs:
+      - cache-yarn-linux:
+          filters: &nightly-filters
+            tags: {only: /.*/}
+            branches: {only: master}
+      - danger:
+          filters: *nightly-filters
+          requires: [cache-yarn-linux]
+      - flow:
+          filters: *nightly-filters
+          requires: [cache-yarn-linux]
+      - jest:
+          filters: *nightly-filters
+          requires: [cache-yarn-linux]
+      - prettier:
+          filters: *nightly-filters
+          requires: [cache-yarn-linux]
+      - eslint:
+          filters: *nightly-filters
+          requires: [cache-yarn-linux]
+      - data:
+          filters: *nightly-filters
+          requires: [cache-yarn-linux]
+      - ios:
+          filters: *nightly-filters
+          requires: [danger, flow, jest, prettier, eslint, data]
+      - android:
+          filters: *nightly-filters
+          requires: [danger, flow, jest, prettier, eslint, data]
 
 jobs:
   cache-yarn-linux:
