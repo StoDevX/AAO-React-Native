@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     fontSize: 18,
     color: c.black,
+    marginRight: 10,
   },
 })
 
