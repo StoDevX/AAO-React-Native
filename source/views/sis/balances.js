@@ -320,8 +320,8 @@ class BalancesView extends React.PureComponent<Props, State> {
           </TableView>
         </ScrollView>
         <Modal
-          animationIn={'zoomIn'}
-          animationOut={'zoomOut'}
+          animationIn="zoomIn"
+          animationOut="zoomOut"
           backdropColor={c.black}
           backdropOpacity={0.3}
           isVisible={this.state.enterPasswordPrompt}
@@ -351,13 +351,13 @@ class BalancesView extends React.PureComponent<Props, State> {
                 color={c.red}
                 onPress={this.dismissModal}
                 style={styles.modalButton}
-                title={'Cancel'}
+                title="Cancel"
               />
               <Button
                 color={c.infoBlue}
                 onPress={this.unlockBalances}
                 style={styles.modalButton}
-                title={'Unlock'}
+                title="Unlock"
               />
             </View>
           </View>

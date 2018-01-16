@@ -76,7 +76,7 @@ class OddsAndEndsSection extends React.PureComponent<Props, State> {
           ) : null}
           {this.state.touchIDSupported ? (
             <CellToggle
-              label={'Use TouchID/FaceID Protection'}
+              label="Use TouchID/FaceID Protection"
               onChange={val => this.props.onChangeTouchIDToggle(val)}
               value={this.props.touchIDEnabled}
             />
