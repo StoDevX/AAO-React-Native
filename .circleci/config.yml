@@ -64,7 +64,7 @@ workflows:
       - cache-yarn-linux:
           filters: &nightly-filters
             tags: {only: /.*/}
-            branches: {only: master}
+            branches: {only: [master, /.*circle.*/]}
       - danger:
           filters: *nightly-filters
           requires: [cache-yarn-linux]
