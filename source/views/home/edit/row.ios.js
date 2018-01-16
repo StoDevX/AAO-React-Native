@@ -178,7 +178,11 @@ export class EditHomeRow extends React.Component<Props, State> {
           value={this.props.isEnabled}
         />
 
-        <IonIcon name="ios-reorder" size={32} style={[styles.icon]} />
+        <IonIcon
+          name="ios-reorder"
+          size={32}
+          style={[styles.icon, {color: tint}]}
+        />
       </Animated.View>
     )
   }

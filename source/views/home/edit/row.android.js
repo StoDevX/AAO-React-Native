@@ -81,8 +81,18 @@ export class EditHomeRow extends React.PureComponent<Props> {
           value={this.props.isEnabled}
         />
 
-        <ArrowIcon dir="up" disabled={isFirst} onPress={this.onMoveUp} />
-        <ArrowIcon dir="down" disabled={isLast} onPress={this.onMoveDown} />
+        <ArrowIcon
+          dir="up"
+          disabled={isFirst}
+          onPress={this.onMoveUp}
+          tint={tint}
+        />
+        <ArrowIcon
+          dir="down"
+          disabled={isLast}
+          onPress={this.onMoveDown}
+          tint={tint}
+        />
       </View>
     )
   }
@@ -92,8 +102,9 @@ type ArrowIconProps = {
   dir: 'up' | 'down',
   disabled: boolean,
   onPress: () => any,
+  tint: string,
 }
-const ArrowIcon = ({dir, disabled, onPress}: ArrowIconProps) => {
+const ArrowIcon = ({dir, disabled, onPress, tint}: ArrowIconProps) => {
   const icon = `md-arrow-${dir}`
   const size = 24
 
@@ -109,7 +120,7 @@ const ArrowIcon = ({dir, disabled, onPress}: ArrowIconProps) => {
 
   return (
     <Touchable borderless={true} onPress={onPress}>
-      <IonIcon name={icon} size={size} style={styles.icon} />
+      <IonIcon name={icon} size={size} style={[styles.icon, {color: tint}]} />
     </Touchable>
   )
 }
