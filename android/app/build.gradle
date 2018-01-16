@@ -199,7 +199,6 @@ dependencies {
     compile project(':react-native-linear-gradient')
     compile project(':react-native-maps')
     compile project(':react-native-network-info')
-    compile project(':react-native-onesignal')
     compile project(':react-native-restart')
     compile project(':react-native-vector-icons')
     // this is for react-native itself
