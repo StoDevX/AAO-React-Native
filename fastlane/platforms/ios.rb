@@ -106,6 +106,6 @@ platform :ios do
     auto_beta
 
     # go ahead and download dSYMs for bugsnag too
-    refresh_dsyms if travis?
+    refresh_dsyms if circle?
   end
 end
