@@ -35,8 +35,8 @@ x-config:
 workflows:
   version: 2
   analyze:
-    jobs:
-      - cache-yarn-linux
+    # jobs:
+      # - cache-yarn-linux
       # - danger:
       #     requires: [cache-yarn-linux]
       # - flow:
