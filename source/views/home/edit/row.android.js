@@ -68,11 +68,13 @@ export class EditHomeRow extends React.PureComponent<Props> {
 
   render() {
     const {item, isFirst, isLast} = this.props
+    const tint = item.gradient ? item.gradient[0] : item.tint
+
     return (
       <View style={styles.row}>
-        <MenuIcon icon={this.props.item.icon} tint={item.tint} />
+        <MenuIcon icon={this.props.item.icon} tint={tint} />
 
-        <Text style={[styles.text, {color: item.tint}]}>{item.title}</Text>
+        <Text style={[styles.text, {color: tint}]}>{item.title}</Text>
 
         <Switch
           onValueChange={this.onToggleSwitch}
