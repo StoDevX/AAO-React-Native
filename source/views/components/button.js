@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {StyleSheet, Platform, Text} from 'react-native'
+import {StyleSheet, Platform} from 'react-native'
 import BasicButton from 'react-native-button'
 import noop from 'lodash/noop'
 import {material, iOSUIKit} from 'react-native-typography'
@@ -44,10 +44,10 @@ export function Button({
 }: Props) {
   return (
     <BasicButton
-      disabled={disabled}
-      onPress={onPress}
       containerStyle={styles.button}
+      disabled={disabled}
       disabledContainerStyle={styles.disabled}
+      onPress={onPress}
       style={styles.text}
       styleDisabled={styles.textDisabled}
     >
