@@ -10,8 +10,6 @@ def current_build_number(**args)
       (google_play_track_version_codes(track: args[:track]) + 1).to_s
     when :ios
       (latest_testflight_build_number + 1).to_s
-    else
-      UI.input 'Please enter a build number: '
     end
   rescue
     '1'
