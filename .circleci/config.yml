@@ -2,7 +2,7 @@
 version: 2
 
 x-config:
-  x-caching: # caching instructions
+  x-caching:  # caching instructions
     - &save-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
       paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
@@ -18,7 +18,7 @@ x-config:
       paths: [~/.gradle]
     - &restore-cache-gradle
       key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
-  x-commands: # command shorthands
+  x-commands:  # command shorthands
     - &set-ruby-version
       name: Set Ruby Version
       command: echo "ruby-2.4.2" > ~/.ruby-version
