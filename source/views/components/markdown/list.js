@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import glamorous, {View, Text} from 'glamorous-native'
+import glamorous, {View} from 'glamorous-native'
 import {BaseText, Paragraph} from './formatting'
 
 // the list itself
