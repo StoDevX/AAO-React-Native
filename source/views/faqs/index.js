@@ -79,8 +79,8 @@ export class FaqView extends React.PureComponent<Props, State> {
     return (
       <ScrollView
         backgroundColor={c.white}
+        contentContainerStyle={{paddingHorizontal: 15}}
         contentInsetAdjustmentBehavior="automatic"
-        paddingHorizontal={15}
         refreshControl={refreshControl}
       >
         <View paddingVertical={15}>
