@@ -8,29 +8,29 @@ import ReactShallowRenderer from 'react-test-renderer/shallow'
 import {Button} from '../button'
 
 const shallow = component => {
-  const r = new ReactShallowRenderer()
-  r.render(component)
-  return r.getRenderOutput()
+	const r = new ReactShallowRenderer()
+	r.render(component)
+	return r.getRenderOutput()
 }
 
 test('renders', () => {
-  const tree = shallow(<Button />)
-  expect(tree).toMatchSnapshot()
+	const tree = shallow(<Button />)
+	expect(tree).toMatchSnapshot()
 })
 
 test('can change the title', () => {
-  const tree = shallow(<Button title="Title" />)
-  expect(tree).toMatchSnapshot()
+	const tree = shallow(<Button title="Title" />)
+	expect(tree).toMatchSnapshot()
 })
 
 xtest('calls the callback', () => {
-  const cb = jest.fn()
+	const cb = jest.fn()
 
-  const tree = shallow(<Button onPress={cb} />)
-  expect(tree).toMatchSnapshot()
+	const tree = shallow(<Button onPress={cb} />)
+	expect(tree).toMatchSnapshot()
 
-  tree.simulate('press')
+	tree.simulate('press')
 
-  expect(cb).toHaveBeenCalled()
-  expect(tree).toMatchSnapshot()
+	expect(cb).toHaveBeenCalled()
+	expect(tree).toMatchSnapshot()
 })

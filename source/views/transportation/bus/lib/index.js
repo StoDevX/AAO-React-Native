@@ -5,7 +5,7 @@ export {parseTime} from './parse-time'
 export {processBusLine} from './process-bus-line'
 export {getCurrentBusIteration} from './get-current-bus-iteration'
 export {
-  findRemainingDeparturesForStop,
+	findRemainingDeparturesForStop,
 } from './find-remaining-departures-for-stop'
 export {findBusStopStatus} from './find-bus-stop-status'
 

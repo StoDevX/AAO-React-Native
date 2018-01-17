@@ -7,25 +7,25 @@ import {Touchable} from '../touchable'
 import {rightButtonStyles as styles} from './styles'
 
 type Props = {
-  onFavorite: () => any,
-  favorited: boolean,
+	onFavorite: () => any,
+	favorited: boolean,
 }
 
 export class FavoriteButton extends React.PureComponent<Props> {
-  render() {
-    // (ios|md)-heart(-outline)
-    const iconPlatform = Platform.OS === 'ios' ? 'ios' : 'md'
-    const icon =
-      `${iconPlatform}-heart` + (this.props.favorited ? '' : '-outline')
+	render() {
+		// (ios|md)-heart(-outline)
+		const iconPlatform = Platform.OS === 'ios' ? 'ios' : 'md'
+		const icon =
+			`${iconPlatform}-heart` + (this.props.favorited ? '' : '-outline')
 
-    return (
-      <Touchable
-        highlight={false}
-        onPress={this.props.onFavorite}
-        style={styles.button}
-      >
-        <Icon name={icon} style={styles.icon} />
-      </Touchable>
-    )
-  }
+		return (
+			<Touchable
+				highlight={false}
+				onPress={this.props.onFavorite}
+				style={styles.button}
+			>
+				<Icon name={icon} style={styles.icon} />
+			</Touchable>
+		)
+	}
 }

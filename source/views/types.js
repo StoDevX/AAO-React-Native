@@ -1,12 +1,12 @@
 // @flow
 import type {
-  NavigationRoute,
-  NavigationScreenProp,
-  NavigationAction,
+	NavigationRoute,
+	NavigationScreenProp,
+	NavigationAction,
 } from 'react-navigation'
 
 export type NavType = NavigationScreenProp<NavigationRoute, NavigationAction>
 
 export type TopLevelViewPropsType = {
-  navigation: NavType,
+	navigation: NavType,
 }

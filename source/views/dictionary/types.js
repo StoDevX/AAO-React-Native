@@ -1,6 +1,6 @@
 // @flow
 
 export type WordType = {
-  word: string,
-  definition: string,
+	word: string,
+	definition: string,
 }

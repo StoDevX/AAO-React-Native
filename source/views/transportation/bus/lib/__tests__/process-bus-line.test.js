@@ -28,6 +28,6 @@ const line = {
 }
 
 test('processBusSchedule returns a timetable property', () => {
-  let actual = processBusSchedule(time('12:00pm'))(line.schedules[0])
-  expect('timetable' in actual).toBe(true)
+	let actual = processBusSchedule(time('12:00pm'))(line.schedules[0])
+	expect('timetable' in actual).toBe(true)
 })
