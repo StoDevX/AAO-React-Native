@@ -99,7 +99,7 @@ export class StreamPlayer extends React.PureComponent<Props> {
 
 	setRef = (ref: WebView) => (this._webview = ref)
 
-  js = `
+	js = `
     function ready(fn) {
       if (document.readyState !== 'loading') {
         fn();
@@ -182,17 +182,17 @@ export class StreamPlayer extends React.PureComponent<Props> {
     });
   `
 
-  render() {
-    return (
-      <WebView
-        ref={this.setRef}
-        allowsInlineMediaPlayback={true}
-        injectedJavaScript={this.js}
-        mediaPlaybackRequiresUserAction={false}
-        onMessage={this.handleMessage}
-        source={{uri: kstoEmbed}}
-        style={this.props.style}
-      />
-    )
-  }
+	render() {
+		return (
+			<WebView
+				ref={this.setRef}
+				allowsInlineMediaPlayback={true}
+				injectedJavaScript={this.js}
+				mediaPlaybackRequiresUserAction={false}
+				onMessage={this.handleMessage}
+				source={{uri: kstoEmbed}}
+				style={this.props.style}
+			/>
+		)
+	}
 }
