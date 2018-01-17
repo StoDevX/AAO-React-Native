@@ -187,11 +187,11 @@ export class StreamPlayer extends React.PureComponent<Props> {
       <WebView
         ref={this.setRef}
         allowsInlineMediaPlayback={true}
+        injectedJavaScript={this.js}
         mediaPlaybackRequiresUserAction={false}
         onMessage={this.handleMessage}
         source={{uri: kstoEmbed}}
         style={this.props.style}
-        injectedJavaScript={this.js}
       />
     )
   }
