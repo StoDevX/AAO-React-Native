@@ -4598,9 +4598,9 @@ pretty-format@^4.2.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/pretty-format/-/pretty-format-4.3.1.tgz#530be5c42b3c05b36414a7a2a4337aa80acd0e8d"
 
-pretty-quick@1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/pretty-quick/-/pretty-quick-1.2.1.tgz#2f8ad20cfb576519bd5976b92e06f440d1b3b239"
+pretty-quick@1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/pretty-quick/-/pretty-quick-1.2.2.tgz#4ebb2bafa86aa5f67948c3d2ead6f196770f9e32"
   dependencies:
     chalk "^2.3.0"
     execa "^0.8.0"
@@ -5948,7 +5948,7 @@ vinyl@^0.5.0:
     clone-stats "^0.0.1"
     replace-ext "0.0.1"
 
-"vm2@github:patriksimek/vm2#custom_files":
+vm2@patriksimek/vm2#custom_files:
   version "3.5.0"
   resolved "https://codeload.github.com/patriksimek/vm2/tar.gz/7e82f90ac705fc44fad044147cb0df09b4c79a57"
 
