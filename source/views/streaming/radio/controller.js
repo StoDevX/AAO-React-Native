@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from 'react-native'
+import noop from 'lodash/noop'
 import * as c from '../../components/colors'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import {callPhone} from '../../components/call-phone'
@@ -105,7 +106,7 @@ export class KSTOView extends React.PureComponent<Props, State> {
         )
 
       default:
-        return <ActionButton icon="ios-bug" onPress={() => {}} text="Error" />
+        return <ActionButton icon="ios-bug" onPress={noop} text="Error" />
     }
   }
 
