@@ -181,16 +181,18 @@ export class KSTOView extends React.PureComponent<Props, State> {
             <ShowCalendarButton onPress={this.openSchedule} />
           </Row>
 
-          {Platform.OS !== 'android' ? <StreamPlayer
-            onEnded={this.handleStreamEnd}
-            // onWaiting={this.handleStreamWait}
-            onError={this.handleStreamError}
-            // onStalled={this.handleStreamStall}
-            onPause={this.handleStreamPause}
-            onPlay={this.handleStreamPlay}
-            playState={this.state.playState}
-            style={styles.webview}
-          /> : null}
+          {Platform.OS !== 'android' ? (
+            <StreamPlayer
+              onEnded={this.handleStreamEnd}
+              // onWaiting={this.handleStreamWait}
+              onError={this.handleStreamError}
+              // onStalled={this.handleStreamStall}
+              onPause={this.handleStreamPause}
+              onPlay={this.handleStreamPlay}
+              playState={this.state.playState}
+              style={styles.webview}
+            />
+          ) : null}
         </View>
       </ScrollView>
     )
