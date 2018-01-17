@@ -19,9 +19,11 @@ import type {TopLevelViewPropsType} from '../../types'
 import {StreamPlayer} from './player'
 import type {PlayState, HtmlAudioError, Viewport} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
+import {openUrl} from '../../components/open-url'
 
 const image = require('../../../../images/streaming/ksto/ksto-logo.png')
 const stationNumber = '+15077863602'
+const kstoLiveUrl = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
 
 type Props = TopLevelViewPropsType
 
@@ -89,7 +91,21 @@ export class KSTOView extends React.PureComponent<Props, State> {
     callPhone(stationNumber)
   }
 
+  openStreamWebsite = () => {
+    openUrl(kstoLiveUrl)
+  }
+
   renderPlayButton = (state: PlayState) => {
+    if (Platform.OS === 'android') {
+      return (
+        <ActionButton
+          icon="ios-planet"
+          onPress={this.openStreamWebsite}
+          text="Open"
+        />
+      )
+    }
+
     switch (state) {
       case 'paused':
         return (
