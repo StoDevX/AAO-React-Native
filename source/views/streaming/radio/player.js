@@ -4,7 +4,7 @@ import * as React from 'react'
 import {WebView} from 'react-native'
 import type {PlayState, HtmlAudioError} from './types'
 
-const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
+const kstoEmbed = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
 
 type Props = {
   playState: PlayState,
@@ -99,17 +99,25 @@ export class StreamPlayer extends React.PureComponent<Props> {
 
   setRef = (ref: WebView) => (this._webview = ref)
 
-  html = (url: string) => `
-    <style>body {background-color: white;}</style>
+  js = `
+const ready = (fn) => {
+ if (document.readyState !== 'loading') {
+  fn();
+ } else if (document.addEventListener) {
+  document.addEventListener('DOMContentLoaded', fn);
+ } else {
+  document.attachEvent('onreadystatechange', () => {
+   if (document.readyState !== 'loading') {
+    fn();
+   }
+  });
+ }
+};
 
-    <title>KSTO Stream</title>
+ready(function() {
+      var player = document.querySelector('audio')
 
-    <audio id="player" webkit-playsinline playsinline>
-      <source src="${url}" />
-    </audio>
-
-    <script>
-      var player = document.getElementById('player')
+      player.muted = false
 
       /////
       /////
@@ -175,7 +183,7 @@ export class StreamPlayer extends React.PureComponent<Props> {
 
       // "error" is fired when an error occurs.
       player.addEventListener('error', error)
-    </script>`
+})	`
 
   render() {
     return (
@@ -184,8 +192,9 @@ export class StreamPlayer extends React.PureComponent<Props> {
         allowsInlineMediaPlayback={true}
         mediaPlaybackRequiresUserAction={false}
         onMessage={this.handleMessage}
-        source={{html: this.html(kstoStream)}}
+        source={{uri: kstoEmbed}}
         style={this.props.style}
+        injectedJavaScript={this.js}
       />
     )
   }
