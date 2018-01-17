@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Platform,
 } from 'react-native'
 import noop from 'lodash/noop'
 import * as c from '../../components/colors'
