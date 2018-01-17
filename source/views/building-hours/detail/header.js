@@ -13,50 +13,50 @@ import * as c from '../../components/colors'
 type Props = {building: BuildingType}
 
 export class Header extends React.PureComponent<Props> {
-  render() {
-    const {building} = this.props
+	render() {
+		const {building} = this.props
 
-    const abbr = building.abbreviation ? ` (${building.abbreviation})` : ''
+		const abbr = building.abbreviation ? ` (${building.abbreviation})` : ''
 
-    const subtitle = building.subtitle ? (
-      <View style={styles.subtitle}>
-        <Text selectable={true} style={[styles.name, styles.subtitleText]}>
-          {building.subtitle}
-        </Text>
-      </View>
-    ) : null
+		const subtitle = building.subtitle ? (
+			<View style={styles.subtitle}>
+				<Text selectable={true} style={[styles.name, styles.subtitleText]}>
+					{building.subtitle}
+				</Text>
+			</View>
+		) : null
 
-    return (
-      <View>
-        <View style={styles.title}>
-          <Text selectable={true} style={styles.name}>
-            {building.name}
-            {abbr}
-          </Text>
-        </View>
-        {subtitle}
-      </View>
-    )
-  }
+		return (
+			<View>
+				<View style={styles.title}>
+					<Text selectable={true} style={styles.name}>
+						{building.name}
+						{abbr}
+					</Text>
+				</View>
+				{subtitle}
+			</View>
+		)
+	}
 }
 
 const styles = StyleSheet.create({
-  title: {
-    paddingTop: 16,
-    paddingBottom: 4,
-    paddingHorizontal: 8,
-  },
-  name: {
-    textAlign: 'center',
-    color: c.black,
-    fontSize: 32,
-    fontWeight: '300',
-  },
-  subtitle: {
-    paddingTop: 8,
-    paddingHorizontal: 8,
-  },
-  subtitleText: {
-    fontSize: 18,
-  },
+	title: {
+		paddingTop: 16,
+		paddingBottom: 4,
+		paddingHorizontal: 8,
+	},
+	name: {
+		textAlign: 'center',
+		color: c.black,
+		fontSize: 32,
+		fontWeight: '300',
+	},
+	subtitle: {
+		paddingTop: 8,
+		paddingHorizontal: 8,
+	},
+	subtitleText: {
+		fontSize: 18,
+	},
 })

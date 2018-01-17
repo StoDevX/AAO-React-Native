@@ -22,19 +22,19 @@ function buildBusSchedules(now): Array<BusSchedule> {
 }
 
 test('returns the bus schedule for today', () => {
-  // a saturday
-  let now = moment.utc('2017-11-18T13:14:00.000-06:00', moment.ISO_8601)
-  let input = buildBusSchedules(now)
-  let actual = getScheduleForNow(input, now)
+	// a saturday
+	let now = moment.utc('2017-11-18T13:14:00.000-06:00', moment.ISO_8601)
+	let input = buildBusSchedules(now)
+	let actual = getScheduleForNow(input, now)
 
-  expect(actual).toMatchSnapshot()
+	expect(actual).toMatchSnapshot()
 })
 
 test('returns an empty schedule if there is no schedule for today', () => {
-  // a sunday
-  let now = moment.utc('2017-11-12T13:14:00.000Z', moment.ISO_8601)
-  let input = buildBusSchedules(now)
-  let actual = getScheduleForNow(input, now)
+	// a sunday
+	let now = moment.utc('2017-11-12T13:14:00.000Z', moment.ISO_8601)
+	let input = buildBusSchedules(now)
+	let actual = getScheduleForNow(input, now)
 
-  expect(actual).toMatchSnapshot()
+	expect(actual).toMatchSnapshot()
 })

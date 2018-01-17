@@ -18,68 +18,68 @@ import {ScheduleTable} from './schedule-table'
 import {ListFooter} from '../../components/list'
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'stretch',
-    ...Platform.select({
-      android: {
-        backgroundColor: c.androidLightBackground,
-      },
-      ios: {
-        backgroundColor: c.iosLightBackground,
-      },
-    }),
-  },
-  image: {
-    width: null,
-    height: 100,
-  },
+	container: {
+		alignItems: 'stretch',
+		...Platform.select({
+			android: {
+				backgroundColor: c.androidLightBackground,
+			},
+			ios: {
+				backgroundColor: c.iosLightBackground,
+			},
+		}),
+	},
+	image: {
+		width: null,
+		height: 100,
+	},
 })
 
 type Props = {
-  info: BuildingType,
-  now: moment,
-  onProblemReport: () => any,
+	info: BuildingType,
+	now: moment,
+	onProblemReport: () => any,
 }
 
 export class BuildingDetail extends React.Component<Props> {
-  shouldComponentUpdate(nextProps: Props) {
-    return (
-      !this.props.now.isSame(nextProps.now, 'minute') ||
-      this.props.info !== nextProps.info ||
-      this.props.onProblemReport !== nextProps.onProblemReport
-    )
-  }
+	shouldComponentUpdate(nextProps: Props) {
+		return (
+			!this.props.now.isSame(nextProps.now, 'minute') ||
+			this.props.info !== nextProps.info ||
+			this.props.onProblemReport !== nextProps.onProblemReport
+		)
+	}
 
-  render() {
-    const {info, now, onProblemReport} = this.props
+	render() {
+		const {info, now, onProblemReport} = this.props
 
-    const headerImage =
-      info.image && buildingImages.hasOwnProperty(info.image)
-        ? buildingImages[info.image]
-        : null
-    const openStatus = getShortBuildingStatus(info, now)
-    const schedules = info.schedule || []
+		const headerImage =
+			info.image && buildingImages.hasOwnProperty(info.image)
+				? buildingImages[info.image]
+				: null
+		const openStatus = getShortBuildingStatus(info, now)
+		const schedules = info.schedule || []
 
-    return (
-      <ScrollView contentContainerStyle={styles.container}>
-        {headerImage ? (
-          <Image resizeMode="cover" source={headerImage} style={styles.image} />
-        ) : null}
+		return (
+			<ScrollView contentContainerStyle={styles.container}>
+				{headerImage ? (
+					<Image resizeMode="cover" source={headerImage} style={styles.image} />
+				) : null}
 
-        <Header building={info} />
-        <Badge status={openStatus} />
-        <ScheduleTable
-          now={now}
-          onProblemReport={onProblemReport}
-          schedules={schedules}
-        />
+				<Header building={info} />
+				<Badge status={openStatus} />
+				<ScheduleTable
+					now={now}
+					onProblemReport={onProblemReport}
+					schedules={schedules}
+				/>
 
-        <ListFooter
-          title={
-            'Building hours subject to change without notice\n\nData collected by the humans of All About Olaf'
-          }
-        />
-      </ScrollView>
-    )
-  }
+				<ListFooter
+					title={
+						'Building hours subject to change without notice\n\nData collected by the humans of All About Olaf'
+					}
+				/>
+			</ScrollView>
+		)
+	}
 }

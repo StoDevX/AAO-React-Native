@@ -13,7 +13,7 @@ import uniq from 'lodash/uniq'
 import {cssSelect} from '../html'
 
 export function parseStudentNumberFromDom(dom: mixed): number[] {
-  const elements = cssSelect('[name=stnum]', dom)
-  const stunums = elements.map(node => Number(node.attribs.value))
-  return uniq(stunums)
+	const elements = cssSelect('[name=stnum]', dom)
+	const stunums = elements.map(node => Number(node.attribs.value))
+	return uniq(stunums)
 }

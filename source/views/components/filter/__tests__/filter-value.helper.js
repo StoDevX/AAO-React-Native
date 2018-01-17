@@ -1,3 +1,3 @@
 export function filterValue(...arr) {
-  return arr.map(item => ({title: item}))
+	return arr.map(item => ({title: item}))
 }

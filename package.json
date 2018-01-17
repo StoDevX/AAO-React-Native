@@ -52,6 +52,7 @@
     "preset": "react-native"
   },
   "prettier": {
+    "useTabs": true,
     "singleQuote": true,
     "trailingComma": "all",
     "bracketSpacing": false,
