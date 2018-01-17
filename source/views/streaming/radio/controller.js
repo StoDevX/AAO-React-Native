@@ -2,13 +2,15 @@
 
 import * as React from 'react'
 import {
-	Dimensions,
-	Image,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Platform,
 } from 'react-native'
+import noop from 'lodash/noop'
 import * as c from '../../components/colors'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import {callPhone} from '../../components/call-phone'
@@ -17,9 +19,11 @@ import type {TopLevelViewPropsType} from '../../types'
 import {StreamPlayer} from './player'
 import type {PlayState, HtmlAudioError, Viewport} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
+import {openUrl} from '../../components/open-url'
 
 const image = require('../../../../images/streaming/ksto/ksto-logo.png')
 const stationNumber = '+15077863602'
+const kstoLiveUrl = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
 
 type Props = TopLevelViewPropsType
 
@@ -31,152 +35,168 @@ type State = {
 }
 
 export class KSTOView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		tabBarLabel: 'KSTO',
-		tabBarIcon: TabBarIcon('radio'),
-	}
+  static navigationOptions = {
+    tabBarLabel: 'KSTO',
+    tabBarIcon: TabBarIcon('radio'),
+  }
 
-	state = {
-		playState: 'paused',
-		streamError: null,
-		uplinkError: null,
-		viewport: Dimensions.get('window'),
-	}
+  state = {
+    playState: 'paused',
+    streamError: null,
+    uplinkError: null,
+    viewport: Dimensions.get('window'),
+  }
 
-	componentWillMount() {
-		Dimensions.addEventListener('change', this.handleResizeEvent)
-	}
+  componentWillMount() {
+    Dimensions.addEventListener('change', this.handleResizeEvent)
+  }
 
-	componentWillUnmount() {
-		Dimensions.removeEventListener('change', this.handleResizeEvent)
-	}
+  componentWillUnmount() {
+    Dimensions.removeEventListener('change', this.handleResizeEvent)
+  }
 
-	handleResizeEvent = (event: {window: {width: number, height: number}}) => {
-		this.setState(() => ({viewport: event.window}))
-	}
+  handleResizeEvent = (event: {window: {width: number, height: number}}) => {
+    this.setState(() => ({viewport: event.window}))
+  }
 
-	play = () => {
-		this.setState(() => ({playState: 'checking'}))
-	}
+  play = () => {
+    this.setState(() => ({playState: 'checking'}))
+  }
 
-	pause = () => {
-		this.setState(() => ({playState: 'paused'}))
-	}
+  pause = () => {
+    this.setState(() => ({playState: 'paused'}))
+  }
 
-	handleStreamPlay = () => {
-		this.setState(() => ({playState: 'playing'}))
-	}
+  handleStreamPlay = () => {
+    this.setState(() => ({playState: 'playing'}))
+  }
 
-	handleStreamPause = () => {
-		this.setState(() => ({playState: 'paused'}))
-	}
+  handleStreamPause = () => {
+    this.setState(() => ({playState: 'paused'}))
+  }
 
-	handleStreamEnd = () => {
-		this.setState(() => ({playState: 'paused'}))
-	}
+  handleStreamEnd = () => {
+    this.setState(() => ({playState: 'paused'}))
+  }
 
-	handleStreamError = (e: {code: number, message: string}) => {
-		this.setState(() => ({streamError: e, playState: 'paused'}))
-	}
+  handleStreamError = (e: {code: number, message: string}) => {
+    this.setState(() => ({streamError: e, playState: 'paused'}))
+  }
 
-	openSchedule = () => {
-		this.props.navigation.navigate('KSTOScheduleView')
-	}
+  openSchedule = () => {
+    this.props.navigation.navigate('KSTOScheduleView')
+  }
 
-	callStation = () => {
-		callPhone(stationNumber)
-	}
+  callStation = () => {
+    callPhone(stationNumber)
+  }
 
-	renderPlayButton = (state: PlayState) => {
-		switch (state) {
-			case 'paused':
-				return (
-					<ActionButton icon="ios-play" onPress={this.play} text="Listen" />
-				)
+  openStreamWebsite = () => {
+    openUrl(kstoLiveUrl)
+  }
 
-			case 'checking':
-				return (
-					<ActionButton icon="ios-more" onPress={this.pause} text="Starting" />
-				)
+  renderPlayButton = (state: PlayState) => {
+    if (Platform.OS === 'android') {
+      return (
+        <ActionButton
+          icon="ios-planet"
+          onPress={this.openStreamWebsite}
+          text="Open"
+        />
+      )
+    }
 
-			case 'playing':
-				return (
-					<ActionButton icon="ios-pause" onPress={this.pause} text="Pause" />
-				)
+    switch (state) {
+      case 'paused':
+        return (
+          <ActionButton icon="ios-play" onPress={this.play} text="Listen" />
+        )
 
-			default:
-				return <ActionButton icon="ios-bug" onPress={() => {}} text="Error" />
-		}
-	}
+      case 'checking':
+        return (
+          <ActionButton icon="ios-more" onPress={this.pause} text="Starting" />
+        )
 
-	render() {
-		const sideways = this.state.viewport.width > this.state.viewport.height
+      case 'playing':
+        return (
+          <ActionButton icon="ios-pause" onPress={this.pause} text="Pause" />
+        )
 
-		const logoWidth = Math.min(
-			this.state.viewport.width / 1.5,
-			this.state.viewport.height / 1.75,
-		)
+      default:
+        return <ActionButton icon="ios-bug" onPress={noop} text="Error" />
+    }
+  }
 
-		const logoSize = {
-			width: logoWidth,
-			height: logoWidth,
-		}
+  render() {
+    const sideways = this.state.viewport.width > this.state.viewport.height
 
-		const error = this.state.uplinkError ? (
-			<Text style={styles.status}>{this.state.uplinkError}</Text>
-		) : this.state.streamError ? (
-			<Text style={styles.status}>
-				Error Code {this.state.streamError.code}:{' '}
-				{this.state.streamError.message}
-			</Text>
-		) : null
+    const logoWidth = Math.min(
+      this.state.viewport.width / 1.5,
+      this.state.viewport.height / 1.75,
+    )
 
-		return (
-			<ScrollView
-				contentContainerStyle={[styles.root, sideways && landscape.root]}
-			>
-				<View style={[styles.logoWrapper, sideways && landscape.logoWrapper]}>
-					<Image
-						resizeMode="contain"
-						source={image}
-						style={[styles.logo, logoSize]}
-					/>
-				</View>
+    const logoSize = {
+      width: logoWidth,
+      height: logoWidth,
+    }
 
-				<View style={styles.container}>
-					<View style={styles.titleWrapper}>
-						<Text selectable={true} style={styles.heading}>
-							St. Olaf College Radio
-						</Text>
-						<Text selectable={true} style={styles.subHeading}>
-							KSTO 93.1 FM
-						</Text>
+    const error = this.state.uplinkError ? (
+      <Text style={styles.status}>{this.state.uplinkError}</Text>
+    ) : this.state.streamError ? (
+      <Text style={styles.status}>
+        Error Code {this.state.streamError.code}:{' '}
+        {this.state.streamError.message}
+      </Text>
+    ) : null
 
-						{error}
-					</View>
+    return (
+      <ScrollView
+        contentContainerStyle={[styles.root, sideways && landscape.root]}
+      >
+        <View style={[styles.logoWrapper, sideways && landscape.logoWrapper]}>
+          <Image
+            resizeMode="contain"
+            source={image}
+            style={[styles.logo, logoSize]}
+          />
+        </View>
 
-					<Row>
-						{this.renderPlayButton(this.state.playState)}
-						<View style={styles.spacer} />
-						<CallButton onPress={this.callStation} />
-						<View style={styles.spacer} />
-						<ShowCalendarButton onPress={this.openSchedule} />
-					</Row>
+        <View style={styles.container}>
+          <View style={styles.titleWrapper}>
+            <Text selectable={true} style={styles.heading}>
+              St. Olaf College Radio
+            </Text>
+            <Text selectable={true} style={styles.subHeading}>
+              KSTO 93.1 FM
+            </Text>
 
-					<StreamPlayer
-						onEnded={this.handleStreamEnd}
-						// onWaiting={this.handleStreamWait}
-						onError={this.handleStreamError}
-						// onStalled={this.handleStreamStall}
-						onPause={this.handleStreamPause}
-						onPlay={this.handleStreamPlay}
-						playState={this.state.playState}
-						style={styles.webview}
-					/>
-				</View>
-			</ScrollView>
-		)
-	}
+            {error}
+          </View>
+
+          <Row>
+            {this.renderPlayButton(this.state.playState)}
+            <View style={styles.spacer} />
+            <CallButton onPress={this.callStation} />
+            <View style={styles.spacer} />
+            <ShowCalendarButton onPress={this.openSchedule} />
+          </Row>
+
+          {Platform.OS !== 'android' ? (
+            <StreamPlayer
+              onEnded={this.handleStreamEnd}
+              // onWaiting={this.handleStreamWait}
+              onError={this.handleStreamError}
+              // onStalled={this.handleStreamStall}
+              onPause={this.handleStreamPause}
+              onPlay={this.handleStreamPlay}
+              playState={this.state.playState}
+              style={styles.webview}
+            />
+          ) : null}
+        </View>
+      </ScrollView>
+    )
+  }
 }
 
 const styles = StyleSheet.create({

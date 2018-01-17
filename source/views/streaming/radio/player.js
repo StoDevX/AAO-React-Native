@@ -4,7 +4,7 @@ import * as React from 'react'
 import {WebView} from 'react-native'
 import type {PlayState, HtmlAudioError} from './types'
 
-const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
+const kstoEmbed = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
 
 type Props = {
 	playState: PlayState,
@@ -99,94 +99,100 @@ export class StreamPlayer extends React.PureComponent<Props> {
 
 	setRef = (ref: WebView) => (this._webview = ref)
 
-	html = (url: string) => `
-    <style>body {background-color: white;}</style>
+  js = `
+    function ready(fn) {
+      if (document.readyState !== 'loading') {
+        fn();
+      } else if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', fn);
+      } else {
+        document.attachEvent('onreadystatechange', function () {
+          if (document.readyState !== 'loading') {
+            fn();
+          }
+        });
+      }
+    };
 
-    <title>KSTO Stream</title>
+    ready(function () {
+      var player = document.querySelector('audio');
 
-    <audio id="player" webkit-playsinline playsinline>
-      <source src="${url}" />
-    </audio>
+      /*******
+       *******/
 
-    <script>
-      var player = document.getElementById('player')
-
-      /////
-      /////
-
-      document.addEventListener('message', function(event) {
+      document.addEventListener('message', function (event) {
         switch (event.data) {
           case 'play':
-            player.play()
-            break
+            player.muted = false;
+            player.play().catch(error);
+            break;
 
           case 'pause':
-            player.pause()
-            break
+            player.pause();
+            break;
         }
-      })
+      });
 
-      /////
-      /////
+      /*******
+       *******/
 
       function message(data) {
-        window.postMessage(JSON.stringify(data))
+        window.postMessage(JSON.stringify(data));
       }
 
       function send(event) {
-        message({type: event.type})
+        message({type: event.type});
       }
 
       function error(event) {
         message({
           type: event.type,
-          error: {
-            code: event.target.error.code,
-            message: event.target.error.message,
-          },
-        })
+          error: 'error',
+        });
       }
 
-      /////
-      /////
+      /*******
+       *******/
 
-      // "waiting" is fired when playback has stopped because of a temporary
-      // lack of data.
-      player.addEventListener('waiting', send)
+      /* "waiting" is fired when playback has stopped because of a temporary
+       * lack of data. */
+      player.addEventListener('waiting', send);
 
-      // "ended" is fired when playback or streaming has stopped because the
-      // end of the media was reached or because no further data is
-      // available.
-      player.addEventListener('ended', send)
+      /* "ended" is fired when playback or streaming has stopped because the
+       * end of the media was reached or because no further data is
+       * available. */
+      player.addEventListener('ended', send);
 
-      // "stalled" is fired when the user agent is trying to fetch media data,
-      // but data is unexpectedly not forthcoming.
-      player.addEventListener('stalled', send)
+      /* "stalled" is fired when the user agent is trying to fetch media data,
+       * but data is unexpectedly not forthcoming. */
+      player.addEventListener('stalled', send);
 
-      // "playing" is fired when playback is ready to start after having been
-      // paused or delayed due to lack of data.
-      player.addEventListener('playing', send)
+      /* "playing" is fired when playback is ready to start after having been
+       * paused or delayed due to lack of data. */
+      player.addEventListener('playing', send);
 
-      // "pause" is fired when playback has been paused.
-      player.addEventListener('pause', send)
+      /* "pause" is fired when playback has been paused. */
+      player.addEventListener('pause', send);
 
-      // "play" is fired when playback has begun.
-      player.addEventListener('play', send)
+      /* "play" is fired when playback has begun. */
+      player.addEventListener('play', send);
 
-      // "error" is fired when an error occurs.
-      player.addEventListener('error', error)
-    </script>`
+      /* "error" is fired when an error occurs. */
+      player.addEventListener('error', error);
+    });
+  `
 
-	render() {
-		return (
-			<WebView
-				ref={this.setRef}
-				allowsInlineMediaPlayback={true}
-				mediaPlaybackRequiresUserAction={false}
-				onMessage={this.handleMessage}
-				source={{html: this.html(kstoStream)}}
-				style={this.props.style}
-			/>
-		)
-	}
+  render() {
+    return (
+      <WebView
+        ref={this.setRef}
+        allowsInlineMediaPlayback={true}
+        injectedJavaScript={this.js}
+        mediaPlaybackRequiresUserAction={false}
+        onMessage={this.handleMessage}
+        source={{uri: kstoEmbed}}
+        style={this.props.style}
+      />
+    )
+  }
 }
