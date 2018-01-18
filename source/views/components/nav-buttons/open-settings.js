@@ -11,33 +11,33 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import type {NavType} from '../../types'
 
 export function OpenSettingsButton({
-  navigation,
-  buttonStyle,
+	navigation,
+	buttonStyle,
 }: {
-  navigation: NavType,
-  buttonStyle?: any,
+	navigation: NavType,
+	buttonStyle?: any,
 }) {
-  return (
-    <Touchable
-      borderless={true}
-      highlight={false}
-      onPress={() => navigation.navigate('SettingsView')}
-      style={[styles.button, buttonStyle]}
-    >
-      <Icon name="ios-settings" style={styles.icon} />
-    </Touchable>
-  )
+	return (
+		<Touchable
+			borderless={true}
+			highlight={false}
+			onPress={() => navigation.navigate('SettingsView')}
+			style={[styles.button, buttonStyle]}
+		>
+			<Icon name="ios-settings" style={styles.icon} />
+		</Touchable>
+	)
 }
 
 const styles = StyleSheet.create({
-  icon: {
-    color: c.white,
-    fontSize: 24,
-  },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Platform.OS === 'ios' ? 10 : 16,
-    paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
-  },
+	icon: {
+		color: c.white,
+		fontSize: 24,
+	},
+	button: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		paddingVertical: Platform.OS === 'ios' ? 10 : 16,
+		paddingHorizontal: Platform.OS === 'ios' ? 18 : 16,
+	},
 })

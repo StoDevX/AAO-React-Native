@@ -1,36 +1,36 @@
 body {
-  font-family: -apple-system, Roboto, sans-serif;
-  font-size: 16px;
-  margin: 0;
-  padding: 1em;
-  word-wrap: break-word;
+	font-family: -apple-system, Roboto, sans-serif;
+	font-size: 16px;
+	margin: 0;
+	padding: 1em;
+	word-wrap: break-word;
 }
 div,
 figure {
-  width: auto !important;
+	width: auto !important;
 }
 img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 12px auto;
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 12px auto;
 }
 p {
-  line-height: 1.2em;
-  margin-bottom: 0.25em;
+	line-height: 1.2em;
+	margin-bottom: 0.25em;
 }
 iframe {
-  max-width: 100%;
+	max-width: 100%;
 }
 .aao-header {
-  border-bottom: solid 2px #eaeaea;
-  margin: 0 0 1em;
-  padding-bottom: 1em;
-  font-weight: bold;
-  text-align: center;
+	border-bottom: solid 2px #eaeaea;
+	margin: 0 0 1em;
+	padding-bottom: 1em;
+	font-weight: bold;
+	text-align: center;
 }
 .aao-header h1 {
-  line-height: 1.1em;
-  font-size: 1.5em;
-  margin-bottom: 0;
+	line-height: 1.1em;
+	font-size: 1.5em;
+	margin-bottom: 0;
 }

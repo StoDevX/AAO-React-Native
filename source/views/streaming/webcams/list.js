@@ -17,96 +17,96 @@ const webcamsUrl = GH_PAGES_URL('webcams.json')
 type Props = {}
 
 type State = {
-  width: number,
-  webcams: Array<Webcam>,
-  loading: boolean,
-  refreshing: boolean,
+	width: number,
+	webcams: Array<Webcam>,
+	loading: boolean,
+	refreshing: boolean,
 }
 
 export class WebcamsView extends React.PureComponent<Props, State> {
-  static navigationOptions = {
-    tabBarLabel: 'Webcams',
-    tabBarIcon: TabBarIcon('videocam'),
-  }
+	static navigationOptions = {
+		tabBarLabel: 'Webcams',
+		tabBarIcon: TabBarIcon('videocam'),
+	}
 
-  state = {
-    width: Dimensions.get('window').width,
-    webcams: defaultData.data,
-    loading: false,
-    refreshing: false,
-  }
+	state = {
+		width: Dimensions.get('window').width,
+		webcams: defaultData.data,
+		loading: false,
+		refreshing: false,
+	}
 
-  componentWillMount() {
-    Dimensions.addEventListener('change', this.handleResizeEvent)
-    this.fetchData()
-  }
+	componentWillMount() {
+		Dimensions.addEventListener('change', this.handleResizeEvent)
+		this.fetchData()
+	}
 
-  componentWillUnmount() {
-    Dimensions.removeEventListener('change', this.handleResizeEvent)
-  }
+	componentWillUnmount() {
+		Dimensions.removeEventListener('change', this.handleResizeEvent)
+	}
 
-  handleResizeEvent = (event: {window: {width: number}}) => {
-    this.setState(() => ({width: event.window.width}))
-  }
+	handleResizeEvent = (event: {window: {width: number}}) => {
+		this.setState(() => ({width: event.window.width}))
+	}
 
-  refresh = async () => {
-    const start = Date.now()
-    this.setState(() => ({refreshing: true}))
+	refresh = async () => {
+		const start = Date.now()
+		this.setState(() => ({refreshing: true}))
 
-    await this.fetchData()
+		await this.fetchData()
 
-    // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-    const elapsed = Date.now() - start
-    if (elapsed < 500) {
-      await delay(500 - elapsed)
-    }
+		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+		const elapsed = Date.now() - start
+		if (elapsed < 500) {
+			await delay(500 - elapsed)
+		}
 
-    this.setState(() => ({refreshing: false}))
-  }
+		this.setState(() => ({refreshing: false}))
+	}
 
-  fetchData = async () => {
-    this.setState(() => ({loading: true}))
+	fetchData = async () => {
+		this.setState(() => ({loading: true}))
 
-    let {data: webcams} = await fetchJson(webcamsUrl).catch(err => {
-      reportNetworkProblem(err)
-      return defaultData
-    })
+		let {data: webcams} = await fetchJson(webcamsUrl).catch(err => {
+			reportNetworkProblem(err)
+			return defaultData
+		})
 
-    if (process.env.NODE_ENV === 'development') {
-      webcams = defaultData.data
-    }
+		if (process.env.NODE_ENV === 'development') {
+			webcams = defaultData.data
+		}
 
-    this.setState(() => ({webcams, loading: false}))
-  }
+		this.setState(() => ({webcams, loading: false}))
+	}
 
-  render() {
-    const columns = partitionByIndex(this.state.webcams)
+	render() {
+		const columns = partitionByIndex(this.state.webcams)
 
-    return (
-      <ScrollView contentContainerStyle={styles.container}>
-        {columns.map((contents, i) => (
-          <Column key={i} style={styles.column}>
-            {contents.map(webcam => (
-              <StreamThumbnail
-                key={webcam.name}
-                viewportWidth={this.state.width}
-                webcam={webcam}
-              />
-            ))}
-          </Column>
-        ))}
-      </ScrollView>
-    )
-  }
+		return (
+			<ScrollView contentContainerStyle={styles.container}>
+				{columns.map((contents, i) => (
+					<Column key={i} style={styles.column}>
+						{contents.map(webcam => (
+							<StreamThumbnail
+								key={webcam.name}
+								viewportWidth={this.state.width}
+								webcam={webcam}
+							/>
+						))}
+					</Column>
+				))}
+			</ScrollView>
+		)
+	}
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 5,
-    flexDirection: 'row',
-  },
-  column: {
-    flex: 1,
-    alignItems: 'center',
-  },
+	container: {
+		padding: 5,
+		flexDirection: 'row',
+	},
+	column: {
+		flex: 1,
+		alignItems: 'center',
+	},
 })

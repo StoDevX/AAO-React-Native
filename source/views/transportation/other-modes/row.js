@@ -6,25 +6,25 @@ import {ListRow, Detail, Title} from '../../components/list'
 import {Column, Row} from '../../components/layout'
 
 type Props = {
-  onPress: OtherModeType => any,
-  mode: OtherModeType,
+	onPress: OtherModeType => any,
+	mode: OtherModeType,
 }
 
 export class OtherModesRow extends React.PureComponent<Props> {
-  _onPress = () => this.props.onPress(this.props.mode)
+	_onPress = () => this.props.onPress(this.props.mode)
 
-  render() {
-    const {mode} = this.props
+	render() {
+		const {mode} = this.props
 
-    return (
-      <ListRow arrowPosition="top" onPress={this._onPress}>
-        <Row alignItems="center">
-          <Column flex={1}>
-            <Title lines={1}>{mode.name}</Title>
-            <Detail lines={1}>{mode.synopsis}</Detail>
-          </Column>
-        </Row>
-      </ListRow>
-    )
-  }
+		return (
+			<ListRow arrowPosition="top" onPress={this._onPress}>
+				<Row alignItems="center">
+					<Column flex={1}>
+						<Title lines={1}>{mode.name}</Title>
+						<Detail lines={1}>{mode.synopsis}</Detail>
+					</Column>
+				</Row>
+			</ListRow>
+		)
+	}
 }

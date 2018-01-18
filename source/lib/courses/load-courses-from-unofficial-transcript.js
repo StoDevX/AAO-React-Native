@@ -15,47 +15,47 @@ import type {CourseCollectionType} from './types'
 type PromisedDataType = Promise<CourseCollectionType>
 
 export async function loadCoursesFromUnofficialTranscript({
-  stnum,
-  force,
-  isConnected,
+	stnum,
+	force,
+	isConnected,
 }: {
-  stnum: number,
-  isConnected: boolean,
-  force?: boolean,
+	stnum: number,
+	isConnected: boolean,
+	force?: boolean,
 }): PromisedDataType {
-  const {isExpired, isCached, value} = await cache.getAllCourses()
+	const {isExpired, isCached, value} = await cache.getAllCourses()
 
-  if (isConnected && (isExpired || !isCached || force)) {
-    const courses = await fetchAllCoursesFromServer({stnum})
+	if (isConnected && (isExpired || !isCached || force)) {
+		const courses = await fetchAllCoursesFromServer({stnum})
 
-    // we don't want to cache error responses
-    if (courses.error) {
-      return courses
-    }
+		// we don't want to cache error responses
+		if (courses.error) {
+			return courses
+		}
 
-    await cache.setAllCourses(courses.value)
-    return courses
-  }
+		await cache.setAllCourses(courses.value)
+		return courses
+	}
 
-  return {error: false, value: value || {}}
+	return {error: false, value: value || {}}
 }
 
 async function fetchAllCoursesFromServer({
-  stnum,
+	stnum,
 }: {
-  stnum: number,
+	stnum: number,
 }): PromisedDataType {
-  const form = buildFormData({stnum: String(stnum), searchyearterm: '0'})
-  const resp = await fetch(GRADES_PAGE, {method: 'POST', body: form})
-  if (startsWith(resp.url, LANDING_PAGE)) {
-    return {error: true, value: new Error('Authentication Error')}
-  }
+	const form = buildFormData({stnum: String(stnum), searchyearterm: '0'})
+	const resp = await fetch(GRADES_PAGE, {method: 'POST', body: form})
+	if (startsWith(resp.url, LANDING_PAGE)) {
+		return {error: true, value: new Error('Authentication Error')}
+	}
 
-  const page = await resp.text()
-  // console.log(page)
-  const dom = parseHtml(page)
+	const page = await resp.text()
+	// console.log(page)
+	const dom = parseHtml(page)
 
-  const courses = parseCoursesFromDom(dom)
+	const courses = parseCoursesFromDom(dom)
 
-  return {error: false, value: courses}
+	return {error: false, value: courses}
 }

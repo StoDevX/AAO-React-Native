@@ -8,52 +8,52 @@ const memoize = require('lodash/memoize')
 const {SCHEMA_BASE} = require('./paths')
 
 function formatError(err, data) {
-  // format some of the errors from ajv
-  let contents = ''
-  const dataPath = err.dataPath.replace(/^\./, '')
-  switch (err.keyword) {
-    case 'enum': {
-      const value = get(data, dataPath)
-      const allowed = err.params.allowedValues
-        .map(v => JSON.stringify(v))
-        .join(', ')
-      contents = `Given value "${JSON.stringify(value)}" ${
-        err.message
-      } [${allowed}]`
-      break
-    }
-    case 'type': {
-      contents = `${get(data, dataPath)} ${err.message}`
-      break
-    }
-    default: {
-      return JSON.stringify(err, null, 2)
-    }
-  }
-  return `Error at ${err.dataPath}:\n${contents}`
+	// format some of the errors from ajv
+	let contents = ''
+	const dataPath = err.dataPath.replace(/^\./, '')
+	switch (err.keyword) {
+		case 'enum': {
+			const value = get(data, dataPath)
+			const allowed = err.params.allowedValues
+				.map(v => JSON.stringify(v))
+				.join(', ')
+			contents = `Given value "${JSON.stringify(value)}" ${
+				err.message
+			} [${allowed}]`
+			break
+		}
+		case 'type': {
+			contents = `${get(data, dataPath)} ${err.message}`
+			break
+		}
+		default: {
+			return JSON.stringify(err, null, 2)
+		}
+	}
+	return `Error at ${err.dataPath}:\n${contents}`
 }
 
 const init = memoize(() => {
-  // load the common definitions
-  const defsPath = path.join(SCHEMA_BASE, '_defs.yaml')
-  const defs = yaml.safeLoad(fs.readFileSync(defsPath, 'utf-8'))
+	// load the common definitions
+	const defsPath = path.join(SCHEMA_BASE, '_defs.yaml')
+	const defs = yaml.safeLoad(fs.readFileSync(defsPath, 'utf-8'))
 
-  // set up the validator
-  const validator = new AJV()
-  validator.addSchema(defs)
+	// set up the validator
+	const validator = new AJV()
+	validator.addSchema(defs)
 
-  return validator
+	return validator
 })
 
 module.exports = function validate(schema, data) {
-  const validator = init()
+	const validator = init()
 
-  const validate = validator.compile(schema)
-  const isValid = validate(data)
+	const validate = validator.compile(schema)
+	const isValid = validate(data)
 
-  if (!isValid) {
-    return [false, validate.errors.map(e => formatError(e, data))]
-  }
+	if (!isValid) {
+		return [false, validate.errors.map(e => formatError(e, data))]
+	}
 
-  return [true, []]
+	return [true, []]
 }

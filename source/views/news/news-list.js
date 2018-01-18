@@ -10,55 +10,55 @@ import {NewsRow} from './news-row'
 import openUrl from '../components/open-url'
 
 const styles = StyleSheet.create({
-  listContainer: {
-    backgroundColor: c.white,
-  },
+	listContainer: {
+		backgroundColor: c.white,
+	},
 })
 
 type Props = TopLevelViewPropsType & {
-  name: string,
-  onRefresh: () => any,
-  entries: StoryType[],
-  loading: boolean,
-  embedFeaturedImage: ?boolean,
-  thumbnail: number,
+	name: string,
+	onRefresh: () => any,
+	entries: StoryType[],
+	loading: boolean,
+	embedFeaturedImage: ?boolean,
+	thumbnail: number,
 }
 
 export class NewsList extends React.PureComponent<Props> {
-  onPressNews = (url: string) => {
-    return openUrl(url)
-  }
+	onPressNews = (url: string) => {
+		return openUrl(url)
+	}
 
-  renderSeparator = () => <ListSeparator spacing={{left: 101}} />
+	renderSeparator = () => <ListSeparator spacing={{left: 101}} />
 
-  renderItem = ({item}: {item: StoryType}) => (
-    <NewsRow
-      onPress={this.onPressNews}
-      story={item}
-      thumbnail={this.props.thumbnail}
-    />
-  )
+	renderItem = ({item}: {item: StoryType}) => (
+		<NewsRow
+			onPress={this.onPressNews}
+			story={item}
+			thumbnail={this.props.thumbnail}
+		/>
+	)
 
-  keyExtractor = (item: StoryType) => item.title
+	keyExtractor = (item: StoryType) => item.title
 
-  render() {
-    // remove all entries with blank excerpts
-    // remove all entries with a <form from the list
-    const entries = this.props.entries
-      .filter(entry => entry.excerpt.trim() !== '')
-      .filter(entry => !entry.content.includes('<form'))
+	render() {
+		// remove all entries with blank excerpts
+		// remove all entries with a <form from the list
+		const entries = this.props.entries
+			.filter(entry => entry.excerpt.trim() !== '')
+			.filter(entry => !entry.content.includes('<form'))
 
-    return (
-      <FlatList
-        ItemSeparatorComponent={this.renderSeparator}
-        ListEmptyComponent={<NoticeView text="No news." />}
-        data={entries}
-        keyExtractor={this.keyExtractor}
-        onRefresh={this.props.onRefresh}
-        refreshing={this.props.loading}
-        renderItem={this.renderItem}
-        style={styles.listContainer}
-      />
-    )
-  }
+		return (
+			<FlatList
+				ItemSeparatorComponent={this.renderSeparator}
+				ListEmptyComponent={<NoticeView text="No news." />}
+				data={entries}
+				keyExtractor={this.keyExtractor}
+				onRefresh={this.props.onRefresh}
+				refreshing={this.props.loading}
+				renderItem={this.renderItem}
+				style={styles.listContainer}
+			/>
+		)
+	}
 }
