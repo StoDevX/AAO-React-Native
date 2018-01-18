@@ -31,7 +31,7 @@
           android:value="${BUGSNAG_KEY}" />
       <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="${gmaps_key}" />
+        android:value="${GMAPS_KEY}" />
     </application>
 
 </manifest>
