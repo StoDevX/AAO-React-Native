@@ -189,6 +189,7 @@ if (propFile.canRead()) {
 }
 
 dependencies {
+    compile project(':react-native-touch-id')
     // please keep this list sorted
     compile project(':bugsnag-react-native')
     compile project(':react-native-calendar-events')
