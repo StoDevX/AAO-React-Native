@@ -5,16 +5,21 @@ def current_build_number(**args)
   return build_number if build_number != nil
 
   begin
-    case lane_context[:PLATFORM_NAME]
-    when :android
-      (google_play_track_version_codes(track: args[:track]) + 1).to_s
-    when :ios
-      (latest_testflight_build_number + 1).to_s
-    else
-      UI.input 'Please enter a build number: '
-    end
+    local = build_number
+    remote = published_build_number
+    local > remote ? local : remote
   rescue
     '1'
+  end
+end
+
+# get latest build from remote service
+def published_build_number
+  case lane_context[:PLATFORM_NAME]
+  when :android
+    (google_play_track_version_codes(track: args[:track]) + 1).to_s
+  when :ios
+    (latest_testflight_build_number + 1).to_s
   end
 end
 
