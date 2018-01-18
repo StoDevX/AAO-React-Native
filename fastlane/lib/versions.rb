@@ -2,28 +2,26 @@
 
 # Gets the version, be it from Travis, Testflight, or Google Play
 def current_build_number(**args)
+  build_number if build_number
+
   begin
-    local = build_number
-    remote = published_build_number
-    local > remote ? local : remote
+    case lane_context[:PLATFORM_NAME]
+    when :android
+      (google_play_track_version_codes(track: args[:track]) + 1).to_s
+    when :ios
+      (latest_testflight_build_number + 1).to_s
+    end
   rescue
     '1'
   end
 end
 
-# get latest build from remote service
-def published_build_number
-  case lane_context[:PLATFORM_NAME]
-  when :android
-    (google_play_track_version_codes(track: args[:track]) + 1).to_s
-  when :ios
-    (latest_testflight_build_number + 1).to_s
-  end
-end
-
 # get the current build number from the environment
 def build_number
-  ENV['TRAVIS_BUILD_NUMBER'] || ENV['CIRCLE_BUILD_NUM']
+  travis = ENV['TRAVIS_BUILD_NUMBER']
+  # bring circle's build numbers up to pass Travis'?
+  circle = (ENV['CIRCLE_BUILD_NUM'].to_i + 3250).to_s
+  travis || circle
 end
 
 # Get the current "app bundle" version
