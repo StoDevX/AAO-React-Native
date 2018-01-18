@@ -83,18 +83,18 @@ workflows:
       # - data:
       #     filters: *nightly-filters
       #     requires: [cache-yarn-linux]
-      - ios:
-          filters: *nightly-filters
-          # requires: [danger, flow, jest, prettier, eslint, data]
-          filters:
-            tags: {only: /.*/}
-            branches: {only: [master, signed-circle]}
-      - android:
-          filters: *nightly-filters
-          # requires: [danger, flow, jest, prettier, eslint, data]
-          filters:
-            tags: {only: /.*/}
-            branches: {only: [master, signed-circle]}
+      # - ios:
+      #     filters: *nightly-filters
+      #     # requires: [danger, flow, jest, prettier, eslint, data]
+      #     filters:
+      #       tags: {only: /.*/}
+      #       branches: {only: [master, signed-circle]}
+      # - android:
+      #     filters: *nightly-filters
+      #     # requires: [danger, flow, jest, prettier, eslint, data]
+      #     filters:
+      #       tags: {only: /.*/}
+      #       branches: {only: [master, signed-circle]}
 
 jobs:
   cache-yarn-linux:
