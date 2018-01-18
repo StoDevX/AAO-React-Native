@@ -15,67 +15,67 @@ const ENABLED_TOOLS_SUCCESS = 'help/ENABLED_TOOLS/success'
 
 type GetEnabledToolsStartAction = {type: 'help/ENABLED_TOOLS/start'}
 type GetEnabledToolsSuccessAction = {
-  type: 'help/ENABLED_TOOLS/success',
-  payload: Array<ToolOptions>,
+	type: 'help/ENABLED_TOOLS/success',
+	payload: Array<ToolOptions>,
 }
 type GetEnabledToolsFailureAction = {type: 'help/ENABLED_TOOLS/failure'}
 type GetEnabledToolsAction =
-  | GetEnabledToolsStartAction
-  | GetEnabledToolsSuccessAction
-  | GetEnabledToolsFailureAction
+	| GetEnabledToolsStartAction
+	| GetEnabledToolsSuccessAction
+	| GetEnabledToolsFailureAction
 
 export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
-  return async (dispatch, getState) => {
-    dispatch({type: ENABLED_TOOLS_START})
+	return async (dispatch, getState) => {
+		dispatch({type: ENABLED_TOOLS_START})
 
-    const state = getState()
-    const isOnline = Boolean(state.app && state.app.isConnected)
+		const state = getState()
+		const isOnline = Boolean(state.app && state.app.isConnected)
 
-    try {
-      const config = await fetchHelpTools(isOnline)
-      dispatch({
-        type: ENABLED_TOOLS_SUCCESS,
-        payload: config,
-      })
-    } catch (err) {
-      dispatch({type: ENABLED_TOOLS_FAILURE})
-    }
-  }
+		try {
+			const config = await fetchHelpTools(isOnline)
+			dispatch({
+				type: ENABLED_TOOLS_SUCCESS,
+				payload: config,
+			})
+		} catch (err) {
+			dispatch({type: ENABLED_TOOLS_FAILURE})
+		}
+	}
 }
 
 export type State = {|
-  +fetching: boolean,
-  +tools: Array<ToolOptions>,
-  +lastFetchError: ?boolean,
+	+fetching: boolean,
+	+tools: Array<ToolOptions>,
+	+lastFetchError: ?boolean,
 |}
 
 const initialState = {
-  fetching: false,
-  tools: [],
-  lastFetchError: null,
+	fetching: false,
+	tools: [],
+	lastFetchError: null,
 }
 
 export function help(state: State = initialState, action: Action) {
-  switch (action.type) {
-    case ENABLED_TOOLS_START:
-      return {...state, fetching: true}
+	switch (action.type) {
+		case ENABLED_TOOLS_START:
+			return {...state, fetching: true}
 
-    case ENABLED_TOOLS_FAILURE:
-      return {
-        ...state,
-        fetching: false,
-        lastFetchError: true,
-      }
+		case ENABLED_TOOLS_FAILURE:
+			return {
+				...state,
+				fetching: false,
+				lastFetchError: true,
+			}
 
-    case ENABLED_TOOLS_SUCCESS:
-      return {
-        ...state,
-        fetching: false,
-        lastFetchError: false,
-        tools: action.payload,
-      }
+		case ENABLED_TOOLS_SUCCESS:
+			return {
+				...state,
+				fetching: false,
+				lastFetchError: false,
+				tools: action.payload,
+			}
 
-    default:
-      return state
-  }
+		default:
+			return state
+	}
 }

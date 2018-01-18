@@ -7,99 +7,99 @@ import type {PlayState, HtmlAudioError} from './types'
 const kstoStream = 'https://cdn.stobcm.com/radio/ksto1.stream/master.m3u8'
 
 type Props = {
-  playState: PlayState,
-  onWaiting?: () => any,
-  onEnded?: () => any,
-  onStalled?: () => any,
-  onPlay?: () => any,
-  onPause?: () => any,
-  onError?: HtmlAudioError => any,
-  style: any,
+	playState: PlayState,
+	onWaiting?: () => any,
+	onEnded?: () => any,
+	onStalled?: () => any,
+	onPlay?: () => any,
+	onPause?: () => any,
+	onError?: HtmlAudioError => any,
+	style: any,
 }
 
 type HtmlAudioState =
-  | 'waiting'
-  | 'ended'
-  | 'stalled'
-  | 'playing'
-  | 'play'
-  | 'pause'
+	| 'waiting'
+	| 'ended'
+	| 'stalled'
+	| 'playing'
+	| 'play'
+	| 'pause'
 
 type HtmlAudioEvent =
-  | {type: HtmlAudioState}
-  | {type: 'error', error: HtmlAudioError}
+	| {type: HtmlAudioState}
+	| {type: 'error', error: HtmlAudioError}
 
 export class StreamPlayer extends React.PureComponent<Props> {
-  _webview: WebView
+	_webview: WebView
 
-  componentWillReceiveProps(nextProps: Props) {
-    this.dispatchEvent(nextProps.playState)
-  }
+	componentWillReceiveProps(nextProps: Props) {
+		this.dispatchEvent(nextProps.playState)
+	}
 
-  componentWillUnmount() {
-    this.pause()
-  }
+	componentWillUnmount() {
+		this.pause()
+	}
 
-  dispatchEvent = (nextPlayState: PlayState) => {
-    // console.log('<StreamPlayer> state changed to', nextPlayState)
+	dispatchEvent = (nextPlayState: PlayState) => {
+		// console.log('<StreamPlayer> state changed to', nextPlayState)
 
-    switch (nextPlayState) {
-      case 'paused':
-        return this.pause()
+		switch (nextPlayState) {
+			case 'paused':
+				return this.pause()
 
-      case 'loading':
-      case 'checking':
-      case 'playing':
-        return this.play()
+			case 'loading':
+			case 'checking':
+			case 'playing':
+				return this.play()
 
-      default:
-        return
-    }
-  }
+			default:
+				return
+		}
+	}
 
-  handleMessage = (event: any) => {
-    const data: HtmlAudioEvent = JSON.parse(event.nativeEvent.data)
+	handleMessage = (event: any) => {
+		const data: HtmlAudioEvent = JSON.parse(event.nativeEvent.data)
 
-    // console.log('<audio> dispatched event', data.type)
+		// console.log('<audio> dispatched event', data.type)
 
-    switch (data.type) {
-      case 'waiting':
-        return this.props.onWaiting && this.props.onWaiting()
+		switch (data.type) {
+			case 'waiting':
+				return this.props.onWaiting && this.props.onWaiting()
 
-      case 'ended':
-        return this.props.onEnded && this.props.onEnded()
+			case 'ended':
+				return this.props.onEnded && this.props.onEnded()
 
-      case 'stalled':
-        return this.props.onStalled && this.props.onStalled()
+			case 'stalled':
+				return this.props.onStalled && this.props.onStalled()
 
-      case 'pause':
-        return this.props.onPause && this.props.onPause()
+			case 'pause':
+				return this.props.onPause && this.props.onPause()
 
-      case 'playing':
-      case 'play':
-        return this.props.onPlay && this.props.onPlay()
+			case 'playing':
+			case 'play':
+				return this.props.onPlay && this.props.onPlay()
 
-      case 'error':
-        return this.props.onError && this.props.onError(data.error)
+			case 'error':
+				return this.props.onError && this.props.onError(data.error)
 
-      default:
-        return
-    }
-  }
+			default:
+				return
+		}
+	}
 
-  pause = () => {
-    // console.log('sent "pause" message to <audio>')
-    this._webview.postMessage('pause')
-  }
+	pause = () => {
+		// console.log('sent "pause" message to <audio>')
+		this._webview.postMessage('pause')
+	}
 
-  play = () => {
-    // console.log('sent "play" message to <audio>')
-    this._webview.postMessage('play')
-  }
+	play = () => {
+		// console.log('sent "play" message to <audio>')
+		this._webview.postMessage('play')
+	}
 
-  setRef = (ref: WebView) => (this._webview = ref)
+	setRef = (ref: WebView) => (this._webview = ref)
 
-  html = (url: string) => `
+	html = (url: string) => `
     <style>body {background-color: white;}</style>
 
     <title>KSTO Stream</title>
@@ -177,16 +177,16 @@ export class StreamPlayer extends React.PureComponent<Props> {
       player.addEventListener('error', error)
     </script>`
 
-  render() {
-    return (
-      <WebView
-        ref={this.setRef}
-        allowsInlineMediaPlayback={true}
-        mediaPlaybackRequiresUserAction={false}
-        onMessage={this.handleMessage}
-        source={{html: this.html(kstoStream)}}
-        style={this.props.style}
-      />
-    )
-  }
+	render() {
+		return (
+			<WebView
+				ref={this.setRef}
+				allowsInlineMediaPlayback={true}
+				mediaPlaybackRequiresUserAction={false}
+				onMessage={this.handleMessage}
+				source={{html: this.html(kstoStream)}}
+				style={this.props.style}
+			/>
+		)
+	}
 }

@@ -11,30 +11,30 @@ import OddsAndEndsSection from './sections/odds-and-ends'
 import SupportSection from './sections/support'
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor:
-      Platform.OS === 'ios' ? c.iosLightBackground : c.androidLightBackground,
-    paddingVertical: 20,
-  },
+	container: {
+		backgroundColor:
+			Platform.OS === 'ios' ? c.iosLightBackground : c.androidLightBackground,
+		paddingVertical: 20,
+	},
 })
 
 export default function SettingsView(props: TopLevelViewPropsType) {
-  return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      keyboardDismissMode="on-drag"
-      keyboardShouldPersistTaps="always"
-    >
-      <TableView>
-        <CredentialsLoginSection />
+	return (
+		<ScrollView
+			contentContainerStyle={styles.container}
+			keyboardDismissMode="on-drag"
+			keyboardShouldPersistTaps="always"
+		>
+			<TableView>
+				<CredentialsLoginSection />
 
-        <SupportSection navigation={props.navigation} />
+				<SupportSection navigation={props.navigation} />
 
-        <OddsAndEndsSection navigation={props.navigation} />
-      </TableView>
-    </ScrollView>
-  )
+				<OddsAndEndsSection navigation={props.navigation} />
+			</TableView>
+		</ScrollView>
+	)
 }
 SettingsView.navigationOptions = {
-  title: 'Settings',
+	title: 'Settings',
 }

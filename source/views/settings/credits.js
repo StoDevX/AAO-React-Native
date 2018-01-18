@@ -9,69 +9,69 @@ import {iOSUIKit, material} from 'react-native-typography'
 const image = require('../../../images/about/IconTrans.png')
 
 const Container = glamorous.scrollView({
-  backgroundColor: c.white,
-  paddingHorizontal: 5,
-  paddingVertical: 10,
+	backgroundColor: c.white,
+	paddingHorizontal: 5,
+	paddingVertical: 10,
 })
 
 const Logo = glamorous.image({
-  width: 100,
-  height: 100,
-  alignSelf: 'center',
+	width: 100,
+	height: 100,
+	alignSelf: 'center',
 })
 
 const Title = glamorous.text({
-  textAlign: 'center',
-  marginTop: 10,
-  marginBottom: 5,
-  ...Platform.select({
-    ios: iOSUIKit.largeTitleEmphasizedObject,
-    android: material.headlineObject,
-  }),
+	textAlign: 'center',
+	marginTop: 10,
+	marginBottom: 5,
+	...Platform.select({
+		ios: iOSUIKit.largeTitleEmphasizedObject,
+		android: material.headlineObject,
+	}),
 })
 
 const Heading = glamorous(Title)({
-  ...Platform.select({
-    ios: iOSUIKit.subheadEmphasizedObject,
-    android: material.titleObject,
-  }),
+	...Platform.select({
+		ios: iOSUIKit.subheadEmphasizedObject,
+		android: material.titleObject,
+	}),
 })
 
 const About = glamorous.text({
-  ...Platform.select({
-    ios: iOSUIKit.bodyObject,
-    android: material.body1Object,
-  }),
-  paddingHorizontal: 25,
-  paddingTop: 10,
+	...Platform.select({
+		ios: iOSUIKit.bodyObject,
+		android: material.body1Object,
+	}),
+	paddingHorizontal: 25,
+	paddingTop: 10,
 })
 
 const Contributors = glamorous(About)({
-  ...Platform.select({
-    ios: iOSUIKit.footnoteEmphasizedObject,
-    android: material.body1Object,
-  }),
-  textAlign: 'center',
+	...Platform.select({
+		ios: iOSUIKit.footnoteEmphasizedObject,
+		android: material.body1Object,
+	}),
+	textAlign: 'center',
 })
 
 const formatPeopleList = arr => arr.map(w => w.replace(' ', ' ')).join(' • ')
 
 export default function CreditsView() {
-  return (
-    <Container contentInsetAdjustmentBehavior="automatic">
-      <Logo source={image} />
+	return (
+		<Container contentInsetAdjustmentBehavior="automatic">
+			<Logo source={image} />
 
-      <Title>{credits.name}</Title>
-      <About>{credits.content}</About>
+			<Title>{credits.name}</Title>
+			<About>{credits.content}</About>
 
-      <Heading>Contributors</Heading>
-      <Contributors>{formatPeopleList(credits.contributors)}</Contributors>
+			<Heading>Contributors</Heading>
+			<Contributors>{formatPeopleList(credits.contributors)}</Contributors>
 
-      <Heading>Acknowledgements</Heading>
-      <Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
-    </Container>
-  )
+			<Heading>Acknowledgements</Heading>
+			<Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
+		</Container>
+	)
 }
 CreditsView.navigationOptions = {
-  title: 'Credits',
+	title: 'Credits',
 }

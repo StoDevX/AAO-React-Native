@@ -10,117 +10,117 @@ import type {ViewType} from '../../views'
 
 const ROW_HORIZONTAL_MARGIN = 15
 const styles = StyleSheet.create({
-  row: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: c.white,
+	row: {
+		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'center',
+		backgroundColor: c.white,
 
-    marginVertical: 5,
-    marginHorizontal: ROW_HORIZONTAL_MARGIN,
-    paddingVertical: 12,
-    paddingRight: 10,
-    borderRadius: 4,
-    elevation: 1,
-  },
-  icon: {
-    paddingHorizontal: 10,
-    color: c.androidTextColor,
-  },
-  disabledIcon: {
-    color: c.androidDisabledIcon,
-  },
-  text: {
-    flex: 1,
-    flexShrink: 0,
-    fontSize: 18,
-    color: c.black,
-  },
+		marginVertical: 5,
+		marginHorizontal: ROW_HORIZONTAL_MARGIN,
+		paddingVertical: 12,
+		paddingRight: 10,
+		borderRadius: 4,
+		elevation: 1,
+	},
+	icon: {
+		paddingHorizontal: 10,
+		color: c.androidTextColor,
+	},
+	disabledIcon: {
+		color: c.androidDisabledIcon,
+	},
+	text: {
+		flex: 1,
+		flexShrink: 0,
+		fontSize: 18,
+		color: c.black,
+	},
 })
 
 const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
-  <EntypoIcon name={icon} size={32} style={[styles.icon, {color: tint}]} />
+	<EntypoIcon name={icon} size={32} style={[styles.icon, {color: tint}]} />
 )
 
 type Props = {
-  item: ViewType,
-  isEnabled: boolean,
-  isFirst: boolean,
-  isLast: boolean,
-  order: string[],
-  onMoveUp: (string[], string) => any,
-  onMoveDown: (string[], string) => any,
-  onToggle: string => any,
+	item: ViewType,
+	isEnabled: boolean,
+	isFirst: boolean,
+	isLast: boolean,
+	order: string[],
+	onMoveUp: (string[], string) => any,
+	onMoveDown: (string[], string) => any,
+	onToggle: string => any,
 }
 
 export class EditHomeRow extends React.PureComponent<Props> {
-  onMoveUp = () => {
-    this.props.onMoveUp(this.props.order, this.props.item.view)
-  }
+	onMoveUp = () => {
+		this.props.onMoveUp(this.props.order, this.props.item.view)
+	}
 
-  onMoveDown = () => {
-    this.props.onMoveDown(this.props.order, this.props.item.view)
-  }
+	onMoveDown = () => {
+		this.props.onMoveDown(this.props.order, this.props.item.view)
+	}
 
-  onToggleSwitch = () => {
-    this.props.onToggle(this.props.item.view)
-  }
+	onToggleSwitch = () => {
+		this.props.onToggle(this.props.item.view)
+	}
 
-  render() {
-    const {item, isFirst, isLast} = this.props
-    const tint = item.gradient ? item.gradient[0] : item.tint
+	render() {
+		const {item, isFirst, isLast} = this.props
+		const tint = item.gradient ? item.gradient[0] : item.tint
 
-    return (
-      <View style={styles.row}>
-        <MenuIcon icon={this.props.item.icon} tint={tint} />
+		return (
+			<View style={styles.row}>
+				<MenuIcon icon={this.props.item.icon} tint={tint} />
 
-        <Text style={[styles.text, {color: tint}]}>{item.title}</Text>
+				<Text style={[styles.text, {color: tint}]}>{item.title}</Text>
 
-        <Switch
-          onValueChange={this.onToggleSwitch}
-          value={this.props.isEnabled}
-        />
+				<Switch
+					onValueChange={this.onToggleSwitch}
+					value={this.props.isEnabled}
+				/>
 
-        <ArrowIcon
-          dir="up"
-          disabled={isFirst}
-          onPress={this.onMoveUp}
-          tint={tint}
-        />
-        <ArrowIcon
-          dir="down"
-          disabled={isLast}
-          onPress={this.onMoveDown}
-          tint={tint}
-        />
-      </View>
-    )
-  }
+				<ArrowIcon
+					dir="up"
+					disabled={isFirst}
+					onPress={this.onMoveUp}
+					tint={tint}
+				/>
+				<ArrowIcon
+					dir="down"
+					disabled={isLast}
+					onPress={this.onMoveDown}
+					tint={tint}
+				/>
+			</View>
+		)
+	}
 }
 
 type ArrowIconProps = {
-  dir: 'up' | 'down',
-  disabled: boolean,
-  onPress: () => any,
-  tint: string,
+	dir: 'up' | 'down',
+	disabled: boolean,
+	onPress: () => any,
+	tint: string,
 }
 const ArrowIcon = ({dir, disabled, onPress, tint}: ArrowIconProps) => {
-  const icon = `md-arrow-${dir}`
-  const size = 24
+	const icon = `md-arrow-${dir}`
+	const size = 24
 
-  if (disabled) {
-    return (
-      <IonIcon
-        name={icon}
-        size={size}
-        style={[styles.icon, styles.disabledIcon]}
-      />
-    )
-  }
+	if (disabled) {
+		return (
+			<IonIcon
+				name={icon}
+				size={size}
+				style={[styles.icon, styles.disabledIcon]}
+			/>
+		)
+	}
 
-  return (
-    <Touchable borderless={true} onPress={onPress}>
-      <IonIcon name={icon} size={size} style={[styles.icon, {color: tint}]} />
-    </Touchable>
-  )
+	return (
+		<Touchable borderless={true} onPress={onPress}>
+			<IonIcon name={icon} size={size} style={[styles.icon, {color: tint}]} />
+		</Touchable>
+	)
 }

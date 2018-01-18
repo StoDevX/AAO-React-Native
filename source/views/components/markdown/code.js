@@ -10,12 +10,12 @@ export const CodeBlock = glamorous.text({})
 type Props = {nodeKey: any, language?: string, literal: string}
 
 export class HighlightedCodeBlock extends React.PureComponent<Props> {
-  render() {
-    const {nodeKey, language, literal} = this.props
-    return (
-      <CodeBlock key={nodeKey} language={language}>
-        <Code>{literal}</Code>
-      </CodeBlock>
-    )
-  }
+	render() {
+		const {nodeKey, language, literal} = this.props
+		return (
+			<CodeBlock key={nodeKey} language={language}>
+				<Code>{literal}</Code>
+			</CodeBlock>
+		)
+	}
 }

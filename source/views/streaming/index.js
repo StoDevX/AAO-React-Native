@@ -10,15 +10,15 @@ import {StreamListView} from './streams'
 export {KSTOScheduleView} from './radio'
 
 export default TabNavigator(
-  {
-    StreamingView: {screen: StreamListView},
-    LiveWebcamsView: {screen: WebcamsView},
-    KSTORadioView: {screen: KSTOView},
-    // WeeklyMovieView: {screen: WeeklyMovieView},
-  },
-  {
-    navigationOptions: {
-      title: 'Streaming Media',
-    },
-  },
+	{
+		StreamingView: {screen: StreamListView},
+		LiveWebcamsView: {screen: WebcamsView},
+		KSTORadioView: {screen: KSTOView},
+		// WeeklyMovieView: {screen: WeeklyMovieView},
+	},
+	{
+		navigationOptions: {
+			title: 'Streaming Media',
+		},
+	},
 )
