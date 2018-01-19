@@ -5,10 +5,10 @@ def auto_beta
   if should_nightly?
     UI.message 'building nightly'
     nightly
-  else if should_beta?
+  elsif should_beta?
     UI.message 'building beta'
     beta
-  else if has_api_keys?
+  elsif has_api_keys?
     UI.message 'signing and building, but not deploying'
     build
   else
