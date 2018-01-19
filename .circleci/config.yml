@@ -56,7 +56,7 @@ workflows:
   nightly:
     triggers:
       - schedule:
-          cron: 0 * 48 * *
+          cron: 0 * 50 * *
           filters:
             branches:
               only: [master, signed-circle]
