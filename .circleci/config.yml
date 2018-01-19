@@ -54,12 +54,12 @@ workflows:
   #     - android:
   #         requires: [danger, flow, jest, prettier, eslint, data]
   nightly:
-    # triggers:
-    #   - schedule:
-    #       cron: 0 6 * * *
-    #       filters:
-    #         branches:
-    #           only: master
+    triggers:
+      - schedule:
+          cron: 0 * 48 * *
+          filters:
+            branches:
+              only: [master, signed-circle]
     jobs:
       - cache-yarn-linux:
           filters: &nightly-filters
