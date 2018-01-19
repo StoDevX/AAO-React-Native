@@ -45,22 +45,22 @@ workflows:
     jobs: &basic-jobs
       - cache-yarn-linux: 
           filters: &filters {tags: {only: /.*/}}
-      - danger: 
+      - danger:
           filters: *filters
           requires: [cache-yarn-linux]
-      - flow: 
+      - flow:
           filters: *filters
           requires: [cache-yarn-linux]
-      - jest: 
+      - jest:
           filters: *filters
           requires: [cache-yarn-linux]
-      - prettier: 
+      - prettier:
           filters: *filters
           requires: [cache-yarn-linux]
-      - eslint: 
+      - eslint:
           filters: *filters
           requires: [cache-yarn-linux]
-      - data: 
+      - data:
           filters: *filters
           requires: [cache-yarn-linux]
       - ios:
@@ -74,7 +74,16 @@ workflows:
       - schedule:
           cron: 0 6 * * *
           filters: {branches: {only: [master]}}
-    jobs: *basic-jobs
+    jobs:
+      - cache-yarn-linux
+      - danger: {requires: [cache-yarn-linux]}
+      - flow: {requires: [cache-yarn-linux]}
+      - jest: {requires: [cache-yarn-linux]}
+      - prettier: {requires: [cache-yarn-linux]}
+      - eslint: {requires: [cache-yarn-linux]}
+      - data: {requires: [cache-yarn-linux]}
+      - ios-nightly: {requires: [danger, flow, jest, prettier, eslint, data]}
+      - android-nightly: {requires: [danger, flow, jest, prettier, eslint, data]}
 
 jobs:
   cache-yarn-linux:
@@ -187,12 +196,12 @@ jobs:
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
       - run: *run-danger
 
-  android:
+  android: &android
     # cmd: key is passed to solve a weird issue (see GitHub PR's 2170 and 2173).
     # this overrides the thing and forces the container to run /bin/bash as the "command"
     # so it doesn't get confused and OOM/exhaust the build resources (don't ask me)
     docker: [{image: 'circleci/android:api-27-node8-alpha', cmd: '/bin/bash'}]
-    environment:
+    environment: &android-env
       task: ANDROID
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_DISABLE_ANIMATION: '1'
@@ -221,10 +230,16 @@ jobs:
           environment:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
       - run: *run-danger
-
-  ios:
-    macos: {xcode: '9.0'}
+  
+  android-nightly:
+    <<: *android
     environment:
+      <<: *android-env
+      IS_NIGHTLY: '1'
+
+  ios: &ios
+    macos: {xcode: '9.0'}
+    environment: &ios-env
       task: IOS
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_DISABLE_ANIMATION: '1'
@@ -252,3 +267,9 @@ jobs:
           name: Analyze Fastlane Logfile
           command: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
       - run: *run-danger
+
+  ios-nightly:
+    <<: *ios
+    environment:
+      <<: *ios-env
+      IS_NIGHTLY: '1'
