@@ -2,7 +2,7 @@
 
 # should we build and release to the nightly channel?
 def should_nightly?
-  travis_cron? || circleci_nightly?
+  travis_cron? || circle_nightly?
 end
 
 # are we running under the circleci nightly workflow?
