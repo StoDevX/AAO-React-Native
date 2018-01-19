@@ -1,3 +1,4 @@
+---
 env:
   # To update the secure tokens, run `travis encrypt NAME='VALUE' --add` after
   # installing the travis gem with `gem install travis`.
@@ -5,19 +6,15 @@ env:
     # variables from the web interface:
     # - BOT_ITC_PASSWORD_FOR_FASTLANE
     # - BUGSNAG_KEY: api key for Bugsnag connection
-    # - CI_USER_TOKEN: unknown
+    # - CI_USER_TOKEN: used to auth with the keys repo
     # - DANGER_GITHUB_API_TOKEN: api key to let Danger write comments to github
-    # - FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: app-specific password for the iTMS Transporter (obselete)
     # - FASTLANE_PASSWORD: password for apple id used by fastlane
-    # - FASTLANE_SESSION: if fastlane's apple ID has 2fa enabled, this is the 1-month 2fa session cookie
     # - GCAL_KEY: google calendar API key
     # - GH_TOKEN: unknown
     # - GITHUB_PAGES_TOKEN: token to push to gh-pages
     # - GMAPS_KEY: google maps API key
     # sets our node version in one nice place
     - TRAVIS_NODE_VERSION=8
-    # set the ruby version up top
-    - TRAVIS_RUBY_VERSION=ruby-2.4.2
     # configure fastlane a bit
     - FASTLANE_SKIP_UPDATE_CHECK=1
     - FASTLANE_DISABLE_ANIMATION=1
@@ -32,9 +29,7 @@ env:
 branches:
   only:
     - master
-    - /^travis/
     - /^greenkeeper\//
-    - /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-[\da-z\-]+(?:\.[\da-z\-]+)*)?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?$/
 
 
 stages:
@@ -42,84 +37,16 @@ stages:
     if: branch =~ ^greenkeeper\/
   - name: Deploy Data
     if: branch = master AND type != pull_request
-  - name: Build + Deploy
-    if: type = cron OR tag IS present
-
-
-#
-# Definitions of dictionaries that are used by the machines below
-#
-
-x-definitions:
-  - &base
-    before_install:
-      # dirty hack for https://github.com/travis-ci/travis-ci/issues/5092
-      - export PATH="${PATH/\.\/node_modules\/\.bin/}"
-
-      # finish bypassing 2fa auth for fastlane
-      - unset FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD
-      - unset FASTLANE_SESSION
-
-      # print some travis debugging info
-      - echo "Now testing on $TRAVIS_OS_NAME"
-      - echo "Travis branch is $TRAVIS_BRANCH"
-      - echo "Travis is in pull request $TRAVIS_PULL_REQUEST"
-      - echo "Build triggered by $TRAVIS_EVENT_TYPE"
-
-      # force the ruby we want
-      - echo "Using ruby $TRAVIS_RUBY_VERSION (ruby -v says $(ruby -v))"
-      - rvm use $TRAVIS_RUBY_VERSION --install --binary --create
-      - echo "ruby -v is now $(ruby -v)"
-      - gem install bundler
-
-      # force a consistent node version
-      - echo "Using node $TRAVIS_NODE_VERSION (node -v says $(node -v))"
-      - nvm install "$TRAVIS_NODE_VERSION"
-      - nvm use "$TRAVIS_NODE_VERSION"
-      - echo "node -v is now $(node -v)"
-
-      # travis doesn't install yarn automatically on osx
-      - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew install yarn --without-node; fi
-
-    install:
-      # install packages (if the first fails, try once more)
-      - yarn || yarn
-
-      # install fastlane (if at first you don't succeed, try once more)
-      - bundle install || bundle install
-
-    before_script:
-      # ensure the env file exists and fill it out
-      - touch .env.js
-      - echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
-      - echo "export const GOOGLE_MAPS_API_KEY = '$GMAPS_KEY'" >> .env.js
-
-      # disable npm wrapper for npm scripts
-      - npm config set loglevel=silent
-      - mkdir -p logs/
-
-    after_script:
-      - npm config set loglevel=notice
-      - npm run danger -- --id $task
-
-    before_cache:
-      - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-      - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-
-  - &simplejs
-    os: linux
-    sudo: false
-    distro: trusty
-    language: node_js
-    node_js: $TRAVIS_NODE_VERSION
 
 
 jobs:
-  # We define default before_install, install, and before_script steps.
-  # To skip the default step, use `step_name: skip`.
   include:
     # Run greenkeeper stuff
-    - <<: *simplejs
+    - os: linux
+      sudo: false
+      distro: trusty
+      language: node_js
+      node_js: $TRAVIS_NODE_VERSION
       stage: Greenkeeper
       env: [task=GREENKEEPER]
       install: npm install -g greenkeeper-lockfile@1
@@ -127,7 +54,11 @@ jobs:
       after_script: greenkeeper-lockfile-upload
 
     # Deploy the gh-pages data
-    - <<: *simplejs
+    - os: linux
+      sudo: false
+      distro: trusty
+      language: node_js
+      node_js: $TRAVIS_NODE_VERSION
       stage: Deploy Data
       env: [task=GH_PAGES]
       install: yarn || yarn
@@ -141,48 +72,5 @@ jobs:
         github_token: $GITHUB_PAGES_TOKEN
         local_dir: docs/
 
-    # Build/deploy the Android binary
-    - <<: *base
-      stage: Build + Deploy
-      os: linux
-      sudo: required
-      distro: trusty
-      language: android
-      env: [task=ANDROID]
-      android:
-        components:
-          - tools
-          - platform-tools
-          - build-tools-23.0.1
-          - build-tools-23.0.2
-          - build-tools-25.0.0
-          - build-tools-25.0.1
-          - build-tools-25.0.2
-          - build-tools-25.0.3
-          - build-tools-26.0.1
-          - android-23
-          - android-25
-          - android-26
-          - extra-android-m2repository
-          - extra-google-m2repository
-      script:
-        - bundle exec fastlane android ci-run | tee ./logs/build
-
-    # Build/deploy the iOS binary
-    - <<: *base
-      stage: Build + Deploy
-      os: osx
-      language: objective-c
-      osx_image: xcode9.2
-      env: [task=IOS]
-      script:
-        - bundle exec fastlane ios ci-run | tee ./logs/build
-        - python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
-
 cache:
-  bundler: true
   yarn: true
-  directories:
-    - $HOME/.gradle
-    - $HOME/.gradle/wrapper/
-    - $HOME/.android/build-cache

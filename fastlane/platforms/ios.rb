@@ -60,8 +60,20 @@ platform :ios do
   lane :build do
     match(type: 'appstore', readonly: true)
     propagate_version
-    gym(include_bitcode: true,
-        include_symbols: true)
+
+    # save it to a log file for later use
+    FileUtils.mkdir_p('../logs')
+    File.open('../logs/products', 'w') { |file| file.write('[]') }
+    build_status = 0
+    begin
+      gym(include_bitcode: true,
+          include_symbols: true)
+    rescue IOError => e
+      build_status = 1
+      raise e
+    ensure
+      File.open('../logs/build-status', 'w') { |file| file.write(build_status.to_s) }
+    end
   end
 
   desc 'Submit a new Beta Build to Testflight'
@@ -106,6 +118,6 @@ platform :ios do
     auto_beta
 
     # go ahead and download dSYMs for bugsnag too
-    refresh_dsyms if travis?
+    # refresh_dsyms if circle?
   end
 end

@@ -23,7 +23,7 @@ end
 
 # Makes a changelog from the timespan passed
 def make_changelog
-  sh('git fetch --unshallow')
+  sh('git fetch --unshallow') if travis?
   log = git_changelog
 
   limit = 4_000
