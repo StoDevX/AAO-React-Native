@@ -159,6 +159,7 @@ jobs:
       FASTLANE_DISABLE_ANIMATION: '1'
     steps:
       - checkout
+      - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
