@@ -34,66 +34,47 @@ x-config:
 
 workflows:
   version: 2
-  # analyze:
-  #   jobs:
-  #     - cache-yarn-linux
-  #     - danger:
-  #         requires: [cache-yarn-linux]
-  #     - flow:
-  #         requires: [cache-yarn-linux]
-  #     - jest:
-  #         requires: [cache-yarn-linux]
-  #     - prettier:
-  #         requires: [cache-yarn-linux]
-  #     - eslint:
-  #         requires: [cache-yarn-linux]
-  #     - data:
-  #         requires: [cache-yarn-linux]
-  #     - ios:
-  #         requires: [danger, flow, jest, prettier, eslint, data]
-  #     - android:
-  #         requires: [danger, flow, jest, prettier, eslint, data]
+  analyze-and-build:
+    # The way this works is, Circle runs analyze-and-build on every commit
+    # to every branch.
+    # Fastlane checks the environment to see if it should build or deploy,
+    # and if there's a tag then it deploys (otherwise it just builds.)
+    # These same jobs are run by the "nightly" workflow, which has a
+    # different CIRCLE_WORKFLOW_ID, which should allow us to only deploy
+    # nightlies from that branch.
+    jobs: &basic-jobs
+      - cache-yarn-linux: 
+          filters: &filters {tags: /.*/}
+      - danger: 
+          filters: *filters
+          requires: [cache-yarn-linux]
+      - flow: 
+          filters: *filters
+          requires: [cache-yarn-linux]
+      - jest: 
+          filters: *filters
+          requires: [cache-yarn-linux]
+      - prettier: 
+          filters: *filters
+          requires: [cache-yarn-linux]
+      - eslint: 
+          filters: *filters
+          requires: [cache-yarn-linux]
+      - data: 
+          filters: *filters
+          requires: [cache-yarn-linux]
+      - ios:
+          filters: *filters
+          requires: [danger, flow, jest, prettier, eslint, data]
+      - android:
+          filters: *filters
+          requires: [danger, flow, jest, prettier, eslint, data]
   nightly:
     triggers:
       - schedule:
-          cron: 0 1 * * *
-          filters:
-            branches: {only: [master, signed-circle]}
-    jobs:
-      - cache-yarn-linux:
-          filters: &nightly-filters
-            tags: {only: /.*/}
-            branches: {only: [master, signed-circle]}
-      # - danger:
-      #     filters: *nightly-filters
-      #     requires: [cache-yarn-linux]
-      # - flow:
-      #     filters: *nightly-filters
-      #     requires: [cache-yarn-linux]
-      # - jest:
-      #     filters: *nightly-filters
-      #     requires: [cache-yarn-linux]
-      # - prettier:
-      #     filters: *nightly-filters
-      #     requires: [cache-yarn-linux]
-      # - eslint:
-      #     filters: *nightly-filters
-      #     requires: [cache-yarn-linux]
-      # - data:
-      #     filters: *nightly-filters
-      #     requires: [cache-yarn-linux]
-      # - ios:
-      #     filters: *nightly-filters
-      #     # requires: [danger, flow, jest, prettier, eslint, data]
-      #     filters:
-      #       tags: {only: /.*/}
-      #       branches: {only: [master, signed-circle]}
-      # - android:
-      #     filters: *nightly-filters
-      #     # requires: [danger, flow, jest, prettier, eslint, data]
-      #     filters:
-      #       tags: {only: /.*/}
-      #       branches: {only: [master, signed-circle]}
+          cron: 0 4 * * *
+          filters: {branches: {only: [master]}}
+    jobs: *basic-jobs
 
 jobs:
   cache-yarn-linux:
