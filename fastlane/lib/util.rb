@@ -2,7 +2,12 @@
 
 # should we build and release to the nightly channel?
 def should_nightly?
-  cron?
+  cron? || circleci_nightly_workflow?
+end
+
+# are we running under the circleci nightly workflow?
+def circleci_nightly_workflow?
+  ENV['CIRCLE_WORKFLOW_ID'] == '1d9cac43-c1bb-45b5-8f28-610d2d38db71'
 end
 
 # should we build and release to the beta channel?
