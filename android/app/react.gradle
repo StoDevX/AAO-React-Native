@@ -68,7 +68,7 @@ task bundleReleaseJsAndAssets(type: Exec) {
             entryFile, "--bundle-output", jsBundleFileRelease, "--assets-dest", resourcesDirRelease
     } else {
         commandLine "react-native", "bundle", "--platform", "android", "--dev", "false", "--entry-file",
-            entryFile, "--bundle-output", jsBundleFileRelease, "--assets-dest", resourcesDirRelease, (System.getenv("CI") == "true") ? "-j2" : ""
+            entryFile, "--bundle-output", jsBundleFileRelease, "--assets-dest", resourcesDirRelease, (System.getenv("CI") ?: "" != "" ? "-j2" : ""
     }
 
     enabled config.bundleInRelease ?: true
