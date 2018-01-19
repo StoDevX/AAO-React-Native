@@ -175,6 +175,7 @@ export class EditHomeRow extends React.Component<Props, State> {
 				</Text>
 
 				<Switch
+					onTintColor={tint}
 					onValueChange={this.onToggleSwitch}
 					value={this.props.isEnabled}
 				/>
