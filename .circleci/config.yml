@@ -44,7 +44,7 @@ workflows:
     # nightlies from that branch.
     jobs: &basic-jobs
       - cache-yarn-linux: 
-          filters: &filters {tags: /.*/}
+          filters: &filters {tags: {only: /.*/}}
       - danger: 
           filters: *filters
           requires: [cache-yarn-linux]
