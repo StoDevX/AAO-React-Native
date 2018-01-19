@@ -8,7 +8,9 @@ import {
 	StyleSheet,
 	Text,
 	View,
+	Platform,
 } from 'react-native'
+import noop from 'lodash/noop'
 import * as c from '../../components/colors'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import {callPhone} from '../../components/call-phone'
@@ -17,9 +19,11 @@ import type {TopLevelViewPropsType} from '../../types'
 import {StreamPlayer} from './player'
 import type {PlayState, HtmlAudioError, Viewport} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
+import {openUrl} from '../../components/open-url'
 
 const image = require('../../../../images/streaming/ksto/ksto-logo.png')
 const stationNumber = '+15077863602'
+const kstoLiveUrl = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
 
 type Props = TopLevelViewPropsType
 
@@ -87,7 +91,21 @@ export class KSTOView extends React.PureComponent<Props, State> {
 		callPhone(stationNumber)
 	}
 
+	openStreamWebsite = () => {
+		openUrl(kstoLiveUrl)
+	}
+
 	renderPlayButton = (state: PlayState) => {
+		if (Platform.OS === 'android') {
+			return (
+				<ActionButton
+					icon="ios-planet"
+					onPress={this.openStreamWebsite}
+					text="Open"
+				/>
+			)
+		}
+
 		switch (state) {
 			case 'paused':
 				return (
@@ -105,7 +123,7 @@ export class KSTOView extends React.PureComponent<Props, State> {
 				)
 
 			default:
-				return <ActionButton icon="ios-bug" onPress={() => {}} text="Error" />
+				return <ActionButton icon="ios-bug" onPress={noop} text="Error" />
 		}
 	}
 
@@ -163,16 +181,18 @@ export class KSTOView extends React.PureComponent<Props, State> {
 						<ShowCalendarButton onPress={this.openSchedule} />
 					</Row>
 
-					<StreamPlayer
-						onEnded={this.handleStreamEnd}
-						// onWaiting={this.handleStreamWait}
-						onError={this.handleStreamError}
-						// onStalled={this.handleStreamStall}
-						onPause={this.handleStreamPause}
-						onPlay={this.handleStreamPlay}
-						playState={this.state.playState}
-						style={styles.webview}
-					/>
+					{Platform.OS !== 'android' ? (
+						<StreamPlayer
+							onEnded={this.handleStreamEnd}
+							// onWaiting={this.handleStreamWait}
+							onError={this.handleStreamError}
+							// onStalled={this.handleStreamStall}
+							onPause={this.handleStreamPause}
+							onPlay={this.handleStreamPlay}
+							playState={this.state.playState}
+							style={styles.webview}
+						/>
+					) : null}
 				</View>
 			</ScrollView>
 		)
