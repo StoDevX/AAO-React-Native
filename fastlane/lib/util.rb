@@ -2,12 +2,12 @@
 
 # should we build and release to the nightly channel?
 def should_nightly?
-  cron? || circleci_nightly_workflow?
+  travis_cron? || circle_nightly?
 end
 
 # are we running under the circleci nightly workflow?
-def circleci_nightly_workflow?
-  ENV['CIRCLE_WORKFLOW_ID'] == '1d9cac43-c1bb-45b5-8f28-610d2d38db71'
+def circle_nightly?
+  ENV['IS_NIGHTLY'] == '1'
 end
 
 # should we build and release to the beta channel?
@@ -21,7 +21,7 @@ def has_api_keys?
 end
 
 # was this build initiated by cron?
-def cron?
+def travis_cron?
   ENV['TRAVIS_EVENT_TYPE'] == 'cron'
 end
 
