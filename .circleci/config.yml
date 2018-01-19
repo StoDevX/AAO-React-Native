@@ -57,6 +57,8 @@ workflows:
     triggers:
       - schedule:
           cron: 0 1 * * *
+          filters:
+            branches: {only: [master, signed-circle]}
     jobs:
       - cache-yarn-linux:
           filters: &nightly-filters
