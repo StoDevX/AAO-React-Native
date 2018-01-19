@@ -152,7 +152,7 @@ jobs:
       - run: *run-danger
 
   android:
-    docker: [{image: 'circleci/android:api-27-node8-alpha'}]
+    docker: [{image: 'circleci/android:api-27-node8-alpha', cmd: '/bin/bash'}]
     environment:
       task: ANDROID
       FASTLANE_SKIP_UPDATE_CHECK: '1'
