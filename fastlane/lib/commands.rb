@@ -1,32 +1,25 @@
 # coding: utf-8
 
-# It doesn't make sense to duplicate this in both platforms, and fastlane is
-# smart enough to call the appropriate platform's "beta" lane. So, let's make
-# a beta build if there have been new commits since the last beta.
+# Pick what to do - build + deploy, build + sign, or just plain build.
 def auto_beta
-  UI.message "TRAVIS_EVENT_TYPE: #{ENV['TRAVIS_EVENT_TYPE']}"
-  if should_deploy?
-    if cron?
-      UI.message 'building nightly'
-      nightly
-    else
-      UI.message 'building beta'
-      beta
-    end
+  if should_nightly?
+    UI.message 'building nightly'
+    nightly
+  elsif should_beta?
+    UI.message 'building beta'
+    beta
+  elsif has_api_keys?
+    UI.message 'signing and building, but not deploying'
+    build
   else
-    if pr?
-      UI.message 'just building (not signing)'
-      check_build
-    else
-      UI.message 'signing and building, but not deploying'
-      build
-    end
+    UI.message 'just building (not signing)'
+    check_build
   end
 end
 
 # Adds the github token for stodevx-bot to the CI machine
 def authorize_ci_for_keys
-  token = ENV['CI_USER_TOKEN']
+  token = ENV['GITHUB_KEYS_REPOSITORY_TOKEN']
 
   # see macoscope.com/blog/simplify-your-life-with-fastlane-match
   # we're allowing the CI access to the keys repo
