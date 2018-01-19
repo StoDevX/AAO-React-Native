@@ -188,7 +188,10 @@ jobs:
       - run: *run-danger
 
   android:
-    docker: [{image: 'circleci/android:api-27-node8-alpha'}]
+    # cmd: key is passed to solve a weird issue (see GitHub PR's 2170 and 2173).
+    # this overrides the thing and forces the container to run /bin/bash as the "command"
+    # so it doesn't get confused and OOM/exhaust the build resources (don't ask me)
+    docker: [{image: 'circleci/android:api-27-node8-alpha', cmd: '/bin/bash'}]
     environment:
       task: ANDROID
       FASTLANE_SKIP_UPDATE_CHECK: '1'
