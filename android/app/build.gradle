@@ -111,7 +111,8 @@ android {
         }
         manifestPlaceholders = [
             manifestApplicationId: applicationId,
-            gmaps_key: System.getenv("GMAPS_KEY") ?: "",
+            BUGSNAG_KEY: System.getenv("BUGSNAG_KEY") ?: "",
+            GMAPS_KEY: System.getenv("GMAPS_KEY") ?: "",
         ]
     }
     signingConfigs {
