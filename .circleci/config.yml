@@ -56,7 +56,7 @@ workflows:
   nightly:
     triggers:
       - schedule:
-          cron: 0 * 50 * *
+          cron: 0 1 * * *
     jobs:
       - cache-yarn-linux:
           filters: &nightly-filters
