@@ -58,10 +58,10 @@ export class HelpView extends React.Component<Props> {
 			.map(getToolView)
 			.map(([Tool, conf]) => <Tool key={conf.key} config={conf} />)
 
-		return (
-			<ScrollView contentContainerStyle={styles.container}>
-				{views.length ? views : <NoticeView text="No tools are enabled." />}
-			</ScrollView>
+		return views.length ? (
+			<ScrollView contentContainerStyle={styles.container}>views</ScrollView>
+		) : (
+			<NoticeView text="No tools are enabled." />
 		)
 	}
 }
