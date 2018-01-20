@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {Text, StyleSheet, Platform} from 'react-native'
+import {View, Text, StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import LinearGradient from 'react-native-linear-gradient'
@@ -14,16 +14,22 @@ type Props = {
 }
 
 export function HomeScreenButton({view, onPress}: Props) {
-	const style = {backgroundColor: view.tint}
+	const touchableProps = {
+		accessibilityComponentType: 'button',
+		accessibilityLabel: view.title,
+		accessibilityTraits: 'button',
+		highlight: false,
+		onPress: onPress,
+	}
 
 	if (view.gradient) {
 		return (
-			<Touchable onPress={onPress}>
+			<Touchable {...touchableProps}>
 				<LinearGradient
 					colors={view.gradient}
 					end={{x: 1, y: 0.85}}
 					start={{x: 0, y: 0.05}}
-					style={[styles.rectangle]}
+					style={styles.rectangle}
 				>
 					<Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
 					<Text style={styles.rectangleButtonText}>{view.title}</Text>
@@ -33,16 +39,11 @@ export function HomeScreenButton({view, onPress}: Props) {
 	}
 
 	return (
-		<Touchable
-			accessibilityComponentType="button"
-			accessibilityLabel={view.title}
-			accessibilityTraits="button"
-			highlight={false}
-			onPress={onPress}
-			style={[styles.rectangle, style]}
-		>
-			<Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
-			<Text style={styles.rectangleButtonText}>{view.title}</Text>
+		<Touchable {...touchableProps}>
+			<View style={[styles.rectangle, {backgroundColor: view.tint}]}>
+				<Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
+				<Text style={styles.rectangleButtonText}>{view.title}</Text>
+			</View>
 		</Touchable>
 	)
 }
