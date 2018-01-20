@@ -14,36 +14,41 @@ type Props = {
 }
 
 export function HomeScreenButton({view, onPress}: Props) {
-	const touchableProps = {
-		accessibilityComponentType: 'button',
-		accessibilityLabel: view.title,
-		accessibilityTraits: 'button',
-		highlight: false,
-		onPress: onPress,
-	}
+	let contents = (
+		<React.Fragment>
+			<Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
+			<Text style={styles.rectangleButtonText}>{view.title}</Text>
+		</React.Fragment>
+	)
 
 	if (view.gradient) {
-		return (
-			<Touchable {...touchableProps}>
-				<LinearGradient
-					colors={view.gradient}
-					end={{x: 1, y: 0.85}}
-					start={{x: 0, y: 0.05}}
-					style={styles.rectangle}
-				>
-					<Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
-					<Text style={styles.rectangleButtonText}>{view.title}</Text>
-				</LinearGradient>
-			</Touchable>
+		contents = (
+			<LinearGradient
+				colors={view.gradient}
+				end={{x: 1, y: 0.85}}
+				start={{x: 0, y: 0.05}}
+				style={styles.rectangle}
+			>
+				{contents}
+			</LinearGradient>
+		)
+	} else {
+		contents = (
+			<View style={[styles.rectangle, {backgroundColor: view.tint}]}>
+				{contents}
+			</View>
 		)
 	}
 
 	return (
-		<Touchable {...touchableProps}>
-			<View style={[styles.rectangle, {backgroundColor: view.tint}]}>
-				<Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
-				<Text style={styles.rectangleButtonText}>{view.title}</Text>
-			</View>
+		<Touchable
+			accessibilityComponentType="button"
+			accessibilityLabel={view.title}
+			accessibilityTraits="button"
+			highlight={false}
+			onPress={onPress}
+		>
+			{contents}
 		</Touchable>
 	)
 }
