@@ -58,6 +58,13 @@ const Contributors = glamorous(About)({
 
 const formatPeopleList = arr => arr.map(w => w.replace(' ', ' ')).join(' • ')
 
+type Props = TopLevelViewPropsType
+
+type State = {
+	supported: boolean,
+	iconType: null | string,
+}
+
 export default class CreditsView extends React.Component<Props, State> {
 	static navigationOptions = {
 		title: 'Credits',
@@ -99,7 +106,9 @@ export default class CreditsView extends React.Component<Props, State> {
 				<Contributors>{formatPeopleList(credits.contributors)}</Contributors>
 
 				<Heading>Acknowledgements</Heading>
-				<Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
+				<Contributors>
+					{formatPeopleList(credits.acknowledgements)}
+				</Contributors>
 			</Container>
 		)
 	}
