@@ -79,6 +79,19 @@
   dependencies:
     prop-types "^15.5.10"
 
+"@octokit/rest@^14.0.4":
+  version "14.0.4"
+  resolved "https://registry.yarnpkg.com/@octokit/rest/-/rest-14.0.4.tgz#7bf3319221352f48a642ac523d2d36b370e17961"
+  dependencies:
+    before-after-hook "^1.1.0"
+    debug "^3.1.0"
+    dotenv "^4.0.0"
+    https-proxy-agent "^2.1.0"
+    is-stream "^1.1.0"
+    lodash "^4.17.4"
+    proxy-from-env "^1.0.0"
+    url-template "^2.0.8"
+
 "@types/node@*":
   version "8.5.1"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.5.1.tgz#4ec3020bcdfe2abffeef9ba3fbf26fca097514b5"
@@ -1045,6 +1058,10 @@ beeper@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/beeper/-/beeper-1.1.1.tgz#e6d5ea8c5dad001304a70b22638447f69cb2f809"
 
+before-after-hook@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/before-after-hook/-/before-after-hook-1.1.0.tgz#83165e15a59460d13702cb8febd6a1807896db5a"
+
 big-integer@^1.6.7:
   version "1.6.25"
   resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.25.tgz#1de45a9f57542ac20121c682f8d642220a34e823"
@@ -1359,17 +1376,13 @@ combined-stream@^1.0.5, combined-stream@~1.0.5:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@^2.12.2:
-  version "2.12.2"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.12.2.tgz#0f5946c427ed9ec0d91a46bb9def53e54650e555"
+commander@^2.13.0, commander@~2.13.0:
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.13.0.tgz#6964bca67685df7c1f1430c584f07d7597885b9c"
 
 commander@^2.9.0:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.11.0.tgz#157152fd1e7a6c8d98a5b715cf376df928004563"
-
-commander@~2.13.0:
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.13.0.tgz#6964bca67685df7c1f1430c584f07d7597885b9c"
 
 commonmark-react-renderer@^4.3.4:
   version "4.3.4"
@@ -1597,16 +1610,16 @@ danger-plugin-yarn@1.2.0:
   optionalDependencies:
     esdoc "^0.5.2"
 
-danger@3.0.6:
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-3.0.6.tgz#a57affbee608a9f4626f7b14f6c2d91e557bef92"
+danger@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-3.1.0.tgz#91760945b641d3a17720d3fa27d3c68dac6a0656"
   dependencies:
+    "@octokit/rest" "^14.0.4"
     babel-polyfill "^6.23.0"
     chalk "^2.3.0"
-    commander "^2.12.2"
+    commander "^2.13.0"
     debug "^3.1.0"
     get-stdin "^5.0.1"
-    github "^13.0.1"
     hyperlinker "^1.0.0"
     jsome "^2.3.25"
     json5 "^0.5.1"
@@ -1627,7 +1640,7 @@ danger@3.0.6:
     rfc6902 "^2.2.2"
     supports-hyperlinks "^1.0.1"
     vm2 patriksimek/vm2#custom_files
-    voca "^1.3.1"
+    voca "^1.4.0"
 
 dashdash@^1.12.0:
   version "1.14.1"
@@ -2466,17 +2479,6 @@ git-config-path@^1.0.1:
     extend-shallow "^2.0.1"
     fs-exists-sync "^0.1.0"
     homedir-polyfill "^1.0.0"
-
-github@^13.0.1:
-  version "13.0.1"
-  resolved "https://registry.yarnpkg.com/github/-/github-13.0.1.tgz#4ccf4a41df662f92367e77a474674eabb1b6c78d"
-  dependencies:
-    debug "^3.1.0"
-    dotenv "^4.0.0"
-    https-proxy-agent "^2.1.0"
-    lodash "^4.17.4"
-    proxy-from-env "^1.0.0"
-    url-template "^2.0.8"
 
 glamorous-native@1.3.0:
   version "1.3.0"
@@ -5956,13 +5958,13 @@ vinyl@^0.5.0:
     clone-stats "^0.0.1"
     replace-ext "0.0.1"
 
-vm2@patriksimek/vm2#custom_files:
+"vm2@github:patriksimek/vm2#custom_files":
   version "3.5.0"
   resolved "https://codeload.github.com/patriksimek/vm2/tar.gz/7e82f90ac705fc44fad044147cb0df09b4c79a57"
 
-voca@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/voca/-/voca-1.3.1.tgz#60c911dd41841785192b4d35971ec2b36f8ef779"
+voca@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/voca/-/voca-1.4.0.tgz#e15ac58b38290b72acc0c330366b6cc7984924d7"
 
 walker@~1.0.5:
   version "1.0.7"
