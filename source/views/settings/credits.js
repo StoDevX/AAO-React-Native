@@ -61,7 +61,6 @@ const formatPeopleList = arr => arr.map(w => w.replace(' ', ' ')).join(' • ')
 type Props = TopLevelViewPropsType
 
 type State = {
-	supported: boolean,
 	iconType: null | string,
 }
 
@@ -71,18 +70,11 @@ export default class CreditsView extends React.Component<Props, State> {
 	}
 
 	state = {
-		supported: false,
 		iconType: null,
 	}
 
 	componentWillMount() {
-		this.checkIfCustomIconsSupported()
 		this.getIcon()
-	}
-
-	checkIfCustomIconsSupported = async () => {
-		const supported = await Icons.isSupported()
-		this.setState(() => ({supported}))
 	}
 
 	getIcon = async () => {
@@ -91,9 +83,8 @@ export default class CreditsView extends React.Component<Props, State> {
 	}
 
 	render() {
-		const image = this.state.supported
-			? this.state.iconType === 'default' ? appIcons.oldMain : appIcons.windmill
-			: appIcons.oldMain
+		const image =
+			this.state.iconType === 'default' ? appIcons.oldMain : appIcons.windmill
 
 		return (
 			<Container contentInsetAdjustmentBehavior="automatic">
