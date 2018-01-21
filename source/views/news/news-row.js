@@ -32,8 +32,8 @@ export class NewsRow extends React.PureComponent<Props> {
 				<Row alignItems="center">
 					<Image source={thumb} style={styles.image} />
 					<Column flex={1}>
-						<Title lines={1}>{story.title}</Title>
-						<Detail lines={2}>{story.excerpt}</Detail>
+						<Title lines={2}>{story.title}</Title>
+						<Detail lines={3}>{story.excerpt}</Detail>
 					</Column>
 				</Row>
 			</ListRow>
