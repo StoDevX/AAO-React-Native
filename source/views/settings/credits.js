@@ -6,7 +6,9 @@ import glamorous from 'glamorous-native'
 import {Platform} from 'react-native'
 import {iOSUIKit, material} from 'react-native-typography'
 
-const image = require('../../../images/about/IconTrans.png')
+import {icons as appIcons} from '../../../images/icon-images'
+import * as Icons from '@hawkrives/react-native-alternate-icons'
+import type {TopLevelViewPropsType} from '../types'
 
 const Container = glamorous.scrollView({
 	backgroundColor: c.white,
@@ -56,22 +58,49 @@ const Contributors = glamorous(About)({
 
 const formatPeopleList = arr => arr.map(w => w.replace(' ', ' ')).join(' • ')
 
-export default function CreditsView() {
-	return (
-		<Container contentInsetAdjustmentBehavior="automatic">
-			<Logo source={image} />
+export default class CreditsView extends React.Component<Props, State> {
+	static navigationOptions = {
+		title: 'Credits',
+	}
 
-			<Title>{credits.name}</Title>
-			<About>{credits.content}</About>
+	state = {
+		supported: false,
+		iconType: null,
+	}
 
-			<Heading>Contributors</Heading>
-			<Contributors>{formatPeopleList(credits.contributors)}</Contributors>
+	componentWillMount() {
+		this.checkIfCustomIconsSupported()
+		this.getIcon()
+	}
 
-			<Heading>Acknowledgements</Heading>
-			<Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
-		</Container>
-	)
-}
-CreditsView.navigationOptions = {
-	title: 'Credits',
+	checkIfCustomIconsSupported = async () => {
+		const supported = await Icons.isSupported()
+		this.setState(() => ({supported}))
+	}
+
+	getIcon = async () => {
+		const name = await Icons.getIconName()
+		this.setState(() => ({iconType: name}))
+	}
+
+	render() {
+		const image = this.state.supported
+			? this.state.iconType === 'default' ? appIcons.oldMain : appIcons.windmill
+			: appIcons.oldMain
+
+		return (
+			<Container contentInsetAdjustmentBehavior="automatic">
+				<Logo source={image} />
+
+				<Title>{credits.name}</Title>
+				<About>{credits.content}</About>
+
+				<Heading>Contributors</Heading>
+				<Contributors>{formatPeopleList(credits.contributors)}</Contributors>
+
+				<Heading>Acknowledgements</Heading>
+				<Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
+			</Container>
+		)
+	}
 }
