@@ -9,7 +9,7 @@ import {RadioControllerView} from './radio'
 import {WebcamsView} from './webcams'
 import {StreamListView} from './streams'
 
-export {KSTOScheduleView} from './radio'
+export {KSTOScheduleView, KRLXScheduleView} from './radio'
 
 export default TabNavigator(
 	{
