@@ -14,7 +14,6 @@ import {
 import {type ReduxState} from '../../../flux'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
-import {View} from 'react-native'
 
 type ReduxStateProps = {
 	initialUsername: string,
@@ -77,8 +76,9 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
 				{loggedIn ? (
 					<Cell title={`Logged in as ${username}.`} />
 				) : (
-					<View>
+					[
 						<CellTextField
+							key="username"
 							_ref={this.getUsernameRef}
 							disabled={loading}
 							label="Username"
@@ -88,9 +88,10 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
 							returnKeyType="next"
 							secureTextEntry={false}
 							value={username}
-						/>
+						/>,
 
 						<CellTextField
+							key="password"
 							_ref={this.getPasswordRef}
 							disabled={loading}
 							label="Password"
@@ -100,8 +101,8 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
 							returnKeyType="done"
 							secureTextEntry={true}
 							value={password}
-						/>
-					</View>
+						/>,
+					]
 				)}
 
 				<LoginButton
