@@ -3,7 +3,7 @@ colors:
   bar: rgb(134, 198, 124)
   dot: rgb(32, 87, 14)
 schedules:
-  - days: [Mo, Tu, We, Th, Fr, Sa]
+  - days: [Tu, We, Th, Fr, Sa]
     coordinates:
       'Arby’s':            [44.435250, -93.188399]
       'Carleton College':  [44.460719, -93.155794]
