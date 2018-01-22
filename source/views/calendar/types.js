@@ -12,28 +12,22 @@ export type GoogleEventType = {
 	location?: string,
 }
 
-type EmbeddedEventDetailType = {type: 'google', data: GoogleEventType}
 
 export type PoweredBy = {
 	title: string,
 	href: string,
 }
 
-export type EventType = {
-	summary: string,
-	location: string,
-	startTime: moment,
-	endTime: moment,
-	isOngoing: boolean,
-	extra: EmbeddedEventDetailType,
-}
-
-export type CleanedEventType = {
+export type EventType = {|
 	title: string,
-	summary: string,
+	description: string,
 	location: string,
 	startTime: moment,
 	endTime: moment,
 	isOngoing: boolean,
-	extra: EmbeddedEventDetailType,
-}
+	config: {
+		startTime: boolean,
+		endTime: boolean,
+		subtitle: 'location' | 'description',
+	},
+|}

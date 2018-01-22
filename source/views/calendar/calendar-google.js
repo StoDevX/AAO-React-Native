@@ -55,13 +55,19 @@ export class GoogleCalendarView extends React.Component<Props, State> {
 		return data.map(event => {
 			const startTime = moment(event.start.date || event.start.dateTime)
 			const endTime = moment(event.end.date || event.end.dateTime)
+
 			return {
 				startTime,
 				endTime,
-				summary: event.summary || '',
+				title: event.summary || '',
+				description: event.description || '',
 				location: event.location || '',
 				isOngoing: startTime.isBefore(now, 'day'),
-				extra: {type: 'google', data: event},
+				config: {
+					startTime: true,
+					endTime: true,
+					subtitle: 'location',
+				},
 			}
 		})
 	}
