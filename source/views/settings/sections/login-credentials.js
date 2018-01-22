@@ -14,7 +14,6 @@ import {
 import {type ReduxState} from '../../../flux'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
-import {View} from 'react-native'
 
 type ReduxStateProps = {
 	initialUsername: string,
