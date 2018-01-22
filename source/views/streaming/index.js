@@ -38,6 +38,28 @@ export default TabNavigator(
 				tabBarIcon: TabBarIcon('radio'),
 			},
 		},
+		KRLXRadioView: {
+			screen: ({navigation}) => (
+				<RadioControllerView
+					image={require('../../../images/streaming/krlx.png')}
+					navigation={navigation}
+					playerUrl="http://live.krlx.org"
+					scheduleViewName="KRLXScheduleView"
+					source={{
+						useEmbeddedPlayer: false,
+						embeddedPlayerUrl: 'http://live.krlx.org',
+						streamSourceUrl: 'http://radio.krlx.org/mp3/high_quality',
+					}}
+					stationName="88.1 KRLX-FM"
+					stationNumber="+15072224127"
+					title="Carleton College Radio"
+				/>
+			),
+			navigationOptions: {
+				tabBarLabel: 'KRLX',
+				tabBarIcon: TabBarIcon('microphone'),
+			},
+		},
 		// WeeklyMovieView: {screen: WeeklyMovieView},
 	},
 	{
