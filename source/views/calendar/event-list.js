@@ -79,6 +79,7 @@ export class EventList extends React.PureComponent<Props> {
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
 				sections={this.groupEvents(this.props.events, this.props.now)}
+				showsVerticalScrollIndicator={false}
 				style={styles.container}
 			/>
 		)
