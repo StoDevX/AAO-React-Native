@@ -44,7 +44,7 @@ export function NoticeView({
 		<View style={[styles.container, style]}>
 			{spinner ? <ActivityIndicator style={styles.spinner} /> : null}
 
-			<Heading level={1}>{header}</Heading>
+			{header ? <Heading level={1}>{header}</Heading> : null}
 
 			<Text selectable={true} style={styles.text}>
 				{text || 'Notice!'}
