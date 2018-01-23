@@ -42,12 +42,10 @@ export default class EventRow extends React.PureComponent<Props> {
 
 	render() {
 		const {event} = this.props
-		const title = fastGetTrimmedText(event.summary)
+		const title = fastGetTrimmedText(event.title)
 
-		const location =
-			event.location && event.location.trim().length ? (
-				<Detail>{event.location}</Detail>
-			) : null
+		let subtitle = event[event.config.subtitle]
+		subtitle = subtitle ? subtitle.trim() : null
 
 		return (
 			<ListRow
@@ -68,7 +66,7 @@ export default class EventRow extends React.PureComponent<Props> {
 						paddingTop={2}
 					>
 						<Title>{title}</Title>
-						{location}
+						{subtitle ? <Detail>{subtitle}</Detail> : null}
 					</Column>
 				</Row>
 			</ListRow>
@@ -89,8 +87,12 @@ function CalendarTimes({event, style}: {event: EventType, style: any}) {
 
 	return (
 		<Column style={style}>
-			<Text style={[styles.time, styles.start]}>{start}</Text>
-			<Text style={[styles.time, styles.end]}>{end}</Text>
+			{event.config.startTime ? (
+				<Text style={[styles.time, styles.start]}>{start}</Text>
+			) : null}
+			{event.config.endTime ? (
+				<Text style={[styles.time, styles.end]}>{end}</Text>
+			) : null}
 		</Column>
 	)
 }
