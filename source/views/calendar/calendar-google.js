@@ -13,7 +13,11 @@ import qs from 'querystring'
 import {GOOGLE_CALENDAR_API_KEY} from '../../lib/config'
 const TIMEZONE = 'America/Winnipeg'
 
-type Props = TopLevelViewPropsType & {calendarId: string, poweredBy: ?PoweredBy}
+type Props = TopLevelViewPropsType & {
+	calendarId: string,
+	eventMapper?: EventType => EventType,
+	poweredBy: ?PoweredBy,
+}
 
 type State = {
 	events: EventType[],
@@ -52,18 +56,30 @@ export class GoogleCalendarView extends React.Component<Props, State> {
 	}
 
 	convertEvents(data: GoogleEventType[], now: moment): EventType[] {
-		return data.map(event => {
+		let events = data.map(event => {
 			const startTime = moment(event.start.date || event.start.dateTime)
 			const endTime = moment(event.end.date || event.end.dateTime)
+
 			return {
 				startTime,
 				endTime,
-				summary: event.summary || '',
+				title: event.summary || '',
+				description: event.description || '',
 				location: event.location || '',
 				isOngoing: startTime.isBefore(now, 'day'),
-				extra: {type: 'google', data: event},
+				config: {
+					startTime: true,
+					endTime: true,
+					subtitle: 'location',
+				},
 			}
 		})
+
+		if (this.props.eventMapper) {
+			events = events.map(this.props.eventMapper)
+		}
+
+		return events
 	}
 
 	getEvents = async (now: moment = moment.tz(TIMEZONE)) => {
