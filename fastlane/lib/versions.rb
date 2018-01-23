@@ -52,6 +52,9 @@ def propagate_version(**args)
   unless version.include? '+'
     set_package_data(data: { version: "#{version}+#{build}" })
   end
+    
+  version = '1.0.0' if should_nightly?
+  UI.message "Actually putting #{version} into the binaries (because we're doing a nightly)"
 
   case lane_context[:PLATFORM_NAME]
   when :android
