@@ -13,8 +13,8 @@ export function shareEvent(event: EventType): Promise<any> {
 	const times = getTimes(event)
 	const location = event.location
 	const description = event.description
-	const message = `${title}\n\n${times}\n\n${location}\n\n${description}`
-	return Share.share({message.trim()})
+	const message = `${title}\n\n${times}\n\n${location}\n\n${description}`.trim()
+	return Share.share({message})
 		.then(result => console.log(result))
 		.catch(error => console.log(error.message))
 }
