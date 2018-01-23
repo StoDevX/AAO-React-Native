@@ -1,0 +1,19 @@
+---
+key: app-support
+enabled: true
+hidden: false
+
+title: Have an App Question?
+body: |
+  If you've got a question about the app, or a new feature idea, let us know!
+
+buttons:
+  - title: Email Us
+    action: send-email
+    params:
+      to: allaboutolaf@stolaf.edu
+      subject: A Thing
+      body: |
+        Idea? Question? Comment? Concern?
+
+        Let us know!
