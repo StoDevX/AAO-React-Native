@@ -12,7 +12,6 @@ export type GoogleEventType = {
 	location?: string,
 }
 
-
 export type PoweredBy = {
 	title: string,
 	href: string,
