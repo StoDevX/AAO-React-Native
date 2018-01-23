@@ -2,7 +2,6 @@
 
 import * as React from 'react'
 import {ScrollView, StyleSheet, StatusBar} from 'react-native'
-
 import {connect} from 'react-redux'
 import * as c from '../components/colors'
 import sortBy from 'lodash/sortBy'
@@ -15,10 +14,12 @@ import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl} from '../components/open-url'
 import {EditHomeButton, OpenSettingsButton} from '../components/nav-buttons'
+import {ConnectedNotices} from './notices'
 
 type ReactProps = TopLevelViewPropsType & {
 	views: Array<ViewType>,
 }
+
 type ReduxStateProps = {
 	order: Array<string>,
 	inactiveViews: Array<string>,
@@ -28,7 +29,6 @@ type Props = ReactProps & ReduxStateProps
 
 function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 	const sortedViews = sortBy(views, view => order.indexOf(view.view))
-
 	const enabledViews = sortedViews.filter(
 		view => !inactiveViews.includes(view.view),
 	)
@@ -44,6 +44,8 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 			showsVerticalScrollIndicator={false}
 		>
 			<StatusBar backgroundColor={c.gold} barStyle="light-content" />
+
+			<ConnectedNotices />
 
 			{columns.map((contents, i) => (
 				<Column key={i} style={styles.column}>
@@ -75,13 +77,11 @@ HomePage.navigationOptions = ({navigation}) => {
 }
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
-	if (!state.homescreen) {
-		return {order: [], inactiveViews: []}
-	}
+	const {homescreen} = state
 
 	return {
-		order: state.homescreen.order,
-		inactiveViews: state.homescreen.inactiveViews,
+		order: homescreen ? homescreen.order : [],
+		inactiveViews: homescreen ? homescreen.inactiveViews : [],
 	}
 }
 
