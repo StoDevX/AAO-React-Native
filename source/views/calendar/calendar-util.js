@@ -43,11 +43,10 @@ export function addToCalendar(event: EventType): Promise<boolean> {
 
 async function saveEventToCalendar(event: EventType): Promise<boolean> {
 	try {
-		const eventToAdd = {
-			location: event.location,
-			startDate: event.startTime.toISOString(),
-			endDate: event.endTime.toISOString(),
-		}
+		const eventToAdd = {}
+		eventToAdd.location = event.location,
+		eventToAdd.startDate = event.startTime.toISOString(),
+		eventToAdd.endDate = event.endTime.toISOString(),
 
 		// handle platform differences in saving event description
 		if (Platform.OS === 'ios') {
