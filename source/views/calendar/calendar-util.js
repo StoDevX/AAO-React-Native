@@ -55,8 +55,6 @@ async function saveEventToCalendar(event: EventType): Promise<boolean> {
 			eventToAdd.description = event.description
 		}
 
-		Object.freeze(eventToAdd);
-
 		await RNCalendarEvents.saveEvent(event.title, eventToAdd)
 
 		return true
