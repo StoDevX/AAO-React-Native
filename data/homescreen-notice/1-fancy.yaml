@@ -1,0 +1,15 @@
+---
+severity: info
+conditions:
+  - and:
+    - platform: ios
+    - versionRange: <=2.6.0
+    - startDate: 2017-01-29
+    - endDate: 2017-02-01
+title: A Title
+icon: american-football
+backgroundColor: '#fff'
+foregroundColor: '#444'
+snippet: My message content is…
+message: |
+  My message content is only applicable for people running All About Olaf versions below v2.6.0.

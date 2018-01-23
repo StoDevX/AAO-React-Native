@@ -1,0 +1,5 @@
+---
+severity: notice
+dismissable: false
+repeatIfDismissed: {repeat: true, interval: 1 day}
+message: This app is unmaintained
