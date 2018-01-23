@@ -55,7 +55,7 @@ async function saveEventToCalendar(event: EventType): Promise<boolean> {
 			eventToAdd.description = event.description
 		}
 
-		await RNCalendarEvents.saveEvent(event.title, ...eventToAdd)
+		await RNCalendarEvents.saveEvent(event.title, eventToAdd)
 
 		return true
 	} catch (err) {
