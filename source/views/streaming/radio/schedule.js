@@ -15,6 +15,13 @@ export class KSTOScheduleView extends React.PureComponent<Props> {
 		return (
 			<GoogleCalendarView
 				calendarId="kstonarwhal@gmail.com"
+				eventMapper={event => ({
+					...event,
+					config: {
+						...event.config,
+						subtitle: 'description',
+					},
+				})}
 				navigation={this.props.navigation}
 				poweredBy={{
 					title: 'Powered by the KSTO team',
@@ -34,6 +41,13 @@ export class KRLXScheduleView extends React.PureComponent<Props> {
 		return (
 			<GoogleCalendarView
 				calendarId="krlxradio88.1@gmail.com"
+				eventMapper={event => ({
+					...event,
+					config: {
+						...event.config,
+						subtitle: 'description',
+					},
+				})}
 				navigation={this.props.navigation}
 				poweredBy={{
 					title: 'Powered by the KRLX team',
