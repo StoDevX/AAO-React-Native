@@ -3,7 +3,7 @@ colors:
   bar: rgb(103, 153, 170)
   dot: rgb(13, 26, 35)
 schedules:
-  - days: [Tu, We, Th, Fr]
+  - days: [Mo, Tu, We, Th, Fr]
     coordinates:
       'Carleton College':                [44.460753, -93.155708]
       'City Hall on Washington':         [44.451472, -93.158529]
