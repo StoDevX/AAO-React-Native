@@ -43,19 +43,13 @@ export function addToCalendar(event: EventType): Promise<boolean> {
 
 async function saveEventToCalendar(event: EventType): Promise<boolean> {
 	try {
-		const eventToAdd = {}
-		eventToAdd.location = event.location
-		eventToAdd.startDate = event.startTime.toISOString()
-		eventToAdd.endDate = event.endTime.toISOString()
-
-		// handle platform differences in saving event description
-		if (Platform.OS === 'ios') {
-			eventToAdd.notes = event.description
-		} else if (Platform.OS === 'android') {
-			eventToAdd.description = event.description
-		}
-
-		await RNCalendarEvents.saveEvent(event.title, eventToAdd)
+		await RNCalendarEvents.saveEvent(event.title, {
+			location: event.location,
+			startDate: event.startTime.toISOString(),
+			endDate: event.endTime.toISOString(),
+			description: event.description,
+			notes: event.description,
+		})
 
 		return true
 	} catch (err) {
