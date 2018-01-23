@@ -18,7 +18,9 @@ schedule:
   - title: Dinner
     hours:
       # - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:30pm'}
-      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:00pm'}
+      # - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:00pm'}
+      - {days: [Mo], from: '4:30pm', to: '6:30pm'}
+      - {days: [Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:00pm'}
 
 breakSchedule:
   fall: []
