@@ -2,7 +2,6 @@
 key: wifi
 enabled: true
 hidden: false
-versionRange: '>=2.5.0-beta'
 
 title: Report a Wi-Fi Problem
 body: |
