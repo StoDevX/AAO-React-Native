@@ -12,7 +12,8 @@ export function shareEvent(event: EventType): Promise<any> {
 	const title = event.title
 	const times = getTimes(event)
 	const location = event.location
-	const message = `${title}\n\n${times}\n\n${location}`
+	const description = event.description
+	const message = `${title}\n\n${times}\n\n${location}\n\n${description}`
 	return Share.share({message})
 		.then(result => console.log(result))
 		.catch(error => console.log(error.message))
@@ -44,6 +45,8 @@ async function saveEventToCalendar(event: EventType): Promise<boolean> {
 	try {
 		await RNCalendarEvents.saveEvent(event.title, {
 			location: event.location,
+			description: event.description,
+			notes: event.description,
 			startDate: event.startTime.toISOString(),
 			endDate: event.endTime.toISOString(),
 		})
