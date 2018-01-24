@@ -13,7 +13,7 @@ buildscript {
 }
 
 ext {
-    travisBuild = System.getenv("TRAVIS") == "true"
+    ciBuild = (System.getenv("CI") ?: "") != ""
     // allows for -Dpre-dex=false to be set
     preDexEnabled = System.getProperty("pre-dex", "true") == "true"
 }
