@@ -48,11 +48,12 @@ export default TabNavigator(
 		MessNewsView: {
 			screen: ({navigation}) => (
 				<NewsContainer
-					mode="rss"
+					mode="wp-json"
 					name="The Mess"
 					navigation={navigation}
+					query={{per_page: 10, _embed: true}}
 					thumbnail={newsImages.mess}
-					url="http://manitoumessenger.com/feed/"
+					url="https://www.manitoumessenger.com/wp-json/wp/v2/posts/"
 				/>
 			),
 			navigationOptions: {
