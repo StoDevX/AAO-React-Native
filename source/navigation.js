@@ -99,7 +99,7 @@ export const AppNavigator = StackNavigator(
 		CarletonLDCMenuView: {screen: CarletonLDCMenuScreen},
 		CarletonWeitzMenuView: {screen: CarletonWeitzMenuScreen},
 		CarletonSaylesMenuView: {screen: CarletonSaylesMenuScreen},
-    BasketballView: {screen: BasketballView},
+		BasketballView: {screen: BasketballView},
 	},
 	{
 		navigationOptions: {

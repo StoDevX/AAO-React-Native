@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {StyleSheet, TouchableOpacity, Image} from 'react-native'
 import {PropTypes} from 'prop-types'
+import {AppLogo} from '../../../components/logo'
 
 class Ball extends Component {
 	constructor(props) {
@@ -57,25 +58,21 @@ class Ball extends Component {
 					},
 				]}
 			>
-				<Image
-					renderToHardwareTextureAndroid
-					source={{
-						uri:
-							'https://raw.githubusercontent.com/FaridSafi/react-native-basketball/902dac849843d6beff3ee843ac527240d73da44f/assets/ball-384.png',
-					}}
-					style={[
-						{
-							width: this.props.radius * 2,
-							height: this.props.radius * 2,
-							borderRadius: this.props.radius,
-							backgroundColor: 'transparent',
-							transform: [
-								{rotate: this.props.rotate + 'deg'},
-								{scale: this.props.scale},
-							],
-						},
-					]}
-				/>
+        <AppLogo
+          style={[
+            {
+              width: this.props.radius * 2,
+              height: this.props.radius * 2,
+              borderRadius: this.props.radius,
+              backgroundColor: 'transparent',
+              transform: [
+                {rotate: this.props.rotate + 'deg'},
+                {scale: this.props.scale},
+              ],
+            },
+          ]}
+        />
+
 			</TouchableOpacity>
 		)
 	}
