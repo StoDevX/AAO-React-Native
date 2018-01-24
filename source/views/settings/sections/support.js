@@ -8,6 +8,7 @@ import DeviceInfo from 'react-native-device-info'
 import {version} from '../../../../package.json'
 import {PushButtonCell} from '../../components/cells/push-button'
 import {refreshApp} from '../../../lib/refresh'
+import {sectionBgColor} from '../../components/colors'
 
 type Props = TopLevelViewPropsType
 
@@ -52,7 +53,7 @@ export default class SupportSection extends React.PureComponent<Props> {
 
 	render() {
 		return (
-			<Section header="SUPPORT">
+			<Section header="SUPPORT" sectionTintColor={sectionBgColor}>
 				<PushButtonCell onPress={openEmail} title="Contact Us" />
 				<PushButtonCell onPress={this.onFaqButton} title="FAQs" />
 				<PushButtonCell onPress={this.onResetButton} title="Reset Everything" />

@@ -12,8 +12,6 @@ import SupportSection from './sections/support'
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor:
-			Platform.OS === 'ios' ? c.iosLightBackground : c.androidLightBackground,
 		paddingVertical: 20,
 	},
 })
