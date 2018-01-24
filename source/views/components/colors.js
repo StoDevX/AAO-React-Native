@@ -40,7 +40,8 @@ export const iosPlaceholderText = iosSeparator
 export const iosHeaderTopBorder = iosSeparator
 export const iosHeaderBottomBorder = 'rgb(224, 224, 224)'
 
-export const sectionBgColor = Platform.OS === 'ios' ? iosLightBackground : androidLightBackground
+export const sectionBgColor =
+	Platform.OS === 'ios' ? iosLightBackground : androidLightBackground
 
 export const tableviewAccessoryColor = 'rgb(0, 122, 255)'
 
