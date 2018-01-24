@@ -141,7 +141,6 @@
     "pretty-quick": "1.2.2",
     "prop-types": "15.6.0",
     "react-test-renderer": "16.2.0",
-    "simple-plist": "0.2.1",
     "string-natural-compare": "2.0.2",
     "strip-ansi": "4.0.0",
     "xcode": "1.0.0"
