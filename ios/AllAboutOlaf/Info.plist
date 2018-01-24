@@ -25,6 +25,21 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>CFBundleIcons~ipad</key>
+	<dict>
+		<key>CFBundleAlternateIcons</key>
+		<dict>
+			<key>icon_type_windmill</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>windmill</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
