@@ -46,15 +46,15 @@ def propagate_version(**args)
 
   UI.message "Propagating version: #{version}"
   UI.message 'into the Info.plist and build.gradle files'
+  
+  version = "#{version.split('-')[0]}-pre" if should_nightly?
+  UI.message "Actually putting #{version} into the binaries (because we're doing a nightly)"
 
   # encode build number into js-land – we've already fetched it, so we'll
   # never set the "+" into the binaries
   unless version.include? '+'
     set_package_data(data: { version: "#{version}+#{build}" })
   end
-    
-  version = '1.0.0' if should_nightly?
-  UI.message "Actually putting #{version} into the binaries (because we're doing a nightly)"
 
   case lane_context[:PLATFORM_NAME]
   when :android
