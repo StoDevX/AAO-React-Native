@@ -53,7 +53,7 @@ export default TabNavigator(
 					navigation={navigation}
 					query={{per_page: 10, _embed: true}}
 					thumbnail={newsImages.mess}
-					url="https://manitoumessenger.com/wp-json/wp/v2/posts/"
+					url="https://www.manitoumessenger.com/wp-json/wp/v2/posts/"
 				/>
 			),
 			navigationOptions: {
