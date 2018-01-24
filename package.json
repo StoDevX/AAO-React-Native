@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "@hawkrives/react-native-alphabetlistview": "1.0.0",
-    "@hawkrives/react-native-alternate-icons": "0.4.6",
+    "@hawkrives/react-native-alternate-icons": "0.4.7",
     "@hawkrives/react-native-sortable-list": "1.0.1",
     "buffer": "5.0.8",
     "bugsnag-react-native": "2.5.1",
