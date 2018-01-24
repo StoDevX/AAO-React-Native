@@ -14,6 +14,7 @@ import {
 import {type ReduxState} from '../../../flux'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
+import {sectionBgColor} from '../../components/colors'
 
 type ReduxStateProps = {
 	initialUsername: string,
@@ -72,6 +73,7 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
 			<Section
 				footer="St. Olaf login enables the &quot;meals remaining&quot; feature."
 				header="ST. OLAF LOGIN"
+				sectionTintColor={sectionBgColor}
 			>
 				{loggedIn ? (
 					<Cell title={`Logged in as ${username}.`} />

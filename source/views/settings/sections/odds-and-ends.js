@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react'
-import {View} from 'react-native'
 import {Cell, Section} from 'react-native-tableview-simple'
 import {version} from '../../../../package.json'
 import type {TopLevelViewPropsType} from '../../types'
@@ -10,6 +9,7 @@ import {CellToggle} from '../../components/cells/toggle'
 import {PushButtonCell} from '../../components/cells/push-button'
 import {trackedOpenUrl} from '../../components/open-url'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
+import {sectionBgColor} from '../../components/colors'
 
 type Props = TopLevelViewPropsType & {
 	onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
@@ -50,8 +50,8 @@ class OddsAndEndsSection extends React.PureComponent<Props, State> {
 
 	render() {
 		return (
-			<View>
-				<Section header="MISCELLANY">
+			<React.Fragment>
+				<Section header="MISCELLANY" sectionTintColor={sectionBgColor}>
 					{this.state.supported ? (
 						<PushButtonCell
 							onPress={this.onAppIconButton}
@@ -68,7 +68,7 @@ class OddsAndEndsSection extends React.PureComponent<Props, State> {
 					<PushButtonCell onPress={this.onSourceButton} title="Contributing" />
 				</Section>
 
-				<Section header="ODDS &amp; ENDS">
+				<Section header="ODDS &amp; ENDS" sectionTintColor={sectionBgColor}>
 					<Cell cellStyle="RightDetail" detail={version} title="Version" />
 
 					<CellToggle
@@ -79,7 +79,7 @@ class OddsAndEndsSection extends React.PureComponent<Props, State> {
 						value={!this.props.feedbackDisabled}
 					/>
 				</Section>
-			</View>
+			</React.Fragment>
 		)
 	}
 }
