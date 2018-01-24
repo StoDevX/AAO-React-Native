@@ -30,7 +30,6 @@ export default TabNavigator(
 		OlevilleNewsView: {
 			screen: ({navigation}) => (
 				<NewsContainer
-					embedFeaturedImage={true}
 					mode="wp-json"
 					name="Oleville"
 					navigation={navigation}
