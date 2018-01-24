@@ -20,7 +20,6 @@ type Props = TopLevelViewPropsType & {
 	onRefresh: () => any,
 	entries: StoryType[],
 	loading: boolean,
-	embedFeaturedImage: ?boolean,
 	thumbnail: number,
 }
 
