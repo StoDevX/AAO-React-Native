@@ -149,6 +149,12 @@ android {
             preDexLibraries = preDexEnabled && !ciBuild
         }
     }
+    configurations.all {
+        resolutionStrategy.force 'com.android.support:appcompat-v7:26.1.0'
+        resolutionStrategy.force 'com.android.support:customtabs:26.1.0'
+        resolutionStrategy.force 'com.google.android.gms:play-services-base:11.8.0'
+        resolutionStrategy.force 'com.google.android.gms:play-services-maps:11.8.0'
+    }
 }
 
 // borrowed from https://gist.github.com/gabrielemariotti/6856974
