@@ -58,21 +58,20 @@ class Ball extends Component {
 					},
 				]}
 			>
-        <AppLogo
-          style={[
-            {
-              width: this.props.radius * 2,
-              height: this.props.radius * 2,
-              borderRadius: this.props.radius,
-              backgroundColor: 'transparent',
-              transform: [
-                {rotate: this.props.rotate + 'deg'},
-                {scale: this.props.scale},
-              ],
-            },
-          ]}
-        />
-
+				<AppLogo
+					style={[
+						{
+							width: this.props.radius * 2,
+							height: this.props.radius * 2,
+							borderRadius: this.props.radius,
+							backgroundColor: 'transparent',
+							transform: [
+								{rotate: this.props.rotate + 'deg'},
+								{scale: this.props.scale},
+							],
+						},
+					]}
+				/>
 			</TouchableOpacity>
 		)
 	}
