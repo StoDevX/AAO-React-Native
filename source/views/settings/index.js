@@ -1,10 +1,9 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, ScrollView, Platform} from 'react-native'
+import {StyleSheet, ScrollView} from 'react-native'
 import {TableView} from 'react-native-tableview-simple'
 import type {TopLevelViewPropsType} from '../types'
-import * as c from '../components/colors'
 
 import CredentialsLoginSection from './sections/login-credentials'
 import OddsAndEndsSection from './sections/odds-and-ends'
