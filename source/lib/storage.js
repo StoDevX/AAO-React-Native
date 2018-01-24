@@ -62,6 +62,22 @@ export function getAcknowledgementStatus(): Promise<boolean> {
 	return getItemAsBoolean(acknowledgementStatusKey)
 }
 
+const touchIDEnabledKey = 'settings:touchIDEnabled'
+export function saveTouchIDStatus(status: boolean) {
+	return setItem(touchIDEnabledKey, status)
+}
+export function getTouchIDStatus(): Promise<boolean> {
+	return getItemAsBoolean(touchIDEnabledKey)
+}
+
+const touchIDAcknowledgedKey = 'settings:touchIDAcknowledged'
+export function saveTouchIDAcknowledged(status: boolean) {
+	return setItem(touchIDAcknowledgedKey, status)
+}
+export function getTouchIDAcknowledged(): Promise<boolean> {
+	return getItemAsBoolean(touchIDAcknowledgedKey)
+}
+
 /// MARK: Credentials
 
 const tokenValidKey = 'credentials:valid'
