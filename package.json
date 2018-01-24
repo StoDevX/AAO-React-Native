@@ -49,6 +49,9 @@
       "source/**/*.js",
       "!**/node_modules/**"
     ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native|glamorous-native)"
+    ],
     "preset": "react-native"
   },
   "prettier": {
