@@ -42,6 +42,7 @@ import {IconSettingsView} from './views/settings/icon'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
 import HelpView from './views/help'
+import BasketballView from './views/settings/basketball'
 
 const styles = StyleSheet.create({
 	header: {
@@ -98,6 +99,7 @@ export const AppNavigator = StackNavigator(
 		CarletonLDCMenuView: {screen: CarletonLDCMenuScreen},
 		CarletonWeitzMenuView: {screen: CarletonWeitzMenuScreen},
 		CarletonSaylesMenuView: {screen: CarletonSaylesMenuScreen},
+    BasketballView: {screen: BasketballView},
 	},
 	{
 		navigationOptions: {
