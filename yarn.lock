@@ -69,9 +69,9 @@
     merge "^1.2.0"
     prop-types "^15.6.0"
 
-"@hawkrives/react-native-alternate-icons@0.4.6":
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/@hawkrives/react-native-alternate-icons/-/react-native-alternate-icons-0.4.6.tgz#02f465ae70ea6220bcaf4e4e8dcef2d2ccab3f6a"
+"@hawkrives/react-native-alternate-icons@0.4.7":
+  version "0.4.7"
+  resolved "https://registry.yarnpkg.com/@hawkrives/react-native-alternate-icons/-/react-native-alternate-icons-0.4.7.tgz#bda816fbb0f748196e5cae7841e4b42201b25399"
 
 "@hawkrives/react-native-sortable-list@1.0.1":
   version "1.0.1"
