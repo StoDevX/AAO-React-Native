@@ -97,6 +97,7 @@ declare module 'react-native-calendar-events' {
     endDate?: string,
     allDay?: boolean,
     notes?: string,
+    description?: string,
     url?: string,
     alarms?: Array<NewCalendarAlarm>,
     recurrence?: string,
