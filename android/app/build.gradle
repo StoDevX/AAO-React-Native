@@ -98,7 +98,6 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "26.0.1"
 
     defaultConfig {
         applicationId "com.allaboutolaf"
