@@ -97,12 +97,12 @@ def enableSeparateBuildPerCPUArchitecture = true
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 26
 
     defaultConfig {
         applicationId "com.allaboutolaf"
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0.0"
         ndk {
