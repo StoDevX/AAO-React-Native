@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {View, StyleSheet, Dimensions} from 'react-native'
+import * as c from '../../../components/colors'
 import {PropTypes} from 'prop-types'
 
 class Floor extends Component {
@@ -10,7 +11,7 @@ class Floor extends Component {
 
 const styles = StyleSheet.create({
 	floorContainer: {
-		backgroundColor: '#F4F4F4',
+		backgroundColor: c.olevilleGold,
 		position: 'absolute',
 		width: Dimensions.get('window').width,
 		bottom: 0,
