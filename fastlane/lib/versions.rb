@@ -47,6 +47,13 @@ def propagate_version(**args)
   UI.message "Propagating version: #{version}"
   UI.message 'into the Info.plist and build.gradle files'
   
+  UI.message "Setting build number to #{build}"
+
+  # android's build number goes way up because we need to exceed the old build
+  # numbers generated for the x86 build.
+  build = (2 * 1048576) + build if lane_context[:PLATFORM_NAME] == :android
+  UI.message "Actually setting build number to #{build} because we're on android"
+
   version = "#{version.split('-')[0]}-pre" if should_nightly?
   UI.message "Actually putting #{version} into the binaries (because we're doing a nightly)"
 

@@ -133,17 +133,20 @@ android {
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
+            // Because we're only generating one universal APK, this is commented out and the "nil"
+            // logic described here is instead implemented in fastlane.
+
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2, nil:2]
+            // def versionCodes = ["armeabi-v7a":1, "x86":2, nil:2]
 
             // `abi` is null for the universal-debug, universal-release variants
-            def abi = output.getFilter(OutputFile.ABI)
+            // def abi = output.getFilter(OutputFile.ABI)
 
-            if (abi != null) { 
-                output.versionCodeOverride =
-                        versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
-            }
+            // if (abi != null) { 
+            //     output.versionCodeOverride =
+            //             versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+            // }
         }
     }
     android {
