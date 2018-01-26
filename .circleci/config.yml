@@ -200,6 +200,10 @@ jobs:
       - run: mkdir -p logs/
       - run: yarn run --silent validate-data --quiet | tee logs/validate-data
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
+      - run: yarn run bundle-data
+      - run: yarn run compress-data
+      - store_artifacts:
+          path: ./docs/
       - run: *run-danger
 
   android: &android
