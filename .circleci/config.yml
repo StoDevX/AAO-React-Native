@@ -229,6 +229,8 @@ jobs:
           command: bundle exec fastlane android ci-run | tee ./logs/build
           environment:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
+      - store_artifacts:
+          path: ./android/app/build/outputs/apk/release/
       - run: *run-danger
 
   android-nightly:
