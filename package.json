@@ -10,7 +10,7 @@
     "bundle:android": "react-native bundle --entry-file index.js --dev true --platform android --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/ --sourcemap-output ./android/app/src/main/assets/index.android.bundle.map",
     "bundle:ios": "react-native bundle --entry-file index.js --dev false --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map",
     "check": "npm run prettier && npm run lint && npm run flow && npm run validate-data -- --quiet && npm run test",
-    "compress-data": "gzip docs/*.json",
+    "compress-data": "gzip --keep docs/*.json",
     "danger": "danger ci",
     "data": "node scripts/bundle-data.js data/ docs/",
     "flow": "flow",
