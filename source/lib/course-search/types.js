@@ -1,23 +1,31 @@
 // @flow
 
 export type CourseType = {
-  clbid: long,
-  credits: float,
-  crsid: long,
+  clbid: number,
+  credits: number,
+  crsid: number,
   departments: string[],
   instructors: string[],
-  level: int,
+  level: number,
   name: string,
   pn: boolean,
   prerequisites: boolean,
-  semester: int,
+  semester: number,
   status: string,
-  term: long,
+  term: number,
   type: string,
-  year: long,
+  year: number,
   description?: string[],
   gereqs?: string[],
   locations?: string[],
   notes?: string[],
   section?: string,
+}
+
+export type TermType = {
+  hash: string,
+  path: string,
+  term: number,
+  type: string,
+  year: number,
 }

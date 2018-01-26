@@ -15,13 +15,20 @@ import * as c from '../../components/colors'
 import {Select, Option} from 'react-native-chooser'
 import {CourseSearchBar} from '../components/searchbar'
 import debounce from 'lodash/debounce'
+import {ToolBar} from 'react-native-material-ui'
+import {updateStoredCourses} from '../../../lib/course-search/update-course-storage'
+
+type Props = TopLevelViewPropsType & {
+  navigation: {state: {params: {}}},
+}
 
 
-export default class CourseSearchView extends React.PureComponent {
-  static navigationOptions = {
+export default class CourseSearchView extends React.PureComponent<Props> {
+  static navigationOptions = ({navigation}: any) => ({
 		tabBarLabel: 'Course Search',
 		tabBarIcon: TabBarIcon('search'),
-	}
+    title: "SIS",
+	})
 
   searchBar: any = null
 
@@ -42,6 +49,11 @@ export default class CourseSearchView extends React.PureComponent {
 
   onFocus = () => {
     // this._header.setNativeProps({style: {display: 'none',},})
+    // this.navigationOptions.header
+    // let courses = loadCourseSearchData(2016, 1)
+    // console.log(loadTermsFromStorage())
+    updateStoredCourses()
+    // console.log(courses)
   }
 
   render() {
@@ -68,22 +80,6 @@ export default class CourseSearchView extends React.PureComponent {
             </CourseSearchBar>
           </View>
 
-          
-
-
-          <Section header="Year/Term">
-            <View>
-              <Picker
-                selectedValue = "20173"
-                onValueChange={(value) => console.log(value)}
-                style={[styles.common, styles.picker]}
-                itemStyle={styles.picker}
-              >
-                <Picker.Item label="Interim 2017" value="20172"/>
-                <Picker.Item label="Spring 2017" value="20173"/>
-              </Picker>
-            </View>
-          </Section>
 
         </TableView>
 
@@ -105,6 +101,7 @@ let styles = StyleSheet.create({
   searchContainer: {
     margin: 0,
     padding: 25,
+    zIndex: 5000,
   },
 
   searchBar: {
@@ -129,3 +126,17 @@ let styles = StyleSheet.create({
 	},
 
 })
+
+// <Section header="Year/Term">
+//   <View>
+//     <Picker
+//       selectedValue = "20173"
+//       onValueChange={(value) => console.log(value)}
+//       style={[styles.common, styles.picker]}
+//       itemStyle={styles.picker}
+//     >
+//       <Picker.Item label="Interim 2017" value="20172"/>
+//       <Picker.Item label="Spring 2017" value="20173"/>
+//     </Picker>
+//   </View>
+// </Section>
