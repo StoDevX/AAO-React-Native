@@ -113,6 +113,10 @@ android {
             BUGSNAG_KEY: System.getenv("BUGSNAG_KEY") ?: "",
             GMAPS_KEY: System.getenv("GMAPS_KEY") ?: "",
         ]
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86"
+        }
     }
 
     signingConfigs {
