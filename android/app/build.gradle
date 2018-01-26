@@ -101,20 +101,29 @@ android {
 
     defaultConfig {
         applicationId "com.allaboutolaf"
+
         minSdkVersion 19
         targetSdkVersion 26
+
         versionCode 1
         versionName "1.0.0"
+
         manifestPlaceholders = [
             manifestApplicationId: applicationId,
             BUGSNAG_KEY: System.getenv("BUGSNAG_KEY") ?: "",
             GMAPS_KEY: System.getenv("GMAPS_KEY") ?: "",
         ]
+
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
     }
+
     signingConfigs {
         // the signingConfig is configured below
         release
     }
+
     splits {
         abi {
             reset()
@@ -123,6 +132,7 @@ android {
             include "armeabi-v7a", "x86"
         }
     }
+
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
@@ -130,6 +140,7 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
@@ -143,18 +154,20 @@ android {
             // `abi` is null for the universal-debug, universal-release variants
             // def abi = output.getFilter(OutputFile.ABI)
 
-            // if (abi != null) { 
+            // if (abi != null) {
             //     output.versionCodeOverride =
             //             versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             // }
         }
     }
+
     android {
         dexOptions {
             // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
             preDexLibraries = preDexEnabled && !ciBuild
         }
     }
+
     configurations.all {
         resolutionStrategy.force 'com.android.support:appcompat-v7:26.1.0'
         resolutionStrategy.force 'com.android.support:customtabs:26.1.0'
@@ -213,6 +226,7 @@ dependencies {
     // this is for react-native itself
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:26.1.0"
+    //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 }
 
