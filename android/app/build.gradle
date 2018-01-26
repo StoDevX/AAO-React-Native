@@ -101,20 +101,25 @@ android {
 
     defaultConfig {
         applicationId "com.allaboutolaf"
+
         minSdkVersion 19
         targetSdkVersion 26
+
         versionCode 1
         versionName "1.0.0"
+
         manifestPlaceholders = [
             manifestApplicationId: applicationId,
             BUGSNAG_KEY: System.getenv("BUGSNAG_KEY") ?: "",
             GMAPS_KEY: System.getenv("GMAPS_KEY") ?: "",
         ]
     }
+
     signingConfigs {
         // the signingConfig is configured below
         release
     }
+
     splits {
         abi {
             reset()
@@ -123,6 +128,7 @@ android {
             include "armeabi-v7a", "x86"
         }
     }
+
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
@@ -130,6 +136,7 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
@@ -149,12 +156,14 @@ android {
             // }
         }
     }
+
     android {
         dexOptions {
             // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
             preDexLibraries = preDexEnabled && !ciBuild
         }
     }
+
     configurations.all {
         resolutionStrategy.force 'com.android.support:appcompat-v7:26.1.0'
         resolutionStrategy.force 'com.android.support:customtabs:26.1.0'
