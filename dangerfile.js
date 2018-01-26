@@ -40,6 +40,8 @@ async function main() {
 			await runJSのPrettier()
 			break
 		case 'GREENKEEPER':
+		case 'JS-bundle-android':
+		case 'JS-bundle-ios':
 			break
 		default:
 			warn(`Unknown task name "${taskName}"; Danger cannot report anything.`)

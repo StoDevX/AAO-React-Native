@@ -69,6 +69,12 @@ workflows:
       - android:
           filters: *filters
           requires: [danger, flow, jest, prettier, eslint, data]
+      - ios-bundle:
+          filters: *filters
+          requires: [danger, flow, jest, prettier, eslint, data]
+      - android-bundle:
+          filters: *filters
+          requires: [danger, flow, jest, prettier, eslint, data]
   nightly:
     triggers:
       - schedule:
@@ -239,6 +245,21 @@ jobs:
       <<: *android-env
       IS_NIGHTLY: '1'
 
+  android-bundle:
+    docker: [{image: 'circleci/node:8'}]
+    environment:
+      task: JS-bundle-android
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install --frozen-lockfile
+      - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
+      - run: yarn run --silent bundle:android
+      - store_artifacts:
+          path: ./android/app/src/main/assets/
+      - run: *run-danger
+
   ios: &ios
     macos: {xcode: '9.0'}
     environment: &ios-env
@@ -277,3 +298,22 @@ jobs:
     environment:
       <<: *ios-env
       IS_NIGHTLY: '1'
+
+  ios-bundle:
+    docker: [{image: 'circleci/node:8'}]
+    environment:
+      task: JS-bundle-ios
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install --frozen-lockfile
+      - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
+      - run: yarn run --silent bundle:ios
+      - store_artifacts:
+          path: ./ios/AllAboutOlaf/main.jsbundle
+          destination: main.jsbundle
+      - store_artifacts:
+          path: ./ios/AllAboutOlaf/main.jsbundle.map
+          destination: main.jsbundle.map
+      - run: *run-danger
