@@ -20,9 +20,6 @@ async function main() {
 		case 'IOS':
 			await runiOS()
 			break
-		case 'GREENKEEPER':
-			await runGreenkeeper()
-			break
 		case 'JS-general':
 			await runJSのGeneral()
 			await yarn()
@@ -42,17 +39,11 @@ async function main() {
 		case 'JS-prettier':
 			await runJSのPrettier()
 			break
+		case 'GREENKEEPER':
+			break
 		default:
 			warn(`Unknown task name "${taskName}"; Danger cannot report anything.`)
 	}
-}
-
-//
-// task=GREENKEEPER
-//
-
-function runGreenkeeper() {
-	// message('greenkeeper ran')
 }
 
 //
@@ -74,31 +65,7 @@ async function runAndroid() {
 		return
 	}
 
-	/*
-  const appPaths = readJsonLogFile('./logs/products')
-  const apkInfos = appPaths.map(listZip)
-
-  markdown('## Android Report')
-  markdown(
-    h.details(
-      h.summary('contents of <code>apkInfos</code>'),
-      m.json(apkInfos),
-      m.json(appPaths),
-    ),
-  )
-
-  markdown(`Generated ${apkInfos.length} APK${apkInfos.length !== 1 ? 's' : ''}
-
-${outputFilesInfo
-    .map((filename, i) => [filename, apkInfos[i]])
-    .map(([filename, apk]) =>
-      h.details(
-        h.summary(`${filename} (${bytes(apk.size)})`),
-        m.json(apk),
-      ),
-    )}
-  `)
-*/
+	// we do not currently do any android analysis
 }
 
 //
@@ -122,10 +89,8 @@ async function runiOS() {
 
 	markdown('## iOS Report')
 
-	// ideas:
-	// - tee the "fastlane" output to a log, and run the analysis script
-	//   to report back the longest compilation units
-	//   (maybe only on react-native / package.json changes?)
+	// tee the "fastlane" output to a log, and run the analysis script
+	// to report back the longest compilation units
 	const analysisFile = readFile('./logs/analysis')
 	markdown(
 		h.details(
@@ -133,21 +98,6 @@ async function runiOS() {
 			m.code({}, analysisFile),
 		),
 	)
-
-	/*
-  // - report the .ipa size
-  // - report the .ipa file list
-  const appPaths = readJsonLogFile('./logs/products')
-
-  appPaths.forEach(appPath => {
-    const info = listDirectoryTree(appPath)
-    markdown(`## <code>.app</code>
-Total <code>.app</code> size: ${info.size}
-
-${h.details(h.summary('.app contents'), m.json(info))}
-`)
-  })
-*/
 }
 
 //
