@@ -255,6 +255,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
+      - run: *embed-env-vars
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:android
       - store_artifacts:
@@ -310,6 +311,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
+      - run: *embed-env-vars
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:ios
       - store_artifacts:
