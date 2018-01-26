@@ -43,7 +43,7 @@ workflows:
     # different CIRCLE_WORKFLOW_ID, which should allow us to only deploy
     # nightlies from that branch.
     jobs: &basic-jobs
-      - cache-yarn-linux: 
+      - cache-yarn-linux:
           filters: &filters {tags: {only: /.*/}}
       - danger:
           filters: *filters
@@ -230,7 +230,7 @@ jobs:
           environment:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
       - run: *run-danger
-  
+
   android-nightly:
     <<: *android
     environment:
