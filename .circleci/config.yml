@@ -264,10 +264,10 @@ jobs:
       - run: yarn run --silent bundle:android
       - store_artifacts:
           path: ./android/app/src/main/assets/index.android.bundle
-          name: android.jsbundle
+          destination: android.jsbundle
       - store_artifacts:
           path: ./android/app/src/main/assets/index.android.bundle.map
-          name: android.jsbundle.map
+          destination: android.jsbundle.map
       - run: *run-danger
 
   ios: &ios
