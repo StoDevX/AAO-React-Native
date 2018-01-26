@@ -150,7 +150,7 @@ android {
             // `abi` is null for the universal-debug, universal-release variants
             // def abi = output.getFilter(OutputFile.ABI)
 
-            // if (abi != null) { 
+            // if (abi != null) {
             //     output.versionCodeOverride =
             //             versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             // }
