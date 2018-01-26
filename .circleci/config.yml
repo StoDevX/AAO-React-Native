@@ -263,7 +263,11 @@ jobs:
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:android
       - store_artifacts:
-          path: ./android/app/src/main/assets/
+          path: ./android/app/src/main/assets/index.android.bundle
+          name: android.jsbundle
+      - store_artifacts:
+          path: ./android/app/src/main/assets/index.android.bundle.map
+          name: android.jsbundle.map
       - run: *run-danger
 
   ios: &ios
@@ -320,8 +324,8 @@ jobs:
       - run: yarn run --silent bundle:ios
       - store_artifacts:
           path: ./ios/AllAboutOlaf/main.jsbundle
-          destination: main.jsbundle
+          destination: ios.jsbundle
       - store_artifacts:
           path: ./ios/AllAboutOlaf/main.jsbundle.map
-          destination: main.jsbundle.map
+          destination: ios.jsbundle.map
       - run: *run-danger
