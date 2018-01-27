@@ -9,6 +9,12 @@ import {
 } from '../../analytics'
 import * as storage from '../../lib/storage'
 import {type ReduxState} from '../index'
+import debounce from 'lodash/debounce'
+
+// see https://css-tricks.com/debouncing-throttling-explained-examples/
+// we only invoke trackHomescreenOrder once every three seconds, to avoid
+// reporting every permutation of someone's home screen while they're editing it
+const debouncedTrackHomescreenOrder = debounce(trackHomescreenOrder, 3000)
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
@@ -71,7 +77,7 @@ type SaveViewOrderAction = {
 export function saveHomescreenOrder(
 	order: Array<ViewName>,
 ): SaveViewOrderAction {
-	trackHomescreenOrder(order)
+	debouncedTrackHomescreenOrder(order)
 	storage.setHomescreenOrder(order)
 	return {type: SAVE_HOMESCREEN_ORDER, payload: order}
 }
