@@ -80,6 +80,12 @@ export const trackDefinitionView = (word: string) =>
 export const trackOrgOpen = (orgName: string) =>
 	tracker.trackEvent('student-org', 'open', {label: orgName})
 
+export const trackCalendarEventOpen = (eventTitle: string) =>
+	tracker.trackEvent('calendar-event', 'open-event', {label: eventTitle})
+
+export const trackStudentJobOpen = (jobTitle: string) =>
+	tracker.trackEvent('student-jobs', 'open-posting', {label: jobTitle})
+
 export const trackLogIn = () =>
 	tracker.trackEvent('account', 'log-in', {})
 
