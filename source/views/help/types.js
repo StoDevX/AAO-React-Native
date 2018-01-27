@@ -39,10 +39,17 @@ type CallPhoneButtonDef = {
 	params: CallPhoneButtonParams,
 }
 
+type CustomButtonDef = {
+	action: 'custom',
+	title: string,
+	params: {[key: string]: any},
+}
+
 export type ButtonDef =
 	| SendEmailButtonDef
 	| OpenUrlButtonDef
 	| CallPhoneButtonDef
+	| CustomButtonDef
 
 export type ToolOptions = {|
 	key: string,
