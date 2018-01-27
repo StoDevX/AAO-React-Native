@@ -7,6 +7,7 @@ import type {ViewType} from '../views'
 import LinearGradient from 'react-native-linear-gradient'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
+import {iPhoneX} from '../components/device'
 
 type Props = {
 	view: ViewType,
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
 		paddingTop: cellVerticalPadding,
 		paddingBottom: cellVerticalPadding / 2,
 		paddingHorizontal: cellHorizontalPadding,
-		borderRadius: Platform.OS === 'ios' ? 6 : 3,
+		borderRadius: Platform.OS === 'ios' ? (iPhoneX ? 17 : 6) : 3,
 
 		elevation: 2,
 
