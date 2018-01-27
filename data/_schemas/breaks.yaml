@@ -1,16 +1,6 @@
 $schema: http://json-schema.org/draft-07/schema#
 
 additionalProperties: false
-required:
-  - weekZero
-  - weekOne
-  - fall
-  - thanksgiving
-  - christmasfest
-  - winter
-  - interim
-  - spring
-  - easter
 
 properties:
   weekZero: {$ref: '#/definitions/break'}
@@ -22,17 +12,9 @@ properties:
   interim: {$ref: '#/definitions/break'}
   spring: {$ref: '#/definitions/break'}
   easter: {$ref: '#/definitions/break'}
-
-  applicable: {$ref: '#/definitions/applicable-to'}
-  schoolYear: {$ref: '#/definitions/school-year'}
-
+  seniorWeek: {$ref: '#/definitions/break'}
 
 definitions:
-  date-or-time:
-    anyOf:
-      - {type: string, format: date}
-      - {type: string, format: date-time}
-
   break:
     additionalProperties: false
     required: [description, start, end]
@@ -43,17 +25,7 @@ definitions:
       start: {$ref: '#/definitions/date-or-time'}
       end: {$ref: '#/definitions/date-or-time'}
 
-  school-year:
-    additionalProperties: false
-    required: [start, end, endForSeniors]
-    properties:
-      start: {$ref: '#/definitions/date-or-time'}
-      end: {$ref: '#/definitions/date-or-time'}
-      endForSeniors: {$ref: '#/definitions/date-or-time'}
-
-  applicable-to:
-    additionalProperties: false
-    required: [from, to]
-    properties:
-      from: {type: number}
-      to: {type: number}
+  date-or-time:
+    anyOf:
+      - {type: string, format: date}
+      - {type: string, format: date-time}

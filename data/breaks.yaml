@@ -1,26 +1,15 @@
 # `hasMealPlan` denotes if meal plans are active over the break
 # `limitedAccess` denotes if there is limited access to campus over the break
 
-# `applicable` denotes which calendar years this schedule applies to
-applicable: {from: 2016, to: 2017}
-
-# Unlike the other keys, `schoolYear` denotes when this schedule applies.
-# If schoolYear doesn't apply, it switches to summer hours.
-schoolYear:
-  start: !!timestamp 2016-08-29
-  end: !!timestamp 2017-05-24T10:00:00
-  # endForSeniors is a special key for denoting senior end time, vs. general end time
-  endForSeniors: !!timestamp 2017-05-29T11:00:00
-
 weekZero:
-  description: The week where campus is prepared for incoming students.
+  description: 'The week where campus is prepared for incoming students.'
   hasMealPlan: true
   limitedAccess: true
   start: !!timestamp 2016-08-29
   end: !!timestamp 2016-09-02
 
 weekOne:
-  description: New students week!
+  description: 'New students week!'
   hasMealPlan: true
   limitedAccess: true
   start: !!timestamp 2016-09-03
@@ -40,6 +29,7 @@ thanksgiving:
 
 christmasfest:
   description: 'Welcome, visitors! Students, stay warm!'
+  hasMealPlan: true
   start: !!timestamp 2016-12-01
   end: !!timestamp 2016-12-04
 
@@ -51,7 +41,7 @@ winter:
   end: !!timestamp 2017-01-01T10:00:00
 
 interim:
-  description: It's finally over! Relax and prepare for round 3.
+  description: "It's finally over! Relax and prepare for round 3."
   hasMealPlan: false
   start: !!timestamp 2017-01-28T14:00:00
   end: !!timestamp 2017-02-05
@@ -67,3 +57,10 @@ easter:
   hasMealPlan: false
   start: !!timestamp 2017-04-14
   end: !!timestamp 2017-04-17T10:00:00
+
+seniorWeek:
+  description: 'Congrats, seniors!'
+  hasMealPlan: true
+  limitedAccess: true
+  start: !!timestamp 2017-05-29T11:00:00
+  end: !!timestamp 2017-05-29T11:00:00
