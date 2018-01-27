@@ -15,15 +15,18 @@ export function isBuildingOpen(info: BuildingType, m: moment): boolean {
 		return false
 	}
 
-	let results = schedules.map(set => {
-		if (set.isPhysicallyOpen === false) {
+	let results = schedules.map(sched => {
+		if (sched.closed) {
 			return false
 		}
-		if (set.closedForChapelTime && isChapelTime(m)) {
+		if (sched.isPhysicallyOpen === false) {
+			return false
+		}
+		if (sched.closedForChapelTime && isChapelTime(m)) {
 			return false
 		}
 
-		let filteredSchedules = set.hours.filter(sched =>
+		let filteredSchedules = sched.hours.filter(sched =>
 			sched.days.includes(dayOfWeek),
 		)
 		if (!filteredSchedules.length) {
