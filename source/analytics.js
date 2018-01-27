@@ -55,3 +55,6 @@ export function trackStreamError(streamName: string) {
 
 export const trackBuildingView = (buildingName: string) =>
 	tracker.trackEvent('building-hours', 'open', {label: buildingName})
+
+export const trackDefinitionView = (word: string) =>
+	tracker.trackEvent('dictionary', 'open', {label: word})

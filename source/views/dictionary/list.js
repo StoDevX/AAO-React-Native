@@ -15,7 +15,7 @@ import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {tracker} from '../../analytics'
+import {trackDefinitionView} from '../../analytics'
 import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
@@ -98,7 +98,7 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 	}
 
 	onPressRow = (data: WordType) => {
-		tracker.trackEvent('dictionary', data.word)
+		trackDefinitionView(data.word)
 		this.props.navigation.navigate('DictionaryDetailView', {item: data})
 	}
 
