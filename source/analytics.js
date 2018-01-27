@@ -52,3 +52,6 @@ export function trackStreamPause(streamName: string) {
 export function trackStreamError(streamName: string) {
 	tracker.trackEvent('stream', 'error', streamName)
 }
+
+export const trackBuildingView = (buildingName: string) =>
+	tracker.trackEvent('building-hours', 'open', {label: buildingName})
