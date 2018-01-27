@@ -9,17 +9,8 @@ export type BuildingStatusType =
 
 export type DayOfWeekEnumType = 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa' | 'Su'
 
-export type BreakNameEnumType =
-	| 'fall'
-	| 'thanksgiving'
-	| 'christmasfest'
-	| 'winter'
-	| 'interim'
-	| 'spring'
-	| 'easter'
-	| 'summer'
-
 export type BuildingScheduleEntry = {
+	closed?: boolean,
 	days: Array<DayOfWeekEnumType>,
 	from: string,
 	to: string,
@@ -28,6 +19,7 @@ export type BuildingScheduleEntry = {
 export type BuildingSchedule = {
 	title: 'Hours' | string,
 	notes?: string,
+	closed?: boolean,
 	isPhysicallyOpen?: boolean,
 	closedForChapelTime?: boolean,
 	hours: Array<BuildingScheduleEntry>,
