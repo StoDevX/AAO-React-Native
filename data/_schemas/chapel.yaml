@@ -5,4 +5,10 @@ required: [chapelSchedule]
 properties:
   chapelSchedule:
     type: array
-    items: {$ref: '_defs.json#/definitions/day'}
+    items:
+      additionalProperties: false
+      required: [days, from, to]
+      properties:
+        days: {$ref: '_defs.json#/definitions/days-of-week'}
+        from: {$ref: '_defs.json#/definitions/time'}
+        to: {$ref: '_defs.json#/definitions/time'}
