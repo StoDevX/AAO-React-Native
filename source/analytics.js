@@ -58,3 +58,6 @@ export const trackBuildingView = (buildingName: string) =>
 
 export const trackDefinitionView = (word: string) =>
 	tracker.trackEvent('dictionary', 'open', {label: word})
+
+export const trackOrgOpen = (orgName: string) =>
+	tracker.trackEvent('student-org', 'open', orgName)
