@@ -4,14 +4,14 @@ import * as React from 'react'
 import {View, StyleSheet} from 'react-native'
 import {Card} from '../../components/card'
 import moment from 'moment-timezone'
-import type {NamedBuildingScheduleType} from '../types'
+import type {BuildingSchedule} from '../types'
 import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
 import {ScheduleRow} from './schedule-row'
 import {ButtonCell} from '../../components/cells/button'
 
 type Props = {
 	now: moment,
-	schedules: NamedBuildingScheduleType[],
+	schedules: BuildingSchedule[],
 	onProblemReport: () => any,
 }
 

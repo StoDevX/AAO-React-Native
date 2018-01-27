@@ -1,15 +1,11 @@
-/**
- * @flow
- *
- * An editor for individual building schedules.
- */
+// @flow
 
 import * as React from 'react'
 import xor from 'lodash/xor'
 import {View, ScrollView, Platform, Text, StyleSheet} from 'react-native'
 import moment from 'moment-timezone'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
-import type {SingleBuildingScheduleType, DayOfWeekEnumType} from '../types'
+import type {BuildingScheduleEntry, DayOfWeekEnumType} from '../types'
 import {Row} from '../../components/layout'
 import type {TopLevelViewPropsType} from '../../types'
 import {parseHours, blankSchedule} from '../lib'
@@ -24,8 +20,8 @@ type Props = TopLevelViewPropsType & {
 	navigation: {
 		state: {
 			params: {
-				set: SingleBuildingScheduleType,
-				onEditSet: (set: SingleBuildingScheduleType) => any,
+				set: BuildingScheduleEntry,
+				onEditSet: (set: BuildingScheduleEntry) => any,
 				onDeleteSet: () => any,
 			},
 		},
@@ -33,7 +29,7 @@ type Props = TopLevelViewPropsType & {
 }
 
 type State = {
-	set: ?SingleBuildingScheduleType,
+	set: ?BuildingScheduleEntry,
 }
 
 export class BuildingHoursScheduleEditorView extends React.PureComponent<

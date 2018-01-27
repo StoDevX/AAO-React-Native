@@ -1,8 +1,4 @@
-/**
- * @flow
- *
- * Building Hours "report a problem" screen.
- */
+// @flow
 
 import * as React from 'react'
 import {ScrollView, View, StyleSheet, Text} from 'react-native'
@@ -15,28 +11,28 @@ import * as c from '../../components/colors'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import type {
 	BuildingType,
-	NamedBuildingScheduleType,
-	SingleBuildingScheduleType,
+	BuildingSchedule,
+	BuildingScheduleEntry,
 } from '../types'
 import type {TopLevelViewPropsType} from '../../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
 
 const styles = StyleSheet.create({
-	helpWrapper: {
+	wrapper: {
 		backgroundColor: c.white,
 		borderWidth: StyleSheet.hairlineWidth,
 		borderTopColor: c.iosHeaderTopBorder,
 		borderBottomColor: c.iosHeaderBottomBorder,
 		marginBottom: 10,
 	},
-	helpTitle: {
+	title: {
 		fontSize: 16,
 		fontWeight: 'bold',
 		paddingTop: 15,
 		paddingHorizontal: 15,
 	},
-	helpDescription: {
+	description: {
 		fontSize: 14,
 		paddingTop: 5,
 		paddingBottom: 15,
@@ -67,17 +63,17 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	openEditor = (
 		scheduleIdx: number,
 		setIdx: number,
-		set: ?SingleBuildingScheduleType = null,
+		set: ?BuildingScheduleEntry = null,
 	) => {
 		this.props.navigation.navigate('BuildingHoursScheduleEditorView', {
 			initialSet: set,
-			onEditSet: (editedData: SingleBuildingScheduleType) =>
+			onEditSet: (editedData: BuildingScheduleEntry) =>
 				this.editHoursRow(scheduleIdx, setIdx, editedData),
 			onDeleteSet: () => this.deleteHoursRow(scheduleIdx, setIdx),
 		})
 	}
 
-	editSchedule = (idx: number, newSchedule: NamedBuildingScheduleType) => {
+	editSchedule = (idx: number, newSchedule: BuildingSchedule) => {
 		this.setState(state => {
 			const schedules = [...state.building.schedule]
 			schedules.splice(idx, 1, newSchedule)
@@ -147,7 +143,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 	editHoursRow = (
 		scheduleIdx: number,
 		setIdx: number,
-		newData: SingleBuildingScheduleType,
+		newData: BuildingScheduleEntry,
 	) => {
 		this.setState(state => {
 			const schedules = [...state.building.schedule]
@@ -199,9 +195,9 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 
 		return (
 			<ScrollView>
-				<View style={styles.helpWrapper}>
-					<Text style={styles.helpTitle}>Thanks for spotting a problem!</Text>
-					<Text style={styles.helpDescription}>
+				<View style={styles.wrapper}>
+					<Text style={styles.title}>Thanks for spotting a problem!</Text>
+					<Text style={styles.description}>
 						If you could tell us what the new times are, we&rsquo;d greatly
 						appreciate it.
 					</Text>
@@ -238,15 +234,15 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 }
 
 type EditableScheduleProps = {
-	schedule: NamedBuildingScheduleType,
+	schedule: BuildingSchedule,
 	scheduleIndex: number,
 	addRow: (idx: number) => any,
 	editRow: (
 		schedIdx: number,
 		setIdx: number,
-		set: SingleBuildingScheduleType,
+		set: BuildingScheduleEntry,
 	) => any,
-	onEditSchedule: (idx: number, set: NamedBuildingScheduleType) => any,
+	onEditSchedule: (idx: number, set: BuildingSchedule) => any,
 	onDelete: (idx: number) => any,
 }
 
@@ -279,7 +275,7 @@ class EditableSchedule extends React.PureComponent<EditableScheduleProps> {
 		this.props.onDelete(this.props.scheduleIndex)
 	}
 
-	openEditor = (setIndex: number, hoursSet: SingleBuildingScheduleType) => {
+	openEditor = (setIndex: number, hoursSet: BuildingScheduleEntry) => {
 		this.props.editRow(this.props.scheduleIndex, setIndex, hoursSet)
 	}
 
@@ -350,9 +346,9 @@ const NotesCell = ({text, onChange}: TextFieldProps) => (
 )
 
 type TimesCellProps = {
-	set: SingleBuildingScheduleType,
+	set: BuildingScheduleEntry,
 	setIndex: number,
-	onPress: (setIdx: number, set: SingleBuildingScheduleType) => any,
+	onPress: (setIdx: number, set: BuildingScheduleEntry) => any,
 	now: moment,
 }
 

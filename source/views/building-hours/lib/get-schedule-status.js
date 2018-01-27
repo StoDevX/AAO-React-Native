@@ -1,6 +1,6 @@
 // @flow
 import moment from 'moment-timezone'
-import type {SingleBuildingScheduleType} from '../types'
+import type {BuildingScheduleEntry} from '../types'
 
 import {parseHours} from './parse-hours'
 
@@ -17,7 +17,7 @@ const timeBetween = (start, end) =>
 		.to(end)
 
 export function getScheduleStatusAtMoment(
-	schedule: SingleBuildingScheduleType,
+	schedule: BuildingScheduleEntry,
 	m: moment,
 ): string {
 	let {open, close} = parseHours(schedule, m)

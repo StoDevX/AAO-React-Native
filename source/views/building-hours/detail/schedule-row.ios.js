@@ -6,13 +6,13 @@
 
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import type {SingleBuildingScheduleType} from '../types'
+import type {BuildingScheduleEntry} from '../types'
 import moment from 'moment-timezone'
 import {Cell} from 'react-native-tableview-simple'
 import {formatBuildingTimes, summarizeDays} from '../lib'
 
 type Props = {
-	set: SingleBuildingScheduleType,
+	set: BuildingScheduleEntry,
 	isActive: boolean,
 	now: moment,
 }

@@ -1,13 +1,13 @@
 // @flow
 import moment from 'moment-timezone'
-import type {SingleBuildingScheduleType} from '../types'
+import type {BuildingScheduleEntry} from '../types'
 
 import {TIME_FORMAT, CENTRAL_TZ} from './constants'
 
 type HourPairType = {open: moment, close: moment}
 
 export function parseHours(
-	{from: fromTime, to: toTime}: SingleBuildingScheduleType,
+	{from: fromTime, to: toTime}: BuildingScheduleEntry,
 	m: moment,
 ): HourPairType {
 	let dayOfYear = m.dayOfYear()

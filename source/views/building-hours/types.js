@@ -19,22 +19,25 @@ export type BreakNameEnumType =
 	| 'easter'
 	| 'summer'
 
-export type SingleBuildingScheduleType = {
-	days: DayOfWeekEnumType[],
+export type BuildingScheduleEntry = {
+	days: Array<DayOfWeekEnumType>,
 	from: string,
 	to: string,
 }
 
-export type NamedBuildingScheduleType = {
+export type BuildingSchedule = {
 	title: 'Hours' | string,
 	notes?: string,
 	isPhysicallyOpen?: boolean,
 	closedForChapelTime?: boolean,
-	hours: SingleBuildingScheduleType[],
+	hours: Array<BuildingScheduleEntry>,
 }
 
-export type BreakScheduleContainerType = {
-	[key: BreakNameEnumType]: NamedBuildingScheduleType[],
+export type OverrideBuildingSchedule = {
+	period: string | Date | {start: Date, end: Date},
+	isNotice?: boolean,
+	noticeMessage?: string,
+	schedule: Array<BuildingSchedule>,
 }
 
 export type BuildingType = {
@@ -45,6 +48,6 @@ export type BuildingType = {
 	noticeMessage?: string,
 	image?: string,
 	category: string,
-	schedule: NamedBuildingScheduleType[],
-	breakSchedule?: BreakScheduleContainerType,
+	schedule: Array<BuildingSchedule>,
+	overrides?: Array<OverrideBuildingSchedule>,
 }

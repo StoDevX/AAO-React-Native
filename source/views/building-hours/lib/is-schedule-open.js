@@ -1,12 +1,12 @@
 // @flow
 import moment from 'moment-timezone'
-import type {SingleBuildingScheduleType} from '../types'
+import type {BuildingScheduleEntry} from '../types'
 
 import {parseHours} from './parse-hours'
 import {isChapelTime} from './chapel'
 
 export function isScheduleReallyOpenAtMoment(
-	schedule: SingleBuildingScheduleType,
+	schedule: BuildingScheduleEntry,
 	m: moment,
 ): boolean {
 	let {open, close} = parseHours(schedule, m)
@@ -14,7 +14,7 @@ export function isScheduleReallyOpenAtMoment(
 }
 
 export function isScheduleOpenAtMoment(
-	schedule: SingleBuildingScheduleType,
+	schedule: BuildingScheduleEntry,
 	m: moment,
 ): boolean {
 	if (isChapelTime(m)) {

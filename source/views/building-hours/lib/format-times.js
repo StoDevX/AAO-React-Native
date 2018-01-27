@@ -1,6 +1,6 @@
 // @flow
 import moment from 'moment-timezone'
-import type {SingleBuildingScheduleType} from '../types'
+import type {BuildingScheduleEntry} from '../types'
 
 import {RESULT_FORMAT} from './constants'
 import {parseHours} from './parse-hours'
@@ -16,7 +16,7 @@ function formatSingleTime(time: moment): string {
 }
 
 export function formatBuildingTimes(
-	schedule: SingleBuildingScheduleType,
+	schedule: BuildingScheduleEntry,
 	m: moment,
 ): string {
 	const {open, close} = parseHours(schedule, m)

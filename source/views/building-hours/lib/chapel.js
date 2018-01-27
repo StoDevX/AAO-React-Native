@@ -1,6 +1,6 @@
 // @flow
 import moment from 'moment-timezone'
-import type {SingleBuildingScheduleType} from '../types'
+import type {BuildingScheduleEntry} from '../types'
 
 import {getDayOfWeek} from './get-day-of-week'
 import {isScheduleReallyOpenAtMoment} from './is-schedule-open'
@@ -12,7 +12,7 @@ const {chapelSchedule} = chapelData
 
 export function isChapelTime(
 	m: moment,
-	schedules: SingleBuildingScheduleType[] = chapelSchedule,
+	schedules: BuildingScheduleEntry[] = chapelSchedule,
 ): boolean {
 	let dayOfWeek = getDayOfWeek(m)
 	let sched = schedules.find(sched => sched.days.includes(dayOfWeek))
@@ -26,7 +26,7 @@ export function isChapelTime(
 
 export function formatChapelTime(
 	m: moment,
-	schedules: SingleBuildingScheduleType[] = chapelSchedule,
+	schedules: BuildingScheduleEntry[] = chapelSchedule,
 ): string {
 	let dayOfWeek = getDayOfWeek(m)
 	let sched = schedules.find(sched => sched.days.includes(dayOfWeek))
@@ -40,7 +40,7 @@ export function formatChapelTime(
 
 export function getTimeUntilChapelCloses(
 	m: moment,
-	schedules: SingleBuildingScheduleType[] = chapelSchedule,
+	schedules: BuildingScheduleEntry[] = chapelSchedule,
 ): string {
 	let dayOfWeek = getDayOfWeek(m)
 	let sched = schedules.find(sched => sched.days.includes(dayOfWeek))

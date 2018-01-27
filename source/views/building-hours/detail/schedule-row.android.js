@@ -7,12 +7,12 @@
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import moment from 'moment-timezone'
-import type {SingleBuildingScheduleType} from '../types'
+import type {BuildingScheduleEntry} from '../types'
 
 import {formatBuildingTimes, summarizeDays} from '../lib'
 
 type Props = {
-	set: SingleBuildingScheduleType,
+	set: BuildingScheduleEntry,
 	isActive: boolean,
 	now: moment,
 }
