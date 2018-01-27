@@ -39,6 +39,7 @@ export async function isLoggedIn(): Promise<boolean> {
 export async function performLogin(
 	username?: string,
 	password?: string,
+	{remainingAttempts = 1}: {remainingAttempts: number} = {},
 ): Promise<boolean> {
 	if (!username || !password) {
 		return false
@@ -52,6 +53,11 @@ export async function performLogin(
 			body: form,
 		})
 	} catch (err) {
+		const networkFailure = err.message === 'Network request failed'
+		if (networkFailure && remainingAttempts > 0) {
+			// console.log(`login failed; trying ${remainingAttempts - 1} more time(s)`)
+			return performLogin(username, password, {remainingAttempts: remainingAttempts - 1})
+		}
 		return false
 	}
 
