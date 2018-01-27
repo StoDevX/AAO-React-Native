@@ -200,7 +200,7 @@ export const navyToNavy = ['rgb(32,67,107)', 'rgb(0,48,104)']
 
 // MARK: homescreen button foregrounds
 export const homescreenForegroundLight = 'rgba(255, 255, 255, 0.9)'
-export const homescreenForegroundDark = 'rgba(0, 0, 0, 0.7)'
+export const homescreenForegroundDark = 'rgba(0, 0, 0, 0.65)'
 
 // MARK: St. Olaf colors
 export const sto = {
