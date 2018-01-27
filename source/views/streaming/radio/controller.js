@@ -11,6 +11,11 @@ import {
 	Platform,
 } from 'react-native'
 import noop from 'lodash/noop'
+import {
+	trackStreamPlay,
+	trackStreamPause,
+	trackStreamError,
+} from '../../../analytics'
 import * as c from '../../components/colors'
 import {callPhone} from '../../components/call-phone'
 import {Row} from '../../components/layout'
@@ -70,10 +75,12 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 	}
 
 	handleStreamPlay = () => {
+		trackStreamPlay(this.props.stationName)
 		this.setState(() => ({playState: 'playing'}))
 	}
 
 	handleStreamPause = () => {
+		trackStreamPause(this.props.stationName)
 		this.setState(() => ({playState: 'paused'}))
 	}
 
@@ -82,6 +89,7 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 	}
 
 	handleStreamError = (e: {code: number, message: string}) => {
+		trackStreamError(this.props.stationName)
 		this.setState(() => ({streamError: e, playState: 'paused'}))
 	}
 

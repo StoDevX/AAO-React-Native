@@ -4,6 +4,7 @@ import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import * as c from '../components/colors'
 import toPairs from 'lodash/toPairs'
+import {trackCalendarEventOpen} from '../../analytics'
 import type {TopLevelViewPropsType} from '../types'
 import type {EventType, PoweredBy} from './types'
 import groupBy from 'lodash/groupBy'
@@ -47,6 +48,7 @@ export class EventList extends React.PureComponent<Props> {
 
 	onPressEvent = (event: EventType) => {
 		event = cleanEvent(event)
+		trackCalendarEventOpen(`${event.title} (${event.startTime.toISOString()})`)
 		this.props.navigation.navigate('EventDetailView', {
 			event,
 			poweredBy: this.props.poweredBy,
