@@ -65,7 +65,9 @@ function ensureClosedSchedulesHaveTimes(building) {
 
 	for (let schedule of schedules) {
 		if (schedule.closed && !schedule.hours) {
-			schedule.hours = [{closed: true, from: '12:00am', to: '12:00am', days: []}]
+			schedule.hours = [
+				{closed: true, from: '12:00am', to: '12:00am', days: []},
+			]
 		}
 	}
 
