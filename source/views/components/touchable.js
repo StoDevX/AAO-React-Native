@@ -15,7 +15,7 @@ type Props = {|
 	accessibilityTraits?: string,
 	activeOpacity?: number,
 	borderless?: boolean,
-	children?: React.Element<*>,
+	children?: React.Node,
 	containerStyle?: any,
 	highlight?: boolean,
 	onPress?: () => any,
