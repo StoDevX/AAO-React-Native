@@ -7,12 +7,15 @@ export function clearAsyncStorage() {
 
 /// MARK: Utilities
 
+// eslint-disable-next-line no-unused-vars
 function setItem(key: string, value: mixed) {
 	return AsyncStorage.setItem(`aao:${key}`, JSON.stringify(value))
 }
+// eslint-disable-next-line no-unused-vars
 function getItem(key: string): Promise<?any> {
 	return AsyncStorage.getItem(`aao:${key}`).then(stored => JSON.parse(stored))
 }
+// eslint-disable-next-line no-unused-vars
 function removeItem(key: string): Promise<void> {
 	return AsyncStorage.removeItem(`aao:${key}`)
 }
@@ -60,27 +63,6 @@ export function setAcknowledgementStatus(status: boolean) {
 }
 export function getAcknowledgementStatus(): Promise<boolean> {
 	return getItemAsBoolean(acknowledgementStatusKey)
-}
-
-/// MARK: Credentials
-
-const tokenValidKey = 'credentials:valid'
-export function setTokenValid(valid: boolean) {
-	return setItem(tokenValidKey, valid)
-}
-export function getTokenValid(): Promise<boolean> {
-	return getItemAsBoolean(tokenValidKey)
-}
-export function clearTokenValid(): Promise<any> {
-	return removeItem(tokenValidKey)
-}
-
-const credentialsValidKey = 'olafCredentials:valid'
-export function setCredentialsValid(valid: boolean) {
-	return setItem(credentialsValidKey, valid)
-}
-export function getCredentialsValid(): Promise<boolean> {
-	return getItemAsBoolean(credentialsValidKey)
 }
 
 /// MARK: Favorite Buildings
