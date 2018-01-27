@@ -9,6 +9,18 @@ export type BuildingStatusType =
 
 export type DayOfWeekEnumType = 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa' | 'Su'
 
+export type BreakCollection = {
+	[key: string]: BreakOutlineSchedule,
+}
+
+export type BreakOutlineSchedule = {
+	description: string,
+	hasMealPlan?: boolean,
+	limitedAccess?: boolean,
+	start: string,
+	end: string,
+}
+
 export type BuildingScheduleEntry = {
 	closed?: boolean,
 	days: Array<DayOfWeekEnumType>,

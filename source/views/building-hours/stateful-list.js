@@ -7,8 +7,9 @@ import {type ReduxState} from '../../flux'
 import {connect} from 'react-redux'
 import moment from 'moment-timezone'
 import type {TopLevelViewPropsType} from '../types'
-import type {BuildingType} from './types'
-import * as defaultData from '../../../docs/building-hours.json'
+import type {BuildingType, BreakCollection} from './types'
+import * as bundledHours from '../../../docs/building-hours.json'
+import * as bundledBreaks from '../../../docs/breaks.json'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
@@ -16,7 +17,30 @@ import delay from 'delay'
 import {CENTRAL_TZ} from './lib'
 import {GH_PAGES_URL} from '../../globals'
 
+function promoteBreakSchedules(
+	buildings: Array<BuildingType>,
+	breaks: BreakCollection,
+) {
+	const thisBreakName = ''
+
+	for (let building of buildings) {
+
+	}
+}
+
 const buildingHoursUrl = GH_PAGES_URL('building-hours.json')
+const fetchBuildingHours = (): {data: Array<BuildingType>} =>
+	fetchJson(buildingHoursUrl).catch(err => {
+		reportNetworkProblem(err)
+		return bundledHours
+	})
+
+const breakDatesUrl = GH_PAGES_URL('breaks.json')
+const fetchBreakDates = (): {data: BreakCollection} =>
+	fetchJson(breakDatesUrl).catch(err => {
+		reportNetworkProblem(err)
+		return bundledBreaks
+	})
 
 const groupBuildings = (buildings: BuildingType[], favorites: string[]) => {
 	const favoritesGroup = {
@@ -63,8 +87,8 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		loading: false,
 		// now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
 		now: moment.tz(CENTRAL_TZ),
-		buildings: groupBuildings(defaultData.data, this.props.favoriteBuildings),
-		allBuildings: defaultData.data,
+		buildings: groupBuildings(bundledHours.data, this.props.favoriteBuildings),
+		allBuildings: bundledHours.data,
 		intervalId: 0,
 	}
 
@@ -109,13 +133,18 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 	}
 
 	fetchData = async () => {
-		let {data: buildings} = await fetchJson(buildingHoursUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
+		let [{data: buildings}, {data: breaks}] = await Promise.all([
+			fetchBuildingHours(),
+			fetchBreakDates(),
+		])
+
 		if (process.env.NODE_ENV === 'development') {
-			buildings = defaultData.data
+			buildings = bundledHours.data
+			breaks = bundledBreaks.data
 		}
+
+		buildings = promoteBreakSchedules(buildings, breaks)
+
 		this.setState(() => ({
 			buildings: groupBuildings(buildings, this.props.favoriteBuildings),
 			allBuildings: buildings,
