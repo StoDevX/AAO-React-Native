@@ -62,19 +62,6 @@ export function getAcknowledgementStatus(): Promise<boolean> {
 	return getItemAsBoolean(acknowledgementStatusKey)
 }
 
-/// MARK: Credentials
-
-const tokenValidKey = 'credentials:valid'
-export function setTokenValid(valid: boolean) {
-	return setItem(tokenValidKey, valid)
-}
-export function getTokenValid(): Promise<boolean> {
-	return getItemAsBoolean(tokenValidKey)
-}
-export function clearTokenValid(): Promise<any> {
-	return removeItem(tokenValidKey)
-}
-
 /// MARK: Favorite Buildings
 
 const favoriteBuildingsKey = 'buildings:favorited'
