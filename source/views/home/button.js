@@ -14,10 +14,12 @@ type Props = {
 }
 
 export function HomeScreenButton({view, onPress}: Props) {
+	const foreground =
+		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 	let contents = (
 		<React.Fragment>
-			<Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
-			<Text style={styles.rectangleButtonText}>{view.title}</Text>
+			<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
+			<Text style={[foreground, styles.text]}>{view.title}</Text>
 		</React.Fragment>
 	)
 
@@ -76,14 +78,18 @@ const styles = StyleSheet.create({
 	},
 
 	// Text styling in buttons
-	rectangleButtonIcon: {
-		color: c.white,
+	icon: {
 		backgroundColor: c.transparent,
 	},
-	rectangleButtonText: {
-		color: c.white,
+	text: {
 		backgroundColor: c.transparent,
 		fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
 		fontSize: 14,
+	},
+	lightForeground: {
+		color: c.homescreenForegroundLight,
+	},
+	darkForeground: {
+		color: c.homescreenForegroundDark,
 	},
 })
