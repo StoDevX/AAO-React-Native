@@ -7,12 +7,15 @@ export function clearAsyncStorage() {
 
 /// MARK: Utilities
 
+// eslint-disable-next-line no-unused-vars
 function setItem(key: string, value: mixed) {
 	return AsyncStorage.setItem(`aao:${key}`, JSON.stringify(value))
 }
+// eslint-disable-next-line no-unused-vars
 function getItem(key: string): Promise<?any> {
 	return AsyncStorage.getItem(`aao:${key}`).then(stored => JSON.parse(stored))
 }
+// eslint-disable-next-line no-unused-vars
 function removeItem(key: string): Promise<void> {
 	return AsyncStorage.removeItem(`aao:${key}`)
 }
