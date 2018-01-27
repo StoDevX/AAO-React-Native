@@ -13,11 +13,7 @@ import {
 	setAcknowledgementStatus,
 } from '../../lib/storage'
 
-import {
-	trackLogOut,
-	trackLogIn,
-	trackLoginFailure,
-} from '../../analytics'
+import {trackLogOut, trackLogIn, trackLoginFailure} from '../../analytics'
 
 import {type ReduxState} from '../index'
 import {type UpdateBalancesType} from './sis'

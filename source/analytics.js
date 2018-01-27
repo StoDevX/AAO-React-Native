@@ -94,11 +94,9 @@ export const trackCalendarEventOpen = (eventTitle: string) =>
 export const trackStudentJobOpen = (jobTitle: string) =>
 	tracker.trackEvent('student-jobs', 'open-posting', {label: jobTitle})
 
-export const trackLogIn = () =>
-	tracker.trackEvent('account', 'log-in', {})
+export const trackLogIn = () => tracker.trackEvent('account', 'log-in', {})
 
 export const trackLoginFailure = (reason: string) =>
 	tracker.trackEvent('account', 'login-failure', {label: reason})
 
-export const trackLogOut = () =>
-	tracker.trackEvent('account', 'log-out', {})
+export const trackLogOut = () => tracker.trackEvent('account', 'log-out', {})
