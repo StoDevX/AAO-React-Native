@@ -37,8 +37,5 @@ export const collectData = async () => ({
 	dateRecorded: new Date().toJSON(),
 })
 
-export const reportToServer = (data: Object) =>
-	fetch(
-		'https://www.stolaf.edu/apps/all-about-olaf/index.cfm?fuseaction=Submit',
-		{method: 'POST', body: JSON.stringify(data)},
-	)
+export const reportToServer = (url: string, data: Object) =>
+	fetch(url, {method: 'POST', body: JSON.stringify(data)})

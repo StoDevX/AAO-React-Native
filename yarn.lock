@@ -162,9 +162,9 @@ ajv-keywords@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-2.1.1.tgz#617997fc5f60576894c435f940d819e135b80762"
 
-ajv@6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.0.1.tgz#2898580a9f3def5f9c85dfead7a2223ef13cf3da"
+ajv@6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.1.0.tgz#adc4b3dd64b2d8740d13c5b38e4596115970e59d"
   dependencies:
     fast-deep-equal "^1.0.0"
     fast-json-stable-stringify "^2.0.0"
@@ -1610,9 +1610,9 @@ danger-plugin-yarn@1.2.0:
   optionalDependencies:
     esdoc "^0.5.2"
 
-danger@3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-3.1.1.tgz#5a153e2e9f06607fe963ff283f0ad4fff00d4074"
+danger@3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-3.1.3.tgz#34c0526d893001d5fe611ad57035e66ad31eca63"
   dependencies:
     "@octokit/rest" "^14.0.4"
     babel-polyfill "^6.23.0"
@@ -1775,14 +1775,7 @@ directory-tree@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/directory-tree/-/directory-tree-2.0.0.tgz#c0a5fa0d642a1b1b7d10351b3c1db429770d8946"
 
-doctrine@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-2.0.0.tgz#c73d8d2909d22291e1a007a395804da8b665fe63"
-  dependencies:
-    esutils "^2.0.2"
-    isarray "^1.0.0"
-
-doctrine@^2.1.0:
+doctrine@^2.0.2, doctrine@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-2.1.0.tgz#5cd01fc101621b42c4cd7f5d1a66243716d3f39d"
   dependencies:
@@ -1986,9 +1979,9 @@ eslint-plugin-babel@4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/eslint-plugin-babel/-/eslint-plugin-babel-4.1.2.tgz#79202a0e35757dd92780919b2336f1fa2fe53c1e"
 
-eslint-plugin-flowtype@2.41.1:
-  version "2.41.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.41.1.tgz#0996e1ea1d501dfc945802453a304ae9e8098b78"
+eslint-plugin-flowtype@2.42.0:
+  version "2.42.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.42.0.tgz#7fcc98df4ed9482a22ac10ba4ca48d649c4c733a"
   dependencies:
     lodash "^4.15.0"
 
@@ -1996,13 +1989,13 @@ eslint-plugin-react-native@3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-react-native/-/eslint-plugin-react-native-3.2.0.tgz#3ec47907858bd07275248bef2de3142ee5c1efb1"
 
-eslint-plugin-react@7.5.1:
-  version "7.5.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.5.1.tgz#52e56e8d80c810de158859ef07b880d2f56ee30b"
+eslint-plugin-react@7.6.0:
+  version "7.6.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.6.0.tgz#351651188c74c5b2fecc2717e3936b7207baa728"
   dependencies:
-    doctrine "^2.0.0"
+    doctrine "^2.0.2"
     has "^1.0.1"
-    jsx-ast-utils "^2.0.0"
+    jsx-ast-utils "^2.0.1"
     prop-types "^15.6.0"
 
 eslint-scope@^3.7.1, eslint-scope@~3.7.1:
@@ -2981,7 +2974,7 @@ isarray@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-0.0.1.tgz#8a18acfca9a8f4177e09abfc6038939b05d1eedf"
 
-isarray@1.0.0, isarray@^1.0.0, isarray@~1.0.0:
+isarray@1.0.0, isarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
 
@@ -3499,7 +3492,7 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-jsx-ast-utils@^2.0.0:
+jsx-ast-utils@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/jsx-ast-utils/-/jsx-ast-utils-2.0.1.tgz#e801b1b39985e20fffc87b40e3748080e2dcac7f"
   dependencies:
@@ -4604,9 +4597,9 @@ pretty-format@^4.2.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/pretty-format/-/pretty-format-4.3.1.tgz#530be5c42b3c05b36414a7a2a4337aa80acd0e8d"
 
-pretty-quick@1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/pretty-quick/-/pretty-quick-1.2.2.tgz#4ebb2bafa86aa5f67948c3d2ead6f196770f9e32"
+pretty-quick@1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/pretty-quick/-/pretty-quick-1.2.3.tgz#4183a1a1d3da9906cf95243f57e9768fc2bf2e36"
   dependencies:
     chalk "^2.3.0"
     execa "^0.8.0"
@@ -4777,9 +4770,9 @@ react-native-drawer-layout@1.3.2:
   dependencies:
     react-native-dismiss-keyboard "1.0.0"
 
-react-native-google-analytics-bridge@5.5.0:
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-5.5.0.tgz#186b9c1e90f500b1efac9007e072aba9fb028804"
+react-native-google-analytics-bridge@5.5.2:
+  version "5.5.2"
+  resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-5.5.2.tgz#b416abc9c51079bccd3487f52d87072d1746c649"
 
 react-native-keychain@2.0.0:
   version "2.0.0"
@@ -4837,9 +4830,9 @@ react-native-vector-icons@4.5.0:
     prop-types "^15.5.10"
     yargs "^8.0.2"
 
-react-native@0.52.1:
-  version "0.52.1"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.52.1.tgz#68ca222f9c6a9bbe4a6f95896a5f9611c1311c31"
+react-native@0.52.2:
+  version "0.52.2"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.52.2.tgz#1ae9a4c4441bd6e54a8ffc8aae4ac2b5c7cccd68"
   dependencies:
     absolute-path "^0.0.0"
     art "^0.10.0"

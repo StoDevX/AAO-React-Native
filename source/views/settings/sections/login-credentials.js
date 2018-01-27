@@ -137,10 +137,13 @@ function mapStateToProps(state: ReduxState): ReduxStateProps {
 
 function mapDispatchToProps(dispatch): ReduxDispatchProps {
 	return {
-		logIn: (u, p) => dispatch(logInViaCredentials(u, p)),
 		logOut: () => dispatch(logOutViaCredentials()),
-		validateCredentials: (u, p) => dispatch(validateLoginCredentials(u, p)),
-		setCredentials: (u, p) => dispatch(setLoginCredentials(u, p)),
+		logIn: (username, password) =>
+			dispatch(logInViaCredentials({username, password})),
+		validateCredentials: (username, password) =>
+			dispatch(validateLoginCredentials({username, password})),
+		setCredentials: (username, password) =>
+			dispatch(setLoginCredentials({username, password})),
 	}
 }
 

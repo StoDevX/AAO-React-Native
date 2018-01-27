@@ -38,12 +38,23 @@ export class ToolView extends React.Component<Props, State> {
 	}
 
 	start = async () => {
+		let reportUrl =
+			'https://www.stolaf.edu/apps/all-about-olaf/wifi/index.cfm?fuseaction=Submit'
+
+		if (this.props.config.buttons && this.props.config.buttons.length >= 1) {
+			const btnConfig = this.props.config.buttons[0]
+			if (btnConfig.action === 'custom') {
+				reportUrl = btnConfig.params.url
+			}
+		}
+
 		this.setState(() => ({status: 'collecting', error: ''}))
 		const [position, device] = await Promise.all([getPosition(), collectData()])
 		this.setState(() => ({status: 'reporting'}))
+
 		try {
 			let data = {position, device, version: 1}
-			await retry(() => reportToServer(data), {retries: 10})
+			await retry(() => reportToServer(reportUrl, data), {retries: 10})
 			await delay(1000)
 			this.setState(() => ({status: 'done'}))
 		} catch (err) {

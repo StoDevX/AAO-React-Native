@@ -7,6 +7,7 @@ import type {ViewType} from '../views'
 import LinearGradient from 'react-native-linear-gradient'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
+import {iPhoneX} from '../components/device'
 
 type Props = {
 	view: ViewType,
@@ -14,6 +15,9 @@ type Props = {
 }
 
 export function HomeScreenButton({view, onPress}: Props) {
+	const foreground =
+		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
+
 	return (
 		<TouchableButton
 			gradient={view.gradient}
@@ -22,8 +26,8 @@ export function HomeScreenButton({view, onPress}: Props) {
 			tint={view.tint}
 		>
 			<View style={styles.contents}>
-				<Icon name={view.icon} size={32} style={styles.icon} />
-				<Text style={styles.text}>{view.title}</Text>
+				<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
+				<Text style={[foreground, styles.text]}>{view.title}</Text>
 			</View>
 		</TouchableButton>
 	)
@@ -88,7 +92,7 @@ const cellHorizontalPadding = 4
 const styles = StyleSheet.create({
 	button: {
 		elevation: 2,
-		borderRadius: Platform.OS === 'ios' ? 6 : 3,
+		borderRadius: Platform.OS === 'ios' ? (iPhoneX ? 17 : 6) : 3,
 
 		marginBottom: CELL_MARGIN,
 		marginLeft: CELL_MARGIN / 2,
@@ -103,13 +107,17 @@ const styles = StyleSheet.create({
 		paddingHorizontal: cellHorizontalPadding,
 	},
 	icon: {
-		color: c.white,
 		backgroundColor: c.transparent,
 	},
 	text: {
-		color: c.white,
 		backgroundColor: c.transparent,
 		fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
 		fontSize: 14,
+	},
+	lightForeground: {
+		color: c.homescreenForegroundLight,
+	},
+	darkForeground: {
+		color: c.homescreenForegroundDark,
 	},
 })
