@@ -13,19 +13,72 @@ properties:
   schedule:
     type: array
     items: {$ref: '#/definitions/schedule'}
-  breakSchedule:
-    type: object
+  overrides: {$ref: '#/definitions/overrides'}
 
 
 definitions:
+  overrides:
+    additionalProperties: false
+    required: [period, schedule]
+    properties:
+      period: {$ref: '#/definitions/period'}
+      isNotice: {type: boolean}
+      noticeMessage: {type: string}
+      schedule:
+        type: array
+        items: {$ref: '#/definitions/schedule'}
+
+  period:
+    oneOf:
+      - {$ref: '#/definitions/namedPeriod'}
+      - {$ref: '#/definitions/singleDatePeriod'}
+      - {$ref: '#/definitions/dateRangePeriod'}
+
+  namedPeriod:
+    type: string
+    enum:
+      - christmasfest
+      - easter
+      - fall
+      - interim
+      - seniorWeek
+      - spring
+      - summer
+      - thanksgiving
+      - weekOne
+      - weekZero
+      - winter
+
+  singleDatePeriod:
+    type: string
+    format: date
+
+  dateRangePeriod:
+    type: object
+    additionalProperties: false
+    required: [start, end]
+    properties:
+      start: {type: string, format: date}
+      end: {type: string, format: date}
+
   schedule:
     additionalProperties: false
     required: [title, hours]
     properties:
       title: {type: string}
       notes: {type: string}
+      closed: {type: boolean}
       closedForChapelTime: {type: boolean}
       isPhysicallyOpen: {type: boolean}
       hours:
         type: array
-        items: {$ref: '_defs.json#/definitions/day'}
+        items: {$ref: '#/definitions/day'}
+
+  day:
+    additionalProperties: false
+    required: [days, from, to]
+    properties:
+      days: {$ref: '_defs.json#/definitions/days-of-week'}
+      from: {$ref: '_defs.json#/definitions/time'}
+      to: {$ref: '_defs.json#/definitions/time'}
+      closed: {type: boolean}

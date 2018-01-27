@@ -17,11 +17,3 @@ definitions:
   days-of-week:
     type: array
     items: {$ref: '#/definitions/day-of-week'}
-
-  day:
-    additionalProperties: false
-    required: [days, from, to]
-    properties:
-      days: {$ref: '#/definitions/days-of-week'}
-      from: {$ref: '#/definitions/time'}
-      to: {$ref: '#/definitions/time'}
