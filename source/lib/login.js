@@ -13,11 +13,13 @@ const SIS_LOGIN_KEY = 'stolaf.edu'
 
 const empty = () => ({})
 
-type Credentials = {username?: string, password?: string}
+export type Credentials = {username: string, password: string}
+export type MaybeCredentials = {username?: string, password?: string}
+
 export function saveLoginCredentials({username, password}: Credentials) {
 	return setInternetCredentials(SIS_LOGIN_KEY, username, password).catch(empty)
 }
-export function loadLoginCredentials(): Promise<Credentials> {
+export function loadLoginCredentials(): Promise<MaybeCredentials> {
 	return getInternetCredentials(SIS_LOGIN_KEY).catch(empty)
 }
 export function clearLoginCredentials() {

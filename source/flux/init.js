@@ -19,17 +19,18 @@ import {updateBalances} from './parts/sis'
 
 async function loginCredentials(store) {
 	const {username, password} = await loadLoginCredentials()
-
 	if (!username || !password) {
 		return
 	}
-
 	store.dispatch(setLoginCredentials({username, password}))
 }
 
 async function validateOlafCredentials(store) {
-	const credentials = await loadLoginCredentials()
-	store.dispatch(validateLoginCredentials(credentials))
+	const {username, password} = await loadLoginCredentials()
+	if (!username || !password) {
+		return
+	}
+	store.dispatch(validateLoginCredentials({username, password}))
 }
 
 function netInfoIsConnected(store) {

@@ -4,6 +4,7 @@ import {
 	performLogin,
 	saveLoginCredentials,
 	clearLoginCredentials,
+	type Credentials,
 } from '../../lib/login'
 
 import {
@@ -61,7 +62,6 @@ export async function hasSeenAcknowledgement(): Promise<SisAlertSeenAction> {
 	return {type: SIS_ALERT_SEEN, payload: true}
 }
 
-type Credentials = {username?: string, password?: string}
 type SetCredentialsAction = {|
 	type: 'settings/SET_LOGIN_CREDENTIALS',
 	payload: Credentials,
