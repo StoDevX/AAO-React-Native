@@ -14,7 +14,8 @@ type Props = {
 }
 
 export function HomeScreenButton({view, onPress}: Props) {
-	const foreground = view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
+	const foreground =
+		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 	let contents = (
 		<React.Fragment>
 			<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
