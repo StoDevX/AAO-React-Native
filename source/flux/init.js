@@ -24,12 +24,12 @@ async function loginCredentials(store) {
 		return
 	}
 
-	store.dispatch(setLoginCredentials(username, password))
+	store.dispatch(setLoginCredentials({username, password}))
 }
 
 async function validateOlafCredentials(store) {
-	const {username, password} = await loadLoginCredentials()
-	store.dispatch(validateLoginCredentials(username, password))
+	const credentials = await loadLoginCredentials()
+	store.dispatch(validateLoginCredentials(credentials))
 }
 
 function netInfoIsConnected(store) {

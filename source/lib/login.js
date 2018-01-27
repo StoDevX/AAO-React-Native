@@ -1,31 +1,27 @@
 // @flow
-import * as Keychain from 'react-native-keychain'
+import {
+	setInternetCredentials,
+	getInternetCredentials,
+	resetInternetCredentials,
+} from 'react-native-keychain'
 
 import * as storage from './storage'
 import buildFormData from './formdata'
 import {OLECARD_AUTH_URL} from './financials/urls'
 
-const SIS_LOGIN_CREDENTIAL_KEY = 'stolaf.edu'
+const SIS_LOGIN_KEY = 'stolaf.edu'
 
-export function saveLoginCredentials(username: string, password: string) {
-	return Keychain.setInternetCredentials(
-		SIS_LOGIN_CREDENTIAL_KEY,
-		username,
-		password,
-	).catch(() => ({}))
+const empty = () => ({})
+
+type Credentials = {username?: string, password?: string}
+export function saveLoginCredentials({username, password}: Credentials) {
+	return setInternetCredentials(SIS_LOGIN_KEY, username, password).catch(empty)
 }
-export function loadLoginCredentials(): Promise<{
-	username?: string,
-	password?: string,
-}> {
-	return Keychain.getInternetCredentials(SIS_LOGIN_CREDENTIAL_KEY).catch(
-		() => ({}),
-	)
+export function loadLoginCredentials(): Promise<Credentials> {
+	return getInternetCredentials(SIS_LOGIN_KEY).catch(empty)
 }
 export function clearLoginCredentials() {
-	return Keychain.resetInternetCredentials(SIS_LOGIN_CREDENTIAL_KEY).catch(
-		() => ({}),
-	)
+	return resetInternetCredentials(SIS_LOGIN_KEY).catch(empty)
 }
 
 export async function isLoggedIn(): Promise<boolean> {
@@ -37,9 +33,8 @@ export async function isLoggedIn(): Promise<boolean> {
 }
 
 export async function performLogin(
-	username?: string,
-	password?: string,
-	{remainingAttempts = 1}: {remainingAttempts: number} = {},
+	{username, password}: Credentials,
+	{attempts = 3}: {attempts: number} = {},
 ): Promise<boolean> {
 	if (!username || !password) {
 		return false
@@ -54,9 +49,9 @@ export async function performLogin(
 		})
 	} catch (err) {
 		const networkFailure = err.message === 'Network request failed'
-		if (networkFailure && remainingAttempts > 0) {
-			// console.log(`login failed; trying ${remainingAttempts - 1} more time(s)`)
-			return performLogin(username, password, {remainingAttempts: remainingAttempts - 1})
+		if (networkFailure && attempts > 0) {
+			// console.log(`login failed; trying ${attempts - 1} more time(s)`)
+			return performLogin({username, password}, {attempts: attempts - 1})
 		}
 		return false
 	}
@@ -69,7 +64,7 @@ export async function performLogin(
 	}
 
 	await Promise.all([
-		saveLoginCredentials(username, password),
+		saveLoginCredentials({username, password}),
 		storage.setCredentialsValid(true),
 	])
 
