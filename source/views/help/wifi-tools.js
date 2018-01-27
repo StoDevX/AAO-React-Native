@@ -4,6 +4,9 @@ import deviceInfo from 'react-native-device-info'
 import networkInfo from 'react-native-network-info'
 import pkg from '../../../package.json'
 
+const SERVER_URL =
+	'https://www.stolaf.edu/apps/all-about-olaf/wifi/index.cfm?fuseaction=Submit'
+
 export const getIpAddress = (): Promise<?string> =>
 	new Promise(resolve => {
 		try {
@@ -38,7 +41,4 @@ export const collectData = async () => ({
 })
 
 export const reportToServer = (data: Object) =>
-	fetch(
-		'https://www.stolaf.edu/apps/all-about-olaf/index.cfm?fuseaction=Submit',
-		{method: 'POST', body: JSON.stringify(data)},
-	)
+	fetch(SERVER_URL, {method: 'POST', body: JSON.stringify(data)})
