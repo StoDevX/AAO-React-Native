@@ -9,6 +9,7 @@ import {getAnalyticsOptOut} from './lib/storage'
 
 const trackerId =
 	process.env.NODE_ENV === 'development' ? 'UA-90234209-1' : 'UA-90234209-2'
+
 export const tracker = new GoogleAnalyticsTracker(trackerId)
 
 function disableIfOptedOut() {
@@ -38,4 +39,16 @@ export function trackHomescreenOrder(order: string[]) {
 		{},
 		{'2': order.join(', ')},
 	)
+}
+
+export function trackStreamPlay(streamName: string) {
+	tracker.trackEvent('stream', 'play', streamName)
+}
+
+export function trackStreamPause(streamName: string) {
+	tracker.trackEvent('stream', 'pause', streamName)
+}
+
+export function trackStreamError(streamName: string) {
+	tracker.trackEvent('stream', 'error', streamName)
 }
