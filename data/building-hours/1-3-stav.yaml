@@ -10,21 +10,31 @@ schedule:
 
   - title: Lunch
     hours:
-      # - {days: [Mo, Tu, We, Th, Fr], from: '10:30am', to: '2:00pm'}
-      # - {days: [Sa, Su], from: '11:00am', to: '1:30pm'}
-      - {days: [Mo, Tu, We, Th, Fr], from: '10:45am', to: '1:30pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '10:30am', to: '2:00pm'}
       - {days: [Sa, Su], from: '11:00am', to: '1:30pm'}
 
   - title: Dinner
     hours:
-      # - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:30pm'}
-      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:00pm'}
+      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:30pm'}
 
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer: []
+overrides:
+  - period: summer
+    noticeMessage: Academic year meal plans are not in effect.
+    schedule:
+      - closed: true
+
+  - period: interim
+    schedule:
+      - title: Breakfast
+        hours:
+          - {days: [Mo, Tu, We, Th, Fr, Sa], from: '7:00am', to: '9:45am'}
+          - {days: [Su], from: '8:30am', to: '10:15am'}
+
+      - title: Lunch
+        hours:
+          - {days: [Mo, Tu, We, Th, Fr], from: '10:45am', to: '1:30pm'}
+          - {days: [Sa, Su], from: '11:00am', to: '1:30pm'}
+
+      - title: Dinner
+        hours:
+          - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:00pm'}

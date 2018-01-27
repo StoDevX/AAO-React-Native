@@ -10,15 +10,10 @@ schedule:
       - {days: [Sa], from: '8:00am', to: '8:00pm'}
       - {days: [Su], from: '8:00am', to: '11:00pm'}
 
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer:
-    - title: Hours
-      hours:
-        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:30pm'}
-        - {days: [Sa, Su], from: '9:00am', to: '5:00pm'}
+overrides:
+  - period: summer
+    schedule:
+      - title: Hours
+        hours:
+          - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:30pm'}
+          - {days: [Sa, Su], from: '9:00am', to: '5:00pm'}

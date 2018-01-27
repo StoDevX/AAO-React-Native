@@ -9,47 +9,54 @@ schedule:
       - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
       - {days: [Sa, Su], from: '8:00am', to: '12:00am'}
 
-breakSchedule:
-  fall:
-    - title: Hours
-      hours:
-        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
-        - {days: [Sa, Su], from: '8:00am', to: '12:00am'}
+overrides:
+  - period: fall
+    schedule:
+      - title: Hours
+        hours:
+          - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
+          - {days: [Sa, Su], from: '8:00am', to: '12:00am'}
 
-  thanksgiving:
-    - title: Hours
-      hours:
-        - {days: [Tu, We], from: '7:00am', to: '10:00pm'}
-        - {days: [Sa], from: '8:00pm', to: '5:00pm'}
-        - {days: [Su], from: '8:00am', to: '12:00am'}
+  - period: thanksgiving
+    schedule:
+      - title: Hours
+        hours:
+          - {days: [Tu, We], from: '7:00am', to: '10:00pm'}
+          - {days: [Sa], from: '8:00pm', to: '5:00pm'}
+          - {days: [Su], from: '8:00am', to: '12:00am'}
 
-  winter:
-    - title: Hours
-      hours:
-        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '8:00pm'}
+  - period: winter
+    schedule:
+      - title: Hours
+        hours:
+          - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '8:00pm'}
 
-  interim:
-    - title: Hours
-      hours:
-        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
+  - period: interim
+    schedule:
+      - title: Hours
+        hours:
+          - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
 
-  spring:
-    - title: Hours
-      hours:
-        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
-        - {days: [Sa], from: '8:00pm', to: '5:00pm'}
-        - {days: [Su], from: '8:00am', to: '12:00am'}
+  - period: spring
+    schedule:
+      - title: Hours
+        hours:
+          - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
+          - {days: [Sa], from: '8:00pm', to: '5:00pm'}
+          - {days: [Su], from: '8:00am', to: '12:00am'}
 
-  easter:
-    - title: Hours
-      hours:
-        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
-        - {days: [Sa], from: '8:00pm', to: '5:00pm'}
-        - {days: [Su], from: '8:00am', to: '12:00am'}
+  - period: easter
+    schedule:
+      - title: Hours
+        hours:
+          - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '5:00pm'}
+          - {days: [Sa], from: '8:00pm', to: '5:00pm'}
+          - {days: [Su], from: '8:00am', to: '12:00am'}
 
-  summer:
-    - title: Hours
-      hours:
-        - {days: [Mo, Tu, We, Th], from: '7:00am', to: '10:00pm'}
-        - {days: [Fr], from: '7:00am', to: '8:00pm'}
-        - {days: [Sa, Su], from: '9:00am', to: '8:00pm'}
+  - period: summer
+    schedule:
+      - title: Hours
+        hours:
+          - {days: [Mo, Tu, We, Th], from: '7:00am', to: '10:00pm'}
+          - {days: [Fr], from: '7:00am', to: '8:00pm'}
+          - {days: [Sa, Su], from: '9:00am', to: '8:00pm'}

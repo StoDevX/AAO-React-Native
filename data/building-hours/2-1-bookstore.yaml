@@ -8,11 +8,4 @@ schedule:
       - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}
       - {days: [Sa], from: '10:00am', to: '4:00pm'}
 
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer: []
+overrides: []

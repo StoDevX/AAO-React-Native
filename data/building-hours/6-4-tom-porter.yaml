@@ -10,13 +10,8 @@ schedule:
       - {days: [Sa], from: '8:00am', to: '9:00pm'}
       - {days: [Su], from: '12:00pm', to: '9:00pm'}
 
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer:
-    - title: Hours
-      hours: [] # closed for the summer
+overrides:
+  - period: summer
+    noticeMessage: Closed for the summer
+    schedule:
+      - closed: true

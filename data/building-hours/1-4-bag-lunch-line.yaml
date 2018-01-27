@@ -6,14 +6,8 @@ schedule:
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '2:00pm'}
 
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer:
-    - title: Hours
-      hours: []
-      notes: The Bag Lunch line is closed for the summer.
+overrides:
+  - period: summer
+    noticeMessage: The Bag Lunch line is closed for the summer.
+    schedule:
+      - closed: true

@@ -8,14 +8,8 @@ schedule:
       - {days: [Sa], from: '2:00pm', to: '5:00pm'}
       - {days: [Su], from: '6:00pm', to: '9:00pm'}
 
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer:
-    - title: Hours
-      hours: []
-      notes: The Speaking Space is closed for the summer.
+overrides:
+  - period: summer
+    noticeMessage: The Speaking Space is closed for the summer.
+    schedule:
+      - closed: true

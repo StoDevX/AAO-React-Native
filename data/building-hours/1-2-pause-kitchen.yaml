@@ -6,33 +6,47 @@ schedule:
   - title: Daylight
     notes: The late night menu starts at 9 p.m.
     hours:
-      # - {days: [Mo], from: '10:30am', to: '12:00am'}
-      # - {days: [Tu], from: '11:30am', to: '12:00am'}
-      # - {days: [We], from: '10:30am', to: '12:00am'}
-      # - {days: [Th], from: '11:30am', to: '12:00am'}
-      # - {days: [Fr], from: '10:30am', to: '9:00pm'}
-      # - {days: [Sa], from: '11:30am', to: '9:00pm'}
-      # - {days: [Su], from: '11:30am', to: '12:00am'}
-      - {days: [Mo], from: '10:45am', to: '11:00pm'}
+      - {days: [Mo], from: '10:30am', to: '12:00am'}
       - {days: [Tu], from: '11:30am', to: '12:00am'}
-      - {days: [We], from: '10:45am', to: '12:00am'}
-      - {days: [Th], from: '11:30am', to: '11:00pm'}
-      - {days: [Fr], from: '11:30am', to: '9:00pm'}
+      - {days: [We], from: '10:30am', to: '12:00am'}
+      - {days: [Th], from: '11:30am', to: '12:00am'}
+      - {days: [Fr], from: '10:30am', to: '9:00pm'}
       - {days: [Sa], from: '11:30am', to: '9:00pm'}
-      - {days: [Su], from: '11:30am', to: '11:00pm'}
+      - {days: [Su], from: '11:30am', to: '12:00am'}
 
   - title: Late Night
     hours:
       - {days: [Fr, Sa], from: '9:00pm', to: '2:00am'}
 
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer:
-    - title: Hours
-      notes: The Pause Kitchen is closed for the summer.
-      hours: []
+overrides:
+  - period: interim
+    schedule:
+      - title: Daylight
+        notes: The late night menu starts at 9 p.m.
+        hours:
+          - {days: [Mo], from: '10:45am', to: '11:00pm'}
+          - {days: [Tu], from: '11:30am', to: '12:00am'}
+          - {days: [We], from: '10:45am', to: '12:00am'}
+          - {days: [Th], from: '11:30am', to: '11:00pm'}
+          - {days: [Fr], from: '11:30am', to: '9:00pm'}
+          - {days: [Sa], from: '11:30am', to: '9:00pm'}
+          - {days: [Su], from: '11:30am', to: '11:00pm'}
+
+      - title: Late Night
+        hours:
+          - {days: [Fr, Sa], from: '9:00pm', to: '2:00am'}
+
+  - period: summer
+    notice: The Pause Kitchen is closed for the summer.
+    schedule:
+      - closed: true
+
+  - period: 2018-01-01
+    notice: The Pause Kitchen is closed to prepare for an event.
+    schedule:
+      - closed: true
+
+  - period: {start: 2018-01-01, end: 2018-01-31}
+    notice: The Pause Kitchen is closed due to remodeling.
+    schedule:
+      - closed: true

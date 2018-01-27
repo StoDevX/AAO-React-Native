@@ -11,14 +11,8 @@ schedule:
       - {days: [Su], from: '1:00pm', to: '5:00pm'}
       - {days: [Su], from: '7:00pm', to: '10:00pm'}
 
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer:
-    - title: Hours
-      hours: []
-      notes: The Writing Desk is closed for the summer.
+overrides:
+  - period: summer
+    noticeMessage: The Writing Desk is closed for the summer.
+    schedule:
+      - closed: true

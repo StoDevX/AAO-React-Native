@@ -9,15 +9,10 @@ schedule:
       - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '8:00pm'}
       - {days: [Sa, Su], from: '9:00am', to: '8:00pm'}
 
-breakSchedule:
-  fall: []
-  thanksgiving: []
-  winter: []
-  interim: []
-  spring: []
-  easter: []
-  summer:
-    - title: Kitchen
-      hours:
-        - {days: [Mo, Tu, We, Th], from: '7:30am', to: '3:00pm'}
-        - {days: [Fr], from: '7:30am', to: '1:00pm'}
+overrides:
+  - period: summer
+    schedule:
+      - title: Kitchen
+        hours:
+          - {days: [Mo, Tu, We, Th], from: '7:30am', to: '3:00pm'}
+          - {days: [Fr], from: '7:30am', to: '1:00pm'}
