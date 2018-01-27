@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import glamorous, {Text} from 'glamorous-native'
+import {Text, View, ScrollView} from 'glamorous-native'
 import {connect} from 'react-redux'
 import * as c from '../../components/colors'
 import {Touchable} from '../../components/touchable'
@@ -21,38 +21,36 @@ export function PlainNotices({notices, navigation}: NoticesProps) {
 	}
 
 	return (
-		<NoticeContainer>
+		<View>
 			{notices
 				.slice(0, 2)
 				.map((n, i) => <Notice key={i} navigation={navigation} notice={n} />)}
 			{notices.length > 2 ? (
 				<MoreNotices navigation={navigation} notices={notices} />
 			) : null}
-		</NoticeContainer>
+		</View>
 	)
 }
-
-const NoticeContainer = glamorous.View({})
 
 function Notice(props: {notice: HomescreenNotice, navigation: NavType}) {
 	const {notice, navigation} = props
 
 	return (
 		<Touchable onPress={() => navigation.push('NoticeDetailView', {notice})}>
-            {notice.title ? <Text numberOfLines={1}>{notice.title}</Text> : null}
-            {/* 2 or 1 line of description? */}
-            <Text numberOfLines={2}>{notice.snippet || notice.message}</Text>
-            {/* <Text numberOfLines={2}>{JSON.stringify(notice)}</Text> */}
+			{notice.title ? <Text numberOfLines={1}>{notice.title}</Text> : null}
+			{/* 2 or 1 line of description? */}
+			<Text numberOfLines={2}>{notice.snippet || notice.message}</Text>
+			{/* <Text numberOfLines={2}>{JSON.stringify(notice)}</Text> */}
 		</Touchable>
 	)
 }
 
-const SingleNoticeContainer = glamorous.ScrollView({})
-
 export function NoticeDetailView({navigation}: TopLevelViewPropsType) {
-    return <SingleNoticeContainer>
-        <Text>{JSON.stringify(navigation.state.params.notice)}</Text>
-    </SingleNoticeContainer>
+	return (
+		<ScrollView>
+			<Text>{JSON.stringify(navigation.state.params.notice)}</Text>
+		</ScrollView>
+	)
 }
 
 function MoreNotices(props: {

@@ -238,3 +238,47 @@ export async function fetchHelpTools(
 
 	return request.data
 }
+
+/// MARK: Notices
+
+const noticesKey = 'help:tools'
+const noticesCacheTime = [1, 'hour']
+import {type HomescreenNotice} from '../views/home/notices/types'
+const {data: noticeData} = require('../../docs/homescreen-notice.json')
+export function setNotices(tools: Array<HomescreenNotice>) {
+	return setItem(noticesKey, tools, noticesCacheTime)
+}
+export function getNotices(): CacheResultType<?Array<HomescreenNotice>> {
+	return getItem(noticesKey)
+}
+function fetchNoticesBundled(): Promise<Array<HomescreenNotice>> {
+	return Promise.resolve(noticeData)
+}
+function fetchNoticesRemote(): Promise<{data: Array<HomescreenNotice>}> {
+	return fetchJson(GH_PAGES_URL('homescreen-notice.json'))
+}
+export async function fetchNotices(
+	isOnline: boolean,
+): Promise<Array<HomescreenNotice>> {
+	const cachedValue = await getNotices()
+
+	if (process.env.NODE_ENV === 'development') {
+		return fetchNoticesBundled()
+	}
+
+	if (!isOnline) {
+		if (cachedValue.isCached && cachedValue.value) {
+			return cachedValue.value
+		}
+		return fetchNoticesBundled()
+	}
+
+	if (!cachedValue.isExpired && cachedValue.value) {
+		return cachedValue.value
+	}
+
+	const request = await fetchNoticesRemote()
+	await setNotices(request.data)
+
+	return request.data
+}
