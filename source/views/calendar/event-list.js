@@ -13,6 +13,7 @@ import {ListSeparator, ListSectionHeader} from '../components/list'
 import {NoticeView} from '../components/notice'
 import EventRow from './event-row'
 import {cleanEvent} from './clean-event'
+import {getTimes} from './calendar-util'
 
 const FullWidthSeparator = props => (
 	<ListSeparator fullWidth={true} {...props} />
@@ -48,7 +49,7 @@ export class EventList extends React.PureComponent<Props> {
 
 	onPressEvent = (event: EventType) => {
 		event = cleanEvent(event)
-		trackCalendarEventOpen(event.title)
+		trackCalendarEventOpen(`${event.title} (${event.startTime.toISOString()})`)
 		this.props.navigation.navigate('EventDetailView', {
 			event,
 			poweredBy: this.props.poweredBy,
