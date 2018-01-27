@@ -13,14 +13,6 @@ const trackerId =
 export const tracker = new GoogleAnalyticsTracker(trackerId)
 
 // Disable things
-function disableIdfa() {
-	if (!tracker) {
-		return
-	}
-	tracker.allowIDFA(false)
-}
-disableIdfa()
-
 function disableIfOptedOut() {
 	return getAnalyticsOptOut().then(didOptOut => {
 		if (didOptOut) {
