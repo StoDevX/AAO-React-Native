@@ -10,6 +10,8 @@ type Props = {
 	onPress: () => any,
 }
 
+const iconName = Platform.OS === 'ios' ? 'ios-share-outline' : 'md-share'
+
 export class ShareButton extends React.PureComponent<Props> {
 	render() {
 		return (
@@ -18,11 +20,7 @@ export class ShareButton extends React.PureComponent<Props> {
 				onPress={this.props.onPress}
 				style={styles.button}
 			>
-				{Platform.OS === 'ios' ? (
-					<Icon name="ios-share-outline" style={styles.icon} />
-				) : (
-					<Icon name="md-share" style={styles.icon} />
-				)}
+				<Icon name={iconName} style={styles.icon} />
 			</Touchable>
 		)
 	}
