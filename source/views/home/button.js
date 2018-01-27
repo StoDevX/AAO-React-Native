@@ -14,38 +14,69 @@ type Props = {
 }
 
 export function HomeScreenButton({view, onPress}: Props) {
-	const contents = (
+	return (
+		<TouchableButton
+			gradient={view.gradient}
+			label={view.title}
+			onPress={onPress}
+			tint={view.tint}
+		>
+			<View style={styles.contents}>
+				<Icon name={view.icon} size={32} style={styles.icon} />
+				<Text style={styles.text}>{view.title}</Text>
+			</View>
+		</TouchableButton>
+	)
+}
+
+function TouchableButton({onPress, label, children, tint, gradient}) {
+	if (Platform.OS === 'android') {
+		return (
+			<Tint gradient={gradient} tint={tint}>
+				<TouchableWrapper label={label} onPress={onPress}>
+					{children}
+				</TouchableWrapper>
+			</Tint>
+		)
+	} else {
+		return (
+			<TouchableWrapper label={label} onPress={onPress}>
+				<Tint gradient={gradient} tint={tint}>
+					{children}
+				</Tint>
+			</TouchableWrapper>
+		)
+	}
+}
+
+function TouchableWrapper({onPress, children, label}) {
+	return (
 		<Touchable
 			accessibilityComponentType="button"
-			accessibilityLabel={view.title}
+			accessibilityLabel={label}
 			accessibilityTraits="button"
 			highlight={false}
 			onPress={onPress}
-			containerStyle={styles.contents}
-			style={StyleSheet.absoluteFill}
 		>
-			<Icon name={view.icon} size={32} style={styles.icon} />
-			<Text style={styles.text}>{view.title}</Text>
+			{children}
 		</Touchable>
 	)
+}
 
-	if (!view.gradient) {
-		const tint = view.tint || 'black'
-		return (
-			<View style={[styles.button, {backgroundColor: tint}]}>
-				{contents}
-			</View>
-		)
+function Tint({tint = 'black', gradient, children}) {
+	if (!gradient) {
+		const bg = {backgroundColor: tint}
+		return <View style={[styles.button, bg]}>{children}</View>
 	}
 
 	return (
 		<LinearGradient
-			colors={view.gradient}
+			colors={gradient}
 			end={{x: 1, y: 0.85}}
 			start={{x: 0, y: 0.05}}
 			style={styles.button}
 		>
-			{contents}
+			{children}
 		</LinearGradient>
 	)
 }
@@ -64,8 +95,6 @@ const styles = StyleSheet.create({
 		marginRight: CELL_MARGIN / 2,
 	},
 	contents: {
-		...StyleSheet.absoluteFillObject,
-
 		alignItems: 'center',
 		justifyContent: 'center',
 
