@@ -5,7 +5,6 @@ import {
 	resetInternetCredentials,
 } from 'react-native-keychain'
 
-import * as storage from './storage'
 import buildFormData from './formdata'
 import {OLECARD_AUTH_URL} from './financials/urls'
 
