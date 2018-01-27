@@ -62,15 +62,16 @@ type State = {
 	accentText: string,
 }
 
+const defaultAccentBackground = c.goldenrod
+const defaultAccentText = 'rgb(130, 82, 45)'
+
 export class BuildingRow extends React.Component<Props, State> {
 	state = {
 		openStatus: 'Unknown',
 		hours: [],
 		firstUpdate: true,
-
-		// when changing these, make sure to change the fallbacks in setStateFromProps
-		accentBg: c.goldenrod,
-		accentText: 'rgb(130, 82, 45)',
+		accentBg: defaultAccentBackground,
+		accentText: defaultAccentText,
 	}
 
 	componentWillMount() {
@@ -109,9 +110,8 @@ export class BuildingRow extends React.Component<Props, State> {
 		const openStatus = getShortBuildingStatus(info, now)
 		const hours = getDetailedBuildingStatus(info, now)
 
-		// when changing these, make sure to change the initial values in `state`
-		const accentBg = BG_COLORS[openStatus] || c.goldenrod
-		const accentText = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
+		const accentBg = BG_COLORS[openStatus] || defaultAccentBackground
+		const accentText = FG_COLORS[openStatus] || defaultAccentText
 
 		this.setState(() => ({
 			openStatus,
@@ -172,15 +172,13 @@ export class BuildingRow extends React.Component<Props, State> {
 	}
 }
 
-const BuildingTimeSlot = ({
-	label,
-	status,
-	highlight,
-}: {
+const BuildingTimeSlot = (props: {
 	label: ?string,
 	status: string,
 	highlight: boolean,
 }) => {
+	const {label, status, highlight} = props
+
 	// we don't want to show the 'Hours' label, since almost every row has it
 	const showLabel = label && label !== 'Hours'
 
