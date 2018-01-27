@@ -1,4 +1,7 @@
 // @flow
+
+import {Platform} from 'react-native'
+
 export const aqua = '#7FDBFF'
 export const black = '#111111'
 export const blue = '#0074D9'
@@ -36,6 +39,9 @@ export const iosListSectionHeader = 'rgb(248, 248, 248)'
 export const iosPlaceholderText = iosSeparator
 export const iosHeaderTopBorder = iosSeparator
 export const iosHeaderBottomBorder = 'rgb(224, 224, 224)'
+
+export const sectionBgColor =
+	Platform.OS === 'ios' ? iosLightBackground : androidLightBackground
 
 export const tableviewAccessoryColor = 'rgb(0, 122, 255)'
 
@@ -191,6 +197,10 @@ export const magentaToPurple = ['rgb(213,69,196)', 'rgb(160,50,230)']
 export const pinkToHotpink = ['rgb(248,102,149)', 'rgb(209,44,159)']
 export const grayToDarkGray = ['rgb(118,134,157)', 'rgb(85,96,124)']
 export const navyToNavy = ['rgb(32,67,107)', 'rgb(0,48,104)']
+
+// MARK: homescreen button foregrounds
+export const homescreenForegroundLight = 'rgba(255, 255, 255, 0.9)'
+export const homescreenForegroundDark = 'rgba(0, 0, 0, 0.65)'
 
 // MARK: St. Olaf colors
 export const sto = {

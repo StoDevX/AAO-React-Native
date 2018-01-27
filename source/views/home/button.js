@@ -7,6 +7,7 @@ import type {ViewType} from '../views'
 import LinearGradient from 'react-native-linear-gradient'
 import {Touchable} from '../components/touchable'
 import * as c from '../components/colors'
+import {iPhoneX} from '../components/device'
 
 type Props = {
 	view: ViewType,
@@ -14,10 +15,12 @@ type Props = {
 }
 
 export function HomeScreenButton({view, onPress}: Props) {
+	const foreground =
+		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 	let contents = (
 		<React.Fragment>
-			<Icon name={view.icon} size={32} style={styles.rectangleButtonIcon} />
-			<Text style={styles.rectangleButtonText}>{view.title}</Text>
+			<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
+			<Text style={[foreground, styles.text]}>{view.title}</Text>
 		</React.Fragment>
 	)
 
@@ -66,7 +69,7 @@ const styles = StyleSheet.create({
 		paddingTop: cellVerticalPadding,
 		paddingBottom: cellVerticalPadding / 2,
 		paddingHorizontal: cellHorizontalPadding,
-		borderRadius: Platform.OS === 'ios' ? 6 : 3,
+		borderRadius: Platform.OS === 'ios' ? (iPhoneX ? 17 : 6) : 3,
 
 		elevation: 2,
 
@@ -76,14 +79,18 @@ const styles = StyleSheet.create({
 	},
 
 	// Text styling in buttons
-	rectangleButtonIcon: {
-		color: c.white,
+	icon: {
 		backgroundColor: c.transparent,
 	},
-	rectangleButtonText: {
-		color: c.white,
+	text: {
 		backgroundColor: c.transparent,
 		fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
 		fontSize: 14,
+	},
+	lightForeground: {
+		color: c.homescreenForegroundLight,
+	},
+	darkForeground: {
+		color: c.homescreenForegroundDark,
 	},
 })

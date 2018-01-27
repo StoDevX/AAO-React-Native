@@ -3,6 +3,7 @@ import * as React from 'react'
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
 import * as c from './colors'
 import {Button} from './button'
+import {Heading} from './markdown/heading'
 
 const styles = StyleSheet.create({
 	container: {
@@ -23,6 +24,7 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
+	header?: string,
 	text?: string,
 	style?: any,
 	spinner?: boolean,
@@ -30,10 +32,19 @@ type Props = {
 	onPress?: () => any,
 }
 
-export function NoticeView({text, style, spinner, buttonText, onPress}: Props) {
+export function NoticeView({
+	header,
+	text,
+	style,
+	spinner,
+	buttonText,
+	onPress,
+}: Props) {
 	return (
 		<View style={[styles.container, style]}>
 			{spinner ? <ActivityIndicator style={styles.spinner} /> : null}
+
+			{header ? <Heading level={1}>{header}</Heading> : null}
 
 			<Text selectable={true} style={styles.text}>
 				{text || 'Notice!'}

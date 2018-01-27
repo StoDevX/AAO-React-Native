@@ -2,20 +2,33 @@
 
 import {allViewNames as defaultViewOrder} from '../../views/views'
 import difference from 'lodash/difference'
-import {trackHomescreenOrder} from '../../analytics'
+import {
+	trackHomescreenOrder,
+	trackHomescreenDisabledItem,
+	trackHomescreenReenabledItem,
+} from '../../analytics'
 import * as storage from '../../lib/storage'
 import {type ReduxState} from '../index'
+import isEqual from 'lodash/isEqual'
+import debounce from 'lodash/debounce'
+
+// see https://css-tricks.com/debouncing-throttling-explained-examples/
+// we only invoke trackHomescreenOrder once every three seconds, to avoid
+// reporting every permutation of someone's home screen while they're editing it
+const debouncedTrackHomescreenOrder = debounce(trackHomescreenOrder, 3000)
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
 type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
 type Action =
 	| SaveViewOrderAction
-	| SaveDisabledViewsAction
+	| LoadDisabledViewsAction
 	| ToggleViewDisabledAction
+	| LoadViewOrderAction
 
+const LOAD_HOMESCREEN_ORDER = 'homescreen/LOAD_HOMESCREEN_ORDER'
 const SAVE_HOMESCREEN_ORDER = 'homescreen/SAVE_HOMESCREEN_ORDER'
-const SAVE_DISABLED_VIEWS = 'homescreen/SAVE_DISABLED_VIEWS'
+const LOAD_DISABLED_VIEWS = 'homescreen/LOAD_DISABLED_VIEWS'
 const TOGGLE_VIEW_DISABLED = 'homescreen/TOGGLE_VIEW_DISABLED'
 
 type ViewName = string
@@ -43,7 +56,11 @@ export function updateViewOrder(
 	return currentOrder
 }
 
-export async function loadHomescreenOrder() {
+type LoadViewOrderAction = {
+	type: 'homescreen/LOAD_HOMESCREEN_ORDER',
+	payload: Array<ViewName>,
+}
+export async function loadHomescreenOrder(): Promise<LoadViewOrderAction> {
 	// get the saved list from persistent storage
 	let savedOrder = await storage.getHomescreenOrder()
 
@@ -51,7 +68,7 @@ export async function loadHomescreenOrder() {
 	let order = updateViewOrder(savedOrder, defaultViewOrder)
 
 	// return an action to save it to persistent storage
-	return saveHomescreenOrder(order, {noTrack: true})
+	return {type: LOAD_HOMESCREEN_ORDER, payload: order}
 }
 
 type SaveViewOrderAction = {
@@ -60,27 +77,17 @@ type SaveViewOrderAction = {
 }
 export function saveHomescreenOrder(
 	order: Array<ViewName>,
-	options: {noTrack?: boolean} = {},
 ): SaveViewOrderAction {
-	if (!options.noTrack) {
-		trackHomescreenOrder(order)
-	}
-
+	debouncedTrackHomescreenOrder(order, isEqual(order, defaultViewOrder))
 	storage.setHomescreenOrder(order)
 	return {type: SAVE_HOMESCREEN_ORDER, payload: order}
 }
 
-type SaveDisabledViewsAction = {
-	type: 'homescreen/SAVE_DISABLED_VIEWS',
+type LoadDisabledViewsAction = {
+	type: 'homescreen/LOAD_DISABLED_VIEWS',
 	payload: Array<ViewName>,
 }
-export function saveDisabledViews(
-	disabledViews: Array<ViewName>,
-): SaveDisabledViewsAction {
-	storage.setDisabledViews(disabledViews)
-	return {type: SAVE_DISABLED_VIEWS, payload: disabledViews}
-}
-export async function loadDisabledViews() {
+export async function loadDisabledViews(): Promise<LoadDisabledViewsAction> {
 	let disabledViews = await storage.getDisabledViews()
 
 	if (disabledViews.length === 0) {
@@ -89,7 +96,7 @@ export async function loadDisabledViews() {
 
 	disabledViews = disabledViews.filter(view => defaultViewOrder.includes(view))
 
-	return saveDisabledViews(disabledViews)
+	return {type: LOAD_DISABLED_VIEWS, payload: disabledViews}
 }
 
 type ToggleViewDisabledAction = {
@@ -109,7 +116,11 @@ export function toggleViewDisabled(
 			? currentDisabledViews.filter(name => name !== viewName)
 			: [...currentDisabledViews, viewName]
 
-		// TODO: remove saving logic from reducers
+		if (newDisabledViews.includes(viewName)) {
+			trackHomescreenDisabledItem(viewName)
+		} else {
+			trackHomescreenReenabledItem(viewName)
+		}
 		storage.setDisabledViews(newDisabledViews)
 
 		dispatch({type: TOGGLE_VIEW_DISABLED, payload: newDisabledViews})
@@ -128,10 +139,13 @@ const initialState: State = {
 
 export function homescreen(state: State = initialState, action: Action) {
 	switch (action.type) {
+		case LOAD_HOMESCREEN_ORDER: {
+			return {...state, order: action.payload}
+		}
 		case SAVE_HOMESCREEN_ORDER: {
 			return {...state, order: action.payload}
 		}
-		case SAVE_DISABLED_VIEWS: {
+		case LOAD_DISABLED_VIEWS: {
 			return {...state, inactiveViews: action.payload}
 		}
 		case TOGGLE_VIEW_DISABLED: {

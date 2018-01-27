@@ -39,6 +39,8 @@ function handleButtonPress(btn) {
 			return handleSendEmail(btn.params)
 		case 'call-phone':
 			return handleCallPhone(btn.params)
+		case 'custom':
+			return
 		default:
 			;(btn.action: empty)
 	}
