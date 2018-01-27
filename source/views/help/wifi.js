@@ -38,7 +38,9 @@ export class ToolView extends React.Component<Props, State> {
 	}
 
 	start = async () => {
-		let reportUrl = 'https://www.stolaf.edu/apps/all-about-olaf/wifi/index.cfm?fuseaction=Submit'
+		let reportUrl =
+			'https://www.stolaf.edu/apps/all-about-olaf/wifi/index.cfm?fuseaction=Submit'
+ 
 
 		if (this.props.config.buttons && this.props.config.buttons.length >= 1) {
 			const btnConfig = this.props.config.buttons[0]
