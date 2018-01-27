@@ -29,7 +29,7 @@ export const TabNavigator: ComponentType = (screens, options) =>
 					activeTintColor: c.mandarin,
 				},
 			}),
-			scrollEnabled: Platform.OS == 'ios',
+			scrollEnabled: Platform.OS !== 'ios',
 			...(options.tabBarOptions || {}),
 			style: {
 				...Platform.select({

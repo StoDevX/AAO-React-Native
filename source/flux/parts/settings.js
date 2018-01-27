@@ -4,6 +4,7 @@ import {
 	performLogin,
 	saveLoginCredentials,
 	clearLoginCredentials,
+	type Credentials,
 } from '../../lib/login'
 
 import {
@@ -65,20 +66,19 @@ export async function hasSeenAcknowledgement(): Promise<SisAlertSeenAction> {
 
 type SetCredentialsAction = {|
 	type: 'settings/SET_LOGIN_CREDENTIALS',
-	payload: {username: string, password: string},
+	payload: Credentials,
 |}
 export async function setLoginCredentials(
-	username: string,
-	password: string,
+	credentials: Credentials,
 ): Promise<SetCredentialsAction> {
-	await saveLoginCredentials(username, password)
-	return {type: SET_LOGIN_CREDENTIALS, payload: {username, password}}
+	await saveLoginCredentials(credentials)
+	return {type: SET_LOGIN_CREDENTIALS, payload: credentials}
 }
 
 type LoginStartAction = {|type: 'settings/CREDENTIALS_LOGIN_START'|}
 type LoginSuccessAction = {|
 	type: 'settings/CREDENTIALS_LOGIN_SUCCESS',
-	payload: {username: string, password: string},
+	payload: Credentials,
 |}
 type LoginFailureAction = {|type: 'settings/CREDENTIALS_LOGIN_FAILURE'|}
 type LogInActions = LoginStartAction | LoginSuccessAction | LoginFailureAction
@@ -98,17 +98,16 @@ const showInvalidLoginMessage = () =>
 	)
 
 export function logInViaCredentials(
-	username: string,
-	password: string,
+	credentials: Credentials,
 ): ThunkAction<LogInActions | UpdateBalancesType> {
 	return async (dispatch, getState) => {
 		dispatch({type: CREDENTIALS_LOGIN_START})
 		const state = getState()
 		const isConnected = state.app ? state.app.isConnected : false
-		const result = await performLogin(username, password)
+		const result = await performLogin(credentials)
 		if (result) {
 			trackLogIn()
-			dispatch({type: CREDENTIALS_LOGIN_SUCCESS, payload: {username, password}})
+			dispatch({type: CREDENTIALS_LOGIN_SUCCESS, payload: credentials})
 			// since we logged in successfully, go ahead and fetch the meal info
 			dispatch(updateBalances())
 		} else {
@@ -139,17 +138,19 @@ type ValidateCredentialsActions =
 	| ValidateSuccessAction
 	| ValidateFailureAction
 export function validateLoginCredentials(
-	username?: string,
-	password?: string,
+	credentials: Credentials,
 ): ThunkAction<ValidateCredentialsActions> {
 	return async dispatch => {
+		const {username, password} = credentials
 		if (!username || !password) {
 			return
 		}
 
 		dispatch({type: CREDENTIALS_VALIDATE_START})
 
-		const result = await performLogin(username, password)
+		// we try a few times here because the network may not have stabilized
+		// quite yet.
+		const result = await performLogin(credentials, {attempts: 3})
 		if (result) {
 			dispatch({type: CREDENTIALS_VALIDATE_SUCCESS})
 		} else {

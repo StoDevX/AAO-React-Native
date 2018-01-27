@@ -198,6 +198,10 @@ export const pinkToHotpink = ['rgb(248,102,149)', 'rgb(209,44,159)']
 export const grayToDarkGray = ['rgb(118,134,157)', 'rgb(85,96,124)']
 export const navyToNavy = ['rgb(32,67,107)', 'rgb(0,48,104)']
 
+// MARK: homescreen button foregrounds
+export const homescreenForegroundLight = 'rgba(255, 255, 255, 0.9)'
+export const homescreenForegroundDark = 'rgba(0, 0, 0, 0.65)'
+
 // MARK: St. Olaf colors
 export const sto = {
 	black: '#242121',
