@@ -28,7 +28,7 @@ export function clearLoginCredentials() {
 
 export async function performLogin(
 	{username, password}: Credentials,
-	{attempts = 3}: {attempts: number} = {},
+	{attempts = 0}: {attempts: number} = {},
 ): Promise<boolean> {
 	if (!username || !password) {
 		return false
