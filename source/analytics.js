@@ -63,22 +63,22 @@ export function trackHomescreenReenabledItem(viewName: string) {
 // These are centralized event functions, so we have an easy place to review
 // them all. There is no limit to the number of these that we can have.
 export const trackStreamPlay = (streamName: string) =>
-	tracker.trackEvent('stream', 'play', {label: streamName})
+	tracker.trackEvent('stream', 'play-stream', {label: streamName})
 
 export const trackStreamPause = (streamName: string) =>
-	tracker.trackEvent('stream', 'pause', {label: streamName})
+	tracker.trackEvent('stream', 'pause-stream', {label: streamName})
 
 export const trackStreamError = (streamName: string) =>
-	tracker.trackEvent('stream', 'error', {label: streamName})
+	tracker.trackEvent('stream', 'errored-stream', {label: streamName})
 
-export const trackBuildingView = (buildingName: string) =>
-	tracker.trackEvent('building-hours', 'open', {label: buildingName})
+export const trackBuildingOpen = (buildingName: string) =>
+	tracker.trackEvent('building-hours', 'open-building', {label: buildingName})
 
-export const trackDefinitionView = (word: string) =>
-	tracker.trackEvent('dictionary', 'open', {label: word})
+export const trackDefinitionOpen = (word: string) =>
+	tracker.trackEvent('dictionary', 'open-definition', {label: word})
 
 export const trackOrgOpen = (orgName: string) =>
-	tracker.trackEvent('student-org', 'open', {label: orgName})
+	tracker.trackEvent('student-org', 'open-org', {label: orgName})
 
 export const trackCalendarEventOpen = (eventTitle: string) =>
 	tracker.trackEvent('calendar-event', 'open-event', {label: eventTitle})
