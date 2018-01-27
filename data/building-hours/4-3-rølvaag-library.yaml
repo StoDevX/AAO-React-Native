@@ -13,10 +13,12 @@ schedule:
 overrides:
   - period: interim
     schedule:
-      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '12:00am'}
-      - {days: [Fr], from: '8:00am', to: '6:00pm'}
-      - {days: [Sa], from: '9:00am', to: '6:00pm'}
-      - {days: [Su], from: '12:00pm', to: '12:00am'}
+      - title: Hours
+        hours:
+          - {days: [Mo, Tu, We, Th], from: '8:00am', to: '12:00am'}
+          - {days: [Fr], from: '8:00am', to: '6:00pm'}
+          - {days: [Sa], from: '9:00am', to: '6:00pm'}
+          - {days: [Su], from: '12:00pm', to: '12:00am'}
 
   - period: summer
     schedule:
