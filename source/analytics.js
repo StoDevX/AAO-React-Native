@@ -78,3 +78,12 @@ export const trackDefinitionView = (word: string) =>
 
 export const trackOrgOpen = (orgName: string) =>
 	tracker.trackEvent('student-org', 'open', {label: orgName})
+
+export const trackLogIn = () =>
+	tracker.trackEvent('account', 'log-in', {})
+
+export const trackLoginFailure = (reason: string) =>
+	tracker.trackEvent('account', 'login-failure', {label: reason})
+
+export const trackLogOut = () =>
+	tracker.trackEvent('account', 'log-out', {})

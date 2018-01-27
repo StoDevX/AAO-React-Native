@@ -13,6 +13,12 @@ import {
 	setAcknowledgementStatus,
 } from '../../lib/storage'
 
+import {
+	trackLogOut,
+	trackLogIn,
+	trackLoginFailure,
+} from '../../analytics'
+
 import {type ReduxState} from '../index'
 import {type UpdateBalancesType} from './sis'
 import {updateBalances} from './sis'
@@ -105,14 +111,17 @@ export function logInViaCredentials(
 		const isConnected = state.app ? state.app.isConnected : false
 		const result = await performLogin(username, password)
 		if (result) {
+			trackLogIn()
 			dispatch({type: CREDENTIALS_LOGIN_SUCCESS, payload: {username, password}})
 			// since we logged in successfully, go ahead and fetch the meal info
 			dispatch(updateBalances())
 		} else {
 			dispatch({type: CREDENTIALS_LOGIN_FAILURE})
 			if (isConnected) {
+				trackLoginFailure('Bad credentials')
 				showInvalidLoginMessage()
 			} else {
+				trackLoginFailure('No network')
 				showNetworkFailureMessage()
 			}
 		}
@@ -121,6 +130,7 @@ export function logInViaCredentials(
 
 type LogOutAction = {|type: 'settings/CREDENTIALS_LOGOUT'|}
 export async function logOutViaCredentials(): Promise<LogOutAction> {
+	trackLogOut()
 	await clearLoginCredentials()
 	return {type: CREDENTIALS_LOGOUT}
 }
