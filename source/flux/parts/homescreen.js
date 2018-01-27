@@ -9,6 +9,7 @@ import {
 } from '../../analytics'
 import * as storage from '../../lib/storage'
 import {type ReduxState} from '../index'
+import isEqual from 'lodash/isEqual'
 import debounce from 'lodash/debounce'
 
 // see https://css-tricks.com/debouncing-throttling-explained-examples/
@@ -77,7 +78,7 @@ type SaveViewOrderAction = {
 export function saveHomescreenOrder(
 	order: Array<ViewName>,
 ): SaveViewOrderAction {
-	debouncedTrackHomescreenOrder(order)
+	debouncedTrackHomescreenOrder(order, isEqual(order, defaultViewOrder))
 	storage.setHomescreenOrder(order)
 	return {type: SAVE_HOMESCREEN_ORDER, payload: order}
 }

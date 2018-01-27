@@ -32,11 +32,11 @@ export function trackMenuFilters(menuName: string, filters: any) {
 	)
 }
 
-export function trackHomescreenOrder(order: string[]) {
+export function trackHomescreenOrder(order: string[], isDefaultOrder: boolean) {
 	tracker.trackEventWithCustomDimensionValues(
 		'homescreen',
 		'reorder',
-		{},
+		{label: isDefaultOrder ? 'default-order' : 'custom-order'},
 		{'2': order.join(', ')},
 	)
 }
