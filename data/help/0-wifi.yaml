@@ -14,4 +14,5 @@ body: |
 buttons:
   - title: Report an Issue
     action: custom
-    params: {}
+    params:
+      url: 'https://www.stolaf.edu/apps/all-about-olaf/wifi/index.cfm?fuseaction=Submit'
