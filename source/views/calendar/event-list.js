@@ -13,7 +13,6 @@ import {ListSeparator, ListSectionHeader} from '../components/list'
 import {NoticeView} from '../components/notice'
 import EventRow from './event-row'
 import {cleanEvent} from './clean-event'
-import {getTimes} from './calendar-util'
 
 const FullWidthSeparator = props => (
 	<ListSeparator fullWidth={true} {...props} />
