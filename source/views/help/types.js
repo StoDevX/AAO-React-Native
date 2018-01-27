@@ -42,6 +42,7 @@ type CallPhoneButtonDef = {
 type CustomButtonDef = {
 	action: 'custom',
 	title: string,
+	enabled?: boolean,
 	params: {[key: string]: any},
 }
 
