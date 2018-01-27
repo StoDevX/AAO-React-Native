@@ -17,6 +17,9 @@ export function isScheduleOpenAtMoment(
 	schedule: BuildingScheduleEntry,
 	m: moment,
 ): boolean {
+	if (schedule.closed) {
+		return false
+	}
 	if (isChapelTime(m)) {
 		return false
 	}
