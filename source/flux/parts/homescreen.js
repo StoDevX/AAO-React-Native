@@ -2,7 +2,11 @@
 
 import {allViewNames as defaultViewOrder} from '../../views/views'
 import difference from 'lodash/difference'
-import {trackHomescreenOrder} from '../../analytics'
+import {
+	trackHomescreenOrder,
+	trackHomescreenDisabledItem,
+	trackHomescreenReenabledItem,
+} from '../../analytics'
 import * as storage from '../../lib/storage'
 import {type ReduxState} from '../index'
 
@@ -105,7 +109,11 @@ export function toggleViewDisabled(
 			? currentDisabledViews.filter(name => name !== viewName)
 			: [...currentDisabledViews, viewName]
 
-		// TODO: remove saving logic from reducers
+		if (newDisabledViews.includes(viewName)) {
+			trackHomescreenDisabledItem(viewName)
+		} else {
+			trackHomescreenReenabledItem(viewName)
+		}
 		storage.setDisabledViews(newDisabledViews)
 
 		dispatch({type: TOGGLE_VIEW_DISABLED, payload: newDisabledViews})
