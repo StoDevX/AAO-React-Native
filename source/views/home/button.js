@@ -86,11 +86,9 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 	},
 	lightForeground: {
-		color: c.white,
-		opacity: 0.95,
+		color: c.homescreenForegroundLight,
 	},
 	darkForeground: {
-		color: c.black,
-		opacity: 0.835,
+		color: c.homescreenForegroundDark,
 	},
 })
