@@ -41,17 +41,34 @@ export function trackHomescreenOrder(order: string[]) {
 	)
 }
 
-export function trackStreamPlay(streamName: string) {
-	tracker.trackEvent('stream', 'play', streamName)
+export function trackHomescreenDisabledItem(viewName: string) {
+	tracker.trackEventWithCustomDimensionValues(
+		'homescreen',
+		'disabled',
+		{label: viewName, value: 1},
+		{'3': viewName},
+	)
 }
 
-export function trackStreamPause(streamName: string) {
-	tracker.trackEvent('stream', 'pause', streamName)
+export function trackHomescreenReenabledItem(viewName: string) {
+	tracker.trackEventWithCustomDimensionValues(
+		'homescreen',
+		're-enabled',
+		{label: viewName, value: -1},
+		{'3': viewName},
+	)
 }
 
-export function trackStreamError(streamName: string) {
-	tracker.trackEvent('stream', 'error', streamName)
-}
+// These are centralized event functions, so we have an easy place to review
+// them all. There is no limit to the number of these that we can have.
+export const trackStreamPlay = (streamName: string) =>
+	tracker.trackEvent('stream', 'play', {label: streamName})
+
+export const trackStreamPause = (streamName: string) =>
+	tracker.trackEvent('stream', 'pause', {label: streamName})
+
+export const trackStreamError = (streamName: string) =>
+	tracker.trackEvent('stream', 'error', {label: streamName})
 
 export const trackBuildingView = (buildingName: string) =>
 	tracker.trackEvent('building-hours', 'open', {label: buildingName})
