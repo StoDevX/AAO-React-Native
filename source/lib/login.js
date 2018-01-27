@@ -26,14 +26,6 @@ export function clearLoginCredentials() {
 	return resetInternetCredentials(SIS_LOGIN_KEY).catch(empty)
 }
 
-export async function isLoggedIn(): Promise<boolean> {
-	const result = await Promise.all([
-		storage.getTokenValid(),
-		storage.getCredentialsValid(),
-	])
-	return result.every(result => result === true)
-}
-
 export async function performLogin(
 	{username, password}: Credentials,
 	{attempts = 3}: {attempts: number} = {},
@@ -61,14 +53,10 @@ export async function performLogin(
 	const page = await loginResult.text()
 
 	if (page.includes('Password')) {
-		await storage.setCredentialsValid(false)
 		return false
 	}
 
-	await Promise.all([
-		saveLoginCredentials({username, password}),
-		storage.setCredentialsValid(true),
-	])
+	await saveLoginCredentials({username, password})
 
 	return true
 }

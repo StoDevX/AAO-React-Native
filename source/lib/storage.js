@@ -75,14 +75,6 @@ export function clearTokenValid(): Promise<any> {
 	return removeItem(tokenValidKey)
 }
 
-const credentialsValidKey = 'olafCredentials:valid'
-export function setCredentialsValid(valid: boolean) {
-	return setItem(credentialsValidKey, valid)
-}
-export function getCredentialsValid(): Promise<boolean> {
-	return getItemAsBoolean(credentialsValidKey)
-}
-
 /// MARK: Favorite Buildings
 
 const favoriteBuildingsKey = 'buildings:favorited'
