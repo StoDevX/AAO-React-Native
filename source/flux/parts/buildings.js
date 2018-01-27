@@ -39,7 +39,6 @@ export function toggleFavoriteBuilding(
 		// Sort the building names (localeCompare handles non-ASCII chars better)
 		newFavorites.sort((a, b) => a.localeCompare(b))
 
-		// TODO: remove saving logic from reducers
 		storage.setFavoriteBuildings(newFavorites)
 
 		dispatch({type: TOGGLE_FAVORITE_BUILDING, payload: newFavorites})
