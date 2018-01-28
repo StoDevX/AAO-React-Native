@@ -1,19 +1,57 @@
 // @flow
 
+{
+  /*<View>
+        <Text style={styles.showingsTitle}>Showings</Text>
+        {this.props.showings.map(showing => (
+          <Text key={showing.time} style={styles.showings}>
+            {moment(showing.time).format('dddd')}
+            {moment(showing.time).format('MMM.')}
+            {moment(showing.time).format('Do')}
+            {moment(showing.time).format('h:mmA')}
+            {'in'}{' '}{showing.location}
+          </Text>
+        ))}
+      </View>
+*/
+}
+
 import React from 'react'
-import {StyleSheet, View, ScrollView, Text, Image} from 'react-native'
+import {
+  StyleSheet,
+  View,
+  SectionList,
+  Platform,
+  ScrollView,
+  Text,
+  Image,
+} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import LoadingView from '../../components/loading'
 import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
 import moment from 'moment-timezone'
 import map from 'lodash/map'
+import values from 'lodash/values'
 import openUrl from '../../components/open-url'
+import {Row, Column} from '../../components/layout'
+import {
+  ListRow,
+  ListSectionHeader,
+  ListSeparator,
+  Detail,
+  Title,
+} from '../../components/list'
+import {MovieRow} from './row'
 import type {Movie} from './types'
 
 const MOVIE_URL = 'https://stodevx.github.io/sga-weekly-movies/next.json'
 
 const MAX_VALUE = 200
+
+const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
+const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
+const leftSideSpacing = 20
 
 type Props = {}
 type State = {
@@ -197,20 +235,63 @@ class Genre extends React.Component {
 }
 
 class Showings extends React.Component {
+  renderSectionHeader = ({title}: {title: string}) => (
+    <ListSectionHeader
+      title={title}
+      spacing={{left: leftSideSpacing}}
+      style={styles.rowSectionHeader}
+    />
+  )
+
+  // renderRow = ({item}: {item: StudentOrgType}) => (
+  //   <ListRow
+  //     onPress={() => this.onPressRow(item)}
+  //     contentContainerStyle={[styles.row]}
+  //     arrowPosition="none"
+  //     fullWidth={true}
+  //   >
+  //     <Row alignItems="flex-start">
+  //       <View style={styles.badgeContainer}>
+  //         <Text style={styles.badge}>•</Text>
+  //       </View>
+
+  //       <Column flex={1}>
+  //         <Title lines={1}>{item.name}</Title>
+  //         <Detail lines={1}>{item.category}</Detail>
+  //       </Column>
+  //     </Row>
+  //   </ListRow>
+  // )
+
+  renderItem = ({item}: {item: Movie}) => (
+    <Text style={styles.showingsDate}>{item.location}</Text>
+  ) //<MovieRow stream={item} />
+
+  keyExtractor = (item: Movie) => item.location
+
   render() {
     if (!this.props.showings) {
       return null
     }
 
+    //const sections = this.props.showings.map(showing => (
+    const sections = [
+      {title: 'foo', data: [('location': 'baz')]},
+      {title: 'bar', data: [('location': 'buzz')]},
+    ]
+
     return (
-      <View>
+      <View style={styles.showingsWrapper}>
         <Text style={styles.showingsTitle}>Showings</Text>
-        {this.props.showings.map(showing => (
-          <Text key={showing.time} style={styles.showings}>
-            {moment(showing.time).format('dddd MMM. Do @ h:mm A')} {'in'}{' '}
-            {showing.location}
-          </Text>
-        ))}
+        <SectionList
+          ListEmptyComponent={<Text>No Showings</Text>}
+          renderSectionHeader={this.renderSectionHeader}
+          sections={(sections: any)}
+          ItemSeparatorComponent={ListSeparator}
+          keyExtractor={this.keyExtractor}
+          style={styles.listContainer}
+          renderItem={this.renderItem}
+        />
       </View>
     )
   }
@@ -227,7 +308,9 @@ class IMDB extends React.Component {
     return (
       <View>
         <Text style={styles.imdbTitle}>IMDB Page</Text>
-        <Text style={styles.imdb} onPress={() => openUrl(url)}>{url}</Text>
+        <Text style={styles.imdb} onPress={() => openUrl(url)}>
+          {url}
+        </Text>
       </View>
     )
   }
@@ -236,6 +319,12 @@ class IMDB extends React.Component {
 const styles = StyleSheet.create({
   contentContainer: {
     padding: 10,
+  },
+  listContainer: {
+    backgroundColor: c.white,
+  },
+  showingsWrapper: {
+    flex: 1,
   },
   rightPane: {
     justifyContent: 'space-between',
@@ -314,6 +403,12 @@ const styles = StyleSheet.create({
   showings: {
     marginLeft: 2,
   },
+  showingsDate: {
+    color: c.black,
+    backgroundColor: c.red,
+    fontSize: 20,
+    marginTop: 20,
+  },
   imdbTitle: {
     fontWeight: '700',
     marginBottom: 3,
@@ -321,5 +416,12 @@ const styles = StyleSheet.create({
   imdb: {
     marginLeft: 2,
     color: c.infoBlue,
+  },
+  row: {
+    height: ROW_HEIGHT,
+    paddingRight: 2,
+  },
+  rowSectionHeader: {
+    height: SECTION_HEADER_HEIGHT,
   },
 })
