@@ -50,12 +50,14 @@ export type State = {|
 	+fetching: boolean,
 	+movie: ?WeeklyMovie,
 	+lastFetchError: ?boolean,
+	+lastFetchErrorMessage: ?string,
 |}
 
 const initialState = {
 	fetching: false,
 	movie: null,
 	lastFetchError: null,
+	lastFetchErrorMessage: '',
 }
 
 export function weeklyMovie(state: State = initialState, action: Action) {
