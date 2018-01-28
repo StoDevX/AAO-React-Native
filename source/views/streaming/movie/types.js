@@ -11,6 +11,8 @@ export type PosterInfo = {
 
 export type MovieShowing = {time: string, location: string}
 
+export type MovieRating = {Source: string, Value: string}
+
 export type MovieInfo = {
 	Title: string,
 	Year: string,
@@ -25,7 +27,7 @@ export type MovieInfo = {
 	Language: string,
 	Country: string,
 	Awards: string,
-	Ratings: Array<{Source: string, Value: string}>,
+	Ratings: Array<MovieRating>,
 	Type: string,
 	DVD: string,
 	BoxOffice: string,
