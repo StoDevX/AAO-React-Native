@@ -102,16 +102,6 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		}
 
 		const poster = movie.posters.find(p => p.width === 512)
-		const title = movie.info.Title
-		const runtime = movie.info.Runtime
-		const releasesd = movie.info.Released
-		const genre = movie.info.Genre
-		const rated = movie.info.Rated
-		const ratings = movie.info.Ratings
-		const plot = movie.info.Plot
-		const cast = movie.info.Actors
-		const showings = movie.showings
-		const imdbID = movie.info.imdbID
 
 		return (
 			<ScrollView contentContainerStyle={styles.contentContainer}>
@@ -124,28 +114,28 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 						/>
 					)}
 					<View style={styles.rightPane}>
-						<Text style={styles.movieTitle}>{title}</Text>
-						<Text>{releasesd}</Text>
+						<Text style={styles.movieTitle}>{movie.info.Title}</Text>
+						<Text>{movie.info.Released}</Text>
 						<View style={styles.ratingTimeWrapper}>
 							<View style={styles.mpaaWrapper}>
-								<Text style={styles.mpaaText}>{rated}</Text>
+								<Text style={styles.mpaaText}>{movie.info.Rated}</Text>
 							</View>
 							<Text> • </Text>
-							<Text>{runtime}</Text>
+							<Text>{movie.info.Runtime}</Text>
 						</View>
-						<Ratings ratings={ratings} />
+						<Ratings ratings={movie.info.Ratings} />
 					</View>
 				</View>
 				<Separator />
-				<Text>{plot}</Text>
+				<Text>{movie.info.Plot}</Text>
 				<Separator />
-				<Genre genre={genre} />
+				<Genre genre={movie.info.Genre} />
 				<Separator />
-				<Cast actors={cast} />
+				<Cast actors={movie.info.Actors} />
 				<Separator />
-				<Showings showings={showings} />
+				<Showings showings={movie.showings} />
 				<Separator />
-				<IMDB imdbID={imdbID} />
+				<IMDB imdbID={movie.info.imdbID} />
 			</ScrollView>
 		)
 	}
