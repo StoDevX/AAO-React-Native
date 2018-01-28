@@ -5,7 +5,6 @@ import {
 	StyleSheet,
 	View,
 	SectionList,
-	Platform,
 	ScrollView,
 	Text,
 	Image,
@@ -15,33 +14,22 @@ import LoadingView from '../../components/loading'
 import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
 import moment from 'moment-timezone'
-import map from 'lodash/map'
-import values from 'lodash/values'
 import openUrl from '../../components/open-url'
 import {Row, Column} from '../../components/layout'
-import {
-	ListRow,
-	ListSectionHeader,
-	ListSeparator,
-	Detail,
-	Title,
-} from '../../components/list'
-import {MovieRow} from './row'
-import type {Movie} from './types'
+import {ListRow, ListSeparator, Detail, Title} from '../../components/list'
+import type {Movie, MovieShowing} from './types'
 
 const MOVIE_URL = 'https://stodevx.github.io/sga-weekly-movies/next.json'
 
 const MAX_VALUE = 200
 
 const ROW_HEIGHT = 60
-const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
 
 type Props = {}
 type State = {
 	loading: boolean,
 	movie: ?Movie,
 }
-;[]
 
 function getStyleFromScore(score: string) {
 	let numScore = Number.parseFloat(score)
@@ -69,7 +57,7 @@ function getStyleFromScore(score: string) {
 	}
 }
 
-export class WeeklyMovieView extends React.Component<any, Props, State> {
+export class WeeklyMovieView extends React.Component<Props, State> {
 	static navigationOptions = {
 		tabBarLabel: 'Weekly Movie',
 		tabBarIcon: TabBarIcon('film'),
@@ -117,9 +105,9 @@ export class WeeklyMovieView extends React.Component<any, Props, State> {
 				<View style={styles.mainSection}>
 					{poster && (
 						<Image
-							style={[styles.detailsImage]}
 							resizeMode="contain"
 							source={{uri: poster.url}}
+							style={[styles.detailsImage]}
 						/>
 					)}
 					<View style={styles.rightPane}>
@@ -150,7 +138,7 @@ export class WeeklyMovieView extends React.Component<any, Props, State> {
 	}
 }
 
-class Ratings extends React.Component {
+class Ratings extends React.Component<any, any> {
 	render() {
 		let criticsScore = ''
 		let audienceScore = ''
@@ -187,7 +175,7 @@ class Ratings extends React.Component {
 	}
 }
 
-class Cast extends React.Component {
+class Cast extends React.Component<any, any> {
 	render() {
 		if (!this.props.actors) {
 			return null
@@ -202,7 +190,7 @@ class Cast extends React.Component {
 	}
 }
 
-class Genre extends React.Component {
+class Genre extends React.Component<any, any> {
 	render() {
 		if (!this.props.genre) {
 			return null
@@ -217,18 +205,18 @@ class Genre extends React.Component {
 	}
 }
 
-class Showings extends React.Component {
-	renderTimes = (item: Movie) =>
+class Showings extends React.Component<any, any> {
+	renderTimes = (item: MovieShowing) =>
 		`${moment(item.time).format('dddd')} ${moment(item.time).format(
 			'MMM.',
 		)} ${moment(item.time).format('Do')} at ${moment(item.time).format(
 			'h:mmA',
 		)}`
 
-	renderRow = ({item}: {item: Movie}) => (
+	renderRow = ({item}: {item: MovieShowing}) => (
 		<ListRow
-			contentContainerStyle={[styles.row]}
 			arrowPosition="none"
+			contentContainerStyle={[styles.row]}
 			fullWidth={true}
 		>
 			<Row alignItems="flex-start">
@@ -242,7 +230,7 @@ class Showings extends React.Component {
 
 	renderSeparator = () => <ListSeparator fullWidth={true} />
 
-	keyExtractor = (item: Movie) => item.time
+	keyExtractor = (item: MovieShowing) => item.time
 
 	render() {
 		if (!this.props.showings) {
@@ -255,19 +243,19 @@ class Showings extends React.Component {
 			<View style={styles.showingsWrapper}>
 				<Text style={styles.showingsTitle}>Showings</Text>
 				<SectionList
-					ListEmptyComponent={<Text>No Showings</Text>}
-					sections={sections}
 					ItemSeparatorComponent={this.renderSeparator}
+					ListEmptyComponent={<Text>No Showings</Text>}
 					keyExtractor={this.keyExtractor}
-					style={styles.listContainer}
 					renderItem={this.renderRow}
+					sections={sections}
+					style={styles.listContainer}
 				/>
 			</View>
 		)
 	}
 }
 
-class IMDB extends React.Component {
+class IMDB extends React.Component<any, any> {
 	render() {
 		if (!this.props.imdbID) {
 			return null
@@ -278,7 +266,7 @@ class IMDB extends React.Component {
 		return (
 			<View>
 				<Text style={styles.imdbTitle}>IMDB Page</Text>
-				<Text style={styles.imdb} onPress={() => openUrl(url)}>
+				<Text onPress={() => openUrl(url)} style={styles.imdb}>
 					{url}
 				</Text>
 			</View>
@@ -349,7 +337,7 @@ const styles = StyleSheet.create({
 		shadowOffset: {height: 0, width: 0},
 	},
 	separator: {
-		backgroundColor: 'rgba(0, 0, 0, 0.1)',
+		backgroundColor: c.semitransparentGray,
 		height: StyleSheet.hairlineWidth,
 		marginVertical: 10,
 	},
@@ -370,11 +358,6 @@ const styles = StyleSheet.create({
 	showingsTitle: {
 		fontWeight: '700',
 		marginBottom: 3,
-	},
-	showingsDate: {
-		color: c.black,
-		fontSize: 20,
-		marginTop: 20,
 	},
 	imdbTitle: {
 		fontWeight: '700',
