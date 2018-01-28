@@ -264,16 +264,16 @@ class Showings extends React.Component {
 	// )
 
 	renderItem = ({item}: {item: Movie}) => (
-    <View>
-      <Text>{item.time}</Text>
-		  <Text style={styles.showingsDate}>{item.location}</Text>
-    </View>
+		<View>
+			<Text>{item.time}</Text>
+			<Text style={styles.showingsDate}>{item.location}</Text>
+		</View>
 	) //<MovieRow stream={item} />
 
 	keyExtractor = (item: Movie) => item.location
 
 	render() {
-    if (!this.props.showings) {
+		if (!this.props.showings) {
 			return null
 		}
 
