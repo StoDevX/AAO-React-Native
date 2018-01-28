@@ -1,21 +1,5 @@
 // @flow
 
-{
-	/*<View>
-        <Text style={styles.showingsTitle}>Showings</Text>
-        {this.props.showings.map(showing => (
-          <Text key={showing.time} style={styles.showings}>
-            {moment(showing.time).format('dddd')}
-            {moment(showing.time).format('MMM.')}
-            {moment(showing.time).format('Do')}
-            {moment(showing.time).format('h:mmA')}
-            {'in'}{' '}{showing.location}
-          </Text>
-        ))}
-      </View>
-*/
-}
-
 import React from 'react'
 import {
 	StyleSheet,
@@ -49,9 +33,8 @@ const MOVIE_URL = 'https://stodevx.github.io/sga-weekly-movies/next.json'
 
 const MAX_VALUE = 200
 
-const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
+const ROW_HEIGHT = 60
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
-const leftSideSpacing = 20
 
 type Props = {}
 type State = {
@@ -172,7 +155,7 @@ class Ratings extends React.Component {
 		let criticsScore = ''
 		let audienceScore = ''
 
-		map(this.props.ratings, rating => {
+		this.props.ratings.forEach(rating => {
 			switch (rating.Source) {
 				case 'Internet Movie Database':
 					criticsScore = rating.Value
@@ -235,65 +218,49 @@ class Genre extends React.Component {
 }
 
 class Showings extends React.Component {
-	renderSectionHeader = ({title}: {title: string}) => (
-		<ListSectionHeader
-			title={title}
-			spacing={{left: leftSideSpacing}}
-			style={styles.rowSectionHeader}
-		/>
+	renderTimes = (item: Movie) =>
+		`${moment(item.time).format('dddd')} ${moment(item.time).format(
+			'MMM.',
+		)} ${moment(item.time).format('Do')} at ${moment(item.time).format(
+			'h:mmA',
+		)}`
+
+	renderRow = ({item}: {item: Movie}) => (
+		<ListRow
+			contentContainerStyle={[styles.row]}
+			arrowPosition="none"
+			fullWidth={true}
+		>
+			<Row alignItems="flex-start">
+				<Column flex={1}>
+					<Title lines={1}>{this.renderTimes(item)}</Title>
+					<Detail lines={1}>{item.location}</Detail>
+				</Column>
+			</Row>
+		</ListRow>
 	)
 
-	// renderRow = ({item}: {item: StudentOrgType}) => (
-	//   <ListRow
-	//     onPress={() => this.onPressRow(item)}
-	//     contentContainerStyle={[styles.row]}
-	//     arrowPosition="none"
-	//     fullWidth={true}
-	//   >
-	//     <Row alignItems="flex-start">
-	//       <View style={styles.badgeContainer}>
-	//         <Text style={styles.badge}>•</Text>
-	//       </View>
+	renderSeparator = () => <ListSeparator fullWidth={true} />
 
-	//       <Column flex={1}>
-	//         <Title lines={1}>{item.name}</Title>
-	//         <Detail lines={1}>{item.category}</Detail>
-	//       </Column>
-	//     </Row>
-	//   </ListRow>
-	// )
-
-	renderItem = ({item}: {item: Movie}) => (
-		<View>
-			<Text>{item.time}</Text>
-			<Text style={styles.showingsDate}>{item.location}</Text>
-		</View>
-	) //<MovieRow stream={item} />
-
-	keyExtractor = (item: Movie) => item.location
+	keyExtractor = (item: Movie) => item.time
 
 	render() {
 		if (!this.props.showings) {
 			return null
 		}
 
-		//const sections = this.props.showings.map(showing => (
-		// const sections = [
-		// 	{title: 'foo', data: [('location': 'baz')]},
-		// 	{title: 'bar', data: [('location': 'buzz')]},
-		// ]
+		const sections = [{title: 'Showings', data: this.props.showings}]
 
 		return (
 			<View style={styles.showingsWrapper}>
 				<Text style={styles.showingsTitle}>Showings</Text>
 				<SectionList
 					ListEmptyComponent={<Text>No Showings</Text>}
-					renderSectionHeader={this.renderSectionHeader}
-					sections={(this.props.showings: any)}
-					ItemSeparatorComponent={ListSeparator}
+					sections={sections}
+					ItemSeparatorComponent={this.renderSeparator}
 					keyExtractor={this.keyExtractor}
 					style={styles.listContainer}
-					renderItem={this.renderItem}
+					renderItem={this.renderRow}
 				/>
 			</View>
 		)
@@ -322,6 +289,7 @@ class IMDB extends React.Component {
 const styles = StyleSheet.create({
 	contentContainer: {
 		padding: 10,
+		backgroundColor: c.white,
 	},
 	listContainer: {
 		backgroundColor: c.white,
@@ -403,12 +371,8 @@ const styles = StyleSheet.create({
 		fontWeight: '700',
 		marginBottom: 3,
 	},
-	showings: {
-		marginLeft: 2,
-	},
 	showingsDate: {
 		color: c.black,
-		backgroundColor: c.red,
 		fontSize: 20,
 		marginTop: 20,
 	},
@@ -422,9 +386,5 @@ const styles = StyleSheet.create({
 	},
 	row: {
 		height: ROW_HEIGHT,
-		paddingRight: 2,
-	},
-	rowSectionHeader: {
-		height: SECTION_HEADER_HEIGHT,
 	},
 })
