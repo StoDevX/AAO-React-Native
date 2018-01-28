@@ -9,6 +9,21 @@ export type PosterInfo = {
 	height: number,
 }
 
+export type MovieTrailerThumbnail = {
+	url: string,
+	filename: string,
+	width: number,
+	height: number,
+}
+
+export type MovieTrailer = {
+	name: string,
+	type: 'Trailer' | 'Teaser' | 'Featurette' | 'Clip',
+	url: string,
+	lang: string,
+	thumbnails: Array<MovieTrailerThumbnail>,
+}
+
 export type MovieShowing = {time: string, location: string}
 
 export type MovieRating = {Source: string, Value: string}
@@ -40,6 +55,7 @@ export type Movie = {
 	root: string,
 	info: MovieInfo,
 	showings: Array<MovieShowing>,
+	trailers: Array<MovieTrailer>,
 	posters: Array<PosterInfo>,
 	posterColors: {
 		dominant: RGBTuple,
