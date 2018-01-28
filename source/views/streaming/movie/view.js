@@ -13,18 +13,15 @@ import moment from 'moment-timezone'
 import openUrl from '../../components/open-url'
 import {Row, Column} from '../../components/layout'
 import {ListRow, ListSeparator, Detail, Title} from '../../components/list'
-import type {Movie, MovieShowing, MovieRating, PosterInfo} from './types'
+import type {Movie, MovieShowing, MovieRating, PosterInfo, RGBTuple} from './types'
 import {type TopLevelViewPropsType} from '../../types'
 
-const MAX_VALUE = 200
-
-const ROW_HEIGHT = 60
-
 function colorizeScore(score: string) {
+	const MAX_VALUE = 200
 	let numScore = Number.parseFloat(score)
 
 	if (numScore < 0) {
-		return styles.noScore
+		return 'black'
 	}
 
 	if (score.indexOf('%') != -1) {
@@ -51,9 +48,8 @@ type ReduxDispatchProps = {
 }
 
 type Props = ReduxStateProps & ReduxDispatchProps & ReactProps
-type State = {}
 
-export class PlainWeeklyMovieView extends React.Component<Props, State> {
+export class PlainWeeklyMovieView extends React.Component<Props> {
 	static navigationOptions = {
 		tabBarLabel: 'Weekly Movie',
 		tabBarIcon: TabBarIcon('film'),
@@ -88,7 +84,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		return (
 			<ScrollView contentContainerStyle={styles.contentContainer}>
 				<View style={styles.mainSection}>
-					<Poster posters={movie.posters} size={512} />
+					<Poster posters={movie.posters} size={512} tint={movie.posterColors.dominant} />
 					<View style={styles.rightPane}>
 						<Text style={styles.movieTitle}>{movie.info.Title}</Text>
 						<Text>{movie.info.Released}</Text>
@@ -142,8 +138,8 @@ export const WeeklyMovieView = connect(mapState, mapDispatch)(
 
 const Separator = () => <View style={styles.separator} />
 
-const Poster = (props: {posters: Array<PosterInfo>, size: number}) => {
-	const {posters, size} = props
+const Poster = (props: {posters: Array<PosterInfo>, size: number, tint: RGBTuple}) => {
+	const {posters, size, tint} = props
 	const poster = posters.find(p => p.width === size)
 
 	if (!poster) {
@@ -154,7 +150,7 @@ const Poster = (props: {posters: Array<PosterInfo>, size: number}) => {
 		<Image
 			resizeMode="contain"
 			source={{uri: poster.url}}
-			style={[styles.detailsImage]}
+			style={[styles.detailsImage, {shadowColor: `rgb(${tint[0]}, ${tint[1]}, ${tint[2]})`}]}
 		/>
 	)
 }
@@ -205,7 +201,7 @@ const Genre = ({genre}: {genre: string}) => (
 	</View>
 )
 
-class Showings extends React.Component<any, any> {
+class Showings extends React.Component<{showings: MovieShowing[]}> {
 	renderTimes = (item: MovieShowing) => {
 		let m = moment(item.time)
 		let dayOfWeek = m.format('dddd')
@@ -216,11 +212,7 @@ class Showings extends React.Component<any, any> {
 	}
 
 	renderRow = ({item}: {item: MovieShowing}) => (
-		<ListRow
-			arrowPosition="none"
-			contentContainerStyle={[styles.row]}
-			fullWidth={true}
-		>
+		<ListRow arrowPosition="none" fullWidth={true}>
 			<Row alignItems="flex-start">
 				<Column flex={1}>
 					<Title lines={1}>{this.renderTimes(item)}</Title>
@@ -256,9 +248,7 @@ class Showings extends React.Component<any, any> {
 class IMDB extends React.Component<any, any> {
 	url = imdbID => `https://www.imdb.com/title/${imdbID}`
 
-	open = () => {
-		openUrl(this.url(this.props.imdbID))
-	}
+	open = () => openUrl(this.url(this.props.imdbID))
 
 	render() {
 		if (!this.props.imdbID) {
@@ -307,9 +297,6 @@ const styles = StyleSheet.create({
 		fontSize: 28,
 		fontWeight: '500',
 	},
-	noScore: {
-		color: c.black,
-	},
 	mpaaTimeWrapper: {
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -328,15 +315,15 @@ const styles = StyleSheet.create({
 	},
 	mainSection: {
 		flexDirection: 'row',
+		overflow: 'visible',
 	},
 	detailsImage: {
+		overflow: 'visible',
 		width: 134,
-		height: 200,
 		marginRight: 10,
-		shadowOpacity: 0.45,
+		shadowOpacity: 0.85,
 		shadowRadius: 3,
-		shadowColor: c.gray,
-		shadowOffset: {height: 0, width: 0},
+		shadowOffset: {height: 2, width: 0},
 	},
 	separator: {
 		backgroundColor: c.semitransparentGray,
@@ -368,8 +355,5 @@ const styles = StyleSheet.create({
 	imdb: {
 		marginLeft: 2,
 		color: c.infoBlue,
-	},
-	row: {
-		height: ROW_HEIGHT,
 	},
 })
