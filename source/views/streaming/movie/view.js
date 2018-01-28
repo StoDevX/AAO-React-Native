@@ -9,6 +9,9 @@ import {
 	Text,
 	Image,
 } from 'react-native'
+import {connect} from 'react-redux'
+import {getWeeklyMovie} from '../../../flux/parts/weekly-movie'
+import {type ReduxState} from '../../../flux'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import LoadingView from '../../components/loading'
 import {NoticeView} from '../../components/notice'
@@ -18,18 +21,11 @@ import openUrl from '../../components/open-url'
 import {Row, Column} from '../../components/layout'
 import {ListRow, ListSeparator, Detail, Title} from '../../components/list'
 import type {Movie, MovieShowing} from './types'
-
-const MOVIE_URL = 'https://stodevx.github.io/sga-weekly-movies/next.json'
+import {type TopLevelViewPropsType} from '../../types'
 
 const MAX_VALUE = 200
 
 const ROW_HEIGHT = 60
-
-type Props = {}
-type State = {
-	loading: boolean,
-	movie: ?Movie,
-}
 
 function getStyleFromScore(score: string) {
 	let numScore = Number.parseFloat(score)
@@ -57,38 +53,55 @@ function getStyleFromScore(score: string) {
 	}
 }
 
-export class WeeklyMovieView extends React.Component<Props, State> {
+type ReactProps = TopLevelViewPropsType
+
+type ReduxStateProps = {|
+	loading: boolean,
+	error: ?boolean,
+	errorMessage?: string,
+	movie: ?Movie,
+|}
+
+type ReduxDispatchProps = {
+	getWeeklyMovie: () => any,
+}
+
+type Props = ReduxStateProps & ReduxDispatchProps & ReactProps
+type State = {}
+
+export class PlainWeeklyMovieView extends React.Component<Props, State> {
 	static navigationOptions = {
 		tabBarLabel: 'Weekly Movie',
 		tabBarIcon: TabBarIcon('film'),
 	}
 
-	state = {
-		loading: true,
-		movie: null,
-	}
-
 	componentWillMount() {
-		this.fetchMovie()
+		this.props.getWeeklyMovie()
 	}
-
-	fetchMovie = () =>
-		fetchJson(MOVIE_URL)
-			.then(({movie}) => fetchJson(movie))
-			.then(info => this.setState(() => ({movie: info, loading: false})))
 
 	render() {
-		if (this.state.loading) {
+		if (this.props.loading) {
 			return <LoadingView />
 		}
 
-		const {movie} = this.state
-
-		if (!movie) {
-			return <NoticeView message="this should never happen" />
+		if (this.props.error) {
+			const msg = this.props.errorMessage || ''
+			return (
+				<NoticeView
+					buttonText="Try Again"
+					onPress={this.props.getWeeklyMovie}
+					text={`There was a problem loading the movie: ${msg}`}
+				/>
+			)
 		}
 
-		const poster = movie.posters.find(p => p.width == 512)
+		const {movie} = this.props
+
+		if (!movie) {
+			return <NoticeView text="this should never happen" />
+		}
+
+		const poster = movie.posters.find(p => p.width === 512)
 		const title = movie.info.Title
 		const runtime = movie.info.Runtime
 		const releasesd = movie.info.Released
@@ -123,20 +136,43 @@ export class WeeklyMovieView extends React.Component<Props, State> {
 						<Ratings ratings={ratings} />
 					</View>
 				</View>
-				<View style={styles.separator} />
+				<Separator />
 				<Text>{plot}</Text>
-				<View style={styles.separator} />
+				<Separator />
 				<Genre genre={genre} />
-				<View style={styles.separator} />
+				<Separator />
 				<Cast actors={cast} />
-				<View style={styles.separator} />
+				<Separator />
 				<Showings showings={showings} />
-				<View style={styles.separator} />
+				<Separator />
 				<IMDB imdbID={imdbID} />
 			</ScrollView>
 		)
 	}
 }
+
+const mapState = (state: ReduxState): ReduxStateProps => {
+	return {
+		loading: state.weeklyMovie ? state.weeklyMovie.fetching : true,
+		error: state.weeklyMovie ? state.weeklyMovie.lastFetchError : null,
+		errorMessage: state.weeklyMovie
+			? state.weeklyMovie.lastFetchErrorMessage
+			: null,
+		movie: state.weeklyMovie ? state.weeklyMovie.movie : null,
+	}
+}
+
+const mapDispatch = (dispatch): ReduxDispatchProps => {
+	return {
+		getWeeklyMovie: () => dispatch(getWeeklyMovie()),
+	}
+}
+
+export const WeeklyMovieView = connect(mapState, mapDispatch)(
+	PlainWeeklyMovieView,
+)
+
+const Separator = () => <View style={styles.separator} />
 
 class Ratings extends React.Component<any, any> {
 	render() {

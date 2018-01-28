@@ -1,7 +1,7 @@
 // @flow
 import {AsyncStorage} from 'react-native'
 import moment from 'moment'
-import {GH_PAGES_URL} from '../globals'
+import {GH_PAGES_URL, WEEKLY_MOVIE_URL} from '../globals'
 
 type BaseCacheResultType<T> = {
 	isExpired: boolean,
@@ -237,4 +237,54 @@ export async function fetchHelpTools(
 	await setHelpTools(request.data)
 
 	return request.data
+}
+
+/// MARK: Weekly Movie
+
+type MaybeError<T> = {error: true, message: string} | {error: false, data: T}
+
+const weeklyMovieKey = 'streaming:movie:current'
+const weeklyMovieCacheTime = [4, 'hours']
+import {type Movie as WeeklyMovie} from '../views/streaming/movie/types'
+export function setWeeklyMovie(movieInfo: WeeklyMovie) {
+	return setItem(weeklyMovieKey, movieInfo, weeklyMovieCacheTime)
+}
+export function getWeeklyMovie(): CacheResultType<?WeeklyMovie> {
+	return getItem(weeklyMovieKey)
+}
+async function fetchWeeklyMovieRemote(): Promise<MaybeError<WeeklyMovie>> {
+	try {
+		console.log(WEEKLY_MOVIE_URL('next.json'))
+		const nextMovie = await fetchJson(WEEKLY_MOVIE_URL('next.json'))
+		console.log(nextMovie)
+		const movieInfo = await fetchJson(nextMovie.movie)
+		return {error: false, data: movieInfo}
+	} catch (err) {
+		console.error(JSON.stringify(err))
+		return {error: true, message: err.message}
+	}
+}
+export async function fetchWeeklyMovie(
+	isOnline: boolean,
+): Promise<MaybeError<WeeklyMovie>> {
+	const cachedValue = await getWeeklyMovie()
+
+	if (!isOnline) {
+		if (cachedValue.isCached && cachedValue.value) {
+			return {error: false, data: cachedValue.value}
+		}
+		return {error: true, message: 'You are currently offline'}
+	}
+
+	if (!cachedValue.isExpired && cachedValue.value) {
+		return {error: false, data: cachedValue.value}
+	}
+
+	const request = await fetchWeeklyMovieRemote()
+	if (request.error) {
+		return {error: true, message: request.message}
+	}
+	await setWeeklyMovie(request.data)
+
+	return {error: false, data: request.data}
 }
