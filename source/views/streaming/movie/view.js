@@ -90,7 +90,7 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 
 		return (
 			<ScrollView contentContainerStyle={styles.contentContainer}>
-				<View style={styles.mainSection}>
+				<View style={styles.movieInfo}>
 					<Poster
 						posters={movie.posters}
 						size={512}
@@ -101,9 +101,9 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 						<Text style={styles.movieTitle}>{movie.info.Title}</Text>
 						<Text>{movie.info.Released}</Text>
 
-						<View style={styles.mpaaTimeWrapper}>
-							<View style={styles.mpaaWrapper}>
-								<Text style={styles.mpaaText}>{movie.info.Rated}</Text>
+						<View style={styles.centeredRow}>
+							<View style={styles.mpaa}>
+								<Text style={styles.mpaaRating}>{movie.info.Rated}</Text>
 							</View>
 							<Text> • </Text>
 							<Text>{movie.info.Runtime}</Text>
@@ -169,7 +169,7 @@ const Poster = (props: {
 		<Image
 			resizeMode="contain"
 			source={{uri: poster.url}}
-			style={[styles.detailsImage, {shadowColor}]}
+			style={[styles.moviePoster, {shadowColor}]}
 		/>
 	)
 }
@@ -192,10 +192,10 @@ const Ratings = ({ratings}: {ratings: Array<MovieRating>}) => {
 		.reverse()
 
 	return scores.map(info => (
-		<View key={info.title} style={styles.rating}>
+		<React.Fragment key={info.title}>
 			<Text style={styles.ratingTitle}>{info.title}</Text>
-			<Text style={[styles.ratingValue, {color: info.tint}]}>{info.score}</Text>
-		</View>
+			<Text style={[styles.rating, {color: info.tint}]}>{info.score}</Text>
+		</React.Fragment>
 	))
 }
 
@@ -270,44 +270,42 @@ const styles = StyleSheet.create({
 		backgroundColor: c.white,
 	},
 	rightPane: {
-		justifyContent: 'space-between',
 		flex: 1,
+		justifyContent: 'space-between',
 	},
 	movieTitle: {
 		fontSize: 23,
 		fontWeight: '400',
 	},
-	rating: {
-		marginTop: 10,
-	},
 	ratingTitle: {
+		marginTop: 10,
 		fontSize: 14,
 		fontWeight: '500',
 	},
-	ratingValue: {
+	rating: {
 		fontSize: 28,
 		fontWeight: '500',
 	},
-	mpaaTimeWrapper: {
+	centeredRow: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
-	mpaaWrapper: {
+	mpaa: {
 		alignSelf: 'flex-start',
 		borderColor: c.black,
 		borderWidth: 1,
 		paddingHorizontal: 3,
 		marginVertical: 5,
 	},
-	mpaaText: {
+	mpaaRating: {
 		fontFamily: 'Palatino',
 		fontSize: 13,
 		fontWeight: '500',
 	},
-	mainSection: {
+	movieInfo: {
 		flexDirection: 'row',
 	},
-	detailsImage: {
+	moviePoster: {
 		overflow: 'visible',
 		width: 134,
 		marginRight: 10,
