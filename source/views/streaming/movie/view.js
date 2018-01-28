@@ -58,7 +58,7 @@ type ReactProps = TopLevelViewPropsType
 type ReduxStateProps = {|
 	loading: boolean,
 	error: ?boolean,
-	errorMessage?: string,
+	errorMessage: ?string,
 	movie: ?Movie,
 |}
 
