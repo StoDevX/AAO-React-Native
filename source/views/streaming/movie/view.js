@@ -1,14 +1,7 @@
 // @flow
 
 import React from 'react'
-import {
-	StyleSheet,
-	View,
-	SectionList,
-	ScrollView,
-	Text,
-	Image,
-} from 'react-native'
+import {StyleSheet, View, FlatList, ScrollView, Text, Image} from 'react-native'
 import {connect} from 'react-redux'
 import {getWeeklyMovie} from '../../../flux/parts/weekly-movie'
 import {type ReduxState} from '../../../flux'
@@ -20,14 +13,14 @@ import moment from 'moment-timezone'
 import openUrl from '../../components/open-url'
 import {Row, Column} from '../../components/layout'
 import {ListRow, ListSeparator, Detail, Title} from '../../components/list'
-import type {Movie, MovieShowing} from './types'
+import type {Movie, MovieShowing, MovieRating, PosterInfo} from './types'
 import {type TopLevelViewPropsType} from '../../types'
 
 const MAX_VALUE = 200
 
 const ROW_HEIGHT = 60
 
-function getStyleFromScore(score: string) {
+function colorizeScore(score: string) {
 	let numScore = Number.parseFloat(score)
 
 	if (numScore < 0) {
@@ -41,16 +34,7 @@ function getStyleFromScore(score: string) {
 	numScore *= 10
 
 	const normalizedScore = Math.round(numScore / 100 * MAX_VALUE)
-	return {
-		color:
-			'rgb(' +
-			(MAX_VALUE - normalizedScore) +
-			', ' +
-			normalizedScore +
-			', ' +
-			0 +
-			')',
-	}
+	return `rgb(${MAX_VALUE - normalizedScore}, ${normalizedScore}, 0)`
 }
 
 type ReactProps = TopLevelViewPropsType
@@ -101,28 +85,22 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 			return <NoticeView text="this should never happen" />
 		}
 
-		const poster = movie.posters.find(p => p.width === 512)
-
 		return (
 			<ScrollView contentContainerStyle={styles.contentContainer}>
 				<View style={styles.mainSection}>
-					{poster && (
-						<Image
-							resizeMode="contain"
-							source={{uri: poster.url}}
-							style={[styles.detailsImage]}
-						/>
-					)}
+					<Poster posters={movie.posters} size={512} />
 					<View style={styles.rightPane}>
 						<Text style={styles.movieTitle}>{movie.info.Title}</Text>
 						<Text>{movie.info.Released}</Text>
-						<View style={styles.ratingTimeWrapper}>
+
+						<View style={styles.mpaaTimeWrapper}>
 							<View style={styles.mpaaWrapper}>
 								<Text style={styles.mpaaText}>{movie.info.Rated}</Text>
 							</View>
 							<Text> • </Text>
 							<Text>{movie.info.Runtime}</Text>
 						</View>
+
 						<Ratings ratings={movie.info.Ratings} />
 					</View>
 				</View>
@@ -164,80 +142,78 @@ export const WeeklyMovieView = connect(mapState, mapDispatch)(
 
 const Separator = () => <View style={styles.separator} />
 
-class Ratings extends React.Component<any, any> {
-	render() {
-		let criticsScore = ''
-		let audienceScore = ''
+const Poster = (props: {posters: Array<PosterInfo>, size: number}) => {
+	const {posters, size} = props
+	const poster = posters.find(p => p.width === size)
 
-		this.props.ratings.forEach(rating => {
-			switch (rating.Source) {
+	if (!poster) {
+		return null
+	}
+
+	return (
+		<Image
+			resizeMode="contain"
+			source={{uri: poster.url}}
+			style={[styles.detailsImage]}
+		/>
+	)
+}
+
+const Ratings = ({ratings}: {ratings: Array<MovieRating>}) => {
+	let scores = ratings
+		.map(r => {
+			switch (r.Source) {
 				case 'Internet Movie Database':
-					criticsScore = rating.Value
-					break
+					return {title: 'Critics', score: r.Value}
 				case 'Rotten Tomatoes':
-					audienceScore = rating.Value
-					break
+					return {title: 'Audience', score: r.Value}
 				default:
-					break
+					return null
 			}
 		})
+		.filter(Boolean)
+		.sort((a, b) => (a.title < b.title ? -1 : a.title === b.title ? 0 : 1))
+		.reverse()
 
-		return (
-			<View>
-				<View style={styles.rating}>
-					<Text style={styles.ratingTitle}>Critics</Text>
-					<Text style={[styles.ratingValue, getStyleFromScore(criticsScore)]}>
-						{criticsScore}
+	return (
+		<View>
+			{scores.map(info => (
+				<View key={info.title} style={styles.rating}>
+					<Text style={styles.ratingTitle}>{info.title}</Text>
+					<Text
+						style={[styles.ratingValue, {color: colorizeScore(info.score)}]}
+					>
+						{info.score}
 					</Text>
 				</View>
-				<View style={styles.rating}>
-					<Text style={styles.ratingTitle}>Audience</Text>
-					<Text style={[styles.ratingValue, getStyleFromScore(audienceScore)]}>
-						{audienceScore}
-					</Text>
-				</View>
-			</View>
-		)
-	}
+			))}
+		</View>
+	)
 }
 
-class Cast extends React.Component<any, any> {
-	render() {
-		if (!this.props.actors) {
-			return null
-		}
+const Cast = ({actors}: {actors: string}) => (
+	<View>
+		<Text style={styles.castTitle}>Cast</Text>
+		<Text style={styles.castActor}>{actors}</Text>
+	</View>
+)
 
-		return (
-			<View>
-				<Text style={styles.castTitle}>Cast</Text>
-				<Text style={styles.castActor}>{this.props.actors}</Text>
-			</View>
-		)
-	}
-}
-
-class Genre extends React.Component<any, any> {
-	render() {
-		if (!this.props.genre) {
-			return null
-		}
-
-		return (
-			<View>
-				<Text style={styles.genreTitle}>Genre</Text>
-				<Text style={styles.genre}>{this.props.genre}</Text>
-			</View>
-		)
-	}
-}
+const Genre = ({genre}: {genre: string}) => (
+	<View>
+		<Text style={styles.genreTitle}>Genre</Text>
+		<Text style={styles.genre}>{genre}</Text>
+	</View>
+)
 
 class Showings extends React.Component<any, any> {
-	renderTimes = (item: MovieShowing) =>
-		`${moment(item.time).format('dddd')} ${moment(item.time).format(
-			'MMM.',
-		)} ${moment(item.time).format('Do')} at ${moment(item.time).format(
-			'h:mmA',
-		)}`
+	renderTimes = (item: MovieShowing) => {
+		let m = moment(item.time)
+		let dayOfWeek = m.format('dddd')
+		let month = m.format('MMM.')
+		let dayOfMonth = m.format('Do')
+		let time = m.format('h:mmA')
+		return `${dayOfWeek} ${month} ${dayOfMonth} at ${time}`
+	}
 
 	renderRow = ({item}: {item: MovieShowing}) => (
 		<ListRow
@@ -259,21 +235,17 @@ class Showings extends React.Component<any, any> {
 	keyExtractor = (item: MovieShowing) => item.time
 
 	render() {
-		if (!this.props.showings) {
-			return null
-		}
-
-		const sections = [{title: 'Showings', data: this.props.showings}]
+		let {showings = []} = this.props
 
 		return (
 			<View style={styles.showingsWrapper}>
 				<Text style={styles.showingsTitle}>Showings</Text>
-				<SectionList
+				<FlatList
 					ItemSeparatorComponent={this.renderSeparator}
 					ListEmptyComponent={<Text>No Showings</Text>}
+					data={showings}
 					keyExtractor={this.keyExtractor}
 					renderItem={this.renderRow}
-					sections={sections}
 					style={styles.listContainer}
 				/>
 			</View>
@@ -282,18 +254,22 @@ class Showings extends React.Component<any, any> {
 }
 
 class IMDB extends React.Component<any, any> {
+	url = imdbID => `https://www.imdb.com/title/${imdbID}`
+
+	open = () => {
+		openUrl(this.url(this.props.imdbID))
+	}
+
 	render() {
 		if (!this.props.imdbID) {
 			return null
 		}
 
-		const url = `https://www.imdb.com/title/${this.props.imdbID}`
-
 		return (
 			<View>
 				<Text style={styles.imdbTitle}>IMDB Page</Text>
-				<Text onPress={() => openUrl(url)} style={styles.imdb}>
-					{url}
+				<Text onPress={this.open} style={styles.imdb}>
+					{this.url(this.props.imdbID)}
 				</Text>
 			</View>
 		)
@@ -334,7 +310,7 @@ const styles = StyleSheet.create({
 	noScore: {
 		color: c.black,
 	},
-	ratingTimeWrapper: {
+	mpaaTimeWrapper: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
