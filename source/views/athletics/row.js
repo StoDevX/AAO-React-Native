@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row',
 		marginHorizontal: 12,
+    paddingHorizontal: 12,
 		marginBottom: 10,
 	},
 	sportName: {
@@ -141,7 +142,8 @@ const styles = StyleSheet.create({
 		width: 50,
 		height: 50,
 		marginTop: 12,
-		marginBottom: 5,
+		marginBottom: 10,
+    resizeMode: 'contain',
 	},
 	teamCity: {
 		color: c.black,
@@ -154,7 +156,6 @@ const styles = StyleSheet.create({
 		fontSize: 13,
 		position: 'relative',
 		paddingBottom: 12,
-		top: 0,
 		justifyContent: 'center',
 		textAlign: 'center',
 	},
