@@ -2,7 +2,7 @@
 
 import {TabNavigator} from '../../../modules/navigation-tabs/tabbed-view'
 
-import WeeklyMovieView from './movie'
+import WeeklyMovieView from '../streaming/movie'
 import {WebcamsView} from './webcams'
 import {StreamListView} from './streams'
 import {KstoStationView} from './radio/station-ksto'
