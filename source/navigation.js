@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
 
 export const AppNavigator = StackNavigator(
 	{
+		StreamingView: {screen: StreamingView},
 		HomeView: {screen: HomeView},
 		BuildingHoursDetailView: {screen: BuildingHoursDetailView},
 		BuildingHoursView: {screen: BuildingHoursView},
@@ -84,7 +85,6 @@ export const AppNavigator = StackNavigator(
 		SettingsView: {screen: SettingsView},
 		IconSettingsView: {screen: IconSettingsView},
 		SISView: {screen: SISView},
-		StreamingView: {screen: StreamingView},
 		KSTOScheduleView: {screen: KSTOScheduleView},
 		KRLXScheduleView: {screen: KRLXScheduleView},
 		StudentOrgsDetailView: {screen: StudentOrgsDetailView},
