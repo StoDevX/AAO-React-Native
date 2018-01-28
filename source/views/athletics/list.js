@@ -1,8 +1,6 @@
 // @flow
 
 import React from 'react'
-//import {View, Text, ScrollView} from 'react-native'
-
 import {AthleticsRow} from './row'
 import LoadingView from '../components/loading'
 import {NoticeView} from '../components/notice'
@@ -19,6 +17,10 @@ export class AthleticsView extends React.Component {
 		refreshing: true,
 		error: null,
 		data: null,
+	}
+
+	static navigationOptions = {
+		title: 'Athletics',
 	}
 
 	componentWillMount() {
