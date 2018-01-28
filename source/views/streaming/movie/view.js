@@ -1,7 +1,7 @@
 // @flow
 
-import React from 'react'
-import {StyleSheet, View, FlatList, ScrollView, Text, Image} from 'react-native'
+import * as React from 'react'
+import {StyleSheet, View, ScrollView, Text, Image} from 'react-native'
 import {connect} from 'react-redux'
 import {getWeeklyMovie} from '../../../flux/parts/weekly-movie'
 import {type ReduxState} from '../../../flux'
@@ -11,26 +11,33 @@ import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
 import moment from 'moment-timezone'
 import openUrl from '../../components/open-url'
-import {Row, Column} from '../../components/layout'
+import {Column} from '../../components/layout'
 import {ListRow, ListSeparator, Detail, Title} from '../../components/list'
-import type {Movie, MovieShowing, MovieRating, PosterInfo, RGBTuple} from './types'
 import {type TopLevelViewPropsType} from '../../types'
+import type {
+	Movie,
+	MovieShowing,
+	MovieRating,
+	PosterInfo,
+	RGBTuple,
+} from './types'
 
 function colorizeScore(score: string) {
-	const MAX_VALUE = 200
 	let numScore = Number.parseFloat(score)
 
 	if (numScore < 0) {
 		return 'black'
 	}
 
-	if (score.indexOf('%') != -1) {
+	if (score.indexOf('%') !== -1) {
 		numScore = numScore / 10
 	}
 
 	numScore *= 10
 
+	const MAX_VALUE = 200
 	const normalizedScore = Math.round(numScore / 100 * MAX_VALUE)
+
 	return `rgb(${MAX_VALUE - normalizedScore}, ${normalizedScore}, 0)`
 }
 
@@ -60,11 +67,13 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 	}
 
 	render() {
-		if (this.props.loading) {
+		const {movie, loading, error} = this.props
+
+		if (loading) {
 			return <LoadingView />
 		}
 
-		if (this.props.error) {
+		if (error) {
 			const msg = this.props.errorMessage || ''
 			return (
 				<NoticeView
@@ -75,8 +84,6 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 			)
 		}
 
-		const {movie} = this.props
-
 		if (!movie) {
 			return <NoticeView text="this should never happen" />
 		}
@@ -84,7 +91,12 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 		return (
 			<ScrollView contentContainerStyle={styles.contentContainer}>
 				<View style={styles.mainSection}>
-					<Poster posters={movie.posters} size={512} tint={movie.posterColors.dominant} />
+					<Poster
+						posters={movie.posters}
+						size={512}
+						tint={movie.posterColors.dominant}
+					/>
+
 					<View style={styles.rightPane}>
 						<Text style={styles.movieTitle}>{movie.info.Title}</Text>
 						<Text>{movie.info.Released}</Text>
@@ -136,9 +148,15 @@ export const WeeklyMovieView = connect(mapState, mapDispatch)(
 	PlainWeeklyMovieView,
 )
 
-const Separator = () => <View style={styles.separator} />
+const Separator = () => (
+	<ListSeparator fullWidth={true} styles={styles.separator} />
+)
 
-const Poster = (props: {posters: Array<PosterInfo>, size: number, tint: RGBTuple}) => {
+const Poster = (props: {
+	posters: Array<PosterInfo>,
+	size: number,
+	tint: RGBTuple,
+}) => {
 	const {posters, size, tint} = props
 	const poster = posters.find(p => p.width === size)
 
@@ -146,11 +164,12 @@ const Poster = (props: {posters: Array<PosterInfo>, size: number, tint: RGBTuple
 		return null
 	}
 
+	const shadowColor = `rgb(${tint[0]}, ${tint[1]}, ${tint[2]})`
 	return (
 		<Image
 			resizeMode="contain"
 			source={{uri: poster.url}}
-			style={[styles.detailsImage, {shadowColor: `rgb(${tint[0]}, ${tint[1]}, ${tint[2]})`}]}
+			style={[styles.detailsImage, {shadowColor}]}
 		/>
 	)
 }
@@ -168,82 +187,61 @@ const Ratings = ({ratings}: {ratings: Array<MovieRating>}) => {
 			}
 		})
 		.filter(Boolean)
+		.map(r => ({...r, tint: colorizeScore(r.score)}))
 		.sort((a, b) => (a.title < b.title ? -1 : a.title === b.title ? 0 : 1))
 		.reverse()
 
-	return (
-		<View>
-			{scores.map(info => (
-				<View key={info.title} style={styles.rating}>
-					<Text style={styles.ratingTitle}>{info.title}</Text>
-					<Text
-						style={[styles.ratingValue, {color: colorizeScore(info.score)}]}
-					>
-						{info.score}
-					</Text>
-				</View>
-			))}
+	return scores.map(info => (
+		<View key={info.title} style={styles.rating}>
+			<Text style={styles.ratingTitle}>{info.title}</Text>
+			<Text style={[styles.ratingValue, {color: info.tint}]}>{info.score}</Text>
 		</View>
-	)
+	))
 }
 
 const Cast = ({actors}: {actors: string}) => (
-	<View>
-		<Text style={styles.castTitle}>Cast</Text>
-		<Text style={styles.castActor}>{actors}</Text>
-	</View>
+	<React.Fragment>
+		<Text style={styles.sectionTitle}>Cast</Text>
+		<Text>{actors}</Text>
+	</React.Fragment>
 )
 
 const Genre = ({genre}: {genre: string}) => (
-	<View>
-		<Text style={styles.genreTitle}>Genre</Text>
-		<Text style={styles.genre}>{genre}</Text>
-	</View>
+	<React.Fragment>
+		<Text style={styles.sectionTitle}>Genre</Text>
+		<Text>{genre}</Text>
+	</React.Fragment>
 )
 
-class Showings extends React.Component<{showings: MovieShowing[]}> {
-	renderTimes = (item: MovieShowing) => {
-		let m = moment(item.time)
-		let dayOfWeek = m.format('dddd')
-		let month = m.format('MMM.')
-		let dayOfMonth = m.format('Do')
-		let time = m.format('h:mmA')
-		return `${dayOfWeek} ${month} ${dayOfMonth} at ${time}`
-	}
-
-	renderRow = ({item}: {item: MovieShowing}) => (
-		<ListRow arrowPosition="none" fullWidth={true}>
-			<Row alignItems="flex-start">
-				<Column flex={1}>
-					<Title lines={1}>{this.renderTimes(item)}</Title>
-					<Detail lines={1}>{item.location}</Detail>
-				</Column>
-			</Row>
-		</ListRow>
-	)
-
-	renderSeparator = () => <ListSeparator fullWidth={true} />
-
-	keyExtractor = (item: MovieShowing) => item.time
-
-	render() {
-		let {showings = []} = this.props
-
-		return (
-			<View style={styles.showingsWrapper}>
-				<Text style={styles.showingsTitle}>Showings</Text>
-				<FlatList
-					ItemSeparatorComponent={this.renderSeparator}
-					ListEmptyComponent={<Text>No Showings</Text>}
-					data={showings}
-					keyExtractor={this.keyExtractor}
-					renderItem={this.renderRow}
-					style={styles.listContainer}
-				/>
-			</View>
-		)
-	}
+const showingTimesToString = (showing: MovieShowing) => {
+	let m = moment(showing.time)
+	let dayOfWeek = m.format('dddd')
+	let month = m.format('MMM.')
+	let dayOfMonth = m.format('Do')
+	let time = m.format('h:mmA')
+	return `${dayOfWeek} ${month} ${dayOfMonth} at ${time}`
 }
+
+const Showings = ({showings = []}: {showings: MovieShowing[]}) => (
+	<React.Fragment>
+		<Text style={styles.sectionTitle}>Showings</Text>
+		{showings.length ? (
+			showings.map((showing, i, arr) => (
+				<React.Fragment key={showing.time}>
+					<ListRow arrowPosition="none" fullWidth={true}>
+						<Column flex={1}>
+							<Title lines={1}>{showingTimesToString(showing)}</Title>
+							<Detail lines={1}>{showing.location}</Detail>
+						</Column>
+					</ListRow>
+					{i !== arr.length - 1 ? <ListSeparator fullWidth={true} /> : null}
+				</React.Fragment>
+			))
+		) : (
+			<Text>No Showings</Text>
+		)}
+	</React.Fragment>
+)
 
 class IMDB extends React.Component<any, any> {
 	url = imdbID => `https://www.imdb.com/title/${imdbID}`
@@ -256,12 +254,12 @@ class IMDB extends React.Component<any, any> {
 		}
 
 		return (
-			<View>
-				<Text style={styles.imdbTitle}>IMDB Page</Text>
+			<React.Fragment>
+				<Text style={styles.sectionTitle}>IMDB Page</Text>
 				<Text onPress={this.open} style={styles.imdb}>
 					{this.url(this.props.imdbID)}
 				</Text>
-			</View>
+			</React.Fragment>
 		)
 	}
 }
@@ -271,18 +269,11 @@ const styles = StyleSheet.create({
 		padding: 10,
 		backgroundColor: c.white,
 	},
-	listContainer: {
-		backgroundColor: c.white,
-	},
-	showingsWrapper: {
-		flex: 1,
-	},
 	rightPane: {
 		justifyContent: 'space-between',
 		flex: 1,
 	},
 	movieTitle: {
-		flex: 1,
 		fontSize: 23,
 		fontWeight: '400',
 	},
@@ -315,7 +306,6 @@ const styles = StyleSheet.create({
 	},
 	mainSection: {
 		flexDirection: 'row',
-		overflow: 'visible',
 	},
 	detailsImage: {
 		overflow: 'visible',
@@ -326,34 +316,13 @@ const styles = StyleSheet.create({
 		shadowOffset: {height: 2, width: 0},
 	},
 	separator: {
-		backgroundColor: c.semitransparentGray,
-		height: StyleSheet.hairlineWidth,
 		marginVertical: 10,
 	},
-	castTitle: {
-		fontWeight: '700',
-		marginBottom: 3,
-	},
-	castActor: {
-		marginLeft: 2,
-	},
-	genreTitle: {
-		fontWeight: '700',
-		marginBottom: 3,
-	},
-	genre: {
-		marginLeft: 2,
-	},
-	showingsTitle: {
-		fontWeight: '700',
-		marginBottom: 3,
-	},
-	imdbTitle: {
+	sectionTitle: {
 		fontWeight: '700',
 		marginBottom: 3,
 	},
 	imdb: {
-		marginLeft: 2,
 		color: c.infoBlue,
 	},
 })
