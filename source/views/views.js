@@ -155,36 +155,11 @@ export const allViews: ViewType[] = [
 	},
 	{
 		type: 'view',
-		view: 'AthleitcsView',
-		title: 'Athletics',
-		icon: 'trophy',
-		foreground: 'light',
-		tint: c.lavender,
-		gradient: c.yellowToGoldLight,
-	},
-	{
-		type: 'view',
-		view: 'HelpView',
-		title: 'Report A Problem',
-		icon: 'help',
-		tint: c.lavender,
-		gradient: c.purpleToIndigo,
-	},
-	// {
-	//   type: 'view',
-	//   view: 'HelpView',
-	//   title: 'Report A Problem',
-	//   icon: 'help',
-	//   tint: c.lavender,
-	//   gradient: c.purpleToIndigo,
-	// },
-	{
-		type: 'view',
 		view: 'AthleticsView',
 		title: 'Athletics',
 		icon: 'trophy',
-		tint: c.red,
-		gradient: c.purpleToIndigo,
+		tint: c.orange,
+		gradient: c.goldToGold,
 	},
 ]
 
