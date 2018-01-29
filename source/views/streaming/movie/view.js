@@ -1,25 +1,37 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View, ScrollView, Text, Image} from 'react-native'
+import {StyleSheet, ScrollView, Dimensions, Platform} from 'react-native'
 import {connect} from 'react-redux'
 import {getWeeklyMovie} from '../../../flux/parts/weekly-movie'
 import {type ReduxState} from '../../../flux'
-import {TabBarIcon} from '../../components/tabbar-icon'
 import LoadingView from '../../components/loading'
 import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
 import moment from 'moment-timezone'
 import openUrl from '../../components/open-url'
 import {Column} from '../../components/layout'
+import glamorous, {Image, Text} from 'glamorous-native'
 import {ListRow, ListSeparator, Detail, Title} from '../../components/list'
 import {type TopLevelViewPropsType} from '../../types'
+import {Button} from '../../components/button'
+import {
+	darken,
+	setSaturation,
+	transparentize,
+	setLightness,
+	rgb,
+} from 'polished'
+import {Touchable} from '../../components/touchable'
+import Icon from 'react-native-vector-icons/Ionicons'
+import LinearGradient from 'react-native-linear-gradient'
 import type {
 	Movie,
 	MovieShowing,
 	MovieRating,
 	PosterInfo,
 	RGBTuple,
+	MovieTrailer,
 } from './types'
 
 function colorizeScore(score: string) {
@@ -56,14 +68,44 @@ type ReduxDispatchProps = {
 
 type Props = ReduxStateProps & ReduxDispatchProps & ReactProps
 
+const makeRgb = (tuple: RGBTuple) => rgb(...tuple)
+
 export class PlainWeeklyMovieView extends React.Component<Props> {
-	static navigationOptions = {
-		tabBarLabel: 'Weekly Movie',
-		tabBarIcon: TabBarIcon('film'),
+	static navigationOptions = (...args: any) => {
+		// console.log(args)
+		return {
+			headerTintColor: c.white,
+			headerStyle: {
+				backgroundColor: c.semitransparentGray,
+			},
+			cardStyle: {
+				backgroundColor: c.white,
+			},
+		}
 	}
 
 	componentWillMount() {
 		this.props.getWeeklyMovie()
+	}
+
+	componentWillReceiveProps(nextProps: Props) {
+		const {movie: thisMovie} = this.props
+		const {movie: nextMovie} = nextProps
+
+		let oldTint = null
+		let newTint = null
+		if (!thisMovie && nextMovie) {
+			newTint = nextMovie.posterColors.dominant
+		} else if (thisMovie && !nextMovie) {
+			newTint = c.white
+		} else if (thisMovie && nextMovie) {
+			oldTint = thisMovie.posterColors.dominant
+			newTint = thisMovie.posterColors.dominant
+		}
+
+		if (oldTint !== newTint) {
+			this.props.navigation.setParams({tintColor: newTint})
+		}
 	}
 
 	render() {
@@ -88,40 +130,80 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 			return <NoticeView text="this should never happen" />
 		}
 
+		// TODO: handle view rotation
+		// TODO: handle landscape
+		// TODO: handle odd-shaped posters
+		// TODO: style for Android
+
+		const mainTrailer = movie.trailers[0]
+		const movieTint = makeRgb(movie.posterColors.dominant)
+		const headerHeight = Math.max(Dimensions.get('window').height / 3, 200)
+
 		return (
 			<ScrollView contentContainerStyle={styles.contentContainer}>
-				<View style={styles.movieInfo}>
-					<Poster
-						posters={movie.posters}
-						size={512}
-						tint={movie.posterColors.dominant}
+				<Header>
+					<TrailerBackground
+						height={headerHeight}
+						tint={movieTint}
+						trailer={mainTrailer}
 					/>
 
-					<View style={styles.rightPane}>
-						<Text style={styles.movieTitle}>{movie.info.Title}</Text>
-						<Text>{movie.info.Released}</Text>
+					<PlayTrailerButton
+						right={50}
+						tint={movieTint}
+						trailer={mainTrailer}
+					/>
 
-						<View style={styles.centeredRow}>
-							<View style={styles.mpaa}>
-								<Text style={styles.mpaaRating}>{movie.info.Rated}</Text>
-							</View>
-							<Text> • </Text>
-							<Text>{movie.info.Runtime}</Text>
-						</View>
+					<Poster
+						ideal={512}
+						left={10}
+						sizes={movie.posters}
+						tint={movieTint}
+					/>
+				</Header>
 
-						<Ratings ratings={movie.info.Ratings} />
-					</View>
-				</View>
-				<Separator />
-				<Text>{movie.info.Plot}</Text>
-				<Separator />
-				<Genre genre={movie.info.Genre} />
-				<Separator />
-				<Cast actors={movie.info.Actors} />
-				<Separator />
+				{/*<MovieInfo>
+					<Row>
+						<MpaaRating>{movie.info.Rated}</MpaaRating>
+						<Title>{movie.info.Title}</Title>
+					</Row>
+
+					<Row>
+						<Genres>{movie.info.genre}</Genres>
+						<Spacer />
+						<ReleaseYear>{movie.info.Released}</ReleaseYear>
+						<RunTime>{movie.info.Released}</RunTime>
+					</Row>
+
+					<Row>
+						<FilmRatings ratings={movie.info.Ratings} />
+
+						<ImdbLink id={movie.info.imdbID} />
+					</Row>
+				</MovieInfo>
+
 				<Showings showings={movie.showings} />
-				<Separator />
-				<IMDB imdbID={movie.info.imdbID} />
+
+				<Row>
+					<Text>{movie.info.Plot}</Text>
+				</Row>
+
+				<Card>
+					<Row>
+						<Heading>Directed By</Heading>
+						<Text>{movie.info.Director}</Text>
+					</Row>
+
+					<Row>
+						<Heading>Written By</Heading>
+						<Text>{movie.info.Writer}</Text>
+					</Row>
+
+					<Row>
+						<Heading>Cast</Heading>
+						<Text>{movie.info.Actors}</Text>
+					</Row>
+				</Card>*/}
 			</ScrollView>
 		)
 	}
@@ -148,29 +230,164 @@ export const WeeklyMovieView = connect(mapState, mapDispatch)(
 	PlainWeeklyMovieView,
 )
 
-const Separator = () => (
-	<ListSeparator fullWidth={true} styles={styles.separator} />
-)
+const Header = glamorous.view({
+	backgroundColor: 'gray',
+	position: 'relative',
+})
 
-const Poster = (props: {
-	posters: Array<PosterInfo>,
-	size: number,
-	tint: RGBTuple,
+const TrailerBackground = (props: {
+	trailer: MovieTrailer,
+	tint: string,
+	height: number,
 }) => {
-	const {posters, size, tint} = props
-	const poster = posters.find(p => p.width === size)
+	const {trailer, tint, height} = props
 
-	if (!poster) {
-		return null
-	}
+	// TODO: find the largest size beneath `ideal`
+	const thumbnail = trailer.thumbnails.find(thm => thm.width === 640)
 
-	const shadowColor = `rgb(${tint[0]}, ${tint[1]}, ${tint[2]})`
+	// TODO: provide a fallback image
+	const uri = thumbnail ? thumbnail.url : ''
+
+	const gradient = [
+		c.transparent,
+		c.transparent,
+		setLightness(0.35, setSaturation(0.25, tint)),
+		// darken(0.2, transparentize(0, tint)),
+	]
+
 	return (
-		<Image
-			resizeMode="contain"
-			source={{uri: poster.url}}
-			style={[styles.moviePoster, {shadowColor}]}
+		<glamorous.View>
+			<Image
+				height={height}
+				resizeMode="cover"
+				source={{uri}}
+				width={Dimensions.get('window').width}
+			/>
+
+			<LinearGradient
+				colors={gradient}
+				locations={[0, 0.66, 1]}
+				style={StyleSheet.absoluteFill}
+			/>
+
+			<TriangleOverlay
+				height={height / 2.5}
+				width={Dimensions.get('window').width}
+			/>
+		</glamorous.View>
+	)
+}
+
+const TriangleOverlay = ({height, width}: {height: number, width: number}) => {
+	return (
+		<glamorous.View
+			backgroundColor="transparent"
+			borderBottomColor="#fff"
+			borderBottomWidth={height}
+			borderLeftColor="transparent"
+			borderLeftWidth={0}
+			borderRightColor="transparent"
+			borderRightWidth={width}
+			borderStyle="solid"
+			bottom={0}
+			height={0}
+			position="absolute"
+			right={0}
+			width={0}
 		/>
+	)
+}
+
+const Poster = (props: PosterProps & {left: number}) => {
+	// TODO: find way to avoid backgroundColor:transparent on wrapper
+	return (
+		<glamorous.View
+			backgroundColor={c.transparent}
+			bottom={0}
+			left={props.left}
+			position="absolute"
+			shadowColor={setLightness(0.35, setSaturation(0.25, props.tint))}
+			shadowOffset={{height: 4, width: 0}}
+			shadowOpacity={0.8}
+			shadowRadius={12}
+		>
+			<PosterImage {...props} />
+		</glamorous.View>
+	)
+}
+
+type PosterProps = {
+	sizes: Array<PosterInfo>,
+	ideal: number,
+	tint: string,
+}
+
+type PosterState = {}
+
+class PosterImage extends React.Component<PosterProps, PosterState> {
+	render() {
+		const {sizes, ideal, tint} = this.props
+
+		// TODO: find the largest size beneath `ideal`
+		const poster = sizes.find(p => p.width === ideal)
+
+		// TODO: provide a fallback image
+		const uri = poster ? poster.url : ''
+
+		return (
+			<Image
+				accessibilityLabel="Movie Poster"
+				borderRadius={8}
+				// defaultSource
+				height={Dimensions.get('window').width / 3 * 1.5}
+				overflow="hidden"
+				resizeMode="cover"
+				source={{uri}}
+				width={Dimensions.get('window').width / 3}
+			/>
+		)
+	}
+}
+
+const PlayTrailerButton = (props: {
+	right: number,
+	tint: string,
+	trailer: MovieTrailer,
+}) => {
+	const {right, tint, trailer} = props
+	const size = 50
+
+	return (
+		<Touchable
+			containerStyle={{
+				position: 'absolute',
+				right: right,
+				bottom: 0,
+				borderColor: tint,
+				borderStyle: 'solid',
+				borderWidth: 1,
+			}}
+			style={{
+				alignItems: 'center',
+				backgroundColor: tint,
+				borderRadius: size,
+				height: size,
+				justifyContent: 'center',
+				width: size,
+				shadowColor: setLightness(0.35, setSaturation(0.15, props.tint)),
+				shadowOffset: {height: 2, width: 0},
+				shadowOpacity: 0.2,
+			}}
+		>
+			<Icon
+				name={Platform.OS === 'ios' ? 'ios-play' : 'md-play'}
+				style={{
+					color: c.white,
+					fontSize: size * (3 / 5),
+					textAlign: 'center',
+				}}
+			/>
+		</Touchable>
 	)
 }
 
@@ -266,8 +483,10 @@ class IMDB extends React.Component<any, any> {
 
 const styles = StyleSheet.create({
 	contentContainer: {
-		padding: 10,
+		// padding: 10,
+		// marginTop: -64,
 		backgroundColor: c.white,
+		flex: 1,
 	},
 	rightPane: {
 		flex: 1,
@@ -304,14 +523,6 @@ const styles = StyleSheet.create({
 	},
 	movieInfo: {
 		flexDirection: 'row',
-	},
-	moviePoster: {
-		overflow: 'visible',
-		width: 134,
-		marginRight: 10,
-		shadowOpacity: 0.85,
-		shadowRadius: 3,
-		shadowOffset: {height: 2, width: 0},
 	},
 	separator: {
 		marginVertical: 10,
