@@ -14,20 +14,20 @@ export {KSTOScheduleView, KRLXScheduleView} from './radio'
 
 export default TabNavigator(
 	{
-		StreamingView: {
-			screen: StreamListView,
-			navigationOptions: {
-				tabBarLabel: 'Streaming',
-				tabBarIcon: TabBarIcon('recording'),
-			},
-		},
-
 		WeeklyMovieView: {
 			screen: WeeklyMovieView,
 			navigationOptions: {
 				tabBarLabel: 'Movie',
 				tabBarIcon: TabBarIcon('film'),
 				headerTintColor: c.white,
+			},
+		},
+
+		StreamingView: {
+			screen: StreamListView,
+			navigationOptions: {
+				tabBarLabel: 'Streaming',
+				tabBarIcon: TabBarIcon('recording'),
 			},
 		},
 
