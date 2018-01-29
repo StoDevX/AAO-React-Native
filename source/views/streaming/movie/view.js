@@ -143,6 +143,9 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 		// TODO: style for Android
 		// TODO: handle "no movie posted yet this week"
 		// TODO: handle all movie showing dates are past (also handle after-last-showing on last showing date)
+		// TODO: show other trailers
+		// TODO: differentiate between trailers, clips, teasers, and featurettes
+		// TODO: group showings by date, then location; show the times for each grouped set on a card
 
 		const mainTrailer = movie.trailers[0]
 		const movieTint = makeRgb(movie.posterColors.dominant)
