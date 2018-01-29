@@ -23,13 +23,13 @@ export default TabNavigator(
 			},
 		},
 
-		StreamingView: {
-			screen: StreamListView,
-			navigationOptions: {
-				tabBarLabel: 'Streaming',
-				tabBarIcon: TabBarIcon('recording'),
-			},
-		},
+		// StreamingView: {
+		// 	screen: StreamListView,
+		// 	navigationOptions: {
+		// 		tabBarLabel: 'Streaming',
+		// 		tabBarIcon: TabBarIcon('recording'),
+		// 	},
+		// },
 
 		LiveWebcamsView: {
 			screen: WebcamsView,
