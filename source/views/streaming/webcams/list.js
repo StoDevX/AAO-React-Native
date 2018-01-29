@@ -4,7 +4,6 @@ import * as React from 'react'
 import {StyleSheet, ScrollView, Dimensions} from 'react-native'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../../lib/report-network-problem'
-import {TabBarIcon} from '../../components/tabbar-icon'
 import * as defaultData from '../../../../docs/webcams.json'
 import {Column} from '../../components/layout'
 import {partitionByIndex} from '../../../lib/partition-by-index'
@@ -24,11 +23,6 @@ type State = {
 }
 
 export class WebcamsView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		tabBarLabel: 'Webcams',
-		tabBarIcon: TabBarIcon('videocam'),
-	}
-
 	state = {
 		width: Dimensions.get('window').width,
 		webcams: defaultData.data,

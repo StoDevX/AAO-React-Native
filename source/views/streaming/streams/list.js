@@ -36,11 +36,6 @@ type State = {
 }
 
 export class StreamListView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		tabBarLabel: 'Streaming',
-		tabBarIcon: TabBarIcon('recording'),
-	}
-
 	state = {
 		error: null,
 		loading: true,
