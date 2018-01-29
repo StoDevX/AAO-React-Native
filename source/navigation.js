@@ -1,6 +1,6 @@
 // @flow
 
-import {Platform, StyleSheet} from 'react-native'
+import {Platform} from 'react-native'
 import {StackNavigator} from 'react-navigation'
 import * as c from './views/components/colors'
 
@@ -41,18 +41,6 @@ import {IconSettingsView} from './views/settings/icon'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
 import HelpView from './views/help'
-
-const styles = StyleSheet.create({
-	header: {
-		backgroundColor: c.olevilleGold,
-	},
-	card: {
-		backgroundColor: Platform.select({
-			ios: c.iosLightBackground,
-			android: c.androidLightBackground,
-		}),
-	},
-})
 
 export const AppNavigator = StackNavigator(
 	{
@@ -95,9 +83,16 @@ export const AppNavigator = StackNavigator(
 	},
 	{
 		navigationOptions: {
-			headerStyle: styles.header,
 			headerTintColor: c.white,
+			headerStyle: {
+				backgroundColor: c.olevilleGold,
+			}
 		},
-		cardStyle: styles.card,
+		cardStyle: {
+			backgroundColor: Platform.select({
+				ios: c.iosLightBackground,
+				android: c.androidLightBackground,
+			}),
+		},
 	},
 )
