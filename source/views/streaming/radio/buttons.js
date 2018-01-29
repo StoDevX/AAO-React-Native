@@ -9,26 +9,26 @@ import {withTheme} from '@callstack/react-theme-provider'
 import type {PlayerTheme} from './types'
 
 type ActionButtonProps = {
-	icon: string,
-	text: string,
-	onPress: () => mixed,
-	theme: PlayerTheme,
+    icon: string,
+    text: string,
+    onPress: () => mixed,
+    theme: PlayerTheme,
 }
 
 const ActionButton = (props: ActionButtonProps) => {
-	let {icon, text, onPress, theme} = props
-	let bg = {backgroundColor: theme.tintColor}
-	let fg = {color: theme.buttonTextColor}
-	let style = [styles.button, styles.largeButton, bg]
+    let {icon, text, onPress, theme} = props
+    let bg = {backgroundColor: theme.tintColor}
+    let fg = {color: theme.buttonTextColor}
+    let style = [styles.button, styles.largeButton, bg]
 
-	return (
-		<Touchable highlight={false} onPress={onPress} style={style}>
-			<View style={styles.wrapper}>
-				<Icon name={icon} style={[styles.icon, fg]} />
-				<Text style={[styles.action, fg]}>{text}</Text>
-			</View>
-		</Touchable>
-	)
+    return (
+        <Touchable highlight={false} onPress={onPress} style={style}>
+            <View style={styles.wrapper}>
+                <Icon name={icon} style={[styles.icon, fg]} />
+                <Text style={[styles.action, fg]}>{text}</Text>
+            </View>
+        </Touchable>
+    )
 }
 
 const ThemedActionButton = withTheme(ActionButton)
@@ -36,66 +36,66 @@ const ThemedActionButton = withTheme(ActionButton)
 export {ThemedActionButton as ActionButton}
 
 export const CallButton = ({onPress}: {onPress: () => mixed}) => (
-	<ThemedSmallActionButton
-		icon={Platform.OS === 'ios' ? 'ios-call' : 'md-call'}
-		onPress={onPress}
-	/>
+    <ThemedSmallActionButton
+        icon={Platform.OS === 'ios' ? 'ios-call' : 'md-call'}
+        onPress={onPress}
+    />
 )
 
 export const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
-	<ThemedSmallActionButton
-		icon={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
-		onPress={onPress}
-	/>
+    <ThemedSmallActionButton
+        icon={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
+        onPress={onPress}
+    />
 )
 
 type SmallActionButtonProps = {
-	icon: string,
-	onPress: () => mixed,
-	theme: PlayerTheme,
+    icon: string,
+    onPress: () => mixed,
+    theme: PlayerTheme,
 }
 
 const SmallActionButton = (props: SmallActionButtonProps) => {
-	let {icon, onPress, theme} = props
-	let bg = {backgroundColor: theme.tintColor}
-	let fg = {color: theme.buttonTextColor}
-	let style = [styles.button, styles.smallButton, bg]
+    let {icon, onPress, theme} = props
+    let bg = {backgroundColor: theme.tintColor}
+    let fg = {color: theme.buttonTextColor}
+    let style = [styles.button, styles.smallButton, bg]
 
-	return (
-		<Touchable highlight={false} onPress={onPress} style={style}>
-			<Icon name={icon} style={[styles.icon, fg]} />
-		</Touchable>
-	)
+    return (
+        <Touchable highlight={false} onPress={onPress} style={style}>
+            <Icon name={icon} style={[styles.icon, fg]} />
+        </Touchable>
+    )
 }
 
 const ThemedSmallActionButton = withTheme(SmallActionButton)
 
 const styles = StyleSheet.create({
-	button: {
-		alignItems: 'center',
-		paddingVertical: 5,
-		borderRadius: 8,
-		overflow: 'hidden',
-		backgroundColor: c.black,
-	},
-	wrapper: {
-		justifyContent: 'center',
-		flexDirection: 'row',
-	},
-	largeButton: {
-		width: 180,
-	},
-	smallButton: {
-		width: 50,
-	},
-	icon: {
-		color: c.white,
-		fontSize: 30,
-	},
-	action: {
-		color: c.white,
-		paddingLeft: 10,
-		paddingTop: 7,
-		fontWeight: '900',
-	},
+    button: {
+        alignItems: 'center',
+        paddingVertical: 5,
+        borderRadius: 8,
+        overflow: 'hidden',
+        backgroundColor: c.black,
+    },
+    wrapper: {
+        justifyContent: 'center',
+        flexDirection: 'row',
+    },
+    largeButton: {
+        width: 180,
+    },
+    smallButton: {
+        width: 50,
+    },
+    icon: {
+        color: c.white,
+        fontSize: 30,
+    },
+    action: {
+        color: c.white,
+        paddingLeft: 10,
+        paddingTop: 7,
+        fontWeight: '900',
+    },
 })
