@@ -29,6 +29,7 @@ type Props = TopLevelViewPropsType & {
 	image: number,
 	playerUrl: string,
 	stationNumber: string,
+	tint: string,
 	title: string,
 	scheduleViewName: string,
 	stationName: string,
@@ -105,13 +106,14 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 		openUrl(this.props.playerUrl)
 	}
 
-	renderPlayButton = (state: PlayState) => {
+	renderPlayButton = (state: PlayState, {tint}: {tint: string}) => {
 		if (Platform.OS === 'android') {
 			return (
 				<ActionButton
 					icon="ios-planet"
 					onPress={this.openStreamWebsite}
 					text="Open"
+					tint={tint}
 				/>
 			)
 		}
@@ -119,21 +121,43 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 		switch (state) {
 			case 'paused':
 				return (
-					<ActionButton icon="ios-play" onPress={this.play} text="Listen" />
+					<ActionButton
+						icon="ios-play"
+						onPress={this.play}
+						text="Listen"
+						tint={tint}
+					/>
 				)
 
 			case 'checking':
 				return (
-					<ActionButton icon="ios-more" onPress={this.pause} text="Starting" />
+					<ActionButton
+						icon="ios-more"
+						onPress={this.pause}
+						text="Starting"
+						tint={tint}
+					/>
 				)
 
 			case 'playing':
 				return (
-					<ActionButton icon="ios-pause" onPress={this.pause} text="Pause" />
+					<ActionButton
+						icon="ios-pause"
+						onPress={this.pause}
+						text="Pause"
+						tint={tint}
+					/>
 				)
 
 			default:
-				return <ActionButton icon="ios-bug" onPress={noop} text="Error" />
+				return (
+					<ActionButton
+						icon="ios-bug"
+						onPress={noop}
+						text="Error"
+						tint={tint}
+					/>
+				)
 		}
 	}
 
@@ -173,10 +197,16 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 
 				<View style={styles.container}>
 					<View style={styles.titleWrapper}>
-						<Text selectable={true} style={styles.heading}>
+						<Text
+							selectable={true}
+							style={[styles.heading, {color: this.props.tint}]}
+						>
 							{this.props.title}
 						</Text>
-						<Text selectable={true} style={styles.subHeading}>
+						<Text
+							selectable={true}
+							style={[styles.subHeading, {color: this.props.tint}]}
+						>
 							{this.props.stationName}
 						</Text>
 
@@ -184,11 +214,16 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 					</View>
 
 					<Row>
-						{this.renderPlayButton(this.state.playState)}
+						{this.renderPlayButton(this.state.playState, {
+							tint: this.props.tint,
+						})}
 						<View style={styles.spacer} />
-						<CallButton onPress={this.callStation} />
+						<CallButton onPress={this.callStation} tint={this.props.tint} />
 						<View style={styles.spacer} />
-						<ShowCalendarButton onPress={this.openSchedule} />
+						<ShowCalendarButton
+							onPress={this.openSchedule}
+							tint={this.props.tint}
+						/>
 					</Row>
 
 					{Platform.OS !== 'android' ? (

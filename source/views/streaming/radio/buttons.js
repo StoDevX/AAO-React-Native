@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, Text, View, Platform} from 'react-native'
+import {StyleSheet, Text, Platform} from 'react-native'
 import * as c from '../../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {Touchable} from '../../components/touchable'
@@ -9,64 +9,73 @@ import {Touchable} from '../../components/touchable'
 type ActionButtonProps = {
 	icon: string,
 	text: string,
+	tint: string,
 	onPress: () => mixed,
 }
 
-export const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
-	<Touchable highlight={false} onPress={onPress} style={styles.button}>
-		<View style={styles.wrapper}>
-			<Icon name={icon} style={styles.icon} />
-			<Text style={styles.action}>{text}</Text>
-		</View>
+export const ActionButton = (props: ActionButtonProps) => (
+	<Touchable
+		highlight={false}
+		onPress={props.onPress}
+		style={[styles.button, styles.large, {backgroundColor: props.tint}]}
+	>
+		<Icon name={props.icon} style={styles.icon} />
+		<Text style={styles.action}>{props.text}</Text>
 	</Touchable>
 )
 
-export const CallButton = ({onPress}: {onPress: () => mixed}) => (
+type NamedSmallActionButtonProps = {
+	onPress: () => mixed,
+	tint: string,
+}
+
+export const CallButton = (props: NamedSmallActionButtonProps) => (
 	<SmallActionButton
 		icon={Platform.OS === 'ios' ? 'ios-call' : 'md-call'}
-		onPress={onPress}
+		onPress={props.onPress}
+		tint={props.tint}
 	/>
 )
 
-export const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
+export const ShowCalendarButton = (props: NamedSmallActionButtonProps) => (
 	<SmallActionButton
 		icon={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
-		onPress={onPress}
+		onPress={props.onPress}
+		tint={props.tint}
 	/>
 )
 
 type SmallActionButtonProps = {
 	icon: string,
 	onPress: () => mixed,
+	tint: string,
 }
 
-const SmallActionButton = ({icon, onPress}: SmallActionButtonProps) => (
-	<Touchable highlight={false} onPress={onPress} style={styles.smallButton}>
-		<View style={styles.wrapper}>
-			<Icon name={icon} style={styles.icon} />
-		</View>
+const SmallActionButton = ({icon, onPress, tint}: SmallActionButtonProps) => (
+	<Touchable
+		highlight={false}
+		onPress={onPress}
+		style={[styles.button, styles.small, {backgroundColor: tint}]}
+	>
+		<Icon name={icon} style={styles.icon} />
 	</Touchable>
 )
 
 const styles = StyleSheet.create({
 	button: {
 		alignItems: 'center',
-		paddingVertical: 5,
 		backgroundColor: c.denim,
-		width: 180,
 		borderRadius: 8,
-		overflow: 'hidden',
-	},
-	smallButton: {
-		alignItems: 'center',
-		paddingVertical: 5,
-		backgroundColor: c.denim,
-		width: 50,
-		borderRadius: 8,
-		overflow: 'hidden',
-	},
-	wrapper: {
 		flexDirection: 'row',
+		justifyContent: 'center',
+		overflow: 'hidden',
+		paddingVertical: 5,
+	},
+	large: {
+		width: 180,
+	},
+	small: {
+		width: 50,
 	},
 	icon: {
 		color: c.white,
@@ -75,7 +84,6 @@ const styles = StyleSheet.create({
 	action: {
 		color: c.white,
 		paddingLeft: 10,
-		paddingTop: 7,
 		fontWeight: '900',
 	},
 })
