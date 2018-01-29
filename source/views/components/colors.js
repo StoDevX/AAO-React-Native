@@ -59,6 +59,7 @@ export const kstoPrimaryDark = '#686ea1'
 export const kstoSecondaryDark = '#4c4f71'
 export const kstoTextLight = '#dcdde5'
 export const kstoTextDark = '#bebad4'
+export const krlxDark = 'rgb(51, 52, 142)'
 
 // MARK: System Colors
 export const infoBlue = 'rgb(47, 112, 225)'
