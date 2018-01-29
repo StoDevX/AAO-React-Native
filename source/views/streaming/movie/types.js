@@ -33,6 +33,7 @@ export type MovieInfo = {
 	Year: string,
 	Rated: string,
 	Released: string,
+	releaseDate: string,
 	Runtime: string,
 	Genre: string,
 	Director: string,

@@ -10,11 +10,10 @@ import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
 import moment from 'moment-timezone'
 import openUrl from '../../components/open-url'
-import {Column} from '../../components/layout'
-import glamorous, {Image, Text} from 'glamorous-native'
-import {ListRow, ListSeparator, Detail, Title} from '../../components/list'
+import glamorous from 'glamorous-native'
 import {type TopLevelViewPropsType} from '../../types'
-import {Button} from '../../components/button'
+import {Row, Column} from '../../components/layout'
+import {iOSUIKit, human, material} from 'react-native-typography'
 import {
 	darken,
 	setSaturation,
@@ -34,18 +33,26 @@ import type {
 	MovieTrailer,
 } from './types'
 
-function colorizeScore(score: string) {
-	let numScore = Number.parseFloat(score)
+function normalizeScore(score: string): ?number {
+	if (score.endsWith('%')) {
+		// XX%
+		score = score.replace('%', '')
+		return parseInt(score)
+	} else if (score.includes('/')) {
+		// X/10
+		score = score.split('/')[0]
+		return Math.round(parseFloat(score) * 10)
+	}
 
-	if (numScore < 0) {
+	return null
+}
+
+function colorizeScore(score: string) {
+	let numScore = normalizeScore(score)
+
+	if (!numScore) {
 		return 'black'
 	}
-
-	if (score.indexOf('%') !== -1) {
-		numScore = numScore / 10
-	}
-
-	numScore *= 10
 
 	const MAX_VALUE = 200
 	const normalizedScore = Math.round(numScore / 100 * MAX_VALUE)
@@ -134,6 +141,8 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 		// TODO: handle landscape
 		// TODO: handle odd-shaped posters
 		// TODO: style for Android
+		// TODO: handle "no movie posted yet this week"
+		// TODO: handle all movie showing dates are past (also handle after-last-showing on last showing date)
 
 		const mainTrailer = movie.trailers[0]
 		const movieTint = makeRgb(movie.posterColors.dominant)
@@ -148,62 +157,77 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 						trailer={mainTrailer}
 					/>
 
-					<PlayTrailerButton
-						right={50}
-						tint={movieTint}
-						trailer={mainTrailer}
-					/>
+					<Row
+						alignItems="flex-end"
+						bottom={0}
+						justifyContent="space-between"
+						left={0}
+						paddingHorizontal={10}
+						position="absolute"
+						right={0}
+					>
+						<Poster
+							ideal={512}
+							left={0}
+							sizes={movie.posters}
+							tint={movieTint}
+						/>
 
-					<Poster
-						ideal={512}
-						left={10}
-						sizes={movie.posters}
-						tint={movieTint}
-					/>
+						<PlayTrailerButton
+							right={40}
+							tint={movieTint}
+							trailer={mainTrailer}
+						/>
+					</Row>
 				</Header>
 
-				{/*<MovieInfo>
+				<MovieInfo>
 					<Row>
-						<MpaaRating>{movie.info.Rated}</MpaaRating>
 						<Title>{movie.info.Title}</Title>
 					</Row>
 
-					<Row>
-						<Genres>{movie.info.genre}</Genres>
+					<Row alignItems="center" marginBottom={16} marginTop={4}>
+						<Genres genres={movie.info.Genre} />
 						<Spacer />
-						<ReleaseYear>{movie.info.Released}</ReleaseYear>
-						<RunTime>{movie.info.Released}</RunTime>
+						<ReleaseYear marginRight={4}>
+							{moment(movie.info.releaseDate).format('YYYY')}
+						</ReleaseYear>
+						<RunTime>{movie.info.Runtime}</RunTime>
 					</Row>
 
-					<Row>
-						<FilmRatings ratings={movie.info.Ratings} />
-
-						<ImdbLink id={movie.info.imdbID} />
+					<Row alignItems="center">
+						<RottenTomatoesRating ratings={movie.info.Ratings} />
+						<FixedSpacer/>
+						<ImdbRating ratings={movie.info.Ratings} />
+						<Spacer/>
+						<MpaaRating rated={movie.info.Rated} />
 					</Row>
 				</MovieInfo>
 
-				<Showings showings={movie.showings} />
+				{/*<Showings showings={movie.showings} />*/}
 
-				<Row>
-					<Text>{movie.info.Plot}</Text>
-				</Row>
+				<Plot text={movie.info.Plot} />
 
-				<Card>
-					<Row>
+				<PaddedCard>
+					<Column marginBottom={16}>
 						<Heading>Directed By</Heading>
 						<Text>{movie.info.Director}</Text>
-					</Row>
+					</Column>
 
-					<Row>
+					<Column marginBottom={16}>
 						<Heading>Written By</Heading>
 						<Text>{movie.info.Writer}</Text>
-					</Row>
+					</Column>
 
-					<Row>
+					<Column>
 						<Heading>Cast</Heading>
 						<Text>{movie.info.Actors}</Text>
-					</Row>
-				</Card>*/}
+					</Column>
+				</PaddedCard>
+
+				<ImdbLink id={movie.info.imdbID} />
+
+				<glamorous.View height={16} />
 			</ScrollView>
 		)
 	}
@@ -257,7 +281,7 @@ const TrailerBackground = (props: {
 
 	return (
 		<glamorous.View>
-			<Image
+			<glamorous.Image
 				height={height}
 				resizeMode="cover"
 				source={{uri}}
@@ -303,9 +327,9 @@ const Poster = (props: PosterProps & {left: number}) => {
 	return (
 		<glamorous.View
 			backgroundColor={c.transparent}
-			bottom={0}
-			left={props.left}
-			position="absolute"
+			//bottom={0}
+			//left={props.left}
+			//position="absolute"
 			shadowColor={setLightness(0.35, setSaturation(0.25, props.tint))}
 			shadowOffset={{height: 4, width: 0}}
 			shadowOpacity={0.8}
@@ -335,7 +359,7 @@ class PosterImage extends React.Component<PosterProps, PosterState> {
 		const uri = poster ? poster.url : ''
 
 		return (
-			<Image
+			<glamorous.Image
 				accessibilityLabel="Movie Poster"
 				borderRadius={8}
 				// defaultSource
@@ -359,24 +383,20 @@ const PlayTrailerButton = (props: {
 
 	return (
 		<Touchable
+			underlayColor={darken(0.1, tint)}
 			containerStyle={{
-				position: 'absolute',
-				right: right,
-				bottom: 0,
-				borderColor: tint,
-				borderStyle: 'solid',
-				borderWidth: 1,
-			}}
-			style={{
-				alignItems: 'center',
+				marginRight: right,
 				backgroundColor: tint,
 				borderRadius: size,
-				height: size,
-				justifyContent: 'center',
-				width: size,
 				shadowColor: setLightness(0.35, setSaturation(0.15, props.tint)),
 				shadowOffset: {height: 2, width: 0},
-				shadowOpacity: 0.2,
+				shadowOpacity: 0.3,
+			}}
+			style={{
+				height: size,
+				width: size,
+				alignItems: 'center',
+				justifyContent: 'center',
 			}}
 		>
 			<Icon
@@ -391,147 +411,211 @@ const PlayTrailerButton = (props: {
 	)
 }
 
-const Ratings = ({ratings}: {ratings: Array<MovieRating>}) => {
-	let scores = ratings
-		.map(r => {
-			switch (r.Source) {
-				case 'Internet Movie Database':
-					return {title: 'Critics', score: r.Value}
-				case 'Rotten Tomatoes':
-					return {title: 'Audience', score: r.Value}
-				default:
-					return null
-			}
-		})
-		.filter(Boolean)
-		.map(r => ({...r, tint: colorizeScore(r.score)}))
-		.sort((a, b) => (a.title < b.title ? -1 : a.title === b.title ? 0 : 1))
-		.reverse()
+const Padding = glamorous.view({
+	paddingHorizontal: 16,
+})
 
-	return scores.map(info => (
-		<React.Fragment key={info.title}>
-			<Text style={styles.ratingTitle}>{info.title}</Text>
-			<Text style={[styles.rating, {color: info.tint}]}>{info.score}</Text>
-		</React.Fragment>
-	))
+const MovieInfo = glamorous(Padding)({
+	marginTop: 18,
+})
+
+const Spacer = glamorous.view({flex: 1})
+
+const FixedSpacer = glamorous.view({flexBasis: 16})
+
+const MpaaRating = ({rated}) => (
+	<glamorous.View
+		//alignSelf="baseline"
+		borderWidth={1}
+		paddingHorizontal={4}
+		paddingVertical={1}
+	>
+		<glamorous.Text fontFamily="Palatino" fontWeight="700" textAlign="center">
+			{rated}
+		</glamorous.Text>
+	</glamorous.View>
+)
+
+const Title = glamorous.text({
+	...Platform.select({
+		ios: human.title1Object,
+	}),
+})
+
+const Genres = ({genres}) => {
+	return genres
+		.toLowerCase()
+		.split(', ')
+		.map(genre => (
+			<Pill key={genre} bgColorName="mediumGray" marginRight={4}>
+				{genre}
+			</Pill>
+		))
 }
 
-const Cast = ({actors}: {actors: string}) => (
-	<React.Fragment>
-		<Text style={styles.sectionTitle}>Cast</Text>
-		<Text>{actors}</Text>
-	</React.Fragment>
+const Pill = ({children, bgColorName, ...props}) => (
+	<glamorous.View
+		backgroundColor={c.sto[bgColorName]}
+		borderRadius={50}
+		{...props}
+	>
+		<glamorous.Text
+			color={c.stoText[bgColorName]}
+			fontSize={12}
+			fontVariant={['small-caps']}
+			paddingBottom={3}
+			paddingHorizontal={8}
+			paddingTop={1}
+		>
+			{children}
+		</glamorous.Text>
+	</glamorous.View>
 )
 
-const Genre = ({genre}: {genre: string}) => (
-	<React.Fragment>
-		<Text style={styles.sectionTitle}>Genre</Text>
-		<Text>{genre}</Text>
-	</React.Fragment>
+const ReleaseYear = ({children, ...props}) => (
+	<Pill bgColorName="blue" {...props}>
+		{children}
+	</Pill>
 )
 
-const showingTimesToString = (showing: MovieShowing) => {
-	let m = moment(showing.time)
-	let dayOfWeek = m.format('dddd')
-	let month = m.format('MMM.')
-	let dayOfMonth = m.format('Do')
-	let time = m.format('h:mmA')
-	return `${dayOfWeek} ${month} ${dayOfMonth} at ${time}`
+const RunTime = ({children, ...props}) => (
+	<Pill bgColorName="lime" {...props}>
+		{children}
+	</Pill>
+)
+
+const Plot = ({text, ...props}: {text: string}) => {
+	return (
+		<Padding marginTop={16} {...props}>
+			<Text>{text}</Text>
+		</Padding>
+	)
 }
 
-const Showings = ({showings = []}: {showings: MovieShowing[]}) => (
-	<React.Fragment>
-		<Text style={styles.sectionTitle}>Showings</Text>
-		{showings.length ? (
-			showings.map((showing, i, arr) => (
-				<React.Fragment key={showing.time}>
-					<ListRow arrowPosition="none" fullWidth={true}>
-						<Column flex={1}>
-							<Title lines={1}>{showingTimesToString(showing)}</Title>
-							<Detail lines={1}>{showing.location}</Detail>
-						</Column>
-					</ListRow>
-					{i !== arr.length - 1 ? <ListSeparator fullWidth={true} /> : null}
-				</React.Fragment>
-			))
-		) : (
-			<Text>No Showings</Text>
-		)}
-	</React.Fragment>
+const Card = glamorous.view({
+	borderRadius: 8,
+	shadowRadius: 12,
+	shadowOpacity: 0.2,
+	shadowOffset: {height: 4, width: 4},
+})
+
+const PaddedCard = ({children}) => (
+	<Card
+		marginHorizontal={16}
+		marginVertical={16}
+		paddingHorizontal={16}
+		paddingVertical={16}
+	>
+		{children}
+	</Card>
 )
 
-class IMDB extends React.Component<any, any> {
-	url = imdbID => `https://www.imdb.com/title/${imdbID}`
+const Heading = glamorous.text({...human.headlineObject})
+const Text = glamorous.text({...human.bodyObject})
 
-	open = () => openUrl(this.url(this.props.imdbID))
+const ImdbRating = ({ratings}) => {
+	const rating = ratings.find(r => r.Source === 'Internet Movie Database')
+
+	if (!rating) {
+		return <glamorous.Text>Unrated</glamorous.Text>
+	}
+
+	const score = normalizeScore(rating.Value)
+	if (!score) {
+		return <glamorous.Text>Unrated</glamorous.Text>
+	}
+
+	const tint = colorizeScore(rating.Value)
+
+	return (
+		<glamorous.Text color={tint}>
+			<glamorous.Text fontSize={24} fontWeight="800">{score / 10}</glamorous.Text>
+			{' ⁄ '}
+			<glamorous.Text fontVariant={['small-caps']}>10</glamorous.Text>
+		</glamorous.Text>
+	)
+}
+
+const FullStar = () => (
+	<Icon name={Platform.OS === 'ios' ? 'ios-star' : 'md-star'} size={22} />
+)
+const HalfStar = () => (
+	<Icon
+		name={Platform.OS === 'ios' ? 'ios-star-half' : 'md-star-half'}
+		size={22}
+	/>
+)
+const EmptyStar = () => (
+	<Icon
+		name={Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'}
+		size={22}
+	/>
+)
+
+const RottenTomatoesRating = ({ratings}) => {
+	const rating = ratings.find(r => r.Source === 'Rotten Tomatoes')
+
+	if (!rating) {
+		return <glamorous.Text>Unrated</glamorous.Text>
+	}
+
+	const score = normalizeScore(rating.Value)
+	if (!score) {
+		return <glamorous.Text>Unrated</glamorous.Text>
+	}
+
+	const stars = Math.round(score / 20)
+	const starIcons = []
+	for (let i = 0; i < 5; i++) {
+		if (i < stars) {
+			starIcons.push(<FullStar key={i} />)
+		} else if (i === stars && i % 2 === 1) {
+			starIcons.push(<HalfStar key={i} />)
+		} else {
+			starIcons.push(<EmptyStar key={i} />)
+		}
+	}
+
+	const tint = colorizeScore(rating.Value)
+	return <glamorous.Text color={tint}>{starIcons}</glamorous.Text>
+}
+
+class ImdbLink extends React.Component<{id: string}> {
+	url = id => `https://www.imdb.com/title/${id}`
+	open = () => openUrl(this.url(this.props.id))
 
 	render() {
-		if (!this.props.imdbID) {
+		if (!this.props.id) {
 			return null
 		}
 
+		// return (
+		// 	<glamorous.Text
+		// 		color={c.infoBlue}
+		// 		//fontVariant={['small-caps']}
+		// 		onPress={this.open}
+		// 	>
+		// 		IMDB{' '}
+		// 		<Icon name={Platform.OS === 'ios' ? 'ios-open-outline' : 'md-open'} size={16} />
+		// 	</glamorous.Text>
+		// )
+
 		return (
-			<React.Fragment>
-				<Text style={styles.sectionTitle}>IMDB Page</Text>
-				<Text onPress={this.open} style={styles.imdb}>
-					{this.url(this.props.imdbID)}
-				</Text>
-			</React.Fragment>
+			<glamorous.Text
+				color={c.infoBlue}
+				fontSize={17}
+				marginLeft={16}
+				onPress={this.open}
+				paddingVertical={14}
+			>
+				Open IMDB Page
+			</glamorous.Text>
 		)
 	}
 }
 
 const styles = StyleSheet.create({
 	contentContainer: {
-		// padding: 10,
-		// marginTop: -64,
 		backgroundColor: c.white,
-		flex: 1,
-	},
-	rightPane: {
-		flex: 1,
-		justifyContent: 'space-between',
-	},
-	movieTitle: {
-		fontSize: 23,
-		fontWeight: '400',
-	},
-	ratingTitle: {
-		marginTop: 10,
-		fontSize: 14,
-		fontWeight: '500',
-	},
-	rating: {
-		fontSize: 28,
-		fontWeight: '500',
-	},
-	centeredRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	mpaa: {
-		alignSelf: 'flex-start',
-		borderColor: c.black,
-		borderWidth: 1,
-		paddingHorizontal: 3,
-		marginVertical: 5,
-	},
-	mpaaRating: {
-		fontFamily: 'Palatino',
-		fontSize: 13,
-		fontWeight: '500',
-	},
-	movieInfo: {
-		flexDirection: 'row',
-	},
-	separator: {
-		marginVertical: 10,
-	},
-	sectionTitle: {
-		fontWeight: '700',
-		marginBottom: 3,
-	},
-	imdb: {
-		color: c.infoBlue,
 	},
 })
