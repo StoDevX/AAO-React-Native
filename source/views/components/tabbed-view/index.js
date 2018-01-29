@@ -20,6 +20,15 @@ export const TabNavigator: ComponentType = (screens, options) =>
 		backBehavior: 'none',
 		lazy: true,
 		swipeEnabled: Platform.OS !== 'ios',
+		...options,
+		navigationOptions: {
+			headerTintColor: c.white,
+			...(options.navigationOptions || {}),
+			headerStyle: [
+				{backgroundColor: c.olevilleGold},
+				(options.navigationOptions || {}).headerStyle,
+			],
+		},
 		tabBarOptions: {
 			...Platform.select({
 				android: {
@@ -52,5 +61,4 @@ export const TabNavigator: ComponentType = (screens, options) =>
 				}),
 			},
 		},
-		...options,
 	})
