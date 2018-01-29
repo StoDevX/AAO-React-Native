@@ -86,7 +86,7 @@ export const AppNavigator = StackNavigator(
 			headerTintColor: c.white,
 			headerStyle: {
 				backgroundColor: c.olevilleGold,
-			}
+			},
 		},
 		cardStyle: {
 			backgroundColor: Platform.select({
