@@ -4770,9 +4770,9 @@ react-native-drawer-layout@1.3.2:
   dependencies:
     react-native-dismiss-keyboard "1.0.0"
 
-react-native-google-analytics-bridge@5.5.2:
-  version "5.5.2"
-  resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-5.5.2.tgz#b416abc9c51079bccd3487f52d87072d1746c649"
+react-native-google-analytics-bridge@5.6.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-5.6.0.tgz#996b8ec29ce17560f8dc89ff58beca0dcebe3fcd"
 
 react-native-keychain@2.0.0:
   version "2.0.0"
