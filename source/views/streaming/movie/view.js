@@ -238,15 +238,7 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 				<Plot text={movie.info.Plot} />
 
 				<PaddedCard>
-					<Column marginBottom={16}>
-						<Heading>Directed By</Heading>
-						<Text>{movie.info.Director}</Text>
-					</Column>
-
-					<Column marginBottom={16}>
-						<Heading>Written By</Heading>
-						<Text>{movie.info.Writer}</Text>
-					</Column>
+					<WritersDirectors />
 
 					<Column>
 						<Heading>Cast</Heading>
