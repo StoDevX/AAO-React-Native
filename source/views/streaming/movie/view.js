@@ -226,9 +226,9 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 
 					<Row alignItems="center">
 						<RottenTomatoesRating ratings={movie.info.Ratings} />
-						<FixedSpacer/>
+						<FixedSpacer />
 						<ImdbRating ratings={movie.info.Ratings} />
-						<Spacer/>
+						<Spacer />
 						<MpaaRating rated={movie.info.Rated} />
 					</Row>
 				</MovieInfo>
@@ -550,7 +550,9 @@ const ImdbRating = ({ratings}) => {
 
 	return (
 		<glamorous.Text color={tint}>
-			<glamorous.Text fontSize={24} fontWeight="800">{score / 10}</glamorous.Text>
+			<glamorous.Text fontSize={24} fontWeight="800">
+				{score / 10}
+			</glamorous.Text>
 			{' ⁄ '}
 			<glamorous.Text fontVariant={['small-caps']}>10</glamorous.Text>
 		</glamorous.Text>
@@ -611,14 +613,14 @@ class ImdbLink extends React.Component<{id: string}> {
 		}
 
 		// return (
-		// 	<glamorous.Text
-		// 		color={c.infoBlue}
-		// 		//fontVariant={['small-caps']}
-		// 		onPress={this.open}
-		// 	>
-		// 		IMDB{' '}
-		// 		<Icon name={Platform.OS === 'ios' ? 'ios-open-outline' : 'md-open'} size={16} />
-		// 	</glamorous.Text>
+		//  <glamorous.Text
+		//    color={c.infoBlue}
+		//    //fontVariant={['small-caps']}
+		//    onPress={this.open}
+		//  >
+		//    IMDB{' '}
+		//    <Icon name={Platform.OS === 'ios' ? 'ios-open-outline' : 'md-open'} size={16} />
+		//  </glamorous.Text>
 		// )
 
 		return (
