@@ -200,9 +200,9 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 
 					<Row alignItems="center">
 						<RottenTomatoesRating ratings={movie.info.Ratings} />
-						<FixedSpacer/>
+						<FixedSpacer />
 						<ImdbRating ratings={movie.info.Ratings} />
-						<Spacer/>
+						<Spacer />
 						<MpaaRating rated={movie.info.Rated} />
 					</Row>
 				</MovieInfo>
@@ -212,15 +212,10 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 				<Plot text={movie.info.Plot} />
 
 				<PaddedCard>
-					<Column marginBottom={16}>
-						<Heading>Directed By</Heading>
-						<Text>{movie.info.Director}</Text>
-					</Column>
-
-					<Column marginBottom={16}>
-						<Heading>Written By</Heading>
-						<Text>{movie.info.Writer}</Text>
-					</Column>
+					<WritersDirectors
+						writers={movie.info.Writer}
+						directors={movie.info.Director}
+					/>
 
 					<Column>
 						<Heading>Cast</Heading>
@@ -487,6 +482,32 @@ const RunTime = ({children, ...props}) => (
 	</Pill>
 )
 
+const WritersDirectors = ({writers, directors}) => {
+	if (writers === directors) {
+		return (
+			<React.Fragment>
+				<Column marginBottom={16}>
+					<Heading>Written and Directed By</Heading>
+					<Text>{directors}</Text>
+				</Column>
+			</React.Fragment>
+		)
+	}
+
+	return (
+		<React.Fragment>
+			<Column marginBottom={16}>
+				<Heading>Directed By</Heading>
+				<Text>{directors}</Text>
+			</Column>
+			<Column marginBottom={16}>
+				<Heading>Written By</Heading>
+				<Text>{writers}</Text>
+			</Column>
+		</React.Fragment>
+	)
+}
+
 const Plot = ({text, ...props}: {text: string}) => {
 	return (
 		<Padding marginTop={16} {...props}>
@@ -532,7 +553,9 @@ const ImdbRating = ({ratings}) => {
 
 	return (
 		<glamorous.Text color={tint}>
-			<glamorous.Text fontSize={24} fontWeight="800">{score / 10}</glamorous.Text>
+			<glamorous.Text fontSize={24} fontWeight="800">
+				{score / 10}
+			</glamorous.Text>
 			{' ⁄ '}
 			<glamorous.Text fontVariant={['small-caps']}>10</glamorous.Text>
 		</glamorous.Text>
@@ -593,14 +616,14 @@ class ImdbLink extends React.Component<{id: string}> {
 		}
 
 		// return (
-		// 	<glamorous.Text
-		// 		color={c.infoBlue}
-		// 		//fontVariant={['small-caps']}
-		// 		onPress={this.open}
-		// 	>
-		// 		IMDB{' '}
-		// 		<Icon name={Platform.OS === 'ios' ? 'ios-open-outline' : 'md-open'} size={16} />
-		// 	</glamorous.Text>
+		//  <glamorous.Text
+		//    color={c.infoBlue}
+		//    //fontVariant={['small-caps']}
+		//    onPress={this.open}
+		//  >
+		//    IMDB{' '}
+		//    <Icon name={Platform.OS === 'ios' ? 'ios-open-outline' : 'md-open'} size={16} />
+		//  </glamorous.Text>
 		// )
 
 		return (
