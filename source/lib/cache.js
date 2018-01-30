@@ -269,15 +269,17 @@ export async function fetchWeeklyMovie(
 ): Promise<MaybeError<WeeklyMovie>> {
 	const cachedValue = await getWeeklyMovie()
 
-	if (!isOnline) {
-		if (cachedValue.isCached && cachedValue.value) {
+	if (process.env.NODE_ENV !== 'development') {
+		if (!isOnline) {
+			if (cachedValue.isCached && cachedValue.value) {
+				return {error: false, data: cachedValue.value}
+			}
+			return {error: true, message: 'You are currently offline'}
+		}
+
+		if (!cachedValue.isExpired && cachedValue.value) {
 			return {error: false, data: cachedValue.value}
 		}
-		return {error: true, message: 'You are currently offline'}
-	}
-
-	if (!cachedValue.isExpired && cachedValue.value) {
-		return {error: false, data: cachedValue.value}
 	}
 
 	const request = await fetchWeeklyMovieRemote()
