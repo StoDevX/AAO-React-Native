@@ -1,7 +1,7 @@
 ---
 key: it-helpdesk
-enabled: true
-hidden: false
+enabled: false
+hidden: true
 
 title: Open a Helpdesk Ticket
 body: |
