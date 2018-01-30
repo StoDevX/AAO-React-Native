@@ -1,7 +1,14 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, ScrollView, Dimensions, Platform} from 'react-native'
+import {
+	StyleSheet,
+	SectionList,
+	View,
+	ScrollView,
+	Dimensions,
+	Platform,
+} from 'react-native'
 import {connect} from 'react-redux'
 import {getWeeklyMovie} from '../../../flux/parts/weekly-movie'
 import {type ReduxState} from '../../../flux'
@@ -24,6 +31,12 @@ import {
 import {Touchable} from '../../components/touchable'
 import Icon from 'react-native-vector-icons/Ionicons'
 import LinearGradient from 'react-native-linear-gradient'
+import {
+	ListRow,
+	ListSectionHeader,
+	ListSeparator,
+	Detail,
+} from '../../components/list'
 import type {
 	Movie,
 	MovieShowing,
@@ -207,7 +220,7 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 					</Row>
 				</MovieInfo>
 
-				{/*<Showings showings={movie.showings} />*/}
+				<Showings showings={movie.showings} />
 
 				<Plot text={movie.info.Plot} />
 
@@ -534,6 +547,12 @@ const PaddedCard = ({children}) => (
 	</Card>
 )
 
+const PaddedShowingsCard = ({children}) => (
+	<Card marginHorizontal={10} marginVertical={16} paddingHorizontal={10}>
+		{children}
+	</Card>
+)
+
 const Heading = glamorous.text({...human.headlineObject})
 const Text = glamorous.text({...human.bodyObject})
 
@@ -606,6 +625,68 @@ const RottenTomatoesRating = ({ratings}) => {
 	return <glamorous.Text color={tint}>{starIcons}</glamorous.Text>
 }
 
+class Showings extends React.Component {
+	renderRow = ({item}: {item: Movie}) => (
+		<PaddedShowingsCard>
+			<ListRow
+				contentContainerStyle={[styles.row]}
+				arrowPosition="none"
+				fullWidth={true}
+			>
+				<Row alignItems="flex-start">
+					<Column flex={1}>
+						<Row alignItems="flex-end">
+							<Detail style={[styles.showingsDay, styles.shared]} lines={1}>
+								{moment(item.time).format('D')}
+							</Detail>
+							<Detail style={styles.showingsLocation} lines={1}>
+								{item.location.toUpperCase()}
+							</Detail>
+						</Row>
+						<Row alignItems="flex-end">
+							<Detail style={[styles.showingsMonth, styles.shared]} lines={1}>
+								{moment(item.time)
+									.format('MMM')
+									.toUpperCase()}
+							</Detail>
+							<Detail style={styles.showingsTime} lines={1}>
+								{moment(item.time).format('h:mmA')}
+							</Detail>
+						</Row>
+					</Column>
+				</Row>
+			</ListRow>
+		</PaddedShowingsCard>
+	)
+
+	renderSeparator = () => <ListSeparator fullWidth={true} />
+
+	keyExtractor = (item: Movie) => item.time
+
+	render() {
+		if (!this.props.showings) {
+			return null
+		}
+
+		const sections = [{title: 'Showings', data: this.props.showings}]
+
+		return (
+			<View style={styles.showingsWrapper}>
+				<SectionList
+					horizontal={true}
+					showsHorizontalScrollIndicator={false}
+					ListEmptyComponent={<Text>No Showings</Text>}
+					sections={sections}
+					ItemSeparatorComponent={this.renderSeparator}
+					keyExtractor={this.keyExtractor}
+					style={styles.listContainer}
+					renderItem={this.renderRow}
+				/>
+			</View>
+		)
+	}
+}
+
 class ImdbLink extends React.Component<{id: string}> {
 	url = id => `https://www.imdb.com/title/${id}`
 	open = () => openUrl(this.url(this.props.id))
@@ -643,5 +724,24 @@ class ImdbLink extends React.Component<{id: string}> {
 const styles = StyleSheet.create({
 	contentContainer: {
 		backgroundColor: c.white,
+	},
+	showingsLocation: {
+		fontSize: 14,
+		marginBottom: 3,
+	},
+	showingsDay: {
+		color: c.black,
+		fontSize: 22,
+	},
+	showingsMonth: {
+		color: c.black,
+		fontSize: 13,
+	},
+	showingsTime: {
+		color: c.black,
+		fontSize: 13,
+	},
+	shared: {
+		marginRight: 20,
 	},
 })
