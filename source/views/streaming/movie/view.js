@@ -151,7 +151,7 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 		const movieTint = makeRgb(movie.posterColors.dominant)
 		const headerHeight = Math.max(Dimensions.get('window').height / 3, 200)
 
-		WritersDirectors = () => {
+		const WritersDirectors = () => {
 			if (movie.info.Writer === movie.info.Director) {
 				return (
 					<React.Fragment>
