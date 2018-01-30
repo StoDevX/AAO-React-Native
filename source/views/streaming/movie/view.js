@@ -151,6 +151,32 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 		const movieTint = makeRgb(movie.posterColors.dominant)
 		const headerHeight = Math.max(Dimensions.get('window').height / 3, 200)
 
+		WritersDirectors = () => {
+			if (movie.info.Writer === movie.info.Director) {
+				return (
+					<React.Fragment>
+						<Column marginBottom={16}>
+							<Heading>Written and Directed By</Heading>
+							<Text>{movie.info.Director}</Text>
+						</Column>
+					</React.Fragment>
+				)
+			}
+
+			return (
+				<React.Fragment>
+					<Column marginBottom={16}>
+						<Heading>Directed By</Heading>
+						<Text>{movie.info.Director}</Text>
+					</Column>
+					<Column marginBottom={16}>
+						<Heading>Written By</Heading>
+						<Text>{movie.info.Writer}</Text>
+					</Column>
+				</React.Fragment>
+			)
+		}
+
 		return (
 			<ScrollView contentContainerStyle={styles.contentContainer}>
 				<Header>
