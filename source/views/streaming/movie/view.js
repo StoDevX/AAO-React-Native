@@ -595,7 +595,7 @@ const EmptyStar = () => (
 )
 
 const RottenTomatoesRating = ({ratings}) => {
-	let rating = ratings.find(r => r.Source === 'Rotten Tomatoes')
+	const rating = ratings.find(r => r.Source === 'Rotten Tomatoes')
 
 	if (!rating) {
 		return <glamorous.Text>Unrated</glamorous.Text>
