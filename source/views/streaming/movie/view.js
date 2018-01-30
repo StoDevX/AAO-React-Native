@@ -151,32 +151,6 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 		const movieTint = makeRgb(movie.posterColors.dominant)
 		const headerHeight = Math.max(Dimensions.get('window').height / 3, 200)
 
-		const WritersDirectors = () => {
-			if (movie.info.Writer === movie.info.Director) {
-				return (
-					<React.Fragment>
-						<Column marginBottom={16}>
-							<Heading>Written and Directed By</Heading>
-							<Text>{movie.info.Director}</Text>
-						</Column>
-					</React.Fragment>
-				)
-			}
-
-			return (
-				<React.Fragment>
-					<Column marginBottom={16}>
-						<Heading>Directed By</Heading>
-						<Text>{movie.info.Director}</Text>
-					</Column>
-					<Column marginBottom={16}>
-						<Heading>Written By</Heading>
-						<Text>{movie.info.Writer}</Text>
-					</Column>
-				</React.Fragment>
-			)
-		}
-
 		return (
 			<ScrollView contentContainerStyle={styles.contentContainer}>
 				<Header>
@@ -238,7 +212,10 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 				<Plot text={movie.info.Plot} />
 
 				<PaddedCard>
-					<WritersDirectors />
+					<WritersDirectors
+						writers={movie.info.Writer}
+						directors={movie.info.Director}
+					/>
 
 					<Column>
 						<Heading>Cast</Heading>
@@ -504,6 +481,32 @@ const RunTime = ({children, ...props}) => (
 		{children}
 	</Pill>
 )
+
+const WritersDirectors = ({writers, directors}) => {
+	if (writers === directors) {
+		return (
+			<React.Fragment>
+				<Column marginBottom={16}>
+					<Heading>Written and Directed By</Heading>
+					<Text>{directors}</Text>
+				</Column>
+			</React.Fragment>
+		)
+	}
+
+	return (
+		<React.Fragment>
+			<Column marginBottom={16}>
+				<Heading>Directed By</Heading>
+				<Text>{directors}</Text>
+			</Column>
+			<Column marginBottom={16}>
+				<Heading>Written By</Heading>
+				<Text>{writers}</Text>
+			</Column>
+		</React.Fragment>
+	)
+}
 
 const Plot = ({text, ...props}: {text: string}) => {
 	return (
