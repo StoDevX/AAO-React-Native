@@ -8,6 +8,8 @@ import {
   View,
   Text,
   ListView,
+  Animated,
+  Dimensions
 } from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
@@ -16,19 +18,46 @@ import {Select, Option} from 'react-native-chooser'
 import {CourseSearchBar} from '../components/searchbar'
 import debounce from 'lodash/debounce'
 import {ToolBar} from 'react-native-material-ui'
-import {updateStoredCourses} from '../../../lib/course-search/update-course-storage'
+import {updateCourseData} from '../../../flux/parts/sis'
+import {CourseType} from '../../../lib/course-search'
+import type {ReduxState} from '../../../flux'
+import type {TopLevelViewPropsType} from '../../types'
+import {connect} from 'react-redux'
+import groupBy from 'lodash/groupBy'
+import sortBy from 'lodash/sortBy'
+import toPairs from 'lodash/toPairs'
+import CourseSearchTableView from '../components/results'
 
-type Props = TopLevelViewPropsType & {
+type ReactProps = TopLevelViewPropsType
+
+type ReduxStateProps = {
+  allCourses: Array<CourseType>,
+  courseDataState: string,
+}
+
+type ReduxDispatchProps = {
+  updateCourseData: () => any,
+}
+
+type Props = ReactProps & ReduxStateProps & ReduxDispatchProps & {
   navigation: {state: {params: {}}},
 }
 
+type State = {
+  searchResults: Array<{title: string, data: Array<CourseType>}>,
+}
 
-export default class CourseSearchView extends React.PureComponent<Props> {
+
+class CourseSearchView extends React.PureComponent<Props, State> {
   static navigationOptions = ({navigation}: any) => ({
 		tabBarLabel: 'Course Search',
 		tabBarIcon: TabBarIcon('search'),
     title: "SIS",
 	})
+
+  state = {
+    searchResults: [],
+  }
 
   searchBar: any = null
 
@@ -37,10 +66,31 @@ export default class CourseSearchView extends React.PureComponent<Props> {
 		// if (typeof text !== 'string') {
 		// 	return this.props.onSearch(null)
 		// }
-    console.log(text)
+    let results = this.props.allCourses.filter(course => (
+      course.name.includes(text)
+    ))
 
+    let grouped = groupBy(results, r => r.term)
+    let groupedCourses = toPairs(grouped).map(([key, value]) => ({
+      title: key,
+      data: value,
+    }))
+    let sortedCourses = sortBy(groupedCourses, course => course.title).reverse()
+    this.setState({searchResults: sortedCourses})
+    console.log(sortedCourses)
 
 	}
+
+  componentWillMount() {
+    let screenWidth = Dimensions.get('window').width
+    this.headerOpacity = new Animated.Value(1)
+    this.searchBarTop = new Animated.Value(71)
+    this.containerHeight = new Animated.Value(125)
+  }
+
+  componentDidMount() {
+    this.props.updateCourseData()
+  }
 
 	// We need to make the search run slightly behind the UI,
 	// so I'm slowing it down by 50ms. 0ms also works, but seems
@@ -48,40 +98,82 @@ export default class CourseSearchView extends React.PureComponent<Props> {
 	performSearch = debounce(this._performSearch, 50)
 
   onFocus = () => {
-    // this._header.setNativeProps({style: {display: 'none',},})
-    // this.navigationOptions.header
-    // let courses = loadCourseSearchData(2016, 1)
-    // console.log(loadTermsFromStorage())
-    updateStoredCourses()
-    // console.log(courses)
+    let screenWidth = Dimensions.get('window').width
+    Animated.timing(this.headerOpacity, {
+      toValue: 0,
+      duration: 800,
+    }).start()
+    Animated.timing(this.searchBarTop, {
+      toValue: 10,
+      duration: 800,
+    }).start()
+    Animated.timing(this.containerHeight, {
+      toValue: 64,
+      duration: 800,
+    }).start()
+  }
+
+  onCancel = () => {
+    let screenWidth = Dimensions.get('window').width
+    Animated.timing(this.headerOpacity, {
+      toValue: 1,
+      duration: 800,
+    }).start()
+    Animated.timing(this.searchBarTop, {
+      toValue: 71,
+      duration: 800,
+    }).start()
+    Animated.timing(this.containerHeight, {
+      toValue: 125,
+      duration: 800,
+    }).start()
   }
 
   render() {
+    const screenWidth = Dimensions.get('window').width
+    const searchBarWidth = screenWidth - 20
+    const headerAnimation = { opacity: this.headerOpacity }
+    const searchBarAnimation = {
+      top: this.searchBarTop,
+    }
+    const containerAnimation = { height: this.containerHeight }
 
     return (
 
-        <TableView>
+        <View>
 
 
-          <View style={[styles.searchContainer, styles.common]}>
-            <Text
-              style={styles.header}
+          <Animated.View style={[styles.searchContainer, styles.common, containerAnimation]}>
+            <Animated.Text
+              style={[styles.header, headerAnimation]}
               ref={component => this._header = component}
             >
               Search Courses
-            </Text>
-            <CourseSearchBar
-              getRef={ref => (this.searchBar = ref)}
-              onChangeText={this.performSearch}
-              onFocus={this.onFocus}
-              onSearchButtonPress={() => this.searchBar.unFocus()}
-              style={styles.searchBar}
-            >
-            </CourseSearchBar>
-          </View>
+            </Animated.Text>
+            <Animated.View style={[styles.searchBarWrapper, {width: searchBarWidth}, searchBarAnimation]}>
+              <CourseSearchBar
+                getRef={ref => (this.searchBar = ref)}
+                onFocus={this.onFocus}
+                onCancel={this.onCancel}
+                onSearchButtonPress={(text) => {
+                  this.searchBar.unFocus()
+                  this.performSearch(text)
+                }}
+                style={styles.searchBar}
+              >
+              </CourseSearchBar>
+            </Animated.View>
+
+          </Animated.View>
+          <ScrollView>
+            <CourseSearchTableView
+              terms={this.state.searchResults}
+              navigation={this.props.navigation}
+            />
+          </ScrollView>
 
 
-        </TableView>
+        </View>
 
 
     )
@@ -89,9 +181,25 @@ export default class CourseSearchView extends React.PureComponent<Props> {
   }
 }
 
+function mapState(state: ReduxState): ReduxStateProps {
+  return {
+    allCourses: state.sis ? state.sis.allCourses : null,
+    courseDataState: state.sis ? state.sis.courseDataState : null,
+  }
+}
+
+function mapDispatch(dispatch): ReduxDispatchProps {
+  return {
+    updateCourseData: () => dispatch(updateCourseData()),
+  }
+}
+
+export default connect(mapState, mapDispatch)(CourseSearchView)
+
 let cellMargin = 10
 let cellSidePadding = 10
 let cellEdgePadding = 10
+
 
 let styles = StyleSheet.create({
   common: {
@@ -100,18 +208,18 @@ let styles = StyleSheet.create({
 
   searchContainer: {
     margin: 0,
-    padding: 25,
-    zIndex: 5000,
   },
 
-  searchBar: {
-    backgroundColor: c.white,
+  searchBarWrapper: {
+    position: 'absolute',
+    left: 10,
   },
 
   header: {
     fontSize: 30,
     fontWeight: 'bold',
-    padding: 5,
+    padding: 22,
+    paddingLeft: 17,
   },
 
   picker: {
