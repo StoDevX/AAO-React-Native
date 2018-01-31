@@ -16,7 +16,7 @@ export const getIpAddress = (): Promise<?string> =>
 
 export const getPosition = (args: any = {}): Promise<Object> =>
 	new Promise((resolve, reject) => {
-		if(Platform.OS === 'ios') {
+		if (Platform.OS === 'ios') {
 			navigator.geolocation.getCurrentPosition(resolve, reject, {
 				...args,
 				enableHighAccuracy: true,
