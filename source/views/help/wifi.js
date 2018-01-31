@@ -51,7 +51,10 @@ export class ToolView extends React.Component<Props, State> {
 
 		this.setState(() => ({status: 'collecting', error: ''}))
 		const [position, device] = await Promise.all([
-			getPosition().catch(bugsnag.notify),
+			getPosition().catch(error => {
+				bugsnag.notify(error)
+				return null
+			}),
 			collectData(),
 		])
 		this.setState(() => ({status: 'reporting'}))
