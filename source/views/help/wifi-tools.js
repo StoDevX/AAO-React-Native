@@ -15,12 +15,7 @@ export const getIpAddress = (): Promise<?string> =>
 
 export const getPosition = (args: any = {}): Promise<Object> =>
 	new Promise(resolve => {
-		navigator.geolocation.getCurrentPosition(resolve, () => resolve({}), {
-			...args,
-			enableHighAccuracy: true,
-			maximumAge: 1000 /*ms*/,
-			timeout: 5000 /*ms*/,
-		})
+		navigator.geolocation.getCurrentPosition(resolve, () => resolve({}))
 	})
 
 export const collectData = async () => ({
