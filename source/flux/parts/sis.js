@@ -2,7 +2,11 @@
 
 import {type ReduxState} from '../index'
 import {getBalances, type BalancesShapeType} from '../../lib/financials'
-import {loadCachedCourses, CourseType, updateStoredCourses} from '../../lib/course-search'
+import {
+	loadCachedCourses,
+	CourseType,
+	updateStoredCourses,
+} from '../../lib/course-search'
 
 const UPDATE_BALANCES_SUCCESS = 'sis/UPDATE_BALANCES_SUCCESS'
 const UPDATE_BALANCES_FAILURE = 'sis/UPDATE_BALANCES_FAILURE'
@@ -49,7 +53,7 @@ type LoadCachedCoursesAction = {|
 |}
 
 export function getCachedCourses() {
-	return async (dispatch) => {
+	return async dispatch => {
 		await updateStoredCourses()
 		const cachedCourses = await loadCachedCourses()
 		dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
@@ -61,7 +65,7 @@ type TermsUpdateAction = {|type: 'sis/TERMS_UPDATE'|}
 type TermsUpdateCompleteAction = {|type: 'sis/TERMS_UPDATE_COMPLETE'|}
 
 export function updateCourseData() {
-	return async (dispatch) => {
+	return async dispatch => {
 		dispatch({type: TERMS_UPDATE})
 		let updateNeeded = await updateStoredCourses()
 		if (updateNeeded) {
@@ -77,9 +81,7 @@ type CourseDataAction =
 	| TermsUpdateAction
 	| TermsUpdateCompleteAction
 
-type Action =
-	| UpdateBalancesActions
-	| CourseDataAction
+type Action = UpdateBalancesActions | CourseDataAction
 
 export type State = {|
 	balancesErrorMessage: ?string,
@@ -102,7 +104,6 @@ const initialState = {
 	mealPlanDescription: null,
 	allCourses: null,
 	courseDataState: null,
-
 }
 export function sis(state: State = initialState, action: Action) {
 	switch (action.type) {

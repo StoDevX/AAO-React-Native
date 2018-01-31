@@ -7,17 +7,19 @@ type Props = TopLevelViewPropsType & {
 }
 
 export class CourseDetailView extends React.PureComponent<Props> {
-  static navigationOptions = ({navigation}: any) => {
+	static navigationOptions = ({navigation}: any) => {
 		const course = navigation.state.params.course
 		return {
 			title: course.name,
 		}
 	}
 
-  render() {
-    const course = this.props.navigation.state.params.course
-    return (
-      <View><Text>{course.name}</Text></View>
-    )
-  }
+	render() {
+		const course = this.props.navigation.state.params.course
+		return (
+			<View>
+				<Text>{course.name}</Text>
+			</View>
+		)
+	}
 }
