@@ -21,7 +21,7 @@ export const getPosition = (args: any = {}): Promise<Object> =>
 				...args,
 				enableHighAccuracy: true,
 				maximumAge: 1000 /* ms */,
-				timeout: 5000 /* ms */,
+				timeout: 15000 /* ms */,
 			})
 		} else {
 			navigator.geolocation.getCurrentPosition(resolve, reject)
