@@ -11,6 +11,7 @@ import {Error, ErrorMessage} from './components'
 import {getPosition, collectData, reportToServer} from './wifi-tools'
 import {styles} from './tool'
 import type {ToolOptions} from './types'
+import bugsnag from '../../bugsnag'
 
 export const toolName = 'wifi'
 
@@ -49,7 +50,10 @@ export class ToolView extends React.Component<Props, State> {
 		}
 
 		this.setState(() => ({status: 'collecting', error: ''}))
-		const [position, device] = await Promise.all([getPosition(), collectData()])
+		const [position, device] = await Promise.all([
+			getPosition().catch(bugsnag.notify),
+			collectData(),
+		])
 		this.setState(() => ({status: 'reporting'}))
 
 		try {
