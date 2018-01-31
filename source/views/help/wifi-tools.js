@@ -15,7 +15,7 @@ export const getIpAddress = (): Promise<?string> =>
 
 export const getPosition = (): Promise<Object> =>
 	new Promise((resolve, reject) => {
-		navigator.geolocation.getCurrentPosition(resolve, err => reject(err))
+		navigator.geolocation.getCurrentPosition(resolve, reject)
 	})
 
 export const collectData = async () => ({
