@@ -13,7 +13,7 @@ export const getIpAddress = (): Promise<?string> =>
 		}
 	})
 
-export const getPosition = (args: any = {}): Promise<Object> =>
+export const getPosition = (): Promise<Object> =>
 	new Promise(resolve => {
 		navigator.geolocation.getCurrentPosition(resolve, () => resolve({}))
 	})
