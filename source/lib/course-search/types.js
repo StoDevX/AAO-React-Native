@@ -20,6 +20,7 @@ export type CourseType = {
   locations?: string[],
   notes?: string[],
   section?: string,
+  times?: string[],
 }
 
 export type TermType = {

@@ -2,9 +2,13 @@
 
 import {type ReduxState} from '../index'
 import {getBalances, type BalancesShapeType} from '../../lib/financials'
+import {loadCachedCourses, CourseType, updateStoredCourses} from '../../lib/course-search'
 
 const UPDATE_BALANCES_SUCCESS = 'sis/UPDATE_BALANCES_SUCCESS'
 const UPDATE_BALANCES_FAILURE = 'sis/UPDATE_BALANCES_FAILURE'
+const LOAD_CACHED_COURSES = 'sis/LOAD_CACHED_COURSES'
+const TERMS_UPDATE = 'sis/TERMS_UPDATE'
+const TERMS_UPDATE_COMPLETE = 'sis/TERMS_UPDATE_COMPLETE'
 
 type UpdateBalancesSuccessAction = {|
 	type: 'sis/UPDATE_BALANCES_SUCCESS',
@@ -39,7 +43,43 @@ export function updateBalances(
 	}
 }
 
-type Action = UpdateBalancesActions
+type LoadCachedCoursesAction = {|
+	type: 'sis/LOAD_CACHED_COURSES',
+	payload: Array<CourseType>,
+|}
+
+export function getCachedCourses() {
+	return async (dispatch) => {
+		await updateStoredCourses()
+		const cachedCourses = await loadCachedCourses()
+		dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
+	}
+}
+
+type TermsUpdateAction = {|type: 'sis/TERMS_UPDATE'|}
+
+type TermsUpdateCompleteAction = {|type: 'sis/TERMS_UPDATE_COMPLETE'|}
+
+export function updateCourseData() {
+	return async (dispatch) => {
+		dispatch({type: TERMS_UPDATE})
+		let updateNeeded = await updateStoredCourses()
+		if (updateNeeded) {
+			const cachedCourses = await loadCachedCourses()
+			dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
+		}
+		dispatch({type: TERMS_UPDATE_COMPLETE})
+	}
+}
+
+type CourseDataAction =
+	| LoadCachedCoursesAction
+	| TermsUpdateAction
+	| TermsUpdateCompleteAction
+
+type Action =
+	| UpdateBalancesActions
+	| CourseDataAction
 
 export type State = {|
 	balancesErrorMessage: ?string,
@@ -49,6 +89,8 @@ export type State = {|
 	mealsRemainingToday: ?string,
 	mealsRemainingThisWeek: ?string,
 	mealPlanDescription: ?string,
+	allCourses: ?Array<CourseType>,
+	courseDataState: ?string,
 |}
 const initialState = {
 	balancesErrorMessage: null,
@@ -58,6 +100,9 @@ const initialState = {
 	mealsRemainingToday: null,
 	mealsRemainingThisWeek: null,
 	mealPlanDescription: null,
+	allCourses: null,
+	courseDataState: null,
+
 }
 export function sis(state: State = initialState, action: Action) {
 	switch (action.type) {
@@ -76,6 +121,12 @@ export function sis(state: State = initialState, action: Action) {
 				balancesErrorMessage: null,
 			}
 		}
+		case LOAD_CACHED_COURSES:
+			return {...state, allCourses: action.payload, courseDataState: 'updated'}
+		case TERMS_UPDATE:
+			return {...state, courseDataState: 'updating'}
+		case TERMS_UPDATE_COMPLETE:
+			return {...state, courseDataState: 'updated'}
 
 		default:
 			return state

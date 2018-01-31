@@ -1,7 +1,6 @@
 /**
  * @flow
- * loadAllCourses is the entry point for loading courses from
- * the SIS.
+ * updateStoredCourses() handles updating the cached course data from the server
  */
 
 import type {CourseType, TermType} from './types'
@@ -13,7 +12,7 @@ type TermInfoType = {
  type: string,
 }
 
-export async function updateStoredCourses() {
+export async function updateStoredCourses(): boolean {
   RNFS.readDir(COURSE_STORAGE_DIR + '/terms')
     .catch(() => {
       RNFS.mkdir(COURSE_STORAGE_DIR + '/terms')
@@ -22,6 +21,7 @@ export async function updateStoredCourses() {
   outdatedTerms.forEach(term => {
     storeTermCoursesFromServer(term.path)
   })
+  return outdatedTerms.length === 0 ? false : true
 }
 
 async function loadCurrentTermsFromServer(): Array<TermType> {
@@ -38,7 +38,7 @@ async function loadCurrentTermsFromServer(): Array<TermType> {
    }
  }
 
-async function loadTermsFromStorage(): Array<TermType> {
+export async function loadTermsFromStorage(): Array<TermType> {
   return (
     RNFS.readFile(TERMS_FILE)
       .then(contents => {
@@ -55,19 +55,24 @@ async function determineOutdatedTerms(): Array<TermType> {
   const remoteTerms : Array<TermType> = await loadCurrentTermsFromServer()
   const localTerms : Array<TermType> = await loadTermsFromStorage()
   if (localTerms.length === 0) {
-    const currentTerms : Array<TermType> = await loadCurrentTermsFromServer()
-    let currentTermsJson = JSON.stringify(currentTerms)
-    RNFS.writeFile(TERMS_FILE, currentTermsJson, 'utf8')
-    return currentTerms
+    storeTermInfo(remoteTerms)
+    return remoteTerms
   }
   let outdatedTerms = localTerms.filter(
    localTerm => localTerm.hash != remoteTerms.find(remoteTerm => remoteTerm.term === localTerm.term).hash
   )
-  console.log(outdatedTerms)
+  if (outdatedTerms.length !== 0) {
+    storeTermInfo(remoteTerms)
+  }
   return outdatedTerms
 }
 
-export async function storeTermCoursesFromServer(
+function storeTermInfo(terms: Array<TermType>) {
+  let json = JSON.stringify(terms)
+  RNFS.writeFile(TERMS_FILE, json, 'utf8')
+}
+
+async function storeTermCoursesFromServer(
  path: string,
 ): boolean {
 
