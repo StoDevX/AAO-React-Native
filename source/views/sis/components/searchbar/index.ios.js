@@ -16,20 +16,27 @@ type PropsType = {
 	getRef?: any,
 	style?: any,
 	placeholder?: string,
-	onChangeText: string => any,
 	onSearchButtonPress: string => any,
 	onFocus: () => any,
+	onCancel: () => any,
 }
 
-export const CourseSearchBar = (props: PropsType) => (
-	<NativeSearchBar
-		ref={props.getRef}
-		hideBackground={true}
-		onChangeText={props.onChangeText || null}
-    onFocus={props.onFocus}
-		onSearchButtonPress={props.onSearchButtonPress || null}
-		placeholder={props.placeholder || 'Search'}
-		style={styles.searchbar}
-    textFieldBackgroundColor={c.sto.lightGray}
-	/>
-)
+export class CourseSearchBar extends React.PureComponent<Props> {
+
+
+	render() {
+		return (
+			<NativeSearchBar
+				ref={this.props.getRef}
+				hideBackground={true}
+		    onFocus={this.props.onFocus}
+				onCancelButtonPress={this.props.onCancel}
+				onSearchButtonPress={this.props.onSearchButtonPress || null}
+				placeholder={this.props.placeholder || 'Search'}
+				style={[styles.searchbar, this.props.style]}
+		    textFieldBackgroundColor={c.sto.lightGray}
+			/>
+		)
+	}
+
+}

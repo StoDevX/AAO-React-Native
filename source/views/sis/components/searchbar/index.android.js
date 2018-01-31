@@ -21,16 +21,21 @@ type PropsType = {
 }
 
 
-export const CourseSearchBar = (props: PropsType) => (
-  <SearchBar
-    onSearchChange={props.onChangeText || null}
-    height={50}
-    onFocus={() => console.log('On Focus')}
-    onBlur={() => console.log('On Blur')}
-    placeholder={props.placeholder || 'Search'}
-    autoCorrect={false}
-    padding={5}
-    returnKeyType={'search'}
-    style={styles.searchbar}
-  />
-)
+export class CourseSearchBar extends React.PureComponent<Props> {
+
+	render() {
+		return (
+			<SearchBar
+		    onSearchChange={this.props.onChangeText || null}
+		    height={50}
+		    onFocus={() => console.log('On Focus')}
+		    onBlur={() => console.log('On Blur')}
+		    placeholder={this.props.placeholder || 'Search'}
+		    autoCorrect={false}
+		    padding={5}
+		    returnKeyType={'search'}
+		    style={styles.searchbar}
+		  />
+		)
+	}
+}
