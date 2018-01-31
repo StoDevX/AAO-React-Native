@@ -16,15 +16,15 @@ export const getIpAddress = (): Promise<?string> =>
 
 export const getPosition = (args: any = {}): Promise<Object> =>
 	new Promise((resolve, reject) => {
-		if (Platform.OS === 'ios') {
+		if (Platform.OS === 'android') {
+			navigator.geolocation.getCurrentPosition(resolve, reject)
+		} else {
 			navigator.geolocation.getCurrentPosition(resolve, reject, {
 				...args,
 				enableHighAccuracy: true,
 				maximumAge: 1000 /* ms */,
 				timeout: 15000 /* ms */,
 			})
-		} else {
-			navigator.geolocation.getCurrentPosition(resolve, reject)
 		}
 	})
 
