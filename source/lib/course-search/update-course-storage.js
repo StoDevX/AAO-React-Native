@@ -81,7 +81,7 @@ async function storeTermCoursesFromServer(path: string): Promise<boolean> {
 	const resp: Array<CourseType> = await fetchJson(url)
 	const courseJson = JSON.stringify(resp)
 	const filePath = COURSE_STORAGE_DIR + path
-	RNFS.writeFile(filePath, courseJson, 'utf8')
+	return RNFS.writeFile(filePath, courseJson, 'utf8')
 		.then(() => true)
 		.catch(() => false)
 }
