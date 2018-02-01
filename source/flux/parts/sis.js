@@ -11,7 +11,7 @@ import {
 const UPDATE_BALANCES_SUCCESS = 'sis/UPDATE_BALANCES_SUCCESS'
 const UPDATE_BALANCES_FAILURE = 'sis/UPDATE_BALANCES_FAILURE'
 const LOAD_CACHED_COURSES = 'sis/LOAD_CACHED_COURSES'
-const TERMS_UPDATE = 'sis/TERMS_UPDATE'
+const TERMS_UPDATE_START = 'sis/TERMS_UPDATE_START'
 const TERMS_UPDATE_COMPLETE = 'sis/TERMS_UPDATE_COMPLETE'
 
 type UpdateBalancesSuccessAction = {|
@@ -52,7 +52,8 @@ type LoadCachedCoursesAction = {|
 	payload: Array<CourseType>,
 |}
 
-export function getCachedCourses() {
+export type CourseDataActionType = ThunkAction<CourseDataAction>
+export function getCachedCourses(): CourseDataActionType {
 	return async dispatch => {
 		await updateStoredCourses()
 		const cachedCourses = await loadCachedCourses()
@@ -60,13 +61,13 @@ export function getCachedCourses() {
 	}
 }
 
-type TermsUpdateAction = {|type: 'sis/TERMS_UPDATE'|}
+type TermsUpdateStartAction = {|type: 'sis/TERMS_UPDATE_START'|}
 
 type TermsUpdateCompleteAction = {|type: 'sis/TERMS_UPDATE_COMPLETE'|}
 
-export function updateCourseData() {
+export function updateCourseData(): CourseDataActionType {
 	return async dispatch => {
-		dispatch({type: TERMS_UPDATE})
+		dispatch({type: TERMS_UPDATE_START})
 		let updateNeeded = await updateStoredCourses()
 		if (updateNeeded) {
 			const cachedCourses = await loadCachedCourses()
@@ -78,7 +79,7 @@ export function updateCourseData() {
 
 type CourseDataAction =
 	| LoadCachedCoursesAction
-	| TermsUpdateAction
+	| TermsUpdateStartAction
 	| TermsUpdateCompleteAction
 
 type Action = UpdateBalancesActions | CourseDataAction
@@ -124,7 +125,7 @@ export function sis(state: State = initialState, action: Action) {
 		}
 		case LOAD_CACHED_COURSES:
 			return {...state, allCourses: action.payload, courseDataState: 'updated'}
-		case TERMS_UPDATE:
+		case TERMS_UPDATE_START:
 			return {...state, courseDataState: 'updating'}
 		case TERMS_UPDATE_COMPLETE:
 			return {...state, courseDataState: 'updated'}

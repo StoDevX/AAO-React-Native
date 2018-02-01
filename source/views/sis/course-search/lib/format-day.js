@@ -13,6 +13,6 @@ export function formatDay(day: string) {
 		case 'Fr':
 			return 'Friday'
 		default:
-			return 'undefined'
+			return 'unknown'
 	}
 }

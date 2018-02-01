@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, ScrollView, View, Animated, Dimensions, Text} from 'react-native'
+import {StyleSheet, ScrollView, View, Animated, Dimensions} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {CourseSearchBar} from '../components/searchbar'
@@ -14,7 +14,7 @@ import {connect} from 'react-redux'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import toPairs from 'lodash/toPairs'
-import CourseSearchTableView from '../components/results'
+import {CourseSearchTableView} from '../components/results'
 
 type ReactProps = TopLevelViewPropsType
 
@@ -35,7 +35,10 @@ type Props = ReactProps &
 
 type State = {
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
-  searchActive: boolean,
+	searchActive: boolean,
+	headerOpacity: Animated.Value,
+	searchBarTop: Animated.Value,
+	containerHeight: Animated.Value,
 }
 
 class CourseSearchView extends React.PureComponent<Props, State> {
@@ -47,13 +50,10 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 
 	state = {
 		searchResults: [],
-    searchActive: false,
-	}
-
-	componentWillMount() {
-		this.headerOpacity = new Animated.Value(1)
-		this.searchBarTop = new Animated.Value(71)
-		this.containerHeight = new Animated.Value(125)
+		searchActive: false,
+		headerOpacity: new Animated.Value(1),
+		searchBarTop: new Animated.Value(71),
+		containerHeight: new Animated.Value(125),
 	}
 
 	componentDidMount() {
@@ -94,31 +94,31 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	performSearch = debounce(this._performSearch, 50)
 
 	onFocus = () => {
-		Animated.timing(this.headerOpacity, {
+		Animated.timing(this.state.headerOpacity, {
 			toValue: 0,
 			duration: 800,
 		}).start()
-		Animated.timing(this.searchBarTop, {
+		Animated.timing(this.state.searchBarTop, {
 			toValue: 10,
 			duration: 800,
 		}).start()
-		Animated.timing(this.containerHeight, {
+		Animated.timing(this.state.containerHeight, {
 			toValue: 64,
 			duration: 800,
 		}).start()
-    this.setState({searchActive: true})
+		this.setState({searchActive: true})
 	}
 
 	onCancel = () => {
-		Animated.timing(this.headerOpacity, {
+		Animated.timing(this.state.headerOpacity, {
 			toValue: 1,
 			duration: 800,
 		}).start()
-		Animated.timing(this.searchBarTop, {
+		Animated.timing(this.state.searchBarTop, {
 			toValue: 71,
 			duration: 800,
 		}).start()
-		Animated.timing(this.containerHeight, {
+		Animated.timing(this.state.containerHeight, {
 			toValue: 125,
 			duration: 800,
 		}).start()
@@ -127,23 +127,19 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	render() {
 		const screenWidth = Dimensions.get('window').width
 		const searchBarWidth = screenWidth - 20
-		const headerAnimation = {opacity: this.headerOpacity}
+		const headerAnimation = {opacity: this.state.headerOpacity}
 		const searchBarAnimation = {
-			top: this.searchBarTop,
+			top: this.state.searchBarTop,
 		}
-		const containerAnimation = {height: this.containerHeight}
-    const {searchActive} = this.state
-    const SEARCH_PROMPT = "Name\nProfessor"
+		const containerAnimation = {height: this.state.containerHeight}
+		const {searchActive} = this.state
 
 		return (
-			<View style={{flex: 1}}>
+			<View style={styles.container}>
 				<Animated.View
 					style={[styles.searchContainer, styles.common, containerAnimation]}
 				>
-					<Animated.Text
-						ref={component => (this._header = component)}
-						style={[styles.header, headerAnimation]}
-					>
+					<Animated.Text style={[styles.header, headerAnimation]}>
 						Search Courses
 					</Animated.Text>
 					<Animated.View
@@ -161,21 +157,19 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 								this.searchBar.unFocus()
 								this.performSearch(text)
 							}}
-							style={styles.searchBar}
 						/>
 					</Animated.View>
 				</Animated.View>
-          {searchActive ? (
-            <ScrollView>
-              <CourseSearchTableView
-    						navigation={this.props.navigation}
-    						terms={this.state.searchResults}
-    					/>
-            </ScrollView>
-          ): (
-            <View>
-            </View>
-          )}
+				{searchActive ? (
+					<ScrollView>
+						<CourseSearchTableView
+							navigation={this.props.navigation}
+							terms={this.state.searchResults}
+						/>
+					</ScrollView>
+				) : (
+					<View />
+				)}
 			</View>
 		)
 	}
@@ -183,8 +177,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
-		allCourses: state.sis ? state.sis.allCourses : null,
-		courseDataState: state.sis ? state.sis.courseDataState : null,
+		allCourses: state.sis ? state.sis.allCourses : [],
+		courseDataState: state.sis ? state.sis.courseDataState : '',
 	}
 }
 
@@ -197,6 +191,10 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 export default connect(mapState, mapDispatch)(CourseSearchView)
 
 let styles = StyleSheet.create({
+	container: {
+		flex: 1,
+	},
+
 	common: {
 		backgroundColor: c.white,
 	},

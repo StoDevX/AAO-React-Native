@@ -7,20 +7,23 @@ import {Cell, TableView, Section} from 'react-native-tableview-simple'
 import {FormattedLine} from './formatted-line'
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from '../../components/colors'
+import type {TopLevelViewPropsType} from '../../types'
 
-type Props = {
+type TermType = {
+	title: string,
+	data: Array<CourseType>,
+}
+
+type Props = TopLevelViewPropsType & {
 	terms: Array<{title: string, data: Array<CourseType>}>,
 }
 
-export default class CourseSearchTableView extends React.PureComponent<
-	Props,
-	State,
-> {
+export class CourseSearchTableView extends React.PureComponent<Props> {
 	onPress = (course: CourseType) => {
 		this.props.navigation.navigate('CourseDetailView', {course: course})
 	}
 
-	renderCells = term => {
+	renderCells = (term: TermType) => {
 		const cells = term.data.map(course => (
 			<TouchableOpacity
 				key={course.clbid}
@@ -34,7 +37,7 @@ export default class CourseSearchTableView extends React.PureComponent<
 		return cells
 	}
 
-	renderSection = term => {
+	renderSection = (term: TermType) => {
 		let cells = this.renderCells(term)
 		let termHeader = parseTerm(term.title)
 		return (
@@ -57,7 +60,6 @@ const CourseCell = props => {
 	return (
 		<Cell
 			{...props}
-			key={props.key}
 			cellContentView={
 				<View style={styles.cellContainer}>
 					<View style={styles.cellContent}>

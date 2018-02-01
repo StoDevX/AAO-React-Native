@@ -9,6 +9,7 @@ import {convertTimeStringsToOfferings} from 'sto-sis-time-parser'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
 import {MultiLineDetailCell} from '../../components/multi-line-cell'
+import type {TopLevelViewPropsType} from '../../../types'
 
 const Container = glamorous.scrollView({
 	paddingVertical: 6,

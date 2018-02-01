@@ -17,54 +17,54 @@ type TermInfoType = {
 	type: string,
 }
 
-export async function updateStoredCourses(): boolean {
+export async function updateStoredCourses(): Promise<boolean> {
 	RNFS.readDir(COURSE_STORAGE_DIR + '/terms').catch(() => {
 		RNFS.mkdir(COURSE_STORAGE_DIR + '/terms')
 	})
 	const outdatedTerms: Array<TermType> = await determineOutdatedTerms()
-	outdatedTerms.forEach(term => {
-		storeTermCoursesFromServer(term.path)
-	})
+	const promises = outdatedTerms.map(term =>
+		storeTermCoursesFromServer(term.path),
+	)
+	await Promise.all(promises)
 	return outdatedTerms.length === 0 ? false : true
 }
 
-async function loadCurrentTermsFromServer(): Array<TermType> {
-	try {
-		const today = new Date()
-		const thisYear = today.getFullYear()
-		const resp: TermInfoType = await fetchJson(INFO_PAGE)
-		const terms: Array<TermType> = resp.files.filter(
-			file => file.type === 'json' && file.year > thisYear - 5,
-		)
-		return terms
-	} catch (error) {
-		console.log(error)
-	}
+async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
+	const today = new Date()
+	const thisYear = today.getFullYear()
+	const resp: TermInfoType = await fetchJson(INFO_PAGE).catch(() => ({
+		files: [],
+		type: 'error',
+	}))
+	const terms: Array<TermType> = resp.files.filter(
+		file => file.type === 'json' && file.year > thisYear - 5,
+	)
+	return terms
 }
 
-export async function loadTermsFromStorage(): Array<TermType> {
+export function loadTermsFromStorage(): Promise<Array<TermType>> {
 	return RNFS.readFile(TERMS_FILE)
 		.then(contents => {
-			const localTerms: Array<TermType> = JSON.parse(contents)
-			return localTerms
+			return JSON.parse(contents)
 		})
 		.catch(() => {
 			return []
 		})
 }
 
-async function determineOutdatedTerms(): Array<TermType> {
+async function determineOutdatedTerms(): Promise<Array<TermType>> {
 	const remoteTerms: Array<TermType> = await loadCurrentTermsFromServer()
 	const localTerms: Array<TermType> = await loadTermsFromStorage()
 	if (localTerms.length === 0) {
 		storeTermInfo(remoteTerms)
 		return remoteTerms
 	}
-	let outdatedTerms = localTerms.filter(
-		localTerm =>
-			localTerm.hash !=
-			remoteTerms.find(remoteTerm => remoteTerm.term === localTerm.term).hash,
-	)
+	let outdatedTerms = localTerms.filter(localTerm => {
+		const match = remoteTerms.find(
+			remoteTerm => remoteTerm.term === localTerm.term,
+		)
+		return match === undefined ? true : localTerm.hash != match.hash
+	})
 	if (outdatedTerms.length !== 0) {
 		storeTermInfo(remoteTerms)
 	}
@@ -76,22 +76,12 @@ function storeTermInfo(terms: Array<TermType>) {
 	RNFS.writeFile(TERMS_FILE, json, 'utf8')
 }
 
-async function storeTermCoursesFromServer(path: string): boolean {
+async function storeTermCoursesFromServer(path: string): Promise<boolean> {
 	const url = COURSE_DATA_PAGE + path
-
-	try {
-		const resp: Array<CourseType> = await fetchJson(url)
-		const courseJson = JSON.stringify(resp)
-		const filePath = COURSE_STORAGE_DIR + path
-		RNFS.writeFile(filePath, courseJson, 'utf8')
-			.then(() => {
-				return true
-			})
-			.catch(() => {
-				return false
-			})
-	} catch (error) {
-		console.log(error)
-		return false
-	}
+	const resp: Array<CourseType> = await fetchJson(url)
+	const courseJson = JSON.stringify(resp)
+	const filePath = COURSE_STORAGE_DIR + path
+	RNFS.writeFile(filePath, courseJson, 'utf8')
+		.then(() => true)
+		.catch(() => false)
 }
