@@ -69,14 +69,17 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		// }
 		const query = text.toLowerCase()
 
-		let results = this.props.allCourses ? (this.props.allCourses.filter(course => {
-			const instructors = course.instructors
-				? course.instructors.toString().toLowerCase()
-				: []
-			return (
-				course.name.toLowerCase().includes(query) || instructors.includes(query)
-			)
-		})): []
+		let results = this.props.allCourses
+			? this.props.allCourses.filter(course => {
+					const instructors = course.instructors
+						? course.instructors.toString().toLowerCase()
+						: []
+					return (
+						course.name.toLowerCase().includes(query) ||
+						instructors.includes(query)
+					)
+				})
+			: []
 
 		let grouped = groupBy(results, r => r.term)
 		let groupedCourses = toPairs(grouped).map(([key, value]) => ({
