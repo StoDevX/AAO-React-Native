@@ -4,23 +4,23 @@ category: Food
 
 schedule:
   - title: Breakfast
-    hours:
-      - {days: [Mo, Tu, We, Th, Fr, Sa], from: '7:00am', to: '9:45am'}
-      - {days: [Su], from: '8:30am', to: '10:15am'}
+    # hours:
+      # - {days: [Mo, Tu, We, Th, Fr, Sa], from: '7:00am', to: '9:45am'}
+      # - {days: [Su], from: '8:30am', to: '10:15am'}
+    hours: []
 
   - title: Lunch
+    notes: NO MEAL PLANS - department charges, cash, credit, Ole or Flex dollars only
     hours:
       # - {days: [Mo, Tu, We, Th, Fr], from: '10:30am', to: '2:00pm'}
       # - {days: [Sa, Su], from: '11:00am', to: '1:30pm'}
-      - {days: [Mo, Tu, We, Th, Fr], from: '10:45am', to: '1:30pm'}
-      - {days: [Sa, Su], from: '11:00am', to: '1:30pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '12:00pm', to: '1:00pm'}
 
   - title: Dinner
+    notes: NO MEAL PLANS - department charges, cash, credit, Ole or Flex dollars only
     hours:
       # - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:30pm'}
-      # - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:00pm'}
-      - {days: [Mo], from: '4:30pm', to: '6:30pm'}
-      - {days: [Tu, We, Th, Fr, Sa, Su], from: '4:30pm', to: '7:00pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '5:00pm', to: '6:00pm'}
 
 breakSchedule:
   fall: []

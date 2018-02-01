@@ -1,6 +1,4 @@
-rootProject.name = 'All About Olaf'
-include ':react-native-fs'
-project(':react-native-fs').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fs/android')
+rootProject.name = 'AllAboutOlaf'
 include ':app'
 
 // Please keep this list in alphabetical order.
@@ -15,6 +13,9 @@ project(':react-native-custom-tabs').projectDir = new File(rootProject.projectDi
 
 include ':react-native-device-info'
 project(':react-native-device-info').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-device-info/android')
+
+include ':react-native-fs'
+project(':react-native-fs').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fs/android'
 
 include ':react-native-google-analytics-bridge'
 project(':react-native-google-analytics-bridge').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-google-analytics-bridge/android')

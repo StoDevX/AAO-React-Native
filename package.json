@@ -1,6 +1,6 @@
 {
   "name": "AllAboutOlaf",
-  "version": "2.5.0-beta.3",
+  "version": "2.5.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -10,6 +10,7 @@
     "bundle:android": "react-native bundle --entry-file index.js --dev true --platform android --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/ --sourcemap-output ./android/app/src/main/assets/index.android.bundle.map",
     "bundle:ios": "react-native bundle --entry-file index.js --dev false --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map",
     "check": "npm run prettier && npm run lint && npm run flow && npm run validate-data -- --quiet && npm run test",
+    "compress-data": "gzip --keep docs/*.json",
     "danger": "danger ci",
     "data": "node scripts/bundle-data.js data/ docs/",
     "flow": "flow",
@@ -49,6 +50,9 @@
       "source/**/*.js",
       "!**/node_modules/**"
     ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native|glamorous-native)"
+    ],
     "preset": "react-native"
   },
   "prettier": {
@@ -60,7 +64,7 @@
   },
   "dependencies": {
     "@hawkrives/react-native-alphabetlistview": "1.0.0",
-    "@hawkrives/react-native-alternate-icons": "0.4.6",
+    "@hawkrives/react-native-alternate-icons": "0.4.7",
     "@hawkrives/react-native-sortable-list": "1.0.1",
     "buffer": "5.0.8",
     "bugsnag-react-native": "2.5.1",
@@ -78,7 +82,7 @@
     "querystring": "0.2.0",
     "react": "16.2.0",
     "react-markdown": "2.5.1",
-    "react-native": "0.52.1",
+    "react-native": "0.52.2",
     "react-native-button": "2.2.0",
     "react-native-calendar-events": "1.4.3",
     "react-native-chooser": "1.7.0",
@@ -86,7 +90,7 @@
     "react-native-custom-tabs": "0.1.7",
     "react-native-device-info": "0.13.0",
     "react-native-fs": "2.9.7",
-    "react-native-google-analytics-bridge": "5.4.1",
+    "react-native-google-analytics-bridge": "5.6.0",
     "react-native-keychain": "2.0.0",
     "react-native-linear-gradient": "2.4.0",
     "react-native-maps": "0.19.0",
@@ -97,7 +101,7 @@
     "react-native-safari-view": "2.1.0",
     "react-native-search-bar": "3.3.1",
     "react-native-tableview-simple": "0.17.2",
-    "react-native-typography": "1.2.1",
+    "react-native-typography": "1.3.0",
     "react-native-vector-icons": "4.5.0",
     "react-navigation": "1.0.0-beta.22",
     "react-redux": "5.0.6",
@@ -114,21 +118,21 @@
     "xml2js": "0.4.19"
   },
   "devDependencies": {
-    "ajv": "6.0.1",
+    "ajv": "6.1.0",
     "babel-core": "6.26.0",
     "babel-eslint": "8.2.1",
     "babel-jest": "22.1.0",
-    "babel-plugin-transform-remove-console": "6.8.5",
+    "babel-plugin-transform-remove-console": "6.9.0",
     "babel-preset-react-native": "4.0.0",
     "bugsnag-sourcemaps": "1.0.1",
-    "danger": "3.1.0",
+    "danger": "3.1.3",
     "danger-plugin-yarn": "1.2.0",
     "directory-tree": "2.0.0",
     "eslint": "4.16.0",
     "eslint-config-prettier": "2.9.0",
     "eslint-plugin-babel": "4.1.2",
-    "eslint-plugin-flowtype": "2.41.0",
-    "eslint-plugin-react": "7.5.1",
+    "eslint-plugin-flowtype": "2.42.0",
+    "eslint-plugin-react": "7.6.1",
     "eslint-plugin-react-native": "3.2.0",
     "flow-bin": "0.61.0",
     "jest": "22.1.4",
@@ -140,10 +144,9 @@
     "pify": "3.0.0",
     "prettier": "1.10.2",
     "pretty-bytes": "4.0.2",
-    "pretty-quick": "1.2.2",
+    "pretty-quick": "1.2.3",
     "prop-types": "15.6.0",
     "react-test-renderer": "16.2.0",
-    "simple-plist": "0.2.1",
     "string-natural-compare": "2.0.2",
     "strip-ansi": "4.0.0",
     "xcode": "1.0.0"

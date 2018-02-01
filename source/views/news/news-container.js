@@ -14,7 +14,6 @@ type Props = TopLevelViewPropsType & {
 	name: string,
 	url: string,
 	query?: Object,
-	embedFeaturedImage?: boolean,
 	mode: 'rss' | 'wp-json',
 	thumbnail: number,
 }
@@ -92,7 +91,6 @@ export default class NewsContainer extends React.PureComponent<Props, State> {
 
 		return (
 			<NewsList
-				embedFeaturedImage={this.props.embedFeaturedImage}
 				entries={this.state.entries}
 				loading={this.state.refreshing}
 				mode={this.props.mode}

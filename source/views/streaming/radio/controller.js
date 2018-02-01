@@ -11,8 +11,12 @@ import {
 	Platform,
 } from 'react-native'
 import noop from 'lodash/noop'
+import {
+	trackStreamPlay,
+	trackStreamPause,
+	trackStreamError,
+} from '../../../analytics'
 import * as c from '../../components/colors'
-import {TabBarIcon} from '../../components/tabbar-icon'
 import {callPhone} from '../../components/call-phone'
 import {Row} from '../../components/layout'
 import type {TopLevelViewPropsType} from '../../types'
@@ -21,11 +25,19 @@ import type {PlayState, HtmlAudioError, Viewport} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
 import {openUrl} from '../../components/open-url'
 
-const image = require('../../../../images/streaming/ksto/ksto-logo.png')
-const stationNumber = '+15077863602'
-const kstoLiveUrl = 'https://www.stolaf.edu/multimedia/play/embed/ksto.html'
-
-type Props = TopLevelViewPropsType
+type Props = TopLevelViewPropsType & {
+	image: number,
+	playerUrl: string,
+	stationNumber: string,
+	title: string,
+	scheduleViewName: string,
+	stationName: string,
+	source: {
+		useEmbeddedPlayer: boolean,
+		embeddedPlayerUrl: string,
+		streamSourceUrl: string,
+	},
+}
 
 type State = {
 	playState: PlayState,
@@ -34,12 +46,7 @@ type State = {
 	viewport: Viewport,
 }
 
-export class KSTOView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		tabBarLabel: 'KSTO',
-		tabBarIcon: TabBarIcon('radio'),
-	}
-
+export class RadioControllerView extends React.PureComponent<Props, State> {
 	state = {
 		playState: 'paused',
 		streamError: null,
@@ -68,10 +75,12 @@ export class KSTOView extends React.PureComponent<Props, State> {
 	}
 
 	handleStreamPlay = () => {
+		trackStreamPlay(this.props.stationName)
 		this.setState(() => ({playState: 'playing'}))
 	}
 
 	handleStreamPause = () => {
+		trackStreamPause(this.props.stationName)
 		this.setState(() => ({playState: 'paused'}))
 	}
 
@@ -80,19 +89,20 @@ export class KSTOView extends React.PureComponent<Props, State> {
 	}
 
 	handleStreamError = (e: {code: number, message: string}) => {
+		trackStreamError(this.props.stationName)
 		this.setState(() => ({streamError: e, playState: 'paused'}))
 	}
 
 	openSchedule = () => {
-		this.props.navigation.navigate('KSTOScheduleView')
+		this.props.navigation.navigate(this.props.scheduleViewName)
 	}
 
 	callStation = () => {
-		callPhone(stationNumber)
+		callPhone(this.props.stationNumber)
 	}
 
 	openStreamWebsite = () => {
-		openUrl(kstoLiveUrl)
+		openUrl(this.props.playerUrl)
 	}
 
 	renderPlayButton = (state: PlayState) => {
@@ -156,7 +166,7 @@ export class KSTOView extends React.PureComponent<Props, State> {
 				<View style={[styles.logoWrapper, sideways && landscape.logoWrapper]}>
 					<Image
 						resizeMode="contain"
-						source={image}
+						source={this.props.image}
 						style={[styles.logo, logoSize]}
 					/>
 				</View>
@@ -164,10 +174,10 @@ export class KSTOView extends React.PureComponent<Props, State> {
 				<View style={styles.container}>
 					<View style={styles.titleWrapper}>
 						<Text selectable={true} style={styles.heading}>
-							St. Olaf College Radio
+							{this.props.title}
 						</Text>
 						<Text selectable={true} style={styles.subHeading}>
-							KSTO 93.1 FM
+							{this.props.stationName}
 						</Text>
 
 						{error}
@@ -183,6 +193,7 @@ export class KSTOView extends React.PureComponent<Props, State> {
 
 					{Platform.OS !== 'android' ? (
 						<StreamPlayer
+							embeddedPlayerUrl={this.props.source.embeddedPlayerUrl}
 							onEnded={this.handleStreamEnd}
 							// onWaiting={this.handleStreamWait}
 							onError={this.handleStreamError}
@@ -190,7 +201,9 @@ export class KSTOView extends React.PureComponent<Props, State> {
 							onPause={this.handleStreamPause}
 							onPlay={this.handleStreamPlay}
 							playState={this.state.playState}
+							streamSourceUrl={this.props.source.streamSourceUrl}
 							style={styles.webview}
+							useEmbeddedPlayer={this.props.source.useEmbeddedPlayer}
 						/>
 					) : null}
 				</View>

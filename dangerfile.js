@@ -8,9 +8,7 @@ import yarn from 'danger-plugin-yarn'
 
 // utilities
 import uniq from 'lodash/uniq'
-import isEqual from 'lodash/isEqual'
 import findIndex from 'lodash/findIndex'
-import plist from 'simple-plist'
 
 async function main() {
 	const taskName = String(process.env.task)
@@ -21,9 +19,6 @@ async function main() {
 			break
 		case 'IOS':
 			await runiOS()
-			break
-		case 'GREENKEEPER':
-			await runGreenkeeper()
 			break
 		case 'JS-general':
 			await runJSのGeneral()
@@ -44,17 +39,13 @@ async function main() {
 		case 'JS-prettier':
 			await runJSのPrettier()
 			break
+		case 'GREENKEEPER':
+		case 'JS-bundle-android':
+		case 'JS-bundle-ios':
+			break
 		default:
 			warn(`Unknown task name "${taskName}"; Danger cannot report anything.`)
 	}
-}
-
-//
-// task=GREENKEEPER
-//
-
-function runGreenkeeper() {
-	// message('greenkeeper ran')
 }
 
 //
@@ -76,31 +67,7 @@ async function runAndroid() {
 		return
 	}
 
-	/*
-  const appPaths = readJsonLogFile('./logs/products')
-  const apkInfos = appPaths.map(listZip)
-
-  markdown('## Android Report')
-  markdown(
-    h.details(
-      h.summary('contents of <code>apkInfos</code>'),
-      m.json(apkInfos),
-      m.json(appPaths),
-    ),
-  )
-
-  markdown(`Generated ${apkInfos.length} APK${apkInfos.length !== 1 ? 's' : ''}
-
-${outputFilesInfo
-    .map((filename, i) => [filename, apkInfos[i]])
-    .map(([filename, apk]) =>
-      h.details(
-        h.summary(`${filename} (${bytes(apk.size)})`),
-        m.json(apk),
-      ),
-    )}
-  `)
-*/
+	// we do not currently do any android analysis
 }
 
 //
@@ -124,10 +91,8 @@ async function runiOS() {
 
 	markdown('## iOS Report')
 
-	// ideas:
-	// - tee the "fastlane" output to a log, and run the analysis script
-	//   to report back the longest compilation units
-	//   (maybe only on react-native / package.json changes?)
+	// tee the "fastlane" output to a log, and run the analysis script
+	// to report back the longest compilation units
 	const analysisFile = readFile('./logs/analysis')
 	markdown(
 		h.details(
@@ -135,21 +100,6 @@ async function runiOS() {
 			m.code({}, analysisFile),
 		),
 	)
-
-	/*
-  // - report the .ipa size
-  // - report the .ipa file list
-  const appPaths = readJsonLogFile('./logs/products')
-
-  appPaths.forEach(appPath => {
-    const info = listDirectoryTree(appPath)
-    markdown(`## <code>.app</code>
-Total <code>.app</code> size: ${info.size}
-
-${h.details(h.summary('.app contents'), m.json(info))}
-`)
-  })
-*/
 }
 
 //
@@ -198,8 +148,6 @@ async function runJSのGeneral() {
 	await bigPr()
 	await exclusionaryTests()
 	await xcodeproj()
-	await gradle()
-	await infoPlist()
 }
 
 // New js files should have `@flow` at the top
@@ -263,7 +211,6 @@ async function xcodeproj() {
 	await pbxprojBlankLine()
 	await pbxprojLeadingZeros()
 	await pbxprojDuplicateLinkingPaths()
-	await pbxprojSidebarSorting()
 }
 
 // Warn about a blank line that Xcode will re-insert if we remove
@@ -343,194 +290,6 @@ async function pbxprojDuplicateLinkingPaths() {
 				'This is easiest to do by editing the project.pbxproj directly, IMHO. These keys all live under the <code>XCBuildConfiguration</code> section.',
 			),
 			h.ul(...duplicateSearchPaths.map(([key]) => h.li(h.code(key)))),
-		),
-	)
-}
-
-// Warn about non-sorted frameworks in xcode sidebar
-async function pbxprojSidebarSorting() {
-	const pbxprojPath = danger.git.modified_files.find(filepath =>
-		filepath.endsWith('project.pbxproj'),
-	)
-	const xcodeproj = await parseXcodeProject(pbxprojPath)
-
-	const projectsInSidebar = xcodeproj.project.objects.PBXGroup
-	const sidebarSorting = Object.entries(projectsInSidebar)
-		.filter(([_, val] /*: [string, any]*/) => typeof val === 'object')
-		.filter(([_, val] /*: [string, any]*/) => val.name === 'Libraries')
-		.filter(([_, val] /*: [string, any]*/) => val.files)
-		.filter(([_, val] /*: [string, any]*/) => {
-			const projects = val.files.map(file => file.comment)
-			const sorted = [...projects].sort((a, b) => a.localeSort(b))
-			return !isEqual(projects, sorted)
-		})
-
-	if (sidebarSorting.length) {
-		return
-	}
-
-	warn(
-		h.details(
-			h.summary(
-				"Some of the iOS frameworks aren't sorted alphabetically in the Xcode sidebar (under Libraries). Please sort them alphabetically. Thanks!",
-			),
-			"If you right-click on the Libraries group in the sidebar, you can just pick 'Sort by Name' and Xcode will do it for you.",
-		),
-	)
-}
-
-// Make sure the Info.plist `NSLocationWhenInUseUsageDescription` didn't switch to entities
-function infoPlist() {
-	const infoPlistChanged = danger.git.modified_files.find(filepath =>
-		filepath.endsWith('Info.plist'),
-	)
-	if (!infoPlistChanged) {
-		return
-	}
-
-	const parsed = plist.parse(readFile(infoPlistChanged))
-	const descKeysWithEntities = Object.keys(parsed)
-		.filter(key => key.endsWith('Description'))
-		.filter(key => parsed[key].includes("'")) // look for single quotes
-
-	if (!descKeysWithEntities.length) {
-		return
-	}
-
-	warn(
-		h.details(
-			h.summary(
-				'Some Info.plist descriptions were rewritten by something to include single quotes.',
-			),
-			h.p(
-				"Xcode will rewrite them to use the <code>&amp;apos;</code> XML entity; would you please change them for us, so that Xcode doesn't have to?",
-			),
-			h.ul(
-				...descKeysWithEntities.map(key => {
-					const val = entities.encode(parsed[key])
-					const escaped = entities.encode(val.replace(/'/g, '&apos;'))
-					return h.li(
-						h.p(h.code(key) + ':'),
-						h.blockquote(val),
-						h.p('should become'),
-						h.blockquote(escaped),
-					)
-				}),
-			),
-		),
-	)
-}
-
-async function gradle() {
-	await buildDotGradle()
-	await mainDotJava()
-	await settingsDotGradleSpacing()
-}
-
-// Ensure that the build.gradle dependencies list is sorted
-function buildDotGradle() {
-	const buildDotGradle = danger.git.modified_files.find(
-		filepath => filepath === 'android/app/build.gradle',
-	)
-	if (!buildDotGradle) {
-		return
-	}
-
-	const file = readFile(buildDotGradle).split('\n')
-	const startLine = findIndex(file, line => line === 'dependencies {')
-	const endLine = findIndex(file, line => line === '}', startLine)
-
-	const linesToSort = file
-		.slice(startLine + 1, endLine - 1)
-		.map(line => line.trim())
-		.filter(line => !line.startsWith('//'))
-
-	const sorted = [...linesToSort].sort()
-
-	if (isEqual(linesToSort, sorted)) {
-		return
-	}
-
-	const firstEntry = linesToSort[0]
-	warn(
-		h.details(
-			h.summary(
-				"We like to keep the <code>build.gradle</code>'s list of dependencies sorted alphabetically.",
-			),
-			h.p(`Was the first entry, <code>${firstEntry}</code>, out of place?`),
-		),
-	)
-}
-
-// Ensure that the MainApplication.java imports list is sorted
-function mainDotJava() {
-	const mainDotJava = danger.git.modified_files.find(filepath =>
-		filepath.endsWith('MainApplication.java'),
-	)
-	if (!mainDotJava) {
-		return
-	}
-
-	const file = readFile(mainDotJava).split('\n')
-	const startNeedle = '// keep these sorted alphabetically'
-	const startLine = findIndex(file, line => line === startNeedle)
-	const endLine = findIndex(file, line => line === '', startLine)
-
-	const linesToSort = file
-		.slice(startLine + 1, endLine - 1)
-		.map(line => line.trim())
-
-	const sorted = [...linesToSort].sort()
-
-	if (isEqual(linesToSort, sorted)) {
-		return
-	}
-
-	// react-native link inserts the new import right after the RN import
-	const rnImportLine = findIndex(
-		file,
-		line => line === 'import com.facebook.react.ReactApplication;',
-	)
-	const problemEntry = file[rnImportLine + 1]
-	const problemLine = rnImportLine - startLine + 1
-	warn(
-		h.details(
-			h.summary(
-				"We like to keep the <code>MainApplication.java</code>'s list of imports sorted alphabetically.",
-			),
-			h.p(
-				`Was the number ${problemLine} entry, <code>${problemEntry}</code>, out of place?`,
-			),
-		),
-	)
-}
-
-// Enforce spacing in the settings.gradle file
-function settingsDotGradleSpacing() {
-	const settingsDotGradle = danger.git.modified_files.find(
-		filepath => filepath === 'android/settings.gradle',
-	)
-	if (!settingsDotGradle) {
-		return
-	}
-
-	const file = readFile(settingsDotGradle).split('\n')
-	const startLine = findIndex(file, line => line.startsWith('//'))
-	const firstInclusionLine = findIndex(file, line => line.startsWith('include'))
-
-	if (firstInclusionLine >= startLine) {
-		return
-	}
-
-	const firstEntry = file[firstInclusionLine]
-	warn(
-		h.details(
-			h.summary(
-				"We like to keep the <code>settings.gradle</code>'s list of imports sorted alphabetically.",
-			),
-			h.p(
-				`It looks like the first entry, <code>${firstEntry}</code>, is out of place.`,
-			),
 		),
 	)
 }
@@ -629,9 +388,6 @@ import xcode from 'xcode'
 import util from 'util'
 
 const execFile = util.promisify(childProcess.execFile)
-
-const {XmlEntities} = require('html-entities')
-const entities = new XmlEntities()
 
 function fastlaneBuildLogTail(log /*: Array<string>*/, message /*: string*/) {
 	const n = 150

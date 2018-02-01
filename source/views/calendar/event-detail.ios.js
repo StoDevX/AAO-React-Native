@@ -2,14 +2,18 @@
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
-import type {CleanedEventType, PoweredBy} from './types'
+import type {EventType, PoweredBy} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../components/nav-buttons'
 import openUrl from '../components/open-url'
 import {ListFooter} from '../components/list'
-import {getLinksFromEvent} from './clean-event'
 import {ButtonCell} from '../components/cells/button'
-import {addToCalendar, shareEvent} from './calendar-util'
+import {
+	getLinksFromEvent,
+	addToCalendar,
+	shareEvent,
+	getTimes,
+} from './calendar-util'
 import delay from 'delay'
 
 const styles = StyleSheet.create({
@@ -32,7 +36,7 @@ function MaybeSection({header, content}: {header: string, content: string}) {
 	) : null
 }
 
-function Links({header, event}: {header: string, event: CleanedEventType}) {
+function Links({header, event}: {header: string, event: EventType}) {
 	const links = getLinksFromEvent(event)
 
 	return links.length ? (
@@ -63,7 +67,7 @@ const CalendarButton = ({message, disabled, onPress}) => {
 
 type Props = TopLevelViewPropsType & {
 	navigation: {
-		state: {params: {event: CleanedEventType, poweredBy: ?PoweredBy}},
+		state: {params: {event: EventType, poweredBy: ?PoweredBy}},
 	},
 }
 
@@ -86,7 +90,7 @@ export class EventDetail extends React.PureComponent<Props, State> {
 		disabled: false,
 	}
 
-	addEvent = async (event: CleanedEventType) => {
+	addEvent = async (event: EventType) => {
 		const start = Date.now()
 		this.setState(() => ({message: 'Adding event to calendar…'}))
 
@@ -120,9 +124,9 @@ export class EventDetail extends React.PureComponent<Props, State> {
 			<ScrollView>
 				<TableView>
 					<MaybeSection content={event.title} header="EVENT" />
-					<MaybeSection content={event.times} header="TIME" />
+					<MaybeSection content={getTimes(event)} header="TIME" />
 					<MaybeSection content={event.location} header="LOCATION" />
-					<MaybeSection content={event.rawSummary} header="DESCRIPTION" />
+					<MaybeSection content={event.description} header="DESCRIPTION" />
 					<Links event={event} header="LINKS" />
 					<CalendarButton
 						disabled={this.state.disabled}

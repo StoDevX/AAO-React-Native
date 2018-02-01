@@ -43,7 +43,7 @@ workflows:
     # different CIRCLE_WORKFLOW_ID, which should allow us to only deploy
     # nightlies from that branch.
     jobs: &basic-jobs
-      - cache-yarn-linux: 
+      - cache-yarn-linux:
           filters: &filters {tags: {only: /.*/}}
       - danger:
           filters: *filters
@@ -67,6 +67,12 @@ workflows:
           filters: *filters
           requires: [danger, flow, jest, prettier, eslint, data]
       - android:
+          filters: *filters
+          requires: [danger, flow, jest, prettier, eslint, data]
+      - ios-bundle:
+          filters: *filters
+          requires: [danger, flow, jest, prettier, eslint, data]
+      - android-bundle:
           filters: *filters
           requires: [danger, flow, jest, prettier, eslint, data]
   nightly:
@@ -194,6 +200,10 @@ jobs:
       - run: mkdir -p logs/
       - run: yarn run --silent validate-data --quiet | tee logs/validate-data
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
+      - run: yarn run bundle-data
+      - run: yarn run compress-data
+      - store_artifacts:
+          path: ./docs/
       - run: *run-danger
 
   android: &android
@@ -229,13 +239,36 @@ jobs:
           command: bundle exec fastlane android ci-run | tee ./logs/build
           environment:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
+      - store_artifacts:
+          path: ./android/app/build/outputs/apk/release/
       - run: *run-danger
-  
+
   android-nightly:
     <<: *android
     environment:
       <<: *android-env
       IS_NIGHTLY: '1'
+
+  android-bundle:
+    docker: [{image: 'circleci/node:8'}]
+    environment:
+      task: JS-bundle-android
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install --frozen-lockfile
+      - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
+      - run: *embed-env-vars
+      - run: yarn run bundle-data
+      - run: yarn run --silent bundle:android
+      - store_artifacts:
+          path: ./android/app/src/main/assets/index.android.bundle
+          destination: android.jsbundle
+      - store_artifacts:
+          path: ./android/app/src/main/assets/index.android.bundle.map
+          destination: android.jsbundle.map
+      - run: *run-danger
 
   ios: &ios
     macos: {xcode: '9.0'}
@@ -263,6 +296,8 @@ jobs:
           command: bundle exec fastlane ios ci-run | tee ./logs/build
           environment:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
+      - store_artifacts:
+          path: ./ios/build/
       - run:
           name: Analyze Fastlane Logfile
           command: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
@@ -273,3 +308,24 @@ jobs:
     environment:
       <<: *ios-env
       IS_NIGHTLY: '1'
+
+  ios-bundle:
+    docker: [{image: 'circleci/node:8'}]
+    environment:
+      task: JS-bundle-ios
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install --frozen-lockfile
+      - save_cache: *save-cache-yarn
+      - run: mkdir -p logs/
+      - run: *embed-env-vars
+      - run: yarn run bundle-data
+      - run: yarn run --silent bundle:ios
+      - store_artifacts:
+          path: ./ios/AllAboutOlaf/main.jsbundle
+          destination: ios.jsbundle
+      - store_artifacts:
+          path: ./ios/AllAboutOlaf/main.jsbundle.map
+          destination: ios.jsbundle.map
+      - run: *run-danger

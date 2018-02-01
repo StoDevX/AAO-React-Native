@@ -6,7 +6,7 @@ import {TabBarIcon} from '../../components/tabbar-icon'
 import type {TopLevelViewPropsType} from '../../types'
 import * as c from '../../components/colors'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
-import {tracker} from '../../../analytics'
+import {tracker, trackStudentJobOpen} from '../../../analytics'
 import bugsnag from '../../../bugsnag'
 import {NoticeView} from '../../components/notice'
 import LoadingView from '../../components/loading'
@@ -103,6 +103,7 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 	}
 
 	onPressJob = (job: JobType) => {
+		trackStudentJobOpen(`${job.office}: ${job.title}`)
 		this.props.navigation.navigate('JobDetailView', {job})
 	}
 

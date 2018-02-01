@@ -27,12 +27,10 @@ export class AppLogo extends React.Component<Props, State> {
 
 	async componentWillMount() {
 		const name = await Icons.getIconName()
-		console.warn(name)
 		this.setState(() => ({icon: getAppIcon(name)}))
 	}
 
 	render() {
-		console.warn(this.state.icon)
 		return <LogoImage source={this.state.icon} style={this.props.style} />
 	}
 }
