@@ -175,7 +175,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 						/>
 					</Animated.View>
 				</Animated.View>
-				<ScrollView>
+				<ScrollView style={styles.results}>
 					<CourseSearchTableView
 						terms={this.state.searchResults}
 						navigation={this.props.navigation}
@@ -236,18 +236,8 @@ let styles = StyleSheet.create({
 		alignItems: 'center',
 		marginBottom: cellMargin,
 	},
-})
 
-// <Section header="Year/Term">
-//   <View>
-//     <Picker
-//       selectedValue = "20173"
-//       onValueChange={(value) => console.log(value)}
-//       style={[styles.common, styles.picker]}
-//       itemStyle={styles.picker}
-//     >
-//       <Picker.Item label="Interim 2017" value="20172"/>
-//       <Picker.Item label="Spring 2017" value="20173"/>
-//     </Picker>
-//   </View>
-// </Section>
+  results: {
+    marginBottom: 60,
+  },
+})

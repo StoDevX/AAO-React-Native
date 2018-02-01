@@ -53,7 +53,10 @@ function Information({course}: {course: CourseType}) {
 }
 
 function Schedule({course}: {course: CourseType}) {
-	const times = course.times ? convertTimeStringsToOfferings({"times": course.times}) : null
+	if (!course.times) {
+		return null
+	}
+	const times = convertTimeStringsToOfferings({"times": course.times})
 	const schedule = times.map(time => {
 		const hours = time.times.map(time => {
 			const start = moment(time.start, "hmm").format("h:mm A")
