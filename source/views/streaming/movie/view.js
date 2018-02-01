@@ -659,8 +659,6 @@ class Showings extends React.Component {
 		</PaddedShowingsCard>
 	)
 
-	renderSeparator = () => <ListSeparator fullWidth={true} />
-
 	keyExtractor = (item: Movie) => item.time
 
 	render() {
@@ -682,6 +680,7 @@ class Showings extends React.Component {
 					style={styles.listContainer}
 					renderItem={this.renderRow}
 				/>
+        <ListSeparator fullWidth={true} />
 			</View>
 		)
 	}
