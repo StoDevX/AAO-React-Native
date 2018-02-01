@@ -84,11 +84,10 @@ async function storeTermCoursesFromServer(path: string): boolean {
 		const courseJson = JSON.stringify(resp)
 		const filePath = COURSE_STORAGE_DIR + path
 		RNFS.writeFile(filePath, courseJson, 'utf8')
-			.then(success => {
-				console.log('FILE WRITTEN!')
+			.then(() => {
 				return true
 			})
-			.catch(err => {
+			.catch(() => {
 				return false
 			})
 	} catch (error) {

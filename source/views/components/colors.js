@@ -76,6 +76,7 @@ export const black75Percent = 'rgb(191.25, 191.25, 191.25)'
 export const warmGray = 'rgb(133, 117, 112)'
 export const coolGray = 'rgb(118, 122, 133)'
 export const charcoal = 'rgb(34, 34, 34)'
+export const lightGray = '#8E8E93'
 
 // MARK: Blues
 export const teal = 'rgb(28, 160, 170)'

@@ -20,7 +20,7 @@ export async function loadCachedCourses(): Array<CourseType> {
 }
 
 async function loadTermCoursesFromStorage(term: TermType): Array<CourseType> {
-	return RNFS.readFile(COURSE_STORAGE_DIR + term.path).then(contents => {
+	return RNFS.readFile(COURSE_STORAGE_DIR + term.path).then(async (contents) => {
 		return JSON.parse(contents)
 	})
 }

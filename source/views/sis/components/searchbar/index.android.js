@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, Component} from 'react-native'
+import {StyleSheet} from 'react-native'
 import * as c from '../../../components/colors'
 import SearchBar from 'react-native-material-design-searchbar'
 
@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-type PropsType = {
+type Props = {
 	getRef?: any,
 	style?: any,
 	placeholder?: string,
@@ -24,14 +24,14 @@ export class CourseSearchBar extends React.PureComponent<Props> {
 	render() {
 		return (
 			<SearchBar
-				onSearchChange={this.props.onChangeText || null}
-				height={50}
-				onFocus={() => console.log('On Focus')}
-				onBlur={() => console.log('On Blur')}
-				placeholder={this.props.placeholder || 'Search'}
 				autoCorrect={false}
+				height={50}
+				onBlur={() => console.log('On Blur')}
+				onFocus={() => console.log('On Focus')}
+				onSearchChange={this.props.onChangeText || null}
 				padding={5}
-				returnKeyType={'search'}
+				placeholder={this.props.placeholder || 'Search'}
+				returnKeyType="search"
 				style={styles.searchbar}
 			/>
 		)

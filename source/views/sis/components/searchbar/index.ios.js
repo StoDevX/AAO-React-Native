@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-type PropsType = {
+type Props = {
 	getRef?: any,
 	style?: any,
 	placeholder?: string,
@@ -27,8 +27,8 @@ export class CourseSearchBar extends React.PureComponent<Props> {
 			<NativeSearchBar
 				ref={this.props.getRef}
 				hideBackground={true}
-				onFocus={this.props.onFocus}
 				onCancelButtonPress={this.props.onCancel}
+				onFocus={this.props.onFocus}
 				onSearchButtonPress={this.props.onSearchButtonPress || null}
 				placeholder={this.props.placeholder || 'Search'}
 				style={[styles.searchbar, this.props.style]}

@@ -1,6 +1,7 @@
+// @flow
+
 import React from 'react'
 import {CourseType} from '../../../../lib/course-search'
-import {Text, View} from 'react-native'
 import glamorous from 'glamorous-native'
 import {Badge} from '../../../building-hours/detail/badge'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
@@ -8,7 +9,6 @@ import {convertTimeStringsToOfferings} from 'sto-sis-time-parser'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
 import {MultiLineDetailCell} from '../../components/multi-line-cell'
-
 
 const Container = glamorous.scrollView({
 	paddingVertical: 6,
@@ -32,11 +32,11 @@ const CellText = glamorous.text({
 })
 
 function Information({course}: {course: CourseType}) {
-	const profs = course.instructors ? course.instructors.join(", ") : null
+	const profs = course.instructors ? course.instructors.join(', ') : null
 	const instructors = course.instructors ? (
 		<Cell cellStyle="LeftDetail" detail="Instructor(s)" title={profs} />
 	) : null
-	const gereqs = course.gereqs ? course.gereqs.join(", ") : null
+	const gereqs = course.gereqs ? course.gereqs.join(', ') : null
 	const ges = course.gereqs ? (
 		<Cell cellStyle="LeftDetail" detail="GE's" title={gereqs} />
 	) : null
@@ -56,35 +56,25 @@ function Schedule({course}: {course: CourseType}) {
 	if (!course.times) {
 		return null
 	}
-	const times = convertTimeStringsToOfferings({"times": course.times})
+	const times = convertTimeStringsToOfferings({times: course.times})
 	const schedule = times.map(time => {
 		const hours = time.times.map(time => {
-			const start = moment(time.start, "hmm").format("h:mm A")
-			const end = moment(time.end, "hmm").format("h:mm A")
-			return (`${start} - ${end}`)
+			const start = moment(time.start, 'hmm').format('h:mm A')
+			const end = moment(time.end, 'hmm').format('h:mm A')
+			return `${start} - ${end}`
 		})
-		const allHours = hours.join("\n")
+		const allHours = hours.join('\n')
 		const day = formatDay(time.day)
-		return (
-			<MultiLineDetailCell title={day} detail={allHours} key={time.day} />
-		)
+		return <MultiLineDetailCell key={time.day} detail={allHours} title={day} />
 	})
 
-	return (
-		<Section header="Schedule">
-			{schedule}
-		</Section>
-	)
+	return <Section header="Schedule">{schedule}</Section>
 }
 
 function Description({course}: {course: CourseType}) {
 	return course.description ? (
 		<Section header="Description">
-			<Cell
-				cellContentView = {
-					<CellText>{course.description[0]}</CellText>
-				}
-			/>
+			<Cell cellContentView={<CellText>{course.description[0]}</CellText>} />
 		</Section>
 	) : null
 }
@@ -103,12 +93,14 @@ export class CourseDetailView extends React.PureComponent<Props> {
 
 	render() {
 		const course = this.props.navigation.state.params.course
-		const status = course.status === "O" ? "Open" : "Closed"
+		const status = course.status === 'O' ? 'Open' : 'Closed'
 		return (
 			<Container>
 				<Header>{course.name}</Header>
-				<SubHeader>{course.departments[0]} {course.number}
-				{course.section}</SubHeader>
+				<SubHeader>
+					{course.departments[0]} {course.number}
+					{course.section}
+				</SubHeader>
 				<Badge status={status} />
 				<TableView>
 					<Information course={course} />

@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react'
 import {Text, View, StyleSheet, TouchableOpacity, Platform} from 'react-native'
 import {CourseType, parseTerm} from '../../../lib/course-search'
@@ -36,7 +38,7 @@ export default class CourseSearchTableView extends React.PureComponent<
 		let cells = this.renderCells(term)
 		let termHeader = parseTerm(term.title)
 		return (
-			<Section header={termHeader} key={term.title}>
+			<Section key={term.title} header={termHeader}>
 				{cells}
 			</Section>
 		)

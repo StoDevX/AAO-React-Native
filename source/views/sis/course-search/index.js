@@ -1,23 +1,11 @@
 // @flow
 
 import * as React from 'react'
-import {
-	StyleSheet,
-	ScrollView,
-	Picker,
-	View,
-	Text,
-	ListView,
-	Animated,
-	Dimensions,
-} from 'react-native'
+import {StyleSheet, ScrollView, View, Animated, Dimensions} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
-import {Cell, TableView, Section} from 'react-native-tableview-simple'
 import * as c from '../../components/colors'
-import {Select, Option} from 'react-native-chooser'
 import {CourseSearchBar} from '../components/searchbar'
 import debounce from 'lodash/debounce'
-import {ToolBar} from 'react-native-material-ui'
 import {updateCourseData} from '../../../flux/parts/sis'
 import {CourseType} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
@@ -50,14 +38,24 @@ type State = {
 }
 
 class CourseSearchView extends React.PureComponent<Props, State> {
-	static navigationOptions = ({navigation}: any) => ({
+	static navigationOptions = {
 		tabBarLabel: 'Course Search',
 		tabBarIcon: TabBarIcon('search'),
 		title: 'SIS',
-	})
+	}
 
 	state = {
 		searchResults: [],
+	}
+
+	componentWillMount() {
+		this.headerOpacity = new Animated.Value(1)
+		this.searchBarTop = new Animated.Value(71)
+		this.containerHeight = new Animated.Value(125)
+	}
+
+	componentDidMount() {
+		this.props.updateCourseData()
 	}
 
 	searchBar: any = null
@@ -88,24 +86,12 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		console.log(sortedCourses)
 	}
 
-	componentWillMount() {
-		let screenWidth = Dimensions.get('window').width
-		this.headerOpacity = new Animated.Value(1)
-		this.searchBarTop = new Animated.Value(71)
-		this.containerHeight = new Animated.Value(125)
-	}
-
-	componentDidMount() {
-		this.props.updateCourseData()
-	}
-
 	// We need to make the search run slightly behind the UI,
 	// so I'm slowing it down by 50ms. 0ms also works, but seems
 	// rather pointless.
 	performSearch = debounce(this._performSearch, 50)
 
 	onFocus = () => {
-		let screenWidth = Dimensions.get('window').width
 		Animated.timing(this.headerOpacity, {
 			toValue: 0,
 			duration: 800,
@@ -121,7 +107,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	onCancel = () => {
-		let screenWidth = Dimensions.get('window').width
 		Animated.timing(this.headerOpacity, {
 			toValue: 1,
 			duration: 800,
@@ -151,8 +136,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 					style={[styles.searchContainer, styles.common, containerAnimation]}
 				>
 					<Animated.Text
-						style={[styles.header, headerAnimation]}
 						ref={component => (this._header = component)}
+						style={[styles.header, headerAnimation]}
 					>
 						Search Courses
 					</Animated.Text>
@@ -165,8 +150,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 					>
 						<CourseSearchBar
 							getRef={ref => (this.searchBar = ref)}
-							onFocus={this.onFocus}
 							onCancel={this.onCancel}
+							onFocus={this.onFocus}
 							onSearchButtonPress={text => {
 								this.searchBar.unFocus()
 								this.performSearch(text)
@@ -177,8 +162,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				</Animated.View>
 				<ScrollView style={styles.results}>
 					<CourseSearchTableView
-						terms={this.state.searchResults}
 						navigation={this.props.navigation}
+						terms={this.state.searchResults}
 					/>
 				</ScrollView>
 			</View>
@@ -201,10 +186,6 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 
 export default connect(mapState, mapDispatch)(CourseSearchView)
 
-let cellMargin = 10
-let cellSidePadding = 10
-let cellEdgePadding = 10
-
 let styles = StyleSheet.create({
 	common: {
 		backgroundColor: c.white,
@@ -226,18 +207,7 @@ let styles = StyleSheet.create({
 		paddingLeft: 17,
 	},
 
-	picker: {
-		height: 90,
+	results: {
+		marginBottom: 60,
 	},
-
-	rectangle: {
-		flex: 1,
-		height: 88,
-		alignItems: 'center',
-		marginBottom: cellMargin,
-	},
-
-  results: {
-    marginBottom: 60,
-  },
 })
