@@ -10,9 +10,9 @@ import TESView from './tes'
 export default TabNavigator(
 	{
 		BalancesView: {screen: BalancesView},
+		CourseSearchView: {screen: CourseSearchView},
 		TESView: {screen: TESView},
 		StudentWorkView: {screen: StudentWorkView},
-		CourseSearchView: {screen: CourseSearchView},
 	},
 	{
 		navigationOptions: {
