@@ -673,7 +673,7 @@ class Showings extends React.Component {
 				<SectionList
 					horizontal={true}
 					showsHorizontalScrollIndicator={false}
-					ListEmptyComponent={<Text>No Showings</Text>}
+					ListEmptyComponent={<Text style={styles.noShowings}>No Showings</Text>}
 					sections={sections}
 					ItemSeparatorComponent={this.renderSeparator}
 					keyExtractor={this.keyExtractor}
@@ -743,4 +743,7 @@ const styles = StyleSheet.create({
 	shared: {
 		marginRight: 20,
 	},
+  noShowings: {
+    margin: 20,
+  },
 })
