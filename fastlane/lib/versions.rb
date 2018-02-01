@@ -10,8 +10,6 @@ def current_build_number(**args)
       (google_play_track_version_codes(track: args[:track]) + 1).to_s
     when :ios
       (latest_testflight_build_number + 1).to_s
-    else
-      UI.input 'Please enter a build number: '
     end
   rescue
     '1'
@@ -20,7 +18,10 @@ end
 
 # get the current build number from the environment
 def build_number
-  ENV['TRAVIS_BUILD_NUMBER'] || ENV['CIRCLE_BUILD_NUM']
+  travis = ENV['TRAVIS_BUILD_NUMBER']
+  # bring circle's build numbers up to pass Travis'?
+  circle = (ENV['CIRCLE_BUILD_NUM'].to_i + 3250).to_s
+  travis || circle
 end
 
 # Get the current "app bundle" version

@@ -5,19 +5,12 @@ import {data as credits} from '../../../docs/credits.json'
 import glamorous from 'glamorous-native'
 import {Platform} from 'react-native'
 import {iOSUIKit, material} from 'react-native-typography'
-
-const image = require('../../../images/about/IconTrans.png')
+import {AppLogo} from '../components/logo'
 
 const Container = glamorous.scrollView({
 	backgroundColor: c.white,
 	paddingHorizontal: 5,
 	paddingVertical: 10,
-})
-
-const Logo = glamorous.image({
-	width: 100,
-	height: 100,
-	alignSelf: 'center',
 })
 
 const Title = glamorous.text({
@@ -59,7 +52,7 @@ const formatPeopleList = arr => arr.map(w => w.replace(' ', ' ')).join(' • ')
 export default function CreditsView() {
 	return (
 		<Container contentInsetAdjustmentBehavior="automatic">
-			<Logo source={image} />
+			<AppLogo />
 
 			<Title>{credits.name}</Title>
 			<About>{credits.content}</About>

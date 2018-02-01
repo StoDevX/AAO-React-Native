@@ -2,7 +2,7 @@
 version: 2
 
 x-config:
-  x-caching: # caching instructions
+  x-caching:  # caching instructions
     - &save-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
       paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
@@ -18,17 +18,62 @@ x-config:
       paths: [~/.gradle]
     - &restore-cache-gradle
       key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
-  x-commands: # command shorthands
+  x-commands:  # command shorthands
     - &set-ruby-version
       name: Set Ruby Version
       command: echo "ruby-2.4.2" > ~/.ruby-version
     - &run-danger
       command: yarn run danger --id $task
       when: always
+    - &embed-env-vars
+      name: Embed environment variables into the app
+      command: |
+        touch .env.js
+        echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
+        echo "export const GOOGLE_MAPS_API_KEY = '$GMAPS_KEY'" >> .env.js
 
 workflows:
   version: 2
-  analyze:
+  analyze-and-build:
+    # The way this works is, Circle runs analyze-and-build on every commit
+    # to every branch.
+    # Fastlane checks the environment to see if it should build or deploy,
+    # and if there's a tag then it deploys (otherwise it just builds.)
+    # These same jobs are run by the "nightly" workflow, which has a
+    # different CIRCLE_WORKFLOW_ID, which should allow us to only deploy
+    # nightlies from that branch.
+    jobs: &basic-jobs
+      - cache-yarn-linux: 
+          filters: &filters {tags: {only: /.*/}}
+      - danger:
+          filters: *filters
+          requires: [cache-yarn-linux]
+      - flow:
+          filters: *filters
+          requires: [cache-yarn-linux]
+      - jest:
+          filters: *filters
+          requires: [cache-yarn-linux]
+      - prettier:
+          filters: *filters
+          requires: [cache-yarn-linux]
+      - eslint:
+          filters: *filters
+          requires: [cache-yarn-linux]
+      - data:
+          filters: *filters
+          requires: [cache-yarn-linux]
+      - ios:
+          filters: *filters
+          requires: [danger, flow, jest, prettier, eslint, data]
+      - android:
+          filters: *filters
+          requires: [danger, flow, jest, prettier, eslint, data]
+  nightly:
+    triggers:
+      - schedule:
+          cron: 0 6 * * *
+          filters: {branches: {only: [master]}}
     jobs:
       - cache-yarn-linux
       - danger: {requires: [cache-yarn-linux]}
@@ -37,8 +82,8 @@ workflows:
       - prettier: {requires: [cache-yarn-linux]}
       - eslint: {requires: [cache-yarn-linux]}
       - data: {requires: [cache-yarn-linux]}
-      - ios: {requires: [danger, flow, jest, prettier, eslint, data]}
-      - android: {requires: [danger, flow, jest, prettier, eslint, data]}
+      - ios-nightly: {requires: [danger, flow, jest, prettier, eslint, data]}
+      - android-nightly: {requires: [danger, flow, jest, prettier, eslint, data]}
 
 jobs:
   cache-yarn-linux:
@@ -151,14 +196,18 @@ jobs:
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
       - run: *run-danger
 
-  android:
-    docker: [{image: 'circleci/android:api-27-node8-alpha'}]
-    environment:
+  android: &android
+    # cmd: key is passed to solve a weird issue (see GitHub PR's 2170 and 2173).
+    # this overrides the thing and forces the container to run /bin/bash as the "command"
+    # so it doesn't get confused and OOM/exhaust the build resources (don't ask me)
+    docker: [{image: 'circleci/android:api-27-node8-alpha', cmd: '/bin/bash'}]
+    environment: &android-env
       task: ANDROID
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_DISABLE_ANIMATION: '1'
     steps:
       - checkout
+      - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
@@ -174,13 +223,23 @@ jobs:
           environment: {TERM: xterm-256color}
       - save_cache: *save-cache-gradle
       - run: mkdir -p logs/
-      - run: touch .env.js
-      - run: bundle exec fastlane android ci-run | tee ./logs/build
+      - run: *embed-env-vars
+      - run:
+          name: Run Fastlane
+          command: bundle exec fastlane android ci-run | tee ./logs/build
+          environment:
+            GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
       - run: *run-danger
-
-  ios:
-    macos: {xcode: '9.0'}
+  
+  android-nightly:
+    <<: *android
     environment:
+      <<: *android-env
+      IS_NIGHTLY: '1'
+
+  ios: &ios
+    macos: {xcode: '9.0'}
+    environment: &ios-env
       task: IOS
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_DISABLE_ANIMATION: '1'
@@ -198,9 +257,19 @@ jobs:
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - save_cache: *save-cache-bundler
       - run: mkdir -p logs/
-      - run: touch .env.js
-      - run: bundle exec fastlane ios ci-run | tee ./logs/build
+      - run: *embed-env-vars
+      - run:
+          name: Run Fastlane
+          command: bundle exec fastlane ios ci-run | tee ./logs/build
+          environment:
+            GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
       - run:
           name: Analyze Fastlane Logfile
           command: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
       - run: *run-danger
+
+  ios-nightly:
+    <<: *ios
+    environment:
+      <<: *ios-env
+      IS_NIGHTLY: '1'
