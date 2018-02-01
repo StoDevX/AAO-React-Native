@@ -62,7 +62,7 @@ async function determineOutdatedTerms(): Promise<Array<TermType>> {
 		const match = remoteTerms.find(
 			remoteTerm => remoteTerm.term === localTerm.term,
 		)
-		return match === undefined ? true : localTerm.hash != match.hash
+		return match ? match.hash === localTerm.hash : true
 	})
 	if (outdatedTerms.length !== 0) {
 		storeTermInfo(remoteTerms)
