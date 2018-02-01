@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, ScrollView, View, Animated, Dimensions} from 'react-native'
+import {StyleSheet, ScrollView, View, Animated, Dimensions, Text} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {CourseSearchBar} from '../components/searchbar'
@@ -35,6 +35,7 @@ type Props = ReactProps &
 
 type State = {
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
+  searchActive: boolean,
 }
 
 class CourseSearchView extends React.PureComponent<Props, State> {
@@ -46,6 +47,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 
 	state = {
 		searchResults: [],
+    searchActive: false,
 	}
 
 	componentWillMount() {
@@ -104,6 +106,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			toValue: 64,
 			duration: 800,
 		}).start()
+    this.setState({searchActive: true})
 	}
 
 	onCancel = () => {
@@ -129,9 +132,11 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			top: this.searchBarTop,
 		}
 		const containerAnimation = {height: this.containerHeight}
+    const {searchActive} = this.state
+    const SEARCH_PROMPT = "Name\nProfessor"
 
 		return (
-			<View>
+			<View style={{flex: 1}}>
 				<Animated.View
 					style={[styles.searchContainer, styles.common, containerAnimation]}
 				>
@@ -160,12 +165,17 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 						/>
 					</Animated.View>
 				</Animated.View>
-				<ScrollView style={styles.results}>
-					<CourseSearchTableView
-						navigation={this.props.navigation}
-						terms={this.state.searchResults}
-					/>
-				</ScrollView>
+          {searchActive ? (
+            <ScrollView>
+              <CourseSearchTableView
+    						navigation={this.props.navigation}
+    						terms={this.state.searchResults}
+    					/>
+            </ScrollView>
+          ): (
+            <View>
+            </View>
+          )}
 			</View>
 		)
 	}
@@ -205,9 +215,5 @@ let styles = StyleSheet.create({
 		fontWeight: 'bold',
 		padding: 22,
 		paddingLeft: 17,
-	},
-
-	results: {
-		marginBottom: 60,
 	},
 })
