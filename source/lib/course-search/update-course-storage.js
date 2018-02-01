@@ -22,10 +22,9 @@ export async function updateStoredCourses(): Promise<boolean> {
 		RNFS.mkdir(COURSE_STORAGE_DIR + '/terms')
 	})
 	const outdatedTerms: Array<TermType> = await determineOutdatedTerms()
-	const promises = outdatedTerms.map(term =>
-		storeTermCoursesFromServer(term.path),
+	await Promise.all(
+		outdatedTerms.map(term => storeTermCoursesFromServer(term.path)),
 	)
-	await Promise.all(promises)
 	return outdatedTerms.length === 0 ? false : true
 }
 

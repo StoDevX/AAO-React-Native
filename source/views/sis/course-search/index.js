@@ -7,7 +7,7 @@ import * as c from '../../components/colors'
 import {CourseSearchBar} from '../components/searchbar'
 import debounce from 'lodash/debounce'
 import {updateCourseData} from '../../../flux/parts/sis'
-import {CourseType} from '../../../lib/course-search'
+import type {CourseType} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
@@ -19,8 +19,8 @@ import {CourseSearchTableView} from '../components/results'
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
-	allCourses: ?Array<CourseType>,
-	courseDataState: ?string,
+	allCourses: Array<CourseType>,
+	courseDataState: string,
 }
 
 type ReduxDispatchProps = {
@@ -36,9 +36,6 @@ type Props = ReactProps &
 type State = {
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
 	searchActive: boolean,
-	headerOpacity: Animated.Value,
-	searchBarTop: Animated.Value,
-	containerHeight: Animated.Value,
 }
 
 class CourseSearchView extends React.PureComponent<Props, State> {
@@ -51,9 +48,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	state = {
 		searchResults: [],
 		searchActive: false,
-		headerOpacity: new Animated.Value(1),
-		searchBarTop: new Animated.Value(71),
-		containerHeight: new Animated.Value(125),
 	}
 
 	componentDidMount() {
@@ -61,6 +55,9 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	searchBar: any = null
+	headerOpacity = new Animated.Value(1)
+	searchBarTop = new Animated.Value(71)
+	containerHeight = new Animated.Value(125)
 
 	_performSearch = (text: string | Object) => {
 		// Android clear button returns an object
@@ -69,17 +66,14 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		// }
 		const query = text.toLowerCase()
 
-		let results = this.props.allCourses
-			? this.props.allCourses.filter(course => {
-					const instructors = course.instructors
-						? course.instructors.toString().toLowerCase()
-						: []
-					return (
-						course.name.toLowerCase().includes(query) ||
-						instructors.includes(query)
-					)
-				})
-			: []
+		let results = this.props.allCourses.filter(course => {
+			const instructors = course.instructors
+				? course.instructors.toString().toLowerCase()
+				: []
+			return (
+				course.name.toLowerCase().includes(query) || instructors.includes(query)
+			)
+		})
 
 		let grouped = groupBy(results, r => r.term)
 		let groupedCourses = toPairs(grouped).map(([key, value]) => ({
@@ -97,15 +91,15 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	performSearch = debounce(this._performSearch, 50)
 
 	onFocus = () => {
-		Animated.timing(this.state.headerOpacity, {
+		Animated.timing(this.headerOpacity, {
 			toValue: 0,
 			duration: 800,
 		}).start()
-		Animated.timing(this.state.searchBarTop, {
+		Animated.timing(this.searchBarTop, {
 			toValue: 10,
 			duration: 800,
 		}).start()
-		Animated.timing(this.state.containerHeight, {
+		Animated.timing(this.containerHeight, {
 			toValue: 64,
 			duration: 800,
 		}).start()
@@ -113,15 +107,15 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	onCancel = () => {
-		Animated.timing(this.state.headerOpacity, {
+		Animated.timing(this.headerOpacity, {
 			toValue: 1,
 			duration: 800,
 		}).start()
-		Animated.timing(this.state.searchBarTop, {
+		Animated.timing(this.searchBarTop, {
 			toValue: 71,
 			duration: 800,
 		}).start()
-		Animated.timing(this.state.containerHeight, {
+		Animated.timing(this.containerHeight, {
 			toValue: 125,
 			duration: 800,
 		}).start()
@@ -130,11 +124,11 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	render() {
 		const screenWidth = Dimensions.get('window').width
 		const searchBarWidth = screenWidth - 20
-		const headerAnimation = {opacity: this.state.headerOpacity}
+		const headerAnimation = {opacity: this.headerOpacity}
 		const searchBarAnimation = {
-			top: this.state.searchBarTop,
+			top: this.searchBarTop,
 		}
-		const containerAnimation = {height: this.state.containerHeight}
+		const containerAnimation = {height: this.containerHeight}
 		const {searchActive} = this.state
 
 		return (

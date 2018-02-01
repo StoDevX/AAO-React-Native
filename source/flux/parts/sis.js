@@ -2,11 +2,8 @@
 
 import {type ReduxState} from '../index'
 import {getBalances, type BalancesShapeType} from '../../lib/financials'
-import {
-	loadCachedCourses,
-	CourseType,
-	updateStoredCourses,
-} from '../../lib/course-search'
+import {loadCachedCourses, updateStoredCourses} from '../../lib/course-search'
+import type {CourseType} from '../../lib/course-search'
 
 const UPDATE_BALANCES_SUCCESS = 'sis/UPDATE_BALANCES_SUCCESS'
 const UPDATE_BALANCES_FAILURE = 'sis/UPDATE_BALANCES_FAILURE'
@@ -92,8 +89,8 @@ export type State = {|
 	mealsRemainingToday: ?string,
 	mealsRemainingThisWeek: ?string,
 	mealPlanDescription: ?string,
-	allCourses: ?Array<CourseType>,
-	courseDataState: ?string,
+	allCourses: Array<CourseType>,
+	courseDataState: string,
 |}
 const initialState = {
 	balancesErrorMessage: null,
@@ -103,8 +100,8 @@ const initialState = {
 	mealsRemainingToday: null,
 	mealsRemainingThisWeek: null,
 	mealPlanDescription: null,
-	allCourses: null,
-	courseDataState: null,
+	allCourses: [],
+	courseDataState: 'not-loaded',
 }
 export function sis(state: State = initialState, action: Action) {
 	switch (action.type) {

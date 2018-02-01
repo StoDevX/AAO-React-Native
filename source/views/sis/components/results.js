@@ -2,7 +2,8 @@
 
 import React from 'react'
 import {Text, View, StyleSheet, TouchableOpacity, Platform} from 'react-native'
-import {CourseType, parseTerm} from '../../../lib/course-search'
+import {parseTerm} from '../../../lib/course-search'
+import type {CourseType} from '../../../lib/course-search'
 import {Cell, TableView, Section} from 'react-native-tableview-simple'
 import {FormattedLine} from './formatted-line'
 import Icon from 'react-native-vector-icons/Ionicons'

@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {CourseType} from '../../../../lib/course-search'
+import type {CourseType} from '../../../../lib/course-search'
 import glamorous from 'glamorous-native'
 import {Badge} from '../../../building-hours/detail/badge'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
@@ -39,7 +39,7 @@ function Information({course}: {course: CourseType}) {
 	) : null
 	const gereqs = course.gereqs ? course.gereqs.join(', ') : null
 	const ges = course.gereqs ? (
-		<Cell cellStyle="LeftDetail" detail="GE's" title={gereqs} />
+		<Cell cellStyle="LeftDetail" detail="GEs" title={gereqs} />
 	) : null
 	const credits = course.credits ? (
 		<Cell cellStyle="LeftDetail" detail="Credits" title={course.credits} />

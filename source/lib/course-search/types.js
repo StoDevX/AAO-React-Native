@@ -15,6 +15,7 @@ export type CourseType = {
 	term: number,
 	type: string,
 	year: number,
+	number: number,
 	description?: string[],
 	gereqs?: string[],
 	locations?: string[],
