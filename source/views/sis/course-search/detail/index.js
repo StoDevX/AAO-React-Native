@@ -48,7 +48,7 @@ function Information({course}: {course: CourseType}) {
 	const passFail = course.pn ? 'Yes' : 'No'
 	const pn = <Cell cellStyle="LeftDetail" detail="Pass/Fail" title={passFail} />
 	const prerequisites = course.prerequisites
-		? course.prerequisites.replace('Prerequisite: ', '')
+		? course.prerequisites
 		: 'None'
 
 	const prereqs = (
