@@ -66,13 +66,12 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		// }
 		const query = text.toLowerCase()
 		let results = this.props.allCourses.filter(course => {
-			const instructors = course.instructors
-				? course.instructors.join().toLowerCase()
-				: []
 			const section = course.section ? course.section.toLowerCase() : ''
 			return (
 				course.name.toLowerCase().includes(query) ||
-				instructors.includes(query) ||
+				(course.instructors || []).some(name =>
+					name.toLowerCase().includes(query),
+				) ||
 				`${course.departments
 					.join('/')
 					.toLowerCase()} ${course.number.toString()}${section}`.startsWith(
