@@ -9,7 +9,7 @@ export type CourseType = {
 	level: number,
 	name: string,
 	pn: boolean,
-	prerequisites: boolean | string,
+	prerequisites: false | string,
 	semester: number,
 	status: string,
 	term: number,
