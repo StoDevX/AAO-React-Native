@@ -49,15 +49,6 @@ type LoadCachedCoursesAction = {|
 	payload: Array<CourseType>,
 |}
 
-export type LoadCachedCoursesActionType = ThunkAction<LoadCachedCoursesAction>
-export function getCachedCourses(): LoadCachedCoursesActionType {
-	return async dispatch => {
-		await updateStoredCourses()
-		const cachedCourses = await loadCachedCourses()
-		dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
-	}
-}
-
 type TermsUpdateStartAction = {|type: 'sis/TERMS_UPDATE_START'|}
 
 type TermsUpdateCompleteAction = {|type: 'sis/TERMS_UPDATE_COMPLETE'|}

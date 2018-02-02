@@ -56,7 +56,6 @@ export async function init(store: {dispatch: any => any}) {
 		store.dispatch(loadFeedbackStatus()),
 		store.dispatch(loadAcknowledgement()),
 		store.dispatch(loadFavoriteBuildings()),
-		store.dispatch(getCachedCourses()),
 		loginCredentials(store),
 	])
 
