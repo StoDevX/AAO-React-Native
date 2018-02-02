@@ -13,11 +13,11 @@ export class FormattedLine extends React.PureComponent<Props> {
 		const lines = items.map((item, index, items) => {
 			const last = index === items.length - 1
 			return (
-				<Text key={item} >
+				<Text key={item}>
 					{item} {!last && <Text>&middot; </Text>}
 				</Text>
 			)
 		})
-		return (<Text>{lines}</Text>)
+		return <Text>{lines}</Text>
 	}
 }

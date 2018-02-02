@@ -28,12 +28,11 @@ type State = {
 }
 
 export class CourseSearchBar extends React.PureComponent<Props, State> {
-
 	state = {
 		input: '',
 	}
 
-	updateText = (input) => {
+	updateText = input => {
 		this.setState({input: input})
 		console.log(input)
 	}
@@ -41,14 +40,16 @@ export class CourseSearchBar extends React.PureComponent<Props, State> {
 	render() {
 		return (
 			<SearchBar
-			  ref={this.props.getRef}
+				ref={this.props.getRef}
 				handleChangeText={this.updateText}
 				onBack={this.props.onCancel}
-			  onFocus={this.props.onFocus}
+				onFocus={this.props.onFocus}
 				onHide={text => console.log(text)}
-				onSubmitEditing={() => {this.props.onSearchButtonPress(this.state.input)}}
+				onSubmitEditing={() => {
+					this.props.onSearchButtonPress(this.state.input)
+				}}
 				placeholder={this.props.placeholder || 'Search'}
-				showOnLoad
+				showOnLoad={true}
 				style={[styles.searchbar, this.props.style]}
 			/>
 		)

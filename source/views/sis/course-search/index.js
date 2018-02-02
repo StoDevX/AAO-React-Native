@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, ScrollView, View, Animated, Dimensions, Platform} from 'react-native'
+import {StyleSheet, View, Animated, Dimensions, Platform} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {CourseSearchBar} from '../components/searchbar'
@@ -73,7 +73,11 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			return (
 				course.name.toLowerCase().includes(query) ||
 				instructors.includes(query) ||
-				`${course.departments.join('/').toLowerCase()} ${course.number.toString()}${section}`.startsWith(query)
+				`${course.departments
+					.join('/')
+					.toLowerCase()} ${course.number.toString()}${section}`.startsWith(
+					query,
+				)
 			)
 		})
 
@@ -153,17 +157,19 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 							onCancel={this.onCancel}
 							onFocus={this.onFocus}
 							onSearchButtonPress={text => {
-								Platform.OS === 'ios' ? this.searchBar.unFocus() : this.searchBar.hide()
+								Platform.OS === 'ios'
+									? this.searchBar.unFocus()
+									: this.searchBar.hide()
 								this.performSearch(text)
 							}}
 						/>
 					</Animated.View>
 				</Animated.View>
 				{searchActive ? (
-						<CourseSearchResultsList
-							navigation={this.props.navigation}
-							terms={this.state.searchResults}
-						/>
+					<CourseSearchResultsList
+						navigation={this.props.navigation}
+						terms={this.state.searchResults}
+					/>
 				) : (
 					<View />
 				)}

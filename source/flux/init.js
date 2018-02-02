@@ -15,7 +15,7 @@ import {
 	loadFeedbackStatus,
 	loadAcknowledgement,
 } from './parts/settings'
-import {updateBalances, getCachedCourses} from './parts/sis'
+import {updateBalances} from './parts/sis'
 
 async function loginCredentials(store) {
 	const {username, password} = await loadLoginCredentials()
