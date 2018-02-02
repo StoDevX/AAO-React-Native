@@ -14,7 +14,7 @@ type TermInfoType = {
 
 export async function updateStoredCourses(): Promise<boolean> {
 	const outdatedTerms: Array<TermType> = await determineOutdatedTerms()
-	console.log(outdatedTerms)
+	// console.log(outdatedTerms)
 	await Promise.all(outdatedTerms.map(term => storeTermCoursesFromServer(term)))
 	return outdatedTerms.length === 0 ? false : true
 }

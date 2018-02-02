@@ -44,11 +44,21 @@ function Information({course}: {course: CourseType}) {
 	const credits = course.credits ? (
 		<Cell cellStyle="LeftDetail" detail="Credits" title={course.credits} />
 	) : null
+	const type = <Cell cellStyle="LeftDetail" detail="Type" title={course.type} />
+	const passFail = course.pn ? 'Yes' : 'No'
+	const pn = <Cell cellStyle="LeftDetail" detail="Pass/Fail" title={passFail} />
+	const prerequisites = course.prerequisites ?
+		course.prerequisites.replace("Prerequisite: ", "") : 'None'
+
+	const prereqs = <Cell cellStyle="LeftDetail" detail="Prerequisites" title={prerequisites} />
 	return (
-		<Section header="Course Information">
+		<Section header="COURSE INFORMATION">
 			{instructors}
-			{credits}
+			{type}
 			{ges}
+			{pn}
+			{prereqs}
+			{credits}
 		</Section>
 	)
 }
@@ -69,12 +79,12 @@ function Schedule({course}: {course: CourseType}) {
 		return <MultiLineDetailCell key={time.day} detail={allHours} title={day} />
 	})
 
-	return <Section header="Schedule">{schedule}</Section>
+	return <Section header="SCHEDULE">{schedule}</Section>
 }
 
 function Description({course}: {course: CourseType}) {
 	return course.description ? (
-		<Section header="Description">
+		<Section header="DESCRIPTION">
 			<Cell cellContentView={<CellText>{course.description[0]}</CellText>} />
 		</Section>
 	) : null
