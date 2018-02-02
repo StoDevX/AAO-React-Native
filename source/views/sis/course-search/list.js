@@ -27,7 +27,7 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 	keyExtractor = (item: CourseType) => item.clbid.toString()
 
 	renderSectionHeader = ({section: {title}}: any) => (
-		<ListSectionHeader title={parseTerm(title)} />
+		<ListSectionHeader title={parseTerm(title).toUpperCase()} />
 	)
 
 	renderItem = ({item}: {item: CourseType}) => (
