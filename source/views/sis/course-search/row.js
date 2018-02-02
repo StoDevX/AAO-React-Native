@@ -23,7 +23,7 @@ export class CourseRow extends React.PureComponent<Props> {
 			<ListRow arrowPosition="center" onPress={this.onPress}>
 				<Row>
 					<Title lines={1}>
-						<Text>{course.name}</Text>
+						{course.name}
 					</Title>
 				</Row>
 				<Text>
@@ -31,19 +31,13 @@ export class CourseRow extends React.PureComponent<Props> {
 					{course.section}
 				</Text>
 				{course.times && (
-					<Text>
 						<FormattedLine items={course.times} />
-					</Text>
 				)}
 				{course.instructors && (
-					<Text>
 						<FormattedLine items={course.instructors} />
-					</Text>
 				)}
 				{course.gereqs && (
-					<Text>
 						<FormattedLine items={course.gereqs} />
-					</Text>
 				)}
 			</ListRow>
 		)

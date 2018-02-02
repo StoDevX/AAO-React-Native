@@ -53,8 +53,6 @@ async function determineOutdatedTerms(): Promise<Array<TermType>> {
 
 async function storeTermCoursesFromServer(term: TermType) {
 	const url = COURSE_DATA_PAGE + term.path
-	const resp: Array<CourseType> = await fetchJson(url).catch(() =>
-		storage.setTermCourseData(term.term, []),
-	)
+	const resp: Array<CourseType> = await fetchJson(url).catch(() => [])
 	storage.setTermCourseData(term.term, resp)
 }

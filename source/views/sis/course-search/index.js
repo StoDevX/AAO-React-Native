@@ -66,12 +66,14 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		// }
 		const query = text.toLowerCase()
 		let results = this.props.allCourses.filter(course => {
-			console.log(course)
 			const instructors = course.instructors
 				? course.instructors.toString().toLowerCase()
 				: []
+			const section = course.section ? course.section.toLowerCase() : ''
 			return (
-				course.name.toLowerCase().includes(query) || instructors.includes(query)
+				course.name.toLowerCase().includes(query) ||
+				instructors.includes(query) ||
+				`${course.departments.join('/').toLowerCase()} ${course.number.toString()}${section}`.startsWith(query)
 			)
 		})
 
@@ -103,7 +105,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			toValue: 64,
 			duration: 800,
 		}).start()
-		this.setState({searchActive: true})
+		this.setState(() => ({searchActive: true}))
 	}
 
 	onCancel = () => {
@@ -158,12 +160,10 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 					</Animated.View>
 				</Animated.View>
 				{searchActive ? (
-					<ScrollView>
 						<CourseSearchResultsList
 							navigation={this.props.navigation}
 							terms={this.state.searchResults}
 						/>
-					</ScrollView>
 				) : (
 					<View />
 				)}
