@@ -105,8 +105,8 @@ export class CourseDetailView extends React.PureComponent<Props> {
 				<Badge status={status} />
 				<TableView>
 					<Information course={course} />
-					<Description course={course} />
 					<Schedule course={course} />
+					<Description course={course} />
 				</TableView>
 			</Container>
 		)
