@@ -67,7 +67,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		const query = text.toLowerCase()
 		let results = this.props.allCourses.filter(course => {
 			const instructors = course.instructors
-				? course.instructors.toString().toLowerCase()
+				? course.instructors.join().toLowerCase()
 				: []
 			const section = course.section ? course.section.toLowerCase() : ''
 			return (
