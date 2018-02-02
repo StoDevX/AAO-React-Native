@@ -14,7 +14,7 @@ import {connect} from 'react-redux'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import toPairs from 'lodash/toPairs'
-import {CourseSearchTableView} from '../components/results'
+import {CourseSearchResultsList} from './list'
 
 type ReactProps = TopLevelViewPropsType
 
@@ -159,7 +159,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				</Animated.View>
 				{searchActive ? (
 					<ScrollView>
-						<CourseSearchTableView
+						<CourseSearchResultsList
 							navigation={this.props.navigation}
 							terms={this.state.searchResults}
 						/>
