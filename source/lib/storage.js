@@ -31,9 +31,6 @@ async function getItemAsBoolean(key: string): Promise<boolean> {
 async function getItemAsArray(key: string): Promise<Array<*>> {
 	return (await getItem(key)) || []
 }
-function getItemAsSpecialArray(key: string): Promise<Array<*>> {
-	return AsyncStorage.getItem(`aao:${key}`).then(stored => JSON.parse(stored))
-}
 
 /// MARK: Settings
 
