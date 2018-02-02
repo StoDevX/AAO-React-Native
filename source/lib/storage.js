@@ -1,5 +1,6 @@
 // @flow
 import {AsyncStorage} from 'react-native'
+import type {CourseType, TermType} from './course-search/types'
 
 export function clearAsyncStorage() {
 	return AsyncStorage.clear()
@@ -29,6 +30,9 @@ async function getItemAsBoolean(key: string): Promise<boolean> {
 }
 async function getItemAsArray(key: string): Promise<Array<*>> {
 	return (await getItem(key)) || []
+}
+function getItemAsSpecialArray(key: string): Promise<Array<*>> {
+	return AsyncStorage.getItem(`aao:${key}`).then(stored => JSON.parse(stored))
 }
 
 /// MARK: Settings
@@ -73,4 +77,24 @@ export function setFavoriteBuildings(buildings: string[]) {
 }
 export function getFavoriteBuildings(): Promise<Array<string>> {
 	return getItemAsArray(favoriteBuildingsKey)
+}
+
+/// MARK: Sis
+const courseDataKey = 'sis:course-data'
+export function setTermCourseData(term: number, courseData: Array<CourseType>) {
+	const key = courseDataKey + `:${term}:courses`
+	return setItem(key, courseData)
+}
+export function getTermCourseData(term: number): Promise<Array<CourseType>> {
+	const key = courseDataKey + `:${term}:courses`
+	return AsyncStorage.getItem(`aao:${key}`).then(stored => JSON.parse(stored))
+}
+const termInfoKey = courseDataKey + ':term-info'
+export function setTermInfo(termData: Array<TermType>) {
+	return setItem(termInfoKey, termData)
+}
+export function getTermInfo(): Promise<Array<TermType>> {
+	return AsyncStorage.getItem(`aao:${termInfoKey}`).then(stored =>
+		JSON.parse(stored),
+	)
 }

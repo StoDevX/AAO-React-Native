@@ -49,8 +49,8 @@ type LoadCachedCoursesAction = {|
 	payload: Array<CourseType>,
 |}
 
-export type CourseDataActionType = ThunkAction<CourseDataAction>
-export function getCachedCourses(): CourseDataActionType {
+export type LoadCachedCoursesActionType = ThunkAction<LoadCachedCoursesAction>
+export function getCachedCourses(): LoadCachedCoursesActionType {
 	return async dispatch => {
 		await updateStoredCourses()
 		const cachedCourses = await loadCachedCourses()
@@ -61,8 +61,10 @@ export function getCachedCourses(): CourseDataActionType {
 type TermsUpdateStartAction = {|type: 'sis/TERMS_UPDATE_START'|}
 
 type TermsUpdateCompleteAction = {|type: 'sis/TERMS_UPDATE_COMPLETE'|}
-
-export function updateCourseData(): CourseDataActionType {
+export type UpdateCourseDataActionType = ThunkAction<
+	TermsUpdateAction | LoadCachedCoursesAction,
+>
+export function updateCourseData(): UpdateCourseDataActionType {
 	return async dispatch => {
 		dispatch({type: TERMS_UPDATE_START})
 		let updateNeeded = await updateStoredCourses()
@@ -74,12 +76,12 @@ export function updateCourseData(): CourseDataActionType {
 	}
 }
 
-type CourseDataAction =
-	| LoadCachedCoursesAction
-	| TermsUpdateStartAction
-	| TermsUpdateCompleteAction
+type TermsUpdateAction = TermsUpdateStartAction | TermsUpdateCompleteAction
 
-type Action = UpdateBalancesActions | CourseDataAction
+type Action =
+	| UpdateBalancesActions
+	| TermsUpdateAction
+	| LoadCachedCoursesAction
 
 export type State = {|
 	balancesErrorMessage: ?string,

@@ -4,13 +4,8 @@
  */
 
 import type {CourseType, TermType} from './types'
-import {
-	COURSE_DATA_PAGE,
-	INFO_PAGE,
-	COURSE_STORAGE_DIR,
-	TERMS_FILE,
-} from './urls'
-import RNFS from 'react-native-fs'
+import {COURSE_DATA_PAGE, INFO_PAGE} from './urls'
+import * as storage from '../storage'
 
 type TermInfoType = {
 	files: Array<TermType>,
@@ -18,13 +13,9 @@ type TermInfoType = {
 }
 
 export async function updateStoredCourses(): Promise<boolean> {
-	RNFS.readDir(COURSE_STORAGE_DIR + '/terms').catch(() => {
-		RNFS.mkdir(COURSE_STORAGE_DIR + '/terms')
-	})
 	const outdatedTerms: Array<TermType> = await determineOutdatedTerms()
-	await Promise.all(
-		outdatedTerms.map(term => storeTermCoursesFromServer(term.path)),
-	)
+	console.log(outdatedTerms)
+	await Promise.all(outdatedTerms.map(term => storeTermCoursesFromServer(term)))
 	return outdatedTerms.length === 0 ? false : true
 }
 
@@ -41,21 +32,11 @@ async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
 	return terms
 }
 
-export function loadTermsFromStorage(): Promise<Array<TermType>> {
-	return RNFS.readFile(TERMS_FILE)
-		.then(contents => {
-			return JSON.parse(contents)
-		})
-		.catch(() => {
-			return []
-		})
-}
-
 async function determineOutdatedTerms(): Promise<Array<TermType>> {
 	const remoteTerms: Array<TermType> = await loadCurrentTermsFromServer()
-	const localTerms: Array<TermType> = await loadTermsFromStorage()
-	if (localTerms.length === 0) {
-		storeTermInfo(remoteTerms)
+	const localTerms: Array<TermType> = await storage.getTermInfo()
+	if (!localTerms) {
+		storage.setTermInfo(remoteTerms)
 		return remoteTerms
 	}
 	let outdatedTerms = localTerms.filter(localTerm => {
@@ -65,22 +46,15 @@ async function determineOutdatedTerms(): Promise<Array<TermType>> {
 		return match ? match.hash === localTerm.hash : true
 	})
 	if (outdatedTerms.length !== 0) {
-		storeTermInfo(remoteTerms)
+		storage.setTermInfo(remoteTerms)
 	}
 	return outdatedTerms
 }
 
-function storeTermInfo(terms: Array<TermType>) {
-	let json = JSON.stringify(terms)
-	RNFS.writeFile(TERMS_FILE, json, 'utf8')
-}
-
-async function storeTermCoursesFromServer(path: string): Promise<boolean> {
-	const url = COURSE_DATA_PAGE + path
-	const resp: Array<CourseType> = await fetchJson(url)
-	const courseJson = JSON.stringify(resp)
-	const filePath = COURSE_STORAGE_DIR + path
-	return RNFS.writeFile(filePath, courseJson, 'utf8')
-		.then(() => true)
-		.catch(() => false)
+async function storeTermCoursesFromServer(term: TermType) {
+	const url = COURSE_DATA_PAGE + term.path
+	const resp: Array<CourseType> = await fetchJson(url).catch(() =>
+		storage.setTermCourseData(term.term, []),
+	)
+	storage.setTermCourseData(term.term, resp)
 }

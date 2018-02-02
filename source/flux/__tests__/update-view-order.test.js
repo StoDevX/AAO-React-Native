@@ -1,6 +1,4 @@
 /* eslint-env jest */
-jest.mock('react-native-fs', () => 'ReactNativeFileSystem')
-
 import {updateViewOrder} from '../parts/homescreen'
 
 test('it should return the current order if no screens have changed', () => {

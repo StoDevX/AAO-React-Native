@@ -211,7 +211,6 @@ if (propFile.canRead()) {
 }
 
 dependencies {
-    compile project(':react-native-fs')
     // please keep this list sorted
     implementation project(':bugsnag-react-native')
     implementation project(':react-native-calendar-events')
