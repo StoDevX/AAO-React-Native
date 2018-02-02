@@ -47,10 +47,13 @@ function Information({course}: {course: CourseType}) {
 	const type = <Cell cellStyle="LeftDetail" detail="Type" title={course.type} />
 	const passFail = course.pn ? 'Yes' : 'No'
 	const pn = <Cell cellStyle="LeftDetail" detail="Pass/Fail" title={passFail} />
-	const prerequisites = course.prerequisites ?
-		course.prerequisites.replace("Prerequisite: ", "") : 'None'
+	const prerequisites = course.prerequisites
+		? course.prerequisites.replace('Prerequisite: ', '')
+		: 'None'
 
-	const prereqs = <Cell cellStyle="LeftDetail" detail="Prerequisites" title={prerequisites} />
+	const prereqs = (
+		<Cell cellStyle="LeftDetail" detail="Prerequisites" title={prerequisites} />
+	)
 	return (
 		<Section header="COURSE INFORMATION">
 			{instructors}
