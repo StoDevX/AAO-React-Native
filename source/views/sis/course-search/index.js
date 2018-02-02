@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, ScrollView, View, Animated, Dimensions} from 'react-native'
+import {StyleSheet, ScrollView, View, Animated, Dimensions, Platform} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {CourseSearchBar} from '../components/searchbar'
@@ -65,8 +65,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		// 	return this.props.onSearch(null)
 		// }
 		const query = text.toLowerCase()
-
 		let results = this.props.allCourses.filter(course => {
+			console.log(course)
 			const instructors = course.instructors
 				? course.instructors.toString().toLowerCase()
 				: []
@@ -151,7 +151,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 							onCancel={this.onCancel}
 							onFocus={this.onFocus}
 							onSearchButtonPress={text => {
-								this.searchBar.unFocus()
+								Platform.OS === 'ios' ? this.searchBar.unFocus() : this.searchBar.hide()
 								this.performSearch(text)
 							}}
 						/>
