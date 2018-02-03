@@ -1,13 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {
-	StyleSheet,
-	FlatList,
-	ScrollView,
-	Dimensions,
-	Platform,
-} from 'react-native'
+import {StyleSheet, ScrollView, Dimensions} from 'react-native'
 import {connect} from 'react-redux'
 import {getWeeklyMovie} from '../../../flux/parts/weekly-movie'
 import {type ReduxState} from '../../../flux'
@@ -15,52 +9,33 @@ import LoadingView from '../../components/loading'
 import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
 import moment from 'moment-timezone'
-import openUrl from '../../components/open-url'
 import glamorous from 'glamorous-native'
 import {type TopLevelViewPropsType} from '../../types'
-import {Row, Column} from '../../components/layout'
-import {human, material} from 'react-native-typography'
-import {darken, setSaturation, setLightness, rgb} from 'polished'
-import {Touchable} from '../../components/touchable'
-import Icon from 'react-native-vector-icons/Ionicons'
-import LinearGradient from 'react-native-linear-gradient'
-import {ListSeparator, Detail} from '../../components/list'
-import type {
-	Movie,
-	MovieShowing,
-	MovieRating,
-	PosterInfo,
-	RGBTuple,
-	MovieTrailer,
-} from './types'
+import {Row} from '../../components/layout'
+import {rgb} from 'polished'
+import type {Movie, RGBTuple} from './types'
+import {
+	Header,
+	MovieInfo,
+	Title,
+	Spacer,
+	FixedSpacer,
+	LineSeparator,
+} from './components/parts'
+import {Pill} from './components/pill'
 import {Poster} from './components/poster'
-
-function normalizeScore(score: string): ?number {
-	if (score.endsWith('%')) {
-		// XX%
-		score = score.replace('%', '')
-		return parseInt(score)
-	} else if (score.includes('/')) {
-		// X/10
-		score = score.split('/')[0]
-		return Math.round(parseFloat(score) * 10)
-	}
-
-	return null
-}
-
-function colorizeScore(score: string) {
-	let numScore = normalizeScore(score)
-
-	if (!numScore) {
-		return 'black'
-	}
-
-	const MAX_VALUE = 200
-	const normalizedScore = Math.round(numScore / 100 * MAX_VALUE)
-
-	return `rgb(${MAX_VALUE - normalizedScore}, ${normalizedScore}, 0)`
-}
+import {TrailerBackground} from './components/trailer-background'
+import {PlayTrailerButton} from './components/play-trailer-button'
+import {Genres} from './components/genres'
+import {
+	RottenTomatoesRating,
+	ImdbRating,
+	MpaaRating,
+} from './components/ratings.js'
+import {Showings} from './components/showings'
+import {Plot} from './components/plot'
+import {Credits} from './components/credits'
+import {ImdbLink} from './components/imdb'
 
 type ReactProps = TopLevelViewPropsType
 
@@ -80,8 +55,7 @@ type Props = ReduxStateProps & ReduxDispatchProps & ReactProps
 const makeRgb = (tuple: RGBTuple) => rgb(...tuple)
 
 export class PlainWeeklyMovieView extends React.Component<Props> {
-	static navigationOptions = (...args: any) => {
-		// console.log(args)
+	static navigationOptions = () => {
 		return {
 			headerTintColor: c.white,
 			headerStyle: {
@@ -95,26 +69,6 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 
 	componentWillMount() {
 		this.props.getWeeklyMovie()
-	}
-
-	componentWillReceiveProps(nextProps: Props) {
-		const {movie: thisMovie} = this.props
-		const {movie: nextMovie} = nextProps
-
-		let oldTint = null
-		let newTint = null
-		if (!thisMovie && nextMovie) {
-			newTint = nextMovie.posterColors.dominant
-		} else if (thisMovie && !nextMovie) {
-			newTint = c.white
-		} else if (thisMovie && nextMovie) {
-			oldTint = thisMovie.posterColors.dominant
-			newTint = thisMovie.posterColors.dominant
-		}
-
-		if (oldTint !== newTint) {
-			this.props.navigation.setParams({tintColor: newTint})
-		}
 	}
 
 	render() {
@@ -186,7 +140,7 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 					</Row>
 				</Header>
 
-				<MovieInfo>
+				<MovieInfo movie={movie}>
 					<Row>
 						<Title>{movie.info.Title}</Title>
 					</Row>
@@ -194,10 +148,10 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 					<Row alignItems="center" marginBottom={16} marginTop={4}>
 						<Genres genres={movie.info.Genre} />
 						<Spacer />
-						<ReleaseYear marginRight={4}>
+						<Pill bgColorName="blue" marginRight={4}>
 							{moment(movie.info.releaseDate).format('YYYY')}
-						</ReleaseYear>
-						<RunTime>{movie.info.Runtime}</RunTime>
+						</Pill>
+						<Pill bgColorName="lime">{movie.info.Runtime}</Pill>
 					</Row>
 
 					<Row alignItems="center">
@@ -211,19 +165,15 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 
 				<Showings showings={movie.showings} />
 
+				<LineSeparator />
+
 				<Plot text={movie.info.Plot} />
 
-				<PaddedCard>
-					<WritersDirectors
-						directors={movie.info.Director}
-						writers={movie.info.Writer}
-					/>
-
-					<Column>
-						<Heading>Cast</Heading>
-						<Text>{movie.info.Actors}</Text>
-					</Column>
-				</PaddedCard>
+				<Credits
+					actors={movie.info.Actors}
+					directors={movie.info.Director}
+					writers={movie.info.Writer}
+				/>
 
 				<ImdbLink id={movie.info.imdbID} />
 
@@ -254,417 +204,8 @@ export const WeeklyMovieView = connect(mapState, mapDispatch)(
 	PlainWeeklyMovieView,
 )
 
-const Header = glamorous.view({
-	backgroundColor: 'gray',
-	position: 'relative',
-})
-
-const TrailerBackground = (props: {
-	trailer: MovieTrailer,
-	tint: string,
-	height: number,
-}) => {
-	const {trailer, tint, height} = props
-
-	// TODO: find the largest size beneath `ideal`
-	const thumbnail = trailer.thumbnails.find(thm => thm.width === 640)
-
-	// TODO: provide a fallback image
-	const uri = thumbnail ? thumbnail.url : ''
-
-	const gradient = [
-		c.transparent,
-		c.transparent,
-		setLightness(0.35, setSaturation(0.25, tint)),
-		// darken(0.2, transparentize(0, tint)),
-	]
-
-	return (
-		<glamorous.View>
-			<glamorous.Image
-				height={height}
-				resizeMode="cover"
-				source={{uri}}
-				width={Dimensions.get('window').width}
-			/>
-
-			<LinearGradient
-				colors={gradient}
-				locations={[0, 0.66, 1]}
-				style={StyleSheet.absoluteFill}
-			/>
-
-			<TriangleOverlay
-				height={height / 2.5}
-				width={Dimensions.get('window').width}
-			/>
-		</glamorous.View>
-	)
-}
-
-const TriangleOverlay = ({height, width}: {height: number, width: number}) => {
-	return (
-		<glamorous.View
-			backgroundColor="transparent"
-			borderBottomColor="#fff"
-			borderBottomWidth={height}
-			borderLeftColor="transparent"
-			borderLeftWidth={0}
-			borderRightColor="transparent"
-			borderRightWidth={width}
-			borderStyle="solid"
-			bottom={0}
-			height={0}
-			position="absolute"
-			right={0}
-			width={0}
-		/>
-	)
-}
-
-const PlayTrailerButton = (props: {
-	right: number,
-	tint: string,
-	trailer: MovieTrailer,
-}) => {
-	const {right, tint, trailer} = props
-	const size = 50
-
-	return (
-		<Touchable
-			underlayColor={darken(0.1, tint)}
-			containerStyle={{
-				marginRight: right,
-				backgroundColor: tint,
-				borderRadius: size,
-				shadowColor: setLightness(0.35, setSaturation(0.15, props.tint)),
-				shadowOffset: {height: 2, width: 0},
-				shadowOpacity: 0.3,
-			}}
-			style={{
-				height: size,
-				width: size,
-				alignItems: 'center',
-				justifyContent: 'center',
-			}}
-		>
-			<Icon
-				name={Platform.OS === 'ios' ? 'ios-play' : 'md-play'}
-				style={{
-					color: c.white,
-					fontSize: size * (3 / 5),
-					textAlign: 'center',
-				}}
-			/>
-		</Touchable>
-	)
-}
-
-const Padding = glamorous.view({
-	paddingHorizontal: 16,
-})
-
-const MovieInfo = glamorous(Padding)({
-	marginTop: 18,
-})
-
-const Spacer = glamorous.view({flex: 1})
-
-const FixedSpacer = glamorous.view({flexBasis: 16})
-
-const MpaaRating = ({rated}) => (
-	<glamorous.View
-		//alignSelf="baseline"
-		borderWidth={1}
-		paddingHorizontal={4}
-		paddingVertical={1}
-	>
-		<glamorous.Text fontFamily="Palatino" fontWeight="700" textAlign="center">
-			{rated}
-		</glamorous.Text>
-	</glamorous.View>
-)
-
-const Title = glamorous.text({
-	...Platform.select({
-		ios: human.title1Object,
-	}),
-})
-
-const Genres = ({genres}) => {
-	return genres
-		.toLowerCase()
-		.split(', ')
-		.map(genre => (
-			<Pill key={genre} bgColorName="mediumGray" marginRight={4}>
-				{genre}
-			</Pill>
-		))
-}
-
-const Pill = ({children, bgColorName, ...props}) => (
-	<glamorous.View
-		backgroundColor={c.sto[bgColorName]}
-		borderRadius={50}
-		{...props}
-	>
-		<glamorous.Text
-			color={c.stoText[bgColorName]}
-			fontSize={12}
-			fontVariant={['small-caps']}
-			paddingBottom={3}
-			paddingHorizontal={8}
-			paddingTop={1}
-		>
-			{children}
-		</glamorous.Text>
-	</glamorous.View>
-)
-
-const ReleaseYear = ({children, ...props}) => (
-	<Pill bgColorName="blue" {...props}>
-		{children}
-	</Pill>
-)
-
-const RunTime = ({children, ...props}) => (
-	<Pill bgColorName="lime" {...props}>
-		{children}
-	</Pill>
-)
-
-const WritersDirectors = ({writers, directors}) => {
-	if (writers === directors) {
-		return (
-			<React.Fragment>
-				<Column marginBottom={16}>
-					<Heading>Written and Directed By</Heading>
-					<Text>{directors}</Text>
-				</Column>
-			</React.Fragment>
-		)
-	}
-
-	return (
-		<React.Fragment>
-			<Column marginBottom={16}>
-				<Heading>Directed By</Heading>
-				<Text>{directors}</Text>
-			</Column>
-			<Column marginBottom={16}>
-				<Heading>Written By</Heading>
-				<Text>{writers}</Text>
-			</Column>
-		</React.Fragment>
-	)
-}
-
-const Plot = ({text, ...props}: {text: string}) => {
-	return (
-		<Padding marginTop={16} {...props}>
-			<Text>{text}</Text>
-		</Padding>
-	)
-}
-
-const Card = glamorous.view({
-	borderRadius: 8,
-	shadowRadius: 12,
-	shadowOpacity: 0.2,
-	shadowOffset: {height: 4, width: 4},
-})
-
-const PaddedCard = ({children}) => (
-	<Card
-		marginHorizontal={16}
-		marginVertical={16}
-		paddingHorizontal={16}
-		paddingVertical={16}
-	>
-		{children}
-	</Card>
-)
-
-const PaddedShowingsCard = ({children}) => (
-	<Card marginHorizontal={10} marginVertical={16} paddingHorizontal={10}>
-		{children}
-	</Card>
-)
-
-const Heading = glamorous.text({...human.headlineObject})
-const Text = glamorous.text({...human.bodyObject})
-
-const ImdbRating = ({ratings}) => {
-	const rating = ratings.find(r => r.Source === 'Internet Movie Database')
-
-	if (!rating) {
-		return <glamorous.Text>Unrated</glamorous.Text>
-	}
-
-	const score = normalizeScore(rating.Value)
-	if (!score) {
-		return <glamorous.Text>Unrated</glamorous.Text>
-	}
-
-	const tint = colorizeScore(rating.Value)
-
-	return (
-		<glamorous.Text color={tint}>
-			<glamorous.Text fontSize={24} fontWeight="800">
-				{score / 10}
-			</glamorous.Text>
-			{' ⁄ '}
-			<glamorous.Text fontVariant={['small-caps']}>10</glamorous.Text>
-		</glamorous.Text>
-	)
-}
-
-const FullStar = () => (
-	<Icon name={Platform.OS === 'ios' ? 'ios-star' : 'md-star'} size={22} />
-)
-const HalfStar = () => (
-	<Icon
-		name={Platform.OS === 'ios' ? 'ios-star-half' : 'md-star-half'}
-		size={22}
-	/>
-)
-const EmptyStar = () => (
-	<Icon
-		name={Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'}
-		size={22}
-	/>
-)
-
-const RottenTomatoesRating = ({ratings}) => {
-	const rating = ratings.find(r => r.Source === 'Rotten Tomatoes')
-
-	if (!rating) {
-		return <glamorous.Text>Unrated</glamorous.Text>
-	}
-
-	const score = normalizeScore(rating.Value)
-	if (!score) {
-		return <glamorous.Text>Unrated</glamorous.Text>
-	}
-
-	const stars = Math.round(score / 20)
-	const starIcons = []
-	for (let i = 0; i < 5; i++) {
-		if (i < stars) {
-			starIcons.push(<FullStar key={i} />)
-		} else if (i === stars && i % 2 === 1) {
-			starIcons.push(<HalfStar key={i} />)
-		} else {
-			starIcons.push(<EmptyStar key={i} />)
-		}
-	}
-
-	const tint = colorizeScore(rating.Value)
-	return <glamorous.Text color={tint}>{starIcons}</glamorous.Text>
-}
-
-type ShowingsProps = {
-	showings: Array<MovieShowing>,
-}
-
-class Showings extends React.Component<ShowingsProps> {
-	renderRow = ({item}: {item: MovieShowing}) => (
-		<PaddedShowingsCard>
-			<Row alignItems="flex-start">
-				<Row alignItems="flex-end">
-					<Detail lines={1} style={[styles.showingsDay, styles.shared]}>
-						{moment(item.time).format('D')}
-					</Detail>
-					<Detail lines={1} style={styles.showingsLocation}>
-						{item.location.toUpperCase()}
-					</Detail>
-				</Row>
-				<Row alignItems="flex-end">
-					<Detail lines={1} style={[styles.showingsMonth, styles.shared]}>
-						{moment(item.time)
-							.format('MMM')
-							.toUpperCase()}
-					</Detail>
-					<Detail lines={1} style={styles.showingsTime}>
-						{moment(item.time).format('h:mmA')}
-					</Detail>
-				</Row>
-			</Row>
-		</PaddedShowingsCard>
-	)
-
-	keyExtractor = (item: MovieShowing) => item.time
-
-	render() {
-		if (!this.props.showings) {
-			return null
-		}
-
-		return (
-			<React.Fragment>
-				<FlatList
-					ListEmptyComponent={
-						<Text style={styles.noShowings}>No Showings</Text>
-					}
-					data={this.props.showings}
-					horizontal={true}
-					keyExtractor={this.keyExtractor}
-					renderItem={this.renderRow}
-					showsHorizontalScrollIndicator={false}
-				/>
-				<ListSeparator fullWidth={true} />
-			</React.Fragment>
-		)
-	}
-}
-
-class ImdbLink extends React.Component<{id: string}> {
-	url = id => `https://www.imdb.com/title/${id}`
-	open = () => openUrl(this.url(this.props.id))
-
-	render() {
-		if (!this.props.id) {
-			return null
-		}
-
-		return (
-			<glamorous.Text
-				color={c.infoBlue}
-				fontSize={17}
-				marginLeft={16}
-				onPress={this.open}
-				paddingVertical={14}
-			>
-				Open IMDB Page
-			</glamorous.Text>
-		)
-	}
-}
-
 const styles = StyleSheet.create({
 	contentContainer: {
 		backgroundColor: c.white,
-	},
-	showingsLocation: {
-		fontSize: 14,
-		marginBottom: 3,
-	},
-	showingsDay: {
-		color: c.black,
-		fontSize: 22,
-	},
-	showingsMonth: {
-		color: c.black,
-		fontSize: 13,
-	},
-	showingsTime: {
-		color: c.black,
-		fontSize: 13,
-	},
-	shared: {
-		marginRight: 20,
-	},
-	noShowings: {
-		margin: 20,
 	},
 })
