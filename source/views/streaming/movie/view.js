@@ -20,23 +20,12 @@ import openUrl from '../../components/open-url'
 import glamorous from 'glamorous-native'
 import {type TopLevelViewPropsType} from '../../types'
 import {Row, Column} from '../../components/layout'
-import {iOSUIKit, human, material} from 'react-native-typography'
-import {
-	darken,
-	setSaturation,
-	transparentize,
-	setLightness,
-	rgb,
-} from 'polished'
+import {human, material} from 'react-native-typography'
+import {darken, setSaturation, setLightness, rgb} from 'polished'
 import {Touchable} from '../../components/touchable'
 import Icon from 'react-native-vector-icons/Ionicons'
 import LinearGradient from 'react-native-linear-gradient'
-import {
-	ListRow,
-	ListSectionHeader,
-	ListSeparator,
-	Detail,
-} from '../../components/list'
+import {ListSeparator, Detail} from '../../components/list'
 import type {
 	Movie,
 	MovieShowing,
@@ -45,6 +34,7 @@ import type {
 	RGBTuple,
 	MovieTrailer,
 } from './types'
+import {Poster} from './components/poster'
 
 function normalizeScore(score: string): ?number {
 	if (score.endsWith('%')) {
@@ -331,57 +321,6 @@ const TriangleOverlay = ({height, width}: {height: number, width: number}) => {
 			width={0}
 		/>
 	)
-}
-
-const Poster = (props: PosterProps & {left: number}) => {
-	// TODO: find way to avoid backgroundColor:transparent on wrapper
-	return (
-		<glamorous.View
-			backgroundColor={c.transparent}
-			//bottom={0}
-			//left={props.left}
-			//position="absolute"
-			shadowColor={setLightness(0.35, setSaturation(0.25, props.tint))}
-			shadowOffset={{height: 4, width: 0}}
-			shadowOpacity={0.8}
-			shadowRadius={12}
-		>
-			<PosterImage {...props} />
-		</glamorous.View>
-	)
-}
-
-type PosterProps = {
-	sizes: Array<PosterInfo>,
-	ideal: number,
-	tint: string,
-}
-
-type PosterState = {}
-
-class PosterImage extends React.Component<PosterProps, PosterState> {
-	render() {
-		const {sizes, ideal, tint} = this.props
-
-		// TODO: find the largest size beneath `ideal`
-		const poster = sizes.find(p => p.width === ideal)
-
-		// TODO: provide a fallback image
-		const uri = poster ? poster.url : ''
-
-		return (
-			<glamorous.Image
-				accessibilityLabel="Movie Poster"
-				borderRadius={8}
-				// defaultSource
-				height={Dimensions.get('window').width / 3 * 1.5}
-				overflow="hidden"
-				resizeMode="cover"
-				source={{uri}}
-				width={Dimensions.get('window').width / 3}
-			/>
-		)
-	}
 }
 
 const PlayTrailerButton = (props: {
