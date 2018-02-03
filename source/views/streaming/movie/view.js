@@ -3,8 +3,7 @@
 import * as React from 'react'
 import {
 	StyleSheet,
-	SectionList,
-	View,
+	FlatList,
 	ScrollView,
 	Dimensions,
 	Platform,
@@ -216,8 +215,8 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 
 				<PaddedCard>
 					<WritersDirectors
-						writers={movie.info.Writer}
 						directors={movie.info.Director}
+						writers={movie.info.Writer}
 					/>
 
 					<Column>
@@ -564,63 +563,57 @@ const RottenTomatoesRating = ({ratings}) => {
 	return <glamorous.Text color={tint}>{starIcons}</glamorous.Text>
 }
 
-class Showings extends React.Component {
-	renderRow = ({item}: {item: Movie}) => (
+type ShowingsProps = {
+	showings: Array<MovieShowing>,
+}
+
+class Showings extends React.Component<ShowingsProps> {
+	renderRow = ({item}: {item: MovieShowing}) => (
 		<PaddedShowingsCard>
-			<ListRow
-				contentContainerStyle={[styles.row]}
-				arrowPosition="none"
-				fullWidth={true}
-			>
-				<Row alignItems="flex-start">
-					<Column flex={1}>
-						<Row alignItems="flex-end">
-							<Detail style={[styles.showingsDay, styles.shared]} lines={1}>
-								{moment(item.time).format('D')}
-							</Detail>
-							<Detail style={styles.showingsLocation} lines={1}>
-								{item.location.toUpperCase()}
-							</Detail>
-						</Row>
-						<Row alignItems="flex-end">
-							<Detail style={[styles.showingsMonth, styles.shared]} lines={1}>
-								{moment(item.time)
-									.format('MMM')
-									.toUpperCase()}
-							</Detail>
-							<Detail style={styles.showingsTime} lines={1}>
-								{moment(item.time).format('h:mmA')}
-							</Detail>
-						</Row>
-					</Column>
+			<Row alignItems="flex-start">
+				<Row alignItems="flex-end">
+					<Detail lines={1} style={[styles.showingsDay, styles.shared]}>
+						{moment(item.time).format('D')}
+					</Detail>
+					<Detail lines={1} style={styles.showingsLocation}>
+						{item.location.toUpperCase()}
+					</Detail>
 				</Row>
-			</ListRow>
+				<Row alignItems="flex-end">
+					<Detail lines={1} style={[styles.showingsMonth, styles.shared]}>
+						{moment(item.time)
+							.format('MMM')
+							.toUpperCase()}
+					</Detail>
+					<Detail lines={1} style={styles.showingsTime}>
+						{moment(item.time).format('h:mmA')}
+					</Detail>
+				</Row>
+			</Row>
 		</PaddedShowingsCard>
 	)
 
-	keyExtractor = (item: Movie) => item.time
+	keyExtractor = (item: MovieShowing) => item.time
 
 	render() {
 		if (!this.props.showings) {
 			return null
 		}
 
-		const sections = [{title: 'Showings', data: this.props.showings}]
-
 		return (
-			<View style={styles.showingsWrapper}>
-				<SectionList
+			<React.Fragment>
+				<FlatList
+					ListEmptyComponent={
+						<Text style={styles.noShowings}>No Showings</Text>
+					}
+					data={this.props.showings}
 					horizontal={true}
-					showsHorizontalScrollIndicator={false}
-					ListEmptyComponent={<Text style={styles.noShowings}>No Showings</Text>}
-					sections={sections}
-					ItemSeparatorComponent={this.renderSeparator}
 					keyExtractor={this.keyExtractor}
-					style={styles.listContainer}
 					renderItem={this.renderRow}
+					showsHorizontalScrollIndicator={false}
 				/>
-        <ListSeparator fullWidth={true} />
-			</View>
+				<ListSeparator fullWidth={true} />
+			</React.Fragment>
 		)
 	}
 }
@@ -633,17 +626,6 @@ class ImdbLink extends React.Component<{id: string}> {
 		if (!this.props.id) {
 			return null
 		}
-
-		// return (
-		//  <glamorous.Text
-		//    color={c.infoBlue}
-		//    //fontVariant={['small-caps']}
-		//    onPress={this.open}
-		//  >
-		//    IMDB{' '}
-		//    <Icon name={Platform.OS === 'ios' ? 'ios-open-outline' : 'md-open'} size={16} />
-		//  </glamorous.Text>
-		// )
 
 		return (
 			<glamorous.Text
@@ -682,7 +664,7 @@ const styles = StyleSheet.create({
 	shared: {
 		marginRight: 20,
 	},
-  noShowings: {
-    margin: 20,
-  },
+	noShowings: {
+		margin: 20,
+	},
 })
