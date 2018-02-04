@@ -79,7 +79,7 @@ exports[`can change the title 1`] = `
   }
   styleDisabled={
     Object {
-      "color": "rgb(143, 143, 143)",
+      "color": "rgb(142, 142, 147)",
     }
   }
 >
@@ -120,7 +120,7 @@ exports[`renders 1`] = `
   }
   styleDisabled={
     Object {
-      "color": "rgb(143, 143, 143)",
+      "color": "rgb(142, 142, 147)",
     }
   }
 >
