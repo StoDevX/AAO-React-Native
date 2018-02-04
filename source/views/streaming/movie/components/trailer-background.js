@@ -32,12 +32,11 @@ export const TrailerBackground = (props: Props) => {
 	]
 
 	return (
-		<glamorous.View>
+		<glamorous.View height={height} width={Dimensions.get('window').width}>
 			<glamorous.Image
-				height={height}
 				resizeMode="cover"
 				source={{uri}}
-				width={Dimensions.get('window').width}
+				style={StyleSheet.absoluteFill}
 			/>
 
 			<LinearGradient
