@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {Heading, Text, Padding} from './parts'
+import {Heading, Text, Padding, SectionHeading} from './parts'
 import {Column} from '../../../components/layout'
 
 type Props = {
@@ -12,29 +12,32 @@ type Props = {
 
 export const Credits = ({directors, writers, actors}: Props) => {
 	return (
-		<Padding marginBottom={16} marginTop={4}>
-			{writers === directors ? (
-				<Column marginBottom={16}>
-					<Heading>Written and Directed By</Heading>
-					<Text>{directors}</Text>
-				</Column>
-			) : (
-				<React.Fragment>
+		<React.Fragment>
+			<SectionHeading>CREDITS</SectionHeading>
+			<Padding marginTop={4}>
+				{writers === directors ? (
 					<Column marginBottom={16}>
-						<Heading>Directed By</Heading>
+						<Heading>Written and Directed By</Heading>
 						<Text>{directors}</Text>
 					</Column>
-					<Column marginBottom={16}>
-						<Heading>Written By</Heading>
-						<Text>{writers}</Text>
-					</Column>
-				</React.Fragment>
-			)}
+				) : (
+					<React.Fragment>
+						<Column marginBottom={16}>
+							<Heading>Directed By</Heading>
+							<Text>{directors}</Text>
+						</Column>
+						<Column marginBottom={16}>
+							<Heading>Written By</Heading>
+							<Text>{writers}</Text>
+						</Column>
+					</React.Fragment>
+				)}
 
-			<Column>
-				<Heading>Cast</Heading>
-				<Text>{actors}</Text>
-			</Column>
-		</Padding>
+				<Column>
+					<Heading>Cast</Heading>
+					<Text>{actors}</Text>
+				</Column>
+			</Padding>
+		</React.Fragment>
 	)
 }

@@ -15,14 +15,7 @@ import * as c from '../../components/colors'
 import {Row} from '../../components/layout'
 import {type TopLevelViewPropsType} from '../../types'
 
-import {
-	Header,
-	MovieInfo,
-	Title,
-	Spacer,
-	FixedSpacer,
-	SectionHeading,
-} from './components/parts'
+import {Header, MovieInfo, Title, Spacer, FixedSpacer} from './components/parts'
 import {Separator} from '../../components/separator'
 import {Pill} from './components/pill'
 import {Poster} from './components/poster'
@@ -170,10 +163,8 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 
 				<Separator />
 
-				<SectionHeading>PLOT</SectionHeading>
 				<Plot text={movie.info.Plot} />
 
-				<SectionHeading>CREDITS</SectionHeading>
 				<Credits
 					actors={movie.info.Actors}
 					directors={movie.info.Director}
