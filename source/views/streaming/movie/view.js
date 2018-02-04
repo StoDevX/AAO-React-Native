@@ -3,25 +3,26 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView, Dimensions} from 'react-native'
 import {connect} from 'react-redux'
-import {getWeeklyMovie} from '../../../flux/parts/weekly-movie'
-import {type ReduxState} from '../../../flux'
-import LoadingView from '../../components/loading'
-import {NoticeView} from '../../components/notice'
-import * as c from '../../components/colors'
 import moment from 'moment-timezone'
 import glamorous from 'glamorous-native'
-import {type TopLevelViewPropsType} from '../../types'
-import {Row} from '../../components/layout'
 import {rgb} from 'polished'
-import type {Movie, RGBTuple} from './types'
+
+import {getWeeklyMovie} from '../../../flux/parts/weekly-movie'
+import {type ReduxState} from '../../../flux'
+import {NoticeView} from '../../components/notice'
+import LoadingView from '../../components/loading'
+import * as c from '../../components/colors'
+import {Row} from '../../components/layout'
+import {type TopLevelViewPropsType} from '../../types'
+
 import {
 	Header,
 	MovieInfo,
 	Title,
 	Spacer,
 	FixedSpacer,
-	LineSeparator,
 } from './components/parts'
+import {Separator} from '../../components/separator'
 import {Pill} from './components/pill'
 import {Poster} from './components/poster'
 import {TrailerBackground} from './components/trailer-background'
@@ -36,6 +37,7 @@ import {Showings} from './components/showings'
 import {Plot} from './components/plot'
 import {Credits} from './components/credits'
 import {ImdbLink} from './components/imdb'
+import type {Movie, RGBTuple} from './types'
 
 type ReactProps = TopLevelViewPropsType
 
@@ -165,7 +167,7 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 
 				<Showings showings={movie.showings} />
 
-				<LineSeparator />
+				<Separator />
 
 				<Plot text={movie.info.Plot} />
 

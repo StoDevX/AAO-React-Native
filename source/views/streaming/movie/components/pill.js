@@ -6,14 +6,12 @@ import glamorous from 'glamorous-native'
 
 type Colors = $Keys<typeof c.sto>
 
-export const Pill = ({
-	children,
-	bgColorName,
-	...props
-}: {
+type Props = {
 	children: React.Node,
 	bgColorName: Colors,
-}) => (
+}
+
+export const Pill = ({children, bgColorName, ...props}: Props) => (
 	<glamorous.View
 		backgroundColor={c.sto[bgColorName]}
 		borderRadius={50}
