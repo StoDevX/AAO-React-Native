@@ -19,122 +19,127 @@ import {API} from '@frogpond/api'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 const styles = StyleSheet.create({
-	listContainer: {
-		backgroundColor: c.white,
-	},
+    listContainer: {
+        backgroundColor: c.white,
+    },
 })
 
 type Props = {}
 
 type State = {
-	error: ?string,
-	loading: boolean,
-	refreshing: boolean,
-	streams: Array<{title: string, data: Array<StreamType>}>,
+    error: ?string,
+    loading: boolean,
+    refreshing: boolean,
+    streams: Array<{title: string, data: Array<StreamType>}>,
 }
 
 export class StreamListView extends React.PureComponent<Props, State> {
-	state = {
-		error: null,
-		loading: true,
-		refreshing: false,
-		streams: [],
-	}
+    static navigationOptions = {
+        tabBarLabel: 'Streaming',
+        tabBarIcon: TabBarIcon('recording'),
+    }
 
-	componentDidMount() {
-		this.getStreams().then(() => {
-			this.setState(() => ({loading: false}))
-		})
-	}
+    state = {
+        error: null,
+        loading: true,
+        refreshing: false,
+        streams: [],
+    }
 
-	refresh = async (): any => {
-		let start = Date.now()
-		this.setState(() => ({refreshing: true}))
+    componentDidMount() {
+        this.getStreams().then(() => {
+            this.setState(() => ({loading: false}))
+        })
+    }
 
-		await this.getStreams()
+    refresh = async (): any => {
+        let start = Date.now()
+        this.setState(() => ({refreshing: true}))
 
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
+        await this.getStreams()
 
-		this.setState(() => ({refreshing: false}))
-	}
+        // wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+        const elapsed = Date.now() - start
+        if (elapsed < 500) {
+            await delay(500 - elapsed)
+        }
 
-	getStreams = async (date: moment = moment.tz(CENTRAL_TZ)) => {
-		try {
-			const dateFrom = date.format('YYYY-MM-DD')
-			const dateTo = date
-				.clone()
-				.add(2, 'month')
-				.format('YYYY-MM-DD')
+        this.setState(() => ({refreshing: false}))
+    }
 
-			let params = {
-				sort: 'ascending',
-				dateFrom,
-				dateTo,
-			}
+    getStreams = async (date: moment = moment.tz(CENTRAL_TZ)) => {
+        try {
+            const dateFrom = date.format('YYYY-MM-DD')
+            const dateTo = date
+                .clone()
+                .add(2, 'month')
+                .format('YYYY-MM-DD')
 
-			const data = await fetchJson(API('/streams/upcoming', params))
+            let params = {
+                sort: 'ascending',
+                dateFrom,
+                dateTo,
+            }
 
-			// force title-case on the stream types, to prevent not-actually-duplicate headings
-			const processed = data
-				.filter(stream => stream.category !== 'athletics')
-				.map(stream => {
-					const date = moment(stream.starttime)
-					const group =
-						stream.status.toLowerCase() !== 'live'
-							? date.format('dddd, MMMM Do')
-							: 'Live'
+            const data = await fetchJson(API('/streams/upcoming', params))
 
-					return {
-						...stream,
-						category: titleCase(stream.category),
-						date: date,
-						$groupBy: group,
-					}
-				})
+            // force title-case on the stream types, to prevent not-actually-duplicate headings
+            const processed = data
+                .filter(stream => stream.category !== 'athletics')
+                .map(stream => {
+                    const date = moment(stream.starttime)
+                    const group =
+                        stream.status.toLowerCase() !== 'live'
+                            ? date.format('dddd, MMMM Do')
+                            : 'Live'
 
-			const grouped = groupBy(processed, j => j.$groupBy)
-			const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
+                    return {
+                        ...stream,
+                        category: titleCase(stream.category),
+                        date: date,
+                        $groupBy: group,
+                    }
+                })
 
-			this.setState(() => ({error: null, streams: mapped}))
-		} catch (error) {
-			this.setState(() => ({error: error.message}))
-			console.warn(error)
-		}
-	}
+            const grouped = groupBy(processed, j => j.$groupBy)
+            const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
 
-	keyExtractor = (item: StreamType) => item.eid
+            this.setState(() => ({error: null, streams: mapped}))
+        } catch (error) {
+            this.setState(() => ({error: error.message}))
+            console.warn(error)
+        }
+    }
 
-	renderSectionHeader = ({section: {title}}: any) => (
-		<ListSectionHeader title={title} />
-	)
+    keyExtractor = (item: StreamType) => item.eid
 
-	renderItem = ({item}: {item: StreamType}) => <StreamRow stream={item} />
+    renderSectionHeader = ({section: {title}}: any) => (
+        <ListSectionHeader title={title} />
+    )
 
-	render() {
-		if (this.state.loading) {
-			return <LoadingView />
-		}
+    renderItem = ({item}: {item: StreamType}) => <StreamRow stream={item} />
 
-		if (this.state.error) {
-			return <NoticeView text={`Error: ${this.state.error}`} />
-		}
+    render() {
+        if (this.state.loading) {
+            return <LoadingView />
+        }
 
-		return (
-			<SectionList
-				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<NoticeView text="No Streams" />}
-				keyExtractor={this.keyExtractor}
-				onRefresh={this.refresh}
-				refreshing={this.state.refreshing}
-				renderItem={this.renderItem}
-				renderSectionHeader={this.renderSectionHeader}
-				sections={(this.state.streams: any)}
-				style={styles.listContainer}
-			/>
-		)
-	}
+        if (this.state.error) {
+            return <NoticeView text={`Error: ${this.state.error}`} />
+        }
+
+        return (
+            <SectionList
+                ItemSeparatorComponent={ListSeparator}
+                ListEmptyComponent={<NoticeView text="No Streams" />}
+                keyExtractor={this.keyExtractor}
+                onRefresh={this.refresh}
+                refreshing={this.state.refreshing}
+                renderItem={this.renderItem}
+                renderSectionHeader={this.renderSectionHeader}
+                sections={(this.state.streams: any)}
+                style={styles.listContainer}
+            />
+        )
+    }
 }
