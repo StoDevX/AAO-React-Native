@@ -156,9 +156,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 							onCancel={this.onCancel}
 							onFocus={this.onFocus}
 							onSearchButtonPress={text => {
-								Platform.OS === 'ios'
-									? this.searchBar.unFocus()
-									: this.searchBar.hide()
+								if (Platform.OS === 'ios') this.searchBar.unFocus()
 								this.performSearch(text)
 							}}
 						/>
