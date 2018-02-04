@@ -2,16 +2,18 @@
 
 import * as React from 'react'
 import * as c from '../../../components/colors'
-import moment from 'moment-timezone'
 import glamorous from 'glamorous-native'
 import {Row, Column} from '../../../components/layout'
-import type {MovieShowing} from '../types'
+import type {MovieShowing, GroupedShowing} from '../types'
 import {Card} from './parts'
+import {groupShowings} from '../lib/group-showings'
 
 export const Showings = ({showings}: {showings: ?Array<MovieShowing>}) => {
 	if (!showings || !showings.length) {
 		return <glamorous.Text>No Showings</glamorous.Text>
 	}
+
+	const grouped = groupShowings(showings)
 
 	return (
 		<glamorous.ScrollView
@@ -19,7 +21,7 @@ export const Showings = ({showings}: {showings: ?Array<MovieShowing>}) => {
 			overflow="hidden"
 			showsHorizontalScrollIndicator={false}
 		>
-			{showings.map(s => <ShowingTile key={s.time} item={s} />)}
+			{grouped.map(s => <ShowingTile key={s.key} item={s} />)}
 		</glamorous.ScrollView>
 	)
 }
@@ -54,30 +56,18 @@ const SmallText = glamorous.text({
 	fontVariant: ['small-caps'],
 })
 
-const ShowingTile = ({item}: {item: MovieShowing}) => {
-	const m = moment(item.time)
-
-	const date = m.format('D')
-	const month = m.format('MMM').toLowerCase()
-
-	const time =
-		m.minutes() === 0
-			? m.format('hA').toLowerCase()
-			: m.format('h:mmA').toLowerCase()
-
-	const location = item.location
-
+const ShowingTile = ({item}: {item: GroupedShowing}) => {
 	return (
 		<PaddedShowingsCard>
 			<Row>
 				<Column alignItems="center">
-					<BigText>{date}</BigText>
-					<SmallText>{month}</SmallText>
+					<BigText>{item.date}</BigText>
+					<SmallText>{item.month}</SmallText>
 				</Column>
 				<glamorous.View width={10} />
 				<Column>
-					<DimText lines={1}>{location}</DimText>
-					<SmallText>{time}</SmallText>
+					<DimText lines={1}>{item.location}</DimText>
+					<SmallText>{item.times.join(' • ')}</SmallText>
 				</Column>
 			</Row>
 		</PaddedShowingsCard>
