@@ -29,6 +29,15 @@ export const Title = glamorous.text({
 	}),
 })
 
+export const SectionHeading = glamorous.text({
+	...Platform.select({
+		ios: human.subheadObject,
+	}),
+	fontWeight: '900',
+	paddingHorizontal: 16,
+	marginTop: 24,
+})
+
 export const Card = glamorous.view({
 	borderRadius: 8,
 	shadowRadius: 12,
@@ -37,15 +46,13 @@ export const Card = glamorous.view({
 })
 
 export const PaddedCard = ({children}: {children: React.Node}) => (
-	<Card
-		marginHorizontal={16}
-		marginVertical={16}
-		paddingHorizontal={16}
-		paddingVertical={16}
-	>
+	<Card margin={16} padding={16}>
 		{children}
 	</Card>
 )
 
-export const Heading = glamorous.text({...human.headlineObject})
+export const Heading = glamorous.text({
+	...human.subheadObject,
+	fontWeight: '700',
+})
 export const Text = glamorous.text({...human.bodyObject})

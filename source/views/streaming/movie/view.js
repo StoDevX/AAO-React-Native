@@ -138,9 +138,7 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 				</Header>
 
 				<MovieInfo movie={movie}>
-					<Row>
-						<Title>{movie.info.Title}</Title>
-					</Row>
+					<Title>{movie.info.Title}</Title>
 
 					<Row alignItems="center" marginBottom={16} marginTop={4}>
 						<Genres genres={movie.info.Genre} />
@@ -164,8 +162,10 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 
 				<Separator />
 
+				<SectionHeading>PLOT</SectionHeading>
 				<Plot text={movie.info.Plot} />
 
+				<SectionHeading>CREDITS</SectionHeading>
 				<Credits
 					actors={movie.info.Actors}
 					directors={movie.info.Director}

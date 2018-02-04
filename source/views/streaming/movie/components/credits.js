@@ -1,8 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {Heading, Text} from './parts'
-import glamorous from 'glamorous-native'
+import {Heading, Text, Padding} from './parts'
 import {Column} from '../../../components/layout'
 
 type Props = {
@@ -13,7 +12,7 @@ type Props = {
 
 export const Credits = ({directors, writers, actors}: Props) => {
 	return (
-		<glamorous.View marginHorizontal={16} paddingVertical={16}>
+		<Padding marginBottom={16} marginTop={4}>
 			{writers === directors ? (
 				<Column marginBottom={16}>
 					<Heading>Written and Directed By</Heading>
@@ -36,6 +35,6 @@ export const Credits = ({directors, writers, actors}: Props) => {
 				<Heading>Cast</Heading>
 				<Text>{actors}</Text>
 			</Column>
-		</glamorous.View>
+		</Padding>
 	)
 }
