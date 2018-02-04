@@ -15,7 +15,14 @@ import * as c from '../../components/colors'
 import {Row} from '../../components/layout'
 import {type TopLevelViewPropsType} from '../../types'
 
-import {Header, MovieInfo, Title, Spacer, FixedSpacer} from './components/parts'
+import {
+	Header,
+	MovieInfo,
+	Title,
+	Spacer,
+	FixedSpacer,
+	SectionHeading,
+} from './components/parts'
 import {Separator} from '../../components/separator'
 import {Pill} from './components/pill'
 import {Poster} from './components/poster'
@@ -31,6 +38,7 @@ import {Showings} from './components/showings'
 import {Plot} from './components/plot'
 import {Credits} from './components/credits'
 import {ImdbLink} from './components/imdb'
+import {Trailers} from './components/trailers'
 import type {Movie, RGBTuple} from './types'
 
 type ReactProps = TopLevelViewPropsType
@@ -171,6 +179,8 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 					directors={movie.info.Director}
 					writers={movie.info.Writer}
 				/>
+
+				<Trailers trailers={movie.trailers} />
 
 				<ImdbLink id={movie.info.imdbID} />
 
