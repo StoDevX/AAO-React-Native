@@ -136,7 +136,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}
 		const containerAnimation = {height: this.containerHeight}
 		const {searchActive} = this.state
-		console.log('RENDER')
 
 		return (
 			<View style={styles.container}>
