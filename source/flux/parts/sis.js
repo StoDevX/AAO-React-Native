@@ -58,11 +58,9 @@ export type UpdateCourseDataActionType = ThunkAction<
 export function updateCourseData(): UpdateCourseDataActionType {
 	return async dispatch => {
 		dispatch({type: TERMS_UPDATE_START})
-		let updateNeeded = await updateStoredCourses()
-		if (updateNeeded) {
-			const cachedCourses = await loadCachedCourses()
-			dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
-		}
+		await updateStoredCourses()
+		const cachedCourses = await loadCachedCourses()
+		dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
 		dispatch({type: TERMS_UPDATE_COMPLETE})
 	}
 }
