@@ -15,13 +15,7 @@ import * as c from '../../components/colors'
 import {Row} from '../../components/layout'
 import {type TopLevelViewPropsType} from '../../types'
 
-import {
-	Header,
-	MovieInfo,
-	Title,
-	Spacer,
-	FixedSpacer,
-} from './components/parts'
+import {Header, MovieInfo, Title, Spacer, FixedSpacer} from './components/parts'
 import {Separator} from '../../components/separator'
 import {Pill} from './components/pill'
 import {Poster} from './components/poster'

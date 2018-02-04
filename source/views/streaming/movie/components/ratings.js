@@ -1,38 +1,32 @@
 // @flow
 
 import * as React from 'react'
-import {
-	StyleSheet,
-	FlatList,
-	ScrollView,
-	Dimensions,
-	Platform,
-} from 'react-native'
-import {connect} from 'react-redux'
-import {getWeeklyMovie} from '../../../flux/parts/weekly-movie'
-import {type ReduxState} from '../../../flux'
-import LoadingView from '../../components/loading'
-import {NoticeView} from '../../components/notice'
-import * as c from '../../components/colors'
-import moment from 'moment-timezone'
-import openUrl from '../../components/open-url'
+import {Platform} from 'react-native'
 import glamorous from 'glamorous-native'
-import {type TopLevelViewPropsType} from '../../types'
-import {Row, Column} from '../../components/layout'
-import {human, material} from 'react-native-typography'
-import {darken, setSaturation, setLightness, rgb} from 'polished'
-import {Touchable} from '../../components/touchable'
 import Icon from 'react-native-vector-icons/Ionicons'
-import type {
-	Movie,
-	MovieShowing,
-	MovieRating,
-	PosterInfo,
-	RGBTuple,
-	MovieTrailer,
-} from './types'
+import type {MovieRating} from '../types'
 
-export const ImdbRating = ({ratings}) => {
+type RatingsProps = {
+	ratings: Array<MovieRating>,
+}
+
+const FullStar = () => (
+	<Icon name={Platform.OS === 'ios' ? 'ios-star' : 'md-star'} size={22} />
+)
+const HalfStar = () => (
+	<Icon
+		name={Platform.OS === 'ios' ? 'ios-star-half' : 'md-star-half'}
+		size={22}
+	/>
+)
+const EmptyStar = () => (
+	<Icon
+		name={Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'}
+		size={22}
+	/>
+)
+
+export const ImdbRating = ({ratings}: RatingsProps) => {
 	const rating = ratings.find(r => r.Source === 'Internet Movie Database')
 
 	if (!rating) {
@@ -57,23 +51,7 @@ export const ImdbRating = ({ratings}) => {
 	)
 }
 
-const FullStar = () => (
-	<Icon name={Platform.OS === 'ios' ? 'ios-star' : 'md-star'} size={22} />
-)
-const HalfStar = () => (
-	<Icon
-		name={Platform.OS === 'ios' ? 'ios-star-half' : 'md-star-half'}
-		size={22}
-	/>
-)
-const EmptyStar = () => (
-	<Icon
-		name={Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'}
-		size={22}
-	/>
-)
-
-export const RottenTomatoesRating = ({ratings}) => {
+export const RottenTomatoesRating = ({ratings}: RatingsProps) => {
 	const rating = ratings.find(r => r.Source === 'Rotten Tomatoes')
 
 	if (!rating) {
@@ -101,13 +79,8 @@ export const RottenTomatoesRating = ({ratings}) => {
 	return <glamorous.Text color={tint}>{starIcons}</glamorous.Text>
 }
 
-export const MpaaRating = ({rated}) => (
-	<glamorous.View
-		//alignSelf="baseline"
-		borderWidth={1}
-		paddingHorizontal={4}
-		paddingVertical={1}
-	>
+export const MpaaRating = ({rated}: {rated: string}) => (
+	<glamorous.View borderWidth={1} paddingHorizontal={4} paddingVertical={1}>
 		<glamorous.Text fontFamily="Palatino" fontWeight="700" textAlign="center">
 			{rated}
 		</glamorous.Text>
