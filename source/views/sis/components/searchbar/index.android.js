@@ -5,6 +5,16 @@ import {StyleSheet} from 'react-native'
 import * as c from '../../../components/colors'
 // import SearchBar from 'react-native-material-design-searchbar'
 import SearchBar from 'react-native-searchbar'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+
+const iconStyles = StyleSheet.create({
+	icon: {
+		color: c.gray,
+	},
+})
+
+const searchIcon = <Icon name="search" size={28} style={iconStyles.icon} />
+const backIcon = <Icon name="arrow-back" size={28} style={iconStyles.icon} />
 
 const styles = StyleSheet.create({
 	searchbar: {
@@ -21,6 +31,7 @@ type Props = {
 	onCancel: () => any,
 	onFocus: () => any,
 	onSearchButtonPress: string => any,
+	searchActive: boolean,
 }
 
 type State = {
@@ -34,13 +45,15 @@ export class CourseSearchBar extends React.PureComponent<Props, State> {
 
 	updateText = input => {
 		this.setState({input: input})
-		console.log(input)
 	}
 
 	render() {
+		const backButton = this.props.searchActive ? backIcon : searchIcon
 		return (
 			<SearchBar
 				ref={this.props.getRef}
+				backButton={backButton}
+				focusOnLayout={false}
 				handleChangeText={this.updateText}
 				onBack={this.props.onCancel}
 				onFocus={this.props.onFocus}

@@ -124,6 +124,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			toValue: 125,
 			duration: 800,
 		}).start()
+		this.setState(() => ({searchActive: false}))
 	}
 
 	render() {
@@ -135,6 +136,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}
 		const containerAnimation = {height: this.containerHeight}
 		const {searchActive} = this.state
+		console.log('RENDER')
 
 		return (
 			<View style={styles.container}>
@@ -159,6 +161,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 								if (Platform.OS === 'ios') this.searchBar.unFocus()
 								this.performSearch(text)
 							}}
+							searchActive={searchActive}
 						/>
 					</Animated.View>
 				</Animated.View>
