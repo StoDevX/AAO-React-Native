@@ -1,11 +1,12 @@
 // @flow
 
 import * as React from 'react'
-import * as c from '../../components/colors'
+import * as c from '../../../components/colors'
 import moment from 'moment-timezone'
 import glamorous from 'glamorous-native'
-import {Row} from '../../components/layout'
+import {Row} from '../../../components/layout'
 import type {MovieShowing} from '../types'
+import {Card} from './parts'
 
 const PaddedShowingsCard = ({children}) => (
 	<Card marginHorizontal={10} marginVertical={16} paddingHorizontal={10}>
@@ -15,7 +16,7 @@ const PaddedShowingsCard = ({children}) => (
 
 export const Showings = ({showings}: {showings: ?Array<MovieShowing>}) => {
 	if (!showings || !showings.length) {
-		return <Text>No Showings</Text>
+		return <glamorous.Text>No Showings</glamorous.Text>
 	}
 
 	return (

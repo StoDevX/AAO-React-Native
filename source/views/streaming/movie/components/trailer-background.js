@@ -1,44 +1,21 @@
 // @flow
 
 import * as React from 'react'
-import {
-	StyleSheet,
-	FlatList,
-	ScrollView,
-	Dimensions,
-	Platform,
-} from 'react-native'
-import {connect} from 'react-redux'
-import {getWeeklyMovie} from '../../../flux/parts/weekly-movie'
-import {type ReduxState} from '../../../flux'
-import LoadingView from '../../components/loading'
-import {NoticeView} from '../../components/notice'
-import * as c from '../../components/colors'
-import moment from 'moment-timezone'
-import openUrl from '../../components/open-url'
+import {StyleSheet, Dimensions} from 'react-native'
+import * as c from '../../../components/colors'
 import glamorous from 'glamorous-native'
-import {type TopLevelViewPropsType} from '../../types'
-import {Row, Column} from '../../components/layout'
-import {human, material} from 'react-native-typography'
-import {darken, setSaturation, setLightness, rgb} from 'polished'
-import {Touchable} from '../../components/touchable'
-import Icon from 'react-native-vector-icons/Ionicons'
-import type {
-	Movie,
-	MovieShowing,
-	MovieRating,
-	PosterInfo,
-	RGBTuple,
-	MovieTrailer,
-} from './types'
+import {setSaturation, setLightness} from 'polished'
+import type {MovieTrailer} from '../types'
 
 import LinearGradient from 'react-native-linear-gradient'
 
-export const TrailerBackground = (props: {
+type Props = {
 	trailer: MovieTrailer,
 	tint: string,
 	height: number,
-}) => {
+}
+
+export const TrailerBackground = (props: Props) => {
 	const {trailer, tint, height} = props
 
 	// TODO: find the largest size beneath `ideal`
@@ -77,7 +54,12 @@ export const TrailerBackground = (props: {
 	)
 }
 
-const TriangleOverlay = ({height, width}: {height: number, width: number}) => {
+type TriangleOverlayProps = {
+	height: number,
+	width: number,
+}
+
+const TriangleOverlay = ({height, width}: TriangleOverlayProps) => {
 	return (
 		<glamorous.View
 			backgroundColor="transparent"
