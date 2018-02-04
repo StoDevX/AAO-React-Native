@@ -1,46 +1,41 @@
 // @flow
 
 import * as React from 'react'
-import {PaddedCard, Heading, Text} from './parts'
+import {Heading, Text} from './parts'
+import glamorous from 'glamorous-native'
 import {Column} from '../../../components/layout'
 
-type Props = {directors: string, writers: string, actors: string}
+type Props = {
+	directors: string,
+	writers: string,
+	actors: string,
+}
 
 export const Credits = ({directors, writers, actors}: Props) => {
 	return (
-		<PaddedCard>
-			<WritersDirectors directors={directors} writers={writers} />
+		<glamorous.View marginHorizontal={16} paddingVertical={16}>
+			{writers === directors ? (
+				<Column marginBottom={16}>
+					<Heading>Written and Directed By</Heading>
+					<Text>{directors}</Text>
+				</Column>
+			) : (
+				<React.Fragment>
+					<Column marginBottom={16}>
+						<Heading>Directed By</Heading>
+						<Text>{directors}</Text>
+					</Column>
+					<Column marginBottom={16}>
+						<Heading>Written By</Heading>
+						<Text>{writers}</Text>
+					</Column>
+				</React.Fragment>
+			)}
 
 			<Column>
 				<Heading>Cast</Heading>
 				<Text>{actors}</Text>
 			</Column>
-		</PaddedCard>
-	)
-}
-
-const WritersDirectors = ({writers, directors}) => {
-	if (writers === directors) {
-		return (
-			<React.Fragment>
-				<Column marginBottom={16}>
-					<Heading>Written and Directed By</Heading>
-					<Text>{directors}</Text>
-				</Column>
-			</React.Fragment>
-		)
-	}
-
-	return (
-		<React.Fragment>
-			<Column marginBottom={16}>
-				<Heading>Directed By</Heading>
-				<Text>{directors}</Text>
-			</Column>
-			<Column marginBottom={16}>
-				<Heading>Written By</Heading>
-				<Text>{writers}</Text>
-			</Column>
-		</React.Fragment>
+		</glamorous.View>
 	)
 }
