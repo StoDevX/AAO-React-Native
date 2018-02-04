@@ -6,7 +6,6 @@ import * as c from '../../../components/colors'
 import glamorous from 'glamorous-native'
 import {setSaturation, setLightness} from 'polished'
 import type {MovieTrailer} from '../types'
-
 import LinearGradient from 'react-native-linear-gradient'
 
 type Props = {
@@ -27,7 +26,8 @@ export const TrailerBackground = (props: Props) => {
 	const gradient = [
 		c.transparent,
 		c.transparent,
-		setLightness(0.35, setSaturation(0.25, tint)),
+		c.black,
+		// setLightness(0.35, setSaturation(0.25, tint)),
 		// darken(0.2, transparentize(0, tint)),
 	]
 
