@@ -56,6 +56,6 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		letterSpacing: -0.32,
 		alignSelf: 'center',
-		color: c.lightGray,
+		color: c.iosDisabledText,
 	},
 })

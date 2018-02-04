@@ -32,7 +32,7 @@ export const androidTabAccentColor = '#ffeb3b'
 export const iosLightBackground = 'rgb(240, 239, 245)'
 export const iosSeparator = '#C8C7CC'
 export const iosLightBorder = iosSeparator
-export const iosDisabledText = 'rgb(143, 143, 143)'
+export const iosDisabledText = 'rgb(142, 142, 147)'
 export const iosText = iosSeparator
 export const iosNavbarBottomBorder = iosSeparator
 export const iosListSectionHeader = 'rgb(248, 248, 248)'
@@ -82,7 +82,6 @@ export const black75Percent = 'rgb(191.25, 191.25, 191.25)'
 export const warmGray = 'rgb(133, 117, 112)'
 export const coolGray = 'rgb(118, 122, 133)'
 export const charcoal = 'rgb(34, 34, 34)'
-export const lightGray = '#8E8E93'
 
 // MARK: Blues
 export const teal = 'rgb(28, 160, 170)'
