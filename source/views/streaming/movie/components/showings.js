@@ -26,12 +26,13 @@ export const Showings = ({showings}: {showings: ?Array<MovieShowing>}) => {
 	)
 }
 
-const PADDINGS = {left: 10, right: 10, top: 10, bottom: 8}
-
 const PaddedShowingsCard = ({children}) => (
 	<Card
 		marginHorizontal={10}
 		marginVertical={16}
+		paddingBottom={8}
+		paddingHorizontal={10}
+		paddingTop={10}
 	>
 		{children}
 	</Card>
@@ -59,11 +60,12 @@ const ShowingTile = ({item}: {item: GroupedShowing}) => {
 	return (
 		<PaddedShowingsCard>
 			<Row>
-				<Column backgroundColor={c.sto.lightGold} borderTopLeftRadius={8} borderBottomLeftRadius={8} alignItems="center" paddingTop={PADDINGS.top} paddingLeft={PADDINGS.left} paddingBottom={PADDINGS.bottom} paddingRight={PADDINGS.left / 3 * 2}>
+				<Column alignItems="center">
 					<BigText>{item.date}</BigText>
 					<SmallText>{item.month}</SmallText>
 				</Column>
-				<Column paddingTop={PADDINGS.top} paddingLeft={PADDINGS.left / 2} paddingBottom={PADDINGS.bottom} paddingRight={PADDINGS.right}>
+				<glamorous.View width={10} />
+				<Column>
 					<DimText lines={1}>{item.location}</DimText>
 					<SmallText>{item.times.join(' • ')}</SmallText>
 				</Column>
