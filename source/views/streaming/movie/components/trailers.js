@@ -1,11 +1,13 @@
 // @flow
 
 import * as React from 'react'
+import {StyleSheet} from 'react-native'
 import * as c from '../../../components/colors'
 import glamorous from 'glamorous-native'
 import {Row, Column} from '../../../components/layout'
 import type {MovieTrailer} from '../types'
 import {SectionHeading, Card} from './parts'
+import LinearGradient from 'react-native-linear-gradient'
 
 type Props = {
 	trailers: Array<MovieTrailer>,
@@ -41,48 +43,54 @@ const ClipSelection = (props: {title: string, clips: Array<MovieTrailer>}) => {
 	return (
 		<React.Fragment>
 			<SectionHeading>{title}</SectionHeading>
-			<glamorous.ScrollView horizontal={true} overflow="visible">
+			<glamorous.ScrollView horizontal={true} overflow="visible" contentContainerStyle={{paddingHorizontal: 6}}>
 				{clips.map(t => <ClipTile key={t.url} clip={t} />)}
 			</glamorous.ScrollView>
 		</React.Fragment>
 	)
 }
 
-const PaddedCard = ({children}) => (
+const SpacedCard = ({children, ...props}) => (
 	<Card
-		marginHorizontal={10}
-		marginVertical={16}
-		paddingBottom={8}
-		paddingHorizontal={10}
-		paddingTop={10}
+        justifyContent="flex-end"
+        height={200}
+        marginHorizontal={10}
+        marginVertical={16}
+        width={300}
 	>
 		{children}
 	</Card>
 )
 
-const BigText = glamorous.text({
-	color: c.black,
-	fontSize: 22,
-	lineHeight: 22,
-	fontWeight: '900',
+const Padding = glamorous.view({
+    paddingBottom: 8,
+    paddingHorizontal: 10,
+    paddingTop: 10,
 })
 
-const DimText = glamorous.text({
-	color: c.iosDisabledText,
-	fontSize: 14,
-	lineHeight: 22,
-})
-
-const SmallText = glamorous.text({
-	color: c.black,
-	fontSize: 13,
-	fontVariant: ['small-caps'],
+const ClipTitle = glamorous.text({
+	color: c.white,
+	fontSize: 18,
+	fontWeight: '700',
 })
 
 const ClipTile = ({clip}: {clip: MovieTrailer}) => {
+    // TODO: pick appropriate thumbnail
+    const thumbnailUrl = clip.thumbnails[0].url
+
 	return (
-		<PaddedCard>
-			<glamorous.Text>Trailer</glamorous.Text>
-		</PaddedCard>
+		<SpacedCard>
+            <glamorous.Image borderRadius={8} source={{uri: thumbnailUrl}} style={StyleSheet.absoluteFill} />
+
+            <LinearGradient
+                colors={[c.transparent, c.transparent, c.black]}
+                locations={[0, 0.6, 1]}
+                style={[StyleSheet.absoluteFill, {borderRadius: 8}]}
+            />
+
+            <Padding>
+    			<ClipTitle>{clip.name}</ClipTitle>
+            </Padding>
+		</SpacedCard>
 	)
 }
