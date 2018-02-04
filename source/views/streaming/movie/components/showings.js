@@ -42,6 +42,7 @@ const BigText = glamorous.text({
 	color: c.black,
 	fontSize: 22,
 	lineHeight: 22,
+	fontWeight: '900',
 })
 
 const DimText = glamorous.text({
