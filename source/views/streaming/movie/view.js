@@ -17,7 +17,6 @@ import openUrl from '../../components/open-url'
 import {type TopLevelViewPropsType} from '../../types'
 
 import {
-	Header,
 	MovieInfo,
 	Title,
 	Spacer,
@@ -129,13 +128,13 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		// TODO: also handle after-last-showing on last showing date
 		// DONE: show other trailers
 		// DONE: differentiate between trailers, clips, teasers, and featurettes
-		// TODO: make trailers nicer
+		// DONE: make trailers nicer
 		// DONE: make trailers tappable
 		// DONE: group showings by date, then location; show the times for each grouped set on a card
 
 		const viewport = this.state.viewport
 		const mainTrailer = movie.trailers[0]
-		const movieTint = makeRgb(movie.posterColors.dominant)
+		const movieTint = makeRgb(movie.poster.colors.dominant)
 		const landscape = viewport.width > viewport.height
 		const headerHeight = landscape
 			? Math.max(viewport.height * (2 / 3), 200)
@@ -163,7 +162,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 						ideal={512}
 						left={0}
 						onPress={() => openUrl(imdbUrl)}
-						sizes={movie.posters}
+						sizes={movie.poster.sizes}
 						tint={movieTint}
 						viewport={viewport}
 					/>
@@ -179,10 +178,10 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 					<Title selectable={true}>{movie.info.Title}</Title>
 
 					<Row alignItems="center" marginBottom={16} marginTop={4}>
-						<Genres genres={movie.info.Genre} />
+						<Genres genres={movie.info.Genres} />
 						<Spacer />
 						<Pill bgColorName="blue" marginRight={4}>
-							{moment(movie.info.releaseDate).format('YYYY')}
+							{moment(movie.info.ReleaseDate).format('YYYY')}
 						</Pill>
 						<Pill bgColorName="lime">{movie.info.Runtime}</Pill>
 					</Row>
