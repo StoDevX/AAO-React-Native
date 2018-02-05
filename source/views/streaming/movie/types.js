@@ -22,6 +22,10 @@ export type MovieTrailer = {
 	url: string,
 	lang: string,
 	thumbnails: Array<MovieTrailerThumbnail>,
+	colors: {
+		dominant: RGBTuple,
+		palette: Array<RGBTuple>,
+	},
 }
 
 export type MovieShowing = {time: string, location: string}
@@ -42,9 +46,10 @@ export type MovieInfo = {
 	Year: string,
 	Rated: string,
 	Released: string,
-	releaseDate: string,
+	ReleaseDate: string,
 	Runtime: string,
 	Genre: string,
+	Genres: Array<string>,
 	Director: string,
 	Writer: string,
 	Actors: string,
@@ -66,9 +71,11 @@ export type Movie = {
 	info: MovieInfo,
 	showings: Array<MovieShowing>,
 	trailers: Array<MovieTrailer>,
-	posters: Array<PosterInfo>,
-	posterColors: {
-		dominant: RGBTuple,
-		palette: Array<RGBTuple>,
-	},
+	poster: {
+		sizes: Array<PosterInfo>,
+		colors: {
+			dominant: RGBTuple,
+			palette: Array<RGBTuple>,
+		},
+	}
 }
