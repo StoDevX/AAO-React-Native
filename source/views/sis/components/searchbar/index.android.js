@@ -15,6 +15,7 @@ const iconStyles = StyleSheet.create({
 
 const searchIcon = <Icon name="md-search" size={28} style={iconStyles.icon} />
 const backIcon = <Icon name="md-arrow-back" size={28} style={iconStyles.icon} />
+const closeIcon = <Icon name="md-close" size={28} style={iconStyles.icon} />
 
 const styles = StyleSheet.create({
 	searchbar: {
@@ -53,8 +54,10 @@ export class CourseSearchBar extends React.PureComponent<Props, State> {
 			<SearchBar
 				ref={this.props.getRef}
 				backButton={backButton}
+				closeButton={this.props.searchActive ? closeIcon : null}
 				focusOnLayout={false}
 				handleChangeText={this.updateText}
+				hideX={!this.props.searchActive}
 				onBack={this.props.onCancel}
 				onFocus={this.props.onFocus}
 				onHide={text => console.log(text)}
