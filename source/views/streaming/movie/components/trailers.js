@@ -19,9 +19,9 @@ export const Trailers = ({trailers: allTrailers}: Props) => {
 	}
 
 	const trailers = allTrailers.filter(t => t.type === 'Trailer')
-	const teasers = trailers.filter(t => t.type === 'Teaser')
-	const featurettes = trailers.filter(t => t.type === 'Featurette')
-	const clips = trailers.filter(t => t.type === 'Clip')
+	const teasers = allTrailers.filter(t => t.type === 'Teaser')
+	const featurettes = allTrailers.filter(t => t.type === 'Featurette')
+	const clips = allTrailers.filter(t => t.type === 'Clip')
 
 	return (
 		<React.Fragment>
