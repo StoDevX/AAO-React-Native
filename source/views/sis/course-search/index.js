@@ -15,6 +15,7 @@ import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import toPairs from 'lodash/toPairs'
 import {CourseSearchResultsList} from './list'
+import LoadingView from '../../components/loading'
 
 type ReactProps = TopLevelViewPropsType
 
@@ -135,6 +136,10 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}
 		const containerAnimation = {height: this.containerHeight}
 		const {searchActive} = this.state
+		const loading = this.props.courseDataState === 'updating'
+		if (loading) {
+			return (<LoadingView text="Loading Course Data..." />)
+		}
 
 		return (
 			<View style={styles.container}>
