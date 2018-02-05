@@ -106,7 +106,6 @@
 	<array>
 		<string>Entypo.ttf</string>
 		<string>Ionicons.ttf</string>
-		<string>MaterialIcons.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
