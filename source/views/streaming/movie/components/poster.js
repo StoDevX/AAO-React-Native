@@ -1,7 +1,6 @@
 // @flow
 
 import * as React from 'react'
-import {Dimensions} from 'react-native'
 import * as c from '../../../components/colors'
 import openUrl from '../../../components/open-url'
 import glamorous from 'glamorous-native'
@@ -12,11 +11,15 @@ type PosterProps = {
 	sizes: Array<PosterInfo>,
 	ideal: number,
 	tint: string,
+	viewport: {
+		width: number,
+		height: number,
+	},
 }
 
 class PosterImage extends React.Component<PosterProps> {
 	render() {
-		const {sizes, ideal, tint} = this.props
+		const {sizes, ideal, tint, viewport} = this.props
 
 		// TODO: find the largest size beneath `ideal`
 		const poster = sizes.find(p => p.width === ideal)
@@ -29,11 +32,11 @@ class PosterImage extends React.Component<PosterProps> {
 				accessibilityLabel="Movie Poster"
 				borderRadius={8}
 				// defaultSource
-				height={Dimensions.get('window').width / 3 * 1.5}
+				height={viewport.width / 3 * 1.5}
 				overflow="hidden"
 				resizeMode="cover"
 				source={{uri}}
-				width={Dimensions.get('window').width / 3}
+				width={viewport.width / 3}
 			/>
 		)
 	}
