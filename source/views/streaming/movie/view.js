@@ -120,12 +120,13 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		// DONE: handle view rotation
 		// DONE: make "play" button work
 		// DONE: make poster tap open IMDB page or something
-		// TODO: handle landscape
+		// WIP: handle landscape
 		// TODO: handle odd-shaped posters
 		// TODO: style for Android
 		// TODO: handle "no movie posted yet this week"
 		// TODO: handle "no movie will show this week"
-		// TODO: handle all movie showing dates are past (also handle after-last-showing on last showing date)
+		// TODO: handle all movie showing dates are past
+		// TODO: also handle after-last-showing on last showing date
 		// DONE: show other trailers
 		// DONE: differentiate between trailers, clips, teasers, and featurettes
 		// TODO: make trailers nicer

@@ -92,28 +92,28 @@ const ClipTile = (props: {clip: MovieTrailer, viewport: Viewport}) => {
 	const thumbnailUrl = clip.thumbnails[0].url
 
 	return (
-        <ShrinkWhenTouched onPress={() => openUrl(clip.url)}>
-		<SpacedCard viewport={viewport}>
-			<glamorous.Image
-				source={{uri: thumbnailUrl}}
-				style={[StyleSheet.absoluteFill, styles.cardBorderRadius]}
-			/>
+		<ShrinkWhenTouched onPress={() => openUrl(clip.url)}>
+			<SpacedCard viewport={viewport}>
+				<glamorous.Image
+					source={{uri: thumbnailUrl}}
+					style={[StyleSheet.absoluteFill, styles.cardBorderRadius]}
+				/>
 
-			<LinearGradient
-				colors={[c.transparent, c.transparent, c.black]}
-				locations={[0, 0.6, 1]}
-				style={[StyleSheet.absoluteFill, styles.cardBorderRadius]}
-			/>
+				<LinearGradient
+					colors={[c.transparent, c.transparent, c.black]}
+					locations={[0, 0.6, 1]}
+					style={[StyleSheet.absoluteFill, styles.cardBorderRadius]}
+				/>
 
-			<Padding>
-				<ClipTitle>
-					{clip.name}
-					{'  '}
-					<Icon name="ios-play" size={18} />
-				</ClipTitle>
-			</Padding>
-		</SpacedCard>
-        </ShrinkWhenTouched>
+				<Padding>
+					<ClipTitle>
+						{clip.name}
+						{'  '}
+						<Icon name="ios-play" size={18} />
+					</ClipTitle>
+				</Padding>
+			</SpacedCard>
+		</ShrinkWhenTouched>
 	)
 }
 
