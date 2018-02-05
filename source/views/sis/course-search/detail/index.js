@@ -8,7 +8,10 @@ import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import {convertTimeStringsToOfferings} from 'sto-sis-time-parser'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
-import {MultiLineDetailCell} from '../../components/multi-line-cell'
+import {
+	MultiLineDetailCell,
+	MultiLineLeftDetailCell,
+} from '../../components/multi-line-cell'
 import type {TopLevelViewPropsType} from '../../../types'
 
 const Container = glamorous.scrollView({
@@ -50,7 +53,7 @@ function Information({course}: {course: CourseType}) {
 	const prerequisites = course.prerequisites ? course.prerequisites : 'None'
 
 	const prereqs = (
-		<Cell cellStyle="LeftDetail" detail="Prerequisites" title={prerequisites} />
+		<MultiLineLeftDetailCell detail="Prerequisites" title={prerequisites} />
 	)
 	return (
 		<Section header="COURSE INFORMATION">
@@ -68,7 +71,10 @@ function Schedule({course}: {course: CourseType}) {
 	if (!course.times) {
 		return null
 	}
-	const times = convertTimeStringsToOfferings({times: course.times})
+	const times = convertTimeStringsToOfferings({
+		times: course.times,
+		locations: course.locations,
+	})
 	const schedule = times.map(time => {
 		const hours = time.times.map(time => {
 			const start = moment(time.start, 'hmm').format('h:mm A')
@@ -77,7 +83,15 @@ function Schedule({course}: {course: CourseType}) {
 		})
 		const allHours = hours.join('\n')
 		const day = formatDay(time.day)
-		return <MultiLineDetailCell key={time.day} detail={allHours} title={day} />
+		const location = time.location
+		return (
+			<MultiLineDetailCell
+				key={time.day}
+				leftDetail={location}
+				rightDetail={allHours}
+				title={day}
+			/>
+		)
 	})
 
 	return <Section header="SCHEDULE">{schedule}</Section>
