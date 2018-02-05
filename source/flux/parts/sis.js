@@ -56,12 +56,17 @@ export type UpdateCourseDataActionType = ThunkAction<
 	TermsUpdateAction | LoadCachedCoursesAction,
 >
 export function updateCourseData(): UpdateCourseDataActionType {
-	return async dispatch => {
-		dispatch({type: TERMS_UPDATE_START})
-		await updateStoredCourses()
-		const cachedCourses = await loadCachedCourses()
-		dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
-		dispatch({type: TERMS_UPDATE_COMPLETE})
+	return async (dispatch, getState) => {
+		const state = getState()
+		const courseDataState = state.sis.courseDataState
+		const dataNotLoaded = courseDataState === 'not-loaded'
+		let updateNeeded = await updateStoredCourses()
+		if (updateNeeded || dataNotLoaded) {
+			dispatch({type: TERMS_UPDATE_START})
+			const cachedCourses = await loadCachedCourses()
+			dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
+			dispatch({type: TERMS_UPDATE_COMPLETE})
+		}
 	}
 }
 
