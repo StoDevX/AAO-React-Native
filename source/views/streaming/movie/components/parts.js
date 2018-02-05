@@ -6,11 +6,6 @@ import * as c from '../../../components/colors'
 import glamorous from 'glamorous-native'
 import {human, material} from 'react-native-typography'
 
-export const Header = glamorous.view({
-	backgroundColor: c.gray,
-	position: 'relative',
-})
-
 export const Padding = glamorous.view({
 	paddingHorizontal: 16,
 })

@@ -21,6 +21,12 @@ type PosterProps = {
 const PosterImage = (props: PosterProps) => {
 	const {sizes, ideal, viewport} = props
 
+	const landscape = viewport.width > viewport.height
+	const width = landscape
+		? Math.min(viewport.height / 2, 200)
+		: Math.min(viewport.width / 3, 300)
+	const ratio = 1.481 // from ebay.com/gds/Movie-Poster-Size-Guide-/10000000005754120/g.html
+
 	// TODO: find the largest size beneath `ideal`
 	const poster = sizes.find(p => p.width === ideal)
 
@@ -32,11 +38,11 @@ const PosterImage = (props: PosterProps) => {
 			accessibilityLabel="Movie Poster"
 			borderRadius={8}
 			// defaultSource
-			height={viewport.width / 3 * 1.5}
+			height={width * ratio}
 			overflow="hidden"
 			resizeMode="cover"
 			source={{uri}}
-			width={viewport.width / 3}
+			width={width}
 		/>
 	)
 }
@@ -45,16 +51,17 @@ export const Poster = (props: PosterProps & {left: number}) => {
 	// TODO: find way to avoid backgroundColor:transparent on wrapper
 
 	return (
-		<ShrinkWhenTouched onPress={props.onPress}>
-			<glamorous.View
-				backgroundColor={c.transparent}
-				shadowColor={setLightness(0.35, setSaturation(0.25, props.tint))}
-				shadowOffset={{height: 4, width: 0}}
-				shadowOpacity={0.8}
-				shadowRadius={12}
-			>
+		<glamorous.View
+			backgroundColor={c.transparent}
+			marginTop={16}
+			shadowColor={setLightness(0.35, setSaturation(0.25, props.tint))}
+			shadowOffset={{height: 4, width: 0}}
+			shadowOpacity={0.8}
+			shadowRadius={12}
+		>
+			<ShrinkWhenTouched onPress={props.onPress}>
 				<PosterImage {...props} />
-			</glamorous.View>
-		</ShrinkWhenTouched>
+			</ShrinkWhenTouched>
+		</glamorous.View>
 	)
 }
