@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, ScrollView, Dimensions, SafeAreaView} from 'react-native'
+import {StyleSheet, ScrollView, Dimensions} from 'react-native'
 import {connect} from 'react-redux'
 import moment from 'moment-timezone'
 import glamorous from 'glamorous-native'
@@ -126,8 +126,10 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		const headerHeight = Math.max(this.state.viewport.height / 3, 200)
 
 		return (
-			<SafeAreaView>
-			<ScrollView contentContainerStyle={styles.contentContainer}>
+			<ScrollView
+				contentContainerStyle={styles.contentContainer}
+				contentInsetAdjustmentBehavior="automatic"
+			>
 				<Header>
 					<TrailerBackground
 						height={headerHeight}
@@ -200,7 +202,6 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 
 				<glamorous.View height={16} />
 			</ScrollView>
-			</SafeAreaView>
 		)
 	}
 }
