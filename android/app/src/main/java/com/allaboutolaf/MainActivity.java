@@ -25,7 +25,7 @@ public class MainActivity extends ReactActivity {
             BugsnagReactNative.start(this);
         }
         long size = 50L * 1024L * 1024L; // 50 MB
-        com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
+        ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
     }
 
     // Required for react-native-calendar-events
