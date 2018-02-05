@@ -49,10 +49,7 @@ export const TrailerBackground = (props: Props) => {
 				style={StyleSheet.absoluteFill}
 			/>
 
-			<TriangleOverlay
-				height={height / 2.5}
-				width={viewport.width}
-			/>
+			<TriangleOverlay height={height / 2.5} width={viewport.width} />
 		</glamorous.View>
 	)
 }
