@@ -95,3 +95,19 @@ export class ShrinkWhenTouched extends React.PureComponent<
 		)
 	}
 }
+
+export const FooterAction = (props: {onPress: () => {}, text: string}) => {
+	const {onPress, text} = props
+
+	return (
+		<glamorous.Text
+			color={c.infoBlue}
+			fontSize={17}
+			marginLeft={16}
+			onPress={onPress}
+			paddingVertical={14}
+		>
+			{text}
+		</glamorous.Text>
+	)
+}

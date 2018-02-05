@@ -13,9 +13,17 @@ import {NoticeView} from '../../components/notice'
 import LoadingView from '../../components/loading'
 import * as c from '../../components/colors'
 import {Row} from '../../components/layout'
+import openUrl from '../../components/open-url'
 import {type TopLevelViewPropsType} from '../../types'
 
-import {Header, MovieInfo, Title, Spacer, FixedSpacer} from './components/parts'
+import {
+	Header,
+	MovieInfo,
+	Title,
+	Spacer,
+	FixedSpacer,
+	FooterAction,
+} from './components/parts'
 import {Separator} from '../../components/separator'
 import {Pill} from './components/pill'
 import {Poster} from './components/poster'
@@ -30,7 +38,6 @@ import {
 import {Showings} from './components/showings'
 import {Plot} from './components/plot'
 import {Credits} from './components/credits'
-import {ImdbLink} from './components/imdb'
 import {Trailers} from './components/trailers'
 import type {Movie, RGBTuple} from './types'
 
@@ -128,6 +135,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		const mainTrailer = movie.trailers[0]
 		const movieTint = makeRgb(movie.posterColors.dominant)
 		const headerHeight = Math.max(this.state.viewport.height / 3, 200)
+		const imdbUrl = `https://www.imdb.com/title/${movie.info.imdbID}`
 
 		return (
 			<ScrollView
@@ -154,6 +162,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 						<Poster
 							ideal={512}
 							left={0}
+							onPress={() => openUrl(imdbUrl)}
 							sizes={movie.posters}
 							tint={movieTint}
 							viewport={this.state.viewport}
@@ -202,7 +211,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 
 				<Trailers trailers={movie.trailers} viewport={this.state.viewport} />
 
-				<ImdbLink id={movie.info.imdbID} />
+				<FooterAction onPress={() => openUrl(imdbUrl)} text="Open IMDB Page" />
 
 				<glamorous.View height={16} />
 			</ScrollView>
