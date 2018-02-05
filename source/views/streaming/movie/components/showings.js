@@ -16,11 +16,7 @@ export const Showings = ({showings}: {showings: ?Array<MovieShowing>}) => {
 	const grouped = groupShowings(showings)
 
 	return (
-		<glamorous.ScrollView
-			horizontal={true}
-			overflow="hidden"
-			showsHorizontalScrollIndicator={false}
-		>
+		<glamorous.ScrollView horizontal={true} overflow="hidden">
 			{grouped.map(s => <ShowingTile key={s.key} item={s} />)}
 		</glamorous.ScrollView>
 	)
