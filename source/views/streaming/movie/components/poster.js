@@ -17,29 +17,27 @@ type PosterProps = {
 	},
 }
 
-class PosterImage extends React.Component<PosterProps> {
-	render() {
-		const {sizes, ideal, tint, viewport} = this.props
+const PosterImage = (props: PosterProps) => {
+	const {sizes, ideal, viewport} = props
 
-		// TODO: find the largest size beneath `ideal`
-		const poster = sizes.find(p => p.width === ideal)
+	// TODO: find the largest size beneath `ideal`
+	const poster = sizes.find(p => p.width === ideal)
 
-		// TODO: provide a fallback image
-		const uri = poster ? poster.url : ''
+	// TODO: provide a fallback image
+	const uri = poster ? poster.url : ''
 
-		return (
-			<glamorous.Image
-				accessibilityLabel="Movie Poster"
-				borderRadius={8}
-				// defaultSource
-				height={viewport.width / 3 * 1.5}
-				overflow="hidden"
-				resizeMode="cover"
-				source={{uri}}
-				width={viewport.width / 3}
-			/>
-		)
-	}
+	return (
+		<glamorous.Image
+			accessibilityLabel="Movie Poster"
+			borderRadius={8}
+			// defaultSource
+			height={viewport.width / 3 * 1.5}
+			overflow="hidden"
+			resizeMode="cover"
+			source={{uri}}
+			width={viewport.width / 3}
+		/>
+	)
 }
 
 export const Poster = (props: PosterProps & {left: number}) => {
