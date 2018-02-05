@@ -43,7 +43,11 @@ const ClipSelection = (props: {title: string, clips: Array<MovieTrailer>}) => {
 	return (
 		<React.Fragment>
 			<SectionHeading>{title}</SectionHeading>
-			<glamorous.ScrollView horizontal={true} overflow="visible" contentContainerStyle={{paddingHorizontal: 6}}>
+			<glamorous.ScrollView
+				horizontal={true}
+				overflow="visible"
+				contentContainerStyle={{paddingHorizontal: 6}}
+			>
 				{clips.map(t => <ClipTile key={t.url} clip={t} />)}
 			</glamorous.ScrollView>
 		</React.Fragment>
@@ -52,20 +56,20 @@ const ClipSelection = (props: {title: string, clips: Array<MovieTrailer>}) => {
 
 const SpacedCard = ({children, ...props}) => (
 	<Card
-        justifyContent="flex-end"
-        height={200}
-        marginHorizontal={10}
-        marginVertical={16}
-        width={300}
+		justifyContent="flex-end"
+		height={200}
+		marginHorizontal={10}
+		marginVertical={16}
+		width={300}
 	>
 		{children}
 	</Card>
 )
 
 const Padding = glamorous.view({
-    paddingBottom: 8,
-    paddingHorizontal: 10,
-    paddingTop: 10,
+	paddingBottom: 8,
+	paddingHorizontal: 10,
+	paddingTop: 10,
 })
 
 const ClipTitle = glamorous.text({
@@ -75,22 +79,26 @@ const ClipTitle = glamorous.text({
 })
 
 const ClipTile = ({clip}: {clip: MovieTrailer}) => {
-    // TODO: pick appropriate thumbnail
-    const thumbnailUrl = clip.thumbnails[0].url
+	// TODO: pick appropriate thumbnail
+	const thumbnailUrl = clip.thumbnails[0].url
 
 	return (
 		<SpacedCard>
-            <glamorous.Image borderRadius={8} source={{uri: thumbnailUrl}} style={StyleSheet.absoluteFill} />
+			<glamorous.Image
+				borderRadius={8}
+				source={{uri: thumbnailUrl}}
+				style={StyleSheet.absoluteFill}
+			/>
 
-            <LinearGradient
-                colors={[c.transparent, c.transparent, c.black]}
-                locations={[0, 0.6, 1]}
-                style={[StyleSheet.absoluteFill, {borderRadius: 8}]}
-            />
+			<LinearGradient
+				colors={[c.transparent, c.transparent, c.black]}
+				locations={[0, 0.6, 1]}
+				style={[StyleSheet.absoluteFill, {borderRadius: 8}]}
+			/>
 
-            <Padding>
-    			<ClipTitle>{clip.name}</ClipTitle>
-            </Padding>
+			<Padding>
+				<ClipTitle>{clip.name}</ClipTitle>
+			</Padding>
 		</SpacedCard>
 	)
 }
