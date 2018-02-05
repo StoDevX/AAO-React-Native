@@ -132,9 +132,13 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		// DONE: make trailers tappable
 		// DONE: group showings by date, then location; show the times for each grouped set on a card
 
+		const viewport = this.state.viewport
 		const mainTrailer = movie.trailers[0]
 		const movieTint = makeRgb(movie.posterColors.dominant)
-		const headerHeight = Math.max(this.state.viewport.height / 3, 200)
+		const landscape = viewport.width > viewport.height
+		const headerHeight = landscape
+			? Math.max(viewport.height * (2 / 3), 200)
+			: Math.max(viewport.height / 3, 200)
 		const imdbUrl = `https://www.imdb.com/title/${movie.info.imdbID}`
 
 		return (
@@ -142,39 +146,34 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 				contentContainerStyle={styles.contentContainer}
 				contentInsetAdjustmentBehavior="automatic"
 			>
-				<Header>
-					<TrailerBackground
-						height={headerHeight}
+				<TrailerBackground
+					height={headerHeight}
+					tint={movieTint}
+					trailer={mainTrailer}
+					viewport={viewport}
+				/>
+
+				<Row
+					alignItems="flex-end"
+					justifyContent="space-between"
+					minHeight={headerHeight}
+					paddingHorizontal={10}
+				>
+					<Poster
+						ideal={512}
+						left={0}
+						onPress={() => openUrl(imdbUrl)}
+						sizes={movie.posters}
 						tint={movieTint}
-						trailer={mainTrailer}
-						viewport={this.state.viewport}
+						viewport={viewport}
 					/>
 
-					<Row
-						alignItems="flex-end"
-						bottom={0}
-						justifyContent="space-between"
-						left={0}
-						paddingHorizontal={10}
-						position="absolute"
-						right={0}
-					>
-						<Poster
-							ideal={512}
-							left={0}
-							onPress={() => openUrl(imdbUrl)}
-							sizes={movie.posters}
-							tint={movieTint}
-							viewport={this.state.viewport}
-						/>
-
-						<PlayTrailerButton
-							right={40}
-							tint={movieTint}
-							trailer={mainTrailer}
-						/>
-					</Row>
-				</Header>
+					<PlayTrailerButton
+						right={40}
+						tint={movieTint}
+						trailer={mainTrailer}
+					/>
+				</Row>
 
 				<MovieInfo movie={movie}>
 					<Title>{movie.info.Title}</Title>
@@ -209,7 +208,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 					writers={movie.info.Writer}
 				/>
 
-				<Trailers trailers={movie.trailers} viewport={this.state.viewport} />
+				<Trailers trailers={movie.trailers} viewport={viewport} />
 
 				<FooterAction onPress={() => openUrl(imdbUrl)} text="Open IMDB Page" />
 

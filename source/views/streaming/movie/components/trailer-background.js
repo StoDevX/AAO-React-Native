@@ -36,7 +36,13 @@ export const TrailerBackground = (props: Props) => {
 	]
 
 	return (
-		<glamorous.View height={height} width={viewport.width}>
+		<glamorous.View
+			height={height}
+			left={0}
+			position="absolute"
+			top={0}
+			width={viewport.width}
+		>
 			<glamorous.Image
 				resizeMode="cover"
 				source={{uri}}
