@@ -118,8 +118,8 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		}
 
 		// DONE: handle view rotation
-		// TODO: make "play" button work
-		// TODO: make poster tap open IMDB page or something
+		// DONE: make "play" button work
+		// DONE: make poster tap open IMDB page or something
 		// TODO: handle landscape
 		// TODO: handle odd-shaped posters
 		// TODO: style for Android
@@ -129,7 +129,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		// DONE: show other trailers
 		// DONE: differentiate between trailers, clips, teasers, and featurettes
 		// TODO: make trailers nicer
-		// TODO: make trailers tappable
+		// DONE: make trailers tappable
 		// DONE: group showings by date, then location; show the times for each grouped set on a card
 
 		const mainTrailer = movie.trailers[0]
