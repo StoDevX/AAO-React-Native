@@ -5,7 +5,7 @@ import {StyleSheet} from 'react-native'
 import * as c from '../../../components/colors'
 // import SearchBar from 'react-native-material-design-searchbar'
 import SearchBar from 'react-native-searchbar'
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 const iconStyles = StyleSheet.create({
 	icon: {
@@ -13,8 +13,8 @@ const iconStyles = StyleSheet.create({
 	},
 })
 
-const searchIcon = <Icon name="search" size={28} style={iconStyles.icon} />
-const backIcon = <Icon name="arrow-back" size={28} style={iconStyles.icon} />
+const searchIcon = <Icon name="md-search" size={28} style={iconStyles.icon} />
+const backIcon = <Icon name="md-arrow-back" size={28} style={iconStyles.icon} />
 
 const styles = StyleSheet.create({
 	searchbar: {
