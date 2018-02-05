@@ -1,10 +1,10 @@
 package com.allaboutolaf;
 
+import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 import com.facebook.react.ReactActivity;
 import com.bugsnag.BugsnagReactNative;
 import com.calendarevents.CalendarEventsPackage;
 import android.os.Bundle;
-import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 
 public class MainActivity extends ReactActivity {
 
