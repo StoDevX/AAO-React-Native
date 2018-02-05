@@ -145,7 +145,6 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		return (
 			<ScrollView
 				contentContainerStyle={styles.contentContainer}
-				contentInsetAdjustmentBehavior="automatic"
 			>
 				<TrailerBackground
 					height={headerHeight}
