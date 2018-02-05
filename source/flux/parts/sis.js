@@ -58,7 +58,7 @@ export type UpdateCourseDataActionType = ThunkAction<
 export function updateCourseData(): UpdateCourseDataActionType {
 	return async (dispatch, getState) => {
 		const state = getState()
-		const courseDataState = state.sis.courseDataState
+		const courseDataState = state.sis ? state.sis.courseDataState : 'not-loaded'
 		const dataNotLoaded = courseDataState === 'not-loaded'
 		let updateNeeded = await updateStoredCourses()
 		if (updateNeeded || dataNotLoaded) {

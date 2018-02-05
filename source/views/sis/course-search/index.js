@@ -138,7 +138,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		const {searchActive} = this.state
 		const loading = this.props.courseDataState === 'updating'
 		if (loading) {
-			return (<LoadingView text="Loading Course Data..." />)
+			return <LoadingView text="Loading Course Data..." />
 		}
 
 		return (
