@@ -120,7 +120,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		// DONE: handle view rotation
 		// DONE: make "play" button work
 		// DONE: make poster tap open IMDB page or something
-		// WIP: handle landscape
+		// DONE: handle landscape
 		// TODO: handle odd-shaped posters
 		// TODO: style for Android
 		// TODO: handle "no movie posted yet this week"
