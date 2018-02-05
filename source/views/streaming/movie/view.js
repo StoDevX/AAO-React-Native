@@ -177,7 +177,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 				</Row>
 
 				<MovieInfo movie={movie}>
-					<Title>{movie.info.Title}</Title>
+					<Title selectable={true}>{movie.info.Title}</Title>
 
 					<Row alignItems="center" marginBottom={16} marginTop={4}>
 						<Genres genres={movie.info.Genre} />
