@@ -4,19 +4,18 @@ import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import * as c from '../../../components/colors'
 import glamorous from 'glamorous-native'
-import {Row, Column} from '../../../components/layout'
 import type {MovieTrailer} from '../types'
 import {SectionHeading, Card} from './parts'
 import LinearGradient from 'react-native-linear-gradient'
+import Icon from 'react-native-vector-icons/Ionicons'
 
-type Props = {
+type Viewport = {width: number, height: number}
+
+export const Trailers = (props: {
 	trailers: Array<MovieTrailer>,
-}
-
-export const Trailers = ({trailers: allTrailers}: Props) => {
-	if (!allTrailers.length) {
-		return null
-	}
+	viewport: Viewport,
+}) => {
+	const {viewport, trailers: allTrailers} = props
 
 	const trailers = allTrailers.filter(t => t.type === 'Trailer')
 	const teasers = allTrailers.filter(t => t.type === 'Teaser')
@@ -25,16 +24,20 @@ export const Trailers = ({trailers: allTrailers}: Props) => {
 
 	return (
 		<React.Fragment>
-			<ClipSelection clips={trailers} title="TRAILERS" />
-			<ClipSelection clips={teasers} title="TEASERS" />
-			<ClipSelection clips={featurettes} title="FEATURETTES" />
-			<ClipSelection clips={clips} title="CLIPS" />
+			<Clips clips={trailers} title="TRAILERS" viewport={viewport} />
+			<Clips clips={teasers} title="TEASERS" viewport={viewport} />
+			<Clips clips={featurettes} title="FEATURETTES" viewport={viewport} />
+			<Clips clips={clips} title="CLIPS" viewport={viewport} />
 		</React.Fragment>
 	)
 }
 
-const ClipSelection = (props: {title: string, clips: Array<MovieTrailer>}) => {
-	const {clips, title} = props
+const Clips = (props: {
+	viewport: Viewport,
+	title: string,
+	clips: Array<MovieTrailer>,
+}) => {
+	const {clips, title, viewport} = props
 
 	if (!clips.length) {
 		return null
@@ -48,23 +51,26 @@ const ClipSelection = (props: {title: string, clips: Array<MovieTrailer>}) => {
 				horizontal={true}
 				overflow="visible"
 			>
-				{clips.map(t => <ClipTile key={t.url} clip={t} />)}
+				{clips.map(t => <ClipTile key={t.url} clip={t} viewport={viewport} />)}
 			</glamorous.ScrollView>
 		</React.Fragment>
 	)
 }
 
-const SpacedCard = ({children, ...props}) => (
-	<Card
-		justifyContent="flex-end"
-		height={200}
-		marginHorizontal={10}
-		marginVertical={16}
-		width={300}
-	>
-		{children}
-	</Card>
-)
+const SpacedCard = ({viewport, children}) => {
+	const width = Math.min(300, viewport.width - 75)
+	return (
+		<Card
+			height={width / 3 * 2}
+			justifyContent="flex-end"
+			marginHorizontal={10}
+			marginVertical={16}
+			width={width}
+		>
+			{children}
+		</Card>
+	)
+}
 
 const Padding = glamorous.view({
 	paddingBottom: 8,
@@ -78,12 +84,14 @@ const ClipTitle = glamorous.text({
 	fontWeight: '700',
 })
 
-const ClipTile = ({clip}: {clip: MovieTrailer}) => {
+const ClipTile = (props: {clip: MovieTrailer, viewport: Viewport}) => {
+	const {clip, viewport} = props
+
 	// TODO: pick appropriate thumbnail
 	const thumbnailUrl = clip.thumbnails[0].url
 
 	return (
-		<SpacedCard>
+		<SpacedCard viewport={viewport}>
 			<glamorous.Image
 				source={{uri: thumbnailUrl}}
 				style={[StyleSheet.absoluteFill, styles.cardBorderRadius]}
@@ -96,7 +104,11 @@ const ClipTile = ({clip}: {clip: MovieTrailer}) => {
 			/>
 
 			<Padding>
-				<ClipTitle>{clip.name}</ClipTitle>
+				<ClipTitle>
+					{clip.name}
+					{'  '}
+					<Icon name="ios-play" size={18} />
+				</ClipTitle>
 			</Padding>
 		</SpacedCard>
 	)

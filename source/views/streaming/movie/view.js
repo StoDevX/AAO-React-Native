@@ -200,7 +200,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 					writers={movie.info.Writer}
 				/>
 
-				<Trailers trailers={movie.trailers} />
+				<Trailers trailers={movie.trailers} viewport={this.state.viewport} />
 
 				<ImdbLink id={movie.info.imdbID} />
 
