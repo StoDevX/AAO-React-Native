@@ -49,9 +49,16 @@ type ReduxDispatchProps = {
 
 type Props = ReduxStateProps & ReduxDispatchProps & ReactProps
 
+type State = {
+	viewport: {
+		width: number,
+		height: number,
+	}
+}
+
 const makeRgb = (tuple: RGBTuple) => rgb(...tuple)
 
-export class PlainWeeklyMovieView extends React.Component<Props> {
+export class PlainWeeklyMovieView extends React.Component<Props, State> {
 	static navigationOptions = () => {
 		return {
 			headerTintColor: c.white,
@@ -70,9 +77,6 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 
 	componentWillMount() {
 		this.props.getWeeklyMovie()
-	}
-
-	componentWillMount() {
 		Dimensions.addEventListener('change', this.handleResizeEvent)
 	}
 
@@ -198,7 +202,6 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 }
 
 const mapState = (state: ReduxState): ReduxStateProps => {
-	console.warn(state.weeklyMovie)
 	return {
 		loading: state.weeklyMovie ? state.weeklyMovie.fetching : true,
 		error: state.weeklyMovie ? state.weeklyMovie.lastFetchError : null,
