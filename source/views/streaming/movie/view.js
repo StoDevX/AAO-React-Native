@@ -64,8 +64,24 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 		}
 	}
 
+	state = {
+		viewport: Dimensions.get('window'),
+	}
+
 	componentWillMount() {
 		this.props.getWeeklyMovie()
+	}
+
+	componentWillMount() {
+		Dimensions.addEventListener('change', this.handleResizeEvent)
+	}
+
+	componentWillUnmount() {
+		Dimensions.removeEventListener('change', this.handleResizeEvent)
+	}
+
+	handleResizeEvent = (event: {window: {width: number, height: number}}) => {
+		this.setState(() => ({viewport: event.window}))
 	}
 
 	render() {
@@ -182,6 +198,7 @@ export class PlainWeeklyMovieView extends React.Component<Props> {
 }
 
 const mapState = (state: ReduxState): ReduxStateProps => {
+	console.warn(state.weeklyMovie)
 	return {
 		loading: state.weeklyMovie ? state.weeklyMovie.fetching : true,
 		error: state.weeklyMovie ? state.weeklyMovie.lastFetchError : null,
