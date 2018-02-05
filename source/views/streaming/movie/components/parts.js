@@ -1,6 +1,6 @@
 // @flow
 
-import {Platform} from 'react-native'
+import {Platform, TouchableWithoutFeedback} from 'react-native'
 import * as React from 'react'
 import * as c from '../../../components/colors'
 import glamorous from 'glamorous-native'
@@ -55,4 +55,43 @@ export const Heading = glamorous.text({
 	...human.subheadObject,
 	fontWeight: '700',
 })
+
 export const Text = glamorous.text({...human.bodyObject})
+
+type ShrinkWhenTouchedProps = {
+	onPress: () => any,
+	style?: any,
+	children: React.Node,
+}
+type ShrinkWhenTouchedState = {
+	pressed: boolean,
+}
+export class ShrinkWhenTouched extends React.PureComponent<
+	ShrinkWhenTouchedProps,
+	ShrinkWhenTouchedState,
+> {
+	state = {pressed: false}
+
+	onPressIn = () => this.setState(() => ({pressed: true}))
+	onPressOut = () => this.setState(() => ({pressed: false}))
+
+	render() {
+		const {children, style, onPress} = this.props
+		const {pressed: isPressed} = this.state
+
+		return (
+			<TouchableWithoutFeedback
+				onPress={onPress}
+				onPressIn={this.onPressIn}
+				onPressOut={this.onPressOut}
+			>
+				<glamorous.View
+					style={style}
+					transform={isPressed ? [{scale: 0.95}] : []}
+				>
+					{children}
+				</glamorous.View>
+			</TouchableWithoutFeedback>
+		)
+	}
+}
