@@ -44,9 +44,9 @@ const ClipSelection = (props: {title: string, clips: Array<MovieTrailer>}) => {
 		<React.Fragment>
 			<SectionHeading>{title}</SectionHeading>
 			<glamorous.ScrollView
+				contentContainerStyle={styles.container}
 				horizontal={true}
 				overflow="visible"
-				contentContainerStyle={{paddingHorizontal: 6}}
 			>
 				{clips.map(t => <ClipTile key={t.url} clip={t} />)}
 			</glamorous.ScrollView>
@@ -103,6 +103,9 @@ const ClipTile = ({clip}: {clip: MovieTrailer}) => {
 }
 
 const styles = StyleSheet.create({
+	container: {
+		paddingHorizontal: 6,
+	},
 	cardBorderRadius: {
 		borderRadius: 8,
 	},
