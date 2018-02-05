@@ -2,6 +2,7 @@
 
 import deviceInfo from 'react-native-device-info'
 import networkInfo from 'react-native-network-info'
+import {Platform} from 'react-native'
 import pkg from '../../../package.json'
 
 export const getIpAddress = (): Promise<?string> =>
@@ -14,13 +15,17 @@ export const getIpAddress = (): Promise<?string> =>
 	})
 
 export const getPosition = (args: any = {}): Promise<Object> =>
-	new Promise(resolve => {
-		navigator.geolocation.getCurrentPosition(resolve, () => resolve({}), {
-			...args,
-			enableHighAccuracy: true,
-			maximumAge: 1000 /*ms*/,
-			timeout: 5000 /*ms*/,
-		})
+	new Promise((resolve, reject) => {
+		if (Platform.OS === 'android') {
+			navigator.geolocation.getCurrentPosition(resolve, reject)
+		} else {
+			navigator.geolocation.getCurrentPosition(resolve, reject, {
+				...args,
+				enableHighAccuracy: true,
+				maximumAge: 1000 /* ms */,
+				timeout: 15000 /* ms */,
+			})
+		}
 	})
 
 export const collectData = async () => ({
