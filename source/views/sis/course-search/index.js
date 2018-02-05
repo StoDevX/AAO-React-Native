@@ -87,7 +87,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}))
 		let sortedCourses = sortBy(groupedCourses, course => course.title).reverse()
 		this.setState({searchResults: sortedCourses})
-		console.log(sortedCourses)
 	}
 
 	// We need to make the search run slightly behind the UI,
@@ -157,7 +156,9 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 							onCancel={this.onCancel}
 							onFocus={this.onFocus}
 							onSearchButtonPress={text => {
-								if (Platform.OS === 'ios') this.searchBar.unFocus()
+								if (Platform.OS === 'ios') {
+									this.searchBar.blur()
+								}
 								this.performSearch(text)
 							}}
 							searchActive={searchActive}
