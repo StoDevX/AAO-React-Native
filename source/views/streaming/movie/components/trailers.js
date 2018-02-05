@@ -85,15 +85,14 @@ const ClipTile = ({clip}: {clip: MovieTrailer}) => {
 	return (
 		<SpacedCard>
 			<glamorous.Image
-				borderRadius={8}
 				source={{uri: thumbnailUrl}}
-				style={StyleSheet.absoluteFill}
+				style={[StyleSheet.absoluteFill, styles.cardBorderRadius]}
 			/>
 
 			<LinearGradient
 				colors={[c.transparent, c.transparent, c.black]}
 				locations={[0, 0.6, 1]}
-				style={[StyleSheet.absoluteFill, {borderRadius: 8}]}
+				style={[StyleSheet.absoluteFill, styles.cardBorderRadius]}
 			/>
 
 			<Padding>
@@ -102,3 +101,9 @@ const ClipTile = ({clip}: {clip: MovieTrailer}) => {
 		</SpacedCard>
 	)
 }
+
+const styles = StyleSheet.create({
+	cardBorderRadius: {
+		borderRadius: 8,
+	},
+})
