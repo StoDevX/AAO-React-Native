@@ -3,9 +3,10 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import * as c from '../../../components/colors'
+import openUrl from '../../../components/open-url'
 import glamorous from 'glamorous-native'
 import type {MovieTrailer} from '../types'
-import {SectionHeading, Card} from './parts'
+import {SectionHeading, Card, ShrinkWhenTouched} from './parts'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/Ionicons'
 
@@ -91,6 +92,7 @@ const ClipTile = (props: {clip: MovieTrailer, viewport: Viewport}) => {
 	const thumbnailUrl = clip.thumbnails[0].url
 
 	return (
+        <ShrinkWhenTouched onPress={() => openUrl(clip.url)}>
 		<SpacedCard viewport={viewport}>
 			<glamorous.Image
 				source={{uri: thumbnailUrl}}
@@ -111,6 +113,7 @@ const ClipTile = (props: {clip: MovieTrailer, viewport: Viewport}) => {
 				</ClipTitle>
 			</Padding>
 		</SpacedCard>
+        </ShrinkWhenTouched>
 	)
 }
 
