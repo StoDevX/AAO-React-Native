@@ -123,7 +123,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 
 		const mainTrailer = movie.trailers[0]
 		const movieTint = makeRgb(movie.posterColors.dominant)
-		const headerHeight = Math.max(Dimensions.get('window').height / 3, 200)
+		const headerHeight = Math.max(this.state.viewport.height / 3, 200)
 
 		return (
 			<ScrollView contentContainerStyle={styles.contentContainer}>

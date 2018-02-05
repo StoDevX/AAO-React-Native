@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, Dimensions} from 'react-native'
+import {StyleSheet} from 'react-native'
 import * as c from '../../../components/colors'
 import glamorous from 'glamorous-native'
 import {setSaturation, setLightness} from 'polished'
@@ -12,10 +12,14 @@ type Props = {
 	trailer: MovieTrailer,
 	tint: string,
 	height: number,
+	viewport: {
+		width: number,
+		height: number,
+	},
 }
 
 export const TrailerBackground = (props: Props) => {
-	const {trailer, tint, height} = props
+	const {trailer, tint, height, viewport} = props
 
 	// TODO: find the largest size beneath `ideal`
 	const thumbnail = trailer.thumbnails.find(thm => thm.width === 640)
@@ -32,7 +36,7 @@ export const TrailerBackground = (props: Props) => {
 	]
 
 	return (
-		<glamorous.View height={height} width={Dimensions.get('window').width}>
+		<glamorous.View height={height} width={viewport.width}>
 			<glamorous.Image
 				resizeMode="cover"
 				source={{uri}}
@@ -47,7 +51,7 @@ export const TrailerBackground = (props: Props) => {
 
 			<TriangleOverlay
 				height={height / 2.5}
-				width={Dimensions.get('window').width}
+				width={viewport.width}
 			/>
 		</glamorous.View>
 	)
