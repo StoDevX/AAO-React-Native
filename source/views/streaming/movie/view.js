@@ -53,7 +53,7 @@ type State = {
 	viewport: {
 		width: number,
 		height: number,
-	}
+	},
 }
 
 const makeRgb = (tuple: RGBTuple) => rgb(...tuple)
