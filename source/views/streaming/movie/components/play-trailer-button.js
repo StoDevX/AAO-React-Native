@@ -54,6 +54,7 @@ export const PlayTrailerButton = ({right, tint, trailer}: Props) => {
 	return (
 		<Touchable
 			containerStyle={containerStyle}
+			onPress={() => openUrl(trailer.url)}
 			style={innerStyle}
 			underlayColor={darken(0.1, tint)}
 		>
