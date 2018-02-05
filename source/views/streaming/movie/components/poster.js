@@ -2,15 +2,16 @@
 
 import * as React from 'react'
 import * as c from '../../../components/colors'
-import openUrl from '../../../components/open-url'
 import glamorous from 'glamorous-native'
 import {setSaturation, setLightness} from 'polished'
 import type {PosterInfo} from '../types'
+import {ShrinkWhenTouched} from './parts'
 
 type PosterProps = {
 	sizes: Array<PosterInfo>,
 	ideal: number,
 	tint: string,
+	onPress: () => any,
 	viewport: {
 		width: number,
 		height: number,
@@ -42,18 +43,18 @@ const PosterImage = (props: PosterProps) => {
 
 export const Poster = (props: PosterProps & {left: number}) => {
 	// TODO: find way to avoid backgroundColor:transparent on wrapper
+
 	return (
-		<glamorous.View
-			backgroundColor={c.transparent}
-			//bottom={0}
-			//left={props.left}
-			//position="absolute"
-			shadowColor={setLightness(0.35, setSaturation(0.25, props.tint))}
-			shadowOffset={{height: 4, width: 0}}
-			shadowOpacity={0.8}
-			shadowRadius={12}
-		>
-			<PosterImage {...props} />
-		</glamorous.View>
+		<ShrinkWhenTouched onPress={props.onPress}>
+			<glamorous.View
+				backgroundColor={c.transparent}
+				shadowColor={setLightness(0.35, setSaturation(0.25, props.tint))}
+				shadowOffset={{height: 4, width: 0}}
+				shadowOpacity={0.8}
+				shadowRadius={12}
+			>
+				<PosterImage {...props} />
+			</glamorous.View>
+		</ShrinkWhenTouched>
 	)
 }
