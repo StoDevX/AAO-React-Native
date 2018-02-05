@@ -34,9 +34,7 @@ async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
 
 async function determineOutdatedTerms(): Promise<Array<TermType>> {
 	const remoteTerms: Array<TermType> = await loadCurrentTermsFromServer()
-	console.log(remoteTerms)
 	const localTerms: Array<TermType> = await storage.getTermInfo()
-	console.log(localTerms)
 	if (!localTerms) {
 		storage.setTermInfo(remoteTerms)
 		return remoteTerms
@@ -50,7 +48,6 @@ async function determineOutdatedTerms(): Promise<Array<TermType>> {
 	if (outdatedTerms.length !== 0) {
 		storage.setTermInfo(remoteTerms)
 	}
-	console.log(outdatedTerms)
 	return outdatedTerms
 }
 
