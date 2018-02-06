@@ -17,12 +17,14 @@ import toPairs from 'lodash/toPairs'
 import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
 import {Cell} from 'react-native-tableview-simple'
+import type {FilterType} from './filters/types'
 
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
 	allCourses: Array<CourseType>,
 	courseDataState: string,
+	filters: Array<FilterType>,
 }
 
 type ReduxDispatchProps = {
@@ -81,6 +83,17 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				)
 			)
 		})
+		const filters = this.props.filters
+		if (filters.length !== 0) {
+			filters.forEach(filter => {
+				if (filter.filterCategory === 'GEs') {
+					results = results.filter(course => {
+						const gereqs = course.gereqs || []
+						return gereqs.includes(filter.value)
+					})
+				}
+			})
+		}
 
 		let grouped = groupBy(results, r => r.term)
 		let groupedCourses = toPairs(grouped).map(([key, value]) => ({
@@ -201,6 +214,7 @@ function mapState(state: ReduxState): ReduxStateProps {
 	return {
 		allCourses: state.sis ? state.sis.allCourses : [],
 		courseDataState: state.sis ? state.sis.courseDataState : '',
+		filters: state.sis ? state.sis.filters : [],
 	}
 }
 

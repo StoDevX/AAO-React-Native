@@ -24,7 +24,7 @@ import NewsView from './views/news'
 import SISView from './views/sis'
 import {JobDetailView} from './views/sis/student-work/detail'
 import {CourseDetailView} from './views/sis/course-search/detail'
-import {CourseSearchFiltersView} from './views/sis/course-search/filters'
+import {ConnectedCourseSearchFiltersView as CourseSearchFiltersView} from './views/sis/course-search/filters'
 import {
 	BuildingHoursView,
 	BuildingHoursDetailView,

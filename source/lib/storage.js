@@ -97,3 +97,10 @@ export function getTermInfo(): Promise<Array<TermType>> {
 		JSON.parse(stored),
 	)
 }
+const geDataKey = courseDataKey + ':ge-reqs'
+export function setValidGes(ges: string[]) {
+	return setItem(geDataKey, ges)
+}
+export function getValidGes(): Promise<Array<string>> {
+	return getItemAsArray(geDataKey)
+}

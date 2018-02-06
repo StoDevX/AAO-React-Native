@@ -2,14 +2,16 @@
 
 import {type ReduxState} from '../index'
 import {getBalances, type BalancesShapeType} from '../../lib/financials'
-import {loadCachedCourses, updateStoredCourses} from '../../lib/course-search'
+import {loadCachedCourses, updateStoredCourses, loadGEs} from '../../lib/course-search'
 import type {CourseType} from '../../lib/course-search'
+import type {FilterType} from '../../views/sis/course-search/filters/types'
 
 const UPDATE_BALANCES_SUCCESS = 'sis/UPDATE_BALANCES_SUCCESS'
 const UPDATE_BALANCES_FAILURE = 'sis/UPDATE_BALANCES_FAILURE'
 const LOAD_CACHED_COURSES = 'sis/LOAD_CACHED_COURSES'
 const TERMS_UPDATE_START = 'sis/TERMS_UPDATE_START'
 const TERMS_UPDATE_COMPLETE = 'sis/TERMS_UPDATE_COMPLETE'
+const UPDATE_FILTERS = 'sis/UPDATE_FILTERS'
 
 type UpdateBalancesSuccessAction = {|
 	type: 'sis/UPDATE_BALANCES_SUCCESS',
@@ -64,7 +66,8 @@ export function updateCourseData(): UpdateCourseDataActionType {
 		if (updateNeeded || dataNotLoaded) {
 			dispatch({type: TERMS_UPDATE_START})
 			const cachedCourses = await loadCachedCourses()
-			dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
+			const validGEs = await loadGEs()
+			dispatch({type: LOAD_CACHED_COURSES, payload: {'courses': cachedCourses, 'gereqs': validGEs}})
 			dispatch({type: TERMS_UPDATE_COMPLETE})
 		}
 	}
@@ -72,10 +75,29 @@ export function updateCourseData(): UpdateCourseDataActionType {
 
 type TermsUpdateAction = TermsUpdateStartAction | TermsUpdateCompleteAction
 
+type UpdateFiltersAction = {|
+	type: 'sis/UPDATE_FILTERS',
+	payload: FilterType,
+|}
+
+export type UpdateFiltersActionType = ThunkAction<UpdateFiltersAction>
+export function updateFilters(newFilter: FilterType): UpdateFiltersActionType {
+	return async (dispatch, getState) => {
+		const state = getState()
+		const currentFilters = state.sis ? state.sis.filters : []
+		const newFilters = currentFilters.find(filter => filter.value === newFilter.value) !== undefined
+			? currentFilters.filter(filter => filter.value !== newFilter.value)
+			: [...currentFilters, newFilter]
+
+		dispatch({type: UPDATE_FILTERS, payload: newFilters})
+	}
+}
+
 type Action =
 	| UpdateBalancesActions
 	| TermsUpdateAction
 	| LoadCachedCoursesAction
+	| UpdateFiltersAction
 
 export type State = {|
 	balancesErrorMessage: ?string,
@@ -87,6 +109,8 @@ export type State = {|
 	mealPlanDescription: ?string,
 	allCourses: Array<CourseType>,
 	courseDataState: string,
+	validGEs: string[],
+	filters: Array<FilterType>,
 |}
 const initialState = {
 	balancesErrorMessage: null,
@@ -98,6 +122,8 @@ const initialState = {
 	mealPlanDescription: null,
 	allCourses: [],
 	courseDataState: 'not-loaded',
+	validGEs: [],
+	filters: [],
 }
 export function sis(state: State = initialState, action: Action) {
 	switch (action.type) {
@@ -117,11 +143,13 @@ export function sis(state: State = initialState, action: Action) {
 			}
 		}
 		case LOAD_CACHED_COURSES:
-			return {...state, allCourses: action.payload, courseDataState: 'updated'}
+			return {...state, allCourses: action.payload.courses, courseDataState: 'updated', validGEs: action.payload.gereqs}
 		case TERMS_UPDATE_START:
 			return {...state, courseDataState: 'updating'}
 		case TERMS_UPDATE_COMPLETE:
 			return {...state, courseDataState: 'updated'}
+		case UPDATE_FILTERS:
+			return {...state, filters: action.payload}
 
 		default:
 			return state
