@@ -891,7 +891,6 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				5A41494DACBB4D2795B46DE0 /* Resources */,
 				3C5BFA21338636E7EB4E5E0D /* Frameworks */,
-				D1D441B920200D070033AE30 /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
