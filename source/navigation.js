@@ -24,6 +24,7 @@ import NewsView from './views/news'
 import SISView from './views/sis'
 import {JobDetailView} from './views/sis/student-work/detail'
 import {CourseDetailView} from './views/sis/course-search/detail'
+import {CourseSearchFiltersView} from './views/sis/course-search/filters'
 import {
 	BuildingHoursView,
 	BuildingHoursDetailView,
@@ -86,6 +87,7 @@ export const AppNavigator = StackNavigator(
 		IconSettingsView: {screen: IconSettingsView},
 		SISView: {screen: SISView},
 		CourseDetailView: {screen: CourseDetailView},
+		CourseSearchFiltersView: {screen: CourseSearchFiltersView},
 		StreamingView: {screen: StreamingView},
 		KSTOScheduleView: {screen: KSTOScheduleView},
 		KRLXScheduleView: {screen: KRLXScheduleView},

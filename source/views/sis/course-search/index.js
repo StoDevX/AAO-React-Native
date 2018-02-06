@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View, Animated, Dimensions, Platform} from 'react-native'
+import {StyleSheet, View, Animated, Dimensions, Platform, Text} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {CourseSearchBar} from '../components/searchbar'
@@ -16,6 +16,7 @@ import sortBy from 'lodash/sortBy'
 import toPairs from 'lodash/toPairs'
 import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
+import {Cell} from 'react-native-tableview-simple'
 
 type ReactProps = TopLevelViewPropsType
 
@@ -127,6 +128,10 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.setState(() => ({searchActive: false}))
 	}
 
+	openFilters = () => {
+		this.props.navigation.navigate('CourseSearchFiltersView', {})
+	}
+
 	render() {
 		const screenWidth = Dimensions.get('window').width
 		const searchBarWidth = screenWidth - 20
@@ -171,10 +176,19 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 					</Animated.View>
 				</Animated.View>
 				{searchActive ? (
-					<CourseSearchResultsList
-						navigation={this.props.navigation}
-						terms={this.state.searchResults}
-					/>
+					<View>
+						<Cell
+							accessory="DisclosureIndicator"
+							backgroundColor={c.sto.lightGray}
+							cellStyle="Basic"
+							onPress={this.openFilters}
+							title="Add Filters..."
+						/>
+						<CourseSearchResultsList
+							navigation={this.props.navigation}
+							terms={this.state.searchResults}
+						/>
+					</View>
 				) : (
 					<View />
 				)}
@@ -221,5 +235,18 @@ let styles = StyleSheet.create({
 		fontWeight: 'bold',
 		padding: 22,
 		paddingLeft: 17,
+	},
+
+	filtersContainer: {
+		backgroundColor: c.white,
+		paddingHorizontal: 15,
+		paddingVertical: 10,
+		borderColor: c.iosDisabledText,
+		borderTopWidth: 0.3,
+	},
+
+	filtersTitle: {
+		color: c.infoBlue,
+		fontSize: 16,
 	},
 })
