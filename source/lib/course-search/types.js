@@ -22,6 +22,7 @@ export type CourseType = {
 	notes?: string[],
 	section?: string,
 	times?: string[],
+	title?: string,
 }
 
 export type TermType = {

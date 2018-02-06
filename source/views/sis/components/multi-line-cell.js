@@ -18,7 +18,7 @@ export class MultiLineDetailCell extends React.PureComponent<Props> {
 			<Cell
 				cellContentView={
 					<View style={detailStyles.cellContentView}>
-						<View numberOfLines={2} style={detailStyles.leftContainer}>
+						<View style={detailStyles.leftContainer}>
 							<Text allowFontScaling={true} style={detailStyles.cellTitle}>
 								{title}
 							</Text>
@@ -26,11 +26,7 @@ export class MultiLineDetailCell extends React.PureComponent<Props> {
 								{leftDetail}
 							</Text>
 						</View>
-						<Text
-							allowFontScaling={true}
-							numberOfLines={3}
-							style={detailStyles.cellRightDetail}
-						>
+						<Text allowFontScaling={true} style={detailStyles.cellRightDetail}>
 							{rightDetail}
 						</Text>
 					</View>
@@ -85,14 +81,12 @@ export class MultiLineLeftDetailCell extends React.PureComponent<
 					<View style={detailStyles.cellContentView}>
 						<Text
 							allowFontScaling={true}
-							numberOfLines={1}
 							style={leftDetailStyles.cellLeftDetail}
 						>
 							{detail}
 						</Text>
 						<Text
 							allowFontScaling={true}
-							numberOfLines={2}
 							style={leftDetailStyles.cellLeftDetailTitle}
 						>
 							{title}

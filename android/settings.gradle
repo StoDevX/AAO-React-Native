@@ -1,5 +1,4 @@
 rootProject.name = 'AllAboutOlaf'
-
 include ':app'
 
 // Please keep this list in alphabetical order.
