@@ -122,9 +122,9 @@ export class CourseDetailView extends React.PureComponent<Props> {
 		const status = course.status === 'O' ? 'Open' : 'Closed'
 		return (
 			<Container>
-				<Header>{course.name}</Header>
+				<Header>{course.title || course.name}</Header>
 				<SubHeader>
-					{course.departments[0]} {course.number}
+					{course.departments.join('/')} {course.number}
 					{course.section}
 				</SubHeader>
 				<Badge status={status} />
