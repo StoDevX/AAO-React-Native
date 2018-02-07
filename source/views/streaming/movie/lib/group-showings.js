@@ -42,6 +42,6 @@ export function groupShowings(
 
 	return sortBy(
 		values(grouped),
-		({date, month, times}) => `${date}-${month}-${times[0]}`,
+		({date, month, times}) => `${String(date).padStart(2, '0')}-${month}-${times[0]}`,
 	)
 }
