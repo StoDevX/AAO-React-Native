@@ -4,9 +4,11 @@ import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import * as c from '../../../components/colors'
 import glamorous from 'glamorous-native'
-import {setSaturation, setLightness} from 'polished'
-import type {MovieTrailer} from '../types'
+import {setSaturation, setLightness, darken, transparentize, rgb} from 'polished'
+import type {MovieTrailer, RGBTuple} from '../types'
 import LinearGradient from 'react-native-linear-gradient'
+
+const makeRgb = (tuple: RGBTuple) => rgb(...tuple)
 
 type Props = {
 	trailer: MovieTrailer,
@@ -19,7 +21,7 @@ type Props = {
 }
 
 export const TrailerBackground = (props: Props) => {
-	const {trailer, tint, height, viewport} = props
+	const {trailer, tint: posterTint, height, viewport} = props
 
 	// TODO: find the largest size beneath `ideal`
 	const thumbnail = trailer.thumbnails.find(thm => thm.width === 640)
@@ -27,12 +29,15 @@ export const TrailerBackground = (props: Props) => {
 	// TODO: provide a fallback image
 	const uri = thumbnail ? thumbnail.url : ''
 
+	const tint = makeRgb(trailer.colors.dominant) || posterTint
+
 	const gradient = [
 		c.transparent,
 		c.transparent,
-		c.black,
+		// c.transparent,
+		// c.black,
 		// setLightness(0.35, setSaturation(0.25, tint)),
-		// darken(0.2, transparentize(0, tint)),
+		darken(0.1, transparentize(0.5, tint)),
 	]
 
 	return (
