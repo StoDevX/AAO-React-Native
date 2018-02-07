@@ -86,3 +86,33 @@ test('groups showings by day, then by location', () => {
 
 	expect(output).toEqual(expected)
 })
+
+test('sorts showings lexiographically', () => {
+	const input: Array<MovieShowing> = [
+		{time: '2017-01-09T00:00:00-06:00', location: 'Viking'},
+		{time: '2017-01-09T06:00:00-06:00', location: 'Viking'},
+		{time: '2017-01-10T12:00:00-06:00', location: 'Viking'},
+		{time: '2017-01-10T18:00:00-06:00', location: 'Viking'},
+	]
+
+	const output = groupShowings(input)
+
+	const expected = [
+		{
+			key: '9-jan-Viking',
+			date: '9',
+			month: 'jan',
+			location: 'Viking',
+			times: ['12am', '6am'],
+		},
+		{
+			key: '10-jan-Viking',
+			date: '10',
+			month: 'jan',
+			location: 'Viking',
+			times: ['12pm', '6pm'],
+		},
+	]
+
+	expect(output).toEqual(expected)
+})
