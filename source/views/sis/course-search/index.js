@@ -18,6 +18,7 @@ import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
 import {Cell} from 'react-native-tableview-simple'
 import type {FilterType} from './filters/types'
+import {MenuButton} from '../components/menu-icon'
 
 type ReactProps = TopLevelViewPropsType
 
@@ -43,10 +44,14 @@ type State = {
 }
 
 class CourseSearchView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		tabBarLabel: 'Course Search',
-		tabBarIcon: TabBarIcon('search'),
-		title: 'SIS',
+	static navigationOptions = ({navigation}: any) => {
+		const menuButton = <MenuButton onPress={() => {navigation.navigate('CourseSearchFiltersView')}} />
+		return {
+			tabBarLabel: 'Course Search',
+			tabBarIcon: TabBarIcon('search'),
+			title: 'SIS',
+			headerRight: menuButton,
+		}
 	}
 
 	state = {
