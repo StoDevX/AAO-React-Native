@@ -5,6 +5,7 @@ import {StyleSheet} from 'react-native'
 import * as c from '../../../components/colors'
 import openUrl from '../../../components/open-url'
 import glamorous from 'glamorous-native'
+import maxBy from 'lodash/maxBy'
 import type {MovieTrailer} from '../types'
 import {SectionHeading, Card, ShrinkWhenTouched} from './parts'
 import LinearGradient from 'react-native-linear-gradient'
@@ -89,7 +90,7 @@ const ClipTile = (props: {clip: MovieTrailer, viewport: Viewport}) => {
 	const {clip, viewport} = props
 
 	// TODO: pick appropriate thumbnail
-	const thumbnailUrl = clip.thumbnails[0].url
+	const thumbnailUrl = maxBy(clip.thumbnails, t => t.width).url
 
 	return (
 		<ShrinkWhenTouched onPress={() => openUrl(clip.url)}>
