@@ -13,6 +13,7 @@ import {
 	MultiLineLeftDetailCell,
 } from '../../components/multi-line-cell'
 import type {TopLevelViewPropsType} from '../../../types'
+import * as c from '../../../components/colors'
 
 const Container = glamorous.scrollView({
 	paddingVertical: 6,
@@ -23,6 +24,7 @@ const Header = glamorous.text({
 	textAlign: 'center',
 	marginTop: 20,
 	marginHorizontal: 10,
+	color: c.black,
 })
 
 const SubHeader = glamorous.text({
@@ -33,6 +35,7 @@ const SubHeader = glamorous.text({
 
 const CellText = glamorous.text({
 	padding: 5,
+	color: c.black,
 })
 
 function Information({course}: {course: CourseType}) {
@@ -56,7 +59,7 @@ function Information({course}: {course: CourseType}) {
 		<MultiLineLeftDetailCell detail="Prerequisites" title={prerequisites} />
 	)
 	return (
-		<Section header="COURSE INFORMATION">
+		<Section header="COURSE INFORMATION" sectionTintColor={c.sectionBgColor}>
 			{instructors}
 			{type}
 			{ges}
@@ -94,12 +97,16 @@ function Schedule({course}: {course: CourseType}) {
 		)
 	})
 
-	return <Section header="SCHEDULE">{schedule}</Section>
+	return (
+		<Section header="SCHEDULE" sectionTintColor={c.sectionBgColor}>
+			{schedule}
+		</Section>
+	)
 }
 
 function Description({course}: {course: CourseType}) {
 	return course.description ? (
-		<Section header="DESCRIPTION">
+		<Section header="DESCRIPTION" sectionTintColor={c.sectionBgColor}>
 			<Cell cellContentView={<CellText>{course.description[0]}</CellText>} />
 		</Section>
 	) : null
