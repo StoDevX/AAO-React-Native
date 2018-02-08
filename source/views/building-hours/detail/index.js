@@ -12,7 +12,7 @@ type Props = TopLevelViewPropsType & {
 	navigation: {state: {params: {building: BuildingType}}},
 }
 
-type State = {intervalId: number, now: moment}
+type State = {intervalId: ?IntervalID, now: moment}
 
 export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
 	static navigationOptions = ({navigation}: any) => {
@@ -24,7 +24,7 @@ export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
-		intervalId: 0,
+		intervalId: null,
 		// now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
 		now: moment.tz(CENTRAL_TZ),
 	}
@@ -36,7 +36,7 @@ export class BuildingHoursDetailView extends React.PureComponent<Props, State> {
 	}
 
 	componentWillUnmount() {
-		clearTimeout(this.state.intervalId)
+		this.state.intervalId && clearInterval(this.state.intervalId)
 	}
 
 	updateTime = () => {
