@@ -72,7 +72,10 @@ export const trackStreamError = (streamName: string) =>
 	tracker.trackEvent('stream', 'errored-stream', {label: streamName, value: 1})
 
 export const trackBuildingOpen = (buildingName: string) =>
-	tracker.trackEvent('building-hours', 'open-building', {label: buildingName, value: 1})
+	tracker.trackEvent('building-hours', 'open-building', {
+		label: buildingName,
+		value: 1,
+	})
 
 export const trackDefinitionOpen = (word: string) =>
 	tracker.trackEvent('dictionary', 'open-definition', {label: word, value: 1})
@@ -81,10 +84,16 @@ export const trackOrgOpen = (orgName: string) =>
 	tracker.trackEvent('student-org', 'open-org', {label: orgName, value: 1})
 
 export const trackCalendarEventOpen = (eventTitle: string) =>
-	tracker.trackEvent('calendar-event', 'open-event', {label: eventTitle, value: 1})
+	tracker.trackEvent('calendar-event', 'open-event', {
+		label: eventTitle,
+		value: 1,
+	})
 
 export const trackStudentJobOpen = (jobTitle: string) =>
-	tracker.trackEvent('student-jobs', 'open-posting', {label: jobTitle, value: 1})
+	tracker.trackEvent('student-jobs', 'open-posting', {
+		label: jobTitle,
+		value: 1,
+	})
 
 export const trackLogIn = () => tracker.trackEvent('account', 'log-in')
 
