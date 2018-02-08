@@ -1,4 +1,6 @@
 #!/bin/bash
+# Usage: From root of project, run ./script/trim-flow-generic-defs.sh
+# Required binaries: ripgrep
 
 for file in $(find ./flow-typed/npm | grep '.*vx.x.x.js$'); do
     echo "$file"
