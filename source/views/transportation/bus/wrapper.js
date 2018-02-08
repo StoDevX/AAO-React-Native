@@ -23,7 +23,7 @@ type Props = TopLevelViewPropsType & {
 type State = {|
 	busLines: Array<UnprocessedBusLine>,
 	activeBusLine: ?UnprocessedBusLine,
-	intervalId: number,
+	intervalId: ?IntervalID,
 	loading: boolean,
 	refreshing: boolean,
 	now: moment,
@@ -33,7 +33,7 @@ export class BusView extends React.PureComponent<Props, State> {
 	state = {
 		busLines: defaultData.data,
 		activeBusLine: null,
-		intervalId: 0,
+		intervalId: null,
 		loading: true,
 		refreshing: false,
 		now: moment.tz(TIMEZONE),
@@ -51,7 +51,7 @@ export class BusView extends React.PureComponent<Props, State> {
 	}
 
 	componentWillUnmount() {
-		clearTimeout(this.state.intervalId)
+		this.state.intervalId && clearInterval(this.state.intervalId)
 	}
 
 	fetchData = async () => {
