@@ -1,5 +1,5 @@
-// flow-typed signature: 65527f14a5f7e89fb28d0a29f45dc848
-// flow-typed version: c7c67b81c1/jest_v21.x.x/flow_>=v0.39.x
+// flow-typed signature: 6e1fc0a644aa956f79029fec0709e597
+// flow-typed version: 07ebad4796/jest_v22.x.x/flow_>=v0.39.x
 
 type JestMockFn<TArguments: $ReadOnlyArray<*>, TReturn> = {
   (...args: TArguments): TReturn,
@@ -258,7 +258,7 @@ type JestExpectType = {
   /**
    * Use .toMatchObject to check that a javascript object matches a subset of the properties of an object.
    */
-  toMatchObject(object: Object): void,
+  toMatchObject(object: Object | Array<Object>): void,
   /**
    * This ensures that a React component matches the most recent snapshot.
    */
@@ -271,8 +271,8 @@ type JestExpectType = {
    *
    * Alias: .toThrowError
    */
-  toThrow(message?: string | Error | RegExp): void,
-  toThrowError(message?: string | Error | RegExp): void,
+  toThrow(message?: string | Error | Class<Error> | RegExp): void,
+  toThrowError(message?: string | Error | Class<Error> | RegExp): void,
   /**
    * Use .toThrowErrorMatchingSnapshot to test that a function throws a error
    * matching the most recent snapshot when it is called.
@@ -310,6 +310,10 @@ type JestObjectType = {
    * mocked function.
    */
   resetAllMocks(): JestObjectType,
+  /**
+   * Restores all mocks back to their original value.
+   */
+  restoreAllMocks(): JestObjectType,
   /**
    * Removes any pending timers from the timer system.
    */
@@ -420,7 +424,12 @@ type JestObjectType = {
    * Creates a mock function similar to jest.fn but also tracks calls to
    * object[methodName].
    */
-  spyOn(object: Object, methodName: string): JestMockFn<any, any>
+  spyOn(object: Object, methodName: string): JestMockFn<any, any>,
+  /**
+   * Set the default timeout interval for tests and before/after hooks in milliseconds.
+   * Note: The default timeout interval is 5 seconds if this method is not called.
+   */
+  setTimeout(timeout: number): JestObjectType
 };
 
 type JestSpyType = {
