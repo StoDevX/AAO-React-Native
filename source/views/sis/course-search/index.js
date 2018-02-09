@@ -61,10 +61,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	containerHeight = new Animated.Value(125)
 
 	_performSearch = (text: string | Object) => {
-		// Android clear button returns an object
-		// if (typeof text !== 'string') {
-		// 	return this.props.onSearch(null)
-		// }
 		const query = text.toLowerCase()
 		let results = this.props.allCourses.filter(course => {
 			const section = course.section ? course.section.toLowerCase() : ''
