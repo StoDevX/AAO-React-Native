@@ -48,6 +48,7 @@ const detailStyles = StyleSheet.create({
 	cellTitle: {
 		fontSize: 16,
 		letterSpacing: -0.32,
+		color: c.black,
 	},
 	cellLeftDetail: {
 		fontSize: 16,
@@ -102,6 +103,7 @@ const leftDetailStyles = StyleSheet.create({
 	cellLeftDetailTitle: {
 		fontSize: 12,
 		flex: 1,
+		color: c.black,
 	},
 	cellLeftDetail: {
 		fontSize: 12,

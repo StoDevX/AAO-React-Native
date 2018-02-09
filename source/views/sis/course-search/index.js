@@ -69,10 +69,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	containerHeight = new Animated.Value(125)
 
 	_performSearch = (text: string | Object) => {
-		// Android clear button returns an object
-		// if (typeof text !== 'string') {
-		// 	return this.props.onSearch(null)
-		// }
 		const query = text.toLowerCase()
 		let results = this.props.allCourses.filter(course => {
 			const section = course.section ? course.section.toLowerCase() : ''
@@ -159,8 +155,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}
 		const containerAnimation = {height: this.containerHeight}
 		const {searchActive} = this.state
-		const loading = this.props.courseDataState === 'updating'
-		if (loading) {
+		const loadingCourseData = this.props.courseDataState === 'updating'
+		if (loadingCourseData) {
 			return <LoadingView text="Loading Course Data..." />
 		}
 
@@ -189,6 +185,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 								}
 								this.performSearch(text)
 							}}
+							placeholder="Search Class & Lab"
 							searchActive={searchActive}
 						/>
 					</Animated.View>

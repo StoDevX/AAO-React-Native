@@ -49,7 +49,7 @@ type State = {
 	now: moment,
 	buildings: Array<{title: string, data: Array<BuildingType>}>,
 	allBuildings: Array<BuildingType>,
-	intervalId: number,
+	intervalId: ?IntervalID,
 }
 
 export class BuildingHoursView extends React.PureComponent<Props, State> {
@@ -65,7 +65,7 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		now: moment.tz(CENTRAL_TZ),
 		buildings: groupBuildings(defaultData.data, this.props.favoriteBuildings),
 		allBuildings: defaultData.data,
-		intervalId: 0,
+		intervalId: null,
 	}
 
 	componentWillMount() {
@@ -86,7 +86,7 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 	}
 
 	componentWillUnmount() {
-		clearTimeout(this.state.intervalId)
+		this.state.intervalId && clearInterval(this.state.intervalId)
 	}
 
 	updateTime = () => {
