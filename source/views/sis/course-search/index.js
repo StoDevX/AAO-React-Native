@@ -162,7 +162,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 								}
 								this.performSearch(text)
 							}}
-							placeholder={"Search Class & Lab"}
+							placeholder="Search Class & Lab"
 							searchActive={searchActive}
 						/>
 					</Animated.View>
