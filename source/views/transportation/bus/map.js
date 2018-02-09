@@ -28,7 +28,7 @@ type Props = TopLevelViewPropsType & {|
 |}
 
 type State = {|
-	intervalId: number,
+	intervalId: ?IntervalID,
 	now: moment,
 	region: {
 		latitude: number,
@@ -46,7 +46,7 @@ export class BusMap extends React.PureComponent<Props, State> {
 	})
 
 	state = {
-		intervalId: 0,
+		intervalId: null,
 		now: moment.tz(TIMEZONE),
 		region: {
 			latitude: 44.44946671480875,
@@ -63,7 +63,7 @@ export class BusMap extends React.PureComponent<Props, State> {
 	}
 
 	componentWillUnmount() {
-		clearTimeout(this.state.intervalId)
+		this.state.intervalId && clearInterval(this.state.intervalId)
 	}
 
 	onRegionChangeComplete = (newRegion: {
