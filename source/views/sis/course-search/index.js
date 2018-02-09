@@ -37,6 +37,7 @@ type Props = ReactProps &
 type State = {
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
 	searchActive: boolean,
+	searchPerformed: boolean,
 }
 
 class CourseSearchView extends React.PureComponent<Props, State> {
@@ -49,6 +50,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	state = {
 		searchResults: [],
 		searchActive: false,
+		searchPerformed: false,
 	}
 
 	componentDidMount() {
@@ -83,7 +85,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			data: value,
 		}))
 		let sortedCourses = sortBy(groupedCourses, course => course.title).reverse()
-		this.setState({searchResults: sortedCourses})
+		this.setState({searchResults: sortedCourses, searchPerformed: true})
 	}
 
 	// We need to make the search run slightly behind the UI,
@@ -131,7 +133,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			top: this.searchBarTop,
 		}
 		const containerAnimation = {height: this.containerHeight}
-		const {searchActive} = this.state
+		const {searchActive, searchPerformed, searchResults} = this.state
 		const loadingCourseData = this.props.courseDataState === 'updating'
 		if (loadingCourseData) {
 			return <LoadingView text="Loading Course Data..." />
@@ -170,7 +172,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				{searchActive ? (
 					<CourseSearchResultsList
 						navigation={this.props.navigation}
-						terms={this.state.searchResults}
+						searchPerformed={searchPerformed}
+						terms={searchResults}
 					/>
 				) : (
 					<View />
