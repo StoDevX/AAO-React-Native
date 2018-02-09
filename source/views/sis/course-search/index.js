@@ -155,6 +155,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}
 		const containerAnimation = {height: this.containerHeight}
 		const {searchActive} = this.state
+		const {filters} = this.props
 		const loadingCourseData = this.props.courseDataState === 'updating'
 		if (loadingCourseData) {
 			return <LoadingView text="Loading Course Data..." />
@@ -192,14 +193,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				</Animated.View>
 				{searchActive ? (
 					<View>
-						<Cell
-							accessory="DisclosureIndicator"
-							backgroundColor={c.sto.lightGray}
-							cellStyle="Basic"
-							onPress={this.openFilters}
-							title="Add Filters..."
-						/>
 						<CourseSearchResultsList
+							filters = {filters}
 							navigation={this.props.navigation}
 							terms={this.state.searchResults}
 						/>

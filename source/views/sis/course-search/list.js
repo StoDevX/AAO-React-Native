@@ -8,6 +8,8 @@ import {ListSeparator, ListSectionHeader} from '../../components/list'
 import * as c from '../../components/colors'
 import {CourseRow} from './row'
 import {parseTerm} from '../../../lib/course-search'
+import type {FilterType} from './filters/types'
+import {FilterToolbar} from '../components/filter-toolbar'
 
 const styles = StyleSheet.create({
 	container: {
@@ -16,6 +18,7 @@ const styles = StyleSheet.create({
 })
 
 type Props = TopLevelViewPropsType & {
+	filters: Array<FilterType>,
 	terms: Array<{title: string, data: CourseType[]}>,
 }
 
@@ -34,10 +37,23 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 		<CourseRow course={item} onPress={this.onPressRow} />
 	)
 
+	onPressToolbar = () => {
+		this.props.navigation.navigate('CourseSearchFiltersView')
+	}
+
 	render() {
+		const {filters} = this.props
+
+		const header = (
+			<FilterToolbar
+				filters={filters}
+				onPress={this.onPressToolbar}
+			/>
+		)
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
+				ListHeaderComponent={header}
 				contentContainerStyle={styles.container}
 				extraData={this.props}
 				keyExtractor={this.keyExtractor}
