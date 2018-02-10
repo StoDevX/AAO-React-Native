@@ -41,7 +41,7 @@ def glob_images(root):
 
 def main():
     parser = argparse.ArgumentParser(description='Process some images.')
-    parser.add_argument('root', nargs='*', default=['buildinghours', 'contacts'],
+    parser.add_argument('root', nargs='*', default=['spaces', 'contacts'],
                         help='a folder which contains a "source/" folder containing the images to be optimized')
     args = parser.parse_args()
 

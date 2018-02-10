@@ -1,8 +1,8 @@
 // @flow
 
 export const icons = {
-	oldMain: require('./about/IconTrans.png'),
-	windmill: require('../ios/AllAboutOlaf/windmill-icon/windmill.png'),
+	oldMain: require('./old-main.png'),
+	windmill: require('./windmill.png'),
 }
 
 export const defaultIcon = icons.oldMain
