@@ -60,7 +60,25 @@
     "singleQuote": true,
     "trailingComma": "all",
     "bracketSpacing": false,
-    "semi": false
+    "semi": false,
+    "overrides": [
+      {
+        "files": "*.md",
+        "options": {"requirePragma": true}
+      },
+      {
+        "files": "*.json",
+        "options": {"requirePragma": true}
+      },
+      {
+        "files": "flow-typed/**",
+        "options": {"requirePragma": true}
+      },
+      {
+        "files": "images/**",
+        "options": {"requirePragma": true}
+      }
+    ]
   },
   "dependencies": {
     "@hawkrives/react-native-alphabetlistview": "1.0.0",
