@@ -1,9 +1,9 @@
 // @flow
 export const webcamImages = {
-  alumniwest: require('./webcams/alumniwest.jpg'),
-  bcplaza: require('./webcams/bcplaza.jpg'),
-  eastquad: require('./webcams/eastquad.jpg'),
-  himom: require('./webcams/himom.jpg'),
-  tomsoneast: require('./webcams/tomsoneast.jpg'),
-  tomsonwest: require('./webcams/tomsonwest.jpg'),
+  alumniwest: require('./alumniwest.jpg'),
+  bcplaza: require('./bcplaza.jpg'),
+  eastquad: require('./eastquad.jpg'),
+  himom: require('./himom.jpg'),
+  tomsoneast: require('./tomsoneast.jpg'),
+  tomsonwest: require('./tomsonwest.jpg'),
 }
