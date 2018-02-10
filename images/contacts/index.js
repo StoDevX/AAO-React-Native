@@ -1,5 +1,5 @@
 // @flow
-export const contactImages = {
+export const images = {
   'boe-house': require('./optimized/boe-house.jpg'),
   'pause-kitchen': require('./optimized/pause-kitchen.jpg'),
   'pubsafe': require('./optimized/pubsafe.jpg'),

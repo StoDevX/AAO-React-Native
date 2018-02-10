@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {Alert, StyleSheet, ScrollView, Image} from 'react-native'
-import {contactImages} from '../../../images/contacts'
+import {images as contactImages} from '../../../images/contacts'
 import {Markdown} from '../components/markdown'
 import {ListFooter} from '../components/list'
 import glamorous from 'glamorous-native'

@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {ScrollView, StyleSheet, Platform, Image} from 'react-native'
-import {buildingImages} from '../../../../images/spaces'
+import {images as buildingImages} from '../../../../images/spaces'
 import type {BuildingType} from '../types'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'

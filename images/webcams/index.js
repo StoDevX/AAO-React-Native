@@ -1,5 +1,5 @@
 // @flow
-export const webcamImages = {
+export const images = {
   alumniwest: require('./alumniwest.jpg'),
   bcplaza: require('./bcplaza.jpg'),
   eastquad: require('./eastquad.jpg'),

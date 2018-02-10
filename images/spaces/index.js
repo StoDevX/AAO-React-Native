@@ -1,5 +1,5 @@
 // @flow
-export const buildingImages = {
+export const images = {
   'alumni-hall': require('./optimized/alumni-hall.jpg'),
   'boe': require('./optimized/boe.jpg'),
   'bookstore': require('./optimized/bookstore.jpg'),
