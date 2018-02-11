@@ -36,7 +36,9 @@ export class CourseRow extends React.PureComponent<Props> {
 				})
 				.join(', ')
 			const dayOrder = ['Mo', 'Tu', 'We', 'Th', 'Fr']
-			let days = sortBy(grouping.days, d => dayOrder.indexOf(d)).map(formatDayAbbrev).join('')
+			let days = sortBy(grouping.days, d => dayOrder.indexOf(d))
+				.map(formatDayAbbrev)
+				.join('')
 			if (days === 'MTWThF') {
 				days = 'M-F'
 			}
