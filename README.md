@@ -1,7 +1,7 @@
 # All About Olaf
 
-[![Get it on Google Play](images/get_google_play.svg)](https://play.google.com/store/apps/details?id=com.allaboutolaf)
-[![Download on the App Store](images/get_app_store.svg)](https://itunes.apple.com/us/app/all-about-olaf/id938588319)
+[![Get it on Google Play](images/readme/get_google_play.svg)](https://play.google.com/store/apps/details?id=com.allaboutolaf)
+[![Download on the App Store](images/readme/get_app_store.svg)](https://itunes.apple.com/us/app/all-about-olaf/id938588319)
 
 ## About
 
