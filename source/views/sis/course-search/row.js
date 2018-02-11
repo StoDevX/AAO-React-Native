@@ -24,6 +24,7 @@ export class CourseRow extends React.PureComponent<Props> {
 		const {course} = this.props
 		const times = course.times
 			? course.times.map(time => {
+					// Splits days and times  ex. 'MWF 0800-0900' -> ['MWF', '0800-0900PM']
 					let array = time.split(/\s/)
 					let cleanedTime = findTime(array[1])
 					const start = moment
