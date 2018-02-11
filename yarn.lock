@@ -5549,9 +5549,9 @@ stealthy-require@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
 
-sto-sis-time-parser@2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/sto-sis-time-parser/-/sto-sis-time-parser-2.3.2.tgz#82cf0c34e6b1d3a3980887ddff6a4e04ee585760"
+sto-sis-time-parser@2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/sto-sis-time-parser/-/sto-sis-time-parser-2.3.3.tgz#566b663997f6ec6cdd1e585456ecb552af977a47"
   dependencies:
     lodash "^4.0.0"
 

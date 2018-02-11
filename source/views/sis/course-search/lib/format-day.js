@@ -12,12 +12,8 @@ export function formatDay(day: string) {
 			return 'Thursday'
 		case 'Fr':
 			return 'Friday'
-		case 'Sa':
-			return 'Saturday'
-		case 'Su':
-			return 'Sunday'
 		default:
-			return 'Unknown Day'
+			return day
 	}
 }
 
@@ -33,11 +29,7 @@ export function formatDayAbbrev(day: string) {
 			return 'Th'
 		case 'Fr':
 			return 'F'
-		case 'Sa':
-			return 'Sa'
-		case 'Su':
-			return 'Su'
 		default:
-			return 'Unknown Day'
+			return day
 	}
 }

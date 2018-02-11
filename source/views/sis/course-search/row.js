@@ -9,6 +9,7 @@ import {deptNum} from './'
 import moment from 'moment-timezone'
 import {convertTimeStringsToOfferings} from 'sto-sis-time-parser'
 import {formatDayAbbrev} from './lib/format-day'
+import sortBy from 'lodash/sortBy'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 type Props = {
@@ -34,7 +35,8 @@ export class CourseRow extends React.PureComponent<Props> {
 					return `${start} - ${end}`
 				})
 				.join(', ')
-			let days = grouping.days.map(day => formatDayAbbrev(day)).join('')
+			const dayOrder = ['Mo', 'Tu', 'We', 'Th', 'Fr']
+			let days = sortBy(grouping.days, d => dayOrder.indexOf(d)).map(formatDayAbbrev).join('')
 			if (days === 'MTWThF') {
 				days = 'M-F'
 			}
