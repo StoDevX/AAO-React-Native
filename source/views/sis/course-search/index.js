@@ -78,7 +78,10 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				) ||
 				deptNum(course)
 					.toLowerCase()
-					.startsWith(query)
+					.startsWith(query) ||
+				(course.gereqs || []).some(gereq =>
+					gereq.toLowerCase().startsWith(query),
+				)
 			)
 		})
 

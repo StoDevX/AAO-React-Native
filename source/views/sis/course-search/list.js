@@ -42,7 +42,7 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 	render() {
 		const message = this.props.searchPerformed
 			? 'There were no courses that matched your query. Please try again.'
-			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), or Department/Number (e.g. MATH 252)."
+			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
 		const messageView = <NoticeView style={styles.message} text={message} />
 
 		return (
