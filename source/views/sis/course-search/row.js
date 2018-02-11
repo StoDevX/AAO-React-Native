@@ -6,8 +6,9 @@ import type {CourseType} from '../../../lib/course-search/types'
 import {ListRow, Title} from '../../components/list'
 import {Row} from '../../components/layout'
 import {deptNum} from './'
-import {findTime} from './lib/find-time'
 import moment from 'moment-timezone'
+import {convertTimeStringsToOfferings} from 'sto-sis-time-parser'
+import {formatDayAbbrev} from './lib/format-day'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 type Props = {
@@ -22,20 +23,26 @@ export class CourseRow extends React.PureComponent<Props> {
 
 	render() {
 		const {course} = this.props
-		const times = course.times
-			? course.times.map(time => {
-					// Splits days and times  ex. 'MWF 0800-0900' -> ['MWF', '0800-0900PM']
-					let array = time.split(/\s/)
-					let cleanedTime = findTime(array[1])
+		const groupings = convertTimeStringsToOfferings(
+			{times: course.times},
+			{groupBy: 'sis'},
+		)
+		const formattedGroupings = groupings.map(grouping => {
+			const times = grouping.times
+				.map(time => {
 					const start = moment
-						.tz(cleanedTime.start, 'hmm', CENTRAL_TZ)
+						.tz(time.start, 'hmm', CENTRAL_TZ)
 						.format('h:mm A')
-					const end = moment
-						.tz(cleanedTime.end, 'hmm', CENTRAL_TZ)
-						.format('h:mm A')
-					return `${array[0]} ${start} - ${end}`
+					const end = moment.tz(time.end, 'hmm', CENTRAL_TZ).format('h:mm A')
+					return `${start} - ${end}`
 				})
-			: null
+				.join(', ')
+			let days = grouping.days.map(day => formatDayAbbrev(day)).join('')
+			if (days === 'MTWThF') {
+				days = 'M-F'
+			}
+			return `${days} ${times}`
+		})
 		return (
 			<ListRow arrowPosition="center" onPress={this.onPress}>
 				<Row>
@@ -46,7 +53,7 @@ export class CourseRow extends React.PureComponent<Props> {
 					{course.gereqs && `(${course.gereqs.join(', ')})`}
 				</Text>
 				{course.instructors && <Text>{course.instructors.join(', ')}</Text>}
-				{times && <Text>{times.join('\n')}</Text>}
+				{course.times && <Text>{formattedGroupings.join('\n')}</Text>}
 			</ListRow>
 		)
 	}

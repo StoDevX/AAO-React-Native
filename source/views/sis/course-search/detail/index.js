@@ -80,10 +80,13 @@ function Schedule({course}: {course: CourseType}) {
 	if (!course.times) {
 		return null
 	}
-	const times = convertTimeStringsToOfferings({
-		times: course.times,
-		locations: course.locations,
-	})
+	const times = convertTimeStringsToOfferings(
+		{
+			times: course.times,
+			locations: course.locations,
+		},
+		{groupBy: 'day'},
+	)
 	const schedule = times.map(time => {
 		const hours = time.times.map(time => {
 			const start = moment.tz(time.start, 'hmm', CENTRAL_TZ).format('h:mm A')
