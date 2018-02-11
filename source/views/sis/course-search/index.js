@@ -17,6 +17,10 @@ import toPairs from 'lodash/toPairs'
 import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
 
+export const deptNum = (course: CourseType) => (
+	`${course.departments.join('/')} ${course.number}${course.section ? course.section : ''}`
+)
+
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
@@ -28,11 +32,7 @@ type ReduxDispatchProps = {
 	updateCourseData: () => any,
 }
 
-type Props = ReactProps &
-	ReduxStateProps &
-	ReduxDispatchProps & {
-		navigation: {state: {params: {}}},
-	}
+type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
 
 type State = {
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
@@ -57,12 +57,18 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.props.updateCourseData()
 	}
 
-	searchBar: any = null
-	headerOpacity = new Animated.Value(1)
-	searchBarTop = new Animated.Value(71)
-	containerHeight = new Animated.Value(125)
+	animations = {
+		headerOpacity: {start: 1, end: 0, duration: 800},
+		searchBarTop: {start: 71, end: 10, duration: 800},
+		containerHeight: {start: 125, end: 64, duration: 800},
+  }
 
-	_performSearch = (text: string | Object) => {
+	searchBar: any = null
+	headerOpacity = new Animated.Value(this.animations.headerOpacity.start)
+	searchBarTop = new Animated.Value(this.animations.searchBarTop.start)
+	containerHeight = new Animated.Value(this.animations.containerHeight.start)
+
+	performSearch = (text: string | Object) => {
 		const query = text.toLowerCase()
 		let results = this.props.allCourses.filter(course => {
 			const section = course.section ? course.section.toLowerCase() : ''
@@ -71,11 +77,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				(course.instructors || []).some(name =>
 					name.toLowerCase().includes(query),
 				) ||
-				`${course.departments
-					.join('/')
-					.toLowerCase()} ${course.number.toString()}${section}`.startsWith(
-					query,
-				)
+				deptNum(course).toLowerCase().startsWith(query)
 			)
 		})
 
@@ -85,42 +87,37 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			data: value,
 		}))
 		let sortedCourses = sortBy(groupedCourses, course => course.title).reverse()
-		this.setState({searchResults: sortedCourses, searchPerformed: true})
+		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true}))
 	}
-
-	// We need to make the search run slightly behind the UI,
-	// so I'm slowing it down by 50ms. 0ms also works, but seems
-	// rather pointless.
-	performSearch = debounce(this._performSearch, 50)
 
 	onFocus = () => {
 		Animated.timing(this.headerOpacity, {
-			toValue: 0,
-			duration: 800,
+			toValue: this.animations.headerOpacity.end,
+			duration: this.animations.headerOpacity.duration,
 		}).start()
 		Animated.timing(this.searchBarTop, {
-			toValue: 10,
-			duration: 800,
+			toValue: this.animations.searchBarTop.end,
+			duration: this.animations.searchBarTop.duration,
 		}).start()
 		Animated.timing(this.containerHeight, {
-			toValue: 64,
-			duration: 800,
+			toValue: this.animations.containerHeight.end,
+			duration: this.animations.containerHeight.duration,
 		}).start()
 		this.setState(() => ({searchActive: true}))
 	}
 
 	onCancel = () => {
 		Animated.timing(this.headerOpacity, {
-			toValue: 1,
-			duration: 800,
+			toValue: this.animations.headerOpacity.start,
+			duration: this.animations.headerOpacity.duration,
 		}).start()
 		Animated.timing(this.searchBarTop, {
-			toValue: 71,
-			duration: 800,
+			toValue: this.animations.searchBarTop.start,
+			duration: this.animations.searchBarTop.duration,
 		}).start()
 		Animated.timing(this.containerHeight, {
-			toValue: 125,
-			duration: 800,
+			toValue: this.animations.containerHeight.start,
+			duration: this.animations.containerHeight.duration,
 		}).start()
 		this.setState(() => ({searchActive: false}))
 	}
@@ -136,7 +133,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		const {searchActive, searchPerformed, searchResults} = this.state
 		const loadingCourseData = this.props.courseDataState === 'updating'
 		if (loadingCourseData) {
-			return <LoadingView text="Loading Course Data..." />
+			return <LoadingView text="Loading Course Data…" />
 		}
 
 		return (

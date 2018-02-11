@@ -14,6 +14,8 @@ import {
 } from '../../components/multi-line-cell'
 import type {TopLevelViewPropsType} from '../../../types'
 import * as c from '../../../components/colors'
+import {deptNum} from '../'
+const CENTRAL_TZ = 'America/Winnipeg'
 
 const Container = glamorous.scrollView({
 	paddingVertical: 6,
@@ -39,33 +41,37 @@ const CellText = glamorous.text({
 })
 
 function Information({course}: {course: CourseType}) {
-	const profs = course.instructors ? course.instructors.join(', ') : null
-	const instructors = course.instructors ? (
-		<Cell cellStyle="LeftDetail" detail="Instructor(s)" title={profs} />
-	) : null
-	const gereqs = course.gereqs ? course.gereqs.join(', ') : null
-	const ges = course.gereqs ? (
-		<Cell cellStyle="LeftDetail" detail="GEs" title={gereqs} />
-	) : null
-	const credits = course.credits ? (
-		<Cell cellStyle="LeftDetail" detail="Credits" title={course.credits} />
-	) : null
-	const type = <Cell cellStyle="LeftDetail" detail="Type" title={course.type} />
-	const passFail = course.pn ? 'Yes' : 'No'
-	const pn = <Cell cellStyle="LeftDetail" detail="Pass/Fail" title={passFail} />
-	const prerequisites = course.prerequisites ? course.prerequisites : 'None'
-
-	const prereqs = (
-		<MultiLineLeftDetailCell detail="Prerequisites" title={prerequisites} />
-	)
 	return (
 		<Section header="COURSE INFORMATION" sectionTintColor={c.sectionBgColor}>
-			{instructors}
-			{type}
-			{ges}
-			{pn}
-			{prereqs}
-			{credits}
+			{course.instructors ? (
+				<Cell
+					cellStyle="LeftDetail"
+					detail="Instructor(s)"
+					title={course.instructors.join(', ')}
+				/>
+			) : null}
+			<Cell cellStyle="LeftDetail" detail="Type" title={course.type} />
+			{course.gereqs ? (
+				<Cell
+					cellStyle="LeftDetail"
+					detail="GEs"
+					title={course.gereqs.join(', ')}
+				/>
+			) : null}
+			{course.pn ? (
+				<Cell
+					cellStyle="LeftDetail"
+					detail="Pass/Fail"
+					title={course.pn ? 'Yes' : 'No'}
+				/>
+			) : null}
+			<MultiLineLeftDetailCell
+				detail="Prerequisites"
+				title={course.prerequisites ? course.prerequisites : 'None'}
+			/>
+			{course.credits ? (
+				<Cell cellStyle="LeftDetail" detail="Credits" title={course.credits} />
+			) : null}
 		</Section>
 	)
 }
@@ -80,19 +86,16 @@ function Schedule({course}: {course: CourseType}) {
 	})
 	const schedule = times.map(time => {
 		const hours = time.times.map(time => {
-			const start = moment(time.start, 'hmm').format('h:mm A')
-			const end = moment(time.end, 'hmm').format('h:mm A')
+			const start = moment.tz(time.start, 'hmm', CENTRAL_TZ).format('h:mm A')
+			const end = moment.tz(time.end, 'hmm', CENTRAL_TZ).format('h:mm A')
 			return `${start} - ${end}`
 		})
-		const allHours = hours.join('\n')
-		const day = formatDay(time.day)
-		const location = time.location
 		return (
 			<MultiLineDetailCell
 				key={time.day}
-				leftDetail={location}
-				rightDetail={allHours}
-				title={day}
+				leftDetail={time.location}
+				rightDetail={hours.join('\n')}
+				title={formatDay(time.day)}
 			/>
 		)
 	})
@@ -131,8 +134,7 @@ export class CourseDetailView extends React.PureComponent<Props> {
 			<Container>
 				<Header>{course.title || course.name}</Header>
 				<SubHeader>
-					{course.departments.join('/')} {course.number}
-					{course.section}
+					{deptNum(course)}
 				</SubHeader>
 				<Badge status={status} />
 				<TableView>

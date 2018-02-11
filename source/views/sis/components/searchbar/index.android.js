@@ -3,7 +3,6 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import * as c from '../../../components/colors'
-// import SearchBar from 'react-native-material-design-searchbar'
 import SearchBar from 'react-native-searchbar'
 import Icon from 'react-native-vector-icons/Ionicons'
 
@@ -48,6 +47,10 @@ export class CourseSearchBar extends React.PureComponent<Props, State> {
 		this.setState({input: input})
 	}
 
+	onSearch = () => {
+		this.props.onSearchButtonPress(this.state.input)
+	}
+
 	render() {
 		const backButton = this.props.searchActive ? backIcon : searchIcon
 		return (
@@ -60,10 +63,7 @@ export class CourseSearchBar extends React.PureComponent<Props, State> {
 				hideX={!this.props.searchActive}
 				onBack={this.props.onCancel}
 				onFocus={this.props.onFocus}
-				onHide={text => console.log(text)}
-				onSubmitEditing={() => {
-					this.props.onSearchButtonPress(this.state.input)
-				}}
+				onSubmitEditing={this.onSearch}
 				placeholder={this.props.placeholder || 'Search'}
 				showOnLoad={true}
 				style={[styles.searchbar, this.props.style]}

@@ -43,8 +43,8 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 		const message = this.props.searchPerformed
 			? 'There were no courses that matched your query. Please try again.'
 			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), or Department/Number (e.g. MATH 252)."
-
 		const messageView = <NoticeView style={styles.message} text={message} />
+		
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}

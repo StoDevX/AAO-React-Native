@@ -1,4 +1,5 @@
 /* eslint-env jest */
+
 jest.mock('react-native-safari-view', () => 'ReactNativeSafariView')
 
 import {canOpenUrl} from '../open-url'
