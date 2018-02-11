@@ -23,10 +23,7 @@ export class CourseRow extends React.PureComponent<Props> {
 
 	render() {
 		const {course} = this.props
-		const groupings = convertTimeStringsToOfferings(
-			{times: course.times},
-			{groupBy: 'sis'},
-		)
+		const groupings = convertTimeStringsToOfferings(course, {groupBy: 'sis'})
 		const formattedGroupings = groupings.map(grouping => {
 			const times = grouping.times
 				.map(time => {
