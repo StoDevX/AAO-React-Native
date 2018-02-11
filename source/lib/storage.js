@@ -27,7 +27,7 @@ function removeItem(key: string): Promise<void> {
 async function getItemAsBoolean(key: string): Promise<boolean> {
 	return (await getItem(key)) || false
 }
-async function getItemAsArray(key: string): Promise<Array<*>> {
+async function getItemAsArray<T>(key: string): Promise<Array<T>> {
 	return (await getItem(key)) || []
 }
 
