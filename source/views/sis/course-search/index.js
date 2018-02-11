@@ -5,7 +5,6 @@ import {StyleSheet, View, Animated, Dimensions, Platform} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {CourseSearchBar} from '../components/searchbar'
-import debounce from 'lodash/debounce'
 import {updateCourseData} from '../../../flux/parts/sis'
 import type {CourseType} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
@@ -17,9 +16,10 @@ import toPairs from 'lodash/toPairs'
 import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
 
-export const deptNum = (course: CourseType) => (
-	`${course.departments.join('/')} ${course.number}${course.section ? course.section : ''}`
-)
+export const deptNum = (course: CourseType) =>
+	`${course.departments.join('/')} ${course.number}${
+		course.section ? course.section : ''
+	}`
 
 type ReactProps = TopLevelViewPropsType
 
@@ -61,7 +61,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		headerOpacity: {start: 1, end: 0, duration: 800},
 		searchBarTop: {start: 71, end: 10, duration: 800},
 		containerHeight: {start: 125, end: 64, duration: 800},
-  }
+	}
 
 	searchBar: any = null
 	headerOpacity = new Animated.Value(this.animations.headerOpacity.start)
@@ -71,13 +71,14 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	performSearch = (text: string | Object) => {
 		const query = text.toLowerCase()
 		let results = this.props.allCourses.filter(course => {
-			const section = course.section ? course.section.toLowerCase() : ''
 			return (
 				course.name.toLowerCase().includes(query) ||
 				(course.instructors || []).some(name =>
 					name.toLowerCase().includes(query),
 				) ||
-				deptNum(course).toLowerCase().startsWith(query)
+				deptNum(course)
+					.toLowerCase()
+					.startsWith(query)
 			)
 		})
 

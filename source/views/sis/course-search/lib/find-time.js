@@ -16,9 +16,7 @@ export function findTime(timestring) {
 	let startsInAM = false
 
 	// Split the string apart and clean it up.
-	let [start, end] = cleanedTimestring
-		.split('-')
-		.map(cleanTimestringSegment)
+	let [start, end] = cleanedTimestring.split('-').map(cleanTimestringSegment)
 
 	// There are a few courses that both start and end at 00.
 	// I've decided that they mean that it's an all-day course.
@@ -72,7 +70,7 @@ export function findTime(timestring) {
 
 	// ASSERT: There are no courses that take longer than 10 hours
 	// and don't start in the morning.
-	if ((endTime - startTime) > 1000 && !startsInAM) {
+	if (endTime - startTime > 1000 && !startsInAM) {
 		// There are no courses that take this long.
 		// There are some 6-hour ones in interim, though.
 		startTime += 1200

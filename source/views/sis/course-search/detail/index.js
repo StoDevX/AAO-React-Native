@@ -133,9 +133,7 @@ export class CourseDetailView extends React.PureComponent<Props> {
 		return (
 			<Container>
 				<Header>{course.title || course.name}</Header>
-				<SubHeader>
-					{deptNum(course)}
-				</SubHeader>
+				<SubHeader>{deptNum(course)}</SubHeader>
 				<Badge status={status} />
 				<TableView>
 					<Information course={course} />
