@@ -9,7 +9,7 @@ const amPmRegex = /([AP])\.?M\.?/i
 
 // Takes a timestring  and turns it into an object with 24-hour time.
 // "800-925" => {start: 800, end: 925}
-export default function findTime(timestring) {
+export function findTime(timestring) {
 	const cleanedTimestring = timestring.replace(/:/g, '') // 8:00-9:25 => 800-925
 
 	let endsInPM = false

@@ -7,7 +7,7 @@ import {ListRow, Title} from '../../components/list'
 import {Row} from '../../components/layout'
 import {deptNum} from './'
 import {convertTimeStringsToOfferings} from 'sto-sis-time-parser'
-import findTime from './lib/find-time'
+import {findTime} from './lib/find-time'
 import moment from 'moment-timezone'
 const CENTRAL_TZ = 'America/Winnipeg'
 
