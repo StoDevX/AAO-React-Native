@@ -4677,9 +4677,9 @@ pretty-format@^4.2.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/pretty-format/-/pretty-format-4.3.1.tgz#530be5c42b3c05b36414a7a2a4337aa80acd0e8d"
 
-pretty-quick@1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/pretty-quick/-/pretty-quick-1.4.0.tgz#01320bb5ca7cc0f0347b4c7ffc138c1b545717fb"
+pretty-quick@1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/pretty-quick/-/pretty-quick-1.4.1.tgz#9d41f778d2d4d940ec603d1293a0998e84c4722c"
   dependencies:
     chalk "^2.3.0"
     execa "^0.8.0"
