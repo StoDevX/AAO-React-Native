@@ -1,3 +1,3 @@
 // @flow
 
-export {default as default} from './search'
+export {default} from './search'
