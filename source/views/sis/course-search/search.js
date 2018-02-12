@@ -126,13 +126,12 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		const screenWidth = Dimensions.get('window').width
 		const searchBarWidth = screenWidth - 20
 		const headerAnimation = {opacity: this.headerOpacity}
-		const searchBarAnimation = {
-			top: this.searchBarTop,
-		}
+		const searchBarAnimation = {top: this.searchBarTop}
 		const containerAnimation = {height: this.containerHeight}
 		const {searchActive, searchPerformed, searchResults} = this.state
 		const loadingCourseData =
 			this.props.courseDataState === ('updating' || 'preparing')
+
 		if (loadingCourseData) {
 			return <LoadingView text="Loading Course Data…" />
 		}
