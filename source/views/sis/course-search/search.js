@@ -4,7 +4,7 @@ import * as React from 'react'
 import {StyleSheet, View, Animated, Dimensions, Platform} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
-import {CourseSearchBar} from '../components/searchbar'
+import {SearchBar} from '../../components/searchbar'
 import {updateCourseData} from '../../../flux/parts/sis'
 import type {CourseType} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
@@ -15,11 +15,7 @@ import sortBy from 'lodash/sortBy'
 import toPairs from 'lodash/toPairs'
 import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
-
-export const deptNum = (course: CourseType) =>
-	`${course.departments.join('/')} ${course.number}${
-		course.section ? course.section : ''
-	}`
+import {deptNum} from './lib/format-dept-num'
 
 type ReactProps = TopLevelViewPropsType
 
@@ -58,9 +54,9 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	animations = {
-		headerOpacity: {start: 1, end: 0, duration: 800},
-		searchBarTop: {start: 71, end: 10, duration: 800},
-		containerHeight: {start: 125, end: 64, duration: 800},
+		headerOpacity: {start: 1, end: 0, duration: 200},
+		searchBarTop: {start: 71, end: 10, duration: 200},
+		containerHeight: {start: 125, end: 64, duration: 200},
 	}
 
 	searchBar: any = null
@@ -135,7 +131,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}
 		const containerAnimation = {height: this.containerHeight}
 		const {searchActive, searchPerformed, searchResults} = this.state
-		const loadingCourseData = this.props.courseDataState === 'updating'
+		const loadingCourseData =
+			this.props.courseDataState === ('updating' || 'preparing')
 		if (loadingCourseData) {
 			return <LoadingView text="Loading Course Data…" />
 		}
@@ -155,7 +152,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 							searchBarAnimation,
 						]}
 					>
-						<CourseSearchBar
+						<SearchBar
 							getRef={ref => (this.searchBar = ref)}
 							onCancel={this.onCancel}
 							onFocus={this.onFocus}
@@ -167,6 +164,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 							}}
 							placeholder="Search Class & Lab"
 							searchActive={searchActive}
+							textFieldBackgroundColor={c.sto.lightGray}
 						/>
 					</Animated.View>
 				</Animated.View>
@@ -203,20 +201,16 @@ let styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
-
 	common: {
 		backgroundColor: c.white,
 	},
-
 	searchContainer: {
 		margin: 0,
 	},
-
 	searchBarWrapper: {
 		position: 'absolute',
 		left: 10,
 	},
-
 	header: {
 		fontSize: 30,
 		fontWeight: 'bold',

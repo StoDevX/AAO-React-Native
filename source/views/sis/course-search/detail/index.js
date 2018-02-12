@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react'
+import {StyleSheet} from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
 import glamorous from 'glamorous-native'
 import {Badge} from '../../../building-hours/detail/badge'
@@ -11,10 +12,10 @@ import {formatDay} from '../lib/format-day'
 import {
 	MultiLineDetailCell,
 	MultiLineLeftDetailCell,
-} from '../../components/multi-line-cell'
+} from '../../../components/cells'
 import type {TopLevelViewPropsType} from '../../../types'
 import * as c from '../../../components/colors'
-import {deptNum} from '../'
+import {deptNum} from '../lib/format-dept-num'
 const CENTRAL_TZ = 'America/Winnipeg'
 
 const Container = glamorous.scrollView({
@@ -40,13 +41,21 @@ const CellText = glamorous.text({
 	color: c.black,
 })
 
+const styles = StyleSheet.create({
+	chunk: {
+		paddingVertical: 10,
+	},
+})
+
 function Information({course}: {course: CourseType}) {
 	return (
-		<Section header="COURSE INFORMATION" sectionTintColor={c.sectionBgColor}>
+		<Section header="INFORMATION" sectionTintColor={c.sectionBgColor}>
 			{course.instructors ? (
 				<Cell
 					cellStyle="LeftDetail"
-					detail="Instructor(s)"
+					detail={
+						course.instructors.length === 1 ? 'Instructor' : 'Instructors'
+					}
 					title={course.instructors.join(', ')}
 				/>
 			) : null}
@@ -91,7 +100,7 @@ function Schedule({course}: {course: CourseType}) {
 		const hours = time.times.map(time => {
 			const start = moment.tz(time.start, 'hmm', CENTRAL_TZ).format('h:mm A')
 			const end = moment.tz(time.end, 'hmm', CENTRAL_TZ).format('h:mm A')
-			return `${start} - ${end}`
+			return `${start} – ${end}`
 		})
 		return (
 			<MultiLineDetailCell
@@ -113,7 +122,10 @@ function Schedule({course}: {course: CourseType}) {
 function Description({course}: {course: CourseType}) {
 	return course.description ? (
 		<Section header="DESCRIPTION" sectionTintColor={c.sectionBgColor}>
-			<Cell cellContentView={<CellText>{course.description[0]}</CellText>} />
+			<Cell
+				cellContentView={<CellText>{course.description[0]}</CellText>}
+				style={styles.chunk}
+			/>
 		</Section>
 	) : null
 }

@@ -10,6 +10,7 @@ const UPDATE_BALANCES_FAILURE = 'sis/UPDATE_BALANCES_FAILURE'
 const LOAD_CACHED_COURSES = 'sis/LOAD_CACHED_COURSES'
 const TERMS_UPDATE_START = 'sis/TERMS_UPDATE_START'
 const TERMS_UPDATE_COMPLETE = 'sis/TERMS_UPDATE_COMPLETE'
+const COURSE_CACHE_INIT = 'sis/COURSE_CACHE_INIT'
 
 type UpdateBalancesSuccessAction = {|
 	type: 'sis/UPDATE_BALANCES_SUCCESS',
@@ -52,14 +53,18 @@ type LoadCachedCoursesAction = {|
 type TermsUpdateStartAction = {|type: 'sis/TERMS_UPDATE_START'|}
 
 type TermsUpdateCompleteAction = {|type: 'sis/TERMS_UPDATE_COMPLETE'|}
+
+type CourseCacheInitAction = {|type: 'sis/COURSE_CACHE_INIT'|}
+
 export type UpdateCourseDataActionType = ThunkAction<
-	TermsUpdateAction | LoadCachedCoursesAction,
+	TermsUpdateAction | LoadCachedCoursesAction | CourseCacheInitAction,
 >
 export function updateCourseData(): UpdateCourseDataActionType {
 	return async (dispatch, getState) => {
 		const state = getState()
 		const courseDataState = state.sis ? state.sis.courseDataState : 'not-loaded'
 		const dataNotLoaded = courseDataState === 'not-loaded'
+		dispatch({type: COURSE_CACHE_INIT})
 		let updateNeeded = await updateStoredCourses()
 		if (updateNeeded || dataNotLoaded) {
 			dispatch({type: TERMS_UPDATE_START})
@@ -76,6 +81,7 @@ type Action =
 	| UpdateBalancesActions
 	| TermsUpdateAction
 	| LoadCachedCoursesAction
+	| CourseCacheInitAction
 
 export type State = {|
 	balancesErrorMessage: ?string,
@@ -86,7 +92,7 @@ export type State = {|
 	mealsRemainingThisWeek: ?string,
 	mealPlanDescription: ?string,
 	allCourses: Array<CourseType>,
-	courseDataState: string,
+	courseDataState: 'not-loaded' | 'preparing' | 'updating' | 'updated',
 |}
 const initialState = {
 	balancesErrorMessage: null,
@@ -117,12 +123,13 @@ export function sis(state: State = initialState, action: Action) {
 			}
 		}
 		case LOAD_CACHED_COURSES:
-			return {...state, allCourses: action.payload, courseDataState: 'updated'}
+			return {...state, allCourses: action.payload}
 		case TERMS_UPDATE_START:
 			return {...state, courseDataState: 'updating'}
 		case TERMS_UPDATE_COMPLETE:
 			return {...state, courseDataState: 'updated'}
-
+		case COURSE_CACHE_INIT:
+			return {...state, courseDataState: 'preparing'}
 		default:
 			return state
 	}
