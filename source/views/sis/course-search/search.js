@@ -35,7 +35,7 @@ type ReduxDispatchProps = {
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
 
 type State = {
-	dataLoaded: boolean,
+	dataLoading: boolean,
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
 	searchActive: boolean,
 	searchPerformed: boolean,
@@ -49,7 +49,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
-		dataLoaded: false,
+		dataLoading: true,
 		searchResults: [],
 		searchActive: false,
 		searchPerformed: false,
@@ -58,7 +58,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	componentDidMount() {
 		this.props.loadCourseDataIntoMemory().then(() => {
 			this.props.updateCourseData()
-			this.setState(() => ({dataLoaded: true}))
+			this.setState(() => ({dataLoading: false}))
 		})
 	}
 
@@ -140,7 +140,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		const {searchActive, searchPerformed, searchResults} = this.state
 		const loadingCourseData = this.props.courseDataState === 'updating'
 
-		if (!this.state.dataLoaded || loadingCourseData) {
+		if (this.state.dataLoading || loadingCourseData) {
 			return <LoadingView text="Loading Course Data…" />
 		}
 
