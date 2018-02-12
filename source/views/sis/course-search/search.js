@@ -5,7 +5,10 @@ import {StyleSheet, View, Animated, Dimensions, Platform} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {SearchBar} from '../../components/searchbar'
-import {updateCourseData} from '../../../flux/parts/sis'
+import {
+	updateCourseData,
+	loadCourseDataIntoMemory,
+} from '../../../flux/parts/sis'
 import type {CourseType} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
@@ -25,12 +28,14 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	updateCourseData: () => any,
+	updateCourseData: () => Promise<any>,
+	loadCourseDataIntoMemory: () => Promise<any>,
 }
 
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
 
 type State = {
+	dataLoaded: boolean,
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
 	searchActive: boolean,
 	searchPerformed: boolean,
@@ -44,13 +49,17 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
+		dataLoaded: false,
 		searchResults: [],
 		searchActive: false,
 		searchPerformed: false,
 	}
 
 	componentDidMount() {
-		this.props.updateCourseData()
+		this.props.loadCourseDataIntoMemory().then(() => {
+			this.props.updateCourseData()
+			this.setState(() => ({dataLoaded: true}))
+		})
 	}
 
 	animations = {
@@ -126,14 +135,12 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		const screenWidth = Dimensions.get('window').width
 		const searchBarWidth = screenWidth - 20
 		const headerAnimation = {opacity: this.headerOpacity}
-		const searchBarAnimation = {
-			top: this.searchBarTop,
-		}
+		const searchBarAnimation = {top: this.searchBarTop}
 		const containerAnimation = {height: this.containerHeight}
 		const {searchActive, searchPerformed, searchResults} = this.state
-		const loadingCourseData =
-			this.props.courseDataState === ('updating' || 'preparing')
-		if (loadingCourseData) {
+		const loadingCourseData = this.props.courseDataState === 'updating'
+
+		if (!this.state.dataLoaded || loadingCourseData) {
 			return <LoadingView text="Loading Course Data…" />
 		}
 
@@ -191,6 +198,7 @@ function mapState(state: ReduxState): ReduxStateProps {
 
 function mapDispatch(dispatch): ReduxDispatchProps {
 	return {
+		loadCourseDataIntoMemory: () => dispatch(loadCourseDataIntoMemory()),
 		updateCourseData: () => dispatch(updateCourseData()),
 	}
 }
