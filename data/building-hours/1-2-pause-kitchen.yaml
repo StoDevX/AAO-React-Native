@@ -3,24 +3,24 @@ image: pause-kitchen
 category: Food
 
 schedule:
-  - title: Break Hours
-    notes: Normal hours resume after Interim break.
-    hours: []
-    
-  # - title: Daylight
-    # notes: The late night menu starts at 9 p.m.
-    # hours:
-      # - {days: [Mo], from: '10:30am', to: '12:00am'}
-      # - {days: [Tu], from: '11:30am', to: '12:00am'}
-      # - {days: [We], from: '10:30am', to: '12:00am'}
-      # - {days: [Th], from: '11:30am', to: '12:00am'}
-      # - {days: [Fr], from: '10:30am', to: '9:00pm'}
-      # - {days: [Sa], from: '11:30am', to: '9:00pm'}
-      # - {days: [Su], from: '11:30am', to: '12:00am'}
+  # - title: Break Hours
+  #   notes: Normal hours resume after Interim break.
+  #   hours: []
 
-  # - title: Late Night
-    # hours:
-      # - {days: [Fr, Sa], from: '9:00pm', to: '2:00am'}
+  - title: Daylight
+    notes: The late night menu starts at 9 p.m.
+    hours:
+      - {days: [Mo], from: '10:30am', to: '12:00am'}
+      - {days: [Tu], from: '11:30am', to: '12:00am'}
+      - {days: [We], from: '10:30am', to: '12:00am'}
+      - {days: [Th], from: '11:30am', to: '12:00am'}
+      - {days: [Fr], from: '10:30am', to: '9:00pm'}
+      - {days: [Sa], from: '11:30am', to: '9:00pm'}
+      - {days: [Su], from: '11:30am', to: '12:00am'}
+
+  - title: Late Night
+    hours:
+      - {days: [Fr, Sa], from: '9:00pm', to: '2:00am'}
 
 breakSchedule:
   fall: []
