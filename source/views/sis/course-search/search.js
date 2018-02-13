@@ -9,7 +9,7 @@ import {
 	updateCourseData,
 	loadCourseDataIntoMemory,
 } from '../../../flux/parts/sis'
-import type {CourseType} from '../../../lib/course-search'
+import {type CourseType, areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
@@ -56,11 +56,23 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	componentDidMount() {
-		this.props.loadCourseDataIntoMemory().then(() => {
-			this.props.updateCourseData()
-			this.setState(() => ({dataLoading: false}))
-		})
+		// 1. load the cached courses
+		// 2. if any courses are cached, hide the spinner
+		// 3. either way, start updating courses in the background
+		// 4. when everything is done, make sure the spinner is hidden
+		this.props
+			.loadCourseDataIntoMemory()
+			.then(() => areAnyTermsCached())
+			.then(anyTermsCached => {
+				if (anyTermsCached) {
+					this.doneLoading()
+				}
+				return this.props.updateCourseData()
+			})
+			.finally(() => this.doneLoading())
 	}
+
+	doneLoading = () => this.setState(() => ({dataLoading: false}))
 
 	animations = {
 		headerOpacity: {start: 1, end: 0, duration: 200},
