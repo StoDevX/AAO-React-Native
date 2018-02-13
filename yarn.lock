@@ -4864,9 +4864,9 @@ react-native-linear-gradient@2.4.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-maps@0.20.0:
-  version "0.20.0"
-  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.20.0.tgz#52ce428ecc47ddc54faee03cd2a8dc4813b00f91"
+react-native-maps@0.20.1:
+  version "0.20.1"
+  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.20.1.tgz#b5247a9a26446b2e1ffc3f680db8ba6ccc960096"
   dependencies:
     babel-plugin-module-resolver "^2.3.0"
     babel-preset-react-native "1.9.0"
