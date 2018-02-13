@@ -73,21 +73,27 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	loadData = () => {
-		// 1. load the cached courses
-		// 2. if any courses are cached, hide the spinner
-		// 3. either way, start updating courses in the background
-		// 4. when everything is done, make sure the spinner is hidden
 		this.setState(() => ({dataLoading: true}))
-		this.props
-			.loadCourseDataIntoMemory()
-			.then(() => areAnyTermsCached())
-			.then(anyTermsCached => {
-				if (anyTermsCached) {
-					this.doneLoading()
-				}
-				return this.props.updateCourseData()
-			})
-			.finally(() => this.doneLoading())
+		if (this.props.courseDataState !== 'ready') {
+			// If the data has not been loaded into Redux State:
+			// 1. load the cached courses
+			// 2. if any courses are cached, hide the spinner
+			// 3. either way, start updating courses in the background
+			// 4. when everything is done, make sure the spinner is hidden
+			this.props
+				.loadCourseDataIntoMemory()
+				.then(() => areAnyTermsCached())
+				.then(anyTermsCached => {
+					if (anyTermsCached) {
+						this.doneLoading()
+					}
+					return this.props.updateCourseData()
+				})
+				.finally(() => this.doneLoading())
+		} else {
+			// If the course data is already in Redux State, check for update
+			this.props.updateCourseData().then(() => this.doneLoading())
+		}
 	}
 
 	doneLoading = () => this.setState(() => ({dataLoading: false}))
