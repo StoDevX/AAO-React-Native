@@ -12,6 +12,11 @@ type TermInfoType = {
 	type: string,
 }
 
+export async function areAnyTermsCached(): Promise<boolean> {
+	const localTerms = await storage.getTermInfo()
+	return localTerms.length === 0 ? false : true
+}
+
 export async function updateStoredCourses(): Promise<boolean> {
 	const outdatedTerms: Array<TermType> = await determineOutdatedTerms()
 	await Promise.all(outdatedTerms.map(term => storeTermCoursesFromServer(term)))

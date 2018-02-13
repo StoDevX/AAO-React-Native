@@ -5,8 +5,11 @@ import {StyleSheet, View, Animated, Dimensions, Platform} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {SearchBar} from '../../components/searchbar'
-import {updateCourseData} from '../../../flux/parts/sis'
-import type {CourseType} from '../../../lib/course-search'
+import {
+	updateCourseData,
+	loadCourseDataIntoMemory,
+} from '../../../flux/parts/sis'
+import {type CourseType, areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
@@ -25,12 +28,14 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	updateCourseData: () => any,
+	updateCourseData: () => Promise<any>,
+	loadCourseDataIntoMemory: () => Promise<any>,
 }
 
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
 
 type State = {
+	dataLoading: boolean,
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
 	searchActive: boolean,
 	searchPerformed: boolean,
@@ -44,14 +49,30 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
+		dataLoading: true,
 		searchResults: [],
 		searchActive: false,
 		searchPerformed: false,
 	}
 
 	componentDidMount() {
-		this.props.updateCourseData()
+		// 1. load the cached courses
+		// 2. if any courses are cached, hide the spinner
+		// 3. either way, start updating courses in the background
+		// 4. when everything is done, make sure the spinner is hidden
+		this.props
+			.loadCourseDataIntoMemory()
+			.then(() => areAnyTermsCached())
+			.then(anyTermsCached => {
+				if (anyTermsCached) {
+					this.doneLoading()
+				}
+				return this.props.updateCourseData()
+			})
+			.finally(() => this.doneLoading())
 	}
+
+	doneLoading = () => this.setState(() => ({dataLoading: false}))
 
 	animations = {
 		headerOpacity: {start: 1, end: 0, duration: 200},
@@ -129,10 +150,9 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		const searchBarAnimation = {top: this.searchBarTop}
 		const containerAnimation = {height: this.containerHeight}
 		const {searchActive, searchPerformed, searchResults} = this.state
-		const loadingCourseData =
-			this.props.courseDataState === ('updating' || 'preparing')
+		const loadingCourseData = this.props.courseDataState === 'updating'
 
-		if (loadingCourseData) {
+		if (this.state.dataLoading || loadingCourseData) {
 			return <LoadingView text="Loading Course Data…" />
 		}
 
@@ -190,6 +210,7 @@ function mapState(state: ReduxState): ReduxStateProps {
 
 function mapDispatch(dispatch): ReduxDispatchProps {
 	return {
+		loadCourseDataIntoMemory: () => dispatch(loadCourseDataIntoMemory()),
 		updateCourseData: () => dispatch(updateCourseData()),
 	}
 }
