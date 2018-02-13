@@ -1,12 +1,8 @@
-/**
- * @flow
- *
- * <Building /> controls the structure of the detail view.
- */
+// @flow
 
 import * as React from 'react'
 import {ScrollView, StyleSheet, Platform, Image} from 'react-native'
-import {buildingImages} from '../../../../images/building-images'
+import {images as buildingImages} from '../../../../images/spaces'
 import type {BuildingType} from '../types'
 import moment from 'moment-timezone'
 import * as c from '../../components/colors'

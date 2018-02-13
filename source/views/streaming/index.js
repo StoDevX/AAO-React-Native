@@ -8,6 +8,7 @@ import {RadioControllerView} from './radio'
 // import WeeklyMovieView from './movie'
 import {WebcamsView} from './webcams'
 import {StreamListView} from './streams'
+import * as logos from '../../../images/streaming'
 
 export {KSTOScheduleView, KRLXScheduleView} from './radio'
 
@@ -18,7 +19,7 @@ export default TabNavigator(
 		KSTORadioView: {
 			screen: ({navigation}) => (
 				<RadioControllerView
-					image={require('../../../images/streaming/ksto.png')}
+					image={logos.ksto}
 					navigation={navigation}
 					playerUrl="https://www.stolaf.edu/multimedia/play/embed/ksto.html"
 					scheduleViewName="KSTOScheduleView"
@@ -41,7 +42,7 @@ export default TabNavigator(
 		KRLXRadioView: {
 			screen: ({navigation}) => (
 				<RadioControllerView
-					image={require('../../../images/streaming/krlx.png')}
+					image={logos.krlx}
 					navigation={navigation}
 					playerUrl="http://live.krlx.org"
 					scheduleViewName="KRLXScheduleView"

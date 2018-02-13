@@ -15,6 +15,8 @@
 		00273CA41F38070F00E42F92 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00273CA31F38070F00E42F92 /* CoreFoundation.framework */; };
 		004B75A01FC21C5B0049204D /* libReactNativeAlternateIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0015CC961FC21C33009C3A73 /* libReactNativeAlternateIcons.a */; };
 		00958A8F2008726000073F2F /* libRNSearchBar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00958A8E2008723800073F2F /* libRNSearchBar.a */; };
+		00B0A216202FB153002DBB76 /* windmill@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B0A1DD202FB153002DBB76 /* windmill@3x.png */; };
+		00B0A217202FB153002DBB76 /* windmill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 00B0A215202FB153002DBB76 /* windmill@2x.png */; };
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
 		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
@@ -43,8 +45,6 @@
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		23787DFEFF9747949AE97A42 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E6FBE71A05CC43E2B4885180 /* Ionicons.ttf */; };
 		3A0CEA921DEA203F0036E739 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0CEA781DEA20340036E739 /* libRCTAnimation.a */; };
-		3A8E189F1FC2936200DBD61C /* windmill@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A8E189D1FC2936200DBD61C /* windmill@3x.png */; };
-		3A8E18A01FC2936200DBD61C /* windmill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A8E189E1FC2936200DBD61C /* windmill@2x.png */; };
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		BBDFD91C684046CB9FD0CD55 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 742B362B86E443C09A7F9FD9 /* Entypo.ttf */; };
@@ -453,6 +453,8 @@
 		00273CA11F3806FF00E42F92 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		00273CA31F38070F00E42F92 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
+		00B0A1DD202FB153002DBB76 /* windmill@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "windmill@3x.png"; path = "../images/icons/windmill@3x.png"; sourceTree = "<group>"; };
+		00B0A215202FB153002DBB76 /* windmill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "windmill@2x.png"; path = "../images/icons/windmill@2x.png"; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
 		00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGeolocation.xcodeproj; path = "../node_modules/react-native/Libraries/Geolocation/RCTGeolocation.xcodeproj"; sourceTree = "<group>"; };
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
@@ -477,8 +479,6 @@
 		2560C43708D64866AA01FCC8 /* RNKeychain.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeychain.xcodeproj; path = "../node_modules/react-native-keychain/RNKeychain.xcodeproj"; sourceTree = "<group>"; };
 		36AB9BDB6CF1449E997C6D74 /* AirMaps.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = AirMaps.xcodeproj; path = "../node_modules/react-native-maps/lib/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; };
 		3A0CEA711DEA20340036E739 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
-		3A8E189D1FC2936200DBD61C /* windmill@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "windmill@3x.png"; sourceTree = "<group>"; };
-		3A8E189E1FC2936200DBD61C /* windmill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "windmill@2x.png"; sourceTree = "<group>"; };
 		3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = AllAboutOlaf/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		43E420DADB24468C9E296F25 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		4E4DA38580594A71BEE6DAB5 /* RNSearchBar.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSearchBar.xcodeproj; path = "../node_modules/react-native-search-bar/ios/RNSearchBar.xcodeproj"; sourceTree = "<group>"; };
@@ -637,6 +637,24 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		00B0A218202FB15A002DBB76 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				742B362B86E443C09A7F9FD9 /* Entypo.ttf */,
+				E6FBE71A05CC43E2B4885180 /* Ionicons.ttf */,
+			);
+			name = Fonts;
+			sourceTree = "<group>";
+		};
+		00B0A219202FB160002DBB76 /* Alternate Icons */ = {
+			isa = PBXGroup;
+			children = (
+				00B0A215202FB153002DBB76 /* windmill@2x.png */,
+				00B0A1DD202FB153002DBB76 /* windmill@3x.png */,
+			);
+			name = "Alternate Icons";
+			sourceTree = "<group>";
+		};
 		00C302A81ABCB8CE00DB3ED1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -783,16 +801,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3A8E189C1FC2936200DBD61C /* windmill-icon */ = {
-			isa = PBXGroup;
-			children = (
-				3A8E189D1FC2936200DBD61C /* windmill@3x.png */,
-				3A8E189E1FC2936200DBD61C /* windmill@2x.png */,
-			);
-			name = "windmill-icon";
-			path = "AllAboutOlaf/windmill-icon";
-			sourceTree = "<group>";
-		};
 		3A9B26421DE3709F00B6A428 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -818,9 +826,8 @@
 		5A41494DACBB4D2795B46DE0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3A8E189C1FC2936200DBD61C /* windmill-icon */,
-				742B362B86E443C09A7F9FD9 /* Entypo.ttf */,
-				E6FBE71A05CC43E2B4885180 /* Ionicons.ttf */,
+				00B0A219202FB160002DBB76 /* Alternate Icons */,
+				00B0A218202FB15A002DBB76 /* Fonts */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1504,12 +1511,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A8E18A01FC2936200DBD61C /* windmill@2x.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				BBDFD91C684046CB9FD0CD55 /* Entypo.ttf in Resources */,
+				00B0A216202FB153002DBB76 /* windmill@3x.png in Resources */,
+				00B0A217202FB153002DBB76 /* windmill@2x.png in Resources */,
 				23787DFEFF9747949AE97A42 /* Ionicons.ttf in Resources */,
 				3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */,
-				3A8E189F1FC2936200DBD61C /* windmill@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
