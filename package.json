@@ -1,6 +1,6 @@
 {
   "name": "AllAboutOlaf",
-  "version": "2.5.1",
+  "version": "2.6.0-beta.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -64,19 +64,27 @@
     "overrides": [
       {
         "files": "*.md",
-        "options": {"requirePragma": true}
+        "options": {
+          "requirePragma": true
+        }
       },
       {
         "files": "*.json",
-        "options": {"requirePragma": true}
+        "options": {
+          "requirePragma": true
+        }
       },
       {
         "files": "flow-typed/**",
-        "options": {"requirePragma": true}
+        "options": {
+          "requirePragma": true
+        }
       },
       {
         "files": "images/**",
-        "options": {"requirePragma": true}
+        "options": {
+          "requirePragma": true
+        }
       }
     ]
   },
