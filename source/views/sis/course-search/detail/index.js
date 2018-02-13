@@ -36,11 +36,6 @@ const SubHeader = glamorous.text({
 	marginTop: 5,
 })
 
-const CellText = glamorous.text({
-	padding: 5,
-	color: c.black,
-})
-
 const styles = StyleSheet.create({
 	chunk: {
 		paddingVertical: 10,
@@ -123,8 +118,11 @@ function Description({course}: {course: CourseType}) {
 	return course.description ? (
 		<Section header="DESCRIPTION" sectionTintColor={c.sectionBgColor}>
 			<Cell
-				cellContentView={<CellText>{course.description[0]}</CellText>}
-				style={styles.chunk}
+				cellContentView={
+					<Text selectable={true} style={styles.chunk}>
+						{course.description[0]}
+					</Text>
+				}
 			/>
 		</Section>
 	) : null
