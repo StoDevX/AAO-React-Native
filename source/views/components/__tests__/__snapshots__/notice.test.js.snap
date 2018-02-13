@@ -29,6 +29,7 @@ exports[`renders a button, if given 1`] = `
     Label
   </Text>
   <Button
+    disabled={undefined}
     onPress={undefined}
     title="Button"
   />
