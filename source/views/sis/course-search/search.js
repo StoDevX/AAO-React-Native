@@ -183,7 +183,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 					text={
 						this.props.isConnected
 							? PROMPT_TEXT
-							: PROMPT_TEXT.concat(`\n${NETWORK_WARNING}`)
+							: PROMPT_TEXT.concat(`\n\n${NETWORK_WARNING}`)
 					}
 				/>
 			)
