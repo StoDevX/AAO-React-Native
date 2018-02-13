@@ -7,26 +7,35 @@ import * as c from '../colors'
 
 const styles = StyleSheet.create({
 	searchbar: {
-		backgroundColor: c.iosGray,
 		height: 44,
 	},
 })
 
 type PropsType = {
 	getRef?: any,
+	backgroundColor?: string,
 	style?: any,
 	placeholder?: string,
-	onChangeText: string => any,
+	onFocus?: () => any,
+	onCancel?: () => any,
+	onChangeText?: string => any,
 	onSearchButtonPress: string => any,
+	textFieldBackgroundColor?: string,
 }
 
-export const SearchBar = (props: PropsType) => (
-	<NativeSearchBar
-		ref={props.getRef}
-		hideBackground={true}
-		onChangeText={props.onChangeText || null}
-		onSearchButtonPress={props.onSearchButtonPress || null}
-		placeholder={props.placeholder || 'Search'}
-		style={styles.searchbar}
-	/>
-)
+export const SearchBar = (props: PropsType) => {
+	return (
+		<NativeSearchBar
+			ref={props.getRef}
+			barTintColor={props.backgroundColor || c.iosGray}
+			hideBackground={true}
+			onCancelButtonPress={props.onCancel || (() => {})}
+			onChangeText={props.onChangeText || (() => {})}
+			onFocus={props.onFocus || (() => {})}
+			onSearchButtonPress={props.onSearchButtonPress || (() => {})}
+			placeholder={props.placeholder || 'Search'}
+			style={styles.searchbar}
+			textFieldBackgroundColor={props.textFieldBackgroundColor || c.white}
+		/>
+	)
+}

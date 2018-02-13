@@ -27,7 +27,7 @@ function removeItem(key: string): Promise<void> {
 async function getItemAsBoolean(key: string): Promise<boolean> {
 	return (await getItem(key)) || false
 }
-async function getItemAsArray(key: string): Promise<Array<*>> {
+async function getItemAsArray<T>(key: string): Promise<Array<T>> {
 	return (await getItem(key)) || []
 }
 
@@ -73,4 +73,24 @@ export function setFavoriteBuildings(buildings: string[]) {
 }
 export function getFavoriteBuildings(): Promise<Array<string>> {
 	return getItemAsArray(favoriteBuildingsKey)
+}
+
+/// MARK: SIS
+import type {CourseType, TermType} from './course-search/types'
+
+const courseDataKey = 'sis:course-data'
+export function setTermCourseData(term: number, courseData: Array<CourseType>) {
+	const key = courseDataKey + `:${term}:courses`
+	return setItem(key, courseData)
+}
+export function getTermCourseData(term: number): Promise<Array<CourseType>> {
+	const key = courseDataKey + `:${term}:courses`
+	return getItemAsArray(key)
+}
+const termInfoKey = courseDataKey + ':term-info'
+export function setTermInfo(termData: Array<TermType>) {
+	return setItem(termInfoKey, termData)
+}
+export function getTermInfo(): Promise<Array<TermType>> {
+	return getItemAsArray(termInfoKey)
 }

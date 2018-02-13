@@ -3891,7 +3891,7 @@ lodash@4.17.4:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
-lodash@4.17.5, lodash@^4.0.0, lodash@^4.1.0, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.16.6, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.6.1:
+lodash@4.17.5, lodash@^4.0.0, lodash@^4.1.0, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.16.4, lodash@^4.16.6, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.6.1:
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
@@ -4889,6 +4889,13 @@ react-native-search-bar@3.4.0:
   dependencies:
     prop-types "^15.5.10"
 
+react-native-searchbar@1.14.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/react-native-searchbar/-/react-native-searchbar-1.14.0.tgz#043eed3e48b52c9d9ab417b58400d84dd07c6efc"
+  dependencies:
+    lodash "^4.16.4"
+    react-native-vector-icons "^4.4.2"
+
 react-native-tab-view@^0.0.70:
   version "0.0.70"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-0.0.70.tgz#1dd2ded32acd0cb6bfef38d26e53675db733b37b"
@@ -4905,7 +4912,7 @@ react-native-typography@1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/react-native-typography/-/react-native-typography-1.3.0.tgz#ae921c141ab1dfdf4335ebc2b4a146bcf7919b36"
 
-react-native-vector-icons@4.5.0:
+react-native-vector-icons@4.5.0, react-native-vector-icons@^4.4.2:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-4.5.0.tgz#6b95619e64f62f05f579f74a01fe5640df95158b"
   dependencies:
@@ -5605,6 +5612,12 @@ statuses@~1.3.1:
 stealthy-require@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
+
+sto-sis-time-parser@2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/sto-sis-time-parser/-/sto-sis-time-parser-2.3.3.tgz#566b663997f6ec6cdd1e585456ecb552af977a47"
+  dependencies:
+    lodash "^4.0.0"
 
 stream-buffers@~2.2.0:
   version "2.2.0"
