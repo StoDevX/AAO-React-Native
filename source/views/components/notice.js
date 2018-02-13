@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
+	buttonDisabled?: boolean,
 	header?: string,
 	text?: string,
 	style?: any,
@@ -33,6 +34,7 @@ type Props = {
 }
 
 export function NoticeView({
+	buttonDisabled,
 	header,
 	text,
 	style,
@@ -50,7 +52,13 @@ export function NoticeView({
 				{text || 'Notice!'}
 			</Text>
 
-			{buttonText ? <Button onPress={onPress} title={buttonText} /> : null}
+			{buttonText ? (
+				<Button
+					disabled={buttonDisabled}
+					onPress={onPress}
+					title={buttonText}
+				/>
+			) : null}
 		</View>
 	)
 }

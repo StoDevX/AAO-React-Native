@@ -19,12 +19,19 @@ import toPairs from 'lodash/toPairs'
 import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
 import {deptNum} from './lib/format-dept-num'
+import {NoticeView} from '../../components/notice'
+
+const PROMPT_TEXT =
+	'We need to download the courses from the server. This will take a few seconds.'
+const NETWORK_WARNING =
+	"You'll need an internet connection to download the courses."
 
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
 	allCourses: Array<CourseType>,
 	courseDataState: string,
+	isConnected: boolean,
 }
 
 type ReduxDispatchProps = {
@@ -56,10 +63,21 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	componentDidMount() {
+		areAnyTermsCached().then(anyTermsCached => {
+			if (anyTermsCached) {
+				this.loadData()
+			} else {
+				this.setState(() => ({dataLoading: false}))
+			}
+		})
+	}
+
+	loadData = () => {
 		// 1. load the cached courses
 		// 2. if any courses are cached, hide the spinner
 		// 3. either way, start updating courses in the background
 		// 4. when everything is done, make sure the spinner is hidden
+		this.setState(() => ({dataLoading: true}))
 		this.props
 			.loadCourseDataIntoMemory()
 			.then(() => areAnyTermsCached())
@@ -150,10 +168,25 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		const searchBarAnimation = {top: this.searchBarTop}
 		const containerAnimation = {height: this.containerHeight}
 		const {searchActive, searchPerformed, searchResults} = this.state
-		const loadingCourseData = this.props.courseDataState === 'updating'
 
-		if (this.state.dataLoading || loadingCourseData) {
+		if (this.state.dataLoading) {
 			return <LoadingView text="Loading Course Data…" />
+		}
+
+		if (this.props.courseDataState == 'not-loaded') {
+			return (
+				<NoticeView
+					buttonDisabled={!this.props.isConnected}
+					buttonText="Download"
+					header="Almost there…"
+					onPress={this.loadData}
+					text={
+						this.props.isConnected
+							? PROMPT_TEXT
+							: PROMPT_TEXT.concat(`\n${NETWORK_WARNING}`)
+					}
+				/>
+			)
 		}
 
 		return (
@@ -205,6 +238,7 @@ function mapState(state: ReduxState): ReduxStateProps {
 	return {
 		allCourses: state.sis ? state.sis.allCourses : [],
 		courseDataState: state.sis ? state.sis.courseDataState : '',
+		isConnected: state.app ? state.app.isConnected : false,
 	}
 }
 
