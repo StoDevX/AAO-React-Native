@@ -2,15 +2,18 @@
 
 import {type ReduxState} from '../index'
 import {getBalances, type BalancesShapeType} from '../../lib/financials'
-import {loadCachedCourses, updateStoredCourses, loadGEs} from '../../lib/course-search'
+import {
+	loadCachedCourses,
+	updateStoredCourses,
+	areAnyTermsCached,
+} from '../../lib/course-search'
 import type {CourseType} from '../../lib/course-search'
 import type {FilterType} from '../../views/sis/course-search/filters/types'
 
 const UPDATE_BALANCES_SUCCESS = 'sis/UPDATE_BALANCES_SUCCESS'
 const UPDATE_BALANCES_FAILURE = 'sis/UPDATE_BALANCES_FAILURE'
 const LOAD_CACHED_COURSES = 'sis/LOAD_CACHED_COURSES'
-const TERMS_UPDATE_START = 'sis/TERMS_UPDATE_START'
-const TERMS_UPDATE_COMPLETE = 'sis/TERMS_UPDATE_COMPLETE'
+const COURSES_LOADED = 'sis/COURSES_LOADED'
 const UPDATE_FILTERS = 'sis/UPDATE_FILTERS'
 
 type UpdateBalancesSuccessAction = {|
@@ -50,25 +53,39 @@ type LoadCachedCoursesAction = {|
 	type: 'sis/LOAD_CACHED_COURSES',
 	payload: Array<CourseType>,
 |}
+type CoursesLoadedAction = {|
+	type: 'sis/COURSES_LOADED',
+|}
 
-type TermsUpdateStartAction = {|type: 'sis/TERMS_UPDATE_START'|}
-
-type TermsUpdateCompleteAction = {|type: 'sis/TERMS_UPDATE_COMPLETE'|}
-export type UpdateCourseDataActionType = ThunkAction<
-	TermsUpdateAction | LoadCachedCoursesAction,
+export type LoadCourseDataActionType = ThunkAction<
+	LoadCachedCoursesAction | CoursesLoadedAction,
 >
+export type UpdateCourseDataActionType = ThunkAction<
+	LoadCachedCoursesAction | CoursesLoadedAction,
+>
+
+export function loadCourseDataIntoMemory(): LoadCourseDataActionType {
+	return async dispatch => {
+		const areAnyCached = await areAnyTermsCached()
+
+		if (!areAnyCached) {
+			return
+		}
+
+		const cachedCourses = await loadCachedCourses()
+		dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
+		dispatch({type: COURSES_LOADED})
+	}
+}
+
 export function updateCourseData(): UpdateCourseDataActionType {
-	return async (dispatch, getState) => {
-		const state = getState()
-		const courseDataState = state.sis ? state.sis.courseDataState : 'not-loaded'
-		const dataNotLoaded = courseDataState === 'not-loaded'
-		let updateNeeded = await updateStoredCourses()
-		if (updateNeeded || dataNotLoaded) {
-			dispatch({type: TERMS_UPDATE_START})
+	return async dispatch => {
+		const updateNeeded = await updateStoredCourses()
+
+		if (updateNeeded) {
 			const cachedCourses = await loadCachedCourses()
-			const validGEs = await loadGEs()
-			dispatch({type: LOAD_CACHED_COURSES, payload: {'courses': cachedCourses, 'gereqs': validGEs}})
-			dispatch({type: TERMS_UPDATE_COMPLETE})
+			dispatch({type: LOAD_CACHED_COURSES, payload: cachedCourses})
+			dispatch({type: COURSES_LOADED})
 		}
 	}
 }
@@ -95,9 +112,9 @@ export function updateFilters(newFilter: FilterType): UpdateFiltersActionType {
 
 type Action =
 	| UpdateBalancesActions
-	| TermsUpdateAction
 	| LoadCachedCoursesAction
 	| UpdateFiltersAction
+	| CoursesLoadedAction
 
 export type State = {|
 	balancesErrorMessage: ?string,
@@ -108,10 +125,11 @@ export type State = {|
 	mealsRemainingThisWeek: ?string,
 	mealPlanDescription: ?string,
 	allCourses: Array<CourseType>,
-	courseDataState: string,
+	courseDataState: 'not-loaded' | 'ready',
 	validGEs: string[],
 	filters: Array<FilterType>,
 |}
+
 const initialState = {
 	balancesErrorMessage: null,
 	flexBalance: null,
@@ -125,6 +143,7 @@ const initialState = {
 	validGEs: [],
 	filters: [],
 }
+
 export function sis(state: State = initialState, action: Action) {
 	switch (action.type) {
 		case UPDATE_BALANCES_FAILURE:
@@ -142,14 +161,14 @@ export function sis(state: State = initialState, action: Action) {
 				balancesErrorMessage: null,
 			}
 		}
+
 		case LOAD_CACHED_COURSES:
-			return {...state, allCourses: action.payload.courses, courseDataState: 'updated', validGEs: action.payload.gereqs}
-		case TERMS_UPDATE_START:
-			return {...state, courseDataState: 'updating'}
-		case TERMS_UPDATE_COMPLETE:
-			return {...state, courseDataState: 'updated'}
+			return {...state, allCourses: action.payload}
+		case COURSES_LOADED:
+			return {...state, courseDataState: 'ready'}
 		case UPDATE_FILTERS:
 			return {...state, filters: action.payload}
+
 
 		default:
 			return state

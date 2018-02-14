@@ -13,6 +13,23 @@ export function formatDay(day: string) {
 		case 'Fr':
 			return 'Friday'
 		default:
-			return 'unknown'
+			return day
+	}
+}
+
+export function formatDayAbbrev(day: string) {
+	switch (day) {
+		case 'Mo':
+			return 'M'
+		case 'Tu':
+			return 'T'
+		case 'We':
+			return 'W'
+		case 'Th':
+			return 'Th'
+		case 'Fr':
+			return 'F'
+		default:
+			return day
 	}
 }

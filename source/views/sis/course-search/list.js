@@ -8,6 +8,7 @@ import {ListSeparator, ListSectionHeader} from '../../components/list'
 import * as c from '../../components/colors'
 import {CourseRow} from './row'
 import {parseTerm} from '../../../lib/course-search'
+import {NoticeView} from '../../components/notice'
 import type {FilterType} from './filters/types'
 import {FilterToolbar} from '../components/filter-toolbar'
 
@@ -15,10 +16,14 @@ const styles = StyleSheet.create({
 	container: {
 		backgroundColor: c.white,
 	},
+	message: {
+		paddingVertical: 16,
+	},
 })
 
 type Props = TopLevelViewPropsType & {
 	filters: Array<FilterType>,
+	searchPerformed: boolean,
 	terms: Array<{title: string, data: CourseType[]}>,
 }
 
@@ -50,10 +55,16 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 				onPress={this.onPressToolbar}
 			/>
 		)
+		
+		const message = this.props.searchPerformed
+			? 'There were no courses that matched your query. Please try again.'
+			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
+		const messageView = <NoticeView style={styles.message} text={message} />
+
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
-				ListHeaderComponent={header}
+				ListEmptyComponent={messageView}
 				contentContainerStyle={styles.container}
 				extraData={this.props}
 				keyExtractor={this.keyExtractor}

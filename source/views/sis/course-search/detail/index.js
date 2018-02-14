@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react'
+import {StyleSheet, Text} from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
 import glamorous from 'glamorous-native'
 import {Badge} from '../../../building-hours/detail/badge'
@@ -11,9 +12,11 @@ import {formatDay} from '../lib/format-day'
 import {
 	MultiLineDetailCell,
 	MultiLineLeftDetailCell,
-} from '../../components/multi-line-cell'
+} from '../../../components/cells'
 import type {TopLevelViewPropsType} from '../../../types'
 import * as c from '../../../components/colors'
+import {deptNum} from '../lib/format-dept-num'
+const CENTRAL_TZ = 'America/Winnipeg'
 
 const Container = glamorous.scrollView({
 	paddingVertical: 6,
@@ -33,39 +36,46 @@ const SubHeader = glamorous.text({
 	marginTop: 5,
 })
 
-const CellText = glamorous.text({
-	padding: 5,
-	color: c.black,
+const styles = StyleSheet.create({
+	chunk: {
+		paddingVertical: 10,
+	},
 })
 
 function Information({course}: {course: CourseType}) {
-	const profs = course.instructors ? course.instructors.join(', ') : null
-	const instructors = course.instructors ? (
-		<Cell cellStyle="LeftDetail" detail="Instructor(s)" title={profs} />
-	) : null
-	const gereqs = course.gereqs ? course.gereqs.join(', ') : null
-	const ges = course.gereqs ? (
-		<Cell cellStyle="LeftDetail" detail="GEs" title={gereqs} />
-	) : null
-	const credits = course.credits ? (
-		<Cell cellStyle="LeftDetail" detail="Credits" title={course.credits} />
-	) : null
-	const type = <Cell cellStyle="LeftDetail" detail="Type" title={course.type} />
-	const passFail = course.pn ? 'Yes' : 'No'
-	const pn = <Cell cellStyle="LeftDetail" detail="Pass/Fail" title={passFail} />
-	const prerequisites = course.prerequisites ? course.prerequisites : 'None'
-
-	const prereqs = (
-		<MultiLineLeftDetailCell detail="Prerequisites" title={prerequisites} />
-	)
 	return (
-		<Section header="COURSE INFORMATION" sectionTintColor={c.sectionBgColor}>
-			{instructors}
-			{type}
-			{ges}
-			{pn}
-			{prereqs}
-			{credits}
+		<Section header="INFORMATION" sectionTintColor={c.sectionBgColor}>
+			{course.instructors ? (
+				<Cell
+					cellStyle="LeftDetail"
+					detail={
+						course.instructors.length === 1 ? 'Instructor' : 'Instructors'
+					}
+					title={course.instructors.join(', ')}
+				/>
+			) : null}
+			<Cell cellStyle="LeftDetail" detail="Type" title={course.type} />
+			{course.gereqs ? (
+				<Cell
+					cellStyle="LeftDetail"
+					detail="GEs"
+					title={course.gereqs.join(', ')}
+				/>
+			) : null}
+			{course.pn ? (
+				<Cell
+					cellStyle="LeftDetail"
+					detail="Pass/Fail"
+					title={course.pn ? 'Yes' : 'No'}
+				/>
+			) : null}
+			<MultiLineLeftDetailCell
+				detail="Prerequisites"
+				title={course.prerequisites ? course.prerequisites : 'None'}
+			/>
+			{course.credits ? (
+				<Cell cellStyle="LeftDetail" detail="Credits" title={course.credits} />
+			) : null}
 		</Section>
 	)
 }
@@ -74,25 +84,25 @@ function Schedule({course}: {course: CourseType}) {
 	if (!course.times) {
 		return null
 	}
-	const times = convertTimeStringsToOfferings({
-		times: course.times,
-		locations: course.locations,
-	})
+	const times = convertTimeStringsToOfferings(
+		{
+			times: course.times,
+			locations: course.locations,
+		},
+		{groupBy: 'day'},
+	)
 	const schedule = times.map(time => {
 		const hours = time.times.map(time => {
-			const start = moment(time.start, 'hmm').format('h:mm A')
-			const end = moment(time.end, 'hmm').format('h:mm A')
-			return `${start} - ${end}`
+			const start = moment.tz(time.start, 'hmm', CENTRAL_TZ).format('h:mm A')
+			const end = moment.tz(time.end, 'hmm', CENTRAL_TZ).format('h:mm A')
+			return `${start} – ${end}`
 		})
-		const allHours = hours.join('\n')
-		const day = formatDay(time.day)
-		const location = time.location
 		return (
 			<MultiLineDetailCell
 				key={time.day}
-				leftDetail={location}
-				rightDetail={allHours}
-				title={day}
+				leftDetail={time.location}
+				rightDetail={hours.join('\n')}
+				title={formatDay(time.day)}
 			/>
 		)
 	})
@@ -107,7 +117,13 @@ function Schedule({course}: {course: CourseType}) {
 function Description({course}: {course: CourseType}) {
 	return course.description ? (
 		<Section header="DESCRIPTION" sectionTintColor={c.sectionBgColor}>
-			<Cell cellContentView={<CellText>{course.description[0]}</CellText>} />
+			<Cell
+				cellContentView={
+					<Text selectable={true} style={styles.chunk}>
+						{course.description[0]}
+					</Text>
+				}
+			/>
 		</Section>
 	) : null
 }
@@ -130,10 +146,7 @@ export class CourseDetailView extends React.PureComponent<Props> {
 		return (
 			<Container>
 				<Header>{course.title || course.name}</Header>
-				<SubHeader>
-					{course.departments.join('/')} {course.number}
-					{course.section}
-				</SubHeader>
+				<SubHeader>{deptNum(course)}</SubHeader>
 				<Badge status={status} />
 				<TableView>
 					<Information course={course} />

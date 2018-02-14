@@ -5,7 +5,7 @@ import * as React from 'react'
 import {TabNavigator} from '../components/tabbed-view'
 import {TabBarIcon} from '../components/tabbar-icon'
 
-import {newsImages} from '../../../images/news-images'
+import * as newsImages from '../../../images/news-sources'
 import NewsContainer from './news-container'
 
 export default TabNavigator(
