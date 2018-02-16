@@ -55,7 +55,7 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 				onPress={this.onPressToolbar}
 			/>
 		)
-		
+
 		const message = this.props.searchPerformed
 			? 'There were no courses that matched your query. Please try again.'
 			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
@@ -65,6 +65,7 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={messageView}
+				ListHeaderComponent={header}
 				contentContainerStyle={styles.container}
 				extraData={this.props}
 				keyExtractor={this.keyExtractor}

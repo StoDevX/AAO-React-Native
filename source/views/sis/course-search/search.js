@@ -31,6 +31,7 @@ type ReactProps = TopLevelViewPropsType
 type ReduxStateProps = {
 	allCourses: Array<CourseType>,
 	courseDataState: string,
+	filters: Array<FilterType>,
 	isConnected: boolean,
 }
 
@@ -228,6 +229,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				</Animated.View>
 				{searchActive ? (
 					<CourseSearchResultsList
+						filters={this.props.filters}
 						navigation={this.props.navigation}
 						searchPerformed={searchPerformed}
 						terms={searchResults}
@@ -245,6 +247,7 @@ function mapState(state: ReduxState): ReduxStateProps {
 		allCourses: state.sis ? state.sis.allCourses : [],
 		courseDataState: state.sis ? state.sis.courseDataState : '',
 		isConnected: state.app ? state.app.isConnected : false,
+		filters: state.sis ? state.sis.filters : [],
 	}
 }
 
