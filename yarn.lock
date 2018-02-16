@@ -1229,9 +1229,9 @@ bugsnag-react-native@2.5.1:
   dependencies:
     prop-types "^15.6.0"
 
-bugsnag-sourcemaps@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/bugsnag-sourcemaps/-/bugsnag-sourcemaps-1.0.1.tgz#9c8c74c79a35eae735067f9e2bf54cb66ab58b5d"
+bugsnag-sourcemaps@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/bugsnag-sourcemaps/-/bugsnag-sourcemaps-1.0.2.tgz#7354202acb76f764e31f5dd973b54a1a56175e74"
   dependencies:
     graceful-fs "^4.1.11"
     listr "^0.12.0"
