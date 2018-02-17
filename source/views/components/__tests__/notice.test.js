@@ -13,11 +13,15 @@ test('renders the given text', () => {
 })
 
 test('renders a button, if given', () => {
-	const tree = ReactTestRenderer.create(<NoticeView buttonText="Button" text="Label" />)
+	const tree = ReactTestRenderer.create(
+		<NoticeView buttonText="Button" text="Label" />,
+	)
 	expect(tree).toMatchSnapshot()
 })
 
 test('shows an ActivityIndicator if given [spinner]', () => {
-	const tree = ReactTestRenderer.create(<NoticeView spinner={true} text="Label" />)
+	const tree = ReactTestRenderer.create(
+		<NoticeView spinner={true} text="Label" />,
+	)
 	expect(tree).toMatchSnapshot()
 })
