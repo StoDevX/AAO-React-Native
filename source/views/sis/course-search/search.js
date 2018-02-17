@@ -73,32 +73,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		})
 	}
 
-	loadData = () => {
-		this.setState(() => ({dataLoading: true}))
-		if (this.props.courseDataState !== 'ready') {
-			// If the data has not been loaded into Redux State:
-			// 1. load the cached courses
-			// 2. if any courses are cached, hide the spinner
-			// 3. either way, start updating courses in the background
-			// 4. when everything is done, make sure the spinner is hidden
-			this.props
-				.loadCourseDataIntoMemory()
-				.then(() => areAnyTermsCached())
-				.then(anyTermsCached => {
-					if (anyTermsCached) {
-						this.doneLoading()
-					}
-					return this.props.updateCourseData()
-				})
-				.finally(() => this.doneLoading())
-		} else {
-			// If the course data is already in Redux State, check for update
-			this.props.updateCourseData().then(() => this.doneLoading())
-		}
-	}
-
-	doneLoading = () => this.setState(() => ({dataLoading: false}))
-
 	animations = {
 		headerOpacity: {start: 1, end: 0, duration: 200},
 		searchBarTop: {start: 71, end: 10, duration: 200},
@@ -110,10 +84,46 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	searchBarTop = new Animated.Value(this.animations.searchBarTop.start)
 	containerHeight = new Animated.Value(this.animations.containerHeight.start)
 
+	loadData = () => {
+		this.setState(() => ({dataLoading: true}))
+
+		if (this.props.courseDataState !== 'ready') {
+			// If the data has not been loaded into Redux State:
+			// 1. load the cached courses
+			// 2. if any courses are cached, hide the spinner
+			// 3. either way, start updating courses in the background
+			// 4. when everything is done, make sure the spinner is hidden
+			return this.props
+				.loadCourseDataIntoMemory()
+				.then(() => areAnyTermsCached())
+				.then(anyTermsCached => {
+					if (anyTermsCached) {
+						this.doneLoading()
+					}
+					return this.props.updateCourseData()
+				})
+				.finally(() => this.doneLoading())
+		} else {
+			// If the course data is already in Redux State, check for update
+			return this.props.updateCourseData().then(() => this.doneLoading())
+		}
+	}
+
+	doneLoading = () => this.setState(() => ({dataLoading: false}))
+
+	onSearchButtonPress = text => {
+		if (Platform.OS === 'ios') {
+			this.searchBar.blur()
+		}
+
+		this.performSearch(text)
+	}
+
 	performSearch = (text: string | Object) => {
 		const query = text.toLowerCase()
-		let results = this.props.allCourses.filter(course => {
-			return (
+
+		const results = this.props.allCourses.filter(
+			course =>
 				course.name.toLowerCase().includes(query) ||
 				(course.instructors || []).some(name =>
 					name.toLowerCase().includes(query),
@@ -123,48 +133,42 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 					.startsWith(query) ||
 				(course.gereqs || []).some(gereq =>
 					gereq.toLowerCase().startsWith(query),
-				)
-			)
-		})
+				),
+		)
 
-		let grouped = groupBy(results, r => r.term)
-		let groupedCourses = toPairs(grouped).map(([key, value]) => ({
+		const grouped = groupBy(results, r => r.term)
+		const groupedCourses = toPairs(grouped).map(([key, value]) => ({
 			title: key,
 			data: value,
 		}))
-		let sortedCourses = sortBy(groupedCourses, course => course.title).reverse()
+
+		const sortedCourses = sortBy(
+			groupedCourses,
+			course => course.title,
+		).reverse()
+
 		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true}))
 	}
 
+	animate = (thing, args, toValue: 'start' | 'end') =>
+		Animated.timing(thing, {
+			toValue: args[toValue],
+			duration: args.duration,
+		}).start()
+
 	onFocus = () => {
-		Animated.timing(this.headerOpacity, {
-			toValue: this.animations.headerOpacity.end,
-			duration: this.animations.headerOpacity.duration,
-		}).start()
-		Animated.timing(this.searchBarTop, {
-			toValue: this.animations.searchBarTop.end,
-			duration: this.animations.searchBarTop.duration,
-		}).start()
-		Animated.timing(this.containerHeight, {
-			toValue: this.animations.containerHeight.end,
-			duration: this.animations.containerHeight.duration,
-		}).start()
+		this.animate(this.headerOpacity, this.animations.headerOpacity, 'end')
+		this.animate(this.searchBarTop, this.animations.searchBarTop, 'end')
+		this.animate(this.containerHeight, this.animations.containerHeight, 'end')
+
 		this.setState(() => ({searchActive: true}))
 	}
 
 	onCancel = () => {
-		Animated.timing(this.headerOpacity, {
-			toValue: this.animations.headerOpacity.start,
-			duration: this.animations.headerOpacity.duration,
-		}).start()
-		Animated.timing(this.searchBarTop, {
-			toValue: this.animations.searchBarTop.start,
-			duration: this.animations.searchBarTop.duration,
-		}).start()
-		Animated.timing(this.containerHeight, {
-			toValue: this.animations.containerHeight.start,
-			duration: this.animations.containerHeight.duration,
-		}).start()
+		this.animate(this.headerOpacity, this.animations.headerOpacity, 'start')
+		this.animate(this.searchBarTop, this.animations.searchBarTop, 'start')
+		this.animate(this.containerHeight, this.animations.containerHeight, 'start')
+
 		this.setState(() => ({searchActive: false}))
 	}
 
@@ -176,17 +180,17 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}
 
 		if (this.props.courseDataState == 'not-loaded') {
+			const msg = this.props.isConnected
+				? PROMPT_TEXT
+				: PROMPT_TEXT.concat(`\n\n${NETWORK_WARNING}`)
+
 			return (
 				<NoticeView
 					buttonDisabled={!this.props.isConnected}
 					buttonText="Download"
 					header="Almost there…"
 					onPress={this.loadData}
-					text={
-						this.props.isConnected
-							? PROMPT_TEXT
-							: PROMPT_TEXT.concat(`\n\n${NETWORK_WARNING}`)
-					}
+					text={msg}
 				/>
 			)
 		}
