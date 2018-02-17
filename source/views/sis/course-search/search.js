@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View, Animated, Dimensions, Platform} from 'react-native'
+import {StyleSheet, View, Animated, Platform} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {SearchBar} from '../../components/searchbar'
@@ -20,6 +20,7 @@ import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
 import {deptNum} from './lib/format-dept-num'
 import {NoticeView} from '../../components/notice'
+import {Viewport} from '../../components/viewport'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -168,11 +169,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const screenWidth = Dimensions.get('window').width
-		const searchBarWidth = screenWidth - 20
-		const headerAnimation = {opacity: this.headerOpacity}
-		const searchBarAnimation = {top: this.searchBarTop}
-		const containerAnimation = {height: this.containerHeight}
 		const {searchActive, searchPerformed, searchResults} = this.state
 
 		if (this.state.dataLoading) {
@@ -196,46 +192,53 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}
 
 		return (
-			<View style={styles.container}>
-				<Animated.View
-					style={[styles.searchContainer, styles.common, containerAnimation]}
-				>
-					<Animated.Text style={[styles.header, headerAnimation]}>
-						Search Courses
-					</Animated.Text>
-					<Animated.View
-						style={[
-							styles.searchBarWrapper,
-							{width: searchBarWidth},
-							searchBarAnimation,
-						]}
-					>
-						<SearchBar
-							getRef={ref => (this.searchBar = ref)}
-							onCancel={this.onCancel}
-							onFocus={this.onFocus}
-							onSearchButtonPress={text => {
-								if (Platform.OS === 'ios') {
-									this.searchBar.blur()
-								}
-								this.performSearch(text)
-							}}
-							placeholder="Search Class & Lab"
-							searchActive={searchActive}
-							textFieldBackgroundColor={c.sto.lightGray}
-						/>
-					</Animated.View>
-				</Animated.View>
-				{searchActive ? (
-					<CourseSearchResultsList
-						navigation={this.props.navigation}
-						searchPerformed={searchPerformed}
-						terms={searchResults}
-					/>
-				) : (
-					<View />
-				)}
-			</View>
+			<Viewport
+				render={viewport => {
+					const searchBarWidth = viewport.width - 20
+
+					const aniContainerStyle = [
+						styles.searchContainer,
+						styles.common,
+						{height: this.containerHeight},
+					]
+					const aniSearchStyle = [
+						styles.searchBarWrapper,
+						{width: searchBarWidth},
+						{top: this.searchBarTop},
+					]
+					const aniHeaderStyle = [styles.header, {opacity: this.headerOpacity}]
+
+					return (
+						<View style={styles.container}>
+							<Animated.View style={aniContainerStyle}>
+								<Animated.Text style={aniHeaderStyle}>
+									Search Courses
+								</Animated.Text>
+								<Animated.View style={aniSearchStyle}>
+									<SearchBar
+										getRef={ref => (this.searchBar = ref)}
+										onCancel={this.onCancel}
+										onFocus={this.onFocus}
+										onSearchButtonPress={this.onSearchButtonPress}
+										placeholder="Search Class & Lab"
+										searchActive={searchActive}
+										textFieldBackgroundColor={c.sto.lightGray}
+									/>
+								</Animated.View>
+							</Animated.View>
+							{searchActive ? (
+								<CourseSearchResultsList
+									navigation={this.props.navigation}
+									searchPerformed={searchPerformed}
+									terms={searchResults}
+								/>
+							) : (
+								<View />
+							)}
+						</View>
+					)
+				}}
+			/>
 		)
 	}
 }
