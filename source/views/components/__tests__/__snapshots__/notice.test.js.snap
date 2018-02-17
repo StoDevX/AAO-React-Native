@@ -28,11 +28,67 @@ exports[`renders a button, if given 1`] = `
   >
     Label
   </Text>
-  <Button
-    disabled={undefined}
-    onPress={undefined}
-    title="Button"
-  />
+  <View
+    accessibilityComponentType="button"
+    accessibilityLabel={undefined}
+    accessibilityTraits="button"
+    accessible={true}
+    collapsable={undefined}
+    hasTVPreferredFocus={undefined}
+    hitSlop={undefined}
+    isTVSelectable={true}
+    nativeID={undefined}
+    onLayout={undefined}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignSelf": "center",
+        "backgroundColor": "rgb(67, 114, 170)",
+        "borderRadius": 6,
+        "marginVertical": 10,
+        "opacity": 1,
+        "overflow": "hidden",
+        "paddingHorizontal": 20,
+        "paddingVertical": 10,
+      }
+    }
+    testID={undefined}
+    tvParallaxProperties={undefined}
+  >
+    <Text
+      accessible={true}
+      allowFontScaling={true}
+      ellipsizeMode="tail"
+      style={
+        Array [
+          Object {
+            "color": "#007aff",
+            "fontSize": 17,
+            "fontWeight": "500",
+            "textAlign": "center",
+          },
+          null,
+          Object {
+            "backgroundColor": "transparent",
+            "color": "#FFFFFF",
+            "fontFamily": "System",
+            "fontSize": 16,
+            "fontWeight": "400",
+            "letterSpacing": -0.32,
+            "lineHeight": 21,
+          },
+          null,
+        ]
+      }
+    >
+      Button
+    </Text>
+  </View>
 </View>
 `;
 
