@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, ScrollView, Dimensions} from 'react-native'
+import {StyleSheet, ScrollView} from 'react-native'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../../lib/report-network-problem'
 import {TabBarIcon} from '../../components/tabbar-icon'
@@ -11,13 +11,13 @@ import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
 import {GH_PAGES_URL} from '../../../globals'
+import {Viewport} from '../../components/viewport'
 
 const webcamsUrl = GH_PAGES_URL('webcams.json')
 
 type Props = {}
 
 type State = {
-	width: number,
 	webcams: Array<Webcam>,
 	loading: boolean,
 	refreshing: boolean,
@@ -30,23 +30,13 @@ export class WebcamsView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
-		width: Dimensions.get('window').width,
 		webcams: defaultData.data,
 		loading: false,
 		refreshing: false,
 	}
 
 	componentWillMount() {
-		Dimensions.addEventListener('change', this.handleResizeEvent)
 		this.fetchData()
-	}
-
-	componentWillUnmount() {
-		Dimensions.removeEventListener('change', this.handleResizeEvent)
-	}
-
-	handleResizeEvent = (event: {window: {width: number}}) => {
-		this.setState(() => ({width: event.window.width}))
 	}
 
 	refresh = async () => {
@@ -83,19 +73,23 @@ export class WebcamsView extends React.PureComponent<Props, State> {
 		const columns = partitionByIndex(this.state.webcams)
 
 		return (
-			<ScrollView contentContainerStyle={styles.container}>
-				{columns.map((contents, i) => (
-					<Column key={i} style={styles.column}>
-						{contents.map(webcam => (
-							<StreamThumbnail
-								key={webcam.name}
-								viewportWidth={this.state.width}
-								webcam={webcam}
-							/>
+			<Viewport
+				render={({width}) => (
+					<ScrollView contentContainerStyle={styles.container}>
+						{columns.map((contents, i) => (
+							<Column key={i} style={styles.column}>
+								{contents.map(webcam => (
+									<StreamThumbnail
+										key={webcam.name}
+										viewportWidth={width}
+										webcam={webcam}
+									/>
+								))}
+							</Column>
 						))}
-					</Column>
-				))}
-			</ScrollView>
+					</ScrollView>
+				)}
+			/>
 		)
 	}
 }
