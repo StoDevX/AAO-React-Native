@@ -1,12 +1,13 @@
 // @flow
 
 import * as React from 'react'
-import {Dimensions, StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {type ReduxState} from '../../../flux'
 import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from '../../components/colors'
 import fromPairs from 'lodash/fromPairs'
+import {Viewport} from '../../components/viewport'
 
 import SortableList from '@hawkrives/react-native-sortable-list'
 
@@ -39,32 +40,13 @@ type ReduxDispatchProps = {
 
 type Props = ReduxStateProps & ReduxDispatchProps
 
-type State = {
-	width: number,
-}
-
-class EditHomeView extends React.PureComponent<Props, State> {
+class EditHomeView extends React.PureComponent<Props> {
 	static navigationOptions = {
 		title: 'Edit Home',
 	}
 
-	state = {
-		width: Dimensions.get('window').width,
-	}
-
-	componentWillMount() {
-		Dimensions.addEventListener('change', this.handleResizeEvent)
-	}
-
-	componentWillUnmount() {
-		Dimensions.removeEventListener('change', this.handleResizeEvent)
-	}
-
-	handleResizeEvent = event => {
-		this.setState(() => ({width: event.window.width}))
-	}
-
-	renderRow = ({data, active}: {data: ViewType, active: boolean}) => {
+	renderRow = (args: {data: ViewType, active: boolean, width: number}) => {
+		const {data, active, width} = args
 		const enabled = !this.props.inactiveViews.includes(data.view)
 		return (
 			<EditHomeRow
@@ -72,7 +54,7 @@ class EditHomeView extends React.PureComponent<Props, State> {
 				data={data}
 				isEnabled={enabled}
 				onToggle={this.props.onToggleViewDisabled}
-				width={this.state.width}
+				width={width}
 			/>
 		)
 	}
@@ -81,15 +63,16 @@ class EditHomeView extends React.PureComponent<Props, State> {
 
 	render() {
 		return (
-			<SortableList
-				contentContainerStyle={[
-					styles.contentContainer,
-					{width: this.state.width},
-				]}
-				data={objViews}
-				onChangeOrder={this.onChangeOrder}
-				order={this.props.order}
-				renderRow={this.renderRow}
+			<Viewport
+				render={({width}) => (
+					<SortableList
+						contentContainerStyle={[styles.contentContainer, {width}]}
+						data={objViews}
+						onChangeOrder={this.onChangeOrder}
+						order={this.props.order}
+						renderRow={props => this.renderRow({...props, width})}
+					/>
+				)}
 			/>
 		)
 	}
