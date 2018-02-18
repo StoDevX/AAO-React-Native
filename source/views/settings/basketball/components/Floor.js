@@ -1,3 +1,4 @@
+// @flow
 import React, {Component} from 'react'
 import {View, StyleSheet, Dimensions} from 'react-native'
 import * as c from '../../../components/colors'

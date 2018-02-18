@@ -1,3 +1,4 @@
+// @flow
 import React, {Component} from 'react'
 import {StyleSheet, TouchableOpacity, Image} from 'react-native'
 import {PropTypes} from 'prop-types'
