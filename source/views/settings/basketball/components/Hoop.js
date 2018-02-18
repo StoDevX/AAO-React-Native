@@ -2,6 +2,7 @@
 import React, {Component} from 'react'
 import {View, StyleSheet, Dimensions} from 'react-native'
 import {PropTypes} from 'prop-types'
+import * as c from '../../../components/colors'
 
 export default class Hoop extends Component {
 	render() {
@@ -30,6 +31,7 @@ const styles = StyleSheet.create({
 		borderWidth: 5,
 		borderColor: '#b7b7b7',
 		borderRadius: 4,
+		backgroundColor: c.white,
 	},
 	hoopContained: {
 		width: 70,
