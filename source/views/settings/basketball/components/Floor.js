@@ -3,10 +3,22 @@ import React, {Component} from 'react'
 import {View, StyleSheet, Dimensions} from 'react-native'
 import * as c from '../../../components/colors'
 import {PropTypes} from 'prop-types'
+import {Viewport} from '../../../components/viewport'
 
 export default class Floor extends Component {
 	render() {
-		return <View style={[styles.floorContainer, {height: this.props.height}]} />
+		return (
+			<Viewport
+				render={({width, height}) => (
+					<View
+						style={[
+							styles.floorContainer,
+							{height: this.props.height, width: width},
+						]}
+					/>
+				)}
+			/>
+		)
 	}
 }
 
