@@ -27,7 +27,7 @@ export const MenusView = TabNavigator(
 						'Tracking wild vegan burgers…',
 						'"Cooking" some lutefisk…',
 						'Finding more mugs…',
-						'Waiting for omlets…',
+						'Waiting for omelets…',
 						'Putting out more cookies…',
 					]}
 					name="Stav Hall"
