@@ -1,17 +1,26 @@
 // @flow
 import React, {Component} from 'react'
 import {StyleSheet, TouchableOpacity, Image} from 'react-native'
-import {PropTypes} from 'prop-types'
+import propTypes from 'prop-types'
 import {AppLogo} from '../../../components/logo'
 
-class Ball extends Component {
-	constructor(props) {
-		super(props)
+type Props = {
+	onStart: () => any,
+	radius: number,
+	rotate: number,
+	scale: number,
+	x: number,
+	y: number,
+}
 
-		this.xIn = null
-		this.yIn = null
-		this.xOut = null
-		this.yOut = null
+export default class Ball extends React.PureComponent<Props> {
+	static defaultProps = {
+		onStart: () => {},
+		x: 0,
+		y: 0,
+		radius: 48,
+		rotate: 0,
+		scale: 1,
 	}
 
 	render() {
@@ -84,23 +93,3 @@ const styles = StyleSheet.create({
 		backgroundColor: 'transparent',
 	},
 })
-
-Ball.defaultProps = {
-	onStart: () => {},
-	x: 0,
-	y: 0,
-	radius: 48,
-	rotate: 0,
-	scale: 1,
-}
-
-Ball.propTypes = {
-	onStart: PropTypes.func,
-	x: PropTypes.number,
-	y: PropTypes.number,
-	radius: PropTypes.number,
-	rotate: PropTypes.number,
-	scale: PropTypes.number,
-}
-
-export default Ball
