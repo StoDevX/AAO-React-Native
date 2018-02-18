@@ -3,7 +3,7 @@ import React, {Component} from 'react'
 import {View, StyleSheet, Dimensions} from 'react-native'
 import {PropTypes} from 'prop-types'
 
-class Hoop extends Component {
+export default class Hoop extends Component {
 	render() {
 		return (
 			<View
@@ -47,5 +47,3 @@ Hoop.defaultProps = {
 Hoop.propTypes = {
 	y: PropTypes.number,
 }
-
-export default Hoop

@@ -3,7 +3,7 @@ import React, {Component} from 'react'
 import {View, StyleSheet} from 'react-native'
 import {PropTypes} from 'prop-types'
 
-class Net extends Component {
+export default class Net extends Component {
 	render() {
 		return (
 			<View
@@ -42,5 +42,3 @@ Net.propTypes = {
 	height: PropTypes.number,
 	width: PropTypes.number,
 }
-
-export default Net

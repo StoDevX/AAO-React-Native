@@ -1,10 +1,9 @@
 // @flow
-
 import React, {Component} from 'react'
 import {View, Text, StyleSheet, Dimensions} from 'react-native'
 import {PropTypes} from 'prop-types'
 
-class Score extends Component {
+export default class Score extends Component {
 	render() {
 		return (
 			<View
@@ -52,5 +51,3 @@ Score.propTypes = {
 	scored: PropTypes.bool,
 	score: PropTypes.number,
 }
-
-export default Score

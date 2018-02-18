@@ -7,7 +7,7 @@ const happy = ['👋', '👌', '👍', '👏', '👐']
 const sad = ['😢', '😓', '😒', '😳', '😭']
 const INITIAL_Y = 5
 
-class Emoji extends Component {
+export default class Emoji extends Component {
 	constructor(props) {
 		super(props)
 
@@ -101,5 +101,3 @@ Emoji.propTypes = {
 	y: PropTypes.number,
 	scored: PropTypes.bool,
 }
-
-export default Emoji

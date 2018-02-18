@@ -4,7 +4,7 @@ import {View, StyleSheet, Dimensions} from 'react-native'
 import * as c from '../../../components/colors'
 import {PropTypes} from 'prop-types'
 
-class Floor extends Component {
+export default class Floor extends Component {
 	render() {
 		return <View style={[styles.floorContainer, {height: this.props.height}]} />
 	}
@@ -26,5 +26,3 @@ Floor.defaultProps = {
 Floor.propTypes = {
 	height: PropTypes.number,
 }
-
-export default Floor

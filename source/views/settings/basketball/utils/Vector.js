@@ -1,8 +1,7 @@
-// @flow
 // Simple 2D vector class including vector functions
 // http://www.adambrookesprojects.co.uk/project/canvas-collision-elastic-collision-tutorial/
 
-var Vector = (function() {
+export default (Vector = (function() {
 	var x
 	var y
 	function vector() {}
@@ -87,6 +86,4 @@ var Vector = (function() {
 	}
 
 	return vector
-})()
-
-module.exports = Vector
+})())
