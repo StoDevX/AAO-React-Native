@@ -37,6 +37,10 @@ const LC_RESTARTING = 4
 const LC_RESTARTING_FALLING = 5
 
 export default class BasketballView extends Component {
+	static navigationOptions = {
+		title: '🏀',
+	}
+
 	constructor(props) {
 		super(props)
 
