@@ -23,7 +23,10 @@ x-config:
       name: Set Ruby Version
       command: echo "ruby-2.4.2" > ~/.ruby-version
     - &run-danger
-      command: yarn run danger --id $task
+      command: |
+        if [[ $DANGER_GITHUB_API_TOKEN ]]; then
+          yarn run danger --id $task
+        fi
       when: always
     - &embed-env-vars
       name: Embed environment variables into the app
