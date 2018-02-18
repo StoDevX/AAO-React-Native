@@ -1,11 +1,13 @@
 // @flow
-import * as React from 'react'
+import React, {Component} from 'react'
 import * as c from '../components/colors'
 import {data as credits} from '../../../docs/credits.json'
 import glamorous from 'glamorous-native'
 import {Platform} from 'react-native'
 import {iOSUIKit, material} from 'react-native-typography'
 import {AppLogo} from '../components/logo'
+import {Touchable} from '../components/touchable'
+import BasketballView from '../../views/settings/basketball'
 
 const Container = glamorous.scrollView({
 	backgroundColor: c.white,
@@ -49,22 +51,34 @@ const Contributors = glamorous(About)({
 
 const formatPeopleList = arr => arr.map(w => w.replace(' ', ' ')).join(' • ')
 
-export default function CreditsView() {
-	return (
-		<Container contentInsetAdjustmentBehavior="automatic">
-			<AppLogo />
+type Props = {navigation: any}
 
-			<Title>{credits.name}</Title>
-			<About>{credits.content}</About>
+export default class CreditsView extends React.PureComponent<Props> {
+	static navigationOptions = {
+		title: 'Credits',
+		headerBackTitle: 'Credits',
+	}
 
-			<Heading>Contributors</Heading>
-			<Contributors>{formatPeopleList(credits.contributors)}</Contributors>
+	onPress = () => this.props.navigation.navigate('BasketballView', {})
 
-			<Heading>Acknowledgements</Heading>
-			<Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
-		</Container>
-	)
-}
-CreditsView.navigationOptions = {
-	title: 'Credits',
+	render() {
+		return (
+			<Container contentInsetAdjustmentBehavior="automatic">
+				<Touchable highlight={false} onPress={this.onPress}>
+					<AppLogo />
+				</Touchable>
+
+				<Title>{credits.name}</Title>
+				<About>{credits.content}</About>
+
+				<Heading>Contributors</Heading>
+				<Contributors>{formatPeopleList(credits.contributors)}</Contributors>
+
+				<Heading>Acknowledgements</Heading>
+				<Contributors>
+					{formatPeopleList(credits.acknowledgements)}
+				</Contributors>
+			</Container>
+		)
+	}
 }
