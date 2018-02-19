@@ -24,7 +24,7 @@ x-config:
       command: echo "ruby-2.4.2" > ~/.ruby-version
     - &run-danger
       command: |
-        if [[ $DANGER_GITHUB_API_TOKEN ]]; then
+        if ! [[ $CIRCLE_PR_NUMBER ]]; then
           yarn run danger --id $task
         fi
       when: always
@@ -152,7 +152,9 @@ jobs:
             export PATH=$PATH:$(yarn global bin)
             export COVERALLS_SERVICE_NAME=CircleCI
             export COVERALLS_SERVICE_JOB_ID=$CIRCLE_BUILD_NUM
-            coveralls < ./coverage/lcov.info
+            if ! [[ $CIRCLE_PR_NUMBER ]]; then
+              coveralls < ./coverage/lcov.info
+            fi
 
   prettier:
     docker: [{image: 'circleci/node:8'}]
