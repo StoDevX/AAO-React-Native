@@ -21,6 +21,7 @@ import LoadingView from '../../components/loading'
 import {deptNum} from './lib/format-dept-num'
 import {NoticeView} from '../../components/notice'
 import {Viewport} from '../../components/viewport'
+import {updateCourseFilters} from '../../../flux/parts/course-search'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -39,6 +40,7 @@ type ReduxStateProps = {
 type ReduxDispatchProps = {
 	updateCourseData: () => Promise<any>,
 	loadCourseDataIntoMemory: () => Promise<any>,
+	onFiltersChange: (f: FilterType[]) => any,
 }
 
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
@@ -235,6 +237,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 								<CourseSearchResultsList
 									filters={this.props.filters}
 									navigation={this.props.navigation}
+									onFiltersChange={this.props.onFiltersChange}
 									searchPerformed={searchPerformed}
 									terms={searchResults}
 								/>
@@ -254,13 +257,14 @@ function mapState(state: ReduxState): ReduxStateProps {
 		allCourses: state.sis ? state.sis.allCourses : [],
 		courseDataState: state.sis ? state.sis.courseDataState : '',
 		isConnected: state.app ? state.app.isConnected : false,
-		filters: state.sis ? state.sis.filters : [],
+		filters: state.courseSearch ? state.courseSearch.filters : [],
 	}
 }
 
 function mapDispatch(dispatch): ReduxDispatchProps {
 	return {
 		loadCourseDataIntoMemory: () => dispatch(loadCourseDataIntoMemory()),
+		onFiltersChange: (filters: FilterType[]) => dispatch(updateCourseFilters(filters)),
 		updateCourseData: () => dispatch(updateCourseData()),
 	}
 }

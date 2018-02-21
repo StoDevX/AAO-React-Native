@@ -11,6 +11,7 @@ import {parseTerm} from '../../../lib/course-search'
 import {NoticeView} from '../../components/notice'
 import type {FilterType} from './filters/types'
 import {FilterToolbar} from '../components/filter-toolbar'
+import {buildFilters} from './lib/build-filters'
 
 const styles = StyleSheet.create({
 	container: {
@@ -23,6 +24,7 @@ const styles = StyleSheet.create({
 
 type Props = TopLevelViewPropsType & {
 	filters: Array<FilterType>,
+	onFiltersChange: filters => any,
 	searchPerformed: boolean,
 	terms: Array<{title: string, data: CourseType[]}>,
 }
@@ -42,8 +44,23 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 		<CourseRow course={item} onPress={this.onPressRow} />
 	)
 
+	componentWillMount() {
+		this.updateFilters(this.props)
+	}
+
+	updateFilters = (props: Props) => {
+		const {filters} = props
+
+		const newFilters = buildFilters()
+		props.onFiltersChange(newFilters)
+	}
+
 	onPressToolbar = () => {
-		this.props.navigation.navigate('CourseSearchFiltersView')
+		this.props.navigation.navigate('FilterView', {
+			title: 'Add Filters',
+			pathToFilters: ['courseSearch', 'filters'],
+			onChange: filters => this.props.onFiltersChange(filters),
+		})
 	}
 
 	render() {
