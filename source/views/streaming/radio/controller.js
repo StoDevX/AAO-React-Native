@@ -1,15 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {
-	Dimensions,
-	Image,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-	Platform,
-} from 'react-native'
+import {Image, ScrollView, StyleSheet, Text, View, Platform} from 'react-native'
 import noop from 'lodash/noop'
 import {
 	trackStreamPlay,
@@ -21,9 +13,10 @@ import {callPhone} from '../../components/call-phone'
 import {Row} from '../../components/layout'
 import type {TopLevelViewPropsType} from '../../types'
 import {StreamPlayer} from './player'
-import type {PlayState, HtmlAudioError, Viewport} from './types'
+import type {PlayState, HtmlAudioError} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
 import {openUrl} from '../../components/open-url'
+import {Viewport} from '../../components/viewport'
 
 type Props = TopLevelViewPropsType & {
 	image: number,
@@ -43,7 +36,6 @@ type State = {
 	playState: PlayState,
 	streamError: ?HtmlAudioError,
 	uplinkError: ?string,
-	viewport: Viewport,
 }
 
 export class RadioControllerView extends React.PureComponent<Props, State> {
@@ -51,19 +43,6 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 		playState: 'paused',
 		streamError: null,
 		uplinkError: null,
-		viewport: Dimensions.get('window'),
-	}
-
-	componentWillMount() {
-		Dimensions.addEventListener('change', this.handleResizeEvent)
-	}
-
-	componentWillUnmount() {
-		Dimensions.removeEventListener('change', this.handleResizeEvent)
-	}
-
-	handleResizeEvent = (event: {window: {width: number, height: number}}) => {
-		this.setState(() => ({viewport: event.window}))
 	}
 
 	play = () => {
@@ -138,76 +117,87 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const sideways = this.state.viewport.width > this.state.viewport.height
+		const {source, title, stationName, image} = this.props
+		const {uplinkError, streamError, playState} = this.state
 
-		const logoWidth = Math.min(
-			this.state.viewport.width / 1.5,
-			this.state.viewport.height / 1.75,
-		)
-
-		const logoSize = {
-			width: logoWidth,
-			height: logoWidth,
-		}
-
-		const error = this.state.uplinkError ? (
-			<Text style={styles.status}>{this.state.uplinkError}</Text>
-		) : this.state.streamError ? (
+		const error = uplinkError ? (
+			<Text style={styles.status}>{uplinkError}</Text>
+		) : streamError ? (
 			<Text style={styles.status}>
-				Error Code {this.state.streamError.code}:{' '}
-				{this.state.streamError.message}
+				Error Code {streamError.code}: {streamError.message}
 			</Text>
 		) : null
 
+		const titleBlock = (
+			<View style={styles.titleWrapper}>
+				<Text selectable={true} style={styles.heading}>
+					{title}
+				</Text>
+				<Text selectable={true} style={styles.subHeading}>
+					{stationName}
+				</Text>
+
+				{error}
+			</View>
+		)
+
+		const controlsBlock = (
+			<Row>
+				{this.renderPlayButton(playState)}
+				<View style={styles.spacer} />
+				<CallButton onPress={this.callStation} />
+				<View style={styles.spacer} />
+				<ShowCalendarButton onPress={this.openSchedule} />
+			</Row>
+		)
+
+		const playerBlock =
+			Platform.OS !== 'android' ? (
+				<StreamPlayer
+					embeddedPlayerUrl={source.embeddedPlayerUrl}
+					onEnded={this.handleStreamEnd}
+					// onWaiting={this.handleStreamWait}
+					onError={this.handleStreamError}
+					// onStalled={this.handleStreamStall}
+					onPause={this.handleStreamPause}
+					onPlay={this.handleStreamPlay}
+					playState={playState}
+					streamSourceUrl={source.streamSourceUrl}
+					style={styles.webview}
+					useEmbeddedPlayer={source.useEmbeddedPlayer}
+				/>
+			) : null
+
 		return (
-			<ScrollView
-				contentContainerStyle={[styles.root, sideways && landscape.root]}
-			>
-				<View style={[styles.logoWrapper, sideways && landscape.logoWrapper]}>
-					<Image
-						resizeMode="contain"
-						source={this.props.image}
-						style={[styles.logo, logoSize]}
-					/>
-				</View>
+			<Viewport
+				render={({width, height}) => {
+					const sideways = width > height
 
-				<View style={styles.container}>
-					<View style={styles.titleWrapper}>
-						<Text selectable={true} style={styles.heading}>
-							{this.props.title}
-						</Text>
-						<Text selectable={true} style={styles.subHeading}>
-							{this.props.stationName}
-						</Text>
+					const logoWidth = Math.min(width / 1.5, height / 1.75)
+					const logoSize = {width: logoWidth, height: logoWidth}
 
-						{error}
-					</View>
+					const root = [styles.root, sideways && landscape.root]
+					const logo = [styles.logo, logoSize]
+					const logoWrapper = [
+						styles.logoWrapper,
+						sideways && landscape.logoWrapper,
+					]
 
-					<Row>
-						{this.renderPlayButton(this.state.playState)}
-						<View style={styles.spacer} />
-						<CallButton onPress={this.callStation} />
-						<View style={styles.spacer} />
-						<ShowCalendarButton onPress={this.openSchedule} />
-					</Row>
+					return (
+						<ScrollView contentContainerStyle={root}>
+							<View style={logoWrapper}>
+								<Image resizeMode="contain" source={image} style={logo} />
+							</View>
 
-					{Platform.OS !== 'android' ? (
-						<StreamPlayer
-							embeddedPlayerUrl={this.props.source.embeddedPlayerUrl}
-							onEnded={this.handleStreamEnd}
-							// onWaiting={this.handleStreamWait}
-							onError={this.handleStreamError}
-							// onStalled={this.handleStreamStall}
-							onPause={this.handleStreamPause}
-							onPlay={this.handleStreamPlay}
-							playState={this.state.playState}
-							streamSourceUrl={this.props.source.streamSourceUrl}
-							style={styles.webview}
-							useEmbeddedPlayer={this.props.source.useEmbeddedPlayer}
-						/>
-					) : null}
-				</View>
-			</ScrollView>
+							<View style={styles.container}>
+								{titleBlock}
+								{controlsBlock}
+								{playerBlock}
+							</View>
+						</ScrollView>
+					)
+				}}
+			/>
 		)
 	}
 }

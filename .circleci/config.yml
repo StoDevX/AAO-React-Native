@@ -23,7 +23,10 @@ x-config:
       name: Set Ruby Version
       command: echo "ruby-2.4.2" > ~/.ruby-version
     - &run-danger
-      command: yarn run danger --id $task
+      command: |
+        if ! [[ $CIRCLE_PR_NUMBER ]]; then
+          yarn run danger --id $task
+        fi
       when: always
     - &embed-env-vars
       name: Embed environment variables into the app
@@ -149,7 +152,9 @@ jobs:
             export PATH=$PATH:$(yarn global bin)
             export COVERALLS_SERVICE_NAME=CircleCI
             export COVERALLS_SERVICE_JOB_ID=$CIRCLE_BUILD_NUM
-            coveralls < ./coverage/lcov.info
+            if ! [[ $CIRCLE_PR_NUMBER ]]; then
+              coveralls < ./coverage/lcov.info
+            fi
 
   prettier:
     docker: [{image: 'circleci/node:8'}]
