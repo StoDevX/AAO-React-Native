@@ -13,6 +13,34 @@ export async function buildFilters(): Promise<FilterType[]> {
 
 	return [
 		{
+			type: 'toggle',
+			key: 'status',
+			enabled: false,
+			spec: {
+				label: 'Only Show Open Courses',
+				caption:
+					'Allows you to either see only courses that are open, or all courses.',
+			},
+			apply: {
+				key: 'status',
+				trueEquivalent: 'O',
+			},
+		},
+		{
+			type: 'toggle',
+			key: 'type',
+			enabled: false,
+			spec: {
+				label: 'Show Labs Only',
+				caption:
+					'Allows you to only see labs.',
+			},
+			apply: {
+				key: 'type',
+				trueEquivalent: 'Lab',
+			},
+		},
+		{
 			type: 'list',
 			key: 'term',
 			enabled: false,

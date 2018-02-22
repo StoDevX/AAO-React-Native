@@ -35,6 +35,7 @@ export type PickerSpecType = {
 
 export type ToggleFilterFunctionType = {
 	key: string,
+	trueEquivalent?: string,
 }
 
 export type PickerFilterFunctionType = {
