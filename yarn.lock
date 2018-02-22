@@ -2075,9 +2075,9 @@ eslint-plugin-babel@4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/eslint-plugin-babel/-/eslint-plugin-babel-4.1.2.tgz#79202a0e35757dd92780919b2336f1fa2fe53c1e"
 
-eslint-plugin-flowtype@2.45.0:
-  version "2.45.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.45.0.tgz#20d8b15d1e1e71ea4e9498e8be3fc62c0752fcbf"
+eslint-plugin-flowtype@2.46.0:
+  version "2.46.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.46.0.tgz#832e2f6cc75ea33a25b801b6b87f0342f372b362"
   dependencies:
     lodash "^4.15.0"
 
