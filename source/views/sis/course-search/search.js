@@ -22,6 +22,8 @@ import {deptNum} from './lib/format-dept-num'
 import {NoticeView} from '../../components/notice'
 import {Viewport} from '../../components/viewport'
 import {updateCourseFilters} from '../../../flux/parts/course-search'
+import {applyFiltersToItem, type FilterType} from '../../components/filter'
+
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -43,7 +45,11 @@ type ReduxDispatchProps = {
 	onFiltersChange: (f: FilterType[]) => any,
 }
 
-type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
+type DefaultProps = {
+	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
+}
+
+type Props = ReactProps & ReduxStateProps & ReduxDispatchProps & DefaultProps
 
 type State = {
 	dataLoading: boolean,
@@ -57,6 +63,10 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		tabBarLabel: 'Course Search',
 		tabBarIcon: TabBarIcon('search'),
 		title: 'SIS',
+	}
+
+	static defaultProps = {
+		applyFilters: applyFiltersToItem,
 	}
 
 	state = {
@@ -123,9 +133,15 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	performSearch = (text: string | Object) => {
+		const {filters, applyFilters} = this.props
+
 		const query = text.toLowerCase()
 
-		const results = this.props.allCourses.filter(
+		const filteredCourses = this.props.allCourses.filter(
+			course => applyFilters(filters, course)
+		)
+
+		const results = filteredCourses.filter(
 			course =>
 				course.name.toLowerCase().includes(query) ||
 				(course.instructors || []).some(name =>

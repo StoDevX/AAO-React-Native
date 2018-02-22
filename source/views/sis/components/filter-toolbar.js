@@ -21,7 +21,8 @@ type Props = {
 }
 
 export function FilterToolbar({filters, onPress}: Props) {
-  const appliedFilterCount = filters.length
+  const appliedFilterCount = filters
+		.filter(f => f.enabled).length
   const isFiltered = appliedFilterCount > 0
   const filterWord = appliedFilterCount === 1 ? 'Filter' : 'Filters'
 

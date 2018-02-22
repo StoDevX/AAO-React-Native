@@ -65,6 +65,7 @@ export type ListType = {
 	enabled: boolean,
 	spec: ListSpecType,
 	apply: ListFilterFunctionType,
+	displayTitle: boolean,
 }
 
 export type FilterType = ToggleType | PickerType | ListType

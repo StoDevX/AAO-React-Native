@@ -9,9 +9,9 @@ import * as c from '../../components/colors'
 import {CourseRow} from './row'
 import {parseTerm} from '../../../lib/course-search'
 import {NoticeView} from '../../components/notice'
-import type {FilterType} from './filters/types'
 import {FilterToolbar} from '../components/filter-toolbar'
 import {buildFilters} from './lib/build-filters'
+import type {FilterType} from '../../components/filter'
 
 const styles = StyleSheet.create({
 	container: {
@@ -48,8 +48,17 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 		this.updateFilters(this.props)
 	}
 
+	componentWillReceiveProps(nextProps: Props) {
+		this.updateFilters(nextProps)
+	}
+
 	updateFilters = (props: Props) => {
 		const {filters} = props
+
+		// prevent ourselves from overwriting the filters from redux on mount
+		if (filters.length) {
+			return
+		}
 
 		const newFilters = buildFilters()
 		props.onFiltersChange(newFilters)
