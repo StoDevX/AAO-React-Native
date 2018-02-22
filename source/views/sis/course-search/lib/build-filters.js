@@ -2,20 +2,18 @@
 
 import {getTermInfo} from '../../../../lib/storage'
 import {parseTerm} from '../../../../lib/course-search/parse-term'
+import type {FilterType} from '../../../components/filter'
 
-export async function buildFilters(): FilterType[] {
+export async function buildFilters(): Promise<FilterType[]> {
+	const terms = await getTermInfo()
+	const allTerms = terms.map(term => ({
+		title: term.term,
+		label: parseTerm(term.term.toString()),
+	}))
 
-  const terms = await getTermInfo()
-  // const termLabels = terms.map(term => parseTerm(term.term.toString()))
-  // const allTerms = termLabels.map(label => ({title: label}))
-  const allTerms = terms.map(term => (
-    {title: term.term, label: parseTerm(term.term.toString())}
-  ))
-  console.log(allTerms)
-
-  return [
-    {
-      type: 'list',
+	return [
+		{
+			type: 'list',
 			key: 'term',
 			enabled: false,
 			spec: {
@@ -23,11 +21,11 @@ export async function buildFilters(): FilterType[] {
 				options: allTerms,
 				mode: 'OR',
 				selected: allTerms,
-        displayTitle: false,
+				displayTitle: false,
 			},
 			apply: {
 				key: 'term',
 			},
-    },
-  ]
+		},
+	]
 }

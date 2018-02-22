@@ -24,14 +24,18 @@ const styles = StyleSheet.create({
 
 type Props = TopLevelViewPropsType & {
 	filters: Array<FilterType>,
-	onFiltersChange: filters => any,
+	onFiltersChange: (Array<FilterType>) => any,
 	searchPerformed: boolean,
 	terms: Array<{title: string, data: CourseType[]}>,
 }
 
 export class CourseSearchResultsList extends React.PureComponent<Props> {
-	onPressRow = (data: CourseType) => {
-		this.props.navigation.navigate('CourseDetailView', {course: data})
+	componentWillMount() {
+		this.updateFilters(this.props)
+	}
+
+	componentWillReceiveProps(nextProps: Props) {
+		this.updateFilters(nextProps)
 	}
 
 	keyExtractor = (item: CourseType) => item.clbid.toString()
@@ -44,15 +48,11 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 		<CourseRow course={item} onPress={this.onPressRow} />
 	)
 
-	componentWillMount() {
-		this.updateFilters(this.props)
+	onPressRow = (data: CourseType) => {
+		this.props.navigation.navigate('CourseDetailView', {course: data})
 	}
 
-	componentWillReceiveProps(nextProps: Props) {
-		this.updateFilters(nextProps)
-	}
-
-	updateFilters = (props: Props) => {
+	updateFilters = async (props: Props) => {
 		const {filters} = props
 
 		// prevent ourselves from overwriting the filters from redux on mount
@@ -60,7 +60,7 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 			return
 		}
 
-		const newFilters = buildFilters()
+		const newFilters = await buildFilters()
 		props.onFiltersChange(newFilters)
 	}
 
@@ -76,10 +76,7 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 		const {filters} = this.props
 
 		const header = (
-			<FilterToolbar
-				filters={filters}
-				onPress={this.onPressToolbar}
-			/>
+			<FilterToolbar filters={filters} onPress={this.onPressToolbar} />
 		)
 
 		const message = this.props.searchPerformed

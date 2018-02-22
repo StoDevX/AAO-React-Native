@@ -8,13 +8,11 @@ import {
 	areAnyTermsCached,
 } from '../../lib/course-search'
 import type {CourseType} from '../../lib/course-search'
-import type {FilterType} from '../../views/sis/course-search/filters/types'
 
 const UPDATE_BALANCES_SUCCESS = 'sis/UPDATE_BALANCES_SUCCESS'
 const UPDATE_BALANCES_FAILURE = 'sis/UPDATE_BALANCES_FAILURE'
 const LOAD_CACHED_COURSES = 'sis/LOAD_CACHED_COURSES'
 const COURSES_LOADED = 'sis/COURSES_LOADED'
-const UPDATE_FILTERS = 'sis/UPDATE_FILTERS'
 
 type UpdateBalancesSuccessAction = {|
 	type: 'sis/UPDATE_BALANCES_SUCCESS',
@@ -90,30 +88,9 @@ export function updateCourseData(): UpdateCourseDataActionType {
 	}
 }
 
-type TermsUpdateAction = TermsUpdateStartAction | TermsUpdateCompleteAction
-
-type UpdateFiltersAction = {|
-	type: 'sis/UPDATE_FILTERS',
-	payload: FilterType,
-|}
-
-export type UpdateFiltersActionType = ThunkAction<UpdateFiltersAction>
-export function updateFilters(newFilter: FilterType): UpdateFiltersActionType {
-	return async (dispatch, getState) => {
-		const state = getState()
-		const currentFilters = state.sis ? state.sis.filters : []
-		const newFilters = currentFilters.find(filter => filter.value === newFilter.value) !== undefined
-			? currentFilters.filter(filter => filter.value !== newFilter.value)
-			: [...currentFilters, newFilter]
-
-		dispatch({type: UPDATE_FILTERS, payload: newFilters})
-	}
-}
-
 type Action =
 	| UpdateBalancesActions
 	| LoadCachedCoursesAction
-	| UpdateFiltersAction
 	| CoursesLoadedAction
 
 export type State = {|
@@ -127,7 +104,6 @@ export type State = {|
 	allCourses: Array<CourseType>,
 	courseDataState: 'not-loaded' | 'ready',
 	validGEs: string[],
-	filters: Array<FilterType>,
 |}
 
 const initialState = {
@@ -141,7 +117,6 @@ const initialState = {
 	allCourses: [],
 	courseDataState: 'not-loaded',
 	validGEs: [],
-	filters: [],
 }
 
 export function sis(state: State = initialState, action: Action) {
@@ -166,9 +141,6 @@ export function sis(state: State = initialState, action: Action) {
 			return {...state, allCourses: action.payload}
 		case COURSES_LOADED:
 			return {...state, courseDataState: 'ready'}
-		case UPDATE_FILTERS:
-			return {...state, filters: action.payload}
-
 
 		default:
 			return state

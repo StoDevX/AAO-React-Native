@@ -5,32 +5,31 @@ import {type FilterType} from '../../views/components/filter/types'
 const UPDATE_COURSE_FILTERS = 'courseSearch/UPDATE_COURSE_FILTERS'
 
 type UpdateCourseFiltersAction = {|
-  type: 'courseSearch/UPDATE_COURSE_FILTERS',
-  payload: Array<FilterType>,
+	type: 'courseSearch/UPDATE_COURSE_FILTERS',
+	payload: Array<FilterType>,
 |}
 export function updateCourseFilters(
-  filters: FilterType[]
+	filters: FilterType[],
 ): UpdateCourseFiltersAction {
-  return {type: UPDATE_COURSE_FILTERS, payload: filters}
+	return {type: UPDATE_COURSE_FILTERS, payload: filters}
 }
 
-
-type Action = UpdateFiltersAction
+type Action = UpdateCourseFiltersAction
 
 export type State = {|
-  filters: Array<FilterType>,
+	filters: Array<FilterType>,
 |}
 
 const initialState = {
-    filters: [],
+	filters: [],
 }
 
 export function courseSearch(state: State = initialState, action: Action) {
-  switch(action.type) {
-    case UPDATE_COURSE_FILTERS:
-      return {...state, filters: action.payload}
+	switch (action.type) {
+		case UPDATE_COURSE_FILTERS:
+			return {...state, filters: action.payload}
 
-    default:
-      return state
-  }
+		default:
+			return state
+	}
 }

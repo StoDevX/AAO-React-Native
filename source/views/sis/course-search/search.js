@@ -24,7 +24,6 @@ import {Viewport} from '../../components/viewport'
 import {updateCourseFilters} from '../../../flux/parts/course-search'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
 
-
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
 const NETWORK_WARNING =
@@ -56,6 +55,7 @@ type State = {
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
 	searchActive: boolean,
 	searchPerformed: boolean,
+	query: string,
 }
 
 class CourseSearchView extends React.PureComponent<Props, State> {
@@ -74,6 +74,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		searchResults: [],
 		searchActive: false,
 		searchPerformed: false,
+		query: '',
 	}
 
 	componentDidMount() {
@@ -84,6 +85,10 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				this.setState(() => ({dataLoading: false}))
 			}
 		})
+	}
+
+	componentWillReceiveProps(nextProps: Props) {
+		this.refreshResults(nextProps.filters)
 	}
 
 	animations = {
@@ -129,16 +134,17 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			this.searchBar.blur()
 		}
 
-		this.performSearch(text)
+		this.performSearch(text, this.props.filters)
 	}
 
-	performSearch = (text: string | Object) => {
-		const {filters, applyFilters} = this.props
+	performSearch = (text: string | Object, filters: Array<FilterType>) => {
+		const {applyFilters} = this.props
 
 		const query = text.toLowerCase()
+		this.setState(() => ({query: query}))
 
-		const filteredCourses = this.props.allCourses.filter(
-			course => applyFilters(filters, course)
+		const filteredCourses = this.props.allCourses.filter(course =>
+			applyFilters(filters, course),
 		)
 
 		const results = filteredCourses.filter(
@@ -167,6 +173,12 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		).reverse()
 
 		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true}))
+	}
+
+	refreshResults = (filters: Array<FilterType>) => {
+		if (this.state.query !== '') {
+			this.performSearch(this.state.query, filters)
+		}
 	}
 
 	animate = (thing, args, toValue: 'start' | 'end') =>
@@ -280,7 +292,8 @@ function mapState(state: ReduxState): ReduxStateProps {
 function mapDispatch(dispatch): ReduxDispatchProps {
 	return {
 		loadCourseDataIntoMemory: () => dispatch(loadCourseDataIntoMemory()),
-		onFiltersChange: (filters: FilterType[]) => dispatch(updateCourseFilters(filters)),
+		onFiltersChange: (filters: FilterType[]) =>
+			dispatch(updateCourseFilters(filters)),
 		updateCourseData: () => dispatch(updateCourseData()),
 	}
 }

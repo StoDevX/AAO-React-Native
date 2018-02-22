@@ -12,7 +12,10 @@ import {settings, type State as SettingsState} from './parts/settings'
 import {sis, type State as SisState} from './parts/sis'
 import {buildings, type State as BuildingsState} from './parts/buildings'
 import {help, type State as HelpState} from './parts/help'
-import {courseSearch, type State as CourseSearchState} from './parts/course-search'
+import {
+	courseSearch,
+	type State as CourseSearchState,
+} from './parts/course-search'
 
 export {init as initRedux} from './init'
 export {updateMenuFilters} from './parts/menus'
