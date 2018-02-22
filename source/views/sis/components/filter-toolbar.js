@@ -26,13 +26,13 @@ export function FilterToolbar({filters, onPress}: Props) {
 	const filterWord = appliedFilterCount === 1 ? 'Filter' : 'Filters'
 	const termFilter = filters.find(f => f.key === 'term')
 	const selectedTerms =
-		termFilter && termFilter.spec.selected
-			? termFilter.spec.selected
-			: []
-	const termMessage = termFilter && termFilter.enabled ? 'No Terms' : 'All Terms'
-	const title = termFilter && termFilter.enabled && selectedTerms.length !== 0
-		? selectedTerms.map(t => t.label).join(', ')
-		: termMessage
+		termFilter && termFilter.spec.selected ? termFilter.spec.selected : []
+	const termMessage =
+		termFilter && termFilter.enabled ? 'No Terms' : 'All Terms'
+	const title =
+		termFilter && termFilter.enabled && selectedTerms.length !== 0
+			? selectedTerms.map(t => t.label).join(', ')
+			: termMessage
 
 	return (
 		<Toolbar onPress={onPress}>
