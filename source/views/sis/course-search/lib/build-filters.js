@@ -32,8 +32,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 			enabled: false,
 			spec: {
 				label: 'Show Labs Only',
-				caption:
-					'Allows you to only see labs.',
+				caption: 'Allows you to only see labs.',
 			},
 			apply: {
 				key: 'type',
