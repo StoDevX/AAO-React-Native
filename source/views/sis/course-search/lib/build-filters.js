@@ -3,7 +3,7 @@
 import {getTermInfo} from '../../../../lib/storage'
 import {parseTerm} from '../../../../lib/course-search/parse-term'
 import type {FilterType} from '../../../components/filter'
-import {loadGEs} from '../../../../lib/course-search'
+import {loadAllCourseFilterOptions} from '../../../../lib/course-search'
 
 export async function buildFilters(): Promise<FilterType[]> {
 	const terms = await getTermInfo()
@@ -12,9 +12,13 @@ export async function buildFilters(): Promise<FilterType[]> {
 		label: parseTerm(term.term.toString()),
 	}))
 
-	const ges = await loadGEs()
+	const {ges, departments} = await loadAllCourseFilterOptions()
+
 	const allGEs = ges.map(ge => ({
 		title: ge,
+	}))
+	const allDepartments = departments.map(dep => ({
+		title: dep,
 	}))
 
 	return [
@@ -74,6 +78,22 @@ export async function buildFilters(): Promise<FilterType[]> {
 			},
 			apply: {
 				key: 'gereqs',
+			},
+		},
+		{
+			type: 'list',
+			key: 'departments',
+			enabled: false,
+			spec: {
+				title: 'Departments',
+				showImages: false,
+				options: allDepartments,
+				mode: 'AND',
+				selected: [],
+				displayTitle: true,
+			},
+			apply: {
+				key: 'departments',
 			},
 		},
 	]
