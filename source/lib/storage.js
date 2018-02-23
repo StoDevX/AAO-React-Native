@@ -94,10 +94,12 @@ export function setTermInfo(termData: Array<TermType>) {
 export function getTermInfo(): Promise<Array<TermType>> {
 	return getItemAsArray(termInfoKey)
 }
-const geDataKey = courseDataKey + ':ge-reqs'
-export function setValidGes(ges: string[]) {
-	return setItem(geDataKey, ges)
+const filterDataKey = courseDataKey + ':filter-data'
+export function setCourseFilterOption(name: string, data: string[]) {
+	const key = filterDataKey + `:${name}`
+	return setItem(key, data)
 }
-export function getValidGes(): Promise<Array<string>> {
-	return getItemAsArray(geDataKey)
+export function getCourseFilterOption(name: string): Promise<Array<string>> {
+	const key = filterDataKey + `:${name}`
+	return getItemAsArray(key)
 }
