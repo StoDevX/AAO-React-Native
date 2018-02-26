@@ -16,6 +16,7 @@ import {connect} from 'react-redux'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import toPairs from 'lodash/toPairs'
+import fuzzysearch from 'fuzzysearch'
 import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
 import {deptNum} from './lib/format-dept-num'
@@ -124,7 +125,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 
 		const results = this.props.allCourses.filter(
 			course =>
-				course.name.toLowerCase().includes(query) ||
+				fuzzysearch(query, course.name.toLowerCase()) ||
+				fuzzysearch(query, (course.title || '').toLowerCase()) ||
 				(course.instructors || []).some(name =>
 					name.toLowerCase().includes(query),
 				) ||
