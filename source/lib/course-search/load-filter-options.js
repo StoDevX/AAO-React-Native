@@ -7,8 +7,8 @@ import isEqual from 'lodash/isEqual'
 import pProps from 'p-props'
 
 const filterCategories = {
-	'ges': { name: 'ges', url: GE_DATA },
-	'departments': { name: 'departments', url: DEPT_DATA },
+	ges: {name: 'ges', url: GE_DATA},
+	departments: {name: 'departments', url: DEPT_DATA},
 }
 
 type FilterCategory = {name: string, url: string}
@@ -18,7 +18,9 @@ type AllFilterCategories = {
 	departments: string[],
 }
 
-export async function loadCourseFilterOption(category: FilterCategory): Promise<Array<string>> {
+export async function loadCourseFilterOption(
+	category: FilterCategory,
+): Promise<Array<string>> {
 	const remoteData = await fetchJson(category.url).catch(() => [])
 	const storedData = await storage.getCourseFilterOption(category.name)
 	if (!isEqual(remoteData, storedData) || storedData.length === 0) {
@@ -30,6 +32,7 @@ export async function loadCourseFilterOption(category: FilterCategory): Promise<
 }
 
 export function loadAllCourseFilterOptions(): Promise<AllFilterCategories> {
-	return pProps(mapValues(filterCategories, (category) => (loadCourseFilterOption(category))))
-		.then(result => result);
+	return pProps(
+		mapValues(filterCategories, category => loadCourseFilterOption(category)),
+	).then(result => result)
 }
