@@ -41,6 +41,7 @@
   "greenkeeper": {
     "ignore": [
       "flow-bin",
+      "react-markdown",
       "react"
     ]
   },
