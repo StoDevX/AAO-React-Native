@@ -4,10 +4,9 @@ import {Text, ScrollView, StyleSheet} from 'react-native'
 import {sendEmail} from '../../components/send-email'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import moment from 'moment'
-import {openUrl} from '../../components/open-url'
 import * as c from '../../components/colors'
 import type {JobType} from './types'
-import {cleanJob, getContactName, getLinksFromJob} from './clean-job'
+import {cleanJob, getContactName} from './clean-job'
 import {SelectableCell} from './selectable'
 import glamorous from 'glamorous-native'
 
@@ -98,22 +97,6 @@ function Comments({job}: {job: JobType}) {
 	) : null
 }
 
-function Links({job}: {job: JobType}) {
-	const links = getLinksFromJob(job)
-	return links.length ? (
-		<Section header="LINKS">
-			{links.map(url => (
-				<Cell
-					key={url}
-					accessory="DisclosureIndicator"
-					onPress={() => openUrl(url)}
-					title={url}
-				/>
-			))}
-		</Section>
-	) : null
-}
-
 function LastUpdated({when}: {when: string}) {
 	return when ? (
 		<Text selectable={true} style={[styles.footer, styles.lastUpdated]}>
@@ -147,7 +130,6 @@ export class JobDetailView extends React.PureComponent<Props> {
 					<Description job={job} />
 					<Skills job={job} />
 					<Comments job={job} />
-					<Links job={job} />
 				</TableView>
 				<LastUpdated when={job.lastModified} />
 			</ScrollView>
