@@ -33,7 +33,7 @@ export class NewsRow extends React.PureComponent<Props> {
 					<Image source={thumb} style={styles.image} />
 					<Column flex={1}>
 						<Title lines={2}>{story.title}</Title>
-						<Detail lines={3}>{story.excerpt}</Detail>
+						<Detail lines={3}>{story.excerpt.trim()}</Detail>
 					</Column>
 				</Row>
 			</ListRow>
