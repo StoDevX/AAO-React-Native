@@ -11,7 +11,6 @@ const styles = StyleSheet.create({
 		color: c.black,
 		backgroundColor: c.white,
 		paddingHorizontal: 15,
-		paddingVertical: 15,
 		paddingTop: 10,
 		paddingBottom: 10,
 		...Platform.select({
