@@ -80,11 +80,11 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 					{website ? (
 						<Section header="WEBSITE">
 							<Cell
-								 accessory="DisclosureIndicator"
-								 cellStyle="Basic"
-								 onPress={() => openUrl(website)}
-								 title={website}
-						 	/>
+								accessory="DisclosureIndicator"
+								cellStyle="Basic"
+								onPress={() => openUrl(website)}
+								title={website}
+							/>
 						</Section>
 					) : null}
 
