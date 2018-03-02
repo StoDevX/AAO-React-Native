@@ -6,6 +6,7 @@ import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
+import {openUrl} from '../components/open-url'
 import {sendEmail} from '../components/send-email'
 import {cleanOrg, showNameOrEmail} from './util'
 import {SelectableCell} from '../sis/student-work/selectable'
@@ -78,7 +79,12 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 
 					{website ? (
 						<Section header="WEBSITE">
-							<SelectableCell text={website} />
+							<Cell
+								 accessory="DisclosureIndicator"
+								 cellStyle="Basic"
+								 onPress={() => openUrl(website)}
+								 title={website}
+						 	/>
 						</Section>
 					) : null}
 
