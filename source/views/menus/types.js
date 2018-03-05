@@ -18,14 +18,14 @@ export type MenuItemType = {
 				name: string,
 				short_name: ?null,
 				image: string,
-			},
+		  },
 	nutrition:
 		| {}
 		| {
 				kcal: NumericStringType,
 				well_being: string,
 				well_being_image: string,
-			},
+		  },
 	nutrition_link: string,
 	options: any[],
 	price: CurrencyStringType,
