@@ -4859,9 +4859,9 @@ react-native-custom-tabs@0.1.7:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/react-native-custom-tabs/-/react-native-custom-tabs-0.1.7.tgz#2dfb4028b0a443610d94792b2019810f68dde525"
 
-react-native-device-info@0.16.0:
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.16.0.tgz#09534a5950c818aeebc8de5a10af94376c2018b8"
+react-native-device-info@0.17.3:
+  version "0.17.3"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.17.3.tgz#7aa58f5c6ce1381beddc86429b9fd4e06e3ce20d"
 
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
