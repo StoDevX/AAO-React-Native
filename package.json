@@ -146,7 +146,7 @@
     "ajv": "6.2.1",
     "babel-core": "6.26.0",
     "babel-eslint": "8.2.2",
-    "babel-jest": "22.2.2",
+    "babel-jest": "22.4.1",
     "babel-plugin-transform-remove-console": "6.9.0",
     "babel-preset-react-native": "4.0.0",
     "bugsnag-sourcemaps": "1.0.3",
