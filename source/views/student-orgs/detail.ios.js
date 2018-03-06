@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {ScrollView, Text, View, StyleSheet} from 'react-native'
+import {ScrollView, Text, StyleSheet} from 'react-native'
 import moment from 'moment'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
@@ -9,6 +9,7 @@ import type {TopLevelViewPropsType} from '../types'
 import {openUrl} from '../components/open-url'
 import {sendEmail} from '../components/send-email'
 import {cleanOrg, showNameOrEmail} from './util'
+import {SelectableCell} from '../sis/student-work/selectable'
 
 const styles = StyleSheet.create({
 	name: {
@@ -19,21 +20,6 @@ const styles = StyleSheet.create({
 		color: c.black,
 		fontSize: 32,
 		fontWeight: '300',
-	},
-	meetings: {
-		flex: 1,
-		paddingVertical: 8,
-		fontSize: 16,
-	},
-	description: {
-		paddingTop: 13,
-		paddingBottom: 13,
-		paddingLeft: 16,
-		paddingRight: 16,
-		backgroundColor: c.white,
-	},
-	descriptionText: {
-		fontSize: 16,
 	},
 	footer: {
 		fontSize: 10,
@@ -87,12 +73,7 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 
 					{meetings ? (
 						<Section header="MEETINGS">
-							<Cell
-								cellContentView={
-									<Text style={styles.meetings}>{meetings}</Text>
-								}
-								cellStyle="Basic"
-							/>
+							<SelectableCell text={meetings} />
 						</Section>
 					) : null}
 
@@ -138,9 +119,7 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 
 					{description ? (
 						<Section header="DESCRIPTION">
-							<View style={styles.description}>
-								<Text style={styles.descriptionText}>{description}</Text>
-							</View>
+							<SelectableCell text={description} />
 						</Section>
 					) : null}
 
