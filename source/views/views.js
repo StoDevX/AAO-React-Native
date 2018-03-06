@@ -11,7 +11,7 @@ export type ViewType =
 			foreground: 'light' | 'dark',
 			tint: string,
 			gradient?: [string, string],
-		}
+	  }
 	| {
 			type: 'url',
 			view: string,
@@ -21,7 +21,7 @@ export type ViewType =
 			foreground: 'light' | 'dark',
 			tint: string,
 			gradient?: [string, string],
-		}
+	  }
 
 export const allViews: ViewType[] = [
 	{
