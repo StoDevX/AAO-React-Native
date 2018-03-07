@@ -30,7 +30,9 @@ export function applyFilter(filter: FilterType, item: any): boolean {
 export function applyToggleFilter(filter: ToggleType, item: any): boolean {
 	// Dereference the value-to-check
 	const itemValue = item[filter.apply.key]
-	return Boolean(itemValue)
+	return filter.apply.trueEquivalent
+		? itemValue == filter.apply.trueEquivalent
+		: Boolean(itemValue)
 }
 
 export function applyListFilter(filter: ListType, item: any): boolean {

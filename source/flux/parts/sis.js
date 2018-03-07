@@ -103,6 +103,7 @@ export type State = {|
 	mealPlanDescription: ?string,
 	allCourses: Array<CourseType>,
 	courseDataState: 'not-loaded' | 'ready',
+	validGEs: string[],
 |}
 
 const initialState = {
@@ -115,6 +116,7 @@ const initialState = {
 	mealPlanDescription: null,
 	allCourses: [],
 	courseDataState: 'not-loaded',
+	validGEs: [],
 }
 
 export function sis(state: State = initialState, action: Action) {

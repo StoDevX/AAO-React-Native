@@ -12,6 +12,7 @@ it('should return `true` if the filter is disabled', () => {
 			options: filterValue('1', '2', '3'),
 			selected: [],
 			mode: 'OR',
+			displayTitle: true,
 		},
 		apply: {key: 'categories'},
 	}
