@@ -1,7 +1,7 @@
 ---
 key: it-helpdesk
-enabled: false
-hidden: true
+enabled: true
+hidden: false
 
 title: Open a Helpdesk Ticket
 body: |
@@ -30,10 +30,11 @@ buttons:
     action: send-email
     params:
       to: helpdesk@stolaf.edu
-      subject: I Haz A Problem
+      subject: ''
       body: |
+        
         Thank you for contacting the IT Helpdesk!
 
-        Please include your name, phone number, and next of kin.
+        Please include your name and phone number.
 
         Have a wonderful day!
