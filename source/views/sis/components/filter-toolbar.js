@@ -3,6 +3,7 @@ import * as React from 'react'
 import type {FilterType} from '../../components/filter'
 import {StyleSheet, Text, View, Platform} from 'react-native'
 import {Toolbar, ToolbarButton} from '../../components/toolbar'
+import {formatTerms} from '../course-search/lib/format-terms'
 
 const styles = StyleSheet.create({
 	today: {
@@ -25,13 +26,13 @@ export function FilterToolbar({filters, onPress}: Props) {
 	const isFiltered = appliedFilterCount > 0
 	const filterWord = appliedFilterCount === 1 ? 'Filter' : 'Filters'
 	const termFilter = filters.find(f => f.key === 'term')
-	const selectedTerms =
-		termFilter && termFilter.spec.selected ? termFilter.spec.selected : []
+	const selectedTerms = termFilter !== undefined ? termFilter.spec.selected : []
 	const termMessage =
 		termFilter && termFilter.enabled ? 'No Terms' : 'All Terms'
+	const termTitles = selectedTerms ? selectedTerms.map(t => t.title) : []
 	const title =
-		termFilter && termFilter.enabled && selectedTerms.length !== 0
-			? selectedTerms.map(t => t.label).join(', ')
+		termFilter && termFilter.enabled && termTitles.length !== 0
+			? formatTerms(termTitles)
 			: termMessage
 
 	return (
