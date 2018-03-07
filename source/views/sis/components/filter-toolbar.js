@@ -32,7 +32,9 @@ export function FilterToolbar({filters, onPress}: Props) {
 	if (termFilter) {
 		const selectedTerms = termFilter ? termFilter.spec.selected : []
 		const terms = selectedTerms.map(t => parseInt(t.title))
-		toolbarTitle = terms.length ? formatTerms(terms) : 'No Terms'
+		if (termFilter.enabled) {
+			toolbarTitle = terms.length ? formatTerms(terms) : 'No Terms'
+		}
 	}
 
 	const buttonTitle = isFiltered
