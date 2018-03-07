@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import type {FilterType} from '../../components/filter'
+import {type FilterType, filterListSpecs} from '../../components/filter'
 import {StyleSheet, Text, View, Platform} from 'react-native'
 import {Toolbar, ToolbarButton} from '../../components/toolbar'
 import {formatTerms} from '../course-search/lib/format-terms'
@@ -25,30 +25,32 @@ export function FilterToolbar({filters, onPress}: Props) {
 	const appliedFilterCount = filters.filter(f => f.enabled).length
 	const isFiltered = appliedFilterCount > 0
 	const filterWord = appliedFilterCount === 1 ? 'Filter' : 'Filters'
-	const termFilter = filters.find(f => f.key === 'term')
-	const selectedTerms = termFilter !== undefined ? termFilter.spec.selected : []
-	const termMessage =
-		termFilter && termFilter.enabled ? 'No Terms' : 'All Terms'
-	const termTitles = selectedTerms ? selectedTerms.map(t => t.title) : []
-	const title =
-		termFilter && termFilter.enabled && termTitles.length !== 0
-			? formatTerms(termTitles)
-			: termMessage
+
+	const termFilter = filterListSpecs(filters).find(f => f.key === 'term')
+
+	let toolbarTitle = 'All Terms'
+	if (termFilter) {
+		const selectedTerms = termFilter ? termFilter.spec.selected : []
+		const terms = selectedTerms.map(t => parseInt(t.title))
+		toolbarTitle = terms.length ? formatTerms(terms) : 'No Terms'
+	}
+
+	const buttonTitle = isFiltered
+		? `${appliedFilterCount} ${filterWord}`
+		: 'No Filters'
 
 	return (
 		<Toolbar onPress={onPress}>
 			<View style={[styles.toolbarSection, styles.today]}>
 				<Text ellipsizeMode="tail" numberOfLines={1}>
-					<Text>{title}</Text>
+					{toolbarTitle}
 				</Text>
 			</View>
 
 			<ToolbarButton
 				iconName={Platform.OS === 'ios' ? 'ios-funnel' : 'md-funnel'}
 				isActive={isFiltered}
-				title={
-					isFiltered ? `${appliedFilterCount} ${filterWord}` : 'No Filters'
-				}
+				title={buttonTitle}
 			/>
 		</Toolbar>
 	)
