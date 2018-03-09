@@ -3,6 +3,7 @@
 import './globalize-fetch'
 import './setup-moment'
 
+import LiveChat from 'react-native-livechat'
 import * as React from 'react'
 import {Provider} from 'react-redux'
 import {makeStore, initRedux} from './flux'
@@ -64,9 +65,8 @@ export default class App extends React.Component<Props> {
 
 	render() {
 		return (
-			<Provider store={store}>
-				<AppNavigator onNavigationStateChange={this.trackScreenChanges} />
-			</Provider>
+			<LiveChat license={8994300} top={-40} />
+
 		)
 	}
 }

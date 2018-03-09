@@ -1,8 +1,9 @@
 // @flow
 
 import * as React from 'react'
-import {ScrollView, StyleSheet, StatusBar} from 'react-native'
+import {ScrollView, View, StyleSheet, StatusBar} from 'react-native'
 
+import LiveChat from 'react-native-livechat'
 import {connect} from 'react-redux'
 import * as c from '../components/colors'
 import sortBy from 'lodash/sortBy'
@@ -36,6 +37,7 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 	const columns = partitionByIndex(enabledViews)
 
 	return (
+		<React.Fragment>
 		<ScrollView
 			alwaysBounceHorizontal={false}
 			contentContainerStyle={styles.cells}
@@ -62,7 +64,10 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 					))}
 				</Column>
 			))}
+			<LiveChat license={8994300} top={-40} />
+			
 		</ScrollView>
+		</React.Fragment>
 	)
 }
 HomePage.navigationOptions = ({navigation}) => {
