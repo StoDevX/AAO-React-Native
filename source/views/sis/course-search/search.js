@@ -24,6 +24,7 @@ import {NoticeView} from '../../components/notice'
 import {Viewport} from '../../components/viewport'
 import {updateCourseFilters} from '../../../flux/parts/course-search'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
+import {Toolbar, ToolbarButton} from '../../components/toolbar'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -264,13 +265,24 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 								</Animated.View>
 							</Animated.View>
 							{searchActive ? (
-								<CourseSearchResultsList
-									filters={this.props.filters}
-									navigation={this.props.navigation}
-									onFiltersChange={this.props.onFiltersChange}
-									searchPerformed={searchPerformed}
-									terms={searchResults}
-								/>
+								<View>
+									<View style={styles.searchAllWrapper}>
+										<View style={styles.searchAllButton}>
+											<ToolbarButton
+												iconName={Platform.OS === 'ios' ? 'ios-funnel' : 'md-funnel'}
+												isActive={true}
+												title="Search All"
+											/>
+										</View>
+									</View>
+									<CourseSearchResultsList
+										filters={this.props.filters}
+										navigation={this.props.navigation}
+										onFiltersChange={this.props.onFiltersChange}
+										searchPerformed={searchPerformed}
+										terms={searchResults}
+									/>
+								</View>
 							) : (
 								<View />
 							)}
@@ -321,5 +333,11 @@ let styles = StyleSheet.create({
 		fontWeight: 'bold',
 		padding: 22,
 		paddingLeft: 17,
+	},
+	searchAllButton: {
+		width: 30,
+	},
+	searchAllWrapper: {
+
 	},
 })
