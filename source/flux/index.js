@@ -48,6 +48,7 @@ export const makeStore = () => {
 	if (__DEV__) {
 		const logger = createLogger({
 			collapsed: true,
+			duration: true,
 			// avoid logging the (large) course data state twice per action
 			stateTransformer: state => ({...state, courseSearch: '<omitted>'}),
 		})
