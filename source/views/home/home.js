@@ -15,6 +15,7 @@ import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl} from '../components/open-url'
 import {EditHomeButton, OpenSettingsButton} from '../components/nav-buttons'
+import {UnofficialAppNotice} from './notice'
 
 type ReactProps = TopLevelViewPropsType & {
 	views: Array<ViewType>,
@@ -63,6 +64,8 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 					</Column>
 				))}
 			</View>
+
+			<UnofficialAppNotice />
 		</ScrollView>
 	)
 }
