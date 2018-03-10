@@ -9,24 +9,21 @@ import {app, type State as AppState} from './parts/app'
 import {homescreen, type State as HomescreenState} from './parts/homescreen'
 import {menus, type State as MenusState} from './parts/menus'
 import {settings, type State as SettingsState} from './parts/settings'
-import {sis, type State as SisState} from './parts/sis'
+import {balances, type State as BalancesState} from './parts/balances'
 import {buildings, type State as BuildingsState} from './parts/buildings'
 import {help, type State as HelpState} from './parts/help'
-import {
-	courseSearch,
-	type State as CourseSearchState,
-} from './parts/course-search'
+import {courses, type State as CoursesState} from './parts/courses'
 
 export {init as initRedux} from './init'
 export {updateMenuFilters} from './parts/menus'
 
 export type ReduxState = {
 	app?: AppState,
-	courseSearch?: CourseSearchState,
+	courses?: CoursesState,
 	homescreen?: HomescreenState,
 	menus?: MenusState,
 	settings?: SettingsState,
-	sis?: SisState,
+	balances?: BalancesState,
 	buildings?: BuildingsState,
 	help?: HelpState,
 }
@@ -34,11 +31,11 @@ export type ReduxState = {
 export const makeStore = () => {
 	const aao: any = combineReducers({
 		app,
-		courseSearch,
+		courses,
 		homescreen,
 		menus,
 		settings,
-		sis,
+		balances,
 		buildings,
 		help,
 	})
@@ -50,7 +47,10 @@ export const makeStore = () => {
 			collapsed: true,
 			duration: true,
 			// avoid logging the (large) course data state twice per action
-			stateTransformer: state => ({...state, courseSearch: '<omitted>'}),
+			stateTransformer: state => ({
+				...state,
+				courses: {...state.courses, allCourses: '<omitted>'},
+			}),
 		})
 		middleware.push(logger)
 	}

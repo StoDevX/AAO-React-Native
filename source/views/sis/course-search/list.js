@@ -67,7 +67,7 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 	onPressToolbar = () => {
 		this.props.navigation.navigate('FilterView', {
 			title: 'Add Filters',
-			pathToFilters: ['courseSearch', 'filters'],
+			pathToFilters: ['courses', 'filters'],
 			onChange: filters => this.props.onFiltersChange(filters),
 		})
 	}
