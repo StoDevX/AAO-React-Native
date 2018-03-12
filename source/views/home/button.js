@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {View, Text, StyleSheet, Platform} from 'react-native'
+import {View, Text, StyleSheet, Platform, Dimensions} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import LinearGradient from 'react-native-linear-gradient'
@@ -24,19 +24,23 @@ export function HomeScreenButton({view, onPress}: Props) {
 			label={view.title}
 			onPress={onPress}
 			tint={view.tint}
+			style={[
+				styles.button,
+				{width: CELL_SIZE * view.size.width + CELL_MARGIN * 2},
+			]}
 		>
 			<View style={styles.contents}>
-				<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
+				<Icon name={view.icon} size={24} style={[foreground, styles.icon]} />
 				<Text style={[foreground, styles.text]}>{view.title}</Text>
 			</View>
 		</TouchableButton>
 	)
 }
 
-function TouchableButton({onPress, label, children, tint, gradient}) {
+function TouchableButton({onPress, label, children, tint, gradient, style}) {
 	if (Platform.OS === 'android') {
 		return (
-			<Tint gradient={gradient} tint={tint}>
+			<Tint gradient={gradient} tint={tint} style={style}>
 				<TouchableWrapper label={label} onPress={onPress}>
 					{children}
 				</TouchableWrapper>
@@ -45,7 +49,7 @@ function TouchableButton({onPress, label, children, tint, gradient}) {
 	} else {
 		return (
 			<TouchableWrapper label={label} onPress={onPress}>
-				<Tint gradient={gradient} tint={tint}>
+				<Tint gradient={gradient} tint={tint} style={style}>
 					{children}
 				</Tint>
 			</TouchableWrapper>
@@ -67,10 +71,10 @@ function TouchableWrapper({onPress, children, label}) {
 	)
 }
 
-function Tint({tint = 'black', gradient, children}) {
+function Tint({tint = 'black', gradient, children, style}) {
 	if (!gradient) {
 		const bg = {backgroundColor: tint}
-		return <View style={[styles.button, bg]}>{children}</View>
+		return <View style={[styles.button, style, bg]}>{children}</View>
 	}
 
 	return (
@@ -78,7 +82,7 @@ function Tint({tint = 'black', gradient, children}) {
 			colors={gradient}
 			end={{x: 1, y: 0.85}}
 			start={{x: 0, y: 0.05}}
-			style={styles.button}
+			style={[styles.button, style]}
 		>
 			{children}
 		</LinearGradient>
@@ -86,25 +90,25 @@ function Tint({tint = 'black', gradient, children}) {
 }
 
 export const CELL_MARGIN = 10
-const cellVerticalPadding = 8
-const cellHorizontalPadding = 4
+export const CELL_SIZE = 70
+export const CELL_INNER_PADDING = 10
 
 const styles = StyleSheet.create({
 	button: {
-		elevation: 2,
+		width: CELL_SIZE,
+		height: CELL_SIZE,
+		flex: 1,
 		borderRadius: Platform.OS === 'ios' ? (iPhoneX ? 17 : 6) : 3,
-
-		marginBottom: CELL_MARGIN,
-		marginLeft: CELL_MARGIN / 2,
-		marginRight: CELL_MARGIN / 2,
+		margin: CELL_MARGIN / 2,
+	},
+	button2: {
+		flex: 2,
 	},
 	contents: {
+		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-
-		paddingTop: cellVerticalPadding,
-		paddingBottom: cellVerticalPadding / 2,
-		paddingHorizontal: cellHorizontalPadding,
+		padding: CELL_INNER_PADDING,
 	},
 	icon: {
 		backgroundColor: c.transparent,

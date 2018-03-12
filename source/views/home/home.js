@@ -13,6 +13,7 @@ import {allViews} from '../views'
 import {Column} from '../components/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
+import {HomeScreenWidget} from './widget'
 import {trackedOpenUrl} from '../components/open-url'
 import {EditHomeButton, OpenSettingsButton} from '../components/nav-buttons'
 
@@ -27,42 +28,19 @@ type ReduxStateProps = {
 type Props = ReactProps & ReduxStateProps
 
 function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
-	const sortedViews = sortBy(views, view => order.indexOf(view.view))
-
-	const enabledViews = sortedViews.filter(
-		view => !inactiveViews.includes(view.view),
-	)
-
-	const columns = partitionByIndex(enabledViews)
-
 	return (
-		<ScrollView
-			alwaysBounceHorizontal={false}
-			contentContainerStyle={styles.cells}
-			overflow="hidden"
-			showsHorizontalScrollIndicator={false}
-			showsVerticalScrollIndicator={false}
-		>
+		<React.Fragment>
 			<StatusBar backgroundColor={c.gold} barStyle="light-content" />
-
-			{columns.map((contents, i) => (
-				<Column key={i} style={styles.column}>
-					{contents.map(view => (
-						<HomeScreenButton
-							key={view.view}
-							onPress={() => {
-								if (view.type === 'url') {
-									return trackedOpenUrl({url: view.url, id: view.view})
-								} else {
-									return navigation.navigate(view.view)
-								}
-							}}
-							view={view}
-						/>
-					))}
-				</Column>
-			))}
-		</ScrollView>
+			<ScrollView contentContainerStyle={styles.cells} overflow="hidden">
+				{views.map(view => {
+					if (view.type === 'view' || view.type === 'url') {
+						return <HomeScreenButton key={view.view} view={view} />
+					} else if (view.type === 'widget') {
+						return <HomeScreenWidget key={view.view} view={view} />
+					}
+				})}
+			</ScrollView>
+		</React.Fragment>
 	)
 }
 HomePage.navigationOptions = ({navigation}) => {
@@ -89,12 +67,9 @@ export default connect(mapStateToProps)(HomePage)
 
 const styles = StyleSheet.create({
 	cells: {
-		marginHorizontal: CELL_MARGIN / 2,
-		paddingTop: CELL_MARGIN,
-
 		flexDirection: 'row',
-	},
-	column: {
-		flex: 1,
+		flexWrap: 'wrap',
+		padding: CELL_MARGIN / 2,
+		justifyContent: 'space-between',
 	},
 })
