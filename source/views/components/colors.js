@@ -197,6 +197,8 @@ export const magentaToPurple = ['rgb(213,69,196)', 'rgb(160,50,230)']
 export const pinkToHotpink = ['rgb(248,102,149)', 'rgb(209,44,159)']
 export const grayToDarkGray = ['rgb(118,134,157)', 'rgb(85,96,124)']
 export const navyToNavy = ['rgb(32,67,107)', 'rgb(0,48,104)']
+export const kstoToKsto = ['#30a488', '#6724b4']
+export const grayToBlack = ['rgb(85,96,124)', 'rgb(40, 50, 70)']
 
 // MARK: homescreen button foregrounds
 export const homescreenForegroundLight = 'rgba(255, 255, 255, 0.9)'
