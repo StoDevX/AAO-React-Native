@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View, Animated, Platform} from 'react-native'
+import {StyleSheet, View, Animated, Platform, Text} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {SearchBar} from '../../components/searchbar'
@@ -22,9 +22,11 @@ import LoadingView from '../../components/loading'
 import {deptNum} from './lib/format-dept-num'
 import {NoticeView} from '../../components/notice'
 import {Viewport} from '../../components/viewport'
-import {updateCourseFilters} from '../../../flux/parts/course-search'
+import {updateCourseFilters, updateRecentSearches} from '../../../flux/parts/course-search'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
 import {Toolbar, ToolbarButton} from '../../components/toolbar'
+import {RecentSearchList} from '../components/recent-search/list'
+import {Separator} from '../../components/separator'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -38,12 +40,14 @@ type ReduxStateProps = {
 	courseDataState: string,
 	filters: Array<FilterType>,
 	isConnected: boolean,
+	recentSearches: string[],
 }
 
 type ReduxDispatchProps = {
 	updateCourseData: () => Promise<any>,
 	loadCourseDataIntoMemory: () => Promise<any>,
 	onFiltersChange: (f: FilterType[]) => any,
+	updateRecentSearches: (query: string) => any,
 }
 
 type DefaultProps = {
@@ -174,7 +178,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			groupedCourses,
 			course => course.title,
 		).reverse()
-
+		this.props.updateRecentSearches(text)
 		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true}))
 	}
 
@@ -264,17 +268,9 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 									/>
 								</Animated.View>
 							</Animated.View>
+							<Separator />
 							{searchActive ? (
 								<View>
-									<View style={styles.searchAllWrapper}>
-										<View style={styles.searchAllButton}>
-											<ToolbarButton
-												iconName={Platform.OS === 'ios' ? 'ios-funnel' : 'md-funnel'}
-												isActive={true}
-												title="Search All"
-											/>
-										</View>
-									</View>
 									<CourseSearchResultsList
 										filters={this.props.filters}
 										navigation={this.props.navigation}
@@ -284,7 +280,14 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 									/>
 								</View>
 							) : (
-								<View />
+								<View style={styles.common}>
+									<Text style={styles.subHeader}>
+										Recent
+									</Text>
+									<RecentSearchList
+										queries={this.props.recentSearches}
+									/>
+								</View>
 							)}
 						</View>
 					)
@@ -300,6 +303,7 @@ function mapState(state: ReduxState): ReduxStateProps {
 		courseDataState: state.sis ? state.sis.courseDataState : '',
 		isConnected: state.app ? state.app.isConnected : false,
 		filters: state.courseSearch ? state.courseSearch.filters : [],
+		recentSearches: state.courseSearch ? state.courseSearch.recentSearches : [],
 	}
 }
 
@@ -309,6 +313,7 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 		onFiltersChange: (filters: FilterType[]) =>
 			dispatch(updateCourseFilters(filters)),
 		updateCourseData: () => dispatch(updateCourseData()),
+		updateRecentSearches: (query: string) => dispatch(updateRecentSearches(query)),
 	}
 }
 
@@ -334,10 +339,17 @@ let styles = StyleSheet.create({
 		padding: 22,
 		paddingLeft: 17,
 	},
+	subHeader: {
+		fontSize: 20,
+		fontWeight: 'bold',
+		padding: 22,
+		paddingLeft: 17,
+	},
 	searchAllButton: {
-		width: 30,
+		width: 115,
 	},
 	searchAllWrapper: {
-
+		alignItems: 'center',
+		backgroundColor: c.white,
 	},
 })
