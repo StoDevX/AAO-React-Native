@@ -8,7 +8,9 @@ import {SearchBar} from '../../components/searchbar'
 import {
 	updateCourseData,
 	loadCourseDataIntoMemory,
-} from '../../../flux/parts/sis'
+	updateCourseFilters,
+	updateRecentSearches
+} from '../../../flux/parts/courses'
 import {type CourseType, areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
@@ -22,7 +24,6 @@ import LoadingView from '../../components/loading'
 import {deptNum} from './lib/format-dept-num'
 import {NoticeView} from '../../components/notice'
 import {Viewport} from '../../components/viewport'
-import {updateCourseFilters, updateRecentSearches} from '../../../flux/parts/course-search'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
 import {Toolbar, ToolbarButton} from '../../components/toolbar'
 import {RecentSearchList} from '../components/recent-search/list'
@@ -299,11 +300,11 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
-		allCourses: state.sis ? state.sis.allCourses : [],
-		courseDataState: state.sis ? state.sis.courseDataState : '',
 		isConnected: state.app ? state.app.isConnected : false,
-		filters: state.courseSearch ? state.courseSearch.filters : [],
-		recentSearches: state.courseSearch ? state.courseSearch.recentSearches : [],
+		allCourses: state.courses ? state.courses.allCourses : [],
+		courseDataState: state.courses ? state.courses.readyState : '',
+		filters: state.courses ? state.courses.filters : [],
+		recentSearches: state.courses ? state.courses.recentSearches : [],
 	}
 }
 

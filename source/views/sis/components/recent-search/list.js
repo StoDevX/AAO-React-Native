@@ -2,7 +2,6 @@
 import * as React from 'react'
 import {FlatList, StyleSheet, Text} from 'react-native'
 import {ListSeparator, ListRow} from '../../../components/list'
-import {RecentSearchRow} from './row'
 import {NoticeView} from '../../../components/notice'
 import * as c from '../../../components/colors'
 

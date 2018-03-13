@@ -88,8 +88,8 @@ export async function buildFilters(): Promise<FilterType[]> {
 				title: 'Departments',
 				showImages: false,
 				options: allDepartments,
-				mode: 'AND',
-				selected: [],
+				mode: 'OR',
+				selected: allDepartments,
 				displayTitle: true,
 			},
 			apply: {
