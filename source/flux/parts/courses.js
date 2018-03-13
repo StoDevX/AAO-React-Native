@@ -8,6 +8,7 @@ import {
 	areAnyTermsCached,
 } from '../../lib/course-search'
 import type {CourseType} from '../../lib/course-search'
+import * as storage from '../../lib/storage'
 
 const UPDATE_COURSE_FILTERS = 'courseSearch/UPDATE_COURSE_FILTERS'
 const LOAD_CACHED_COURSES = 'sis/LOAD_CACHED_COURSES'
@@ -68,10 +69,21 @@ export function updateCourseData(): UpdateCourseDataActionType {
 	}
 }
 
-const UPDATE_RECENT_SEARCHES = 'courseSearch/UPDATE_RECENT_SEARCHES'
+const LOAD_RECENT_SEARCHES = 'courses/LOAD_RECENT_SEARCHES'
+
+type LoadRecentSearchesAction = {|
+	type: 'courses/LOAD_RECENT_SEARCHES',
+	payload: string[],
+|}
+export async function loadRecentSearches(): Promise<LoadRecentSearchesAction> {
+	const recentSearches = storage.getRecentSearches()
+	return {type: LOAD_RECENT_SEARCHES, payload: recentSearches}
+}
+
+const UPDATE_RECENT_SEARCHES = 'courses/UPDATE_RECENT_SEARCHES'
 
 type UpdateRecentSearchesAction = {|
-	type: 'courseSearch/UPDATE_RECENT_SEARCHES',
+	type: 'courses/UPDATE_RECENT_SEARCHES',
 	payload: string[],
 |}
 export function updateRecentSearches(
@@ -90,6 +102,9 @@ export function updateRecentSearches(
 		if (newRecentSearches.length > 3) {
 			newRecentSearches.pop()
 		}
+		// TODO: remove saving logic from reducers
+		storage.setRecentSearches(newRecentSearches)
+
 		dispatch({type: UPDATE_RECENT_SEARCHES, payload: newRecentSearches})
 	}
 }
@@ -99,6 +114,7 @@ type Action =
 	| LoadCachedCoursesAction
 	| CoursesLoadedAction
 	| UpdateRecentSearchesAction
+	| LoadRecentSearchesAction
 
 export type State = {|
 	filters: Array<FilterType>,
@@ -126,6 +142,9 @@ export function courses(state: State = initialState, action: Action) {
 
 		case COURSES_LOADED:
 			return {...state, readyState: 'ready'}
+
+		case LOAD_RECENT_SEARCHES:
+			return {...state, recentSearches: action.payload}
 
 		case UPDATE_RECENT_SEARCHES:
 			return {...state, recentSearches: action.payload}
