@@ -93,6 +93,9 @@ export function updateRecentSearches(
 		const state = getState()
 
 		const oldRecentSearches = state.courses ? state.courses.recentSearches : []
+		if (oldRecentSearches.includes(query)) {
+			return
+		}
 		let newRecentSearches = oldRecentSearches
 		if (newRecentSearches.length === 0) {
 			newRecentSearches = [query]

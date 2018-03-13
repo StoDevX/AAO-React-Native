@@ -140,14 +140,15 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			this.searchBar.blur()
 		}
 
-		this.performSearch(text, this.props.filters)
+		this.performSearch(text)
 	}
 
-	performSearch = (text: string | Object, filters: Array<FilterType>) => {
+	performSearch = (text: string, passedFilters?: Array<FilterType>) => {
 		const {applyFilters} = this.props
+		const filters = passedFilters || this.props.filters
 
+		this.setState(() => ({query: text}))
 		const query = text.toLowerCase()
-		this.setState(() => ({query: query}))
 
 		const filteredCourses = this.props.allCourses.filter(course =>
 			applyFilters(filters, course),
@@ -190,6 +191,11 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}
 	}
 
+	onRecentSearchPress = (text: string) => {
+		this.onFocus()
+		this.performSearch(text)
+	}
+
 	animate = (thing, args, toValue: 'start' | 'end') =>
 		Animated.timing(thing, {
 			toValue: args[toValue],
@@ -213,7 +219,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {searchActive, searchPerformed, searchResults} = this.state
+		const {searchActive, searchPerformed, searchResults, query} = this.state
 
 		if (this.state.dataLoading) {
 			return <LoadingView text="Loading Course Data…" />
@@ -266,6 +272,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 										onSearchButtonPress={this.onSearchButtonPress}
 										placeholder="Search Class & Lab"
 										searchActive={searchActive}
+										text={query}
 										textFieldBackgroundColor={c.sto.lightGray}
 									/>
 								</Animated.View>
@@ -284,7 +291,10 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 							) : (
 								<View style={styles.common}>
 									<Text style={styles.subHeader}>Recent</Text>
-									<RecentSearchList queries={this.props.recentSearches} />
+									<RecentSearchList
+										onQueryPress={this.onRecentSearchPress}
+										queries={this.props.recentSearches}
+									/>
 								</View>
 							)}
 						</View>
