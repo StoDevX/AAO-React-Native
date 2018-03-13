@@ -9,7 +9,7 @@ import {
 	updateCourseData,
 	loadCourseDataIntoMemory,
 	updateCourseFilters,
-	updateRecentSearches
+	updateRecentSearches,
 } from '../../../flux/parts/courses'
 import {type CourseType, areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
@@ -25,7 +25,6 @@ import {deptNum} from './lib/format-dept-num'
 import {NoticeView} from '../../components/notice'
 import {Viewport} from '../../components/viewport'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
-import {Toolbar, ToolbarButton} from '../../components/toolbar'
 import {RecentSearchList} from '../components/recent-search/list'
 import {Separator} from '../../components/separator'
 
@@ -179,7 +178,9 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			groupedCourses,
 			course => course.title,
 		).reverse()
-		this.props.updateRecentSearches(text)
+		if (text.toString().length !== 0) {
+			this.props.updateRecentSearches(text.toString())
+		}
 		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true}))
 	}
 
@@ -282,12 +283,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 								</View>
 							) : (
 								<View style={styles.common}>
-									<Text style={styles.subHeader}>
-										Recent
-									</Text>
-									<RecentSearchList
-										queries={this.props.recentSearches}
-									/>
+									<Text style={styles.subHeader}>Recent</Text>
+									<RecentSearchList queries={this.props.recentSearches} />
 								</View>
 							)}
 						</View>
@@ -314,7 +311,8 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 		onFiltersChange: (filters: FilterType[]) =>
 			dispatch(updateCourseFilters(filters)),
 		updateCourseData: () => dispatch(updateCourseData()),
-		updateRecentSearches: (query: string) => dispatch(updateRecentSearches(query)),
+		updateRecentSearches: (query: string) =>
+			dispatch(updateRecentSearches(query)),
 	}
 }
 
@@ -345,12 +343,5 @@ let styles = StyleSheet.create({
 		fontWeight: 'bold',
 		padding: 22,
 		paddingLeft: 17,
-	},
-	searchAllButton: {
-		width: 115,
-	},
-	searchAllWrapper: {
-		alignItems: 'center',
-		backgroundColor: c.white,
 	},
 })

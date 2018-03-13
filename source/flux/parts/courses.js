@@ -76,7 +76,7 @@ type LoadRecentSearchesAction = {|
 	payload: string[],
 |}
 export async function loadRecentSearches(): Promise<LoadRecentSearchesAction> {
-	const recentSearches = storage.getRecentSearches()
+	const recentSearches = await storage.getRecentSearches()
 	return {type: LOAD_RECENT_SEARCHES, payload: recentSearches}
 }
 

@@ -31,16 +31,12 @@ export class RecentSearchList extends React.PureComponent<Props> {
         keyExtractor={this.keyExtractor}
         renderItem={this.renderItem}
         scrollEnabled={false}
-        style={styles.listContainer}
       />
     )
   }
 }
 
 const styles = StyleSheet.create({
-  common: {
-    backgroundColor: c.white,
-  },
   listItem: {
     paddingVertical: 5,
     paddingLeft: 5,
