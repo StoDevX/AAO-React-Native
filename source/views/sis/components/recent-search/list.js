@@ -30,7 +30,13 @@ export class RecentSearchList extends React.PureComponent<Props> {
 		return (
 			<FlatList
 				ItemSeparatorComponent={this.renderSeparator}
-				ListEmptyComponent={<NoticeView text="No recent searches" />}
+				ListEmptyComponent={
+					<NoticeView
+						header="No recent searches"
+						style={styles.notice}
+						text="Your recent searches will appear here."
+					/>
+				}
 				data={queries}
 				keyExtractor={this.keyExtractor}
 				renderItem={this.renderItem}
@@ -46,5 +52,8 @@ const styles = StyleSheet.create({
 		paddingLeft: 5,
 		fontSize: 18,
 		color: c.olevilleGold,
+	},
+	notice: {
+		paddingBottom: 35,
 	},
 })
