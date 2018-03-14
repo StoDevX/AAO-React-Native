@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import type {UnprocessedBusLine} from './types'
-import MapView from 'react-native-maps'
+import MapView from '@mapbox/react-native-mapbox-gl'
 import moment from 'moment-timezone'
 import {NoticeView} from '../../components/notice'
 import type {TopLevelViewPropsType} from '../../types'
