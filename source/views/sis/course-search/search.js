@@ -18,6 +18,7 @@ import {connect} from 'react-redux'
 import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import toPairs from 'lodash/toPairs'
+import debounce from 'lodash/debounce'
 import fuzzysearch from 'fuzzysearch'
 import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
@@ -143,7 +144,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.performSearch(text)
 	}
 
-	performSearch = (text: string, passedFilters?: Array<FilterType>) => {
+	_performSearch = (text: string, passedFilters?: Array<FilterType>) => {
 		const {applyFilters} = this.props
 		const filters = passedFilters || this.props.filters
 
@@ -184,6 +185,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}
 		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true}))
 	}
+
+	performSearch = debounce(this._performSearch, 20)
 
 	refreshResults = (filters: Array<FilterType>) => {
 		if (this.state.query !== '') {
