@@ -96,6 +96,12 @@
   dependencies:
     prop-types "^15.5.10"
 
+"@mapbox/react-native-mapbox-gl@6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@mapbox/react-native-mapbox-gl/-/react-native-mapbox-gl-6.1.0.tgz#111b71b532682ce786bd5c7790c43ea17700adf2"
+  dependencies:
+    "@turf/helpers" "4.6.0"
+
 "@octokit/rest@^14.0.4":
   version "14.0.4"
   resolved "https://registry.yarnpkg.com/@octokit/rest/-/rest-14.0.4.tgz#7bf3319221352f48a642ac523d2d36b370e17961"
@@ -108,6 +114,10 @@
     lodash "^4.17.4"
     proxy-from-env "^1.0.0"
     url-template "^2.0.8"
+
+"@turf/helpers@4.6.0":
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@turf/helpers/-/helpers-4.6.0.tgz#12398733b8ae28420df6166fa44c7ee8ffd6414c"
 
 "@types/node@*":
   version "8.5.1"
