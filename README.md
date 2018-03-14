@@ -2,6 +2,7 @@
 
 [![Get it on Google Play](images/readme/get_google_play.svg)](https://play.google.com/store/apps/details?id=com.allaboutolaf)
 [![Download on the App Store](images/readme/get_app_store.svg)](https://itunes.apple.com/us/app/all-about-olaf/id938588319)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FStoDevX%2FAAO-React-Native.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FStoDevX%2FAAO-React-Native?ref=badge_shield)
 
 ## About
 
@@ -37,3 +38,7 @@ You should [create one yourself](https://console.developers.google.com/projectse
 For full information, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <h6>Google Play and the Google Play logo are trademarks of Google LLC.<br>Apple, the Apple logo, iPhone, and iPad are trademarks of Apple Inc., registered in the U.S. and other countries.<br>App Store is a service mark of Apple Inc., registered in the U.S. and other countries.</h6>
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FStoDevX%2FAAO-React-Native.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FStoDevX%2FAAO-React-Native?ref=badge_large)
