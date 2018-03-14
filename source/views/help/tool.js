@@ -86,7 +86,7 @@ export const styles = StyleSheet.create({
 	card: {
 		paddingHorizontal: 20,
 		paddingVertical: 15,
-		marginHorizontal: 0,
+		marginHorizontal: 10,
 		marginBottom: 10,
 	},
 })

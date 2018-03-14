@@ -6,7 +6,8 @@ export type ToggleSpecType = {
 }
 
 export type ListItemSpecType = {|
-	title: string,
+	title: string | number,
+	label?: string,
 	detail?: string,
 	image?: ?any,
 |}
@@ -18,6 +19,7 @@ export type ListSpecType = {
 	options: ListItemSpecType[],
 	selected: ListItemSpecType[],
 	mode: 'AND' | 'OR',
+	displayTitle: boolean,
 }
 
 export type PickerItemSpecType = {|
@@ -33,6 +35,7 @@ export type PickerSpecType = {
 
 export type ToggleFilterFunctionType = {
 	key: string,
+	trueEquivalent?: string,
 }
 
 export type PickerFilterFunctionType = {

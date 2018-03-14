@@ -70,7 +70,9 @@ export function ListSection({filter, onChange}: PropsType) {
 			accessory={includes(selected, val) ? 'Checkmark' : undefined}
 			cellContentView={
 				<Column style={styles.content}>
-					<Text style={styles.title}>{val.title}</Text>
+					<Text style={styles.title}>
+						{spec.displayTitle ? val.title : val.label}
+					</Text>
 					{val.detail ? <Text style={styles.detail}>{val.detail}</Text> : null}
 				</Column>
 			}

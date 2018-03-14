@@ -94,3 +94,12 @@ export function setTermInfo(termData: Array<TermType>) {
 export function getTermInfo(): Promise<Array<TermType>> {
 	return getItemAsArray(termInfoKey)
 }
+const filterDataKey = courseDataKey + ':filter-data'
+export function setCourseFilterOption(name: string, data: string[]) {
+	const key = filterDataKey + `:${name}`
+	return setItem(key, data)
+}
+export function getCourseFilterOption(name: string): Promise<Array<string>> {
+	const key = filterDataKey + `:${name}`
+	return getItemAsArray(key)
+}

@@ -4652,6 +4652,10 @@ p-map@^1.1.1:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/p-map/-/p-map-1.2.0.tgz#e4e94f311eabbc8633a1e79908165fca26241b6b"
 
+p-props@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/p-props/-/p-props-1.1.0.tgz#8e6a5af26cca539f3ff9a9fb162c629405b2e8a8"
+
 p-retry@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/p-retry/-/p-retry-1.0.0.tgz#3927332a4b7d70269b535515117fc547da1a6968"
@@ -5001,9 +5005,9 @@ react-native-custom-tabs@0.1.7:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/react-native-custom-tabs/-/react-native-custom-tabs-0.1.7.tgz#2dfb4028b0a443610d94792b2019810f68dde525"
 
-react-native-device-info@0.17.3:
-  version "0.17.3"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.17.3.tgz#7aa58f5c6ce1381beddc86429b9fd4e06e3ce20d"
+react-native-device-info@0.17.4:
+  version "0.17.4"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.17.4.tgz#c135d4719f0512729de1c72e058a137e29ea1e3e"
 
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
@@ -5042,9 +5046,9 @@ react-native-maps@0.20.1:
     babel-plugin-module-resolver "^2.3.0"
     babel-preset-react-native "1.9.0"
 
-react-native-network-info@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-3.0.0.tgz#fafc0ccea2803ef3b6ba3e01c34e89df90ba1a87"
+react-native-network-info@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-3.1.0.tgz#8d833d430f636400a33528c717f21b2c7f507024"
 
 react-native-restart@0.0.6:
   version "0.0.6"

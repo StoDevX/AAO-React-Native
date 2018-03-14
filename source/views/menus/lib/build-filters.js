@@ -85,6 +85,7 @@ export function buildFilters(
 				options: allStations,
 				mode: 'OR',
 				selected: allStations,
+				displayTitle: true,
 			},
 			apply: {
 				key: 'station',
@@ -100,6 +101,7 @@ export function buildFilters(
 				options: allDietaryRestrictions,
 				mode: 'AND',
 				selected: [],
+				displayTitle: true,
 			},
 			apply: {
 				key: 'cor_icon',

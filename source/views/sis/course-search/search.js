@@ -8,7 +8,8 @@ import {SearchBar} from '../../components/searchbar'
 import {
 	updateCourseData,
 	loadCourseDataIntoMemory,
-} from '../../../flux/parts/sis'
+	updateCourseFilters,
+} from '../../../flux/parts/courses'
 import {type CourseType, areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
@@ -22,6 +23,7 @@ import LoadingView from '../../components/loading'
 import {deptNum} from './lib/format-dept-num'
 import {NoticeView} from '../../components/notice'
 import {Viewport} from '../../components/viewport'
+import {applyFiltersToItem, type FilterType} from '../../components/filter'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -33,21 +35,28 @@ type ReactProps = TopLevelViewPropsType
 type ReduxStateProps = {
 	allCourses: Array<CourseType>,
 	courseDataState: string,
+	filters: Array<FilterType>,
 	isConnected: boolean,
 }
 
 type ReduxDispatchProps = {
 	updateCourseData: () => Promise<any>,
 	loadCourseDataIntoMemory: () => Promise<any>,
+	onFiltersChange: (f: FilterType[]) => any,
 }
 
-type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
+type DefaultProps = {
+	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
+}
+
+type Props = ReactProps & ReduxStateProps & ReduxDispatchProps & DefaultProps
 
 type State = {
 	dataLoading: boolean,
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
 	searchActive: boolean,
 	searchPerformed: boolean,
+	query: string,
 }
 
 class CourseSearchView extends React.PureComponent<Props, State> {
@@ -57,11 +66,16 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		title: 'SIS',
 	}
 
+	static defaultProps = {
+		applyFilters: applyFiltersToItem,
+	}
+
 	state = {
 		dataLoading: true,
 		searchResults: [],
 		searchActive: false,
 		searchPerformed: false,
+		query: '',
 	}
 
 	componentDidMount() {
@@ -72,6 +86,10 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				this.setState(() => ({dataLoading: false}))
 			}
 		})
+	}
+
+	componentWillReceiveProps(nextProps: Props) {
+		this.refreshResults(nextProps.filters)
 	}
 
 	animations = {
@@ -117,13 +135,20 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			this.searchBar.blur()
 		}
 
-		this.performSearch(text)
+		this.performSearch(text, this.props.filters)
 	}
 
-	performSearch = (text: string | Object) => {
-		const query = text.toLowerCase()
+	performSearch = (text: string | Object, filters: Array<FilterType>) => {
+		const {applyFilters} = this.props
 
-		const results = this.props.allCourses.filter(
+		const query = text.toLowerCase()
+		this.setState(() => ({query: query}))
+
+		const filteredCourses = this.props.allCourses.filter(course =>
+			applyFilters(filters, course),
+		)
+
+		const results = filteredCourses.filter(
 			course =>
 				fuzzysearch(query, course.name.toLowerCase()) ||
 				fuzzysearch(query, (course.title || '').toLowerCase()) ||
@@ -150,6 +175,12 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		).reverse()
 
 		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true}))
+	}
+
+	refreshResults = (filters: Array<FilterType>) => {
+		if (this.state.query !== '') {
+			this.performSearch(this.state.query, filters)
+		}
 	}
 
 	animate = (thing, args, toValue: 'start' | 'end') =>
@@ -234,7 +265,9 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 							</Animated.View>
 							{searchActive ? (
 								<CourseSearchResultsList
+									filters={this.props.filters}
 									navigation={this.props.navigation}
+									onFiltersChange={this.props.onFiltersChange}
 									searchPerformed={searchPerformed}
 									terms={searchResults}
 								/>
@@ -251,15 +284,18 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
-		allCourses: state.sis ? state.sis.allCourses : [],
-		courseDataState: state.sis ? state.sis.courseDataState : '',
 		isConnected: state.app ? state.app.isConnected : false,
+		allCourses: state.courses ? state.courses.allCourses : [],
+		courseDataState: state.courses ? state.courses.readyState : '',
+		filters: state.courses ? state.courses.filters : [],
 	}
 }
 
 function mapDispatch(dispatch): ReduxDispatchProps {
 	return {
 		loadCourseDataIntoMemory: () => dispatch(loadCourseDataIntoMemory()),
+		onFiltersChange: (filters: FilterType[]) =>
+			dispatch(updateCourseFilters(filters)),
 		updateCourseData: () => dispatch(updateCourseData()),
 	}
 }
