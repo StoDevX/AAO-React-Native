@@ -11,6 +11,7 @@ const messages = [
 	'By students, for students',
 	'An unofficial St. Olaf app',
 	'For Oles, by Oles',
+	'☃️',
 ]
 
 export function UnofficialAppNotice() {
