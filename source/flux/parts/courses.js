@@ -97,8 +97,7 @@ export function updateRecentSearches(
 		if (recentLowerCase.includes(query.toLowerCase())) {
 			return
 		}
-		recentSearches = [query, ...recentSearches]
-		recentSearches = recentSearches.slice(0, 3)
+		recentSearches = [query, ...recentSearches].slice(0, 3)
 
 		// TODO: remove saving logic from reducers
 		storage.setRecentSearches(recentSearches)
