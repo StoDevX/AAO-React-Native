@@ -9,13 +9,8 @@ const messages = [
 	'☃️ An Unofficial App Project ☃️',
 	'For students, by students',
 	'By students, for students',
-	'SGA-owned and misunderstood',
-	'I AM AN UNOFFICIAL APP',
-	'we are (not) olaf',
-	'☃️',
 	'An unofficial St. Olaf app',
 	'For Oles, by Oles',
-	'Not supported by St. Olaf',
 ]
 
 export function UnofficialAppNotice() {
