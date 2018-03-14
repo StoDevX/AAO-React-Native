@@ -103,3 +103,11 @@ export function getCourseFilterOption(name: string): Promise<Array<string>> {
 	const key = filterDataKey + `:${name}`
 	return getItemAsArray(key)
 }
+
+const recentSearchesKey = 'courses:recent-searches'
+export function setRecentSearches(searches: string[]) {
+	return setItem(recentSearchesKey, searches)
+}
+export function getRecentSearches(): Promise<Array<string>> {
+	return getItemAsArray(recentSearchesKey)
+}
