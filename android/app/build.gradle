@@ -219,6 +219,7 @@ dependencies {
     implementation project(':react-native-google-analytics-bridge')
     implementation project(':react-native-keychain')
     implementation project(':react-native-linear-gradient')
+    implementation project(':mapbox-react-native-mapbox-gl')
     implementation project(':react-native-network-info')
     implementation project(':react-native-restart')
     implementation project(':react-native-vector-icons')
