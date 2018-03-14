@@ -1,4 +1,4 @@
-package com.allaboutolaf;
+apackage com.allaboutolaf;
 
 import android.app.Application;
 import android.net.http.HttpResponseCache;
@@ -48,7 +48,7 @@ public class MainApplication extends Application implements ReactApplication {
         new GoogleAnalyticsBridgePackage(),
         new KeychainPackage(),
         new LinearGradientPackage(),
-	new RCTMGLPackage(),
+        new RCTMGLPackage(),
         new ReactNativeRestartPackage(),
         new RNDeviceInfo(),
         new RNNetworkInfoPackage(),
