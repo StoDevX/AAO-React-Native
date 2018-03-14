@@ -2,6 +2,7 @@
 import type {FilterType, ToggleType, ListType, ListItemSpecType} from './types'
 import values from 'lodash/values'
 import difference from 'lodash/difference'
+import intersection from 'lodash/intersection'
 
 export function applyFiltersToItem(filters: FilterType[], item: any): boolean {
 	// Given a list of filters, return the result of running all of those
@@ -53,10 +54,16 @@ export function applyListFilter(filter: ListType, item: any): boolean {
 
 export function applyOrListFilter(
 	filterValue: ListItemSpecType[],
-	itemValue: string,
+	itemValue: string | string[],
 ): boolean {
 	// An item passes, if its value is in the filter's selected items array
-	return filterValue.map(f => f.title).includes(itemValue)
+	if (!Array.isArray(itemValue)) {
+		return filterValue.map(f => f.title).includes(itemValue)
+	}
+
+	const valueToCheckAgainst = filterValue.map(f => f.title.toString())
+	const intersectionValues = intersection(valueToCheckAgainst, itemValue)
+	return intersectionValues.length !== 0
 }
 
 export function applyAndListFilter(

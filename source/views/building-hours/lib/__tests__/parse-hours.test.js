@@ -55,7 +55,7 @@ describe('handles wierd times', () => {
 	})
 })
 
-describe('checks a list of schedules to see if any are open', () => {
+xdescribe('checks a list of schedules to see if any are open', () => {
 	const schedule = {days: ['Fr', 'Sa'], from: '10:30am', to: '2:00am'}
 
 	it('in normal, non-dst situations', () => {

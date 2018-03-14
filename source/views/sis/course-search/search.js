@@ -8,7 +8,8 @@ import {SearchBar} from '../../components/searchbar'
 import {
 	updateCourseData,
 	loadCourseDataIntoMemory,
-} from '../../../flux/parts/sis'
+	updateCourseFilters,
+} from '../../../flux/parts/courses'
 import {type CourseType, areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
@@ -22,7 +23,6 @@ import LoadingView from '../../components/loading'
 import {deptNum} from './lib/format-dept-num'
 import {NoticeView} from '../../components/notice'
 import {Viewport} from '../../components/viewport'
-import {updateCourseFilters} from '../../../flux/parts/course-search'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
 
 const PROMPT_TEXT =
@@ -284,10 +284,10 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
-		allCourses: state.sis ? state.sis.allCourses : [],
-		courseDataState: state.sis ? state.sis.courseDataState : '',
 		isConnected: state.app ? state.app.isConnected : false,
-		filters: state.courseSearch ? state.courseSearch.filters : [],
+		allCourses: state.courses ? state.courses.allCourses : [],
+		courseDataState: state.courses ? state.courses.readyState : '',
+		filters: state.courses ? state.courses.filters : [],
 	}
 }
 
