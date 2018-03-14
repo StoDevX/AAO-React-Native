@@ -12,6 +12,7 @@ const messages = [
 	'An unofficial St. Olaf app',
 	'For Oles, by Oles',
 	'☃️',
+	'🦁',
 ]
 
 export function UnofficialAppNotice() {
