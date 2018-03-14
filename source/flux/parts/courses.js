@@ -92,23 +92,18 @@ export function updateRecentSearches(
 	return (dispatch, getState) => {
 		const state = getState()
 
-		const oldRecentSearches = state.courses ? state.courses.recentSearches : []
-		if (oldRecentSearches.includes(query)) {
+		let recentSearches = state.courses ? state.courses.recentSearches : []
+		const recentLowerCase = recentSearches.map(query => query.toLowerCase())
+		if (recentLowerCase.includes(query.toLowerCase())) {
 			return
 		}
-		let newRecentSearches = oldRecentSearches
-		if (newRecentSearches.length === 0) {
-			newRecentSearches = [query]
-		} else {
-			newRecentSearches.unshift(query)
-		}
-		if (newRecentSearches.length > 3) {
-			newRecentSearches.pop()
-		}
-		// TODO: remove saving logic from reducers
-		storage.setRecentSearches(newRecentSearches)
+		recentSearches = [query, ...recentSearches]
+		recentSearches = recentSearches.slice(0, 3)
 
-		dispatch({type: UPDATE_RECENT_SEARCHES, payload: newRecentSearches})
+		// TODO: remove saving logic from reducers
+		storage.setRecentSearches(recentSearches)
+
+		dispatch({type: UPDATE_RECENT_SEARCHES, payload: recentSearches})
 	}
 }
 

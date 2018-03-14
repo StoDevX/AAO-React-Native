@@ -11,15 +11,10 @@ type Props = {
 }
 
 export class RecentSearchList extends React.PureComponent<Props> {
-	renderSeparator = () => <ListSeparator spacing={{left: 20}} />
+	renderSeparator = () => <ListSeparator spacing={{left: 20, right: 20}} />
 
 	renderItem = ({item}: {item: string}) => (
-		<ListRow
-			arrowPosition="none"
-			onPress={() => {
-				this.onPressRow(item)
-			}}
-		>
+		<ListRow arrowPosition="none" onPress={() => this.onPressRow(item)}>
 			<Text style={styles.listItem}>{item}</Text>
 		</ListRow>
 	)

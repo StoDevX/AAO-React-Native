@@ -179,8 +179,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			groupedCourses,
 			course => course.title,
 		).reverse()
-		if (text.toString().length !== 0) {
-			this.props.updateRecentSearches(text.toString())
+		if (text.length !== 0) {
+			this.props.updateRecentSearches(text)
 		}
 		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true}))
 	}
@@ -282,15 +282,13 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 							</Animated.View>
 							<Separator />
 							{searchActive ? (
-								<View>
-									<CourseSearchResultsList
-										filters={this.props.filters}
-										navigation={this.props.navigation}
-										onFiltersChange={this.props.onFiltersChange}
-										searchPerformed={searchPerformed}
-										terms={searchResults}
-									/>
-								</View>
+								<CourseSearchResultsList
+									filters={this.props.filters}
+									navigation={this.props.navigation}
+									onFiltersChange={this.props.onFiltersChange}
+									searchPerformed={searchPerformed}
+									terms={searchResults}
+								/>
 							) : (
 								<View style={styles.common}>
 									<Text style={styles.subHeader}>Recent</Text>
