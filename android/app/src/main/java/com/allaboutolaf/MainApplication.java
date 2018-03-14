@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 // keep these sorted alphabetically
-import com.airbnb.android.react.maps.MapsPackage;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.bugsnag.BugsnagReactNative;
 import com.BV.LinearGradient.LinearGradientPackage;
@@ -20,6 +19,7 @@ import com.facebook.soloader.SoLoader;
 import com.github.droibit.android.reactnative.customtabs.CustomTabsPackage;
 import com.idehub.GoogleAnalyticsBridge.GoogleAnalyticsBridgePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.mapbox.rctmgl.RCTMGLPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
@@ -48,7 +48,7 @@ public class MainApplication extends Application implements ReactApplication {
         new GoogleAnalyticsBridgePackage(),
         new KeychainPackage(),
         new LinearGradientPackage(),
-        new MapsPackage(),
+        new RCTMGLPackage(),
         new ReactNativeRestartPackage(),
         new RNDeviceInfo(),
         new RNNetworkInfoPackage(),
