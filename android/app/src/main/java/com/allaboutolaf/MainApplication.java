@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 // keep these sorted alphabetically
-import com.airbnb.android.react.maps.MapsPackage;
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.bugsnag.BugsnagReactNative;
 import com.BV.LinearGradient.LinearGradientPackage;
@@ -48,7 +47,6 @@ public class MainApplication extends Application implements ReactApplication {
         new GoogleAnalyticsBridgePackage(),
         new KeychainPackage(),
         new LinearGradientPackage(),
-        new MapsPackage(),
         new ReactNativeRestartPackage(),
         new RNDeviceInfo(),
         new RNNetworkInfoPackage(),
