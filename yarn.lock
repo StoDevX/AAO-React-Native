@@ -4961,9 +4961,9 @@ react-native-search-bar@3.4.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-searchbar@1.14.0:
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/react-native-searchbar/-/react-native-searchbar-1.14.0.tgz#043eed3e48b52c9d9ab417b58400d84dd07c6efc"
+"react-native-searchbar@https://github.com/MosesEsan/react-native-searchbar.git#setValue-function":
+  version "1.13.0"
+  resolved "https://github.com/MosesEsan/react-native-searchbar.git#9c9fd0ece3d5c5ba44697e8535021155ed696cc8"
   dependencies:
     lodash "^4.16.4"
     react-native-vector-icons "^4.4.2"

@@ -8,6 +8,7 @@ import {
 	areAnyTermsCached,
 } from '../../lib/course-search'
 import type {CourseType} from '../../lib/course-search'
+import * as storage from '../../lib/storage'
 
 const UPDATE_COURSE_FILTERS = 'courseSearch/UPDATE_COURSE_FILTERS'
 const LOAD_CACHED_COURSES = 'sis/LOAD_CACHED_COURSES'
@@ -68,16 +69,56 @@ export function updateCourseData(): UpdateCourseDataActionType {
 	}
 }
 
+const LOAD_RECENT_SEARCHES = 'courses/LOAD_RECENT_SEARCHES'
+
+type LoadRecentSearchesAction = {|
+	type: 'courses/LOAD_RECENT_SEARCHES',
+	payload: string[],
+|}
+export async function loadRecentSearches(): Promise<LoadRecentSearchesAction> {
+	const recentSearches = await storage.getRecentSearches()
+	return {type: LOAD_RECENT_SEARCHES, payload: recentSearches}
+}
+
+const UPDATE_RECENT_SEARCHES = 'courses/UPDATE_RECENT_SEARCHES'
+
+type UpdateRecentSearchesAction = {|
+	type: 'courses/UPDATE_RECENT_SEARCHES',
+	payload: string[],
+|}
+export function updateRecentSearches(
+	query: string,
+): ThunkAction<UpdateRecentSearchesAction> {
+	return (dispatch, getState) => {
+		const state = getState()
+
+		let recentSearches = state.courses ? state.courses.recentSearches : []
+		const recentLowerCase = recentSearches.map(query => query.toLowerCase())
+		if (recentLowerCase.includes(query.toLowerCase())) {
+			return
+		}
+		recentSearches = [query, ...recentSearches].slice(0, 3)
+
+		// TODO: remove saving logic from reducers
+		storage.setRecentSearches(recentSearches)
+
+		dispatch({type: UPDATE_RECENT_SEARCHES, payload: recentSearches})
+	}
+}
+
 type Action =
 	| UpdateCourseFiltersAction
 	| LoadCachedCoursesAction
 	| CoursesLoadedAction
+	| UpdateRecentSearchesAction
+	| LoadRecentSearchesAction
 
 export type State = {|
 	filters: Array<FilterType>,
 	allCourses: Array<CourseType>,
 	readyState: 'not-loaded' | 'ready',
 	validGEs: string[],
+	recentSearches: string[],
 |}
 
 const initialState = {
@@ -85,6 +126,7 @@ const initialState = {
 	allCourses: [],
 	readyState: 'not-loaded',
 	validGEs: [],
+	recentSearches: [],
 }
 
 export function courses(state: State = initialState, action: Action) {
@@ -97,6 +139,12 @@ export function courses(state: State = initialState, action: Action) {
 
 		case COURSES_LOADED:
 			return {...state, readyState: 'ready'}
+
+		case LOAD_RECENT_SEARCHES:
+			return {...state, recentSearches: action.payload}
+
+		case UPDATE_RECENT_SEARCHES:
+			return {...state, recentSearches: action.payload}
 
 		default:
 			return state

@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View, Animated, Platform} from 'react-native'
+import {StyleSheet, View, Animated, Platform, Text} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {SearchBar} from '../../components/searchbar'
@@ -9,6 +9,7 @@ import {
 	updateCourseData,
 	loadCourseDataIntoMemory,
 	updateCourseFilters,
+	updateRecentSearches,
 } from '../../../flux/parts/courses'
 import {type CourseType, areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
@@ -24,6 +25,8 @@ import {deptNum} from './lib/format-dept-num'
 import {NoticeView} from '../../components/notice'
 import {Viewport} from '../../components/viewport'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
+import {RecentSearchList} from '../components/recent-search/list'
+import {Separator} from '../../components/separator'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -37,12 +40,14 @@ type ReduxStateProps = {
 	courseDataState: string,
 	filters: Array<FilterType>,
 	isConnected: boolean,
+	recentSearches: string[],
 }
 
 type ReduxDispatchProps = {
 	updateCourseData: () => Promise<any>,
 	loadCourseDataIntoMemory: () => Promise<any>,
 	onFiltersChange: (f: FilterType[]) => any,
+	updateRecentSearches: (query: string) => any,
 }
 
 type DefaultProps = {
@@ -135,14 +140,15 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			this.searchBar.blur()
 		}
 
-		this.performSearch(text, this.props.filters)
+		this.performSearch(text)
 	}
 
-	performSearch = (text: string | Object, filters: Array<FilterType>) => {
+	performSearch = (text: string, passedFilters?: Array<FilterType>) => {
 		const {applyFilters} = this.props
+		const filters = passedFilters || this.props.filters
 
+		this.setState(() => ({query: text}))
 		const query = text.toLowerCase()
-		this.setState(() => ({query: query}))
 
 		const filteredCourses = this.props.allCourses.filter(course =>
 			applyFilters(filters, course),
@@ -173,7 +179,9 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			groupedCourses,
 			course => course.title,
 		).reverse()
-
+		if (text.length !== 0) {
+			this.props.updateRecentSearches(text)
+		}
 		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true}))
 	}
 
@@ -181,6 +189,14 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		if (this.state.query !== '') {
 			this.performSearch(this.state.query, filters)
 		}
+	}
+
+	onRecentSearchPress = (text: string) => {
+		this.onFocus()
+		if (Platform.OS === 'android') {
+			this.searchBar.setValue(text)
+		}
+		this.performSearch(text)
 	}
 
 	animate = (thing, args, toValue: 'start' | 'end') =>
@@ -206,7 +222,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {searchActive, searchPerformed, searchResults} = this.state
+		const {searchActive, searchPerformed, searchResults, query} = this.state
 
 		if (this.state.dataLoading) {
 			return <LoadingView text="Loading Course Data…" />
@@ -259,10 +275,12 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 										onSearchButtonPress={this.onSearchButtonPress}
 										placeholder="Search Class & Lab"
 										searchActive={searchActive}
+										text={query}
 										textFieldBackgroundColor={c.sto.lightGray}
 									/>
 								</Animated.View>
 							</Animated.View>
+							<Separator />
 							{searchActive ? (
 								<CourseSearchResultsList
 									filters={this.props.filters}
@@ -272,7 +290,13 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 									terms={searchResults}
 								/>
 							) : (
-								<View />
+								<View style={styles.common}>
+									<Text style={styles.subHeader}>Recent</Text>
+									<RecentSearchList
+										onQueryPress={this.onRecentSearchPress}
+										queries={this.props.recentSearches}
+									/>
+								</View>
 							)}
 						</View>
 					)
@@ -288,6 +312,7 @@ function mapState(state: ReduxState): ReduxStateProps {
 		allCourses: state.courses ? state.courses.allCourses : [],
 		courseDataState: state.courses ? state.courses.readyState : '',
 		filters: state.courses ? state.courses.filters : [],
+		recentSearches: state.courses ? state.courses.recentSearches : [],
 	}
 }
 
@@ -297,6 +322,8 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 		onFiltersChange: (filters: FilterType[]) =>
 			dispatch(updateCourseFilters(filters)),
 		updateCourseData: () => dispatch(updateCourseData()),
+		updateRecentSearches: (query: string) =>
+			dispatch(updateRecentSearches(query)),
 	}
 }
 
@@ -318,6 +345,12 @@ let styles = StyleSheet.create({
 	},
 	header: {
 		fontSize: 30,
+		fontWeight: 'bold',
+		padding: 22,
+		paddingLeft: 17,
+	},
+	subHeader: {
+		fontSize: 20,
 		fontWeight: 'bold',
 		padding: 22,
 		paddingLeft: 17,
