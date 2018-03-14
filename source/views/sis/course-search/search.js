@@ -193,6 +193,9 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 
 	onRecentSearchPress = (text: string) => {
 		this.onFocus()
+		if (Platform.OS === 'android') {
+			this.searchBar.setValue(text)
+		}
 		this.performSearch(text)
 	}
 
