@@ -56,6 +56,7 @@ type Props = TopLevelViewPropsType & {
 	name: string,
 }
 type State = {
+	cachedCafeId: string,
 	errormsg: ?string,
 	loading: boolean,
 	refreshing: boolean,
@@ -66,6 +67,7 @@ type State = {
 
 export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 	state = {
+		cachedCafeId: this.props.cafeId,
 		errormsg: null,
 		loading: true,
 		refreshing: false,
@@ -80,9 +82,9 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		})
 	}
 
-	componentWillReceiveProps(newProps: Props) {
-		if (this.props.cafeId !== newProps.cafeId) {
-			this.fetchData(newProps)
+	componentDidUpdate() {
+		if (this.state.cachedCafeId !== this.props.cafeId) {
+			this.fetchData(this.props)
 		}
 	}
 
