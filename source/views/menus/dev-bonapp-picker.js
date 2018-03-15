@@ -40,43 +40,32 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 		menu: null,
 	}
 
-	componentDidMount() {
-		this.chooseMenu()
-	}
-
 	chooseCafe = (cafeId: string) => {
 		if (!/^\d*$/.test(cafeId)) {
 			return
 		}
-		this.setState({cafeId})
-	}
-
-	chooseMenu = () => {
-		const menu = (
-			<BonAppHostedMenu
-				cafeId={this.state.cafeId}
-				loadingMessage={['Loading…']}
-				name="BonApp"
-				navigation={this.props.navigation}
-			/>
-		)
-		this.setState({menu})
+		this.setState(() => ({cafeId}))
 	}
 
 	render() {
 		return (
 			<View style={styles.container}>
-				<Toolbar onPress={this.chooseMenu}>
+				<Toolbar onPress={() => {}}>
 					<TextInput
 						keyboardType="numeric"
-						onBlur={this.chooseMenu}
+						onBlur={this.chooseCafe}
 						onChangeText={this.chooseCafe}
 						style={styles.default}
 						value={this.state.cafeId}
 					/>
 					<ToolbarButton isActive={true} title="Go" />
 				</Toolbar>
-				{this.state.menu}
+				<BonAppHostedMenu
+					cafeId={this.state.cafeId}
+					loadingMessage={['Loading…']}
+					name="BonApp"
+					navigation={this.props.navigation}
+				/>
 			</View>
 		)
 	}
