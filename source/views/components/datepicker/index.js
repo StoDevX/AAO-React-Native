@@ -39,20 +39,20 @@ export class DatePicker extends React.Component<Props, State> {
 		onDateChange: () => null,
 	}
 
+	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+		if (nextProps.initialDate !== prevState.date) {
+			return {
+				date: nextProps.initialDate,
+				timezone: nextProps.initialDate.tz(),
+			}
+		}
+	}
+
 	_ref: any
 
 	state = {
 		date: this.props.initialDate,
 		timezone: this.props.initialDate.tz(),
-	}
-
-	componentWillReceiveProps(nextProps: Props) {
-		if (nextProps.initialDate !== this.props.initialDate) {
-			this.setState(() => ({
-				date: nextProps.initialDate,
-				timezone: nextProps.initialDate.tz(),
-			}))
-		}
 	}
 
 	formatDate = (date: moment) => {
