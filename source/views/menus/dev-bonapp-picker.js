@@ -40,7 +40,7 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 		menu: null,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.chooseMenu()
 	}
 

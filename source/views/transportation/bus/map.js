@@ -56,7 +56,7 @@ export class BusMap extends React.PureComponent<Props, State> {
 		},
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		// This updates the screen every second, so that the "next bus" times are
 		// updated without needing to leave and come back.
 		this.setState(() => ({intervalId: setInterval(this.updateTime, 1000)}))

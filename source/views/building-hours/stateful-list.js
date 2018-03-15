@@ -68,7 +68,7 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		intervalId: null,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.fetchData()
 
 		// This updates the screen every second, so that the building

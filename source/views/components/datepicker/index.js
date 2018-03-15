@@ -46,7 +46,7 @@ export class DatePicker extends React.Component<Props, State> {
 		timezone: this.props.initialDate.tz(),
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.setState(() => ({
 			date: this.props.initialDate,
 			timezone: this.props.initialDate.tz(),

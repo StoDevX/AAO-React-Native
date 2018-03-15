@@ -34,7 +34,7 @@ function getCurrentRouteName(navigationState: NavigationState): ?string {
 type Props = {}
 
 export default class App extends React.Component<Props> {
-	componentWillMount() {
+	componentDidMount() {
 		startStatusBarColorChanger()
 	}
 

@@ -40,7 +40,7 @@ export class BusView extends React.PureComponent<Props, State> {
 		// now: moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE),
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.fetchData().then(() => {
 			this.setState(() => ({loading: false}))
 		})

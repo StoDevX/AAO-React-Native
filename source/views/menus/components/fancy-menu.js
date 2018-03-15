@@ -66,7 +66,7 @@ class FancyMenu extends React.PureComponent<Props> {
 		applyFilters: applyFiltersToItem,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.updateFilters(this.props, {initial: true})
 	}
 

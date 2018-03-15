@@ -74,7 +74,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		cafeInfo: null,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.fetchData(this.props).then(() => {
 			this.setState(() => ({loading: false}))
 		})

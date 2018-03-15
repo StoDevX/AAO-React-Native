@@ -73,7 +73,7 @@ export class BuildingRow extends React.Component<Props, State> {
 		accentText: 'rgb(130, 82, 45)',
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.setStateFromProps(this.props)
 	}
 

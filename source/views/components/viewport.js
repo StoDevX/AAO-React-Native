@@ -18,7 +18,7 @@ export class Viewport extends React.PureComponent<Props, State> {
 		viewport: Dimensions.get('window'),
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		Dimensions.addEventListener('change', this.handleResizeEvent)
 	}
 

@@ -66,7 +66,7 @@ export class BusLine extends React.Component<Props, State> {
 		status: 'none',
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.updateFromProps(this.props)
 	}
 

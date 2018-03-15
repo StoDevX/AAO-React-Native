@@ -30,7 +30,7 @@ type Props = TopLevelViewPropsType & {
 }
 
 export class CourseSearchResultsList extends React.PureComponent<Props> {
-	componentWillMount() {
+	componentDidMount() {
 		this.updateFilters(this.props)
 	}
 
