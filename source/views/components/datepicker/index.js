@@ -40,11 +40,13 @@ export class DatePicker extends React.Component<Props, State> {
 	}
 
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		if (nextProps.initialDate !== prevState.date) {
-			return {
-				date: nextProps.initialDate,
-				timezone: nextProps.initialDate.tz(),
-			}
+		if (nextProps.initialDate === prevState.date) {
+			return null
+		}
+
+		return {
+			date: nextProps.initialDate,
+			timezone: nextProps.initialDate.tz(),
 		}
 	}
 
