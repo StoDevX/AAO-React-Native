@@ -30,12 +30,17 @@ type Props = TopLevelViewPropsType & {
 }
 
 export class CourseSearchResultsList extends React.PureComponent<Props> {
-	componentDidMount() {
-		this.updateFilters(this.props)
+	static getDerivedStateFromProps(nextProps: Props) {
+		// prevent ourselves from overwriting the filters from redux on mount
+		if (nextProps.filters.length) {
+			return
+		}
+
+		buildFilters().then(nextProps.onFiltersChange)
 	}
 
-	componentWillReceiveProps(nextProps: Props) {
-		this.updateFilters(nextProps)
+	componentDidMount() {
+		buildFilters().then(this.props.onFiltersChange)
 	}
 
 	keyExtractor = (item: CourseType) => item.clbid.toString()
@@ -50,18 +55,6 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 
 	onPressRow = (data: CourseType) => {
 		this.props.navigation.navigate('CourseDetailView', {course: data})
-	}
-
-	updateFilters = async (props: Props) => {
-		const {filters} = props
-
-		// prevent ourselves from overwriting the filters from redux on mount
-		if (filters.length) {
-			return
-		}
-
-		const newFilters = await buildFilters()
-		props.onFiltersChange(newFilters)
 	}
 
 	onPressToolbar = () => {
