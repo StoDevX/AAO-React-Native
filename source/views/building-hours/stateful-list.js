@@ -57,6 +57,15 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		headerBackTitle: 'Hours',
 	}
 
+	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+		return {
+			buildings: groupBuildings(
+				prevState.allBuildings,
+				nextProps.favoriteBuildings,
+			),
+		}
+	}
+
 	_intervalId: ?IntervalID
 
 	state = {
@@ -75,15 +84,6 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		// This updates the screen every second, so that the building
 		// info statuses are updated without needing to leave and come back.
 		this._intervalId = setInterval(this.updateTime, 1000)
-	}
-
-	componentWillReceiveProps(nextProps: Props) {
-		this.setState(state => ({
-			buildings: groupBuildings(
-				state.allBuildings,
-				nextProps.favoriteBuildings,
-			),
-		}))
 	}
 
 	componentWillUnmount() {
