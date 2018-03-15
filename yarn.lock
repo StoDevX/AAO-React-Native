@@ -1823,9 +1823,9 @@ danger-plugin-yarn@1.2.1:
   optionalDependencies:
     esdoc "^0.5.2"
 
-danger@3.1.8:
-  version "3.1.8"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-3.1.8.tgz#dd7cdb2e155bb02d9413bcce936b9aae64977029"
+danger@3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-3.2.0.tgz#8524c434540ae84e0b1009b2f1fc8e4fb74a9bf8"
   dependencies:
     "@octokit/rest" "^14.0.4"
     babel-polyfill "^6.23.0"
@@ -6146,7 +6146,7 @@ vinyl@^0.5.0:
     clone-stats "^0.0.1"
     replace-ext "0.0.1"
 
-vm2@patriksimek/vm2#custom_files:
+"vm2@github:patriksimek/vm2#custom_files":
   version "3.5.0"
   resolved "https://codeload.github.com/patriksimek/vm2/tar.gz/7e82f90ac705fc44fad044147cb0df09b4c79a57"
 
