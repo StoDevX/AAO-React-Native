@@ -14,9 +14,11 @@ type Props = {
 	onPress: () => any,
 }
 
-export function HomeScreenButton({view, onPress}: Props) {
+export function HomeScreenButton({view, onPress, layout}: Props) {
 	const foreground =
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
+
+	const wideMode = view.size.width > 1 && view.size.width !== view.size.height
 
 	return (
 		<TouchableButton
@@ -24,14 +26,11 @@ export function HomeScreenButton({view, onPress}: Props) {
 			label={view.title}
 			onPress={onPress}
 			tint={view.tint}
-			style={[
-				styles.button,
-				{width: CELL_SIZE * view.size.width + CELL_MARGIN * 2},
-			]}
+			style={[styles.button, layout]}
 		>
-			<View style={styles.contents}>
-				<Icon name={view.icon} size={24} style={[foreground, styles.icon]} />
-				<Text style={[foreground, styles.text]}>{view.title}</Text>
+			<View style={[styles.contents, wideMode && styles.wide]}>
+				<Icon name={view.icon} size={24} style={[foreground, styles.icon, wideMode && styles.wideIcon]} />
+				<Text style={[foreground, styles.text, wideMode && styles.wideText]}>{view.title}</Text>
 			</View>
 		</TouchableButton>
 	)
@@ -91,18 +90,16 @@ function Tint({tint = 'black', gradient, children, style}) {
 
 export const CELL_MARGIN = 10
 export const CELL_SIZE = 70
-export const CELL_INNER_PADDING = 10
+export const CELL_INNER_PADDING = 4
 
 const styles = StyleSheet.create({
 	button: {
-		width: CELL_SIZE,
-		height: CELL_SIZE,
-		flex: 1,
 		borderRadius: Platform.OS === 'ios' ? (iPhoneX ? 17 : 6) : 3,
-		margin: CELL_MARGIN / 2,
-	},
-	button2: {
-		flex: 2,
+		position: 'absolute',
+		shadowColor: 'rgba(0,0,0,0.15)',
+		shadowOffset: {width: 0, height: 2},
+		shadowRadius: 4,
+		shadowOpacity: 1,
 	},
 	contents: {
 		flex: 1,
@@ -114,6 +111,7 @@ const styles = StyleSheet.create({
 		backgroundColor: c.transparent,
 	},
 	text: {
+		marginTop: 4,
 		backgroundColor: c.transparent,
 		fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
 		fontSize: 14,
@@ -123,5 +121,16 @@ const styles = StyleSheet.create({
 	},
 	darkForeground: {
 		color: c.homescreenForegroundDark,
+	},
+	wide: {
+		flexDirection: 'row',
+	},
+	wideIcon: {
+		flex: 2,
+		textAlign: 'center',
+	},
+	wideText: {
+		flex: 3,
+		textAlign: 'center',
 	},
 })
