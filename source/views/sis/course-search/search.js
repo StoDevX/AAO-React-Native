@@ -58,11 +58,60 @@ type DefaultProps = {
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps & DefaultProps
 
 type State = {
+	cachedFilters: Array<FilterType>,
 	dataLoading: boolean,
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
 	searchActive: boolean,
 	searchPerformed: boolean,
 	query: string,
+}
+
+function executeSearch(args: {
+	text: string,
+	filters: FilterType[],
+	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
+	allCourses: Array<CourseType>,
+	updateRecentSearches: (query: string) => any,
+}) {
+	const {text, filters, applyFilters, allCourses, updateRecentSearches} = args
+	const query = text.toLowerCase()
+
+	const filteredCourses = allCourses.filter(course =>
+		applyFilters(filters, course),
+	)
+
+	const results = filteredCourses.filter(
+		course =>
+			fuzzysearch(query, course.name.toLowerCase()) ||
+			fuzzysearch(query, (course.title || '').toLowerCase()) ||
+			(course.instructors || []).some(name =>
+				name.toLowerCase().includes(query),
+			) ||
+			deptNum(course)
+				.toLowerCase()
+				.startsWith(query) ||
+			(course.gereqs || []).some(gereq =>
+				gereq.toLowerCase().startsWith(query),
+			),
+	)
+
+	const grouped = groupBy(results, r => r.term)
+	const groupedCourses = toPairs(grouped).map(([key, value]) => ({
+		title: key,
+		data: value,
+	}))
+
+	const sortedCourses = sortBy(groupedCourses, course => course.title).reverse()
+
+	if (text.length !== 0) {
+		updateRecentSearches(text)
+	}
+
+	return {
+		searchResults: sortedCourses,
+		searchPerformed: true,
+		query: text,
+	}
 }
 
 class CourseSearchView extends React.PureComponent<Props, State> {
@@ -76,7 +125,20 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		applyFilters: applyFiltersToItem,
 	}
 
+	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+		if (prevState.query && nextProps.filters !== prevState.cachedFilters) {
+			return executeSearch({
+				text: prevState.query,
+				filters: nextProps.filters,
+				applyFilters: nextProps.applyFilters,
+				allCourses: nextProps.allCourses,
+				updateRecentSearches: nextProps.updateRecentSearches,
+			})
+		}
+	}
+
 	state = {
+		cachedFilters: this.props.filters,
 		dataLoading: true,
 		searchResults: [],
 		searchActive: false,
@@ -92,10 +154,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				this.setState(() => ({dataLoading: false}))
 			}
 		})
-	}
-
-	componentWillReceiveProps(nextProps: Props) {
-		this.refreshResults(nextProps.filters)
 	}
 
 	animations = {
@@ -144,68 +202,26 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.performSearch(text)
 	}
 
-	_performSearch = (
-		text: string,
-		filters: FilterType[] = this.props.filters,
-	) => {
-		const {applyFilters, allCourses} = this.props
-
-		const query = text.toLowerCase()
-
-		const filteredCourses = allCourses.filter(course =>
-			applyFilters(filters, course),
+	_performSearch = (query: string) =>
+		this.setState(() =>
+			executeSearch({
+				text: query,
+				filters: this.props.filters,
+				applyFilters: this.props.applyFilters,
+				allCourses: this.props.allCourses,
+				updateRecentSearches: this.props.updateRecentSearches,
+			}),
 		)
-
-		const results = filteredCourses.filter(
-			course =>
-				fuzzysearch(query, course.name.toLowerCase()) ||
-				fuzzysearch(query, (course.title || '').toLowerCase()) ||
-				(course.instructors || []).some(name =>
-					name.toLowerCase().includes(query),
-				) ||
-				deptNum(course)
-					.toLowerCase()
-					.startsWith(query) ||
-				(course.gereqs || []).some(gereq =>
-					gereq.toLowerCase().startsWith(query),
-				),
-		)
-
-		const grouped = groupBy(results, r => r.term)
-		const groupedCourses = toPairs(grouped).map(([key, value]) => ({
-			title: key,
-			data: value,
-		}))
-
-		const sortedCourses = sortBy(
-			groupedCourses,
-			course => course.title,
-		).reverse()
-
-		if (text.length !== 0) {
-			this.props.updateRecentSearches(text)
-		}
-
-		this.setState(() => ({
-			searchResults: sortedCourses,
-			searchPerformed: true,
-			query: text,
-		}))
-	}
 
 	performSearch = debounce(this._performSearch, 20)
 
-	refreshResults = (filters: Array<FilterType>) => {
-		if (this.state.query !== '') {
-			this.performSearch(this.state.query, filters)
-		}
-	}
-
 	onRecentSearchPress = (text: string) => {
 		this.handleFocus()
+
 		if (Platform.OS === 'android') {
 			this.searchBar.setValue(text)
 		}
+
 		this.performSearch(text)
 	}
 
