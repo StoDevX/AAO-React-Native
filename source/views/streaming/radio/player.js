@@ -18,6 +18,10 @@ type Props = {
 	streamSourceUrl: string,
 }
 
+type State = {
+	playState: PlayState,
+}
+
 type HtmlAudioState =
 	| 'waiting'
 	| 'ended'
@@ -30,10 +34,17 @@ type HtmlAudioEvent =
 	| {type: HtmlAudioState}
 	| {type: 'error', error: HtmlAudioError}
 
-export class StreamPlayer extends React.PureComponent<Props> {
+export class StreamPlayer extends React.PureComponent<Props, State> {
+	static deriveStateFromProps(nextProps: Props) {
+		return {playState: nextProps.playState}
+	}
 
-	componentWillReceiveProps(nextProps: Props) {
-		this.dispatchEvent(nextProps.playState)
+	state = {
+		playState: this.props.playState,
+	}
+
+	componentDidUpdate() {
+		this.dispatchEvent(this.state.playState)
 	}
 
 	componentWillUnmount() {
