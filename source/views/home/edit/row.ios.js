@@ -56,11 +56,7 @@ type Props = {
 	width: number,
 }
 
-type State = {
-	active: boolean,
-}
-
-export class EditHomeRow extends React.Component<Props, State> {
+export class EditHomeRow extends React.Component<Props> {
 	static startStyle = {
 		shadowRadius: 2,
 		transform: [{scale: 1}],
@@ -75,15 +71,7 @@ export class EditHomeRow extends React.Component<Props, State> {
 		elevation: 4,
 	}
 
-	state = {
-		active: this.props.active,
-	}
-
 	componentDidUpdate() {
-		if (this.props.active === this.state.active) {
-			return
-		}
-
 		if (this.props.active) {
 			this.startActivationAnimation()
 		} else {
