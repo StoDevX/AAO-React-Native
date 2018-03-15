@@ -202,7 +202,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	onRecentSearchPress = (text: string) => {
-		this.onFocus()
+		this.handleFocus()
 		if (Platform.OS === 'android') {
 			this.searchBar.setValue(text)
 		}
@@ -215,7 +215,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			duration: args.duration,
 		}).start()
 
-	onFocus = () => {
+	handleFocus = () => {
 		this.animate(this.headerOpacity, this.animations.headerOpacity, 'end')
 		this.animate(this.searchBarTop, this.animations.searchBarTop, 'end')
 		this.animate(this.containerHeight, this.animations.containerHeight, 'end')
@@ -223,7 +223,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.setState(() => ({searchActive: true}))
 	}
 
-	onCancel = () => {
+	handleCancel = () => {
 		this.animate(this.headerOpacity, this.animations.headerOpacity, 'start')
 		this.animate(this.searchBarTop, this.animations.searchBarTop, 'start')
 		this.animate(this.containerHeight, this.animations.containerHeight, 'start')
@@ -280,8 +280,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 								<Animated.View style={aniSearchStyle}>
 									<SearchBar
 										getRef={ref => (this.searchBar = ref)}
-										onCancel={this.onCancel}
-										onFocus={this.onFocus}
+										onCancel={this.handleCancel}
+										onFocus={this.handleFocus}
 										onSearchButtonPress={this.onSearchButtonPress}
 										placeholder="Search Class & Lab"
 										searchActive={searchActive}
