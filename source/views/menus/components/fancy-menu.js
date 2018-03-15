@@ -66,18 +66,17 @@ class FancyMenu extends React.PureComponent<Props> {
 		applyFilters: applyFiltersToItem,
 	}
 
-	static getDerivedStateFromProps(nextProps: Props) {
-		// prevent ourselves from overwriting the filters from redux on mount
-		if (nextProps.filters.length) {
-			return
-		}
-
-		const {foodItems, menuCorIcons, meals, now, onFiltersChange} = nextProps
+	componentDidMount() {
+		const {foodItems, menuCorIcons, meals, now, onFiltersChange} = this.props
 		const newFilters = buildFilters(values(foodItems), menuCorIcons, meals, now)
 		onFiltersChange(newFilters)
 	}
 
-	componentDidMount() {
+	componentDidUpdate() {
+		if (this.props.filters.length) {
+			return null
+		}
+
 		const {foodItems, menuCorIcons, meals, now, onFiltersChange} = this.props
 		const newFilters = buildFilters(values(foodItems), menuCorIcons, meals, now)
 		onFiltersChange(newFilters)

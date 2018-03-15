@@ -126,15 +126,21 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		if (prevState.query && nextProps.filters !== prevState.cachedFilters) {
-			return executeSearch({
-				text: prevState.query,
-				filters: nextProps.filters,
-				applyFilters: nextProps.applyFilters,
-				allCourses: nextProps.allCourses,
-				updateRecentSearches: nextProps.updateRecentSearches,
-			})
+		if (!prevState.query) {
+			return null
 		}
+
+		if (nextProps.filters === prevState.cachedFilters) {
+			return null
+		}
+
+		return executeSearch({
+			text: prevState.query,
+			filters: nextProps.filters,
+			applyFilters: nextProps.applyFilters,
+			allCourses: nextProps.allCourses,
+			updateRecentSearches: nextProps.updateRecentSearches,
+		})
 	}
 
 	state = {
