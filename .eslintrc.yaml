@@ -86,6 +86,8 @@ rules:
   react/no-redundant-should-component-update: warn
   react/no-typos: error
   react/prop-types: off
+  react/no-did-update-set-state: error
+  react/no-did-mount-set-state: error
   react/self-closing-comp: warn  # prevent extra closing tags for components without children
   react/sort-comp:
     - warn
