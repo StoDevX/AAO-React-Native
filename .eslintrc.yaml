@@ -82,6 +82,7 @@ rules:
     - reservedFirst: true
       ignoreCase: false
       callbacksLast: true
+  react/no-access-state-in-setstate: error
   react/no-did-mount-set-state: error
   react/no-did-update-set-state: error
   react/no-multi-comp: off  # prevent multiple component definition per file
