@@ -144,14 +144,15 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.performSearch(text)
 	}
 
-	_performSearch = (text: string, passedFilters?: Array<FilterType>) => {
-		const {applyFilters} = this.props
-		const filters = passedFilters || this.props.filters
+	_performSearch = (
+		text: string,
+		filters: FilterType[] = this.props.filters,
+	) => {
+		const {applyFilters, allCourses} = this.props
 
-		this.setState(() => ({query: text}))
 		const query = text.toLowerCase()
 
-		const filteredCourses = this.props.allCourses.filter(course =>
+		const filteredCourses = allCourses.filter(course =>
 			applyFilters(filters, course),
 		)
 
@@ -180,10 +181,16 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			groupedCourses,
 			course => course.title,
 		).reverse()
+
 		if (text.length !== 0) {
 			this.props.updateRecentSearches(text)
 		}
-		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true}))
+
+		this.setState(() => ({
+			searchResults: sortedCourses,
+			searchPerformed: true,
+			query: text,
+		}))
 	}
 
 	performSearch = debounce(this._performSearch, 20)
