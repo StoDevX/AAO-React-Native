@@ -63,20 +63,20 @@ type State = {
 }
 
 function deriveStateFromProps(props: Props) {
-		const openStatus = getShortBuildingStatus(props.info, props.now)
-		const hours = getDetailedBuildingStatus(props.info, props.now)
+	const openStatus = getShortBuildingStatus(props.info, props.now)
+	const hours = getDetailedBuildingStatus(props.info, props.now)
 
-		const accentBg = BG_COLORS[openStatus] || c.goldenrod
-		const accentText = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
+	const accentBg = BG_COLORS[openStatus] || c.goldenrod
+	const accentText = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
 
-		return {
-			now: props.now,
-			openStatus,
-			hours,
-			accentBg,
-			accentText,
-		}
+	return {
+		now: props.now,
+		openStatus,
+		hours,
+		accentBg,
+		accentText,
 	}
+}
 
 export class BuildingRow extends React.Component<Props, State> {
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
