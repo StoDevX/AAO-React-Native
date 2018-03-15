@@ -57,12 +57,7 @@ type Props = {
 }
 
 type State = {
-	style: {
-		shadowRadius: Animated.Value,
-		transform: Array<{[key: string]: Animated.Value}>,
-		opacity: Animated.Value,
-		elevation: Animated.Value,
-	},
+	active: boolean,
 }
 
 export class EditHomeRow extends React.Component<Props, State> {
@@ -81,30 +76,37 @@ export class EditHomeRow extends React.Component<Props, State> {
 	}
 
 	state = {
-		style: {
-			shadowRadius: new Animated.Value(EditHomeRow.startStyle.shadowRadius),
-			transform: [
-				{scale: new Animated.Value(EditHomeRow.startStyle.transform[0].scale)},
-			],
-			opacity: new Animated.Value(EditHomeRow.startStyle.opacity),
-			elevation: new Animated.Value(EditHomeRow.startStyle.elevation),
-		},
+		active: this.props.active,
 	}
 
-	componentWillReceiveProps(nextProps: Props) {
-		if (this.props.active === nextProps.active) {
+	componentDidUpdate() {
+		if (this.props.active === this.state.active) {
 			return
 		}
 
-		if (nextProps.active) {
+		if (this.props.active) {
 			this.startActivationAnimation()
 		} else {
 			this.startDeactivationAnimation()
 		}
 	}
 
+	_style: {
+		shadowRadius: Animated.Value,
+		transform: Array<{[key: string]: Animated.Value}>,
+		opacity: Animated.Value,
+		elevation: Animated.Value,
+	} = {
+		shadowRadius: new Animated.Value(EditHomeRow.startStyle.shadowRadius),
+		transform: [
+			{scale: new Animated.Value(EditHomeRow.startStyle.transform[0].scale)},
+		],
+		opacity: new Animated.Value(EditHomeRow.startStyle.opacity),
+		elevation: new Animated.Value(EditHomeRow.startStyle.elevation),
+	}
+
 	startActivationAnimation = () => {
-		const {transform, shadowRadius, opacity, elevation} = this.state.style
+		const {transform, shadowRadius, opacity, elevation} = this._style
 		Animated.parallel([
 			Animated.timing(transform[0].scale, {
 				duration: 100,
@@ -130,7 +132,7 @@ export class EditHomeRow extends React.Component<Props, State> {
 	}
 
 	startDeactivationAnimation = () => {
-		const {transform, shadowRadius, opacity, elevation} = this.state.style
+		const {transform, shadowRadius, opacity, elevation} = this._style
 		Animated.parallel([
 			Animated.timing(transform[0].scale, {
 				duration: 100,
@@ -167,7 +169,7 @@ export class EditHomeRow extends React.Component<Props, State> {
 			: this.props.data.tint
 
 		return (
-			<Animated.View style={[styles.row, this.state.style, {width}]}>
+			<Animated.View style={[styles.row, this._style, {width}]}>
 				<MenuIcon icon={this.props.data.icon} tint={tint} />
 
 				<Text style={[styles.text, {color: tint}]}>
