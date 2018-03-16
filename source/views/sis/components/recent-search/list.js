@@ -11,7 +11,7 @@ type Props = {
 }
 
 export class RecentSearchList extends React.PureComponent<Props> {
-	renderSeparator = () => <ListSeparator spacing={{left: 20, right: 20}} />
+	renderSeparator = () => <ListSeparator spacing={{left: 17, right: 17}} />
 
 	renderItem = ({item}: {item: string}) => (
 		<ListRow arrowPosition="none" onPress={() => this.onPressRow(item)}>
@@ -49,7 +49,7 @@ export class RecentSearchList extends React.PureComponent<Props> {
 const styles = StyleSheet.create({
 	listItem: {
 		paddingVertical: 5,
-		paddingLeft: 5,
+		paddingLeft: 2,
 		fontSize: 18,
 		color: c.olevilleGold,
 	},

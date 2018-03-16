@@ -28,6 +28,8 @@ import {Viewport} from '../../components/viewport'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
 import {RecentSearchList} from '../components/recent-search/list'
 import {Separator} from '../../components/separator'
+import {buildFilters} from './lib/build-filters'
+
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -58,6 +60,7 @@ type DefaultProps = {
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps & DefaultProps
 
 type State = {
+	browsing: boolean,
 	dataLoading: boolean,
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
 	searchActive: boolean,
@@ -77,6 +80,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
+		browsing: false,
 		dataLoading: true,
 		searchResults: [],
 		searchActive: false,
@@ -92,6 +96,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				this.setState(() => ({dataLoading: false}))
 			}
 		})
+		this.updateFilters(this.props)
 	}
 
 	componentWillReceiveProps(nextProps: Props) {
@@ -183,14 +188,36 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		if (text.length !== 0) {
 			this.props.updateRecentSearches(text)
 		}
-		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true}))
+		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true, browsing: false}))
 	}
 
 	performSearch = debounce(this._performSearch, 20)
 
+	browseAll = (passedFilters?: Array<FilterType>) => {
+		const {applyFilters} = this.props
+		const filters = passedFilters || this.props.filters
+		const filteredCourses = this.props.allCourses.filter(course =>
+			applyFilters(filters, course),
+		)
+		const grouped = groupBy(filteredCourses, r => r.term)
+		const groupedCourses = toPairs(grouped).map(([key, value]) => ({
+			title: key,
+			data: value,
+		}))
+
+		const sortedCourses = sortBy(
+			groupedCourses,
+			course => course.title,
+		).reverse()
+		this.setState(() => ({searchResults: sortedCourses}))
+	}
+
 	refreshResults = (filters: Array<FilterType>) => {
+		console.log("REFRESHING")
 		if (this.state.query !== '') {
 			this.performSearch(this.state.query, filters)
+		} else if (this.state.browsing) {
+			this.browseAll(filters)
 		}
 	}
 
@@ -221,7 +248,29 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.animate(this.searchBarTop, this.animations.searchBarTop, 'start')
 		this.animate(this.containerHeight, this.animations.containerHeight, 'start')
 
-		this.setState(() => ({searchActive: false}))
+		this.setState(() => ({searchActive: false, browsing: false}))
+	}
+
+	openFilterView = () => {
+		this.props.navigation.navigate('FilterView', {
+			title: 'Add Filters',
+			pathToFilters: ['courses', 'filters'],
+			onChange: filters => this.props.onFiltersChange(filters),
+		})
+		this.setState(() => ({browsing: true}))
+		this.onFocus()
+	}
+
+	updateFilters = async (props: Props) => {
+		const {filters} = props
+
+		// prevent ourselves from overwriting the filters from redux on mount
+		if (filters.length) {
+			return
+		}
+
+		const newFilters = await buildFilters()
+		props.onFiltersChange(newFilters)
 	}
 
 	render() {
@@ -246,6 +295,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				/>
 			)
 		}
+
+		const placeholderPrompt = this.state.browsing ? "Browsing all courses" : "Search Class & Lab"
 
 		return (
 			<Viewport
@@ -276,7 +327,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 										onCancel={this.onCancel}
 										onFocus={this.onFocus}
 										onSearchButtonPress={this.onSearchButtonPress}
-										placeholder="Search Class & Lab"
+										placeholder={placeholderPrompt}
 										searchActive={searchActive}
 										text={query}
 										textFieldBackgroundColor={c.sto.lightGray}
@@ -293,12 +344,16 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 									terms={searchResults}
 								/>
 							) : (
-								<View style={styles.common}>
+								<View style={[styles.common, styles.bottomContainer]}>
 									<Text style={styles.subHeader}>Recent</Text>
 									<RecentSearchList
 										onQueryPress={this.onRecentSearchPress}
 										queries={this.props.recentSearches}
 									/>
+									<View style={styles.rowFlex}>
+										<Text style={styles.subHeader}>Browse</Text>
+										<Text onPress={this.openFilterView} style={styles.sideButton}>All Filters</Text>
+									</View>
 								</View>
 							)}
 						</View>
@@ -333,6 +388,9 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 export default connect(mapState, mapDispatch)(CourseSearchView)
 
 let styles = StyleSheet.create({
+	bottomContainer: {
+		paddingTop: 12,
+	},
 	container: {
 		flex: 1,
 	},
@@ -352,10 +410,20 @@ let styles = StyleSheet.create({
 		padding: 22,
 		paddingLeft: 17,
 	},
+	rowFlex: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+	sideButton: {
+		paddingRight: 17,
+		fontSize: 16,
+		color: c.olevilleGold,
+		padding: 14,
+	},
 	subHeader: {
 		fontSize: 20,
 		fontWeight: 'bold',
-		padding: 22,
+		padding: 10,
 		paddingLeft: 17,
 	},
 })
