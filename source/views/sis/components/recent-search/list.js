@@ -1,16 +1,21 @@
 // @flow
 import * as React from 'react'
-import {FlatList, StyleSheet, Text} from 'react-native'
+import {FlatList, StyleSheet, Text, View} from 'react-native'
 import {ListSeparator, ListRow} from '../../../components/list'
 import {NoticeView} from '../../../components/notice'
 import * as c from '../../../components/colors'
 
 type Props = {
-	onQueryPress: (query: string) => any,
-	queries: string[],
+	actionLabel?: string,
+	emptyHeader: string,
+	emptyText: string,
+	onAction?: () => any,
+	onItemPress: (item: string) => any,
+	items: string[],
+	title: string,
 }
 
-export class RecentSearchList extends React.PureComponent<Props> {
+export class RecentItemsList extends React.PureComponent<Props> {
 	renderSeparator = () => <ListSeparator spacing={{left: 17, right: 17}} />
 
 	renderItem = ({item}: {item: string}) => (
@@ -19,29 +24,47 @@ export class RecentSearchList extends React.PureComponent<Props> {
 		</ListRow>
 	)
 
-	onPressRow = (query: string) => {
-		this.props.onQueryPress(query)
+	onPressRow = (item: string) => {
+		this.props.onItemPress(item)
 	}
 
 	keyExtractor = (item: string) => item
 
 	render() {
-		const {queries} = this.props
+		const {
+			items,
+			actionLabel,
+			onAction,
+			title,
+			emptyHeader,
+			emptyText,
+		} = this.props
 		return (
-			<FlatList
-				ItemSeparatorComponent={this.renderSeparator}
-				ListEmptyComponent={
-					<NoticeView
-						header="No recent searches"
-						style={styles.notice}
-						text="Your recent searches will appear here."
-					/>
-				}
-				data={queries}
-				keyExtractor={this.keyExtractor}
-				renderItem={this.renderItem}
-				scrollEnabled={false}
-			/>
+			<View>
+				<View style={styles.rowFlex}>
+					{title && <Text style={styles.subHeader}>{title}</Text>}
+					{onAction && (
+						<Text onPress={onAction} style={styles.sideButton}>
+							{actionLabel}
+						</Text>
+					)}
+				</View>
+				<FlatList
+					ItemSeparatorComponent={this.renderSeparator}
+					ListEmptyComponent={
+						<NoticeView
+							header={emptyHeader}
+							style={styles.notice}
+							text={emptyText}
+							textStyle={styles.noticeText}
+						/>
+					}
+					data={items}
+					keyExtractor={this.keyExtractor}
+					renderItem={this.renderItem}
+					scrollEnabled={false}
+				/>
+			</View>
 		)
 	}
 }
@@ -50,10 +73,30 @@ const styles = StyleSheet.create({
 	listItem: {
 		paddingVertical: 5,
 		paddingLeft: 2,
-		fontSize: 18,
+		fontSize: 16,
 		color: c.olevilleGold,
 	},
 	notice: {
+		paddingTop: 30,
 		paddingBottom: 35,
+	},
+	noticeText: {
+		color: c.gray,
+	},
+	rowFlex: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+	sideButton: {
+		paddingRight: 17,
+		fontSize: 16,
+		color: c.olevilleGold,
+		padding: 14,
+	},
+	subHeader: {
+		fontSize: 20,
+		fontWeight: 'bold',
+		padding: 10,
+		paddingLeft: 17,
 	},
 })

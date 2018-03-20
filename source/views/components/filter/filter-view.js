@@ -44,7 +44,7 @@ class FilterViewComponent extends React.PureComponent<Props> {
 
 	componentWillUnmount() {
 		if (this.props.navigation.state.params.onLeave) {
-			console.log("DEBUG")
+			console.log('DEBUG')
 			this.props.navigation.state.params.onLeave(this.props.filters)
 		}
 	}
@@ -52,7 +52,9 @@ class FilterViewComponent extends React.PureComponent<Props> {
 	onFilterChanged = (filter: FilterType) => {
 		const {onChange} = this.props.navigation.state.params
 		// replace the changed filter in the array, maintaining position
-		let result = this.props.filters.map(f => (f.key !== filter.key ? f : filter))
+		let result = this.props.filters.map(
+			f => (f.key !== filter.key ? f : filter),
+		)
 		onChange(result)
 	}
 

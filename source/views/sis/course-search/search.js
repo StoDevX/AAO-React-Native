@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View, Animated, Platform, Text} from 'react-native'
+import {StyleSheet, View, Animated, Platform} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {SearchBar} from '../../components/searchbar'
@@ -27,10 +27,10 @@ import {deptNum} from './lib/format-dept-num'
 import {NoticeView} from '../../components/notice'
 import {Viewport} from '../../components/viewport'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
-import {RecentSearchList} from '../components/recent-search/list'
+import {RecentItemsList} from '../components/recent-search/list'
 import {Separator} from '../../components/separator'
 import {buildFilters} from './lib/build-filters'
-
+import type {FilterComboType} from '../../../flux/parts/courses'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -44,14 +44,15 @@ type ReduxStateProps = {
 	courseDataState: string,
 	filters: Array<FilterType>,
 	isConnected: boolean,
+	recentFilters: FilterComboType[],
 	recentSearches: string[],
 }
 
 type ReduxDispatchProps = {
 	updateCourseData: () => Promise<any>,
 	loadCourseDataIntoMemory: () => Promise<any>,
-	onFiltersChange: (f: FilterType[]) => any,
-	updateRecentFilters: (f: FilterType[]) => any,
+	onFiltersChange: (filters: FilterType[]) => any,
+	updateRecentFilters: (filters: FilterType[]) => any,
 	updateRecentSearches: (query: string) => any,
 }
 
@@ -190,7 +191,11 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		if (text.length !== 0) {
 			this.props.updateRecentSearches(text)
 		}
-		this.setState(() => ({searchResults: sortedCourses, searchPerformed: true, browsing: false}))
+		this.setState(() => ({
+			searchResults: sortedCourses,
+			searchPerformed: true,
+			browsing: false,
+		}))
 	}
 
 	performSearch = debounce(this._performSearch, 20)
@@ -228,6 +233,15 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			this.searchBar.setValue(text)
 		}
 		this.performSearch(text)
+	}
+
+	onRecentFilterPress = (text: string) => {
+		this.onFocus()
+		const selectedFilterCombo = this.props.recentFilters.find(
+			f => f.description === text,
+		)
+		this.props.onFiltersChange(selectedFilterCombo.filters)
+		this.browseAll(selectedFilterCombo.filters)
 	}
 
 	animate = (thing, args, toValue: 'start' | 'end') =>
@@ -276,7 +290,13 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {searchActive, searchPerformed, searchResults, query, browsing} = this.state
+		const {
+			searchActive,
+			searchPerformed,
+			searchResults,
+			query,
+			browsing,
+		} = this.state
 
 		if (this.state.dataLoading) {
 			return <LoadingView text="Loading Course Data…" />
@@ -298,7 +318,13 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			)
 		}
 
-		const placeholderPrompt = browsing ? "Browsing all courses" : "Search Class & Lab"
+		const placeholderPrompt = browsing
+			? 'Browsing all courses'
+			: 'Search Class & Lab'
+
+		const recentFilterDescriptions = this.props.recentFilters.map(
+			f => f.description,
+		)
 
 		return (
 			<Viewport
@@ -318,7 +344,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 					const aniHeaderStyle = [styles.header, {opacity: this.headerOpacity}]
 
 					return (
-						<View style={styles.container}>
+						<View style={[styles.container, styles.common]}>
 							<Animated.View style={aniContainerStyle}>
 								<Animated.Text style={aniHeaderStyle}>
 									Search Courses
@@ -348,15 +374,22 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 								/>
 							) : (
 								<View style={[styles.common, styles.bottomContainer]}>
-									<Text style={styles.subHeader}>Recent</Text>
-									<RecentSearchList
-										onQueryPress={this.onRecentSearchPress}
-										queries={this.props.recentSearches}
+									<RecentItemsList
+										emptyHeader="No recent searches"
+										emptyText="Your recent searches will appear here."
+										items={this.props.recentSearches}
+										onItemPress={this.onRecentSearchPress}
+										title="Recent"
 									/>
-									<View style={styles.rowFlex}>
-										<Text style={styles.subHeader}>Browse</Text>
-										<Text onPress={this.openFilterView} style={styles.sideButton}>Select Filters</Text>
-									</View>
+									<RecentItemsList
+										actionLabel="Select Filters"
+										emptyHeader="No recent browses"
+										emptyText="Your recent filter combinations will appear here."
+										items={recentFilterDescriptions}
+										onAction={this.openFilterView}
+										onItemPress={this.onRecentFilterPress}
+										title="Browse"
+									/>
 								</View>
 							)}
 						</View>
@@ -373,6 +406,7 @@ function mapState(state: ReduxState): ReduxStateProps {
 		allCourses: state.courses ? state.courses.allCourses : [],
 		courseDataState: state.courses ? state.courses.readyState : '',
 		filters: state.courses ? state.courses.filters : [],
+		recentFilters: state.courses ? state.courses.recentFilters : [],
 		recentSearches: state.courses ? state.courses.recentSearches : [],
 	}
 }
@@ -385,7 +419,8 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 		updateCourseData: () => dispatch(updateCourseData()),
 		updateRecentSearches: (query: string) =>
 			dispatch(updateRecentSearches(query)),
-		updateRecentFilters: (filters: FilterType[]) => dispatch(updateRecentFilters(filters)),
+		updateRecentFilters: (filters: FilterType[]) =>
+			dispatch(updateRecentFilters(filters)),
 	}
 }
 
@@ -412,22 +447,6 @@ let styles = StyleSheet.create({
 		fontSize: 30,
 		fontWeight: 'bold',
 		padding: 22,
-		paddingLeft: 17,
-	},
-	rowFlex: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-	},
-	sideButton: {
-		paddingRight: 17,
-		fontSize: 16,
-		color: c.olevilleGold,
-		padding: 14,
-	},
-	subHeader: {
-		fontSize: 20,
-		fontWeight: 'bold',
-		padding: 10,
 		paddingLeft: 17,
 	},
 })

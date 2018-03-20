@@ -1,5 +1,6 @@
 // @flow
 import {AsyncStorage} from 'react-native'
+import {type FilterComboType} from '../flux/parts/courses'
 
 export function clearAsyncStorage() {
 	return AsyncStorage.clear()
@@ -113,9 +114,9 @@ export function getRecentSearches(): Promise<Array<string>> {
 }
 
 const recentFiltersKey = 'courses:recent-filters'
-export function setRecentFilters(combos: string[]) {
+export function setRecentFilters(combos: Array<FilterComboType>) {
 	return setItem(recentFiltersKey, combos)
 }
-export function getRecentFilters(): Promise<Array<string>> {
+export function getRecentFilters(): Promise<Array<FilterComboType>> {
 	return getItemAsArray(recentFiltersKey)
 }
