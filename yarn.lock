@@ -444,9 +444,9 @@ ajv-keywords@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-2.1.1.tgz#617997fc5f60576894c435f940d819e135b80762"
 
-ajv@6.2.1:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.2.1.tgz#28a6abc493a2abe0fb4c8507acaedb43fa550671"
+ajv@6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.3.0.tgz#1650a41114ef00574cac10b8032d8f4c14812da7"
   dependencies:
     fast-deep-equal "^1.0.0"
     fast-json-stable-stringify "^2.0.0"
@@ -1820,9 +1820,9 @@ danger-plugin-yarn@1.2.1:
   optionalDependencies:
     esdoc "^0.5.2"
 
-danger@3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-3.2.0.tgz#8524c434540ae84e0b1009b2f1fc8e4fb74a9bf8"
+danger@3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-3.3.0.tgz#5bcd9e530d9ec14f7e02fbd37a3800cc8554831f"
   dependencies:
     "@octokit/rest" "^14.0.4"
     babel-polyfill "^6.23.0"
@@ -4957,9 +4957,9 @@ react-native-button@2.3.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-calendar-events@1.4.3:
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.4.3.tgz#29804e8b44d6946e69ab5a20902d9449ed315c47"
+react-native-calendar-events@1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.5.0.tgz#77d1bef17a8061f1188680d5821b952d90827dc0"
 
 react-native-communications@2.2.1:
   version "2.2.1"
@@ -4969,9 +4969,9 @@ react-native-custom-tabs@0.1.7:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/react-native-custom-tabs/-/react-native-custom-tabs-0.1.7.tgz#2dfb4028b0a443610d94792b2019810f68dde525"
 
-react-native-device-info@0.21.0:
-  version "0.21.0"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.21.0.tgz#113b726bb05397e70249aa85453da93399a2ce30"
+react-native-device-info@0.21.1:
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.21.1.tgz#0b0918a84041541905337b37b9438d55ed9ed44f"
 
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
@@ -6151,7 +6151,7 @@ vinyl@^0.5.0:
     clone-stats "^0.0.1"
     replace-ext "0.0.1"
 
-vm2@patriksimek/vm2#custom_files:
+"vm2@github:patriksimek/vm2#custom_files":
   version "3.5.0"
   resolved "https://codeload.github.com/patriksimek/vm2/tar.gz/7e82f90ac705fc44fad044147cb0df09b4c79a57"
 

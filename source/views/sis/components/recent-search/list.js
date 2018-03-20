@@ -20,7 +20,9 @@ export class RecentItemsList extends React.PureComponent<Props> {
 
 	renderItem = ({item}: {item: string}) => (
 		<ListRow arrowPosition="none" onPress={() => this.onPressRow(item)}>
-			<Text style={styles.listItem}>{item}</Text>
+			<Text numberOfLines={1} style={styles.listItem}>
+				{item}
+			</Text>
 		</ListRow>
 	)
 
