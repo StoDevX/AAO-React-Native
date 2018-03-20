@@ -10,6 +10,7 @@ import {
 	loadCourseDataIntoMemory,
 	updateCourseFilters,
 	updateRecentSearches,
+	updateRecentFilters,
 } from '../../../flux/parts/courses'
 import {type CourseType, areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
@@ -50,6 +51,7 @@ type ReduxDispatchProps = {
 	updateCourseData: () => Promise<any>,
 	loadCourseDataIntoMemory: () => Promise<any>,
 	onFiltersChange: (f: FilterType[]) => any,
+	updateRecentFilters: (f: FilterType[]) => any,
 	updateRecentSearches: (query: string) => any,
 }
 
@@ -213,7 +215,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	refreshResults = (filters: Array<FilterType>) => {
-		console.log("REFRESHING")
 		if (this.state.query !== '') {
 			this.performSearch(this.state.query, filters)
 		} else if (this.state.browsing) {
@@ -256,6 +257,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			title: 'Add Filters',
 			pathToFilters: ['courses', 'filters'],
 			onChange: filters => this.props.onFiltersChange(filters),
+			onLeave: filters => this.props.updateRecentFilters(filters),
 		})
 		this.setState(() => ({browsing: true}))
 		this.onFocus()
@@ -274,7 +276,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {searchActive, searchPerformed, searchResults, query} = this.state
+		const {searchActive, searchPerformed, searchResults, query, browsing} = this.state
 
 		if (this.state.dataLoading) {
 			return <LoadingView text="Loading Course Data…" />
@@ -296,7 +298,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			)
 		}
 
-		const placeholderPrompt = this.state.browsing ? "Browsing all courses" : "Search Class & Lab"
+		const placeholderPrompt = browsing ? "Browsing all courses" : "Search Class & Lab"
 
 		return (
 			<Viewport
@@ -337,6 +339,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 							<Separator />
 							{searchActive ? (
 								<CourseSearchResultsList
+									browsing={browsing}
 									filters={this.props.filters}
 									navigation={this.props.navigation}
 									onFiltersChange={this.props.onFiltersChange}
@@ -352,7 +355,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 									/>
 									<View style={styles.rowFlex}>
 										<Text style={styles.subHeader}>Browse</Text>
-										<Text onPress={this.openFilterView} style={styles.sideButton}>All Filters</Text>
+										<Text onPress={this.openFilterView} style={styles.sideButton}>Select Filters</Text>
 									</View>
 								</View>
 							)}
@@ -382,6 +385,7 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 		updateCourseData: () => dispatch(updateCourseData()),
 		updateRecentSearches: (query: string) =>
 			dispatch(updateRecentSearches(query)),
+		updateRecentFilters: (filters: FilterType[]) => dispatch(updateRecentFilters(filters)),
 	}
 }
 

@@ -111,3 +111,11 @@ export function setRecentSearches(searches: string[]) {
 export function getRecentSearches(): Promise<Array<string>> {
 	return getItemAsArray(recentSearchesKey)
 }
+
+const recentFiltersKey = 'courses:recent-filters'
+export function setRecentFilters(combos: string[]) {
+	return setItem(recentFiltersKey, combos)
+}
+export function getRecentFilters(): Promise<Array<string>> {
+	return getItemAsArray(recentFiltersKey)
+}

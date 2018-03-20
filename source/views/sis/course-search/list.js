@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
 })
 
 type Props = TopLevelViewPropsType & {
+	browsing: boolean,
 	filters: Array<FilterType>,
 	onFiltersChange: (Array<FilterType>) => any,
 	searchPerformed: boolean,
@@ -73,15 +74,16 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 	}
 
 	render() {
-		const {filters} = this.props
+		const {filters, browsing} = this.props
 
 		const header = (
 			<FilterToolbar filters={filters} onPress={this.onPressToolbar} />
 		)
 
-		const message = this.props.searchPerformed
+		let message = this.props.searchPerformed
 			? 'There were no courses that matched your query. Please try again.'
 			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
+		message = browsing ? "You are currently browsing the Class & Lab, but haven't selected any filters! Either choose some filters or perform a search to see some results.": message
 		const messageView = <NoticeView style={styles.message} text={message} />
 
 		return (
