@@ -235,13 +235,20 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.performSearch(text)
 	}
 
-	onRecentFilterPress = (text: string) => {
+	onRecentFilterPress = async (text: string) => {
+		this.setState(() => ({browsing: true}))
 		this.onFocus()
 		const selectedFilterCombo = this.props.recentFilters.find(
 			f => f.description === text,
 		)
-		this.props.onFiltersChange(selectedFilterCombo.filters)
-		this.browseAll(selectedFilterCombo.filters)
+		const resetFilters = await buildFilters()
+		const selectedFilters = selectedFilterCombo
+			? resetFilters.map(
+					f => selectedFilterCombo.filters.find(f2 => f2.key === f.key) || f,
+			  )
+			: resetFilters
+		this.props.onFiltersChange(selectedFilters)
+		this.browseAll()
 	}
 
 	animate = (thing, args, toValue: 'start' | 'end') =>
@@ -263,10 +270,11 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.animate(this.searchBarTop, this.animations.searchBarTop, 'start')
 		this.animate(this.containerHeight, this.animations.containerHeight, 'start')
 
-		this.setState(() => ({searchActive: false, browsing: false}))
+		this.setState(() => ({searchActive: false, browsing: false, query: ''}))
 	}
 
 	openFilterView = () => {
+		this.resetFilters()
 		this.props.navigation.navigate('FilterView', {
 			title: 'Add Filters',
 			pathToFilters: ['courses', 'filters'],
@@ -277,7 +285,12 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.onFocus()
 	}
 
-	updateFilters = async (props: Props) => {
+	resetFilters = async () => {
+		const newFilters = await buildFilters()
+		this.props.onFiltersChange(newFilters)
+	}
+
+	updateFilters = (props: Props) => {
 		const {filters} = props
 
 		// prevent ourselves from overwriting the filters from redux on mount
@@ -285,8 +298,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			return
 		}
 
-		const newFilters = await buildFilters()
-		props.onFiltersChange(newFilters)
+		this.resetFilters()
 	}
 
 	render() {
@@ -371,6 +383,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 									onFiltersChange={this.props.onFiltersChange}
 									searchPerformed={searchPerformed}
 									terms={searchResults}
+									updateRecentFilters={this.props.updateRecentFilters}
 								/>
 							) : (
 								<View style={[styles.common, styles.bottomContainer]}>

@@ -12,16 +12,16 @@ import * as storage from '../../lib/storage'
 import {filterListSpecs} from '../../views/components/filter'
 import {formatTerms} from '../../views/sis/course-search/lib/format-terms'
 
-const UPDATE_COURSE_FILTERS = 'courseSearch/UPDATE_COURSE_FILTERS'
-const LOAD_CACHED_COURSES = 'sis/LOAD_CACHED_COURSES'
-const COURSES_LOADED = 'sis/COURSES_LOADED'
+const UPDATE_COURSE_FILTERS = 'courses/UPDATE_COURSE_FILTERS'
+const LOAD_CACHED_COURSES = 'courses/LOAD_CACHED_COURSES'
+const COURSES_LOADED = 'courses/COURSES_LOADED'
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
 type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
 
 type UpdateCourseFiltersAction = {|
-	type: 'courseSearch/UPDATE_COURSE_FILTERS',
+	type: 'courses/UPDATE_COURSE_FILTERS',
 	payload: Array<FilterType>,
 |}
 export function updateCourseFilters(
@@ -30,17 +30,17 @@ export function updateCourseFilters(
 	return {type: UPDATE_COURSE_FILTERS, payload: filters}
 }
 
-const UPDATE_RECENT_FILTERS = 'sis/UPDATE_RECENT_FILTERS'
-
-type UpdateRecentFiltersAction = {|
-	type: 'courses/UPDATE_RECENT_FILTERS',
-	payload: string[],
-|}
+const UPDATE_RECENT_FILTERS = 'courses/UPDATE_RECENT_FILTERS'
 
 export type FilterComboType = {
 	filters: FilterType[],
 	description: string,
 }
+
+type UpdateRecentFiltersAction = {|
+	type: 'courses/UPDATE_RECENT_FILTERS',
+	payload: FilterComboType[],
+|}
 
 export function updateRecentFilters(
 	filters: FilterType[],
@@ -91,7 +91,7 @@ export function updateRecentFilters(
 		}
 		const recentFilters = state.courses ? state.courses.recentFilters : []
 		if (
-			!recentFilters.includes(newRecentFilter) &&
+			!recentFilters.find(f => f.description === newRecentFilter.description) &&
 			comboDescription.length !== 0
 		) {
 			const newFilters = [newRecentFilter, ...recentFilters].slice(0, 3)
@@ -104,11 +104,11 @@ export function updateRecentFilters(
 	}
 }
 
-const LOAD_RECENT_FILTERS = 'sis/LOAD_RECENT_FILTERS'
+const LOAD_RECENT_FILTERS = 'courses/LOAD_RECENT_FILTERS'
 
 type LoadRecentFiltersAction = {|
 	type: 'courses/LOAD_RECENT_FILTERS',
-	payload: string[],
+	payload: FilterComboType[],
 |}
 export async function loadRecentFilters(): Promise<LoadRecentFiltersAction> {
 	const recentFilters = await storage.getRecentFilters()
@@ -116,11 +116,11 @@ export async function loadRecentFilters(): Promise<LoadRecentFiltersAction> {
 }
 
 type LoadCachedCoursesAction = {|
-	type: 'sis/LOAD_CACHED_COURSES',
+	type: 'courses/LOAD_CACHED_COURSES',
 	payload: Array<CourseType>,
 |}
 type CoursesLoadedAction = {|
-	type: 'sis/COURSES_LOADED',
+	type: 'courses/COURSES_LOADED',
 |}
 
 export type LoadCourseDataActionType = ThunkAction<
@@ -199,13 +199,15 @@ type Action =
 	| CoursesLoadedAction
 	| UpdateRecentSearchesAction
 	| LoadRecentSearchesAction
+	| UpdateRecentFiltersAction
+	| LoadRecentFiltersAction
 
 export type State = {|
 	filters: Array<FilterType>,
 	allCourses: Array<CourseType>,
 	readyState: 'not-loaded' | 'ready',
 	validGEs: string[],
-	recentFilters: string[],
+	recentFilters: FilterComboType[],
 	recentSearches: string[],
 |}
 

@@ -44,7 +44,6 @@ class FilterViewComponent extends React.PureComponent<Props> {
 
 	componentWillUnmount() {
 		if (this.props.navigation.state.params.onLeave) {
-			console.log('DEBUG')
 			this.props.navigation.state.params.onLeave(this.props.filters)
 		}
 	}

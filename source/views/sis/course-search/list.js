@@ -28,6 +28,7 @@ type Props = TopLevelViewPropsType & {
 	onFiltersChange: (Array<FilterType>) => any,
 	searchPerformed: boolean,
 	terms: Array<{title: string, data: CourseType[]}>,
+	updateRecentFilters: (filters: FilterType[]) => any,
 }
 
 export class CourseSearchResultsList extends React.PureComponent<Props> {
@@ -70,6 +71,7 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 			title: 'Add Filters',
 			pathToFilters: ['courses', 'filters'],
 			onChange: filters => this.props.onFiltersChange(filters),
+			onLeave: filters => this.props.updateRecentFilters(filters),
 		})
 	}
 
@@ -84,7 +86,7 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 			? 'There were no courses that matched your query. Please try again.'
 			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
 		message = browsing
-			? "You are currently browsing the Class & Lab, but haven't selected any filters! Either choose some filters or perform a search to see some results."
+			? 'There were no courses that matched your selected filters. Try a different filter combination.'
 			: message
 		const messageView = <NoticeView style={styles.message} text={message} />
 
