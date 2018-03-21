@@ -151,7 +151,7 @@
     "babel-plugin-transform-remove-console": "6.9.0",
     "babel-preset-react-native": "4.0.0",
     "bugsnag-sourcemaps": "1.0.3",
-    "danger": "3.3.0",
+    "danger": "3.3.1",
     "danger-plugin-yarn": "1.2.1",
     "directory-tree": "2.1.0",
     "eslint": "4.19.0",
