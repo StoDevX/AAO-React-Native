@@ -127,7 +127,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: *run-danger
 
   flow:
@@ -138,7 +137,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run bundle-data
       - run: yarn run --silent flow check --quiet | tee logs/flow
@@ -153,7 +151,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/ test-results/jest/
       - run: yarn run bundle-data
       - run: yarn run --silent test --coverage --testResultsProcessor="jest-junit" 2>&1 | tee logs/jest
@@ -179,7 +176,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run prettier
       - run:
@@ -199,7 +195,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/ test-results/eslint/
       - run: yarn run bundle-data
       - run: yarn run --silent lint | tee logs/eslint
@@ -216,7 +211,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run --silent validate-data --quiet | tee logs/validate-data
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
@@ -242,10 +236,8 @@ jobs:
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - save_cache: *save-cache-bundler
       - restore_cache: *restore-cache-gradle
       - run:
           name: Download Android dependencies
@@ -277,7 +269,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run: yarn run bundle-data
@@ -337,7 +328,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run: yarn run bundle-data
