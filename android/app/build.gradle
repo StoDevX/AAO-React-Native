@@ -213,13 +213,13 @@ if (propFile.canRead()) {
 dependencies {
     // please keep this list sorted
     implementation project(':bugsnag-react-native')
+    implementation project(':mapbox-react-native-mapbox-gl')
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-custom-tabs')
     implementation project(':react-native-device-info')
     implementation project(':react-native-google-analytics-bridge')
     implementation project(':react-native-keychain')
     implementation project(':react-native-linear-gradient')
-    implementation project(':mapbox-react-native-mapbox-gl')
     implementation project(':react-native-network-info')
     implementation project(':react-native-restart')
     implementation project(':react-native-vector-icons')
