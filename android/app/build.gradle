@@ -94,16 +94,18 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 
+def COMPILE_SDK_VERSION = 27
+def TARGET_SDK_VERSION = 27
 def ANDROID_SUPPORT_LIBRARY_VERSION = '27.1.0'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion COMPILE_SDK_VERSION
 
     defaultConfig {
         applicationId "com.allaboutolaf"
 
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion TARGET_SDK_VERSION
 
         versionCode 1
         versionName "1.0.0"
@@ -117,6 +119,12 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+    }
+
+    ext {
+        compileSdkVersion = COMPILE_SDK_VERSION
+        targetSdkVersion = TARGET_SDK_VERSION
+        androidSupportLibraryVersion = ANDROID_SUPPORT_LIBRARY_VERSION
     }
 
     signingConfigs {
