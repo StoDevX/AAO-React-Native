@@ -177,7 +177,7 @@ android {
 }
 
 // borrowed from https://gist.github.com/gabrielemariotti/6856974
-def propFile = new File('android/app//signing.properties')
+def propFile = new File('android/app/signing.properties')
 if (propFile.canRead()) {
     Properties props = new Properties()
     props.load(new FileInputStream(propFile))
