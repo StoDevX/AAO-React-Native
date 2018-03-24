@@ -241,7 +241,7 @@ jobs:
       - restore_cache: *restore-cache-gradle
       - run:
           name: Download Android dependencies
-          command: cd android && ./gradlew androidDependencies
+          command: cd android && ./gradlew androidDependencies --console=plain
           environment: {TERM: xterm-256color}
       - save_cache: *save-cache-gradle
       - run: mkdir -p logs/
