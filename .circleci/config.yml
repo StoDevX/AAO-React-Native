@@ -48,6 +48,8 @@ workflows:
     jobs: &basic-jobs
       - cache-yarn-linux:
           filters: &filters {tags: {only: /.*/}}
+      - cache-bundler-linux:
+          filters: &filters {tags: {only: /.*/}}
       - danger:
           filters: *filters
           requires: [cache-yarn-linux]
@@ -71,7 +73,7 @@ workflows:
           requires: [danger, flow, jest, prettier, eslint, data]
       - android:
           filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data]
+          requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
       - ios-bundle:
           filters: *filters
           requires: [danger, flow, jest, prettier, eslint, data]
@@ -85,6 +87,7 @@ workflows:
           filters: {branches: {only: [master]}}
     jobs:
       - cache-yarn-linux
+      - cache-bundler-linux
       - danger: {requires: [cache-yarn-linux]}
       - flow: {requires: [cache-yarn-linux]}
       - jest: {requires: [cache-yarn-linux]}
@@ -92,7 +95,7 @@ workflows:
       - eslint: {requires: [cache-yarn-linux]}
       - data: {requires: [cache-yarn-linux]}
       - ios-nightly: {requires: [danger, flow, jest, prettier, eslint, data]}
-      - android-nightly: {requires: [danger, flow, jest, prettier, eslint, data]}
+      - android-nightly: {requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]}
 
 jobs:
   cache-yarn-linux:
@@ -104,6 +107,18 @@ jobs:
       - run: yarn --version
       - save_cache: *save-cache-yarn
 
+  cache-bundler-linux:
+    docker: [{image: 'circleci/ruby:2.4'}]
+    steps:
+      - checkout
+      - run: *set-ruby-version
+      - restore_cache: *restore-cache-bundler
+      - run: bundle check || bundle install --frozen --path ./vendor/bundle
+      - run: bundle --version
+      - run: gem --version
+      - run: ruby --version
+      - save_cache: *save-cache-bundler
+
   danger:
     docker: [{image: 'circleci/node:8'}]
     environment:
@@ -112,7 +127,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: *run-danger
 
   flow:
@@ -123,7 +137,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run bundle-data
       - run: yarn run --silent flow check --quiet | tee logs/flow
@@ -138,7 +151,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/ test-results/jest/
       - run: yarn run bundle-data
       - run: yarn run --silent test --coverage --testResultsProcessor="jest-junit" 2>&1 | tee logs/jest
@@ -164,7 +176,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run prettier
       - run:
@@ -184,7 +195,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/ test-results/eslint/
       - run: yarn run bundle-data
       - run: yarn run --silent lint | tee logs/eslint
@@ -201,7 +211,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run --silent validate-data --quiet | tee logs/validate-data
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
@@ -227,14 +236,12 @@ jobs:
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - save_cache: *save-cache-bundler
       - restore_cache: *restore-cache-gradle
       - run:
           name: Download Android dependencies
-          command: cd android && ./gradlew androidDependencies
+          command: cd android && ./gradlew androidDependencies --console=plain
           environment: {TERM: xterm-256color}
       - save_cache: *save-cache-gradle
       - run: mkdir -p logs/
@@ -262,7 +269,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run: yarn run bundle-data
@@ -322,7 +328,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run: yarn run bundle-data
