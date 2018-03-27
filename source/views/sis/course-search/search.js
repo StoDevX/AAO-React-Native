@@ -30,7 +30,7 @@ import {applyFiltersToItem, type FilterType} from '../../components/filter'
 import {RecentItemsList} from '../components/recent-search/list'
 import {Separator} from '../../components/separator'
 import {buildFilters} from './lib/build-filters'
-import type {FilterComboType} from '../../../flux/parts/courses'
+import type {FilterComboType} from './lib/format-filter-combo'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'

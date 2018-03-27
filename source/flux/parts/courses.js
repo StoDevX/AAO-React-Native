@@ -9,7 +9,10 @@ import {
 } from '../../lib/course-search'
 import type {CourseType} from '../../lib/course-search'
 import * as storage from '../../lib/storage'
-import {type FilterComboType, formatFilterCombo} from '../../views/sis/course-search/lib/format-filter-combo'
+import {
+	type FilterComboType,
+	formatFilterCombo,
+} from '../../views/sis/course-search/lib/format-filter-combo'
 
 const UPDATE_COURSE_FILTERS = 'courses/UPDATE_COURSE_FILTERS'
 const LOAD_CACHED_COURSES = 'courses/LOAD_CACHED_COURSES'

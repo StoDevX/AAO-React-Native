@@ -1,6 +1,6 @@
 // @flow
 import {AsyncStorage} from 'react-native'
-import {type FilterComboType} from '../flux/parts/courses'
+import {type FilterComboType} from '../views/sis/course-search/lib/format-filter-combo'
 
 export function clearAsyncStorage() {
 	return AsyncStorage.clear()
