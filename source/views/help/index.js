@@ -44,7 +44,7 @@ export class HelpView extends React.Component<Props> {
 		title: 'Help',
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.props.getEnabledTools()
 	}
 

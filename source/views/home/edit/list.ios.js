@@ -10,6 +10,7 @@ import fromPairs from 'lodash/fromPairs'
 import {Viewport} from '../../components/viewport'
 
 import SortableList from '@hawkrives/react-native-sortable-list'
+import debounce from 'lodash/debounce'
 
 import type {ViewType} from '../../views'
 import {allViews} from '../../views'
@@ -59,7 +60,9 @@ class EditHomeView extends React.PureComponent<Props> {
 		)
 	}
 
-	onChangeOrder = (order: string[]) => this.props.onSaveOrder(order)
+	_saveOrder = (order: string[]) => this.props.onSaveOrder(order)
+
+	onChangeOrder = debounce(this._saveOrder, 100)
 
 	render() {
 		return (

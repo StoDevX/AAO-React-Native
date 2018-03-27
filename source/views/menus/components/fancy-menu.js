@@ -66,26 +66,20 @@ class FancyMenu extends React.PureComponent<Props> {
 		applyFilters: applyFiltersToItem,
 	}
 
-	componentWillMount() {
-		this.updateFilters(this.props, {initial: true})
+	componentDidMount() {
+		const {foodItems, menuCorIcons, meals, now, onFiltersChange} = this.props
+		const newFilters = buildFilters(values(foodItems), menuCorIcons, meals, now)
+		onFiltersChange(newFilters)
 	}
 
-	componentWillReceiveProps(nextProps: Props) {
-		this.updateFilters(nextProps)
-	}
-
-	updateFilters = (props: Props, {initial}: {initial: boolean} = {}) => {
-		const {foodItems, menuCorIcons, filters, meals, now} = props
-
-		// we want to reset the filters when the menu is re-opened,
-		// but we want to avoid updating ourselves recursively, and
-		// especially avoid creating new filters on every `newProps`.
-		if (!initial && filters.length) {
-			return
+	componentDidUpdate() {
+		if (this.props.filters.length) {
+			return null
 		}
 
+		const {foodItems, menuCorIcons, meals, now, onFiltersChange} = this.props
 		const newFilters = buildFilters(values(foodItems), menuCorIcons, meals, now)
-		props.onFiltersChange(newFilters)
+		onFiltersChange(newFilters)
 	}
 
 	areSpecialsFiltered = filters => Boolean(filters.find(this.isSpecialsFilter))

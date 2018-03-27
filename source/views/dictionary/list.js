@@ -65,7 +65,7 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 		refreshing: false,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.fetchData()
 	}
 

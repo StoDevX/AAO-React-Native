@@ -23,35 +23,35 @@ type Props = TopLevelViewPropsType & {
 type State = {|
 	busLines: Array<UnprocessedBusLine>,
 	activeBusLine: ?UnprocessedBusLine,
-	intervalId: ?IntervalID,
 	loading: boolean,
 	refreshing: boolean,
 	now: moment,
 |}
 
 export class BusView extends React.PureComponent<Props, State> {
+	_intervalId: ?IntervalID
+
 	state = {
 		busLines: defaultData.data,
 		activeBusLine: null,
-		intervalId: null,
 		loading: true,
 		refreshing: false,
 		now: moment.tz(TIMEZONE),
 		// now: moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE),
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.fetchData().then(() => {
 			this.setState(() => ({loading: false}))
 		})
 
 		// This updates the screen every second, so that the "next bus" times
 		// update without needing to leave and come back.
-		this.setState(() => ({intervalId: setInterval(this.updateTime, 1000)}))
+		this._intervalId = setInterval(this.updateTime, 1000)
 	}
 
 	componentWillUnmount() {
-		this.state.intervalId && clearInterval(this.state.intervalId)
+		this._intervalId && clearInterval(this._intervalId)
 	}
 
 	fetchData = async () => {

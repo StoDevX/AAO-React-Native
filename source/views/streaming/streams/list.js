@@ -48,7 +48,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
 		streams: [],
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.getStreams().then(() => {
 			this.setState(() => ({loading: false}))
 		})
