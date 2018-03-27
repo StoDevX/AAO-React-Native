@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {FlatList, StyleSheet, Text, View} from 'react-native'
+import {FlatList, StyleSheet, Text, View, Platform} from 'react-native'
 import {ListSeparator, ListRow} from '../../../components/list'
 import {NoticeView} from '../../../components/notice'
 import * as c from '../../../components/colors'
@@ -73,7 +73,7 @@ export class RecentItemsList extends React.PureComponent<Props> {
 
 const styles = StyleSheet.create({
 	listItem: {
-		paddingVertical: 5,
+		paddingVertical: Platform.OS === 'ios' ? 5 : 0,
 		paddingLeft: 2,
 		fontSize: 16,
 		color: c.olevilleGold,

@@ -269,7 +269,9 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.animate(this.headerOpacity, this.animations.headerOpacity, 'start')
 		this.animate(this.searchBarTop, this.animations.searchBarTop, 'start')
 		this.animate(this.containerHeight, this.animations.containerHeight, 'start')
-
+		if (Platform.OS === 'android') {
+			this.searchBar.setValue('')
+		}
 		this.setState(() => ({searchActive: false, browsing: false, query: ''}))
 	}
 
