@@ -74,15 +74,6 @@ class FilterViewComponent extends React.PureComponent<Props> {
 	}
 }
 
-// const mapStateToProps = (
-// 	state: ReduxState,
-// 	actualProps: ReactProps,
-// ): ReduxStateProps => {
-// 	return {
-// 		filters: get(state, actualProps.navigation.state.params.pathToFilters, []),
-// 	}
-// }
-
 function mapState(state: ReduxState, actualProps: ReactProps): ReduxStateProps {
 	return {
 		filters: get(state, actualProps.navigation.state.params.pathToFilters, []),

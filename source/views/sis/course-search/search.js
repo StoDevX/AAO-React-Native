@@ -261,7 +261,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.animate(this.headerOpacity, this.animations.headerOpacity, 'end')
 		this.animate(this.searchBarTop, this.animations.searchBarTop, 'end')
 		this.animate(this.containerHeight, this.animations.containerHeight, 'end')
-
+		this.resetFilters()
 		this.setState(() => ({searchActive: true}))
 	}
 

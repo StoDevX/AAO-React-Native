@@ -9,8 +9,7 @@ import {
 } from '../../lib/course-search'
 import type {CourseType} from '../../lib/course-search'
 import * as storage from '../../lib/storage'
-import {filterListSpecs} from '../../views/components/filter'
-import {formatTerms} from '../../views/sis/course-search/lib/format-terms'
+import {type FilterComboType, formatFilterCombo} from '../../views/sis/course-search/lib/format-filter-combo'
 
 const UPDATE_COURSE_FILTERS = 'courses/UPDATE_COURSE_FILTERS'
 const LOAD_CACHED_COURSES = 'courses/LOAD_CACHED_COURSES'
@@ -32,11 +31,6 @@ export function updateCourseFilters(
 
 const UPDATE_RECENT_FILTERS = 'courses/UPDATE_RECENT_FILTERS'
 
-export type FilterComboType = {
-	filters: FilterType[],
-	description: string,
-}
-
 type UpdateRecentFiltersAction = {|
 	type: 'courses/UPDATE_RECENT_FILTERS',
 	payload: FilterComboType[],
@@ -48,51 +42,12 @@ export function updateRecentFilters(
 	return (dispatch, getState) => {
 		const state = getState()
 
-		const filterCombo = filters.filter(f => f.enabled)
-		const comboDescription = filterCombo
-			.map(f => {
-				switch (f.key) {
-					case 'status': {
-						return 'Open Courses'
-					}
-					case 'type': {
-						return 'Labs Only'
-					}
-					case 'term': {
-						const termFilter = filterListSpecs(filters).find(
-							f => f.key === 'term',
-						)
-						const selectedTerms = termFilter ? termFilter.spec.selected : []
-						const terms = selectedTerms.map(t => parseInt(t.title))
-						return formatTerms(terms)
-					}
-					case 'gereqs': {
-						const geFilter = filterListSpecs(filters).find(
-							f => f.key === 'gereqs',
-						)
-						const selectedGEs = geFilter ? geFilter.spec.selected : []
-						return selectedGEs.map(ge => ge.title).join('/')
-					}
-					case 'departments': {
-						const deptFilter = filterListSpecs(filters).find(
-							f => f.key === 'departments',
-						)
-						const selectedDepts = deptFilter ? deptFilter.spec.selected : []
-						return selectedDepts.map(dept => dept.title).join('/')
-					}
-					default:
-						return ''
-				}
-			})
-			.join(', ')
-		const newRecentFilter = {
-			filters: filterCombo,
-			description: comboDescription,
-		}
+		const newRecentFilter = formatFilterCombo(filters)
+		console.log(newRecentFilter)
 		const recentFilters = state.courses ? state.courses.recentFilters : []
 		if (
 			!recentFilters.find(f => f.description === newRecentFilter.description) &&
-			comboDescription.length !== 0
+			newRecentFilter.description.length !== 0
 		) {
 			const newFilters = [newRecentFilter, ...recentFilters].slice(0, 3)
 
