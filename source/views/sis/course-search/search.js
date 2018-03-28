@@ -83,10 +83,10 @@ function executeSearch(args: {
 
 	const results = filteredCourses.filter(
 		course =>
-			fuzzysearch(query, course.name.toLowerCase()) ||
-			fuzzysearch(query, (course.title || '').toLowerCase()) ||
+			leven(query, course.name.toLowerCase()) < 2 ||
+			leven(query, (course.title || '').toLowerCase()) < 2 ||
 			(course.instructors || []).some(name =>
-				name.toLowerCase().includes(query) || leven(name.toLowerCase(), query) < 4,
+				name.toLowerCase().includes(query) || (leven(name.toLowerCase(), query) < 4 && query.length > 4),
 			) ||
 			deptNum(course)
 				.toLowerCase()
