@@ -19,7 +19,6 @@ import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import toPairs from 'lodash/toPairs'
 import debounce from 'lodash/debounce'
-import fuzzysearch from 'fuzzysearch'
 import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
 import {deptNum} from './lib/format-dept-num'
@@ -85,8 +84,10 @@ function executeSearch(args: {
 		course =>
 			leven(query, course.name.toLowerCase()) < 2 ||
 			leven(query, (course.title || '').toLowerCase()) < 2 ||
-			(course.instructors || []).some(name =>
-				name.toLowerCase().includes(query) || (leven(name.toLowerCase(), query) < 4 && query.length > 4),
+			(course.instructors || []).some(
+				name =>
+					name.toLowerCase().includes(query) ||
+					(leven(name.toLowerCase(), query) < 4 && query.length > 4),
 			) ||
 			deptNum(course)
 				.toLowerCase()
