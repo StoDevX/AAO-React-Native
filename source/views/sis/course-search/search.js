@@ -398,7 +398,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 									/>
 									<RecentItemsList
 										actionLabel="Select Filters"
-										emptyHeader="No recent browses"
+										emptyHeader="No recent filter combinations"
 										emptyText="Your recent filter combinations will appear here."
 										items={recentFilterDescriptions}
 										onAction={this.openFilterView}
