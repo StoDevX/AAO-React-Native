@@ -28,6 +28,7 @@ import {Viewport} from '../../components/viewport'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
 import {RecentSearchList} from '../components/recent-search/list'
 import {Separator} from '../../components/separator'
+import leven from 'leven'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -85,7 +86,7 @@ function executeSearch(args: {
 			fuzzysearch(query, course.name.toLowerCase()) ||
 			fuzzysearch(query, (course.title || '').toLowerCase()) ||
 			(course.instructors || []).some(name =>
-				name.toLowerCase().includes(query),
+				name.toLowerCase().includes(query) || leven(name.toLowerCase(), query) < 4,
 			) ||
 			deptNum(course)
 				.toLowerCase()
