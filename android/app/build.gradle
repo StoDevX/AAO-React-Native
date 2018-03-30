@@ -1,7 +1,5 @@
 apply plugin: "com.android.application"
 
-import com.android.build.OutputFile
-
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
  * and bundleReleaseJsAndAssets).
@@ -96,14 +94,18 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 
+def COMPILE_SDK_VERSION = 27
+def TARGET_SDK_VERSION = 27
+def ANDROID_SUPPORT_LIBRARY_VERSION = '27.1.0'
+
 android {
-    compileSdkVersion 26
+    compileSdkVersion COMPILE_SDK_VERSION
 
     defaultConfig {
         applicationId "com.allaboutolaf"
 
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion TARGET_SDK_VERSION
 
         versionCode 1
         versionName "1.0.0"
@@ -117,6 +119,12 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+    }
+
+    ext {
+        compileSdkVersion = COMPILE_SDK_VERSION
+        targetSdkVersion = TARGET_SDK_VERSION
+        androidSupportLibraryVersion = ANDROID_SUPPORT_LIBRARY_VERSION
     }
 
     signingConfigs {
@@ -169,15 +177,15 @@ android {
     }
 
     configurations.all {
-        resolutionStrategy.force 'com.android.support:appcompat-v7:26.1.0'
-        resolutionStrategy.force 'com.android.support:customtabs:26.1.0'
-        resolutionStrategy.force 'com.google.android.gms:play-services-base:11.8.0'
-        resolutionStrategy.force 'com.google.android.gms:play-services-maps:11.8.0'
+        resolutionStrategy.force "com.android.support:appcompat-v7:$ANDROID_SUPPORT_LIBRARY_VERSION"
+        resolutionStrategy.force "com.android.support:customtabs:$ANDROID_SUPPORT_LIBRARY_VERSION"
+        resolutionStrategy.force "com.android.support:support-media-compat:$ANDROID_SUPPORT_LIBRARY_VERSION"
+        resolutionStrategy.force "com.android.support:support-v4:$ANDROID_SUPPORT_LIBRARY_VERSION"
     }
 }
 
 // borrowed from https://gist.github.com/gabrielemariotti/6856974
-def propFile = new File('android/app//signing.properties')
+def propFile = new File('android/app/signing.properties')
 if (propFile.canRead()) {
     Properties props = new Properties()
     props.load(new FileInputStream(propFile))
@@ -213,19 +221,19 @@ if (propFile.canRead()) {
 dependencies {
     // please keep this list sorted
     implementation project(':bugsnag-react-native')
+    implementation project(':mapbox-react-native-mapbox-gl')
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-custom-tabs')
     implementation project(':react-native-device-info')
     implementation project(':react-native-google-analytics-bridge')
     implementation project(':react-native-keychain')
     implementation project(':react-native-linear-gradient')
-    implementation project(':mapbox-react-native-mapbox-gl')
     implementation project(':react-native-network-info')
     implementation project(':react-native-restart')
     implementation project(':react-native-vector-icons')
     // this is for react-native itself
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:26.1.0"
+    implementation "com.android.support:appcompat-v7:$ANDROID_SUPPORT_LIBRARY_VERSION"
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 }
