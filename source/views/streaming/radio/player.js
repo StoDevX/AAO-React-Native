@@ -30,7 +30,7 @@ type HtmlAudioEvent =
 	| {type: HtmlAudioState}
 	| {type: 'error', error: HtmlAudioError}
 
-export class StreamPlayer extends React.PureComponent<Props, State> {
+export class StreamPlayer extends React.PureComponent<Props> {
 	componentDidUpdate() {
 		this.dispatchEvent(this.props.playState)
 	}
