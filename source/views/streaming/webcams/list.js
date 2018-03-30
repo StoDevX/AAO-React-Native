@@ -35,7 +35,7 @@ export class WebcamsView extends React.PureComponent<Props, State> {
 		refreshing: false,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.fetchData()
 	}
 

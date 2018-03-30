@@ -48,7 +48,7 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 		meals: [],
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.fetchData()
 	}
 

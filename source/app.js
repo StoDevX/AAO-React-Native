@@ -34,7 +34,7 @@ function getCurrentRouteName(navigationState: NavigationState): ?string {
 type Props = {}
 
 export default class App extends React.Component<Props> {
-	componentWillMount() {
+	componentDidMount() {
 		startStatusBarColorChanger()
 	}
 
@@ -55,7 +55,7 @@ export default class App extends React.Component<Props> {
 
 		if (currentScreen !== prevScreen) {
 			tracker.trackScreenView(currentScreen)
-			bugsnag.leaveBreadcrumb(currentScreen, {
+			bugsnag.leaveBreadcrumb(currentScreen.substr(0, 30), {
 				type: 'navigation',
 				previousScreen: prevScreen,
 			})
