@@ -105,7 +105,7 @@
     "html-entities": "1.2.1",
     "htmlparser2": "3.9.2",
     "lodash": "4.17.5",
-    "moment": "2.21.0",
+    "moment": "2.22.0",
     "moment-timezone": "0.5.14",
     "p-props": "1.1.0",
     "p-retry": "1.0.0",
