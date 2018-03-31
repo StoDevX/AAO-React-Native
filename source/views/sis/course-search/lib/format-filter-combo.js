@@ -10,7 +10,9 @@ export type FilterComboType = {
 
 export function formatFilterCombo(filters: FilterType[]): FilterComboType {
 	const filterCombo = filters.filter(f => f.enabled)
-	const comboDescription = filterCombo.map(f => describeFilter(f, filters)).join(', ')
+	const comboDescription = filterCombo
+		.map(f => describeFilter(f, filters))
+		.join(', ')
 	return {filters: filterCombo, description: comboDescription}
 }
 
@@ -23,17 +25,13 @@ function describeFilter(f: FilterType, filters: FilterType[]) {
 			return 'Labs Only'
 		}
 		case 'term': {
-			const termFilter = filterListSpecs(filters).find(
-				f => f.key === 'term',
-			)
+			const termFilter = filterListSpecs(filters).find(f => f.key === 'term')
 			const selectedTerms = termFilter ? termFilter.spec.selected : []
 			const terms = selectedTerms.map(t => parseInt(t.title))
 			return formatTerms(terms)
 		}
 		case 'gereqs': {
-			const geFilter = filterListSpecs(filters).find(
-				f => f.key === 'gereqs',
-			)
+			const geFilter = filterListSpecs(filters).find(f => f.key === 'gereqs')
 			const selectedGEs = geFilter ? geFilter.spec.selected : []
 			return selectedGEs.map(ge => ge.title).join('/')
 		}

@@ -316,7 +316,13 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		if (Platform.OS === 'android') {
 			this.searchBar.setValue('')
 		}
-		this.setState(() => ({searchActive: false, browsing: false, query: '', searchResults: [], searchPerformed: false}))
+		this.setState(() => ({
+			searchActive: false,
+			browsing: false,
+			query: '',
+			searchResults: [],
+			searchPerformed: false,
+		}))
 	}
 
 	openFilterView = () => {
