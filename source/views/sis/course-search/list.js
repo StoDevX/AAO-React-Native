@@ -60,7 +60,7 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 			title: 'Add Filters',
 			pathToFilters: ['courses', 'filters'],
 			onChange: filters => this.props.onFiltersChange(filters),
-			onLeave: filters => this.props.updateRecentFilters(filters),
+			onLeave: this.props.browsing ? filters => this.props.updateRecentFilters(filters) : null,
 		})
 	}
 
