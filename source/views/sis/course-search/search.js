@@ -120,7 +120,7 @@ function executeSearch(args: {
 	}
 }
 
-function executeBrowse(args: {
+function applyFiltersAndQuery(args: {
 	filters: FilterType[],
 	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
 	allCourses: Array<CourseType>,
@@ -155,7 +155,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
 		if (prevState.browsing) {
-			return executeBrowse({
+			return applyFiltersAndQuery({
 				filters: nextProps.filters,
 				applyFilters: nextProps.applyFilters,
 				allCourses: nextProps.allCourses,
@@ -261,7 +261,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 
 	browseAll = () => {
 		this.setState(() =>
-			executeBrowse({
+			applyFiltersAndQuery({
 				filters: this.props.filters,
 				applyFilters: this.props.applyFilters,
 				allCourses: this.props.allCourses,
@@ -316,7 +316,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		if (Platform.OS === 'android') {
 			this.searchBar.setValue('')
 		}
-		this.setState(() => ({searchActive: false, browsing: false, query: ''}))
+		this.setState(() => ({searchActive: false, browsing: false, query: '', searchResults: [], searchPerformed: false}))
 	}
 
 	openFilterView = () => {

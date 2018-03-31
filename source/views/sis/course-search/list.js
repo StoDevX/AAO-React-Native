@@ -71,12 +71,17 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 			<FilterToolbar filters={filters} onPress={this.onPressToolbar} />
 		)
 
-		let message = this.props.searchPerformed
-			? 'There were no courses that matched your query. Please try again.'
-			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
-		message = browsing
+		const message = browsing
 			? 'There were no courses that matched your selected filters. Try a different filter combination.'
-			: message
+			: this.props.searchPerformed
+				? 'There were no courses that matched your query. Please try again.'
+				: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
+		// let message = this.props.searchPerformed
+		// 	? 'There were no courses that matched your query. Please try again.'
+		// 	: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
+		// message = browsing
+		// 	? 'There were no courses that matched your selected filters. Try a different filter combination.'
+		// 	: message
 		const messageView = <NoticeView style={styles.message} text={message} />
 
 		return (
