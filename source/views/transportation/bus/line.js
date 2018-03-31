@@ -58,87 +58,78 @@ function startsIn(now, start: ?moment) {
 	return `Starts ${nowCopy.seconds(0).to(start)}`
 }
 
+function deriveFromProps({line, now}: Props) {
+	// Finds the stuff that's shared between FlatList and renderItem
+	const processedLine = processBusLine(line, now)
+
+	const scheduleForToday = getScheduleForNow(processedLine.schedules, now)
+	const {times, status, index, nextStart} = getCurrentBusIteration(
+		scheduleForToday,
+		now,
+	)
+
+	const isLastBus = index === scheduleForToday.times.length - 1
+
+	let subtitle = 'Error'
+	switch (status) {
+		case 'none':
+			subtitle = 'Not running today'
+			break
+		case 'before-start':
+		case 'between-rounds':
+			subtitle = startsIn(now, nextStart)
+			break
+		case 'after-end':
+			subtitle = 'Over for today'
+			break
+		case 'running': {
+			if (isLastBus) {
+				subtitle = 'Last Bus'
+			} else {
+				const first = find(times, isTruthy)
+				const last = findLast(times, isTruthy)
+				if (!first || !last) {
+					subtitle = 'Not running today'
+				} else if (now.isBefore(first)) {
+					subtitle = startsIn(now, first)
+				} else if (now.isAfter(last)) {
+					subtitle = 'Running'
+				} else {
+					subtitle = 'Running'
+				}
+			}
+			break
+		}
+		default: {
+			;(status: empty)
+		}
+	}
+
+	if (process.env.NODE_ENV !== 'production') {
+		// for debugging
+		subtitle += ` (${now.format('dd h:mma')})`
+	}
+
+	return {
+		subtitle: subtitle,
+		status: status,
+		schedule: scheduleForToday,
+		currentBusIteration: index,
+	}
+}
+
 export class BusLine extends React.Component<Props, State> {
-	state = {
-		subtitle: 'Loading',
-		schedule: null,
-		currentBusIteration: null,
-		status: 'none',
+	static getDerivedStateFromProps(nextProps: Props) {
+		return deriveFromProps(nextProps)
 	}
 
-	componentWillMount() {
-		this.updateFromProps(this.props)
-	}
-
-	componentWillReceiveProps(nextProps: Props) {
-		this.updateFromProps(nextProps)
-	}
+	state = deriveFromProps(this.props)
 
 	shouldComponentUpdate(nextProps: Props) {
 		return (
 			this.props.now.isSame(nextProps.now, 'minute') ||
 			this.props.line !== nextProps.line
 		)
-	}
-
-	updateFromProps = ({line, now}: Props) => {
-		// Finds the stuff that's shared between FlatList and renderItem
-		const processedLine = processBusLine(line, now)
-
-		const scheduleForToday = getScheduleForNow(processedLine.schedules, now)
-		const {times, status, index, nextStart} = getCurrentBusIteration(
-			scheduleForToday,
-			now,
-		)
-
-		const isLastBus = index === scheduleForToday.times.length - 1
-
-		let subtitle = 'Error'
-		switch (status) {
-			case 'none':
-				subtitle = 'Not running today'
-				break
-			case 'before-start':
-			case 'between-rounds':
-				subtitle = startsIn(now, nextStart)
-				break
-			case 'after-end':
-				subtitle = 'Over for today'
-				break
-			case 'running': {
-				if (isLastBus) {
-					subtitle = 'Last Bus'
-				} else {
-					const first = find(times, isTruthy)
-					const last = findLast(times, isTruthy)
-					if (!first || !last) {
-						subtitle = 'Not running today'
-					} else if (now.isBefore(first)) {
-						subtitle = startsIn(now, first)
-					} else if (now.isAfter(last)) {
-						subtitle = 'Running'
-					} else {
-						subtitle = 'Running'
-					}
-				}
-				break
-			}
-			default: {
-				;(status: empty)
-			}
-		}
-
-		if (process.env.NODE_ENV !== 'production') {
-			// for debugging
-			subtitle += ` (${now.format('dd h:mma')})`
-		}
-
-		this.setState(() => ({
-			subtitle: subtitle,
-			status: status,
-			schedule: scheduleForToday,
-			currentBusIteration: index,
-		}))
 	}
 
 	keyExtractor = (item: BusTimetableEntry, index: number) => index.toString()

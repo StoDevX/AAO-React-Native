@@ -53,7 +53,7 @@ export class IconSettingsView extends React.PureComponent<Props, State> {
 		iconType: null,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.getIcon()
 	}
 

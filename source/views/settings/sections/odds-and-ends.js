@@ -25,7 +25,7 @@ class OddsAndEndsSection extends React.PureComponent<Props, State> {
 		supported: false,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.checkIfCustomIconsSupported()
 	}
 

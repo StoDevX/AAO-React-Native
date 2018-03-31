@@ -61,13 +61,11 @@ class BalancesView extends React.PureComponent<Props, State> {
 		loading: false,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		// calling "refresh" here, to make clear to the user
 		// that the data is being updated
 		this.refresh()
-	}
 
-	componentDidMount() {
 		if (!this.props.alertSeen) {
 			Alert.alert('', LONG_DISCLAIMER, [
 				{text: 'I Disagree', onPress: this.goBack, style: 'cancel'},

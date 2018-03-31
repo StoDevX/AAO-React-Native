@@ -31,15 +31,15 @@ type HtmlAudioEvent =
 	| {type: 'error', error: HtmlAudioError}
 
 export class StreamPlayer extends React.PureComponent<Props> {
-	_webview: WebView
-
-	componentWillReceiveProps(nextProps: Props) {
-		this.dispatchEvent(nextProps.playState)
+	componentDidUpdate() {
+		this.dispatchEvent(this.props.playState)
 	}
 
 	componentWillUnmount() {
 		this.pause()
 	}
+
+	_webview: ?WebView = null
 
 	dispatchEvent = (nextPlayState: PlayState) => {
 		// console.log('<StreamPlayer> state changed to', nextPlayState)
@@ -90,12 +90,12 @@ export class StreamPlayer extends React.PureComponent<Props> {
 
 	pause = () => {
 		// console.log('sent "pause" message to <audio>')
-		this._webview.postMessage('pause')
+		this._webview && this._webview.postMessage('pause')
 	}
 
 	play = () => {
 		// console.log('sent "play" message to <audio>')
-		this._webview.postMessage('play')
+		this._webview && this._webview.postMessage('play')
 	}
 
 	setRef = (ref: WebView) => (this._webview = ref)
