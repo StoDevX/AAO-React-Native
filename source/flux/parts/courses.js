@@ -46,7 +46,6 @@ export function updateRecentFilters(
 		const state = getState()
 
 		const newRecentFilter = formatFilterCombo(filters)
-		console.log(newRecentFilter)
 		const recentFilters = state.courses ? state.courses.recentFilters : []
 		if (
 			!recentFilters.find(f => f.description === newRecentFilter.description) &&

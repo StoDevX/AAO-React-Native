@@ -32,10 +32,6 @@ type Props = TopLevelViewPropsType & {
 }
 
 export class CourseSearchResultsList extends React.PureComponent<Props> {
-	componentDidMount() {
-		buildFilters().then(this.props.onFiltersChange)
-	}
-
 	componentDidUpdate() {
 		// prevent ourselves from overwriting the filters from redux on mount
 		if (this.props.filters.length) {
