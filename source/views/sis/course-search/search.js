@@ -320,7 +320,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	openFilterView = () => {
-		this.resetFilters()
 		this.props.navigation.navigate('FilterView', {
 			title: 'Add Filters',
 			pathToFilters: ['courses', 'filters'],
