@@ -5128,9 +5128,9 @@ react-native@0.54.3:
     xmldoc "^0.4.0"
     yargs "^9.0.0"
 
-react-navigation@1.5.8:
-  version "1.5.8"
-  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-1.5.8.tgz#f04bec1a39af8cfcf651337d351e8d0a144f1b6d"
+react-navigation@1.5.9:
+  version "1.5.9"
+  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-1.5.9.tgz#2740fd1b0056559c1d15f12958f6b30448a2154d"
   dependencies:
     clamp "^1.0.1"
     hoist-non-react-statics "^2.2.0"
