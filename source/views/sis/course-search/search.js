@@ -28,6 +28,7 @@ import {applyFiltersToItem, type FilterType} from '../../components/filter'
 import {RecentSearchList} from '../components/recent-search/list'
 import {Separator} from '../../components/separator'
 import leven from 'leven'
+import hamming from 'hamming'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -66,6 +67,18 @@ type State = {
 	query: string,
 }
 
+function looseSearch(query: string, item: string) {
+	const dist = hamming(query, item.slice(0, query.length))
+	const words = item.split(' ')
+	const wordDists = words.map(word => hamming(query, word.slice(0, query.length)))
+	const dists = [dist].concat(wordDists)
+	return dists.some(dist => dist < 2 && dist !== null)
+}
+
+function keywordSearch(query: string, item: string) {
+	
+}
+
 function executeSearch(args: {
 	text: string,
 	filters: FilterType[],
@@ -82,12 +95,14 @@ function executeSearch(args: {
 
 	const results = filteredCourses.filter(
 		course =>
-			leven(query, course.name.toLowerCase()) < 2 ||
-			leven(query, (course.title || '').toLowerCase()) < 2 ||
+			// leven(query, course.name.toLowerCase()) < (Math.abs(query.length - course.name.length) + 2) ||
+			looseSearch(query, course.name.toLowerCase()) ||
+			// leven(query, (course.title || '').toLowerCase()) < 2 ||
 			(course.instructors || []).some(
 				name =>
-					name.toLowerCase().includes(query) ||
-					(leven(name.toLowerCase(), query) < 4 && query.length > 4),
+					// name.toLowerCase().includes(query) ||
+					// (leven(name.toLowerCase(), query) < 4 && query.length > 4),
+					looseSearch(query, name.toLowerCase())
 			) ||
 			deptNum(course)
 				.toLowerCase()

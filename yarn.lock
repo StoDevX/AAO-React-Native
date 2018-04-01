@@ -2772,6 +2772,10 @@ gulplog@^1.0.0:
   dependencies:
     glogg "^1.0.0"
 
+hamming@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/hamming/-/hamming-0.0.2.tgz#6ca46984c4c6f8b5c3002fe209eabb4515c49aa3"
+
 handlebars@^4.0.3:
   version "4.0.11"
   resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.11.tgz#630a35dfe0294bc281edae6ffc5d329fc7982dcc"
