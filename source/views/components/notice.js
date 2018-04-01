@@ -32,10 +32,11 @@ type Props = {
 	spinner?: boolean,
 	buttonText?: string,
 	onPress?: () => any,
+	textStyle?: any,
 }
 
 export function NoticeView(props: Props) {
-	const {header, text, style} = props
+	const {header, text, style, textStyle} = props
 	const {buttonDisabled, buttonText, onPress} = props
 	const {spinner} = props
 
@@ -45,9 +46,13 @@ export function NoticeView(props: Props) {
 				<View style={[styles.container, style]}>
 					{spinner ? <ActivityIndicator style={styles.spinner} /> : null}
 
-					{header ? <Heading level={1}>{header}</Heading> : null}
+					{header ? (
+						<Heading level={1} style={textStyle}>
+							{header}
+						</Heading>
+					) : null}
 
-					<Text selectable={true} style={styles.text}>
+					<Text selectable={true} style={[styles.text, textStyle]}>
 						{text || 'Notice!'}
 					</Text>
 

@@ -1,5 +1,6 @@
 // @flow
 import {AsyncStorage} from 'react-native'
+import {type FilterComboType} from '../views/sis/course-search/lib/format-filter-combo'
 
 export function clearAsyncStorage() {
 	return AsyncStorage.clear()
@@ -110,4 +111,12 @@ export function setRecentSearches(searches: string[]) {
 }
 export function getRecentSearches(): Promise<Array<string>> {
 	return getItemAsArray(recentSearchesKey)
+}
+
+const recentFiltersKey = 'courses:recent-filters'
+export function setRecentFilters(combos: Array<FilterComboType>) {
+	return setItem(recentFiltersKey, combos)
+}
+export function getRecentFilters(): Promise<Array<FilterComboType>> {
+	return getItemAsArray(recentFiltersKey)
 }
