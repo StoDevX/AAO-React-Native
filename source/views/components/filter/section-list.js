@@ -6,6 +6,7 @@ import {Section, Cell} from 'react-native-tableview-simple'
 import {Column} from '../layout'
 import concat from 'lodash/concat'
 import isEqual from 'lodash/isEqual'
+import reject from 'lodash/reject'
 
 type PropsType = {
 	filter: ListType,
@@ -24,7 +25,7 @@ export function ListSection({filter, onChange}: PropsType) {
 		if (selected.some(val => isEqual(val, tappedValue))) {
 			// if the user has tapped an item, and it's already in the list of
 			// things they've tapped, we want to _remove_ it from that list.
-			result = selected.reject(val => isEqual(val, tappedValue))
+			result = reject(selected, val => isEqual(val, tappedValue))
 		} else {
 			// otherwise, we need to add it to the list
 			result = concat(selected, tappedValue)
