@@ -19,7 +19,6 @@ import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import toPairs from 'lodash/toPairs'
 import debounce from 'lodash/debounce'
-import fuzzysearch from 'fuzzysearch'
 import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
 import {deptNum} from './lib/format-dept-num'
@@ -28,6 +27,7 @@ import {Viewport} from '../../components/viewport'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
 import {RecentSearchList} from '../components/recent-search/list'
 import {Separator} from '../../components/separator'
+import leven from 'leven'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -82,10 +82,12 @@ function executeSearch(args: {
 
 	const results = filteredCourses.filter(
 		course =>
-			fuzzysearch(query, course.name.toLowerCase()) ||
-			fuzzysearch(query, (course.title || '').toLowerCase()) ||
-			(course.instructors || []).some(name =>
-				name.toLowerCase().includes(query),
+			leven(query, course.name.toLowerCase()) < 2 ||
+			leven(query, (course.title || '').toLowerCase()) < 2 ||
+			(course.instructors || []).some(
+				name =>
+					name.toLowerCase().includes(query) ||
+					(leven(name.toLowerCase(), query) < 4 && query.length > 4),
 			) ||
 			deptNum(course)
 				.toLowerCase()
