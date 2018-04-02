@@ -20,7 +20,6 @@ import groupBy from 'lodash/groupBy'
 import sortBy from 'lodash/sortBy'
 import toPairs from 'lodash/toPairs'
 import debounce from 'lodash/debounce'
-import fuzzysearch from 'fuzzysearch'
 import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
 import {deptNum} from './lib/format-dept-num'
@@ -31,6 +30,7 @@ import {RecentItemsList} from '../components/recent-search/list'
 import {Separator} from '../../components/separator'
 import {buildFilters} from './lib/build-filters'
 import type {FilterComboType} from './lib/format-filter-combo'
+import hamming from 'hamming'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -72,6 +72,18 @@ type State = {
 	query: string,
 }
 
+function keywordSearch(query: string, item: string) {
+	const keywords = query.split(' ')
+	const itemWords = item.split(' ')
+	return keywords.every(keyword =>
+		itemWords.some(
+			word =>
+				keyword.length <= word.length &&
+				hamming(keyword, word.slice(0, keyword.length)) < 2,
+		),
+	)
+}
+
 function executeSearch(args: {
 	text: string,
 	filters: FilterType[],
@@ -89,10 +101,10 @@ function executeSearch(args: {
 
 	const results = filteredCourses.filter(
 		course =>
-			fuzzysearch(query, course.name.toLowerCase()) ||
-			fuzzysearch(query, (course.title || '').toLowerCase()) ||
+			keywordSearch(query, course.name.toLowerCase()) ||
+			keywordSearch(query, (course.title || '').toLowerCase()) ||
 			(course.instructors || []).some(name =>
-				name.toLowerCase().includes(query),
+				keywordSearch(query, name.toLowerCase()),
 			) ||
 			deptNum(course)
 				.toLowerCase()
