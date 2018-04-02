@@ -78,8 +78,8 @@ function keywordSearch(query: string, item: string) {
 	return keywords.every(keyword =>
 		itemWords.some(
 			word =>
-				hamming(keyword, word.slice(0, keyword.length)) < 2 &&
-				keyword.length <= word.length,
+				keyword.length <= word.length &&
+				hamming(keyword, word.slice(0, keyword.length)) < 2
 		),
 	)
 }
@@ -101,6 +101,7 @@ function executeSearch(args: {
 	const results = filteredCourses.filter(
 		course =>
 			keywordSearch(query, course.name.toLowerCase()) ||
+			keywordSearch(query, (course.title || '').toLowerCase()) ||
 			(course.instructors || []).some(name =>
 				keywordSearch(query, name.toLowerCase()),
 			) ||
