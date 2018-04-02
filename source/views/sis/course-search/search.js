@@ -76,10 +76,11 @@ function keywordSearch(query: string, item: string) {
 	const keywords = query.split(' ')
 	const itemWords = item.split(' ')
 	return keywords.every(keyword =>
-		itemWords.some(word =>
-			hamming(keyword, word.slice(0, keyword.length)) < 2 &&
-			keyword.length <= word.length
-    )
+		itemWords.some(
+			word =>
+				hamming(keyword, word.slice(0, keyword.length)) < 2 &&
+				keyword.length <= word.length,
+		),
 	)
 }
 
@@ -100,9 +101,8 @@ function executeSearch(args: {
 	const results = filteredCourses.filter(
 		course =>
 			keywordSearch(query, course.name.toLowerCase()) ||
-			(course.instructors || []).some(
-				name =>
-					keywordSearch(query, name.toLowerCase())
+			(course.instructors || []).some(name =>
+				keywordSearch(query, name.toLowerCase()),
 			) ||
 			deptNum(course)
 				.toLowerCase()
