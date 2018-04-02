@@ -91,7 +91,6 @@ function executeSearch(args: {
 	allCourses: Array<CourseType>,
 	updateRecentSearches: (query: string) => any,
 }) {
-	console.log("SEARCHING")
 	const {text, filters, applyFilters, allCourses, updateRecentSearches} = args
 	const query = text.toLowerCase()
 
@@ -113,21 +112,21 @@ function executeSearch(args: {
 				gereq.toLowerCase().startsWith(query),
 			),
 	)
-
-	const grouped = groupBy(results, r => r.term)
+	const sortedResults = sortBy(results, course => deptNum(course))
+	const grouped = groupBy(sortedResults, r => r.term)
 	const groupedCourses = toPairs(grouped).map(([key, value]) => ({
 		title: key,
 		data: value,
 	}))
 
-	const sortedCourses = sortBy(groupedCourses, course => course.deptNum).reverse()
+	const sortedTerms = sortBy(groupedCourses, course => course.title).reverse()
 
 	if (text.length !== 0) {
 		updateRecentSearches(text)
 	}
 
 	return {
-		searchResults: sortedCourses,
+		searchResults: sortedTerms,
 		searchPerformed: true,
 		query: text,
 	}
@@ -142,16 +141,17 @@ function applyFiltersAndQuery(args: {
 	const filteredCourses = allCourses.filter(course =>
 		applyFilters(filters, course),
 	)
-	const grouped = groupBy(filteredCourses, r => r.term)
+	const sortedCourses = sortBy(filteredCourses, course => deptNum(course))
+	const grouped = groupBy(sortedCourses, r => r.term)
 	const groupedCourses = toPairs(grouped).map(([key, value]) => ({
 		title: key,
 		data: value,
 	}))
 
-	const sortedCourses = sortBy(groupedCourses, course => course.title).reverse()
+	const sortedTerms = sortBy(groupedCourses, course => course.title).reverse()
 
 	return {
-		searchResults: sortedCourses,
+		searchResults: sortedTerms,
 	}
 }
 
@@ -260,17 +260,14 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	_performSearch = (query: string) => {
-		console.log(this.state)
-		this.setState(() =>
-			executeSearch({
-				text: query,
-				filters: this.props.filters,
-				applyFilters: this.props.applyFilters,
-				allCourses: this.props.allCourses,
-				updateRecentSearches: this.props.updateRecentSearches,
-			}),
-		)
-		console.log(this.state)
+		const newState = executeSearch({
+			text: query,
+			filters: this.props.filters,
+			applyFilters: this.props.applyFilters,
+			allCourses: this.props.allCourses,
+			updateRecentSearches: this.props.updateRecentSearches,
+		})
+		this.setState(() => newState)
 	}
 
 	performSearch = debounce(this._performSearch, 20)
