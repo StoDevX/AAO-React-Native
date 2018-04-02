@@ -59,3 +59,10 @@ export const rightButtonStyles = StyleSheet.create({
 		}),
 	},
 })
+
+export const leftButtonStyles = StyleSheet.create({
+	icon: {
+		color: c.white,
+		fontSize: 24,
+	},
+})
