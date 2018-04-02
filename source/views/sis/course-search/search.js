@@ -79,7 +79,7 @@ function keywordSearch(query: string, item: string) {
 		itemWords.some(
 			word =>
 				keyword.length <= word.length &&
-				hamming(keyword, word.slice(0, keyword.length)) < 2
+				hamming(keyword, word.slice(0, keyword.length)) < 2,
 		),
 	)
 }
