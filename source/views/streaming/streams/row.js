@@ -30,7 +30,7 @@ function Info({item}: {item: StreamType}) {
 }
 
 function Time({item}: {item: StreamType}) {
-	const showTime = item.status != 'archived'
+	const showTime = item.status !== 'archived'
 	return showTime ? (
 		<Detail>{item.date.format('h:mm A – ddd, MMM. Do, YYYY')}</Detail>
 	) : null

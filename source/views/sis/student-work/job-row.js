@@ -19,7 +19,7 @@ export class JobRow extends React.PureComponent<Props> {
 		const title = fastGetTrimmedText(job.title)
 		const office = fastGetTrimmedText(job.office)
 		const hours = fastGetTrimmedText(job.hoursPerWeek)
-		const ending = hours == 'Full-time' ? '' : 'hrs/week'
+		const ending = hours === 'Full-time' ? '' : 'hrs/week'
 
 		return (
 			<ListRow arrowPosition="top" onPress={this._onPress}>
