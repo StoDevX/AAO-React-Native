@@ -104,7 +104,6 @@
     "hamming": "0.0.2",
     "html-entities": "1.2.1",
     "htmlparser2": "3.9.2",
-    "leven": "2.1.0",
     "lodash": "4.17.5",
     "moment": "2.21.0",
     "moment-timezone": "0.5.14",

@@ -27,7 +27,6 @@ import {Viewport} from '../../components/viewport'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
 import {RecentSearchList} from '../components/recent-search/list'
 import {Separator} from '../../components/separator'
-import leven from 'leven'
 import hamming from 'hamming'
 
 const PROMPT_TEXT =
@@ -67,16 +66,15 @@ type State = {
 	query: string,
 }
 
-function looseSearch(query: string, item: string) {
-	const dist = hamming(query, item.slice(0, query.length))
-	const words = item.split(' ')
-	const wordDists = words.map(word => hamming(query, word.slice(0, query.length)))
-	const dists = [dist].concat(wordDists)
-	return dists.some(dist => dist < 2 && dist !== null)
-}
-
 function keywordSearch(query: string, item: string) {
-	
+	const keywords = query.split(' ')
+	const itemWords = item.split(' ')
+	return keywords.every(keyword =>
+		itemWords.some(word =>
+			hamming(keyword, word.slice(0, keyword.length)) < 2 &&
+			keyword.length <= word.length
+    )
+	)
 }
 
 function executeSearch(args: {
@@ -95,14 +93,10 @@ function executeSearch(args: {
 
 	const results = filteredCourses.filter(
 		course =>
-			// leven(query, course.name.toLowerCase()) < (Math.abs(query.length - course.name.length) + 2) ||
-			looseSearch(query, course.name.toLowerCase()) ||
-			// leven(query, (course.title || '').toLowerCase()) < 2 ||
+			keywordSearch(query, course.name.toLowerCase()) ||
 			(course.instructors || []).some(
 				name =>
-					// name.toLowerCase().includes(query) ||
-					// (leven(name.toLowerCase(), query) < 4 && query.length > 4),
-					looseSearch(query, name.toLowerCase())
+					keywordSearch(query, name.toLowerCase())
 			) ||
 			deptNum(course)
 				.toLowerCase()
