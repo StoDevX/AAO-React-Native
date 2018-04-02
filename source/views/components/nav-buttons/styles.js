@@ -12,7 +12,6 @@ export const commonStyles = StyleSheet.create({
 		alignItems: 'center',
 		...Platform.select({
 			ios: {
-				paddingVertical: 11,
 				paddingHorizontal: 18,
 			},
 			android: {
