@@ -19,6 +19,7 @@ type NavigationState = {
 		title: string,
 		pathToFilters: string[],
 		onChange: (x: FilterType[]) => any,
+		onLeave?: (filters: FilterType[]) => any,
 	},
 }
 
@@ -32,44 +33,51 @@ type ReduxStateProps = {
 	filters: FilterType[],
 }
 
-type PropsType = ReactProps & ReduxStateProps
+type Props = ReactProps & ReduxStateProps
 
-export function FilterViewComponent({filters, navigation}: PropsType) {
-	const {onChange} = navigation.state.params
+class FilterViewComponent extends React.PureComponent<Props> {
+	static navigationOptions = ({navigation}: Props) => {
+		return {
+			title: navigation.state.params.title,
+		}
+	}
 
-	const onFilterChanged = (filter: FilterType) => {
+	componentWillUnmount() {
+		if (this.props.navigation.state.params.onLeave) {
+			this.props.navigation.state.params.onLeave(this.props.filters)
+		}
+	}
+
+	onFilterChanged = (filter: FilterType) => {
+		const {onChange} = this.props.navigation.state.params
 		// replace the changed filter in the array, maintaining position
-		let result = filters.map(f => (f.key !== filter.key ? f : filter))
+		let result = this.props.filters.map(
+			f => (f.key !== filter.key ? f : filter),
+		)
 		onChange(result)
 	}
 
-	const contents = filters.map(filter => (
-		<FilterSection
-			key={filter.key}
-			filter={filter}
-			onChange={onFilterChanged}
-		/>
-	))
+	render() {
+		const contents = this.props.filters.map(filter => (
+			<FilterSection
+				key={filter.key}
+				filter={filter}
+				onChange={this.onFilterChanged}
+			/>
+		))
 
-	return (
-		<ScrollView style={styles.container}>
-			<TableView>{contents}</TableView>
-		</ScrollView>
-	)
-}
-FilterViewComponent.navigationOptions = ({navigation}) => {
-	return {
-		title: navigation.state.params.title,
+		return (
+			<ScrollView style={styles.container}>
+				<TableView>{contents}</TableView>
+			</ScrollView>
+		)
 	}
 }
 
-const mapStateToProps = (
-	state: ReduxState,
-	actualProps: ReactProps,
-): ReduxStateProps => {
+function mapState(state: ReduxState, actualProps: ReactProps): ReduxStateProps {
 	return {
 		filters: get(state, actualProps.navigation.state.params.pathToFilters, []),
 	}
 }
 
-export const FilterView = connect(mapStateToProps)(FilterViewComponent)
+export const ConnectedFilterView = connect(mapState)(FilterViewComponent)

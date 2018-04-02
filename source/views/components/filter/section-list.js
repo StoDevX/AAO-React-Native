@@ -4,9 +4,9 @@ import {Text, Image, StyleSheet} from 'react-native'
 import type {ListType, ListItemSpecType} from './types'
 import {Section, Cell} from 'react-native-tableview-simple'
 import {Column} from '../layout'
-import includes from 'lodash/includes'
-import without from 'lodash/without'
 import concat from 'lodash/concat'
+import isEqual from 'lodash/isEqual'
+import reject from 'lodash/reject'
 
 type PropsType = {
 	filter: ListType,
@@ -22,10 +22,10 @@ export function ListSection({filter, onChange}: PropsType) {
 	function buttonPushed(tappedValue: ListItemSpecType) {
 		let result
 
-		if (includes(selected, tappedValue)) {
+		if (selected.some(val => isEqual(val, tappedValue))) {
 			// if the user has tapped an item, and it's already in the list of
 			// things they've tapped, we want to _remove_ it from that list.
-			result = without(selected, tappedValue)
+			result = reject(selected, val => isEqual(val, tappedValue))
 		} else {
 			// otherwise, we need to add it to the list
 			result = concat(selected, tappedValue)
@@ -67,7 +67,7 @@ export function ListSection({filter, onChange}: PropsType) {
 	let buttons = options.map(val => (
 		<Cell
 			key={val.title}
-			accessory={includes(selected, val) ? 'Checkmark' : undefined}
+			accessory={selected.some(s => isEqual(s, val)) ? 'Checkmark' : undefined}
 			cellContentView={
 				<Column style={styles.content}>
 					<Text style={styles.title}>
