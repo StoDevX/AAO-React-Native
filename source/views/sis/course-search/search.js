@@ -79,6 +79,7 @@ function executeSearch(args: {
 	allCourses: Array<CourseType>,
 	updateRecentSearches: (query: string) => any,
 }) {
+	console.log("SEARCHING")
 	const {text, filters, applyFilters, allCourses, updateRecentSearches} = args
 	const query = text.toLowerCase()
 
@@ -107,7 +108,7 @@ function executeSearch(args: {
 		data: value,
 	}))
 
-	const sortedCourses = sortBy(groupedCourses, course => course.title).reverse()
+	const sortedCourses = sortBy(groupedCourses, course => course.deptNum).reverse()
 
 	if (text.length !== 0) {
 		updateRecentSearches(text)
@@ -246,7 +247,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.performSearch(text)
 	}
 
-	_performSearch = (query: string) =>
+	_performSearch = (query: string) => {
+		console.log(this.state)
 		this.setState(() =>
 			executeSearch({
 				text: query,
@@ -256,6 +258,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				updateRecentSearches: this.props.updateRecentSearches,
 			}),
 		)
+		console.log(this.state)
+	}
 
 	performSearch = debounce(this._performSearch, 20)
 
@@ -305,7 +309,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.animate(this.headerOpacity, this.animations.headerOpacity, 'end')
 		this.animate(this.searchBarTop, this.animations.searchBarTop, 'end')
 		this.animate(this.containerHeight, this.animations.containerHeight, 'end')
-		this.resetFilters()
 		this.setState(() => ({searchActive: true}))
 	}
 
@@ -323,6 +326,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			searchResults: [],
 			searchPerformed: false,
 		}))
+		this.resetFilters()
 	}
 
 	openFilterView = () => {
