@@ -6,9 +6,8 @@ import compress from 'koa-compress'
 import logger from 'koa-logger'
 import responseTime from 'koa-response-time'
 import health from 'koa-ping'
-import mem from 'mem'
-import Koa from 'koa'
 import Router from 'koa-better-router'
+import Koa from 'koa'
 
 import {v1} from './v1'
 
@@ -17,13 +16,15 @@ const app = new Koa();
 //
 // set up the routes
 //
-const api = Router({ prefix: '/api' }).loadMethods()
+const router = Router({prefix: '/api'}).loadMethods()
 
-api.extend(v1)
+router.extend(v1)
 
-api.get('/', async (ctx) => {
+router.get('/', async (ctx) => {
   ctx.body = `Hello world! Prefix: ${ctx.route.prefix}`
 })
+
+// router.getRoutes().forEach(route => console.log(route.path))
 
 //
 // attach middleware
@@ -36,7 +37,7 @@ app.use(conditional());
 app.use(etag());
 app.use(health());
 // hook in the router
-app.use(api.middleware())
+app.use(router.middleware())
 
 //
 // start the app

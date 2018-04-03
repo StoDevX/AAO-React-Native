@@ -1,4 +1,5 @@
 import got from 'got'
+import mem from 'mem'
 
 const ONE_DAY = 24 * 60 * 60 * 1000
 const GET = mem(got.get, {maxAge: ONE_DAY})
