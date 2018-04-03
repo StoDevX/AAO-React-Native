@@ -11,13 +11,13 @@ const getCafeMenu = (cafeId) => GET(menuBase, {json: true, query: {cafe: cafeId}
 const getCafeInfo = (cafeId) => GET(menuBase, {json: true, query: {cafe: cafeId}})
 
 export async function menu(ctx) {
-	let {cafeId} = ctx.route.params
+	let {cafeId} = ctx.params
 	let resp = await getCafeMenu(cafeId)
 	ctx.body = resp.body
 }
 
 export async function cafe(ctx) {
-	let {cafeId} = ctx.route.params
+	let {cafeId} = ctx.params
 	let resp = await getCafeInfo(cafeId)
 	ctx.body = resp.body
 }
