@@ -1,5 +1,3 @@
-'use strict'
-
 import conditional from 'koa-conditional-get'
 import etag from 'koa-etag'
 import compress from 'koa-compress'
@@ -17,11 +15,8 @@ const app = new Koa();
 // set up the routes
 //
 const router = new Router()
-
 const api = new Router({prefix: '/api'})
-
 api.use(v1.routes())
-
 router.use(api.routes())
 
 router.get('/', async (ctx) => {
@@ -42,6 +37,7 @@ app.use(etag());
 app.use(health());
 // hook in the router
 app.use(router.routes())
+app.use(router.allowedMethods())
 
 //
 // start the app
