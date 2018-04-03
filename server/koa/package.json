@@ -13,7 +13,6 @@
   "dependencies": {
     "got": "^8.3.0",
     "koa": "^2.5.0",
-    "koa-better-router": "^2.1.1",
     "koa-compress": "^2.0.0",
     "koa-conditional-get": "^2.0.0",
     "koa-etag": "^3.0.0",
@@ -21,6 +20,7 @@
     "koa-logger": "^3.2.0",
     "koa-ping": "^0.1.1",
     "koa-response-time": "^2.0.0",
+    "koa-router": "^7.4.0",
     "mem": "^3.0.0"
   }
 }
