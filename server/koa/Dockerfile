@@ -13,4 +13,4 @@ HEALTHCHECK --interval=20s --timeout=1s \
 
 ADD . /app
 
-CMD env NODE_ENV=production NODE_PORT=3001 node ./index.js 
+CMD env NODE_ENV=production NODE_PORT=3001 node --experimental-modules ./index.mjs 
