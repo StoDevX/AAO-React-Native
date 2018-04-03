@@ -1,5 +1,7 @@
 FROM docker.io/node:9-alpine
 
+RUN apk add -U curl
+
 WORKDIR /app
 ADD ./package.json /app
 ADD ./package-lock.json /app
