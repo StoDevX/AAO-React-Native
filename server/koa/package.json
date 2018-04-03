@@ -1,0 +1,26 @@
+{
+  "name": "aao-koa-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "got": "^8.3.0",
+    "koa": "^2.5.0",
+    "koa-better-router": "^2.1.1",
+    "koa-compress": "^2.0.0",
+    "koa-conditional-get": "^2.0.0",
+    "koa-etag": "^3.0.0",
+    "koa-json-error": "^3.1.2",
+    "koa-logger": "^3.2.0",
+    "koa-ping": "^0.1.1",
+    "koa-response-time": "^2.0.0",
+    "mem": "^3.0.0"
+  }
+}
