@@ -1,7 +1,8 @@
 const { send } = require('micro')
-const { router, get } = require('microrouter')
+const { router, get, head } = require('microrouter')
 const cache = require('micro-cacheable')
 const got = require('got')
+const compress = require('micro-compress')
 
 const notfound = (req, res) => send(res, 404, {type: 'error', payload: 'Route not found'})
 
@@ -19,5 +20,6 @@ const menu = async (req, res) => {
 
 module.exports = router(
   get('/menu/:cafeId', cache(24 * 60 * 60 * 1000, menu)),
+  get('/cmenu/:cafeId', cache(24 * 60 * 60 * 1000, compress(menu))),
   get('/*', notfound),
 )
