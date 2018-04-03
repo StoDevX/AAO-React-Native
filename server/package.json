@@ -10,6 +10,7 @@
   "dependencies": {
     "got": "^8.3.0",
     "micro": "^9.1.4",
+    "micro-cacheable": "^2.0.1",
     "microrouter": "^3.1.1",
     "nodemon": "^1.17.3"
   },
