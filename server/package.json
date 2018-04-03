@@ -1,0 +1,19 @@
+{
+  "name": "json-api",
+  "engines": {
+    "node": "^9.0.0"
+  },
+  "scripts": {
+    "dev": "micro-dev",
+    "start": "micro"
+  },
+  "dependencies": {
+    "got": "^8.3.0",
+    "micro": "^9.1.4",
+    "microrouter": "^3.1.1",
+    "nodemon": "^1.17.3"
+  },
+  "devDependencies": {
+    "micro-dev": "^2.2.2"
+  }
+}
