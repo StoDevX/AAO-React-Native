@@ -6,11 +6,11 @@ WORKDIR /app
 ADD ./package.json /app
 ADD ./package-lock.json /app
 
-RUN npm install --production
+RUN npm install --production && rm -rf node_modules/apollo-engine-binary-{darwin,windows}
 
 HEALTHCHECK --interval=20s --timeout=1s \
   CMD curl -f http://localhost:3001/ping
 
 ADD . /app
 
-CMD env NODE_ENV=production NODE_PORT=3001 node --experimental-modules ./index.mjs 
+CMD env NODE_ENV=production NODE_PORT=3001 node --experimental-modules ./index.mjs
