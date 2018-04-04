@@ -5,6 +5,7 @@ import logger from 'koa-logger'
 import responseTime from 'koa-response-time'
 import health from 'koa-ping'
 import Router from 'koa-router'
+import ApolloEngine from 'apollo-engine'
 import Koa from 'koa'
 
 import {v1} from './v1'
@@ -19,8 +20,8 @@ const api = new Router({prefix: '/api'})
 api.use(v1.routes())
 router.use(api.routes())
 
-router.get('/', async (ctx) => {
-  ctx.body = `Hello world! Prefix: ${ctx.route.prefix}`
+router.get('/', (ctx) => {
+  ctx.body = 'Hello world!'
 })
 
 // router.getRoutes().forEach(route => console.log(route.path))
@@ -42,6 +43,16 @@ app.use(router.allowedMethods())
 //
 // start the app
 //
-const PORT = process.env.NODE_PORT || '3000';
-app.listen(Number.parseInt(PORT, 10));
-console.log(`listening on port ${PORT}`);
+const PORT = process.env.NODE_PORT || '3000'
+if (process.env.APOLLO_KEY) {
+	const engine = new ApolloEngine.ApolloEngine({apiKey: process.env.APOLLO_KEY})
+	engine.listen({
+		port: Number.parseInt(PORT, 10),
+		koaApp: app,
+		graphqlPaths: ['/api/v1/graphql']
+	})
+} else {
+	app.listen(Number.parseInt(PORT, 10))
+}
+
+console.log(`listening on port ${PORT}`)
