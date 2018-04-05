@@ -267,7 +267,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				applyFilters: this.props.applyFilters,
 				allCourses: this.props.allCourses,
 				updateRecentSearches: this.props.updateRecentSearches,
-			})
+			}),
 		)
 	}
 
