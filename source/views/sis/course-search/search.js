@@ -112,21 +112,21 @@ function executeSearch(args: {
 				gereq.toLowerCase().startsWith(query),
 			),
 	)
-
-	const grouped = groupBy(results, r => r.term)
+	const sortedResults = sortBy(results, course => deptNum(course))
+	const grouped = groupBy(sortedResults, r => r.term)
 	const groupedCourses = toPairs(grouped).map(([key, value]) => ({
 		title: key,
 		data: value,
 	}))
 
-	const sortedCourses = sortBy(groupedCourses, course => course.title).reverse()
+	const sortedTerms = sortBy(groupedCourses, course => course.title).reverse()
 
 	if (text.length !== 0) {
 		updateRecentSearches(text)
 	}
 
 	return {
-		searchResults: sortedCourses,
+		searchResults: sortedTerms,
 		searchPerformed: true,
 		query: text,
 	}
@@ -141,16 +141,17 @@ function applyFiltersAndQuery(args: {
 	const filteredCourses = allCourses.filter(course =>
 		applyFilters(filters, course),
 	)
-	const grouped = groupBy(filteredCourses, r => r.term)
+	const sortedCourses = sortBy(filteredCourses, course => deptNum(course))
+	const grouped = groupBy(sortedCourses, r => r.term)
 	const groupedCourses = toPairs(grouped).map(([key, value]) => ({
 		title: key,
 		data: value,
 	}))
 
-	const sortedCourses = sortBy(groupedCourses, course => course.title).reverse()
+	const sortedTerms = sortBy(groupedCourses, course => course.title).reverse()
 
 	return {
-		searchResults: sortedCourses,
+		searchResults: sortedTerms,
 	}
 }
 
@@ -258,7 +259,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.performSearch(text)
 	}
 
-	_performSearch = (query: string) =>
+	_performSearch = (query: string) => {
 		this.setState(() =>
 			executeSearch({
 				text: query,
@@ -268,6 +269,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 				updateRecentSearches: this.props.updateRecentSearches,
 			}),
 		)
+	}
 
 	performSearch = debounce(this._performSearch, 20)
 
@@ -317,7 +319,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.animate(this.headerOpacity, this.animations.headerOpacity, 'end')
 		this.animate(this.searchBarTop, this.animations.searchBarTop, 'end')
 		this.animate(this.containerHeight, this.animations.containerHeight, 'end')
-		this.resetFilters()
 		this.setState(() => ({searchActive: true}))
 	}
 
@@ -335,6 +336,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			searchResults: [],
 			searchPerformed: false,
 		}))
+		this.resetFilters()
 	}
 
 	openFilterView = () => {
