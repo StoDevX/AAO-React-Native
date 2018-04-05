@@ -379,7 +379,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			return <LoadingView text="Loading Course Data…" />
 		}
 
-		if (this.props.courseDataState == 'not-loaded') {
+		if (this.props.courseDataState === 'not-loaded') {
 			const msg = this.props.isConnected
 				? PROMPT_TEXT
 				: PROMPT_TEXT.concat(`\n\n${NETWORK_WARNING}`)
