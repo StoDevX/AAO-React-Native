@@ -471,11 +471,12 @@
   dependencies:
     prop-types "^15.5.10"
 
-"@mapbox/react-native-mapbox-gl@6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@mapbox/react-native-mapbox-gl/-/react-native-mapbox-gl-6.1.0.tgz#111b71b532682ce786bd5c7790c43ea17700adf2"
+"@mapbox/react-native-mapbox-gl@6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@mapbox/react-native-mapbox-gl/-/react-native-mapbox-gl-6.1.1.tgz#d4a791d5ba51f25c837991b5c7a48ede9d5b5f49"
   dependencies:
     "@turf/helpers" "4.6.0"
+    underscore "^1.8.3"
 
 "@octokit/rest@^14.0.4":
   version "14.0.9"
@@ -6253,6 +6254,10 @@ ultron@1.0.x:
 ultron@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/ultron/-/ultron-1.1.0.tgz#b07a2e6a541a815fc6a34ccd4533baec307ca864"
+
+underscore@^1.8.3:
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
 
 unpipe@~1.0.0:
   version "1.0.0"
