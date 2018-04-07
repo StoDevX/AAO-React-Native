@@ -5171,9 +5171,9 @@ react-native-linear-gradient@2.4.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-network-info@3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-3.1.0.tgz#8d833d430f636400a33528c717f21b2c7f507024"
+react-native-network-info@3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-3.2.2.tgz#93625587ab5ae31b7c853f37ec2b75a0af6c936d"
 
 react-native-restart@0.0.6:
   version "0.0.6"
