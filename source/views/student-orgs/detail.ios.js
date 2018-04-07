@@ -9,7 +9,7 @@ import type {TopLevelViewPropsType} from '../types'
 import {openUrl} from '../components/open-url'
 import {sendEmail} from '../components/send-email'
 import {cleanOrg, showNameOrEmail} from './util'
-import {SelectableCell} from '../sis/student-work/selectable'
+import {SelectableCell} from '../components/cells/selectable'
 
 const styles = StyleSheet.create({
 	name: {
