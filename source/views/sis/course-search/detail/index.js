@@ -116,22 +116,21 @@ function Schedule({course}: {course: CourseType}) {
 }
 
 function Description({course}: {course: CourseType}) {
-	const androidDescription = (
-		<Cell
-			cellContentView={
-				<Text selectable={true} style={styles.chunk}>
-					{course.description[0]}
-				</Text>
-			}
-		/>		
-	)
-	const iosDescription = <SelectableCell text={job.description} />
-	const description = Platform.OS === 'ios' ? iosDescription : androidDescription
+	const description =
+		Platform.OS === 'ios' ? (
+			<SelectableCell text={course.description[0]} />
+		) : (
+			<Cell
+				cellContentView={
+					<Text selectable={true} style={styles.chunk}>
+						{course.description[0]}
+					</Text>
+				}
+			/>
+		)
 
 	return course.description ? (
-		<Section header="DESCRIPTION">
-			{description}
-		</Section>
+		<Section header="DESCRIPTION">{description}</Section>
 	) : null
 }
 
