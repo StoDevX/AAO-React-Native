@@ -260,15 +260,14 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	_performSearch = (query: string) => {
-		this.setState(() =>
-			executeSearch({
-				text: query,
-				filters: this.props.filters,
-				applyFilters: this.props.applyFilters,
-				allCourses: this.props.allCourses,
-				updateRecentSearches: this.props.updateRecentSearches,
-			}),
-		)
+		const results = executeSearch({
+			text: query,
+			filters: this.props.filters,
+			applyFilters: this.props.applyFilters,
+			allCourses: this.props.allCourses,
+			updateRecentSearches: this.props.updateRecentSearches,
+		})
+		this.setState(() => results)
 	}
 
 	performSearch = debounce(this._performSearch, 20)
