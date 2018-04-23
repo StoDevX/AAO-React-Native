@@ -150,7 +150,7 @@
     "babel-eslint": "8.2.2",
     "babel-jest": "22.4.1",
     "babel-plugin-transform-remove-console": "6.9.1",
-    "babel-preset-react-native": "4.0.0",
+    "babel-preset-react-native": "5.0.0",
     "bugsnag-sourcemaps": "1.0.3",
     "danger": "3.4.5",
     "danger-plugin-yarn": "1.2.1",
