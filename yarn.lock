@@ -1931,9 +1931,9 @@ currently-unhandled@^0.4.1:
   dependencies:
     array-find-index "^1.0.1"
 
-danger-plugin-yarn@1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/danger-plugin-yarn/-/danger-plugin-yarn-1.2.1.tgz#e161d898ab3ddd5a80695c38471205476af9da81"
+danger-plugin-yarn@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/danger-plugin-yarn/-/danger-plugin-yarn-1.3.0.tgz#59b707c866bf40c0b1e2b2b945a8287c75366453"
   dependencies:
     date-fns "^1.28.5"
     lodash.flatten "^4.4.0"
