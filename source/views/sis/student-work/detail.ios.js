@@ -7,7 +7,7 @@ import moment from 'moment'
 import * as c from '../../components/colors'
 import type {JobType} from './types'
 import {cleanJob, getContactName} from './clean-job'
-import {SelectableCell} from './selectable'
+import {SelectableCell} from '../../components/cells/selectable'
 import glamorous from 'glamorous-native'
 
 const styles = StyleSheet.create({

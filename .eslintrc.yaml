@@ -34,6 +34,7 @@ rules:
   curly: [warn, multi-line]
   default-case: error
   guard-for-in: error
+  eqeqeq: [error, always, {'null': ignore}]
   linebreak-style: [error, unix]
   new-cap: off
   no-await-in-loop: warn

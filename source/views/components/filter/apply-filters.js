@@ -32,7 +32,7 @@ export function applyToggleFilter(filter: ToggleType, item: any): boolean {
 	// Dereference the value-to-check
 	const itemValue = item[filter.apply.key]
 	return filter.apply.trueEquivalent
-		? itemValue == filter.apply.trueEquivalent
+		? itemValue === filter.apply.trueEquivalent
 		: Boolean(itemValue)
 }
 
