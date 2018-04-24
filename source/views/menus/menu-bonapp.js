@@ -30,8 +30,8 @@ import delay from 'delay'
 import retry from 'p-retry'
 const CENTRAL_TZ = 'America/Winnipeg'
 
-const bonappMenuBaseUrl = 'http://legacy.cafebonappetit.com/api/2/menus'
-const bonappCafeBaseUrl = 'http://legacy.cafebonappetit.com/api/2/cafes'
+const bonappMenuBaseUrl = 'https://legacy.cafebonappetit.com/api/2/menus'
+const bonappCafeBaseUrl = 'https://legacy.cafebonappetit.com/api/2/cafes'
 const fetchJsonQuery = (url, query) =>
 	fetchJson(`${url}?${qs.stringify(query)}`)
 const entities = new AllHtmlEntities()
