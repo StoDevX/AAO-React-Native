@@ -98,7 +98,7 @@ buttons:
   - title: Open the Form
     action: open-url
     params:
-      url: http://dlweb.megamation.biz/stolaf/DLWEB.php/O4W_WO_NEW
+      url: http://dlweb.megamation.com/stolaf/DLWEB.php/O4W_WO_NEW
     # action: open-form
     # params:
     #   form: &form
