@@ -77,11 +77,6 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>legacy.cafebonappetit.com</key>
-			<dict>
-				<key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
 			<key>localhost</key>
 			<dict>
 				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
