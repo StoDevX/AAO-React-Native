@@ -109,7 +109,7 @@
     "moment": "2.22.1",
     "moment-timezone": "0.5.16",
     "p-props": "1.2.0",
-    "p-retry": "1.0.0",
+    "p-retry": "2.0.0",
     "querystring": "0.2.0",
     "react": "16.3.0-alpha.1",
     "react-markdown": "2.5.1",
