@@ -62,7 +62,7 @@ async function runAndroid() {
 		return
 	}
 
-	if (!await didNativeDependencyChange()) {
+	if (!(await didNativeDependencyChange())) {
 		// nothing changed to make this worth analyzing
 		return
 	}
@@ -84,7 +84,7 @@ async function runiOS() {
 		return
 	}
 
-	if (!await didNativeDependencyChange()) {
+	if (!(await didNativeDependencyChange())) {
 		// nothing changed to make this worth analyzing
 		return
 	}
