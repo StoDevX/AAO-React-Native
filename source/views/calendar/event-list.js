@@ -27,7 +27,7 @@ type Props = TopLevelViewPropsType & {
 	poweredBy: ?PoweredBy,
 }
 
-export class EventList extends React.PureComponent<Props> {
+export class EventList extends React.Component<Props> {
 	groupEvents = (events: EventType[], now: moment): any => {
 		// the proper return type is $ReadOnlyArray<{title: string, data: $ReadOnlyArray<EventType>}>
 		const grouped = groupBy(events, event => {

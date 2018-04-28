@@ -76,7 +76,7 @@ type State = {
 	disabled: boolean,
 }
 
-export class EventDetail extends React.PureComponent<Props, State> {
+export class EventDetail extends React.Component<Props, State> {
 	static navigationOptions = ({navigation}: any) => {
 		const {event} = navigation.state.params
 		return {
