@@ -17,7 +17,11 @@ const messages = [
 
 export function UnofficialAppNotice() {
 	return (
-		<glamorous.View justifyContent="center" marginBottom={10} marginHorizontal={10}>
+		<glamorous.View
+			justifyContent="center"
+			marginBottom={10}
+			marginHorizontal={10}
+		>
 			<glamorous.View backgroundColor="rgba(0,0,0,0.05)" borderRadius={7}>
 				<glamorous.Text color={c.black25Percent} padding={8} textAlign="center">
 					{sample(messages)}
