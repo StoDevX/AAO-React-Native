@@ -17,11 +17,16 @@ const styles = StyleSheet.create({
 	customTextInput: {
 		flex: 1,
 	},
-	loginCell: {
+	singlelineCell: {
 		height: Platform.OS === 'android' ? 65 : 44,
 		alignItems: 'stretch',
 		paddingTop: 0,
 		paddingBottom: 0,
+	},
+	multilineCell: {
+		alignItems: 'stretch',
+		paddingTop: 10,
+		paddingBottom: 10,
 	},
 })
 
@@ -29,6 +34,7 @@ type Props = {
 	label?: string,
 	_ref: any => any,
 	disabled: boolean,
+	multiline?: boolean,
 	onChangeText: string => any,
 	onSubmitEditing: string => any,
 	placeholder: string,
@@ -84,6 +90,7 @@ export class CellTextField extends React.Component<Props> {
 						autoCorrect={false}
 						clearButtonMode="while-editing"
 						disabled={this.props.disabled}
+						multiline={this.props.multiline || false}
 						onChangeText={this.props.onChangeText}
 						onSubmitEditing={this.onSubmit}
 						placeholder={this.props.placeholder}
@@ -95,7 +102,9 @@ export class CellTextField extends React.Component<Props> {
 					/>
 				}
 				cellContentView={label}
-				contentContainerStyle={styles.loginCell}
+				contentContainerStyle={
+					this.props.multiline ? styles.multilineCell : styles.singlelineCell
+				}
 			/>
 		)
 	}
