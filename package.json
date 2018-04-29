@@ -142,6 +142,7 @@
     "timers": "0.1.1",
     "titlecase": "1.1.2",
     "url": "0.11.0",
+    "wordwrap": "1.0.0",
     "xml2js": "0.4.19"
   },
   "devDependencies": {
