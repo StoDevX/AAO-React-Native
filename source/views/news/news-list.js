@@ -20,7 +20,7 @@ type Props = TopLevelViewPropsType & {
 	onRefresh: () => any,
 	entries: StoryType[],
 	loading: boolean,
-	thumbnail: number,
+	thumbnail: false | number,
 }
 
 export class NewsList extends React.PureComponent<Props> {
@@ -28,7 +28,11 @@ export class NewsList extends React.PureComponent<Props> {
 		return openUrl(url)
 	}
 
-	renderSeparator = () => <ListSeparator spacing={{left: 101}} />
+	renderSeparator = () => (
+		<ListSeparator
+			spacing={{left: this.props.thumbnail === false ? undefined : 101}}
+		/>
+	)
 
 	renderItem = ({item}: {item: StoryType}) => (
 		<NewsRow

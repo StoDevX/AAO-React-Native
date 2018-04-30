@@ -15,7 +15,7 @@ type Props = TopLevelViewPropsType & {
 	url: string,
 	query?: Object,
 	mode: 'rss' | 'wp-json',
-	thumbnail: number,
+	thumbnail: false | number,
 }
 
 type State = {
