@@ -35,7 +35,7 @@ export default TabNavigator(
 					navigation={navigation}
 					query={{per_page: 10, _embed: true}}
 					thumbnail={newsImages.oleville}
-					url="http://oleville.com/wp-json/wp/v2/posts/"
+					url="https://oleville.com/wp-json/wp/v2/posts/"
 				/>
 			),
 			navigationOptions: {
@@ -68,7 +68,7 @@ export default TabNavigator(
 					name="PoliticOle"
 					navigation={navigation}
 					thumbnail={newsImages.politicole}
-					url="http://oleville.com/politicole/feed/"
+					url="https://oleville.com/politicole/feed/"
 				/>
 			),
 			navigationOptions: {
