@@ -12,7 +12,6 @@ import moment from 'moment-timezone'
 import {ListSeparator, ListSectionHeader} from '../components/list'
 import {NoticeView} from '../components/notice'
 import EventRow from './event-row'
-import {cleanEvent} from './clean-event'
 
 const FullWidthSeparator = props => (
 	<ListSeparator fullWidth={true} {...props} />
@@ -49,7 +48,6 @@ export class EventList extends React.Component<Props> {
 
 	onPressEvent = (event: EventType) => {
 		let detailView = this.props.detailView || 'EventDetailView'
-		event = cleanEvent(event)
 		trackCalendarEventOpen(`${event.title} (${event.startTime.toISOString()})`)
 		this.props.navigation.navigate(detailView, {
 			event,
