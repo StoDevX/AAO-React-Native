@@ -221,7 +221,6 @@ if (propFile.canRead()) {
 }
 
 dependencies {
-    compile project(':react-native-onesignal')
     // please keep this list sorted
     implementation project(':bugsnag-react-native')
     implementation project(':mapbox-react-native-mapbox-gl')
@@ -232,6 +231,7 @@ dependencies {
     implementation project(':react-native-keychain')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-network-info')
+    compile project(':react-native-onesignal')
     implementation project(':react-native-restart')
     implementation project(':react-native-vector-icons')
     // this is for react-native itself
