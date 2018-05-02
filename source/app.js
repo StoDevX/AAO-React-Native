@@ -14,6 +14,7 @@ import {
 	stopStatusBarColorChanger,
 } from './views/components/open-url'
 import type {NavigationState} from 'react-navigation'
+import OneSignal from 'react-native-onesignal'
 
 const store = makeStore()
 initRedux(store)
@@ -36,11 +37,32 @@ type Props = {}
 export default class App extends React.Component<Props> {
 	componentDidMount() {
 		startStatusBarColorChanger()
+		OneSignal.addEventListener('received', this.onReceived)
+    OneSignal.addEventListener('opened', this.onOpened)
+    OneSignal.addEventListener('ids', this.onIds)
 	}
 
 	componentWillUnmount() {
 		stopStatusBarColorChanger()
+		OneSignal.removeEventListener('received', this.onReceived)
+		OneSignal.removeEventListener('opened', this.onOpened)
+		OneSignal.removeEventListener('ids', this.onIds)
 	}
+
+	onReceived(notification) {
+      console.log("Notification received: ", notification);
+  }
+
+  onOpened(openResult) {
+    console.log('Message: ', openResult.notification.payload.body);
+    console.log('Data: ', openResult.notification.payload.additionalData);
+    console.log('isActive: ', openResult.notification.isAppInFocus);
+    console.log('openResult: ', openResult);
+  }
+
+  onIds(device) {
+		console.log('Device info: ', device);
+  }
 
 	trackScreenChanges(
 		prevState: NavigationState,
