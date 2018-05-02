@@ -38,8 +38,8 @@ export default class App extends React.Component<Props> {
 	componentDidMount() {
 		startStatusBarColorChanger()
 		OneSignal.addEventListener('received', this.onReceived)
-    OneSignal.addEventListener('opened', this.onOpened)
-    OneSignal.addEventListener('ids', this.onIds)
+		OneSignal.addEventListener('opened', this.onOpened)
+		OneSignal.addEventListener('ids', this.onIds)
 	}
 
 	componentWillUnmount() {
@@ -49,20 +49,20 @@ export default class App extends React.Component<Props> {
 		OneSignal.removeEventListener('ids', this.onIds)
 	}
 
-	onReceived(notification) {
-      console.log("Notification received: ", notification);
-  }
+	onReceived(notification: any) {
+		console.log('Notification received: ', notification)
+	}
 
-  onOpened(openResult) {
-    console.log('Message: ', openResult.notification.payload.body);
-    console.log('Data: ', openResult.notification.payload.additionalData);
-    console.log('isActive: ', openResult.notification.isAppInFocus);
-    console.log('openResult: ', openResult);
-  }
+	onOpened(openResult: any) {
+		console.log('Message: ', openResult.notification.payload.body)
+		console.log('Data: ', openResult.notification.payload.additionalData)
+		console.log('isActive: ', openResult.notification.isAppInFocus)
+		console.log('openResult: ', openResult)
+	}
 
-  onIds(device) {
-		console.log('Device info: ', device);
-  }
+	onIds(device: any) {
+		console.log('Device info: ', device)
+	}
 
 	trackScreenChanges(
 		prevState: NavigationState,
