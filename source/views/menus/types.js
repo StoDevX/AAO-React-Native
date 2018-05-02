@@ -78,9 +78,20 @@ export type MenuForDayType = {
 	cafes: {[key: string]: CafeMenuType},
 }
 
+export type EditedMenuForDayType = {
+	date: string,
+	cafe: CafeMenuType,
+}
+
 export type BonAppMenuInfoType = {
 	cor_icons: {[key: string]: Object},
 	days: MenuForDayType[],
+	items: MenuItemContainerType,
+}
+
+export type EditedBonAppMenuInfoType = {
+	cor_icons: {[key: string]: Object},
+	days: EditedMenuForDayType[],
 	items: MenuItemContainerType,
 }
 
@@ -99,41 +110,47 @@ export type ItemCorIconMapType =
 	| Array<void>
 export type MasterCorIconMapType = {[key: NumericStringType]: CorIconType}
 
-export type BonAppCafeInfoType = {
-	cafes: {
-		[key: string]: {
-			name: string,
-			address: string,
-			city: string,
-			state: string,
-			zip: string,
-			latitude: string,
-			longitude: string,
-			description: string,
-			message: string,
-			eod: string,
-			timezone: string,
-			menu_type: string,
-			menu_html: string,
-			weekly_schedule: string,
-			days: [
+type BonAppSingleCafeInfo = {
+	name: string,
+	address: string,
+	city: string,
+	state: string,
+	zip: string,
+	latitude: string,
+	longitude: string,
+	description: string,
+	message: string,
+	eod: string,
+	timezone: string,
+	menu_type: string,
+	menu_html: string,
+	weekly_schedule: string,
+	days: [
+		{
+			date: string,
+			dayparts: [
 				{
-					date: string,
-					dayparts: [
-						{
-							id: string,
-							starttime: string,
-							endtime: string,
-							message: string,
-							label: string,
-						},
-					],
-					status: 'open' | 'closed' | string,
-					message: false | string,
+					id: string,
+					starttime: string,
+					endtime: string,
+					message: string,
+					label: string,
 				},
 			],
+			status: 'open' | 'closed' | string,
+			message: false | string,
 		},
+	],
+}
+
+export type BonAppCafeInfoType = {
+	cafes: {
+		[key: string]: BonAppSingleCafeInfo,
 	},
+}
+
+export type EditedBonAppCafeInfoType = {
+	cafe: BonAppSingleCafeInfo,
 }
 
 export type ProcessedMealType = {|
