@@ -231,7 +231,7 @@ dependencies {
     implementation project(':react-native-keychain')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-network-info')
-    compile project(':react-native-onesignal')
+    implementation project(':react-native-onesignal')
     implementation project(':react-native-restart')
     implementation project(':react-native-vector-icons')
     // this is for react-native itself
