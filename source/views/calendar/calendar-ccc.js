@@ -19,6 +19,7 @@ type Props = TopLevelViewPropsType & {
 		| {type: 'google', id: string}
 		| {type: 'reason', url: string}
 		| {type: 'ics', url: string},
+	detailView?: string,
 	eventMapper?: EventType => EventType,
 	poweredBy: ?PoweredBy,
 }
@@ -114,6 +115,7 @@ export class CccCalendarView extends React.Component<Props, State> {
 
 		return (
 			<EventList
+				detailView={this.props.detailView}
 				events={this.state.events}
 				message={this.state.error ? this.state.error.message : null}
 				navigation={this.props.navigation}
