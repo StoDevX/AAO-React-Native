@@ -66,8 +66,8 @@ export default class App extends React.Component<Props> {
 		return (
 			<Provider store={store}>
 				<AppNavigator
-					persistenceKey="NavState"
 					onNavigationStateChange={this.trackScreenChanges}
+					persistenceKey="NavState"
 				/>
 			</Provider>
 		)
