@@ -65,24 +65,6 @@
     "semi": false,
     "overrides": [
       {
-        "files": "*.md",
-        "options": {
-          "requirePragma": true
-        }
-      },
-      {
-        "files": "*.json",
-        "options": {
-          "requirePragma": true
-        }
-      },
-      {
-        "files": "flow-typed/**",
-        "options": {
-          "requirePragma": true
-        }
-      },
-      {
         "files": "images/**",
         "options": {
           "requirePragma": true
