@@ -116,14 +116,15 @@ function Schedule({course}: {course: CourseType}) {
 }
 
 function Description({course}: {course: CourseType}) {
+	let descText = course.description ? course.description[0] : ''
 	const description =
 		Platform.OS === 'ios' ? (
-			<SelectableCell text={course.description[0]} />
+			<SelectableCell text={descText} />
 		) : (
 			<Cell
 				cellContentView={
 					<Text selectable={true} style={styles.chunk}>
-						{course.description[0]}
+						{descText}
 					</Text>
 				}
 			/>
