@@ -1,30 +1,10 @@
 // @flow
 
-import {Platform, Linking, StatusBar} from 'react-native'
+import {Platform, Linking} from 'react-native'
 
 import {tracker} from '../../analytics'
 import SafariView from 'react-native-safari-view'
 import {CustomTabs} from 'react-native-custom-tabs'
-
-const iosOnShowListener = () => StatusBar.setBarStyle('dark-content')
-const iosOnDismissListener = () => StatusBar.setBarStyle('light-content')
-export function startStatusBarColorChanger() {
-	return SafariView.isAvailable()
-		.then(() => {
-			SafariView.addEventListener('onShow', iosOnShowListener)
-			SafariView.addEventListener('onDismiss', iosOnDismissListener)
-		})
-		.catch(() => {})
-}
-
-export function stopStatusBarColorChanger() {
-	return SafariView.isAvailable()
-		.then(() => {
-			SafariView.removeEventListener('onShow', iosOnShowListener)
-			SafariView.removeEventListener('onDismiss', iosOnDismissListener)
-		})
-		.catch(() => {})
-}
 
 function genericOpen(url: string) {
 	return Linking.canOpenURL(url)

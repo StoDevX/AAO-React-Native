@@ -1,7 +1,7 @@
 // @flow
 
 import {Platform, StyleSheet} from 'react-native'
-import {StackNavigator} from 'react-navigation'
+import {createStackNavigator} from 'react-navigation'
 import * as c from './views/components/colors'
 
 import CalendarView, {EventDetail as EventDetailView} from './views/calendar'
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const AppNavigator = StackNavigator(
+export const AppNavigator = createStackNavigator(
 	{
 		HomeView: {screen: HomeView},
 		BuildingHoursDetailView: {screen: BuildingHoursDetailView},
@@ -107,7 +107,7 @@ export const AppNavigator = StackNavigator(
 	{
 		navigationOptions: {
 			headerStyle: styles.header,
-			headerTintColor: c.white,
+			headerTintColor: c.black,
 		},
 		cardStyle: styles.card,
 	},
