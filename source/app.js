@@ -9,10 +9,6 @@ import {makeStore, initRedux} from './flux'
 import bugsnag from './bugsnag'
 import {tracker} from './analytics'
 import {AppNavigator} from './navigation'
-import {
-	startStatusBarColorChanger,
-	stopStatusBarColorChanger,
-} from './views/components/open-url'
 import type {NavigationState} from 'react-navigation'
 
 const store = makeStore()
@@ -34,14 +30,6 @@ function getCurrentRouteName(navigationState: NavigationState): ?string {
 type Props = {}
 
 export default class App extends React.Component<Props> {
-	componentDidMount() {
-		startStatusBarColorChanger()
-	}
-
-	componentWillUnmount() {
-		stopStatusBarColorChanger()
-	}
-
 	trackScreenChanges(
 		prevState: NavigationState,
 		currentState: NavigationState,

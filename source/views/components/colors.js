@@ -49,7 +49,8 @@ export const semitransparentGray = 'rgba(0,0,0,0.2)'
 
 // MARK: Oleville colors
 export const theLatest = '#00BFFF'
-export const olevilleGold = '#F7B600'
+export const olevilleGold = '#fbc02d'
+export const darkGold = '#c49000'
 export const olevilleBackground = '#F0F0E1'
 
 // MARK: KSTO Colors
