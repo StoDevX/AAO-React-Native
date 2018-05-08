@@ -107,7 +107,7 @@ export const AppNavigator = StackNavigator(
 	{
 		navigationOptions: {
 			headerStyle: styles.header,
-			headerTintColor: c.white,
+			headerTintColor: c.black,
 		},
 		cardStyle: styles.card,
 	},
