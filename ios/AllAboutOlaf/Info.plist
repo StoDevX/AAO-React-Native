@@ -69,10 +69,6 @@
 	<string>1</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>KSTORadio</string>
-	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -81,17 +77,7 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>legacy.cafebonappetit.com</key>
-			<dict>
-				<key>NSThirdPartyExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
 			<key>localhost</key>
-			<dict>
-				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-			<key>oleville.com</key>
 			<dict>
 				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
@@ -100,6 +86,8 @@
 	</dict>
 	<key>NSCalendarsUsageDescription</key>
 	<string>We use your calendar to add events to your calendar so that you remember what you wanted to attend.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We only use your location when you would expect us to, and never when you aren&apos;t using the app.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We only use your location when you would expect us to, and never when you aren&apos;t using the app.</string>
 	<key>UIAppFonts</key>
@@ -120,7 +108,7 @@
 	<key>UIStatusBarHidden</key>
 	<false/>
 	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleLightContent</string>
+	<string>UIStatusBarStyleDarkContent</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -11,4 +11,4 @@ export const DEPT_DATA =
 	'https://stodevx.github.io/course-data/data-lists/valid_departments.json'
 
 export const TIMES_DATA =
-	'https://stodevx.github.io/course-data/data-lists/valid-times.json'
+	'https://stodevx.github.io/course-data/data-lists/valid_times.json'
