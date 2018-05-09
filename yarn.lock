@@ -5286,6 +5286,16 @@ react-native-network-info@3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-3.2.2.tgz#93625587ab5ae31b7c853f37ec2b75a0af6c936d"
 
+react-native-paper@1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-1.7.0.tgz#4cdb2fb11d0a8e448e57afc2952ea0d9c6fb855c"
+  dependencies:
+    color "^2.0.1"
+    create-react-context "^0.2.2"
+    deepmerge "^2.1.0"
+    hoist-non-react-statics "^2.5.0"
+    react-lifecycles-compat "^3.0.2"
+
 react-native-paper@=1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-1.4.0.tgz#33bd477cde1468b63e60bdb0c9a500822d03cdca"
