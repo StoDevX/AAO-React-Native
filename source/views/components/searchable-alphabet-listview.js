@@ -5,6 +5,7 @@ import {StyleSheet, Platform, View} from 'react-native'
 import {StyledAlphabetListView} from '../components/alphabet-listview'
 import debounce from 'lodash/debounce'
 import {SearchBar} from '../components/searchbar'
+import {Searchbar as PaperSearchBar} from 'react-native-paper'
 
 export const LIST_HEADER_HEIGHT = Platform.OS === 'ios' ? 42 : 60
 
@@ -14,34 +15,70 @@ const styles = StyleSheet.create({
 	},
 })
 
+type SearchProps = {
+	getRef?: any,
+	placeholder?: string,
+	onChangeText: string => any,
+}
+
+type SearchState = {
+	input: string,
+}
+
+class AndroidSearchBar extends React.PureComponent<SearchProps, SearchState> {
+	state = {
+		input: '',
+	}
+
+	updateText = (input: string) => {
+		this.setState(() => ({input: input}), () => this.props.onChangeText(this.state.input))
+	}
+
+	render() {
+		return (
+			<PaperSearchBar
+				ref={this.props.getRef}
+				onChangeText={this.updateText}
+				onIconPress={() => {}}
+				placeholder={this.props.placeholder || 'Search'}
+				value={this.state.input}
+			/>
+		)
+	}
+}
+
+
 type Props = any
 
 export class SearchableAlphabetListView extends React.PureComponent<Props> {
 	searchBar: any = null
 
-	_performSearch = (text: string | Object) => {
-		// Android clear button returns an object
-		if (typeof text !== 'string') {
-			return this.props.onSearch(null)
-		}
-
-		return this.props.onSearch(text)
+	performSearch = (text: string) => {
+		this.props.onSearch(text)
 	}
 
-	// We need to make the search run slightly behind the UI,
-	// so I'm slowing it down by 50ms. 0ms also works, but seems
-	// rather pointless.
-	performSearch = debounce(this._performSearch, 50)
+	onSearchButtonPress = () => {
+		this.searchBar.blur()
+	}
 
 	render() {
-		return (
-			<View style={styles.wrapper}>
-				<SearchBar
+		let search = Platform.OS === 'ios' ? (
+			<SearchBar
 					getRef={ref => (this.searchBar = ref)}
 					onChangeText={this.performSearch}
-					// if we don't use the arrow function here, searchBar ref is null...
-					onSearchButtonPress={() => this.searchBar.unFocus()}
+					onSearchButtonPress={this.onSearchButtonPress}
 				/>
+			) : (
+				<AndroidSearchBar
+					getRef={ref => (this.searchBar = ref)}
+					onChangeText={this.performSearch}
+					onSearchButtonPress={this.onSearchButtonPress}
+				/>
+			)
+
+		return (
+			<View style={styles.wrapper}>
+				{search}
 				<StyledAlphabetListView
 					headerHeight={
 						Platform.OS === 'ios'
@@ -52,7 +89,6 @@ export class SearchableAlphabetListView extends React.PureComponent<Props> {
 					keyboardShouldPersistTaps="never"
 					showsVerticalScrollIndicator={false}
 					{...this.props}
-					style={[this.props.style, {marginTop: LIST_HEADER_HEIGHT}]}
 				/>
 			</View>
 		)
