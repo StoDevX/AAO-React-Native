@@ -6,7 +6,7 @@ import {StyledAlphabetListView} from '../components/alphabet-listview'
 import debounce from 'lodash/debounce'
 import {SearchBar} from '../components/searchbar'
 
-export const LIST_HEADER_HEIGHT = Platform.OS === 'ios' ? 42 : 0
+export const LIST_HEADER_HEIGHT = Platform.OS === 'ios' ? 42 : 60
 
 const styles = StyleSheet.create({
 	wrapper: {
@@ -52,6 +52,7 @@ export class SearchableAlphabetListView extends React.PureComponent<Props> {
 					keyboardShouldPersistTaps="never"
 					showsVerticalScrollIndicator={false}
 					{...this.props}
+					style={[this.props.style, {marginTop: LIST_HEADER_HEIGHT}]}
 				/>
 			</View>
 		)
