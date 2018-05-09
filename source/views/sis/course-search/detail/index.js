@@ -1,11 +1,12 @@
 // @flow
 
 import React from 'react'
-import {StyleSheet, Text} from 'react-native'
+import {StyleSheet, Text, Platform} from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
 import glamorous from 'glamorous-native'
 import {Badge} from '../../../building-hours/detail/badge'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
+import {SelectableCell} from '../../../components/cells/selectable'
 import {convertTimeStringsToOfferings} from 'sto-sis-time-parser'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
@@ -115,16 +116,22 @@ function Schedule({course}: {course: CourseType}) {
 }
 
 function Description({course}: {course: CourseType}) {
-	return course.description ? (
-		<Section header="DESCRIPTION" sectionTintColor={c.sectionBgColor}>
+	let descText = course.description ? course.description[0] : ''
+	const description =
+		Platform.OS === 'ios' ? (
+			<SelectableCell text={descText} />
+		) : (
 			<Cell
 				cellContentView={
 					<Text selectable={true} style={styles.chunk}>
-						{course.description[0]}
+						{descText}
 					</Text>
 				}
 			/>
-		</Section>
+		)
+
+	return course.description ? (
+		<Section header="DESCRIPTION">{description}</Section>
 	) : null
 }
 
