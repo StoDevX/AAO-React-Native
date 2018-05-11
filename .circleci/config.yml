@@ -161,6 +161,7 @@ jobs:
       JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
     steps:
       - checkout
+      - run: *bail-if-data-only
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - run: mkdir -p logs/ test-results/jest/
