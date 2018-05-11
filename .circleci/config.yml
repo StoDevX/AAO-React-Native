@@ -147,6 +147,7 @@ jobs:
       task: JS-flow
     steps:
       - checkout
+      - run: *bail-if-data-only
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - run: mkdir -p logs/
