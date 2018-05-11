@@ -304,6 +304,7 @@ jobs:
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
+      - run: *bail-if-data-only
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
@@ -338,6 +339,7 @@ jobs:
       task: JS-bundle-ios
     steps:
       - checkout
+      - run: *bail-if-data-only
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - run: mkdir -p logs/
