@@ -243,6 +243,7 @@ jobs:
       FASTLANE_DISABLE_ANIMATION: '1'
     steps:
       - checkout
+      - run: *bail-if-data-only
       - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
@@ -279,6 +280,7 @@ jobs:
       task: JS-bundle-android
     steps:
       - checkout
+      - run: *bail-if-data-only
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - run: mkdir -p logs/
