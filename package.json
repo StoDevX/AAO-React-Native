@@ -117,7 +117,7 @@
     "react-redux": "5.0.7",
     "redux": "3.7.2",
     "redux-logger": "3.0.6",
-    "redux-promise": "0.5.3",
+    "redux-promise": "0.6.0",
     "redux-thunk": "2.2.0",
     "semver": "5.5.0",
     "sto-sis-time-parser": "2.3.3",
