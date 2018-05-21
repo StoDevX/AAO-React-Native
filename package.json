@@ -155,7 +155,7 @@
     "pify": "3.0.0",
     "prettier": "1.12.1",
     "pretty-bytes": "5.0.0",
-    "pretty-quick": "1.5.0",
+    "pretty-quick": "1.5.1",
     "prop-types": "15.6.1",
     "react-test-renderer": "16.3.2",
     "string-natural-compare": "2.0.2",
