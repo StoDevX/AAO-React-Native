@@ -157,7 +157,7 @@
     "pretty-bytes": "5.0.0",
     "pretty-quick": "1.6.0",
     "prop-types": "15.6.1",
-    "react-test-renderer": "16.3.2",
+    "react-test-renderer": "16.4.0",
     "string-natural-compare": "2.0.2",
     "strip-ansi": "4.0.0",
     "xcode": "1.0.0"
