@@ -18,19 +18,20 @@ schedules:
     stops:
       - City Hall on Washington
       - Econo Foods
-      - Library
       - Carleton College
-      - St. Olaf College
-      - Greenvale Apartments
       - Northfield Estates
       - Viking Terrace
-      - Northfield Retirement Community
+      - Greenvale Apartments
+      - South Oak Apartments
       - Ensley Apartments
+      - Northfield Manor
       - St. Olaf College
+      - Library
       - City Hall on Washington
     times:
-      - [ '6:00am',  '6:01am',  '6:03am',  '6:05am',  '6:12am',  '6:17am',  '6:19am',  '6:21am',     false,  '6:25am',  '6:29am',  '6:40am']
-      - [ '6:45am',  '6:46am',  '6:48am',  '6:50am',  '6:57am',  '7:02am',  '7:04am',  '7:06am',     false,  '7:10am',  '7:14am',  '7:25am']
+      - [ '6:00am',  '6:01am',  '6:06am',  '6:10am',  '6:13am',  '6:16am',  '6:18am',  '6:21am',  '6:25am',  '6:31am',  '6:38am',  '6:40am']
+      - [ '6:45am',  '6:46am',  '6:51am',  '6:55am',  '6:58am',  '7:01am',  '7:03am',  '7:06am',  '7:10am',  '7:16am',  '7:23am',  '7:25am']
+
       - [ '7:30am',  '7:31am',  '7:33am',  '7:35am',  '7:42am',  '7:47am',  '7:49am',  '7:51am',  '7:53am',  '7:55am',  '7:59am',  '8:10am']
       - [ '8:15am',  '8:16am',  '8:18am',  '8:20am',  '8:27am',  '8:32am',  '8:34am',  '8:36am',  '8:38am',  '8:40am',  '8:44am',  '8:55am']
       - [ '9:00am',  '9:01am',  '9:03am',  '9:05am',  '9:12am',  '9:17am',  '9:19am',  '9:21am',  '9:23am',  '9:25am',  '9:29am',  '9:40am']
