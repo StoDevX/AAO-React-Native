@@ -2502,9 +2502,9 @@ eventemitter3@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-3.0.0.tgz#fc29ecf233bd19fbd527bb4089bbf665dc90c1e3"
 
-events@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/events/-/events-2.0.0.tgz#cbbb56bf3ab1ac18d71c43bb32c86255062769f2"
+events@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/events/-/events-3.0.0.tgz#9a0a0dfaf62893d92b875b8f2698ca4114973e88"
 
 exec-sh@^0.2.0:
   version "0.2.1"
