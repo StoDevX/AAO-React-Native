@@ -55,6 +55,7 @@
     "transformIgnorePatterns": [
       "node_modules/(?!(jest-)?react-native|glamorous-native)"
     ],
+    "testEnvironment": "node",
     "preset": "react-native"
   },
   "prettier": {
