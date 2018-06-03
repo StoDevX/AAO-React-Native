@@ -208,7 +208,7 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 				cell={this.renderRow}
 				cellHeight={
 					ROW_HEIGHT +
-					(Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
+					(Platform.OS === 'ios' ? (11 / 12) * StyleSheet.hairlineWidth : 0)
 				}
 				data={groupedResults}
 				onSearch={this.performSearch}

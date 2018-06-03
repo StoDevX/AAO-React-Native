@@ -210,4 +210,7 @@ const mapDispatch = (dispatch, actualProps: ReactProps): ReduxDispatchProps => {
 	}
 }
 
-export const ConnectedFancyMenu = connect(mapState, mapDispatch)(FancyMenu)
+export const ConnectedFancyMenu = connect(
+	mapState,
+	mapDispatch,
+)(FancyMenu)

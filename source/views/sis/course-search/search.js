@@ -490,7 +490,10 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 	}
 }
 
-export default connect(mapState, mapDispatch)(CourseSearchView)
+export default connect(
+	mapState,
+	mapDispatch,
+)(CourseSearchView)
 
 let styles = StyleSheet.create({
 	bottomContainer: {
