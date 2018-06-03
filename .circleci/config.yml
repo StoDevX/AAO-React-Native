@@ -37,6 +37,8 @@ x-config:
     - &bail-if-data-only
       name: Bail if data-only
       command: |
+        set -v
+        echo $CIRCLE_COMPARE_URL
         circleci step halt
         sudo npm i -g check-if-folder-contents-changed-in-git-commit-range@1
         check-if-folder-contents-changed-in-git-commit-range data/* $CIRCLE_COMPARE_URL
