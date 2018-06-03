@@ -2102,11 +2102,9 @@ del@^2.0.2:
     pinkie-promise "^2.0.0"
     rimraf "^2.2.8"
 
-delay@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/delay/-/delay-2.0.0.tgz#9112eadc03e4ec7e00297337896f273bbd91fae5"
-  dependencies:
-    p-defer "^1.0.0"
+delay@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/delay/-/delay-3.0.0.tgz#97fc5c21028e20616e822ab11838c648808534eb"
 
 delayed-stream@~1.0.0:
   version "1.0.0"
@@ -3776,9 +3774,9 @@ js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
-js-yaml@3.11.0:
-  version "3.11.0"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.11.0.tgz#597c1a8bd57152f26d622ce4117851a51f5ebaef"
+js-yaml@3.12.0:
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.12.0.tgz#eaed656ec8344f10f527c6bfa1b6e2244de167d1"
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
@@ -4567,9 +4565,9 @@ moment-timezone@0.5.17:
   dependencies:
     moment ">= 2.9.0"
 
-moment@2.22.1:
-  version "2.22.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.1.tgz#529a2e9bf973f259c9643d237fda84de3a26e8ad"
+moment@2.22.2:
+  version "2.22.2"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
 "moment@>= 2.9.0":
   version "2.20.1"
@@ -4850,10 +4848,6 @@ osenv@^0.1.4:
   dependencies:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.0"
-
-p-defer@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/p-defer/-/p-defer-1.0.0.tgz#9f6eb182f6c9aa8cd743004a7d4f96b196b0fb0c"
 
 p-finally@^1.0.0:
   version "1.0.0"
@@ -5243,9 +5237,9 @@ react-native-button@2.3.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-calendar-events@1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.5.0.tgz#77d1bef17a8061f1188680d5821b952d90827dc0"
+react-native-calendar-events@1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.6.0.tgz#53c3fb9bb7704c33186deead8dfdad0ffa19c998"
 
 react-native-communications@2.2.1:
   version "2.2.1"
@@ -5617,9 +5611,9 @@ redux-promise@0.6.0:
     flux-standard-action "^2.0.3"
     is-promise "^2.1.0"
 
-redux-thunk@2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-2.2.0.tgz#e615a16e16b47a19a515766133d1e3e99b7852e5"
+redux-thunk@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-2.3.0.tgz#51c2c19a185ed5187aaa9a2d08b666d0d6467622"
 
 redux@3.7.2:
   version "3.7.2"
