@@ -3784,9 +3784,9 @@ js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
-js-yaml@3.11.0:
-  version "3.11.0"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.11.0.tgz#597c1a8bd57152f26d622ce4117851a51f5ebaef"
+js-yaml@3.12.0:
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.12.0.tgz#eaed656ec8344f10f527c6bfa1b6e2244de167d1"
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
@@ -4575,9 +4575,9 @@ moment-timezone@0.5.17:
   dependencies:
     moment ">= 2.9.0"
 
-moment@2.22.1:
-  version "2.22.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.1.tgz#529a2e9bf973f259c9643d237fda84de3a26e8ad"
+moment@2.22.2:
+  version "2.22.2"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
 "moment@>= 2.9.0":
   version "2.20.1"
@@ -5254,9 +5254,9 @@ react-native-button@2.3.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-calendar-events@1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.5.0.tgz#77d1bef17a8061f1188680d5821b952d90827dc0"
+react-native-calendar-events@1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.6.0.tgz#53c3fb9bb7704c33186deead8dfdad0ffa19c998"
 
 react-native-communications@2.2.1:
   version "2.2.1"
