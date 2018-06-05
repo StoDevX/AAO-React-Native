@@ -5678,9 +5678,9 @@ react-native-safe-area-view@^0.7.0:
   dependencies:
     hoist-non-react-statics "^2.3.1"
 
-react-native-search-bar@3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/react-native-search-bar/-/react-native-search-bar-3.4.1.tgz#01f38a0df81c25e60404721c488492eab6266f82"
+react-native-search-bar@3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-search-bar/-/react-native-search-bar-3.4.2.tgz#8606bb1d6b29a26dd5ee86cfae00f7253181736d"
   dependencies:
     prop-types "^15.5.10"
 
