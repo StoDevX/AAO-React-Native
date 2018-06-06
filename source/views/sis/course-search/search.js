@@ -154,6 +154,16 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		applyFilters: applyFiltersToItem,
 	}
 
+	state = {
+		browsing: false,
+		cachedFilters: this.props.filters,
+		dataLoading: true,
+		searchResults: [],
+		searchActive: false,
+		searchPerformed: false,
+		query: '',
+	}
+
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
 		if (prevState.browsing) {
 			return applyFiltersAndQuery({
@@ -178,16 +188,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			allCourses: nextProps.allCourses,
 			updateRecentSearches: nextProps.updateRecentSearches,
 		})
-	}
-
-	state = {
-		browsing: false,
-		cachedFilters: this.props.filters,
-		dataLoading: true,
-		searchResults: [],
-		searchActive: false,
-		searchPerformed: false,
-		query: '',
 	}
 
 	componentDidMount() {
