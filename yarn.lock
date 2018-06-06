@@ -5647,7 +5647,7 @@ react-lifecycles-compat@^1.0.2:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-1.1.4.tgz#fc005c72849b7ed364de20a0f64ff58ebdc2009a"
 
-react-lifecycles-compat@^3, react-lifecycles-compat@^3.0.2:
+react-lifecycles-compat@^3:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.2.tgz#7279047275bd727a912e25f734c0559527e84eff"
 
@@ -5719,15 +5719,15 @@ react-native-network-info@3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-3.2.2.tgz#93625587ab5ae31b7c853f37ec2b75a0af6c936d"
 
-react-native-paper@2.0.0-alpha.0:
-  version "2.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-2.0.0-alpha.0.tgz#20ddb59926a45333841db7bb35911543b390cd2e"
+react-native-paper@2.0.0-alpha.4:
+  version "2.0.0-alpha.4"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-2.0.0-alpha.4.tgz#2186fd85e3e5aee368a0861f6a302015e76f24d9"
   dependencies:
     color "^2.0.1"
     create-react-context "^0.2.2"
     deepmerge "^2.1.0"
     hoist-non-react-statics "^2.5.0"
-    react-lifecycles-compat "^3.0.2"
+    react-lifecycles-compat "^3.0.4"
 
 react-native-restart@0.0.6:
   version "0.0.6"
@@ -5762,15 +5762,15 @@ react-native-tab-view@^0.0.74:
   dependencies:
     prop-types "^15.6.0"
 
+react-native-tab-view@^1.0.0:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-1.0.2.tgz#66e0bc6d38a227ed2b212e3a256b7902f6ce02ed"
+  dependencies:
+    prop-types "^15.6.1"
+
 react-native-tab-view@~0.0.77:
   version "0.0.77"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-0.0.77.tgz#11ceb8e7c23100d07e628dc151b57797524d00d4"
-  dependencies:
-    prop-types "^15.6.0"
-
-react-native-tab-view@~0.0.78:
-  version "0.0.78"
-  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-0.0.78.tgz#9b90730d89cbd34a03f0e0ab10e74ca7af945560"
   dependencies:
     prop-types "^15.6.0"
 
@@ -5862,14 +5862,14 @@ react-navigation-deprecated-tab-navigator@1.2.0:
   dependencies:
     react-native-tab-view "^0.0.74"
 
-react-navigation-material-bottom-tabs@0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/react-navigation-material-bottom-tabs/-/react-navigation-material-bottom-tabs-0.2.0.tgz#0e6783a713483f6c6df16e7aa891a00ff283e657"
+react-navigation-material-bottom-tabs@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/react-navigation-material-bottom-tabs/-/react-navigation-material-bottom-tabs-0.3.0.tgz#7fae682a41c1c290f2584fe50879e36b41da5394"
   dependencies:
     hoist-non-react-statics "^2.5.0"
     prop-types "^15.6.0"
-    react-native-paper "2.0.0-alpha.0"
-    react-navigation-tabs "^0.3.0"
+    react-native-paper "2.0.0-alpha.4"
+    react-navigation-tabs "^0.4.0"
 
 react-navigation-tabs@0.2.0:
   version "0.2.0"
@@ -5881,15 +5881,15 @@ react-navigation-tabs@0.2.0:
     react-native-safe-area-view "^0.7.0"
     react-native-tab-view "~0.0.77"
 
-react-navigation-tabs@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-0.3.0.tgz#b1fe7ef1c665dd8928fafcc8622616e220ae5efa"
+react-navigation-tabs@^0.4.0:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-0.4.1.tgz#b367535c1b00fc2046341ae93cb8d3e8e0b96a11"
   dependencies:
     hoist-non-react-statics "^2.5.0"
-    prop-types "^15.6.0"
+    prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
     react-native-safe-area-view "^0.7.0"
-    react-native-tab-view "~0.0.78"
+    react-native-tab-view "^1.0.0"
 
 react-navigation@2.0.0:
   version "2.0.0"
