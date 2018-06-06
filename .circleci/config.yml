@@ -34,6 +34,21 @@ x-config:
         touch .env.js
         echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
         echo "export const GOOGLE_MAPS_API_KEY = '$GMAPS_KEY'" >> .env.js
+    - &bail-if-data-only
+      name: Bail if data-only
+      command: |
+        set -v
+        echo $CIRCLE_COMPARE_URL
+        circleci step halt
+        sudo npm i -g check-if-folder-contents-changed-in-git-commit-range@1
+        check-if-folder-contents-changed-in-git-commit-range data/* $CIRCLE_COMPARE_URL
+        if [ $? -eq 0 ]; then
+          echo "Nothing but data changed. Skipping build."
+          circleci step halt
+        else
+          echo "Things changed. Running tests."
+        fi
+
 
 workflows:
   version: 2
@@ -135,6 +150,7 @@ jobs:
       task: JS-flow
     steps:
       - checkout
+      - run: *bail-if-data-only
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - run: mkdir -p logs/
@@ -149,6 +165,7 @@ jobs:
       JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
     steps:
       - checkout
+      - run: *bail-if-data-only
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - run: mkdir -p logs/ test-results/jest/
@@ -231,6 +248,7 @@ jobs:
       FASTLANE_DISABLE_ANIMATION: '1'
     steps:
       - checkout
+      - run: *bail-if-data-only
       - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
@@ -267,6 +285,7 @@ jobs:
       task: JS-bundle-android
     steps:
       - checkout
+      - run: *bail-if-data-only
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - run: mkdir -p logs/
@@ -292,6 +311,7 @@ jobs:
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
+      - run: *bail-if-data-only
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
@@ -326,6 +346,7 @@ jobs:
       task: JS-bundle-ios
     steps:
       - checkout
+      - run: *bail-if-data-only
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - run: mkdir -p logs/
