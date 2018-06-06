@@ -206,7 +206,10 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 	}
 }
 
-export default connect(mapState, mapDispatch)(BalancesView)
+export default connect(
+	mapState,
+	mapDispatch,
+)(BalancesView)
 
 let cellMargin = 10
 let cellSidePadding = 10

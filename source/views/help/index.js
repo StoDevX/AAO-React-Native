@@ -79,7 +79,10 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 	}
 }
 
-export default connect(mapState, mapDispatch)(HelpView)
+export default connect(
+	mapState,
+	mapDispatch,
+)(HelpView)
 
 const styles = StyleSheet.create({
 	container: {
