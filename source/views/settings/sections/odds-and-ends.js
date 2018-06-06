@@ -96,4 +96,7 @@ function mapDispatchToProps(dispatch) {
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(OddsAndEndsSection)
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+)(OddsAndEndsSection)
