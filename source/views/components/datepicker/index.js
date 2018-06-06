@@ -39,6 +39,11 @@ export class DatePicker extends React.Component<Props, State> {
 		onDateChange: () => null,
 	}
 
+	state = {
+		date: this.props.initialDate,
+		timezone: this.props.initialDate.tz(),
+	}
+
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
 		if (nextProps.initialDate === prevState.date) {
 			return null
@@ -51,11 +56,6 @@ export class DatePicker extends React.Component<Props, State> {
 	}
 
 	_ref: any
-
-	state = {
-		date: this.props.initialDate,
-		timezone: this.props.initialDate.tz(),
-	}
 
 	formatDate = (date: moment) => {
 		const {mode, format = FORMATS[mode]} = this.props
