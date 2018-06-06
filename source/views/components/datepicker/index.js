@@ -33,6 +33,8 @@ type State = {
 }
 
 export class DatePicker extends React.Component<Props, State> {
+	_ref: any
+
 	static defaultProps = {
 		mode: 'date',
 		androidMode: 'default',
@@ -54,8 +56,6 @@ export class DatePicker extends React.Component<Props, State> {
 			timezone: nextProps.initialDate.tz(),
 		}
 	}
-
-	_ref: any
 
 	formatDate = (date: moment) => {
 		const {mode, format = FORMATS[mode]} = this.props
