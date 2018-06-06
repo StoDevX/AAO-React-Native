@@ -149,7 +149,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
-    unicode-display_width (1.3.2)
+    unicode-display_width (1.4.0)
     word_wrap (1.0.0)
     xcodeproj (1.5.7)
       CFPropertyList (>= 2.3.3, < 4.0)
