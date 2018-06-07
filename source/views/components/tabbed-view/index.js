@@ -25,6 +25,8 @@ export const TabNavigator: ComponentType = (screens, options = {}) =>
 	createTabNavigator(screens, {
 		backBehavior: 'none',
 		lazy: true,
+		activeTintColor: c.black,
+		inactiveTintColor: c.black25Percent,
 		tabBarOptions: {
 			...(options.tabBarOptions || {}),
 			labelStyle: {
