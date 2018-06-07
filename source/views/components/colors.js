@@ -49,7 +49,7 @@ export const semitransparentGray = 'rgba(0,0,0,0.2)'
 
 // MARK: Oleville colors
 export const theLatest = '#00BFFF'
-export const olevilleGold = '#ffc107'
+export const olevilleGold = '#FFC107'
 export const darkGold = '#c79100'
 export const olevilleBackground = '#F0F0E1'
 
