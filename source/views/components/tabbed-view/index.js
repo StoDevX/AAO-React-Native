@@ -33,6 +33,8 @@ export const TabNavigator: ComponentType = (screens, options = {}) =>
 			},
 		},
 		tabBarOptions: {
+			activeTintColor: c.black,
+			inactiveTintColor: c.black25Percent,
 			...(options.tabBarOptions || {}),
 			labelStyle: {
 				...Platform.select({
