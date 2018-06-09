@@ -49,7 +49,11 @@ workflows:
       - cache-yarn-linux:
           filters: &filters {tags: {only: /.*/}}
       - cache-bundler-linux:
-          filters: &filters {tags: {only: /.*/}}
+          filters: *filters
+      - cache-gradle-linux:
+          filters: *filters
+          # needs to make sure react-native is updated
+          requires: [cache-yarn-linux]
       - danger:
           filters: *filters
           requires: [cache-yarn-linux]
@@ -73,7 +77,7 @@ workflows:
           requires: [danger, flow, jest, prettier, eslint, data]
       - android:
           filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
+          requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux, cache-gradle-linux]
       - ios-bundle:
           filters: *filters
           requires: [danger, flow, jest, prettier, eslint, data]
@@ -88,6 +92,7 @@ workflows:
     jobs:
       - cache-yarn-linux
       - cache-bundler-linux
+      - cache-gradle-linux
       - danger: {requires: [cache-yarn-linux]}
       - flow: {requires: [cache-yarn-linux]}
       - jest: {requires: [cache-yarn-linux]}
@@ -95,7 +100,7 @@ workflows:
       - eslint: {requires: [cache-yarn-linux]}
       - data: {requires: [cache-yarn-linux]}
       - ios-nightly: {requires: [danger, flow, jest, prettier, eslint, data]}
-      - android-nightly: {requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]}
+      - android-nightly: {requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux, cache-gradle-linux]}
 
 jobs:
   cache-yarn-linux:
@@ -118,6 +123,27 @@ jobs:
       - run: gem --version
       - run: ruby --version
       - save_cache: *save-cache-bundler
+
+  cache-gradle-linux:
+    docker: [{image: 'circleci/android:api-27-node8-alpha', cmd: '/bin/bash'}]
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install --frozen-lockfile
+      - restore_cache: *restore-cache-gradle
+      - run: &android-deps
+          name: Download Android dependencies
+          working_directory: ./android
+          command: ./gradlew androidDependencies --console=plain
+          environment: {TERM: xterm-256color}
+      - run:
+          # if the previous attempt failed, try a second time
+          name: Download Android dependencies (again)
+          working_directory: ./android
+          command: ./gradlew androidDependencies --console=plain
+          environment: {TERM: xterm-256color}
+          when: on_fail
+      - save_cache: *save-cache-gradle
 
   danger:
     docker: [{image: 'circleci/node:8'}]
@@ -243,7 +269,6 @@ jobs:
           name: Download Android dependencies
           command: cd android && ./gradlew androidDependencies --console=plain
           environment: {TERM: xterm-256color}
-      - save_cache: *save-cache-gradle
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run:
