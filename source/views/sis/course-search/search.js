@@ -230,8 +230,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.setState(() => ({dataLoading: false}))
 	}
 
-	doneLoading = () => this.setState(() => ({dataLoading: false}))
-
 	onSearchButtonPress = text => {
 		if (Platform.OS === 'ios') {
 			this.searchBar.blur()
