@@ -1,37 +1,43 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.allaboutolaf">
-
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.allaboutolaf"
+>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- FINE_LOCATION is used for wifi reporting -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
-      android:name=".MainApplication"
-      android:allowBackup="true"
-      android:label="@string/app_name"
-      android:icon="@mipmap/ic_launcher"
-      android:theme="@style/AppTheme">
-      <activity
-        android:launchMode="singleTop"
-        android:name=".MainActivity"
+        android:name=".MainApplication"
+        android:allowBackup="true"
         android:label="@string/app_name"
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-        android:windowSoftInputMode="adjustResize">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/AppTheme"
+    >
+      <activity
+          android:launchMode="singleTop"
+          android:name=".MainActivity"
+          android:label="@string/app_name"
+          android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+          android:windowSoftInputMode="adjustResize"
+      >
+          <intent-filter>
+              <action android:name="android.intent.action.MAIN" />
+              <category android:name="android.intent.category.LAUNCHER" />
+          </intent-filter>
       </activity>
+
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
       <meta-data
           android:name="com.bugsnag.android.API_KEY"
-          android:value="${BUGSNAG_KEY}" />
+          android:value="${BUGSNAG_KEY}"
+      />
       <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="${GMAPS_KEY}" />
+          android:name="com.google.android.geo.API_KEY"
+          android:value="${GMAPS_KEY}"
+      />
     </application>
 
 </manifest>
