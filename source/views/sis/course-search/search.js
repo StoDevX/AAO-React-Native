@@ -191,13 +191,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	componentDidMount() {
-		areAnyTermsCached().then(anyTermsCached => {
-			if (anyTermsCached) {
-				this.loadData()
-			} else {
-				this.setState(() => ({dataLoading: false}))
-			}
-		})
+		this.loadData()
 		this.updateFilters(this.props)
 	}
 
