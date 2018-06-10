@@ -191,13 +191,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	componentDidMount() {
-		areAnyTermsCached().then(anyTermsCached => {
-			if (anyTermsCached) {
-				this.loadData()
-			} else {
-				this.setState(() => ({dataLoading: false}))
-			}
-		})
+		this.loadData()
 		this.updateFilters(this.props)
 	}
 
@@ -212,32 +206,29 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	searchBarTop = new Animated.Value(this.animations.searchBarTop.start)
 	containerHeight = new Animated.Value(this.animations.containerHeight.start)
 
-	loadData = () => {
+	loadData = async () => {
 		this.setState(() => ({dataLoading: true}))
 
+		// If the data has not been loaded into Redux State:
 		if (this.props.courseDataState !== 'ready') {
-			// If the data has not been loaded into Redux State:
 			// 1. load the cached courses
+			await this.props.loadCourseDataIntoMemory()
+
 			// 2. if any courses are cached, hide the spinner
+			if (await areAnyTermsCached()) {
+				this.setState(() => ({dataLoading: false}))
+			}
+
 			// 3. either way, start updating courses in the background
-			// 4. when everything is done, make sure the spinner is hidden
-			return this.props
-				.loadCourseDataIntoMemory()
-				.then(() => areAnyTermsCached())
-				.then(anyTermsCached => {
-					if (anyTermsCached) {
-						this.doneLoading()
-					}
-					return this.props.updateCourseData()
-				})
-				.finally(() => this.doneLoading())
+			await this.props.updateCourseData()
 		} else {
 			// If the course data is already in Redux State, check for update
-			return this.props.updateCourseData().then(() => this.doneLoading())
+			await this.props.updateCourseData()
 		}
-	}
 
-	doneLoading = () => this.setState(() => ({dataLoading: false}))
+		// 4. when everything is done, make sure the spinner is hidden
+		this.setState(() => ({dataLoading: false}))
+	}
 
 	onSearchButtonPress = text => {
 		if (Platform.OS === 'ios') {
