@@ -33,10 +33,17 @@ type State = {
 }
 
 export class DatePicker extends React.Component<Props, State> {
+	_ref: any
+
 	static defaultProps = {
 		mode: 'date',
 		androidMode: 'default',
 		onDateChange: () => null,
+	}
+
+	state = {
+		date: this.props.initialDate,
+		timezone: this.props.initialDate.tz(),
 	}
 
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -48,13 +55,6 @@ export class DatePicker extends React.Component<Props, State> {
 			date: nextProps.initialDate,
 			timezone: nextProps.initialDate.tz(),
 		}
-	}
-
-	_ref: any
-
-	state = {
-		date: this.props.initialDate,
-		timezone: this.props.initialDate.tz(),
 	}
 
 	formatDate = (date: moment) => {

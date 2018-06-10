@@ -1,12 +1,16 @@
 // @flow
 
 import {Platform, StyleSheet} from 'react-native'
-import {StackNavigator} from 'react-navigation'
+import {createStackNavigator} from 'react-navigation'
 import * as c from './views/components/colors'
 
 import CalendarView, {EventDetail as EventDetailView} from './views/calendar'
 import {ContactsView, ContactsDetailView} from './views/contacts'
-import {DictionaryView, DictionaryDetailView} from './views/dictionary'
+import {
+	DictionaryView,
+	DictionaryDetailView,
+	DictionaryEditorView,
+} from './views/dictionary'
 import {HomeView, EditHomeView} from './views/home'
 import StreamingView, {
 	KSTOScheduleView,
@@ -59,7 +63,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const AppNavigator = StackNavigator(
+export const AppNavigator = createStackNavigator(
 	{
 		HomeView: {screen: HomeView},
 		BuildingHoursDetailView: {screen: BuildingHoursDetailView},
@@ -72,6 +76,7 @@ export const AppNavigator = StackNavigator(
 		CreditsView: {screen: CreditsView},
 		DictionaryDetailView: {screen: DictionaryDetailView},
 		DictionaryView: {screen: DictionaryView},
+		DictionaryEditorView: {screen: DictionaryEditorView},
 		EditHomeView: {screen: EditHomeView},
 		EventDetailView: {screen: EventDetailView},
 		FaqView: {screen: FaqView},
@@ -102,7 +107,7 @@ export const AppNavigator = StackNavigator(
 	{
 		navigationOptions: {
 			headerStyle: styles.header,
-			headerTintColor: c.white,
+			headerTintColor: c.black,
 		},
 		cardStyle: styles.card,
 	},

@@ -24,7 +24,9 @@ export function LoginButton({
 			title={
 				loading
 					? `Logging in to ${label}…`
-					: loggedIn ? `Sign Out of ${label}` : `Sign In to ${label}`
+					: loggedIn
+						? `Sign Out of ${label}`
+						: `Sign In to ${label}`
 			}
 		/>
 	)

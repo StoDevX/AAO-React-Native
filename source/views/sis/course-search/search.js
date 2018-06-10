@@ -30,7 +30,7 @@ import {RecentItemsList} from '../components/recent-search/list'
 import {Separator} from '../../components/separator'
 import {buildFilters} from './lib/build-filters'
 import type {FilterComboType} from './lib/format-filter-combo'
-import hamming from 'hamming'
+import keywordSearch from 'keyword-search'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -72,18 +72,6 @@ type State = {
 	query: string,
 }
 
-function keywordSearch(query: string, item: string) {
-	const keywords = query.split(' ')
-	const itemWords = item.split(' ')
-	return keywords.every(keyword =>
-		itemWords.some(
-			word =>
-				keyword.length <= word.length &&
-				hamming(keyword, word.slice(0, keyword.length)) < 2,
-		),
-	)
-}
-
 function executeSearch(args: {
 	text: string,
 	filters: FilterType[],
@@ -100,10 +88,10 @@ function executeSearch(args: {
 
 	const results = filteredCourses.filter(
 		course =>
-			keywordSearch(query, course.name.toLowerCase()) ||
-			keywordSearch(query, (course.title || '').toLowerCase()) ||
+			keywordSearch(query, course.name.toLowerCase(), 1) ||
+			keywordSearch(query, (course.title || '').toLowerCase(), 1) ||
 			(course.instructors || []).some(name =>
-				keywordSearch(query, name.toLowerCase()),
+				keywordSearch(query, name.toLowerCase(), 1),
 			) ||
 			deptNum(course)
 				.toLowerCase()
@@ -166,6 +154,16 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		applyFilters: applyFiltersToItem,
 	}
 
+	state = {
+		browsing: false,
+		cachedFilters: this.props.filters,
+		dataLoading: true,
+		searchResults: [],
+		searchActive: false,
+		searchPerformed: false,
+		query: '',
+	}
+
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
 		if (prevState.browsing) {
 			return applyFiltersAndQuery({
@@ -190,16 +188,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			allCourses: nextProps.allCourses,
 			updateRecentSearches: nextProps.updateRecentSearches,
 		})
-	}
-
-	state = {
-		browsing: false,
-		cachedFilters: this.props.filters,
-		dataLoading: true,
-		searchResults: [],
-		searchActive: false,
-		searchPerformed: false,
-		query: '',
 	}
 
 	componentDidMount() {
@@ -501,7 +489,10 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 	}
 }
 
-export default connect(mapState, mapDispatch)(CourseSearchView)
+export default connect(
+	mapState,
+	mapDispatch,
+)(CourseSearchView)
 
 let styles = StyleSheet.create({
 	bottomContainer: {
