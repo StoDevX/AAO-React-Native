@@ -20,7 +20,7 @@ export async function areAnyTermsCached(): Promise<boolean> {
 export async function updateStoredCourses(): Promise<boolean> {
 	const outdatedTerms: Array<TermType> = await determineOutdatedTerms()
 	await Promise.all(outdatedTerms.map(term => storeTermCoursesFromServer(term)))
-	// returns ``true`` if any terms were updated
+	// returns `true` if any terms were updated
 	return outdatedTerms.length === 0 ? false : true
 }
 
