@@ -1,12 +1,14 @@
 // @flow
 import * as React from 'react'
-import {Text, Image, StyleSheet} from 'react-native'
+import {Text, Image, StyleSheet, View} from 'react-native'
 import type {ListType, ListItemSpecType} from './types'
 import {Section, Cell} from 'react-native-tableview-simple'
 import {Column} from '../layout'
 import concat from 'lodash/concat'
 import isEqual from 'lodash/isEqual'
 import reject from 'lodash/reject'
+import {FilterItem} from './filter-item'
+import * as c from '../colors'
 
 type PropsType = {
 	filter: ListType,
@@ -18,7 +20,7 @@ export function ListSection({filter, onChange}: PropsType) {
 	const {title = '', options, selected, mode} = spec
 	const quantifier = mode === 'AND' ? 'all' : 'any'
 	const {caption = `Show items with ${quantifier} of these options.`} = spec
-
+	console.log(onChange)
 	function buttonPushed(tappedValue: ListItemSpecType) {
 		let result
 
@@ -65,57 +67,41 @@ export function ListSection({filter, onChange}: PropsType) {
 
 	const hasImageColumn = options.some(val => Boolean(val.image))
 	let buttons = options.map(val => (
-		<Cell
+		<FilterItem
+			active={selected.some(s => isEqual(s, val))}
 			key={val.title}
-			accessory={selected.some(s => isEqual(s, val)) ? 'Checkmark' : undefined}
-			cellContentView={
-				<Column style={styles.content}>
-					<Text style={styles.title}>
-						{spec.displayTitle ? val.title : val.label}
-					</Text>
-					{val.detail ? <Text style={styles.detail}>{val.detail}</Text> : null}
-				</Column>
-			}
-			cellStyle="RightDetail"
-			disableImageResize={true}
-			image={
-				spec.showImages ? (
-					<Image source={val.image} style={styles.icon} />
-				) : (
-					undefined
-				)
-			}
+			title={spec.displayTitle ? val.title : val.label}
 			onPress={() => buttonPushed(val)}
 		/>
 	))
 
 	if (mode === 'OR') {
 		const showAllButton = (
-			<Cell
+			<FilterItem
+				active={selected.length === options.length}
 				key="__show_all"
-				accessory={selected.length === options.length ? 'Checkmark' : undefined}
-				onPress={showAll}
 				title="Show All"
+				onPress={showAll}
 			/>
 		)
 		buttons = [showAllButton].concat(buttons)
 	}
 
 	return (
-		<Section
-			footer={caption}
-			header={title.toUpperCase()}
-			separatorInsetLeft={hasImageColumn ? 45 : undefined}
-		>
+		<View style={styles.content}>
 			{buttons}
-		</Section>
+		</View>
 	)
 }
 
 const styles = StyleSheet.create({
 	content: {
+		padding: 15,
 		flex: 1,
-		paddingVertical: 10,
+		backgroundColor: c.white,
+		alignItems: 'flex-start',
+		flexDirection: 'row',
+		flexWrap: 'wrap',
 	},
 	title: {
 		fontSize: 16,
