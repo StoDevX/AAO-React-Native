@@ -26,6 +26,7 @@ type Props = TopLevelViewPropsType & {
 	browsing: boolean,
 	filters: Array<FilterType>,
 	onFiltersChange: (Array<FilterType>) => any,
+	onPressFilterToggle: (FilterType[]) => any,
 	searchPerformed: boolean,
 	terms: Array<{title: string, data: CourseType[]}>,
 	updateRecentFilters: (filters: FilterType[]) => any,
@@ -70,7 +71,7 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 		const {filters, browsing} = this.props
 
 		const header = (
-			<FilterToolbar filters={filters} onPress={this.onPressToolbar} />
+			<FilterToolbar filters={filters} onPress={this.props.onPressFilterToggle} />
 		)
 
 		const message = browsing

@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View, Animated, Platform} from 'react-native'
+import {StyleSheet, View, Animated, Platform, Modal, Text, TouchableWithoutFeedback} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {SearchBar} from '../../components/searchbar'
@@ -31,6 +31,7 @@ import {Separator} from '../../components/separator'
 import {buildFilters} from './lib/build-filters'
 import type {FilterComboType} from './lib/format-filter-combo'
 import keywordSearch from 'keyword-search'
+import {FilterModal} from '../components/filter-modal'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -63,9 +64,11 @@ type DefaultProps = {
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps & DefaultProps
 
 type State = {
+	adjustingFilters: Array<FilterType>,
 	browsing: boolean,
 	cachedFilters: Array<FilterType>,
 	dataLoading: boolean,
+	modalVisible: boolean,
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
 	searchActive: boolean,
 	searchPerformed: boolean,
@@ -155,9 +158,11 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
+		adjustingFilters: [],
 		browsing: false,
 		cachedFilters: this.props.filters,
 		dataLoading: true,
+		modalVisible: false,
 		searchResults: [],
 		searchActive: false,
 		searchPerformed: false,
@@ -329,6 +334,13 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.handleFocus()
 	}
 
+	openFilterModal = (adjustingFilters: FilterType[]) => {
+		this.setState(() => ({
+			modalVisible: true,
+			adjustingFilters: adjustingFilters,
+		}))
+	}
+
 	resetFilters = async () => {
 		const newFilters = await buildFilters()
 		this.props.onFiltersChange(newFilters)
@@ -345,6 +357,11 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.resetFilters()
 	}
 
+	dismissModal = () => {
+		console.log("DEBUG")
+		this.setState(() => ({modalVisible: false}))
+	}
+
 	render() {
 		const {
 			searchActive,
@@ -352,6 +369,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			searchResults,
 			query,
 			browsing,
+			modalVisible,
+			adjustingFilters,
 		} = this.state
 
 		if (this.state.dataLoading) {
@@ -420,15 +439,24 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 							</Animated.View>
 							<Separator />
 							{searchActive ? (
-								<CourseSearchResultsList
-									browsing={browsing}
-									filters={this.props.filters}
-									navigation={this.props.navigation}
-									onFiltersChange={this.props.onFiltersChange}
-									searchPerformed={searchPerformed}
-									terms={searchResults}
-									updateRecentFilters={this.props.updateRecentFilters}
-								/>
+								<View>
+									<CourseSearchResultsList
+										browsing={browsing}
+										filters={this.props.filters}
+										navigation={this.props.navigation}
+										onFiltersChange={this.props.onFiltersChange}
+										onPressFilterToggle={this.openFilterModal}
+										searchPerformed={searchPerformed}
+										terms={searchResults}
+										updateRecentFilters={this.props.updateRecentFilters}
+									/>
+									<FilterModal
+										filters={adjustingFilters}
+										onPressOutside={this.dismissModal}
+										visible={modalVisible}
+									/>
+								</View>
+
 							) : (
 								<View style={[styles.common, styles.bottomContainer]}>
 									<RecentItemsList

@@ -14,46 +14,40 @@ const styles = StyleSheet.create({
 	toolbarSection: {
 		flexDirection: 'row',
 	},
+	filterButton: {
+		marginLeft: 8,
+	},
 })
 
 type Props = {
 	filters: Array<FilterType>,
-	onPress: () => any,
+	onPress: (filterCategories: FilterType[]) => any,
 }
 
 export function FilterToolbar({filters, onPress}: Props) {
 	const appliedFilterCount = filters.filter(f => f.enabled).length
 	const isFiltered = appliedFilterCount > 0
-	const filterWord = appliedFilterCount === 1 ? 'Filter' : 'Filters'
 
-	const termFilter = filterListSpecs(filters).find(f => f.key === 'term')
-
-	let toolbarTitle = 'All Terms'
-	if (termFilter) {
-		const selectedTerms = termFilter ? termFilter.spec.selected : []
-		const terms = selectedTerms.map(t => parseInt(t.title))
-		if (termFilter.enabled) {
-			toolbarTitle = terms.length ? formatTerms(terms) : 'No Terms'
-		}
-	}
-
-	const buttonTitle = isFiltered
-		? `${appliedFilterCount} ${filterWord}`
-		: 'No Filters'
+	const filterToggles = filters.map(filter => (
+		<ToolbarButton
+			iconName={Platform.OS === 'ios' ? 'ios-arrow-down' : 'md-arrow-dropdown'}
+			isActive={filter.enabled}
+			key={filter.spec.title}
+			onPress={() => {onPress([filter])}}
+			title={filter.spec.title}
+		/>
+	))
 
 	return (
-		<Toolbar onPress={onPress}>
-			<View style={[styles.toolbarSection, styles.today]}>
-				<Text ellipsizeMode="tail" numberOfLines={1}>
-					{toolbarTitle}
-				</Text>
-			</View>
-
+		<Toolbar>
 			<ToolbarButton
 				iconName={Platform.OS === 'ios' ? 'ios-funnel' : 'md-funnel'}
 				isActive={isFiltered}
-				title={buttonTitle}
+				onPress={() => {onPress(filters)}}
+				style={styles.filterButton}
+				title="Filters"
 			/>
+			{ filterToggles }
 		</Toolbar>
 	)
 }

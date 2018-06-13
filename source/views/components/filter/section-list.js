@@ -70,7 +70,7 @@ export function ListSection({filter, onChange}: PropsType) {
 		<FilterItem
 			active={selected.some(s => isEqual(s, val))}
 			key={val.title}
-			title={spec.displayTitle ? val.title : val.label}
+			title={val.label || val.title}
 			onPress={() => buttonPushed(val)}
 		/>
 	))
@@ -88,8 +88,12 @@ export function ListSection({filter, onChange}: PropsType) {
 	}
 
 	return (
-		<View style={styles.content}>
-			{buttons}
+		<View>
+			<View style={styles.sectionHeader}><Text style={styles.sectionHeader__text}>{title.toUpperCase()}</Text></View>
+			<View style={styles.content}>
+				{buttons}
+			</View>
+			<View style={styles.sectionFooter}><Text style={styles.sectionFooter__text}>{caption}</Text></View>
 		</View>
 	)
 }
@@ -99,7 +103,6 @@ const styles = StyleSheet.create({
 		padding: 15,
 		flex: 1,
 		backgroundColor: c.white,
-		alignItems: 'flex-start',
 		flexDirection: 'row',
 		flexWrap: 'wrap',
 	},
@@ -113,4 +116,26 @@ const styles = StyleSheet.create({
 		width: 16,
 		height: 16,
 	},
+	sectionHeader: {
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingBottom: 5,
+		paddingTop: 15,
+  },
+  sectionHeader__text: {
+    fontSize: 13,
+    letterSpacing: -0.078,
+		color: '#6D6D72',
+  },
+  sectionFooter: {
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 10,
+		paddingBottom: 5,
+  },
+  sectionFooter__text: {
+    fontSize: 13,
+    letterSpacing: -0.078,
+		color: '#6D6D72',
+  },
 })

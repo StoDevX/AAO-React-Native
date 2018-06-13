@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {StyleSheet, View, Text, Platform} from 'react-native'
+import {StyleSheet, View, Text, Platform, TouchableOpacity} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from '../../components/colors'
 
@@ -10,7 +10,7 @@ const buttonStyles = StyleSheet.create({
 		alignItems: 'center',
 		marginRight: 8,
 		paddingHorizontal: 8,
-		paddingVertical: 0,
+		paddingVertical: 2,
 		marginVertical: 8,
 		borderWidth: 1,
 		borderRadius: 2,
@@ -37,9 +37,11 @@ type ButtonPropsType = {
 	iconName?: string,
 	title: string,
 	isActive: boolean,
+	onPress?: () => any,
+	style?: any,
 }
 
-export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
+export function ToolbarButton({title, iconName, isActive, onPress, style}: ButtonPropsType) {
 	let icon
 	if (!iconName) {
 		icon = null
@@ -62,11 +64,11 @@ export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
 	}
 
 	return (
-		<View style={[buttonStyles.button, activeButtonStyle]}>
+		<TouchableOpacity onPress={onPress} style={[buttonStyles.button, activeButtonStyle, style]}>
 			<Text style={[activeContentStyle, textWithIconStyle, activeTextStyle]}>
 				{title}
 			</Text>
 			{icon ? <Icon name={icon} size={18} style={activeContentStyle} /> : null}
-		</View>
+		</TouchableOpacity>
 	)
 }

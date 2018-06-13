@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {StyleSheet, Platform, View} from 'react-native'
+import {StyleSheet, Platform, View, ScrollView} from 'react-native'
 import {Touchable} from '../touchable'
 import * as c from '../colors'
 
@@ -24,11 +24,11 @@ const toolbarStyles = StyleSheet.create({
 
 type ToolbarPropsType = {
 	children?: any,
-	onPress: () => any,
+	onPress?: () => any,
 }
 
 export function Toolbar({children, onPress}: ToolbarPropsType) {
-	return (
+	return onPress ? (
 		<View style={toolbarStyles.shadow}>
 			<Touchable
 				borderless={true}
@@ -37,6 +37,12 @@ export function Toolbar({children, onPress}: ToolbarPropsType) {
 			>
 				{children}
 			</Touchable>
+		</View>
+	) : (
+		<View style={[toolbarStyles.shadow, toolbarStyles.container]}>
+			<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+			{children}
+			</ScrollView>
 		</View>
 	)
 }
