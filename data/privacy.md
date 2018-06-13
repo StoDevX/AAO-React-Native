@@ -1,8 +1,12 @@
 # All About Olaf Privacy Policy
 
-This privacy policy has been compiled to better serve those who are concerned with how their 'Personally Identifiable Information' (PII) is being used online.
-PII, as described in US privacy law and information security, is information that can be used on its own or with other information to identify, contact, or locate a single person, or to identify an individual in context.
-Please read our privacy policy carefully to get a clear understanding of how we collect, use, protect or otherwise handle your Personally Identifiable Information in accordance with our website.
+This Privacy Policy is intended to better inform our users about whether or not (and if so, how) we use their 'Personally Identifiable Information' (PII) online.
+PII, as described in United States privacy law and the field of information security, is defined as:
+
+> Information that can be used on its own or with other information to identify, contact, or locate a single person, or to identify an individual in context.
+
+We invite you to read this Policy carefully to get a clear understanding of what information we collect and use, and to develop an understanding of how we handle your Personally Identifiable Information.
+Feel free to reach out to the development team <allaboutolaf@stolaf.edu> if you have any questions.
 
 ## Introduction
 
