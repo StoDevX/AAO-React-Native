@@ -8,6 +8,23 @@ PII, as described in United States privacy law and the field of information secu
 We invite you to read this Policy carefully to get a clear understanding of what information we collect and use, and to develop an understanding of how we handle your Personally Identifiable Information.
 Feel free to reach out to the development team <allaboutolaf@stolaf.edu> if you have any questions.
 
+## General Information
+
+## Who runs this app? Who is collecting data?
+
+## What data is being collected?
+
+## What is the legal basis for processing this data?
+
+## Will the data be shared with any third parties?
+
+## How will the information be used?
+
+## How long will the data be stored for?
+
+## What rights do data subjects have?
+
+## How can data subjects raise a complaint?
 ## Introduction
 
 ### What personal information do we collect from the people that visit our blog, website or app? When do we collect information?
