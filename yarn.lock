@@ -5679,9 +5679,9 @@ react-native-button@2.3.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-calendar-events@1.6.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.6.0.tgz#53c3fb9bb7704c33186deead8dfdad0ffa19c998"
+react-native-calendar-events@1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.6.1.tgz#727f605b603498005dfde1f6562d457310b7b53c"
 
 react-native-communications@2.2.1:
   version "2.2.1"
@@ -5872,9 +5872,9 @@ react-navigation-deprecated-tab-navigator@1.3.0:
   dependencies:
     react-native-tab-view "^0.0.77"
 
-react-navigation-drawer@0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/react-navigation-drawer/-/react-navigation-drawer-0.2.1.tgz#fed9b09a41ddfdc1ff198fad04a7b6051def8adf"
+react-navigation-drawer@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/react-navigation-drawer/-/react-navigation-drawer-0.3.0.tgz#641007213f0f1e1b55a0a4bb64d71df07b3e7208"
   dependencies:
     react-native-drawer-layout-polyfill "^1.3.2"
 
@@ -5907,9 +5907,9 @@ react-navigation-tabs@^0.4.0:
     react-native-safe-area-view "^0.7.0"
     react-native-tab-view "^1.0.0"
 
-react-navigation@2.2.5:
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.2.5.tgz#5c23091d2a87b63fe8d6be350d155664677b903c"
+react-navigation@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.3.0.tgz#1f3cdbc5223b25ea8196b655d85daf8f14d21e84"
   dependencies:
     clamp "^1.0.1"
     create-react-context "^0.2.1"
@@ -5919,7 +5919,7 @@ react-navigation@2.2.5:
     react-lifecycles-compat "^3"
     react-native-safe-area-view "^0.8.0"
     react-navigation-deprecated-tab-navigator "1.3.0"
-    react-navigation-drawer "0.2.1"
+    react-navigation-drawer "0.3.0"
     react-navigation-tabs "0.5.1"
 
 react-proxy@^1.1.7:

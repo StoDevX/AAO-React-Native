@@ -1,7 +1,11 @@
 // @flow
 
 import * as React from 'react'
+<<<<<<< HEAD
 import {StyleSheet, View, Animated, Platform, Modal, Text, TouchableWithoutFeedback} from 'react-native'
+=======
+import {StyleSheet, View, Animated, Platform, ScrollView} from 'react-native'
+>>>>>>> master
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {SearchBar} from '../../components/searchbar'
@@ -419,7 +423,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 					const aniHeaderStyle = [styles.header, {opacity: this.headerOpacity}]
 
 					return (
-						<View style={[styles.container, styles.common]}>
+						<ScrollView style={[styles.container, styles.common]}>
 							<Animated.View style={aniContainerStyle}>
 								<Animated.Text style={aniHeaderStyle}>
 									Search Courses
@@ -477,7 +481,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 									/>
 								</View>
 							)}
-						</View>
+						</ScrollView>
 					)
 				}}
 			/>
