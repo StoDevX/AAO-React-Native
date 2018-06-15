@@ -8,6 +8,8 @@ schedule:
     hours:
       # - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}
       # - {days: [Sa], from: '10:00am', to: '1:00pm'}
+      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '3:00pm'}
+      - {days: [Fr], from: '8:00am', to: '12:00pm'}
 
 breakSchedule:
   fall: []
