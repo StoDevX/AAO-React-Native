@@ -5,9 +5,11 @@ image: center-for-arts-and-dance
 schedule:
   - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
-      - {days: [Sa], from: '8:00am', to: '12:00am'}
-      - {days: [Su], from: '10:00am', to: '12:00am'}
+      # - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
+      # - {days: [Sa], from: '8:00am', to: '12:00am'}
+      # - {days: [Su], from: '10:00am', to: '12:00am'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '8:00pm'}
+      - {days: [Sa], from: '9:00am', to: '3:00pm'}
 
 breakSchedule:
   fall: []
@@ -20,3 +22,4 @@ breakSchedule:
     - title: Hours
       hours:
         - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '8:00pm'}
+        - {days: [Sa], from: '9:00am', to: '3:00pm'}
