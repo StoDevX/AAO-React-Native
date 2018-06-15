@@ -6,6 +6,7 @@ schedule:
     hours:
       # - {days: [Mo, Tu, We, Th, Fr], from: '12:00pm', to: '2:00pm'}
       # - {days: [Mo, We, Fr], from: '6:00pm', to: '8:30pm'}
+      - {days: [Mo, Tu, We, Th], from: '6:00pm', to: '7:00pm'}
 
   # - title: Open Swim
   #   hours:
@@ -23,4 +24,4 @@ breakSchedule:
   summer:
     - title: Lap Swim
       hours:
-        - {days: [Mo, Tu, We, Th], from: '1:00pm', to: '2:00pm'}
+        - {days: [Mo, Tu, We, Th], from: '6:00pm', to: '7:00pm'}
