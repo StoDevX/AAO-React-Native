@@ -9,6 +9,7 @@ schedule:
       # - {days: [Fr], from: '7:00am', to: '5:00pm'}
       # - {days: [Sa], from: '8:00am', to: '9:00pm'}
       # - {days: [Su], from: '12:00pm', to: '9:00pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '5:15pm'}
 
 breakSchedule:
   fall: []
@@ -19,4 +20,5 @@ breakSchedule:
   easter: []
   summer:
     - title: Hours
-      hours: [] # closed for the summer
+      hours:
+        - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '5:15pm'}
