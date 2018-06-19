@@ -1,8 +1,16 @@
+# Contributing
+
 Would you like to contribute? Great! Have a look at [React Native's "getting started" guide](http://facebook.github.io/react-native/docs/getting-started.html) to help you get your computer set up, and make a pull request! (If you feel like you should have write access to the repo, please make an issue and we can discuss it.)
 
 If you are looking to get started with the project, issues tagged with [`good first issue`](https://github.com/StoDevX/AAO-React-Native/issues?q=is%3Aissue+label%3A%22good+first+issue%22+is%3Aopen) are a great place to start. These issues are ones that the team has identified as simple, small changes that won't get too deep, and will be easy to approve for merging.
 
-### Labels
+## Table of Contents
+1. [Labels](#labels)
+2. [Keep It Running](#keep-it-running)
+3. [Maintainers](#maintainers)
+4. [Travis CI Notes](#travisci-notes)
+
+## Labels
 We have a lot of labels! Even though they may seem unorganized, there's a method to the madness.
 
 - <kbd>bug/*</kbd> – These labels relate to the various types of bugs we get: accessibility, layout, and everything else
@@ -31,7 +39,7 @@ We have a lot of labels! Even though they may seem unorganized, there's a method
 - <kbd>wontfix</kbd> – We won't fix anything with this label
 
 
-### Keep It Runnning
+## Keep It Running
 We use a continuous-integration (CI) system to make sure that the project still works as we change things. Any submissions you make will be validated by [TravisCI](https://travis-ci.org/StoDevX/AAO-React-Native/builds).
 
 We use a set of tools to enforce code style and find common bugs: [ESLint][eslint], [Flow][flow], [Jest][jest], and [Prettier][prettier].
