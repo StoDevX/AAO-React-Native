@@ -4,7 +4,7 @@ Would you like to contribute? Great! Have a look at [React Native's "getting sta
 
 If you are looking to get started with the project, issues tagged with [`good first issue`](https://github.com/StoDevX/AAO-React-Native/issues?q=is%3Aissue+label%3A%22good+first+issue%22+is%3Aopen) are a great place to start. These issues are ones that the team has identified as simple, small changes that won't get too deep, and will be easy to approve for merging.
 
-## Jump to section
+## Table of Contents
 1. [Labels](#labels)
 2. [Keep It Running](#keep-it-running)
 3. [Maintainers](#maintainers)
