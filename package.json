@@ -132,7 +132,7 @@
   "devDependencies": {
     "ajv": "6.5.1",
     "babel-core": "6.26.0",
-    "babel-eslint": "8.2.3",
+    "babel-eslint": "8.2.4",
     "babel-jest": "23.0.1",
     "babel-plugin-transform-remove-console": "6.9.4",
     "babel-preset-react-native": "4.0.0",
