@@ -358,7 +358,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	dismissModal = () => {
-		console.log("DEBUG")
+		console.log('DEBUG')
 		this.setState(() => ({modalVisible: false}))
 	}
 
@@ -456,7 +456,6 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 										visible={modalVisible}
 									/>
 								</View>
-
 							) : (
 								<View style={[styles.common, styles.bottomContainer]}>
 									<RecentItemsList

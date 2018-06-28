@@ -33,7 +33,9 @@ export function FilterToolbar({filters, onPress}: Props) {
 			iconName={Platform.OS === 'ios' ? 'ios-arrow-down' : 'md-arrow-dropdown'}
 			isActive={filter.enabled}
 			key={filter.spec.title}
-			onPress={() => {onPress([filter])}}
+			onPress={() => {
+				onPress([filter])
+			}}
 			title={filter.spec.title}
 		/>
 	))
@@ -43,11 +45,13 @@ export function FilterToolbar({filters, onPress}: Props) {
 			<ToolbarButton
 				iconName={Platform.OS === 'ios' ? 'ios-funnel' : 'md-funnel'}
 				isActive={isFiltered}
-				onPress={() => {onPress(filters)}}
+				onPress={() => {
+					onPress(filters)
+				}}
 				style={styles.filterButton}
 				title="Filters"
 			/>
-			{ filterToggles }
+			{filterToggles}
 		</Toolbar>
 	)
 }

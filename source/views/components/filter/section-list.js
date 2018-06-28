@@ -89,11 +89,13 @@ export function ListSection({filter, onChange}: PropsType) {
 
 	return (
 		<View>
-			<View style={styles.sectionHeader}><Text style={styles.sectionHeader__text}>{title.toUpperCase()}</Text></View>
-			<View style={styles.content}>
-				{buttons}
+			<View style={styles.sectionHeader}>
+				<Text style={styles.sectionHeader__text}>{title.toUpperCase()}</Text>
 			</View>
-			<View style={styles.sectionFooter}><Text style={styles.sectionFooter__text}>{caption}</Text></View>
+			<View style={styles.content}>{buttons}</View>
+			<View style={styles.sectionFooter}>
+				<Text style={styles.sectionFooter__text}>{caption}</Text>
+			</View>
 		</View>
 	)
 }
@@ -117,25 +119,25 @@ const styles = StyleSheet.create({
 		height: 16,
 	},
 	sectionHeader: {
-    paddingLeft: 15,
-    paddingRight: 15,
-    paddingBottom: 5,
-		paddingTop: 15,
-  },
-  sectionHeader__text: {
-    fontSize: 13,
-    letterSpacing: -0.078,
-		color: '#6D6D72',
-  },
-  sectionFooter: {
-    paddingLeft: 15,
-    paddingRight: 15,
-    paddingTop: 10,
+		paddingLeft: 15,
+		paddingRight: 15,
 		paddingBottom: 5,
-  },
-  sectionFooter__text: {
-    fontSize: 13,
-    letterSpacing: -0.078,
+		paddingTop: 15,
+	},
+	sectionHeader__text: {
+		fontSize: 13,
+		letterSpacing: -0.078,
 		color: '#6D6D72',
-  },
+	},
+	sectionFooter: {
+		paddingLeft: 15,
+		paddingRight: 15,
+		paddingTop: 10,
+		paddingBottom: 5,
+	},
+	sectionFooter__text: {
+		fontSize: 13,
+		letterSpacing: -0.078,
+		color: '#6D6D72',
+	},
 })

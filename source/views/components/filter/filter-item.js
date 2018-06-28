@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
 		marginRight: 3,
 		marginBottom: 3,
 		borderRadius: 3,
-    borderColor: c.iosGray,
-    borderWidth: 1,
+		borderColor: c.iosGray,
+		borderWidth: 1,
 	},
 	text: {
 		alignItems: 'flex-start',

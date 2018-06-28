@@ -41,7 +41,7 @@ export function Toolbar({children, onPress}: ToolbarPropsType) {
 	) : (
 		<View style={[toolbarStyles.shadow, toolbarStyles.container]}>
 			<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-			{children}
+				{children}
 			</ScrollView>
 		</View>
 	)

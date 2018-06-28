@@ -71,7 +71,10 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 		const {filters, browsing} = this.props
 
 		const header = (
-			<FilterToolbar filters={filters} onPress={this.props.onPressFilterToggle} />
+			<FilterToolbar
+				filters={filters}
+				onPress={this.props.onPressFilterToggle}
+			/>
 		)
 
 		const message = browsing

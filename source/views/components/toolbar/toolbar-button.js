@@ -41,7 +41,13 @@ type ButtonPropsType = {
 	style?: any,
 }
 
-export function ToolbarButton({title, iconName, isActive, onPress, style}: ButtonPropsType) {
+export function ToolbarButton({
+	title,
+	iconName,
+	isActive,
+	onPress,
+	style,
+}: ButtonPropsType) {
 	let icon
 	if (!iconName) {
 		icon = null
@@ -64,7 +70,10 @@ export function ToolbarButton({title, iconName, isActive, onPress, style}: Butto
 	}
 
 	return (
-		<TouchableOpacity onPress={onPress} style={[buttonStyles.button, activeButtonStyle, style]}>
+		<TouchableOpacity
+			onPress={onPress}
+			style={[buttonStyles.button, activeButtonStyle, style]}
+		>
 			<Text style={[activeContentStyle, textWithIconStyle, activeTextStyle]}>
 				{title}
 			</Text>
