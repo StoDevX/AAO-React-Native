@@ -5879,9 +5879,9 @@ react-navigation-deprecated-tab-navigator@1.3.0:
   dependencies:
     react-native-tab-view "^0.0.77"
 
-react-navigation-drawer@0.4.2:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/react-navigation-drawer/-/react-navigation-drawer-0.4.2.tgz#49aa1bc6684923294a9c112dce75d8ec4184c64f"
+react-navigation-drawer@0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/react-navigation-drawer/-/react-navigation-drawer-0.4.3.tgz#c04c94e2429b7e724801af05bd0a93a79cb27f71"
   dependencies:
     react-native-drawer-layout-polyfill "^1.3.2"
 
@@ -5914,9 +5914,9 @@ react-navigation-tabs@^0.4.0:
     react-native-safe-area-view "^0.7.0"
     react-native-tab-view "^1.0.0"
 
-react-navigation@2.5.3:
-  version "2.5.3"
-  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.5.3.tgz#37ebe91553d2ae7bb047aababe688e87c6e6fe7e"
+react-navigation@2.5.5:
+  version "2.5.5"
+  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.5.5.tgz#0c3b05147f824e636e6dd74a682e779e676d0cb0"
   dependencies:
     clamp "^1.0.1"
     create-react-context "^0.2.1"
@@ -5925,7 +5925,7 @@ react-navigation@2.5.3:
     react-lifecycles-compat "^3"
     react-native-safe-area-view "^0.8.0"
     react-navigation-deprecated-tab-navigator "1.3.0"
-    react-navigation-drawer "0.4.2"
+    react-navigation-drawer "0.4.3"
     react-navigation-tabs "0.5.1"
 
 react-proxy@^1.1.7:
