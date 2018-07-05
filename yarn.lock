@@ -5905,9 +5905,9 @@ react-navigation-tabs@^0.4.0:
     react-native-safe-area-view "^0.7.0"
     react-native-tab-view "^1.0.0"
 
-react-navigation@2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.6.0.tgz#7734aec4acf690d556a5bdcbda10ea79a3dc6c7e"
+react-navigation@2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.6.1.tgz#1466e7737799ef5426e76a012f0a2cc353a9c24e"
   dependencies:
     clamp "^1.0.1"
     create-react-context "^0.2.1"
