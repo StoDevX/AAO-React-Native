@@ -562,9 +562,9 @@ ajv-keywords@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-2.1.1.tgz#617997fc5f60576894c435f940d819e135b80762"
 
-ajv@6.5.1:
-  version "6.5.1"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.5.1.tgz#88ebc1263c7133937d108b80c5572e64e1d9322d"
+ajv@6.5.2:
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.5.2.tgz#678495f9b82f7cca6be248dd92f59bff5e1f4360"
   dependencies:
     fast-deep-equal "^2.0.1"
     fast-json-stable-stringify "^2.0.0"
@@ -815,9 +815,9 @@ babel-core@6.26.0, babel-core@^6.0.0, babel-core@^6.24.1, babel-core@^6.26.0, ba
     slash "^1.0.0"
     source-map "^0.5.6"
 
-babel-eslint@8.2.3:
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/babel-eslint/-/babel-eslint-8.2.3.tgz#1a2e6681cc9bc4473c32899e59915e19cd6733cf"
+babel-eslint@8.2.5:
+  version "8.2.5"
+  resolved "https://registry.yarnpkg.com/babel-eslint/-/babel-eslint-8.2.5.tgz#dc2331c259d36782aa189da510c43dedd5adc7a3"
   dependencies:
     "@babel/code-frame" "7.0.0-beta.44"
     "@babel/traverse" "7.0.0-beta.44"
@@ -1596,9 +1596,9 @@ buffer@5.1.0:
     base64-js "^1.0.2"
     ieee754 "^1.1.4"
 
-bugsnag-react-native@2.9.5:
-  version "2.9.5"
-  resolved "https://registry.yarnpkg.com/bugsnag-react-native/-/bugsnag-react-native-2.9.5.tgz#2ba9377b30528d30d3260c70ff208b8ddafa0f76"
+bugsnag-react-native@2.10.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/bugsnag-react-native/-/bugsnag-react-native-2.10.0.tgz#40a274ac13f36d888b724aa0dfc8dc974faf5e2a"
   dependencies:
     iserror "^0.0.2"
     promise "^7"
@@ -2493,14 +2493,14 @@ eslint-plugin-react-native@^3.2.1:
   dependencies:
     eslint-plugin-react-native-globals "^0.1.1"
 
-eslint-plugin-react@7.9.1:
-  version "7.9.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.9.1.tgz#101aadd15e7c7b431ed025303ac7b421a8e3dc15"
+eslint-plugin-react@7.10.0:
+  version "7.10.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.10.0.tgz#af5c1fef31c4704db02098f9be18202993828b50"
   dependencies:
     doctrine "^2.1.0"
-    has "^1.0.2"
+    has "^1.0.3"
     jsx-ast-utils "^2.0.1"
-    prop-types "^15.6.1"
+    prop-types "^15.6.2"
 
 eslint-rule-composer@^0.3.0:
   version "0.3.0"
@@ -3245,9 +3245,9 @@ has@^1.0.1:
   dependencies:
     function-bind "^1.0.2"
 
-has@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/has/-/has-1.0.2.tgz#1a64bfe4b52e67fb87b9822503d97c019fb6ba42"
+has@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/has/-/has-1.0.3.tgz#722d7cbfc1f6aa8241f16dd814e011e1f41e8796"
   dependencies:
     function-bind "^1.1.1"
 
@@ -4964,9 +4964,9 @@ mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.1:
   dependencies:
     minimist "0.0.8"
 
-moment-timezone@0.5.20:
-  version "0.5.20"
-  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.20.tgz#fe66da425dd9f9bbf416f131bf17659680aabb99"
+moment-timezone@0.5.21:
+  version "0.5.21"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.21.tgz#3cba247d84492174dbf71de2a9848fa13207b845"
   dependencies:
     moment ">= 2.9.0"
 
@@ -5523,9 +5523,9 @@ preserve@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/preserve/-/preserve-0.2.0.tgz#815ed1f6ebc65926f865b310c0713bcb3315ce4b"
 
-prettier@1.13.5:
-  version "1.13.5"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.13.5.tgz#7ae2076998c8edce79d63834e9b7b09fead6bfd0"
+prettier@1.13.7:
+  version "1.13.7"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.13.7.tgz#850f3b8af784a49a6ea2d2eaa7ed1428a34b7281"
 
 pretty-bytes@5.1.0:
   version "5.1.0"
@@ -5574,19 +5574,10 @@ promise@^7, promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@15.6.1, prop-types@^15.5.10, prop-types@^15.6.0, prop-types@^15.6.1:
-  version "15.6.1"
-  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.1.tgz#36644453564255ddda391191fb3a125cbdf654ca"
+prop-types@15.6.2, prop-types@^15.5.1, prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
+  version "15.6.2"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   dependencies:
-    fbjs "^0.8.16"
-    loose-envify "^1.3.1"
-    object-assign "^4.1.1"
-
-prop-types@^15.5.1, prop-types@^15.5.8:
-  version "15.6.0"
-  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.0.tgz#ceaf083022fc46b4a35f69e13ef75aed0d639856"
-  dependencies:
-    fbjs "^0.8.16"
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
 
@@ -5617,6 +5608,13 @@ query-string@^5.0.1:
     decode-uri-component "^0.2.0"
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
+
+query-string@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.1.0.tgz#01e7d69f6a0940dac67a937d6c6325647aa4532a"
+  dependencies:
+    decode-uri-component "^0.2.0"
+    strict-uri-encode "^2.0.0"
 
 querystring@0.2.0:
   version "0.2.0"
@@ -5872,9 +5870,9 @@ react-navigation-deprecated-tab-navigator@1.3.0:
   dependencies:
     react-native-tab-view "^0.0.77"
 
-react-navigation-drawer@0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/react-navigation-drawer/-/react-navigation-drawer-0.4.1.tgz#ea3c9218dabbe8626c91d388cf0df4b1f8b14cb7"
+react-navigation-drawer@0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/react-navigation-drawer/-/react-navigation-drawer-0.4.3.tgz#c04c94e2429b7e724801af05bd0a93a79cb27f71"
   dependencies:
     react-native-drawer-layout-polyfill "^1.3.2"
 
@@ -5907,18 +5905,19 @@ react-navigation-tabs@^0.4.0:
     react-native-safe-area-view "^0.7.0"
     react-native-tab-view "^1.0.0"
 
-react-navigation@2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.5.0.tgz#16b85fdcada8a347a7a819bc9aa04f7462f57fd0"
+react-navigation@2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.7.0.tgz#cd2a5ed107ebf9e24616a3fbc68aab00b9b3b241"
   dependencies:
     clamp "^1.0.1"
     create-react-context "^0.2.1"
     hoist-non-react-statics "^2.2.0"
     path-to-regexp "^1.7.0"
+    query-string "^6.1.0"
     react-lifecycles-compat "^3"
     react-native-safe-area-view "^0.8.0"
     react-navigation-deprecated-tab-navigator "1.3.0"
-    react-navigation-drawer "0.4.1"
+    react-navigation-drawer "0.4.3"
     react-navigation-tabs "0.5.1"
 
 react-proxy@^1.1.7:
@@ -6666,6 +6665,10 @@ stream@0.0.2:
 strict-uri-encode@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz#279b225df1d582b1f54e65addd4352e18faa0713"
+
+strict-uri-encode@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-2.0.0.tgz#b9c7330c7042862f6b142dc274bbcc5866ce3546"
 
 string-length@^2.0.0:
   version "2.0.0"
