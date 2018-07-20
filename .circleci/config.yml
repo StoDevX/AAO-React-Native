@@ -282,7 +282,7 @@ jobs:
       - run: *run-danger
 
   ios: &ios
-    macos: {xcode: '9.0'}
+    macos: {xcode: '9.4.1'}
     environment: &ios-env
       task: IOS
       FASTLANE_SKIP_UPDATE_CHECK: '1'
