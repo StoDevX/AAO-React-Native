@@ -105,7 +105,7 @@ GEM
     naturally (2.2.0)
     os (0.9.6)
     parallel (1.12.1)
-    parser (2.5.1.0)
+    parser (2.5.1.2)
       ast (~> 2.4.0)
     plist (3.4.0)
     powerpack (0.1.1)
