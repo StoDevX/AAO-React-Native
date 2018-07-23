@@ -170,7 +170,7 @@ DEPENDENCIES
   fastlane
   fastlane-plugin-bugsnag
   json
-  rubocop (~> 0.51)
+  rubocop (~> 0.58)
   xcodeproj
 
 BUNDLED WITH
