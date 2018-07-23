@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View, Animated, Platform} from 'react-native'
+import {StyleSheet, View, Animated, Platform, ScrollView} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {SearchBar} from '../../components/searchbar'
@@ -154,6 +154,16 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		applyFilters: applyFiltersToItem,
 	}
 
+	state = {
+		browsing: false,
+		cachedFilters: this.props.filters,
+		dataLoading: true,
+		searchResults: [],
+		searchActive: false,
+		searchPerformed: false,
+		query: '',
+	}
+
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
 		if (prevState.browsing) {
 			return applyFiltersAndQuery({
@@ -180,24 +190,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		})
 	}
 
-	state = {
-		browsing: false,
-		cachedFilters: this.props.filters,
-		dataLoading: true,
-		searchResults: [],
-		searchActive: false,
-		searchPerformed: false,
-		query: '',
-	}
-
 	componentDidMount() {
-		areAnyTermsCached().then(anyTermsCached => {
-			if (anyTermsCached) {
-				this.loadData()
-			} else {
-				this.setState(() => ({dataLoading: false}))
-			}
-		})
+		this.loadData()
 		this.updateFilters(this.props)
 	}
 
@@ -212,32 +206,29 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	searchBarTop = new Animated.Value(this.animations.searchBarTop.start)
 	containerHeight = new Animated.Value(this.animations.containerHeight.start)
 
-	loadData = () => {
+	loadData = async () => {
 		this.setState(() => ({dataLoading: true}))
 
+		// If the data has not been loaded into Redux State:
 		if (this.props.courseDataState !== 'ready') {
-			// If the data has not been loaded into Redux State:
 			// 1. load the cached courses
+			await this.props.loadCourseDataIntoMemory()
+
 			// 2. if any courses are cached, hide the spinner
+			if (await areAnyTermsCached()) {
+				this.setState(() => ({dataLoading: false}))
+			}
+
 			// 3. either way, start updating courses in the background
-			// 4. when everything is done, make sure the spinner is hidden
-			return this.props
-				.loadCourseDataIntoMemory()
-				.then(() => areAnyTermsCached())
-				.then(anyTermsCached => {
-					if (anyTermsCached) {
-						this.doneLoading()
-					}
-					return this.props.updateCourseData()
-				})
-				.finally(() => this.doneLoading())
+			await this.props.updateCourseData()
 		} else {
 			// If the course data is already in Redux State, check for update
-			return this.props.updateCourseData().then(() => this.doneLoading())
+			await this.props.updateCourseData()
 		}
-	}
 
-	doneLoading = () => this.setState(() => ({dataLoading: false}))
+		// 4. when everything is done, make sure the spinner is hidden
+		this.setState(() => ({dataLoading: false}))
+	}
 
 	onSearchButtonPress = text => {
 		if (Platform.OS === 'ios') {
@@ -248,15 +239,14 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	_performSearch = (query: string) => {
-		this.setState(() =>
-			executeSearch({
-				text: query,
-				filters: this.props.filters,
-				applyFilters: this.props.applyFilters,
-				allCourses: this.props.allCourses,
-				updateRecentSearches: this.props.updateRecentSearches,
-			}),
-		)
+		const results = executeSearch({
+			text: query,
+			filters: this.props.filters,
+			applyFilters: this.props.applyFilters,
+			allCourses: this.props.allCourses,
+			updateRecentSearches: this.props.updateRecentSearches,
+		})
+		this.setState(() => results)
 	}
 
 	performSearch = debounce(this._performSearch, 20)
@@ -409,7 +399,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 					const aniHeaderStyle = [styles.header, {opacity: this.headerOpacity}]
 
 					return (
-						<View style={[styles.container, styles.common]}>
+						<ScrollView style={[styles.container, styles.common]}>
 							<Animated.View style={aniContainerStyle}>
 								<Animated.Text style={aniHeaderStyle}>
 									Search Courses
@@ -458,7 +448,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 									/>
 								</View>
 							)}
-						</View>
+						</ScrollView>
 					)
 				}}
 			/>
@@ -490,7 +480,10 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 	}
 }
 
-export default connect(mapState, mapDispatch)(CourseSearchView)
+export default connect(
+	mapState,
+	mapDispatch,
+)(CourseSearchView)
 
 let styles = StyleSheet.create({
 	bottomContainer: {

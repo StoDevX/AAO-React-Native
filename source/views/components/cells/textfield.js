@@ -46,6 +46,8 @@ type Props = {
 }
 
 export class CellTextField extends React.Component<Props> {
+	_input: any
+
 	static defaultProps = {
 		disabled: false,
 		placeholder: '',
@@ -55,7 +57,6 @@ export class CellTextField extends React.Component<Props> {
 		autoCapitalize: 'none',
 	}
 
-	_input: any
 	focusInput = () => this._input.focus()
 
 	cacheRef = (ref: any) => {

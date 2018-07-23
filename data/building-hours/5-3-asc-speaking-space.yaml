@@ -3,10 +3,11 @@ category: Help and Support
 
 schedule:
   - title: Hours
-    hours:
-      - {days: [Mo, Tu, We, Th], from: '7:00pm', to: '9:00pm'}
-      - {days: [Sa], from: '2:00pm', to: '5:00pm'}
-      - {days: [Su], from: '6:00pm', to: '9:00pm'}
+    hours: []
+      # - {days: [Mo, Tu, We, Th], from: '7:00pm', to: '9:00pm'}
+      # - {days: [Sa], from: '2:00pm', to: '5:00pm'}
+      # - {days: [Su], from: '6:00pm', to: '9:00pm'}
+    notes: The Speaking Space is closed for the summer.
 
 breakSchedule:
   fall: []

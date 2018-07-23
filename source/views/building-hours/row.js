@@ -79,6 +79,8 @@ function deriveStateFromProps(props: Props) {
 }
 
 export class BuildingRow extends React.Component<Props, State> {
+	state = deriveStateFromProps(this.props)
+
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
 		if (prevState.now.isSame(nextProps.now, 'minute')) {
 			return null
@@ -86,8 +88,6 @@ export class BuildingRow extends React.Component<Props, State> {
 
 		return deriveStateFromProps(nextProps)
 	}
-
-	state = deriveStateFromProps(this.props)
 
 	shouldComponentUpdate(nextProps: Props, nextState: State) {
 		// We won't check the time in shouldComponentUpdate, because we really

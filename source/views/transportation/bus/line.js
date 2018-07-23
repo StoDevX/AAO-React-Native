@@ -119,11 +119,11 @@ function deriveFromProps({line, now}: Props) {
 }
 
 export class BusLine extends React.Component<Props, State> {
+	state = deriveFromProps(this.props)
+
 	static getDerivedStateFromProps(nextProps: Props) {
 		return deriveFromProps(nextProps)
 	}
-
-	state = deriveFromProps(this.props)
 
 	shouldComponentUpdate(nextProps: Props) {
 		return (

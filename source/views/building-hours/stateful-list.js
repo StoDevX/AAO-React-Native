@@ -57,15 +57,6 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		headerBackTitle: 'Hours',
 	}
 
-	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		return {
-			buildings: groupBuildings(
-				prevState.allBuildings,
-				nextProps.favoriteBuildings,
-			),
-		}
-	}
-
 	_intervalId: ?IntervalID
 
 	state = {
@@ -76,6 +67,15 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		buildings: groupBuildings(defaultData.data, this.props.favoriteBuildings),
 		allBuildings: defaultData.data,
 		intervalId: null,
+	}
+
+	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+		return {
+			buildings: groupBuildings(
+				prevState.allBuildings,
+				nextProps.favoriteBuildings,
+			),
+		}
 	}
 
 	componentDidMount() {

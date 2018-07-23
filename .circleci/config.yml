@@ -153,7 +153,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: mkdir -p logs/ test-results/jest/
       - run: yarn run bundle-data
-      - run: yarn run --silent test --coverage --testResultsProcessor="jest-junit" 2>&1 | tee logs/jest
+      - run: yarn run --silent test --coverage | tee logs/jest
       - run: *run-danger
       - store_test_results:
           path: ./test-results
@@ -282,7 +282,7 @@ jobs:
       - run: *run-danger
 
   ios: &ios
-    macos: {xcode: '9.0'}
+    macos: {xcode: '9.4.1'}
     environment: &ios-env
       task: IOS
       FASTLANE_SKIP_UPDATE_CHECK: '1'

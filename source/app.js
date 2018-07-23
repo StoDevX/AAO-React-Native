@@ -9,10 +9,6 @@ import {makeStore, initRedux} from './flux'
 import bugsnag from './bugsnag'
 import {tracker} from './analytics'
 import {AppNavigator} from './navigation'
-import {
-	startStatusBarColorChanger,
-	stopStatusBarColorChanger,
-} from './views/components/open-url'
 import type {NavigationState} from 'react-navigation'
 import OneSignal from 'react-native-onesignal'
 
@@ -87,7 +83,10 @@ export default class App extends React.Component<Props> {
 	render() {
 		return (
 			<Provider store={store}>
-				<AppNavigator onNavigationStateChange={this.trackScreenChanges} />
+				<AppNavigator
+					onNavigationStateChange={this.trackScreenChanges}
+					persistenceKey="NavState"
+				/>
 			</Provider>
 		)
 	}
