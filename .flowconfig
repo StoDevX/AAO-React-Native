@@ -15,6 +15,7 @@
 ; Ignore other things
 .*/node_modules/.*/__tests?__/.*
 .*/node_modules/.*/examples/.*
+.*/node_modules/danger/test-results.json
 .*/node_modules/react-native-mock/.*
 .*/node_modules/react-native-restart/.*
 ; remove this after rn-linear-gradient updates
