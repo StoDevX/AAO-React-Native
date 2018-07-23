@@ -117,7 +117,7 @@ GEM
       declarative (< 0.1.0)
       declarative-option (< 0.2.0)
       uber (< 0.2.0)
-    retriable (3.1.1)
+    retriable (3.1.2)
     rouge (2.0.7)
     rubocop (0.51.0)
       parallel (~> 1.10)
