@@ -5,6 +5,7 @@ import {View, StyleSheet, Image} from 'react-native'
 import keys from 'lodash/keys'
 import pick from 'lodash/pick'
 import map from 'lodash/map'
+import type {ViewStyleProp} from '../../types'
 import type {ItemCorIconMapType, MasterCorIconMapType} from '../types'
 
 const styles = StyleSheet.create({
@@ -19,15 +20,13 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function DietaryTags({
-	corIcons,
-	dietary,
-	style,
-}: {
+type Props = {
 	corIcons: MasterCorIconMapType,
 	dietary: ItemCorIconMapType,
-	style?: any,
-}) {
+	style?: ViewStyleProp,
+}
+
+export function DietaryTags({corIcons, dietary, style}: Props) {
 	// filter the mapping of all icons by just the icons provided by this item
 	let filtered = Array.isArray(dietary)
 		? pick(corIcons, [])

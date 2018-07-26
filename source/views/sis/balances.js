@@ -21,6 +21,7 @@ import {type ReduxState} from '../../flux'
 import delay from 'delay'
 import * as c from '../components/colors'
 import type {TopLevelViewPropsType} from '../types'
+import type {ViewStyleProp} from '../types'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 const LONG_DISCLAIMER =

@@ -2,6 +2,7 @@
 import * as React from 'react'
 import {StyleSheet, Platform, Text} from 'react-native'
 import * as c from '../colors'
+import type {ViewStyleProp} from '../../types'
 
 const styles = StyleSheet.create({
 	title: {
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
 
 type PropsType = {
 	children?: any,
-	style?: any,
+	style?: ViewStyleProp,
 	lines?: number,
 	bold?: boolean,
 }

@@ -7,13 +7,13 @@ import moment from 'moment-timezone'
 
 import {DatePicker as ActualDatePicker} from './datepicker'
 
+import type {ViewStyleProp} from '../../types'
+
 const FORMATS = {
 	date: 'YYYY-MM-DD',
 	datetime: 'YYYY-MM-DD HH:mm',
 	time: 'HH:mm',
 }
-
-type StyleSheetRules = Object | number | false | Array<StyleSheetRules>
 
 type Props = {
 	androidMode: 'calendar' | 'spinner' | 'default',
@@ -24,7 +24,7 @@ type Props = {
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
 	mode: 'date' | 'datetime' | 'time',
 	onDateChange: moment => any,
-	style?: StyleSheetRules,
+	style?: ViewStyleProp,
 }
 
 type State = {

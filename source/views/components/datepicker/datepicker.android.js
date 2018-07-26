@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 import moment from 'moment-timezone'
 import * as c from '../colors'
-import type {StyleSheetRules} from './types'
+import type {ViewStyleProp} from '../../types'
 
 // $FlowExpectedError "dismissedAction is not found in DatePickerAndroid"
 let DISMISSED = DatePickerAndroid.dismissedAction
@@ -23,7 +23,7 @@ type Props = {
 	formattedDate: string,
 	mode: 'date' | 'datetime' | 'time',
 	onDateChange: moment => any,
-	style?: StyleSheetRules,
+	style?: ViewStyleProp,
 	timezone: string,
 }
 

@@ -6,6 +6,8 @@ import {Touchable} from '../touchable'
 import {DisclosureArrow} from './disclosure-arrow'
 import isNil from 'lodash/isNil'
 
+import type {ViewStyleProp} from '../../types'
+
 const styles = StyleSheet.create({
 	childWrapper: {
 		flex: 1,
@@ -40,8 +42,8 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {|
-	style?: any,
-	contentContainerStyle?: any,
+	style?: ViewStyleProp,
+	contentContainerStyle?: ViewStyleProp,
 	arrowPosition?: 'center' | 'top' | 'none',
 	fullWidth?: boolean,
 	fullHeight?: boolean,

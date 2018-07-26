@@ -8,6 +8,7 @@ import {ListRow, Detail, Title} from '../components/list'
 import {fastGetTrimmedText} from '../../lib/html'
 import {Bar} from './vertical-bar'
 import {times} from './times'
+import type {ViewStyleProp} from '../types'
 
 const styles = StyleSheet.create({
 	row: {
@@ -74,7 +75,8 @@ export default class EventRow extends React.PureComponent<Props> {
 	}
 }
 
-function CalendarTimes({event, style}: {event: EventType, style: any}) {
+function CalendarTimes(props: {event: EventType, style: ViewStyleProp}) {
+	let {event, style} = props
 	const {allDay, start, end} = times(event)
 
 	if (allDay) {

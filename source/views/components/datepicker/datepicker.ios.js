@@ -13,7 +13,7 @@ import {
 } from 'react-native'
 import moment from 'moment-timezone'
 import * as c from '../colors'
-import type {StyleSheetRules} from './types'
+import type {ViewStyleProp, TextStyleProp} from '../../types'
 
 type Props = {
 	date: moment,
@@ -24,7 +24,7 @@ type Props = {
 	minuteInterval?: 1 | 2 | 3 | 4 | 5 | 6 | 10 | 12 | 15 | 20 | 30,
 	mode: 'date' | 'datetime' | 'time',
 	onDateChange: moment => any,
-	style?: StyleSheetRules,
+	style?: ViewStyleProp,
 	timezone: string,
 }
 
@@ -205,8 +205,8 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 type StyleSheetRule = number | Object | Array<StyleSheetRule>
 
 type ButtonProps = {
-	style?: StyleSheetRule,
-	textStyle?: StyleSheetRule,
+	style?: ViewStyleProp,
+	textStyle?: TextStyleProp,
 	onPress: () => any,
 	text: string,
 }
