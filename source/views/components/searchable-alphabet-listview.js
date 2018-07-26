@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = any
+type Props = $PropertyType<StyledAlphabetListView, 'props'>
 
 export class SearchableAlphabetListView extends React.PureComponent<Props> {
 	searchBar: any = null
