@@ -81,3 +81,7 @@ android/app/signing.properties
 ios/*/*.jsbundle
 ios/*/*.jsbundle.map
 ios/assets/*
+
+# android bundled assets
+android/app/src/main/assets/*
+android/app/src/main/res/drawable-*/*
