@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
-	getRef?: any,
+	getRef?: NativeSearchBar => any,
 	backgroundColor?: string,
 	style?: ViewStyleProp,
 	placeholder?: string,

@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	getRef?: any,
+	getRef?: NativeSearchBar => any,
 	style?: ViewStyleProp,
 	placeholder?: string,
 	onChangeText: string => any,
@@ -44,7 +44,7 @@ export class SearchBar extends React.PureComponent<Props, State> {
 		input: '',
 	}
 
-	updateText = input => {
+	updateText = (input: string) => {
 		this.setState({input: input})
 	}
 
