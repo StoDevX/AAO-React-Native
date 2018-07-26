@@ -3,6 +3,7 @@ import * as React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
 import {material, iOSUIKit} from 'react-native-typography'
 import * as c from './colors'
+import type {ViewStyleProp} from '../types'
 
 const cardStyles = StyleSheet.create({
 	card: {
@@ -40,8 +41,8 @@ const cardStyles = StyleSheet.create({
 type Props = {
 	header?: false | string,
 	footer?: false | string,
-	children?: any,
-	style?: any,
+	children?: React.Node,
+	style?: ViewStyleProp,
 }
 
 export function Card({header, footer, children, style}: Props) {

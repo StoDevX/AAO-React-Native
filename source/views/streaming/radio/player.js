@@ -3,6 +3,7 @@
 import * as React from 'react'
 import {WebView} from 'react-native'
 import type {PlayState, HtmlAudioError} from './types'
+import type {ViewStyleProp} from '../../types'
 
 type Props = {
 	playState: PlayState,
@@ -12,7 +13,7 @@ type Props = {
 	onPlay?: () => any,
 	onPause?: () => any,
 	onError?: HtmlAudioError => any,
-	style: any,
+	style: ViewStyleProp,
 	useEmbeddedPlayer: boolean,
 	embeddedPlayerUrl: string,
 	streamSourceUrl: string,

@@ -78,11 +78,10 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
 				{loggedIn ? (
 					<Cell title={`Logged in as ${username}.`} />
 				) : (
-					[
+					<React.Fragment>
 						<CellTextField
-							key="username"
 							_ref={this.getUsernameRef}
-							disabled={loading}
+							editable={loading}
 							label="Username"
 							onChangeText={this.onChangeUsername}
 							onSubmitEditing={this.focusPassword}
@@ -90,12 +89,10 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
 							returnKeyType="next"
 							secureTextEntry={false}
 							value={username}
-						/>,
-
+						/>
 						<CellTextField
-							key="password"
 							_ref={this.getPasswordRef}
-							disabled={loading}
+							editable={loading}
 							label="Password"
 							onChangeText={this.onChangePassword}
 							onSubmitEditing={loggedIn ? noop : this.logIn}
@@ -103,8 +100,8 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
 							returnKeyType="done"
 							secureTextEntry={true}
 							value={password}
-						/>,
-					]
+						/>
+					</React.Fragment>
 				)}
 
 				<LoginButton

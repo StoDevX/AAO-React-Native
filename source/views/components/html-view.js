@@ -3,11 +3,12 @@
 import * as React from 'react'
 import {WebView} from 'react-native'
 import openUrl, {canOpenUrl} from '../components/open-url'
+import type {ViewStyleProp} from '../types'
 
 type Props = {
 	html: string,
 	baseUrl?: ?string,
-	style?: number | Object | Array<number | Object>,
+	style?: ViewStyleProp,
 }
 
 export class HtmlView extends React.Component<Props> {

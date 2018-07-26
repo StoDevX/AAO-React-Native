@@ -31,7 +31,7 @@ type ReactProps = TopLevelViewPropsType & {
 	menuCorIcons: MasterCorIconMapType,
 	name: string,
 	now: momentT,
-	onRefresh?: ?() => any,
+	onRefresh?: () => any,
 	refreshing?: ?boolean,
 }
 

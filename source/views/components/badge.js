@@ -1,14 +1,15 @@
 // @flow
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
+import type {ViewStyleProp, TextStyleProp} from '../types'
 import * as c from '../components/colors'
 
 type PropsType = {
 	text: string,
 	accentColor?: string,
 	textColor?: string,
-	style?: number | Object | Array<number | Object>,
-	textStyle?: number | Object | Array<number | Object>,
+	style?: ViewStyleProp,
+	textStyle?: TextStyleProp,
 }
 
 let styles = StyleSheet.create({

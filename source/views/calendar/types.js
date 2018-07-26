@@ -2,6 +2,7 @@
 import type moment from 'moment'
 
 type GoogleTimeType = {
+	date?: string,
 	dateTime: string,
 }
 export type GoogleEventType = {

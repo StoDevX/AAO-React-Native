@@ -209,7 +209,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		cafeId: string,
 		ignoreProvidedMenus: boolean,
 		foodItems: MenuItemContainerType,
-	}) {
+	}): Array<ProcessedMealType> {
 		const {cafeMenu, cafeId, ignoreProvidedMenus, foodItems} = args
 
 		// We hard-code to the first day returned because we're only requesting

@@ -30,10 +30,10 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {
+type Props = $ReadOnly<{|
 	label?: string,
-	_ref: any => any,
-	disabled: boolean,
+	_ref: TextInput => any,
+	editable?: boolean,
 	multiline?: boolean,
 	onChangeText: string => any,
 	onSubmitEditing: string => any,
@@ -43,13 +43,13 @@ type Props = {
 	autoCapitalize: 'characters' | 'words' | 'sentences' | 'none',
 	value: string,
 	labelWidth?: number,
-}
+|}>
 
 export class CellTextField extends React.Component<Props> {
 	_input: any
 
 	static defaultProps = {
-		disabled: false,
+		editable: true,
 		placeholder: '',
 		_ref: () => {},
 		returnKeyType: 'default',
@@ -90,7 +90,7 @@ export class CellTextField extends React.Component<Props> {
 						autoCapitalize={this.props.autoCapitalize}
 						autoCorrect={false}
 						clearButtonMode="while-editing"
-						disabled={this.props.disabled}
+						editable={this.props.editable}
 						multiline={this.props.multiline || false}
 						onChangeText={this.props.onChangeText}
 						onSubmitEditing={this.onSubmit}

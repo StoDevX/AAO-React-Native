@@ -7,6 +7,7 @@ import {ListRow, Detail, Title} from '../../components/list'
 import type {MenuItemType, MasterCorIconMapType} from '../types'
 import * as c from '../../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
+import type {ViewStyleProp} from '../../types'
 
 const specialsIcon =
 	Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'
@@ -14,7 +15,7 @@ const specialsIcon =
 type FoodItemPropsType = {|
 	corIcons: MasterCorIconMapType,
 	data: MenuItemType,
-	style?: any,
+	style?: ViewStyleProp,
 	badgeSpecials?: boolean,
 	spacing: {left: number},
 |}

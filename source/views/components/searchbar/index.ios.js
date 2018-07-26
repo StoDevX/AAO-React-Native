@@ -4,6 +4,7 @@ import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import NativeSearchBar from 'react-native-search-bar'
 import * as c from '../colors'
+import type {ViewStyleProp} from '../../types'
 
 const styles = StyleSheet.create({
 	searchbar: {
@@ -12,9 +13,9 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
-	getRef?: any,
+	getRef?: NativeSearchBar => any,
 	backgroundColor?: string,
-	style?: any,
+	style?: ViewStyleProp,
 	placeholder?: string,
 	onFocus?: () => any,
 	onCancel?: () => any,

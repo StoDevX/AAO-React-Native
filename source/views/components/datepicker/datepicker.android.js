@@ -12,7 +12,10 @@ import {
 } from 'react-native'
 import moment from 'moment-timezone'
 import * as c from '../colors'
-import type {StyleSheetRules} from './types'
+import type {ViewStyleProp} from '../../types'
+
+// $FlowExpectedError "dismissedAction is not found in DatePickerAndroid"
+let DISMISSED = DatePickerAndroid.dismissedAction
 
 type Props = {
 	androidMode: 'calendar' | 'spinner' | 'default',
@@ -20,12 +23,12 @@ type Props = {
 	formattedDate: string,
 	mode: 'date' | 'datetime' | 'time',
 	onDateChange: moment => any,
-	style?: StyleSheetRules,
+	style?: ViewStyleProp,
 	timezone: string,
 }
 
 type DatePickerResponse = {
-	action: string,
+	action: typeof DISMISSED,
 	year: number,
 	month: number,
 	day: number,
@@ -45,7 +48,7 @@ export class DatePicker extends React.PureComponent<Props> {
 	}
 
 	onDatePicked = ({action, year, month, day}: DatePickerResponse) => {
-		if (action === DatePickerAndroid.dismissedAction) {
+		if (action === DISMISSED) {
 			return
 		}
 
@@ -53,7 +56,7 @@ export class DatePicker extends React.PureComponent<Props> {
 	}
 
 	onTimePicked = ({action, hour, minute}: TimePickerResponse) => {
-		if (action === DatePickerAndroid.dismissedAction) {
+		if (action === DISMISSED) {
 			return
 		}
 
@@ -61,7 +64,7 @@ export class DatePicker extends React.PureComponent<Props> {
 	}
 
 	onDatetimeDatePicked = ({action, year, month, day}: DatePickerResponse) => {
-		if (action === DatePickerAndroid.dismissedAction) {
+		if (action === DISMISSED) {
 			return
 		}
 
@@ -80,7 +83,7 @@ export class DatePicker extends React.PureComponent<Props> {
 		hour,
 		minute,
 	}: TimePickerResponse) => {
-		if (action === DatePickerAndroid.dismissedAction) {
+		if (action === DISMISSED) {
 			return
 		}
 

@@ -26,9 +26,10 @@ export type State = {|
 |}
 
 function handleViewPop(state: State) {
+	let viewStack: Array<ViewName> = state.viewStack.slice(0, -1)
 	return {
 		...state,
-		viewStack: state.viewStack.slice(0, -1),
+		viewStack: viewStack,
 		currentView: state.viewStack[state.viewStack.length - 2] || null,
 	}
 }

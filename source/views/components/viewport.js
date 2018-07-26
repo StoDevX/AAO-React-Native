@@ -5,13 +5,13 @@ import {Dimensions} from 'react-native'
 
 type WindowDimensions = {width: number, height: number}
 
-type Props = {
+type Props = $ReadOnly<{|
 	render: WindowDimensions => React.Node,
-}
+|}>
 
-type State = {
+type State = {|
 	viewport: WindowDimensions,
-}
+|}
 
 export class Viewport extends React.PureComponent<Props, State> {
 	state = {

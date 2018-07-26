@@ -5,6 +5,7 @@ import * as c from './colors'
 import {Button} from './button'
 import {Heading} from './markdown/heading'
 import {Viewport} from './viewport'
+import type {ViewStyleProp, TextStyleProp} from '../types'
 
 const styles = StyleSheet.create({
 	container: {
@@ -24,16 +25,16 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {
+type Props = $ReadOnly<{|
 	buttonDisabled?: boolean,
 	header?: string,
 	text?: string,
-	style?: any,
+	style?: ViewStyleProp,
 	spinner?: boolean,
 	buttonText?: string,
 	onPress?: () => any,
-	textStyle?: any,
-}
+	textStyle?: TextStyleProp,
+|}>
 
 export function NoticeView(props: Props) {
 	const {header, text, style, textStyle} = props

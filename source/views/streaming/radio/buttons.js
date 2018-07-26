@@ -9,7 +9,7 @@ import {Touchable} from '../../components/touchable'
 type ActionButtonProps = {
 	icon: string,
 	text: string,
-	onPress: () => mixed,
+	onPress: () => any,
 }
 
 export const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
@@ -37,7 +37,7 @@ export const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
 
 type SmallActionButtonProps = {
 	icon: string,
-	onPress: () => mixed,
+	onPress: () => any,
 }
 
 const SmallActionButton = ({icon, onPress}: SmallActionButtonProps) => (

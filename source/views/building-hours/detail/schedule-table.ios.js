@@ -1,8 +1,4 @@
-/**
- * @flow
- *
- * <ScheduleTable/> renders the table of schedules.
- */
+// @flow
 
 import * as React from 'react'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
