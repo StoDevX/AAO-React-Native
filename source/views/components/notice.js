@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {
+type Props = $ReadOnly<{|
 	buttonDisabled?: boolean,
 	header?: string,
 	text?: string,
@@ -34,7 +34,7 @@ type Props = {
 	buttonText?: string,
 	onPress?: () => any,
 	textStyle?: TextStyleProp,
-}
+|}>
 
 export function NoticeView(props: Props) {
 	const {header, text, style, textStyle} = props
