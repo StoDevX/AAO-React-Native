@@ -9,19 +9,25 @@ import {
 	View,
 } from 'react-native'
 
-type Props = {|
-	accessibilityComponentType?: string,
+import type {ViewStyleProp} from '../types'
+import type {
+	AccessibilityComponentType,
+	AccessibilityTraits as AccessibilityTraitsFlow,
+} from 'ViewAccessibility'
+
+type Props = $ReadOnly<{
+	accessibilityComponentType?: AccessibilityComponentType,
 	accessibilityLabel?: string,
-	accessibilityTraits?: string,
+	accessibilityTraits?: AccessibilityTraitsFlow,
 	activeOpacity?: number,
 	borderless?: boolean,
 	children?: React.Node,
 	containerStyle?: any,
 	highlight?: boolean,
 	onPress?: () => any,
-	style?: any,
+	style?: ViewStyleProp,
 	underlayColor?: string,
-|}
+}>
 
 export const Touchable = ({
 	borderless = false,
