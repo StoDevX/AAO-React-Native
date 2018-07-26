@@ -1,8 +1,4 @@
-/**
- * @flow
- *
- * An editor for individual building schedules.
- */
+// @flow
 
 import * as React from 'react'
 import xor from 'lodash/xor'
