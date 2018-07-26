@@ -117,12 +117,6 @@ android {
         }
     }
 
-    ext {
-        compileSdkVersion = COMPILE_SDK_VERSION
-        targetSdkVersion = TARGET_SDK_VERSION
-        androidSupportLibraryVersion = ANDROID_SUPPORT_LIBRARY_VERSION
-    }
-
     signingConfigs {
         // the signingConfig is configured below
         release
