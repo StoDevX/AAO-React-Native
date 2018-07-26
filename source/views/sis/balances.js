@@ -276,19 +276,21 @@ function getValueOrNa(value: ?string): string {
 	return value
 }
 
+type ValueCellProps = {
+	indeterminate: boolean,
+	label: string,
+	value: ?string,
+	style?: ViewStyleProp,
+	formatter: (?string) => string,
+}
+
 function FormattedValueCell({
 	indeterminate,
 	label,
 	value,
 	style,
 	formatter,
-}: {
-	indeterminate: boolean,
-	label: string,
-	value: ?string,
-	style?: any,
-	formatter: (?string) => string,
-}) {
+}: ValueCellProps) {
 	return (
 		<View style={[styles.rectangle, styles.common, styles.balances, style]}>
 			<Text
