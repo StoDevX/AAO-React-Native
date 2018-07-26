@@ -76,3 +76,8 @@ android/app/signing.properties
 # rubygems bundle
 /vendor/bundle/
 /.bundle/
+
+# ios bundled assets
+ios/*/*.jsbundle
+ios/*/*.jsbundle.map
+ios/assets/*
