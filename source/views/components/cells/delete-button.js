@@ -9,15 +9,17 @@ const deleteStyles = StyleSheet.create({
 	text: {textAlign: 'center', color: c.red},
 })
 
+type Props = {
+	title: string,
+	skipConfirm?: boolean,
+	onPress?: () => any,
+}
+
 export const DeleteButtonCell = ({
 	title,
 	skipConfirm = false,
 	onPress,
-}: {
-	title: string,
-	skipConfirm?: boolean,
-	onPress?: () => any,
-}) => {
+}: Props) => {
 	const onPressCallback = onPress ? onPress : () => {}
 
 	const callback = !skipConfirm
