@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
-	children?: any,
+	children?: React.Node,
 	style?: ViewStyleProp,
 	lines?: number,
 	bold?: boolean,

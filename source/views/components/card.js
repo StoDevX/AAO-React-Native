@@ -41,7 +41,7 @@ const cardStyles = StyleSheet.create({
 type Props = {
 	header?: false | string,
 	footer?: false | string,
-	children?: any,
+	children?: React.Node,
 	style?: ViewStyleProp,
 }
 
