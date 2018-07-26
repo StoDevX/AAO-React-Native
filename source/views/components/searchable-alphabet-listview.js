@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 type Props = $PropertyType<StyledAlphabetListView, 'props'>
 
 export class SearchableAlphabetListView extends React.PureComponent<Props> {
-	searchBar: any = null
+	searchBar: ?Object = null
 
 	_performSearch = (text: string | Object) => {
 		// Android clear button returns an object
@@ -40,7 +40,7 @@ export class SearchableAlphabetListView extends React.PureComponent<Props> {
 					getRef={ref => (this.searchBar = ref)}
 					onChangeText={this.performSearch}
 					// if we don't use the arrow function here, searchBar ref is null...
-					onSearchButtonPress={() => this.searchBar.unFocus()}
+					onSearchButtonPress={() => this.searchBar && this.searchBar.unFocus()}
 				/>
 				<StyledAlphabetListView
 					headerHeight={
