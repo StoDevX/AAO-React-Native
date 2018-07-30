@@ -3,7 +3,6 @@
 import * as React from 'react'
 import {StyleSheet, RefreshControl, Platform} from 'react-native'
 import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
-import {Column} from '../components/layout'
 import {
 	Detail,
 	Title,
@@ -11,8 +10,7 @@ import {
 	ListSectionHeader,
 	ListSeparator,
 } from '../components/list'
-import delay from 'delay'
-import {reportNetworkProblem} from '../../lib/report-network-problem'
+import {NoticeView} from '../components/notice'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {trackDefinitionOpen} from '../../analytics'
@@ -20,10 +18,19 @@ import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
-import * as defaultData from '../../../docs/dictionary.json'
-import {GH_PAGES_URL} from '../../globals'
+import {aaoGh} from '@app/fetch'
+import {DataFetcher} from '@frogpond/data-fetcher'
+import {age} from '@frogpond/age'
 
-const dictionaryUrl = GH_PAGES_URL('dictionary.json')
+let dictionary = aaoGh({
+	file: 'contact-info.json',
+	version: 2,
+	cacheControl: {
+		maxAge: age.days(1),
+		staleWhileRevalidate: true,
+		staleIfOffline: true,
+	},
+})
 
 const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
@@ -49,11 +56,18 @@ type Props = TopLevelViewPropsType
 
 type State = {
 	query: string,
-	allTerms: Array<WordType>,
-	refreshing: boolean,
 }
 
-export class DictionaryView extends React.PureComponent<Props, State> {
+type DataFetcherProps = {
+	dictionary: {
+		data: Array<WordType>,
+		error: ?Error,
+		loading: boolean,
+		refresh: () => any,
+	},
+}
+
+export class DictionaryView extends React.Component<Props, State> {
 	static navigationOptions = {
 		title: 'Campus Dictionary',
 		headerBackTitle: 'Dictionary',
@@ -61,40 +75,6 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 
 	state = {
 		query: '',
-		allTerms: defaultData.data,
-		refreshing: false,
-	}
-
-	componentDidMount() {
-		this.fetchData()
-	}
-
-	refresh = async () => {
-		const start = Date.now()
-		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
-		this.setState(() => ({refreshing: false}))
-	}
-
-	fetchData = async () => {
-		let {data: allTerms} = await fetchJson(dictionaryUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-
-		if (process.env.NODE_ENV === 'development') {
-			allTerms = defaultData.data
-		}
-
-		this.setState(() => ({allTerms}))
 	}
 
 	onPressRow = (data: WordType) => {
@@ -102,62 +82,72 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 		this.props.navigation.navigate('DictionaryDetailView', {item: data})
 	}
 
-	renderRow = ({item}: {item: WordType}) => (
-		<ListRow
-			arrowPosition="none"
-			contentContainerStyle={styles.row}
-			onPress={() => this.onPressRow(item)}
-		>
-			<Column>
+	renderRow = ({item}: {item: WordType}) => {
+		return (
+			<ListRow
+				arrowPosition="none"
+				contentContainerStyle={styles.row}
+				onPress={() => this.onPressRow(item)}
+			>
 				<Title lines={1}>{item.word}</Title>
 				<Detail lines={2} style={styles.rowDetailText}>
 					{item.definition}
 				</Detail>
-			</Column>
-		</ListRow>
-	)
+			</ListRow>
+		)
+	}
 
-	renderSectionHeader = ({title}: {title: string}) => (
-		<ListSectionHeader style={styles.rowSectionHeader} title={title} />
-	)
+	renderSectionHeader = ({title}: {title: string}) => {
+		return <ListSectionHeader style={styles.rowSectionHeader} title={title} />
+	}
 
-	renderSeparator = (sectionId: string, rowId: string) => (
-		<ListSeparator key={`${sectionId}-${rowId}`} />
-	)
+	renderSeparator = (sectionId: string, rowId: string) => {
+		return <ListSeparator key={`${sectionId}-${rowId}`} />
+	}
 
 	performSearch = (text: ?string) => {
 		this.setState(() => ({query: text ? text.toLowerCase() : ''}))
 	}
 
-	render() {
-		const refreshControl = (
-			<RefreshControl
-				onRefresh={this.refresh}
-				refreshing={this.state.refreshing}
-			/>
+	renderList = ({dictionary}: DataFetcherProps) => {
+		let {data: allTerms, loading, refresh} = dictionary
+
+		let refreshControl = (
+			<RefreshControl onRefresh={refresh} refreshing={loading} />
 		)
 
-		let results = this.state.allTerms
+		let results = allTerms
 		if (this.state.query) {
-			const {query, allTerms} = this.state
+			let {query} = this.state
 			results = allTerms.filter(term =>
 				termToArray(term).some(word => word.startsWith(query)),
 			)
 		}
 
+		let cellHeight =
+			ROW_HEIGHT +
+			(Platform.OS === 'ios' ? (11 / 12) * StyleSheet.hairlineWidth : 0)
+
 		return (
 			<SearchableAlphabetListView
 				cell={this.renderRow}
-				cellHeight={
-					ROW_HEIGHT +
-					(Platform.OS === 'ios' ? (11 / 12) * StyleSheet.hairlineWidth : 0)
-				}
+				cellHeight={cellHeight}
 				data={groupBy(results, item => item.word[0])}
 				onSearch={this.performSearch}
 				refreshControl={refreshControl}
 				renderSeparator={this.renderSeparator}
 				sectionHeader={this.renderSectionHeader}
 				sectionHeaderHeight={SECTION_HEADER_HEIGHT}
+			/>
+		)
+	}
+
+	render() {
+		return (
+			<DataFetcher
+				error={NoticeView}
+				render={this.renderList}
+				resources={{dictionary}}
 			/>
 		)
 	}
