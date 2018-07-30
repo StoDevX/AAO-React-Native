@@ -46,6 +46,12 @@
       "react"
     ]
   },
+  "workspaces": [
+    "./",
+    "./modules/@app/*",
+    "./modules/@frogpond/*",
+    "./modules/*"
+  ],
   "jest": {
     "testRegex": "/__tests__/.*\\.(test|spec)\\.js$",
     "collectCoverageFrom": [
