@@ -5,22 +5,34 @@ import {SectionList, StyleSheet} from 'react-native'
 import {ListSeparator, ListSectionHeader} from '../components/list'
 import {ListEmpty} from '../components/list'
 import {ContactRow} from './row'
-import delay from 'delay'
-import {reportNetworkProblem} from '../../lib/report-network-problem'
-import * as defaultData from '../../../docs/contact-info.json'
+import {NoticeView} from '../components/notice'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import * as c from '../components/colors'
 import type {ContactType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {GH_PAGES_URL} from '../../globals'
+import {aaoGh} from '@app/fetch'
+import {DataFetcher} from '@frogpond/data-fetcher'
+import {age} from '@frogpond/age'
+import mem from 'mem'
+import QuickLRU from 'quick-lru'
 
-const contactInfoUrl = GH_PAGES_URL('contact-info.json')
+let importantContacts = aaoGh({
+	file: 'contact-info.json',
+	version: 2,
+	cacheControl: {
+		maxAge: age.days(1),
+		staleWhileRevalidate: true,
+		staleIfOffline: true,
+	},
+})
 
-const groupContacts = (contacts: ContactType[]) => {
+function groupContacts(contacts: Array<ContactType>) {
 	const grouped = groupBy(contacts, c => c.category)
 	return toPairs(grouped).map(([key, value]) => ({title: key, data: value}))
 }
+
+let memGroupContacts = mem(groupContacts, {cache: new QuickLRU({maxSize: 1})})
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -30,56 +42,19 @@ const styles = StyleSheet.create({
 
 type Props = TopLevelViewPropsType
 
-type State = {
-	contacts: Array<ContactType>,
-	loading: boolean,
-	refreshing: boolean,
+type DataFetcherProps = {
+	importantContacts: {
+		data: Array<ContactType>,
+		error: ?Error,
+		loading: boolean,
+		refresh: () => any,
+	},
 }
 
-export class ContactsListView extends React.PureComponent<Props, State> {
+export class ContactsListView extends React.Component<Props> {
 	static navigationOptions = {
 		title: 'Important Contacts',
 		headerBackTitle: 'Contacts',
-	}
-
-	state = {
-		contacts: defaultData.data,
-		loading: true,
-		refreshing: false,
-	}
-
-	componentDidMount() {
-		this.fetchData().then(() => {
-			this.setState(() => ({loading: false}))
-		})
-	}
-
-	refresh = async (): any => {
-		const start = Date.now()
-		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
-		this.setState(() => ({refreshing: false}))
-	}
-
-	fetchData = async () => {
-		let {data: contacts} = await fetchJson(contactInfoUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-
-		if (process.env.NODE_ENV === 'development') {
-			contacts = defaultData.data
-		}
-
-		this.setState(() => ({contacts}))
 	}
 
 	onPressContact = (contact: ContactType) => {
@@ -88,30 +63,41 @@ export class ContactsListView extends React.PureComponent<Props, State> {
 		})
 	}
 
-	renderSectionHeader = ({section: {title}}: any) => (
-		<ListSectionHeader title={title} />
-	)
+	renderSectionHeader = ({section: {title}}: any) => {
+		return <ListSectionHeader title={title} />
+	}
 
-	renderItem = ({item}: {item: ContactType}) => (
-		<ContactRow contact={item} onPress={this.onPressContact} />
-	)
+	renderItem = ({item}: {item: ContactType}) => {
+		return <ContactRow contact={item} onPress={this.onPressContact} />
+	}
 
 	keyExtractor = (item: ContactType) => item.title
 
-	render() {
-		const groupedData = groupContacts(this.state.contacts)
+	renderList = ({importantContacts}: DataFetcherProps) => {
+		let {data: contacts, loading, refresh} = importantContacts
+		let grouped = memGroupContacts(contacts)
+
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={<ListEmpty mode="bug" />}
-				data={groupedData}
+				contentContainerStyle={styles.listContainer}
 				keyExtractor={this.keyExtractor}
-				onRefresh={this.refresh}
-				refreshing={this.state.refreshing}
+				onRefresh={refresh}
+				refreshing={loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				sections={groupedData}
-				style={styles.listContainer}
+				sections={grouped}
+			/>
+		)
+	}
+
+	render() {
+		return (
+			<DataFetcher
+				error={NoticeView}
+				render={this.renderList}
+				resources={{importantContacts}}
 			/>
 		)
 	}
