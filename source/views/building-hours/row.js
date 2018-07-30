@@ -2,14 +2,15 @@
 
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
+import mem from 'mem'
 import {Badge} from '../components/badge'
-import isEqual from 'lodash/isEqual'
-import type momentT from 'moment'
+import type moment from 'moment'
 import type {BuildingType} from './types'
 import * as c from '../components/colors'
 import {Row} from '../components/layout'
 import {ListRow, Detail, Title} from '../components/list'
 import {getDetailedBuildingStatus, getShortBuildingStatus} from './lib'
+import {age} from '@frogpond/age'
 
 const styles = StyleSheet.create({
 	title: {
@@ -50,27 +51,18 @@ const FG_COLORS = {
 type Props = {
 	info: BuildingType,
 	name: string,
-	now: momentT,
+	now: moment,
 	onPress: BuildingType => any,
 }
 
-type State = {
-	now: momentT,
-	openStatus: string,
-	hours: Array<any>,
-	accentBg: string,
-	accentText: string,
-}
-
-function deriveStateFromProps(props: Props) {
-	const openStatus = getShortBuildingStatus(props.info, props.now)
-	const hours = getDetailedBuildingStatus(props.info, props.now)
+function deriveState(info: BuildingType, now: moment) {
+	const openStatus = getShortBuildingStatus(info, now)
+	const hours = getDetailedBuildingStatus(info, now)
 
 	const accentBg = BG_COLORS[openStatus] || c.goldenrod
 	const accentText = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
 
 	return {
-		now: props.now,
 		openStatus,
 		hours,
 		accentBg,
@@ -78,40 +70,15 @@ function deriveStateFromProps(props: Props) {
 	}
 }
 
-export class BuildingRow extends React.Component<Props, State> {
-	state = deriveStateFromProps(this.props)
+let memDeriveState = mem(deriveState, {maxAge: age.minutes(2)})
 
-	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		if (prevState.now.isSame(nextProps.now, 'minute')) {
-			return null
-		}
-
-		return deriveStateFromProps(nextProps)
-	}
-
-	shouldComponentUpdate(nextProps: Props, nextState: State) {
-		// We won't check the time in shouldComponentUpdate, because we really
-		// only care if the building status has changed, and this is called after
-		// setStateFromProps runs.
-		return (
-			this.props.name !== nextProps.name ||
-			this.props.info !== nextProps.info ||
-			this.props.onPress !== nextProps.onPress ||
-			this.state.openStatus !== nextState.openStatus ||
-			!isEqual(this.state.hours, nextState.hours)
-		)
-	}
-
-	onPress = () => {
-		this.props.onPress(this.props.info)
-	}
-
+export class BuildingRow extends React.Component<Props> {
 	render() {
-		const {info, name} = this.props
-		const {openStatus, hours, accentBg, accentText} = this.state
+		const {info, name, onPress, now} = this.props
+		const {openStatus, hours, accentBg, accentText} = memDeriveState(info, now)
 
 		return (
-			<ListRow arrowPosition="center" onPress={this.onPress}>
+			<ListRow arrowPosition="center" onPress={() => onPress(info)}>
 				<Row style={styles.title}>
 					<Title lines={1} style={styles.titleText}>
 						<Text>{name}</Text>
@@ -152,15 +119,13 @@ export class BuildingRow extends React.Component<Props, State> {
 	}
 }
 
-const BuildingTimeSlot = ({
-	label,
-	status,
-	highlight,
-}: {
+const BuildingTimeSlot = (props: {
 	label: ?string,
 	status: string,
 	highlight: boolean,
 }) => {
+	let {label, status, highlight} = props
+
 	// we don't want to show the 'Hours' label, since almost every row has it
 	const showLabel = label && label !== 'Hours'
 

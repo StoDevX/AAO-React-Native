@@ -2,17 +2,51 @@
 
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
-import {BuildingRow} from './row'
+import moment from 'moment'
+import {type TopLevelViewPropsType} from '../types'
+import {NoticeView} from '../components/notice'
 import {trackBuildingOpen} from '../../analytics'
-
-import type momentT from 'moment'
-import type {TopLevelViewPropsType} from '../types'
-import type {BuildingType} from './types'
-
 import * as c from '../components/colors'
 import {ListSeparator, ListSectionHeader} from '../components/list'
 
-export {BuildingHoursDetailView} from './detail'
+import {aaoGh, fromRedux} from '@app/fetch'
+import {DataFetcher} from '@frogpond/data-fetcher'
+import {age} from '@frogpond/age'
+import {Timer} from '@frogpond/timer'
+
+import {type BuildingType} from './types'
+import {memGroupBuildings} from './lib/group-buildings'
+import {BuildingRow} from './row'
+
+let buildingHours = aaoGh({
+	file: 'building-hours.json',
+	version: 2,
+	cacheControl: {
+		maxAge: age.days(1),
+		staleWhileRevalidate: true,
+		staleIfOffline: true,
+	},
+})
+
+let reduxFavoriteBuildings = fromRedux({
+	key: ['buildings', 'favorites'],
+	default: [],
+})
+
+type DataFetcherProps = {
+	buildingHours: {
+		data: Array<BuildingType>,
+		error: ?Error,
+		loading: boolean,
+		refresh: () => any,
+	},
+	reduxFavoriteBuildings: {
+		data: Array<string>,
+		error: ?Error,
+		loading: boolean,
+		refresh: () => any,
+	},
+}
 
 const styles = StyleSheet.create({
 	container: {
@@ -20,14 +54,14 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType & {
-	now: momentT,
-	loading: boolean,
-	onRefresh: () => any,
-	buildings: Array<{title: string, data: BuildingType[]}>,
-}
+type Props = TopLevelViewPropsType
 
-export class BuildingHoursList extends React.PureComponent<Props> {
+export class BuildingHoursView extends React.Component<Props> {
+	static navigationOptions = {
+		title: 'Building Hours',
+		headerBackTitle: 'Hours',
+	}
+
 	onPressRow = (data: BuildingType) => {
 		trackBuildingOpen(data.name)
 		this.props.navigation.navigate('BuildingHoursDetailView', {building: data})
@@ -35,31 +69,54 @@ export class BuildingHoursList extends React.PureComponent<Props> {
 
 	keyExtractor = (item: BuildingType) => item.name
 
-	renderSectionHeader = ({section: {title}}: any) => (
-		<ListSectionHeader title={title} />
-	)
+	renderSectionHeader = ({section: {title}}: any) => {
+		return <ListSectionHeader title={title} />
+	}
 
-	renderItem = ({item}: {item: BuildingType}) => (
-		<BuildingRow
-			info={item}
-			name={item.name}
-			now={this.props.now}
-			onPress={this.onPressRow}
-		/>
-	)
+	renderItem = ({item}: {item: BuildingType}) => {
+		return (
+			<Timer
+				interval={age.minute(1)}
+				render={ts => (
+					<BuildingRow
+						info={item}
+						name={item.name}
+						now={moment(ts)}
+						onPress={this.onPressRow}
+					/>
+				)}
+			/>
+		)
+	}
 
-	render() {
+	renderList = (args: DataFetcherProps) => {
+		let {
+			buildingHours: {data: buildings, loading, refresh},
+			reduxFavoriteBuildings: {data: favoriteBuildings},
+		} = args
+
+		let groupedBuildings = memGroupBuildings(buildings, favoriteBuildings)
+
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				contentContainerStyle={styles.container}
-				extraData={this.props}
 				keyExtractor={this.keyExtractor}
-				onRefresh={this.props.onRefresh}
-				refreshing={this.props.loading}
+				onRefresh={refresh}
+				refreshing={loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				sections={(this.props.buildings: any)}
+				sections={groupedBuildings}
+			/>
+		)
+	}
+
+	render() {
+		return (
+			<DataFetcher
+				error={NoticeView}
+				render={this.renderList}
+				resources={{buildingHours, reduxFavoriteBuildings}}
 			/>
 		)
 	}

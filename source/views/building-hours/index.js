@@ -1,6 +1,6 @@
 // @flow
 
-export {ConnectedBuildingHoursView as BuildingHoursView} from './stateful-list'
+export {BuildingHoursView} from './list'
 export {BuildingHoursDetailView} from './detail'
 export {
 	BuildingHoursProblemReportView,
