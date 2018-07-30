@@ -1,6 +1,12 @@
 // @flow
 import * as React from 'react'
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
+import {
+	ActivityIndicator,
+	StyleSheet,
+	Text,
+	ScrollView,
+	RefreshControl,
+} from 'react-native'
 import * as c from './colors'
 import {Button} from './button'
 import {Heading} from './markdown/heading'
@@ -33,17 +39,21 @@ type Props = {
 	buttonText?: string,
 	onPress?: () => any,
 	textStyle?: any,
+	refreshControl?: React.Element<typeof RefreshControl>,
 }
 
 export function NoticeView(props: Props) {
 	const {header, text, style, textStyle} = props
 	const {buttonDisabled, buttonText, onPress} = props
-	const {spinner} = props
+	const {spinner, refreshControl} = props
 
 	return (
 		<Viewport
 			render={() => (
-				<View style={[styles.container, style]}>
+				<ScrollView
+					contentContainerStyle={[styles.container, style]}
+					refreshControl={refreshControl}
+				>
 					{spinner ? <ActivityIndicator style={styles.spinner} /> : null}
 
 					{header ? (
@@ -63,7 +73,7 @@ export function NoticeView(props: Props) {
 							title={buttonText}
 						/>
 					) : null}
-				</View>
+				</ScrollView>
 			)}
 		/>
 	)
