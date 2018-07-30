@@ -3,18 +3,29 @@
 import * as React from 'react'
 import semver from 'semver'
 import pkg from '../../../package.json'
-import {connect} from 'react-redux'
-import {ScrollView, StyleSheet} from 'react-native'
+import {ScrollView, StyleSheet, RefreshControl} from 'react-native'
 import {NoticeView} from '../components/notice'
 import LoadingView from '../components/loading'
 import {type TopLevelViewPropsType} from '../types'
-import {type ReduxState} from '../../flux'
-import {getEnabledTools} from '../../flux/parts/help'
 import * as wifi from './wifi'
 import {ToolView} from './tool'
 import {type ToolOptions} from './types'
 
+import {aaoGh} from '@app/fetch'
+import {DataFetcher} from '@frogpond/data-fetcher'
+import {age} from '@frogpond/age'
+
 const CUSTOM_TOOLS = [wifi]
+
+let helpTools = aaoGh({
+	file: 'help.json',
+	version: 2,
+	cacheControl: {
+		maxAge: age.hours(1),
+		staleWhileRevalidate: true,
+		staleIfOffline: true,
+	},
+})
 
 const shouldBeShown = conf =>
 	!conf.hidden &&
@@ -28,61 +39,65 @@ const getToolView = config => {
 	return [customView.ToolView, config]
 }
 
-type ReduxStateProps = {
-	fetching: boolean,
-	tools: Array<ToolOptions>,
-}
+type Props = TopLevelViewPropsType;
 
-type ReduxDispatchProps = {
-	getEnabledTools: () => mixed,
-}
-
-type Props = TopLevelViewPropsType & ReduxStateProps & ReduxDispatchProps
+type DataFetcherProps = {
+	helpTools: {
+		data: Array<ToolOptions>,
+		error: ?Error,
+		loading: boolean,
+		refresh: () => any,
+	},
+};
 
 export class HelpView extends React.Component<Props> {
 	static navigationOptions = {
 		title: 'Help',
 	}
 
-	componentDidMount() {
-		this.props.getEnabledTools()
-	}
-
 	render() {
-		if (this.props.fetching) {
-			return <LoadingView text="Loading…" />
-		}
+		return (
+			<DataFetcher
+				error={NoticeView}
+				loading={() => <LoadingView text="Loading…" />}
+				render={({helpTools}: DataFetcherProps) => {
+					let {refresh, data, loading} = helpTools
 
-		const views = this.props.tools
-			.filter(shouldBeShown)
-			.map(getToolView)
-			.map(([Tool, conf]) => <Tool key={conf.key} config={conf} />)
+					let refreshControl = (
+						<RefreshControl onRefresh={refresh} refreshing={loading} />
+					)
 
-		return views.length ? (
-			<ScrollView contentContainerStyle={styles.container}>{views}</ScrollView>
-		) : (
-			<NoticeView text="No tools are enabled." />
+					let views = data.filter(shouldBeShown)
+
+					if (!views.length) {
+						return (
+							<NoticeView
+								refreshControl={refreshControl}
+								text="No tools are enabled."
+							/>
+						)
+					}
+
+					let children = views
+						.map(getToolView)
+						.map(([Tool, conf]) => <Tool key={conf.key} config={conf} />)
+
+					return (
+						<ScrollView
+							contentContainerStyle={styles.container}
+							refreshControl={refreshControl}
+						>
+							{children}
+						</ScrollView>
+					)
+				}}
+				resources={{helpTools}}
+			/>
 		)
 	}
 }
 
-function mapState(state: ReduxState): ReduxStateProps {
-	return {
-		fetching: state.help ? state.help.fetching : false,
-		tools: state.help ? state.help.tools : [],
-	}
-}
-
-function mapDispatch(dispatch): ReduxDispatchProps {
-	return {
-		getEnabledTools: () => dispatch(getEnabledTools()),
-	}
-}
-
-export default connect(
-	mapState,
-	mapDispatch,
-)(HelpView)
+export default HelpView
 
 const styles = StyleSheet.create({
 	container: {
