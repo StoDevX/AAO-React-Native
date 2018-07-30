@@ -13,7 +13,7 @@ type Props = {
 }
 
 export class NewsRow extends React.PureComponent<Props> {
-	_onPress = () => {
+	onPress = () => {
 		if (!this.props.story.link) {
 			Alert.alert('There is nowhere to go for this story')
 			return
@@ -28,7 +28,7 @@ export class NewsRow extends React.PureComponent<Props> {
 			: this.props.thumbnail
 
 		return (
-			<ListRow arrowPosition="top" onPress={this._onPress}>
+			<ListRow arrowPosition="top" onPress={this.onPress}>
 				<Row alignItems="center">
 					<Image source={thumb} style={styles.image} />
 					<Column flex={1}>
