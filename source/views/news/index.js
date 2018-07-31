@@ -6,12 +6,12 @@ import {TabNavigator} from '../components/tabbed-view'
 import {TabBarIcon} from '../components/tabbar-icon'
 
 import * as newsImages from '../../../images/news-sources'
-import NewsContainer from './news-container'
+import {NewsList} from './news-list'
 
 const NewsView = TabNavigator({
 	StOlafNewsView: {
 		screen: ({navigation}) => (
-			<NewsContainer
+			<NewsList
 				mode="wp-json"
 				name="St. Olaf"
 				navigation={navigation}
@@ -28,7 +28,7 @@ const NewsView = TabNavigator({
 
 	OlevilleNewsView: {
 		screen: ({navigation}) => (
-			<NewsContainer
+			<NewsList
 				mode="wp-json"
 				name="Oleville"
 				navigation={navigation}
@@ -45,7 +45,7 @@ const NewsView = TabNavigator({
 
 	MessNewsView: {
 		screen: ({navigation}) => (
-			<NewsContainer
+			<NewsList
 				mode="wp-json"
 				name="The Mess"
 				navigation={navigation}
@@ -62,7 +62,7 @@ const NewsView = TabNavigator({
 
 	PoliticOleNewsView: {
 		screen: ({navigation}) => (
-			<NewsContainer
+			<NewsList
 				mode="rss"
 				name="PoliticOle"
 				navigation={navigation}
@@ -78,7 +78,7 @@ const NewsView = TabNavigator({
 
 	KstoNewsView: {
 		screen: ({navigation}) => (
-			<NewsContainer
+			<NewsList
 				mode="wp-json"
 				name="KSTO"
 				navigation={navigation}

@@ -19,7 +19,7 @@ type Props = TopLevelViewPropsType & {
 	query?: Object,
 	mode: 'rss' | 'wp-json',
 	thumbnail: number,
-};
+}
 
 type DataFetcherProps = {
 	feed: {
@@ -28,19 +28,21 @@ type DataFetcherProps = {
 		loading: boolean,
 		refresh: () => any,
 	},
-};
+}
 
-export default class NewsContainer extends React.Component<Props> {
+export class NewsList extends React.Component<Props> {
 	renderSeparator = () => {
 		return <ListSeparator spacing={{left: 101}} />
 	}
 
 	renderItem = ({item}: {item: StoryType}) => {
-		return <NewsRow
-			onPress={url => openUrl(url)}
-			story={item}
-			thumbnail={this.props.thumbnail}
-		/>
+		return (
+			<NewsRow
+				onPress={url => openUrl(url)}
+				story={item}
+				thumbnail={this.props.thumbnail}
+			/>
+		)
 	}
 
 	keyExtractor = (item: StoryType) => item.title
