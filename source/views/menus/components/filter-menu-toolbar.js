@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet, View, Text, Platform} from 'react-native'
-import type momentT from 'moment'
+import type moment from 'moment'
 import type {FilterType} from '../../components/filter'
 import {Toolbar, ToolbarButton} from '../../components/toolbar'
 
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
-	date: momentT,
+	date: moment,
 	title?: string,
 	onPress: () => any,
 	filters: FilterType[],

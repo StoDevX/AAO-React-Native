@@ -184,7 +184,7 @@ class FancyMenu extends React.PureComponent<Props> {
 				refreshing={this.props.refreshing}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				sections={(groupedMenuData: any)}
+				sections={groupedMenuData}
 				style={styles.inner}
 			/>
 		)
