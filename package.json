@@ -53,7 +53,7 @@
     "./modules/*"
   ],
   "jest": {
-    "testRegex": "/__tests__/.*\\.(test|spec)\\.js$",
+    "testRegex": "/__tests__/.*\\.(test|spec)\\.js$|test\\.js$",
     "collectCoverageFrom": [
       "source/**/*.js",
       "!**/node_modules/**"
