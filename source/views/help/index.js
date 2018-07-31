@@ -39,7 +39,7 @@ const getToolView = config => {
 	return [customView.ToolView, config]
 }
 
-type Props = TopLevelViewPropsType;
+type Props = TopLevelViewPropsType
 
 type DataFetcherProps = {
 	helpTools: {
@@ -48,7 +48,7 @@ type DataFetcherProps = {
 		loading: boolean,
 		refresh: () => any,
 	},
-};
+}
 
 export class HelpView extends React.Component<Props> {
 	static navigationOptions = {
