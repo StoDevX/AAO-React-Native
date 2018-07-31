@@ -2,15 +2,17 @@
 import * as React from 'react'
 import LoadingView from '../components/loading'
 import {NoticeView} from '../components/notice'
-import {ConnectedFancyMenu as FancyMenu} from './components/fancy-menu'
+import {FancyMenu} from './components/fancy-menu'
 import type {TopLevelViewPropsType} from '../types'
 import sample from 'lodash/sample'
 import fromPairs from 'lodash/fromPairs'
 import filter from 'lodash/filter'
+import moment from 'moment'
 import type {
 	MasterCorIconMapType,
 	MenuItemType,
 	ProcessedMealType,
+	MenuItemContainerType,
 } from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 
@@ -42,13 +44,12 @@ export class GitHubHostedMenu extends React.Component<Props> {
 		let {refresh, data} = menu
 
 		let {foodItems, corIcons, stationMenus} = data
+		foodItems = foodItems.map(upgradeMenuItem).map(item => [item.id, item])
 
-		let upgradedFoodItems = fromPairs(
-			foodItems.map(upgradeMenuItem).map(item => [item.id, item]),
-		)
+		let food: MenuItemContainerType = fromPairs(foodItems)
 		stationMenus = stationMenus.map((menu, index) => ({
 			...upgradeStation(menu, index),
-			items: filter(upgradedFoodItems, item => item.station === menu.label).map(
+			items: filter(food, item => item.station === menu.label).map(
 				item => item.id,
 			),
 		}))
@@ -67,12 +68,12 @@ export class GitHubHostedMenu extends React.Component<Props> {
 				interval={age.minute(1)}
 				render={ts => (
 					<FancyMenu
-						foodItems={foodItems}
+						foodItems={food}
 						meals={meals}
 						menuCorIcons={corIcons}
 						name={this.props.name}
 						navigation={this.props.navigation}
-						now={ts}
+						now={moment(ts)}
 						onRefresh={refresh}
 					/>
 				)}

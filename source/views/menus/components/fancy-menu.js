@@ -3,8 +3,7 @@
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import * as c from '../../components/colors'
-import {connect} from 'react-redux'
-import {updateMenuFilters, type ReduxState} from '../../../flux'
+import {trackMenuFilters} from '../../../analytics'
 import {type TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
 import type {
@@ -35,19 +34,15 @@ type ReactProps = TopLevelViewPropsType & {
 	refreshing?: ?boolean,
 }
 
-type ReduxDispatchProps = {
-	onFiltersChange: (f: FilterType[]) => any,
-}
-
-type ReduxStateProps = {
-	filters: FilterType[],
-}
-
 type DefaultProps = {
 	applyFilters: (filters: FilterType[], item: MenuItemType) => boolean,
 }
 
-type Props = ReactProps & ReduxStateProps & ReduxDispatchProps & DefaultProps
+type Props = ReactProps & DefaultProps
+
+type State = {
+	filters: Array<FilterType>,
+}
 
 const styles = StyleSheet.create({
 	inner: {
@@ -61,41 +56,38 @@ const styles = StyleSheet.create({
 const LEFT_MARGIN = 28
 const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
-class FancyMenu extends React.PureComponent<Props> {
+export class FancyMenu extends React.Component<Props, State> {
 	static defaultProps = {
 		applyFilters: applyFiltersToItem,
 	}
 
-	componentDidMount() {
-		const {foodItems, menuCorIcons, meals, now, onFiltersChange} = this.props
-		const newFilters = buildFilters(values(foodItems), menuCorIcons, meals, now)
-		onFiltersChange(newFilters)
+	static getDerivedStateFromProps(props: Props) {
+		const {foodItems, menuCorIcons, meals, now} = props
+		const filters = buildFilters(values(foodItems), menuCorIcons, meals, now)
+		return {filters}
 	}
 
-	componentDidUpdate() {
-		if (this.props.filters.length) {
-			return null
-		}
-
-		const {foodItems, menuCorIcons, meals, now, onFiltersChange} = this.props
-		const newFilters = buildFilters(values(foodItems), menuCorIcons, meals, now)
-		onFiltersChange(newFilters)
+	handleFiltersChange = (newFilters: Array<FilterType>) => {
+		trackMenuFilters(this.props.name, newFilters)
+		this.setState(() => ({filters: newFilters}))
 	}
 
-	areSpecialsFiltered = filters => Boolean(filters.find(this.isSpecialsFilter))
-	isSpecialsFilter = f =>
+	areSpecialsFiltered = (filters: Array<FilterType>) =>
+		Boolean(filters.find(this.isSpecialsFilter))
+	isSpecialsFilter = (f: FilterType) =>
 		f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
 	openFilterView = () => {
 		this.props.navigation.navigate('FilterView', {
 			title: `Filter ${this.props.name} Menu`,
-			pathToFilters: ['menus', this.props.name],
-			onChange: filters => this.props.onFiltersChange(filters),
+			filters: this.state.filters,
+			onDismiss: this.handleFiltersChange,
 		})
 	}
 
 	groupMenuData = (props: Props, stations: Array<StationMenuType>) => {
-		const {applyFilters, filters, foodItems} = props
+		const {applyFilters, foodItems} = props
+		const {filters} = this.state
 
 		const derefrenceMenuItems = menu =>
 			menu.items
@@ -117,7 +109,8 @@ class FancyMenu extends React.PureComponent<Props> {
 	}
 
 	renderSectionHeader = ({section: {title}}: any) => {
-		const {filters, now, meals} = this.props
+		const {now, meals} = this.props
+		const {filters} = this.state
 		const {stations} = chooseMeal(meals, filters, now)
 		const menu = stations.find(m => m.label === title)
 
@@ -131,7 +124,7 @@ class FancyMenu extends React.PureComponent<Props> {
 	}
 
 	renderItem = ({item}: {item: MenuItemType}) => {
-		const specialsFilterEnabled = this.areSpecialsFiltered(this.props.filters)
+		const specialsFilterEnabled = this.areSpecialsFiltered(this.state.filters)
 		return (
 			<FoodItemRow
 				badgeSpecials={!specialsFilterEnabled}
@@ -142,10 +135,11 @@ class FancyMenu extends React.PureComponent<Props> {
 		)
 	}
 
-	keyExtractor = (item, index) => index.toString()
+	keyExtractor = (item: MenuItemType, index: number) => index.toString()
 
 	render() {
-		const {filters, now, meals, cafeMessage} = this.props
+		const {now, meals, cafeMessage} = this.props
+		const {filters} = this.state
 
 		const {label: mealName, stations} = chooseMeal(meals, filters, now)
 		const anyFiltersEnabled = filters.some(f => f.enabled)
@@ -190,27 +184,3 @@ class FancyMenu extends React.PureComponent<Props> {
 		)
 	}
 }
-
-const mapState = (
-	state: ReduxState,
-	actualProps: ReactProps,
-): ReduxStateProps => {
-	if (!state.menus) {
-		return {filters: []}
-	}
-	return {
-		filters: state.menus[actualProps.name] || [],
-	}
-}
-
-const mapDispatch = (dispatch, actualProps: ReactProps): ReduxDispatchProps => {
-	return {
-		onFiltersChange: (filters: FilterType[]) =>
-			dispatch(updateMenuFilters(actualProps.name, filters)),
-	}
-}
-
-export const ConnectedFancyMenu = connect(
-	mapState,
-	mapDispatch,
-)(FancyMenu)
