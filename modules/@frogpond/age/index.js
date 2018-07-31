@@ -1,6 +1,6 @@
 // @flow
 
-const SECONDS_MULT = 1
+const SECONDS_MULT = 1000
 const MINUTES_MULT = SECONDS_MULT * 60
 const HOURS_MULT = MINUTES_MULT * 60
 const DAYS_MULT = HOURS_MULT * 24
@@ -9,7 +9,7 @@ const MONTHS_MULT = WEEKS_MULT * 4
 const YEARS_MULT = MONTHS_MULT * 12
 
 export function seconds(n: number) {
-	return n
+	return n * SECONDS_MULT
 }
 
 export function minutes(n: number) {
