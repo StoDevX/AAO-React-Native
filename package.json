@@ -19,7 +19,7 @@
     "ios-simulator": "xcrun instruments -s devices | peco --select-1 --query 'Simulator iPhone' --on-cancel error | sed  's~.*\\[\\(.*\\)\\].*~\\1~' | xargs open -n -a Simulator --args -CurrentDeviceUDID",
     "lint": "eslint --cache source/ scripts/ *.js",
     "prepare": "sed -i.bak 's/\\(_backedTextInputView.scrollEnabled = \\)YES;/\\1NO;/' node_modules/react-native/Libraries/Text/TextInput/Multiline/RCTMultilineTextInputView.m",
-    "pretty": "prettier --write '{source,scripts}/**/*.js' 'data/**/*.css' '*.js'",
+    "pretty": "prettier --write '{source,scripts}/**/*' 'data/**/*.css' '*.js'",
     "p": "pretty-quick",
     "start": "react-native start",
     "test": "jest",

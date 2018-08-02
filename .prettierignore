@@ -1,5 +1,9 @@
 *.md
-*.json
+*.py
+*.sh
+.DS_Store
+*.snap
+LICENSE
 /flow-typed/
 /node_modules/
 /docs/
