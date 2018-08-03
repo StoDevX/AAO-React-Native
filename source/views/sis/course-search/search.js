@@ -399,7 +399,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 					const aniHeaderStyle = [styles.header, {opacity: this.headerOpacity}]
 
 					return (
-						<ScrollView style={[styles.container, styles.common]}>
+						<View style={[styles.container, styles.common]}>
 							<Animated.View style={aniContainerStyle}>
 								<Animated.Text style={aniHeaderStyle}>
 									Search Courses
@@ -448,7 +448,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 									/>
 								</View>
 							)}
-						</ScrollView>
+						</View>
 					)
 				}}
 			/>

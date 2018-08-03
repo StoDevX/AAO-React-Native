@@ -92,6 +92,7 @@ export class CourseSearchResultsList extends React.PureComponent<Props> {
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
 				sections={(this.props.terms: any)}
+				windowSize={10}
 			/>
 		)
 	}
