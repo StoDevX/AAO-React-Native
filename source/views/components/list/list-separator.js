@@ -2,6 +2,7 @@
 import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
 import {Separator} from '../separator'
+import type {ViewStyleProp} from '../../types'
 
 const styles = StyleSheet.create({
 	separator: {
@@ -10,7 +11,7 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {
-	styles?: any,
+	styles?: ViewStyleProp,
 	fullWidth?: boolean,
 	spacing?: {left?: number, right?: number},
 	force?: boolean,

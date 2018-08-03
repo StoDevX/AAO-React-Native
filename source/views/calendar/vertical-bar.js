@@ -2,6 +2,7 @@
 import * as React from 'react'
 import {StyleSheet, View, Platform} from 'react-native'
 import * as c from '../components/colors'
+import type {ViewStyleProp} from '../types'
 
 const dotBarStyles = StyleSheet.create({
 	diagram: {
@@ -23,7 +24,9 @@ const dotBarStyles = StyleSheet.create({
 	},
 })
 
-function DottedBar({style}: {style?: any}) {
+type Props = {style?: ViewStyleProp}
+
+function DottedBar({style}: Props) {
 	return (
 		<View style={[dotBarStyles.diagram, style]}>
 			<View style={dotBarStyles.circle} />
@@ -40,11 +43,11 @@ const solidBarStyles = StyleSheet.create({
 	},
 })
 
-function SolidBar({style}: {style?: any}) {
+function SolidBar({style}: Props) {
 	return <View style={[solidBarStyles.border, style]} />
 }
 
-export function Bar(props: Object) {
+export function Bar(props: Props) {
 	switch (Platform.OS) {
 		case 'ios':
 			return <SolidBar {...props} />

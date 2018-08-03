@@ -5,6 +5,7 @@ import {StyleSheet} from 'react-native'
 import * as c from '../colors'
 import NativeSearchBar from 'react-native-searchbar'
 import Icon from 'react-native-vector-icons/Ionicons'
+import type {ViewStyleProp} from '../../types'
 
 const iconStyles = StyleSheet.create({
 	icon: {
@@ -24,8 +25,8 @@ const styles = StyleSheet.create({
 })
 
 type Props = {
-	getRef?: any,
-	style?: any,
+	getRef?: NativeSearchBar => any,
+	style?: ViewStyleProp,
 	placeholder?: string,
 	onChangeText: string => any,
 	onCancel: () => any,
@@ -43,7 +44,7 @@ export class SearchBar extends React.PureComponent<Props, State> {
 		input: '',
 	}
 
-	updateText = input => {
+	updateText = (input: string) => {
 		this.setState({input: input})
 	}
 

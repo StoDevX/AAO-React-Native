@@ -3,6 +3,7 @@ import * as React from 'react'
 import {Platform, StyleSheet, View} from 'react-native'
 import * as c from '../colors'
 import Icon from 'react-native-vector-icons/Ionicons'
+import type {ViewStyleProp} from '../../types'
 
 const arrowStyles = StyleSheet.create({
 	wrapper: {
@@ -14,7 +15,7 @@ const arrowStyles = StyleSheet.create({
 	},
 })
 
-export const DisclosureArrow = ({style}: {style?: any}) => {
+export const DisclosureArrow = ({style}: {style?: ViewStyleProp}) => {
 	if (Platform.OS === 'android') {
 		return null
 	}

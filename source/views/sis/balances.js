@@ -21,6 +21,7 @@ import {type ReduxState} from '../../flux'
 import delay from 'delay'
 import * as c from '../components/colors'
 import type {TopLevelViewPropsType} from '../types'
+import type {ViewStyleProp} from '../types'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 const LONG_DISCLAIMER =
@@ -276,19 +277,21 @@ function getValueOrNa(value: ?string): string {
 	return value
 }
 
+type ValueCellProps = {
+	indeterminate: boolean,
+	label: string,
+	value: ?string,
+	style?: ViewStyleProp,
+	formatter: (?string) => string,
+}
+
 function FormattedValueCell({
 	indeterminate,
 	label,
 	value,
 	style,
 	formatter,
-}: {
-	indeterminate: boolean,
-	label: string,
-	value: ?string,
-	style?: any,
-	formatter: (?string) => string,
-}) {
+}: ValueCellProps) {
 	return (
 		<View style={[styles.rectangle, styles.common, styles.balances, style]}>
 			<Text

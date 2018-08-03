@@ -39,9 +39,9 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 	return (
 		<ScrollView
 			alwaysBounceHorizontal={false}
-			overflow="hidden"
 			showsHorizontalScrollIndicator={false}
 			showsVerticalScrollIndicator={false}
+			style={styles.homescreen}
 		>
 			<StatusBar backgroundColor={c.darkGold} barStyle="dark-content" />
 
@@ -100,5 +100,8 @@ const styles = StyleSheet.create({
 	},
 	column: {
 		flex: 1,
+	},
+	homescreen: {
+		overflow: 'hidden',
 	},
 })

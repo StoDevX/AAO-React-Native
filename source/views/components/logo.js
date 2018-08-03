@@ -3,6 +3,7 @@
 import * as React from 'react'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
 import glamorous from 'glamorous-native'
+import type {ViewStyleProp} from '../types'
 
 import {lookup as getAppIcon} from '../../../images/icons'
 
@@ -12,9 +13,9 @@ const LogoImage = glamorous.image({
 	alignSelf: 'center',
 })
 
-type Props = {
-	style?: StyleSheet,
-}
+type Props = $ReadOnly<{|
+	style?: ViewStyleProp,
+|}>
 
 type State = {
 	icon: number,

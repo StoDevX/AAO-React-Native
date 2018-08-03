@@ -1,8 +1,4 @@
-/**
- * @flow
- *
- * Building Hours "report a problem" screen.
- */
+// @flow
 
 import * as React from 'react'
 import {ScrollView, View, StyleSheet, Text} from 'react-native'
@@ -327,7 +323,6 @@ type TextFieldProps = {text: string, onChange: string => any}
 const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
-		hideLabel={true}
 		onChangeText={onChange}
 		onSubmitEditing={onChange}
 		placeholder="Title"
@@ -340,7 +335,6 @@ const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 const NotesCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="sentences"
-		hideLabel={true}
 		onChangeText={onChange}
 		onSubmitEditing={onChange}
 		placeholder="Notes"

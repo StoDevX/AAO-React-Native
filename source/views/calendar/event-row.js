@@ -8,6 +8,7 @@ import {ListRow, Detail, Title} from '../components/list'
 import {fastGetTrimmedText} from '../../lib/html'
 import {Bar} from './vertical-bar'
 import {times} from './times'
+import type {ViewStyleProp} from '../types'
 
 const styles = StyleSheet.create({
 	row: {
@@ -38,8 +39,6 @@ type Props = {
 }
 
 export default class EventRow extends React.PureComponent<Props> {
-	_onPress = () => this.props.onPress(this.props.event)
-
 	render() {
 		const {event} = this.props
 		const title = fastGetTrimmedText(event.title)
@@ -52,7 +51,7 @@ export default class EventRow extends React.PureComponent<Props> {
 				arrowPosition="top"
 				contentContainerStyle={styles.row}
 				fullWidth={true}
-				onPress={this._onPress}
+				onPress={() => this.props.onPress(this.props.event)}
 			>
 				<Row minHeight={46}>
 					<CalendarTimes event={event} style={styles.timeContainer} />
@@ -74,7 +73,8 @@ export default class EventRow extends React.PureComponent<Props> {
 	}
 }
 
-function CalendarTimes({event, style}: {event: EventType, style: any}) {
+function CalendarTimes(props: {event: EventType, style: ViewStyleProp}) {
+	let {event, style} = props
 	const {allDay, start, end} = times(event)
 
 	if (allDay) {

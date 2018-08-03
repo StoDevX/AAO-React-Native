@@ -2,6 +2,7 @@
 import * as React from 'react'
 import {Platform, StyleSheet, Text, View} from 'react-native'
 import * as c from '../colors'
+import type {ViewStyleProp} from '../../types'
 
 const styles = StyleSheet.create({
 	container: {
@@ -70,7 +71,7 @@ type PropsType = {
 	subtitle?: string,
 	subtitleStyle?: any,
 	separator?: string,
-	style?: any,
+	style?: ViewStyleProp,
 	spacing?: {left?: number, right?: number},
 }
 export function ListSectionHeader(props: PropsType) {

@@ -17,25 +17,21 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function ButtonCell({
-	indeterminate,
-	disabled,
-	onPress,
-	title,
-}: {
+type Props = {
 	indeterminate?: boolean,
 	disabled?: boolean,
 	onPress: () => any,
 	title: string,
-}) {
+}
+
+export function ButtonCell({indeterminate, disabled, onPress, title}: Props) {
+	let isDisabled = indeterminate || disabled
 	return (
 		<Cell
-			isDisabled={indeterminate || disabled}
+			isDisabled={isDisabled}
 			onPress={onPress}
 			title={
-				<Text
-					style={[indeterminate || disabled ? styles.disabled : styles.active]}
-				>
+				<Text style={[isDisabled ? styles.disabled : styles.active]}>
 					{title}
 				</Text>
 			}

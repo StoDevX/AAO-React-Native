@@ -9,19 +9,25 @@ import {
 	View,
 } from 'react-native'
 
-type Props = {|
-	accessibilityComponentType?: string,
+import type {ViewStyleProp} from '../types'
+import type {
+	AccessibilityComponentType,
+	AccessibilityTraits as AccessibilityTraitsFlow,
+} from 'ViewAccessibility'
+
+type Props = $ReadOnly<{
+	accessibilityComponentType?: AccessibilityComponentType,
 	accessibilityLabel?: string,
-	accessibilityTraits?: string,
+	accessibilityTraits?: AccessibilityTraitsFlow,
 	activeOpacity?: number,
 	borderless?: boolean,
 	children?: React.Node,
 	containerStyle?: any,
 	highlight?: boolean,
 	onPress?: () => any,
-	style?: any,
+	style?: ViewStyleProp,
 	underlayColor?: string,
-|}
+}>
 
 export const Touchable = ({
 	borderless = false,
@@ -30,6 +36,8 @@ export const Touchable = ({
 	highlight = true,
 	onPress = () => {},
 	style,
+	underlayColor = '#d9d9d9',
+	activeOpacity = 0.65,
 	...props
 }: Props) => {
 	// The child <View> is required; the Touchable needs a View as its direct child.
@@ -38,21 +46,29 @@ export const Touchable = ({
 	switch (Platform.OS) {
 		default:
 		case 'ios': {
-			const Component = highlight ? TouchableHighlight : TouchableOpacity
-			const innerProps = highlight
-				? {underlayColor: '#d9d9d9'}
-				: {activeOpacity: 0.65}
-
-			return (
-				<Component
-					onPress={onPress}
-					{...innerProps}
-					style={containerStyle}
-					{...props}
-				>
-					{content}
-				</Component>
-			)
+			if (highlight) {
+				return (
+					<TouchableHighlight
+						onPress={onPress}
+						style={containerStyle}
+						underlayColor={underlayColor}
+						{...props}
+					>
+						{content}
+					</TouchableHighlight>
+				)
+			} else {
+				return (
+					<TouchableOpacity
+						activeOpacity={activeOpacity}
+						onPress={onPress}
+						style={containerStyle}
+						{...props}
+					>
+						{content}
+					</TouchableOpacity>
+				)
+			}
 		}
 
 		case 'android': {

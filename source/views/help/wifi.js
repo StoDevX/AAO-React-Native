@@ -67,9 +67,7 @@ export class ToolView extends React.Component<Props, State> {
 		} catch (err) {
 			reportNetworkProblem(err)
 			this.setState(() => ({
-				error:
-					this.props.config.errorMessage ||
-					'Apologies; there was an error. Please try again later.',
+				error: 'Apologies; there was an error. Please try again later.',
 				status: 'error',
 			}))
 		}
