@@ -14,19 +14,10 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = any
+type Props = any & {query: string}
 
-export class SearchableAlphabetListView extends React.PureComponent<Props> {
-	searchBar: any = null
-
-	_performSearch = (text: string | Object) => {
-		// Android clear button returns an object
-		if (typeof text !== 'string') {
-			return this.props.onSearch(null)
-		}
-
-		return this.props.onSearch(text)
-	}
+export class SearchableAlphabetListView extends React.Component<Props> {
+	_performSearch = (text: string) => this.props.onSearch(text)
 
 	// We need to make the search run slightly behind the UI,
 	// so I'm slowing it down by 50ms. 0ms also works, but seems
@@ -36,12 +27,7 @@ export class SearchableAlphabetListView extends React.PureComponent<Props> {
 	render() {
 		return (
 			<View style={styles.wrapper}>
-				<SearchBar
-					getRef={ref => (this.searchBar = ref)}
-					onChangeText={this.performSearch}
-					// if we don't use the arrow function here, searchBar ref is null...
-					onSearchButtonPress={() => this.searchBar.unFocus()}
-				/>
+				<SearchBar onChange={this.performSearch} value={this.props.query} />
 				<StyledAlphabetListView
 					headerHeight={
 						Platform.OS === 'ios'

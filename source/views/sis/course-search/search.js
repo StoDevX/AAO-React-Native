@@ -1,10 +1,9 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View, Animated, Platform} from 'react-native'
+import {StyleSheet, View} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
-import {SearchBar} from '../../components/searchbar'
 import {
 	updateCourseData,
 	loadCourseDataIntoMemory,
@@ -24,7 +23,7 @@ import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
 import {deptNum} from './lib/format-dept-num'
 import {NoticeView} from '../../components/notice'
-import {Viewport} from '../../components/viewport'
+import {AnimatedSearchbox} from '../components/animated-searchbox'
 import {applyFiltersToItem, type FilterType} from '../../components/filter'
 import {RecentItemsList} from '../components/recents-list'
 import {Separator} from '../../components/separator'
@@ -63,14 +62,12 @@ type DefaultProps = {
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps & DefaultProps
 
 type State = {
-	browsing: boolean,
 	cachedFilters: Array<FilterType>,
-	dataLoading: boolean,
 	searchResults: Array<{title: string, data: Array<CourseType>}>,
-	searchActive: boolean,
 	searchPerformed: boolean,
 	query: string,
-}
+	mode: 'loading' | 'browsing' | 'searching' | 'ready',
+};
 
 function executeSearch(args: {
 	text: string,
@@ -143,7 +140,7 @@ function applyFiltersAndQuery(args: {
 	}
 }
 
-class CourseSearchView extends React.PureComponent<Props, State> {
+class CourseSearchView extends React.Component<Props, State> {
 	static navigationOptions = {
 		tabBarLabel: 'Course Search',
 		tabBarIcon: TabBarIcon('search'),
@@ -155,11 +152,9 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
-		browsing: false,
+		mode: 'loading',
 		cachedFilters: this.props.filters,
-		dataLoading: true,
 		searchResults: [],
-		searchActive: false,
 		searchPerformed: false,
 		query: '',
 	}
@@ -195,19 +190,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		this.updateFilters(this.props)
 	}
 
-	animations = {
-		headerOpacity: {start: 1, end: 0, duration: 200},
-		searchBarTop: {start: 71, end: 10, duration: 200},
-		containerHeight: {start: 125, end: 64, duration: 200},
-	}
-
-	searchBar: any = null
-	headerOpacity = new Animated.Value(this.animations.headerOpacity.start)
-	searchBarTop = new Animated.Value(this.animations.searchBarTop.start)
-	containerHeight = new Animated.Value(this.animations.containerHeight.start)
-
 	loadData = async () => {
-		this.setState(() => ({dataLoading: true}))
+		this.setState(() => ({mode: 'loading'}))
 
 		// If the data has not been loaded into Redux State:
 		if (this.props.courseDataState !== 'ready') {
@@ -216,7 +200,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 
 			// 2. if any courses are cached, hide the spinner
 			if (await areAnyTermsCached()) {
-				this.setState(() => ({dataLoading: false}))
+				this.setState(() => ({mode: 'ready'}))
 			}
 
 			// 3. either way, start updating courses in the background
@@ -227,15 +211,30 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}
 
 		// 4. when everything is done, make sure the spinner is hidden
-		this.setState(() => ({dataLoading: false}))
+		this.setState(() => ({mode: 'ready'}))
 	}
 
-	onSearchButtonPress = text => {
-		if (Platform.OS === 'ios') {
-			this.searchBar.blur()
-		}
+	handleSearchSubmit = () => {
+		this.setState(() => ({mode: 'searching'}))
+		this.performSearch(this.state.query)
+	}
 
-		this.performSearch(text)
+	handleSearchCancel = () => {
+		this.setState(() => ({
+			query: '',
+			searchResults: [],
+			searchPerformed: false,
+			mode: 'ready',
+		}))
+		this.resetFilters()
+	}
+
+	handleSearchChange = (value: string) => {
+		this.setState(() => ({query: value}))
+	}
+
+	handleSearchFocus = () => {
+		this.setState(() => ({mode: 'searching'}))
 	}
 
 	_performSearch = (query: string) => {
@@ -246,6 +245,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			allCourses: this.props.allCourses,
 			updateRecentSearches: this.props.updateRecentSearches,
 		})
+
 		this.setState(() => results)
 	}
 
@@ -262,18 +262,14 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 	}
 
 	onRecentSearchPress = (text: string) => {
-		this.handleFocus()
-
-		if (Platform.OS === 'android') {
-			this.searchBar.setValue(text)
-		}
+		this.setState(() => ({query: text, mode: 'searching'}))
 
 		this.performSearch(text)
 	}
 
 	onRecentFilterPress = async (text: string) => {
-		this.setState(() => ({browsing: true}))
-		this.handleFocus()
+		this.setState(() => ({mode: 'browsing'}))
+
 		const selectedFilterCombo = this.props.recentFilters.find(
 			f => f.description === text,
 		)
@@ -283,38 +279,10 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 					f => selectedFilterCombo.filters.find(f2 => f2.key === f.key) || f,
 			  )
 			: resetFilters
+
 		this.props.onFiltersChange(selectedFilters)
+
 		this.browseAll()
-	}
-
-	animate = (thing, args, toValue: 'start' | 'end') =>
-		Animated.timing(thing, {
-			toValue: args[toValue],
-			duration: args.duration,
-		}).start()
-
-	handleFocus = () => {
-		this.animate(this.headerOpacity, this.animations.headerOpacity, 'end')
-		this.animate(this.searchBarTop, this.animations.searchBarTop, 'end')
-		this.animate(this.containerHeight, this.animations.containerHeight, 'end')
-		this.setState(() => ({searchActive: true}))
-	}
-
-	handleCancel = () => {
-		this.animate(this.headerOpacity, this.animations.headerOpacity, 'start')
-		this.animate(this.searchBarTop, this.animations.searchBarTop, 'start')
-		this.animate(this.containerHeight, this.animations.containerHeight, 'start')
-		if (Platform.OS === 'android') {
-			this.searchBar.setValue('')
-		}
-		this.setState(() => ({
-			searchActive: false,
-			browsing: false,
-			query: '',
-			searchResults: [],
-			searchPerformed: false,
-		}))
-		this.resetFilters()
 	}
 
 	openFilterView = () => {
@@ -324,8 +292,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			onChange: filters => this.props.onFiltersChange(filters),
 			onLeave: filters => this.props.updateRecentFilters(filters),
 		})
-		this.setState(() => ({browsing: true}))
-		this.handleFocus()
+
+		this.setState(() => ({mode: 'browsing'}))
 	}
 
 	resetFilters = async () => {
@@ -346,14 +314,13 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 
 	render() {
 		const {
-			searchActive,
 			searchPerformed,
 			searchResults,
 			query,
-			browsing,
+			mode,
 		} = this.state
 
-		if (this.state.dataLoading) {
+		if (mode === 'loading') {
 			return <LoadingView text="Loading Course Data…" />
 		}
 
@@ -373,7 +340,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			)
 		}
 
-		const placeholderPrompt = browsing
+		const placeholderPrompt = mode === 'browsing'
 			? 'Browsing all courses'
 			: 'Search Class & Lab'
 
@@ -382,76 +349,48 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		)
 
 		return (
-			<Viewport
-				render={viewport => {
-					const searchBarWidth = viewport.width - 20
-
-					const aniContainerStyle = [
-						styles.searchContainer,
-						styles.common,
-						{height: this.containerHeight},
-					]
-					const aniSearchStyle = [
-						styles.searchBarWrapper,
-						{width: searchBarWidth},
-						{top: this.searchBarTop},
-					]
-					const aniHeaderStyle = [styles.header, {opacity: this.headerOpacity}]
-
-					return (
-						<View style={[styles.container, styles.common]}>
-							<Animated.View style={aniContainerStyle}>
-								<Animated.Text style={aniHeaderStyle}>
-									Search Courses
-								</Animated.Text>
-								<Animated.View style={aniSearchStyle}>
-									<SearchBar
-										getRef={ref => (this.searchBar = ref)}
-										onCancel={this.handleCancel}
-										onFocus={this.handleFocus}
-										onSearchButtonPress={this.onSearchButtonPress}
-										placeholder={placeholderPrompt}
-										searchActive={searchActive}
-										text={query}
-										textFieldBackgroundColor={c.sto.lightGray}
-									/>
-								</Animated.View>
-							</Animated.View>
-							<Separator />
-							{searchActive ? (
-								<CourseSearchResultsList
-									browsing={browsing}
-									filters={this.props.filters}
-									navigation={this.props.navigation}
-									onFiltersChange={this.props.onFiltersChange}
-									searchPerformed={searchPerformed}
-									terms={searchResults}
-									updateRecentFilters={this.props.updateRecentFilters}
-								/>
-							) : (
-								<View style={[styles.common, styles.bottomContainer]}>
-									<RecentItemsList
-										emptyHeader="No recent searches"
-										emptyText="Your recent searches will appear here."
-										items={this.props.recentSearches}
-										onItemPress={this.onRecentSearchPress}
-										title="Recent"
-									/>
-									<RecentItemsList
-										actionLabel="Select Filters"
-										emptyHeader="No recent filter combinations"
-										emptyText="Your recent filter combinations will appear here."
-										items={recentFilterDescriptions}
-										onAction={this.openFilterView}
-										onItemPress={this.onRecentFilterPress}
-										title="Browse"
-									/>
-								</View>
-							)}
-						</View>
-					)
-				}}
-			/>
+			<View style={[styles.container, styles.common]}>
+				<AnimatedSearchbox
+					active={mode !== 'ready'}
+					onCancel={this.handleSearchCancel}
+					onChange={this.handleSearchChange}
+					onFocus={this.handleSearchFocus}
+					onSubmit={this.handleSearchSubmit}
+					placeholder={placeholderPrompt}
+					value={query}
+				/>
+				<Separator />
+				{mode !== 'ready' ? (
+					<CourseSearchResultsList
+						browsing={mode === 'browsing'}
+						filters={this.props.filters}
+						navigation={this.props.navigation}
+						onFiltersChange={this.props.onFiltersChange}
+						searchPerformed={searchPerformed}
+						terms={searchResults}
+						updateRecentFilters={this.props.updateRecentFilters}
+					/>
+				) : (
+					<View style={[styles.common, styles.bottomContainer]}>
+						<RecentItemsList
+							emptyHeader="No recent searches"
+							emptyText="Your recent searches will appear here."
+							items={this.props.recentSearches}
+							onItemPress={this.onRecentSearchPress}
+							title="Recent"
+						/>
+						<RecentItemsList
+							actionLabel="Select Filters"
+							emptyHeader="No recent filter combinations"
+							emptyText="Your recent filter combinations will appear here."
+							items={recentFilterDescriptions}
+							onAction={this.openFilterView}
+							onItemPress={this.onRecentFilterPress}
+							title="Browse"
+						/>
+					</View>
+				)}
+			</View>
 		)
 	}
 }
@@ -494,18 +433,5 @@ let styles = StyleSheet.create({
 	},
 	common: {
 		backgroundColor: c.white,
-	},
-	searchContainer: {
-		margin: 0,
-	},
-	searchBarWrapper: {
-		position: 'absolute',
-		left: 10,
-	},
-	header: {
-		fontSize: 30,
-		fontWeight: 'bold',
-		padding: 22,
-		paddingLeft: 17,
 	},
 })

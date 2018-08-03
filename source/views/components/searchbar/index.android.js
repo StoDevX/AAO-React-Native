@@ -5,6 +5,7 @@ import {StyleSheet} from 'react-native'
 import * as c from '../colors'
 import NativeSearchBar from 'react-native-searchbar-controlled'
 import Icon from 'react-native-vector-icons/Ionicons'
+import {type Props} from './types'
 
 const iconStyles = StyleSheet.create({
 	icon: {
@@ -23,48 +24,37 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {
-	getRef?: any,
-	style?: any,
-	placeholder?: string,
-	onChangeText: string => any,
-	onCancel: () => any,
-	onFocus: () => any,
-	onSearchButtonPress: string => any,
-	searchActive: boolean,
-}
-
-type State = {
-	input: string,
-}
-
-export class SearchBar extends React.PureComponent<Props, State> {
-	state = {
-		input: '',
+export class SearchBar extends React.Component<Props> {
+	static defaultProps = {
+		active: false,
+		onCancel: () => {},
+		onChange: () => {},
+		onFocus: () => {},
+		onSubmit: () => {},
+		placeholder: 'Search',
+		value: '',
 	}
 
-	updateText = input => {
-		this.setState({input: input})
-	}
-
-	onSearch = () => {
-		this.props.onSearchButtonPress(this.state.input)
+	handleRef = (ref: NativeSearchBar) => {
+		this.props.getRef && this.props.getRef(ref)
 	}
 
 	render() {
-		const backButton = this.props.searchActive ? backIcon : searchIcon
+		let backButton = this.props.active ? backIcon : searchIcon
+
 		return (
 			<NativeSearchBar
-				ref={this.props.getRef}
+				ref={this.handleRef}
 				backButton={backButton}
-				closeButton={this.props.searchActive ? closeIcon : null}
+				closeButton={this.props.active ? closeIcon : null}
 				focusOnLayout={false}
-				handleChangeText={this.updateText}
-				hideX={!this.props.searchActive}
+				handleChangeText={this.props.onChange}
+				hideClose={!this.props.active}
+				input={this.props.value}
 				onBack={this.props.onCancel}
 				onFocus={this.props.onFocus}
-				onSubmitEditing={this.onSearch}
-				placeholder={this.props.placeholder || 'Search'}
+				onSubmitEditing={this.props.onSubmit}
+				placeholder={this.props.placeholder}
 				showOnLoad={true}
 				style={[styles.searchbar, this.props.style]}
 			/>
