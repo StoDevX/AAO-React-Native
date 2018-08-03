@@ -61,6 +61,7 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 					<ToolbarButton isActive={true} title="Go" />
 				</Toolbar>
 				<BonAppHostedMenu
+					key={this.state.cafeId}
 					cafeId={this.state.cafeId}
 					loadingMessage={['Loading…']}
 					name="BonApp"
