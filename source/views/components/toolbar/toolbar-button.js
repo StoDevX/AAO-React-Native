@@ -44,7 +44,7 @@ export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
 	if (!iconName) {
 		icon = null
 	} else if (Platform.OS === 'ios') {
-		icon = isActive ? iconName : iconName + '-outline'
+		icon = iconName
 	} else if (Platform.OS === 'android') {
 		icon = iconName
 	}
