@@ -11,7 +11,6 @@ const styles = StyleSheet.create({
 
 export const TabBarIcon = (icon: string) => ({
 	tintColor,
-	focused,
 }: {
 	tintColor: string,
 	focused: boolean,
