@@ -43,7 +43,8 @@ type Props = ReactProps & DefaultProps
 
 type State = {
 	filters: Array<FilterType>,
-};
+	cachedFoodItems: ?MenuItemContainerType,
+}
 
 const styles = StyleSheet.create({
 	inner: {
@@ -64,16 +65,26 @@ export class FancyMenu extends React.Component<Props, State> {
 
 	state = {
 		filters: [],
+		cachedFoodItems: null,
 	}
 
-	static getDerivedStateFromProps(props: Props) {
-		let {foodItems, menuCorIcons, meals, now} = props
-		let filters = buildFilters(values(foodItems), menuCorIcons, meals, now)
-		return {filters}
+	static getDerivedStateFromProps(props: Props, prevState: State) {
+		// we only need to do this when the menu has changed; this avoids
+		// us overriding our changes from FilterView.onDismiss
+		if (
+			!prevState.cachedFoodItems ||
+			props.foodItems === prevState.cachedFoodItems
+		) {
+			let {foodItems, menuCorIcons, meals, now} = props
+			let filters = buildFilters(values(foodItems), menuCorIcons, meals, now)
+			return {filters, cachedFoodItems: props.foodItems}
+		}
+		return null
 	}
 
 	areSpecialsFiltered = (filters: Array<FilterType>) =>
 		Boolean(filters.find(this.isSpecialsFilter))
+
 	isSpecialsFilter = (f: FilterType) =>
 		f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
