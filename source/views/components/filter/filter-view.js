@@ -37,8 +37,6 @@ export class FilterView extends React.Component<Props, State> {
 		return {title}
 	}
 
-	_subscription: ?{remove: () => void} = null
-
 	state = {
 		filters: [],
 	}
@@ -60,6 +58,8 @@ export class FilterView extends React.Component<Props, State> {
 	componentWillUnmount() {
 		this._subscription && this._subscription.remove()
 	}
+
+	_subscription: ?{remove: () => void} = null
 
 	onFilterChanged = (filter: FilterType) => {
 		// replace the changed filter in the array, maintaining position
