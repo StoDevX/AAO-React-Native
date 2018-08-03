@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View, Animated, Platform, ScrollView} from 'react-native'
+import {StyleSheet, View, Animated, Platform} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {SearchBar} from '../../components/searchbar'
