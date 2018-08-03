@@ -20,6 +20,10 @@ type Props = {
 				+onDismiss: (filters: Array<FilterType>) => mixed,
 			|},
 		},
+		addListener: (
+			ev: string,
+			(payload: mixed) => mixed,
+		) => {remove: () => void},
 	},
 }
 
@@ -33,6 +37,8 @@ export class FilterView extends React.Component<Props, State> {
 		return {title}
 	}
 
+	_subscription: ?{remove: () => void} = null
+
 	state = {
 		filters: [],
 	}
@@ -42,11 +48,17 @@ export class FilterView extends React.Component<Props, State> {
 		return {filters}
 	}
 
+	componentDidMount() {
+		this._subscription = this.props.navigation.addListener('willBlur', () => {
+			let {onDismiss} = this.props.navigation.state.params
+			if (onDismiss) {
+				onDismiss(this.state.filters)
+			}
+		})
+	}
+
 	componentWillUnmount() {
-		let {onDismiss} = this.props.navigation.state.params
-		if (onDismiss) {
-			onDismiss(this.state.filters)
-		}
+		this._subscription && this._subscription.remove()
 	}
 
 	onFilterChanged = (filter: FilterType) => {
