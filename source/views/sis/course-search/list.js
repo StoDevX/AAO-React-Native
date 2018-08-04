@@ -7,7 +7,7 @@ import type {CourseType} from '../../../lib/course-search/types'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
 import * as c from '../../components/colors'
 import {CourseRow} from './row'
-import memoize from 'mem'
+import memoize from 'lodash/memoize'
 import {parseTerm} from '../../../lib/course-search'
 import {NoticeView} from '../../components/notice'
 import {FilterToolbar} from '../components/filter-toolbar'
@@ -49,10 +49,8 @@ function doSearch (args: {
 	return sortAndGroupResults(results)
 }
 
-let memoizedDoSearch = memoize(doSearch, {
-	maxAge: 1000,
-	cacheKey: (...args) => args,
-})
+let memoizedDoSearch = memoize(doSearch)
+memoizedDoSearch.cache = new WeakMap()
 
 export class CourseResultsList extends React.Component<Props> {
 	keyExtractor = (item: CourseType) => item.clbid.toString()
