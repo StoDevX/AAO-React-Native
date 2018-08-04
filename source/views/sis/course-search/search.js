@@ -23,6 +23,7 @@ import {RecentItemsList} from '../components/recents-list'
 import {Separator} from '../../components/separator'
 import {buildFilters} from './lib/build-filters'
 import type {FilterComboType} from './lib/format-filter-combo'
+import fromPairs from 'lodash/fromPairs'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -133,16 +134,17 @@ class CourseSearchView extends React.Component<Props, State> {
 	onRecentFilterPress = async (text: string) => {
 		this.setState(() => ({mode: 'browsing'}))
 
-		const selectedFilterCombo = this.props.recentFilters.find(
-			f => f.description === text,
-		)
-		const resetFilters = await buildFilters()
-		const selectedFilters = selectedFilterCombo
-			? resetFilters.map(
-					f => selectedFilterCombo.filters.find(f2 => f2.key === f.key) || f,
-			  )
-			: resetFilters
+		let {recentFilters} = this.props
+		let selectedFilterCombo = recentFilters.find(f => f.description === text)
 
+		let freshFilters = await buildFilters()
+		let selectedFilters = freshFilters
+		if (selectedFilterCombo) {
+			let filterLookup = fromPairs(
+				selectedFilterCombo.filters.map(f => [f.key, f]),
+			)
+			selectedFilters = freshFilters.map(f => filterLookup[f.key] || f)
+		}
 
 		this.setState(() => ({filters: selectedFilters}))
 	}
