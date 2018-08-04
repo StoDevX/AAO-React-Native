@@ -241,3 +241,5 @@ export const stoText = {
 	navy: white,
 	mint: black,
 }
+
+export const accent = sto.cranberry
