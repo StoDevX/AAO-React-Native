@@ -89,7 +89,6 @@
     "htmlparser2": "3.9.2",
     "keyword-search": "0.1.1",
     "lodash": "4.17.10",
-    "mem": "3.0.1",
     "moment": "2.22.2",
     "moment-timezone": "0.5.21",
     "p-props": "1.2.0",

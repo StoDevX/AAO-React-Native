@@ -7,7 +7,7 @@ import type {CourseType} from '../../../lib/course-search/types'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
 import * as c from '../../components/colors'
 import {CourseRow} from './row'
-import memoize from 'mem'
+import memoize from 'lodash/memoize'
 import {parseTerm} from '../../../lib/course-search'
 import {NoticeView} from '../../components/notice'
 import {FilterToolbar} from '../components/filter-toolbar'
@@ -33,6 +33,25 @@ type Props = TopLevelViewPropsType & {
 	updateRecentFilters: (filters: FilterType[]) => any,
 }
 
+function doSearch(args: {
+	query: string,
+	filters: Array<FilterType>,
+	courses: Array<CourseType>,
+	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
+}) {
+	let {query, filters, courses, applyFilters} = args
+
+	let results = courses.filter(course => applyFilters(filters, course))
+	if (query) {
+		results = results.filter(course => applySearch(query, course))
+	}
+
+	return sortAndGroupResults(results)
+}
+
+let memoizedDoSearch = memoize(doSearch)
+memoizedDoSearch.cache = new WeakMap()
+
 export class CourseResultsList extends React.Component<Props> {
 	keyExtractor = (item: CourseType) => item.clbid.toString()
 
@@ -48,37 +67,10 @@ export class CourseResultsList extends React.Component<Props> {
 		this.props.navigation.navigate('CourseDetailView', {course: data})
 	}
 
-	doSearch = (args: {
-		query: string,
-		filters: Array<FilterType>,
-		courses: Array<CourseType>,
-		applyFilters: (filters: FilterType[], item: CourseType) => boolean,
-	}) => {
-		let {query, filters, courses, applyFilters} = args
-		query = query.toLowerCase()
-
-		let results = courses.filter(course => applyFilters(filters, course))
-		if (query) {
-			results = results.filter(course => applySearch(query, course))
-		}
-
-		return sortAndGroupResults(results)
-	}
-
-	memoizedDoSearch = memoize(this.doSearch, {
-		maxAge: 1000,
-		cacheKey: (...args) => args,
-	})
-
 	render() {
 		let {filters, browsing, query, courses, applyFilters} = this.props
 
-		let results = this.memoizedDoSearch({
-			query: query.toLowerCase(),
-			filters,
-			courses,
-			applyFilters,
-		})
+		let results = memoizedDoSearch({query, filters, courses, applyFilters})
 
 		const header = (
 			<FilterToolbar filters={filters} onPress={this.props.openFilterView} />
