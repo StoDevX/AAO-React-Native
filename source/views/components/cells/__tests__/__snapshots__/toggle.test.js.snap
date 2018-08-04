@@ -9,6 +9,7 @@ exports[`renders 1`] = `
   cellAccessoryView={
     <Switch
       disabled={false}
+      onTintColor="#E3A025"
       onValueChange={[Function]}
       value={true}
     />
@@ -48,6 +49,7 @@ exports[`renders the given label into the Cell 1`] = `
   cellAccessoryView={
     <Switch
       disabled={false}
+      onTintColor="#E3A025"
       onValueChange={[Function]}
       value={true}
     />

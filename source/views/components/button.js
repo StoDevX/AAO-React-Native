@@ -9,7 +9,7 @@ import * as c from './colors'
 
 const styles = StyleSheet.create({
 	button: {
-		backgroundColor: c.denim,
+		backgroundColor: c.buttonBackground,
 		alignSelf: 'center',
 		paddingVertical: 10,
 		paddingHorizontal: 20,
@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
 			ios: iOSUIKit.calloutWhiteObject,
 			android: material.buttonWhiteObject,
 		}),
+		color: c.buttonForeground,
 	},
 	textDisabled: {
 		color: c.iosDisabledText,

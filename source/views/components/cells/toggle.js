@@ -2,6 +2,7 @@
 import * as React from 'react'
 import {Switch} from 'react-native'
 import {Cell} from 'react-native-tableview-simple'
+import * as c from '../colors'
 
 type PropsType = {
 	label: string,
@@ -10,10 +11,13 @@ type PropsType = {
 }
 
 export function CellToggle({value, onChange, label}: PropsType) {
-	return (
-		<Cell
-			cellAccessoryView={<Switch onValueChange={onChange} value={value} />}
-			title={label}
+	let toggle = (
+		<Switch
+			onTintColor={c.switchTintOn}
+			onValueChange={onChange}
+			tintColor={c.switchTintOff}
+			value={value}
 		/>
 	)
+	return <Cell cellAccessoryView={toggle} title={label} />
 }
