@@ -14,6 +14,7 @@ type Props = {
 	onFocus?: () => mixed,
 	onCancel?: () => mixed,
 	onChange?: string => mixed,
+	title?: string,
 }
 
 type State = {
@@ -88,9 +89,11 @@ export class AnimatedSearchbox extends React.Component<Props, State> {
 
 					return (
 						<Animated.View style={containerStyle}>
-							<Animated.Text style={headerStyle}>
-								Search Courses
-							</Animated.Text>
+							{this.props.title ? (
+								<Animated.Text style={headerStyle}>
+									{this.props.title}
+								</Animated.Text>
+							) : null}
 
 							<Animated.View style={searchStyle}>
 								<SearchBar
