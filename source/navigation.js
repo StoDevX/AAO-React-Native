@@ -48,16 +48,14 @@ import {FaqView} from './views/faqs'
 import HelpView from './views/help'
 
 const styles = StyleSheet.create({
-	card: {
-		...Platform.select({
-			ios: {
-				backgroundColor: c.iosLightBackground,
-			},
-			android: {
-				backgroundColor: c.androidLightBackground,
-			},
-		}),
-	},
+	card: Platform.select({
+		ios: {
+			backgroundColor: c.iosLightBackground,
+		},
+		android: {
+			backgroundColor: c.androidLightBackground,
+		},
+	}),
 })
 
 export const AppNavigator = createStackNavigator(
