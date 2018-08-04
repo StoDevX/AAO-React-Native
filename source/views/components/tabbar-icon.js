@@ -9,9 +9,11 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const TabBarIcon = (icon: string) => ({
-	tintColor,
-}: {
+type Props = {
 	tintColor: string,
 	focused: boolean,
-}) => <Icon name={`ios-${icon}`} style={[styles.icon, {color: tintColor}]} />
+}
+
+export const TabBarIcon = (icon: string) => ({tintColor}: Props) => (
+	<Icon name={`ios-${icon}`} style={[styles.icon, {color: tintColor}]} />
+)
