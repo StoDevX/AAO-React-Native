@@ -1,6 +1,7 @@
 // @flow
 
 import {Platform} from 'react-native'
+import {darken} from 'polished'
 
 export const aqua = '#7FDBFF'
 export const black = '#111111'
@@ -242,3 +243,5 @@ export const stoText = {
 }
 
 export const accent = sto.cranberry
+export const androidStatusBarColor = darken(0.2, accent)
+export const statusBarStyle = Platform.select({ios: 'dark-content', android: 'dark-content'})
