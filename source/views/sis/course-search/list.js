@@ -33,6 +33,27 @@ type Props = TopLevelViewPropsType & {
 	updateRecentFilters: (filters: FilterType[]) => any,
 }
 
+function doSearch (args: {
+	query: string,
+	filters: Array<FilterType>,
+	courses: Array<CourseType>,
+	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
+}) {
+	let {query, filters, courses, applyFilters} = args
+
+	let results = courses.filter(course => applyFilters(filters, course))
+	if (query) {
+		results = results.filter(course => applySearch(query, course))
+	}
+
+	return sortAndGroupResults(results)
+}
+
+let memoizedDoSearch = memoize(doSearch, {
+	maxAge: 1000,
+	cacheKey: (...args) => args,
+})
+
 export class CourseResultsList extends React.Component<Props> {
 	keyExtractor = (item: CourseType) => item.clbid.toString()
 
@@ -47,28 +68,6 @@ export class CourseResultsList extends React.Component<Props> {
 	onPressRow = (data: CourseType) => {
 		this.props.navigation.navigate('CourseDetailView', {course: data})
 	}
-
-	doSearch = (args: {
-		query: string,
-		filters: Array<FilterType>,
-		courses: Array<CourseType>,
-		applyFilters: (filters: FilterType[], item: CourseType) => boolean,
-	}) => {
-		let {query, filters, courses, applyFilters} = args
-		query = query.toLowerCase()
-
-		let results = courses.filter(course => applyFilters(filters, course))
-		if (query) {
-			results = results.filter(course => applySearch(query, course))
-		}
-
-		return sortAndGroupResults(results)
-	}
-
-	memoizedDoSearch = memoize(this.doSearch, {
-		maxAge: 1000,
-		cacheKey: (...args) => args,
-	})
 
 	render() {
 		let {filters, browsing, query, courses, applyFilters} = this.props
