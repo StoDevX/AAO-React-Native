@@ -55,7 +55,8 @@ type Props = ReactProps & ReduxStateProps & ReduxDispatchProps & DefaultProps
 
 type State = {
 	filters: Array<FilterType>,
-	query: string,
+	typedQuery: string,
+	searchQuery: string,
 	mode: 'loading' | 'browsing' | 'searching' | 'ready',
 }
 
@@ -73,7 +74,8 @@ class CourseSearchView extends React.Component<Props, State> {
 	state = {
 		mode: 'loading',
 		filters: [],
-		query: '',
+		typedQuery: '',
+		searchQuery: '',
 	}
 
 	componentDidMount() {
@@ -106,21 +108,26 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 
 	handleSearchSubmit = () => {
-		this.setState(() => ({mode: 'searching'}))
-
-		let {query} = this.state
-		if (query.length !== 0) {
-			this.props.updateRecentSearches(query)
-		}
+		this.setState(
+			state => {
+				return {mode: 'searching', searchQuery: state.typedQuery}
+			},
+			() => {
+				let {searchQuery: query} = this.state
+				if (query.length !== 0) {
+					this.props.updateRecentSearches(query)
+				}
+			},
+		)
 	}
 
 	handleSearchCancel = () => {
-		this.setState(() => ({query: '', mode: 'ready'}))
+		this.setState(() => ({typedQuery: '', searchQuery: '', mode: 'ready'}))
 		this.resetFilters()
 	}
 
 	handleSearchChange = (value: string) => {
-		this.setState(() => ({query: value}))
+		this.setState(() => ({typedQuery: value}))
 	}
 
 	handleSearchFocus = () => {
@@ -128,7 +135,11 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 
 	onRecentSearchPress = (text: string) => {
-		this.setState(() => ({query: text, mode: 'searching'}))
+		this.setState(() => ({
+			typedQuery: text,
+			searchQuery: text,
+			mode: 'searching',
+		}))
 	}
 
 	onRecentFilterPress = async (text: string) => {
@@ -168,7 +179,7 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 
 	render() {
-		let {query, mode, filters} = this.state
+		let {typedQuery, searchQuery, mode, filters} = this.state
 
 		if (mode === 'loading') {
 			return <LoadingView text="Loading Course Data…" />
@@ -207,7 +218,7 @@ class CourseSearchView extends React.Component<Props, State> {
 					onSubmit={this.handleSearchSubmit}
 					placeholder={placeholderPrompt}
 					title="Search Courses"
-					value={query}
+					value={typedQuery}
 				/>
 
 				<Separator />
@@ -220,7 +231,7 @@ class CourseSearchView extends React.Component<Props, State> {
 						filters={filters}
 						navigation={this.props.navigation}
 						openFilterView={this.openFilterView}
-						query={query}
+						query={searchQuery}
 						updateRecentFilters={this.props.updateRecentFilters}
 					/>
 				) : (
