@@ -9,6 +9,7 @@ import {Viewport} from '../../components/viewport'
 
 type Props = {
 	value: string,
+	active: boolean,
 	placeholder?: string,
 	onSubmit?: () => mixed,
 	onFocus?: () => mixed,
@@ -17,24 +18,24 @@ type Props = {
 	title?: string,
 }
 
-type State = {
-	active: boolean,
-}
-
-export class AnimatedSearchbox extends React.Component<Props, State> {
-	state = {
-		active: false,
+export class AnimatedSearchbox extends React.Component<Props> {
+	componentDidUpdate(prevProps: Props) {
+		if (this.props.active !== prevProps.active) {
+			if (this.props.active) {
+				this.activateSearch()
+			} else {
+				this.deactivateSearch()
+			}
+		}
 	}
 
-	animations = {
-		headerOpacity: {start: 1, end: 0, duration: 200},
-		searchBarTop: {start: 71, end: 10, duration: 200},
-		containerHeight: {start: 125, end: 64, duration: 200},
-	}
+	headerOpacitySpec = {start: 1, end: 0, duration: 200}
+	searchBarTopSpec = {start: 71, end: 10, duration: 200}
+	containerHeightSpec = {start: 125, end: 64, duration: 200}
 
-	headerOpacity = new Animated.Value(this.animations.headerOpacity.start)
-	searchBarTop = new Animated.Value(this.animations.searchBarTop.start)
-	containerHeight = new Animated.Value(this.animations.containerHeight.start)
+	headerOpacity = new Animated.Value(this.headerOpacitySpec.start)
+	searchBarTop = new Animated.Value(this.searchBarTopSpec.start)
+	containerHeight = new Animated.Value(this.containerHeightSpec.start)
 
 	onSearchButtonPress = () => {
 		this.props.onSubmit && this.props.onSubmit()
@@ -51,19 +52,25 @@ export class AnimatedSearchbox extends React.Component<Props, State> {
 		}).start()
 	}
 
-	handleFocus = () => {
-		this.animate(this.headerOpacity, this.animations.headerOpacity, 'end')
-		this.animate(this.searchBarTop, this.animations.searchBarTop, 'end')
-		this.animate(this.containerHeight, this.animations.containerHeight, 'end')
+	activateSearch = () => {
+		this.animate(this.headerOpacity, this.headerOpacitySpec, 'end')
+		this.animate(this.searchBarTop, this.searchBarTopSpec, 'end')
+		this.animate(this.containerHeight, this.containerHeightSpec, 'end')
+	}
 
+	deactivateSearch = () => {
+		this.animate(this.headerOpacity, this.headerOpacitySpec, 'start')
+		this.animate(this.searchBarTop, this.searchBarTopSpec, 'start')
+		this.animate(this.containerHeight, this.containerHeightSpec, 'start')
+	}
+
+	handleFocus = () => {
+		this.activateSearch()
 		this.props.onFocus && this.props.onFocus()
 	}
 
 	handleCancel = () => {
-		this.animate(this.headerOpacity, this.animations.headerOpacity, 'start')
-		this.animate(this.searchBarTop, this.animations.searchBarTop, 'start')
-		this.animate(this.containerHeight, this.animations.containerHeight, 'start')
-
+		this.deactivateSearch()
 		this.props.onCancel && this.props.onCancel()
 	}
 
@@ -97,7 +104,7 @@ export class AnimatedSearchbox extends React.Component<Props, State> {
 
 							<Animated.View style={searchStyle}>
 								<SearchBar
-									active={this.state.active}
+									active={this.props.active}
 									onCancel={this.handleCancel}
 									onChange={this.props.onChange}
 									onFocus={this.handleFocus}
