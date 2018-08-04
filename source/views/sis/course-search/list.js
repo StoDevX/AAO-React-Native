@@ -74,7 +74,7 @@ export class CourseResultsList extends React.Component<Props> {
 		let {filters, browsing, query, courses, applyFilters} = this.props
 
 		let results = this.memoizedDoSearch({
-			query: query.toLowerCase(),
+			query,
 			filters,
 			courses,
 			applyFilters,
