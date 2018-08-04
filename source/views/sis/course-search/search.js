@@ -152,7 +152,7 @@ class CourseSearchView extends React.Component<Props, State> {
 	openFilterView = () => {
 		this.props.navigation.navigate('FilterView', {
 			title: 'Add Filters',
-			filters: this.state.filters,
+			initialFilters: this.state.filters,
 			onDismiss: filters => this.setState(() => ({filters})),
 		})
 	}
