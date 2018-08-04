@@ -265,7 +265,7 @@ export const androidTabBarForeground = textOnAccent
 
 export const iosTabBarActiveColor = sto.black
 
-export const androidStatusBarColor = darken(0.2, sto.white)
+export const androidStatusBarColor = darken(0.2, navigationBackground)
 export const statusBarStyle = Platform.select({
 	ios: 'dark-content',
 	android: 'light-content',
