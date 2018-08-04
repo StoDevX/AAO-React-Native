@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
 		paddingVertical: Platform.OS === 'ios' ? 5 : 0,
 		paddingLeft: 2,
 		fontSize: 16,
-		color: c.accent,
+		color: c.iosPushButtonCellForeground,
 	},
 	notice: {
 		paddingTop: 30,
