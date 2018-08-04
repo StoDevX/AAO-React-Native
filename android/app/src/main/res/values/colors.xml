@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Change the color value for your needs -->
-    <color name="colorAccent">@color/purple</color>
+	<!-- Change the color value for your needs -->
+	<color name="colorAccent">@color/purple</color>
 
-    <color name="black">#242121</color>
+	<color name="black">#242121</color>
 	<color name="darkGray">#53585A</color>
 	<color name="mediumGray">#E0DAD6</color>
 	<color name="lightGray">#F7F5F2</color>
