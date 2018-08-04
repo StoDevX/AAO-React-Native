@@ -72,24 +72,27 @@ export class AnimatedSearchbox extends React.Component<Props, State> {
 				render={viewport => {
 					let searchBarWidth = viewport.width - 20
 
-					let aniContainerStyle = [
+					let containerStyle = [
 						styles.searchContainer,
 						styles.common,
 						{height: this.containerHeight},
 					]
-					let aniSearchStyle = [
+
+					let searchStyle = [
 						styles.searchBarWrapper,
 						{width: searchBarWidth},
 						{top: this.searchBarTop},
 					]
-					let aniHeaderStyle = [styles.header, {opacity: this.headerOpacity}]
+
+					let headerStyle = [styles.header, {opacity: this.headerOpacity}]
 
 					return (
-						<Animated.View style={aniContainerStyle}>
-							<Animated.Text style={aniHeaderStyle}>
+						<Animated.View style={containerStyle}>
+							<Animated.Text style={headerStyle}>
 								Search Courses
 							</Animated.Text>
-							<Animated.View style={aniSearchStyle}>
+
+							<Animated.View style={searchStyle}>
 								<SearchBar
 									active={this.state.active}
 									onCancel={this.handleCancel}
