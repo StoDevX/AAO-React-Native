@@ -33,7 +33,7 @@ type Props = TopLevelViewPropsType & {
 	updateRecentFilters: (filters: FilterType[]) => any,
 }
 
-function doSearch (args: {
+function doSearch(args: {
 	query: string,
 	filters: Array<FilterType>,
 	courses: Array<CourseType>,
