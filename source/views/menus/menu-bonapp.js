@@ -4,7 +4,7 @@ import LoadingView from '../components/loading'
 import qs from 'querystring'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
-import {ConnectedFancyMenu as FancyMenu} from './components/fancy-menu'
+import {FancyMenu} from './components/fancy-menu'
 import type {
 	BonAppMenuInfoType as MenuInfoType,
 	BonAppCafeInfoType as CafeInfoType,

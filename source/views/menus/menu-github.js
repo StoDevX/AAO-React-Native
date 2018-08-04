@@ -2,7 +2,7 @@
 import * as React from 'react'
 import LoadingView from '../components/loading'
 import {NoticeView} from '../components/notice'
-import {ConnectedFancyMenu as FancyMenu} from './components/fancy-menu'
+import {FancyMenu} from './components/fancy-menu'
 import type {TopLevelViewPropsType} from '../types'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
