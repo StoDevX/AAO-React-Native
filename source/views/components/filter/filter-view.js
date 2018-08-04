@@ -42,7 +42,7 @@ export class FilterView extends React.Component<Props, State> {
 	}
 
 	static getDerivedStateFromProps(props: Props) {
-		let {initialFilters: filters} = props.navigation.state.params
+		let {initialFilters: filters = []} = props.navigation.state.params
 		return {filters}
 	}
 
