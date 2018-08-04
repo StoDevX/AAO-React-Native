@@ -16,14 +16,14 @@ const buttonStyles = StyleSheet.create({
 		borderRadius: 2,
 	},
 	activeButton: {
-		backgroundColor: c.accent,
-		borderColor: c.accent,
+		backgroundColor: c.toolbarButtonBackground,
+		borderColor: c.toolbarButtonBackground,
 	},
 	inactiveButton: {
 		borderColor: c.iosDisabledText,
 	},
 	activeText: {
-		color: c.white,
+		color: c.toolbarButtonForeground,
 	},
 	inactiveText: {
 		color: c.iosDisabledText,
