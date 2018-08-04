@@ -1,11 +1,14 @@
 // @flow
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 const styles = StyleSheet.create({
 	icon: {
-		fontSize: 30,
+		fontSize: Platform.select({
+			ios: 30,
+			android: 24,
+		}),
 	},
 })
 
