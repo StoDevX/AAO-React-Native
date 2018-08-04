@@ -242,30 +242,31 @@ export const stoText = {
 	mint: sto.black,
 }
 
-export const accent = sto.purple
+export const accent = sto.gold
+const textOnAccent = stoText.gold
 
 export const navigationBackground = Platform.select({
-	ios: sto.white,
-	android: sto.white,
-})
-export const navigationForeground = Platform.select({
 	ios: accent,
 	android: accent,
 })
+export const navigationForeground = Platform.select({
+	ios: textOnAccent,
+	android: textOnAccent,
+})
 
 export const toolbarButtonBackground = accent
-export const toolbarButtonForeground = sto.white
+export const toolbarButtonForeground = textOnAccent
 
-export const androidListHeaderForeground = accent
+export const androidListHeaderForeground = sto.black
 export const androidListHeaderBackground = sto.white
 
-export const androidTabBarBackground = sto.white
-export const androidTabBarForeground = accent
+export const androidTabBarBackground = accent
+export const androidTabBarForeground = textOnAccent
 
-export const iosTabBarActiveColor = accent
+export const iosTabBarActiveColor = sto.black
 
 export const androidStatusBarColor = darken(0.2, sto.white)
 export const statusBarStyle = Platform.select({
 	ios: 'dark-content',
-	android: 'dark-content',
+	android: 'light-content',
 })
