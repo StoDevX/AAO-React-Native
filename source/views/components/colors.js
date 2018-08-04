@@ -1,7 +1,7 @@
 // @flow
 
 import {Platform} from 'react-native'
-import {darken} from 'polished'
+import tinycolor from 'tinycolor2'
 
 export const aqua = '#7FDBFF'
 export const black = '#111111'
@@ -223,50 +223,78 @@ export const sto = {
 	white: '#FFFFFF',
 }
 
-export const stoText = {
-	black: sto.white,
-	darkGray: sto.white,
-	mediumGray: sto.black,
-	lightGray: sto.black,
-	gold: sto.black,
-	lightGold: sto.black,
-	cranberry: sto.white,
-	lime: sto.black,
-	orange: sto.black,
-	red: transparent,
-	lightBlue: sto.black,
-	blue: sto.black,
-	teal: sto.white,
-	purple: sto.white,
-	navy: sto.white,
-	mint: sto.black,
+/**
+ * Given a background and a set of foreground colors, returns the first
+ * foreground color that is readable (at WCAG AA-Small), or black/white if
+ * none of the options were readable.
+ */
+function firstReadable(background: string, possibilities: Array<string>) {
+	possibilities = possibilities.map(c => tinycolor(c))
+	let readable = possibilities.find(c => tinycolor.isReadable(c, background))
+	if (readable) {
+		return readable
+	}
+	return tinycolor.mostReadable(background, [sto.black, sto.white])
 }
 
+/**
+ * The primary color of the app.
+ */
 export const accent = sto.gold
-const textOnAccent = stoText.gold
 
 export const navigationBackground = Platform.select({
 	ios: accent,
 	android: accent,
 })
-export const navigationForeground = Platform.select({
-	ios: textOnAccent,
-	android: textOnAccent,
-})
+export const navigationForeground = firstReadable(navigationBackground, [
+	sto.black,
+	sto.white,
+])
 
-export const toolbarButtonBackground = accent
-export const toolbarButtonForeground = textOnAccent
+export const buttonBackground = accent
+export const buttonForeground = firstReadable(buttonBackground, [
+	sto.black,
+	sto.white,
+])
 
-export const androidListHeaderForeground = sto.black
+export const toolbarButtonBackground = buttonBackground
+export const toolbarButtonForeground = buttonForeground
+
+export const iosPushButtonCellBackground = sto.white
+export const iosPushButtonCellForeground = firstReadable(
+	iosPushButtonCellBackground,
+	[accent, sto.black, sto.white],
+)
+
 export const androidListHeaderBackground = sto.white
+export const androidListHeaderForeground = firstReadable(
+	androidListHeaderBackground,
+	[accent, sto.black, sto.white],
+)
 
 export const androidTabBarBackground = accent
-export const androidTabBarForeground = textOnAccent
+export const androidTabBarForeground = firstReadable(androidTabBarBackground, [
+	accent,
+	sto.black,
+	sto.white,
+])
 
-export const iosTabBarActiveColor = sto.black
+// not used in the gui; just used for calculations
+const iosTabBarBackground = '#F7F7F7'
+export const iosTabBarActiveColor = firstReadable(iosTabBarBackground, [
+	accent,
+	sto.black,
+])
 
-export const androidStatusBarColor = darken(0.2, navigationBackground)
+export const androidStatusBarColor = tinycolor(navigationBackground)
+	.darken(20)
+	.toString()
+
 export const statusBarStyle = Platform.select({
-	ios: 'dark-content',
-	android: 'light-content',
+	ios: tinycolor.isReadable('#000', navigationBackground)
+		? 'dark-content'
+		: 'light-content',
+	android: tinycolor.isReadable('#000', androidStatusBarColor)
+		? 'dark-content'
+		: 'light-content',
 })
