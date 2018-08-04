@@ -357,6 +357,7 @@ class CourseSearchView extends React.Component<Props, State> {
 					onFocus={this.handleSearchFocus}
 					onSubmit={this.handleSearchSubmit}
 					placeholder={placeholderPrompt}
+					title="Search Courses"
 					value={query}
 				/>
 				<Separator />
