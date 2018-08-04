@@ -168,7 +168,7 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 
 	render() {
-		let {query, mode} = this.state
+		let {query, mode, filters} = this.state
 
 		if (mode === 'loading') {
 			return <LoadingView text="Loading Course Data…" />
@@ -217,10 +217,10 @@ class CourseSearchView extends React.Component<Props, State> {
 						applyFilters={this.props.applyFilters}
 						browsing={mode === 'browsing'}
 						courses={this.props.allCourses}
-						filters={this.state.filters}
+						filters={filters}
 						navigation={this.props.navigation}
 						openFilterView={this.openFilterView}
-						query={this.state.query}
+						query={query}
 						updateRecentFilters={this.props.updateRecentFilters}
 					/>
 				) : (
