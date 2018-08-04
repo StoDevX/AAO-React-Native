@@ -270,6 +270,22 @@ export const iosPushButtonCellForeground = firstReadable(
 	[accent, sto.black, sto.white],
 )
 
+// Background color when the switch is turned on.
+export const switchTintOn = Platform.select({
+	ios: accent,
+	// don't set on Android so the platform can pick the right shades from the theming system
+	android: undefined,
+})
+// Border color on iOS and background color on Android when the switch is turned off.
+export const switchTintOff = undefined
+// Color of the foreground switch grip. If this is set on iOS, the switch grip will lose its drop shadow.
+export const switchThumbTint = Platform.select({
+	// don't set on ios so we keep the drop shadow
+	ios: undefined,
+	// don't set on Android so the platform can pick the right shades from the theming system
+	android: undefined,
+})
+
 export const androidListHeaderBackground = sto.white
 export const androidListHeaderForeground = firstReadable(
 	androidListHeaderBackground,
