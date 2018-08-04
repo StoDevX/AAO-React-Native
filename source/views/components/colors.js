@@ -242,6 +242,10 @@ function firstReadable(background: string, possibilities: Array<string>) {
  */
 export const accent = sto.gold
 
+// When you change this for iOS, you also need to update the RGB values in
+// `/ios/AllAboutOlaf/LaunchScreen.storyboard`; you'll need to edit
+// <color key="backgroundColor"/> and <color key="tintColor"/> in <view>,
+// and <color key="tintColor"/> and <color key="barTintColor"/> in <navigationBar/>.
 export const navigationBackground = Platform.select({
 	ios: accent,
 	android: accent,
