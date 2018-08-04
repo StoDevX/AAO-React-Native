@@ -57,7 +57,7 @@ type State = {
 	filters: Array<FilterType>,
 	query: string,
 	mode: 'loading' | 'browsing' | 'searching' | 'ready',
-};
+}
 
 class CourseSearchView extends React.Component<Props, State> {
 	static navigationOptions = {
