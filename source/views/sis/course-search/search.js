@@ -14,7 +14,7 @@ import {type CourseType, areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
-import {CourseSearchResultsList} from './list'
+import {CourseResultsList} from './list'
 import LoadingView from '../../components/loading'
 import {NoticeView} from '../../components/notice'
 import {AnimatedSearchbox} from '../components/animated-searchbox'
@@ -210,7 +210,7 @@ class CourseSearchView extends React.Component<Props, State> {
 				/>
 				<Separator />
 				{mode !== 'ready' ? (
-					<CourseSearchResultsList
+					<CourseResultsList
 						applyFilters={this.props.applyFilters}
 						browsing={mode === 'browsing'}
 						courses={this.props.allCourses}
