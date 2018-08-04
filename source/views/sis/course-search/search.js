@@ -292,7 +292,10 @@ class CourseSearchView extends React.Component<Props, State> {
 			onChange: filters => this.props.onFiltersChange(filters),
 			onLeave: filters => this.props.updateRecentFilters(filters),
 		})
+	}
 
+	openFilterViewAndBrowse = () => {
+		this.openFilterView()
 		this.setState(() => ({mode: 'browsing'}))
 	}
 
@@ -385,7 +388,7 @@ class CourseSearchView extends React.Component<Props, State> {
 							emptyHeader="No recent filter combinations"
 							emptyText="Your recent filter combinations will appear here."
 							items={recentFilterDescriptions}
-							onAction={this.openFilterView}
+							onAction={this.openFilterViewAndBrowse}
 							onItemPress={this.onRecentFilterPress}
 							title="Browse"
 						/>
