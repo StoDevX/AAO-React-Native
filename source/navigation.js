@@ -48,9 +48,6 @@ import {FaqView} from './views/faqs'
 import HelpView from './views/help'
 
 const styles = StyleSheet.create({
-	header: {
-		backgroundColor: c.olevilleGold,
-	},
 	card: {
 		...Platform.select({
 			ios: {
@@ -106,8 +103,7 @@ export const AppNavigator = createStackNavigator(
 	},
 	{
 		navigationOptions: {
-			headerStyle: styles.header,
-			headerTintColor: c.black,
+			headerTintColor: c.accent,
 		},
 		cardStyle: styles.card,
 	},

@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
 		paddingVertical: Platform.OS === 'ios' ? 5 : 0,
 		paddingLeft: 2,
 		fontSize: 16,
-		color: c.olevilleGold,
+		color: c.accent,
 	},
 	notice: {
 		paddingTop: 30,
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
 	sideButton: {
 		paddingRight: 17,
 		fontSize: 16,
-		color: c.olevilleGold,
+		color: c.accent,
 		padding: 14,
 	},
 	subHeader: {
