@@ -15,8 +15,8 @@ export function CellToggle({value, onChange, label}: PropsType) {
 		<Switch
 			onTintColor={c.switchTintOn}
 			onValueChange={onChange}
-			value={value}
 			tintColor={c.switchTintOff}
+			value={value}
 		/>
 	)
 	return <Cell cellAccessoryView={toggle} title={label} />
