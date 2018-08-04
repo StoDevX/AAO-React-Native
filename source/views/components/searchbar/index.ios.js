@@ -40,6 +40,7 @@ export class SearchBar extends React.Component<Props> {
 		return (
 			<NativeSearchBar
 				ref={this.handleRef}
+				autoCorrect={false}
 				barTintColor={this.props.backgroundColor}
 				hideBackground={true}
 				onCancelButtonPress={this.props.onCancel}
