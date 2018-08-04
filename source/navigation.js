@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
 		backgroundColor: Platform.select({
 			ios: c.iosLightBackground,
 			android: c.androidLightBackground,
-		})
+		}),
 	},
 })
 

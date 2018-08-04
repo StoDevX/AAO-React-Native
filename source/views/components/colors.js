@@ -244,8 +244,14 @@ export const stoText = {
 
 export const accent = sto.purple
 
-export const navigationBackground = Platform.select({ios: sto.white, android: sto.white})
-export const navigationForeground = Platform.select({ios: accent, android: accent})
+export const navigationBackground = Platform.select({
+	ios: sto.white,
+	android: sto.white,
+})
+export const navigationForeground = Platform.select({
+	ios: accent,
+	android: accent,
+})
 
 export const toolbarButtonBackground = accent
 export const toolbarButtonForeground = sto.white
@@ -259,4 +265,7 @@ export const androidTabBarForeground = accent
 export const iosTabBarActiveColor = accent
 
 export const androidStatusBarColor = darken(0.2, sto.white)
-export const statusBarStyle = Platform.select({ios: 'dark-content', android: 'dark-content'})
+export const statusBarStyle = Platform.select({
+	ios: 'dark-content',
+	android: 'dark-content',
+})
