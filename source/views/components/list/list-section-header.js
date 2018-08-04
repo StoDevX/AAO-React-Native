@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 				paddingRight: 10,
 			},
 			android: {
-				backgroundColor: c.white,
+				backgroundColor: c.androidListHeaderBackground,
 				paddingTop: 10,
 				paddingBottom: 10,
 				borderTopWidth: 1,
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
 			android: {
 				fontSize: 16,
 				fontFamily: 'sans-serif-condensed',
-				color: c.accent,
+				color: c.androidListHeaderForeground,
 			},
 		}),
 	},

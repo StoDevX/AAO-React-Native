@@ -27,11 +27,12 @@ export const TabNavigator: ComponentType = (screens, options = {}) =>
 		lazy: true,
 		theme: {
 			colors: {
-				primary: c.accent,
+				primary: c.androidTabBarBackground,
 			},
 		},
+		activeTintColor: c.androidTabBarForeground,
 		tabBarOptions: {
-			activeTintColor: c.accent,
+			activeTintColor: c.iosTabBarActiveColor,
 			...(options.tabBarOptions || {}),
 			labelStyle: {
 				...Platform.select({
