@@ -45,6 +45,7 @@ export class SearchBar extends React.Component<Props> {
 		return (
 			<NativeSearchBar
 				ref={this.handleRef}
+				autoCorrect={false}
 				backButton={backButton}
 				closeButton={this.props.active ? closeIcon : null}
 				focusOnLayout={false}
