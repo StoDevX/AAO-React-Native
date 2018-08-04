@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
+import {StyleSheet, View, ScrollView} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
 import {
@@ -221,7 +221,7 @@ class CourseSearchView extends React.Component<Props, State> {
 						updateRecentFilters={this.props.updateRecentFilters}
 					/>
 				) : (
-					<View style={[styles.common, styles.bottomContainer]}>
+					<ScrollView style={[styles.common, styles.bottomContainer]}>
 						<RecentItemsList
 							emptyHeader="No recent searches"
 							emptyText="Your recent searches will appear here."
@@ -238,7 +238,7 @@ class CourseSearchView extends React.Component<Props, State> {
 							onItemPress={this.onRecentFilterPress}
 							title="Browse"
 						/>
-					</View>
+					</ScrollView>
 				)}
 			</View>
 		)
