@@ -4,6 +4,7 @@ import {ScrollView, StyleSheet} from 'react-native'
 import {type FilterType} from './types'
 import {FilterSection} from './section'
 import {TableView} from 'react-native-tableview-simple'
+import {NoticeView} from '../notice'
 
 const styles = StyleSheet.create({
 	container: {
@@ -70,6 +71,10 @@ export class FilterView extends React.Component<Props, State> {
 	}
 
 	render() {
+		if (!this.state.filters.length) {
+			return <NoticeView text="No filters available" />
+		}
+
 		const contents = this.state.filters.map(filter => (
 			<FilterSection
 				key={filter.key}
