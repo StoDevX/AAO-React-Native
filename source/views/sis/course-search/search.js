@@ -175,7 +175,7 @@ class CourseSearchView extends React.Component<Props, State> {
 		}
 
 		if (this.props.courseDataState === 'not-loaded') {
-			const msg = this.props.isConnected
+			let msg = this.props.isConnected
 				? PROMPT_TEXT
 				: PROMPT_TEXT.concat(`\n\n${NETWORK_WARNING}`)
 
@@ -190,11 +190,10 @@ class CourseSearchView extends React.Component<Props, State> {
 			)
 		}
 
-		const placeholderPrompt = mode === 'browsing'
-			? 'Browsing all courses'
-			: 'Search Class & Lab'
+		let placeholderPrompt =
+			mode === 'browsing' ? 'Browsing all courses' : 'Search Class & Lab'
 
-		const recentFilterDescriptions = this.props.recentFilters.map(
+		let recentFilterDescriptions = this.props.recentFilters.map(
 			f => f.description,
 		)
 
@@ -210,7 +209,9 @@ class CourseSearchView extends React.Component<Props, State> {
 					title="Search Courses"
 					value={query}
 				/>
+
 				<Separator />
+
 				{mode !== 'ready' ? (
 					<CourseResultsList
 						applyFilters={this.props.applyFilters}
