@@ -73,12 +73,7 @@ export class CourseResultsList extends React.Component<Props> {
 	render() {
 		let {filters, browsing, query, courses, applyFilters} = this.props
 
-		let results = this.memoizedDoSearch({
-			query,
-			filters,
-			courses,
-			applyFilters,
-		})
+		let results = memoizedDoSearch({query, filters, courses, applyFilters})
 
 		const header = (
 			<FilterToolbar filters={filters} onPress={this.props.openFilterView} />
