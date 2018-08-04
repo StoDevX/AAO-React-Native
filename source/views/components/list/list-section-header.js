@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
 			android: {
 				fontSize: 16,
 				fontFamily: 'sans-serif-condensed',
-				color: c.tint,
+				color: c.accent,
 			},
 		}),
 	},

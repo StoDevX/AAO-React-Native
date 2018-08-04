@@ -14,11 +14,11 @@ const dotBarStyles = StyleSheet.create({
 		height: 5,
 		width: 5,
 		borderRadius: 5,
-		backgroundColor: c.tint,
+		backgroundColor: c.accent,
 	},
 	line: {
 		width: 1,
-		backgroundColor: c.tint,
+		backgroundColor: c.accent,
 		flex: 1,
 	},
 })

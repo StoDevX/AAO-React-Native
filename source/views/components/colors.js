@@ -180,8 +180,6 @@ export const mud = 'rgb(70, 45, 29)'
 export const sienna = 'rgb(160, 82, 45)'
 export const dust = 'rgb(236, 214, 197)'
 
-export const tint = mandarin
-
 // MARK: gradients
 export const redToPurple = ['rgb(249,64,77)', 'rgb(217,37,111)']
 export const orangeToRed = ['rgb(250,120,37)', 'rgb(242,38,83)']
