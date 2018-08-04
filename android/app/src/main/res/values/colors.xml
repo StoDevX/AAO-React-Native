@@ -3,6 +3,11 @@
     <!-- Change the color value for your needs -->
     <color name="colorAccent">@color/purple</color>
 
+    <!-- this is used (in our app) solely for the app switcher color -->
+    <color name="colorPrimary">#FFC107</color>
+    <!-- this is used when the app is starting to define the status bar color -->
+    <color name="colorPrimaryDark">#C4C4C4</color>
+
     <color name="black">#242121</color>
     <color name="darkGray">#53585A</color>
     <color name="mediumGray">#E0DAD6</color>
