@@ -52,7 +52,7 @@ function doSearch(args: {
 let memoizedDoSearch = memoize(doSearch)
 memoizedDoSearch.cache = new WeakMap()
 
-export class CourseResultsList extends React.Component<Props> {
+export class CourseResultsList extends React.PureComponent<Props> {
 	keyExtractor = (item: CourseType) => item.clbid.toString()
 
 	renderSectionHeader = ({section: {title}}: any) => (
