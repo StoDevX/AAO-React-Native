@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {Platform, TextInput, StyleSheet} from 'react-native'
+import {TextInput, StyleSheet} from 'react-native'
 import * as c from '../../components/colors'
 import {AllHtmlEntities} from 'html-entities'
 
@@ -13,14 +13,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 15,
 		paddingTop: 10,
 		paddingBottom: 10,
-		...Platform.select({
-			ios: {
-				fontWeight: '500',
-			},
-			android: {
-				fontWeight: '600',
-			},
-		}),
 	},
 })
 
