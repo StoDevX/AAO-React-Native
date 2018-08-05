@@ -19,10 +19,9 @@ type Props = any & {query: string}
 export class SearchableAlphabetListView extends React.Component<Props> {
 	_performSearch = (text: string) => this.props.onSearch(text)
 
-	// We need to make the search run slightly behind the UI,
-	// so I'm slowing it down by 50ms. 0ms also works, but seems
-	// rather pointless.
-	performSearch = debounce(this._performSearch, 50)
+	// We don't need to search as-you-type; slightly delayed is more
+	// efficient and nearly as effective
+	performSearch = debounce(this._performSearch, 200)
 
 	render() {
 		return (
