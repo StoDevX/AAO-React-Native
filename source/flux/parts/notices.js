@@ -24,7 +24,7 @@ type GetNoticesAction =
 	| GetNoticesFailureAction
 	| GetNoticesSuccessAction
 
-export function getEnabledTools(): ThunkAction<GetNoticesAction> {
+export function loadNotices(): ThunkAction<GetNoticesAction> {
 	return async (dispatch, getState) => {
 		dispatch({type: NOTICES_START})
 
@@ -33,7 +33,7 @@ export function getEnabledTools(): ThunkAction<GetNoticesAction> {
 
 		try {
 			const config = await fetchNotices(isOnline)
-			dispatch({type: NOTICES_SUCCESS, payload: config, })
+			dispatch({type: NOTICES_SUCCESS, payload: config})
 		} catch (err) {
 			dispatch({type: NOTICES_FAILURE})
 		}

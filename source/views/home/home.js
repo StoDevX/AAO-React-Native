@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {ScrollView, StyleSheet, StatusBar} from 'react-native'
+import {View, ScrollView, StyleSheet, StatusBar} from 'react-native'
 import {connect} from 'react-redux'
 import * as c from '../components/colors'
 import sortBy from 'lodash/sortBy'
@@ -38,7 +38,6 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 	return (
 		<ScrollView
 			alwaysBounceHorizontal={false}
-			contentContainerStyle={styles.cells}
 			overflow="hidden"
 			showsHorizontalScrollIndicator={false}
 			showsVerticalScrollIndicator={false}
@@ -47,23 +46,25 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 
 			<ConnectedNotices />
 
-			{columns.map((contents, i) => (
-				<Column key={i} style={styles.column}>
-					{contents.map(view => (
-						<HomeScreenButton
-							key={view.view}
-							onPress={() => {
-								if (view.type === 'url') {
-									return trackedOpenUrl({url: view.url, id: view.view})
-								} else {
-									return navigation.navigate(view.view)
-								}
-							}}
-							view={view}
-						/>
-					))}
-				</Column>
-			))}
+			<View style={styles.cells}>
+				{columns.map((contents, i) => (
+					<Column key={i} style={styles.column}>
+						{contents.map(view => (
+							<HomeScreenButton
+								key={view.view}
+								onPress={() => {
+									if (view.type === 'url') {
+										return trackedOpenUrl({url: view.url, id: view.view})
+									} else {
+										return navigation.navigate(view.view)
+									}
+								}}
+								view={view}
+							/>
+						))}
+					</Column>
+				))}
+			</View>
 		</ScrollView>
 	)
 }

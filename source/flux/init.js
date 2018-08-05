@@ -15,6 +15,7 @@ import {
 	loadFeedbackStatus,
 	loadAcknowledgement,
 } from './parts/settings'
+import {loadNotices} from './parts/notices'
 import {updateBalances} from './parts/sis'
 
 async function loginCredentials(store) {
@@ -56,6 +57,7 @@ export async function init(store: {dispatch: any => any}) {
 		store.dispatch(loadFeedbackStatus()),
 		store.dispatch(loadAcknowledgement()),
 		store.dispatch(loadFavoriteBuildings()),
+		store.dispatch(loadNotices()),
 		loginCredentials(store),
 	])
 
