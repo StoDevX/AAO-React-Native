@@ -20,6 +20,7 @@ import {Viewport} from '../../components/viewport'
 
 type Props = TopLevelViewPropsType & {
 	image: number,
+	imageBorder: boolean,
 	playerUrl: string,
 	stationNumber: string,
 	title: string,
@@ -117,7 +118,7 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {source, title, stationName, image} = this.props
+		const {source, title, stationName, image, imageBorder} = this.props
 		const {uplinkError, streamError, playState} = this.state
 
 		const error = uplinkError ? (
@@ -177,7 +178,7 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 					const logoSize = {width: logoWidth, height: logoWidth}
 
 					const root = [styles.root, sideways && landscape.root]
-					const logo = [styles.logo, logoSize]
+					const logo = [imageBorder && styles.logoBorder, logoSize]
 					const logoWrapper = [
 						styles.logoWrapper,
 						sideways && landscape.logoWrapper,
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		flex: 1,
 	},
-	logo: {
+	logoBorder: {
 		borderRadius: 6,
 		borderColor: c.kstoSecondaryDark,
 		borderWidth: 3,
