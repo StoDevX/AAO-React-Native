@@ -1,6 +1,7 @@
 // @flow
 
 import {Platform} from 'react-native'
+import tinycolor from 'tinycolor2'
 
 export const aqua = '#7FDBFF'
 export const black = '#111111'
@@ -180,8 +181,6 @@ export const mud = 'rgb(70, 45, 29)'
 export const sienna = 'rgb(160, 82, 45)'
 export const dust = 'rgb(236, 214, 197)'
 
-export const tint = mandarin
-
 // MARK: gradients
 export const redToPurple = ['rgb(249,64,77)', 'rgb(217,37,111)']
 export const orangeToRed = ['rgb(250,120,37)', 'rgb(242,38,83)']
@@ -221,23 +220,101 @@ export const sto = {
 	purple: '#6E3A5D',
 	navy: '#233746',
 	mint: '#CFE1D7',
+	white: '#FFFFFF',
 }
 
-export const stoText = {
-	black: white,
-	darkGray: white,
-	mediumGray: black,
-	lightGray: black,
-	gold: black,
-	lightGold: black,
-	cranberry: white,
-	lime: black,
-	orange: black,
-	red: transparent,
-	lightBlue: black,
-	blue: black,
-	teal: white,
-	purple: white,
-	navy: white,
-	mint: black,
+/**
+ * Given a background and a set of foreground colors, returns the first
+ * foreground color that is readable (at WCAG AA-Small), or black/white if
+ * none of the options were readable.
+ */
+function firstReadable(background: string, possibilities: Array<string>) {
+	possibilities = possibilities.map(c => tinycolor(c))
+	let readable = possibilities.find(c => tinycolor.isReadable(c, background))
+	if (readable) {
+		return readable
+	}
+	return tinycolor.mostReadable(background, [sto.black, sto.white])
 }
+
+/**
+ * The primary color of the app.
+ */
+export const accent = sto.gold
+
+// When you change this for iOS, you also need to update the RGB values in
+// `/ios/AllAboutOlaf/LaunchScreen.storyboard`; you'll need to edit
+// <color key="backgroundColor"/> and <color key="tintColor"/> in <view>,
+// and <color key="tintColor"/> and <color key="barTintColor"/> in <navigationBar/>.
+export const navigationBackground = Platform.select({
+	ios: accent,
+	android: accent,
+})
+export const navigationForeground = firstReadable(navigationBackground, [
+	sto.black,
+	sto.white,
+])
+
+export const buttonBackground = accent
+export const buttonForeground = firstReadable(buttonBackground, [
+	sto.black,
+	sto.white,
+])
+
+export const toolbarButtonBackground = buttonBackground
+export const toolbarButtonForeground = buttonForeground
+
+export const iosPushButtonCellBackground = sto.white
+export const iosPushButtonCellForeground = firstReadable(
+	iosPushButtonCellBackground,
+	[accent, sto.black, sto.white],
+)
+
+// Background color when the switch is turned on.
+export const switchTintOn = Platform.select({
+	ios: accent,
+	// don't set on Android so the platform can pick the right shades from the theming system
+	android: undefined,
+})
+// Border color on iOS and background color on Android when the switch is turned off.
+export const switchTintOff = undefined
+// Color of the foreground switch grip. If this is set on iOS, the switch grip will lose its drop shadow.
+export const switchThumbTint = Platform.select({
+	// don't set on ios so we keep the drop shadow
+	ios: undefined,
+	// don't set on Android so the platform can pick the right shades from the theming system
+	android: undefined,
+})
+
+export const androidListHeaderBackground = sto.white
+export const androidListHeaderForeground = firstReadable(
+	androidListHeaderBackground,
+	[accent, sto.black, sto.white],
+)
+
+export const androidTabBarBackground = accent
+export const androidTabBarForeground = firstReadable(androidTabBarBackground, [
+	accent,
+	sto.black,
+	sto.white,
+])
+
+// not used in the gui; just used for calculations
+const iosTabBarBackground = '#F7F7F7'
+export const iosTabBarActiveColor = firstReadable(iosTabBarBackground, [
+	accent,
+	sto.black,
+])
+
+export const androidStatusBarColor = tinycolor(navigationBackground)
+	.darken(20)
+	.toString()
+
+export const statusBarStyle = Platform.select({
+	ios: tinycolor.isReadable('#000', navigationBackground)
+		? 'dark-content'
+		: 'light-content',
+	android: tinycolor.isReadable('#000', androidStatusBarColor)
+		? 'dark-content'
+		: 'light-content',
+})

@@ -22,6 +22,26 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
+"@babel/core@7.0.0-beta.44":
+  version "7.0.0-beta.44"
+  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.0.0-beta.44.tgz#90bb9e897427e7ebec2a1b857f458ff74ca28057"
+  dependencies:
+    "@babel/code-frame" "7.0.0-beta.44"
+    "@babel/generator" "7.0.0-beta.44"
+    "@babel/helpers" "7.0.0-beta.44"
+    "@babel/template" "7.0.0-beta.44"
+    "@babel/traverse" "7.0.0-beta.44"
+    "@babel/types" "7.0.0-beta.44"
+    babylon "7.0.0-beta.44"
+    convert-source-map "^1.1.0"
+    debug "^3.1.0"
+    json5 "^0.5.0"
+    lodash "^4.2.0"
+    micromatch "^2.3.11"
+    resolve "^1.3.2"
+    semver "^5.4.1"
+    source-map "^0.5.0"
+
 "@babel/core@^7.0.0-beta":
   version "7.0.0-beta.40"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.0.0-beta.40.tgz#455464dd81d499fd97d32b473f0331f74379a33f"
@@ -214,6 +234,14 @@
     "@babel/template" "7.0.0-beta.40"
     "@babel/traverse" "7.0.0-beta.40"
     "@babel/types" "7.0.0-beta.40"
+
+"@babel/helpers@7.0.0-beta.44":
+  version "7.0.0-beta.44"
+  resolved "https://registry.yarnpkg.com/@babel/helpers/-/helpers-7.0.0-beta.44.tgz#b1cc87fdc3b77351c0a4860bcd9d4ef457919bfd"
+  dependencies:
+    "@babel/template" "7.0.0-beta.44"
+    "@babel/traverse" "7.0.0-beta.44"
+    "@babel/types" "7.0.0-beta.44"
 
 "@babel/highlight@7.0.0-beta.40":
   version "7.0.0-beta.40"
@@ -1585,24 +1613,24 @@ buffer-from@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.0.tgz#87fcaa3a298358e0ade6e442cfce840740d1ad04"
 
-buffer@5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/buffer/-/buffer-5.1.0.tgz#c913e43678c7cb7c8bd16afbcddb6c5505e8f9fe"
+buffer@5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/buffer/-/buffer-5.2.0.tgz#53cf98241100099e9eeae20ee6d51d21b16e541e"
   dependencies:
     base64-js "^1.0.2"
     ieee754 "^1.1.4"
 
-bugsnag-react-native@2.10.1:
-  version "2.10.1"
-  resolved "https://registry.yarnpkg.com/bugsnag-react-native/-/bugsnag-react-native-2.10.1.tgz#8ab14f950f121f292a2c6499985f34ce14b33c62"
+bugsnag-react-native@2.10.2:
+  version "2.10.2"
+  resolved "https://registry.yarnpkg.com/bugsnag-react-native/-/bugsnag-react-native-2.10.2.tgz#be5bac92ec5ba593116703cec4669667436a8407"
   dependencies:
     iserror "^0.0.2"
     promise "^7"
     prop-types "^15.6.0"
 
-bugsnag-sourcemaps@1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/bugsnag-sourcemaps/-/bugsnag-sourcemaps-1.0.3.tgz#238dd4843b80cf02672f5a2533bb1ad739b01b6a"
+bugsnag-sourcemaps@1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/bugsnag-sourcemaps/-/bugsnag-sourcemaps-1.0.4.tgz#5b49c98edf2f931cf881dc22177cda8db8534371"
   dependencies:
     graceful-fs "^4.1.11"
     listr "^0.12.0"
@@ -2086,9 +2114,9 @@ danger-plugin-yarn@1.3.0:
   optionalDependencies:
     esdoc "^0.5.2"
 
-danger@3.8.0:
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-3.8.0.tgz#04d61683195ddd98e9395342d9d1985a4aacacef"
+danger@3.8.4:
+  version "3.8.4"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-3.8.4.tgz#e84b8398a3b7dd5707d7628a833f529efa4d1354"
   dependencies:
     "@octokit/rest" "^15.5.0"
     babel-polyfill "^6.23.0"
@@ -5583,9 +5611,9 @@ preserve@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/preserve/-/preserve-0.2.0.tgz#815ed1f6ebc65926f865b310c0713bcb3315ce4b"
 
-prettier@1.13.7:
-  version "1.13.7"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.13.7.tgz#850f3b8af784a49a6ea2d2eaa7ed1428a34b7281"
+prettier@1.14.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.14.0.tgz#847c235522035fd988100f1f43cf20a7d24f9372"
 
 pretty-bytes@5.1.0:
   version "5.1.0"
@@ -5749,9 +5777,9 @@ react-native-custom-tabs@0.1.7:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/react-native-custom-tabs/-/react-native-custom-tabs-0.1.7.tgz#2dfb4028b0a443610d94792b2019810f68dde525"
 
-react-native-device-info@0.21.5:
-  version "0.21.5"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.21.5.tgz#99478a2d68182e012297f2d63f2bd1b788106dee"
+react-native-device-info@0.22.2:
+  version "0.22.2"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.22.2.tgz#ff2829ebe40d75be1d3b6560f0cd48e794a5a287"
 
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
@@ -5829,9 +5857,9 @@ react-native-search-bar@3.4.2:
   dependencies:
     prop-types "^15.5.10"
 
-"react-native-searchbar@https://github.com/MosesEsan/react-native-searchbar.git#setValue-function":
-  version "1.13.0"
-  resolved "https://github.com/MosesEsan/react-native-searchbar.git#9c9fd0ece3d5c5ba44697e8535021155ed696cc8"
+react-native-searchbar-controlled@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-searchbar-controlled/-/react-native-searchbar-controlled-1.0.0.tgz#3e2cfd0ee356fb8b2d0bd547f76c57298a9f55e4"
   dependencies:
     lodash "^4.16.4"
     react-native-vector-icons "^4.4.2"
@@ -5858,7 +5886,15 @@ react-native-typography@1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/react-native-typography/-/react-native-typography-1.3.0.tgz#ae921c141ab1dfdf4335ebc2b4a146bcf7919b36"
 
-react-native-vector-icons@4.6.0, react-native-vector-icons@^4.4.2:
+react-native-vector-icons@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-5.0.0.tgz#d0bd6fdda01159db409810718dd04904951a98f5"
+  dependencies:
+    lodash "^4.0.0"
+    prop-types "^15.5.10"
+    yargs "^8.0.2"
+
+react-native-vector-icons@^4.4.2:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-4.6.0.tgz#e4014311ffa6de397d914ffc31b7097a874cc8d5"
   dependencies:
@@ -5936,9 +5972,9 @@ react-navigation-deprecated-tab-navigator@1.3.0:
   dependencies:
     react-native-tab-view "^0.0.77"
 
-react-navigation-drawer@0.4.3:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/react-navigation-drawer/-/react-navigation-drawer-0.4.3.tgz#c04c94e2429b7e724801af05bd0a93a79cb27f71"
+react-navigation-drawer@0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/react-navigation-drawer/-/react-navigation-drawer-0.5.0.tgz#d91b6a6ec65c34ba78c00f814b1e6508922cc9ec"
   dependencies:
     react-native-drawer-layout-polyfill "^1.3.2"
 
@@ -5951,9 +5987,9 @@ react-navigation-material-bottom-tabs@0.3.0:
     react-native-paper "2.0.0-alpha.4"
     react-navigation-tabs "^0.4.0"
 
-react-navigation-tabs@0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-0.5.1.tgz#ed33bce3a3e21b92646700de25bd94b8fc570371"
+react-navigation-tabs@0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-0.6.0.tgz#2f526194f4360e56c2702e736887449acc2080dc"
   dependencies:
     hoist-non-react-statics "^2.5.0"
     prop-types "^15.6.1"
@@ -5971,9 +6007,9 @@ react-navigation-tabs@^0.4.0:
     react-native-safe-area-view "^0.7.0"
     react-native-tab-view "^1.0.0"
 
-react-navigation@2.9.0:
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.9.0.tgz#714d14c085fa566088166c85f187bc5f5943812d"
+react-navigation@2.11.2:
+  version "2.11.2"
+  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.11.2.tgz#cd099f6d7d09efe48ef8463614a3abb113d45c01"
   dependencies:
     clamp "^1.0.1"
     create-react-context "^0.2.1"
@@ -5983,8 +6019,8 @@ react-navigation@2.9.0:
     react-lifecycles-compat "^3"
     react-native-safe-area-view "^0.8.0"
     react-navigation-deprecated-tab-navigator "1.3.0"
-    react-navigation-drawer "0.4.3"
-    react-navigation-tabs "0.5.1"
+    react-navigation-drawer "0.5.0"
+    react-navigation-tabs "0.6.0"
 
 react-proxy@^1.1.7:
   version "1.1.8"
@@ -6962,6 +6998,10 @@ time-stamp@^1.0.0:
 timers@0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/timers/-/timers-0.1.1.tgz#86ac5c78c1ee419694f35a58de4fd4183cfb9c1e"
+
+tinycolor2@1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
 
 titlecase@1.1.2:
   version "1.1.2"

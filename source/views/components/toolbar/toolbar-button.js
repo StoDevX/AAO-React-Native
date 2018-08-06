@@ -16,14 +16,14 @@ const buttonStyles = StyleSheet.create({
 		borderRadius: 2,
 	},
 	activeButton: {
-		backgroundColor: c.mandarin,
-		borderColor: c.mandarin,
+		backgroundColor: c.toolbarButtonBackground,
+		borderColor: c.toolbarButtonBackground,
 	},
 	inactiveButton: {
 		borderColor: c.iosDisabledText,
 	},
 	activeText: {
-		color: c.white,
+		color: c.toolbarButtonForeground,
 	},
 	inactiveText: {
 		color: c.iosDisabledText,
@@ -44,7 +44,7 @@ export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
 	if (!iconName) {
 		icon = null
 	} else if (Platform.OS === 'ios') {
-		icon = isActive ? iconName : iconName + '-outline'
+		icon = iconName
 	} else if (Platform.OS === 'android') {
 		icon = iconName
 	}

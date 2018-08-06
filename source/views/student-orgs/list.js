@@ -174,8 +174,8 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 		this.props.navigation.navigate('StudentOrgsDetailView', {org: data})
 	}
 
-	performSearch = (text: ?string) => {
-		this.setState(() => ({query: text ? text.toLowerCase() : ''}))
+	performSearch = (text: string) => {
+		this.setState(() => ({query: text}))
 	}
 
 	render() {
@@ -197,6 +197,7 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 		let results = this.state.orgs
 		if (this.state.query) {
 			let {query, orgs} = this.state
+			query = query.toLowerCase()
 			results = orgs.filter(org =>
 				orgToArray(org).some(word => word.startsWith(query)),
 			)
@@ -212,6 +213,7 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 				}
 				data={groupedResults}
 				onSearch={this.performSearch}
+				query={this.state.query}
 				refreshControl={refreshControl}
 				renderSeparator={this.renderSeparator}
 				sectionHeader={this.renderSectionHeader}

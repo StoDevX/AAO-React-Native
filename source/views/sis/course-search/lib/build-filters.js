@@ -14,12 +14,8 @@ export async function buildFilters(): Promise<FilterType[]> {
 
 	const {ges, departments} = await loadAllCourseFilterOptions()
 
-	const allGEs = ges.map(ge => ({
-		title: ge,
-	}))
-	const allDepartments = departments.map(dep => ({
-		title: dep,
-	}))
+	const allGEs = ges.map(ge => ({title: ge}))
+	const allDepartments = departments.map(dep => ({title: dep}))
 
 	return [
 		{

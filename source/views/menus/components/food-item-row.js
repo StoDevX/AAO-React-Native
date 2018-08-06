@@ -8,8 +8,7 @@ import type {MenuItemType, MasterCorIconMapType} from '../types'
 import * as c from '../../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 
-const specialsIcon =
-	Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'
+const specialsIcon = Platform.OS === 'ios' ? 'ios-star' : 'md-star'
 
 type FoodItemPropsType = {|
 	corIcons: MasterCorIconMapType,

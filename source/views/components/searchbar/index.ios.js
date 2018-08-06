@@ -4,6 +4,7 @@ import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import NativeSearchBar from 'react-native-search-bar'
 import * as c from '../colors'
+import {type Props} from './types'
 
 const styles = StyleSheet.create({
 	searchbar: {
@@ -11,33 +12,46 @@ const styles = StyleSheet.create({
 	},
 })
 
-type PropsType = {
-	getRef?: any,
-	backgroundColor?: string,
-	style?: any,
-	placeholder?: string,
-	onFocus?: () => any,
-	onCancel?: () => any,
-	onChangeText?: string => any,
-	onSearchButtonPress: string => any,
-	text?: string,
-	textFieldBackgroundColor?: string,
-}
+export class SearchBar extends React.Component<Props> {
+	static defaultProps = {
+		backgroundColor: c.iosGray,
+		onCancel: () => {},
+		onChange: () => {},
+		onFocus: () => {},
+		onSubmit: () => {},
+		placeholder: 'Search',
+		textFieldBackgroundColor: c.white,
+		value: '',
+	}
 
-export const SearchBar = (props: PropsType) => {
-	return (
-		<NativeSearchBar
-			ref={props.getRef}
-			barTintColor={props.backgroundColor || c.iosGray}
-			hideBackground={true}
-			onCancelButtonPress={props.onCancel || (() => {})}
-			onChangeText={props.onChangeText || (() => {})}
-			onFocus={props.onFocus || (() => {})}
-			onSearchButtonPress={props.onSearchButtonPress || (() => {})}
-			placeholder={props.placeholder || 'Search'}
-			style={styles.searchbar}
-			text={props.text || ''}
-			textFieldBackgroundColor={props.textFieldBackgroundColor || c.white}
-		/>
-	)
+	_ref: ?NativeSearchBar = null
+
+	handleSearchButtonPress = () => {
+		this._ref && this._ref.blur()
+		this.props.onSubmit()
+	}
+
+	handleRef = (ref: NativeSearchBar) => {
+		this._ref = ref
+		this.props.getRef && this.props.getRef(ref)
+	}
+
+	render() {
+		return (
+			<NativeSearchBar
+				ref={this.handleRef}
+				autoCorrect={false}
+				barTintColor={this.props.backgroundColor}
+				hideBackground={true}
+				onCancelButtonPress={this.props.onCancel}
+				onChangeText={this.props.onChange}
+				onFocus={this.props.onFocus}
+				onSearchButtonPress={this.handleSearchButtonPress}
+				placeholder={this.props.placeholder}
+				style={styles.searchbar}
+				text={this.props.value}
+				textFieldBackgroundColor={this.props.textFieldBackgroundColor}
+			/>
+		)
+	}
 }
