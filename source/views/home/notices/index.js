@@ -7,7 +7,12 @@ import {connect} from 'react-redux'
 import * as c from '../../components/colors'
 import {Touchable} from '../../components/touchable'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {CELL_MARGIN} from '../button'
+import {Row, Column} from '../../components/layout'
+import {
+	CELL_MARGIN,
+	cellVerticalPadding,
+	cellHorizontalPadding,
+} from '../button'
 import type {HomescreenNotice} from './types'
 import type {NavType, TopLevelViewPropsType} from '../../types'
 import type {ReduxState} from '../../../flux'
@@ -23,11 +28,13 @@ export function PlainNotices({notices, navigation}: NoticesProps) {
 		return null
 	}
 
+	let twoNotices = notices.slice(0, 2)
+
 	return (
-		<View>
-			{notices
-				.slice(0, 2)
-				.map((n, i) => <Notice key={i} navigation={navigation} notice={n} />)}
+		<View style={styles.container}>
+			{twoNotices.map((n, i) => (
+				<Notice key={i} navigation={navigation} notice={n} />
+			))}
 			{notices.length > 2 ? (
 				<MoreNotices navigation={navigation} notices={notices} />
 			) : null}
@@ -36,42 +43,41 @@ export function PlainNotices({notices, navigation}: NoticesProps) {
 }
 
 function Notice(props: {notice: HomescreenNotice, navigation: NavType}) {
-	const {notice, navigation} = props
-	const background = notice.backgroundColor ? notice.backgroundColor : c.white
+	let {notice, navigation} = props
+	let background = notice.backgroundColor ? notice.backgroundColor : c.white
+	let foreground = {color: notice.foregroundColor}
 	return (
-		<Touchable
-			onPress={() => navigation.push('NoticeDetailView', {notice})}
-			style={[styles.notice, {backgroundColor: background}]}
-		>
-			<View style={styles.noticeIconView}>
-				{notice.icon ? (
-					<View style={iconStyles.wrapper}>
-						<Icon
-							name={`ios-${notice.icon}`}
-							style={[iconStyles.icon, {color: notice.foregroundColor}]}
-						/>
-					</View>
-				) : null}
-			</View>
-			<View style={styles.noticeContentView}>
-				{notice.title ? (
-					<Text
-						numberOfLines={1}
-						style={[styles.noticeTitle, {color: notice.foregroundColor}]}
-					>
-						{notice.title}
-					</Text>
-				) : null}
-				{/* 2 or 1 line of description? */}
-				<Text
-					numberOfLines={2}
-					style={[styles.noticeDescription, {color: notice.foregroundColor}]}
-				>
-					{notice.snippet || notice.message}
-				</Text>
-			</View>
-			{/* <Text numberOfLines={2}>{JSON.stringify(notice)}</Text> */}
-		</Touchable>
+		<View style={styles.cell}>
+			<Touchable
+				onPress={() => navigation.push('NoticeDetailView', {notice})}
+				style={[styles.touchable, {backgroundColor: background}]}
+			>
+				<Row>
+					{notice.icon ? (
+						<Column style={styles.iconColumn}>
+							<Icon
+								name={`ios-${notice.icon}`}
+								style={[iconStyles.icon, foreground]}
+							/>
+						</Column>
+					) : null}
+
+					<Column style={styles.textColumn}>
+						{notice.title ? (
+							<Text numberOfLines={1} style={[styles.title, foreground]}>
+								{notice.title}
+							</Text>
+						) : null}
+
+						{/* 2 or 1 line of description? */}
+						<Text numberOfLines={2} style={[styles.description, foreground]}>
+							{notice.snippet || notice.message}
+						</Text>
+						{/* <Text numberOfLines={2}>{JSON.stringify(notice)}</Text> */}
+					</Column>
+				</Row>
+			</Touchable>
+		</View>
 	)
 }
 
@@ -103,38 +109,41 @@ function mapStateToProps(state: ReduxState): ReduxStateProps {
 	const {notices} = state
 
 	return {
-		notices: notices.notices, // ? notices.applicable : [],
+		notices: notices ? notices.notices : [], // ? notices.applicable : [],
 	}
 }
 
 export const ConnectedNotices = connect(mapStateToProps)(PlainNotices)
 
+const SPACE_BETWEEN = 5
 const styles = StyleSheet.create({
-	notice: {
-		marginHorizontal: CELL_MARGIN / 2,
-		marginTop: 5,
-		paddingTop: CELL_MARGIN,
-		backgroundColor: c.white,
+	container: {
+		marginTop: SPACE_BETWEEN / 2,
+		marginBottom: SPACE_BETWEEN / 2,
+		marginHorizontal: CELL_MARGIN,
+	},
+	cell: {
+		marginVertical: SPACE_BETWEEN / 2,
 		borderRadius: 10,
-
-		flexDirection: 'row',
+		overflow: 'hidden',
 	},
-	noticeIconView: {
-		alignItems: 'center',
+	touchable: {
+		paddingVertical: cellVerticalPadding,
+		paddingHorizontal: 10,
+		backgroundColor: c.white,
+	},
+	iconColumn: {
 		justifyContent: 'center',
+		marginRight: 10,
 	},
-	noticeContentView: {},
-	noticeTitle: {
+	textColumn: {
 		flex: 1,
-		marginVertical: 5,
-		marginHorizontal: 10,
+	},
+	title: {
+		marginBottom: 5,
 		fontWeight: 'bold',
 	},
-	noticeDescription: {
-		flex: 1,
-		marginBottom: 10,
-		marginHorizontal: 10,
-	},
+	description: {},
 	moreNotices: {
 		marginHorizontal: 10,
 		marginVertical: 5,
@@ -142,9 +151,6 @@ const styles = StyleSheet.create({
 })
 
 const iconStyles = StyleSheet.create({
-	wrapper: {
-		marginLeft: 10,
-	},
 	icon: {
 		fontSize: 40,
 	},
