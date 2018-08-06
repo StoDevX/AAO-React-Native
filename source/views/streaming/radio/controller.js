@@ -180,9 +180,9 @@ class RadioControllerView extends React.Component<Props, State> {
 					const logoSize = {width: logoWidth, height: logoWidth}
 
 					const root = [styles.root, sideways && landscape.root]
-					const logoBorder = {borderColor: theme.imageBorderColor}
+					const logoBorderColor = {borderColor: theme.imageBorderColor}
 					const logoBg = {backgroundColor: theme.imageBackgroundColor}
-					const logo = [styles.logo, logoSize, logoBorder, logoBg]
+					const logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
 					const logoWrapper = [
 						styles.logoWrapper,
 						sideways && landscape.logoWrapper,
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		flex: 1,
 	},
-	logo: {
+	logoBorder: {
 		borderRadius: 6,
 		borderColor: c.black,
 		borderWidth: 3,
