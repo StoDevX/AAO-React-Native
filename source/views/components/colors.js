@@ -48,12 +48,6 @@ export const tableviewAccessoryColor = 'rgb(0, 122, 255)'
 
 export const semitransparentGray = 'rgba(0,0,0,0.2)'
 
-// MARK: Oleville colors
-export const theLatest = '#00BFFF'
-export const olevilleGold = '#FFC107'
-export const darkGold = '#c79100'
-export const olevilleBackground = '#F0F0E1'
-
 // MARK: KSTO Colors
 export const kstoPrimaryLight = '#c5c5e8'
 export const kstoSecondaryLight = '#7789bb'
