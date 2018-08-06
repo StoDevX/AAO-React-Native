@@ -32,14 +32,12 @@ type Props = {}
 
 export default class App extends React.Component<Props> {
 	componentDidMount() {
-		startStatusBarColorChanger()
 		OneSignal.addEventListener('received', this.onReceived)
 		OneSignal.addEventListener('opened', this.onOpened)
 		OneSignal.addEventListener('ids', this.onIds)
 	}
 
 	componentWillUnmount() {
-		stopStatusBarColorChanger()
 		OneSignal.removeEventListener('received', this.onReceived)
 		OneSignal.removeEventListener('opened', this.onOpened)
 		OneSignal.removeEventListener('ids', this.onIds)
