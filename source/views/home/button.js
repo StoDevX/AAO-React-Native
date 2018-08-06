@@ -86,8 +86,8 @@ function Tint({tint = 'black', gradient, children}) {
 }
 
 export const CELL_MARGIN = 10
-const cellVerticalPadding = 8
-const cellHorizontalPadding = 4
+export const cellVerticalPadding = 8
+export const cellHorizontalPadding = 4
 
 const styles = StyleSheet.create({
 	button: {
