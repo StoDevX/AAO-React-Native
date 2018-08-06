@@ -19,6 +19,7 @@ const StreamingMediaView = TabNavigator({
 		screen: ({navigation}) => (
 			<RadioControllerView
 				image={logos.ksto}
+				imageBorder={false}
 				navigation={navigation}
 				playerUrl="https://www.stolaf.edu/multimedia/play/embed/ksto.html"
 				scheduleViewName="KSTOScheduleView"
@@ -42,6 +43,7 @@ const StreamingMediaView = TabNavigator({
 		screen: ({navigation}) => (
 			<RadioControllerView
 				image={logos.krlx}
+				imageBorder={true}
 				navigation={navigation}
 				playerUrl="http://live.krlx.org"
 				scheduleViewName="KRLXScheduleView"
