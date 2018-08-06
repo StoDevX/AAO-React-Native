@@ -105,6 +105,10 @@ export const AppNavigator = createStackNavigator(
 			headerStyle: styles.header,
 			headerTintColor: c.navigationForeground,
 		},
+		headerTransitionPreset: Platform.select({
+			ios: 'uikit',
+			android: undefined,
+		}),
 		cardStyle: styles.card,
 	},
 )
