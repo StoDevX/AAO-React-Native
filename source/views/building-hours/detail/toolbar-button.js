@@ -44,6 +44,7 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 	}
 }
 
-export const ConnectedBuildingFavoriteButton = connect(mapState, mapDispatch)(
-	BuildingFavoriteButton,
-)
+export const ConnectedBuildingFavoriteButton = connect(
+	mapState,
+	mapDispatch,
+)(BuildingFavoriteButton)

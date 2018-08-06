@@ -16,7 +16,8 @@ import {
 	loadAcknowledgement,
 } from './parts/settings'
 import {loadNotices} from './parts/notices'
-import {updateBalances} from './parts/sis'
+import {updateBalances} from './parts/balances'
+import {loadRecentSearches, loadRecentFilters} from './parts/courses'
 
 async function loginCredentials(store) {
 	const {username, password} = await loadLoginCredentials()
@@ -58,6 +59,8 @@ export async function init(store: {dispatch: any => any}) {
 		store.dispatch(loadAcknowledgement()),
 		store.dispatch(loadFavoriteBuildings()),
 		store.dispatch(loadNotices()),
+		store.dispatch(loadRecentSearches()),
+		store.dispatch(loadRecentFilters()),
 		loginCredentials(store),
 	])
 

@@ -3,12 +3,10 @@
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import * as c from '../../components/colors'
-import {connect} from 'react-redux'
-import {updateMenuFilters, type ReduxState} from '../../../flux'
 import {type TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
 import type {
-	MenuItemType,
+	MenuItemType as MenuItem,
 	MasterCorIconMapType,
 	ProcessedMealType,
 	MenuItemContainerType,
@@ -35,19 +33,18 @@ type ReactProps = TopLevelViewPropsType & {
 	refreshing?: ?boolean,
 }
 
-type ReduxDispatchProps = {
-	onFiltersChange: (f: FilterType[]) => any,
-}
-
-type ReduxStateProps = {
-	filters: FilterType[],
-}
+type FilterFunc = (filters: Array<FilterType>, item: MenuItem) => boolean
 
 type DefaultProps = {
-	applyFilters: (filters: FilterType[], item: MenuItemType) => boolean,
+	applyFilters: FilterFunc,
 }
 
-type Props = ReactProps & ReduxStateProps & ReduxDispatchProps & DefaultProps
+type Props = ReactProps & DefaultProps
+
+type State = {
+	filters: Array<FilterType>,
+	cachedFoodItems: ?MenuItemContainerType,
+}
 
 const styles = StyleSheet.create({
 	inner: {
@@ -61,47 +58,53 @@ const styles = StyleSheet.create({
 const LEFT_MARGIN = 28
 const Separator = () => <ListSeparator spacing={{left: LEFT_MARGIN}} />
 
-class FancyMenu extends React.PureComponent<Props> {
+export class FancyMenu extends React.Component<Props, State> {
 	static defaultProps = {
 		applyFilters: applyFiltersToItem,
 	}
 
-	componentWillMount() {
-		this.updateFilters(this.props)
+	state = {
+		filters: [],
+		cachedFoodItems: null,
 	}
 
-	componentWillReceiveProps(nextProps: Props) {
-		this.updateFilters(nextProps)
-	}
-
-	updateFilters = (props: Props) => {
-		const {foodItems, menuCorIcons, filters, meals, now} = props
-
-		// prevent ourselves from overwriting the filters from redux on mount
-		if (filters.length) {
-			return
+	static getDerivedStateFromProps(props: Props, prevState: State) {
+		// we only need to do this when the menu has changed; this avoids
+		// us overriding our changes from FilterView.onDismiss
+		if (
+			!prevState.cachedFoodItems ||
+			props.foodItems === prevState.cachedFoodItems
+		) {
+			let {foodItems, menuCorIcons, meals, now} = props
+			let filters = buildFilters(values(foodItems), menuCorIcons, meals, now)
+			return {filters, cachedFoodItems: props.foodItems}
 		}
-
-		const newFilters = buildFilters(values(foodItems), menuCorIcons, meals, now)
-		props.onFiltersChange(newFilters)
+		return null
 	}
 
-	areSpecialsFiltered = filters => Boolean(filters.find(this.isSpecialsFilter))
-	isSpecialsFilter = f =>
+	areSpecialsFiltered = (filters: Array<FilterType>) =>
+		Boolean(filters.find(this.isSpecialsFilter))
+
+	isSpecialsFilter = (f: FilterType) =>
 		f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
 	openFilterView = () => {
 		this.props.navigation.navigate('FilterView', {
 			title: `Filter ${this.props.name} Menu`,
-			pathToFilters: ['menus', this.props.name],
-			onChange: filters => this.props.onFiltersChange(filters),
+			initialFilters: this.state.filters,
+			onDismiss: filters => this.setState(() => ({filters})),
 		})
 	}
 
-	groupMenuData = (props: Props, stations: Array<StationMenuType>) => {
-		const {applyFilters, filters, foodItems} = props
+	groupMenuData = (args: {
+		filters: Array<FilterType>,
+		stations: Array<StationMenuType>,
+		foodItems: MenuItemContainerType,
+		applyFilters: FilterFunc,
+	}) => {
+		let {applyFilters, foodItems, stations, filters} = args
 
-		const derefrenceMenuItems = menu =>
+		let derefrenceMenuItems = menu =>
 			menu.items
 				// Dereference each menu item
 				.map(id => foodItems[id])
@@ -109,7 +112,7 @@ class FancyMenu extends React.PureComponent<Props> {
 				// and apply the selected filters to the items in the menu
 				.filter(item => item && applyFilters(filters, item))
 
-		const menusWithItems = stations
+		let menusWithItems = stations
 			// We're grouping the menu items in a [label, Array<items>] tuple.
 			.map(menu => [menu.label, derefrenceMenuItems(menu)])
 			// We only want to show stations with at least one item in them
@@ -121,9 +124,10 @@ class FancyMenu extends React.PureComponent<Props> {
 	}
 
 	renderSectionHeader = ({section: {title}}: any) => {
-		const {filters, now, meals} = this.props
-		const {stations} = chooseMeal(meals, filters, now)
-		const menu = stations.find(m => m.label === title)
+		let {now, meals} = this.props
+		let {filters} = this.state
+		let {stations} = chooseMeal(meals, filters, now)
+		let menu = stations.find(m => m.label === title)
 
 		return (
 			<ListSectionHeader
@@ -134,8 +138,8 @@ class FancyMenu extends React.PureComponent<Props> {
 		)
 	}
 
-	renderItem = ({item}: {item: MenuItemType}) => {
-		const specialsFilterEnabled = this.areSpecialsFiltered(this.props.filters)
+	renderItem = ({item}: {item: MenuItem}) => {
+		let specialsFilterEnabled = this.areSpecialsFiltered(this.state.filters)
 		return (
 			<FoodItemRow
 				badgeSpecials={!specialsFilterEnabled}
@@ -146,15 +150,21 @@ class FancyMenu extends React.PureComponent<Props> {
 		)
 	}
 
-	keyExtractor = (item, index) => index.toString()
+	keyExtractor = (item: MenuItem, index: number) => index.toString()
 
 	render() {
-		const {filters, now, meals, cafeMessage} = this.props
+		let {now, meals, cafeMessage, applyFilters, foodItems} = this.props
+		let {filters} = this.state
 
-		const {label: mealName, stations} = chooseMeal(meals, filters, now)
-		const anyFiltersEnabled = filters.some(f => f.enabled)
-		const specialsFilterEnabled = this.areSpecialsFiltered(filters)
-		const groupedMenuData = this.groupMenuData(this.props, stations)
+		let {label: mealName, stations} = chooseMeal(meals, filters, now)
+		let anyFiltersEnabled = filters.some(f => f.enabled)
+		let specialsFilterEnabled = this.areSpecialsFiltered(filters)
+		let groupedMenuData = this.groupMenuData({
+			stations,
+			filters,
+			applyFilters,
+			foodItems,
+		})
 
 		let message = 'No items to show.'
 		if (cafeMessage) {
@@ -166,9 +176,9 @@ class FancyMenu extends React.PureComponent<Props> {
 			message = 'No items to show. Try changing the filters.'
 		}
 
-		const messageView = <NoticeView style={styles.message} text={message} />
+		let messageView = <NoticeView style={styles.message} text={message} />
 
-		const header = (
+		let header = (
 			<FilterToolbar
 				date={now}
 				filters={filters}
@@ -194,24 +204,3 @@ class FancyMenu extends React.PureComponent<Props> {
 		)
 	}
 }
-
-const mapState = (
-	state: ReduxState,
-	actualProps: ReactProps,
-): ReduxStateProps => {
-	if (!state.menus) {
-		return {filters: []}
-	}
-	return {
-		filters: state.menus[actualProps.name] || [],
-	}
-}
-
-const mapDispatch = (dispatch, actualProps: ReactProps): ReduxDispatchProps => {
-	return {
-		onFiltersChange: (filters: FilterType[]) =>
-			dispatch(updateMenuFilters(actualProps.name, filters)),
-	}
-}
-
-export const ConnectedFancyMenu = connect(mapState, mapDispatch)(FancyMenu)

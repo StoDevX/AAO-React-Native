@@ -18,7 +18,7 @@ export function cleanEvent(event: EventType) {
 function cleanDescription(desc: string) {
 	const description = fastGetTrimmedText(desc || '')
 
-	if (description == 'See more details') {
+	if (description === 'See more details') {
 		return ''
 	}
 

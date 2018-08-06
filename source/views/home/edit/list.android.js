@@ -112,6 +112,7 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 	}
 }
 
-export const ConnectedEditHomeView = connect(mapState, mapDispatch)(
-	EditHomeView,
-)
+export const ConnectedEditHomeView = connect(
+	mapState,
+	mapDispatch,
+)(EditHomeView)

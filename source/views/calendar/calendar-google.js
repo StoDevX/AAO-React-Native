@@ -36,7 +36,7 @@ export class GoogleCalendarView extends React.Component<Props, State> {
 		now: moment.tz(TIMEZONE),
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.getEvents().then(() => {
 			this.setState(() => ({loading: false}))
 		})

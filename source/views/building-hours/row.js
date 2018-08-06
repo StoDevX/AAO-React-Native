@@ -55,30 +55,38 @@ type Props = {
 }
 
 type State = {
-	firstUpdate: boolean,
+	now: momentT,
 	openStatus: string,
 	hours: Array<any>,
 	accentBg: string,
 	accentText: string,
 }
 
+function deriveStateFromProps(props: Props) {
+	const openStatus = getShortBuildingStatus(props.info, props.now)
+	const hours = getDetailedBuildingStatus(props.info, props.now)
+
+	const accentBg = BG_COLORS[openStatus] || c.goldenrod
+	const accentText = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
+
+	return {
+		now: props.now,
+		openStatus,
+		hours,
+		accentBg,
+		accentText,
+	}
+}
+
 export class BuildingRow extends React.Component<Props, State> {
-	state = {
-		openStatus: 'Unknown',
-		hours: [],
-		firstUpdate: true,
+	state = deriveStateFromProps(this.props)
 
-		// when changing these, make sure to change the fallbacks in setStateFromProps
-		accentBg: c.goldenrod,
-		accentText: 'rgb(130, 82, 45)',
-	}
+	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+		if (prevState.now.isSame(nextProps.now, 'minute')) {
+			return null
+		}
 
-	componentWillMount() {
-		this.setStateFromProps(this.props)
-	}
-
-	componentWillReceiveProps(nextProps: Props) {
-		this.setStateFromProps(nextProps)
+		return deriveStateFromProps(nextProps)
 	}
 
 	shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -92,34 +100,6 @@ export class BuildingRow extends React.Component<Props, State> {
 			this.state.openStatus !== nextState.openStatus ||
 			!isEqual(this.state.hours, nextState.hours)
 		)
-	}
-
-	setStateFromProps = (nextProps: Props) => {
-		// we check the time in setStateFromProps, because shouldComponentUpdate
-		// runs _after_ setStateFromProps.
-		if (
-			this.props.now.isSame(nextProps.now, 'minute') &&
-			!this.state.firstUpdate
-		) {
-			return
-		}
-
-		const {info, now} = nextProps
-
-		const openStatus = getShortBuildingStatus(info, now)
-		const hours = getDetailedBuildingStatus(info, now)
-
-		// when changing these, make sure to change the initial values in `state`
-		const accentBg = BG_COLORS[openStatus] || c.goldenrod
-		const accentText = FG_COLORS[openStatus] || 'rgb(130, 82, 45)'
-
-		this.setState(() => ({
-			openStatus,
-			hours,
-			accentBg,
-			accentText,
-			firstUpdate: false,
-		}))
 	}
 
 	onPress = () => {
@@ -164,7 +144,7 @@ export class BuildingRow extends React.Component<Props, State> {
 										status={status}
 									/>
 								</Detail>
-							))
+						  ))
 						: null}
 				</View>
 			</ListRow>

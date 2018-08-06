@@ -2,11 +2,9 @@
 import * as React from 'react'
 import {ScrollView, StyleSheet} from 'react-native'
 import {type FilterType} from './types'
-import {type ReduxState} from '../../../flux'
 import {FilterSection} from './section'
 import {TableView} from 'react-native-tableview-simple'
-import {connect} from 'react-redux'
-import get from 'lodash/get'
+import {NoticeView} from '../notice'
 
 const styles = StyleSheet.create({
 	container: {
@@ -14,62 +12,81 @@ const styles = StyleSheet.create({
 	},
 })
 
-type NavigationState = {
-	params: {
-		title: string,
-		pathToFilters: string[],
-		onChange: (x: FilterType[]) => any,
-	},
-}
-
-type ReactProps = {
+type Props = {
 	navigation: {
-		state: NavigationState,
+		state: {
+			params: {|
+				+title: string,
+				+initialFilters: Array<FilterType>,
+				+onDismiss: (filters: Array<FilterType>) => mixed,
+			|},
+		},
+		addListener: (
+			ev: string,
+			(payload: mixed) => mixed,
+		) => {remove: () => void},
 	},
 }
 
-type ReduxStateProps = {
-	filters: FilterType[],
+type State = {
+	filters: Array<FilterType>,
 }
 
-type PropsType = ReactProps & ReduxStateProps
+export class FilterView extends React.Component<Props, State> {
+	static navigationOptions({navigation}: Props) {
+		let {title} = navigation.state.params
+		return {title}
+	}
 
-export function FilterViewComponent({filters, navigation}: PropsType) {
-	const {onChange} = navigation.state.params
+	state = {
+		filters: [],
+	}
 
-	const onFilterChanged = (filter: FilterType) => {
+	static getDerivedStateFromProps(props: Props) {
+		let {initialFilters: filters = []} = props.navigation.state.params
+		return {filters}
+	}
+
+	componentDidMount() {
+		this._subscription = this.props.navigation.addListener('willBlur', () => {
+			let {onDismiss} = this.props.navigation.state.params
+			if (onDismiss) {
+				onDismiss(this.state.filters)
+			}
+		})
+	}
+
+	componentWillUnmount() {
+		this._subscription && this._subscription.remove()
+	}
+
+	_subscription: ?{remove: () => void} = null
+
+	onFilterChanged = (filter: FilterType) => {
 		// replace the changed filter in the array, maintaining position
-		let result = filters.map(f => (f.key !== filter.key ? f : filter))
-		onChange(result)
+		this.setState(state => {
+			let edited = state.filters.map(f => (f.key !== filter.key ? f : filter))
+			return {filters: edited}
+		})
 	}
 
-	const contents = filters.map(filter => (
-		<FilterSection
-			key={filter.key}
-			filter={filter}
-			onChange={onFilterChanged}
-		/>
-	))
+	render() {
+		if (!this.state.filters.length) {
+			return <NoticeView text="No filters available" />
+		}
 
-	return (
-		<ScrollView style={styles.container}>
-			<TableView>{contents}</TableView>
-		</ScrollView>
-	)
-}
-FilterViewComponent.navigationOptions = ({navigation}) => {
-	return {
-		title: navigation.state.params.title,
+		const contents = this.state.filters.map(filter => (
+			<FilterSection
+				key={filter.key}
+				filter={filter}
+				onChange={this.onFilterChanged}
+			/>
+		))
+
+		return (
+			<ScrollView style={styles.container}>
+				<TableView>{contents}</TableView>
+			</ScrollView>
+		)
 	}
 }
-
-const mapStateToProps = (
-	state: ReduxState,
-	actualProps: ReactProps,
-): ReduxStateProps => {
-	return {
-		filters: get(state, actualProps.navigation.state.params.pathToFilters, []),
-	}
-}
-
-export const FilterView = connect(mapStateToProps)(FilterViewComponent)

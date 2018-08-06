@@ -1,14 +1,16 @@
 // @flow
 
 import * as React from 'react'
-import {Dimensions, StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
 import {type ReduxState} from '../../../flux'
 import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from '../../components/colors'
 import fromPairs from 'lodash/fromPairs'
+import {Viewport} from '../../components/viewport'
 
 import SortableList from '@hawkrives/react-native-sortable-list'
+import debounce from 'lodash/debounce'
 
 import type {ViewType} from '../../views'
 import {allViews} from '../../views'
@@ -39,32 +41,13 @@ type ReduxDispatchProps = {
 
 type Props = ReduxStateProps & ReduxDispatchProps
 
-type State = {
-	width: number,
-}
-
-class EditHomeView extends React.PureComponent<Props, State> {
+class EditHomeView extends React.PureComponent<Props> {
 	static navigationOptions = {
 		title: 'Edit Home',
 	}
 
-	state = {
-		width: Dimensions.get('window').width,
-	}
-
-	componentWillMount() {
-		Dimensions.addEventListener('change', this.handleResizeEvent)
-	}
-
-	componentWillUnmount() {
-		Dimensions.removeEventListener('change', this.handleResizeEvent)
-	}
-
-	handleResizeEvent = event => {
-		this.setState(() => ({width: event.window.width}))
-	}
-
-	renderRow = ({data, active}: {data: ViewType, active: boolean}) => {
+	renderRow = (args: {data: ViewType, active: boolean, width: number}) => {
+		const {data, active, width} = args
 		const enabled = !this.props.inactiveViews.includes(data.view)
 		return (
 			<EditHomeRow
@@ -72,24 +55,27 @@ class EditHomeView extends React.PureComponent<Props, State> {
 				data={data}
 				isEnabled={enabled}
 				onToggle={this.props.onToggleViewDisabled}
-				width={this.state.width}
+				width={width}
 			/>
 		)
 	}
 
-	onChangeOrder = (order: string[]) => this.props.onSaveOrder(order)
+	_saveOrder = (order: string[]) => this.props.onSaveOrder(order)
+
+	onChangeOrder = debounce(this._saveOrder, 100)
 
 	render() {
 		return (
-			<SortableList
-				contentContainerStyle={[
-					styles.contentContainer,
-					{width: this.state.width},
-				]}
-				data={objViews}
-				onChangeOrder={this.onChangeOrder}
-				order={this.props.order}
-				renderRow={this.renderRow}
+			<Viewport
+				render={({width}) => (
+					<SortableList
+						contentContainerStyle={[styles.contentContainer, {width}]}
+						data={objViews}
+						onChangeOrder={this.onChangeOrder}
+						order={this.props.order}
+						renderRow={props => this.renderRow({...props, width})}
+					/>
+				)}
 			/>
 		)
 	}
@@ -109,6 +95,7 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 	}
 }
 
-export const ConnectedEditHomeView = connect(mapState, mapDispatch)(
-	EditHomeView,
-)
+export const ConnectedEditHomeView = connect(
+	mapState,
+	mapDispatch,
+)(EditHomeView)

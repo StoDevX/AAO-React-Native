@@ -44,7 +44,7 @@ export class HelpView extends React.Component<Props> {
 		title: 'Help',
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.props.getEnabledTools()
 	}
 
@@ -79,7 +79,10 @@ function mapDispatch(dispatch): ReduxDispatchProps {
 	}
 }
 
-export default connect(mapState, mapDispatch)(HelpView)
+export default connect(
+	mapState,
+	mapDispatch,
+)(HelpView)
 
 const styles = StyleSheet.create({
 	container: {

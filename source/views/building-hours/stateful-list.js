@@ -49,7 +49,6 @@ type State = {
 	now: moment,
 	buildings: Array<{title: string, data: Array<BuildingType>}>,
 	allBuildings: Array<BuildingType>,
-	intervalId: number,
 }
 
 export class BuildingHoursView extends React.PureComponent<Props, State> {
@@ -58,6 +57,8 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		headerBackTitle: 'Hours',
 	}
 
+	_intervalId: ?IntervalID
+
 	state = {
 		error: null,
 		loading: false,
@@ -65,28 +66,28 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		now: moment.tz(CENTRAL_TZ),
 		buildings: groupBuildings(defaultData.data, this.props.favoriteBuildings),
 		allBuildings: defaultData.data,
-		intervalId: 0,
+		intervalId: null,
 	}
 
-	componentWillMount() {
+	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+		return {
+			buildings: groupBuildings(
+				prevState.allBuildings,
+				nextProps.favoriteBuildings,
+			),
+		}
+	}
+
+	componentDidMount() {
 		this.fetchData()
 
 		// This updates the screen every second, so that the building
 		// info statuses are updated without needing to leave and come back.
-		this.setState({intervalId: setInterval(this.updateTime, 1000)})
-	}
-
-	componentWillReceiveProps(nextProps: Props) {
-		this.setState(state => ({
-			buildings: groupBuildings(
-				state.allBuildings,
-				nextProps.favoriteBuildings,
-			),
-		}))
+		this._intervalId = setInterval(this.updateTime, 1000)
 	}
 
 	componentWillUnmount() {
-		clearTimeout(this.state.intervalId)
+		this._intervalId && clearInterval(this._intervalId)
 	}
 
 	updateTime = () => {

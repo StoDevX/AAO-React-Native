@@ -34,6 +34,7 @@ rules:
   curly: [warn, multi-line]
   default-case: error
   guard-for-in: error
+  eqeqeq: [error, always, {'null': ignore}]
   linebreak-style: [error, unix]
   new-cap: off
   no-await-in-loop: warn
@@ -82,6 +83,9 @@ rules:
     - reservedFirst: true
       ignoreCase: false
       callbacksLast: true
+  react/no-access-state-in-setstate: error
+  react/no-did-mount-set-state: error
+  react/no-did-update-set-state: error
   react/no-multi-comp: off  # prevent multiple component definition per file
   react/no-redundant-should-component-update: warn
   react/no-typos: error

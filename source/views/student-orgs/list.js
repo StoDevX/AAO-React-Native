@@ -17,13 +17,11 @@ import {
 } from '../components/list'
 import {trackOrgOpen} from '../../analytics'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
-import size from 'lodash/size'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
-import filter from 'lodash/filter'
 import startCase from 'lodash/startCase'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
@@ -70,7 +68,7 @@ type Props = TopLevelViewPropsType
 
 type State = {
 	orgs: Array<StudentOrgType>,
-	results: {[key: string]: StudentOrgType[]},
+	query: string,
 	refreshing: boolean,
 	error: boolean,
 	loading: boolean,
@@ -86,13 +84,13 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 
 	state = {
 		orgs: [],
-		results: {},
+		query: '',
 		refreshing: false,
 		loading: true,
 		error: false,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.fetchData().then(() => {
 			this.setState(() => ({loading: false}))
 		})
@@ -119,8 +117,7 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 		})
 
 		const sorted = sortBy(withSortableNames, '$sortableName')
-		const grouped = groupBy(sorted, '$groupableName')
-		this.setState(() => ({orgs: sorted, results: grouped}))
+		this.setState(() => ({orgs: sorted}))
 	}
 
 	refresh = async () => {
@@ -177,21 +174,8 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 		this.props.navigation.navigate('StudentOrgsDetailView', {org: data})
 	}
 
-	performSearch = (text: ?string) => {
-		if (!text) {
-			this.setState(state => ({
-				results: groupBy(state.orgs, '$groupableName'),
-			}))
-			return
-		}
-
-		const query = text.toLowerCase()
-		this.setState(state => {
-			const filteredResults = filter(state.orgs, org =>
-				orgToArray(org).some(word => word.startsWith(query)),
-			)
-			return {results: groupBy(filteredResults, '$groupableName')}
-		})
+	performSearch = (text: string) => {
+		this.setState(() => ({query: text}))
 	}
 
 	render() {
@@ -199,7 +183,7 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 			return <LoadingView />
 		}
 
-		if (!size(this.state.orgs)) {
+		if (!this.state.orgs.length) {
 			return <NoticeView text="No organizations found." />
 		}
 
@@ -210,15 +194,26 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 			/>
 		)
 
+		let results = this.state.orgs
+		if (this.state.query) {
+			let {query, orgs} = this.state
+			query = query.toLowerCase()
+			results = orgs.filter(org =>
+				orgToArray(org).some(word => word.startsWith(query)),
+			)
+		}
+		let groupedResults = groupBy(results, '$groupableName')
+
 		return (
 			<SearchableAlphabetListView
 				cell={this.renderRow}
 				cellHeight={
 					ROW_HEIGHT +
-					(Platform.OS === 'ios' ? 11 / 12 * StyleSheet.hairlineWidth : 0)
+					(Platform.OS === 'ios' ? (11 / 12) * StyleSheet.hairlineWidth : 0)
 				}
-				data={this.state.results}
+				data={groupedResults}
 				onSearch={this.performSearch}
+				query={this.state.query}
 				refreshControl={refreshControl}
 				renderSeparator={this.renderSeparator}
 				sectionHeader={this.renderSectionHeader}

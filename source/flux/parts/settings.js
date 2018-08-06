@@ -17,8 +17,7 @@ import {
 import {trackLogOut, trackLogIn, trackLoginFailure} from '../../analytics'
 
 import {type ReduxState} from '../index'
-import {type UpdateBalancesType} from './sis'
-import {updateBalances} from './sis'
+import {type UpdateBalancesType, updateBalances} from './balances'
 import {Alert} from 'react-native'
 
 export type LoginStateType = 'logged-out' | 'logged-in' | 'checking' | 'invalid'

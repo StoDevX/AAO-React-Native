@@ -23,7 +23,10 @@ x-config:
       name: Set Ruby Version
       command: echo "ruby-2.4.2" > ~/.ruby-version
     - &run-danger
-      command: yarn run danger --id $task
+      command: |
+        if ! [[ $CIRCLE_PR_NUMBER ]]; then
+          yarn run danger --id $task
+        fi
       when: always
     - &embed-env-vars
       name: Embed environment variables into the app
@@ -44,6 +47,8 @@ workflows:
     # nightlies from that branch.
     jobs: &basic-jobs
       - cache-yarn-linux:
+          filters: &filters {tags: {only: /.*/}}
+      - cache-bundler-linux:
           filters: &filters {tags: {only: /.*/}}
       - danger:
           filters: *filters
@@ -68,7 +73,7 @@ workflows:
           requires: [danger, flow, jest, prettier, eslint, data]
       - android:
           filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data]
+          requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
       - ios-bundle:
           filters: *filters
           requires: [danger, flow, jest, prettier, eslint, data]
@@ -78,10 +83,11 @@ workflows:
   nightly:
     triggers:
       - schedule:
-          cron: 0 6 * * *
+          cron: 0 10 * * *
           filters: {branches: {only: [master]}}
     jobs:
       - cache-yarn-linux
+      - cache-bundler-linux
       - danger: {requires: [cache-yarn-linux]}
       - flow: {requires: [cache-yarn-linux]}
       - jest: {requires: [cache-yarn-linux]}
@@ -89,7 +95,7 @@ workflows:
       - eslint: {requires: [cache-yarn-linux]}
       - data: {requires: [cache-yarn-linux]}
       - ios-nightly: {requires: [danger, flow, jest, prettier, eslint, data]}
-      - android-nightly: {requires: [danger, flow, jest, prettier, eslint, data]}
+      - android-nightly: {requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]}
 
 jobs:
   cache-yarn-linux:
@@ -101,6 +107,18 @@ jobs:
       - run: yarn --version
       - save_cache: *save-cache-yarn
 
+  cache-bundler-linux:
+    docker: [{image: 'circleci/ruby:2.4'}]
+    steps:
+      - checkout
+      - run: *set-ruby-version
+      - restore_cache: *restore-cache-bundler
+      - run: bundle check || bundle install --frozen --path ./vendor/bundle
+      - run: bundle --version
+      - run: gem --version
+      - run: ruby --version
+      - save_cache: *save-cache-bundler
+
   danger:
     docker: [{image: 'circleci/node:8'}]
     environment:
@@ -109,7 +127,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: *run-danger
 
   flow:
@@ -120,7 +137,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run bundle-data
       - run: yarn run --silent flow check --quiet | tee logs/flow
@@ -135,10 +151,9 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/ test-results/jest/
       - run: yarn run bundle-data
-      - run: yarn run --silent test --coverage --testResultsProcessor="jest-junit" 2>&1 | tee logs/jest
+      - run: yarn run --silent test --coverage | tee logs/jest
       - run: *run-danger
       - store_test_results:
           path: ./test-results
@@ -149,7 +164,9 @@ jobs:
             export PATH=$PATH:$(yarn global bin)
             export COVERALLS_SERVICE_NAME=CircleCI
             export COVERALLS_SERVICE_JOB_ID=$CIRCLE_BUILD_NUM
-            coveralls < ./coverage/lcov.info
+            if ! [[ $CIRCLE_PR_NUMBER ]]; then
+              coveralls < ./coverage/lcov.info
+            fi
 
   prettier:
     docker: [{image: 'circleci/node:8'}]
@@ -159,7 +176,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run prettier
       - run:
@@ -179,7 +195,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/ test-results/eslint/
       - run: yarn run bundle-data
       - run: yarn run --silent lint | tee logs/eslint
@@ -196,7 +211,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: yarn run --silent validate-data --quiet | tee logs/validate-data
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
@@ -222,14 +236,12 @@ jobs:
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - save_cache: *save-cache-bundler
       - restore_cache: *restore-cache-gradle
       - run:
           name: Download Android dependencies
-          command: cd android && ./gradlew androidDependencies
+          command: cd android && ./gradlew androidDependencies --console=plain
           environment: {TERM: xterm-256color}
       - save_cache: *save-cache-gradle
       - run: mkdir -p logs/
@@ -257,7 +269,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run: yarn run bundle-data
@@ -271,7 +282,7 @@ jobs:
       - run: *run-danger
 
   ios: &ios
-    macos: {xcode: '9.0'}
+    macos: {xcode: '9.4.1'}
     environment: &ios-env
       task: IOS
       FASTLANE_SKIP_UPDATE_CHECK: '1'
@@ -317,7 +328,6 @@ jobs:
       - checkout
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run: yarn run bundle-data

@@ -51,7 +51,7 @@ exports[`can change the title 1`] = `
   containerStyle={
     Object {
       "alignSelf": "center",
-      "backgroundColor": "rgb(67, 114, 170)",
+      "backgroundColor": "#E3A025",
       "borderRadius": 6,
       "marginVertical": 10,
       "overflow": "hidden",
@@ -69,7 +69,18 @@ exports[`can change the title 1`] = `
   style={
     Object {
       "backgroundColor": "transparent",
-      "color": "#FFFFFF",
+      "color": Object {
+        "_a": 1,
+        "_b": 33,
+        "_format": "hex",
+        "_g": 33,
+        "_gradientType": undefined,
+        "_ok": true,
+        "_originalInput": "#242121",
+        "_r": 36,
+        "_roundA": 1,
+        "_tc_id": 3,
+      },
       "fontFamily": "System",
       "fontSize": 16,
       "fontWeight": "400",
@@ -79,7 +90,7 @@ exports[`can change the title 1`] = `
   }
   styleDisabled={
     Object {
-      "color": "rgb(143, 143, 143)",
+      "color": "rgb(142, 142, 147)",
     }
   }
 >
@@ -92,7 +103,7 @@ exports[`renders 1`] = `
   containerStyle={
     Object {
       "alignSelf": "center",
-      "backgroundColor": "rgb(67, 114, 170)",
+      "backgroundColor": "#E3A025",
       "borderRadius": 6,
       "marginVertical": 10,
       "overflow": "hidden",
@@ -110,7 +121,18 @@ exports[`renders 1`] = `
   style={
     Object {
       "backgroundColor": "transparent",
-      "color": "#FFFFFF",
+      "color": Object {
+        "_a": 1,
+        "_b": 33,
+        "_format": "hex",
+        "_g": 33,
+        "_gradientType": undefined,
+        "_ok": true,
+        "_originalInput": "#242121",
+        "_r": 36,
+        "_roundA": 1,
+        "_tc_id": 3,
+      },
       "fontFamily": "System",
       "fontSize": 16,
       "fontWeight": "400",
@@ -120,7 +142,7 @@ exports[`renders 1`] = `
   }
   styleDisabled={
     Object {
-      "color": "rgb(143, 143, 143)",
+      "color": "rgb(142, 142, 147)",
     }
   }
 >

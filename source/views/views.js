@@ -11,7 +11,7 @@ export type ViewType =
 			foreground: 'light' | 'dark',
 			tint: string,
 			gradient?: [string, string],
-		}
+	  }
 	| {
 			type: 'url',
 			view: string,
@@ -21,7 +21,7 @@ export type ViewType =
 			foreground: 'light' | 'dark',
 			tint: string,
 			gradient?: [string, string],
-		}
+	  }
 
 export const allViews: ViewType[] = [
 	{
@@ -38,7 +38,7 @@ export const allViews: ViewType[] = [
 		view: 'SISView',
 		title: 'SIS',
 		icon: 'fingerprint',
-		foreground: 'dark',
+		foreground: 'light',
 		tint: c.goldenrod,
 		gradient: c.yellowToGoldDark,
 	},
@@ -130,7 +130,7 @@ export const allViews: ViewType[] = [
 		view: 'StudentOrgsView',
 		title: 'Student Orgs',
 		icon: 'globe',
-		foreground: 'dark',
+		foreground: 'light',
 		tint: c.periwinkle,
 		gradient: c.tealToSeafoam,
 	},
@@ -140,7 +140,7 @@ export const allViews: ViewType[] = [
 		view: 'MoodleView',
 		title: 'Moodle',
 		icon: 'graduation-cap',
-		foreground: 'dark',
+		foreground: 'light',
 		tint: c.cantaloupe,
 		gradient: c.yellowToGoldLight,
 	},

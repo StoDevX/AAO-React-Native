@@ -3,11 +3,21 @@ image: cage
 category: Food
 
 schedule:
-  - title: Kitchen
-    notes: The kitchen stops cooking at 8 p.m.
+  - title: Hours
     hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '8:00pm'}
-      - {days: [Sa, Su], from: '9:00am', to: '8:00pm'}
+      - {days: [Mo, Tu, We, Th], from: '7:30am', to: '3:00pm'}
+      - {days: [Fr], from: '7:30am', to: '1:00pm'}
+
+  # - title: Kitchen
+  #   notes: The kitchen stops cooking at 8 p.m.
+  #   hours:
+  #     - {days: [Mo, Tu, We, Th, Fr], from: '7:30am', to: '8:00pm'}
+  #     - {days: [Sa, Su], from: '9:00am', to: '8:00pm'}
+
+  # - title: Late Night
+  #   hours:
+  #     - {days: [Mo, Tu, We, Th], from: '8:00pm', to: '10:00pm'}
+  #     - {days: [Su], from: '8:00pm', to: '10:00pm'}
 
 breakSchedule:
   fall: []
@@ -17,7 +27,7 @@ breakSchedule:
   spring: []
   easter: []
   summer:
-    - title: Kitchen
+    - title: Hours
       hours:
         - {days: [Mo, Tu, We, Th], from: '7:30am', to: '3:00pm'}
         - {days: [Fr], from: '7:30am', to: '1:00pm'}

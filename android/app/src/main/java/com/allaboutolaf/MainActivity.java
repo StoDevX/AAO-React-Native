@@ -1,5 +1,6 @@
 package com.allaboutolaf;
 
+import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 import com.facebook.react.ReactActivity;
 import com.bugsnag.BugsnagReactNative;
 import com.calendarevents.CalendarEventsPackage;
@@ -23,6 +24,8 @@ public class MainActivity extends ReactActivity {
         if (!BuildConfig.DEBUG) {
             BugsnagReactNative.start(this);
         }
+        long size = 50L * 1024L * 1024L; // 50 MB
+        ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
     }
 
     // Required for react-native-calendar-events

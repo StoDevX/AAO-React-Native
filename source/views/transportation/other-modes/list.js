@@ -48,7 +48,7 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 		refreshing: false,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.fetchData().then(() => {
 			this.setState(() => ({loading: false}))
 		})

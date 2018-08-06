@@ -3,7 +3,7 @@ import React from 'react'
 import {ScrollView, Image, StyleSheet} from 'react-native'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
 import {Section, Cell} from 'react-native-tableview-simple'
-import {icons as appIcons} from '../../../images/icon-images'
+import {icons as appIcons} from '../../../images/icons'
 import * as c from '../components/colors'
 import type {TopLevelViewPropsType} from '../types'
 
@@ -53,7 +53,7 @@ export class IconSettingsView extends React.PureComponent<Props, State> {
 		iconType: null,
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.getIcon()
 	}
 

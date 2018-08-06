@@ -152,7 +152,7 @@ class DatePickerModal extends React.PureComponent<ModalProps> {
 			// We need to negate the offset, because moment inverts the offset for
 			// POSIX compatability. So, GMT-5 (CST) is shown to be GMT+5.
 			const dateInUnixMs = date.valueOf()
-			tzOffset = -moment.tz.zone(timezone).offset(dateInUnixMs)
+			tzOffset = -moment.tz.zone(timezone).utcOffset(dateInUnixMs)
 		}
 
 		return (

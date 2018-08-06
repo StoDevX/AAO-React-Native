@@ -1,12 +1,13 @@
-name: Theatre Building
+name: Theater Building
 image: theater
 category: Academia
 
 schedule:
   - title: Hours
-    hours:
-      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
-      - {days: [Sa, Su], from: '9:00am', to: '12:00am'}
+    hours: []
+      # - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
+      # - {days: [Sa, Su], from: '9:00am', to: '12:00am'}
+    notes: The Theater Building is closed for the summer.
 
 breakSchedule:
   fall: []
@@ -18,4 +19,4 @@ breakSchedule:
   summer:
     - title: Hours
       hours: []
-      notes: The Theatre Building is closed for the summer.
+      notes: The Theater Building is closed for the summer.

@@ -76,7 +76,7 @@ function Contact({job}: {job: JobType}) {
 }
 
 function Hours({job}: {job: JobType}) {
-	const ending = job.hoursPerWeek == 'Full-time' ? '' : ' hrs/week'
+	const ending = job.hoursPerWeek === 'Full-time' ? '' : ' hrs/week'
 	return job.timeOfHours && job.hoursPerWeek ? (
 		<Card header="Hours" style={styles.card}>
 			<Text style={styles.cardBody}>

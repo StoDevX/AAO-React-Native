@@ -4,7 +4,7 @@ import * as React from 'react'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
 import glamorous from 'glamorous-native'
 
-import {lookup as getAppIcon} from '../../../images/icon-images'
+import {lookup as getAppIcon} from '../../../images/icons'
 
 const LogoImage = glamorous.image({
 	width: 100,
@@ -25,9 +25,10 @@ export class AppLogo extends React.Component<Props, State> {
 		icon: getAppIcon('default'),
 	}
 
-	async componentWillMount() {
-		const name = await Icons.getIconName()
-		this.setState(() => ({icon: getAppIcon(name)}))
+	componentDidMount() {
+		Icons.getIconName().then(name => {
+			this.setState(() => ({icon: getAppIcon(name)}))
+		})
 	}
 
 	render() {

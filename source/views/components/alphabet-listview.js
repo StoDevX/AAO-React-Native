@@ -15,16 +15,20 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function StyledAlphabetListView(props: Object) {
-	return (
-		<AlphabetListView
-			contentContainerStyle={styles.listView}
-			initialListSize={StyledAlphabetListView.initialListSize}
-			pageSize={StyledAlphabetListView.pageSize}
-			sectionListStyle={styles.sectionItems}
-			{...props}
-		/>
-	)
+type Props = {}
+
+export class StyledAlphabetListView extends React.PureComponent<Props> {
+	static initialListSize = 12
+	static pageSize = 8
+	render() {
+		return (
+			<AlphabetListView
+				contentContainerStyle={styles.listView}
+				initialListSize={StyledAlphabetListView.initialListSize}
+				pageSize={StyledAlphabetListView.pageSize}
+				sectionListStyle={styles.sectionItems}
+				{...this.props}
+			/>
+		)
+	}
 }
-StyledAlphabetListView.initialListSize = 12
-StyledAlphabetListView.pageSize = 8

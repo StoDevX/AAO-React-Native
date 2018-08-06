@@ -12,7 +12,6 @@ export const commonStyles = StyleSheet.create({
 		alignItems: 'center',
 		...Platform.select({
 			ios: {
-				paddingVertical: 11,
 				paddingHorizontal: 18,
 			},
 			android: {
@@ -23,7 +22,7 @@ export const commonStyles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 17,
-		color: c.white,
+		color: c.navigationForeground,
 		...Platform.select({
 			android: {
 				marginTop: 1,
@@ -49,7 +48,7 @@ export const rightButtonStyles = StyleSheet.create({
 		}),
 	},
 	icon: {
-		color: c.white,
+		color: c.navigationForeground,
 		...Platform.select({
 			ios: {
 				fontSize: 32,
@@ -58,5 +57,12 @@ export const rightButtonStyles = StyleSheet.create({
 				fontSize: 24,
 			},
 		}),
+	},
+})
+
+export const leftButtonStyles = StyleSheet.create({
+	icon: {
+		color: c.navigationForeground,
+		fontSize: 24,
 	},
 })

@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import type {UnprocessedBusLine} from './types'
-import MapView from 'react-native-maps'
+import MapView from '@mapbox/react-native-mapbox-gl'
 import moment from 'moment-timezone'
 import {NoticeView} from '../../components/notice'
 import type {TopLevelViewPropsType} from '../../types'
@@ -28,7 +28,6 @@ type Props = TopLevelViewPropsType & {|
 |}
 
 type State = {|
-	intervalId: number,
 	now: moment,
 	region: {
 		latitude: number,
@@ -45,8 +44,9 @@ export class BusMap extends React.PureComponent<Props, State> {
 		title: `${args.navigation.state.params.line.line} Map`,
 	})
 
+	_intervalId: ?IntervalID
+
 	state = {
-		intervalId: 0,
 		now: moment.tz(TIMEZONE),
 		region: {
 			latitude: 44.44946671480875,
@@ -56,14 +56,14 @@ export class BusMap extends React.PureComponent<Props, State> {
 		},
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		// This updates the screen every second, so that the "next bus" times are
 		// updated without needing to leave and come back.
-		this.setState(() => ({intervalId: setInterval(this.updateTime, 1000)}))
+		this._intervalId = setInterval(this.updateTime, 1000)
 	}
 
 	componentWillUnmount() {
-		clearTimeout(this.state.intervalId)
+		this._intervalId && clearInterval(this._intervalId)
 	}
 
 	onRegionChangeComplete = (newRegion: {

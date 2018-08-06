@@ -1,7 +1,8 @@
 // @flow
 
 import * as React from 'react'
-import {View, ScrollView, StyleSheet, StatusBar} from 'react-native'
+import {ScrollView, View, StyleSheet, StatusBar} from 'react-native'
+
 import {connect} from 'react-redux'
 import * as c from '../components/colors'
 import sortBy from 'lodash/sortBy'
@@ -15,6 +16,7 @@ import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl} from '../components/open-url'
 import {EditHomeButton, OpenSettingsButton} from '../components/nav-buttons'
 import {ConnectedNotices} from './notices'
+import {UnofficialAppNotice} from './notice'
 
 type ReactProps = TopLevelViewPropsType & {
 	views: Array<ViewType>,
@@ -42,7 +44,10 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 			showsHorizontalScrollIndicator={false}
 			showsVerticalScrollIndicator={false}
 		>
-			<StatusBar backgroundColor={c.gold} barStyle="light-content" />
+			<StatusBar
+				backgroundColor={c.androidStatusBarColor}
+				barStyle={c.statusBarStyle}
+			/>
 
 			<ConnectedNotices />
 
@@ -65,6 +70,8 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 					</Column>
 				))}
 			</View>
+
+			<UnofficialAppNotice />
 		</ScrollView>
 	)
 }

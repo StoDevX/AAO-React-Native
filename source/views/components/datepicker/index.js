@@ -33,32 +33,27 @@ type State = {
 }
 
 export class DatePicker extends React.Component<Props, State> {
+	_ref: any
+
 	static defaultProps = {
 		mode: 'date',
 		androidMode: 'default',
 		onDateChange: () => null,
 	}
 
-	_ref: any
-
 	state = {
 		date: this.props.initialDate,
 		timezone: this.props.initialDate.tz(),
 	}
 
-	componentWillMount() {
-		this.setState(() => ({
-			date: this.props.initialDate,
-			timezone: this.props.initialDate.tz(),
-		}))
-	}
+	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+		if (nextProps.initialDate === prevState.date) {
+			return null
+		}
 
-	componentWillReceiveProps(nextProps: Props) {
-		if (nextProps.initialDate !== this.props.initialDate) {
-			this.setState(() => ({
-				date: nextProps.initialDate,
-				timezone: nextProps.initialDate.tz(),
-			}))
+		return {
+			date: nextProps.initialDate,
+			timezone: nextProps.initialDate.tz(),
 		}
 	}
 

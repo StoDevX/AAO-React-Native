@@ -1,12 +1,16 @@
 // @flow
 
 import {Platform, StyleSheet} from 'react-native'
-import {StackNavigator} from 'react-navigation'
+import {createStackNavigator} from 'react-navigation'
 import * as c from './views/components/colors'
 
 import CalendarView, {EventDetail as EventDetailView} from './views/calendar'
 import {ContactsView, ContactsDetailView} from './views/contacts'
-import {DictionaryView, DictionaryDetailView} from './views/dictionary'
+import {
+	DictionaryView,
+	DictionaryDetailView,
+	DictionaryEditorView,
+} from './views/dictionary'
 import {HomeView, EditHomeView} from './views/home'
 import StreamingView, {
 	KSTOScheduleView,
@@ -23,6 +27,7 @@ import {FilterView} from './views/components/filter'
 import NewsView from './views/news'
 import SISView from './views/sis'
 import {JobDetailView} from './views/sis/student-work/detail'
+import {CourseDetailView} from './views/sis/course-search/detail'
 import {
 	BuildingHoursView,
 	BuildingHoursDetailView,
@@ -44,21 +49,17 @@ import HelpView from './views/help'
 
 const styles = StyleSheet.create({
 	header: {
-		backgroundColor: c.olevilleGold,
+		backgroundColor: c.navigationBackground,
 	},
 	card: {
-		...Platform.select({
-			ios: {
-				backgroundColor: c.iosLightBackground,
-			},
-			android: {
-				backgroundColor: c.androidLightBackground,
-			},
+		backgroundColor: Platform.select({
+			ios: c.iosLightBackground,
+			android: c.androidLightBackground,
 		}),
 	},
 })
 
-export const AppNavigator = StackNavigator(
+export const AppNavigator = createStackNavigator(
 	{
 		HomeView: {screen: HomeView},
 		BuildingHoursDetailView: {screen: BuildingHoursDetailView},
@@ -71,6 +72,7 @@ export const AppNavigator = StackNavigator(
 		CreditsView: {screen: CreditsView},
 		DictionaryDetailView: {screen: DictionaryDetailView},
 		DictionaryView: {screen: DictionaryView},
+		DictionaryEditorView: {screen: DictionaryEditorView},
 		EditHomeView: {screen: EditHomeView},
 		EventDetailView: {screen: EventDetailView},
 		FaqView: {screen: FaqView},
@@ -84,6 +86,7 @@ export const AppNavigator = StackNavigator(
 		SettingsView: {screen: SettingsView},
 		IconSettingsView: {screen: IconSettingsView},
 		SISView: {screen: SISView},
+		CourseDetailView: {screen: CourseDetailView},
 		StreamingView: {screen: StreamingView},
 		KSTOScheduleView: {screen: KSTOScheduleView},
 		KRLXScheduleView: {screen: KRLXScheduleView},
@@ -100,8 +103,12 @@ export const AppNavigator = StackNavigator(
 	{
 		navigationOptions: {
 			headerStyle: styles.header,
-			headerTintColor: c.white,
+			headerTintColor: c.navigationForeground,
 		},
+		headerTransitionPreset: Platform.select({
+			ios: 'uikit',
+			android: undefined,
+		}),
 		cardStyle: styles.card,
 	},
 )
