@@ -3,9 +3,10 @@ category: Health and Wellness
 
 schedule:
   - title: Office
-    hours:
-      - {days: [Tu], from: '1:00pm', to: '5:00pm'}
-      - {days: [Fr], from: '8:00am', to: '12:00pm'}
+    hours: []
+      # - {days: [Tu], from: '1:00pm', to: '5:00pm'}
+      # - {days: [Fr], from: '8:00am', to: '12:00pm'}
+    notes: The Gender & Sexuality Center is closed for the summer?
 
 breakSchedule:
   fall: []
@@ -14,4 +15,7 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer: []
+  summer:
+    - title: Office
+      hours: []
+      notes: The Gender & Sexuality Center is closed for the summer?
