@@ -66,36 +66,80 @@ export function ListSection({filter, onChange}: PropsType) {
 	}
 
 	const hasImageColumn = options.some(val => Boolean(val.image))
-	let buttons = options.map(val => (
-		<FilterItem
-			active={selected.some(s => isEqual(s, val))}
-			key={val.title}
-			title={val.label || val.title}
-			onPress={() => buttonPushed(val)}
-		/>
-	))
+	let buttons = hasImageColumn
+		? options.map(val => (
+				<FilterItem
+					active={selected.some(s => isEqual(s, val))}
+					key={val.title}
+					title={val.label || val.title}
+					onPress={() => buttonPushed(val)}
+				/>
+			))
+		: options.map(val => (
+				<Cell
+					key={val.title}
+					accessory={includes(selected, val) ? 'Checkmark' : undefined}
+					cellContentView={
+						<Column style={styles.content}>
+							<Text style={styles.title}>{val.title}</Text>
+							{val.detail ? <Text style={styles.detail}>{val.detail}</Text> : null}
+						</Column>
+					}
+					cellStyle="RightDetail"
+					disableImageResize={true}
+					image={
+						spec.showImages ? (
+							<Image source={val.image} style={styles.icon} />
+						) : (
+							undefined
+						)
+					}
+					onPress={() => buttonPushed(val)}
+				/>
+			))
 
 	if (mode === 'OR') {
-		const showAllButton = (
-			<FilterItem
-				active={selected.length === options.length}
-				key="__show_all"
-				title="Show All"
-				onPress={showAll}
-			/>
-		)
+		const showAllButton = hasImageColumn
+		? (
+				<FilterItem
+					active={selected.length === options.length}
+					key="__show_all"
+					title="Show All"
+					onPress={showAll}
+				/>
+			)
+		: (
+				<Cell
+					key="__show_all"
+					accessory={selected.length === options.length ? 'Checkmark' : undefined}
+					onPress={showAll}
+					title="Show All"
+				/>
+			)
 		buttons = [showAllButton].concat(buttons)
 	}
 
 	return (
 		<View>
-			<View style={styles.sectionHeader}>
-				<Text style={styles.sectionHeader__text}>{title.toUpperCase()}</Text>
-			</View>
-			<View style={styles.content}>{buttons}</View>
-			<View style={styles.sectionFooter}>
-				<Text style={styles.sectionFooter__text}>{caption}</Text>
-			</View>
+			{hasImageColumn ? (
+				<View>
+					<View style={styles.sectionHeader}>
+						<Text style={styles.sectionHeader__text}>{title.toUpperCase()}</Text>
+					</View>
+					<View style={styles.content}>{buttons}</View>
+					<View style={styles.sectionFooter}>
+						<Text style={styles.sectionFooter__text}>{caption}</Text>
+					</View>
+				</View>
+			) : (
+				<Section
+					footer={caption}
+					header={title.toUpperCase()}
+					separatorInsetLeft={hasImageColumn ? 45 : undefined}
+				>
+					{buttons}
+				</Section>
+			)}
 		</View>
 	)
 }

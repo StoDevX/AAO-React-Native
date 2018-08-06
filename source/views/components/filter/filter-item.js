@@ -11,12 +11,8 @@ type Props = {
 }
 
 export const FilterItem = ({active, onPress, title}: Props) => {
-	let activeButtonStyle = active
-		? styles.activeButton
-		: styles.inactiveButton
-	let activeContentStyle = active
-		? styles.activeText
-		: styles.inactiveText
+	let activeButtonStyle = active ? styles.activeButton : styles.inactiveButton
+	let activeContentStyle = active ? styles.activeText : styles.inactiveText
 
 	return (
 		<TouchableOpacity
