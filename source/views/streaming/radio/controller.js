@@ -13,10 +13,11 @@ import {callPhone} from '../../components/call-phone'
 import {Row} from '../../components/layout'
 import type {TopLevelViewPropsType} from '../../types'
 import {StreamPlayer} from './player'
-import type {PlayState, HtmlAudioError} from './types'
+import type {PlayState, HtmlAudioError, PlayerTheme} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
 import {openUrl} from '../../components/open-url'
 import {Viewport} from '../../components/viewport'
+import {withTheme} from '@callstack/react-theme-provider'
 
 type Props = TopLevelViewPropsType & {
 	image: number,
@@ -30,6 +31,7 @@ type Props = TopLevelViewPropsType & {
 		embeddedPlayerUrl: string,
 		streamSourceUrl: string,
 	},
+	theme: PlayerTheme,
 }
 
 type State = {
@@ -38,7 +40,7 @@ type State = {
 	uplinkError: ?string,
 }
 
-export class RadioControllerView extends React.PureComponent<Props, State> {
+class RadioControllerView extends React.Component<Props, State> {
 	state = {
 		playState: 'paused',
 		streamError: null,
@@ -117,7 +119,7 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {source, title, stationName, image} = this.props
+		const {source, title, stationName, image, theme} = this.props
 		const {uplinkError, streamError, playState} = this.state
 
 		const error = uplinkError ? (
@@ -128,12 +130,13 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 			</Text>
 		) : null
 
+		let textColor = {color: theme.textColor}
 		const titleBlock = (
 			<View style={styles.titleWrapper}>
-				<Text selectable={true} style={styles.heading}>
+				<Text selectable={true} style={[styles.heading, textColor]}>
 					{title}
 				</Text>
-				<Text selectable={true} style={styles.subHeading}>
+				<Text selectable={true} style={[styles.subHeading, textColor]}>
 					{stationName}
 				</Text>
 
@@ -177,7 +180,9 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 					const logoSize = {width: logoWidth, height: logoWidth}
 
 					const root = [styles.root, sideways && landscape.root]
-					const logo = [styles.logo, logoSize]
+					const logoBorder = {borderColor: theme.imageBorderColor}
+					const logoBg = {backgroundColor: theme.imageBackgroundColor}
+					const logo = [styles.logo, logoSize, logoBorder, logoBg]
 					const logoWrapper = [
 						styles.logoWrapper,
 						sideways && landscape.logoWrapper,
@@ -202,6 +207,10 @@ export class RadioControllerView extends React.PureComponent<Props, State> {
 	}
 }
 
+const ThemedRadioControllerView = withTheme(RadioControllerView)
+
+export {ThemedRadioControllerView as RadioControllerView}
+
 const styles = StyleSheet.create({
 	root: {
 		flexDirection: 'column',
@@ -222,7 +231,7 @@ const styles = StyleSheet.create({
 	},
 	logo: {
 		borderRadius: 6,
-		borderColor: c.kstoSecondaryDark,
+		borderColor: c.black,
 		borderWidth: 3,
 	},
 	titleWrapper: {
@@ -230,14 +239,14 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	heading: {
-		color: c.kstoPrimaryDark,
+		color: c.black,
 		fontWeight: '600',
 		fontSize: 28,
 		textAlign: 'center',
 	},
 	subHeading: {
 		marginTop: 5,
-		color: c.kstoPrimaryDark,
+		color: c.black,
 		fontWeight: '300',
 		fontSize: 28,
 		textAlign: 'center',
