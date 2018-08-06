@@ -44,8 +44,10 @@ export function PlainNotices({notices, navigation}: NoticesProps) {
 
 function Notice(props: {notice: HomescreenNotice, navigation: NavType}) {
 	let {notice, navigation} = props
-	let background = notice.backgroundColor ? notice.backgroundColor : c.white
-	let foreground = {color: notice.foregroundColor}
+	let background = notice.backgroundColor
+		? notice.backgroundColor
+		: 'rgba(0,0,0,0.6)'
+	let foreground = notice.foregroundColor ? notice.foregroundColor : c.white
 	return (
 		<View style={styles.cell}>
 			<Touchable
@@ -57,20 +59,26 @@ function Notice(props: {notice: HomescreenNotice, navigation: NavType}) {
 						<Column style={styles.iconColumn}>
 							<Icon
 								name={`ios-${notice.icon}`}
-								style={[iconStyles.icon, foreground]}
+								style={[iconStyles.icon, {color: foreground}]}
 							/>
 						</Column>
 					) : null}
 
 					<Column style={styles.textColumn}>
 						{notice.title ? (
-							<Text numberOfLines={1} style={[styles.title, foreground]}>
+							<Text
+								numberOfLines={1}
+								style={[styles.title, {color: foreground}]}
+							>
 								{notice.title}
 							</Text>
 						) : null}
 
 						{/* 2 or 1 line of description? */}
-						<Text numberOfLines={2} style={[styles.description, foreground]}>
+						<Text
+							numberOfLines={2}
+							style={[styles.description, {color: foreground}]}
+						>
 							{notice.snippet || notice.message}
 						</Text>
 						{/* <Text numberOfLines={2}>{JSON.stringify(notice)}</Text> */}
@@ -130,7 +138,6 @@ const styles = StyleSheet.create({
 	touchable: {
 		paddingVertical: cellVerticalPadding,
 		paddingHorizontal: 10,
-		backgroundColor: c.white,
 	},
 	iconColumn: {
 		justifyContent: 'center',
