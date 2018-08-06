@@ -20,7 +20,7 @@ export function ListSection({filter, onChange}: PropsType) {
 	const {title = '', options, selected, mode} = spec
 	const quantifier = mode === 'AND' ? 'all' : 'any'
 	const {caption = `Show items with ${quantifier} of these options.`} = spec
-	console.log(onChange)
+
 	function buttonPushed(tappedValue: ListItemSpecType) {
 		let result
 

@@ -11,15 +11,20 @@ type Props = {
 }
 
 export const FilterItem = ({active, onPress, title}: Props) => {
-	const backgroundColor = active ? c.olevilleGold : c.white
+	let activeButtonStyle = active
+		? styles.activeButton
+		: styles.inactiveButton
+	let activeContentStyle = active
+		? styles.activeText
+		: styles.inactiveText
 
 	return (
 		<TouchableOpacity
 			onPress={onPress}
-			style={[{backgroundColor: backgroundColor}, styles.container]}
+			style={[activeButtonStyle, styles.container]}
 		>
 			<View style={styles.text}>
-				<Text>{title}</Text>
+				<Text style={activeContentStyle}>{title}</Text>
 			</View>
 		</TouchableOpacity>
 	)
@@ -36,5 +41,18 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		alignItems: 'flex-start',
+	},
+	activeButton: {
+		backgroundColor: c.toolbarButtonBackground,
+		borderColor: c.toolbarButtonBackground,
+	},
+	inactiveButton: {
+		borderColor: c.iosDisabledText,
+	},
+	activeText: {
+		color: c.toolbarButtonForeground,
+	},
+	inactiveText: {
+		color: c.iosDisabledText,
 	},
 })
