@@ -6,6 +6,24 @@ import {TabBarIcon} from '../../components/tabbar-icon'
 import {type TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
+import tinycolor from 'tinycolor2'
+import {ThemeProvider} from '@callstack/react-theme-provider'
+import {type PlayerTheme} from './types'
+
+let tintColor = '#37a287'
+const colors: PlayerTheme = {
+	tintColor,
+	buttonTextColor: tinycolor.mostReadable(tintColor, [
+		c.sto.white,
+		c.sto.black,
+	]),
+	textColor: tintColor,
+	imageBorderColor: 'transparent',
+	imageBackgroundColor: tinycolor(tintColor)
+		.complement()
+		.setAlpha(0.2)
+		.toString(),
+}
 
 export class KstoStationView extends React.Component<TopLevelViewPropsType> {
 	static navigationOptions = {
@@ -15,6 +33,7 @@ export class KstoStationView extends React.Component<TopLevelViewPropsType> {
 
 	render() {
 		return (
+			<ThemeProvider theme={colors}>
 				<RadioControllerView
 					image={logos.ksto}
 					navigation={this.props.navigation}
@@ -30,6 +49,7 @@ export class KstoStationView extends React.Component<TopLevelViewPropsType> {
 					stationNumber="+15077863602"
 					title="St. Olaf College Radio"
 				/>
+			</ThemeProvider>
 		)
 	}
 }
