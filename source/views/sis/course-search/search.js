@@ -160,16 +160,14 @@ class CourseSearchView extends React.Component<Props, State> {
 		this.setState(() => ({filters: selectedFilters}))
 	}
 
-	openFilterView = () => {
-		this.props.navigation.navigate('FilterView', {
-			title: 'Add Filters',
-			initialFilters: this.state.filters,
-			onDismiss: filters => this.setState(() => ({filters})),
+	updateFilter = (filter: FilterType) => {
+		this.setState(state => {
+			let edited = state.filters.map(f => (f.key !== filter.key ? f : filter))
+			return {filters: edited}
 		})
 	}
 
-	openFilterViewAndBrowse = () => {
-		this.openFilterView()
+	browseAll = () => {
 		this.setState(() => ({mode: 'browsing'}))
 	}
 
@@ -230,7 +228,7 @@ class CourseSearchView extends React.Component<Props, State> {
 						courses={this.props.allCourses}
 						filters={filters}
 						navigation={this.props.navigation}
-						openFilterView={this.openFilterView}
+						onPopoverDismiss={this.updateFilter}
 						query={searchQuery}
 						updateRecentFilters={this.props.updateRecentFilters}
 					/>
@@ -244,11 +242,11 @@ class CourseSearchView extends React.Component<Props, State> {
 							title="Recent"
 						/>
 						<RecentItemsList
-							actionLabel="Select Filters"
+							actionLabel="Browse All"
 							emptyHeader="No recent filter combinations"
 							emptyText="Your recent filter combinations will appear here."
 							items={recentFilterDescriptions}
-							onAction={this.openFilterViewAndBrowse}
+							onAction={this.browseAll}
 							onItemPress={this.onRecentFilterPress}
 							title="Browse"
 						/>

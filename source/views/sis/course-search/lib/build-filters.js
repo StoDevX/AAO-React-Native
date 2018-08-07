@@ -24,6 +24,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 			enabled: false,
 			spec: {
 				label: 'Only Show Open Courses',
+				title: 'Enrollment',
 				caption:
 					'Allows you to either see only courses that are open, or all courses.',
 			},
@@ -38,6 +39,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 			enabled: false,
 			spec: {
 				label: 'Show Labs Only',
+				title: 'Lab Only',
 				caption: 'Allows you to only see labs.',
 			},
 			apply: {

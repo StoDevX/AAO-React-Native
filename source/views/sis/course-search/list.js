@@ -10,7 +10,7 @@ import {CourseRow} from './row'
 import memoize from 'lodash/memoize'
 import {parseTerm} from '../../../lib/course-search'
 import {NoticeView} from '../../components/notice'
-import {FilterToolbar} from '../components/filter-toolbar'
+import {FilterToolbar} from '../../components/filter'
 import type {FilterType} from '../../components/filter'
 import {applySearch, sortAndGroupResults} from './lib/execute-search'
 
@@ -28,7 +28,7 @@ type Props = TopLevelViewPropsType & {
 	browsing: boolean,
 	courses: Array<CourseType>,
 	filters: Array<FilterType>,
-	openFilterView: () => mixed,
+	onPopoverDismiss: (filter: FilterType) => any,
 	query: string,
 	updateRecentFilters: (filters: FilterType[]) => any,
 }
@@ -68,12 +68,19 @@ export class CourseResultsList extends React.PureComponent<Props> {
 	}
 
 	render() {
-		let {filters, browsing, query, courses, applyFilters} = this.props
+		let {
+			filters,
+			browsing,
+			query,
+			courses,
+			applyFilters,
+			onPopoverDismiss,
+		} = this.props
 
 		let results = memoizedDoSearch({query, filters, courses, applyFilters})
 
 		const header = (
-			<FilterToolbar filters={filters} onPress={this.props.openFilterView} />
+			<FilterToolbar filters={filters} onPopoverDismiss={onPopoverDismiss} />
 		)
 
 		const message = browsing
