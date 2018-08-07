@@ -30,7 +30,6 @@ type Props = TopLevelViewPropsType & {
 	filters: Array<FilterType>,
 	onPopoverDismiss: (filter: FilterType) => any,
 	query: string,
-	updateRecentFilters: (filters: FilterType[]) => any,
 }
 
 function doSearch(args: {

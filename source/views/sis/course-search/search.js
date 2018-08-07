@@ -122,6 +122,9 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 
 	handleSearchCancel = () => {
+		if (this.state.mode === 'browsing') {
+			this.props.updateRecentFilters(this.state.filters)
+		}
 		this.setState(() => ({typedQuery: '', searchQuery: '', mode: 'ready'}))
 		this.resetFilters()
 	}
@@ -131,7 +134,9 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 
 	handleSearchFocus = () => {
-		this.setState(() => ({mode: 'searching'}))
+		if (this.state.mode !== 'browsing') {
+			this.setState(() => ({mode: 'searching'}))
+		}
 	}
 
 	onRecentSearchPress = (text: string) => {
@@ -230,7 +235,6 @@ class CourseSearchView extends React.Component<Props, State> {
 						navigation={this.props.navigation}
 						onPopoverDismiss={this.updateFilter}
 						query={searchQuery}
-						updateRecentFilters={this.props.updateRecentFilters}
 					/>
 				) : (
 					<ScrollView style={[styles.common, styles.bottomContainer]}>
