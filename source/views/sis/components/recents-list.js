@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
 	sideButton: {
 		paddingRight: 17,
 		fontSize: 16,
-		color: c.accent,
+		color: c.iosPushButtonCellForeground,
 		padding: 14,
 	},
 	subHeader: {
