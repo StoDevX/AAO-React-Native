@@ -91,9 +91,9 @@ export class CourseResultsList extends React.PureComponent<Props> {
 				ListHeaderComponent={header}
 				contentContainerStyle={styles.container}
 				extraData={this.props}
+				keyExtractor={this.keyExtractor}
 				keyboardDismissMode="on-drag"
 				keyboardShouldPersistTaps="never"
-				keyExtractor={this.keyExtractor}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
 				sections={(results: any)}
