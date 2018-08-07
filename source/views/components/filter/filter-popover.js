@@ -4,6 +4,7 @@ import {StyleSheet, View} from 'react-native'
 import Popover from 'react-native-popover-view'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
+import * as c from '../colors'
 
 type Props = {
 	anchor: any,
@@ -36,6 +37,7 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 		const {anchor, onClosePopover, visible} = this.props
 		return (
 			<Popover
+        arrowStyle={arrowStyle}
 				fromView={anchor}
 				isVisible={visible}
 				onClose={() => {
@@ -52,7 +54,12 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 }
 
 const styles = StyleSheet.create({
+  arrow: {
+    backgroundColor: c.iosLightBackground,
+  },
 	popoverContainer: {
 		minWidth: 300,
 	},
 })
+
+const arrowStyle = StyleSheet.flatten(styles.arrow)
