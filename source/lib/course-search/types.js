@@ -15,6 +15,7 @@ export type CourseType = {
 	name: string,
 	notes?: string[],
 	number: number,
+	open: boolean,
 	pn: boolean,
 	prerequisites: false | string,
 	section?: string,

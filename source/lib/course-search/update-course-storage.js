@@ -59,5 +59,15 @@ async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
 async function storeTermCoursesFromServer(term: TermType) {
 	const url = COURSE_DATA_PAGE + term.path
 	const resp: Array<CourseType> = await fetchJson(url).catch(() => [])
+	const formattedTermData = formatRawData(resp)
 	storage.setTermCourseData(term.term, resp)
+}
+
+function formatRawData(rawData: Array<CourseType>): Array<CourseType> {
+	return rawData.map(course => {
+		const open = course.enroll < course.max
+		let formattedCourse = course
+		course.open = open
+		return formattedCourse
+	})
 }

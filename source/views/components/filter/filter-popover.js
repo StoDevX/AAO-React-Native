@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 		backgroundColor: c.iosLightBackground,
 	},
 	popoverContainer: {
-		minWidth: 300,
+		maxWidth: 300,
 	},
 })
 

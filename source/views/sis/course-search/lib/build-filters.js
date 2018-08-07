@@ -22,31 +22,16 @@ export async function buildFilters(): Promise<FilterType[]> {
 	return [
 		{
 			type: 'toggle',
-			key: 'status',
+			key: 'open',
 			enabled: false,
 			spec: {
-				label: 'Only Show Open Courses',
+				label: 'Space Available',
 				title: 'Enrollment',
 				caption:
-					'Allows you to either see only courses that are open, or all courses.',
+					'When activated, shows only courses with space available.',
 			},
 			apply: {
-				key: 'status',
-				trueEquivalent: 'O',
-			},
-		},
-		{
-			type: 'toggle',
-			key: 'type',
-			enabled: false,
-			spec: {
-				label: 'Show Labs Only',
-				title: 'Lab Only',
-				caption: 'Allows you to only see labs.',
-			},
-			apply: {
-				key: 'type',
-				trueEquivalent: 'Lab',
+				key: 'open',
 			},
 		},
 		{
@@ -94,6 +79,35 @@ export async function buildFilters(): Promise<FilterType[]> {
 			},
 			apply: {
 				key: 'departments',
+			},
+		},
+		{
+			type: 'toggle',
+			key: 'status',
+			enabled: false,
+			spec: {
+				label: 'Only Show Open Courses',
+				title: 'Status',
+				caption:
+					'Allows you to either see only courses that are open, or all courses.',
+			},
+			apply: {
+				key: 'status',
+				trueEquivalent: 'O',
+			},
+		},
+		{
+			type: 'toggle',
+			key: 'type',
+			enabled: false,
+			spec: {
+				label: 'Lab Only',
+				title: 'Lab',
+				caption: 'Allows you to only see labs.',
+			},
+			apply: {
+				key: 'type',
+				trueEquivalent: 'Lab',
 			},
 		},
 	]
