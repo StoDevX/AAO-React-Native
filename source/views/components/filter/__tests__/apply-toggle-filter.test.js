@@ -7,7 +7,7 @@ it('should return `true` if the item has a truthy value', () => {
 		type: 'toggle',
 		key: 'key',
 		enabled: true,
-		spec: {label: 'label'},
+		spec: {label: 'label', title: 'title'},
 		apply: {key: 'i-am-a-key'},
 	}
 	let item = {'i-am-a-key': true}
@@ -19,7 +19,7 @@ it('should return `false` if the item has a falsy value', () => {
 		type: 'toggle',
 		key: 'key',
 		enabled: true,
-		spec: {label: 'label'},
+		spec: {label: 'label', title: 'title'},
 		apply: {key: 'i-am-a-key'},
 	}
 	let item = {'i-am-a-key': false}
@@ -31,7 +31,7 @@ it('should ignore the `enabled` status of the filter', () => {
 		type: 'toggle',
 		key: 'key',
 		enabled: false,
-		spec: {label: 'label'},
+		spec: {label: 'label', title: 'title'},
 		apply: {key: 'i-am-a-key'},
 	}
 	let itemTrue = {'i-am-a-key': true}
