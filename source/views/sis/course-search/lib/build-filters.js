@@ -27,8 +27,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 			spec: {
 				label: 'Space Available',
 				title: 'Enrollment',
-				caption:
-					'When activated, shows only courses with space available.',
+				caption: 'When activated, shows only courses with space available.',
 			},
 			apply: {
 				key: 'open',
