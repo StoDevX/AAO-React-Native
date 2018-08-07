@@ -37,7 +37,7 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 		const {anchor, onClosePopover, visible} = this.props
 		return (
 			<Popover
-        arrowStyle={arrowStyle}
+				arrowStyle={arrowStyle}
 				fromView={anchor}
 				isVisible={visible}
 				onClose={() => {
@@ -54,9 +54,9 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 }
 
 const styles = StyleSheet.create({
-  arrow: {
-    backgroundColor: c.iosLightBackground,
-  },
+	arrow: {
+		backgroundColor: c.iosLightBackground,
+	},
 	popoverContainer: {
 		minWidth: 300,
 	},

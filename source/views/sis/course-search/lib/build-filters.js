@@ -7,10 +7,12 @@ import {loadAllCourseFilterOptions} from '../../../../lib/course-search'
 
 export async function buildFilters(): Promise<FilterType[]> {
 	const terms = await getTermInfo()
-	const allTerms = terms.map(term => ({
-		title: term.term,
-		label: parseTerm(term.term.toString()),
-	})).reverse()
+	const allTerms = terms
+		.map(term => ({
+			title: term.term,
+			label: parseTerm(term.term.toString()),
+		}))
+		.reverse()
 
 	const {ges, departments} = await loadAllCourseFilterOptions()
 
