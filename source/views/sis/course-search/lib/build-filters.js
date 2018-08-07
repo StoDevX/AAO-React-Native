@@ -10,7 +10,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 	const allTerms = terms.map(term => ({
 		title: term.term,
 		label: parseTerm(term.term.toString()),
-	}))
+	})).reverse()
 
 	const {ges, departments} = await loadAllCourseFilterOptions()
 
