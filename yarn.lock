@@ -3091,6 +3091,10 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
 
+fs@^0.0.1-security:
+  version "0.0.1-security"
+  resolved "https://registry.yarnpkg.com/fs/-/fs-0.0.1-security.tgz#8a7bd37186b6dddf3813f23858b57ecaaf5e41d4"
+
 fsevents@^1.1.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-1.1.2.tgz#3282b713fb3ad80ede0e9fcf4611b5aa6fc033f4"
@@ -6026,6 +6030,12 @@ react-native-paper@2.0.0-alpha.4:
     deepmerge "^2.1.0"
     hoist-non-react-statics "^2.5.0"
     react-lifecycles-compat "^3.0.4"
+
+react-native-popover-view@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-popover-view/-/react-native-popover-view-1.0.0.tgz#6885088a3ed298c92aff09407c8dc400d4c460d2"
+  dependencies:
+    fs "^0.0.1-security"
 
 react-native-restart@0.0.6:
   version "0.0.6"
