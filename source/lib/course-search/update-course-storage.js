@@ -60,7 +60,7 @@ async function storeTermCoursesFromServer(term: TermType) {
 	const url = COURSE_DATA_PAGE + term.path
 	const resp: Array<CourseType> = await fetchJson(url).catch(() => [])
 	const formattedTermData = formatRawData(resp)
-	storage.setTermCourseData(term.term, resp)
+	storage.setTermCourseData(term.term, formattedTermData)
 }
 
 function formatRawData(rawData: Array<CourseType>): Array<CourseType> {
