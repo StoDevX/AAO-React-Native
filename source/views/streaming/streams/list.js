@@ -71,7 +71,6 @@ export class StreamListView extends React.PureComponent<Props, State> {
 
 	getStreams = async (date: moment = moment.tz(CENTRAL_TZ)) => {
 		try {
-			const dateFrom = date.format('YYYY-MM-DD')
 			const dateTo = date
 				.clone()
 				.add(1, 'month')
@@ -80,8 +79,6 @@ export class StreamListView extends React.PureComponent<Props, State> {
 			let params = {
 				class: 'current',
 				sort: 'ascending',
-				// eslint-disable-next-line camelcase
-				date_from: dateFrom,
 				// eslint-disable-next-line camelcase
 				date_to: dateTo,
 			}
