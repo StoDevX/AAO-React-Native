@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 	},
 	toolbarSection: {
 		flexDirection: 'row',
-		alignItems: 'center'
+		alignItems: 'center',
 	},
 })
 
@@ -32,7 +32,7 @@ export function FilterMenuToolbar({
 	onPopoverDismiss,
 }: PropsType) {
 	const mealFilter = filters.find(f => f.key === 'meals')
-	console.log(mealFilter)
+	const multipleMeals = mealFilter.spec.options.length > 1
 	const nonPickerFilters = filters.filter(f => f.type !== 'picker')
 	return (
 		<View>
@@ -43,17 +43,22 @@ export function FilterMenuToolbar({
 						{title ? <Text> — {title}</Text> : null}
 					</Text>
 				</View>
-				{ mealFilter &&
+				{multipleMeals && (
 					<FilterToolbarButton
 						filter={mealFilter}
-						iconName={Platform.OS === 'ios' ? 'ios-arrow-down' : 'md-arrow-dropdown'}
+						iconName={
+							Platform.OS === 'ios' ? 'ios-arrow-down' : 'md-arrow-dropdown'
+						}
 						isActive={true}
 						onPopoverDismiss={onPopoverDismiss}
 						title={mealFilter.spec.title}
 					/>
-				}
+				)}
 			</Toolbar>
-			<FilterToolbar filters={nonPickerFilters} onPopoverDismiss={onPopoverDismiss} />
+			<FilterToolbar
+				filters={nonPickerFilters}
+				onPopoverDismiss={onPopoverDismiss}
+			/>
 		</View>
 	)
 }

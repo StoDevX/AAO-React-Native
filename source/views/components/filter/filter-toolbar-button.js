@@ -91,6 +91,12 @@ export class FilterToolbarButton extends React.PureComponent<Props, State> {
 			fontWeight: isActive && Platform.OS === 'android' ? 'bold' : 'normal',
 		}
 
+		if (filter.type === 'list') {
+			if (!filter.spec.options.length) {
+				return null
+			}
+		}
+
 		return (
 			<View>
 				<TouchableOpacity
