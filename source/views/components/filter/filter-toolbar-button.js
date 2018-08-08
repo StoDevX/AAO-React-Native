@@ -12,7 +12,7 @@ const buttonStyles = StyleSheet.create({
 		alignItems: 'center',
 		marginRight: 10,
 		paddingHorizontal: 8,
-		paddingVertical: 2,
+		paddingVertical: 5,
 		marginVertical: 8,
 		borderWidth: 1,
 		borderRadius: 2,
