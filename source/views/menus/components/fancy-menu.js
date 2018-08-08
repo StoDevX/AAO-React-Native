@@ -199,6 +199,7 @@ export class FancyMenu extends React.Component<Props, State> {
 				renderSectionHeader={this.renderSectionHeader}
 				sections={(groupedMenuData: any)}
 				style={styles.inner}
+				windowSize={5}
 			/>
 		)
 	}

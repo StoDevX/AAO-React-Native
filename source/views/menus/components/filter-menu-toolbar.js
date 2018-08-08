@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react'
-import {StyleSheet, View, Text} from 'react-native'
+import {StyleSheet, View, Text, Platform} from 'react-native'
 import type momentT from 'moment'
 import type {FilterType} from '../../components/filter'
-import {FilterToolbar} from '../../components/filter'
+import {FilterToolbar, FilterToolbarButton} from '../../components/filter'
 import {Toolbar} from '../../components/toolbar'
 
 const styles = StyleSheet.create({
@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
 	},
 	toolbarSection: {
 		flexDirection: 'row',
+		alignItems: 'center'
 	},
 })
 
@@ -30,6 +31,9 @@ export function FilterMenuToolbar({
 	filters,
 	onPopoverDismiss,
 }: PropsType) {
+	const mealFilter = filters.find(f => f.key === 'meals')
+	console.log(mealFilter)
+	const nonPickerFilters = filters.filter(f => f.type !== 'picker')
 	return (
 		<View>
 			<Toolbar>
@@ -39,8 +43,17 @@ export function FilterMenuToolbar({
 						{title ? <Text> — {title}</Text> : null}
 					</Text>
 				</View>
+				{ mealFilter &&
+					<FilterToolbarButton
+						filter={mealFilter}
+						iconName={Platform.OS === 'ios' ? 'ios-arrow-down' : 'md-arrow-dropdown'}
+						isActive={true}
+						onPopoverDismiss={onPopoverDismiss}
+						title={mealFilter.spec.title}
+					/>
+				}
 			</Toolbar>
-			<FilterToolbar filters={filters} onPopoverDismiss={onPopoverDismiss} />
+			<FilterToolbar filters={nonPickerFilters} onPopoverDismiss={onPopoverDismiss} />
 		</View>
 	)
 }
