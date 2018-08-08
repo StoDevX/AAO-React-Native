@@ -38,7 +38,6 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 			}
 			newFilter.enabled = false
 		}
-		console.log(newFilter)
 		onPopoverDismiss(newFilter)
 	}
 
