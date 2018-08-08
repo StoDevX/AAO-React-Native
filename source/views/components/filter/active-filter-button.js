@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import type {FilterType, ListItemSpecType} from './types'
+import type {FilterType} from './types'
 import {
 	StyleSheet,
 	View,
@@ -31,7 +31,7 @@ export function ActiveFilterButton({filter, label, onRemove, style}: Props) {
 					onRemove(filter)
 				}}
 			>
-				<Icon name={iconName} size={20} color={c.sto.white} />
+				<Icon color={c.sto.white} name={iconName} size={20} />
 			</TouchableWithoutFeedback>
 		</View>
 	)

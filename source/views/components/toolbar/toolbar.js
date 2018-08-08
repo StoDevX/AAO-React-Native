@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {StyleSheet, Platform, View, ScrollView} from 'react-native'
+import {StyleSheet, Platform, View} from 'react-native'
 import * as c from '../colors'
 
 const toolbarStyles = StyleSheet.create({

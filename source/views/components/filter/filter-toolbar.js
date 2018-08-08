@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react'
-import type {FilterType, ListType, ToggleType} from './types'
+import type {FilterType, ListType, ToggleType, ListItemSpecType} from './types'
 import {Platform, StyleSheet, ScrollView, View} from 'react-native'
 import {Toolbar} from '../toolbar'
 import {FilterToolbarButton} from './filter-toolbar-button'
 import {ActiveFilterButton} from './active-filter-button'
-import concat from 'lodash/concat'
+import flatten from 'lodash/flatten'
 
 type Props = {
 	filters: Array<FilterType>,
@@ -13,6 +13,14 @@ type Props = {
 }
 
 export function FilterToolbar({filters, onPopoverDismiss}: Props) {
+	function updateFilter(filter: FilterType, option?: ListItemSpecType) {
+		if (filter.type === 'toggle') {
+			updateToggleFilter(filter)
+		} else if (filter.type === 'list' && option) {
+			updateListFilter(filter, option)
+		}
+	}
+
 	function updateToggleFilter(filter: ToggleType) {
 		let newFilter = filter
 		newFilter.enabled = false
@@ -20,7 +28,6 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 	}
 
 	function updateListFilter(filter: ListType, option: ListItemSpecType) {
-		console.log(filter, option)
 		let newFilter = filter
 		newFilter.spec.selected = filter.spec.selected.filter(
 			item => item.title !== option.title,
@@ -46,51 +53,44 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 			title={filter.spec.title}
 		/>
 	))
-	let activeFilterButtons = []
-	filters.map(filter => {
-		if (filter.enabled) {
-			switch (filter.type) {
-				case 'toggle':
-					activeFilterButtons.push(
-						<ActiveFilterButton
-							key={filter.spec.title}
-							filter={filter}
-							label={filter.spec.label}
-							onRemove={filter => updateToggleFilter(filter)}
-							style={activeFilterButtons.length === 0 ? styles.first : null}
-						/>,
-					)
-					break
-				case 'list':
-					const newButtons = filter.spec.selected.map((selected, index) => (
-						<ActiveFilterButton
-							key={selected.title}
-							filter={filter}
-							label={selected.label || selected.title}
-							onRemove={filter => updateListFilter(filter, selected)}
-							style={
-								activeFilterButtons.length === 0 && index === 0
-									? styles.first
-									: null
-							}
-						/>
-					))
-					activeFilterButtons = concat(activeFilterButtons, newButtons)
-					break
-				default:
-					break
-			}
+
+	const allButtons = filters.filter(f => f.enabled).map((filter, i) => {
+		if (filter.type === 'toggle') {
+			return (
+				<ActiveFilterButton
+					key={filter.spec.title}
+					filter={filter}
+					label={filter.spec.label}
+					onRemove={filter => updateFilter(filter)}
+					style={i === 0 ? styles.first : null}
+				/>
+			)
+		} else if (filter.type === 'list') {
+			return filter.spec.selected.map((selected, j) => (
+				<ActiveFilterButton
+					key={selected.title}
+					filter={filter}
+					label={selected.label || selected.title.toString()}
+					onRemove={filter => updateFilter(filter, selected)}
+					style={i === 0 && j === 0 ? styles.first : null}
+				/>
+			))
 		}
+		return null
 	})
+	const activeFilterButtons = flatten(allButtons)
+	const anyFiltersEnabled = filters.some(f => f.enabled)
 
 	return (
 		<View>
 			<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
 				<Toolbar>{filterToggles}</Toolbar>
 			</ScrollView>
-			<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-				{activeFilterButtons}
-			</ScrollView>
+			{anyFiltersEnabled && (
+				<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+					{activeFilterButtons}
+				</ScrollView>
+			)}
 		</View>
 	)
 }

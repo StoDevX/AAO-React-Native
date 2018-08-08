@@ -31,8 +31,11 @@ export function FilterMenuToolbar({
 	filters,
 	onPopoverDismiss,
 }: PropsType) {
-	const mealFilter = filters.find(f => f.key === 'meals')
-	const multipleMeals = mealFilter.spec.options.length > 1
+	const mealFilter = filters.find(f => f.type === 'picker')
+	const multipleMeals =
+		mealFilter && mealFilter.type === 'picker'
+			? mealFilter.spec.options.length > 1
+			: false
 	const nonPickerFilters = filters.filter(f => f.type !== 'picker')
 	return (
 		<View>
@@ -43,7 +46,7 @@ export function FilterMenuToolbar({
 						{title ? <Text> — {title}</Text> : null}
 					</Text>
 				</View>
-				{multipleMeals && (
+				{mealFilter && multipleMeals ? (
 					<FilterToolbarButton
 						filter={mealFilter}
 						iconName={
@@ -53,7 +56,7 @@ export function FilterMenuToolbar({
 						onPopoverDismiss={onPopoverDismiss}
 						title={mealFilter.spec.title}
 					/>
-				)}
+				) : null}
 			</Toolbar>
 			<FilterToolbar
 				filters={nonPickerFilters}
