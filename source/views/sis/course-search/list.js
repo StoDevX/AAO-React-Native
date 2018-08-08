@@ -70,6 +70,9 @@ export class CourseResultsList extends React.PureComponent<Props> {
 	render() {
 		let {filters, browsing, query, courses, applyFilters} = this.props
 
+		// be sure to lowercase the query before calling doSearch, so that the memoization
+		// doesn't break when nothing's changed except case.
+		query = query.toLowerCase()
 		let results = memoizedDoSearch({query, filters, courses, applyFilters})
 
 		const header = (
