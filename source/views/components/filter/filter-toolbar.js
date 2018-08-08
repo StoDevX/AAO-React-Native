@@ -13,7 +13,6 @@ type Props = {
 }
 
 export function FilterToolbar({filters, onPopoverDismiss}: Props) {
-
 	function updateToggleFilter(filter: ToggleType) {
 		let newFilter = filter
 		newFilter.enabled = false
@@ -23,9 +22,9 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 	function updateListFilter(filter: ListType, option: ListItemSpecType) {
 		console.log(filter, option)
 		let newFilter = filter
-		newFilter.spec.selected = filter.spec.selected.filter(item => (
-			item.title !== option.title
-		))
+		newFilter.spec.selected = filter.spec.selected.filter(
+			item => item.title !== option.title,
+		)
 		if (newFilter.spec.selected.length === 0) {
 			if (filter.spec.mode === 'OR') {
 				newFilter.spec.selected = newFilter.spec.options
@@ -69,7 +68,11 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 							filter={filter}
 							label={selected.label || selected.title}
 							onRemove={filter => updateListFilter(filter, selected)}
-							style={activeFilterButtons.length === 0 && index === 0 ? styles.first : null}
+							style={
+								activeFilterButtons.length === 0 && index === 0
+									? styles.first
+									: null
+							}
 						/>
 					))
 					activeFilterButtons = concat(activeFilterButtons, newButtons)
