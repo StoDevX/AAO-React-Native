@@ -29,9 +29,7 @@ type ToolbarPropsType = {
 export function Toolbar({children}: ToolbarPropsType) {
 	return (
 		<View style={[toolbarStyles.shadow, toolbarStyles.container]}>
-			<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-				{children}
-			</ScrollView>
+			{children}
 		</View>
 	)
 }
