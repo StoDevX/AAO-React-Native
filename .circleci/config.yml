@@ -157,15 +157,13 @@ jobs:
       - run: *run-danger
       - store_test_results:
           path: ./test-results
+      - run: yarn global add coveralls
       - run:
           name: coveralls
           command: |
-            set -v
             export PATH=$PATH:$(yarn global bin)
             export COVERALLS_SERVICE_NAME=CircleCI
             export COVERALLS_SERVICE_JOB_ID=$CIRCLE_BUILD_NUM
-
-            yarn global add coveralls
             coveralls < ./coverage/lcov.info
 
   prettier:
