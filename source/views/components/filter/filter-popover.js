@@ -40,9 +40,7 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 				arrowStyle={arrowStyle}
 				fromView={anchor}
 				isVisible={visible}
-				onClose={() => {
-					onClosePopover(filter)
-				}}
+				onClose={() => onClosePopover(filter)}
 				placement="bottom"
 			>
 				<View style={styles.popoverContainer}>
