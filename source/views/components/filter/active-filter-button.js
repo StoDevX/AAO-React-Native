@@ -26,9 +26,7 @@ export function ActiveFilterButton({filter, label, onRemove, style}: Props) {
 	return (
 		<View style={[style, styles.badge]}>
 			<Text style={styles.text}>{label}</Text>
-			<TouchableWithoutFeedback
-				onPress={() => onRemove(filter)}
-			>
+			<TouchableWithoutFeedback onPress={() => onRemove(filter)}>
 				<Icon color={c.sto.white} name={iconName} size={20} />
 			</TouchableWithoutFeedback>
 		</View>

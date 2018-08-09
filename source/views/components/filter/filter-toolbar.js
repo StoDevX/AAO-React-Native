@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import type {FilterType, ListType, ToggleType, ListItemSpecType} from './types'
-import {Platform, StyleSheet, ScrollView, View} from 'react-native'
+import {StyleSheet, ScrollView, View} from 'react-native'
 import {Toolbar} from '../toolbar'
 import {FilterToolbarButton} from './filter-toolbar-button'
 import {ActiveFilterButton} from './active-filter-button'

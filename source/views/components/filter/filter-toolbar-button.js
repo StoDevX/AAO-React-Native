@@ -67,7 +67,7 @@ export class FilterToolbarButton extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {filter, iconName, isActive, style, title} = this.props
+		const {filter, isActive, style, title} = this.props
 		const {popoverVisible} = this.state
 		const icon = Platform.select({
 			ios: 'ios-arrow-down',
