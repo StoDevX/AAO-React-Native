@@ -1,5 +1,32 @@
 // @flow
 
+export type RawCourseType = {
+	clbid: number,
+	credits: number,
+	crsid: number,
+	departments: string[],
+	description?: string[],
+	enroll: number,
+	gereqs?: string[],
+	instructors: string[],
+	level: number,
+	locations?: string[],
+	max: number,
+	name: string,
+	notes?: string[],
+	number: number,
+	pn: boolean,
+	prerequisites: false | string,
+	section?: string,
+	semester: number,
+	status: string,
+	term: number,
+	times?: string[],
+	title?: string,
+	type: string,
+	year: number,
+}
+
 export type CourseType = {
 	clbid: number,
 	credits: number,
@@ -15,7 +42,7 @@ export type CourseType = {
 	name: string,
 	notes?: string[],
 	number: number,
-	open: boolean,
+	spaceAvailable: boolean,
 	pn: boolean,
 	prerequisites: false | string,
 	section?: string,
