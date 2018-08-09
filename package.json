@@ -155,6 +155,7 @@
     "junk": "2.1.0",
     "minimist": "1.2.0",
     "mkdirp": "0.5.1",
+    "prettier": "1.14.2",
     "pify": "4.0.0",
     "prettier": "1.14.0",
     "pretty-bytes": "5.1.0",
