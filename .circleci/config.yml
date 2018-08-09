@@ -166,7 +166,7 @@ jobs:
             export COVERALLS_SERVICE_JOB_ID=$CIRCLE_BUILD_NUM
 
             yarn global add coveralls
-            coveralls -v < ./coverage/lcov.info
+            coveralls < ./coverage/lcov.info
 
   prettier:
     docker: [{image: 'circleci/node:8'}]
