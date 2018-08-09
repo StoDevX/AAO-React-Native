@@ -45,7 +45,6 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 		<FilterToolbarButton
 			key={filter.spec.title}
 			filter={filter}
-			iconName={Platform.OS === 'ios' ? 'ios-arrow-down' : 'md-arrow-dropdown'}
 			isActive={filter.enabled}
 			onPopoverDismiss={onPopoverDismiss}
 			style={index === 0 ? styles.first : null}

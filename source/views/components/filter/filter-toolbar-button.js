@@ -40,7 +40,6 @@ const buttonStyles = StyleSheet.create({
 
 type Props = {
 	filter: FilterType,
-	iconName?: string,
 	isActive: boolean,
 	onPopoverDismiss: (filter: FilterType) => any,
 	style?: any,
@@ -70,14 +69,10 @@ export class FilterToolbarButton extends React.PureComponent<Props, State> {
 	render() {
 		const {filter, iconName, isActive, style, title} = this.props
 		const {popoverVisible} = this.state
-		let icon
-		if (!iconName) {
-			icon = null
-		} else if (Platform.OS === 'ios') {
-			icon = iconName
-		} else if (Platform.OS === 'android') {
-			icon = iconName
-		}
+		const icon = Platform.select({
+			ios: 'ios-arrow-down',
+			android: 'md-arrow-dropdown',
+		})
 
 		let activeButtonStyle = isActive
 			? buttonStyles.activeButton

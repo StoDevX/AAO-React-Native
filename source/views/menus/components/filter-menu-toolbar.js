@@ -49,9 +49,6 @@ export function FilterMenuToolbar({
 				{mealFilter && multipleMeals ? (
 					<FilterToolbarButton
 						filter={mealFilter}
-						iconName={
-							Platform.OS === 'ios' ? 'ios-arrow-down' : 'md-arrow-dropdown'
-						}
 						isActive={true}
 						onPopoverDismiss={onPopoverDismiss}
 						title={mealFilter.spec.title}
