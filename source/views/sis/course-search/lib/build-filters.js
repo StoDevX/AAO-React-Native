@@ -30,7 +30,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 				caption: 'When activated, shows only courses with space available.',
 			},
 			apply: {
-				key: 'open',
+				key: 'spaceAvailable',
 			},
 		},
 		{
