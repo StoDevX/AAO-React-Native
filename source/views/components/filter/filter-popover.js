@@ -1,13 +1,13 @@
 //@flow
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
+import {StyleSheet, View, TouchableOpacity} from 'react-native'
 import Popover from 'react-native-popover-view'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
 import * as c from '../colors'
 
 type Props = {
-	anchor: any,
+	anchor: React.Ref<typeof TouchableOpacity>,
 	filter: FilterType,
 	onClosePopover: (filter: FilterType) => any,
 	visible: boolean,
