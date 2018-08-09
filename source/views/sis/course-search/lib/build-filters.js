@@ -22,7 +22,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 	return [
 		{
 			type: 'toggle',
-			key: 'open',
+			key: 'spaceAvailable',
 			enabled: false,
 			spec: {
 				label: 'Space Available',
