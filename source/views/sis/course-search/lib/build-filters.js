@@ -85,7 +85,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 			key: 'status',
 			enabled: false,
 			spec: {
-				label: 'Only Show Open Courses',
+				label: 'Open Courses',
 				title: 'Status',
 				caption:
 					'Allows you to either see only courses that are open, or all courses.',
