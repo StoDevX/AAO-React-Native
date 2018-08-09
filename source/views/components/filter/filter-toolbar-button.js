@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {StyleSheet, View, Text, Platform, TouchableOpacity} from 'react-native'
+import {StyleSheet, Text, Platform, TouchableOpacity} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
@@ -93,7 +93,7 @@ export class FilterToolbarButton extends React.PureComponent<Props, State> {
 		}
 
 		return (
-			<View>
+			<React.Fragment>
 				<TouchableOpacity
 					ref={ref => (this.touchable = ref)}
 					onPress={this.openPopover}
@@ -119,7 +119,7 @@ export class FilterToolbarButton extends React.PureComponent<Props, State> {
 					onClosePopover={this.onClosePopover}
 					visible={popoverVisible}
 				/>
-			</View>
+			</React.Fragment>
 		)
 	}
 }

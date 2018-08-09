@@ -38,7 +38,7 @@ export function FilterMenuToolbar({
 			: false
 	const nonPickerFilters = filters.filter(f => f.type !== 'picker')
 	return (
-		<View>
+		<React.Fragment>
 			<Toolbar>
 				<View style={[styles.toolbarSection, styles.today]}>
 					<Text>
@@ -59,6 +59,6 @@ export function FilterMenuToolbar({
 				filters={nonPickerFilters}
 				onPopoverDismiss={onPopoverDismiss}
 			/>
-		</View>
+		</React.Fragment>
 	)
 }
