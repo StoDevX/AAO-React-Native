@@ -9,7 +9,7 @@ import type {StoryType} from './types'
 type Props = {
 	onPress: string => any,
 	story: StoryType,
-	thumbnail: number,
+	thumbnail: false | number,
 }
 
 export class NewsRow extends React.PureComponent<Props> {
@@ -23,14 +23,19 @@ export class NewsRow extends React.PureComponent<Props> {
 
 	render() {
 		const {story} = this.props
-		const thumb = story.featuredImage
-			? {uri: story.featuredImage}
-			: this.props.thumbnail
+		const thumb =
+			this.props.thumbnail !== false
+				? story.featuredImage
+					? {uri: story.featuredImage}
+					: this.props.thumbnail
+				: null
 
 		return (
 			<ListRow arrowPosition="top" onPress={this._onPress}>
 				<Row alignItems="center">
-					<Image source={thumb} style={styles.image} />
+					{thumb !== null ? (
+						<Image source={thumb} style={styles.image} />
+					) : null}
 					<Column flex={1}>
 						<Title lines={2}>{story.title}</Title>
 						<Detail lines={3}>{story.excerpt}</Detail>

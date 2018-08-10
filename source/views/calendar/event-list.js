@@ -12,13 +12,13 @@ import moment from 'moment-timezone'
 import {ListSeparator, ListSectionHeader} from '../components/list'
 import {NoticeView} from '../components/notice'
 import EventRow from './event-row'
-import {cleanEvent} from './clean-event'
 
 const FullWidthSeparator = props => (
 	<ListSeparator fullWidth={true} {...props} />
 )
 
 type Props = TopLevelViewPropsType & {
+	detailView?: string,
 	events: EventType[],
 	message: ?string,
 	refreshing: boolean,
@@ -27,7 +27,7 @@ type Props = TopLevelViewPropsType & {
 	poweredBy: ?PoweredBy,
 }
 
-export class EventList extends React.PureComponent<Props> {
+export class EventList extends React.Component<Props> {
 	groupEvents = (events: EventType[], now: moment): any => {
 		// the proper return type is $ReadOnlyArray<{title: string, data: $ReadOnlyArray<EventType>}>
 		const grouped = groupBy(events, event => {
@@ -47,9 +47,9 @@ export class EventList extends React.PureComponent<Props> {
 	}
 
 	onPressEvent = (event: EventType) => {
-		event = cleanEvent(event)
+		let detailView = this.props.detailView || 'EventDetailView'
 		trackCalendarEventOpen(`${event.title} (${event.startTime.toISOString()})`)
-		this.props.navigation.navigate('EventDetailView', {
+		this.props.navigation.navigate(detailView, {
 			event,
 			poweredBy: this.props.poweredBy,
 		})

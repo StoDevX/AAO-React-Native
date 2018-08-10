@@ -1,7 +1,7 @@
 // @flow
 import {AsyncStorage} from 'react-native'
 import moment from 'moment'
-import {GH_PAGES_URL} from '../globals'
+import {API} from '../globals'
 
 type BaseCacheResultType<T> = {
 	isExpired: boolean,
@@ -211,7 +211,7 @@ function fetchHelpToolsBundled(): Promise<Array<ToolOptions>> {
 	return Promise.resolve(helpData)
 }
 function fetchHelpToolsRemote(): Promise<{data: Array<ToolOptions>}> {
-	return fetchJson(GH_PAGES_URL('help.json'))
+	return fetchJson(API('/tools/help'))
 }
 export async function fetchHelpTools(
 	isOnline: boolean,

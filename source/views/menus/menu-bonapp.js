@@ -1,13 +1,12 @@
 // @flow
 import * as React from 'react'
 import LoadingView from '../components/loading'
-import qs from 'querystring'
 import {NoticeView} from '../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {FancyMenu} from './components/fancy-menu'
 import type {
-	BonAppMenuInfoType as MenuInfoType,
-	BonAppCafeInfoType as CafeInfoType,
+	EditedBonAppMenuInfoType as MenuInfoType,
+	EditedBonAppCafeInfoType as CafeInfoType,
 	StationMenuType,
 	ProcessedMealType,
 	DayPartMenuType,
@@ -28,14 +27,10 @@ import {tracker} from '../../analytics'
 import bugsnag from '../../bugsnag'
 import delay from 'delay'
 import retry from 'p-retry'
+import {API} from '../../globals'
+
 const CENTRAL_TZ = 'America/Winnipeg'
-
-const bonappMenuBaseUrl = 'https://legacy.cafebonappetit.com/api/2/menus'
-const bonappCafeBaseUrl = 'https://legacy.cafebonappetit.com/api/2/cafes'
-const fetchJsonQuery = (url, query) =>
-	fetchJson(`${url}?${qs.stringify(query)}`)
 const entities = new AllHtmlEntities()
-
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
 const DEFAULT_MENU = [
@@ -50,13 +45,13 @@ const DEFAULT_MENU = [
 ]
 
 type Props = TopLevelViewPropsType & {
-	cafeId: string,
+	cafe: string | {id: string},
 	ignoreProvidedMenus?: boolean,
 	loadingMessage: string[],
 	name: string,
 }
 type State = {
-	cachedCafeId: string,
+	cachedCafe: string | {id: string},
 	errormsg: ?string,
 	loading: boolean,
 	refreshing: boolean,
@@ -67,7 +62,7 @@ type State = {
 
 export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 	state = {
-		cachedCafeId: this.props.cafeId,
+		cachedCafe: this.props.cafe,
 		errormsg: null,
 		loading: true,
 		refreshing: false,
@@ -83,7 +78,13 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 	}
 
 	componentDidUpdate() {
-		if (this.state.cachedCafeId !== this.props.cafeId) {
+		let {cachedCafe} = this.state
+		let {cafe: newCafe} = this.props
+
+		cachedCafe = typeof cachedCafe === 'string' ? cachedCafe : cachedCafe.id
+		newCafe = typeof newCafe === 'string' ? newCafe : newCafe.id
+
+		if (cachedCafe !== newCafe) {
 			this.fetchData(this.props)
 		}
 	}
@@ -94,19 +95,27 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		})
 	}
 
-	requestMenu = (cafeId: string) => () =>
-		fetchJsonQuery(bonappMenuBaseUrl, {cafe: cafeId})
-	requestCafe = (cafeId: string) => () =>
-		fetchJsonQuery(bonappCafeBaseUrl, {cafe: cafeId})
-
 	fetchData = async (props: Props) => {
 		let cafeMenu: ?MenuInfoType = null
 		let cafeInfo: ?CafeInfoType = null
 
+		let menuUrl
+		let cafeUrl
+		let cafe = typeof props.cafe === 'string' ? props.cafe : props.cafe.id
+		if (typeof props.cafe === 'string') {
+			menuUrl = API(`/food/named/menu/${cafe}`)
+			cafeUrl = API(`/food/named/cafe/${cafe}`)
+		} else if (props.cafe.hasOwnProperty('id')) {
+			menuUrl = API(`/food/menu/${cafe}`)
+			cafeUrl = API(`/food/cafe/${cafe}`)
+		} else {
+			throw new Error('invalid cafe passed to BonappMenu!')
+		}
+
 		try {
 			;[cafeMenu, cafeInfo] = await Promise.all([
-				retry(this.requestMenu(props.cafeId), {retries: 3}),
-				retry(this.requestCafe(props.cafeId), {retries: 3}),
+				retry(() => fetchJson(menuUrl), {retries: 3}),
+				retry(() => fetchJson(cafeUrl), {retries: 3}),
 			])
 		} catch (error) {
 			if (error.message === "JSON Parse error: Unrecognized token '<'") {
@@ -136,11 +145,8 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		this.setState(() => ({refreshing: false}))
 	}
 
-	findCafeMessage(cafeId: string, cafeInfo: CafeInfoType, now: momentT) {
-		const actualCafeInfo = cafeInfo.cafes[cafeId]
-		if (!actualCafeInfo) {
-			return 'BonApp did not return a menu for that café'
-		}
+	findCafeMessage(cafeInfo: CafeInfoType, now: momentT) {
+		const actualCafeInfo = cafeInfo.cafe
 
 		const todayDate = now.format('YYYY-MM-DD')
 		const todayMenu = actualCafeInfo.days.find(({date}) => date === todayDate)
@@ -206,16 +212,15 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 
 	getMeals(args: {
 		cafeMenu: MenuInfoType,
-		cafeId: string,
 		ignoreProvidedMenus: boolean,
 		foodItems: MenuItemContainerType,
 	}) {
-		const {cafeMenu, cafeId, ignoreProvidedMenus, foodItems} = args
+		const {cafeMenu, ignoreProvidedMenus, foodItems} = args
 
 		// We hard-code to the first day returned because we're only requesting
 		// one day. `cafes` is a map of cafe ids to cafes, but we only request one
 		// cafe at a time, so we just grab the one we requested.
-		const dayparts = cafeMenu.days[0].cafes[cafeId].dayparts
+		const dayparts = cafeMenu.days[0].cafe.dayparts
 
 		// either use the meals as provided by bonapp, or make our own
 		const mealInfoItems = dayparts[0].length ? dayparts[0] : DEFAULT_MENU
@@ -250,9 +255,11 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		}
 
 		if (!this.state.cafeMenu || !this.state.cafeInfo) {
-			const err = new Error(
-				`Something went wrong loading BonApp cafe #${this.props.cafeId}`,
-			)
+			let cafe =
+				typeof this.props.cafe === 'string'
+					? this.props.cafe
+					: this.props.cafe.id
+			const err = new Error(`Something went wrong loading BonApp cafe #${cafe}`)
 			tracker.trackException(err.message)
 			bugsnag.notify(err)
 
@@ -260,12 +267,12 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			return <NoticeView text={msg} />
 		}
 
-		const {cafeId, ignoreProvidedMenus = false} = this.props
+		const {ignoreProvidedMenus = false} = this.props
 		const {now, cafeMenu, cafeInfo} = this.state
 
 		// We grab the "today" info from here because BonApp returns special
 		// messages in this response, like "Closed for Christmas Break"
-		const specialMessage = this.findCafeMessage(cafeId, cafeInfo, now)
+		const specialMessage = this.findCafeMessage(cafeInfo, now)
 
 		// prepare all food items from bonapp for rendering
 		const foodItems = this.prepareFood(cafeMenu)
@@ -273,7 +280,6 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		const meals = this.getMeals({
 			foodItems,
 			ignoreProvidedMenus,
-			cafeId,
 			cafeMenu,
 		})
 
