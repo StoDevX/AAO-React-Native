@@ -92,6 +92,13 @@ export class FilterToolbarButton extends React.PureComponent<Props, State> {
 			}
 		}
 
+		const buttonTextStyle = [
+			activeContentStyle,
+			textWithIconStyle,
+			activeTextStyle,
+			buttonStyles.text,
+		]
+
 		return (
 			<React.Fragment>
 				<TouchableOpacity
@@ -99,19 +106,8 @@ export class FilterToolbarButton extends React.PureComponent<Props, State> {
 					onPress={this.openPopover}
 					style={[buttonStyles.button, activeButtonStyle, style]}
 				>
-					<Text
-						style={[
-							activeContentStyle,
-							textWithIconStyle,
-							activeTextStyle,
-							buttonStyles.text,
-						]}
-					>
-						{title}
-					</Text>
-					{icon ? (
-						<Icon name={icon} size={18} style={activeContentStyle} />
-					) : null}
+					<Text style={buttonTextStyle}>{title}</Text>
+					<Icon name={icon} size={18} style={activeContentStyle} />
 				</TouchableOpacity>
 				<FilterPopover
 					anchor={this.touchable}
