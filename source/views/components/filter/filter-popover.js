@@ -1,10 +1,9 @@
 //@flow
 import * as React from 'react'
-import {StyleSheet, View, TouchableOpacity} from 'react-native'
 import Popover from 'react-native-popover-view'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
-import {Touchable, type TouchableUnion} from '../touchable'
+import {type TouchableUnion} from '../touchable'
 import * as c from '../colors'
 
 type Props = {

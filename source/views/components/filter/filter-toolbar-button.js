@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {StyleSheet, Text, Platform, TouchableOpacity} from 'react-native'
+import {StyleSheet, Text, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
@@ -52,11 +52,11 @@ type State = {
 }
 
 export class FilterToolbarButton extends React.PureComponent<Props, State> {
-	touchable: ?TouchableUnion = null
-
 	state = {
 		popoverVisible: false,
 	}
+
+	touchable: ?TouchableUnion = null
 
 	openPopover = () => {
 		this.setState(() => ({popoverVisible: true}))
