@@ -52,13 +52,10 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 }
 
 const styles = StyleSheet.create({
-	arrow: {
-		backgroundColor: c.iosLightBackground,
-	},
 	popoverContainer: {
 		minWidth: 200,
 		maxWidth: 300,
 	},
 })
 
-const arrowStyle = StyleSheet.flatten(styles.arrow)
+const arrowStyle = {backgroundColor: c.iosLightBackground}
