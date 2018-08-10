@@ -41,18 +41,17 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 		onPopoverDismiss(newFilter)
 	}
 
-	const filterToggles = filters.map((filter, index) => (
+	const filterToggles = filters.map(filter => (
 		<FilterToolbarButton
 			key={filter.spec.title}
 			filter={filter}
 			isActive={filter.enabled}
 			onPopoverDismiss={onPopoverDismiss}
-			style={index === 0 ? styles.first : null}
 			title={filter.spec.title}
 		/>
 	))
 
-	const allButtons = filters.filter(f => f.enabled).map((filter, i) => {
+	const allButtons = filters.filter(f => f.enabled).map(filter => {
 		if (filter.type === 'toggle') {
 			return (
 				<ActiveFilterButton
@@ -60,17 +59,15 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 					filter={filter}
 					label={filter.spec.label}
 					onRemove={filter => updateFilter(filter)}
-					style={i === 0 ? styles.first : null}
 				/>
 			)
 		} else if (filter.type === 'list') {
-			return filter.spec.selected.map((selected, j) => (
+			return filter.spec.selected.map(selected => (
 				<ActiveFilterButton
 					key={selected.title}
 					filter={filter}
 					label={selected.label || selected.title.toString()}
 					onRemove={filter => updateFilter(filter, selected)}
-					style={i === 0 && j === 0 ? styles.first : null}
 				/>
 			))
 		}
@@ -81,11 +78,19 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 
 	return (
 		<React.Fragment>
-			<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+			<ScrollView
+				contentContainerStyle={styles.scroller}
+				horizontal={true}
+				showsHorizontalScrollIndicator={false}
+			>
 				<Toolbar>{filterToggles}</Toolbar>
 			</ScrollView>
 			{anyFiltersEnabled && (
-				<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+				<ScrollView
+					contentContainerStyle={styles.scroller}
+					horizontal={true}
+					showsHorizontalScrollIndicator={false}
+				>
 					{activeFilterButtons}
 				</ScrollView>
 			)}
@@ -94,7 +99,7 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 }
 
 const styles = StyleSheet.create({
-	first: {
-		marginLeft: 10,
+	scroller: {
+		paddingLeft: 10,
 	},
 })
