@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react'
+import {ScrollView} from 'react-native'
 import type {FilterType} from './types'
 import {SingleToggleSection} from './section-toggle'
 import {ListSection} from './section-list'
@@ -20,7 +21,11 @@ export function FilterSection({filter, onChange}: FilterSectionPropsType) {
 			return null
 		}
 
-		return <ListSection filter={filter} onChange={onChange} />
+		return (
+			<ScrollView>
+				<ListSection filter={filter} onChange={onChange} />
+			</ScrollView>
+		)
 	}
 
 	if (filter.type === 'picker') {

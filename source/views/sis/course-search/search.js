@@ -122,6 +122,9 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 
 	handleSearchCancel = () => {
+		if (this.state.mode === 'browsing') {
+			this.props.updateRecentFilters(this.state.filters)
+		}
 		this.setState(() => ({typedQuery: '', searchQuery: '', mode: 'ready'}))
 		this.resetFilters()
 	}
@@ -131,7 +134,9 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 
 	handleSearchFocus = () => {
-		this.setState(() => ({mode: 'searching'}))
+		if (this.state.mode !== 'browsing') {
+			this.setState(() => ({mode: 'searching'}))
+		}
 	}
 
 	onRecentSearchPress = (text: string) => {
@@ -160,16 +165,14 @@ class CourseSearchView extends React.Component<Props, State> {
 		this.setState(() => ({filters: selectedFilters}))
 	}
 
-	openFilterView = () => {
-		this.props.navigation.navigate('FilterView', {
-			title: 'Add Filters',
-			initialFilters: this.state.filters,
-			onDismiss: filters => this.setState(() => ({filters})),
+	updateFilter = (filter: FilterType) => {
+		this.setState(state => {
+			let edited = state.filters.map(f => (f.key !== filter.key ? f : filter))
+			return {filters: edited}
 		})
 	}
 
-	openFilterViewAndBrowse = () => {
-		this.openFilterView()
+	browseAll = () => {
 		this.setState(() => ({mode: 'browsing'}))
 	}
 
@@ -230,9 +233,8 @@ class CourseSearchView extends React.Component<Props, State> {
 						courses={this.props.allCourses}
 						filters={filters}
 						navigation={this.props.navigation}
-						openFilterView={this.openFilterView}
+						onPopoverDismiss={this.updateFilter}
 						query={searchQuery}
-						updateRecentFilters={this.props.updateRecentFilters}
 					/>
 				) : (
 					<ScrollView style={[styles.common, styles.bottomContainer]}>
@@ -244,11 +246,11 @@ class CourseSearchView extends React.Component<Props, State> {
 							title="Recent"
 						/>
 						<RecentItemsList
-							actionLabel="Select Filters"
+							actionLabel="Browse All"
 							emptyHeader="No recent filter combinations"
 							emptyText="Your recent filter combinations will appear here."
 							items={recentFilterDescriptions}
-							onAction={this.openFilterViewAndBrowse}
+							onAction={this.browseAll}
 							onItemPress={this.onRecentFilterPress}
 							title="Browse"
 						/>

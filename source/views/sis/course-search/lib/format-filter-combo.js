@@ -18,6 +18,9 @@ export function formatFilterCombo(filters: FilterType[]): FilterComboType {
 
 function describeFilter(f: FilterType, filters: FilterType[]) {
 	switch (f.key) {
+		case 'spaceAvailable': {
+			return 'Space Available'
+		}
 		case 'status': {
 			return 'Open Courses'
 		}

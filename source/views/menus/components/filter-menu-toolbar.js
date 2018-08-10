@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react'
-import {StyleSheet, View, Text, Platform} from 'react-native'
+import {StyleSheet, View, Text} from 'react-native'
 import type momentT from 'moment'
 import type {FilterType} from '../../components/filter'
-import {Toolbar, ToolbarButton} from '../../components/toolbar'
+import {FilterToolbar, FilterToolbarButton} from '../../components/filter'
+import {Toolbar} from '../../components/toolbar'
 
 const styles = StyleSheet.create({
 	today: {
@@ -13,40 +14,52 @@ const styles = StyleSheet.create({
 	},
 	toolbarSection: {
 		flexDirection: 'row',
+		alignItems: 'center',
 	},
 })
 
 type PropsType = {
 	date: momentT,
 	title?: string,
-	onPress: () => any,
+	onPopoverDismiss: (filter: FilterType) => any,
 	filters: FilterType[],
 }
 
-export function FilterMenuToolbar({date, title, filters, onPress}: PropsType) {
-	const appliedFilterCount = filters
-		.filter(f => f.type !== 'picker')
-		.filter(f => f.enabled).length
-
-	const isFiltered = appliedFilterCount > 0
-	const filterWord = appliedFilterCount === 1 ? 'Filter' : 'Filters'
+export function FilterMenuToolbar({
+	date,
+	title,
+	filters,
+	onPopoverDismiss,
+}: PropsType) {
+	const mealFilter = filters.find(f => f.type === 'picker')
+	const multipleMeals =
+		mealFilter && mealFilter.type === 'picker'
+			? mealFilter.spec.options.length > 1
+			: false
+	const nonPickerFilters = filters.filter(f => f.type !== 'picker')
 
 	return (
-		<Toolbar onPress={onPress}>
-			<View style={[styles.toolbarSection, styles.today]}>
-				<Text>
-					<Text>{date.format('MMM. Do')}</Text>
-					{title ? <Text> — {title}</Text> : null}
-				</Text>
-			</View>
-
-			<ToolbarButton
-				iconName={Platform.OS === 'ios' ? 'ios-funnel' : 'md-funnel'}
-				isActive={isFiltered}
-				title={
-					isFiltered ? `${appliedFilterCount} ${filterWord}` : 'No Filters'
-				}
+		<React.Fragment>
+			<Toolbar>
+				<View style={[styles.toolbarSection, styles.today]}>
+					<Text>
+						<Text>{date.format('MMM. Do')}</Text>
+						{title ? <Text> — {title}</Text> : null}
+					</Text>
+				</View>
+				{mealFilter && multipleMeals ? (
+					<FilterToolbarButton
+						filter={mealFilter}
+						isActive={true}
+						onPopoverDismiss={onPopoverDismiss}
+						title={mealFilter.spec.title}
+					/>
+				) : null}
+			</Toolbar>
+			<FilterToolbar
+				filters={nonPickerFilters}
+				onPopoverDismiss={onPopoverDismiss}
 			/>
-		</Toolbar>
+		</React.Fragment>
 	)
 }

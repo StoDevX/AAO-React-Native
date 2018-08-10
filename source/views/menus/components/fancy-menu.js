@@ -88,11 +88,10 @@ export class FancyMenu extends React.Component<Props, State> {
 	isSpecialsFilter = (f: FilterType) =>
 		f.enabled && f.type === 'toggle' && f.spec.label === 'Only Show Specials'
 
-	openFilterView = () => {
-		this.props.navigation.navigate('FilterView', {
-			title: `Filter ${this.props.name} Menu`,
-			initialFilters: this.state.filters,
-			onDismiss: filters => this.setState(() => ({filters})),
+	updateFilter = (filter: FilterType) => {
+		this.setState(state => {
+			let edited = state.filters.map(f => (f.key !== filter.key ? f : filter))
+			return {filters: edited}
 		})
 	}
 
@@ -182,7 +181,7 @@ export class FancyMenu extends React.Component<Props, State> {
 			<FilterToolbar
 				date={now}
 				filters={filters}
-				onPress={this.openFilterView}
+				onPopoverDismiss={this.updateFilter}
 				title={mealName}
 			/>
 		)
@@ -200,6 +199,7 @@ export class FancyMenu extends React.Component<Props, State> {
 				renderSectionHeader={this.renderSectionHeader}
 				sections={(groupedMenuData: any)}
 				style={styles.inner}
+				windowSize={5}
 			/>
 		)
 	}
