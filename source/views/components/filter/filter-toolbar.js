@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import type {FilterType, ListType, ToggleType, ListItemSpecType} from './types'
-import {StyleSheet, ScrollView, View} from 'react-native'
+import {StyleSheet, ScrollView} from 'react-native'
 import {Toolbar} from '../toolbar'
 import {FilterToolbarButton} from './filter-toolbar-button'
 import {ActiveFilterButton} from './active-filter-button'
@@ -80,7 +80,7 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 	const anyFiltersEnabled = filters.some(f => f.enabled)
 
 	return (
-		<View>
+		<React.Fragment>
 			<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
 				<Toolbar>{filterToggles}</Toolbar>
 			</ScrollView>
@@ -89,7 +89,7 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 					{activeFilterButtons}
 				</ScrollView>
 			)}
-		</View>
+		</React.Fragment>
 	)
 }
 
