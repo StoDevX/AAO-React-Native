@@ -78,12 +78,13 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 	}
 
 	componentDidUpdate() {
-		if (
-			(typeof this.state.cachedCafe === 'string' &&
-				this.state.cachedCafe !== this.props.cafe) ||
-			(typeof this.state.cachedCafe !== 'string' &&
-				this.state.cachedCafe.id !== this.props.cafe.id)
-		) {
+		let {cachedCafe} = this.state
+		let {cafe: newCafe} = this.props
+
+		cachedCafe = typeof cachedCafe === 'string' ? cachedCafe : cachedCafe.id
+		newCafe = typeof newCafe === 'string' ? newCafe : newCafe.id
+
+		if (cachedCafe !== newCafe) {
 			this.fetchData(this.props)
 		}
 	}
@@ -100,12 +101,13 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 
 		let menuUrl
 		let cafeUrl
+		let cafe = typeof props.cafe === 'string' ? props.cafe : props.cafe.id
 		if (typeof props.cafe === 'string') {
-			menuUrl = API(`/food/named/menu/${props.cafe}`)
-			cafeUrl = API(`/food/named/cafe/${props.cafe}`)
+			menuUrl = API(`/food/named/menu/${cafe}`)
+			cafeUrl = API(`/food/named/cafe/${cafe}`)
 		} else if (props.cafe.hasOwnProperty('id')) {
-			menuUrl = API(`/food/menu/${props.cafe.id}`)
-			cafeUrl = API(`/food/cafe/${props.cafe.id}`)
+			menuUrl = API(`/food/menu/${cafe}`)
+			cafeUrl = API(`/food/cafe/${cafe}`)
 		} else {
 			throw new Error('invalid cafe passed to BonappMenu!')
 		}
