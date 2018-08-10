@@ -19,6 +19,7 @@ const FullWidthSeparator = props => (
 )
 
 type Props = TopLevelViewPropsType & {
+	detailView?: string,
 	events: EventType[],
 	message: ?string,
 	refreshing: boolean,
@@ -47,9 +48,10 @@ export class EventList extends React.Component<Props> {
 	}
 
 	onPressEvent = (event: EventType) => {
+		let detailView = this.props.detailView || 'EventDetailView'
 		event = cleanEvent(event)
 		trackCalendarEventOpen(`${event.title} (${event.startTime.toISOString()})`)
-		this.props.navigation.navigate('EventDetailView', {
+		this.props.navigation.navigate(detailView, {
 			event,
 			poweredBy: this.props.poweredBy,
 		})
