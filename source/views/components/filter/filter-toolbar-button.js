@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '../colors'
+import {Touchable, type TouchableUnion} from '../touchable'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -51,7 +52,7 @@ type State = {
 }
 
 export class FilterToolbarButton extends React.PureComponent<Props, State> {
-	touchable: TouchableOpacity
+	touchable: ?TouchableUnion = null
 
 	state = {
 		popoverVisible: false,
@@ -101,14 +102,15 @@ export class FilterToolbarButton extends React.PureComponent<Props, State> {
 
 		return (
 			<React.Fragment>
-				<TouchableOpacity
-					ref={ref => (this.touchable = ref)}
+				<Touchable
+					getRef={ref => (this.touchable = ref)}
+					highlight={false}
 					onPress={this.openPopover}
 					style={[buttonStyles.button, activeButtonStyle, style]}
 				>
 					<Text style={buttonTextStyle}>{title}</Text>
 					<Icon name={icon} size={18} style={activeContentStyle} />
-				</TouchableOpacity>
+				</Touchable>
 				<FilterPopover
 					anchor={this.touchable}
 					filter={filter}

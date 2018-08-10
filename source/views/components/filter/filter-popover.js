@@ -4,10 +4,11 @@ import {StyleSheet, View, TouchableOpacity} from 'react-native'
 import Popover from 'react-native-popover-view'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
+import {Touchable, type TouchableUnion} from '../touchable'
 import * as c from '../colors'
 
 type Props = {
-	anchor: React.Ref<typeof TouchableOpacity>,
+	anchor: ?React.Ref<TouchableUnion>,
 	filter: FilterType,
 	onClosePopover: (filter: FilterType) => any,
 	visible: boolean,
