@@ -28,14 +28,10 @@ import {tracker} from '../../analytics'
 import bugsnag from '../../bugsnag'
 import delay from 'delay'
 import retry from 'p-retry'
+import {API} from '../../globals'
+
 const CENTRAL_TZ = 'America/Winnipeg'
-
-const bonappMenuBaseUrl = 'https://legacy.cafebonappetit.com/api/2/menus'
-const bonappCafeBaseUrl = 'https://legacy.cafebonappetit.com/api/2/cafes'
-const fetchJsonQuery = (url, query) =>
-	fetchJson(`${url}?${qs.stringify(query)}`)
 const entities = new AllHtmlEntities()
-
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
 const DEFAULT_MENU = [
@@ -94,10 +90,8 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		})
 	}
 
-	requestMenu = (cafeId: string) => () =>
-		fetchJsonQuery(bonappMenuBaseUrl, {cafe: cafeId})
-	requestCafe = (cafeId: string) => () =>
-		fetchJsonQuery(bonappCafeBaseUrl, {cafe: cafeId})
+	requestMenu = (cafeId: string) => () => fetchJson(API(`/food/menu/${cafeId}`))
+	requestCafe = (cafeId: string) => () => fetchJson(API(`/food/cafe/${cafeId}`))
 
 	fetchData = async (props: Props) => {
 		let cafeMenu: ?MenuInfoType = null
