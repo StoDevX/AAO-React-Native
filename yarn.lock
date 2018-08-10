@@ -509,9 +509,9 @@
   dependencies:
     prop-types "^15.5.10"
 
-"@mapbox/react-native-mapbox-gl@6.1.2-beta2":
-  version "6.1.2-beta2"
-  resolved "https://registry.yarnpkg.com/@mapbox/react-native-mapbox-gl/-/react-native-mapbox-gl-6.1.2-beta2.tgz#2140aab25ab5c31db1c91b17076d1573b93950e2"
+"@mapbox/react-native-mapbox-gl@6.1.2":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@mapbox/react-native-mapbox-gl/-/react-native-mapbox-gl-6.1.2.tgz#cf760105910db0b9de9544705165b307a2ccfeaa"
   dependencies:
     "@turf/helpers" "4.6.0"
     underscore "^1.8.3"
