@@ -1,13 +1,13 @@
 //@flow
 import * as React from 'react'
-import {StyleSheet, View, TouchableOpacity} from 'react-native'
 import Popover from 'react-native-popover-view'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
+import {type TouchableUnion} from '../touchable'
 import * as c from '../colors'
 
 type Props = {
-	anchor: React.Ref<typeof TouchableOpacity>,
+	anchor: ?React.Ref<TouchableUnion>,
 	filter: FilterType,
 	onClosePopover: (filter: FilterType) => any,
 	visible: boolean,
@@ -43,20 +43,17 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 				isVisible={visible}
 				onClose={() => onClosePopover(filter)}
 				placement="bottom"
+				popoverStyle={popoverContainer}
 			>
-				<View style={styles.popoverContainer}>
-					<FilterSection filter={filter} onChange={this.onFilterChanged} />
-				</View>
+				<FilterSection filter={filter} onChange={this.onFilterChanged} />
 			</Popover>
 		)
 	}
 }
 
-const styles = StyleSheet.create({
-	popoverContainer: {
-		minWidth: 200,
-		maxWidth: 300,
-	},
-})
+const popoverContainer = {
+	minWidth: 200,
+	maxWidth: 300,
+}
 
 const arrowStyle = {backgroundColor: c.iosLightBackground}
