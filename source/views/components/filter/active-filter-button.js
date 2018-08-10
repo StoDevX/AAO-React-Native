@@ -23,6 +23,7 @@ export function ActiveFilterButton({filter, label, onRemove, style}: Props) {
 		ios: 'ios-close-circle',
 		android: 'md-close-circle',
 	})
+
 	return (
 		<View style={[style, styles.badge]}>
 			<Text style={styles.text}>{label}</Text>

@@ -37,6 +37,7 @@ export function FilterMenuToolbar({
 			? mealFilter.spec.options.length > 1
 			: false
 	const nonPickerFilters = filters.filter(f => f.type !== 'picker')
+
 	return (
 		<React.Fragment>
 			<Toolbar>
