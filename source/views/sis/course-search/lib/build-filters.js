@@ -18,6 +18,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 
 	const allGEs = ges.map(ge => ({title: ge}))
 	const allDepartments = departments.map(dep => ({title: dep}))
+	const courseLevelOptions = [{title: 100}, {title: 200}, {title: 300}]
 
 	return [
 		{
@@ -78,6 +79,22 @@ export async function buildFilters(): Promise<FilterType[]> {
 			},
 			apply: {
 				key: 'departments',
+			},
+		},
+		{
+			type: 'list',
+			key: 'level',
+			enabled: false,
+			spec: {
+				title: 'Level',
+				showImages: false,
+				options: courseLevelOptions,
+				mode: 'OR',
+				selected: courseLevelOptions,
+				displayTitle: true,
+			},
+			apply: {
+				key: 'level',
 			},
 		},
 		{
