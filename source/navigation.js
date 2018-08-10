@@ -23,7 +23,6 @@ import {
 	CarletonWeitzMenuScreen,
 	CarletonSaylesMenuScreen,
 } from './views/menus'
-import {FilterView} from './views/components/filter'
 import NewsView from './views/news'
 import SISView from './views/sis'
 import {JobDetailView} from './views/sis/student-work/detail'
@@ -76,7 +75,6 @@ export const AppNavigator = createStackNavigator(
 		EditHomeView: {screen: EditHomeView},
 		EventDetailView: {screen: EventDetailView},
 		FaqView: {screen: FaqView},
-		FilterView: {screen: FilterView},
 		HelpView: {screen: HelpView},
 		JobDetailView: {screen: JobDetailView},
 		LegalView: {screen: LegalView},
