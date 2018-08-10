@@ -44,20 +44,17 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 				isVisible={visible}
 				onClose={() => onClosePopover(filter)}
 				placement="bottom"
+				popoverStyle={popoverContainer}
 			>
-				<View style={styles.popoverContainer}>
-					<FilterSection filter={filter} onChange={this.onFilterChanged} />
-				</View>
+				<FilterSection filter={filter} onChange={this.onFilterChanged} />
 			</Popover>
 		)
 	}
 }
 
-const styles = StyleSheet.create({
-	popoverContainer: {
-		minWidth: 200,
-		maxWidth: 300,
-	},
-})
+const popoverContainer = {
+	minWidth: 200,
+	maxWidth: 300,
+}
 
 const arrowStyle = {backgroundColor: c.iosLightBackground}
