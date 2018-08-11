@@ -42,7 +42,7 @@ GEM
       faraday_middleware (~> 0.9)
       fastimage (>= 2.1.0, < 3.0.0)
       gh_inspector (>= 1.1.2, < 2.0.0)
-      google-api-client (>= 0.21.2, < 0.24.0)
+      google-api-client (>= 0.21.2, < 0.22.0)
       highline (>= 1.7.2, < 2.0.0)
       json (< 3.0.0)
       mini_magick (~> 4.5.1)
