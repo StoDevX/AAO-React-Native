@@ -263,7 +263,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			tracker.trackException(err.message)
 			bugsnag.notify(err)
 
-			const msg = 'Something went wrong. Email odt@stolaf.edu to let them know?'
+			const msg = 'Something went wrong. Email allaboutolaf@stolaf.edu to let them know?'
 			return <NoticeView text={msg} />
 		}
 
