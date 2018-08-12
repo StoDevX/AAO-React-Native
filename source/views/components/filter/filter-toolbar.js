@@ -100,6 +100,8 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 
 const styles = StyleSheet.create({
 	scroller: {
+		flex: 1,
+		flexDirection: 'column',
 		paddingLeft: 10,
 	},
 })
