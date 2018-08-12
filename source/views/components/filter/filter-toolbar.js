@@ -78,13 +78,15 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 
 	return (
 		<React.Fragment>
-			<ScrollView
-				contentContainerStyle={styles.scroller}
-				horizontal={true}
-				showsHorizontalScrollIndicator={false}
-			>
-				<Toolbar>{filterToggles}</Toolbar>
-			</ScrollView>
+			<Toolbar>
+				<ScrollView
+					contentContainerStyle={styles.scroller}
+					horizontal={true}
+					showsHorizontalScrollIndicator={false}
+				>
+					{filterToggles}
+				</ScrollView>
+			</Toolbar>
 			{anyFiltersEnabled && (
 				<ScrollView
 					contentContainerStyle={styles.scroller}
