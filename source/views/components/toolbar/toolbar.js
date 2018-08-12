@@ -19,6 +19,7 @@ const toolbarStyles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',
 		paddingVertical: 3,
+		alignItems: 'center',
 	},
 })
 
