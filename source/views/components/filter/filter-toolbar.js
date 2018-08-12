@@ -78,21 +78,25 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 
 	return (
 		<React.Fragment>
-			<ScrollView
-				contentContainerStyle={styles.scroller}
-				horizontal={true}
-				showsHorizontalScrollIndicator={false}
-			>
-				<Toolbar>{filterToggles}</Toolbar>
-			</ScrollView>
-			{anyFiltersEnabled && (
+			<Toolbar>
 				<ScrollView
 					contentContainerStyle={styles.scroller}
 					horizontal={true}
 					showsHorizontalScrollIndicator={false}
 				>
-					{activeFilterButtons}
+					{filterToggles}
 				</ScrollView>
+			</Toolbar>
+			{anyFiltersEnabled && (
+				<Toolbar>
+					<ScrollView
+						contentContainerStyle={styles.scroller}
+						horizontal={true}
+						showsHorizontalScrollIndicator={false}
+					>
+						{activeFilterButtons}
+					</ScrollView>
+				</Toolbar>
 			)}
 		</React.Fragment>
 	)
@@ -101,5 +105,6 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 const styles = StyleSheet.create({
 	scroller: {
 		paddingLeft: 10,
+		paddingVertical: 8,
 	},
 })
