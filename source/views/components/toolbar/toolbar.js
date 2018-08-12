@@ -2,6 +2,7 @@
 import * as React from 'react'
 import {StyleSheet, Platform, View} from 'react-native'
 import * as c from '../colors'
+import {Viewport} from '../../components/viewport'
 
 const toolbarStyles = StyleSheet.create({
 	shadow: {
@@ -28,8 +29,21 @@ type ToolbarPropsType = {
 
 export function Toolbar({children}: ToolbarPropsType) {
 	return (
-		<View style={[toolbarStyles.shadow, toolbarStyles.container]}>
-			{children}
-		</View>
+		<Viewport
+			render={({width}) => {
+				const toolbarWidth = {width: width}
+				return (
+					<View
+						style={[
+							toolbarStyles.shadow,
+							toolbarStyles.container,
+							toolbarWidth,
+						]}
+					>
+						{children}
+					</View>
+				)
+			}}
+		/>
 	)
 }
