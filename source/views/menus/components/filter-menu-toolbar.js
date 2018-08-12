@@ -42,10 +42,8 @@ export function FilterMenuToolbar({
 		<React.Fragment>
 			<Toolbar>
 				<View style={[styles.toolbarSection, styles.today]}>
-					<Text>
-						<Text>{date.format('MMM. Do')}</Text>
-						{title ? <Text> — {title}</Text> : null}
-					</Text>
+					<Text>{date.format('MMM. Do')}</Text>
+					{title ? <Text> — {title}</Text> : null}
 				</View>
 				{mealFilter && multipleMeals ? (
 					<FilterToolbarButton
