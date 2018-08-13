@@ -82,7 +82,6 @@ rules:
     - warn
     - reservedFirst: true
       ignoreCase: false
-      callbacksLast: true
   react/no-access-state-in-setstate: error
   react/no-did-mount-set-state: error
   react/no-did-update-set-state: error
