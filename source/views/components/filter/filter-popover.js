@@ -39,7 +39,7 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 
 		return (
 			<Viewport
-				render={viewport => (
+				render={() => (
 					<Popover
 						arrowStyle={arrowStyle}
 						fromView={anchor}
