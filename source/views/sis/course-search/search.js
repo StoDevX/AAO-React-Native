@@ -83,6 +83,12 @@ class CourseSearchView extends React.Component<Props, State> {
 		this.resetFilters()
 	}
 
+	componentWillUnmount() {
+		if (this.state.mode === 'browsing') {
+			this.props.updateRecentFilters(this.state.filters)
+		}
+	}
+
 	loadData = async () => {
 		this.setState(() => ({mode: 'loading'}))
 
