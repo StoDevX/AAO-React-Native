@@ -131,6 +131,9 @@ class CourseSearchView extends React.Component<Props, State> {
 
 	handleSearchChange = (value: string) => {
 		this.setState(() => ({typedQuery: value}))
+		if (value === '') {
+			this.setState(() => ({mode: 'browsing', searchQuery: value}))
+		}
 	}
 
 	handleSearchFocus = () => {
