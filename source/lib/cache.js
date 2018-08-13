@@ -54,27 +54,6 @@ function getItem(key: string): CacheResultType<any> {
 	)
 }
 
-/// MARK: courses
-
-const studentNumberKey = 'courses:student-number'
-const studentNumberCacheTime = [1, 'week']
-export function setStudentNumber(idNumbers: number) {
-	return setItem(studentNumberKey, idNumbers, studentNumberCacheTime)
-}
-export function getStudentNumber(): CacheResultType<number> {
-	return getItem(studentNumberKey)
-}
-
-const coursesKey = 'courses'
-const coursesCacheTime = [1, 'hour']
-import {type CoursesByTermType} from './courses/types'
-export function setAllCourses(courses: CoursesByTermType) {
-	return setItem(coursesKey, courses, coursesCacheTime)
-}
-export function getAllCourses(): CacheResultType<?CoursesByTermType> {
-	return getItem(coursesKey)
-}
-
 /// MARK: Financials
 
 const flexBalanceKey = 'financials:flex'
