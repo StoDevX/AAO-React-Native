@@ -75,7 +75,7 @@ class CourseSearchView extends React.Component<Props, State> {
 			// if no terms are cached, and the user didn't push the button,
 			// then don't download anything.
 			this.setState(() => ({mode: 'pending'}))
-			return;
+			return
 		}
 
 		this.setState(() => ({mode: 'loading'}))
@@ -102,10 +102,10 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 
 	handleSearchSubmit = () => {
-		this.setState(() => ({isSearchbarActive: false}))
 		this.props.navigation.push('CourseSearchResultsView', {
 			initialQuery: this.state.typedQuery,
 		})
+		this.setState(() => ({isSearchbarActive: false, typedQuery: ''}))
 	}
 
 	handleSearchCancel = () => {
