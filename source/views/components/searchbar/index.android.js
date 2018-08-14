@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
 export class SearchBar extends React.Component<Props> {
 	static defaultProps = {
 		active: false,
+		backButtonAndroid: true,
 		onCancel: () => {},
 		onChange: () => {},
 		onFocus: () => {},
@@ -50,6 +51,7 @@ export class SearchBar extends React.Component<Props> {
 				closeButton={this.props.active ? closeIcon : null}
 				focusOnLayout={false}
 				handleChangeText={this.props.onChange}
+				hideBack={!this.props.backButtonAndroid}
 				hideClose={!this.props.active}
 				input={this.props.value}
 				onBack={this.props.onCancel}
