@@ -46,7 +46,7 @@ type ReduxDispatchProps = {
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
 
 type State = {
-	isLoaded: boolean,
+	mode: 'loading' | 'pending' | 'ready',
 	isSearchbarActive: boolean,
 	typedQuery: string,
 }
@@ -59,17 +59,26 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 
 	state = {
-		isLoaded: false,
+		mode: 'pending',
 		isSearchbarActive: false,
 		typedQuery: '',
 	}
 
 	componentDidMount() {
-		this.loadData()
+		this.loadData({userInitiated: false})
 	}
 
-	loadData = async () => {
-		this.setState(() => ({isLoaded: false}))
+	loadData = async ({userInitiated=true}={}) => {
+		let hasCache = await areAnyTermsCached()
+
+		if (!hasCache && !userInitiated) {
+			// if no terms are cached, and the user didn't push the button,
+			// then don't download anything.
+			this.setState(() => ({mode: 'pending'}))
+			return;
+		}
+
+		this.setState(() => ({mode: 'loading'}))
 
 		// If the data has not been loaded into Redux State:
 		if (this.props.courseDataState !== 'ready') {
@@ -77,8 +86,8 @@ class CourseSearchView extends React.Component<Props, State> {
 			await this.props.loadCourseDataIntoMemory()
 
 			// 2. if any courses are cached, hide the spinner
-			if (await areAnyTermsCached()) {
-				this.setState(() => ({isLoaded: true}))
+			if (hasCache) {
+				this.setState(() => ({mode: 'ready'}))
 			}
 
 			// 3. either way, start updating courses in the background
@@ -89,7 +98,7 @@ class CourseSearchView extends React.Component<Props, State> {
 		}
 
 		// 4. when everything is done, make sure the spinner is hidden
-		this.setState(() => ({isLoaded: true}))
+		this.setState(() => ({mode: 'ready'}))
 	}
 
 	handleSearchSubmit = () => {
@@ -138,9 +147,9 @@ class CourseSearchView extends React.Component<Props, State> {
 	}
 
 	render() {
-		let {typedQuery, isLoaded, isSearchbarActive} = this.state
+		let {typedQuery, mode, isSearchbarActive} = this.state
 
-		if (!isLoaded) {
+		if (mode === 'loading') {
 			return <LoadingView text="Loading Course Data…" />
 		}
 
