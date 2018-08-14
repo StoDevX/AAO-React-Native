@@ -28,6 +28,7 @@ export class SearchBar extends React.Component<Props> {
 	static defaultProps = {
 		active: false,
 		backButtonAndroid: true,
+		androidIcon: null,
 		onCancel: () => {},
 		onChange: () => {},
 		onFocus: () => {},
@@ -41,17 +42,18 @@ export class SearchBar extends React.Component<Props> {
 	}
 
 	render() {
+		let {backButtonAndroid} = this.props
 		let backButton = this.props.active ? backIcon : searchIcon
 
 		return (
 			<NativeSearchBar
 				ref={this.handleRef}
 				autoCorrect={false}
-				backButton={backButton}
+				backButton={backButtonAndroid === 'search' ? searchIcon : backButton}
 				closeButton={this.props.active ? closeIcon : null}
 				focusOnLayout={false}
 				handleChangeText={this.props.onChange}
-				hideBack={!this.props.backButtonAndroid}
+				hideBack={!backButtonAndroid}
 				hideClose={!this.props.active}
 				input={this.props.value}
 				onBack={this.props.onCancel}

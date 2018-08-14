@@ -3,7 +3,7 @@
 export type Props = {
 	getRef?: any,
 	active?: boolean,
-	backButtonAndroid?: boolean,
+	backButtonAndroid?: "search" | boolean,
 	backgroundColor?: string,
 	onCancel: () => any,
 	onChange: string => any,

@@ -118,7 +118,7 @@ export class AnimatedSearchbox extends React.Component<Props> {
 							<Animated.View style={searchStyle}>
 								<SearchBar
 									active={this.props.active}
-									backButtonAndroid={false}
+									backButtonAndroid="search"
 									onCancel={this.handleCancel}
 									onChange={this.props.onChange}
 									onFocus={this.handleFocus}
