@@ -2575,9 +2575,9 @@ esdoc@^0.5.2:
     minimist "1.2.0"
     taffydb "2.7.2"
 
-eslint-config-prettier@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-3.0.0.tgz#1624534c08a7a1f536e15ac61ce2103e4c5d3d6f"
+eslint-config-prettier@3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-3.0.1.tgz#479214f64c1a4b344040924bfb97543db334b7b1"
   dependencies:
     get-stdin "^6.0.0"
 
