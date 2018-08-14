@@ -86,9 +86,8 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 	}
 
 	handleSearchCancel = () => {
-		this.setState(() => ({
-			typedQuery: '',
-			searchQuery: '',
+		this.setState(state => ({
+			typedQuery: state.searchQuery,
 			isSearchbarActive: false,
 		}))
 	}
