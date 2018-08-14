@@ -68,7 +68,7 @@ class CourseSearchView extends React.Component<Props, State> {
 		this.loadData({userInitiated: false})
 	}
 
-	loadData = async ({userInitiated=true}={}) => {
+	loadData = async ({userInitiated = true} = {}) => {
 		let hasCache = await areAnyTermsCached()
 
 		if (!hasCache && !userInitiated) {
