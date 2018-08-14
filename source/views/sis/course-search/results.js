@@ -91,7 +91,6 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 			searchQuery: '',
 			isSearchbarActive: false,
 		}))
-		this.resetFilters()
 	}
 
 	handleSearchChange = (value: string) => {
