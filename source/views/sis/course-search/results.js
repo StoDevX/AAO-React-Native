@@ -71,14 +71,16 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 
 	state = {
 		isSearchbarActive: false,
-		filtersLoaded: false,
+		filtersLoaded: Boolean(this.props.navigation.state.params.initialFilters),
 		filters: this.props.navigation.state.params.initialFilters || [],
 		typedQuery: this.props.navigation.state.params.initialQuery || '',
 		searchQuery: this.props.navigation.state.params.initialQuery || '',
 	}
 
 	componentDidMount() {
-		this.resetFilters()
+		if (!this.state.filters.length) {
+			this.resetFilters()
+		}
 	}
 
 	handleSearchSubmit = () => {
