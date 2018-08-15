@@ -10,7 +10,7 @@ Feel free to reach out to the development team <allaboutolaf@stolaf.edu> if you 
 
 ## General Information
 
-## Who runs this app? Who is collecting data?
+## Who runs this app? Who is processing data?
 
 ## What data is being collected?
 
