@@ -90,7 +90,9 @@ export class StreamListView extends React.PureComponent<Props, State> {
 				.map(stream => {
 					const date = moment(stream.starttime)
 					const group =
-						stream.status !== 'live' ? date.format('dddd, MMMM Do') : 'Live'
+						stream.status.toLowerCase() !== 'live'
+							? date.format('dddd, MMMM Do')
+							: 'Live'
 
 					return {
 						...stream,
