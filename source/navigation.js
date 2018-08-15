@@ -24,9 +24,11 @@ import {
 	CarletonSaylesMenuScreen,
 } from './views/menus'
 import NewsView from './views/news'
-import SISView from './views/sis'
-import {JobDetailView} from './views/sis/student-work/detail'
-import {CourseDetailView} from './views/sis/course-search/detail'
+import SISView, {
+	JobDetailView,
+	CourseDetailView,
+	CourseSearchResultsView,
+} from './views/sis'
 import {
 	BuildingHoursView,
 	BuildingHoursDetailView,
@@ -84,6 +86,7 @@ export const AppNavigator = createStackNavigator(
 		SettingsView: {screen: SettingsView},
 		IconSettingsView: {screen: IconSettingsView},
 		SISView: {screen: SISView},
+		CourseSearchResultsView: {screen: CourseSearchResultsView},
 		CourseDetailView: {screen: CourseDetailView},
 		StreamingView: {screen: StreamingView},
 		KSTOScheduleView: {screen: KSTOScheduleView},

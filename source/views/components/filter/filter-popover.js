@@ -4,6 +4,7 @@ import Popover from 'react-native-popover-view'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
 import {type TouchableUnion} from '../touchable'
+import {Viewport} from '../viewport'
 import * as c from '../colors'
 
 type Props = {
@@ -37,16 +38,20 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 		const {anchor, onClosePopover, visible} = this.props
 
 		return (
-			<Popover
-				arrowStyle={arrowStyle}
-				fromView={anchor}
-				isVisible={visible}
-				onClose={() => onClosePopover(filter)}
-				placement="bottom"
-				popoverStyle={popoverContainer}
-			>
-				<FilterSection filter={filter} onChange={this.onFilterChanged} />
-			</Popover>
+			<Viewport
+				render={() => (
+					<Popover
+						arrowStyle={arrowStyle}
+						fromView={anchor}
+						isVisible={visible}
+						onClose={() => onClosePopover(filter)}
+						placement="bottom"
+						popoverStyle={popoverContainer}
+					>
+						<FilterSection filter={filter} onChange={this.onFilterChanged} />
+					</Popover>
+				)}
+			/>
 		)
 	}
 }
