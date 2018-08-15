@@ -7,11 +7,13 @@ plugins:
   - react
   - react-native
   - flowtype
+  - react-native-a11y
 
 extends:
   - eslint:recommended
   - plugin:flowtype/recommended
   - plugin:react/recommended
+  - plugin:react-native-a11y/recommended
   - prettier
   - prettier/flowtype
   - prettier/react
