@@ -78,10 +78,8 @@ export class StreamListView extends React.PureComponent<Props, State> {
 
 			let params = {
 				sort: 'ascending',
-				// eslint-disable-next-line camelcase
-				date_from: dateFrom,
-				// eslint-disable-next-line camelcase
-				date_to: dateTo,
+				dateFrom,
+				dateTo,
 			}
 
 			const data = await fetchJson(API('/streams/upcoming', params))
@@ -90,7 +88,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
 			const processed = data
 				.filter(stream => stream.category !== 'athletics')
 				.map(stream => {
-					const date = moment(stream.starttime, 'YYYY-MM-DD HH:mm')
+					const date = moment(stream.starttime)
 					const group =
 						stream.status !== 'live' ? date.format('dddd, MMMM Do') : 'Live'
 
