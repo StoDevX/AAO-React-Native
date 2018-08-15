@@ -16,6 +16,11 @@ extends:
   - prettier/flowtype
   - prettier/react
 
+settings:
+  react:
+    version: "16.4"
+    flowVersion: "0.67"
+
 env:
   es6: true
   react-native/react-native: true
