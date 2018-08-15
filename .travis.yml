@@ -74,3 +74,6 @@ jobs:
 
 cache:
   yarn: true
+
+notifications:
+  webhooks: $TRAVIS_WEBHOOK
