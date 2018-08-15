@@ -76,4 +76,11 @@ cache:
   yarn: true
 
 notifications:
-  webhooks: $TRAVIS_WEBHOOK
+  webhooks:
+    urls:
+      - $TRAVIS_WEBHOOK
+    on_success: change
+    on_failure: always
+    on_start: change
+    on_cancel: always
+    on_error: always
