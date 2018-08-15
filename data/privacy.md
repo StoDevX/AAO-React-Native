@@ -12,17 +12,57 @@ Feel free to reach out to the development team <allaboutolaf@stolaf.edu> if you 
 
 ## Who runs this app? Who is processing data?
 
-## What data is being collected?
+This app is developed by a team of students and alumni who operate independently of St. Olaf College ("The College"), and this app is not supported in any official capacity by The College.
+However, in order to collect information which is then presented to the user, (such as Menu data, SIS Balances, etc.) we make external network connections to services that are operated by The College or its affiliates.
+Any data that All About Olaf and its related systems collects is only accessible to trusted members of this team and will not be shared with any third parties.
+Any data that the external systems that All About Olaf interacts with may collect is accessible only to those who operate those external systems.
+
+It is worth noting that All About Olaf is an Open Source project, which means that you can read every line of source code that goes into this app and verify our claims.
+We encourage contributions from St. Olaf students, as this helps us to build new features and improvements that all users can enjoy.
+
+## What data _is_ being processed?
+
+There are a few different types of data we process, and various reasons why.
+
+- **User Credentials**, which include the User's username and password, are voluntarily entered by the user and stored locally in an encrypted datastore on the user's device until they uninstall the app.
+
+- **Analytics Data**, which consists of metrics relating to feature usage and engagement, is only collected when the "Share Analytics" option is enabled in the Settings view.
+
+- **Data Voluntarily Submitted by Users**, such as Building Hours update suggestions, are currently related to users who submit this data.
+  The voluntary submission of building hours updates is processed through email, and there is no requirement that you use your `@stolaf.edu` email address to submit suggestions.
+  We will not identify your contributions publicly without your explicit consent.
 
 ## What is the legal basis for processing this data?
 
+We need to process this data in order to provide you, the User, an experience that is satisfactory.
+
 ## Will the data be shared with any third parties?
+
+No.
+We do not share any data with third parties, except in situations where we are legally required to, or in additional situations as noted elsewhere in this document.
+Your data may also be shared with The College for investigative or diagnostic purposes, but in general we do not use this data because we don't really need to.
+Your usage of the All About Olaf app may be monitored by the entity that controls your network.
 
 ## How will the information be used?
 
+- **User Credentials** are expressly _never_ transmitted unless for the purpose of authenticating with an external system such as the SIS for the purpose of reading a user's balances.
+
+- **Analytics Data** are used for development purposes to understand how our users interact with the app and what the most common features and usage cases are.
+  We _do not_ share this Analytics Data with any third parties, except numbers of daily active users and amounts of feature usage.
+  Again, we neither have the ability to nor are interested in correlating this information with your identity, and we will never do that without your express opt-in consent.
+  We cannot and will not correlate Analytics Data with an identity or attempt to identify you by your app usage.
+
+- **Data Voluntarily Submitted by Users** are used to improve the experience for all users by updating the data that the app uses.
+
 ## How long will the data be stored for?
 
+**User Credentials** are stored locally on each device only for the duration of All About Olaf's installation.
+These credentials are stored using your device's standard means of storage, and cannot be retrieved.
+
 ## What rights do data subjects have?
+
+Data subjects can request a manual removal of any identifying data that we might have on record by sending an email to <allaboutolaf@stolaf.edu>.
+We will check to see if we do have any identifying data, but because of the very limited amount of data that we do collect, we will not
 
 ## How can data subjects raise a complaint?
 ## Introduction
