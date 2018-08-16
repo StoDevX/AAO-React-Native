@@ -21,8 +21,7 @@ x-config:
   x-workspace:
     - &persist-workspace-node_modules
       root: ./node_modules
-      paths:
-        - ./*
+      paths: [./*]
     - &attach-workspace-node_modules
       at: ./node_modules
   x-commands:  # command shorthands
@@ -113,7 +112,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn --version
       - save_cache: *save-cache-yarn
-      - persist_to_workspace: persist-workspace-node_modules
+      - persist_to_workspace: *persist-workspace-node_modules
 
   cache-bundler-linux:
     docker: [{image: 'circleci/ruby:2.4'}]
