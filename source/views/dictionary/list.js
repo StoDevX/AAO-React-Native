@@ -21,9 +21,9 @@ import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import * as defaultData from '../../../docs/dictionary.json'
-import {GH_PAGES_URL} from '../../globals'
+import {API} from '../../globals'
 
-const dictionaryUrl = GH_PAGES_URL('dictionary.json')
+const dictionaryUrl = API('/dictionary')
 
 const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
@@ -125,8 +125,8 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 		<ListSeparator key={`${sectionId}-${rowId}`} />
 	)
 
-	performSearch = (text: ?string) => {
-		this.setState(() => ({query: text ? text.toLowerCase() : ''}))
+	performSearch = (text: string) => {
+		this.setState(() => ({query: text}))
 	}
 
 	render() {
@@ -139,7 +139,8 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 
 		let results = this.state.allTerms
 		if (this.state.query) {
-			const {query, allTerms} = this.state
+			let {query, allTerms} = this.state
+			query = query.toLowerCase()
 			results = allTerms.filter(term =>
 				termToArray(term).some(word => word.startsWith(query)),
 			)
@@ -154,6 +155,7 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 				}
 				data={groupBy(results, item => item.word[0])}
 				onSearch={this.performSearch}
+				query={this.state.query}
 				refreshControl={refreshControl}
 				renderSeparator={this.renderSeparator}
 				sectionHeader={this.renderSectionHeader}

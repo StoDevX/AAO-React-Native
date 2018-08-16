@@ -16,6 +16,11 @@ extends:
   - prettier/flowtype
   - prettier/react
 
+settings:
+  react:
+    version: "16.4"
+    flowVersion: "0.67"
+
 env:
   es6: true
   react-native/react-native: true
@@ -82,7 +87,6 @@ rules:
     - warn
     - reservedFirst: true
       ignoreCase: false
-      callbacksLast: true
   react/no-access-state-in-setstate: error
   react/no-did-mount-set-state: error
   react/no-did-update-set-state: error

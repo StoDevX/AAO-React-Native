@@ -1,36 +1,28 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View, Animated, Platform, ScrollView} from 'react-native'
+import {StyleSheet, View, ScrollView} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '../../components/colors'
-import {SearchBar} from '../../components/searchbar'
 import {
 	updateCourseData,
 	loadCourseDataIntoMemory,
-	updateCourseFilters,
 	updateRecentSearches,
 	updateRecentFilters,
 } from '../../../flux/parts/courses'
-import {type CourseType, areAnyTermsCached} from '../../../lib/course-search'
+import {areAnyTermsCached} from '../../../lib/course-search'
 import type {ReduxState} from '../../../flux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
-import groupBy from 'lodash/groupBy'
-import sortBy from 'lodash/sortBy'
-import toPairs from 'lodash/toPairs'
-import debounce from 'lodash/debounce'
-import {CourseSearchResultsList} from './list'
 import LoadingView from '../../components/loading'
-import {deptNum} from './lib/format-dept-num'
 import {NoticeView} from '../../components/notice'
-import {Viewport} from '../../components/viewport'
-import {applyFiltersToItem, type FilterType} from '../../components/filter'
-import {RecentItemsList} from '../components/recent-search/list'
+import {AnimatedSearchbox} from '../components/animated-searchbox'
+import {type FilterType} from '../../components/filter'
+import {RecentItemsList} from '../components/recents-list'
 import {Separator} from '../../components/separator'
 import {buildFilters} from './lib/build-filters'
 import type {FilterComboType} from './lib/format-filter-combo'
-import keywordSearch from 'keyword-search'
+import fromPairs from 'lodash/fromPairs'
 
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
@@ -40,9 +32,7 @@ const NETWORK_WARNING =
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
-	allCourses: Array<CourseType>,
 	courseDataState: string,
-	filters: Array<FilterType>,
 	isConnected: boolean,
 	recentFilters: FilterComboType[],
 	recentSearches: string[],
@@ -51,163 +41,44 @@ type ReduxStateProps = {
 type ReduxDispatchProps = {
 	updateCourseData: () => Promise<any>,
 	loadCourseDataIntoMemory: () => Promise<any>,
-	onFiltersChange: (filters: FilterType[]) => any,
-	updateRecentFilters: (filters: FilterType[]) => any,
-	updateRecentSearches: (query: string) => any,
 }
 
-type DefaultProps = {
-	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
-}
-
-type Props = ReactProps & ReduxStateProps & ReduxDispatchProps & DefaultProps
+type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
 
 type State = {
-	browsing: boolean,
-	cachedFilters: Array<FilterType>,
-	dataLoading: boolean,
-	searchResults: Array<{title: string, data: Array<CourseType>}>,
-	searchActive: boolean,
-	searchPerformed: boolean,
-	query: string,
+	mode: 'loading' | 'pending' | 'ready',
+	isSearchbarActive: boolean,
+	typedQuery: string,
 }
 
-function executeSearch(args: {
-	text: string,
-	filters: FilterType[],
-	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
-	allCourses: Array<CourseType>,
-	updateRecentSearches: (query: string) => any,
-}) {
-	const {text, filters, applyFilters, allCourses, updateRecentSearches} = args
-	const query = text.toLowerCase()
-
-	const filteredCourses = allCourses.filter(course =>
-		applyFilters(filters, course),
-	)
-
-	const results = filteredCourses.filter(
-		course =>
-			keywordSearch(query, course.name.toLowerCase(), 1) ||
-			keywordSearch(query, (course.title || '').toLowerCase(), 1) ||
-			(course.instructors || []).some(name =>
-				keywordSearch(query, name.toLowerCase(), 1),
-			) ||
-			deptNum(course)
-				.toLowerCase()
-				.startsWith(query) ||
-			(course.gereqs || []).some(gereq =>
-				gereq.toLowerCase().startsWith(query),
-			),
-	)
-	const sortedResults = sortBy(results, course => deptNum(course))
-	const grouped = groupBy(sortedResults, r => r.term)
-	const groupedCourses = toPairs(grouped).map(([key, value]) => ({
-		title: key,
-		data: value,
-	}))
-
-	const sortedTerms = sortBy(groupedCourses, course => course.title).reverse()
-
-	if (text.length !== 0) {
-		updateRecentSearches(text)
-	}
-
-	return {
-		searchResults: sortedTerms,
-		searchPerformed: true,
-		query: text,
-	}
-}
-
-function applyFiltersAndQuery(args: {
-	filters: FilterType[],
-	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
-	allCourses: Array<CourseType>,
-}) {
-	const {filters, applyFilters, allCourses} = args
-	const filteredCourses = allCourses.filter(course =>
-		applyFilters(filters, course),
-	)
-	const sortedCourses = sortBy(filteredCourses, course => deptNum(course))
-	const grouped = groupBy(sortedCourses, r => r.term)
-	const groupedCourses = toPairs(grouped).map(([key, value]) => ({
-		title: key,
-		data: value,
-	}))
-
-	const sortedTerms = sortBy(groupedCourses, course => course.title).reverse()
-
-	return {
-		searchResults: sortedTerms,
-	}
-}
-
-class CourseSearchView extends React.PureComponent<Props, State> {
+class CourseSearchView extends React.Component<Props, State> {
 	static navigationOptions = {
 		tabBarLabel: 'Course Search',
 		tabBarIcon: TabBarIcon('search'),
 		title: 'SIS',
 	}
 
-	static defaultProps = {
-		applyFilters: applyFiltersToItem,
-	}
-
 	state = {
-		browsing: false,
-		cachedFilters: this.props.filters,
-		dataLoading: true,
-		searchResults: [],
-		searchActive: false,
-		searchPerformed: false,
-		query: '',
-	}
-
-	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		if (prevState.browsing) {
-			return applyFiltersAndQuery({
-				filters: nextProps.filters,
-				applyFilters: nextProps.applyFilters,
-				allCourses: nextProps.allCourses,
-			})
-		}
-
-		if (!prevState.query) {
-			return null
-		}
-
-		if (nextProps.filters === prevState.cachedFilters) {
-			return null
-		}
-
-		return executeSearch({
-			text: prevState.query,
-			filters: nextProps.filters,
-			applyFilters: nextProps.applyFilters,
-			allCourses: nextProps.allCourses,
-			updateRecentSearches: nextProps.updateRecentSearches,
-		})
+		mode: 'pending',
+		isSearchbarActive: false,
+		typedQuery: '',
 	}
 
 	componentDidMount() {
-		this.loadData()
-		this.updateFilters(this.props)
+		this.loadData({userInitiated: false})
 	}
 
-	animations = {
-		headerOpacity: {start: 1, end: 0, duration: 200},
-		searchBarTop: {start: 71, end: 10, duration: 200},
-		containerHeight: {start: 125, end: 64, duration: 200},
-	}
+	loadData = async ({userInitiated = true} = {}) => {
+		let hasCache = await areAnyTermsCached()
 
-	searchBar: any = null
-	headerOpacity = new Animated.Value(this.animations.headerOpacity.start)
-	searchBarTop = new Animated.Value(this.animations.searchBarTop.start)
-	containerHeight = new Animated.Value(this.animations.containerHeight.start)
+		if (!hasCache && !userInitiated) {
+			// if no terms are cached, and the user didn't push the button,
+			// then don't download anything.
+			this.setState(() => ({mode: 'pending'}))
+			return
+		}
 
-	loadData = async () => {
-		this.setState(() => ({dataLoading: true}))
+		this.setState(() => ({mode: 'loading'}))
 
 		// If the data has not been loaded into Redux State:
 		if (this.props.courseDataState !== 'ready') {
@@ -215,8 +86,8 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			await this.props.loadCourseDataIntoMemory()
 
 			// 2. if any courses are cached, hide the spinner
-			if (await areAnyTermsCached()) {
-				this.setState(() => ({dataLoading: false}))
+			if (hasCache) {
+				this.setState(() => ({mode: 'ready'}))
 			}
 
 			// 3. either way, start updating courses in the background
@@ -227,138 +98,63 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 		}
 
 		// 4. when everything is done, make sure the spinner is hidden
-		this.setState(() => ({dataLoading: false}))
+		this.setState(() => ({mode: 'ready'}))
 	}
 
-	onSearchButtonPress = text => {
-		if (Platform.OS === 'ios') {
-			this.searchBar.blur()
-		}
-
-		this.performSearch(text)
-	}
-
-	_performSearch = (query: string) => {
-		const results = executeSearch({
-			text: query,
-			filters: this.props.filters,
-			applyFilters: this.props.applyFilters,
-			allCourses: this.props.allCourses,
-			updateRecentSearches: this.props.updateRecentSearches,
+	handleSearchSubmit = () => {
+		this.props.navigation.push('CourseSearchResultsView', {
+			initialQuery: this.state.typedQuery,
 		})
-		this.setState(() => results)
+		this.setState(() => ({isSearchbarActive: false, typedQuery: ''}))
 	}
 
-	performSearch = debounce(this._performSearch, 20)
+	handleSearchCancel = () => {
+		this.setState(() => ({typedQuery: '', isSearchbarActive: false}))
+	}
+
+	handleSearchChange = (value: string) => {
+		this.setState(() => ({typedQuery: value}))
+	}
+
+	handleSearchFocus = () => {
+		this.setState(() => ({isSearchbarActive: true}))
+	}
 
 	browseAll = () => {
-		this.setState(() =>
-			applyFiltersAndQuery({
-				filters: this.props.filters,
-				applyFilters: this.props.applyFilters,
-				allCourses: this.props.allCourses,
-			}),
-		)
+		this.props.navigation.push('CourseSearchResultsView', {initialQuery: ''})
 	}
 
 	onRecentSearchPress = (text: string) => {
-		this.handleFocus()
-
-		if (Platform.OS === 'android') {
-			this.searchBar.setValue(text)
-		}
-
-		this.performSearch(text)
+		this.props.navigation.push('CourseSearchResultsView', {initialQuery: text})
 	}
 
 	onRecentFilterPress = async (text: string) => {
-		this.setState(() => ({browsing: true}))
-		this.handleFocus()
-		const selectedFilterCombo = this.props.recentFilters.find(
-			f => f.description === text,
-		)
-		const resetFilters = await buildFilters()
-		const selectedFilters = selectedFilterCombo
-			? resetFilters.map(
-					f => selectedFilterCombo.filters.find(f2 => f2.key === f.key) || f,
-			  )
-			: resetFilters
-		this.props.onFiltersChange(selectedFilters)
-		this.browseAll()
-	}
+		let {recentFilters} = this.props
+		let selectedFilterCombo = recentFilters.find(f => f.description === text)
 
-	animate = (thing, args, toValue: 'start' | 'end') =>
-		Animated.timing(thing, {
-			toValue: args[toValue],
-			duration: args.duration,
-		}).start()
-
-	handleFocus = () => {
-		this.animate(this.headerOpacity, this.animations.headerOpacity, 'end')
-		this.animate(this.searchBarTop, this.animations.searchBarTop, 'end')
-		this.animate(this.containerHeight, this.animations.containerHeight, 'end')
-		this.setState(() => ({searchActive: true}))
-	}
-
-	handleCancel = () => {
-		this.animate(this.headerOpacity, this.animations.headerOpacity, 'start')
-		this.animate(this.searchBarTop, this.animations.searchBarTop, 'start')
-		this.animate(this.containerHeight, this.animations.containerHeight, 'start')
-		if (Platform.OS === 'android') {
-			this.searchBar.setValue('')
+		let freshFilters = await buildFilters()
+		let selectedFilters = freshFilters
+		if (selectedFilterCombo) {
+			let filterLookup = fromPairs(
+				selectedFilterCombo.filters.map(f => [f.key, f]),
+			)
+			selectedFilters = freshFilters.map(f => filterLookup[f.key] || f)
 		}
-		this.setState(() => ({
-			searchActive: false,
-			browsing: false,
-			query: '',
-			searchResults: [],
-			searchPerformed: false,
-		}))
-		this.resetFilters()
-	}
 
-	openFilterView = () => {
-		this.props.navigation.navigate('FilterView', {
-			title: 'Add Filters',
-			pathToFilters: ['courses', 'filters'],
-			onChange: filters => this.props.onFiltersChange(filters),
-			onLeave: filters => this.props.updateRecentFilters(filters),
+		this.props.navigation.push('CourseSearchResultsView', {
+			initialFilters: selectedFilters,
 		})
-		this.setState(() => ({browsing: true}))
-		this.handleFocus()
-	}
-
-	resetFilters = async () => {
-		const newFilters = await buildFilters()
-		this.props.onFiltersChange(newFilters)
-	}
-
-	updateFilters = (props: Props) => {
-		const {filters} = props
-
-		// prevent ourselves from overwriting the filters from redux on mount
-		if (filters.length) {
-			return
-		}
-
-		this.resetFilters()
 	}
 
 	render() {
-		const {
-			searchActive,
-			searchPerformed,
-			searchResults,
-			query,
-			browsing,
-		} = this.state
+		let {typedQuery, mode, isSearchbarActive} = this.state
 
-		if (this.state.dataLoading) {
+		if (mode === 'loading') {
 			return <LoadingView text="Loading Course Data…" />
 		}
 
 		if (this.props.courseDataState === 'not-loaded') {
-			const msg = this.props.isConnected
+			let msg = this.props.isConnected
 				? PROMPT_TEXT
 				: PROMPT_TEXT.concat(`\n\n${NETWORK_WARNING}`)
 
@@ -373,85 +169,47 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 			)
 		}
 
-		const placeholderPrompt = browsing
-			? 'Browsing all courses'
-			: 'Search Class & Lab'
-
-		const recentFilterDescriptions = this.props.recentFilters.map(
+		let recentFilterDescriptions = this.props.recentFilters.map(
 			f => f.description,
 		)
 
 		return (
-			<Viewport
-				render={viewport => {
-					const searchBarWidth = viewport.width - 20
+			<View style={[styles.container, styles.common]}>
+				<AnimatedSearchbox
+					active={isSearchbarActive}
+					onCancel={this.handleSearchCancel}
+					onChange={this.handleSearchChange}
+					onFocus={this.handleSearchFocus}
+					onSubmit={this.handleSearchSubmit}
+					placeholder="Search Class & Lab"
+					title="Search Courses"
+					value={typedQuery}
+				/>
 
-					const aniContainerStyle = [
-						styles.searchContainer,
-						styles.common,
-						{height: this.containerHeight},
-					]
-					const aniSearchStyle = [
-						styles.searchBarWrapper,
-						{width: searchBarWidth},
-						{top: this.searchBarTop},
-					]
-					const aniHeaderStyle = [styles.header, {opacity: this.headerOpacity}]
+				<Separator />
 
-					return (
-						<ScrollView style={[styles.container, styles.common]}>
-							<Animated.View style={aniContainerStyle}>
-								<Animated.Text style={aniHeaderStyle}>
-									Search Courses
-								</Animated.Text>
-								<Animated.View style={aniSearchStyle}>
-									<SearchBar
-										getRef={ref => (this.searchBar = ref)}
-										onCancel={this.handleCancel}
-										onFocus={this.handleFocus}
-										onSearchButtonPress={this.onSearchButtonPress}
-										placeholder={placeholderPrompt}
-										searchActive={searchActive}
-										text={query}
-										textFieldBackgroundColor={c.sto.lightGray}
-									/>
-								</Animated.View>
-							</Animated.View>
-							<Separator />
-							{searchActive ? (
-								<CourseSearchResultsList
-									browsing={browsing}
-									filters={this.props.filters}
-									navigation={this.props.navigation}
-									onFiltersChange={this.props.onFiltersChange}
-									searchPerformed={searchPerformed}
-									terms={searchResults}
-									updateRecentFilters={this.props.updateRecentFilters}
-								/>
-							) : (
-								<View style={[styles.common, styles.bottomContainer]}>
-									<RecentItemsList
-										emptyHeader="No recent searches"
-										emptyText="Your recent searches will appear here."
-										items={this.props.recentSearches}
-										onItemPress={this.onRecentSearchPress}
-										title="Recent"
-									/>
-									<RecentItemsList
-										actionLabel="Select Filters"
-										emptyHeader="No recent filter combinations"
-										emptyText="Your recent filter combinations will appear here."
-										items={recentFilterDescriptions}
-										onAction={this.openFilterView}
-										onItemPress={this.onRecentFilterPress}
-										title="Browse"
-									/>
-								</View>
-							)}
-						</ScrollView>
-					)
-				}}
-			/>
+				<ScrollView
+					keyboardDismissMode="interactive"
+					style={[styles.common, styles.bottomContainer]}
+				>
+					<RecentItemsList
+						emptyHeader="No recent searches"
+						emptyText="Your recent searches will appear here."
+						items={this.props.recentSearches}
+						onItemPress={this.onRecentSearchPress}
+						title="Recent"
+					/>
+					<RecentItemsList
+						actionLabel="Browse All"
+						emptyHeader="No recent filter combinations"
+						emptyText="Your recent filter combinations will appear here."
+						items={recentFilterDescriptions}
+						onAction={this.browseAll}
+						onItemPress={this.onRecentFilterPress}
+						title="Browse"
+					/>
+				</ScrollView>
+			</View>
 		)
 	}
 }
@@ -459,9 +217,7 @@ class CourseSearchView extends React.PureComponent<Props, State> {
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
 		isConnected: state.app ? state.app.isConnected : false,
-		allCourses: state.courses ? state.courses.allCourses : [],
 		courseDataState: state.courses ? state.courses.readyState : '',
-		filters: state.courses ? state.courses.filters : [],
 		recentFilters: state.courses ? state.courses.recentFilters : [],
 		recentSearches: state.courses ? state.courses.recentSearches : [],
 	}
@@ -470,8 +226,6 @@ function mapState(state: ReduxState): ReduxStateProps {
 function mapDispatch(dispatch): ReduxDispatchProps {
 	return {
 		loadCourseDataIntoMemory: () => dispatch(loadCourseDataIntoMemory()),
-		onFiltersChange: (filters: FilterType[]) =>
-			dispatch(updateCourseFilters(filters)),
 		updateCourseData: () => dispatch(updateCourseData()),
 		updateRecentSearches: (query: string) =>
 			dispatch(updateRecentSearches(query)),
@@ -494,18 +248,5 @@ let styles = StyleSheet.create({
 	},
 	common: {
 		backgroundColor: c.white,
-	},
-	searchContainer: {
-		margin: 0,
-	},
-	searchBarWrapper: {
-		position: 'absolute',
-		left: 10,
-	},
-	header: {
-		fontSize: 30,
-		fontWeight: 'bold',
-		padding: 22,
-		paddingLeft: 17,
 	},
 })

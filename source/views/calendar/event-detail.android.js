@@ -8,13 +8,8 @@ import openUrl from '../components/open-url'
 import {Card} from '../components/card'
 import * as c from '../components/colors'
 import {ButtonCell} from '../components/cells/button'
-import {
-	getLinksFromEvent,
-	addToCalendar,
-	shareEvent,
-	getTimes,
-} from './calendar-util'
-import delay from 'delay'
+import {getLinksFromEvent, shareEvent, getTimes} from './calendar-util'
+import {AddToCalendar} from '../components/add-to-calendar'
 import {ListFooter} from '../components/list'
 
 const styles = StyleSheet.create({
@@ -64,30 +59,13 @@ function Links({urls}: {urls: Array<string>}) {
 	) : null
 }
 
-const CalendarButton = ({message, disabled, onPress}) => {
-	return (
-		<Card footer={message} style={styles.card}>
-			<ButtonCell
-				disabled={disabled}
-				onPress={onPress}
-				title="Add to calendar"
-			/>
-		</Card>
-	)
-}
-
 type Props = TopLevelViewPropsType & {
 	navigation: {
 		state: {params: {event: EventType, poweredBy: ?PoweredBy}},
 	},
 }
 
-type State = {
-	message: string,
-	disabled: boolean,
-}
-
-export class EventDetail extends React.PureComponent<Props, State> {
+export class EventDetail extends React.PureComponent<Props> {
 	static navigationOptions = ({navigation}: any) => {
 		const {event} = navigation.state.params
 		return {
@@ -95,38 +73,6 @@ export class EventDetail extends React.PureComponent<Props, State> {
 			headerRight: <ShareButton onPress={() => shareEvent(event)} />,
 		}
 	}
-
-	state = {
-		message: '',
-		disabled: false,
-	}
-
-	addEvent = async (event: EventType) => {
-		const start = Date.now()
-		this.setState(() => ({message: 'Adding event to calendar…'}))
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
-		const result = await addToCalendar(event)
-
-		if (result) {
-			this.setState(() => ({
-				message: 'Event has been added to your calendar',
-				disabled: true,
-			}))
-		} else {
-			this.setState(() => ({
-				message: 'Could not add event to your calendar',
-				disabled: false,
-			}))
-		}
-	}
-
-	onPressButton = () => this.addEvent(this.props.navigation.state.params.event)
 
 	render() {
 		const {event, poweredBy} = this.props.navigation.state.params
@@ -140,10 +86,17 @@ export class EventDetail extends React.PureComponent<Props, State> {
 
 				<Links urls={getLinksFromEvent(event)} />
 
-				<CalendarButton
-					disabled={this.state.disabled}
-					message={this.state.message}
-					onPress={this.onPressButton}
+				<AddToCalendar
+					event={event}
+					render={({message, disabled, onPress}) => (
+						<Card footer={message} style={styles.card}>
+							<ButtonCell
+								disabled={disabled}
+								onPress={onPress}
+								title="Add to calendar"
+							/>
+						</Card>
+					)}
 				/>
 
 				{poweredBy.title ? (

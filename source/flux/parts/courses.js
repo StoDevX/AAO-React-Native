@@ -14,23 +14,12 @@ import {
 	formatFilterCombo,
 } from '../../views/sis/course-search/lib/format-filter-combo'
 
-const UPDATE_COURSE_FILTERS = 'courses/UPDATE_COURSE_FILTERS'
 const LOAD_CACHED_COURSES = 'courses/LOAD_CACHED_COURSES'
 const COURSES_LOADED = 'courses/COURSES_LOADED'
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
 type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
-
-type UpdateCourseFiltersAction = {|
-	type: 'courses/UPDATE_COURSE_FILTERS',
-	payload: Array<FilterType>,
-|}
-export function updateCourseFilters(
-	filters: FilterType[],
-): UpdateCourseFiltersAction {
-	return {type: UPDATE_COURSE_FILTERS, payload: filters}
-}
 
 const UPDATE_RECENT_FILTERS = 'courses/UPDATE_RECENT_FILTERS'
 
@@ -151,7 +140,6 @@ export function updateRecentSearches(
 }
 
 type Action =
-	| UpdateCourseFiltersAction
 	| LoadCachedCoursesAction
 	| CoursesLoadedAction
 	| UpdateRecentSearchesAction
@@ -160,7 +148,6 @@ type Action =
 	| LoadRecentFiltersAction
 
 export type State = {|
-	filters: Array<FilterType>,
 	allCourses: Array<CourseType>,
 	readyState: 'not-loaded' | 'ready',
 	validGEs: string[],
@@ -169,7 +156,6 @@ export type State = {|
 |}
 
 const initialState = {
-	filters: [],
 	allCourses: [],
 	readyState: 'not-loaded',
 	validGEs: [],
@@ -179,9 +165,6 @@ const initialState = {
 
 export function courses(state: State = initialState, action: Action) {
 	switch (action.type) {
-		case UPDATE_COURSE_FILTERS:
-			return {...state, filters: action.payload}
-
 		case LOAD_RECENT_FILTERS:
 			return {...state, recentFilters: action.payload}
 

@@ -1,23 +1,22 @@
 // @flow
 import * as React from 'react'
-import {StyleSheet} from 'react-native'
+import {StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 const styles = StyleSheet.create({
 	icon: {
-		fontSize: 30,
+		fontSize: Platform.select({
+			ios: 30,
+			android: 24,
+		}),
 	},
 })
 
-export const TabBarIcon = (icon: string) => ({
-	tintColor,
-	focused,
-}: {
+type Props = {
 	tintColor: string,
 	focused: boolean,
-}) => (
-	<Icon
-		name={focused ? `ios-${icon}` : `ios-${icon}-outline`}
-		style={[styles.icon, {color: tintColor}]}
-	/>
+}
+
+export const TabBarIcon = (icon: string) => ({tintColor}: Props) => (
+	<Icon name={`ios-${icon}`} style={[styles.icon, {color: tintColor}]} />
 )

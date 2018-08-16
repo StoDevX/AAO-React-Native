@@ -7,46 +7,31 @@ import {loadAllCourseFilterOptions} from '../../../../lib/course-search'
 
 export async function buildFilters(): Promise<FilterType[]> {
 	const terms = await getTermInfo()
-	const allTerms = terms.map(term => ({
-		title: term.term,
-		label: parseTerm(term.term.toString()),
-	}))
+	const allTerms = terms
+		.map(term => ({
+			title: term.term,
+			label: parseTerm(term.term.toString()),
+		}))
+		.reverse()
 
 	const {ges, departments} = await loadAllCourseFilterOptions()
 
-	const allGEs = ges.map(ge => ({
-		title: ge,
-	}))
-	const allDepartments = departments.map(dep => ({
-		title: dep,
-	}))
+	const allGEs = ges.map(ge => ({title: ge}))
+	const allDepartments = departments.map(dep => ({title: dep}))
+	const courseLevelOptions = [{title: 100}, {title: 200}, {title: 300}]
 
 	return [
 		{
 			type: 'toggle',
-			key: 'status',
+			key: 'spaceAvailable',
 			enabled: false,
 			spec: {
-				label: 'Only Show Open Courses',
-				caption:
-					'Allows you to either see only courses that are open, or all courses.',
+				label: 'Space Available',
+				title: 'Enrollment',
+				caption: 'When activated, shows only courses with space available.',
 			},
 			apply: {
-				key: 'status',
-				trueEquivalent: 'O',
-			},
-		},
-		{
-			type: 'toggle',
-			key: 'type',
-			enabled: false,
-			spec: {
-				label: 'Show Labs Only',
-				caption: 'Allows you to only see labs.',
-			},
-			apply: {
-				key: 'type',
-				trueEquivalent: 'Lab',
+				key: 'spaceAvailable',
 			},
 		},
 		{
@@ -94,6 +79,51 @@ export async function buildFilters(): Promise<FilterType[]> {
 			},
 			apply: {
 				key: 'departments',
+			},
+		},
+		{
+			type: 'list',
+			key: 'level',
+			enabled: false,
+			spec: {
+				title: 'Level',
+				showImages: false,
+				options: courseLevelOptions,
+				mode: 'OR',
+				selected: courseLevelOptions,
+				displayTitle: true,
+			},
+			apply: {
+				key: 'level',
+			},
+		},
+		{
+			type: 'toggle',
+			key: 'status',
+			enabled: false,
+			spec: {
+				label: 'Open Courses',
+				title: 'Status',
+				caption:
+					'Allows you to either see only courses that are open, or all courses.',
+			},
+			apply: {
+				key: 'status',
+				trueEquivalent: 'O',
+			},
+		},
+		{
+			type: 'toggle',
+			key: 'type',
+			enabled: false,
+			spec: {
+				label: 'Lab Only',
+				title: 'Lab',
+				caption: 'Allows you to only see labs.',
+			},
+			apply: {
+				key: 'type',
+				trueEquivalent: 'Lab',
 			},
 		},
 	]

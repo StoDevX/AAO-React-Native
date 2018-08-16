@@ -11,7 +11,7 @@ export const CarletonBurtonMenuScreen = ({
 	navigation,
 }: TopLevelViewPropsType) => (
 	<BonAppHostedMenu
-		cafeId="35"
+		cafe="burton"
 		loadingMessage={['Searching for Schiller…']}
 		name="Burton"
 		navigation={navigation}
@@ -24,7 +24,7 @@ CarletonBurtonMenuScreen.navigationOptions = {
 
 export const CarletonLDCMenuScreen = ({navigation}: TopLevelViewPropsType) => (
 	<BonAppHostedMenu
-		cafeId="36"
+		cafe="ldc"
 		loadingMessage={['Tracking down empty seats…']}
 		name="LDC"
 		navigation={navigation}
@@ -39,7 +39,7 @@ export const CarletonWeitzMenuScreen = ({
 	navigation,
 }: TopLevelViewPropsType) => (
 	<BonAppHostedMenu
-		cafeId="458"
+		cafe="weitz"
 		loadingMessage={['Observing the artwork…', 'Previewing performances…']}
 		name="Weitz Center"
 		navigation={navigation}
@@ -54,7 +54,7 @@ export const CarletonSaylesMenuScreen = ({
 	navigation,
 }: TopLevelViewPropsType) => (
 	<BonAppHostedMenu
-		cafeId="34"
+		cafe="sayles"
 		loadingMessage={['Engaging in people-watching…', 'Checking the mail…']}
 		name="Sayles Hill"
 		navigation={navigation}

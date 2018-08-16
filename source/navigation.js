@@ -23,11 +23,12 @@ import {
 	CarletonWeitzMenuScreen,
 	CarletonSaylesMenuScreen,
 } from './views/menus'
-import {FilterView} from './views/components/filter'
 import NewsView from './views/news'
-import SISView from './views/sis'
-import {JobDetailView} from './views/sis/student-work/detail'
-import {CourseDetailView} from './views/sis/course-search/detail'
+import SISView, {
+	JobDetailView,
+	CourseDetailView,
+	CourseSearchResultsView,
+} from './views/sis'
 import {
 	BuildingHoursView,
 	BuildingHoursDetailView,
@@ -49,16 +50,12 @@ import HelpView from './views/help'
 
 const styles = StyleSheet.create({
 	header: {
-		backgroundColor: c.olevilleGold,
+		backgroundColor: c.navigationBackground,
 	},
 	card: {
-		...Platform.select({
-			ios: {
-				backgroundColor: c.iosLightBackground,
-			},
-			android: {
-				backgroundColor: c.androidLightBackground,
-			},
+		backgroundColor: Platform.select({
+			ios: c.iosLightBackground,
+			android: c.androidLightBackground,
 		}),
 	},
 })
@@ -80,7 +77,6 @@ export const AppNavigator = createStackNavigator(
 		EditHomeView: {screen: EditHomeView},
 		EventDetailView: {screen: EventDetailView},
 		FaqView: {screen: FaqView},
-		FilterView: {screen: FilterView},
 		HelpView: {screen: HelpView},
 		JobDetailView: {screen: JobDetailView},
 		LegalView: {screen: LegalView},
@@ -90,6 +86,7 @@ export const AppNavigator = createStackNavigator(
 		SettingsView: {screen: SettingsView},
 		IconSettingsView: {screen: IconSettingsView},
 		SISView: {screen: SISView},
+		CourseSearchResultsView: {screen: CourseSearchResultsView},
 		CourseDetailView: {screen: CourseDetailView},
 		StreamingView: {screen: StreamingView},
 		KSTOScheduleView: {screen: KSTOScheduleView},
@@ -107,8 +104,12 @@ export const AppNavigator = createStackNavigator(
 	{
 		navigationOptions: {
 			headerStyle: styles.header,
-			headerTintColor: c.black,
+			headerTintColor: c.navigationForeground,
 		},
+		headerTransitionPreset: Platform.select({
+			ios: 'uikit',
+			android: undefined,
+		}),
 		cardStyle: styles.card,
 	},
 )
