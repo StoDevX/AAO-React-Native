@@ -38,6 +38,7 @@ type Props = TopLevelViewPropsType & {
 	style?: any,
 	contentContainerStyle?: any,
 	filtersLoaded: boolean,
+	getRef: (ref: any) => any,
 }
 
 function doSearch(args: {
@@ -87,6 +88,7 @@ export class CourseResultsList extends React.PureComponent<Props> {
 			contentContainerStyle,
 			style,
 			filtersLoaded,
+			getRef,
 		} = this.props
 
 		// be sure to lowercase the query before calling doSearch, so that the memoization
@@ -112,6 +114,7 @@ export class CourseResultsList extends React.PureComponent<Props> {
 
 		return (
 			<SectionList
+				ref={getRef}
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={messageView}
 				ListHeaderComponent={header}
