@@ -1698,7 +1698,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "npm run bundle-data";
+			shellScript = "if [ ! -e package.json ]; then\n    cd ..\nfi\n\nnpm run bundle-data";
 		};
 		679C3A682050B39600B4D498 /* Mapbox - strip frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
