@@ -47,6 +47,7 @@ import {IconSettingsView} from './views/settings/icon'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
 import HelpView from './views/help'
+import PrintReleaseView, {PrintJobReleaseView} from './views/stoprint'
 
 const styles = StyleSheet.create({
 	header: {
@@ -100,6 +101,8 @@ export const AppNavigator = createStackNavigator(
 		CarletonLDCMenuView: {screen: CarletonLDCMenuScreen},
 		CarletonWeitzMenuView: {screen: CarletonWeitzMenuScreen},
 		CarletonSaylesMenuView: {screen: CarletonSaylesMenuScreen},
+		PrintReleaseView: {screen: PrintReleaseView},
+		PrintJobReleaseView: {screen: PrintJobReleaseView},
 	},
 	{
 		navigationOptions: {

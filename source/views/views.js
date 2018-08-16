@@ -153,6 +153,14 @@ export const allViews: ViewType[] = [
 		tint: c.lavender,
 		gradient: c.seafoamToGrass,
 	},
+	{
+		type: 'view',
+		view: 'PrintReleaseView',
+		title: 'StoPrint',
+		icon: 'print',
+		tint: c.chartreuse,
+		gradient: c.tealToSeafoam,
+	},
 ]
 
 export const allViewNames = allViews.map(v => v.view)
