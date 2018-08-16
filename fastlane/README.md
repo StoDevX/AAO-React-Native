@@ -100,6 +100,16 @@ Upload dYSM symbols to Bugsnag from Apple
 fastlane ios ci-run
 ```
 Run iOS builds or tests, as appropriate
+### ios certificates
+```
+fastlane ios certificates
+```
+Fetch certs for both the app and any extensions
+### ios bootstrap
+```
+fastlane ios bootstrap
+```
+Ensure that everything is set up (must be run manually, as it needs a 2FA code)
 
 ----
 
