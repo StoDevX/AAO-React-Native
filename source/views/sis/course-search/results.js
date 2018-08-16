@@ -185,11 +185,11 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 					courses={this.props.allCourses}
 					filters={filters}
 					filtersLoaded={filtersLoaded}
+					getRef={this.getRef}
 					navigation={this.props.navigation}
 					onListItemPress={this.handleListItemPress}
 					onPopoverDismiss={this.updateFilter}
 					query={searchQuery}
-					getRef={this.getRef}
 					style={isSearchbarActive ? styles.darken : null}
 				/>
 			</View>
