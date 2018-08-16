@@ -2040,7 +2040,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = TMK6S7TPX2;
@@ -2050,8 +2050,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "tech.frogpond.allaboutolaf.onesignal.notification-service-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "58db6c89-23db-43ef-aa00-74a802c8c646";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development tech.frogpond.allaboutolaf.onesignal.notification-service-extension";
+				PROVISIONING_PROFILE = "e4509c1a-92a7-4e44-b9d8-70ece5f8d29a";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc tech.frogpond.allaboutolaf.onesignal.notification-service-extension";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
