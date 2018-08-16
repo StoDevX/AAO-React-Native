@@ -78,7 +78,7 @@ cache:
 notifications:
   webhooks:
     urls:
-      - $TRAVIS_WEBHOOK
+      - https://discordapp.com/api/webhooks/477651404085919747/DezH4DOZQOm2wOFHY_BjYDlOCGmS5lDsasu-P4URfqVWvzb5CLCXV9_lKiM-bu3KP_VF
     on_success: change
     on_failure: always
     on_start: change
