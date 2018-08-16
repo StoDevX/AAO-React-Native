@@ -3,6 +3,7 @@ app_identifier 'NFMTHAZVS9.com.drewvolz.stolaf'
 
 # Your Apple email address
 apple_id 'aao_bot@fastmail.fm'
+apple_dev_portal_id 'hawkrives@gmail.com'
 
 # Your Apple Developer Team ID, if you are in multiple teams
 team_id 'TMK6S7TPX2'
