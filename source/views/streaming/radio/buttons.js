@@ -5,31 +5,45 @@ import {StyleSheet, Text, View, Platform} from 'react-native'
 import * as c from '../../components/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {Touchable} from '../../components/touchable'
+import {withTheme} from '@callstack/react-theme-provider'
+import type {PlayerTheme} from './types'
 
 type ActionButtonProps = {
 	icon: string,
 	text: string,
 	onPress: () => mixed,
+	theme: PlayerTheme,
 }
 
-export const ActionButton = ({icon, text, onPress}: ActionButtonProps) => (
-	<Touchable highlight={false} onPress={onPress} style={styles.button}>
-		<View style={styles.wrapper}>
-			<Icon name={icon} style={styles.icon} />
-			<Text style={styles.action}>{text}</Text>
-		</View>
-	</Touchable>
-)
+const ActionButton = (props: ActionButtonProps) => {
+	let {icon, text, onPress, theme} = props
+	let bg = {backgroundColor: theme.tintColor}
+	let fg = {color: theme.buttonTextColor}
+	let style = [styles.button, styles.largeButton, bg]
+
+	return (
+		<Touchable highlight={false} onPress={onPress} style={style}>
+			<View style={styles.wrapper}>
+				<Icon name={icon} style={[styles.icon, fg]} />
+				<Text style={[styles.action, fg]}>{text}</Text>
+			</View>
+		</Touchable>
+	)
+}
+
+const ThemedActionButton = withTheme(ActionButton)
+
+export {ThemedActionButton as ActionButton}
 
 export const CallButton = ({onPress}: {onPress: () => mixed}) => (
-	<SmallActionButton
+	<ThemedSmallActionButton
 		icon={Platform.OS === 'ios' ? 'ios-call' : 'md-call'}
 		onPress={onPress}
 	/>
 )
 
 export const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
-	<SmallActionButton
+	<ThemedSmallActionButton
 		icon={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
 		onPress={onPress}
 	/>
@@ -38,35 +52,41 @@ export const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
 type SmallActionButtonProps = {
 	icon: string,
 	onPress: () => mixed,
+	theme: PlayerTheme,
 }
 
-const SmallActionButton = ({icon, onPress}: SmallActionButtonProps) => (
-	<Touchable highlight={false} onPress={onPress} style={styles.smallButton}>
-		<View style={styles.wrapper}>
-			<Icon name={icon} style={styles.icon} />
-		</View>
-	</Touchable>
-)
+const SmallActionButton = (props: SmallActionButtonProps) => {
+	let {icon, onPress, theme} = props
+	let bg = {backgroundColor: theme.tintColor}
+	let fg = {color: theme.buttonTextColor}
+	let style = [styles.button, styles.smallButton, bg]
+
+	return (
+		<Touchable highlight={false} onPress={onPress} style={style}>
+			<Icon name={icon} style={[styles.icon, fg]} />
+		</Touchable>
+	)
+}
+
+const ThemedSmallActionButton = withTheme(SmallActionButton)
 
 const styles = StyleSheet.create({
 	button: {
 		alignItems: 'center',
 		paddingVertical: 5,
-		backgroundColor: c.denim,
-		width: 180,
 		borderRadius: 8,
 		overflow: 'hidden',
-	},
-	smallButton: {
-		alignItems: 'center',
-		paddingVertical: 5,
-		backgroundColor: c.denim,
-		width: 50,
-		borderRadius: 8,
-		overflow: 'hidden',
+		backgroundColor: c.black,
 	},
 	wrapper: {
+		justifyContent: 'center',
 		flexDirection: 'row',
+	},
+	largeButton: {
+		width: 180,
+	},
+	smallButton: {
+		width: 50,
 	},
 	icon: {
 		color: c.white,

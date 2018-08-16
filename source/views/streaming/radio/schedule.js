@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {GoogleCalendarView} from '../../calendar/calendar-google'
+import {CccCalendarView} from '../../calendar/calendar-ccc'
 import type {TopLevelViewPropsType} from '../../types'
 
 type Props = TopLevelViewPropsType
@@ -13,8 +13,8 @@ export class KSTOScheduleView extends React.PureComponent<Props> {
 
 	render() {
 		return (
-			<GoogleCalendarView
-				calendarId="kstonarwhal@gmail.com"
+			<CccCalendarView
+				calendar="ksto-schedule"
 				eventMapper={event => ({
 					...event,
 					config: {
@@ -39,8 +39,8 @@ export class KRLXScheduleView extends React.PureComponent<Props> {
 
 	render() {
 		return (
-			<GoogleCalendarView
-				calendarId="krlxradio88.1@gmail.com"
+			<CccCalendarView
+				calendar="krlx-schedule"
 				eventMapper={event => ({
 					...event,
 					config: {

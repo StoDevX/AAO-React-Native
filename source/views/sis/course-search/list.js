@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, SectionList} from 'react-native'
+import {StyleSheet, SectionList, ActivityIndicator} from 'react-native'
 import type {TopLevelViewPropsType} from '../../types'
 import type {CourseType} from '../../../lib/course-search/types'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
@@ -10,7 +10,7 @@ import {CourseRow} from './row'
 import memoize from 'lodash/memoize'
 import {parseTerm} from '../../../lib/course-search'
 import {NoticeView} from '../../components/notice'
-import {FilterToolbar} from '../components/filter-toolbar'
+import {FilterToolbar} from '../../components/filter'
 import type {FilterType} from '../../components/filter'
 import {applySearch, sortAndGroupResults} from './lib/execute-search'
 
@@ -21,16 +21,23 @@ const styles = StyleSheet.create({
 	message: {
 		paddingVertical: 16,
 	},
+	spinner: {
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 8,
+	},
 })
 
 type Props = TopLevelViewPropsType & {
 	applyFilters: (filters: FilterType[], item: CourseType) => boolean,
-	browsing: boolean,
 	courses: Array<CourseType>,
 	filters: Array<FilterType>,
-	openFilterView: () => mixed,
+	onPopoverDismiss: (filter: FilterType) => any,
+	onListItemPress?: CourseType => any,
 	query: string,
-	updateRecentFilters: (filters: FilterType[]) => any,
+	style?: any,
+	contentContainerStyle?: any,
+	filtersLoaded: boolean,
 }
 
 function doSearch(args: {
@@ -64,19 +71,38 @@ export class CourseResultsList extends React.PureComponent<Props> {
 	)
 
 	onPressRow = (data: CourseType) => {
+		if (this.props.onListItemPress) {
+			this.props.onListItemPress(data)
+		}
 		this.props.navigation.navigate('CourseDetailView', {course: data})
 	}
 
 	render() {
-		let {filters, browsing, query, courses, applyFilters} = this.props
+		let {
+			filters,
+			query,
+			courses,
+			applyFilters,
+			onPopoverDismiss,
+			contentContainerStyle,
+			style,
+			filtersLoaded,
+		} = this.props
 
+		// be sure to lowercase the query before calling doSearch, so that the memoization
+		// doesn't break when nothing's changed except case.
+		query = query.toLowerCase()
 		let results = memoizedDoSearch({query, filters, courses, applyFilters})
 
-		const header = (
-			<FilterToolbar filters={filters} onPress={this.props.openFilterView} />
+		const header = filtersLoaded ? (
+			<FilterToolbar filters={filters} onPopoverDismiss={onPopoverDismiss} />
+		) : (
+			<ActivityIndicator style={styles.spinner} />
 		)
 
-		const message = browsing
+		const hasActiveFilter = filters.some(f => f.enabled)
+
+		const message = hasActiveFilter
 			? 'There were no courses that matched your selected filters. Try a different filter combination.'
 			: query.length
 				? 'There were no courses that matched your query. Please try again.'
@@ -89,12 +115,14 @@ export class CourseResultsList extends React.PureComponent<Props> {
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={messageView}
 				ListHeaderComponent={header}
-				contentContainerStyle={styles.container}
+				contentContainerStyle={[styles.container, contentContainerStyle]}
 				extraData={this.props}
 				keyExtractor={this.keyExtractor}
+				keyboardDismissMode="interactive"
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
 				sections={(results: any)}
+				style={style}
 				windowSize={10}
 			/>
 		)

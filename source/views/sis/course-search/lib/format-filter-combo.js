@@ -18,6 +18,14 @@ export function formatFilterCombo(filters: FilterType[]): FilterComboType {
 
 function describeFilter(f: FilterType, filters: FilterType[]) {
 	switch (f.key) {
+		case 'level': {
+			const levelFilter = filterListSpecs(filters).find(f => f.key === 'level')
+			const selectedLevels = levelFilter ? levelFilter.spec.selected : []
+			return selectedLevels.map(level => level.title).join('/') + ' Level'
+		}
+		case 'spaceAvailable': {
+			return 'Space Available'
+		}
 		case 'status': {
 			return 'Open Courses'
 		}

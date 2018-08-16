@@ -12,12 +12,10 @@ const NewsView = TabNavigator({
 	StOlafNewsView: {
 		screen: ({navigation}) => (
 			<NewsContainer
-				mode="wp-json"
-				name="St. Olaf"
 				navigation={navigation}
-				query={{per_page: 10, _embed: true}}
+				source="stolaf"
 				thumbnail={newsImages.stolaf}
-				url="https://wp.stolaf.edu/wp-json/wp/v2/posts"
+				title="St. Olaf"
 			/>
 		),
 		navigationOptions: {
@@ -29,12 +27,10 @@ const NewsView = TabNavigator({
 	OlevilleNewsView: {
 		screen: ({navigation}) => (
 			<NewsContainer
-				mode="wp-json"
-				name="Oleville"
 				navigation={navigation}
-				query={{per_page: 10, _embed: true}}
+				source="oleville"
 				thumbnail={newsImages.oleville}
-				url="https://oleville.com/wp-json/wp/v2/posts/"
+				title="Oleville"
 			/>
 		),
 		navigationOptions: {
@@ -46,12 +42,10 @@ const NewsView = TabNavigator({
 	MessNewsView: {
 		screen: ({navigation}) => (
 			<NewsContainer
-				mode="wp-json"
-				name="The Mess"
 				navigation={navigation}
-				query={{per_page: 10, _embed: true}}
+				source="mess"
 				thumbnail={newsImages.mess}
-				url="https://www.manitoumessenger.com/wp-json/wp/v2/posts/"
+				title="The Mess"
 			/>
 		),
 		navigationOptions: {
@@ -63,11 +57,10 @@ const NewsView = TabNavigator({
 	PoliticOleNewsView: {
 		screen: ({navigation}) => (
 			<NewsContainer
-				mode="rss"
-				name="PoliticOle"
 				navigation={navigation}
+				source="politicole"
 				thumbnail={newsImages.politicole}
-				url="https://oleville.com/politicole/feed/"
+				title="PoliticOle"
 			/>
 		),
 		navigationOptions: {
@@ -79,12 +72,10 @@ const NewsView = TabNavigator({
 	KstoNewsView: {
 		screen: ({navigation}) => (
 			<NewsContainer
-				mode="wp-json"
-				name="KSTO"
 				navigation={navigation}
-				query={{per_page: 10, _embed: true}}
+				source="ksto"
 				thumbnail={newsImages.ksto}
-				url="https://pages.stolaf.edu/ksto/wp-json/wp/v2/posts/"
+				title="KSTO"
 			/>
 		),
 		navigationOptions: {

@@ -8,9 +8,9 @@ import {reportNetworkProblem} from '../../lib/report-network-problem'
 import LoadingView from '../components/loading'
 import * as defaultData from '../../../docs/faqs.json'
 import delay from 'delay'
-import {GH_PAGES_URL} from '../../globals'
+import {API} from '../../globals'
 
-const faqsUrl = GH_PAGES_URL('faqs.json')
+const faqsUrl = API('/faqs')
 
 const styles = StyleSheet.create({
 	container: {

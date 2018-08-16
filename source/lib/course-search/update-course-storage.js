@@ -3,7 +3,7 @@
  * updateStoredCourses() handles updating the cached course data from the server
  */
 
-import type {CourseType, TermType} from './types'
+import type {RawCourseType, CourseType, TermType} from './types'
 import {COURSE_DATA_PAGE, INFO_PAGE} from './urls'
 import * as storage from '../storage'
 
@@ -58,6 +58,14 @@ async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
 
 async function storeTermCoursesFromServer(term: TermType) {
 	const url = COURSE_DATA_PAGE + term.path
-	const resp: Array<CourseType> = await fetchJson(url).catch(() => [])
-	storage.setTermCourseData(term.term, resp)
+	const resp: Array<RawCourseType> = await fetchJson(url).catch(() => [])
+	const formattedTermData = formatRawData(resp)
+	storage.setTermCourseData(term.term, formattedTermData)
+}
+
+function formatRawData(rawData: Array<RawCourseType>): Array<CourseType> {
+	return rawData.map(course => {
+		let spaceAvailable = course.enroll < course.max
+		return {spaceAvailable: spaceAvailable, ...course}
+	})
 }

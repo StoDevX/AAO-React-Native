@@ -13,9 +13,9 @@ import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import type {TopLevelViewPropsType} from '../../types'
 import type {OtherModeType} from '../types'
-import {GH_PAGES_URL} from '../../../globals'
+import {API} from '../../../globals'
 
-const transportationUrl = GH_PAGES_URL('transportation.json')
+const transportationUrl = API('/transit/modes')
 
 const groupModes = (modes: OtherModeType[]) => {
 	const grouped = groupBy(modes, m => m.category)

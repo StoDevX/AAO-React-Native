@@ -9,6 +9,11 @@ import {
 	View,
 } from 'react-native'
 
+export type TouchableUnion =
+	| typeof TouchableHighlight
+	| typeof TouchableOpacity
+	| typeof TouchableNativeFeedback
+
 type Props = {|
 	accessibilityComponentType?: string,
 	accessibilityLabel?: string,
@@ -17,6 +22,7 @@ type Props = {|
 	borderless?: boolean,
 	children?: React.Node,
 	containerStyle?: any,
+	getRef?: () => TouchableUnion,
 	highlight?: boolean,
 	onPress?: () => any,
 	style?: any,
@@ -27,6 +33,7 @@ export const Touchable = ({
 	borderless = false,
 	children,
 	containerStyle,
+	getRef,
 	highlight = true,
 	onPress = () => {},
 	style,
@@ -45,6 +52,7 @@ export const Touchable = ({
 
 			return (
 				<Component
+					ref={getRef}
 					onPress={onPress}
 					{...innerProps}
 					style={containerStyle}
@@ -64,6 +72,7 @@ export const Touchable = ({
 
 			return (
 				<TouchableNativeFeedback
+					ref={getRef}
 					background={background}
 					onPress={onPress}
 					style={containerStyle}

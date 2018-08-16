@@ -4,15 +4,15 @@ import * as React from 'react'
 import {TabNavigator} from '../components/tabbed-view'
 import {TabBarIcon} from '../components/tabbar-icon'
 
-import {GoogleCalendarView} from './calendar-google'
+import {CccCalendarView} from './calendar-ccc'
 
 export {EventDetail} from './event-detail'
 
 const CalendarView = TabNavigator({
 	StOlafCalendarView: {
 		screen: ({navigation}) => (
-			<GoogleCalendarView
-				calendarId="5g91il39n0sv4c2bjdv1jrvcpq4ulm4r@import.calendar.google.com"
+			<CccCalendarView
+				calendar="stolaf"
 				navigation={navigation}
 				poweredBy={{
 					title: 'Powered by the St. Olaf calendar',
@@ -28,8 +28,8 @@ const CalendarView = TabNavigator({
 
 	OlevilleCalendarView: {
 		screen: ({navigation}) => (
-			<GoogleCalendarView
-				calendarId="stolaf.edu_fvulqo4larnslel75740vglvko@group.calendar.google.com"
+			<CccCalendarView
+				calendar="oleville"
 				navigation={navigation}
 				poweredBy={{
 					title: 'Powered by the Oleville calendar',
@@ -45,8 +45,8 @@ const CalendarView = TabNavigator({
 
 	NorthfieldCalendarView: {
 		screen: ({navigation}) => (
-			<GoogleCalendarView
-				calendarId="thisisnorthfield@gmail.com"
+			<CccCalendarView
+				calendar="northfield"
 				navigation={navigation}
 				poweredBy={{
 					title: 'Powered by VisitingNorthfield.com',
