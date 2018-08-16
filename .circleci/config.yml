@@ -24,6 +24,36 @@ x-config:
       paths: [./*]
     - &attach-workspace-node_modules
       at: ./node_modules
+    - &persist-workspace-bundler
+      root: ./vendor/bundle
+      paths: [./*]
+    - &attach-workspace-bundler
+      at: ./vendor/bundle
+  x-platform:
+    - &platform-js
+      docker: 
+        - image: 'circleci/node:8'
+    - &platform-ios
+      macos:
+        xcode: '9.4.1'
+      environment: &ios-env
+        task: IOS
+        FASTLANE_SKIP_UPDATE_CHECK: '1'
+        FASTLANE_DISABLE_ANIMATION: '1'
+        LC_ALL: en_US.UTF-8
+        LANG: en_US.UTF-8
+      shell: /bin/bash --login -o pipefail
+    - &platform-android
+      # cmd: key is passed to solve a weird issue (see GitHub PR's 2170 and 2173).
+      # this overrides the thing and forces the container to run /bin/bash as the "command"
+      # so it doesn't get confused and OOM/exhaust the build resources (don't ask me)
+      docker: 
+        - image: 'circleci/android:api-27-node8-alpha'
+          cmd: '/bin/bash'
+      environment: &android-env
+        task: ANDROID
+        FASTLANE_SKIP_UPDATE_CHECK: '1'
+        FASTLANE_DISABLE_ANIMATION: '1'
   x-commands:  # command shorthands
     - &set-ruby-version
       name: Set Ruby Version
@@ -56,6 +86,8 @@ workflows:
           filters: &filters {tags: {only: /.*/}}
       - cache-bundler-linux:
           filters: &filters {tags: {only: /.*/}}
+      - cache-ios:
+          filters: &filters {tags: {only: /.*/}}
       - danger:
           filters: *filters
           requires: [cache-yarn-linux]
@@ -76,7 +108,7 @@ workflows:
           requires: [cache-yarn-linux]
       - ios:
           filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data]
+          requires: [danger, flow, jest, prettier, eslint, data, cache-ios]
       - android:
           filters: *filters
           requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
@@ -105,7 +137,7 @@ workflows:
 
 jobs:
   cache-yarn-linux:
-    docker: [{image: 'circleci/node:8'}]
+    <<: *platform-js
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -125,9 +157,29 @@ jobs:
       - run: gem --version
       - run: ruby --version
       - save_cache: *save-cache-bundler
+  
+  cache-ios:
+    <<: *platform-ios
+    steps:
+      - checkout
+      # yarn
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn --version
+      - save_cache: *save-cache-yarn
+      - persist_to_workspace: *persist-workspace-node_modules
+      # bundler
+      - run: *set-ruby-version
+      - restore_cache: *restore-cache-bundler
+      - run: bundle check || bundle install --frozen --path ./vendor/bundle
+      - run: bundle --version
+      - run: gem --version
+      - run: ruby --version
+      - save_cache: *save-cache-bundler
+      - persist_to_workspace: *persist-workspace-bundler
 
   danger:
-    docker: [{image: 'circleci/node:8'}]
+    <<: *platform-js
     environment:
       task: JS-general
     steps:
@@ -136,7 +188,7 @@ jobs:
       - run: *run-danger
 
   flow:
-    docker: [{image: 'circleci/node:8'}]
+    <<: *platform-js
     environment:
       task: JS-flow
     steps:
@@ -148,7 +200,7 @@ jobs:
       - run: *run-danger
 
   jest:
-    docker: [{image: 'circleci/node:8'}]
+    <<: *platform-js
     environment:
       task: JS-jest
       JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
@@ -173,7 +225,7 @@ jobs:
             fi
 
   prettier:
-    docker: [{image: 'circleci/node:8'}]
+    <<: *platform-js
     environment:
       task: JS-prettier
     steps:
@@ -191,7 +243,7 @@ jobs:
       - run: *run-danger
 
   eslint:
-    docker: [{image: 'circleci/node:8'}]
+    <<: *platform-js
     environment:
       task: JS-lint
     steps:
@@ -206,7 +258,7 @@ jobs:
           path: ./test-results
 
   data:
-    docker: [{image: 'circleci/node:8'}]
+    <<: *platform-js
     environment:
       task: JS-data
     steps:
@@ -222,14 +274,7 @@ jobs:
       - run: *run-danger
 
   android: &android
-    # cmd: key is passed to solve a weird issue (see GitHub PR's 2170 and 2173).
-    # this overrides the thing and forces the container to run /bin/bash as the "command"
-    # so it doesn't get confused and OOM/exhaust the build resources (don't ask me)
-    docker: [{image: 'circleci/android:api-27-node8-alpha', cmd: '/bin/bash'}]
-    environment: &android-env
-      task: ANDROID
-      FASTLANE_SKIP_UPDATE_CHECK: '1'
-      FASTLANE_DISABLE_ANIMATION: '1'
+    <<: *platform-android
     steps:
       - checkout
       - run: node --version
@@ -262,7 +307,7 @@ jobs:
       IS_NIGHTLY: '1'
 
   android-bundle:
-    docker: [{image: 'circleci/node:8'}]
+    <<: *platform-js
     environment:
       task: JS-bundle-android
     steps:
@@ -281,24 +326,13 @@ jobs:
       - run: *run-danger
 
   ios: &ios
-    macos: {xcode: '9.4.1'}
-    environment: &ios-env
-      task: IOS
-      FASTLANE_SKIP_UPDATE_CHECK: '1'
-      FASTLANE_DISABLE_ANIMATION: '1'
-      LC_ALL: en_US.UTF-8
-      LANG: en_US.UTF-8
-    shell: /bin/bash --login -o pipefail
+    <<: *platform-ios
     steps:
       - checkout
       - run: yarn --version
       - run: *set-ruby-version
-      - restore_cache: *restore-cache-yarn
-      - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
-      - restore_cache: *restore-cache-bundler
-      - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - save_cache: *save-cache-bundler
+      - attach_workspace: *attach-workspace-node_modules
+      - attach_workspace: *attach-workspace-bundler
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run:
@@ -320,7 +354,7 @@ jobs:
       IS_NIGHTLY: '1'
 
   ios-bundle:
-    docker: [{image: 'circleci/node:8'}]
+    <<: *platform-js
     environment:
       task: JS-bundle-ios
     steps:
