@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, View} from 'react-native'
+import {StyleSheet, View, Platform} from 'react-native'
 import * as c from '../../components/colors'
 import {
 	updateRecentSearches,
@@ -69,6 +69,8 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 		applyFilters: applyFiltersToItem,
 	}
 
+	resultsList: any
+
 	state = {
 		isSearchbarActive: false,
 		filtersLoaded: Boolean(this.props.navigation.state.params.initialFilters),
@@ -83,8 +85,19 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 		}
 	}
 
+	scrollResultsToTop = () => {
+		this.resultsList.scrollToLocation({
+			animated: false,
+			itemIndex: 0,
+			sectionIndex: 0,
+			viewOffset: Platform.OS === 'ios' ? 87 : 100,
+			viewPosition: 0,
+		})
+	}
+
 	handleSearchSubmit = () => {
 		this.setState(state => ({searchQuery: state.typedQuery}))
+		this.scrollResultsToTop()
 	}
 
 	handleSearchCancel = () => {
@@ -99,6 +112,7 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 
 		if (value === '') {
 			this.setState(() => ({searchQuery: value}))
+			this.scrollResultsToTop()
 		}
 	}
 
@@ -133,6 +147,10 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 	resetFilters = async () => {
 		const newFilters = await buildFilters()
 		this.setState(() => ({filters: newFilters, filtersLoaded: true}))
+	}
+
+	setRef = (ref: any) => {
+		this.resultsList = ref
 	}
 
 	render() {
@@ -171,6 +189,7 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 					onListItemPress={this.handleListItemPress}
 					onPopoverDismiss={this.updateFilter}
 					query={searchQuery}
+					setRef={this.setRef}
 					style={isSearchbarActive ? styles.darken : null}
 				/>
 			</View>
