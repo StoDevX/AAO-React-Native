@@ -58,7 +58,7 @@ platform :ios do
 
   desc 'Builds and exports the app'
   lane :build do
-    match(type: 'appstore', readonly: true)
+    certificates(type: 'appstore')
     propagate_version
 
     # save it to a log file for later use
@@ -119,5 +119,15 @@ platform :ios do
 
     # go ahead and download dSYMs for bugsnag too
     # refresh_dsyms if circle?
+  end
+
+  desc 'Fetch certs for both the app and any extensions'
+  lane :certificates do |options|
+    app = 'NFMTHAZVS9.com.drewvolz.stolaf'
+    push_extension = 'tech.frogpond.allaboutolaf.onesignal.notification-service-extension'
+
+    match(app_identifier: [app, push_extension],
+          type: options[:type],
+          readonly: true)
   end
 end
