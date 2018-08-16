@@ -170,7 +170,7 @@ platform :ios do
   end
 
   desc 'Generate the push notification cert and upload it to OneSignal'
-  private_lane :generate_pem do
+  lane :generate_pem do
     password = 'password'
     env_key = 'ONESIGNAL_KEY'
 

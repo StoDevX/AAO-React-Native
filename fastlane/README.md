@@ -110,6 +110,11 @@ Fetch certs for both the app and any extensions
 fastlane ios bootstrap
 ```
 Ensure that everything is set up (must be run manually, as it needs a 2FA code)
+### ios generate_pem
+```
+fastlane ios generate_pem
+```
+Generate the push notification cert and upload it to OneSignal
 
 ----
 
