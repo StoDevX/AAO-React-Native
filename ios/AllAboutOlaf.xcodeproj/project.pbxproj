@@ -2050,10 +2050,10 @@
 				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "tech.frogpond.allaboutolaf.onesignal.notification-service-extension";
+				PRODUCT_BUNDLE_IDENTIFIER = "NFMTHAZVS9.com.drewvolz.stolaf.onesignal-notification-service-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "e4509c1a-92a7-4e44-b9d8-70ece5f8d29a";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc tech.frogpond.allaboutolaf.onesignal.notification-service-extension";
+				PROVISIONING_PROFILE = "41855bc4-ab4b-44dd-b24f-b751670d8838";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc NFMTHAZVS9.com.drewvolz.stolaf.onesignal-notification-service-extension";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2080,10 +2080,10 @@
 				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "tech.frogpond.allaboutolaf.onesignal.notification-service-extension";
+				PRODUCT_BUNDLE_IDENTIFIER = "NFMTHAZVS9.com.drewvolz.stolaf.onesignal-notification-service-extension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "08873df3-e7e9-4230-bdf8-f89384e436a8";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore tech.frogpond.allaboutolaf.onesignal.notification-service-extension";
+				PROVISIONING_PROFILE = "3ccc3330-77f4-4e83-ab75-873352e4d908";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore NFMTHAZVS9.com.drewvolz.stolaf.onesignal-notification-service-extension";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

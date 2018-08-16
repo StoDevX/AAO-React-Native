@@ -33,7 +33,7 @@ before_all do
   lane_context[:GRADLE_FILE] = "#{ENV['FL_GRADLE_PROJECT_DIR']}/app/build.gradle"
   lane_context[:APPLE_APP_ID] = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
   lane_context[:APPLE_APP_NAME] = 'All About Olaf'
-  lane_context[:APPLE_PUSH_EXTENSION_ID] = 'tech.frogpond.allaboutolaf.onesignal.notification-service-extension'
+  lane_context[:APPLE_PUSH_EXTENSION_ID] = 'NFMTHAZVS9.com.drewvolz.stolaf.onesignal-notification-service-extension'
   lane_context[:APPLE_PUSH_EXTENSION_NAME] = 'All About Olaf OneSignal Notification Service Extension'
 
   UI.message "GYM_PROJECT is #{ENV['GYM_PROJECT']}"
