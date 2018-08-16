@@ -149,7 +149,7 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 		this.setState(() => ({filters: newFilters, filtersLoaded: true}))
 	}
 
-	setRef = (ref: any) => {
+	getRef = (ref: any) => {
 		this.resultsList = ref
 	}
 
@@ -189,7 +189,7 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 					onListItemPress={this.handleListItemPress}
 					onPopoverDismiss={this.updateFilter}
 					query={searchQuery}
-					setRef={this.setRef}
+					getRef={this.getRef}
 					style={isSearchbarActive ? styles.darken : null}
 				/>
 			</View>
