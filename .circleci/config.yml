@@ -18,6 +18,12 @@ x-config:
       paths: [~/.gradle]
     - &restore-cache-gradle
       key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+  x-workspace:
+    - &persist-workspace-node_modules
+      root: ./node_modules
+      paths: [./*]
+    - &attach-workspace-node_modules
+      at: ./node_modules
   x-commands:  # command shorthands
     - &set-ruby-version
       name: Set Ruby Version
@@ -68,9 +74,9 @@ workflows:
       - data:
           filters: *filters
           requires: [cache-yarn-linux]
-      - ios:
-          filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data]
+      # - ios:
+      #     filters: *filters
+      #     requires: [danger, flow, jest, prettier, eslint, data]
       - android:
           filters: *filters
           requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
@@ -106,6 +112,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn --version
       - save_cache: *save-cache-yarn
+      - persist_to_workspace: persist-workspace-node_modules
 
   cache-bundler-linux:
     docker: [{image: 'circleci/ruby:2.4'}]
@@ -125,8 +132,7 @@ jobs:
       task: JS-general
     steps:
       - checkout
-      - restore_cache: *restore-cache-yarn
-      - run: yarn install --frozen-lockfile
+      - attach_workspace: *attach-workspace-node_modules
       - run: *run-danger
 
   flow:
@@ -135,8 +141,7 @@ jobs:
       task: JS-flow
     steps:
       - checkout
-      - restore_cache: *restore-cache-yarn
-      - run: yarn install --frozen-lockfile
+      - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
       - run: yarn run bundle-data
       - run: yarn run --silent flow check --quiet | tee logs/flow
@@ -149,8 +154,7 @@ jobs:
       JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
     steps:
       - checkout
-      - restore_cache: *restore-cache-yarn
-      - run: yarn install --frozen-lockfile
+      - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/ test-results/jest/
       - run: yarn run bundle-data
       - run: yarn run --silent test --coverage | tee logs/jest
@@ -174,8 +178,7 @@ jobs:
       task: JS-prettier
     steps:
       - checkout
-      - restore_cache: *restore-cache-yarn
-      - run: yarn install --frozen-lockfile
+      - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
       - run: yarn run prettier
       - run:
@@ -193,8 +196,7 @@ jobs:
       task: JS-lint
     steps:
       - checkout
-      - restore_cache: *restore-cache-yarn
-      - run: yarn install --frozen-lockfile
+      - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/ test-results/eslint/
       - run: yarn run bundle-data
       - run: yarn run --silent lint | tee logs/eslint
@@ -209,8 +211,7 @@ jobs:
       task: JS-data
     steps:
       - checkout
-      - restore_cache: *restore-cache-yarn
-      - run: yarn install --frozen-lockfile
+      - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
       - run: yarn run --silent validate-data --quiet | tee logs/validate-data
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
@@ -234,8 +235,7 @@ jobs:
       - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
-      - restore_cache: *restore-cache-yarn
-      - run: yarn install --frozen-lockfile
+      - attach_workspace: *attach-workspace-node_modules
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - restore_cache: *restore-cache-gradle
@@ -267,8 +267,7 @@ jobs:
       task: JS-bundle-android
     steps:
       - checkout
-      - restore_cache: *restore-cache-yarn
-      - run: yarn install --frozen-lockfile
+      - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run: yarn run bundle-data
@@ -326,8 +325,7 @@ jobs:
       task: JS-bundle-ios
     steps:
       - checkout
-      - restore_cache: *restore-cache-yarn
-      - run: yarn install --frozen-lockfile
+      - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run: yarn run bundle-data
