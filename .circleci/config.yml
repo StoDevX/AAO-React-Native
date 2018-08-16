@@ -21,7 +21,8 @@ x-config:
   x-workspace:
     - &persist-workspace-node_modules
       root: ./node_modules
-      paths: [./*]
+      paths:
+        - ./*
     - &attach-workspace-node_modules
       at: ./node_modules
   x-commands:  # command shorthands
