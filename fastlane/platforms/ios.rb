@@ -123,8 +123,8 @@ platform :ios do
 
   desc 'Fetch certs for both the app and any extensions'
   lane :certificates do |options|
-    app = 'NFMTHAZVS9.com.drewvolz.stolaf'
-    push_extension = 'tech.frogpond.allaboutolaf.onesignal.notification-service-extension'
+    app = lane_context[:APPLE_APP_ID]
+    push_extension = lane_context[:APPLE_PUSH_EXTENSION_ID]
 
     match(app_identifier: [app, push_extension],
           type: options[:type],
@@ -161,7 +161,7 @@ platform :ios do
   end
 
   desc 'Generate certs for the app and for any extensions'
-  private_lane :generate_certificates do
+  lane :generate_certificates do
     app = lane_context[:APPLE_APP_ID]
     push_extension = lane_context[:APPLE_PUSH_EXTENSION_ID]
 
