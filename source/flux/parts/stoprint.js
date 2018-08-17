@@ -10,7 +10,8 @@ import type {
 	RecentPopularPrintersResponse as RecentPrinters,
 } from '../../views/stoprint/types'
 
-const PAPERCUT = 'https://papercut.stolaf.edu:9192/rpc/api/rest/internal'
+const PAPERCUT = 'https://papercut.stolaf.edu'
+const PAPERCUT_API = 'https://papercut.stolaf.edu/rpc/api/rest/internal'
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
@@ -72,9 +73,10 @@ async function logIn(
 ): Promise<'success' | string> {
 	try {
 		const now = new Date().getTime()
-		const url = `${PAPERCUT}/webclient/users/${username}/log-in?nocache=${now}`
+		const url = `${PAPERCUT_API}/webclient/users/${username}/log-in?nocache=${now}`
 		const headers = new Headers({
 			'Content-Type': 'application/x-www-form-urlencoded',
+			'Origin': PAPERCUT,
 		})
 		const body = querystring.stringify({password: encode(password)})
 		const result = await fetchJson(url, {method: 'POST', body, headers})
@@ -102,7 +104,7 @@ const heldJobsAvailableAtPrinterForUser = (
 	printerName: string,
 	username: string,
 ): Promise<{}> =>
-	// https://papercut.stolaf.edu/rpc/api/rest/internal/mobilerelease/api/held-jobs/?username=rives&printerName=printers%5Cmfc-it
+	// https://PAPERCUT_API.stolaf.edu/rpc/api/rest/internal/mobilerelease/api/held-jobs/?username=rives&printerName=printers%5Cmfc-it
 	fetchJson(
 		`${mobileRelease}/held-jobs/?username=${username}&printerName=printers%5c\\${printerName}`,
 	)
@@ -183,7 +185,7 @@ export function updatePrintJobs(): ThunkAction<UpdatePrintJobsAction> {
 			return dispatch({type: UPDATE_PRINT_JOBS_FAILURE, payload: successMsg})
 		}
 
-		const url = `https://papercut.stolaf.edu:9192/rpc/api/rest/internal/webclient/users/${username}/jobs/status`
+		const url = `${PAPERCUT_API}/webclient/users/${username}/jobs/status`
 		const {jobs} = await fetchJson(url)
 
 		dispatch({type: UPDATE_PRINT_JOBS_SUCCESS, payload: jobs})
