@@ -76,3 +76,6 @@ android/app/signing.properties
 # rubygems bundle
 /vendor/bundle/
 /.bundle/
+
+# detox artifacts folder
+/artifacts
