@@ -92,7 +92,7 @@ async function logIn(
 	}
 }
 
-const mobileRelease = `${PAPERCUT}/mobilerelease/api`
+const mobileRelease = `${PAPERCUT_API}/mobilerelease/api`
 
 const fetchAllPrinters = (username: string): Promise<Array<Printer>> =>
 	fetchJson(`${mobileRelease}/all-printers?username=${username}`)
