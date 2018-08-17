@@ -15,6 +15,7 @@ export type TouchableUnion =
 	| typeof TouchableNativeFeedback
 
 type Props = {|
+	accessible?: boolean,
 	accessibilityComponentType?: string,
 	accessibilityLabel?: string,
 	accessibilityTraits?: string,
@@ -26,6 +27,7 @@ type Props = {|
 	highlight?: boolean,
 	onPress?: () => any,
 	style?: any,
+	testID?: string,
 	underlayColor?: string,
 |}
 
@@ -36,7 +38,10 @@ export const Touchable = ({
 	getRef,
 	highlight = true,
 	onPress = () => {},
+	accessible=true,
+	accessibilityLabel,
 	style,
+	testID,
 	...props
 }: Props) => {
 	// The child <View> is required; the Touchable needs a View as its direct child.
@@ -53,9 +58,12 @@ export const Touchable = ({
 			return (
 				<Component
 					ref={getRef}
+					accessibilityLabel={accessibilityLabel}
+					accessible={accessible}
 					onPress={onPress}
 					{...innerProps}
 					style={containerStyle}
+					testID={testID}
 					{...props}
 				>
 					{content}
@@ -73,9 +81,12 @@ export const Touchable = ({
 			return (
 				<TouchableNativeFeedback
 					ref={getRef}
+					accessibilityLabel={accessibilityLabel}
+					accessible={accessible}
 					background={background}
 					onPress={onPress}
 					style={containerStyle}
+					testID={testID}
 					{...props}
 				>
 					{content}
