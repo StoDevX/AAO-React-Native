@@ -36,12 +36,13 @@ type ReduxDispatchProps = {
 
 type Props = ReactProps & ReduxDispatchProps & ReduxStateProps
 
-class PrintReleaseView extends React.PureComponent<Props> {
+class PrintJobsView extends React.PureComponent<Props> {
 	static navigationOptions = {
 		title: 'Print Jobs',
+		headerBackTitle: 'Jobs',
 	}
 
-	componentWillMount = () => {
+	componentDidMount = () => {
 		this.refresh()
 	}
 
@@ -64,15 +65,15 @@ class PrintReleaseView extends React.PureComponent<Props> {
 
 	openSettings = () => this.props.navigation.navigate('SettingsView')
 
-	releaseJob = (id: any) =>
-		this.props.navigation.navigate('PrintJobReleaseView', {id})
+	releaseJob = (job: PrintJob) =>
+		this.props.navigation.navigate('PrinterListView', {job: job})
 
 	renderItem = ({item}: {item: PrintJob}) => (
-		<ListRow onPress={() => this.releaseJob(item.id)}>
+		<ListRow onPress={() => this.releaseJob(item)}>
 			<Title>{item.documentName}</Title>
 			<Detail>
-				{item.usageCostFormatted} • {item.totalPages} pages •{' '}
-				{item.statusFormatted} • {item.grayscaleFormatted}
+				{item.usageTimeFormatted} • {item.usageCostFormatted} • {item.totalPages} pages •{' '}
+				{item.statusFormatted}
 			</Detail>
 		</ListRow>
 	)
@@ -121,7 +122,7 @@ function mapDispatchToProps(dispatch): ReduxDispatchProps {
 	}
 }
 
-export default connect(
+export const ConnectedPrintJobsView = connect(
 	mapStateToProps,
 	mapDispatchToProps,
-)(PrintReleaseView)
+)(PrintJobsView)

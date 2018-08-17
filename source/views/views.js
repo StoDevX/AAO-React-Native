@@ -155,7 +155,7 @@ export const allViews: ViewType[] = [
 	},
 	{
 		type: 'view',
-		view: 'PrintReleaseView',
+		view: 'PrintJobsView',
 		title: 'StoPrint',
 		icon: 'print',
 		tint: c.chartreuse,

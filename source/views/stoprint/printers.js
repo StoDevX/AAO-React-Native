@@ -6,7 +6,7 @@ import {connect} from 'react-redux'
 import {type ReduxState} from '../../flux'
 import {ListEmpty} from '../components/list'
 import {updatePrinters} from '../../flux/parts/stoprint'
-import type {Printer} from './types'
+import type {Printer, PrintJob} from './types'
 import {
 	ListRow,
 	ListSeparator,
@@ -23,7 +23,9 @@ const styles = StyleSheet.create({
 	list: {},
 })
 
-type ReactProps = TopLevelViewPropsType
+type ReactProps = TopLevelViewPropsType & {
+	navigation: {state: {params: {job: PrintJob}}},
+}
 
 type ReduxStateProps = {
 	+printers: Array<Printer>,
@@ -39,9 +41,9 @@ type ReduxDispatchProps = {
 
 type Props = ReactProps & ReduxDispatchProps & ReduxStateProps
 
-class PrintReleaseView extends React.PureComponent<Props> {
+class PrinterListView extends React.PureComponent<Props> {
 	static navigationOptions = {
-		title: 'Printers',
+		title: 'Select Printer',
 	}
 
 	componentWillMount = () => {
@@ -65,11 +67,14 @@ class PrintReleaseView extends React.PureComponent<Props> {
 
 	keyExtractor = (item: Printer) => item.printerName
 
-	openPrintConfirmation = () =>
-		this.props.navigation.navigate('PrintJobReleaseConfirmationView')
+	openPrintRelease = (item: Printer) =>
+		this.props.navigation.navigate(
+			'PrintJobReleaseView',
+			{job: this.props.navigation.state.params.job, printer: item}
+		)
 
 	renderItem = ({item}: {item: Printer}) => (
-		<ListRow onPress={this.openPrintConfirmation}>
+		<ListRow onPress={() => this.openPrintRelease(item)}>
 			<Title>{item.printerName}</Title>
 			<Detail>{item.location}</Detail>
 		</ListRow>
@@ -143,7 +148,7 @@ function mapDispatchToProps(dispatch): ReduxDispatchProps {
 	}
 }
 
-export default connect(
+export const ConnectedPrinterListView = connect(
 	mapStateToProps,
 	mapDispatchToProps,
-)(PrintReleaseView)
+)(PrinterListView)
