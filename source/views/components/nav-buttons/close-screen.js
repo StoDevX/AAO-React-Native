@@ -18,10 +18,15 @@ export function CloseScreenButton({
 }) {
 	return (
 		<Touchable
+			accessibilityComponentType="button"
+			accessibilityLabel="Close the screen"
+			accessibilityTraits="button"
+			accessible={true}
 			borderless={true}
 			highlight={false}
 			onPress={() => navigation.goBack()}
 			style={[commonStyles.button, buttonStyle]}
+			testID="button-close-screen"
 		>
 			<Text style={[commonStyles.text, styles.text]}>Done</Text>
 		</Touchable>
