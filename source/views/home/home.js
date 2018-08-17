@@ -42,6 +42,7 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 			overflow="hidden"
 			showsHorizontalScrollIndicator={false}
 			showsVerticalScrollIndicator={false}
+			testID="screen-homescreen"
 		>
 			<StatusBar
 				backgroundColor={c.androidStatusBarColor}
