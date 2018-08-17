@@ -29,7 +29,7 @@ export type StatusResponse = {
 }
 
 export type Printer = {
-	location: string,
+	location?: string,
 	serverName: string,
 	code: string,
 	printerName: string,
