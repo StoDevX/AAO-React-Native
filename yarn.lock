@@ -5871,9 +5871,9 @@ react-native-paper@2.0.0-alpha.4:
     hoist-non-react-statics "^2.5.0"
     react-lifecycles-compat "^3.0.4"
 
-react-native-popover-view@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-popover-view/-/react-native-popover-view-1.0.0.tgz#6885088a3ed298c92aff09407c8dc400d4c460d2"
+react-native-popover-view@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-popover-view/-/react-native-popover-view-1.0.3.tgz#0646420a736cb610975c23b5e830986027f08239"
   dependencies:
     fs "^0.0.1-security"
 
