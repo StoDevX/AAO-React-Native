@@ -49,7 +49,7 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 				barStyle={c.statusBarStyle}
 			/>
 
-			<ConnectedNotices />
+			<ConnectedNotices navigation={navigation} />
 
 			<View style={styles.cells}>
 				{columns.map((contents, i) => (

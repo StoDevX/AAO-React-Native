@@ -21,7 +21,7 @@ type ReduxStateProps = {
 	notices: Array<HomescreenNotice>,
 }
 
-type NoticesProps = {navigation: NavType} & ReduxStateProps & {}
+type NoticesProps = TopLevelViewPropsType & ReduxStateProps;
 
 export function PlainNotices({notices, navigation}: NoticesProps) {
 	if (!notices.length) {
@@ -48,6 +48,7 @@ function Notice(props: {notice: HomescreenNotice, navigation: NavType}) {
 		? notice.backgroundColor
 		: 'rgba(0,0,0,0.6)'
 	let foreground = notice.foregroundColor ? notice.foregroundColor : c.white
+
 	return (
 		<View style={styles.cell}>
 			<Touchable
