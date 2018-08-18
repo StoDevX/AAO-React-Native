@@ -26,6 +26,7 @@ snippet: KRLX is having intellectual conversations about life and KSTO is… not
 severity: notice
 dismissable: true
 repeatIfDismissed: {repeat: true, interval: 1 day}
+repeatIfDismissed: '0 0 1 * *'
 message: This app is unmaintained
 ```
 
@@ -49,4 +50,4 @@ message: Was pretty nice, they do make an effort to take care of you (I get park
 	- [ ] dates, inclusive (from date through date)
 	- [ ] boolean operators (`and`, `or`, `not`)
 - [ ] A Dissmissable property (defaults to true); prevents the user from dismissing the notice, if false
-- [ ] The ability to automatically repeat a message at each `$interval` (TODO: choose how to define the interval; cron / ISO8601 / ics?)
+- [ ] The ability to automatically repeat a message at each `$interval` (TODO: choose how to define the interval; cron / ISO8601 / ics?) [okay cron is much simpler than ISO/ICS rrules.]
