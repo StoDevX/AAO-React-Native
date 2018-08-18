@@ -38,7 +38,7 @@ export const Touchable = ({
 	getRef,
 	highlight = true,
 	onPress = () => {},
-	accessible=true,
+	accessible = true,
 	accessibilityLabel,
 	style,
 	testID,
