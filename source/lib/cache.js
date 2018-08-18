@@ -1,7 +1,7 @@
 // @flow
 import {AsyncStorage} from 'react-native'
 import moment from 'moment'
-import {GH_PAGES_URL} from '../globals'
+import {API} from '../globals'
 
 type BaseCacheResultType<T> = {
 	isExpired: boolean,
@@ -52,27 +52,6 @@ function getItem(key: string): CacheResultType<any> {
 	return AsyncStorage.getItem(`aao:${key}`).then(stored =>
 		annotateCacheEntry(JSON.parse(stored)),
 	)
-}
-
-/// MARK: courses
-
-const studentNumberKey = 'courses:student-number'
-const studentNumberCacheTime = [1, 'week']
-export function setStudentNumber(idNumbers: number) {
-	return setItem(studentNumberKey, idNumbers, studentNumberCacheTime)
-}
-export function getStudentNumber(): CacheResultType<number> {
-	return getItem(studentNumberKey)
-}
-
-const coursesKey = 'courses'
-const coursesCacheTime = [1, 'hour']
-import {type CoursesByTermType} from './courses/types'
-export function setAllCourses(courses: CoursesByTermType) {
-	return setItem(coursesKey, courses, coursesCacheTime)
-}
-export function getAllCourses(): CacheResultType<?CoursesByTermType> {
-	return getItem(coursesKey)
 }
 
 /// MARK: Financials
@@ -211,7 +190,7 @@ function fetchHelpToolsBundled(): Promise<Array<ToolOptions>> {
 	return Promise.resolve(helpData)
 }
 function fetchHelpToolsRemote(): Promise<{data: Array<ToolOptions>}> {
-	return fetchJson(GH_PAGES_URL('help.json'))
+	return fetchJson(API('/tools/help'))
 }
 export async function fetchHelpTools(
 	isOnline: boolean,

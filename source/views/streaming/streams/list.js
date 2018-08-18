@@ -12,13 +12,12 @@ import {StreamRow} from './row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
-import qs from 'querystring'
 import {toLaxTitleCase as titleCase} from 'titlecase'
 import type {StreamType} from './types'
 import delay from 'delay'
+import {API} from '../../../globals'
 
 const CENTRAL_TZ = 'America/Winnipeg'
-const url = 'https://www.stolaf.edu/multimedia/api/collection'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -74,27 +73,22 @@ export class StreamListView extends React.PureComponent<Props, State> {
 			const dateFrom = date.format('YYYY-MM-DD')
 			const dateTo = date
 				.clone()
-				.add(1, 'month')
+				.add(2, 'month')
 				.format('YYYY-MM-DD')
 
 			let params = {
-				class: 'current',
 				sort: 'ascending',
-				// eslint-disable-next-line camelcase
-				date_from: dateFrom,
-				// eslint-disable-next-line camelcase
-				date_to: dateTo,
+				dateFrom,
+				dateTo,
 			}
 
-			const streamsAPI = `${url}?${qs.stringify(params)}`
-			const data = await fetchJson(streamsAPI)
-			const streams = data.results
+			const data = await fetchJson(API('/streams/upcoming', params))
 
 			// force title-case on the stream types, to prevent not-actually-duplicate headings
-			const processed = streams
+			const processed = data
 				.filter(stream => stream.category !== 'athletics')
 				.map(stream => {
-					const date = moment(stream.starttime, 'YYYY-MM-DD HH:mm')
+					const date = moment(stream.starttime)
 					const group =
 						stream.status.toLowerCase() !== 'live'
 							? date.format('dddd, MMMM Do')

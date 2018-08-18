@@ -16,6 +16,8 @@
 
 @implementation AppDelegate
 
+@synthesize oneSignal = _oneSignal;
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   NSURL *jsCodeLocation;
@@ -52,6 +54,8 @@
   // ignore vibrate/silent switch when playing audio
   [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error: nil];
 
+  self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
+                                                         appId:@"a46c6f2f-a240-4908-a359-801911e9b9ea"];
   return YES;
 }
 

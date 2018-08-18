@@ -4,8 +4,11 @@ import {TabNavigator} from '../components/tabbed-view'
 
 import BalancesView from './balances'
 import StudentWorkView from './student-work'
-import CourseSearchView from './course-search'
+import {CourseSearchView} from './course-search'
 import TESView from './tes'
+
+export {JobDetailView} from './student-work/detail'
+export {CourseSearchResultsView, CourseDetailView} from './course-search'
 
 const SisView = TabNavigator({
 	BalancesView: {screen: BalancesView},

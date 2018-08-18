@@ -58,7 +58,7 @@ platform :ios do
 
   desc 'Builds and exports the app'
   lane :build do
-    match(type: 'appstore', readonly: true)
+    certificates(type: 'appstore')
     propagate_version
 
     # save it to a log file for later use
@@ -119,5 +119,82 @@ platform :ios do
 
     # go ahead and download dSYMs for bugsnag too
     # refresh_dsyms if circle?
+  end
+
+  desc 'Fetch certs for both the app and any extensions'
+  lane :certificates do |options|
+    app = lane_context[:APPLE_APP_ID]
+    push_extension = lane_context[:APPLE_PUSH_EXTENSION_ID]
+
+    match(app_identifier: [app, push_extension],
+          type: options[:type],
+          readonly: true)
+  end
+
+  desc 'Ensure that everything is set up (must be run manually, as it needs a 2FA code)'
+  lane :bootstrap do
+    generate_apps
+    generate_certificates
+    generate_pem
+  end
+
+  desc 'Generate the app and any extensions on the Apple Developer Portal / App Store Connect'
+  private_lane :generate_apps do
+    produce(
+      app_identifier: lane_context[:APPLE_APP_ID],
+      app_name: lane_context[:APPLE_APP_NAME],
+      language: 'English',
+      enable_services: {
+        push_notification: 'on',
+      },
+    )
+
+    produce(
+      app_identifier: lane_context[:APPLE_PUSH_EXTENSION_ID],
+      app_name: lane_context[:APPLE_PUSH_EXTENSION_NAME],
+      language: 'English',
+      skip_itc: 'on',
+      enable_services: {
+        push_notification: 'off',
+      },
+    )
+  end
+
+  desc 'Generate certs for the app and for any extensions'
+  lane :generate_certificates do
+    app = lane_context[:APPLE_APP_ID]
+    push_extension = lane_context[:APPLE_PUSH_EXTENSION_ID]
+
+    match(app_identifier: [app, push_extension], type: 'adhoc', readonly: false, force: true)
+    match(app_identifier: [app, push_extension], type: 'appstore', readonly: false, force: true)
+  end
+
+  desc 'Generate the push notification cert and upload it to OneSignal'
+  lane :generate_pem do
+    password = 'password'
+    env_key = 'ONESIGNAL_KEY'
+
+    unless ENV.has_key?(env_key)
+      raise "You do not have the #{env_key} environment variable configured. Not generating push certificate nor uploading to OneSignal."
+    end
+
+    get_push_certificate(
+      app_identifier: lane_context[:APPLE_APP_ID],
+      pem_name: 'push_cert',
+      generate_p12: true,
+      p12_password: password,
+      new_profile: proc do |profile_path|
+        p12 = profile_path.sub('.pem', '.p12')
+
+        onesignal(
+          auth_token: ENV[env_key],
+          app_name: lane_context[:ONESIGNAL_APP_NAME],
+          app_id: lane_context[:ONESIGNAL_APP_ID],
+          apns_p12: p12,
+          apns_p12_password: password,
+          apns_env: 'production',
+        )
+      end
+    )
   end
 end

@@ -20,7 +20,7 @@ export const MenusView = TabNavigator({
 	StavHallMenuView: {
 		screen: ({navigation}) => (
 			<BonAppHostedMenu
-				cafeId="261"
+				cafe="stav-hall"
 				loadingMessage={[
 					'Hunting Ferndale Turkey…',
 					'Tracking wild vegan burgers…',
@@ -42,7 +42,7 @@ export const MenusView = TabNavigator({
 	TheCageMenuView: {
 		screen: ({navigation}) => (
 			<BonAppHostedMenu
-				cafeId="262"
+				cafe="the-cage"
 				ignoreProvidedMenus={true}
 				loadingMessage={[
 					'Checking for vegan cookies…',

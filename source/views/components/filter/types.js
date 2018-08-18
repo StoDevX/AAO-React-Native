@@ -1,7 +1,7 @@
 // @flow
 export type ToggleSpecType = {
 	label: string,
-	title?: string,
+	title: string,
 	caption?: string,
 }
 
@@ -13,7 +13,7 @@ export type ListItemSpecType = {|
 |}
 
 export type ListSpecType = {
-	title?: string,
+	title: string,
 	caption?: string,
 	showImages?: boolean,
 	options: ListItemSpecType[],
@@ -27,7 +27,7 @@ export type PickerItemSpecType = {|
 |}
 
 export type PickerSpecType = {
-	title?: string,
+	title: string,
 	caption?: string,
 	options: PickerItemSpecType[],
 	selected: ?PickerItemSpecType,

@@ -14,9 +14,9 @@ import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import delay from 'delay'
 import {CENTRAL_TZ} from './lib'
-import {GH_PAGES_URL} from '../../globals'
+import {API} from '../../globals'
 
-const buildingHoursUrl = GH_PAGES_URL('building-hours.json')
+const buildingHoursUrl = API('/spaces/hours')
 
 const groupBuildings = (buildings: BuildingType[], favorites: string[]) => {
 	const favoritesGroup = {

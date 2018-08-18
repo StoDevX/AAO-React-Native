@@ -100,6 +100,26 @@ Upload dYSM symbols to Bugsnag from Apple
 fastlane ios ci-run
 ```
 Run iOS builds or tests, as appropriate
+### ios certificates
+```
+fastlane ios certificates
+```
+Fetch certs for both the app and any extensions
+### ios bootstrap
+```
+fastlane ios bootstrap
+```
+Ensure that everything is set up (must be run manually, as it needs a 2FA code)
+### ios generate_certificates
+```
+fastlane ios generate_certificates
+```
+Generate certs for the app and for any extensions
+### ios generate_pem
+```
+fastlane ios generate_pem
+```
+Generate the push notification cert and upload it to OneSignal
 
 ----
 

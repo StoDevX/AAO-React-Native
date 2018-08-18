@@ -16,10 +16,10 @@ import orderBy from 'lodash/orderBy'
 import groupBy from 'lodash/groupBy'
 import {toLaxTitleCase as titleCase} from 'titlecase'
 import {JobRow} from './job-row'
+import {API} from '../../../globals'
 import type {JobType} from './types'
 
-const jobsUrl =
-	'https://www.stolaf.edu/apps/stuwork/index.cfm?fuseaction=getall&nostructure=1'
+const jobsUrl = API('/jobs')
 
 const styles = StyleSheet.create({
 	listContainer: {

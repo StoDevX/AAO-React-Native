@@ -62,7 +62,7 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 				</Toolbar>
 				<BonAppHostedMenu
 					key={this.state.cafeId}
-					cafeId={this.state.cafeId}
+					cafe={{id: this.state.cafeId}}
 					loadingMessage={['Loading…']}
 					name="BonApp"
 					navigation={this.props.navigation}

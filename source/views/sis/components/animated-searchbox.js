@@ -80,23 +80,36 @@ export class AnimatedSearchbox extends React.Component<Props> {
 				render={viewport => {
 					let searchBarWidth = viewport.width - 20
 
+					let showTitle = Boolean(this.props.title)
+
 					let containerStyle = [
 						styles.searchContainer,
 						styles.common,
-						{height: this.containerHeight},
+						{
+							height: showTitle
+								? this.containerHeight
+								: this.containerHeightSpec.end,
+						},
 					]
 
 					let searchStyle = [
 						styles.searchBarWrapper,
 						{width: searchBarWidth},
-						{top: this.searchBarTop},
+						{top: showTitle ? this.searchBarTop : this.searchBarTopSpec.end},
 					]
 
-					let headerStyle = [styles.header, {opacity: this.headerOpacity}]
+					let headerStyle = [
+						styles.header,
+						{
+							opacity: showTitle
+								? this.headerOpacity
+								: this.headerOpacitySpec.end,
+						},
+					]
 
 					return (
 						<Animated.View style={containerStyle}>
-							{this.props.title ? (
+							{showTitle ? (
 								<Animated.Text style={headerStyle}>
 									{this.props.title}
 								</Animated.Text>
@@ -105,6 +118,7 @@ export class AnimatedSearchbox extends React.Component<Props> {
 							<Animated.View style={searchStyle}>
 								<SearchBar
 									active={this.props.active}
+									backButtonAndroid="search"
 									onCancel={this.handleCancel}
 									onChange={this.props.onChange}
 									onFocus={this.handleFocus}

@@ -13,9 +13,9 @@ import toPairs from 'lodash/toPairs'
 import * as c from '../components/colors'
 import type {ContactType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {GH_PAGES_URL} from '../../globals'
+import {API} from '../../globals'
 
-const contactInfoUrl = GH_PAGES_URL('contact-info.json')
+const contactInfoUrl = API('/contacts')
 
 const groupContacts = (contacts: ContactType[]) => {
 	const grouped = groupBy(contacts, c => c.category)
