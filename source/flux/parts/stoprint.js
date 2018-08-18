@@ -1,17 +1,15 @@
 // @flow
 
 import {loadLoginCredentials} from '../../lib/login'
-import querystring from 'querystring'
 import {encode} from 'base-64'
 import {type ReduxState} from '../index'
 import type {
+	HeldJob,
 	PrintJob,
 	Printer,
 	RecentPopularPrintersResponse as RecentPrinters,
 } from '../../views/stoprint/types'
-
-const PAPERCUT = 'https://papercut.stolaf.edu'
-const PAPERCUT_API = 'https://papercut.stolaf.edu/rpc/api/rest/internal'
+import {fetchAllPrinters, fetchJobs, fetchRecentPrinters, logIn} from '../../lib/stoprint'
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
@@ -67,82 +65,6 @@ type UpdatePrintJobsAction =
 	| UpdatePrintJobsFailureAction
 	| UpdatePrintJobsStartAction
 
-async function logIn(
-	username: string,
-	password: string,
-): Promise<'success' | string> {
-	try {
-		const now = new Date().getTime()
-		const url = `${PAPERCUT_API}/webclient/users/${username}/log-in?nocache=${now}`
-		const headers = new Headers({
-			'Content-Type': 'application/x-www-form-urlencoded',
-			'Origin': PAPERCUT,
-		})
-		const body = querystring.stringify({password: encode(password)})
-		const result = await fetchJson(url, {method: 'POST', body, headers})
-
-		if (!result.success) {
-			return 'The username and password appear to be invalid'
-		}
-
-		return 'success'
-	} catch (err) {
-		console.error(err)
-		return 'The print server seems to be having some issues'
-	}
-}
-
-const mobileRelease = `${PAPERCUT_API}/mobilerelease/api`
-
-const fetchAllPrinters = (username: string): Promise<Array<Printer>> =>
-	fetchJson(`${mobileRelease}/all-printers?username=${username}`)
-
-const fetchRecentPrinters = (username: string): Promise<RecentPrinters> =>
-	fetchJson(`${mobileRelease}/recent-popular-printers?username=${username}`)
-
-const heldJobsAvailableAtPrinterForUser = (
-	printerName: string,
-	username: string,
-): Promise<{}> =>
-	// https://PAPERCUT_API.stolaf.edu/rpc/api/rest/internal/mobilerelease/api/held-jobs/?username=rives&printerName=printers%5Cmfc-it
-	fetchJson(
-		`${mobileRelease}/held-jobs/?username=${username}&printerName=printers%5c\\${printerName}`,
-	)
-
-const cancelPrintJobForUser = (jobId, username) =>
-	// url: '/rpc/api/rest/internal/mobilerelease/api/held-jobs/cancel?username=' + MRApp.session.get('username'),
-	// data: {
-	//   jobIds: selectedJobIds
-	// },
-	fetchJson(`${mobileRelease}/held-jobs/cancel?username=${username}`, {
-		method: 'POST',
-		body: JSON.stringify({
-			jobIds: [jobId],
-		}),
-	})
-
-const releasePrintJobToPrinterForUser = ({
-	jobId,
-	printerName,
-	username,
-}: {
-	jobId: any,
-	printerName: string,
-	username: string,
-}) =>
-	// url: '/rpc/api/rest/internal/mobilerelease/api/held-jobs/release?username=' + MRApp.session.get('username'),
-	// data: {
-	//   printerName: this.model._printerName,
-	//   jobIds: selectedJobIds
-	// },
-	fetchJson(`${mobileRelease}/held-jobs/release?username=${username}`, {
-		method: 'POST',
-		body: JSON.stringify({
-			printerName,
-			jobIds: [jobId],
-		}),
-	})
-
 export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 	return async dispatch => {
 		const {username, password} = await loadLoginCredentials()
@@ -185,8 +107,7 @@ export function updatePrintJobs(): ThunkAction<UpdatePrintJobsAction> {
 			return dispatch({type: UPDATE_PRINT_JOBS_FAILURE, payload: successMsg})
 		}
 
-		const url = `${PAPERCUT_API}/webclient/users/${username}/jobs/status`
-		const {jobs} = await fetchJson(url)
+		const {jobs} = await fetchJobs(username)
 
 		dispatch({type: UPDATE_PRINT_JOBS_SUCCESS, payload: jobs})
 	}
