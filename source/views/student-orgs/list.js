@@ -25,9 +25,9 @@ import deburr from 'lodash/deburr'
 import startCase from 'lodash/startCase'
 import * as c from '../components/colors'
 import type {StudentOrgType} from './types'
+import {API} from '../../globals'
 
-const orgsUrl =
-	'https://www.stolaf.edu/orgs/list/index.cfm?fuseaction=getall&nostructure=1'
+const orgsUrl = API('/orgs')
 const leftSideSpacing = 20
 const ROW_HEIGHT = Platform.OS === 'ios' ? 58 : 74
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41

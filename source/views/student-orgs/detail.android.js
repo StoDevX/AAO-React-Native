@@ -8,7 +8,7 @@ import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {sendEmail} from '../components/send-email'
 import {openUrl} from '../components/open-url'
-import {cleanOrg, showNameOrEmail} from './util'
+import {showNameOrEmail} from './util'
 
 const styles = StyleSheet.create({
 	name: {
@@ -76,7 +76,7 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 			advisors,
 			description,
 			lastUpdated: orgLastUpdated,
-		} = cleanOrg(this.props.navigation.state.params.org)
+		} = this.props.navigation.state.params.org
 
 		return (
 			<ScrollView>
