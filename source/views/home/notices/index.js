@@ -56,14 +56,12 @@ function Notice(props: {notice: HomescreenNotice, navigation: NavType}) {
 				style={[styles.touchable, {backgroundColor: background}]}
 			>
 				<Row>
-					{notice.icon ? (
-						<Column style={styles.iconColumn}>
-							<Icon
-								name={`ios-${notice.icon}`}
-								style={[iconStyles.icon, {color: foreground}]}
-							/>
-						</Column>
-					) : null}
+					<Column style={styles.iconColumn}>
+						<Icon
+							name={notice.icon ? `ios-${notice.icon}` : 'ios-alert'}
+							style={[iconStyles.icon, {color: foreground}]}
+						/>
+					</Column>
 
 					<Column style={styles.textColumn}>
 						{notice.title ? (
