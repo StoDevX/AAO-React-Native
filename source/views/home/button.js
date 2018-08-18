@@ -59,6 +59,7 @@ function TouchableWrapper({onPress, children, label}) {
 			accessibilityComponentType="button"
 			accessibilityLabel={label}
 			accessibilityTraits="button"
+			accessible={true}
 			highlight={false}
 			onPress={onPress}
 		>

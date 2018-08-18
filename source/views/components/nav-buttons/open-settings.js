@@ -18,10 +18,15 @@ export function OpenSettingsButton({
 }) {
 	return (
 		<Touchable
+			accessibilityComponentType="button"
+			accessibilityLabel="Open Settings"
+			accessibilityTraits="button"
+			accessible={true}
 			borderless={true}
 			highlight={false}
 			onPress={() => navigation.navigate('SettingsView')}
 			style={[commonStyles.button, buttonStyle]}
+			testID="button-open-settings"
 		>
 			<Icon name="ios-settings" style={leftButtonStyles.icon} />
 		</Touchable>
