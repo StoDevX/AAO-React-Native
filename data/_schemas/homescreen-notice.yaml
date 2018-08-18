@@ -19,7 +19,6 @@ properties:
       repeat: {type: boolean}
       interval: {type: '#/definitions/interval'}
 
-
 definitions:
   interval:
     type: regex

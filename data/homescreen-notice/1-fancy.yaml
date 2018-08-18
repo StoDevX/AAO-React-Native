@@ -1,11 +1,10 @@
----
 severity: info
 conditions:
   - and:
-    - platform: ios
-    - versionRange: <=2.6.0
-    - startDate: 2017-01-29
-    - endDate: 2017-02-01
+      - platform: ios
+      - versionRange: <=2.6.0
+      - startDate: 2017-01-29
+      - endDate: 2017-02-01
 title: A Title
 icon: american-football
 backgroundColor: '#fff'
