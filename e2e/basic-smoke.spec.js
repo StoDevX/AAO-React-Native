@@ -1,7 +1,7 @@
 /* eslint-env jest */
 /* global element, device, by */
 
-describe('Example', () => {
+describe('Basic smoke tests', () => {
 	it('should have homescreen', async () => {
 		await expect(element(by.id('screen-homescreen'))).toBeVisible()
 	})
