@@ -158,6 +158,8 @@ const styles = StyleSheet.create({
 
 const iconStyles = StyleSheet.create({
 	icon: {
-		fontSize: 40,
+		fontSize: 32,
+		width: 32,
+		textAlign: 'center',
 	},
 })
