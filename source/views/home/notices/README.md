@@ -35,17 +35,18 @@ title: On Unions 😇
 message: Was pretty nice, they do make an effort to take care of you (I get parking vouchers for the rest of the week 😆)
 ```
 
-- [ ] Severity levels, to do ??? something
-- [ ] Conditions, similar to the versionRange property in the help widgets, but more comprehensive
-	- [ ] platform
-	- [ ] semver-compatible version ranges
-	- [ ] dates, inclusive (from date through date)
-	- [ ] boolean operators (`and`, `or`, `not`)
-- [x] A title, optional
+- [x] A title, optional (if ommitted, the snippet is shown on two lines.)
 - [x] An icon; defaults to `(!)`
 - [x] A background color???
 - [x] A foreground color???
 - [x] A snippet to show on the home screen (optional; defaults to truncated `message`)
 - [x] A longer, markdown-formatted message to be shown on the detail view
+- [ ] Severity levels, to do ??? something
+	- I think my original idea was to pick default colors / icons for severity levels
+- [ ] Conditions, similar to the versionRange property in the help widgets, but more comprehensive
+	- [ ] platform
+	- [ ] semver-compatible version ranges
+	- [ ] dates, inclusive (from date through date)
+	- [ ] boolean operators (`and`, `or`, `not`)
 - [ ] A Dissmissable property (defaults to true); prevents the user from dismissing the notice, if false
 - [ ] The ability to automatically repeat a message at each `$interval` (TODO: choose how to define the interval; cron / ISO8601 / ics?)
