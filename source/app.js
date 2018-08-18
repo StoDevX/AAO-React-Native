@@ -30,6 +30,8 @@ function getCurrentRouteName(navigationState: NavigationState): ?string {
 
 type Props = {}
 
+const navigationPersistenceKey = __DEV__ ? null : 'NavState'
+
 export default class App extends React.Component<Props> {
 	componentDidMount() {
 		OneSignal.addEventListener('received', this.onReceived)
@@ -83,7 +85,7 @@ export default class App extends React.Component<Props> {
 			<Provider store={store}>
 				<AppNavigator
 					onNavigationStateChange={this.trackScreenChanges}
-					persistenceKey="NavState"
+					persistenceKey={navigationPersistenceKey}
 				/>
 			</Provider>
 		)
