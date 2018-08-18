@@ -73,14 +73,12 @@ function Notice(props: {notice: HomescreenNotice, navigation: NavType}) {
 							</Text>
 						) : null}
 
-						{/* 2 or 1 line of description? */}
 						<Text
-							numberOfLines={2}
+							numberOfLines={1}
 							style={[styles.description, {color: foreground}]}
 						>
 							{notice.snippet || notice.message}
 						</Text>
-						{/* <Text numberOfLines={2}>{JSON.stringify(notice)}</Text> */}
 					</Column>
 				</Row>
 			</Touchable>
@@ -146,7 +144,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	title: {
-		marginBottom: 5,
+		marginBottom: 3,
 		fontWeight: 'bold',
 	},
 	description: {},
