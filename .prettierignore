@@ -1,6 +1,5 @@
 /package.json
 *.md
-*.json
 /flow-typed/
 /node_modules/
 /docs/
