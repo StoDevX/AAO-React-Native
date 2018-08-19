@@ -158,6 +158,7 @@ export const allViews: ViewType[] = [
 		view: 'PrintJobsView',
 		title: 'StoPrint',
 		icon: 'print',
+		foreground: 'light',
 		tint: c.chartreuse,
 		gradient: c.tealToSeafoam,
 	},
