@@ -47,7 +47,11 @@ import {IconSettingsView} from './views/settings/icon'
 import {StudentOrgsView, StudentOrgsDetailView} from './views/student-orgs'
 import {FaqView} from './views/faqs'
 import HelpView from './views/help'
-import {PrintJobsView, PrinterListView, PrintJobReleaseView} from './views/stoprint'
+import {
+	PrintJobsView,
+	PrinterListView,
+	PrintJobReleaseView,
+} from './views/stoprint'
 
 const styles = StyleSheet.create({
 	header: {
