@@ -1,12 +1,11 @@
 // @flow
 
 import React from 'react'
-import {FlatList, StyleSheet, View, Text, Button} from 'react-native'
+import {SectionList, StyleSheet, View, Platform} from 'react-native'
 import {connect} from 'react-redux'
 import {type ReduxState} from '../../flux'
-import {ListEmpty} from '../components/list'
 import {updatePrintJobs} from '../../flux/parts/stoprint'
-import type {PrintJob} from './types'
+import {type PrintJob, STOPRINT_HELP_PAGE} from '../../lib/stoprint'
 import {
 	ListRow,
 	ListSeparator,
@@ -16,9 +15,26 @@ import {
 } from '../components/list'
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
+import {NoticeView} from '../components/notice'
+import Icon from 'react-native-vector-icons/Ionicons'
+import * as c from '../components/colors'
+import openUrl from '../components/open-url'
+import {StoprintErrorView} from './components'
+import groupBy from 'lodash/groupBy'
+import toPairs from 'lodash/toPairs'
+import sortBy from 'lodash/sortBy'
 
 const styles = StyleSheet.create({
 	list: {},
+	container: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: c.sto.white,
+	},
+	notice: {
+		flex: 0,
+	},
 })
 
 type ReactProps = TopLevelViewPropsType
@@ -42,7 +58,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 		headerBackTitle: 'Jobs',
 	}
 
-	componentDidMount = () => {
+	componentDidMount() {
 		this.refresh()
 	}
 
@@ -61,19 +77,24 @@ class PrintJobsView extends React.PureComponent<Props> {
 
 	fetchData = () => this.props.updatePrintJobs()
 
-	keyExtractor = (item: PrintJob) => item.id
+	keyExtractor = (item: PrintJob) => item.id.toString()
 
 	openSettings = () => this.props.navigation.navigate('SettingsView')
 
-	releaseJob = (job: PrintJob) =>
-		this.props.navigation.navigate('PrinterListView', {job: job})
+	handleJobPress = (job: PrintJob) => {
+		if (job.statusFormatted === 'Pending Release') {
+			this.props.navigation.navigate('PrinterListView', {job: job})
+		} else {
+			this.props.navigation.navigate('PrintJobReleaseView', {job: job})
+		}
+	}
 
 	renderItem = ({item}: {item: PrintJob}) => (
-		<ListRow onPress={() => this.releaseJob(item)}>
+		<ListRow onPress={() => this.handleJobPress(item)}>
 			<Title>{item.documentName}</Title>
 			<Detail>
-				{item.usageTimeFormatted} • {item.usageCostFormatted} • {item.totalPages} pages •{' '}
-				{item.statusFormatted}
+				{item.usageTimeFormatted} • {item.usageCostFormatted} •{' '}
+				{item.totalPages} pages • {item.statusFormatted}
 			</Detail>
 		</ListRow>
 	)
@@ -85,22 +106,50 @@ class PrintJobsView extends React.PureComponent<Props> {
 	render() {
 		if (this.props.loginState !== 'logged-in') {
 			return (
-				<View>
-					<Text>You are not logged in.</Text>
-					<Button onPress={this.openSettings} title="Open Settings" />
+				<NoticeView
+					buttonText="Open Settings"
+					header="You are not logged in"
+					onPress={this.openSettings}
+					text="You must be logged in to your St. Olaf student account to access this feature"
+				/>
+			)
+		} else if (this.props.jobs.length === 0) {
+			const iconName = Platform.select({
+				ios: 'ios-print',
+				android: 'md-print',
+			})
+			return (
+				<View style={styles.container}>
+					<Icon color={c.sto.black} name={iconName} size={100} />
+					<NoticeView
+						buttonText="Install Stoprint"
+						header="Nothing to Print!"
+						onPress={() => openUrl(STOPRINT_HELP_PAGE)}
+						style={styles.notice}
+						text="Need help getting started?"
+					/>
 				</View>
 			)
+		} else if (this.props.error) {
+			return <StoprintErrorView navigation={this.props.navigation} />
 		}
-
+		const grouped = groupBy(this.props.jobs, j => j.statusFormatted || 'Other')
+		let groupedJobs = toPairs(grouped).map(([title, data]) => ({
+			title,
+			data,
+		}))
+		let sortedGroupedJobs = sortBy(groupedJobs, [
+			group => group.title !== 'Pending Release',
+		])
 		return (
-			<FlatList
+			<SectionList
 				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<ListEmpty mode="bug" />}
-				data={this.props.jobs}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
 				refreshing={this.props.loading}
 				renderItem={this.renderItem}
+				renderSectionHeader={this.renderSectionHeader}
+				sections={sortedGroupedJobs}
 				style={styles.list}
 			/>
 		)
