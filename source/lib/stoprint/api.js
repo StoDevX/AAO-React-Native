@@ -3,6 +3,14 @@
 import {PAPERCUT_MOBILE_RELEASE_API, PAPERCUT_API, PAPERCUT} from './urls'
 import querystring from 'query-string'
 import {encode} from 'base-64'
+import type {
+	PrintJob,
+	Printer,
+	RecentPopularPrintersResponse,
+	ReleaseResponseOrErrorType,
+	CancelResponseOrErrorType,
+	HeldJobsResponseOrErrorType,
+} from './types'
 
 const PAPERCUT_API_HEADERS = new Headers({
 	'Content-Type': 'application/x-www-form-urlencoded',
@@ -34,15 +42,15 @@ export async function logIn(
 	}
 }
 
-export const fetchJobs = (username: string): Promise<Array<PrintJob>> =>
-  fetchJson(`${PAPERCUT_API}/webclient/users/${username}/jobs/status`)
+export const fetchJobs = (username: string): Promise<{jobs: Array<PrintJob>}> =>
+	fetchJson(`${PAPERCUT_API}/webclient/users/${username}/jobs/status`)
 
 export const fetchAllPrinters = (username: string): Promise<Array<Printer>> =>
 	fetchJson(`${PAPERCUT_MOBILE_RELEASE_API}/all-printers?username=${username}`)
 
 export const fetchRecentPrinters = (
 	username: string,
-): Promise<RecentPrinters> =>
+): Promise<RecentPopularPrintersResponse> =>
 	fetchJson(
 		`${PAPERCUT_MOBILE_RELEASE_API}/recent-popular-printers?username=${username}`,
 	)
@@ -50,25 +58,45 @@ export const fetchRecentPrinters = (
 export const heldJobsAvailableAtPrinterForUser = (
 	printerName: string,
 	username: string,
-): Promise<Array<HeldJob>> =>
+): Promise<HeldJobsResponseOrErrorType> =>
 	// https://PAPERCUT_API.stolaf.edu/rpc/api/rest/internal/mobilerelease/api/held-jobs/?username=rives&printerName=printers%5Cmfc-it
 	fetchJson(
 		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/?username=${username}&printerName=printers%5C${printerName}`,
 	)
+		.then(response => ({
+			error: false,
+			value: response,
+		}))
+		.catch(error => ({
+			error: true,
+			value: error,
+		}))
 
-export const cancelPrintJobForUser = (jobId, username) =>
-	fetchJson(
+export const cancelPrintJobForUser = (
+	jobId: string,
+	username: string,
+): CancelResponseOrErrorType =>
+	fetch(
 		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/cancel?username=${username}`,
 		{
 			method: 'POST',
-			body: querystring.stringify({
-				jobIds: [jobId],
-			},
-      {arrayFormat: 'bracket'},
-    ),
-    headers: PAPERCUT_API_HEADERS,
+			body: querystring.stringify(
+				{
+					jobIds: [jobId],
+				},
+				{arrayFormat: 'bracket'},
+			),
+			headers: PAPERCUT_API_HEADERS,
 		},
 	)
+		.then(response => ({
+			error: false,
+			value: response,
+		}))
+		.catch(error => ({
+			error: true,
+			value: error,
+		}))
 
 export const releasePrintJobToPrinterForUser = ({
 	jobId,
@@ -78,7 +106,7 @@ export const releasePrintJobToPrinterForUser = ({
 	jobId: any,
 	printerName: string,
 	username: string,
-}) => {
+}): Promise<ReleaseResponseOrErrorType> =>
 	fetchJson(
 		`${PAPERCUT_MOBILE_RELEASE_API}/held-jobs/release?username=${username}`,
 		{
@@ -93,4 +121,20 @@ export const releasePrintJobToPrinterForUser = ({
 			headers: PAPERCUT_API_HEADERS,
 		},
 	)
-}
+		.then(response => {
+			if (response.numJobsReleased === 0) {
+				return {
+					error: true,
+					value: new Error('Problem with Papercut API releasing job'),
+				}
+			} else {
+				return {
+					error: false,
+					value: response,
+				}
+			}
+		})
+		.catch(error => ({
+			error: true,
+			value: error,
+		}))
