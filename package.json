@@ -65,6 +65,12 @@
         "build": "xcodebuild -project ios/AllAboutOlaf.xcodeproj -scheme AllAboutOlaf -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
         "type": "ios.simulator",
         "name": "iPhone 7"
+      },
+      "ios.sim.release": {
+        "binaryPath": "ios/build/Build/Products/Releast-iphonesimulator/AllAboutOlaf.app",
+        "build": "xcodebuild -project ios/AllAboutOlaf.xcodeproj -scheme AllAboutOlaf -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
+        "type": "ios.simulator",
+        "name": "iPhone 7"
       }
     },
     "test-runner": "jest"
