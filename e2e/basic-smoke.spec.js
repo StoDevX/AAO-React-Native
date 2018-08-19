@@ -18,12 +18,4 @@ describe('Basic smoke tests', () => {
 		await element(by.id('header-back')).tap()
 		await expect(element(by.id('screen-homescreen'))).toBeVisible()
 	})
-
-	it('should show home screen after tap to exit edit-home screen', async () => {
-		await device.reloadReactNative()
-		await element(by.id('button-open-edit-home')).tap()
-		await expect(element(by.id('screen-homescreen'))).toBeNotVisible()
-		await element(by.id('header-back')).tap()
-		await expect(element(by.id('screen-homescreen'))).toBeVisible()
-	})
 })
