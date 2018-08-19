@@ -7,7 +7,6 @@ import moment from 'moment'
 import {openUrl} from '../../components/open-url'
 import * as c from '../../components/colors'
 import type {JobType} from './types'
-import {cleanJob, getContactName, getLinksFromJob} from './clean-job'
 
 const styles = StyleSheet.create({
 	name: {
@@ -58,12 +57,15 @@ function Title({job}: {job: JobType}) {
 }
 
 function Contact({job}: {job: JobType}) {
-	const contactName = getContactName(job).trim() || job.contactEmail
+	let contactName = job.contactName || job.contactEmail
+
 	return job.office || contactName ? (
 		<Card header="Contact" style={styles.card}>
 			<Text
 				onPress={() =>
-					sendEmail({to: [job.contactEmail], subject: job.title, body: ''})
+					job.contactEmail
+						? sendEmail({to: [job.contactEmail], subject: job.title, body: ''})
+						: null
 				}
 				style={styles.cardBody}
 			>
@@ -113,7 +115,7 @@ function Comments({job}: {job: JobType}) {
 }
 
 function Links({job}: {job: JobType}) {
-	const links = getLinksFromJob(job)
+	const {links} = job
 	return links.length ? (
 		<Card header="LINKS" style={styles.card}>
 			{links.map(url => (
@@ -148,7 +150,7 @@ export class JobDetailView extends React.PureComponent<Props> {
 	}
 
 	render() {
-		const job = cleanJob(this.props.navigation.state.params.job)
+		const job = this.props.navigation.state.params.job
 
 		return (
 			<ScrollView>
