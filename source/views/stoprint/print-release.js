@@ -1,14 +1,49 @@
 // @flow
 
 import React from 'react'
-import {StyleSheet, Text, Platform} from 'react-native'
+import {Alert, StyleSheet, View, ScrollView} from 'react-native'
+import type {TopLevelViewPropsType} from '../types'
 import glamorous from 'glamorous-native'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
-import type {Printer, PrintJob} from './types'
+import {Button} from '../components/button'
+import {
+	type Printer,
+	type PrintJob,
+	type HeldJob,
+	type ReleaseResponseOrErrorType,
+	type CancelResponseOrErrorType,
+	cancelPrintJobForUser,
+	heldJobsAvailableAtPrinterForUser,
+	releasePrintJobToPrinterForUser,
+	showGeneralError,
+} from '../../lib/stoprint'
 
-const Container = glamorous.scrollView({
-	paddingVertical: 6,
+const styles = StyleSheet.create({
+	button: {
+		width: 150,
+	},
+	buttonContainer: {
+		alignContent: 'center',
+		backgroundColor: c.sto.black,
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'center',
+	},
+	buttonText: {
+		color: c.white,
+	},
+	cancelButton: {
+		backgroundColor: c.red,
+		marginRight: 20,
+	},
+	printButton: {
+		backgroundColor: c.green,
+	},
+})
+
+const Container = glamorous.view({
+	flex: 1,
 })
 
 const Header = glamorous.text({
@@ -19,60 +54,202 @@ const Header = glamorous.text({
 	color: c.black,
 })
 
-const SubHeader = glamorous.text({
-	fontSize: 21,
-	textAlign: 'center',
-	marginTop: 5,
-})
-
-type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {job: PrintJob, printer: Printer}}},
-}
-
 function LeftDetailCell({detail, title}: {detail: string, title: string}) {
-  return (
-    <Cell cellStyle="LeftDetail" detail={detail} title={title}/>
-  )
+	return <Cell cellStyle="LeftDetail" detail={detail} title={title} />
 }
 
 function JobInformation({job}: {job: PrintJob}) {
-  return (
-    <Section header="JOB INFO" sectionTintColor={c.sectionBgColor}>
-      <LeftDetailCell detail="Status" title={job.statusFormatted}/>
-      <LeftDetailCell detail="Time" title={job.usageTimeFormatted}/>
-      <LeftDetailCell detail="Pages" title={job.totalPages}/>
-      <LeftDetailCell detail="Cost" title={job.usageCostFormatted}/>
-      <LeftDetailCell detail="Grayscale" title={job.grayscaleFormatted}/>
-      <LeftDetailCell detail="Paper Size" title={job.paperSizeFormatted}/>
-    </Section>
-  )
+	const wasPrintedAlready = job.statusFormatted === 'Sent to Printer'
+	return (
+		<Section header="JOB INFO" sectionTintColor={c.sectionBgColor}>
+			<LeftDetailCell detail="Status" title={job.statusFormatted} />
+			<LeftDetailCell detail="Time" title={job.usageTimeFormatted} />
+			<LeftDetailCell detail="Pages" title={job.totalPages.toString()} />
+			<LeftDetailCell detail="Cost" title={job.usageCostFormatted} />
+			<LeftDetailCell detail="Grayscale" title={job.grayscaleFormatted} />
+			<LeftDetailCell detail="Paper Size" title={job.paperSizeFormatted} />
+			{wasPrintedAlready && (
+				<LeftDetailCell detail="Printer" title={job.printerName} />
+			)}
+		</Section>
+	)
 }
 
 function PrinterInformation({printer}: {printer: Printer}) {
-  return (
-    <Section header="PRINTER INFO" sectionTintColor={c.sectionBgColor}>
-      <LeftDetailCell detail="Name" title={printer.printerName}/>
-      {printer.location &&
-        <LeftDetailCell detail="Location" title={printer.location}/>
-      }
-    </Section>
-  )
+	return (
+		<Section header="PRINTER INFO" sectionTintColor={c.sectionBgColor}>
+			<LeftDetailCell detail="Name" title={printer.printerName} />
+			{printer.location && (
+				<LeftDetailCell detail="Location" title={printer.location} />
+			)}
+		</Section>
+	)
 }
 
-export class PrintJobReleaseView extends React.PureComponent<Props> {
+type Props = TopLevelViewPropsType & {
+	navigation: {
+		state: {params: {job: PrintJob, printer: ?Printer, username: ?string}},
+	},
+}
+
+type State = {
+	heldJob: ?HeldJob,
+	status: 'complete' | 'pending' | 'printing' | 'cancelling',
+}
+
+export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
-			title: 'Release Job',
+		title: 'Release Job',
+	}
+
+	state = {
+		heldJob: null,
+		status:
+			this.props.navigation.state.params.job.statusFormatted ===
+			'Pending Release'
+				? 'pending'
+				: 'complete',
+	}
+
+	componentDidMount() {
+		if (this.state.status === 'pending') {
+			this.getHeldJob()
+		}
+	}
+
+	getHeldJob = async () => {
+		const {job, printer, username} = this.props.navigation.state.params
+		const jobId = job.id.toString()
+		const response = await heldJobsAvailableAtPrinterForUser(
+			printer.printerName,
+			username,
+		)
+		if (response.error) {
+			showGeneralError(this.returnToJobsView)
+		} else {
+			const heldJobMatch = response.value.find(heldJob =>
+				heldJob.id.startsWith(jobId),
+			)
+			if (heldJobMatch) {
+				this.setState(() => ({heldJob: heldJobMatch}))
+			} else {
+				showGeneralError(this.returnToJobsView)
+			}
+		}
+	}
+
+	requestCancel = () => {
+		const {job} = this.props.navigation.state.params
+		const prompt = `Are you sure you want to cancel printing ${
+			job.documentName
+		}? This cannot be undone.`
+		Alert.alert('Print Job Cancellation Confirmation', prompt, [
+			{text: 'Cancel', style: 'cancel'},
+			{text: 'OK', onPress: this.cancelJob},
+		])
+	}
+
+	requestRelease = () => {
+		const {job, printer} = this.props.navigation.state.params
+		const prompt = `Are you sure you want to print ${job.documentName} to ${
+			printer.printerName
+		}?`
+		Alert.alert('Print Job Release Confirmation', prompt, [
+			{text: 'Cancel', style: 'cancel'},
+			{text: 'OK', onPress: this.releaseJob},
+		])
+	}
+
+	releaseJob = async () => {
+		this.setState(() => ({status: 'printing'}))
+		const {printer, username, job} = this.props.navigation.state.params
+		const {heldJob} = this.state
+		if (!heldJob) {
+			showGeneralError(this.returnToJobsView)
+			return
+		}
+		const response: ReleaseResponseOrErrorType = await releasePrintJobToPrinterForUser(
+			{
+				jobId: heldJob.id,
+				printerName: printer.printerName,
+				username: username,
+			},
+		)
+		if (response.error) {
+			Alert.alert(
+				'Error Releasing Job',
+				'We encountered a problem while trying to release your job to the printer. Please try again or release your job at the printer itself.',
+				[{text: 'OK', onPress: this.returnToJobsView}],
+			)
+		} else {
+			Alert.alert(
+				'Job Successfully Released',
+				`Document ${job.documentName} is printing at ${printer.printerName}`,
+				[{text: 'OK', onPress: this.returnToJobsView}],
+			)
+		}
+	}
+
+	cancelJob = async () => {
+		this.setState(() => ({status: 'cancelling'}))
+		const {username, job} = this.props.navigation.state.params
+		const {heldJob} = this.state
+		if (!heldJob) {
+			showGeneralError(this.returnToJobsView)
+			return
+		}
+		const response: CancelResponseOrErrorType = await cancelPrintJobForUser(
+			heldJob.id,
+			username,
+		)
+		if (response.error) {
+			Alert.alert(
+				'Error Cancelling Job',
+				'We encountered a problem while trying to cancel your job. Please try again or cancel your job at the printer itself.',
+				[{text: 'OK', onPress: this.returnToJobsView}],
+			)
+		} else {
+			Alert.alert(
+				'Job Successfully Cancelled',
+				`Document ${job.documentName} has been removed from your print queue.`,
+				[{text: 'OK', onPress: this.returnToJobsView}],
+			)
+		}
+	}
+
+	returnToJobsView = () => {
+		this.props.navigation.navigate('PrintJobsView')
 	}
 
 	render() {
 		const {job, printer} = this.props.navigation.state.params
+		const {status} = this.state
+		const actionAvailable = status !== 'complete' && printer
 		return (
 			<Container>
-				<Header>{job.documentName}</Header>
-				<TableView>
-					<JobInformation job={job} />
-          <PrinterInformation printer={printer} />
-				</TableView>
+				<ScrollView>
+					<Header>{job.documentName}</Header>
+					<TableView>
+						<JobInformation job={job} />
+						{actionAvailable && <PrinterInformation printer={printer} />}
+					</TableView>
+				</ScrollView>
+				{actionAvailable && (
+					<View style={styles.buttonContainer}>
+						<Button
+							buttonStyle={[styles.button, styles.cancelButton]}
+							onPress={this.requestCancel}
+							textStyle={styles.buttonText}
+							title={status === 'cancelling' ? 'Cancelling…' : 'Cancel'}
+						/>
+						<Button
+							buttonStyle={[styles.button, styles.printButton]}
+							onPress={this.requestRelease}
+							textStyle={styles.buttonText}
+							title={status === 'printing' ? 'Printing…' : 'Print'}
+						/>
+					</View>
+				)}
 			</Container>
 		)
 	}
