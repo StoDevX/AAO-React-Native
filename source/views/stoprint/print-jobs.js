@@ -104,6 +104,9 @@ class PrintJobsView extends React.PureComponent<Props> {
 	)
 
 	render() {
+		if (this.props.error) {
+			return <StoprintErrorView refresh={this.refresh} navigation={this.props.navigation} />
+		}
 		if (this.props.loginState !== 'logged-in') {
 			return (
 				<NoticeView
@@ -130,8 +133,6 @@ class PrintJobsView extends React.PureComponent<Props> {
 					/>
 				</View>
 			)
-		} else if (this.props.error) {
-			return <StoprintErrorView navigation={this.props.navigation} />
 		}
 		const grouped = groupBy(this.props.jobs, j => j.statusFormatted || 'Other')
 		let groupedJobs = toPairs(grouped).map(([title, data]) => ({

@@ -7,25 +7,43 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
 
-type Props = TopLevelViewPropsType
+const ERROR_MESSAGE = 'Make sure you are connected to the St. Olaf WiFi \
+ Network via eduroam or VPN. If you are, please report this so we can make\
+ sure it doesn\'t happen again.'
 
-export function StoprintErrorView(props: Props) {
-	const iconName = Platform.select({
-		ios: 'ios-bug',
-		android: 'md-bug',
-	})
-	return (
-		<View style={styles.container}>
-			<Icon color={c.sto.black} name={iconName} size={100} />
-			<NoticeView
-				buttonText="Report"
-				header="Look! A bug!"
-				onPress={() => props.navigation.navigate('HelpView')}
-				style={styles.notice}
-				text="We're sorry, but an unexpected error occurred when trying to connect to Stoprint. Please report this so we can make sure it doesn't happen again."
-			/>
-		</View>
-	)
+type Props = TopLevelViewPropsType & {
+	refresh: () => any,
+}
+
+export class StoprintErrorView extends React.PureComponent<Props> {
+	_timer : any
+
+	componentDidMount() {
+		this._timer = setInterval(this.props.refresh, 5000)
+	}
+
+	componentWillUnmount() {
+		clearInterval(this._timer)
+	}
+
+	render() {
+		const iconName = Platform.select({
+			ios: 'ios-bug',
+			android: 'md-bug',
+		})
+		return (
+			<View style={styles.container}>
+				<Icon color={c.sto.black} name={iconName} size={100} />
+				<NoticeView
+					buttonText="Report"
+					header="Connection Issue"
+					onPress={() => this.props.navigation.navigate('HelpView')}
+					style={styles.notice}
+					text={ERROR_MESSAGE}
+				/>
+			</View>
+		)
+	}
 }
 
 const styles = StyleSheet.create({
