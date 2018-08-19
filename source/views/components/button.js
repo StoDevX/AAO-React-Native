@@ -36,20 +36,24 @@ type Props = {
 	title?: string,
 	onPress?: () => any,
 	disabled?: boolean,
+	buttonStyle?: any,
+	textStyle?: any,
 }
 
 export function Button({
 	title = 'Push me!',
 	onPress = noop,
 	disabled = false,
+	buttonStyle = null,
+	textStyle = null,
 }: Props) {
 	return (
 		<BasicButton
-			containerStyle={styles.button}
+			containerStyle={[styles.button, buttonStyle]}
 			disabled={disabled}
 			disabledContainerStyle={styles.disabled}
 			onPress={onPress}
-			style={styles.text}
+			style={[styles.text, textStyle]}
 			styleDisabled={styles.textDisabled}
 		>
 			{Platform.OS === 'android' ? title.toUpperCase() : title}
