@@ -6,7 +6,6 @@ import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import moment from 'moment'
 import * as c from '../../components/colors'
 import type {JobType} from './types'
-import {cleanJob, getContactName} from './clean-job'
 import {SelectableCell} from '../../components/cells/selectable'
 import glamorous from 'glamorous-native'
 
@@ -33,6 +32,7 @@ function Information({job}: {job: JobType}) {
 		<Cell cellStyle="LeftDetail" detail="Office" title={job.office} />
 	) : null
 
+	let contactName = job.contactName || job.contactEmail
 	const contact = job.contactEmail ? (
 		<Cell
 			accessory="DisclosureIndicator"
@@ -41,7 +41,7 @@ function Information({job}: {job: JobType}) {
 			onPress={() =>
 				sendEmail({to: [job.contactEmail], subject: job.title, body: ''})
 			}
-			title={getContactName(job).trim() || job.contactEmail}
+			title={contactName}
 		/>
 	) : null
 
@@ -120,7 +120,7 @@ export class JobDetailView extends React.PureComponent<Props> {
 	}
 
 	render() {
-		const job = cleanJob(this.props.navigation.state.params.job)
+		const job = this.props.navigation.state.params.job
 
 		return (
 			<ScrollView>
