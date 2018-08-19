@@ -4,9 +4,8 @@ import React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {connect} from 'react-redux'
 import {type ReduxState} from '../../flux'
-import {ListEmpty} from '../components/list'
 import {updatePrinters} from '../../flux/parts/stoprint'
-import type {Printer, PrintJob} from './types'
+import type {Printer, PrintJob} from '../../lib/stoprint'
 import {
 	ListRow,
 	ListSeparator,
@@ -18,6 +17,7 @@ import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
+import {StoprintErrorView} from './components'
 
 const styles = StyleSheet.create({
 	list: {},
@@ -33,6 +33,7 @@ type ReduxStateProps = {
 	+popularPrinters: Array<Printer>,
 	+error: ?string,
 	+loading: boolean,
+	+username: ?string,
 }
 
 type ReduxDispatchProps = {
@@ -44,9 +45,10 @@ type Props = ReactProps & ReduxDispatchProps & ReduxStateProps
 class PrinterListView extends React.PureComponent<Props> {
 	static navigationOptions = {
 		title: 'Select Printer',
+		headerBackTitle: 'Printers',
 	}
 
-	componentWillMount = () => {
+	componentDidMount = () => {
 		this.refresh()
 	}
 
@@ -68,10 +70,11 @@ class PrinterListView extends React.PureComponent<Props> {
 	keyExtractor = (item: Printer) => item.printerName
 
 	openPrintRelease = (item: Printer) =>
-		this.props.navigation.navigate(
-			'PrintJobReleaseView',
-			{job: this.props.navigation.state.params.job, printer: item}
-		)
+		this.props.navigation.navigate('PrintJobReleaseView', {
+			job: this.props.navigation.state.params.job,
+			printer: item,
+			username: this.props.username,
+		})
 
 	renderItem = ({item}: {item: Printer}) => (
 		<ListRow onPress={() => this.openPrintRelease(item)}>
@@ -85,6 +88,10 @@ class PrinterListView extends React.PureComponent<Props> {
 	)
 
 	render() {
+		if (this.props.error) {
+			return <StoprintErrorView navigation={this.props.navigation} />
+		}
+
 		const allWithLocations = this.props.printers.map(j => ({
 			...j,
 			location: j.location || 'Unknown Building',
@@ -119,7 +126,6 @@ class PrinterListView extends React.PureComponent<Props> {
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<ListEmpty mode="bug" />}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
 				refreshing={this.props.loading}
@@ -139,6 +145,7 @@ function mapStateToProps(state: ReduxState): ReduxStateProps {
 		popularPrinters: state.stoprint ? state.stoprint.popularPrinters : [],
 		error: state.stoprint ? state.stoprint.error : null,
 		loading: state.stoprint ? state.stoprint.loadingPrinters : false,
+		username: state.settings ? state.settings.username : null,
 	}
 }
 
