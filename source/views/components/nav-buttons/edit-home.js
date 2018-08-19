@@ -18,10 +18,15 @@ export function EditHomeButton({
 }) {
 	return (
 		<Touchable
+			accessibilityComponentType="button"
+			accessibilityLabel="Open Edit Home"
+			accessibilityTraits="button"
+			accessible={true}
 			borderless={true}
 			highlight={false}
 			onPress={() => navigation.navigate('EditHomeView')}
 			style={[commonStyles.button, buttonStyle]}
+			testID="button-open-edit-home"
 		>
 			<Text style={commonStyles.text}>Edit</Text>
 		</Touchable>
