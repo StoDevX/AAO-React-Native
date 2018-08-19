@@ -183,6 +183,8 @@ android {
         resolutionStrategy.force "com.android.support:customtabs:$ANDROID_SUPPORT_LIBRARY_VERSION"
         resolutionStrategy.force "com.android.support:support-media-compat:$ANDROID_SUPPORT_LIBRARY_VERSION"
         resolutionStrategy.force "com.android.support:support-v4:$ANDROID_SUPPORT_LIBRARY_VERSION"
+
+        resolutionStrategy.force 'org.webkit:android-jsc:r224109'
     }
 }
 
