@@ -1,15 +1,14 @@
 // @flow
 
 import {loadLoginCredentials} from '../../lib/login'
-import {encode} from 'base-64'
 import {type ReduxState} from '../index'
-import type {
-	HeldJob,
-	PrintJob,
-	Printer,
-	RecentPopularPrintersResponse as RecentPrinters,
-} from '../../views/stoprint/types'
-import {fetchAllPrinters, fetchJobs, fetchRecentPrinters, logIn} from '../../lib/stoprint'
+import type {PrintJob, Printer} from '../../lib/stoprint'
+import {
+	fetchAllPrinters,
+	fetchJobs,
+	fetchRecentPrinters,
+	logIn,
+} from '../../lib/stoprint'
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
