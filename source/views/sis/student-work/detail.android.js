@@ -58,11 +58,14 @@ function Title({job}: {job: JobType}) {
 
 function Contact({job}: {job: JobType}) {
 	let contactName = job.contactName || job.contactEmail
+
 	return job.office || contactName ? (
 		<Card header="Contact" style={styles.card}>
 			<Text
 				onPress={() =>
-					sendEmail({to: [job.contactEmail], subject: job.title, body: ''})
+					job.contactEmail
+						? sendEmail({to: [job.contactEmail], subject: job.title, body: ''})
+						: null
 				}
 				style={styles.cardBody}
 			>

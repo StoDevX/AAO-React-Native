@@ -33,13 +33,15 @@ function Information({job}: {job: JobType}) {
 	) : null
 
 	let contactName = job.contactName || job.contactEmail
-	const contact = job.contactEmail ? (
+	const contact = contactName ? (
 		<Cell
-			accessory="DisclosureIndicator"
+			accessory={job.contactEmail ? 'DisclosureIndicator' : undefined}
 			cellStyle="LeftDetail"
 			detail="Contact"
 			onPress={() =>
-				sendEmail({to: [job.contactEmail], subject: job.title, body: ''})
+				job.contactEmail
+					? sendEmail({to: [job.contactEmail], subject: job.title, body: ''})
+					: null
 			}
 			title={contactName}
 		/>
