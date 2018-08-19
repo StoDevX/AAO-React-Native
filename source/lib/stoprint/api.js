@@ -10,6 +10,7 @@ import type {
 	ReleaseResponseOrErrorType,
 	CancelResponseOrErrorType,
 	HeldJobsResponseOrErrorType,
+	LoginResponseOrErrorType,
 } from './types'
 
 const PAPERCUT_API_HEADERS = new Headers({
@@ -21,25 +22,30 @@ export async function logIn(
 	username: string,
 	password: string,
 ): Promise<'success' | string> {
-	try {
-		const now = new Date().getTime()
-		const url = `${PAPERCUT_API}/webclient/users/${username}/log-in?nocache=${now}`
-		const body = querystring.stringify({password: encode(password)})
-		const result = await fetchJson(url, {
-			method: 'POST',
-			body: body,
-			headers: PAPERCUT_API_HEADERS,
-		})
+	const now = new Date().getTime()
+	const url = `${PAPERCUT_API}/webclient/users/${username}/log-in?nocache=${now}`
+	const body = querystring.stringify({password: encode(password)})
+	const result : LoginResponseOrErrorType = await fetchJson(url, {
+		method: 'POST',
+		body: body,
+		headers: PAPERCUT_API_HEADERS,
+	}).then(response => ({
+		error: false,
+		value: response
+	})).catch((error) => ({
+		error: true,
+		value: error
+	}))
 
-		if (!result.success) {
-			return 'The username and password appear to be invalid'
-		}
-
-		return 'success'
-	} catch (err) {
-		console.error(err)
+	if (result.error) {
 		return 'The print server seems to be having some issues'
 	}
+
+	if (!result.value.success) {
+		return 'The username and password appear to be invalid'
+	}
+
+	return 'success'
 }
 
 export const fetchJobs = (username: string): Promise<{jobs: Array<PrintJob>}> =>

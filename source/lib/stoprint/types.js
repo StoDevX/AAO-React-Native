@@ -77,3 +77,15 @@ export type HeldJobsResponse = Array<HeldJob>
 export type HeldJobsResponseOrErrorType =
 	| {error: true, value: Error}
 	| {error: false, value: HeldJobsResponse}
+
+type LoginResponse = {
+	authCookie: string,
+	isMobileReleaseEnabled: boolean,
+	realName: string,
+	rememberMeEnabled: boolean,
+	success: true,
+}
+
+export type LoginResponseOrErrorType =
+	| {error: true, value: Error}
+	| {error: false, value: LoginResponse}
