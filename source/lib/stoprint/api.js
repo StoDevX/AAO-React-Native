@@ -28,7 +28,7 @@ export async function logIn(
 	const result: LoginResponseOrErrorType = await fetchJson(url, {
 		method: 'POST',
 		body: body,
-		headers: Headers(PAPERCUT_API_HEADERS),
+		headers: new Headers(PAPERCUT_API_HEADERS),
 	})
 		.then(response => ({
 			error: false,
@@ -94,7 +94,7 @@ export const cancelPrintJobForUser = (
 				},
 				{arrayFormat: 'bracket'},
 			),
-			headers: Headers(PAPERCUT_API_HEADERS),
+			headers: new Headers(PAPERCUT_API_HEADERS),
 		},
 	)
 		.then(response => ({
@@ -126,7 +126,7 @@ export const releasePrintJobToPrinterForUser = ({
 				},
 				{arrayFormat: 'bracket'},
 			),
-			headers: Headers(PAPERCUT_API_HEADERS),
+			headers: new Headers(PAPERCUT_API_HEADERS),
 		},
 	)
 		.then(response => {
