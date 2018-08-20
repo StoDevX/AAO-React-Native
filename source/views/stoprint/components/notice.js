@@ -5,6 +5,7 @@ import {Platform, ScrollView, StyleSheet, RefreshControl} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
+import delay from 'delay'
 
 type Props = {
 	buttonText: string,
@@ -37,9 +38,16 @@ export class StoPrintNoticeView extends React.PureComponent<Props, State> {
 		}
 	}
 
-	_refresh = () => {
+	_refresh = async () => {
 		this.setState(() => ({refreshing: true}))
-		this.props.refresh()
+		let start = Date.now()
+
+		await this.props.refresh()
+
+		let elapsed = start - Date.now()
+		if (elapsed < 500) {
+			await delay(500 - elapsed)
+		}
 		this.setState(() => ({refreshing: false}))
 	}
 

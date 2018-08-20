@@ -6,6 +6,7 @@ import {ScrollView, RefreshControl, StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
+import delay from 'delay'
 
 const ERROR_MESSAGE =
 	"Make sure you are connected to the St. Olaf Network via eduroam or the VPN. If you are, please report this so we can make sure it doesn't happen again."
@@ -35,9 +36,16 @@ export class StoPrintErrorView extends React.PureComponent<Props, State> {
 		}
 	}
 
-	_refresh = () => {
+	_refresh = async () => {
 		this.setState(() => ({refreshing: true}))
-		this.props.refresh()
+		let start = Date.now()
+
+		await this.props.refresh()
+
+		let elapsed = start - Date.now()
+		if (elapsed < 500) {
+			await delay(500 - elapsed)
+		}
 		this.setState(() => ({refreshing: false}))
 	}
 
