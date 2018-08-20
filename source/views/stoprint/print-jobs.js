@@ -16,10 +16,9 @@ import {
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
 import {NoticeView} from '../components/notice'
-import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from '../components/colors'
 import openUrl from '../components/open-url'
-import {StoprintErrorView} from './components'
+import {StoprintErrorView, StoprintNoticeView} from './components'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
@@ -109,7 +108,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 		}
 		if (this.props.loginState !== 'logged-in') {
 			return (
-				<NoticeView
+				<StoprintNoticeView
 					buttonText="Open Settings"
 					header="You are not logged in"
 					onPress={this.openSettings}
@@ -117,21 +116,14 @@ class PrintJobsView extends React.PureComponent<Props> {
 				/>
 			)
 		} else if (this.props.jobs.length === 0) {
-			const iconName = Platform.select({
-				ios: 'ios-print',
-				android: 'md-print',
-			})
 			return (
-				<View style={styles.container}>
-					<Icon color={c.sto.black} name={iconName} size={100} />
-					<NoticeView
-						buttonText="Install Stoprint"
-						header="Nothing to Print!"
-						onPress={() => openUrl(STOPRINT_HELP_PAGE)}
-						style={styles.notice}
-						text="Need help getting started?"
-					/>
-				</View>
+				<StoprintNoticeView
+					buttonText="Install Stoprint"
+					header="Nothing to Print!"
+					onPress={() => openUrl(STOPRINT_HELP_PAGE)}
+					refresh={this.refresh}
+					text="Need help getting started?"
+				/>
 			)
 		}
 		const grouped = groupBy(this.props.jobs, j => j.statusFormatted || 'Other')
@@ -140,7 +132,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 			data,
 		}))
 		let sortedGroupedJobs = sortBy(groupedJobs, [
-			group => group.title !== 'Pending Release',
+			group => group.title !== 'Pending Release', // puts 'Pending Release' jobs at the top
 		])
 		return (
 			<SectionList
