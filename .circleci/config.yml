@@ -300,7 +300,7 @@ jobs:
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - save_cache: *save-cache-bundler
       - run: HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew
-      - run: brew install applesimutils
+      - run: HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run:
