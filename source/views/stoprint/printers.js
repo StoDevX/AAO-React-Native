@@ -13,6 +13,7 @@ import {
 	Detail,
 	Title,
 } from '../components/list'
+import LoadingView from '../components/loading'
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
 import toPairs from 'lodash/toPairs'
@@ -88,6 +89,9 @@ class PrinterListView extends React.PureComponent<Props> {
 	)
 
 	render() {
+		if (this.props.loading && this.props.printers.length === 0) {
+			return <LoadingView text="Fetching Available Printers…" />
+		}
 		if (this.props.error) {
 			return (
 				<StoPrintErrorView
