@@ -67,16 +67,18 @@ You should use Release Candidates generously – do, for example, `npm version 2
 Anyway. TL;DR: `npm version` is your friend! Use it.
 
 
-## TravisCI Notes
-A short description of what the various environment variables do, and how to generate them:
+## CI Notes
+A short description of what the various environment variables do.
 
-- `BUGSNAG_KEY`: I'm not sure. Some kind of API key for Bugsnag integration? This might be different from the Bugsnag API key that's embedded into the iOS/android projects? A `grep` over our project didn't reveal anywhere that this is used.
-- `CI_USER_TOKEN`: A github token from a bot account, used to allow Travis to access the private `aao-keys` repo. We apparently can't just use a personal github access token, since our personal accounts are automatically hooked into the travis clone or something IDK. To make: new GitHub bot acccount; new Personal Access token (not deploy key!) with `repo > public_repo` scope.
-- `DANGER_GITHUB_API_TOKEN`: A GitHub token of some sort for Danger. I assume this is a personal access token? Not sure yet.
-- `encrypted_199c454344e1_iv`: Part 1/2 of a failed attempt at pushing back to github. Contains encrypted data to decrypt the private key that we store in the repo to allow us to push back to the repo from Travis.
-- `encrypted_199c454344e1_key`: Part 2/2 of a failed attempt at pushing back to github.
-- `GCAL_KEY`: a Google Developer Console generated key for Google Calendar. Might just be a Google Dev Console token?
-- `GH_TOKEN`: some kind of GitHub token? a quick `grep` didn't reveal any usages of it.
-- `GITHUB_PAGES_TOKEN`: A GitHub personal access token to allow Travis to push to `gh-pages`.
-- `GMAPS_KEY`: a Google Developer Console generated key for Google Maps. Might just be a Google Dev Console token?
-- `MATCH_PASSWORD`: the password to the private `aao-keys` Match repository.
+Name | Decription | Used by
+---- | ---------- | -------
+`BUGSNAG_KEY` | The "Bugsnag Notifier" API token. | The app; CircleCI
+`COVERALLS_REPO_TOKEN` | The API token used to talk to Coveralls. | CircleCI
+`DANGER_GITHUB_API_TOKEN` | A GitHub token for Danger. Owned by the StoDevX bot account. | CircleCI
+`FASTLANE_PASSWORD` | The Apple ID account password for Fastlane to use to deploy the app. | CircleCI
+`GH_TOKEN` | A GitHub Token; used to let Greenkeeper update yarn.lock | TravisCI
+`GITHUB_KEYS_REPOSITORY_TOKEN` | Used by Match to get access to the keys repository. | CircleCI
+`GITHUB_PAGES_TOKEN` | A GitHub personal access token to allow Travis to push to `gh-pages`. | TravisCI
+`MAPBOX_KEY` | A MapBox API key, used to authenticate with the MapBox API servers. | The app
+`MATCH_PASSWORD` | The password to the private `aao-keys` Match repository. | CircleCI
+`ONESIGNAL_KEY` | A User Auth key from OneSignal for creating/updating OneSignal apps. | CircleCI
