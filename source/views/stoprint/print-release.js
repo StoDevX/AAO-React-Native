@@ -23,9 +23,6 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		color: c.red,
 	},
-	container: {
-		flex: 1,
-	},
 	buttonCell: {
 		textAlign: 'center',
 	},
@@ -213,7 +210,7 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 		const {status} = this.state
 		const actionAvailable = status !== 'complete' && printer
 		return (
-			<ScrollView contentContainerStyle={styles.container}>
+			<ScrollView>
 				<Header>{job.documentName}</Header>
 				<TableView>
 					<JobInformation job={job} />
