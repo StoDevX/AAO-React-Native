@@ -13,6 +13,7 @@ import {
 	Detail,
 	Title,
 } from '../components/list'
+import LoadingView from '../components/loading'
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
 import openUrl from '../components/open-url'
@@ -89,6 +90,11 @@ class PrintJobsView extends React.PureComponent<Props> {
 	)
 
 	render() {
+		if (this.props.loginState === 'checking') {
+			return <LoadingView text="Logging in…" />
+		} else if (this.props.loading && this.props.jobs.length === 0) {
+			return <LoadingView text="Fetching stoPrint Jobs…" />
+		}
 		if (this.props.error) {
 			return (
 				<StoPrintErrorView
