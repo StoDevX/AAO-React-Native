@@ -169,7 +169,7 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 		} else {
 			Alert.alert(
 				'Job Successfully Released',
-				`Document ${job.documentName} is printing at ${printer.printerName}.`,
+				`Document "${job.documentName}" is printing at ${printer.printerName}.`,
 				[{text: 'OK', onPress: this.returnToJobsView}],
 			)
 		}
@@ -196,7 +196,7 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 		} else {
 			Alert.alert(
 				'Job Successfully Cancelled',
-				`Document ${job.documentName} has been removed from your print queue.`,
+				`Document "${job.documentName}" has been removed from your print queue.`,
 				[{text: 'OK', onPress: this.returnToJobsView}],
 			)
 		}
