@@ -43,7 +43,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 	}
 
 	componentDidMount() {
-		this.refresh()
+		this.fetchData()
 	}
 
 	refresh = async (): any => {
