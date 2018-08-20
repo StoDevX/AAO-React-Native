@@ -32,7 +32,7 @@ allprojects {
             url "https://jitpack.io"
         }
         maven {
-            // Local Maven repo containing AARs with JSC library built for Android
+            // Local Maven repo containing AARs with JSC library built for Android, like RN
             url "$rootDir/../node_modules/jsc-android/dist"
         }
         google()
