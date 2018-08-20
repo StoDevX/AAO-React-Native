@@ -36,7 +36,10 @@ export function ButtonCell({
 			onPress={onPress}
 			title={
 				<Text
-					style={[indeterminate || disabled ? styles.disabled : styles.active, textStyle]}
+					style={[
+						indeterminate || disabled ? styles.disabled : styles.active,
+						textStyle,
+					]}
 				>
 					{title}
 				</Text>

@@ -25,17 +25,19 @@ export async function logIn(
 	const now = new Date().getTime()
 	const url = `${PAPERCUT_API}/webclient/users/${username}/log-in?nocache=${now}`
 	const body = querystring.stringify({password: encode(password)})
-	const result : LoginResponseOrErrorType = await fetchJson(url, {
+	const result: LoginResponseOrErrorType = await fetchJson(url, {
 		method: 'POST',
 		body: body,
 		headers: PAPERCUT_API_HEADERS,
-	}).then(response => ({
-		error: false,
-		value: response
-	})).catch((error) => ({
-		error: true,
-		value: error
-	}))
+	})
+		.then(response => ({
+			error: false,
+			value: response,
+		}))
+		.catch(error => ({
+			error: true,
+			value: error,
+		}))
 
 	if (result.error) {
 		return 'The print server seems to be having some issues'

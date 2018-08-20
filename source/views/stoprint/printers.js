@@ -89,7 +89,12 @@ class PrinterListView extends React.PureComponent<Props> {
 
 	render() {
 		if (this.props.error) {
-			return <StoprintErrorView refresh={this.refresh} navigation={this.props.navigation} />
+			return (
+				<StoprintErrorView
+					navigation={this.props.navigation}
+					refresh={this.refresh}
+				/>
+			)
 		}
 
 		const allWithLocations = this.props.printers.map(j => ({

@@ -7,16 +7,17 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
 
-const ERROR_MESSAGE = 'Make sure you are connected to the St. Olaf WiFi \
+const ERROR_MESSAGE =
+	"Make sure you are connected to the St. Olaf WiFi \
  Network via eduroam or VPN. If you are, please report this so we can make\
- sure it doesn\'t happen again.'
+ sure it doesn't happen again."
 
 type Props = TopLevelViewPropsType & {
 	refresh: () => any,
 }
 
 export class StoprintErrorView extends React.PureComponent<Props> {
-	_timer : any
+	_timer: any
 
 	componentDidMount() {
 		this._timer = setInterval(this.props.refresh, 5000)

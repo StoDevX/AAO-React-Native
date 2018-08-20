@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {SectionList, StyleSheet, View, Platform} from 'react-native'
+import {SectionList} from 'react-native'
 import {connect} from 'react-redux'
 import {type ReduxState} from '../../flux'
 import {updatePrintJobs} from '../../flux/parts/stoprint'
@@ -15,26 +15,11 @@ import {
 } from '../components/list'
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
-import {NoticeView} from '../components/notice'
-import * as c from '../components/colors'
 import openUrl from '../components/open-url'
 import {StoprintErrorView, StoprintNoticeView} from './components'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
-
-const styles = StyleSheet.create({
-	list: {},
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-		backgroundColor: c.sto.white,
-	},
-	notice: {
-		flex: 0,
-	},
-})
 
 type ReactProps = TopLevelViewPropsType
 
@@ -104,7 +89,12 @@ class PrintJobsView extends React.PureComponent<Props> {
 
 	render() {
 		if (this.props.error) {
-			return <StoprintErrorView refresh={this.refresh} navigation={this.props.navigation} />
+			return (
+				<StoprintErrorView
+					navigation={this.props.navigation}
+					refresh={this.refresh}
+				/>
+			)
 		}
 		if (this.props.loginState !== 'logged-in') {
 			return (
@@ -143,7 +133,6 @@ class PrintJobsView extends React.PureComponent<Props> {
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
 				sections={sortedGroupedJobs}
-				style={styles.list}
 			/>
 		)
 	}

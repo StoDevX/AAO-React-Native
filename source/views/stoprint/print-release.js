@@ -1,12 +1,11 @@
 // @flow
 
 import * as React from 'react'
-import {Alert, StyleSheet, View, ScrollView} from 'react-native'
+import {Alert, StyleSheet, ScrollView} from 'react-native'
 import type {TopLevelViewPropsType} from '../types'
 import glamorous from 'glamorous-native'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
-import {Button} from '../components/button'
 import {ButtonCell} from '../components/cells'
 import {
 	type Printer,
@@ -21,28 +20,12 @@ import {
 } from '../../lib/stoprint'
 
 const styles = StyleSheet.create({
-	button: {
-		width: 150,
-	},
-	buttonContainer: {
-		alignContent: 'center',
-		backgroundColor: c.sto.black,
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'center',
-	},
-	buttonText: {
-		color: c.white,
-	},
 	cancelButton: {
 		color: c.red,
 	},
-	printButton: {
-		backgroundColor: c.green,
-	},
 	buttonCell: {
 		textAlign: 'center',
-	}
+	},
 })
 
 const Container = glamorous.view({
@@ -234,7 +217,7 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 					<Header>{job.documentName}</Header>
 					<TableView>
 						<JobInformation job={job} />
-						{actionAvailable &&
+						{actionAvailable && (
 							<React.Fragment>
 								<PrinterInformation printer={printer} />
 								<Section sectionPaddingBottom={0}>
@@ -252,7 +235,7 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 									/>
 								</Section>
 							</React.Fragment>
-						}
+						)}
 					</TableView>
 				</ScrollView>
 			</Container>

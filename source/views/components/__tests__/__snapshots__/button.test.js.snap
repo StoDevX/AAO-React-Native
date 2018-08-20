@@ -49,15 +49,18 @@ exports[`calls the callback 2`] = `
 exports[`can change the title 1`] = `
 <Button
   containerStyle={
-    Object {
-      "alignSelf": "center",
-      "backgroundColor": "#E3A025",
-      "borderRadius": 6,
-      "marginVertical": 10,
-      "overflow": "hidden",
-      "paddingHorizontal": 20,
-      "paddingVertical": 10,
-    }
+    Array [
+      Object {
+        "alignSelf": "center",
+        "backgroundColor": "#E3A025",
+        "borderRadius": 6,
+        "marginVertical": 10,
+        "overflow": "hidden",
+        "paddingHorizontal": 20,
+        "paddingVertical": 10,
+      },
+      null,
+    ]
   }
   disabled={false}
   disabledContainerStyle={
@@ -67,26 +70,29 @@ exports[`can change the title 1`] = `
   }
   onPress={[Function]}
   style={
-    Object {
-      "backgroundColor": "transparent",
-      "color": Object {
-        "_a": 1,
-        "_b": 33,
-        "_format": "hex",
-        "_g": 33,
-        "_gradientType": undefined,
-        "_ok": true,
-        "_originalInput": "#242121",
-        "_r": 36,
-        "_roundA": 1,
-        "_tc_id": 3,
+    Array [
+      Object {
+        "backgroundColor": "transparent",
+        "color": Object {
+          "_a": 1,
+          "_b": 33,
+          "_format": "hex",
+          "_g": 33,
+          "_gradientType": undefined,
+          "_ok": true,
+          "_originalInput": "#242121",
+          "_r": 36,
+          "_roundA": 1,
+          "_tc_id": 3,
+        },
+        "fontFamily": "System",
+        "fontSize": 16,
+        "fontWeight": "400",
+        "letterSpacing": -0.32,
+        "lineHeight": 21,
       },
-      "fontFamily": "System",
-      "fontSize": 16,
-      "fontWeight": "400",
-      "letterSpacing": -0.32,
-      "lineHeight": 21,
-    }
+      null,
+    ]
   }
   styleDisabled={
     Object {
@@ -101,15 +107,18 @@ exports[`can change the title 1`] = `
 exports[`renders 1`] = `
 <Button
   containerStyle={
-    Object {
-      "alignSelf": "center",
-      "backgroundColor": "#E3A025",
-      "borderRadius": 6,
-      "marginVertical": 10,
-      "overflow": "hidden",
-      "paddingHorizontal": 20,
-      "paddingVertical": 10,
-    }
+    Array [
+      Object {
+        "alignSelf": "center",
+        "backgroundColor": "#E3A025",
+        "borderRadius": 6,
+        "marginVertical": 10,
+        "overflow": "hidden",
+        "paddingHorizontal": 20,
+        "paddingVertical": 10,
+      },
+      null,
+    ]
   }
   disabled={false}
   disabledContainerStyle={
@@ -119,26 +128,29 @@ exports[`renders 1`] = `
   }
   onPress={[Function]}
   style={
-    Object {
-      "backgroundColor": "transparent",
-      "color": Object {
-        "_a": 1,
-        "_b": 33,
-        "_format": "hex",
-        "_g": 33,
-        "_gradientType": undefined,
-        "_ok": true,
-        "_originalInput": "#242121",
-        "_r": 36,
-        "_roundA": 1,
-        "_tc_id": 3,
+    Array [
+      Object {
+        "backgroundColor": "transparent",
+        "color": Object {
+          "_a": 1,
+          "_b": 33,
+          "_format": "hex",
+          "_g": 33,
+          "_gradientType": undefined,
+          "_ok": true,
+          "_originalInput": "#242121",
+          "_r": 36,
+          "_roundA": 1,
+          "_tc_id": 3,
+        },
+        "fontFamily": "System",
+        "fontSize": 16,
+        "fontWeight": "400",
+        "letterSpacing": -0.32,
+        "lineHeight": 21,
       },
-      "fontFamily": "System",
-      "fontSize": 16,
-      "fontWeight": "400",
-      "letterSpacing": -0.32,
-      "lineHeight": 21,
-    }
+      null,
+    ]
   }
   styleDisabled={
     Object {
