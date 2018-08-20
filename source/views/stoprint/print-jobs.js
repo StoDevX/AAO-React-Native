@@ -92,7 +92,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 			return (
 				<StoprintErrorView
 					navigation={this.props.navigation}
-					refresh={this.refresh}
+					refresh={this.fetchData}
 				/>
 			)
 		}
@@ -111,7 +111,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 					buttonText="Install Stoprint"
 					header="Nothing to Print!"
 					onPress={() => openUrl(STOPRINT_HELP_PAGE)}
-					refresh={this.refresh}
+					refresh={this.fetchData}
 					text="Need help getting started?"
 				/>
 			)
