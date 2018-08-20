@@ -311,7 +311,7 @@ jobs:
       - run: yarn detox build --configuration ios.sim.release
       - run: yarn detox test --configuration ios.sim.release --cleanup
       - store_artifacts:
-          path: ./ios/build/
+          path: ./ios/build/Build/Products/
       - run:
           name: Analyze Fastlane Logfile
           command: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
