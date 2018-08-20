@@ -310,8 +310,8 @@ jobs:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
       - run: yarn detox build --configuration ios.sim.release
       - run: yarn detox test --configuration ios.sim.release --cleanup
-      - store_artifacts:
-          path: ./ios/build/Build/Products/
+      - store_artifacts: {path: ./ios/build/AllAboutOlaf.app.dSYM.zip}
+      - store_artifacts: {path: ./ios/build/AllAboutOlaf.ipa}
       - run:
           name: Analyze Fastlane Logfile
           command: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
