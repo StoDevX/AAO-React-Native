@@ -23,13 +23,12 @@ const styles = StyleSheet.create({
 	cancelButton: {
 		color: c.red,
 	},
+	container: {
+		flex: 1,
+	},
 	buttonCell: {
 		textAlign: 'center',
 	},
-})
-
-const Container = glamorous.view({
-	flex: 1,
 })
 
 const Header = glamorous.text({
@@ -212,33 +211,31 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 		const {status} = this.state
 		const actionAvailable = status !== 'complete' && printer
 		return (
-			<Container>
-				<ScrollView>
-					<Header>{job.documentName}</Header>
-					<TableView>
-						<JobInformation job={job} />
-						{actionAvailable && (
-							<React.Fragment>
-								<PrinterInformation printer={printer} />
-								<Section sectionPaddingBottom={0}>
-									<ButtonCell
-										onPress={this.requestRelease}
-										textStyle={styles.buttonCell}
-										title={status === 'printing' ? 'Printing…' : 'Print'}
-									/>
-								</Section>
-								<Section>
-									<ButtonCell
-										onPress={this.requestCancel}
-										textStyle={[styles.buttonCell, styles.cancelButton]}
-										title={status === 'cancelling' ? 'Cancelling…' : 'Cancel'}
-									/>
-								</Section>
-							</React.Fragment>
-						)}
-					</TableView>
-				</ScrollView>
-			</Container>
+			<ScrollView contentContainerStyle={styles.container}>
+				<Header>{job.documentName}</Header>
+				<TableView>
+					<JobInformation job={job} />
+					{actionAvailable && (
+						<React.Fragment>
+							<PrinterInformation printer={printer} />
+							<Section sectionPaddingBottom={0}>
+								<ButtonCell
+									onPress={this.requestRelease}
+									textStyle={styles.buttonCell}
+									title={status === 'printing' ? 'Printing…' : 'Print'}
+								/>
+							</Section>
+							<Section>
+								<ButtonCell
+									onPress={this.requestCancel}
+									textStyle={[styles.buttonCell, styles.cancelButton]}
+									title={status === 'cancelling' ? 'Cancelling…' : 'Cancel'}
+								/>
+							</Section>
+						</React.Fragment>
+					)}
+				</TableView>
+			</ScrollView>
 		)
 	}
 }
