@@ -38,8 +38,6 @@ x-config:
       name: Embed environment variables into the app
       command: |
         touch .env.js
-        echo "export const GOOGLE_CALENDAR_API_KEY = '$GCAL_KEY'" >> .env.js
-        echo "export const GOOGLE_MAPS_API_KEY = '$GMAPS_KEY'" >> .env.js
 
 workflows:
   version: 2
