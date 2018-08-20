@@ -92,7 +92,7 @@ class PrinterListView extends React.PureComponent<Props> {
 			return (
 				<StoPrintErrorView
 					navigation={this.props.navigation}
-					refresh={this.refresh}
+					refresh={this.fetchData}
 				/>
 			)
 		}
