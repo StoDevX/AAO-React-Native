@@ -1,12 +1,13 @@
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import {Alert, StyleSheet, View, ScrollView} from 'react-native'
 import type {TopLevelViewPropsType} from '../types'
 import glamorous from 'glamorous-native'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import * as c from '../components/colors'
 import {Button} from '../components/button'
+import {ButtonCell} from '../components/cells'
 import {
 	type Printer,
 	type PrintJob,
@@ -34,12 +35,14 @@ const styles = StyleSheet.create({
 		color: c.white,
 	},
 	cancelButton: {
-		backgroundColor: c.red,
-		marginRight: 20,
+		color: c.red,
 	},
 	printButton: {
 		backgroundColor: c.green,
 	},
+	buttonCell: {
+		textAlign: 'center',
+	}
 })
 
 const Container = glamorous.view({
@@ -47,7 +50,7 @@ const Container = glamorous.view({
 })
 
 const Header = glamorous.text({
-	fontSize: 36,
+	fontSize: 30,
 	textAlign: 'center',
 	marginTop: 20,
 	marginHorizontal: 10,
@@ -231,25 +234,27 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 					<Header>{job.documentName}</Header>
 					<TableView>
 						<JobInformation job={job} />
-						{actionAvailable && <PrinterInformation printer={printer} />}
+						{actionAvailable &&
+							<React.Fragment>
+								<PrinterInformation printer={printer} />
+								<Section sectionPaddingBottom={0}>
+									<ButtonCell
+										onPress={this.requestRelease}
+										textStyle={styles.buttonCell}
+										title={status === 'printing' ? 'Printing…' : 'Print'}
+									/>
+								</Section>
+								<Section>
+									<ButtonCell
+										onPress={this.requestCancel}
+										textStyle={[styles.buttonCell, styles.cancelButton]}
+										title={status === 'cancelling' ? 'Cancelling…' : 'Cancel'}
+									/>
+								</Section>
+							</React.Fragment>
+						}
 					</TableView>
 				</ScrollView>
-				{actionAvailable && (
-					<View style={styles.buttonContainer}>
-						<Button
-							buttonStyle={[styles.button, styles.cancelButton]}
-							onPress={this.requestCancel}
-							textStyle={styles.buttonText}
-							title={status === 'cancelling' ? 'Cancelling…' : 'Cancel'}
-						/>
-						<Button
-							buttonStyle={[styles.button, styles.printButton]}
-							onPress={this.requestRelease}
-							textStyle={styles.buttonText}
-							title={status === 'printing' ? 'Printing…' : 'Print'}
-						/>
-					</View>
-				)}
 			</Container>
 		)
 	}
