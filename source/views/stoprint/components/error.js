@@ -8,8 +8,8 @@ import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
 
 const ERROR_MESSAGE =
-	"Make sure you are connected to the St. Olaf WiFi \
- Network via eduroam or VPN. If you are, please report this so we can make\
+	"Make sure you are connected to the St. Olaf \
+ Network via eduroam or the VPN. If you are, please report this so we can make\
  sure it doesn't happen again."
 
 type Props = TopLevelViewPropsType & {

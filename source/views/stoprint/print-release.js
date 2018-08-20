@@ -170,7 +170,7 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 		} else {
 			Alert.alert(
 				'Job Successfully Released',
-				`Document ${job.documentName} is printing at ${printer.printerName}`,
+				`Document ${job.documentName} is printing at ${printer.printerName}.`,
 				[{text: 'OK', onPress: this.returnToJobsView}],
 			)
 		}
