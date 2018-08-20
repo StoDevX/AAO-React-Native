@@ -94,9 +94,9 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 
-def COMPILE_SDK_VERSION = 27
-def TARGET_SDK_VERSION = 27
-def ANDROID_SUPPORT_LIBRARY_VERSION = '27.1.0'
+def COMPILE_SDK_VERSION = 28
+def TARGET_SDK_VERSION = 28
+def ANDROID_SUPPORT_LIBRARY_VERSION = '27.1.1'
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION
@@ -143,7 +143,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            manifestPlaceholders = [isDebug: true]
+        }
+
         release {
+            manifestPlaceholders = [isDebug: false]
+
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
