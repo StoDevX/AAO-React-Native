@@ -8,23 +8,23 @@ import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
 
 const ERROR_MESSAGE =
-	"Make sure you are connected to the St. Olaf \
- Network via eduroam or the VPN. If you are, please report this so we can make\
- sure it doesn't happen again."
+	"Make sure you are connected to the St. Olaf Network via eduroam or the VPN. If you are, please report this so we can make sure it doesn't happen again."
 
 type Props = TopLevelViewPropsType & {
 	refresh: () => any,
 }
 
 export class StoPrintErrorView extends React.PureComponent<Props> {
-	_timer: any
+	_timer: ?IntervalID
 
 	componentDidMount() {
 		this._timer = setInterval(this.props.refresh, 5000)
 	}
 
 	componentWillUnmount() {
-		clearInterval(this._timer)
+		if (this._timer) {
+			clearInterval(this._timer)
+		}
 	}
 
 	render() {

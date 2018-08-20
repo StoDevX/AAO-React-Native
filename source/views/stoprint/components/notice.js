@@ -15,16 +15,16 @@ type Props = {
 }
 
 export class StoPrintNoticeView extends React.PureComponent<Props> {
-	_timer: any
+	_timer: ?IntervalID
 
 	componentDidMount() {
-		if (this.props.refresh) {
+		if (this._timer && this.props.refresh) {
 			this._timer = setInterval(this.props.refresh, 5000)
 		}
 	}
 
 	componentWillUnmount() {
-		if (this.props.refresh) {
+		if (this._timer && this.props.refresh) {
 			clearInterval(this._timer)
 		}
 	}
