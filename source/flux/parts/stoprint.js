@@ -135,7 +135,7 @@ const initialState: State = {
 export function stoprint(state: State = initialState, action: Action) {
 	switch (action.type) {
 		case UPDATE_PRINT_JOBS_START:
-			return {...state, loadingJobs: true, error: null}
+			return {...state, loadingJobs: true}
 
 		case UPDATE_PRINT_JOBS_FAILURE:
 			return {...state, loadingJobs: false, error: action.payload}
@@ -149,7 +149,7 @@ export function stoprint(state: State = initialState, action: Action) {
 			}
 
 		case UPDATE_ALL_PRINTERS_START:
-			return {...state, loadingPrinters: true, error: null}
+			return {...state, loadingPrinters: true}
 
 		case UPDATE_ALL_PRINTERS_FAILURE:
 			return {...state, loadingPrinters: false, error: action.payload}
