@@ -13,10 +13,10 @@ import type {
 	LoginResponseOrErrorType,
 } from './types'
 
-const PAPERCUT_API_HEADERS = new Headers({
+const PAPERCUT_API_HEADERS = {
 	'Content-Type': 'application/x-www-form-urlencoded',
 	Origin: PAPERCUT,
-})
+}
 
 export async function logIn(
 	username: string,
@@ -28,7 +28,7 @@ export async function logIn(
 	const result: LoginResponseOrErrorType = await fetchJson(url, {
 		method: 'POST',
 		body: body,
-		headers: PAPERCUT_API_HEADERS,
+		headers: Headers(PAPERCUT_API_HEADERS),
 	})
 		.then(response => ({
 			error: false,
@@ -94,7 +94,7 @@ export const cancelPrintJobForUser = (
 				},
 				{arrayFormat: 'bracket'},
 			),
-			headers: PAPERCUT_API_HEADERS,
+			headers: Headers(PAPERCUT_API_HEADERS),
 		},
 	)
 		.then(response => ({
@@ -126,7 +126,7 @@ export const releasePrintJobToPrinterForUser = ({
 				},
 				{arrayFormat: 'bracket'},
 			),
-			headers: PAPERCUT_API_HEADERS,
+			headers: Headers(PAPERCUT_API_HEADERS),
 		},
 	)
 		.then(response => {
