@@ -1,4 +1,4 @@
 // @flow
 
-export {StoprintErrorView} from './error'
-export {StoprintNoticeView} from './notice'
+export {StoPrintErrorView} from './error'
+export {StoPrintNoticeView} from './notice'

@@ -16,7 +16,7 @@ import {
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
 import openUrl from '../components/open-url'
-import {StoprintErrorView, StoprintNoticeView} from './components'
+import {StoPrintErrorView, StoPrintNoticeView} from './components'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
@@ -90,7 +90,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 	render() {
 		if (this.props.error) {
 			return (
-				<StoprintErrorView
+				<StoPrintErrorView
 					navigation={this.props.navigation}
 					refresh={this.fetchData}
 				/>
@@ -98,7 +98,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 		}
 		if (this.props.loginState !== 'logged-in') {
 			return (
-				<StoprintNoticeView
+				<StoPrintNoticeView
 					buttonText="Open Settings"
 					header="You are not logged in"
 					onPress={this.openSettings}
@@ -107,8 +107,8 @@ class PrintJobsView extends React.PureComponent<Props> {
 			)
 		} else if (this.props.jobs.length === 0) {
 			return (
-				<StoprintNoticeView
-					buttonText="Install Stoprint"
+				<StoPrintNoticeView
+					buttonText="Install stoPrint"
 					header="Nothing to Print!"
 					onPress={() => openUrl(STOPRINT_HELP_PAGE)}
 					refresh={this.fetchData}

@@ -16,7 +16,7 @@ type Props = TopLevelViewPropsType & {
 	refresh: () => any,
 }
 
-export class StoprintErrorView extends React.PureComponent<Props> {
+export class StoPrintErrorView extends React.PureComponent<Props> {
 	_timer: any
 
 	componentDidMount() {

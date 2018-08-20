@@ -12,7 +12,7 @@ import {balances, type State as BalancesState} from './parts/balances'
 import {buildings, type State as BuildingsState} from './parts/buildings'
 import {help, type State as HelpState} from './parts/help'
 import {courses, type State as CoursesState} from './parts/courses'
-import {stoprint, type State as StoprintState} from './parts/stoprint'
+import {stoprint, type State as StoPrintState} from './parts/stoprint'
 
 export {init as initRedux} from './init'
 
@@ -24,7 +24,7 @@ export type ReduxState = {
 	balances?: BalancesState,
 	buildings?: BuildingsState,
 	help?: HelpState,
-	stoprint?: StoprintState,
+	stoprint?: StoPrintState,
 }
 
 export const makeStore = () => {

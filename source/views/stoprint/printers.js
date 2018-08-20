@@ -17,7 +17,7 @@ import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
-import {StoprintErrorView} from './components'
+import {StoPrintErrorView} from './components'
 
 const styles = StyleSheet.create({
 	list: {},
@@ -90,7 +90,7 @@ class PrinterListView extends React.PureComponent<Props> {
 	render() {
 		if (this.props.error) {
 			return (
-				<StoprintErrorView
+				<StoPrintErrorView
 					navigation={this.props.navigation}
 					refresh={this.refresh}
 				/>

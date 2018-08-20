@@ -14,7 +14,7 @@ type Props = {
 	text: string,
 }
 
-export class StoprintNoticeView extends React.PureComponent<Props> {
+export class StoPrintNoticeView extends React.PureComponent<Props> {
 	_timer: any
 
 	componentDidMount() {
