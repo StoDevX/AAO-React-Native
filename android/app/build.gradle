@@ -113,7 +113,6 @@ android {
         manifestPlaceholders = [
             manifestApplicationId: applicationId,
             BUGSNAG_KEY: System.getenv("BUGSNAG_KEY") ?: "",
-            GMAPS_KEY: System.getenv("GMAPS_KEY") ?: "",
             onesignal_app_id: "a46c6f2f-a240-4908-a359-801911e9b9ea",
             onesignal_google_project_number: "REMOTE",
         ]
