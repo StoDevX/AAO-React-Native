@@ -3,7 +3,7 @@
 import jsYaml from 'js-yaml'
 import type {BuildingType} from '../types'
 import {sendEmail} from '../../components/send-email'
-import querystring from 'querystring'
+import querystring from 'query-string'
 import {GH_NEW_ISSUE_URL} from '../../../globals'
 
 export function submitReport(current: BuildingType, suggestion: BuildingType) {

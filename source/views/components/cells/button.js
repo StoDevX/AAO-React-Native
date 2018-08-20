@@ -21,11 +21,13 @@ export function ButtonCell({
 	indeterminate,
 	disabled,
 	onPress,
+	textStyle,
 	title,
 }: {
 	indeterminate?: boolean,
 	disabled?: boolean,
 	onPress: () => any,
+	textStyle?: any,
 	title: string,
 }) {
 	return (
@@ -34,7 +36,10 @@ export function ButtonCell({
 			onPress={onPress}
 			title={
 				<Text
-					style={[indeterminate || disabled ? styles.disabled : styles.active]}
+					style={[
+						indeterminate || disabled ? styles.disabled : styles.active,
+						textStyle,
+					]}
 				>
 					{title}
 				</Text>

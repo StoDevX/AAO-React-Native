@@ -1,6 +1,6 @@
 // @flow
 
-import qs from 'querystring'
+import qs from 'query-string'
 
 const root = 'https://stolaf.api.frogpond.tech/v1'
 export const API = (pth: string, query: ?Object = null) => {
