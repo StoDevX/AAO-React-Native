@@ -1,5 +1,5 @@
 /* eslint-env jest */
-/* global element, device, by */
+/* global element, by */
 
 describe('Edit Home tests to reorganize the home screen.', () => {
 	it('should show home screen after tap to exit edit-home screen', async () => {

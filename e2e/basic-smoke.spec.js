@@ -1,5 +1,5 @@
 /* eslint-env jest */
-/* global element, device, by */
+/* global element, by */
 
 describe('Basic smoke tests', () => {
 	it('should have homescreen', async () => {
