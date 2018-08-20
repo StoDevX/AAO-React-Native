@@ -49,7 +49,7 @@ class PrinterListView extends React.PureComponent<Props> {
 	}
 
 	componentDidMount = () => {
-		this.refresh()
+		this.fetchData()
 	}
 
 	refresh = async (): any => {
