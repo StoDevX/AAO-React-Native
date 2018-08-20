@@ -109,6 +109,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 					buttonText="Open Settings"
 					header="You are not logged in"
 					onPress={this.openSettings}
+					refresh={this.fetchData}
 					text="You must be logged in to your St. Olaf account to access this feature"
 				/>
 			)

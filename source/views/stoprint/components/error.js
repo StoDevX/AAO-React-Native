@@ -2,10 +2,11 @@
 
 import React from 'react'
 import type {TopLevelViewPropsType} from '../../types'
-import {View, StyleSheet, Platform} from 'react-native'
+import {ScrollView, RefreshControl, StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
+import delay from 'delay'
 
 const ERROR_MESSAGE =
 	"Make sure you are connected to the St. Olaf Network via eduroam or the VPN. If you are, please report this so we can make sure it doesn't happen again."
@@ -14,8 +15,16 @@ type Props = TopLevelViewPropsType & {
 	refresh: () => any,
 }
 
-export class StoPrintErrorView extends React.PureComponent<Props> {
+type State = {
+	refreshing: boolean,
+}
+
+export class StoPrintErrorView extends React.PureComponent<Props, State> {
 	_timer: ?IntervalID
+
+	state = {
+		refreshing: false,
+	}
 
 	componentDidMount() {
 		this._timer = setInterval(this.props.refresh, 5000)
@@ -27,13 +36,35 @@ export class StoPrintErrorView extends React.PureComponent<Props> {
 		}
 	}
 
+	_refresh = async () => {
+		this.setState(() => ({refreshing: true}))
+		let start = Date.now()
+
+		await this.props.refresh()
+
+		let elapsed = start - Date.now()
+		if (elapsed < 500) {
+			await delay(500 - elapsed)
+		}
+		this.setState(() => ({refreshing: false}))
+	}
+
 	render() {
 		const iconName = Platform.select({
 			ios: 'ios-bug',
 			android: 'md-bug',
 		})
 		return (
-			<View style={styles.container}>
+			<ScrollView
+				contentContainerStyle={styles.content}
+				refreshControl={
+					<RefreshControl
+						onRefresh={this._refresh}
+						refreshing={this.state.refreshing}
+					/>
+				}
+				style={styles.container}
+			>
 				<Icon color={c.sto.black} name={iconName} size={100} />
 				<NoticeView
 					buttonText="Report"
@@ -42,17 +73,19 @@ export class StoPrintErrorView extends React.PureComponent<Props> {
 					style={styles.notice}
 					text={ERROR_MESSAGE}
 				/>
-			</View>
+			</ScrollView>
 		)
 	}
 }
 
 const styles = StyleSheet.create({
 	container: {
+		backgroundColor: c.sto.white,
+	},
+	content: {
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: c.sto.white,
 	},
 	notice: {
 		flex: 0,
