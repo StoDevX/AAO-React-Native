@@ -9,6 +9,7 @@ export {
 export {
 	cancelPrintJobForUser,
 	fetchAllPrinters,
+	fetchColorPrinters,
 	fetchJobs,
 	fetchRecentPrinters,
 	heldJobsAvailableAtPrinterForUser,
@@ -19,7 +20,6 @@ export type {
 	HeldJob,
 	Printer,
 	PrintJob,
-	RecentPopularPrintersResponse,
 	ReleaseResponseOrErrorType,
 	CancelResponseOrErrorType,
 	HeldJobsResponseOrErrorType,

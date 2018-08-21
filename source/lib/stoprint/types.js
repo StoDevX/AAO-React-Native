@@ -33,6 +33,14 @@ export type HeldJob = {
 	usageTimeFormatted: string,
 }
 
+type PrintJobsResponse = {
+	jobs: Array<PrintJob>,
+}
+
+export type PrintJobsResponseOrErrorType =
+	| {error: true, value: string}
+	| {error: false, value: PrintJobsResponse}
+
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/webclient/users/rives/jobs/status
 export type StatusResponse = {
 	hashCode: number,
@@ -48,12 +56,24 @@ export type Printer = {
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/recent-popular-printers
 // ?username=rives
-export type RecentPopularPrintersResponse = {
+type RecentPopularPrintersResponse = {
 	popularPrinters: Array<Printer>,
 	recentPrinters: Array<Printer>,
 }
 
-export type ReleaseResponse = {
+export type RecentPopularPrintersResponseOrErrorType =
+	| {error: true, value: string}
+	| {error: false, value: RecentPopularPrintersResponse}
+
+type ColorPrintersReponse = {
+	data: {colorPrinters: Array<string>},
+}
+
+export type ColorPrintersResponseOrErrorType =
+	| {error: true, value: string}
+	| {error: false, value: ColorPrintersReponse}
+
+type ReleaseResponse = {
 	numJobsReleased: number,
 	statusMessage: string,
 }
@@ -68,7 +88,11 @@ export type CancelResponseOrErrorType =
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/all-printers
 // ?username=rives
-export type AllPrintersResponse = Array<Printer>
+type AllPrintersResponse = Array<Printer>
+
+export type AllPrintersResponseOrErrorType =
+	| {error: true, value: string}
+	| {error: false, value: AllPrintersResponse}
 
 // https://papercut.stolaf.edu:9192/rpc/api/rest/internal/mobilerelease/api/held-jobs/
 // ?username=rives
