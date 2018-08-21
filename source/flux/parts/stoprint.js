@@ -94,8 +94,8 @@ export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 			reportNetworkProblem(err)
 			return defaultData
 		})
-		const colorPrinters = allPrinters.filter(
-			printer => data.colorPrinters.includes(printer.printerName)
+		const colorPrinters = allPrinters.filter(printer =>
+			data.colorPrinters.includes(printer.printerName),
 		)
 
 		dispatch({

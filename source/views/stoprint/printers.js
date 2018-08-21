@@ -101,7 +101,8 @@ class PrinterListView extends React.PureComponent<Props> {
 				/>
 			)
 		}
-		const colorJob = this.props.navigation.state.params.job.grayscaleFormatted === 'No'
+		const colorJob =
+			this.props.navigation.state.params.job.grayscaleFormatted === 'No'
 
 		const availablePrinters = colorJob
 			? this.props.colorPrinters
