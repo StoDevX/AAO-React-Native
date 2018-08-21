@@ -83,7 +83,9 @@ export class StoPrintNoticeView extends React.PureComponent<Props, State> {
 					style={styles.notice}
 					text={text}
 				/>
-				<Text style={styles.description}>{description}</Text>
+				{description ? (
+					<Text style={styles.description}>{description}</Text>
+				) : null}
 			</ScrollView>
 		)
 	}
