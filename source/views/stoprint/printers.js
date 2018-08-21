@@ -90,16 +90,17 @@ class PrinterListView extends React.PureComponent<Props> {
 	)
 
 	render() {
-		if (this.props.loading && this.props.printers.length === 0) {
-			return <LoadingView text="Fetching Available Printers…" />
-		}
 		if (this.props.error) {
 			return (
 				<StoPrintErrorView
 					navigation={this.props.navigation}
 					refresh={this.fetchData}
+					statusMessage={this.props.error}
 				/>
 			)
+		}
+		if (this.props.loading && this.props.printers.length === 0) {
+			return <LoadingView text="Fetching Available Printers…" />
 		}
 		const colorJob =
 			this.props.navigation.state.params.job.grayscaleFormatted === 'No'
@@ -162,7 +163,7 @@ function mapStateToProps(state: ReduxState): ReduxStateProps {
 		recentPrinters: state.stoprint ? state.stoprint.recentPrinters : [],
 		popularPrinters: state.stoprint ? state.stoprint.popularPrinters : [],
 		colorPrinters: state.stoprint ? state.stoprint.colorPrinters : [],
-		error: state.stoprint ? state.stoprint.error : null,
+		error: state.stoprint ? state.stoprint.printersError : null,
 		loading: state.stoprint ? state.stoprint.loadingPrinters : false,
 		username: state.settings ? state.settings.username : null,
 	}

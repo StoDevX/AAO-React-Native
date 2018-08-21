@@ -92,16 +92,18 @@ class PrintJobsView extends React.PureComponent<Props> {
 	render() {
 		if (this.props.loginState === 'checking') {
 			return <LoadingView text="Logging in…" />
-		} else if (this.props.loading && this.props.jobs.length === 0) {
-			return <LoadingView text="Fetching stoPrint Jobs…" />
 		}
 		if (this.props.error) {
 			return (
 				<StoPrintErrorView
 					navigation={this.props.navigation}
 					refresh={this.fetchData}
+					statusMessage={this.props.error}
 				/>
 			)
+		}
+		if (this.props.loading && this.props.jobs.length === 0) {
+			return <LoadingView text="Fetching stoPrint Jobs…" />
 		}
 		if (this.props.loginState !== 'logged-in') {
 			return (
@@ -149,7 +151,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 function mapStateToProps(state: ReduxState): ReduxStateProps {
 	return {
 		jobs: state.stoprint ? state.stoprint.jobs : [],
-		error: state.stoprint ? state.stoprint.error : null,
+		error: state.stoprint ? state.stoprint.jobsError : null,
 		loading: state.stoprint ? state.stoprint.loadingJobs : false,
 		loginState: state.settings ? state.settings.loginState : 'logged-out',
 	}
