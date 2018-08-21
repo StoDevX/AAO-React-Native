@@ -40,6 +40,7 @@ type UpdateAllPrintersSuccessAction = {
 		allPrinters: Array<Printer>,
 		popularPrinters: Array<Printer>,
 		recentPrinters: Array<Printer>,
+		colorPrinters: Array<Printer>,
 	},
 }
 
@@ -88,11 +89,14 @@ export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 
 		const {recentPrinters, popularPrinters} = recentAndPopularPrinters
 
-		const colorPrintersUrl = API('/color-printers')
-		const {colorPrinters} = await fetchJson(colorPrintersUrl).catch(err => {
+		const colorPrintersUrl = API('/printing/color-printers')
+		const {data} = await fetchJson(colorPrintersUrl).catch(err => {
 			reportNetworkProblem(err)
-			return defaultData.colorPrinters
+			return defaultData
 		})
+		const colorPrinters = allPrinters.filter(
+			printer => data.colorPrinters.includes(printer.printerName)
+		)
 
 		dispatch({
 			type: UPDATE_ALL_PRINTERS_SUCCESS,

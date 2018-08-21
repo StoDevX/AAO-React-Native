@@ -101,10 +101,11 @@ class PrinterListView extends React.PureComponent<Props> {
 				/>
 			)
 		}
+		const colorJob = this.props.navigation.state.params.job.grayscaleFormatted === 'No'
 
-		const availablePrinters = this.props.navigation.state.params.job.grayscaleFormatted === 'Yes'
-			? this.props.printers
-			: this.props.colorPrinters
+		const availablePrinters = colorJob
+			? this.props.colorPrinters
+			: this.props.printers
 
 		const allWithLocations = availablePrinters.map(j => ({
 			...j,
@@ -137,6 +138,8 @@ class PrinterListView extends React.PureComponent<Props> {
 			  ]
 			: []
 
+		const availableGrouped = colorJob ? groupedByBuilding : grouped
+
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
@@ -145,7 +148,7 @@ class PrinterListView extends React.PureComponent<Props> {
 				refreshing={this.props.loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				sections={grouped}
+				sections={availableGrouped}
 				style={styles.list}
 			/>
 		)
