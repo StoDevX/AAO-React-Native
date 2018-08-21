@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {SectionList} from 'react-native'
+import {Platform, SectionList} from 'react-native'
 import {connect} from 'react-redux'
 import {type ReduxState} from '../../flux'
 import {updatePrintJobs} from '../../flux/parts/stoprint'
@@ -103,20 +103,17 @@ class PrintJobsView extends React.PureComponent<Props> {
 				/>
 			)
 		}
-		if (this.props.loginState !== 'logged-in') {
-			return (
-				<StoPrintNoticeView
-					buttonText="Open Settings"
-					header="You are not logged in"
-					onPress={this.openSettings}
-					refresh={this.fetchData}
-					text="You must be logged in to your St. Olaf account to access this feature"
-				/>
-			)
-		} else if (this.props.jobs.length === 0) {
+		if (this.props.jobs.length === 0) {
+			const instructions =
+				Platform.OS === 'android'
+					? 'using the Mobility Print app'
+					: 'using the Print option in the Share Sheet'
+			const descriptionText = `You can print from a computer, or by ${instructions}.`
+
 			return (
 				<StoPrintNoticeView
 					buttonText="Learn how to use stoPrint"
+					description={descriptionText}
 					header="Nothing to Print!"
 					onPress={() => openUrl(STOPRINT_HELP_PAGE)}
 					refresh={this.fetchData}
