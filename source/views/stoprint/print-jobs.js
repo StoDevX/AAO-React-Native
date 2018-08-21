@@ -103,7 +103,17 @@ class PrintJobsView extends React.PureComponent<Props> {
 				/>
 			)
 		}
-		if (this.props.jobs.length === 0) {
+		if (this.props.loginState !== 'logged-in') {
+			return (
+				<StoPrintNoticeView
+					buttonText="Open Settings"
+					header="You are not logged in"
+					onPress={this.openSettings}
+					refresh={this.fetchData}
+					text="You must be logged in to your St. Olaf account to access this feature"
+				/>
+			)
+		} else if (this.props.jobs.length === 0) {
 			const instructions =
 				Platform.OS === 'android'
 					? 'using the Mobility Print app'
