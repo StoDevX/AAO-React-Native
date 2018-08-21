@@ -159,8 +159,8 @@ export const allViews: ViewType[] = [
 		title: 'stoPrint',
 		icon: 'print',
 		foreground: 'light',
-		tint: c.chartreuse,
-		gradient: c.tealToSeafoam,
+		tint: c.wave,
+		gradient: c.darkBlueToIndigo,
 	},
 ]
 
