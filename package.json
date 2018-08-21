@@ -65,6 +65,12 @@
         "build": "xcodebuild -project ios/AllAboutOlaf.xcodeproj -scheme AllAboutOlaf -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
         "type": "ios.simulator",
         "name": "iPhone 7"
+      },
+      "ios.sim.release": {
+        "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/AllAboutOlaf.app",
+        "build": "xcodebuild -project ios/AllAboutOlaf.xcodeproj -scheme AllAboutOlaf -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
+        "type": "ios.simulator",
+        "name": "iPhone 7"
       }
     },
     "test-runner": "jest"
@@ -121,7 +127,7 @@
     "react-native-linear-gradient": "2.4.0",
     "react-native-network-info": "3.2.2",
     "react-native-onesignal": "3.1.4",
-    "react-native-popover-view": "1.0.3",
+    "react-native-popover-view": "1.0.4",
     "react-native-restart": "0.0.6",
     "react-native-safari-view": "2.1.0",
     "react-native-search-bar": "3.4.2",

@@ -1,5 +1,5 @@
 /* eslint-env jest */
-/* global element, device, by */
+/* global element, by */
 
 describe('Basic smoke tests', () => {
 	it('should have homescreen', async () => {
@@ -12,7 +12,6 @@ describe('Basic smoke tests', () => {
 	})
 
 	it('should show home screen after tap to exit settings screen', async () => {
-		await device.reloadReactNative()
 		await element(by.id('button-open-settings')).tap()
 		await expect(element(by.id('screen-homescreen'))).toBeNotVisible()
 		await element(by.id('header-back')).tap()
