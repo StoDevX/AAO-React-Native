@@ -131,8 +131,8 @@ export const allViews: ViewType[] = [
 		title: 'Student Orgs',
 		icon: 'globe',
 		foreground: 'light',
-		tint: c.periwinkle,
-		gradient: c.tealToSeafoam,
+		tint: c.wave,
+		gradient: c.darkBlueToIndigo,
 	},
 	{
 		type: 'url',
@@ -159,7 +159,7 @@ export const allViews: ViewType[] = [
 		title: 'stoPrint',
 		icon: 'print',
 		foreground: 'light',
-		tint: c.chartreuse,
+		tint: c.periwinkle,
 		gradient: c.tealToSeafoam,
 	},
 ]
