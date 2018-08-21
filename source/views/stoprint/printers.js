@@ -32,6 +32,7 @@ type ReduxStateProps = {
 	+printers: Array<Printer>,
 	+recentPrinters: Array<Printer>,
 	+popularPrinters: Array<Printer>,
+	+colorPrinters: Array<Printer>,
 	+error: ?string,
 	+loading: boolean,
 	+username: ?string,
@@ -101,7 +102,11 @@ class PrinterListView extends React.PureComponent<Props> {
 			)
 		}
 
-		const allWithLocations = this.props.printers.map(j => ({
+		const availablePrinters = this.props.navigation.state.params.job.grayscaleFormatted === 'Yes'
+			? this.props.printers
+			: this.props.colorPrinters
+
+		const allWithLocations = availablePrinters.map(j => ({
 			...j,
 			location: j.location || 'Unknown Building',
 		}))
@@ -152,6 +157,7 @@ function mapStateToProps(state: ReduxState): ReduxStateProps {
 		printers: state.stoprint ? state.stoprint.printers : [],
 		recentPrinters: state.stoprint ? state.stoprint.recentPrinters : [],
 		popularPrinters: state.stoprint ? state.stoprint.popularPrinters : [],
+		colorPrinters: state.stoprint ? state.stoprint.colorPrinters : [],
 		error: state.stoprint ? state.stoprint.error : null,
 		loading: state.stoprint ? state.stoprint.loadingPrinters : false,
 		username: state.settings ? state.settings.username : null,
