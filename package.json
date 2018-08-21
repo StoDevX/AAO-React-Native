@@ -106,6 +106,7 @@
     "glamorous-native": "1.4.0",
     "html-entities": "1.2.1",
     "htmlparser2": "3.9.2",
+    "jsc-android": "224109.x.x",
     "keyword-search": "0.1.1",
     "lodash": "4.17.10",
     "moment": "2.22.2",
