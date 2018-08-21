@@ -5,6 +5,7 @@ import {type ReduxState} from '../index'
 import type {PrintJob, Printer} from '../../lib/stoprint'
 import {
 	fetchAllPrinters,
+	fetchColorPrinters,
 	fetchJobs,
 	fetchRecentPrinters,
 	logIn,
@@ -37,6 +38,7 @@ type UpdateAllPrintersSuccessAction = {
 		allPrinters: Array<Printer>,
 		popularPrinters: Array<Printer>,
 		recentPrinters: Array<Printer>,
+		colorPrinters: Array<Printer>,
 	},
 }
 
@@ -78,16 +80,52 @@ export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 			return dispatch({type: UPDATE_ALL_PRINTERS_FAILURE, payload: successMsg})
 		}
 
-		const [allPrinters, recentAndPopularPrinters] = await Promise.all([
+		const [
+			allPrintersResponse,
+			recentAndPopularPrintersResponse,
+			colorPrintersResponse,
+		] = await Promise.all([
 			fetchAllPrinters(username),
 			fetchRecentPrinters(username),
+			fetchColorPrinters(),
 		])
 
-		const {recentPrinters, popularPrinters} = recentAndPopularPrinters
+		if (allPrintersResponse.error) {
+			return dispatch({
+				type: UPDATE_ALL_PRINTERS_FAILURE,
+				payload: allPrintersResponse.value,
+			})
+		}
+
+		if (recentAndPopularPrintersResponse.error) {
+			return dispatch({
+				type: UPDATE_ALL_PRINTERS_FAILURE,
+				payload: recentAndPopularPrintersResponse.value,
+			})
+		}
+
+		if (colorPrintersResponse.error) {
+			return dispatch({
+				type: UPDATE_ALL_PRINTERS_FAILURE,
+				payload: colorPrintersResponse.value,
+			})
+		}
+
+		const {
+			recentPrinters,
+			popularPrinters,
+		} = recentAndPopularPrintersResponse.value
+		const allPrinters = allPrintersResponse.value
+
+		const colorPrinters = allPrinters.filter(printer =>
+			colorPrintersResponse.value.data.colorPrinters.includes(
+				printer.printerName,
+			),
+		)
 
 		dispatch({
 			type: UPDATE_ALL_PRINTERS_SUCCESS,
-			payload: {allPrinters, recentPrinters, popularPrinters},
+			payload: {allPrinters, recentPrinters, popularPrinters, colorPrinters},
 		})
 	}
 }
@@ -106,9 +144,19 @@ export function updatePrintJobs(): ThunkAction<UpdatePrintJobsAction> {
 			return dispatch({type: UPDATE_PRINT_JOBS_FAILURE, payload: successMsg})
 		}
 
-		const {jobs} = await fetchJobs(username)
+		const jobsResponse = await fetchJobs(username)
 
-		dispatch({type: UPDATE_PRINT_JOBS_SUCCESS, payload: jobs})
+		if (jobsResponse.error) {
+			return dispatch({
+				type: UPDATE_PRINT_JOBS_FAILURE,
+				payload: jobsResponse.value,
+			})
+		}
+
+		dispatch({
+			type: UPDATE_PRINT_JOBS_SUCCESS,
+			payload: jobsResponse.value.jobs,
+		})
 	}
 }
 
@@ -117,17 +165,21 @@ export type State = {|
 	printers: Array<Printer>,
 	recentPrinters: Array<Printer>, // printer names
 	popularPrinters: Array<Printer>, // printer names
-	error: ?string,
+	colorPrinters: Array<Printer>,
+	jobsError: ?string,
+	printersError: ?string,
 	loadingPrinters: boolean,
 	loadingJobs: boolean,
 |}
 
 const initialState: State = {
-	error: null,
+	jobsError: null,
+	printersError: null,
 	jobs: [],
 	printers: [],
 	recentPrinters: [],
 	popularPrinters: [],
+	colorPrinters: [],
 	loadingPrinters: false,
 	loadingJobs: false,
 }
@@ -138,7 +190,7 @@ export function stoprint(state: State = initialState, action: Action) {
 			return {...state, loadingJobs: true}
 
 		case UPDATE_PRINT_JOBS_FAILURE:
-			return {...state, loadingJobs: false, error: action.payload}
+			return {...state, loadingJobs: false, jobsError: action.payload}
 
 		case UPDATE_PRINT_JOBS_SUCCESS:
 			return {
@@ -152,7 +204,7 @@ export function stoprint(state: State = initialState, action: Action) {
 			return {...state, loadingPrinters: true}
 
 		case UPDATE_ALL_PRINTERS_FAILURE:
-			return {...state, loadingPrinters: false, error: action.payload}
+			return {...state, loadingPrinters: false, printersError: action.payload}
 
 		case UPDATE_ALL_PRINTERS_SUCCESS:
 			return {
@@ -160,7 +212,9 @@ export function stoprint(state: State = initialState, action: Action) {
 				printers: action.payload.allPrinters,
 				recentPrinters: action.payload.recentPrinters,
 				popularPrinters: action.payload.popularPrinters,
-				error: null,
+				colorPrinters: action.payload.colorPrinters,
+				jobsError: null,
+				printersError: null,
 				loadingPrinters: false,
 			}
 

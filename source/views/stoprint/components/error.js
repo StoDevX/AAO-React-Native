@@ -13,6 +13,7 @@ const ERROR_MESSAGE =
 
 type Props = TopLevelViewPropsType & {
 	refresh: () => any,
+	statusMessage: string,
 }
 
 type State = {
@@ -71,7 +72,7 @@ export class StoPrintErrorView extends React.PureComponent<Props, State> {
 					header="Connection Issue"
 					onPress={() => this.props.navigation.navigate('HelpView')}
 					style={styles.notice}
-					text={ERROR_MESSAGE}
+					text={`${this.props.statusMessage} ${ERROR_MESSAGE}`}
 				/>
 			</ScrollView>
 		)

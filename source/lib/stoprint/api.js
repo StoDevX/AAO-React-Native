@@ -3,10 +3,12 @@
 import {PAPERCUT_MOBILE_RELEASE_API, PAPERCUT_API, PAPERCUT} from './urls'
 import querystring from 'query-string'
 import {encode} from 'base-64'
+import {API} from '../../globals'
 import type {
-	PrintJob,
-	Printer,
-	RecentPopularPrintersResponse,
+	PrintJobsResponseOrErrorType,
+	AllPrintersResponseOrErrorType,
+	ColorPrintersResponseOrErrorType,
+	RecentPopularPrintersResponseOrErrorType,
 	ReleaseResponseOrErrorType,
 	CancelResponseOrErrorType,
 	HeldJobsResponseOrErrorType,
@@ -40,28 +42,71 @@ export async function logIn(
 		}))
 
 	if (result.error) {
-		return 'The print server seems to be having some issues'
+		return 'The print server seems to be having some issues.'
 	}
 
 	if (!result.value.success) {
-		return 'The username and password appear to be invalid'
+		return 'Your username or password appear to be invalid.'
 	}
 
 	return 'success'
 }
 
-export const fetchJobs = (username: string): Promise<{jobs: Array<PrintJob>}> =>
+export const fetchJobs = (
+	username: string,
+): Promise<PrintJobsResponseOrErrorType> =>
 	fetchJson(`${PAPERCUT_API}/webclient/users/${username}/jobs/status`)
+		.then(response => ({
+			error: false,
+			value: response,
+		}))
+		.catch(() => ({
+			error: true,
+			value: 'Unable to fetch a list of print jobs from stoPrint.',
+		}))
 
-export const fetchAllPrinters = (username: string): Promise<Array<Printer>> =>
+export const fetchAllPrinters = (
+	username: string,
+): Promise<AllPrintersResponseOrErrorType> =>
 	fetchJson(`${PAPERCUT_MOBILE_RELEASE_API}/all-printers?username=${username}`)
+		.then(response => ({
+			error: false,
+			value: response,
+		}))
+		.catch(() => ({
+			error: true,
+			value: 'Unable to fetch the list of all printers from stoPrint.',
+		}))
 
 export const fetchRecentPrinters = (
 	username: string,
-): Promise<RecentPopularPrintersResponse> =>
+): Promise<RecentPopularPrintersResponseOrErrorType> =>
 	fetchJson(
 		`${PAPERCUT_MOBILE_RELEASE_API}/recent-popular-printers?username=${username}`,
 	)
+		.then(response => ({
+			error: false,
+			value: response,
+		}))
+		.catch(() => ({
+			error: true,
+			value: 'Unable to fetch a list of recent printers from stoPrint.',
+		}))
+
+const colorPrintersUrl = API('/printing/color-printers')
+
+export const fetchColorPrinters = (): Promise<
+	ColorPrintersResponseOrErrorType,
+> =>
+	fetchJson(colorPrintersUrl)
+		.then(response => ({
+			error: false,
+			value: response,
+		}))
+		.catch(() => ({
+			error: true,
+			value: 'Unable to fetch the list of color printers from stoPrint.',
+		}))
 
 export const heldJobsAvailableAtPrinterForUser = (
 	printerName: string,

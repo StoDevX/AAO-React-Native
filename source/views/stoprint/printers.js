@@ -32,6 +32,7 @@ type ReduxStateProps = {
 	+printers: Array<Printer>,
 	+recentPrinters: Array<Printer>,
 	+popularPrinters: Array<Printer>,
+	+colorPrinters: Array<Printer>,
 	+error: ?string,
 	+loading: boolean,
 	+username: ?string,
@@ -89,19 +90,26 @@ class PrinterListView extends React.PureComponent<Props> {
 	)
 
 	render() {
-		if (this.props.loading && this.props.printers.length === 0) {
-			return <LoadingView text="Fetching Available Printers…" />
-		}
 		if (this.props.error) {
 			return (
 				<StoPrintErrorView
 					navigation={this.props.navigation}
 					refresh={this.fetchData}
+					statusMessage={this.props.error}
 				/>
 			)
 		}
+		if (this.props.loading && this.props.printers.length === 0) {
+			return <LoadingView text="Querying Available Printers…" />
+		}
+		const colorJob =
+			this.props.navigation.state.params.job.grayscaleFormatted === 'No'
 
-		const allWithLocations = this.props.printers.map(j => ({
+		const availablePrinters = colorJob
+			? this.props.colorPrinters
+			: this.props.printers
+
+		const allWithLocations = availablePrinters.map(j => ({
 			...j,
 			location: j.location || 'Unknown Building',
 		}))
@@ -132,6 +140,8 @@ class PrinterListView extends React.PureComponent<Props> {
 			  ]
 			: []
 
+		const availableGrouped = colorJob ? groupedByBuilding : grouped
+
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
@@ -140,7 +150,7 @@ class PrinterListView extends React.PureComponent<Props> {
 				refreshing={this.props.loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
-				sections={grouped}
+				sections={availableGrouped}
 				style={styles.list}
 			/>
 		)
@@ -152,7 +162,8 @@ function mapStateToProps(state: ReduxState): ReduxStateProps {
 		printers: state.stoprint ? state.stoprint.printers : [],
 		recentPrinters: state.stoprint ? state.stoprint.recentPrinters : [],
 		popularPrinters: state.stoprint ? state.stoprint.popularPrinters : [],
-		error: state.stoprint ? state.stoprint.error : null,
+		colorPrinters: state.stoprint ? state.stoprint.colorPrinters : [],
+		error: state.stoprint ? state.stoprint.printersError : null,
 		loading: state.stoprint ? state.stoprint.loadingPrinters : false,
 		username: state.settings ? state.settings.username : null,
 	}
