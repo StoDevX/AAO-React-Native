@@ -116,7 +116,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 		} else if (this.props.jobs.length === 0) {
 			return (
 				<StoPrintNoticeView
-					buttonText="Install stoPrint"
+					buttonText="Learn how to use stoPrint"
 					header="Nothing to Print!"
 					onPress={() => openUrl(STOPRINT_HELP_PAGE)}
 					refresh={this.fetchData}
