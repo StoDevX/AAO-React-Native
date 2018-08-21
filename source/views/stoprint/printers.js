@@ -100,7 +100,7 @@ class PrinterListView extends React.PureComponent<Props> {
 			)
 		}
 		if (this.props.loading && this.props.printers.length === 0) {
-			return <LoadingView text="Fetching Available Printers…" />
+			return <LoadingView text="Querying Available Printers…" />
 		}
 		const colorJob =
 			this.props.navigation.state.params.job.grayscaleFormatted === 'No'

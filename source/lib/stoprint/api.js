@@ -46,7 +46,7 @@ export async function logIn(
 	}
 
 	if (!result.value.success) {
-		return 'The username and password appear to be invalid.'
+		return 'Your username and password appear to be invalid.'
 	}
 
 	return 'success'
@@ -62,7 +62,7 @@ export const fetchJobs = (
 		}))
 		.catch(() => ({
 			error: true,
-			value: 'Unable to fetch print jobs list from stoPrint.',
+			value: 'Unable to fetch a list of print jobs from stoPrint.',
 		}))
 
 export const fetchAllPrinters = (
@@ -75,7 +75,7 @@ export const fetchAllPrinters = (
 		}))
 		.catch(() => ({
 			error: true,
-			value: 'Unable to fetch all printers from stoPrint.',
+			value: 'Unable to fetch the list of all printers from stoPrint.',
 		}))
 
 export const fetchRecentPrinters = (
@@ -90,7 +90,7 @@ export const fetchRecentPrinters = (
 		}))
 		.catch(() => ({
 			error: true,
-			value: 'Unable to fetch recent printers from stoPrint.',
+			value: 'Unable to fetch a list of recent printers from stoPrint.',
 		}))
 
 const colorPrintersUrl = API('/printing/color-printers')
@@ -105,7 +105,7 @@ export const fetchColorPrinters = (): Promise<
 		}))
 		.catch(() => ({
 			error: true,
-			value: 'Unable to fetch color printers from stoPrint.',
+			value: 'Unable to fetch the list of color printers from stoPrint.',
 		}))
 
 export const heldJobsAvailableAtPrinterForUser = (

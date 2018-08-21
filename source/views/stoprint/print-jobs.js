@@ -103,7 +103,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 			)
 		}
 		if (this.props.loading && this.props.jobs.length === 0) {
-			return <LoadingView text="Fetching stoPrint Jobs…" />
+			return <LoadingView text="Fetching a list of stoPrint Jobs…" />
 		}
 		if (this.props.loginState !== 'logged-in') {
 			return (
