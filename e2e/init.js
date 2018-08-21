@@ -10,11 +10,11 @@ jasmine.getEnv().addReporter(adapter)
 
 beforeAll(async () => {
 	await detox.init(config, {launchApp: false})
-	await device.launchApp({permissions: {notifications: 'YES'}})
 })
 
 beforeEach(async () => {
 	await adapter.beforeEach()
+	await device.relaunchApp({delete: true, permissions: {notifications: 'YES'}})
 })
 
 afterAll(async () => {
