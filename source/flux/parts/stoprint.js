@@ -9,6 +9,9 @@ import {
 	fetchRecentPrinters,
 	logIn,
 } from '../../lib/stoprint'
+import {API} from '../../globals'
+import * as defaultData from '../../../docs/color-printers.json'
+import {reportNetworkProblem} from '../../lib/report-network-problem'
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
@@ -85,9 +88,15 @@ export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 
 		const {recentPrinters, popularPrinters} = recentAndPopularPrinters
 
+		const colorPrintersUrl = API('/color-printers')
+		const {colorPrinters} = await fetchJson(colorPrintersUrl).catch(err => {
+			reportNetworkProblem(err)
+			return defaultData.colorPrinters
+		})
+
 		dispatch({
 			type: UPDATE_ALL_PRINTERS_SUCCESS,
-			payload: {allPrinters, recentPrinters, popularPrinters},
+			payload: {allPrinters, recentPrinters, popularPrinters, colorPrinters},
 		})
 	}
 }
@@ -117,6 +126,7 @@ export type State = {|
 	printers: Array<Printer>,
 	recentPrinters: Array<Printer>, // printer names
 	popularPrinters: Array<Printer>, // printer names
+	colorPrinters: Array<Printer>,
 	error: ?string,
 	loadingPrinters: boolean,
 	loadingJobs: boolean,
@@ -128,6 +138,7 @@ const initialState: State = {
 	printers: [],
 	recentPrinters: [],
 	popularPrinters: [],
+	colorPrinters: [],
 	loadingPrinters: false,
 	loadingJobs: false,
 }
@@ -160,6 +171,7 @@ export function stoprint(state: State = initialState, action: Action) {
 				printers: action.payload.allPrinters,
 				recentPrinters: action.payload.recentPrinters,
 				popularPrinters: action.payload.popularPrinters,
+				colorPrinters: action.payload.colorPrinters,
 				error: null,
 				loadingPrinters: false,
 			}
