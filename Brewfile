@@ -1,4 +1,3 @@
-brew "git-lfs"
 brew "node"
 brew "ruby"
 brew "watchman"
