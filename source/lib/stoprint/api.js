@@ -46,7 +46,7 @@ export async function logIn(
 	}
 
 	if (!result.value.success) {
-		return 'Your username and password appear to be invalid.'
+		return 'Your username or password appear to be invalid.'
 	}
 
 	return 'success'
