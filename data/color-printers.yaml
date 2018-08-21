@@ -1,0 +1,3 @@
+colorPrinters:
+  - {code: '', location: 'RML', printerName: 'mfc-rml-4-disco', serverName: 'printers'}
+  - {code: '', location: 'Tomson Hall', printerName: 'mfc-toh101', serverName: 'printers'}
