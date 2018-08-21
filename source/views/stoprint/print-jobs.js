@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {SectionList} from 'react-native'
+import {Platform, SectionList} from 'react-native'
 import {connect} from 'react-redux'
 import {type ReduxState} from '../../flux'
 import {updatePrintJobs} from '../../flux/parts/stoprint'
@@ -114,9 +114,16 @@ class PrintJobsView extends React.PureComponent<Props> {
 				/>
 			)
 		} else if (this.props.jobs.length === 0) {
+			const instructions =
+				Platform.OS === 'android'
+					? 'using the Mobility Print app'
+					: 'using the Print option in the Share Sheet'
+			const descriptionText = `You can print from a computer, or by ${instructions}.`
+
 			return (
 				<StoPrintNoticeView
-					buttonText="Install stoPrint"
+					buttonText="Learn how to use stoPrint"
+					description={descriptionText}
 					header="Nothing to Print!"
 					onPress={() => openUrl(STOPRINT_HELP_PAGE)}
 					refresh={this.fetchData}

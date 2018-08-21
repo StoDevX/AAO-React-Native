@@ -1,7 +1,13 @@
 // @flow
 
 import React from 'react'
-import {Platform, ScrollView, StyleSheet, RefreshControl} from 'react-native'
+import {
+	Platform,
+	Text,
+	ScrollView,
+	StyleSheet,
+	RefreshControl,
+} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '../../components/notice'
 import * as c from '../../components/colors'
@@ -9,6 +15,7 @@ import delay from 'delay'
 
 type Props = {
 	buttonText: string,
+	description?: string,
 	header: string,
 	onPress: () => any,
 	refresh: () => any,
@@ -52,7 +59,7 @@ export class StoPrintNoticeView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {buttonText, header, onPress, text} = this.props
+		const {buttonText, description, header, onPress, text} = this.props
 		return (
 			<ScrollView
 				contentContainerStyle={styles.content}
@@ -76,6 +83,9 @@ export class StoPrintNoticeView extends React.PureComponent<Props, State> {
 					style={styles.notice}
 					text={text}
 				/>
+				{description ? (
+					<Text style={styles.description}>{description}</Text>
+				) : null}
 			</ScrollView>
 		)
 	}
@@ -89,6 +99,11 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
+	},
+	description: {
+		marginHorizontal: 30,
+		marginVertical: 20,
+		textAlign: 'center',
 	},
 	notice: {
 		flex: 0,
