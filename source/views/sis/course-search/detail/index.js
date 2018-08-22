@@ -1,13 +1,12 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, Text, Platform, View} from 'react-native'
+import {StyleSheet, Text, Platform} from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
 import glamorous from 'glamorous-native'
 import {Badge} from '../../../building-hours/detail/badge'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import {SelectableCell} from '../../../components/cells/selectable'
-import {convertTimeStringsToOfferings} from 'sto-sis-time-parser'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
 import {
@@ -17,7 +16,10 @@ import {
 import type {TopLevelViewPropsType} from '../../../types'
 import * as c from '../../../components/colors'
 import {deptNum} from '../lib/format-dept-num'
-import * as _ from 'lodash'
+import groupBy from 'lodash/groupBy'
+import map from 'lodash/map'
+import zip from 'lodash/zip'
+import zipObject from 'lodash/zipObject'
 
 const CENTRAL_TZ = 'America/Winnipeg'
 
@@ -98,8 +100,8 @@ function Schedule({course}: {course: CourseType}) {
 	if (!course.offerings) {
 		return null
 	}
-	const groupedByDay = _.groupBy(course.offerings, 'day')
-	const schedule = _.map(groupedByDay, (offerings, day) => {
+	const groupedByDay = groupBy(course.offerings, 'day')
+	const schedule = map(groupedByDay, (offerings, day) => {
 		const timesFormatted = offerings.map(offering => {
 			const start = moment
 				.tz(offering.start, 'H:mm', CENTRAL_TZ)
@@ -109,14 +111,14 @@ function Schedule({course}: {course: CourseType}) {
 		})
 		const locations = offerings.map(offering => offering.location)
 
-		const timelocs = _.zip(timesFormatted, locations)
+		const timelocs = zip(timesFormatted, locations)
 
 		const timelocsObj = timelocs.map(timelocs =>
-			_.zipObject(['time', 'location'], timelocs),
+			zipObject(['time', 'location'], timelocs),
 		)
 
 		const rightDetail = timelocsObj.map(timeloc => (
-			<Text style={styles.rightDetail}>
+			<Text key={timeloc.time} style={styles.rightDetail}>
 				<Text style={styles.time}>{timeloc.time} </Text>
 				<Text style={styles.location}>{`(${timeloc.location})`}</Text>
 			</Text>
