@@ -8,7 +8,7 @@ If you are looking to get started with the project, issues tagged with [`good fi
 1. [Labels](#labels)
 2. [Keep It Running](#keep-it-running)
 3. [Maintainers](#maintainers)
-4. [Travis CI Notes](#travisci-notes)
+4. [CI Notes](#ci-notes)
 
 ## Labels
 We have a lot of labels! Even though they may seem unorganized, there's a method to the madness.
