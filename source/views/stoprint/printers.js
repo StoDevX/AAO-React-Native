@@ -34,7 +34,6 @@ type ReduxStateProps = {
 	+popularPrinters: Array<Printer>,
 	+colorPrinters: Array<Printer>,
 	+error: ?string,
-	+loading: boolean,
 	+username: ?string,
 }
 
@@ -44,18 +43,36 @@ type ReduxDispatchProps = {
 
 type Props = ReactProps & ReduxDispatchProps & ReduxStateProps
 
-class PrinterListView extends React.PureComponent<Props> {
+type State = {
+	initialLoadComplete: boolean,
+	loading: boolean,
+}
+
+class PrinterListView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
 		title: 'Select Printer',
 		headerBackTitle: 'Printers',
 	}
 
+	state = {
+		initialLoadComplete: false,
+		loading: false,
+	}
+
 	componentDidMount = () => {
-		this.fetchData()
+		this.initialLoad()
+	}
+
+	initialLoad = async () => {
+		this.setState(() => ({loading: true}))
+		await this.fetchData()
+		this.setState(() => ({loading: false, initialLoadComplete: true}))
 	}
 
 	refresh = async (): any => {
 		let start = Date.now()
+
+		this.setState(() => ({loading: true}))
 
 		await this.fetchData()
 		// console.log('data returned')
@@ -65,6 +82,7 @@ class PrinterListView extends React.PureComponent<Props> {
 		if (elapsed < 500) {
 			await delay(500 - elapsed)
 		}
+		this.setState(() => ({loading: false}))
 	}
 
 	fetchData = () => this.props.updatePrinters()
@@ -99,7 +117,7 @@ class PrinterListView extends React.PureComponent<Props> {
 				/>
 			)
 		}
-		if (this.props.loading && this.props.printers.length === 0) {
+		if (this.state.loading && !this.state.initialLoadComplete) {
 			return <LoadingView text="Querying Available Printers…" />
 		}
 		const colorJob =
@@ -147,7 +165,7 @@ class PrinterListView extends React.PureComponent<Props> {
 				ItemSeparatorComponent={ListSeparator}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
-				refreshing={this.props.loading}
+				refreshing={this.state.loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
 				sections={availableGrouped}
@@ -164,7 +182,6 @@ function mapStateToProps(state: ReduxState): ReduxStateProps {
 		popularPrinters: state.stoprint ? state.stoprint.popularPrinters : [],
 		colorPrinters: state.stoprint ? state.stoprint.colorPrinters : [],
 		error: state.stoprint ? state.stoprint.printersError : null,
-		loading: state.stoprint ? state.stoprint.loadingPrinters : false,
 		username: state.settings ? state.settings.username : null,
 	}
 }

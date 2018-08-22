@@ -27,7 +27,6 @@ type ReactProps = TopLevelViewPropsType
 type ReduxStateProps = {
 	jobs: Array<PrintJob>,
 	error: ?string,
-	loading: boolean,
 	loginState: string,
 }
 
@@ -37,18 +36,36 @@ type ReduxDispatchProps = {
 
 type Props = ReactProps & ReduxDispatchProps & ReduxStateProps
 
-class PrintJobsView extends React.PureComponent<Props> {
+type State = {
+	initialLoadComplete: boolean,
+	loading: boolean,
+}
+
+class PrintJobsView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
 		title: 'Print Jobs',
 		headerBackTitle: 'Jobs',
 	}
 
+	state = {
+		initialLoadComplete: false,
+		loading: false,
+	}
+
 	componentDidMount() {
-		this.fetchData()
+		this.initialLoad()
+	}
+
+	initialLoad = async () => {
+		this.setState(() => ({loading: true}))
+		await this.fetchData()
+		this.setState(() => ({loading: false, initialLoadComplete: true}))
 	}
 
 	refresh = async (): any => {
 		let start = Date.now()
+
+		this.setState(() => ({loading: true}))
 
 		await this.fetchData()
 		// console.log('data returned')
@@ -58,6 +75,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 		if (elapsed < 500) {
 			await delay(500 - elapsed)
 		}
+		this.setState(() => ({loading: false}))
 	}
 
 	fetchData = () => this.props.updatePrintJobs()
@@ -102,7 +120,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 				/>
 			)
 		}
-		if (this.props.loading && this.props.jobs.length === 0) {
+		if (this.state.loading && !this.state.initialLoadComplete) {
 			return <LoadingView text="Fetching a list of stoPrint Jobs…" />
 		}
 		if (this.props.loginState !== 'logged-in') {
@@ -146,7 +164,7 @@ class PrintJobsView extends React.PureComponent<Props> {
 				ItemSeparatorComponent={ListSeparator}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
-				refreshing={this.props.loading}
+				refreshing={this.state.loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
 				sections={sortedGroupedJobs}
@@ -159,7 +177,6 @@ function mapStateToProps(state: ReduxState): ReduxStateProps {
 	return {
 		jobs: state.stoprint ? state.stoprint.jobs : [],
 		error: state.stoprint ? state.stoprint.jobsError : null,
-		loading: state.stoprint ? state.stoprint.loadingJobs : false,
 		loginState: state.settings ? state.settings.loginState : 'logged-out',
 	}
 }
