@@ -34,9 +34,7 @@ export class StoPrintNoticeView extends React.PureComponent<Props, State> {
 	}
 
 	componentDidMount() {
-		if (this._timer) {
-			this._timer = setInterval(this.props.refresh, 5000)
-		}
+		this._timer = setInterval(this.props.refresh, 5000)
 	}
 
 	componentWillUnmount() {
@@ -69,6 +67,7 @@ export class StoPrintNoticeView extends React.PureComponent<Props, State> {
 						refreshing={this.state.refreshing}
 					/>
 				}
+				showsVerticalScrollIndicator={false}
 				style={styles.container}
 			>
 				<Icon

@@ -16,16 +16,10 @@ type GetState = () => ReduxState
 type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
 type Action = UpdateAllPrintersAction | UpdatePrintJobsAction
 
-const UPDATE_ALL_PRINTERS_START = 'stoprint/UPDATE_ALL_PRINTERS/START'
 const UPDATE_ALL_PRINTERS_FAILURE = 'stoprint/UPDATE_ALL_PRINTERS/FAILURE'
 const UPDATE_ALL_PRINTERS_SUCCESS = 'stoprint/UPDATE_ALL_PRINTERS/SUCCESS'
-const UPDATE_PRINT_JOBS_START = 'stoprint/UPDATE_PRINT_JOBS/START'
 const UPDATE_PRINT_JOBS_FAILURE = 'stoprint/UPDATE_PRINT_JOBS/FAILURE'
 const UPDATE_PRINT_JOBS_SUCCESS = 'stoprint/UPDATE_PRINT_JOBS/SUCCESS'
-
-type UpdateAllPrintersStartAction = {
-	type: 'stoprint/UPDATE_ALL_PRINTERS/START',
-}
 
 type UpdateAllPrintersFailureAction = {
 	type: 'stoprint/UPDATE_ALL_PRINTERS/FAILURE',
@@ -45,11 +39,6 @@ type UpdateAllPrintersSuccessAction = {
 type UpdateAllPrintersAction =
 	| UpdateAllPrintersSuccessAction
 	| UpdateAllPrintersFailureAction
-	| UpdateAllPrintersStartAction
-
-type UpdatePrintJobsStartAction = {
-	type: 'stoprint/UPDATE_PRINT_JOBS/START',
-}
 
 type UpdatePrintJobsFailureAction = {
 	type: 'stoprint/UPDATE_PRINT_JOBS/FAILURE',
@@ -64,7 +53,6 @@ type UpdatePrintJobsSuccessAction = {
 type UpdatePrintJobsAction =
 	| UpdatePrintJobsSuccessAction
 	| UpdatePrintJobsFailureAction
-	| UpdatePrintJobsStartAction
 
 export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 	return async dispatch => {
@@ -72,8 +60,6 @@ export function updatePrinters(): ThunkAction<UpdateAllPrintersAction> {
 		if (!username || !password) {
 			return false
 		}
-
-		dispatch({type: UPDATE_ALL_PRINTERS_START})
 
 		const successMsg = await logIn(username, password)
 		if (successMsg !== 'success') {
@@ -137,8 +123,6 @@ export function updatePrintJobs(): ThunkAction<UpdatePrintJobsAction> {
 			return false
 		}
 
-		dispatch({type: UPDATE_PRINT_JOBS_START})
-
 		const successMsg = await logIn(username, password)
 		if (successMsg !== 'success') {
 			return dispatch({type: UPDATE_PRINT_JOBS_FAILURE, payload: successMsg})
@@ -168,8 +152,6 @@ export type State = {|
 	colorPrinters: Array<Printer>,
 	jobsError: ?string,
 	printersError: ?string,
-	loadingPrinters: boolean,
-	loadingJobs: boolean,
 |}
 
 const initialState: State = {
@@ -180,31 +162,22 @@ const initialState: State = {
 	recentPrinters: [],
 	popularPrinters: [],
 	colorPrinters: [],
-	loadingPrinters: false,
-	loadingJobs: false,
 }
 
 export function stoprint(state: State = initialState, action: Action) {
 	switch (action.type) {
-		case UPDATE_PRINT_JOBS_START:
-			return {...state, loadingJobs: true}
-
 		case UPDATE_PRINT_JOBS_FAILURE:
-			return {...state, loadingJobs: false, jobsError: action.payload}
+			return {...state, jobsError: action.payload}
 
 		case UPDATE_PRINT_JOBS_SUCCESS:
 			return {
 				...state,
 				jobs: action.payload,
-				error: null,
-				loadingJobs: false,
+				jobsError: null,
 			}
 
-		case UPDATE_ALL_PRINTERS_START:
-			return {...state, loadingPrinters: true}
-
 		case UPDATE_ALL_PRINTERS_FAILURE:
-			return {...state, loadingPrinters: false, printersError: action.payload}
+			return {...state, printersError: action.payload}
 
 		case UPDATE_ALL_PRINTERS_SUCCESS:
 			return {
@@ -213,9 +186,7 @@ export function stoprint(state: State = initialState, action: Action) {
 				recentPrinters: action.payload.recentPrinters,
 				popularPrinters: action.payload.popularPrinters,
 				colorPrinters: action.payload.colorPrinters,
-				jobsError: null,
 				printersError: null,
-				loadingPrinters: false,
 			}
 
 		default:
