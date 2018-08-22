@@ -67,10 +67,10 @@ export async function buildFilters(): Promise<FilterType[]> {
 		},
 		{
 			type: 'list',
-			key: 'departments',
+			key: 'department',
 			enabled: false,
 			spec: {
-				title: 'Departments',
+				title: 'Department',
 				showImages: false,
 				options: allDepartments,
 				mode: 'OR',
@@ -78,7 +78,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 				displayTitle: true,
 			},
 			apply: {
-				key: 'departments',
+				key: 'department',
 			},
 		},
 		{

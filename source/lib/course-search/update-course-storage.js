@@ -65,7 +65,7 @@ async function storeTermCoursesFromServer(term: TermType) {
 
 function formatRawData(rawData: Array<RawCourseType>): Array<CourseType> {
 	return rawData.map(course => {
-		let spaceAvailable = course.enroll < course.max
+		let spaceAvailable = course.enrolled < course.max
 		return {spaceAvailable: spaceAvailable, ...course}
 	})
 }
