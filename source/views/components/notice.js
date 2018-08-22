@@ -9,7 +9,7 @@ import {Viewport} from './viewport'
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingHorizontal: 16,
+		paddingHorizontal: 30,
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: c.white,
