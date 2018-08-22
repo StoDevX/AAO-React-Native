@@ -1,7 +1,7 @@
 // @flow
 
-import React from 'react'
-import {StyleSheet, Text, Platform} from 'react-native'
+import * as React from 'react'
+import {StyleSheet, Text, Platform, View} from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
 import glamorous from 'glamorous-native'
 import {Badge} from '../../../building-hours/detail/badge'
@@ -17,6 +17,8 @@ import {
 import type {TopLevelViewPropsType} from '../../../types'
 import * as c from '../../../components/colors'
 import {deptNum} from '../lib/format-dept-num'
+import * as _ from 'lodash'
+
 const CENTRAL_TZ = 'America/Winnipeg'
 
 const Container = glamorous.scrollView({
@@ -40,6 +42,17 @@ const SubHeader = glamorous.text({
 const styles = StyleSheet.create({
 	chunk: {
 		paddingVertical: 10,
+	},
+	time: {
+		lineHeight: 20,
+	},
+	location: {
+		fontStyle: 'italic',
+		lineHeight: 20,
+	},
+	rightDetail: {
+		color: c.iosDisabledText,
+		textAlign: 'right',
 	},
 })
 
@@ -82,28 +95,38 @@ function Information({course}: {course: CourseType}) {
 }
 
 function Schedule({course}: {course: CourseType}) {
-	if (!course.times) {
+	if (!course.offerings) {
 		return null
 	}
-	const times = convertTimeStringsToOfferings(
-		{
-			times: course.times,
-			locations: course.locations,
-		},
-		{groupBy: 'day'},
-	)
-	const schedule = times.map(time => {
-		const hours = time.times.map(time => {
-			const start = moment.tz(time.start, 'hmm', CENTRAL_TZ).format('h:mm A')
-			const end = moment.tz(time.end, 'hmm', CENTRAL_TZ).format('h:mm A')
+	const groupedByDay = _.groupBy(course.offerings, 'day')
+	const schedule = _.map(groupedByDay, (offerings, day) => {
+		const timesFormatted = offerings.map(offering => {
+			const start = moment
+				.tz(offering.start, 'H:mm', CENTRAL_TZ)
+				.format('h:mm A')
+			const end = moment.tz(offering.end, 'H:mm', CENTRAL_TZ).format('h:mm A')
 			return `${start} – ${end}`
 		})
+		const locations = offerings.map(offering => offering.location)
+
+		const timelocs = _.zip(timesFormatted, locations)
+
+		const timelocsObj = timelocs.map(timelocs =>
+			_.zipObject(['time', 'location'], timelocs),
+		)
+
+		const rightDetail = timelocsObj.map(timeloc => (
+			<Text style={styles.rightDetail}>
+				<Text style={styles.time}>{timeloc.time} </Text>
+				<Text style={styles.location}>{`(${timeloc.location})`}</Text>
+			</Text>
+		))
+
 		return (
 			<MultiLineDetailCell
-				key={time.day}
-				leftDetail={time.location}
-				rightDetail={hours.join('\n')}
-				title={formatDay(time.day)}
+				key={day}
+				rightDetail={rightDetail}
+				title={formatDay(day)}
 			/>
 		)
 	})
