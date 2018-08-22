@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
 		color: c.iosDisabledText,
 	},
 	cellRightDetail: {
-		letterSpacing: -0.32,
 		alignSelf: 'center',
 	},
 	leftContainer: {
