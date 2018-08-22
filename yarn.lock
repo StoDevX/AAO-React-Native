@@ -6016,9 +6016,9 @@ react-native-popover-view@1.0.4:
   dependencies:
     fs "^0.0.1-security"
 
-react-native-restart@0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.6.tgz#77770d078683947b2c1f2adb876f179269d8443a"
+react-native-restart@0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.7.tgz#e2ec764dcb0a82918a301c8664c30df75225f7e3"
 
 react-native-safari-view@2.1.0:
   version "2.1.0"
