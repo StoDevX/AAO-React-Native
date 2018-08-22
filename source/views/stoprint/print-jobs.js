@@ -49,7 +49,7 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 
 	state = {
 		initialLoadComplete: false,
-		loading: false,
+		loading: true,
 	}
 
 	componentDidMount() {
@@ -57,7 +57,6 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 	}
 
 	initialLoad = async () => {
-		this.setState(() => ({loading: true}))
 		await this.fetchData()
 		this.setState(() => ({loading: false, initialLoadComplete: true}))
 	}
