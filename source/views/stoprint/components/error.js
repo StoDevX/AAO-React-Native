@@ -64,6 +64,7 @@ export class StoPrintErrorView extends React.PureComponent<Props, State> {
 						refreshing={this.state.refreshing}
 					/>
 				}
+				showsVerticalScrollIndicator={false}
 				style={styles.container}
 			>
 				<Icon color={c.sto.black} name={iconName} size={100} />
