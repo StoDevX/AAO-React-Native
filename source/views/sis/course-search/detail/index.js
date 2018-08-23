@@ -19,7 +19,6 @@ import {deptNum} from '../lib/format-dept-num'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 import zip from 'lodash/zip'
-import zipObject from 'lodash/zipObject'
 
 const CENTRAL_TZ = 'America/Winnipeg'
 
@@ -113,9 +112,7 @@ function Schedule({course}: {course: CourseType}) {
 
 		const timelocs = zip(timesFormatted, locations)
 
-		const timelocsObj = timelocs.map(timelocs =>
-			zipObject(['time', 'location'], timelocs),
-		)
+		const timelocsObj = timelocs.map(([time, location]) => ({time, location}))
 
 		const rightDetail = timelocsObj.map(timeloc => (
 			<Text key={timeloc.time} style={styles.rightDetail}>
