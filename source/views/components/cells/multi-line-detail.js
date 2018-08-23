@@ -7,8 +7,8 @@ import * as c from '../../components/colors'
 
 type Props = {
 	title: string,
-	leftDetail: string,
-	rightDetail: string,
+	leftDetail?: string,
+	rightDetail: any,
 }
 
 export class MultiLineDetailCell extends React.PureComponent<Props> {
@@ -20,13 +20,15 @@ export class MultiLineDetailCell extends React.PureComponent<Props> {
 					<Text allowFontScaling={true} style={styles.cellTitle}>
 						{title}
 					</Text>
-					<Text allowFontScaling={true} style={styles.cellLeftDetail}>
-						{leftDetail}
-					</Text>
+					{this.props.leftDetail && (
+						<Text allowFontScaling={true} style={styles.cellLeftDetail}>
+							{leftDetail}
+						</Text>
+					)}
 				</View>
-				<Text allowFontScaling={true} style={styles.cellRightDetail}>
+				<View allowFontScaling={true} style={styles.cellRightDetail}>
 					{rightDetail}
-				</Text>
+				</View>
 			</View>
 		)
 		return <Cell cellContentView={cellContent} />
@@ -53,10 +55,7 @@ const styles = StyleSheet.create({
 		color: c.iosDisabledText,
 	},
 	cellRightDetail: {
-		fontSize: 16,
-		letterSpacing: -0.32,
 		alignSelf: 'center',
-		color: c.iosDisabledText,
 	},
 	leftContainer: {
 		flex: 1,
