@@ -100,7 +100,7 @@ function Schedule({course}: {course: CourseType}) {
 	if (!course.offerings) {
 		return null
 	}
-	const groupedByDay = groupBy(course.offerings, 'day')
+	const groupedByDay = groupBy(course.offerings, c => c.day)
 	const schedule = map(groupedByDay, (offerings, day) => {
 		const timesFormatted = offerings.map(offering => {
 			const start = moment
@@ -120,7 +120,7 @@ function Schedule({course}: {course: CourseType}) {
 		const rightDetail = timelocsObj.map(timeloc => (
 			<Text key={timeloc.time} style={styles.rightDetail}>
 				<Text style={styles.time}>{timeloc.time} </Text>
-				<Text style={styles.location}>{`(${timeloc.location})`}</Text>
+				<Text style={styles.location}>({timeloc.location})</Text>
 			</Text>
 		))
 
