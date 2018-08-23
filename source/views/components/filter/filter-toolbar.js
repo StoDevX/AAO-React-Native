@@ -6,6 +6,7 @@ import {Toolbar} from '../toolbar'
 import {FilterToolbarButton} from './filter-toolbar-button'
 import {ActiveFilterButton} from './active-filter-button'
 import flatten from 'lodash/flatten'
+import cloneDeep from 'lodash/cloneDeep'
 
 type Props = {
 	filters: Array<FilterType>,
@@ -22,13 +23,13 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 	}
 
 	function updateToggleFilter(filter: ToggleType) {
-		let newFilter = filter
-		newFilter.enabled = false
+		let newFilter = {...filter, enabled: false}
 		onPopoverDismiss(newFilter)
 	}
 
 	function updateListFilter(filter: ListType, option: ListItemSpecType) {
-		let newFilter = filter
+		// easier to just clone the filter and mutate than avoid mutations
+		let newFilter = cloneDeep(filter)
 		newFilter.spec.selected = filter.spec.selected.filter(
 			item => item.title !== option.title,
 		)
