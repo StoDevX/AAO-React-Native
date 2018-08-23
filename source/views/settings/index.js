@@ -6,6 +6,7 @@ import {TableView} from 'react-native-tableview-simple'
 import type {TopLevelViewPropsType} from '../types'
 
 import CredentialsLoginSection from './sections/login-credentials'
+import MiscellanySection from './sections/miscellany'
 import OddsAndEndsSection from './sections/odds-and-ends'
 import SupportSection from './sections/support'
 
@@ -26,6 +27,8 @@ export default function SettingsView(props: TopLevelViewPropsType) {
 				<CredentialsLoginSection />
 
 				<SupportSection navigation={props.navigation} />
+
+				<MiscellanySection navigation={props.navigation} />
 
 				<OddsAndEndsSection navigation={props.navigation} />
 			</TableView>
