@@ -6,6 +6,7 @@ import {PushButtonCell} from '../../components/cells/push-button'
 import {trackedOpenUrl} from '../../components/open-url'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
 import {sectionBgColor} from '../../components/colors'
+import {GH_BASE_URL} from '../../../globals'
 
 type Props = TopLevelViewPropsType
 
@@ -39,7 +40,7 @@ export default class MiscellanySection extends React.PureComponent<
 	onLegalButton = () => this.onPressButton('LegalView')
 	onSourceButton = () =>
 		trackedOpenUrl({
-			url: 'https://github.com/StoDevX/AAO-React-Native',
+			url: GH_BASE_URL,
 			id: 'ContributingView',
 		})
 	onAppIconButton = () => this.onPressButton('IconSettingsView')
