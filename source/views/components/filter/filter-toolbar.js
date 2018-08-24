@@ -23,7 +23,7 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 	}
 
 	function updateToggleFilter(filter: ToggleType) {
-		let newFilter = {...filter, enabled: false}
+		let newFilter: ToggleType = {...filter, enabled: false}
 		onPopoverDismiss(newFilter)
 	}
 
