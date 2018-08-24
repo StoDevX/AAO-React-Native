@@ -7,10 +7,14 @@ import {Platform} from 'react-native'
 import {iOSUIKit, material} from 'react-native-typography'
 import {AppLogo} from '../components/logo'
 
-const Container = glamorous.scrollView({
+const Wrapper = glamorous.scrollView({
 	backgroundColor: c.white,
 	paddingHorizontal: 5,
-	paddingVertical: 10,
+	paddingTop: 10,
+})
+
+const Container = glamorous.view({
+	paddingBottom: 30,
 })
 
 const Title = glamorous.text({
@@ -51,18 +55,22 @@ const formatPeopleList = arr => arr.map(w => w.replace(' ', ' ')).join(' • ')
 
 export default function CreditsView() {
 	return (
-		<Container contentInsetAdjustmentBehavior="automatic">
-			<AppLogo />
+		<Wrapper>
+			<Container contentInsetAdjustmentBehavior="automatic">
+				<AppLogo />
 
-			<Title>{credits.name}</Title>
-			<About>{credits.content}</About>
+				<Title>{credits.name}</Title>
+				<About>{credits.content}</About>
 
-			<Heading>Contributors</Heading>
-			<Contributors>{formatPeopleList(credits.contributors)}</Contributors>
+				<Heading>Contributors</Heading>
+				<Contributors>{formatPeopleList(credits.contributors)}</Contributors>
 
-			<Heading>Acknowledgements</Heading>
-			<Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
-		</Container>
+				<Heading>Acknowledgements</Heading>
+				<Contributors>
+					{formatPeopleList(credits.acknowledgements)}
+				</Contributors>
+			</Container>
+		</Wrapper>
 	)
 }
 CreditsView.navigationOptions = {
