@@ -33,8 +33,9 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 
 		// if no option is given, then the "No Terms" button was pressed
 		if (option) {
+			let optionTitle = option.title
 			newFilter.spec.selected = filter.spec.selected.filter(
-				item => item.title !== option.title,
+				item => item.title !== optionTitle,
 			)
 		}
 
