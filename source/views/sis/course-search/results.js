@@ -163,6 +163,7 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 				<Separator />
 
 				<CourseResultsList
+					key={searchQuery.toLowerCase()}
 					applyFilters={this.props.applyFilters}
 					courses={this.props.allCourses}
 					filters={filters}
