@@ -3,14 +3,18 @@ import * as React from 'react'
 import * as c from '../components/colors'
 import {data as credits} from '../../../docs/credits.json'
 import glamorous from 'glamorous-native'
-import {Platform} from 'react-native'
+import {Platform, StyleSheet, ScrollView} from 'react-native'
 import {iOSUIKit, material} from 'react-native-typography'
 import {AppLogo} from '../components/logo'
 
-const Container = glamorous.scrollView({
-	backgroundColor: c.white,
-	paddingHorizontal: 5,
-	paddingVertical: 10,
+const styles = StyleSheet.create({
+	container: {
+		backgroundColor: c.white,
+	},
+	contentContainer: {
+		paddingHorizontal: 5,
+		paddingVertical: 10,
+	}
 })
 
 const Title = glamorous.text({
@@ -51,7 +55,11 @@ const formatPeopleList = arr => arr.map(w => w.replace(' ', ' ')).join(' • ')
 
 export default function CreditsView() {
 	return (
-		<Container contentInsetAdjustmentBehavior="automatic">
+		<ScrollView
+			contentContainerStyle={styles.contentContainer}
+			contentInsetAdjustmentBehavior="automatic"
+			style={styles.container}
+		>
 			<AppLogo />
 
 			<Title>{credits.name}</Title>
@@ -62,7 +70,7 @@ export default function CreditsView() {
 
 			<Heading>Acknowledgements</Heading>
 			<Contributors>{formatPeopleList(credits.acknowledgements)}</Contributors>
-		</Container>
+		</ScrollView>
 	)
 }
 CreditsView.navigationOptions = {
