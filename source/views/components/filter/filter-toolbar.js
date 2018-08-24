@@ -19,6 +19,11 @@ function updateAnyFilter(callback: FilterType => any) {
 			filter = updateToggleFilter(filter)
 		} else if (filter.type === 'list') {
 			filter = updateListFilter(filter, option)
+		} else if (filter.type === 'picker') {
+			filter = filter
+		} else {
+			// assert to flow that we have handled every case
+			;(filter.type: empty)
 		}
 		callback(filter)
 	}
