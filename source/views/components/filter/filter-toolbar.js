@@ -17,7 +17,7 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 	function updateFilter(filter: FilterType, option?: ListItemSpecType) {
 		if (filter.type === 'toggle') {
 			updateToggleFilter(filter)
-		} else if (filter.type === 'list' && option) {
+		} else if (filter.type === 'list') {
 			updateListFilter(filter, option)
 		}
 	}
@@ -27,12 +27,17 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 		onPopoverDismiss(newFilter)
 	}
 
-	function updateListFilter(filter: ListType, option: ListItemSpecType) {
+	function updateListFilter(filter: ListType, option?: ListItemSpecType) {
 		// easier to just clone the filter and mutate than avoid mutations
 		let newFilter = cloneDeep(filter)
-		newFilter.spec.selected = filter.spec.selected.filter(
-			item => item.title !== option.title,
-		)
+
+		// if no option is given, then the "No Terms" button was pressed
+		if (option) {
+			newFilter.spec.selected = filter.spec.selected.filter(
+				item => item.title !== option.title,
+			)
+		}
+
 		if (newFilter.spec.selected.length === 0) {
 			if (filter.spec.mode === 'OR') {
 				newFilter.spec.selected = newFilter.spec.options
