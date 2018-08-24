@@ -63,6 +63,15 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 				/>
 			)
 		} else if (filter.type === 'list') {
+			if (!filter.spec.selected.length) {
+				return <ActiveFilterButton
+					key={filter.spec.title}
+					filter={filter}
+					label={`No ${filter.spec.title}`}
+					onRemove={filter => updateFilter(filter)}
+				/>
+			}
+
 			return filter.spec.selected.map(selected => (
 				<ActiveFilterButton
 					key={selected.title}
