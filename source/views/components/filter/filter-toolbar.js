@@ -20,7 +20,7 @@ function updateAnyFilter(callback: FilterType => any) {
 		} else if (filter.type === 'list') {
 			filter = updateListFilter(filter, option)
 		} else if (filter.type === 'picker') {
-			filter = filter
+			// we don't need to do anything for pickers?
 		} else {
 			// assert to flow that we have handled every case
 			;(filter.type: empty)
