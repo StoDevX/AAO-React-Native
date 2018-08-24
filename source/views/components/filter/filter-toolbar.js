@@ -6,40 +6,58 @@ import {Toolbar} from '../toolbar'
 import {FilterToolbarButton} from './filter-toolbar-button'
 import {ActiveFilterButton} from './active-filter-button'
 import flatten from 'lodash/flatten'
+import cloneDeep from 'lodash/cloneDeep'
 
 type Props = {
 	filters: Array<FilterType>,
 	onPopoverDismiss: (filter: FilterType) => any,
 }
 
-export function FilterToolbar({filters, onPopoverDismiss}: Props) {
-	function updateFilter(filter: FilterType, option?: ListItemSpecType) {
+function updateAnyFilter(callback: FilterType => any) {
+	return (filter: FilterType, option?: ListItemSpecType) => {
 		if (filter.type === 'toggle') {
-			updateToggleFilter(filter)
-		} else if (filter.type === 'list' && option) {
-			updateListFilter(filter, option)
+			filter = updateToggleFilter(filter)
+		} else if (filter.type === 'list') {
+			filter = updateListFilter(filter, option)
+		} else if (filter.type === 'picker') {
+			// we don't need to do anything for pickers?
+		} else {
+			// assert to flow that we have handled every case
+			;(filter.type: empty)
 		}
+		callback(filter)
 	}
+}
 
-	function updateToggleFilter(filter: ToggleType) {
-		let newFilter = filter
-		newFilter.enabled = false
-		onPopoverDismiss(newFilter)
-	}
+function updateToggleFilter(filter: ToggleType) {
+	let newFilter: ToggleType = {...filter, enabled: false}
+	return newFilter
+}
 
-	function updateListFilter(filter: ListType, option: ListItemSpecType) {
-		let newFilter = filter
+function updateListFilter(filter: ListType, option?: ListItemSpecType) {
+	// easier to just clone the filter and mutate than avoid mutations
+	let newFilter = cloneDeep(filter)
+
+	// if no option is given, then the "No Terms" button was pressed
+	if (option) {
+		let optionTitle = option.title
 		newFilter.spec.selected = filter.spec.selected.filter(
-			item => item.title !== option.title,
+			item => item.title !== optionTitle,
 		)
-		if (newFilter.spec.selected.length === 0) {
-			if (filter.spec.mode === 'OR') {
-				newFilter.spec.selected = newFilter.spec.options
-			}
-			newFilter.enabled = false
-		}
-		onPopoverDismiss(newFilter)
 	}
+
+	if (newFilter.spec.selected.length === 0) {
+		if (filter.spec.mode === 'OR') {
+			newFilter.spec.selected = newFilter.spec.options
+		}
+		newFilter.enabled = false
+	}
+
+	return newFilter
+}
+
+export function FilterToolbar({filters, onPopoverDismiss}: Props) {
+	let updateFilter = updateAnyFilter(onPopoverDismiss)
 
 	const filterToggles = filters.map(filter => (
 		<FilterToolbarButton
@@ -62,6 +80,17 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 				/>
 			)
 		} else if (filter.type === 'list') {
+			if (!filter.spec.selected.length) {
+				return (
+					<ActiveFilterButton
+						key={filter.spec.title}
+						filter={filter}
+						label={`No ${filter.spec.title}`}
+						onRemove={filter => updateFilter(filter)}
+					/>
+				)
+			}
+
 			return filter.spec.selected.map(selected => (
 				<ActiveFilterButton
 					key={selected.title}
