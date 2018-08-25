@@ -1,6 +1,6 @@
 // @flow
 
-import {version} from '../package.json'
+import {version} from '../../package.json'
 import {Platform} from 'react-native'
 
 const aaoVersion = version || 'unknown'

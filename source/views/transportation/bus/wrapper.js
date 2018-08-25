@@ -10,7 +10,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../../lib/report-network-problem'
 import * as defaultData from '../../../../docs/bus-times.json'
-import {API} from '../../../globals'
+import {API} from '../../../init/constants'
 
 const TIMEZONE = 'America/Winnipeg'
 

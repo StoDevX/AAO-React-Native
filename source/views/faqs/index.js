@@ -8,7 +8,7 @@ import {reportNetworkProblem} from '../../lib/report-network-problem'
 import LoadingView from '../../components/loading'
 import * as defaultData from '../../../docs/faqs.json'
 import delay from 'delay'
-import {API} from '../../globals'
+import {API} from '../../init/constants'
 
 const faqsUrl = API('/faqs')
 

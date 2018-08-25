@@ -3,9 +3,9 @@ import {
 	GoogleAnalyticsTracker,
 	GoogleAnalyticsSettings,
 } from 'react-native-google-analytics-bridge'
-import {stringifyFilters} from './components/filter/stringify-filters'
+import {stringifyFilters} from '../components/filter/stringify-filters'
 
-import {getAnalyticsOptOut} from './lib/storage'
+import {getAnalyticsOptOut} from '../lib/storage'
 
 const trackerId =
 	process.env.NODE_ENV === 'development' ? 'UA-90234209-1' : 'UA-90234209-2'

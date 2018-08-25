@@ -15,7 +15,7 @@ import {
 	Detail,
 	Title,
 } from '../../components/list'
-import {trackOrgOpen} from '../../analytics'
+import {trackOrgOpen} from '../../init/analytics'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
@@ -25,7 +25,7 @@ import deburr from 'lodash/deburr'
 import startCase from 'lodash/startCase'
 import * as c from '../../components/colors'
 import type {StudentOrgType} from './types'
-import {API} from '../../globals'
+import {API} from '../../init/constants'
 
 const orgsUrl = API('/orgs')
 const leftSideSpacing = 20

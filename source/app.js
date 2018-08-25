@@ -1,13 +1,13 @@
 // @flow
 
-import './globalize-fetch'
-import './setup-moment'
+import './init/fetch'
+import './init/moment'
 
 import * as React from 'react'
 import {Provider} from 'react-redux'
 import {makeStore, initRedux} from './redux'
-import bugsnag from './bugsnag'
-import {tracker} from './analytics'
+import bugsnag from './init/bugsnag'
+import {tracker} from './init/analytics'
 import {AppNavigator} from './navigation'
 import type {NavigationState} from 'react-navigation'
 import OneSignal from 'react-native-onesignal'

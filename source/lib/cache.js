@@ -1,7 +1,7 @@
 // @flow
 import {AsyncStorage} from 'react-native'
 import moment from 'moment'
-import {API} from '../globals'
+import {API} from '../init/constants'
 
 type BaseCacheResultType<T> = {
 	isExpired: boolean,

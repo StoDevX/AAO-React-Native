@@ -7,7 +7,7 @@ import {
 	trackStreamPlay,
 	trackStreamPause,
 	trackStreamError,
-} from '../../../analytics'
+} from '../../../init/analytics'
 import * as c from '../../../components/colors'
 import {callPhone} from '../../../components/call-phone'
 import {Row} from '../../../components/layout'

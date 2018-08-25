@@ -14,7 +14,7 @@ import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import delay from 'delay'
 import {CENTRAL_TZ} from './lib'
-import {API} from '../../globals'
+import {API} from '../../init/constants'
 
 const buildingHoursUrl = API('/spaces/hours')
 

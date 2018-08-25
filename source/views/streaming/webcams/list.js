@@ -10,7 +10,7 @@ import {Column} from '../../../components/layout'
 import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
-import {API} from '../../../globals'
+import {API} from '../../../init/constants'
 import {Viewport} from '../../../components/viewport'
 
 const webcamsUrl = API('/webcams')

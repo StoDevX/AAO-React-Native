@@ -7,7 +7,7 @@ import {NoticeView} from '../../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {NewsList} from './news-list'
-import {API} from '../../globals'
+import {API} from '../../init/constants'
 
 type Props = TopLevelViewPropsType & {
 	source: string | {url: string, type: 'rss' | 'wp-json'},
