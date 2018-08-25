@@ -6,7 +6,7 @@
 import * as React from 'react'
 import {Text} from 'react-native'
 import {Touchable} from '../touchable'
-import type {NavType} from '../../types'
+import type {NavType} from '../../views/types'
 import {commonStyles} from './styles'
 
 export function EditHomeButton({

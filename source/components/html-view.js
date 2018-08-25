@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {WebView} from 'react-native'
-import openUrl, {canOpenUrl} from '../components/open-url'
+import openUrl, {canOpenUrl} from './open-url'
 
 type Props = {
 	html: string,

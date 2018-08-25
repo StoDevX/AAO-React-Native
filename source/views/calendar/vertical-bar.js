@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet, View, Platform} from 'react-native'
-import * as c from '../components/colors'
+import * as c from '../../components/colors'
 
 const dotBarStyles = StyleSheet.create({
 	diagram: {

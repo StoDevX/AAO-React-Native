@@ -2,8 +2,8 @@
 
 import * as React from 'react'
 import {StyleSheet, Image, Alert} from 'react-native'
-import {Column, Row} from '../components/layout'
-import {ListRow, Detail, Title} from '../components/list'
+import {Column, Row} from '../../components/layout'
+import {ListRow, Detail, Title} from '../../components/list'
 import type {StoryType} from './types'
 
 type Props = {

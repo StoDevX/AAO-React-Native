@@ -1,6 +1,6 @@
 // @flow
 
-import {TabNavigator} from '../components/tabbed-view'
+import {TabNavigator} from '../../components/tabbed-view'
 
 // import WeeklyMovieView from './movie'
 import {WebcamsView} from './webcams'

@@ -2,9 +2,9 @@
 
 import * as React from 'react'
 import {StyleSheet, Platform, View} from 'react-native'
-import {StyledAlphabetListView} from '../components/alphabet-listview'
+import {StyledAlphabetListView} from './alphabet-listview'
 import debounce from 'lodash/debounce'
-import {SearchBar} from '../components/searchbar'
+import {SearchBar} from './searchbar/index'
 
 export const LIST_HEADER_HEIGHT = Platform.OS === 'ios' ? 42 : 0
 

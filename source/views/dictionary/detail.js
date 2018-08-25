@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Markdown} from '../components/markdown'
-import {ListFooter} from '../components/list'
-import {Button} from '../components/button'
+import {Markdown} from '../../components/markdown'
+import {ListFooter} from '../../components/list'
+import {Button} from '../../components/button'
 import glamorous from 'glamorous-native'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'

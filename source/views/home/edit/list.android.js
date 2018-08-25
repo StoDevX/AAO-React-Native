@@ -5,7 +5,7 @@ import {StyleSheet, FlatList} from 'react-native'
 import {type ReduxState} from '../../../flux'
 import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
 import {connect} from 'react-redux'
-import * as c from '../../components/colors'
+import * as c from '../../../components/colors'
 import sortBy from 'lodash/sortBy'
 
 import type {ViewType} from '../../views'

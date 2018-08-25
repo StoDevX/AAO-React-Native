@@ -8,7 +8,7 @@ import type {TopLevelViewPropsType} from '../types'
 import type {EventType, PoweredBy} from './types'
 import moment from 'moment-timezone'
 import delay from 'delay'
-import LoadingView from '../components/loading'
+import LoadingView from '../../components/loading'
 import {API} from '../../globals'
 const TIMEZONE = 'America/Winnipeg'
 

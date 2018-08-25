@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
-import LoadingView from '../components/loading'
-import {NoticeView} from '../components/notice'
+import LoadingView from '../../components/loading'
+import {NoticeView} from '../../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {FancyMenu} from './components/fancy-menu'
 import type {

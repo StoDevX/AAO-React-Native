@@ -1,6 +1,6 @@
 // @flow
 
-import {TabNavigator} from '../components/tabbed-view'
+import {TabNavigator} from '../../components/tabbed-view'
 
 import BalancesView from './balances'
 import StudentWorkView from './student-work'

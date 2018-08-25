@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {StyleSheet, Text} from 'react-native'
 import {Cell} from 'react-native-tableview-simple'
-import * as c from '../../components/colors'
+import * as c from '../colors'
 
 const styles = StyleSheet.create({
 	title: {

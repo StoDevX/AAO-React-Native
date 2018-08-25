@@ -1,7 +1,7 @@
 // @flow
 
 import {type ReduxState} from '../index'
-import {type FilterType} from '../../views/components/filter/types'
+import {type FilterType} from '../../components/filter/types'
 import {
 	loadCachedCourses,
 	updateStoredCourses,

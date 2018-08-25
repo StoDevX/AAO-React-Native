@@ -3,9 +3,9 @@
 import * as React from 'react'
 
 import {StyleSheet, Animated} from 'react-native'
-import * as c from '../../components/colors'
-import {SearchBar} from '../../components/searchbar'
-import {Viewport} from '../../components/viewport'
+import * as c from '../../../components/colors'
+import {SearchBar} from '../../../components/searchbar'
+import {Viewport} from '../../../components/viewport'
 
 type Props = {
 	value: string,

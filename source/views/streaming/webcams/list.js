@@ -4,14 +4,14 @@ import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../../lib/report-network-problem'
-import {TabBarIcon} from '../../components/tabbar-icon'
+import {TabBarIcon} from '../../../components/tabbar-icon'
 import * as defaultData from '../../../../docs/webcams.json'
-import {Column} from '../../components/layout'
+import {Column} from '../../../components/layout'
 import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
 import {API} from '../../../globals'
-import {Viewport} from '../../components/viewport'
+import {Viewport} from '../../../components/viewport'
 
 const webcamsUrl = API('/webcams')
 

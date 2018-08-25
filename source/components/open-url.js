@@ -2,7 +2,7 @@
 
 import {Platform, Linking} from 'react-native'
 
-import {tracker} from '../../analytics'
+import {tracker} from '../analytics'
 import SafariView from 'react-native-safari-view'
 import {CustomTabs} from 'react-native-custom-tabs'
 

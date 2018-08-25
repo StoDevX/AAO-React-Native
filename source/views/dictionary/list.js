@@ -2,15 +2,15 @@
 
 import * as React from 'react'
 import {StyleSheet, RefreshControl, Platform} from 'react-native'
-import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
-import {Column} from '../components/layout'
+import {SearchableAlphabetListView} from '../../components/searchable-alphabet-listview'
+import {Column} from '../../components/layout'
 import {
 	Detail,
 	Title,
 	ListRow,
 	ListSectionHeader,
 	ListSeparator,
-} from '../components/list'
+} from '../../components/list'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import type {WordType} from './types'
