@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
-import {TableView} from 'react-native-tableview-simple'
+import {TableView} from '@frogpond/tableview'
 import type {TopLevelViewPropsType} from '../types'
 
 import CredentialsLoginSection from './sections/login-credentials'

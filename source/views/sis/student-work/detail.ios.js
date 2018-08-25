@@ -2,11 +2,10 @@
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {sendEmail} from '../../../components/send-email'
-import {Cell, Section, TableView} from 'react-native-tableview-simple'
+import {Cell, Section, TableView, SelectableCell} from '@frogpond/tableview'
 import moment from 'moment'
 import * as c from '@frogpond/colors'
 import type {JobType} from './types'
-import {SelectableCell} from '../../../components/cells/selectable'
 import glamorous from 'glamorous-native'
 
 const styles = StyleSheet.create({

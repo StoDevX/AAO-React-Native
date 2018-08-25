@@ -7,12 +7,16 @@
 import * as React from 'react'
 import {ScrollView, View, StyleSheet, Text} from 'react-native'
 import moment from 'moment-timezone'
-import {CellTextField} from '../../../components/cells/textfield'
-import {CellToggle} from '../../../components/cells/toggle'
-import {DeleteButtonCell} from '../../../components/cells/delete-button'
-import {ButtonCell} from '../../../components/cells/button'
 import * as c from '@frogpond/colors'
-import {TableView, Section, Cell} from 'react-native-tableview-simple'
+import {
+	TableView,
+	Section,
+	Cell,
+	CellTextField,
+	CellToggle,
+	DeleteButtonCell,
+	ButtonCell,
+} from '@frogpond/tableview'
 import type {
 	BuildingType,
 	NamedBuildingScheduleType,

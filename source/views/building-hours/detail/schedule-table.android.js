@@ -7,7 +7,7 @@ import moment from 'moment-timezone'
 import type {NamedBuildingScheduleType} from '../types'
 import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
 import {ScheduleRow} from './schedule-row'
-import {ButtonCell} from '../../../components/cells/button'
+import {ButtonCell} from '@frogpond/tableview'
 
 type Props = {
 	now: moment,

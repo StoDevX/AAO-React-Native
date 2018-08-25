@@ -2,14 +2,13 @@
 import * as React from 'react'
 import {ScrollView, Text, StyleSheet} from 'react-native'
 import moment from 'moment'
-import {Cell, Section, TableView} from 'react-native-tableview-simple'
+import {Cell, Section, TableView, SelectableCell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {openUrl} from '../../components/open-url'
 import {sendEmail} from '../../components/send-email'
 import {showNameOrEmail} from './util'
-import {SelectableCell} from '../../components/cells/selectable'
 
 const styles = StyleSheet.create({
 	name: {

@@ -4,9 +4,8 @@ import * as React from 'react'
 import {Alert, StyleSheet, ScrollView} from 'react-native'
 import type {TopLevelViewPropsType} from '../types'
 import glamorous from 'glamorous-native'
-import {TableView, Section, Cell} from 'react-native-tableview-simple'
+import {TableView, Section, Cell, ButtonCell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
-import {ButtonCell} from '../../components/cells'
 import {
 	type Printer,
 	type PrintJob,
