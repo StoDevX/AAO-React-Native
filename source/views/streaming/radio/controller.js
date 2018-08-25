@@ -10,7 +10,7 @@ import {
 } from '../../../lib/analytics'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
-import {Row} from '../../../components/layout'
+import {Row} from '@frogpond/layout'
 import type {TopLevelViewPropsType} from '../../types'
 import {StreamPlayer} from './player'
 import type {PlayState, HtmlAudioError, PlayerTheme} from './types'
