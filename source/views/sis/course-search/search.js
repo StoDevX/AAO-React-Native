@@ -15,7 +15,7 @@ import type {ReduxState} from '../../../redux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {AnimatedSearchbox} from '../components/animated-searchbox'
+import {AnimatedSearchBar} from '@frogpond/searchbar'
 import {type FilterType} from '@frogpond/filter'
 import {RecentItemsList} from '../components/recents-list'
 import {Separator} from '@frogpond/separator'
@@ -174,7 +174,7 @@ class CourseSearchView extends React.Component<Props, State> {
 
 		return (
 			<View style={[styles.container, styles.common]}>
-				<AnimatedSearchbox
+				<AnimatedSearchBar
 					active={isSearchbarActive}
 					onCancel={this.handleSearchCancel}
 					onChange={this.handleSearchChange}
