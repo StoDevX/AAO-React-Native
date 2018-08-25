@@ -15,13 +15,13 @@ import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {trackDefinitionOpen} from '../../analytics'
+import {trackDefinitionOpen} from '../../lib/analytics'
 import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import * as defaultData from '../../../docs/dictionary.json'
-import {API} from '../../globals'
+import {API} from '../../lib/api'
 
 const dictionaryUrl = API('/dictionary')
 

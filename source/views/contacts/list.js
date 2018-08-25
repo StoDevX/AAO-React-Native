@@ -13,7 +13,7 @@ import toPairs from 'lodash/toPairs'
 import * as c from '../../components/colors'
 import type {ContactType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {API} from '../../globals'
+import {API} from '../../lib/api'
 
 const contactInfoUrl = API('/contacts')
 

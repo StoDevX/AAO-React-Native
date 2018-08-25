@@ -1,26 +1,9 @@
 // @flow
-import {
-	GoogleAnalyticsTracker,
-	GoogleAnalyticsSettings,
-} from 'react-native-google-analytics-bridge'
-import {stringifyFilters} from './components/filter/stringify-filters'
+import {GoogleAnalyticsTracker} from 'react-native-google-analytics-bridge'
+import {stringifyFilters} from '../components/filter/stringify-filters'
+import {GOOGLE_ANALYTICS_ID} from './constants'
 
-import {getAnalyticsOptOut} from './lib/storage'
-
-const trackerId =
-	process.env.NODE_ENV === 'development' ? 'UA-90234209-1' : 'UA-90234209-2'
-
-export const tracker = new GoogleAnalyticsTracker(trackerId)
-
-// Disable things
-function disableIfOptedOut() {
-	return getAnalyticsOptOut().then(didOptOut => {
-		if (didOptOut) {
-			GoogleAnalyticsSettings.setOptOut(true)
-		}
-	})
-}
-disableIfOptedOut()
+export const tracker = new GoogleAnalyticsTracker(GOOGLE_ANALYTICS_ID)
 
 // Google requires that custom dimensions be tracked by index, and we only get
 // 20 custom dimensions, so I decided to centralize them here.

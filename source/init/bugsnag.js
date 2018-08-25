@@ -1,7 +1,6 @@
 // @flow
 import {Client, Configuration} from 'bugsnag-react-native'
-
-const IS_PRODUCTION = process.env.NODE_ENV === 'production'
+import {IS_PRODUCTION} from '../lib/constants'
 
 const config = new Configuration()
 config.autoNotify = IS_PRODUCTION

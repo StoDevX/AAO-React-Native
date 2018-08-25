@@ -18,9 +18,9 @@ import type {
 } from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import {data as fallbackMenu} from '../../../docs/pause-menu.json'
-import {tracker} from '../../analytics'
-import bugsnag from '../../bugsnag'
-import {API} from '../../globals'
+import {tracker} from '../../lib/analytics'
+import bugsnag from '../../init/bugsnag'
+import {API} from '../../lib/api'
 
 const CENTRAL_TZ = 'America/Winnipeg'
 

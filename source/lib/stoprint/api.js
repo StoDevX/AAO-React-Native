@@ -3,7 +3,7 @@
 import {PAPERCUT_MOBILE_RELEASE_API, PAPERCUT_API, PAPERCUT} from './urls'
 import querystring from 'query-string'
 import {encode} from 'base-64'
-import {API} from '../../globals'
+import {API} from '../api'
 import type {
 	PrintJobsResponseOrErrorType,
 	AllPrintersResponseOrErrorType,

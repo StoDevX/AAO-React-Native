@@ -11,7 +11,7 @@ import {Error, ErrorMessage} from './components'
 import {getPosition, collectData, reportToServer} from './wifi-tools'
 import {styles} from './tool'
 import type {ToolOptions} from './types'
-import bugsnag from '../../bugsnag'
+import bugsnag from '../../init/bugsnag'
 
 export const toolName = 'wifi'
 
