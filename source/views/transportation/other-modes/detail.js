@@ -4,11 +4,11 @@ import {StyleSheet} from 'react-native'
 import {Markdown} from '../../../components/markdown'
 import {ListFooter} from '../../../components/list'
 import glamorous from 'glamorous-native'
-import {tracker} from '../../../init/analytics'
+import {tracker} from '../../../lib/analytics'
 import {Button} from '../../../components/button'
 import openUrl from '../../../components/open-url'
 import type {OtherModeType} from '../types'
-import {GH_NEW_ISSUE_URL} from '../../../init/constants'
+import {GH_NEW_ISSUE_URL} from '../../../lib/constants'
 
 const Title = glamorous.text({
 	fontSize: 36,

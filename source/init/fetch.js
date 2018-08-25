@@ -1,6 +1,6 @@
 // @flow
 
-import {AAO_USER_AGENT} from './user-agent'
+import {AAO_USER_AGENT} from '../lib/user-agent'
 
 global.rawFetch = global.fetch
 

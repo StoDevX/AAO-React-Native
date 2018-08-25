@@ -4,7 +4,7 @@ import jsYaml from 'js-yaml'
 import type {BuildingType} from '../types'
 import {sendEmail} from '../../../components/send-email'
 import querystring from 'query-string'
-import {GH_NEW_ISSUE_URL} from '../../../init/constants'
+import {GH_NEW_ISSUE_URL} from '../../../lib/constants'
 
 export function submitReport(current: BuildingType, suggestion: BuildingType) {
 	// calling trim() on these to remove the trailing newlines

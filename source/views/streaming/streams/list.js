@@ -15,7 +15,7 @@ import moment from 'moment-timezone'
 import {toLaxTitleCase as titleCase} from 'titlecase'
 import type {StreamType} from './types'
 import delay from 'delay'
-import {API} from '../../../init/constants'
+import {API} from '../../../lib/api'
 
 const CENTRAL_TZ = 'America/Winnipeg'
 

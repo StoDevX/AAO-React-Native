@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import {BuildingRow} from './row'
-import {trackBuildingOpen} from '../../init/analytics'
+import {trackBuildingOpen} from '../../lib/analytics'
 
 import type momentT from 'moment'
 import type {TopLevelViewPropsType} from '../types'
