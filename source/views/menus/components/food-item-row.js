@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {View, StyleSheet, Platform} from 'react-native'
 import {DietaryTags} from './dietary-tags'
-import {Row, Column} from '../../../components/layout'
+import {Row, Column} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
 import type {MenuItemType, MasterCorIconMapType} from '../types'
 import * as c from '@frogpond/colors'

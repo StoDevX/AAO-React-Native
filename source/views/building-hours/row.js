@@ -7,7 +7,7 @@ import isEqual from 'lodash/isEqual'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
 import * as c from '@frogpond/colors'
-import {Row} from '../../components/layout'
+import {Row} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
 import {getDetailedBuildingStatus, getShortBuildingStatus} from './lib'
 

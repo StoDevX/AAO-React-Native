@@ -6,7 +6,7 @@ import {SearchableAlphabetListView} from '@frogpond/listview'
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {Row, Column} from '../../components/layout'
+import {Row, Column} from '@frogpond/layout'
 import {
 	ListRow,
 	ListSectionHeader,
