@@ -5,7 +5,7 @@ import * as React from 'react'
 import {StyleSheet, Animated} from 'react-native'
 import {sto} from '@app/lib/colors'
 import {SearchBar} from '@frogpond/searchbar'
-import {Viewport} from '../../../components/viewport'
+import {Viewport} from '@frogpond/viewport'
 
 type Props = {
 	value: string,

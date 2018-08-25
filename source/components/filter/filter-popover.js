@@ -4,7 +4,7 @@ import Popover from 'react-native-popover-view'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
 import {type TouchableUnion} from '@frogpond/touchable'
-import {Viewport} from '../viewport'
+import {Viewport} from '@frogpond/viewport'
 import * as c from '@frogpond/colors'
 
 type Props = {

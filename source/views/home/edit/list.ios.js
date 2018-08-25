@@ -7,7 +7,7 @@ import {saveHomescreenOrder} from '../../../redux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from '@frogpond/colors'
 import fromPairs from 'lodash/fromPairs'
-import {Viewport} from '../../../components/viewport'
+import {Viewport} from '@frogpond/viewport'
 
 import SortableList from '@hawkrives/react-native-sortable-list'
 import debounce from 'lodash/debounce'

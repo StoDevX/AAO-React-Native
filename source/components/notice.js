@@ -4,7 +4,7 @@ import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Button} from './button'
 import {Heading} from './markdown/heading'
-import {Viewport} from './viewport'
+import {Viewport} from '@frogpond/viewport'
 
 const styles = StyleSheet.create({
 	container: {

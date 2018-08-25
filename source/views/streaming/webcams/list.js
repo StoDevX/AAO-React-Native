@@ -11,7 +11,7 @@ import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
 import {API} from '../../../lib/api'
-import {Viewport} from '../../../components/viewport'
+import {Viewport} from '@frogpond/viewport'
 
 const webcamsUrl = API('/webcams')
 
