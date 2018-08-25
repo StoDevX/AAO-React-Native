@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {Text, ScrollView, StyleSheet} from 'react-native'
+import {Text, ScrollView, StyleSheet, Share} from 'react-native'
 import {sendEmail} from '../../components/send-email'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import moment from 'moment'
@@ -8,6 +8,7 @@ import * as c from '../../components/colors'
 import type {JobType} from './types'
 import {SelectableCell} from '../../components/cells/selectable'
 import glamorous from 'glamorous-native'
+import {ShareButton} from '../../components/nav-buttons'
 
 const styles = StyleSheet.create({
 	lastUpdated: {
@@ -109,6 +110,16 @@ function LastUpdated({when}: {when: string}) {
 	) : null
 }
 
+function shareJob(job: JobType) {
+	const jobBaseUrl =
+		'https://www.stolaf.edu/apps/stuwork/index.cfm?fuseaction=Details&jobID='
+	Share.share({
+		message: `${jobBaseUrl}${job.id}`,
+	})
+		.then(result => console.log(result))
+		.catch(error => console.log(error.message))
+}
+
 type Props = {
 	navigation: {state: {params: {job: JobType}}},
 }
@@ -118,6 +129,7 @@ export class JobDetailView extends React.PureComponent<Props> {
 		const {job} = navigation.state.params
 		return {
 			title: job.title,
+			headerRight: <ShareButton onPress={() => shareJob(job)} />,
 		}
 	}
 
