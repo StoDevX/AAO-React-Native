@@ -9,7 +9,7 @@ import type {EventType, PoweredBy} from './types'
 import moment from 'moment-timezone'
 import delay from 'delay'
 import {LoadingView} from '@frogpond/notice'
-import {API} from '../../lib/api'
+import {API} from '@frogpond/api'
 const TIMEZONE = 'America/Winnipeg'
 
 type Props = TopLevelViewPropsType & {

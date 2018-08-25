@@ -26,7 +26,7 @@ import {tracker} from '../../lib/analytics'
 import bugsnag from '../../init/bugsnag'
 import delay from 'delay'
 import retry from 'p-retry'
-import {API} from '../../lib/api'
+import {API} from '@frogpond/api'
 
 const CENTRAL_TZ = 'America/Winnipeg'
 const entities = new AllHtmlEntities()

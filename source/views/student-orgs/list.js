@@ -24,7 +24,7 @@ import deburr from 'lodash/deburr'
 import startCase from 'lodash/startCase'
 import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
-import {API} from '../../lib/api'
+import {API} from '@frogpond/api'
 
 const orgsUrl = API('/orgs')
 const leftSideSpacing = 20
