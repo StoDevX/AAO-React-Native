@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 	contentContainer: {
 		paddingHorizontal: 5,
 		paddingVertical: 10,
-	}
+	},
 })
 
 const Title = glamorous.text({
