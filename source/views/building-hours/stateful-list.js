@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {NoticeView} from '../../components/notice'
 import {BuildingHoursList} from './list'
-import {type ReduxState} from '../../flux'
+import {type ReduxState} from '../../redux'
 import {connect} from 'react-redux'
 import moment from 'moment-timezone'
 import type {TopLevelViewPropsType} from '../types'

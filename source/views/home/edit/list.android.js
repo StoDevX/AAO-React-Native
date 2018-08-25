@@ -2,8 +2,8 @@
 
 import * as React from 'react'
 import {StyleSheet, FlatList} from 'react-native'
-import {type ReduxState} from '../../../flux'
-import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
+import {type ReduxState} from '../../../redux'
+import {saveHomescreenOrder} from '../../../redux/parts/homescreen'
 import {connect} from 'react-redux'
 import * as c from '../../../components/colors'
 import sortBy from 'lodash/sortBy'
@@ -11,7 +11,7 @@ import sortBy from 'lodash/sortBy'
 import type {ViewType} from '../../views'
 import {allViews} from '../../views'
 import {EditHomeRow} from './row'
-import {toggleViewDisabled} from '../../../flux/parts/homescreen'
+import {toggleViewDisabled} from '../../../redux/parts/homescreen'
 
 const styles = StyleSheet.create({
 	contentContainer: {

@@ -15,9 +15,9 @@ import {Cell, TableView, Section} from 'react-native-tableview-simple'
 import {
 	hasSeenAcknowledgement,
 	type LoginStateType,
-} from '../../flux/parts/settings'
-import {updateBalances} from '../../flux/parts/balances'
-import {type ReduxState} from '../../flux'
+} from '../../redux/parts/settings'
+import {updateBalances} from '../../redux/parts/balances'
+import {type ReduxState} from '../../redux'
 import delay from 'delay'
 import * as c from '../../components/colors'
 import type {TopLevelViewPropsType} from '../types'

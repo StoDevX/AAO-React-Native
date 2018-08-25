@@ -9,9 +9,9 @@ import {
 	loadCourseDataIntoMemory,
 	updateRecentSearches,
 	updateRecentFilters,
-} from '../../../flux/parts/courses'
+} from '../../../redux/parts/courses'
 import {areAnyTermsCached} from '../../../lib/course-search'
-import type {ReduxState} from '../../../flux'
+import type {ReduxState} from '../../../redux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
 import LoadingView from '../../../components/loading'

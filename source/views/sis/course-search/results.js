@@ -6,10 +6,10 @@ import * as c from '../../../components/colors'
 import {
 	updateRecentSearches,
 	updateRecentFilters,
-} from '../../../flux/parts/courses'
+} from '../../../redux/parts/courses'
 import LoadingView from '../../../components/loading'
 import {type CourseType} from '../../../lib/course-search'
-import type {ReduxState} from '../../../flux'
+import type {ReduxState} from '../../../redux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
 import {CourseResultsList} from './list'

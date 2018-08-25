@@ -5,7 +5,7 @@ import './setup-moment'
 
 import * as React from 'react'
 import {Provider} from 'react-redux'
-import {makeStore, initRedux} from './flux'
+import {makeStore, initRedux} from './redux'
 import bugsnag from './bugsnag'
 import {tracker} from './analytics'
 import {AppNavigator} from './navigation'
