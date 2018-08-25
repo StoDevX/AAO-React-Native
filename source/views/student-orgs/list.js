@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, View, Text, Platform, RefreshControl} from 'react-native'
-import {SearchableAlphabetListView} from '../../components/searchable-alphabet-listview'
+import {SearchableAlphabetListView} from '@frogpond/listview'
 import type {TopLevelViewPropsType} from '../types'
 import LoadingView from '../../components/loading'
 import delay from 'delay'
