@@ -1,13 +1,12 @@
 // @flow
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
-import {Cell, Section, TableView} from 'react-native-tableview-simple'
+import {Cell, Section, TableView, ButtonCell} from '@frogpond/tableview'
 import type {EventType, PoweredBy} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../../components/nav-buttons'
 import openUrl from '../../components/open-url'
 import {ListFooter} from '@frogpond/lists'
-import {ButtonCell} from '../../components/cells/button'
 import {getLinksFromEvent, shareEvent, getTimes} from './calendar-util'
 import {AddToCalendar} from '../../components/add-to-calendar'
 

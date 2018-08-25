@@ -1,8 +1,7 @@
 // @flow
 import * as React from 'react'
-import {Section} from 'react-native-tableview-simple'
+import {Section, PushButtonCell} from '@frogpond/tableview'
 import type {TopLevelViewPropsType} from '../../types'
-import {PushButtonCell} from '../../../components/cells/push-button'
 import {trackedOpenUrl} from '../../../components/open-url'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
 import {sectionBgColor} from '@frogpond/colors'
