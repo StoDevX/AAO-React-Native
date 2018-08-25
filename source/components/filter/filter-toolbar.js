@@ -2,7 +2,7 @@
 import * as React from 'react'
 import type {FilterType, ListType, ToggleType, ListItemSpecType} from './types'
 import {StyleSheet, ScrollView} from 'react-native'
-import {Toolbar} from '../toolbar/index'
+import {Toolbar} from '@frogpond/toolbar'
 import {FilterToolbarButton} from './filter-toolbar-button'
 import {ActiveFilterButton} from './active-filter-button'
 import flatten from 'lodash/flatten'
