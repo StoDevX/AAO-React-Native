@@ -18,7 +18,7 @@ import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
 import {DeleteButtonCell} from '../../../components/cells/delete-button'
 import {CellToggle} from '../../../components/cells/toggle'
-import {ListSeparator} from '../../../components/list'
+import {ListSeparator} from '@frogpond/lists'
 
 type Props = TopLevelViewPropsType & {
 	navigation: {

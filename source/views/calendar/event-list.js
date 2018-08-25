@@ -9,7 +9,7 @@ import type {TopLevelViewPropsType} from '../types'
 import type {EventType, PoweredBy} from './types'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
-import {ListSeparator, ListSectionHeader} from '../../components/list'
+import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView} from '../../components/notice'
 import EventRow from './event-row'
 

@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {FlatList, StyleSheet, Text, View, Platform} from 'react-native'
-import {ListSeparator, ListRow} from '../../../components/list'
+import {ListSeparator, ListRow} from '@frogpond/lists'
 import {NoticeView} from '../../../components/notice'
 import * as c from '@frogpond/colors'
 import * as theme from '@app/lib/theme'

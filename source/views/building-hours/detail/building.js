@@ -11,7 +11,7 @@ import {getShortBuildingStatus} from '../lib'
 import {Badge} from './badge'
 import {Header} from './header'
 import {ScheduleTable} from './schedule-table'
-import {ListFooter} from '../../../components/list'
+import {ListFooter} from '@frogpond/lists'
 
 const styles = StyleSheet.create({
 	container: {

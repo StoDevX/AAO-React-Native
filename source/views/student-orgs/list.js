@@ -14,7 +14,7 @@ import {
 	ListSeparator,
 	Detail,
 	Title,
-} from '../../components/list'
+} from '@frogpond/lists'
 import {trackOrgOpen} from '../../lib/analytics'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import sortBy from 'lodash/sortBy'

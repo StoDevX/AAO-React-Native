@@ -10,7 +10,7 @@ import {
 	ListRow,
 	ListSectionHeader,
 	ListSeparator,
-} from '../../components/list'
+} from '@frogpond/lists'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import type {WordType} from './types'

@@ -8,7 +8,7 @@ import type momentT from 'moment'
 import type {BuildingType} from './types'
 import * as c from '@frogpond/colors'
 import {Row} from '../../components/layout'
-import {ListRow, Detail, Title} from '../../components/list'
+import {ListRow, Detail, Title} from '@frogpond/lists'
 import {getDetailedBuildingStatus, getShortBuildingStatus} from './lib'
 
 const styles = StyleSheet.create({
