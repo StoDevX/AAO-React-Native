@@ -2,9 +2,9 @@
 
 import * as React from 'react'
 import {FavoriteButton} from '../../../components/nav-buttons/favorite'
-import {type ReduxState} from '../../../flux'
+import {type ReduxState} from '../../../redux'
 import {connect} from 'react-redux'
-import {toggleFavoriteBuilding} from '../../../flux/parts/buildings'
+import {toggleFavoriteBuilding} from '../../../redux/parts/buildings'
 
 type ReactProps = {
 	buildingName: string,
