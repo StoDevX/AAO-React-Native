@@ -5,7 +5,7 @@ import type {
 	MenuItemType,
 	MasterCorIconMapType,
 	ProcessedMealType,
-} from '../../../source/views/menus/types'
+} from '../types'
 import flatten from 'lodash/flatten'
 import filter from 'lodash/filter'
 import map from 'lodash/map'

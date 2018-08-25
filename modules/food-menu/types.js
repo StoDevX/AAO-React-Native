@@ -1,4 +1,5 @@
 // @flow
+
 export type CurrencyStringType = string
 export type HtmlStringType = string
 export type ItemIdReferenceStringType = string
@@ -14,18 +15,18 @@ export type MenuItemType = {
 	monotony:
 		| {}
 		| {
-		id: string,
-		name: string,
-		short_name: ?null,
-		image: string,
-	},
+				id: string,
+				name: string,
+				short_name: ?null,
+				image: string,
+		  },
 	nutrition:
 		| {}
 		| {
-		kcal: NumericStringType,
-		well_being: string,
-		well_being_image: string,
-	},
+				kcal: NumericStringType,
+				well_being: string,
+				well_being_image: string,
+		  },
 	nutrition_link: string,
 	options: any[],
 	price: CurrencyStringType,
@@ -68,5 +69,16 @@ export type ProcessedMealType = {|
 	starttime: MilitaryTimeStringType,
 	endtime: MilitaryTimeStringType,
 	label: string,
+	stations: StationMenuType[],
+|}
+
+export type DayPartsCollectionType = Array<Array<DayPartMenuType>>
+
+export type DayPartMenuType = {|
+	starttime: MilitaryTimeStringType,
+	endtime: MilitaryTimeStringType,
+	id: NumericStringType,
+	label: string,
+	abbreviation: string,
 	stations: StationMenuType[],
 |}
