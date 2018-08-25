@@ -4,7 +4,7 @@ import {View, StyleSheet, Platform} from 'react-native'
 import {DietaryTags} from './dietary-tags'
 import {Row, Column} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
-import type {MenuItemType, MasterCorIconMapType} from '../types'
+import type {MenuItemType, MasterCorIconMapType} from '../../source/views/menus/types'
 import * as c from '@frogpond/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 
