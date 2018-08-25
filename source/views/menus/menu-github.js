@@ -19,7 +19,7 @@ import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import {data as fallbackMenu} from '../../../docs/pause-menu.json'
 import {tracker} from '../../lib/analytics'
 import bugsnag from '../../init/bugsnag'
-import {API} from '../../lib/api'
+import {API} from '@frogpond/api'
 
 const CENTRAL_TZ = 'America/Winnipeg'
 

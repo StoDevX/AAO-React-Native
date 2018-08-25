@@ -12,7 +12,7 @@ import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import type {TopLevelViewPropsType} from '../../types'
 import type {OtherModeType} from '../types'
-import {API} from '../../../lib/api'
+import {API} from '@frogpond/api'
 
 const transportationUrl = API('/transit/modes')
 

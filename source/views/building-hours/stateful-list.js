@@ -14,7 +14,7 @@ import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import delay from 'delay'
 import {CENTRAL_TZ} from './lib'
-import {API} from '../../lib/api'
+import {API} from '@frogpond/api'
 
 const buildingHoursUrl = API('/spaces/hours')
 

@@ -6,7 +6,7 @@ import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {NewsList} from './news-list'
-import {API} from '../../lib/api'
+import {API} from '@frogpond/api'
 
 type Props = TopLevelViewPropsType & {
 	source: string | {url: string, type: 'rss' | 'wp-json'},

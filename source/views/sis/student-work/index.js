@@ -15,7 +15,7 @@ import orderBy from 'lodash/orderBy'
 import groupBy from 'lodash/groupBy'
 import {toLaxTitleCase as titleCase} from 'titlecase'
 import {JobRow} from './job-row'
-import {API} from '../../../lib/api'
+import {API} from '@frogpond/api'
 import type {JobType} from './types'
 
 const jobsUrl = API('/jobs')
