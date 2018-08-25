@@ -2,6 +2,18 @@
   "presets": [
     "react-native"
   ],
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "alias": {
+          "^@app/(.+)": "source/\\1",
+          "^@frogpond/(.+)": "modules/\\1"
+        },
+        "extensions": [".ios.js", ".android.js", ".js", ".json"]
+      }
+    ]
+  ],
   "env": {
     "production": {
       "plugins": [
