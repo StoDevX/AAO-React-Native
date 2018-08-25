@@ -2,7 +2,7 @@
 
 import {Platform, StyleSheet} from 'react-native'
 import {createStackNavigator} from 'react-navigation'
-import * as c from './views/components/colors'
+import * as c from './components/colors'
 
 import CalendarView, {EventDetail as EventDetailView} from './views/calendar'
 import {ContactsView, ContactsDetailView} from './views/contacts'

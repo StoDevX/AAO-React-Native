@@ -1,12 +1,12 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Markdown} from '../../components/markdown'
-import {ListFooter} from '../../components/list'
+import {Markdown} from '../../../components/markdown'
+import {ListFooter} from '../../../components/list'
 import glamorous from 'glamorous-native'
 import {tracker} from '../../../analytics'
-import {Button} from '../../components/button'
-import openUrl from '../../components/open-url'
+import {Button} from '../../../components/button'
+import openUrl from '../../../components/open-url'
 import type {OtherModeType} from '../types'
 import {GH_NEW_ISSUE_URL} from '../../../globals'
 

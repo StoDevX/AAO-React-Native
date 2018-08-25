@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {NoticeView} from '../components/notice'
+import {NoticeView} from '../../components/notice'
 import {BuildingHoursList} from './list'
 import {type ReduxState} from '../../flux'
 import {connect} from 'react-redux'

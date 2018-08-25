@@ -12,11 +12,11 @@ import {
 	ListSectionHeader,
 	Detail,
 	Title,
-} from '../components/list'
-import LoadingView from '../components/loading'
+} from '../../components/list'
+import LoadingView from '../../components/loading'
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
-import openUrl from '../components/open-url'
+import openUrl from '../../components/open-url'
 import {StoPrintErrorView, StoPrintNoticeView} from './components'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'

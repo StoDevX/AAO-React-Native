@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {TextInput, StyleSheet} from 'react-native'
-import * as c from '../../components/colors'
+import * as c from '../colors'
 import {AllHtmlEntities} from 'html-entities'
 
 const entities = new AllHtmlEntities()

@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {StyleSheet, View, Text, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import * as c from '../../components/colors'
+import * as c from '../colors'
 
 const buttonStyles = StyleSheet.create({
 	button: {

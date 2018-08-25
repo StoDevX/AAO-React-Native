@@ -7,7 +7,7 @@ import * as React from 'react'
 import {Touchable} from '../touchable'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {commonStyles, leftButtonStyles} from './styles'
-import type {NavType} from '../../types'
+import type {NavType} from '../../views/types'
 
 export function OpenSettingsButton({
 	navigation,

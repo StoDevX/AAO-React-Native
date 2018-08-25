@@ -6,15 +6,15 @@ import type {CourseType} from '../../../../lib/course-search'
 import glamorous from 'glamorous-native'
 import {Badge} from '../../../building-hours/detail/badge'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
-import {SelectableCell} from '../../../components/cells/selectable'
+import {SelectableCell} from '../../../../components/cells/selectable'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
 import {
 	MultiLineDetailCell,
 	MultiLineLeftDetailCell,
-} from '../../../components/cells'
+} from '../../../../components/cells'
 import type {TopLevelViewPropsType} from '../../../types'
-import * as c from '../../../components/colors'
+import * as c from '../../../../components/colors'
 import {deptNum} from '../lib/format-dept-num'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'

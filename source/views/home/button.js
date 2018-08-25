@@ -5,9 +5,9 @@ import {View, Text, StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import LinearGradient from 'react-native-linear-gradient'
-import {Touchable} from '../components/touchable'
-import * as c from '../components/colors'
-import {iPhoneX} from '../components/device'
+import {Touchable} from '../../components/touchable'
+import * as c from '../../components/colors'
+import {iPhoneX} from '../../components/device'
 
 type Props = {
 	view: ViewType,

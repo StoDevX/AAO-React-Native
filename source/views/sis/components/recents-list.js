@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react'
 import {FlatList, StyleSheet, Text, View, Platform} from 'react-native'
-import {ListSeparator, ListRow} from '../../components/list'
-import {NoticeView} from '../../components/notice'
-import * as c from '../../components/colors'
+import {ListSeparator, ListRow} from '../../../components/list'
+import {NoticeView} from '../../../components/notice'
+import * as c from '../../../components/colors'
 
 type Props = {
 	actionLabel?: string,

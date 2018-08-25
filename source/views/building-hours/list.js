@@ -9,8 +9,8 @@ import type momentT from 'moment'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 
-import * as c from '../components/colors'
-import {ListSeparator, ListSectionHeader} from '../components/list'
+import * as c from '../../components/colors'
+import {ListSeparator, ListSectionHeader} from '../../components/list'
 
 export {BuildingHoursDetailView} from './detail'
 

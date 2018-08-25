@@ -12,8 +12,8 @@ import {
 	ListSectionHeader,
 	Detail,
 	Title,
-} from '../components/list'
-import LoadingView from '../components/loading'
+} from '../../components/list'
+import LoadingView from '../../components/loading'
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
 import toPairs from 'lodash/toPairs'

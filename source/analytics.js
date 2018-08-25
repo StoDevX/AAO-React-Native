@@ -3,7 +3,7 @@ import {
 	GoogleAnalyticsTracker,
 	GoogleAnalyticsSettings,
 } from 'react-native-google-analytics-bridge'
-import {stringifyFilters} from './views/components/filter/stringify-filters'
+import {stringifyFilters} from './components/filter/stringify-filters'
 
 import {getAnalyticsOptOut} from './lib/storage'
 
