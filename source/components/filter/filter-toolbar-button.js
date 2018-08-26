@@ -6,7 +6,7 @@ import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
 import * as theme from '@app/lib/theme'
-import {Touchable, type TouchableUnion} from '../touchable'
+import {Touchable, type TouchableUnion} from '@frogpond/touchable'
 
 const buttonStyles = StyleSheet.create({
 	button: {

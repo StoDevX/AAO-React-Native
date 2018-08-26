@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, View, Text, Image} from 'react-native'
-import {Touchable} from '../../../components/touchable'
+import {Touchable} from '@frogpond/touchable'
 import * as c from '@frogpond/colors'
 import {images as webcamImages} from '../../../../images/webcams'
 import {trackedOpenUrl} from '../../../components/open-url'

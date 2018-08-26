@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {Text, Platform, StyleSheet} from 'react-native'
-import {Touchable} from '../touchable'
+import {Touchable} from '@frogpond/touchable'
 import type {NavType} from '../../views/types'
 import {commonStyles} from './styles'
 

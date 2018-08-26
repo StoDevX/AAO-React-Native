@@ -5,7 +5,7 @@ import {View, StyleSheet, Text, Switch} from 'react-native'
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
 import * as c from '@frogpond/colors'
-import {Touchable} from '../../../components/touchable'
+import {Touchable} from '@frogpond/touchable'
 import type {ViewType} from '../../views'
 
 const ROW_HORIZONTAL_MARGIN = 15

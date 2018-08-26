@@ -4,7 +4,7 @@ import * as React from 'react'
 import {StyleSheet, Text, View, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {Touchable} from '../../../components/touchable'
+import {Touchable} from '@frogpond/touchable'
 import {withTheme} from '@callstack/react-theme-provider'
 import type {PlayerTheme} from './types'
 
