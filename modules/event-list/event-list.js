@@ -5,7 +5,7 @@ import {StyleSheet, SectionList} from 'react-native'
 import * as c from '@frogpond/colors'
 import toPairs from 'lodash/toPairs'
 import {trackCalendarEventOpen} from '@frogpond/analytics'
-import type {TopLevelViewPropsType} from '../../source/views/types'
+import type {NavigationScreenProp} from 'react-navigation'
 import type {EventType, PoweredBy} from './types'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
@@ -17,12 +17,13 @@ const FullWidthSeparator = props => (
 	<ListSeparator fullWidth={true} {...props} />
 )
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	detailView?: string,
 	events: EventType[],
 	message: ?string,
 	refreshing: boolean,
 	onRefresh: () => any,
+	navigation: NavigationScreenProp,
 	now: moment,
 	poweredBy: ?PoweredBy,
 }

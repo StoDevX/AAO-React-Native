@@ -3,12 +3,12 @@ import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {Cell, Section, TableView, ButtonCell} from '@frogpond/tableview'
 import type {EventType, PoweredBy} from './types'
-import type {TopLevelViewPropsType} from '../../source/views/types'
-import {ShareButton} from '../../source/components/nav-buttons/index'
+import type {NavigationScreenProp} from 'react-navigation'
+import {ShareButton} from '@frogpond/navigation-buttons'
 import {openUrl} from '@frogpond/open-url'
 import {ListFooter} from '@frogpond/lists'
 import {getLinksFromEvent, shareEvent, getTimes} from './calendar-util'
-import {AddToCalendar} from '../../source/components/add-to-calendar'
+import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 
 const styles = StyleSheet.create({
 	chunk: {
@@ -47,15 +47,18 @@ function Links({header, event}: {header: string, event: EventType}) {
 	) : null
 }
 
-type Props = TopLevelViewPropsType & {
-	navigation: {
-		state: {params: {event: EventType, poweredBy: ?PoweredBy}},
-	},
+type Navigation = NavigationScreenProp<{
+	params: {event: EventType, poweredBy: ?PoweredBy},
+}>
+
+type Props = {
+	navigation: Navigation,
 }
 
 export class EventDetail extends React.Component<Props> {
-	static navigationOptions = ({navigation}: any) => {
+	static navigationOptions = ({navigation}: {navigation: Navigation}) => {
 		const {event} = navigation.state.params
+
 		return {
 			title: event.title,
 			headerRight: <ShareButton onPress={() => shareEvent(event)} />,
