@@ -4,7 +4,7 @@ import * as React from 'react'
 
 import {StyleSheet, Animated} from 'react-native'
 import {sto} from '@app/lib/colors'
-import {SearchBar} from '@frogpond/searchbar'
+import {SearchBar} from './searchbar'
 import {Viewport} from '@frogpond/viewport'
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
 	title?: string,
 }
 
-export class AnimatedSearchbox extends React.Component<Props> {
+export class AnimatedSearchBar extends React.Component<Props> {
 	componentDidUpdate(prevProps: Props) {
 		if (this.props.active !== prevProps.active) {
 			if (this.props.active) {
