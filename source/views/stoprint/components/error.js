@@ -4,8 +4,8 @@ import React from 'react'
 import type {TopLevelViewPropsType} from '../../types'
 import {ScrollView, RefreshControl, StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {NoticeView} from '../../components/notice'
-import * as c from '../../components/colors'
+import {NoticeView} from '../../../components/notice'
+import {sto} from '@app/lib/colors'
 import delay from 'delay'
 
 const ERROR_MESSAGE =
@@ -67,7 +67,7 @@ export class StoPrintErrorView extends React.PureComponent<Props, State> {
 				showsVerticalScrollIndicator={false}
 				style={styles.container}
 			>
-				<Icon color={c.sto.black} name={iconName} size={100} />
+				<Icon color={sto.black} name={iconName} size={100} />
 				<NoticeView
 					buttonText="Report"
 					header="Connection Issue"
@@ -82,7 +82,7 @@ export class StoPrintErrorView extends React.PureComponent<Props, State> {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: c.sto.white,
+		backgroundColor: sto.white,
 	},
 	content: {
 		flex: 1,

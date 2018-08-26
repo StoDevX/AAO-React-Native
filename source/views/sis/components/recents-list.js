@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react'
 import {FlatList, StyleSheet, Text, View, Platform} from 'react-native'
-import {ListSeparator, ListRow} from '../../components/list'
-import {NoticeView} from '../../components/notice'
-import * as c from '../../components/colors'
+import {ListSeparator, ListRow} from '../../../components/list'
+import {NoticeView} from '../../../components/notice'
+import * as c from '@frogpond/colors'
+import * as theme from '@app/lib/theme'
 
 type Props = {
 	actionLabel?: string,
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
 		paddingVertical: Platform.OS === 'ios' ? 5 : 0,
 		paddingLeft: 2,
 		fontSize: 16,
-		color: c.iosPushButtonCellForeground,
+		color: theme.iosPushButtonCellForeground,
 	},
 	notice: {
 		paddingTop: 30,
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
 	sideButton: {
 		paddingRight: 17,
 		fontSize: 16,
-		color: c.iosPushButtonCellForeground,
+		color: theme.iosPushButtonCellForeground,
 		padding: 14,
 	},
 	subHeader: {

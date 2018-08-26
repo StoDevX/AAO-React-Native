@@ -2,12 +2,12 @@
 
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {type ReduxState} from '../../../flux'
-import {saveHomescreenOrder} from '../../../flux/parts/homescreen'
+import {type ReduxState} from '../../../redux'
+import {saveHomescreenOrder} from '../../../redux/parts/homescreen'
 import {connect} from 'react-redux'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 import fromPairs from 'lodash/fromPairs'
-import {Viewport} from '../../components/viewport'
+import {Viewport} from '../../../components/viewport'
 
 import SortableList from '@hawkrives/react-native-sortable-list'
 import debounce from 'lodash/debounce'
@@ -15,7 +15,7 @@ import debounce from 'lodash/debounce'
 import type {ViewType} from '../../views'
 import {allViews} from '../../views'
 import {EditHomeRow} from './row'
-import {toggleViewDisabled} from '../../../flux/parts/homescreen'
+import {toggleViewDisabled} from '../../../redux/parts/homescreen'
 
 const objViews = fromPairs(allViews.map(v => [v.view, v]))
 

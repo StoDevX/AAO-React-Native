@@ -4,12 +4,12 @@ import {Text, ScrollView, StyleSheet} from 'react-native'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import type {EventType, PoweredBy} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {ShareButton} from '../components/nav-buttons'
-import openUrl from '../components/open-url'
-import {ListFooter} from '../components/list'
-import {ButtonCell} from '../components/cells/button'
+import {ShareButton} from '../../components/nav-buttons'
+import openUrl from '../../components/open-url'
+import {ListFooter} from '../../components/list'
+import {ButtonCell} from '../../components/cells/button'
 import {getLinksFromEvent, shareEvent, getTimes} from './calendar-util'
-import {AddToCalendar} from '../components/add-to-calendar'
+import {AddToCalendar} from '../../components/add-to-calendar'
 
 const styles = StyleSheet.create({
 	chunk: {

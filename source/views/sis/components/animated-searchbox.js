@@ -3,9 +3,9 @@
 import * as React from 'react'
 
 import {StyleSheet, Animated} from 'react-native'
-import * as c from '../../components/colors'
-import {SearchBar} from '../../components/searchbar'
-import {Viewport} from '../../components/viewport'
+import {sto} from '@app/lib/colors'
+import {SearchBar} from '../../../components/searchbar'
+import {Viewport} from '../../../components/viewport'
 
 type Props = {
 	value: string,
@@ -124,7 +124,7 @@ export class AnimatedSearchbox extends React.Component<Props> {
 									onFocus={this.handleFocus}
 									onSubmit={this.props.onSubmit}
 									placeholder={this.props.placeholder}
-									textFieldBackgroundColor={c.sto.lightGray}
+									textFieldBackgroundColor={sto.lightGray}
 									value={this.props.value}
 								/>
 							</Animated.View>
@@ -138,7 +138,7 @@ export class AnimatedSearchbox extends React.Component<Props> {
 
 let styles = StyleSheet.create({
 	common: {
-		backgroundColor: c.white,
+		backgroundColor: sto.white,
 	},
 	searchContainer: {
 		margin: 0,

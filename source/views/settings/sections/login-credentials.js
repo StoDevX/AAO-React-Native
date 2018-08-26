@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {Cell, Section} from 'react-native-tableview-simple'
-import {CellTextField} from '../../components/cells/textfield'
+import {CellTextField} from '../../../components/cells/textfield'
 import {LoginButton} from '../components/login-button'
 import {
 	logInViaCredentials,
@@ -10,11 +10,11 @@ import {
 	validateLoginCredentials,
 	setLoginCredentials,
 	type LoginStateType,
-} from '../../../flux/parts/settings'
-import {type ReduxState} from '../../../flux'
+} from '../../../redux/parts/settings'
+import {type ReduxState} from '../../../redux'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
-import {sectionBgColor} from '../../components/colors'
+import {sectionBgColor} from '@frogpond/colors'
 
 type ReduxStateProps = {
 	initialUsername: string,

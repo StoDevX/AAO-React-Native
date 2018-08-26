@@ -2,20 +2,20 @@
 
 import * as React from 'react'
 import {StyleSheet, View, Text, Platform, RefreshControl} from 'react-native'
-import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
+import {SearchableAlphabetListView} from '../../components/searchable-alphabet-listview'
 import type {TopLevelViewPropsType} from '../types'
-import LoadingView from '../components/loading'
+import LoadingView from '../../components/loading'
 import delay from 'delay'
-import {NoticeView} from '../components/notice'
-import {Row, Column} from '../components/layout'
+import {NoticeView} from '../../components/notice'
+import {Row, Column} from '../../components/layout'
 import {
 	ListRow,
 	ListSectionHeader,
 	ListSeparator,
 	Detail,
 	Title,
-} from '../components/list'
-import {trackOrgOpen} from '../../analytics'
+} from '../../components/list'
+import {trackOrgOpen} from '../../lib/analytics'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
@@ -23,9 +23,9 @@ import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import startCase from 'lodash/startCase'
-import * as c from '../components/colors'
+import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
-import {API} from '../../globals'
+import {API} from '../../lib/api'
 
 const orgsUrl = API('/orgs')
 const leftSideSpacing = 20

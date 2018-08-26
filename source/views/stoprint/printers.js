@@ -3,8 +3,8 @@
 import React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {connect} from 'react-redux'
-import {type ReduxState} from '../../flux'
-import {updatePrinters} from '../../flux/parts/stoprint'
+import {type ReduxState} from '../../redux'
+import {updatePrinters} from '../../redux/parts/stoprint'
 import type {Printer, PrintJob} from '../../lib/stoprint'
 import {
 	ListRow,
@@ -12,8 +12,8 @@ import {
 	ListSectionHeader,
 	Detail,
 	Title,
-} from '../components/list'
-import LoadingView from '../components/loading'
+} from '../../components/list'
+import LoadingView from '../../components/loading'
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
 import toPairs from 'lodash/toPairs'

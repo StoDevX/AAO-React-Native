@@ -1,10 +1,10 @@
 // @flow
 import * as React from 'react'
-import {TabBarIcon} from '../components/tabbar-icon'
+import {TabBarIcon} from '../../components/tabbar-icon'
 import {View, Platform, ScrollView, StyleSheet} from 'react-native'
 import type {TopLevelViewPropsType} from '../types'
-import {Row} from '../components/layout'
-import {ListRow, ListSeparator, Title} from '../components/list'
+import {Row} from '../../components/layout'
+import {ListRow, ListSeparator, Title} from '../../components/list'
 import {BonAppHostedMenu} from './menu-bonapp'
 
 export const CarletonBurtonMenuScreen = ({

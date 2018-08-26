@@ -2,14 +2,14 @@
 
 import * as React from 'react'
 import {EventList} from './event-list'
-import bugsnag from '../../bugsnag'
-import {tracker} from '../../analytics'
+import bugsnag from '../../init/bugsnag'
+import {tracker} from '../../lib/analytics'
 import type {TopLevelViewPropsType} from '../types'
 import type {EventType, PoweredBy} from './types'
 import moment from 'moment-timezone'
 import delay from 'delay'
-import LoadingView from '../components/loading'
-import {API} from '../../globals'
+import LoadingView from '../../components/loading'
+import {API} from '../../lib/api'
 const TIMEZONE = 'America/Winnipeg'
 
 type Props = TopLevelViewPropsType & {

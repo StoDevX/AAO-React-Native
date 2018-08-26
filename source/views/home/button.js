@@ -5,9 +5,10 @@ import {View, Text, StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import LinearGradient from 'react-native-linear-gradient'
-import {Touchable} from '../components/touchable'
-import * as c from '../components/colors'
-import {iPhoneX} from '../components/device'
+import {Touchable} from '../../components/touchable'
+import {transparent} from '@frogpond/colors'
+import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
+import {iPhoneX} from '../../components/device'
 
 type Props = {
 	view: ViewType,
@@ -108,17 +109,17 @@ const styles = StyleSheet.create({
 		paddingHorizontal: cellHorizontalPadding,
 	},
 	icon: {
-		backgroundColor: c.transparent,
+		backgroundColor: transparent,
 	},
 	text: {
-		backgroundColor: c.transparent,
+		backgroundColor: transparent,
 		fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
 		fontSize: 14,
 	},
 	lightForeground: {
-		color: c.homescreenForegroundLight,
+		color: homescreenForegroundLight,
 	},
 	darkForeground: {
-		color: c.homescreenForegroundDark,
+		color: homescreenForegroundDark,
 	},
 })

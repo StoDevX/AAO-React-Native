@@ -1,7 +1,7 @@
 // @flow
 
-import {tracker} from '../analytics'
-import bugsnag from '../bugsnag'
+import {tracker} from './analytics'
+import bugsnag from '../init/bugsnag'
 
 export function reportNetworkProblem(err: Error) {
 	tracker.trackException(err.message)

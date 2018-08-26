@@ -2,20 +2,20 @@
 
 import * as React from 'react'
 import {StyleSheet, View} from 'react-native'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 import {
 	updateRecentSearches,
 	updateRecentFilters,
-} from '../../../flux/parts/courses'
-import LoadingView from '../../components/loading'
+} from '../../../redux/parts/courses'
+import LoadingView from '../../../components/loading'
 import {type CourseType} from '../../../lib/course-search'
-import type {ReduxState} from '../../../flux'
+import type {ReduxState} from '../../../redux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
 import {CourseResultsList} from './list'
 import {AnimatedSearchbox} from '../components/animated-searchbox'
-import {applyFiltersToItem, type FilterType} from '../../components/filter'
-import {Separator} from '../../components/separator'
+import {applyFiltersToItem, type FilterType} from '../../../components/filter'
+import {Separator} from '../../../components/separator'
 import {buildFilters} from './lib/build-filters'
 
 type ReactProps = TopLevelViewPropsType

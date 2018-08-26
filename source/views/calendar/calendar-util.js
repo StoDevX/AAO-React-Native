@@ -4,8 +4,8 @@ import {Platform, Alert, Linking, Share} from 'react-native'
 import RNCalendarEvents from 'react-native-calendar-events'
 import getUrls from 'get-urls'
 import type {EventType} from './types'
-import bugsnag from '../../bugsnag'
-import {tracker} from '../../analytics'
+import bugsnag from '../../init/bugsnag'
+import {tracker} from '../../lib/analytics'
 import {detailTimes} from './times'
 
 export function shareEvent(event: EventType): Promise<any> {

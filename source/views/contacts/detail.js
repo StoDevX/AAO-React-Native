@@ -3,15 +3,15 @@
 import * as React from 'react'
 import {Alert, StyleSheet, ScrollView, Image} from 'react-native'
 import {images as contactImages} from '../../../images/contacts'
-import {Markdown} from '../components/markdown'
-import {ListFooter} from '../components/list'
+import {Markdown} from '../../components/markdown'
+import {ListFooter} from '../../components/list'
 import glamorous from 'glamorous-native'
-import {callPhone} from '../components/call-phone'
-import {tracker} from '../../analytics'
-import {Button} from '../components/button'
-import {openUrl} from '../components/open-url'
+import {callPhone} from '../../components/call-phone'
+import {tracker} from '../../lib/analytics'
+import {Button} from '../../components/button'
+import {openUrl} from '../../components/open-url'
 import type {ContactType} from './types'
-import {GH_NEW_ISSUE_URL} from '../../globals'
+import {GH_NEW_ISSUE_URL} from '../../lib/constants'
 
 const Title = glamorous.text({
 	fontSize: 36,

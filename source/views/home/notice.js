@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import * as glamorous from 'glamorous-native'
-import * as c from '../components/colors'
+import * as c from '@frogpond/colors'
 import sample from 'lodash/sample'
 import {CELL_MARGIN} from './button'
 

@@ -1,13 +1,13 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet, FlatList} from 'react-native'
-import * as c from '../components/colors'
+import * as c from '@frogpond/colors'
 import type {StoryType} from './types'
-import {ListSeparator} from '../components/list'
-import {NoticeView} from '../components/notice'
+import {ListSeparator} from '../../components/list'
+import {NoticeView} from '../../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {NewsRow} from './news-row'
-import openUrl from '../components/open-url'
+import openUrl from '../../components/open-url'
 
 const styles = StyleSheet.create({
 	listContainer: {

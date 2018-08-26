@@ -2,15 +2,15 @@
 
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
-import * as c from '../components/colors'
+import * as c from '@frogpond/colors'
 import toPairs from 'lodash/toPairs'
-import {trackCalendarEventOpen} from '../../analytics'
+import {trackCalendarEventOpen} from '../../lib/analytics'
 import type {TopLevelViewPropsType} from '../types'
 import type {EventType, PoweredBy} from './types'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
-import {ListSeparator, ListSectionHeader} from '../components/list'
-import {NoticeView} from '../components/notice'
+import {ListSeparator, ListSectionHeader} from '../../components/list'
+import {NoticeView} from '../../components/notice'
 import EventRow from './event-row'
 
 const FullWidthSeparator = props => (

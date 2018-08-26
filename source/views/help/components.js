@@ -1,7 +1,7 @@
 // @flow
 
 import glamorous from 'glamorous-native'
-import * as c from '../components/colors'
+import * as c from '@frogpond/colors'
 
 export const Title = glamorous.text({
 	fontWeight: '700',

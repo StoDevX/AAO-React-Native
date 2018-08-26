@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 import {type TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
 import type {
@@ -14,9 +14,9 @@ import type {
 } from '../types'
 import size from 'lodash/size'
 import values from 'lodash/values'
-import {ListSeparator, ListSectionHeader} from '../../components/list'
-import {applyFiltersToItem, type FilterType} from '../../components/filter'
-import {NoticeView} from '../../components/notice'
+import {ListSeparator, ListSectionHeader} from '../../../components/list'
+import {applyFiltersToItem, type FilterType} from '../../../components/filter'
+import {NoticeView} from '../../../components/notice'
 import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
 import {chooseMeal} from '../lib/choose-meal'

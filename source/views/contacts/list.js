@@ -2,18 +2,18 @@
 
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import {ListSeparator, ListSectionHeader} from '../components/list'
-import {ListEmpty} from '../components/list'
+import {ListSeparator, ListSectionHeader} from '../../components/list'
+import {ListEmpty} from '../../components/list'
 import {ContactRow} from './row'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import * as defaultData from '../../../docs/contact-info.json'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
-import * as c from '../components/colors'
+import * as c from '@frogpond/colors'
 import type {ContactType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {API} from '../../globals'
+import {API} from '../../lib/api'
 
 const contactInfoUrl = API('/contacts')
 

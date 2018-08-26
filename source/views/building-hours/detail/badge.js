@@ -6,7 +6,7 @@
 
 import * as React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 
 const BGCOLORS = {
 	Open: c.moneyGreen,

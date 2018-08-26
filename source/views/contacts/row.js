@@ -2,8 +2,8 @@
 
 import * as React from 'react'
 import type {ContactType} from './types'
-import {ListRow, Detail, Title} from '../components/list'
-import {Column, Row} from '../components/layout'
+import {ListRow, Detail, Title} from '../../components/list'
+import {Column, Row} from '../../components/layout'
 
 type Props = {
 	onPress: ContactType => any,
