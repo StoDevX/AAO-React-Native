@@ -4,7 +4,7 @@ import jsYaml from 'js-yaml'
 import type {WordType} from '../types'
 import {sendEmail} from '../../../components/send-email'
 import querystring from 'query-string'
-import {GH_NEW_ISSUE_URL} from '../../../lib/constants'
+import {GH_NEW_ISSUE_URL} from '@app/lib/constants'
 import wrap from 'wordwrap'
 
 export function submitReport(current: WordType, suggestion: WordType) {

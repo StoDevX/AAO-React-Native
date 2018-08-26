@@ -11,7 +11,7 @@ import {trackScreenView} from '@frogpond/analytics'
 import {Button} from '../../components/button'
 import {openUrl} from '@frogpond/open-url'
 import type {ContactType} from './types'
-import {GH_NEW_ISSUE_URL} from '../../lib/constants'
+import {GH_NEW_ISSUE_URL} from '@app/lib/constants'
 
 const Title = glamorous.text({
 	fontSize: 36,
