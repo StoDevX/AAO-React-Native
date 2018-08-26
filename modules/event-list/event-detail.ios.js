@@ -3,12 +3,12 @@ import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {Cell, Section, TableView, ButtonCell} from '@frogpond/tableview'
 import type {EventType, PoweredBy} from './types'
-import type {TopLevelViewPropsType} from '../types'
-import {ShareButton} from '../../components/nav-buttons'
+import type {TopLevelViewPropsType} from '../../source/views/types'
+import {ShareButton} from '../../source/components/nav-buttons/index'
 import {openUrl} from '@frogpond/open-url'
 import {ListFooter} from '@frogpond/lists'
 import {getLinksFromEvent, shareEvent, getTimes} from './calendar-util'
-import {AddToCalendar} from '../../components/add-to-calendar'
+import {AddToCalendar} from '../../source/components/add-to-calendar'
 
 const styles = StyleSheet.create({
 	chunk: {

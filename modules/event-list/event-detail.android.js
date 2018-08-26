@@ -2,14 +2,14 @@
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import type {EventType, PoweredBy} from './types'
-import type {TopLevelViewPropsType} from '../types'
-import {ShareButton} from '../../components/nav-buttons'
+import type {TopLevelViewPropsType} from '../../source/views/types'
+import {ShareButton} from '../../source/components/nav-buttons/index'
 import {openUrl} from '@frogpond/open'
-import {Card} from '../../components/card'
+import {Card} from '../../source/components/card'
 import * as c from '@frogpond/colors'
 import {ButtonCell} from '@frogpond/tableview'
 import {getLinksFromEvent, shareEvent, getTimes} from './calendar-util'
-import {AddToCalendar} from '../../components/add-to-calendar'
+import {AddToCalendar} from '../../source/components/add-to-calendar'
 import {ListFooter} from '@frogpond/lists'
 
 const styles = StyleSheet.create({
