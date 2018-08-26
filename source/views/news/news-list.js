@@ -7,7 +7,7 @@ import {ListSeparator} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {NewsRow} from './news-row'
-import openUrl from '../../components/open-url'
+import {openUrl} from '@frogpond/open-url'
 
 const styles = StyleSheet.create({
 	listContainer: {

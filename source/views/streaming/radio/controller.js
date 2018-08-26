@@ -15,7 +15,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import {StreamPlayer} from './player'
 import type {PlayState, HtmlAudioError, PlayerTheme} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
-import {openUrl} from '../../../components/open-url'
+import {openUrl} from '@frogpond/open-url'
 import {Viewport} from '@frogpond/viewport'
 import {withTheme} from '@callstack/react-theme-provider'
 

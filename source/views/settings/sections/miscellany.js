@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {Section, PushButtonCell} from '@frogpond/tableview'
 import type {TopLevelViewPropsType} from '../../types'
-import {trackedOpenUrl} from '../../../components/open-url'
+import {trackedOpenUrl} from '@frogpond/open-url'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
 import {sectionBgColor} from '@frogpond/colors'
 import {GH_BASE_URL} from '../../../lib/constants'
