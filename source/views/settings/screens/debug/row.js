@@ -13,9 +13,13 @@ export class DebugRow extends React.PureComponent<Props> {
 	render() {
 		const {data} = this.props
 
-		let rowDetail = isObject(data.value) ? null : JSON.stringify(data.value)
-		if (isArray(data.value) && data.value.length === 0) {
-			rowDetail = data.value.length
+		let rowDetail =
+			typeof data.value === 'object' ? null : JSON.stringify(data.value)
+
+		if (data.value === null) {
+			rowDetail = 'Object[0]'
+		} else if (Array.isArray(data.value) && data.value.length === 0) {
+			rowDetail = 'Array(0)'
 		}
 
 		const arrowPosition = rowDetail === null ? 'center' : 'none'
