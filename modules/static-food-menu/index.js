@@ -2,29 +2,35 @@
 import * as React from 'react'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
-import type {TopLevelViewPropsType} from '../types'
+import {type NavigationScreenProp} from 'react-navigation'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import sample from 'lodash/sample'
 import fromPairs from 'lodash/fromPairs'
 import filter from 'lodash/filter'
-import type {
-	MenuItemType,
-	MasterCorIconMapType,
-	StationMenuType,
-	MenuItemContainerType,
-	ProcessedMealType,
-} from './types'
-import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
-import {data as fallbackMenu} from '../../../docs/pause-menu.json'
+import {
+	upgradeMenuItem,
+	upgradeStation,
+	type MenuItemType,
+	type MasterCorIconMapType,
+	type StationMenuType,
+	type MenuItemContainerType,
+	type ProcessedMealType,
+} from '@frogpond/ccc-bonapp-menu'
 import {reportNetworkProblem} from '@frogpond/analytics'
-import {API} from '@frogpond/api'
 
 const CENTRAL_TZ = 'America/Winnipeg'
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	name: string,
 	loadingMessage: string[],
+	navigation: NavigationScreenProp<*>,
+	url: string,
+	fallbackData: {
+		foodItems: Array<MenuItemType>,
+		stationMenus: Array<StationMenuType>,
+		corIcons: MasterCorIconMapType,
+	},
 }
 
 type State = {
@@ -36,7 +42,7 @@ type State = {
 	meals: ProcessedMealType[],
 }
 
-export class GitHubHostedMenu extends React.PureComponent<Props, State> {
+export class StaticFoodMenu extends React.PureComponent<Props, State> {
 	state = {
 		error: null,
 		loading: true,
@@ -57,7 +63,7 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 		let stationMenus: StationMenuType[] = []
 		let corIcons: MasterCorIconMapType = {}
 		try {
-			let container = await fetchJson(API('/food/named/menu/the-pause'))
+			let container = await fetchJson(this.props.url)
 			let data = container.data
 			foodItems = data.foodItems || []
 			stationMenus = data.stationMenus || []
@@ -65,15 +71,15 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 		} catch (err) {
 			reportNetworkProblem(err)
 			console.warn(err)
-			foodItems = fallbackMenu.foodItems || []
-			stationMenus = fallbackMenu.stationMenus || []
-			corIcons = fallbackMenu.corIcons || {}
+			foodItems = this.props.fallbackData.foodItems || []
+			stationMenus = this.props.fallbackData.stationMenus || []
+			corIcons = this.props.fallbackData.corIcons || {}
 		}
 
 		if (process.env.NODE_ENV === 'development') {
-			foodItems = fallbackMenu.foodItems
-			stationMenus = fallbackMenu.stationMenus || []
-			corIcons = fallbackMenu.corIcons || {}
+			foodItems = this.props.fallbackData.foodItems
+			stationMenus = this.props.fallbackData.stationMenus
+			corIcons = this.props.fallbackData.corIcons
 		}
 
 		const upgradedFoodItems = fromPairs(
