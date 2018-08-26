@@ -3,11 +3,11 @@
 import * as React from 'react'
 import {Text, Platform, StyleSheet} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
-import type {NavType} from '../../views/types'
+import {type NavigationScreenProp} from 'react-navigation'
 import {commonStyles} from './styles'
 
 type Props = {
-	navigation: NavType,
+	navigation: NavigationScreenProp<*>,
 	buttonStyle?: any,
 }
 

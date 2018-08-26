@@ -6,14 +6,14 @@
 import * as React from 'react'
 import {Text} from 'react-native'
 import {Touchable} from '@frogpond/touchable'
-import type {NavType} from '../../views/types'
+import {type NavigationScreenProp} from 'react-navigation'
 import {commonStyles} from './styles'
 
 export function EditHomeButton({
 	navigation,
 	buttonStyle,
 }: {
-	navigation: NavType,
+	navigation: NavigationScreenProp<*>,
 	buttonStyle?: any,
 }) {
 	return (
