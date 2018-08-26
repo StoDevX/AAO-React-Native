@@ -15,7 +15,6 @@ import {Link} from './link'
 import {Image} from './image'
 import {List, ListItem} from './list'
 
-// eslint-disable-next-line react/self-closing-comp
 const Softbreak = () => <Text>{'\n'}</Text>
 const Hardbreak = () => <Text>&lt;br&gt;</Text>
 const HorizontalRule = glamorous.view({
