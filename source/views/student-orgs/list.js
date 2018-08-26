@@ -4,9 +4,8 @@ import * as React from 'react'
 import {StyleSheet, View, Text, Platform, RefreshControl} from 'react-native'
 import {SearchableAlphabetListView} from '@frogpond/listview'
 import type {TopLevelViewPropsType} from '../types'
-import LoadingView from '../../components/loading'
 import delay from 'delay'
-import {NoticeView} from '../../components/notice'
+import {NoticeView, LoadingView} from '@frogpond/notice'
 import {Row, Column} from '../../components/layout'
 import {
 	ListRow,

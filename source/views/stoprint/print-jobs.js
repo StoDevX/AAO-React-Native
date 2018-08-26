@@ -13,7 +13,7 @@ import {
 	Detail,
 	Title,
 } from '@frogpond/lists'
-import LoadingView from '../../components/loading'
+import {LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
 import openUrl from '../../components/open-url'

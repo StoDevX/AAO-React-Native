@@ -10,7 +10,7 @@ import type {EventType, PoweredBy} from './types'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
-import {NoticeView} from '../../components/notice'
+import {NoticeView} from '@frogpond/notice'
 import EventRow from './event-row'
 
 const FullWidthSeparator = props => (
