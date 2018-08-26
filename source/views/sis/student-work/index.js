@@ -6,8 +6,7 @@ import {TabBarIcon} from '@frogpond/navigation-tabs'
 import type {TopLevelViewPropsType} from '../../types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
-import {tracker, trackStudentJobOpen} from '../../../lib/analytics'
-import bugsnag from '../../../init/bugsnag'
+import {reportNetworkProblem, trackStudentJobOpen} from '@frogpond/analytics'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import delay from 'delay'
 import toPairs from 'lodash/toPairs'
@@ -80,8 +79,7 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 			const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
 			this.setState(() => ({jobs: mapped}))
 		} catch (err) {
-			tracker.trackException(err.message)
-			bugsnag.notify(err)
+			reportNetworkProblem(err)
 			this.setState(() => ({error: true}))
 			console.error(err)
 		}

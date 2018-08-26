@@ -12,10 +12,9 @@ import {
 	ListSeparator,
 } from '@frogpond/lists'
 import delay from 'delay'
-import {reportNetworkProblem} from '../../lib/report-network-problem'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {trackDefinitionOpen} from '../../lib/analytics'
+import {trackDefinitionOpen, reportNetworkProblem} from '@frogpond/analytics'
 import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'

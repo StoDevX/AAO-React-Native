@@ -22,8 +22,7 @@ import {trimStationName, trimItemLabel} from './lib/trim-names'
 import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
 import {AllHtmlEntities} from 'html-entities'
 import {toLaxTitleCase} from 'titlecase'
-import {tracker} from '../../lib/analytics'
-import bugsnag from '../../init/bugsnag'
+import {reportNetworkProblem} from '@frogpond/analytics'
 import delay from 'delay'
 import retry from 'p-retry'
 import {API} from '@frogpond/api'
@@ -120,8 +119,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			if (error.message === "JSON Parse error: Unrecognized token '<'") {
 				this.setState(() => ({errormsg: BONAPP_HTML_ERROR_CODE}))
 			} else {
-				tracker.trackException(error.message)
-				bugsnag.notify(error)
+				reportNetworkProblem(error)
 				this.setState(() => ({errormsg: error.message}))
 			}
 		}
@@ -259,8 +257,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 					? this.props.cafe
 					: this.props.cafe.id
 			const err = new Error(`Something went wrong loading BonApp cafe #${cafe}`)
-			tracker.trackException(err.message)
-			bugsnag.notify(err)
+			reportNetworkProblem(err)
 
 			const msg =
 				'Something went wrong. Email allaboutolaf@stolaf.edu to let them know?'

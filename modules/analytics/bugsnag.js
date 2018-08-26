@@ -16,4 +16,5 @@ export function initBugsnag() {
 }
 
 export const notify = (err: Error) => client.notify(err)
-export const leaveBreadcrumb: typeof client.leaveBreadcrumb = (...args) => client.leaveBreadcrumb(...args)
+export const leaveBreadcrumb: typeof client.leaveBreadcrumb = (...args) =>
+	client.leaveBreadcrumb(...args)
