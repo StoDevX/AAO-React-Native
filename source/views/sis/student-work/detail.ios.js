@@ -8,6 +8,8 @@ import * as c from '@frogpond/colors'
 import type {JobType} from './types'
 import {SelectableCell} from '../../../components/cells/selectable'
 import glamorous from 'glamorous-native'
+import {ShareButton} from '../../../components/nav-buttons'
+import {shareJob} from './lib'
 
 const styles = StyleSheet.create({
 	lastUpdated: {
@@ -118,6 +120,7 @@ export class JobDetailView extends React.PureComponent<Props> {
 		const {job} = navigation.state.params
 		return {
 			title: job.title,
+			headerRight: <ShareButton onPress={() => shareJob(job)} />,
 		}
 	}
 
