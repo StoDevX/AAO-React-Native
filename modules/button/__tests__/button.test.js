@@ -5,7 +5,7 @@ import 'react-native'
 import * as React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 
-import {Button} from '../button'
+import {Button} from '../index'
 
 const shallow = component => {
 	const r = new ReactShallowRenderer()
