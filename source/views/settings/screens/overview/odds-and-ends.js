@@ -3,15 +3,19 @@ import * as React from 'react'
 import {Cell, Section, CellToggle, PushButtonCell} from '@frogpond/tableview'
 import {appVersion, appBuild} from '@frogpond/constants'
 import {setFeedbackStatus} from '../../../../redux/parts/settings'
+import {PushButtonCell} from '@frogpond/tableview'
 import type {ReduxState} from '../../../../redux'
 import {connect} from 'react-redux'
 import {type NavigationScreenProp} from 'react-navigation'
+import {IS_DEBUG} from '@frogpond/constants'
 
 type Props = {
 	navigation: NavigationScreenProp<*>,
 }
 
 export class OddsAndEndsSection extends React.Component<Props> {
+	onDebugButton = () => this.props.navigation.navigate('DebugView')
+
 	onNotificationsButton = () => {
 		this.props.navigation.navigate('PushNotificationsSettingsView')
 	}
@@ -30,6 +34,10 @@ export class OddsAndEndsSection extends React.Component<Props> {
 				<ConnectedAnalyticsCell />
 
 				<ConnectedNotificationsCell onPress={this.onNotificationsButton} />
+
+				{IS_DEBUG ? (
+						<PushButtonCell onPress={this.onDebugButton} title="Debug" />
+					) : null}
 			</Section>
 		)
 	}
