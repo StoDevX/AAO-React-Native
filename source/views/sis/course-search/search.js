@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {StyleSheet, View, ScrollView} from 'react-native'
 import {TabBarIcon} from '../../../components/tabbar-icon'
-import * as c from '../../../components/colors'
+import * as c from '@frogpond/colors'
 import {
 	updateCourseData,
 	loadCourseDataIntoMemory,

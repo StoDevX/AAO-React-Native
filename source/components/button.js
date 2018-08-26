@@ -5,11 +5,12 @@ import BasicButton from 'react-native-button'
 import noop from 'lodash/noop'
 import {material, iOSUIKit} from 'react-native-typography'
 
-import * as c from './colors'
+import * as c from '@frogpond/colors'
+import * as theme from '@app/lib/theme'
 
 const styles = StyleSheet.create({
 	button: {
-		backgroundColor: c.buttonBackground,
+		backgroundColor: theme.buttonBackground,
 		alignSelf: 'center',
 		paddingVertical: 10,
 		paddingHorizontal: 20,
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
 			ios: iOSUIKit.calloutWhiteObject,
 			android: material.buttonWhiteObject,
 		}),
-		color: c.buttonForeground,
+		color: theme.buttonForeground,
 	},
 	textDisabled: {
 		color: c.iosDisabledText,

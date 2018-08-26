@@ -2,12 +2,13 @@
 
 import {Platform, StyleSheet} from 'react-native'
 import {createStackNavigator} from 'react-navigation'
-import * as c from '../components/colors'
+import * as c from '@frogpond/colors'
+import * as theme from '@app/lib/theme'
 import {routes} from './routes'
 
 const styles = StyleSheet.create({
 	header: {
-		backgroundColor: c.navigationBackground,
+		backgroundColor: theme.navigationBackground,
 	},
 	card: {
 		backgroundColor: Platform.select({
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
 const navigatorOptions = {
 	navigationOptions: {
 		headerStyle: styles.header,
-		headerTintColor: c.navigationForeground,
+		headerTintColor: theme.navigationForeground,
 	},
 	headerTransitionPreset: Platform.select({
 		ios: 'uikit',

@@ -6,7 +6,7 @@ import {Column} from '../../../../components/layout'
 import {ListRow, Detail, Title} from '../../../../components/list'
 import type {BusTimetableEntry} from '../types'
 import type moment from 'moment'
-import * as c from '../../../../components/colors'
+import * as c from '@frogpond/colors'
 import {ProgressChunk} from './progress-chunk'
 import {ScheduleTimes} from './times'
 import {

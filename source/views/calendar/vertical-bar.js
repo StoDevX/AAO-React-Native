@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet, View, Platform} from 'react-native'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
+import * as theme from '@app/lib/theme'
 
 const dotBarStyles = StyleSheet.create({
 	diagram: {
@@ -14,11 +15,11 @@ const dotBarStyles = StyleSheet.create({
 		height: 5,
 		width: 5,
 		borderRadius: 5,
-		backgroundColor: c.accent,
+		backgroundColor: theme.accent,
 	},
 	line: {
 		width: 1,
-		backgroundColor: c.accent,
+		backgroundColor: theme.accent,
 		flex: 1,
 	},
 })

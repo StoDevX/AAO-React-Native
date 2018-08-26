@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
-import * as c from './colors'
+import * as c from '@frogpond/colors'
 import {Button} from './button'
 import {Heading} from './markdown/heading'
 import {Viewport} from './viewport'

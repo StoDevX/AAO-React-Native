@@ -6,7 +6,7 @@ import {ButtonCell} from '../../../components/cells/button'
 import {TableView, Section} from 'react-native-tableview-simple'
 import {submitReport} from './submit'
 import type {WordType} from '../types'
-import * as c from '../../../components/colors'
+import * as c from '@frogpond/colors'
 import type {TopLevelViewPropsType} from '../../types'
 
 type Props = TopLevelViewPropsType & {

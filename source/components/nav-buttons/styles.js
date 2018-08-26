@@ -4,7 +4,7 @@
  */
 
 import {StyleSheet, Platform} from 'react-native'
-import * as c from '../colors'
+import * as theme from '@app/lib/theme'
 
 export const commonStyles = StyleSheet.create({
 	button: {
@@ -22,7 +22,7 @@ export const commonStyles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 17,
-		color: c.navigationForeground,
+		color: theme.navigationForeground,
 		...Platform.select({
 			android: {
 				marginTop: 1,
@@ -48,7 +48,7 @@ export const rightButtonStyles = StyleSheet.create({
 		}),
 	},
 	icon: {
-		color: c.navigationForeground,
+		color: theme.navigationForeground,
 		...Platform.select({
 			ios: {
 				fontSize: 32,
@@ -62,7 +62,7 @@ export const rightButtonStyles = StyleSheet.create({
 
 export const leftButtonStyles = StyleSheet.create({
 	icon: {
-		color: c.navigationForeground,
+		color: theme.navigationForeground,
 		fontSize: 24,
 	},
 })

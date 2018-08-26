@@ -11,7 +11,7 @@ import {CellTextField} from '../../../components/cells/textfield'
 import {CellToggle} from '../../../components/cells/toggle'
 import {DeleteButtonCell} from '../../../components/cells/delete-button'
 import {ButtonCell} from '../../../components/cells/button'
-import * as c from '../../../components/colors'
+import * as c from '@frogpond/colors'
 import {TableView, Section, Cell} from 'react-native-tableview-simple'
 import type {
 	BuildingType,

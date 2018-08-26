@@ -4,7 +4,7 @@ import * as React from 'react'
 import {ScrollView, View, StyleSheet, StatusBar} from 'react-native'
 
 import {connect} from 'react-redux'
-import * as c from '../../components/colors'
+import {androidStatusBarColor, statusBarStyle} from '@app/lib/theme'
 import sortBy from 'lodash/sortBy'
 import {type TopLevelViewPropsType} from '../types'
 import {type ViewType} from '../views'
@@ -45,8 +45,8 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 			testID="screen-homescreen"
 		>
 			<StatusBar
-				backgroundColor={c.androidStatusBarColor}
-				barStyle={c.statusBarStyle}
+				backgroundColor={androidStatusBarColor}
+				barStyle={statusBarStyle}
 			/>
 
 			<View style={styles.cells}>

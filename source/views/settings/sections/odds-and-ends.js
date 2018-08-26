@@ -6,7 +6,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import {setFeedbackStatus} from '../../../redux/parts/settings'
 import {connect} from 'react-redux'
 import {CellToggle} from '../../../components/cells/toggle'
-import {sectionBgColor} from '../../../components/colors'
+import {sectionBgColor} from '@frogpond/colors'
 
 type Props = TopLevelViewPropsType & {
 	onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,

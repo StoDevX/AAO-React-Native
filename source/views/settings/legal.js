@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 import {View, ScrollView} from 'glamorous-native'
 import {Markdown} from '../../components/markdown'
 import {text} from '../../../docs/legal.json'

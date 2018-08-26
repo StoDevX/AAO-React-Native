@@ -5,7 +5,7 @@ import {DietaryTags} from './dietary-tags'
 import {Row, Column} from '../../../components/layout'
 import {ListRow, Detail, Title} from '../../../components/list'
 import type {MenuItemType, MasterCorIconMapType} from '../types'
-import * as c from '../../../components/colors'
+import * as c from '@frogpond/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 const specialsIcon = Platform.OS === 'ios' ? 'ios-star' : 'md-star'

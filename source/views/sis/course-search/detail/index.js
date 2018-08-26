@@ -14,7 +14,7 @@ import {
 	MultiLineLeftDetailCell,
 } from '../../../../components/cells'
 import type {TopLevelViewPropsType} from '../../../types'
-import * as c from '../../../../components/colors'
+import * as c from '@frogpond/colors'
 import {deptNum} from '../lib/format-dept-num'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'

@@ -14,7 +14,7 @@ import {
 import {type ReduxState} from '../../../redux'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
-import {sectionBgColor} from '../../../components/colors'
+import {sectionBgColor} from '@frogpond/colors'
 
 type ReduxStateProps = {
 	initialUsername: string,

@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet, FlatList} from 'react-native'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 import type {StoryType} from './types'
 import {ListSeparator} from '../../components/list'
 import {NoticeView} from '../../components/notice'

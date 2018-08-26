@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet, Platform, Text} from 'react-native'
-import * as c from '../colors'
+import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	title: {

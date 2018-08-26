@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react'
 import {Platform, StyleSheet, Text, View} from 'react-native'
-import * as c from '../colors'
+import * as c from '@frogpond/colors'
+import * as theme from '@app/lib/theme'
 
 const styles = StyleSheet.create({
 	container: {
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
 				paddingRight: 10,
 			},
 			android: {
-				backgroundColor: c.androidListHeaderBackground,
+				backgroundColor: theme.androidListHeaderBackground,
 				paddingTop: 10,
 				paddingBottom: 10,
 				borderTopWidth: 1,
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
 			android: {
 				fontSize: 16,
 				fontFamily: 'sans-serif-condensed',
-				color: c.androidListHeaderForeground,
+				color: theme.androidListHeaderForeground,
 			},
 		}),
 	},

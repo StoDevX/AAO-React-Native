@@ -8,7 +8,7 @@ import DeviceInfo from 'react-native-device-info'
 import {version} from '../../../../package.json'
 import {PushButtonCell} from '../../../components/cells/push-button'
 import {refreshApp} from '../../../lib/refresh'
-import {sectionBgColor} from '../../../components/colors'
+import {sectionBgColor} from '@frogpond/colors'
 
 type Props = TopLevelViewPropsType
 

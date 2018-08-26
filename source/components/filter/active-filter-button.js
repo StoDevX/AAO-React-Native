@@ -9,7 +9,8 @@ import {
 	TouchableWithoutFeedback,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import * as c from '../colors'
+import {sto} from '@app/lib/colors'
+import * as theme from '@app/lib/theme'
 
 type Props = {
 	filter: FilterType,
@@ -28,7 +29,7 @@ export function ActiveFilterButton({filter, label, onRemove, style}: Props) {
 		<View style={[style, styles.badge]}>
 			<Text style={styles.text}>{label}</Text>
 			<TouchableWithoutFeedback onPress={() => onRemove(filter)}>
-				<Icon color={c.sto.white} name={iconName} size={20} />
+				<Icon color={sto.white} name={iconName} size={20} />
 			</TouchableWithoutFeedback>
 		</View>
 	)
@@ -37,7 +38,7 @@ export function ActiveFilterButton({filter, label, onRemove, style}: Props) {
 const styles = StyleSheet.create({
 	badge: {
 		alignItems: 'center',
-		backgroundColor: c.accent,
+		backgroundColor: theme.accent,
 		borderRadius: 15,
 		flexDirection: 'row',
 		justifyContent: 'center',

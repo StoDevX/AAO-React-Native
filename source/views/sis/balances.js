@@ -19,7 +19,7 @@ import {
 import {updateBalances} from '../../redux/parts/balances'
 import {type ReduxState} from '../../redux'
 import delay from 'delay'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 import type {TopLevelViewPropsType} from '../types'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
