@@ -3,7 +3,7 @@ import * as React from 'react'
 import Popover from 'react-native-popover-view'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
-import {type TouchableUnion} from '../touchable'
+import {type TouchableUnion} from '@frogpond/touchable'
 import {Viewport} from '../viewport'
 import * as c from '@frogpond/colors'
 
