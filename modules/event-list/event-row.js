@@ -5,7 +5,7 @@ import type {EventType} from './types'
 import * as c from '@frogpond/colors'
 import {Row, Column} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
-import {fastGetTrimmedText} from '../../source/lib/html'
+import {fastGetTrimmedText} from '@frogpond/html-lib'
 import {Bar} from './vertical-bar'
 import {times} from './times'
 

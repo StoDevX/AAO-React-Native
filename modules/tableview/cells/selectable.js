@@ -2,9 +2,7 @@
 import * as React from 'react'
 import {TextInput, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
-import {AllHtmlEntities} from 'html-entities'
-
-const entities = new AllHtmlEntities()
+import {htmlEntities} from '@frogpond/html-lib'
 
 const styles = StyleSheet.create({
 	text: {
@@ -22,6 +20,6 @@ export const SelectableCell = ({text}: {text: string}) => (
 		editable={false}
 		multiline={true}
 		style={styles.text}
-		value={entities.decode(text)}
+		value={htmlEntities.decode(text)}
 	/>
 )

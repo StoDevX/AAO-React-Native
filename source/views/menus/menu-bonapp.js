@@ -19,8 +19,11 @@ import toPairs from 'lodash/toPairs'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import {trimStationName, trimItemLabel} from './lib/trim-names'
-import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
-import {AllHtmlEntities} from 'html-entities'
+import {
+	getTrimmedTextWithSpaces,
+	parseHtml,
+	htmlEntities,
+} from '@frogpond/html-lib'
 import {toLaxTitleCase} from 'titlecase'
 import {reportNetworkProblem} from '@frogpond/analytics'
 import delay from 'delay'
@@ -28,7 +31,6 @@ import retry from 'p-retry'
 import {API} from '@frogpond/api'
 
 const CENTRAL_TZ = 'America/Winnipeg'
-const entities = new AllHtmlEntities()
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
 const DEFAULT_MENU = [
@@ -231,8 +233,10 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 	prepareFood(cafeMenu: MenuInfoType) {
 		return mapValues(cafeMenu.items, item => ({
 			...item, // we want to edit the item, not replace it
-			station: entities.decode(toLaxTitleCase(trimStationName(item.station))), // <b>@station names</b> are a mess
-			label: entities.decode(trimItemLabel(item.label)), // clean up the titles
+			station: htmlEntities.decode(
+				toLaxTitleCase(trimStationName(item.station)),
+			), // <b>@station names</b> are a mess
+			label: htmlEntities.decode(trimItemLabel(item.label)), // clean up the titles
 			description: getTrimmedTextWithSpaces(parseHtml(item.description || '')), // clean up the descriptions
 		}))
 	}

@@ -11,11 +11,8 @@ import filter from 'lodash/filter'
 import map from 'lodash/map'
 import uniq from 'lodash/uniq'
 import type {FilterType} from '@frogpond/filter'
-import {fastGetTrimmedText} from '../../../source/lib/html'
-import {AllHtmlEntities} from 'html-entities'
+import {fastGetTrimmedText, htmlEntities} from '@frogpond/html-lib'
 import {chooseMeal} from './choose-meal'
-
-const entities = new AllHtmlEntities()
 
 export function buildFilters(
 	foodItems: MenuItemType[],
@@ -30,10 +27,10 @@ export function buildFilters(
 
 	// Grab the labels of the COR icons
 	const allDietaryRestrictions = map(corIcons, cor => ({
-		title: entities.decode(cor.label),
+		title: htmlEntities.decode(cor.label),
 		image: cor.image ? {uri: cor.image} : null,
 		detail: cor.description
-			? entities.decode(fastGetTrimmedText(cor.description))
+			? htmlEntities.decode(fastGetTrimmedText(cor.description))
 			: '',
 	}))
 

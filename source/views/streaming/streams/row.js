@@ -5,7 +5,7 @@ import {StyleSheet, Image} from 'react-native'
 
 import {ListRow, Detail, Title} from '@frogpond/lists'
 import {Column, Row} from '@frogpond/layout'
-import {getTrimmedTextWithSpaces, parseHtml} from '../../../lib/html'
+import {getTrimmedTextWithSpaces, parseHtml} from '@frogpond/html-lib'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import moment from 'moment'
 import type {StreamType} from './types'
