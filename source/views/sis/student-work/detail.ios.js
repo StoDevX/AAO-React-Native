@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {Text, ScrollView, StyleSheet, Share} from 'react-native'
+import {Text, ScrollView, StyleSheet} from 'react-native'
 import {sendEmail} from '../../../components/send-email'
 import {Cell, Section, TableView} from 'react-native-tableview-simple'
 import moment from 'moment'
@@ -9,6 +9,7 @@ import type {JobType} from './types'
 import {SelectableCell} from '../../../components/cells/selectable'
 import glamorous from 'glamorous-native'
 import {ShareButton} from '../../../components/nav-buttons'
+import {shareJob} from './lib'
 
 const styles = StyleSheet.create({
 	lastUpdated: {
@@ -108,14 +109,6 @@ function LastUpdated({when}: {when: string}) {
 			Powered by St. Olaf Student Employment job postings
 		</Text>
 	) : null
-}
-
-function shareJob(job: JobType) {
-	const jobBaseUrl =
-		'https://www.stolaf.edu/apps/stuwork/index.cfm?fuseaction=Details&jobID='
-	Share.share({
-		message: `${jobBaseUrl}${job.id}`,
-	}).catch(error => console.log(error.message))
 }
 
 type Props = {

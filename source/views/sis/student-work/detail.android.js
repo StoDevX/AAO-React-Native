@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {Text, View, ScrollView, StyleSheet, Share} from 'react-native'
+import {Text, View, ScrollView, StyleSheet} from 'react-native'
 import {sendEmail} from '../../../components/send-email'
 import {Card} from '../../../components/card'
 import moment from 'moment'
@@ -8,6 +8,7 @@ import {openUrl} from '../../../components/open-url'
 import * as c from '../../../components/colors'
 import type {JobType} from './types'
 import {ShareButton} from '../../../components/nav-buttons'
+import {shareJob} from './lib'
 
 const styles = StyleSheet.create({
 	name: {
@@ -136,14 +137,6 @@ function LastUpdated({when}: {when: string}) {
 			Powered by St. Olaf Student Employment job postings
 		</Text>
 	) : null
-}
-
-function shareJob(job: JobType) {
-	const jobBaseUrl =
-		'https://www.stolaf.edu/apps/stuwork/index.cfm?fuseaction=Details&jobID='
-	Share.share({
-		message: `${jobBaseUrl}${job.id}`,
-	}).catch(error => console.log(error.message))
 }
 
 type Props = {
