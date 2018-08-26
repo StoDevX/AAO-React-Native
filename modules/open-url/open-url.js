@@ -35,7 +35,7 @@ function androidOpen(url: string) {
 	}).catch(() => genericOpen(url)) // fall back to opening in Chrome / Browser / platform default
 }
 
-export default function openUrl(url: string) {
+export function openUrl(url: string) {
 	const protocol = /^(.*?):/.exec(url)
 
 	if (protocol.length) {
@@ -58,7 +58,6 @@ export default function openUrl(url: string) {
 			return genericOpen(url)
 	}
 }
-export {openUrl}
 
 export function trackedOpenUrl({url, id}: {url: string, id?: string}) {
 	trackUrl(id || url)
