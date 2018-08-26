@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
 import {Column} from '../../../../components/layout'
-import {ListRow, Detail, Title} from '../../../../components/list'
+import {ListRow, Detail, Title} from '@frogpond/lists'
 import type {BusTimetableEntry} from '../types'
 import type moment from 'moment'
 import * as c from '@frogpond/colors'

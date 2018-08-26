@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {Column, Row} from '../../../components/layout'
-import {ListRow, Detail, Title} from '../../../components/list'
+import {ListRow, Detail, Title} from '@frogpond/lists'
 import {fastGetTrimmedText} from '../../../lib/html'
 import type {JobType} from './types'
 

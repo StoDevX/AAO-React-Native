@@ -10,7 +10,7 @@ import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 
 import * as c from '@frogpond/colors'
-import {ListSeparator, ListSectionHeader} from '../../components/list'
+import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 
 export {BuildingHoursDetailView} from './detail'
 

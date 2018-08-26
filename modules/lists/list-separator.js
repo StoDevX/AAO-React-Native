@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
-import {Separator} from '../separator'
+import {Separator} from '@frogpond/separator'
 
 const styles = StyleSheet.create({
 	separator: {

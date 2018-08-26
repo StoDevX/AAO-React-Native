@@ -14,7 +14,7 @@ import type {
 } from '../types'
 import size from 'lodash/size'
 import values from 'lodash/values'
-import {ListSeparator, ListSectionHeader} from '../../../components/list'
+import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {applyFiltersToItem, type FilterType} from '../../../components/filter'
 import {NoticeView} from '../../../components/notice'
 import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'

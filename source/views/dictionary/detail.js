@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import {Markdown} from '../../components/markdown'
-import {ListFooter} from '../../components/list'
+import {ListFooter} from '@frogpond/lists'
 import {Button} from '../../components/button'
 import glamorous from 'glamorous-native'
 import type {WordType} from './types'

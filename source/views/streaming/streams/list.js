@@ -4,7 +4,7 @@ import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 
 import * as c from '@frogpond/colors'
-import {ListSeparator, ListSectionHeader} from '../../../components/list'
+import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import LoadingView from '../../../components/loading'
 import {NoticeView} from '../../../components/notice'
 import {TabBarIcon} from '../../../components/tabbar-icon'

@@ -10,7 +10,7 @@ import * as c from '@frogpond/colors'
 import {ButtonCell} from '../../components/cells/button'
 import {getLinksFromEvent, shareEvent, getTimes} from './calendar-util'
 import {AddToCalendar} from '../../components/add-to-calendar'
-import {ListFooter} from '../../components/list'
+import {ListFooter} from '@frogpond/lists'
 
 const styles = StyleSheet.create({
 	name: {

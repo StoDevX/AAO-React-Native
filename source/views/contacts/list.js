@@ -2,8 +2,7 @@
 
 import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
-import {ListSeparator, ListSectionHeader} from '../../components/list'
-import {ListEmpty} from '../../components/list'
+import {ListSeparator, ListSectionHeader, ListEmpty} from '@frogpond/lists'
 import {ContactRow} from './row'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'

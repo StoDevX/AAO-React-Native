@@ -11,9 +11,9 @@ import {
 import moment from 'moment-timezone'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
-import {Separator} from '../../../components/separator'
+import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
-import {ListSectionHeader, ListFooter, ListRow} from '../../../components/list'
+import {ListSectionHeader, ListFooter, ListRow} from '@frogpond/lists'
 
 const styles = StyleSheet.create({
 	separator: {

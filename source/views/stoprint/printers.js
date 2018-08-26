@@ -12,7 +12,7 @@ import {
 	ListSectionHeader,
 	Detail,
 	Title,
-} from '../../components/list'
+} from '@frogpond/lists'
 import LoadingView from '../../components/loading'
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
