@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, View, ScrollView} from 'react-native'
-import {TabBarIcon} from '../../../components/tabbar-icon'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as c from '@frogpond/colors'
 import {
 	updateCourseData,
