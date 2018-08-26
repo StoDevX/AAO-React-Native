@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
-import type {EventType} from '@app/views/calendar/types'
-import {addToCalendar} from '@app/views/calendar/calendar-util'
+import type {EventType} from '@frogpond/event-list'
+import {addToCalendar} from './lib'
 import delay from 'delay'
 
 type Props = {
