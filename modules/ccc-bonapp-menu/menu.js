@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import type {TopLevelViewPropsType} from '../types'
+import {type NavigationScreenProp} from 'react-navigation'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {
 	EditedBonAppMenuInfoType as MenuInfoType,
@@ -44,12 +44,14 @@ const DEFAULT_MENU = [
 	},
 ]
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	cafe: string | {id: string},
 	ignoreProvidedMenus?: boolean,
 	loadingMessage: string[],
 	name: string,
+	navigation: NavigationScreenProp<*>,
 }
+
 type State = {
 	cachedCafe: string | {id: string},
 	errormsg: ?string,
@@ -60,7 +62,7 @@ type State = {
 	cafeMenu: ?MenuInfoType,
 }
 
-export class BonAppHostedMenu extends React.PureComponent<Props, State> {
+export class CccBonAppMenu extends React.PureComponent<Props, State> {
 	state = {
 		cachedCafe: this.props.cafe,
 		errormsg: null,
