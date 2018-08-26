@@ -8,7 +8,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import {Touchable} from '@frogpond/touchable'
 import {transparent} from '@frogpond/colors'
 import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
-import {iPhoneX} from '../../components/device'
+import {iPhoneX} from '@frogpond/device'
 
 type Props = {
 	view: ViewType,
