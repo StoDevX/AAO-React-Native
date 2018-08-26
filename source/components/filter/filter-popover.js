@@ -5,7 +5,7 @@ import {FilterSection} from './section'
 import type {FilterType} from './types'
 import {type TouchableUnion} from '../touchable'
 import {Viewport} from '../viewport'
-import * as c from '../colors'
+import * as c from '@frogpond/colors'
 
 type Props = {
 	anchor: ?React.Ref<TouchableUnion>,

@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import AlphabetListView from '@hawkrives/react-native-alphabetlistview'
-import * as c from './colors'
+import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	listView: {

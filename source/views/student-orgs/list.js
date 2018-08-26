@@ -23,7 +23,7 @@ import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import startCase from 'lodash/startCase'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
 import {API} from '../../lib/api'
 

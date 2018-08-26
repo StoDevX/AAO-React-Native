@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {StyleSheet, View, Text, Image} from 'react-native'
 import {Touchable} from '../../../components/touchable'
-import * as c from '../../../components/colors'
+import * as c from '@frogpond/colors'
 import {images as webcamImages} from '../../../../images/webcams'
 import {trackedOpenUrl} from '../../../components/open-url'
 import LinearGradient from 'react-native-linear-gradient'

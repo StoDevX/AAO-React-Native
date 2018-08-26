@@ -9,7 +9,7 @@ import type momentT from 'moment'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '../../components/list'
 
 export {BuildingHoursDetailView} from './detail'

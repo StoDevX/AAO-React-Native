@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {Text, StyleSheet} from 'react-native'
-import * as c from '../colors'
+import * as c from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	footer: {

@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {RefreshControl, StyleSheet} from 'react-native'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 import {View, ScrollView} from 'glamorous-native'
 import {Markdown} from '../../components/markdown'
 import {reportNetworkProblem} from '../../lib/report-network-problem'

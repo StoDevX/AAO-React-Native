@@ -5,7 +5,7 @@ import {sendEmail} from '../../../components/send-email'
 import {Card} from '../../../components/card'
 import moment from 'moment'
 import {openUrl} from '../../../components/open-url'
-import * as c from '../../../components/colors'
+import * as c from '@frogpond/colors'
 import type {JobType} from './types'
 
 const styles = StyleSheet.create({

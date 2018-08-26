@@ -2,7 +2,8 @@
 import * as React from 'react'
 import {StyleSheet, View, Text, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import * as c from '../colors'
+import * as c from '@frogpond/colors'
+import * as theme from '@app/lib/theme'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -16,14 +17,14 @@ const buttonStyles = StyleSheet.create({
 		borderRadius: 2,
 	},
 	activeButton: {
-		backgroundColor: c.toolbarButtonBackground,
-		borderColor: c.toolbarButtonBackground,
+		backgroundColor: theme.toolbarButtonBackground,
+		borderColor: theme.toolbarButtonBackground,
 	},
 	inactiveButton: {
 		borderColor: c.iosDisabledText,
 	},
 	activeText: {
-		color: c.toolbarButtonForeground,
+		color: theme.toolbarButtonForeground,
 	},
 	inactiveText: {
 		color: c.iosDisabledText,

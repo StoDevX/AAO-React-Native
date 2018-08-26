@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {Picker, StyleSheet} from 'react-native'
-import * as c from '../colors'
+import * as c from '@frogpond/colors'
 import type {PickerType} from './types'
 import {Section} from 'react-native-tableview-simple'
 

@@ -5,7 +5,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import {PushButtonCell} from '../../../components/cells/push-button'
 import {trackedOpenUrl} from '../../../components/open-url'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
-import {sectionBgColor} from '../../../components/colors'
+import {sectionBgColor} from '@frogpond/colors'
 import {GH_BASE_URL} from '../../../lib/constants'
 
 type Props = TopLevelViewPropsType

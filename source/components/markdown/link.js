@@ -5,7 +5,7 @@ import {ActionSheetIOS, Clipboard} from 'react-native'
 import glamorous from 'glamorous-native'
 import openUrl from '../open-url'
 
-import * as c from '../colors'
+import * as c from '@frogpond/colors'
 
 export const LinkText = glamorous.text({
 	textDecorationLine: 'underline',

@@ -12,7 +12,7 @@ import {
 	StyleSheet,
 } from 'react-native'
 import moment from 'moment-timezone'
-import * as c from '../colors'
+import * as c from '@frogpond/colors'
 import type {StyleSheetRules} from './types'
 
 type Props = {

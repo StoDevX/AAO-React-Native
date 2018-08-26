@@ -5,7 +5,7 @@ import {ScrollView, StyleSheet, Platform, Image} from 'react-native'
 import {images as buildingImages} from '../../../../images/spaces'
 import type {BuildingType} from '../types'
 import moment from 'moment-timezone'
-import * as c from '../../../components/colors'
+import * as c from '@frogpond/colors'
 import {getShortBuildingStatus} from '../lib'
 
 import {Badge} from './badge'

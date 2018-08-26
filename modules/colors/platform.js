@@ -1,4 +1,4 @@
-import {Platform} from "react-native"
+import {Platform} from 'react-native'
 import {silver} from './index'
 
 export const iosGray = silver

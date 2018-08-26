@@ -8,7 +8,7 @@ import {
 	trackStreamPause,
 	trackStreamError,
 } from '../../../lib/analytics'
-import * as c from '../../../components/colors'
+import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
 import {Row} from '../../../components/layout'
 import type {TopLevelViewPropsType} from '../../types'

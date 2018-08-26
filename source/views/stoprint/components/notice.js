@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '../../../components/notice'
-import * as c from '../../../components/colors'
+import {sto} from '@app/lib/colors'
 import delay from 'delay'
 
 type Props = {
@@ -71,7 +71,7 @@ export class StoPrintNoticeView extends React.PureComponent<Props, State> {
 				style={styles.container}
 			>
 				<Icon
-					color={c.sto.black}
+					color={sto.black}
 					name={Platform.OS === 'ios' ? 'ios-print' : 'md-print'}
 					size={100}
 				/>
@@ -92,7 +92,7 @@ export class StoPrintNoticeView extends React.PureComponent<Props, State> {
 
 const styles = StyleSheet.create({
 	container: {
-		backgroundColor: c.sto.white,
+		backgroundColor: sto.white,
 	},
 	content: {
 		flex: 1,

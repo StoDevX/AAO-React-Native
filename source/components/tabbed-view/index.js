@@ -5,7 +5,7 @@ import {
 	createBottomTabNavigator,
 	NavigationScreenRouteConfig,
 } from 'react-navigation'
-import * as c from '../colors'
+import * as theme from '@app/lib/theme'
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs'
 
 type ComponentType = (
@@ -27,12 +27,12 @@ export const TabNavigator: ComponentType = (screens, options = {}) =>
 		lazy: true,
 		theme: {
 			colors: {
-				primary: c.androidTabBarBackground,
+				primary: theme.androidTabBarBackground,
 			},
 		},
-		activeTintColor: c.androidTabBarForeground,
+		activeTintColor: theme.androidTabBarForeground,
 		tabBarOptions: {
-			activeTintColor: c.iosTabBarActiveColor,
+			activeTintColor: theme.iosTabBarActiveColor,
 			...(options.tabBarOptions || {}),
 			labelStyle: {
 				...Platform.select({

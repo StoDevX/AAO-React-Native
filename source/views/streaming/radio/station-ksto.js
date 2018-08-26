@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import * as c from '../../../components/colors'
+import {sto} from '@app/lib/colors'
 import {TabBarIcon} from '../../../components/tabbar-icon'
 import {type TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'
@@ -13,10 +13,7 @@ import {type PlayerTheme} from './types'
 let tintColor = '#37a287'
 const colors: PlayerTheme = {
 	tintColor,
-	buttonTextColor: tinycolor.mostReadable(tintColor, [
-		c.sto.white,
-		c.sto.black,
-	]),
+	buttonTextColor: tinycolor.mostReadable(tintColor, [sto.white, sto.black]),
 	textColor: tintColor,
 	imageBorderColor: 'transparent',
 	imageBackgroundColor: tinycolor(tintColor)

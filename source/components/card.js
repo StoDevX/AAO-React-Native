@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
 import {material, iOSUIKit} from 'react-native-typography'
-import * as c from './colors'
+import * as c from '@frogpond/colors'
 
 const cardStyles = StyleSheet.create({
 	card: {
