@@ -143,9 +143,7 @@ function shareJob(job: JobType) {
 		'https://www.stolaf.edu/apps/stuwork/index.cfm?fuseaction=Details&jobID='
 	Share.share({
 		message: `${jobBaseUrl}${job.id}`,
-	})
-		.then(result => console.log(result))
-		.catch(error => console.log(error.message))
+	}).catch(error => console.log(error.message))
 }
 
 type Props = {
