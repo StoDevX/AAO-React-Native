@@ -5,7 +5,7 @@ import * as c from '@frogpond/colors'
 import type {StoryType} from './types'
 import {ListSeparator} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
-import type {TopLevelViewPropsType} from '../types'
+import type {NavigationScreenProp} from 'react-navigation'
 import {NewsRow} from './news-row'
 import {openUrl} from '@frogpond/open-url'
 
@@ -15,12 +15,13 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	name: string,
 	onRefresh: () => any,
 	entries: StoryType[],
 	loading: boolean,
 	thumbnail: false | number,
+	navigation: NavigationScreenProp<*>,
 }
 
 export class NewsList extends React.PureComponent<Props> {
