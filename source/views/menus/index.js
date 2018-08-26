@@ -3,8 +3,8 @@
 import * as React from 'react'
 import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
 
-import {BonAppHostedMenu} from './menu-bonapp'
-import {GitHubHostedMenu} from './menu-github'
+import {CccBonAppMenu} from '@frogpond/ccc-bonapp-menu'
+import {PauseMenu} from './pause-menu'
 import {CarletonCafeIndex} from './carleton-menus'
 // import {BonAppPickerView} from './dev-bonapp-picker'
 
@@ -18,7 +18,7 @@ export {
 export const MenusView = TabNavigator({
 	StavHallMenuView: {
 		screen: ({navigation}) => (
-			<BonAppHostedMenu
+			<CccBonAppMenu
 				cafe="stav-hall"
 				loadingMessage={[
 					'Hunting Ferndale Turkey…',
@@ -40,7 +40,7 @@ export const MenusView = TabNavigator({
 
 	TheCageMenuView: {
 		screen: ({navigation}) => (
-			<BonAppHostedMenu
+			<CccBonAppMenu
 				cafe="the-cage"
 				ignoreProvidedMenus={true}
 				loadingMessage={[
@@ -62,7 +62,7 @@ export const MenusView = TabNavigator({
 
 	ThePauseMenuView: {
 		screen: ({navigation}) => (
-			<GitHubHostedMenu
+			<PauseMenu
 				loadingMessage={[
 					'Mixing up a shake…',
 					'Spinning up pizzas…',

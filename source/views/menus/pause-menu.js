@@ -11,7 +11,7 @@ type Props = {
 	navigation: NavigationScreenProp<*>,
 }
 
-export class GitHubHostedMenu extends React.PureComponent<Props> {
+export class PauseMenu extends React.PureComponent<Props> {
 	render() {
 		return (
 			<StaticFoodMenu

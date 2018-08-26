@@ -5,12 +5,12 @@ import {View, Platform, ScrollView, StyleSheet} from 'react-native'
 import type {TopLevelViewPropsType} from '../types'
 import {Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Title} from '@frogpond/lists'
-import {BonAppHostedMenu} from './menu-bonapp'
+import {CccBonAppMenu} from '@frogpond/ccc-bonapp-menu'
 
 export const CarletonBurtonMenuScreen = ({
 	navigation,
 }: TopLevelViewPropsType) => (
-	<BonAppHostedMenu
+	<CccBonAppMenu
 		cafe="burton"
 		loadingMessage={['Searching for Schiller…']}
 		name="Burton"
@@ -23,7 +23,7 @@ CarletonBurtonMenuScreen.navigationOptions = {
 }
 
 export const CarletonLDCMenuScreen = ({navigation}: TopLevelViewPropsType) => (
-	<BonAppHostedMenu
+	<CccBonAppMenu
 		cafe="ldc"
 		loadingMessage={['Tracking down empty seats…']}
 		name="LDC"
@@ -38,7 +38,7 @@ CarletonLDCMenuScreen.navigationOptions = {
 export const CarletonWeitzMenuScreen = ({
 	navigation,
 }: TopLevelViewPropsType) => (
-	<BonAppHostedMenu
+	<CccBonAppMenu
 		cafe="weitz"
 		loadingMessage={['Observing the artwork…', 'Previewing performances…']}
 		name="Weitz Center"
@@ -53,7 +53,7 @@ CarletonWeitzMenuScreen.navigationOptions = {
 export const CarletonSaylesMenuScreen = ({
 	navigation,
 }: TopLevelViewPropsType) => (
-	<BonAppHostedMenu
+	<CccBonAppMenu
 		cafe="sayles"
 		loadingMessage={['Engaging in people-watching…', 'Checking the mail…']}
 		name="Sayles Hill"

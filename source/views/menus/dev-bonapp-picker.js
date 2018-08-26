@@ -4,8 +4,8 @@ import {View, TextInput, StyleSheet} from 'react-native'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as c from '@frogpond/colors'
 import {Toolbar, ToolbarButton} from '@frogpond/toolbar'
-import type {TopLevelViewPropsType} from '../types'
-import {BonAppHostedMenu} from './menu-bonapp'
+import {type NavigationScreenProp} from 'react-navigation'
+import {CccBonAppMenu} from '@frogpond/ccc-bonapp-menu'
 
 const styles = StyleSheet.create({
 	container: {
@@ -22,11 +22,12 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType
+type Props = {
+	navigation: NavigationScreenProp<*>,
+}
 
 type State = {
 	cafeId: string,
-	menu: ?any,
 }
 
 export class BonAppPickerView extends React.PureComponent<Props, State> {
@@ -37,7 +38,6 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 
 	state = {
 		cafeId: '34',
-		menu: null,
 	}
 
 	chooseCafe = (cafeId: string) => {
@@ -60,7 +60,7 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 					/>
 					<ToolbarButton isActive={true} title="Go" />
 				</Toolbar>
-				<BonAppHostedMenu
+				<CccBonAppMenu
 					key={this.state.cafeId}
 					cafe={{id: this.state.cafeId}}
 					loadingMessage={['Loading…']}
