@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
-import {Badge} from '../../components/badge'
+import {Badge} from './row-badge'
 import isEqual from 'lodash/isEqual'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
