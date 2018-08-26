@@ -5,7 +5,7 @@ import {
 	resetInternetCredentials,
 } from 'react-native-keychain'
 
-import buildFormData from './formdata'
+import querystring from 'query-string'
 import {OLECARD_AUTH_URL} from './financials/urls'
 
 const SIS_LOGIN_KEY = 'stolaf.edu'
@@ -33,12 +33,13 @@ export async function performLogin(
 		return false
 	}
 
-	const form = buildFormData({username, password})
+	const body = querystring.stringify({username, password})
 	let loginResult = null
 	try {
 		loginResult = await fetch(OLECARD_AUTH_URL, {
 			method: 'POST',
-			body: form,
+			headers: {'Content-type': 'application/x-www-form-urlencoded'},
+			body: body,
 		})
 	} catch (err) {
 		const networkFailure = err.message === 'Network request failed'

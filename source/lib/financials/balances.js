@@ -1,6 +1,6 @@
 // @flow
 import {loadLoginCredentials} from '../login'
-import buildFormData from '../formdata'
+import querystring from 'query-string'
 import {OLECARD_AUTH_URL, OLECARD_DATA_ENDPOINT} from './urls'
 import type {BalancesShapeType, OleCardBalancesType} from './types'
 import isNil from 'lodash/isNil'
@@ -56,13 +56,11 @@ async function fetchBalancesFromServer(): Promise<BalancesOrErrorType> {
 		return {error: true, value: new Error('not logged in!')}
 	}
 
-	const form = buildFormData({
-		username: username,
-		password: password,
-	})
+	const body = querystring.stringify({username, password})
 	let loginResponse = await fetch(OLECARD_AUTH_URL, {
 		method: 'POST',
-		body: form,
+		headers: {'Content-type': 'application/x-www-form-urlencoded'},
+		body: body,
 	})
 
 	if (loginResponse.url.includes('message=')) {
