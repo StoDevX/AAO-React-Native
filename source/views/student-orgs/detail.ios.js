@@ -6,7 +6,7 @@ import {Cell, Section, TableView, SelectableCell} from '@frogpond/tableview'
 import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {openUrl} from '../../components/open-url'
+import {openUrl} from '@frogpond/open-url'
 import {sendEmail} from '../../components/send-email'
 import {showNameOrEmail} from './util'
 

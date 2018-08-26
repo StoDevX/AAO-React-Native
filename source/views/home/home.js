@@ -13,7 +13,7 @@ import {allViews} from '../views'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
-import {trackedOpenUrl} from '../../components/open-url'
+import {trackedOpenUrl} from '@frogpond/open-url'
 import {EditHomeButton, OpenSettingsButton} from '../../components/nav-buttons'
 import {UnofficialAppNotice} from './notice'
 

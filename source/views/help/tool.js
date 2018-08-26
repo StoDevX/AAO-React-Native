@@ -5,7 +5,7 @@ import {StyleSheet} from 'react-native'
 import {Card} from '../../components/card'
 import {Button} from '../../components/button'
 import {Markdown} from '../../components/markdown'
-import {openUrl} from '../../components/open-url'
+import {openUrl} from '@frogpond/open-url'
 import {sendEmail} from '../../components/send-email'
 import {callPhone} from '../../components/call-phone'
 import type {

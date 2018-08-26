@@ -7,7 +7,7 @@ import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {sendEmail} from '../../components/send-email'
-import {openUrl} from '../../components/open-url'
+import {openUrl} from '@frogpond/open'
 import {showNameOrEmail} from './util'
 
 const styles = StyleSheet.create({
