@@ -7,7 +7,8 @@ import {
 	BuildingHoursScheduleEditorView,
 	BuildingHoursView,
 } from '../views/building-hours'
-import CalendarView, {EventDetail as EventDetailView} from '../views/calendar'
+import CalendarView from '../views/calendar'
+import {EventDetail as EventDetailView} from '@frogpond/event-list'
 import {ContactsDetailView, ContactsView} from '../views/contacts'
 import {
 	DictionaryDetailView,
