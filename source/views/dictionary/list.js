@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, RefreshControl, Platform} from 'react-native'
-import {SearchableAlphabetListView} from '../../components/searchable-alphabet-listview'
+import {SearchableAlphabetListView} from '@frogpond/listview'
 import {Column} from '../../components/layout'
 import {
 	Detail,
