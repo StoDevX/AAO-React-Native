@@ -1,7 +1,11 @@
 // @flow
 import htmlparser from 'htmlparser2'
 import cssSelect from 'css-select'
+import {AllHtmlEntities} from 'html-entities'
+
 export {cssSelect}
+
+export const htmlEntities = new AllHtmlEntities()
 
 export function parseHtml(string: string): Object {
 	return htmlparser.parseDOM(string, {
