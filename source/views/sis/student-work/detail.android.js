@@ -7,7 +7,7 @@ import moment from 'moment'
 import {openUrl} from '../../../components/open-url'
 import * as c from '../../../components/colors'
 import type {JobType} from './types'
-import {ShareButton} from '../../components/nav-buttons'
+import {ShareButton} from '../../../components/nav-buttons'
 
 const styles = StyleSheet.create({
 	name: {

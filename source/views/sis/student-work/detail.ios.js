@@ -8,7 +8,7 @@ import * as c from '../../../components/colors'
 import type {JobType} from './types'
 import {SelectableCell} from '../../../components/cells/selectable'
 import glamorous from 'glamorous-native'
-import {ShareButton} from '../../components/nav-buttons'
+import {ShareButton} from '../../../components/nav-buttons'
 
 const styles = StyleSheet.create({
 	lastUpdated: {
