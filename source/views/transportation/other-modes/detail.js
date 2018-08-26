@@ -5,7 +5,7 @@ import {Markdown} from '../../../components/markdown'
 import {ListFooter} from '@frogpond/lists'
 import glamorous from 'glamorous-native'
 import {trackScreenView} from '@frogpond/analytics'
-import {Button} from '../../../components/button'
+import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
 import type {OtherModeType} from '../types'
 import {GH_NEW_ISSUE_URL} from '../../../lib/constants'
@@ -47,19 +47,19 @@ export class OtherModesDetailView extends React.PureComponent<Props> {
 		const mode = this.props.navigation.state.params.mode
 		return (
 			<Container>
-				<Title selectable={true}>{mode.name}</Title>
+			<Title selectable={true}>{mode.name}</Title>
 
-				<Markdown
-					source={mode.description}
-					styles={{Paragraph: styles.paragraph}}
-				/>
+			<Markdown
+			source={mode.description}
+			styles={{Paragraph: styles.paragraph}}
+			/>
 
-				<Button onPress={this.onPress} title="More Info" />
+			<Button onPress={this.onPress} title="More Info" />
 
-				<ListFooter
-					href={GH_NEW_ISSUE_URL}
-					title="Collected by the humans of All About Olaf"
-				/>
+			<ListFooter
+			href={GH_NEW_ISSUE_URL}
+			title="Collected by the humans of All About Olaf"
+			/>
 			</Container>
 		)
 	}

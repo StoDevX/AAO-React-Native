@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
-import {Button} from '../../source/components/button'
+import {Button} from '@frogpond/button'
 import {Heading} from '../../source/components/markdown/heading'
 import {Viewport} from '@frogpond/viewport'
 
