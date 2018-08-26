@@ -1,5 +1,8 @@
 // @flow
-import {GoogleAnalyticsTracker, GoogleAnalyticsSettings} from 'react-native-google-analytics-bridge'
+import {
+	GoogleAnalyticsTracker,
+	GoogleAnalyticsSettings,
+} from 'react-native-google-analytics-bridge'
 import {setItem, getItemAsBoolean} from '@frogpond/storage'
 
 let tracker: GoogleAnalyticsTracker
@@ -31,7 +34,9 @@ export const trackUrl = (url: string) => tracker.trackScreenView(url)
 export const trackScreenView = (id: string) => tracker.trackScreenView(id)
 export const trackException = (ex: string) => tracker.trackException(ex)
 
-export const trackEventWithCustomDimensionValues: typeof tracker.trackEventWithCustomDimensionValues = (...args) => tracker.trackEventWithCustomDimensionValues(...args)
+export const trackEventWithCustomDimensionValues: typeof tracker.trackEventWithCustomDimensionValues = (
+	...args
+) => tracker.trackEventWithCustomDimensionValues(...args)
 
 // These are centralized event functions, so we have an easy place to review
 // them all. There is no limit to the number of these that we can have.

@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
 import delay from 'delay'
-import {reportNetworkProblem} from '../../../lib/report-network-problem'
+import {reportNetworkProblem} from '@frogpond/analytics'
 import {TabBarIcon} from '../../../components/tabbar-icon'
 import * as defaultData from '../../../../docs/webcams.json'
 import {Column} from '@frogpond/layout'

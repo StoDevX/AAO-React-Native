@@ -6,12 +6,11 @@ import {Button} from '../../components/button'
 import {Markdown} from '../../components/markdown'
 import retry from 'p-retry'
 import delay from 'delay'
-import {reportNetworkProblem} from '../../lib/report-network-problem'
+import {reportNetworkProblem, notify} from '@frogpond/analytics'
 import {Error, ErrorMessage} from './components'
 import {getPosition, collectData, reportToServer} from './wifi-tools'
 import {styles} from './tool'
 import type {ToolOptions} from './types'
-import bugsnag from '../../init/bugsnag'
 
 export const toolName = 'wifi'
 
@@ -52,7 +51,7 @@ export class ToolView extends React.Component<Props, State> {
 		this.setState(() => ({status: 'collecting', error: ''}))
 		const [position, device] = await Promise.all([
 			getPosition().catch(error => {
-				bugsnag.notify(error)
+				notify(error)
 				return null
 			}),
 			collectData(),

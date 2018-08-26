@@ -7,7 +7,7 @@ import moment from 'moment-timezone'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../../types'
 import delay from 'delay'
-import {reportNetworkProblem} from '../../../lib/report-network-problem'
+import {reportNetworkProblem} from '@frogpond/analytics'
 import * as defaultData from '../../../../docs/bus-times.json'
 import {API} from '@frogpond/api'
 

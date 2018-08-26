@@ -2,7 +2,7 @@
 import * as React from 'react'
 import delay from 'delay'
 import {OtherModesRow} from './row'
-import {reportNetworkProblem} from '../../../lib/report-network-problem'
+import {reportNetworkProblem} from '@frogpond/analytics'
 import {TabBarIcon} from '../../../components/tabbar-icon'
 import * as defaultData from '../../../../docs/transportation.json'
 import * as c from '@frogpond/colors'
