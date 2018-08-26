@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Markdown} from '../../components/markdown'
+import {Markdown} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
 import {Button} from '../../components/button'
 import glamorous from 'glamorous-native'
