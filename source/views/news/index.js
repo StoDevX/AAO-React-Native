@@ -1,11 +1,10 @@
-/* eslint-disable camelcase */
 // @flow
 
 import * as React from 'react'
 import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
 
 import * as newsImages from '../../../images/news-sources'
-import NewsContainer from './news-container'
+import {CccNewsView as NewsContainer} from '@frogpond/ccc-news'
 
 const NewsView = TabNavigator({
 	StOlafNewsView: {
