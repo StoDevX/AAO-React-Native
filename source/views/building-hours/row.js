@@ -2,13 +2,13 @@
 
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
-import {Badge} from '../components/badge'
+import {Badge} from '../../components/badge'
 import isEqual from 'lodash/isEqual'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
-import * as c from '../components/colors'
-import {Row} from '../components/layout'
-import {ListRow, Detail, Title} from '../components/list'
+import * as c from '../../components/colors'
+import {Row} from '../../components/layout'
+import {ListRow, Detail, Title} from '../../components/list'
 import {getDetailedBuildingStatus, getShortBuildingStatus} from './lib'
 
 const styles = StyleSheet.create({

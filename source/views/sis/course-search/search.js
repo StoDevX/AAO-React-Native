@@ -2,24 +2,24 @@
 
 import * as React from 'react'
 import {StyleSheet, View, ScrollView} from 'react-native'
-import {TabBarIcon} from '../../components/tabbar-icon'
-import * as c from '../../components/colors'
+import {TabBarIcon} from '../../../components/tabbar-icon'
+import * as c from '../../../components/colors'
 import {
 	updateCourseData,
 	loadCourseDataIntoMemory,
 	updateRecentSearches,
 	updateRecentFilters,
-} from '../../../flux/parts/courses'
+} from '../../../redux/parts/courses'
 import {areAnyTermsCached} from '../../../lib/course-search'
-import type {ReduxState} from '../../../flux'
+import type {ReduxState} from '../../../redux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
-import LoadingView from '../../components/loading'
-import {NoticeView} from '../../components/notice'
+import LoadingView from '../../../components/loading'
+import {NoticeView} from '../../../components/notice'
 import {AnimatedSearchbox} from '../components/animated-searchbox'
-import {type FilterType} from '../../components/filter'
+import {type FilterType} from '../../../components/filter'
 import {RecentItemsList} from '../components/recents-list'
-import {Separator} from '../../components/separator'
+import {Separator} from '../../../components/separator'
 import {buildFilters} from './lib/build-filters'
 import type {FilterComboType} from './lib/format-filter-combo'
 import fromPairs from 'lodash/fromPairs'

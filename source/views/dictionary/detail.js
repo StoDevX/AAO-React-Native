@@ -1,13 +1,13 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Markdown} from '../components/markdown'
-import {ListFooter} from '../components/list'
-import {Button} from '../components/button'
+import {Markdown} from '../../components/markdown'
+import {ListFooter} from '../../components/list'
+import {Button} from '../../components/button'
 import glamorous from 'glamorous-native'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {GH_NEW_ISSUE_URL} from '../../globals'
+import {GH_NEW_ISSUE_URL} from '../../lib/constants'
 
 // TODO: This doesn't point at the SA dictionary because they don't have an
 // overview page.

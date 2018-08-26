@@ -1,6 +1,6 @@
 // @flow
 
-import * as c from './components/colors'
+import * as c from '../components/colors'
 
 export type ViewType =
 	| {

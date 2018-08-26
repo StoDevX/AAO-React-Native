@@ -3,14 +3,14 @@
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import {BuildingRow} from './row'
-import {trackBuildingOpen} from '../../analytics'
+import {trackBuildingOpen} from '../../lib/analytics'
 
 import type momentT from 'moment'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 
-import * as c from '../components/colors'
-import {ListSeparator, ListSectionHeader} from '../components/list'
+import * as c from '../../components/colors'
+import {ListSeparator, ListSectionHeader} from '../../components/list'
 
 export {BuildingHoursDetailView} from './detail'
 

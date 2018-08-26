@@ -2,12 +2,12 @@
 import * as React from 'react'
 import delay from 'delay'
 import type {StoryType} from './types'
-import LoadingView from '../components/loading'
-import {NoticeView} from '../components/notice'
+import LoadingView from '../../components/loading'
+import {NoticeView} from '../../components/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {NewsList} from './news-list'
-import {API} from '../../globals'
+import {API} from '../../lib/api'
 
 type Props = TopLevelViewPropsType & {
 	source: string | {url: string, type: 'rss' | 'wp-json'},

@@ -1,8 +1,8 @@
 // @flow
 
 import * as React from 'react'
-import {TabNavigator} from '../components/tabbed-view'
-import {TabBarIcon} from '../components/tabbar-icon'
+import {TabNavigator} from '../../components/tabbed-view'
+import {TabBarIcon} from '../../components/tabbar-icon'
 
 import {CccCalendarView} from './calendar-ccc'
 

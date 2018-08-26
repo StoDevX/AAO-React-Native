@@ -1,6 +1,6 @@
 // @flow
-import {type FilterType} from '../../../components/filter/types'
-import {filterListSpecs} from '../../../components/filter'
+import {type FilterType} from '../../../../components/filter/types'
+import {filterListSpecs} from '../../../../components/filter'
 import {formatTerms} from './format-terms'
 
 export type FilterComboType = {

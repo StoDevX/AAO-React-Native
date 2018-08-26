@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react'
 import {Text, View, ScrollView, StyleSheet, Share} from 'react-native'
-import {sendEmail} from '../../components/send-email'
-import {Card} from '../../components/card'
+import {sendEmail} from '../../../components/send-email'
+import {Card} from '../../../components/card'
 import moment from 'moment'
-import {openUrl} from '../../components/open-url'
-import * as c from '../../components/colors'
+import {openUrl} from '../../../components/open-url'
+import * as c from '../../../components/colors'
 import type {JobType} from './types'
 import {ShareButton} from '../../components/nav-buttons'
 

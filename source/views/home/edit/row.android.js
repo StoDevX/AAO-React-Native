@@ -4,8 +4,8 @@ import * as React from 'react'
 import {View, StyleSheet, Text, Switch} from 'react-native'
 import EntypoIcon from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
-import * as c from '../../components/colors'
-import {Touchable} from '../../components/touchable'
+import * as c from '../../../components/colors'
+import {Touchable} from '../../../components/touchable'
 import type {ViewType} from '../../views'
 
 const ROW_HORIZONTAL_MARGIN = 15

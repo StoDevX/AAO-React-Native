@@ -5,13 +5,13 @@ import {ScrollView, StyleSheet, Platform, Image} from 'react-native'
 import {images as buildingImages} from '../../../../images/spaces'
 import type {BuildingType} from '../types'
 import moment from 'moment-timezone'
-import * as c from '../../components/colors'
+import * as c from '../../../components/colors'
 import {getShortBuildingStatus} from '../lib'
 
 import {Badge} from './badge'
 import {Header} from './header'
 import {ScheduleTable} from './schedule-table'
-import {ListFooter} from '../../components/list'
+import {ListFooter} from '../../../components/list'
 
 const styles = StyleSheet.create({
 	container: {

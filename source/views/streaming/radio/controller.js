@@ -7,16 +7,16 @@ import {
 	trackStreamPlay,
 	trackStreamPause,
 	trackStreamError,
-} from '../../../analytics'
-import * as c from '../../components/colors'
-import {callPhone} from '../../components/call-phone'
-import {Row} from '../../components/layout'
+} from '../../../lib/analytics'
+import * as c from '../../../components/colors'
+import {callPhone} from '../../../components/call-phone'
+import {Row} from '../../../components/layout'
 import type {TopLevelViewPropsType} from '../../types'
 import {StreamPlayer} from './player'
 import type {PlayState, HtmlAudioError, PlayerTheme} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
-import {openUrl} from '../../components/open-url'
-import {Viewport} from '../../components/viewport'
+import {openUrl} from '../../../components/open-url'
+import {Viewport} from '../../../components/viewport'
 import {withTheme} from '@callstack/react-theme-provider'
 
 type Props = TopLevelViewPropsType & {

@@ -1,10 +1,10 @@
 // @flow
 
 import * as React from 'react'
-import {TabBarIcon} from '../components/tabbar-icon'
-import openUrl from '../components/open-url'
+import {TabBarIcon} from '../../components/tabbar-icon'
+import openUrl from '../../components/open-url'
 import type {TopLevelViewPropsType} from '../types'
-import {NoticeView} from '../components/notice'
+import {NoticeView} from '../../components/notice'
 
 type Props = TopLevelViewPropsType
 

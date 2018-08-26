@@ -1,9 +1,9 @@
 // @flow
 
 import * as React from 'react'
-import {NoticeView} from '../components/notice'
+import {NoticeView} from '../../components/notice'
 import {BuildingHoursList} from './list'
-import {type ReduxState} from '../../flux'
+import {type ReduxState} from '../../redux'
 import {connect} from 'react-redux'
 import moment from 'moment-timezone'
 import type {TopLevelViewPropsType} from '../types'
@@ -14,7 +14,7 @@ import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import delay from 'delay'
 import {CENTRAL_TZ} from './lib'
-import {API} from '../../globals'
+import {API} from '../../lib/api'
 
 const buildingHoursUrl = API('/spaces/hours')
 

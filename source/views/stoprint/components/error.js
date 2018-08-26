@@ -4,8 +4,8 @@ import React from 'react'
 import type {TopLevelViewPropsType} from '../../types'
 import {ScrollView, RefreshControl, StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {NoticeView} from '../../components/notice'
-import * as c from '../../components/colors'
+import {NoticeView} from '../../../components/notice'
+import * as c from '../../../components/colors'
 import delay from 'delay'
 
 const ERROR_MESSAGE =

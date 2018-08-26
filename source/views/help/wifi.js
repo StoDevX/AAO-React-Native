@@ -1,9 +1,9 @@
 // @flow
 
 import * as React from 'react'
-import {Card} from '../components/card'
-import {Button} from '../components/button'
-import {Markdown} from '../components/markdown'
+import {Card} from '../../components/card'
+import {Button} from '../../components/button'
+import {Markdown} from '../../components/markdown'
 import retry from 'p-retry'
 import delay from 'delay'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
@@ -11,7 +11,7 @@ import {Error, ErrorMessage} from './components'
 import {getPosition, collectData, reportToServer} from './wifi-tools'
 import {styles} from './tool'
 import type {ToolOptions} from './types'
-import bugsnag from '../../bugsnag'
+import bugsnag from '../../init/bugsnag'
 
 export const toolName = 'wifi'
 

@@ -1,14 +1,14 @@
 // @flow
 import * as React from 'react'
 import {RefreshControl, StyleSheet} from 'react-native'
-import * as c from '../components/colors'
+import * as c from '../../components/colors'
 import {View, ScrollView} from 'glamorous-native'
-import {Markdown} from '../components/markdown'
+import {Markdown} from '../../components/markdown'
 import {reportNetworkProblem} from '../../lib/report-network-problem'
-import LoadingView from '../components/loading'
+import LoadingView from '../../components/loading'
 import * as defaultData from '../../../docs/faqs.json'
 import delay from 'delay'
-import {API} from '../../globals'
+import {API} from '../../lib/api'
 
 const faqsUrl = API('/faqs')
 

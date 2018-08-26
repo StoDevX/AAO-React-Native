@@ -2,7 +2,7 @@
 
 import type momentT from 'moment'
 import type {ProcessedMealType} from '../types'
-import type {FilterType} from '../../components/filter'
+import type {FilterType} from '../../../components/filter'
 import {findMeal} from './find-menu'
 
 export function chooseMeal(

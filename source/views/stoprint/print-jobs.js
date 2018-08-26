@@ -3,8 +3,8 @@
 import React from 'react'
 import {Platform, SectionList} from 'react-native'
 import {connect} from 'react-redux'
-import {type ReduxState} from '../../flux'
-import {updatePrintJobs} from '../../flux/parts/stoprint'
+import {type ReduxState} from '../../redux'
+import {updatePrintJobs} from '../../redux/parts/stoprint'
 import {type PrintJob, STOPRINT_HELP_PAGE} from '../../lib/stoprint'
 import {
 	ListRow,
@@ -12,11 +12,11 @@ import {
 	ListSectionHeader,
 	Detail,
 	Title,
-} from '../components/list'
-import LoadingView from '../components/loading'
+} from '../../components/list'
+import LoadingView from '../../components/loading'
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
-import openUrl from '../components/open-url'
+import openUrl from '../../components/open-url'
 import {StoPrintErrorView, StoPrintNoticeView} from './components'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'

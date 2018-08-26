@@ -2,7 +2,7 @@
 
 import {getTermInfo} from '../../../../lib/storage'
 import {parseTerm} from '../../../../lib/course-search/parse-term'
-import type {FilterType} from '../../../components/filter'
+import type {FilterType} from '../../../../components/filter'
 import {loadAllCourseFilterOptions} from '../../../../lib/course-search'
 
 export async function buildFilters(): Promise<FilterType[]> {
