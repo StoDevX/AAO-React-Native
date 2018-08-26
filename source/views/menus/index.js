@@ -6,7 +6,7 @@ import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
 import {CccBonAppMenu} from '@frogpond/ccc-bonapp-menu'
 import {PauseMenu} from './pause-menu'
 import {CarletonCafeIndex} from './carleton-menus'
-// import {BonAppPickerView} from './dev-bonapp-picker'
+// import {BonAppCafeViewer} from '@frogpond/bonapp-cafe-viewer'
 
 export {
 	CarletonBurtonMenuScreen,
@@ -88,7 +88,13 @@ export const MenusView = TabNavigator({
 		},
 	},
 
-	// BonAppDevToolView: {screen: BonAppPickerView},
+	// BonAppDevToolView: {
+	// 	screen: BonAppCafeViewer,
+	// 	navigationOptions: {
+	// 		tabBarLabel: 'BonApp',
+	// 		tabBarIcon: TabBarIcon('ionic'),
+	// 	}
+	// },
 })
 MenusView.navigationOptions = {
 	title: 'Menus',

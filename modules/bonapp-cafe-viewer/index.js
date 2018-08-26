@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react'
 import {View, TextInput, StyleSheet} from 'react-native'
-import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as c from '@frogpond/colors'
 import {Toolbar, ToolbarButton} from '@frogpond/toolbar'
 import {type NavigationScreenProp} from 'react-navigation'
@@ -30,12 +29,7 @@ type State = {
 	cafeId: string,
 }
 
-export class BonAppPickerView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		tabBarLabel: 'BonApp',
-		tabBarIcon: TabBarIcon('ionic'),
-	}
-
+export class BonAppCafeViewer extends React.PureComponent<Props, State> {
 	state = {
 		cafeId: '34',
 	}
