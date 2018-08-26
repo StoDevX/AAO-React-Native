@@ -1,8 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {TabNavigator} from '../../components/tabbed-view'
-import {TabBarIcon} from '../../components/tabbar-icon'
+import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
 
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'

@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {TabBarIcon} from '../../components/tabbar-icon'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
 import openUrl from '../../components/open-url'
 import type {TopLevelViewPropsType} from '../types'
 import {NoticeView} from '@frogpond/notice'
