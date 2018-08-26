@@ -1,14 +1,14 @@
 // @flow
 
-import {GoogleAnalyticsSettings} from 'react-native-google-analytics-bridge'
-import {getAnalyticsOptOut} from '../lib/storage'
+import {initTracker, initBugsnag} from '@frogpond/analytics'
+import {IS_PRODUCTION} from '@app/lib/constants'
 
-async function disableIfOptedOut() {
-	let didOptOut = await getAnalyticsOptOut()
+const GOOGLE_ANALYTICS_PRODUCTION_ID = 'UA-90234209-2'
+const GOOGLE_ANALYTICS_DEVELOPMENT_ID = 'UA-90234209-1'
 
-	if (didOptOut) {
-		GoogleAnalyticsSettings.setOptOut(true)
-	}
-}
+export const GOOGLE_ANALYTICS_ID = IS_PRODUCTION
+	? GOOGLE_ANALYTICS_PRODUCTION_ID
+	: GOOGLE_ANALYTICS_DEVELOPMENT_ID
 
-disableIfOptedOut()
+initTracker(GOOGLE_ANALYTICS_ID)
+initBugsnag()
