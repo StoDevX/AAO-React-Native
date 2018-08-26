@@ -28,9 +28,8 @@ export class DebugListView extends React.PureComponent<Props> {
 	}
 
 	onPressRow = (row: any) => {
-		let keyPath = this.props.navigation.state.params
-			? [...this.props.navigation.state.params.keyPath, row.key]
-			: [row.key]
+		let keyPath = this.props.navigation.getParam('keyPath', [])
+		keyPath = [...keyPath, row.key]
 		this.props.navigation.push('DebugView', {keyPath: keyPath})
 	}
 
@@ -62,15 +61,12 @@ export class DebugListView extends React.PureComponent<Props> {
 }
 
 function mapStateToProps(state, ownProps) {
-	if (
-		!ownProps.navigation.state.params ||
-		!ownProps.navigation.state.params.keyPath
-	) {
+	if (!ownProps.navigation.getParam('keyPath', null)) {
 		return {state}
 	}
 
 	return {
-		state: get(state, ownProps.navigation.state.params.keyPath),
+		state: get(state, ownProps.navigation.getParam('keyPath')),
 	}
 }
 
