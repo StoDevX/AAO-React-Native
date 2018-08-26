@@ -13,17 +13,28 @@ export class DebugRow extends React.PureComponent<Props> {
 	render() {
 		const {data} = this.props
 
-		let rowDetail =
-			typeof data.value === 'object' ? null : JSON.stringify(data.value)
+		let rowDetail = '<unknown>'
+		let arrowPosition = 'none'
 
-		if (data.value === null) {
-			rowDetail = 'null'
-		} else if (Array.isArray(data.value) && data.value.length === 0) {
-			rowDetail = 'Array(0)'
+		if (Array.isArray(data.value)) {
+			// Array(0), Array(100), etc
+			rowDetail = `Array(${data.value.length})`
+			arrowPosition = 'center'
+		} else if (typeof data.value === 'object' && data.value !== null) {
+			// [object Object], [object Symbol], etc
+			rowDetail = data.value.toString()
+			arrowPosition = 'center'
+		} else if (typeof data.value === 'string') {
+			if (data.value.length > 20) {
+				rowDetail = `"${data.value.substr(0, 20)}…"`
+			} else {
+				rowDetail = JSON.stringify(data.value)
+			}
+		} else {
+			rowDetail = JSON.stringify(data.value)
 		}
 
-		const arrowPosition = rowDetail === null ? 'center' : 'none'
-		const arrowStyle = arrowPosition !== 'none' ? 'DisclosureIndicator' : false
+		const arrowStyle = arrowPosition === 'none' ? false : 'DisclosureIndicator'
 		const onPress = arrowPosition === 'none' ? null : this.props.onPress
 
 		return (
