@@ -9,7 +9,7 @@ import {
 	RefreshControl,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {NoticeView} from '../../../components/notice'
+import {NoticeView} from '@frogpond/notice'
 import {sto} from '@app/lib/colors'
 import delay from 'delay'
 

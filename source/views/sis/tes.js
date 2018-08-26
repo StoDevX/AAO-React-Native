@@ -4,7 +4,7 @@ import * as React from 'react'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import openUrl from '../../components/open-url'
 import type {TopLevelViewPropsType} from '../types'
-import {NoticeView} from '../../components/notice'
+import {NoticeView} from '@frogpond/notice'
 
 type Props = TopLevelViewPropsType
 
