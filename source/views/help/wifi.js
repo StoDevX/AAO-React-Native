@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {Card} from '../../components/card'
-import {Button} from '../../components/button'
+import {Button} from '@frogpond/button'
 import {Markdown} from '@frogpond/markdown'
 import retry from 'p-retry'
 import delay from 'delay'
