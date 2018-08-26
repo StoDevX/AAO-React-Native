@@ -1,17 +1,17 @@
 // @flow
 import * as React from 'react'
 import delay from 'delay'
-import type {StoryType} from './types'
+import {NewsList, type StoryType} from '@frogpond/news-list'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import type {TopLevelViewPropsType} from '../types'
+import type {NavigationScreenProp} from 'react-navigation'
 import {reportNetworkProblem} from '@frogpond/analytics'
-import {NewsList} from './news-list'
 import {API} from '@frogpond/api'
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	source: string | {url: string, type: 'rss' | 'wp-json'},
 	thumbnail: false | number,
 	title: string,
+	navigation: NavigationScreenProp<*>,
 }
 
 type State = {
@@ -20,7 +20,8 @@ type State = {
 	refreshing: boolean,
 	error: ?Error,
 }
-export default class NewsContainer extends React.PureComponent<Props, State> {
+
+export class CccNewsView extends React.PureComponent<Props, State> {
 	state = {
 		entries: [],
 		loading: true,
