@@ -4,7 +4,7 @@ import * as React from 'react'
 import {StyleSheet, Platform, View} from 'react-native'
 import {StyledAlphabetListView} from './alphabet-listview'
 import debounce from 'lodash/debounce'
-import {SearchBar} from './searchbar/index'
+import {SearchBar} from '@frogpond/searchbar'
 
 export const LIST_HEADER_HEIGHT = Platform.OS === 'ios' ? 42 : 0
 
