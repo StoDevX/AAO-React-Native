@@ -17,7 +17,7 @@ export class DebugRow extends React.PureComponent<Props> {
 			typeof data.value === 'object' ? null : JSON.stringify(data.value)
 
 		if (data.value === null) {
-			rowDetail = 'Object[0]'
+			rowDetail = 'Object'
 		} else if (Array.isArray(data.value) && data.value.length === 0) {
 			rowDetail = 'Array(0)'
 		}
