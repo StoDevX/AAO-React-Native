@@ -3,7 +3,6 @@
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import * as c from '@frogpond/colors'
-import {type TopLevelViewPropsType} from '../../types'
 import type momentT from 'moment'
 import type {
 	MenuItemType as MenuItem,
@@ -11,7 +10,7 @@ import type {
 	ProcessedMealType,
 	MenuItemContainerType,
 	StationMenuType,
-} from '../types'
+} from './types'
 import size from 'lodash/size'
 import values from 'lodash/values'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
@@ -19,10 +18,10 @@ import {applyFiltersToItem, type FilterType} from '@frogpond/filter'
 import {NoticeView} from '@frogpond/notice'
 import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
-import {chooseMeal} from '../lib/choose-meal'
-import {buildFilters} from '../lib/build-filters'
+import {chooseMeal} from './lib/choose-meal'
+import {buildFilters} from './lib/build-filters'
 
-type ReactProps = TopLevelViewPropsType & {
+type ReactProps = {
 	cafeMessage?: ?string,
 	foodItems: MenuItemContainerType,
 	meals: ProcessedMealType[],

@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {TabBarIcon} from '../../components/tabbar-icon'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {View, Platform, ScrollView, StyleSheet} from 'react-native'
 import type {TopLevelViewPropsType} from '../types'
 import {Row} from '@frogpond/layout'

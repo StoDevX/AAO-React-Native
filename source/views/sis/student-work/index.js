@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
-import {TabBarIcon} from '../../../components/tabbar-icon'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
 import type {TopLevelViewPropsType} from '../../types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'

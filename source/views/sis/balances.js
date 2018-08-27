@@ -9,7 +9,7 @@ import {
 	RefreshControl,
 	Alert,
 } from 'react-native'
-import {TabBarIcon} from '../../components/tabbar-icon'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from '@frogpond/tableview'
 import {

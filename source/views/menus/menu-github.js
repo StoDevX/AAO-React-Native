@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {FancyMenu} from './components/fancy-menu'
+import {FoodMenu} from '@frogpond/food-menu'
 import type {TopLevelViewPropsType} from '../types'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
@@ -112,7 +112,7 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 		}
 
 		return (
-			<FancyMenu
+			<FoodMenu
 				foodItems={this.state.foodItems}
 				meals={this.state.meals}
 				menuCorIcons={this.state.corIcons}
