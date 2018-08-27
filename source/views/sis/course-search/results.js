@@ -13,7 +13,7 @@ import type {ReduxState} from '../../../redux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
 import {CourseResultsList} from './list'
-import {AnimatedSearchbox} from '../components/animated-searchbox'
+import {AnimatedSearchBar} from '@frogpond/searchbar'
 import {applyFiltersToItem, type FilterType} from '@frogpond/filter'
 import {Separator} from '@frogpond/separator'
 import {buildFilters} from './lib/build-filters'
@@ -150,7 +150,7 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 
 		return (
 			<View style={[styles.container, styles.common]}>
-				<AnimatedSearchbox
+				<AnimatedSearchBar
 					active={true}
 					onCancel={this.handleSearchCancel}
 					onChange={this.handleSearchChange}
