@@ -2,8 +2,11 @@
 import * as React from 'react'
 import {StyleSheet, View, Text} from 'react-native'
 import type momentT from 'moment'
-import type {FilterType} from '../../../components/filter'
-import {FilterToolbar, FilterToolbarButton} from '../../../components/filter'
+import {
+	type FilterType,
+	FilterToolbar,
+	FilterToolbarButton,
+} from '@frogpond/filter'
 import {Toolbar} from '@frogpond/toolbar'
 
 const styles = StyleSheet.create({
