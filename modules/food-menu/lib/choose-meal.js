@@ -1,9 +1,9 @@
 // @flow
 
 import type momentT from 'moment'
-import type {ProcessedMealType} from '../types'
+import type {ProcessedMealType} from '../../../source/views/menus/types'
 import type {FilterType} from '@frogpond/filter'
-import {findMeal} from './find-menu'
+import {findMeal} from '../../../source/views/menus/lib/find-menu'
 
 export function chooseMeal(
 	meals: ProcessedMealType[],
