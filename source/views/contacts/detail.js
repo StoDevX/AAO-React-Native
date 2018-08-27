@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {Alert, StyleSheet, ScrollView, Image} from 'react-native'
 import {images as contactImages} from '../../../images/contacts'
-import {Markdown} from '../../components/markdown'
+import {Markdown} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
 import glamorous from 'glamorous-native'
 import {callPhone} from '../../components/call-phone'

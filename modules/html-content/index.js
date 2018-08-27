@@ -10,7 +10,7 @@ type Props = {
 	style?: number | Object | Array<number | Object>,
 }
 
-export class HtmlView extends React.Component<Props> {
+export class HtmlContent extends React.Component<Props> {
 	_webview: WebView
 
 	onNavigationStateChange = ({url}: {url: string}) => {
