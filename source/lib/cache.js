@@ -1,7 +1,7 @@
 // @flow
 import {AsyncStorage} from 'react-native'
 import moment from 'moment'
-import {API} from '../lib/api'
+import {API} from '@frogpond/api'
 
 type BaseCacheResultType<T> = {
 	isExpired: boolean,

@@ -21,7 +21,7 @@ import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import * as defaultData from '../../../docs/dictionary.json'
-import {API} from '../../lib/api'
+import {API} from '@frogpond/api'
 
 const dictionaryUrl = API('/dictionary')
 

@@ -8,7 +8,7 @@ import {reportNetworkProblem} from '../../lib/report-network-problem'
 import {LoadingView} from '@frogpond/notice'
 import * as defaultData from '../../../docs/faqs.json'
 import delay from 'delay'
-import {API} from '../../lib/api'
+import {API} from '@frogpond/api'
 
 const faqsUrl = API('/faqs')
 

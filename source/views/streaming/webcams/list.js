@@ -10,7 +10,7 @@ import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
-import {API} from '../../../lib/api'
+import {API} from '@frogpond/api'
 import {Viewport} from '@frogpond/viewport'
 
 const webcamsUrl = API('/webcams')

@@ -12,7 +12,7 @@ import toPairs from 'lodash/toPairs'
 import * as c from '@frogpond/colors'
 import type {ContactType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {API} from '../../lib/api'
+import {API} from '@frogpond/api'
 
 const contactInfoUrl = API('/contacts')
 
