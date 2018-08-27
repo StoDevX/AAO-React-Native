@@ -3,6 +3,7 @@
 import './init/fetch'
 import './init/moment'
 import './init/analytics'
+import './init/api'
 
 import * as React from 'react'
 import {Provider} from 'react-redux'
