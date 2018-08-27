@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {sto} from '@app/lib/colors'
-import {TabBarIcon} from '../../../components/tabbar-icon'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {type TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'

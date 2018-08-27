@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, View, Text} from 'react-native'
-import {TabBarIcon} from '../../components/tabbar-icon'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
 
 export default function WeeklyMovieView() {
 	return (
