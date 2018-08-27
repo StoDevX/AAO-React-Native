@@ -47,19 +47,19 @@ export class OtherModesDetailView extends React.PureComponent<Props> {
 		const mode = this.props.navigation.state.params.mode
 		return (
 			<Container>
-			<Title selectable={true}>{mode.name}</Title>
+				<Title selectable={true}>{mode.name}</Title>
 
-			<Markdown
-			source={mode.description}
-			styles={{Paragraph: styles.paragraph}}
-			/>
+				<Markdown
+					source={mode.description}
+					styles={{Paragraph: styles.paragraph}}
+				/>
 
-			<Button onPress={this.onPress} title="More Info" />
+				<Button onPress={this.onPress} title="More Info" />
 
-			<ListFooter
-			href={GH_NEW_ISSUE_URL}
-			title="Collected by the humans of All About Olaf"
-			/>
+				<ListFooter
+					href={GH_NEW_ISSUE_URL}
+					title="Collected by the humans of All About Olaf"
+				/>
 			</Container>
 		)
 	}
