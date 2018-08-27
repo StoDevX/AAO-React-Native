@@ -3,7 +3,6 @@
 import {
 	setItem,
 	clearAsyncStorage,
-	removeItem,
 	getItemAsBoolean,
 	getItemAsArray,
 	setStoragePrefix,
