@@ -3,7 +3,7 @@ import * as React from 'react'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import {View, Platform, ScrollView, StyleSheet} from 'react-native'
 import type {TopLevelViewPropsType} from '../types'
-import {Row} from '../../components/layout'
+import {Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Title} from '@frogpond/lists'
 import {BonAppHostedMenu} from './menu-bonapp'
 

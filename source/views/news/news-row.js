@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, Image, Alert} from 'react-native'
-import {Column, Row} from '../../components/layout'
+import {Column, Row} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
 import type {StoryType} from './types'
 

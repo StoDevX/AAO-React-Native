@@ -4,7 +4,7 @@ import * as React from 'react'
 import {StyleSheet, Image} from 'react-native'
 
 import {ListRow, Detail, Title} from '@frogpond/lists'
-import {Column, Row} from '../../../components/layout'
+import {Column, Row} from '@frogpond/layout'
 import {getTrimmedTextWithSpaces, parseHtml} from '../../../lib/html'
 import {trackedOpenUrl} from '../../../components/open-url'
 import moment from 'moment'
