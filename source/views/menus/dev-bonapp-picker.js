@@ -3,7 +3,7 @@ import * as React from 'react'
 import {View, TextInput, StyleSheet} from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import * as c from '@frogpond/colors'
-import {Toolbar, ToolbarButton} from '../../components/toolbar'
+import {Toolbar, ToolbarButton} from '@frogpond/toolbar'
 import type {TopLevelViewPropsType} from '../types'
 import {BonAppHostedMenu} from './menu-bonapp'
 
