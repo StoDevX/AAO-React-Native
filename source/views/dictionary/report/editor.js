@@ -1,9 +1,12 @@
 // @flow
 import * as React from 'react'
 import {ScrollView, View, Text, StyleSheet} from 'react-native'
-import {CellTextField} from '../../../components/cells/textfield'
-import {ButtonCell} from '../../../components/cells/button'
-import {TableView, Section} from 'react-native-tableview-simple'
+import {
+	TableView,
+	Section,
+	CellTextField,
+	ButtonCell,
+} from '@frogpond/tableview'
 import {submitReport} from './submit'
 import type {WordType} from '../types'
 import * as c from '@frogpond/colors'

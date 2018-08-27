@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import {TabBarIcon} from '../../components/tabbar-icon'
 import {connect} from 'react-redux'
-import {Cell, TableView, Section} from 'react-native-tableview-simple'
+import {Cell, TableView, Section} from '@frogpond/tableview'
 import {
 	hasSeenAcknowledgement,
 	type LoginStateType,

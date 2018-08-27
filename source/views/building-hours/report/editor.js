@@ -8,7 +8,13 @@ import * as React from 'react'
 import xor from 'lodash/xor'
 import {View, ScrollView, Platform, Text, StyleSheet} from 'react-native'
 import moment from 'moment-timezone'
-import {TableView, Section, Cell} from 'react-native-tableview-simple'
+import {
+	TableView,
+	Section,
+	Cell,
+	DeleteButtonCell,
+	CellToggle,
+} from '@frogpond/tableview'
 import type {SingleBuildingScheduleType, DayOfWeekEnumType} from '../types'
 import {Row} from '@frogpond/layout'
 import type {TopLevelViewPropsType} from '../../types'
@@ -16,8 +22,6 @@ import {parseHours, blankSchedule} from '../lib'
 import * as c from '@frogpond/colors'
 import {DatePicker} from '@frogpond/datepicker'
 import {Touchable} from '@frogpond/touchable'
-import {DeleteButtonCell} from '../../../components/cells/delete-button'
-import {CellToggle} from '../../../components/cells/toggle'
 import {ListSeparator} from '@frogpond/lists'
 
 type Props = TopLevelViewPropsType & {

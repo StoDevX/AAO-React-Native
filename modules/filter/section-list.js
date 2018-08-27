@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {Text, Image, StyleSheet} from 'react-native'
 import type {ListType, ListItemSpecType} from './types'
-import {Section, Cell} from 'react-native-tableview-simple'
+import {Section, Cell} from '@frogpond/tableview'
 import {Column} from '@frogpond/layout'
 import concat from 'lodash/concat'
 import isEqual from 'lodash/isEqual'

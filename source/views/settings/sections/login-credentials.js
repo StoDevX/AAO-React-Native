@@ -1,8 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {Cell, Section} from 'react-native-tableview-simple'
-import {CellTextField} from '../../../components/cells/textfield'
+import {Cell, Section, CellTextField} from '@frogpond/tableview'
 import {LoginButton} from '../components/login-button'
 import {
 	logInViaCredentials,
