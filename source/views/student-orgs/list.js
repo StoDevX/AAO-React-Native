@@ -14,8 +14,7 @@ import {
 	Detail,
 	Title,
 } from '@frogpond/lists'
-import {trackOrgOpen} from '../../lib/analytics'
-import {reportNetworkProblem} from '../../lib/report-network-problem'
+import {trackOrgOpen, reportNetworkProblem} from '@frogpond/analytics'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'

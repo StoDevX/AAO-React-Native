@@ -1,8 +1,7 @@
 // @flow
 
 import {type NavigationState} from 'react-navigation'
-import {tracker} from '../lib/analytics'
-import bugsnag from '../init/bugsnag'
+import {trackScreenView, leaveBreadcrumb} from '@frogpond/analytics'
 
 // gets the current screen from navigation state
 function getCurrentRouteName(navigationState: NavigationState): ?string {
@@ -29,8 +28,8 @@ export function trackScreenChanges(
 	}
 
 	if (currentScreen !== prevScreen) {
-		tracker.trackScreenView(currentScreen)
-		bugsnag.leaveBreadcrumb(currentScreen.substr(0, 30), {
+		trackScreenView(currentScreen)
+		leaveBreadcrumb(currentScreen.substr(0, 30), {
 			type: 'navigation',
 			previousScreen: prevScreen,
 		})

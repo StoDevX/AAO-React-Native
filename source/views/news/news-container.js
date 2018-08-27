@@ -4,7 +4,7 @@ import delay from 'delay'
 import type {StoryType} from './types'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../types'
-import {reportNetworkProblem} from '../../lib/report-network-problem'
+import {reportNetworkProblem} from '@frogpond/analytics'
 import {NewsList} from './news-list'
 import {API} from '@frogpond/api'
 

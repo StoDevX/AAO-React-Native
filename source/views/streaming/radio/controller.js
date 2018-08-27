@@ -7,7 +7,7 @@ import {
 	trackStreamPlay,
 	trackStreamPause,
 	trackStreamError,
-} from '../../../lib/analytics'
+} from '@frogpond/analytics'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
 import {Row} from '@frogpond/layout'

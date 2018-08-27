@@ -14,7 +14,7 @@ import {
 	setAcknowledgementStatus,
 } from '../../lib/storage'
 
-import {trackLogOut, trackLogIn, trackLoginFailure} from '../../lib/analytics'
+import {trackLogOut, trackLogIn, trackLoginFailure} from '@frogpond/analytics'
 
 import {type ReduxState} from '../index'
 import {type UpdateBalancesType, updateBalances} from './balances'

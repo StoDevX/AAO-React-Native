@@ -17,8 +17,7 @@ import type {
 } from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
 import {data as fallbackMenu} from '../../../docs/pause-menu.json'
-import {tracker} from '../../lib/analytics'
-import bugsnag from '../../init/bugsnag'
+import {reportNetworkProblem} from '@frogpond/analytics'
 import {API} from '@frogpond/api'
 
 const CENTRAL_TZ = 'America/Winnipeg'
@@ -64,8 +63,7 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 			stationMenus = data.stationMenus || []
 			corIcons = data.corIcons || {}
 		} catch (err) {
-			tracker.trackException(err.message)
-			bugsnag.notify(err)
+			reportNetworkProblem(err)
 			console.warn(err)
 			foodItems = fallbackMenu.foodItems || []
 			stationMenus = fallbackMenu.stationMenus || []
