@@ -5,7 +5,7 @@ import {View, StyleSheet, Image} from 'react-native'
 import keys from 'lodash/keys'
 import pick from 'lodash/pick'
 import map from 'lodash/map'
-import type {ItemCorIconMapType, MasterCorIconMapType} from '../types'
+import type {ItemCorIconMapType, MasterCorIconMapType} from './types'
 
 const styles = StyleSheet.create({
 	container: {

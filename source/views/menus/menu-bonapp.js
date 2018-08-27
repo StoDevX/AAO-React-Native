@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../types'
-import {FancyMenu} from './components/fancy-menu'
+import {FoodMenu} from '@frogpond/food-menu'
 import type {
 	EditedBonAppMenuInfoType as MenuInfoType,
 	EditedBonAppCafeInfoType as CafeInfoType,
@@ -284,7 +284,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		})
 
 		return (
-			<FancyMenu
+			<FoodMenu
 				cafeMessage={specialMessage}
 				foodItems={foodItems}
 				meals={meals}

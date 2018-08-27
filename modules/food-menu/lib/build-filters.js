@@ -11,7 +11,7 @@ import filter from 'lodash/filter'
 import map from 'lodash/map'
 import uniq from 'lodash/uniq'
 import type {FilterType} from '@frogpond/filter'
-import {fastGetTrimmedText} from '../../../lib/html'
+import {fastGetTrimmedText} from '../../../source/lib/html'
 import {AllHtmlEntities} from 'html-entities'
 import {chooseMeal} from './choose-meal'
 
