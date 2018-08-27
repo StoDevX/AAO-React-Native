@@ -6,7 +6,7 @@ import {ListFooter} from '@frogpond/lists'
 import glamorous from 'glamorous-native'
 import {trackScreenView} from '@frogpond/analytics'
 import {Button} from '../../../components/button'
-import openUrl from '../../../components/open-url'
+import {openUrl} from '@frogpond/open-url'
 import type {OtherModeType} from '../types'
 import {GH_NEW_ISSUE_URL} from '../../../lib/constants'
 

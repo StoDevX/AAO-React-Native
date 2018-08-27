@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {ActionSheetIOS, Clipboard} from 'react-native'
 import glamorous from 'glamorous-native'
-import openUrl from '../open-url'
+import {openUrl} from '@frogpond/open-url'
 
 import * as c from '@frogpond/colors'
 

@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
-import openUrl from '../../components/open-url'
+import {openUrl} from '@frogpond/open-url'
 import type {TopLevelViewPropsType} from '../types'
 import {NoticeView} from '@frogpond/notice'
 

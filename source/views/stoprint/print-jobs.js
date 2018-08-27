@@ -16,7 +16,7 @@ import {
 import {LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../types'
 import delay from 'delay'
-import openUrl from '../../components/open-url'
+import {openUrl} from '@frogpond/open-url'
 import {StoPrintErrorView, StoPrintNoticeView} from './components'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
