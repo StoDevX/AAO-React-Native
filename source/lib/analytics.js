@@ -1,6 +1,6 @@
 // @flow
 import {GoogleAnalyticsTracker} from 'react-native-google-analytics-bridge'
-import {stringifyFilters} from '../components/filter/stringify-filters'
+import {stringifyFilters} from '@frogpond/filter/stringify-filters'
 import {GOOGLE_ANALYTICS_ID} from './constants'
 
 export const tracker = new GoogleAnalyticsTracker(GOOGLE_ANALYTICS_ID)

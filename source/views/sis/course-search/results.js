@@ -14,7 +14,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
 import {CourseResultsList} from './list'
 import {AnimatedSearchbox} from '../components/animated-searchbox'
-import {applyFiltersToItem, type FilterType} from '../../../components/filter'
+import {applyFiltersToItem, type FilterType} from '@frogpond/filter'
 import {Separator} from '@frogpond/separator'
 import {buildFilters} from './lib/build-filters'
 
