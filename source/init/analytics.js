@@ -1,7 +1,7 @@
 // @flow
 
 import {initTracker, initBugsnag} from '@frogpond/analytics'
-import {IS_PRODUCTION} from '@app/lib/constants'
+import {IS_PRODUCTION} from '@frogpond/constants'
 
 const GOOGLE_ANALYTICS_PRODUCTION_ID = 'UA-90234209-2'
 const GOOGLE_ANALYTICS_DEVELOPMENT_ID = 'UA-90234209-1'
