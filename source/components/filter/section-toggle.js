@@ -1,8 +1,7 @@
 // @flow
 import * as React from 'react'
 import type {ToggleType} from './types'
-import {Section} from 'react-native-tableview-simple'
-import {CellToggle} from '../cells/toggle'
+import {Section, CellToggle} from '@frogpond/tableview'
 
 type PropsType = {
 	filter: ToggleType,

@@ -5,14 +5,16 @@ import {StyleSheet, Text, Platform} from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
 import glamorous from 'glamorous-native'
 import {Badge} from '../../../building-hours/detail/badge'
-import {TableView, Section, Cell} from 'react-native-tableview-simple'
-import {SelectableCell} from '../../../../components/cells/selectable'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
 import {
+	TableView,
+	Section,
+	Cell,
+	SelectableCell,
 	MultiLineDetailCell,
 	MultiLineLeftDetailCell,
-} from '../../../../components/cells'
+} from '@frogpond/tableview'
 import type {TopLevelViewPropsType} from '../../../types'
 import * as c from '@frogpond/colors'
 import {deptNum} from '../lib/format-dept-num'

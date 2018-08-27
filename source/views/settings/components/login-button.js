@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {ButtonCell} from '../../../components/cells/button'
+import {ButtonCell} from '@frogpond/tableview'
 
 export function LoginButton({
 	loading,

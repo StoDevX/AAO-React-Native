@@ -1,12 +1,11 @@
 // @flow
 import * as React from 'react'
 import {Alert} from 'react-native'
-import {Section} from 'react-native-tableview-simple'
+import {Section, PushButtonCell} from '@frogpond/tableview'
 import type {TopLevelViewPropsType} from '../../types'
 import {sendEmail} from '../../../components/send-email'
 import DeviceInfo from 'react-native-device-info'
 import {version} from '../../../../package.json'
-import {PushButtonCell} from '../../../components/cells/push-button'
 import {refreshApp} from '../../../lib/refresh'
 import {sectionBgColor} from '@frogpond/colors'
 

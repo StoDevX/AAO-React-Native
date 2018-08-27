@@ -5,7 +5,7 @@
  */
 
 import * as React from 'react'
-import {TableView, Section, Cell} from 'react-native-tableview-simple'
+import {TableView, Section, Cell} from '@frogpond/tableview'
 import moment from 'moment-timezone'
 import type {NamedBuildingScheduleType} from '../types'
 import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'
