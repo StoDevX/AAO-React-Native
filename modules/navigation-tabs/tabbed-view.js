@@ -5,7 +5,7 @@ import {
 	createBottomTabNavigator,
 	NavigationScreenRouteConfig,
 } from 'react-navigation'
-import * as theme from '@app/lib/theme'
+import {getTheme} from '@frogpond/app-theme'
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs'
 
 type ComponentType = (
@@ -21,8 +21,10 @@ const createTabNavigator =
 		? createMaterialBottomTabNavigator
 		: createBottomTabNavigator
 
-export const TabNavigator: ComponentType = (screens, options = {}) =>
-	createTabNavigator(screens, {
+export const TabNavigator: ComponentType = (screens, options = {}) => {
+	let theme = getTheme()
+
+	return createTabNavigator(screens, {
 		backBehavior: 'none',
 		lazy: true,
 		theme: {
@@ -48,3 +50,4 @@ export const TabNavigator: ComponentType = (screens, options = {}) =>
 		},
 		...options,
 	})
+}

@@ -3,7 +3,8 @@ import * as React from 'react'
 import {StyleSheet, View, Text, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from '@frogpond/colors'
-import * as theme from '@app/lib/theme'
+import {type AppTheme} from '@frogpond/app-theme'
+import {withTheme} from '@callstack/react-theme-provider'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -16,15 +17,8 @@ const buttonStyles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 2,
 	},
-	activeButton: {
-		backgroundColor: theme.toolbarButtonBackground,
-		borderColor: theme.toolbarButtonBackground,
-	},
 	inactiveButton: {
 		borderColor: c.iosDisabledText,
-	},
-	activeText: {
-		color: theme.toolbarButtonForeground,
 	},
 	inactiveText: {
 		color: c.iosDisabledText,
@@ -38,9 +32,10 @@ type ButtonPropsType = {
 	iconName?: string,
 	title: string,
 	isActive: boolean,
+	theme: AppTheme,
 }
 
-export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
+function ToolbarButton({title, iconName, isActive, theme}: ButtonPropsType) {
 	let icon
 	if (!iconName) {
 		icon = null
@@ -50,12 +45,17 @@ export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
 		icon = iconName
 	}
 
-	let activeButtonStyle = isActive
-		? buttonStyles.activeButton
-		: buttonStyles.inactiveButton
-	let activeContentStyle = isActive
-		? buttonStyles.activeText
-		: buttonStyles.inactiveText
+	let activeButton = {
+		backgroundColor: theme.toolbarButtonBackground,
+		borderColor: theme.toolbarButtonBackground,
+	}
+
+	let activeText = {
+		color: theme.toolbarButtonForeground,
+	}
+
+	let activeButtonStyle = isActive ? activeButton : buttonStyles.inactiveButton
+	let activeContentStyle = isActive ? activeText : buttonStyles.inactiveText
 
 	let textWithIconStyle = icon ? buttonStyles.textWithIcon : null
 	let activeTextStyle = {
@@ -71,3 +71,9 @@ export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
 		</View>
 	)
 }
+
+export const RawToolbarButton = ToolbarButton
+
+const ThemedToolbarButton = withTheme(ToolbarButton)
+
+export {ThemedToolbarButton as ToolbarButton}

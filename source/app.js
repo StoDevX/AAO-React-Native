@@ -4,12 +4,15 @@ import './init/fetch'
 import './init/moment'
 import './init/analytics'
 import './init/api'
+import './init/theme'
 
 import * as React from 'react'
 import {Provider} from 'react-redux'
 import {makeStore, initRedux} from './redux'
 import * as navigation from './navigation'
 import OneSignal from 'react-native-onesignal'
+import {ThemeProvider} from '@callstack/react-theme-provider'
+import {getTheme} from '@frogpond/app-theme'
 
 const store = makeStore()
 initRedux(store)
@@ -45,12 +48,16 @@ export default class App extends React.Component<Props> {
 	}
 
 	render() {
+		let theme = getTheme()
+
 		return (
 			<Provider store={store}>
-				<navigation.AppNavigator
-					onNavigationStateChange={navigation.trackScreenChanges}
-					persistenceKey={navigation.persistenceKey}
-				/>
+				<ThemeProvider theme={theme}>
+					<navigation.AppNavigator
+						onNavigationStateChange={navigation.trackScreenChanges}
+						persistenceKey={navigation.persistenceKey}
+					/>
+				</ThemeProvider>
 			</Provider>
 		)
 	}

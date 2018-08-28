@@ -2,7 +2,8 @@
 import * as React from 'react'
 import {StyleSheet, View, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
-import * as theme from '@app/lib/theme'
+import {type AppTheme} from '@frogpond/app-theme'
+import {withTheme} from '@callstack/react-theme-provider'
 
 const dotBarStyles = StyleSheet.create({
 	diagram: {
@@ -15,24 +16,26 @@ const dotBarStyles = StyleSheet.create({
 		height: 5,
 		width: 5,
 		borderRadius: 5,
-		backgroundColor: theme.accent,
 	},
 	line: {
 		width: 1,
-		backgroundColor: theme.accent,
 		flex: 1,
 	},
 })
 
-function DottedBar({style}: {style?: any}) {
+function DottedBar({style, theme}: {style?: any, theme: AppTheme}) {
+	let background = {backgroundColor: theme.accent}
+
 	return (
 		<View style={[dotBarStyles.diagram, style]}>
-			<View style={dotBarStyles.circle} />
-			<View style={dotBarStyles.line} />
-			<View style={dotBarStyles.circle} />
+			<View style={[background, dotBarStyles.circle]} />
+			<View style={[background, dotBarStyles.line]} />
+			<View style={[background, dotBarStyles.circle]} />
 		</View>
 	)
 }
+
+const ThemedDottedBar = withTheme(DottedBar)
 
 const solidBarStyles = StyleSheet.create({
 	border: {
@@ -50,7 +53,7 @@ export function Bar(props: Object) {
 		case 'ios':
 			return <SolidBar {...props} />
 		case 'android':
-			return <DottedBar {...props} />
+			return <ThemedDottedBar {...props} />
 		default:
 			return <SolidBar {...props} />
 	}

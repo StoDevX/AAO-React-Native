@@ -4,6 +4,7 @@ import {Platform} from 'react-native'
 import tinycolor from 'tinycolor2'
 import {sto} from './colors'
 import {firstReadable} from '@frogpond/colors'
+import {type AppTheme} from '@frogpond/app-theme'
 
 /**
  * The primary color of the app.
@@ -86,3 +87,26 @@ export const statusBarStyle = Platform.select({
 		? 'dark-content'
 		: 'light-content',
 })
+
+export const themeObject: AppTheme = {
+	accent,
+	navigationBackground,
+	navigationForeground,
+	buttonBackground,
+	buttonForeground,
+	toolbarButtonBackground,
+	toolbarButtonForeground,
+	iosPushButtonCellBackground,
+	iosPushButtonCellForeground,
+	switchTintOn,
+	switchTintOff,
+	switchThumbTint,
+	androidListHeaderBackground,
+	androidListHeaderForeground,
+	androidTabBarBackground,
+	androidTabBarForeground,
+	iosTabBarBackground,
+	iosTabBarActiveColor,
+	androidStatusBarColor,
+	statusBarStyle,
+}

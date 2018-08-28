@@ -5,8 +5,9 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
-import * as theme from '@app/lib/theme'
 import {Touchable, type TouchableUnion} from '@frogpond/touchable'
+import {type AppTheme} from '@frogpond/app-theme'
+import {withTheme} from '@callstack/react-theme-provider'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -18,15 +19,8 @@ const buttonStyles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 2,
 	},
-	activeButton: {
-		backgroundColor: theme.toolbarButtonBackground,
-		borderColor: theme.toolbarButtonBackground,
-	},
 	inactiveButton: {
 		borderColor: c.iosDisabledText,
-	},
-	activeText: {
-		color: theme.toolbarButtonForeground,
 	},
 	inactiveText: {
 		color: c.iosDisabledText,
@@ -45,13 +39,14 @@ type Props = {
 	onPopoverDismiss: (filter: FilterType) => any,
 	style?: any,
 	title: string,
+	theme: AppTheme,
 }
 
 type State = {
 	popoverVisible: boolean,
 }
 
-export class FilterToolbarButton extends React.PureComponent<Props, State> {
+class FilterToolbarButton extends React.PureComponent<Props, State> {
 	state = {
 		popoverVisible: false,
 	}
@@ -68,19 +63,26 @@ export class FilterToolbarButton extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		const {filter, isActive, style, title} = this.props
+		const {filter, isActive, style, title, theme} = this.props
 		const {popoverVisible} = this.state
 		const icon = Platform.select({
 			ios: 'ios-arrow-down',
 			android: 'md-arrow-dropdown',
 		})
 
+		let activeButton = {
+			backgroundColor: theme.toolbarButtonBackground,
+			borderColor: theme.toolbarButtonBackground,
+		}
+
+		let inactiveText = {
+			color: theme.toolbarButtonForeground,
+		}
+
 		let activeButtonStyle = isActive
-			? buttonStyles.activeButton
+			? activeButton
 			: buttonStyles.inactiveButton
-		let activeContentStyle = isActive
-			? buttonStyles.activeText
-			: buttonStyles.inactiveText
+		let activeContentStyle = isActive ? inactiveText : buttonStyles.inactiveText
 
 		let textWithIconStyle = icon ? buttonStyles.textWithIcon : null
 		let activeTextStyle = {
@@ -121,3 +123,9 @@ export class FilterToolbarButton extends React.PureComponent<Props, State> {
 		)
 	}
 }
+
+export const RawFilterToolbarButton = FilterToolbarButton
+
+const ThemedFilterToolbarButton = withTheme(FilterToolbarButton)
+
+export {ThemedFilterToolbarButton as FilterToolbarButton}
