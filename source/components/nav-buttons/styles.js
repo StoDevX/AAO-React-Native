@@ -4,7 +4,9 @@
  */
 
 import {StyleSheet, Platform} from 'react-native'
-import * as theme from '@app/lib/theme'
+import {getTheme} from '@frogpond/app-theme'
+
+let theme = getTheme()
 
 export const commonStyles = StyleSheet.create({
 	button: {

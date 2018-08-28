@@ -4,7 +4,7 @@ import * as React from 'react'
 import {ScrollView, View, StyleSheet, StatusBar} from 'react-native'
 
 import {connect} from 'react-redux'
-import {androidStatusBarColor, statusBarStyle} from '@app/lib/theme'
+import {getTheme} from '@frogpond/app-theme'
 import sortBy from 'lodash/sortBy'
 import {type TopLevelViewPropsType} from '../types'
 import {type ViewType} from '../views'
@@ -35,6 +35,8 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 	)
 
 	const columns = partitionByIndex(enabledViews)
+
+	let {androidStatusBarColor, statusBarStyle} = getTheme()
 
 	return (
 		<ScrollView

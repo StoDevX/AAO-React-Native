@@ -3,8 +3,10 @@
 import {Platform, StyleSheet} from 'react-native'
 import {createStackNavigator} from 'react-navigation'
 import * as c from '@frogpond/colors'
-import * as theme from '@app/lib/theme'
+import {getTheme} from '@frogpond/app-theme'
 import {routes} from './routes'
+
+let theme = getTheme()
 
 const styles = StyleSheet.create({
 	header: {
