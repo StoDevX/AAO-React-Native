@@ -7,7 +7,7 @@ import {Button} from '@frogpond/button'
 import glamorous from 'glamorous-native'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {GH_NEW_ISSUE_URL} from '@app/lib/constants'
+import {GH_NEW_ISSUE_URL} from '../../lib/constants'
 
 // TODO: This doesn't point at the SA dictionary because they don't have an
 // overview page.
