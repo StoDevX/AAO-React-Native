@@ -9,6 +9,9 @@ import type {JobType} from './types'
 import glamorous from 'glamorous-native'
 import {ShareButton} from '../../../components/nav-buttons'
 import {shareJob} from './lib'
+import {AllHtmlEntities} from 'html-entities'
+
+const entities = new AllHtmlEntities()
 
 const styles = StyleSheet.create({
 	lastUpdated: {
@@ -79,7 +82,7 @@ function Information({job}: {job: JobType}) {
 function Description({job}: {job: JobType}) {
 	return job.description ? (
 		<Section header="DESCRIPTION">
-			<SelectableCell text={job.description} />
+			<SelectableCell text={entities.decode(job.description)} />
 		</Section>
 	) : null
 }
@@ -87,7 +90,7 @@ function Description({job}: {job: JobType}) {
 function Skills({job}: {job: JobType}) {
 	return job.skills ? (
 		<Section header="SKILLS">
-			<SelectableCell text={job.skills} />
+			<SelectableCell text={entities.decode(job.skills)} />
 		</Section>
 	) : null
 }
@@ -95,7 +98,7 @@ function Skills({job}: {job: JobType}) {
 function Comments({job}: {job: JobType}) {
 	return job.comments ? (
 		<Section header="COMMENTS">
-			<SelectableCell text={job.comments} />
+			<SelectableCell text={entities.decode(job.comments)} />
 		</Section>
 	) : null
 }
