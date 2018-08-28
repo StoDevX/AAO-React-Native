@@ -27,6 +27,11 @@
     "validate-bus-data": "node scripts/validate-bus-schedules.js",
     "validate-data": "node scripts/validate-data.js"
   },
+  "workspaces": {
+    "packages": [
+      "modules/*"
+    ]
+  },
   "greenkeeper": {
     "ignore": [
       "flow-bin",
