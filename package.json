@@ -27,6 +27,11 @@
     "validate-bus-data": "node scripts/validate-bus-schedules.js",
     "validate-data": "node scripts/validate-data.js"
   },
+  "workspaces": {
+    "packages": [
+      "modules/*"
+    ]
+  },
   "greenkeeper": {
     "ignore": [
       "flow-bin",
@@ -37,6 +42,7 @@
   "jest": {
     "testRegex": "/__tests__/.*\\.(test|spec)\\.js$",
     "collectCoverageFrom": [
+      "modules/**/*.js",
       "source/**/*.js",
       "!**/node_modules/**"
     ],
@@ -75,6 +81,14 @@
         "options": {
           "requirePragma": true
         }
+      },
+      {
+        "files": "**/package.json",
+        "options": {
+          "parser": "json-stringify",
+          "useTabs": false,
+          "tabWidth": 2
+        }
       }
     ]
   },
@@ -87,13 +101,10 @@
     "base-64": "0.1.0",
     "buffer": "5.2.0",
     "bugsnag-react-native": "2.10.2",
-    "css-select": "2.0.0",
     "delay": "3.1.0",
     "events": "3.0.0",
     "get-urls": "7.2.0",
     "glamorous-native": "1.4.0",
-    "html-entities": "1.2.1",
-    "htmlparser2": "3.9.2",
     "jsc-android": "224109.x.x",
     "keyword-search": "0.1.1",
     "lodash": "4.17.10",
@@ -146,7 +157,6 @@
     "babel-core": "6.26.3",
     "babel-eslint": "8.2.6",
     "babel-jest": "23.4.2",
-    "babel-plugin-module-resolver": "3.1.1",
     "babel-plugin-transform-remove-console": "6.9.4",
     "babel-preset-react-native": "4.0.0",
     "bugsnag-sourcemaps": "1.0.4",
