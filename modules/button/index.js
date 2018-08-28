@@ -4,13 +4,12 @@ import {StyleSheet, Platform} from 'react-native'
 import BasicButton from 'react-native-button'
 import noop from 'lodash/noop'
 import {material, iOSUIKit} from 'react-native-typography'
-
 import * as c from '@frogpond/colors'
-import * as theme from '@app/lib/theme'
+import {type AppTheme} from '@frogpond/app-theme'
+import {withTheme} from '@callstack/react-theme-provider'
 
 const styles = StyleSheet.create({
 	button: {
-		backgroundColor: theme.buttonBackground,
 		alignSelf: 'center',
 		paddingVertical: 10,
 		paddingHorizontal: 20,
@@ -26,7 +25,6 @@ const styles = StyleSheet.create({
 			ios: iOSUIKit.calloutWhiteObject,
 			android: material.buttonWhiteObject,
 		}),
-		color: theme.buttonForeground,
 	},
 	textDisabled: {
 		color: c.iosDisabledText,
@@ -39,25 +37,39 @@ type Props = {
 	disabled?: boolean,
 	buttonStyle?: any,
 	textStyle?: any,
+	theme: AppTheme,
 }
 
-export function Button({
+function Button({
 	title = 'Push me!',
 	onPress = noop,
 	disabled = false,
 	buttonStyle = null,
 	textStyle = null,
+	theme,
 }: Props) {
+	let background = {backgroundColor: theme.buttonBackground}
+	let foreground = {color: theme.buttonForeground}
+
+	let containerStyle = [styles.button, background, buttonStyle]
+	let style = [styles.text, foreground, textStyle]
+
 	return (
 		<BasicButton
-			containerStyle={[styles.button, buttonStyle]}
+			containerStyle={containerStyle}
 			disabled={disabled}
 			disabledContainerStyle={styles.disabled}
 			onPress={onPress}
-			style={[styles.text, textStyle]}
+			style={style}
 			styleDisabled={styles.textDisabled}
 		>
 			{Platform.OS === 'android' ? title.toUpperCase() : title}
 		</BasicButton>
 	)
 }
+
+export const RawButton = Button
+
+const ThemedButton = withTheme(Button)
+
+export {ThemedButton as Button}
