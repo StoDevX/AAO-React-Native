@@ -4,7 +4,8 @@ import {FlatList, StyleSheet, Text, View, Platform} from 'react-native'
 import {ListSeparator, ListRow} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
-import * as theme from '@app/lib/theme'
+import {type AppTheme} from '@frogpond/app-theme'
+import {withTheme} from '@callstack/react-theme-provider'
 
 type Props = {
 	actionLabel?: string,
@@ -14,18 +15,23 @@ type Props = {
 	onItemPress: (item: string) => any,
 	items: string[],
 	title: string,
+	theme: AppTheme,
 }
 
-export class RecentItemsList extends React.PureComponent<Props> {
+class RecentItemsList extends React.PureComponent<Props> {
 	renderSeparator = () => <ListSeparator spacing={{left: 17, right: 17}} />
 
-	renderItem = ({item}: {item: string}) => (
-		<ListRow arrowPosition="none" onPress={() => this.onPressRow(item)}>
-			<Text numberOfLines={1} style={styles.listItem}>
-				{item}
-			</Text>
-		</ListRow>
-	)
+	renderItem = ({item}: {item: string}) => {
+		let foreground = {color: this.props.theme.iosPushButtonCellForeground}
+
+		return (
+			<ListRow arrowPosition="none" onPress={() => this.onPressRow(item)}>
+				<Text numberOfLines={1} style={[foreground, styles.listItem]}>
+					{item}
+				</Text>
+			</ListRow>
+		)
+	}
 
 	onPressRow = (item: string) => {
 		this.props.onItemPress(item)
@@ -41,13 +47,17 @@ export class RecentItemsList extends React.PureComponent<Props> {
 			title,
 			emptyHeader,
 			emptyText,
+			theme,
 		} = this.props
+
+		let foreground = {color: theme.iosPushButtonCellForeground}
+
 		return (
 			<View>
 				<View style={styles.rowFlex}>
 					{title && <Text style={styles.subHeader}>{title}</Text>}
 					{onAction && (
-						<Text onPress={onAction} style={styles.sideButton}>
+						<Text onPress={onAction} style={[foreground, styles.sideButton]}>
 							{actionLabel}
 						</Text>
 					)}
@@ -72,12 +82,17 @@ export class RecentItemsList extends React.PureComponent<Props> {
 	}
 }
 
+export const RawRecentItemsList = RecentItemsList
+
+const ThemedRecentItemsList = withTheme(RecentItemsList)
+
+export {ThemedRecentItemsList as RecentItemsList}
+
 const styles = StyleSheet.create({
 	listItem: {
 		paddingVertical: Platform.OS === 'ios' ? 5 : 0,
 		paddingLeft: 2,
 		fontSize: 16,
-		color: theme.iosPushButtonCellForeground,
 	},
 	notice: {
 		paddingTop: 30,
@@ -93,7 +108,6 @@ const styles = StyleSheet.create({
 	sideButton: {
 		paddingRight: 17,
 		fontSize: 16,
-		color: theme.iosPushButtonCellForeground,
 		padding: 14,
 	},
 	subHeader: {
