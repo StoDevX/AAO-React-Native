@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {sto} from '@app/lib/colors'
+import {sto} from '../../../lib/colors'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {type TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'

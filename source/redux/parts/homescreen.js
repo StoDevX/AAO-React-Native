@@ -6,7 +6,7 @@ import {
 	trackHomescreenOrder,
 	trackHomescreenDisabledItem,
 	trackHomescreenReenabledItem,
-} from '@app/lib/analytics'
+} from '../../lib/analytics'
 import * as storage from '../../lib/storage'
 import {type ReduxState} from '../index'
 import isEqual from 'lodash/isEqual'

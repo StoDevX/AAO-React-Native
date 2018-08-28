@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '@frogpond/notice'
-import {sto} from '@app/lib/colors'
+import {sto} from '../../../lib/colors'
 import delay from 'delay'
 
 type Props = {
