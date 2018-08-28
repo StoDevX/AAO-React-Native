@@ -11,6 +11,6 @@ export type Props = {
 	onSubmit: () => any,
 	placeholder?: string,
 	style?: any,
-	textFieldBackgroundColor?: string,
+	textFieldBackgroundColor?: ?string,
 	value: string,
 }

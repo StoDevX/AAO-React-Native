@@ -124,7 +124,6 @@ export class AnimatedSearchBar extends React.Component<Props> {
 									onFocus={this.handleFocus}
 									onSubmit={this.props.onSubmit}
 									placeholder={this.props.placeholder}
-									textFieldBackgroundColor={sto.lightGray}
 									value={this.props.value}
 								/>
 							</Animated.View>
