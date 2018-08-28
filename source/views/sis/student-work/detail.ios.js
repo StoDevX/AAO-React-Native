@@ -9,9 +9,7 @@ import type {JobType} from './types'
 import glamorous from 'glamorous-native'
 import {ShareButton} from '../../../components/nav-buttons'
 import {shareJob} from './lib'
-import {AllHtmlEntities} from 'html-entities'
-
-const entities = new AllHtmlEntities()
+import {entities} from '@frogpond/html-lib'
 
 const styles = StyleSheet.create({
 	lastUpdated: {

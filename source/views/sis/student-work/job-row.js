@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {Column, Row} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
-import {fastGetTrimmedText} from '../../../lib/html'
+import {fastGetTrimmedText} from '@frogpond/html-lib'
 import type {JobType} from './types'
 
 type Props = {

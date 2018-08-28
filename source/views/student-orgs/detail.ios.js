@@ -9,9 +9,7 @@ import type {TopLevelViewPropsType} from '../types'
 import {openUrl} from '@frogpond/open-url'
 import {sendEmail} from '../../components/send-email'
 import {showNameOrEmail} from './util'
-import {AllHtmlEntities} from 'html-entities'
-
-const entities = new AllHtmlEntities()
+import {entities} from '@frogpond/html-lib'
 
 const styles = StyleSheet.create({
 	name: {
