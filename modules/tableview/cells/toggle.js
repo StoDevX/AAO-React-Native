@@ -2,15 +2,17 @@
 import * as React from 'react'
 import {Switch} from 'react-native'
 import {Cell} from 'react-native-tableview-simple'
-import * as theme from '@app/lib/theme'
+import {type AppTheme} from '@frogpond/app-theme'
+import {withTheme} from '@callstack/react-theme-provider'
 
 type PropsType = {
 	label: string,
 	value: boolean,
 	onChange: (val: boolean) => any,
+	theme: AppTheme,
 }
 
-export function CellToggle({value, onChange, label}: PropsType) {
+function CellToggle({value, onChange, label, theme}: PropsType) {
 	let toggle = (
 		<Switch
 			onTintColor={theme.switchTintOn}
@@ -19,5 +21,12 @@ export function CellToggle({value, onChange, label}: PropsType) {
 			value={value}
 		/>
 	)
+
 	return <Cell cellAccessoryView={toggle} title={label} />
 }
+
+export const RawCellToggle = CellToggle
+
+const ThemedCellToggle = withTheme(CellToggle)
+
+export {ThemedCellToggle as CellToggle}
