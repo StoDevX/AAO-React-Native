@@ -11,11 +11,8 @@ import filter from 'lodash/filter'
 import map from 'lodash/map'
 import uniq from 'lodash/uniq'
 import type {FilterType} from '@frogpond/filter'
-import {fastGetTrimmedText} from '../../../source/lib/html'
-import {AllHtmlEntities} from 'html-entities'
+import {fastGetTrimmedText, entities} from '@frogpond/html-lib'
 import {chooseMeal} from './choose-meal'
-
-const entities = new AllHtmlEntities()
 
 export function buildFilters(
 	foodItems: MenuItemType[],

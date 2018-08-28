@@ -3,6 +3,10 @@ import htmlparser from 'htmlparser2'
 import cssSelect from 'css-select'
 export {cssSelect}
 
+import {AllHtmlEntities} from 'html-entities'
+
+export const entities = new AllHtmlEntities()
+
 export function parseHtml(string: string): Object {
 	return htmlparser.parseDOM(string, {
 		withDomLvl1: true,

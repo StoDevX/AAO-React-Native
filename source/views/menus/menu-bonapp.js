@@ -19,8 +19,7 @@ import toPairs from 'lodash/toPairs'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import {trimStationName, trimItemLabel} from './lib/trim-names'
-import {getTrimmedTextWithSpaces, parseHtml} from '../../lib/html'
-import {AllHtmlEntities} from 'html-entities'
+import {getTrimmedTextWithSpaces, parseHtml, entities} from '@frogpond/html-lib'
 import {toLaxTitleCase} from 'titlecase'
 import {reportNetworkProblem} from '@frogpond/analytics'
 import delay from 'delay'
@@ -28,7 +27,6 @@ import retry from 'p-retry'
 import {API} from '@frogpond/api'
 
 const CENTRAL_TZ = 'America/Winnipeg'
-const entities = new AllHtmlEntities()
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
 const DEFAULT_MENU = [
