@@ -2,7 +2,8 @@
 import * as React from 'react'
 import {Platform, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
-import * as theme from '@app/lib/theme'
+import {type AppTheme} from '@frogpond/app-theme'
+import {withTheme} from '@callstack/react-theme-provider'
 
 const styles = StyleSheet.create({
 	container: {
@@ -18,7 +19,6 @@ const styles = StyleSheet.create({
 				paddingRight: 10,
 			},
 			android: {
-				backgroundColor: theme.androidListHeaderBackground,
 				paddingTop: 10,
 				paddingBottom: 10,
 				borderTopWidth: 1,
@@ -44,7 +44,6 @@ const styles = StyleSheet.create({
 			android: {
 				fontSize: 16,
 				fontFamily: 'sans-serif-condensed',
-				color: theme.androidListHeaderForeground,
 			},
 		}),
 	},
@@ -73,8 +72,10 @@ type PropsType = {
 	separator?: string,
 	style?: any,
 	spacing?: {left?: number, right?: number},
+	theme: AppTheme,
 }
-export function ListSectionHeader(props: PropsType) {
+
+function ListSectionHeader(props: PropsType) {
 	const {
 		style,
 		title,
@@ -84,14 +85,34 @@ export function ListSectionHeader(props: PropsType) {
 		subtitleStyle,
 		separator = ' — ',
 		spacing: {left: leftSpacing = 15} = {},
+		theme,
 	} = props
 
+	let containerTheme = {paddingLeft: leftSpacing}
+	let titleTheme = {}
+
+	if (Platform.OS === 'android') {
+		containerTheme = {
+			...containerTheme,
+			backgroundColor: theme.androidListHeaderBackground,
+		}
+		titleTheme = {
+			...titleTheme,
+			color: theme.androidListHeaderForeground,
+		}
+	}
+
+	let finalTitleStyle = [
+		styles.title,
+		titleTheme,
+		titleStyle,
+		bold ? styles.bold : null,
+	]
+
 	return (
-		<View style={[styles.container, {paddingLeft: leftSpacing}, style]}>
+		<View style={[styles.container, containerTheme, style]}>
 			<Text>
-				<Text style={[styles.title, titleStyle, bold ? styles.bold : null]}>
-					{title}
-				</Text>
+				<Text style={finalTitleStyle}>{title}</Text>
 				{subtitle ? (
 					<Text style={[styles.subtitle, subtitleStyle]}>
 						{separator}
@@ -102,3 +123,9 @@ export function ListSectionHeader(props: PropsType) {
 		</View>
 	)
 }
+
+export const RawListSectionHeader = ListSectionHeader
+
+const ThemedListSectionHeader = withTheme(ListSectionHeader)
+
+export {ThemedListSectionHeader as ListSectionHeader}
