@@ -3,7 +3,7 @@
 import * as React from 'react'
 
 import {StyleSheet, Animated} from 'react-native'
-import {sto} from '@app/lib/colors'
+import {white} from '@frogpond/colors'
 import {SearchBar} from './searchbar'
 import {Viewport} from '@frogpond/viewport'
 
@@ -137,7 +137,7 @@ export class AnimatedSearchBar extends React.Component<Props> {
 
 let styles = StyleSheet.create({
 	common: {
-		backgroundColor: sto.white,
+		backgroundColor: white,
 	},
 	searchContainer: {
 		margin: 0,
