@@ -9,36 +9,48 @@ import {
 	TouchableWithoutFeedback,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-import {sto} from '@app/lib/colors'
-import * as theme from '@app/lib/theme'
+import {white} from '@frogpond/colors'
+import {type AppTheme} from '@frogpond/app-theme'
+import {withTheme} from '@callstack/react-theme-provider'
 
 type Props = {
 	filter: FilterType,
 	label: string,
 	onRemove: (filter: FilterType) => any,
 	style?: any,
+	theme: AppTheme,
 }
 
-export function ActiveFilterButton({filter, label, onRemove, style}: Props) {
+function ActiveFilterButton({filter, label, onRemove, style, theme}: Props) {
 	const iconName = Platform.select({
 		ios: 'ios-close-circle',
 		android: 'md-close-circle',
 	})
 
+	const foreground = {color: theme.buttonForeground}
+	const background = {backgroundColor: theme.buttonBackground}
+	// TODO: pick an appopriate icon color automatically
+	const iconColor = white
+
 	return (
-		<View style={[style, styles.badge]}>
-			<Text style={styles.text}>{label}</Text>
+		<View style={[styles.badge, background, style]}>
+			<Text style={[styles.text, foreground]}>{label}</Text>
 			<TouchableWithoutFeedback onPress={() => onRemove(filter)}>
-				<Icon color={sto.white} name={iconName} size={20} />
+				<Icon color={iconColor} name={iconName} size={20} />
 			</TouchableWithoutFeedback>
 		</View>
 	)
 }
 
+export const RawActiveFilterButton = ActiveFilterButton
+
+const ThemedActiveFilterButton = withTheme(ActiveFilterButton)
+
+export {ThemedActiveFilterButton as ActiveFilterButton}
+
 const styles = StyleSheet.create({
 	badge: {
 		alignItems: 'center',
-		backgroundColor: theme.accent,
 		borderRadius: 15,
 		flexDirection: 'row',
 		justifyContent: 'center',
