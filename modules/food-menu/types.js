@@ -27,6 +27,7 @@ export type MenuItemType = {
 				well_being: string,
 				well_being_image: string,
 		  },
+	nutrition_details: {} | NutritionDetailContainer,
 	nutrition_link: string,
 	options: any[],
 	price: CurrencyStringType,
@@ -38,6 +39,26 @@ export type MenuItemType = {
 	sub_station_order: NumericStringType,
 	tier3: boolean,
 	zero_entree: NumericStringType,
+}
+
+export type NutritionDetailContainer = {
+	calories: NutritionDetailType,
+	servingSize: NutritionDetailType,
+	fatContent: NutritionDetailType,
+	saturatedFatContent: NutritionDetailType,
+	transFatContent: NutritionDetailType,
+	cholesterolContent: NutritionDetailType,
+	sodiumContent: NutritionDetailType,
+	carbohydrateContent: NutritionDetailType,
+	fiberContent: NutritionDetailType,
+	sugarContent: NutritionDetailType,
+	proteinContent: NutritionDetailType,
+}
+
+export type NutritionDetailType = {
+	label: string,
+	value: number,
+	unit: string,
 }
 
 export type StationMenuType = {
