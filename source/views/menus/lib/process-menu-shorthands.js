@@ -29,6 +29,7 @@ export function upgradeMenuItem(
 			well_being: '',
 			well_being_image: '',
 		},
+		nutrition_details: {},
 		nutrition_link: '',
 		price: '',
 		rating: '',

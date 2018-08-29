@@ -19,6 +19,7 @@ export const item: ({|
 	monotony: {},
 	nutrition_link: '',
 	nutrition: {},
+	nutrition_details: {},
 	options: [],
 	rating: '',
 	special: special,
