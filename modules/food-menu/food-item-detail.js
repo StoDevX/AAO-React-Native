@@ -19,10 +19,8 @@ type Props = TopLevelViewPropsType & {
 }
 
 export class MenuItemDetailView extends React.Component<Props> {
-	static navigationOptions = () => {
-		return {
-			title: 'Nutrition',
-		}
+	static navigationOptions = {
+		title: 'Nutrition',
 	}
 
 	render() {
