@@ -16,19 +16,22 @@ type FoodItemPropsType = {|
 	style?: any,
 	badgeSpecials?: boolean,
 	spacing: {left: number},
+	onPress: any,
 |}
 
 export function FoodItemRow({
 	data,
 	corIcons,
 	badgeSpecials = true,
+	onPress,
 	...props
 }: FoodItemPropsType) {
 	const {left = 0} = props.spacing
 	return (
 		<ListRow
-			arrowPosition="none"
+			arrowPosition="center"
 			fullWidth={true}
+			onPress={onPress}
 			style={[styles.container, props.style]}
 		>
 			<Row alignItems="center">
@@ -46,6 +49,7 @@ export function FoodItemRow({
 				<DietaryTags
 					corIcons={corIcons}
 					dietary={data.cor_icon}
+					isDetail={false}
 					style={styles.iconContainer}
 				/>
 			</Row>
