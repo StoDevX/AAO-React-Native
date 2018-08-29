@@ -30,6 +30,7 @@ import {
 	CarletonWeitzMenuScreen,
 	MenusView,
 } from '../views/menus'
+import {MenuItemDetailView} from '@frogpond/food-menu/food-item-detail'
 import NewsView from '../views/news'
 import PrivacyView from '../views/settings/privacy'
 import SettingsView from '../views/settings'
@@ -89,6 +90,7 @@ export const routes = {
 	CarletonLDCMenuView: {screen: CarletonLDCMenuScreen},
 	CarletonWeitzMenuView: {screen: CarletonWeitzMenuScreen},
 	CarletonSaylesMenuView: {screen: CarletonSaylesMenuScreen},
+	MenuItemDetailView: {screen: MenuItemDetailView},
 	PrintJobsView: {screen: PrintJobsView},
 	PrinterListView: {screen: PrinterListView},
 	PrintJobReleaseView: {screen: PrintJobReleaseView},
