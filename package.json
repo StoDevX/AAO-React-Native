@@ -186,6 +186,6 @@
     "xcode": "1.0.0"
   },
   "optionalDependencies": {
-    "detox": "8.1.6"
+    "detox": "9.0.1"
   }
 }
