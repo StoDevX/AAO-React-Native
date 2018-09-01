@@ -7,12 +7,9 @@ import {ListRow, ListSeparator, Detail, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import map from 'lodash/map'
 import {DietaryTags} from './dietary-tags'
+import {calculateAmount} from './lib/calculate-amount'
 import {type TopLevelViewPropsType} from '../../source/views/types'
-import type {
-	MenuItemType as MenuItem,
-	NutritionDetailType,
-	MasterCorIconMapType,
-} from './types'
+import type {MenuItemType as MenuItem, MasterCorIconMapType} from './types'
 
 type Props = TopLevelViewPropsType & {
 	navigation: {state: {params: {icons: MasterCorIconMapType, item: MenuItem}}},
@@ -26,13 +23,6 @@ export class MenuItemDetailView extends React.Component<Props> {
 	render() {
 		const item = this.props.navigation.state.params.item
 		const icons = this.props.navigation.state.params.icons
-
-		const calculateAmount = (nutrition: NutritionDetailType) => {
-			// turn "lessthang" and "lessthanmg" into "less than 1g", "less than 5mg", etc
-			return nutrition.unit.includes('lessthan')
-				? `less than ${nutrition.value}${nutrition.unit.split('lessthan')[1]}`
-				: `${nutrition.value}${nutrition.unit}`
-		}
 
 		return (
 			<ScrollView style={styles.container}>
