@@ -5,6 +5,7 @@ import {StyleSheet, Platform, View} from 'react-native'
 import {StyledAlphabetListView} from './alphabet-listview'
 import debounce from 'lodash/debounce'
 import {SearchBar} from '@frogpond/searchbar'
+import {white} from '@frogpond/colors'
 
 export const LIST_HEADER_HEIGHT = Platform.OS === 'ios' ? 42 : 0
 
@@ -26,7 +27,12 @@ export class SearchableAlphabetListView extends React.Component<Props> {
 	render() {
 		return (
 			<View style={styles.wrapper}>
-				<SearchBar onChange={this.performSearch} value={this.props.query} />
+				<SearchBar
+					onChange={this.performSearch}
+					textFieldBackgroundColor={white}
+					value={this.props.query}
+				/>
+
 				<StyledAlphabetListView
 					headerHeight={
 						Platform.OS === 'ios'
