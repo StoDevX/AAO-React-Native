@@ -1,7 +1,6 @@
 import {Platform} from 'react-native'
-import {silver} from './index'
 
-export const iosGray = silver
+export const iosGray = 'rgb(241, 241, 242)'
 
 export const androidLightBackground = 'rgb(244, 244, 244)'
 export const androidSeparator = 'rgb(224, 224, 224)'
