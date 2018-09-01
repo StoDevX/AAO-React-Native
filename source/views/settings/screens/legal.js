@@ -7,7 +7,7 @@ import {text} from '../../../docs/legal.json'
 
 type Props = {}
 
-export default class LegalView extends React.PureComponent<Props> {
+export class LegalView extends React.Component<Props> {
 	static navigationOptions = {
 		title: 'Legal',
 	}

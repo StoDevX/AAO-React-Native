@@ -7,7 +7,7 @@ import {text} from '../../../docs/privacy.json'
 
 type Props = {}
 
-export default class PrivacyView extends React.PureComponent<Props> {
+export default class PrivacyView extends React.Component<Props> {
 	static navigationOptions = {
 		title: 'Privacy Policy',
 	}

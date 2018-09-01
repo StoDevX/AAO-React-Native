@@ -44,7 +44,7 @@ type State = {
 	iconType: ?string,
 }
 
-export class IconSettingsView extends React.PureComponent<Props, State> {
+export class IconSettingsView extends React.Component<Props, State> {
 	static navigationOptions = {
 		title: 'App Icon',
 	}
