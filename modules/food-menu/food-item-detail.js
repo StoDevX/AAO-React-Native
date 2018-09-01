@@ -36,7 +36,7 @@ export class MenuItemDetailView extends React.Component<Props> {
 				/>
 
 				{item.description ? (
-					<View>
+					<React.Fragment>
 						<ListRow
 							arrowPosition="none"
 							contentContainerStyle={styles.container}
@@ -50,14 +50,14 @@ export class MenuItemDetailView extends React.Component<Props> {
 							</Row>
 						</ListRow>
 						<ListSeparator />
-					</View>
+					</React.Fragment>
 				) : null}
 
 				{item.nutrition_details &&
 				Object.keys(item.nutrition_details).length > 1 ? (
 					map(item.nutrition_details, (nutrition, key: number) => {
 						return (
-							<View key={`${nutrition}-${key}`}>
+							<React.Fragment key={`${nutrition}-${key}`}>
 								<ListRow
 									arrowPosition="none"
 									fullWidth={false}
@@ -73,7 +73,7 @@ export class MenuItemDetailView extends React.Component<Props> {
 								</ListRow>
 
 								<ListSeparator />
-							</View>
+							</React.Fragment>
 						)
 					})
 				) : (
