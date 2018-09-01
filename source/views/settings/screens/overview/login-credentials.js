@@ -2,15 +2,15 @@
 
 import * as React from 'react'
 import {Cell, Section, CellTextField} from '@frogpond/tableview'
-import {LoginButton} from '../components/login-button'
+import {LoginButton} from './login-button'
 import {
 	logInViaCredentials,
 	logOutViaCredentials,
 	validateLoginCredentials,
 	setLoginCredentials,
 	type LoginStateType,
-} from '../../../redux/parts/settings'
-import {type ReduxState} from '../../../redux'
+} from '../../../../redux/parts/settings'
+import {type ReduxState} from '../../../../redux'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
 import {sectionBgColor} from '@frogpond/colors'
@@ -77,9 +77,8 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
 				{loggedIn ? (
 					<Cell title={`Logged in as ${username}.`} />
 				) : (
-					[
+					<React.Fragment>
 						<CellTextField
-							key="username"
 							_ref={this.getUsernameRef}
 							disabled={loading}
 							label="Username"
@@ -89,7 +88,7 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
 							returnKeyType="next"
 							secureTextEntry={false}
 							value={username}
-						/>,
+						/>
 
 						<CellTextField
 							key="password"
@@ -102,8 +101,8 @@ class CredentialsLoginSection extends React.PureComponent<Props, State> {
 							returnKeyType="done"
 							secureTextEntry={true}
 							value={password}
-						/>,
-					]
+						/>
+					</React.Fragment>
 				)}
 
 				<LoginButton
