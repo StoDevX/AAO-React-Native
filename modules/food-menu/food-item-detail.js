@@ -21,8 +21,7 @@ export class MenuItemDetailView extends React.Component<Props> {
 	}
 
 	render() {
-		const item = this.props.navigation.state.params.item
-		const icons = this.props.navigation.state.params.icons
+		const {item, icons} = this.props.navigation.state.params
 
 		return (
 			<ScrollView style={styles.container}>

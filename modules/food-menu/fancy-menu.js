@@ -98,8 +98,8 @@ export class FancyMenu extends React.Component<Props, State> {
 
 	onPressRow(item: MenuItem, icons: MasterCorIconMapType) {
 		this.props.navigation.navigate('MenuItemDetailView', {
-			item: item,
-			icons: icons,
+			item,
+			icons,
 		})
 	}
 
