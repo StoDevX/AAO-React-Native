@@ -28,7 +28,7 @@ const openEmail = () => {
 	})
 }
 
-export default class SupportSection extends React.PureComponent<Props> {
+export default class SupportSection extends React.Component<Props> {
 	onPressButton = (id: string) => {
 		this.props.navigation.navigate(id)
 	}

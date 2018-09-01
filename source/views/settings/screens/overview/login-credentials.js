@@ -35,7 +35,7 @@ type State = {
 	password: string,
 }
 
-class CredentialsLoginSection extends React.PureComponent<Props, State> {
+class CredentialsLoginSection extends React.Component<Props, State> {
 	_usernameInput: any
 	_passwordInput: any
 

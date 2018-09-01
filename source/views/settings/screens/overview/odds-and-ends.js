@@ -12,7 +12,7 @@ type Props = TopLevelViewPropsType & {
 	feedbackDisabled: boolean,
 }
 
-class OddsAndEndsSection extends React.PureComponent<Props> {
+class OddsAndEndsSection extends React.Component<Props> {
 	render() {
 		return (
 			<React.Fragment>
