@@ -13,6 +13,7 @@ import {
 	DictionaryEditorView,
 	DictionaryView,
 } from '../views/dictionary'
+import {DirectoryView, DirectoryDetailView} from '../views/directory'
 import {FaqView} from '../views/faqs'
 import {HelpView} from '../views/help'
 import {
@@ -53,6 +54,8 @@ import {
 } from '../views/stoprint'
 
 export const routes = {
+	DirectoryView: {screen: DirectoryView},
+	DirectoryDetailView: {screen: DirectoryDetailView},
 	HomeView: {screen: HomeView},
 	BuildingHoursDetailView: {screen: BuildingHoursDetailView},
 	BuildingHoursView: {screen: BuildingHoursView},
