@@ -8,11 +8,13 @@ import * as c from '@frogpond/colors'
 import map from 'lodash/map'
 import {DietaryTagsDetail} from './dietary-tags-detail'
 import {calculateAmount} from './lib/calculate-amount'
-import {type TopLevelViewPropsType} from '../../source/views/types'
+import type {NavigationScreenProp} from 'react-navigation'
 import type {MenuItemType as MenuItem, MasterCorIconMapType} from './types'
 
-type Props = TopLevelViewPropsType & {
-	navigation: {state: {params: {icons: MasterCorIconMapType, item: MenuItem}}},
+type Props = {
+	navigation: NavigationScreenProp<*> & {
+		state: {params: {icons: MasterCorIconMapType, item: MenuItem}},
+	},
 }
 
 export class MenuItemDetailView extends React.Component<Props> {
