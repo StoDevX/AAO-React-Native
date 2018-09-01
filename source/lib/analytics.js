@@ -1,19 +1,13 @@
 // @flow
 
 import {trackEventWithCustomDimensionValues} from '@frogpond/analytics'
-import {stringifyFilters} from '@frogpond/filter/stringify-filters'
 
 // Google requires that custom dimensions be tracked by index, and we only get
 // 20 custom dimensions, so I decided to centralize them here.
-export function trackMenuFilters(menuName: string, filters: any) {
-	trackEventWithCustomDimensionValues(
-		'menus',
-		'filter',
-		{label: menuName, value: 1},
-		{'1': stringifyFilters(filters)},
-	)
-}
 
+// "1" was trackMenuFilters, which is no more.
+
+// "2" is trackHomescreenOrder
 export function trackHomescreenOrder(order: string[], isDefaultOrder: boolean) {
 	trackEventWithCustomDimensionValues(
 		'homescreen',
@@ -23,6 +17,7 @@ export function trackHomescreenOrder(order: string[], isDefaultOrder: boolean) {
 	)
 }
 
+// "3" is trackHomescreenDisabledItem and trackHomescreenReenabledItem (with different values)
 export function trackHomescreenDisabledItem(viewName: string) {
 	trackEventWithCustomDimensionValues(
 		'homescreen',
