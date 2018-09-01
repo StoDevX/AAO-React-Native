@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {Text, ScrollView, View, StyleSheet} from 'react-native'
+import {Text, ScrollView, StyleSheet} from 'react-native'
 import {Column, Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Detail, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
