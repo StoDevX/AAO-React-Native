@@ -49,7 +49,6 @@ export function FoodItemRow({
 				<DietaryTags
 					corIcons={corIcons}
 					dietary={data.cor_icon}
-					isDetail={false}
 					style={styles.iconContainer}
 				/>
 			</Row>

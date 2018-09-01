@@ -6,7 +6,7 @@ import {Column, Row} from '@frogpond/layout'
 import {ListRow, ListSeparator, Detail, Title} from '@frogpond/lists'
 import * as c from '@frogpond/colors'
 import map from 'lodash/map'
-import {DietaryTags} from './dietary-tags'
+import {DietaryTagsDetail} from './dietary-tags-detail'
 import {calculateAmount} from './lib/calculate-amount'
 import {type TopLevelViewPropsType} from '../../source/views/types'
 import type {MenuItemType as MenuItem, MasterCorIconMapType} from './types'
@@ -30,10 +30,9 @@ export class MenuItemDetailView extends React.Component<Props> {
 					{item.label}
 				</Text>
 
-				<DietaryTags
+				<DietaryTagsDetail
 					corIcons={icons}
 					dietary={item.cor_icon}
-					isDetail={true}
 					style={styles.iconContainer}
 				/>
 
