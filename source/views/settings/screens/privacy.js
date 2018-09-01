@@ -3,7 +3,7 @@ import * as React from 'react'
 import * as c from '@frogpond/colors'
 import {View, ScrollView} from 'glamorous-native'
 import {Markdown} from '@frogpond/markdown'
-import {text} from '../../../docs/privacy.json'
+import {text} from '../../../../docs/privacy.json'
 
 type Props = {}
 

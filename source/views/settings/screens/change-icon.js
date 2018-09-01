@@ -3,9 +3,8 @@ import React from 'react'
 import {ScrollView, Image, StyleSheet} from 'react-native'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
 import {Section, Cell} from '@frogpond/tableview'
-import {icons as appIcons} from '../../../images/icons'
+import {icons as appIcons} from '../../../../images/icons'
 import * as c from '@frogpond/colors'
-import type {TopLevelViewPropsType} from '../types'
 
 const styles = StyleSheet.create({
 	icon: {
@@ -38,7 +37,7 @@ export const icons: Array<Icon> = [
 	},
 ]
 
-type Props = TopLevelViewPropsType & {}
+type Props = {}
 
 type State = {
 	iconType: ?string,

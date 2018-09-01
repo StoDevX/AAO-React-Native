@@ -3,12 +3,12 @@
 import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
 import {TableView} from '@frogpond/tableview'
-import type {TopLevelViewPropsType} from '../types'
+import {type NavigationScreenProp} from 'react-navigation'
 
-import CredentialsLoginSection from './sections/login-credentials'
-import MiscellanySection from './sections/miscellany'
-import OddsAndEndsSection from './sections/odds-and-ends'
-import SupportSection from './sections/support'
+import CredentialsLoginSection from './login-credentials'
+import MiscellanySection from './miscellany'
+import OddsAndEndsSection from './odds-and-ends'
+import SupportSection from './support'
 
 const styles = StyleSheet.create({
 	container: {
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export default function SettingsView(props: TopLevelViewPropsType) {
+export function SettingsView(props: {navigation: NavigationScreenProp<*>}) {
 	return (
 		<ScrollView
 			contentContainerStyle={styles.container}

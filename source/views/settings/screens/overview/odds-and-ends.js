@@ -1,13 +1,12 @@
 // @flow
 import * as React from 'react'
 import {Cell, Section, CellToggle} from '@frogpond/tableview'
-import {version} from '../../../../package.json'
-import type {TopLevelViewPropsType} from '../../types'
-import {setFeedbackStatus} from '../../../redux/parts/settings'
+import {APP_VERSION} from '../../../../lib/constants'
+import {setFeedbackStatus} from '../../../../redux/parts/settings'
 import {connect} from 'react-redux'
 import {sectionBgColor} from '@frogpond/colors'
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	onChangeFeedbackToggle: (feedbackDisabled: boolean) => any,
 	feedbackDisabled: boolean,
 }
@@ -15,19 +14,17 @@ type Props = TopLevelViewPropsType & {
 class OddsAndEndsSection extends React.Component<Props> {
 	render() {
 		return (
-			<React.Fragment>
-				<Section header="ODDS &amp; ENDS" sectionTintColor={sectionBgColor}>
-					<Cell cellStyle="RightDetail" detail={version} title="Version" />
+			<Section header="ODDS &amp; ENDS" sectionTintColor={sectionBgColor}>
+				<Cell cellStyle="RightDetail" detail={APP_VERSION} title="Version" />
 
-					<CellToggle
-						label="Share Analytics"
-						// These are both inverted because the toggle makes more sense as
-						// optout/optin, but the code works better as optin/optout.
-						onChange={val => this.props.onChangeFeedbackToggle(!val)}
-						value={!this.props.feedbackDisabled}
-					/>
-				</Section>
-			</React.Fragment>
+				<CellToggle
+					label="Share Analytics"
+					// These are both inverted because the toggle makes more sense as
+					// optout/optin, but the code works better as optin/optout.
+					onChange={val => this.props.onChangeFeedbackToggle(!val)}
+					value={!this.props.feedbackDisabled}
+				/>
+			</Section>
 		)
 	}
 }
