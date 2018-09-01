@@ -14,7 +14,6 @@ const styles = StyleSheet.create({
 
 export class SearchBar extends React.Component<Props> {
 	static defaultProps = {
-		backgroundColor: c.iosGray,
 		onCancel: () => {},
 		onChange: () => {},
 		onFocus: () => {},
@@ -41,7 +40,6 @@ export class SearchBar extends React.Component<Props> {
 			<NativeSearchBar
 				ref={this.handleRef}
 				autoCorrect={false}
-				barTintColor={this.props.backgroundColor}
 				hideBackground={true}
 				onCancelButtonPress={this.props.onCancel}
 				onChangeText={this.props.onChange}
