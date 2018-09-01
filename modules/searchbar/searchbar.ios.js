@@ -19,7 +19,7 @@ export class SearchBar extends React.Component<Props> {
 		onFocus: () => {},
 		onSubmit: () => {},
 		placeholder: 'Search',
-		textFieldBackgroundColor: null,
+		textFieldBackgroundColor: c.iosGray,
 		value: '',
 	}
 
