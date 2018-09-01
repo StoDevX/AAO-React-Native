@@ -42,12 +42,8 @@ export class MenuItemDetailView extends React.Component<Props> {
 							contentContainerStyle={styles.container}
 							fullWidth={false}
 						>
-							<Row>
-								<Title>Description</Title>
-							</Row>
-							<Row>
-								<Detail>{item.description}</Detail>
-							</Row>
+							<Title>Description</Title>
+							<Detail>{item.description}</Detail>
 						</ListRow>
 						<ListSeparator />
 					</React.Fragment>
