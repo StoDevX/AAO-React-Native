@@ -5,7 +5,7 @@ import {data as credits} from '../../../docs/credits.json'
 import glamorous from 'glamorous-native'
 import {Platform, StyleSheet, ScrollView} from 'react-native'
 import {iOSUIKit, material} from 'react-native-typography'
-import {AppLogo} from '../../components/logo'
+import {AppLogo} from './components/logo'
 
 const styles = StyleSheet.create({
 	container: {
