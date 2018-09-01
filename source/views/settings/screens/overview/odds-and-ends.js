@@ -13,9 +13,14 @@ type Props = {
 
 class OddsAndEndsSection extends React.Component<Props> {
 	render() {
+		let [version, build] = APP_VERSION.split('+')
+
 		return (
 			<Section header="ODDS &amp; ENDS" sectionTintColor={sectionBgColor}>
-				<Cell cellStyle="RightDetail" detail={APP_VERSION} title="Version" />
+				<Cell cellStyle="RightDetail" detail={version} title="Version" />
+				{build && (
+					<Cell cellStyle="RightDetail" detail={build} title="Build Number" />
+				)}
 
 				<CellToggle
 					label="Share Analytics"
