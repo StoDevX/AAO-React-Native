@@ -13,7 +13,7 @@ type State = {
 	canChangeIcon: boolean,
 }
 
-export default class MiscellanySection extends React.Component<Props, State> {
+export class MiscellanySection extends React.Component<Props, State> {
 	state = {
 		canChangeIcon: false,
 	}

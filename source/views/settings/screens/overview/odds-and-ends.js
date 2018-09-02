@@ -11,7 +11,7 @@ type Props = {
 	feedbackDisabled: boolean,
 }
 
-class OddsAndEndsSection extends React.Component<Props> {
+export class OddsAndEndsSection extends React.Component<Props> {
 	render() {
 		let [version, build] = APP_VERSION.split('+')
 

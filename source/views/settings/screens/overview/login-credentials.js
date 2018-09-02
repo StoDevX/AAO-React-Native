@@ -145,7 +145,7 @@ function mapDispatchToProps(dispatch): ReduxDispatchProps {
 	}
 }
 
-export default connect(
+export const ConnectedCredentialsLoginSection = connect(
 	mapStateToProps,
 	mapDispatchToProps,
 )(CredentialsLoginSection)
