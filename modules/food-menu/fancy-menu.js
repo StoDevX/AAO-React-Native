@@ -11,6 +11,7 @@ import type {
 	MenuItemContainerType,
 	StationMenuType,
 } from './types'
+import {type NavigationScreenProp} from 'react-navigation'
 import size from 'lodash/size'
 import values from 'lodash/values'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
@@ -36,6 +37,7 @@ type FilterFunc = (filters: Array<FilterType>, item: MenuItem) => boolean
 
 type DefaultProps = {
 	applyFilters: FilterFunc,
+	navigation: NavigationScreenProp<*>,
 }
 
 type Props = ReactProps & DefaultProps
@@ -94,6 +96,10 @@ export class FancyMenu extends React.Component<Props, State> {
 		})
 	}
 
+	onPressRow(item: MenuItem, icons: MasterCorIconMapType) {
+		this.props.navigation.navigate('MenuItemDetailView', {item, icons})
+	}
+
 	groupMenuData = (args: {
 		filters: Array<FilterType>,
 		stations: Array<StationMenuType>,
@@ -143,6 +149,7 @@ export class FancyMenu extends React.Component<Props, State> {
 				badgeSpecials={!specialsFilterEnabled}
 				corIcons={this.props.menuCorIcons}
 				data={item}
+				onPress={() => this.onPressRow(item, this.props.menuCorIcons)}
 				spacing={{left: LEFT_MARGIN}}
 			/>
 		)

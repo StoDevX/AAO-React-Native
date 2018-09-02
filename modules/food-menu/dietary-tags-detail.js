@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react'
-import {View, StyleSheet, Image} from 'react-native'
+import {View, Text, StyleSheet, Image} from 'react-native'
+import {Row} from '@frogpond/layout'
 
 import keys from 'lodash/keys'
 import pick from 'lodash/pick'
@@ -12,14 +13,17 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'flex-end',
 	},
-	iconsList: {
-		marginHorizontal: 3,
+	wrapper: {
+		marginVertical: 5,
+	},
+	iconsDetail: {
+		marginRight: 5,
 		width: 15,
 		height: 15,
 	},
 })
 
-export function DietaryTags({
+export function DietaryTagsDetail({
 	corIcons,
 	dietary,
 	style,
@@ -33,14 +37,13 @@ export function DietaryTags({
 		? pick(corIcons, [])
 		: pick(corIcons, keys(dietary))
 
-	// turn the remaining items into images
 	let tags = map(filtered, (dietaryIcon, key) => (
-		<Image
-			key={key}
-			source={{uri: dietaryIcon.image}}
-			style={styles.iconsList}
-		/>
+		<Row key={key} alignItems="center" style={styles.wrapper}>
+			<Row flex={1}>
+				<Image source={{uri: dietaryIcon.image}} style={styles.iconsDetail} />
+				<Text>{dietaryIcon.label}</Text>
+			</Row>
+		</Row>
 	))
-
 	return <View style={[styles.container, style]}>{tags}</View>
 }
