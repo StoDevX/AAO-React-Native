@@ -6,6 +6,7 @@ import './init/moment'
 import './init/analytics'
 import './init/api'
 import './init/theme'
+import {ONESIGNAL_APP_ID} from './init/notifications'
 
 import * as React from 'react'
 import {Provider} from 'react-redux'
@@ -22,6 +23,8 @@ type Props = {}
 
 export default class App extends React.Component<Props> {
 	componentDidMount() {
+		OneSignal.init(ONESIGNAL_APP_ID, {kOSSettingsKeyAutoPrompt: false})
+
 		OneSignal.addEventListener('received', this.onReceived)
 		OneSignal.addEventListener('opened', this.onOpened)
 		OneSignal.addEventListener('ids', this.onIds)
