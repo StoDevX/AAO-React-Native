@@ -11,7 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons'
 import {NoticeView} from '@frogpond/notice'
 import {sto} from '../../../lib/colors'
-import delay from 'delay'
+import {Timer} from '@frogpond/timer'
 
 type Props = {
 	buttonText: string,
@@ -22,70 +22,42 @@ type Props = {
 	text: string,
 }
 
-type State = {
-	refreshing: boolean,
-}
-
-export class StoPrintNoticeView extends React.PureComponent<Props, State> {
-	_timer: ?IntervalID
-
-	state = {
-		refreshing: false,
-	}
-
-	componentDidMount() {
-		this._timer = setInterval(this.props.refresh, 5000)
-	}
-
-	componentWillUnmount() {
-		if (this._timer) {
-			clearInterval(this._timer)
-		}
-	}
-
-	_refresh = async () => {
-		this.setState(() => ({refreshing: true}))
-		let start = Date.now()
-
-		await this.props.refresh()
-
-		let elapsed = start - Date.now()
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-		this.setState(() => ({refreshing: false}))
-	}
-
+export class StoPrintNoticeView extends React.PureComponent<Props> {
 	render() {
 		const {buttonText, description, header, onPress, text} = this.props
+
 		return (
-			<ScrollView
-				contentContainerStyle={styles.content}
-				refreshControl={
-					<RefreshControl
-						onRefresh={this._refresh}
-						refreshing={this.state.refreshing}
-					/>
-				}
-				showsVerticalScrollIndicator={false}
-				style={styles.container}
-			>
-				<Icon
-					color={sto.black}
-					name={Platform.OS === 'ios' ? 'ios-print' : 'md-print'}
-					size={100}
-				/>
-				<NoticeView
-					buttonText={buttonText}
-					header={header}
-					onPress={onPress}
-					style={styles.notice}
-					text={text}
-				/>
-				{description ? (
-					<Text style={styles.description}>{description}</Text>
-				) : null}
-			</ScrollView>
+			<Timer
+				interval={5000}
+				invoke={this.props.refresh}
+				moment={false}
+				render={({refresh, loading}) => (
+					<ScrollView
+						contentContainerStyle={styles.content}
+						refreshControl={
+							<RefreshControl onRefresh={refresh} refreshing={loading} />
+						}
+						showsVerticalScrollIndicator={false}
+						style={styles.container}
+					>
+						<Icon
+							color={sto.black}
+							name={Platform.OS === 'ios' ? 'ios-print' : 'md-print'}
+							size={100}
+						/>
+						<NoticeView
+							buttonText={buttonText}
+							header={header}
+							onPress={onPress}
+							style={styles.notice}
+							text={text}
+						/>
+						{description ? (
+							<Text style={styles.description}>{description}</Text>
+						) : null}
+					</ScrollView>
+				)}
+			/>
 		)
 	}
 }
