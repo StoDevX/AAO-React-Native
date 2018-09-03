@@ -1,17 +1,34 @@
 // @flow
 
 import * as React from 'react'
-import moment from 'moment'
+import moment from 'moment-timezone'
+import delay from 'delay'
 
 type Props = {
 	interval: number, // ms
-	render: ({now: Date}) => React.Node,
-	moment?: boolean,
 	timezone?: string,
-}
+} & (
+	| {
+			moment?: true,
+			render: ({
+				now: moment,
+				loading: boolean,
+				refresh: () => mixed,
+			}) => React.Node,
+	  }
+	| {
+			moment?: false,
+			render: ({
+				now: Date,
+				loading: boolean,
+				refresh: () => mixed,
+			}) => React.Node,
+	  }
+)
 
 type State = {
 	now: Date,
+	loading: boolean,
 }
 
 export class Timer extends React.Component<Props, State> {
@@ -20,10 +37,12 @@ export class Timer extends React.Component<Props, State> {
 
 	state = {
 		now: new Date(),
+		loading: false,
 	}
 
 	componentDidMount() {
 		this._intervalId = setInterval(this.updateTime, this.props.interval)
+
 		// get the time remaining until the next $interval
 		let {interval} = this.props
 		let nowMs = this.state.now.getTime()
@@ -49,17 +68,31 @@ export class Timer extends React.Component<Props, State> {
 		this.setState(() => ({now: new Date()}))
 	}
 
+	refresh = async () => {
+		const start = Date.now()
+		this.setState(() => ({loading: true}))
+
+		this.updateTime()
+
+		const elapsed = Date.now() - start
+		if (elapsed < 500) {
+			await delay(500 - elapsed)
+		}
+
+		this.setState(() => ({loading: false}))
+	}
+
 	render() {
-		let {now} = this.state
+		let {now, loading} = this.state
 
 		if (this.props.moment) {
 			now = moment(now)
+
+			if (this.props.timezone) {
+				now = now.tz(this.props.timezone)
+			}
 		}
 
-		if (this.props.timezone) {
-			now = now.tz(this.props.timezone)
-		}
-
-		return this.props.render({now})
+		return this.props.render({now, loading, refresh: this.refresh})
 	}
 }
