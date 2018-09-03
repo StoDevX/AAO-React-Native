@@ -41,6 +41,16 @@ const TransportationView = TabNavigator({
 		},
 	},
 
+	OlesGoView: {
+		screen: ({navigation}) => (
+			<BusView line="Oles Go" navigation={navigation} />
+		),
+		navigationOptions: {
+			tabBarLabel: 'Oles Go',
+			tabBarIcon: TabBarIcon('car'),
+		},
+	},
+
 	TransportationOtherModesListView: {
 		screen: OtherModesView,
 	},
