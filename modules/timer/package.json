@@ -1,5 +1,5 @@
 {
-  "name": "@frogpond/constants",
+  "name": "@frogpond/timer",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "react-native": "^0.55.4"
-  },
-  "dependencies": {}
+    "react": "^16.4.2",
+    "moment-timezone": "^0.5.21"
+  }
 }

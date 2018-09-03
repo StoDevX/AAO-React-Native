@@ -2,14 +2,14 @@
 
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
+import type moment from 'moment'
 import type {UnprocessedBusLine} from './types'
 import MapView from '@mapbox/react-native-mapbox-gl'
-import moment from 'moment-timezone'
 import {NoticeView} from '@frogpond/notice'
-import type {TopLevelViewPropsType} from '../../types'
 import {getScheduleForNow, processBusLine} from './lib'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
+import {Timer} from '@frogpond/timer'
 
 const TIMEZONE = 'America/Winnipeg'
 
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 	map: {...StyleSheet.absoluteFillObject},
 })
 
-type Props = TopLevelViewPropsType & {|
+type WrapperProps = {|
 	navigation: {
 		state: {
 			params: {
@@ -27,8 +27,25 @@ type Props = TopLevelViewPropsType & {|
 	},
 |}
 
-type State = {|
+export function BusMap(props: WrapperProps) {
+	const lineToDisplay = props.navigation.state.params.line
+
+	return (
+		<Timer
+			interval={60000}
+			moment={true}
+			render={({now}) => <Map line={lineToDisplay} now={now} />}
+			timezone={TIMEZONE}
+		/>
+	)
+}
+
+type Props = {|
+	line: UnprocessedBusLine,
 	now: moment,
+|}
+
+type State = {|
 	region: {
 		latitude: number,
 		latitudeDelta: number,
@@ -37,33 +54,20 @@ type State = {|
 	},
 |}
 
-export class BusMap extends React.PureComponent<Props, State> {
+class Map extends React.Component<Props, State> {
 	static navigationOptions = (args: {
 		navigation: {state: {params: {line: UnprocessedBusLine}}},
 	}) => ({
 		title: `${args.navigation.state.params.line.line} Map`,
 	})
 
-	_intervalId: ?IntervalID
-
 	state = {
-		now: moment.tz(TIMEZONE),
 		region: {
 			latitude: 44.44946671480875,
 			latitudeDelta: 0.06175530810822494,
 			longitude: -93.17014753996669,
 			longitudeDelta: 0.05493163793703104,
 		},
-	}
-
-	componentDidMount() {
-		// This updates the screen every second, so that the "next bus" times are
-		// updated without needing to leave and come back.
-		this._intervalId = setInterval(this.updateTime, 1000)
-	}
-
-	componentWillUnmount() {
-		this._intervalId && clearInterval(this._intervalId)
 	}
 
 	onRegionChangeComplete = (newRegion: {
@@ -81,14 +85,9 @@ export class BusMap extends React.PureComponent<Props, State> {
 		})
 	}
 
-	updateTime = () => {
-		this.setState(() => ({now: moment.tz(TIMEZONE)}))
-	}
-
 	render() {
-		const {now} = this.state
-		// now = moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE)
-		const lineToDisplay = this.props.navigation.state.params.line
+		const lineToDisplay = this.props.line
+		const now = this.props.now
 
 		const processedLine = processBusLine(lineToDisplay, now)
 		const scheduleForToday = getScheduleForNow(processedLine.schedules, now)
@@ -104,7 +103,9 @@ export class BusMap extends React.PureComponent<Props, State> {
 
 		if (!entriesWithCoordinates.length) {
 			const today = now.format('dddd')
-			const msg = `No coordinates have been provided for today's (${today}) schedule on the "${lineToDisplay}" line`
+			const msg = `No coordinates have been provided for today's (${today}) schedule on the "${
+				lineToDisplay.line
+			}" line`
 			return <NoticeView text={msg} />
 		}
 
