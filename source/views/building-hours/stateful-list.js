@@ -43,12 +43,12 @@ type ReduxStateProps = {
 
 type Props = TopLevelViewPropsType & ReduxStateProps
 
-type State = {
+type State = {|
 	error: ?Error,
 	loading: boolean,
 	buildings: Array<{title: string, data: Array<BuildingType>}>,
 	allBuildings: Array<BuildingType>,
-}
+|}
 
 export class BuildingHoursView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
@@ -61,7 +61,6 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		loading: false,
 		buildings: groupBuildings(defaultData.data, this.props.favoriteBuildings),
 		allBuildings: defaultData.data,
-		intervalId: null,
 	}
 
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
