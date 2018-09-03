@@ -9,7 +9,7 @@ type Props = {
 	timezone?: string,
 } & (
 	| {
-			moment?: true,
+			moment: true,
 			render: ({
 				now: moment,
 				loading: boolean,
@@ -17,7 +17,7 @@ type Props = {
 			}) => React.Node,
 	  }
 	| {
-			moment?: false,
+			moment: false,
 			render: ({
 				now: Date,
 				loading: boolean,
