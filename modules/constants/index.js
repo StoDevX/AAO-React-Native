@@ -1,5 +1,7 @@
 // @flow
 
+import {Platform} from 'react-native'
+
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 
 let APP_VERSION: string
@@ -35,4 +37,17 @@ export const setVersionInfo = (versionStr: string) => {
 	IS_BETA = version.includes('-beta')
 	IS_PRE = version.includes('-pre')
 	IS_RC = version.includes('-rc')
+}
+
+export const userAgent = () => {
+	const platformString =
+		Platform.OS === 'ios'
+			? 'iOS'
+			: Platform.OS === 'android'
+				? 'Android'
+				: 'unknown'
+
+	const platformVersion = Platform.Version || 'unknown'
+
+	return `${APP_NAME}/${APP_VERSION} (${platformString}/${platformVersion})`
 }
