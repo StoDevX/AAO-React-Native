@@ -1,5 +1,6 @@
 // @flow
 
+import './init/constants'
 import './init/fetch'
 import './init/moment'
 import './init/analytics'
