@@ -113,7 +113,7 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 
 		return (
 			<Timer
-				interval={1000}
+				interval={60000}
 				moment={true}
 				render={({now}) => (
 					<BuildingHoursList
