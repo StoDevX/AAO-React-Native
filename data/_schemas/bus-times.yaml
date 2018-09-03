@@ -5,6 +5,7 @@ required: [line, schedules, colors]
 properties:
   line: {type: string}
   colors: {$ref: '#/definitions/colors'}
+  notice: {type: string}
   schedules:
     type: array
     items: {$ref: '#/definitions/schedule'}
