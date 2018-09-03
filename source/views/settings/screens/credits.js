@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {data as credits} from '../../../docs/credits.json'
+import {data as credits} from '../../../../docs/credits.json'
 import glamorous from 'glamorous-native'
 import {Platform, StyleSheet, ScrollView} from 'react-native'
 import {iOSUIKit, material} from 'react-native-typography'
-import {AppLogo} from '../../components/logo'
+import {AppLogo} from '../components/logo'
 
 const styles = StyleSheet.create({
 	container: {
@@ -53,7 +53,7 @@ const Contributors = glamorous(About)({
 
 const formatPeopleList = arr => arr.map(w => w.replace(' ', ' ')).join(' • ')
 
-export default function CreditsView() {
+export function CreditsView() {
 	return (
 		<ScrollView
 			contentContainerStyle={styles.contentContainer}

@@ -2,21 +2,21 @@
 import * as React from 'react'
 import {Alert} from 'react-native'
 import {Section, PushButtonCell} from '@frogpond/tableview'
-import type {TopLevelViewPropsType} from '../../types'
-import {sendEmail} from '../../../components/send-email'
+import {type NavigationScreenProp} from 'react-navigation'
+import {sendEmail} from '../../../../components/send-email'
 import DeviceInfo from 'react-native-device-info'
-import {version} from '../../../../package.json'
-import {refreshApp} from '../../../lib/refresh'
+import {APP_VERSION} from '../../../../lib/constants'
+import {refreshApp} from '../../../../lib/refresh'
 import {sectionBgColor} from '@frogpond/colors'
 
-type Props = TopLevelViewPropsType
+type Props = {navigation: NavigationScreenProp<*>}
 
 const getDeviceInfo = () => `
 
 ----- Please do not edit below here -----
 ${DeviceInfo.getBrand()} ${DeviceInfo.getModel()}
 ${DeviceInfo.getDeviceId()}
-${DeviceInfo.getSystemName()} ${version}
+${DeviceInfo.getSystemName()} ${APP_VERSION}
 ${DeviceInfo.getReadableVersion()}
 `
 
@@ -28,7 +28,7 @@ const openEmail = () => {
 	})
 }
 
-export default class SupportSection extends React.PureComponent<Props> {
+export class SupportSection extends React.Component<Props> {
 	onPressButton = (id: string) => {
 		this.props.navigation.navigate(id)
 	}

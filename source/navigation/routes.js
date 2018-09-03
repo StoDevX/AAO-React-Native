@@ -9,7 +9,6 @@ import {
 } from '../views/building-hours'
 import CalendarView, {EventDetail as EventDetailView} from '../views/calendar'
 import {ContactsDetailView, ContactsView} from '../views/contacts'
-import CreditsView from '../views/settings/credits'
 import {
 	DictionaryDetailView,
 	DictionaryEditorView,
@@ -22,7 +21,6 @@ import {
 	CourseSearchResultsView,
 	JobDetailView,
 } from '../views/sis'
-import LegalView from '../views/settings/legal'
 import {
 	CarletonBurtonMenuScreen,
 	CarletonLDCMenuScreen,
@@ -32,9 +30,13 @@ import {
 } from '../views/menus'
 import {MenuItemDetailView} from '@frogpond/food-menu/food-item-detail'
 import NewsView from '../views/news'
-import PrivacyView from '../views/settings/privacy'
-import SettingsView from '../views/settings'
-import {IconSettingsView} from '../views/settings/icon'
+import {
+	SettingsView,
+	IconSettingsView,
+	CreditsView,
+	LegalView,
+	PrivacyView,
+} from '../views/settings'
 import SISView from '../views/sis'
 import StreamingView, {
 	KRLXScheduleView,

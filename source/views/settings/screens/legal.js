@@ -3,13 +3,13 @@ import * as React from 'react'
 import * as c from '@frogpond/colors'
 import {View, ScrollView} from 'glamorous-native'
 import {Markdown} from '@frogpond/markdown'
-import {text} from '../../../docs/privacy.json'
+import {text} from '../../../../docs/legal.json'
 
 type Props = {}
 
-export default class PrivacyView extends React.PureComponent<Props> {
+export class LegalView extends React.Component<Props> {
 	static navigationOptions = {
-		title: 'Privacy Policy',
+		title: 'Legal',
 	}
 
 	render() {
