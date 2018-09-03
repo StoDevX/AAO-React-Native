@@ -8,5 +8,8 @@
   "scripts": {
     "test": "jest"
   },
+  "peerDependencies": {
+    "react-native": "^0.55.4"
+  },
   "dependencies": {}
 }

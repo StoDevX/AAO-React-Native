@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {Cell, Section, CellToggle} from '@frogpond/tableview'
-import {APP_VERSION} from '../../../../lib/constants'
+import {appVersion, appBuild} from '@frogpond/constants'
 import {setFeedbackStatus} from '../../../../redux/parts/settings'
 import type {ReduxState} from '../../../../redux'
 import {connect} from 'react-redux'
@@ -11,7 +11,8 @@ type Props = {}
 
 export class OddsAndEndsSection extends React.Component<Props> {
 	render() {
-		let [version, build] = APP_VERSION.split('+')
+		let version = appVersion()
+		let build = appBuild()
 
 		return (
 			<Section header="ODDS &amp; ENDS" sectionTintColor={sectionBgColor}>

@@ -1,6 +1,8 @@
 // @flow
 
-import {AAO_USER_AGENT} from '../lib/user-agent'
+import {userAgent} from '@frogpond/constants'
+
+const USER_AGENT = userAgent()
 
 global.rawFetch = global.fetch
 
@@ -24,7 +26,7 @@ global.fetch = function(input, opts: {[key: string]: any} = {}) {
 		opts.headers = opts.headers || new Headers({})
 
 		if (!opts.headers.has('User-Agent')) {
-			opts.headers.set('User-Agent', AAO_USER_AGENT)
+			opts.headers.set('User-Agent', USER_AGENT)
 		}
 	}
 

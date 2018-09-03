@@ -5,7 +5,7 @@ import {Section, PushButtonCell} from '@frogpond/tableview'
 import {type NavigationScreenProp} from 'react-navigation'
 import {sendEmail} from '../../../../components/send-email'
 import DeviceInfo from 'react-native-device-info'
-import {APP_VERSION} from '../../../../lib/constants'
+import {appVersion, appBuild} from '@frogpond/constants'
 import {refreshApp} from '../../../../lib/refresh'
 import {sectionBgColor} from '@frogpond/colors'
 
@@ -16,7 +16,7 @@ const getDeviceInfo = () => `
 ----- Please do not edit below here -----
 ${DeviceInfo.getBrand()} ${DeviceInfo.getModel()}
 ${DeviceInfo.getDeviceId()}
-${DeviceInfo.getSystemName()} ${APP_VERSION}
+${DeviceInfo.getSystemName()} ${appVersion()}+${appBuild() || 'unknown'}
 ${DeviceInfo.getReadableVersion()}
 `
 
