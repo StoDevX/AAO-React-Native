@@ -7,6 +7,7 @@ import delay from 'delay'
 type Props = {
 	interval: number, // ms
 	timezone?: string,
+	invoke?: () => mixed,
 } & (
 	| {
 			moment: true,
@@ -91,6 +92,10 @@ export class Timer extends React.Component<Props, State> {
 			if (this.props.timezone) {
 				now = now.tz(this.props.timezone)
 			}
+		}
+
+		if (this.props.invoke) {
+			this.props.invoke()
 		}
 
 		return this.props.render({now, loading, refresh: this.refresh})
