@@ -5,7 +5,6 @@ import {NoticeView} from '@frogpond/notice'
 import {BuildingHoursList} from './list'
 import {type ReduxState} from '../../redux'
 import {connect} from 'react-redux'
-import moment from 'moment-timezone'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 import * as defaultData from '../../../docs/building-hours.json'
@@ -15,6 +14,7 @@ import groupBy from 'lodash/groupBy'
 import delay from 'delay'
 import {CENTRAL_TZ} from './lib'
 import {API} from '@frogpond/api'
+import {Timer} from '@frogpond/timer'
 
 const buildingHoursUrl = API('/spaces/hours')
 
@@ -43,13 +43,12 @@ type ReduxStateProps = {
 
 type Props = TopLevelViewPropsType & ReduxStateProps
 
-type State = {
+type State = {|
 	error: ?Error,
 	loading: boolean,
-	now: moment,
 	buildings: Array<{title: string, data: Array<BuildingType>}>,
 	allBuildings: Array<BuildingType>,
-}
+|}
 
 export class BuildingHoursView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
@@ -57,16 +56,11 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		headerBackTitle: 'Hours',
 	}
 
-	_intervalId: ?IntervalID
-
 	state = {
 		error: null,
 		loading: false,
-		// now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
-		now: moment.tz(CENTRAL_TZ),
 		buildings: groupBuildings(defaultData.data, this.props.favoriteBuildings),
 		allBuildings: defaultData.data,
-		intervalId: null,
 	}
 
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -80,18 +74,6 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 
 	componentDidMount() {
 		this.fetchData()
-
-		// This updates the screen every second, so that the building
-		// info statuses are updated without needing to leave and come back.
-		this._intervalId = setInterval(this.updateTime, 1000)
-	}
-
-	componentWillUnmount() {
-		this._intervalId && clearInterval(this._intervalId)
-	}
-
-	updateTime = () => {
-		this.setState(() => ({now: moment.tz(CENTRAL_TZ)}))
 	}
 
 	refresh = async (): any => {
@@ -120,7 +102,6 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		this.setState(() => ({
 			buildings: groupBuildings(buildings, this.props.favoriteBuildings),
 			allBuildings: buildings,
-			now: moment.tz(CENTRAL_TZ),
 		}))
 	}
 
@@ -130,12 +111,19 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		}
 
 		return (
-			<BuildingHoursList
-				buildings={this.state.buildings}
-				loading={this.state.loading}
-				navigation={this.props.navigation}
-				now={this.state.now}
-				onRefresh={this.refresh}
+			<Timer
+				interval={60000}
+				moment={true}
+				render={({now}) => (
+					<BuildingHoursList
+						buildings={this.state.buildings}
+						loading={this.state.loading}
+						navigation={this.props.navigation}
+						now={now}
+						onRefresh={this.refresh}
+					/>
+				)}
+				timezone={CENTRAL_TZ}
 			/>
 		)
 	}

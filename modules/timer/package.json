@@ -1,0 +1,15 @@
+{
+  "name": "@frogpond/timer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^16.4.2",
+    "moment-timezone": "^0.5.21"
+  }
+}
