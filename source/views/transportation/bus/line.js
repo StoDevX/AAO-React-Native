@@ -30,9 +30,6 @@ const EMPTY_SCHEDULE_MESSAGE = (
 		<Text>This line is not running today.</Text>
 	</ListRow>
 )
-const FOOTER_MSG =
-	'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
-const FOOTER_EL = <ListFooter title={FOOTER_MSG} />
 
 type Props = {
 	+line: UnprocessedBusLine,
@@ -162,6 +159,11 @@ export class BusLine extends React.Component<Props, State> {
 				titleStyle={Platform.OS === 'android' ? {color: line.colors.bar} : null}
 			/>
 		)
+
+		const FOOTER_MSG = `${this.props.line.notice || ''}${
+			this.props.line.notice ? '\n\n' : ''
+		}Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf`
+		const FOOTER_EL = <ListFooter title={FOOTER_MSG} />
 
 		return (
 			<FlatList
