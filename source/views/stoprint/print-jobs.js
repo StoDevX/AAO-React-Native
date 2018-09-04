@@ -22,6 +22,9 @@ import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
 import {getTimeRemaining} from './lib'
+import {Timer} from '@frogpond/timer'
+
+const TIMEZONE = 'America/Winnipeg'
 
 type ReactProps = TopLevelViewPropsType
 
@@ -93,14 +96,21 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 	}
 
 	renderItem = ({item}: {item: PrintJob}) => (
-		<ListRow onPress={() => this.handleJobPress(item)}>
-			<Title>{item.documentName}</Title>
-			<Detail>
-				Expires: {getTimeRemaining(now)(item.usageTimeFormatted)} {' • '} {item.usageCostFormatted} {' •  '}
-				{item.totalPages} {item.totalPages === 1 ? 'page' : 'pages'} {'\n'}
-				{item.statusFormatted}
-			</Detail>
-		</ListRow>
+		<Timer
+			interval={60000}
+			moment={true}
+			render={({now}) => (
+				<ListRow onPress={() => this.handleJobPress(item)}>
+					<Title>{item.documentName}</Title>
+					<Detail>
+						Expires: {getTimeRemaining(now, item.usageTimeFormatted)} {' • '} {item.usageCostFormatted} {' •  '}
+						{item.totalPages} {item.totalPages === 1 ? 'page' : 'pages'} {'\n'}
+						{item.statusFormatted}
+					</Detail>
+				</ListRow>
+			)}
+			timezone={TIMEZONE}
+		/>
 	)
 
 	renderSectionHeader = ({section: {title}}: any) => (
