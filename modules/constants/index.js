@@ -10,7 +10,7 @@ export const appVersion = () => APP_VERSION
 export const appBuild = () => APP_BUILD
 
 let APP_NAME: string
-export const setAppName = (name: string) => APP_NAME = name
+export const setAppName = (name: string) => (APP_NAME = name)
 export const appName = () => APP_NAME
 
 let IS_BETA: boolean
