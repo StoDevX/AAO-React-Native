@@ -103,7 +103,8 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 				<ListRow onPress={() => this.handleJobPress(item)}>
 					<Title>{item.documentName}</Title>
 					<Detail>
-						Expires: {getTimeRemaining(now, item.usageTimeFormatted)} {' • '} {item.usageCostFormatted} {' •  '}
+						Expires: {getTimeRemaining(now, item.usageTimeFormatted)} {' • '}{' '}
+						{item.usageCostFormatted} {' •  '}
 						{item.totalPages} {item.totalPages === 1 ? 'page' : 'pages'} {'\n'}
 						{item.statusFormatted}
 					</Detail>
