@@ -78,7 +78,7 @@ function Tint({tint = 'black', gradient, children}) {
 	return (
 		<LinearGradient
 			colors={gradient}
-			end={{x: 1, y: 0.85}}
+			end={{x: 0, y: 0.85}}
 			start={{x: 0, y: 0.05}}
 			style={styles.button}
 		>
