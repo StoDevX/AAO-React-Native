@@ -48,6 +48,14 @@ export class CourseRow extends React.PureComponent<Props> {
 				<Title lines={1}>{course.name}</Title>
 				<Detail>
 					<Text>
+						{course.notes && (
+							<Text style={styles.italics}>
+								{course.notes.join(' ')}
+								{'\n'}
+							</Text>
+						)}
+					</Text>
+					<Text>
 						<Text style={styles.bold}>{deptNum(course)}</Text>
 						{course.gereqs && ` (${course.gereqs.join(', ')})`}
 					</Text>
@@ -68,5 +76,8 @@ export class CourseRow extends React.PureComponent<Props> {
 const styles = StyleSheet.create({
 	bold: {
 		fontWeight: 'bold',
+	},
+	italics: {
+		fontStyle: 'italic',
 	},
 })
