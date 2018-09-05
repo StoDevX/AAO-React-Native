@@ -57,24 +57,16 @@ export class CourseRow extends React.PureComponent<Props> {
 				</Row>
 
 				{course.instructors && (
-					<Row style={styles.row}>
-						<Detail>{course.instructors.join(', ')}</Detail>
-					</Row>
+					<Detail style={styles.row}>{course.instructors.join(', ')}</Detail>
 				)}
 
 				{course.notes && (
-					<Row style={styles.row}>
-						<Detail lines={1} style={styles.italics}>
-							{course.notes.join(' ')}
-						</Detail>
-					</Row>
+					<Detail lines={1} style={[styles.italics, styles.row]}>
+						{course.notes.join(' ')}
+					</Detail>
 				)}
 
-				{course.times && (
-					<Row style={styles.row}>
-						<Detail>{formattedGroupings.join('\n')}</Detail>
-					</Row>
-				)}
+				{course.times && <Detail>{formattedGroupings.join('\n')}</Detail>}
 			</ListRow>
 		)
 	}
