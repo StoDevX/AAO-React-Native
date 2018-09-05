@@ -5,9 +5,9 @@
  */
 
 import * as React from 'react'
-import {ScrollView, View, StyleSheet, Text} from 'react-native'
+import {ScrollView, View} from 'react-native'
 import moment from 'moment-timezone'
-import * as c from '@frogpond/colors'
+import {InfoHeader} from '@frogpond/info-header'
 import {
 	TableView,
 	Section,
@@ -25,28 +25,6 @@ import type {
 import type {TopLevelViewPropsType} from '../../types'
 import {summarizeDays, formatBuildingTimes, blankSchedule} from '../lib'
 import {submitReport} from './submit'
-
-const styles = StyleSheet.create({
-	helpWrapper: {
-		backgroundColor: c.white,
-		borderWidth: StyleSheet.hairlineWidth,
-		borderTopColor: c.iosHeaderTopBorder,
-		borderBottomColor: c.iosHeaderBottomBorder,
-		marginBottom: 10,
-	},
-	helpTitle: {
-		fontSize: 16,
-		fontWeight: 'bold',
-		paddingTop: 15,
-		paddingHorizontal: 15,
-	},
-	helpDescription: {
-		fontSize: 14,
-		paddingTop: 5,
-		paddingBottom: 15,
-		paddingHorizontal: 15,
-	},
-})
 
 type Props = TopLevelViewPropsType & {
 	navigation: {state: {params: {initialBuilding: BuildingType}}},
@@ -203,13 +181,10 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 
 		return (
 			<ScrollView>
-				<View style={styles.helpWrapper}>
-					<Text style={styles.helpTitle}>Thanks for spotting a problem!</Text>
-					<Text style={styles.helpDescription}>
-						If you could tell us what the new times are, we&rsquo;d greatly
-						appreciate it.
-					</Text>
-				</View>
+				<InfoHeader
+					message="If you could tell us what the new times are, we&rsquo;d greatly appreciate it."
+					title="Thanks for spotting a problem!"
+				/>
 
 				<TableView>
 					{schedules.map((s, i) => (

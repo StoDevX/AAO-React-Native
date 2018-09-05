@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react'
-import {ScrollView, View, Text, StyleSheet} from 'react-native'
+import {ScrollView} from 'react-native'
+import {InfoHeader} from '@frogpond/info-header'
 import {
 	TableView,
 	Section,
@@ -9,7 +10,6 @@ import {
 } from '@frogpond/tableview'
 import {submitReport} from './submit'
 import type {WordType} from '../types'
-import * as c from '@frogpond/colors'
 import type {TopLevelViewPropsType} from '../../types'
 
 type Props = TopLevelViewPropsType & {
@@ -65,13 +65,10 @@ export class DictionaryEditorView extends React.PureComponent<Props, State> {
 				keyboardDismissMode="on-drag"
 				keyboardShouldPersistTaps="always"
 			>
-				<View style={styles.helpWrapper}>
-					<Text style={styles.helpTitle}>Thanks for spotting a problem!</Text>
-					<Text style={styles.helpDescription}>
-						If you could tell us what the word and definition should be,
-						we&rsquo;d greatly appreciate it.
-					</Text>
-				</View>
+				<InfoHeader
+					message="If you could tell us what the word and definition should be, we&rsquo;d greatly appreciate it."
+					title="Thanks for spotting a problem!"
+				/>
 
 				<TableView>
 					<Section header="WORD">
@@ -120,25 +117,3 @@ const DefinitionCell = ({text, onChange = () => {}}: TextFieldProps) => (
 		value={text}
 	/>
 )
-
-const styles = StyleSheet.create({
-	helpWrapper: {
-		backgroundColor: c.white,
-		borderWidth: StyleSheet.hairlineWidth,
-		borderTopColor: c.iosHeaderTopBorder,
-		borderBottomColor: c.iosHeaderBottomBorder,
-		marginBottom: 10,
-	},
-	helpTitle: {
-		fontSize: 16,
-		fontWeight: 'bold',
-		paddingTop: 15,
-		paddingHorizontal: 15,
-	},
-	helpDescription: {
-		fontSize: 14,
-		paddingTop: 5,
-		paddingBottom: 15,
-		paddingHorizontal: 15,
-	},
-})
