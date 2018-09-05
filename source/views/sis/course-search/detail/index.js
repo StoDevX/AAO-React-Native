@@ -139,6 +139,24 @@ function Schedule({course}: {course: CourseType}) {
 	)
 }
 
+function Notes({course}: {course: CourseType}) {
+	let notesText = course.notes ? course.notes.join(' ') : ''
+	const notes =
+		Platform.OS === 'ios' ? (
+			<SelectableCell text={notesText} />
+		) : (
+			<Cell
+				cellContentView={
+					<Text selectable={true} style={styles.chunk}>
+						{notesText}
+					</Text>
+				}
+			/>
+		)
+
+	return course.notes ? <Section header="NOTES">{notes}</Section> : null
+}
+
 function Description({course}: {course: CourseType}) {
 	let descText = course.description ? course.description[0] : ''
 	const description =
@@ -182,6 +200,7 @@ export class CourseDetailView extends React.PureComponent<Props> {
 				<TableView>
 					<Information course={course} />
 					<Schedule course={course} />
+					<Notes course={course} />
 					<Description course={course} />
 				</TableView>
 			</Container>
