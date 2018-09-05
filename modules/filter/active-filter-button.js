@@ -33,12 +33,12 @@ function ActiveFilterButton({filter, label, onRemove, style, theme}: Props) {
 	const iconColor = white
 
 	return (
-		<View style={[styles.badge, background, style]}>
-			<Text style={[styles.text, foreground]}>{label}</Text>
-			<TouchableWithoutFeedback onPress={() => onRemove(filter)}>
+		<TouchableWithoutFeedback onPress={() => onRemove(filter)}>
+			<View style={[styles.badge, background, style]}>
+				<Text style={[styles.text, foreground]}>{label}</Text>
 				<Icon color={iconColor} name={iconName} size={20} />
-			</TouchableWithoutFeedback>
-		</View>
+			</View>
+		</TouchableWithoutFeedback>
 	)
 }
 
