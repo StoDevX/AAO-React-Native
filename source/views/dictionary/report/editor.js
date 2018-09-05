@@ -66,8 +66,7 @@ export class DictionaryEditorView extends React.PureComponent<Props, State> {
 				keyboardShouldPersistTaps="always"
 			>
 				<InfoHeader
-					message="If you could tell us what the word and definition should be,
-                        we&rsquo;d greatly appreciate it."
+					message="If you could tell us what the word and definition should be, we&rsquo;d greatly appreciate it."
 					title="Thanks for spotting a problem!"
 				/>
 
