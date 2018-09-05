@@ -182,8 +182,7 @@ export class BuildingHoursProblemReportView extends React.PureComponent<
 		return (
 			<ScrollView>
 				<InfoHeader
-					message="If you could tell us what the new times are, we&rsquo;d greatly
-                        appreciate it."
+					message="If you could tell us what the new times are, we&rsquo;d greatly appreciate it."
 					title="Thanks for spotting a problem!"
 				/>
 
