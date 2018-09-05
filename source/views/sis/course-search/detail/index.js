@@ -140,7 +140,12 @@ function Schedule({course}: {course: CourseType}) {
 }
 
 function Notes({course}: {course: CourseType}) {
-	let notesText = course.notes ? course.notes.join(' ') : ''
+	if (!course.notes) {
+		return null
+	}
+
+	let notesText = course.notes.join(' ')
+
 	const notes =
 		Platform.OS === 'ios' ? (
 			<SelectableCell text={notesText} />
@@ -154,11 +159,16 @@ function Notes({course}: {course: CourseType}) {
 			/>
 		)
 
-	return course.notes ? <Section header="NOTES">{notes}</Section> : null
+	return <Section header="NOTES">{notes}</Section>
 }
 
 function Description({course}: {course: CourseType}) {
-	let descText = course.description ? course.description[0] : ''
+	if (!course.description) {
+		return null
+	}
+
+	let descText = course.description[0]
+
 	const description =
 		Platform.OS === 'ios' ? (
 			<SelectableCell text={descText} />
@@ -172,9 +182,7 @@ function Description({course}: {course: CourseType}) {
 			/>
 		)
 
-	return course.description ? (
-		<Section header="DESCRIPTION">{description}</Section>
-	) : null
+	return <Section header="DESCRIPTION">{description}</Section>
 }
 
 type Props = TopLevelViewPropsType & {
