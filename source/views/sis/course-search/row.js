@@ -60,13 +60,13 @@ export class CourseRow extends React.PureComponent<Props> {
 					<Detail style={styles.row}>{course.instructors.join(', ')}</Detail>
 				)}
 
+				{course.times && <Detail>{formattedGroupings.join('\n')}</Detail>}
+
 				{course.notes && (
 					<Detail lines={1} style={[styles.italics, styles.row]}>
 						{course.notes.join(' ')}
 					</Detail>
 				)}
-
-				{course.times && <Detail>{formattedGroupings.join('\n')}</Detail>}
 			</ListRow>
 		)
 	}
