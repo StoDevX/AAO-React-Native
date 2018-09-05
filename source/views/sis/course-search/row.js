@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {Text, StyleSheet} from 'react-native'
+import {StyleSheet} from 'react-native'
 import type {CourseType} from '../../../lib/course-search/types'
 import {ListRow, Title, Detail} from '@frogpond/lists'
 import {deptNum} from './lib/format-dept-num'
@@ -9,6 +9,7 @@ import moment from 'moment-timezone'
 import {convertTimeStringsToOfferings} from 'sto-sis-time-parser'
 import {formatDayAbbrev} from './lib/format-day'
 import sortBy from 'lodash/sortBy'
+import {Row} from '@frogpond/layout'
 const CENTRAL_TZ = 'America/Winnipeg'
 const fmt = 'h:mm A'
 
@@ -46,28 +47,26 @@ export class CourseRow extends React.PureComponent<Props> {
 		return (
 			<ListRow arrowPosition="center" onPress={this.onPress}>
 				<Title lines={1}>{course.name}</Title>
-				<Detail>
-					<Text>
-						{course.notes && (
-							<Text style={styles.italics}>
-								{course.notes.join(' ')}
-								{'\n'}
-							</Text>
-						)}
-					</Text>
-					<Text>
-						<Text style={styles.bold}>{deptNum(course)}</Text>
-						{course.gereqs && ` (${course.gereqs.join(', ')})`}
-					</Text>
-					{course.instructors && (
-						<Text>
-							{'\n'}
-							{course.instructors.join(', ')}
-						</Text>
+
+				<Row>
+					<Detail style={styles.bold}>{deptNum(course)}</Detail>
+
+					{course.gereqs && (
+						<Detail style={styles.ges}>({course.gereqs.join(', ')})</Detail>
 					)}
-					{course.instructors && course.times && <Text>{'\n'}</Text>}
-					{course.times && <Text>{formattedGroupings.join('\n')}</Text>}
-				</Detail>
+				</Row>
+
+				{course.instructors && (
+					<Detail style={styles.row}>{course.instructors.join(', ')}</Detail>
+				)}
+
+				{course.times && <Detail>{formattedGroupings.join('\n')}</Detail>}
+
+				{course.notes && (
+					<Detail lines={1} style={[styles.italics, styles.row]}>
+						{course.notes.join(' ')}
+					</Detail>
+				)}
 			</ListRow>
 		)
 	}
@@ -79,5 +78,11 @@ const styles = StyleSheet.create({
 	},
 	italics: {
 		fontStyle: 'italic',
+	},
+	ges: {
+		marginLeft: 4,
+	},
+	row: {
+		marginTop: -4,
 	},
 })
