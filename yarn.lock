@@ -5984,9 +5984,9 @@ react-native-linear-gradient@2.4.2:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.4.2.tgz#9d3acd0a198b9d4566e8f6253ef1f60fef0ff2be"
 
-react-native-network-info@3.2.2:
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-3.2.2.tgz#93625587ab5ae31b7c853f37ec2b75a0af6c936d"
+react-native-network-info@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-4.0.0.tgz#aade28ddcf38f5d2c4d8055078dd7f0d97c51cff"
 
 react-native-onesignal@3.1.4:
   version "3.1.4"
