@@ -97,7 +97,7 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 
 	renderItem = ({item}: {item: PrintJob}) => (
 		<Timer
-			interval={60000}
+			interval={5000}
 			moment={true}
 			render={({now}) => (
 				<ListRow onPress={() => this.handleJobPress(item)}>

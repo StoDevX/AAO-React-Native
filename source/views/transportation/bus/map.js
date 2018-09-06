@@ -32,7 +32,7 @@ export function BusMap(props: WrapperProps) {
 
 	return (
 		<Timer
-			interval={60000}
+			interval={5000}
 			moment={true}
 			render={({now}) => <Map line={lineToDisplay} now={now} />}
 			timezone={TIMEZONE}

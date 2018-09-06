@@ -73,7 +73,7 @@ export class BusView extends React.PureComponent<Props, State> {
 
 		return (
 			<Timer
-				interval={60000}
+				interval={5000}
 				moment={true}
 				render={({now, refresh, loading}) => (
 					<BusLine
