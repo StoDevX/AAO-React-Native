@@ -32,7 +32,7 @@ export class BuildingHoursDetailView extends React.Component<Props> {
 
 		return (
 			<Timer
-				interval={60000}
+				interval={5000}
 				moment={true}
 				render={({now}) => (
 					<BuildingDetail
