@@ -67,6 +67,10 @@ class PushNotificationsSettingsView extends React.Component<Props> {
 	}
 
 	render() {
+		// TODO: use redux.state.notifications.permissions.hasPrompted to
+		// display a message about how to open Settings if
+		// hasPrompted is true and enabled is false
+
 		return (
 			<ScrollView contentInsetAdjustmentBehavior="automatic">
 				<TableView>

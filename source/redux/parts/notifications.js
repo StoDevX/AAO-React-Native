@@ -21,7 +21,10 @@ const getOneSignalPermissions: () => Promise<SubscriptionState> = pify(
 	OneSignal.getPermissionSubscriptionState,
 	{errorFirst: false},
 )
-const promptOneSignalPushPermission: () => Promise<boolean> = pify(OneSignal.promptForPushNotificationsWithUserResponse, {errorFirst: false})
+const promptOneSignalPushPermission: () => Promise<boolean> = pify(
+	OneSignal.promptForPushNotificationsWithUserResponse,
+	{errorFirst: false},
+)
 
 import {type ReduxState} from '../index'
 
@@ -114,12 +117,13 @@ export function disable(): DisableNotificationsAction {
 type EnableNotificationsAction = {|
 	type: 'notifications/ENABLE',
 |}
-export function enable(): EnableNotificationsAction {
-	OneSignal.setSubscription(true)
-	// TODO: fix this to request push notifications permission when first enabled
-	// promptOneSignalPushPermission()
-	trackNotificationsEnable()
-	return {type: ENABLE}
+export function enable(): ThunkAction<EnableNotificationsAction> {
+	return async dispatch => {
+		OneSignal.setSubscription(true)
+		trackNotificationsEnable()
+		await promptOneSignalPushPermission()
+		dispatch({type: ENABLE})
+	}
 }
 
 type Action =
