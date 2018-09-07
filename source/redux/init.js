@@ -17,7 +17,7 @@ import {
 } from './parts/settings'
 import {updateBalances} from './parts/balances'
 import {loadRecentSearches, loadRecentFilters} from './parts/courses'
-import {hydrate, subscribe} from './parts/notifications'
+import {hydrate} from './parts/notifications'
 
 async function loginCredentials(store) {
 	const {username, password} = await loadLoginCredentials()
