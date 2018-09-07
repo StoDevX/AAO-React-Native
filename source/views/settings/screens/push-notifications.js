@@ -1,8 +1,14 @@
 // @flow
 
 import * as React from 'react'
+import {AppState, Platform, Linking} from 'react-native'
 import {ScrollView} from 'glamorous-native'
-import {TableView, Section, CellToggle} from '@frogpond/tableview'
+import {
+	TableView,
+	Section,
+	CellToggle,
+	PushButtonCell,
+} from '@frogpond/tableview'
 import {connect} from 'react-redux'
 import type {ReduxState} from '../../../redux'
 import groupBy from 'lodash/groupBy'
@@ -10,19 +16,21 @@ import toPairs from 'lodash/toPairs'
 import flatten from 'lodash/flatten'
 import {
 	type NotificationChannelName,
-	enable,
-	disable,
+	hydrate,
+	prompt,
 	toggleSubscription,
 } from '../../../redux/parts/notifications'
 
 type ReduxStateProps = {|
 	+channels: Set<NotificationChannelName>,
 	+enabled: boolean,
+	+hasPrompted: boolean,
 |}
 
 type ReduxDispatchProps = {|
-	+onChangeEnabledToggle: (enabled: boolean) => any,
+	+onChangeEnabledToggle: () => any,
 	+onToggleChannel: (channelName: NotificationChannelName) => any,
+	+rehydrate: () => any,
 |}
 
 type Props = ReduxStateProps & ReduxDispatchProps
@@ -66,21 +74,69 @@ class PushNotificationsSettingsView extends React.Component<Props> {
 		title: 'Notifications',
 	}
 
+	state = {
+		appState: AppState.currentState,
+	}
+
+	componentDidMount() {
+		AppState.addEventListener('change', this._handleAppStateChange)
+	}
+
+	componentWillUnmount() {
+		AppState.removeEventListener('change', this._handleAppStateChange)
+	}
+
+	_handleAppStateChange = nextAppState => {
+		if (
+			this.state.appState.match(/inactive|background/) &&
+			nextAppState === 'active'
+		) {
+			this.props.rehydrate()
+		}
+
+		this.setState({appState: nextAppState})
+	}
+
 	render() {
-		// TODO: use redux.state.notifications.permissions.hasPrompted to
-		// display a message about how to open Settings if
-		// hasPrompted is true and enabled is false
+		let titleText
+		let footerText
+		let onPress
+
+		const showSettingsEnableButton =
+			Platform.OS === 'ios' && !this.props.enabled && !this.props.hasPrompted
+		const showSettingsDeclinedButton =
+			Platform.OS === 'ios' && !this.props.enabled && this.props.hasPrompted
+		const showSettingsDisableButton =
+			Platform.OS === 'ios' && this.props.enabled
+
+		// we haye not been prompted before -- let onesignal prompt for permissions
+		if (showSettingsEnableButton) {
+			titleText = 'Turn On Notifications'
+			footerText =
+				'Notifications are turned off for "All About Olaf". You can turn notifications on for this app by pushing the button above.'
+			onPress = this.props.onChangeEnabledToggle
+			// we declined the initial prompt -- give an option to open settings to turn on notifications
+		} else if (showSettingsDeclinedButton) {
+			titleText = 'Open Settings'
+			footerText =
+				'Notifications are turned off for "All About Olaf". You can turn notifications on for this app in Settings.'
+			onPress = () => Linking.openURL('app-settings:')
+			// we have seen the prompt and given permission -- given an option to open settings to turn off notifications
+		} else if (showSettingsDisableButton) {
+			titleText = 'Turn Off Notifications'
+			footerText =
+				'Notifications are turned on for "All About Olaf". You can turn notifications off for this app in Settings.'
+			onPress = () => Linking.openURL('app-settings:')
+		}
 
 		return (
 			<ScrollView contentInsetAdjustmentBehavior="automatic">
 				<TableView>
-					<Section>
-						<CellToggle
-							label="Allow Notifications"
-							onChange={this.props.onChangeEnabledToggle}
-							value={this.props.enabled}
-						/>
-					</Section>
+					{Platform.OS === 'ios' ? (
+						<Section footer={footerText} header="NOTIFICATION SETTINGS">
+							<PushButtonCell onPress={onPress} title={titleText} />
+						</Section>
+					) : null}
 
 					<Section header="CHANNELS">
 						{flatten(
@@ -121,11 +177,12 @@ export const ConnectedPushNotificationsSettingsView = connect(
 	(state: ReduxState): ReduxStateProps => ({
 		channels: state.notifications ? state.notifications.channels : new Set(),
 		enabled: state.notifications ? state.notifications.enabled : false,
+		hasPrompted: state.notifications ? state.notifications.hasPrompted : false,
 	}),
 	(dispatch): ReduxDispatchProps => ({
-		onChangeEnabledToggle: (s: boolean) =>
-			s ? dispatch(enable()) : dispatch(disable()),
+		onChangeEnabledToggle: () => dispatch(prompt()),
 		onToggleChannel: (name: NotificationChannelName) =>
 			dispatch(toggleSubscription(name)),
+		rehydrate: () => dispatch(hydrate()),
 	}),
 )(PushNotificationsSettingsView)
