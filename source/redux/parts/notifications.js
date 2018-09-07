@@ -140,11 +140,13 @@ type Action =
 export type State = {|
 	+enabled: boolean,
 	+channels: Set<NotificationChannelName>,
+	+hasPrompted: boolean,
 |}
 
 const initialState = {
 	enabled: false,
 	channels: new Set(),
+	hasPrompted: false,
 }
 
 export function notifications(state: State = initialState, action: Action) {
@@ -166,13 +168,14 @@ export function notifications(state: State = initialState, action: Action) {
 				...state,
 				channels: action.payload.channels,
 				enabled: action.payload.permissions.notificationsEnabled,
+				hasPrompted: action.payload.permissions.hasPrompted,
 			}
 
 		case ENABLE:
-			return {...state, enabled: true}
+			return {...state, enabled: true, hasPrompted: true}
 
 		case DISABLE:
-			return {...state, enabled: false}
+			return {...state, enabled: false, hasPrompted: true}
 
 		default:
 			return state
