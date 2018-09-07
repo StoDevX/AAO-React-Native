@@ -108,7 +108,7 @@ export function hydrate(): ThunkAction<HydrateChannelsAction> {
 type DisableNotificationsAction = {|
 	type: 'notifications/DISABLE',
 |}
-export function disable(): DisableNotificationsAction {
+function disable(): DisableNotificationsAction {
 	OneSignal.setSubscription(false)
 	trackNotificationsDisable()
 	return {type: DISABLE}
@@ -117,12 +117,16 @@ export function disable(): DisableNotificationsAction {
 type EnableNotificationsAction = {|
 	type: 'notifications/ENABLE',
 |}
-export function enable(): ThunkAction<EnableNotificationsAction> {
+function enable(): ThunkAction<EnableNotificationsAction> {
+	OneSignal.setSubscription(true)
+	trackNotificationsEnable()
+	return {type: ENABLE}
+}
+
+export function prompt() {
 	return async dispatch => {
-		OneSignal.setSubscription(true)
-		trackNotificationsEnable()
-		await promptOneSignalPushPermission()
-		dispatch({type: ENABLE})
+		const permissionResult = await promptOneSignalPushPermission()
+		dispatch(permissionResult ? enable() : disable())
 	}
 }
 
