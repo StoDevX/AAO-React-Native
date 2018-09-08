@@ -117,13 +117,15 @@ function disable(): DisableNotificationsAction {
 type EnableNotificationsAction = {|
 	type: 'notifications/ENABLE',
 |}
-function enable(): ThunkAction<EnableNotificationsAction> {
+function enable(): EnableNotificationsAction {
 	OneSignal.setSubscription(true)
 	trackNotificationsEnable()
 	return {type: ENABLE}
 }
 
-export function prompt() {
+export function prompt(): ThunkAction<
+	EnableNotificationsAction | DisableNotificationsAction,
+> {
 	return async dispatch => {
 		const permissionResult = await promptOneSignalPushPermission()
 		dispatch(permissionResult ? enable() : disable())
