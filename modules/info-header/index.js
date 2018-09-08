@@ -6,7 +6,8 @@ import * as c from '@frogpond/colors'
 const styles = StyleSheet.create({
 	content: {
 		backgroundColor: c.white,
-		borderWidth: StyleSheet.hairlineWidth,
+		borderTopWidth: StyleSheet.hairlineWidth,
+		borderBottomWidth: StyleSheet.hairlineWidth,
 		borderTopColor: c.iosHeaderTopBorder,
 		borderBottomColor: c.iosHeaderBottomBorder,
 		marginBottom: 10,
