@@ -36,7 +36,9 @@
     "ignore": [
       "flow-bin",
       "react-markdown",
-      "react"
+      "react",
+      "react-test-renderer",
+      "react-native-vector-icons"
     ]
   },
   "jest": {
