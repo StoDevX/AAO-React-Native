@@ -58,25 +58,23 @@ class PushNotificationsSettingsView extends React.Component<Props> {
 						/>
 					)}
 
-					<Section header="CHANNELS">
-						<ChannelsList
-							channels={channels}
-							onToggleChannel={onToggleChannel}
-							pushesEnabled={enabled}
-						/>
-					</Section>
+					<ChannelsSection
+						channels={channels}
+						onToggleChannel={onToggleChannel}
+						pushesEnabled={enabled}
+					/>
 				</TableView>
 			</ScrollView>
 		)
 	}
 }
 
-function ChannelsList({pushesEnabled, onToggleChannel, channels}) {
+function ChannelsSection({pushesEnabled, onToggleChannel, channels}) {
 	let paired: Array<[string, Array<NotificationChannel>]> = toPairs(
 		groupBy(notificationTypes, c => c.group),
 	)
 
-	return flatten(
+	let listItems = flatten(
 		paired.map(([groupName, theseChannels]) =>
 			theseChannels.map(channel => {
 				// if the channel is forced, then we want to show the switch
@@ -98,6 +96,8 @@ function ChannelsList({pushesEnabled, onToggleChannel, channels}) {
 			}),
 		),
 	)
+
+	return <Section header="CHANNELS">{listItems}</Section>
 }
 
 export const ConnectedPushNotificationsSettingsView = connect(
