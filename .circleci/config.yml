@@ -5,6 +5,8 @@ x-config:
   x-images:
     - &docker-node
       - image: 'circleci/node:8'
+    - &docker-ruby
+      - image: 'circleci/ruby:2.4'
   x-caching:  # caching instructions
     - &save-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
@@ -116,7 +118,7 @@ jobs:
       - persist_to_workspace: *persist-workspace-node_modules
 
   cache-bundler-linux:
-    docker: [{image: 'circleci/ruby:2.4'}]
+    docker: *docker-ruby
     steps:
       - checkout
       - run: *set-ruby-version
