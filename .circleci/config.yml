@@ -2,6 +2,9 @@
 version: 2
 
 x-config:
+  x-images:
+    - &docker-node
+      - image: 'circleci/node:8'
   x-caching:  # caching instructions
     - &save-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
@@ -103,7 +106,7 @@ workflows:
 
 jobs:
   cache-yarn-linux:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -125,7 +128,7 @@ jobs:
       - save_cache: *save-cache-bundler
 
   danger:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-general
     steps:
@@ -134,7 +137,7 @@ jobs:
       - run: *run-danger
 
   flow:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-flow
     steps:
@@ -146,7 +149,7 @@ jobs:
       - run: *run-danger
 
   jest:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-jest
       JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
@@ -171,7 +174,7 @@ jobs:
             fi
 
   prettier:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-prettier
     steps:
@@ -189,7 +192,7 @@ jobs:
       - run: *run-danger
 
   eslint:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-lint
     steps:
@@ -204,7 +207,7 @@ jobs:
           path: ./test-results
 
   data:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-data
     steps:
@@ -260,7 +263,7 @@ jobs:
       IS_NIGHTLY: '1'
 
   android-bundle:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-bundle-android
     steps:
@@ -322,7 +325,7 @@ jobs:
       IS_NIGHTLY: '1'
 
   ios-bundle:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-bundle-ios
     steps:
