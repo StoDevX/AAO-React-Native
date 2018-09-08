@@ -76,7 +76,7 @@ function NotificationsCell(props: NotificationsCellProps) {
 		<PushButtonCell
 			detail={isSubscribed ? 'Subscribed' : 'Disabled'}
 			onPress={props.onPress}
-			title="Push Notifications"
+			title="Push Notifications (BETA)"
 		/>
 	)
 }
