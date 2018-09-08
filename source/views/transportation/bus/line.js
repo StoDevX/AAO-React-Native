@@ -14,6 +14,7 @@ import findLast from 'lodash/findLast'
 import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
 import {ListSectionHeader, ListFooter, ListRow} from '@frogpond/lists'
+import {InfoHeader} from '@frogpond/info-header'
 
 const styles = StyleSheet.create({
 	separator: {
@@ -152,7 +153,7 @@ export class BusLine extends React.Component<Props, State> {
 		const {line} = this.props
 		const {schedule, subtitle} = this.state
 
-		const headerEl = (
+		const INFO_EL = (
 			<ListSectionHeader
 				subtitle={subtitle}
 				title={line.line}
@@ -160,17 +161,26 @@ export class BusLine extends React.Component<Props, State> {
 			/>
 		)
 
-		const FOOTER_MSG = `${this.props.line.notice || ''}${
-			this.props.line.notice ? '\n\n' : ''
-		}Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf`
+		const LINE_MSG = line.notice || ''
+		const FOOTER_MSG =
+			'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
 		const FOOTER_EL = <ListFooter title={FOOTER_MSG} />
+
+		const HEADER_EL = LINE_MSG ? (
+			<React.Fragment>
+				<InfoHeader message={LINE_MSG} title={`About ${line.line}`} />
+				{INFO_EL}
+			</React.Fragment>
+		) : (
+			INFO_EL
+		)
 
 		return (
 			<FlatList
 				ItemSeparatorComponent={BusLineSeparator}
 				ListEmptyComponent={EMPTY_SCHEDULE_MESSAGE}
 				ListFooterComponent={FOOTER_EL}
-				ListHeaderComponent={headerEl}
+				ListHeaderComponent={HEADER_EL}
 				data={schedule ? schedule.timetable : []}
 				extraData={this.state}
 				keyExtractor={this.keyExtractor}

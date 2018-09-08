@@ -2,6 +2,7 @@ line: Red Line
 colors:
   bar: rgb(233, 87, 95)
   dot: rgb(151, 27, 16)
+notice: Route that services the south part of the city. Normal route service is $1.25.
 schedules:
   - days: [Mo, Tu, We, Th, Fr]
     coordinates: {}
