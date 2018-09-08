@@ -78,10 +78,17 @@ function ChannelsSection({pushesEnabled, onToggleChannel, channels}) {
 		paired.map(([groupName, theseChannels]) =>
 			theseChannels.map(channel => {
 				// if the channel is forced, then we want to show the switch
-				// as being "on", unless notifications are disabled, in which
-				// case we can't send the forced notification, so we want to
-				// show it as being "off".
-				let forcedOn = channel.forced && pushesEnabled
+				// as being "on". We also want to forcibly set all switches to
+				// "off" when pushes are disabled.
+				let value = channels.has(channel.key)
+
+				if (channel.forced) {
+					value = true
+				}
+
+				if (pushesEnabled === false) {
+					value = false
+				}
 
 				return (
 					<CellToggle
@@ -90,7 +97,7 @@ function ChannelsSection({pushesEnabled, onToggleChannel, channels}) {
 						disabled={pushesEnabled === false || channel.forced}
 						label={channel.label}
 						onChange={() => onToggleChannel(channel.key)}
-						value={forcedOn || channels.has(channel.key)}
+						value={value}
 					/>
 				)
 			}),
