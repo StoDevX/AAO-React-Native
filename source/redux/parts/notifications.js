@@ -14,7 +14,7 @@ import OneSignal, {
 } from 'react-native-onesignal'
 import pify from 'pify'
 
-const getOneSignalTags: () => Promise<TagsObject> = pify(OneSignal.getTags, {
+const getOneSignalTags: () => Promise<?TagsObject> = pify(OneSignal.getTags, {
 	errorFirst: false,
 })
 const getOneSignalPermissions: () => Promise<SubscriptionState> = pify(
@@ -100,7 +100,10 @@ export function hydrate(): ThunkAction<HydrateChannelsAction> {
 			getOneSignalTags(),
 			getOneSignalPermissions(),
 		])
-		let channels = new Set(Object.keys(tags))
+		let channels = new Set()
+		if (tags) {
+			channels = new Set(Object.keys(tags))
+		}
 		dispatch({type: CHANNELS_HYDRATE, payload: {channels, permissions}})
 	}
 }

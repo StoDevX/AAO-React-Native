@@ -110,7 +110,7 @@ declare module 'react-native-onesignal' {
 
     static sendTag(key: string, value: string): void;
     static sendTags(TagsObject): void;
-    static getTags((TagsObject | Error) => mixed): void;
+    static getTags((null | TagsObject | Error) => mixed): void;
     static deleteTag(key: string): void;
 
     static enableVibrate(enable: boolean): void;
