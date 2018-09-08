@@ -25,7 +25,7 @@ export function IosNotificationSettingsButton(props: Props) {
 		// we have seen the prompt and given permission
 		// -- show a button to open settings to turn off notifications
 		titleText = 'Disable Notifications'
-		footerText = `${onString}. You can turn notifications off for this app in Settings.`
+		footerText = `${onString} You can turn notifications off for this app in Settings.`
 		onPress = () => Linking.openURL('app-settings:')
 	} else {
 		if (hasPrompted) {
@@ -38,7 +38,7 @@ export function IosNotificationSettingsButton(props: Props) {
 			// we have not been prompted before
 			// -- let onesignal prompt for permissions
 			titleText = 'Enable Notifications'
-			footerText = `${offString}. You can turn notifications on for this app by pushing the button above.`
+			footerText = `${offString} You can turn notifications on for this app by pushing the button above.`
 			onPress = onEnable
 		}
 	}
