@@ -4,7 +4,6 @@ import {Section, PushButtonCell} from '@frogpond/tableview'
 import {type NavigationScreenProp} from 'react-navigation'
 import {trackedOpenUrl} from '@frogpond/open-url'
 import * as Icons from '@hawkrives/react-native-alternate-icons'
-import {sectionBgColor} from '@frogpond/colors'
 import {GH_BASE_URL} from '../../../../lib/constants'
 
 type Props = {navigation: NavigationScreenProp<*>}
@@ -40,7 +39,7 @@ export class MiscellanySection extends React.Component<Props, State> {
 
 	render() {
 		return (
-			<Section header="MISCELLANY" sectionTintColor={sectionBgColor}>
+			<Section header="MISCELLANY">
 				{this.state.canChangeIcon ? (
 					<PushButtonCell
 						onPress={this.onAppIconButton}
