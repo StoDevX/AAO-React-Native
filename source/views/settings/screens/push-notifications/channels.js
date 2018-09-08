@@ -28,16 +28,16 @@ export const notificationTypes: Array<NotificationChannel> = [
 		label: 'Monthly Specials',
 		group: "Lion's Pause",
 	},
-	{
-		key: 'channel:multimedia/weekly-movie',
-		label: 'Weekly Movie',
-		group: 'Multimedia',
-	},
-	{
-		key: 'channel:post-office/packages',
-		label: 'Packages',
-		group: 'Post Office',
-	},
+	// {
+	// 	key: 'channel:multimedia/weekly-movie',
+	// 	label: 'Weekly Movie',
+	// 	group: 'Multimedia',
+	// },
+	// {
+	// 	key: 'channel:post-office/packages',
+	// 	label: 'Packages',
+	// 	group: 'Post Office',
+	// },
 	{
 		key: 'channel:sga/announcements',
 		label: 'Announcements',
