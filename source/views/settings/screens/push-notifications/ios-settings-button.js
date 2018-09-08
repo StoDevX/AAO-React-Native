@@ -38,13 +38,13 @@ export function IosNotificationSettingsButton(props: Props) {
 			// we have not been prompted before
 			// -- let onesignal prompt for permissions
 			titleText = 'Enable Notifications'
-			footerText = `${offString} You can turn notifications on for this app by pushing the button above.`
+			footerText = ''
 			onPress = onEnable
 		}
 	}
 
 	return (
-		<Section footer={footerText} header="NOTIFICATION SETTINGS">
+		<Section footer={footerText} header="PUSH NOTIFICATIONS">
 			<PushButtonCell onPress={onPress} title={titleText} />
 		</Section>
 	)
