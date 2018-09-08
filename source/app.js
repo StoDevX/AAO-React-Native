@@ -2,6 +2,7 @@
 
 // monkey-patches
 import './init/global--buffer'
+import './init/monkey-patch--url'
 
 // initialization
 import './init/constants'
