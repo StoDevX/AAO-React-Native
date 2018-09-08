@@ -83,6 +83,6 @@ function NotificationsCell(props: NotificationsCellProps) {
 
 const ConnectedNotificationsCell = connect((state: ReduxState) => ({
 	isSubscribed: state.notifications
-		? state.notifications.channels.size > 0
+		? state.notifications.enabled
 		: false,
 }))(NotificationsCell)
