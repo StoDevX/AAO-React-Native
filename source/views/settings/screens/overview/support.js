@@ -7,7 +7,6 @@ import {sendEmail} from '../../../../components/send-email'
 import DeviceInfo from 'react-native-device-info'
 import {appVersion, appBuild} from '@frogpond/constants'
 import {refreshApp} from '../../../../lib/refresh'
-import {sectionBgColor} from '@frogpond/colors'
 
 type Props = {navigation: NavigationScreenProp<*>}
 
@@ -52,7 +51,7 @@ export class SupportSection extends React.Component<Props> {
 
 	render() {
 		return (
-			<Section header="SUPPORT" sectionTintColor={sectionBgColor}>
+			<Section header="SUPPORT">
 				<PushButtonCell onPress={openEmail} title="Contact Us" />
 				<PushButtonCell onPress={this.onFaqButton} title="FAQs" />
 				<PushButtonCell onPress={this.onResetButton} title="Reset Everything" />
