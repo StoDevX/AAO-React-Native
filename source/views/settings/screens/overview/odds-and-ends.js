@@ -5,7 +5,6 @@ import {appVersion, appBuild} from '@frogpond/constants'
 import {setFeedbackStatus} from '../../../../redux/parts/settings'
 import type {ReduxState} from '../../../../redux'
 import {connect} from 'react-redux'
-import {sectionBgColor} from '@frogpond/colors'
 import {type NavigationScreenProp} from 'react-navigation'
 
 type Props = {
@@ -22,7 +21,7 @@ export class OddsAndEndsSection extends React.Component<Props> {
 		let build = appBuild()
 
 		return (
-			<Section header="ODDS &amp; ENDS" sectionTintColor={sectionBgColor}>
+			<Section header="ODDS &amp; ENDS">
 				<Cell cellStyle="RightDetail" detail={version} title="Version" />
 				{build && (
 					<Cell cellStyle="RightDetail" detail={build} title="Build Number" />

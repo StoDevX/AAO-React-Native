@@ -2,6 +2,11 @@
 version: 2
 
 x-config:
+  x-images:
+    - &docker-node
+      - image: 'circleci/node:8'
+    - &docker-ruby
+      - image: 'circleci/ruby:2.5.1'
   x-caching:  # caching instructions
     - &save-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
@@ -103,7 +108,7 @@ workflows:
 
 jobs:
   cache-yarn-linux:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -113,7 +118,7 @@ jobs:
       - persist_to_workspace: *persist-workspace-node_modules
 
   cache-bundler-linux:
-    docker: [{image: 'circleci/ruby:2.4'}]
+    docker: *docker-ruby
     steps:
       - checkout
       - run: *set-ruby-version
@@ -125,7 +130,7 @@ jobs:
       - save_cache: *save-cache-bundler
 
   danger:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-general
     steps:
@@ -134,7 +139,7 @@ jobs:
       - run: *run-danger
 
   flow:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-flow
     steps:
@@ -146,7 +151,7 @@ jobs:
       - run: *run-danger
 
   jest:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-jest
       JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
@@ -171,7 +176,7 @@ jobs:
             fi
 
   prettier:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-prettier
     steps:
@@ -189,7 +194,7 @@ jobs:
       - run: *run-danger
 
   eslint:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-lint
     steps:
@@ -204,7 +209,7 @@ jobs:
           path: ./test-results
 
   data:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-data
     steps:
@@ -260,7 +265,7 @@ jobs:
       IS_NIGHTLY: '1'
 
   android-bundle:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-bundle-android
     steps:
@@ -284,6 +289,7 @@ jobs:
       task: IOS
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_DISABLE_ANIMATION: '1'
+      HOMEBREW_NO_AUTO_UPDATE: 1
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
     shell: /bin/bash --login -o pipefail
@@ -297,8 +303,8 @@ jobs:
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - save_cache: *save-cache-bundler
-      - run: HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew
-      - run: HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils
+      - run: brew tap wix/brew
+      - run: brew install applesimutils
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run:
@@ -322,7 +328,7 @@ jobs:
       IS_NIGHTLY: '1'
 
   ios-bundle:
-    docker: [{image: 'circleci/node:8'}]
+    docker: *docker-node
     environment:
       task: JS-bundle-ios
     steps:

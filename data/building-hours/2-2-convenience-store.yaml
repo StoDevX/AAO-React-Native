@@ -4,11 +4,10 @@ category: Supplies and Books
 
 schedule:
   - title: Hours
-    hours: []
-      # - {days: [Mo, Tu, We, Th, Fr], from: '5:00pm', to: '8:00pm'}
-      # - {days: [Sa], from: '4:00pm', to: '8:00pm'}
-      # - {days: [Su], from: '12:00pm', to: '4:00pm'}
-    notes: The convenience store is closed for the summer? They should be open whenever the bookstore is open.
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '5:00pm', to: '8:00pm'}
+      - {days: [Sa], from: '4:00pm', to: '8:00pm'}
+      - {days: [Su], from: '12:00pm', to: '4:00pm'}
 
 breakSchedule:
   fall: []

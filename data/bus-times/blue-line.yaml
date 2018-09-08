@@ -2,6 +2,7 @@ line: Blue Line
 colors:
   bar: rgb(103, 153, 170)
   dot: rgb(13, 26, 35)
+notice: Route that services the north part of the city. Normal route service is $1.25.
 schedules:
   - days: [Mo, Tu, We, Th, Fr]
     coordinates:
