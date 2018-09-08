@@ -82,7 +82,5 @@ function NotificationsCell(props: NotificationsCellProps) {
 }
 
 const ConnectedNotificationsCell = connect((state: ReduxState) => ({
-	isSubscribed: state.notifications
-		? state.notifications.enabled
-		: false,
+	isSubscribed: state.notifications ? state.notifications.enabled : false,
 }))(NotificationsCell)
