@@ -1,5 +1,9 @@
 // @flow
 
+// monkey-patches
+import './init/global--buffer'
+
+// initialization
 import './init/constants'
 import './init/fetch'
 import './init/moment'
