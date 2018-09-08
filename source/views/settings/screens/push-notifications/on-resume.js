@@ -29,9 +29,7 @@ class _CheckForPushSettingsOnResume extends React.Component<Props, State> {
 	handleAppStateChange = (nextAppState: string) => {
 		let {appState: currentAppState} = this.state
 
-		let shouldRehydrate =
-			(currentAppState === 'inactive' || currentAppState === 'background') &&
-			nextAppState === 'active'
+		let shouldRehydrate = currentAppState !== 'active' && nextAppState === 'active'
 
 		if (shouldRehydrate) {
 			this.props.rehydrate()
