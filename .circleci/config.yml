@@ -6,7 +6,7 @@ x-config:
     - &docker-node
       - image: 'circleci/node:8'
     - &docker-ruby
-      - image: 'circleci/ruby:2.4'
+      - image: 'circleci/ruby:2.5.1'
   x-caching:  # caching instructions
     - &save-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
