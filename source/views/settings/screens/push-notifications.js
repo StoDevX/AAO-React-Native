@@ -109,19 +109,19 @@ class PushNotificationsSettingsView extends React.Component<Props> {
 		const showSettingsDisableButton =
 			Platform.OS === 'ios' && this.props.enabled
 
-		// we haye not been prompted before -- let onesignal prompt for permissions
+		// we have not been prompted before -- let onesignal prompt for permissions
 		if (showSettingsEnableButton) {
 			titleText = 'Turn On Notifications'
 			footerText =
 				'Notifications are turned off for "All About Olaf". You can turn notifications on for this app by pushing the button above.'
 			onPress = this.props.onChangeEnabledToggle
-			// we declined the initial prompt -- give an option to open settings to turn on notifications
+			// we declined the initial prompt -- button to open settings to turn on notifications
 		} else if (showSettingsDeclinedButton) {
 			titleText = 'Open Settings'
 			footerText =
 				'Notifications are turned off for "All About Olaf". You can turn notifications on for this app in Settings.'
 			onPress = () => Linking.openURL('app-settings:')
-			// we have seen the prompt and given permission -- given an option to open settings to turn off notifications
+			// we have seen the prompt and given permission -- button to open settings to turn off notifications
 		} else if (showSettingsDisableButton) {
 			titleText = 'Turn Off Notifications'
 			footerText =
