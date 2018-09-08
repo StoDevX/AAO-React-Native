@@ -284,6 +284,7 @@ jobs:
       task: IOS
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_DISABLE_ANIMATION: '1'
+      HOMEBREW_NO_AUTO_UPDATE: 1
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
     shell: /bin/bash --login -o pipefail
@@ -297,8 +298,8 @@ jobs:
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - save_cache: *save-cache-bundler
-      - run: HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew
-      - run: HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils
+      - run: brew tap wix/brew
+      - run: brew install applesimutils
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run:
