@@ -19,7 +19,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Lap Swim
-      hours:
-        - {days: [Mo, Tu, We, Th], from: '6:00pm', to: '7:00pm'}
+  summer: []
