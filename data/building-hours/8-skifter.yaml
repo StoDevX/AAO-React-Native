@@ -15,8 +15,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Hours
-      hours:
-        - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '10:00pm'}
-        - {days: [Sa, Su], from: '12:00pm', to: '10:00pm'}
+  summer: []

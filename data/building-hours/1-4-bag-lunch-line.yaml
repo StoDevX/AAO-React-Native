@@ -13,7 +13,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Hours
-      hours: []
-      notes: The Bag Lunch line is closed for the summer.
+  summer: []

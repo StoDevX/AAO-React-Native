@@ -15,7 +15,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Office
-      hours: []
-      notes: The Gender & Sexuality Center is closed for the summer?
+  summer: []

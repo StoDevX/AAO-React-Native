@@ -23,7 +23,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Office
-      hours: []
-      notes: The SARN office is closed for the summer?
+  summer: []

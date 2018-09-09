@@ -15,7 +15,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Hours
-      hours: []
-      notes: The Wellness Center is closed for the summer?
+  summer: []
