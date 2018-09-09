@@ -17,10 +17,10 @@
 
 import {URL, URLSearchParams} from 'whatwg-url'
 
-let RNURL = global.URL;
+let RNURL = global.URL
 
-URL.createObjectURL = RNURL.createObjectURL;
-URL.revokeObjectURL = RNURL.revokeObjectURL;
+URL.createObjectURL = RNURL.createObjectURL
+URL.revokeObjectURL = RNURL.revokeObjectURL
 
-global.URL = URL;
-global.URLSearchParams = URLSearchParams;
+global.URL = URL
+global.URLSearchParams = URLSearchParams
