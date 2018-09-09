@@ -19,7 +19,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Hours
-      hours: []
-      notes: The Writing Desk is closed for the summer.
+  summer: []
