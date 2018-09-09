@@ -1,30 +1,12 @@
 // @flow
 
-import {} from '../../lib/storage'
-
 import {
 	trackChannelSubscribe,
 	trackChannelUnsubscribe,
 	trackNotificationsDisable,
 	trackNotificationsEnable,
 } from '@frogpond/analytics'
-import OneSignal, {
-	type SubscriptionState,
-	type TagsObject,
-} from 'react-native-onesignal'
-import pify from 'pify'
-
-const getOneSignalTags: () => Promise<?TagsObject> = pify(OneSignal.getTags, {
-	errorFirst: false,
-})
-const getOneSignalPermissions: () => Promise<SubscriptionState> = pify(
-	OneSignal.getPermissionSubscriptionState,
-	{errorFirst: false},
-)
-const promptOneSignalPushPermission: () => Promise<boolean> = pify(
-	OneSignal.promptForPushNotificationsWithUserResponse,
-	{errorFirst: false},
-)
+import OneSignal from 'react-native-onesignal'
 
 import {type ReduxState} from '../index'
 
@@ -42,7 +24,8 @@ export type NotificationChannelName =
 
 const CHANNEL_SUBSCRIBE = 'notifications/CHANNEL_SUBSCRIBE'
 const CHANNEL_UNSUBSCRIBE = 'notifications/CHANNEL_UNSUBSCRIBE'
-const CHANNELS_HYDRATE = 'notifications/CHANNELS_HYDRATE'
+const SET_CHANNELS = 'notifications/SET_CHANNELS'
+const SET_PERMISSIONS = 'notifications/SET_PERMISSIONS'
 const DISABLE = 'notifications/DISABLE'
 const ENABLE = 'notifications/ENABLE'
 
@@ -87,24 +70,36 @@ export function toggleSubscription(
 	}
 }
 
-type HydrateChannelsAction = {|
-	type: 'notifications/CHANNELS_HYDRATE',
-	payload: {
-		channels: Set<NotificationChannelName>,
-		permissions: SubscriptionState,
-	},
+type SetPermissionsAction = {|
+	type: 'notifications/SET_PERMISSIONS',
+	payload: {enabled: boolean, hasPrompted: boolean},
 |}
-export function hydrate(): ThunkAction<HydrateChannelsAction> {
-	return async dispatch => {
-		let [tags, permissions] = await Promise.all([
-			getOneSignalTags(),
-			getOneSignalPermissions(),
-		])
-		let channels = new Set()
-		if (tags) {
-			channels = new Set(Object.keys(tags))
-		}
-		dispatch({type: CHANNELS_HYDRATE, payload: {channels, permissions}})
+type SetChannelsAction = {|
+	type: 'notifications/SET_CHANNELS',
+	payload: Set<NotificationChannelName>,
+|}
+export function hydrate(): ThunkAction<SetPermissionsAction | SetChannelsAction> {
+	return dispatch => {
+		OneSignal.getPermissionSubscriptionState(permissions => {
+			dispatch({type: SET_PERMISSIONS, payload: {
+				enabled: permissions.notificationsEnabled,
+				hasPrompted: permissions.hasPrompted,
+			}})
+		})
+
+		OneSignal.getTags(tags => {
+			if (!tags) {
+				return;
+			}
+
+			if (tags.stack && tags.message) {
+				// it's an error
+				return;
+			}
+
+			let channels: Set<any> = new Set(Object.keys(tags))
+			dispatch({type: SET_CHANNELS, payload: channels})
+		})
 	}
 }
 
@@ -129,16 +124,18 @@ function enable(): EnableNotificationsAction {
 export function prompt(): ThunkAction<
 	EnableNotificationsAction | DisableNotificationsAction,
 > {
-	return async dispatch => {
-		const permissionResult = await promptOneSignalPushPermission()
-		dispatch(permissionResult ? enable() : disable())
+	return dispatch => {
+		OneSignal.promptForPushNotificationsWithUserResponse(result => {
+			dispatch(result ? enable() : disable())
+		})
 	}
 }
 
 type Action =
 	| ChannelSubscribeAction
 	| ChannelUnsubscribeAction
-	| HydrateChannelsAction
+	| SetPermissionsAction
+	| SetChannelsAction
 	| EnableNotificationsAction
 	| DisableNotificationsAction
 
@@ -168,12 +165,15 @@ export function notifications(state: State = initialState, action: Action) {
 			return {...state, channels}
 		}
 
-		case CHANNELS_HYDRATE:
+		case SET_CHANNELS: {
+			return {...state, channels: action.payload}
+		}
+
+		case SET_PERMISSIONS:
 			return {
 				...state,
-				channels: action.payload.channels,
-				enabled: action.payload.permissions.notificationsEnabled,
-				hasPrompted: action.payload.permissions.hasPrompted,
+				enabled: action.payload.enabled,
+				hasPrompted: action.payload.hasPrompted,
 			}
 
 		case ENABLE:
