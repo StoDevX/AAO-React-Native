@@ -85,14 +85,10 @@ platform :ios do
   desc 'Submit a new nightly Beta Build to Testflight'
   lane :nightly do
     build
-    # TestFlight is returning 500 errors when we upload changelogs again.
-    begin
-      testflight(changelog: make_changelog,
-                 distribute_external: false)
-    rescue => error
-      puts 'Changelog failed to upload:'
-      puts error
-    end
+
+    testflight(changelog: make_changelog,
+               distribute_external: false)
+
     generate_sourcemap
     upload_sourcemap_to_bugsnag
   end
