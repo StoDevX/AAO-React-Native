@@ -78,23 +78,28 @@ type SetChannelsAction = {|
 	type: 'notifications/SET_CHANNELS',
 	payload: Set<NotificationChannelName>,
 |}
-export function hydrate(): ThunkAction<SetPermissionsAction | SetChannelsAction> {
+export function hydrate(): ThunkAction<
+	SetPermissionsAction | SetChannelsAction,
+> {
 	return dispatch => {
 		OneSignal.getPermissionSubscriptionState(permissions => {
-			dispatch({type: SET_PERMISSIONS, payload: {
-				enabled: permissions.notificationsEnabled,
-				hasPrompted: permissions.hasPrompted,
-			}})
+			dispatch({
+				type: SET_PERMISSIONS,
+				payload: {
+					enabled: permissions.notificationsEnabled,
+					hasPrompted: permissions.hasPrompted,
+				},
+			})
 		})
 
 		OneSignal.getTags(tags => {
 			if (!tags) {
-				return;
+				return
 			}
 
 			if (tags.stack && tags.message) {
 				// it's an error
-				return;
+				return
 			}
 
 			let channels: Set<any> = new Set(Object.keys(tags))
