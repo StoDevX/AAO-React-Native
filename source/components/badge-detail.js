@@ -15,7 +15,7 @@ const BGCOLORS = {
 
 type Props = {status: string}
 
-export class Badge extends React.PureComponent<Props> {
+export class BadgeDetail extends React.PureComponent<Props> {
 	render() {
 		const {status} = this.props
 		const bgColor = BGCOLORS[status] || c.goldenrod
