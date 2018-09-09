@@ -29,7 +29,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Hours
-      notes: The Pause Kitchen is closed for the summer.
-      hours: []
+  summer: []
