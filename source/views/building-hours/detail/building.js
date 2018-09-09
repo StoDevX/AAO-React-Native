@@ -8,7 +8,7 @@ import moment from 'moment-timezone'
 import * as c from '@frogpond/colors'
 import {getShortBuildingStatus} from '../lib'
 
-import {BadgeDetail} from '../../../components/badge-detail'
+import {OutlineBadge} from '../../../components/outline-badge'
 import {Header} from './header'
 import {ScheduleTable} from './schedule-table'
 import {ListFooter} from '@frogpond/lists'
@@ -63,7 +63,7 @@ export class BuildingDetail extends React.Component<Props> {
 				) : null}
 
 				<Header building={info} />
-				<BadgeDetail status={openStatus} />
+				<OutlineBadge status={openStatus} />
 				<ScheduleTable
 					now={now}
 					onProblemReport={onProblemReport}

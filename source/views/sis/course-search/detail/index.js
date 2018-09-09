@@ -4,7 +4,7 @@ import * as React from 'react'
 import {StyleSheet, Text, Platform} from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
 import glamorous from 'glamorous-native'
-import {BadgeDetail} from '../../../../components/badge-detail'
+import {OutlineBadge} from '../../../../components/outline-badge'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
 import {
@@ -204,7 +204,7 @@ export class CourseDetailView extends React.PureComponent<Props> {
 			<Container>
 				<Header>{course.title || course.name}</Header>
 				<SubHeader>{deptNum(course)}</SubHeader>
-				<BadgeDetail status={status} />
+				<OutlineBadge status={status} />
 				<TableView>
 					<Information course={course} />
 					<Schedule course={course} />
