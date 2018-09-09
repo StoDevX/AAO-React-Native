@@ -11,12 +11,17 @@ import './init/moment'
 import './init/analytics'
 import './init/api'
 import './init/theme'
+import {ONESIGNAL_APP_ID} from './init/notifications'
 
 import * as React from 'react'
 import {Provider} from 'react-redux'
 import {makeStore, initRedux} from './redux'
 import * as navigation from './navigation'
-import OneSignal from 'react-native-onesignal'
+import OneSignal, {
+	type OneSignalOpenResult,
+	type OneSignalNotification,
+	type OneSignalIdsResult,
+} from 'react-native-onesignal'
 import {ThemeProvider} from '@callstack/react-theme-provider'
 import {getTheme} from '@frogpond/app-theme'
 
@@ -27,6 +32,8 @@ type Props = {}
 
 export default class App extends React.Component<Props> {
 	componentDidMount() {
+		OneSignal.init(ONESIGNAL_APP_ID, {kOSSettingsKeyAutoPrompt: false})
+
 		OneSignal.addEventListener('received', this.onReceived)
 		OneSignal.addEventListener('opened', this.onOpened)
 		OneSignal.addEventListener('ids', this.onIds)
@@ -38,19 +45,19 @@ export default class App extends React.Component<Props> {
 		OneSignal.removeEventListener('ids', this.onIds)
 	}
 
-	onReceived(notification: any) {
+	onReceived(notification: OneSignalNotification) {
 		console.log('Notification received: ', notification)
 	}
 
-	onOpened(openResult: any) {
-		console.log('Message: ', openResult.notification.payload.body)
-		console.log('Data: ', openResult.notification.payload.additionalData)
-		console.log('isActive: ', openResult.notification.isAppInFocus)
-		console.log('openResult: ', openResult)
+	onOpened(openResult: OneSignalOpenResult) {
+		console.log('Message:', openResult.notification.payload.body)
+		console.log('Data:', openResult.notification.payload.additionalData)
+		console.log('isActive:', openResult.notification.isAppInFocus)
+		console.log('openResult:', openResult)
 	}
 
-	onIds(device: any) {
-		console.log('Device info: ', device)
+	onIds(device: OneSignalIdsResult) {
+		console.log('Device info:', device)
 	}
 
 	render() {

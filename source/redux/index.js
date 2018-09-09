@@ -13,6 +13,10 @@ import {buildings, type State as BuildingsState} from './parts/buildings'
 import {help, type State as HelpState} from './parts/help'
 import {courses, type State as CoursesState} from './parts/courses'
 import {stoprint, type State as StoPrintState} from './parts/stoprint'
+import {
+	notifications,
+	type State as NotificationsState,
+} from './parts/notifications'
 
 export {init as initRedux} from './init'
 
@@ -25,6 +29,7 @@ export type ReduxState = {
 	buildings?: BuildingsState,
 	help?: HelpState,
 	stoprint?: StoPrintState,
+	notifications?: NotificationsState,
 }
 
 export const makeStore = () => {
@@ -37,6 +42,7 @@ export const makeStore = () => {
 		buildings,
 		help,
 		stoprint,
+		notifications,
 	})
 
 	const middleware = [reduxPromise, reduxThunk]

@@ -146,6 +146,7 @@ platform :ios do
       language: 'English',
       enable_services: {
         push_notification: 'on',
+        app_group: 'on',
       },
     )
 
@@ -156,6 +157,7 @@ platform :ios do
       skip_itc: 'on',
       enable_services: {
         push_notification: 'off',
+        app_group: 'on',
       },
     )
   end

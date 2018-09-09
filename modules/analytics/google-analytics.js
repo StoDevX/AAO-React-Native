@@ -81,3 +81,21 @@ export const trackLoginFailure = (reason: string) =>
 	tracker.trackEvent('account', 'login-failure', {label: reason, value: 1})
 
 export const trackLogOut = () => tracker.trackEvent('account', 'log-out')
+
+export const trackChannelSubscribe = (channelName: string) =>
+	tracker.trackEvent('notification-channel', 'subscribe', {
+		label: channelName,
+		value: 1,
+	})
+
+export const trackChannelUnsubscribe = (streamName: string) =>
+	tracker.trackEvent('notification-channel', 'unsubscribe', {
+		label: streamName,
+		value: 1,
+	})
+
+export const trackNotificationsDisable = () =>
+	tracker.trackEvent('notification-channel', 'disabled')
+
+export const trackNotificationsEnable = () =>
+	tracker.trackEvent('notifications', 'enabled')

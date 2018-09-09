@@ -17,6 +17,7 @@ import {
 } from './parts/settings'
 import {updateBalances} from './parts/balances'
 import {loadRecentSearches, loadRecentFilters} from './parts/courses'
+import {hydrate} from './parts/notifications'
 
 async function loginCredentials(store) {
 	const {username, password} = await loadLoginCredentials()
@@ -70,5 +71,6 @@ export async function init(store: {dispatch: any => any}) {
 		validateOlafCredentials(store),
 		store.dispatch(updateBalances(false)),
 		store.dispatch(getEnabledTools()),
+		store.dispatch(hydrate()),
 	])
 }

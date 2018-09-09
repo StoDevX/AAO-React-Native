@@ -36,6 +36,7 @@ import {
 	CreditsView,
 	LegalView,
 	PrivacyView,
+	PushNotificationsSettingsView,
 } from '../views/settings'
 import SISView from '../views/sis'
 import StreamingView, {
@@ -77,6 +78,7 @@ export const routes = {
 	PrivacyView: {screen: PrivacyView},
 	SettingsView: {screen: SettingsView},
 	IconSettingsView: {screen: IconSettingsView},
+	PushNotificationsSettingsView: {screen: PushNotificationsSettingsView},
 	SISView: {screen: SISView},
 	CourseSearchResultsView: {screen: CourseSearchResultsView},
 	CourseDetailView: {screen: CourseDetailView},
