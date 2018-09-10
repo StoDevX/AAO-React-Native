@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
-import {Badge} from '../../components/badge'
+import {SolidBadge} from '../../components/solid-badge'
 import isEqual from 'lodash/isEqual'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
@@ -122,7 +122,7 @@ export class BuildingRow extends React.Component<Props, State> {
 					</Title>
 
 					{!info.isNotice ? (
-						<Badge
+						<SolidBadge
 							accentColor={accentBg}
 							style={styles.accessoryBadge}
 							text={openStatus}

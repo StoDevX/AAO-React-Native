@@ -1,8 +1,4 @@
-/**
- * @flow
- *
- * <Badge/> renders the [Open] / [Closed] / [IDK] badge on the detai view
- */
+// @flow
 
 import * as React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
@@ -15,7 +11,7 @@ const BGCOLORS = {
 
 type Props = {status: string}
 
-export class Badge extends React.PureComponent<Props> {
+export class OutlineBadge extends React.PureComponent<Props> {
 	render() {
 		const {status} = this.props
 		const bgColor = BGCOLORS[status] || c.goldenrod
