@@ -42,8 +42,6 @@ export class Timer extends React.Component<Props, State> {
 	}
 
 	componentDidMount() {
-		this._intervalId = setInterval(this.updateTime, this.props.interval)
-
 		// get the time remaining until the next $interval
 		let {interval} = this.props
 		let nowMs = this.state.now.getTime()
