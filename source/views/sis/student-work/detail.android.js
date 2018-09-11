@@ -63,8 +63,9 @@ function Contact({job}: {job: JobType}) {
 	const contactName = job.contactName
 	const contactEmail = job.contactEmail
 	const contactNumber = job.contactPhone
+	const contactOffice = job.office
 
-	return job.office || contactName ? (
+	return contactName || contactEmail || contactNumber || contactOffice ? (
 		<Card header="Contact" style={styles.card}>
 			<Text style={styles.cardBody}>{contactName}</Text>
 
@@ -90,7 +91,9 @@ function Contact({job}: {job: JobType}) {
 				</Text>
 			) : null}
 
-			{job.office ? <Text style={styles.cardBody}>{job.office}</Text> : null}
+			{contactOffice ? (
+				<Text style={styles.cardBody}>{contactOffice}</Text>
+			) : null}
 		</Card>
 	) : null
 }
