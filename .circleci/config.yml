@@ -31,7 +31,7 @@ x-config:
       at: *workspace_nm_root
     - &persist-workspace-ios
       root: &workspace_ios_root ./
-      paths: [./node_modules, ./vendor/bundle]
+      paths: [./node_modules, ./vendor/bundle, ./.bundle]
     - &attach-workspace-ios
       at: *workspace_ios_root
     - &persist-workspace-ios-build
