@@ -52,11 +52,11 @@ x-config:
     - &attach-workspace-ios-bundler
       at: *workspace_ios_bundler_root
 
-    - &persist-workspace-ios-build
-      root: &workspace_ios_root ./
-      paths: [./*]
-    - &attach-workspace-ios-build
-      at: *workspace_ios_root
+    # - &persist-workspace-ios-build
+    #   root: &workspace_ios_root ./ios
+    #   paths: [./*]
+    # - &attach-workspace-ios-build
+    #   at: *workspace_ios_root
 
   x-commands:  # command shorthands
     - &set-ruby-version
@@ -364,7 +364,6 @@ jobs:
           command: bundle exec fastlane ios ci-run | tee ./logs/build
           environment:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
-      - persist_to_workspace: *persist-workspace-ios-build
       - store_artifacts: {path: ./ios/build/AllAboutOlaf.app.dSYM.zip}
       - store_artifacts: {path: ./ios/build/AllAboutOlaf.ipa}
       - run:
@@ -378,7 +377,11 @@ jobs:
       <<: *ios-base-env
       task: IOS-E2E
     steps:
-      - attach_workspace: *attach-workspace-ios-build
+      - checkout
+      - attach_workspace: *attach-workspace-ios-node_modules
+      - attach-workspace: *attach-workspace-ios-bundler
+      - run: bundle install --frozen --path ./vendor/bundle
+      - run: mkdir -p logs/
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - run: yarn detox build --configuration ios.sim.release
