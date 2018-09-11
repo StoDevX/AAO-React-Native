@@ -5,11 +5,7 @@ import moment from 'moment-timezone'
 import delay from 'delay'
 
 export function msUntilIntervalRepeat(now: number, interval: number) {
-	let next = now
-	while (next % interval !== 0) {
-		next += 1
-	}
-	return next - now
+	return interval - (now % interval)
 }
 
 type Props = {
