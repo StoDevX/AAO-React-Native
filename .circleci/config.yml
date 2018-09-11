@@ -181,9 +181,11 @@ jobs:
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
+      - restore_cache: *restore-cache-node_modules
       # most of the time here is from recompiling fsevents
       - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
+      - save_cache: *save-cache-node_modules
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - save_cache: *save-cache-bundler
