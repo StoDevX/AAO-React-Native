@@ -86,42 +86,44 @@ workflows:
     # different CIRCLE_WORKFLOW_ID, which should allow us to only deploy
     # nightlies from that branch.
     jobs: &basic-jobs
-      - cache-yarn-linux:
-          filters: &filters {tags: {only: /.*/}}
-      - cache-bundler-linux:
-          filters: *filters
+      # - cache-yarn-linux:
+      #     filters: &filters {tags: {only: /.*/}}
+      # - cache-bundler-linux:
+      #     filters: *filters
       - cache-ios:
-          filters: *filters
-      - danger:
-          filters: *filters
-          requires: [cache-yarn-linux]
-      - flow:
-          filters: *filters
-          requires: [cache-yarn-linux]
-      - jest:
-          filters: *filters
-          requires: [cache-yarn-linux]
-      - prettier:
-          filters: *filters
-          requires: [cache-yarn-linux]
-      - eslint:
-          filters: *filters
-          requires: [cache-yarn-linux]
-      - data:
-          filters: *filters
-          requires: [cache-yarn-linux]
+          filters: &filters {tags: {only: /.*/}}
+      #     filters: *filters
+      # - danger:
+      #     filters: *filters
+      #     requires: [cache-yarn-linux]
+      # - flow:
+      #     filters: *filters
+      #     requires: [cache-yarn-linux]
+      # - jest:
+      #     filters: *filters
+      #     requires: [cache-yarn-linux]
+      # - prettier:
+      #     filters: *filters
+      #     requires: [cache-yarn-linux]
+      # - eslint:
+      #     filters: *filters
+      #     requires: [cache-yarn-linux]
+      # - data:
+      #     filters: *filters
+      #     requires: [cache-yarn-linux]
       - ios:
           filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data, cache-ios]
-      - android:
-          filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
-      - ios-bundle:
-          filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data]
-      - android-bundle:
-          filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data]
+          requires: [cache-ios]
+      #     requires: [danger, flow, jest, prettier, eslint, data, cache-ios]
+      # - android:
+      #     filters: *filters
+      #     requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
+      # - ios-bundle:
+      #     filters: *filters
+      #     requires: [danger, flow, jest, prettier, eslint, data]
+      # - android-bundle:
+      #     filters: *filters
+      #     requires: [danger, flow, jest, prettier, eslint, data]
       - ios-e2e:
           filters: *filters
           requires: [ios]
