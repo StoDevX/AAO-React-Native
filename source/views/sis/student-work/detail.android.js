@@ -59,14 +59,14 @@ function Title({job}: {job: JobType}) {
 	) : null
 }
 
-function Contact({job}: {job: JobType}) {
+function ContactInformation({job}: {job: JobType}) {
 	const contactName = job.contactName
 	const contactEmail = job.contactEmail
 	const contactNumber = job.contactPhone
 	const contactOffice = job.office
 
 	return contactName || contactEmail || contactNumber || contactOffice ? (
-		<Card header="Contact" style={styles.card}>
+		<Card header="Contact Information" style={styles.card}>
 			<Text style={styles.cardBody}>{contactName}</Text>
 
 			{contactEmail ? (
@@ -111,9 +111,9 @@ function Hours({job}: {job: JobType}) {
 	) : null
 }
 
-function GeneralInfo({job}: {job: JobType}) {
+function JobInformation({job}: {job: JobType}) {
 	return job.year || job.openPositions ? (
-		<Card header="General" style={styles.card}>
+		<Card header="Job Information" style={styles.card}>
 			<Text style={styles.cardBody}>
 				{job.year ? `${job.year}\n\n` : null}
 				{job.openPositions ? `Positions: ${job.openPositions}\n\n` : null}
@@ -207,8 +207,8 @@ export class JobDetailView extends React.PureComponent<Props> {
 		return (
 			<ScrollView>
 				<Title job={job} />
-				<Contact job={job} />
-				<GeneralInfo job={job} />
+				<ContactInformation job={job} />
+				<JobInformation job={job} />
 				<Hours job={job} />
 				<Description job={job} />
 				<Skills job={job} />
