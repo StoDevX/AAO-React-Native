@@ -1,7 +1,13 @@
 // @flow
 import * as React from 'react'
-import {Text, ScrollView, StyleSheet} from 'react-native'
-import {Cell, Section, TableView, ButtonCell} from '@frogpond/tableview'
+import {ScrollView} from 'react-native'
+import {
+	Cell,
+	Section,
+	TableView,
+	ButtonCell,
+	SelectableCell,
+} from '@frogpond/tableview'
 import type {EventType, PoweredBy} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../../components/nav-buttons'
@@ -10,22 +16,10 @@ import {ListFooter} from '@frogpond/lists'
 import {shareEvent, getTimes} from './calendar-util'
 import {AddToCalendar} from '../../components/add-to-calendar'
 
-const styles = StyleSheet.create({
-	chunk: {
-		paddingVertical: 10,
-	},
-})
-
 function MaybeSection({header, content}: {header: string, content: string}) {
 	return content.trim() ? (
 		<Section header={header}>
-			<Cell
-				cellContentView={
-					<Text selectable={true} style={styles.chunk}>
-						{content}
-					</Text>
-				}
-			/>
+			<SelectableCell text={content} />
 		</Section>
 	) : null
 }
