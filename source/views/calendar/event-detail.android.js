@@ -8,7 +8,7 @@ import {openUrl} from '@frogpond/open-url'
 import {Card} from '../../components/card'
 import * as c from '@frogpond/colors'
 import {ButtonCell} from '@frogpond/tableview'
-import {getLinksFromEvent, shareEvent, getTimes} from './calendar-util'
+import {shareEvent, getTimes} from './calendar-util'
 import {AddToCalendar} from '../../components/add-to-calendar'
 import {ListFooter} from '@frogpond/lists'
 
@@ -84,7 +84,7 @@ export class EventDetail extends React.PureComponent<Props> {
 				<MaybeCard content={event.location} header="Location" />
 				<MaybeCard content={event.description} header="Description" />
 
-				<Links urls={getLinksFromEvent(event)} />
+				<Links urls={event.links} />
 
 				<AddToCalendar
 					event={event}
