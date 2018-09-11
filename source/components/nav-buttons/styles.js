@@ -41,7 +41,6 @@ export const rightButtonStyles = StyleSheet.create({
 		...Platform.select({
 			ios: {
 				paddingRight: 16,
-				marginTop: 7,
 			},
 			android: {
 				paddingVertical: 16,
