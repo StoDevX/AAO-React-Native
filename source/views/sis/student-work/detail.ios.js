@@ -30,7 +30,7 @@ const Title = glamorous.text({
 	marginVertical: 10,
 })
 
-function Information({job}: {job: JobType}) {
+function ContactInformation({job}: {job: JobType}) {
 	const office = job.office ? (
 		<Cell cellStyle="LeftDetail" detail="Office" title={job.office} />
 	) : null
@@ -64,6 +64,17 @@ function Information({job}: {job: JobType}) {
 		/>
 	) : null
 
+	return (
+		<Section header="CONTACT INFORMATION">
+			{office}
+			{contactName}
+			{contactEmail}
+			{contactPhone}
+		</Section>
+	)
+}
+
+function JobInformation({job}: {job: JobType}) {
 	const ending = job.hoursPerWeek === 'Full-time' ? '' : ' hrs/week'
 	const hours = job.hoursPerWeek ? (
 		<Cell
@@ -90,11 +101,7 @@ function Information({job}: {job: JobType}) {
 	) : null
 
 	return (
-		<Section header="INFORMATION">
-			{office}
-			{contactName}
-			{contactEmail}
-			{contactPhone}
+		<Section header="JOB INFORMATION">
 			{hours}
 			{amount}
 			{year}
@@ -182,7 +189,8 @@ export class JobDetailView extends React.PureComponent<Props> {
 			<ScrollView>
 				<Title selectable={true}>{job.title}</Title>
 				<TableView>
-					<Information job={job} />
+					<ContactInformation job={job} />
+					<JobInformation job={job} />
 					<FirstYearAppropriate job={job} />
 					<Description job={job} />
 					<Skills job={job} />
