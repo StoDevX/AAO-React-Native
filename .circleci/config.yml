@@ -25,10 +25,20 @@ x-config:
       key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
   x-workspace:
     - &persist-workspace-node_modules
-      root: ./node_modules
+      root: &workspace_nm_root ./node_modules
       paths: [./*]
     - &attach-workspace-node_modules
-      at: ./node_modules
+      at: *workspace_nm_root
+    - &persist-workspace-ios
+      root: &workspace_ios_root ./
+      paths: [./node_modules, ./vendor/bundle]
+    - &attach-workspace-ios
+      at: *workspace_ios_root
+    - &persist-workspace-ios-build
+      root: &workspace_ios_root ./
+      paths: [./*]
+    - &attach-workspace-ios-build
+      at: *workspace_ios_root
   x-commands:  # command shorthands
     - &set-ruby-version
       name: Set Ruby Version
@@ -58,7 +68,9 @@ workflows:
       - cache-yarn-linux:
           filters: &filters {tags: {only: /.*/}}
       - cache-bundler-linux:
-          filters: &filters {tags: {only: /.*/}}
+          filters: *filters
+      - cache-ios:
+          filters: *filters
       - danger:
           filters: *filters
           requires: [cache-yarn-linux]
@@ -79,7 +91,7 @@ workflows:
           requires: [cache-yarn-linux]
       - ios:
           filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data]
+          requires: [danger, flow, jest, prettier, eslint, data, cache-ios]
       - android:
           filters: *filters
           requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
@@ -89,6 +101,9 @@ workflows:
       - android-bundle:
           filters: *filters
           requires: [danger, flow, jest, prettier, eslint, data]
+      - ios-e2e:
+          filters: *filters
+          requires: [ios]
   nightly:
     triggers:
       - schedule:
@@ -128,6 +143,27 @@ jobs:
       - run: gem --version
       - run: ruby --version
       - save_cache: *save-cache-bundler
+
+  cache-ios: &ios-base
+    macos: {xcode: '9.4.1'}
+    environment: &ios-base-env
+      FASTLANE_SKIP_UPDATE_CHECK: '1'
+      FASTLANE_DISABLE_ANIMATION: '1'
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+    shell: /bin/bash --login -o pipefail
+    steps:
+      - checkout
+      - run: yarn --version
+      - run: *set-ruby-version
+      - restore_cache: *restore-cache-yarn
+      - run: yarn install --frozen-lockfile
+      - save_cache: *save-cache-yarn
+      - restore_cache: *restore-cache-bundler
+      - run: bundle check || bundle install --frozen --path ./vendor/bundle
+      - save_cache: *save-cache-bundler
+      - persist_to_workspace: *persist-workspace-ios
 
   danger:
     docker: *docker-node
@@ -285,27 +321,12 @@ jobs:
       - run: *run-danger
 
   ios: &ios
-    macos: {xcode: '9.4.1'}
+    <<: *ios-base
     environment: &ios-env
+      <<: *ios-base-env
       task: IOS
-      FASTLANE_SKIP_UPDATE_CHECK: '1'
-      FASTLANE_DISABLE_ANIMATION: '1'
-      HOMEBREW_NO_AUTO_UPDATE: 1
-      LC_ALL: en_US.UTF-8
-      LANG: en_US.UTF-8
-    shell: /bin/bash --login -o pipefail
     steps:
-      - checkout
-      - run: yarn --version
-      - run: *set-ruby-version
-      - restore_cache: *restore-cache-yarn
-      - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
-      - restore_cache: *restore-cache-bundler
-      - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - save_cache: *save-cache-bundler
-      - run: brew tap wix/brew
-      - run: brew install applesimutils
+      - attach_workspace: *attach-workspace-ios
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run:
@@ -313,14 +334,25 @@ jobs:
           command: bundle exec fastlane ios ci-run | tee ./logs/build
           environment:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
-      - run: yarn detox build --configuration ios.sim.release
-      - run: yarn detox test --configuration ios.sim.release --cleanup
+      - persist_to_workspace: *persist-workspace-ios-build
       - store_artifacts: {path: ./ios/build/AllAboutOlaf.app.dSYM.zip}
       - store_artifacts: {path: ./ios/build/AllAboutOlaf.ipa}
       - run:
           name: Analyze Fastlane Logfile
           command: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
       - run: *run-danger
+
+  ios-e2e:
+    <<: *ios
+    environment:
+      <<: *ios-base-env
+      task: IOS-E2E
+    steps:
+      - attach_workspace: *attach-workspace-ios-build
+      - run: brew tap wix/brew
+      - run: brew install applesimutils
+      - run: yarn detox build --configuration ios.sim.release
+      - run: yarn detox test --configuration ios.sim.release --cleanup
 
   ios-nightly:
     <<: *ios
