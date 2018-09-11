@@ -18,7 +18,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Hours
-      hours: []
-      notes: 'World Language Center is closed for the summer?'
+  summer: []

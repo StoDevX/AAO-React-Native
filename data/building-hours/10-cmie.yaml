@@ -16,7 +16,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Hours
-      hours: []
-      notes: The CMIE is closed for the summer.
+  summer: []

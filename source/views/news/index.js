@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 // @flow
 
 import * as React from 'react'

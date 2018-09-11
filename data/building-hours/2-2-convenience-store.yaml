@@ -16,7 +16,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Hours
-      hours: []
-      notes: The convenience store is closed for the summer? They should be open whenever the bookstore is open.
+  summer: []
