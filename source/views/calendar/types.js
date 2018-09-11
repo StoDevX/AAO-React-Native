@@ -24,6 +24,7 @@ export type EventType = {
 	startTime: moment,
 	endTime: moment,
 	isOngoing: boolean,
+	links: Array<string>,
 	config: {
 		startTime: boolean,
 		endTime: boolean,
