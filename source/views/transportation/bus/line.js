@@ -121,13 +121,6 @@ export class BusLine extends React.Component<Props, State> {
 		return deriveFromProps(nextProps)
 	}
 
-	shouldComponentUpdate(nextProps: Props) {
-		return (
-			this.props.now.isSame(nextProps.now, 'minute') ||
-			this.props.line !== nextProps.line
-		)
-	}
-
 	keyExtractor = (item: BusTimetableEntry, index: number) => index.toString()
 
 	renderItem = ({item, index}: {index: number, item: BusTimetableEntry}) => (
