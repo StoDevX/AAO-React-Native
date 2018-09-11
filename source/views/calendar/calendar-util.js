@@ -2,7 +2,6 @@
 
 import {Platform, Alert, Linking, Share} from 'react-native'
 import RNCalendarEvents from 'react-native-calendar-events'
-import getUrls from 'get-urls'
 import type {EventType} from './types'
 import {notify} from '@frogpond/analytics'
 import {detailTimes} from './times'
@@ -89,12 +88,6 @@ async function requestCalendarAccess(): Promise<boolean> {
 	}
 
 	return true
-}
-
-export function getLinksFromEvent(event: EventType) {
-	// Clean up returns, newlines, tabs, and misc symbols...
-	// ...and search for links in the text
-	return Array.from(getUrls(event.description))
 }
 
 export function getTimes(event: EventType) {
