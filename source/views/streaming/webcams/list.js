@@ -2,7 +2,6 @@
 
 import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
-import delay from 'delay'
 import {reportNetworkProblem} from '@frogpond/analytics'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as defaultData from '../../../../docs/webcams.json'
