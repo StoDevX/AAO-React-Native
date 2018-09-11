@@ -1,7 +1,13 @@
 // @flow
 import * as React from 'react'
 import {ScrollView} from 'react-native'
-import {Cell, Section, TableView, ButtonCell, SelectableCell} from '@frogpond/tableview'
+import {
+	Cell,
+	Section,
+	TableView,
+	ButtonCell,
+	SelectableCell,
+} from '@frogpond/tableview'
 import type {EventType, PoweredBy} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../../components/nav-buttons'
