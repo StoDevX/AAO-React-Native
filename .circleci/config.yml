@@ -7,48 +7,69 @@ x-config:
       - image: 'circleci/node:8'
     - &docker-ruby
       - image: 'circleci/ruby:2.5.1'
+
   x-caching:  # caching instructions
     - &save-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
       paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
     - &restore-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+
+    - &save-cache-node_modules
+      key: 'v1-node_modules-{{ arch }}-{{ checksum "yarn.lock" }}'
+      paths: [./node_modules]
+    - &restore-cache-node_modules
+      key: 'v1-node_modules-{{ arch }}-{{ checksum "yarn.lock" }}'
+
     - &save-cache-bundler
       key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
       paths: [./vendor/bundle]
     - &restore-cache-bundler
       key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+
     - &save-cache-gradle
       key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
       paths: [~/.gradle]
     - &restore-cache-gradle
       key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+
   x-workspace:
     - &persist-workspace-node_modules
       root: &workspace_nm_root ./node_modules
       paths: [./*]
     - &attach-workspace-node_modules
       at: *workspace_nm_root
-    - &persist-workspace-ios
-      root: &workspace_ios_root ./
-      paths: [./node_modules, ./vendor/bundle, ./.bundle]
-    - &attach-workspace-ios
-      at: *workspace_ios_root
+
+    - &persist-workspace-ios-node_modules
+      root: &workspace_ios_node_modules_root ./
+      paths: [./node_modules]
+    - &attach-workspace-ios-node_modules
+      at: *workspace_ios_node_modules_root
+
+    - &persist-workspace-ios-bundler
+      root: &workspace_ios_bundler_root ./
+      paths: [./vendor/bundle]
+    - &attach-workspace-ios-bundler
+      at: *workspace_ios_bundler_root
+
     - &persist-workspace-ios-build
       root: &workspace_ios_root ./
       paths: [./*]
     - &attach-workspace-ios-build
       at: *workspace_ios_root
+
   x-commands:  # command shorthands
     - &set-ruby-version
       name: Set Ruby Version
       command: echo "ruby-2.5.1" > ~/.ruby-version
+
     - &run-danger
       command: |
         if ! [[ $CIRCLE_PR_NUMBER ]]; then
           yarn run danger --id $task
         fi
       when: always
+
     - &embed-env-vars
       name: Embed environment variables into the app
       command: |
@@ -158,12 +179,14 @@ jobs:
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
-      - run: yarn install --verbose --frozen-lockfile
+      # most of the time here is from recompiling fsevents
+      - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - save_cache: *save-cache-bundler
-      - persist_to_workspace: *persist-workspace-ios
+      - persist_to_workspace: *persist-workspace-ios-node_modules
+      - persist_to_workspace: *persist-workspace-ios-bundler
 
   danger:
     docker: *docker-node
@@ -327,7 +350,9 @@ jobs:
       task: IOS
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-ios
+      - attach_workspace: *attach-workspace-ios-node_modules
+      - attach-workspace: *attach-workspace-ios-bundler
+      - run: bundle install --frozen --path ./vendor/bundle
       - run: mkdir -p logs/
       - run: *embed-env-vars
       - run:
