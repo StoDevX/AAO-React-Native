@@ -158,7 +158,7 @@ jobs:
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --verbose --frozen-lockfile
       - save_cache: *save-cache-yarn
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
