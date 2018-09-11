@@ -42,6 +42,7 @@ type State = {
 
 export class Timer extends React.Component<Props, State> {
 	_timeoutId: ?TimeoutID
+	_intervalId: ?IntervalID
 
 	state = {
 		now: new Date(),
@@ -49,25 +50,26 @@ export class Timer extends React.Component<Props, State> {
 	}
 
 	componentDidMount() {
-		this.queue()
-	}
-
-	componentWillUnmount() {
-		// eslint-disable-next-line no-eq-null
-		this._timeoutId != null && clearTimeout(this._timeoutId)
-	}
-
-	queue = () => {
 		// get the time remaining until the next $interval
 		let {interval} = this.props
 		let nowMs = this.state.now.getTime()
 		let untilNextInterval = msUntilIntervalRepeat(nowMs, interval)
 
-		this._timeoutId = setTimeout(this.updateTime, untilNextInterval)
+		this._timeoutId = setTimeout(() => {
+			this.updateTime()
+			this._intervalId = setInterval(this.updateTime, interval)
+		}, untilNextInterval)
+	}
+
+	componentWillUnmount() {
+		// eslint-disable-next-line no-eq-null
+		this._timeoutId != null && clearTimeout(this._timeoutId)
+		// eslint-disable-next-line no-eq-null
+		this._intervalId != null && clearInterval(this._intervalId)
 	}
 
 	updateTime = () => {
-		this.setState(() => ({now: new Date()}), this.queue)
+		this.setState(() => ({now: new Date()}))
 	}
 
 	refresh = async () => {
