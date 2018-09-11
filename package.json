@@ -105,7 +105,6 @@
     "bugsnag-react-native": "2.10.2",
     "delay": "4.0.1",
     "events": "3.0.0",
-    "get-urls": "8.0.0",
     "glamorous-native": "1.4.0",
     "jsc-android": "224109.x.x",
     "keyword-search": "0.1.1",
@@ -152,7 +151,6 @@
     "tinycolor2": "1.4.1",
     "titlecase": "1.1.2",
     "url": "0.11.0",
-    "whatwg-url": "7.0.0",
     "wordwrap": "1.0.0"
   },
   "devDependencies": {

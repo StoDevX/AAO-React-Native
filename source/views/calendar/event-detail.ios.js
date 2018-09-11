@@ -7,7 +7,7 @@ import type {TopLevelViewPropsType} from '../types'
 import {ShareButton} from '../../components/nav-buttons'
 import {openUrl} from '@frogpond/open-url'
 import {ListFooter} from '@frogpond/lists'
-import {getLinksFromEvent, shareEvent, getTimes} from './calendar-util'
+import {shareEvent, getTimes} from './calendar-util'
 import {AddToCalendar} from '../../components/add-to-calendar'
 
 const styles = StyleSheet.create({
@@ -31,11 +31,9 @@ function MaybeSection({header, content}: {header: string, content: string}) {
 }
 
 function Links({header, event}: {header: string, event: EventType}) {
-	const links = getLinksFromEvent(event)
-
-	return links.length ? (
+	return event.links.length ? (
 		<Section header={header}>
-			{links.map(url => (
+			{event.links.map(url => (
 				<Cell
 					key={url}
 					accessory="DisclosureIndicator"
