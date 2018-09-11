@@ -75,8 +75,9 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 				{loggedIn ? (
 					<Cell title={`Logged in as ${username}.`} />
 				) : (
-					<React.Fragment>
+					[
 						<CellTextField
+							key={0}
 							_ref={this.getUsernameRef}
 							disabled={loading}
 							label="Username"
@@ -86,10 +87,9 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 							returnKeyType="next"
 							secureTextEntry={false}
 							value={username}
-						/>
-
+						/>,
 						<CellTextField
-							key="password"
+							key={1}
 							_ref={this.getPasswordRef}
 							disabled={loading}
 							label="Password"
@@ -99,8 +99,8 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 							returnKeyType="done"
 							secureTextEntry={true}
 							value={password}
-						/>
-					</React.Fragment>
+						/>,
+					]
 				)}
 
 				<LoginButton
