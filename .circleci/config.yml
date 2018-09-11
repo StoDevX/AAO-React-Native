@@ -326,6 +326,7 @@ jobs:
       <<: *ios-base-env
       task: IOS
     steps:
+      - checkout
       - attach_workspace: *attach-workspace-ios
       - run: mkdir -p logs/
       - run: *embed-env-vars
