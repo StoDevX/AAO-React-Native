@@ -75,14 +75,8 @@ export class BusView extends React.PureComponent<Props, State> {
 			<Timer
 				interval={60000}
 				moment={true}
-				render={({now, refresh, loading}) => (
-					<BusLine
-						line={activeBusLine}
-						now={now}
-						onRefresh={refresh}
-						openMap={this.openMap}
-						refreshing={loading}
-					/>
+				render={({now}) => (
+					<BusLine line={activeBusLine} now={now} openMap={this.openMap} />
 				)}
 				timezone={TIMEZONE}
 			/>

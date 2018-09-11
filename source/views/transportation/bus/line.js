@@ -36,8 +36,6 @@ type Props = {
 	+line: UnprocessedBusLine,
 	+now: moment,
 	+openMap: () => any,
-	+onRefresh: () => any,
-	+refreshing: boolean,
 }
 
 type State = {|
@@ -184,8 +182,6 @@ export class BusLine extends React.Component<Props, State> {
 				data={schedule ? schedule.timetable : []}
 				extraData={this.state}
 				keyExtractor={this.keyExtractor}
-				onRefresh={this.props.onRefresh}
-				refreshing={this.props.refreshing}
 				renderItem={this.renderItem}
 			/>
 		)
