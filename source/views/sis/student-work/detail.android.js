@@ -2,6 +2,7 @@
 import * as React from 'react'
 import {Text, View, ScrollView, StyleSheet} from 'react-native'
 import {sendEmail} from '../../../components/send-email'
+import {callPhone} from '../../../components/call-phone'
 import {Card} from '../../../components/card'
 import moment from 'moment'
 import {openUrl} from '@frogpond/open-url'
@@ -59,22 +60,37 @@ function Title({job}: {job: JobType}) {
 }
 
 function Contact({job}: {job: JobType}) {
-	let contactName = job.contactName || job.contactEmail
+	const contactName = job.contactName
+	const contactEmail = job.contactEmail
+	const contactNumber = job.contactPhone
 
 	return job.office || contactName ? (
 		<Card header="Contact" style={styles.card}>
-			<Text
-				onPress={() =>
-					job.contactEmail
-						? sendEmail({to: [job.contactEmail], subject: job.title, body: ''})
-						: null
-				}
-				style={styles.cardBody}
-			>
-				{contactName} {job.title ? `(${job.title})` : ''}
-				{'\n'}
-				{job.office}
-			</Text>
+			<Text style={styles.cardBody}>{contactName}</Text>
+
+			{contactEmail ? (
+				<Text
+					onPress={() =>
+						job.contactEmail
+							? sendEmail({to: [contactEmail], subject: job.title, body: ''})
+							: null
+					}
+					style={styles.cardBody}
+				>
+					{contactEmail}
+				</Text>
+			) : null}
+
+			{contactNumber ? (
+				<Text
+					onPress={() => (job.contactPhone ? callPhone(contactNumber) : null)}
+					style={styles.cardBody}
+				>
+					{contactNumber}
+				</Text>
+			) : null}
+
+			{job.office ? <Text style={styles.cardBody}>{job.office}</Text> : null}
 		</Card>
 	) : null
 }
@@ -87,6 +103,20 @@ function Hours({job}: {job: JobType}) {
 				{job.timeOfHours}
 				{'\n'}
 				{job.hoursPerWeek + ending}
+			</Text>
+		</Card>
+	) : null
+}
+
+function GeneralInfo({job}: {job: JobType}) {
+	return job.year || job.openPositions ? (
+		<Card header="General" style={styles.card}>
+			<Text style={styles.cardBody}>
+				{job.year ? `${job.year}\n\n` : null}
+				{job.openPositions ? `Positions: ${job.openPositions}\n\n` : null}
+				{job.goodForIncomingStudents
+					? 'Appropriate for First Year Students'
+					: 'Not Appropriate for First Year Students'}
 			</Text>
 		</Card>
 	) : null
@@ -112,6 +142,22 @@ function Comments({job}: {job: JobType}) {
 	return job.comments ? (
 		<Card header="Comments" style={styles.card}>
 			<Text style={styles.cardBody}>{job.comments}</Text>
+		</Card>
+	) : null
+}
+
+function HowToApply({job}: {job: JobType}) {
+	return job.howToApply ? (
+		<Card header="How To Apply" style={styles.card}>
+			<Text style={styles.cardBody}>{job.howToApply}</Text>
+		</Card>
+	) : null
+}
+
+function Timeline({job}: {job: JobType}) {
+	return job.timeline ? (
+		<Card header="Timeline" style={styles.card}>
+			<Text style={styles.cardBody}>{job.timeline}</Text>
 		</Card>
 	) : null
 }
@@ -159,10 +205,13 @@ export class JobDetailView extends React.PureComponent<Props> {
 			<ScrollView>
 				<Title job={job} />
 				<Contact job={job} />
+				<GeneralInfo job={job} />
 				<Hours job={job} />
 				<Description job={job} />
 				<Skills job={job} />
 				<Comments job={job} />
+				<Timeline job={job} />
+				<HowToApply job={job} />
 				<Links job={job} />
 				<LastUpdated when={job.lastModified} />
 			</ScrollView>
