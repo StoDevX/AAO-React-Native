@@ -62,6 +62,7 @@ const CalendarView = TabNavigator({
 
 CalendarView.navigationOptions = {
 	title: 'Calendar',
+	headerBackTitle: 'Back',
 }
 
 export default CalendarView
