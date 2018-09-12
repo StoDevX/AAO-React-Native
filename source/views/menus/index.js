@@ -2,11 +2,12 @@
 
 import * as React from 'react'
 import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
+import {IS_PRODUCTION} from '@frogpond/constants'
 
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
 import {CarletonCafeIndex} from './carleton-menus'
-// import {BonAppPickerView} from './dev-bonapp-picker'
+import {BonAppPickerView} from './dev-bonapp-picker'
 
 export {
 	CarletonBurtonMenuScreen,
@@ -88,7 +89,7 @@ export const MenusView = TabNavigator({
 		},
 	},
 
-	// BonAppDevToolView: {screen: BonAppPickerView},
+	...(!IS_PRODUCTION ? {BonAppDevToolView: {screen: BonAppPickerView}} : {}),
 })
 MenusView.navigationOptions = {
 	title: 'Menus',
