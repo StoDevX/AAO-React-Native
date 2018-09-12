@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {View, StyleSheet} from 'react-native'
-import {Card} from '../../../components/card'
+import {Card} from '@frogpond/silly-card'
 import moment from 'moment-timezone'
 import type {NamedBuildingScheduleType} from '../types'
 import {isScheduleOpenAtMoment, getDayOfWeek} from '../lib'

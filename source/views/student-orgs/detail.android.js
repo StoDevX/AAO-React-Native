@@ -2,7 +2,7 @@
 import * as React from 'react'
 import {ScrollView, Text, View, StyleSheet} from 'react-native'
 import moment from 'moment'
-import {Card} from '../../components/card'
+import {Card} from '@frogpond/silly-card'
 import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
