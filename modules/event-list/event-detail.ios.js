@@ -9,12 +9,12 @@ import {
 	SelectableCell,
 } from '@frogpond/tableview'
 import type {EventType, PoweredBy} from './types'
-import type {TopLevelViewPropsType} from '../types'
+import type {NavigationScreenProp} from 'react-navigation'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {openUrl} from '@frogpond/open-url'
 import {ListFooter} from '@frogpond/lists'
 import {shareEvent, getTimes} from './calendar-util'
-import {AddToCalendar} from '../../components/add-to-calendar'
+import {AddToCalendar} from '@frogpond/add-to-device-calendar'
 
 function MaybeSection({header, content}: {header: string, content: string}) {
 	return content.trim() ? (
@@ -39,15 +39,18 @@ function Links({header, event}: {header: string, event: EventType}) {
 	) : null
 }
 
-type Props = TopLevelViewPropsType & {
-	navigation: {
-		state: {params: {event: EventType, poweredBy: ?PoweredBy}},
-	},
+type Navigation = NavigationScreenProp<{
+	params: {event: EventType, poweredBy: ?PoweredBy},
+}>
+
+type Props = {
+	navigation: Navigation,
 }
 
 export class EventDetail extends React.Component<Props> {
-	static navigationOptions = ({navigation}: any) => {
+	static navigationOptions = ({navigation}: {navigation: Navigation}) => {
 		const {event} = navigation.state.params
+
 		return {
 			title: event.title,
 			headerRight: <ShareButton onPress={() => shareEvent(event)} />,
