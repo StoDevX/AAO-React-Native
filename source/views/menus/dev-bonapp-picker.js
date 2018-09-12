@@ -36,7 +36,7 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 		tabBarIcon: TabBarIcon('ionic'),
 	}
 
-	_ref: any
+	_ref: ?TextInput
 
 	state = {
 		cafeId: '34',
@@ -59,12 +59,16 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 					<TextInput
 						ref={this.setRef}
 						keyboardType="numeric"
-						onBlur={() => this.chooseCafe(this._ref._lastNativeText)}
+						onBlur={() =>
+							this._ref ? this.chooseCafe(this._ref._lastNativeText) : null
+						}
 						style={styles.default}
 						value={Platform.OS === 'ios' ? this.state.cafeId : null}
 					/>
 					<Button
-						onPress={() => this.chooseCafe(this._ref._lastNativeText)}
+						onPress={() =>
+							this._ref ? this.chooseCafe(this._ref._lastNativeText) : null
+						}
 						title="Go"
 					/>
 				</Toolbar>
