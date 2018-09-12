@@ -108,9 +108,7 @@ export function hydrate(): ThunkAction<
 	}
 }
 
-export function refreshPushStatus(): ThunkAction<
-	SetPermissionsAction,
-> {
+export function refreshPushStatus(): ThunkAction<SetPermissionsAction> {
 	return dispatch => {
 		OneSignal.getPermissionSubscriptionState(permissions => {
 			dispatch({
