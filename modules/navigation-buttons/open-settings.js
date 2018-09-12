@@ -1,21 +1,17 @@
-/**
- * @flow
- * Exports a button that opens the Settings screen
- */
+// @flow
 
 import * as React from 'react'
 import {Touchable} from '@frogpond/touchable'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {commonStyles, leftButtonStyles} from './styles'
-import type {NavType} from '../../views/types'
+import type {NavigationScreenProp} from 'react-navigation'
 
-export function OpenSettingsButton({
-	navigation,
-	buttonStyle,
-}: {
-	navigation: NavType,
+type Props = {
+	navigation: NavigationScreenProp<*>,
 	buttonStyle?: any,
-}) {
+}
+
+export function OpenSettingsButton({navigation, buttonStyle}: Props) {
 	return (
 		<Touchable
 			accessibilityComponentType="button"

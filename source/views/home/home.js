@@ -14,7 +14,7 @@ import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
 import {trackedOpenUrl} from '@frogpond/open-url'
-import {EditHomeButton, OpenSettingsButton} from '../../components/nav-buttons'
+import {EditHomeButton, OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
 
 type ReactProps = TopLevelViewPropsType & {

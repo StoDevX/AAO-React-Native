@@ -10,7 +10,7 @@ import {
 } from '@frogpond/tableview'
 import type {EventType, PoweredBy} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {ShareButton} from '../../components/nav-buttons'
+import {ShareButton} from '@frogpond/navigation-buttons'
 import {openUrl} from '@frogpond/open-url'
 import {ListFooter} from '@frogpond/lists'
 import {shareEvent, getTimes} from './calendar-util'

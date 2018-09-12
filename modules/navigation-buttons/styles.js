@@ -1,7 +1,4 @@
-/**
- * @flow
- * A collection of common styles for navbar buttons
- */
+// @flow
 
 import {StyleSheet, Platform} from 'react-native'
 import {getTheme} from '@frogpond/app-theme'
