@@ -1,0 +1,21 @@
+{
+  "name": "@frogpond/add-to-device-calendar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-native": "^0.55.4",
+    "react-native-calendar-events": "1.6.3"
+  },
+  "dependencies": {
+    "@frogpond/analytics": "^1.0.0",
+    "@frogpond/event-type": "^1.0.0",
+    "delay": "4.0.1"
+  }
+}

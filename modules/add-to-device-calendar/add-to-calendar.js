@@ -1,6 +1,7 @@
 // @flow
+
 import * as React from 'react'
-import type {EventType} from '@frogpond/event-list'
+import type {EventType} from '@frogpond/event-type'
 import {addToCalendar} from './lib'
 import delay from 'delay'
 

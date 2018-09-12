@@ -1,6 +1,6 @@
 // @flow
 
-import type {EventType} from '@frogpond/event-list'
+import type {EventType} from '@frogpond/event-type'
 import {notify} from '@frogpond/analytics'
 import RNCalendarEvents from 'react-native-calendar-events'
 import {Alert, Linking, Platform} from 'react-native'
