@@ -25,7 +25,7 @@ let styles = StyleSheet.create({
 	},
 })
 
-export function SolidBadge({
+export function OutlineBadge({
 	text,
 	style,
 	textStyle,

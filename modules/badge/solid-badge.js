@@ -10,7 +10,7 @@ type Props = {
 	textColor?: string,
 }
 
-export function OutlineBadge(props: Props) {
+export function SolidBadge(props: Props) {
 	const {status, accentColor = c.goldenrod, textColor = c.white} = props
 
 	return (
