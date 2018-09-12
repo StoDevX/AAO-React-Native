@@ -8,7 +8,7 @@ import moment from 'moment'
 import {openUrl} from '@frogpond/open-url'
 import * as c from '@frogpond/colors'
 import type {JobType} from './types'
-import {ShareButton} from '../../../components/nav-buttons'
+import {ShareButton} from '@frogpond/navigation-buttons'
 import {shareJob} from './lib'
 
 const styles = StyleSheet.create({

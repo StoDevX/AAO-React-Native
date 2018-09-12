@@ -8,7 +8,7 @@ import moment from 'moment'
 import * as c from '@frogpond/colors'
 import type {JobType} from './types'
 import glamorous from 'glamorous-native'
-import {ShareButton} from '../../../components/nav-buttons'
+import {ShareButton} from '@frogpond/navigation-buttons'
 import {shareJob} from './lib'
 import {entities} from '@frogpond/html-lib'
 

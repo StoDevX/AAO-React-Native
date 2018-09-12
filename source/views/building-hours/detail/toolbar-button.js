@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {FavoriteButton} from '../../../components/nav-buttons/favorite'
+import {FavoriteButton} from '@frogpond/navigation-buttons'
 import {type ReduxState} from '../../../redux'
 import {connect} from 'react-redux'
 import {toggleFavoriteBuilding} from '../../../redux/parts/buildings'
