@@ -32,7 +32,9 @@ export function OutlineBadge({
 	accentColor = c.goldenrod,
 	textColor = 'hsl(26, 49%, 34%)',
 }: Props) {
-	const bgaccent = tinycolor(accentColor).setAlpha(0.1).toRgbString()
+	const bgaccent = tinycolor(accentColor)
+		.setAlpha(0.1)
+		.toRgbString()
 
 	return (
 		<View
