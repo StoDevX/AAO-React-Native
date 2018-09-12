@@ -3,7 +3,8 @@ import * as React from 'react'
 import {View, TextInput, StyleSheet} from 'react-native'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as c from '@frogpond/colors'
-import {Toolbar, ToolbarButton} from '@frogpond/toolbar'
+import {Toolbar} from '@frogpond/toolbar'
+import {Button} from '@frogpond/button'
 import type {TopLevelViewPropsType} from '../types'
 import {BonAppHostedMenu} from './menu-bonapp'
 
@@ -35,6 +36,8 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 		tabBarIcon: TabBarIcon('ionic'),
 	}
 
+	_ref: any
+
 	state = {
 		cafeId: '34',
 		menu: null,
@@ -47,18 +50,23 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 		this.setState(() => ({cafeId}))
 	}
 
+	setRef = (ref: any) => (this._ref = ref)
+
 	render() {
 		return (
 			<View style={styles.container}>
 				<Toolbar onPress={() => {}}>
 					<TextInput
+						ref={this.setRef}
 						keyboardType="numeric"
-						onBlur={this.chooseCafe}
-						onChangeText={this.chooseCafe}
+						onBlur={() => this.chooseCafe(this._ref._lastNativeText)}
 						style={styles.default}
 						value={this.state.cafeId}
 					/>
-					<ToolbarButton isActive={true} title="Go" />
+					<Button
+						onPress={() => this.chooseCafe(this._ref._lastNativeText)}
+						title="Go"
+					/>
 				</Toolbar>
 				<BonAppHostedMenu
 					key={this.state.cafeId}
