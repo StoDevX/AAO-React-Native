@@ -1,0 +1,14 @@
+{
+  "name": "@frogpond/event-type",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+	"moment": "^2.22.2"
+  }
+}
