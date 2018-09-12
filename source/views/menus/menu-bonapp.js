@@ -16,7 +16,6 @@ import sample from 'lodash/sample'
 import mapValues from 'lodash/mapValues'
 import reduce from 'lodash/reduce'
 import toPairs from 'lodash/toPairs'
-import isEmpty from 'lodash/isEmpty'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import {trimStationName, trimItemLabel} from './lib/trim-names'
@@ -263,7 +262,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			return <NoticeView text={msg} />
 		}
 
-		if (isEmpty(this.state.cafeMenu.items)) {
+		if (Object.keys(this.state.cafeMenu.items).length === 0) {
 			const msg = 'No items were found.'
 			return <NoticeView text={msg} />
 		}
