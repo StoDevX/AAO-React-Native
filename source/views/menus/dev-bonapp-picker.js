@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {View, TextInput, StyleSheet} from 'react-native'
+import {View, TextInput, StyleSheet, Platform} from 'react-native'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as c from '@frogpond/colors'
 import {Toolbar} from '@frogpond/toolbar'
@@ -61,7 +61,7 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 						keyboardType="numeric"
 						onBlur={() => this.chooseCafe(this._ref._lastNativeText)}
 						style={styles.default}
-						value={this.state.cafeId}
+						value={Platform.OS === 'ios' ? this.state.cafeId : null}
 					/>
 					<Button
 						onPress={() => this.chooseCafe(this._ref._lastNativeText)}
