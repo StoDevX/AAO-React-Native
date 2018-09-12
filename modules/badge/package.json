@@ -1,0 +1,16 @@
+{
+  "name": "@frogpond/badge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "@frogpond/colors": "^1.0.0",
+    "react": "^16.0.0",
+    "react-native": "^0.55.4"
+  }
+}
