@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Card} from '../../components/card'
+import {Card} from '@frogpond/silly-card'
 import {Button} from '@frogpond/button'
 import {Markdown} from '@frogpond/markdown'
 import {openUrl} from '@frogpond/open-url'

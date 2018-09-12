@@ -1,4 +1,5 @@
 // @flow
+
 import * as React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
 import {material, iOSUIKit} from 'react-native-typography'
