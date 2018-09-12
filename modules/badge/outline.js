@@ -4,26 +4,20 @@ import * as React from 'react'
 import {View, Text, StyleSheet, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
 
-const BGCOLORS = {
-	Open: c.moneyGreen,
-	Closed: c.salmon,
+type Props = {
+	status: string,
+	accentColor?: string,
+	textColor?: string,
 }
 
-type Props = {status: string}
+export function OutlineBadge(props: Props) {
+	const {status, accentColor = c.goldenrod, textColor = c.white} = props
 
-export class OutlineBadge extends React.PureComponent<Props> {
-	render() {
-		const {status} = this.props
-		const bgColor = BGCOLORS[status] || c.goldenrod
-
-		return (
-			<View style={[styles.badge, {backgroundColor: bgColor}]}>
-				<Text style={styles.badgeText}>
-					{status}
-				</Text>
-			</View>
-		)
-	}
+	return (
+		<View style={[styles.badge, {backgroundColor: accentColor}]}>
+			<Text style={[styles.badgeText, {color: textColor}]}>{status}</Text>
+		</View>
+	)
 }
 
 const styles = StyleSheet.create({
@@ -40,7 +34,6 @@ const styles = StyleSheet.create({
 		}),
 	},
 	badgeText: {
-		color: c.white,
 		fontSize: 18,
 	},
 })
