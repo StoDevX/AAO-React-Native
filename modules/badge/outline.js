@@ -18,7 +18,7 @@ export class OutlineBadge extends React.PureComponent<Props> {
 
 		return (
 			<View style={[styles.badge, {backgroundColor: bgColor}]}>
-				<Text selectable={true} style={styles.badgeText}>
+				<Text style={styles.badgeText}>
 					{status}
 				</Text>
 			</View>
