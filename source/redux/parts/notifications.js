@@ -108,6 +108,20 @@ export function hydrate(): ThunkAction<
 	}
 }
 
+export function refreshPushStatus(): ThunkAction<SetPermissionsAction> {
+	return dispatch => {
+		OneSignal.getPermissionSubscriptionState(permissions => {
+			dispatch({
+				type: SET_PERMISSIONS,
+				payload: {
+					enabled: permissions.notificationsEnabled,
+					hasPrompted: permissions.hasPrompted,
+				},
+			})
+		})
+	}
+}
+
 type DisableNotificationsAction = {|
 	type: 'notifications/DISABLE',
 |}
