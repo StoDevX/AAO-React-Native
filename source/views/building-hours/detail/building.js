@@ -37,6 +37,11 @@ type Props = {
 	onProblemReport: () => any,
 }
 
+const BGCOLORS = {
+	Open: c.moneyGreen,
+	Closed: c.salmon,
+}
+
 export class BuildingDetail extends React.Component<Props> {
 	shouldComponentUpdate(nextProps: Props) {
 		return (
@@ -63,7 +68,7 @@ export class BuildingDetail extends React.Component<Props> {
 				) : null}
 
 				<Header building={info} />
-				<OutlineBadge status={openStatus} />
+				<OutlineBadge accentColor={BGCOLORS[openStatus]} status={openStatus} />
 				<ScheduleTable
 					now={now}
 					onProblemReport={onProblemReport}

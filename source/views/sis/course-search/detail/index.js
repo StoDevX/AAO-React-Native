@@ -189,6 +189,11 @@ type Props = TopLevelViewPropsType & {
 	navigation: {state: {params: {course: CourseType}}},
 }
 
+const BGCOLORS = {
+	Open: c.moneyGreen,
+	Closed: c.salmon,
+}
+
 export class CourseDetailView extends React.PureComponent<Props> {
 	static navigationOptions = ({navigation}: any) => {
 		const course = navigation.state.params.course
@@ -204,7 +209,7 @@ export class CourseDetailView extends React.PureComponent<Props> {
 			<Container>
 				<Header>{course.title || course.name}</Header>
 				<SubHeader>{deptNum(course)}</SubHeader>
-				<OutlineBadge status={status} />
+				<OutlineBadge accentColor={BGCOLORS[status]} status={status} />
 				<TableView>
 					<Information course={course} />
 					<Schedule course={course} />
