@@ -4,7 +4,7 @@ import * as React from 'react'
 import {StyleSheet, Text, Platform} from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
 import glamorous from 'glamorous-native'
-import {OutlineBadge} from '../../../../components/outline-badge'
+import {SolidBadge as Badge} from '@frogpond/badge'
 import moment from 'moment-timezone'
 import {formatDay} from '../lib/format-day'
 import {
@@ -189,6 +189,11 @@ type Props = TopLevelViewPropsType & {
 	navigation: {state: {params: {course: CourseType}}},
 }
 
+const BGCOLORS = {
+	Open: c.moneyGreen,
+	Closed: c.salmon,
+}
+
 export class CourseDetailView extends React.PureComponent<Props> {
 	static navigationOptions = ({navigation}: any) => {
 		const course = navigation.state.params.course
@@ -204,7 +209,7 @@ export class CourseDetailView extends React.PureComponent<Props> {
 			<Container>
 				<Header>{course.title || course.name}</Header>
 				<SubHeader>{deptNum(course)}</SubHeader>
-				<OutlineBadge status={status} />
+				<Badge accentColor={BGCOLORS[status]} status={status} />
 				<TableView>
 					<Information course={course} />
 					<Schedule course={course} />

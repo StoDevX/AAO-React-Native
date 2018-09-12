@@ -8,7 +8,7 @@ import moment from 'moment-timezone'
 import * as c from '@frogpond/colors'
 import {getShortBuildingStatus} from '../lib'
 
-import {OutlineBadge} from '../../../components/outline-badge'
+import {SolidBadge as Badge} from '@frogpond/badge'
 import {Header} from './header'
 import {ScheduleTable} from './schedule-table'
 import {ListFooter} from '@frogpond/lists'
@@ -37,6 +37,11 @@ type Props = {
 	onProblemReport: () => any,
 }
 
+const BGCOLORS = {
+	Open: c.moneyGreen,
+	Closed: c.salmon,
+}
+
 export class BuildingDetail extends React.Component<Props> {
 	shouldComponentUpdate(nextProps: Props) {
 		return (
@@ -63,7 +68,7 @@ export class BuildingDetail extends React.Component<Props> {
 				) : null}
 
 				<Header building={info} />
-				<OutlineBadge status={openStatus} />
+				<Badge accentColor={BGCOLORS[openStatus]} status={openStatus} />
 				<ScheduleTable
 					now={now}
 					onProblemReport={onProblemReport}
