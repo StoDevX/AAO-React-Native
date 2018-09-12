@@ -8,7 +8,8 @@ import {
 	ButtonCell,
 	SelectableCell,
 } from '@frogpond/tableview'
-import type {EventType, PoweredBy} from './types'
+import type {EventType} from '@frogpond/event-type'
+import type {PoweredBy} from './types'
 import type {NavigationScreenProp} from 'react-navigation'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {openUrl} from '@frogpond/open-url'

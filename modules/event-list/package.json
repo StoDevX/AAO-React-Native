@@ -1,0 +1,32 @@
+{
+  "name": "@frogpond/event-list",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-native": "^0.55.4",
+    "react-native-vector-icons": "^4.0.0",
+    "react-navigation": "^2.13.0",
+    "moment-timezone": "^0.5.21"
+  },
+  "dependencies": {
+    "@callstack/react-theme-provider": "^1.0.3",
+    "@frogpond/add-to-device-calendar": "^1.0.0",
+    "@frogpond/analytics": "^1.0.0",
+    "@frogpond/app-theme": "^1.0.0",
+    "@frogpond/colors": "^1.0.0",
+    "@frogpond/event-type": "^1.0.0",
+    "@frogpond/lists": "^1.0.0",
+    "@frogpond/navigation-buttons": "^1.0.0",
+    "@frogpond/notice": "^1.0.0",
+    "@frogpond/open-url": "^1.0.0",
+    "@frogpond/tableview": "^1.0.0",
+    "lodash": "^4.17.10"
+  }
+}

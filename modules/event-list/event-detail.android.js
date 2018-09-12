@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
-import type {EventType, PoweredBy} from './types'
+import type {EventType} from '@frogpond/event-type'
+import type {PoweredBy} from './types'
 import {NavigationScreenProp} from 'react-navigation'
 import {ShareButton} from '@frogpond/navigation-buttons'
 import {openUrl} from '@frogpond/open-url'

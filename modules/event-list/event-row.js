@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet, Text} from 'react-native'
-import type {EventType} from './types'
+import type {EventType} from '@frogpond/event-type'
 import * as c from '@frogpond/colors'
 import {Row, Column} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
