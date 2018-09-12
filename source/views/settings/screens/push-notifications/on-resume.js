@@ -3,10 +3,10 @@
 import * as React from 'react'
 import {AppState} from 'react-native'
 import {connect} from 'react-redux'
-import {hydrate} from '../../../../redux/parts/notifications'
+import {refreshPushStatus} from '../../../../redux/parts/notifications'
 
 type Props = {
-	rehydrate: () => any,
+	refreshPushStatus: () => any,
 }
 
 type State = {
@@ -33,7 +33,7 @@ class _CheckForPushSettingsOnResume extends React.Component<Props, State> {
 			currentAppState !== 'active' && nextAppState === 'active'
 
 		if (shouldRehydrate) {
-			this.props.rehydrate()
+			this.props.refreshPushStatus()
 		}
 
 		this.setState(() => ({appState: nextAppState}))
@@ -47,6 +47,6 @@ class _CheckForPushSettingsOnResume extends React.Component<Props, State> {
 export const CheckForPushSettingsOnResume = connect(
 	null,
 	(dispatch): Props => ({
-		rehydrate: () => dispatch(hydrate()),
+		refreshPushStatus: () => dispatch(refreshPushStatus()),
 	}),
 )(_CheckForPushSettingsOnResume)
