@@ -2,13 +2,14 @@
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
+import tinycolor from 'tinycolor2'
 
-type PropsType = {
+type Props = {
 	text: string,
 	accentColor?: string,
 	textColor?: string,
-	style?: number | Object | Array<number | Object>,
-	textStyle?: number | Object | Array<number | Object>,
+	style?: any,
+	textStyle?: any,
 }
 
 let styles = StyleSheet.create({
@@ -30,18 +31,18 @@ export function SolidBadge({
 	textStyle,
 	accentColor = c.goldenrod,
 	textColor = 'hsl(26, 49%, 34%)',
-}: PropsType) {
-	const bgaccent = accentColor.replace('rgb', 'rgba').replace(')', ', 0.1)')
+}: Props) {
+	const bgaccent = tinycolor(accentColor).setAlpha(0.1).toRgbString()
 
 	return (
 		<View
 			style={[
 				styles.accessoryBadge,
-				style,
 				{backgroundColor: bgaccent, borderColor: accentColor},
+				style,
 			]}
 		>
-			<Text style={[styles.accessoryBadgeText, textStyle, {color: textColor}]}>
+			<Text style={[styles.accessoryBadgeText, {color: textColor}, textStyle]}>
 				{text}
 			</Text>
 		</View>
