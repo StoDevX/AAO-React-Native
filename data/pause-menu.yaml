@@ -128,7 +128,7 @@ foodItems:
     station: Savory
     special: true
 
-  - label: Garlic Cheesy Bread
+  - label: Cheesy Bread
     station: Savory
     special: true
 
@@ -144,6 +144,7 @@ foodItems:
 
   - label: Bosco Sticks
     station: Savory
+    description: 'Breadsticks with cheese inside'
     special: true
 
   - label: Soft Pretzel
