@@ -144,7 +144,7 @@ foodItems:
 
   - label: Bosco Sticks
     station: Savory
-    description: 'Breadsticks with cheese inside'
+    description: 'Mozzarella cheese-stuffed breadstucks, topped with a dusting of salt'
     special: true
 
   - label: Soft Pretzel
