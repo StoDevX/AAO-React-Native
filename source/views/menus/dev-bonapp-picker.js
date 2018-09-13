@@ -4,7 +4,6 @@ import {View, TextInput, StyleSheet, Platform} from 'react-native'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as c from '@frogpond/colors'
 import {Toolbar} from '@frogpond/toolbar'
-import {Button} from '@frogpond/button'
 import type {TopLevelViewPropsType} from '../types'
 import {BonAppHostedMenu} from './menu-bonapp'
 
@@ -62,14 +61,9 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 						onBlur={() =>
 							this._ref ? this.chooseCafe(this._ref._lastNativeText) : null
 						}
+						returnKeyType="done"
 						style={styles.default}
 						value={Platform.OS === 'ios' ? this.state.cafeId : null}
-					/>
-					<Button
-						onPress={() =>
-							this._ref ? this.chooseCafe(this._ref._lastNativeText) : null
-						}
-						title="Go"
 					/>
 				</Toolbar>
 				<BonAppHostedMenu
