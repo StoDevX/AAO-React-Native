@@ -1,7 +1,7 @@
 // @flow
 
 import moment from 'moment-timezone'
-import type {EventType} from './types'
+import type {EventType} from '@frogpond/event-type'
 
 export function times(event: EventType) {
 	const eventLength = moment

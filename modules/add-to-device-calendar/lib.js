@@ -1,21 +1,9 @@
 // @flow
 
-import {Platform, Alert, Linking, Share} from 'react-native'
-import RNCalendarEvents from 'react-native-calendar-events'
-import type {EventType} from './types'
+import type {EventType} from '@frogpond/event-type'
 import {notify} from '@frogpond/analytics'
-import {detailTimes} from './times'
-
-export function shareEvent(event: EventType): Promise<any> {
-	const title = event.title
-	const times = getTimes(event)
-	const location = event.location
-	const description = event.description
-	const message = `${title}\n\n${times}\n\n${location}\n\n${description}`.trim()
-	return Share.share({message})
-		.then(result => console.log(result))
-		.catch(error => console.log(error.message))
-}
+import RNCalendarEvents from 'react-native-calendar-events'
+import {Alert, Linking, Platform} from 'react-native'
 
 export function addToCalendar(event: EventType): Promise<boolean> {
 	return RNCalendarEvents.authorizationStatus()
@@ -88,14 +76,4 @@ async function requestCalendarAccess(): Promise<boolean> {
 	}
 
 	return true
-}
-
-export function getTimes(event: EventType) {
-	const {allDay, start, end} = detailTimes(event)
-
-	if (allDay) {
-		return `All-Day on ${event.startTime.format('MMM D.')}`
-	}
-
-	return `${start}${end ? ' to ' + end : ''}`
 }

@@ -1,17 +1,17 @@
 // @flow
 
 import * as React from 'react'
-import {EventList} from './event-list'
 import {reportNetworkProblem} from '@frogpond/analytics'
-import type {TopLevelViewPropsType} from '../types'
-import type {EventType, PoweredBy} from './types'
+import type {NavigationScreenProp} from 'react-navigation'
+import {EventList, type PoweredBy} from '@frogpond/event-list'
+import {type EventType} from '@frogpond/event-type'
 import moment from 'moment-timezone'
 import delay from 'delay'
 import {LoadingView} from '@frogpond/notice'
 import {API} from '@frogpond/api'
 const TIMEZONE = 'America/Winnipeg'
 
-type Props = TopLevelViewPropsType & {
+type Props = {
 	calendar:
 		| string
 		| {type: 'google', id: string}
@@ -19,6 +19,7 @@ type Props = TopLevelViewPropsType & {
 		| {type: 'ics', url: string},
 	detailView?: string,
 	eventMapper?: EventType => EventType,
+	navigation: NavigationScreenProp<*>,
 	poweredBy: ?PoweredBy,
 }
 
