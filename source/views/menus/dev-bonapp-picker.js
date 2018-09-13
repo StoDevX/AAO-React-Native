@@ -26,7 +26,6 @@ type Props = TopLevelViewPropsType
 
 type State = {
 	cafeId: string,
-	menu: ?any,
 }
 
 export class BonAppPickerView extends React.PureComponent<Props, State> {
@@ -37,7 +36,6 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 
 	state = {
 		cafeId: '34',
-		menu: null,
 	}
 
 	chooseCafe = (cafeId: string) => {
