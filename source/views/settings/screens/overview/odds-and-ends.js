@@ -7,7 +7,7 @@ import {PushButtonCell} from '@frogpond/tableview'
 import type {ReduxState} from '../../../../redux'
 import {connect} from 'react-redux'
 import {type NavigationScreenProp} from 'react-navigation'
-import {IS_DEBUG} from '@frogpond/constants'
+import {IS_PRODUCTION} from '@frogpond/constants'
 
 type Props = {
 	navigation: NavigationScreenProp<*>,
@@ -35,9 +35,9 @@ export class OddsAndEndsSection extends React.Component<Props> {
 
 				<ConnectedNotificationsCell onPress={this.onNotificationsButton} />
 
-				{IS_DEBUG ? (
-						<PushButtonCell onPress={this.onDebugButton} title="Debug" />
-					) : null}
+				{!IS_PRODUCTION && (
+					<PushButtonCell onPress={this.onDebugButton} title="Debug" />
+				)}
 			</Section>
 		)
 	}
