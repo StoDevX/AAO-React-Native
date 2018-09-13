@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {Cell} from 'react-native-tableview-simple'
-import type {TopLevelViewPropsType} from '../../types'
+import type {TopLevelViewPropsType} from '../../../types'
 
 type Props = TopLevelViewPropsType & {
 	data: {key: string, value: any},

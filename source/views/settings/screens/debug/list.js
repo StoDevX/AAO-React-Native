@@ -4,13 +4,13 @@ import * as React from 'react'
 import {FlatList} from 'react-native'
 import {DebugRow} from './row'
 import {connect} from 'react-redux'
-import {NoticeView} from '../../../components/notice'
-import {ListSeparator} from '../../../components/list'
+import {NoticeView} from '@frogpond/notice'
+import {ListSeparator} from '@frogpond/lists'
 import toPairs from 'lodash/toPairs'
 import {toLaxTitleCase} from 'titlecase'
 import get from 'lodash/get'
 import type {NavigationState} from 'react-navigation'
-import type {TopLevelViewPropsType} from '../../types'
+import type {TopLevelViewPropsType} from '../../../types'
 
 type Props = TopLevelViewPropsType & {
 	state: any,
