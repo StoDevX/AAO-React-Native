@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react'
-import {View, TextInput, StyleSheet, Platform} from 'react-native'
+import {View, TextInput, StyleSheet} from 'react-native'
+import {NoticeView} from '@frogpond/notice'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as c from '@frogpond/colors'
 import {Toolbar} from '@frogpond/toolbar'
@@ -35,7 +36,7 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
-		cafeId: '34',
+		cafeId: '',
 	}
 
 	chooseCafe = (cafeId: string) => {
@@ -52,18 +53,22 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 					<TextInput
 						keyboardType="numeric"
 						onEndEditing={e => this.chooseCafe(e.nativeEvent.text)}
+						placeholder="id"
 						returnKeyType="done"
 						style={styles.default}
-						value={Platform.OS === 'ios' ? this.state.cafeId : null}
 					/>
 				</Toolbar>
-				<BonAppHostedMenu
-					key={this.state.cafeId}
-					cafe={{id: this.state.cafeId}}
-					loadingMessage={['Loading…']}
-					name="BonApp"
-					navigation={this.props.navigation}
-				/>
+				{this.state.cafeId ? (
+					<BonAppHostedMenu
+						key={this.state.cafeId}
+						cafe={{id: this.state.cafeId}}
+						loadingMessage={['Loading…']}
+						name="BonApp"
+						navigation={this.props.navigation}
+					/>
+				) : (
+					<NoticeView text="Please enter a Cafe ID." />
+				)}
 			</View>
 		)
 	}
