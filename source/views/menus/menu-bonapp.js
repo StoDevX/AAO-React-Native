@@ -262,6 +262,11 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			return <NoticeView text={msg} />
 		}
 
+		if (Object.keys(this.state.cafeMenu.items).length === 0) {
+			const msg = 'No items were found.'
+			return <NoticeView text={msg} />
+		}
+
 		const {ignoreProvidedMenus = false} = this.props
 		const {now, cafeMenu, cafeInfo} = this.state
 
