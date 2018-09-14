@@ -13,8 +13,17 @@ import find from 'lodash/find'
 import findLast from 'lodash/findLast'
 import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
-import {ListSectionHeader, ListFooter, ListRow} from '@frogpond/lists'
+import {
+	ListSectionHeader,
+	ListFooter,
+	ListRow,
+	Detail,
+	Title,
+} from '@frogpond/lists'
 import {InfoHeader} from '@frogpond/info-header'
+import {Row, Column} from '@frogpond/layout'
+import Icon from 'react-native-vector-icons/Ionicons'
+import {iosDisabledText} from '@frogpond/colors'
 
 const styles = StyleSheet.create({
 	separator: {
@@ -155,7 +164,41 @@ export class BusLine extends React.Component<Props, State> {
 		const LINE_MSG = line.notice || ''
 		const FOOTER_MSG =
 			'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
-		const FOOTER_EL = <ListFooter title={FOOTER_MSG} />
+
+		const OPEN_MAP_ROW = (
+			<ListRow
+				fullWidth={true}
+				onPress={this.props.openMap}
+				spacing={{left: 45}}
+			>
+				<Row alignItems="center">
+					<Column alignItems="center" paddingRight={5} width={45}>
+						<Icon
+							name={
+								Platform.OS === 'ios' ? 'ios-navigate-outline' : 'md-navigate'
+							}
+							size={24}
+							style={{color: iosDisabledText}}
+						/>
+					</Column>
+					<Column>
+						<Title>
+							<Text>Open Map</Text>
+						</Title>
+						<Detail>
+							<Text>See the planned bus route on a map!</Text>
+						</Detail>
+					</Column>
+				</Row>
+			</ListRow>
+		)
+
+		const FOOTER_EL = (
+			<React.Fragment>
+				{OPEN_MAP_ROW}
+				<ListFooter title={FOOTER_MSG} />
+			</React.Fragment>
+		)
 
 		const HEADER_EL = LINE_MSG ? (
 			<React.Fragment>
