@@ -6052,9 +6052,9 @@ react-navigation-material-bottom-tabs@0.4.0:
     prop-types "^15.6.0"
     react-navigation-tabs "^0.4.0"
 
-react-navigation-stack@0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/react-navigation-stack/-/react-navigation-stack-0.5.0.tgz#549a40cdb260aa073a1796bae2986107666f3361"
+react-navigation-stack@0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/react-navigation-stack/-/react-navigation-stack-0.5.1.tgz#acc3c84c7b5209c7d89380d7f4576f17624f683c"
   dependencies:
     react-native-screens "^1.0.0-alpha.10"
 
@@ -6077,9 +6077,9 @@ react-navigation-tabs@^0.4.0:
     react-native-safe-area-view "^0.7.0"
     react-native-tab-view "^1.0.0"
 
-react-navigation@2.14.1:
-  version "2.14.1"
-  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.14.1.tgz#a998588986c397abb1c66fa7c9c47652aa8030b8"
+react-navigation@2.14.2:
+  version "2.14.2"
+  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-2.14.2.tgz#e3c933b15efdc6bcb1e9b014aeacfb2a08997d5b"
   dependencies:
     clamp "^1.0.1"
     create-react-context "0.2.2"
@@ -6090,7 +6090,7 @@ react-navigation@2.14.1:
     react-native-safe-area-view "^0.10.0"
     react-navigation-deprecated-tab-navigator "1.3.0"
     react-navigation-drawer "0.5.0"
-    react-navigation-stack "0.5.0"
+    react-navigation-stack "0.5.1"
     react-navigation-tabs "0.7.0"
 
 react-proxy@^1.1.7:
