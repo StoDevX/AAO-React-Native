@@ -172,10 +172,10 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 					<Row alignItems="center" marginBottom={16} marginTop={4}>
 						<Genres genres={movie.info.Genres} />
 						<Spacer />
-						<Pill bgColorName="blue" marginRight={4}>
+						<Pill bgColor={c.candyBlue} marginRight={4}>
 							{moment(movie.info.ReleaseDate).format('YYYY')}
 						</Pill>
-						<Pill bgColorName="lime">{movie.info.Runtime}</Pill>
+						<Pill bgColor={c.candyLime}>{movie.info.Runtime}</Pill>
 					</Row>
 
 					<Row alignItems="center">
