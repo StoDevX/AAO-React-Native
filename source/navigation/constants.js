@@ -2,4 +2,4 @@
 
 import {IS_PRODUCTION} from '@frogpond/constants'
 
-export const persistenceKey = 'NavState'
+export const persistenceKey = IS_PRODUCTION ? 'NavState' : null
