@@ -1,7 +1,8 @@
 // @flow
 
 import * as React from 'react'
-import * as c from '../../../components/colors'
+import * as c from '@frogpond/colors'
+import {firstReadable} from '@frogpond/colors'
 import glamorous from 'glamorous-native'
 
 type Colors = $Keys<typeof c.sto>

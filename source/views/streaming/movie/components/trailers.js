@@ -2,8 +2,8 @@
 
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import * as c from '../../../components/colors'
-import openUrl from '../../../components/open-url'
+import * as c from '@frogpond/colors'
+import {openUrl} from '@frogpond/open-url'
 import glamorous from 'glamorous-native'
 import maxBy from 'lodash/maxBy'
 import type {MovieTrailer} from '../types'

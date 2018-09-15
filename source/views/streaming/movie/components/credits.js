@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {Heading, Text, Padding, SectionHeading} from './parts'
-import {Column} from '../../../components/layout'
+import {Column} from '@frogpond/layout'
 
 type Props = {
 	directors: string,

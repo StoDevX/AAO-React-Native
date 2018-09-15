@@ -2,10 +2,10 @@
 
 import * as React from 'react'
 import {StyleSheet, Platform} from 'react-native'
-import * as c from '../../../components/colors'
-import openUrl from '../../../components/open-url'
+import * as c from '@frogpond/colors'
+import {openUrl} from '@frogpond/open-url'
 import {darken, setSaturation, setLightness} from 'polished'
-import {Touchable} from '../../../components/touchable'
+import {Touchable} from '@frogpond/touchable'
 import Icon from 'react-native-vector-icons/Ionicons'
 import type {MovieTrailer} from '../types'
 
