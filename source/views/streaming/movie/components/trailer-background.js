@@ -4,7 +4,13 @@ import * as React from 'react'
 import {StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import glamorous from 'glamorous-native'
-import {setSaturation, setLightness, darken, transparentize, rgb} from 'polished'
+import {
+	setSaturation,
+	setLightness,
+	darken,
+	transparentize,
+	rgb,
+} from 'polished'
 import type {MovieTrailer, RGBTuple} from '../types'
 import LinearGradient from 'react-native-linear-gradient'
 

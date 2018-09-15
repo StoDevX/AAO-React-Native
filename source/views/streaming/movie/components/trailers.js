@@ -53,7 +53,9 @@ const Clips = (props: {
 				horizontal={true}
 				overflow="visible"
 			>
-				{clips.map(t => <ClipTile key={t.url} clip={t} viewport={viewport} />)}
+				{clips.map(t => (
+					<ClipTile key={t.url} clip={t} viewport={viewport} />
+				))}
 			</glamorous.ScrollView>
 		</React.Fragment>
 	)
@@ -63,7 +65,7 @@ const SpacedCard = ({viewport, children}) => {
 	const width = Math.min(300, viewport.width - 75)
 	return (
 		<Card
-			height={width / 3 * 2}
+			height={(width / 3) * 2}
 			justifyContent="flex-end"
 			marginHorizontal={10}
 			marginVertical={16}

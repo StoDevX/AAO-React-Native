@@ -109,7 +109,7 @@ function colorizeScore(score: string) {
 	}
 
 	const MAX_VALUE = 200
-	const normalizedScore = Math.round(numScore / 100 * MAX_VALUE)
+	const normalizedScore = Math.round((numScore / 100) * MAX_VALUE)
 
 	return `rgb(${MAX_VALUE - normalizedScore}, ${normalizedScore}, 0)`
 }

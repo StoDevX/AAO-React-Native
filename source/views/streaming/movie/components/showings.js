@@ -17,7 +17,9 @@ export const Showings = ({showings}: {showings: ?Array<MovieShowing>}) => {
 
 	return (
 		<glamorous.ScrollView horizontal={true} overflow="hidden">
-			{grouped.map(s => <ShowingTile key={s.key} item={s} />)}
+			{grouped.map(s => (
+				<ShowingTile key={s.key} item={s} />
+			))}
 		</glamorous.ScrollView>
 	)
 }

@@ -11,15 +11,15 @@ import {KrlxStationView} from './radio/station-krlx'
 export {KSTOScheduleView, KRLXScheduleView} from './radio'
 
 const StreamingMediaView = TabNavigator({
-    StreamingView: {screen: StreamListView},
-    LiveWebcamsView: {screen: WebcamsView},
-    KSTORadioView: {screen: KstoStationView},
-    KRLXRadioView: {screen: KrlxStationView},
-    WeeklyMovieView: {screen: WeeklyMovieView},
+	StreamingView: {screen: StreamListView},
+	LiveWebcamsView: {screen: WebcamsView},
+	KSTORadioView: {screen: KstoStationView},
+	KRLXRadioView: {screen: KrlxStationView},
+	WeeklyMovieView: {screen: WeeklyMovieView},
 })
 
 StreamingMediaView.navigationOptions = {
-    title: 'Streaming Media',
+	title: 'Streaming Media',
 }
 
 export default StreamingMediaView

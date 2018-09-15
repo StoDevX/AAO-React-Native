@@ -77,5 +77,5 @@ export type Movie = {
 			dominant: RGBTuple,
 			palette: Array<RGBTuple>,
 		},
-	}
+	},
 }
