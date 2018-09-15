@@ -34,6 +34,7 @@ export const SectionHeading = glamorous.text({
 })
 
 export const Card = glamorous.view({
+	backgroundColor: c.white,
 	borderRadius: 8,
 	shadowRadius: 12,
 	shadowOpacity: 0.2,
