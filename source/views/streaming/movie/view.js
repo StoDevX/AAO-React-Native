@@ -67,13 +67,8 @@ const makeRgb = (tuple: RGBTuple) => rgb(...tuple)
 export class PlainWeeklyMovieView extends React.Component<Props, State> {
 	static navigationOptions = () => {
 		return {
-			headerTintColor: c.white,
-			headerStyle: {
-				backgroundColor: c.semitransparentGray,
-			},
-			cardStyle: {
-				backgroundColor: c.white,
-			},
+			tabBarLabel: 'Movie',
+			tabBarIcon: TabBarIcon('film'),
 		}
 	}
 
@@ -135,9 +130,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		const imdbUrl = `https://www.imdb.com/title/${movie.info.imdbID}`
 
 		return (
-			<ScrollView
-				contentContainerStyle={styles.contentContainer}
-			>
+			<ScrollView contentContainerStyle={styles.contentContainer}>
 				<TrailerBackground
 					height={headerHeight}
 					tint={movieTint}
@@ -227,9 +220,10 @@ const mapDispatch = (dispatch): ReduxDispatchProps => {
 	}
 }
 
-export const WeeklyMovieView = connect(mapState, mapDispatch)(
-	PlainWeeklyMovieView,
-)
+export const WeeklyMovieView = connect(
+	mapState,
+	mapDispatch,
+)(PlainWeeklyMovieView)
 
 const styles = StyleSheet.create({
 	contentContainer: {
