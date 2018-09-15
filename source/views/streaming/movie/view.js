@@ -9,11 +9,11 @@ import {rgb} from 'polished'
 
 import {getWeeklyMovie} from '../../../flux/parts/weekly-movie'
 import {type ReduxState} from '../../../flux'
-import {NoticeView} from '../../components/notice'
-import LoadingView from '../../components/loading'
-import * as c from '../../components/colors'
-import {Row} from '../../components/layout'
-import openUrl from '../../components/open-url'
+import {LoadingView, NoticeView} from '@frogpond/notice'
+import * as c from '@frogpond/colors'
+import {Row} from '@frogpond/layout'
+import {openUrl} from '@frogpond/open-url'
+import {ListSeparator} from '@frogpond/lists'
 import {type TopLevelViewPropsType} from '../../types'
 
 import {
@@ -23,7 +23,6 @@ import {
 	FixedSpacer,
 	FooterAction,
 } from './components/parts'
-import {Separator} from '../../components/separator'
 import {Pill} from './components/pill'
 import {Poster} from './components/poster'
 import {TrailerBackground} from './components/trailer-background'
@@ -81,7 +80,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		viewport: Dimensions.get('window'),
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.props.getWeeklyMovie()
 		Dimensions.addEventListener('change', this.handleResizeEvent)
 	}
@@ -190,7 +189,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 
 				<Showings showings={movie.showings} />
 
-				<Separator />
+				<ListSeparator />
 
 				<Plot text={movie.info.Plot} />
 
