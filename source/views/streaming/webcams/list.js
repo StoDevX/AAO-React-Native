@@ -17,72 +17,72 @@ const webcamsUrl = API('/webcams')
 type Props = {}
 
 type State = {
-    webcams: Array<Webcam>,
-    loading: boolean,
+	webcams: Array<Webcam>,
+	loading: boolean,
 }
 
 export class WebcamsView extends React.PureComponent<Props, State> {
-    static navigationOptions = {
-        tabBarLabel: 'Webcams',
-        tabBarIcon: TabBarIcon('videocam'),
-    }
+	static navigationOptions = {
+		tabBarLabel: 'Webcams',
+		tabBarIcon: TabBarIcon('videocam'),
+	}
 
-    state = {
-        webcams: defaultData.data,
-        loading: false,
-    }
+	state = {
+		webcams: defaultData.data,
+		loading: false,
+	}
 
-    componentDidMount() {
-        this.fetchData()
-    }
+	componentDidMount() {
+		this.fetchData()
+	}
 
-    fetchData = async () => {
-        this.setState(() => ({loading: true}))
+	fetchData = async () => {
+		this.setState(() => ({loading: true}))
 
-        let {data: webcams} = await fetchJson(webcamsUrl).catch(err => {
-            reportNetworkProblem(err)
-            return defaultData
-        })
+		let {data: webcams} = await fetchJson(webcamsUrl).catch(err => {
+			reportNetworkProblem(err)
+			return defaultData
+		})
 
-        if (process.env.NODE_ENV === 'development') {
-            webcams = defaultData.data
-        }
+		if (process.env.NODE_ENV === 'development') {
+			webcams = defaultData.data
+		}
 
-        this.setState(() => ({webcams, loading: false}))
-    }
+		this.setState(() => ({webcams, loading: false}))
+	}
 
-    render() {
-        const columns = partitionByIndex(this.state.webcams)
+	render() {
+		const columns = partitionByIndex(this.state.webcams)
 
-        return (
-            <Viewport
-                render={({width}) => (
-                    <ScrollView contentContainerStyle={styles.container}>
-                        {columns.map((contents, i) => (
-                            <Column key={i} style={styles.column}>
-                                {contents.map(webcam => (
-                                    <StreamThumbnail
-                                        key={webcam.name}
-                                        viewportWidth={width}
-                                        webcam={webcam}
-                                    />
-                                ))}
-                            </Column>
-                        ))}
-                    </ScrollView>
-                )}
-            />
-        )
-    }
+		return (
+			<Viewport
+				render={({width}) => (
+					<ScrollView contentContainerStyle={styles.container}>
+						{columns.map((contents, i) => (
+							<Column key={i} style={styles.column}>
+								{contents.map(webcam => (
+									<StreamThumbnail
+										key={webcam.name}
+										viewportWidth={width}
+										webcam={webcam}
+									/>
+								))}
+							</Column>
+						))}
+					</ScrollView>
+				)}
+			/>
+		)
+	}
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 5,
-        flexDirection: 'row',
-    },
-    column: {
-        flex: 1,
-        alignItems: 'center',
-    },
+	container: {
+		padding: 5,
+		flexDirection: 'row',
+	},
+	column: {
+		flex: 1,
+		alignItems: 'center',
+	},
 })
