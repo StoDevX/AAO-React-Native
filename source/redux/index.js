@@ -17,6 +17,7 @@ import {
 	notifications,
 	type State as NotificationsState,
 } from './parts/notifications'
+import {weeklyMovie, type State as WeeklyMovieState} from './parts/weekly-movie'
 
 export {init as initRedux} from './init'
 
@@ -30,6 +31,7 @@ export type ReduxState = {
 	help?: HelpState,
 	stoprint?: StoPrintState,
 	notifications?: NotificationsState,
+	weeklyMovie?: WeeklyMovieState,
 }
 
 export const makeStore = () => {
@@ -43,6 +45,7 @@ export const makeStore = () => {
 		help,
 		stoprint,
 		notifications,
+		weeklyMovie,
 	})
 
 	const middleware = [reduxPromise, reduxThunk]
