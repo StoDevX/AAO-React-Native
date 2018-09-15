@@ -2,7 +2,7 @@
 import {AsyncStorage} from 'react-native'
 import moment from 'moment'
 import {API} from '@frogpond/api'
-import {WEEKLY_MOVIE_URL} from '../globals'
+import {WEEKLY_MOVIE_URL} from '../lib/constants'
 
 type BaseCacheResultType<T> = {
 	isExpired: boolean,
@@ -234,9 +234,7 @@ export function getWeeklyMovie(): CacheResultType<?WeeklyMovie> {
 }
 async function fetchWeeklyMovieRemote(): Promise<MaybeError<WeeklyMovie>> {
 	try {
-		console.log(WEEKLY_MOVIE_URL('next.json'))
 		const nextMovie = await fetchJson(WEEKLY_MOVIE_URL('next.json'))
-		console.log(nextMovie)
 		const movieInfo = await fetchJson(nextMovie.movie)
 		return {error: false, data: movieInfo}
 	} catch (err) {
