@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {Platform} from 'react-native'
+import {Platform, View} from 'react-native'
 import glamorous from 'glamorous-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import type {MovieRating} from '../types'
@@ -41,13 +41,19 @@ export const ImdbRating = ({ratings}: RatingsProps) => {
 	const tint = colorizeScore(rating.Value)
 
 	return (
-		<glamorous.Text color={tint}>
-			<glamorous.Text fontSize={24} fontWeight="800">
-				{score / 10}
+		<View>
+			<glamorous.Text color={tint}>
+				<glamorous.Text fontSize={24} fontWeight="800">
+					{score / 10}
+				</glamorous.Text>
+				{' ⁄ '}
+				<glamorous.Text fontVariant={['small-caps']}>10</glamorous.Text>
 			</glamorous.Text>
-			{' ⁄ '}
-			<glamorous.Text fontVariant={['small-caps']}>10</glamorous.Text>
-		</glamorous.Text>
+
+			<glamorous.Text fontSize={12} fontWeight="100" paddingHorizontal={2}>
+				IMDB
+			</glamorous.Text>
+		</View>
 	)
 }
 
@@ -76,7 +82,14 @@ export const RottenTomatoesRating = ({ratings}: RatingsProps) => {
 	}
 
 	const tint = colorizeScore(rating.Value)
-	return <glamorous.Text color={tint}>{starIcons}</glamorous.Text>
+	return (
+		<View>
+			<glamorous.Text color={tint}>{starIcons}</glamorous.Text>
+			<glamorous.Text fontSize={12} fontWeight="100" paddingHorizontal={2}>
+				Rotten Tomatoes
+			</glamorous.Text>
+		</View>
+	)
 }
 
 export const MpaaRating = ({rated}: {rated: string}) => (
