@@ -234,7 +234,7 @@ export function getWeeklyMovie(): CacheResultType<?WeeklyMovie> {
 }
 async function fetchWeeklyMovieRemote(): Promise<MaybeError<WeeklyMovie>> {
 	try {
-		const nextMovie = await fetchJson(WEEKLY_MOVIE_URL('next.json'))
+		const nextMovie = await fetchJson(`${WEEKLY_MOVIE_URL}/next.json`)
 		const movieInfo = await fetchJson(nextMovie.movie)
 		return {error: false, data: movieInfo}
 	} catch (err) {
