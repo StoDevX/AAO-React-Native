@@ -89,6 +89,18 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 		this.setState(() => ({viewport: event.window}))
 	}
 
+	findLargestTrailerImage(movie: Movie) {
+		if (!movie.trailers && movie.trailers.size) {
+			return null
+		}
+
+		const backgrounds = movie.trailers
+			.map(trailer => trailer.thumbnails.find(thm => thm.width === 640))
+			.filter(trailer => trailer)
+
+		return backgrounds.length ? backgrounds[0] : null
+	}
+
 	render() {
 		const {movie, loading, error} = this.props
 
@@ -122,6 +134,7 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 
 		const viewport = this.state.viewport
 		const mainTrailer = movie.trailers[0]
+		const largestTrailerImage = this.findLargestTrailerImage(movie)
 		const movieTint = makeRgb(movie.poster.colors.dominant)
 		const landscape = viewport.width > viewport.height
 		const headerHeight = landscape
@@ -133,8 +146,9 @@ export class PlainWeeklyMovieView extends React.Component<Props, State> {
 			<ScrollView contentContainerStyle={styles.contentContainer}>
 				<TrailerBackground
 					height={headerHeight}
+					movie={movie}
 					tint={movieTint}
-					trailer={mainTrailer}
+					trailer={largestTrailerImage}
 					viewport={viewport}
 				/>
 

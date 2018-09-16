@@ -11,12 +11,13 @@ import {
 	transparentize,
 	rgb,
 } from 'polished'
-import type {MovieTrailer, RGBTuple} from '../types'
+import type {Movie, MovieTrailer, RGBTuple} from '../types'
 import LinearGradient from 'react-native-linear-gradient'
 
 const makeRgb = (tuple: RGBTuple) => rgb(...tuple)
 
 type Props = {
+	movie: Movie,
 	trailer: MovieTrailer,
 	tint: string,
 	height: number,
@@ -27,15 +28,12 @@ type Props = {
 }
 
 export const TrailerBackground = (props: Props) => {
-	const {trailer, tint: posterTint, height, viewport} = props
-
-	// TODO: find the largest size beneath `ideal`
-	const thumbnail = trailer.thumbnails.find(thm => thm.width === 640)
+	const {movie, trailer, tint: posterTint, height, viewport} = props
 
 	// TODO: provide a fallback image
-	const uri = thumbnail ? thumbnail.url : ''
+	const uri = trailer ? trailer.url : ''
 
-	const tint = makeRgb(trailer.colors.dominant) || posterTint
+	const tint = makeRgb(movie.poster.colors.dominant) || posterTint
 
 	const gradient = [
 		c.transparent,
