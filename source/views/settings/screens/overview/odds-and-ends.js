@@ -6,7 +6,7 @@ import {setFeedbackStatus} from '../../../../redux/parts/settings'
 import type {ReduxState} from '../../../../redux'
 import {connect} from 'react-redux'
 import {type NavigationScreenProp} from 'react-navigation'
-import {IS_PRODUCTION} from '@frogpond/constants'
+import {isDevMode} from '@frogpond/constants'
 
 type Props = {
 	navigation: NavigationScreenProp<*>,
@@ -34,7 +34,7 @@ export class OddsAndEndsSection extends React.Component<Props> {
 
 				<ConnectedNotificationsCell onPress={this.onNotificationsButton} />
 
-				{!IS_PRODUCTION && (
+				{isDevMode && (
 					<PushButtonCell onPress={this.onDebugButton} title="Debug" />
 				)}
 			</Section>
