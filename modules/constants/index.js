@@ -26,7 +26,8 @@ let IS_RC: boolean
 export const isRc = () => IS_RC
 
 // checks if the build should show debugging tools
-export const isDevMode = () => !IS_PRODUCTION || (IS_ALPHA || IS_BETA || IS_PRE || IS_RC)
+export const isDevMode = () =>
+	!IS_PRODUCTION || (IS_ALPHA || IS_BETA || IS_PRE || IS_RC)
 
 export const setVersionInfo = (versionStr: string) => {
 	let [version, buildNum] = versionStr.split('+')
