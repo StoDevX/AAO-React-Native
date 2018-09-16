@@ -11,18 +11,18 @@ type RatingsProps = {
 }
 
 const FullStar = () => (
-	<Icon name={Platform.OS === 'ios' ? 'ios-star' : 'md-star'} size={22} />
+	<Icon name={Platform.OS === 'ios' ? 'ios-star' : 'md-star'} size={26} />
 )
 const HalfStar = () => (
 	<Icon
 		name={Platform.OS === 'ios' ? 'ios-star-half' : 'md-star-half'}
-		size={22}
+		size={26}
 	/>
 )
 const EmptyStar = () => (
 	<Icon
 		name={Platform.OS === 'ios' ? 'ios-star-outline' : 'md-star-outline'}
-		size={22}
+		size={26}
 	/>
 )
 
