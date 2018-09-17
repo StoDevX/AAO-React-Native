@@ -89,7 +89,7 @@ export const MenusView = TabNavigator({
 		},
 	},
 
-	...(isDevMode() ? {BonAppDevToolView: {screen: BonAppPickerView}} : {}),
+	...(isDevMode ? {BonAppDevToolView: {screen: BonAppPickerView}} : {}),
 })
 MenusView.navigationOptions = {
 	title: 'Menus',
