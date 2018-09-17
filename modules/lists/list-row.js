@@ -6,6 +6,7 @@ import {Touchable} from '@frogpond/touchable'
 import {DisclosureArrow} from './disclosure-arrow'
 import noop from 'lodash/noop'
 import isNil from 'lodash/isNil'
+import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
 
 const styles = StyleSheet.create({
 	childWrapper: {
@@ -35,8 +36,8 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {|
-	style?: any,
-	contentContainerStyle?: any,
+	style?: ViewStyleProp,
+	contentContainerStyle?: ViewStyleProp,
 	arrowPosition?: 'center' | 'top' | 'none',
 	fullWidth?: boolean,
 	fullHeight?: boolean,
