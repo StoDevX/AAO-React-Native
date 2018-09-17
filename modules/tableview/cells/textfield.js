@@ -82,26 +82,27 @@ export class CellTextField extends React.Component<Props> {
 			<Text style={styles.hiddenLabel} />
 		)
 
+		const input = (
+			<TextInput
+				ref={this.cacheRef}
+				autoCapitalize={this.props.autoCapitalize}
+				autoCorrect={false}
+				clearButtonMode="while-editing"
+				multiline={this.props.multiline || false}
+				onChangeText={this.props.onChangeText}
+				onSubmitEditing={this.onSubmit}
+				placeholder={this.props.placeholder}
+				placeholderTextColor={c.iosPlaceholderText}
+				returnKeyType={this.props.returnKeyType}
+				secureTextEntry={this.props.secureTextEntry}
+				style={[styles.customTextInput]}
+				value={this.props.value}
+			/>
+		)
+
 		return (
 			<Cell
-				cellAccessoryView={
-					<TextInput
-						ref={this.cacheRef}
-						autoCapitalize={this.props.autoCapitalize}
-						autoCorrect={false}
-						clearButtonMode="while-editing"
-						disabled={this.props.disabled}
-						multiline={this.props.multiline || false}
-						onChangeText={this.props.onChangeText}
-						onSubmitEditing={this.onSubmit}
-						placeholder={this.props.placeholder}
-						placeholderTextColor={c.iosPlaceholderText}
-						returnKeyType={this.props.returnKeyType}
-						secureTextEntry={this.props.secureTextEntry}
-						style={[styles.customTextInput]}
-						value={this.props.value}
-					/>
-				}
+				cellAccessoryView={input}
 				cellContentView={label}
 				contentContainerStyle={
 					this.props.multiline ? styles.multilineCell : styles.singlelineCell
