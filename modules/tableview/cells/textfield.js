@@ -83,6 +83,7 @@ export class CellTextField extends React.Component<Props> {
 		)
 
 		const input = (
+			// $FlowExpectedError Cannot create TextInput element because property scrollEnabled is missing in object type [1] but exists in props [2].
 			<TextInput
 				ref={this.cacheRef}
 				autoCapitalize={this.props.autoCapitalize}
@@ -95,6 +96,7 @@ export class CellTextField extends React.Component<Props> {
 				placeholder={this.props.placeholder}
 				placeholderTextColor={c.iosPlaceholderText}
 				returnKeyType={this.props.returnKeyType}
+				scrollEnabled={false}
 				secureTextEntry={this.props.secureTextEntry}
 				style={[styles.customTextInput]}
 				value={this.props.value}
