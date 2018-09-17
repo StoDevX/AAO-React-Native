@@ -34,7 +34,7 @@ export class OddsAndEndsSection extends React.Component<Props> {
 
 				<ConnectedNotificationsCell onPress={this.onNotificationsButton} />
 
-				{isDevMode && (
+				{isDevMode() && (
 					<PushButtonCell onPress={this.onDebugButton} title="Debug" />
 				)}
 			</Section>
