@@ -4,12 +4,11 @@ category: Academia
 
 schedule:
   - title: Hours
-    hours: []
-      # - {days: [Mo, Tu, We, Th], from: '8:00am', to: '9:00pm'}
-      # - {days: [Fr], from: '8:00am', to: '5:00pm'}
-      # - {days: [Sa], from: '10:00am', to: '3:00pm'}
-      # - {days: [Su], from: '4:00pm', to: '10:00pm'}
-    notes: 'World Language Center is closed for the summer?'
+    hours:
+      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '9:00pm'}
+      - {days: [Fr], from: '8:00am', to: '5:00pm'}
+      - {days: [Sa], from: '10:00am', to: '3:00pm'}
+      - {days: [Su], from: '4:00pm', to: '10:00pm'}
 
 breakSchedule:
   fall: []
