@@ -38,7 +38,7 @@ function androidOpen(url: string) {
 export function openUrl(url: string) {
 	const protocol = /^(.*?):/.exec(url)
 
-	if (protocol.length) {
+	if (protocol && protocol.length) {
 		switch (protocol[1]) {
 			case 'tel':
 				return genericOpen(url)
