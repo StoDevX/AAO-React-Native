@@ -25,3 +25,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 - Revamped navigation! We tweaked some colors and made things a bit simpler.
+- Updated a few design-y things
+- Made certain things way (waaaaay) faster
+
+### Removed
+- Cleaned up old code
+
+### Security
+- Improved some security
