@@ -88,6 +88,7 @@ export class CellTextField extends React.Component<Props> {
 				autoCapitalize={this.props.autoCapitalize}
 				autoCorrect={false}
 				clearButtonMode="while-editing"
+				editable={!this.props.disabled}
 				multiline={this.props.multiline || false}
 				onChangeText={this.props.onChangeText}
 				onSubmitEditing={this.onSubmit}
