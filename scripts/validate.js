@@ -10,7 +10,7 @@ const {SCHEMA_BASE} = require('./paths')
 function formatError(err, data) {
 	// format some of the errors from ajv
 	let contents = ''
-	const dataPath = err.dataPath.replace(/^\./, '')
+	const dataPath = err.dataPath.replace(/^\./u, '')
 	switch (err.keyword) {
 		case 'enum': {
 			const value = get(data, dataPath)
