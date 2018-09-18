@@ -74,6 +74,7 @@ rules:
   quotes: [warn, single, avoid-escape]
   require-await: warn
   semi: off
+  require-unicode-regexp: error
 
   # react rules – https://github.com/yannickcr/eslint-plugin-react
   react/display-name: off
