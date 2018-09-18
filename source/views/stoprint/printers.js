@@ -134,8 +134,8 @@ class PrinterListView extends React.PureComponent<Props, State> {
 		const allGrouped = groupBy(
 			allWithLocations,
 			j =>
-				/^[A-Z]+ \d+/.test(j.location)
-					? j.location.split(/\s+/)[0]
+				/^[A-Z]+ \d+/u.test(j.location)
+					? j.location.split(/\s+/u)[0]
 					: j.location,
 		)
 
