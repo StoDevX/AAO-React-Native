@@ -19,7 +19,6 @@ export type TouchableUnion =
 type Props = {|
 	borderless?: boolean,
 	containerStyle?: ViewStyleProp,
-	getRef?: () => TouchableUnion,
 	style?: ViewStyleProp,
 	highlight?: boolean,
 	activeOpacity?: number,
@@ -27,12 +26,11 @@ type Props = {|
 	...$Exact<TouchableWithoutFeedbackProps>,
 |}
 
-export const Touchable = (props: Props) => {
+const Touchable = (props: Props, ref) => {
 	let {
 		borderless = false,
 		children,
 		containerStyle,
-		getRef,
 		highlight = true,
 		style,
 		underlayColor = '#d9d9d9',
@@ -49,7 +47,7 @@ export const Touchable = (props: Props) => {
 			if (highlight) {
 				return (
 					<TouchableHighlight
-						ref={getRef}
+						ref={ref}
 						style={containerStyle}
 						underlayColor={underlayColor}
 						{...passthrough}
@@ -61,7 +59,7 @@ export const Touchable = (props: Props) => {
 
 			return (
 				<TouchableOpacity
-					ref={getRef}
+					ref={ref}
 					activeOpacity={activeOpacity}
 					style={containerStyle}
 					{...passthrough}
@@ -80,7 +78,7 @@ export const Touchable = (props: Props) => {
 
 			return (
 				<TouchableNativeFeedback
-					ref={getRef}
+					ref={ref}
 					background={background}
 					style={containerStyle}
 					{...passthrough}
@@ -91,3 +89,8 @@ export const Touchable = (props: Props) => {
 		}
 	}
 }
+
+// $FlowExpectedError Cannot call React.forwardRef because property forwardRef is missing in module react
+const WrappedTouchable = React.forwardRef(Touchable)
+
+export {WrappedTouchable as Touchable}
