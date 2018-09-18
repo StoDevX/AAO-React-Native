@@ -82,26 +82,30 @@ export class CellTextField extends React.Component<Props> {
 			<Text style={styles.hiddenLabel} />
 		)
 
+		const input = (
+			// $FlowExpectedError Cannot create TextInput element because property scrollEnabled is missing in object type [1] but exists in props [2].
+			<TextInput
+				ref={this.cacheRef}
+				autoCapitalize={this.props.autoCapitalize}
+				autoCorrect={false}
+				clearButtonMode="while-editing"
+				editable={!this.props.disabled}
+				multiline={this.props.multiline || false}
+				onChangeText={this.props.onChangeText}
+				onSubmitEditing={this.onSubmit}
+				placeholder={this.props.placeholder}
+				placeholderTextColor={c.iosPlaceholderText}
+				returnKeyType={this.props.returnKeyType}
+				scrollEnabled={false}
+				secureTextEntry={this.props.secureTextEntry}
+				style={[styles.customTextInput]}
+				value={this.props.value}
+			/>
+		)
+
 		return (
 			<Cell
-				cellAccessoryView={
-					<TextInput
-						ref={this.cacheRef}
-						autoCapitalize={this.props.autoCapitalize}
-						autoCorrect={false}
-						clearButtonMode="while-editing"
-						disabled={this.props.disabled}
-						multiline={this.props.multiline || false}
-						onChangeText={this.props.onChangeText}
-						onSubmitEditing={this.onSubmit}
-						placeholder={this.props.placeholder}
-						placeholderTextColor={c.iosPlaceholderText}
-						returnKeyType={this.props.returnKeyType}
-						secureTextEntry={this.props.secureTextEntry}
-						style={[styles.customTextInput]}
-						value={this.props.value}
-					/>
-				}
+				cellAccessoryView={input}
 				cellContentView={label}
 				contentContainerStyle={
 					this.props.multiline ? styles.multilineCell : styles.singlelineCell

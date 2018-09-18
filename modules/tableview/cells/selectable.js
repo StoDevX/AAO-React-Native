@@ -14,10 +14,12 @@ const styles = StyleSheet.create({
 })
 
 export const SelectableCell = ({text}: {text: string}) => (
+	// $FlowExpectedError Cannot create TextInput element because property scrollEnabled is missing in object type [1] but exists in props [2].
 	<TextInput
 		dataDetectorTypes="all"
 		editable={false}
 		multiline={true}
+		scrollEnabled={false}
 		style={styles.text}
 		value={text}
 	/>

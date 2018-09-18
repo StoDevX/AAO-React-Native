@@ -116,7 +116,7 @@ export class FancyMenu extends React.Component<Props, State> {
 				// and apply the selected filters to the items in the menu
 				.filter(item => item && applyFilters(filters, item))
 
-		let menusWithItems = stations
+		let menusWithItems: Array<{title: string, data: Array<MenuItem>}> = stations
 			// We're grouping the menu items in a [label, Array<items>] tuple.
 			.map(menu => [menu.label, derefrenceMenuItems(menu)])
 			// We only want to show stations with at least one item in them
