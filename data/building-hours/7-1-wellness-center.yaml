@@ -4,9 +4,8 @@ category: Health and Wellness
 
 schedule:
   - title: Hours
-    hours: []
-      # - {days: [Mo, Tu, We, Th, Fr], from: '10:00am', to: '5:00pm'}
-    notes: The Wellness Center is closed for the summer?
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '10:00am', to: '5:00pm'}
 
 breakSchedule:
   fall: []
