@@ -4,6 +4,10 @@ import {Platform, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import {type AppTheme} from '@frogpond/app-theme'
 import {withTheme} from '@callstack/react-theme-provider'
+import type {
+	ViewStyleProp,
+	TextStyleProp,
+} from 'react-native/Libraries/StyleSheet/StyleSheet'
 
 const styles = StyleSheet.create({
 	container: {
@@ -66,11 +70,11 @@ const styles = StyleSheet.create({
 type PropsType = {
 	title: string,
 	bold?: boolean,
-	titleStyle?: any,
+	titleStyle?: TextStyleProp,
 	subtitle?: string,
-	subtitleStyle?: any,
+	subtitleStyle?: TextStyleProp,
 	separator?: string,
-	style?: any,
+	style?: ViewStyleProp,
 	spacing?: {left?: number, right?: number},
 	theme: AppTheme,
 }
