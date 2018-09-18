@@ -64,7 +64,12 @@ export class BuildingDetail extends React.Component<Props> {
 		return (
 			<ScrollView contentContainerStyle={styles.container}>
 				{headerImage ? (
-					<Image resizeMode="cover" source={headerImage} style={styles.image} />
+					<Image
+						accessibilityIgnoresInvertColors={true}
+						resizeMode="cover"
+						source={headerImage}
+						style={styles.image}
+					/>
 				) : null}
 
 				<Header building={info} />
