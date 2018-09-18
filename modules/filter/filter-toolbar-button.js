@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
-import {Touchable, type TouchableUnion} from '@frogpond/touchable'
+import {Touchable} from '@frogpond/touchable'
 import {type AppTheme} from '@frogpond/app-theme'
 import {withTheme} from '@callstack/react-theme-provider'
 
