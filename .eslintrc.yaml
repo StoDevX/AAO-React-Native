@@ -74,6 +74,9 @@ rules:
   quotes: [warn, single, avoid-escape]
   require-await: warn
   semi: off
+  no-misleading-character-class: warn
+  require-atomic-updates: error
+  no-async-promise-executor: error
   require-unicode-regexp: error
 
   # react rules – https://github.com/yannickcr/eslint-plugin-react
