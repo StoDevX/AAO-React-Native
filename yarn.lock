@@ -6794,12 +6794,6 @@ stealthy-require@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
 
-sto-sis-time-parser@2.3.3:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/sto-sis-time-parser/-/sto-sis-time-parser-2.3.3.tgz#566b663997f6ec6cdd1e585456ecb552af977a47"
-  dependencies:
-    lodash "^4.0.0"
-
 stream-buffers@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/stream-buffers/-/stream-buffers-2.2.0.tgz#91d5f5130d1cef96dcfa7f726945188741d09ee4"
