@@ -53,4 +53,6 @@ const popoverContainer = {
 	maxWidth: 300,
 }
 
-const arrowStyle = {backgroundColor: c.iosLightBackground}
+const arrowStyle = {
+	backgroundColor: c.iosLightBackground,
+}
