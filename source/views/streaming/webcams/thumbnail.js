@@ -50,6 +50,7 @@ export class StreamThumbnail extends React.PureComponent<Props> {
 					underlayColor={baseColor}
 				>
 					<Image
+						accessibilityIgnoresInvertColors={true}
 						resizeMode="cover"
 						source={img}
 						style={[StyleSheet.absoluteFill, {width, height}]}

@@ -39,7 +39,11 @@ function Time({item}: {item: StreamType}) {
 
 function Thumbnail({item}: {item: StreamType}) {
 	return item.thumb ? (
-		<Image source={{uri: item.thumb}} style={styles.image} />
+		<Image
+			accessibilityIgnoresInvertColors={true}
+			source={{uri: item.thumb}}
+			style={styles.image}
+		/>
 	) : null
 }
 
