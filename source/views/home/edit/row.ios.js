@@ -75,3 +75,5 @@ export class EditHomeRow extends React.Component<Props> {
 		)
 	}
 }
+
+AppRegistry.registerComponent('EditHomeRow', () => EditHomeRow)
