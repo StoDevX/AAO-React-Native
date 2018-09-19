@@ -1,12 +1,11 @@
 // @flow
 
 import * as React from 'react'
-import {Animated, Easing, StyleSheet, Text, Switch} from 'react-native'
+import {AppRegistry, StyleSheet, View, Text, Switch} from 'react-native'
 
 import * as c from '@frogpond/colors'
 
 import EntypoIcon from 'react-native-vector-icons/Entypo'
-import IonIcon from 'react-native-vector-icons/Ionicons'
 
 import type {ViewType} from '../../views'
 
@@ -20,15 +19,7 @@ const styles = StyleSheet.create({
 
 		backgroundColor: c.white,
 
-		marginVertical: 5,
 		marginHorizontal: ROW_HORIZONTAL_MARGIN,
-		paddingVertical: 12,
-
-		borderRadius: 4,
-
-		shadowColor: c.semitransparentGray,
-		shadowOpacity: 1,
-		shadowOffset: {height: 0, width: 0},
 	},
 	icon: {
 		paddingLeft: 10,
@@ -57,107 +48,18 @@ type Props = {
 }
 
 export class EditHomeRow extends React.Component<Props> {
-	static startStyle = {
-		shadowRadius: 2,
-		transform: [{scale: 1}],
-		opacity: 1,
-		elevation: 2,
-	}
-
-	static endStyle = {
-		shadowRadius: 10,
-		transform: [{scale: 1.05}],
-		opacity: 0.65,
-		elevation: 4,
-	}
-
-	componentDidUpdate() {
-		if (this.props.active) {
-			this.startActivationAnimation()
-		} else {
-			this.startDeactivationAnimation()
-		}
-	}
-
-	_style: {
-		shadowRadius: Animated.Value,
-		transform: Array<{[key: string]: Animated.Value}>,
-		opacity: Animated.Value,
-		elevation: Animated.Value,
-	} = {
-		shadowRadius: new Animated.Value(EditHomeRow.startStyle.shadowRadius),
-		transform: [
-			{scale: new Animated.Value(EditHomeRow.startStyle.transform[0].scale)},
-		],
-		opacity: new Animated.Value(EditHomeRow.startStyle.opacity),
-		elevation: new Animated.Value(EditHomeRow.startStyle.elevation),
-	}
-
-	startActivationAnimation = () => {
-		const {transform, shadowRadius, opacity, elevation} = this._style
-		Animated.parallel([
-			Animated.timing(transform[0].scale, {
-				duration: 100,
-				easing: Easing.out(Easing.quad),
-				toValue: EditHomeRow.endStyle.transform[0].scale,
-			}),
-			Animated.timing(shadowRadius, {
-				duration: 100,
-				easing: Easing.out(Easing.quad),
-				toValue: EditHomeRow.endStyle.shadowRadius,
-			}),
-			Animated.timing(opacity, {
-				duration: 100,
-				easing: Easing.out(Easing.quad),
-				toValue: EditHomeRow.endStyle.opacity,
-			}),
-			Animated.timing(elevation, {
-				duration: 100,
-				easing: Easing.out(Easing.quad),
-				toValue: EditHomeRow.endStyle.elevation,
-			}),
-		]).start()
-	}
-
-	startDeactivationAnimation = () => {
-		const {transform, shadowRadius, opacity, elevation} = this._style
-		Animated.parallel([
-			Animated.timing(transform[0].scale, {
-				duration: 100,
-				easing: Easing.out(Easing.quad),
-				toValue: EditHomeRow.startStyle.transform[0].scale,
-			}),
-			Animated.timing(shadowRadius, {
-				duration: 100,
-				easing: Easing.out(Easing.quad),
-				toValue: EditHomeRow.startStyle.shadowRadius,
-			}),
-			Animated.timing(opacity, {
-				duration: 100,
-				easing: Easing.out(Easing.quad),
-				toValue: EditHomeRow.startStyle.opacity,
-			}),
-			Animated.timing(elevation, {
-				duration: 100,
-				easing: Easing.out(Easing.quad),
-				toValue: EditHomeRow.startStyle.elevation,
-			}),
-		]).start()
-	}
-
 	onToggleSwitch = () => {
+        // todo: can only pass in primitives... implement this from list row?
 		this.props.onToggle(this.props.data.view)
 	}
 
 	render() {
-		const width = this.props.width - ROW_HORIZONTAL_MARGIN * 2
-
 		const tint = this.props.data.gradient
 			? this.props.data.gradient[0]
 			: this.props.data.tint
 
 		return (
-			<Animated.View style={[styles.row, this._style, {width}]}>
+			<View style={[styles.row, this._style]}>
 				<MenuIcon icon={this.props.data.icon} tint={tint} />
 
 				<Text style={[styles.text, {color: tint}]}>
@@ -167,15 +69,9 @@ export class EditHomeRow extends React.Component<Props> {
 				<Switch
 					onTintColor={tint}
 					onValueChange={this.onToggleSwitch}
-					value={this.props.isEnabled}
+					value={this.props.data.isEnabled}
 				/>
-
-				<IonIcon
-					name="ios-reorder"
-					size={32}
-					style={[styles.icon, {color: tint}]}
-				/>
-			</Animated.View>
+			</View>
 		)
 	}
 }
