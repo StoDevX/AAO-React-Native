@@ -13,7 +13,6 @@ import TableView from 'react-native-tableview'
 import debounce from 'lodash/debounce'
 
 import {allViews} from '../../views'
-// todo: might need an eslint rule to ignore this just once... reactModuleForCell is using it`
 import {EditHomeRow} from './row'
 import {toggleViewDisabled} from '../../../redux/parts/homescreen'
 
@@ -58,14 +57,15 @@ class EditHomeView extends React.PureComponent<Props> {
 	onChangeOrder = debounce(this._saveOrder, 100)
 
 	render() {
+		console.log(this.props)
 		return (
 			<Viewport
 				render={() => (
 					// <SortableList
-					// 	data={objViews}
-					// 	onChangeOrder={this.onChangeOrder}
-					// 	order={this.props.order}
-					// 	renderRow={props => this.renderRow({...props, width})}
+					//  data={objViews}
+					//  onChangeOrder={this.onChangeOrder}
+					//  order={this.props.order}
+					//  renderRow={props => this.renderRow({...props, width})}
 					// />
 
 					// project:         https://github.com/aksonov/react-native-tableview
@@ -74,26 +74,32 @@ class EditHomeView extends React.PureComponent<Props> {
 
 					<TableView
 						editing={true}
-						onChange={order => this.onChangeOrder(order)}
-						reactModuleForCell="EditHomeRow"
+						moveWithinSectionOnly={false}
+						onChange={this.onChangeOrder}
+						// todo: get rid of this and make the section reordring handle disabling
+						onPress={event =>
+							this.props.navigation.getParam('reordering')
+								? null
+								: this.props.onToggleViewDisabled(event.view)
+						}
 						style={styles.table}
 						tableViewCellEditingStyle={EDITING_STYLE}
+						tableViewStyle={TableView.Consts.Style.Grouped}
 					>
-						<Section canEdit={true} canMove={true}>
+						<Section canEdit={true} canMove={true} label="Visible">
 							{map(objViews, (view, key) => (
 								<Item
 									key={key}
-									active={view.active}
-									gradient={view.gradient}
-									icon={view.icon}
+									accessoryType={TableView.Consts.AccessoryType.Checkmark}
 									isEnabled={!this.props.inactiveViews.includes(objViews.view)}
-									// todo: can only pass primitives... move this to the list row?
-									onToggle={this.props.onToggleViewDisabled}
-									tint={view.tint}
-									title={view.title}
-								/>
+									view={key}
+								>
+									{view.title}
+								</Item>
 							))}
 						</Section>
+
+						<Section canEdit={true} canMove={true} label="Hidden" />
 					</TableView>
 				)}
 			/>

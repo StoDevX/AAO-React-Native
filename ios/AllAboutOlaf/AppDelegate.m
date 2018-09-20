@@ -13,7 +13,6 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-#import <RNTableView/RNAppGlobals.h>
 
 @implementation AppDelegate
 
@@ -37,9 +36,6 @@
                                                initialProperties:nil
                                                    launchOptions:launchOptions];
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-
-  // save main bridge so that RNTableView could access our bridge to create its RNReactModuleCells
-  [[RNAppGlobals sharedInstance] setAppBridge:rootView.bridge];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
