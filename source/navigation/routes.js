@@ -55,8 +55,10 @@ import {
 	PrintJobReleaseView,
 	PrintJobsView,
 } from '../views/stoprint'
+import {TimelineView} from '../views/timeline/timeline'
 
 export const routes = {
+	TimelineView: {screen: TimelineView},
 	HomeView: {screen: HomeView},
 	BuildingHoursDetailView: {screen: BuildingHoursDetailView},
 	BuildingHoursView: {screen: BuildingHoursView},
