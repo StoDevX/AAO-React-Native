@@ -1,5 +1,7 @@
 // @flow
 
+// todo: delete me? this whole file isn't being used at the moment
+
 import * as React from 'react'
 import {AppRegistry, StyleSheet, View, Text, Switch} from 'react-native'
 
@@ -49,7 +51,7 @@ type Props = {
 
 export class EditHomeRow extends React.Component<Props> {
 	onToggleSwitch = () => {
-        // todo: can only pass in primitives... implement this from list row?
+		// todo: can only pass in primitives... implement this from list row?
 		this.props.onToggle(this.props.data.view)
 	}
 
@@ -65,12 +67,6 @@ export class EditHomeRow extends React.Component<Props> {
 				<Text style={[styles.text, {color: tint}]}>
 					{this.props.data.title}
 				</Text>
-
-				<Switch
-					onTintColor={tint}
-					onValueChange={this.onToggleSwitch}
-					value={this.props.data.isEnabled}
-				/>
 			</View>
 		)
 	}
