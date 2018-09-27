@@ -109,7 +109,7 @@ workflows:
 
 jobs:
   sleep-random:
-    docker: [{image: alpine:latest}]
+    docker: [{image: 'alpine:latest'}]
     steps:
       - run:
           name: Sleep for up to 10 minutes
