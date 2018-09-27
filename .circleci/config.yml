@@ -95,9 +95,8 @@ workflows:
           cron: 0 10 * * *
           filters: {branches: {only: [master]}}
     jobs:
-      - sleep-random
-      - cache-yarn-linux: {requires: [sleep-random]}
-      - cache-bundler-linux: {requires: [sleep-random]}
+      - cache-yarn-linux
+      - cache-bundler-linux
       - danger: {requires: [cache-yarn-linux]}
       - flow: {requires: [cache-yarn-linux]}
       - jest: {requires: [cache-yarn-linux]}
@@ -108,14 +107,6 @@ workflows:
       - android-nightly: {requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]}
 
 jobs:
-  sleep-random:
-    docker: [{image: 'alpine:latest'}]
-    steps:
-      - run:
-          name: Sleep for up to 10 minutes
-          command: time=$((RANDOM % 600)) && echo "Sleeping for $time seconds..." && set -x && sleep ${time}s
-          no_output_timeout: 15m
-
   cache-yarn-linux:
     docker: *docker-node
     steps:
