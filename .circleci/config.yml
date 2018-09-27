@@ -92,7 +92,7 @@ workflows:
   nightly:
     triggers:
       - schedule:
-          cron: 0 10 * * *
+          cron: 17 10 * * *
           filters: {branches: {only: [master]}}
     jobs:
       - cache-yarn-linux
