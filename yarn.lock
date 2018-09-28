@@ -2381,9 +2381,9 @@ detect-newline@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-2.1.0.tgz#f41f1c10be4b00e87b5f13da680759f2c5bfd3e2"
 
-detox@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.yarnpkg.com/detox/-/detox-9.0.3.tgz#f9e8515f066253bfff5f41062bdad7aff1b53dfc"
+detox@9.0.4:
+  version "9.0.4"
+  resolved "https://registry.yarnpkg.com/detox/-/detox-9.0.4.tgz#ff8deeb56464ca0a351b7f9123c86a52dc80d8ef"
   dependencies:
     bunyan "^1.8.12"
     bunyan-debug-stream "^1.1.0"
