@@ -183,7 +183,7 @@
     "prop-types": "15.6.2",
     "react-test-renderer": "16.5.0",
     "string-natural-compare": "2.0.2",
-    "strip-ansi": "4.0.0",
+    "strip-ansi": "5.0.0",
     "xcode": "1.0.0"
   },
   "optionalDependencies": {
