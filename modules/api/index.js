@@ -14,9 +14,12 @@ export const API = (path: string, query: ?Object = null) => {
 			throw new Error('invalid path requested from the api!')
 		}
 	}
+
 	let url = root + path
+
 	if (query) {
 		url += `?${qs.stringify(query)}`
 	}
+
 	return url
 }
