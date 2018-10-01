@@ -2,6 +2,8 @@
 
 import qs from 'query-string'
 
+import {IS_PRODUCTION} from '@frogpond/constants'
+
 let root: string
 
 export function setApiRoot(url: string) {
@@ -9,7 +11,7 @@ export function setApiRoot(url: string) {
 }
 
 export const API = (path: string, query: ?Object = null) => {
-	if (process.env.NODE_ENV !== 'production') {
+	if (!IS_PRODUCTION) {
 		if (!path.startsWith('/')) {
 			throw new Error('invalid path requested from the api!')
 		}
