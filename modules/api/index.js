@@ -8,13 +8,13 @@ export function setApiRoot(url: string) {
 	root = url
 }
 
-export const API = (pth: string, query: ?Object = null) => {
+export const API = (path: string, query: ?Object = null) => {
 	if (process.env.NODE_ENV !== 'production') {
-		if (!pth.startsWith('/')) {
+		if (!path.startsWith('/')) {
 			throw new Error('invalid path requested from the api!')
 		}
 	}
-	let url = root + pth
+	let url = root + path
 	if (query) {
 		url += `?${qs.stringify(query)}`
 	}
