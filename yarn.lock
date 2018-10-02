@@ -788,6 +788,11 @@ ansi-regex@^3.0.0:
   resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-3.0.0.tgz#ed0317c322064f79466c02966bddb605ab37d998"
   integrity sha1-7QMXwyIGT3lGbAKWa922Bas32Zg=
 
+ansi-regex@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-4.0.0.tgz#70de791edf021404c3fd615aa89118ae0432e5a9"
+  integrity sha512-iB5Dda8t/UqpPI/IjsejXu5jOGDrzn41wJyljwPH65VCIbk6+1BzFIMJGFwTNrYXT1CrD+B4l19U7awiQ8rk7w==
+
 ansi-styles@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-2.2.1.tgz#b432dd3358b634cf75e1e4664368240533c1ddbe"
@@ -1933,10 +1938,10 @@ buffer@5.2.1:
     base64-js "^1.0.2"
     ieee754 "^1.1.4"
 
-bugsnag-react-native@2.10.3:
-  version "2.10.3"
-  resolved "https://registry.yarnpkg.com/bugsnag-react-native/-/bugsnag-react-native-2.10.3.tgz#e3b2fc6e81adcb44fe88155a4c79de196b5f597e"
-  integrity sha512-EjmCaBUN2lY5YXjsi9xhRCat/gB4L8qSlQMnZPQYuFt0DU61zyic8PFp0W/BR9tlyO+Fqfu8li43VuBMOGisBw==
+bugsnag-react-native@2.11.0:
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/bugsnag-react-native/-/bugsnag-react-native-2.11.0.tgz#a65db95a1b4318e7e0089815ddc4f0779a678616"
+  integrity sha512-1YhPC5ZRCyXvmLuGBklBhNo0/H2Rxs/vU34yij0ElzJsyByYACwMpOEd/NUYdrhEoDSyjStbvAZ9hGSpT587kg==
   dependencies:
     iserror "^0.0.2"
     promise "^7"
@@ -2743,10 +2748,10 @@ detect-newline@^2.1.0:
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-2.1.0.tgz#f41f1c10be4b00e87b5f13da680759f2c5bfd3e2"
   integrity sha1-9B8cEL5LAOh7XxPaaAdZ8sW/0+I=
 
-detox@9.0.3:
-  version "9.0.3"
-  resolved "https://registry.yarnpkg.com/detox/-/detox-9.0.3.tgz#f9e8515f066253bfff5f41062bdad7aff1b53dfc"
-  integrity sha512-elXwWMvE0EGxuaWCJe6nsSNp7htr914hVIpzoF+cRtWsI3HKvwWFDp4e7MAIenb/6GnSDy6iPl7SeEaKf8Yqew==
+detox@9.0.4:
+  version "9.0.4"
+  resolved "https://registry.yarnpkg.com/detox/-/detox-9.0.4.tgz#ff8deeb56464ca0a351b7f9123c86a52dc80d8ef"
+  integrity sha512-2dbMXA2BlJmtx2XWOwMHETsbwKdn9mjto9jrQ2djgmpt3+ulJhWmODmbKCKgtvNuDE5wlfjogvxfoPIv0rzinA==
   dependencies:
     bunyan "^1.8.12"
     bunyan-debug-stream "^1.1.0"
@@ -6657,7 +6662,15 @@ qs@~6.5.2:
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
 
-query-string@6.1.0, query-string@^6.1.0:
+query-string@6.2.0:
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.2.0.tgz#468edeb542b7e0538f9f9b1aeb26f034f19c86e1"
+  integrity sha512-5wupExkIt8RYL4h/FE+WTg3JHk62e6fFPWtAZA9J5IWK1PfTfKkMS93HBUHcFpeYi9KsY5pFbh+ldvEyaz5MyA==
+  dependencies:
+    decode-uri-component "^0.2.0"
+    strict-uri-encode "^2.0.0"
+
+query-string@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.1.0.tgz#01e7d69f6a0940dac67a937d6c6325647aa4532a"
   integrity sha512-pNB/Gr8SA8ff8KpUFM36o/WFAlthgaThka5bV19AD9PNTH20Pwq5Zxodif2YyHwrctp6SkL4GqlOot0qR/wGaw==
@@ -6894,12 +6907,14 @@ react-native-tableview-simple@0.17.5:
   dependencies:
     prop-types "^15.6.1"
 
-react-native-typography@1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-typography/-/react-native-typography-1.3.0.tgz#ae921c141ab1dfdf4335ebc2b4a146bcf7919b36"
-  integrity sha512-RqLQxapbyZpHnoUVy5xU3E1t+7cc0GKZfB6ZZQYhPkV+D3HXx4j++hnBUiIN8UFrUZbfz4HDh5W4RR/6QVCZ8Q==
+react-native-tableview-simple@0.18.1:
+  version "0.18.1"
+  resolved "https://registry.yarnpkg.com/react-native-tableview-simple/-/react-native-tableview-simple-0.18.1.tgz#944b343ab65a944e3cd8a334da08a250bf3b9ec1"
+  integrity sha512-2NU7U8od6ZFKggk/FbfIDGoxt4dN5nF2O2rL2zAozj0uB2PlDHIZTjwXney+/hULeUBOaVvJxVrrJ5PX7ZSEoA==
+  dependencies:
+    prop-types "^15.6.2"
 
-react-native-typography@^1.3.0:
+react-native-typography@1.4.0, react-native-typography@^1.3.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/react-native-typography/-/react-native-typography-1.4.0.tgz#166b79c618075882d8af07720649f5bc6523160d"
   integrity sha512-3lToN3hRvPySw0PWCn1SjbDbNaqlV+FM22zSuymIc2ILGcfWbWcgZ+qdX+VKtHAewMG7Rp5yab2bmuaEYQlu3Q==
@@ -8005,12 +8020,12 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-strip-ansi@4.0.0, strip-ansi@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-4.0.0.tgz#a8479022eb1ac368a871389b635262c505ee368f"
-  integrity sha1-qEeQIusaw2iocTibY1JixQXuNo8=
+strip-ansi@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-5.0.0.tgz#f78f68b5d0866c20b2c9b8c61b5298508dc8756f"
+  integrity sha512-Uu7gQyZI7J7gn5qLn1Np3G9vcYGTVqB+lFTytnDJv83dd8T22aGH451P3jueT2/QemInJDfxHB5Tde5OzgG1Ow==
   dependencies:
-    ansi-regex "^3.0.0"
+    ansi-regex "^4.0.0"
 
 strip-ansi@^3.0.0, strip-ansi@^3.0.1:
   version "3.0.1"
@@ -8018,6 +8033,13 @@ strip-ansi@^3.0.0, strip-ansi@^3.0.1:
   integrity sha1-ajhfuIU9lS1f8F0Oiq+UJ43GPc8=
   dependencies:
     ansi-regex "^2.0.0"
+
+strip-ansi@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-4.0.0.tgz#a8479022eb1ac368a871389b635262c505ee368f"
+  integrity sha1-qEeQIusaw2iocTibY1JixQXuNo8=
+  dependencies:
+    ansi-regex "^3.0.0"
 
 strip-bom@3.0.0, strip-bom@^3.0.0:
   version "3.0.0"
