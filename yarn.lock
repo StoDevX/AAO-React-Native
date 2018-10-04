@@ -577,7 +577,7 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@callstack/react-theme-provider@1.0.4", "@callstack/react-theme-provider@^1.0.3":
+"@callstack/react-theme-provider@1.0.4", "@callstack/react-theme-provider@^1.0.3", "@callstack/react-theme-provider@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-1.0.4.tgz#62cb2af8fedb971d509b92c79cc8476c91909477"
   integrity sha512-BSYOMF+jHmj4E6Qv5oOEh0+KAwqr2iQnsnDhfeE9lWMmjj6tz2mZeBQAKHRz5mXy4bdhDUClZioRlwGTwA72hg==
@@ -6827,12 +6827,12 @@ react-native-onesignal@3.2.7:
   dependencies:
     invariant "^2.2.2"
 
-react-native-paper@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-2.0.1.tgz#0221ead52e35811ca6d2ce41cf069d424fe92bcf"
-  integrity sha512-KGJ34ARCEDLVfhNg5YVelw0+kyCpcBPux2jAGAAFS6nedu5jrwe/d8Egqgle8oEhYDcsJ3IIxYvsXwP6qTRDWg==
+react-native-paper@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-2.1.0.tgz#bd694dc41212f43d18361360d15aea408fe4ecbd"
+  integrity sha512-+ND9EkImGk1a4l5FrqE9sBu/hyXJBV14ugJQg6xI6IeMsceM9YghMRSmi88RFYvfIkNGwnQR2yZ57Go21w0jrA==
   dependencies:
-    "@callstack/react-theme-provider" "^1.0.3"
+    "@callstack/react-theme-provider" "^1.0.4"
     color "^2.0.1"
     create-react-context "^0.2.2"
     hoist-non-react-statics "^2.5.0"
