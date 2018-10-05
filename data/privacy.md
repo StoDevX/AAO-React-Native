@@ -86,16 +86,6 @@ In addition, all sensitive/credit information you supply is encrypted via Secure
 We implement a variety of security measures when a user places an order enters, submits, or accesses their information to maintain the safety of your personal information.
 All transactions are processed through a gateway provider and are not stored or processed on our servers.
 
-### Do we use 'cookies'?
-
-We do not use cookies for tracking purposes.
-
-You can choose to have your computer warn you each time a cookie is being sent, or you can choose to turn off all cookies.
-You do this through your browser settings.
-Since browser is a little different, look at your browser's Help Menu to learn the correct way to modify your cookies.
-
-If you turn cookies off, some features will be disabled that make your site experience more efficient and may not function properly.
-
 ## Third-party disclosure
 
 We do not sell, trade, or otherwise transfer to outside parties your Personally Identifiable Information.
