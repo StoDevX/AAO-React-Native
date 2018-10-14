@@ -577,18 +577,7 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@callstack/react-theme-provider@1.0.4", "@callstack/react-theme-provider@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-1.0.4.tgz#62cb2af8fedb971d509b92c79cc8476c91909477"
-  integrity sha512-BSYOMF+jHmj4E6Qv5oOEh0+KAwqr2iQnsnDhfeE9lWMmjj6tz2mZeBQAKHRz5mXy4bdhDUClZioRlwGTwA72hg==
-  dependencies:
-    create-react-context "^0.2.1"
-    deepmerge "^2.1.1"
-    flow-copy-source "^1.3.0"
-    hoist-non-react-statics "^2.5.0"
-    prop-types "^15.6.0"
-
-"@callstack/react-theme-provider@^1.0.3":
+"@callstack/react-theme-provider@1.0.6", "@callstack/react-theme-provider@^1.0.3", "@callstack/react-theme-provider@^1.0.6":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-1.0.6.tgz#6298708c811f287d2bad2e10df0783b8b8e4c53d"
   integrity sha512-v2lAll0Xd8Dhb6kyIH2vF7DbS6oa7aRxdfsV50M8m4CbGcYzd3GDhi2/N8w62rkyHBbL511r+wQ8UzxzqlsH1A==
@@ -2717,6 +2706,11 @@ delay@4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/delay/-/delay-4.0.1.tgz#052120e49bc3617a92e9a6cd9556be2cf23397a0"
   integrity sha512-wOsrzqdl8Lphi0v3g4FPz7zf0sT4o/u+z+LB+s1q0qzB9xw6QzZbdY9D6IoCojRHIxbaHvpUkLt6//1KB6VNug==
+
+delay@4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/delay/-/delay-4.1.0.tgz#474cd28809da41d1a048a70a1d835f47ac377cd2"
+  integrity sha512-8Hea6/aOu3bPdDBQhSRUEUzF0QwuWmSPuIK+sxNdvcJtSfzb6HXrTd9DFJBCJcV9o83fFECqTgllqdnmUfq9+w==
 
 delayed-stream@~1.0.0:
   version "1.0.0"
@@ -6586,10 +6580,10 @@ pretty-format@^4.2.1:
   resolved "https://registry.yarnpkg.com/pretty-format/-/pretty-format-4.3.1.tgz#530be5c42b3c05b36414a7a2a4337aa80acd0e8d"
   integrity sha1-UwvlxCs8BbNkFKeipDN6qArNDo0=
 
-pretty-quick@1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/pretty-quick/-/pretty-quick-1.7.0.tgz#6be2a707f874b56a461f6508c9fbd5d1c9234930"
-  integrity sha512-bKoLGOy2rvPKcypkzYqlyqBBAtf0yKV7VK0C/7E4m541dY98rxZsbBt4GDRa/mc74EBPCeuiFe1fkKiyqjUKVg==
+pretty-quick@1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/pretty-quick/-/pretty-quick-1.8.0.tgz#067ebe744ddb4e1ed4e1ee1af9648815121f78fc"
+  integrity sha512-qV25sQF/ivJpdZ5efwemQYkQJa7sp3HqT/Vf/7z5vGYMcq1VrT2lDpFKAxJPf6219N1YAdR8mGkIhPAZ1odTmQ==
   dependencies:
     chalk "^2.3.0"
     execa "^0.8.0"
@@ -6838,12 +6832,12 @@ react-native-onesignal@3.2.7:
   dependencies:
     invariant "^2.2.2"
 
-react-native-paper@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-2.1.0.tgz#bd694dc41212f43d18361360d15aea408fe4ecbd"
-  integrity sha512-+ND9EkImGk1a4l5FrqE9sBu/hyXJBV14ugJQg6xI6IeMsceM9YghMRSmi88RFYvfIkNGwnQR2yZ57Go21w0jrA==
+react-native-paper@2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-2.1.3.tgz#ae2efce3cf8ba7d8afa6f5d743768b2be110520f"
+  integrity sha512-f9CKazmEd8c38CsX5d5+/qxv2AzD8rI/k8xNPrXk5PHWS81RrQOUSVcHJApcEFyzRMQ+gIGbijtZ3mkn0V2lSg==
   dependencies:
-    "@callstack/react-theme-provider" "^1.0.4"
+    "@callstack/react-theme-provider" "^1.0.6"
     color "^2.0.1"
     create-react-context "^0.2.2"
     hoist-non-react-statics "^2.5.0"
