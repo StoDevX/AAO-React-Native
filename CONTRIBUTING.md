@@ -20,7 +20,6 @@ We have a lot of labels! Even though they may seem unorganized, there's a method
 - <kbd>dep/*</kbd> – Used when reporting bugs to blame either a JS or native dependency
 - <kbd>discussion</kbd> – Highlights issues that are in "discussion"
 - <kbd>good first issue</kbd> – Highlights anything we've identified as a good way to get your feet wet
-- <kbd>greenkeeper</kbd> – Identifies PRs submitted by Greenkeeper, our automated npm dependency updater
 - <kbd>help wanted</kbd> – We don't really use it. I guess it's used on PRs when someone needs help? But we usually just mention someone by name instead
 - <kbd>platform/*</kbd> – Used to show that a problem/feature request only applies to one platform or the other
 - <kbd>pr/*</kbd> – These originate from before Github had their Review system, but it's still helpful for these to stick around, because they let the author of the PR say "okay, this is ready for someone to review" or "this is broken right now"
@@ -76,7 +75,6 @@ Name | Decription | Used by
 `COVERALLS_REPO_TOKEN` | The API token used to talk to Coveralls. | CircleCI
 `DANGER_GITHUB_API_TOKEN` | A GitHub token for Danger. Owned by the StoDevX bot account. | CircleCI
 `FASTLANE_PASSWORD` | The Apple ID account password for Fastlane to use to deploy the app. | CircleCI
-`GH_TOKEN` | A GitHub Token; used to let Greenkeeper update yarn.lock | TravisCI
 `GITHUB_KEYS_REPOSITORY_TOKEN` | Used by Match to get access to the keys repository. | CircleCI
 `GITHUB_PAGES_TOKEN` | A GitHub personal access token to allow Travis to push to `gh-pages`. | TravisCI
 `MAPBOX_KEY` | A MapBox API key, used to authenticate with the MapBox API servers. | The app
