@@ -32,15 +32,6 @@
       "modules/*"
     ]
   },
-  "greenkeeper": {
-    "ignore": [
-      "flow-bin",
-      "react-markdown",
-      "react",
-      "react-test-renderer",
-      "react-native-vector-icons"
-    ]
-  },
   "jest": {
     "testRegex": "/__tests__/.*\\.(test|spec)\\.js$",
     "collectCoverageFrom": [
