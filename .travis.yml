@@ -7,37 +7,18 @@ env:
     # sets our node version in one nice place
     - TRAVIS_NODE_VERSION=10
 
-
 # As seen in http://stackoverflow.com/a/31882307/2347774
 # Prevent travis from building twice for PRs
 branches:
   only:
     - master
-    - /^greenkeeper\//
-
 
 stages:
-  - name: Greenkeeper
-    if: branch =~ /^greenkeeper\//
   - name: Deploy Data
     if: branch = master AND type != pull_request
 
-
 jobs:
   include:
-    # Run greenkeeper stuff
-    - os: linux
-      sudo: false
-      distro: trusty
-      language: node_js
-      node_js: $TRAVIS_NODE_VERSION
-      stage: Greenkeeper
-      env: [task=GREENKEEPER]
-      before_install: npm i -g yarn
-      install: npm install -g greenkeeper-lockfile@1
-      script: greenkeeper-lockfile-update
-      after_script: greenkeeper-lockfile-upload
-
     # Deploy the gh-pages data
     - os: linux
       sudo: false
