@@ -78,29 +78,53 @@ there's a method to the madness.
 
 
 ## Keep It Running
-We use a continuous-integration (CI) system to make sure that the project still works as we change things. Any submissions you make will be validated by [TravisCI](https://travis-ci.org/StoDevX/AAO-React-Native/builds).
+We use a continuous-integration (CI) system to make sure that the
+project still works as we change things. Any submissions you make will
+be validated by [TravisCI][travis].
 
-We use a set of tools to enforce code style and find common bugs: [ESLint][eslint], [Flow][flow], [Jest][jest], and [Prettier][prettier].
+[travis]: https://travis-ci.org/StoDevX/AAO-React-Native/builds
 
-- `npm run lint`: ESLint finds and flags things that might be typos, or unintentional bugs
+We use a set of tools to enforce code style and find common bugs:
+[ESLint][eslint], [Flow][flow], [Jest][jest], and
+[Prettier][prettier].
+
+- `npm run lint`: ESLint finds and flags things that might be typos,
+  or unintentional bugs
 - `npm run flow`: Flow looks for type errors (in JS? yes!)
 - `npm run test`: Jest runs our unit tests
-- `npm run prettier`: Prettier enforces a common style on the JS code, without us needing to edit anything
+- `npm run prettier`: Prettier enforces a common style on the JS code,
+  without us needing to edit anything
 
-We have a special command that runs all four of those for you: `npm run check`. So, before you commit and push, you may wish to run `npm run check`. If you don't, TravisCI will run them for you and our StoDevX Bot will comment in the PR to let you know exactly what happened.
+We have a special command that runs all four of those for you: `npm
+run check`.  So, before you commit and push, you may wish to run `npm
+run check`.  If you don't, TravisCI will run them for you and our
+StoDevX Bot will comment in the PR to let you know exactly what
+happened.
 
 [eslint]: http://eslint.org/
 [flow]: https://flowtype.org/
 [jest]: https://facebook.github.io/jest/
 [prettier]: https://github.com/prettier/prettier
 
-As always, please keep the [Code of Conduct](https://github.com/StoDevX/AAO-React-Native/blob/master/CODE_OF_CONDUCT.md) in mind.
+As always, please keep the [Code of Conduct][cc] in mind.
+
+[cc]: https://github.com/StoDevX/AAO-React-Native/blob/master/CODE_OF_CONDUCT.md
 
 
 ## Maintainers
-Before you release a new version to the app store, you'll want to use the `npm version` command. That will automatically bump the version numbers and tag the commit.
+Before you release a new version to the app store, you'll want to use
+the `npm version` command. That will automatically bump the version
+numbers and tag the commit.
 
-You should use Release Candidates generously – do, for example, `npm version 2.2.0-rc.1`, then make sure it builds, and run it on the simulators / devices / whatever you would do before you upload it to iTunes Connect / the Play Store. Then, once it's passed all your manual checks, you can do `npm version 2.2.0`, and build that commit, because the only thing that will have changed is the numbers. That way, if something goes wrong while you're testing it, you can do 2.2.0-rc.2, instead of … having 2.0.0-rc.2 be _newer_ than 2.0.0 (final).
+You should use Release Candidates generously – do, for example, `npm
+version 2.2.0-rc.1`, then make sure it builds, and run it on the
+simulators / devices / whatever you would do before you upload it to
+iTunes Connect / the Play Store. Then, once it's passed all your
+manual checks, you can do `npm version 2.2.0`, and build that commit,
+because the only thing that will have changed is the numbers. That
+way, if something goes wrong while you're testing it, you can do
+2.2.0-rc.2, instead of … having 2.0.0-rc.2 be _newer_ than 2.0.0
+(final).
 
 Anyway. TL;DR: `npm version` is your friend! Use it.
 
