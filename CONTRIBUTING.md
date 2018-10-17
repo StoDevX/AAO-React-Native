@@ -77,7 +77,6 @@ there's a method to the madness.
   in the app
 - <kbd>wontfix</kbd> — We won't fix anything with this label
 
-
 ## Keep It Running
 
 We use a continuous-integration (CI) system to make sure that the
