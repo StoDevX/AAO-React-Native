@@ -145,6 +145,7 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
+    "@babel/plugin-external-helpers": "7.0.0",
     "ajv": "6.5.4",
     "babel-core": "6.26.3",
     "babel-eslint": "10.0.1",
@@ -165,6 +166,7 @@
     "jest": "23.5.0",
     "js-yaml": "3.12.0",
     "junk": "2.1.0",
+    "metro-react-native-babel-preset": "0.48.1",
     "minimist": "1.2.0",
     "mkdirp": "0.5.1",
     "pify": "4.0.0",
@@ -173,6 +175,7 @@
     "pretty-quick": "1.8.0",
     "prop-types": "15.6.2",
     "react-test-renderer": "16.5.0",
+    "schedule": "0.4.0",
     "string-natural-compare": "2.0.3",
     "strip-ansi": "5.0.0",
     "xcode": "1.0.0"
