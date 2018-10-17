@@ -15,11 +15,13 @@ get too deep, and will be easy to approve for merging.
 [gfi]: https://github.com/StoDevX/AAO-React-Native/issues?q=is%3Aissue+label%3A%22good+first+issue%22+is%3Aopen
 
 ## Table of Contents
+
 1. [Labels](#labels)
 2. [Keep It Running](#keep-it-running)
 3. [Maintainers](#maintainers)
 
 ## Labels
+
 We have a lot of labels! Even though they may seem unorganized,
 there's a method to the madness.
 
@@ -77,6 +79,7 @@ there's a method to the madness.
 
 
 ## Keep It Running
+
 We use a continuous-integration (CI) system to make sure that the
 project still works as we change things. Any submissions you make will
 be validated by [CircleCI][circle] and [TravisCI][travis].
@@ -110,8 +113,8 @@ As always, please keep the [Code of Conduct][cc] in mind.
 
 [cc]: https://github.com/StoDevX/AAO-React-Native/blob/master/CODE_OF_CONDUCT.md
 
-
 ## Maintainers
+
 Before you release a new version to the app store, you'll want to use
 the `npm version` command. That will automatically bump the version
 numbers and tag the commit.
