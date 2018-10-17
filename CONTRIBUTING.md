@@ -39,8 +39,6 @@ there's a method to the madness.
 - <kbd>discussion</kbd> — Highlights issues that are in "discussion"
 - <kbd>good first issue</kbd> — Highlights anything we've identified
   as a good way to get your feet wet
-- <kbd>greenkeeper</kbd> — Identifies PRs submitted by Greenkeeper,
-  our automated npm dependency updater
 - <kbd>help wanted</kbd> — We don't really use it. I guess it's used
   on PRs when someone needs help? But we usually just mention someone
   by name instead
