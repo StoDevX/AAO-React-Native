@@ -128,19 +128,3 @@ way, if something goes wrong while you're testing it, you can do
 (final).
 
 Anyway. TL;DR: `npm version` is your friend! Use it.
-
-
-## CI Notes
-A short description of what the various environment variables do.
-
-Name | Decription | Used by
----- | ---------- | -------
-`BUGSNAG_KEY` | The "Bugsnag Notifier" API token. | The app; CircleCI
-`COVERALLS_REPO_TOKEN` | The API token used to talk to Coveralls. | CircleCI
-`DANGER_GITHUB_API_TOKEN` | A GitHub token for Danger. Owned by the StoDevX bot account. | CircleCI
-`FASTLANE_PASSWORD` | The Apple ID account password for Fastlane to use to deploy the app. | CircleCI
-`GITHUB_KEYS_REPOSITORY_TOKEN` | Used by Match to get access to the keys repository. | CircleCI
-`GITHUB_PAGES_TOKEN` | A GitHub personal access token to allow Travis to push to `gh-pages`. | TravisCI
-`MAPBOX_KEY` | A MapBox API key, used to authenticate with the MapBox API servers. | The app
-`MATCH_PASSWORD` | The password to the private `aao-keys` Match repository. | CircleCI
-`ONESIGNAL_KEY` | A User Auth key from OneSignal for creating/updating OneSignal apps. | CircleCI
