@@ -39,7 +39,6 @@ async function main() {
 		case 'JS-prettier':
 			await runJSのPrettier()
 			break
-		case 'GREENKEEPER':
 		case 'JS-bundle-android':
 		case 'JS-bundle-ios':
 			break
