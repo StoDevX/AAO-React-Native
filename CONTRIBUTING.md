@@ -61,17 +61,17 @@ there's a method to the madness.
 - <kbd>triage</kbd> – Automatically applied to issues that are filed
   without any labels
 - <kbd>type/*</kbd>
-    - <kbd>type/bugfix</kbd> – used for PRs that fix bugs
-    - <kbd>type/documentation</kbd> – used for PRs/issues about
-      documentation
-    - <kbd>type/enhancement</kbd> – used to create a list of things
-      that we want to add/change about the app, but that aren't bugs
-    - <kbd>type/refactoring</kbd> – identifies issues/PRs about
-      refactoring the app
-    - <kbd>type/shipping hold</kbd> – highlights issues that are
-      considered to block the next release
-    - <kbd>type/tracking</kbd> – high-level issues used to keep track
-      of another set of issues
+  - <kbd>type/bugfix</kbd> – used for PRs that fix bugs
+  - <kbd>type/documentation</kbd> – used for PRs/issues about
+    documentation
+  - <kbd>type/enhancement</kbd> – used to create a list of things
+    that we want to add/change about the app, but that aren't bugs
+  - <kbd>type/refactoring</kbd> – identifies issues/PRs about
+    refactoring the app
+  - <kbd>type/shipping hold</kbd> – highlights issues that are
+    considered to block the next release
+  - <kbd>type/tracking</kbd> – high-level issues used to keep track
+    of another set of issues
 - <kbd>view/*</kbd> – Used to scope an issue to a particular component
   in the app
 - <kbd>wontfix</kbd> – We won't fix anything with this label
