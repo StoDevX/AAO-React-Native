@@ -13,6 +13,7 @@
     "compress-data": "gzip --keep docs/*.json",
     "danger": "danger ci",
     "data": "node scripts/bundle-data.js data/ docs/",
+    "fix-rn": "bash scripts/fix-rn.sh",
     "flow": "flow",
     "ios": "react-native run-ios",
     "ios:release": "react-native run-ios --configuration Release",
