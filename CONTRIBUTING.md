@@ -21,7 +21,8 @@ get too deep, and will be easy to approve for merging.
 4. [CI Notes](#ci-notes)
 
 ## Labels
-We have a lot of labels! Even though they may seem unorganized, there's a method to the madness.
+We have a lot of labels! Even though they may seem unorganized,
+there's a method to the madness.
 
 - <kbd>bug/*</kbd> – These labels relate to the various types of bugs we get: accessibility, layout, and everything else
 - <kbd>bugsnag</kbd> – Hardly used. Our in-app crash reporting system can be configured to automatically report crashes with this label, but it's currently disabled
