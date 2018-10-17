@@ -80,8 +80,9 @@ there's a method to the madness.
 ## Keep It Running
 We use a continuous-integration (CI) system to make sure that the
 project still works as we change things. Any submissions you make will
-be validated by [TravisCI][travis].
+be validated by [CircleCI][circle] and [TravisCI][travis].
 
+[circle]: https://circleci.com/gh/StoDevX/AAO-React-Native
 [travis]: https://travis-ci.org/StoDevX/AAO-React-Native/builds
 
 We use a set of tools to enforce code style and find common bugs:
