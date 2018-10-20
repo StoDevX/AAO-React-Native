@@ -185,7 +185,7 @@ jobs:
       - checkout
       - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
-      - run: yarn run prettier
+      - run: yarn run pretty
       - run:
           name: git diff
           command: |
