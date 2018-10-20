@@ -39,6 +39,8 @@ x-config:
           yarn run danger --id $task
         fi
       when: always
+      environment:
+        DANGER_DISABLE_TRANSPILATION: "true"
     - &embed-env-vars
       name: Embed environment variables into the app
       command: |
