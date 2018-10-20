@@ -2565,10 +2565,10 @@ danger-plugin-yarn@1.3.0:
   optionalDependencies:
     esdoc "^0.5.2"
 
-danger@4.4.8:
-  version "4.4.8"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-4.4.8.tgz#40e0448c3b20d44455b9a630fa895348811e6b78"
-  integrity sha512-70xEZFAhCxqnfNxDI28oCsIowHXe3NC6+3eAK5uyRICUCcs3e+5OcHbBIvd9vbsJFT2pvVDEc4jvQMXtoEh/RQ==
+danger@4.4.10:
+  version "4.4.10"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-4.4.10.tgz#dc6bb25b2bd5e00bc0a42f107d944914db9d650e"
+  integrity sha512-YLr8xJ7TJ6kC24taMt3Mgy3jLwTBEHR4FOhI7XXNveyfJSMNZn/p3BEolJ+RcyUM+It9nWpgvGWPnkOR8nmV8Q==
   dependencies:
     "@babel/polyfill" "^7.0.0"
     "@octokit/rest" "^15.12.1"
