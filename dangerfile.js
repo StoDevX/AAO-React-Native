@@ -1,10 +1,10 @@
 // @flow
 
 // danger (removed by danger)
-import {danger, schedule, markdown, warn, fail} from 'danger'
+const {danger, schedule, markdown, warn, fail} = require('danger')
 
 // danger plugins
-const yarn = require('danger-plugin-yarn')
+const {default: yarn} = require('danger-plugin-yarn')
 
 // utilities
 const uniq = require('lodash/uniq')
