@@ -39,6 +39,8 @@ x-config:
           yarn run danger --id $task
         fi
       when: always
+      environment:
+        DANGER_DISABLE_TRANSPILATION: "true"
     - &embed-env-vars
       name: Embed environment variables into the app
       command: |
@@ -183,7 +185,7 @@ jobs:
       - checkout
       - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
-      - run: yarn run prettier
+      - run: yarn run pretty
       - run:
           name: git diff
           command: |

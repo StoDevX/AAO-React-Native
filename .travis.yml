@@ -21,7 +21,6 @@ jobs:
   include:
     # Deploy the gh-pages data
     - os: linux
-      sudo: false
       distro: trusty
       language: node_js
       node_js: $TRAVIS_NODE_VERSION
