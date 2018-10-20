@@ -1,14 +1,14 @@
 // @flow
 
 // danger (removed by danger)
-import {danger, schedule, markdown, warn, fail} from 'danger'
+const {danger, schedule, markdown, warn, fail} = require('danger')
 
 // danger plugins
-import yarn from 'danger-plugin-yarn'
+const {default: yarn} = require('danger-plugin-yarn')
 
 // utilities
-import uniq from 'lodash/uniq'
-import findIndex from 'lodash/findIndex'
+const uniq = require('lodash/uniq')
+const findIndex = require('lodash/findIndex')
 
 async function main() {
 	const taskName = String(process.env.task)
@@ -379,12 +379,12 @@ function runJSのPrettier() {
 // Utilities
 //
 
-import fs from 'fs'
-import childProcess from 'child_process'
-import stripAnsi from 'strip-ansi'
-import directoryTree from 'directory-tree'
-import xcode from 'xcode'
-import util from 'util'
+const fs = require('fs')
+const childProcess = require('child_process')
+const stripAnsi = require('strip-ansi')
+const directoryTree = require('directory-tree')
+const xcode = require('xcode')
+const util = require('util')
 
 const execFile = util.promisify(childProcess.execFile)
 
