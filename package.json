@@ -144,7 +144,6 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
-    "@babel/plugin-external-helpers": "7.0.0",
     "@babel/core": "7.0.1",
     "ajv": "6.5.4",
     "babel-core": "7.0.0-bridge.0",
