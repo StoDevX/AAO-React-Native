@@ -234,12 +234,12 @@ function pbxprojLeadingZeros() {
 	const pbxproj = readFile(pbxprojPath).split('\n')
 
 	const numericLineNames = [
-		/^\s+LastSwiftUpdateCheck\s/,
-		/^\s+LastUpgradeCheck\s/,
-		/^\s+LastSwiftMigration\s/,
+		/^\s+LastSwiftUpdateCheck\s/u,
+		/^\s+LastUpgradeCheck\s/u,
+		/^\s+LastSwiftMigration\s/u,
 	]
 	const isLineWithoutLeadingZero = line =>
-		numericLineNames.some(nline => nline.test(line) && / [^0]\d+;$/.test(line))
+		numericLineNames.some(nline => nline.test(line) && / [^0]\d+;$/u.test(line))
 
 	const numericLinesWithoutLeadingZeros = pbxproj
 		.filter(isLineWithoutLeadingZero)

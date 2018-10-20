@@ -18,6 +18,7 @@ export const SelectableCell = ({text}: {text: string}) => (
 		dataDetectorTypes="all"
 		editable={false}
 		multiline={true}
+		scrollEnabled={false}
 		style={styles.text}
 		value={text}
 	/>

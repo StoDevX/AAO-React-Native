@@ -3,11 +3,10 @@ import * as React from 'react'
 import Popover from 'react-native-popover-view'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
-import {type TouchableUnion} from '@frogpond/touchable'
 import * as c from '@frogpond/colors'
 
 type Props = {
-	anchor: ?React.Ref<TouchableUnion>,
+	anchor: ?React.Ref<*>,
 	filter: FilterType,
 	onClosePopover: (filter: FilterType) => any,
 	visible: boolean,
@@ -23,9 +22,7 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 	}
 
 	static getDerivedStateFromProps(props: Props) {
-		return {
-			filter: props.filter,
-		}
+		return {filter: props.filter}
 	}
 
 	onFilterChanged = (filter: FilterType) => {
@@ -56,4 +53,6 @@ const popoverContainer = {
 	maxWidth: 300,
 }
 
-const arrowStyle = {backgroundColor: c.iosLightBackground}
+const arrowStyle = {
+	backgroundColor: c.iosLightBackground,
+}

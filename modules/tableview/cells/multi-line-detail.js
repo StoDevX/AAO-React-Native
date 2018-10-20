@@ -26,9 +26,7 @@ export class MultiLineDetailCell extends React.PureComponent<Props> {
 						</Text>
 					)}
 				</View>
-				<View allowFontScaling={true} style={styles.cellRightDetail}>
-					{rightDetail}
-				</View>
+				<View style={styles.cellRightDetail}>{rightDetail}</View>
 			</View>
 		)
 		return <Cell cellContentView={cellContent} />

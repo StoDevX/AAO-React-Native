@@ -112,7 +112,13 @@ class IconCell extends React.Component<IconCellProps> {
 				accessory={isSelected ? 'Checkmark' : undefined}
 				cellStyle="RightDetail"
 				disableImageResize={false}
-				image={<Image source={icon.src} style={styles.icon} />}
+				image={
+					<Image
+						accessibilityIgnoresInvertColors={true}
+						source={icon.src}
+						style={styles.icon}
+					/>
+				}
 				onPress={this.setIcon}
 				title={icon.title}
 			/>

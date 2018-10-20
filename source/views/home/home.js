@@ -41,7 +41,6 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 	return (
 		<ScrollView
 			alwaysBounceHorizontal={false}
-			overflow="hidden"
 			showsHorizontalScrollIndicator={false}
 			showsVerticalScrollIndicator={false}
 			testID="screen-homescreen"

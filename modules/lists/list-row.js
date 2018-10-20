@@ -4,8 +4,7 @@ import {Platform, StyleSheet, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
 import {DisclosureArrow} from './disclosure-arrow'
-import noop from 'lodash/noop'
-import isNil from 'lodash/isNil'
+import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
 
 const styles = StyleSheet.create({
 	childWrapper: {
@@ -35,15 +34,16 @@ const styles = StyleSheet.create({
 })
 
 type PropsType = {|
-	style?: any,
-	contentContainerStyle?: any,
+	style?: ViewStyleProp,
+	contentContainerStyle?: ViewStyleProp,
 	arrowPosition?: 'center' | 'top' | 'none',
 	fullWidth?: boolean,
 	fullHeight?: boolean,
 	spacing?: {left?: number, right?: number},
 	onPress?: () => any,
-	children?: any,
+	children?: React.Node,
 |}
+
 export function ListRow(props: PropsType) {
 	const {
 		style,
@@ -55,9 +55,6 @@ export function ListRow(props: PropsType) {
 		fullHeight = false,
 	} = props
 
-	const Component = onPress ? Touchable : View
-	const callback = onPress || noop
-
 	const arrowPosition = props.arrowPosition || (onPress ? 'center' : 'none')
 	const arrowPositionStyle = {
 		alignSelf: arrowPosition === 'center' ? 'center' : 'flex-start',
@@ -67,20 +64,31 @@ export function ListRow(props: PropsType) {
 			<DisclosureArrow style={arrowPositionStyle} />
 		)
 
-	return (
-		<Component
-			onPress={callback}
-			style={[
-				styles.container,
-				!isNil(leftSpacing) && {paddingLeft: leftSpacing},
-				!isNil(rightSpacing) && {paddingRight: rightSpacing},
-				fullWidth && styles.fullWidth,
-				fullHeight && styles.fullHeight,
-				contentContainerStyle,
-			]}
-		>
+	/*  eslint-disable no-eq-null */
+	let wrapperStyle = [
+		styles.container,
+		leftSpacing != null && {paddingLeft: leftSpacing},
+		rightSpacing != null && {paddingRight: rightSpacing},
+		fullWidth && styles.fullWidth,
+		fullHeight && styles.fullHeight,
+		contentContainerStyle,
+	]
+	/*  eslint-enable no-eq-null */
+
+	let content = (
+		<React.Fragment>
 			<View style={[styles.childWrapper, style]}>{children}</View>
 			{arrow}
-		</Component>
+		</React.Fragment>
 	)
+
+	if (onPress) {
+		return (
+			<Touchable onPress={onPress} style={wrapperStyle}>
+				{content}
+			</Touchable>
+		)
+	}
+
+	return <View style={wrapperStyle}>{content}</View>
 }

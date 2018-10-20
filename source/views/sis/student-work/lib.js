@@ -7,7 +7,7 @@ export function shareJob(job: JobType) {
 	const jobBaseUrl = 'https://www.stolaf.edu/apps/stuwork/index.cfm?'
 	const query = querystring.stringify({
 		fuseaction: 'Details',
-		jobID: job.id,
+		jobID: String(job.id),
 	})
 	const url = `${jobBaseUrl}${query}`
 

@@ -34,7 +34,11 @@ export class NewsRow extends React.PureComponent<Props> {
 			<ListRow arrowPosition="top" onPress={this._onPress}>
 				<Row alignItems="center">
 					{thumb !== null ? (
-						<Image source={thumb} style={styles.image} />
+						<Image
+							accessibilityIgnoresInvertColors={true}
+							source={thumb}
+							style={styles.image}
+						/>
 					) : null}
 					<Column flex={1}>
 						<Title lines={2}>{story.title}</Title>

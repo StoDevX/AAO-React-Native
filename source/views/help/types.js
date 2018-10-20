@@ -58,6 +58,7 @@ export type ToolOptions = {|
 	hidden?: boolean,
 	message?: string,
 	versionRange?: string,
+	errorMessage?: string,
 	title: string,
 	body: string,
 	buttons: Array<ButtonDef>,
