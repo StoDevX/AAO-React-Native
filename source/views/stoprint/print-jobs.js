@@ -24,7 +24,7 @@ import sortBy from 'lodash/sortBy'
 import {getTimeRemaining} from './lib'
 import {Timer} from '@frogpond/timer'
 
-const TIMEZONE = 'America/Winnipeg'
+const TIMEZONE = 'US/Central'
 
 type ReactProps = TopLevelViewPropsType
 

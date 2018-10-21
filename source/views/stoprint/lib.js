@@ -1,7 +1,7 @@
 // @flow
 
 const TIME_FORMAT = 'h:mm:ss A'
-const TIMEZONE = 'America/Winnipeg'
+const TIMEZONE = 'US/Central'
 import moment from 'moment-timezone'
 
 const parseTime = (now: moment, time: string): null | moment => {
