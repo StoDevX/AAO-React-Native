@@ -6,7 +6,7 @@ x-config:
     - &docker-node
       - image: 'circleci/node:8'
     - &docker-ruby
-      - image: 'circleci/ruby:2.5.1'
+      - image: 'circleci/ruby:2.5.3'
   x-caching:  # caching instructions
     - &save-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
@@ -32,7 +32,7 @@ x-config:
   x-commands:  # command shorthands
     - &set-ruby-version
       name: Set Ruby Version
-      command: echo "ruby-2.5.1" > ~/.ruby-version
+      command: echo "ruby-2.5.3" > ~/.ruby-version
     - &run-danger
       command: |
         if ! [[ $CIRCLE_PR_NUMBER ]]; then
