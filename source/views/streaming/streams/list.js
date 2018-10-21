@@ -16,7 +16,7 @@ import type {StreamType} from './types'
 import delay from 'delay'
 import {API} from '@frogpond/api'
 
-const CENTRAL_TZ = 'America/Winnipeg'
+const CENTRAL_TZ = 'US/Central'
 
 const styles = StyleSheet.create({
 	listContainer: {
