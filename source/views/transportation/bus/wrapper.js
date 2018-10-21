@@ -10,7 +10,7 @@ import {reportNetworkProblem} from '@frogpond/analytics'
 import * as defaultData from '../../../../docs/bus-times.json'
 import {API} from '@frogpond/api'
 
-const TIMEZONE = 'America/Winnipeg'
+const TIMEZONE = 'US/Central'
 
 const busTimesUrl = API('/transit/bus')
 

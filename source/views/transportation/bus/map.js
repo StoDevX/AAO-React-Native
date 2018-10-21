@@ -11,7 +11,7 @@ import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
 import {Timer} from '@frogpond/timer'
 
-const TIMEZONE = 'America/Winnipeg'
+const TIMEZONE = 'US/Central'
 
 const styles = StyleSheet.create({
 	map: {...StyleSheet.absoluteFillObject},
