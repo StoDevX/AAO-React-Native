@@ -2,13 +2,12 @@
 import type momentT from 'moment'
 import moment from 'moment-timezone'
 import findIndex from 'lodash/findIndex'
+import {timezone} from '@frogpond/constants'
 import type {
 	DayPartMenuType,
 	DayPartsCollectionType,
 	ProcessedMealType,
 } from '../types'
-
-const CENTRAL_TZ = 'US/Central'
 
 export function findMenu(
 	dayparts: DayPartsCollectionType,
@@ -63,10 +62,10 @@ function findMenuIndex(dayparts: DayPartMenuType[], now: momentT): number {
 	// `now`, so that we don't have our days wandering all over the place.
 	const times = dayparts.map(({starttime, endtime}) => ({
 		start: moment
-			.tz(starttime, 'H:mm', true, CENTRAL_TZ)
+			.tz(starttime, 'H:mm', true, timezone())
 			.dayOfYear(now.dayOfYear()),
 		end: moment
-			.tz(endtime, 'H:mm', true, CENTRAL_TZ)
+			.tz(endtime, 'H:mm', true, timezone())
 			.dayOfYear(now.dayOfYear()),
 	}))
 
