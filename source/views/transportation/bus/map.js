@@ -10,8 +10,7 @@ import {getScheduleForNow, processBusLine} from './lib'
 import uniqBy from 'lodash/uniqBy'
 import isEqual from 'lodash/isEqual'
 import {Timer} from '@frogpond/timer'
-
-const TIMEZONE = 'US/Central'
+import {timezone} from '@frogpond/constants'
 
 const styles = StyleSheet.create({
 	map: {...StyleSheet.absoluteFillObject},
@@ -35,7 +34,7 @@ export function BusMap(props: WrapperProps) {
 			interval={60000}
 			moment={true}
 			render={({now}) => <Map line={lineToDisplay} now={now} />}
-			timezone={TIMEZONE}
+			timezone={timezone()}
 		/>
 	)
 }
