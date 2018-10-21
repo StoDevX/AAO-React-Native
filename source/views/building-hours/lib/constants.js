@@ -1,7 +1,6 @@
 // @flow
 import type {DayOfWeekEnumType} from '../types'
 
-export const CENTRAL_TZ = 'US/Central'
 export const TIME_FORMAT = 'h:mma'
 export const RESULT_FORMAT = 'LT'
 
