@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react'
+import {timezone} from '@frogpond/constants'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {FoodMenu} from '@frogpond/food-menu'
@@ -26,7 +27,6 @@ import delay from 'delay'
 import retry from 'p-retry'
 import {API} from '@frogpond/api'
 
-const CENTRAL_TZ = 'US/Central'
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
 const DEFAULT_MENU = [
@@ -62,7 +62,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		errormsg: null,
 		loading: true,
 		refreshing: false,
-		now: moment.tz(CENTRAL_TZ),
+		now: moment.tz(timezone()),
 		cafeMenu: null,
 		cafeInfo: null,
 	}
@@ -122,7 +122,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			}
 		}
 
-		this.setState(() => ({cafeMenu, cafeInfo, now: moment.tz(CENTRAL_TZ)}))
+		this.setState(() => ({cafeMenu, cafeInfo, now: moment.tz(timezone())}))
 	}
 
 	refresh = async (): any => {
