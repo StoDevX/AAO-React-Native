@@ -7,7 +7,8 @@ import type {
 	DayPartsCollectionType,
 	ProcessedMealType,
 } from '../types'
-const CENTRAL_TZ = 'America/Winnipeg'
+
+const CENTRAL_TZ = 'US/Central'
 
 export function findMenu(
 	dayparts: DayPartsCollectionType,
