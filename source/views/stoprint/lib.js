@@ -1,12 +1,12 @@
 // @flow
 
 const TIME_FORMAT = 'h:mm:ss A'
-const TIMEZONE = 'US/Central'
+import {timezone} from '@frogpond/constants'
 import moment from 'moment-timezone'
 
 const parseTime = (now: moment, time: string): null | moment => {
 	// interpret in Central time
-	let m = moment.tz(time, TIME_FORMAT, true, TIMEZONE)
+	let m = moment.tz(time, TIME_FORMAT, true, timezone())
 
 	// and set the date to today
 	m.dayOfYear(now.dayOfYear())

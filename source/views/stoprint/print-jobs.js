@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react'
+import {timezone} from '@frogpond/constants'
 import {Platform, SectionList} from 'react-native'
 import {connect} from 'react-redux'
 import {type ReduxState} from '../../redux'
@@ -23,8 +24,6 @@ import toPairs from 'lodash/toPairs'
 import sortBy from 'lodash/sortBy'
 import {getTimeRemaining} from './lib'
 import {Timer} from '@frogpond/timer'
-
-const TIMEZONE = 'US/Central'
 
 type ReactProps = TopLevelViewPropsType
 
@@ -111,7 +110,7 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 					</Detail>
 				</ListRow>
 			)}
-			timezone={TIMEZONE}
+			timezone={timezone()}
 		/>
 	)
 
