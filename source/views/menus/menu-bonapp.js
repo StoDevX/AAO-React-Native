@@ -26,7 +26,7 @@ import delay from 'delay'
 import retry from 'p-retry'
 import {API} from '@frogpond/api'
 
-const CENTRAL_TZ = 'America/Winnipeg'
+const CENTRAL_TZ = 'US/Central'
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
 const DEFAULT_MENU = [

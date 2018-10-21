@@ -20,7 +20,7 @@ import {data as fallbackMenu} from '../../../docs/pause-menu.json'
 import {reportNetworkProblem} from '@frogpond/analytics'
 import {API} from '@frogpond/api'
 
-const CENTRAL_TZ = 'America/Winnipeg'
+const CENTRAL_TZ = 'US/Central'
 
 type Props = TopLevelViewPropsType & {
 	name: string,
