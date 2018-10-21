@@ -1,6 +1,7 @@
 // @flow
 
 import * as React from 'react'
+import {timezone} from '@frogpond/constants'
 import {reportNetworkProblem} from '@frogpond/analytics'
 import type {NavigationScreenProp} from 'react-navigation'
 import {EventList, type PoweredBy} from '@frogpond/event-list'
@@ -9,8 +10,6 @@ import moment from 'moment-timezone'
 import delay from 'delay'
 import {LoadingView} from '@frogpond/notice'
 import {API} from '@frogpond/api'
-
-const TIMEZONE = 'US/Central'
 
 type Props = {
 	calendar:
@@ -38,7 +37,7 @@ export class CccCalendarView extends React.Component<Props, State> {
 		loading: true,
 		refreshing: false,
 		error: null,
-		now: moment.tz(TIMEZONE),
+		now: moment.tz(timezone()),
 	}
 
 	componentDidMount() {
@@ -66,7 +65,7 @@ export class CccCalendarView extends React.Component<Props, State> {
 		return events
 	}
 
-	getEvents = async (now: moment = moment.tz(TIMEZONE)) => {
+	getEvents = async (now: moment = moment.tz(timezone())) => {
 		let url
 		if (typeof this.props.calendar === 'string') {
 			url = API(`/calendar/named/${this.props.calendar}`)
