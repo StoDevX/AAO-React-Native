@@ -6,3 +6,4 @@ const {version, name} = require('../../package.json')
 
 setVersionInfo(version)
 setAppName(name)
+setTimezone("US/Central")
