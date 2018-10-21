@@ -22,7 +22,7 @@ import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 import zip from 'lodash/zip'
 
-const CENTRAL_TZ = 'America/Winnipeg'
+const CENTRAL_TZ = 'US/Central'
 
 const Container = glamorous.scrollView({
 	paddingVertical: 6,
