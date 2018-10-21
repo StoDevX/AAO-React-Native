@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [module] frogpond/event-list
 - [module] frogpond/add-to-device-calendar
 - Include development bonapp menu picker
-- Constants for app build type 
+- Constants for app build type
 - List representation of redux info viewable in beta settings
 
 ### Changed
@@ -28,7 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 - Stop calling onesignal's getTags on app resume in the settings screen
-- Updated popover to fix an issue with the popover filters that froze the app on devices <= iOS 9.0 
+- Updated popover to fix an issue with the popover filters that froze the app on devices <= iOS 9.0
 - Allow git-diff to run across the whole project when prettifying
 
 ### Removed
@@ -80,7 +80,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Move google repo to top of of build.gradle
 - Prioritize npm-installed things locally over maven modules installed locally
 - Prioritize more "canonical" repositories over more custom repositories.
-- Updates to bookstore, convenience store, and post office hours 
+- Updates to bookstore, convenience store, and post office hours
 - Downgrade react-native-vector-icons to retain the outlined icons
 - Change favorite and share icon to have outlines
 - Exit build when prettier fails
