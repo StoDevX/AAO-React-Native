@@ -1,6 +1,7 @@
 // @flow
 
 import * as React from 'react'
+import {timezone} from '@frogpond/constants'
 import {StyleSheet, Text, Platform} from 'react-native'
 import type {CourseType} from '../../../../lib/course-search'
 import glamorous from 'glamorous-native'
@@ -21,8 +22,6 @@ import {deptNum} from '../lib/format-dept-num'
 import groupBy from 'lodash/groupBy'
 import map from 'lodash/map'
 import zip from 'lodash/zip'
-
-const CENTRAL_TZ = 'America/Winnipeg'
 
 const Container = glamorous.scrollView({
 	paddingVertical: 6,
@@ -105,9 +104,9 @@ function Schedule({course}: {course: CourseType}) {
 	const schedule = map(groupedByDay, (offerings, day) => {
 		const timesFormatted = offerings.map(offering => {
 			const start = moment
-				.tz(offering.start, 'H:mm', CENTRAL_TZ)
+				.tz(offering.start, 'H:mm', timezone())
 				.format('h:mm A')
-			const end = moment.tz(offering.end, 'H:mm', CENTRAL_TZ).format('h:mm A')
+			const end = moment.tz(offering.end, 'H:mm', timezone()).format('h:mm A')
 			return `${start} – ${end}`
 		})
 		const locations = offerings.map(offering => offering.location)

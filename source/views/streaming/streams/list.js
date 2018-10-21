@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
-
+import {timezone} from '@frogpond/constants'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 import {NoticeView, LoadingView} from '@frogpond/notice'
@@ -15,8 +15,6 @@ import {toLaxTitleCase as titleCase} from 'titlecase'
 import type {StreamType} from './types'
 import delay from 'delay'
 import {API} from '@frogpond/api'
-
-const CENTRAL_TZ = 'America/Winnipeg'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -67,7 +65,7 @@ export class StreamListView extends React.PureComponent<Props, State> {
 		this.setState(() => ({refreshing: false}))
 	}
 
-	getStreams = async (date: moment = moment.tz(CENTRAL_TZ)) => {
+	getStreams = async (date: moment = moment.tz(timezone())) => {
 		try {
 			const dateFrom = date.format('YYYY-MM-DD')
 			const dateTo = date

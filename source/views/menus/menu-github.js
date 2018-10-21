@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react'
+import {timezone} from '@frogpond/constants'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {FoodMenu} from '@frogpond/food-menu'
 import type {TopLevelViewPropsType} from '../types'
@@ -20,8 +21,6 @@ import {data as fallbackMenu} from '../../../docs/pause-menu.json'
 import {reportNetworkProblem} from '@frogpond/analytics'
 import {API} from '@frogpond/api'
 
-const CENTRAL_TZ = 'America/Winnipeg'
-
 type Props = TopLevelViewPropsType & {
 	name: string,
 	loadingMessage: string[],
@@ -40,7 +39,7 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 	state = {
 		error: null,
 		loading: true,
-		now: moment.tz(CENTRAL_TZ),
+		now: moment.tz(timezone()),
 		foodItems: {},
 		corIcons: {},
 		meals: [],
@@ -98,7 +97,7 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 					endtime: '23:59',
 				},
 			],
-			now: moment.tz(CENTRAL_TZ),
+			now: moment.tz(timezone()),
 		})
 	}
 
