@@ -7,11 +7,6 @@ import {Button} from '@frogpond/button'
 import glamorous from 'glamorous-native'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {GH_NEW_ISSUE_URL} from '../../lib/constants'
-
-// TODO: This doesn't point at the SA dictionary because they don't have an
-// overview page.
-const STO_SA_DICT_URL = GH_NEW_ISSUE_URL
 
 const Term = glamorous.text({
 	fontSize: 36,
@@ -61,12 +56,7 @@ export class DictionaryDetailView extends React.PureComponent<Props> {
 
 				<Button onPress={this.handleEditButtonPress} title="Suggest an Edit" />
 
-				<ListFooter
-					href={STO_SA_DICT_URL}
-					title={
-						'Collected by the humans of All About Olaf,\nfrom the Student Activities dictionary'
-					}
-				/>
+				<ListFooter title="Collected by the humans of All About Olaf" />
 			</Container>
 		)
 	}

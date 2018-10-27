@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 - Switched time zone definitions from America/Winnipeg to US/Central
 - Pulled out time zone constants from all over the place into a central constant
+- Removed list footer credit for student activities dictionary (we're the source now)
 
 ## [2.6.3] - 2018-09-17
 ### Fixed
