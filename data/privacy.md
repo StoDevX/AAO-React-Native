@@ -33,9 +33,9 @@ on our app.  As such, our privacy policy is quite simple.
 - When you fetch any data besides your personal information, your
   requests may reach servers that we control.  Whenever your app makes
   such a request, the following information is logged:
-  - _Your public IP address_, for diagnostic purposes.  We do not use
-    this to identify you or for tracking purposes, and this is logged
-    for diagnostic purposes.
+  - _Your public IP address_.  We do not use this to identify you or
+    for tracking purposes, and this is logged only for diagnostic
+    purposes.
   - _The version of All About Olaf you are using and information about
     your phone_, which is sent as part of your device's request.  This
     data is intentionally vague so that we can also not use this to
