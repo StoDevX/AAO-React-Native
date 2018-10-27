@@ -9,10 +9,6 @@ import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
 import {GH_NEW_ISSUE_URL} from '../../lib/constants'
 
-// TODO: This doesn't point at the SA dictionary because they don't have an
-// overview page.
-const STO_SA_DICT_URL = GH_NEW_ISSUE_URL
-
 const Term = glamorous.text({
 	fontSize: 36,
 	textAlign: 'center',
