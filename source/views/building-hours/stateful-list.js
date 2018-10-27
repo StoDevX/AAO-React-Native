@@ -12,7 +12,7 @@ import {reportNetworkProblem} from '@frogpond/analytics'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import delay from 'delay'
-import {CENTRAL_TZ} from './lib'
+import {timezone} from '@frogpond/constants'
 import {API} from '@frogpond/api'
 import {Timer} from '@frogpond/timer'
 
@@ -123,7 +123,7 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 						onRefresh={this.refresh}
 					/>
 				)}
-				timezone={CENTRAL_TZ}
+				timezone={timezone()}
 			/>
 		)
 	}

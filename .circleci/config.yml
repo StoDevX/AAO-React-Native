@@ -6,7 +6,7 @@ x-config:
     - &docker-node
       - image: 'circleci/node:8'
     - &docker-ruby
-      - image: 'circleci/ruby:2.5.1'
+      - image: 'circleci/ruby:2.5.3'
   x-caching:  # caching instructions
     - &save-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
@@ -32,13 +32,15 @@ x-config:
   x-commands:  # command shorthands
     - &set-ruby-version
       name: Set Ruby Version
-      command: echo "ruby-2.5.1" > ~/.ruby-version
+      command: echo "ruby-2.5.3" > ~/.ruby-version
     - &run-danger
       command: |
         if ! [[ $CIRCLE_PR_NUMBER ]]; then
           yarn run danger --id $task
         fi
       when: always
+      environment:
+        DANGER_DISABLE_TRANSPILATION: "true"
     - &embed-env-vars
       name: Embed environment variables into the app
       command: |
@@ -92,7 +94,7 @@ workflows:
   nightly:
     triggers:
       - schedule:
-          cron: 17 10 * * *
+          cron: 17 8 * * *
           filters: {branches: {only: [master]}}
     jobs:
       - cache-yarn-linux
@@ -183,7 +185,7 @@ jobs:
       - checkout
       - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
-      - run: yarn run prettier
+      - run: yarn run pretty
       - run:
           name: git diff
           command: |

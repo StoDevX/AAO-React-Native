@@ -9,8 +9,7 @@ import type {TopLevelViewPropsType} from '../../types'
 import {reportNetworkProblem} from '@frogpond/analytics'
 import * as defaultData from '../../../../docs/bus-times.json'
 import {API} from '@frogpond/api'
-
-const TIMEZONE = 'America/Winnipeg'
+import {timezone} from '@frogpond/constants'
 
 const busTimesUrl = API('/transit/bus')
 
@@ -78,7 +77,7 @@ export class BusView extends React.PureComponent<Props, State> {
 				render={({now}) => (
 					<BusLine line={activeBusLine} now={now} openMap={this.openMap} />
 				)}
-				timezone={TIMEZONE}
+				timezone={timezone()}
 			/>
 		)
 	}

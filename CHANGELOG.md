@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Switched time zone definitions from America/Winnipeg to US/Central
+- Pulled out time zone constants from all over the place into a central constant
 
 ## [2.6.3] - 2018-09-17
 ### Fixed
@@ -18,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [module] frogpond/event-list
 - [module] frogpond/add-to-device-calendar
 - Include development bonapp menu picker
-- Constants for app build type 
+- Constants for app build type
 - List representation of redux info viewable in beta settings
 
 ### Changed
@@ -28,7 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 - Stop calling onesignal's getTags on app resume in the settings screen
-- Updated popover to fix an issue with the popover filters that froze the app on devices <= iOS 9.0 
+- Updated popover to fix an issue with the popover filters that froze the app on devices <= iOS 9.0
 - Allow git-diff to run across the whole project when prettifying
 
 ### Removed
@@ -80,7 +83,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Move google repo to top of of build.gradle
 - Prioritize npm-installed things locally over maven modules installed locally
 - Prioritize more "canonical" repositories over more custom repositories.
-- Updates to bookstore, convenience store, and post office hours 
+- Updates to bookstore, convenience store, and post office hours
 - Downgrade react-native-vector-icons to retain the outlined icons
 - Change favorite and share icon to have outlines
 - Exit build when prettier fails
