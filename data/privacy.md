@@ -63,7 +63,7 @@ identifiable information that we may have collected to a third party,
 unless as required by law**.  We treat your data as confidential and
 have the utmost respect for your privacy, and we think that sharing
 data with other companies for marketing purposes or compensation is a
-blatant violation of trust; we will never share these data.
+blatant violation of trust; we will never share this data.
 
 ### Contact Us
 
