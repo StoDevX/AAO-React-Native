@@ -43,12 +43,18 @@ on our app.  As such, our privacy policy is quite simple.
   - _What you requested and how long it took_, which is widely
     considered to be fully anonymous.
 
-- We also use a few tools to track our most used features and to
-  gather crash reports.  These tools are:
+- We also use a few tools to track our most used features and push
+  notification receipts, as well as collect crash reports.  These
+  tools are:
   - _Google Analytics_, which can be disabled via the "Share
-    Analytics" toggle in the Settings view.
-  - _BugSnag_, which can also be disabled via the "Share Analytics"
-    toggle in the Settings view.
+    Analytics" toggle in the Settings view.  Google Analytics records
+    slightly more in-depth information about your device, which we use
+    for ensuring that our app looks good on all screen sizes.
+  - _OneSignal_, which manages the delivery of our notifications,
+    collects device information to place you into categories.
+  - _BugSnag_, which collects crash reports and cannot be disabled
+    currently.  BugSnag collects in-depth information about the
+    device and circumstances leading up to a given crash.
 
 - If you send us suggestions for updates to building hours, we will
   anonymously add them to the app if we determine that they are
@@ -56,6 +62,11 @@ on our app.  As such, our privacy policy is quite simple.
   primarily because we don't have an easy way of attributing these.
   In its current form, the "suggest an update" feature requires you to
   send an email, and this email is sent to our developer mailing list.
+
+- If you choose to use the "Submit a Wi-Fi problem" feature or other
+  features and tools that use college systems such as StoPrint, your
+  data is transmitted to those systems exclusively, and we do not have
+  the ability to see it.
 
 Most importantly: **the developers and maintainers of All About Olaf
 _will not_, under any circumstances, grant access to any personally
