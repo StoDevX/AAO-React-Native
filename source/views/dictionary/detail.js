@@ -57,9 +57,7 @@ export class DictionaryDetailView extends React.PureComponent<Props> {
 
 				<Button onPress={this.handleEditButtonPress} title="Suggest an Edit" />
 
-				<ListFooter
-					title="Collected by the humans of All About Olaf"
-				/>
+				<ListFooter title="Collected by the humans of All About Olaf" />
 			</Container>
 		)
 	}
