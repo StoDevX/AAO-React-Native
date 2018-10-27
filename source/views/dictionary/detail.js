@@ -63,9 +63,7 @@ export class DictionaryDetailView extends React.PureComponent<Props> {
 
 				<ListFooter
 					href={STO_SA_DICT_URL}
-					title={
-						'Collected by the humans of All About Olaf,\nfrom the Student Activities dictionary'
-					}
+					title={'Collected by the humans of All About Olaf'}
 				/>
 			</Container>
 		)
