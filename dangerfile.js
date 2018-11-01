@@ -39,6 +39,9 @@ async function main() {
 		case 'JS-prettier':
 			await runJSのPrettier()
 			break
+		case 'JS-yarn-dedupe':
+			await runJSのYarnDedupe()
+			break
 		case 'JS-bundle-android':
 		case 'JS-bundle-ios':
 			break
@@ -373,6 +376,16 @@ function runJSのPrettier() {
 	}
 
 	fileLog('Prettier made some changes', prettierLog, {lang: 'diff'})
+}
+
+function runJSのYarnDedupe() {
+	const yarnDedupeLog = readLogFile('./logs/yarn-dedupe')
+
+	if (!yarnDedupeLog) {
+		return
+	}
+
+	fileLog('yarn dedupe made some changes', yarnDedupeLog, {lang: 'diff'})
 }
 
 //

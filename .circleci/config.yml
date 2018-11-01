@@ -70,6 +70,9 @@ workflows:
       - jest:
           filters: *filters
           requires: [cache-yarn-linux]
+      - yarn-dedupe:
+          filters: *filters
+          requires: [cache-yarn-linux]
       - prettier:
           filters: *filters
           requires: [cache-yarn-linux]
@@ -102,6 +105,7 @@ workflows:
       - danger: {requires: [cache-yarn-linux]}
       - flow: {requires: [cache-yarn-linux]}
       - jest: {requires: [cache-yarn-linux]}
+      - yarn-dedupe: {requires: [cache-yarn-linux]}
       - prettier: {requires: [cache-yarn-linux]}
       - eslint: {requires: [cache-yarn-linux]}
       - data: {requires: [cache-yarn-linux]}
@@ -192,6 +196,25 @@ jobs:
             touch logs/prettier  # to ensure that the file exists
             if ! git diff --quiet --stat; then
               git diff | tee logs/prettier
+              exit 1
+            fi
+      - run: *run-danger
+
+  yarn-dedupe:
+    docker: *docker-node
+    environment:
+      task: JS-yarn-dedupe
+    steps:
+      - checkout
+      - attach_workspace: *attach-workspace-node_modules
+      - run: mkdir -p logs/
+      - run: yarn run d
+      - run:
+          name: git diff
+          command: |
+            touch logs/yarn-dedupe
+            if ! git diff --quiet --stat; then
+              git diff | tee logs/yarn-dedupe
               exit 1
             fi
       - run: *run-danger
