@@ -12,6 +12,7 @@
     "compress-data": "gzip --keep docs/*.json",
     "danger": "danger ci",
     "data": "node scripts/bundle-data.js data/ docs/",
+    "d": "yarn-deduplicate yarn.lock && yarn",
     "flow": "flow",
     "ios": "react-native run-ios",
     "ios:release": "react-native run-ios --configuration Release",
@@ -173,7 +174,8 @@
     "react-test-renderer": "16.5.0",
     "string-natural-compare": "2.0.3",
     "strip-ansi": "5.0.0",
-    "xcode": "1.0.0"
+    "xcode": "1.0.0",
+    "yarn-deduplicate": "1.0.0"
   },
   "optionalDependencies": {
     "detox": "9.0.4"
