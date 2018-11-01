@@ -22,6 +22,9 @@
 ; ignore all of react-navigation for now
 .*/node_modules/react-navigation/.*
 
+; ignore yarn-deduplicate/.history because it is accidentally included in 1.0.0
+.*/node_modules/yarn-deduplicate/.history/.*
+
 [include]
 
 [libs]
