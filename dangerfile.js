@@ -155,29 +155,29 @@ async function runJSのGeneral() {
 // New js files should have `@flow` at the top
 function flowAnnotated() {
 	danger.git.created_files
-				.filter(path => path.endsWith('.js'))
-	// except for those in /flow-typed
-				.filter(filepath => !filepath.includes('flow-typed'))
-				.filter(filepath => !readFile(filepath).includes('@flow'))
-				.forEach(file =>
-					warn(`<code>${file}</code> has no <code>@flow</code> annotation!`),
-				)
+		.filter(path => path.endsWith('.js'))
+		// except for those in /flow-typed
+		.filter(filepath => !filepath.includes('flow-typed'))
+		.filter(filepath => !readFile(filepath).includes('@flow'))
+		.forEach(file =>
+			warn(`<code>${file}</code> has no <code>@flow</code> annotation!`),
+		)
 }
 
 // Warn if tests have been enabled to the exclusion of all others
 function exclusionaryTests() {
 	danger.git.created_files
-				.filter(filepath => filepath.endsWith('.test.js'))
-				.map(filepath => ({filepath, content: readFile(filepath)}))
-				.filter(
-					({content}) =>
-						content.includes('it.only') || content.includes('describe.only'),
-				)
-				.forEach(({filepath}) =>
-					warn(
-						`An <code>only</code> was left in ${filepath} – no other tests can run.`,
-					),
-				)
+		.filter(filepath => filepath.endsWith('.test.js'))
+		.map(filepath => ({filepath, content: readFile(filepath)}))
+		.filter(
+			({content}) =>
+				content.includes('it.only') || content.includes('describe.only'),
+		)
+		.forEach(({filepath}) =>
+			warn(
+				`An <code>only</code> was left in ${filepath} – no other tests can run.`,
+			),
+		)
 }
 
 // Warn when PR size is large (mainly for hawken)
@@ -270,14 +270,14 @@ async function pbxprojDuplicateLinkingPaths() {
 
 	const buildConfig = xcodeproj.project.objects.XCBuildConfiguration
 	const duplicateSearchPaths = Object.entries(buildConfig)
-																		 .filter(([_, val] /*: [string, any]*/) => typeof val === 'object')
-																		 .filter(
-																			 ([_, val] /*: [string, any]*/) => val.buildSettings.LIBRARY_SEARCH_PATHS,
-																		 )
-																		 .filter(([_, val] /*: [string, any]*/) => {
-																			 const searchPaths = val.buildSettings.LIBRARY_SEARCH_PATHS
-																			 return uniq(searchPaths).length !== searchPaths.length
-																		 })
+		.filter(([_, val] /*: [string, any]*/) => typeof val === 'object')
+		.filter(
+			([_, val] /*: [string, any]*/) => val.buildSettings.LIBRARY_SEARCH_PATHS,
+		)
+		.filter(([_, val] /*: [string, any]*/) => {
+			const searchPaths = val.buildSettings.LIBRARY_SEARCH_PATHS
+			return uniq(searchPaths).length !== searchPaths.length
+		})
 
 	if (!duplicateSearchPaths.length) {
 		return
@@ -436,7 +436,7 @@ const m = {
 		return (
 			'\n' +
 			'```' +
-			 (attrs.language || '') +
+			(attrs.language || '') +
 			'\n' +
 			children.join('\n') +
 			'\n' +
