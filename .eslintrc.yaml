@@ -19,7 +19,7 @@ extends:
 settings:
   react:
     version: '16.6'
-    flowVersion: '0.67'
+    flowVersion: '0.78'
 
 env:
   es6: true
