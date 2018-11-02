@@ -2,6 +2,10 @@
 
 import {Platform} from 'react-native'
 
+let TZ: string
+export const setTimezone = (zone: string) => (TZ = zone)
+export const timezone = () => TZ || 'US/Central'
+
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 
 let APP_VERSION: string

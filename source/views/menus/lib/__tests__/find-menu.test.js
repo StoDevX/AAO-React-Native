@@ -2,9 +2,10 @@
 // @flow
 import {findMenu} from '../../../../../modules/food-menu/lib/find-menu'
 import moment from 'moment-timezone'
-const CENTRAL_TZ = 'America/Winnipeg'
 import type {DayPartsCollectionType} from '../../types'
 import uniqueId from 'lodash/uniqueId'
+
+const CENTRAL_TZ = 'US/Central'
 
 const generateDayparts: (
 	...{start: string, end: string}[]

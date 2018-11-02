@@ -1,8 +1,9 @@
 // @flow
 import moment from 'moment-timezone'
 import type {SingleBuildingScheduleType} from '../types'
+import {timezone} from '@frogpond/constants'
 
-import {TIME_FORMAT, CENTRAL_TZ} from './constants'
+import {TIME_FORMAT} from './constants'
 
 type HourPairType = {open: moment, close: moment}
 
@@ -17,10 +18,10 @@ export function parseHours(
 		dayOfYear -= 1
 	}
 
-	let open = moment.tz(fromTime, TIME_FORMAT, true, CENTRAL_TZ)
+	let open = moment.tz(fromTime, TIME_FORMAT, true, timezone())
 	open.dayOfYear(dayOfYear)
 
-	let close = moment.tz(toTime, TIME_FORMAT, true, CENTRAL_TZ)
+	let close = moment.tz(toTime, TIME_FORMAT, true, timezone())
 	close.dayOfYear(dayOfYear)
 
 	if (close.isBefore(open)) {
