@@ -6,25 +6,20 @@ import {LoginButton} from './login-button'
 import {
 	logInViaCredentials,
 	logOutViaCredentials,
-	validateLoginCredentials,
-	setLoginCredentials,
 	type LoginStateType,
 } from '../../../../redux/parts/settings'
+import {loadLoginCredentials} from '../../../../lib/login'
 import {type ReduxState} from '../../../../redux'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
 
 type ReduxStateProps = {
-	initialUsername: string,
-	initialPassword: string,
 	loginState: LoginStateType,
 }
 
 type ReduxDispatchProps = {
-	logIn: (username: string, password: string) => any,
+	logIn: (string, string) => any,
 	logOut: () => any,
-	validateCredentials: (username: string, password: string) => any,
-	setCredentials: (username: string, password: string) => any,
 }
 
 type Props = ReduxStateProps & ReduxDispatchProps
@@ -39,20 +34,25 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 	_passwordInput: any
 
 	state = {
-		username: this.props.initialUsername,
-		password: this.props.initialPassword,
+		username: '',
+		password: '',
+	}
+
+	componentDidMount() {
+		this.loadCredentialsFromKeychain()
 	}
 
 	focusUsername = () => this._usernameInput.focus()
 	focusPassword = () => this._passwordInput.focus()
 
-	logIn = async () => {
-		await this.props.logIn(this.state.username, this.state.password)
+	loadCredentialsFromKeychain = async () => {
+		let {username = '', password = ''} = await loadLoginCredentials()
+		this.setState(() => ({username, password}))
 	}
 
-	logOut = () => {
-		this.props.logOut()
-	}
+	logIn = () => this.props.logIn(this.state.username, this.state.password)
+
+	logOut = () => this.props.logOut()
 
 	getUsernameRef = ref => (this._usernameInput = ref)
 	getPasswordRef = ref => (this._passwordInput = ref)
@@ -64,8 +64,8 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		const {loginState} = this.props
 		const {username, password} = this.state
 
-		const loading = loginState === 'checking'
 		const loggedIn = loginState === 'logged-in'
+		const loading = loginState === 'checking' || loginState === 'initializing'
 
 		return (
 			<Section
@@ -117,29 +117,16 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
 	if (!state.settings) {
-		return {
-			initialUsername: '',
-			initialPassword: '',
-			loginState: 'logged-out',
-		}
+		return {loginState: 'initializing'}
 	}
 
-	return {
-		initialUsername: state.settings.username,
-		initialPassword: state.settings.password,
-		loginState: state.settings.loginState,
-	}
+	return {loginState: state.settings.loginState}
 }
 
 function mapDispatchToProps(dispatch): ReduxDispatchProps {
 	return {
 		logOut: () => dispatch(logOutViaCredentials()),
-		logIn: (username, password) =>
-			dispatch(logInViaCredentials({username, password})),
-		validateCredentials: (username, password) =>
-			dispatch(validateLoginCredentials({username, password})),
-		setCredentials: (username, password) =>
-			dispatch(setLoginCredentials({username, password})),
+		logIn: (user, pass) => dispatch(logInViaCredentials(user, pass)),
 	}
 }
 
