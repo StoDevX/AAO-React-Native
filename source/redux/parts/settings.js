@@ -30,9 +30,6 @@ const CREDENTIALS_LOGIN_START = 'settings/CREDENTIALS_LOGIN_START'
 const CREDENTIALS_LOGIN_SUCCESS = 'settings/CREDENTIALS_LOGIN_SUCCESS'
 const CREDENTIALS_LOGIN_FAILURE = 'settings/CREDENTIALS_LOGIN_FAILURE'
 const CREDENTIALS_LOGOUT = 'settings/CREDENTIALS_LOGOUT'
-const CREDENTIALS_VALIDATE_START = 'settings/CREDENTIALS_VALIDATE_START'
-const CREDENTIALS_VALIDATE_SUCCESS = 'settings/CREDENTIALS_VALIDATE_SUCCESS'
-const CREDENTIALS_VALIDATE_FAILURE = 'settings/CREDENTIALS_VALIDATE_FAILURE'
 const SET_FEEDBACK = 'settings/SET_FEEDBACK'
 const CHANGE_THEME = 'settings/CHANGE_THEME'
 const SIS_ALERT_SEEN = 'settings/SIS_ALERT_SEEN'
@@ -126,35 +123,6 @@ export async function logOutViaCredentials(): Promise<LogOutAction> {
 	return {type: CREDENTIALS_LOGOUT}
 }
 
-type ValidateStartAction = {|type: 'settings/CREDENTIALS_VALIDATE_START'|}
-type ValidateSuccessAction = {|type: 'settings/CREDENTIALS_VALIDATE_SUCCESS'|}
-type ValidateFailureAction = {|type: 'settings/CREDENTIALS_VALIDATE_FAILURE'|}
-type ValidateCredentialsActions =
-	| ValidateStartAction
-	| ValidateSuccessAction
-	| ValidateFailureAction
-export function validateLoginCredentials(
-	credentials: Credentials,
-): ThunkAction<ValidateCredentialsActions> {
-	return async dispatch => {
-		const {username, password} = credentials
-		if (!username || !password) {
-			return
-		}
-
-		dispatch({type: CREDENTIALS_VALIDATE_START})
-
-		// we try a few times here because the network may not have stabilized
-		// quite yet.
-		const result = await performLogin(credentials, {attempts: 3})
-		if (result) {
-			dispatch({type: CREDENTIALS_VALIDATE_SUCCESS})
-		} else {
-			dispatch({type: CREDENTIALS_VALIDATE_FAILURE})
-		}
-	}
-}
-
 type Action =
 	| SetFeedbackStatusAction
 	| SisAlertSeenAction
@@ -164,7 +132,6 @@ type Action =
 type CredentialsActions =
 	| LogInActions
 	| LogOutAction
-	| ValidateCredentialsActions
 	| SetCredentialsAction
 
 export type State = {
@@ -200,15 +167,6 @@ export function settings(state: State = initialState, action: Action) {
 
 		case SIS_ALERT_SEEN:
 			return {...state, unofficiallyAcknowledged: action.payload}
-
-		case CREDENTIALS_VALIDATE_START:
-			return {...state, loginState: 'checking'}
-
-		case CREDENTIALS_VALIDATE_SUCCESS:
-			return {...state, loginState: 'logged-in'}
-
-		case CREDENTIALS_VALIDATE_FAILURE:
-			return {...state, loginState: 'invalid'}
 
 		case CREDENTIALS_LOGIN_START:
 			return {...state, loginState: 'checking'}
