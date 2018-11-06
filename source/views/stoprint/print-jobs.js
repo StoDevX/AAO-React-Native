@@ -64,7 +64,7 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 		this.setState(() => ({loading: false, initialLoadComplete: true}))
 	}
 
-	refresh = async (): any => {
+	refresh = async () => {
 		let start = Date.now()
 
 		this.setState(() => ({loading: true}))
@@ -121,6 +121,7 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 		if (this.props.loginState === 'checking') {
 			return <LoadingView text="Logging in…" />
 		}
+
 		if (this.props.error) {
 			return (
 				<StoPrintErrorView
@@ -130,9 +131,11 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 				/>
 			)
 		}
+
 		if (this.state.loading && !this.state.initialLoadComplete) {
 			return <LoadingView text="Fetching a list of stoPrint Jobs…" />
 		}
+
 		if (this.props.loginState !== 'logged-in') {
 			return (
 				<StoPrintNoticeView
@@ -143,7 +146,9 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 					text="You must be logged in to your St. Olaf account to access this feature"
 				/>
 			)
-		} else if (this.props.jobs.length === 0) {
+		}
+
+		if (this.props.jobs.length === 0) {
 			const instructions =
 				Platform.OS === 'android'
 					? 'using the Mobility Print app'
@@ -161,7 +166,8 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 				/>
 			)
 		}
-		const grouped = groupBy(this.props.jobs, j => j.statusFormatted || 'Other')
+
+		let grouped = groupBy(this.props.jobs, j => j.statusFormatted || 'Other')
 		let groupedJobs = toPairs(grouped).map(([title, data]) => ({
 			title,
 			data,
@@ -169,11 +175,12 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 		let sortedGroupedJobs = sortBy(groupedJobs, [
 			group => group.title !== 'Pending Release', // puts 'Pending Release' jobs at the top
 		])
+
 		return (
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				keyExtractor={this.keyExtractor}
-				onRefresh={this.refresh}
+				onRefresh={(this.refresh: any)}
 				refreshing={this.state.loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
