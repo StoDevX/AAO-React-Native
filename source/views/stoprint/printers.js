@@ -19,7 +19,6 @@ import delay from 'delay'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import {StoPrintErrorView} from './components'
-import {loadLoginCredentials} from '../../lib/login'
 
 const styles = StyleSheet.create({
 	list: {},
@@ -46,7 +45,6 @@ type Props = ReactProps & ReduxDispatchProps & ReduxStateProps
 type State = {
 	initialLoadComplete: boolean,
 	loading: boolean,
-	username: ?string,
 }
 
 class PrinterListView extends React.PureComponent<Props, State> {
@@ -58,7 +56,6 @@ class PrinterListView extends React.PureComponent<Props, State> {
 	state = {
 		initialLoadComplete: false,
 		loading: true,
-		username: null,
 	}
 
 	componentDidMount = () => {
@@ -75,18 +72,17 @@ class PrinterListView extends React.PureComponent<Props, State> {
 
 		this.setState(() => ({loading: true}))
 
-		let [_, {username = null}] = await this.fetchData()
+		await this.fetchData()
 
 		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
 		let elapsed = start - Date.now()
 		if (elapsed < 500) {
 			await delay(500 - elapsed)
 		}
-		this.setState(() => ({loading: false, username}))
+		this.setState(() => ({loading: false}))
 	}
 
-	fetchData = () =>
-		Promise.all([this.props.updatePrinters(), loadLoginCredentials()])
+	fetchData = () => this.props.updatePrinters()
 
 	keyExtractor = (item: Printer) => item.printerName
 
@@ -94,7 +90,6 @@ class PrinterListView extends React.PureComponent<Props, State> {
 		this.props.navigation.navigate('PrintJobReleaseView', {
 			job: this.props.navigation.state.params.job,
 			printer: item,
-			username: this.state.username,
 		})
 
 	renderItem = ({item}: {item: Printer}) => (
