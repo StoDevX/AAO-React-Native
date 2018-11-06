@@ -68,7 +68,7 @@ class PrinterListView extends React.PureComponent<Props, State> {
 		this.setState(() => ({loading: false, initialLoadComplete: true}))
 	}
 
-	refresh = async (): any => {
+	refresh = async () => {
 		let start = Date.now()
 
 		this.setState(() => ({loading: true}))
@@ -163,7 +163,7 @@ class PrinterListView extends React.PureComponent<Props, State> {
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				keyExtractor={this.keyExtractor}
-				onRefresh={this.refresh}
+				onRefresh={(this.refresh: any)}
 				refreshing={this.state.loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
