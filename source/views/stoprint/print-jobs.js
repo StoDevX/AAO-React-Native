@@ -70,7 +70,6 @@ class PrintJobsView extends React.PureComponent<Props, State> {
 		this.setState(() => ({loading: true}))
 
 		await this.fetchData()
-		// console.log('data returned')
 
 		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
 		let elapsed = start - Date.now()
