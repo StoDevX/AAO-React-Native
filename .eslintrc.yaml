@@ -39,7 +39,7 @@ rules:
   curly: [warn, multi-line]
   default-case: error
   guard-for-in: error
-  eqeqeq: [error, always, {'null': ignore}]
+  eqeqeq: [error, smart]
   linebreak-style: [error, unix]
   new-cap: off
   no-await-in-loop: warn
@@ -47,7 +47,6 @@ rules:
   no-confusing-arrow: off
   no-console: off
   no-div-regex: error
-  no-eq-null: warn
   no-extra-label: error
   no-implicit-coercion:
     - error

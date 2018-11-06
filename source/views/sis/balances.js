@@ -269,7 +269,6 @@ let styles = StyleSheet.create({
 })
 
 function getValueOrNa(value: ?string): string {
-	// eslint-disable-next-line no-eq-null
 	if (value == null) {
 		return 'N/A'
 	}

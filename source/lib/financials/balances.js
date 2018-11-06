@@ -3,7 +3,6 @@ import {loadLoginCredentials} from '../login'
 import buildFormData from '../formdata'
 import {OLECARD_AUTH_URL, OLECARD_DATA_ENDPOINT} from './urls'
 import type {BalancesShapeType, OleCardBalancesType} from './types'
-import isNil from 'lodash/isNil'
 
 type BalancesOrErrorType =
 	| {error: true, value: Error}
@@ -64,9 +63,9 @@ function getBalancesFromData(resp: OleCardBalancesType): BalancesOrErrorType {
 			flex: flex || flex === 0 ? flex.formatted : null,
 			ole: ole || ole === 0 ? ole.formatted : null,
 			print: print || print === 0 ? print.formatted : null,
-			daily: isNil(daily) ? null : daily,
-			weekly: isNil(weekly) ? null : weekly,
-			plan: isNil(plan) ? null : plan,
+			daily: daily == null ? null : daily,
+			weekly: weekly == null ? null : weekly,
+			plan: plan == null ? null : plan,
 		},
 	}
 }
