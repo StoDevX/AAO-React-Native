@@ -17,7 +17,6 @@ import {
 import {trackLogOut, trackLogIn, trackLoginFailure} from '@frogpond/analytics'
 
 import {type ReduxState} from '../index'
-import {type UpdateBalancesType, updateBalances} from './balances'
 import {Alert} from 'react-native'
 
 export type LoginStateType = 'logged-out' | 'logged-in' | 'checking' | 'invalid'
@@ -107,8 +106,6 @@ export function logInViaCredentials(
 		if (result) {
 			trackLogIn()
 			dispatch({type: CREDENTIALS_LOGIN_SUCCESS, payload: credentials})
-			// since we logged in successfully, go ahead and fetch the meal info
-			dispatch(updateBalances())
 		} else {
 			dispatch({type: CREDENTIALS_LOGIN_FAILURE})
 			if (isConnected) {
