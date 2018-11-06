@@ -67,6 +67,7 @@ rules:
     - warn
     - args: 'after-used'
       argsIgnorePattern: '^_'
+      varsIgnorePattern: '^_'
   no-useless-constructor: error
   no-var: error
   prefer-promise-reject-errors: error
