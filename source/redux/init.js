@@ -5,7 +5,6 @@
 
 import {NetInfo} from 'react-native'
 import {loadLoginCredentials} from '../lib/login'
-import {updateOnlineStatus} from './parts/app'
 import {getEnabledTools} from './parts/help'
 import {loadHomescreenOrder, loadDisabledViews} from './parts/homescreen'
 import {loadFavoriteBuildings} from './parts/buildings'
@@ -35,18 +34,6 @@ async function validateOlafCredentials(store) {
 	store.dispatch(validateLoginCredentials({username, password}))
 }
 
-function netInfoIsConnected(store) {
-	function updateConnectionStatus(isConnected) {
-		store.dispatch(updateOnlineStatus(isConnected))
-	}
-
-	NetInfo.isConnected.addEventListener(
-		'connectionChange',
-		updateConnectionStatus,
-	)
-	return NetInfo.isConnected.fetch().then(updateConnectionStatus)
-}
-
 export async function init(store: {dispatch: any => any}) {
 	// this function runs in two parts: the things that don't care about
 	// network, and those that do.
@@ -64,7 +51,7 @@ export async function init(store: {dispatch: any => any}) {
 	])
 
 	// wait for our first connection check to happen
-	await netInfoIsConnected(store)
+	await NetInfo.isConnected.fetch()
 
 	// then go do the network stuff in parallel
 	await Promise.all([
