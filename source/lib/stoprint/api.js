@@ -32,14 +32,8 @@ export async function logIn(
 		body: body,
 		headers: new Headers(PAPERCUT_API_HEADERS),
 	})
-		.then(response => ({
-			error: false,
-			value: response,
-		}))
-		.catch(error => ({
-			error: true,
-			value: error,
-		}))
+		.then(response => ({error: false, value: response}))
+		.catch(error => ({error: true, value: error}))
 
 	if (result.error) {
 		return 'The print server seems to be having some issues.'
