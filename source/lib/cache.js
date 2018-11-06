@@ -192,19 +192,10 @@ function fetchHelpToolsBundled(): Promise<Array<ToolOptions>> {
 function fetchHelpToolsRemote(): Promise<{data: Array<ToolOptions>}> {
 	return fetchJson(API('/tools/help'))
 }
-export async function fetchHelpTools(
-	isOnline: boolean,
-): Promise<Array<ToolOptions>> {
+export async function fetchHelpTools(): Promise<Array<ToolOptions>> {
 	const cachedValue = await getHelpTools()
 
 	if (process.env.NODE_ENV === 'development') {
-		return fetchHelpToolsBundled()
-	}
-
-	if (!isOnline) {
-		if (cachedValue.isCached && cachedValue.value) {
-			return cachedValue.value
-		}
 		return fetchHelpToolsBundled()
 	}
 
@@ -212,8 +203,15 @@ export async function fetchHelpTools(
 		return cachedValue.value
 	}
 
-	const request = await fetchHelpToolsRemote()
-	await setHelpTools(request.data)
+	try {
+		const request = await fetchHelpToolsRemote()
+		await setHelpTools(request.data)
 
-	return request.data
+		return request.data
+	} catch (error) {
+		if (cachedValue.isCached && cachedValue.value) {
+			return cachedValue.value
+		}
+		return fetchHelpToolsBundled()
+	}
 }
