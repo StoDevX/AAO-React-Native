@@ -132,23 +132,6 @@ class BalancesView extends React.PureComponent<Props, State> {
 		} = this.state
 		let {loginState} = this.props
 
-		if (loginState !== 'logged-in' || message) {
-			return (
-				<Section footer="You'll need to log in again so we can update these numbers.">
-					{loginState !== 'logged-in' ? (
-						<Cell
-							accessory="DisclosureIndicator"
-							cellStyle="Basic"
-							onPress={this.openSettings}
-							title="Log in with St. Olaf"
-						/>
-					) : null}
-
-					{message ? <Cell cellStyle="Basic" title={message} /> : null}
-				</Section>
-			)
-		}
-
 		return (
 			<ScrollView
 				contentContainerStyle={styles.stage}
@@ -208,6 +191,23 @@ class BalancesView extends React.PureComponent<Props, State> {
 						)}
 					</Section>
 				</TableView>
+
+				{(loginState !== 'logged-in' || message) && (
+					<Section footer="You'll need to log in in order to see this data.">
+						{loginState !== 'logged-in' ? (
+							<Cell
+								accessory="DisclosureIndicator"
+								cellStyle="Basic"
+								onPress={this.openSettings}
+								title="Log in with St. Olaf"
+							/>
+						) : null}
+
+						{message ? (
+							<Cell cellStyle="Basic" title={message} />
+						) : null}
+					</Section>
+				)}
 			</ScrollView>
 		)
 	}
