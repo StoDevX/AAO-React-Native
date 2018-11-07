@@ -203,9 +203,7 @@ class BalancesView extends React.PureComponent<Props, State> {
 							/>
 						) : null}
 
-						{message ? (
-							<Cell cellStyle="Basic" title={message} />
-						) : null}
+						{message ? <Cell cellStyle="Basic" title={message} /> : null}
 					</Section>
 				)}
 			</ScrollView>
