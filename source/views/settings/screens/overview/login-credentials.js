@@ -52,7 +52,10 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 
 	logIn = () => this.props.logIn(this.state.username, this.state.password)
 
-	logOut = () => this.props.logOut()
+	logOut = () => {
+		this.setState(() => ({username: '', password: ''}))
+		this.props.logOut()
+	}
 
 	getUsernameRef = ref => (this._usernameInput = ref)
 	getPasswordRef = ref => (this._passwordInput = ref)
