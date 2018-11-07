@@ -48,6 +48,10 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 	loadCredentialsFromKeychain = async () => {
 		let {username = '', password = ''} = await loadLoginCredentials()
 		this.setState(() => ({username, password}))
+
+		if (username && password) {
+			this.props.logIn(username, password)
+		}
 	}
 
 	logIn = () => this.props.logIn(this.state.username, this.state.password)
