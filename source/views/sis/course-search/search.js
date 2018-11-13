@@ -26,13 +26,12 @@ import fromPairs from 'lodash/fromPairs'
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
 const NETWORK_WARNING =
-	"You'll need an internet connection to download the courses."
+	'(Please make sure that you are connected to the Internet before downloading the courses).'
 
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
 	courseDataState: string,
-	isConnected: boolean,
 	recentFilters: FilterComboType[],
 	recentSearches: string[],
 }
@@ -153,13 +152,10 @@ class CourseSearchView extends React.Component<Props, State> {
 		}
 
 		if (this.props.courseDataState === 'not-loaded') {
-			let msg = this.props.isConnected
-				? PROMPT_TEXT
-				: PROMPT_TEXT.concat(`\n\n${NETWORK_WARNING}`)
+			let msg = PROMPT_TEXT + '\n\n' + NETWORK_WARNING
 
 			return (
 				<NoticeView
-					buttonDisabled={!this.props.isConnected}
 					buttonText="Download"
 					header="Almost there…"
 					onPress={this.loadData}
@@ -215,7 +211,6 @@ class CourseSearchView extends React.Component<Props, State> {
 
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
-		isConnected: state.app ? state.app.isConnected : false,
 		courseDataState: state.courses ? state.courses.readyState : '',
 		recentFilters: state.courses ? state.courses.recentFilters : [],
 		recentSearches: state.courses ? state.courses.recentSearches : [],

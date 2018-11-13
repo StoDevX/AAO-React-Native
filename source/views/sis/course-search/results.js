@@ -22,7 +22,6 @@ type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
 	allCourses: Array<CourseType>,
-	isConnected: boolean,
 	courseDataState: string,
 }
 
@@ -181,7 +180,6 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
-		isConnected: state.app ? state.app.isConnected : false,
 		allCourses: state.courses ? state.courses.allCourses : [],
 		courseDataState: state.courses ? state.courses.readyState : '',
 	}

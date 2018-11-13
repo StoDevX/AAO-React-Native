@@ -25,12 +25,20 @@ export function clearLoginCredentials() {
 	return resetInternetCredentials(SIS_LOGIN_KEY).catch(empty)
 }
 
-export async function performLogin(
-	{username, password}: Credentials,
-	{attempts = 0}: {attempts: number} = {},
-): Promise<boolean> {
+export type LoginResultEnum =
+	| 'success'
+	| 'network'
+	| 'bad-credentials'
+	| 'no-credentials'
+
+type Args = {attempts?: number}
+
+export async function performLogin({attempts = 0}: Args = {}): Promise<
+	LoginResultEnum,
+> {
+	let {username, password} = await loadLoginCredentials()
 	if (!username || !password) {
-		return false
+		return 'no-credentials'
 	}
 
 	const form = buildFormData({username, password})
@@ -41,21 +49,19 @@ export async function performLogin(
 			body: form,
 		})
 	} catch (err) {
-		const networkFailure = err.message === 'Network request failed'
-		if (networkFailure && attempts > 0) {
+		let wasNetworkFailure = err.message === 'Network request failed'
+		if (wasNetworkFailure && attempts > 0) {
 			// console.log(`login failed; trying ${attempts - 1} more time(s)`)
-			return performLogin({username, password}, {attempts: attempts - 1})
+			return performLogin({attempts: attempts - 1})
 		}
-		return false
+		return 'network'
 	}
 
 	const page = await loginResult.text()
 
 	if (page.includes('Password')) {
-		return false
+		return 'bad-credentials'
 	}
 
-	await saveLoginCredentials({username, password})
-
-	return true
+	return 'success'
 }

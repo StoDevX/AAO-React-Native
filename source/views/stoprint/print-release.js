@@ -17,6 +17,7 @@ import {
 	releasePrintJobToPrinterForUser,
 	showGeneralError,
 } from '../../lib/stoprint'
+import {loadLoginCredentials} from '../../lib/login'
 
 const styles = StyleSheet.create({
 	cancelButton: {
@@ -99,23 +100,35 @@ export class PrintJobReleaseView extends React.PureComponent<Props, State> {
 	}
 
 	getHeldJob = async () => {
-		const {job, printer, username} = this.props.navigation.state.params
+		let {username = null} = await loadLoginCredentials()
+		if (!username) {
+			Alert.alert(
+				'Not Logged In',
+				'You are not logged in. Please open the app settings and log in.',
+				[{text: 'OK'}],
+			)
+			return
+		}
+
+		const {job, printer} = this.props.navigation.state.params
 		const jobId = job.id.toString()
 		const response = await heldJobsAvailableAtPrinterForUser(
 			printer.printerName,
 			username,
 		)
+
 		if (response.error) {
 			showGeneralError(this.returnToJobsView)
+			return
+		}
+
+		const heldJobMatch = response.value.find(heldJob =>
+			heldJob.id.startsWith(jobId),
+		)
+		if (heldJobMatch) {
+			this.setState(() => ({heldJob: heldJobMatch}))
 		} else {
-			const heldJobMatch = response.value.find(heldJob =>
-				heldJob.id.startsWith(jobId),
-			)
-			if (heldJobMatch) {
-				this.setState(() => ({heldJob: heldJobMatch}))
-			} else {
-				showGeneralError(this.returnToJobsView)
-			}
+			showGeneralError(this.returnToJobsView)
 		}
 	}
 
