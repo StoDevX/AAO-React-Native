@@ -9,6 +9,9 @@ Naming/PredicateName:
   Exclude:
     - 'fastlane/actions/*.rb'
 
+Style/Documentation:
+  Enabled: false
+
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: comma
 
