@@ -16,7 +16,7 @@ def should_beta?
 end
 
 # does the build have the api keys needed for signing?
-def has_api_keys?
+def api_keys_available?
   ENV['MATCH_PASSWORD'] && ENV['FASTLANE_PASSWORD']
 end
 

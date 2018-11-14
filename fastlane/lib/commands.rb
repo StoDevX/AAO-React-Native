@@ -8,7 +8,7 @@ def auto_beta
   elsif should_beta?
     UI.message 'building beta'
     beta
-  elsif has_api_keys?
+  elsif api_keys_available?
     UI.message 'signing and building, but not deploying'
     build
   else
