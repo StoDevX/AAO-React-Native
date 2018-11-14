@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added a new "yarn d" command to deduplicate dependencies
+
 ### Changed
+- Adjusted and deduplicated logic in API scaffolding
 - Switched time zone definitions from America/Winnipeg to US/Central
 - Pulled out time zone constants from all over the place into a central constant
 - Removed list footer credit for student activities dictionary (we're the source now)
 - Add a Danger rule to help enforce consistent use of the CHANGELOG
+- Updated the privacy policy to more closely match what we do
+- Stopped storing login state in redux
 
 ## [2.6.3] - 2018-09-17
 ### Fixed
