@@ -218,7 +218,7 @@ async function xcodeproj() {
 
 function changelogSync() {
 	const changedSourceFiles = danger.git.modified_files.find(file =>
-		file.match(/source\//g),
+		file.match(/\.js$/g),
 	)
 
 	if (!changedSourceFiles) {
