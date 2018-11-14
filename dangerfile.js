@@ -229,7 +229,7 @@ function changelogSync() {
 		file => file === 'CHANGELOG.md',
 	)
 
-	if (changedSourceFiles && !changedChangelog) {
+	if (!changedChangelog) {
 		warn(
 			'This PR modifies files in source/ but does not have any changes to the CHANGELOG.',
 		)
