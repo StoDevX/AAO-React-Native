@@ -4,3 +4,7 @@ AllCops:
 
 Layout/Tab:
   IndentationWidth: 2
+
+Naming/PredicateName:
+  Exclude:
+    - 'fastlane/actions/*.rb'
