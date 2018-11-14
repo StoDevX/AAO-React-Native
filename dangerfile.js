@@ -216,17 +216,23 @@ async function xcodeproj() {
 	await pbxprojDuplicateLinkingPaths()
 }
 
-await changelogSync() {
-	const changedSourceFiles = danger.git.modified_files.find(file => file.match(/source\//g))
+function changelogSync() {
+	const changedSourceFiles = danger.git.modified_files.find(file =>
+		file.match(/source\//g),
+	)
 
-	if(!changedSourceFiles) {
+	if (!changedSourceFiles) {
 		return
 	}
 
-	const changedChangelog = danger.git.modified_files.find(file => file === "CHANGELOG.md")
+	const changedChangelog = danger.git.modified_files.find(
+		file => file === 'CHANGELOG.md',
+	)
 
-	if(changedSourceFiles && !changedChangelog) {
-		warn('This PR modifies files in source/ but does not have any changes to the CHANGELOG.')
+	if (changedSourceFiles && !changedChangelog) {
+		warn(
+			'This PR modifies files in source/ but does not have any changes to the CHANGELOG.',
+		)
 	}
 }
 
