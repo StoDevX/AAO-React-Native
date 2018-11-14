@@ -171,7 +171,7 @@ platform :ios do
     password = 'password'
     env_key = 'ONESIGNAL_KEY'
 
-    unless ENV.has_key?(env_key)
+    unless ENV.key?(env_key)
       raise "You do not have the #{env_key} environment variable configured. Not generating push certificate nor uploading to OneSignal."
     end
 
