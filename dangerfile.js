@@ -227,9 +227,7 @@ function changelogSync() {
 		return
 	}
 
-	const changedChangelog = danger.git.modified_files.find(
-		file => file === 'CHANGELOG.md',
-	)
+	const changedChangelog = danger.git.modified_files.includes('CHANGELOG.md')
 
 	if (!changedChangelog) {
 		warn(
