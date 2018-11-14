@@ -15,7 +15,7 @@ def git_changelog
   # to keep the character count down
   graph
     .lines
-    .map { |line| line.chomp }
+    .map(&:chomp)
     .join "\n"
 end
 
