@@ -1,6 +1,6 @@
 # Gets the version, be it from Travis, Testflight, or Google Play
 def current_build_number(**args)
-  return build_number if build_number != nil
+  return build_number if build_number
 
   begin
     case lane_context[:PLATFORM_NAME]
