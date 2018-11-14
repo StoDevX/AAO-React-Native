@@ -12,9 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Switched time zone definitions from America/Winnipeg to US/Central
 - Pulled out time zone constants from all over the place into a central constant
 - Removed list footer credit for student activities dictionary (we're the source now)
-- Add a Danger rule to help enforce consistent use of the CHANGELOG
 - Updated the privacy policy to more closely match what we do
 - Stopped storing login state in redux
+- Add a Danger rule to help enforce consistent use of the CHANGELOG
 
 ## [2.6.3] - 2018-09-17
 ### Fixed
