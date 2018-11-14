@@ -1,5 +1,5 @@
 # Generate argument values for the generate_sourcemap and upload_sourcemap_to_bugsnag lanes
-def get_sourcemap_args
+def sourcemap_args
   # The cwd is /fastlane. I don't know why entry_file doesn't need to be ../, but
   # I believe that watchman finds the project root and automatically looks there
   case lane_context[:PLATFORM_NAME]
@@ -28,7 +28,7 @@ end
 
 # Use react-native cli to generate the source map
 def generate_sourcemap
-  args = get_sourcemap_args
+  args = sourcemap_args
 
   cmd = [
     'npx react-native bundle',
@@ -46,7 +46,7 @@ end
 
 # Upload source map to Bugsnag
 def upload_sourcemap_to_bugsnag
-  args = get_sourcemap_args
+  args = sourcemap_args
 
   cmd = [
     'npx bugsnag-sourcemaps upload',
