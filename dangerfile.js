@@ -217,10 +217,26 @@ async function xcodeproj() {
 }
 
 function changelogSync() {
-	const noteworthyFile = /\.js$/g
+	const noteworthyFolder = /^(\.circleci|\.github|android|e2e|fastlane|ios|modules|scripts|source)\//gu
+	const noteworthyFiles = new Set([
+		'.babelrc',
+		'.eslintignore',
+		'.eslintrc.yaml',
+		'.flowconfig',
+		'.gitattributes',
+		'.gitignore',
+		'.prettierignore',
+		'.prettierrc.yaml',
+		'.rubocop.yml',
+		'.travis.yml',
+		'babel.config.js',
+		'Brewfile',
+		'Gemfile',
+		'index.js',
+	])
 
-	const changedSourceFiles = danger.git.modified_files.some(file =>
-		file.match(noteworthyFile),
+	const changedSourceFiles = danger.git.modified_files.some(
+		file => noteworthyFolder.test(file) || noteworthyFiles.has(file),
 	)
 
 	if (!changedSourceFiles) {
