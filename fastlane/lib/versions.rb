@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # Gets the version, be it from Travis, Testflight, or Google Play
 def current_build_number(**args)
   return build_number if build_number != nil

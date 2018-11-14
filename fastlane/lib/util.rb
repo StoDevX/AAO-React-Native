@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # should we build and release to the nightly channel?
 def should_nightly?
   travis_cron? || circle_nightly?

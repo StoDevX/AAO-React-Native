@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # Pick what to do - build + deploy, build + sign, or just plain build.
 def auto_beta
   if should_nightly?

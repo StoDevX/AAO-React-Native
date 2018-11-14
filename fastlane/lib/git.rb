@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # `last_git_tag` returns the most recent tag, chronologically.
 # `newest_tag` returns the most recent tag *on this branch*.
 def newest_tag

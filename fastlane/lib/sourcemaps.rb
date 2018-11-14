@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # Generate argument values for the generate_sourcemap and upload_sourcemap_to_bugsnag lanes
 def get_sourcemap_args
   # The cwd is /fastlane. I don't know why entry_file doesn't need to be ../, but
