@@ -8,3 +8,9 @@ Layout/Tab:
 Naming/PredicateName:
   Exclude:
     - 'fastlane/actions/*.rb'
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
