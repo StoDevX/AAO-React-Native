@@ -56,7 +56,7 @@ def propagate_version(**args)
   version = "#{version.split('-')[0]}-pre" if should_nightly?
   UI.message "Actually putting #{version} into the binaries (because we're doing a nightly)"
 
-  # encode build number into js-land – we've already fetched it, so we'll
+  # encode build number into js-land --- we've already fetched it, so we'll
   # never set the "+" into the binaries
   unless version.include? '+'
     # we always want the CI build number in js-land
