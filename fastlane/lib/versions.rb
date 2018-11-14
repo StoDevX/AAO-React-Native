@@ -9,7 +9,7 @@ def current_build_number(**args)
     when :ios
       (latest_testflight_build_number + 1).to_s
     end
-  rescue
+  rescue StandardError
     '1'
   end
 end
