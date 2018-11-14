@@ -150,6 +150,7 @@ async function runJSのGeneral() {
 	await bigPr()
 	await exclusionaryTests()
 	await xcodeproj()
+	await changelogSync()
 }
 
 // New js files should have `@flow` at the top
@@ -213,6 +214,20 @@ async function xcodeproj() {
 	await pbxprojBlankLine()
 	await pbxprojLeadingZeros()
 	await pbxprojDuplicateLinkingPaths()
+}
+
+await changelogSync() {
+	const changedSourceFiles = danger.git.modified_files.find(file => file.match(/source\//g))
+
+	if(!changedSourceFiles) {
+		return
+	}
+
+	const changedChangelog = danger.git.modified_files.find(file => file === "CHANGELOG.md")
+
+	if(changedSourceFiles && !changedChangelog) {
+		warn('This PR modifies files in source/ but does not have any changes to the CHANGELOG.')
+	}
 }
 
 // Warn about a blank line that Xcode will re-insert if we remove
