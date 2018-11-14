@@ -219,7 +219,7 @@ async function xcodeproj() {
 function changelogSync() {
 	const noteworthyFile = /\.js$/g
 
-	const changedSourceFiles = danger.git.modified_files.find(file =>
+	const changedSourceFiles = danger.git.modified_files.some(file =>
 		file.match(noteworthyFile),
 	)
 
