@@ -1,3 +1,6 @@
 AllCops:
   Exclude:
     - 'node_modules/**/*'
+
+Layout/Tab:
+  IndentationWidth: 2
