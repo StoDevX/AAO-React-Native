@@ -33,7 +33,7 @@ export type LoginResultEnum =
 
 type Args = {attempts?: number}
 
-export async function performLogin({attempts = 0}: Args = {}): Promise<
+export async function performLogin({attempts = 1}: Args = {}): Promise<
 	LoginResultEnum,
 > {
 	let {username, password} = await loadLoginCredentials()
