@@ -21,6 +21,8 @@ import {type ReduxState} from '../../redux'
 import delay from 'delay'
 import * as c from '@frogpond/colors'
 import type {TopLevelViewPropsType} from '../types'
+import {logInViaCredentials} from '../../redux/parts/settings'
+import {loadLoginCredentials} from '../../lib/login'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 const LONG_DISCLAIMER =
@@ -35,6 +37,7 @@ type ReduxStateProps = {
 
 type ReduxDispatchProps = {
 	hasSeenAcknowledgement: () => any,
+	logIn: (string, string) => any,
 }
 
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
@@ -80,7 +83,17 @@ class BalancesView extends React.PureComponent<Props, State> {
 		}
 	}
 
+	login = async () => {
+		if (this.state.loginState !== 'logged-in') {
+			const {username, password} = await loadLoginCredentials()
+			if (username && password) {
+				await this.props.logIn(username, password)
+			}
+		}
+	}
+
 	refresh = async () => {
+		await this.login()
 		let start = Date.now()
 		this.setState(() => ({loading: true}))
 
@@ -221,6 +234,7 @@ function mapState(state: ReduxState): ReduxStateProps {
 function mapDispatch(dispatch): ReduxDispatchProps {
 	return {
 		hasSeenAcknowledgement: () => dispatch(hasSeenAcknowledgement()),
+		logIn: (user, pass) => dispatch(logInViaCredentials(user, pass)),
 	}
 }
 
