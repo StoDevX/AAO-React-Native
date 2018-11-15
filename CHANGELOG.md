@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Stopped storing login state in redux
 - Add a Danger rule to help enforce consistent use of the CHANGELOG
 - Updated Android JSC requirement to r236355
+- Refactored Fastlane files to resolve some code style issues
 
 ## [2.6.3] - 2018-09-17
 ### Fixed

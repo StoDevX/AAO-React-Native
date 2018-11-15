@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # should we build and release to the nightly channel?
 def should_nightly?
   travis_cron? || circle_nightly?
@@ -16,7 +14,7 @@ def should_beta?
 end
 
 # does the build have the api keys needed for signing?
-def has_api_keys?
+def api_keys_available?
   ENV['MATCH_PASSWORD'] && ENV['FASTLANE_PASSWORD']
 end
 
