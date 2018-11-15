@@ -1,8 +1,6 @@
-# coding: utf-8
-
 # Gets the version, be it from Travis, Testflight, or Google Play
 def current_build_number(**args)
-  return build_number if build_number != nil
+  return build_number if build_number
 
   begin
     case lane_context[:PLATFORM_NAME]
@@ -11,7 +9,7 @@ def current_build_number(**args)
     when :ios
       (latest_testflight_build_number + 1).to_s
     end
-  rescue
+  rescue StandardError
     '1'
   end
 end
@@ -52,13 +50,13 @@ def propagate_version(**args)
   # android's build number goes way up because we need to exceed the old build
   # numbers generated for the x86 build.
   ci_build_num = build
-  build = ((2 * 1048576) + build.to_i).to_s if lane_context[:PLATFORM_NAME] == :android
+  build = ((2 * 1_048_576) + build.to_i).to_s if lane_context[:PLATFORM_NAME] == :android
   UI.message "Actually setting build number to #{build} because we're on android"
 
   version = "#{version.split('-')[0]}-pre" if should_nightly?
   UI.message "Actually putting #{version} into the binaries (because we're doing a nightly)"
 
-  # encode build number into js-land – we've already fetched it, so we'll
+  # encode build number into js-land --- we've already fetched it, so we'll
   # never set the "+" into the binaries
   unless version.include? '+'
     # we always want the CI build number in js-land
