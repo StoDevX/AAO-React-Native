@@ -99,7 +99,7 @@ export function logInViaCredentials(
 
 		await saveLoginCredentials({username, password})
 
-		let result = await performLogin()
+		let result = await performLogin({attempts: 1})
 		if (result === 'success') {
 			dispatch({type: CREDENTIALS_LOGIN_SUCCESS})
 			trackLogIn()
@@ -107,6 +107,7 @@ export function logInViaCredentials(
 			dispatch({type: CREDENTIALS_LOGIN_FAILURE})
 			trackLoginFailure('Bad credentials')
 			showInvalidLoginMessage()
+			clearLoginCredentials()
 		} else if (result === 'no-credentials') {
 			dispatch({type: CREDENTIALS_LOGIN_FAILURE})
 			trackLoginFailure('No credentials')
