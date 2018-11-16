@@ -83,21 +83,18 @@ class BalancesView extends React.PureComponent<Props, State> {
 		}
 	}
 
-	login = async () => {
-		if (this.state.loginState !== 'logged-in') {
+	refresh = async () => {
+		if (this.props.loginState !== 'logged-in') {
 			const {username, password} = await loadLoginCredentials()
 			if (username && password) {
 				await this.props.logIn(username, password)
 			}
 		}
-	}
-
-	refresh = async () => {
-		await this.login()
 		let start = Date.now()
 		this.setState(() => ({loading: true}))
-
-		await this.fetchData()
+		if (this.props.loginState === 'logged-in') {
+			await this.fetchData()
+		}
 
 		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
 		let elapsed = Date.now() - start
@@ -205,7 +202,7 @@ class BalancesView extends React.PureComponent<Props, State> {
 					</Section>
 				</TableView>
 
-				{(loginState !== 'logged-in' || message) && (
+				{((loginState !== 'logged-in' && !loading) || message) && (
 					<Section footer="You'll need to log in in order to see this data.">
 						{loginState !== 'logged-in' ? (
 							<Cell
