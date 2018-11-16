@@ -49,7 +49,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		let {username = '', password = ''} = await loadLoginCredentials()
 		this.setState(() => ({username, password}))
 
-		if (username && password) {
+		if (username && password && this.props.loginState !== 'logged-in') {
 			this.props.logIn(username, password)
 		}
 	}
