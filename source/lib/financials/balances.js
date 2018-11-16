@@ -9,24 +9,7 @@ type BalancesOrErrorType =
 	| {error: false, value: BalancesShapeType}
 
 export async function getBalances(): Promise<BalancesOrErrorType> {
-	const {username, password} = await loadLoginCredentials()
-
-	if (!username || !password) {
-		return {error: true, value: new Error('Not logged in')}
-	}
-
-	const form = buildFormData({username, password})
-
 	try {
-		let loginResponse = await fetch(OLECARD_AUTH_URL, {
-			method: 'POST',
-			body: form,
-		})
-
-		if (loginResponse.url.includes('message=')) {
-			return {error: true, value: new Error('Login failed')}
-		}
-
 		const resp: OleCardBalancesType = await fetchJson(OLECARD_DATA_ENDPOINT)
 
 		if (resp.error != null) {
