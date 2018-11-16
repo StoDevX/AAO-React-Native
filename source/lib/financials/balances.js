@@ -1,7 +1,5 @@
 // @flow
-import {loadLoginCredentials} from '../login'
-import buildFormData from '../formdata'
-import {OLECARD_AUTH_URL, OLECARD_DATA_ENDPOINT} from './urls'
+import {OLECARD_DATA_ENDPOINT} from './urls'
 import type {BalancesShapeType, OleCardBalancesType} from './types'
 
 type BalancesOrErrorType =
