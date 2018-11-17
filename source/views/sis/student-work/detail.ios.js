@@ -3,13 +3,20 @@ import * as React from 'react'
 import {Text, ScrollView, StyleSheet} from 'react-native'
 import {sendEmail} from '../../../components/send-email'
 import {callPhone} from '../../../components/call-phone'
-import {Cell, Section, TableView, SelectableCell} from '@frogpond/tableview'
+import {
+	Cell,
+	Section,
+	TableView,
+	SelectableCell,
+	PushButtonCell,
+} from '@frogpond/tableview'
+import {openUrl} from '@frogpond/open-url'
 import moment from 'moment'
 import * as c from '@frogpond/colors'
 import type {JobType} from './types'
 import glamorous from 'glamorous-native'
 import {ShareButton} from '@frogpond/navigation-buttons'
-import {shareJob} from './lib'
+import {shareJob, createJobFullUrl} from './lib'
 import {entities} from '@frogpond/html-lib'
 
 const styles = StyleSheet.create({
@@ -151,6 +158,17 @@ function Timeline({job}: {job: JobType}) {
 	) : null
 }
 
+function OpenWebpage({job}: {job: JobType}) {
+	return job.id ? (
+		<Section header="">
+			<PushButtonCell
+				onPress={() => openUrl(createJobFullUrl(job))}
+				title="Open original posting webpage"
+			/>
+		</Section>
+	) : null
+}
+
 function HowToApply({job}: {job: JobType}) {
 	return job.howToApply ? (
 		<Section header="HOW TO APPLY">
@@ -197,6 +215,7 @@ export class JobDetailView extends React.PureComponent<Props> {
 					<Comments job={job} />
 					<HowToApply job={job} />
 					<Timeline job={job} />
+					<OpenWebpage job={job} />
 				</TableView>
 				<LastUpdated when={job.lastModified} />
 			</ScrollView>
