@@ -64,7 +64,6 @@ export function ListRow(props: PropsType) {
 			<DisclosureArrow style={arrowPositionStyle} />
 		)
 
-	/*  eslint-disable no-eq-null */
 	let wrapperStyle = [
 		styles.container,
 		leftSpacing != null && {paddingLeft: leftSpacing},
@@ -73,7 +72,6 @@ export function ListRow(props: PropsType) {
 		fullHeight && styles.fullHeight,
 		contentContainerStyle,
 	]
-	/*  eslint-enable no-eq-null */
 
 	let content = (
 		<React.Fragment>
