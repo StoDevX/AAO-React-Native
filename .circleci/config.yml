@@ -338,7 +338,7 @@ jobs:
           command: bundle exec fastlane ios ci-run | tee ./logs/build
           environment:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
-      - run: yarn detox build --configuration ios.sim.release
+      - run: yarn detox build --configuration ios.sim.release >/dev/null
       - run: yarn detox test --configuration ios.sim.release --cleanup
       - store_artifacts: {path: ./ios/build/AllAboutOlaf.app.dSYM.zip}
       - store_artifacts: {path: ./ios/build/AllAboutOlaf.ipa}
