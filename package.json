@@ -180,6 +180,6 @@
     "yarn-deduplicate": "1.0.2"
   },
   "optionalDependencies": {
-    "detox": "9.0.4"
+    "detox": "9.1.2"
   }
 }
