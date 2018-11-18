@@ -8,7 +8,7 @@ schedule:
     hours:
       - {days: [Mo], from: '10:30am', to: '12:00am'}
       - {days: [Tu], from: '11:30am', to: '12:00am'}
-      - {days: [We], from: '10:30am', to: '12:00am'}
+      - {days: [We], from: '1:00pm', to: '12:00am'}
       - {days: [Th], from: '11:30am', to: '12:00am'}
       - {days: [Fr], from: '10:30am', to: '9:00pm'}
       - {days: [Sa], from: '11:30am', to: '9:00pm'}

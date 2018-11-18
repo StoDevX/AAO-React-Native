@@ -4,7 +4,7 @@ version: 2
 x-config:
   x-images:
     - &docker-node
-      - image: 'circleci/node:8'
+      - image: 'circleci/node:10'
     - &docker-ruby
       - image: 'circleci/ruby:2.5.3'
   x-caching:  # caching instructions

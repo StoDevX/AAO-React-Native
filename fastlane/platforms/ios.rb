@@ -1,4 +1,3 @@
-# coding: utf-8
 require 'json'
 
 platform :ios do
@@ -46,7 +45,7 @@ platform :ios do
         scheme: ENV['GYM_SCHEME'],
         project: ENV['GYM_PROJECT'],
         destination: 'generic/platform=iOS',
-        xcargs: %(CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="")
+        xcargs: %(CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""),
       )
     rescue IOError => e
       build_status = 1
@@ -172,7 +171,7 @@ platform :ios do
     password = 'password'
     env_key = 'ONESIGNAL_KEY'
 
-    unless ENV.has_key?(env_key)
+    unless ENV.key?(env_key)
       raise "You do not have the #{env_key} environment variable configured. Not generating push certificate nor uploading to OneSignal."
     end
 
@@ -192,7 +191,7 @@ platform :ios do
           apns_p12_password: password,
           apns_env: 'production',
         )
-      end
+      end,
     )
   end
 end

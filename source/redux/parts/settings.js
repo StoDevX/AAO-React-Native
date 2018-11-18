@@ -4,7 +4,6 @@ import {
 	performLogin,
 	saveLoginCredentials,
 	clearLoginCredentials,
-	type Credentials,
 } from '../../lib/login'
 
 import {
@@ -17,26 +16,28 @@ import {
 import {trackLogOut, trackLogIn, trackLoginFailure} from '@frogpond/analytics'
 
 import {type ReduxState} from '../index'
-import {type UpdateBalancesType, updateBalances} from './balances'
 import {Alert} from 'react-native'
 
-export type LoginStateType = 'logged-out' | 'logged-in' | 'checking' | 'invalid'
+export type LoginStateType =
+	| 'logged-out'
+	| 'logged-in'
+	| 'checking'
+	| 'invalid'
+	| 'initializing'
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
 type ThunkAction<A: Action> = (dispatch: Dispatch<A>, getState: GetState) => any
 
-const SET_LOGIN_CREDENTIALS = 'settings/SET_LOGIN_CREDENTIALS'
 const CREDENTIALS_LOGIN_START = 'settings/CREDENTIALS_LOGIN_START'
 const CREDENTIALS_LOGIN_SUCCESS = 'settings/CREDENTIALS_LOGIN_SUCCESS'
 const CREDENTIALS_LOGIN_FAILURE = 'settings/CREDENTIALS_LOGIN_FAILURE'
 const CREDENTIALS_LOGOUT = 'settings/CREDENTIALS_LOGOUT'
-const CREDENTIALS_VALIDATE_START = 'settings/CREDENTIALS_VALIDATE_START'
-const CREDENTIALS_VALIDATE_SUCCESS = 'settings/CREDENTIALS_VALIDATE_SUCCESS'
-const CREDENTIALS_VALIDATE_FAILURE = 'settings/CREDENTIALS_VALIDATE_FAILURE'
 const SET_FEEDBACK = 'settings/SET_FEEDBACK'
 const CHANGE_THEME = 'settings/CHANGE_THEME'
 const SIS_ALERT_SEEN = 'settings/SIS_ALERT_SEEN'
+
+type ChangeThemeAction = {|type: 'settings/CHANGE_THEME', payload: string|}
 
 type SetFeedbackStatusAction = {|
 	type: 'settings/SET_FEEDBACK',
@@ -63,22 +64,8 @@ export async function hasSeenAcknowledgement(): Promise<SisAlertSeenAction> {
 	return {type: SIS_ALERT_SEEN, payload: true}
 }
 
-type SetCredentialsAction = {|
-	type: 'settings/SET_LOGIN_CREDENTIALS',
-	payload: Credentials,
-|}
-export async function setLoginCredentials(
-	credentials: Credentials,
-): Promise<SetCredentialsAction> {
-	await saveLoginCredentials(credentials)
-	return {type: SET_LOGIN_CREDENTIALS, payload: credentials}
-}
-
 type LoginStartAction = {|type: 'settings/CREDENTIALS_LOGIN_START'|}
-type LoginSuccessAction = {|
-	type: 'settings/CREDENTIALS_LOGIN_SUCCESS',
-	payload: Credentials,
-|}
+type LoginSuccessAction = {|type: 'settings/CREDENTIALS_LOGIN_SUCCESS'|}
 type LoginFailureAction = {|type: 'settings/CREDENTIALS_LOGIN_FAILURE'|}
 type LogInActions = LoginStartAction | LoginSuccessAction | LoginFailureAction
 
@@ -96,28 +83,40 @@ const showInvalidLoginMessage = () =>
 		[{text: 'OK'}],
 	)
 
+const showUnknownLoginMessage = () =>
+	Alert.alert(
+		'Unknown Login',
+		'No username and password were provided. Please try again.',
+		[{text: 'OK'}],
+	)
+
 export function logInViaCredentials(
-	credentials: Credentials,
-): ThunkAction<LogInActions | UpdateBalancesType> {
-	return async (dispatch, getState) => {
+	username: string,
+	password: string,
+): ThunkAction<LogInActions> {
+	return async dispatch => {
 		dispatch({type: CREDENTIALS_LOGIN_START})
-		const state = getState()
-		const isConnected = state.app ? state.app.isConnected : false
-		const result = await performLogin(credentials)
-		if (result) {
+
+		await saveLoginCredentials({username, password})
+
+		let result = await performLogin()
+		if (result === 'success') {
+			dispatch({type: CREDENTIALS_LOGIN_SUCCESS})
 			trackLogIn()
-			dispatch({type: CREDENTIALS_LOGIN_SUCCESS, payload: credentials})
-			// since we logged in successfully, go ahead and fetch the meal info
-			dispatch(updateBalances())
-		} else {
+		} else if (result === 'bad-credentials') {
 			dispatch({type: CREDENTIALS_LOGIN_FAILURE})
-			if (isConnected) {
-				trackLoginFailure('Bad credentials')
-				showInvalidLoginMessage()
-			} else {
-				trackLoginFailure('No network')
-				showNetworkFailureMessage()
-			}
+			trackLoginFailure('Bad credentials')
+			showInvalidLoginMessage()
+		} else if (result === 'no-credentials') {
+			dispatch({type: CREDENTIALS_LOGIN_FAILURE})
+			trackLoginFailure('No credentials')
+			showUnknownLoginMessage()
+		} else if (result === 'network') {
+			dispatch({type: CREDENTIALS_LOGIN_FAILURE})
+			trackLoginFailure('No network')
+			showNetworkFailureMessage()
+		} else {
+			;(result: empty)
 		}
 	}
 }
@@ -129,68 +128,28 @@ export async function logOutViaCredentials(): Promise<LogOutAction> {
 	return {type: CREDENTIALS_LOGOUT}
 }
 
-type ValidateStartAction = {|type: 'settings/CREDENTIALS_VALIDATE_START'|}
-type ValidateSuccessAction = {|type: 'settings/CREDENTIALS_VALIDATE_SUCCESS'|}
-type ValidateFailureAction = {|type: 'settings/CREDENTIALS_VALIDATE_FAILURE'|}
-type ValidateCredentialsActions =
-	| ValidateStartAction
-	| ValidateSuccessAction
-	| ValidateFailureAction
-export function validateLoginCredentials(
-	credentials: Credentials,
-): ThunkAction<ValidateCredentialsActions> {
-	return async dispatch => {
-		const {username, password} = credentials
-		if (!username || !password) {
-			return
-		}
-
-		dispatch({type: CREDENTIALS_VALIDATE_START})
-
-		// we try a few times here because the network may not have stabilized
-		// quite yet.
-		const result = await performLogin(credentials, {attempts: 3})
-		if (result) {
-			dispatch({type: CREDENTIALS_VALIDATE_SUCCESS})
-		} else {
-			dispatch({type: CREDENTIALS_VALIDATE_FAILURE})
-		}
-	}
-}
-
 type Action =
 	| SetFeedbackStatusAction
 	| SisAlertSeenAction
 	| CredentialsActions
-	| UpdateBalancesType
+	| ChangeThemeAction
 
-type CredentialsActions =
-	| LogInActions
-	| LogOutAction
-	| ValidateCredentialsActions
-	| SetCredentialsAction
+type CredentialsActions = LogInActions | LogOutAction
 
 export type State = {
 	+theme: string,
 	+dietaryPreferences: [],
 	+feedbackDisabled: boolean,
 	+unofficiallyAcknowledged: boolean,
-
-	+username: string,
-	+password: string,
 	+loginState: LoginStateType,
 }
 
 const initialState = {
 	theme: 'All About Olaf',
 	dietaryPreferences: [],
-
 	feedbackDisabled: false,
 	unofficiallyAcknowledged: false,
-
-	username: '',
-	password: '',
-	loginState: 'logged-out',
+	loginState: 'initializing',
 }
 
 export function settings(state: State = initialState, action: Action) {
@@ -204,46 +163,17 @@ export function settings(state: State = initialState, action: Action) {
 		case SIS_ALERT_SEEN:
 			return {...state, unofficiallyAcknowledged: action.payload}
 
-		case CREDENTIALS_VALIDATE_START:
-			return {...state, loginState: 'checking'}
-
-		case CREDENTIALS_VALIDATE_SUCCESS:
-			return {...state, loginState: 'logged-in'}
-
-		case CREDENTIALS_VALIDATE_FAILURE:
-			return {...state, loginState: 'invalid'}
-
 		case CREDENTIALS_LOGIN_START:
 			return {...state, loginState: 'checking'}
 
-		case CREDENTIALS_LOGIN_SUCCESS: {
-			return {
-				...state,
-				loginState: 'logged-in',
-				username: action.payload.username,
-				password: action.payload.password,
-			}
-		}
+		case CREDENTIALS_LOGIN_SUCCESS:
+			return {...state, loginState: 'logged-in'}
 
 		case CREDENTIALS_LOGIN_FAILURE:
 			return {...state, loginState: 'invalid'}
 
-		case CREDENTIALS_LOGOUT: {
-			return {
-				...state,
-				loginState: 'logged-out',
-				username: '',
-				password: '',
-			}
-		}
-
-		case SET_LOGIN_CREDENTIALS: {
-			return {
-				...state,
-				username: action.payload.username,
-				password: action.payload.password,
-			}
-		}
+		case CREDENTIALS_LOGOUT:
+			return {...state, loginState: 'logged-out'}
 
 		default:
 			return state

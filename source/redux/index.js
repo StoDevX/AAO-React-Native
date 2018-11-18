@@ -5,10 +5,8 @@ import {createLogger} from 'redux-logger'
 import reduxPromise from 'redux-promise'
 import reduxThunk from 'redux-thunk'
 
-import {app, type State as AppState} from './parts/app'
 import {homescreen, type State as HomescreenState} from './parts/homescreen'
 import {settings, type State as SettingsState} from './parts/settings'
-import {balances, type State as BalancesState} from './parts/balances'
 import {buildings, type State as BuildingsState} from './parts/buildings'
 import {help, type State as HelpState} from './parts/help'
 import {courses, type State as CoursesState} from './parts/courses'
@@ -21,11 +19,9 @@ import {
 export {init as initRedux} from './init'
 
 export type ReduxState = {
-	app?: AppState,
 	courses?: CoursesState,
 	homescreen?: HomescreenState,
 	settings?: SettingsState,
-	balances?: BalancesState,
 	buildings?: BuildingsState,
 	help?: HelpState,
 	stoprint?: StoPrintState,
@@ -34,11 +30,9 @@ export type ReduxState = {
 
 export const makeStore = () => {
 	const aao: any = combineReducers({
-		app,
 		courses,
 		homescreen,
 		settings,
-		balances,
 		buildings,
 		help,
 		stoprint,

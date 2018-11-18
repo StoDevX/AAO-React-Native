@@ -150,6 +150,7 @@ async function runJSのGeneral() {
 	await bigPr()
 	await exclusionaryTests()
 	await xcodeproj()
+	await changelogSync()
 }
 
 // New js files should have `@flow` at the top
@@ -213,6 +214,42 @@ async function xcodeproj() {
 	await pbxprojBlankLine()
 	await pbxprojLeadingZeros()
 	await pbxprojDuplicateLinkingPaths()
+}
+
+function changelogSync() {
+	const noteworthyFolder = /^(\.circleci|\.github|android|e2e|fastlane|ios|modules|scripts|source)\//gu
+	const noteworthyFiles = new Set([
+		'.babelrc',
+		'.eslintignore',
+		'.eslintrc.yaml',
+		'.flowconfig',
+		'.gitattributes',
+		'.gitignore',
+		'.prettierignore',
+		'.prettierrc.yaml',
+		'.rubocop.yml',
+		'.travis.yml',
+		'babel.config.js',
+		'Brewfile',
+		'Gemfile',
+		'index.js',
+	])
+
+	const changedSourceFiles = danger.git.modified_files.some(
+		file => noteworthyFolder.test(file) || noteworthyFiles.has(file),
+	)
+
+	if (!changedSourceFiles) {
+		return
+	}
+
+	const changedChangelog = danger.git.modified_files.includes('CHANGELOG.md')
+
+	if (!changedChangelog) {
+		warn(
+			'This PR modifies files in source/ but does not have any changes to the CHANGELOG.',
+		)
+	}
 }
 
 // Warn about a blank line that Xcode will re-insert if we remove

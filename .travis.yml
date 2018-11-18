@@ -1,4 +1,6 @@
 ---
+dist: xenial
+
 env:
   global:
     # variables from the web interface:
