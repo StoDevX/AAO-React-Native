@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # `last_git_tag` returns the most recent tag, chronologically.
 # `newest_tag` returns the most recent tag *on this branch*.
 def newest_tag
@@ -17,7 +15,7 @@ def git_changelog
   # to keep the character count down
   graph
     .lines
-    .map { |line| line.chomp }
+    .map(&:chomp)
     .join "\n"
 end
 

@@ -25,18 +25,12 @@ type GetEnabledToolsAction =
 	| GetEnabledToolsFailureAction
 
 export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
-	return async (dispatch, getState) => {
+	return async dispatch => {
 		dispatch({type: ENABLED_TOOLS_START})
 
-		const state = getState()
-		const isOnline = Boolean(state.app && state.app.isConnected)
-
 		try {
-			const config = await fetchHelpTools(isOnline)
-			dispatch({
-				type: ENABLED_TOOLS_SUCCESS,
-				payload: config,
-			})
+			const config = await fetchHelpTools()
+			dispatch({type: ENABLED_TOOLS_SUCCESS, payload: config})
 		} catch (err) {
 			dispatch({type: ENABLED_TOOLS_FAILURE})
 		}

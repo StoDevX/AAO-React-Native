@@ -16,7 +16,7 @@ import {
 	hasSeenAcknowledgement,
 	type LoginStateType,
 } from '../../redux/parts/settings'
-import {updateBalances} from '../../redux/parts/balances'
+import {getBalances} from '../../lib/financials'
 import {type ReduxState} from '../../redux'
 import delay from 'delay'
 import * as c from '@frogpond/colors'
@@ -29,26 +29,25 @@ const LONG_DISCLAIMER =
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
-	flex: ?string,
-	ole: ?string,
-	print: ?string,
-	weeklyMeals: ?string,
-	dailyMeals: ?string,
-	mealPlan: ?string,
 	loginState: LoginStateType,
-	message: ?string,
 	alertSeen: boolean,
 }
 
 type ReduxDispatchProps = {
 	hasSeenAcknowledgement: () => any,
-	updateBalances: boolean => any,
 }
 
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
 
 type State = {
 	loading: boolean,
+	flex: ?string,
+	ole: ?string,
+	print: ?string,
+	weeklyMeals: ?string,
+	dailyMeals: ?string,
+	mealPlan: ?string,
+	message: ?string,
 }
 
 class BalancesView extends React.PureComponent<Props, State> {
@@ -59,6 +58,13 @@ class BalancesView extends React.PureComponent<Props, State> {
 
 	state = {
 		loading: false,
+		flex: null,
+		ole: null,
+		print: null,
+		weeklyMeals: null,
+		dailyMeals: null,
+		mealPlan: null,
+		message: null,
 	}
 
 	componentDidMount() {
@@ -88,20 +94,43 @@ class BalancesView extends React.PureComponent<Props, State> {
 	}
 
 	fetchData = async () => {
-		await this.props.updateBalances(true)
+		let balances = await getBalances()
+
+		if (balances.error === true) {
+			return
+		}
+
+		let {value} = balances
+
+		let {flex, ole, print} = value
+		let {weekly: weeklyMeals, daily: dailyMeals, plan: mealPlan} = value
+
+		this.setState(() => ({
+			flex,
+			ole,
+			print,
+			weeklyMeals,
+			dailyMeals,
+			mealPlan,
+		}))
 	}
 
-	openSettings = () => {
-		this.props.navigation.navigate('SettingsView')
-	}
+	openSettings = () => this.props.navigation.navigate('SettingsView')
 
-	goBack = () => {
-		this.props.navigation.goBack(null)
-	}
+	goBack = () => this.props.navigation.goBack(null)
 
 	render() {
-		let {flex, ole, print, dailyMeals, weeklyMeals, mealPlan} = this.props
-		let {loading} = this.state
+		let {
+			flex,
+			ole,
+			print,
+			dailyMeals,
+			weeklyMeals,
+			mealPlan,
+			message,
+			loading,
+		} = this.state
+		let {loginState} = this.props
 
 		return (
 			<ScrollView
@@ -161,24 +190,22 @@ class BalancesView extends React.PureComponent<Props, State> {
 							<Cell cellStyle="Subtitle" detail={mealPlan} title="Meal Plan" />
 						)}
 					</Section>
-
-					{this.props.loginState !== 'logged-in' || this.props.message ? (
-						<Section footer="You'll need to log in again so we can update these numbers.">
-							{this.props.loginState !== 'logged-in' ? (
-								<Cell
-									accessory="DisclosureIndicator"
-									cellStyle="Basic"
-									onPress={this.openSettings}
-									title="Log in with St. Olaf"
-								/>
-							) : null}
-
-							{this.props.message ? (
-								<Cell cellStyle="Basic" title={this.props.message} />
-							) : null}
-						</Section>
-					) : null}
 				</TableView>
+
+				{(loginState !== 'logged-in' || message) && (
+					<Section footer="You'll need to log in in order to see this data.">
+						{loginState !== 'logged-in' ? (
+							<Cell
+								accessory="DisclosureIndicator"
+								cellStyle="Basic"
+								onPress={this.openSettings}
+								title="Log in with St. Olaf"
+							/>
+						) : null}
+
+						{message ? <Cell cellStyle="Basic" title={message} /> : null}
+					</Section>
+				)}
 			</ScrollView>
 		)
 	}
@@ -186,22 +213,13 @@ class BalancesView extends React.PureComponent<Props, State> {
 
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
-		flex: state.balances ? state.balances.flexBalance : null,
-		ole: state.balances ? state.balances.oleBalance : null,
-		print: state.balances ? state.balances.printBalance : null,
-		weeklyMeals: state.balances ? state.balances.mealsRemainingThisWeek : null,
-		dailyMeals: state.balances ? state.balances.mealsRemainingToday : null,
-		mealPlan: state.balances ? state.balances.mealPlanDescription : null,
-		message: state.balances ? state.balances.balancesErrorMessage : null,
 		alertSeen: state.settings ? state.settings.unofficiallyAcknowledged : false,
-
 		loginState: state.settings ? state.settings.loginState : 'logged-out',
 	}
 }
 
 function mapDispatch(dispatch): ReduxDispatchProps {
 	return {
-		updateBalances: force => dispatch(updateBalances(force)),
 		hasSeenAcknowledgement: () => dispatch(hasSeenAcknowledgement()),
 	}
 }
@@ -269,26 +287,21 @@ let styles = StyleSheet.create({
 })
 
 function getValueOrNa(value: ?string): string {
-	// eslint-disable-next-line no-eq-null
 	if (value == null) {
 		return 'N/A'
 	}
 	return value
 }
 
-function FormattedValueCell({
-	indeterminate,
-	label,
-	value,
-	style,
-	formatter,
-}: {
+function FormattedValueCell(props: {
 	indeterminate: boolean,
 	label: string,
 	value: ?string,
 	style?: any,
 	formatter: (?string) => string,
 }) {
+	let {indeterminate, label, value, style, formatter} = props
+
 	return (
 		<View style={[styles.rectangle, styles.common, styles.balances, style]}>
 			<Text
