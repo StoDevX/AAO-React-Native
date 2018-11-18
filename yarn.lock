@@ -6856,10 +6856,10 @@ react-native-keychain@3.0.0:
   resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-3.0.0.tgz#29da1dfa43c2581f76bf9420914fd38a1558cf18"
   integrity sha512-0incABt1+aXsZvG34mDV57KKanSB+iMHmxvWv+N6lgpNLaSoqrCxazjbZdeqD4qJ7Z+Etp5CLf/4v1aI+sNLBw==
 
-react-native-linear-gradient@2.4.2:
-  version "2.4.2"
-  resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.4.2.tgz#9d3acd0a198b9d4566e8f6253ef1f60fef0ff2be"
-  integrity sha512-6+efUAsLIn8jHwb861ftjNmw0QuIhKCeQ3vBgQvPDWDcdL1M7GbPmOUdATQfoPod+m+UGSjLf8Tez2QwYLAG+A==
+react-native-linear-gradient@2.4.4:
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.4.4.tgz#64944a39290eefbede18dfd7e9551f1ef61e3de7"
+  integrity sha512-j2py4Q/9kbbAERe+zZM/ZKjhhe83hYqREECGVfRJxcI1PYf4VPWJ0eth/1EUUTGiRMol8L0M5Zj8MK/KqdhYhw==
 
 react-native-network-info@4.0.0:
   version "4.0.0"
