@@ -4,6 +4,8 @@ import {
 	getInternetCredentials,
 	resetInternetCredentials,
 } from 'react-native-keychain'
+import {trackLogOut, trackLogIn, trackLoginFailure} from '@frogpond/analytics'
+import {Alert} from 'react-native'
 
 import buildFormData from './formdata'
 import {OLECARD_AUTH_URL} from './financials/urls'
@@ -31,13 +33,16 @@ export type LoginResultEnum =
 	| 'bad-credentials'
 	| 'no-credentials'
 
-type Args = {attempts?: number}
+type Args = {username: string, password: string, attempts?: number}
 
-export async function performLogin({attempts = 0}: Args = {}): Promise<
-	LoginResultEnum,
-> {
-	let {username, password} = await loadLoginCredentials()
+export async function performLogin({
+	username,
+	password,
+	attempts = 0,
+}: Args = {}): Promise<LoginResultEnum> {
 	if (!username || !password) {
+		trackLoginFailure('No credentials')
+		showUnknownLoginMessage()
 		return 'no-credentials'
 	}
 
@@ -52,16 +57,48 @@ export async function performLogin({attempts = 0}: Args = {}): Promise<
 		let wasNetworkFailure = err.message === 'Network request failed'
 		if (wasNetworkFailure && attempts > 0) {
 			// console.log(`login failed; trying ${attempts - 1} more time(s)`)
-			return performLogin({attempts: attempts - 1})
+			return performLogin({username, password, attempts: attempts - 1})
 		}
+		trackLoginFailure('No network')
+		showNetworkFailureMessage()
 		return 'network'
 	}
 
 	const page = await loginResult.text()
 
 	if (page.includes('Password')) {
+		trackLoginFailure('Bad credentials')
+		clearLoginCredentials()
+		showInvalidLoginMessage()
 		return 'bad-credentials'
 	}
-
+	trackLogIn()
+	await saveLoginCredentials({username, password})
 	return 'success'
 }
+
+export async function performLogout() {
+	trackLogOut()
+	await clearLoginCredentials()
+}
+
+const showNetworkFailureMessage = () =>
+	Alert.alert(
+		'Network Failure',
+		'You are not connected to the internet. Please connect if you want to access this feature.',
+		[{text: 'OK'}],
+	)
+
+const showInvalidLoginMessage = () =>
+	Alert.alert(
+		'Invalid Login',
+		'The username and password you provided do not match a valid account. Please try again.',
+		[{text: 'OK'}],
+	)
+
+const showUnknownLoginMessage = () =>
+	Alert.alert(
+		'Unknown Login',
+		'No username and password were provided. Please try again.',
+		[{text: 'OK'}],
+	)
