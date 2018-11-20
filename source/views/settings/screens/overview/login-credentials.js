@@ -4,36 +4,26 @@ import * as React from 'react'
 import {Cell, Section, CellTextField} from '@frogpond/tableview'
 import {LoginButton} from './login-button'
 import {
-	logInViaCredentials,
-	logOutViaCredentials,
-	type LoginStateType,
-} from '../../../../redux/parts/settings'
-import {loadLoginCredentials} from '../../../../lib/login'
-import {type ReduxState} from '../../../../redux'
-import {connect} from 'react-redux'
+	loadLoginCredentials,
+	performLogin,
+	performLogout,
+} from '../../../../lib/login'
 import noop from 'lodash/noop'
 
-type ReduxStateProps = {
-	loginState: LoginStateType,
-}
-
-type ReduxDispatchProps = {
-	logIn: (string, string) => any,
-	logOut: () => any,
-}
-
-type Props = ReduxStateProps & ReduxDispatchProps
+type Props = {}
 
 type State = {
+	loginState: 'checking' | 'logged-in' | 'logged-out',
 	username: string,
 	password: string,
 }
 
-class CredentialsLoginSection extends React.Component<Props, State> {
+export class CredentialsLoginSection extends React.Component<Props, State> {
 	_usernameInput: any
 	_passwordInput: any
 
 	state = {
+		loginState: 'checking',
 		username: '',
 		password: '',
 	}
@@ -50,27 +40,42 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		this.setState(() => ({username, password}))
 
 		if (username && password) {
-			this.props.logIn(username, password)
+			this.logIn()
+		} else {
+			this.setState(() => ({loginState: 'logged-out'}))
 		}
 	}
 
-	logIn = () => this.props.logIn(this.state.username, this.state.password)
-
-	logOut = () => {
-		this.setState(() => ({username: '', password: ''}))
-		this.props.logOut()
+	logIn = async () => {
+		this.setState(() => ({loginState: 'checking'}))
+		const result = await performLogin({
+			username: this.state.username,
+			password: this.state.password,
+			attempts: 1,
+		})
+		this.setState(() => ({
+			loginState: result === 'success' ? 'logged-in' : 'logged-out',
+		}))
 	}
 
-	getUsernameRef = ref => (this._usernameInput = ref)
-	getPasswordRef = ref => (this._passwordInput = ref)
+	logOut = async () => {
+		this.setState(() => ({
+			username: '',
+			password: '',
+			loginState: 'logged-out',
+		}))
+		await performLogout()
+	}
 
-	onChangeUsername = (text = '') => this.setState(() => ({username: text}))
-	onChangePassword = (text = '') => this.setState(() => ({password: text}))
+	getUsernameRef = (ref : any) => (this._usernameInput = ref)
+	getPasswordRef = (ref : any) => (this._passwordInput = ref)
+
+	onChangeUsername = (text : string = '') => this.setState(() => ({username: text}))
+	onChangePassword = (text : string = '') => this.setState(() => ({password: text}))
 
 	render() {
-		const {loginState} = this.props
-		const {username, password} = this.state
-
+		const {loginState, username, password} = this.state
+		const loggedOut = loginState === 'logged-out'
 		const loggedIn = loginState === 'logged-in'
 		const loading = loginState === 'checking'
 
@@ -79,8 +84,10 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 				footer="St. Olaf login enables the &quot;meals remaining&quot; feature."
 				header="ST. OLAF LOGIN"
 			>
-				{loggedIn ? (
-					<Cell title={`Logged in as ${username}.`} />
+				{username && !loggedOut ? (
+					<Cell
+						title={`${loggedIn ? 'Logged' : 'Logging'} in as ${username}.`}
+					/>
 				) : (
 					[
 						<CellTextField
@@ -121,23 +128,3 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		)
 	}
 }
-
-function mapStateToProps(state: ReduxState): ReduxStateProps {
-	if (!state.settings) {
-		return {loginState: 'initializing'}
-	}
-
-	return {loginState: state.settings.loginState}
-}
-
-function mapDispatchToProps(dispatch): ReduxDispatchProps {
-	return {
-		logOut: () => dispatch(logOutViaCredentials()),
-		logIn: (user, pass) => dispatch(logInViaCredentials(user, pass)),
-	}
-}
-
-export const ConnectedCredentialsLoginSection = connect(
-	mapStateToProps,
-	mapDispatchToProps,
-)(CredentialsLoginSection)

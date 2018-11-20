@@ -1,8 +1,8 @@
 // @flow
 import {loadLoginCredentials} from '../login'
-import buildFormData from '../formdata'
-import {OLECARD_AUTH_URL, OLECARD_DATA_ENDPOINT} from './urls'
+import {OLECARD_DATA_ENDPOINT} from './urls'
 import type {BalancesShapeType, OleCardBalancesType} from './types'
+import {performLogin} from '../login'
 
 type BalancesOrErrorType =
 	| {error: true, value: Error}
@@ -12,18 +12,13 @@ export async function getBalances(): Promise<BalancesOrErrorType> {
 	const {username, password} = await loadLoginCredentials()
 
 	if (!username || !password) {
-		return {error: true, value: new Error('Not logged in')}
+		return {error: true, value: new Error('Login failed')}
 	}
 
-	const form = buildFormData({username, password})
-
 	try {
-		let loginResponse = await fetch(OLECARD_AUTH_URL, {
-			method: 'POST',
-			body: form,
-		})
+		const loginResponse = await performLogin({username, password, attempts: 1})
 
-		if (loginResponse.url.includes('message=')) {
+		if (loginResponse !== 'success') {
 			return {error: true, value: new Error('Login failed')}
 		}
 

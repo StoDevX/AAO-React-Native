@@ -12,10 +12,7 @@ import {
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from '@frogpond/tableview'
-import {
-	hasSeenAcknowledgement,
-	type LoginStateType,
-} from '../../redux/parts/settings'
+import {hasSeenAcknowledgement} from '../../redux/parts/settings'
 import {getBalances} from '../../lib/financials'
 import {type ReduxState} from '../../redux'
 import delay from 'delay'
@@ -29,7 +26,6 @@ const LONG_DISCLAIMER =
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
-	loginState: LoginStateType,
 	alertSeen: boolean,
 }
 
@@ -41,6 +37,7 @@ type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
 
 type State = {
 	loading: boolean,
+	loginState: 'checking' | 'logged-in' | 'logged-out',
 	flex: ?string,
 	ole: ?string,
 	print: ?string,
@@ -58,6 +55,7 @@ class BalancesView extends React.PureComponent<Props, State> {
 
 	state = {
 		loading: false,
+		loginState: 'checking',
 		flex: null,
 		ole: null,
 		print: null,
@@ -97,6 +95,9 @@ class BalancesView extends React.PureComponent<Props, State> {
 		let balances = await getBalances()
 
 		if (balances.error === true) {
+			if (balances.value.message === 'Login failed') {
+				this.setState(() => ({loginState: 'logged-out'}))
+			}
 			return
 		}
 
@@ -112,6 +113,7 @@ class BalancesView extends React.PureComponent<Props, State> {
 			weeklyMeals,
 			dailyMeals,
 			mealPlan,
+			loginState: 'logged-in',
 		}))
 	}
 
@@ -129,8 +131,8 @@ class BalancesView extends React.PureComponent<Props, State> {
 			mealPlan,
 			message,
 			loading,
+			loginState,
 		} = this.state
-		let {loginState} = this.props
 
 		return (
 			<ScrollView
@@ -192,9 +194,9 @@ class BalancesView extends React.PureComponent<Props, State> {
 					</Section>
 				</TableView>
 
-				{(loginState !== 'logged-in' || message) && (
+				{(loginState === 'logged-out' || message) && (
 					<Section footer="You'll need to log in in order to see this data.">
-						{loginState !== 'logged-in' ? (
+						{loginState === 'logged-out' ? (
 							<Cell
 								accessory="DisclosureIndicator"
 								cellStyle="Basic"
@@ -214,7 +216,6 @@ class BalancesView extends React.PureComponent<Props, State> {
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
 		alertSeen: state.settings ? state.settings.unofficiallyAcknowledged : false,
-		loginState: state.settings ? state.settings.loginState : 'logged-out',
 	}
 }
 
