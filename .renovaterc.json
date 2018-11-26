@@ -1,7 +1,8 @@
 {
   "extends": [
     "config:base",
-    ":semanticCommitsDisabled"
+    ":semanticCommitsDisabled",
+    ":maintainLockFilesWeekly"
   ],
   "prConcurrentLimit": 3,
   "schedule": [
