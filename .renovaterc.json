@@ -18,6 +18,10 @@
   ],
   "packageRules": [
     {
+      "packageNames": ["jsc-android"],
+      "followTag": "latest"
+    },
+    {
       "packagePatterns": ["^moment"],
       "groupName": "moment packages"
     },
