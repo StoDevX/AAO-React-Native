@@ -14,6 +14,9 @@ def git_changelog
   pr_merges = sh("git log #{from_ref}..#{to_ref} --oneline --grep 'Merge pull request'")
 
   "Merged Pull Requests as of #{describe}:\n\n#{pr_merges}"
+    .gsub(/pull request |StoDevX\//,'')
+    .gsub(/Merge/, '—')
+    .gsub(' from', ': ')
 end
 
 # Makes a changelog from the timespan passed
