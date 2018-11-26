@@ -11,7 +11,7 @@ def git_changelog
 
   describe = sh("git describe --tags #{to_ref}")
 
-  pr_merges = sh("git log #{from_ref}..#{to_ref} --oneline --grep 'Merge pull request'")
+  pr_merges = sh("git log #{from_ref}..#{to_ref} --pretty='format:%s' --grep 'Merge pull request'")
 
   "Merged Pull Requests as of #{describe}:\n\n#{pr_merges}"
     .gsub(/pull request |StoDevX\//,'')
