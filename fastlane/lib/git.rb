@@ -9,14 +9,13 @@ def git_changelog
   to_ref = ENV['TRAVIS_COMMIT'] || ENV['CIRCLE_SHA1'] || 'HEAD'
   from_ref = newest_tag
 
-  graph = sh("git log #{from_ref}..#{to_ref} --oneline --graph")
+  describe = sh("git describe --tags #{to_ref}")
 
-  # make sure to trim off whitespace from the graph lines
-  # to keep the character count down
-  graph
-    .lines
-    .map(&:chomp)
-    .join "\n"
+  pr_merges = sh("git log #{from_ref}..#{to_ref} --pretty='format:%s' --grep 'Merge pull request'")
+
+  "Merged Pull Requests as of #{describe}:\n\n#{pr_merges}"
+    .gsub(/Merge pull request |StoDevX\//,'')
+    .gsub(' from ', ': ')
 end
 
 # Makes a changelog from the timespan passed
