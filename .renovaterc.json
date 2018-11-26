@@ -30,7 +30,7 @@
       "groupName": "react-navigation packages"
     },
     {
-      "packagePatterns": ["^redux$", "^react-redux$"],
+      "packageNames": ["redux", "react-redux"],
       "groupName": "redux packages"
     }
   ]
