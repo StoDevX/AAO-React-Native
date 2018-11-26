@@ -12,7 +12,6 @@
     "compress-data": "gzip --keep docs/*.json",
     "danger": "danger ci",
     "data": "node scripts/bundle-data.js data/ docs/",
-    "fix-rn": "bash scripts/fix-rn.sh",
     "d": "yarn-deduplicate yarn.lock && yarn",
     "flow": "flow",
     "ios": "react-native run-ios",
