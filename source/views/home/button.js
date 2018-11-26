@@ -57,9 +57,8 @@ function TouchableButton({onPress, label, children, tint, gradient}) {
 function TouchableWrapper({onPress, children, label}) {
 	return (
 		<Touchable
-			accessibilityComponentType="button"
 			accessibilityLabel={label}
-			accessibilityTraits="button"
+			accessibilityRole="button"
 			accessible={true}
 			highlight={false}
 			onPress={onPress}

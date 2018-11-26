@@ -40,7 +40,11 @@ export function DietaryTagsDetail({
 	let tags = map(filtered, (dietaryIcon, key) => (
 		<Row key={key} alignItems="center" style={styles.wrapper}>
 			<Row flex={1}>
-				<Image source={{uri: dietaryIcon.image}} style={styles.iconsDetail} />
+				<Image
+					accessibilityIgnoresInvertColors={true}
+					source={{uri: dietaryIcon.image}}
+					style={styles.iconsDetail}
+				/>
 				<Text>{dietaryIcon.label}</Text>
 			</Row>
 		</Row>

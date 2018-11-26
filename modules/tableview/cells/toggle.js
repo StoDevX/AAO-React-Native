@@ -20,9 +20,8 @@ function CellToggle(props: PropsType) {
 	let toggle = (
 		<Switch
 			disabled={disabled}
-			onTintColor={theme.switchTintOn}
 			onValueChange={onChange}
-			tintColor={theme.switchTintOff}
+			trackColor={{true: theme.switchTintOn, false: theme.switchTintOff}}
 			value={value}
 		/>
 	)

@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
 })
 
 function formatNumber(phoneNumber: string) {
-	const re = /(\d{3})-?(\d{3})-?(\d{4})/g
+	const re = /(\d{3})-?(\d{3})-?(\d{4})/gu
 	return phoneNumber.replace(re, '($1) $2-$3')
 }
 
