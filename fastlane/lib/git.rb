@@ -9,11 +9,9 @@ def git_changelog
   to_ref = ENV['TRAVIS_COMMIT'] || ENV['CIRCLE_SHA1'] || 'HEAD'
   from_ref = newest_tag
 
-  graph = sh("git log #{from_ref}..#{to_ref} --oneline --grep 'Merge pull request'")
+  merged_prs = sh("git log #{from_ref}..#{to_ref} --oneline --grep 'Merge pull request'")
 
-  # make sure to trim off whitespace from the graph lines
-  # to keep the character count down
-  graph
+  merged_prs
     .lines
     .map(&:chomp)
     .join "\n"
