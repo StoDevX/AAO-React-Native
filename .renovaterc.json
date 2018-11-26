@@ -1,5 +1,25 @@
 {
   "extends": [
     "config:base"
+  ],
+  "ignoreDeps": [
+    "flow-bin",
+    "metro-react-native-babel-preset",
+    "react",
+    "react-test-renderer"
+  ],
+  "packageRules": [
+    {
+      "packagePatterns": ["^moment"],
+      "groupName": "moment packages"
+    },
+    {
+      "packagePatterns": ["^react-navigation"],
+      "groupName": "react-navigation packages"
+    },
+    {
+      "packagePatterns": ["^redux$", "^react-redux$"],
+      "groupName": "redux packages"
+    }
   ]
 }
