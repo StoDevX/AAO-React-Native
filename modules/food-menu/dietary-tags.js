@@ -37,6 +37,7 @@ export function DietaryTags({
 	let tags = map(filtered, (dietaryIcon, key) => (
 		<Image
 			key={key}
+			accessibilityIgnoresInvertColors={true}
 			source={{uri: dietaryIcon.image}}
 			style={styles.iconsList}
 		/>

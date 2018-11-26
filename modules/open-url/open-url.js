@@ -36,9 +36,9 @@ function androidOpen(url: string) {
 }
 
 export function openUrl(url: string) {
-	const protocol = /^(.*?):/.exec(url)
+	const protocol = /^(.*?):/u.exec(url)
 
-	if (protocol.length) {
+	if (protocol && protocol.length) {
 		switch (protocol[1]) {
 			case 'tel':
 				return genericOpen(url)
@@ -67,7 +67,7 @@ export function trackedOpenUrl({url, id}: {url: string, id?: string}) {
 export function canOpenUrl(url: string) {
 	// iOS navigates to about:blank when you provide raw HTML to a webview.
 	// Android navigates to data:text/html;$stuff (that is, the document you passed) instead.
-	if (/^(?:about|data):/.test(url)) {
+	if (/^(?:about|data):/u.test(url)) {
 		return false
 	}
 	return true

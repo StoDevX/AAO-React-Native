@@ -103,7 +103,7 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 			},
 		)
 
-		const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/i
+		const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/iu
 		const withSortableNames = responseData.map(item => {
 			const sortableName = item.name.replace(sortableRegex, '')
 

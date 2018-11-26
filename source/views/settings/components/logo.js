@@ -32,6 +32,12 @@ export class AppLogo extends React.Component<Props, State> {
 	}
 
 	render() {
-		return <LogoImage source={this.state.icon} style={this.props.style} />
+		return (
+			<LogoImage
+				accessibilityIgnoresInvertColors={true}
+				source={this.state.icon}
+				style={this.props.style}
+			/>
+		)
 	}
 }

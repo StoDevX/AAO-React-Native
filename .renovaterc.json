@@ -1,0 +1,37 @@
+{
+  "extends": [
+    "config:base",
+    ":semanticCommitsDisabled",
+    ":maintainLockFilesWeekly"
+  ],
+  "prConcurrentLimit": 3,
+  "schedule": [
+    "after 10pm every weekday",
+    "before 5am every weekday",
+    "every weekend"
+  ],
+  "ignoreDeps": [
+    "flow-bin",
+    "metro-react-native-babel-preset",
+    "react",
+    "react-test-renderer"
+  ],
+  "packageRules": [
+    {
+      "packageNames": ["jsc-android"],
+      "followTag": "latest"
+    },
+    {
+      "packagePatterns": ["^moment"],
+      "groupName": "moment packages"
+    },
+    {
+      "packagePatterns": ["^react-navigation"],
+      "groupName": "react-navigation packages"
+    },
+    {
+      "packageNames": ["redux", "react-redux"],
+      "groupName": "redux packages"
+    }
+  ]
+}
