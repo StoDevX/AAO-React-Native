@@ -3,6 +3,12 @@
     "config:base",
     ":semanticCommitsDisabled"
   ],
+  "prConcurrentLimit": 3,
+  "schedule": [
+    "after 10pm every weekday",
+    "before 5am every weekday",
+    "every weekend"
+  ],
   "ignoreDeps": [
     "flow-bin",
     "metro-react-native-babel-preset",
