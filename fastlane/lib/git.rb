@@ -14,8 +14,7 @@ def git_changelog
   pr_merges = sh("git log #{from_ref}..#{to_ref} --pretty='format:%s' --grep 'Merge pull request'")
 
   "Merged Pull Requests as of #{describe}:\n\n#{pr_merges}"
-    .gsub(/pull request |StoDevX\//,'')
-    .gsub(/Merge/, '—')
+    .gsub(/Merge pull request |StoDevX\//,'')
     .gsub(' from', ': ')
 end
 
