@@ -18,7 +18,8 @@ export const SelectableCell = ({text}: {text: string}) => (
 		dataDetectorTypes="all"
 		editable={false}
 		multiline={true}
-		scrollEnabled={false}
+		// TODO(react-native@0.58): enable this once React Native no longer dies when opening Settings
+		//scrollEnabled={false}
 		style={styles.text}
 		value={text}
 	/>

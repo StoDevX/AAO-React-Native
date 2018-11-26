@@ -95,7 +95,8 @@ export class CellTextField extends React.Component<Props> {
 				placeholder={this.props.placeholder}
 				placeholderTextColor={c.iosPlaceholderText}
 				returnKeyType={this.props.returnKeyType}
-				scrollEnabled={false}
+				// TODO(react-native@0.58): enable this once React Native no longer dies when opening Settings
+				//scrollEnabled={false}
 				secureTextEntry={this.props.secureTextEntry}
 				style={[styles.customTextInput]}
 				value={this.props.value}
