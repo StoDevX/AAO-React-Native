@@ -9,12 +9,7 @@ def git_changelog
   to_ref = ENV['TRAVIS_COMMIT'] || ENV['CIRCLE_SHA1'] || 'HEAD'
   from_ref = newest_tag
 
-  merged_prs = sh("git log #{from_ref}..#{to_ref} --oneline --grep 'Merge pull request'")
-
-  merged_prs
-    .lines
-    .map(&:chomp)
-    .join "\n"
+  pr_merges = sh("git log #{from_ref}..#{to_ref} --oneline --grep 'Merge pull request'")
 end
 
 # Makes a changelog from the timespan passed
