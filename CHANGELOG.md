@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Refactored Fastlane files to resolve some code style issues
 - Updated Android JSC requirement to r236355
 - Pipe Detox output through xcpretty to reduce noise (#3188)
+- Changed Fastlane Testflight changelog format to be more concise
 
 ## [2.6.3] - 2018-09-17
 ### Fixed
