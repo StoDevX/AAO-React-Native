@@ -15,7 +15,7 @@ def git_changelog
 
   "Merged Pull Requests as of #{describe}:\n\n#{pr_merges}"
     .gsub(/Merge pull request |StoDevX\//,'')
-    .gsub(' from', ': ')
+    .gsub(' from ', ': ')
 end
 
 # Makes a changelog from the timespan passed
