@@ -51,6 +51,7 @@ def deps_diff(old_hash, new_hash, path)
   (new_hash.dig(*path).to_a - old_hash.dig(*path).to_a).to_h
 end
 
+NPM_DEP_NAME_REGEXP = /react|jsc/.freeze
 def npm_native_package_changed?
   old_package = JSON.parse(sh "git show '#{source_branch}:package.json'")
   new_package = JSON.parse(sh "git show '#{current_branch}:package.json'")
@@ -58,8 +59,7 @@ def npm_native_package_changed?
   changed_dependencies = deps_diff(old_package, new_package, ['dependencies']).keys
   changed_devdependencies = deps_diff(old_package, new_package, ['devDependencies']).keys
 
-  dep_name_regex = /react|jsc/
-  (changed_dependencies + changed_devdependencies).any? { |dep| dep =~ dep_name_regex }
+  (changed_dependencies + changed_devdependencies).any? { |dep| dep =~ NPM_DEP_NAME_REGEXP }
 end
 
 def native_build_globs
@@ -114,7 +114,7 @@ def should_build?
 
   # 2. check for "packages we care about"
   if changed_files.include? 'package.json' and npm_native_package_changed?
-    UI.message('should_build? some react|jsc dep changed, so yes')
+    UI.message("should_build? some dependency matching #{NPM_DEP_NAME_REGEXP.inspect} changed, so yes")
     return true
   end
 
