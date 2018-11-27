@@ -45,3 +45,76 @@ end
 def circle?
   ENV['CIRCLECI'] == 'true'
 end
+
+# diff two hashes at a path and return the changed items
+def deps_diff(old_hash, new_hash, path)
+  (new_hash.dig(*path).to_a - old_hash.dig(*path).to_a).to_h
+end
+
+# checks if the native build needs to be run
+def should_build?
+  # Essentially, we want to avoid native builds if the only thing that changed was JS code.
+
+  # TODO: figure out how to determine the actual source branch
+  source_branch = 'master'
+  current_branch = git_branch
+
+  if source_branch == current_branch
+    # if we're on master, we should do the build
+    UI.message("should_build? branch == #{source_branch}, so yes")
+    return true
+  end
+
+  # 1. need to get files changed in the current build since master
+  # 2. compare list of files to our sets of "files we care about"
+  # 3. if any match, return true; otherwise, false
+
+  changed_files = sh("git diff --name-only '#{source_branch}' '#{current_branch}'").lines
+
+  if changed_files.include? 'package.json'
+    old_package = JSON.parse(sh "git show '#{source_branch}:package.json'")
+    new_package = JSON.parse(sh "git show '#{current_branch}:package.json'")
+
+    changed_dependencies = deps_diff(old_package, new_package, ['dependencies']).keys
+    changed_devdependencies = deps_diff(old_package, new_package, ['devDependencies']).keys
+
+    dep_name_regex = /react|jsc/
+    if (changed_dependencies + changed_devdependencies).any? { |dep| dep =~ dep_name_regex }
+      UI.message('should_build? some react|jsc dep changed, so yes')
+      return true
+    end
+  end
+
+  source_globs = [
+    ".circleci/**",
+    "e2e/**",
+    "fastlane/**",
+    "scripts/**",
+    "Gemfile.lock",
+  ]
+
+  case lane_context[:PLATFORM_NAME]
+  when :android
+    platform_globs = [
+      "android/**",
+      "{modules,source}/**/*.java",
+    ]
+  when :ios
+    platform_globs = [
+      "ios/**",
+      "{modules,source}/**/*.{h,m,mm}",
+    ]
+  end
+
+  native_file_changed = (source_globs + platform_globs).any? {
+    |glob| changed_files.any? { |path| File.fnmatch?(glob, path) }
+  }
+
+  if native_file_changed
+    UI.message('should_build? some native file changed, so yes')
+    true
+  else
+    UI.message('should_build? no')
+    false
+  end
+end
