@@ -62,6 +62,39 @@ def npm_native_package_changed?
   (changed_dependencies + changed_devdependencies).any? { |dep| dep =~ dep_name_regex }
 end
 
+def native_build_globs
+  base_globs = [
+    '.circleci/**',
+    'e2e/**',
+    'fastlane/**',
+    'scripts/**',
+    'Gemfile.lock',
+  ]
+
+  case lane_context[:PLATFORM_NAME]
+  when :android
+    base_globs + [
+      'android/**',
+      '{modules,source}/**/*.{java,gradle}',
+    ]
+  when :ios
+    base_globs + [
+      'ios/**',
+      '{modules,source}/**/*.{h,m,mm}',
+    ]
+  else
+    base_globs
+  end
+end
+
+def native_file_changed?(changed_files)
+  native_build_globs.any? do |glob|
+    changed_files.any? do |path|
+      File.fnmatch?(glob, path)
+    end
+  end
+end
+
 # checks if the native build needs to be run
 def should_build?
   # Essentially, we want to avoid native builds if the only thing that changed was JS code.
@@ -77,48 +110,21 @@ def should_build?
   end
 
   # 1. need to get files changed in the current build since master
-  # 2. compare list of files to our sets of "files we care about"
-  # 3. if any match, return true; otherwise, false
-
   changed_files = sh("git diff --name-only '#{source_branch}' '#{current_branch}'").lines
 
+  # 2. check for "packages we care about"
   if changed_files.include? 'package.json' and npm_native_package_changed?
     UI.message('should_build? some react|jsc dep changed, so yes')
     return true
   end
 
-  source_globs = [
-    '.circleci/**',
-    'e2e/**',
-    'fastlane/**',
-    'scripts/**',
-    'Gemfile.lock',
-  ]
-
-  case lane_context[:PLATFORM_NAME]
-  when :android
-    platform_globs = [
-      'android/**',
-      '{modules,source}/**/*.java',
-    ]
-  when :ios
-    platform_globs = [
-      'ios/**',
-      '{modules,source}/**/*.{h,m,mm}',
-    ]
-  else
-    platform_globs = []
-  end
-
-  native_file_changed = (source_globs + platform_globs).any? do |glob|
-    changed_files.any? { |path| File.fnmatch?(glob, path) }
-  end
-
-  if native_file_changed
+  # 3. compare list of files to our sets of "files we care about"
+  if native_file_changed?(changed_files)
     UI.message('should_build? some native file changed, so yes')
     true
-  else
-    UI.message('should_build? no')
-    false
   end
+
+  # 4) if none matched, return false
+  UI.message('should_build? no')
+  false
 end
