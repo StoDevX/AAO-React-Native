@@ -261,6 +261,13 @@ jobs:
       FASTLANE_DISABLE_ANIMATION: '1'
     steps:
       - checkout
+      - run:
+          name: "Reconcile Git histories"
+          command: |
+            git checkout master
+            git reset --hard origin/master
+            git checkout $CIRCLE_BRANCH
+            git reset --hard origin/$CIRCLE_BRANCH
       - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
@@ -322,6 +329,13 @@ jobs:
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
+      - run:
+          name: "Reconcile Git histories"
+          command: |
+            git checkout master
+            git reset --hard origin/master
+            git checkout $CIRCLE_BRANCH
+            git reset --hard origin/$CIRCLE_BRANCH
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
