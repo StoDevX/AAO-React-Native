@@ -7,6 +7,10 @@ def auto_beta
     UI.message 'building beta'
     beta
   elsif api_keys_available?
+    unless should_build?
+      UI.message 'skipping build; no code changes to test'
+      return
+    end
     UI.message 'signing and building, but not deploying'
     build
   else
