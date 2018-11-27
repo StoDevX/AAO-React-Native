@@ -108,9 +108,9 @@ def should_build?
     ]
   end
 
-  native_file_changed = (source_globs + platform_globs).any? {
-    |glob| changed_files.any? { |path| File.fnmatch?(glob, path) }
-  }
+  native_file_changed = (source_globs + platform_globs).any? do |glob|
+    changed_files.any? { |path| File.fnmatch?(glob, path) }
+  end
 
   if native_file_changed
     UI.message('should_build? some native file changed, so yes')
