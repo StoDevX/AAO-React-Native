@@ -1,9 +1,11 @@
 {
   "extends": [
     "config:base",
-    ":semanticCommitsDisabled",
-    ":maintainLockFilesWeekly"
+    ":semanticCommitsDisabled"
   ],
+  "lockFileMaintenance": {
+    "schedule": ["after 5pm on every weekday"]
+  },
   "prConcurrentLimit": 3,
   "timezone": "America/Chicago",
   "ignoreDeps": [
