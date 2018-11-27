@@ -163,7 +163,7 @@ function OpenWebpage({job}: {job: JobType}) {
 		<Section header="">
 			<PushButtonCell
 				onPress={() => openUrl(createJobFullUrl(job))}
-				title="Open original posting webpage"
+				title="Open Posting"
 			/>
 		</Section>
 	) : null
