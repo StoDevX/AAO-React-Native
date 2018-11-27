@@ -4747,10 +4747,10 @@ jsbn@~0.1.0:
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
   integrity sha1-peZUwuWi3rXyAdls77yoDA7y9RM=
 
-jsc-android@236355.0.0:
-  version "236355.0.0"
-  resolved "https://registry.yarnpkg.com/jsc-android/-/jsc-android-236355.0.0.tgz#22795b980e1cded0fc19a7f95fe780601cec8377"
-  integrity sha512-cp9kjlMgQso4x3I1U3f1/pRf+L2ziFfjyeoiSvUPRrHNVl4Qd54RKeV3H5OegWSoofLc2x/U4uuJ/gL8lcsS8A==
+jsc-android@236355.1.1:
+  version "236355.1.1"
+  resolved "https://registry.yarnpkg.com/jsc-android/-/jsc-android-236355.1.1.tgz#43e153b722e3c60dd0595be4e7430baf65e67c9c"
+  integrity sha512-2py4f0McZIl/oH6AzPj1Ebutc58fyeLvwq6gyVYp1RsWr4qeLNHAPfW3kmfeVMz44oUBJMQ0lECZg9n4KBhHbQ==
 
 jsdom@^11.5.1:
   version "11.5.1"
