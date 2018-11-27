@@ -88,23 +88,23 @@ def should_build?
   end
 
   source_globs = [
-    ".circleci/**",
-    "e2e/**",
-    "fastlane/**",
-    "scripts/**",
-    "Gemfile.lock",
+    '.circleci/**',
+    'e2e/**',
+    'fastlane/**',
+    'scripts/**',
+    'Gemfile.lock',
   ]
 
   case lane_context[:PLATFORM_NAME]
   when :android
     platform_globs = [
-      "android/**",
-      "{modules,source}/**/*.java",
+      'android/**',
+      '{modules,source}/**/*.java',
     ]
   when :ios
     platform_globs = [
-      "ios/**",
-      "{modules,source}/**/*.{h,m,mm}",
+      'ios/**',
+      '{modules,source}/**/*.{h,m,mm}',
     ]
   end
 
