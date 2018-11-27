@@ -234,7 +234,7 @@ function changelogSync() {
 		'Gemfile',
 		'index.js',
 	])
-	const definitelyNotNoteworthy = /package\.json|yarn\.lock/
+	const definitelyNotNoteworthy = /package\.json|yarn\.lock/gu
 
 	const changedSourceFiles = danger.git.modified_files.some(file => {
 		let noteworthy = noteworthyFolder.test(file) || noteworthyFiles.has(file)
