@@ -783,10 +783,10 @@ ajv-keywords@^3.0.0:
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-3.2.0.tgz#e86b819c602cf8821ad637413698f1dec021847a"
   integrity sha1-6GuBnGAs+IIa1jdBNpjx3sAhhHo=
 
-ajv@6.5.4, ajv@^6.0.1, ajv@^6.5.3:
-  version "6.5.4"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.5.4.tgz#247d5274110db653706b550fcc2b797ca28cfc59"
-  integrity sha512-4Wyjt8+t6YszqaXnLDfMmG/8AlO5Zbcsy3ATHncCzjW/NoPzAId8AK6749Ybjmdt+kUY1gP60fCu46oDxPv/mg==
+ajv@6.5.5, ajv@^6.0.1, ajv@^6.5.3:
+  version "6.5.5"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.5.5.tgz#cf97cdade71c6399a92c6d6c4177381291b781a1"
+  integrity sha512-7q7gtRQDJSyuEHjuVgHoUa2VuemFiCMrfQc9Tc08XTAc4Zj/5U1buQJ0HU6i7fKjXU09SVgSmxa4sLvuvS8Iyg==
   dependencies:
     fast-deep-equal "^2.0.1"
     fast-json-stable-stringify "^2.0.0"
@@ -1902,10 +1902,10 @@ buffer@5.2.1:
     base64-js "^1.0.2"
     ieee754 "^1.1.4"
 
-bugsnag-react-native@2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/bugsnag-react-native/-/bugsnag-react-native-2.11.0.tgz#a65db95a1b4318e7e0089815ddc4f0779a678616"
-  integrity sha512-1YhPC5ZRCyXvmLuGBklBhNo0/H2Rxs/vU34yij0ElzJsyByYACwMpOEd/NUYdrhEoDSyjStbvAZ9hGSpT587kg==
+bugsnag-react-native@2.12.4:
+  version "2.12.4"
+  resolved "https://registry.yarnpkg.com/bugsnag-react-native/-/bugsnag-react-native-2.12.4.tgz#0a4383ff8c7e11cef9e43cecbcf3cf9d17b16d2e"
+  integrity sha512-4kt1cyU6qLinbtKHZbtOb1ufVPpXAyVtGsKsHKFACfcfSeQdC4gOj9VhD3uEVNtTfUdoIInXzgif0y6fVm/qBA==
   dependencies:
     iserror "^0.0.2"
     promise "^7"

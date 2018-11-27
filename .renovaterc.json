@@ -5,17 +5,15 @@
     ":maintainLockFilesWeekly"
   ],
   "prConcurrentLimit": 3,
-  "schedule": [
-    "after 10pm every weekday",
-    "before 5am every weekday",
-    "every weekend"
-  ],
   "timezone": "America/Chicago",
   "ignoreDeps": [
     "flow-bin",
     "metro-react-native-babel-preset",
     "react",
     "react-test-renderer"
+  ],
+  "labels": [
+    "renovate"
   ],
   "packageRules": [
     {

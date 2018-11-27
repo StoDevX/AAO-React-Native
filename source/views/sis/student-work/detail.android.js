@@ -9,7 +9,7 @@ import {openUrl} from '@frogpond/open-url'
 import * as c from '@frogpond/colors'
 import type {JobType} from './types'
 import {ShareButton} from '@frogpond/navigation-buttons'
-import {shareJob} from './lib'
+import {shareJob, createJobFullUrl} from './lib'
 
 const styles = StyleSheet.create({
 	name: {
@@ -165,6 +165,20 @@ function Timeline({job}: {job: JobType}) {
 	) : null
 }
 
+function OpenWebpage({job}: {job: JobType}) {
+	return job.id ? (
+		<Card header="Webpage" style={styles.card}>
+			<Text
+				key={job.id}
+				onPress={() => openUrl(createJobFullUrl(job))}
+				style={styles.cardBody}
+			>
+				Open Posting
+			</Text>
+		</Card>
+	) : null
+}
+
 function Links({job}: {job: JobType}) {
 	const {links} = job
 	return links.length ? (
@@ -216,6 +230,7 @@ export class JobDetailView extends React.PureComponent<Props> {
 				<Timeline job={job} />
 				<HowToApply job={job} />
 				<Links job={job} />
+				<OpenWebpage job={job} />
 				<LastUpdated when={job.lastModified} />
 			</ScrollView>
 		)
