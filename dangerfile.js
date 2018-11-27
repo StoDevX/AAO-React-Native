@@ -234,10 +234,14 @@ function changelogSync() {
 		'Gemfile',
 		'index.js',
 	])
+	const definitelyNotNoteworthy = /package\.json|yarn\.lock/gu
 
-	const changedSourceFiles = danger.git.modified_files.filter(
-		file => noteworthyFolder.test(file) || noteworthyFiles.has(file),
-	)
+	const changedSourceFiles = danger.git.modified_files.filter(file => {
+		let noteworthy = noteworthyFolder.test(file) || noteworthyFiles.has(file)
+		let excluded = !definitelyNotNoteworthy.test(file)
+
+		return noteworthy && !excluded
+	})
 
 	if (!changedSourceFiles.length) {
 		return
