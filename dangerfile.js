@@ -251,10 +251,8 @@ function changelogSync() {
 				h.summary(
 					'This PR modified important files but does not have any changes to the CHANGELOG.',
 				),
-				h.ul(
-					...changedSourceFiles.map(file => h.li(h.code(file))),
-				),
-			)
+				h.ul(...changedSourceFiles.map(file => h.li(h.code(file)))),
+			),
 		)
 	}
 }
