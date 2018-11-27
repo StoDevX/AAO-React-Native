@@ -167,7 +167,7 @@
     "metro-react-native-babel-preset": "0.48.1",
     "minimist": "1.2.0",
     "mkdirp": "0.5.1",
-    "pify": "4.0.0",
+    "pify": "4.0.1",
     "prettier": "1.14.3",
     "pretty-bytes": "5.1.0",
     "pretty-quick": "1.8.0",
