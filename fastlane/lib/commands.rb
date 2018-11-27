@@ -12,6 +12,8 @@ def auto_beta
 
   unless should_build?
     UI.message 'skipping build; no code changes to test'
+    # since the build was moot, explicitly write 0 as the build status
+    File.open('../logs/build-status', 'w') { |file| file.write('0') }
     return
   end
 
