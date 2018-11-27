@@ -3,16 +3,26 @@ def auto_beta
   if should_nightly?
     UI.message 'building nightly'
     nightly
+    return
   elsif should_beta?
     UI.message 'building beta'
     beta
-  elsif api_keys_available?
+    return
+  end
+
+  unless should_build?
+    UI.message 'skipping build; no code changes to test'
+    return
+  end
+
+  if api_keys_available?
     UI.message 'signing and building, but not deploying'
     build
-  else
-    UI.message 'just building (not signing)'
-    check_build
+    return
   end
+
+  UI.message 'just building (not signing)'
+  check_build
 end
 
 # Adds the github token for stodevx-bot to the CI machine

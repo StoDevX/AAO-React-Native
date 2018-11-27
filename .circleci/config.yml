@@ -261,6 +261,13 @@ jobs:
       FASTLANE_DISABLE_ANIMATION: '1'
     steps:
       - checkout
+      - run:
+          name: "Reconcile Git histories"
+          command: |
+            git checkout master
+            git reset --hard origin/master
+            git checkout "$CIRCLE_BRANCH"
+            git reset --hard "origin/$CIRCLE_BRANCH"
       - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
@@ -274,6 +281,7 @@ jobs:
           environment: {TERM: xterm-256color}
       - save_cache: *save-cache-gradle
       - run: mkdir -p logs/
+      - run: touch logs/build-status
       - run: *embed-env-vars
       - run:
           name: Run Fastlane
@@ -321,6 +329,13 @@ jobs:
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
+      - run:
+          name: "Reconcile Git histories"
+          command: |
+            git checkout master
+            git reset --hard origin/master
+            git checkout "$CIRCLE_BRANCH"
+            git reset --hard "origin/$CIRCLE_BRANCH"
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
@@ -332,6 +347,7 @@ jobs:
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - run: mkdir -p logs/
+      - run: touch logs/build-status
       - run: *embed-env-vars
       - run:
           name: Run Fastlane
