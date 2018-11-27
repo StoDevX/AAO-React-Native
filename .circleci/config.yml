@@ -266,8 +266,8 @@ jobs:
           command: |
             git checkout master
             git reset --hard origin/master
-            git checkout $CIRCLE_BRANCH
-            git reset --hard origin/$CIRCLE_BRANCH
+            git checkout "$CIRCLE_BRANCH"
+            git reset --hard "origin/$CIRCLE_BRANCH"
       - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
@@ -334,8 +334,8 @@ jobs:
           command: |
             git checkout master
             git reset --hard origin/master
-            git checkout $CIRCLE_BRANCH
-            git reset --hard origin/$CIRCLE_BRANCH
+            git checkout "$CIRCLE_BRANCH"
+            git reset --hard "origin/$CIRCLE_BRANCH"
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
