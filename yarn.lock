@@ -4940,10 +4940,10 @@ kefir@^3.7.3:
   dependencies:
     symbol-observable "1.0.4"
 
-keyword-search@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/keyword-search/-/keyword-search-0.1.1.tgz#f7615e739024de410a92dd0071ff20b8ae01956f"
-  integrity sha512-e/sCnjIrZqWN8/FUXh1mxHllcnu+JTVEVG+R0yrXRNfQrj0nUTFb7VH2zY4ynQmz4T0ArMAOCAB1poTE4+kYfw==
+keyword-search@0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/keyword-search/-/keyword-search-0.1.2.tgz#26dac75093b6230e0e498e503890ae25983367e0"
+  integrity sha512-WzkGHe6v/SFS7fszr88f5CVHSNGH2vmtVEs7aV9zZb9fFaV5BqJ4hVfsEeFZNHg19QSsjJ6gjXmpj4ibMUBx2g==
   dependencies:
     hamming "0.0.2"
 
