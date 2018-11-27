@@ -110,7 +110,7 @@ def should_build?
   end
 
   # 1. need to get files changed in the current build since master
-  changed_files = sh("git diff --name-only '#{source_branch}' '#{current_branch}'").lines
+  changed_files = sh("git log --name-only --format='' '#{source_branch}'..'#{current_branch}'").lines.sort.uniq
 
   # 2. check for "packages we care about"
   if changed_files.include? 'package.json' and npm_native_package_changed?
