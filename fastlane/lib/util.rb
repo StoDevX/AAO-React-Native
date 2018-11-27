@@ -121,7 +121,7 @@ def should_build?
   # 3. compare list of files to our sets of "files we care about"
   if native_file_changed?(changed_files)
     UI.message('should_build? some native file changed, so yes')
-    true
+    return true
   end
 
   # 4) if none matched, return false
