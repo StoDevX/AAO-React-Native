@@ -246,7 +246,7 @@ function changelogSync() {
 	const changedChangelog = danger.git.modified_files.includes('CHANGELOG.md')
 
 	if (!changedChangelog) {
-		message(
+		markdown(
 			h.details(
 				h.summary(
 					'This PR modified important files but does not have any changes to the CHANGELOG.',
