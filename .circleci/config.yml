@@ -274,6 +274,7 @@ jobs:
           environment: {TERM: xterm-256color}
       - save_cache: *save-cache-gradle
       - run: mkdir -p logs/
+      - run: touch logs/build-status
       - run: *embed-env-vars
       - run:
           name: Run Fastlane
@@ -332,6 +333,7 @@ jobs:
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - run: mkdir -p logs/
+      - run: touch logs/build-status
       - run: *embed-env-vars
       - run:
           name: Run Fastlane
