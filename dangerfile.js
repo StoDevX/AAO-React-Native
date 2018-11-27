@@ -235,19 +235,26 @@ function changelogSync() {
 		'index.js',
 	])
 
-	const changedSourceFiles = danger.git.modified_files.some(
+	const changedSourceFiles = danger.git.modified_files.filter(
 		file => noteworthyFolder.test(file) || noteworthyFiles.has(file),
 	)
 
-	if (!changedSourceFiles) {
+	if (!changedSourceFiles.length) {
 		return
 	}
 
 	const changedChangelog = danger.git.modified_files.includes('CHANGELOG.md')
 
 	if (!changedChangelog) {
-		warn(
-			'This PR modifies files in source/ but does not have any changes to the CHANGELOG.',
+		message(
+			h.details(
+				h.summary(
+					'This PR modified important files but does not have any changes to the CHANGELOG.',
+				),
+				h.ul(
+					...changedSourceFiles.map(file => h.li(h.code(file))),
+				),
+			)
 		)
 	}
 }
