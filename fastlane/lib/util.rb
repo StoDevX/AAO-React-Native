@@ -106,6 +106,8 @@ def should_build?
       'ios/**',
       '{modules,source}/**/*.{h,m,mm}',
     ]
+  else
+    platform_globs = []
   end
 
   native_file_changed = (source_globs + platform_globs).any? do |glob|
