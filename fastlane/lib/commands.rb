@@ -10,6 +10,10 @@ def auto_beta
     UI.message 'signing and building, but not deploying'
     build
   else
+    unless should_build?
+      UI.message 'skipping build; no code changes to test'
+      return
+    end
     UI.message 'just building (not signing)'
     check_build
   end
