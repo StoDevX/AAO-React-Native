@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 - Added a new "yarn d" command to deduplicate dependencies
 - Added Renovate as our new automated dependency management tool, with a nice configuration (#3193)
+- Added some logic to skip native builds if nothing that might affect them has changed (#3209)
 
 ### Changed
 - Adjusted and deduplicated logic in API scaffolding
