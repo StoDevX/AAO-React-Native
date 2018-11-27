@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 ### Added
 - Added a new "yarn d" command to deduplicate dependencies
+- Add "open webpage" row to student work detail
 
 ### Changed
 - Adjusted and deduplicated logic in API scaffolding
