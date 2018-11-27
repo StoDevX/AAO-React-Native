@@ -13,7 +13,7 @@
     "react-test-renderer"
   ],
   "labels": [
-    "tool/renovate"
+    "renovate"
   ],
   "packageRules": [
     {
