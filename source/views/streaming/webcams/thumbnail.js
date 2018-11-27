@@ -44,13 +44,13 @@ export class StreamThumbnail extends React.PureComponent<Props> {
 			// do not remove this View; it is needed to prevent extra highlighting
 			<View style={styles.cell}>
 				<Touchable
-					activeOpacity={0.7}
 					highlight={true}
 					onPress={this.handlePress}
 					style={{width, height}}
 					underlayColor={baseColor}
 				>
 					<Image
+						accessibilityIgnoresInvertColors={true}
 						resizeMode="cover"
 						source={img}
 						style={[StyleSheet.absoluteFill, {width, height}]}

@@ -36,7 +36,6 @@ export function findMeal(
 		return
 	}
 
-	// TODO: Revisit this typing stuff here when we go to flow@0.39
 	const dayparts: DayPartMenuType[] = meals.map(m => ({
 		starttime: m.starttime,
 		endtime: m.endtime,

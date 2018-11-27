@@ -47,12 +47,12 @@ const files = findFilesIn(fromDir)
 files.forEach(file => {
 	// Get the absolute paths to the input and output files
 	const input = path.join(fromDir, file)
-	const output = path.join(toDir, file).replace(/\.(.*)$/, '.json')
+	const output = path.join(toDir, file).replace(/\.(.*)$/u, '.json')
 	console.log(`convert-data-file ${input} ${output}`)
 	console.time(`convert-data-file ${input} ${output}`)
 	convertDataFile({fromFile: input, toFile: output})
 	if (file.endsWith('.css')) {
-		const dest = output.replace(/\.json/, '.css')
+		const dest = output.replace(/\.json/u, '.css')
 		convertDataFile({fromFile: input, toFile: dest, toFileType: 'css'})
 	}
 	console.timeEnd(`convert-data-file ${input} ${output}`)

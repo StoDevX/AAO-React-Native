@@ -14,9 +14,8 @@ type Props = {
 export function OpenSettingsButton({navigation, buttonStyle}: Props) {
 	return (
 		<Touchable
-			accessibilityComponentType="button"
 			accessibilityLabel="Open Settings"
-			accessibilityTraits="button"
+			accessibilityRole="button"
 			accessible={true}
 			borderless={true}
 			highlight={false}

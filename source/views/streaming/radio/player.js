@@ -200,6 +200,7 @@ export class StreamPlayer extends React.PureComponent<Props> {
 						: {html: this.html(this.props.streamSourceUrl)}
 				}
 				style={this.props.style}
+				useWebKit={true}
 			/>
 		)
 	}

@@ -14,9 +14,8 @@ type Props = {
 export function EditHomeButton({navigation, buttonStyle}: Props) {
 	return (
 		<Touchable
-			accessibilityComponentType="button"
 			accessibilityLabel="Open Edit Home"
-			accessibilityTraits="button"
+			accessibilityRole="button"
 			accessible={true}
 			borderless={true}
 			highlight={false}

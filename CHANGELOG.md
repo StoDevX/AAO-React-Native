@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 ### Added
 - Added a new "yarn d" command to deduplicate dependencies
+- Added Renovate as our new automated dependency management tool, with a nice configuration (#3193)
 - Add "open webpage" row to student work detail
 
 ### Changed
@@ -18,6 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Add a Danger rule to help enforce consistent use of the CHANGELOG
 - Refactored Fastlane files to resolve some code style issues
 - Updated Android JSC requirement to r236355
+- Changed Fastlane Testflight changelog format to be more concise
+- Pipe Detox output through xcpretty to reduce noise (#3188)
 
 ## [2.6.3] - 2018-09-17
 ### Fixed

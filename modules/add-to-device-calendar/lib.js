@@ -5,25 +5,23 @@ import {notify} from '@frogpond/analytics'
 import RNCalendarEvents from 'react-native-calendar-events'
 import {Alert, Linking, Platform} from 'react-native'
 
-export function addToCalendar(event: EventType): Promise<boolean> {
-	return RNCalendarEvents.authorizationStatus()
-		.then(authStatus => {
-			if (authStatus !== 'authorized') {
-				return requestCalendarAccess()
-			}
-			return true
-		})
-		.then(status => {
-			if (!status) {
-				return false
-			}
-			return saveEventToCalendar(event)
-		})
-		.catch(err => {
-			notify(err)
-			console.error(err)
+export async function addToCalendar(event: EventType): Promise<boolean> {
+	try {
+		let authCode = await RNCalendarEvents.authorizationStatus()
+
+		let authStatus =
+			authCode === 'authorized' ? true : await requestCalendarAccess()
+
+		if (!authStatus) {
 			return false
-		})
+		}
+
+		return await saveEventToCalendar(event)
+	} catch (error) {
+		notify(error)
+		console.error(error)
+		return false
+	}
 }
 
 async function saveEventToCalendar(event: EventType): Promise<boolean> {
