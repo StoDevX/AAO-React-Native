@@ -236,22 +236,27 @@ function changelogSync() {
 	])
 	const definitelyNotNoteworthy = /package\.json|yarn\.lock/gu
 
-	const changedSourceFiles = danger.git.modified_files.some(file => {
+	const changedSourceFiles = danger.git.modified_files.filter(file => {
 		let noteworthy = noteworthyFolder.test(file) || noteworthyFiles.has(file)
 		let excluded = !definitelyNotNoteworthy.test(file)
 
 		return noteworthy && !excluded
 	})
 
-	if (!changedSourceFiles) {
+	if (!changedSourceFiles.length) {
 		return
 	}
 
 	const changedChangelog = danger.git.modified_files.includes('CHANGELOG.md')
 
 	if (!changedChangelog) {
-		warn(
-			'This PR modifies files in source/ but does not have any changes to the CHANGELOG.',
+		markdown(
+			h.details(
+				h.summary(
+					'This PR modified important files but does not have any changes to the CHANGELOG.',
+				),
+				h.ul(...changedSourceFiles.map(file => h.li(h.code(file)))),
+			),
 		)
 	}
 }
