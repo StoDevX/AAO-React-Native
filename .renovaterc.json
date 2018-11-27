@@ -12,6 +12,9 @@
     "react",
     "react-test-renderer"
   ],
+  "labels": [
+    "renovate"
+  ],
   "packageRules": [
     {
       "packageNames": ["jsc-android"],
