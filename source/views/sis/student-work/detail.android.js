@@ -173,7 +173,7 @@ function OpenWebpage({job}: {job: JobType}) {
 				onPress={() => openUrl(createJobFullUrl(job))}
 				style={styles.cardBody}
 			>
-				Open original posting webpage
+				Open Posting
 			</Text>
 		</Card>
 	) : null
