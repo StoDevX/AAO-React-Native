@@ -51,6 +51,17 @@ def deps_diff(old_hash, new_hash, path)
   (new_hash.dig(*path).to_a - old_hash.dig(*path).to_a).to_h
 end
 
+def npm_native_package_changed?
+  old_package = JSON.parse(sh "git show '#{source_branch}:package.json'")
+  new_package = JSON.parse(sh "git show '#{current_branch}:package.json'")
+
+  changed_dependencies = deps_diff(old_package, new_package, ['dependencies']).keys
+  changed_devdependencies = deps_diff(old_package, new_package, ['devDependencies']).keys
+
+  dep_name_regex = /react|jsc/
+  (changed_dependencies + changed_devdependencies).any? { |dep| dep =~ dep_name_regex }
+end
+
 # checks if the native build needs to be run
 def should_build?
   # Essentially, we want to avoid native builds if the only thing that changed was JS code.
@@ -71,18 +82,9 @@ def should_build?
 
   changed_files = sh("git diff --name-only '#{source_branch}' '#{current_branch}'").lines
 
-  if changed_files.include? 'package.json'
-    old_package = JSON.parse(sh "git show '#{source_branch}:package.json'")
-    new_package = JSON.parse(sh "git show '#{current_branch}:package.json'")
-
-    changed_dependencies = deps_diff(old_package, new_package, ['dependencies']).keys
-    changed_devdependencies = deps_diff(old_package, new_package, ['devDependencies']).keys
-
-    dep_name_regex = /react|jsc/
-    if (changed_dependencies + changed_devdependencies).any? { |dep| dep =~ dep_name_regex }
-      UI.message('should_build? some react|jsc dep changed, so yes')
-      return true
-    end
+  if changed_files.include? 'package.json' and npm_native_package_changed?
+    UI.message('should_build? some react|jsc dep changed, so yes')
+    return true
   end
 
   source_globs = [
