@@ -9,10 +9,6 @@ def sh(cmd)
   output
 end
 
-def git_branch
-  sh('git rev-parse --abbrev-ref HEAD')
-end
-
 # diff two hashes at a path and return the changed items
 def hash_diff(old_hash, new_hash, path)
   (new_hash.dig(*path).to_a - old_hash.dig(*path).to_a).to_h
