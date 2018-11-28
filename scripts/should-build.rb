@@ -62,9 +62,9 @@ def native_file_changed?(changed_files)
   end
 end
 
-# checks if the native build needs to be run
 def should_build?
-  # Essentially, we want to avoid native builds if the only thing that changed was JS code.
+  # Essentially, we want to avoid native builds if the only thing that changed
+  # was JS code.
 
   # TODO: figure out how to determine the actual source branch
   source_branch = 'master'
@@ -72,7 +72,7 @@ def should_build?
 
   if source_branch == current_branch
     # if we're on master, we should do the build
-    puts("should_build? branch == #{source_branch}, so yes")
+    puts "branch == #{source_branch}"
     return true
   end
 
@@ -81,18 +81,18 @@ def should_build?
 
   # 2. check for "packages we care about"
   if changed_files.include? 'package.json' and npm_native_package_changed?
-    puts("should_build? some dependency matching #{NPM_DEP_NAME_REGEXP.inspect} changed, so yes")
+    puts "some dependency matching #{NPM_DEP_NAME_REGEXP.inspect} changed"
     return true
   end
 
   # 3. compare list of files to our sets of "files we care about"
   if native_file_changed?(changed_files)
-    puts('should_build? some native file changed, so yes')
+    puts 'some native file changed'
     return true
   end
 
   # 4) if none matched, return false
-  puts('should_build? no')
+  puts 'skip build'
   false
 end
 
