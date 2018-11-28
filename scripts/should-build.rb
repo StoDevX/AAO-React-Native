@@ -78,12 +78,6 @@ def should_build?
   source_branch = 'master'
   current_branch = git_branch
 
-  if source_branch == current_branch
-    # if we're on master, we should do the build
-    puts "branch == #{source_branch}"
-    return true
-  end
-
   # 1. need to get files changed in the current build since master
   changed_files = git_log_between(source_branch, current_branch).lines.sort.uniq
 
