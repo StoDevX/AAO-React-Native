@@ -70,12 +70,22 @@ end
 
 # checks if the native build needs to be run
 def should_build?
-  # Essentially, we want to avoid native builds if the only thing that changed
-  # was JS code.
+  # Find the oldest common revision between HEAD's parent and our
+  # default branch.
+  #
+  # HEAD's parent may _be_ our default branch, or the commit before
+  # `master` if we've forked to a branch off it.  More than likely,
+  # though, `HEAD^1` is some commit in our stream of history, and will
+  # be sufficient to find the starting point of divergence, if such a
+  # point exists.
+  #
+  # If HEAD is a merge commit on `master`, then HEAD^1 points to the
+  # previous commit on `master`, which should clearly be completely
+  # separate from the branch that was merged, and hence the fork point
+  # will be the point of divergence.
+  oldest_shared_revision = sh("git merge-base '#{DEFAULT_BRANCH}' 'HEAD^1'")
 
-	oldest_shared_revision = sh("git merge-base '#{DEFAULT_BRANCH}' 'HEAD^1'")
-
-	# Get all files that changed between the fork point and HEAD
+  # Get all files that changed between the fork point and HEAD
   changed_files = git_log_between(oldest_shared_revision, 'HEAD').lines.sort.uniq
 
   # 1. Check if any packages we care about changed
