@@ -1,6 +1,6 @@
 require 'json'
 
-PLATFORM = ENV.fetch('task', 'unknown')
+PLATFORM = (ENV['task'] || 'unknown').freeze
 
 def sh(cmd)
   puts "$ #{cmd}"
