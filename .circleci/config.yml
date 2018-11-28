@@ -200,24 +200,20 @@ workflows:
     # different CIRCLE_WORKFLOW_ID, which should allow us to only deploy
     # nightlies from that branch.
     jobs: &basic-jobs
-      - cache-yarn-linux: &only-tags
+      - cache-yarn-linux:
           filters: &filters {tags: {only: /.*/}}
-      - cache-bundler-linux: *only-tags
-      - danger: &basic-job
-          filters: *filters
-          requires: [cache-yarn-linux]
-      - flow: *basic-job
-      - jest: *basic-job
-      - yarn-dedupe: *basic-job
-      - prettier: *basic-job
-      - eslint: *basic-job
-      - data: *basic-job
-      - ios: &enhanced-job
-          filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
-      - android: *enhanced-job
-      - ios-bundle: *enhanced-job
-      - android-bundle: *enhanced-job
+      - cache-bundler-linux: {filters: *filters}
+      - danger: {filters: *filters, requires: [cache-yarn-linux]}
+      - flow: {filters: *filters, requires: [cache-yarn-linux]}
+      - jest: {filters: *filters, requires: [cache-yarn-linux]}
+      - yarn-dedupe: {filters: *filters, requires: [cache-yarn-linux]}
+      - prettier: {filters: *filters, requires: [cache-yarn-linux]}
+      - eslint: {filters: *filters, requires: [cache-yarn-linux]}
+      - data: {filters: *filters, requires: [cache-yarn-linux]}
+      - ios: {filters: *filters, requires: [danger, flow, jest, prettier, eslint, data]}
+      - android: {filters: *filters, requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]}
+      - ios-bundle: {filters: *filters, requires: [danger, flow, jest, prettier, eslint, data]}
+      - android-bundle: {filters: *filters, requires: [danger, flow, jest, prettier, eslint, data]}
 
   nightly:
     triggers:
@@ -227,15 +223,15 @@ workflows:
     jobs:
       - cache-yarn-linux
       - cache-bundler-linux
-      - danger: &basic-nightly {requires: [cache-yarn-linux]}
-      - flow: *basic-nightly
-      - jest: *basic-nightly
-      - yarn-dedupe: *basic-nightly
-      - prettier: *basic-nightly
-      - eslint: *basic-nightly
-      - data: *basic-nightly
-      - ios-nightly: &enhanced-nightly {requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]}
-      - android-nightly: *enhanced-nightly
+      - danger: {requires: [cache-yarn-linux]}
+      - flow: {requires: [cache-yarn-linux]}
+      - jest: {requires: [cache-yarn-linux]}
+      - yarn-dedupe: {requires: [cache-yarn-linux]}
+      - prettier: {requires: [cache-yarn-linux]}
+      - eslint: {requires: [cache-yarn-linux]}
+      - data: {requires: [cache-yarn-linux]}
+      - ios-nightly: {requires: [danger, flow, jest, prettier, eslint, data]}
+      - android-nightly: {requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]}
 
 jobs:
   cache-yarn-linux:
