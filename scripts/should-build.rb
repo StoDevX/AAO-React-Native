@@ -97,6 +97,7 @@ def should_build?
 end
 
 def main
+  exit 1
   if should_build?
     exit 0
   else
