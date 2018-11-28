@@ -89,9 +89,7 @@ export const fetchRecentPrinters = (
 
 const colorPrintersUrl = API('/printing/color-printers')
 
-export const fetchColorPrinters = (): Promise<
-	ColorPrintersResponseOrErrorType,
-> =>
+export const fetchColorPrinters = (): Promise<ColorPrintersResponseOrErrorType> =>
 	fetchJson(colorPrintersUrl)
 		.then(response => ({
 			error: false,

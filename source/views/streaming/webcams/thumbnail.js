@@ -37,8 +37,8 @@ export class StreamThumbnail extends React.PureComponent<Props> {
 		const img = thumbnailUrl
 			? {uri: thumbnailUrl}
 			: webcamImages.hasOwnProperty(thumbnail)
-				? webcamImages[thumbnail]
-				: transparentPixel
+			? webcamImages[thumbnail]
+			: transparentPixel
 
 		return (
 			// do not remove this View; it is needed to prevent extra highlighting

@@ -33,9 +33,9 @@ export type LoginResultEnum =
 
 type Args = {attempts?: number}
 
-export async function performLogin({attempts = 0}: Args = {}): Promise<
-	LoginResultEnum,
-> {
+export async function performLogin({
+	attempts = 0,
+}: Args = {}): Promise<LoginResultEnum> {
 	let {username, password} = await loadLoginCredentials()
 	if (!username || !password) {
 		return 'no-credentials'

@@ -46,9 +46,9 @@ function DottedBar({style, theme}: Props) {
 	)
 }
 
-const ThemedDottedBar: React.StatelessFunctionalComponent<
-	BaseProps,
-> = (withTheme(DottedBar): any)
+const ThemedDottedBar: React.StatelessFunctionalComponent<BaseProps> = (withTheme(
+	DottedBar,
+): any)
 
 const solidBarStyles = StyleSheet.create({
 	border: {

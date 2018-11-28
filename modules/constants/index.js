@@ -50,8 +50,8 @@ export const userAgent = () => {
 		Platform.OS === 'ios'
 			? 'iOS'
 			: Platform.OS === 'android'
-				? 'Android'
-				: 'unknown'
+			? 'Android'
+			: 'unknown'
 
 	const platformVersion = Platform.Version || 'unknown'
 
