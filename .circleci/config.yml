@@ -272,7 +272,7 @@ jobs:
       - run: touch logs/build-status
       - run: 
           name: Skip build if possible
-          command: ruby scripts/should-build.rb || circleci step halt
+          command: ruby scripts/should_build.rb || circleci step halt
       - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
@@ -343,7 +343,7 @@ jobs:
       - run: touch logs/build-status
       - run: 
           name: Skip build if possible
-          command: ruby scripts/should-build.rb || circleci step halt
+          command: ruby scripts/should_build.rb || circleci step halt
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
