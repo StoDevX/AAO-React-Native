@@ -178,18 +178,26 @@ function flowAnnotated() {
 
 // Warn if tests have been enabled to the exclusion of all others
 function exclusionaryTests() {
-	danger.git.created_files
+	let exclusionary = danger.git.created_files
 		.filter(filepath => filepath.endsWith('.test.js'))
 		.map(filepath => ({filepath, content: readFile(filepath)}))
 		.filter(
 			({content}) =>
 				content.includes('it.only') || content.includes('describe.only'),
 		)
-		.forEach(({filepath}) =>
-			warn(
-				`An <code>only</code> was left in ${filepath} – no other tests can run.`,
+
+	if (!exclusionary.length) {
+		return
+	}
+
+	markdown(
+		h.details(
+			h.summary(
+				'An <code>only</code> was left these file(s) – no other tests can run.',
 			),
-		)
+			h.ul(...exclusionaryTests.map(file => h.li(h.code(file)))),
+		),
+	)
 }
 
 // Warn when PR size is large (mainly for hawken)
