@@ -98,6 +98,7 @@ end
 
 def main
   if should_build?
+    File.open('../logs/build-status', 'w') { |file| file.write('0') }
     exit 0
   else
     exit 1
