@@ -53,7 +53,7 @@ async function main() {
 // task=ANDROID
 //
 
-async function runAndroid() {
+function runAndroid() {
 	const logFile = readLogFile('./logs/build').split('\n')
 	const buildStatus = readLogFile('./logs/build-status')
 
@@ -70,7 +70,7 @@ async function runAndroid() {
 // task=IOS
 //
 
-async function runiOS() {
+function runiOS() {
 	const logFile = readLogFile('./logs/build').split('\n')
 	const buildStatus = readLogFile('./logs/build-status')
 
