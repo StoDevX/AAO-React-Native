@@ -97,7 +97,11 @@ def should_build?
 end
 
 def main
-  puts should_build?
+  if should_build?
+    exit 0
+  else
+    exit 1
+  end
 end
 
 main
