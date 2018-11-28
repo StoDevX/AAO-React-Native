@@ -229,10 +229,6 @@ async function xcodeproj() {
 	}
 
 	warn('The Xcode project file changed. Maintainers, double-check the changes!')
-
-	await pbxprojBlankLine()
-	await pbxprojLeadingZeros()
-	await pbxprojDuplicateLinkingPaths()
 }
 
 function changelogSync() {
@@ -278,87 +274,6 @@ function changelogSync() {
 			),
 		)
 	}
-}
-
-// Warn about a blank line that Xcode will re-insert if we remove
-function pbxprojBlankLine() {
-	const pbxprojPath = danger.git.modified_files.find(filepath =>
-		filepath.endsWith('project.pbxproj'),
-	)
-	const pbxproj = readFile(pbxprojPath).split('\n')
-
-	if (pbxproj[7] === '') {
-		return
-	}
-
-	warn('Line 8 of the .pbxproj must be an empty line to match Xcode')
-}
-
-// Warn about numbers that `react-native link` removes leading 0s on
-function pbxprojLeadingZeros() {
-	const pbxprojPath = danger.git.modified_files.find(filepath =>
-		filepath.endsWith('project.pbxproj'),
-	)
-	const pbxproj = readFile(pbxprojPath).split('\n')
-
-	const numericLineNames = [
-		/^\s+LastSwiftUpdateCheck\s/u,
-		/^\s+LastUpgradeCheck\s/u,
-		/^\s+LastSwiftMigration\s/u,
-	]
-	const isLineWithoutLeadingZero = line =>
-		numericLineNames.some(nline => nline.test(line) && / [^0]\d+;$/u.test(line))
-
-	const numericLinesWithoutLeadingZeros = pbxproj
-		.filter(isLineWithoutLeadingZero)
-		.map(line => line.trim())
-
-	if (!numericLinesWithoutLeadingZeros.length) {
-		return
-	}
-
-	warn(
-		h.details(
-			h.summary('Some lines in the .pbxproj lost their leading 0s.'),
-			h.p('Xcode likes to put them back, so we try to keep them around.'),
-			h.ul(...numericLinesWithoutLeadingZeros.map(line => h.li(h.code(line)))),
-		),
-	)
-}
-
-// Warn about duplicate entries in the linking paths after a `react-native link`
-async function pbxprojDuplicateLinkingPaths() {
-	const pbxprojPath = danger.git.modified_files.find(filepath =>
-		filepath.endsWith('project.pbxproj'),
-	)
-	const xcodeproj = await parseXcodeProject(pbxprojPath)
-
-	const buildConfig = xcodeproj.project.objects.XCBuildConfiguration
-	const duplicateSearchPaths = Object.entries(buildConfig)
-		.filter(([_, val] /*: [string, any]*/) => typeof val === 'object')
-		.filter(
-			([_, val] /*: [string, any]*/) => val.buildSettings.LIBRARY_SEARCH_PATHS,
-		)
-		.filter(([_, val] /*: [string, any]*/) => {
-			const searchPaths = val.buildSettings.LIBRARY_SEARCH_PATHS
-			return uniq(searchPaths).length !== searchPaths.length
-		})
-
-	if (!duplicateSearchPaths.length) {
-		return
-	}
-
-	fail(
-		h.details(
-			h.summary(
-				'Some of the Xcode <code>LIBRARY_SEARCH_PATHS</code> have duplicate entries. Please remove the duplicates. Thanks!',
-			),
-			h.p(
-				'This is easiest to do by editing the project.pbxproj directly, IMHO. These keys all live under the <code>XCBuildConfiguration</code> section.',
-			),
-			h.ul(...duplicateSearchPaths.map(([key]) => h.li(h.code(key)))),
-		),
-	)
 }
 
 //
@@ -460,8 +375,6 @@ function runJSのYarnDedupe() {
 const fs = require('fs')
 const childProcess = require('child_process')
 const stripAnsi = require('strip-ansi')
-const directoryTree = require('directory-tree')
-const xcode = require('xcode')
 const util = require('util')
 
 const execFile = util.promisify(childProcess.execFile)
