@@ -14,7 +14,7 @@ def git_branch
 end
 
 # diff two hashes at a path and return the changed items
-def deps_diff(old_hash, new_hash, path)
+def hash_diff(old_hash, new_hash, path)
   (new_hash.dig(*path).to_a - old_hash.dig(*path).to_a).to_h
 end
 
@@ -23,10 +23,10 @@ def npm_native_package_changed?
   old_package = JSON.parse(sh("git show '#{source_branch}:package.json'"))
   new_package = JSON.parse(sh("git show '#{current_branch}:package.json'"))
 
-  changed_dependencies = deps_diff(old_package, new_package, ['dependencies']).keys
-  changed_devdependencies = deps_diff(old_package, new_package, ['devDependencies']).keys
+  deps_diff = hash_diff(old_package, new_package, ['dependencies']).keys
+  devdeps_diff = hash_diff(old_package, new_package, ['devDependencies']).keys
 
-  (changed_dependencies + changed_devdependencies).any? { |dep| dep =~ NPM_DEP_NAME_REGEXP }
+  (deps_diff + devdeps_diff).any? { |dep| dep =~ NPM_DEP_NAME_REGEXP }
 end
 
 def native_build_globs
