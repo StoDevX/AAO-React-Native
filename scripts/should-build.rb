@@ -19,9 +19,9 @@ def hash_diff(old_hash, new_hash, path)
 end
 
 NPM_DEP_NAME_REGEXP = /react|jsc/.freeze
-def npm_native_package_changed?
-  old_package = JSON.parse(sh("git show '#{source_branch}:package.json'"))
-  new_package = JSON.parse(sh("git show '#{current_branch}:package.json'"))
+def npm_native_package_changed?(source, target)
+  old_package = JSON.parse(sh("git show '#{source}:package.json'"))
+  new_package = JSON.parse(sh("git show '#{target}:package.json'"))
 
   deps_diff = hash_diff(old_package, new_package, ['dependencies']).keys
   devdeps_diff = hash_diff(old_package, new_package, ['devDependencies']).keys
@@ -88,7 +88,8 @@ def should_build?
   changed_files = git_log_between(source_branch, current_branch).lines.sort.uniq
 
   # 2. check for "packages we care about"
-  if changed_files.include?('package.json') && npm_native_package_changed?
+  if changed_files.include?('package.json') &&
+     npm_native_package_changed?(source_branch, current_branch)
     puts "some dependency matching #{NPM_DEP_NAME_REGEXP.inspect} changed"
     return true
   end
