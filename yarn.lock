@@ -6699,13 +6699,6 @@ react-native-tab-view@^1.0.0:
   dependencies:
     prop-types "^15.6.1"
 
-react-native-tableview-simple@0.17.5:
-  version "0.17.5"
-  resolved "https://registry.yarnpkg.com/react-native-tableview-simple/-/react-native-tableview-simple-0.17.5.tgz#07b3ec325d053e18d72e3d28836f037f96e6cfda"
-  integrity sha512-H8gkVo1uOaZ8HBpG2jKyZ+cQdFSfzRL5bvsb3w47fKJ6KbQ5+yjWU9gdPQvuQ5SvEO9y1/Hj0k9TfNa7VB6dyg==
-  dependencies:
-    prop-types "^15.6.1"
-
 react-native-tableview-simple@0.18.1:
   version "0.18.1"
   resolved "https://registry.yarnpkg.com/react-native-tableview-simple/-/react-native-tableview-simple-0.18.1.tgz#944b343ab65a944e3cd8a334da08a250bf3b9ec1"
