@@ -108,7 +108,7 @@ jobs:
             git reset --hard "origin/$CIRCLE_BRANCH"
       - run: 
           name: Skip build if possible
-          command: ruby scripts/should-build.rb || circleci step halt
+          command: exit 1 || circleci step halt
       - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
