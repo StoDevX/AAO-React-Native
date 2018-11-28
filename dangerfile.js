@@ -7,7 +7,6 @@ const {danger, schedule, markdown, warn, fail} = require('danger')
 const {default: yarn} = require('danger-plugin-yarn')
 
 // utilities
-const uniq = require('lodash/uniq')
 const findIndex = require('lodash/findIndex')
 
 async function main() {
@@ -365,11 +364,7 @@ function runJSのYarnDedupe() {
 //
 
 const fs = require('fs')
-const childProcess = require('child_process')
 const stripAnsi = require('strip-ansi')
-const util = require('util')
-
-const execFile = util.promisify(childProcess.execFile)
 
 function fastlaneBuildLogTail(log /*: Array<string>*/, message /*: string*/) {
 	const n = 150
@@ -437,21 +432,6 @@ function readLogFile(filename /*: string*/) {
 	return readFile(filename).trim()
 }
 
-// eslint-disable-next-line no-unused-vars
-function readJsonLogFile(filename /*: string*/) {
-	try {
-		return JSON.parse(readFile(filename))
-	} catch (err) {
-		fail(
-			h.details(
-				h.summary(`Could not read the log file at <code>${filename}</code>`),
-				m.json(err),
-			),
-		)
-		return []
-	}
-}
-
 function isBadDataValidationLog(log /*: string*/) {
 	return log.split('\n').some(l => !l.endsWith('is valid'))
 }
@@ -466,86 +446,6 @@ function fileLog(
 
 ${m.code({language: lang}, log)}`,
 	)
-}
-
-function parseXcodeProject(pbxprojPath /*: string*/) /*: Promise<Object>*/ {
-	return new Promise((resolve, reject) => {
-		const project = xcode.project(pbxprojPath)
-		// I think this can be called twice from .parse, which is an error for a Promise
-		let resolved = false
-		project.parse((error, data) => {
-			if (resolved) {
-				return
-			}
-			resolved = true
-
-			if (error) {
-				reject(error)
-			}
-			resolve(data)
-		})
-	})
-}
-
-// eslint-disable-next-line no-unused-vars
-async function listZip(filepath /*: string*/) {
-	try {
-		const {stdout} = await execFile('unzip', ['-l', filepath])
-		const lines = stdout.split('\n')
-
-		const parsed = lines.slice(3, -3).map(line => {
-			const length = parseInt(line.slice(0, 9).trim(), 10)
-			// const datetime = line.slice(12, 28)
-			const filepath = line.slice(30).trim()
-			const type = filepath.endsWith('/') ? 'folder' : 'file'
-			return {size: length, filepath, type}
-		})
-		const zipSize = parsed.reduce((sum, current) => current.size + sum, 0)
-
-		return {files: parsed, size: zipSize}
-	} catch (err) {
-		fail(
-			h.details(
-				h.summary(`Could not examine the ZIP file at <code>${filepath}</code>`),
-				m.json(err),
-			),
-		)
-	}
-}
-
-function listDirectory(dirpath /*: string*/) {
-	try {
-		return fs.readdirSync(dirpath)
-	} catch (err) {
-		fail(h.details(h.summary(`${h.code(dirpath)} does not exist`), m.json(err)))
-		return []
-	}
-}
-
-// eslint-disable-next-line no-unused-vars
-function listDirectoryTree(dirpath /*: string*/) /*: any*/ {
-	try {
-		const exists = fs.accessSync(dirpath, fs.F_OK)
-
-		if (!exists) {
-			fail(
-				h.details(
-					h.summary(`Could not access <code>${dirpath}</code>`),
-					m.code({}, listDirectory(dirpath).join('\n')),
-				),
-			)
-		}
-
-		return directoryTree(dirpath)
-	} catch (err) {
-		fail(
-			h.details(
-				h.summary('<code>listDirectoryTree</code> threw an error'),
-				m.json(err),
-			),
-		)
-		return {}
-	}
 }
 
 //
