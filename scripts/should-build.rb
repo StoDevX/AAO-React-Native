@@ -29,28 +29,32 @@ def npm_native_package_changed?
   (deps_diff + devdeps_diff).any? { |dep| dep =~ NPM_DEP_NAME_REGEXP }
 end
 
-def native_build_globs
-  base_globs = [
-    '.circleci/**',
-    'e2e/**',
-    'fastlane/**',
-    'scripts/**',
-    'Gemfile.lock',
-  ]
+BASE_GLOBS = [
+  '.circleci/**',
+  'e2e/**',
+  'fastlane/**',
+  'scripts/**',
+  'Gemfile.lock',
+].freeze
 
+ANDROID_GLOBS = [
+  'android/**',
+  '{modules,source}/**/*.{java,gradle}',
+].freeze
+
+IOS_GLOBS = [
+  'ios/**',
+  '{modules,source}/**/*.{h,m,mm}',
+].freeze
+
+def native_build_globs
   case PLATFORM
   when 'ANDROID'
-    base_globs + [
-      'android/**',
-      '{modules,source}/**/*.{java,gradle}',
-    ]
+    BASE_GLOBS + ANDROID_GLOBS
   when 'IOS'
-    base_globs + [
-      'ios/**',
-      '{modules,source}/**/*.{h,m,mm}',
-    ]
+    BASE_GLOBS + IOS_GLOBS
   else
-    base_globs
+    BASE_GLOBS
   end
 end
 
