@@ -12,9 +12,7 @@ executors:
     # `cmd` key is passed to solve a weird issue (see GitHub PR's 2170 and 2173).
     # this overrides the thing and forces the container to run /bin/bash as the "command"
     # so it doesn't get confused and OOM/exhaust the build resources (don't ask me)
-    docker:
-      - image: 'circleci/android:api-27-node8-alpha'
-        cmd: '/bin/bash'
+    docker: [{image: 'circleci/android:api-27-node8-alpha', command: '/bin/bash'}]
   ios:
     macos:
       xcode: '9.4.1'
@@ -41,12 +39,12 @@ commands:
     description: "Reconcile Git histories to fix Circle's munging"
     steps:
       - run:
-        name: "Reconcile Git histories"
-        command: |
-          git checkout master
-          git reset --hard origin/master
-          git checkout "$CIRCLE_BRANCH"
-          git reset --hard "origin/$CIRCLE_BRANCH"
+          name: "Reconcile Git histories"
+          command: |
+            git checkout master
+            git reset --hard origin/master
+            git checkout "$CIRCLE_BRANCH"
+            git reset --hard "origin/$CIRCLE_BRANCH"
 
   danger:
     description: 'Run Danger'
@@ -126,12 +124,13 @@ commands:
       - run: yarn run --silent flow check --quiet | tee logs/flow
 
   yarn-jest:
-    environment:
-      JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
     steps:
       - run: mkdir -p logs/
       - run: mkdir -p test-results/jest/
-      - run: yarn run --silent test --coverage | tee logs/jest
+      - run:
+          command: yarn run --silent test --coverage | tee logs/jest
+          environment:
+            JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
       - store_test_results: {path: ./test-results}
 
   yarn-eslint:
@@ -164,9 +163,6 @@ commands:
   fastlane:
     parameters:
       platform: {type: string}
-    environment:
-      FASTLANE_SKIP_UPDATE_CHECK: '1'
-      FASTLANE_DISABLE_ANIMATION: '1'
     steps:
       - run: mkdir -p ./logs/
       - run: touch logs/build-status
@@ -174,21 +170,25 @@ commands:
           name: Run Fastlane
           command: bundle exec fastlane << platform >> ci-run | tee ./logs/build
           environment:
+            FASTLANE_SKIP_UPDATE_CHECK: '1'
+            FASTLANE_DISABLE_ANIMATION: '1'
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
 
   homebrew:
     parameters:
       tap: {type: string}
       install: {type: string}
-    environment:
-      HOMEBREW_NO_AUTO_UPDATE: '1'
     steps:
       - when:
           condition: << parameters.tap >>
-          steps: [{run: brew tap << parameters.tap >>}]
+          steps:
+            - run: brew tap << parameters.tap >>
+              environment: {HOMEBREW_NO_AUTO_UPDATE: '1'}
       - when:
           condition: << parameters.install >>
-          steps: [{run: brew install << parameters.install >>}]
+          steps:
+            - run: brew install << parameters.install >>
+              environment: {HOMEBREW_NO_AUTO_UPDATE: '1'}
 
 workflows:
   analyze-and-build:
