@@ -25,12 +25,6 @@ commands:
   persist-workspace--node_modules:
     steps: [{persist_to_workspace: {root: ./node_modules, paths: [./*]}}]
 
-  yarn:
-    description: 'Run a Yarn command'
-    parameters:
-      cmd: string
-    steps: [{run: yarn << parameters.cmd >>}]
-
   coveralls:
     description: 'Upload code coverage stats to Coveralls'
     steps:
@@ -58,13 +52,13 @@ commands:
     description: 'Run Danger'
     steps:
       - run:
-        command: |
-          if ! [[ $CIRCLE_PR_NUMBER ]]; then
-            yarn run danger --id $task
-          fi
-        when: always
-        environment:
-          DANGER_DISABLE_TRANSPILATION: "true"
+          command: |
+            if ! [[ $CIRCLE_PR_NUMBER ]]; then
+              yarn run danger --id $task
+            fi
+          when: always
+          environment:
+            DANGER_DISABLE_TRANSPILATION: "true"
 
   set-ruby-version:
     steps: [{run: {name: Set Ruby Version, command: echo "ruby-2.5.3" > ~/.ruby-version}}]
@@ -109,7 +103,7 @@ commands:
   mkdir-logs: {steps: [{run: mkdir -p logs/}]}
   git-diff-to-file:
     parameters:
-      file: string
+      file: {type: string}
     steps:
       # ensure that the folder exists
       - run: mkdir -p $(dirname << parameters.file >>)
@@ -151,7 +145,7 @@ commands:
   run-if:
     description: Run a command if the build is not doing an early exit
     parameters:
-      cmd: string
+      cmd: {type: string}
     steps:
       - run:
           name: << parameters.cmd >>
@@ -169,7 +163,7 @@ commands:
 
   fastlane:
     parameters:
-      platform: string
+      platform: {type: string}
     environment:
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_DISABLE_ANIMATION: '1'
@@ -184,8 +178,8 @@ commands:
 
   homebrew:
     parameters:
-      tap: string
-      install: string
+      tap: {type: string}
+      install: {type: string}
     environment:
       HOMEBREW_NO_AUTO_UPDATE: '1'
     steps:
