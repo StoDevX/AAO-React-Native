@@ -91,12 +91,15 @@ async function runiOS() {
 		return
 	}
 
-	markdown('## iOS Report')
-
 	// tee the "fastlane" output to a log, and run the analysis script
 	// to report back the longest compilation units
 	const analysisFile = readFile('./logs/analysis')
+	if (!analysisFile.trim().length) {
+		return
+	}
+
 	markdown(
+		h.h2('iOS Report'),
 		h.details(
 			h.summary('Analysis of slow build times (>20s)'),
 			m.code({}, analysisFile),
