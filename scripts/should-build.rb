@@ -66,10 +66,13 @@ def native_file_changed?(changed_files)
   end
 end
 
+DEFAULT_BRANCH = 'master'.freeze
+
 def git_log_between(source, target)
   sh("git log --name-only --format='' '#{source}'..'#{target}'")
 end
 
+# checks if the native build needs to be run
 def should_build?
   # Essentially, we want to avoid native builds if the only thing that changed
   # was JS code.
