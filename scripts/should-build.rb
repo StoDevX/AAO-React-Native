@@ -104,13 +104,11 @@ def should_build?
   false
 end
 
-def main
-  if should_build?
-    File.open(File.join(File.dirname(__FILE__), '..', 'logs', 'build-status'), 'w') { |file| file.write('0') }
-    exit 0
-  else
-    exit 1
-  end
+if should_build?
+  file_path = File.join(File.dirname(__FILE__), '..', 'logs', 'build-status')
+  File.open(file_path, 'w') { |file| file.write('0') }
+  exit 0
+else
+  exit 1
 end
 
-main
