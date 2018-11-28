@@ -268,6 +268,9 @@ jobs:
             git reset --hard origin/master
             git checkout "$CIRCLE_BRANCH"
             git reset --hard "origin/$CIRCLE_BRANCH"
+      - run: 
+          name: Skip build if possible
+          command: ruby scripts/should-build.rb || circleci step halt
       - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
@@ -336,6 +339,9 @@ jobs:
             git reset --hard origin/master
             git checkout "$CIRCLE_BRANCH"
             git reset --hard "origin/$CIRCLE_BRANCH"
+      - run: 
+          name: Skip build if possible
+          command: ruby scripts/should-build.rb || circleci step halt
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
