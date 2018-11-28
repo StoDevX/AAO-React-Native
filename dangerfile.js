@@ -238,7 +238,7 @@ function changelogSync() {
 
 	const changedSourceFiles = danger.git.modified_files.filter(file => {
 		let noteworthy = noteworthyFolder.test(file) || noteworthyFiles.has(file)
-		let excluded = !definitelyNotNoteworthy.test(file)
+		let excluded = definitelyNotNoteworthy.test(file)
 
 		return noteworthy && !excluded
 	})
