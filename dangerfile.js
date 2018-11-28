@@ -209,7 +209,7 @@ function bigPr() {
 }
 
 // Remind us to check the xcodeproj, if it's changed
-async function xcodeproj() {
+function xcodeproj() {
 	const pbxprojChanged = danger.git.modified_files.find(filepath =>
 		filepath.endsWith('project.pbxproj'),
 	)
@@ -218,7 +218,9 @@ async function xcodeproj() {
 		return
 	}
 
-	warn('The Xcode project file changed. Maintainers, double-check the changes!')
+	markdown(
+		'The Xcode project file changed. Maintainers, double-check the changes!',
+	)
 }
 
 function changelogSync() {
@@ -331,7 +333,7 @@ function runJSのLint() {
 		return
 	}
 
-	fileLog('Eslint had a thing to say!', eslintLog)
+	fileLog('ESLint had a thing to say!', eslintLog)
 }
 
 //
@@ -376,7 +378,7 @@ function fastlaneBuildLogTail(log /*: Array<string>*/, message /*: string*/) {
 		.map(stripAnsi)
 		.join('\n')
 
-	fail(
+	markdown(
 		h.details(
 			h.summary(message),
 			h.p(`Last ${n} lines`),
