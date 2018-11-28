@@ -648,7 +648,7 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@callstack/react-theme-provider@1.0.7", "@callstack/react-theme-provider@^1.0.3", "@callstack/react-theme-provider@^1.0.6":
+"@callstack/react-theme-provider@1.0.7", "@callstack/react-theme-provider@^1.0.3", "@callstack/react-theme-provider@^1.0.7":
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-1.0.7.tgz#2d2fd1a1d965f36165eaa2e4da28aed1ade75484"
   integrity sha512-NTjvHadSLja5KruFXThC6rwLrewzbPSZFefgl5hTWXVZ40BsIDn3744AgregeuGTM3249K1cE9uN7UKua87pKQ==
@@ -2340,7 +2340,7 @@ create-react-context@0.2.2:
     fbjs "^0.8.0"
     gud "^1.0.0"
 
-create-react-context@^0.2.1, create-react-context@^0.2.2:
+create-react-context@^0.2.1, create-react-context@^0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/create-react-context/-/create-react-context-0.2.3.tgz#9ec140a6914a22ef04b8b09b7771de89567cb6f3"
   integrity sha512-CQBmD0+QGgTaxDL3OX1IDXYqjkp2It4RIbcb99jS6AEg27Ga+a9G3JtK6SIu0HBwPLZlmwt9F7UwWA4Bn92Rag==
@@ -3775,10 +3775,10 @@ hoist-non-react-statics@^2.2.0, hoist-non-react-statics@^2.3.1, hoist-non-react-
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz#c5903cf409c0dfd908f388e619d86b9c1174cb47"
   integrity sha512-rqcy4pJo55FTTLWt+bU8ukscqHeE/e9KWvsOW2b/a3afxQZhwkQdT1rPPCJ0rYXdj4vNcasY8zHTH+jF/qStxw==
 
-hoist-non-react-statics@^3.0.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-3.1.0.tgz#42414ccdfff019cd2168168be998c7b3bd5245c0"
-  integrity sha512-MYcYuROh7SBM69xHGqXEwQqDux34s9tz+sCnxJmN18kgWh6JFdTw/5YdZtqsOdZJXddE/wUpCzfEdDrJj8p0Iw==
+hoist-non-react-statics@^3.0.0, hoist-non-react-statics@^3.1.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-3.2.0.tgz#d21b9fc72b50fdc38c5d88f6e2c52f2c2dbe5ee2"
+  integrity sha512-3IascCRfaEkbmHjJnUxWSspIUE1okLPjGTMVXW8zraUo1t3yg1BadKAxAGILHwgoBzmMnzrgeeaDGBvpuPz6dA==
   dependencies:
     react-is "^16.3.2"
 
@@ -6609,28 +6609,28 @@ react-native-network-info@4.0.0:
   resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-4.0.0.tgz#aade28ddcf38f5d2c4d8055078dd7f0d97c51cff"
   integrity sha512-ONyOUMJEhBSP5sDHCgBFk037ePL3auLB//W4H8+m+GDIMkRHNksJ2lTYvjEQf1gaYQp+fYl+xcDIo1d/odZwpA==
 
-react-native-onesignal@3.2.8:
-  version "3.2.8"
-  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-3.2.8.tgz#594a293f1f30262958bb0af9b6e98ca04d2038e8"
-  integrity sha512-Br9cIsMTi6tQqIZmB2vh2vCNom78qglbWn+ywsjEhjN1HLlZ7C4D/2x8i8MT23xEA9iiznJl2XSo7wU7Tom+7Q==
+react-native-onesignal@3.2.7:
+  version "3.2.7"
+  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-3.2.7.tgz#8e3245b720af68af7d01ff572c56cbb3521b88f5"
+  integrity sha512-OLoTfE5iC21r4UsE+ebzr0HSpRIC0HSsQ5yfbWV5hxtiRRZy+ASgbd8VMK5Xbl7B0KqxmP13X9b/cCi+DWZAdg==
   dependencies:
     invariant "^2.2.2"
 
-react-native-paper@2.1.3:
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-2.1.3.tgz#ae2efce3cf8ba7d8afa6f5d743768b2be110520f"
-  integrity sha512-f9CKazmEd8c38CsX5d5+/qxv2AzD8rI/k8xNPrXk5PHWS81RrQOUSVcHJApcEFyzRMQ+gIGbijtZ3mkn0V2lSg==
+react-native-paper@2.2.8:
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-2.2.8.tgz#b0751525f9a34188db9af96bbacca4644c168fb5"
+  integrity sha512-a3Fe9DC81RRq+G1HLZHFZRWvY+A2WZ9w42oFQpmpIuPt+np5HLJhCQ8Qyef95RZyOP38Ql8QONutGqPmUgtyIQ==
   dependencies:
-    "@callstack/react-theme-provider" "^1.0.6"
+    "@callstack/react-theme-provider" "^1.0.7"
     color "^2.0.1"
-    create-react-context "^0.2.2"
-    hoist-non-react-statics "^2.5.0"
+    create-react-context "^0.2.3"
+    hoist-non-react-statics "^3.1.0"
     react-lifecycles-compat "^3.0.4"
 
-react-native-popover-view@1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/react-native-popover-view/-/react-native-popover-view-1.0.9.tgz#e64d0958fa9e371bf85ec83d0968880a86b33c99"
-  integrity sha512-Wko9vvinytuqQ/NJjeqN54Fny59Qs4B+S91Q6lpXXRI0LvfqqD0oAEU8ghwhwij5u5puIC6LaYSt1DC9v1QK2g==
+react-native-popover-view@1.0.14:
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/react-native-popover-view/-/react-native-popover-view-1.0.14.tgz#2420d91096127b5cc85c5445ee38d1b6ebe7b85e"
+  integrity sha512-FLMYgYxEmft3K3KyLjFqkg/+US7JEoCSHYgIo86B3gsZGpvoek+9E4XC+oi4mmqvBLCVOZIaFoY++iew3pHenQ==
   dependencies:
     react-native-safe-area-view "^0.10.0"
 
@@ -6696,13 +6696,6 @@ react-native-tab-view@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-1.0.2.tgz#66e0bc6d38a227ed2b212e3a256b7902f6ce02ed"
   integrity sha512-x8I43V1X7/AyMnIwnqJGMU54LqQRlV6vJ9irbls9asA/axdHIdxagPIV6Jx1ttFe/bPKhFwXL+lRYdYxGyUlWg==
-  dependencies:
-    prop-types "^15.6.1"
-
-react-native-tableview-simple@0.17.5:
-  version "0.17.5"
-  resolved "https://registry.yarnpkg.com/react-native-tableview-simple/-/react-native-tableview-simple-0.17.5.tgz#07b3ec325d053e18d72e3d28836f037f96e6cfda"
-  integrity sha512-H8gkVo1uOaZ8HBpG2jKyZ+cQdFSfzRL5bvsb3w47fKJ6KbQ5+yjWU9gdPQvuQ5SvEO9y1/Hj0k9TfNa7VB6dyg==
   dependencies:
     prop-types "^15.6.1"
 
