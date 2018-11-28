@@ -8590,10 +8590,10 @@ yargs@~3.10.0:
     decamelize "^1.0.0"
     window-size "0.1.0"
 
-yarn-deduplicate@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/yarn-deduplicate/-/yarn-deduplicate-1.0.2.tgz#951b90ab065726680dcd31765ebc9c4e96bbc9c0"
-  integrity sha512-ngFhBmPBksCPJem49MKHRkrPsL8RI6Ruu6K1WVMAknMiF+50ypp9tKXiCuZ6KXGSWyIvn7C7hv/7JoURGrEIbg==
+yarn-deduplicate@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/yarn-deduplicate/-/yarn-deduplicate-1.0.3.tgz#9d7c2e5a7f32cbfe88a9c0e20eb9fd42529ca31b"
+  integrity sha512-FNPQLZEh+c5ZhJK6LkFd6Izky3q2kDqQW+kIao08+pym4QXc6tYAOyNPQdLMOwoGBhCpE7HXETxm+fmnjXuzYA==
   dependencies:
     "@yarnpkg/lockfile" "^1.1.0"
     commander "^2.10.0"

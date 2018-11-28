@@ -176,7 +176,7 @@
     "string-natural-compare": "2.0.3",
     "strip-ansi": "5.0.0",
     "xcode": "1.0.0",
-    "yarn-deduplicate": "1.0.2"
+    "yarn-deduplicate": "1.0.3"
   },
   "optionalDependencies": {
     "detox": "9.1.2"
