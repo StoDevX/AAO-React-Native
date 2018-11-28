@@ -204,18 +204,18 @@ function exclusionaryTests() {
 function bigPr() {
 	const bigPRThreshold = 400 // lines
 	const thisPRSize = danger.github.pr.additions + danger.github.pr.deletions
-	if (thisPRSize > bigPRThreshold) {
-		warn(
-			h.details(
-				h.summary(
-					`Big PR! We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.`,
-				),
-				h.p(
-					'If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.',
-				),
-			),
-		)
+	if (thisPRSize <= bigPRThreshold) {
+		return
 	}
+
+	markdown(
+		h.p(
+			`Big PR! We like to try and keep PRs under ${bigPRThreshold} lines, and this one was ${thisPRSize} lines.`,
+		),
+		h.p(
+			'If the PR contains multiple logical changes, splitting each change into a separate PR will allow a faster, easier, and more thorough review.',
+		),
+	)
 }
 
 // Remind us to check the xcodeproj, if it's changed
