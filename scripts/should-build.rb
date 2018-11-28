@@ -78,22 +78,22 @@ def should_build?
 	# Get all files that changed between the fork point and HEAD
   changed_files = git_log_between(oldest_shared_revision, 'HEAD').lines.sort.uniq
 
-  # 2. check for "packages we care about"
+  # 1. Check if any packages we care about changed
   if changed_files.include?('package.json') &&
      npm_native_package_changed?(oldest_shared_revision, 'HEAD')
     puts "some dependency matching #{NPM_DEP_NAME_REGEXP.inspect} changed"
     return true
   end
 
-  # 3. compare list of files to our sets of "files we care about"
+  # 2. Check if any files we care about changed
   if native_file_changed?(changed_files)
     puts 'some native file changed'
     return true
   end
 
-  # 4) if none matched, return false
-  puts 'skip build'
-  false
+  # 3. If we haven't decided to build yet, we aren't going to.
+  puts 'build skippable'
+  return false
 end
 
 if should_build?
