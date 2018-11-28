@@ -6609,10 +6609,10 @@ react-native-network-info@4.0.0:
   resolved "https://registry.yarnpkg.com/react-native-network-info/-/react-native-network-info-4.0.0.tgz#aade28ddcf38f5d2c4d8055078dd7f0d97c51cff"
   integrity sha512-ONyOUMJEhBSP5sDHCgBFk037ePL3auLB//W4H8+m+GDIMkRHNksJ2lTYvjEQf1gaYQp+fYl+xcDIo1d/odZwpA==
 
-react-native-onesignal@3.2.8:
-  version "3.2.8"
-  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-3.2.8.tgz#594a293f1f30262958bb0af9b6e98ca04d2038e8"
-  integrity sha512-Br9cIsMTi6tQqIZmB2vh2vCNom78qglbWn+ywsjEhjN1HLlZ7C4D/2x8i8MT23xEA9iiznJl2XSo7wU7Tom+7Q==
+react-native-onesignal@3.2.7:
+  version "3.2.7"
+  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-3.2.7.tgz#8e3245b720af68af7d01ff572c56cbb3521b88f5"
+  integrity sha512-OLoTfE5iC21r4UsE+ebzr0HSpRIC0HSsQ5yfbWV5hxtiRRZy+ASgbd8VMK5Xbl7B0KqxmP13X9b/cCi+DWZAdg==
   dependencies:
     invariant "^2.2.2"
 
