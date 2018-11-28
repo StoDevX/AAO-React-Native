@@ -158,14 +158,22 @@ async function runJSのGeneral() {
 
 // New js files should have `@flow` at the top
 function flowAnnotated() {
-	danger.git.created_files
+	let noFlow = danger.git.created_files
 		.filter(path => path.endsWith('.js'))
 		// except for those in /flow-typed
 		.filter(filepath => !filepath.includes('flow-typed'))
 		.filter(filepath => !readFile(filepath).includes('@flow'))
-		.forEach(file =>
-			warn(`<code>${file}</code> has no <code>@flow</code> annotation!`),
-		)
+
+	if (!noFlow.length) {
+		return
+	}
+
+	markdown(
+		h.details(
+			h.summary('There is no <code>@flow</code> annotation in these file(s)'),
+			h.ul(...noFlow.map(file => h.li(h.code(file)))),
+		),
+	)
 }
 
 // Warn if tests have been enabled to the exclusion of all others
