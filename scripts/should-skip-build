@@ -108,7 +108,7 @@ def should_build?
   false
 end
 
-if should_build?
+if !should_build?
   file_path = File.join(File.dirname(__FILE__), '..', 'logs', 'build-status')
   File.open(file_path, 'w') { |file| file.write('0') }
   exit 0
