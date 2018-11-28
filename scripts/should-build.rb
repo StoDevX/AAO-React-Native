@@ -93,7 +93,7 @@ def should_build?
 
   # 3. If we haven't decided to build yet, we aren't going to.
   puts 'build skippable'
-  return false
+  false
 end
 
 if should_build?
