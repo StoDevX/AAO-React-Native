@@ -112,4 +112,3 @@ if should_build?
 else
   exit 1
 end
-
