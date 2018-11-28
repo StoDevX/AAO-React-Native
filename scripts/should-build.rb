@@ -77,16 +77,14 @@ def should_build?
   # Essentially, we want to avoid native builds if the only thing that changed
   # was JS code.
 
-  # TODO: figure out how to determine the actual source branch
-  source_branch = 'master'
-  current_branch = git_branch
+	oldest_shared_revision = sh("git merge-base '#{DEFAULT_BRANCH}' 'HEAD^1'")
 
-  # 1. need to get files changed in the current build since master
-  changed_files = git_log_between(source_branch, current_branch).lines.sort.uniq
+	# Get all files that changed between the fork point and HEAD
+  changed_files = git_log_between(oldest_shared_revision, 'HEAD').lines.sort.uniq
 
   # 2. check for "packages we care about"
   if changed_files.include?('package.json') &&
-     npm_native_package_changed?(source_branch, current_branch)
+     npm_native_package_changed?(oldest_shared_revision, 'HEAD')
     puts "some dependency matching #{NPM_DEP_NAME_REGEXP.inspect} changed"
     return true
   end
