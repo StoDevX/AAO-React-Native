@@ -270,7 +270,7 @@ jobs:
             git reset --hard "origin/$CIRCLE_BRANCH"
       - run: 
           name: Skip build if possible
-          command: ruby scripts/should-build.rb || mkdir -p logs/ && echo 0 > logs/build-status && circleci step halt
+          command: ruby scripts/should-build.rb || { mkdir -p logs/ && echo 0 > logs/build-status && circleci step halt }
       - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
@@ -341,7 +341,7 @@ jobs:
             git reset --hard "origin/$CIRCLE_BRANCH"
       - run: 
           name: Skip build if possible
-          command: ruby scripts/should-build.rb || mkdir -p logs/ && echo 0 > logs/build-status && circleci step halt
+          command: ruby scripts/should-build.rb || { mkdir -p logs/ && echo 0 > logs/build-status && circleci step halt }
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
