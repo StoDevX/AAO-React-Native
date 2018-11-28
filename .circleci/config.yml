@@ -268,6 +268,11 @@ jobs:
             git reset --hard origin/master
             git checkout "$CIRCLE_BRANCH"
             git reset --hard "origin/$CIRCLE_BRANCH"
+      - run: mkdir -p logs/
+      - run: touch logs/build-status
+      - run: 
+          name: Skip build if possible
+          command: ruby scripts/should-build.rb || circleci step halt
       - run: node --version
       - run: yarn --version
       - run: *set-ruby-version
@@ -280,8 +285,6 @@ jobs:
           command: cd android && ./gradlew androidDependencies --console=plain
           environment: {TERM: xterm-256color}
       - save_cache: *save-cache-gradle
-      - run: mkdir -p logs/
-      - run: touch logs/build-status
       - run: *embed-env-vars
       - run:
           name: Run Fastlane
@@ -336,6 +339,11 @@ jobs:
             git reset --hard origin/master
             git checkout "$CIRCLE_BRANCH"
             git reset --hard "origin/$CIRCLE_BRANCH"
+      - run: mkdir -p logs/
+      - run: touch logs/build-status
+      - run: 
+          name: Skip build if possible
+          command: ruby scripts/should-build.rb || circleci step halt
       - run: yarn --version
       - run: *set-ruby-version
       - restore_cache: *restore-cache-yarn
@@ -346,8 +354,6 @@ jobs:
       - save_cache: *save-cache-bundler
       - run: brew tap wix/brew
       - run: brew install applesimutils
-      - run: mkdir -p logs/
-      - run: touch logs/build-status
       - run: *embed-env-vars
       - run:
           name: Run Fastlane

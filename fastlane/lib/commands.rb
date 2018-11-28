@@ -10,13 +10,6 @@ def auto_beta
     return
   end
 
-  unless should_build?
-    UI.message 'skipping build; no code changes to test'
-    # since the build was moot, explicitly write 0 as the build status
-    File.open('../logs/build-status', 'w') { |file| file.write('0') }
-    return
-  end
-
   if api_keys_available?
     UI.message 'signing and building, but not deploying'
     build
