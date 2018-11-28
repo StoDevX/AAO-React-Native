@@ -6565,10 +6565,10 @@ react-native-custom-tabs@0.1.7:
   resolved "https://registry.yarnpkg.com/react-native-custom-tabs/-/react-native-custom-tabs-0.1.7.tgz#2dfb4028b0a443610d94792b2019810f68dde525"
   integrity sha512-Lgxh/KvhRnirnvN9FrS/+FJ8OIKJcWGdceSrZutZt2x02Sc72uQVD1O4rh2kzN8NUw8yU6KQz279ltkicISbaw==
 
-react-native-device-info@0.24.3:
-  version "0.24.3"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.24.3.tgz#f15eff8d09fe418eaf5e7c89ddaabbc5ed718fd7"
-  integrity sha512-usW00Wk6DoXH1eRSMt07j0uYvuka3SIEnJ9girlddAacyqwfa1QMVTN4eYmtaBzuMd/avhis8iHZQ3cLaR9CMA==
+react-native-device-info@0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.24.0.tgz#a6c2a8977229e1b94435e30469fa6af21a68f3ea"
+  integrity sha512-ab04CWcBeVJCAnjgYV2s1LscAypqJJxnt40EPdrQYe8J+nspUb9fNOPC+bfrJe3u8HKZuJ5dZmMAv29ANpl1Dw==
 
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
@@ -6589,10 +6589,10 @@ react-native-drawer-layout@1.3.2:
   dependencies:
     react-native-dismiss-keyboard "1.0.0"
 
-react-native-google-analytics-bridge@5.7.1:
-  version "5.7.1"
-  resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-5.7.1.tgz#16ad57392f4fdf8cde2e3a162b5b792afa04d485"
-  integrity sha512-tBXegZ/BZ09DYJFMams5k2OKtyMEfJjo5bdYlaplMVXLNznuU6g99vvqgQnvOgAaNK7sEaTbWz8U/C0Wvc2yYA==
+react-native-google-analytics-bridge@5.9.0:
+  version "5.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-5.9.0.tgz#d1a757bd8a46d8aecefee279d66e3a83d962552f"
+  integrity sha512-VsfovNdqoTGn3nwvB7G0bencRxtSOPby81lnOmTR+NdkPlgQqYKSrK0wg4HwsOx63d3YQAn5hcwbHOQwMJTIaw==
 
 react-native-keychain@3.0.0:
   version "3.0.0"
