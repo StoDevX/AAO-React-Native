@@ -2421,10 +2421,10 @@ danger-plugin-yarn@1.3.1:
     node-fetch "^1.7.1"
     semver "^5.4.1"
 
-danger@6.1.7:
-  version "6.1.7"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-6.1.7.tgz#c74bdcd266fb32e418b2cb64c3b01a0fe035429f"
-  integrity sha512-q9naFTFG/MBrdvekxgv6rPx2kW4cQIcs51depYBk023kY29wnvJfhBr/xDiiLLI9Dj6/JWg25/A1kaOMCut0Mg==
+danger@6.1.8:
+  version "6.1.8"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-6.1.8.tgz#a940ce426fb8ccce1891b4669c32f14e5e0b696c"
+  integrity sha512-O/t+DOjHQ49mvsUNNUhTrHmVFoQiO1haathW666utL5vPQsLgSvRuTSgjsiSK5YazE5sftjotA0xCImaCWYelQ==
   dependencies:
     "@babel/polyfill" "^7.0.0"
     "@octokit/rest" "^15.12.1"
