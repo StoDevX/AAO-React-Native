@@ -36,9 +36,9 @@ const ActionButton = (props: ActionButtonProps) => {
 	)
 }
 
-const ThemedActionButton: React.StatelessFunctionalComponent<
-	ActionButtonBaseProps,
-> = (withTheme(ActionButton): any)
+const ThemedActionButton: React.StatelessFunctionalComponent<ActionButtonBaseProps> = (withTheme(
+	ActionButton,
+): any)
 
 export {ThemedActionButton as ActionButton}
 
@@ -76,9 +76,9 @@ const SmallActionButton = (props: SmallActionButtonProps) => {
 	)
 }
 
-const ThemedSmallActionButton: React.StatelessFunctionalComponent<
-	SmallActionButtonBaseProps,
-> = (withTheme(SmallActionButton): any)
+const ThemedSmallActionButton: React.StatelessFunctionalComponent<SmallActionButtonBaseProps> = (withTheme(
+	SmallActionButton,
+): any)
 
 const styles = StyleSheet.create({
 	button: {

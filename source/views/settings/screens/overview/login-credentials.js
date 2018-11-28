@@ -76,7 +76,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 
 		return (
 			<Section
-				footer="St. Olaf login enables the &quot;meals remaining&quot; feature."
+				footer='St. Olaf login enables the "meals remaining" feature.'
 				header="ST. OLAF LOGIN"
 			>
 				{loggedIn ? (

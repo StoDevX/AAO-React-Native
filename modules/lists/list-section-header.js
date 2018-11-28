@@ -135,8 +135,8 @@ function ListSectionHeader(props: Props) {
 
 export const RawListSectionHeader = ListSectionHeader
 
-const ThemedListSectionHeader: React.StatelessFunctionalComponent<
-	BaseProps,
-> = (withTheme(ListSectionHeader): any)
+const ThemedListSectionHeader: React.StatelessFunctionalComponent<BaseProps> = (withTheme(
+	ListSectionHeader,
+): any)
 
 export {ThemedListSectionHeader as ListSectionHeader}

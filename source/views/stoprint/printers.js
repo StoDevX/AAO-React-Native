@@ -128,12 +128,10 @@ class PrinterListView extends React.PureComponent<Props, State> {
 			location: j.location || 'Unknown Building',
 		}))
 
-		const allGrouped = groupBy(
-			allWithLocations,
-			j =>
-				/^[A-Z]+ \d+/u.test(j.location)
-					? j.location.split(/\s+/u)[0]
-					: j.location,
+		const allGrouped = groupBy(allWithLocations, j =>
+			/^[A-Z]+ \d+/u.test(j.location)
+				? j.location.split(/\s+/u)[0]
+				: j.location,
 		)
 
 		const groupedByBuilding = toPairs(allGrouped).map(([title, data]) => ({
@@ -141,9 +139,8 @@ class PrinterListView extends React.PureComponent<Props, State> {
 			data,
 		}))
 
-		groupedByBuilding.sort(
-			(a, b) =>
-				a.title === '' && b.title !== '' ? 1 : a.title.localeCompare(b.title),
+		groupedByBuilding.sort((a, b) =>
+			a.title === '' && b.title !== '' ? 1 : a.title.localeCompare(b.title),
 		)
 
 		const grouped = this.props.printers.length
