@@ -88,7 +88,7 @@ def should_build?
   changed_files = git_log_between(source_branch, current_branch).lines.sort.uniq
 
   # 2. check for "packages we care about"
-  if changed_files.include? 'package.json' and npm_native_package_changed?
+  if changed_files.include?('package.json') && npm_native_package_changed?
     puts "some dependency matching #{NPM_DEP_NAME_REGEXP.inspect} changed"
     return true
   end
