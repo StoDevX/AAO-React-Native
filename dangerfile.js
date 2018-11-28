@@ -64,11 +64,6 @@ async function runAndroid() {
 		return
 	}
 
-	if (!(await didNativeDependencyChange())) {
-		// nothing changed to make this worth analyzing
-		return
-	}
-
 	// we do not currently do any android analysis
 }
 
@@ -83,11 +78,6 @@ async function runiOS() {
 	if (buildStatus !== '0') {
 		// returning early here because if the build fails, there's nothing to analyze
 		fastlaneBuildLogTail(logFile, 'iOS Build Failed')
-		return
-	}
-
-	if (!(await didNativeDependencyChange())) {
-		// nothing changed to make this worth analyzing
 		return
 	}
 
@@ -554,17 +544,6 @@ function listDirectoryTree(dirpath /*: string*/) /*: any*/ {
 		)
 		return {}
 	}
-}
-
-async function didNativeDependencyChange() /*: Promise<boolean>*/ {
-	const diff = await danger.git.JSONDiffForFile('package.json')
-
-	if (!diff.dependencies && !diff.devDependencies) {
-		return false
-	}
-
-	// If we need to, we can add more heuristics here in the future
-	return true
 }
 
 //
