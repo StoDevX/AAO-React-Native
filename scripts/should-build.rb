@@ -66,6 +66,10 @@ def native_file_changed?(changed_files)
   end
 end
 
+def git_log_between(source, target)
+  sh("git log --name-only --format='' '#{source}'..'#{target}'")
+end
+
 def should_build?
   # Essentially, we want to avoid native builds if the only thing that changed
   # was JS code.
@@ -81,7 +85,7 @@ def should_build?
   end
 
   # 1. need to get files changed in the current build since master
-  changed_files = sh("git log --name-only --format='' '#{source_branch}'..'#{current_branch}'").lines.sort.uniq
+  changed_files = git_log_between(source_branch, current_branch).lines.sort.uniq
 
   # 2. check for "packages we care about"
   if changed_files.include? 'package.json' and npm_native_package_changed?
