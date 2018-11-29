@@ -6677,14 +6677,7 @@ react-native-searchbar-controlled@1.0.0:
     lodash "^4.16.4"
     react-native-vector-icons "^4.4.2"
 
-react-native-tab-view@^1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-1.0.2.tgz#66e0bc6d38a227ed2b212e3a256b7902f6ce02ed"
-  integrity sha512-x8I43V1X7/AyMnIwnqJGMU54LqQRlV6vJ9irbls9asA/axdHIdxagPIV6Jx1ttFe/bPKhFwXL+lRYdYxGyUlWg==
-  dependencies:
-    prop-types "^15.6.1"
-
-react-native-tab-view@^1.2.0:
+react-native-tab-view@^1.0.0, react-native-tab-view@^1.2.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-1.3.1.tgz#f9932d6bd5ba7dad75ef9335a68f13d85ba5bd56"
   integrity sha512-QNt6VkEW8SP1UJ7yjD5P4bOTWwHQfoIMD5CqnA06pcubdNwHR1NmjiNZsVnIvp5wAEVbW6yTHjLXOh1fzab4xg==
