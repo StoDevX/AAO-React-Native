@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
+- Made sure that nightly builds will get built (#3261)
 
 ## [2.6.3] - 2018-09-17
 ### Fixed
