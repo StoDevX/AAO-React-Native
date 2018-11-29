@@ -72,6 +72,8 @@ end
 
 # checks if the native build needs to be run
 def should_build?
+	return true if ENV['IS_NIGHTLY']
+
   # Find the oldest common revision between HEAD's parent and our
   # default branch.
   #
