@@ -76,9 +76,15 @@ def git_log_between(source, target)
   sh("git log --name-only --format='' '#{source}'..'#{target}'")
 end
 
+def anything_changed_yesterday?
+	yesterdays_changes = git_log_between('HEAD@{26 hours ago}', 'HEAD').unique_lines
+
+  yesterdays_changes.count > 0
+end
+
 # checks if the native build needs to be run
 def should_build?
-  return true if ENV['IS_NIGHTLY']
+  return anything_changed_yesterday? if ENV['IS_NIGHTLY']
 
   # Find the oldest common revision between HEAD's parent and our
   # default branch.
