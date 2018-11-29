@@ -88,7 +88,7 @@ function runiOS() {
 	}
 
 	markdown(
-		h.h2('iOS Reportzzz'),
+		h.h2('iOS Report'),
 		h.details(
 			h.summary('Analysis of slow build times (>20s)'),
 			m.code({}, analysisFile),
