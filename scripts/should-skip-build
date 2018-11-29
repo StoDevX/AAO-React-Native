@@ -67,9 +67,10 @@ end
 DEFAULT_BRANCH = 'master'.freeze
 
 class String
-	def unique_lines
-		lines.uniq
-	end
+  def unique_lines
+    lines.uniq
+  end
+end
 end
 
 def git_log_between(source, target)
@@ -77,13 +78,13 @@ def git_log_between(source, target)
 end
 
 def anything_changed_yesterday?
-	yesterdays_changes = git_log_between('HEAD@{26 hours ago}', 'HEAD').unique_lines
+  yesterdays_changes = git_log_between('HEAD@{26 hours ago}', 'HEAD').unique_lines
 
   yesterdays_changes.count > 0
 end
 
 def should_build_nightly?
-	anything_changed_yesterday?
+  anything_changed_yesterday?
 end
 
 # checks if the native build needs to be run
