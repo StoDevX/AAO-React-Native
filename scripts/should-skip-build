@@ -66,6 +66,12 @@ end
 
 DEFAULT_BRANCH = 'master'.freeze
 
+class String
+	def unique_lines
+		lines.uniq
+	end
+end
+
 def git_log_between(source, target)
   sh("git log --name-only --format='' '#{source}'..'#{target}'")
 end
@@ -90,7 +96,7 @@ def should_build?
   oldest_shared_revision = sh("git merge-base '#{DEFAULT_BRANCH}' 'HEAD^1'")
 
   # Get all files that changed between the fork point and HEAD
-  changed_files = git_log_between(oldest_shared_revision, 'HEAD').lines.sort.uniq
+  changed_files = git_log_between(oldest_shared_revision, 'HEAD').unique_lines
 
   # 1. Check if any packages we care about changed
   if changed_files.include?('package.json') &&
