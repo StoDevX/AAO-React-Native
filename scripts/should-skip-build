@@ -82,9 +82,13 @@ def anything_changed_yesterday?
   yesterdays_changes.count > 0
 end
 
+def should_build_nightly?
+	anything_changed_yesterday?
+end
+
 # checks if the native build needs to be run
 def should_build?
-  return anything_changed_yesterday? if ENV['IS_NIGHTLY']
+  return should_build_nightly? if ENV['IS_NIGHTLY']
 
   # Find the oldest common revision between HEAD's parent and our
   # default branch.
