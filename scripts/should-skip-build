@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'json'
 
 PLATFORM = (ENV['task'] || 'unknown').freeze
@@ -7,10 +9,6 @@ def sh(cmd)
   output = `#{cmd}`.chomp
   puts output
   output
-end
-
-def git_branch
-  sh('git rev-parse --abbrev-ref HEAD')
 end
 
 # diff two hashes at a path and return the changed items
@@ -66,46 +64,51 @@ def native_file_changed?(changed_files)
   end
 end
 
+DEFAULT_BRANCH = 'master'.freeze
+
 def git_log_between(source, target)
   sh("git log --name-only --format='' '#{source}'..'#{target}'")
 end
 
+# checks if the native build needs to be run
 def should_build?
-  # Essentially, we want to avoid native builds if the only thing that changed
-  # was JS code.
+  # Find the oldest common revision between HEAD's parent and our
+  # default branch.
+  #
+  # HEAD's parent may _be_ our default branch, or the commit before
+  # `master` if we've forked to a branch off it.  More than likely,
+  # though, `HEAD^1` is some commit in our stream of history, and will
+  # be sufficient to find the starting point of divergence, if such a
+  # point exists.
+  #
+  # If HEAD is a merge commit on `master`, then HEAD^1 points to the
+  # previous commit on `master`, which should clearly be completely
+  # separate from the branch that was merged, and hence the fork point
+  # will be the point of divergence.
+  oldest_shared_revision = sh("git merge-base '#{DEFAULT_BRANCH}' 'HEAD^1'")
 
-  # TODO: figure out how to determine the actual source branch
-  source_branch = 'master'
-  current_branch = git_branch
+  # Get all files that changed between the fork point and HEAD
+  changed_files = git_log_between(oldest_shared_revision, 'HEAD').lines.sort.uniq
 
-  if source_branch == current_branch
-    # if we're on master, we should do the build
-    puts "branch == #{source_branch}"
-    return true
-  end
-
-  # 1. need to get files changed in the current build since master
-  changed_files = git_log_between(source_branch, current_branch).lines.sort.uniq
-
-  # 2. check for "packages we care about"
+  # 1. Check if any packages we care about changed
   if changed_files.include?('package.json') &&
-     npm_native_package_changed?(source_branch, current_branch)
+     npm_native_package_changed?(oldest_shared_revision, 'HEAD')
     puts "some dependency matching #{NPM_DEP_NAME_REGEXP.inspect} changed"
     return true
   end
 
-  # 3. compare list of files to our sets of "files we care about"
+  # 2. Check if any files we care about changed
   if native_file_changed?(changed_files)
     puts 'some native file changed'
     return true
   end
 
-  # 4) if none matched, return false
-  puts 'skip build'
+  # 3. If we haven't decided to build yet, we aren't going to.
+  puts 'build skippable'
   false
 end
 
-if should_build?
+if !should_build?
   file_path = File.join(File.dirname(__FILE__), '..', 'logs', 'build-status')
   File.open(file_path, 'w') { |file| file.write('0') }
   exit 0
