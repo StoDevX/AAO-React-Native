@@ -18,7 +18,7 @@
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
     "@frogpond/open-url": "^1.0.0",
-    "react-markdown": "^2.5.1",
+    "react-markdown": "^4.0.0",
     "react-native-typography": "^1.3.0",
     "lodash": "^4.17.10"
   },
