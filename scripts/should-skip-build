@@ -71,7 +71,6 @@ class String
     lines.uniq
   end
 end
-end
 
 def git_log_between(source, target)
   sh("git log --name-only --format='' '#{source}'..'#{target}'")
