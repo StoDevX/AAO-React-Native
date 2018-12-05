@@ -2,35 +2,12 @@
 ; We fork some components by platform
 .*/*[.]android.js
 
-; Ignore "BUCK" generated dirs
-<PROJECT_ROOT>/\.buckd/
-
-; Ignore unexpected extra "@providesModule"
-.*/node_modules/.*/node_modules/fbjs/.*
-
-; Ignore duplicate module providers: For RN Apps installed via npm, the
-; "Libraries" folder is inside "node_modules/react-native", but in the source
-; repo it is in the root.
-.*/Libraries/react-native/React.js
-
-; Ignore polyfills
-.*/Libraries/polyfills/.*
-
-; Ignore metro
-.*/node_modules/metro/.*
-
 ; Ignore the vendor/ folder, since CIs stick ruby deps in there
 <PROJECT_ROOT>/vendor/
 <PROJECT_ROOT>/.bundle/
 
-; Ignore other things
-.*/node_modules/.*/__tests?__/.*
-.*/node_modules/.*/examples/.*
-.*/node_modules/react-native-mock/.*
-.*/node_modules/react-native-restart/.*
 ; remove this after rn-linear-gradient fixes their @flow/no type arguments issue
 .*/node_modules/react-native-linear-gradient/.*
-.*/node_modules/yarn-deduplicate/.*
 
 [include]
 
