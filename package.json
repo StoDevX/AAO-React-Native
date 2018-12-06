@@ -143,7 +143,7 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.1.6",
+    "@babel/core": "7.2.0",
     "ajv": "6.6.1",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
