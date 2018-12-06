@@ -1862,17 +1862,17 @@ bugsnag-react-native@2.12.6:
     promise "^7"
     prop-types "^15.6.0"
 
-bugsnag-sourcemaps@1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/bugsnag-sourcemaps/-/bugsnag-sourcemaps-1.0.4.tgz#5b49c98edf2f931cf881dc22177cda8db8534371"
-  integrity sha512-AUnvubm/gDYkpdvw/dq/oQlC2zR9EvZUukpr4bgeBSEFGLnE1sCs4GINXuw0HBgsYKJ3dq5zRFyndtGXK+5Odw==
+bugsnag-sourcemaps@1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/bugsnag-sourcemaps/-/bugsnag-sourcemaps-1.0.5.tgz#310b0ac7dfcdbc964ffae9945d886e2c5fc11260"
+  integrity sha512-9MV4c7y4xFXzK9rl8MSB9k0nNXUDnpt3VcrKZhHscXShfWZ6eY18JQ2QNIU+UZGHe2e9n23u+OonxxEmrAVE3Q==
   dependencies:
     graceful-fs "^4.1.11"
     listr "^0.12.0"
     meow "^3.7.0"
-    rc "^1.2.1"
+    rc "^1.2.8"
     read-pkg-up "^2.0.0"
-    request "^2.79.0"
+    request "^2.88.0"
 
 builtin-modules@^1.0.0:
   version "1.1.1"
@@ -6491,7 +6491,7 @@ range-parser@~1.2.0:
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.0.tgz#f49be6b487894ddc40dcc94a322f611092e00d5e"
   integrity sha1-9JvmtIeJTdxA3MlKMi9hEJLgDV4=
 
-rc@^1.2.1, rc@^1.2.7:
+rc@^1.2.7, rc@^1.2.8:
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.8.tgz#cd924bf5200a075b83c188cd6b9e211b7fc0d3ed"
   integrity sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==
@@ -7129,7 +7129,7 @@ request-promise-native@^1.0.3:
     stealthy-require "^1.1.0"
     tough-cookie ">=2.3.3"
 
-request@^2.79.0, request@^2.83.0:
+request@^2.83.0, request@^2.88.0:
   version "2.88.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.0.tgz#9c2fca4f7d35b592efe57c7f0a55e81052124fef"
   integrity sha512-NAqBSrijGLZdM0WZNsInLJpkJokL72XYjUpnB0iwsRgxh7dB6COrHnTBNwN0E+lHDAJzu7kLAkDeY08z2/A0hg==
