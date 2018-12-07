@@ -68,7 +68,7 @@ DEFAULT_BRANCH = 'master'.freeze
 
 class String
   def unique_lines
-    lines.uniq
+    lines.uniq.map(&:chomp)
   end
 end
 
