@@ -15,7 +15,7 @@ const TransportationView = TabNavigator({
 		screen: ({navigation}) => (
 			<BusView line="Express Bus" navigation={navigation} />
 		),
-		navigationOptions: {
+		defaultNavigationOptions: {
 			tabBarLabel: 'Express Bus',
 			tabBarIcon: TabBarIcon('bus'),
 		},
@@ -25,7 +25,7 @@ const TransportationView = TabNavigator({
 		screen: ({navigation}) => (
 			<BusView line="Red Line" navigation={navigation} />
 		),
-		navigationOptions: {
+		defaultNavigationOptions: {
 			tabBarLabel: 'Red Line',
 			tabBarIcon: TabBarIcon('bus'),
 		},
@@ -35,7 +35,7 @@ const TransportationView = TabNavigator({
 		screen: ({navigation}) => (
 			<BusView line="Blue Line" navigation={navigation} />
 		),
-		navigationOptions: {
+		defaultNavigationOptions: {
 			tabBarLabel: 'Blue Line',
 			tabBarIcon: TabBarIcon('bus'),
 		},
@@ -45,7 +45,7 @@ const TransportationView = TabNavigator({
 		screen: ({navigation}) => (
 			<BusView line="Oles Go" navigation={navigation} />
 		),
-		navigationOptions: {
+		defaultNavigationOptions: {
 			tabBarLabel: 'Oles Go',
 			tabBarIcon: TabBarIcon('car'),
 		},

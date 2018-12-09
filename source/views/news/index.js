@@ -16,7 +16,7 @@ const NewsView = TabNavigator({
 				title="St. Olaf"
 			/>
 		),
-		navigationOptions: {
+		defaultNavigationOptions: {
 			tabBarLabel: 'St. Olaf',
 			tabBarIcon: TabBarIcon('school'),
 		},
@@ -31,7 +31,7 @@ const NewsView = TabNavigator({
 				title="Oleville"
 			/>
 		),
-		navigationOptions: {
+		defaultNavigationOptions: {
 			tabBarLabel: 'Oleville',
 			tabBarIcon: TabBarIcon('happy'),
 		},
@@ -46,7 +46,7 @@ const NewsView = TabNavigator({
 				title="The Mess"
 			/>
 		),
-		navigationOptions: {
+		defaultNavigationOptions: {
 			tabBarLabel: 'The Mess',
 			tabBarIcon: TabBarIcon('paper'),
 		},
@@ -61,7 +61,7 @@ const NewsView = TabNavigator({
 				title="PoliticOle"
 			/>
 		),
-		navigationOptions: {
+		defaultNavigationOptions: {
 			tabBarLabel: 'PoliticOle',
 			tabBarIcon: TabBarIcon('megaphone'),
 		},
@@ -76,7 +76,7 @@ const NewsView = TabNavigator({
 				title="KSTO"
 			/>
 		),
-		navigationOptions: {
+		defaultNavigationOptions: {
 			tabBarLabel: 'KSTO',
 			tabBarIcon: TabBarIcon('radio'),
 		},
