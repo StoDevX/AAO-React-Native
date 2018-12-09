@@ -25,14 +25,17 @@ export const TabNavigator: ComponentType = (screens, options = {}) => {
 	let theme = getTheme()
 
 	return createTabNavigator(screens, {
-		backBehavior: 'none',
-		lazy: true,
-		theme: {
-			colors: {
-				primary: theme.androidTabBarBackground,
+		defaultNavigationOptions: {
+			backBehavior: 'none',
+			lazy: true,
+			theme: {
+				colors: {
+					primary: theme.androidTabBarBackground,
+				},
 			},
+			activeTintColor: theme.androidTabBarForeground,
+			...(options.defaultNavigationOptions || {}),
 		},
-		activeTintColor: theme.androidTabBarForeground,
 		tabBarOptions: {
 			activeTintColor: theme.iosTabBarActiveColor,
 			...(options.tabBarOptions || {}),
