@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed a syntax error in build skipping script (#3262)
 - Forced build skipping script to actually query Git history for nightly skip check (#3275)
 - Fixed the touchable ref from not passing from the filter toolbar button to the popover (#3279)
+- Resolved some circular `require` statements in our code (#3280)
 
 ## [2.6.3] - 2018-09-17
 ### Fixed

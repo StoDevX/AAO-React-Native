@@ -1,6 +1,6 @@
 // @flow
 
-import {trackException} from '@frogpond/analytics'
+import {trackException} from './google-analytics'
 import {notify} from './bugsnag'
 
 export function reportNetworkProblem(err: Error) {
