@@ -4,6 +4,9 @@ import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 import com.facebook.react.ReactFragmentActivity
 import com.bugsnag.BugsnagReactNative;
 import com.calendarevents.CalendarEventsPackage;
+import com.facebook.react.ReactActivityDelegate;
+import com.facebook.react.ReactRootView;
+import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 import android.os.Bundle;
 
 public class MainActivity extends ReactFragmentActivity {
@@ -20,6 +23,16 @@ public class MainActivity extends ReactFragmentActivity {
     @Override
     protected String getMainComponentName() {
         return "AllAboutOlaf";
+    }
+
+    @Override
+    protected ReactActivityDelegate createReactActivityDelegate() {
+        return new ReactActivityDelegate(this, getMainComponentName()) {
+            @Override
+            protected ReactRootView createRootView() {
+                return new RNGestureHandlerEnabledRootView(MainActivity.this);
+            }
+        };
     }
 
     // Set up Bugsnag
