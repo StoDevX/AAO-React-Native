@@ -33,6 +33,10 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 		const {filter} = this.state
 		const {anchor, onClosePopover, visible} = this.props
 
+		if (typeof anchor !== 'object') {
+			throw new Error('FilterPopover only supports createRef refs')
+		}
+
 		return (
 			<Popover
 				arrowStyle={arrowStyle}
