@@ -24,6 +24,7 @@ import com.mapbox.rctmgl.RCTMGLPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
+import com.swmansion.rnscreens.RNScreensPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +55,7 @@ public class MainApplication extends Application implements ReactApplication {
         new ReactNativeRestartPackage(),
         new RNDeviceInfo(),
         new RNNetworkInfoPackage(),
+        new RNScreensPackage(),
         new VectorIconsPackage()
       );
     }
