@@ -16,7 +16,7 @@ const CalendarView = TabNavigator({
 				}}
 			/>
 		),
-		defaultNavigationOptions: {
+		navigationOptions: {
 			tabBarLabel: 'St. Olaf',
 			tabBarIcon: TabBarIcon('school'),
 		},
@@ -33,7 +33,7 @@ const CalendarView = TabNavigator({
 				}}
 			/>
 		),
-		defaultNavigationOptions: {
+		navigationOptions: {
 			tabBarLabel: 'Oleville',
 			tabBarIcon: TabBarIcon('happy'),
 		},
@@ -50,7 +50,7 @@ const CalendarView = TabNavigator({
 				}}
 			/>
 		),
-		defaultNavigationOptions: {
+		navigationOptions: {
 			tabBarLabel: 'Northfield',
 			tabBarIcon: TabBarIcon('pin'),
 		},

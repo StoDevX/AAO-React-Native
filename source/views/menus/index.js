@@ -33,7 +33,7 @@ export const MenusView = TabNavigator({
 				navigation={navigation}
 			/>
 		),
-		defaultNavigationOptions: {
+		navigationOptions: {
 			tabBarLabel: 'Stav Hall',
 			tabBarIcon: TabBarIcon('nutrition'),
 		},
@@ -55,7 +55,7 @@ export const MenusView = TabNavigator({
 				navigation={navigation}
 			/>
 		),
-		defaultNavigationOptions: {
+		navigationOptions: {
 			tabBarLabel: 'The Cage',
 			tabBarIcon: TabBarIcon('cafe'),
 		},
@@ -75,7 +75,7 @@ export const MenusView = TabNavigator({
 				navigation={navigation}
 			/>
 		),
-		defaultNavigationOptions: {
+		navigationOptions: {
 			tabBarLabel: 'The Pause',
 			tabBarIcon: TabBarIcon('paw'),
 		},
@@ -83,7 +83,7 @@ export const MenusView = TabNavigator({
 
 	CarletonMenuListView: {
 		screen: CarletonCafeIndex,
-		defaultNavigationOptions: {
+		navigationOptions: {
 			tabBarLabel: 'Carleton',
 			tabBarIcon: TabBarIcon('menu'),
 		},
