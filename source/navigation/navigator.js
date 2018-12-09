@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
 })
 
 const navigatorOptions = {
-	navigationOptions: {
+	defaultNavigationOptions: {
 		headerStyle: styles.header,
 		headerTintColor: theme.navigationForeground,
 	},
