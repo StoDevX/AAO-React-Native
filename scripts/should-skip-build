@@ -66,12 +66,34 @@ end
 
 DEFAULT_BRANCH = 'master'.freeze
 
+class String
+  def unique_lines
+    lines.uniq.map(&:chomp)
+  end
+end
+
+def changes_after(time, ref = 'HEAD')
+  sh("git log --name-only --format='' --after='#{time}' '#{ref}'")
+end
+
 def git_log_between(source, target)
   sh("git log --name-only --format='' '#{source}'..'#{target}'")
 end
 
+def anything_changed_yesterday?
+  yesterdays_changes = changes_after('26 hours ago').unique_lines
+
+  yesterdays_changes.count > 0
+end
+
+def should_build_nightly?
+  anything_changed_yesterday?
+end
+
 # checks if the native build needs to be run
 def should_build?
+  return should_build_nightly? if ENV['IS_NIGHTLY']
+
   # Find the oldest common revision between HEAD's parent and our
   # default branch.
   #
@@ -88,7 +110,7 @@ def should_build?
   oldest_shared_revision = sh("git merge-base '#{DEFAULT_BRANCH}' 'HEAD^1'")
 
   # Get all files that changed between the fork point and HEAD
-  changed_files = git_log_between(oldest_shared_revision, 'HEAD').lines.sort.uniq
+  changed_files = git_log_between(oldest_shared_revision, 'HEAD').unique_lines
 
   # 1. Check if any packages we care about changed
   if changed_files.include?('package.json') &&
