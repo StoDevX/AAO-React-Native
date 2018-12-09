@@ -45,6 +45,7 @@
 		3A0CEA921DEA203F0036E739 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0CEA781DEA20340036E739 /* libRCTAnimation.a */; };
 		3AD99DE32141CA1600D8CAAA /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D18853A920995CEB000A1DC5 /* libRCTOneSignal.a */; };
 		3AE408501E1E280800F0FD83 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3AE4084F1E1E280800F0FD83 /* LaunchScreen.storyboard */; };
+		670F94EE21BDC8A8000B63AB /* libRNScreens.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67802DB521BDC55C00EAA9E9 /* libRNScreens.a */; };
 		679C3A672050B38F00B4D498 /* libRCTMGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 679C3A662050B37200B4D498 /* libRCTMGL.a */; };
 		679C3A6E2050B4F100B4D498 /* Mapbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 679C3A6D2050B4F100B4D498 /* Mapbox.framework */; };
 		679C3A6F2050B4F100B4D498 /* Mapbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 679C3A6D2050B4F100B4D498 /* Mapbox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -607,6 +608,7 @@
 				679C3A672050B38F00B4D498 /* libRCTMGL.a in Frameworks */,
 				67A1EEB02072C1860059399D /* libRNDeviceInfo.a in Frameworks */,
 				3AD99DE32141CA1600D8CAAA /* libRCTOneSignal.a in Frameworks */,
+				670F94EE21BDC8A8000B63AB /* libRNScreens.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
