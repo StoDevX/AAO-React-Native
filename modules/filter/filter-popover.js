@@ -6,7 +6,7 @@ import type {FilterType} from './types'
 import * as c from '@frogpond/colors'
 
 type Props = {
-	anchor: ?React.Ref<*>,
+	anchor: React.Ref<*>,
 	filter: FilterType,
 	onClosePopover: (filter: FilterType) => any,
 	visible: boolean,
@@ -36,7 +36,7 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 		return (
 			<Popover
 				arrowStyle={arrowStyle}
-				fromView={anchor}
+				fromView={anchor.current}
 				isVisible={visible}
 				onClose={() => onClosePopover(filter)}
 				placement="bottom"
