@@ -25,32 +25,23 @@ export const TabNavigator: ComponentType = (screens, options = {}) => {
 	let theme = getTheme()
 
 	return createTabNavigator(screens, {
+		// for react-native-material-bottom-tabs
+		backBehavior: 'none',
+		activeColor: theme.androidTabBarForeground,
+		// for the <BottomNavigation/> that react-native-material-bottom-tabs wraps
+		theme: {
+			colors: {primary: theme.androidTabBarBackground},
+		},
+		...options,
 		defaultNavigationOptions: {
-			backBehavior: 'none',
-			lazy: true,
-			theme: {
-				colors: {
-					primary: theme.androidTabBarBackground,
-				},
-			},
-			activeTintColor: theme.androidTabBarForeground,
 			...(options.defaultNavigationOptions || {}),
 		},
 		tabBarOptions: {
 			activeTintColor: theme.iosTabBarActiveColor,
 			...(options.tabBarOptions || {}),
 			labelStyle: {
-				...Platform.select({
-					ios: {
-						fontFamily: 'System',
-					},
-					android: {
-						fontFamily: 'sans-serif-condensed',
-						fontSize: 14,
-					},
-				}),
+				fontFamily: 'System',
 			},
 		},
-		...options,
 	})
 }
