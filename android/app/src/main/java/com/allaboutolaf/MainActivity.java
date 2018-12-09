@@ -1,12 +1,17 @@
 package com.allaboutolaf;
 
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
-import com.facebook.react.ReactActivity;
+import com.facebook.react.ReactFragmentActivity
 import com.bugsnag.BugsnagReactNative;
 import com.calendarevents.CalendarEventsPackage;
 import android.os.Bundle;
 
-public class MainActivity extends ReactActivity {
+public class MainActivity extends ReactFragmentActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(null);
+    }
 
     /**
      * Returns the name of the main component registered from JavaScript.
