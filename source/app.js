@@ -7,7 +7,7 @@ import './init/moment'
 import './init/analytics'
 import './init/api'
 import './init/theme'
-import './init/navigation'
+// import './init/navigation'
 import {ONESIGNAL_APP_ID} from './init/notifications'
 
 import * as React from 'react'
