@@ -12,7 +12,7 @@
     "react": "^16.0.0",
     "react-native": "^0.57.0",
     "react-native-search-bar": "^3.4.2",
-    "react-native-searchbar-controlled": "^1.0.0",
+    "react-native-searchbar-controlled": "^1.0.0 || ^2.0.0",
     "react-native-vector-icons": "^4.0.0"
   },
   "dependencies": {

@@ -5181,7 +5181,7 @@ lodash.throttle@^4.1.1:
   resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
   integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
 
-lodash@4.17.11, lodash@4.x.x, lodash@^4.0.0, lodash@^4.13.1, lodash@^4.16.4, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.3.0, lodash@^4.6.1:
+lodash@4.17.11, lodash@4.x.x, lodash@^4.0.0, lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.3.0, lodash@^4.6.1:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
@@ -6670,13 +6670,10 @@ react-native-search-bar@3.4.2:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-searchbar-controlled@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-searchbar-controlled/-/react-native-searchbar-controlled-1.0.0.tgz#3e2cfd0ee356fb8b2d0bd547f76c57298a9f55e4"
-  integrity sha512-qix15Dxn//mHyCm1Tdr5l7O8+rVpT39X5gRlzOiF7+9fGvKhvcrI+IXwjIuD3q0PXq22kWrFJ2Yg0atg2LBgJQ==
-  dependencies:
-    lodash "^4.16.4"
-    react-native-vector-icons "^4.4.2"
+react-native-searchbar-controlled@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-searchbar-controlled/-/react-native-searchbar-controlled-2.0.0.tgz#5f4566e3dd354773aada7887477db11477f54b04"
+  integrity sha512-QQmMcv6b4lKDdRGx3t3tMZXRskzYZEnjBphy9UWB8QELqdgDj8q2BjsrOG2xGvJDpnfZoRa3rXRV+2s50zA2nw==
 
 react-native-tab-view@^0.0.77:
   version "0.0.77"
@@ -6704,7 +6701,7 @@ react-native-typography@1.4.0, react-native-typography@^1.3.0:
   resolved "https://registry.yarnpkg.com/react-native-typography/-/react-native-typography-1.4.0.tgz#166b79c618075882d8af07720649f5bc6523160d"
   integrity sha512-3lToN3hRvPySw0PWCn1SjbDbNaqlV+FM22zSuymIc2ILGcfWbWcgZ+qdX+VKtHAewMG7Rp5yab2bmuaEYQlu3Q==
 
-react-native-vector-icons@4.6.0, react-native-vector-icons@^4.4.2:
+react-native-vector-icons@4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-4.6.0.tgz#e4014311ffa6de397d914ffc31b7097a874cc8d5"
   integrity sha512-rpfhfPiXCK2PX1nrNhdxSMrEGB/Gw/SvKoPM0G2wAkSoqynnes19K0VYI+Up7DqR1rFIpE4hP2erpT1tNx2tfg==
