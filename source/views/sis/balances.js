@@ -27,7 +27,7 @@ const LONG_DISCLAIMER =
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
-	loginState: LoginStateEnum,
+	status: LoginStateEnum,
 	alertSeen: boolean,
 }
 
@@ -128,7 +128,7 @@ class BalancesView extends React.PureComponent<Props, State> {
 			message,
 			loading,
 		} = this.state
-		let {loginState} = this.props
+		let {status} = this.props
 
 		return (
 			<ScrollView
@@ -190,9 +190,9 @@ class BalancesView extends React.PureComponent<Props, State> {
 					</Section>
 				</TableView>
 
-				{(loginState !== 'logged-in' || message) && (
+				{(status !== 'logged-in' || message) && (
 					<Section footer="You'll need to log in in order to see this data.">
-						{loginState !== 'logged-in' ? (
+						{status !== 'logged-in' ? (
 							<Cell
 								accessory="DisclosureIndicator"
 								cellStyle="Basic"
@@ -212,7 +212,7 @@ class BalancesView extends React.PureComponent<Props, State> {
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
 		alertSeen: state.settings ? state.settings.unofficiallyAcknowledged : false,
-		loginState: state.login ? state.login.loginState : 'logged-out',
+		status: state.login ? state.login.status : 'logged-out',
 	}
 }
 

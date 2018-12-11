@@ -96,26 +96,26 @@ type Action = CredentialsActions
 type CredentialsActions = LogInActions | LogOutAction
 
 export type State = {
-	+loginState: LoginStateEnum,
+	+status: LoginStateEnum,
 }
 
 const initialState = {
-	loginState: 'initializing',
+	status: 'initializing',
 }
 
 export function login(state: State = initialState, action: Action) {
 	switch (action.type) {
 		case CREDENTIALS_LOGIN_START:
-			return {...state, loginState: 'checking'}
+			return {...state, status: 'checking'}
 
 		case CREDENTIALS_LOGIN_SUCCESS:
-			return {...state, loginState: 'logged-in'}
+			return {...state, status: 'logged-in'}
 
 		case CREDENTIALS_LOGIN_FAILURE:
-			return {...state, loginState: 'invalid'}
+			return {...state, status: 'invalid'}
 
 		case CREDENTIALS_LOGOUT:
-			return {...state, loginState: 'logged-out'}
+			return {...state, status: 'logged-out'}
 
 		default:
 			return state

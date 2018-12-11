@@ -14,7 +14,7 @@ import {connect} from 'react-redux'
 import noop from 'lodash/noop'
 
 type ReduxStateProps = {
-	loginState: LoginStateEnum,
+	status: LoginStateEnum,
 }
 
 type ReduxDispatchProps = {
@@ -69,11 +69,11 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 	onChangePassword = (text = '') => this.setState(() => ({password: text}))
 
 	render() {
-		const {loginState} = this.props
+		const {status} = this.props
 		const {username, password} = this.state
 
-		const loggedIn = loginState === 'logged-in'
-		const loading = loginState === 'checking'
+		const loggedIn = status === 'logged-in'
+		const loading = status === 'checking'
 
 		return (
 			<Section
@@ -125,10 +125,10 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
 	if (!state.login) {
-		return {loginState: 'initializing'}
+		return {status: 'initializing'}
 	}
 
-	return {loginState: state.login.loginState}
+	return {status: state.login.status}
 }
 
 export const ConnectedCredentialsLoginSection = connect(
