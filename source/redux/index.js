@@ -15,6 +15,7 @@ import {
 	notifications,
 	type State as NotificationsState,
 } from './parts/notifications'
+import {login, type State as LoginState} from './parts/login'
 
 export {init as initRedux} from './init'
 
@@ -26,6 +27,7 @@ export type ReduxState = {
 	help?: HelpState,
 	stoprint?: StoPrintState,
 	notifications?: NotificationsState,
+	login?: LoginState,
 }
 
 export const makeStore = () => {
@@ -37,6 +39,7 @@ export const makeStore = () => {
 		help,
 		stoprint,
 		notifications,
+		login,
 	})
 
 	const middleware = [reduxPromise, reduxThunk]

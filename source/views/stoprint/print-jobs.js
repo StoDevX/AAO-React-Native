@@ -6,6 +6,7 @@ import {Platform, SectionList} from 'react-native'
 import {connect} from 'react-redux'
 import {type ReduxState} from '../../redux'
 import {updatePrintJobs} from '../../redux/parts/stoprint'
+import {type LoginStateEnum} from '../../redux/parts/login'
 import {type PrintJob, STOPRINT_HELP_PAGE} from '../../lib/stoprint'
 import {
 	ListRow,
@@ -30,7 +31,7 @@ type ReactProps = TopLevelViewPropsType
 type ReduxStateProps = {
 	jobs: Array<PrintJob>,
 	error: ?string,
-	loginState: string,
+	loginState: LoginStateEnum,
 }
 
 type ReduxDispatchProps = {
@@ -194,7 +195,7 @@ function mapStateToProps(state: ReduxState): ReduxStateProps {
 	return {
 		jobs: state.stoprint ? state.stoprint.jobs : [],
 		error: state.stoprint ? state.stoprint.jobsError : null,
-		loginState: state.settings ? state.settings.loginState : 'logged-out',
+		loginState: state.login ? state.login.loginState : 'logged-out',
 	}
 }
 

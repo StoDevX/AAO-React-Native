@@ -6,15 +6,15 @@ import {LoginButton} from './login-button'
 import {
 	logInViaCredentials,
 	logOutViaCredentials,
-	type LoginStateType,
-} from '../../../../redux/parts/settings'
+	type LoginStateEnum,
+} from '../../../../redux/parts/login'
 import {loadLoginCredentials} from '../../../../lib/login'
 import {type ReduxState} from '../../../../redux'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
 
 type ReduxStateProps = {
-	loginState: LoginStateType,
+	loginState: LoginStateEnum,
 }
 
 type ReduxDispatchProps = {
@@ -123,11 +123,11 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 }
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
-	if (!state.settings) {
+	if (!state.login) {
 		return {loginState: 'initializing'}
 	}
 
-	return {loginState: state.settings.loginState}
+	return {loginState: state.login.loginState}
 }
 
 function mapDispatchToProps(dispatch): ReduxDispatchProps {

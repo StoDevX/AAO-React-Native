@@ -12,10 +12,8 @@ import {
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from '@frogpond/tableview'
-import {
-	hasSeenAcknowledgement,
-	type LoginStateType,
-} from '../../redux/parts/settings'
+import {hasSeenAcknowledgement} from '../../redux/parts/settings'
+import {type LoginStateEnum} from '../../redux/parts/login'
 import {getBalances} from '../../lib/financials'
 import {type ReduxState} from '../../redux'
 import delay from 'delay'
@@ -29,7 +27,7 @@ const LONG_DISCLAIMER =
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
-	loginState: LoginStateType,
+	loginState: LoginStateEnum,
 	alertSeen: boolean,
 }
 
@@ -214,7 +212,7 @@ class BalancesView extends React.PureComponent<Props, State> {
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
 		alertSeen: state.settings ? state.settings.unofficiallyAcknowledged : false,
-		loginState: state.settings ? state.settings.loginState : 'logged-out',
+		loginState: state.login ? state.login.loginState : 'logged-out',
 	}
 }
 
