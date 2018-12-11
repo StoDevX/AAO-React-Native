@@ -18,8 +18,8 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	logIn: (string, string) => any,
-	logOut: () => any,
+	logInViaCredentials: (string, string) => any,
+	logOutViaCredentials: () => any,
 }
 
 type Props = ReduxStateProps & ReduxDispatchProps
@@ -50,15 +50,16 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		this.setState(() => ({username, password}))
 
 		if (username && password) {
-			this.props.logIn(username, password)
+			this.props.logInViaCredentials(username, password)
 		}
 	}
 
-	logIn = () => this.props.logIn(this.state.username, this.state.password)
+	logIn = () =>
+		this.props.logInViaCredentials(this.state.username, this.state.password)
 
 	logOut = () => {
 		this.setState(() => ({username: '', password: ''}))
-		this.props.logOut()
+		this.props.logOutViaCredentials()
 	}
 
 	getUsernameRef = ref => (this._usernameInput = ref)
@@ -130,14 +131,7 @@ function mapStateToProps(state: ReduxState): ReduxStateProps {
 	return {loginState: state.login.loginState}
 }
 
-function mapDispatchToProps(dispatch): ReduxDispatchProps {
-	return {
-		logOut: () => dispatch(logOutViaCredentials()),
-		logIn: (user, pass) => dispatch(logInViaCredentials(user, pass)),
-	}
-}
-
 export const ConnectedCredentialsLoginSection = connect(
 	mapStateToProps,
-	mapDispatchToProps,
+	{logOutViaCredentials, logInViaCredentials},
 )(CredentialsLoginSection)
