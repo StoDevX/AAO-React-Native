@@ -53,6 +53,13 @@ const showUnknownLoginMessage = () =>
 		[{text: 'OK'}],
 	)
 
+const showUnknownFailureMessage = () =>
+	Alert.alert(
+		'Unknown Login Error',
+		'An unexpected error occured. Please try again, and let us know if it continues to happen.',
+		[{text: 'OK'}],
+	)
+
 export function logInViaCredentials(
 	username: string,
 	password: string,
@@ -79,6 +86,7 @@ export function logInViaCredentials(
 			trackLoginFailure('No network')
 			showNetworkFailureMessage()
 		} else {
+			showUnknownFailureMessage()
 			;(result: empty)
 		}
 	}
