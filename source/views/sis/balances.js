@@ -12,10 +12,8 @@ import {
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from '@frogpond/tableview'
-import {
-	hasSeenAcknowledgement,
-	type LoginStateType,
-} from '../../redux/parts/settings'
+import {hasSeenAcknowledgement} from '../../redux/parts/settings'
+import {type LoginStateEnum} from '../../redux/parts/login'
 import {getBalances} from '../../lib/financials'
 import {type ReduxState} from '../../redux'
 import delay from 'delay'
@@ -29,7 +27,7 @@ const LONG_DISCLAIMER =
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
-	loginState: LoginStateType,
+	status: LoginStateEnum,
 	alertSeen: boolean,
 }
 
@@ -130,7 +128,7 @@ class BalancesView extends React.PureComponent<Props, State> {
 			message,
 			loading,
 		} = this.state
-		let {loginState} = this.props
+		let {status} = this.props
 
 		return (
 			<ScrollView
@@ -192,9 +190,9 @@ class BalancesView extends React.PureComponent<Props, State> {
 					</Section>
 				</TableView>
 
-				{(loginState !== 'logged-in' || message) && (
+				{(status !== 'logged-in' || message) && (
 					<Section footer="You'll need to log in in order to see this data.">
-						{loginState !== 'logged-in' ? (
+						{status !== 'logged-in' ? (
 							<Cell
 								accessory="DisclosureIndicator"
 								cellStyle="Basic"
@@ -214,7 +212,7 @@ class BalancesView extends React.PureComponent<Props, State> {
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
 		alertSeen: state.settings ? state.settings.unofficiallyAcknowledged : false,
-		loginState: state.settings ? state.settings.loginState : 'logged-out',
+		status: state.login ? state.login.status : 'logged-out',
 	}
 }
 
