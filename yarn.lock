@@ -6609,10 +6609,10 @@ react-native-onesignal@3.2.11:
   dependencies:
     invariant "^2.2.2"
 
-react-native-paper@2.2.8:
-  version "2.2.8"
-  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-2.2.8.tgz#b0751525f9a34188db9af96bbacca4644c168fb5"
-  integrity sha512-a3Fe9DC81RRq+G1HLZHFZRWvY+A2WZ9w42oFQpmpIuPt+np5HLJhCQ8Qyef95RZyOP38Ql8QONutGqPmUgtyIQ==
+react-native-paper@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-2.3.0.tgz#8440a1a067ba7c7aac76d7ab9ff30194d6203100"
+  integrity sha512-RO71CUp6P9fyaFcQ7kJ7+8mhnVHnS1e4uGJkNIaWIHoZwtM5Tt1VlHPdRgR6DZ3scsRyvmh9IKnI+qvjj6zxHA==
   dependencies:
     "@callstack/react-theme-provider" "^1.0.7"
     color "^2.0.1"
