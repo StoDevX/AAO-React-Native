@@ -6,20 +6,20 @@ import {LoginButton} from './login-button'
 import {
 	logInViaCredentials,
 	logOutViaCredentials,
-	type LoginStateType,
-} from '../../../../redux/parts/settings'
+	type LoginStateEnum,
+} from '../../../../redux/parts/login'
 import {loadLoginCredentials} from '../../../../lib/login'
 import {type ReduxState} from '../../../../redux'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
 
 type ReduxStateProps = {
-	loginState: LoginStateType,
+	status: LoginStateEnum,
 }
 
 type ReduxDispatchProps = {
-	logIn: (string, string) => any,
-	logOut: () => any,
+	logInViaCredentials: (string, string) => any,
+	logOutViaCredentials: () => any,
 }
 
 type Props = ReduxStateProps & ReduxDispatchProps
@@ -50,15 +50,16 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		this.setState(() => ({username, password}))
 
 		if (username && password) {
-			this.props.logIn(username, password)
+			this.props.logInViaCredentials(username, password)
 		}
 	}
 
-	logIn = () => this.props.logIn(this.state.username, this.state.password)
+	logIn = () =>
+		this.props.logInViaCredentials(this.state.username, this.state.password)
 
 	logOut = () => {
 		this.setState(() => ({username: '', password: ''}))
-		this.props.logOut()
+		this.props.logOutViaCredentials()
 	}
 
 	getUsernameRef = ref => (this._usernameInput = ref)
@@ -68,11 +69,11 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 	onChangePassword = (text = '') => this.setState(() => ({password: text}))
 
 	render() {
-		const {loginState} = this.props
+		const {status} = this.props
 		const {username, password} = this.state
 
-		const loggedIn = loginState === 'logged-in'
-		const loading = loginState === 'checking'
+		const loggedIn = status === 'logged-in'
+		const loading = status === 'checking'
 
 		return (
 			<Section
@@ -90,7 +91,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 							label="Username"
 							onChangeText={this.onChangeUsername}
 							onSubmitEditing={this.focusPassword}
-							placeholder="username"
+							placeholder="ole"
 							returnKeyType="next"
 							secureTextEntry={false}
 							value={username}
@@ -102,7 +103,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 							label="Password"
 							onChangeText={this.onChangePassword}
 							onSubmitEditing={loggedIn ? noop : this.logIn}
-							placeholder="password"
+							placeholder="the$lion"
 							returnKeyType="done"
 							secureTextEntry={true}
 							value={password}
@@ -123,21 +124,14 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 }
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
-	if (!state.settings) {
-		return {loginState: 'initializing'}
+	if (!state.login) {
+		return {status: 'initializing'}
 	}
 
-	return {loginState: state.settings.loginState}
-}
-
-function mapDispatchToProps(dispatch): ReduxDispatchProps {
-	return {
-		logOut: () => dispatch(logOutViaCredentials()),
-		logIn: (user, pass) => dispatch(logInViaCredentials(user, pass)),
-	}
+	return {status: state.login.status}
 }
 
 export const ConnectedCredentialsLoginSection = connect(
 	mapStateToProps,
-	mapDispatchToProps,
+	{logOutViaCredentials, logInViaCredentials},
 )(CredentialsLoginSection)
