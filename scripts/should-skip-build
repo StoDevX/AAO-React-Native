@@ -81,9 +81,7 @@ def git_log_between(source, target)
 end
 
 def anything_changed_yesterday?
-  hours_ago = 26
-  seconds_ago = hours_ago * 60 * 60
-  yesterdays_changes = changes_after(seconds_ago.to_s).unique_lines
+  yesterdays_changes = changes_after('26 hours ago').unique_lines
 
   yesterdays_changes.count > 0
 end
