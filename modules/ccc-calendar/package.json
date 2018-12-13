@@ -10,7 +10,7 @@
   },
   "peerDependencies": {
     "react": "^16.0.0",
-    "react-navigation": "^2.13.0",
+    "react-navigation": "^3.0.0",
     "moment-timezone": "^0.5.21",
     "delay": "^4.1.0"
   },
