@@ -268,7 +268,6 @@ jobs:
             git reset --hard origin/master
             git checkout "$CIRCLE_BRANCH"
             git reset --hard "origin/$CIRCLE_BRANCH"
-            git fetch --all --unshallow
       - run: mkdir -p logs/
       - run: touch logs/build-status
       - run:
@@ -340,7 +339,6 @@ jobs:
             git reset --hard origin/master
             git checkout "$CIRCLE_BRANCH"
             git reset --hard "origin/$CIRCLE_BRANCH"
-            git fetch --all --unshallow
       - run: mkdir -p logs/
       - run: touch logs/build-status
       - run:
