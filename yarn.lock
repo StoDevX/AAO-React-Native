@@ -702,12 +702,12 @@
     universal-user-agent "^2.0.0"
     url-template "^2.0.8"
 
-"@react-navigation/core@3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.0.1.tgz#9c513c65ae64aa8dee2777f66f547d488905140b"
-  integrity sha512-bJgQHGhtczCmnfIibKuOjgSucLb6rJiz/EbpgqpCHLWg64D94OVEig7uQesmynCiaas1MN1FDSX2hrh2IB3kVw==
+"@react-navigation/core@3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.0.2.tgz#8631801533a27d034a3b8421dfd0510a9f27dcf3"
+  integrity sha512-E0ETZJUuJRHvjtb0f0U416NcDxt9T5HvRLxXu5K4DNxtmjpOfkT9Sh+Q309/zrCwSkHY85ZpGKvewZTSGI7Q1Q==
   dependencies:
-    create-react-context "^0.2.3"
+    create-react-context "0.2.2"
     hoist-non-react-statics "^3.0.1"
     path-to-regexp "^1.7.0"
     query-string "^6.2.0"
@@ -2351,6 +2351,14 @@ create-react-class@^15.6.3:
     fbjs "^0.8.9"
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
+
+create-react-context@0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/create-react-context/-/create-react-context-0.2.2.tgz#9836542f9aaa22868cd7d4a6f82667df38019dca"
+  integrity sha512-KkpaLARMhsTsgp0d2NA/R94F/eDLbhXERdIq3LvX2biCAXcDvHYoOqHfWCHf1+OLj+HKBotLG3KqaOOf+C1C+A==
+  dependencies:
+    fbjs "^0.8.0"
+    gud "^1.0.0"
 
 create-react-context@^0.2.1, create-react-context@^0.2.3:
   version "0.2.3"
@@ -6794,12 +6802,12 @@ react-navigation-tabs@1.0.1:
     react-lifecycles-compat "^3.0.4"
     react-native-tab-view "^1.0.0"
 
-react-navigation@3.0.7:
-  version "3.0.7"
-  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-3.0.7.tgz#d0bd6138822eebaa500db6c1d2cba3c1d285ff44"
-  integrity sha512-6iS7/+tL1U/sc05DQ0fDfdSHZ4AO7Ng0JiYF8wHPR21RfNZb0Meh1/hadZvguMHDwSn65mgLiGpxGFUSliyI9A==
+react-navigation@3.0.8:
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-3.0.8.tgz#34c0d48f29b807dfc5cf399c2fc60fea13adaf2b"
+  integrity sha512-gU55gHwytRczQnOLatFyF89eI8bv8NivPVoe0cEU8sxCKvX2RbuElGtLxKPWKJiIGz4ZScrmNqiJpkjTsmwiTg==
   dependencies:
-    "@react-navigation/core" "3.0.1"
+    "@react-navigation/core" "3.0.2"
     "@react-navigation/native" "3.0.3"
     react-navigation-drawer "1.0.5"
     react-navigation-stack "1.0.5"
