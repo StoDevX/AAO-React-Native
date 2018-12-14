@@ -125,7 +125,7 @@ GEM
       uber (< 0.2.0)
     retriable (3.1.2)
     rouge (2.0.7)
-    rubocop (0.60.0)
+    rubocop (0.61.1)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.5, != 2.5.1.1)
