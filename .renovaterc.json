@@ -6,7 +6,7 @@
   "lockFileMaintenance": {
     "schedule": ["after 5pm on every weekday"]
   },
-  "prConcurrentLimit": 3,
+  "prConcurrentLimit": 5,
   "timezone": "America/Chicago",
   "ignoreDeps": [
     "flow-bin",
