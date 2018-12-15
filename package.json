@@ -176,7 +176,7 @@
     "react-test-renderer": "16.6.3",
     "string-natural-compare": "2.0.3",
     "strip-ansi": "5.0.0",
-    "yarn-deduplicate": "1.0.4"
+    "yarn-deduplicate": "1.0.5"
   },
   "optionalDependencies": {
     "detox": "9.1.2"
