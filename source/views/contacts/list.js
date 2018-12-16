@@ -9,23 +9,18 @@ import toPairs from 'lodash/toPairs'
 import * as c from '@frogpond/colors'
 import type {ContactType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {fetchAndCacheItem, type CacheResult} from '@frogpond/cache'
+import {fetchCachedApi, type CacheResult} from '@frogpond/cache'
 import {API} from '@frogpond/api'
 
-function fetchContacts(
-	args: {reload?: boolean} = {},
-): CacheResult<?Array<ContactType>> {
-	return fetchAndCacheItem({
-		key: 'contacts',
-		url: API('/contacts'),
-		afterFetch: parsed => parsed.data,
+type ContactCache = CacheResult<?Array<ContactType>>
+const getBundledData = () =>
+	Promise.resolve(require('../../../docs/contact-info.json'))
+const fetchContacts = (forReload?: boolean): ContactCache =>
+	fetchCachedApi(API('/contacts'), {
+		getBundledData,
+		forReload,
 		ttl: [12, 'hours'],
-		cbForBundledData: () =>
-			Promise.resolve(require('../../../docs/contact-info.json')),
-		force: args.reload,
-		delay: args.reload,
 	})
-}
 
 const groupContacts = (contacts: ContactType[]) => {
 	const grouped = groupBy(contacts, c => c.category)
@@ -62,12 +57,12 @@ export class ContactsListView extends React.PureComponent<Props, State> {
 
 	refresh = async (): any => {
 		this.setState(() => ({loading: true}))
-		await this.fetchData(true)
-		this.setState(() => ({loading: false}))
+		let {value} = await fetchContacts()
+		this.setState(() => ({loading: false, contacts: value || []}))
 	}
 
-	fetchData = async (reload?: boolean) => {
-		let {value} = await fetchContacts({reload})
+	fetchData = async () => {
+		let {value} = await fetchContacts()
 		this.setState(() => ({contacts: value || []}))
 	}
 
