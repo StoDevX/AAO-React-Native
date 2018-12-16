@@ -40,6 +40,11 @@ async function setItem(
 	{ttl}: {ttl?: [number, string]},
 ) {
 	console.log('setItem', {key, value, ttl})
+
+	if (value == null) {
+		value = null
+	}
+
 	await AsyncStorage.multiSet([
 		[`${ROOT}:${key}:data`, JSON.stringify(value)],
 		[`${ROOT}:${key}:ts`, new Date().toUTCString()],
