@@ -79,3 +79,6 @@ android/app/signing.properties
 
 # detox artifacts folder
 /artifacts
+
+# generated logs files in CI
+/logs
