@@ -6,12 +6,11 @@ import delay from 'delay'
 
 // global.AsyncStorage = AsyncStorage
 
-type _BaseCacheResult<T> = {
+type _BaseCacheResult<T> = {|
 	isExpired: boolean,
 	isCached: boolean,
 	value: ?T,
-	source: ?string,
-}
+|}
 
 export type CacheResult<T> = Promise<_BaseCacheResult<T>>
 
@@ -38,30 +37,27 @@ const ROOT = 'fp'
 async function setItem(
 	key: string,
 	value: any,
-	{ttl, source}: {ttl?: [number, string], source?: string},
+	{ttl}: {ttl?: [number, string]},
 ) {
-	console.log('setItem', {key, value, ttl, source})
+	console.log('setItem', {key, value, ttl})
 	await AsyncStorage.multiSet([
 		[`${ROOT}:${key}:data`, JSON.stringify(value)],
 		[`${ROOT}:${key}:ts`, new Date().toUTCString()],
 		[`${ROOT}:${key}:ttl`, JSON.stringify(ttl)],
-		[`${ROOT}:${key}:source`, source],
 	])
 }
 
 async function getItem(key: string): CacheResult<any> {
 	console.log('getItem', key)
 
-	let [[, value], [, ts], [, ttl], [, source]] = await AsyncStorage.multiGet([
+	let [[, value], [, ts], [, ttl]] = await AsyncStorage.multiGet([
 		`${ROOT}:${key}:data`,
 		`${ROOT}:${key}:ts`,
 		`${ROOT}:${key}:ttl`,
-		`${ROOT}:${key}:source`,
 	])
 
 	return {
 		value: JSON.parse(value),
-		source,
 		...annotateCacheEntry({ts, ttl}),
 	}
 }
@@ -99,14 +95,10 @@ export async function fetchAndCacheItem(args: {
 	// 	return getItem(key)
 	// }
 
-	let {value, isExpired, isCached, source} = await getItem(key)
+	let {value, isExpired, isCached} = await getItem(key)
 
 	if (!isExpired && value != null && !shouldForce) {
-		return {value, isCached, isExpired, source}
-	}
-
-	if (!source && url) {
-		source = url
+		return {value, isCached, isExpired}
 	}
 
 	try {
@@ -117,7 +109,7 @@ export async function fetchAndCacheItem(args: {
 			body = afterFetch(body)
 		}
 
-		await setItem(key, body, {source: url, ttl})
+		await setItem(key, body, {ttl})
 
 		let elapsed = Date.now() - start
 		if (shouldDelay && elapsed < 500) {
@@ -136,14 +128,14 @@ export async function fetchAndCacheItem(args: {
 		if (!isCached) {
 			if (cbForBundledData) {
 				let data = await cbForBundledData()
-				await setItem(key, data, {source: url, ttl})
+				await setItem(key, data, {ttl})
 				return getItem(key)
 			}
 
-			return {value: null, isCached, isExpired, source}
+			return {value: null, isCached, isExpired}
 		}
 
 		// if we have data, though, return it
-		return {value, isCached, isExpired, source}
+		return {value, isCached, isExpired}
 	}
 }
