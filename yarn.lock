@@ -6188,10 +6188,10 @@ react-native-button@2.3.0, react-native-button@^2.3.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-calendar-events@1.6.3:
-  version "1.6.3"
-  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.6.3.tgz#2b31faf776a6df2ba0d5ecd595fe283e51de4e5c"
-  integrity sha512-ph8YFLs+uhBAch5nIxHAIoaaYmxaKqrHsAlqa7owGHNiUDJPPn2v68ksIy52XVr1GJDSP0XUqYJqxwks46tHBA==
+react-native-calendar-events@1.6.4:
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.6.4.tgz#e1ccfe50e48b385a00847c41f9fb2a97e756e72e"
+  integrity sha512-By4lgWQG9eewS9WzhzxVHAewxX40v1CzLnNYXFMOqF06fYVCNykiiTMGlLzz3UXHVwwN1Drxw9uWroQfGRFMsw==
 
 react-native-communications@2.2.1:
   version "2.2.1"
