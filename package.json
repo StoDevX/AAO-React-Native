@@ -86,6 +86,7 @@
   },
   "dependencies": {
     "@callstack/react-theme-provider": "1.0.7",
+    "@frogpond/titlecase": "1.0.0",
     "@hawkrives/react-native-alphabetlistview": "1.0.0",
     "@hawkrives/react-native-alternate-icons": "0.4.7",
     "@hawkrives/react-native-sortable-list": "1.0.1",
@@ -140,7 +141,6 @@
     "stream": "0.0.2",
     "timers": "0.1.1",
     "tinycolor2": "1.4.1",
-    "titlecase": "1.1.2",
     "url": "0.11.0",
     "wordwrap": "1.0.0"
   },

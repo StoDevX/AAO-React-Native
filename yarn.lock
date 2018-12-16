@@ -659,6 +659,11 @@
     hoist-non-react-statics "^2.5.0"
     prop-types "^15.6.0"
 
+"@frogpond/titlecase@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@frogpond/titlecase/-/titlecase-1.0.0.tgz#993e5371c31b58a839e76fdc531053c55b1a2736"
+  integrity sha512-C1qKm/J+B+cXo+7+ZHbRnt2iApx/IrxMEXwOxe+ZkeTvSC1nZ2XRWf0xzFuAanpBNDhFcgrxdnR8FMKNHo1scQ==
+
 "@hawkrives/react-native-alphabetlistview@1.0.0", "@hawkrives/react-native-alphabetlistview@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@hawkrives/react-native-alphabetlistview/-/react-native-alphabetlistview-1.0.0.tgz#0a832b7e55e81002741e623056112fe5d19d03b3"
@@ -7568,11 +7573,6 @@ tinycolor2@1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
   integrity sha1-9PrTM0R7wLB9TcjpIJ2POaisd+g=
-
-titlecase@1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/titlecase/-/titlecase-1.1.2.tgz#78113d1108086b8326331a3247dea8f5a49ea853"
-  integrity sha1-eBE9EQgIa4MmMxoyR96o9aSeqFM=
 
 tmp@^0.0.33:
   version "0.0.33"
