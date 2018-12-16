@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Extracted native build skipping and made it independent of branch (#3252, #3255)
 - Upgraded React-Navigation to v3.0.0, with associated breaking changes (#3259)
 - Told Circle to use Xcode 10.1 to build and test the iOS app
+- Updated Fastlane support url to point to the project's issues tracker (#3314)
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
