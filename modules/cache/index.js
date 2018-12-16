@@ -137,7 +137,6 @@ export async function fetchCached(
 
 		return getItem(key)
 	} catch (error) {
-		// fall back to the local data
 		if (error.message.startsWith('Failed to fetch')) {
 			reportNetworkProblem(error)
 		}
