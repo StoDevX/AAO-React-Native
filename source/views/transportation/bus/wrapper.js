@@ -6,12 +6,15 @@ import {BusLine} from './line'
 import {Timer} from '@frogpond/timer'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../../types'
-import {reportNetworkProblem} from '@frogpond/analytics'
-import * as defaultData from '../../../../docs/bus-times.json'
 import {API} from '@frogpond/api'
+import {fetchCachedApi, type CacheResult} from '@frogpond/cache'
 import {timezone} from '@frogpond/constants'
 
-const busTimesUrl = API('/transit/bus')
+type BusTimesCache = CacheResult<?Array<UnprocessedBusLine>>
+const getBundledData = () =>
+	Promise.resolve(require('../../../../docs/bus-times.json'))
+const fetchBusTimes = (forReload?: boolean): BusTimesCache =>
+	fetchCachedApi(API('/transit/bus'), {getBundledData, forReload})
 
 type Props = TopLevelViewPropsType & {
 	+line: string,
@@ -25,7 +28,7 @@ type State = {|
 
 export class BusView extends React.PureComponent<Props, State> {
 	state = {
-		busLines: defaultData.data,
+		busLines: [],
 		activeBusLine: null,
 		loading: true,
 	}
@@ -37,16 +40,9 @@ export class BusView extends React.PureComponent<Props, State> {
 	}
 
 	fetchData = async () => {
-		let {data: busLines} = await fetchJson(busTimesUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-
-		if (process.env.NODE_ENV === 'development') {
-			busLines = defaultData.data
-		}
-
-		const activeBusLine = busLines.find(({line}) => line === this.props.line)
+		let {value} = await fetchBusTimes()
+		let busLines = value || []
+		let activeBusLine = busLines.find(({line}) => line === this.props.line)
 
 		this.setState(() => ({busLines, activeBusLine}))
 	}
