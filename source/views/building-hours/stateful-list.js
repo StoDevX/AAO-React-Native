@@ -11,14 +11,19 @@ import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import {timezone} from '@frogpond/constants'
 import {Timer} from '@frogpond/timer'
-import {fetchCachedApi, type CacheResult} from '@frogpond/cache'
+import {fetchCached, type CacheResult} from '@frogpond/cache'
 import {API} from '@frogpond/api'
 
 type BuildingCache = CacheResult<?Array<BuildingType>>
 const getBundledData = () =>
 	Promise.resolve(require('../../../docs/building-hours.json'))
+const afterFetch = body => body.data
 const fetchBuildingHours = (forReload?: boolean): BuildingCache =>
-	fetchCachedApi(API('/spaces/hours'), {getBundledData, forReload})
+	fetchCached(API('/spaces/hours'), {
+		getBundledData,
+		forReload,
+		afterFetch,
+	})
 
 const groupBuildings = (
 	buildings: Array<BuildingType>,

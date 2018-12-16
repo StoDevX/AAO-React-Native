@@ -9,16 +9,17 @@ import toPairs from 'lodash/toPairs'
 import * as c from '@frogpond/colors'
 import type {ContactType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {fetchCachedApi, type CacheResult} from '@frogpond/cache'
+import {fetchCached, type CacheResult} from '@frogpond/cache'
 import {API} from '@frogpond/api'
 
 type ContactCache = CacheResult<?Array<ContactType>>
 const getBundledData = () =>
 	Promise.resolve(require('../../../docs/contact-info.json'))
 const fetchContacts = (forReload?: boolean): ContactCache =>
-	fetchCachedApi(API('/contacts'), {
+	fetchCached(API('/contacts'), {
 		getBundledData,
 		forReload,
+		afterFetch: body => body.data,
 		ttl: [12, 'hours'],
 	})
 

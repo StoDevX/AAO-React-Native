@@ -8,14 +8,15 @@ import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
 import {API} from '@frogpond/api'
-import {fetchCachedApi, type CacheResult} from '@frogpond/cache'
+import {fetchCached, type CacheResult} from '@frogpond/cache'
 import {Viewport} from '@frogpond/viewport'
 
 type WebcamsCache = CacheResult<?Array<Webcam>>
 const getBundledData = () =>
 	Promise.resolve(require('../../../../docs/webcams.json'))
+const afterFetch = body => body.data
 const fetchWebcams = (forReload?: boolean): WebcamsCache =>
-	fetchCachedApi(API('/webcams'), {getBundledData, forReload})
+	fetchCached(API('/webcams'), {getBundledData, forReload, afterFetch})
 
 type Props = {}
 

@@ -18,14 +18,15 @@ import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
-import {fetchCachedApi, type CacheResult} from '@frogpond/cache'
+import {fetchCached, type CacheResult} from '@frogpond/cache'
 import {API} from '@frogpond/api'
 
 type DictionaryCache = CacheResult<?Array<WordType>>
 const getBundledData = () =>
 	Promise.resolve(require('../../../docs/dictionary.json'))
+const afterFetch = body => body.data
 const fetchDictionaryTerms = (forReload?: boolean): DictionaryCache =>
-	fetchCachedApi(API('/dictionary'), {getBundledData, forReload})
+	fetchCached(API('/dictionary'), {getBundledData, forReload, afterFetch})
 
 const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41

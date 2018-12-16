@@ -7,14 +7,15 @@ import {Timer} from '@frogpond/timer'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../../types'
 import {API} from '@frogpond/api'
-import {fetchCachedApi, type CacheResult} from '@frogpond/cache'
+import {fetchCached, type CacheResult} from '@frogpond/cache'
 import {timezone} from '@frogpond/constants'
 
 type BusTimesCache = CacheResult<?Array<UnprocessedBusLine>>
 const getBundledData = () =>
 	Promise.resolve(require('../../../../docs/bus-times.json'))
+const afterFetch = body => body.data
 const fetchBusTimes = (forReload?: boolean): BusTimesCache =>
-	fetchCachedApi(API('/transit/bus'), {getBundledData, forReload})
+	fetchCached(API('/transit/bus'), {getBundledData, forReload, afterFetch})
 
 type Props = TopLevelViewPropsType & {
 	+line: string,

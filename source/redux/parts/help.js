@@ -2,13 +2,18 @@
 
 import {type ReduxState} from '../index'
 import {type ToolOptions} from '../../views/help/types'
-import {fetchCachedApi, type CacheResult} from '@frogpond/cache'
+import {fetchCached, type CacheResult} from '@frogpond/cache'
 import {API} from '@frogpond/api'
 
 type HelpToolsCache = CacheResult<?Array<ToolOptions>>
 const getBundledData = () => Promise.resolve(require('../../../docs/help.json'))
+const afterFetch = body => body.data
 const fetchHelpTools = (): HelpToolsCache =>
-	fetchCachedApi(API('/tools/help'), {getBundledData, ttl: [12, 'hours']})
+	fetchCached(API('/tools/help'), {
+		getBundledData,
+		ttl: [12, 'hours'],
+		afterFetch,
+	})
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState

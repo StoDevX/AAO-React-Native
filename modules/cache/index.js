@@ -74,22 +74,16 @@ async function getItem(key: string): CacheResult<any> {
 // global._getItem = getItem
 // global._fetchAndCacheItem = fetchAndCacheItem
 
-type CachedFetchArgs = {
-	ttl?: [number, string],
-	getBundledData?: () => Promise<mixed>,
-	afterFetch?: (parsed: any) => any,
-	force?: boolean,
-	delay?: boolean,
-	forReload?: boolean,
-}
-
-export function fetchCachedApi(url: string, args: CachedFetchArgs) {
-	return fetchCached(url, {afterFetch: parsed => parsed.data, ...args})
-}
-
 export async function fetchCached(
 	url: string,
-	args: CachedFetchArgs = {},
+	args?: {
+		ttl?: [number, string],
+		getBundledData?: () => Promise<mixed>,
+		afterFetch?: (parsed: any) => any,
+		force?: boolean,
+		delay?: boolean,
+		forReload?: boolean,
+	} = {},
 ): CacheResult<any> {
 	let {
 		getBundledData,
