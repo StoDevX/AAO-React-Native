@@ -42,7 +42,7 @@ const showNetworkFailureMessage = () =>
 const showServerErrorMessage = () =>
 	Alert.alert(
 		'Server Failure',
-		'The OleCard Server is having issues right now. Please try again later.',
+		"We're having issues talking to the OleCard server. Please try again later.",
 		[{text: 'OK'}],
 	)
 
