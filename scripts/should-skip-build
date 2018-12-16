@@ -87,9 +87,7 @@ def anything_changed_yesterday?
 end
 
 def should_build_nightly?
-  # disabled due to failures to build nightlies
-  # anything_changed_yesterday?
-  true
+  anything_changed_yesterday?
 end
 
 # checks if the native build needs to be run
