@@ -3,7 +3,9 @@ AllCops:
     - 'node_modules/**/*'
 
 Layout/Tab:
-  IndentationWidth: 2
+  Enabled: false
+Layout/IndentationWidth:
+  Enabled: false
 
 Naming/PredicateName:
   Exclude:
