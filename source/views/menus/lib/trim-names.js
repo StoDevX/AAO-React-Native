@@ -1,5 +1,5 @@
 // @flow
-import {toLaxTitleCase} from 'titlecase'
+import {toLaxTitleCase} from '@frogpond/titlecase'
 
 export function trimStationName(stationName: string) {
 	return stationName.replace(/<strong>@(.*)<\/strong>/u, '$1')
