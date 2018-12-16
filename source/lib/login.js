@@ -30,6 +30,8 @@ export type LoginResultEnum =
 	| 'network'
 	| 'bad-credentials'
 	| 'no-credentials'
+	| 'server-error'
+	| 'other'
 
 type Args = {attempts?: number}
 
@@ -41,27 +43,37 @@ export async function performLogin({
 		return 'no-credentials'
 	}
 
-	const form = buildFormData({username, password})
-	let loginResult = null
+	let form = buildFormData({username, password})
+
 	try {
-		loginResult = await fetch(OLECARD_AUTH_URL, {
+		let {status: statusCode} = await rawFetch(OLECARD_AUTH_URL, {
 			method: 'POST',
 			body: form,
+			credentials: 'include',
 		})
+
+		if (statusCode >= 400 && statusCode < 500) {
+			return 'bad-credentials'
+		}
+
+		if (statusCode >= 500 && statusCode < 600) {
+			return 'server-error'
+		}
+
+		if (statusCode < 200 || statusCode >= 300) {
+			return 'other'
+		}
+
+		return 'success'
 	} catch (err) {
 		let wasNetworkFailure = err.message === 'Network request failed'
-		if (wasNetworkFailure && attempts > 0) {
-			// console.log(`login failed; trying ${attempts - 1} more time(s)`)
-			return performLogin({attempts: attempts - 1})
+		if (wasNetworkFailure) {
+			if (attempts > 0) {
+				// console.log(`login failed; trying ${attempts - 1} more time(s)`)
+				return performLogin({attempts: attempts - 1})
+			}
+			return 'network'
 		}
-		return 'network'
+		return 'other'
 	}
-
-	const page = await loginResult.text()
-
-	if (page.includes('Password')) {
-		return 'bad-credentials'
-	}
-
-	return 'success'
 }

@@ -39,6 +39,13 @@ const showNetworkFailureMessage = () =>
 		[{text: 'OK'}],
 	)
 
+const showServerErrorMessage = () =>
+	Alert.alert(
+		'Server Failure',
+		"We're having issues talking to the OleCard server. Please try again later.",
+		[{text: 'OK'}],
+	)
+
 const showInvalidLoginMessage = () =>
 	Alert.alert(
 		'Invalid Login',
@@ -85,6 +92,14 @@ export function logInViaCredentials(
 			dispatch({type: LOGIN_FAILURE})
 			trackLoginFailure('No network')
 			showNetworkFailureMessage()
+		} else if (result === 'server-error') {
+			dispatch({type: LOGIN_FAILURE})
+			trackLoginFailure('Server error')
+			showServerErrorMessage()
+		} else if (result === 'other') {
+			dispatch({type: LOGIN_FAILURE})
+			trackLoginFailure('Unknown problem')
+			showUnknownFailureMessage()
 		} else {
 			showUnknownFailureMessage()
 			;(result: empty)
