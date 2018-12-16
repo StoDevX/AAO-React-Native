@@ -75,8 +75,12 @@ end
 class Commit
 	attr_reader :hash
 
-	def initialize(hash)
-		@hash = hash
+	def initialize(ref)
+		@hash = dereference(ref)
+	end
+
+	def dereference(ref)
+		`git show-ref --hash #{ref}`
 	end
 end
 
