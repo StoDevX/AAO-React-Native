@@ -11,18 +11,30 @@ import {
 	ListSectionHeader,
 	ListSeparator,
 } from '@frogpond/lists'
-import delay from 'delay'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {trackDefinitionOpen, reportNetworkProblem} from '@frogpond/analytics'
+import {trackDefinitionOpen} from '@frogpond/analytics'
 import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
-import * as defaultData from '../../../docs/dictionary.json'
 import {API} from '@frogpond/api'
+import {fetchAndCacheItem, type CacheResult} from '@frogpond/cache'
 
-const dictionaryUrl = API('/dictionary')
+function fetchDictionaryTerms(
+	args: {reload?: boolean} = {},
+): CacheResult<?Array<WordType>> {
+	return fetchAndCacheItem({
+		key: 'dictionary:terms',
+		url: API('/dictionary'),
+		afterFetch: parsed => parsed.data,
+		ttl: [1, 'hour'],
+		cbForBundledData: () =>
+			Promise.resolve(require('../../../docs/dictionary.json')),
+		force: args.reload,
+		delay: args.reload,
+	})
+}
 
 const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
@@ -60,7 +72,7 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 
 	state = {
 		query: '',
-		allTerms: defaultData.data,
+		allTerms: [],
 		refreshing: false,
 	}
 
@@ -69,31 +81,15 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 	}
 
 	refresh = async () => {
-		const start = Date.now()
 		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
+		await this.fetchData(true)
 		this.setState(() => ({refreshing: false}))
 	}
 
-	fetchData = async () => {
-		let {data: allTerms} = await fetchJson(dictionaryUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
+	fetchData = async (reload: boolean = false) => {
+		let {value} = await fetchDictionaryTerms({reload})
 
-		if (process.env.NODE_ENV === 'development') {
-			allTerms = defaultData.data
-		}
-
-		this.setState(() => ({allTerms}))
+		this.setState(() => ({allTerms: value || []}))
 	}
 
 	onPressRow = (data: WordType) => {
