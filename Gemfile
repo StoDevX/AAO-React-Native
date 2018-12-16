@@ -8,5 +8,5 @@ gem 'xcodeproj'
 gem 'fastlane-plugin-bugsnag'
 
 group :development do
-  gem 'rubocop', '~> 0.60'
+	gem 'rubocop', '~> 0.60'
 end
