@@ -79,6 +79,10 @@ class Commit
 		@hash = dereference(ref)
 	end
 
+	def time
+		`git show --format="%aI" --quiet #{@hash}`
+	end
+
 	protected
 
 	def dereference(ref)
