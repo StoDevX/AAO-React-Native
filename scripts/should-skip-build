@@ -73,6 +73,20 @@ class String
   end
 end
 
+class Numeric
+	def hours
+		minutes * 60
+	end
+
+	def minutes
+		seconds * 60
+	end
+
+	def seconds
+		self
+	end
+end
+
 class Commit
 	attr_reader :hash
 
