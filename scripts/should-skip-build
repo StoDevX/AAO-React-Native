@@ -73,6 +73,11 @@ class String
 end
 
 class Commit
+	attr_reader :hash
+
+	def initialize(hash)
+		@hash = hash
+	end
 end
 
 def changes_after(time, ref = 'HEAD')
