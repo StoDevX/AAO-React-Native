@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'json'
+require 'time'
 
 PLATFORM = (ENV['task'] || 'unknown').freeze
 
@@ -80,7 +81,8 @@ class Commit
 	end
 
 	def time
-		`git show --format="%aI" --quiet #{@hash}`
+		git_author_time = `git show --format="%aI" --quiet #{@hash}`
+		Time.parse(git_author_time)
 	end
 
 	protected
