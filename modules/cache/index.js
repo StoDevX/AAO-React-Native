@@ -4,7 +4,7 @@ import moment from 'moment'
 import {reportNetworkProblem} from '@frogpond/analytics'
 import delay from 'delay'
 
-global.AsyncStorage = AsyncStorage
+// global.AsyncStorage = AsyncStorage
 
 type _BaseCacheResult<T> = {
 	isExpired: boolean,
@@ -64,9 +64,9 @@ async function getItem(key: string): CacheResult<any> {
 	}
 }
 
-global._setItem = setItem
-global._getItem = getItem
-global._fetchAndCacheItem = fetchAndCacheItem
+// global._setItem = setItem
+// global._getItem = getItem
+// global._fetchAndCacheItem = fetchAndCacheItem
 
 export async function fetchAndCacheItem(args: {
 	key: string,

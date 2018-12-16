@@ -1,0 +1,16 @@
+{
+  "name": "@frogpond/cache",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "react-native": "^0.57.0",
+    "moment": "2.23.0",
+    "delay": "^4.1.0"
+  },
+  "dependencies": {
+    "@frogpond/analytics": "^1.0.0"
+  }
+}
