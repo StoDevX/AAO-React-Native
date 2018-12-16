@@ -72,6 +72,9 @@ class String
   end
 end
 
+class Commit
+end
+
 def changes_after(time, ref = 'HEAD')
   sh("git log --name-only --format='' --after='#{time}' '#{ref}'")
 end
