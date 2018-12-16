@@ -33,6 +33,8 @@ function annotateCacheEntry({ts, ttl}: {ts: string, ttl: string}) {
 
 /// MARK: Utilities
 
+const ROOT = 'fp'
+
 async function setItem(
 	key: string,
 	value: any,
@@ -40,10 +42,10 @@ async function setItem(
 ) {
 	console.log('setItem', {key, value, ttl, source})
 	await AsyncStorage.multiSet([
-		[`fp:${key}:data`, JSON.stringify(value)],
-		[`fp:${key}:ts`, new Date().toUTCString()],
-		[`fp:${key}:ttl`, JSON.stringify(ttl)],
-		[`fp:${key}:source`, source],
+		[`${ROOT}:${key}:data`, JSON.stringify(value)],
+		[`${ROOT}:${key}:ts`, new Date().toUTCString()],
+		[`${ROOT}:${key}:ttl`, JSON.stringify(ttl)],
+		[`${ROOT}:${key}:source`, source],
 	])
 }
 
@@ -51,10 +53,10 @@ async function getItem(key: string): CacheResult<any> {
 	console.log('getItem', key)
 
 	let [[, value], [, ts], [, ttl], [, source]] = await AsyncStorage.multiGet([
-		`fp:${key}:data`,
-		`fp:${key}:ts`,
-		`fp:${key}:ttl`,
-		`fp:${key}:source`,
+		`${ROOT}:${key}:data`,
+		`${ROOT}:${key}:ts`,
+		`${ROOT}:${key}:ttl`,
+		`${ROOT}:${key}:source`,
 	])
 
 	return {
