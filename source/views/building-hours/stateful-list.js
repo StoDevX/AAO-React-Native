@@ -11,8 +11,7 @@ import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import {timezone} from '@frogpond/constants'
 import {Timer} from '@frogpond/timer'
-
-import {fetchAndCacheItem, type CacheResult} from '../../lib/cache'
+import {fetchAndCacheItem, type CacheResult} from '@frogpond/cache'
 import {API} from '@frogpond/api'
 
 function fetchBuildingHours(

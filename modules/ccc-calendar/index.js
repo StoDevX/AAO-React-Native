@@ -2,14 +2,12 @@
 
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
-import {reportNetworkProblem} from '@frogpond/analytics'
 import type {NavigationScreenProp} from 'react-navigation'
+import {fetchAndCacheItem} from '@frogpond/cache'
 import {EventList, type PoweredBy} from '@frogpond/event-list'
 import {type EventType} from '@frogpond/event-type'
 import moment from 'moment-timezone'
-import delay from 'delay'
 import {LoadingView} from '@frogpond/notice'
-import {fetchAndCacheItem, type CacheResult} from '../../source/lib/cache'
 import {API} from '@frogpond/api'
 
 type Props = {

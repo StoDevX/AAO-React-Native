@@ -2,7 +2,7 @@
 
 import {type ReduxState} from '../index'
 import {type ToolOptions} from '../../views/help/types'
-import {fetchAndCacheItem, type CacheResult} from '../../lib/cache'
+import {fetchAndCacheItem, type CacheResult} from '@frogpond/cache'
 import {API} from '@frogpond/api'
 
 function fetchHelpTools(): CacheResult<?Array<ToolOptions>> {

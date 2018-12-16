@@ -9,7 +9,7 @@ import toPairs from 'lodash/toPairs'
 import * as c from '@frogpond/colors'
 import type {ContactType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {fetchAndCacheItem, type CacheResult} from '../../lib/cache'
+import {fetchAndCacheItem, type CacheResult} from '@frogpond/cache'
 import {API} from '@frogpond/api'
 
 function fetchContacts(
