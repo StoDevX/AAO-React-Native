@@ -80,7 +80,7 @@ class Commit
 	end
 
 	def dereference(ref)
-		`git show-ref --hash #{ref}`
+		`git rev-parse #{ref}`
 	end
 end
 
