@@ -98,6 +98,10 @@ end
 class Commit
 	attr_reader :hash
 
+	def self.HEAD
+		self.new('HEAD')
+	end
+
 	def initialize(ref)
 		@hash = dereference(ref)
 	end
