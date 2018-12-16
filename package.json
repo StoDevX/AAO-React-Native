@@ -146,7 +146,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.2.2",
-    "ajv": "6.6.1",
+    "ajv": "6.6.2",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
     "babel-jest": "23.6.0",
