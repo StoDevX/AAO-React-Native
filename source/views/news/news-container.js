@@ -1,11 +1,10 @@
 // @flow
 import * as React from 'react'
-import delay from 'delay'
 import type {StoryType} from './types'
-import {NoticeView, LoadingView} from '@frogpond/notice'
+import {LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../types'
-import {reportNetworkProblem} from '@frogpond/analytics'
 import {NewsList} from './news-list'
+import {fetchCached} from '@frogpond/cache'
 import {API} from '@frogpond/api'
 
 type Props = TopLevelViewPropsType & {
@@ -16,65 +15,51 @@ type Props = TopLevelViewPropsType & {
 
 type State = {
 	entries: StoryType[],
-	loading: boolean,
+	initialLoadComplete: boolean,
 	refreshing: boolean,
-	error: ?Error,
 }
+
 export default class NewsContainer extends React.PureComponent<Props, State> {
 	state = {
 		entries: [],
-		loading: true,
-		error: null,
+		initialLoadComplete: false,
 		refreshing: false,
 	}
 
 	componentDidMount() {
 		this.fetchData().then(() => {
-			this.setState(() => ({loading: false}))
+			this.setState(() => ({initialLoadComplete: true}))
 		})
 	}
 
-	fetchData = async () => {
-		try {
-			let url
-			if (typeof this.props.source === 'string') {
-				url = API(`/news/named/${this.props.source}`)
-			} else if (this.props.source.type === 'rss') {
-				url = API('/news/rss', {url: this.props.source.url})
-			} else if (this.props.source.type === 'wp-json') {
-				url = API('/news/wpjson', {url: this.props.source.url})
-			} else {
-				throw new Error('invalid news source type!')
-			}
-
-			let entries: StoryType[] = await fetchJson(url)
-			this.setState(() => ({entries}))
-		} catch (error) {
-			reportNetworkProblem(error)
-			this.setState(() => ({error}))
+	fetchData = async (reload?: boolean) => {
+		let url
+		if (typeof this.props.source === 'string') {
+			url = API(`/news/named/${this.props.source}`)
+		} else if (this.props.source.type === 'rss') {
+			url = API('/news/rss', {url: this.props.source.url})
+		} else if (this.props.source.type === 'wp-json') {
+			url = API('/news/wpjson', {url: this.props.source.url})
+		} else {
+			throw new Error('invalid news source type!')
 		}
+
+		let {value} = await fetchCached(url, {
+			ttl: [6, 'hours'],
+			forReload: reload,
+		})
+
+		this.setState(() => ({entries: value || []}))
 	}
 
 	refresh = async (): any => {
-		let start = Date.now()
 		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		let elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
+		await this.fetchData(true)
 		this.setState(() => ({refreshing: false}))
 	}
 
 	render() {
-		if (this.state.error) {
-			return <NoticeView text={`Error: ${this.state.error.message}`} />
-		}
-
-		if (this.state.loading) {
+		if (!this.state.initialLoadComplete) {
 			return <LoadingView />
 		}
 
