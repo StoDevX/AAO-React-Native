@@ -74,48 +74,48 @@ class String
 end
 
 class Numeric
-	def weeks
-		days * 7
-	end
+  def weeks
+    days * 7
+  end
 
-	def days
-		hours * 24
-	end
+  def days
+    hours * 24
+  end
 
-	def hours
-		minutes * 60
-	end
+  def hours
+    minutes * 60
+  end
 
-	def minutes
-		seconds * 60
-	end
+  def minutes
+    seconds * 60
+  end
 
-	def seconds
-		self
-	end
+  def seconds
+    self
+  end
 end
 
 class Commit
-	attr_reader :hash
+  attr_reader :hash
 
-	def self.HEAD
-		self.new('HEAD')
-	end
+  def self.HEAD
+    self.new('HEAD')
+  end
 
-	def initialize(ref)
-		@hash = dereference(ref)
-	end
+  def initialize(ref)
+    @hash = dereference(ref)
+  end
 
-	def time
-		git_author_time = `git show --format="%aI" --quiet #{@hash}`
-		Time.parse(git_author_time)
-	end
+  def time
+    git_author_time = `git show --format="%aI" --quiet #{@hash}`
+    Time.parse(git_author_time)
+  end
 
-	protected
+  protected
 
-	def dereference(ref)
-		`git rev-parse #{ref}`
-	end
+  def dereference(ref)
+    `git rev-parse #{ref}`
+  end
 end
 
 def changes_after(time, ref = 'HEAD')
@@ -127,8 +127,8 @@ def git_log_between(source, target)
 end
 
 def anything_changed_yesterday?
-	head_time = Commit.HEAD.time
-	readback_time = head_time - 26.hours
+  head_time = Commit.HEAD.time
+  readback_time = head_time - 26.hours
 
   yesterdays_changes = changes_after(readback_time.iso8601).unique_lines
 
