@@ -129,7 +129,8 @@ end
 def anything_changed_yesterday?
 	head_time = Commit.HEAD.time
 	readback_time = head_time - 26.hours
-  yesterdays_changes = changes_after('26 hours ago').unique_lines
+
+  yesterdays_changes = changes_after(readback_time.iso8601).unique_lines
 
   yesterdays_changes.count > 0
 end
