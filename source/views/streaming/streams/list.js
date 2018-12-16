@@ -13,8 +13,8 @@ import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
 import {toLaxTitleCase as titleCase} from 'titlecase'
 import type {StreamType} from './types'
-import delay from 'delay'
 import {API} from '@frogpond/api'
+import {fetchCached} from '@frogpond/cache'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -51,62 +51,53 @@ export class StreamListView extends React.PureComponent<Props, State> {
 	}
 
 	refresh = async (): any => {
-		let start = Date.now()
 		this.setState(() => ({refreshing: true}))
-
-		await this.getStreams()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
+		await this.getStreams(true)
 		this.setState(() => ({refreshing: false}))
 	}
 
-	getStreams = async (date: moment = moment.tz(timezone())) => {
-		try {
-			const dateFrom = date.format('YYYY-MM-DD')
-			const dateTo = date
-				.clone()
-				.add(2, 'month')
-				.format('YYYY-MM-DD')
+	getStreams = async (
+		reload?: boolean,
+		date: moment = moment.tz(timezone()),
+	) => {
+		const dateFrom = date.format('YYYY-MM-DD')
+		const dateTo = date
+			.clone()
+			.add(2, 'month')
+			.format('YYYY-MM-DD')
 
-			let params = {
-				sort: 'ascending',
-				dateFrom,
-				dateTo,
-			}
-
-			const data = await fetchJson(API('/streams/upcoming', params))
-
-			// force title-case on the stream types, to prevent not-actually-duplicate headings
-			const processed = data
-				.filter(stream => stream.category !== 'athletics')
-				.map(stream => {
-					const date = moment(stream.starttime)
-					const group =
-						stream.status.toLowerCase() !== 'live'
-							? date.format('dddd, MMMM Do')
-							: 'Live'
-
-					return {
-						...stream,
-						category: titleCase(stream.category),
-						date: date,
-						$groupBy: group,
-					}
-				})
-
-			const grouped = groupBy(processed, j => j.$groupBy)
-			const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
-
-			this.setState(() => ({error: null, streams: mapped}))
-		} catch (error) {
-			this.setState(() => ({error: error.message}))
-			console.warn(error)
+		let params = {
+			sort: 'ascending',
+			dateFrom,
+			dateTo,
 		}
+
+		const {value} = await fetchCached(API('/streams/upcoming', params), {
+			forReload: reload,
+			afterFetch: data =>
+				data
+					.filter(stream => stream.category !== 'athletics')
+					.map(stream => {
+						const date = moment(stream.starttime)
+						const group =
+							stream.status.toLowerCase() !== 'live'
+								? date.format('dddd, MMMM Do')
+								: 'Live'
+
+						return {
+							...stream,
+							// force title-case on the stream types, to prevent not-actually-duplicate headings
+							category: titleCase(stream.category),
+							date: date,
+							$groupBy: group,
+						}
+					}),
+		})
+
+		const grouped = groupBy(value, j => j.$groupBy)
+		const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
+
+		this.setState(() => ({streams: mapped}))
 	}
 
 	keyExtractor = (item: StreamType) => item.eid
