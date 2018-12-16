@@ -6,183 +6,183 @@ require 'time'
 PLATFORM = (ENV['task'] || 'unknown').freeze
 
 def sh(cmd)
-  puts "$ #{cmd}"
-  output = `#{cmd}`.chomp
-  puts output
-  output
+	puts "$ #{cmd}"
+	output = `#{cmd}`.chomp
+	puts output
+	output
 end
 
 # diff two hashes at a path and return the changed items
 def hash_diff(old_hash, new_hash, path)
-  (new_hash.dig(*path).to_a - old_hash.dig(*path).to_a).to_h
+	(new_hash.dig(*path).to_a - old_hash.dig(*path).to_a).to_h
 end
 
 NPM_DEP_NAME_REGEXP = /react|jsc/.freeze
 def npm_native_package_changed?(source, target)
-  old_package = JSON.parse(sh("git show '#{source}:package.json'"))
-  new_package = JSON.parse(sh("git show '#{target}:package.json'"))
+	old_package = JSON.parse(sh("git show '#{source}:package.json'"))
+	new_package = JSON.parse(sh("git show '#{target}:package.json'"))
 
-  deps_diff = hash_diff(old_package, new_package, ['dependencies']).keys
-  devdeps_diff = hash_diff(old_package, new_package, ['devDependencies']).keys
+	deps_diff = hash_diff(old_package, new_package, ['dependencies']).keys
+	devdeps_diff = hash_diff(old_package, new_package, ['devDependencies']).keys
 
-  (deps_diff + devdeps_diff).any? { |dep| dep =~ NPM_DEP_NAME_REGEXP }
+	(deps_diff + devdeps_diff).any? { |dep| dep =~ NPM_DEP_NAME_REGEXP }
 end
 
 BASE_GLOBS = [
-  '.circleci/**',
-  'e2e/**',
-  'fastlane/**',
-  'scripts/**',
-  'Gemfile.lock',
-].freeze
+              '.circleci/**',
+              'e2e/**',
+              'fastlane/**',
+              'scripts/**',
+              'Gemfile.lock',
+             ].freeze
 
 ANDROID_GLOBS = [
-  'android/**',
-  '{modules,source}/**/*.{java,gradle}',
-].freeze
+                 'android/**',
+                 '{modules,source}/**/*.{java,gradle}',
+                ].freeze
 
 IOS_GLOBS = [
-  'ios/**',
-  '{modules,source}/**/*.{h,m,mm}',
-].freeze
+             'ios/**',
+             '{modules,source}/**/*.{h,m,mm}',
+            ].freeze
 
 def native_build_globs
-  case PLATFORM
-  when 'ANDROID'
-    BASE_GLOBS + ANDROID_GLOBS
-  when 'IOS'
-    BASE_GLOBS + IOS_GLOBS
-  else
-    BASE_GLOBS
-  end
+	case PLATFORM
+	when 'ANDROID'
+		BASE_GLOBS + ANDROID_GLOBS
+	when 'IOS'
+		BASE_GLOBS + IOS_GLOBS
+	else
+		BASE_GLOBS
+	end
 end
 
 def native_file_changed?(changed_files)
-  native_build_globs.any? do |glob|
-    changed_files.any? do |path|
-      File.fnmatch?(glob, path)
-    end
-  end
+	native_build_globs.any? do |glob|
+		changed_files.any? do |path|
+			File.fnmatch?(glob, path)
+		end
+	end
 end
 
 DEFAULT_BRANCH = 'master'.freeze
 
 class String
-  def unique_lines
-    lines.uniq.map(&:chomp)
-  end
+	def unique_lines
+		lines.uniq.map(&:chomp)
+	end
 end
 
 class Numeric
-  def weeks
-    days * 7
-  end
+	def weeks
+		days * 7
+	end
 
-  def days
-    hours * 24
-  end
+	def days
+		hours * 24
+	end
 
-  def hours
-    minutes * 60
-  end
+	def hours
+		minutes * 60
+	end
 
-  def minutes
-    seconds * 60
-  end
+	def minutes
+		seconds * 60
+	end
 
-  def seconds
-    self
-  end
+	def seconds
+		self
+	end
 end
 
 class Commit
-  attr_reader :hash
+	attr_reader :hash
 
-  def self.HEAD
-    self.new('HEAD')
-  end
+	def self.HEAD
+		self.new('HEAD')
+	end
 
-  def initialize(ref)
-    @hash = dereference(ref)
-  end
+	def initialize(ref)
+		@hash = dereference(ref)
+	end
 
-  def time
-    git_author_time = `git show --format="%aI" --quiet #{@hash}`
-    Time.parse(git_author_time)
-  end
+	def time
+		git_author_time = `git show --format="%aI" --quiet #{@hash}`
+		Time.parse(git_author_time)
+	end
 
-  protected
+	protected
 
-  def dereference(ref)
-    `git rev-parse #{ref}`
-  end
+	def dereference(ref)
+		`git rev-parse #{ref}`
+	end
 end
 
 def changes_after(time, ref = 'HEAD')
-  sh("git log --name-only --format='' --after='#{time}' '#{ref}'")
+	sh("git log --name-only --format='' --after='#{time}' '#{ref}'")
 end
 
 def git_log_between(source, target)
-  sh("git log --name-only --format='' '#{source}'..'#{target}'")
+	sh("git log --name-only --format='' '#{source}'..'#{target}'")
 end
 
 def anything_changed_yesterday?
-  head_time = Commit.HEAD.time
-  readback_time = head_time - 26.hours
+	head_time = Commit.HEAD.time
+	readback_time = head_time - 26.hours
 
-  yesterdays_changes = changes_after(readback_time.iso8601).unique_lines
+	yesterdays_changes = changes_after(readback_time.iso8601).unique_lines
 
-  yesterdays_changes.count > 0
+	yesterdays_changes.count > 0
 end
 
 def should_build_nightly?
-  anything_changed_yesterday?
+	anything_changed_yesterday?
 end
 
 # checks if the native build needs to be run
 def should_build?
-  return should_build_nightly? if ENV['IS_NIGHTLY']
+	return should_build_nightly? if ENV['IS_NIGHTLY']
 
-  # Find the oldest common revision between HEAD's parent and our
-  # default branch.
-  #
-  # HEAD's parent may _be_ our default branch, or the commit before
-  # `master` if we've forked to a branch off it.  More than likely,
-  # though, `HEAD^1` is some commit in our stream of history, and will
-  # be sufficient to find the starting point of divergence, if such a
-  # point exists.
-  #
-  # If HEAD is a merge commit on `master`, then HEAD^1 points to the
-  # previous commit on `master`, which should clearly be completely
-  # separate from the branch that was merged, and hence the fork point
-  # will be the point of divergence.
-  oldest_shared_revision = sh("git merge-base '#{DEFAULT_BRANCH}' 'HEAD^1'")
+	# Find the oldest common revision between HEAD's parent and our
+	# default branch.
+	#
+	# HEAD's parent may _be_ our default branch, or the commit before
+	# `master` if we've forked to a branch off it.  More than likely,
+	# though, `HEAD^1` is some commit in our stream of history, and will
+	# be sufficient to find the starting point of divergence, if such a
+	# point exists.
+	#
+	# If HEAD is a merge commit on `master`, then HEAD^1 points to the
+	# previous commit on `master`, which should clearly be completely
+	# separate from the branch that was merged, and hence the fork point
+	# will be the point of divergence.
+	oldest_shared_revision = sh("git merge-base '#{DEFAULT_BRANCH}' 'HEAD^1'")
 
-  # Get all files that changed between the fork point and HEAD
-  changed_files = git_log_between(oldest_shared_revision, 'HEAD').unique_lines
+	# Get all files that changed between the fork point and HEAD
+	changed_files = git_log_between(oldest_shared_revision, 'HEAD').unique_lines
 
-  # 1. Check if any packages we care about changed
-  if changed_files.include?('package.json') &&
-     npm_native_package_changed?(oldest_shared_revision, 'HEAD')
-    puts "some dependency matching #{NPM_DEP_NAME_REGEXP.inspect} changed"
-    return true
-  end
+	# 1. Check if any packages we care about changed
+	if changed_files.include?('package.json') &&
+			npm_native_package_changed?(oldest_shared_revision, 'HEAD')
+		puts "some dependency matching #{NPM_DEP_NAME_REGEXP.inspect} changed"
+		return true
+	end
 
-  # 2. Check if any files we care about changed
-  if native_file_changed?(changed_files)
-    puts 'some native file changed'
-    return true
-  end
+	# 2. Check if any files we care about changed
+	if native_file_changed?(changed_files)
+		puts 'some native file changed'
+		return true
+	end
 
-  # 3. If we haven't decided to build yet, we aren't going to.
-  puts 'build skippable'
-  false
+	# 3. If we haven't decided to build yet, we aren't going to.
+	puts 'build skippable'
+	false
 end
 
 if !should_build?
-  file_path = File.join(File.dirname(__FILE__), '..', 'logs', 'build-status')
-  File.open(file_path, 'w') { |file| file.write('0') }
-  exit 0
+	file_path = File.join(File.dirname(__FILE__), '..', 'logs', 'build-status')
+	File.open(file_path, 'w') { |file| file.write('0') }
+	exit 0
 else
-  exit 1
+	exit 1
 end
