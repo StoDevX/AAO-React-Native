@@ -47,6 +47,7 @@ export async function performLogin({
 		loginResult = await fetch(OLECARD_AUTH_URL, {
 			method: 'POST',
 			body: form,
+			credentials: 'include',
 		})
 	} catch (err) {
 		let wasNetworkFailure = err.message === 'Network request failed'
