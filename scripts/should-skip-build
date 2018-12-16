@@ -79,6 +79,8 @@ class Commit
 		@hash = dereference(ref)
 	end
 
+	protected
+
 	def dereference(ref)
 		`git rev-parse #{ref}`
 	end
