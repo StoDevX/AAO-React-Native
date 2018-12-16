@@ -4,7 +4,7 @@ import moment from 'moment'
 import {reportNetworkProblem} from '@frogpond/analytics'
 import delay from 'delay'
 
-// global.AsyncStorage = AsyncStorage
+global.AsyncStorage = AsyncStorage
 
 type _BaseCacheResult<T> = {|
 	isExpired: boolean,
@@ -71,31 +71,41 @@ async function getItem(key: string): CacheResult<any> {
 // global._getItem = getItem
 // global._fetchAndCacheItem = fetchAndCacheItem
 
-export async function fetchAndCacheItem(args: {
-	key: string,
-	url?: string,
-	cbForBundledData?: () => Promise<mixed>,
+type CachedFetchArgs = {|
 	ttl?: [number, string],
+	getBundledData?: () => Promise<mixed>,
 	afterFetch?: (parsed: any) => any,
 	force?: boolean,
 	delay?: boolean,
-}): CacheResult<any> {
+	forReload?: boolean,
+|}
+
+export function fetchCachedApi(url: string, args: CachedFetchArgs) {
+	return fetchCached(url, {afterFetch: parsed => parsed.data, ...args})
+}
+
+export async function fetchCached(
+	url: string,
+	args: CachedFetchArgs,
+): CacheResult<any> {
 	let {
-		key,
-		url,
-		cbForBundledData,
-		ttl,
+		getBundledData,
+		ttl = [1, 'hour'],
 		afterFetch,
-		force: shouldForce,
-		delay: shouldDelay,
+		forReload,
+		force: shouldForce = forReload,
+		delay: shouldDelay = forReload,
 	} = args
 
 	let start = Date.now()
 
-	console.log('fetchAndCacheItem', {key, url, cbForBundledData, ttl})
+	let key = `urlcache:${url}`
 
-	// if (process.env.NODE_ENV === 'development' && cbForBundledData) {
-	// 	let data = await cbForBundledData()
+	console.log('fetchAndCacheItem', {key, url, getBundledData, ttl})
+
+	// TODO: re-enable this?
+	// if (process.env.NODE_ENV === 'development' && getBundledData) {
+	// 	let data = await getBundledData()
 	// 	await setItem(key, data, {source: url})
 	// 	return getItem(key)
 	// }
@@ -131,8 +141,8 @@ export async function fetchAndCacheItem(args: {
 
 		// if there's no data still, return null
 		if (!isCached) {
-			if (cbForBundledData) {
-				let data = await cbForBundledData()
+			if (getBundledData) {
+				let data = await getBundledData()
 				await setItem(key, data, {ttl})
 				return getItem(key)
 			}
