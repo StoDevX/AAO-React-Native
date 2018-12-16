@@ -2,7 +2,19 @@
 
 import {type ReduxState} from '../index'
 import {type ToolOptions} from '../../views/help/types'
-import {fetchHelpTools} from '../../lib/cache'
+import {fetchAndCacheItem, type CacheResult} from '../../lib/cache'
+import {API} from '@frogpond/api'
+
+function fetchHelpTools(): CacheResult<?Array<ToolOptions>> {
+	return fetchAndCacheItem({
+		key: 'help:tools',
+		url: API('/tools/help'),
+		afterFetch: parsed => parsed.data,
+		ttl: [1, 'hour'],
+		cbForBundledData: () =>
+			Promise.resolve(require('../../../docs/help.json')),
+	})
+}
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
@@ -30,7 +42,10 @@ export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
 
 		try {
 			const config = await fetchHelpTools()
-			dispatch({type: ENABLED_TOOLS_SUCCESS, payload: config})
+			dispatch({
+				type: ENABLED_TOOLS_SUCCESS,
+				payload: config.value || [],
+			})
 		} catch (err) {
 			dispatch({type: ENABLED_TOOLS_FAILURE})
 		}
