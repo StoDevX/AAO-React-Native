@@ -45,9 +45,12 @@ async function setItem(
 		value = null
 	}
 
+	// toISOString is always represented in UTC
+	let timestamp = new Date().toISOString()
+
 	await AsyncStorage.multiSet([
 		[`${ROOT}:${key}:data`, JSON.stringify(value)],
-		[`${ROOT}:${key}:ts`, new Date().toUTCString()],
+		[`${ROOT}:${key}:ts`, timestamp],
 		[`${ROOT}:${key}:ttl`, JSON.stringify(ttl)],
 	])
 }
