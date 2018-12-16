@@ -4,17 +4,28 @@ import * as React from 'react'
 import {SectionList, StyleSheet} from 'react-native'
 import {ListSeparator, ListSectionHeader, ListEmpty} from '@frogpond/lists'
 import {ContactRow} from './row'
-import delay from 'delay'
-import {reportNetworkProblem} from '@frogpond/analytics'
-import * as defaultData from '../../../docs/contact-info.json'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import * as c from '@frogpond/colors'
 import type {ContactType} from './types'
 import type {TopLevelViewPropsType} from '../types'
+import {fetchAndCacheItem, type CacheResult} from '../../lib/cache'
 import {API} from '@frogpond/api'
 
-const contactInfoUrl = API('/contacts')
+function fetchContacts(
+	args: {reload?: boolean} = {},
+): CacheResult<?Array<ContactType>> {
+	return fetchAndCacheItem({
+		key: 'contacts',
+		url: API('/contacts'),
+		afterFetch: parsed => parsed.data,
+		ttl: [12, 'hours'],
+		cbForBundledData: () =>
+			Promise.resolve(require('../../../docs/contact-info.json')),
+		force: args.reload,
+		delay: args.reload,
+	})
+}
 
 const groupContacts = (contacts: ContactType[]) => {
 	const grouped = groupBy(contacts, c => c.category)
@@ -32,7 +43,6 @@ type Props = TopLevelViewPropsType
 type State = {
 	contacts: Array<ContactType>,
 	loading: boolean,
-	refreshing: boolean,
 }
 
 export class ContactsListView extends React.PureComponent<Props, State> {
@@ -42,43 +52,23 @@ export class ContactsListView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
-		contacts: defaultData.data,
-		loading: true,
-		refreshing: false,
+		contacts: [],
+		loading: false,
 	}
 
 	componentDidMount() {
-		this.fetchData().then(() => {
-			this.setState(() => ({loading: false}))
-		})
+		this.fetchData()
 	}
 
 	refresh = async (): any => {
-		const start = Date.now()
-		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
-		this.setState(() => ({refreshing: false}))
+		this.setState(() => ({loading: true}))
+		await this.fetchData(true)
+		this.setState(() => ({loading: false}))
 	}
 
-	fetchData = async () => {
-		let {data: contacts} = await fetchJson(contactInfoUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-
-		if (process.env.NODE_ENV === 'development') {
-			contacts = defaultData.data
-		}
-
-		this.setState(() => ({contacts}))
+	fetchData = async (reload?: boolean) => {
+		let {value} = await fetchContacts({reload})
+		this.setState(() => ({contacts: value || []}))
 	}
 
 	onPressContact = (contact: ContactType) => {
@@ -106,7 +96,7 @@ export class ContactsListView extends React.PureComponent<Props, State> {
 				data={groupedData}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
-				refreshing={this.state.refreshing}
+				refreshing={this.state.loading}
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
 				sections={groupedData}
