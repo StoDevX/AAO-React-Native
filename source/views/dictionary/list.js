@@ -18,23 +18,14 @@ import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
+import {fetchCachedApi, type CacheResult} from '@frogpond/cache'
 import {API} from '@frogpond/api'
-import {fetchAndCacheItem, type CacheResult} from '@frogpond/cache'
 
-function fetchDictionaryTerms(
-	args: {reload?: boolean} = {},
-): CacheResult<?Array<WordType>> {
-	return fetchAndCacheItem({
-		key: 'dictionary:terms',
-		url: API('/dictionary'),
-		afterFetch: parsed => parsed.data,
-		ttl: [1, 'hour'],
-		cbForBundledData: () =>
-			Promise.resolve(require('../../../docs/dictionary.json')),
-		force: args.reload,
-		delay: args.reload,
-	})
-}
+type DictionaryCache = CacheResult<?Array<WordType>>
+const getBundledData = () =>
+	Promise.resolve(require('../../../docs/dictionary.json'))
+const fetchDictionaryTerms = (forReload?: boolean): DictionaryCache =>
+	fetchCachedApi(API('/dictionary'), {getBundledData, forReload})
 
 const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
@@ -61,7 +52,7 @@ type Props = TopLevelViewPropsType
 type State = {
 	query: string,
 	allTerms: Array<WordType>,
-	refreshing: boolean,
+	loading: boolean,
 }
 
 export class DictionaryView extends React.PureComponent<Props, State> {
@@ -73,7 +64,7 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 	state = {
 		query: '',
 		allTerms: [],
-		refreshing: false,
+		loading: false,
 	}
 
 	componentDidMount() {
@@ -81,14 +72,13 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 	}
 
 	refresh = async () => {
-		this.setState(() => ({refreshing: true}))
-		await this.fetchData(true)
-		this.setState(() => ({refreshing: false}))
+		this.setState(() => ({loading: true}))
+		let {value} = await fetchDictionaryTerms()
+		this.setState(() => ({loading: false, allTerms: value || []}))
 	}
 
-	fetchData = async (reload: boolean = false) => {
-		let {value} = await fetchDictionaryTerms({reload})
-
+	fetchData = async () => {
+		let {value} = await fetchDictionaryTerms()
 		this.setState(() => ({allTerms: value || []}))
 	}
 
@@ -128,7 +118,7 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 		const refreshControl = (
 			<RefreshControl
 				onRefresh={this.refresh}
-				refreshing={this.state.refreshing}
+				refreshing={this.state.loading}
 			/>
 		)
 
