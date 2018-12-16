@@ -67,10 +67,13 @@ export async function performLogin({
 		return 'success'
 	} catch (err) {
 		let wasNetworkFailure = err.message === 'Network request failed'
-		if (wasNetworkFailure && attempts > 0) {
-			// console.log(`login failed; trying ${attempts - 1} more time(s)`)
-			return performLogin({attempts: attempts - 1})
+		if (wasNetworkFailure) {
+			if (attempts > 0) {
+				// console.log(`login failed; trying ${attempts - 1} more time(s)`)
+				return performLogin({attempts: attempts - 1})
+			}
+			return 'network'
 		}
-		return 'network'
+		return 'other'
 	}
 }
