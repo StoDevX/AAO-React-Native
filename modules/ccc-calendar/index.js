@@ -3,7 +3,7 @@
 import * as React from 'react'
 import {timezone} from '@frogpond/constants'
 import type {NavigationScreenProp} from 'react-navigation'
-import {fetchAndCacheItem} from '@frogpond/cache'
+import {fetchCached} from '@frogpond/cache'
 import {EventList, type PoweredBy} from '@frogpond/event-list'
 import {type EventType} from '@frogpond/event-type'
 import moment from 'moment-timezone'
@@ -78,12 +78,9 @@ export class CccCalendarView extends React.Component<Props, State> {
 			throw new Error('invalid calendar type!')
 		}
 
-		let {value} = await fetchAndCacheItem({
-			key: `calendar:${url}`,
-			url: url,
+		let {value} = await fetchCached(url, {
 			ttl: [1, 'minute'],
-			delay: reload,
-			force: reload,
+			forReload: reload,
 		})
 
 		this.setState({now, events: this.convertEvents(value || [])})
