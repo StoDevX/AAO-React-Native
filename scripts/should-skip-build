@@ -74,6 +74,14 @@ class String
 end
 
 class Numeric
+	def weeks
+		days * 7
+	end
+
+	def days
+		hours * 24
+	end
+
 	def hours
 		minutes * 60
 	end
