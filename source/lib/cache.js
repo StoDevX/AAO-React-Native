@@ -1,97 +1,147 @@
 // @flow
 import {AsyncStorage} from 'react-native'
 import moment from 'moment'
-import {API} from '@frogpond/api'
+import {reportNetworkProblem} from '@frogpond/analytics'
+import delay from 'delay'
 
-type BaseCacheResultType<T> = {
+global.AsyncStorage = AsyncStorage
+
+type _BaseCacheResult<T> = {
 	isExpired: boolean,
 	isCached: boolean,
 	value: ?T,
+	source: ?string,
 }
 
-type CacheResultType<T> = Promise<BaseCacheResultType<T>>
+export type CacheResult<T> = Promise<_BaseCacheResult<T>>
 
 function needsUpdate(time: Date, [count, unit]: [number, string]): boolean {
 	return moment(time).isBefore(moment().subtract(count, unit))
 }
 
-function annotateCacheEntry(stored) {
-	// if nothing's stored, note that it's expired and not cached
-	if (stored === null || stored === undefined) {
-		return {isCached: false, isExpired: true, value: null}
+function annotateCacheEntry({ts, ttl}: {ts: string, ttl: string}) {
+	// handle uncached entries and entries that aren't caches, like the homescreen order
+	if (!ts || !ttl) {
+		return {isCached: true, isExpired: false}
 	}
 
-	// migration from old storage
-	if (
-		!('dateCached' in stored && 'timeToCache' in stored && 'value' in stored)
-	) {
-		return {isCached: true, isExpired: true, value: stored}
+	return {
+		isCached: true,
+		isExpired: needsUpdate(new Date(ts), JSON.parse(ttl)),
 	}
-
-	// handle AsyncStorage entries that aren't caches, like the homescreen order
-	if (!stored.timeToCache) {
-		return {isCached: true, isExpired: false, value: stored.value}
-	}
-
-	const date = new Date(stored.dateCached)
-	const isExpired = needsUpdate(date, stored.timeToCache)
-	return {isCached: true, isExpired, value: stored.value}
 }
 
 /// MARK: Utilities
 
-function setItem(key: string, value: any, cacheTime?: [number, string]) {
-	const dataToStore = {
-		dateCached: new Date().toUTCString(),
-		timeToCache: cacheTime,
-		value: value,
+async function setItem(
+	key: string,
+	value: any,
+	{ttl, source}: {ttl?: [number, string], source?: string},
+) {
+	console.log('setItem', {key, value, ttl, source})
+	await AsyncStorage.multiSet([
+		[`fp:${key}:data`, JSON.stringify(value)],
+		[`fp:${key}:ts`, new Date().toUTCString()],
+		[`fp:${key}:ttl`, JSON.stringify(ttl)],
+		[`fp:${key}:source`, source],
+	])
+}
+
+async function getItem(key: string): CacheResult<any> {
+	console.log('getItem', key)
+
+	let [[, value], [, ts], [, ttl], [, source]] = await AsyncStorage.multiGet([
+		`fp:${key}:data`,
+		`fp:${key}:ts`,
+		`fp:${key}:ttl`,
+		`fp:${key}:source`,
+	])
+
+	return {
+		value: JSON.parse(value),
+		source,
+		...annotateCacheEntry({ts, ttl}),
 	}
-	return AsyncStorage.setItem(`aao:${key}`, JSON.stringify(dataToStore))
-}
-function getItem(key: string): CacheResultType<any> {
-	return AsyncStorage.getItem(`aao:${key}`).then(stored =>
-		annotateCacheEntry(JSON.parse(stored)),
-	)
 }
 
-/// MARK: Help tools
+global._setItem = setItem
+global._getItem = getItem
+global._fetchAndCacheItem = fetchAndCacheItem
 
-const helpToolsKey = 'help:tools'
-const helpToolsCacheTime = [1, 'hour']
-import {type ToolOptions} from '../views/help/types'
-const {data: helpData} = require('../../docs/help.json')
-export function setHelpTools(tools: Array<ToolOptions>) {
-	return setItem(helpToolsKey, tools, helpToolsCacheTime)
-}
-export function getHelpTools(): CacheResultType<?Array<ToolOptions>> {
-	return getItem(helpToolsKey)
-}
-function fetchHelpToolsBundled(): Promise<Array<ToolOptions>> {
-	return Promise.resolve(helpData)
-}
-function fetchHelpToolsRemote(): Promise<{data: Array<ToolOptions>}> {
-	return fetchJson(API('/tools/help'))
-}
-export async function fetchHelpTools(): Promise<Array<ToolOptions>> {
-	const cachedValue = await getHelpTools()
+export async function fetchAndCacheItem(args: {
+	key: string,
+	url?: string,
+	cbForBundledData?: () => Promise<mixed>,
+	ttl?: [number, string],
+	afterFetch?: (parsed: any) => any,
+	force?: boolean,
+	delay?: boolean,
+}): CacheResult<any> {
+	let {
+		key,
+		url,
+		cbForBundledData,
+		ttl,
+		afterFetch,
+		force: shouldForce,
+		delay: shouldDelay,
+	} = args
 
-	if (process.env.NODE_ENV === 'development') {
-		return fetchHelpToolsBundled()
+	let start = Date.now()
+
+	console.log('fetchAndCacheItem', {key, url, cbForBundledData, ttl})
+
+	// if (process.env.NODE_ENV === 'development' && cbForBundledData) {
+	// 	let data = await cbForBundledData()
+	// 	await setItem(key, data, {source: url})
+	// 	return getItem(key)
+	// }
+
+	let {value, isExpired, isCached, source} = await getItem(key)
+
+	if (!isExpired && value != null && !shouldForce) {
+		return {value, isCached, isExpired, source}
 	}
 
-	if (!cachedValue.isExpired && cachedValue.value) {
-		return cachedValue.value
+	if (!source && url) {
+		source = url
 	}
 
 	try {
-		const request = await fetchHelpToolsRemote()
-		await setHelpTools(request.data)
+		// try fetching first
+		let body = await fetchJson(url)
 
-		return request.data
-	} catch (error) {
-		if (cachedValue.isCached && cachedValue.value) {
-			return cachedValue.value
+		if (afterFetch) {
+			body = afterFetch(body)
 		}
-		return fetchHelpToolsBundled()
+
+		await setItem(key, body, {source: url, ttl})
+
+		let elapsed = Date.now() - start
+		if (shouldDelay && elapsed < 500) {
+			// 0.5s delay for ListViews – if we let them go at full speed, it feels broken
+			await delay(500 - elapsed)
+		}
+
+		return getItem(key)
+	} catch (error) {
+		// fall back to the local data
+		if (error.message.startsWith('Failed to fetch')) {
+			reportNetworkProblem(error)
+		}
+
+		// if there's no data still, return null
+		if (!isCached) {
+			if (cbForBundledData) {
+				let data = await cbForBundledData()
+				await setItem(key, data, {source: url, ttl})
+				return getItem(key)
+			}
+
+			return {value: null, isCached, isExpired, source}
+		}
+
+		// if we have data, though, return it
+		return {value, isCached, isExpired, source}
 	}
 }
