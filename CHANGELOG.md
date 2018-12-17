@@ -24,6 +24,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Pipe Detox output through xcpretty to reduce noise (#3188)
 - Extracted native build skipping and made it independent of branch (#3252, #3255)
 - Upgraded React-Navigation to v3.0.0, with associated breaking changes (#3259)
+- Told Circle to use Xcode 10.1 to build and test the iOS app
+- Updated Fastlane support url to point to the project's issues tracker (#3314)
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
@@ -32,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Forced build skipping script to actually query Git history for nightly skip check (#3275)
 - Fixed the touchable ref from not passing from the filter toolbar button to the popover (#3279)
 - Resolved some circular `require` statements in our code (#3280)
+- Resolved issue with OleCard login just never working (#3308)
 
 ## [2.6.3] - 2018-09-17
 ### Fixed

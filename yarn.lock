@@ -659,6 +659,11 @@
     hoist-non-react-statics "^2.5.0"
     prop-types "^15.6.0"
 
+"@frogpond/titlecase@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@frogpond/titlecase/-/titlecase-1.0.0.tgz#993e5371c31b58a839e76fdc531053c55b1a2736"
+  integrity sha512-C1qKm/J+B+cXo+7+ZHbRnt2iApx/IrxMEXwOxe+ZkeTvSC1nZ2XRWf0xzFuAanpBNDhFcgrxdnR8FMKNHo1scQ==
+
 "@hawkrives/react-native-alphabetlistview@1.0.0", "@hawkrives/react-native-alphabetlistview@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@hawkrives/react-native-alphabetlistview/-/react-native-alphabetlistview-1.0.0.tgz#0a832b7e55e81002741e623056112fe5d19d03b3"
@@ -791,10 +796,10 @@ agent-base@4, agent-base@^4.1.0:
   dependencies:
     es6-promisify "^5.0.0"
 
-ajv@6.6.1, ajv@^6.5.3:
-  version "6.6.1"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.6.1.tgz#6360f5ed0d80f232cc2b294c362d5dc2e538dd61"
-  integrity sha512-ZoJjft5B+EJBjUyu9C9Hc0OZyPZSSlOF+plzouTrg6UlA8f+e/n8NIgBFG/9tppJtpPWfthHakK7juJdNDODww==
+ajv@6.6.2, ajv@^6.5.3:
+  version "6.6.2"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.6.2.tgz#caceccf474bf3fc3ce3b147443711a24063cc30d"
+  integrity sha512-FBHEW6Jf5TB9MGBgUUA9XHkTbjXYfAUjY43ACMfmdMRHniyoMHjHjzD50OK8LGDWQwp4rWEsIq5kEqq7rvIM1g==
   dependencies:
     fast-deep-equal "^2.0.1"
     fast-json-stable-stringify "^2.0.0"
@@ -6188,10 +6193,10 @@ react-native-button@2.3.0, react-native-button@^2.3.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-calendar-events@1.6.3:
-  version "1.6.3"
-  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.6.3.tgz#2b31faf776a6df2ba0d5ecd595fe283e51de4e5c"
-  integrity sha512-ph8YFLs+uhBAch5nIxHAIoaaYmxaKqrHsAlqa7owGHNiUDJPPn2v68ksIy52XVr1GJDSP0XUqYJqxwks46tHBA==
+react-native-calendar-events@1.6.4:
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/react-native-calendar-events/-/react-native-calendar-events-1.6.4.tgz#e1ccfe50e48b385a00847c41f9fb2a97e756e72e"
+  integrity sha512-By4lgWQG9eewS9WzhzxVHAewxX40v1CzLnNYXFMOqF06fYVCNykiiTMGlLzz3UXHVwwN1Drxw9uWroQfGRFMsw==
 
 react-native-communications@2.2.1:
   version "2.2.1"
@@ -6255,10 +6260,10 @@ react-native-paper@2.3.0:
     hoist-non-react-statics "^3.1.0"
     react-lifecycles-compat "^3.0.4"
 
-react-native-popover-view@1.0.14:
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/react-native-popover-view/-/react-native-popover-view-1.0.14.tgz#2420d91096127b5cc85c5445ee38d1b6ebe7b85e"
-  integrity sha512-FLMYgYxEmft3K3KyLjFqkg/+US7JEoCSHYgIo86B3gsZGpvoek+9E4XC+oi4mmqvBLCVOZIaFoY++iew3pHenQ==
+react-native-popover-view@1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/react-native-popover-view/-/react-native-popover-view-1.0.15.tgz#9c4bbc18b21d019a04660f53f17fccb1b1e3b0c9"
+  integrity sha512-u9N6039ycB2XG9BKKsVIXX6kDsXOUYG8zQQ9+fanaJF6xNlGdZcCgHzrVUomKEQeAN4zz6oC1Vdevvrsf7LLwg==
   dependencies:
     react-native-safe-area-view "^0.10.0"
 
@@ -7573,11 +7578,6 @@ tinycolor2@1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
   integrity sha1-9PrTM0R7wLB9TcjpIJ2POaisd+g=
-
-titlecase@1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/titlecase/-/titlecase-1.1.2.tgz#78113d1108086b8326331a3247dea8f5a49ea853"
-  integrity sha1-eBE9EQgIa4MmMxoyR96o9aSeqFM=
 
 tmp@^0.0.33:
   version "0.0.33"

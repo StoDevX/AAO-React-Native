@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'json'
+require 'time'
 
 PLATFORM = (ENV['task'] || 'unknown').freeze
 
@@ -72,6 +73,51 @@ class String
   end
 end
 
+class Numeric
+  def weeks
+    days * 7
+  end
+
+  def days
+    hours * 24
+  end
+
+  def hours
+    minutes * 60
+  end
+
+  def minutes
+    seconds * 60
+  end
+
+  def seconds
+    self
+  end
+end
+
+class Commit
+  attr_reader :hash
+
+  def self.HEAD
+    self.new('HEAD')
+  end
+
+  def initialize(ref)
+    @hash = dereference(ref)
+  end
+
+  def time
+    git_author_time = `git show --format="%aI" --quiet #{@hash}`
+    Time.parse(git_author_time)
+  end
+
+  protected
+
+  def dereference(ref)
+    `git rev-parse #{ref}`
+  end
+end
+
 def changes_after(time, ref = 'HEAD')
   sh("git log --name-only --format='' --after='#{time}' '#{ref}'")
 end
@@ -81,15 +127,16 @@ def git_log_between(source, target)
 end
 
 def anything_changed_yesterday?
-  yesterdays_changes = changes_after('26 hours ago').unique_lines
+  head_time = Commit.HEAD.time
+  readback_time = head_time - 26.hours
+
+  yesterdays_changes = changes_after(readback_time.iso8601).unique_lines
 
   yesterdays_changes.count > 0
 end
 
 def should_build_nightly?
-  # disabled due to failures to build nightlies
-  # anything_changed_yesterday?
-  true
+  anything_changed_yesterday?
 end
 
 # checks if the native build needs to be run
