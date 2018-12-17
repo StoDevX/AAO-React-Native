@@ -25,12 +25,6 @@ env:
   es6: true
   react-native/react-native: true
 
-globals:
-  fetch: true
-  FormData: true
-  fetchJson: true
-  rawFetch: true
-
 rules:
   array-callback-return: error
   camelcase: warn
