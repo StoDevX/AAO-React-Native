@@ -23,11 +23,10 @@ import startCase from 'lodash/startCase'
 import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
 import {API} from '@frogpond/api'
-import {fetchCached, type CacheResult} from '@frogpond/cache'
+import {fetch} from '@frogpond/fetch'
 
-type StudentOrgCache = CacheResult<?Array<StudentOrgType>>
-const fetchOrgs = (forReload?: boolean): StudentOrgCache =>
-	fetchCached(API('/orgs'), {forReload})
+const fetchOrgs = (forReload?: boolean): Promise<Array<StudentOrgType>> =>
+	fetch(API('/orgs'), {delay: forReload ? 500 : 0}).json()
 
 const leftSideSpacing = 20
 const ROW_HEIGHT = Platform.OS === 'ios' ? 58 : 74
@@ -98,12 +97,10 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 	}
 
 	fetchData = async (refresh?: boolean) => {
-		let {value} = await fetchOrgs(refresh)
-
-		value = value || []
+		let orgs = await fetchOrgs(refresh)
 
 		let sortableRegex = /^(St\.? Olaf(?: College)?|The) +/iu
-		let withSortableNames = value.map(item => {
+		let withSortableNames = orgs.map(item => {
 			let sortableName = item.name.replace(sortableRegex, '')
 
 			return {
@@ -198,7 +195,9 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 				cell={this.renderRow}
 				cellHeight={
 					ROW_HEIGHT +
-					(Platform.OS === 'ios' ? (11 / 12) * StyleSheet.hairlineWidth : 0)
+					(Platform.OS === 'ios'
+						? (11 / 12) * StyleSheet.hairlineWidth
+						: 0)
 				}
 				data={groupedResults}
 				onSearch={this.performSearch}

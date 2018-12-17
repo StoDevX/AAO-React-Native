@@ -4,7 +4,7 @@ import type {StoryType} from './types'
 import {LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../types'
 import {NewsList} from './news-list'
-import {fetchCached} from '@frogpond/cache'
+import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 
 type Props = TopLevelViewPropsType & {
@@ -44,12 +44,11 @@ export default class NewsContainer extends React.PureComponent<Props, State> {
 			throw new Error('invalid news source type!')
 		}
 
-		let {value} = await fetchCached(url, {
-			ttl: [6, 'hours'],
-			forReload: reload,
-		})
+		let entries: Array<StoryType> = await fetch(url, {
+			forReload: reload ? 500 : 0,
+		}).json()
 
-		this.setState(() => ({entries: value || []}))
+		this.setState(() => ({entries}))
 	}
 
 	refresh = async (): any => {

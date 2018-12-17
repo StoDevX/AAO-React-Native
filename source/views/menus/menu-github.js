@@ -17,9 +17,8 @@ import type {
 	ProcessedMealType,
 } from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
-import {data as fallbackMenu} from '../../../docs/pause-menu.json'
-import {reportNetworkProblem} from '@frogpond/analytics'
 import {API} from '@frogpond/api'
+import {fetch} from '@frogpond/fetch'
 
 type Props = TopLevelViewPropsType & {
 	name: string,
@@ -52,37 +51,22 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 	fetchData = async () => {
 		this.setState({loading: true})
 
-		let foodItems: MenuItemType[] = []
-		let stationMenus: StationMenuType[] = []
-		let corIcons: MasterCorIconMapType = {}
-		try {
-			let container = await fetchJson(API('/food/named/menu/the-pause'))
-			let data = container.data
-			foodItems = data.foodItems || []
-			stationMenus = data.stationMenus || []
-			corIcons = data.corIcons || {}
-		} catch (err) {
-			reportNetworkProblem(err)
-			console.warn(err)
-			foodItems = fallbackMenu.foodItems || []
-			stationMenus = fallbackMenu.stationMenus || []
-			corIcons = fallbackMenu.corIcons || {}
-		}
+		let container = await fetch(API('/food/named/menu/the-pause')).json()
 
-		if (process.env.NODE_ENV === 'development') {
-			foodItems = fallbackMenu.foodItems
-			stationMenus = fallbackMenu.stationMenus || []
-			corIcons = fallbackMenu.corIcons || {}
-		}
+		let data = container.data
+		let foodItems: MenuItemType[] = data.foodItems || []
+		let stationMenus: StationMenuType[] = data.stationMenus || []
+		let corIcons: MasterCorIconMapType = data.corIcons || {}
 
 		const upgradedFoodItems = fromPairs(
 			foodItems.map(upgradeMenuItem).map(item => [item.id, item]),
 		)
 		stationMenus = stationMenus.map((menu, index) => ({
 			...upgradeStation(menu, index),
-			items: filter(upgradedFoodItems, item => item.station === menu.label).map(
-				item => item.id,
-			),
+			items: filter(
+				upgradedFoodItems,
+				item => item.station === menu.label,
+			).map(item => item.id),
 		}))
 
 		this.setState({

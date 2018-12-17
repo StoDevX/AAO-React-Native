@@ -2,7 +2,6 @@
 import * as React from 'react'
 import delay from 'delay'
 import {OtherModesRow} from './row'
-import {reportNetworkProblem} from '@frogpond/analytics'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as defaultData from '../../../../docs/transportation.json'
 import * as c from '@frogpond/colors'
@@ -13,6 +12,7 @@ import toPairs from 'lodash/toPairs'
 import type {TopLevelViewPropsType} from '../../types'
 import type {OtherModeType} from '../types'
 import {API} from '@frogpond/api'
+import {fetch} from '@frogpond/fetch'
 
 const transportationUrl = API('/transit/modes')
 
@@ -69,15 +69,9 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 	}
 
 	fetchData = async () => {
-		let {data: modes} = await fetchJson(transportationUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-
-		if (process.env.NODE_ENV === 'development') {
-			modes = defaultData.data
-		}
-
+		let {data: modes}: {data: Array<OtherModeType>} = await fetch(
+			transportationUrl,
+		).json()
 		this.setState(() => ({modes}))
 	}
 

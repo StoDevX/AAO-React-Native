@@ -14,7 +14,7 @@ import moment from 'moment-timezone'
 import {toLaxTitleCase as titleCase} from 'titlecase'
 import type {StreamType} from './types'
 import {API} from '@frogpond/api'
-import {fetchCached} from '@frogpond/cache'
+import {fetch} from '@frogpond/fetch'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -66,35 +66,34 @@ export class StreamListView extends React.PureComponent<Props, State> {
 			.add(2, 'month')
 			.format('YYYY-MM-DD')
 
-		let params = {
-			sort: 'ascending',
-			dateFrom,
-			dateTo,
-		}
+		let data = await fetch(API('/streams/upcoming'), {
+			searchParams: {
+				sort: 'ascending',
+				dateFrom,
+				dateTo,
+			},
+			delay: reload ? 500 : 0,
+		}).json()
 
-		const {value} = await fetchCached(API('/streams/upcoming', params), {
-			forReload: reload,
-			afterFetch: data =>
-				data
-					.filter(stream => stream.category !== 'athletics')
-					.map(stream => {
-						const date = moment(stream.starttime)
-						const group =
-							stream.status.toLowerCase() !== 'live'
-								? date.format('dddd, MMMM Do')
-								: 'Live'
+		data = data
+			.filter(stream => stream.category !== 'athletics')
+			.map(stream => {
+				const date = moment(stream.starttime)
+				const group =
+					stream.status.toLowerCase() !== 'live'
+						? date.format('dddd, MMMM Do')
+						: 'Live'
 
-						return {
-							...stream,
-							// force title-case on the stream types, to prevent not-actually-duplicate headings
-							category: titleCase(stream.category),
-							date: date,
-							$groupBy: group,
-						}
-					}),
-		})
+				return {
+					...stream,
+					// force title-case on the stream types, to prevent not-actually-duplicate headings
+					category: titleCase(stream.category),
+					date: date,
+					$groupBy: group,
+				}
+			})
 
-		const grouped = groupBy(value, j => j.$groupBy)
+		const grouped = groupBy(data, j => j.$groupBy)
 		const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
 
 		this.setState(() => ({streams: mapped}))

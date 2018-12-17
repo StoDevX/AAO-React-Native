@@ -24,7 +24,7 @@ import {getTrimmedTextWithSpaces, parseHtml, entities} from '@frogpond/html-lib'
 import {toLaxTitleCase} from 'titlecase'
 import {reportNetworkProblem} from '@frogpond/analytics'
 import {API} from '@frogpond/api'
-import {fetchCached, type CacheResult} from '@frogpond/cache'
+import {fetch} from '@frogpond/fetch'
 
 const BONAPP_HTML_ERROR_CODE = 'bonapp-html'
 
@@ -105,13 +105,13 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		}
 
 		try {
-			let cafeMenuPromise: CacheResult<?MenuInfoType> = fetchCached(menuUrl, {
-				forReload: reload,
-			})
+			let cafeMenuPromise: Promise<MenuInfoType> = fetch(menuUrl, {
+				forReload: reload ? 500 : 0,
+			}).json()
 
-			let cafeInfoPromise: CacheResult<?CafeInfoType> = fetchCached(cafeUrl, {
-				forReload: reload,
-			})
+			let cafeInfoPromise: Promise<CafeInfoType> = fetch(cafeUrl, {
+				forReload: reload ? 500 : 0,
+			}).json()
 
 			let [cafeMenu, cafeInfo] = await Promise.all([
 				cafeMenuPromise,
@@ -119,8 +119,8 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			])
 
 			this.setState(() => ({
-				cafeMenu: cafeMenu && cafeMenu.value ? cafeMenu.value : null,
-				cafeInfo: cafeInfo && cafeInfo.value ? cafeInfo.value : null,
+				cafeMenu: cafeMenu ? cafeMenu : null,
+				cafeInfo: cafeInfo ? cafeInfo : null,
 				now: moment.tz(timezone()),
 			}))
 		} catch (error) {
@@ -143,7 +143,9 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		const actualCafeInfo = cafeInfo.cafe
 
 		const todayDate = now.format('YYYY-MM-DD')
-		const todayMenu = actualCafeInfo.days.find(({date}) => date === todayDate)
+		const todayMenu = actualCafeInfo.days.find(
+			({date}) => date === todayDate,
+		)
 
 		if (!todayMenu) {
 			return 'Closed today'
@@ -228,9 +230,13 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 	prepareFood(cafeMenu: MenuInfoType) {
 		return mapValues(cafeMenu.items, item => ({
 			...item, // we want to edit the item, not replace it
-			station: entities.decode(toLaxTitleCase(trimStationName(item.station))), // <b>@station names</b> are a mess
+			station: entities.decode(
+				toLaxTitleCase(trimStationName(item.station)),
+			), // <b>@station names</b> are a mess
 			label: entities.decode(trimItemLabel(item.label)), // clean up the titles
-			description: getTrimmedTextWithSpaces(parseHtml(item.description || '')), // clean up the descriptions
+			description: getTrimmedTextWithSpaces(
+				parseHtml(item.description || ''),
+			), // clean up the descriptions
 		}))
 	}
 
@@ -245,7 +251,13 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 				msg =
 					'Something between you and BonApp is having problems. Try again in a minute or two?'
 			}
-			return <NoticeView buttonText="Again!" onPress={this.retry} text={msg} />
+			return (
+				<NoticeView
+					buttonText="Again!"
+					onPress={this.retry}
+					text={msg}
+				/>
+			)
 		}
 
 		if (!this.state.cafeMenu || !this.state.cafeInfo) {
@@ -253,7 +265,9 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 				typeof this.props.cafe === 'string'
 					? this.props.cafe
 					: this.props.cafe.id
-			const err = new Error(`Something went wrong loading BonApp cafe #${cafe}`)
+			const err = new Error(
+				`Something went wrong loading BonApp cafe #${cafe}`,
+			)
 			reportNetworkProblem(err)
 
 			const msg =

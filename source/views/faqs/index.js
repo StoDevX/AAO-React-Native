@@ -4,13 +4,9 @@ import {RefreshControl, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import {View, ScrollView} from 'glamorous-native'
 import {Markdown} from '@frogpond/markdown'
-import {reportNetworkProblem} from '@frogpond/analytics'
 import {LoadingView} from '@frogpond/notice'
-import * as defaultData from '../../../docs/faqs.json'
-import delay from 'delay'
 import {API} from '@frogpond/api'
-
-const faqsUrl = API('/faqs')
+import {fetch} from '@frogpond/fetch'
 
 const styles = StyleSheet.create({
 	container: {
@@ -32,7 +28,7 @@ export class FaqView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
-		text: defaultData.text,
+		text: '',
 		loading: true,
 		refreshing: false,
 	}
@@ -43,30 +39,19 @@ export class FaqView extends React.PureComponent<Props, State> {
 		})
 	}
 
-	fetchData = async () => {
-		let {text} = await fetchJson(faqsUrl).catch(err => {
-			reportNetworkProblem(err)
-			return {text: 'There was a problem loading the FAQs'}
+	fetchData = async (reload?: boolean) => {
+		let {text}: {text: string} = await fetch(API('/faqs'), {
+			forReload: reload ? 500 : 0,
 		})
-
-		if (process.env.NODE_ENV === 'development') {
-			text = defaultData.text
-		}
+			.json()
+			.catch(() => ({text: 'There was a problem loading the FAQs'}))
 
 		this.setState(() => ({text}))
 	}
 
 	refresh = async (): any => {
-		const start = Date.now()
 		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
+		await this.fetchData(true)
 		this.setState(() => ({refreshing: false}))
 	}
 

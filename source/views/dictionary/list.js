@@ -18,15 +18,15 @@ import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
-import {fetchCached, type CacheResult} from '@frogpond/cache'
+import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 
-type DictionaryCache = CacheResult<?Array<WordType>>
 const getBundledData = () =>
 	Promise.resolve(require('../../../docs/dictionary.json'))
-const afterFetch = body => body.data
-const fetchDictionaryTerms = (forReload?: boolean): DictionaryCache =>
-	fetchCached(API('/dictionary'), {getBundledData, forReload, afterFetch})
+const fetchDictionaryTerms = (forReload?: boolean): Promise<Array<WordType>> =>
+	fetch(API('/dictionary'), {delay: forReload ? 500 : 0})
+		.json()
+		.then(body => body.data)
 
 const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
@@ -74,13 +74,13 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 
 	refresh = async () => {
 		this.setState(() => ({loading: true}))
-		let {value} = await fetchDictionaryTerms()
-		this.setState(() => ({loading: false, allTerms: value || []}))
+		let allTerms = await fetchDictionaryTerms(true)
+		this.setState(() => ({loading: false, allTerms}))
 	}
 
 	fetchData = async () => {
-		let {value} = await fetchDictionaryTerms()
-		this.setState(() => ({allTerms: value || []}))
+		let allTerms = await fetchDictionaryTerms()
+		this.setState(() => ({allTerms}))
 	}
 
 	onPressRow = (data: WordType) => {
@@ -137,7 +137,9 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 				cell={this.renderRow}
 				cellHeight={
 					ROW_HEIGHT +
-					(Platform.OS === 'ios' ? (11 / 12) * StyleSheet.hairlineWidth : 0)
+					(Platform.OS === 'ios'
+						? (11 / 12) * StyleSheet.hairlineWidth
+						: 0)
 				}
 				data={groupBy(results, item => item.word[0])}
 				onSearch={this.performSearch}

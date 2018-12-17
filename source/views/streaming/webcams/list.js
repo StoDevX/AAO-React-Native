@@ -8,15 +8,12 @@ import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
 import {API} from '@frogpond/api'
-import {fetchCached, type CacheResult} from '@frogpond/cache'
+import {fetch} from '@frogpond/fetch'
 import {Viewport} from '@frogpond/viewport'
 
-type WebcamsCache = CacheResult<?Array<Webcam>>
 const getBundledData = () =>
 	Promise.resolve(require('../../../../docs/webcams.json'))
-const afterFetch = body => body.data
-const fetchWebcams = (forReload?: boolean): WebcamsCache =>
-	fetchCached(API('/webcams'), {getBundledData, forReload, afterFetch})
+const fetchWebcams = (): Promise<Array<Webcam>> => fetch(API('/webcams')).json()
 
 type Props = {}
 
@@ -42,10 +39,8 @@ export class WebcamsView extends React.PureComponent<Props, State> {
 
 	fetchData = async () => {
 		this.setState(() => ({loading: true}))
-
-		let {value} = await fetchWebcams()
-
-		this.setState(() => ({webcams: value || [], loading: false}))
+		let webcams = await fetchWebcams()
+		this.setState(() => ({webcams, loading: false}))
 	}
 
 	render() {

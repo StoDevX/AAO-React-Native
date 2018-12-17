@@ -7,15 +7,13 @@ import {Timer} from '@frogpond/timer'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../../types'
 import {API} from '@frogpond/api'
-import {fetchCached, type CacheResult} from '@frogpond/cache'
+import {fetch} from '@frogpond/fetch'
 import {timezone} from '@frogpond/constants'
 
-type BusTimesCache = CacheResult<?Array<UnprocessedBusLine>>
 const getBundledData = () =>
 	Promise.resolve(require('../../../../docs/bus-times.json'))
-const afterFetch = body => body.data
-const fetchBusTimes = (forReload?: boolean): BusTimesCache =>
-	fetchCached(API('/transit/bus'), {getBundledData, forReload, afterFetch})
+const fetchBusTimes = (): Promise<Array<UnprocessedBusLine>> =>
+	fetch(API('/transit/bus')).json()
 
 type Props = TopLevelViewPropsType & {
 	+line: string,
@@ -41,8 +39,7 @@ export class BusView extends React.PureComponent<Props, State> {
 	}
 
 	fetchData = async () => {
-		let {value} = await fetchBusTimes()
-		let busLines = value || []
+		let busLines = await fetchBusTimes()
 		let activeBusLine = busLines.find(({line}) => line === this.props.line)
 
 		this.setState(() => ({busLines, activeBusLine}))
@@ -63,7 +60,9 @@ export class BusView extends React.PureComponent<Props, State> {
 
 		if (!activeBusLine) {
 			const lines = this.state.busLines.map(({line}) => line).join(', ')
-			const msg = `The line "${this.props.line}" was not found among ${lines}`
+			const msg = `The line "${
+				this.props.line
+			}" was not found among ${lines}`
 			return <NoticeView text={msg} />
 		}
 
@@ -72,7 +71,11 @@ export class BusView extends React.PureComponent<Props, State> {
 				interval={60000}
 				moment={true}
 				render={({now}) => (
-					<BusLine line={activeBusLine} now={now} openMap={this.openMap} />
+					<BusLine
+						line={activeBusLine}
+						now={now}
+						openMap={this.openMap}
+					/>
 				)}
 				timezone={timezone()}
 			/>

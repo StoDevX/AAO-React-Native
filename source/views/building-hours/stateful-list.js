@@ -11,19 +11,17 @@ import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import {timezone} from '@frogpond/constants'
 import {Timer} from '@frogpond/timer'
-import {fetchCached, type CacheResult} from '@frogpond/cache'
+import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 
-type BuildingCache = CacheResult<?Array<BuildingType>>
 const getBundledData = () =>
 	Promise.resolve(require('../../../docs/building-hours.json'))
-const afterFetch = body => body.data
-const fetchBuildingHours = (forReload?: boolean): BuildingCache =>
-	fetchCached(API('/spaces/hours'), {
-		getBundledData,
-		forReload,
-		afterFetch,
+const fetchHours = (forReload?: boolean): Promise<Array<BuildingType>> =>
+	fetch(API('/spaces/hours'), {
+		delay: forReload ? 500 : 0,
 	})
+		.json()
+		.then(body => body.data)
 
 const groupBuildings = (
 	buildings: Array<BuildingType>,
@@ -77,13 +75,13 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 
 	refresh = async (): any => {
 		this.setState(() => ({loading: true}))
-		let {value} = await fetchBuildingHours(true)
-		this.setState(() => ({loading: false, buildings: value || []}))
+		let buildings = await fetchHours(true)
+		this.setState(() => ({loading: false, buildings}))
 	}
 
 	fetchData = async () => {
-		let {value} = await fetchBuildingHours()
-		this.setState(() => ({buildings: value || []}))
+		let buildings = await fetchHours()
+		this.setState(() => ({buildings}))
 	}
 
 	render() {
