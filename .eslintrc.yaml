@@ -27,7 +27,6 @@ env:
 
 globals:
   fetch: true
-  Headers: true
   FormData: true
   fetchJson: true
   rawFetch: true
