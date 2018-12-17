@@ -21,6 +21,7 @@ export async function getBalances(): Promise<BalancesOrErrorType> {
 		let loginResponse = await fetch(OLECARD_AUTH_URL, {
 			method: 'POST',
 			body: form,
+			credentials: 'include',
 		})
 
 		if (loginResponse.url.includes('message=')) {
