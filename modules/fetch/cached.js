@@ -146,8 +146,24 @@ export async function cachedFetch(request: Request): Promise<Response> {
 
 	debug && console.log(`fetch(${request.url}): stale; validating`)
 
-	// Send request to the origin server. The server may respond with status 304
-	let newResponse = await fetch(request)
+	let newResponse = null
+	try {
+		// Send request to the origin server. The server may respond with status 304
+		newResponse = await fetch(request)
+	} catch (error) {
+		// "A fetch() promise only rejects when a network error is encountered [...] not on HTTP errors such as 404"
+		// - https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch
+
+		// We know there's data in the cache, or we wouldn't have hit this spot.
+		// We've made the decision to return "stale" data if we're offline, so if
+		// we have a network error, we just do an early return with the cached
+		// data.
+
+		debug && console.log(`fetch(${request.url}): offline; returning stale data`)
+		oldResponse.headers = new Headers(oldPolicy.responseHeaders())
+		return oldResponse
+	}
+
 	let newCachePolicyResponse = responseForCachePolicy(newResponse)
 
 	// Create updated policy and combined response from the old and new data
