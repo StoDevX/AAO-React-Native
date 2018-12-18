@@ -77,17 +77,17 @@ class Fetch {
 
 		this.response = cachedFetch(this.request)
 
-		// $FlowExpectedError "cannot assign to new property"
-		this.response.text = async () => {
-			return (await this.response).clone().text()
-		}
+		this.start()
 
-		// $FlowExpectedError "cannot assign to new property"
-		this.response.json = async () => {
-			return (await this.response).clone().json()
-		}
+		return this
+	}
 
-		return this.start()
+	async text() {
+		return (await this.response).clone().text()
+	}
+
+	async json() {
+		return (await this.response).clone().json()
 	}
 
 	async start() {
