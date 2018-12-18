@@ -100,63 +100,64 @@ async function getItem(key: string): Promise<GetItemResult> {
 	}
 }
 
-// Requests an URL and retrieves it from the cache if possible
-export async function cachedFetch(request: Request): Promise<Response> {
-	let {url} = request
+// Handles the case of no-data-yet-cached
+async function handleInitialFetch(args: {request: Request, key: string}) {
+	let {request, key} = args
+
+	debug && console.log(`fetch(${request.url}): no policy cached; fetching`)
+
+	// I explicitly want errors here to propagate. Why? Bundled data will have
+	// an expired policy stored, so it won't hit this branch. Thus, the only
+	// requests in here will have nothing to fall back to, so we need some way
+	// to signal that an error happened.
+	let response = await fetch(request)
 
 	let cachePolicyRequest = requestForCachePolicy(request)
+	let cachePolicyResponse = responseForCachePolicy(response)
 
-	let key = `urlcache:${url}`
-	let {response: oldResponse, policy: oldPolicy} = await getItem(key)
+	let policy = new CachePolicy(cachePolicyRequest, cachePolicyResponse)
 
-	if (process.env.NODE_ENV === 'development') {
-		let bundledResponse = await AsyncStorage.getItem(`${ROOT}:${key}:bundled`)
-		if (bundledResponse) {
-			debug &&
-				console.log(
-					`fetch(${request.url}): in dev mode; returning bundled data`,
-				)
-			let {body, ...init} = JSON.parse(bundledResponse)
-			return new Response(body, init)
-		}
+	if (policy.storable()) {
+		debug && console.log(`fetch(${request.url}): caching`)
+		await cacheItem({key, response, policy})
+	} else {
+		debug && console.log(`fetch(${request.url}): not cachable`)
 	}
 
-	// If nothing has ever been cached, go fetch it
-	if (!oldPolicy) {
-		debug && console.log(`fetch(${request.url}): no policy cached; fetching`)
+	return response
+}
 
-		let response = await fetch(request)
-		let cachePolicyResponse = responseForCachePolicy(response)
+type HandlePartialFetchArgs = {
+	request: Request,
+	oldResponse: Response,
+	oldPolicy: CachePolicy,
+	key: string,
+}
 
-		let policy = new CachePolicy(cachePolicyRequest, cachePolicyResponse)
+// Handles the case of cached-and-fresh data
+function handleCachedButStillFresh(args: HandlePartialFetchArgs) {
+	let {request, oldResponse, oldPolicy} = args
 
-		if (policy.storable()) {
-			debug && console.log(`fetch(${request.url}): caching`)
-			await cacheItem({key, response, policy})
-		} else {
-			debug && console.log(`fetch(${request.url}): not cachable`)
-		}
+	debug && console.log(`fetch(${request.url}): fresh; returning`)
+	oldResponse.headers = new Headers(oldPolicy.responseHeaders())
+	return oldResponse
+}
 
-		return response
-	}
-
-	// If we can re-use the cached data, return it; otherwise, we're serving requests from the cache
-	if (oldPolicy.satisfiesWithoutRevalidation(cachePolicyRequest)) {
-		debug && console.log(`fetch(${request.url}): fresh; returning`)
-		oldResponse.headers = new Headers(oldPolicy.responseHeaders())
-		return oldResponse
-	}
-
-	// Update the request to ask the origin server if the cached response can be used
-	request.headers = new Headers(
-		oldPolicy.revalidationHeaders(cachePolicyRequest),
-	)
+// Handles the case of cached-but-stale data
+async function handleStale(args: HandlePartialFetchArgs) {
+	let {request, oldResponse, oldPolicy, key} = args
 
 	debug && console.log(`fetch(${request.url}): stale; validating`)
 
+	let cachePolicyRequest = requestForCachePolicy(request)
+
 	let newResponse = null
 	try {
-		// Send request to the origin server. The server may respond with status 304
+		// Update the request to ask the origin server if the cached response can be used
+		let newHeaders = oldPolicy.revalidationHeaders(cachePolicyRequest)
+		request.headers = new Headers(newHeaders)
+
+		// Send request to the origin server. The server may respond with status 304.
 		newResponse = await fetch(request)
 	} catch (error) {
 		// "A fetch() promise only rejects when a network error is encountered [...] not on HTTP errors such as 404"
@@ -199,4 +200,40 @@ export async function cachedFetch(request: Request): Promise<Response> {
 	debug && console.log(`fetch(${request.url}): returning updated response`)
 
 	return response
+}
+
+// Returns the bundled response when in development
+function handleBundledInDev(request: Request, bundledResponse: string) {
+	debug &&
+		console.log(`fetch(${request.url}): in dev mode; returning bundled data`)
+	let {body, ...init} = JSON.parse(bundledResponse)
+	return new Response(body, init)
+}
+
+// Requests an URL and retrieves it from the cache if possible
+export async function cachedFetch(request: Request): Promise<Response> {
+	let {url} = request
+
+	let key = `urlcache:${url}`
+	let {response: oldResponse, policy: oldPolicy} = await getItem(key)
+
+	// If we're in dev, and there's bundled data, return it
+	if (process.env.NODE_ENV === 'development') {
+		let bundledResponse = await AsyncStorage.getItem(`${ROOT}:${key}:bundled`)
+		if (bundledResponse) {
+			return handleBundledInDev(request, bundledResponse)
+		}
+	}
+
+	// If nothing has ever been cached, go fetch it
+	if (!oldPolicy) {
+		return handleInitialFetch({request, key})
+	}
+
+	// If we can re-use the cached data, return it; otherwise, we're serving requests from the cache
+	if (oldPolicy.satisfiesWithoutRevalidation(requestForCachePolicy(request))) {
+		return handleCachedButStillFresh({request, oldResponse, oldPolicy, key})
+	}
+
+	return handleStale({request, oldResponse, oldPolicy, key})
 }
