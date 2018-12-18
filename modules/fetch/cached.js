@@ -32,11 +32,15 @@ async function cacheItem(args: {
 
 async function getItem(
 	key: string,
-): Promise<{response: Response, policy: CachePolicy}> {
+): Promise<{response: Response, policy: ?CachePolicy}> {
 	let [[, response], [, policy]] = await AsyncStorage.multiGet([
 		`${ROOT}:${key}:response`,
 		`${ROOT}:${key}:policy`,
 	])
+
+	if (!response) {
+		return {response, policy: null}
+	}
 
 	let {body, ...init} = JSON.parse(response)
 
