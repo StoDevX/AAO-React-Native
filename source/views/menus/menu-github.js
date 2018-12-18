@@ -63,10 +63,9 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 		)
 		stationMenus = stationMenus.map((menu, index) => ({
 			...upgradeStation(menu, index),
-			items: filter(
-				upgradedFoodItems,
-				item => item.station === menu.label,
-			).map(item => item.id),
+			items: filter(upgradedFoodItems, item => item.station === menu.label).map(
+				item => item.id,
+			),
 		}))
 
 		this.setState({

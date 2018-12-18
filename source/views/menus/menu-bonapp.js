@@ -143,9 +143,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		const actualCafeInfo = cafeInfo.cafe
 
 		const todayDate = now.format('YYYY-MM-DD')
-		const todayMenu = actualCafeInfo.days.find(
-			({date}) => date === todayDate,
-		)
+		const todayMenu = actualCafeInfo.days.find(({date}) => date === todayDate)
 
 		if (!todayMenu) {
 			return 'Closed today'
@@ -230,13 +228,9 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 	prepareFood(cafeMenu: MenuInfoType) {
 		return mapValues(cafeMenu.items, item => ({
 			...item, // we want to edit the item, not replace it
-			station: entities.decode(
-				toLaxTitleCase(trimStationName(item.station)),
-			), // <b>@station names</b> are a mess
+			station: entities.decode(toLaxTitleCase(trimStationName(item.station))), // <b>@station names</b> are a mess
 			label: entities.decode(trimItemLabel(item.label)), // clean up the titles
-			description: getTrimmedTextWithSpaces(
-				parseHtml(item.description || ''),
-			), // clean up the descriptions
+			description: getTrimmedTextWithSpaces(parseHtml(item.description || '')), // clean up the descriptions
 		}))
 	}
 
@@ -251,13 +245,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 				msg =
 					'Something between you and BonApp is having problems. Try again in a minute or two?'
 			}
-			return (
-				<NoticeView
-					buttonText="Again!"
-					onPress={this.retry}
-					text={msg}
-				/>
-			)
+			return <NoticeView buttonText="Again!" onPress={this.retry} text={msg} />
 		}
 
 		if (!this.state.cafeMenu || !this.state.cafeInfo) {
@@ -265,9 +253,7 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 				typeof this.props.cafe === 'string'
 					? this.props.cafe
 					: this.props.cafe.id
-			const err = new Error(
-				`Something went wrong loading BonApp cafe #${cafe}`,
-			)
+			const err = new Error(`Something went wrong loading BonApp cafe #${cafe}`)
 			reportNetworkProblem(err)
 
 			const msg =

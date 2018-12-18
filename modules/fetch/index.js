@@ -98,10 +98,7 @@ class Fetch {
 		}
 
 		let elapsed = Date.now() - this.startMs
-		if (
-			this.options.delay &&
-			elapsed < this.options.delay
-		) {
+		if (this.options.delay && elapsed < this.options.delay) {
 			// 0.5s delay for ListViews – if we let them go at full speed, it feels broken
 			await delay(this.options.delay - elapsed)
 		}

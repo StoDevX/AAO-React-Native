@@ -60,9 +60,7 @@ export class BusView extends React.PureComponent<Props, State> {
 
 		if (!activeBusLine) {
 			const lines = this.state.busLines.map(({line}) => line).join(', ')
-			const msg = `The line "${
-				this.props.line
-			}" was not found among ${lines}`
+			const msg = `The line "${this.props.line}" was not found among ${lines}`
 			return <NoticeView text={msg} />
 		}
 
@@ -71,11 +69,7 @@ export class BusView extends React.PureComponent<Props, State> {
 				interval={60000}
 				moment={true}
 				render={({now}) => (
-					<BusLine
-						line={activeBusLine}
-						now={now}
-						openMap={this.openMap}
-					/>
+					<BusLine line={activeBusLine} now={now} openMap={this.openMap} />
 				)}
 				timezone={timezone()}
 			/>
