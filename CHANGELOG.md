@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Added Renovate as our new automated dependency management tool, with a nice configuration (#3193)
 - Add "open webpage" row to student work detail
 - Added some logic to skip native builds if nothing that might affect them has changed (#3209)
-- All network requests are now cached according to the server's caching headers (#3310)
+- All network requests are now cached according to the server's caching headers, even offline (#3310, #3320)
 
 ### Changed
 - Adjusted and deduplicated logic in API scaffolding
