@@ -58,7 +58,7 @@ export async function cachedFetch(request: Request): Promise<Response> {
 		let policy = new CachePolicy(request, response)
 
 		if (policy.storable()) {
-			await cacheItem({key: request.url, response, policy})
+			await cacheItem({key, response, policy})
 		}
 
 		return response
@@ -84,7 +84,7 @@ export async function cachedFetch(request: Request): Promise<Response> {
 	let response = modified ? newResponse : oldResponse
 
 	// Update the cache with the newer/fresher response
-	await cacheItem({key: request.url, policy, response})
+	await cacheItem({key, policy, response})
 
 	// And proceed returning cached response as usual
 	response.headers = policy.responseHeaders()
