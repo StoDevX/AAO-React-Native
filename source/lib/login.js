@@ -46,10 +46,11 @@ export async function performLogin({
 	let form = buildFormData({username, password})
 
 	try {
-		let {status: statusCode} = await rawFetch(OLECARD_AUTH_URL, {
+		let {status: statusCode} = await fetch(OLECARD_AUTH_URL, {
 			method: 'POST',
 			body: form,
 			credentials: 'include',
+			cache: 'no-store',
 		})
 
 		if (statusCode >= 400 && statusCode < 500) {
