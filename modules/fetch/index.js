@@ -1,6 +1,6 @@
 // @flow
 
-/* globals Request, URL */
+/* globals Request */
 
 import {cachedFetch} from './cached'
 import {userAgent} from '@frogpond/constants'
