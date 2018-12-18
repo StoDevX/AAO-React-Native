@@ -36,6 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed the touchable ref from not passing from the filter toolbar button to the popover (#3279)
 - Resolved some circular `require` statements in our code (#3280)
 - Resolved issue with OleCard login just never working (#3308)
+- Made build tooling always build tagged commits (#3323)
 
 ## [2.6.3] - 2018-09-17
 ### Fixed
