@@ -264,10 +264,15 @@ jobs:
       - run:
           name: "Reconcile Git histories"
           command: |
-            git checkout master
-            git reset --hard origin/master
-            git checkout "$CIRCLE_BRANCH"
-            git reset --hard "origin/$CIRCLE_BRANCH"
+            if [ -z "$CIRCLE_TAG" ];
+            then
+              git checkout master
+              git reset --hard origin/master
+              git checkout "$CIRCLE_BRANCH"
+              git reset --hard "origin/$CIRCLE_BRANCH"
+            else
+              echo "CIRCLE_TAG was set, didn't do anything"
+            fi
       - run: mkdir -p logs/
       - run: touch logs/build-status
       - run:
@@ -335,10 +340,15 @@ jobs:
       - run:
           name: "Reconcile Git histories"
           command: |
-            git checkout master
-            git reset --hard origin/master
-            git checkout "$CIRCLE_BRANCH"
-            git reset --hard "origin/$CIRCLE_BRANCH"
+            if [ -z "$CIRCLE_TAG" ];
+            then
+              git checkout master
+              git reset --hard origin/master
+              git checkout "$CIRCLE_BRANCH"
+              git reset --hard "origin/$CIRCLE_BRANCH"
+            else
+              echo "CIRCLE_TAG was set, didn't do anything"
+            fi
       - run: mkdir -p logs/
       - run: touch logs/build-status
       - run:
