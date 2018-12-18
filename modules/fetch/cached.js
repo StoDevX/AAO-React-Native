@@ -49,10 +49,7 @@ export async function insertForUrl(url: string, data: mixed) {
 	}
 
 	let req = new Request(url)
-	let resp = new Response(JSON.stringify(data), {
-		status: 200,
-		headers: new Headers({}),
-	})
+	let resp = new Response(JSON.stringify(data), {status: 200})
 	let policy = new CachePolicy(
 		requestForCachePolicy(req),
 		responseForCachePolicy(resp),
