@@ -21,7 +21,7 @@ async function cacheItem(args: {
 	policy: CachePolicy,
 }) {
 	let {key, response, policy} = args
-	response = serializeResponse(response)
+	response = await serializeResponse(response)
 
 	await AsyncStorage.multiSet([
 		[`${ROOT}:${key}:response`, JSON.stringify(response)],
