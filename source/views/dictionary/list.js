@@ -21,8 +21,6 @@ import deburr from 'lodash/deburr'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 
-const getBundledData = () =>
-	Promise.resolve(require('../../../docs/dictionary.json'))
 const fetchDictionaryTerms = (forReload?: boolean): Promise<Array<WordType>> =>
 	fetch(API('/dictionary'), {delay: forReload ? 500 : 0})
 		.json()

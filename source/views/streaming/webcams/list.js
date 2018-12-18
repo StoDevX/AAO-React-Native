@@ -11,9 +11,10 @@ import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
 import {Viewport} from '@frogpond/viewport'
 
-const getBundledData = () =>
-	Promise.resolve(require('../../../../docs/webcams.json'))
-const fetchWebcams = (): Promise<Array<Webcam>> => fetch(API('/webcams')).json()
+const fetchWebcams = (): Promise<Array<Webcam>> =>
+	fetch(API('/webcams'))
+		.json()
+		.then(body => body.data)
 
 type Props = {}
 

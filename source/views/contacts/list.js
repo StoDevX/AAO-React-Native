@@ -12,8 +12,6 @@ import type {TopLevelViewPropsType} from '../types'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 
-const getBundledData = () =>
-	Promise.resolve(require('../../../docs/contact-info.json'))
 const fetchContacts = (forReload?: boolean): Promise<Array<ContactType>> =>
 	fetch(API('/contacts'), {
 		delay: forReload ? 500 : 0,

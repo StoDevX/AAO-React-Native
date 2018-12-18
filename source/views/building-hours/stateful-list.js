@@ -14,8 +14,6 @@ import {Timer} from '@frogpond/timer'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 
-const getBundledData = () =>
-	Promise.resolve(require('../../../docs/building-hours.json'))
 const fetchHours = (forReload?: boolean): Promise<Array<BuildingType>> =>
 	fetch(API('/spaces/hours'), {
 		delay: forReload ? 500 : 0,

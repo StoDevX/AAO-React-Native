@@ -10,10 +10,10 @@ import {API} from '@frogpond/api'
 import {fetch} from '@frogpond/fetch'
 import {timezone} from '@frogpond/constants'
 
-const getBundledData = () =>
-	Promise.resolve(require('../../../../docs/bus-times.json'))
 const fetchBusTimes = (): Promise<Array<UnprocessedBusLine>> =>
-	fetch(API('/transit/bus')).json()
+	fetch(API('/transit/bus'))
+		.json()
+		.then(body => body.data)
 
 type Props = TopLevelViewPropsType & {
 	+line: string,
