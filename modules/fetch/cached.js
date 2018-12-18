@@ -55,19 +55,24 @@ export async function insertForUrl(url: string, data: mixed) {
 		responseForCachePolicy(resp),
 	)
 
-	return cacheItem({key, response: resp, policy})
+	return cacheItem({key, response: resp, policy, bundled: true})
 }
 
 // Does the magic: stores a Request into AsyncStorage
-type CacheItemArgs = {key: string, response: Response, policy: CachePolicy}
-async function cacheItem({key, response, policy}: CacheItemArgs) {
+type CacheItemArgs = {key: string, response: Response, policy: CachePolicy, bundled?: boolean}
+async function cacheItem({key, response, policy, bundled}: CacheItemArgs) {
 	response = await serializeResponse(response)
 
+	let strResponse = JSON.stringify(response)
 	await AsyncStorage.multiSet([
-		[`${ROOT}:${key}:response`, JSON.stringify(response)],
+		[`${ROOT}:${key}:response`, strResponse],
 		[`${ROOT}:${key}:policy`, JSON.stringify(policy.toObject())],
 		[`${ROOT}:${key}:ttl`, JSON.stringify(policy.timeToLive())],
 	])
+
+	if (bundled) {
+		await AsyncStorage.setItem(`${ROOT}:${key}:bundled`, strResponse)
+	}
 }
 
 // Does more magic: gets a Request from AsyncStorage
@@ -98,6 +103,15 @@ export async function cachedFetch(request: Request): Promise<Response> {
 
 	let key = `urlcache:${url}`
 	let {response: oldResponse, policy: oldPolicy} = await getItem(key)
+
+	if (process.env.NODE_ENV === 'development') {
+		let bundledResponse = await AsyncStorage.getItem(`${ROOT}:${key}:bundled`)
+		if (bundledResponse) {
+			debug && console.log(`fetch(${request.url}): in dev mode; returning bundled data`)
+			let {body, ...init} = JSON.parse(bundledResponse)
+			return new Response(body, init)
+		}
+	}
 
 	// If nothing has ever been cached, go fetch it
 	if (!oldPolicy) {
