@@ -139,8 +139,15 @@ def should_build_nightly?
   anything_changed_yesterday?
 end
 
+def tagged_build?
+  travis = ENV['TRAVIS_TAG'] && !ENV['TRAVIS_TAG'].empty?
+  circle = ENV['CIRCLE_TAG'] && !ENV['CIRCLE_TAG'].empty?
+  travis || circle
+end
+
 # checks if the native build needs to be run
 def should_build?
+  return true if tagged_build?
   return should_build_nightly? if ENV['IS_NIGHTLY']
 
   # Find the oldest common revision between HEAD's parent and our
