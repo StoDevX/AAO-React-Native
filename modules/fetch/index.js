@@ -65,10 +65,10 @@ class Fetch {
 		this.request = new Request(input, init)
 
 		if (searchParams) {
-			let url = new URL(this.request.url)
+			let url = this.request.url.split('?')[0]
 			// $FlowExpectedError
-			url.search = queryString.stringify(searchParams)
-			this.request.url = url
+			let queryParams = queryString.stringify(searchParams)
+			this.request.url = `${url}?${queryParams}`
 		}
 
 		if (!this.request.headers.has('User-Agent')) {
