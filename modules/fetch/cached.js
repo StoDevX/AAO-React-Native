@@ -1,8 +1,9 @@
 // @flow
-/* globals Request, Response */
+/* globals Request, Response, Headers */
 
 import {AsyncStorage} from 'react-native'
 import CachePolicy from 'http-cache-semantics'
+import fromPairs from 'lodash/fromPairs'
 
 const ROOT = 'fp'
 
@@ -13,6 +14,57 @@ async function serializeResponse(r: Request) {
 		headers = [...headers.entries()]
 	}
 	return {headers, status, statusText, body}
+}
+
+function responseForCachePolicy(response: Response) {
+	// Request and response must have a headers property with all header names
+	// in lower case. url, status and method are optional (defaults are any
+	// URL, status 200, and GET method).
+
+	// const request = {
+	//     url: '/',
+	//     method: 'GET',
+	//     headers: {
+	//         accept: '*/*',
+	//     },
+	// };
+
+	let {url, method, headers} = response
+
+	// now we need to convert from a Headers object to an object-of-headers
+
+	headers = fromPairs([...Object.entries(headers)])
+
+	return {url, method, headers}
+}
+
+function requestForCachePolicy(request: Request) {
+	// Request and response must have a headers property with all header names
+	// in lower case. url, status and method are optional (defaults are any
+	// URL, status 200, and GET method).
+
+	// const response = {
+	//     status: 200,
+	//     headers: {
+	//         'cache-control': 'public, max-age=7234',
+	//     },
+	// };
+
+	let {status, headers} = request
+
+	// now we need to convert from a Headers object to an object-of-headers
+
+	headers = fromPairs([...Object.entries(headers)])
+
+	return {status, headers}
+}
+
+function headersObjectToHeadersClass(headers: {[string]: string}) {
+	let updatedHeaders = new Headers()
+	for (let [key, value] of Object.entries(headers)) {
+		updatedHeaders.append(key, value)
+	}
+	return updatedHeaders
 }
 
 async function cacheItem(args: {
@@ -50,6 +102,10 @@ async function getItem(
 	}
 }
 
+// global.AsyncStorage = AsyncStorage
+// global.getItem = getItem
+// global.cachedFetch = cachedFetch
+
 export async function cachedFetch(request: Request): Promise<Response> {
 	let {url} = request
 
@@ -58,32 +114,53 @@ export async function cachedFetch(request: Request): Promise<Response> {
 
 	// if nothing has ever been cached, go fetch it
 	if (!oldPolicy) {
+		console.log(`fetch(${request.url}): no policy cached; fetching`)
+
 		let response = await fetch(request)
-		let policy = new CachePolicy(request, response)
+		// console.log(response.headers)
+		// global.xyz = response.headers
+		let policy = new CachePolicy(requestForCachePolicy(request), responseForCachePolicy(response))
 
 		if (policy.storable()) {
+			console.log(`fetch(${request.url}): caching`)
 			await cacheItem({key, response, policy})
+		} else {
+			console.log(`fetch(${request.url}): not cachable`)
 		}
 
 		return response
 	}
 
 	// if we can re-use the cached data, return it
-	if (oldPolicy.satisfiesWithoutRevalidation(request)) {
-		oldResponse.headers = oldPolicy.responseHeaders()
+	if (oldPolicy.satisfiesWithoutRevalidation(requestForCachePolicy(request))) {
+		console.log(`fetch(${request.url}): fresh; returning`)
+		oldResponse.headers = headersObjectToHeadersClass(oldPolicy.responseHeaders())
 		return oldResponse
 	}
 
 	// otherwise, we're serving requests from the cache
 
 	// Change the request to ask the origin server if the cached response can be used
-	request.headers = oldPolicy.revalidationHeaders(request)
+	request.headers = headersObjectToHeadersClass(oldPolicy.revalidationHeaders(requestForCachePolicy(request)))
+
+	// console.log('revalidationHeaders', oldPolicy.revalidationHeaders(request))
+	// console.log('old headers', oldPolicy._resHeaders)
+
+	console.log(`fetch(${request.url}): stale; validating`)
 
 	// Send request to the origin server. The server may respond with status 304
 	let newResponse = await fetch(request)
 
 	// Create updated policy and combined response from the old and new data
-	let {policy, modified} = oldPolicy.revalidatedPolicy(request, newResponse)
+	let {policy, modified} = oldPolicy.revalidatedPolicy(requestForCachePolicy(request), responseForCachePolicy(newResponse))
+
+	if (modified) {
+		console.log(`fetch(${request.url}): validated; did change`)
+		console.log('old', oldPolicy.responseHeaders())
+		console.log('new', policy.responseHeaders())
+	} else {
+		console.log(`fetch(${request.url}): validated; 304 no change`)
+	}
 
 	let response = modified ? newResponse : oldResponse
 
@@ -91,6 +168,9 @@ export async function cachedFetch(request: Request): Promise<Response> {
 	await cacheItem({key, policy, response})
 
 	// And proceed returning cached response as usual
-	response.headers = policy.responseHeaders()
+	response.headers = headersObjectToHeadersClass(policy.responseHeaders())
+
+	console.log(`fetch(${request.url}): returning updated response`)
+
 	return response
 }
