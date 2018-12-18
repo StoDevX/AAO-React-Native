@@ -7,18 +7,24 @@ import {type ReduxState} from '../../redux'
 import {connect} from 'react-redux'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
-import * as defaultData from '../../../docs/building-hours.json'
-import {reportNetworkProblem} from '@frogpond/analytics'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
-import delay from 'delay'
 import {timezone} from '@frogpond/constants'
-import {API} from '@frogpond/api'
 import {Timer} from '@frogpond/timer'
+import {fetch} from '@frogpond/fetch'
+import {API} from '@frogpond/api'
 
-const buildingHoursUrl = API('/spaces/hours')
+const fetchHours = (forReload?: boolean): Promise<Array<BuildingType>> =>
+	fetch(API('/spaces/hours'), {
+		delay: forReload ? 500 : 0,
+	})
+		.json()
+		.then(body => body.data)
 
-const groupBuildings = (buildings: BuildingType[], favorites: string[]) => {
+const groupBuildings = (
+	buildings: Array<BuildingType>,
+	favorites: Array<string>,
+): Array<{title: string, data: Array<BuildingType>}> => {
 	const favoritesGroup = {
 		title: 'Favorites',
 		data: buildings.filter(b => favorites.includes(b.name)),
@@ -46,8 +52,7 @@ type Props = TopLevelViewPropsType & ReduxStateProps
 type State = {|
 	error: ?Error,
 	loading: boolean,
-	buildings: Array<{title: string, data: Array<BuildingType>}>,
-	allBuildings: Array<BuildingType>,
+	buildings: Array<BuildingType>,
 |}
 
 export class BuildingHoursView extends React.PureComponent<Props, State> {
@@ -59,17 +64,7 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 	state = {
 		error: null,
 		loading: false,
-		buildings: groupBuildings(defaultData.data, this.props.favoriteBuildings),
-		allBuildings: defaultData.data,
-	}
-
-	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		return {
-			buildings: groupBuildings(
-				prevState.allBuildings,
-				nextProps.favoriteBuildings,
-			),
-		}
+		buildings: [],
 	}
 
 	componentDidMount() {
@@ -77,32 +72,14 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 	}
 
 	refresh = async (): any => {
-		let start = Date.now()
 		this.setState(() => ({loading: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		let elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
-		this.setState(() => ({loading: false}))
+		let buildings = await fetchHours(true)
+		this.setState(() => ({loading: false, buildings}))
 	}
 
 	fetchData = async () => {
-		let {data: buildings} = await fetchJson(buildingHoursUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-		if (process.env.NODE_ENV === 'development') {
-			buildings = defaultData.data
-		}
-		this.setState(() => ({
-			buildings: groupBuildings(buildings, this.props.favoriteBuildings),
-			allBuildings: buildings,
-		}))
+		let buildings = await fetchHours()
+		this.setState(() => ({buildings}))
 	}
 
 	render() {
@@ -110,13 +87,17 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 			return <NoticeView text={`Error: ${this.state.error.message}`} />
 		}
 
+		let {buildings} = this.state
+		let {favoriteBuildings} = this.props
+		let grouped = groupBuildings(buildings, favoriteBuildings)
+
 		return (
 			<Timer
 				interval={60000}
 				moment={true}
 				render={({now}) => (
 					<BuildingHoursList
-						buildings={this.state.buildings}
+						buildings={grouped}
 						loading={this.state.loading}
 						navigation={this.props.navigation}
 						now={now}

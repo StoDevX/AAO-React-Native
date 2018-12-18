@@ -2,7 +2,6 @@
 
 // initialization
 import './init/constants'
-import './init/fetch'
 import './init/moment'
 import './init/analytics'
 import './init/api'

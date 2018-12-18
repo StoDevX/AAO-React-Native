@@ -11,18 +11,20 @@ import {
 	ListSectionHeader,
 	ListSeparator,
 } from '@frogpond/lists'
-import delay from 'delay'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {trackDefinitionOpen, reportNetworkProblem} from '@frogpond/analytics'
+import {trackDefinitionOpen} from '@frogpond/analytics'
 import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
-import * as defaultData from '../../../docs/dictionary.json'
+import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 
-const dictionaryUrl = API('/dictionary')
+const fetchDictionaryTerms = (forReload?: boolean): Promise<Array<WordType>> =>
+	fetch(API('/dictionary'), {delay: forReload ? 500 : 0})
+		.json()
+		.then(body => body.data)
 
 const ROW_HEIGHT = Platform.OS === 'ios' ? 76 : 89
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
@@ -49,7 +51,7 @@ type Props = TopLevelViewPropsType
 type State = {
 	query: string,
 	allTerms: Array<WordType>,
-	refreshing: boolean,
+	loading: boolean,
 }
 
 export class DictionaryView extends React.PureComponent<Props, State> {
@@ -60,8 +62,8 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 
 	state = {
 		query: '',
-		allTerms: defaultData.data,
-		refreshing: false,
+		allTerms: [],
+		loading: false,
 	}
 
 	componentDidMount() {
@@ -69,30 +71,13 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 	}
 
 	refresh = async () => {
-		const start = Date.now()
-		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
-		this.setState(() => ({refreshing: false}))
+		this.setState(() => ({loading: true}))
+		let allTerms = await fetchDictionaryTerms(true)
+		this.setState(() => ({loading: false, allTerms}))
 	}
 
 	fetchData = async () => {
-		let {data: allTerms} = await fetchJson(dictionaryUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-
-		if (process.env.NODE_ENV === 'development') {
-			allTerms = defaultData.data
-		}
-
+		let allTerms = await fetchDictionaryTerms()
 		this.setState(() => ({allTerms}))
 	}
 
@@ -132,7 +117,7 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 		const refreshControl = (
 			<RefreshControl
 				onRefresh={this.refresh}
-				refreshing={this.state.refreshing}
+				refreshing={this.state.loading}
 			/>
 		)
 

@@ -2,17 +2,19 @@
 
 import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
-import {reportNetworkProblem} from '@frogpond/analytics'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
-import * as defaultData from '../../../../docs/webcams.json'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
 import {API} from '@frogpond/api'
+import {fetch} from '@frogpond/fetch'
 import {Viewport} from '@frogpond/viewport'
 
-const webcamsUrl = API('/webcams')
+const fetchWebcams = (): Promise<Array<Webcam>> =>
+	fetch(API('/webcams'))
+		.json()
+		.then(body => body.data)
 
 type Props = {}
 
@@ -28,7 +30,7 @@ export class WebcamsView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
-		webcams: defaultData.data,
+		webcams: [],
 		loading: false,
 	}
 
@@ -38,16 +40,7 @@ export class WebcamsView extends React.PureComponent<Props, State> {
 
 	fetchData = async () => {
 		this.setState(() => ({loading: true}))
-
-		let {data: webcams} = await fetchJson(webcamsUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-
-		if (process.env.NODE_ENV === 'development') {
-			webcams = defaultData.data
-		}
-
+		let webcams = await fetchWebcams()
 		this.setState(() => ({webcams, loading: false}))
 	}
 

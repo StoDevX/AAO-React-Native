@@ -2,7 +2,8 @@
 
 import {type ReduxState} from '../index'
 import {type ToolOptions} from '../../views/help/types'
-import {fetchHelpTools} from '../../lib/cache'
+import {fetch} from '@frogpond/fetch'
+import {API} from '@frogpond/api'
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
@@ -29,8 +30,13 @@ export function getEnabledTools(): ThunkAction<GetEnabledToolsAction> {
 		dispatch({type: ENABLED_TOOLS_START})
 
 		try {
-			const config = await fetchHelpTools()
-			dispatch({type: ENABLED_TOOLS_SUCCESS, payload: config})
+			let url = API('/tools/help')
+			let body: {data: Array<ToolOptions>} = await fetch(url).json()
+
+			dispatch({
+				type: ENABLED_TOOLS_SUCCESS,
+				payload: body.data,
+			})
 		} catch (err) {
 			dispatch({type: ENABLED_TOOLS_FAILURE})
 		}

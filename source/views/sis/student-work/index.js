@@ -6,7 +6,7 @@ import {TabBarIcon} from '@frogpond/navigation-tabs'
 import type {TopLevelViewPropsType} from '../../types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
-import {reportNetworkProblem, trackStudentJobOpen} from '@frogpond/analytics'
+import {trackStudentJobOpen} from '@frogpond/analytics'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import delay from 'delay'
 import toPairs from 'lodash/toPairs'
@@ -16,8 +16,7 @@ import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import {JobRow} from './job-row'
 import {API} from '@frogpond/api'
 import type {JobType} from './types'
-
-const jobsUrl = API('/jobs')
+import {fetch} from '@frogpond/fetch'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -55,34 +54,34 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 	}
 
 	fetchData = async () => {
-		try {
-			const data: Array<JobType> = await fetchJson(jobsUrl)
+		const data: Array<JobType> = await fetch(API('/jobs')).json()
 
-			// force title-case on the job types, to prevent not-actually-duplicate headings
-			const processed = data.map(job => ({...job, type: titleCase(job.type)}))
+		// force title-case on the job types, to prevent not-actually-duplicate headings
+		const processed = data.map(job => ({
+			...job,
+			type: titleCase(job.type),
+		}))
 
-			// Turns out that, for our data, we really just want to sort the categories
-			// _backwards_ - that is, On-Campus Work Study should come before
-			// Off-Campus Work Study, and the Work Studies should come before the
-			// Summer Employments
-			const sorted = orderBy(
-				processed,
-				[
-					j => j.type, // sort any groups with the same sort index alphabetically
-					j => j.office, // sort all jobs with the same office
-					j => j.lastModified, // sort all jobs by date-last-modified
-				],
-				['desc', 'asc'],
-			)
+		// Turns out that, for our data, we really just want to sort the categories
+		// _backwards_ - that is, On-Campus Work Study should come before
+		// Off-Campus Work Study, and the Work Studies should come before the
+		// Summer Employments
+		const sorted = orderBy(
+			processed,
+			[
+				j => j.type, // sort any groups with the same sort index alphabetically
+				j => j.office, // sort all jobs with the same office
+				j => j.lastModified, // sort all jobs by date-last-modified
+			],
+			['desc', 'asc'],
+		)
 
-			const grouped = groupBy(sorted, j => j.type)
-			const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
-			this.setState(() => ({jobs: mapped}))
-		} catch (err) {
-			reportNetworkProblem(err)
-			this.setState(() => ({error: true}))
-			console.error(err)
-		}
+		const grouped = groupBy(sorted, j => j.type)
+		const mapped = toPairs(grouped).map(([title, data]) => ({
+			title,
+			data,
+		}))
+		this.setState(() => ({jobs: mapped}))
 	}
 
 	refresh = async (): any => {

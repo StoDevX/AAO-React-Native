@@ -28,7 +28,8 @@ export async function getBalances(): Promise<BalancesOrErrorType> {
 			return {error: true, value: new Error('Login failed')}
 		}
 
-		const resp: OleCardBalancesType = await fetchJson(OLECARD_DATA_ENDPOINT)
+		let url = OLECARD_DATA_ENDPOINT
+		let resp: OleCardBalancesType = await fetch(url).then(r => r.json())
 
 		if (resp.error != null) {
 			return {
