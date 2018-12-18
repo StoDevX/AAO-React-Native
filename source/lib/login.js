@@ -51,6 +51,7 @@ export async function performLogin({
 			body: form,
 			credentials: 'include',
 			cache: 'no-store',
+			throwHttpErrors: false,
 		})
 
 		if (statusCode >= 400 && statusCode < 500) {
