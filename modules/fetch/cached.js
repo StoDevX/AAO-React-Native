@@ -59,7 +59,12 @@ export async function insertForUrl(url: string, data: mixed) {
 }
 
 // Does the magic: stores a Request into AsyncStorage
-type CacheItemArgs = {key: string, response: Response, policy: CachePolicy, bundled?: boolean}
+type CacheItemArgs = {
+	key: string,
+	response: Response,
+	policy: CachePolicy,
+	bundled?: boolean,
+}
 async function cacheItem({key, response, policy, bundled}: CacheItemArgs) {
 	response = await serializeResponse(response)
 
@@ -107,7 +112,10 @@ export async function cachedFetch(request: Request): Promise<Response> {
 	if (process.env.NODE_ENV === 'development') {
 		let bundledResponse = await AsyncStorage.getItem(`${ROOT}:${key}:bundled`)
 		if (bundledResponse) {
-			debug && console.log(`fetch(${request.url}): in dev mode; returning bundled data`)
+			debug &&
+				console.log(
+					`fetch(${request.url}): in dev mode; returning bundled data`,
+				)
 			let {body, ...init} = JSON.parse(bundledResponse)
 			return new Response(body, init)
 		}
