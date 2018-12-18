@@ -39,6 +39,28 @@ function requestForCachePolicy({status, headers}: Request) {
 	return {status, headers: headersInstanceToObject(headers)}
 }
 
+export async function insertForUrl(url: string, data: mixed) {
+	let key = `urlcache:${url}`
+
+	let {policy: oldPolicy} = await getItem(key)
+
+	if (oldPolicy) {
+		return
+	}
+
+	let req = new Request(url)
+	let resp = new Response(JSON.stringify(data), {
+		status: 200,
+		headers: new Headers({}),
+	})
+	let policy = new CachePolicy(
+		requestForCachePolicy(req),
+		responseForCachePolicy(resp),
+	)
+
+	return cacheItem({key, response: resp, policy})
+}
+
 // Does the magic: stores a Request into AsyncStorage
 type CacheItemArgs = {key: string, response: Response, policy: CachePolicy}
 async function cacheItem({key, response, policy}: CacheItemArgs) {

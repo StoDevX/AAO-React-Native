@@ -7,6 +7,8 @@ import {userAgent} from '@frogpond/constants'
 import delay from 'delay'
 import queryString from 'query-string'
 
+export {insertForUrl} from './cached'
+
 const USER_AGENT = userAgent()
 
 class HTTPError extends Error {
