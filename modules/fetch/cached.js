@@ -6,7 +6,9 @@ import CachePolicy from 'http-cache-semantics'
 import fromPairs from 'lodash/fromPairs'
 
 const ROOT = 'fp'
+const debug = false
 
+// Pulls out the important bits from a Request for storage
 async function serializeResponse(r: Request) {
 	let {headers, status, statusText} = r
 	let body = await r.clone().text()
@@ -16,63 +18,30 @@ async function serializeResponse(r: Request) {
 	return {headers, status, statusText, body}
 }
 
-function responseForCachePolicy(response: Response) {
-	// Request and response must have a headers property with all header names
-	// in lower case. url, status and method are optional (defaults are any
-	// URL, status 200, and GET method).
-
-	// const request = {
-	//     url: '/',
-	//     method: 'GET',
-	//     headers: {
-	//         accept: '*/*',
-	//     },
-	// };
-
-	let {url, method, headers} = response
-
-	// now we need to convert from a Headers object to an object-of-headers
-
-	headers = fromPairs([...Object.entries(headers)])
-
-	return {url, method, headers}
+// Converts a whatwg Headers instance into a plain object for http-cache-semantics
+function headersInstanceToObject(headers: Headers) {
+	return fromPairs([...Object.entries(headers)])
 }
 
-function requestForCachePolicy(request: Request) {
-	// Request and response must have a headers property with all header names
-	// in lower case. url, status and method are optional (defaults are any
-	// URL, status 200, and GET method).
+// Converts a whatwg Response into a plain object for http-cache-semantics
+function responseForCachePolicy({url, method, headers}: Response) {
+	// Response must have a headers property with all header names in lower
+	// case. `url` and `method` are optional.
 
-	// const response = {
-	//     status: 200,
-	//     headers: {
-	//         'cache-control': 'public, max-age=7234',
-	//     },
-	// };
-
-	let {status, headers} = request
-
-	// now we need to convert from a Headers object to an object-of-headers
-
-	headers = fromPairs([...Object.entries(headers)])
-
-	return {status, headers}
+	return {url, method, headers: headersInstanceToObject(headers)}
 }
 
-function headersObjectToHeadersClass(headers: {[string]: string}) {
-	let updatedHeaders = new Headers()
-	for (let [key, value] of Object.entries(headers)) {
-		updatedHeaders.append(key, value)
-	}
-	return updatedHeaders
+// Converts a whatwg Request into a plain object for http-cache-semantics
+function requestForCachePolicy({status, headers}: Request) {
+	// Request must have a headers property with all header names in lower
+	// case. `url` and `status` are optional.
+
+	return {status, headers: headersInstanceToObject(headers)}
 }
 
-async function cacheItem(args: {
-	key: string,
-	response: Response,
-	policy: CachePolicy,
-}) {
-	let {key, response, policy} = args
+// Does the magic: stores a Request into AsyncStorage
+type CacheItemArgs = {key: string, response: Response, policy: CachePolicy}
+async function cacheItem({key, response, policy}: CacheItemArgs) {
 	response = await serializeResponse(response)
 
 	await AsyncStorage.multiSet([
@@ -82,9 +51,9 @@ async function cacheItem(args: {
 	])
 }
 
-async function getItem(
-	key: string,
-): Promise<{response: Response, policy: ?CachePolicy}> {
+// Does more magic: gets a Request from AsyncStorage
+type GetItemResult = {response: Response, policy: ?CachePolicy}
+async function getItem(key: string): Promise<GetItemResult> {
 	let [[, response], [, policy]] = await AsyncStorage.multiGet([
 		`${ROOT}:${key}:response`,
 		`${ROOT}:${key}:policy`,
@@ -102,64 +71,64 @@ async function getItem(
 	}
 }
 
-// global.AsyncStorage = AsyncStorage
-// global.getItem = getItem
-// global.cachedFetch = cachedFetch
-
+// Requests an URL and retrieves it from the cache if possible
 export async function cachedFetch(request: Request): Promise<Response> {
 	let {url} = request
+
+	let cachePolicyRequest = requestForCachePolicy(request)
 
 	let key = `urlcache:${url}`
 	let {response: oldResponse, policy: oldPolicy} = await getItem(key)
 
-	// if nothing has ever been cached, go fetch it
+	// If nothing has ever been cached, go fetch it
 	if (!oldPolicy) {
-		console.log(`fetch(${request.url}): no policy cached; fetching`)
+		debug && console.log(`fetch(${request.url}): no policy cached; fetching`)
 
 		let response = await fetch(request)
-		// console.log(response.headers)
-		// global.xyz = response.headers
-		let policy = new CachePolicy(requestForCachePolicy(request), responseForCachePolicy(response))
+		let cachePolicyResponse = responseForCachePolicy(response)
+
+		let policy = new CachePolicy(cachePolicyRequest, cachePolicyResponse)
 
 		if (policy.storable()) {
-			console.log(`fetch(${request.url}): caching`)
+			debug && console.log(`fetch(${request.url}): caching`)
 			await cacheItem({key, response, policy})
 		} else {
-			console.log(`fetch(${request.url}): not cachable`)
+			debug && console.log(`fetch(${request.url}): not cachable`)
 		}
 
 		return response
 	}
 
-	// if we can re-use the cached data, return it
-	if (oldPolicy.satisfiesWithoutRevalidation(requestForCachePolicy(request))) {
-		console.log(`fetch(${request.url}): fresh; returning`)
-		oldResponse.headers = headersObjectToHeadersClass(oldPolicy.responseHeaders())
+	// If we can re-use the cached data, return it; otherwise, we're serving requests from the cache
+	if (oldPolicy.satisfiesWithoutRevalidation(cachePolicyRequest)) {
+		debug && console.log(`fetch(${request.url}): fresh; returning`)
+		oldResponse.headers = new Headers(oldPolicy.responseHeaders())
 		return oldResponse
 	}
 
-	// otherwise, we're serving requests from the cache
+	// Update the request to ask the origin server if the cached response can be used
+	request.headers = new Headers(
+		oldPolicy.revalidationHeaders(cachePolicyRequest),
+	)
 
-	// Change the request to ask the origin server if the cached response can be used
-	request.headers = headersObjectToHeadersClass(oldPolicy.revalidationHeaders(requestForCachePolicy(request)))
-
-	// console.log('revalidationHeaders', oldPolicy.revalidationHeaders(request))
-	// console.log('old headers', oldPolicy._resHeaders)
-
-	console.log(`fetch(${request.url}): stale; validating`)
+	debug && console.log(`fetch(${request.url}): stale; validating`)
 
 	// Send request to the origin server. The server may respond with status 304
 	let newResponse = await fetch(request)
+	let newCachePolicyResponse = responseForCachePolicy(newResponse)
 
 	// Create updated policy and combined response from the old and new data
-	let {policy, modified} = oldPolicy.revalidatedPolicy(requestForCachePolicy(request), responseForCachePolicy(newResponse))
+	let {policy, modified} = oldPolicy.revalidatedPolicy(
+		cachePolicyRequest,
+		newCachePolicyResponse,
+	)
 
-	if (modified) {
-		console.log(`fetch(${request.url}): validated; did change`)
-		console.log('old', oldPolicy.responseHeaders())
-		console.log('new', policy.responseHeaders())
-	} else {
-		console.log(`fetch(${request.url}): validated; 304 no change`)
+	if (debug) {
+		if (modified) {
+			console.log(`fetch(${request.url}): validated; did change`)
+		} else {
+			console.log(`fetch(${request.url}): validated; 304 no change`)
+		}
 	}
 
 	let response = modified ? newResponse : oldResponse
@@ -168,9 +137,9 @@ export async function cachedFetch(request: Request): Promise<Response> {
 	await cacheItem({key, policy, response})
 
 	// And proceed returning cached response as usual
-	response.headers = headersObjectToHeadersClass(policy.responseHeaders())
+	response.headers = new Headers(policy.responseHeaders())
 
-	console.log(`fetch(${request.url}): returning updated response`)
+	debug && console.log(`fetch(${request.url}): returning updated response`)
 
 	return response
 }
