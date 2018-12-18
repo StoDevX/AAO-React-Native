@@ -75,23 +75,23 @@ class Fetch {
 
 		this.startMs = Date.now()
 
-		this.response = cachedFetch(this.request)
+		this.response = this.fetch()
 
-		this.start()
+		// $FlowExpectedError: we're purposefully attaching these properties to a promise
+		this.response.text = async () => {
+			return (await this.response).clone().text()
+		}
 
-		return this
+		// $FlowExpectedError: we're purposefully attaching these properties to a promise
+		this.response.json = async () => {
+			return (await this.response).clone().json()
+		}
+
+		return this.response
 	}
 
-	async text() {
-		return (await this.response).clone().text()
-	}
-
-	async json() {
-		return (await this.response).clone().json()
-	}
-
-	async start() {
-		let response = await this.response
+	async fetch() {
+		let response = await cachedFetch(this.request)
 
 		if (this.options.throwHttpErrors && !response.ok) {
 			throw new HTTPError(response)
