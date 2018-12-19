@@ -6222,10 +6222,10 @@ react-native-gesture-handler@1.0.12, react-native-gesture-handler@^1.0.0:
     invariant "^2.2.2"
     prop-types "^15.5.10"
 
-react-native-google-analytics-bridge@5.7.1:
-  version "5.7.1"
-  resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-5.7.1.tgz#16ad57392f4fdf8cde2e3a162b5b792afa04d485"
-  integrity sha512-tBXegZ/BZ09DYJFMams5k2OKtyMEfJjo5bdYlaplMVXLNznuU6g99vvqgQnvOgAaNK7sEaTbWz8U/C0Wvc2yYA==
+react-native-google-analytics-bridge@7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-google-analytics-bridge/-/react-native-google-analytics-bridge-7.0.0.tgz#ab4b7f43f7c31c73cd3e3dc577b9be913356cf25"
+  integrity sha512-PifW2VXYqH92u6GyJfEZAiZQYHmXuJvN7eouuC9ZWadfz+m4MFJbsVFAAsTQ1JzMiuo8B5KwK97hpY0cp7HD9w==
 
 react-native-keychain@3.0.0:
   version "3.0.0"

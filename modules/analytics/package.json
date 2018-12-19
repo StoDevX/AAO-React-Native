@@ -10,7 +10,7 @@
   },
   "peerDependencies": {
     "bugsnag-react-native": "^2.10.2",
-    "react-native-google-analytics-bridge": "^5.7.1"
+    "react-native-google-analytics-bridge": "^5.7.1 || ^7.0.0"
   },
   "dependencies": {
     "@frogpond/constants": "^1.0.0",

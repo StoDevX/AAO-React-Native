@@ -115,7 +115,7 @@
     "react-native-custom-tabs": "0.1.7",
     "react-native-device-info": "0.24.3",
     "react-native-gesture-handler": "1.0.12",
-    "react-native-google-analytics-bridge": "5.7.1",
+    "react-native-google-analytics-bridge": "7.0.0",
     "react-native-keychain": "3.0.0",
     "react-native-linear-gradient": "2.5.3",
     "react-native-network-info": "4.0.0",
