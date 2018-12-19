@@ -1515,10 +1515,10 @@ bugsnag-react-native@2.12.6:
     promise "^7"
     prop-types "^15.6.0"
 
-bugsnag-sourcemaps@1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/bugsnag-sourcemaps/-/bugsnag-sourcemaps-1.0.6.tgz#c665e6407d07b1fc3242c4ca089cd0f22fc5405e"
-  integrity sha512-BQl9oMNJKJ06IylkDuQ7jxwW/ftUKsM1mITLUmOGtJQ38+uaID+V4+2NUSaRAWaE3N79gBpcO/rkq/nW8rY8WA==
+bugsnag-sourcemaps@1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/bugsnag-sourcemaps/-/bugsnag-sourcemaps-1.0.7.tgz#aa35179f2e9d34b592265c7166a88b8217e4b6f4"
+  integrity sha512-krf7A2pz1Jr5k9TAwl9sLNX0KCc+ermC4wDshh+45ADzZzHEYCjYjx+QF1hQxAB19HBcfDTIEJ1O5dgmHgVJmQ==
   dependencies:
     graceful-fs "^4.1.11"
     listr "^0.12.0"
