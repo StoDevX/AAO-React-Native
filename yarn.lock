@@ -3221,10 +3221,10 @@ git-config-path@^1.0.1:
     fs-exists-sync "^0.1.0"
     homedir-polyfill "^1.0.0"
 
-glamorous-native@1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/glamorous-native/-/glamorous-native-1.4.0.tgz#22c331e354f1fda59d8e57b245f2b09dc2463b14"
-  integrity sha1-IsMx41Tx/aWdjleyRfKwncJGOxQ=
+glamorous-native@1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/glamorous-native/-/glamorous-native-1.4.2.tgz#ce895cf4c53c2bbf653c3cdba1e95980b173fac0"
+  integrity sha512-s3IG7RXuulnJ734AX2EFCyGmBjTYIaP5s8ABhsjFrxv5LrOW2F9jNM4GP3QUGxGW3XaHX4OdxJ8W98eTOS6o1w==
   dependencies:
     brcast "^2.0.0"
 
