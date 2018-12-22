@@ -1,0 +1,18 @@
+{
+  "name": "@frogpond/async",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0"
+  },
+  "dependencies": {
+    "@frogpond/notice": "^1.0.0",
+    "react-async": "^3.8.2"
+  }
+}
