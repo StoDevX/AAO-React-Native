@@ -69,6 +69,11 @@ export class CellTextField extends React.Component<Props> {
 	}
 
 	render() {
+		let moreProps = {}
+		if (this.props.multiline) {
+			moreProps.scrollEnabled = false
+		}
+
 		const labelWidthStyle =
 			this.props.labelWidth !== null && this.props.labelWidth !== undefined
 				? {width: this.props.labelWidth}
@@ -95,11 +100,10 @@ export class CellTextField extends React.Component<Props> {
 				placeholder={this.props.placeholder}
 				placeholderTextColor={c.iosPlaceholderText}
 				returnKeyType={this.props.returnKeyType}
-				// TODO(react-native@0.58): enable this once React Native no longer dies when opening Settings
-				//scrollEnabled={false}
 				secureTextEntry={this.props.secureTextEntry}
 				style={[styles.customTextInput]}
 				value={this.props.value}
+				{...moreProps}
 			/>
 		)
 
