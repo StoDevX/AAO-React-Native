@@ -1,4 +1,5 @@
 // @flow
+
 import * as React from 'react'
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'

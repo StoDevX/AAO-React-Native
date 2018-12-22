@@ -1,4 +1,4 @@
 // @flow
 
-export {LoadingView} from './loading'
 export {NoticeView} from './notice'
+export {LoadingView} from './loading'
