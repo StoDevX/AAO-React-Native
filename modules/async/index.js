@@ -7,26 +7,20 @@ import {LoadingView, DataErrorView, NoDataView} from '@frogpond/notice'
 export function Async<T>(props: AsyncProps<T>) {
 	return (
 		<AsyncComponent {...props}>
-			{({data, isLoading, reload, error, startedAt, finishedAt}) => {
-				if (!data && isLoading) {
-					return <LoadingView startedAt={startedAt} />
+			{args => {
+				if (!args.data && args.isLoading) {
+					return <LoadingView startedAt={args.startedAt} />
 				}
 
-				if (error) {
-					return <DataErrorView error={error} retry={reload} />
+				if (args.error) {
+					return <DataErrorView error={args.error} retry={args.reload} />
 				}
 
-				if (!data) {
-					return <NoDataView retry={reload} />
+				if (!args.data) {
+					return <NoDataView retry={args.reload} />
 				}
 
-				return this.props.children({
-					data,
-					isLoading,
-					reload,
-					startedAt,
-					finishedAt,
-				})
+				return this.props.children(args)
 			}}
 		</AsyncComponent>
 	)
