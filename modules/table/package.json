@@ -1,0 +1,17 @@
+{
+  "name": "@frogpond/table",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0"
+  },
+  "dependencies": {
+    "@frogpond/async": "^1.0.0"
+  }
+}
