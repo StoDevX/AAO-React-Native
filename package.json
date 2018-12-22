@@ -12,7 +12,7 @@
     "compress-data": "gzip --keep docs/*.json",
     "danger": "danger ci",
     "data": "node scripts/bundle-data.js data/ docs/",
-    "d": "yarn-deduplicate yarn.lock && yarn",
+    "d": "yarn-deduplicate && yarn",
     "flow": "flow",
     "ios": "react-native run-ios",
     "ios:release": "react-native run-ios --configuration Release",
