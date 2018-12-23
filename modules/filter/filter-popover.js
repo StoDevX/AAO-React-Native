@@ -21,10 +21,6 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 		filter: this.props.filter,
 	}
 
-	static getDerivedStateFromProps(props: Props) {
-		return {filter: props.filter}
-	}
-
 	onFilterChanged = (filter: FilterType) => {
 		this.setState(() => ({filter: filter}))
 	}
