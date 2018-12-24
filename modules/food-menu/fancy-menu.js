@@ -74,7 +74,7 @@ export class FancyMenu extends React.Component<Props, State> {
 		// us overriding our changes from FilterView.onDismiss
 		if (
 			!prevState.cachedFoodItems ||
-			props.foodItems === prevState.cachedFoodItems
+			props.foodItems !== prevState.cachedFoodItems
 		) {
 			let {foodItems, menuCorIcons, meals, now} = props
 			let filters = buildFilters(values(foodItems), menuCorIcons, meals, now)
