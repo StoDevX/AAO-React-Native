@@ -14,7 +14,7 @@ import {allViews} from '../views'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
-import {trackedOpenUrl} from '@frogpond/open-url'
+import {trackedOpenUrl, openUrlInBrowser} from '@frogpond/open-url'
 import {EditHomeButton, OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
 
@@ -61,6 +61,8 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 									onPress={() => {
 										if (view.type === 'url') {
 											return trackedOpenUrl({url: view.url, id: view.view})
+										} else if (view.type === 'browser-url') {
+											return openUrlInBrowser({url: view.url, id: view.view})
 										} else {
 											return navigation.navigate(view.view)
 										}
