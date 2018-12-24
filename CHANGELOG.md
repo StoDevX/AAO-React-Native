@@ -39,7 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Resolved some circular `require` statements in our code (#3280)
 - Resolved issue with OleCard login just never working (#3308)
 - Made build tooling always build tagged commits (#3323)
-- Fixed bug where filters were not applying correctly in menu and course search views (#3344)
+- Fixed bug where filters were not applying correctly in menu and course search views (#3344, #3350)
 
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)
