@@ -22,7 +22,11 @@ export function ListSection({filter, onChange}: PropsType) {
 	function buttonPushed(tappedValue: ListItemSpecType) {
 		let result
 
-		if (selected.some(val => isEqual(val, tappedValue))) {
+		if (mode === 'OR' && selected.length === options.length) {
+			// if all options of an OR filter are selected and a user selects
+			// an option, make that the only sleected option
+			result = [tappedValue]
+		} else if (selected.some(val => isEqual(val, tappedValue))) {
 			// if the user has tapped an item, and it's already in the list of
 			// things they've tapped, we want to _remove_ it from that list.
 			result = reject(selected, val => isEqual(val, tappedValue))
