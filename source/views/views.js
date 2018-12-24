@@ -180,7 +180,7 @@ export const allViews: ViewType[] = [
 		icon: 'warning',
 		foreground: 'dark',
 		tint: c.periwinkle,
-		gradient: c.tealToSeafoam,
+		gradient: c.yellowToGoldMid,
 	},
 ]
 
