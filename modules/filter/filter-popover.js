@@ -21,7 +21,7 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 		filter: this.props.filter,
 	}
 
-	componentDidUpdate(prevProps: Props, prevState: State) {
+	componentDidUpdate(prevProps: Props) {
 		if (prevProps.filter !== this.props.filter) {
 			this.setState(() => ({filter: this.props.filter}))
 		}
