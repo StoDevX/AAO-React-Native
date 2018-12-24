@@ -1,3 +1,3 @@
 // @flow
 
-export {openUrl, trackedOpenUrl, canOpenUrl} from './open-url'
+export {openUrl, trackedOpenUrl, canOpenUrl, openUrlInBrowser} from './open-url'

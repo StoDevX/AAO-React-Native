@@ -72,3 +72,8 @@ export function canOpenUrl(url: string) {
 	}
 	return true
 }
+
+export function openUrlInBrowser({url, id}: {url: string, id?: string}) {
+	trackUrl(id || url)
+	return genericOpen(url)
+}
