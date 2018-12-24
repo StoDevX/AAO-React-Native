@@ -113,14 +113,14 @@ class FilterToolbarButton extends React.PureComponent<Props, State> {
 					<Text style={buttonTextStyle}>{title}</Text>
 					<Icon name={icon} size={18} style={activeContentStyle} />
 				</Touchable>
-				{popoverVisible &&
+				{popoverVisible && (
 					<FilterPopover
 						anchor={this.touchable}
 						filter={filter}
 						onClosePopover={this.onClosePopover}
 						visible={true}
 					/>
-				}
+				)}
 			</React.Fragment>
 		)
 	}
