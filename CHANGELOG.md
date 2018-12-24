@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated Fastlane support url to point to the project's issues tracker (#3314)
 - Ignore specific proptype warning for react markdown (#3329)
 - Only set `scrollEnabled` if `multiline` is true (#3337)
+- Select, rather than deselect, first selected filter option of OR filters (#3347)
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
