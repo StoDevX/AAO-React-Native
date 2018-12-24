@@ -22,6 +22,16 @@ export type ViewType =
 			tint: string,
 			gradient?: [string, string],
 	  }
+	| {
+			type: 'browser-url',
+			view: string,
+			url: string,
+			title: string,
+			icon: string,
+			foreground: 'light' | 'dark',
+			tint: string,
+			gradient?: [string, string],
+	  }
 
 export const allViews: Array<ViewType> = [
 	{
@@ -161,6 +171,16 @@ export const allViews: Array<ViewType> = [
 		foreground: 'light',
 		tint: c.periwinkle,
 		gradient: c.tealToSeafoam,
+	},
+	{
+		type: 'browser-url',
+		url: 'https://wp.stolaf.edu/safety-committee/report-a-safety-concern-2/',
+		view: 'SafetyView',
+		title: 'Safety Concerns',
+		icon: 'warning',
+		foreground: 'dark',
+		tint: c.periwinkle,
+		gradient: c.yellowToGoldMid,
 	},
 ]
 

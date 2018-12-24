@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Add "open webpage" row to student work detail
 - Added some logic to skip native builds if nothing that might affect them has changed (#3209)
 - All network requests are now cached according to the server's caching headers, even offline (#3310, #3320)
+- Added "Safety Concerns" tile that links to St. Olaf's official form for documenting safety concerns (#3345)
 
 ### Changed
 - Adjusted and deduplicated logic in API scaffolding
@@ -40,6 +41,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Resolved issue with OleCard login just never working (#3308)
 - Made build tooling always build tagged commits (#3323)
 - Fixed bug where filters were not applying correctly in menu and course search views (#3344, #3350)
+- Fixed bug where filters were not applying correctly in menu and course search views (#3344)
+- Fixed the text color of the safety concerns button (#3349)
 
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)
