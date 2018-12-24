@@ -31,7 +31,7 @@ export type ViewType =
 			foreground: 'light' | 'dark',
 			tint: string,
 			gradient?: [string, string],
-	}
+	  }
 
 export const allViews: Array<ViewType> = [
 	{
@@ -181,7 +181,7 @@ export const allViews: Array<ViewType> = [
 		foreground: 'light',
 		tint: c.periwinkle,
 		gradient: c.tealToSeafoam,
-	}
+	},
 ]
 
 export const allViewNames: Array<string> = allViews.map(v => v.view)
