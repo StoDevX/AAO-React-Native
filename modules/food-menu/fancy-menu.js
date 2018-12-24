@@ -77,7 +77,10 @@ export class FancyMenu extends React.Component<Props, State> {
 			props.foodItems !== prevState.cachedFoodItems
 		) {
 			let {foodItems, menuCorIcons, meals, now} = props
-			let filters = buildFilters(values(foodItems), menuCorIcons, meals, now)
+			const filters =
+				prevState.filters.length !== 0
+					? prevState.filters
+					: buildFilters(values(foodItems), menuCorIcons, meals, now)
 			return {filters, cachedFoodItems: props.foodItems}
 		}
 		return null
