@@ -24,7 +24,7 @@ export function ListSection({filter, onChange}: PropsType) {
 
 		if (mode === 'OR' && selected.length === options.length) {
 			// if all options of an OR filter are selected and a user selects
-			// an option, make that the only sleected option
+			// an option, make that the only selected option
 			result = [tappedValue]
 		} else if (selected.some(val => isEqual(val, tappedValue))) {
 			// if the user has tapped an item, and it's already in the list of
