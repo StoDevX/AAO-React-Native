@@ -178,7 +178,7 @@ export const allViews: ViewType[] = [
 		view: 'SafetyView',
 		title: 'Safety Concerns',
 		icon: 'warning',
-		foreground: 'light',
+		foreground: 'dark',
 		tint: c.periwinkle,
 		gradient: c.tealToSeafoam,
 	},
