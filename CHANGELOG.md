@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Ignore specific proptype warning for react markdown (#3329)
 - Only set `scrollEnabled` if `multiline` is true (#3337)
 - Select, rather than deselect, first selected filter option of OR filters (#3347)
+- Menus and Course Search will have non-sticky headers until a RN bug is fixed (#3353)
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
