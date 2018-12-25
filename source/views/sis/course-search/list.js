@@ -121,6 +121,8 @@ export class CourseResultsList extends React.PureComponent<Props> {
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
 				sections={(results: any)}
+				// remove this after react native fixes the sticky header positioning
+				stickySectionHeadersEnabled={false}
 				style={style}
 				windowSize={10}
 			/>

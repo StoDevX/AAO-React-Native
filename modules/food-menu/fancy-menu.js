@@ -207,6 +207,8 @@ export class FancyMenu extends React.Component<Props, State> {
 				renderItem={this.renderItem}
 				renderSectionHeader={this.renderSectionHeader}
 				sections={(groupedMenuData: any)}
+				// remove this after react native fixes the sticky header positioning
+				stickySectionHeadersEnabled={false}
 				style={styles.inner}
 				windowSize={5}
 			/>
