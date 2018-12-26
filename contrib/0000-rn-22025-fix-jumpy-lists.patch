@@ -1,0 +1,14 @@
+--- ./node_modules/react-native/Libraries/Lists/VirtualizedList.js
++++ ./node_modules/react-native/Libraries/Lists/VirtualizedList.js
+@@ -805,7 +805,10 @@ class VirtualizedList extends React.Pure
+             if (stickyIndicesFromProps.has(ii + stickyOffset)) {
+               const initBlock = this._getFrameMetricsApprox(lastInitialIndex);
+               const stickyBlock = this._getFrameMetricsApprox(ii);
+-              const leadSpace = stickyBlock.offset - initBlock.offset;
++              const leadSpace =
++                stickyBlockOffset -
++                initBlockOffset -
++                (this.props.initialScrollIndex ? 0 : initBlock.length);
+               cells.push(
+                 <View key="$sticky_lead" style={{[spacerKey]: leadSpace}} />,
+               );

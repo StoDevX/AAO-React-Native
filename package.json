@@ -18,7 +18,7 @@
     "ios:release": "react-native run-ios --configuration Release",
     "ios-simulator": "xcrun instruments -s devices | peco --select-1 --query 'Simulator iPhone' --on-cancel error | sed  's~.*\\[\\(.*\\)\\].*~\\1~' | xargs open -n -a Simulator --args -CurrentDeviceUDID",
     "lint": "eslint --report-unused-disable-directives --max-warnings=0 --cache source/ modules/ scripts/ *.js",
-    "prepare": "sed -i.bak 's/\\(const leadSpace = stickyBlock.offset - initBlock.offset\\);/\\1 - (this.props.initialScrollIndex ? 0 : initBlock.length);/' node_modules/react-native/Libraries/Lists/VirtualizedList.js",
+    "prepare": "patch -p0 -Nfsi contrib/*.patch || true",
     "pretty": "prettier --write '{source,modules,scripts,e2e}/**/*.{js,json}' 'data/**/*.css' '*.js'",
     "p": "pretty-quick",
     "start": "react-native start",
