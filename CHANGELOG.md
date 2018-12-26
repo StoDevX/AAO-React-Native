@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Added some logic to skip native builds if nothing that might affect them has changed (#3209)
 - All network requests are now cached according to the server's caching headers, even offline (#3310, #3320)
 - Added "Safety Concerns" tile that links to St. Olaf's official form for documenting safety concerns (#3345)
+- Added a prepare statement to apply an upstream fix to the VirtualizedList sticky header calculation (#3357)
 
 ### Changed
 - Adjusted and deduplicated logic in API scaffolding
