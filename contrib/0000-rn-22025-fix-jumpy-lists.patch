@@ -6,8 +6,8 @@
                const stickyBlock = this._getFrameMetricsApprox(ii);
 -              const leadSpace = stickyBlock.offset - initBlock.offset;
 +              const leadSpace =
-+                stickyBlockOffset -
-+                initBlockOffset -
++                stickyBlock.offset -
++                initBlock.offset -
 +                (this.props.initialScrollIndex ? 0 : initBlock.length);
                cells.push(
                  <View key="$sticky_lead" style={{[spacerKey]: leadSpace}} />,
