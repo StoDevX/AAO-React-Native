@@ -1,8 +1,9 @@
 // @flow
 
-import {Platform, Linking} from 'react-native'
+import {Platform, Linking, Alert} from 'react-native'
 
 import {trackUrl, trackException} from '@frogpond/analytics'
+import {appName} from '@frogpond/constants'
 import SafariView from 'react-native-safari-view'
 import {CustomTabs} from 'react-native-custom-tabs'
 
@@ -75,5 +76,15 @@ export function canOpenUrl(url: string) {
 
 export function openUrlInBrowser({url, id}: {url: string, id?: string}) {
 	trackUrl(id || url)
-	return genericOpen(url)
+	return promptConfirm(url)
+}
+
+function promptConfirm(url: string) {
+	const app = appName()
+	const title = `Leaving ${app}`
+	const detail = `A web page will be opened in a browser outside of ${app}.`
+	Alert.alert(title, detail, [
+		{text: 'Cancel', onPress: () => {}},
+		{text: 'Open', onPress: () => genericOpen(url)},
+	])
 }
