@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 - Adjusted and deduplicated logic in API scaffolding
-- Switched time zone definitions from America/Winnipeg to US/Central
+- Switched time zone definitions from America/Winnipeg to US/Central, and then to America/Chicago
 - Pulled out time zone constants from all over the place into a central constant
 - Removed list footer credit for student activities dictionary (we're the source now)
 - Updated the privacy policy to more closely match what we do

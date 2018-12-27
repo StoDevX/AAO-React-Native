@@ -5,7 +5,7 @@ import moment from 'moment-timezone'
 import type {DayPartsCollectionType} from '../../types'
 import uniqueId from 'lodash/uniqueId'
 
-const CENTRAL_TZ = 'US/Central'
+const CENTRAL_TZ = 'America/Chicago'
 
 const generateDayparts: (
 	...{start: string, end: string}[]

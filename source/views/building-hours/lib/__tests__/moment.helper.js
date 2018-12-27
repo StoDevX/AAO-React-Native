@@ -2,7 +2,7 @@
 import moment from 'moment-timezone'
 export {moment}
 
-const CENTRAL_TZ = 'US/Central'
+const CENTRAL_TZ = 'America/Chicago'
 
 export const dayMoment = (time: string, format: ?string = 'ddd h:mma') =>
 	moment.tz(time, format, false, CENTRAL_TZ)
