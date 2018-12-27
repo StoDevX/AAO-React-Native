@@ -4,7 +4,9 @@
     ":semanticCommitsDisabled"
   ],
   "lockFileMaintenance": {
-    "schedule": ["after 5pm on every weekday"]
+    "schedule": [
+      "after 5pm on every weekday"
+    ]
   },
   "prConcurrentLimit": 5,
   "timezone": "America/Chicago",
@@ -19,19 +21,28 @@
   ],
   "packageRules": [
     {
-      "packageNames": ["jsc-android"],
+      "packageNames": [
+        "jsc-android"
+      ],
       "followTag": "latest"
     },
     {
-      "packagePatterns": ["^moment"],
+      "packagePatterns": [
+        "^moment"
+      ],
       "groupName": "moment packages"
     },
     {
-      "packagePatterns": ["^react-navigation"],
+      "packagePatterns": [
+        "^react-navigation"
+      ],
       "groupName": "react-navigation packages"
     },
     {
-      "packageNames": ["redux", "react-redux"],
+      "packageNames": [
+        "redux",
+        "react-redux"
+      ],
       "groupName": "redux packages"
     }
   ]
