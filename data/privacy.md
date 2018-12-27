@@ -35,10 +35,10 @@ following information is logged:
 purposes, and this is logged only for diagnostic purposes.
 2. _The version of All About Olaf you are using and information about your
 phone_, which is sent as part of your device's request. This data is
-intentionally vague so that we can also not use this to identify you. 
+intentionally vague so that we can also not use this to identify you.
 3. _What you requested and how long it took_, which is widely considered to be
 fully anonymous.
- 
+
 We also use a few tools to track our most used features and push notification
 receipts, as well as collect crash reports. These tools are:
 
