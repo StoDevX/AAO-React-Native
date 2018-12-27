@@ -19,7 +19,7 @@
     "ios-simulator": "xcrun instruments -s devices | peco --select-1 --query 'Simulator iPhone' --on-cancel error | sed  's~.*\\[\\(.*\\)\\].*~\\1~' | xargs open -n -a Simulator --args -CurrentDeviceUDID",
     "lint": "eslint --report-unused-disable-directives --max-warnings=0 --cache source/ modules/ scripts/ *.js",
     "prepare": "patch -p0 -Nfsi contrib/*.patch || true",
-    "pretty": "prettier --write '{source,modules,scripts,e2e}/**/*.{js,json}' 'data/**/*.css' '*.js'",
+    "pretty": "prettier --write '{source,modules,scripts,e2e}/**/*.{js,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js}' '.circleci/*'",
     "p": "pretty-quick",
     "start": "react-native start",
     "test": "jest",
