@@ -7,7 +7,7 @@ x-config:
       - image: 'circleci/node:10'
     - &docker-ruby
       - image: 'circleci/ruby:2.5.3'
-  x-caching:  # caching instructions
+  x-caching: # caching instructions
     - &save-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
       paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
@@ -29,7 +29,7 @@ x-config:
       paths: [./*]
     - &attach-workspace-node_modules
       at: ./node_modules
-  x-commands:  # command shorthands
+  x-commands: # command shorthands
     - &set-ruby-version
       name: Set Ruby Version
       command: echo "ruby-2.5.3" > ~/.ruby-version
@@ -40,7 +40,7 @@ x-config:
         fi
       when: always
       environment:
-        DANGER_DISABLE_TRANSPILATION: "true"
+        DANGER_DISABLE_TRANSPILATION: 'true'
     - &embed-env-vars
       name: Embed environment variables into the app
       command: |
@@ -87,7 +87,8 @@ workflows:
           requires: [danger, flow, jest, prettier, eslint, data]
       - android:
           filters: *filters
-          requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
+          requires:
+            [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
       - ios-bundle:
           filters: *filters
           requires: [danger, flow, jest, prettier, eslint, data]
@@ -109,8 +110,11 @@ workflows:
       - prettier: {requires: [cache-yarn-linux]}
       - eslint: {requires: [cache-yarn-linux]}
       - data: {requires: [cache-yarn-linux]}
-      - ios-nightly: {requires: [danger, flow, jest, prettier, eslint, data]}
-      - android-nightly: {requires: [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]}
+      - ios-nightly:
+          requires: [danger, flow, jest, prettier, eslint, data]
+      - android-nightly:
+          requires:
+            [danger, flow, jest, prettier, eslint, data, cache-bundler-linux]
 
 jobs:
   cache-yarn-linux:
@@ -262,7 +266,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "Reconcile Git histories"
+          name: 'Reconcile Git histories'
           command: |
             if [ -z "$CIRCLE_TAG" ];
             then
@@ -338,7 +342,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "Reconcile Git histories"
+          name: 'Reconcile Git histories'
           command: |
             if [ -z "$CIRCLE_TAG" ];
             then
