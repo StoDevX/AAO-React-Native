@@ -75,7 +75,7 @@
         }
       },
       {
-        "files": "**/package.json",
+        "files": "**/{*,.*}.json",
         "options": {
           "parser": "json-stringify",
           "useTabs": false,
