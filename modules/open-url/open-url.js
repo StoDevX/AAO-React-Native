@@ -82,7 +82,7 @@ export function openUrlInBrowser({url, id}: {url: string, id?: string}) {
 function promptConfirm(url: string) {
 	const app = appName()
 	const title = `Leaving ${app}`
-	const detail = `A web page will be opened in a browser outside of ${app}. Are you sure you want to open it?`
+	const detail = `A web page will be opened in a browser outside of ${app}.`
 	Alert.alert(title, detail, [
 		{text: 'Cancel', onPress: () => {}},
 		{text: 'Open', onPress: () => genericOpen(url)},
