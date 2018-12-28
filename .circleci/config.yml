@@ -300,6 +300,7 @@ jobs:
           command: bundle exec fastlane android ci-run | tee ./logs/build
           environment:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
+            RUBYOPT: --jit
       - store_artifacts:
           path: ./android/app/build/outputs/apk/release/
       - run: *run-danger
@@ -374,6 +375,7 @@ jobs:
           command: bundle exec fastlane ios ci-run | tee ./logs/build
           environment:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
+            RUBYOPT: --jit
       - run: yarn detox build --configuration ios.sim.release | xcpretty
       - run: yarn detox test --configuration ios.sim.release --cleanup
       - store_artifacts: {path: ./ios/build/AllAboutOlaf.app.dSYM.zip}
