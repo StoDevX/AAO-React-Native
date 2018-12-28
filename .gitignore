@@ -46,15 +46,12 @@ fastlane/screenshots
 # scan's temporary files
 fastlane/test_output
 
-# deploy key
-scripts/travisci_deploy_key
-fastlane/play-private-key.json
-
 # generated files
 /docs/
 
-# android keystores
+# Deployment keys
 android/app/signing.properties
+fastlane/play-private-key.json
 *.keystore
 
 # vim temp files
