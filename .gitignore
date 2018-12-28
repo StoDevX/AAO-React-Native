@@ -33,9 +33,6 @@ npm-debug.log
 yarn-error.log
 .eslintcache
 
-# Android Signing Keys
-*.keystore
-
 # Tests and code coverage
 coverage
 
