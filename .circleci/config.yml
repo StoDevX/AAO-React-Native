@@ -360,8 +360,8 @@ jobs:
           name: Skip build if possible
           command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
       - run: yarn --version
-      - run: chruby
       - run: *set-ruby-version
+      - run: chruby
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
