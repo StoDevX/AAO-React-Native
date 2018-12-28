@@ -1,9 +1,7 @@
 # OSX
-#
 .DS_Store
 
 # Xcode
-#
 build/
 *.pbxuser
 !default.pbxuser
@@ -23,7 +21,6 @@ DerivedData
 project.xcworkspace
 
 # Android/IntelliJ
-#
 build/
 .idea
 .gradle
@@ -31,20 +28,10 @@ local.properties
 *.iml
 
 # node.js
-#
 node_modules/
 npm-debug.log
 yarn-error.log
 .eslintcache
-
-# BUCK
-buck-out/
-\.buckd/
-android/app/libs
-*.keystore
-
-# KEYS
-.env.js
 
 # Tests and code coverage
 coverage
@@ -59,15 +46,12 @@ fastlane/screenshots
 # scan's temporary files
 fastlane/test_output
 
-# deploy key
-scripts/travisci_deploy_key
-fastlane/play-private-key.json
-
 # generated files
-docs/
+/docs/
 
-# android keystores
+# Deployment keys
 android/app/signing.properties
+fastlane/play-private-key.json
 *.keystore
 
 # vim temp files
@@ -79,3 +63,6 @@ android/app/signing.properties
 
 # detox artifacts folder
 /artifacts
+
+# generated logs files in CI
+/logs
