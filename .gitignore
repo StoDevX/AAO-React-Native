@@ -33,14 +33,8 @@ npm-debug.log
 yarn-error.log
 .eslintcache
 
-# BUCK
-buck-out/
-\.buckd/
-android/app/libs
+# Android Signing Keys
 *.keystore
-
-# KEYS
-.env.js
 
 # Tests and code coverage
 coverage
