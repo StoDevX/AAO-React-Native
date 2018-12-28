@@ -54,7 +54,7 @@ scripts/travisci_deploy_key
 fastlane/play-private-key.json
 
 # generated files
-docs/
+/docs/
 
 # android keystores
 android/app/signing.properties
