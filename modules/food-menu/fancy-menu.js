@@ -190,9 +190,9 @@ export class FancyMenu extends React.Component<Props, State> {
 		const isClosed = Object.keys(foodItems).length === 0
 		let header = (
 			<FilterToolbar
-				isClosed={isClosed}
 				date={now}
 				filters={filters}
+				isClosed={isClosed}
 				onPopoverDismiss={this.updateFilter}
 				title={mealName}
 			/>
