@@ -217,9 +217,9 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		const dayparts = cafeMenu.days[0].cafe.dayparts
 
 		// either use the meals as provided by bonapp, or make our own
-		const mealInfoItems = dayparts[0].length ? dayparts[0] : DEFAULT_MENU
+		const mealInfoItems = dayparts.length !== 0 && dayparts[0].length ? dayparts[0] : DEFAULT_MENU
 
-		const ignoreMenus = dayparts[0].length ? ignoreProvidedMenus : true
+		const ignoreMenus = dayparts.length !== 0 && dayparts[0].length ? ignoreProvidedMenus : true
 		return mealInfoItems.map(mealInfo =>
 			this.prepareSingleMenu(mealInfo, foodItems, ignoreMenus),
 		)
