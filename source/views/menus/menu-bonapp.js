@@ -264,7 +264,9 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 
 		const {ignoreProvidedMenus = false} = this.props
 		const {now, cafeMenu, cafeInfo} = this.state
-		if (cafeInfo.cafe.length === 0) {
+		// The API returns an empty array for the cafeInfo.cafe value if there is no
+		// matching cafe with the inputted id number, otherwise it returns an non-array object
+		if (cafeInfo.cafe instanceof Array) {
 			const msg = `There is no cafe with id #${cafe}`
 			return <NoticeView text={msg} />
 		}
