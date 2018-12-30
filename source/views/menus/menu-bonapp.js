@@ -250,11 +250,10 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			return <NoticeView buttonText="Again!" onPress={this.retry} text={msg} />
 		}
 
+		const cafe =
+			typeof this.props.cafe === 'string' ? this.props.cafe : this.props.cafe.id
+
 		if (!this.state.cafeMenu || !this.state.cafeInfo) {
-			let cafe =
-				typeof this.props.cafe === 'string'
-					? this.props.cafe
-					: this.props.cafe.id
 			const err = new Error(`Something went wrong loading BonApp cafe #${cafe}`)
 			reportNetworkProblem(err)
 
@@ -265,6 +264,10 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 
 		const {ignoreProvidedMenus = false} = this.props
 		const {now, cafeMenu, cafeInfo} = this.state
+		if (cafeInfo.cafe.length === 0) {
+			const msg = `There is no cafe with id #${cafe}`
+			return <NoticeView text={msg} />
+		}
 
 		// We grab the "today" info from here because BonApp returns special
 		// messages in this response, like "Closed for Christmas Break"
