@@ -18,5 +18,11 @@ export const parseTime = (now: moment) => (
 	// and set the date to today
 	m.dayOfYear(now.dayOfYear())
 
+	let sixMonthsAgo = moment(now).subtract(6, 'months')
+
+	if (m.isBefore(sixMonthsAgo)) {
+		m.add(1, 'year')
+	}
+
 	return m
 }
