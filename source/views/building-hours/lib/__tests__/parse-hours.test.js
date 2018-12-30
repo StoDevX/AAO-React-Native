@@ -35,7 +35,7 @@ it('will add a day to the close time with nextDay:true', () => {
 	expect(close.isAfter(now)).toBe(true)
 })
 
-describe('handles wierd times', () => {
+describe('handles weird times', () => {
 	it('handles Friday at 4:30pm', () => {
 		const now = dayMoment('Fri 4:30pm')
 		const input = {days: [], from: '10:00am', to: '2:00am'}
