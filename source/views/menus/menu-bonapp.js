@@ -217,9 +217,12 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		const dayparts = cafeMenu.days[0].cafe.dayparts
 
 		// either use the meals as provided by bonapp, or make our own
-		const mealInfoItems = dayparts[0].length ? dayparts[0] : DEFAULT_MENU
+		const mealInfoItems =
+			dayparts.length !== 0 && dayparts[0].length ? dayparts[0] : DEFAULT_MENU
 
-		const ignoreMenus = dayparts[0].length ? ignoreProvidedMenus : true
+		const ignoreMenus =
+			dayparts.length !== 0 && dayparts[0].length ? ignoreProvidedMenus : true
+
 		return mealInfoItems.map(mealInfo =>
 			this.prepareSingleMenu(mealInfo, foodItems, ignoreMenus),
 		)
@@ -248,11 +251,10 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			return <NoticeView buttonText="Again!" onPress={this.retry} text={msg} />
 		}
 
+		const cafe =
+			typeof this.props.cafe === 'string' ? this.props.cafe : this.props.cafe.id
+
 		if (!this.state.cafeMenu || !this.state.cafeInfo) {
-			let cafe =
-				typeof this.props.cafe === 'string'
-					? this.props.cafe
-					: this.props.cafe.id
 			const err = new Error(`Something went wrong loading BonApp cafe #${cafe}`)
 			reportNetworkProblem(err)
 
@@ -261,13 +263,15 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 			return <NoticeView text={msg} />
 		}
 
-		if (Object.keys(this.state.cafeMenu.items).length === 0) {
-			const msg = 'No items were found.'
-			return <NoticeView text={msg} />
-		}
-
 		const {ignoreProvidedMenus = false} = this.props
 		const {now, cafeMenu, cafeInfo} = this.state
+
+		// The API returns an empty array for the cafeInfo.cafe value if there is no
+		// matching cafe with the inputted id number, otherwise it returns an non-array object
+		if (Array.isArray(cafeInfo.cafe)) {
+			const msg = `There is no cafe with id #${cafe}`
+			return <NoticeView text={msg} />
+		}
 
 		// We grab the "today" info from here because BonApp returns special
 		// messages in this response, like "Closed for Christmas Break"

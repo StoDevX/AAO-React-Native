@@ -186,10 +186,14 @@ export class FancyMenu extends React.Component<Props, State> {
 
 		let messageView = <NoticeView style={styles.message} text={message} />
 
+		// If the requested menu has no food items, that location is closed
+		const isOpen = Object.keys(foodItems).length !== 0
+
 		let header = (
 			<FilterToolbar
 				date={now}
 				filters={filters}
+				isOpen={isOpen}
 				onPopoverDismiss={this.updateFilter}
 				title={mealName}
 			/>
