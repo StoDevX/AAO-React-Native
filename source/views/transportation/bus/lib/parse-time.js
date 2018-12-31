@@ -4,6 +4,8 @@ const TIME_FORMAT = 'h:mma'
 import {timezone} from '@frogpond/constants'
 import moment from 'moment-timezone'
 
+// TODO: Do "dayOfYear" handling better so that we don't need to handle wrapping at
+// the 6 month mark. (See #3375 for why this function changed.)
 export const parseTime = (now: moment) => (
 	time: string | false,
 ): null | moment => {
