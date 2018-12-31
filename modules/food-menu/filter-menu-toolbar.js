@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 
 type PropsType = {
 	date: momentT,
-	isClosed: boolean,
+	isOpen: boolean,
 	title?: string,
 	onPopoverDismiss: (filter: FilterType) => any,
 	filters: FilterType[],
@@ -31,7 +31,7 @@ type PropsType = {
 
 export function FilterMenuToolbar({
 	date,
-	isClosed,
+	isOpen,
 	title,
 	filters,
 	onPopoverDismiss,
@@ -59,7 +59,7 @@ export function FilterMenuToolbar({
 					/>
 				) : null}
 			</Toolbar>
-			{!isClosed && (
+			{isOpen && (
 				<FilterToolbar
 					filters={nonPickerFilters}
 					onPopoverDismiss={onPopoverDismiss}
