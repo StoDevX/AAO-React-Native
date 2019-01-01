@@ -16,7 +16,7 @@ import {Image} from './image'
 import {List, ListItem} from './list'
 
 const Softbreak = () => ' '
-const Hardbreak = () => <Text>&lt;br&gt;</Text>
+const Hardbreak = () => '\n'
 const HorizontalRule = glamorous.view({
 	width: '100%',
 	height: 1,
