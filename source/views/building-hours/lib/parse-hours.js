@@ -24,9 +24,12 @@ export function parseHours(
 	open.dayOfYear(dayOfYear)
 
 	let sixMonthsAgo = moment(m).subtract(6, 'months')
+	let sixMonthsFromNow = moment(m).add(6, 'months')
 
 	if (open.isBefore(sixMonthsAgo)) {
 		open.add(1, 'year')
+	} else if (open.isAfter(sixMonthsFromNow)) {
+		open.subtract(1, 'year')
 	}
 
 	let close = moment.tz(toTime, TIME_FORMAT, true, timezone())
@@ -34,6 +37,8 @@ export function parseHours(
 
 	if (close.isBefore(sixMonthsAgo)) {
 		close.add(1, 'year')
+	} else if (close.isAfter(sixMonthsFromNow)) {
+		close.subtract(1, 'year')
 	}
 
 	if (close.isBefore(open)) {
