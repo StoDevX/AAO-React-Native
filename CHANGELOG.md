@@ -48,7 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed bug where filters were not applying correctly in menu and course search views (#3344, #3350)
 - Fixed the text color of the safety concerns button (#3349)
 - Fixed bug where applied filters would be cleared on a pull-to-refresh of the BonApp menus (#3352)
-- Fixed some strange behavior with hours and bus schedules around the new year (#3376)
+- Fixed some strange behavior with hours and bus schedules around the new year (#3376, #3378)
 
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)
