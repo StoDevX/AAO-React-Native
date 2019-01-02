@@ -33,14 +33,6 @@ export class DictionaryEditorView extends React.PureComponent<Props, State> {
 		definition: this.props.navigation.state.params.word.definition,
 	}
 
-	static getDerivedStateFromProps(nextProps: Props) {
-		let entry = nextProps.navigation.state.params.word
-		return {
-			term: entry.word,
-			definition: entry.definition,
-		}
-	}
-
 	submit = () => {
 		submitReport(this.props.navigation.state.params.word, {
 			word: this.state.term,
