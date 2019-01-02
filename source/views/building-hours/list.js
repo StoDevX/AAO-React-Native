@@ -45,6 +45,7 @@ export class BuildingHoursList extends React.PureComponent<Props> {
 			name={item.name}
 			now={this.props.now}
 			onPress={this.onPressRow}
+			testID=`${item.name}-row`
 		/>
 	)
 

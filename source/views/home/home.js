@@ -68,6 +68,7 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 										}
 									}}
 									view={view}
+									testID=`${view.view}-button`
 								/>
 							))}
 						</Column>
