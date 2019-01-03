@@ -52,6 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed rendering of markdown softbreaks (#3377)
 - Fixed rendering of markdown hardbreaks (#3379)
 - Fixed the dictionary editor and made it handle user input again (#3383)
+- Fixed DatePicker by removing an unnecessary call to getDerivedStateFromProps (#3382)
 
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)

@@ -44,17 +44,6 @@ export class DatePicker extends React.Component<Props, State> {
 		timezone: this.props.initialDate.tz(),
 	}
 
-	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		if (nextProps.initialDate === prevState.date) {
-			return null
-		}
-
-		return {
-			date: nextProps.initialDate,
-			timezone: nextProps.initialDate.tz(),
-		}
-	}
-
 	formatDate = (date: moment) => {
 		const {mode, format = FORMATS[mode]} = this.props
 		return moment(date).format(format)
