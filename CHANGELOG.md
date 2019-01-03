@@ -51,6 +51,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed some strange behavior with hours and bus schedules around the new year (#3376, #3378)
 - Fixed rendering of markdown softbreaks (#3377)
 - Fixed rendering of markdown hardbreaks (#3379)
+- Fixed the dictionary editor and made it handle user input again (#3383)
 
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)
