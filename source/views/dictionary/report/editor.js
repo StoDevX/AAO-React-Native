@@ -43,8 +43,8 @@ export class DictionaryEditorView extends React.PureComponent<Props, State> {
 
 	submit = () => {
 		submitReport(this.props.navigation.state.params.word, {
-			word: this.state.term,
-			definition: this.state.definition,
+			word: this.state.term.trim(),
+			definition: this.state.definition.trim(),
 		})
 	}
 
@@ -57,8 +57,7 @@ export class DictionaryEditorView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		let term = this.state.term ? this.state.term.trim() : ''
-		let definition = this.state.definition ? this.state.definition.trim() : ''
+		let {term, definition} = this.state
 
 		return (
 			<ScrollView
