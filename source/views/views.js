@@ -174,7 +174,7 @@ export const allViews: ViewType[] = [
 	},
 	{
 		type: 'browser-url',
-		url: 'https://wp.stolaf.edu/safety-committee/report-a-safety-concern-2/',
+		url: 'https://wp.stolaf.edu/safety-committee/report/',
 		view: 'SafetyView',
 		title: 'Safety Concerns',
 		icon: 'warning',
