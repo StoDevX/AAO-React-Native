@@ -6375,15 +6375,10 @@ react-native-safe-area-view@^0.11.0:
   dependencies:
     hoist-non-react-statics "^2.3.1"
 
-react-native-screens@1.0.0-alpha.21:
+react-native-screens@1.0.0-alpha.21, "react-native-screens@^1.0.0 || ^1.0.0-alpha":
   version "1.0.0-alpha.21"
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-1.0.0-alpha.21.tgz#ba8d401e82fa3d0f30e7922dbb6446a8c000d7ef"
   integrity sha512-Jm0hfUyEw0v4Rn2rmpG2ab+H2J+36a/505gufMeZQUcx8EajysiuyzNcHQ9B9NhUEUajk/ostF73X4pHuMLItw==
-
-"react-native-screens@^1.0.0 || ^1.0.0-alpha":
-  version "1.0.0-alpha.20"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-1.0.0-alpha.20.tgz#1a28389b702654862584824ae93650c1bca7c12d"
-  integrity sha512-cQ8wr2gP3S+2ZmPilOFHlJvKAbewZCBtIycGMfddGjirJ5hA795Zf5PHe8MPaC1o7ZgjC1urPrpHCXo8OFBojA==
 
 react-native-search-bar@3.4.2:
   version "3.4.2"
