@@ -133,10 +133,11 @@ jobs:
       - checkout
       - run: *set-ruby-version
       - restore_cache: *restore-cache-bundler
-      - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - run: bundle --version
       - run: gem --version
       - run: ruby --version
+      - run: gem install bundler
+      - run: bundle check || bundle install --frozen --path ./vendor/bundle
+      - run: bundle --version
       - save_cache: *save-cache-bundler
 
   danger:
