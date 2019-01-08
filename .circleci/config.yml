@@ -365,6 +365,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
       - restore_cache: *restore-cache-bundler
+      - run: gem install bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - save_cache: *save-cache-bundler
       - run: brew tap wix/brew
