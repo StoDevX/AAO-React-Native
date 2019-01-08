@@ -17,7 +17,7 @@ GEM
     digest-crc (0.4.1)
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
-    dotenv (2.5.0)
+    dotenv (2.6.0)
     emoji_regex (0.1.1)
     excon (0.62.0)
     faraday (0.15.4)
@@ -28,11 +28,11 @@ GEM
     faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
     fastimage (2.1.5)
-    fastlane (2.112.0)
+    fastlane (2.113.0)
       CFPropertyList (>= 2.3, < 4.0.0)
       addressable (>= 2.3, < 3.0.0)
       babosa (>= 1.0.2, < 2.0.0)
-      bundler (>= 1.12.0, < 2.0.0)
+      bundler (>= 1.12.0, < 3.0.0)
       colored
       commander-fastlane (>= 4.4.6, < 5.0.0)
       dotenv (>= 2.1.1, < 3.0.0)
@@ -98,7 +98,7 @@ GEM
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httpclient (2.8.3)
-    jaro_winkler (1.5.1)
+    jaro_winkler (1.5.2)
     json (2.1.0)
     jwt (2.1.0)
     memoist (0.16.0)
@@ -125,7 +125,7 @@ GEM
       uber (< 0.2.0)
     retriable (3.1.2)
     rouge (2.0.7)
-    rubocop (0.61.1)
+    rubocop (0.62.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.5, != 2.5.1.1)
@@ -181,4 +181,4 @@ DEPENDENCIES
   xcodeproj
 
 BUNDLED WITH
-   1.17.3
+   2.0.1
