@@ -98,7 +98,7 @@ GEM
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httpclient (2.8.3)
-    jaro_winkler (1.5.1)
+    jaro_winkler (1.5.2)
     json (2.1.0)
     jwt (2.1.0)
     memoist (0.16.0)
