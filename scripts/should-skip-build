@@ -17,7 +17,7 @@ def hash_diff(old_hash, new_hash, path)
   (new_hash.dig(*path).to_a - old_hash.dig(*path).to_a).to_h
 end
 
-NPM_DEP_NAME_REGEXP = /react|jsc/.freeze
+NPM_DEP_NAME_REGEXP = /detox|react|jsc/.freeze
 def npm_native_package_changed?(source, target)
   old_package = JSON.parse(sh("git show '#{source}:package.json'"))
   new_package = JSON.parse(sh("git show '#{target}:package.json'"))
