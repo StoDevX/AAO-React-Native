@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'fastlane'
+gem "fastlane"
 gem 'json'
 gem 'xcodeproj'
 
