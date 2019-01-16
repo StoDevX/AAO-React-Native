@@ -45,5 +45,8 @@
       ],
       "groupName": "redux packages"
     }
-  ]
+  ],
+  "bundler": {
+    "enabled": true
+  }
 }
