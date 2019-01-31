@@ -256,10 +256,10 @@ jobs:
       - run: *run-danger
 
   android: &android
-    # cmd: key is passed to solve a weird issue (see GitHub PR's 2170 and 2173).
+    # we pass the `command:` key to solve a weird issue (see GitHub PRs 2170 and 2173).
     # this overrides the thing and forces the container to run /bin/bash as the "command"
     # so it doesn't get confused and OOM/exhaust the build resources (don't ask me)
-    docker: [{image: 'circleci/android:api-28-node', cmd: '/bin/bash'}]
+    docker: [{image: 'circleci/android:api-28-node', command: '/bin/bash'}]
     environment: &android-env
       task: ANDROID
       FASTLANE_SKIP_UPDATE_CHECK: '1'
@@ -336,7 +336,7 @@ jobs:
       task: IOS
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_DISABLE_ANIMATION: '1'
-      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_NO_AUTO_UPDATE: '1'
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
     shell: /bin/bash --login -o pipefail

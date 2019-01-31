@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Only set `scrollEnabled` if `multiline` is true (#3337)
 - Select, rather than deselect, first selected filter option of OR filters (#3347)
 - Updated our Ruby version for builds to 2.6.0 (#3367)
+- Continued cleanups in the Circle config (#3436)
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
