@@ -6298,16 +6298,17 @@ react-native-onesignal@3.2.12:
   dependencies:
     invariant "^2.2.2"
 
-react-native-paper@2.8.0:
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-2.8.0.tgz#09ba46592e7de112b761dc3c6b37e70ed6ce6d95"
-  integrity sha512-NGNpZmhyApWZozJL0u7wHiNtnOkjMIIY6AGgpWXENU20Gb+sfhWrwJetfMOAUFdSJwARXJca0C78hyGCvnu3XA==
+react-native-paper@2.9.0:
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-2.9.0.tgz#a4591ac7b93f17769efd2427d1919cc49875ac0e"
+  integrity sha512-GWitQAj+UeD8sgksRXNfU7NLB0GnEHn1KvrIUVVJTr0QSyyS3RPHq1cfysyzzJpoxio0165CR9GozEZqBUt/pA==
   dependencies:
     "@callstack/react-theme-provider" "^1.0.7"
     color "^2.0.1"
     create-react-context "^0.2.3"
     hoist-non-react-statics "^3.1.0"
     react-lifecycles-compat "^3.0.4"
+    react-native-safe-area-view "^0.12.0"
 
 react-native-popover-view@1.0.17:
   version "1.0.17"
@@ -6337,6 +6338,13 @@ react-native-safe-area-view@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/react-native-safe-area-view/-/react-native-safe-area-view-0.11.0.tgz#4f3dda43c2bace37965e7c6aef5fc83d4f19d174"
   integrity sha512-N3nElaahu1Me2ltnfc9acpgt1znm6pi8DSadKy79kvdzKwvVIzw0IXueA/Hjr51eCW1BsfNw7D1SgBT9U6qEkA==
+  dependencies:
+    hoist-non-react-statics "^2.3.1"
+
+react-native-safe-area-view@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-view/-/react-native-safe-area-view-0.12.0.tgz#5c312f087300ecf82e8541c3eac25d560e147f22"
+  integrity sha512-UrAXmBC4KNR5K2eczIDZgqceWyKsgG9gmWFerHCvoyApfei8ceBB9u/c//PWCpS5Gt8MRLTmX5jPtzdXo2yNqg==
   dependencies:
     hoist-non-react-statics "^2.3.1"
 
