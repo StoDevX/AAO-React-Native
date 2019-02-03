@@ -30,5 +30,8 @@ export const platformPrefixIcon = (name: string) => {
 }
 
 export const TabBarIcon = (icon: string) => ({tintColor}: Props) => (
-	<Icon name={`ios-${icon}`} style={[styles.icon, {color: tintColor}]} />
+	<Icon
+		name={platformPrefixIcon(icon)}
+		style={[styles.icon, {color: tintColor}]}
+	/>
 )
