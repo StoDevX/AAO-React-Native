@@ -32,7 +32,7 @@ type State = {
 export class BonAppPickerView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
 		tabBarLabel: 'BonApp',
-		tabBarIcon: TabBarIcon('ionic'),
+		tabBarIcon: TabBarIcon('cog'),
 	}
 
 	state = {
