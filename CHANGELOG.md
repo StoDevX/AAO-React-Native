@@ -37,6 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated our Ruby version for builds to 2.6.0 (#3367)
 - Continued cleanups in the Circle config (#3436)
 - Updated Ruby to version 2.6.1 (#3452)
+- Changed custom BonApp cafe viewer icon to a cog instead of the ionicons logo (#3458)
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
