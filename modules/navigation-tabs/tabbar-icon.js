@@ -17,6 +17,10 @@ type Props = {
 	focused: boolean,
 }
 
+export const platformPrefixIcon = (name: string) => {
+	return Platform.OS === 'ios' ? `ios-${name}` : `md-${name}`
+}
+
 export const TabBarIcon = (icon: string) => ({tintColor}: Props) => (
 	<Icon name={`ios-${icon}`} style={[styles.icon, {color: tintColor}]} />
 )
