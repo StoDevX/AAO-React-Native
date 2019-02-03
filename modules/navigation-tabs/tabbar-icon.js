@@ -18,6 +18,14 @@ type Props = {
 }
 
 export const platformPrefixIcon = (name: string) => {
+	let isAvailable = Icon.hasIcon(name)
+	let isAvailableOnBothPlatforms =
+		Icon.hasIcon(`ios-${name}`) && Icon.hasIcon(`md-${name}`)
+
+	if (isAvailable && !isAvailableOnBothPlatforms) {
+		return name
+	}
+
 	return Platform.OS === 'ios' ? `ios-${name}` : `md-${name}`
 }
 
