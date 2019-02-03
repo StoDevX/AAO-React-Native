@@ -9,6 +9,7 @@ import {Touchable} from '@frogpond/touchable'
 import {transparent} from '@frogpond/colors'
 import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
 import {iPhoneX} from '@frogpond/device'
+import {SafeAreaView} from 'react-navigation'
 
 type Props = {
 	view: ViewType,
@@ -20,17 +21,19 @@ export function HomeScreenButton({view, onPress}: Props) {
 		view.foreground === 'light' ? styles.lightForeground : styles.darkForeground
 
 	return (
-		<TouchableButton
-			gradient={view.gradient}
-			label={view.title}
-			onPress={onPress}
-			tint={view.tint}
-		>
-			<View style={styles.contents}>
-				<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
-				<Text style={[foreground, styles.text]}>{view.title}</Text>
-			</View>
-		</TouchableButton>
+		<SafeAreaView>
+			<TouchableButton
+				gradient={view.gradient}
+				label={view.title}
+				onPress={onPress}
+				tint={view.tint}
+			>
+				<View style={styles.contents}>
+					<Icon name={view.icon} size={32} style={[foreground, styles.icon]} />
+					<Text style={[foreground, styles.text]}>{view.title}</Text>
+				</View>
+			</TouchableButton>
+		</SafeAreaView>
 	)
 }
 
