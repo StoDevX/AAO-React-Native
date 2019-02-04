@@ -2,6 +2,7 @@
 import * as React from 'react'
 import {StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
+import {platformPrefixIconName} from '@frogpond/icon'
 
 const styles = StyleSheet.create({
 	icon: {
@@ -18,5 +19,8 @@ type Props = {
 }
 
 export const TabBarIcon = (icon: string) => ({tintColor}: Props) => (
-	<Icon name={`ios-${icon}`} style={[styles.icon, {color: tintColor}]} />
+	<Icon
+		name={platformPrefixIconName(icon)}
+		style={[styles.icon, {color: tintColor}]}
+	/>
 )
