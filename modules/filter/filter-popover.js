@@ -54,5 +54,5 @@ const popoverContainer = {
 }
 
 const arrowStyle = {
-	backgroundColor: c.iosLightBackground,
+	backgroundColor: c.sectionBgColor,
 }
