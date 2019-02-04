@@ -13,10 +13,7 @@ const styles = StyleSheet.create({
 		backgroundColor: theme.navigationBackground,
 	},
 	card: {
-		backgroundColor: Platform.select({
-			ios: c.iosLightBackground,
-			android: c.androidLightBackground,
-		}),
+		backgroundColor: c.sectionBgColor,
 	},
 })
 
