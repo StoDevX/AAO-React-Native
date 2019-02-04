@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 		overflow: 'hidden',
 	},
 	disabled: {
-		backgroundColor: c.iosLightBackground,
+		backgroundColor: c.sectionBgColor,
 	},
 	text: {
 		...Platform.select({
