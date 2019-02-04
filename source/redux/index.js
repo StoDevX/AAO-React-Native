@@ -31,7 +31,7 @@ export type ReduxState = {
 }
 
 export const makeStore = () => {
-	const aao: any = combineReducers({
+	const aao = combineReducers({
 		courses,
 		homescreen,
 		settings,
