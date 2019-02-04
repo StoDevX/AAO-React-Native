@@ -233,7 +233,7 @@ let cellEdgePadding = 10
 
 let styles = StyleSheet.create({
 	stage: {
-		backgroundColor: c.iosLightBackground,
+		backgroundColor: c.sectionBgColor,
 		paddingTop: 20,
 		paddingBottom: 20,
 	},

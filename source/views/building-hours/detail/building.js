@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {ScrollView, StyleSheet, Platform, Image} from 'react-native'
+import {ScrollView, StyleSheet, Image} from 'react-native'
 import {images as buildingImages} from '../../../../images/spaces'
 import type {BuildingType} from '../types'
 import moment from 'moment-timezone'
@@ -16,14 +16,7 @@ import {ListFooter} from '@frogpond/lists'
 const styles = StyleSheet.create({
 	container: {
 		alignItems: 'stretch',
-		...Platform.select({
-			android: {
-				backgroundColor: c.androidLightBackground,
-			},
-			ios: {
-				backgroundColor: c.iosLightBackground,
-			},
-		}),
+		backgroundColor: c.sectionBgColor,
 	},
 	image: {
 		width: null,
