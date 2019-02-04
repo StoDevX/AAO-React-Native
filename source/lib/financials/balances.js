@@ -62,9 +62,9 @@ function getBalancesFromData(resp: OleCardBalancesType): BalancesOrErrorType {
 	return {
 		error: false,
 		value: {
-			flex: flex || flex === 0 ? flex.formatted : null,
-			ole: ole || ole === 0 ? ole.formatted : null,
-			print: print || print === 0 ? print.formatted : null,
+			flex: flex ? flex.formatted : null,
+			ole: ole ? ole.formatted : null,
+			print: print ? print.formatted : null,
 			daily: daily == null ? null : daily,
 			weekly: weekly == null ? null : weekly,
 			plan: plan == null ? null : plan,
