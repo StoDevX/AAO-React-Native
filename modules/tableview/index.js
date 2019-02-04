@@ -12,11 +12,11 @@ import {
 
 export * from './cells'
 
-let AndroidSection = props => (
+let AndroidSection = (props: $PropertyType<IosSection, 'props'>) => (
 	<IosSection sectionTintColor={androidLightBackground} {...props} />
 )
-let Section
 
+let Section
 if (Platform.OS === 'android') {
 	Section = AndroidSection
 } else {
