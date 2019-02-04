@@ -54,7 +54,7 @@ const initialState: State = {
 	favorites: [],
 }
 
-export function buildings(state: State = initialState, action: Action) {
+export function buildings(state: State = initialState, action: Action): State {
 	switch (action.type) {
 		case LOAD_FAVORITE_BUILDINGS:
 		case TOGGLE_FAVORITE_BUILDING: {
