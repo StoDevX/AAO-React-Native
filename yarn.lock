@@ -1917,10 +1917,10 @@ danger-plugin-yarn@1.3.1:
     node-fetch "^1.7.1"
     semver "^5.4.1"
 
-danger@7.0.7:
-  version "7.0.7"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-7.0.7.tgz#03f08fc78fd1125cc87b855383fc8c5069bfe1ab"
-  integrity sha512-x91m7V9bWc7cCaYxtnsG6nZTtKanvepK6VUvzym9vE7M4lY+C4fvRfg0D9ODFN7H6RuHK2NmTxDPTBsZpUU0og==
+danger@7.0.9:
+  version "7.0.9"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-7.0.9.tgz#057ccf52868feb4416f6379199a813d001f8588e"
+  integrity sha512-HqsztujIEdbBL89Xcr0CF7n/qul5W7LRvER63Dc2dc+MHO3RBtc+4lB2AE1kiOXm5uTgLCA3E2dHdzMvcrYuhg==
   dependencies:
     "@babel/polyfill" "^7.2.5"
     "@octokit/rest" "^16.14.1"
@@ -1953,7 +1953,6 @@ danger@7.0.7:
     require-from-string "^2.0.2"
     rfc6902 "^3.0.1"
     supports-hyperlinks "^1.0.1"
-    vm2 "^3.6.3"
 
 dashdash@^1.12.0:
   version "1.14.1"
@@ -7916,11 +7915,6 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
-
-vm2@^3.6.3:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/vm2/-/vm2-3.6.3.tgz#6dd426bb67a387d03055c5d276720f3f23203b72"
-  integrity sha512-9sGC9T+R/afjDSVyG15ATUPzm5ZHzvIJvwkVmQ+4H2Cy55uDp0dXneXV4gXC7RMd2crWcL/awfdHjCsNSm+ufg==
 
 walker@~1.0.5:
   version "1.0.7"
