@@ -11,6 +11,6 @@
   "dependencies": {
     "css-select": "2.0.2",
     "html-entities": "1.2.1",
-    "htmlparser2": "3.10.0"
+    "htmlparser2": "3.10.1"
   }
 }
