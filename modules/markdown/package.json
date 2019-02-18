@@ -23,6 +23,6 @@
     "lodash": "^4.17.10"
   },
   "devDependencies": {
-    "prop-types": "15.6.2"
+    "prop-types": "15.7.2"
   }
 }
