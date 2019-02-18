@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Added a prompt before the user leaves the app from open-browser-url (#3361)
 - Added more descriptive messages provided by Bon Appetit for closed cafeterias (#3374)
 - Added `@frogpond/icon` module with a helper for platform-prefixing modules (#3459)
+- Added consideration of `optionalDependencies` to our build scripts (#3489)
 
 ### Changed
 - Adjusted and deduplicated logic in API scaffolding
