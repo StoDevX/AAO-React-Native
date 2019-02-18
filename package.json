@@ -174,7 +174,7 @@
     "prettier": "1.16.4",
     "pretty-bytes": "5.1.0",
     "pretty-quick": "1.10.0",
-    "prop-types": "15.6.2",
+    "prop-types": "15.7.2",
     "react-test-renderer": "16.6.3",
     "string-natural-compare": "2.0.3",
     "strip-ansi": "5.0.0",
