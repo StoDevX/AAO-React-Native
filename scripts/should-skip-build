@@ -24,8 +24,9 @@ def npm_native_package_changed?(source, target)
 
 	deps_diff = hash_diff(old_package, new_package, ['dependencies']).keys
 	devdeps_diff = hash_diff(old_package, new_package, ['devDependencies']).keys
+	optdeps_diff = hash_diff(old_package, new_package, ['optionalDependencies']).keys
 
-	(deps_diff + devdeps_diff).any? { |dep| dep =~ NPM_DEP_NAME_REGEXP }
+	(deps_diff + devdeps_diff + optdeps_diff).any? { |dep| dep =~ NPM_DEP_NAME_REGEXP }
 end
 
 BASE_GLOBS = [
