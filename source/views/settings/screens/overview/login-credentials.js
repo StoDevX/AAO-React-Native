@@ -42,7 +42,6 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		this.loadCredentialsFromKeychain()
 	}
 
-	focusUsername = () => this._usernameInput.focus()
 	focusPassword = () => this._passwordInput.focus()
 
 	loadCredentialsFromKeychain = async () => {
