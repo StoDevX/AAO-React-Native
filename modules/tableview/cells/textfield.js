@@ -22,11 +22,13 @@ const styles = StyleSheet.create({
 		alignItems: 'stretch',
 		paddingTop: 0,
 		paddingBottom: 0,
+		flex: 1,
 	},
 	multilineCell: {
 		alignItems: 'stretch',
 		paddingTop: 10,
 		paddingBottom: 10,
+		flex: 1,
 	},
 })
 
