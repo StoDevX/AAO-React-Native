@@ -101,7 +101,7 @@ export class CellTextField extends React.Component<Props> {
 				placeholderTextColor={c.iosPlaceholderText}
 				returnKeyType={this.props.returnKeyType}
 				secureTextEntry={this.props.secureTextEntry}
-				style={[styles.customTextInput]}
+				style={styles.customTextInput}
 				value={this.props.value}
 				{...moreProps}
 			/>
