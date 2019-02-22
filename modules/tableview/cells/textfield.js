@@ -75,9 +75,7 @@ export class CellTextField extends React.Component<Props> {
 		}
 
 		const labelWidthStyle =
-			this.props.labelWidth !== null && this.props.labelWidth !== undefined
-				? {width: this.props.labelWidth}
-				: null
+			this.props.labelWidth != null ? {width: this.props.labelWidth} : null
 
 		const label = this.props.label ? (
 			<Text onPress={this.focusInput} style={[styles.label, labelWidthStyle]}>
