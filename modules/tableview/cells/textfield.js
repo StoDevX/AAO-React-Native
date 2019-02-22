@@ -107,13 +107,15 @@ export class CellTextField extends React.Component<Props> {
 			/>
 		)
 
+		const style = this.props.multiline
+			? styles.multilineCell
+			: styles.singlelineCell
+
 		return (
 			<Cell
 				cellAccessoryView={input}
 				cellContentView={label}
-				contentContainerStyle={
-					this.props.multiline ? styles.multilineCell : styles.singlelineCell
-				}
+				contentContainerStyle={style}
 			/>
 		)
 	}
