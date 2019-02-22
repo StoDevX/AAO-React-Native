@@ -230,7 +230,7 @@ class BalancesView extends React.PureComponent<Props, State> {
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
 		alertSeen: state.settings ? state.settings.unofficiallyAcknowledged : false,
-		status: state.login ? state.login.status : 'initializing'
+		status: state.login ? state.login.status : 'initializing',
 	}
 }
 
