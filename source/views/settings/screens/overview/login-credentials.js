@@ -54,8 +54,9 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		}
 	}
 
-	logIn = () =>
+	logIn = () => {
 		this.props.logInViaCredentials(this.state.username, this.state.password)
+	}
 
 	logOut = () => {
 		this.setState(() => ({username: '', password: ''}))
