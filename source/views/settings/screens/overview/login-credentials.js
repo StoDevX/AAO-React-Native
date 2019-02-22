@@ -30,9 +30,6 @@ type State = {
 }
 
 class CredentialsLoginSection extends React.Component<Props, State> {
-	_usernameInput: any
-	_passwordInput: any
-
 	state = {
 		username: '',
 		password: '',
@@ -42,8 +39,11 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		this.loadCredentialsFromKeychain()
 	}
 
-	focusUsername = () => this._usernameInput.focus()
-	focusPassword = () => this._passwordInput.focus()
+	_usernameInput = React.createRef()
+	_passwordInput = React.createRef()
+
+	focusPassword = () =>
+		this._passwordInput.current && this._passwordInput.current.focus()
 
 	loadCredentialsFromKeychain = async () => {
 		let {username = '', password = ''} = await loadLoginCredentials()
@@ -61,12 +61,6 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		this.setState(() => ({username: '', password: ''}))
 		this.props.logOutViaCredentials()
 	}
-
-	getUsernameRef = ref => (this._usernameInput = ref)
-	getPasswordRef = ref => (this._passwordInput = ref)
-
-	onChangeUsername = (text = '') => this.setState(() => ({username: text}))
-	onChangePassword = (text = '') => this.setState(() => ({password: text}))
 
 	render() {
 		const {status} = this.props
@@ -86,24 +80,24 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 					[
 						<CellTextField
 							key={0}
-							_ref={this.getUsernameRef}
+							_ref={this._usernameInput}
 							disabled={loading}
 							label="Username"
-							onChangeText={this.onChangeUsername}
+							onChangeText={text => this.setState(() => ({username: text}))}
 							onSubmitEditing={this.focusPassword}
-							placeholder="ole"
+							placeholder="username"
 							returnKeyType="next"
 							secureTextEntry={false}
 							value={username}
 						/>,
 						<CellTextField
 							key={1}
-							_ref={this.getPasswordRef}
+							_ref={this._passwordInput}
 							disabled={loading}
 							label="Password"
-							onChangeText={this.onChangePassword}
+							onChangeText={text => this.setState(() => ({password: text}))}
 							onSubmitEditing={loggedIn ? noop : this.logIn}
-							placeholder="the$lion"
+							placeholder="password"
 							returnKeyType="done"
 							secureTextEntry={true}
 							value={password}

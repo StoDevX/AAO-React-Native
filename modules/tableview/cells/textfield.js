@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 
 type Props = {
 	label?: string,
-	_ref: any => any,
+	_ref?: {current: null | React.ElementRef<typeof TextInput>},
 	disabled: boolean,
 	multiline?: boolean,
 	onChangeText: string => any,
@@ -48,22 +48,18 @@ type Props = {
 }
 
 export class CellTextField extends React.Component<Props> {
-	_input: any
-
 	static defaultProps = {
 		disabled: false,
 		placeholder: '',
-		_ref: () => {},
 		returnKeyType: 'default',
 		secureTextEntry: false,
 		autoCapitalize: 'none',
 	}
 
-	focusInput = () => this._input.focus()
+	_ref = this.props._ref || React.createRef()
 
-	cacheRef = (ref: any) => {
-		this._input = ref
-		this.props._ref(ref)
+	focusInput = () => {
+		this._ref.current && this._ref.current.focus()
 	}
 
 	onSubmit = () => {
@@ -77,9 +73,7 @@ export class CellTextField extends React.Component<Props> {
 		}
 
 		const labelWidthStyle =
-			this.props.labelWidth !== null && this.props.labelWidth !== undefined
-				? {width: this.props.labelWidth}
-				: null
+			this.props.labelWidth != null ? {width: this.props.labelWidth} : null
 
 		const label = this.props.label ? (
 			<Text onPress={this.focusInput} style={[styles.label, labelWidthStyle]}>
@@ -91,7 +85,7 @@ export class CellTextField extends React.Component<Props> {
 
 		const input = (
 			<TextInput
-				ref={this.cacheRef}
+				ref={this.props._ref}
 				autoCapitalize={this.props.autoCapitalize}
 				autoCorrect={false}
 				clearButtonMode="while-editing"
