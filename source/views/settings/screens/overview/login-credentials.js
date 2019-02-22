@@ -30,9 +30,6 @@ type State = {
 }
 
 class CredentialsLoginSection extends React.Component<Props, State> {
-	_usernameInput: any
-	_passwordInput: any
-
 	state = {
 		username: '',
 		password: '',
@@ -42,7 +39,11 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		this.loadCredentialsFromKeychain()
 	}
 
-	focusPassword = () => this._passwordInput.focus()
+	_usernameInput = React.createRef()
+	_passwordInput = React.createRef()
+
+	focusPassword = () =>
+		this._passwordInput.current && this._passwordInput.current.focus()
 
 	loadCredentialsFromKeychain = async () => {
 		let {username = '', password = ''} = await loadLoginCredentials()
@@ -60,9 +61,6 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 		this.setState(() => ({username: '', password: ''}))
 		this.props.logOutViaCredentials()
 	}
-
-	getUsernameRef = ref => (this._usernameInput = ref)
-	getPasswordRef = ref => (this._passwordInput = ref)
 
 	render() {
 		const {status} = this.props
@@ -82,7 +80,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 					[
 						<CellTextField
 							key={0}
-							_ref={this.getUsernameRef}
+							_ref={this._usernameInput}
 							disabled={loading}
 							label="Username"
 							onChangeText={text => this.setState(() => ({username: text}))}
@@ -94,7 +92,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 						/>,
 						<CellTextField
 							key={1}
-							_ref={this.getPasswordRef}
+							_ref={this._passwordInput}
 							disabled={loading}
 							label="Password"
 							onChangeText={text => this.setState(() => ({password: text}))}
