@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-type Props = {
+type Props = {|
 	label?: string,
 	_ref?: {current: null | React.ElementRef<typeof TextInput>},
 	disabled: boolean,
@@ -45,7 +45,7 @@ type Props = {
 	autoCapitalize: 'characters' | 'words' | 'sentences' | 'none',
 	value: string,
 	labelWidth?: number,
-}
+|}
 
 export class CellTextField extends React.Component<Props> {
 	static defaultProps = {
