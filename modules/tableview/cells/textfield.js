@@ -97,19 +97,21 @@ export class CellTextField extends React.Component<Props> {
 				placeholderTextColor={c.iosPlaceholderText}
 				returnKeyType={this.props.returnKeyType}
 				secureTextEntry={this.props.secureTextEntry}
-				style={[styles.customTextInput]}
+				style={styles.customTextInput}
 				value={this.props.value}
 				{...moreProps}
 			/>
 		)
 
+		const style = this.props.multiline
+			? styles.multilineCell
+			: styles.singlelineCell
+
 		return (
 			<Cell
 				cellAccessoryView={input}
 				cellContentView={label}
-				contentContainerStyle={
-					this.props.multiline ? styles.multilineCell : styles.singlelineCell
-				}
+				contentContainerStyle={style}
 			/>
 		)
 	}
