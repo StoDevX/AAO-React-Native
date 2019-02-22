@@ -91,7 +91,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 							label="Username"
 							onChangeText={this.onChangeUsername}
 							onSubmitEditing={this.focusPassword}
-							placeholder="ole"
+							placeholder="username"
 							returnKeyType="next"
 							secureTextEntry={false}
 							value={username}
@@ -103,7 +103,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 							label="Password"
 							onChangeText={this.onChangePassword}
 							onSubmitEditing={loggedIn ? noop : this.logIn}
-							placeholder="the$lion"
+							placeholder="password"
 							returnKeyType="done"
 							secureTextEntry={true}
 							value={password}
