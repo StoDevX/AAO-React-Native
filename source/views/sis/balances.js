@@ -13,8 +13,10 @@ import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from '@frogpond/tableview'
 import {hasSeenAcknowledgement} from '../../redux/parts/settings'
+import {logInViaCredentials} from '../../redux/parts/login'
 import {type LoginStateEnum} from '../../redux/parts/login'
 import {getBalances} from '../../lib/financials'
+import {loadLoginCredentials} from '../../lib/login'
 import {type ReduxState} from '../../redux'
 import delay from 'delay'
 import * as c from '@frogpond/colors'
@@ -32,6 +34,7 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
+	logInViaCredentials: (string, string) => Promise<any>,
 	hasSeenAcknowledgement: () => any,
 }
 
@@ -91,7 +94,22 @@ class BalancesView extends React.PureComponent<Props, State> {
 		this.setState(() => ({loading: false}))
 	}
 
+	logIn = async () => {
+		let {status} = this.props
+		if (status === 'logged-in' || status === 'checking') {
+			return
+		}
+
+		let {username = '', password = ''} = await loadLoginCredentials()
+		if (username && password) {
+			await this.props.logInViaCredentials(username, password)
+		}
+	}
+
 	fetchData = async () => {
+		// trigger the login so that the banner at the bottom hides itself
+		await this.logIn()
+
 		let balances = await getBalances()
 
 		if (balances.error === true) {
@@ -212,19 +230,13 @@ class BalancesView extends React.PureComponent<Props, State> {
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
 		alertSeen: state.settings ? state.settings.unofficiallyAcknowledged : false,
-		status: state.login ? state.login.status : 'logged-out',
-	}
-}
-
-function mapDispatch(dispatch): ReduxDispatchProps {
-	return {
-		hasSeenAcknowledgement: () => dispatch(hasSeenAcknowledgement()),
+		status: state.login ? state.login.status : 'initializing',
 	}
 }
 
 export default connect(
 	mapState,
-	mapDispatch,
+	{logInViaCredentials, hasSeenAcknowledgement},
 )(BalancesView)
 
 let cellMargin = 10

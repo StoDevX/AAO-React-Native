@@ -18,7 +18,7 @@ type ReduxStateProps = {
 }
 
 type ReduxDispatchProps = {
-	logInViaCredentials: (string, string) => any,
+	logInViaCredentials: (string, string) => Promise<any>,
 	logOutViaCredentials: () => any,
 }
 
@@ -27,12 +27,16 @@ type Props = ReduxStateProps & ReduxDispatchProps
 type State = {
 	username: string,
 	password: string,
+	loadingCredentials: boolean,
+	initialCheckComplete: boolean,
 }
 
 class CredentialsLoginSection extends React.Component<Props, State> {
 	state = {
 		username: '',
 		password: '',
+		loadingCredentials: true,
+		initialCheckComplete: false,
 	}
 
 	componentDidMount() {
@@ -47,11 +51,13 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 
 	loadCredentialsFromKeychain = async () => {
 		let {username = '', password = ''} = await loadLoginCredentials()
-		this.setState(() => ({username, password}))
+		this.setState(() => ({username, password, loadingCredentials: false}))
 
 		if (username && password) {
-			this.props.logInViaCredentials(username, password)
+			await this.props.logInViaCredentials(username, password)
 		}
+
+		this.setState(() => ({initialCheckComplete: true}))
 	}
 
 	logIn = () => {
@@ -65,24 +71,36 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 
 	render() {
 		const {status} = this.props
-		const {username, password} = this.state
+		const {
+			username,
+			password,
+			loadingCredentials,
+			initialCheckComplete,
+		} = this.state
 
 		const loggedIn = status === 'logged-in'
-		const loading = status === 'checking'
+		const checkingCredentials = status === 'checking'
+		const hasBothCredentials = username && password
+
+		// this becomes TRUE when (a) creds are loaded from AsyncStorage and
+		// (b) the initial check from those credentials has completed
+		const checkingState = loadingCredentials || !initialCheckComplete
 
 		return (
 			<Section
 				footer='St. Olaf login enables the "meals remaining" feature.'
 				header="ST. OLAF LOGIN"
 			>
-				{loggedIn ? (
+				{checkingState ? (
+					<Cell title="Loading…" />
+				) : loggedIn ? (
 					<Cell title={`Logged in as ${username}.`} />
 				) : (
 					[
 						<CellTextField
 							key={0}
 							_ref={this._usernameInput}
-							disabled={loading}
+							disabled={checkingCredentials}
 							label="Username"
 							onChangeText={text => this.setState(() => ({username: text}))}
 							onSubmitEditing={this.focusPassword}
@@ -94,7 +112,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 						<CellTextField
 							key={1}
 							_ref={this._passwordInput}
-							disabled={loading}
+							disabled={checkingCredentials}
 							label="Password"
 							onChangeText={text => this.setState(() => ({password: text}))}
 							onSubmitEditing={loggedIn ? noop : this.logIn}
@@ -107,9 +125,9 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 				)}
 
 				<LoginButton
-					disabled={loading || (!username || !password)}
+					disabled={!hasBothCredentials || checkingCredentials || checkingState}
 					label="St. Olaf"
-					loading={loading}
+					loading={checkingCredentials || checkingState}
 					loggedIn={loggedIn}
 					onPress={loggedIn ? this.logOut : this.logIn}
 				/>
@@ -119,11 +137,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 }
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
-	if (!state.login) {
-		return {status: 'initializing'}
-	}
-
-	return {status: state.login.status}
+	return {status: state.login ? state.login.status : 'initializing'}
 }
 
 export const ConnectedCredentialsLoginSection = connect(
