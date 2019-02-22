@@ -306,7 +306,6 @@ type TextFieldProps = {text: string, onChange: string => any}
 const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
-		hideLabel={true}
 		onChangeText={onChange}
 		onSubmitEditing={onChange}
 		placeholder="Title"
@@ -319,7 +318,6 @@ const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 const NotesCell = ({text, onChange}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="sentences"
-		hideLabel={true}
 		onChangeText={onChange}
 		onSubmitEditing={onChange}
 		placeholder="Notes"
