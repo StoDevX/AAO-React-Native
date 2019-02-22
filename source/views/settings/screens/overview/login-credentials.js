@@ -65,9 +65,6 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 	getUsernameRef = ref => (this._usernameInput = ref)
 	getPasswordRef = ref => (this._passwordInput = ref)
 
-	onChangeUsername = (text = '') => this.setState(() => ({username: text}))
-	onChangePassword = (text = '') => this.setState(() => ({password: text}))
-
 	render() {
 		const {status} = this.props
 		const {username, password} = this.state
@@ -89,7 +86,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 							_ref={this.getUsernameRef}
 							disabled={loading}
 							label="Username"
-							onChangeText={this.onChangeUsername}
+							onChangeText={text => this.setState(() => ({username: text}))}
 							onSubmitEditing={this.focusPassword}
 							placeholder="username"
 							returnKeyType="next"
@@ -101,7 +98,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 							_ref={this.getPasswordRef}
 							disabled={loading}
 							label="Password"
-							onChangeText={this.onChangePassword}
+							onChangeText={text => this.setState(() => ({password: text}))}
 							onSubmitEditing={loggedIn ? noop : this.logIn}
 							placeholder="password"
 							returnKeyType="done"
