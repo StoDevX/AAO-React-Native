@@ -137,11 +137,7 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 }
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
-	if (!state.login) {
-		return {status: 'initializing'}
-	}
-
-	return {status: state.login.status}
+	return {status: state.login ? state.login.status : 'initializing'}
 }
 
 export const ConnectedCredentialsLoginSection = connect(
