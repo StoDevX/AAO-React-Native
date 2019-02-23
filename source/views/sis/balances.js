@@ -1,18 +1,9 @@
 // @flow
 
 import * as React from 'react'
-import {
-	StyleSheet,
-	ScrollView,
-	View,
-	Text,
-	RefreshControl,
-	Alert,
-} from 'react-native'
-import {TabBarIcon} from '@frogpond/navigation-tabs'
+import {StyleSheet, ScrollView, View, Text, RefreshControl} from 'react-native'
 import {connect} from 'react-redux'
 import {Cell, TableView, Section} from '@frogpond/tableview'
-import {hasSeenAcknowledgement} from '../../redux/parts/settings'
 import {logInViaCredentials} from '../../redux/parts/login'
 import {type LoginStateEnum} from '../../redux/parts/login'
 import {getBalances} from '../../lib/financials'
@@ -23,19 +14,15 @@ import * as c from '@frogpond/colors'
 import type {TopLevelViewPropsType} from '../types'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
-const LONG_DISCLAIMER =
-	'This data may be inaccurate.\nBon Appétit is always right.\nThis app is unofficial.'
 
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
 	status: LoginStateEnum,
-	alertSeen: boolean,
 }
 
 type ReduxDispatchProps = {
 	logInViaCredentials: (string, string) => Promise<any>,
-	hasSeenAcknowledgement: () => any,
 }
 
 type Props = ReactProps & ReduxStateProps & ReduxDispatchProps
@@ -52,11 +39,6 @@ type State = {
 }
 
 class BalancesView extends React.PureComponent<Props, State> {
-	static navigationOptions = {
-		tabBarLabel: 'Balances',
-		tabBarIcon: TabBarIcon('card'),
-	}
-
 	state = {
 		loading: false,
 		flex: null,
@@ -72,13 +54,6 @@ class BalancesView extends React.PureComponent<Props, State> {
 		// calling "refresh" here, to make clear to the user
 		// that the data is being updated
 		this.refresh()
-
-		if (!this.props.alertSeen) {
-			Alert.alert('', LONG_DISCLAIMER, [
-				{text: 'I Disagree', onPress: this.goBack, style: 'cancel'},
-				{text: 'Okay', onPress: this.props.hasSeenAcknowledgement},
-			])
-		}
 	}
 
 	refresh = async () => {
@@ -132,8 +107,6 @@ class BalancesView extends React.PureComponent<Props, State> {
 	}
 
 	openSettings = () => this.props.navigation.navigate('SettingsView')
-
-	goBack = () => this.props.navigation.goBack(null)
 
 	render() {
 		let {
@@ -224,14 +197,13 @@ class BalancesView extends React.PureComponent<Props, State> {
 
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
-		alertSeen: state.settings ? state.settings.unofficiallyAcknowledged : false,
 		status: state.login ? state.login.status : 'initializing',
 	}
 }
 
 export default connect(
 	mapState,
-	{logInViaCredentials, hasSeenAcknowledgement},
+	{logInViaCredentials},
 )(BalancesView)
 
 let cellMargin = 10
