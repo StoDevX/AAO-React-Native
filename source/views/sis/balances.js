@@ -206,15 +206,10 @@ export default connect(
 	{logInViaCredentials},
 )(BalancesView)
 
-let cellMargin = 10
-let cellSidePadding = 10
-let cellEdgePadding = 10
-
 let styles = StyleSheet.create({
 	stage: {
 		backgroundColor: c.sectionBgColor,
-		paddingTop: 20,
-		paddingBottom: 20,
+		paddingVertical: 20,
 	},
 
 	common: {
@@ -240,11 +235,9 @@ let styles = StyleSheet.create({
 		height: 88,
 		flex: 1,
 		alignItems: 'center',
-		paddingTop: cellSidePadding,
-		paddingBottom: cellSidePadding,
-		paddingRight: cellEdgePadding,
-		paddingLeft: cellEdgePadding,
-		marginBottom: cellMargin,
+		paddingVertical: 10,
+		paddingHorizontal: 10,
+		marginBottom: 10,
 	},
 
 	// Text styling
