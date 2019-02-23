@@ -38,7 +38,7 @@ type State = {
 	message: ?string,
 }
 
-class BalancesView extends React.PureComponent<Props, State> {
+class BalancesView extends React.Component<Props, State> {
 	state = {
 		loading: false,
 		flex: null,
