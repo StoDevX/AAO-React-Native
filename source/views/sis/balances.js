@@ -162,21 +162,18 @@ class BalancesView extends React.PureComponent<Props, State> {
 					<Section footer={DISCLAIMER} header="BALANCES">
 						<View style={styles.balancesRow}>
 							<FormattedValueCell
-								formatter={getValueOrNa}
 								indeterminate={loading}
 								label="Flex"
 								value={flex}
 							/>
 
 							<FormattedValueCell
-								formatter={getValueOrNa}
 								indeterminate={loading}
 								label="Ole"
 								value={ole}
 							/>
 
 							<FormattedValueCell
-								formatter={getValueOrNa}
 								indeterminate={loading}
 								label="Copy/Print"
 								style={styles.finalCell}
@@ -188,14 +185,12 @@ class BalancesView extends React.PureComponent<Props, State> {
 					<Section footer={DISCLAIMER} header="MEAL PLAN">
 						<View style={styles.balancesRow}>
 							<FormattedValueCell
-								formatter={getValueOrNa}
 								indeterminate={loading}
 								label="Daily Meals Left"
 								value={dailyMeals}
 							/>
 
 							<FormattedValueCell
-								formatter={getValueOrNa}
 								indeterminate={loading}
 								label="Weekly Meals Left"
 								style={styles.finalCell}
@@ -308,9 +303,9 @@ function FormattedValueCell(props: {
 	label: string,
 	value: ?string,
 	style?: any,
-	formatter: (?string) => string,
+	formatter?: (?string) => string,
 }) {
-	let {indeterminate, label, value, style, formatter} = props
+	let {indeterminate, label, value, style, formatter = getValueOrNa} = props
 
 	return (
 		<View style={[styles.rectangle, styles.common, styles.balances, style]}>
