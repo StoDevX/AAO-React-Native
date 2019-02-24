@@ -23,6 +23,12 @@ commands:
     steps:
       - run: touch .env.js
 
+  restore-cache-yarn:
+    description: "Restore the Yarn cache"
+    steps:
+      - restore_cache:
+          key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+
   save-cache-yarn:
     description: "Save the Yarn cache"
     steps:
@@ -37,8 +43,6 @@ commands:
 
 x-config:
   x-caching: # caching instructions
-    - &restore-cache-yarn
-      key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
     - &save-cache-bundler
       key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
       paths: [./vendor/bundle]
@@ -131,7 +135,7 @@ jobs:
     executor: node
     steps:
       - checkout
-      - restore_cache: *restore-cache-yarn
+      - restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - run: yarn --version
       - save-cache-yarn
@@ -371,7 +375,7 @@ jobs:
           command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
       - run: yarn --version
       - set-ruby-version
-      - restore_cache: *restore-cache-yarn
+      - restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - save-cache-yarn
       - restore_cache: *restore-cache-bundler
