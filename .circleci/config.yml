@@ -1,12 +1,14 @@
 ---
 version: 2.1
 
+executors:
+  node:
+    docker: [{image: 'circleci/node:10'}]
+
+  ruby:
+    docker: [{image: 'circleci/ruby:2.6.1'}]
+
 x-config:
-  x-images:
-    - &docker-node
-      - image: 'circleci/node:10'
-    - &docker-ruby
-      - image: 'circleci/ruby:2.6.1'
   x-caching: # caching instructions
     - &save-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
@@ -118,7 +120,7 @@ workflows:
 
 jobs:
   cache-yarn-linux:
-    docker: *docker-node
+    executor: node
     steps:
       - checkout
       - restore_cache: *restore-cache-yarn
@@ -128,7 +130,7 @@ jobs:
       - persist_to_workspace: *persist-workspace-node_modules
 
   cache-bundler-linux:
-    docker: *docker-ruby
+    executor: ruby
     steps:
       - checkout
       - run: *set-ruby-version
@@ -141,7 +143,7 @@ jobs:
       - save_cache: *save-cache-bundler
 
   danger:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-general
     steps:
@@ -150,7 +152,7 @@ jobs:
       - run: *run-danger
 
   flow:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-flow
     steps:
@@ -162,7 +164,7 @@ jobs:
       - run: *run-danger
 
   jest:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-jest
       JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
@@ -187,7 +189,7 @@ jobs:
             fi
 
   prettier:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-prettier
     steps:
@@ -206,7 +208,7 @@ jobs:
       - run: *run-danger
 
   yarn-dedupe:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-yarn-dedupe
     steps:
@@ -225,7 +227,7 @@ jobs:
       - run: *run-danger
 
   eslint:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-lint
     steps:
@@ -240,7 +242,7 @@ jobs:
           path: ./test-results
 
   data:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-data
     steps:
@@ -312,7 +314,7 @@ jobs:
       IS_NIGHTLY: '1'
 
   android-bundle:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-bundle-android
     steps:
@@ -392,7 +394,7 @@ jobs:
       IS_NIGHTLY: '1'
 
   ios-bundle:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-bundle-ios
     steps:
