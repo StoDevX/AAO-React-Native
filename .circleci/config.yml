@@ -23,6 +23,12 @@ commands:
     steps:
       - run: touch .env.js
 
+  restore-cache-bundler:
+    description: "Restore the Bundler cache"
+    steps:
+      - restore_cache:
+          key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+
   restore-cache-yarn:
     description: "Restore the Yarn cache"
     steps:
@@ -50,8 +56,6 @@ commands:
 
 x-config:
   x-caching: # caching instructions
-    - &restore-cache-bundler
-      key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
     - &save-cache-gradle
       key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
       paths: [~/.gradle]
@@ -150,7 +154,7 @@ jobs:
     steps:
       - checkout
       - set-ruby-version
-      - restore_cache: *restore-cache-bundler
+      - restore-cache-bundler
       - run: gem --version
       - run: ruby --version
       - run: gem install bundler
@@ -305,7 +309,7 @@ jobs:
       - run: yarn --version
       - set-ruby-version
       - attach_workspace: *attach-workspace-node_modules
-      - restore_cache: *restore-cache-bundler
+      - restore-cache-bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - restore_cache: *restore-cache-gradle
       - run:
@@ -382,7 +386,7 @@ jobs:
       - restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - save-cache-yarn
-      - restore_cache: *restore-cache-bundler
+      - restore-cache-bundler
       - run: gem install bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - save-cache-bundler
