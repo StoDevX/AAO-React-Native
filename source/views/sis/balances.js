@@ -85,7 +85,9 @@ class BalancesView extends React.PureComponent<Props, State> {
 		let start = Date.now()
 		this.setState(() => ({loading: true}))
 
-		await this.fetchData()
+		if (this.props.alertSeen) {
+			await this.fetchData()
+		}
 
 		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
 		let elapsed = Date.now() - start
