@@ -9,11 +9,6 @@ executors:
     docker: [{image: 'circleci/ruby:2.6.1'}]
 
 commands:
-  set-ruby-version:
-    description: "Set the Ruby Version"
-    steps:
-      - run: echo "ruby-2.5.3" > ~/.ruby-version
-
   danger:
     description: "Run Danger"
     steps:
@@ -27,6 +22,12 @@ commands:
     description: "Embed environment variables into the app"
     steps:
       - run: touch .env.js
+
+  set-ruby-version:
+    description: "Set the Ruby Version"
+    steps:
+      - run: echo "ruby-2.5.3" > ~/.ruby-version
+
 
 x-config:
   x-caching: # caching instructions
