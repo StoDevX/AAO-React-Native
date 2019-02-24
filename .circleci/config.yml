@@ -23,17 +23,20 @@ commands:
     steps:
       - run: touch .env.js
 
+  save-cache-yarn:
+    description: "Save the Yarn cache"
+    steps:
+      - save_cache:
+          key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+          paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
+
   set-ruby-version:
     description: "Set the Ruby Version"
     steps:
       - run: echo "ruby-2.5.3" > ~/.ruby-version
 
-
 x-config:
   x-caching: # caching instructions
-    - &save-cache-yarn
-      key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
-      paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
     - &restore-cache-yarn
       key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
     - &save-cache-bundler
@@ -131,7 +134,7 @@ jobs:
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - run: yarn --version
-      - save_cache: *save-cache-yarn
+      - save-cache-yarn
       - persist_to_workspace: *persist-workspace-node_modules
 
   cache-bundler-linux:
@@ -370,7 +373,7 @@ jobs:
       - set-ruby-version
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
+      - save-cache-yarn
       - restore_cache: *restore-cache-bundler
       - run: gem install bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
