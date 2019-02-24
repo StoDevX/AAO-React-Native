@@ -10,7 +10,7 @@ executors:
 
 commands:
   danger:
-    description: "Run Danger"
+    description: 'Run Danger'
     steps:
       - run:
           command: if ! [[ $CIRCLE_PR_NUMBER ]]; then yarn run danger --id $task; fi
@@ -19,51 +19,51 @@ commands:
             DANGER_DISABLE_TRANSPILATION: 'true'
 
   embed-env-vars:
-    description: "Embed environment variables into the app"
+    description: 'Embed environment variables into the app'
     steps:
       - run: touch .env.js
 
   restore-cache-bundler:
-    description: "Restore the Bundler cache"
+    description: 'Restore the Bundler cache'
     steps:
       - restore_cache:
           key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
 
   restore-cache-gradle:
-    description: "Restore the Gradle cache"
+    description: 'Restore the Gradle cache'
     steps:
       - restore_cache:
           key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
 
   restore-cache-yarn:
-    description: "Restore the Yarn cache"
+    description: 'Restore the Yarn cache'
     steps:
       - restore_cache:
           key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
 
   save-cache-bundler:
-    description: "Save the Bundler cache"
+    description: 'Save the Bundler cache'
     steps:
       - save_cache:
           key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
           paths: [./vendor/bundle]
 
   save-cache-gradle:
-    description: "Save the Gradle cache"
+    description: 'Save the Gradle cache'
     steps:
       - save_cache:
           key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
           paths: [~/.gradle]
 
   save-cache-yarn:
-    description: "Save the Yarn cache"
+    description: 'Save the Yarn cache'
     steps:
       - save_cache:
           key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
           paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
 
   set-ruby-version:
-    description: "Set the Ruby Version"
+    description: 'Set the Ruby Version'
     steps:
       - run: echo "ruby-2.5.3" > ~/.ruby-version
 
