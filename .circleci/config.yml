@@ -29,6 +29,13 @@ commands:
       - restore_cache:
           key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
 
+  save-cache-bundler:
+    description: "Save the Bundler cache"
+    steps:
+      - save_cache:
+          key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+          paths: [./vendor/bundle]
+
   save-cache-yarn:
     description: "Save the Yarn cache"
     steps:
@@ -43,9 +50,6 @@ commands:
 
 x-config:
   x-caching: # caching instructions
-    - &save-cache-bundler
-      key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
-      paths: [./vendor/bundle]
     - &restore-cache-bundler
       key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
     - &save-cache-gradle
@@ -152,7 +156,7 @@ jobs:
       - run: gem install bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - run: bundle --version
-      - save_cache: *save-cache-bundler
+      - save-cache-bundler
 
   danger:
     executor: node
@@ -381,7 +385,7 @@ jobs:
       - restore_cache: *restore-cache-bundler
       - run: gem install bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - save_cache: *save-cache-bundler
+      - save-cache-bundler
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - embed-env-vars
