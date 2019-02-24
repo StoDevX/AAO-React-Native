@@ -69,11 +69,11 @@ class BalancesView extends React.PureComponent<Props, State> {
 	}
 
 	componentDidMount() {
-		// calling "refresh" here, to make clear to the user
-		// that the data is being updated
-		this.refresh()
-
-		if (!this.props.alertSeen) {
+		if (this.props.alertSeen) {
+			// calling "refresh" here, to make clear to the user
+			// that the data is being updated
+			this.refresh()
+		} else {
 			Alert.alert('', LONG_DISCLAIMER, [
 				{text: 'I Disagree', onPress: this.goBack, style: 'cancel'},
 				{text: 'Okay', onPress: this.props.hasSeenAcknowledgement},
@@ -85,9 +85,7 @@ class BalancesView extends React.PureComponent<Props, State> {
 		let start = Date.now()
 		this.setState(() => ({loading: true}))
 
-		if (this.props.alertSeen) {
-			await this.fetchData()
-		}
+		await this.fetchData()
 
 		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
 		let elapsed = Date.now() - start
