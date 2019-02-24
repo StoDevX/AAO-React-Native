@@ -8,6 +8,26 @@ executors:
   ruby:
     docker: [{image: 'circleci/ruby:2.6.1'}]
 
+commands:
+  set-ruby-version:
+    description: "Set the Ruby Version"
+    steps:
+      - run: echo "ruby-2.5.3" > ~/.ruby-version
+
+  danger:
+    description: "Run Danger"
+    steps:
+      - run:
+          command: if ! [[ $CIRCLE_PR_NUMBER ]]; then yarn run danger --id $task; fi
+          when: always
+          environment:
+            DANGER_DISABLE_TRANSPILATION: 'true'
+
+  embed-env-vars:
+    description: "Embed environment variables into the app"
+    steps:
+      - run: touch .env.js
+
 x-config:
   x-caching: # caching instructions
     - &save-cache-yarn
@@ -31,22 +51,6 @@ x-config:
       paths: [./*]
     - &attach-workspace-node_modules
       at: ./node_modules
-  x-commands: # command shorthands
-    - &set-ruby-version
-      name: Set Ruby Version
-      command: echo "ruby-2.5.3" > ~/.ruby-version
-    - &run-danger
-      command: |
-        if ! [[ $CIRCLE_PR_NUMBER ]]; then
-          yarn run danger --id $task
-        fi
-      when: always
-      environment:
-        DANGER_DISABLE_TRANSPILATION: 'true'
-    - &embed-env-vars
-      name: Embed environment variables into the app
-      command: |
-        touch .env.js
 
 workflows:
   version: 2
@@ -133,7 +137,7 @@ jobs:
     executor: ruby
     steps:
       - checkout
-      - run: *set-ruby-version
+      - set-ruby-version
       - restore_cache: *restore-cache-bundler
       - run: gem --version
       - run: ruby --version
@@ -149,7 +153,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace: *attach-workspace-node_modules
-      - run: *run-danger
+      - danger
 
   flow:
     executor: node
@@ -161,7 +165,7 @@ jobs:
       - run: mkdir -p logs/
       - run: yarn run bundle-data
       - run: yarn run --silent flow check --quiet | tee logs/flow
-      - run: *run-danger
+      - danger
 
   jest:
     executor: node
@@ -174,7 +178,7 @@ jobs:
       - run: mkdir -p logs/ test-results/jest/
       - run: yarn run bundle-data
       - run: yarn run --silent test --coverage | tee logs/jest
-      - run: *run-danger
+      - danger
       - store_test_results:
           path: ./test-results
       - run: yarn global add coveralls
@@ -205,7 +209,7 @@ jobs:
               git diff | tee logs/prettier
               exit 1
             fi
-      - run: *run-danger
+      - danger
 
   yarn-dedupe:
     executor: node
@@ -224,7 +228,7 @@ jobs:
               git diff | tee logs/yarn-dedupe
               exit 1
             fi
-      - run: *run-danger
+      - danger
 
   eslint:
     executor: node
@@ -237,7 +241,7 @@ jobs:
       - run: yarn run bundle-data
       - run: yarn run --silent lint | tee logs/eslint
       - run: yarn run --silent lint --format junit > test-results/eslint/junit.xml
-      - run: *run-danger
+      - danger
       - store_test_results:
           path: ./test-results
 
@@ -255,7 +259,7 @@ jobs:
       - run: yarn run compress-data
       - store_artifacts:
           path: ./docs/
-      - run: *run-danger
+      - danger
 
   android: &android
     # we pass the `command:` key to solve a weird issue (see GitHub PRs 2170 and 2173).
@@ -287,7 +291,7 @@ jobs:
           command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
       - run: node --version
       - run: yarn --version
-      - run: *set-ruby-version
+      - set-ruby-version
       - attach_workspace: *attach-workspace-node_modules
       - restore_cache: *restore-cache-bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
@@ -297,7 +301,7 @@ jobs:
           command: cd android && ./gradlew androidDependencies --console=plain
           environment: {TERM: xterm-256color}
       - save_cache: *save-cache-gradle
-      - run: *embed-env-vars
+      - embed-env-vars
       - run:
           name: Run Fastlane
           command: bundle exec fastlane android ci-run | tee ./logs/build
@@ -305,7 +309,7 @@ jobs:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
       - store_artifacts:
           path: ./android/app/build/outputs/apk/release/
-      - run: *run-danger
+      - danger
 
   android-nightly:
     <<: *android
@@ -321,7 +325,7 @@ jobs:
       - checkout
       - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
-      - run: *embed-env-vars
+      - embed-env-vars
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:android
       - store_artifacts:
@@ -330,7 +334,7 @@ jobs:
       - store_artifacts:
           path: ./android/app/src/main/assets/index.android.bundle.map
           destination: android.jsbundle.map
-      - run: *run-danger
+      - danger
 
   ios: &ios
     macos: {xcode: '10.1.0'}
@@ -362,7 +366,7 @@ jobs:
           name: Skip build if possible
           command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
       - run: yarn --version
-      - run: *set-ruby-version
+      - set-ruby-version
       - restore_cache: *restore-cache-yarn
       - run: yarn install --frozen-lockfile
       - save_cache: *save-cache-yarn
@@ -372,7 +376,7 @@ jobs:
       - save_cache: *save-cache-bundler
       - run: brew tap wix/brew
       - run: brew install applesimutils
-      - run: *embed-env-vars
+      - embed-env-vars
       - run:
           name: Run Fastlane
           command: bundle exec fastlane ios ci-run | tee ./logs/build
@@ -385,7 +389,7 @@ jobs:
       - run:
           name: Analyze Fastlane Logfile
           command: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
-      - run: *run-danger
+      - danger
 
   ios-nightly:
     <<: *ios
@@ -401,7 +405,7 @@ jobs:
       - checkout
       - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
-      - run: *embed-env-vars
+      - embed-env-vars
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:ios
       - store_artifacts:
@@ -410,4 +414,4 @@ jobs:
       - store_artifacts:
           path: ./ios/AllAboutOlaf/main.jsbundle.map
           destination: ios.jsbundle.map
-      - run: *run-danger
+      - danger
