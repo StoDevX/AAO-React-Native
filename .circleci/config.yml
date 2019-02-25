@@ -9,6 +9,19 @@ executors:
     docker: [{image: 'circleci/ruby:2.6.1'}]
 
 commands:
+  bundler-cache:
+    description: 'Save the Bundler cache'
+    steps:
+      - save_cache:
+          key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+          paths: [./vendor/bundle]
+
+  bundler-restore:
+    description: 'Restore the Bundler cache'
+    steps:
+      - restore_cache:
+          key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+
   danger:
     description: 'Run Danger'
     steps:
@@ -18,49 +31,36 @@ commands:
           environment:
             DANGER_DISABLE_TRANSPILATION: 'true'
 
-  restore-cache-bundler:
-    description: 'Restore the Bundler cache'
-    steps:
-      - restore_cache:
-          key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
-
-  restore-cache-gradle:
-    description: 'Restore the Gradle cache'
-    steps:
-      - restore_cache:
-          key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
-
-  restore-cache-yarn:
-    description: 'Restore the Yarn cache'
-    steps:
-      - restore_cache:
-          key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
-
-  save-cache-bundler:
-    description: 'Save the Bundler cache'
-    steps:
-      - save_cache:
-          key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
-          paths: [./vendor/bundle]
-
-  save-cache-gradle:
+  gradle-cache:
     description: 'Save the Gradle cache'
     steps:
       - save_cache:
           key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
           paths: [~/.gradle]
 
-  save-cache-yarn:
+  gradle-restore:
+    description: 'Restore the Gradle cache'
+    steps:
+      - restore_cache:
+          key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+
+  set-ruby-version:
+    description: 'Set the Ruby Version'
+    steps:
+      - run: echo "ruby-2.5.3" > ~/.ruby-version
+
+  yarn-cache:
     description: 'Save the Yarn cache'
     steps:
       - save_cache:
           key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
           paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
 
-  set-ruby-version:
-    description: 'Set the Ruby Version'
+  yarn-restore:
+    description: 'Restore the Yarn cache'
     steps:
-      - run: echo "ruby-2.5.3" > ~/.ruby-version
+      - restore_cache:
+          key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
 
 x-config:
   x-workspace:
@@ -145,10 +145,10 @@ jobs:
     executor: node
     steps:
       - checkout
-      - restore-cache-yarn
+      - yarn-restore
       - run: yarn install --frozen-lockfile
       - run: yarn --version
-      - save-cache-yarn
+      - yarn-cache
       - persist_to_workspace: *persist-workspace-node_modules
 
   cache-bundler-linux:
@@ -156,13 +156,13 @@ jobs:
     steps:
       - checkout
       - set-ruby-version
-      - restore-cache-bundler
+      - bundler-restore
       - run: gem --version
       - run: ruby --version
       - run: gem install bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - run: bundle --version
-      - save-cache-bundler
+      - bundler-cache
 
   danger:
     executor: node
@@ -311,14 +311,14 @@ jobs:
       - run: yarn --version
       - set-ruby-version
       - attach_workspace: *attach-workspace-node_modules
-      - restore-cache-bundler
+      - bundler-restore
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - restore-cache-gradle
+      - gradle-restore
       - run:
           name: Download Android dependencies
           command: cd android && ./gradlew androidDependencies --console=plain
           environment: {TERM: xterm-256color}
-      - save-cache-gradle
+      - gradle-cache
       - run:
           name: Run Fastlane
           command: bundle exec fastlane android ci-run | tee ./logs/build
@@ -383,13 +383,13 @@ jobs:
           command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
       - run: yarn --version
       - set-ruby-version
-      - restore-cache-yarn
+      - yarn-restore
       - run: yarn install --frozen-lockfile
-      - save-cache-yarn
-      - restore-cache-bundler
+      - yarn-cache
+      - bundler-restore
       - run: gem install bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - save-cache-bundler
+      - bundler-cache
       - run: brew tap wix/brew
       - run: brew install applesimutils
       - run:
