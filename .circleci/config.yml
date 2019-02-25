@@ -18,11 +18,6 @@ commands:
           environment:
             DANGER_DISABLE_TRANSPILATION: 'true'
 
-  embed-env-vars:
-    description: 'Embed environment variables into the app'
-    steps:
-      - run: touch .env.js
-
   restore-cache-bundler:
     description: 'Restore the Bundler cache'
     steps:
@@ -324,7 +319,6 @@ jobs:
           command: cd android && ./gradlew androidDependencies --console=plain
           environment: {TERM: xterm-256color}
       - save-cache-gradle
-      - embed-env-vars
       - run:
           name: Run Fastlane
           command: bundle exec fastlane android ci-run | tee ./logs/build
@@ -348,7 +342,6 @@ jobs:
       - checkout
       - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
-      - embed-env-vars
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:android
       - store_artifacts:
@@ -399,7 +392,6 @@ jobs:
       - save-cache-bundler
       - run: brew tap wix/brew
       - run: brew install applesimutils
-      - embed-env-vars
       - run:
           name: Run Fastlane
           command: bundle exec fastlane ios ci-run | tee ./logs/build
@@ -428,7 +420,6 @@ jobs:
       - checkout
       - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
-      - embed-env-vars
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:ios
       - store_artifacts:
