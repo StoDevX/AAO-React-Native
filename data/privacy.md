@@ -39,13 +39,8 @@ following information is logged:
 3. _What you requested and how long it took_, which is widely considered to be
   fully anonymous.
 
-We also use a few tools to track our most used features and push notification
-receipts, as well as collect crash reports.  These tools are:
-
-- _Google Analytics_, which can be disabled via the "Share Analytics" toggle in
-  the Settings view.  Google Analytics records slightly more in-depth information
-  about your device, which we use for ensuring that our app looks good on all
-  screen sizes.
+We also use a couple of tools to track our most used features and push
+notification receipts, as well as collect crash reports.  These tools are:
 
 - _OneSignal_, which manages the delivery of our notifications, collects device
   information to place you into categories.
