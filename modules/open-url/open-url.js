@@ -58,7 +58,7 @@ export function openUrl(url: string) {
 	}
 }
 
-export function trackedOpenUrl({url, id}: {url: string, id?: string}) {
+export function trackedOpenUrl({url, _id}: {url: string, _id?: string}) {
 	return openUrl(url)
 }
 
@@ -71,7 +71,7 @@ export function canOpenUrl(url: string) {
 	return true
 }
 
-export function openUrlInBrowser({url, id}: {url: string, id?: string}) {
+export function openUrlInBrowser({url, _id}: {url: string, _id?: string}) {
 	return promptConfirm(url)
 }
 

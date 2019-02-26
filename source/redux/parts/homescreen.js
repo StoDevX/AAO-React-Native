@@ -4,8 +4,6 @@ import {allViewNames as defaultViewOrder} from '../../views/views'
 import difference from 'lodash/difference'
 import * as storage from '../../lib/storage'
 import {type ReduxState} from '../index'
-import isEqual from 'lodash/isEqual'
-import debounce from 'lodash/debounce'
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState

@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react'
-import {Cell, Section, CellToggle, PushButtonCell} from '@frogpond/tableview'
+import {Cell, Section, PushButtonCell} from '@frogpond/tableview'
 import {appVersion, appBuild} from '@frogpond/constants'
 import type {ReduxState} from '../../../../redux'
 import {connect} from 'react-redux'

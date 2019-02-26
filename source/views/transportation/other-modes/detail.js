@@ -37,7 +37,7 @@ export class OtherModesDetailView extends React.PureComponent<Props> {
 	}
 
 	onPress = () => {
-		const {name, url} = this.props.navigation.state.params.mode
+		const {url} = this.props.navigation.state.params.mode
 		openUrl(url)
 	}
 

@@ -57,7 +57,6 @@ export class ContactsDetailView extends React.PureComponent<Props> {
 
 	onPress = () => {
 		const {
-			title,
 			phoneNumber,
 			buttonText,
 			buttonLink,
