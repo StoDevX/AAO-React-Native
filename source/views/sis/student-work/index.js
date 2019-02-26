@@ -6,7 +6,6 @@ import {TabBarIcon} from '@frogpond/navigation-tabs'
 import type {TopLevelViewPropsType} from '../../types'
 import * as c from '@frogpond/colors'
 import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
-import {trackStudentJobOpen} from '@frogpond/analytics'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import delay from 'delay'
 import toPairs from 'lodash/toPairs'
@@ -99,7 +98,6 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 	}
 
 	onPressJob = (job: JobType) => {
-		trackStudentJobOpen(`${job.office}: ${job.title}`)
 		this.props.navigation.navigate('JobDetailView', {job})
 	}
 

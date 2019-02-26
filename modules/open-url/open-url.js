@@ -2,7 +2,6 @@
 
 import {Platform, Linking, Alert} from 'react-native'
 
-import {trackUrl, trackException} from '@frogpond/analytics'
 import {appName} from '@frogpond/constants'
 import SafariView from 'react-native-safari-view'
 import {CustomTabs} from 'react-native-custom-tabs'
@@ -16,7 +15,6 @@ function genericOpen(url: string) {
 			return Linking.openURL(url)
 		})
 		.catch(err => {
-			trackException(err.message)
 			console.error(err)
 		})
 }
@@ -61,7 +59,6 @@ export function openUrl(url: string) {
 }
 
 export function trackedOpenUrl({url, id}: {url: string, id?: string}) {
-	trackUrl(id || url)
 	return openUrl(url)
 }
 
@@ -75,7 +72,6 @@ export function canOpenUrl(url: string) {
 }
 
 export function openUrlInBrowser({url, id}: {url: string, id?: string}) {
-	trackUrl(id || url)
 	return promptConfirm(url)
 }
 

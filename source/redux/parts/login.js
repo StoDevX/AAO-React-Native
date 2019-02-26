@@ -6,8 +6,6 @@ import {
 	clearLoginCredentials,
 } from '../../lib/login'
 
-import {trackLogOut, trackLogIn, trackLoginFailure} from '@frogpond/analytics'
-
 import {type ReduxState} from '../index'
 import {Alert} from 'react-native'
 
@@ -79,26 +77,20 @@ export function logInViaCredentials(
 		let result = await performLogin()
 		if (result === 'success') {
 			dispatch({type: LOGIN_SUCCESS})
-			trackLogIn()
 		} else if (result === 'bad-credentials') {
 			dispatch({type: LOGIN_FAILURE})
-			trackLoginFailure('Bad credentials')
 			showInvalidLoginMessage()
 		} else if (result === 'no-credentials') {
 			dispatch({type: LOGIN_FAILURE})
-			trackLoginFailure('No credentials')
 			showUnknownLoginMessage()
 		} else if (result === 'network') {
 			dispatch({type: LOGIN_FAILURE})
-			trackLoginFailure('No network')
 			showNetworkFailureMessage()
 		} else if (result === 'server-error') {
 			dispatch({type: LOGIN_FAILURE})
-			trackLoginFailure('Server error')
 			showServerErrorMessage()
 		} else if (result === 'other') {
 			dispatch({type: LOGIN_FAILURE})
-			trackLoginFailure('Unknown problem')
 			showUnknownFailureMessage()
 		} else {
 			showUnknownFailureMessage()
@@ -109,7 +101,6 @@ export function logInViaCredentials(
 
 type LogOutAction = {|type: 'settings/CREDENTIALS_LOGOUT'|}
 export async function logOutViaCredentials(): Promise<LogOutAction> {
-	trackLogOut()
 	await clearLoginCredentials()
 	return {type: LOGOUT}
 }

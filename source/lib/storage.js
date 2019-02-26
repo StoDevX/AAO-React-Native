@@ -10,8 +10,6 @@ import {
 
 export {clearAsyncStorage}
 
-export {getAnalyticsOptOut, setAnalyticsOptOut} from '@frogpond/analytics'
-
 setStoragePrefix('aao:')
 
 /// MARK: Settings
