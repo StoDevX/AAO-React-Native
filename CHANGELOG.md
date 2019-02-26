@@ -43,6 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated `react-native-vector-icons` to v6 and made some compatibility fixes (#3162)
 - Addressed color banding in SIS/Balances on Android (#3462)
 - [wip] Fix OleCard login stuff (#3503)
+- Adjusted how we present the BonApp ultimatum on first visiting the Balances tab (#3515)
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
