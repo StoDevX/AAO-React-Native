@@ -65,6 +65,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)
+- Removed Google Analytics tracking (#3517)
 
 ## [2.6.3] - 2018-09-17
 ### Fixed
