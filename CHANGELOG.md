@@ -61,6 +61,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed rendering of markdown hardbreaks (#3379)
 - Fixed the dictionary editor and made it handle user input again (#3383, #3387)
 - Fixed DatePicker by removing an unnecessary call to getDerivedStateFromProps (#3382)
+- Fixed the balances view from refreshing if the user has not agreed to the alert (#3509)
 
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)

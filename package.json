@@ -133,7 +133,7 @@
     "react-native-tableview-simple": "2.0.1",
     "react-native-typography": "1.4.0",
     "react-native-vector-icons": "6.3.0",
-    "react-navigation": "3.3.0",
+    "react-navigation": "3.3.2",
     "react-navigation-material-bottom-tabs": "1.0.0",
     "react-redux": "6.0.1",
     "redux": "4.0.1",
@@ -148,7 +148,7 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.3.3",
+    "@babel/core": "7.3.4",
     "ajv": "6.9.1",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
@@ -181,6 +181,6 @@
     "yarn-deduplicate": "1.1.1"
   },
   "optionalDependencies": {
-    "detox": "10.0.9"
+    "detox": "10.0.10"
   }
 }
