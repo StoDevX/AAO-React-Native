@@ -39,8 +39,8 @@ following information is logged:
 3. _What you requested and how long it took_, which is widely considered to be
   fully anonymous.
 
-We also use a couple of tools to track our most used features and push
-notification receipts, as well as collect crash reports.  These tools are:
+We also use a couple of tools to track our push notification receipts and
+collect crash reports.  These tools are:
 
 - _OneSignal_, which manages the delivery of our notifications, collects device
   information to place you into categories.
