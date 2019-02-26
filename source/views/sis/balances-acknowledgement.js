@@ -134,6 +134,7 @@ let styles = StyleSheet.create({
 	},
 	androidCard: {
 		marginHorizontal: 10,
+		marginBottom: 10,
 	},
 	bonappNotice: {
 		fontWeight: Platform.select({
