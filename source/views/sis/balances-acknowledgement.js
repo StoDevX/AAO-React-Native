@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, ScrollView, Platform, Alert, View} from 'react-native'
+import {StyleSheet, ScrollView, Platform, View} from 'react-native'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {connect} from 'react-redux'
 import {hasSeenAcknowledgement} from '../../redux/parts/settings'
@@ -35,7 +35,6 @@ function BalancesOrAcknowledgementView(props: Props) {
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
 			<Acknowledgement
-				onNegative={() => Alert.alert('You said "No"')}
 				onPositive={props.hasSeenAcknowledgement}
 				subtitle="Bon Appétit is always right"
 				title="Before you continue…"
@@ -85,11 +84,10 @@ type AcknowledgementProps = {
 	subtitle: string,
 	children: React.Node,
 	onPositive: () => any,
-	onNegative: () => any,
 }
 
 function AndroidAck(props: AcknowledgementProps) {
-	let {title, subtitle, children, onPositive, onNegative} = props
+	let {title, subtitle, children, onPositive} = props
 
 	return (
 		<Card style={styles.androidCard}>
@@ -100,23 +98,23 @@ function AndroidAck(props: AcknowledgementProps) {
 			/>
 			<Card.Content>{children}</Card.Content>
 			<Card.Actions>
-				<Button onPress={onNegative}>I Disagree</Button>
-				<Button onPress={onPositive}>Agreed</Button>
+				<Button onPress={onPositive}>
+					I Agree
+				</Button>
 			</Card.Actions>
 		</Card>
 	)
 }
 
 function IosAck(props: AcknowledgementProps) {
-	let {title, subtitle, children, onPositive, onNegative} = props
+	let {title, children, onPositive} = props
 
 	return (
-		<IosCard footer={subtitle} header={title}>
+		<IosCard header={title}>
 			{children}
 
 			<View style={styles.iosButtonRow}>
-				<IosButton mode="inverted" onPress={onNegative} title="I Disagree" />
-				<IosButton onPress={onPositive} title="Agreed" />
+				<IosButton onPress={onPositive} title="I Agree" />
 			</View>
 		</IosCard>
 	)
