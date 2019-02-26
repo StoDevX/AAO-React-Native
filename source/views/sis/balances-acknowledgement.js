@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import {StyleSheet, ScrollView, Platform, View} from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
 import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {connect} from 'react-redux'
 import {hasSeenAcknowledgement} from '../../redux/parts/settings'
@@ -92,7 +93,14 @@ function AndroidAck(props: AcknowledgementProps) {
 	return (
 		<Card style={styles.androidCard}>
 			<Card.Title
-				left={props => <Avatar.Icon {...props} icon="warning" />}
+				left={props => (
+					<Avatar.Icon
+						{...props}
+						icon={({size, color}) => (
+							<Icon name="md-warning" size={size} style={{color}} />
+						)}
+					/>
+				)}
 				subtitle={subtitle}
 				title={title}
 			/>
