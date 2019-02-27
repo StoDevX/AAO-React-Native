@@ -106,7 +106,9 @@ function AndroidAck(props: AcknowledgementProps) {
 			/>
 			<Card.Content>{children}</Card.Content>
 			<Card.Actions>
-				<Button mode="contained" onPress={onPositive}>I Agree</Button>
+				<Button mode="contained" onPress={onPositive}>
+					I Agree
+				</Button>
 			</Card.Actions>
 		</Card>
 	)
