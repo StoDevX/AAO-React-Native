@@ -7,7 +7,6 @@ import {Markdown} from '@frogpond/markdown'
 import {ListFooter} from '@frogpond/lists'
 import glamorous from 'glamorous-native'
 import {callPhone} from '../../components/call-phone'
-import {trackScreenView} from '@frogpond/analytics'
 import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
 import type {ContactType} from './types'
@@ -58,12 +57,10 @@ export class ContactsDetailView extends React.PureComponent<Props> {
 
 	onPress = () => {
 		const {
-			title,
 			phoneNumber,
 			buttonText,
 			buttonLink,
 		} = this.props.navigation.state.params.contact
-		trackScreenView(`ImportantContacts_${title.replace(' ', '')}View`)
 		if (buttonLink) {
 			openUrl(buttonLink)
 		} else if (phoneNumber) {

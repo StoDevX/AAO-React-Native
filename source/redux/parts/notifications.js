@@ -1,11 +1,5 @@
 // @flow
 
-import {
-	trackChannelSubscribe,
-	trackChannelUnsubscribe,
-	trackNotificationsDisable,
-	trackNotificationsEnable,
-} from '@frogpond/analytics'
 import OneSignal from 'react-native-onesignal'
 
 import {type ReduxState} from '../index'
@@ -37,7 +31,6 @@ export function subscribe(
 	channelName: NotificationChannelName,
 ): ChannelSubscribeAction {
 	OneSignal.sendTag(channelName, 'active')
-	trackChannelSubscribe(channelName)
 	return {type: CHANNEL_SUBSCRIBE, payload: channelName}
 }
 
@@ -49,7 +42,6 @@ export function unsubscribe(
 	channelName: NotificationChannelName,
 ): ChannelUnsubscribeAction {
 	OneSignal.deleteTag(channelName)
-	trackChannelUnsubscribe(channelName)
 	return {type: CHANNEL_UNSUBSCRIBE, payload: channelName}
 }
 
@@ -127,7 +119,6 @@ type DisableNotificationsAction = {|
 |}
 function disable(): DisableNotificationsAction {
 	OneSignal.setSubscription(false)
-	trackNotificationsDisable()
 	return {type: DISABLE}
 }
 
@@ -136,7 +127,6 @@ type EnableNotificationsAction = {|
 |}
 function enable(): EnableNotificationsAction {
 	OneSignal.setSubscription(true)
-	trackNotificationsEnable()
 	return {type: ENABLE}
 }
 

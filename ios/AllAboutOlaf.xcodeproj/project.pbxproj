@@ -25,7 +25,6 @@
 		00D33BE21DDA58A8001E830E /* AllAboutOlafUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33BE11DDA58A8001E830E /* AllAboutOlafUITests.swift */; };
 		00D33C031DDA598B001E830E /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00D33C011DDA5958001E830E /* SnapshotHelper.swift */; };
 		00E9BA601FBBB58600E0DFCD /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0027B0A71D5C82AA00C2B4FD /* libRNVectorIcons.a */; };
-		00E9BA621FBBB5B200E0DFCD /* libRCTGoogleAnalyticsBridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 000296051E270B8A000909F2 /* libRCTGoogleAnalyticsBridge.a */; };
 		00E9BA641FBBB5C800E0DFCD /* libRNKeychain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00158AA31E4FAE9E00F78C7B /* libRNKeychain.a */; };
 		00E9BA651FBBB5CF00E0DFCD /* libSafariViewManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 009845C11E5DEE6800194E4A /* libSafariViewManager.a */; };
 		00E9BA661FBBB5D900E0DFCD /* libDBCustomTabs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 009845B91E5DEE6800194E4A /* libDBCustomTabs.a */; };
@@ -60,13 +59,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		000296041E270B8A000909F2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 150D47C893AB4ACBA45D7AF8 /* RCTGoogleAnalyticsBridge.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A79185C61C30694E001236A6;
-			remoteInfo = RCTGoogleAnalyticsBridge;
-		};
 		00158AA21E4FAE9E00F78C7B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2560C43708D64866AA01FCC8 /* RNKeychain.xcodeproj */;
@@ -529,7 +521,6 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = AllAboutOlaf/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = AllAboutOlaf/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
-		150D47C893AB4ACBA45D7AF8 /* RCTGoogleAnalyticsBridge.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTGoogleAnalyticsBridge.xcodeproj; path = "../node_modules/react-native-google-analytics-bridge/ios/RCTGoogleAnalyticsBridge/RCTGoogleAnalyticsBridge.xcodeproj"; sourceTree = "<group>"; };
 		1F5AF589D9354B23BF7E7177 /* RCTOneSignal.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTOneSignal.xcodeproj; path = "../node_modules/react-native-onesignal/ios/RCTOneSignal.xcodeproj"; sourceTree = "<group>"; };
 		23880A5682F24328A190720F /* RNCalendarEvents.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCalendarEvents.xcodeproj; path = "../node_modules/react-native-calendar-events/RNCalendarEvents.xcodeproj"; sourceTree = "<group>"; };
 		2560C43708D64866AA01FCC8 /* RNKeychain.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNKeychain.xcodeproj; path = "../node_modules/react-native-keychain/RNKeychain.xcodeproj"; sourceTree = "<group>"; };
@@ -595,7 +586,6 @@
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				00E9BA601FBBB58600E0DFCD /* libRNVectorIcons.a in Frameworks */,
-				00E9BA621FBBB5B200E0DFCD /* libRCTGoogleAnalyticsBridge.a in Frameworks */,
 				00E9BA641FBBB5C800E0DFCD /* libRNKeychain.a in Frameworks */,
 				00E9BA651FBBB5CF00E0DFCD /* libSafariViewManager.a in Frameworks */,
 				00E9BA661FBBB5D900E0DFCD /* libDBCustomTabs.a in Frameworks */,
@@ -625,14 +615,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		000295FD1E270B8A000909F2 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				000296051E270B8A000909F2 /* libRCTGoogleAnalyticsBridge.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		00158A7F1E4FAE9E00F78C7B /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -946,7 +928,6 @@
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
 				3A0CEA711DEA20340036E739 /* RCTAnimation.xcodeproj */,
 				00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */,
-				150D47C893AB4ACBA45D7AF8 /* RCTGoogleAnalyticsBridge.xcodeproj */,
 				00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */,
 				78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */,
 				953D3EBCD86D447894D1DC0D /* RCTMGL.xcodeproj */,
@@ -1161,10 +1142,6 @@
 					ProjectRef = 00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */;
 				},
 				{
-					ProductGroup = 000295FD1E270B8A000909F2 /* Products */;
-					ProjectRef = 150D47C893AB4ACBA45D7AF8 /* RCTGoogleAnalyticsBridge.xcodeproj */;
-				},
-				{
 					ProductGroup = 00C302BC1ABCB91800DB3ED1 /* Products */;
 					ProjectRef = 00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */;
 				},
@@ -1267,13 +1244,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		000296051E270B8A000909F2 /* libRCTGoogleAnalyticsBridge.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRCTGoogleAnalyticsBridge.a;
-			remoteRef = 000296041E270B8A000909F2 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		00158AA31E4FAE9E00F78C7B /* libRNKeychain.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
