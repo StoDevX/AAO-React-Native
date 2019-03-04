@@ -44,6 +44,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Addressed color banding in SIS/Balances on Android (#3462)
 - [wip] Fix OleCard login stuff (#3503)
 - Adjusted how we present the BonApp ultimatum on first visiting the Balances tab (#3515)
+- Changed the `data` prop on fancy-menu to be `extraData` (#3528)
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
@@ -67,6 +68,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)
 - Removed Google Analytics tracking (#3517)
+- Removed the `data` prop on other-transport modes and important contacts (#3528)
 
 ## [2.6.3] - 2018-09-17
 ### Fixed

@@ -204,7 +204,7 @@ export class FancyMenu extends React.Component<Props, State> {
 				ItemSeparatorComponent={Separator}
 				ListEmptyComponent={messageView}
 				ListHeaderComponent={header}
-				data={filters}
+				extraData={filters}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.props.onRefresh}
 				refreshing={this.props.refreshing}
