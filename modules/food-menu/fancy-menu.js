@@ -27,6 +27,7 @@ import words from 'lodash/words'
 import uniq from 'lodash/uniq'
 import map from 'lodash/map'
 import fromPairs from 'lodash/fromPairs'
+import deburr from 'lodash/deburr'
 import {SearchBar} from '@frogpond/searchbar'
 import {white} from '@frogpond/colors'
 
@@ -171,7 +172,10 @@ export class FancyMenu extends React.Component<Props, State> {
 	keyExtractor = (item: MenuItem, index: number) => index.toString()
 
 	itemToArray = (item: MenuItemType) =>
-		uniq([...words(item.label.toLowerCase())])
+		uniq([
+			...words(deburr(item.label.toLowerCase())),
+			...words(deburr(item.description.toLowerCase())),
+		])
 
 	_performSearch = (text: string) => {
 		this.setState(() => ({query: text}))
