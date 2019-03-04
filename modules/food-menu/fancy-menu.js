@@ -223,13 +223,15 @@ export class FancyMenu extends React.Component<Props, State> {
 
 		let header = (
 			<>
-				<FilterToolbar
-					date={now}
-					filters={filters}
-					isOpen={isOpen}
-					onPopoverDismiss={this.updateFilter}
-					title={mealName}
-				/>
+				{!query ? (
+					<FilterToolbar
+						date={now}
+						filters={filters}
+						isOpen={isOpen}
+						onPopoverDismiss={this.updateFilter}
+						title={mealName}
+					/>
+				) : null}
 				<SearchBar
 					onChange={this.performSearch}
 					textFieldBackgroundColor={white}
