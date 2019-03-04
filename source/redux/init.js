@@ -7,7 +7,7 @@ import {NetInfo} from 'react-native'
 import {getEnabledTools} from './parts/help'
 import {loadHomescreenOrder, loadDisabledViews} from './parts/homescreen'
 import {loadFavoriteBuildings} from './parts/buildings'
-import {loadFeedbackStatus, loadAcknowledgement} from './parts/settings'
+import {loadAcknowledgement} from './parts/settings'
 import {loadRecentSearches, loadRecentFilters} from './parts/courses'
 import {hydrate} from './parts/notifications'
 
@@ -19,7 +19,6 @@ export async function init(store: {dispatch: any => any}) {
 	await Promise.all([
 		store.dispatch(loadHomescreenOrder()),
 		store.dispatch(loadDisabledViews()),
-		store.dispatch(loadFeedbackStatus()),
 		store.dispatch(loadAcknowledgement()),
 		store.dispatch(loadFavoriteBuildings()),
 		store.dispatch(loadRecentSearches()),

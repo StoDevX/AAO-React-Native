@@ -13,7 +13,6 @@ import {
 	Detail,
 	Title,
 } from '@frogpond/lists'
-import {trackOrgOpen} from '@frogpond/analytics'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
@@ -156,7 +155,6 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 	)
 
 	onPressRow = (data: StudentOrgType) => {
-		trackOrgOpen(data.name)
 		this.props.navigation.navigate('StudentOrgsDetailView', {org: data})
 	}
 

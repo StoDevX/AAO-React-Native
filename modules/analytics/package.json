@@ -9,8 +9,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "bugsnag-react-native": "^2.10.2",
-    "react-native-google-analytics-bridge": "^5.7.1"
+    "bugsnag-react-native": "^2.10.2"
   },
   "dependencies": {
     "@frogpond/constants": "^1.0.0",

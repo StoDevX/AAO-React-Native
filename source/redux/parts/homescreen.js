@@ -2,20 +2,8 @@
 
 import {allViewNames as defaultViewOrder} from '../../views/views'
 import difference from 'lodash/difference'
-import {
-	trackHomescreenOrder,
-	trackHomescreenDisabledItem,
-	trackHomescreenReenabledItem,
-} from '../../lib/analytics'
 import * as storage from '../../lib/storage'
 import {type ReduxState} from '../index'
-import isEqual from 'lodash/isEqual'
-import debounce from 'lodash/debounce'
-
-// see https://css-tricks.com/debouncing-throttling-explained-examples/
-// we only invoke trackHomescreenOrder once every three seconds, to avoid
-// reporting every permutation of someone's home screen while they're editing it
-const debouncedTrackHomescreenOrder = debounce(trackHomescreenOrder, 3000)
 
 type Dispatch<A: Action> = (action: A | Promise<A> | ThunkAction<A>) => any
 type GetState = () => ReduxState
@@ -78,7 +66,6 @@ type SaveViewOrderAction = {
 export function saveHomescreenOrder(
 	order: Array<ViewName>,
 ): SaveViewOrderAction {
-	debouncedTrackHomescreenOrder(order, isEqual(order, defaultViewOrder))
 	storage.setHomescreenOrder(order)
 	return {type: SAVE_HOMESCREEN_ORDER, payload: order}
 }
@@ -116,11 +103,6 @@ export function toggleViewDisabled(
 			? currentDisabledViews.filter(name => name !== viewName)
 			: [...currentDisabledViews, viewName]
 
-		if (newDisabledViews.includes(viewName)) {
-			trackHomescreenDisabledItem(viewName)
-		} else {
-			trackHomescreenReenabledItem(viewName)
-		}
 		storage.setDisabledViews(newDisabledViews)
 
 		dispatch({type: TOGGLE_VIEW_DISABLED, payload: newDisabledViews})

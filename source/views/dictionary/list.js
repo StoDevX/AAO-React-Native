@@ -13,7 +13,6 @@ import {
 } from '@frogpond/lists'
 import type {WordType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {trackDefinitionOpen} from '@frogpond/analytics'
 import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
@@ -82,7 +81,6 @@ export class DictionaryView extends React.PureComponent<Props, State> {
 	}
 
 	onPressRow = (data: WordType) => {
-		trackDefinitionOpen(data.word)
 		this.props.navigation.navigate('DictionaryDetailView', {item: data})
 	}
 

@@ -4,7 +4,6 @@ import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import * as c from '@frogpond/colors'
 import toPairs from 'lodash/toPairs'
-import {trackCalendarEventOpen} from '@frogpond/analytics'
 import type {NavigationScreenProp} from 'react-navigation'
 import type {EventType} from '@frogpond/event-type'
 import type {PoweredBy} from './types'
@@ -50,7 +49,6 @@ export class EventList extends React.Component<Props> {
 
 	onPressEvent = (event: EventType) => {
 		let detailView = this.props.detailView || 'EventDetailView'
-		trackCalendarEventOpen(`${event.title} (${event.startTime.toISOString()})`)
 		this.props.navigation.navigate(detailView, {
 			event,
 			poweredBy: this.props.poweredBy,
