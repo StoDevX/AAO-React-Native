@@ -197,7 +197,7 @@ export class FancyMenu extends React.Component<Props, State> {
 		if (query) {
 			results = filter(foodItems, item =>
 				this.itemToArray(item).some(entry =>
-					entry.startsWith(query.toLowerCase()),
+					entry.startsWith(deburr(query.toLowerCase())),
 				),
 			)
 		}
