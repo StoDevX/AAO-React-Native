@@ -223,6 +223,11 @@ export class FancyMenu extends React.Component<Props, State> {
 
 		let header = (
 			<>
+				<SearchBar
+					onChange={this.performSearch}
+					textFieldBackgroundColor={white}
+					value={query}
+				/>
 				{!query ? (
 					<FilterToolbar
 						date={now}
@@ -232,11 +237,6 @@ export class FancyMenu extends React.Component<Props, State> {
 						title={mealName}
 					/>
 				) : null}
-				<SearchBar
-					onChange={this.performSearch}
-					textFieldBackgroundColor={white}
-					value={query}
-				/>
 			</>
 		)
 
