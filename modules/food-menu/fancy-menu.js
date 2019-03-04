@@ -21,6 +21,14 @@ import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
 import {chooseMeal} from './lib/choose-meal'
 import {buildFilters} from './lib/build-filters'
+import debounce from 'lodash/debounce'
+import filter from 'lodash/filter'
+import words from 'lodash/words'
+import uniq from 'lodash/uniq'
+import map from 'lodash/map'
+import fromPairs from 'lodash/fromPairs'
+import {SearchBar} from '@frogpond/searchbar'
+import {white} from '@frogpond/colors'
 
 type ReactProps = {
 	cafeMessage?: ?string,
@@ -45,6 +53,7 @@ type Props = ReactProps & DefaultProps
 type State = {
 	filters: Array<FilterType>,
 	cachedFoodItems: ?MenuItemContainerType,
+	query: string,
 }
 
 const styles = StyleSheet.create({
@@ -67,6 +76,7 @@ export class FancyMenu extends React.Component<Props, State> {
 	state = {
 		filters: [],
 		cachedFoodItems: null,
+		query: '',
 	}
 
 	static getDerivedStateFromProps(props: Props, prevState: State) {
@@ -160,18 +170,40 @@ export class FancyMenu extends React.Component<Props, State> {
 
 	keyExtractor = (item: MenuItem, index: number) => index.toString()
 
+	itemToArray = (item: MenuItemType) =>
+		uniq([...words(item.label.toLowerCase())])
+
+	_performSearch = (text: string) => {
+		this.setState(() => ({query: text}))
+	}
+
+	// We don't need to search as-you-type; slightly delayed is more
+	// efficient and nearly as effective
+	performSearch = debounce(this._performSearch, 200)
+
 	render() {
 		let {now, meals, cafeMessage, applyFilters, foodItems} = this.props
-		let {filters} = this.state
+		let {filters, query} = this.state
 
 		let {label: mealName, stations} = chooseMeal(meals, filters, now)
 		let anyFiltersEnabled = filters.some(f => f.enabled)
 		let specialsFilterEnabled = this.areSpecialsFiltered(filters)
+
+		let results = foodItems
+		if (query) {
+			query = query.toLowerCase()
+			results = filter(foodItems, item =>
+				this.itemToArray(item).some(entry => entry.startsWith(query)),
+			)
+		}
+
+		results = fromPairs(map(results, item => [item.id, item]))
+
 		let groupedMenuData = this.groupMenuData({
 			stations,
 			filters,
 			applyFilters,
-			foodItems,
+			foodItems: results,
 		})
 
 		let message = 'No items to show.'
@@ -190,13 +222,20 @@ export class FancyMenu extends React.Component<Props, State> {
 		const isOpen = Object.keys(foodItems).length !== 0
 
 		let header = (
-			<FilterToolbar
-				date={now}
-				filters={filters}
-				isOpen={isOpen}
-				onPopoverDismiss={this.updateFilter}
-				title={mealName}
-			/>
+			<>
+				<FilterToolbar
+					date={now}
+					filters={filters}
+					isOpen={isOpen}
+					onPopoverDismiss={this.updateFilter}
+					title={mealName}
+				/>
+				<SearchBar
+					onChange={this.performSearch}
+					textFieldBackgroundColor={white}
+					value={query}
+				/>
+			</>
 		)
 
 		return (
