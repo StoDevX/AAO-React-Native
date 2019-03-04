@@ -49,6 +49,19 @@ commands:
     steps:
       - run: echo "ruby-2.5.3" > ~/.ruby-version
 
+  workspace-persist-node_modules:
+    description: 'Persist node_modules'
+    steps:
+      - persist_to_workspace:
+          root: ./node_modules
+          paths: [./*]
+
+  workspace-attach-node_modules:
+    description: 'Attach to node_modules'
+    steps:
+      - attach_workspace:
+          at: ./node_modules
+
   yarn-cache:
     description: 'Save the Yarn cache'
     steps:
@@ -61,14 +74,6 @@ commands:
     steps:
       - restore_cache:
           key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
-
-x-config:
-  x-workspace:
-    - &persist-workspace-node_modules
-      root: ./node_modules
-      paths: [./*]
-    - &attach-workspace-node_modules
-      at: ./node_modules
 
 workflows:
   version: 2
@@ -149,7 +154,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn --version
       - yarn-cache
-      - persist_to_workspace: *persist-workspace-node_modules
+      - workspace-persist-node_modules
 
   cache-bundler-linux:
     executor: ruby
@@ -170,7 +175,7 @@ jobs:
       task: JS-general
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - danger
 
   flow:
@@ -179,7 +184,7 @@ jobs:
       task: JS-flow
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/
       - run: yarn run bundle-data
       - run: yarn run --silent flow check --quiet | tee logs/flow
@@ -192,7 +197,7 @@ jobs:
       JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/ test-results/jest/
       - run: yarn run bundle-data
       - run: yarn run --silent test --coverage | tee logs/jest
@@ -216,7 +221,7 @@ jobs:
       task: JS-prettier
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/
       - run: yarn run pretty
       - run:
@@ -235,7 +240,7 @@ jobs:
       task: JS-yarn-dedupe
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/
       - run: yarn run d
       - run:
@@ -254,7 +259,7 @@ jobs:
       task: JS-lint
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/ test-results/eslint/
       - run: yarn run bundle-data
       - run: yarn run --silent lint | tee logs/eslint
@@ -269,7 +274,7 @@ jobs:
       task: JS-data
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/
       - run: yarn run --silent validate-data --quiet | tee logs/validate-data
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
@@ -310,7 +315,7 @@ jobs:
       - run: node --version
       - run: yarn --version
       - set-ruby-version
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - bundler-restore
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - gradle-restore
@@ -340,7 +345,6 @@ jobs:
       task: JS-bundle-android
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
       - run: mkdir -p logs/
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:android
@@ -418,7 +422,7 @@ jobs:
       task: JS-bundle-ios
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:ios
