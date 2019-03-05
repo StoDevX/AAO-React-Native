@@ -43,6 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated `react-native-vector-icons` to v6 and made some compatibility fixes (#3162)
 - Addressed color banding in SIS/Balances on Android (#3462)
 - [wip] Fix OleCard login stuff (#3503)
+- Updated to CircleCI 2.1 configuration syntax (#3512)
 - Adjusted how we present the BonApp ultimatum on first visiting the Balances tab (#3515)
 - Changed the `data` prop on fancy-menu to be `extraData` (#3528)
 

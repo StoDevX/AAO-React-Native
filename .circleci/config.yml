@@ -1,50 +1,79 @@
 ---
-version: 2
+version: 2.1
 
-x-config:
-  x-images:
-    - &docker-node
-      - image: 'circleci/node:10'
-    - &docker-ruby
-      - image: 'circleci/ruby:2.6.1'
-  x-caching: # caching instructions
-    - &save-cache-yarn
-      key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
-      paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
-    - &restore-cache-yarn
-      key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
-    - &save-cache-bundler
-      key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
-      paths: [./vendor/bundle]
-    - &restore-cache-bundler
-      key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
-    - &save-cache-gradle
-      key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
-      paths: [~/.gradle]
-    - &restore-cache-gradle
-      key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
-  x-workspace:
-    - &persist-workspace-node_modules
-      root: ./node_modules
-      paths: [./*]
-    - &attach-workspace-node_modules
-      at: ./node_modules
-  x-commands: # command shorthands
-    - &set-ruby-version
-      name: Set Ruby Version
-      command: echo "ruby-2.5.3" > ~/.ruby-version
-    - &run-danger
-      command: |
-        if ! [[ $CIRCLE_PR_NUMBER ]]; then
-          yarn run danger --id $task
-        fi
-      when: always
-      environment:
-        DANGER_DISABLE_TRANSPILATION: 'true'
-    - &embed-env-vars
-      name: Embed environment variables into the app
-      command: |
-        touch .env.js
+executors:
+  node:
+    docker: [{image: 'circleci/node:10'}]
+
+  ruby:
+    docker: [{image: 'circleci/ruby:2.6.1'}]
+
+commands:
+  bundler-cache:
+    description: 'Save the Bundler cache'
+    steps:
+      - save_cache:
+          key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+          paths: [./vendor/bundle]
+
+  bundler-restore:
+    description: 'Restore the Bundler cache'
+    steps:
+      - restore_cache:
+          key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+
+  danger:
+    description: 'Run Danger'
+    steps:
+      - run:
+          command: if ! [[ $CIRCLE_PR_NUMBER ]]; then yarn run danger --id $task; fi
+          when: always
+          environment:
+            DANGER_DISABLE_TRANSPILATION: 'true'
+
+  gradle-cache:
+    description: 'Save the Gradle cache'
+    steps:
+      - save_cache:
+          key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+          paths: [~/.gradle]
+
+  gradle-restore:
+    description: 'Restore the Gradle cache'
+    steps:
+      - restore_cache:
+          key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+
+  set-ruby-version:
+    description: 'Set the Ruby Version'
+    steps:
+      - run: echo "ruby-2.5.3" > ~/.ruby-version
+
+  workspace-persist-node_modules:
+    description: 'Persist node_modules'
+    steps:
+      - persist_to_workspace:
+          root: ./node_modules
+          paths: [./*]
+
+  workspace-attach-node_modules:
+    description: 'Attach to node_modules'
+    steps:
+      - attach_workspace:
+          at: ./node_modules
+
+  yarn-cache:
+    description: 'Save the Yarn cache'
+    steps:
+      - save_cache:
+          key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+          paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
+
+  yarn-restore:
+    description: 'Restore the Yarn cache'
+    steps:
+      - restore_cache:
+          key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
 
 workflows:
   version: 2
@@ -118,61 +147,61 @@ workflows:
 
 jobs:
   cache-yarn-linux:
-    docker: *docker-node
+    executor: node
     steps:
       - checkout
-      - restore_cache: *restore-cache-yarn
+      - yarn-restore
       - run: yarn install --frozen-lockfile
       - run: yarn --version
-      - save_cache: *save-cache-yarn
-      - persist_to_workspace: *persist-workspace-node_modules
+      - yarn-cache
+      - workspace-persist-node_modules
 
   cache-bundler-linux:
-    docker: *docker-ruby
+    executor: ruby
     steps:
       - checkout
-      - run: *set-ruby-version
-      - restore_cache: *restore-cache-bundler
+      - set-ruby-version
+      - bundler-restore
       - run: gem --version
       - run: ruby --version
       - run: gem install bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
       - run: bundle --version
-      - save_cache: *save-cache-bundler
+      - bundler-cache
 
   danger:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-general
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
-      - run: *run-danger
+      - workspace-attach-node_modules
+      - danger
 
   flow:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-flow
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/
       - run: yarn run bundle-data
       - run: yarn run --silent flow check --quiet | tee logs/flow
-      - run: *run-danger
+      - danger
 
   jest:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-jest
       JEST_JUNIT_OUTPUT: ./test-results/jest/junit.xml
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/ test-results/jest/
       - run: yarn run bundle-data
       - run: yarn run --silent test --coverage | tee logs/jest
-      - run: *run-danger
+      - danger
       - store_test_results:
           path: ./test-results
       - run: yarn global add coveralls
@@ -187,12 +216,12 @@ jobs:
             fi
 
   prettier:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-prettier
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/
       - run: yarn run pretty
       - run:
@@ -203,15 +232,15 @@ jobs:
               git diff | tee logs/prettier
               exit 1
             fi
-      - run: *run-danger
+      - danger
 
   yarn-dedupe:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-yarn-dedupe
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/
       - run: yarn run d
       - run:
@@ -222,30 +251,30 @@ jobs:
               git diff | tee logs/yarn-dedupe
               exit 1
             fi
-      - run: *run-danger
+      - danger
 
   eslint:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-lint
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/ test-results/eslint/
       - run: yarn run bundle-data
       - run: yarn run --silent lint | tee logs/eslint
       - run: yarn run --silent lint --format junit > test-results/eslint/junit.xml
-      - run: *run-danger
+      - danger
       - store_test_results:
           path: ./test-results
 
   data:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-data
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/
       - run: yarn run --silent validate-data --quiet | tee logs/validate-data
       - run: yarn run --silent validate-bus-data | tee logs/validate-bus-data
@@ -253,7 +282,7 @@ jobs:
       - run: yarn run compress-data
       - store_artifacts:
           path: ./docs/
-      - run: *run-danger
+      - danger
 
   android: &android
     # we pass the `command:` key to solve a weird issue (see GitHub PRs 2170 and 2173).
@@ -285,17 +314,16 @@ jobs:
           command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
       - run: node --version
       - run: yarn --version
-      - run: *set-ruby-version
-      - attach_workspace: *attach-workspace-node_modules
-      - restore_cache: *restore-cache-bundler
+      - set-ruby-version
+      - workspace-attach-node_modules
+      - bundler-restore
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - restore_cache: *restore-cache-gradle
+      - gradle-restore
       - run:
           name: Download Android dependencies
           command: cd android && ./gradlew androidDependencies --console=plain
           environment: {TERM: xterm-256color}
-      - save_cache: *save-cache-gradle
-      - run: *embed-env-vars
+      - gradle-cache
       - run:
           name: Run Fastlane
           command: bundle exec fastlane android ci-run | tee ./logs/build
@@ -303,7 +331,7 @@ jobs:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
       - store_artifacts:
           path: ./android/app/build/outputs/apk/release/
-      - run: *run-danger
+      - danger
 
   android-nightly:
     <<: *android
@@ -312,14 +340,13 @@ jobs:
       IS_NIGHTLY: '1'
 
   android-bundle:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-bundle-android
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/
-      - run: *embed-env-vars
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:android
       - store_artifacts:
@@ -328,7 +355,7 @@ jobs:
       - store_artifacts:
           path: ./android/app/src/main/assets/index.android.bundle.map
           destination: android.jsbundle.map
-      - run: *run-danger
+      - danger
 
   ios: &ios
     macos: {xcode: '10.1.0'}
@@ -360,17 +387,16 @@ jobs:
           name: Skip build if possible
           command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
       - run: yarn --version
-      - run: *set-ruby-version
-      - restore_cache: *restore-cache-yarn
+      - set-ruby-version
+      - yarn-restore
       - run: yarn install --frozen-lockfile
-      - save_cache: *save-cache-yarn
-      - restore_cache: *restore-cache-bundler
+      - yarn-cache
+      - bundler-restore
       - run: gem install bundler
       - run: bundle check || bundle install --frozen --path ./vendor/bundle
-      - save_cache: *save-cache-bundler
+      - bundler-cache
       - run: brew tap wix/brew
       - run: brew install applesimutils
-      - run: *embed-env-vars
       - run:
           name: Run Fastlane
           command: bundle exec fastlane ios ci-run | tee ./logs/build
@@ -383,7 +409,7 @@ jobs:
       - run:
           name: Analyze Fastlane Logfile
           command: python2 ./scripts/analyze-gym.py -s 20 < ./logs/build | tee ./logs/analysis || true
-      - run: *run-danger
+      - danger
 
   ios-nightly:
     <<: *ios
@@ -392,14 +418,13 @@ jobs:
       IS_NIGHTLY: '1'
 
   ios-bundle:
-    docker: *docker-node
+    executor: node
     environment:
       task: JS-bundle-ios
     steps:
       - checkout
-      - attach_workspace: *attach-workspace-node_modules
+      - workspace-attach-node_modules
       - run: mkdir -p logs/
-      - run: *embed-env-vars
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:ios
       - store_artifacts:
@@ -408,4 +433,4 @@ jobs:
       - store_artifacts:
           path: ./ios/AllAboutOlaf/main.jsbundle.map
           destination: ios.jsbundle.map
-      - run: *run-danger
+      - danger
