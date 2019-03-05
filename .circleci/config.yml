@@ -345,6 +345,7 @@ jobs:
       task: JS-bundle-android
     steps:
       - checkout
+      - workspace-attach-node_modules
       - run: mkdir -p logs/
       - run: yarn run bundle-data
       - run: yarn run --silent bundle:android
