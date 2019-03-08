@@ -176,7 +176,7 @@
     "prop-types": "15.7.2",
     "react-test-renderer": "16.6.3",
     "string-natural-compare": "2.0.3",
-    "strip-ansi": "5.0.0",
+    "strip-ansi": "5.1.0",
     "yarn-deduplicate": "1.1.1"
   },
   "optionalDependencies": {
