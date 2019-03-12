@@ -5929,17 +5929,22 @@ p-locate@^3.0.0:
   dependencies:
     p-limit "^2.0.0"
 
-p-map@^1.1.1, p-map@^1.2.0:
+p-map@^1.1.1:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/p-map/-/p-map-1.2.0.tgz#e4e94f311eabbc8633a1e79908165fca26241b6b"
   integrity sha512-r6zKACMNhjPJMTl8KcFH4li//gkrXWfbD6feV8l6doRHlzljFWGJ2AP6iKaCJXyZmAUMOPtvbW7EXkbWO/pLEA==
 
-p-props@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/p-props/-/p-props-1.2.0.tgz#d9cbdd32ae20b6234a63a1d20c41f271c33e1669"
-  integrity sha512-OySQ6ZtqN/DjsQ0Vj1U3E7Q4hG0kz8hJvTnQtxSJGtZM13ECO3gOaAiUnHU4bQyvppCnUPoase1g1SysWaQJ2w==
+p-map@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/p-map/-/p-map-2.0.0.tgz#be18c5a5adeb8e156460651421aceca56c213a50"
+  integrity sha512-GO107XdrSUmtHxVoi60qc9tUl/KkNKm+X2CF4P9amalpGxv5YqVPJNfSb0wcA+syCopkZvYYIzW8OVTQW59x/w==
+
+p-props@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/p-props/-/p-props-2.0.0.tgz#f402047d423b3529eee4f97cb421ba7defd975e6"
+  integrity sha512-byniwkJC1r0aCXn6LADRjj8o4qSMzOz2c3fFh0KwzRxTAxcGWdX9pkiPz53E75jszcVNRCqcK9qAC2mueWC1ag==
   dependencies:
-    p-map "^1.2.0"
+    p-map "^2.0.0"
 
 p-reduce@^1.0.0:
   version "1.0.0"
