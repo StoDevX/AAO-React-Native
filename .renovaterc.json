@@ -8,7 +8,7 @@
       "after 5pm on every weekday"
     ]
   },
-  "prConcurrentLimit": 5,
+  "prConcurrentLimit": 10,
   "timezone": "America/Chicago",
   "ignoreDeps": [
     "flow-bin",
