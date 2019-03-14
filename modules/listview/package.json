@@ -13,7 +13,7 @@
     "react-native": "^0.57.0"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "^1.0.3",
+    "@callstack/react-theme-provider": "^2.0.0",
     "@hawkrives/react-native-alphabetlistview": "^1.0.0",
     "@frogpond/app-theme": "^1.0.0",
     "@frogpond/colors": "^1.0.0",
