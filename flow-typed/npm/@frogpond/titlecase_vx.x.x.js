@@ -4,5 +4,5 @@
 declare module '@frogpond/titlecase' {
   declare export function toLaxTitleCase(str: string): string;
   declare export function toTitleCase(str: string): string;
-  declare export default toTitleCase;
+  declare export default typeof toTitleCase;
 }
