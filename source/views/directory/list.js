@@ -13,7 +13,6 @@ import {
 	Detail,
 	Title,
 } from '@frogpond/lists'
-import qs from 'querystring'
 import size from 'lodash/size'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
@@ -73,6 +72,8 @@ export class DirectoryView extends React.Component {
 
 	props: TopLevelViewPropsType
 
+	searchBar: any
+
 	state: {
 		results: {[key: string]: DirectoryType[]},
 		refreshing: boolean,
@@ -98,7 +99,7 @@ export class DirectoryView extends React.Component {
 
 			const results = responseData.results
 
-			const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/i
+			const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/iu
 			const withSortableNames = results.map(item => {
 				const sortableName = item.lastName.replace(sortableRegex, '')
 
@@ -201,8 +202,6 @@ export class DirectoryView extends React.Component {
 
 	// we need to make the search run slightly behind the UI
 	performSearch = debounce(this._performSearch, 1000)
-
-	searchBar: any
 
 	render() {
 		const emptyNotice = !size(this.state.results) ? (

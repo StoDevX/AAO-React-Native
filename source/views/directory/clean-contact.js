@@ -14,7 +14,7 @@ export default function cleanContact(contact: DirectoryType): DirectoryType {
 	const email = contact.email
 
 	let profile = contact.profileUrl
-	if (profile && !/^https?:\/\//.test(profile)) {
+	if (profile && !/^https?:\/\//u.test(profile)) {
 		profile = `http://${profile}`
 	}
 
