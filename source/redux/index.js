@@ -1,6 +1,6 @@
 // @flow
 
-import {createStore, applyMiddleware, combineReducers} from 'redux'
+import {createStore, applyMiddleware, combineReducers, type Store} from 'redux'
 import {createLogger} from 'redux-logger'
 import reduxPromise from 'redux-promise'
 import reduxThunk from 'redux-thunk'
@@ -30,7 +30,7 @@ export type ReduxState = {
 	login?: LoginState,
 }
 
-export const makeStore = () => {
+export function makeStore(): Store<*, *, *> {
 	const aao = combineReducers({
 		courses,
 		homescreen,
