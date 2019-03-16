@@ -10,22 +10,22 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {white} from '@frogpond/colors'
-import {type AppTheme} from '@frogpond/app-theme'
-import {withTheme} from '@callstack/react-theme-provider'
+import {useTheme} from '@frogpond/theme'
 
 type Props = {
 	filter: FilterType,
 	label: string,
 	onRemove: (filter: FilterType) => any,
 	style?: any,
-	theme: AppTheme,
 }
 
-function ActiveFilterButton({filter, label, onRemove, style, theme}: Props) {
-	const iconName = Platform.select({
-		ios: 'ios-close-circle',
-		android: 'md-close-circle',
-	})
+const iconName = Platform.select({
+	ios: 'ios-close-circle',
+	android: 'md-close-circle',
+})
+
+export function ActiveFilterButton({filter, label, onRemove, style}: Props) {
+	let theme = useTheme()
 
 	const foreground = {color: theme.buttonForeground}
 	const background = {backgroundColor: theme.buttonBackground}
@@ -41,12 +41,6 @@ function ActiveFilterButton({filter, label, onRemove, style, theme}: Props) {
 		</TouchableWithoutFeedback>
 	)
 }
-
-export const RawActiveFilterButton = ActiveFilterButton
-
-const ThemedActiveFilterButton = withTheme(ActiveFilterButton)
-
-export {ThemedActiveFilterButton as ActiveFilterButton}
 
 const styles = StyleSheet.create({
 	badge: {
