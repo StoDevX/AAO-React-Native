@@ -1,4 +1,7 @@
-apply plugin: "com.android.application"
+// this includes the onesignal gradle plugin
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+// this plugin adapts the gradle build for android apps
+apply plugin: 'com.android.application'
 
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets

@@ -12,10 +12,15 @@ buildscript {
     repositories {
         jcenter()
         google()
+        // this maven repo is needed by the onesignal gradle plugin
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.2'
+
+        // this plugin warns / fixes google-play depdendency issues caused by onsignal
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:0.12.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
