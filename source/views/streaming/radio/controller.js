@@ -11,7 +11,9 @@ import {StreamPlayer} from './player'
 import type {PlayState, HtmlAudioError, PlayerTheme} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
-import {Viewport} from '@frogpond/viewport'
+import {useViewport} from '@frogpond/viewport'
+
+const useState = React.useState
 
 type Props = TopLevelViewPropsType & {
 	colors: PlayerTheme,
@@ -28,200 +30,132 @@ type Props = TopLevelViewPropsType & {
 	},
 }
 
-type State = {
-	playState: PlayState,
-	streamError: ?HtmlAudioError,
-	uplinkError: ?string,
-}
+export function RadioControllerView(props: Props) {
+	const {source, title, stationName, image, colors} = props
 
-export class RadioControllerView extends React.Component<Props, State> {
-	state = {
-		playState: 'paused',
-		streamError: null,
-		uplinkError: null,
+	let [playState, setPlayState]: [PlayState, *] = useState('paused')
+	let [streamError, setStreamError]: [?HtmlAudioError, *] = useState(null)
+	let [uplinkError, _setUplinkError]: [?string, *] = useState(null)
+	let {width, height} = useViewport()
+
+	let play = () => setPlayState('checking')
+	let pause = () => setPlayState('paused')
+	let handleStreamPlay = () => setPlayState('playing')
+	let handleStreamPause = () => setPlayState('paused')
+	let handleStreamEnd = () => setPlayState('paused')
+
+	let handleStreamError = (e: {code: number, message: string}) => {
+		setStreamError(e)
+		setPlayState('paused')
 	}
 
-	play = () => {
-		this.setState(() => ({playState: 'checking'}))
+	let openSchedule = () => {
+		props.navigation.navigate(props.scheduleViewName)
 	}
 
-	pause = () => {
-		this.setState(() => ({playState: 'paused'}))
-	}
+	let callStation = () => callPhone(props.stationNumber)
 
-	handleStreamPlay = () => {
-		this.setState(() => ({playState: 'playing'}))
-	}
+	let openStreamWebsite = () => openUrl(props.playerUrl)
 
-	handleStreamPause = () => {
-		this.setState(() => ({playState: 'paused'}))
-	}
+	let playButton = () => {
+		let Button = ({icon, onPress, text}) => (
+			<ActionButton colors={colors} icon={icon} onPress={onPress} text={text} />
+		)
 
-	handleStreamEnd = () => {
-		this.setState(() => ({playState: 'paused'}))
-	}
-
-	handleStreamError = (e: {code: number, message: string}) => {
-		this.setState(() => ({streamError: e, playState: 'paused'}))
-	}
-
-	openSchedule = () => {
-		this.props.navigation.navigate(this.props.scheduleViewName)
-	}
-
-	callStation = () => {
-		callPhone(this.props.stationNumber)
-	}
-
-	openStreamWebsite = () => {
-		openUrl(this.props.playerUrl)
-	}
-
-	renderPlayButton = (state: PlayState) => {
 		if (Platform.OS === 'android') {
 			return (
-				<ActionButton
-					colors={this.props.colors}
-					icon="ios-planet"
-					onPress={this.openStreamWebsite}
-					text="Open"
-				/>
+				<Button icon="ios-planet" onPress={openStreamWebsite} text="Open" />
 			)
 		}
 
-		switch (state) {
+		switch (playState) {
 			case 'paused':
-				return (
-					<ActionButton
-						colors={this.props.colors}
-						icon="ios-play"
-						onPress={this.play}
-						text="Listen"
-					/>
-				)
+				return <Button icon="ios-play" onPress={play} text="Listen" />
 
 			case 'checking':
-				return (
-					<ActionButton
-						colors={this.props.colors}
-						icon="ios-more"
-						onPress={this.pause}
-						text="Starting"
-					/>
-				)
+				return <Button icon="ios-more" onPress={pause} text="Starting" />
 
 			case 'playing':
-				return (
-					<ActionButton
-						colors={this.props.colors}
-						icon="ios-pause"
-						onPress={this.pause}
-						text="Pause"
-					/>
-				)
+				return <Button icon="ios-pause" onPress={pause} text="Pause" />
 
 			default:
-				return (
-					<ActionButton
-						colors={this.props.colors}
-						icon="ios-bug"
-						onPress={noop}
-						text="Error"
-					/>
-				)
+				return <Button icon="ios-bug" onPress={noop} text="Error" />
 		}
 	}
 
-	render() {
-		const {source, title, stationName, image, colors} = this.props
-		const {uplinkError, streamError, playState} = this.state
+	const error = uplinkError ? (
+		<Text style={styles.status}>{uplinkError}</Text>
+	) : streamError ? (
+		<Text style={styles.status}>
+			Error Code {streamError.code}: {streamError.message}
+		</Text>
+	) : null
 
-		const error = uplinkError ? (
-			<Text style={styles.status}>{uplinkError}</Text>
-		) : streamError ? (
-			<Text style={styles.status}>
-				Error Code {streamError.code}: {streamError.message}
+	let textColor = {color: colors.textColor}
+	const titleBlock = (
+		<View style={styles.titleWrapper}>
+			<Text selectable={true} style={[styles.heading, textColor]}>
+				{title}
 			</Text>
+			<Text selectable={true} style={[styles.subHeading, textColor]}>
+				{stationName}
+			</Text>
+
+			{error}
+		</View>
+	)
+
+	const controlsBlock = (
+		<Row>
+			{playButton}
+			<View style={styles.spacer} />
+			<CallButton colors={props.colors} onPress={callStation} />
+			<View style={styles.spacer} />
+			<ShowCalendarButton colors={props.colors} onPress={openSchedule} />
+		</Row>
+	)
+
+	const playerBlock =
+		Platform.OS !== 'android' ? (
+			<StreamPlayer
+				embeddedPlayerUrl={source.embeddedPlayerUrl}
+				onEnded={handleStreamEnd}
+				// onWaiting={handleStreamWait}
+				onError={handleStreamError}
+				// onStalled={handleStreamStall}
+				onPause={handleStreamPause}
+				onPlay={handleStreamPlay}
+				playState={playState}
+				streamSourceUrl={source.streamSourceUrl}
+				style={styles.webview}
+				useEmbeddedPlayer={source.useEmbeddedPlayer}
+			/>
 		) : null
 
-		let textColor = {color: colors.textColor}
-		const titleBlock = (
-			<View style={styles.titleWrapper}>
-				<Text selectable={true} style={[styles.heading, textColor]}>
-					{title}
-				</Text>
-				<Text selectable={true} style={[styles.subHeading, textColor]}>
-					{stationName}
-				</Text>
+	const sideways = width > height
 
-				{error}
+	const logoWidth = Math.min(width / 1.5, height / 1.75)
+	const logoSize = {width: logoWidth, height: logoWidth}
+
+	const root = [styles.root, sideways && landscape.root]
+	const logoBorderColor = {borderColor: colors.imageBorderColor}
+	const logoBg = {backgroundColor: colors.imageBackgroundColor}
+	const logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
+	const logoWrapper = [styles.logoWrapper, sideways && landscape.logoWrapper]
+
+	return (
+		<ScrollView contentContainerStyle={root}>
+			<View style={logoWrapper}>
+				<Image resizeMode="contain" source={image} style={logo} />
 			</View>
-		)
 
-		const controlsBlock = (
-			<Row>
-				{this.renderPlayButton(playState)}
-				<View style={styles.spacer} />
-				<CallButton colors={this.props.colors} onPress={this.callStation} />
-				<View style={styles.spacer} />
-				<ShowCalendarButton
-					colors={this.props.colors}
-					onPress={this.openSchedule}
-				/>
-			</Row>
-		)
-
-		const playerBlock =
-			Platform.OS !== 'android' ? (
-				<StreamPlayer
-					embeddedPlayerUrl={source.embeddedPlayerUrl}
-					onEnded={this.handleStreamEnd}
-					// onWaiting={this.handleStreamWait}
-					onError={this.handleStreamError}
-					// onStalled={this.handleStreamStall}
-					onPause={this.handleStreamPause}
-					onPlay={this.handleStreamPlay}
-					playState={playState}
-					streamSourceUrl={source.streamSourceUrl}
-					style={styles.webview}
-					useEmbeddedPlayer={source.useEmbeddedPlayer}
-				/>
-			) : null
-
-		return (
-			<Viewport
-				render={({width, height}) => {
-					const sideways = width > height
-
-					const logoWidth = Math.min(width / 1.5, height / 1.75)
-					const logoSize = {width: logoWidth, height: logoWidth}
-
-					const root = [styles.root, sideways && landscape.root]
-					const logoBorderColor = {borderColor: colors.imageBorderColor}
-					const logoBg = {backgroundColor: colors.imageBackgroundColor}
-					const logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
-					const logoWrapper = [
-						styles.logoWrapper,
-						sideways && landscape.logoWrapper,
-					]
-
-					return (
-						<ScrollView contentContainerStyle={root}>
-							<View style={logoWrapper}>
-								<Image resizeMode="contain" source={image} style={logo} />
-							</View>
-
-							<View style={styles.container}>
-								{titleBlock}
-								{controlsBlock}
-								{playerBlock}
-							</View>
-						</ScrollView>
-					)
-				}}
-			/>
-		)
-	}
+			<View style={styles.container}>
+				{titleBlock}
+				{controlsBlock}
+				{playerBlock}
+			</View>
+		</ScrollView>
+	)
 }
 
 const styles = StyleSheet.create({
