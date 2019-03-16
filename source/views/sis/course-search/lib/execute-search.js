@@ -37,7 +37,7 @@ export function applySearch(query: string, course: Course): boolean {
 }
 
 export function sortAndGroupResults(results: Array<Course>) {
-	let sorted = sortBy(results, course => deptNum(course))
+	let sorted: Array<Course> = sortBy(results, course => deptNum(course))
 	let byTerm = groupBy(sorted, r => r.term)
 
 	let forSectionList = toPairs(byTerm).map(([key, value]) => ({
@@ -45,5 +45,12 @@ export function sortAndGroupResults(results: Array<Course>) {
 		data: value,
 	}))
 
-	return sortBy(forSectionList, course => course.title).reverse()
+	let sortedAgain: Array<{title: string, data: Array<Course>}> = sortBy(
+		forSectionList,
+		course => course.title,
+	)
+
+	sortedAgain.reverse()
+
+	return sorted
 }
