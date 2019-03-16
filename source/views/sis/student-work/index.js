@@ -56,7 +56,7 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 		const data: Array<JobType> = await fetch(API('/jobs')).json()
 
 		// force title-case on the job types, to prevent not-actually-duplicate headings
-		const processed = data.map(job => ({
+		const processed: Array<JobType> = data.map(job => ({
 			...job,
 			type: titleCase(job.type),
 		}))
@@ -65,15 +65,13 @@ export default class StudentWorkView extends React.PureComponent<Props, State> {
 		// _backwards_ - that is, On-Campus Work Study should come before
 		// Off-Campus Work Study, and the Work Studies should come before the
 		// Summer Employments
-		const sorted = orderBy(
-			processed,
-			[
-				j => j.type, // sort any groups with the same sort index alphabetically
-				j => j.office, // sort all jobs with the same office
-				j => j.lastModified, // sort all jobs by date-last-modified
-			],
-			['desc', 'asc'],
-		)
+		let sorters: Array<(JobType) => mixed> = [
+			j => j.type, // sort any groups with the same sort index alphabetically
+			j => j.office, // sort all jobs with the same office
+			j => j.lastModified, // sort all jobs by date-last-modified
+		]
+		let ordered: Array<'desc' | 'asc'> = ['desc', 'asc', 'desc']
+		const sorted = orderBy(processed, sorters, ordered)
 
 		const grouped = groupBy(sorted, j => j.type)
 		const mapped = toPairs(grouped).map(([title, data]) => ({
