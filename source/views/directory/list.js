@@ -14,9 +14,6 @@ import {
 	Title,
 } from '@frogpond/lists'
 import qs from 'querystring'
-// todo: add these back with the correct import paths
-// import {tracker} from '../../analytics'
-// import bugsnag from '../../bugsnag'
 import size from 'lodash/size'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
@@ -115,9 +112,6 @@ export class DirectoryView extends React.Component {
 			const grouped = groupBy(sorted, '$groupableName')
 			this.setState({results: grouped})
 		} catch (err) {
-			// todo: add these back
-			// tracker.trackException(err.message)
-			// bugsnag.notify(err)
 			this.setState({error: true})
 			console.error(err)
 		}
@@ -164,7 +158,6 @@ export class DirectoryView extends React.Component {
 	}
 
 	onPressRow = (data: DirectoryType) => {
-		// tracker.trackEvent('directory', data.name)
 		this.props.navigation.navigate('DirectoryDetailView', {contact: data})
 	}
 
