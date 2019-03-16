@@ -75,7 +75,7 @@ export class DirectoryView extends React.Component {
 	searchBar: any
 
 	state: {
-		results: {[key: string]: DirectoryType[]},
+		results: {[key: string]: Array<DirectoryType>},
 		refreshing: boolean,
 		error: boolean,
 		loaded: boolean,

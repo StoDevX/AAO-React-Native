@@ -1,24 +1,36 @@
 // @flow
 
-export type ContactPersonType = {
-	lastName: string,
-	title: string,
-	firstName: string,
-	email: string,
-}
-
-export type AdvisorType = {
-	email: string,
-	name: string,
-}
-
 export type DirectoryType = {
-	meetings: string,
-	contacts: ContactPersonType[],
-	advisors: AdvisorType[],
-	description: string,
-	category: string,
-	lastUpdated: string,
-	website: string,
+	displayName: string,
+	classYear: number,
+	suffixName: string,
+	extension: number,
+	firstName: string,
+	thumbnail: URL,
+	departments: Array<DepartmentType>,
+	email: string,
+	homePhone: null,
+	onLeave: boolean,
+	officePhone: string,
+	homeAddress: {
+		zip: string,
+		city: string,
+		country: string,
+		state: string,
+		street: Array<string>,
+	},
+	building: string,
+	lastName: string,
+	profileUrl: string,
+	username: string,
+	title: string,
+	photo: string,
+	officeHours: string,
+	room: number,
+	displayTitle: string,
+}
+
+export type DepartmentType = {
+	href: string,
 	name: string,
 }
