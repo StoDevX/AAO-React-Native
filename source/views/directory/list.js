@@ -168,7 +168,6 @@ export class DirectoryView extends React.Component {
 		return words(deburr(str.toLowerCase()))
 	}
 
-	// todo: add department name from array
 	// todo: add splits for props that exist depending on type of contact
 	//       e.g. student vs faculty vs staff vs
 	directoryToArray = (entry: DirectoryType) => {
@@ -177,12 +176,8 @@ export class DirectoryView extends React.Component {
 			...this.splitToArray(entry.lastName),
 			...this.splitToArray(entry.email),
 			...this.splitToArray(entry.title),
-			// todo: check that this is doing things correctly (currently passing in an array?)
-			//...this.splitToArray(map(entry.departments, dept => dept.name)),
 			...this.splitToArray(entry.officePhone),
 			...this.splitToArray(entry.extension),
-			//...this.splitToArray(entry.classYear),
-			...this.splitToArray(entry.building),
 		])
 	}
 
