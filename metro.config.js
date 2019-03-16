@@ -6,12 +6,12 @@
  */
 
 module.exports = {
-  transformer: {
-    getTransformOptions: () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: false,
-      },
-    }),
-  },
-};
+	transformer: {
+		getTransformOptions: () => ({
+			transform: {
+				experimentalImportSupport: false,
+				inlineRequires: false,
+			},
+		}),
+	},
+}
