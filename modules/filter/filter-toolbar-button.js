@@ -6,8 +6,7 @@ import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
 import {Touchable} from '@frogpond/touchable'
-import {type AppTheme} from '@frogpond/app-theme'
-import {withTheme} from '@callstack/react-theme-provider'
+import {useTheme} from '@frogpond/theme'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -39,95 +38,79 @@ type Props = {
 	onPopoverDismiss: (filter: FilterType) => any,
 	style?: any,
 	title: string,
-	theme: AppTheme,
 }
 
-type State = {
-	popoverVisible: boolean,
+export function FilterToolbarButton(props: Props) {
+	const {filter, isActive, style, title} = props
+	let theme = useTheme()
+	let [popoverVisible, setPopoverVisible] = React.useState(false)
+
+	let touchable: React.Ref<*> = React.useRef(null)
+
+	let openPopover = () => {
+		setPopoverVisible(false)
+	}
+
+	let onClosePopover = (filter: FilterType) => {
+		props.onPopoverDismiss(filter)
+		setPopoverVisible(false)
+	}
+
+	const icon = Platform.select({
+		ios: 'ios-arrow-down',
+		android: 'md-arrow-dropdown',
+	})
+
+	let activeButton = {
+		backgroundColor: theme.toolbarButtonBackground,
+		borderColor: theme.toolbarButtonBackground,
+	}
+
+	let inactiveText = {
+		color: theme.toolbarButtonForeground,
+	}
+
+	let activeButtonStyle = isActive ? activeButton : buttonStyles.inactiveButton
+	let activeContentStyle = isActive ? inactiveText : buttonStyles.inactiveText
+
+	let textWithIconStyle = icon ? buttonStyles.textWithIcon : null
+	let activeTextStyle = {
+		fontWeight: isActive && Platform.OS === 'android' ? 'bold' : 'normal',
+	}
+
+	if (filter.type === 'list') {
+		if (!filter.spec.options.length) {
+			return null
+		}
+	}
+
+	const buttonTextStyle = [
+		activeContentStyle,
+		textWithIconStyle,
+		activeTextStyle,
+		buttonStyles.text,
+	]
+
+	return (
+		<>
+			<Touchable
+				ref={touchable}
+				highlight={false}
+				onPress={openPopover}
+				style={[buttonStyles.button, activeButtonStyle, style]}
+			>
+				<Text style={buttonTextStyle}>{title}</Text>
+				<Icon name={icon} size={18} style={activeContentStyle} />
+			</Touchable>
+
+			{popoverVisible && (
+				<FilterPopover
+					anchor={touchable}
+					filter={filter}
+					onClosePopover={onClosePopover}
+					visible={true}
+				/>
+			)}
+		</>
+	)
 }
-
-class FilterToolbarButton extends React.PureComponent<Props, State> {
-	state = {
-		popoverVisible: false,
-	}
-
-	touchable: React.Ref<*> = React.createRef()
-
-	openPopover = () => {
-		this.setState(() => ({popoverVisible: true}))
-	}
-
-	onClosePopover = (filter: FilterType) => {
-		this.props.onPopoverDismiss(filter)
-		this.setState(() => ({popoverVisible: false}))
-	}
-
-	render() {
-		const {filter, isActive, style, title, theme} = this.props
-		const {popoverVisible} = this.state
-		const icon = Platform.select({
-			ios: 'ios-arrow-down',
-			android: 'md-arrow-dropdown',
-		})
-
-		let activeButton = {
-			backgroundColor: theme.toolbarButtonBackground,
-			borderColor: theme.toolbarButtonBackground,
-		}
-
-		let inactiveText = {
-			color: theme.toolbarButtonForeground,
-		}
-
-		let activeButtonStyle = isActive
-			? activeButton
-			: buttonStyles.inactiveButton
-		let activeContentStyle = isActive ? inactiveText : buttonStyles.inactiveText
-
-		let textWithIconStyle = icon ? buttonStyles.textWithIcon : null
-		let activeTextStyle = {
-			fontWeight: isActive && Platform.OS === 'android' ? 'bold' : 'normal',
-		}
-
-		if (filter.type === 'list') {
-			if (!filter.spec.options.length) {
-				return null
-			}
-		}
-
-		const buttonTextStyle = [
-			activeContentStyle,
-			textWithIconStyle,
-			activeTextStyle,
-			buttonStyles.text,
-		]
-
-		return (
-			<React.Fragment>
-				<Touchable
-					ref={this.touchable}
-					highlight={false}
-					onPress={this.openPopover}
-					style={[buttonStyles.button, activeButtonStyle, style]}
-				>
-					<Text style={buttonTextStyle}>{title}</Text>
-					<Icon name={icon} size={18} style={activeContentStyle} />
-				</Touchable>
-				{popoverVisible && (
-					<FilterPopover
-						anchor={this.touchable}
-						filter={filter}
-						onClosePopover={this.onClosePopover}
-						visible={true}
-					/>
-				)}
-			</React.Fragment>
-		)
-	}
-}
-
-export const RawFilterToolbarButton = FilterToolbarButton
-
-const ThemedFilterToolbarButton = withTheme(FilterToolbarButton)
-
-export {ThemedFilterToolbarButton as FilterToolbarButton}
