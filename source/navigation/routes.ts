@@ -54,8 +54,6 @@ import {
 } from '../views/stoprint'
 
 export const routes = {
-	DirectoryView: {screen: DirectoryView},
-	DirectoryDetailView: {screen: DirectoryDetailView},
 	HomeView: {screen: HomeView},
 	BuildingHoursDetailView: {screen: BuildingHoursDetailView},
 	BuildingHoursView: {screen: BuildingHoursView},
@@ -70,6 +68,9 @@ export const routes = {
 	DictionaryDetailView: {screen: DictionaryDetailView},
 	DictionaryView: {screen: DictionaryView},
 	DictionaryEditorView: {screen: DictionaryEditorView},
+	DirectoryView: {screen: DirectoryView},
+	DirectoryDetailView: {screen: DirectoryDetailView},
+	EditHomeView: {screen: EditHomeView},
 	EventDetailView: {screen: EventDetailView},
 	FaqView: {screen: FaqView},
 	HelpView: {screen: HelpView},
