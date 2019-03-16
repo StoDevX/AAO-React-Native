@@ -249,6 +249,10 @@ task bundleData(type: Exec) {
 
 gradle.projectsEvaluated {
     // hook bundleData into the android build process
-    bundleDebugJsAndAssets.dependsOn bundleData
-    bundleReleaseJsAndAssets.dependsOn bundleData
+    if (project.hasProperty('bundleDebugJsAndAssets')) {
+        bundleDebugJsAndAssets.dependsOn bundleData
+    }
+    if (project.hasProperty('bundleReleaseJsAndAssets')) {
+        bundleReleaseJsAndAssets.dependsOn bundleData
+    }
 }
