@@ -28,7 +28,7 @@ import uniq from 'lodash/uniq'
 import map from 'lodash/map'
 import fromPairs from 'lodash/fromPairs'
 import deburr from 'lodash/deburr'
-import {SearchBar} from '@frogpond/searchbar'
+import {AnimatedSearchBar} from '@frogpond/searchbar'
 import {white} from '@frogpond/colors'
 
 type ReactProps = {
@@ -54,7 +54,9 @@ type Props = ReactProps & DefaultProps
 type State = {
 	filters: Array<FilterType>,
 	cachedFoodItems: ?MenuItemContainerType,
-	query: string,
+	typedQuery: string,
+	searchQueery: string,
+	isSearchbarActive: boolean,
 }
 
 const styles = StyleSheet.create({
@@ -77,7 +79,9 @@ export class FancyMenu extends React.Component<Props, State> {
 	state = {
 		filters: [],
 		cachedFoodItems: null,
-		query: '',
+		typedQuery: '',
+		searchQuery: '',
+		isSearchbarActive: false,
 	}
 
 	static getDerivedStateFromProps(props: Props, prevState: State) {
@@ -181,23 +185,46 @@ export class FancyMenu extends React.Component<Props, State> {
 		this.setState(() => ({query: text}))
 	}
 
+	handleSearchSubmit = () => {
+		this.setState(state => ({searchQuery: state.typedQuery}))
+	}
+
+	handleSearchCancel = () => {
+		this.setState(state => ({
+			typedQuery: state.searchQuery,
+			isSearchbarActive: false,
+		}))
+	}
+
+	handleSearchChange = (value: string) => {
+		this.setState(() => ({typedQuery: value}))
+
+		if (value === '') {
+			this.setState(() => ({searchQuery: value}))
+		}
+	}
+
+	handleSearchFocus = () => {
+		this.setState(() => ({isSearchbarActive: true}))
+	}
+
 	// We don't need to search as-you-type; slightly delayed is more
 	// efficient and nearly as effective
 	performSearch = debounce(this._performSearch, 200)
 
 	render() {
 		let {now, meals, cafeMessage, applyFilters, foodItems} = this.props
-		let {filters, query} = this.state
+		let {filters, typedQuery, searchQuery, isSearchbarActive} = this.state
 
 		let {label: mealName, stations} = chooseMeal(meals, filters, now)
 		let anyFiltersEnabled = filters.some(f => f.enabled)
 		let specialsFilterEnabled = this.areSpecialsFiltered(filters)
 
 		let results = foodItems
-		if (query) {
+		if (searchQuery) {
 			results = filter(foodItems, item =>
 				this.itemToArray(item).some(entry =>
-					entry.startsWith(deburr(query.toLowerCase())),
+					entry.startsWith(deburr(searchQuery.toLowerCase())),
 				),
 			)
 		}
@@ -228,12 +255,16 @@ export class FancyMenu extends React.Component<Props, State> {
 
 		let header = (
 			<>
-				<SearchBar
-					onChange={this.performSearch}
+				<AnimatedSearchBar
+					active={isSearchbarActive}
+					onCancel={this.handleSearchCancel}
+					onChange={this.handleSearchChange}
+					onFocus={this.handleSearchFocus}
+					onSubmit={this.handleSearchSubmit}
 					textFieldBackgroundColor={white}
-					value={query}
+					value={typedQuery}
 				/>
-				{!query ? (
+				{!typedQuery ? (
 					<FilterToolbar
 						date={now}
 						filters={filters}
