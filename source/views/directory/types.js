@@ -9,7 +9,7 @@ export type DirectoryType = {
 	thumbnail: URL,
 	departments: Array<DepartmentType>,
 	email: string,
-	homePhone: null,
+	homePhone: string,
 	onLeave: boolean,
 	officePhone: string,
 	homeAddress: {
