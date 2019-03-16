@@ -94,18 +94,19 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 
-def COMPILE_SDK_VERSION = 28
-def TARGET_SDK_VERSION = 28
-def ANDROID_SUPPORT_LIBRARY_VERSION = '27.1.1'
-
 android {
-    compileSdkVersion COMPILE_SDK_VERSION
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         applicationId "com.allaboutolaf"
 
-        minSdkVersion 21
-        targetSdkVersion TARGET_SDK_VERSION
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
 
         versionCode 1
         versionName "1.0.0"
@@ -115,16 +116,6 @@ android {
             BUGSNAG_KEY: System.getenv("BUGSNAG_KEY") ?: "",
             onesignal_google_project_number: "REMOTE",
         ]
-
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
-    }
-
-    ext {
-        compileSdkVersion = COMPILE_SDK_VERSION
-        targetSdkVersion = TARGET_SDK_VERSION
-        androidSupportLibraryVersion = ANDROID_SUPPORT_LIBRARY_VERSION
     }
 
     signingConfigs {
@@ -137,7 +128,7 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
+            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
 
@@ -163,7 +154,7 @@ android {
 
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            // def versionCodes = ["armeabi-v7a":1, "x86":2, nil:2]
+            // def versionCodes = ["armeabi-v7a":1, "x86":2, nil:2, "arm64-v8a": 3, "x86_64": 4]
 
             // `abi` is null for the universal-debug, universal-release variants
             // def abi = output.getFilter(OutputFile.ABI)
@@ -183,10 +174,10 @@ android {
     }
 
     configurations.all {
-        resolutionStrategy.force "com.android.support:appcompat-v7:$ANDROID_SUPPORT_LIBRARY_VERSION"
-        resolutionStrategy.force "com.android.support:customtabs:$ANDROID_SUPPORT_LIBRARY_VERSION"
-        resolutionStrategy.force "com.android.support:support-media-compat:$ANDROID_SUPPORT_LIBRARY_VERSION"
-        resolutionStrategy.force "com.android.support:support-v4:$ANDROID_SUPPORT_LIBRARY_VERSION"
+        resolutionStrategy.force "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+        resolutionStrategy.force "com.android.support:customtabs:${rootProject.ext.supportLibVersion}"
+        resolutionStrategy.force "com.android.support:support-media-compat:${rootProject.ext.supportLibVersion}"
+        resolutionStrategy.force "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
 
         resolutionStrategy.force 'org.webkit:android-jsc:r236355'
     }
@@ -242,7 +233,7 @@ dependencies {
     implementation project(':react-native-vector-icons')
     // this is for react-native itself
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:$ANDROID_SUPPORT_LIBRARY_VERSION"
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 }
