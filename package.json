@@ -32,7 +32,10 @@
     ]
   },
   "jest": {
-    "testRegex": "/__tests__/.*\\.(test|spec)\\.js$",
+    "testMatch": [
+      "**/__tests__/**/*.(spec|test).(js|ts|tsx)",
+      "!**/node_modules/**"
+    ],
     "collectCoverageFrom": [
       "modules/**/*.js",
       "source/**/*.js",
@@ -44,7 +47,6 @@
     "transformIgnorePatterns": [
       "node_modules/(?!(jest-)?react-native|glamorous-native|react-navigation)"
     ],
-    "testEnvironment": "node",
     "preset": "react-native"
   },
   "detox": {
