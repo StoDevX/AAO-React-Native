@@ -26,6 +26,7 @@ import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import filter from 'lodash/filter'
 import isString from 'lodash/isString'
+import {fetch} from '@frogpond/fetch'
 import * as c from '@frogpond/colors'
 import startCase from 'lodash/startCase'
 import type {DirectoryType} from './types'
@@ -89,15 +90,13 @@ export class DirectoryView extends React.Component {
 
 	fetchData = async (query: string) => {
 		try {
-			let params = {
-				fuseaction: 'SearchResults',
-				format: 'json',
-				query: query,
-			}
-
-			const responseData: DirectoryType[] = await fetchJson(
-				`${url}?${qs.stringify(params)}`,
-			)
+			let responseData: Array<DirectoryType> = await fetch(url, {
+				searchParams: {
+					fuseaction: 'SearchResults',
+					format: 'json',
+					query: query,
+				},
+			}).json()
 
 			const results = responseData.results
 

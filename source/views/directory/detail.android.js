@@ -2,7 +2,7 @@
 import React from 'react'
 import {ScrollView, View, Text, StyleSheet, Image} from 'react-native'
 import cleanContact from './clean-contact'
-import {Card} from '../../components/card'
+import {Card} from '@frogpond/silly-card'
 import {openUrl} from '@frogpond/open-url'
 import {callPhone} from '../../components/call-phone'
 import {sendEmail} from '../../components/send-email'
@@ -90,7 +90,7 @@ function Contact({email, office, officeHours, phone, profile}) {
 				onPress={() => sendEmail({to: [email], subject: '', body: ''})}
 				style={styles.cardBody}
 			>
-				{phone}
+				{email}
 			</Text>
 		</Card>
 	) : null
