@@ -188,12 +188,13 @@ def propFile = new File('android/app/signing.properties')
 if (propFile.canRead()) {
     Properties props = new Properties()
     props.load(new FileInputStream(propFile))
-    if (props != null
-            && props.containsKey('STORE_FILE')
-            && props.containsKey('STORE_PASSWORD')
-            && props.containsKey('KEY_ALIAS')
-            && props.containsKey('KEY_PASSWORD')
-    ) {
+
+    bool hasFile = props != null && props.containsKey('STORE_FILE');
+    bool hasPassword = props != null && props.containsKey('STORE_PASSWORD');
+    bool hasAlias = props != null && props.containsKey('KEY_ALIAS');
+    bool hasKeyPass = props != null && props.containsKey('KEY_PASSWORD');
+
+    if (hasFile && hasPassword && hasAlias && hasKeyPass) {
         logger.info 'android/app/signing.properties is fully functional.'
         android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
         android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
@@ -204,10 +205,10 @@ if (propFile.canRead()) {
         if (props == null) {
             logger.warn '`props` was null'
         } else {
-            logger.warn "has STORE_FILE: ${props.containsKey('STORE_FILE')}"
-            logger.warn "has STORE_PASSWORD: ${props.containsKey('STORE_PASSWORD')}"
-            logger.warn "has KEY_ALIAS: ${props.containsKey('KEY_ALIAS')}"
-            logger.warn "has KEY_PASSWORD: ${props.containsKey('KEY_PASSWORD')}"
+            logger.warn "has STORE_FILE [y/n]: ${props.containsKey('STORE_FILE')}"
+            logger.warn "has STORE_PASSWORD [y/n]: ${props.containsKey('STORE_PASSWORD')}"
+            logger.warn "has KEY_ALIAS [y/n]: ${props.containsKey('KEY_ALIAS')}"
+            logger.warn "has KEY_PASSWORD [y/n]: ${props.containsKey('KEY_PASSWORD')}"
         }
         android.buildTypes.release.signingConfig = null
     }
@@ -231,9 +232,11 @@ dependencies {
     implementation project(':react-native-onesignal')
     implementation project(':react-native-restart')
     implementation project(':react-native-vector-icons')
+
     // this is for react-native itself
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 }
