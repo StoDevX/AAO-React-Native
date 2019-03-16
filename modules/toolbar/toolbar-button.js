@@ -58,7 +58,9 @@ function ToolbarButton({title, iconName, isActive, theme}: ButtonPropsType) {
 			<Text style={[activeContentStyle, textWithIconStyle, activeTextStyle]}>
 				{title}
 			</Text>
-			{iconName ? <Icon name={iconName} size={18} style={activeContentStyle} /> : null}
+			{iconName ? (
+				<Icon name={iconName} size={18} style={activeContentStyle} />
+			) : null}
 		</View>
 	)
 }
