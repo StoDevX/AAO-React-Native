@@ -21,7 +21,6 @@ import {FilterMenuToolbar as FilterToolbar} from './filter-menu-toolbar'
 import {FoodItemRow} from './food-item-row'
 import {chooseMeal} from './lib/choose-meal'
 import {buildFilters} from './lib/build-filters'
-import debounce from 'lodash/debounce'
 import filter from 'lodash/filter'
 import words from 'lodash/words'
 import uniq from 'lodash/uniq'
@@ -55,7 +54,7 @@ type State = {
 	filters: Array<FilterType>,
 	cachedFoodItems: ?MenuItemContainerType,
 	typedQuery: string,
-	searchQueery: string,
+	searchQuery: string,
 	isSearchbarActive: boolean,
 }
 
@@ -175,15 +174,11 @@ export class FancyMenu extends React.Component<Props, State> {
 
 	keyExtractor = (item: MenuItem, index: number) => index.toString()
 
-	itemToArray = (item: MenuItemType) =>
+	itemToArray = (item: MenuItem) =>
 		uniq([
 			...words(deburr(item.label.toLowerCase())),
 			...words(deburr(item.description.toLowerCase())),
 		])
-
-	_performSearch = (text: string) => {
-		this.setState(() => ({query: text}))
-	}
 
 	handleSearchSubmit = () => {
 		this.setState(state => ({searchQuery: state.typedQuery}))
@@ -207,10 +202,6 @@ export class FancyMenu extends React.Component<Props, State> {
 	handleSearchFocus = () => {
 		this.setState(() => ({isSearchbarActive: true}))
 	}
-
-	// We don't need to search as-you-type; slightly delayed is more
-	// efficient and nearly as effective
-	performSearch = debounce(this._performSearch, 200)
 
 	render() {
 		let {now, meals, cafeMessage, applyFilters, foodItems} = this.props
