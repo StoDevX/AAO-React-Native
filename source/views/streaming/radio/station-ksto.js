@@ -7,7 +7,6 @@ import {type TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
 import tinycolor from 'tinycolor2'
-import {createTheming} from '@callstack/react-theme-provider'
 import {type PlayerTheme} from './types'
 
 let tintColor = '#37a287'
@@ -21,8 +20,6 @@ const colors: PlayerTheme = {
 		.setAlpha(0.2)
 		.toString(),
 }
-
-const {ThemeProvider} = createTheming<PlayerTheme>(colors)
 
 export class KstoStationView extends React.Component<TopLevelViewPropsType> {
 	static navigationOptions = {

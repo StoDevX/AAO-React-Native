@@ -4,7 +4,6 @@ import {FlatList, StyleSheet, Text, View, Platform} from 'react-native'
 import {ListSeparator, ListRow} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
-import {type AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/theme'
 
 type Props = {

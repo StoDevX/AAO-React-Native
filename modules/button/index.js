@@ -5,7 +5,6 @@ import BasicButton from 'react-native-button'
 import noop from 'lodash/noop'
 import {material, iOSUIKit} from 'react-native-typography'
 import * as c from '@frogpond/colors'
-import {type AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/theme'
 
 const styles = StyleSheet.create({
@@ -57,7 +56,7 @@ export function Button({
 	textStyle = null,
 	mode = 'default',
 }: Props) {
-	let theme: AppTheme = useTheme()
+	let theme = useTheme()
 
 	let background =
 		mode === 'default'

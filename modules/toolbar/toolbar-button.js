@@ -3,7 +3,6 @@ import * as React from 'react'
 import {StyleSheet, View, Text, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from '@frogpond/colors'
-import {type AppTheme} from '@frogpond/app-theme'
 import {useTheme} from '@frogpond/theme'
 
 const buttonStyles = StyleSheet.create({
