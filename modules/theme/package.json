@@ -1,0 +1,17 @@
+{
+  "name": "@frogpond/theme",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "@frogpond/app-theme": "^1.0.0"
+  },
+  "dependencies": {
+    "@callstack/react-theme-provider": "^2.0.0"
+  }
+}
