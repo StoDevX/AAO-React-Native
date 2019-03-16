@@ -277,9 +277,7 @@ function FormattedValueCell(props: {
 			<Text selectable={true} style={styles.financialText}>
 				{indeterminate ? '…' : formatter(value)}
 			</Text>
-			<Text style={styles.rectangleButtonText}>
-				{label}
-			</Text>
+			<Text style={styles.rectangleButtonText}>{label}</Text>
 		</View>
 	)
 }
