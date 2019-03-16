@@ -325,12 +325,12 @@ jobs:
           environment:
             TERM: xterm-256color
       - gradle-cache
+      - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
       - run:
           name: Run Fastlane
           command: bundle exec fastlane android ci-run | tee ./logs/build
           environment:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
-            GRADLE_OPTS: --max-workers=2 --no-parallel
       - store_artifacts:
           path: ./android/app/build/outputs/apk/release/
       - danger
