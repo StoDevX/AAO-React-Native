@@ -88,6 +88,7 @@ export class DirectoryView extends React.Component {
 	fetchData = async (query: string) => {
 		try {
 			let responseData: Array<DirectoryType> = await fetch(url, {
+				cache: 'no-store',
 				searchParams: {
 					fuseaction: 'SearchResults',
 					format: 'json',
