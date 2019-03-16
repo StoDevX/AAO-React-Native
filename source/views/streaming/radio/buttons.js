@@ -5,25 +5,19 @@ import {StyleSheet, Text, View, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
 import Icon from 'react-native-vector-icons/Ionicons'
 import {Touchable} from '@frogpond/touchable'
-import {withTheme} from '@callstack/react-theme-provider'
 import type {PlayerTheme} from './types'
 
-type ActionButtonBaseProps = {
+type ActionButtonProps = {
+	colors: PlayerTheme,
 	icon: string,
 	text: string,
 	onPress: () => mixed,
 }
 
-type HocProps = {
-	theme: PlayerTheme,
-}
-
-type ActionButtonProps = ActionButtonBaseProps & HocProps
-
-const ActionButton = (props: ActionButtonProps) => {
-	let {icon, text, onPress, theme} = props
-	let bg = {backgroundColor: theme.tintColor}
-	let fg = {color: theme.buttonTextColor}
+export const ActionButton = (props: ActionButtonProps) => {
+	let {icon, text, onPress, colors} = props
+	let bg = {backgroundColor: colors.tintColor}
+	let fg = {color: colors.buttonTextColor}
 	let style = [styles.button, styles.largeButton, bg]
 
 	return (
@@ -36,37 +30,35 @@ const ActionButton = (props: ActionButtonProps) => {
 	)
 }
 
-const ThemedActionButton: React.StatelessFunctionalComponent<ActionButtonBaseProps> = (withTheme(
-	ActionButton,
-): any)
+type PrefabButtonProps = {
+	colors: PlayerTheme,
+	onPress: () => mixed,
+}
 
-export {ThemedActionButton as ActionButton}
-
-export const CallButton = ({onPress}: {onPress: () => mixed}) => (
-	<ThemedSmallActionButton
+export const CallButton = (props: PrefabButtonProps) => (
+	<SmallActionButton
 		icon={Platform.OS === 'ios' ? 'ios-call' : 'md-call'}
-		onPress={onPress}
+		{...props}
 	/>
 )
 
-export const ShowCalendarButton = ({onPress}: {onPress: () => mixed}) => (
-	<ThemedSmallActionButton
+export const ShowCalendarButton = (props: PrefabButtonProps) => (
+	<SmallActionButton
 		icon={Platform.OS === 'ios' ? 'ios-calendar' : 'md-calendar'}
-		onPress={onPress}
+		{...props}
 	/>
 )
 
-type SmallActionButtonBaseProps = {
+type SmallActionButtonProps = {
+	colors: PlayerTheme,
 	icon: string,
 	onPress: () => mixed,
 }
 
-type SmallActionButtonProps = ActionButtonBaseProps & HocProps
-
-const SmallActionButton = (props: SmallActionButtonProps) => {
-	let {icon, onPress, theme} = props
-	let bg = {backgroundColor: theme.tintColor}
-	let fg = {color: theme.buttonTextColor}
+export const SmallActionButton = (props: SmallActionButtonProps) => {
+	let {icon, onPress, colors} = props
+	let bg = {backgroundColor: colors.tintColor}
+	let fg = {color: colors.buttonTextColor}
 	let style = [styles.button, styles.smallButton, bg]
 
 	return (
@@ -75,10 +67,6 @@ const SmallActionButton = (props: SmallActionButtonProps) => {
 		</Touchable>
 	)
 }
-
-const ThemedSmallActionButton: React.StatelessFunctionalComponent<SmallActionButtonBaseProps> = (withTheme(
-	SmallActionButton,
-): any)
 
 const styles = StyleSheet.create({
 	button: {

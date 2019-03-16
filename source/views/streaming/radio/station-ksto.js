@@ -7,7 +7,7 @@ import {type TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'
 import tinycolor from 'tinycolor2'
-import {ThemeProvider} from '@callstack/react-theme-provider'
+import {createTheming} from '@callstack/react-theme-provider'
 import {type PlayerTheme} from './types'
 
 let tintColor = '#37a287'
@@ -22,6 +22,8 @@ const colors: PlayerTheme = {
 		.toString(),
 }
 
+const {ThemeProvider} = createTheming<PlayerTheme>(colors)
+
 export class KstoStationView extends React.Component<TopLevelViewPropsType> {
 	static navigationOptions = {
 		tabBarLabel: 'KSTO',
@@ -30,23 +32,22 @@ export class KstoStationView extends React.Component<TopLevelViewPropsType> {
 
 	render() {
 		return (
-			<ThemeProvider theme={colors}>
-				<RadioControllerView
-					image={logos.ksto}
-					navigation={this.props.navigation}
-					playerUrl="https://www.stolaf.edu/multimedia/play/embed/ksto.html"
-					scheduleViewName="KSTOScheduleView"
-					source={{
-						useEmbeddedPlayer: true,
-						embeddedPlayerUrl:
-							'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
-						streamSourceUrl: '',
-					}}
-					stationName="KSTO 93.1 FM"
-					stationNumber="+15077863602"
-					title="St. Olaf College Radio"
-				/>
-			</ThemeProvider>
+			<RadioControllerView
+				colors={colors}
+				image={logos.ksto}
+				navigation={this.props.navigation}
+				playerUrl="https://www.stolaf.edu/multimedia/play/embed/ksto.html"
+				scheduleViewName="KSTOScheduleView"
+				source={{
+					useEmbeddedPlayer: true,
+					embeddedPlayerUrl:
+						'https://www.stolaf.edu/multimedia/play/embed/ksto.html',
+					streamSourceUrl: '',
+				}}
+				stationName="KSTO 93.1 FM"
+				stationNumber="+15077863602"
+				title="St. Olaf College Radio"
+			/>
 		)
 	}
 }

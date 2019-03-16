@@ -12,9 +12,9 @@ import type {PlayState, HtmlAudioError, PlayerTheme} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
 import {openUrl} from '@frogpond/open-url'
 import {Viewport} from '@frogpond/viewport'
-import {withTheme} from '@callstack/react-theme-provider'
 
 type Props = TopLevelViewPropsType & {
+	colors: PlayerTheme,
 	image: number,
 	playerUrl: string,
 	stationNumber: string,
@@ -26,7 +26,6 @@ type Props = TopLevelViewPropsType & {
 		embeddedPlayerUrl: string,
 		streamSourceUrl: string,
 	},
-	theme: PlayerTheme,
 }
 
 type State = {
@@ -35,7 +34,7 @@ type State = {
 	uplinkError: ?string,
 }
 
-class RadioControllerView extends React.Component<Props, State> {
+export class RadioControllerView extends React.Component<Props, State> {
 	state = {
 		playState: 'paused',
 		streamError: null,
@@ -82,6 +81,7 @@ class RadioControllerView extends React.Component<Props, State> {
 		if (Platform.OS === 'android') {
 			return (
 				<ActionButton
+					colors={this.props.colors}
 					icon="ios-planet"
 					onPress={this.openStreamWebsite}
 					text="Open"
@@ -92,26 +92,48 @@ class RadioControllerView extends React.Component<Props, State> {
 		switch (state) {
 			case 'paused':
 				return (
-					<ActionButton icon="ios-play" onPress={this.play} text="Listen" />
+					<ActionButton
+						colors={this.props.colors}
+						icon="ios-play"
+						onPress={this.play}
+						text="Listen"
+					/>
 				)
 
 			case 'checking':
 				return (
-					<ActionButton icon="ios-more" onPress={this.pause} text="Starting" />
+					<ActionButton
+						colors={this.props.colors}
+						icon="ios-more"
+						onPress={this.pause}
+						text="Starting"
+					/>
 				)
 
 			case 'playing':
 				return (
-					<ActionButton icon="ios-pause" onPress={this.pause} text="Pause" />
+					<ActionButton
+						colors={this.props.colors}
+						icon="ios-pause"
+						onPress={this.pause}
+						text="Pause"
+					/>
 				)
 
 			default:
-				return <ActionButton icon="ios-bug" onPress={noop} text="Error" />
+				return (
+					<ActionButton
+						colors={this.props.colors}
+						icon="ios-bug"
+						onPress={noop}
+						text="Error"
+					/>
+				)
 		}
 	}
 
 	render() {
-		const {source, title, stationName, image, theme} = this.props
+		const {source, title, stationName, image, colors} = this.props
 		const {uplinkError, streamError, playState} = this.state
 
 		const error = uplinkError ? (
@@ -122,7 +144,7 @@ class RadioControllerView extends React.Component<Props, State> {
 			</Text>
 		) : null
 
-		let textColor = {color: theme.textColor}
+		let textColor = {color: colors.textColor}
 		const titleBlock = (
 			<View style={styles.titleWrapper}>
 				<Text selectable={true} style={[styles.heading, textColor]}>
@@ -140,9 +162,12 @@ class RadioControllerView extends React.Component<Props, State> {
 			<Row>
 				{this.renderPlayButton(playState)}
 				<View style={styles.spacer} />
-				<CallButton onPress={this.callStation} />
+				<CallButton colors={this.props.colors} onPress={this.callStation} />
 				<View style={styles.spacer} />
-				<ShowCalendarButton onPress={this.openSchedule} />
+				<ShowCalendarButton
+					colors={this.props.colors}
+					onPress={this.openSchedule}
+				/>
 			</Row>
 		)
 
@@ -172,8 +197,8 @@ class RadioControllerView extends React.Component<Props, State> {
 					const logoSize = {width: logoWidth, height: logoWidth}
 
 					const root = [styles.root, sideways && landscape.root]
-					const logoBorderColor = {borderColor: theme.imageBorderColor}
-					const logoBg = {backgroundColor: theme.imageBackgroundColor}
+					const logoBorderColor = {borderColor: colors.imageBorderColor}
+					const logoBg = {backgroundColor: colors.imageBackgroundColor}
 					const logo = [styles.logoBorder, logoSize, logoBorderColor, logoBg]
 					const logoWrapper = [
 						styles.logoWrapper,
@@ -198,10 +223,6 @@ class RadioControllerView extends React.Component<Props, State> {
 		)
 	}
 }
-
-const ThemedRadioControllerView = withTheme(RadioControllerView)
-
-export {ThemedRadioControllerView as RadioControllerView}
 
 const styles = StyleSheet.create({
 	root: {

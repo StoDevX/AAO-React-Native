@@ -4,7 +4,7 @@ import {StyleSheet, View, Text, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import * as c from '@frogpond/colors'
 import {type AppTheme} from '@frogpond/app-theme'
-import {withTheme} from '@callstack/react-theme-provider'
+import {useTheme} from '@frogpond/theme'
 
 const buttonStyles = StyleSheet.create({
 	button: {
@@ -32,10 +32,11 @@ type ButtonPropsType = {
 	iconName?: string,
 	title: string,
 	isActive: boolean,
-	theme: AppTheme,
 }
 
-function ToolbarButton({title, iconName, isActive, theme}: ButtonPropsType) {
+export function ToolbarButton({title, iconName, isActive}: ButtonPropsType) {
+	let theme = useTheme()
+
 	let icon
 	if (!iconName) {
 		icon = null
@@ -71,9 +72,3 @@ function ToolbarButton({title, iconName, isActive, theme}: ButtonPropsType) {
 		</View>
 	)
 }
-
-export const RawToolbarButton = ToolbarButton
-
-const ThemedToolbarButton = withTheme(ToolbarButton)
-
-export {ThemedToolbarButton as ToolbarButton}

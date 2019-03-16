@@ -19,8 +19,7 @@ import OneSignal, {
 	type OneSignalNotification,
 	type OneSignalIdsResult,
 } from 'react-native-onesignal'
-import {ThemeProvider} from '@callstack/react-theme-provider'
-import {getTheme} from '@frogpond/app-theme'
+import {ThemeProvider} from '@frogpond/theme'
 
 const store = makeStore()
 initRedux(store)
@@ -58,11 +57,9 @@ export default class App extends React.Component<Props> {
 	}
 
 	render() {
-		let theme = getTheme()
-
 		return (
 			<Provider store={store}>
-				<ThemeProvider theme={theme}>
+				<ThemeProvider>
 					<navigation.AppNavigator
 						onNavigationStateChange={navigation.trackScreenChanges}
 						persistenceKey={navigation.persistenceKey}

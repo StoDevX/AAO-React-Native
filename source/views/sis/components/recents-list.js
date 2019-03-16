@@ -5,7 +5,7 @@ import {ListSeparator, ListRow} from '@frogpond/lists'
 import {NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {type AppTheme} from '@frogpond/app-theme'
-import {withTheme} from '@callstack/react-theme-provider'
+import {useTheme} from '@frogpond/theme'
 
 type Props = {
 	actionLabel?: string,
@@ -15,79 +15,53 @@ type Props = {
 	onItemPress: (item: string) => any,
 	items: string[],
 	title: string,
-	theme: AppTheme,
 }
 
-class RecentItemsList extends React.PureComponent<Props> {
-	renderSeparator = () => <ListSeparator spacing={{left: 17, right: 17}} />
+export function RecentItemsList(props: Props) {
+	let {items, actionLabel, onAction, title, emptyHeader, emptyText} = props
+	let theme = useTheme()
 
-	renderItem = ({item}: {item: string}) => {
-		let foreground = {color: this.props.theme.iosPushButtonCellForeground}
+	let foreground = {color: theme.iosPushButtonCellForeground}
 
-		return (
-			<ListRow arrowPosition="none" onPress={() => this.onPressRow(item)}>
-				<Text numberOfLines={1} style={[foreground, styles.listItem]}>
-					{item}
-				</Text>
-			</ListRow>
-		)
-	}
+	let renderItem = ({item}: {item: string}) => (
+		<ListRow arrowPosition="none" onPress={() => props.onItemPress(item)}>
+			<Text numberOfLines={1} style={[foreground, styles.listItem]}>
+				{item}
+			</Text>
+		</ListRow>
+	)
 
-	onPressRow = (item: string) => {
-		this.props.onItemPress(item)
-	}
-
-	keyExtractor = (item: string) => item
-
-	render() {
-		const {
-			items,
-			actionLabel,
-			onAction,
-			title,
-			emptyHeader,
-			emptyText,
-			theme,
-		} = this.props
-
-		let foreground = {color: theme.iosPushButtonCellForeground}
-
-		return (
-			<View>
-				<View style={styles.rowFlex}>
-					{title && <Text style={styles.subHeader}>{title}</Text>}
-					{onAction && (
-						<Text onPress={onAction} style={[foreground, styles.sideButton]}>
-							{actionLabel}
-						</Text>
-					)}
-				</View>
-				<FlatList
-					ItemSeparatorComponent={this.renderSeparator}
-					ListEmptyComponent={
-						<NoticeView
-							header={emptyHeader}
-							style={styles.notice}
-							text={emptyText}
-							textStyle={styles.noticeText}
-						/>
-					}
-					data={items}
-					keyExtractor={this.keyExtractor}
-					renderItem={this.renderItem}
-					// TODO(react-native@0.58): enable this once React Native no longer dies when opening Settings
-					//scrollEnabled={false}
-				/>
+	return (
+		<View>
+			<View style={styles.rowFlex}>
+				{title && <Text style={styles.subHeader}>{title}</Text>}
+				{onAction && (
+					<Text onPress={onAction} style={[foreground, styles.sideButton]}>
+						{actionLabel}
+					</Text>
+				)}
 			</View>
-		)
-	}
+			<FlatList
+				ItemSeparatorComponent={() => (
+					<ListSeparator spacing={{left: 17, right: 17}} />
+				)}
+				ListEmptyComponent={
+					<NoticeView
+						header={emptyHeader}
+						style={styles.notice}
+						text={emptyText}
+						textStyle={styles.noticeText}
+					/>
+				}
+				data={items}
+				keyExtractor={(item: string) => item}
+				renderItem={renderItem}
+				// TODO(react-native@0.58): enable this once React Native no longer dies when opening Settings
+				//scrollEnabled={false}
+			/>
+		</View>
+	)
 }
-
-export const RawRecentItemsList = RecentItemsList
-
-const ThemedRecentItemsList = withTheme(RecentItemsList)
-
-export {ThemedRecentItemsList as RecentItemsList}
 
 const styles = StyleSheet.create({
 	listItem: {
