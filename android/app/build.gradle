@@ -97,6 +97,11 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 
+/**
+ * Fetch the keystore file's path from the environment
+ */
+String keystorePath = System.getenv("KEYSTORE_FILE")
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -123,19 +128,17 @@ android {
 
     signingConfigs {
         // originally derived from https://gist.github.com/gabrielemariotti/6856974
-        String filePath = System.getenv("KEYSTORE_FILE")
-
-        if (filePath == null) {
+        if (keystorePath == null) {
             logger.warn "env['KEYSTORE_FILE'] not set"
             release
             return
         } else {
-            logger.warn "env['KEYSTORE_FILE'] = ${filePath}"
+            logger.warn "env['KEYSTORE_FILE'] = ${keystorePath}"
         }
 
-        def propFile = new File(filePath)
+        def propFile = new File(keystorePath)
         if (!propFile.canRead()) {
-            logger.warn "${filePath} is not readable"
+            logger.warn "${keystorePath} is not readable"
             release
             return
         }
@@ -170,7 +173,9 @@ android {
 
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            signingConfig signingConfigs.release
+            if (keystorePath != null) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 
