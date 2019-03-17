@@ -45,9 +45,14 @@ export class DebugListView extends React.PureComponent<Props> {
 	)
 
 	render() {
+		let nothingFoundMessage = this.props.testing
+			? 'Nothing parsed.'
+			: 'Nothing found in redux.'
+
 		let parsedData = this.props.testing
 			? JSON.parse(this.props.state)
 			: this.props.state
+
 		let keyed = toPairs(parsedData).map(([key, value]) => {
 			return {key, value}
 		})
@@ -55,7 +60,7 @@ export class DebugListView extends React.PureComponent<Props> {
 		return (
 			<FlatList
 				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<NoticeView text="Nothing found in redux." />}
+				ListEmptyComponent={<NoticeView text={nothingFoundMessage} />}
 				data={keyed}
 				keyExtractor={this.keyExtractor}
 				renderItem={this.renderItem}
