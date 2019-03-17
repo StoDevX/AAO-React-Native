@@ -83,12 +83,12 @@ platform :android do
 		dest = File.expand_path('..', '.')
 
 		# we export this variable so that Gradle knows where to find the .properties file
-		signing_props_dest = "#{dest}/android/app/signing.properties"
+		signing_props_dest = "#{dest}/android/app/upload-keystore.properties"
 		ENV['KEYSTORE_FILE'] = signing_props_dest
 
 		pairs = [
-			{:from => "#{src}/signing.properties", :to => signing_props_dest},
-			{:from => "#{src}/my-release-key.keystore", :to => "#{dest}/android/app/my-release-key.keystore"},
+			{:from => "#{src}/upload-keystore.properties", :to => signing_props_dest},
+			{:from => "#{src}/upload-keystore.keystore", :to => "#{dest}/android/app/upload-keystore.keystore"},
 			{:from => "#{src}/play-private-key.json", :to => "#{dest}/fastlane/play-private-key.json"},
 		]
 
