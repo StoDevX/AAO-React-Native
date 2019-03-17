@@ -112,13 +112,13 @@ export class DirectoryView extends React.Component {
 
 			const sorted = sortBy(withSortableNames, '$sortableName')
 			const grouped = groupBy(sorted, '$groupableName')
-			this.setState(() => {
-				results: grouped
-			})
+			this.setState(() => ({
+				results: grouped,
+			}))
 		} catch (err) {
-			this.setState(() => {
-				error: true
-			})
+			this.setState(() => ({
+				error: true,
+			}))
 			console.error(err)
 		}
 
@@ -203,9 +203,9 @@ export class DirectoryView extends React.Component {
 			this.directoryToArray(entry[0]).some(word => word.startsWith(query)),
 		)
 
-		this.setState(() => {
-			results: groupBy(uniq(filteredResults), '$groupableName')
-		})
+		this.setState(() => ({
+			results: groupBy(uniq(filteredResults), '$groupableName'),
+		}))
 	}
 
 	// we need to make the search run slightly behind the UI
