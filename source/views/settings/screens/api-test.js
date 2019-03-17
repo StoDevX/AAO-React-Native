@@ -46,8 +46,8 @@ type Props = {
 }
 
 type State = {
-	results: string,
-	error: string,
+	results: string | null,
+	error: string | null,
 }
 
 export class APITestView extends React.PureComponent<Props, State> {
@@ -56,8 +56,8 @@ export class APITestView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
-		results: '',
-		error: '',
+		results: null,
+		error: null,
 	}
 
 	fetchData = async (path: string) => {
@@ -66,9 +66,9 @@ export class APITestView extends React.PureComponent<Props, State> {
 			let responseData: string = await fetch(API(correctedPath), {
 				cache: 'no-store',
 			}).text()
-			this.setState(() => ({results: responseData, error: ''}))
+			this.setState(() => ({results: responseData, error: null}))
 		} catch (err) {
-			this.setState(() => ({results: '', error: JSON.stringify(err)}))
+			this.setState(() => ({results: null, error: JSON.stringify(err)}))
 		}
 	}
 
