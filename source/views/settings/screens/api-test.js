@@ -92,6 +92,7 @@ export class APITestView extends React.PureComponent<Props, State> {
 				// this aligns the text to the top on iOS, and centers it on Android
 				multiline={true}
 				scrollEnabled={true}
+				style={styles.error}
 				// use multiline with textAlignVertical="top" for the same behavior in both platforms
 				textAlignVertical="top"
 				value={error}
@@ -102,8 +103,9 @@ export class APITestView extends React.PureComponent<Props, State> {
 			<Output
 				editable={false}
 				// this aligns the text to the top on iOS, and centers it on Android
-				multiline={true} 
+				multiline={true}
 				scrollEnabled={true}
+				style={styles.data}
 				// use multiline with textAlignVertical="top" for the same behavior in both platforms
 				textAlignVertical="top"
 				value={results}
