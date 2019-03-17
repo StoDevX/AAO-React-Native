@@ -122,6 +122,7 @@ android {
     }
 
     signingConfigs {
+        // originally derived from https://gist.github.com/gabrielemariotti/6856974
         String filePath = System.getenv("KEYSTORE_FILE")
 
         if (filePath == null) {
