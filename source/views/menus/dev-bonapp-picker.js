@@ -73,3 +73,7 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 		)
 	}
 }
+BonAppPickerView.navigationOptions = {
+	title: 'BonApp',
+	tabBarIcon: TabBarIcon('cog'),
+}
