@@ -327,6 +327,7 @@ jobs:
           command: ./scripts/should-skip-build && circleci step halt || echo "Build continuing."
       - run: node --version
       - run: yarn --version
+      - run: cd android && ./gradlew --version
       - set-ruby-version
       - workspace-attach-node_modules
       - bundler-restore
