@@ -24,8 +24,11 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 8,
 	},
 	data: {
-		paddingVertical: 10,
-		paddingTop: 10,
+		padding: 10,
+	},
+	error: {
+		padding: 10,
+		color: c.brickRed,
 	},
 })
 
@@ -61,12 +64,10 @@ export class APITestView extends React.PureComponent<Props, State> {
 		try {
 			let responseData: Array<any> = await fetch(API(path), {
 				cache: 'no-store',
-			}).json()
-			let stringifiedResults = JSON.stringify(responseData)
-			this.setState(() => ({results: stringifiedResults, error: ''}))
+			}).text()
+			this.setState(() => ({results: responseData, error: ''}))
 		} catch (err) {
-			let stringifiedError = JSON.stringify(err)
-			this.setState(() => ({results: '', error: stringifiedError}))
+			this.setState(() => ({results: '', error: JSON.stringify(err)}))
 		}
 	}
 
@@ -84,8 +85,10 @@ export class APITestView extends React.PureComponent<Props, State> {
 					/>
 				</Toolbar>
 				<ScrollView style={styles.container}>
-					{error ? <Text style={styles.data}>{error}</Text> : null}
-					{results ? <Paragraph>{results}</Paragraph> : null}
+					{error ? <Paragraph style={styles.error}>{error}</Paragraph> : null}
+					{results ? (
+						<Paragraph style={styles.data}>{results}</Paragraph>
+					) : null}
 				</ScrollView>
 			</>
 		)
