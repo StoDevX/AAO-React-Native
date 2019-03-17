@@ -13,7 +13,7 @@ commands:
     description: 'Save the Bundler cache'
     steps:
       - save_cache:
-          key: &bundler-key >-
+          key: &bundler-cache-key >-
             v2-ruby-dependencies
             {{ arch }}
             {{ checksum "Gemfile.lock" }}
@@ -23,7 +23,7 @@ commands:
     description: 'Restore the Bundler cache'
     steps:
       - restore_cache:
-          key: *bundler-key
+          key: *bundler-cache-key
 
   danger:
     description: 'Run Danger'
@@ -38,7 +38,7 @@ commands:
     description: 'Save the Gradle cache'
     steps:
       - save_cache:
-          key: &gradle-key >-
+          key: &gradle-cache-key >-
             v1-gradle-dependencies
             {{ arch }}
             {{ checksum "android/gradle/wrapper/gradle-wrapper.properties" }}
@@ -52,7 +52,7 @@ commands:
     description: 'Restore the Gradle cache'
     steps:
       - restore_cache:
-          key: *gradle-key
+          key: *gradle-cache-key
 
   set-ruby-version:
     description: 'Set the Ruby Version'
@@ -76,7 +76,7 @@ commands:
     description: 'Save the Yarn cache'
     steps:
       - save_cache:
-          key: &yarn-key >-
+          key: &yarn-cache-key >-
             v3-yarn-dependencies
             {{ arch }}
             {{ checksum "yarn.lock" }}
@@ -86,7 +86,7 @@ commands:
     description: 'Restore the Yarn cache'
     steps:
       - restore_cache:
-          key: *yarn-key
+          key: *yarn-cache-key
 
 workflows:
   version: 2
