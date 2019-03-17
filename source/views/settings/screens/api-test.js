@@ -126,15 +126,17 @@ export class APITestView extends React.PureComponent<Props, State> {
 					/>
 				</Toolbar>
 
-				<Segment
-					onChange={event => {
-						this.setState({
-							selectedIndex: event.nativeEvent.selectedSegmentIndex,
-						})
-					}}
-					selectedIndex={selectedIndex}
-					values={['JSON', 'List']}
-				/>
+				{Platform.OS === 'ios' ? (
+					<Segment
+						onChange={event => {
+							this.setState({
+								selectedIndex: event.nativeEvent.selectedSegmentIndex,
+							})
+						}}
+						selectedIndex={selectedIndex}
+						values={['JSON', 'List']}
+					/>
+				) : null}
 
 				<View style={styles.container}>{showIndex()}</View>
 			</>
