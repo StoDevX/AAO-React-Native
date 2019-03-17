@@ -105,7 +105,11 @@ export class APITestView extends React.PureComponent<Props, State> {
 					{jsonError}
 				</>
 			) : (
-				<DebugListView navigation={this.props.navigation} state={jsonData} />
+				<DebugListView
+					navigation={this.props.navigation}
+					state={results}
+					testing={true}
+				/>
 			)
 		}
 		return (

@@ -13,6 +13,7 @@ import type {NavigationState} from 'react-navigation'
 import type {TopLevelViewPropsType} from '../../../types'
 
 type Props = TopLevelViewPropsType & {
+	testing?: boolean,
 	state: any,
 }
 
@@ -44,7 +45,10 @@ export class DebugListView extends React.PureComponent<Props> {
 	)
 
 	render() {
-		let keyed = toPairs(this.props.state).map(([key, value]) => {
+		let parsedData = this.props.testing
+			? JSON.parse(this.props.state)
+			: this.props.state
+		let keyed = toPairs(parsedData).map(([key, value]) => {
 			return {key, value}
 		})
 
