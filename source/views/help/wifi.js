@@ -6,7 +6,7 @@ import {Button} from '@frogpond/button'
 import {Markdown} from '@frogpond/markdown'
 import retry from 'p-retry'
 import delay from 'delay'
-import {reportNetworkProblem, notify} from '@frogpond/analytics'
+import {reportNetworkProblem} from '@frogpond/analytics'
 import {Error, ErrorMessage} from './components'
 import {getPosition, collectData, reportToServer} from './wifi-tools'
 import {styles} from './tool'
@@ -51,7 +51,6 @@ export class ToolView extends React.Component<Props, State> {
 		this.setState(() => ({status: 'collecting', error: ''}))
 		const [position, device] = await Promise.all([
 			getPosition().catch(error => {
-				notify(error)
 				return null
 			}),
 			collectData(),

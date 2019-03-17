@@ -1,7 +1,6 @@
 // @flow
 
 import type {EventType} from '@frogpond/event-type'
-import {notify} from '@frogpond/analytics'
 import RNCalendarEvents from 'react-native-calendar-events'
 import {Alert, Linking, Platform} from 'react-native'
 
@@ -18,7 +17,6 @@ export async function addToCalendar(event: EventType): Promise<boolean> {
 
 		return await saveEventToCalendar(event)
 	} catch (error) {
-		notify(error)
 		console.error(error)
 		return false
 	}
@@ -36,7 +34,6 @@ async function saveEventToCalendar(event: EventType): Promise<boolean> {
 
 		return true
 	} catch (err) {
-		notify(err)
 		console.error(err)
 		return false
 	}

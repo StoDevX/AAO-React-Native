@@ -5,7 +5,6 @@ gem 'json'
 gem 'xcodeproj'
 
 # fastlane plugins
-gem 'fastlane-plugin-bugsnag'
 
 group :development do
   gem 'rubocop', '~> 0.60'
