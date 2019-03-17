@@ -62,7 +62,8 @@ export class APITestView extends React.PureComponent<Props, State> {
 
 	fetchData = async (path: string) => {
 		try {
-			let responseData: string = await fetch(API(`/${path}`), {
+			let correctedPath = path.charAt(0) === '/' ? path : `/${path}`
+			let responseData: string = await fetch(API(correctedPath), {
 				cache: 'no-store',
 			}).text()
 			this.setState(() => ({results: responseData, error: ''}))
