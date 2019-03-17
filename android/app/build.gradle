@@ -97,6 +97,11 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 
+/**
+ * Fetch the keystore file's path from the environment
+ */
+String keystorePath = System.getenv("KEYSTORE_FILE")
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -122,8 +127,31 @@ android {
     }
 
     signingConfigs {
-        // the signingConfig is configured below
-        release
+        // originally derived from https://gist.github.com/gabrielemariotti/6856974
+        if (keystorePath == null) {
+            logger.warn "env['KEYSTORE_FILE'] not set"
+            release
+            return
+        } else {
+            logger.warn "env['KEYSTORE_FILE'] = ${keystorePath}"
+        }
+
+        def propFile = new File(keystorePath)
+        if (!propFile.canRead()) {
+            logger.warn "${keystorePath} is not readable"
+            release
+            return
+        }
+
+        def props = new Properties()
+        props.load(new FileInputStream(propFile))
+
+        release {
+            storeFile file(props['STORE_FILE'])
+            storePassword props['STORE_PASSWORD']
+            keyAlias props['KEY_ALIAS']
+            keyPassword props['KEY_PASSWORD']
+        }
     }
 
     splits {
@@ -145,7 +173,9 @@ android {
 
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            signingConfig signingConfigs.release
+            if (keystorePath != null) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 
@@ -184,41 +214,6 @@ android {
 
         resolutionStrategy.force 'org.webkit:android-jsc:r236355'
     }
-}
-
-// borrowed from https://gist.github.com/gabrielemariotti/6856974
-def propFile = new File('android/app/signing.properties')
-if (propFile.canRead()) {
-    Properties props = new Properties()
-    props.load(new FileInputStream(propFile))
-
-    bool hasFile = props != null && props.containsKey('STORE_FILE');
-    bool hasPassword = props != null && props.containsKey('STORE_PASSWORD');
-    bool hasAlias = props != null && props.containsKey('KEY_ALIAS');
-    bool hasKeyPass = props != null && props.containsKey('KEY_PASSWORD');
-
-    if (hasFile && hasPassword && hasAlias && hasKeyPass) {
-        logger.info 'android/app/signing.properties is fully functional.'
-        android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
-        android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
-        android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
-        android.signingConfigs.release.keyPassword = props['KEY_PASSWORD']
-    } else {
-        println 'android/app/signing.properties found, but some entries are missing.'
-        if (props == null) {
-            logger.warn '`props` was null'
-        } else {
-            logger.warn "has STORE_FILE [y/n]: ${props.containsKey('STORE_FILE')}"
-            logger.warn "has STORE_PASSWORD [y/n]: ${props.containsKey('STORE_PASSWORD')}"
-            logger.warn "has KEY_ALIAS [y/n]: ${props.containsKey('KEY_ALIAS')}"
-            logger.warn "has KEY_PASSWORD [y/n]: ${props.containsKey('KEY_PASSWORD')}"
-        }
-        android.buildTypes.release.signingConfig = null
-    }
-} else {
-    logger.warn 'android/app/signing.properties not found.'
-    logger.warn "cwd: ${new File(".").absolutePath}"
-    android.buildTypes.release.signingConfig = null
 }
 
 dependencies {

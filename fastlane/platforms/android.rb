@@ -78,20 +78,25 @@ platform :android do
 	lane :matchesque do
 		match_dir = clone_match
 
-		# don't forget --- lanes run inside of ./fastlane
-		gradle_file = 'signing.properties'
-		keystore_name = 'my-release-key.keystore'
-		play_store_key = 'play-private-key.json'
-
+		# we'll be copying files out of the tempdir from the git-clone operation
 		src = "#{match_dir}/android"
+		# don't forget: lanes run inside of ./fastlane, so we go up a level for our basedir
+		dest = File.expand_path('..', '.')
 
-		# FastlaneCore::CommandExecutor.execute(command: "pwd", print_all: true, print_command: true)
-		UI.command "cp #{src}/#{gradle_file} ../android/app/#{gradle_file}"
-		FileUtils.cp("#{src}/#{gradle_file}", "../android/app/#{gradle_file}")
-		UI.command "cp #{src}/#{keystore_name} ../android/app/#{keystore_name}"
-		FileUtils.cp("#{src}/#{keystore_name}", "../android/app/#{keystore_name}")
-		UI.command "cp #{src}/#{play_store_key} ../fastlane/#{play_store_key}"
-		FileUtils.cp("#{src}/#{play_store_key}", "../fastlane/#{play_store_key}")
+		# we export this variable so that Gradle knows where to find the .properties file
+		signing_props_dest = "#{dest}/android/app/signing.properties"
+		ENV['KEYSTORE_FILE'] = signing_props_dest
+
+		pairs = [
+			{:from => "#{src}/signing.properties", :to => signing_props_dest},
+			{:from => "#{src}/my-release-key.keystore", :to => "#{dest}/android/app/my-release-key.keystore"},
+			{:from => "#{src}/play-private-key.json", :to => "#{dest}/fastlane/play-private-key.json"},
+		]
+
+		pairs.each do |pair|
+			UI.command "cp #{pair[:from]} #{pair[:to]}"
+			FileUtils.cp(pair[:from], pair[:to])
+		end
 
 		remove_match_clone(dir: match_dir)
 	end
