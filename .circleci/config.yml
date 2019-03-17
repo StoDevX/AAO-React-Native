@@ -13,8 +13,10 @@ commands:
     description: 'Save the Bundler cache'
     steps:
       - save_cache:
-          key: &bundler-key
-            'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+          key: &bundler-key >-
+            v2-ruby-dependencies
+            {{ arch }}
+            {{ checksum "Gemfile.lock" }}
           paths: [./vendor/bundle]
 
   bundler-restore:
@@ -36,8 +38,12 @@ commands:
     description: 'Save the Gradle cache'
     steps:
       - save_cache:
-          key: &gradle-key
-            'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+          key: &gradle-key >-
+            v1-gradle-dependencies
+            {{ arch }}
+            {{ checksum "android/build.gradle" }}
+            {{ checksum "android/app/build.gradle" }}
+            {{ checksum "node_modules/react-native/package.json" }}
           paths: [~/.gradle]
 
   gradle-restore:
@@ -68,8 +74,10 @@ commands:
     description: 'Save the Yarn cache'
     steps:
       - save_cache:
-          key: &yarn-key
-            'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+          key: &yarn-key >-
+            v3-yarn-dependencies
+            {{ arch }}
+            {{ checksum "yarn.lock" }}
           paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
 
   yarn-restore:
