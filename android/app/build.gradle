@@ -199,11 +199,21 @@ android {
         }
     }
 
-    android {
-        dexOptions {
-            // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
-            preDexLibraries = preDexEnabled && !ciBuild
+    bundle {
+        language {
+            enableSplit = true
         }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+
+    dexOptions {
+        // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
+        preDexLibraries = preDexEnabled && !ciBuild
     }
 
     configurations.all {
