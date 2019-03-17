@@ -14,7 +14,7 @@ import {API} from '@frogpond/api'
 import glamorous from 'glamorous-native'
 import {iOSUIKit, material} from 'react-native-typography'
 import type {NavigationScreenProp} from 'react-navigation'
-import {DebugListView} from '../../../views/settings/screens/debug'
+import {DebugListView} from '../screens/debug'
 
 const styles = StyleSheet.create({
 	container: {
@@ -55,8 +55,8 @@ type Props = {
 }
 
 type State = {
-	results: string | null,
-	error: string | null,
+	results: ?string,
+	error: ?string,
 	selectedIndex: number,
 }
 
@@ -73,7 +73,7 @@ export class APITestView extends React.PureComponent<Props, State> {
 
 	fetchData = async (path: string) => {
 		try {
-			let correctedPath = path.charAt(0) === '/' ? path : `/${path}`
+			let correctedPath = path.startsWith('/') ? path : `/${path}`
 			let responseData: string = await fetch(API(correctedPath), {
 				cache: 'no-store',
 			}).text()
