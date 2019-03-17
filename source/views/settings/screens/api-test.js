@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const Paragraph = glamorous(TextInput)({
+const Output = glamorous(TextInput)({
 	marginVertical: 3,
 	paddingRight: 4,
 	...Platform.select({
@@ -87,15 +87,27 @@ export class APITestView extends React.PureComponent<Props, State> {
 		let {error, results, selectedIndex} = this.state
 
 		let jsonError = error ? (
-			<Paragraph editable={false} multiline={true} style={styles.error}>
-				{error}
-			</Paragraph>
+			<Output
+				editable={false}
+				// this aligns the text to the top on iOS, and centers it on Android
+				multiline={true}
+				scrollEnabled={true}
+				// use multiline with textAlignVertical="top" for the same behavior in both platforms
+				textAlignVertical="top"
+				value={error}
+			/>
 		) : null
 
 		let jsonData = results ? (
-			<Paragraph editable={false} multiline={true} style={styles.data}>
-				{results}
-			</Paragraph>
+			<Output
+				editable={false}
+				// this aligns the text to the top on iOS, and centers it on Android
+				multiline={true} 
+				scrollEnabled={true}
+				// use multiline with textAlignVertical="top" for the same behavior in both platforms
+				textAlignVertical="top"
+				value={results}
+			/>
 		) : null
 
 		let showIndex = () => {
@@ -113,7 +125,7 @@ export class APITestView extends React.PureComponent<Props, State> {
 			)
 		}
 		return (
-			<>
+			<View style={styles.container}>
 				<Toolbar onPress={() => {}}>
 					<TextInput
 						autoCapitalize="none"
@@ -138,8 +150,8 @@ export class APITestView extends React.PureComponent<Props, State> {
 					/>
 				) : null}
 
-				<View style={styles.container}>{showIndex()}</View>
-			</>
+				{showIndex()}
+			</View>
 		)
 	}
 }
