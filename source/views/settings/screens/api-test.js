@@ -77,6 +77,8 @@ export class APITestView extends React.PureComponent<Props, State> {
 			<>
 				<Toolbar onPress={() => {}}>
 					<TextInput
+						autoCapitalize="none"
+						autoCorrect={false}
 						keyboardType="web-search"
 						onEndEditing={e => this.fetchData(e.nativeEvent.text)}
 						placeholder="path/to/resource"
