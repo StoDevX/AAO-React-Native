@@ -2,7 +2,6 @@
 import * as React from 'react'
 import {View, TextInput, StyleSheet} from 'react-native'
 import {NoticeView} from '@frogpond/notice'
-import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as c from '@frogpond/colors'
 import {Toolbar} from '@frogpond/toolbar'
 import type {TopLevelViewPropsType} from '../types'
@@ -32,7 +31,6 @@ type State = {
 export class BonAppPickerView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
 		tabBarLabel: 'BonApp',
-		tabBarIcon: TabBarIcon('cog'),
 	}
 
 	state = {
@@ -75,5 +73,4 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 }
 BonAppPickerView.navigationOptions = {
 	title: 'BonApp',
-	tabBarIcon: TabBarIcon('cog'),
 }
