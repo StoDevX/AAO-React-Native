@@ -32,7 +32,7 @@ export class DebugListView extends React.PureComponent<Props> {
 		let testing = this.props.testing
 		let keyPath = this.props.navigation.getParam('keyPath', [])
 		keyPath = [...keyPath, row.key]
-		this.props.navigation.push('DebugView', {
+		this.props.navigation.push('DebugView', {keyPath, testing})
 			keyPath: keyPath,
 			testing: testing,
 		})
