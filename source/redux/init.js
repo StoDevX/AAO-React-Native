@@ -3,7 +3,7 @@
  * Functions to initialize bits of the global state, as appropriate
  */
 
-import {NetInfo} from 'react-native'
+import NetInfo from '@react-native-community/netinfo'
 import {getEnabledTools} from './parts/help'
 import {loadHomescreenOrder, loadDisabledViews} from './parts/homescreen'
 import {loadFavoriteBuildings} from './parts/buildings'

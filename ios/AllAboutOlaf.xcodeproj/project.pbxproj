@@ -58,6 +58,7 @@
 		D1FC2491209B6F06002CD083 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0002961E1E270BD9000909F2 /* SystemConfiguration.framework */; };
 		D1FC2492209B6F0D002CD083 /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D18853A920995CEB000A1DC5 /* libRCTOneSignal.a */; };
 		A8698BD3FB6C4E0BA8E8153E /* libRNCAsyncStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DEFCCD485DB54DD481CD7999 /* libRNCAsyncStorage.a */; };
+		955C9342AC1A4F568EB0C968 /* libRNCNetInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ECE416DC3EC4412F90D1C08E /* libRNCNetInfo.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -578,6 +579,8 @@
 		E847E37AA434496AB97586B8 /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGestureHandler.xcodeproj; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; };
 		D67D7577FBCD42A595082ED8 /* RNCAsyncStorage.xcodeproj */ = {isa = PBXFileReference; name = "RNCAsyncStorage.xcodeproj"; path = "../node_modules/@react-native-community/async-storage/ios/RNCAsyncStorage.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		DEFCCD485DB54DD481CD7999 /* libRNCAsyncStorage.a */ = {isa = PBXFileReference; name = "libRNCAsyncStorage.a"; path = "libRNCAsyncStorage.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		5D94F487E046419398206BBD /* RNCNetInfo.xcodeproj */ = {isa = PBXFileReference; name = "RNCNetInfo.xcodeproj"; path = "../node_modules/@react-native-community/netinfo/ios/RNCNetInfo.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		ECE416DC3EC4412F90D1C08E /* libRNCNetInfo.a */ = {isa = PBXFileReference; name = "libRNCNetInfo.a"; path = "libRNCNetInfo.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -627,6 +630,7 @@
 				3AD99DE32141CA1600D8CAAA /* libRCTOneSignal.a in Frameworks */,
 				670F958521BDC98F000B63AB /* libRNGestureHandler.a in Frameworks */,
 				A8698BD3FB6C4E0BA8E8153E /* libRNCAsyncStorage.a in Frameworks */,
+				955C9342AC1A4F568EB0C968 /* libRNCNetInfo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -982,6 +986,7 @@
 				71D5CCADA66D45008D9A38F2 /* RNVectorIcons.xcodeproj */,
 				89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */,
 				D67D7577FBCD42A595082ED8 /* RNCAsyncStorage.xcodeproj */,
+				5D94F487E046419398206BBD /* RNCNetInfo.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1874,6 +1879,7 @@
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
 					"$(SRCROOT)/../node_modules/bugsnag-react-native/**",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 				);
 				INFOPLIST_FILE = AllAboutOlaf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1909,6 +1915,7 @@
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
 					"$(SRCROOT)/../node_modules/bugsnag-react-native/**",
 					"$(SRCROOT)/../node_modules/@react-native-community/async-storage/ios",
+					"$(SRCROOT)/../node_modules/@react-native-community/netinfo/ios",
 				);
 				INFOPLIST_FILE = AllAboutOlaf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
