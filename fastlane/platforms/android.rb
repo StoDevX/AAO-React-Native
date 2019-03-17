@@ -8,7 +8,7 @@ platform :android do
 		build_status = 0
 		begin
 			propagate_version(track: options[:track])
-			gradle(task: 'assemble',
+			gradle(task: 'bundle',
 			       build_type: 'Release',
 			       print_command: true,
 			       print_command_output: true)
@@ -20,9 +20,9 @@ platform :android do
 		end
 
 		UI.message 'Generated files:'
-		UI.message lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS]
+		UI.message lane_context[SharedValues::GRADLE_ALL_AAB_OUTPUT_PATHS]
 
-		output = lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].to_json
+		output = lane_context[SharedValues::GRADLE_ALL_AAB_OUTPUT_PATHS].to_json
 		File.open('../logs/products', 'w') { |file| file.write(output) }
 	end
 
@@ -38,9 +38,9 @@ platform :android do
 		matchesque
 		build(track: track)
 
-		lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS] =
-			lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].select do |apk|
-				apk.end_with? '-release.apk'
+		lane_context[SharedValues::GRADLE_ALL_AAB_OUTPUT_PATHS] =
+			lane_context[SharedValues::GRADLE_ALL_AAB_OUTPUT_PATHS].select do |apk|
+				apk.end_with? '-release.aab'
 			end
 
 		supply(track: track, check_superseded_tracks: true)
