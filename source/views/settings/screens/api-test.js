@@ -1,13 +1,20 @@
 // @flow
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {Platform, StyleSheet, TextInput, View} from 'react-native'
+import {
+	Platform,
+	StyleSheet,
+	TextInput,
+	View,
+	SegmentedControlIOS,
+} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 import glamorous from 'glamorous-native'
 import {iOSUIKit, material} from 'react-native-typography'
 import type {NavigationScreenProp} from 'react-navigation'
+import {DebugListView} from '../../../views/settings/screens/debug'
 
 const styles = StyleSheet.create({
 	container: {
@@ -32,7 +39,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const Paragraph = glamorous(TextInput)({
+const Paragraph = glamorous(TextInput)({
 	marginVertical: 3,
 	paddingRight: 4,
 	...Platform.select({
@@ -41,6 +48,8 @@ export const Paragraph = glamorous(TextInput)({
 	}),
 })
 
+const Segment = glamorous(SegmentedControlIOS)({})
+
 type Props = {
 	navigation: NavigationScreenProp<*>,
 }
@@ -48,6 +57,7 @@ type Props = {
 type State = {
 	results: string | null,
 	error: string | null,
+	selectedIndex: number,
 }
 
 export class APITestView extends React.PureComponent<Props, State> {
@@ -58,6 +68,7 @@ export class APITestView extends React.PureComponent<Props, State> {
 	state = {
 		results: null,
 		error: null,
+		selectedIndex: 0,
 	}
 
 	fetchData = async (path: string) => {
@@ -73,7 +84,30 @@ export class APITestView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		let {error, results} = this.state
+		let {error, results, selectedIndex} = this.state
+
+		let jsonError = error ? (
+			<Paragraph editable={false} multiline={true} style={styles.error}>
+				{error}
+			</Paragraph>
+		) : null
+
+		let jsonData = results ? (
+			<Paragraph editable={false} multiline={true} style={styles.data}>
+				{results}
+			</Paragraph>
+		) : null
+
+		let showIndex = () => {
+			return selectedIndex === 0 ? (
+				<>
+					{jsonData}
+					{jsonError}
+				</>
+			) : (
+				<DebugListView navigation={this.props.navigation} state={jsonData} />
+			)
+		}
 		return (
 			<>
 				<Toolbar onPress={() => {}}>
@@ -87,18 +121,18 @@ export class APITestView extends React.PureComponent<Props, State> {
 						style={styles.default}
 					/>
 				</Toolbar>
-				<View style={styles.container}>
-					{error ? (
-						<Paragraph editable={false} multiline={true} style={styles.error}>
-							{error}
-						</Paragraph>
-					) : null}
-					{results ? (
-						<Paragraph editable={false} multiline={true} style={styles.data}>
-							{results}
-						</Paragraph>
-					) : null}
-				</View>
+
+				<Segment
+					onChange={event => {
+						this.setState({
+							selectedIndex: event.nativeEvent.selectedSegmentIndex,
+						})
+					}}
+					selectedIndex={selectedIndex}
+					values={['JSON', 'List']}
+				/>
+
+				<View style={styles.container}>{showIndex()}</View>
 			</>
 		)
 	}
