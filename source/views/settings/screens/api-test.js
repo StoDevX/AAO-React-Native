@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {Platform, StyleSheet, ScrollView, TextInput, Text} from 'react-native'
+import {Platform, StyleSheet, TextInput, View} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-export const Paragraph = glamorous(Text)({
+export const Paragraph = glamorous(TextInput)({
 	marginVertical: 3,
 	paddingRight: 4,
 	...Platform.select({
@@ -84,12 +84,18 @@ export class APITestView extends React.PureComponent<Props, State> {
 						style={styles.default}
 					/>
 				</Toolbar>
-				<ScrollView style={styles.container}>
-					{error ? <Paragraph style={styles.error}>{error}</Paragraph> : null}
-					{results ? (
-						<Paragraph style={styles.data}>{results}</Paragraph>
+				<View style={styles.container}>
+					{error ? (
+						<Paragraph editable={false} multiline={true} style={styles.error}>
+							{error}
+						</Paragraph>
 					) : null}
-				</ScrollView>
+					{results ? (
+						<Paragraph editable={false} multiline={true} style={styles.data}>
+							{results}
+						</Paragraph>
+					) : null}
+				</View>
 			</>
 		)
 	}
