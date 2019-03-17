@@ -40,11 +40,10 @@ platform :android do
 
 		lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS] =
 			lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS].select do |apk|
-			apk.end_with? '-release.apk'
-		end
+				apk.end_with? '-release.apk'
+			end
 
-		supply(track: track,
-		       check_superseded_tracks: true)
+		supply(track: track, check_superseded_tracks: true)
 
 		generate_sourcemap
 		upload_sourcemap_to_bugsnag
