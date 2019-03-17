@@ -13,14 +13,17 @@ commands:
     description: 'Save the Bundler cache'
     steps:
       - save_cache:
-          key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+          key: &bundler-cache-key >-
+            v2-ruby-dependencies
+            {{ arch }}
+            {{ checksum "Gemfile.lock" }}
           paths: [./vendor/bundle]
 
   bundler-restore:
     description: 'Restore the Bundler cache'
     steps:
       - restore_cache:
-          key: 'v2-ruby-dependencies-{{ arch }}-{{ checksum "Gemfile.lock" }}'
+          key: *bundler-cache-key
 
   danger:
     description: 'Run Danger'
@@ -35,14 +38,21 @@ commands:
     description: 'Save the Gradle cache'
     steps:
       - save_cache:
-          key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+          key: &gradle-cache-key >-
+            v1-gradle-dependencies
+            {{ arch }}
+            {{ checksum "android/gradle/wrapper/gradle-wrapper.properties" }}
+            {{ checksum "android/build.gradle" }}
+            {{ checksum "android/settings.gradle" }}
+            {{ checksum "android/app/build.gradle" }}
+            {{ checksum "node_modules/react-native/package.json" }}
           paths: [~/.gradle]
 
   gradle-restore:
     description: 'Restore the Gradle cache'
     steps:
       - restore_cache:
-          key: 'v1-gradle-dependencies-{{ arch }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "node_modules/react-native/package.json" }}'
+          key: *gradle-cache-key
 
   set-ruby-version:
     description: 'Set the Ruby Version'
@@ -66,14 +76,17 @@ commands:
     description: 'Save the Yarn cache'
     steps:
       - save_cache:
-          key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+          key: &yarn-cache-key >-
+            v3-yarn-dependencies
+            {{ arch }}
+            {{ checksum "yarn.lock" }}
           paths: [~/.cache/yarn, ~/Library/Caches/Yarn]
 
   yarn-restore:
     description: 'Restore the Yarn cache'
     steps:
       - restore_cache:
-          key: 'v3-yarn-dependencies-{{ arch }}-{{ checksum "yarn.lock" }}'
+          key: *yarn-cache-key
 
 workflows:
   version: 2
