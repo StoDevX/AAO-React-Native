@@ -10,6 +10,7 @@ import com.bugsnag.BugsnagReactNative;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -41,6 +42,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.asList(
         new MainReactPackage(),
         // please keep these sorted alphabetically
+        new AsyncStoragePackage(),
         BugsnagReactNative.getPackage(),
         new CalendarEventsPackage(),
         new CustomTabsPackage(),
