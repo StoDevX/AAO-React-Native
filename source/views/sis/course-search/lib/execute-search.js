@@ -52,5 +52,5 @@ export function sortAndGroupResults(results: Array<Course>) {
 
 	sortedAgain.reverse()
 
-	return sorted
+	return sortedAgain
 }
