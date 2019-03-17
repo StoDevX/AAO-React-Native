@@ -43,6 +43,7 @@ commands:
             {{ arch }}
             {{ checksum "android/gradle/wrapper/gradle-wrapper.properties" }}
             {{ checksum "android/build.gradle" }}
+            {{ checksum "android/settings.gradle" }}
             {{ checksum "android/app/build.gradle" }}
             {{ checksum "node_modules/react-native/package.json" }}
           paths: [~/.gradle]
