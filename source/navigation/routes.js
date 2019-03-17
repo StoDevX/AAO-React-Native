@@ -29,6 +29,7 @@ import {
 	CarletonWeitzMenuScreen,
 	MenusView,
 } from '../views/menus'
+import {BonAppPickerView} from '../views/menus/dev-bonapp-picker'
 import {MenuItemDetailView} from '@frogpond/food-menu/food-item-detail'
 import NewsView from '../views/news'
 import {
@@ -39,6 +40,7 @@ import {
 	LegalView,
 	PrivacyView,
 	PushNotificationsSettingsView,
+	APITestView,
 } from '../views/settings'
 import SISView from '../views/sis'
 import StreamingView, {
@@ -67,6 +69,7 @@ export const routes = {
 	ContactsDetailView: {screen: ContactsDetailView},
 	CreditsView: {screen: CreditsView},
 	DebugView: {screen: DebugView},
+	APITestView: {screen: APITestView},
 	DictionaryDetailView: {screen: DictionaryDetailView},
 	DictionaryView: {screen: DictionaryView},
 	DictionaryEditorView: {screen: DictionaryEditorView},
@@ -77,6 +80,7 @@ export const routes = {
 	JobDetailView: {screen: JobDetailView},
 	LegalView: {screen: LegalView},
 	MenusView: {screen: MenusView},
+	BonAppPickerView: {screen: BonAppPickerView},
 	NewsView: {screen: NewsView},
 	PrivacyView: {screen: PrivacyView},
 	SettingsView: {screen: SettingsView},
