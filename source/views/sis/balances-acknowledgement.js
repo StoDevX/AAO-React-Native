@@ -25,7 +25,6 @@ type Props = {
 	hasSeenAcknowledgement: () => any,
 }
 
-let Acknowledgement = Platform.OS === 'android' ? AndroidAck : IosAck
 let Paragraph = Platform.OS === 'android' ? AndroidP : IosP
 
 function BalancesOrAcknowledgementView(props: Props) {
@@ -33,33 +32,42 @@ function BalancesOrAcknowledgementView(props: Props) {
 		return <BalancesView navigation={props.navigation} />
 	}
 
+	let content = (
+		<>
+			<Paragraph>
+				While we strive to keep this app and the data therein up-to-date, there
+				will always be issues, especially seeing as we are not part of the
+				college. (Students and alumni of, yes, but officially sponsored by, no.)
+			</Paragraph>
+			<Paragraph>
+				As such, we require that you agree to the following statement before you
+				can see your balances within the app:
+			</Paragraph>
+			<Paragraph style={styles.bonappNotice}>
+				This data may be inaccurate.{'\n'}
+				Bon Appétit is always right.{'\n'}
+				This app is unofficial.
+			</Paragraph>
+			<Paragraph>
+				If you disagree, you will simply not be able to access this Balances
+				view. The rest of the app will remain available for perusal.
+			</Paragraph>
+		</>
+	)
+
+	let ackProps = {
+		onPositive: props.hasSeenAcknowledgement,
+		subtitle: 'Bon Appétit is always right',
+		title: 'Before you continue…',
+	}
+
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
-			<Acknowledgement
-				onPositive={props.hasSeenAcknowledgement}
-				subtitle="Bon Appétit is always right"
-				title="Before you continue…"
-			>
-				<Paragraph>
-					While we strive to keep this app and the data therein up-to-date,
-					there will always be issues, especially seeing as we are not part of
-					the college. (Students and alumni of, yes, but officially sponsored
-					by, no.)
-				</Paragraph>
-				<Paragraph>
-					As such, we require that you agree to the following statement before
-					you can see your balances within the app:
-				</Paragraph>
-				<Paragraph style={styles.bonappNotice}>
-					This data may be inaccurate.{'\n'}
-					Bon Appétit is always right.{'\n'}
-					This app is unofficial.
-				</Paragraph>
-				<Paragraph>
-					If you disagree, you will simply not be able to access this Balances
-					view. The rest of the app will remain available for perusal.
-				</Paragraph>
-			</Acknowledgement>
+			{Platform.OS === 'ios' ? (
+				<IosAck {...ackProps}>{content}</IosAck>
+			) : (
+				<AndroidAck {...ackProps}>{content}</AndroidAck>
+			)}
 		</ScrollView>
 	)
 }

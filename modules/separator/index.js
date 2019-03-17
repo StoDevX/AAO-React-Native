@@ -2,6 +2,7 @@
 import * as React from 'react'
 import {View, StyleSheet, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
+import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
 
 const styles = StyleSheet.create({
 	separator: {
@@ -18,6 +19,6 @@ const styles = StyleSheet.create({
 	},
 })
 
-export function Separator({style}: {style?: mixed}) {
+export function Separator({style}: {style?: ViewStyleProp}) {
 	return <View style={[styles.separator, style]} />
 }

@@ -322,8 +322,10 @@ jobs:
       - run:
           name: Download Android dependencies
           command: cd android && ./gradlew androidDependencies --console=plain
-          environment: {TERM: xterm-256color}
+          environment:
+            TERM: xterm-256color
       - gradle-cache
+      - run: echo 'org.gradle.workers.max=2' >> ./android/gradle.properties
       - run:
           name: Run Fastlane
           command: bundle exec fastlane android ci-run | tee ./logs/build

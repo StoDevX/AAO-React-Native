@@ -40,7 +40,7 @@ const initialState = {
 	unofficiallyAcknowledged: false,
 }
 
-export function settings(state: State = initialState, action: Action) {
+export function settings(state: State = initialState, action: Action): State {
 	switch (action.type) {
 		case CHANGE_THEME:
 			return {...state, theme: action.payload}

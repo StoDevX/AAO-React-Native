@@ -154,7 +154,9 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		return null
 	}
 
-	buildCustomStationMenu(foodItems: MenuItemContainerType) {
+	buildCustomStationMenu(
+		foodItems: MenuItemContainerType,
+	): Array<StationMenuType> {
 		const groupByStation = (grouped, item: MenuItemType) => {
 			if (item.station in grouped) {
 				grouped[item.station].push(item.id)
@@ -169,16 +171,19 @@ export class BonAppHostedMenu extends React.PureComponent<Props, State> {
 		const idsGroupedByStation = reduce(foodItems, groupByStation, {})
 
 		// then we make our own StationMenus list
-		return toPairs(idsGroupedByStation).map(([name, items], i) => ({
-			// eslint-disable-next-line camelcase
-			order_id: String(i),
-			id: String(i),
-			label: name,
-			price: '',
-			note: '',
-			soup: false,
-			items: items,
-		}))
+		let paired: Array<[string, Array<string>]> = toPairs(idsGroupedByStation)
+		return paired.map(
+			([name, items], i): StationMenuType => ({
+				// eslint-disable-next-line camelcase
+				order_id: String(i),
+				id: String(i),
+				label: name,
+				price: '',
+				note: '',
+				soup: false,
+				items: items,
+			}),
+		)
 	}
 
 	prepareSingleMenu(

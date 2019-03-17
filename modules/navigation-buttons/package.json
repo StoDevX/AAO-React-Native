@@ -11,7 +11,7 @@
   "peerDependencies": {
     "@frogpond/app-theme": "^1.0.0",
     "react": "^16.0.0",
-    "react-native": "^0.57.0",
+    "react-native": "^0.59.0",
     "react-native-vector-icons": "^6.0.0",
     "react-navigation": "^3.0.0"
   }

@@ -5,7 +5,6 @@
   "scripts": {
     "android": "react-native run-android",
     "android:release": "react-native run-android --variant=release",
-    "android-emulator": "VBoxManage list vms | peco --select-1 --query API --on-cancel error | sed  's~.*{\\(.*\\)}.*~\\1~' | xargs /Applications/Genymotion.app/Contents/MacOS/player.app/Contents/MacOS/player --vm-name",
     "bundle-data": "node scripts/bundle-data.js data/ docs/",
     "bundle:android": "react-native bundle --entry-file index.js --dev true --platform android --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/ --sourcemap-output ./android/app/src/main/assets/index.android.bundle.map",
     "bundle:ios": "react-native bundle --entry-file index.js --dev false --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map",
@@ -16,7 +15,6 @@
     "flow": "flow",
     "ios": "react-native run-ios",
     "ios:release": "react-native run-ios --configuration Release",
-    "ios-simulator": "xcrun instruments -s devices | peco --select-1 --query 'Simulator iPhone' --on-cancel error | sed  's~.*\\[\\(.*\\)\\].*~\\1~' | xargs open -n -a Simulator --args -CurrentDeviceUDID",
     "lint": "eslint --report-unused-disable-directives --max-warnings=0 --cache source/ modules/ scripts/ *.js",
     "prepare": "patch -p0 -Nfsi contrib/*.patch || true",
     "pretty": "prettier --write '{source,modules,scripts,e2e}/**/*.{js,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js}' '.circleci/*'",
@@ -32,7 +30,10 @@
     ]
   },
   "jest": {
-    "testRegex": "/__tests__/.*\\.(test|spec)\\.js$",
+    "testMatch": [
+      "**/__tests__/**/*.(spec|test).(js|ts|tsx)",
+      "!**/node_modules/**"
+    ],
     "collectCoverageFrom": [
       "modules/**/*.js",
       "source/**/*.js",
@@ -44,7 +45,6 @@
     "transformIgnorePatterns": [
       "node_modules/(?!(jest-)?react-native|glamorous-native|react-navigation)"
     ],
-    "testEnvironment": "node",
     "preset": "react-native"
   },
   "detox": {
@@ -109,9 +109,9 @@
     "p-retry": "4.0.0",
     "query-string": "6.4.0",
     "querystring": "0.2.0",
-    "react": "16.6.3",
+    "react": "16.8.3",
     "react-markdown": "2.5.1",
-    "react-native": "0.57.8",
+    "react-native": "0.59.1",
     "react-native-button": "2.3.0",
     "react-native-calendar-events": "1.7.0",
     "react-native-communications": "2.2.1",
@@ -148,11 +148,11 @@
   },
   "devDependencies": {
     "@babel/core": "7.3.4",
+    "@babel/runtime": "^7.3.4",
     "ajv": "6.10.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
     "babel-jest": "24.5.0",
-    "babel-plugin-transform-remove-console": "6.9.4",
     "bugsnag-sourcemaps": "1.1.0",
     "danger": "7.0.15",
     "danger-plugin-yarn": "1.3.1",
@@ -162,11 +162,11 @@
     "eslint-plugin-flowtype": "3.4.2",
     "eslint-plugin-react": "7.12.4",
     "eslint-plugin-react-native": "3.6.0",
-    "flow-bin": "0.78.0",
+    "flow-bin": "0.92.1",
     "jest": "24.5.0",
     "js-yaml": "3.12.2",
     "junk": "2.1.0",
-    "metro-react-native-babel-preset": "0.48.1",
+    "metro-react-native-babel-preset": "0.53.1",
     "minimist": "1.2.0",
     "mkdirp": "0.5.1",
     "pify": "4.0.1",
@@ -174,7 +174,7 @@
     "pretty-bytes": "5.1.0",
     "pretty-quick": "1.10.0",
     "prop-types": "15.7.2",
-    "react-test-renderer": "16.6.3",
+    "react-test-renderer": "16.8.3",
     "string-natural-compare": "2.0.3",
     "strip-ansi": "5.1.0",
     "yarn-deduplicate": "1.1.1"

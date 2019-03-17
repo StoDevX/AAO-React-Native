@@ -117,7 +117,7 @@ const initialState = {
 	status: 'initializing',
 }
 
-export function login(state: State = initialState, action: Action) {
+export function login(state: State = initialState, action: Action): State {
 	switch (action.type) {
 		case LOGIN_START:
 			return {...state, status: 'checking'}

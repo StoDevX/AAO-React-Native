@@ -1,12 +1,26 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext {
+        buildToolsVersion = "28.0.3"
+        minSdkVersion = 21
+        compileSdkVersion = 28
+        targetSdkVersion = 28
+        supportLibVersion = "28.0.0"
+    }
+
     repositories {
         jcenter()
         google()
+        // this maven repo is needed by the onesignal gradle plugin
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.3'
+        classpath 'com.android.tools.build:gradle:3.3.2'
+
+        // this plugin warns / fixes google-play depdendency issues caused by onsignal
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:0.12.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -21,21 +35,15 @@ ext {
 
 allprojects {
     repositories {
-        maven {
-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url "$rootDir/../node_modules/react-native/android"
-        }
-        maven {
-            // Local Maven repo containing AARs with JSC library built for Android, like RN
-            url "$rootDir/../node_modules/jsc-android/dist"
-        }
+        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+        maven { url "$rootDir/../node_modules/react-native/android" }
+        // Local Maven repo containing AARs with JSC library built for Android, like RN
+        maven { url "$rootDir/../node_modules/jsc-android/dist" }
         mavenLocal()
         google()
         jcenter()
-        maven {
-            // react-native-custom-tabs requires this maven repository
-            url "https://jitpack.io"
-        }
+        // react-native-custom-tabs requires this maven repository
+        maven { url "https://jitpack.io" }
     }
 }
 
@@ -43,8 +51,13 @@ subprojects {
     afterEvaluate { project ->
         if (project.hasProperty("android")) {
             android {
-                compileSdkVersion 28
-                buildToolsVersion "27.0.3"
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+
+                defaultConfig {
+                    targetSdkVersion rootProject.ext.targetSdkVersion
+                    minSdkVersion rootProject.ext.minSdkVersion
+                }
             }
         }
     }
