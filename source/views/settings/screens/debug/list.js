@@ -29,9 +29,13 @@ export class DebugListView extends React.PureComponent<Props> {
 	}
 
 	onPressRow = (row: any) => {
+		let testing = this.props.testing
 		let keyPath = this.props.navigation.getParam('keyPath', [])
 		keyPath = [...keyPath, row.key]
-		this.props.navigation.push('DebugView', {keyPath: keyPath})
+		this.props.navigation.push('DebugView', {
+			keyPath: keyPath,
+			testing: testing,
+		})
 	}
 
 	keyExtractor = (item: any) => item.key
@@ -45,9 +49,10 @@ export class DebugListView extends React.PureComponent<Props> {
 	)
 
 	render() {
-		let nothingFoundMessage = this.props.testing
-			? 'Nothing parsed.'
-			: 'Nothing found in redux.'
+		let nothingFoundMessage =
+			this.props.testing || this.props.navigation.getParam('testing')
+				? 'Nothing parsed.'
+				: 'Nothing found in redux.'
 
 		let parsedData = this.props.testing
 			? JSON.parse(this.props.state)
