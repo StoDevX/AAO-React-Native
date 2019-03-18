@@ -117,7 +117,35 @@ export class APITestView extends React.PureComponent<Props, State> {
 				<>
 					{jsonData}
 					{jsonError}
-				</>
+			error ? (
+				<Output
+					editable={false}
+					// this aligns the text to the top on iOS, and centers it on Android
+					multiline={true}
+					scrollEnabled={true}
+					style={styles.error}
+					// use multiline with textAlignVertical="top" for the same behavior in both platforms
+					textAlignVertical="top"
+					value={error}
+				/>
+			) : selectedIndex === 0 ? (
+				<Output
+					editable={false}
+					// this aligns the text to the top on iOS, and centers it on Android
+					multiline={true}
+					scrollEnabled={true}
+					style={styles.data}
+					// use multiline with textAlignVertical="top" for the same behavior in both platforms
+					textAlignVertical="top"
+					value={results}
+				/>
+			) : (
+				<DebugListView
+					navigation={this.props.navigation}
+					state={results}
+					testing={true}
+				/>
+			)
 			) : (
 				<DebugListView
 					navigation={this.props.navigation}
