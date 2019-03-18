@@ -8,7 +8,6 @@
  */
 
 #import "AppDelegate.h"
-#import <BugsnagReactNative/BugsnagReactNative.h>
 #import <AVFoundation/AVFoundation.h>
 
 #import <React/RCTBridge.h>
