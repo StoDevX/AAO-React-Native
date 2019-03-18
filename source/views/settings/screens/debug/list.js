@@ -65,7 +65,7 @@ export class DebugListView extends React.PureComponent<Props> {
 		return (
 			<FlatList
 				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<NoticeView text={nothingFoundMessage} />}
+				ListEmptyComponent={<NoticeView text="Nothing found." />}
 				data={keyed}
 				keyExtractor={this.keyExtractor}
 				renderItem={this.renderItem}
