@@ -148,7 +148,7 @@ export class APITestView extends React.PureComponent<Props, State> {
 							})
 						}}
 						selectedIndex={selectedIndex}
-						values={['JSON', 'List']}
+						values={['Text', 'Parsed']}
 					/>
 				) : null}
 
