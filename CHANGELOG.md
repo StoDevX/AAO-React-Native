@@ -42,7 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Changed custom BonApp cafe viewer icon to a cog instead of the ionicons logo (#3458)
 - Updated `react-native-vector-icons` to v6 and made some compatibility fixes (#3162)
 - Addressed color banding in SIS/Balances on Android (#3462)
-- [wip] Fix OleCard login stuff (#3503)
+- Fix OleCard login stuff (#3503)
 - Updated to CircleCI 2.1 configuration syntax (#3512)
 - Adjusted how we present the BonApp ultimatum on first visiting the Balances tab (#3515)
 - Changed the `data` prop on fancy-menu to be `extraData` (#3528)
@@ -56,7 +56,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed the touchable ref from not passing from the filter toolbar button to the popover (#3279)
 - Resolved some circular `require` statements in our code (#3280)
 - Resolved issue with OleCard login just never working (#3308)
-- A resolved an issue with Balances not re-using the login cookie
+- Also resolved an issue with Balances not re-using the login cookie
 - Made build tooling always build tagged commits (#3323)
 - Fixed bug where filters were not applying correctly in menu and course search views (#3344, #3350)
 - Fixed the text color of the safety concerns button (#3349)
