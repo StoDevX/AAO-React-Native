@@ -6,9 +6,6 @@
 <PROJECT_ROOT>/vendor/
 <PROJECT_ROOT>/.bundle/
 
-; remove this after rn-linear-gradient fixes their @flow/no type arguments issue
-.*/node_modules/react-native-linear-gradient/.*
-
 .*/node_modules/@callstack/react-theme-provider/.*
 .*/node_modules/react-native-paper/.*
 
