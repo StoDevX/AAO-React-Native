@@ -21,10 +21,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-#ifndef DEBUG
-  [BugsnagReactNative start];
-#endif
-
   UIStoryboard *loadingViewStoryBoard = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
   UIViewController *loadingViewController = [loadingViewStoryBoard instantiateViewControllerWithIdentifier:@"LaunchViewController"];
 
