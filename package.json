@@ -128,6 +128,7 @@
     "react-native-screens": "1.0.0-alpha.22",
     "react-native-search-bar": "3.4.2",
     "react-native-searchbar-controlled": "2.0.0",
+    "react-native-sentry": "0.42.0",
     "react-native-tableview-simple": "2.0.1",
     "react-native-typography": "1.4.0",
     "react-native-vector-icons": "6.3.0",
@@ -148,6 +149,7 @@
   "devDependencies": {
     "@babel/core": "7.3.4",
     "@babel/runtime": "7.3.4",
+    "@sentry/cli": "1.40.0",
     "ajv": "6.10.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
