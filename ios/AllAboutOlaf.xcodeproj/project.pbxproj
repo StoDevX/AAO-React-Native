@@ -1060,7 +1060,6 @@
 				6776346D1ECC93FA00C6F018 /* Bundle Data Files */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				D18853BB2099726A000A1DC5 /* Embed App Extensions */,
-				51F2B4CB91F7471F95D4ECD5 /* Upload Debug Symbols to Sentry */,
 			);
 			buildRules = (
 			);
