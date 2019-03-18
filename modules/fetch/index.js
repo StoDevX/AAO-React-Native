@@ -2,7 +2,7 @@
 
 /* globals Request */
 
-import {cachedFetch} from './cached'
+// import {cachedFetch} from './cached'
 import {userAgent} from '@frogpond/constants'
 import delay from 'delay'
 import queryString from 'query-string'
@@ -93,7 +93,7 @@ class Fetch {
 	}
 
 	async fetch() {
-		let response = await cachedFetch(this.request)
+		let response = await global.fetch(this.request)
 
 		if (this.options.throwHttpErrors && !response.ok) {
 			throw new HTTPError(response)
@@ -109,7 +109,9 @@ class Fetch {
 	}
 }
 
-export const fetch = (
+const doFetch = (
 	input: RequestInfo = '',
 	init?: RequestOptions & ExpandedFetchArgs = {},
 ): ResponsePromise => (new Fetch(input, init): any)
+
+export {doFetch as fetch}
