@@ -81,6 +81,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-sentry/sentry.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -237,6 +238,7 @@ dependencies {
     implementation project(':react-native-network-info')
     implementation project(':react-native-onesignal')
     implementation project(':react-native-restart')
+    implementation project(':react-native-sentry')
     implementation project(':react-native-vector-icons')
 
     // this is for react-native itself

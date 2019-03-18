@@ -8,8 +8,6 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
-  },
   "dependencies": {
     "@frogpond/constants": "^1.0.0",
     "@frogpond/storage": "^1.0.0"

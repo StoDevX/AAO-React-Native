@@ -21,6 +21,7 @@ import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+import io.sentry.RNSentryPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +51,7 @@ public class MainApplication extends Application implements ReactApplication {
         new RNDeviceInfo(),
         new RNGestureHandlerPackage(),
         new RNNetworkInfoPackage(),
+        new RNSentryPackage(),
         new VectorIconsPackage()
       );
     }
