@@ -13,7 +13,7 @@ import type {NavigationState} from 'react-navigation'
 import type {TopLevelViewPropsType} from '../../../types'
 
 type Props = TopLevelViewPropsType & {
-	testing?: boolean,
+	apiTest?: boolean,
 	state: any,
 }
 
@@ -29,13 +29,10 @@ export class DebugListView extends React.PureComponent<Props> {
 	}
 
 	onPressRow = (row: any) => {
-		let testing = this.props.testing
+		let apiTest = this.props.apiTest
 		let keyPath = this.props.navigation.getParam('keyPath', [])
 		keyPath = [...keyPath, row.key]
-		this.props.navigation.push('DebugView', {keyPath, testing})
-			keyPath: keyPath,
-			testing: testing,
-		})
+		this.props.navigation.push('DebugView', {keyPath, apiTest})
 	}
 
 	keyExtractor = (item: any) => item.key
@@ -49,12 +46,7 @@ export class DebugListView extends React.PureComponent<Props> {
 	)
 
 	render() {
-		let nothingFoundMessage =
-			this.props.testing || this.props.navigation.getParam('testing')
-				? 'Nothing parsed.'
-				: 'Nothing found in redux.'
-
-		let parsedData = this.props.testing
+		let parsedData = this.props.apiTest
 			? JSON.parse(this.props.state)
 			: this.props.state
 
