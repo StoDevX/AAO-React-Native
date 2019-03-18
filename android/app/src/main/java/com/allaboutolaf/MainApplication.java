@@ -2,7 +2,6 @@ package com.allaboutolaf;
 
 import android.app.Application;
 import android.net.http.HttpResponseCache;
-import android.os.Bundle;
 import android.util.Log;
 
 // keep these sorted alphabetically
@@ -11,7 +10,6 @@ import com.bugsnag.BugsnagReactNative;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactApplication;
-import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -40,7 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
+      return Arrays.asList(
         new MainReactPackage(),
         // please keep these sorted alphabetically
         BugsnagReactNative.getPackage(),

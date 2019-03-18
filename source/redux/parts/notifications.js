@@ -160,7 +160,10 @@ const initialState = {
 	hasPrompted: false,
 }
 
-export function notifications(state: State = initialState, action: Action) {
+export function notifications(
+	state: State = initialState,
+	action: Action,
+): State {
 	switch (action.type) {
 		case CHANNEL_SUBSCRIBE: {
 			let channels: Set<NotificationChannelName> = new Set(state.channels)

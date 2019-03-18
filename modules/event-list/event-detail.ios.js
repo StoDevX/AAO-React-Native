@@ -65,7 +65,7 @@ export class EventDetail extends React.Component<Props> {
 						)}
 					/>
 
-					{poweredBy.title ? (
+					{poweredBy && poweredBy.title ? (
 						<ListFooter href={poweredBy.href} title={poweredBy.title} />
 					) : null}
 				</TableView>

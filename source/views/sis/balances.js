@@ -274,16 +274,10 @@ function FormattedValueCell(props: {
 
 	return (
 		<View style={[styles.rectangle, styles.common, styles.balances, style]}>
-			<Text
-				autoAdjustsFontSize={true}
-				selectable={true}
-				style={styles.financialText}
-			>
+			<Text selectable={true} style={styles.financialText}>
 				{indeterminate ? '…' : formatter(value)}
 			</Text>
-			<Text autoAdjustsFontSize={true} style={styles.rectangleButtonText}>
-				{label}
-			</Text>
+			<Text style={styles.rectangleButtonText}>{label}</Text>
 		</View>
 	)
 }

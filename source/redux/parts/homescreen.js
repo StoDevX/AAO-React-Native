@@ -119,7 +119,7 @@ const initialState: State = {
 	inactiveViews: [],
 }
 
-export function homescreen(state: State = initialState, action: Action) {
+export function homescreen(state: State = initialState, action: Action): State {
 	switch (action.type) {
 		case LOAD_HOMESCREEN_ORDER: {
 			return {...state, order: action.payload}
