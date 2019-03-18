@@ -1,5 +1,6 @@
 // @flow
 
+import {Sentry} from 'react-native-sentry'
 import type {EventType} from '@frogpond/event-type'
 import RNCalendarEvents from 'react-native-calendar-events'
 import {Alert, Linking, Platform} from 'react-native'
@@ -17,6 +18,7 @@ export async function addToCalendar(event: EventType): Promise<boolean> {
 
 		return await saveEventToCalendar(event)
 	} catch (error) {
+		Sentry.captureException(error)
 		console.error(error)
 		return false
 	}
@@ -34,6 +36,7 @@ async function saveEventToCalendar(event: EventType): Promise<boolean> {
 
 		return true
 	} catch (err) {
+		Sentry.captureException(err)
 		console.error(err)
 		return false
 	}

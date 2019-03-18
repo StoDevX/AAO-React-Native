@@ -1,5 +1,6 @@
 // @flow
 
+import {Sentry} from 'react-native-sentry'
 import {type NavigationState} from 'react-navigation'
 
 // gets the current screen from navigation state
@@ -27,6 +28,12 @@ export function trackScreenChanges(
 	}
 
 	if (currentScreen !== prevScreen) {
-		// leave a breadcrumb
+		Sentry.captureBreadcrumb({
+			message: `Navigated to ${currentScreen}`,
+			category: 'navigation',
+			data: {
+				prev: prevScreen,
+			},
+		})
 	}
 }
