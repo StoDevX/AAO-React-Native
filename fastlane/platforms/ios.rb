@@ -89,6 +89,7 @@ platform :ios do
 		           distribute_external: false)
 
 		generate_sourcemap
+		upload_sourcemap_to_sentry
 	end
 
 	desc 'Bundle an iOS sourcemap'

@@ -1,4 +1,4 @@
-# Generate argument values for the generate_sourcemap lane
+# Generate argument values for the generate_sourcemap and upload_sourcemap_to_sentry lanes
 def sourcemap_args
 	# The cwd is /fastlane. I don't know why entry_file doesn't need to be ../, but
 	# I believe that watchman finds the project root and automatically looks there
@@ -38,6 +38,27 @@ def generate_sourcemap
 	       "--bundle-output '#{args[:bundle_output]}'",
 	       "--sourcemap-output '#{args[:sourcemap_output]}'",
 	      ].join ' '
+
+	FastlaneCore::CommandExecutor.execute(command: cmd,
+	                                      print_all: true,
+	                                      print_command: true)
+end
+
+# Upload sourcemap to bugsnag
+def upload_sourcemap_to_bugsnag
+	args = sourcemap_args
+
+	cmd = [
+	       'npx @sentry/cli',
+	       'releases',
+	       'files',
+	       current_bundle_version,
+	       'upload-sourcemaps',
+	       "--dist #{current_bundle_version}",
+	       "--strip-prefix #{File.expand_path(File.join(__FILE__), '..', '..', '..')}",
+	       '--rewrite',
+	       args[:sourcemap_output]
+	].join ' '
 
 	FastlaneCore::CommandExecutor.execute(command: cmd,
 	                                      print_all: true,
