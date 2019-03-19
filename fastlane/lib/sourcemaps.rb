@@ -44,8 +44,8 @@ def generate_sourcemap
 	                                      print_command: true)
 end
 
-# Upload sourcemap to bugsnag
-def upload_sourcemap_to_bugsnag
+# Upload sourcemap to sentry
+def upload_sourcemap_to_sentry
 	args = sourcemap_args
 
 	cmd = [
