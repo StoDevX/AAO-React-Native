@@ -121,7 +121,6 @@ android {
 
         manifestPlaceholders = [
             manifestApplicationId: applicationId,
-            BUGSNAG_KEY: System.getenv("BUGSNAG_KEY") ?: "",
             onesignal_google_project_number: "REMOTE",
         ]
     }
@@ -228,7 +227,6 @@ android {
 
 dependencies {
     // please keep this list sorted
-    implementation project(':bugsnag-react-native')
     implementation project(':mapbox-react-native-mapbox-gl')
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-custom-tabs')
@@ -239,6 +237,7 @@ dependencies {
     implementation project(':react-native-network-info')
     implementation project(':react-native-onesignal')
     implementation project(':react-native-restart')
+    implementation project(':react-native-sentry')
     implementation project(':react-native-vector-icons')
 
     // this is for react-native itself

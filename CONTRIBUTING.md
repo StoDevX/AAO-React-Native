@@ -27,9 +27,6 @@ there's a method to the madness.
 
 - <kbd>bug/*</kbd> — These labels relate to the various types of bugs
   we get: accessibility, layout, and everything else
-- <kbd>bugsnag</kbd> — Hardly used. Our in-app crash reporting system
-  can be configured to automatically report crashes with this label,
-  but it's currently disabled
 - <kbd>component/*</kbd> — For the "reusable" components in the app:
   filter, analytics, and markdown
 - <kbd>data/*</kbd> — Regarding our various data sources: bus routes,
@@ -55,8 +52,8 @@ there's a method to the madness.
   be in: blocked, dup, in progress, on hold(?), or pending an upstream
   update
 - <kbd>tool/*</kbd> — Issues/PRs that affect our various tools:
-  fastlane, CircleCI, Bugsnag, Danger, ESLint, Flow, Gradle, a custom
-  script, or Testflight
+  fastlane, CircleCI, Danger, ESLint, Flow, Gradle, a custom script,
+  or Testflight
 - <kbd>triage</kbd> — Automatically applied to issues that are filed
   without any labels
 - <kbd>type/*</kbd>
