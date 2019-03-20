@@ -55,7 +55,7 @@ def upload_sourcemap_to_sentry
 	       current_bundle_version,
 	       'upload-sourcemaps',
 	       "--dist #{current_bundle_version}",
-	       "--strip-prefix #{File.expand_path(File.join(__FILE__), '..', '..', '..')}",
+	       "--strip-prefix #{File.expand_path(File.join(__FILE__, '..', '..', '..'))}",
 	       '--rewrite',
 	       args[:sourcemap_output]
 	].join ' '
