@@ -12,6 +12,7 @@ import {type ReduxState} from '../../redux'
 import delay from 'delay'
 import * as c from '@frogpond/colors'
 import type {TopLevelViewPropsType} from '../types'
+import {DataTable, Surface} from 'react-native-paper'
 
 const DISCLAIMER = 'This data may be outdated or otherwise inaccurate.'
 
@@ -131,50 +132,60 @@ class BalancesView extends React.Component<Props, State> {
 					/>
 				}
 			>
-				<TableView>
-					<Section footer={DISCLAIMER} header="BALANCES">
-						<View style={styles.balancesRow}>
-							<FormattedValueCell
-								indeterminate={loading}
-								label="Flex"
-								value={flex}
-							/>
+				<Surface style={styles.table}>
+					<DataTable>
+						<DataTable.Header>
+							<DataTable.Title>OleCard Balances</DataTable.Title>
+							<DataTable.Title numeric={true}>Balance</DataTable.Title>
+						</DataTable.Header>
 
-							<FormattedValueCell
-								indeterminate={loading}
-								label="Ole"
-								value={ole}
-							/>
+						<MaterialRow
+							indeterminate={loading}
+							label="Ole Dollars"
+							value={ole}
+						/>
 
-							<FormattedValueCell
-								indeterminate={loading}
-								label="Copy/Print"
-								style={styles.finalCell}
-								value={print}
-							/>
-						</View>
-					</Section>
+						<MaterialRow
+							indeterminate={loading}
+							label="Flex Dollars"
+							value={flex}
+						/>
 
-					<Section footer={DISCLAIMER} header="MEAL PLAN">
-						<View style={styles.balancesRow}>
-							<FormattedValueCell
-								indeterminate={loading}
-								label="Daily Meals Left"
-								value={dailyMeals}
-							/>
+						<MaterialRow
+							indeterminate={loading}
+							label="Copy/Print"
+							value={print}
+						/>
+					</DataTable>
+				</Surface>
 
-							<FormattedValueCell
+				<Surface style={styles.table}>
+					<DataTable>
+						<DataTable.Header>
+							<DataTable.Title>Meal Plan Information</DataTable.Title>
+							<DataTable.Title numeric={true}>Balance</DataTable.Title>
+						</DataTable.Header>
+
+						<MaterialRow
+							indeterminate={loading}
+							label="Meals Left Today"
+							value={dailyMeals}
+						/>
+						<MaterialRow
+							indeterminate={loading}
+							label="Meals Left (Weekly)"
+							value={weeklyMeals}
+						/>
+
+						{mealPlan != null && (
+							<MaterialRow
 								indeterminate={loading}
-								label="Weekly Meals Left"
-								style={styles.finalCell}
-								value={weeklyMeals}
+								label="Meal Plan"
+								value={mealPlan}
 							/>
-						</View>
-						{mealPlan && (
-							<Cell cellStyle="Subtitle" detail={mealPlan} title="Meal Plan" />
 						)}
-					</Section>
-				</TableView>
+					</DataTable>
+				</Surface>
 
 				{(status !== 'logged-in' || message) && (
 					<Section footer="You'll need to log in in order to see this data.">
@@ -208,7 +219,6 @@ export default connect(
 
 let styles = StyleSheet.create({
 	stage: {
-		backgroundColor: c.sectionBgColor,
 		paddingVertical: 20,
 	},
 
@@ -230,6 +240,8 @@ let styles = StyleSheet.create({
 		marginTop: 0,
 		marginBottom: -10,
 	},
+
+	table: {borderRadius: 2, margin: 20, marginTop: 0, elevation: 2},
 
 	rectangle: {
 		height: 88,
@@ -256,6 +268,21 @@ let styles = StyleSheet.create({
 	},
 })
 
+function MaterialRow(props: {
+	label: string,
+	value: ?string,
+	indeterminate: boolean,
+}) {
+	return (
+		<DataTable.Row>
+			<DataTable.Cell>{props.label}</DataTable.Cell>
+			<DataTable.Cell numeric={true}>
+				<Text style={{fontWeight: '500'}}>{getValueOrNa(props.value)}</Text>
+			</DataTable.Cell>
+		</DataTable.Row>
+	)
+}
+
 function getValueOrNa(value: ?string): string {
 	if (value == null) {
 		return 'N/A'
@@ -268,14 +295,13 @@ function FormattedValueCell(props: {
 	label: string,
 	value: ?string,
 	style?: any,
-	formatter?: (?string) => string,
 }) {
-	let {indeterminate, label, value, style, formatter = getValueOrNa} = props
+	let {indeterminate, label, value, style} = props
 
 	return (
 		<View style={[styles.rectangle, styles.common, styles.balances, style]}>
 			<Text selectable={true} style={styles.financialText}>
-				{indeterminate ? '…' : formatter(value)}
+				{indeterminate ? '…' : getValueOrNa(value)}
 			</Text>
 			<Text style={styles.rectangleButtonText}>{label}</Text>
 		</View>
