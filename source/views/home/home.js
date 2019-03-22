@@ -281,7 +281,7 @@ function UrlHomeCell(props: {
 }) {
 	let {url, external, title, icon, foreground, tint} = props
 
-	let handlePress = () => () => {
+	let handlePress = () => {
 		if (external) {
 			return openUrlInBrowser(url)
 		} else {
