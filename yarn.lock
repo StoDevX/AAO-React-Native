@@ -6643,10 +6643,10 @@ react-navigation-tabs@1.0.2:
     react-lifecycles-compat "^3.0.4"
     react-native-tab-view "^1.0.0"
 
-react-navigation@3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-3.5.0.tgz#f789c282b56f9864c4ca9b82a85bdabd058db44e"
-  integrity sha512-Jido+CdRzzB9bCcn4bpHYLbfKoST+lUjxQTfgy9LXofLvS5JfI+BLcYmyg75/bOmHjn1dxeZAbKLr7cRxMR6XA==
+react-navigation@3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/react-navigation/-/react-navigation-3.5.1.tgz#73e6f71f89d428e3567fbc5241e935bfaff6b62a"
+  integrity sha512-uyKCvk8BaNhpVfjclIbr+lnAbHCPhpvo/RlgigvCJwAtzWZXTgX73PfDxX5n2wCGzhKayzN+MByByXobwTL06g==
   dependencies:
     "@react-navigation/core" "3.2.0"
     "@react-navigation/native" "~3.3.0"
