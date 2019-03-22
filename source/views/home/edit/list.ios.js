@@ -13,11 +13,11 @@ import SortableList from '@hawkrives/react-native-sortable-list'
 import debounce from 'lodash/debounce'
 
 import type {ViewType} from '../../views'
-import {allViews} from '../../views'
+// import {allViews} from '../../views'
 import {EditHomeRow} from './row'
 import {toggleViewDisabled} from '../../../redux/parts/homescreen'
 
-const objViews = fromPairs(allViews.map(v => [v.view, v]))
+const objViews = {} //fromPairs(allViews.map(v => [v.view, v]))
 
 const styles = StyleSheet.create({
 	contentContainer: {

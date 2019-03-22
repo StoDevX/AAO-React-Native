@@ -71,7 +71,7 @@ export function canOpenUrl(url: string) {
 	return true
 }
 
-export function openUrlInBrowser({url}: {url: string, id?: string}) {
+export function openUrlInBrowser(url: string) {
 	return promptConfirm(url)
 }
 
