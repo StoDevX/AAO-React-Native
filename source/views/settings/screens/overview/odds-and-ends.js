@@ -19,7 +19,7 @@ export class OddsAndEndsSection extends React.Component<Props> {
 	}
 
 	onBundlePickerButton = () => {
-		this.props.navigation.navigate('BundlePickerView')
+		this.props.navigation.navigate('BundlePickerListView')
 	}
 
 	render() {
