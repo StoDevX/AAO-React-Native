@@ -17,9 +17,11 @@ import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.github.droibit.android.reactnative.customtabs.CustomTabsPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.mapbox.rctmgl.RCTMGLPackage;
+import org.mauritsd.reactnativedynamicbundle.RNDynamicBundlePackage;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
+import com.rnfs.RNFSPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import io.sentry.RNSentryPackage;
 
@@ -49,6 +51,8 @@ public class MainApplication extends Application implements ReactApplication {
         new ReactNativeOneSignalPackage(),
         new ReactNativeRestartPackage(),
         new RNDeviceInfo(),
+        new RNDynamicBundlePackage(),
+        new RNFSPackage(),
         new RNGestureHandlerPackage(),
         new RNNetworkInfoPackage(),
         new RNSentryPackage(),

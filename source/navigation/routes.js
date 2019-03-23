@@ -37,6 +37,7 @@ import {
 	CreditsView,
 	DebugView,
 	LegalView,
+	BundlePickerView,
 	PrivacyView,
 	PushNotificationsSettingsView,
 } from '../views/settings'
@@ -101,4 +102,5 @@ export const routes = {
 	PrintJobsView: {screen: PrintJobsView},
 	PrinterListView: {screen: PrinterListView},
 	PrintJobReleaseView: {screen: PrintJobReleaseView},
+	BundlePickerView: {screen: BundlePickerView},
 }

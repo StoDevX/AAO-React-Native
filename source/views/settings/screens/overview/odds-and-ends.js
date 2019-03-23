@@ -18,6 +18,10 @@ export class OddsAndEndsSection extends React.Component<Props> {
 		this.props.navigation.navigate('PushNotificationsSettingsView')
 	}
 
+	onBundlePickerButton = () => {
+		this.props.navigation.navigate('BundlePickerView')
+	}
+
 	render() {
 		let version = appVersion()
 		let build = appBuild()
@@ -32,7 +36,13 @@ export class OddsAndEndsSection extends React.Component<Props> {
 				<ConnectedNotificationsCell onPress={this.onNotificationsButton} />
 
 				{isDevMode() && (
-					<PushButtonCell onPress={this.onDebugButton} title="Debug" />
+					<>
+						<PushButtonCell onPress={this.onDebugButton} title="Debug" />
+						<PushButtonCell
+							onPress={this.onBundlePickerButton}
+							title="Bundle Picker"
+						/>
+					</>
 				)}
 			</Section>
 		)
