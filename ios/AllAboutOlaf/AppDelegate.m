@@ -19,52 +19,38 @@
 
 @synthesize oneSignal = _oneSignal;
 
-// - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-// {
-//   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-//   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-//                                                    moduleName:@"AllAboutOlaf"
-//                                                    initialProperties:nil];
-
-//   [RNSentry installWithRootView:rootView];
-
-//   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-
-//   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-//   UIViewController *rootViewController = [UIViewController new];
-//   rootViewController.view = rootView;
-//   self.window.rootViewController = rootViewController;
-//   [self.window makeKeyAndVisible];
-
-//   rootView.loadingView = loadingViewController.view;
-
-//   // set up the requests cacher
-//   NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024   // 4 MiB
-//                                                        diskCapacity:20 * 1024 * 1024  // 20 MiB
-//                                                            diskPath:nil];
-//   [NSURLCache setSharedURLCache:URLCache];
-
-//   // ignore vibrate/silent switch when playing audio
-//   [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error: nil];
-
-//   return YES;
-// }
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   self.launchOptions = launchOptions;
+
+  UIStoryboard *loadingViewStoryBoard = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
+  UIViewController *loadingViewController = [loadingViewStoryBoard instantiateViewControllerWithIdentifier:@"LaunchViewController"];
   
   NSURL *jsCodeLocation;
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
   [RNDynamicBundle setDefaultBundleURL:jsCodeLocation];
   
   RCTRootView *rootView = [self getRootViewForBundleURL:[RNDynamicBundle resolveBundleURL]];
+  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+  rootView.loadingView = loadingViewController.view;
+
+  [RNSentry installWithRootView:rootView];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+
+  // set up the requests cacher
+  NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024   // 4 MiB
+                                                       diskCapacity:20 * 1024 * 1024  // 20 MiB
+                                                           diskPath:nil];
+  [NSURLCache setSharedURLCache:URLCache];
+
+  // ignore vibrate/silent switch when playing audio
+  [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error: nil];
+
   return YES;
 }
 
@@ -88,14 +74,5 @@
   
   return rootView;
 }
-
-// - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-// {
-// #if DEBUG
-//   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-// #else
-//   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-// #endif
-// }
 
 @end

@@ -9,6 +9,7 @@ import {
 	setActiveBundle,
 	registerBundle,
 	reloadBundle,
+	getBundles,
 } from 'react-native-dynamic-bundle'
 import {type TopLevelViewPropsType} from '../../types'
 
@@ -37,6 +38,10 @@ export class BundlePickerView extends React.Component<Props> {
 
 		registerBundle('test', 'test.bundle')
 		setActiveBundle('test')
+
+		const bundles = await getBundles()
+		console.log(bundles)
+
 		reloadBundle()
 		refreshApp()
 	}
