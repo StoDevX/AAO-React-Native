@@ -39,6 +39,7 @@ export class BundlePickerView extends React.Component {
 			toFile: `${platformBundlePath}/test.bundle`,
 		})
 
+		// unregisterBundle('test')
 		registerBundle('test', 'test.bundle')
 		setActiveBundle('test')
 

@@ -10,11 +10,17 @@
 #import <React/RCTBridgeDelegate.h>
 #import <UIKit/UIKit.h>
 #import <RCTOneSignal.h>
+#import <RNDynamicBundle.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate>
+@class RCTRootView;
+
+@interface AppDelegate : UIResponder <UIApplicationDelegate, RNDynamicBundleDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
+@property (nonatomic, strong) NSDictionary *launchOptions;
 
 @property (strong, nonatomic) RCTOneSignal* oneSignal;
+
+- (RCTRootView *)getRootViewForBundleURL:(NSURL *)bundleURL;
 
 @end
