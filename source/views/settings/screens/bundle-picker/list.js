@@ -1,21 +1,14 @@
 // @flow
 import * as React from 'react'
-import {FlatList, View, Text, StyleSheet} from 'react-native'
-import {BranchRow} from './row'
+import {FlatList, StyleSheet} from 'react-native'
+import delay from 'delay'
+import {PullRequestRow} from './row'
 import * as c from '@frogpond/colors'
 import {fetch} from '@frogpond/fetch'
-import {CIRCLE_API_BASE_URL, GH_REPOS_API_URL} from '../../../../lib/constants'
-import {refreshApp} from '../../../../lib/refresh'
-import RNFS from 'react-native-fs'
-import {
-	setActiveBundle,
-	registerBundle,
-	reloadBundle,
-	getBundles,
-} from 'react-native-dynamic-bundle'
+import {GH_REPOS_API_URL} from '../../../../lib/constants'
 import {type TopLevelViewPropsType} from '../../../types'
 import {NoticeView, LoadingView} from '@frogpond/notice'
-import {ListSeparator} from '@frogpond/lists'
+import {ListSeparator, ListFooter} from '@frogpond/lists'
 
 let styles = StyleSheet.create({
 	listContainer: {
@@ -23,11 +16,15 @@ let styles = StyleSheet.create({
 	},
 })
 
-type Props = TopLevelViewPropsType
+type Props = TopLevelViewPropsType & {
+	onRefresh: () => any,
+	refreshing: boolean,
+}
 
 type State = {
-	results: any,
 	loading: boolean,
+	refreshing: boolean,
+	results: any,
 }
 
 export class BundlePickerListView extends React.Component<Props, State> {
@@ -36,8 +33,9 @@ export class BundlePickerListView extends React.Component<Props, State> {
 	}
 
 	state = {
-		results: null,
 		loading: true,
+		refreshing: false,
+		results: null,
 	}
 
 	componentDidMount() {
@@ -46,32 +44,59 @@ export class BundlePickerListView extends React.Component<Props, State> {
 		})
 	}
 
+	refresh = async (): any => {
+		const start = Date.now()
+		this.setState(() => ({refreshing: true}))
+
+		await this.fetchData()
+
+		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
+		const elapsed = Date.now() - start
+		if (elapsed < 500) {
+			await delay(500 - elapsed)
+		}
+
+		this.setState(() => ({refreshing: false}))
+	}
+
 	fetchData = async () => {
-		const results = await fetch(GH_REPOS_API_URL).json()
-		this.setState(() => ({results: results}))
+		const results = await fetch(GH_REPOS_API_URL, {
+			searchParams: {
+				state: 'open',
+			},
+		}).json()
+		this.setState(() => ({results}))
 	}
 
-	onPressRow = (row: any) => {
-		console.log(row)
+	onPressRow = (request: any) => {
+		this.props.navigation.navigate('DownloaderView', {request})
 	}
 
-	keyExtractor = (branch: any, index: number) => index.toString()
+	keyExtractor = (request: any, index: number) => index.toString()
 
-	renderItem = branch => <BranchRow onPress={this.onPressRow} branch={branch} />
+	renderItem = (request: any) => (
+		<PullRequestRow
+			onPress={() => this.onPressRow(request)}
+			request={request}
+		/>
+	)
 
 	render() {
 		const {results, loading} = this.state
 
 		if (loading) {
-			return <LoadingView />
+			return <LoadingView text="Fetching Open PRs…" />
 		}
 
 		return (
 			<FlatList
 				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<NoticeView text="No branches found." />}
+				ListEmptyComponent={<NoticeView text="No pull requests found." />}
+				ListFooterComponent={<ListFooter title="Powered by GitHub" />}
 				data={results}
 				keyExtractor={this.keyExtractor}
+				onRefresh={this.refresh}
+				refreshing={this.state.refreshing}
 				renderItem={this.renderItem}
 				style={styles.listContainer}
 			/>

@@ -1,34 +1,63 @@
 // @flow
 import * as React from 'react'
-import {Alert} from 'react-native'
-import {Column, Row} from '@frogpond/layout'
+import {View, Text, StyleSheet} from 'react-native'
+import {Row} from '@frogpond/layout'
 import {ListRow, Detail, Title} from '@frogpond/lists'
+import {OutlineBadge as Badge} from '@frogpond/badge'
+import * as c from '@frogpond/colors'
+import moment from 'moment-timezone'
+
+const styles = StyleSheet.create({
+	title: {
+		justifyContent: 'space-between',
+		alignItems: 'center',
+	},
+	titleText: {
+		flex: 1,
+	},
+	detailWrapper: {
+		paddingTop: 3,
+	},
+	detailRow: {
+		paddingTop: 0,
+	},
+	accessoryBadge: {
+		marginLeft: 4,
+	},
+})
 
 type Props = {
-	onPress: string => any,
-	branch: any,
+	onPress: () => any,
+	request: any,
 }
 
-export class BranchRow extends React.PureComponent<Props> {
-	_onPress = () => {
-		if (!this.props.branch.item.commit.url) {
-			Alert.alert('There is nowhere to go for this branch')
-			return
-		}
-		// this.props.onPress(this.props.branch.link)
-	}
-
+export class PullRequestRow extends React.PureComponent<Props> {
 	render() {
-		const {branch} = this.props
+		const {item} = this.props.request
+		const date = moment(item.created_at)
+			.startOf('day')
+			.fromNow()
 
 		return (
-			<ListRow arrowPosition="top" onPress={this._onPress}>
-				<Row alignItems="center">
-					<Column flex={1}>
-						<Title lines={1}>{branch.item.name}</Title>
-						<Detail lines={1}>{branch.item.commit.sha}</Detail>
-					</Column>
+			<ListRow arrowPosition="center" onPress={this.props.onPress}>
+				<Row style={styles.title}>
+					<Title lines={1} style={styles.titleText}>
+						<Text>{item.title}</Text>
+					</Title>
+
+					<Badge
+						accentColor={c.moneyGreen}
+						style={styles.accessoryBadge}
+						text={`#${item.number}`}
+						textColor={c.hollyGreen}
+					/>
 				</Row>
+
+				<View style={styles.detailWrapper}>
+					<Detail style={styles.detailRow}>{`opened ${date} by ${
+						item.user.login
+					}`}</Detail>
+				</View>
 			</ListRow>
 		)
 	}
