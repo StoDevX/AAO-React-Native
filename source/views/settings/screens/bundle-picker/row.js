@@ -6,6 +6,7 @@ import {ListRow, Detail, Title} from '@frogpond/lists'
 import {OutlineBadge as Badge} from '@frogpond/badge'
 import * as c from '@frogpond/colors'
 import moment from 'moment-timezone'
+import type {GithubResponse} from './types'
 
 const styles = StyleSheet.create({
 	title: {
@@ -28,13 +29,13 @@ const styles = StyleSheet.create({
 
 type Props = {
 	onPress: () => any,
-	request: any,
+	request: GithubResponse,
 }
 
 export class PullRequestRow extends React.PureComponent<Props> {
 	render() {
-		const {item} = this.props.request
-		const date = moment(item.created_at)
+		const {request} = this.props
+		const date = moment(request.created_at)
 			.startOf('day')
 			.fromNow()
 
@@ -42,20 +43,20 @@ export class PullRequestRow extends React.PureComponent<Props> {
 			<ListRow arrowPosition="center" onPress={this.props.onPress}>
 				<Row style={styles.title}>
 					<Title lines={1} style={styles.titleText}>
-						<Text>{item.title}</Text>
+						<Text>{request.title}</Text>
 					</Title>
 
 					<Badge
 						accentColor={c.moneyGreen}
 						style={styles.accessoryBadge}
-						text={`#${item.number}`}
+						text={`#${request.number}`}
 						textColor={c.hollyGreen}
 					/>
 				</Row>
 
 				<View style={styles.detailWrapper}>
 					<Detail style={styles.detailRow}>{`opened ${date} by ${
-						item.user.login
+						request.user.login
 					}`}</Detail>
 				</View>
 			</ListRow>

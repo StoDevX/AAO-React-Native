@@ -9,6 +9,7 @@ import {GH_REPOS_API_URL} from '../../../../lib/constants'
 import {type TopLevelViewPropsType} from '../../../types'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import {ListSeparator, ListFooter} from '@frogpond/lists'
+import type {GithubResponse} from './types'
 
 let styles = StyleSheet.create({
 	listContainer: {
@@ -24,7 +25,7 @@ type Props = TopLevelViewPropsType & {
 type State = {
 	loading: boolean,
 	refreshing: boolean,
-	results: any,
+	results: ?Array<GithubResponse>,
 }
 
 export class BundlePickerListView extends React.Component<Props, State> {
@@ -68,17 +69,14 @@ export class BundlePickerListView extends React.Component<Props, State> {
 		this.setState(() => ({results}))
 	}
 
-	onPressRow = (request: any) => {
+	onPressRow = (request: GithubResponse) => {
 		this.props.navigation.navigate('DownloaderView', {request})
 	}
 
-	keyExtractor = (request: any, index: number) => index.toString()
+	keyExtractor = (request: GithubResponse, index: number) => index.toString()
 
-	renderItem = (request: any) => (
-		<PullRequestRow
-			onPress={() => this.onPressRow(request)}
-			request={request}
-		/>
+	renderItem = ({item}: {item: GithubResponse}) => (
+		<PullRequestRow onPress={() => this.onPressRow(item)} request={item} />
 	)
 
 	render() {

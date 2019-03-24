@@ -15,6 +15,7 @@ import * as c from '@frogpond/colors'
 import {Button} from '@frogpond/button'
 import {openUrl} from '@frogpond/open-url'
 import type {NavigationScreenProp} from 'react-navigation'
+import type {CircleArtifact} from './types'
 
 const styles = StyleSheet.create({
 	container: {
@@ -35,7 +36,7 @@ type Props = {
 }
 
 type State = {
-	circleResponse: any,
+	circleResponse: ?Array<CircleArtifact>,
 	loading: boolean,
 	error: boolean,
 }
@@ -67,11 +68,11 @@ export class DownloaderView extends React.Component<Props, State> {
 	}
 
 	fetchCirlceData = async () => {
-		const item = this.props.navigation.state.params.request.item
+		const request = this.props.navigation.state.params.request
 
 		let circleResponse = await fetch(CIRCLE_API_ARTIFACTS_URL, {
 			searchParams: {
-				branch: item.head.ref,
+				branch: request.head.ref,
 			},
 		}).json()
 
@@ -104,13 +105,13 @@ export class DownloaderView extends React.Component<Props, State> {
 	}
 
 	render() {
-		const {item} = this.props.navigation.state.params.request
+		const {request} = this.props.navigation.state.params
 		const {circleResponse, loading, error} = this.state
 
 		return (
 			<ScrollView style={styles.container}>
 				<Text selectable={true} style={styles.title}>
-					{item.title}
+					{request.title}
 				</Text>
 
 				{loading ? (
@@ -130,7 +131,7 @@ export class DownloaderView extends React.Component<Props, State> {
 				)}
 
 				<Button
-					onPress={() => openUrl(item.html_url)}
+					onPress={() => openUrl(request.html_url)}
 					title="Open in browser"
 				/>
 			</ScrollView>
