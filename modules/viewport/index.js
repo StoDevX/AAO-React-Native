@@ -34,3 +34,19 @@ export class Viewport extends React.PureComponent<Props, State> {
 		return this.props.render(this.state.viewport)
 	}
 }
+
+export function useViewport() {
+	let [window, setWindow] = React.useState(Dimensions.get('window'))
+
+	React.useEffect(() => {
+		function handleResizeEvent(event: {window: WindowDimensions}) {
+			setWindow(event.window)
+		}
+
+		Dimensions.addEventListener('change', handleResizeEvent)
+
+		return () => Dimensions.removeEventListener('change', handleResizeEvent)
+	})
+
+	return window
+}
