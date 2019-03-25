@@ -83,6 +83,11 @@ export class APITestView extends React.PureComponent<Props, State> {
 		}
 	}
 
+	onChangeSegment = (event: any) => {
+		const selectedSegment = event.nativeEvent.selectedSegmentIndex
+		this.setState(() => ({selectedIndex: selectedSegment}))
+	}
+
 	render() {
 		let {error, results, selectedIndex} = this.state
 
@@ -132,11 +137,7 @@ export class APITestView extends React.PureComponent<Props, State> {
 
 				{Platform.OS === 'ios' ? (
 					<Segment
-						onChange={event => {
-							this.setState(() => ({
-								selectedIndex: event.nativeEvent.selectedSegmentIndex,
-							}))
-						}}
+						onChange={this.onChangeSegment}
 						selectedIndex={selectedIndex}
 						values={['Text', 'Parsed']}
 					/>
