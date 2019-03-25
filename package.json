@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "android:release": "react-native run-android --variant=release",
     "bundle-data": "node scripts/bundle-data.js data/ docs/",
     "bundle:android": "react-native bundle --entry-file index.js --dev true --platform android --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/ --sourcemap-output ./android/app/src/main/assets/index.android.bundle.map",
     "bundle:ios": "react-native bundle --entry-file index.js --dev false --platform ios --bundle-output ./ios/AllAboutOlaf/main.jsbundle --assets-dest ./ios --sourcemap-output ./ios/AllAboutOlaf/main.jsbundle.map",
@@ -14,7 +13,6 @@
     "d": "yarn-deduplicate && yarn",
     "flow": "flow",
     "ios": "react-native run-ios",
-    "ios:release": "react-native run-ios --configuration Release",
     "lint": "eslint --report-unused-disable-directives --max-warnings=0 --cache source/ modules/ scripts/ *.js",
     "prepare": "patch -p0 -Nfsi contrib/*.patch || true",
     "pretty": "prettier --write '{source,modules,scripts,e2e}/**/*.{js,json}' 'data/**/*.css' '{*,.*}.{yaml,yml,json,js}' '.circleci/*'",
