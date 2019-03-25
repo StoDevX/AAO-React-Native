@@ -1,8 +1,8 @@
 // @flow
 
-import {notify} from './bugsnag'
+import {Sentry} from 'react-native-sentry'
 
 export function reportNetworkProblem(err: Error) {
-	notify(err)
+	Sentry.captureException(err)
 	console.warn(err)
 }

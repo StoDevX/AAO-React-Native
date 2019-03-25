@@ -6,7 +6,6 @@ import android.util.Log;
 
 // keep these sorted alphabetically
 import com.avishayil.rnrestart.ReactNativeRestartPackage;
-import com.bugsnag.BugsnagReactNative;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactApplication;
@@ -22,6 +21,7 @@ import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+import io.sentry.RNSentryPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +41,6 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.asList(
         new MainReactPackage(),
         // please keep these sorted alphabetically
-        BugsnagReactNative.getPackage(),
         new CalendarEventsPackage(),
         new CustomTabsPackage(),
         new KeychainPackage(),
@@ -52,6 +51,7 @@ public class MainApplication extends Application implements ReactApplication {
         new RNDeviceInfo(),
         new RNGestureHandlerPackage(),
         new RNNetworkInfoPackage(),
+        new RNSentryPackage(),
         new VectorIconsPackage()
       );
     }
