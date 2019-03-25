@@ -2,8 +2,8 @@
 
 import * as React from 'react'
 import type {OtherModeType} from '../types'
-import {ListRow, Detail, Title} from '../../components/list'
-import {Column, Row} from '../../components/layout'
+import {ListRow, Detail, Title} from '@frogpond/lists'
+import {Column, Row} from '@frogpond/layout'
 
 type Props = {
 	onPress: OtherModeType => any,

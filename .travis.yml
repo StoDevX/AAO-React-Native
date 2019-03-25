@@ -1,66 +1,34 @@
 ---
+dist: xenial
+
 env:
-  # To update the secure tokens, run `travis encrypt NAME='VALUE' --add` after
-  # installing the travis gem with `gem install travis`.
   global:
     # variables from the web interface:
-    # - BOT_ITC_PASSWORD_FOR_FASTLANE
-    # - BUGSNAG_KEY: api key for Bugsnag connection
-    # - CI_USER_TOKEN: used to auth with the keys repo
-    # - DANGER_GITHUB_API_TOKEN: api key to let Danger write comments to github
-    # - FASTLANE_PASSWORD: password for apple id used by fastlane
-    # - GCAL_KEY: google calendar API key
-    # - GH_TOKEN: unknown
+    # - GH_TOKEN: token to push to the repo for greenkeeper
     # - GITHUB_PAGES_TOKEN: token to push to gh-pages
-    # - GMAPS_KEY: google maps API key
     # sets our node version in one nice place
     - TRAVIS_NODE_VERSION=10
-    # configure fastlane a bit
-    - FASTLANE_SKIP_UPDATE_CHECK=1
-    - FASTLANE_DISABLE_ANIMATION=1
-    # bypass the 2fa auth for fastlane
-    - FASTLANE_PASSWORD="$BOT_ITC_PASSWORD_FOR_FASTLANE"
-    # this is `GH_TOKEN`: used by greenkeeper to update package-lock.json
-    - secure: s2HicpDrioxVuS/1KyDMgFkgbM3eVxp1FVF1R922oKeUGhtNFERufXp+nXaG98trqmJhfjfx243i7qP8oEX1DoGtFAHAuILBG0KTXoY1HZG/ZlVpc2pjRQmfCt3tJCs8Trovv2q2yM21JtTKXJ6wZ+XUGK0zqXbd4IH7k30Q649CIZ+l/pcU4cVqoLojekFWMQuW9onPOiTGtBckdPngmJ9GgAGDQesYjZ/p5RTaggCleD4oFmgkUdPZtityr+6TYe6cU9fFIVHyxe5F4JsiXB2aKk0qbX86tXUdlneOTYAw0YsxzVbpjtjVeedG3lm+UDAABznaqyuj4EI2+ERIXEMXtDzG+knQuQIF1P9E5ZWRanuSbfwFRJecPXyw03AtT+lBEHls1klRFep0yYzSKPunuqyeFZG+QFFtiegPnk7C4R2KfJhghB8kr8Ysgwg1YJXP77AaTBET0YsEvhMNNqEGK0LsXhZJUCWUnZfINFwp8ggEB8ZHWqWmTD2SxufqWXCzcMBnNdyuoDAH8//myA/09UcxzRpQwBqy3wH/Nlb47n+RydQxxiSmpTw0xAa5f9/qRjy0DrIT0PowDN1VGLgy6wQIqzAN6Ex4Y7AIyaTZrga7cbpfHE7lKee8XTTfDJnfGywJ1+3CqpZpA1jQhRzeGQbxPfghaOxzI46i4p4=
-
 
 # As seen in http://stackoverflow.com/a/31882307/2347774
 # Prevent travis from building twice for PRs
 branches:
   only:
     - master
-    - /^greenkeeper\//
-
 
 stages:
-  - name: Greenkeeper
-    if: branch =~ /^greenkeeper\//
   - name: Deploy Data
     if: branch = master AND type != pull_request
 
-
 jobs:
   include:
-    # Run greenkeeper stuff
-    - os: linux
-      sudo: false
-      distro: trusty
-      language: node_js
-      node_js: $TRAVIS_NODE_VERSION
-      stage: Greenkeeper
-      env: [task=GREENKEEPER]
-      install: npm install -g greenkeeper-lockfile@1
-      script: greenkeeper-lockfile-update
-      after_script: greenkeeper-lockfile-upload
-
     # Deploy the gh-pages data
     - os: linux
-      sudo: false
       distro: trusty
       language: node_js
       node_js: $TRAVIS_NODE_VERSION
       stage: Deploy Data
       env: [task=GH_PAGES]
+      before_install: npm i -g yarn
       install: yarn || yarn
       script:
         - npm run validate-bus-data

@@ -4,17 +4,16 @@ category: Health and Wellness
 
 schedule:
   - title: Office
-    hours: []
-      # - {days: [Mo, We, Fr], from: '10:10am', to: '10:30am'}
-      # - {days: [Tu], from: '11:10am', to: '11:30am'}
-      # - {days: [Th], from: '11:00am', to: '12:35pm'}
-      # - {days: [Tu, Su], from: '7:00pm', to: '8:00pm'}
-    notes: The SARN office is closed for the summer?
+    hours:
+      - {days: [Mo, We, Fr], from: '10:10am', to: '10:30am'}
+      - {days: [Tu], from: '11:10am', to: '11:30am'}
+      - {days: [Th], from: '11:00am', to: '12:35pm'}
+      - {days: [Tu, Su], from: '7:00pm', to: '8:00pm'}
 
-  # - title: Phone
-  #   isPhysicallyOpen: false
-  #   hours:
-  #     - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '8:00pm', to: '8:00am'}
+  - title: Phone
+    isPhysicallyOpen: false
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr, Sa, Su], from: '8:00pm', to: '8:00am'}
 
 breakSchedule:
   fall: []
@@ -23,7 +22,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Office
-      hours: []
-      notes: The SARN office is closed for the summer?
+  summer: []

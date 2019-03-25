@@ -2,23 +2,19 @@
 
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
-
-import * as c from '../../components/colors'
-import {ListSeparator, ListSectionHeader} from '../../components/list'
-import LoadingView from '../../components/loading'
-import {NoticeView} from '../../components/notice'
-import {TabBarIcon} from '../../components/tabbar-icon'
+import {timezone} from '@frogpond/constants'
+import * as c from '@frogpond/colors'
+import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
+import {NoticeView, LoadingView} from '@frogpond/notice'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {StreamRow} from './row'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
 import moment from 'moment-timezone'
-import qs from 'querystring'
-import {toLaxTitleCase as titleCase} from 'titlecase'
+import {toLaxTitleCase as titleCase} from '@frogpond/titlecase'
 import type {StreamType} from './types'
-import delay from 'delay'
-
-const CENTRAL_TZ = 'America/Winnipeg'
-const url = 'https://www.stolaf.edu/multimedia/api/collection'
+import {API} from '@frogpond/api'
+import {fetch} from '@frogpond/fetch'
 
 const styles = StyleSheet.create({
 	listContainer: {
@@ -55,67 +51,52 @@ export class StreamListView extends React.PureComponent<Props, State> {
 	}
 
 	refresh = async (): any => {
-		let start = Date.now()
 		this.setState(() => ({refreshing: true}))
-
-		await this.getStreams()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
+		await this.getStreams(true)
 		this.setState(() => ({refreshing: false}))
 	}
 
-	getStreams = async (date: moment = moment.tz(CENTRAL_TZ)) => {
-		try {
-			const dateFrom = date.format('YYYY-MM-DD')
-			const dateTo = date
-				.clone()
-				.add(1, 'month')
-				.format('YYYY-MM-DD')
+	getStreams = async (
+		reload?: boolean,
+		date: moment = moment.tz(timezone()),
+	) => {
+		const dateFrom = date.format('YYYY-MM-DD')
+		const dateTo = date
+			.clone()
+			.add(2, 'month')
+			.format('YYYY-MM-DD')
 
-			let params = {
-				class: 'current',
+		let data = await fetch(API('/streams/upcoming'), {
+			searchParams: {
 				sort: 'ascending',
-				// eslint-disable-next-line camelcase
-				date_from: dateFrom,
-				// eslint-disable-next-line camelcase
-				date_to: dateTo,
-			}
+				dateFrom,
+				dateTo,
+			},
+			delay: reload ? 500 : 0,
+		}).json()
 
-			const streamsAPI = `${url}?${qs.stringify(params)}`
-			const data = await fetchJson(streamsAPI)
-			const streams = data.results
+		data = data
+			.filter(stream => stream.category !== 'athletics')
+			.map(stream => {
+				const date = moment(stream.starttime)
+				const group =
+					stream.status.toLowerCase() !== 'live'
+						? date.format('dddd, MMMM Do')
+						: 'Live'
 
-			// force title-case on the stream types, to prevent not-actually-duplicate headings
-			const processed = streams
-				.filter(stream => stream.category !== 'athletics')
-				.map(stream => {
-					const date = moment(stream.starttime, 'YYYY-MM-DD HH:mm')
-					const group =
-						stream.status.toLowerCase() !== 'live'
-							? date.format('dddd, MMMM Do')
-							: 'Live'
+				return {
+					...stream,
+					// force title-case on the stream types, to prevent not-actually-duplicate headings
+					category: titleCase(stream.category),
+					date: date,
+					$groupBy: group,
+				}
+			})
 
-					return {
-						...stream,
-						category: titleCase(stream.category),
-						date: date,
-						$groupBy: group,
-					}
-				})
+		const grouped = groupBy(data, j => j.$groupBy)
+		const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
 
-			const grouped = groupBy(processed, j => j.$groupBy)
-			const mapped = toPairs(grouped).map(([title, data]) => ({title, data}))
-
-			this.setState(() => ({error: null, streams: mapped}))
-		} catch (error) {
-			this.setState(() => ({error: error.message}))
-			console.warn(error)
-		}
+		this.setState(() => ({streams: mapped}))
 	}
 
 	keyExtractor = (item: StreamType) => item.eid

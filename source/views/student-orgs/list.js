@@ -2,32 +2,31 @@
 
 import * as React from 'react'
 import {StyleSheet, View, Text, Platform, RefreshControl} from 'react-native'
-import {SearchableAlphabetListView} from '../components/searchable-alphabet-listview'
+import {SearchableAlphabetListView} from '@frogpond/listview'
 import type {TopLevelViewPropsType} from '../types'
-import LoadingView from '../components/loading'
-import delay from 'delay'
-import {NoticeView} from '../components/notice'
-import {Row, Column} from '../components/layout'
+import {NoticeView, LoadingView} from '@frogpond/notice'
+import {Row, Column} from '@frogpond/layout'
 import {
 	ListRow,
 	ListSectionHeader,
 	ListSeparator,
 	Detail,
 	Title,
-} from '../components/list'
-import {trackOrgOpen} from '../../analytics'
-import {reportNetworkProblem} from '../../lib/report-network-problem'
+} from '@frogpond/lists'
 import sortBy from 'lodash/sortBy'
 import groupBy from 'lodash/groupBy'
 import uniq from 'lodash/uniq'
 import words from 'lodash/words'
 import deburr from 'lodash/deburr'
 import startCase from 'lodash/startCase'
-import * as c from '../components/colors'
+import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
+import {API} from '@frogpond/api'
+import {fetch} from '@frogpond/fetch'
 
-const orgsUrl =
-	'https://www.stolaf.edu/orgs/list/index.cfm?fuseaction=getall&nostructure=1'
+const fetchOrgs = (forReload?: boolean): Promise<Array<StudentOrgType>> =>
+	fetch(API('/orgs'), {delay: forReload ? 500 : 0}).json()
+
 const leftSideSpacing = 20
 const ROW_HEIGHT = Platform.OS === 'ios' ? 58 : 74
 const SECTION_HEADER_HEIGHT = Platform.OS === 'ios' ? 33 : 41
@@ -96,18 +95,12 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 		})
 	}
 
-	fetchData = async () => {
-		const responseData: StudentOrgType[] = await fetchJson(orgsUrl).catch(
-			err => {
-				reportNetworkProblem(err)
-				this.setState(() => ({error: true}))
-				return []
-			},
-		)
+	fetchData = async (refresh?: boolean) => {
+		let orgs = await fetchOrgs(refresh)
 
-		const sortableRegex = /^(St\.? Olaf(?: College)?|The) +/i
-		const withSortableNames = responseData.map(item => {
-			const sortableName = item.name.replace(sortableRegex, '')
+		let sortableRegex = /^(St\.? Olaf(?: College)?|The) +/iu
+		let withSortableNames = orgs.map(item => {
+			let sortableName = item.name.replace(sortableRegex, '')
 
 			return {
 				...item,
@@ -116,21 +109,13 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 			}
 		})
 
-		const sorted = sortBy(withSortableNames, '$sortableName')
+		let sorted = sortBy(withSortableNames, '$sortableName')
 		this.setState(() => ({orgs: sorted}))
 	}
 
 	refresh = async () => {
-		const start = Date.now()
 		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
+		await this.fetchData(true)
 		this.setState(() => ({refreshing: false}))
 	}
 
@@ -170,7 +155,6 @@ export class StudentOrgsView extends React.PureComponent<Props, State> {
 	)
 
 	onPressRow = (data: StudentOrgType) => {
-		trackOrgOpen(data.name)
 		this.props.navigation.navigate('StudentOrgsDetailView', {org: data})
 	}
 

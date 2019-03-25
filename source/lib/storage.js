@@ -1,46 +1,18 @@
 // @flow
-import {AsyncStorage} from 'react-native'
-import {type FilterComboType} from '../views/sis/course-search/lib/format-filter-combo'
 
-export function clearAsyncStorage() {
-	return AsyncStorage.clear()
-}
+import {
+	setItem,
+	clearAsyncStorage,
+	getItemAsBoolean,
+	getItemAsArray,
+	setStoragePrefix,
+} from '@frogpond/storage'
 
-/// MARK: Utilities
+export {clearAsyncStorage}
 
-// eslint-disable-next-line no-unused-vars
-function setItem(key: string, value: mixed) {
-	return AsyncStorage.setItem(`aao:${key}`, JSON.stringify(value))
-}
-// eslint-disable-next-line no-unused-vars
-function getItem(key: string): Promise<?any> {
-	return AsyncStorage.getItem(`aao:${key}`).then(stored => JSON.parse(stored))
-}
-// eslint-disable-next-line no-unused-vars
-function removeItem(key: string): Promise<void> {
-	return AsyncStorage.removeItem(`aao:${key}`)
-}
-
-/// MARK: Typed utility functions
-// These simply cast the return value of getItem; they provide no runtime
-// guarantees.
-
-async function getItemAsBoolean(key: string): Promise<boolean> {
-	return (await getItem(key)) || false
-}
-async function getItemAsArray<T>(key: string): Promise<Array<T>> {
-	return (await getItem(key)) || []
-}
+setStoragePrefix('aao:')
 
 /// MARK: Settings
-
-const analyticsOptOutKey = 'settings:opt-out'
-export function setAnalyticsOptOut(status: boolean) {
-	return setItem(analyticsOptOutKey, status)
-}
-export function getAnalyticsOptOut(): Promise<boolean> {
-	return getItemAsBoolean(analyticsOptOutKey)
-}
 
 const homescreenOrderKey = 'homescreen:view-order'
 export function setHomescreenOrder(order: string[]) {
@@ -77,6 +49,7 @@ export function getFavoriteBuildings(): Promise<Array<string>> {
 }
 
 /// MARK: SIS
+import type {FilterComboType} from '../views/sis/course-search/lib/format-filter-combo'
 import type {CourseType, TermType} from './course-search/types'
 
 const courseDataKey = 'sis:course-data'

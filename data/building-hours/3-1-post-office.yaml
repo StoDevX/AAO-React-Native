@@ -4,12 +4,10 @@ category: Mail and Packages
 
 schedule:
   - title: Hours
-    # closedForChapelTime: true
+    closedForChapelTime: true
     hours:
-      # - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}
-      # - {days: [Sa], from: '10:00am', to: '1:00pm'}
-      - {days: [Mo, Tu, We, Th], from: '8:00am', to: '3:00pm'}
-      - {days: [Fr], from: '8:00am', to: '12:00pm'}
+      - {days: [Mo, Tu, We, Th, Fr], from: '8:00am', to: '5:00pm'}
+      - {days: [Sa], from: '10:00am', to: '1:00pm'}
 
 breakSchedule:
   fall: []
@@ -18,8 +16,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Hours
-      hours:
-        - {days: [Mo, Tu, We, Th], from: '8:00am', to: '3:00pm'}
-        - {days: [Fr], from: '8:00am', to: '12:00pm'}
+  summer: []

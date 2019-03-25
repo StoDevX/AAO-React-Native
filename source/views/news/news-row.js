@@ -2,8 +2,8 @@
 
 import * as React from 'react'
 import {StyleSheet, Image, Alert} from 'react-native'
-import {Column, Row} from '../components/layout'
-import {ListRow, Detail, Title} from '../components/list'
+import {Column, Row} from '@frogpond/layout'
+import {ListRow, Detail, Title} from '@frogpond/lists'
 import type {StoryType} from './types'
 
 type Props = {
@@ -34,7 +34,11 @@ export class NewsRow extends React.PureComponent<Props> {
 			<ListRow arrowPosition="top" onPress={this._onPress}>
 				<Row alignItems="center">
 					{thumb !== null ? (
-						<Image source={thumb} style={styles.image} />
+						<Image
+							accessibilityIgnoresInvertColors={true}
+							source={thumb}
+							style={styles.image}
+						/>
 					) : null}
 					<Column flex={1}>
 						<Title lines={2}>{story.title}</Title>

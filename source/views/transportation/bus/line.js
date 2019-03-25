@@ -11,9 +11,10 @@ import {
 import moment from 'moment-timezone'
 import find from 'lodash/find'
 import findLast from 'lodash/findLast'
-import {Separator} from '../../components/separator'
+import {Separator} from '@frogpond/separator'
 import {BusStopRow} from './components/bus-stop-row'
-import {ListSectionHeader, ListFooter, ListRow} from '../../components/list'
+import {ListSectionHeader, ListFooter, ListRow} from '@frogpond/lists'
+import {InfoHeader} from '@frogpond/info-header'
 
 const styles = StyleSheet.create({
 	separator: {
@@ -30,16 +31,11 @@ const EMPTY_SCHEDULE_MESSAGE = (
 		<Text>This line is not running today.</Text>
 	</ListRow>
 )
-const FOOTER_MSG =
-	'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
-const FOOTER_EL = <ListFooter title={FOOTER_MSG} />
 
 type Props = {
 	+line: UnprocessedBusLine,
 	+now: moment,
 	+openMap: () => any,
-	+onRefresh: () => any,
-	+refreshing: boolean,
 }
 
 type State = {|
@@ -125,13 +121,6 @@ export class BusLine extends React.Component<Props, State> {
 		return deriveFromProps(nextProps)
 	}
 
-	shouldComponentUpdate(nextProps: Props) {
-		return (
-			this.props.now.isSame(nextProps.now, 'minute') ||
-			this.props.line !== nextProps.line
-		)
-	}
-
 	keyExtractor = (item: BusTimetableEntry, index: number) => index.toString()
 
 	renderItem = ({item, index}: {index: number, item: BusTimetableEntry}) => (
@@ -155,7 +144,7 @@ export class BusLine extends React.Component<Props, State> {
 		const {line} = this.props
 		const {schedule, subtitle} = this.state
 
-		const headerEl = (
+		const INFO_EL = (
 			<ListSectionHeader
 				subtitle={subtitle}
 				title={line.line}
@@ -163,17 +152,29 @@ export class BusLine extends React.Component<Props, State> {
 			/>
 		)
 
+		const LINE_MSG = line.notice || ''
+		const FOOTER_MSG =
+			'Bus routes and times subject to change without notice\n\nData collected by the humans of All About Olaf'
+		const FOOTER_EL = <ListFooter title={FOOTER_MSG} />
+
+		const HEADER_EL = LINE_MSG ? (
+			<React.Fragment>
+				<InfoHeader message={LINE_MSG} title={`About ${line.line}`} />
+				{INFO_EL}
+			</React.Fragment>
+		) : (
+			INFO_EL
+		)
+
 		return (
 			<FlatList
 				ItemSeparatorComponent={BusLineSeparator}
 				ListEmptyComponent={EMPTY_SCHEDULE_MESSAGE}
 				ListFooterComponent={FOOTER_EL}
-				ListHeaderComponent={headerEl}
+				ListHeaderComponent={HEADER_EL}
 				data={schedule ? schedule.timetable : []}
 				extraData={this.state}
 				keyExtractor={this.keyExtractor}
-				onRefresh={this.props.onRefresh}
-				refreshing={this.props.refreshing}
 				renderItem={this.renderItem}
 			/>
 		)

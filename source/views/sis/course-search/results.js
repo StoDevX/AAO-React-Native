@@ -2,27 +2,26 @@
 
 import * as React from 'react'
 import {StyleSheet, View} from 'react-native'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 import {
 	updateRecentSearches,
 	updateRecentFilters,
-} from '../../../flux/parts/courses'
-import LoadingView from '../../components/loading'
+} from '../../../redux/parts/courses'
+import {LoadingView} from '@frogpond/notice'
 import {type CourseType} from '../../../lib/course-search'
-import type {ReduxState} from '../../../flux'
+import type {ReduxState} from '../../../redux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
 import {CourseResultsList} from './list'
-import {AnimatedSearchbox} from '../components/animated-searchbox'
-import {applyFiltersToItem, type FilterType} from '../../components/filter'
-import {Separator} from '../../components/separator'
+import {AnimatedSearchBar} from '@frogpond/searchbar'
+import {applyFiltersToItem, type FilterType} from '@frogpond/filter'
+import {Separator} from '@frogpond/separator'
 import {buildFilters} from './lib/build-filters'
 
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
 	allCourses: Array<CourseType>,
-	isConnected: boolean,
 	courseDataState: string,
 }
 
@@ -150,7 +149,7 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 
 		return (
 			<View style={[styles.container, styles.common]}>
-				<AnimatedSearchbox
+				<AnimatedSearchBar
 					active={true}
 					onCancel={this.handleSearchCancel}
 					onChange={this.handleSearchChange}
@@ -163,6 +162,7 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 				<Separator />
 
 				<CourseResultsList
+					key={searchQuery.toLowerCase()}
 					applyFilters={this.props.applyFilters}
 					courses={this.props.allCourses}
 					filters={filters}
@@ -180,7 +180,6 @@ class CourseSearchResultsView extends React.Component<Props, State> {
 
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
-		isConnected: state.app ? state.app.isConnected : false,
 		allCourses: state.courses ? state.courses.allCourses : [],
 		courseDataState: state.courses ? state.courses.readyState : '',
 	}

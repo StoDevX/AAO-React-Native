@@ -25,37 +25,57 @@ export function clearLoginCredentials() {
 	return resetInternetCredentials(SIS_LOGIN_KEY).catch(empty)
 }
 
-export async function performLogin(
-	{username, password}: Credentials,
-	{attempts = 0}: {attempts: number} = {},
-): Promise<boolean> {
+export type LoginResultEnum =
+	| 'success'
+	| 'network'
+	| 'bad-credentials'
+	| 'no-credentials'
+	| 'server-error'
+	| 'other'
+
+type Args = {attempts?: number}
+
+export async function performLogin({
+	attempts = 0,
+}: Args = {}): Promise<LoginResultEnum> {
+	let {username, password} = await loadLoginCredentials()
 	if (!username || !password) {
-		return false
+		return 'no-credentials'
 	}
 
-	const form = buildFormData({username, password})
-	let loginResult = null
+	let form = buildFormData({username, password})
+
 	try {
-		loginResult = await fetch(OLECARD_AUTH_URL, {
+		let {status: statusCode} = await fetch(OLECARD_AUTH_URL, {
 			method: 'POST',
 			body: form,
+			credentials: 'include',
+			cache: 'no-store',
+			throwHttpErrors: false,
 		})
-	} catch (err) {
-		const networkFailure = err.message === 'Network request failed'
-		if (networkFailure && attempts > 0) {
-			// console.log(`login failed; trying ${attempts - 1} more time(s)`)
-			return performLogin({username, password}, {attempts: attempts - 1})
+
+		if (statusCode >= 400 && statusCode < 500) {
+			return 'bad-credentials'
 		}
-		return false
+
+		if (statusCode >= 500 && statusCode < 600) {
+			return 'server-error'
+		}
+
+		if (statusCode < 200 || statusCode >= 300) {
+			return 'other'
+		}
+
+		return 'success'
+	} catch (err) {
+		let wasNetworkFailure = err.message === 'Network request failed'
+		if (wasNetworkFailure) {
+			if (attempts > 0) {
+				// console.log(`login failed; trying ${attempts - 1} more time(s)`)
+				return performLogin({attempts: attempts - 1})
+			}
+			return 'network'
+		}
+		return 'other'
 	}
-
-	const page = await loginResult.text()
-
-	if (page.includes('Password')) {
-		return false
-	}
-
-	await saveLoginCredentials({username, password})
-
-	return true
 }

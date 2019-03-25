@@ -2,24 +2,23 @@
 
 import * as React from 'react'
 import {StyleSheet, View, ScrollView} from 'react-native'
-import {TabBarIcon} from '../../components/tabbar-icon'
-import * as c from '../../components/colors'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
+import * as c from '@frogpond/colors'
 import {
 	updateCourseData,
 	loadCourseDataIntoMemory,
 	updateRecentSearches,
 	updateRecentFilters,
-} from '../../../flux/parts/courses'
+} from '../../../redux/parts/courses'
 import {areAnyTermsCached} from '../../../lib/course-search'
-import type {ReduxState} from '../../../flux'
+import type {ReduxState} from '../../../redux'
 import type {TopLevelViewPropsType} from '../../types'
 import {connect} from 'react-redux'
-import LoadingView from '../../components/loading'
-import {NoticeView} from '../../components/notice'
-import {AnimatedSearchbox} from '../components/animated-searchbox'
-import {type FilterType} from '../../components/filter'
+import {NoticeView, LoadingView} from '@frogpond/notice'
+import {AnimatedSearchBar} from '@frogpond/searchbar'
+import {type FilterType} from '@frogpond/filter'
 import {RecentItemsList} from '../components/recents-list'
-import {Separator} from '../../components/separator'
+import {Separator} from '@frogpond/separator'
 import {buildFilters} from './lib/build-filters'
 import type {FilterComboType} from './lib/format-filter-combo'
 import fromPairs from 'lodash/fromPairs'
@@ -27,13 +26,12 @@ import fromPairs from 'lodash/fromPairs'
 const PROMPT_TEXT =
 	'We need to download the courses from the server. This will take a few seconds.'
 const NETWORK_WARNING =
-	"You'll need an internet connection to download the courses."
+	'(Please make sure that you are connected to the Internet before downloading the courses).'
 
 type ReactProps = TopLevelViewPropsType
 
 type ReduxStateProps = {
 	courseDataState: string,
-	isConnected: boolean,
 	recentFilters: FilterComboType[],
 	recentSearches: string[],
 }
@@ -154,13 +152,10 @@ class CourseSearchView extends React.Component<Props, State> {
 		}
 
 		if (this.props.courseDataState === 'not-loaded') {
-			let msg = this.props.isConnected
-				? PROMPT_TEXT
-				: PROMPT_TEXT.concat(`\n\n${NETWORK_WARNING}`)
+			let msg = PROMPT_TEXT + '\n\n' + NETWORK_WARNING
 
 			return (
 				<NoticeView
-					buttonDisabled={!this.props.isConnected}
 					buttonText="Download"
 					header="Almost there…"
 					onPress={this.loadData}
@@ -175,7 +170,7 @@ class CourseSearchView extends React.Component<Props, State> {
 
 		return (
 			<View style={[styles.container, styles.common]}>
-				<AnimatedSearchbox
+				<AnimatedSearchBar
 					active={isSearchbarActive}
 					onCancel={this.handleSearchCancel}
 					onChange={this.handleSearchChange}
@@ -216,7 +211,6 @@ class CourseSearchView extends React.Component<Props, State> {
 
 function mapState(state: ReduxState): ReduxStateProps {
 	return {
-		isConnected: state.app ? state.app.isConnected : false,
 		courseDataState: state.courses ? state.courses.readyState : '',
 		recentFilters: state.courses ? state.courses.recentFilters : [],
 		recentSearches: state.courses ? state.courses.recentSearches : [],

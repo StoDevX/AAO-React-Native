@@ -2,18 +2,17 @@
 import * as React from 'react'
 import delay from 'delay'
 import {OtherModesRow} from './row'
-import {reportNetworkProblem} from '../../../lib/report-network-problem'
-import {TabBarIcon} from '../../components/tabbar-icon'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
 import * as defaultData from '../../../../docs/transportation.json'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 import {SectionList, StyleSheet} from 'react-native'
-import {ListSeparator, ListSectionHeader} from '../../components/list'
-import {ListEmpty} from '../../components/list'
+import {ListSeparator, ListSectionHeader, ListEmpty} from '@frogpond/lists'
 import groupBy from 'lodash/groupBy'
 import toPairs from 'lodash/toPairs'
 import type {TopLevelViewPropsType} from '../../types'
 import type {OtherModeType} from '../types'
-import {API} from '../../../globals'
+import {API} from '@frogpond/api'
+import {fetch} from '@frogpond/fetch'
 
 const transportationUrl = API('/transit/modes')
 
@@ -70,15 +69,9 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 	}
 
 	fetchData = async () => {
-		let {data: modes} = await fetchJson(transportationUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-
-		if (process.env.NODE_ENV === 'development') {
-			modes = defaultData.data
-		}
-
+		let {data: modes}: {data: Array<OtherModeType>} = await fetch(
+			transportationUrl,
+		).json()
 		this.setState(() => ({modes}))
 	}
 
@@ -104,7 +97,6 @@ export class OtherModesView extends React.PureComponent<Props, State> {
 			<SectionList
 				ItemSeparatorComponent={ListSeparator}
 				ListEmptyComponent={<ListEmpty mode="bug" />}
-				data={groupedData}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.refresh}
 				refreshing={this.state.refreshing}

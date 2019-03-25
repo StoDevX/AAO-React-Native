@@ -1,29 +1,22 @@
 // @flow
 
 import * as React from 'react'
-import {ScrollView, StyleSheet, Platform, Image} from 'react-native'
+import {ScrollView, StyleSheet, Image} from 'react-native'
 import {images as buildingImages} from '../../../../images/spaces'
 import type {BuildingType} from '../types'
 import moment from 'moment-timezone'
-import * as c from '../../components/colors'
+import * as c from '@frogpond/colors'
 import {getShortBuildingStatus} from '../lib'
 
-import {Badge} from './badge'
+import {SolidBadge as Badge} from '@frogpond/badge'
 import {Header} from './header'
 import {ScheduleTable} from './schedule-table'
-import {ListFooter} from '../../components/list'
+import {ListFooter} from '@frogpond/lists'
 
 const styles = StyleSheet.create({
 	container: {
 		alignItems: 'stretch',
-		...Platform.select({
-			android: {
-				backgroundColor: c.androidLightBackground,
-			},
-			ios: {
-				backgroundColor: c.iosLightBackground,
-			},
-		}),
+		backgroundColor: c.sectionBgColor,
 	},
 	image: {
 		width: null,
@@ -35,6 +28,11 @@ type Props = {
 	info: BuildingType,
 	now: moment,
 	onProblemReport: () => any,
+}
+
+const BGCOLORS = {
+	Open: c.moneyGreen,
+	Closed: c.salmon,
 }
 
 export class BuildingDetail extends React.Component<Props> {
@@ -59,11 +57,16 @@ export class BuildingDetail extends React.Component<Props> {
 		return (
 			<ScrollView contentContainerStyle={styles.container}>
 				{headerImage ? (
-					<Image resizeMode="cover" source={headerImage} style={styles.image} />
+					<Image
+						accessibilityIgnoresInvertColors={true}
+						resizeMode="cover"
+						source={headerImage}
+						style={styles.image}
+					/>
 				) : null}
 
 				<Header building={info} />
-				<Badge status={openStatus} />
+				<Badge accentColor={BGCOLORS[openStatus]} status={openStatus} />
 				<ScheduleTable
 					now={now}
 					onProblemReport={onProblemReport}

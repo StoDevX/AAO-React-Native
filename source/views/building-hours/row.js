@@ -2,13 +2,13 @@
 
 import * as React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
-import {Badge} from '../components/badge'
+import {OutlineBadge as Badge} from '@frogpond/badge'
 import isEqual from 'lodash/isEqual'
 import type momentT from 'moment'
 import type {BuildingType} from './types'
-import * as c from '../components/colors'
-import {Row} from '../components/layout'
-import {ListRow, Detail, Title} from '../components/list'
+import * as c from '@frogpond/colors'
+import {Row} from '@frogpond/layout'
+import {ListRow, Detail, Title} from '@frogpond/lists'
 import {getDetailedBuildingStatus, getShortBuildingStatus} from './lib'
 
 const styles = StyleSheet.create({

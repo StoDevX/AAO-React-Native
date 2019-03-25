@@ -1,9 +1,7 @@
-/* eslint-disable camelcase */
 // @flow
 
 import * as React from 'react'
-import {TabNavigator} from '../components/tabbed-view'
-import {TabBarIcon} from '../components/tabbar-icon'
+import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
 
 import * as newsImages from '../../../images/news-sources'
 import NewsContainer from './news-container'

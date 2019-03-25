@@ -3,20 +3,15 @@
 import * as React from 'react'
 import {Image, ScrollView, StyleSheet, Text, View, Platform} from 'react-native'
 import noop from 'lodash/noop'
-import {
-	trackStreamPlay,
-	trackStreamPause,
-	trackStreamError,
-} from '../../../analytics'
-import * as c from '../../components/colors'
-import {callPhone} from '../../components/call-phone'
-import {Row} from '../../components/layout'
+import * as c from '@frogpond/colors'
+import {callPhone} from '../../../components/call-phone'
+import {Row} from '@frogpond/layout'
 import type {TopLevelViewPropsType} from '../../types'
 import {StreamPlayer} from './player'
 import type {PlayState, HtmlAudioError, PlayerTheme} from './types'
 import {ActionButton, ShowCalendarButton, CallButton} from './buttons'
-import {openUrl} from '../../components/open-url'
-import {Viewport} from '../../components/viewport'
+import {openUrl} from '@frogpond/open-url'
+import {Viewport} from '@frogpond/viewport'
 import {withTheme} from '@callstack/react-theme-provider'
 
 type Props = TopLevelViewPropsType & {
@@ -56,12 +51,10 @@ class RadioControllerView extends React.Component<Props, State> {
 	}
 
 	handleStreamPlay = () => {
-		trackStreamPlay(this.props.stationName)
 		this.setState(() => ({playState: 'playing'}))
 	}
 
 	handleStreamPause = () => {
-		trackStreamPause(this.props.stationName)
 		this.setState(() => ({playState: 'paused'}))
 	}
 
@@ -70,7 +63,6 @@ class RadioControllerView extends React.Component<Props, State> {
 	}
 
 	handleStreamError = (e: {code: number, message: string}) => {
-		trackStreamError(this.props.stationName)
 		this.setState(() => ({streamError: e, playState: 'paused'}))
 	}
 

@@ -1,10 +1,11 @@
 /* eslint-env jest */
 // @flow
-import {findMenu} from '../find-menu'
+import {findMenu} from '../../../../../modules/food-menu/lib/find-menu'
 import moment from 'moment-timezone'
-const CENTRAL_TZ = 'America/Winnipeg'
 import type {DayPartsCollectionType} from '../../types'
 import uniqueId from 'lodash/uniqueId'
+
+const CENTRAL_TZ = 'America/Chicago'
 
 const generateDayparts: (
 	...{start: string, end: string}[]

@@ -2,8 +2,10 @@ package com.allaboutolaf;
 
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 import com.facebook.react.ReactActivity;
-import com.bugsnag.BugsnagReactNative;
 import com.calendarevents.CalendarEventsPackage;
+import com.facebook.react.ReactActivityDelegate;
+import com.facebook.react.ReactRootView;
+import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 import android.os.Bundle;
 
 public class MainActivity extends ReactActivity {
@@ -17,13 +19,20 @@ public class MainActivity extends ReactActivity {
         return "AllAboutOlaf";
     }
 
+    @Override
+    protected ReactActivityDelegate createReactActivityDelegate() {
+        return new ReactActivityDelegate(this, getMainComponentName()) {
+            @Override
+            protected ReactRootView createRootView() {
+                return new RNGestureHandlerEnabledRootView(MainActivity.this);
+            }
+        };
+    }
+
     // Set up Bugsnag
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!BuildConfig.DEBUG) {
-            BugsnagReactNative.start(this);
-        }
         long size = 50L * 1024L * 1024L; // 50 MB
         ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
     }

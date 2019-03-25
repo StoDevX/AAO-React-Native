@@ -2,19 +2,20 @@
 
 import * as React from 'react'
 import {ScrollView, View, StyleSheet, StatusBar} from 'react-native'
+import {SafeAreaView} from 'react-navigation'
 
 import {connect} from 'react-redux'
-import * as c from '../components/colors'
+import {getTheme} from '@frogpond/app-theme'
 import sortBy from 'lodash/sortBy'
 import {type TopLevelViewPropsType} from '../types'
 import {type ViewType} from '../views'
-import {type ReduxState} from '../../flux'
+import {type ReduxState} from '../../redux'
 import {allViews} from '../views'
-import {Column} from '../components/layout'
+import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
-import {trackedOpenUrl} from '../components/open-url'
-import {EditHomeButton, OpenSettingsButton} from '../components/nav-buttons'
+import {trackedOpenUrl, openUrlInBrowser} from '@frogpond/open-url'
+import {EditHomeButton, OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
 
 type ReactProps = TopLevelViewPropsType & {
@@ -36,37 +37,43 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 
 	const columns = partitionByIndex(enabledViews)
 
+	let {androidStatusBarColor, statusBarStyle} = getTheme()
+
 	return (
 		<ScrollView
 			alwaysBounceHorizontal={false}
-			overflow="hidden"
 			showsHorizontalScrollIndicator={false}
 			showsVerticalScrollIndicator={false}
+			testID="screen-homescreen"
 		>
 			<StatusBar
-				backgroundColor={c.androidStatusBarColor}
-				barStyle={c.statusBarStyle}
+				backgroundColor={androidStatusBarColor}
+				barStyle={statusBarStyle}
 			/>
 
-			<View style={styles.cells}>
-				{columns.map((contents, i) => (
-					<Column key={i} style={styles.column}>
-						{contents.map(view => (
-							<HomeScreenButton
-								key={view.view}
-								onPress={() => {
-									if (view.type === 'url') {
-										return trackedOpenUrl({url: view.url, id: view.view})
-									} else {
-										return navigation.navigate(view.view)
-									}
-								}}
-								view={view}
-							/>
-						))}
-					</Column>
-				))}
-			</View>
+			<SafeAreaView>
+				<View style={styles.cells}>
+					{columns.map((contents, i) => (
+						<Column key={i} style={styles.column}>
+							{contents.map(view => (
+								<HomeScreenButton
+									key={view.view}
+									onPress={() => {
+										if (view.type === 'url') {
+											return trackedOpenUrl({url: view.url, id: view.view})
+										} else if (view.type === 'browser-url') {
+											return openUrlInBrowser({url: view.url, id: view.view})
+										} else {
+											return navigation.navigate(view.view)
+										}
+									}}
+									view={view}
+								/>
+							))}
+						</Column>
+					))}
+				</View>
+			</SafeAreaView>
 
 			<UnofficialAppNotice />
 		</ScrollView>

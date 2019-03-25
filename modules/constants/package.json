@@ -1,0 +1,15 @@
+{
+  "name": "@frogpond/constants",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react-native": "^0.59.0"
+  },
+  "dependencies": {}
+}

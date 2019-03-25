@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react'
 import {View, TextInput, StyleSheet} from 'react-native'
-import {TabBarIcon} from '../components/tabbar-icon'
-import * as c from '../components/colors'
-import {Toolbar, ToolbarButton} from '../components/toolbar'
+import {NoticeView} from '@frogpond/notice'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
+import * as c from '@frogpond/colors'
+import {Toolbar} from '@frogpond/toolbar'
 import type {TopLevelViewPropsType} from '../types'
 import {BonAppHostedMenu} from './menu-bonapp'
 
@@ -26,22 +27,20 @@ type Props = TopLevelViewPropsType
 
 type State = {
 	cafeId: string,
-	menu: ?any,
 }
 
 export class BonAppPickerView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
 		tabBarLabel: 'BonApp',
-		tabBarIcon: TabBarIcon('ionic'),
+		tabBarIcon: TabBarIcon('cog'),
 	}
 
 	state = {
-		cafeId: '34',
-		menu: null,
+		cafeId: '',
 	}
 
 	chooseCafe = (cafeId: string) => {
-		if (!/^\d*$/.test(cafeId)) {
+		if (!/^\d*$/u.test(cafeId)) {
 			return
 		}
 		this.setState(() => ({cafeId}))
@@ -53,20 +52,23 @@ export class BonAppPickerView extends React.PureComponent<Props, State> {
 				<Toolbar onPress={() => {}}>
 					<TextInput
 						keyboardType="numeric"
-						onBlur={this.chooseCafe}
-						onChangeText={this.chooseCafe}
+						onEndEditing={e => this.chooseCafe(e.nativeEvent.text)}
+						placeholder="id"
+						returnKeyType="done"
 						style={styles.default}
-						value={this.state.cafeId}
 					/>
-					<ToolbarButton isActive={true} title="Go" />
 				</Toolbar>
-				<BonAppHostedMenu
-					key={this.state.cafeId}
-					cafe={{id: this.state.cafeId}}
-					loadingMessage={['Loading…']}
-					name="BonApp"
-					navigation={this.props.navigation}
-				/>
+				{this.state.cafeId ? (
+					<BonAppHostedMenu
+						key={this.state.cafeId}
+						cafe={{id: this.state.cafeId}}
+						loadingMessage={['Loading…']}
+						name="BonApp"
+						navigation={this.props.navigation}
+					/>
+				) : (
+					<NoticeView text="Please enter a Cafe ID." />
+				)}
 			</View>
 		)
 	}

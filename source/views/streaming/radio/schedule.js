@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react'
-import {CccCalendarView} from '../../calendar/calendar-ccc'
+import {CccCalendarView} from '@frogpond/ccc-calendar'
 import type {TopLevelViewPropsType} from '../../types'
 
 type Props = TopLevelViewPropsType

@@ -1,12 +1,8 @@
 // @flow
 
 import * as React from 'react'
-import {TabNavigator} from '../components/tabbed-view'
-import {TabBarIcon} from '../components/tabbar-icon'
-
-import {CccCalendarView} from './calendar-ccc'
-
-export {EventDetail} from './event-detail'
+import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
+import {CccCalendarView} from '@frogpond/ccc-calendar'
 
 const CalendarView = TabNavigator({
 	StOlafCalendarView: {
@@ -63,6 +59,7 @@ const CalendarView = TabNavigator({
 
 CalendarView.navigationOptions = {
 	title: 'Calendar',
+	headerBackTitle: 'Back',
 }
 
 export default CalendarView

@@ -1,8 +1,8 @@
 // @flow
 
 import * as React from 'react'
-import * as c from '../../components/colors'
-import {TabBarIcon} from '../../components/tabbar-icon'
+import * as c from '@frogpond/colors'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
 import {type TopLevelViewPropsType} from '../../types'
 import * as logos from '../../../../images/streaming'
 import {RadioControllerView} from './index'

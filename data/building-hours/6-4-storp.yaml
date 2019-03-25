@@ -1,0 +1,18 @@
+name: STORP
+subtitle: St. Olaf Outdoor Recreation Program
+category: Gym
+
+schedule:
+  - title: Hours
+    hours:
+      # - {days: [Mo, Fr], from: '4:00pm', to: '6:00pm'}
+      - {days: [Mo, Th], from: '4:00pm', to: '6:00pm'}
+
+breakSchedule:
+  fall: []
+  thanksgiving: []
+  winter: []
+  interim: []
+  spring: []
+  easter: []
+  summer: []

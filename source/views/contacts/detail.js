@@ -3,15 +3,14 @@
 import * as React from 'react'
 import {Alert, StyleSheet, ScrollView, Image} from 'react-native'
 import {images as contactImages} from '../../../images/contacts'
-import {Markdown} from '../components/markdown'
-import {ListFooter} from '../components/list'
+import {Markdown} from '@frogpond/markdown'
+import {ListFooter} from '@frogpond/lists'
 import glamorous from 'glamorous-native'
-import {callPhone} from '../components/call-phone'
-import {tracker} from '../../analytics'
-import {Button} from '../components/button'
-import {openUrl} from '../components/open-url'
+import {callPhone} from '../../components/call-phone'
+import {Button} from '@frogpond/button'
+import {openUrl} from '@frogpond/open-url'
 import type {ContactType} from './types'
-import {GH_NEW_ISSUE_URL} from '../../globals'
+import {GH_NEW_ISSUE_URL} from '../../lib/constants'
 
 const Title = glamorous.text({
 	fontSize: 36,
@@ -36,7 +35,7 @@ const styles = StyleSheet.create({
 })
 
 function formatNumber(phoneNumber: string) {
-	const re = /(\d{3})-?(\d{3})-?(\d{4})/g
+	const re = /(\d{3})-?(\d{3})-?(\d{4})/gu
 	return phoneNumber.replace(re, '($1) $2-$3')
 }
 
@@ -58,12 +57,10 @@ export class ContactsDetailView extends React.PureComponent<Props> {
 
 	onPress = () => {
 		const {
-			title,
 			phoneNumber,
 			buttonText,
 			buttonLink,
 		} = this.props.navigation.state.params.contact
-		tracker.trackScreenView(`ImportantContacts_${title.replace(' ', '')}View`)
 		if (buttonLink) {
 			openUrl(buttonLink)
 		} else if (phoneNumber) {

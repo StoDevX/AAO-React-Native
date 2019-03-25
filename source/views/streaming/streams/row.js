@@ -3,10 +3,11 @@
 import * as React from 'react'
 import {StyleSheet, Image} from 'react-native'
 
-import {ListRow, Detail, Title} from '../../components/list'
-import {Column, Row} from '../../components/layout'
-import {getTrimmedTextWithSpaces, parseHtml} from '../../../lib/html'
-import {trackedOpenUrl} from '../../components/open-url'
+import {ListRow, Detail, Title} from '@frogpond/lists'
+import {Column, Row} from '@frogpond/layout'
+import {getTrimmedTextWithSpaces, parseHtml} from '@frogpond/html-lib'
+import {trackedOpenUrl} from '@frogpond/open-url'
+import moment from 'moment'
 import type {StreamType} from './types'
 
 const styles = StyleSheet.create({
@@ -32,13 +33,17 @@ function Info({item}: {item: StreamType}) {
 function Time({item}: {item: StreamType}) {
 	const showTime = item.status !== 'archived'
 	return showTime ? (
-		<Detail>{item.date.format('h:mm A – ddd, MMM. Do, YYYY')}</Detail>
+		<Detail>{moment(item.date).format('h:mm A – ddd, MMM. Do, YYYY')}</Detail>
 	) : null
 }
 
 function Thumbnail({item}: {item: StreamType}) {
 	return item.thumb ? (
-		<Image source={{uri: item.thumb}} style={styles.image} />
+		<Image
+			accessibilityIgnoresInvertColors={true}
+			source={{uri: item.thumb}}
+			style={styles.image}
+		/>
 	) : null
 }
 

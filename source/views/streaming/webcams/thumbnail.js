@@ -2,10 +2,10 @@
 
 import * as React from 'react'
 import {StyleSheet, View, Text, Image} from 'react-native'
-import {Touchable} from '../../components/touchable'
-import * as c from '../../components/colors'
+import {Touchable} from '@frogpond/touchable'
+import * as c from '@frogpond/colors'
 import {images as webcamImages} from '../../../../images/webcams'
-import {trackedOpenUrl} from '../../components/open-url'
+import {trackedOpenUrl} from '@frogpond/open-url'
 import LinearGradient from 'react-native-linear-gradient'
 import type {Webcam} from './types'
 
@@ -37,20 +37,20 @@ export class StreamThumbnail extends React.PureComponent<Props> {
 		const img = thumbnailUrl
 			? {uri: thumbnailUrl}
 			: webcamImages.hasOwnProperty(thumbnail)
-				? webcamImages[thumbnail]
-				: transparentPixel
+			? webcamImages[thumbnail]
+			: transparentPixel
 
 		return (
 			// do not remove this View; it is needed to prevent extra highlighting
 			<View style={styles.cell}>
 				<Touchable
-					activeOpacity={0.7}
 					highlight={true}
 					onPress={this.handlePress}
 					style={{width, height}}
 					underlayColor={baseColor}
 				>
 					<Image
+						accessibilityIgnoresInvertColors={true}
 						resizeMode="cover"
 						source={img}
 						style={[StyleSheet.absoluteFill, {width, height}]}

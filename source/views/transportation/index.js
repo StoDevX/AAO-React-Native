@@ -2,8 +2,7 @@
 
 import * as React from 'react'
 
-import {TabNavigator} from '../components/tabbed-view'
-import {TabBarIcon} from '../components/tabbar-icon'
+import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
 
 import {OtherModesView} from './other-modes'
 import {BusView} from './bus'
@@ -39,6 +38,16 @@ const TransportationView = TabNavigator({
 		navigationOptions: {
 			tabBarLabel: 'Blue Line',
 			tabBarIcon: TabBarIcon('bus'),
+		},
+	},
+
+	OlesGoView: {
+		screen: ({navigation}) => (
+			<BusView line="Oles Go" navigation={navigation} />
+		),
+		navigationOptions: {
+			tabBarLabel: 'Oles Go',
+			tabBarIcon: TabBarIcon('car'),
 		},
 	},
 

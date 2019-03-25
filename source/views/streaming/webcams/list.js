@@ -2,25 +2,25 @@
 
 import * as React from 'react'
 import {StyleSheet, ScrollView} from 'react-native'
-import delay from 'delay'
-import {reportNetworkProblem} from '../../../lib/report-network-problem'
-import {TabBarIcon} from '../../components/tabbar-icon'
-import * as defaultData from '../../../../docs/webcams.json'
-import {Column} from '../../components/layout'
+import {TabBarIcon} from '@frogpond/navigation-tabs'
+import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../../lib/partition-by-index'
 import type {Webcam} from './types'
 import {StreamThumbnail} from './thumbnail'
-import {API} from '../../../globals'
-import {Viewport} from '../../components/viewport'
+import {API} from '@frogpond/api'
+import {fetch} from '@frogpond/fetch'
+import {Viewport} from '@frogpond/viewport'
 
-const webcamsUrl = API('/webcams')
+const fetchWebcams = (): Promise<Array<Webcam>> =>
+	fetch(API('/webcams'))
+		.json()
+		.then(body => body.data)
 
 type Props = {}
 
 type State = {
 	webcams: Array<Webcam>,
 	loading: boolean,
-	refreshing: boolean,
 }
 
 export class WebcamsView extends React.PureComponent<Props, State> {
@@ -30,42 +30,17 @@ export class WebcamsView extends React.PureComponent<Props, State> {
 	}
 
 	state = {
-		webcams: defaultData.data,
+		webcams: [],
 		loading: false,
-		refreshing: false,
 	}
 
 	componentDidMount() {
 		this.fetchData()
 	}
 
-	refresh = async () => {
-		const start = Date.now()
-		this.setState(() => ({refreshing: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
-		this.setState(() => ({refreshing: false}))
-	}
-
 	fetchData = async () => {
 		this.setState(() => ({loading: true}))
-
-		let {data: webcams} = await fetchJson(webcamsUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-
-		if (process.env.NODE_ENV === 'development') {
-			webcams = defaultData.data
-		}
-
+		let webcams = await fetchWebcams()
 		this.setState(() => ({webcams, loading: false}))
 	}
 

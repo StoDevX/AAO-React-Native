@@ -2,7 +2,7 @@
 
 import {getTermInfo} from '../../../../lib/storage'
 import {parseTerm} from '../../../../lib/course-search/parse-term'
-import type {FilterType} from '../../../components/filter'
+import type {FilterType} from '@frogpond/filter'
 import {loadAllCourseFilterOptions} from '../../../../lib/course-search'
 
 export async function buildFilters(): Promise<FilterType[]> {
@@ -67,10 +67,10 @@ export async function buildFilters(): Promise<FilterType[]> {
 		},
 		{
 			type: 'list',
-			key: 'departments',
+			key: 'department',
 			enabled: false,
 			spec: {
-				title: 'Departments',
+				title: 'Department',
 				showImages: false,
 				options: allDepartments,
 				mode: 'OR',
@@ -78,7 +78,7 @@ export async function buildFilters(): Promise<FilterType[]> {
 				displayTitle: true,
 			},
 			apply: {
-				key: 'departments',
+				key: 'department',
 			},
 		},
 		{

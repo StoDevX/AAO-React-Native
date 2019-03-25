@@ -3,14 +3,13 @@
 import * as React from 'react'
 import {StyleSheet, SectionList} from 'react-native'
 import {BuildingRow} from './row'
-import {trackBuildingOpen} from '../../analytics'
 
 import type momentT from 'moment'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
 
-import * as c from '../components/colors'
-import {ListSeparator, ListSectionHeader} from '../components/list'
+import * as c from '@frogpond/colors'
+import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
 
 export {BuildingHoursDetailView} from './detail'
 
@@ -29,7 +28,6 @@ type Props = TopLevelViewPropsType & {
 
 export class BuildingHoursList extends React.PureComponent<Props> {
 	onPressRow = (data: BuildingType) => {
-		trackBuildingOpen(data.name)
 		this.props.navigation.navigate('BuildingHoursDetailView', {building: data})
 	}
 

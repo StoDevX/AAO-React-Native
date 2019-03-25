@@ -1,14 +1,13 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet} from 'react-native'
-import {Markdown} from '../../components/markdown'
-import {ListFooter} from '../../components/list'
+import {Markdown} from '@frogpond/markdown'
+import {ListFooter} from '@frogpond/lists'
 import glamorous from 'glamorous-native'
-import {tracker} from '../../../analytics'
-import {Button} from '../../components/button'
-import openUrl from '../../components/open-url'
+import {Button} from '@frogpond/button'
+import {openUrl} from '@frogpond/open-url'
 import type {OtherModeType} from '../types'
-import {GH_NEW_ISSUE_URL} from '../../../globals'
+import {GH_NEW_ISSUE_URL} from '../../../lib/constants'
 
 const Title = glamorous.text({
 	fontSize: 36,
@@ -38,10 +37,7 @@ export class OtherModesDetailView extends React.PureComponent<Props> {
 	}
 
 	onPress = () => {
-		const {name, url} = this.props.navigation.state.params.mode
-		tracker.trackScreenView(
-			`Transportation_OtherModes_${name.replace(' ', '')}View`,
-		)
+		const {url} = this.props.navigation.state.params.mode
 		openUrl(url)
 	}
 

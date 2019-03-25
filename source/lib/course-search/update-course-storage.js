@@ -3,6 +3,7 @@
  * updateStoredCourses() handles updating the cached course data from the server
  */
 
+import {fetch} from '@frogpond/fetch'
 import type {RawCourseType, CourseType, TermType} from './types'
 import {COURSE_DATA_PAGE, INFO_PAGE} from './urls'
 import * as storage from '../storage'
@@ -46,10 +47,12 @@ async function determineOutdatedTerms(): Promise<Array<TermType>> {
 async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
 	const today = new Date()
 	const thisYear = today.getFullYear()
-	const resp: TermInfoType = await fetchJson(INFO_PAGE).catch(() => ({
-		files: [],
-		type: 'error',
-	}))
+	const resp: TermInfoType = await fetch(INFO_PAGE, {cache: 'no-store'})
+		.json()
+		.catch(() => ({
+			files: [],
+			type: 'error',
+		}))
 	const terms: Array<TermType> = resp.files.filter(
 		file => file.type === 'json' && file.year > thisYear - 5,
 	)
@@ -58,14 +61,17 @@ async function loadCurrentTermsFromServer(): Promise<Array<TermType>> {
 
 async function storeTermCoursesFromServer(term: TermType) {
 	const url = COURSE_DATA_PAGE + term.path
-	const resp: Array<RawCourseType> = await fetchJson(url).catch(() => [])
+	const resp: Array<RawCourseType> = await fetch(url, {cache: 'no-store'})
+		.json()
+		.catch(() => [])
+
 	const formattedTermData = formatRawData(resp)
 	storage.setTermCourseData(term.term, formattedTermData)
 }
 
 function formatRawData(rawData: Array<RawCourseType>): Array<CourseType> {
 	return rawData.map(course => {
-		let spaceAvailable = course.enroll < course.max
+		let spaceAvailable = course.enrolled < course.max
 		return {spaceAvailable: spaceAvailable, ...course}
 	})
 }

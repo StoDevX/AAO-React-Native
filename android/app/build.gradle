@@ -1,4 +1,7 @@
-apply plugin: "com.android.application"
+// this includes the onesignal gradle plugin
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+// this plugin adapts the gradle build for android apps
+apply plugin: 'com.android.application'
 
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
@@ -94,42 +97,60 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 
-def COMPILE_SDK_VERSION = 27
-def TARGET_SDK_VERSION = 27
-def ANDROID_SUPPORT_LIBRARY_VERSION = '27.1.0'
+/**
+ * Fetch the keystore file's path from the environment
+ */
+String keystorePath = System.getenv("KEYSTORE_FILE")
 
 android {
-    compileSdkVersion COMPILE_SDK_VERSION
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         applicationId "com.allaboutolaf"
 
-        minSdkVersion 19
-        targetSdkVersion TARGET_SDK_VERSION
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
 
         versionCode 1
         versionName "1.0.0"
 
         manifestPlaceholders = [
             manifestApplicationId: applicationId,
-            BUGSNAG_KEY: System.getenv("BUGSNAG_KEY") ?: "",
-            GMAPS_KEY: System.getenv("GMAPS_KEY") ?: "",
+            onesignal_google_project_number: "REMOTE",
         ]
-
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
-    }
-
-    ext {
-        compileSdkVersion = COMPILE_SDK_VERSION
-        targetSdkVersion = TARGET_SDK_VERSION
-        androidSupportLibraryVersion = ANDROID_SUPPORT_LIBRARY_VERSION
     }
 
     signingConfigs {
-        // the signingConfig is configured below
-        release
+        // originally derived from https://gist.github.com/gabrielemariotti/6856974
+        if (keystorePath == null) {
+            logger.warn "env['KEYSTORE_FILE'] not set"
+            release
+            return
+        } else {
+            logger.warn "env['KEYSTORE_FILE'] = ${keystorePath}"
+        }
+
+        def propFile = new File(keystorePath)
+        if (!propFile.canRead()) {
+            logger.warn "${keystorePath} is not readable"
+            release
+            return
+        }
+
+        def props = new Properties()
+        props.load(new FileInputStream(propFile))
+
+        release {
+            storeFile file(props['STORE_FILE'])
+            storePassword props['STORE_PASSWORD']
+            keyAlias props['KEY_ALIAS']
+            keyPassword props['KEY_PASSWORD']
+        }
     }
 
     splits {
@@ -137,15 +158,23 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
+            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
 
     buildTypes {
+        debug {
+            manifestPlaceholders = [isDebug: true]
+        }
+
         release {
+            manifestPlaceholders = [isDebug: false]
+
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            signingConfig signingConfigs.release
+            if (keystorePath != null) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 
@@ -157,7 +186,7 @@ android {
 
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            // def versionCodes = ["armeabi-v7a":1, "x86":2, nil:2]
+            // def versionCodes = ["armeabi-v7a":1, "x86":2, nil:2, "arm64-v8a": 3, "x86_64": 4]
 
             // `abi` is null for the universal-debug, universal-release variants
             // def abi = output.getFilter(OutputFile.ABI)
@@ -169,80 +198,54 @@ android {
         }
     }
 
-    android {
-        dexOptions {
-            // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
-            preDexLibraries = preDexEnabled && !ciBuild
+    bundle {
+        language {
+            enableSplit = true
         }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+
+    dexOptions {
+        // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
+        preDexLibraries = preDexEnabled && !ciBuild
     }
 
     configurations.all {
-        resolutionStrategy.force "com.android.support:appcompat-v7:$ANDROID_SUPPORT_LIBRARY_VERSION"
-        resolutionStrategy.force "com.android.support:customtabs:$ANDROID_SUPPORT_LIBRARY_VERSION"
-        resolutionStrategy.force "com.android.support:support-media-compat:$ANDROID_SUPPORT_LIBRARY_VERSION"
-        resolutionStrategy.force "com.android.support:support-v4:$ANDROID_SUPPORT_LIBRARY_VERSION"
-    }
-}
+        resolutionStrategy.force "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+        resolutionStrategy.force "com.android.support:customtabs:${rootProject.ext.supportLibVersion}"
+        resolutionStrategy.force "com.android.support:support-media-compat:${rootProject.ext.supportLibVersion}"
+        resolutionStrategy.force "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
 
-// borrowed from https://gist.github.com/gabrielemariotti/6856974
-def propFile = new File('android/app/signing.properties')
-if (propFile.canRead()) {
-    Properties props = new Properties()
-    props.load(new FileInputStream(propFile))
-    if (props != null
-            && props.containsKey('STORE_FILE')
-            && props.containsKey('STORE_PASSWORD')
-            && props.containsKey('KEY_ALIAS')
-            && props.containsKey('KEY_PASSWORD')
-    ) {
-        logger.info 'android/app/signing.properties is fully functional.'
-        android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
-        android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
-        android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
-        android.signingConfigs.release.keyPassword = props['KEY_PASSWORD']
-    } else {
-        println 'android/app/signing.properties found, but some entries are missing.'
-        if (props == null) {
-            logger.warn '`props` was null'
-        } else {
-            logger.warn "has STORE_FILE: ${props.containsKey('STORE_FILE')}"
-            logger.warn "has STORE_PASSWORD: ${props.containsKey('STORE_PASSWORD')}"
-            logger.warn "has KEY_ALIAS: ${props.containsKey('KEY_ALIAS')}"
-            logger.warn "has KEY_PASSWORD: ${props.containsKey('KEY_PASSWORD')}"
-        }
-        android.buildTypes.release.signingConfig = null
+        resolutionStrategy.force 'org.webkit:android-jsc:r236355'
     }
-} else {
-    logger.warn 'android/app/signing.properties not found.'
-    logger.warn "cwd: ${new File(".").absolutePath}"
-    android.buildTypes.release.signingConfig = null
 }
 
 dependencies {
     // please keep this list sorted
-    implementation project(':bugsnag-react-native')
     implementation project(':mapbox-react-native-mapbox-gl')
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-custom-tabs')
     implementation project(':react-native-device-info')
-    implementation project(':react-native-google-analytics-bridge')
+    implementation project(':react-native-gesture-handler')
     implementation project(':react-native-keychain')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-network-info')
+    implementation project(':react-native-onesignal')
     implementation project(':react-native-restart')
+    implementation project(':react-native-sentry')
     implementation project(':react-native-vector-icons')
+
     // this is for react-native itself
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:$ANDROID_SUPPORT_LIBRARY_VERSION"
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-}
-
-// Run this once to be able to run the application with BUCK
-// puts all compile dependencies into folder libs for BUCK to use
-task copyDownloadableDepsToLibs(type: Copy) {
-    from configurations.compile
-    into 'libs'
 }
 
 // Bundles the app's data for the build process
@@ -253,6 +256,10 @@ task bundleData(type: Exec) {
 
 gradle.projectsEvaluated {
     // hook bundleData into the android build process
-    bundleDebugJsAndAssets.dependsOn bundleData
-    bundleReleaseJsAndAssets.dependsOn bundleData
+    if (project.hasProperty('bundleDebugJsAndAssets')) {
+        bundleDebugJsAndAssets.dependsOn bundleData
+    }
+    if (project.hasProperty('bundleReleaseJsAndAssets')) {
+        bundleReleaseJsAndAssets.dependsOn bundleData
+    }
 }

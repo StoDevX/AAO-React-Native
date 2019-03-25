@@ -5,9 +5,10 @@ import {View, Text, StyleSheet, Platform} from 'react-native'
 import Icon from 'react-native-vector-icons/Entypo'
 import type {ViewType} from '../views'
 import LinearGradient from 'react-native-linear-gradient'
-import {Touchable} from '../components/touchable'
-import * as c from '../components/colors'
-import {iPhoneX} from '../components/device'
+import {Touchable} from '@frogpond/touchable'
+import {transparent} from '@frogpond/colors'
+import {homescreenForegroundDark, homescreenForegroundLight} from './colors'
+import {iPhoneX} from '@frogpond/device'
 
 type Props = {
 	view: ViewType,
@@ -33,7 +34,17 @@ export function HomeScreenButton({view, onPress}: Props) {
 	)
 }
 
-function TouchableButton({onPress, label, children, tint, gradient}) {
+type TouchableButtonProps = {
+	onPress: () => void,
+	label: string,
+	children: React.Node,
+	tint: string,
+	gradient: ?[string, string],
+}
+
+function TouchableButton(props: TouchableButtonProps) {
+	let {onPress, label, children, tint, gradient} = props
+
 	if (Platform.OS === 'android') {
 		return (
 			<Tint gradient={gradient} tint={tint}>
@@ -53,12 +64,18 @@ function TouchableButton({onPress, label, children, tint, gradient}) {
 	}
 }
 
-function TouchableWrapper({onPress, children, label}) {
+type TouchableWrapperProps = {
+	onPress: () => void,
+	label: string,
+	children: React.Node,
+}
+
+function TouchableWrapper({onPress, children, label}: TouchableWrapperProps) {
 	return (
 		<Touchable
-			accessibilityComponentType="button"
 			accessibilityLabel={label}
-			accessibilityTraits="button"
+			accessibilityRole="button"
+			accessible={true}
 			highlight={false}
 			onPress={onPress}
 		>
@@ -67,7 +84,13 @@ function TouchableWrapper({onPress, children, label}) {
 	)
 }
 
-function Tint({tint = 'black', gradient, children}) {
+type TintProps = {
+	children: React.Node,
+	tint: string,
+	gradient: ?[string, string],
+}
+
+function Tint({tint = 'black', gradient, children}: TintProps) {
 	if (!gradient) {
 		const bg = {backgroundColor: tint}
 		return <View style={[styles.button, bg]}>{children}</View>
@@ -76,7 +99,7 @@ function Tint({tint = 'black', gradient, children}) {
 	return (
 		<LinearGradient
 			colors={gradient}
-			end={{x: 1, y: 0.85}}
+			end={{x: 0, y: 0.85}}
 			start={{x: 0, y: 0.05}}
 			style={styles.button}
 		>
@@ -107,17 +130,17 @@ const styles = StyleSheet.create({
 		paddingHorizontal: cellHorizontalPadding,
 	},
 	icon: {
-		backgroundColor: c.transparent,
+		backgroundColor: transparent,
 	},
 	text: {
-		backgroundColor: c.transparent,
+		backgroundColor: transparent,
 		fontFamily: Platform.OS === 'ios' ? 'System' : 'sans-serif-condensed',
 		fontSize: 14,
 	},
 	lightForeground: {
-		color: c.homescreenForegroundLight,
+		color: homescreenForegroundLight,
 	},
 	darkForeground: {
-		color: c.homescreenForegroundDark,
+		color: homescreenForegroundDark,
 	},
 })

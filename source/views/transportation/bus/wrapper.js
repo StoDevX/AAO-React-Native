@@ -3,18 +3,17 @@
 import * as React from 'react'
 import type {UnprocessedBusLine} from './types'
 import {BusLine} from './line'
-import moment from 'moment-timezone'
-import {NoticeView} from '../../components/notice'
-import LoadingView from '../../components/loading'
+import {Timer} from '@frogpond/timer'
+import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../../types'
-import delay from 'delay'
-import {reportNetworkProblem} from '../../../lib/report-network-problem'
-import * as defaultData from '../../../../docs/bus-times.json'
-import {API} from '../../../globals'
+import {API} from '@frogpond/api'
+import {fetch} from '@frogpond/fetch'
+import {timezone} from '@frogpond/constants'
 
-const TIMEZONE = 'America/Winnipeg'
-
-const busTimesUrl = API('/transit/bus')
+const fetchBusTimes = (): Promise<Array<UnprocessedBusLine>> =>
+	fetch(API('/transit/bus'))
+		.json()
+		.then(body => body.data)
 
 type Props = TopLevelViewPropsType & {
 	+line: string,
@@ -24,67 +23,26 @@ type State = {|
 	busLines: Array<UnprocessedBusLine>,
 	activeBusLine: ?UnprocessedBusLine,
 	loading: boolean,
-	refreshing: boolean,
-	now: moment,
 |}
 
 export class BusView extends React.PureComponent<Props, State> {
-	_intervalId: ?IntervalID
-
 	state = {
-		busLines: defaultData.data,
+		busLines: [],
 		activeBusLine: null,
 		loading: true,
-		refreshing: false,
-		now: moment.tz(TIMEZONE),
-		// now: moment.tz('Fri 8:13pm', 'ddd h:mma', true, TIMEZONE),
 	}
 
 	componentDidMount() {
 		this.fetchData().then(() => {
 			this.setState(() => ({loading: false}))
 		})
-
-		// This updates the screen every second, so that the "next bus" times
-		// update without needing to leave and come back.
-		this._intervalId = setInterval(this.updateTime, 1000)
-	}
-
-	componentWillUnmount() {
-		this._intervalId && clearInterval(this._intervalId)
 	}
 
 	fetchData = async () => {
-		let {data: busLines} = await fetchJson(busTimesUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-
-		if (process.env.NODE_ENV === 'development') {
-			busLines = defaultData.data
-		}
-
-		const activeBusLine = busLines.find(({line}) => line === this.props.line)
+		let busLines = await fetchBusTimes()
+		let activeBusLine = busLines.find(({line}) => line === this.props.line)
 
 		this.setState(() => ({busLines, activeBusLine}))
-	}
-
-	updateTime = () => {
-		this.setState(() => ({now: moment.tz(TIMEZONE)}))
-	}
-
-	refreshTime = async () => {
-		const start = Date.now()
-		this.setState(() => ({refreshing: true}))
-
-		this.updateTime()
-
-		const elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
-		this.setState(() => ({refreshing: false}))
 	}
 
 	openMap = () => {
@@ -98,7 +56,7 @@ export class BusView extends React.PureComponent<Props, State> {
 			return <LoadingView />
 		}
 
-		const {now, activeBusLine} = this.state
+		const {activeBusLine} = this.state
 
 		if (!activeBusLine) {
 			const lines = this.state.busLines.map(({line}) => line).join(', ')
@@ -107,12 +65,13 @@ export class BusView extends React.PureComponent<Props, State> {
 		}
 
 		return (
-			<BusLine
-				line={activeBusLine}
-				now={now}
-				onRefresh={this.refreshTime}
-				openMap={this.openMap}
-				refreshing={this.state.refreshing}
+			<Timer
+				interval={60000}
+				moment={true}
+				render={({now}) => (
+					<BusLine line={activeBusLine} now={now} openMap={this.openMap} />
+				)}
+				timezone={timezone()}
 			/>
 		)
 	}

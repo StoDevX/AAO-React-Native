@@ -21,6 +21,7 @@ export type BusTimetableEntry = {|
 export type UnprocessedBusLine = {|
 	+line: string,
 	+colors: BusLineColors,
+	+notice?: string,
 	+schedules: Array<UnprocessedBusSchedule>,
 |}
 

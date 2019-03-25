@@ -4,14 +4,13 @@ import * as React from 'react'
 import {StyleSheet, SectionList, ActivityIndicator} from 'react-native'
 import type {TopLevelViewPropsType} from '../../types'
 import type {CourseType} from '../../../lib/course-search/types'
-import {ListSeparator, ListSectionHeader} from '../../components/list'
-import * as c from '../../components/colors'
+import {ListSeparator, ListSectionHeader} from '@frogpond/lists'
+import * as c from '@frogpond/colors'
 import {CourseRow} from './row'
 import memoize from 'lodash/memoize'
 import {parseTerm} from '../../../lib/course-search'
-import {NoticeView} from '../../components/notice'
-import {FilterToolbar} from '../../components/filter'
-import type {FilterType} from '../../components/filter'
+import {NoticeView} from '@frogpond/notice'
+import {FilterToolbar, type FilterType} from '@frogpond/filter'
 import {applySearch, sortAndGroupResults} from './lib/execute-search'
 
 const styles = StyleSheet.create({
@@ -105,8 +104,8 @@ export class CourseResultsList extends React.PureComponent<Props> {
 		const message = hasActiveFilter
 			? 'There were no courses that matched your selected filters. Try a different filter combination.'
 			: query.length
-				? 'There were no courses that matched your query. Please try again.'
-				: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
+			? 'There were no courses that matched your query. Please try again.'
+			: "You can search by Professor (e.g. 'Jill Dietz'), Course Name (e.g. 'Abstract Algebra'), Department/Number (e.g. MATH 252), or GE (e.g. WRI)"
 
 		const messageView = <NoticeView style={styles.message} text={message} />
 

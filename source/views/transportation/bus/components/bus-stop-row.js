@@ -2,11 +2,11 @@
 
 import * as React from 'react'
 import {Platform, StyleSheet} from 'react-native'
-import {Column} from '../../../components/layout'
-import {ListRow, Detail, Title} from '../../../components/list'
+import {Column} from '@frogpond/layout'
+import {ListRow, Detail, Title} from '@frogpond/lists'
 import type {BusTimetableEntry} from '../types'
 import type moment from 'moment'
-import * as c from '../../../components/colors'
+import * as c from '@frogpond/colors'
 import {ProgressChunk} from './progress-chunk'
 import {ScheduleTimes} from './times'
 import {

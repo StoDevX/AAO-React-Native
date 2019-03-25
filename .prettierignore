@@ -1,8 +1,6 @@
-/package.json
 *.md
-*.json
+node_modules/
 /flow-typed/
-/node_modules/
 /docs/
 /android/
 /ios/

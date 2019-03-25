@@ -2,13 +2,13 @@
 import * as React from 'react'
 import {ScrollView, Text, View, StyleSheet} from 'react-native'
 import moment from 'moment'
-import {Card} from '../components/card'
-import * as c from '../components/colors'
+import {Card} from '@frogpond/silly-card'
+import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {sendEmail} from '../components/send-email'
-import {openUrl} from '../components/open-url'
-import {cleanOrg, showNameOrEmail} from './util'
+import {sendEmail} from '../../components/send-email'
+import {openUrl} from '@frogpond/open-url'
+import {showNameOrEmail} from './util'
 
 const styles = StyleSheet.create({
 	name: {
@@ -76,7 +76,7 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 			advisors,
 			description,
 			lastUpdated: orgLastUpdated,
-		} = cleanOrg(this.props.navigation.state.params.org)
+		} = this.props.navigation.state.params.org
 
 		return (
 			<ScrollView>

@@ -2,14 +2,14 @@
 import * as React from 'react'
 import {ScrollView, Text, StyleSheet} from 'react-native'
 import moment from 'moment'
-import {Cell, Section, TableView} from 'react-native-tableview-simple'
-import * as c from '../components/colors'
+import {Cell, Section, TableView, SelectableCell} from '@frogpond/tableview'
+import * as c from '@frogpond/colors'
 import type {StudentOrgType} from './types'
 import type {TopLevelViewPropsType} from '../types'
-import {openUrl} from '../components/open-url'
-import {sendEmail} from '../components/send-email'
-import {cleanOrg, showNameOrEmail} from './util'
-import {SelectableCell} from '../components/cells/selectable'
+import {openUrl} from '@frogpond/open-url'
+import {sendEmail} from '../../components/send-email'
+import {showNameOrEmail} from './util'
+import {entities} from '@frogpond/html-lib'
 
 const styles = StyleSheet.create({
 	name: {
@@ -56,7 +56,7 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 			advisors,
 			description,
 			lastUpdated: orgLastUpdated,
-		} = cleanOrg(this.props.navigation.state.params.org)
+		} = this.props.navigation.state.params.org
 
 		return (
 			<ScrollView>
@@ -73,7 +73,7 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 
 					{meetings ? (
 						<Section header="MEETINGS">
-							<SelectableCell text={meetings} />
+							<SelectableCell text={entities.decode(meetings)} />
 						</Section>
 					) : null}
 
@@ -119,7 +119,7 @@ export class StudentOrgsDetailView extends React.PureComponent<Props> {
 
 					{description ? (
 						<Section header="DESCRIPTION">
-							<SelectableCell text={description} />
+							<SelectableCell text={entities.decode(description)} />
 						</Section>
 					) : null}
 

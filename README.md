@@ -14,6 +14,7 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 
 ## Getting Started
 
+- If you're on a system with the `brew` command, run `brew bundle install` to install the system dependencies. (Node, Ruby, Yarn, Watchman, etc.)
 - [Install React Native](http://facebook.github.io/react-native/docs/getting-started.html#content)
 - [Install Yarn](https://yarnpkg.com/en/docs/install)
 - Clone the repository
@@ -21,13 +22,6 @@ The St. Olaf community, now in pocket size… rewritten in React Native.
 - Run `yarn`
 - For iOS: `npm run ios`
 - For Android: launch your favorite Android emulator first, then run `npm run android`
-
-### Notes
-
-- The Calendar won't work until you give it a proper Google Calendar API key.
-You should [create one yourself](https://console.developers.google.com/projectselector/apis/credentials)!
-  1. Create a copy of the `.env.sample.js` file and rename it to `.env.js`.
-  2. Insert your API key in place of the `key goes here` text.
 
 ## Contributing
 

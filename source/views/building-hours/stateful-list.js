@@ -1,24 +1,30 @@
 // @flow
 
 import * as React from 'react'
-import {NoticeView} from '../components/notice'
+import {NoticeView} from '@frogpond/notice'
 import {BuildingHoursList} from './list'
-import {type ReduxState} from '../../flux'
+import {type ReduxState} from '../../redux'
 import {connect} from 'react-redux'
-import moment from 'moment-timezone'
 import type {TopLevelViewPropsType} from '../types'
 import type {BuildingType} from './types'
-import * as defaultData from '../../../docs/building-hours.json'
-import {reportNetworkProblem} from '../../lib/report-network-problem'
 import toPairs from 'lodash/toPairs'
 import groupBy from 'lodash/groupBy'
-import delay from 'delay'
-import {CENTRAL_TZ} from './lib'
-import {API} from '../../globals'
+import {timezone} from '@frogpond/constants'
+import {Timer} from '@frogpond/timer'
+import {fetch} from '@frogpond/fetch'
+import {API} from '@frogpond/api'
 
-const buildingHoursUrl = API('/spaces/hours')
+const fetchHours = (forReload?: boolean): Promise<Array<BuildingType>> =>
+	fetch(API('/spaces/hours'), {
+		delay: forReload ? 500 : 0,
+	})
+		.json()
+		.then(body => body.data)
 
-const groupBuildings = (buildings: BuildingType[], favorites: string[]) => {
+const groupBuildings = (
+	buildings: Array<BuildingType>,
+	favorites: Array<string>,
+): Array<{title: string, data: Array<BuildingType>}> => {
 	const favoritesGroup = {
 		title: 'Favorites',
 		data: buildings.filter(b => favorites.includes(b.name)),
@@ -43,13 +49,11 @@ type ReduxStateProps = {
 
 type Props = TopLevelViewPropsType & ReduxStateProps
 
-type State = {
+type State = {|
 	error: ?Error,
 	loading: boolean,
-	now: moment,
-	buildings: Array<{title: string, data: Array<BuildingType>}>,
-	allBuildings: Array<BuildingType>,
-}
+	buildings: Array<BuildingType>,
+|}
 
 export class BuildingHoursView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
@@ -57,71 +61,25 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 		headerBackTitle: 'Hours',
 	}
 
-	_intervalId: ?IntervalID
-
 	state = {
 		error: null,
 		loading: false,
-		// now: moment.tz('Wed 7:25pm', 'ddd h:mma', null, CENTRAL_TZ),
-		now: moment.tz(CENTRAL_TZ),
-		buildings: groupBuildings(defaultData.data, this.props.favoriteBuildings),
-		allBuildings: defaultData.data,
-		intervalId: null,
-	}
-
-	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		return {
-			buildings: groupBuildings(
-				prevState.allBuildings,
-				nextProps.favoriteBuildings,
-			),
-		}
+		buildings: [],
 	}
 
 	componentDidMount() {
 		this.fetchData()
-
-		// This updates the screen every second, so that the building
-		// info statuses are updated without needing to leave and come back.
-		this._intervalId = setInterval(this.updateTime, 1000)
-	}
-
-	componentWillUnmount() {
-		this._intervalId && clearInterval(this._intervalId)
-	}
-
-	updateTime = () => {
-		this.setState(() => ({now: moment.tz(CENTRAL_TZ)}))
 	}
 
 	refresh = async (): any => {
-		let start = Date.now()
 		this.setState(() => ({loading: true}))
-
-		await this.fetchData()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		let elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
-		this.setState(() => ({loading: false}))
+		let buildings = await fetchHours(true)
+		this.setState(() => ({loading: false, buildings}))
 	}
 
 	fetchData = async () => {
-		let {data: buildings} = await fetchJson(buildingHoursUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-		if (process.env.NODE_ENV === 'development') {
-			buildings = defaultData.data
-		}
-		this.setState(() => ({
-			buildings: groupBuildings(buildings, this.props.favoriteBuildings),
-			allBuildings: buildings,
-			now: moment.tz(CENTRAL_TZ),
-		}))
+		let buildings = await fetchHours()
+		this.setState(() => ({buildings}))
 	}
 
 	render() {
@@ -129,13 +87,24 @@ export class BuildingHoursView extends React.PureComponent<Props, State> {
 			return <NoticeView text={`Error: ${this.state.error.message}`} />
 		}
 
+		let {buildings} = this.state
+		let {favoriteBuildings} = this.props
+		let grouped = groupBuildings(buildings, favoriteBuildings)
+
 		return (
-			<BuildingHoursList
-				buildings={this.state.buildings}
-				loading={this.state.loading}
-				navigation={this.props.navigation}
-				now={this.state.now}
-				onRefresh={this.refresh}
+			<Timer
+				interval={60000}
+				moment={true}
+				render={({now}) => (
+					<BuildingHoursList
+						buildings={grouped}
+						loading={this.state.loading}
+						navigation={this.props.navigation}
+						now={now}
+						onRefresh={this.refresh}
+					/>
+				)}
+				timezone={timezone()}
 			/>
 		)
 	}

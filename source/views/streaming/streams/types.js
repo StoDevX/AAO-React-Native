@@ -1,6 +1,4 @@
 // @flow
-import type momentT from 'moment'
-
 export type StreamType = {
 	category: string,
 	eid: string,
@@ -15,5 +13,5 @@ export type StreamType = {
 	subtitle: ?string,
 	thumb: string,
 	title: string,
-	date: momentT,
+	date: string,
 }

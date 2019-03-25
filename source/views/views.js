@@ -1,6 +1,6 @@
 // @flow
 
-import * as c from './components/colors'
+import * as c from '@frogpond/colors'
 
 export type ViewType =
 	| {
@@ -22,8 +22,18 @@ export type ViewType =
 			tint: string,
 			gradient?: [string, string],
 	  }
+	| {
+			type: 'browser-url',
+			view: string,
+			url: string,
+			title: string,
+			icon: string,
+			foreground: 'light' | 'dark',
+			tint: string,
+			gradient?: [string, string],
+	  }
 
-export const allViews: ViewType[] = [
+export const allViews: Array<ViewType> = [
 	{
 		type: 'view',
 		view: 'MenusView',
@@ -131,8 +141,8 @@ export const allViews: ViewType[] = [
 		title: 'Student Orgs',
 		icon: 'globe',
 		foreground: 'light',
-		tint: c.periwinkle,
-		gradient: c.tealToSeafoam,
+		tint: c.wave,
+		gradient: c.darkBlueToIndigo,
 	},
 	{
 		type: 'url',
@@ -153,6 +163,25 @@ export const allViews: ViewType[] = [
 		tint: c.lavender,
 		gradient: c.seafoamToGrass,
 	},
+	{
+		type: 'view',
+		view: 'PrintJobsView',
+		title: 'stoPrint',
+		icon: 'print',
+		foreground: 'light',
+		tint: c.periwinkle,
+		gradient: c.tealToSeafoam,
+	},
+	{
+		type: 'browser-url',
+		url: 'https://wp.stolaf.edu/safety-committee/report/',
+		view: 'SafetyView',
+		title: 'Safety Concerns',
+		icon: 'warning',
+		foreground: 'dark',
+		tint: c.periwinkle,
+		gradient: c.yellowToGoldMid,
+	},
 ]
 
-export const allViewNames = allViews.map(v => v.view)
+export const allViewNames: Array<string> = allViews.map(v => v.view)

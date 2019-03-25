@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react'
-import LoadingView from '../components/loading'
-import {NoticeView} from '../components/notice'
-import {FancyMenu} from './components/fancy-menu'
+import {timezone} from '@frogpond/constants'
+import {NoticeView, LoadingView} from '@frogpond/notice'
+import {FoodMenu} from '@frogpond/food-menu'
 import type {TopLevelViewPropsType} from '../types'
 import type momentT from 'moment'
 import moment from 'moment-timezone'
@@ -17,12 +17,8 @@ import type {
 	ProcessedMealType,
 } from './types'
 import {upgradeMenuItem, upgradeStation} from './lib/process-menu-shorthands'
-import {data as fallbackMenu} from '../../../docs/pause-menu.json'
-import {tracker} from '../../analytics'
-import bugsnag from '../../bugsnag'
-import {API} from '../../globals'
-
-const CENTRAL_TZ = 'America/Winnipeg'
+import {API} from '@frogpond/api'
+import {fetch} from '@frogpond/fetch'
 
 type Props = TopLevelViewPropsType & {
 	name: string,
@@ -42,7 +38,7 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 	state = {
 		error: null,
 		loading: true,
-		now: moment.tz(CENTRAL_TZ),
+		now: moment.tz(timezone()),
 		foodItems: {},
 		corIcons: {},
 		meals: [],
@@ -55,29 +51,12 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 	fetchData = async () => {
 		this.setState({loading: true})
 
-		let foodItems: MenuItemType[] = []
-		let stationMenus: StationMenuType[] = []
-		let corIcons: MasterCorIconMapType = {}
-		try {
-			let container = await fetchJson(API('/food/named/menu/the-pause'))
-			let data = container.data
-			foodItems = data.foodItems || []
-			stationMenus = data.stationMenus || []
-			corIcons = data.corIcons || {}
-		} catch (err) {
-			tracker.trackException(err.message)
-			bugsnag.notify(err)
-			console.warn(err)
-			foodItems = fallbackMenu.foodItems || []
-			stationMenus = fallbackMenu.stationMenus || []
-			corIcons = fallbackMenu.corIcons || {}
-		}
+		let container = await fetch(API('/food/named/menu/the-pause')).json()
 
-		if (process.env.NODE_ENV === 'development') {
-			foodItems = fallbackMenu.foodItems
-			stationMenus = fallbackMenu.stationMenus || []
-			corIcons = fallbackMenu.corIcons || {}
-		}
+		let data = container.data
+		let foodItems: MenuItemType[] = data.foodItems || []
+		let stationMenus: StationMenuType[] = data.stationMenus || []
+		let corIcons: MasterCorIconMapType = data.corIcons || {}
 
 		const upgradedFoodItems = fromPairs(
 			foodItems.map(upgradeMenuItem).map(item => [item.id, item]),
@@ -101,7 +80,7 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 					endtime: '23:59',
 				},
 			],
-			now: moment.tz(CENTRAL_TZ),
+			now: moment.tz(timezone()),
 		})
 	}
 
@@ -115,7 +94,7 @@ export class GitHubHostedMenu extends React.PureComponent<Props, State> {
 		}
 
 		return (
-			<FancyMenu
+			<FoodMenu
 				foodItems={this.state.foodItems}
 				meals={this.state.meals}
 				menuCorIcons={this.state.corIcons}

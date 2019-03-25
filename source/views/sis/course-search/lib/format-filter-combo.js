@@ -1,6 +1,5 @@
 // @flow
-import {type FilterType} from '../../../components/filter/types'
-import {filterListSpecs} from '../../../components/filter'
+import {filterListSpecs, type FilterType} from '@frogpond/filter'
 import {formatTerms} from './format-terms'
 
 export type FilterComboType = {
@@ -43,9 +42,9 @@ function describeFilter(f: FilterType, filters: FilterType[]) {
 			const selectedGEs = geFilter ? geFilter.spec.selected : []
 			return selectedGEs.map(ge => ge.title).join('/')
 		}
-		case 'departments': {
+		case 'department': {
 			const deptFilter = filterListSpecs(filters).find(
-				f => f.key === 'departments',
+				f => f.key === 'department',
 			)
 			const selectedDepts = deptFilter ? deptFilter.spec.selected : []
 			return selectedDepts.map(dept => dept.title).join('/')

@@ -4,10 +4,9 @@ category: Academia
 
 schedule:
   - title: Hours
-    hours: []
-      # - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
-      # - {days: [Sa, Su], from: '9:00am', to: '12:00am'}
-    notes: The Theater Building is closed for the summer.
+    hours:
+      - {days: [Mo, Tu, We, Th, Fr], from: '7:00am', to: '12:00am'}
+      - {days: [Sa, Su], from: '9:00am', to: '12:00am'}
 
 breakSchedule:
   fall: []
@@ -16,7 +15,4 @@ breakSchedule:
   interim: []
   spring: []
   easter: []
-  summer:
-    - title: Hours
-      hours: []
-      notes: The Theater Building is closed for the summer.
+  summer: []

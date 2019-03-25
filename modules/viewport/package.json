@@ -1,0 +1,15 @@
+{
+  "name": "@frogpond/viewport",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-native": "^0.59.0"
+  }
+}

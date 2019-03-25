@@ -1,0 +1,16 @@
+{
+  "name": "@frogpond/html-lib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "css-select": "2.0.2",
+    "html-entities": "1.2.1",
+    "htmlparser2": "3.10.1"
+  }
+}
