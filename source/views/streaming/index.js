@@ -2,7 +2,7 @@
 
 import {TabNavigator} from '../../../modules/navigation-tabs/tabbed-view'
 
-// import WeeklyMovieView from './movie'
+import {WeeklyMovieView} from './movie'
 import {WebcamsView} from './webcams'
 import {StreamListView} from './streams'
 import {KstoStationView} from './radio/station-ksto'
@@ -15,7 +15,7 @@ const StreamingMediaView = TabNavigator({
 	LiveWebcamsView: {screen: WebcamsView},
 	KSTORadioView: {screen: KstoStationView},
 	KRLXRadioView: {screen: KrlxStationView},
-	// WeeklyMovieView: {screen: WeeklyMovieView},
+	WeeklyMovieView: {screen: WeeklyMovieView},
 })
 
 StreamingMediaView.navigationOptions = {
