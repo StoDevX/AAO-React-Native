@@ -14,6 +14,12 @@ project(':react-native-custom-tabs').projectDir = new File(rootProject.projectDi
 include ':react-native-device-info'
 project(':react-native-device-info').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-device-info/android')
 
+include ':react-native-dynamic-bundle'
+project(':react-native-dynamic-bundle').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-dynamic-bundle/android')
+
+include ':react-native-fs'
+project(':react-native-fs').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fs/android')
+
 include ':react-native-gesture-handler'
 project(':react-native-gesture-handler').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-gesture-handler/android')
 

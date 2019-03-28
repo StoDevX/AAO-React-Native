@@ -2,6 +2,7 @@ package com.allaboutolaf;
 
 import android.app.Application;
 import android.net.http.HttpResponseCache;
+import android.net.Uri;
 import android.util.Log;
 
 // keep these sorted alphabetically
@@ -17,9 +18,12 @@ import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.github.droibit.android.reactnative.customtabs.CustomTabsPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.mapbox.rctmgl.RCTMGLPackage;
+import org.mauritsd.reactnativedynamicbundle.RNDynamicBundleModule;
+import org.mauritsd.reactnativedynamicbundle.RNDynamicBundlePackage;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
+import com.rnfs.RNFSPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import io.sentry.RNSentryPackage;
 
@@ -27,6 +31,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -49,6 +55,8 @@ public class MainApplication extends Application implements ReactApplication {
         new ReactNativeOneSignalPackage(),
         new ReactNativeRestartPackage(),
         new RNDeviceInfo(),
+        new RNDynamicBundlePackage(),
+        new RNFSPackage(),
         new RNGestureHandlerPackage(),
         new RNNetworkInfoPackage(),
         new RNSentryPackage(),
@@ -59,6 +67,12 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected String getJSMainModuleName() {
       return "index";
+    }
+
+    @Nullable
+    @Override
+    protected String getJSBundleFile() {
+      return RNDynamicBundleModule.launchResolveBundlePath(MainApplication.this);
     }
   };
 

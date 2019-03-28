@@ -57,6 +57,8 @@
 		D1FC2491209B6F06002CD083 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0002961E1E270BD9000909F2 /* SystemConfiguration.framework */; };
 		D1FC2492209B6F0D002CD083 /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D18853A920995CEB000A1DC5 /* libRCTOneSignal.a */; };
 		F81CA9D936FC4A64BB381A6A /* libRNSentry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B223B62BFCC4894BEFE8A4D /* libRNSentry.a */; };
+		8B65BF69D7C74421A31D5B91 /* libRNDynamicBundle.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 518E5EBD197F43FDA533D253 /* libRNDynamicBundle.a */; };
+		A61D71EC2DC0433B93DC37EA /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E30799C9D8D6469196A5E4C8 /* libRNFS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -569,6 +571,10 @@
 		E847E37AA434496AB97586B8 /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGestureHandler.xcodeproj; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; };
 		A3F076A6A4BE48A89AA0A933 /* RNSentry.xcodeproj */ = {isa = PBXFileReference; name = "RNSentry.xcodeproj"; path = "../node_modules/react-native-sentry/ios/RNSentry.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		9B223B62BFCC4894BEFE8A4D /* libRNSentry.a */ = {isa = PBXFileReference; name = "libRNSentry.a"; path = "libRNSentry.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		AB7615E5BA014DF8A13DA1EB /* RNDynamicBundle.xcodeproj */ = {isa = PBXFileReference; name = "RNDynamicBundle.xcodeproj"; path = "../node_modules/react-native-dynamic-bundle/ios/RNDynamicBundle.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		518E5EBD197F43FDA533D253 /* libRNDynamicBundle.a */ = {isa = PBXFileReference; name = "libRNDynamicBundle.a"; path = "libRNDynamicBundle.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		7E0E971C46294C4AA03732F5 /* RNFS.xcodeproj */ = {isa = PBXFileReference; name = "RNFS.xcodeproj"; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		E30799C9D8D6469196A5E4C8 /* libRNFS.a */ = {isa = PBXFileReference; name = "libRNFS.a"; path = "libRNFS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -617,6 +623,8 @@
 				3AD99DE32141CA1600D8CAAA /* libRCTOneSignal.a in Frameworks */,
 				670F958521BDC98F000B63AB /* libRNGestureHandler.a in Frameworks */,
 				F81CA9D936FC4A64BB381A6A /* libRNSentry.a in Frameworks */,
+				8B65BF69D7C74421A31D5B91 /* libRNDynamicBundle.a in Frameworks */,
+				A61D71EC2DC0433B93DC37EA /* libRNFS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -963,6 +971,8 @@
 				71D5CCADA66D45008D9A38F2 /* RNVectorIcons.xcodeproj */,
 				89FC2AFC0A394CFFAE89242D /* SafariViewManager.xcodeproj */,
 				A3F076A6A4BE48A89AA0A933 /* RNSentry.xcodeproj */,
+				AB7615E5BA014DF8A13DA1EB /* RNDynamicBundle.xcodeproj */,
+				7E0E971C46294C4AA03732F5 /* RNFS.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1851,6 +1861,8 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-sentry/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-dynamic-bundle/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
 				);
 				INFOPLIST_FILE = AllAboutOlaf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1885,6 +1897,8 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-onesignal/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-sentry/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-dynamic-bundle/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
 				);
 				INFOPLIST_FILE = AllAboutOlaf/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
