@@ -1,8 +1,7 @@
 // @flow
 import * as React from 'react'
 import {StyleSheet, Platform} from 'react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
-import {platformPrefixIconName} from '@frogpond/icon'
+import {Icon, platformPrefixIconName} from '@frogpond/icon'
 
 const styles = StyleSheet.create({
 	icon: {
