@@ -61,6 +61,8 @@ function findLargestTrailerImage(movie: Movie) {
 }
 
 export function WeeklyMovieView() {
+	const viewport = useViewport()
+
 	let {data: movie, error, isLoading, reload} = useAsync({
 		promiseFn: fetchWeeklyMovie,
 	})
@@ -92,7 +94,6 @@ export function WeeklyMovieView() {
 	// TODO: remove the Play button
 	// TODO: handle multiple movies on one weekend
 
-	const viewport = useViewport()
 	const mainTrailer = movie.trailers[0]
 	const largestTrailerImage = findLargestTrailerImage(movie)
 	const movieTint = makeRgb(movie.poster.colors.dominant)
