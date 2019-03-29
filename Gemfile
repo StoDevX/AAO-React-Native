@@ -1,12 +1,11 @@
 source 'https://rubygems.org'
 
-gem 'fastlane'
+gem "fastlane"
 gem 'json'
 gem 'xcodeproj'
 
 # fastlane plugins
-gem 'fastlane-plugin-bugsnag'
 
 group :development do
-  gem 'rubocop', '~> 0.58'
+  gem 'rubocop', '~> 0.60'
 end

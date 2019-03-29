@@ -3,11 +3,6 @@
 import * as React from 'react'
 import {Image, ScrollView, StyleSheet, Text, View, Platform} from 'react-native'
 import noop from 'lodash/noop'
-import {
-	trackStreamPlay,
-	trackStreamPause,
-	trackStreamError,
-} from '@frogpond/analytics'
 import * as c from '@frogpond/colors'
 import {callPhone} from '../../../components/call-phone'
 import {Row} from '@frogpond/layout'
@@ -56,12 +51,10 @@ class RadioControllerView extends React.Component<Props, State> {
 	}
 
 	handleStreamPlay = () => {
-		trackStreamPlay(this.props.stationName)
 		this.setState(() => ({playState: 'playing'}))
 	}
 
 	handleStreamPause = () => {
-		trackStreamPause(this.props.stationName)
 		this.setState(() => ({playState: 'paused'}))
 	}
 
@@ -70,7 +63,6 @@ class RadioControllerView extends React.Component<Props, State> {
 	}
 
 	handleStreamError = (e: {code: number, message: string}) => {
-		trackStreamError(this.props.stationName)
 		this.setState(() => ({streamError: e, playState: 'paused'}))
 	}
 

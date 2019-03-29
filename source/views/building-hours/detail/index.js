@@ -4,7 +4,7 @@ import * as React from 'react'
 import type {BuildingType} from '../types'
 import {Timer} from '@frogpond/timer'
 import {BuildingDetail} from './building'
-import {CENTRAL_TZ} from '../lib'
+import {timezone} from '@frogpond/constants'
 import type {TopLevelViewPropsType} from '../../types'
 import {ConnectedBuildingFavoriteButton as FavoriteButton} from './toolbar-button'
 
@@ -41,7 +41,7 @@ export class BuildingHoursDetailView extends React.Component<Props> {
 						onProblemReport={this.reportProblem}
 					/>
 				)}
-				timezone={CENTRAL_TZ}
+				timezone={timezone()}
 			/>
 		)
 	}

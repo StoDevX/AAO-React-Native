@@ -8,6 +8,8 @@ import {
 	Platform,
 	View,
 } from 'react-native'
+import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
+import type {Props as TouchableWithoutFeedbackProps} from 'react-native/Libraries/Components/Touchable/TouchableWithoutFeedback'
 
 export type TouchableUnion =
 	| typeof TouchableHighlight
@@ -15,59 +17,55 @@ export type TouchableUnion =
 	| typeof TouchableNativeFeedback
 
 type Props = {|
-	accessible?: boolean,
-	accessibilityComponentType?: string,
-	accessibilityLabel?: string,
-	accessibilityTraits?: string,
-	activeOpacity?: number,
 	borderless?: boolean,
-	children?: React.Node,
-	containerStyle?: any,
-	getRef?: () => TouchableUnion,
+	containerStyle?: ViewStyleProp,
+	style?: ViewStyleProp,
 	highlight?: boolean,
-	onPress?: () => any,
-	style?: any,
-	testID?: string,
+	activeOpacity?: number,
 	underlayColor?: string,
+	...$Exact<TouchableWithoutFeedbackProps>,
 |}
 
-export const Touchable = ({
-	borderless = false,
-	children,
-	containerStyle,
-	getRef,
-	highlight = true,
-	onPress = () => {},
-	accessible = true,
-	accessibilityLabel,
-	style,
-	testID,
-	...props
-}: Props) => {
+const Touchable = (props: Props, ref) => {
+	let {
+		borderless = false,
+		children,
+		containerStyle,
+		highlight = true,
+		style,
+		underlayColor = '#d9d9d9',
+		activeOpacity = 0.65,
+		...passthrough
+	} = props
+
 	// The child <View> is required; the Touchable needs a View as its direct child.
 	const content = <View style={style}>{children}</View>
 
 	switch (Platform.OS) {
 		default:
 		case 'ios': {
-			const Component = highlight ? TouchableHighlight : TouchableOpacity
-			const innerProps = highlight
-				? {underlayColor: '#d9d9d9'}
-				: {activeOpacity: 0.65}
+			if (highlight) {
+				return (
+					<TouchableHighlight
+						ref={ref}
+						style={containerStyle}
+						underlayColor={underlayColor}
+						{...passthrough}
+					>
+						{content}
+					</TouchableHighlight>
+				)
+			}
 
 			return (
-				<Component
-					ref={getRef}
-					accessibilityLabel={accessibilityLabel}
-					accessible={accessible}
-					onPress={onPress}
-					{...innerProps}
+				<TouchableOpacity
+					ref={ref}
+					activeOpacity={activeOpacity}
 					style={containerStyle}
-					testID={testID}
-					{...props}
+					{...passthrough}
 				>
 					{content}
-				</Component>
+				</TouchableOpacity>
 			)
 		}
 
@@ -80,14 +78,10 @@ export const Touchable = ({
 
 			return (
 				<TouchableNativeFeedback
-					ref={getRef}
-					accessibilityLabel={accessibilityLabel}
-					accessible={accessible}
+					ref={ref}
 					background={background}
-					onPress={onPress}
 					style={containerStyle}
-					testID={testID}
-					{...props}
+					{...passthrough}
 				>
 					{content}
 				</TouchableNativeFeedback>
@@ -95,3 +89,8 @@ export const Touchable = ({
 		}
 	}
 }
+
+// $FlowExpectedError Cannot call React.forwardRef because property forwardRef is missing in module react
+const WrappedTouchable = React.forwardRef(Touchable)
+
+export {WrappedTouchable as Touchable}

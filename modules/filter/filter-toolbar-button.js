@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import type {FilterType} from './types'
 import {FilterPopover} from './filter-popover'
 import * as c from '@frogpond/colors'
-import {Touchable, type TouchableUnion} from '@frogpond/touchable'
+import {Touchable} from '@frogpond/touchable'
 import {type AppTheme} from '@frogpond/app-theme'
 import {withTheme} from '@callstack/react-theme-provider'
 
@@ -51,7 +51,7 @@ class FilterToolbarButton extends React.PureComponent<Props, State> {
 		popoverVisible: false,
 	}
 
-	touchable: ?TouchableUnion = null
+	touchable: React.Ref<*> = React.createRef()
 
 	openPopover = () => {
 		this.setState(() => ({popoverVisible: true}))
@@ -105,7 +105,7 @@ class FilterToolbarButton extends React.PureComponent<Props, State> {
 		return (
 			<React.Fragment>
 				<Touchable
-					getRef={ref => (this.touchable = ref)}
+					ref={this.touchable}
 					highlight={false}
 					onPress={this.openPopover}
 					style={[buttonStyles.button, activeButtonStyle, style]}
@@ -113,12 +113,14 @@ class FilterToolbarButton extends React.PureComponent<Props, State> {
 					<Text style={buttonTextStyle}>{title}</Text>
 					<Icon name={icon} size={18} style={activeContentStyle} />
 				</Touchable>
-				<FilterPopover
-					anchor={this.touchable}
-					filter={filter}
-					onClosePopover={this.onClosePopover}
-					visible={popoverVisible}
-				/>
+				{popoverVisible && (
+					<FilterPopover
+						anchor={this.touchable}
+						filter={filter}
+						onClosePopover={this.onClosePopover}
+						visible={true}
+					/>
+				)}
 			</React.Fragment>
 		)
 	}

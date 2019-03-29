@@ -4,6 +4,7 @@ import {StyleSheet, View, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
 import {type AppTheme} from '@frogpond/app-theme'
 import {withTheme} from '@callstack/react-theme-provider'
+import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet'
 
 const dotBarStyles = StyleSheet.create({
 	diagram: {
@@ -23,7 +24,17 @@ const dotBarStyles = StyleSheet.create({
 	},
 })
 
-function DottedBar({style, theme}: {style?: any, theme: AppTheme}) {
+type BaseProps = {
+	style?: ViewStyleProp,
+}
+
+type HocProps = {
+	theme: AppTheme,
+}
+
+type Props = BaseProps & HocProps
+
+function DottedBar({style, theme}: Props) {
 	let background = {backgroundColor: theme.accent}
 
 	return (
@@ -35,7 +46,9 @@ function DottedBar({style, theme}: {style?: any, theme: AppTheme}) {
 	)
 }
 
-const ThemedDottedBar = withTheme(DottedBar)
+const ThemedDottedBar: React.StatelessFunctionalComponent<BaseProps> = (withTheme(
+	DottedBar,
+): any)
 
 const solidBarStyles = StyleSheet.create({
 	border: {

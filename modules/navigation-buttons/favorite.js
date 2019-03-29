@@ -11,9 +11,8 @@ type Props = {
 	favorited: boolean,
 }
 
-// (ios|md)-heart(-outline)
-const filled = `${Platform.OS === 'ios' ? 'ios' : 'md'}-heart`
-const outlined = `${filled}-outline`
+const filled = Platform.OS === 'ios' ? 'ios-heart' : 'md-heart'
+const outlined = Platform.OS === 'ios' ? 'ios-heart-empty' : 'md-heart-empty'
 
 export function FavoriteButton(props: Props) {
 	const icon = props.favorited ? filled : outlined

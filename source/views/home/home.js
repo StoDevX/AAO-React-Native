@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import {ScrollView, View, StyleSheet, StatusBar} from 'react-native'
+import {SafeAreaView} from 'react-navigation'
 
 import {connect} from 'react-redux'
 import {getTheme} from '@frogpond/app-theme'
@@ -13,7 +14,7 @@ import {allViews} from '../views'
 import {Column} from '@frogpond/layout'
 import {partitionByIndex} from '../../lib/partition-by-index'
 import {HomeScreenButton, CELL_MARGIN} from './button'
-import {trackedOpenUrl} from '@frogpond/open-url'
+import {trackedOpenUrl, openUrlInBrowser} from '@frogpond/open-url'
 import {EditHomeButton, OpenSettingsButton} from '@frogpond/navigation-buttons'
 import {UnofficialAppNotice} from './notice'
 
@@ -41,7 +42,6 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 	return (
 		<ScrollView
 			alwaysBounceHorizontal={false}
-			overflow="hidden"
 			showsHorizontalScrollIndicator={false}
 			showsVerticalScrollIndicator={false}
 			testID="screen-homescreen"
@@ -51,25 +51,29 @@ function HomePage({navigation, order, inactiveViews, views = allViews}: Props) {
 				barStyle={statusBarStyle}
 			/>
 
-			<View style={styles.cells}>
-				{columns.map((contents, i) => (
-					<Column key={i} style={styles.column}>
-						{contents.map(view => (
-							<HomeScreenButton
-								key={view.view}
-								onPress={() => {
-									if (view.type === 'url') {
-										return trackedOpenUrl({url: view.url, id: view.view})
-									} else {
-										return navigation.navigate(view.view)
-									}
-								}}
-								view={view}
-							/>
-						))}
-					</Column>
-				))}
-			</View>
+			<SafeAreaView>
+				<View style={styles.cells}>
+					{columns.map((contents, i) => (
+						<Column key={i} style={styles.column}>
+							{contents.map(view => (
+								<HomeScreenButton
+									key={view.view}
+									onPress={() => {
+										if (view.type === 'url') {
+											return trackedOpenUrl({url: view.url, id: view.view})
+										} else if (view.type === 'browser-url') {
+											return openUrlInBrowser({url: view.url, id: view.view})
+										} else {
+											return navigation.navigate(view.view)
+										}
+									}}
+									view={view}
+								/>
+							))}
+						</Column>
+					))}
+				</View>
+			</SafeAreaView>
 
 			<UnofficialAppNotice />
 		</ScrollView>

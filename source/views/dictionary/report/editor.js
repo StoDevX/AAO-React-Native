@@ -33,18 +33,10 @@ export class DictionaryEditorView extends React.PureComponent<Props, State> {
 		definition: this.props.navigation.state.params.word.definition,
 	}
 
-	static getDerivedStateFromProps(nextProps: Props) {
-		let entry = nextProps.navigation.state.params.word
-		return {
-			term: entry.word,
-			definition: entry.definition,
-		}
-	}
-
 	submit = () => {
 		submitReport(this.props.navigation.state.params.word, {
-			word: this.state.term,
-			definition: this.state.definition,
+			word: this.state.term.trim(),
+			definition: this.state.definition.trim(),
 		})
 	}
 
@@ -57,8 +49,7 @@ export class DictionaryEditorView extends React.PureComponent<Props, State> {
 	}
 
 	render() {
-		let term = this.state.term ? this.state.term.trim() : ''
-		let definition = this.state.definition ? this.state.definition.trim() : ''
+		let {term, definition} = this.state
 
 		return (
 			<ScrollView
@@ -96,7 +87,6 @@ type TextFieldProps = {text: string, onChange: string => any}
 const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="words"
-		hideLabel={true}
 		onChangeText={onChange}
 		onSubmitEditing={onChange}
 		placeholder="Title"
@@ -108,7 +98,6 @@ const TitleCell = ({text, onChange = () => {}}: TextFieldProps) => (
 const DefinitionCell = ({text, onChange = () => {}}: TextFieldProps) => (
 	<CellTextField
 		autoCapitalize="sentences"
-		hideLabel={true}
 		multiline={true}
 		onChangeText={onChange}
 		onSubmitEditing={onChange}

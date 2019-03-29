@@ -58,9 +58,7 @@ export class Timer extends React.Component<Props, State> {
 	}
 
 	componentWillUnmount() {
-		// eslint-disable-next-line no-eq-null
 		this._timeoutId != null && clearTimeout(this._timeoutId)
-		// eslint-disable-next-line no-eq-null
 		this._intervalId != null && clearInterval(this._intervalId)
 	}
 

@@ -1,13 +1,14 @@
 // @flow
 
 import * as c from '@frogpond/colors'
+import {type EntypoGlyphs} from 'react-native-vector-icons/Entypo'
 
 export type ViewType =
 	| {
 			type: 'view',
 			view: string,
 			title: string,
-			icon: string,
+			icon: EntypoGlyphs,
 			foreground: 'light' | 'dark',
 			tint: string,
 			gradient?: [string, string],
@@ -17,13 +18,23 @@ export type ViewType =
 			view: string,
 			url: string,
 			title: string,
-			icon: string,
+			icon: EntypoGlyphs,
+			foreground: 'light' | 'dark',
+			tint: string,
+			gradient?: [string, string],
+	  }
+	| {
+			type: 'browser-url',
+			view: string,
+			url: string,
+			title: string,
+			icon: EntypoGlyphs,
 			foreground: 'light' | 'dark',
 			tint: string,
 			gradient?: [string, string],
 	  }
 
-export const allViews: ViewType[] = [
+export const allViews: Array<ViewType> = [
 	{
 		type: 'view',
 		view: 'MenusView',
@@ -162,6 +173,16 @@ export const allViews: ViewType[] = [
 		tint: c.periwinkle,
 		gradient: c.tealToSeafoam,
 	},
+	{
+		type: 'browser-url',
+		url: 'https://wp.stolaf.edu/safety-committee/report/',
+		view: 'SafetyView',
+		title: 'Safety Concerns',
+		icon: 'warning',
+		foreground: 'dark',
+		tint: c.periwinkle,
+		gradient: c.yellowToGoldMid,
+	},
 ]
 
-export const allViewNames = allViews.map(v => v.view)
+export const allViewNames: Array<string> = allViews.map(v => v.view)

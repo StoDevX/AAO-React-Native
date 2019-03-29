@@ -14,9 +14,8 @@ type Props = {
 export function CloseScreenButton({navigation, buttonStyle}: Props) {
 	return (
 		<Touchable
-			accessibilityComponentType="button"
 			accessibilityLabel="Close the screen"
-			accessibilityTraits="button"
+			accessibilityRole="button"
 			accessible={true}
 			borderless={true}
 			highlight={false}

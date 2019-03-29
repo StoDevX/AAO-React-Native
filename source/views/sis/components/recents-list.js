@@ -75,7 +75,8 @@ class RecentItemsList extends React.PureComponent<Props> {
 					data={items}
 					keyExtractor={this.keyExtractor}
 					renderItem={this.renderItem}
-					scrollEnabled={false}
+					// TODO(react-native@0.58): enable this once React Native no longer dies when opening Settings
+					//scrollEnabled={false}
 				/>
 			</View>
 		)

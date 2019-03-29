@@ -10,10 +10,10 @@
   },
   "peerDependencies": {
     "react": "^16.0.0",
-    "react-native": "^0.55.4"
+    "react-native": "^0.59.0"
   },
   "dependencies": {
     "@frogpond/colors": "^1.0.0",
-    "react-native-tableview-simple": "0.17.5"
+    "react-native-tableview-simple": "2.0.1"
   }
 }

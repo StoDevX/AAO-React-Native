@@ -10,13 +10,14 @@
   },
   "peerDependencies": {
     "react": "^16.0.0",
-    "react-navigation": "^2.13.0",
+    "react-navigation": "^3.0.0",
     "moment-timezone": "^0.5.21",
-    "delay": "4.0.1"
+    "delay": "^4.1.0"
   },
   "dependencies": {
     "@frogpond/analytics": "^1.0.0",
     "@frogpond/api": "^1.0.0",
+    "@frogpond/fetch": "^1.0.0",
     "@frogpond/event-list": "^1.0.0",
     "@frogpond/event-type": "^1.0.0",
     "@frogpond/notice": "^1.0.0"

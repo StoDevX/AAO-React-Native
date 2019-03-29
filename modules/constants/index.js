@@ -2,6 +2,16 @@
 
 import {Platform} from 'react-native'
 
+let TZ: string
+export const setTimezone = (zone: string) => (TZ = zone)
+export const timezone = () => {
+	if (!TZ) {
+		throw new Error('timezone is not set')
+	}
+
+	return TZ
+}
+
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 
 let APP_VERSION: string
@@ -25,7 +35,9 @@ export const isPre = () => IS_PRE
 let IS_RC: boolean
 export const isRc = () => IS_RC
 
-export const isReleaseBuild = () => IS_ALPHA || IS_BETA || IS_PRE || IS_RC
+// checks if the build should show debugging tools
+export const isDevMode = () =>
+	!IS_PRODUCTION || (IS_ALPHA || IS_BETA || IS_PRE || IS_RC)
 
 export const setVersionInfo = (versionStr: string) => {
 	let [version, buildNum] = versionStr.split('+')
@@ -44,8 +56,8 @@ export const userAgent = () => {
 		Platform.OS === 'ios'
 			? 'iOS'
 			: Platform.OS === 'android'
-				? 'Android'
-				: 'unknown'
+			? 'Android'
+			: 'unknown'
 
 	const platformVersion = Platform.Version || 'unknown'
 

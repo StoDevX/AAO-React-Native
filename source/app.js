@@ -2,11 +2,12 @@
 
 // initialization
 import './init/constants'
-import './init/fetch'
 import './init/moment'
-import './init/analytics'
+import './init/sentry'
 import './init/api'
 import './init/theme'
+import './init/data'
+// import './init/navigation'
 import {ONESIGNAL_APP_ID} from './init/notifications'
 
 import * as React from 'react'

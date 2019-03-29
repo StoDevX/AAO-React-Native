@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 		overflow: 'hidden',
 	},
 	disabled: {
-		backgroundColor: c.iosLightBackground,
+		backgroundColor: c.sectionBgColor,
 	},
 	text: {
 		...Platform.select({
@@ -31,12 +31,22 @@ const styles = StyleSheet.create({
 	},
 })
 
+const inverted = StyleSheet.create({
+	text: {
+		...Platform.select({
+			ios: iOSUIKit.calloutBlackObject,
+			android: material.buttonBlackObject,
+		}),
+	},
+})
+
 type Props = {
 	title?: string,
 	onPress?: () => any,
 	disabled?: boolean,
 	buttonStyle?: any,
 	textStyle?: any,
+	mode?: 'default' | 'inverted',
 	theme: AppTheme,
 }
 
@@ -46,13 +56,21 @@ function Button({
 	disabled = false,
 	buttonStyle = null,
 	textStyle = null,
+	mode = 'default',
 	theme,
 }: Props) {
-	let background = {backgroundColor: theme.buttonBackground}
-	let foreground = {color: theme.buttonForeground}
+	let background =
+		mode === 'default'
+			? {backgroundColor: theme.buttonBackground}
+			: {backgroundColor: theme.buttonForeground}
+	let foreground =
+		mode === 'default'
+			? {color: theme.buttonForeground}
+			: {color: theme.buttonBackground}
 
+	let textStyleThing = mode === 'default' ? styles.text : inverted.text
 	let containerStyle = [styles.button, background, buttonStyle]
-	let style = [styles.text, foreground, textStyle]
+	let style = [textStyleThing, foreground, textStyle]
 
 	return (
 		<BasicButton

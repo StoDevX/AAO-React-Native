@@ -4,10 +4,7 @@ import {AppRegistry, YellowBox} from 'react-native'
 import App from './app'
 
 YellowBox.ignoreWarnings([
-	// TODO: remove me after upgrading to RN 0.56
-	'Warning: isMounted(...) is deprecated',
-	// TODO: remove me after upgrading to RN 0.56
-	'Module RCTImageLoader',
+	'Failed prop type: Invalid prop `containerTagName` of type `object` supplied to `ReactMarkdown`, expected `function`',
 ])
 
 AppRegistry.registerComponent('AllAboutOlaf', () => App)

@@ -4,6 +4,10 @@ import {Platform, StyleSheet, Text, View} from 'react-native'
 import * as c from '@frogpond/colors'
 import {type AppTheme} from '@frogpond/app-theme'
 import {withTheme} from '@callstack/react-theme-provider'
+import type {
+	ViewStyleProp,
+	TextStyleProp,
+} from 'react-native/Libraries/StyleSheet/StyleSheet'
 
 const styles = StyleSheet.create({
 	container: {
@@ -63,19 +67,24 @@ const styles = StyleSheet.create({
 	},
 })
 
-type PropsType = {
+type BaseProps = {
 	title: string,
 	bold?: boolean,
-	titleStyle?: any,
+	titleStyle?: TextStyleProp,
 	subtitle?: string,
-	subtitleStyle?: any,
+	subtitleStyle?: TextStyleProp,
 	separator?: string,
-	style?: any,
+	style?: ViewStyleProp,
 	spacing?: {left?: number, right?: number},
+}
+
+type HocProps = {
 	theme: AppTheme,
 }
 
-function ListSectionHeader(props: PropsType) {
+type Props = BaseProps & HocProps
+
+function ListSectionHeader(props: Props) {
 	const {
 		style,
 		title,
@@ -126,6 +135,8 @@ function ListSectionHeader(props: PropsType) {
 
 export const RawListSectionHeader = ListSectionHeader
 
-const ThemedListSectionHeader = withTheme(ListSectionHeader)
+const ThemedListSectionHeader: React.StatelessFunctionalComponent<BaseProps> = (withTheme(
+	ListSectionHeader,
+): any)
 
 export {ThemedListSectionHeader as ListSectionHeader}

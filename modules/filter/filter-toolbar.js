@@ -69,39 +69,41 @@ export function FilterToolbar({filters, onPopoverDismiss}: Props) {
 		/>
 	))
 
-	const allButtons = filters.filter(f => f.enabled).map(filter => {
-		if (filter.type === 'toggle') {
-			return (
-				<ActiveFilterButton
-					key={filter.spec.title}
-					filter={filter}
-					label={filter.spec.label}
-					onRemove={filter => updateFilter(filter)}
-				/>
-			)
-		} else if (filter.type === 'list') {
-			if (!filter.spec.selected.length) {
+	const allButtons = filters
+		.filter(f => f.enabled)
+		.map(filter => {
+			if (filter.type === 'toggle') {
 				return (
 					<ActiveFilterButton
 						key={filter.spec.title}
 						filter={filter}
-						label={`No ${filter.spec.title}`}
+						label={filter.spec.label}
 						onRemove={filter => updateFilter(filter)}
 					/>
 				)
-			}
+			} else if (filter.type === 'list') {
+				if (!filter.spec.selected.length) {
+					return (
+						<ActiveFilterButton
+							key={filter.spec.title}
+							filter={filter}
+							label={`No ${filter.spec.title}`}
+							onRemove={filter => updateFilter(filter)}
+						/>
+					)
+				}
 
-			return filter.spec.selected.map(selected => (
-				<ActiveFilterButton
-					key={selected.title}
-					filter={filter}
-					label={selected.label || selected.title.toString()}
-					onRemove={filter => updateFilter(filter, selected)}
-				/>
-			))
-		}
-		return null
-	})
+				return filter.spec.selected.map(selected => (
+					<ActiveFilterButton
+						key={selected.title}
+						filter={filter}
+						label={selected.label || selected.title.toString()}
+						onRemove={filter => updateFilter(filter, selected)}
+					/>
+				))
+			}
+			return null
+		})
 	const activeFilterButtons = flatten(allButtons)
 	const anyFiltersEnabled = filters.some(f => f.enabled)
 

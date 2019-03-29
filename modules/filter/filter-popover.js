@@ -3,11 +3,10 @@ import * as React from 'react'
 import Popover from 'react-native-popover-view'
 import {FilterSection} from './section'
 import type {FilterType} from './types'
-import {type TouchableUnion} from '@frogpond/touchable'
 import * as c from '@frogpond/colors'
 
 type Props = {
-	anchor: ?React.Ref<TouchableUnion>,
+	anchor: React.Ref<*>,
 	filter: FilterType,
 	onClosePopover: (filter: FilterType) => any,
 	visible: boolean,
@@ -22,12 +21,6 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 		filter: this.props.filter,
 	}
 
-	static getDerivedStateFromProps(props: Props) {
-		return {
-			filter: props.filter,
-		}
-	}
-
 	onFilterChanged = (filter: FilterType) => {
 		this.setState(() => ({filter: filter}))
 	}
@@ -36,10 +29,13 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 		const {filter} = this.state
 		const {anchor, onClosePopover, visible} = this.props
 
+		if (typeof anchor !== 'object') {
+			throw new Error('FilterPopover only supports createRef refs')
+		}
+
 		return (
 			<Popover
-				arrowStyle={arrowStyle}
-				fromView={anchor}
+				fromView={anchor.current}
 				isVisible={visible}
 				onClose={() => onClosePopover(filter)}
 				placement="bottom"
@@ -54,6 +50,5 @@ export class FilterPopover extends React.PureComponent<Props, State> {
 const popoverContainer = {
 	minWidth: 200,
 	maxWidth: 300,
+	backgroundColor: c.sectionBgColor,
 }
-
-const arrowStyle = {backgroundColor: c.iosLightBackground}

@@ -17,8 +17,8 @@ export function LoginButton(props: Props) {
 	let message = loading
 		? `Logging in to ${label}…`
 		: loggedIn
-			? `Sign Out of ${label}`
-			: `Sign In to ${label}`
+		? `Sign Out of ${label}`
+		: `Sign In to ${label}`
 
 	return (
 		<ButtonCell

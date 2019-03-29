@@ -6,13 +6,14 @@ import {BusLine} from './line'
 import {Timer} from '@frogpond/timer'
 import {NoticeView, LoadingView} from '@frogpond/notice'
 import type {TopLevelViewPropsType} from '../../types'
-import {reportNetworkProblem} from '@frogpond/analytics'
-import * as defaultData from '../../../../docs/bus-times.json'
 import {API} from '@frogpond/api'
+import {fetch} from '@frogpond/fetch'
+import {timezone} from '@frogpond/constants'
 
-const TIMEZONE = 'America/Winnipeg'
-
-const busTimesUrl = API('/transit/bus')
+const fetchBusTimes = (): Promise<Array<UnprocessedBusLine>> =>
+	fetch(API('/transit/bus'))
+		.json()
+		.then(body => body.data)
 
 type Props = TopLevelViewPropsType & {
 	+line: string,
@@ -26,7 +27,7 @@ type State = {|
 
 export class BusView extends React.PureComponent<Props, State> {
 	state = {
-		busLines: defaultData.data,
+		busLines: [],
 		activeBusLine: null,
 		loading: true,
 	}
@@ -38,16 +39,8 @@ export class BusView extends React.PureComponent<Props, State> {
 	}
 
 	fetchData = async () => {
-		let {data: busLines} = await fetchJson(busTimesUrl).catch(err => {
-			reportNetworkProblem(err)
-			return defaultData
-		})
-
-		if (process.env.NODE_ENV === 'development') {
-			busLines = defaultData.data
-		}
-
-		const activeBusLine = busLines.find(({line}) => line === this.props.line)
+		let busLines = await fetchBusTimes()
+		let activeBusLine = busLines.find(({line}) => line === this.props.line)
 
 		this.setState(() => ({busLines, activeBusLine}))
 	}
@@ -78,7 +71,7 @@ export class BusView extends React.PureComponent<Props, State> {
 				render={({now}) => (
 					<BusLine line={activeBusLine} now={now} openMap={this.openMap} />
 				)}
-				timezone={TIMEZONE}
+				timezone={timezone()}
 			/>
 		)
 	}

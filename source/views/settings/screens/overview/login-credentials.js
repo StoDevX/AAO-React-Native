@@ -6,25 +6,20 @@ import {LoginButton} from './login-button'
 import {
 	logInViaCredentials,
 	logOutViaCredentials,
-	validateLoginCredentials,
-	setLoginCredentials,
-	type LoginStateType,
-} from '../../../../redux/parts/settings'
+	type LoginStateEnum,
+} from '../../../../redux/parts/login'
+import {loadLoginCredentials} from '../../../../lib/login'
 import {type ReduxState} from '../../../../redux'
 import {connect} from 'react-redux'
 import noop from 'lodash/noop'
 
 type ReduxStateProps = {
-	initialUsername: string,
-	initialPassword: string,
-	loginState: LoginStateType,
+	status: LoginStateEnum,
 }
 
 type ReduxDispatchProps = {
-	logIn: (username: string, password: string) => any,
-	logOut: () => any,
-	validateCredentials: (username: string, password: string) => any,
-	setCredentials: (username: string, password: string) => any,
+	logInViaCredentials: (string, string) => Promise<any>,
+	logOutViaCredentials: () => any,
 }
 
 type Props = ReduxStateProps & ReduxDispatchProps
@@ -32,56 +27,82 @@ type Props = ReduxStateProps & ReduxDispatchProps
 type State = {
 	username: string,
 	password: string,
+	loadingCredentials: boolean,
+	initialCheckComplete: boolean,
 }
 
 class CredentialsLoginSection extends React.Component<Props, State> {
-	_usernameInput: any
-	_passwordInput: any
-
 	state = {
-		username: this.props.initialUsername,
-		password: this.props.initialPassword,
+		username: '',
+		password: '',
+		loadingCredentials: true,
+		initialCheckComplete: false,
 	}
 
-	focusUsername = () => this._usernameInput.focus()
-	focusPassword = () => this._passwordInput.focus()
+	componentDidMount() {
+		this.loadCredentialsFromKeychain()
+	}
 
-	logIn = async () => {
-		await this.props.logIn(this.state.username, this.state.password)
+	_usernameInput = React.createRef()
+	_passwordInput = React.createRef()
+
+	focusPassword = () =>
+		this._passwordInput.current && this._passwordInput.current.focus()
+
+	loadCredentialsFromKeychain = async () => {
+		let {username = '', password = ''} = await loadLoginCredentials()
+		this.setState(() => ({username, password, loadingCredentials: false}))
+
+		if (username && password) {
+			await this.props.logInViaCredentials(username, password)
+		}
+
+		this.setState(() => ({initialCheckComplete: true}))
+	}
+
+	logIn = () => {
+		this.props.logInViaCredentials(this.state.username, this.state.password)
 	}
 
 	logOut = () => {
-		this.props.logOut()
+		this.setState(() => ({username: '', password: ''}))
+		this.props.logOutViaCredentials()
 	}
 
-	getUsernameRef = ref => (this._usernameInput = ref)
-	getPasswordRef = ref => (this._passwordInput = ref)
-
-	onChangeUsername = (text = '') => this.setState(() => ({username: text}))
-	onChangePassword = (text = '') => this.setState(() => ({password: text}))
-
 	render() {
-		const {loginState} = this.props
-		const {username, password} = this.state
+		const {status} = this.props
+		const {
+			username,
+			password,
+			loadingCredentials,
+			initialCheckComplete,
+		} = this.state
 
-		const loading = loginState === 'checking'
-		const loggedIn = loginState === 'logged-in'
+		const loggedIn = status === 'logged-in'
+		const checkingCredentials = status === 'checking'
+		const hasBothCredentials = username && password
+
+		// this becomes TRUE when (a) creds are loaded from AsyncStorage and
+		// (b) the initial check from those credentials has completed
+		const checkingState = loadingCredentials || !initialCheckComplete
 
 		return (
 			<Section
-				footer="St. Olaf login enables the &quot;meals remaining&quot; feature."
+				footer='St. Olaf login enables the "meals remaining" feature.'
 				header="ST. OLAF LOGIN"
 			>
-				{loggedIn ? (
+				{checkingState ? (
+					<Cell title="Loading…" />
+				) : loggedIn ? (
 					<Cell title={`Logged in as ${username}.`} />
 				) : (
 					[
 						<CellTextField
 							key={0}
-							_ref={this.getUsernameRef}
-							disabled={loading}
+							_ref={this._usernameInput}
+							disabled={checkingCredentials}
 							label="Username"
-							onChangeText={this.onChangeUsername}
+							onChangeText={text => this.setState(() => ({username: text}))}
 							onSubmitEditing={this.focusPassword}
 							placeholder="username"
 							returnKeyType="next"
@@ -90,10 +111,10 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 						/>,
 						<CellTextField
 							key={1}
-							_ref={this.getPasswordRef}
-							disabled={loading}
+							_ref={this._passwordInput}
+							disabled={checkingCredentials}
 							label="Password"
-							onChangeText={this.onChangePassword}
+							onChangeText={text => this.setState(() => ({password: text}))}
 							onSubmitEditing={loggedIn ? noop : this.logIn}
 							placeholder="password"
 							returnKeyType="done"
@@ -104,9 +125,9 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 				)}
 
 				<LoginButton
-					disabled={loading || (!username || !password)}
+					disabled={!hasBothCredentials || checkingCredentials || checkingState}
 					label="St. Olaf"
-					loading={loading}
+					loading={checkingCredentials || checkingState}
 					loggedIn={loggedIn}
 					onPress={loggedIn ? this.logOut : this.logIn}
 				/>
@@ -116,34 +137,10 @@ class CredentialsLoginSection extends React.Component<Props, State> {
 }
 
 function mapStateToProps(state: ReduxState): ReduxStateProps {
-	if (!state.settings) {
-		return {
-			initialUsername: '',
-			initialPassword: '',
-			loginState: 'logged-out',
-		}
-	}
-
-	return {
-		initialUsername: state.settings.username,
-		initialPassword: state.settings.password,
-		loginState: state.settings.loginState,
-	}
-}
-
-function mapDispatchToProps(dispatch): ReduxDispatchProps {
-	return {
-		logOut: () => dispatch(logOutViaCredentials()),
-		logIn: (username, password) =>
-			dispatch(logInViaCredentials({username, password})),
-		validateCredentials: (username, password) =>
-			dispatch(validateLoginCredentials({username, password})),
-		setCredentials: (username, password) =>
-			dispatch(setLoginCredentials({username, password})),
-	}
+	return {status: state.login ? state.login.status : 'initializing'}
 }
 
 export const ConnectedCredentialsLoginSection = connect(
 	mapStateToProps,
-	mapDispatchToProps,
+	{logOutViaCredentials, logInViaCredentials},
 )(CredentialsLoginSection)

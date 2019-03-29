@@ -34,7 +34,17 @@ export function HomeScreenButton({view, onPress}: Props) {
 	)
 }
 
-function TouchableButton({onPress, label, children, tint, gradient}) {
+type TouchableButtonProps = {
+	onPress: () => void,
+	label: string,
+	children: React.Node,
+	tint: string,
+	gradient: ?[string, string],
+}
+
+function TouchableButton(props: TouchableButtonProps) {
+	let {onPress, label, children, tint, gradient} = props
+
 	if (Platform.OS === 'android') {
 		return (
 			<Tint gradient={gradient} tint={tint}>
@@ -54,12 +64,17 @@ function TouchableButton({onPress, label, children, tint, gradient}) {
 	}
 }
 
-function TouchableWrapper({onPress, children, label}) {
+type TouchableWrapperProps = {
+	onPress: () => void,
+	label: string,
+	children: React.Node,
+}
+
+function TouchableWrapper({onPress, children, label}: TouchableWrapperProps) {
 	return (
 		<Touchable
-			accessibilityComponentType="button"
 			accessibilityLabel={label}
-			accessibilityTraits="button"
+			accessibilityRole="button"
 			accessible={true}
 			highlight={false}
 			onPress={onPress}
@@ -69,7 +84,13 @@ function TouchableWrapper({onPress, children, label}) {
 	)
 }
 
-function Tint({tint = 'black', gradient, children}) {
+type TintProps = {
+	children: React.Node,
+	tint: string,
+	gradient: ?[string, string],
+}
+
+function Tint({tint = 'black', gradient, children}: TintProps) {
 	if (!gradient) {
 		const bg = {backgroundColor: tint}
 		return <View style={[styles.button, bg]}>{children}</View>

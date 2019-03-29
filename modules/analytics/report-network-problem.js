@@ -1,10 +1,8 @@
 // @flow
 
-import {trackException} from '@frogpond/analytics'
-import {notify} from './bugsnag'
+import {Sentry} from 'react-native-sentry'
 
 export function reportNetworkProblem(err: Error) {
-	trackException(err.message)
-	notify(err)
+	Sentry.captureException(err)
 	console.warn(err)
 }

@@ -9,8 +9,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "css-select": "2.0.0",
+    "css-select": "2.0.2",
     "html-entities": "1.2.1",
-    "htmlparser2": "3.9.2"
+    "htmlparser2": "3.10.1"
   }
 }

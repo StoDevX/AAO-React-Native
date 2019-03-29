@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {TabNavigator, TabBarIcon} from '@frogpond/navigation-tabs'
-import {IS_PRODUCTION} from '@frogpond/constants'
+import {isDevMode} from '@frogpond/constants'
 
 import {BonAppHostedMenu} from './menu-bonapp'
 import {GitHubHostedMenu} from './menu-github'
@@ -89,7 +89,7 @@ export const MenusView = TabNavigator({
 		},
 	},
 
-	...(!IS_PRODUCTION ? {BonAppDevToolView: {screen: BonAppPickerView}} : {}),
+	...(isDevMode() ? {BonAppDevToolView: {screen: BonAppPickerView}} : {}),
 })
 MenusView.navigationOptions = {
 	title: 'Menus',

@@ -1,7 +1,7 @@
 // @flow
 
 import {Platform, StyleSheet} from 'react-native'
-import {createStackNavigator} from 'react-navigation'
+import {createStackNavigator, createAppContainer} from 'react-navigation'
 import * as c from '@frogpond/colors'
 import {getTheme} from '@frogpond/app-theme'
 import {routes} from './routes'
@@ -13,15 +13,12 @@ const styles = StyleSheet.create({
 		backgroundColor: theme.navigationBackground,
 	},
 	card: {
-		backgroundColor: Platform.select({
-			ios: c.iosLightBackground,
-			android: c.androidLightBackground,
-		}),
+		backgroundColor: c.sectionBgColor,
 	},
 })
 
 const navigatorOptions = {
-	navigationOptions: {
+	defaultNavigationOptions: {
 		headerStyle: styles.header,
 		headerTintColor: theme.navigationForeground,
 	},
@@ -32,4 +29,5 @@ const navigatorOptions = {
 	cardStyle: styles.card,
 }
 
-export const AppNavigator = createStackNavigator(routes, navigatorOptions)
+const MainNavigator = createStackNavigator(routes, navigatorOptions)
+export const AppNavigator = createAppContainer(MainNavigator)

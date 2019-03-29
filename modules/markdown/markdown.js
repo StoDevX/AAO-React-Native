@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {View, Text} from 'react-native'
+import {View} from 'react-native'
 import glamorous from 'glamorous-native'
 import ReactMarkdown from 'react-markdown'
 
@@ -15,8 +15,8 @@ import {Link} from './link'
 import {Image} from './image'
 import {List, ListItem} from './list'
 
-const Softbreak = () => <Text>{'\n'}</Text>
-const Hardbreak = () => <Text>&lt;br&gt;</Text>
+const Softbreak = () => ' '
+const Hardbreak = () => '\n'
 const HorizontalRule = glamorous.view({
 	width: '100%',
 	height: 1,

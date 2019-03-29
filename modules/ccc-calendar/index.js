@@ -1,15 +1,14 @@
 // @flow
 
 import * as React from 'react'
-import {reportNetworkProblem} from '@frogpond/analytics'
+import {timezone} from '@frogpond/constants'
 import type {NavigationScreenProp} from 'react-navigation'
+import {fetch} from '@frogpond/fetch'
 import {EventList, type PoweredBy} from '@frogpond/event-list'
 import {type EventType} from '@frogpond/event-type'
 import moment from 'moment-timezone'
-import delay from 'delay'
 import {LoadingView} from '@frogpond/notice'
 import {API} from '@frogpond/api'
-const TIMEZONE = 'America/Winnipeg'
 
 type Props = {
 	calendar:
@@ -25,7 +24,7 @@ type Props = {
 
 type State = {
 	events: EventType[],
-	loading: boolean,
+	initialLoadComplete: boolean,
 	refreshing: boolean,
 	error: ?Error,
 	now: moment,
@@ -34,15 +33,15 @@ type State = {
 export class CccCalendarView extends React.Component<Props, State> {
 	state = {
 		events: [],
-		loading: true,
+		initialLoadComplete: false,
 		refreshing: false,
 		error: null,
-		now: moment.tz(TIMEZONE),
+		now: moment.tz(timezone()),
 	}
 
 	componentDidMount() {
 		this.getEvents().then(() => {
-			this.setState(() => ({loading: false}))
+			this.setState(() => ({initialLoadComplete: true}))
 		})
 	}
 
@@ -65,7 +64,7 @@ export class CccCalendarView extends React.Component<Props, State> {
 		return events
 	}
 
-	getEvents = async (now: moment = moment.tz(TIMEZONE)) => {
+	getEvents = async (reload?: boolean, now: moment = moment.tz(timezone())) => {
 		let url
 		if (typeof this.props.calendar === 'string') {
 			url = API(`/calendar/named/${this.props.calendar}`)
@@ -79,35 +78,21 @@ export class CccCalendarView extends React.Component<Props, State> {
 			throw new Error('invalid calendar type!')
 		}
 
-		let data: EventType[] = []
-		try {
-			data = await fetchJson(url)
-		} catch (err) {
-			reportNetworkProblem(err)
-			this.setState({error: err.message})
-			console.warn(err)
-		}
+		let events: Array<EventType> = await fetch(url, {
+			delay: reload ? 500 : 0,
+		}).json()
 
-		this.setState({now, events: this.convertEvents(data)})
+		this.setState({now, events: this.convertEvents(events)})
 	}
 
 	refresh = async () => {
-		let start = Date.now()
 		this.setState(() => ({refreshing: true}))
-
-		await this.getEvents()
-
-		// wait 0.5 seconds – if we let it go at normal speed, it feels broken.
-		let elapsed = Date.now() - start
-		if (elapsed < 500) {
-			await delay(500 - elapsed)
-		}
-
+		await this.getEvents(true)
 		this.setState(() => ({refreshing: false}))
 	}
 
 	render() {
-		if (this.state.loading) {
+		if (!this.state.initialLoadComplete) {
 			return <LoadingView />
 		}
 

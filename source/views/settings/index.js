@@ -3,6 +3,7 @@
 export {SettingsView} from './screens/overview'
 export {IconSettingsView} from './screens/change-icon'
 export {CreditsView} from './screens/credits'
+export {DebugView} from './screens/debug'
 export {LegalView} from './screens/legal'
 export {PrivacyView} from './screens/privacy'
 export {

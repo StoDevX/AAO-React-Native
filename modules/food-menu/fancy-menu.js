@@ -74,10 +74,13 @@ export class FancyMenu extends React.Component<Props, State> {
 		// us overriding our changes from FilterView.onDismiss
 		if (
 			!prevState.cachedFoodItems ||
-			props.foodItems === prevState.cachedFoodItems
+			props.foodItems !== prevState.cachedFoodItems
 		) {
 			let {foodItems, menuCorIcons, meals, now} = props
-			let filters = buildFilters(values(foodItems), menuCorIcons, meals, now)
+			const filters =
+				prevState.filters.length !== 0
+					? prevState.filters
+					: buildFilters(values(foodItems), menuCorIcons, meals, now)
 			return {filters, cachedFoodItems: props.foodItems}
 		}
 		return null
@@ -116,7 +119,7 @@ export class FancyMenu extends React.Component<Props, State> {
 				// and apply the selected filters to the items in the menu
 				.filter(item => item && applyFilters(filters, item))
 
-		let menusWithItems = stations
+		let menusWithItems: Array<{title: string, data: Array<MenuItem>}> = stations
 			// We're grouping the menu items in a [label, Array<items>] tuple.
 			.map(menu => [menu.label, derefrenceMenuItems(menu)])
 			// We only want to show stations with at least one item in them
@@ -183,10 +186,14 @@ export class FancyMenu extends React.Component<Props, State> {
 
 		let messageView = <NoticeView style={styles.message} text={message} />
 
+		// If the requested menu has no food items, that location is closed
+		const isOpen = Object.keys(foodItems).length !== 0
+
 		let header = (
 			<FilterToolbar
 				date={now}
 				filters={filters}
+				isOpen={isOpen}
 				onPopoverDismiss={this.updateFilter}
 				title={mealName}
 			/>
@@ -197,7 +204,7 @@ export class FancyMenu extends React.Component<Props, State> {
 				ItemSeparatorComponent={Separator}
 				ListEmptyComponent={messageView}
 				ListHeaderComponent={header}
-				data={filters}
+				extraData={filters}
 				keyExtractor={this.keyExtractor}
 				onRefresh={this.props.onRefresh}
 				refreshing={this.props.refreshing}

@@ -18,19 +18,12 @@ extends:
 
 settings:
   react:
-    version: "16.4"
-    flowVersion: "0.67"
+    version: '16.6'
+    flowVersion: '0.78'
 
 env:
   es6: true
   react-native/react-native: true
-
-globals:
-  fetch: true
-  Headers: true
-  FormData: true
-  fetchJson: true
-  rawFetch: true
 
 rules:
   array-callback-return: error
@@ -39,7 +32,7 @@ rules:
   curly: [warn, multi-line]
   default-case: error
   guard-for-in: error
-  eqeqeq: [error, always, {'null': ignore}]
+  eqeqeq: [error, smart]
   linebreak-style: [error, unix]
   new-cap: off
   no-await-in-loop: warn
@@ -47,7 +40,6 @@ rules:
   no-confusing-arrow: off
   no-console: off
   no-div-regex: error
-  no-eq-null: warn
   no-extra-label: error
   no-implicit-coercion:
     - error
@@ -67,6 +59,7 @@ rules:
     - warn
     - args: 'after-used'
       argsIgnorePattern: '^_'
+      varsIgnorePattern: '^_'
   no-useless-constructor: error
   no-var: error
   prefer-promise-reject-errors: error
@@ -74,6 +67,10 @@ rules:
   quotes: [warn, single, avoid-escape]
   require-await: warn
   semi: off
+  no-misleading-character-class: warn
+  require-atomic-updates: error
+  no-async-promise-executor: error
+  require-unicode-regexp: error
 
   # react rules – https://github.com/yannickcr/eslint-plugin-react
   react/display-name: off
@@ -90,11 +87,11 @@ rules:
   react/no-access-state-in-setstate: error
   react/no-did-mount-set-state: error
   react/no-did-update-set-state: error
-  react/no-multi-comp: off  # prevent multiple component definition per file
+  react/no-multi-comp: off # prevent multiple component definition per file
   react/no-redundant-should-component-update: warn
   react/no-typos: error
   react/prop-types: off
-  react/self-closing-comp: warn  # prevent extra closing tags for components without children
+  react/self-closing-comp: warn # prevent extra closing tags for components without children
   react/sort-comp:
     - warn
     - order:
