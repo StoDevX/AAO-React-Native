@@ -25,12 +25,12 @@ export const Trailers = (props: {
 	const clips = allTrailers.filter(t => t.type === 'Clip')
 
 	return (
-		<React.Fragment>
+		<>
 			<Clips clips={trailers} title="TRAILERS" viewport={viewport} />
 			<Clips clips={teasers} title="TEASERS" viewport={viewport} />
 			<Clips clips={featurettes} title="FEATURETTES" viewport={viewport} />
 			<Clips clips={clips} title="CLIPS" viewport={viewport} />
-		</React.Fragment>
+		</>
 	)
 }
 
@@ -46,7 +46,7 @@ const Clips = (props: {
 	}
 
 	return (
-		<React.Fragment>
+		<>
 			<SectionHeading>{title}</SectionHeading>
 			<glamorous.ScrollView
 				contentContainerStyle={styles.container}
@@ -57,7 +57,7 @@ const Clips = (props: {
 					<ClipTile key={t.url} clip={t} viewport={viewport} />
 				))}
 			</glamorous.ScrollView>
-		</React.Fragment>
+		</>
 	)
 }
 

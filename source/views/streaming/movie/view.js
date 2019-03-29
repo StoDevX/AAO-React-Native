@@ -1,21 +1,20 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, ScrollView, Dimensions} from 'react-native'
-import {connect} from 'react-redux'
+import {StyleSheet, ScrollView} from 'react-native'
 import moment from 'moment-timezone'
 import glamorous from 'glamorous-native'
 import {rgb} from 'polished'
 
 import {TabBarIcon} from '@frogpond/navigation-tabs'
-import {getWeeklyMovie} from '../../../redux/parts/weekly-movie'
-import {type ReduxState} from '../../../redux'
 import {LoadingView, NoticeView} from '@frogpond/notice'
 import * as c from '@frogpond/colors'
 import {Row} from '@frogpond/layout'
 import {openUrl} from '@frogpond/open-url'
 import {ListSeparator} from '@frogpond/lists'
-import {type TopLevelViewPropsType} from '../../types'
+import {useViewport} from '@frogpond/viewport'
+import {fetch} from '@frogpond/fetch'
+import {WEEKLY_MOVIE_URL} from '../../../lib/constants'
 
 import {
 	MovieInfo,
@@ -39,205 +38,142 @@ import {Plot} from './components/plot'
 import {Credits} from './components/credits'
 import {Trailers} from './components/trailers'
 import type {Movie, RGBTuple} from './types'
+import {useAsync} from 'react-async'
 
-type ReactProps = TopLevelViewPropsType
-
-type ReduxStateProps = {|
-	loading: boolean,
-	error: ?boolean,
-	errorMessage: ?string,
-	movie: ?Movie,
-|}
-
-type ReduxDispatchProps = {
-	getWeeklyMovie: () => any,
-}
-
-type Props = ReduxStateProps & ReduxDispatchProps & ReactProps
-
-type State = {
-	viewport: {
-		width: number,
-		height: number,
-	},
+async function fetchWeeklyMovie(_, {signal}): Promise<Movie> {
+	let url = `${WEEKLY_MOVIE_URL}/next.json`
+	const nextMovie = await fetch(url, {signal}).json()
+	return fetch(nextMovie.movie, {signal}).json()
 }
 
 const makeRgb = (tuple: RGBTuple) => rgb(...tuple)
 
-export class PlainWeeklyMovieView extends React.Component<Props, State> {
-	static navigationOptions = () => {
-		return {
-			tabBarLabel: 'Movie',
-			tabBarIcon: TabBarIcon('film'),
-		}
+function findLargestTrailerImage(movie: Movie) {
+	if (!movie.trailers && movie.trailers.size) {
+		return null
 	}
 
-	state = {
-		viewport: Dimensions.get('window'),
+	const backgrounds = movie.trailers
+		.map(trailer => trailer.thumbnails.find(thm => thm.width === 640))
+		.filter(trailer => trailer)
+
+	return backgrounds.length ? backgrounds[0] : null
+}
+
+export function WeeklyMovieView() {
+	let {data: movie, error, isLoading, reload} = useAsync({
+		promiseFn: fetchWeeklyMovie,
+	})
+
+	if (isLoading) {
+		return <LoadingView />
 	}
 
-	componentDidMount() {
-		this.props.getWeeklyMovie()
-		Dimensions.addEventListener('change', this.handleResizeEvent)
-	}
-
-	componentWillUnmount() {
-		Dimensions.removeEventListener('change', this.handleResizeEvent)
-	}
-
-	handleResizeEvent = (event: {window: {width: number, height: number}}) => {
-		this.setState(() => ({viewport: event.window}))
-	}
-
-	findLargestTrailerImage(movie: Movie) {
-		if (!movie.trailers && movie.trailers.size) {
-			return null
-		}
-
-		const backgrounds = movie.trailers
-			.map(trailer => trailer.thumbnails.find(thm => thm.width === 640))
-			.filter(trailer => trailer)
-
-		return backgrounds.length ? backgrounds[0] : null
-	}
-
-	render() {
-		const {movie, loading, error} = this.props
-
-		if (loading) {
-			return <LoadingView />
-		}
-
-		if (error) {
-			const msg = this.props.errorMessage || ''
-			return (
-				<NoticeView
-					buttonText="Try Again"
-					onPress={this.props.getWeeklyMovie}
-					text={`There was a problem loading the movie: ${msg}`}
-				/>
-			)
-		}
-
-		if (!movie) {
-			return <NoticeView text="this should never happen" />
-		}
-
-		// TODO: handle odd-shaped posters
-		// TODO: style for Android
-		// TODO: handle "no movie posted yet this week"
-		// TODO: handle "no movie will show this week"
-		// TODO: handle all movie showing dates are past
-		// TODO: also handle after-last-showing on last showing date
-		// TODO: remove the Play button
-		// TODO: handle multiple movies on one weekend
-
-		const viewport = this.state.viewport
-		const mainTrailer = movie.trailers[0]
-		const largestTrailerImage = this.findLargestTrailerImage(movie)
-		const movieTint = makeRgb(movie.poster.colors.dominant)
-		const landscape = viewport.width > viewport.height
-		const headerHeight = landscape
-			? Math.max(viewport.height * (2 / 3), 200)
-			: Math.max(viewport.height / 3, 200)
-		const imdbUrl = `https://www.imdb.com/title/${movie.info.imdbID}`
-
+	if (error) {
 		return (
-			<ScrollView contentContainerStyle={styles.contentContainer}>
-				<TrailerBackground
-					height={headerHeight}
-					movie={movie}
-					tint={movieTint}
-					trailer={largestTrailerImage}
-					viewport={viewport}
-				/>
-
-				<Row
-					alignItems="flex-end"
-					justifyContent="space-between"
-					minHeight={headerHeight}
-					paddingHorizontal={10}
-				>
-					<Poster
-						ideal={512}
-						left={0}
-						onPress={() => openUrl(imdbUrl)}
-						sizes={movie.poster.sizes}
-						tint={movieTint}
-						viewport={viewport}
-					/>
-
-					<PlayTrailerButton
-						right={40}
-						tint={movieTint}
-						trailer={mainTrailer}
-					/>
-				</Row>
-
-				<MovieInfo movie={movie}>
-					<Title selectable={true}>{movie.info.Title}</Title>
-
-					<Row alignItems="center" marginBottom={16} marginTop={4}>
-						<Genres genres={movie.info.Genres} />
-						<Spacer />
-						<Pill bgColor={c.candyBlue} marginRight={4}>
-							{moment(movie.info.ReleaseDate).format('YYYY')}
-						</Pill>
-						<Pill bgColor={c.candyLime}>{movie.info.Runtime}</Pill>
-					</Row>
-
-					<Row alignItems="center">
-						<RottenTomatoesRating ratings={movie.info.Ratings} />
-						<FixedSpacer />
-						<ImdbRating ratings={movie.info.Ratings} />
-						<Spacer />
-						<MpaaRating rated={movie.info.Rated} />
-					</Row>
-				</MovieInfo>
-
-				<Showings showings={movie.showings} />
-
-				<ListSeparator />
-
-				<Plot text={movie.info.Plot} />
-
-				<Credits
-					actors={movie.info.Actors}
-					directors={movie.info.Director}
-					writers={movie.info.Writer}
-				/>
-
-				<Trailers trailers={movie.trailers} viewport={viewport} />
-
-				<FooterAction onPress={() => openUrl(imdbUrl)} text="Open IMDB Page" />
-
-				<glamorous.View height={16} />
-			</ScrollView>
+			<NoticeView
+				buttonText="Try Again"
+				onPress={reload}
+				text={`There was a problem loading the movie: ${error.message}`}
+			/>
 		)
 	}
-}
 
-const mapState = (state: ReduxState): ReduxStateProps => {
-	return {
-		loading: state.weeklyMovie ? state.weeklyMovie.fetching : true,
-		error: state.weeklyMovie ? state.weeklyMovie.lastFetchError : null,
-		errorMessage: state.weeklyMovie
-			? state.weeklyMovie.lastFetchErrorMessage
-			: null,
-		movie: state.weeklyMovie ? state.weeklyMovie.movie : null,
+	if (!movie) {
+		return <NoticeView text="this should never happen" />
 	}
+
+	// TODO: handle odd-shaped posters
+	// TODO: style for Android
+	// TODO: handle "no movie posted yet this week"
+	// TODO: handle "no movie will show this week"
+	// TODO: handle all movie showing dates are past
+	// TODO: also handle after-last-showing on last showing date
+	// TODO: remove the Play button
+	// TODO: handle multiple movies on one weekend
+
+	const viewport = useViewport()
+	const mainTrailer = movie.trailers[0]
+	const largestTrailerImage = findLargestTrailerImage(movie)
+	const movieTint = makeRgb(movie.poster.colors.dominant)
+	const landscape = viewport.width > viewport.height
+	const headerHeight = landscape
+		? Math.max(viewport.height * (2 / 3), 200)
+		: Math.max(viewport.height / 3, 200)
+	const imdbUrl = `https://www.imdb.com/title/${movie.info.imdbID}`
+
+	return (
+		<ScrollView contentContainerStyle={styles.contentContainer}>
+			<TrailerBackground
+				height={headerHeight}
+				movie={movie}
+				tint={movieTint}
+				trailer={largestTrailerImage}
+			/>
+
+			<Row
+				alignItems="flex-end"
+				justifyContent="space-between"
+				minHeight={headerHeight}
+				paddingHorizontal={10}
+			>
+				<Poster
+					ideal={512}
+					left={0}
+					onPress={() => openUrl(imdbUrl)}
+					sizes={movie.poster.sizes}
+					tint={movieTint}
+				/>
+
+				<PlayTrailerButton right={40} tint={movieTint} trailer={mainTrailer} />
+			</Row>
+
+			<MovieInfo movie={movie}>
+				<Title selectable={true}>{movie.info.Title}</Title>
+
+				<Row alignItems="center" marginBottom={16} marginTop={4}>
+					<Genres genres={movie.info.Genres} />
+					<Spacer />
+					<Pill bgColor={c.candyBlue} marginRight={4}>
+						{moment(movie.info.ReleaseDate).format('YYYY')}
+					</Pill>
+					<Pill bgColor={c.candyLime}>{movie.info.Runtime}</Pill>
+				</Row>
+
+				<Row alignItems="center">
+					<RottenTomatoesRating ratings={movie.info.Ratings} />
+					<FixedSpacer />
+					<ImdbRating ratings={movie.info.Ratings} />
+					<Spacer />
+					<MpaaRating rated={movie.info.Rated} />
+				</Row>
+			</MovieInfo>
+
+			<Showings showings={movie.showings} />
+
+			<ListSeparator />
+
+			<Plot text={movie.info.Plot} />
+
+			<Credits
+				actors={movie.info.Actors}
+				directors={movie.info.Director}
+				writers={movie.info.Writer}
+			/>
+
+			<Trailers trailers={movie.trailers} viewport={viewport} />
+
+			<FooterAction onPress={() => openUrl(imdbUrl)} text="Open IMDB Page" />
+
+			<glamorous.View height={16} />
+		</ScrollView>
+	)
 }
 
-const mapDispatch = (dispatch): ReduxDispatchProps => {
-	return {
-		getWeeklyMovie: () => dispatch(getWeeklyMovie()),
-	}
+WeeklyMovieView.navigationOptions = {
+	tabBarLabel: 'Movie',
+	tabBarIcon: TabBarIcon('film'),
 }
-
-export const WeeklyMovieView = connect(
-	mapState,
-	mapDispatch,
-)(PlainWeeklyMovieView)
 
 const styles = StyleSheet.create({
 	contentContainer: {

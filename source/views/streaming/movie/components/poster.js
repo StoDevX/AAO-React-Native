@@ -6,20 +6,18 @@ import glamorous from 'glamorous-native'
 import {setSaturation, setLightness} from 'polished'
 import type {PosterInfo} from '../types'
 import {ShrinkWhenTouched} from './parts'
+import {useViewport} from '@frogpond/viewport'
 
 type PosterProps = {
 	sizes: Array<PosterInfo>,
 	ideal: number,
 	tint: string,
 	onPress: () => any,
-	viewport: {
-		width: number,
-		height: number,
-	},
 }
 
 const PosterImage = (props: PosterProps) => {
-	const {sizes, ideal, viewport} = props
+	const {sizes, ideal} = props
+	const viewport = useViewport()
 
 	const landscape = viewport.width > viewport.height
 	const width = landscape
