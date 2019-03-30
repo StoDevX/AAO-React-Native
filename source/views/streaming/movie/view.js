@@ -26,7 +26,6 @@ import {
 import {Pill} from './components/pill'
 import {Poster} from './components/poster'
 import {TrailerBackground} from './components/trailer-background'
-import {PlayTrailerButton} from './components/play-trailer-button'
 import {Genres} from './components/genres'
 import {
 	RottenTomatoesRating,
@@ -92,7 +91,6 @@ export function WeeklyMovieView() {
 	// TODO: remove the Play button
 	// TODO: handle multiple movies on one weekend
 
-	const mainTrailer = movie.trailers[0]
 	const largestTrailerImage = findLargestTrailerImage(movie)
 	const movieTint = makeRgb(movie.poster.colors.dominant)
 	const landscape = viewport.width > viewport.height
@@ -123,8 +121,6 @@ export function WeeklyMovieView() {
 					sizes={movie.poster.sizes}
 					tint={movieTint}
 				/>
-
-				<PlayTrailerButton right={40} tint={movieTint} trailer={mainTrailer} />
 			</Row>
 
 			<MovieInfo movie={movie}>
