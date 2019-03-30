@@ -3,13 +3,13 @@
 import * as React from 'react'
 import {StyleSheet, Text, View, Platform} from 'react-native'
 import * as c from '@frogpond/colors'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Icon, type Glyphs} from '@frogpond/icon'
 import {Touchable} from '@frogpond/touchable'
 import type {PlayerTheme} from './types'
 
 type ActionButtonProps = {
 	colors: PlayerTheme,
-	icon: string,
+	icon: Glyphs,
 	text: string,
 	onPress: () => mixed,
 }
@@ -51,7 +51,7 @@ export const ShowCalendarButton = (props: PrefabButtonProps) => (
 
 type SmallActionButtonProps = {
 	colors: PlayerTheme,
-	icon: string,
+	icon: Glyphs,
 	onPress: () => mixed,
 }
 
