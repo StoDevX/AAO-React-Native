@@ -12,6 +12,6 @@
     "@frogpond/app-theme": "^1.0.0"
   },
   "dependencies": {
-    "@callstack/react-theme-provider": "^2.0.0"
+    "@callstack/react-theme-provider": "^2.0.1"
   }
 }

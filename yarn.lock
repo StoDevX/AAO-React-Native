@@ -648,10 +648,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@callstack/react-theme-provider@2.0.0", "@callstack/react-theme-provider@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-2.0.0.tgz#ec2da91faa0a7c0a37aacd703be476f6032e9547"
-  integrity sha512-nmzg30VBbMwZdnEC5NyI467S5OjEEDXt3v7jOlO+h4NhsDESGekSXHu2o/7qsT7SP/Uf0gYlFPq/mplIrmbf8g==
+"@callstack/react-theme-provider@2.0.1", "@callstack/react-theme-provider@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-2.0.1.tgz#c26d811cbf204cedf309deec6e6a728b10095b26"
+  integrity sha512-98EBW3VLS7P70auVJVk83mFJC+Xh5DzvUoRPhUpsiA3z6Cm3GScU8+2Ov1srmp56fdDR1nTDmprD3wvbRTVF7A==
   dependencies:
     deepmerge "^3.2.0"
     hoist-non-react-statics "^3.3.0"
