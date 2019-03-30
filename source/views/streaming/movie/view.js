@@ -130,13 +130,15 @@ export function WeeklyMovieView() {
 			<MovieInfo movie={movie}>
 				<Title selectable={true}>{movie.info.Title}</Title>
 
-				<Row alignItems="center" marginBottom={16} marginTop={4}>
-					<Genres genres={movie.info.Genres} />
-					<Spacer />
+				<Row alignItems="center" marginBottom={4} marginTop={4}>
 					<Pill bgColor={c.candyBlue} marginRight={4}>
 						{moment(movie.info.ReleaseDate).format('YYYY')}
 					</Pill>
 					<Pill bgColor={c.candyLime}>{movie.info.Runtime}</Pill>
+				</Row>
+
+				<Row alignItems="flex-end" marginBottom={4} marginTop={4}>
+					<Genres genres={movie.info.Genres} />
 				</Row>
 
 				<Row alignItems="center">
