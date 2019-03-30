@@ -37,7 +37,7 @@ import {Showings} from './components/showings'
 import {Plot} from './components/plot'
 import {Credits} from './components/credits'
 import {Trailers} from './components/trailers'
-import type {Movie, RGBTuple} from './types'
+import type {Movie, RGBTuple, MovieTrailerThumbnail} from './types'
 import {useAsync} from 'react-async'
 
 async function fetchWeeklyMovie(_, {signal}): Promise<Movie> {
@@ -48,7 +48,7 @@ async function fetchWeeklyMovie(_, {signal}): Promise<Movie> {
 
 const makeRgb = (tuple: RGBTuple) => rgb(...tuple)
 
-function findLargestTrailerImage(movie: Movie) {
+function findLargestTrailerImage(movie: Movie): ?MovieTrailerThumbnail {
 	if (!movie.trailers && movie.trailers.size) {
 		return null
 	}
@@ -106,10 +106,10 @@ export function WeeklyMovieView() {
 	return (
 		<ScrollView contentContainerStyle={styles.contentContainer}>
 			<TrailerBackground
+				background={largestTrailerImage}
 				height={headerHeight}
 				movie={movie}
 				tint={movieTint}
-				trailer={largestTrailerImage}
 			/>
 
 			<Row

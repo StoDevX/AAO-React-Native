@@ -5,7 +5,7 @@ import {StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import glamorous from 'glamorous-native'
 import {darken, transparentize, rgb} from 'polished'
-import type {Movie, MovieTrailer, RGBTuple} from '../types'
+import type {Movie, MovieTrailerThumbnail, RGBTuple} from '../types'
 import LinearGradient from 'react-native-linear-gradient'
 import {useViewport} from '@frogpond/viewport'
 
@@ -13,17 +13,17 @@ const makeRgb = (tuple: RGBTuple) => rgb(...tuple)
 
 type Props = {
 	movie: Movie,
-	trailer: MovieTrailer,
+	background: ?MovieTrailerThumbnail,
 	tint: string,
 	height: number,
 }
 
 export const TrailerBackground = (props: Props) => {
-	const {movie, trailer, tint: posterTint, height} = props
+	const {movie, background, tint: posterTint, height} = props
 	const viewport = useViewport()
 
 	// TODO: provide a fallback image
-	const uri = trailer ? trailer.url : ''
+	const uri = background ? background.url : ''
 
 	const tint = makeRgb(movie.poster.colors.dominant) || posterTint
 
