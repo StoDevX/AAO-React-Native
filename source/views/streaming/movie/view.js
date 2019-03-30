@@ -53,11 +53,9 @@ function findLargestTrailerImage(movie: Movie): ?MovieTrailerThumbnail {
 		return null
 	}
 
-	const backgrounds = movie.trailers
+	return movie.trailers
 		.map(trailer => trailer.thumbnails.find(thm => thm.width === 640))
-		.filter(trailer => trailer)
-
-	return backgrounds.length ? backgrounds[0] : null
+		.find(trailer => trailer)
 }
 
 export function WeeklyMovieView() {
