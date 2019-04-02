@@ -163,7 +163,7 @@
     "flow-bin": "0.92.1",
     "jest": "24.5.0",
     "js-yaml": "3.13.0",
-    "junk": "3.0.0",
+    "junk": "3.1.0",
     "metro-react-native-babel-preset": "0.53.1",
     "minimist": "1.2.0",
     "mkdirp": "0.5.1",
