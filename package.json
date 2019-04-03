@@ -145,8 +145,8 @@
     "wordwrap": "1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.4.0",
-    "@babel/runtime": "7.4.2",
+    "@babel/core": "7.4.3",
+    "@babel/runtime": "7.4.3",
     "@sentry/cli": "1.40.0",
     "ajv": "6.10.0",
     "babel-core": "7.0.0-bridge.0",
