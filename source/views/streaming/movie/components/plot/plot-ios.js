@@ -1,9 +1,9 @@
 // @flow
 
 import * as React from 'react'
-import {Padding, Text, SectionHeading} from './parts'
+import {Padding, Text, SectionHeading} from '../parts'
 
-export const Plot = ({text, ...props}: {text: string}) => {
+export const IosPlot = ({text, ...props}: {text: string}) => {
 	return (
 		<>
 			<SectionHeading>PLOT</SectionHeading>
