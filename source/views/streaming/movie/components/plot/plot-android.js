@@ -6,9 +6,9 @@ import {StyleSheet} from 'react-native'
 
 export const AndroidPlot = ({text}: {text: string}) => {
 	return (
-		<Card style={styles.androidCard}>
+		<Card style={styles.card}>
 			<Card.Title title="Plot" />
-			<Card.Content>
+			<Card.Content style={styles.content}>
 				<Paragraph>{text}</Paragraph>
 			</Card.Content>
 		</Card>
@@ -16,8 +16,13 @@ export const AndroidPlot = ({text}: {text: string}) => {
 }
 
 const styles = StyleSheet.create({
-	androidCard: {
-		marginHorizontal: 10,
+	card: {
+		elevation: 2,
 		marginBottom: 10,
+		marginHorizontal: 10,
+	},
+
+	content: {
+		marginBottom: 12,
 	},
 })
