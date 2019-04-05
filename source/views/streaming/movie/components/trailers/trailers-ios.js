@@ -6,14 +6,14 @@ import * as c from '@frogpond/colors'
 import {openUrl} from '@frogpond/open-url'
 import glamorous from 'glamorous-native'
 import maxBy from 'lodash/maxBy'
-import type {MovieTrailer} from '../types'
-import {SectionHeading, Card, ShrinkWhenTouched} from './parts'
+import type {MovieTrailer} from '../../types'
+import {SectionHeading, Card, ShrinkWhenTouched} from '../parts'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 type Viewport = {width: number, height: number}
 
-export const Trailers = (props: {
+export const IosTrailers = (props: {
 	trailers: Array<MovieTrailer>,
 	viewport: Viewport,
 }) => {
