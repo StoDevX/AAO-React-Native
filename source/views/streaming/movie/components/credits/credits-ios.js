@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {Heading, Text, Padding, SectionHeading} from './parts'
+import {Heading, Text, Padding, SectionHeading} from '../parts'
 import {Column} from '@frogpond/layout'
 
 type Props = {
@@ -10,9 +10,9 @@ type Props = {
 	actors: string,
 }
 
-export const Credits = ({directors, writers, actors}: Props) => {
+export const IosCredits = ({directors, writers, actors}: Props) => {
 	return (
-		<React.Fragment>
+		<>
 			<SectionHeading>CREDITS</SectionHeading>
 			<Padding marginTop={4}>
 				{writers === directors ? (
@@ -38,6 +38,6 @@ export const Credits = ({directors, writers, actors}: Props) => {
 					<Text>{actors}</Text>
 				</Column>
 			</Padding>
-		</React.Fragment>
+		</>
 	)
 }
