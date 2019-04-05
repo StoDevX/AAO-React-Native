@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react'
-import {StyleSheet, ScrollView} from 'react-native'
+import {StyleSheet, Platform, ScrollView} from 'react-native'
 import moment from 'moment-timezone'
 import glamorous from 'glamorous-native'
 import {rgb} from 'polished'
@@ -174,6 +174,10 @@ WeeklyMovieView.navigationOptions = {
 
 const styles = StyleSheet.create({
 	contentContainer: {
-		backgroundColor: c.white,
+		...Platform.select({
+			ios: {
+				backgroundColor: c.white,
+			},
+		}),
 	},
 })
