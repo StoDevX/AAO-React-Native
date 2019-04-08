@@ -2097,10 +2097,10 @@ danger-plugin-yarn@1.3.1:
     node-fetch "^1.7.1"
     semver "^5.4.1"
 
-danger@7.0.19:
-  version "7.0.19"
-  resolved "https://registry.yarnpkg.com/danger/-/danger-7.0.19.tgz#aa3d976fc7bfa616e1537ad8951c0d13f0a1c42d"
-  integrity sha512-vqV3kF71asWTxa/YvOfDg379SS20MwAp33uoHKz+hcd8zlmLSpA90V+ZonNsNbQkbsuTTjQGtLVlGVBVezL5DA==
+danger@7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/danger/-/danger-7.1.0.tgz#1bfb606822ad554c93678f62ee410d9f9c772055"
+  integrity sha512-Zi4ylmidTSId3NGLv3bZ1CKaUuB3DjWkFb9pSRcZdVd/zfG+x9Eivtb0CKPusmJ6E8arspt3Birydf6+GD6SAQ==
   dependencies:
     "@babel/polyfill" "^7.2.5"
     "@octokit/rest" "^16.14.1"
@@ -2119,8 +2119,10 @@ danger@7.0.19:
     lodash.includes "^4.3.0"
     lodash.isobject "^3.0.2"
     lodash.keys "^4.0.8"
+    lodash.mapvalues "^4.6.0"
     lodash.memoize "^4.1.2"
     memfs-or-file-map-to-github-branch "^1.1.0"
+    micromatch "^3.1.10"
     node-cleanup "^2.1.2"
     node-fetch "^2.3.0"
     override-require "^1.1.1"
@@ -4790,6 +4792,11 @@ lodash.keys@^4.0.8:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/lodash.keys/-/lodash.keys-4.2.0.tgz#a08602ac12e4fb83f91fc1fb7a360a4d9ba35205"
   integrity sha1-oIYCrBLk+4P5H8H7ejYKTZujUgU=
+
+lodash.mapvalues@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.mapvalues/-/lodash.mapvalues-4.6.0.tgz#1bafa5005de9dd6f4f26668c30ca37230cc9689c"
+  integrity sha1-G6+lAF3p3W9PJmaMMMo3IwzJaJw=
 
 lodash.memoize@^4.1.2:
   version "4.1.2"
