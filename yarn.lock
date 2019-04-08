@@ -2096,10 +2096,10 @@ cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
   dependencies:
     cssom "0.3.x"
 
-danger-plugin-yarn@1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/danger-plugin-yarn/-/danger-plugin-yarn-1.3.1.tgz#dee34a2c0b4d95e20d1edf64ac3970c8ad713b25"
-  integrity sha512-ZZdL8P3a9BP8ZL/FcuOEwHu20YOcPu3MMT2AOJxTDyYb8oCra2EhvpRlVjg908Mtc4ZMpgZLPdSMhn9830m8cQ==
+danger-plugin-yarn@1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/danger-plugin-yarn/-/danger-plugin-yarn-1.3.2.tgz#c1fc2b9ad24477775fd828473a0a33c62bd9a9b5"
+  integrity sha512-g+7guMig986giNyUxM15sFH32HKBGzHcKHMrAojvGOU9lpB53KwxX5yrYnokRlfW0aSaAwm9GCInXTQc9MoW3w==
   dependencies:
     date-fns "^1.28.5"
     lodash.flatten "^4.4.0"
@@ -4431,10 +4431,10 @@ jest@24.7.1:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
-js-yaml@3.13.0, js-yaml@^3.12.0, js-yaml@^3.13.0, js-yaml@^3.9.0:
-  version "3.13.0"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.13.0.tgz#38ee7178ac0eea2c97ff6d96fff4b18c7d8cf98e"
-  integrity sha512-pZZoSxcCYco+DIKBTimr67J6Hy+EYGZDY/HCWC+iAEA9h1ByhMXAIVUXMcMFpOCxQ/xjXmPI2MkDL5HRm5eFrQ==
+js-yaml@3.13.1, js-yaml@^3.12.0, js-yaml@^3.13.0, js-yaml@^3.9.0:
+  version "3.13.1"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.13.1.tgz#aff151b30bfdfa8e49e05da22e7415e9dfa37847"
+  integrity sha512-YfbcO7jXDdyj0DGxYVSlSeQNHbD7XPWvrVWeVUujrQEoZzWJIRrCPoyk6kL6IAjAG2IolMK4T0hNUe0HOUs5Jw==
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"

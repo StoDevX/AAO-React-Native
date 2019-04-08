@@ -48,6 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Changed the `data` prop on fancy-menu to be `extraData` (#3528)
 - Upgraded to RN 0.59 (#3557)
 - Migrated our error handling to Sentry.
+- Enabled inline requires in the metro bundler
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
