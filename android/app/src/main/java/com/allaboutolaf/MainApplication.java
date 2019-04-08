@@ -9,7 +9,6 @@ import com.avishayil.rnrestart.ReactNativeRestartPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactApplication;
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -21,6 +20,8 @@ import com.mapbox.rctmgl.RCTMGLPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import io.sentry.RNSentryPackage;
 
@@ -47,6 +48,7 @@ public class MainApplication extends Application implements ReactApplication {
         new CustomTabsPackage(),
         new KeychainPackage(),
         new LinearGradientPackage(),
+        new NetInfoPackage(),
         new RCTMGLPackage(),
         new ReactNativeOneSignalPackage(),
         new ReactNativeRestartPackage(),

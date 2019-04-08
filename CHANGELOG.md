@@ -48,6 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Changed the `data` prop on fancy-menu to be `extraData` (#3528)
 - Upgraded to RN 0.59 (#3557)
 - As per the 0.59 upgrade, point asyncstorage to the react-native-community dep (#3565)
+- As per the 0.59 upgrade, point netinfo to the react-native-community dep (#3566)
 - Migrated our error handling to Sentry.
 - Enabled inline requires in the metro bundler
 
