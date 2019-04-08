@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import {Touchable} from '@frogpond/touchable'
-import Icon from 'react-native-vector-icons/Ionicons'
+import {Icon, platformPrefixIconName} from '@frogpond/icon'
 import {commonStyles, leftButtonStyles} from './styles'
 import type {NavigationScreenProp} from 'react-navigation'
 
@@ -23,7 +23,10 @@ export function OpenSettingsButton({navigation, buttonStyle}: Props) {
 			style={[commonStyles.button, buttonStyle]}
 			testID="button-open-settings"
 		>
-			<Icon name="ios-settings" style={leftButtonStyles.icon} />
+			<Icon
+				name={platformPrefixIconName('settings')}
+				style={leftButtonStyles.icon}
+			/>
 		</Touchable>
 	)
 }

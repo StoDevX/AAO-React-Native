@@ -4,9 +4,10 @@ import * as React from 'react'
 import {Card} from '@frogpond/silly-card'
 import {Button} from '@frogpond/button'
 import {Markdown} from '@frogpond/markdown'
+import {Sentry} from 'react-native-sentry'
 import retry from 'p-retry'
 import delay from 'delay'
-import {reportNetworkProblem, notify} from '@frogpond/analytics'
+import {reportNetworkProblem} from '@frogpond/analytics'
 import {Error, ErrorMessage} from './components'
 import {getPosition, collectData, reportToServer} from './wifi-tools'
 import {styles} from './tool'
@@ -51,7 +52,7 @@ export class ToolView extends React.Component<Props, State> {
 		this.setState(() => ({status: 'collecting', error: ''}))
 		const [position, device] = await Promise.all([
 			getPosition().catch(error => {
-				notify(error)
+				Sentry.captureException(error)
 				return null
 			}),
 			collectData(),
