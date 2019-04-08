@@ -5,7 +5,7 @@ import {Animated, Easing, StyleSheet, Text, Switch} from 'react-native'
 
 import * as c from '@frogpond/colors'
 
-import EntypoIcon from 'react-native-vector-icons/Entypo'
+import EntypoIcon, {type EntypoGlyphs} from 'react-native-vector-icons/Entypo'
 import IonIcon from 'react-native-vector-icons/Ionicons'
 
 import type {ViewType} from '../../views'
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
 	},
 })
 
-const MenuIcon = ({icon, tint}: {icon: string, tint: string}) => (
+const MenuIcon = ({icon, tint}: {icon: EntypoGlyphs, tint: string}) => (
 	<EntypoIcon name={icon} size={32} style={[styles.icon, {color: tint}]} />
 )
 

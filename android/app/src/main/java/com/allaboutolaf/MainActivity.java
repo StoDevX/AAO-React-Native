@@ -2,7 +2,6 @@ package com.allaboutolaf;
 
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 import com.facebook.react.ReactActivity;
-import com.bugsnag.BugsnagReactNative;
 import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
@@ -34,9 +33,6 @@ public class MainActivity extends ReactActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!BuildConfig.DEBUG) {
-            BugsnagReactNative.start(this);
-        }
         long size = 50L * 1024L * 1024L; // 50 MB
         ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
     }

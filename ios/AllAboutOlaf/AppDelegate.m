@@ -8,12 +8,12 @@
  */
 
 #import "AppDelegate.h"
-#import <BugsnagReactNative/BugsnagReactNative.h>
 #import <AVFoundation/AVFoundation.h>
 
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <React/RNSentry.h> // This is used for versions of react >= 0.40
 
 @implementation AppDelegate
 
@@ -21,17 +21,15 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-#ifndef DEBUG
-  [BugsnagReactNative start];
-#endif
-
   UIStoryboard *loadingViewStoryBoard = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
   UIViewController *loadingViewController = [loadingViewStoryBoard instantiateViewControllerWithIdentifier:@"LaunchViewController"];
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"AllAboutOlaf"
-																						initialProperties:nil];
+                                                   initialProperties:nil];
+
+  [RNSentry installWithRootView:rootView];
 
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 

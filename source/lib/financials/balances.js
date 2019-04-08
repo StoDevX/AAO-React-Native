@@ -29,7 +29,9 @@ export async function getBalances(): Promise<BalancesOrErrorType> {
 		}
 
 		let url = OLECARD_DATA_ENDPOINT
-		let resp: OleCardBalancesType = await fetch(url).then(r => r.json())
+		let resp: OleCardBalancesType = await fetch(url, {
+			credentials: 'include',
+		}).then(r => r.json())
 
 		if (resp.error != null) {
 			return {

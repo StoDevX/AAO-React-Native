@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Added a new "yarn d" command to deduplicate dependencies
 - Added Renovate as our new automated dependency management tool, with a nice configuration (#3193)
 - Add "open webpage" row to student work detail
-- Added some logic to skip native builds if nothing that might affect them has changed (#3209)
+- Added [and then disabled] some logic to skip native builds if nothing that might affect them has changed (#3209)
 - All network requests are now cached according to the server's caching headers, even offline (#3310, #3320)
 - Added "Safety Concerns" tile that links to St. Olaf's official form for documenting safety concerns (#3345, #3394)
 - Added a prepare statement to apply an upstream fix to the VirtualizedList sticky header calculation (#3357)
@@ -42,13 +42,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Changed custom BonApp cafe viewer icon to a cog instead of the ionicons logo (#3458)
 - Updated `react-native-vector-icons` to v6 and made some compatibility fixes (#3162)
 - Addressed color banding in SIS/Balances on Android (#3462)
-- [wip] Fix OleCard login stuff (#3503)
+- Fix OleCard login stuff (#3503)
 - Updated to CircleCI 2.1 configuration syntax (#3512)
 - Adjusted how we present the BonApp ultimatum on first visiting the Balances tab (#3515)
 - Changed the `data` prop on fancy-menu to be `extraData` (#3528)
 - Upgraded to RN 0.59 (#3557)
 - As per the 0.59 upgrade, point asyncstorage to the react-native-community dep (#3565)
 - As per the 0.59 upgrade, point netinfo to the react-native-community dep (#3566)
+- Migrated our error handling to Sentry.
+- Enabled inline requires in the metro bundler
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
@@ -58,6 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed the touchable ref from not passing from the filter toolbar button to the popover (#3279)
 - Resolved some circular `require` statements in our code (#3280)
 - Resolved issue with OleCard login just never working (#3308)
+- Also resolved an issue with Balances not re-using the login cookie
 - Made build tooling always build tagged commits (#3323)
 - Fixed bug where filters were not applying correctly in menu and course search views (#3344, #3350)
 - Fixed the text color of the safety concerns button (#3349)
@@ -68,6 +71,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed the dictionary editor and made it handle user input again (#3383, #3387)
 - Fixed DatePicker by removing an unnecessary call to getDerivedStateFromProps (#3382)
 - Fixed the balances view from refreshing if the user has not agreed to the alert (#3509)
+- Fixed course search crash (#3564)
+- Building signed Android APKs was broken after RN 0.59; now it is fixed (#3569)
 
 ### Removed
 - Removed the `prepare` script patching `ScrollEnabled` inside `RCTMultilineTextInputView` (#3337)

@@ -89,19 +89,12 @@ platform :ios do
 		           distribute_external: false)
 
 		generate_sourcemap
-		upload_sourcemap_to_bugsnag
+		upload_sourcemap_to_sentry
 	end
 
 	desc 'Bundle an iOS sourcemap'
 	lane :sourcemap do
 		generate_sourcemap
-	end
-
-	desc 'Upload dYSM symbols to Bugsnag from Apple'
-	lane :refresh_dsyms do
-		download_dsyms
-		upload_symbols_to_bugsnag
-		clean_build_artifacts
 	end
 
 	desc 'Run iOS builds or tests, as appropriate'
@@ -111,9 +104,6 @@ platform :ios do
 
 		# and run
 		auto_beta
-
-		# go ahead and download dSYMs for bugsnag too
-		# refresh_dsyms if circle?
 	end
 
 	desc 'Fetch certs for both the app and any extensions'
