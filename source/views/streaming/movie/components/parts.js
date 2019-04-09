@@ -21,14 +21,14 @@ export const FixedSpacer = glamorous.view({flexBasis: 16})
 export const Title = glamorous.text({
 	...Platform.select({
 		ios: human.title1Object,
-		material: material.titleObject,
+		android: material.titleObject,
 	}),
 })
 
 export const SectionHeading = glamorous.text({
 	...Platform.select({
 		ios: human.subheadObject,
-		material: material.subheadingObject,
+		android: material.subheadingObject,
 	}),
 	fontWeight: '900',
 	paddingHorizontal: 16,
