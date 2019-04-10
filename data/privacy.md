@@ -45,8 +45,8 @@ collect crash reports.  These tools are:
 - _OneSignal_, which manages the delivery of our notifications, collects device
   information to place you into categories.
 
-- _BugSnag_, which collects crash reports and cannot be disabled currently.
-  BugSnag collects in-depth information about the device and circumstances
+- _Sentry_, which collects crash reports and cannot be disabled currently.
+  Sentry collects in-depth information about the device and circumstances
   leading up to a given crash.
 
 If you send us suggestions for updates to building hours, we will anonymously add

@@ -94,7 +94,7 @@ Bundle an iOS sourcemap
 ```
 fastlane ios refresh_dsyms
 ```
-Upload dYSM symbols to Bugsnag from Apple
+Upload dYSM symbols to Sentry from Apple
 ### ios ci-run
 ```
 fastlane ios ci-run
