@@ -112,9 +112,9 @@ workflows:
       - jest:
           filters: *filters
           requires: [cache-yarn-linux]
-      - yarn-dedupe:
-          filters: *filters
-          requires: [cache-yarn-linux]
+      # - yarn-dedupe:
+      #     filters: *filters
+      #     requires: [cache-yarn-linux]
       - prettier:
           filters: *filters
           requires: [cache-yarn-linux]
