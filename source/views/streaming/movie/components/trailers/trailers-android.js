@@ -7,9 +7,10 @@ import {openUrl} from '@frogpond/open-url'
 import glamorous from 'glamorous-native'
 import maxBy from 'lodash/maxBy'
 import type {MovieTrailer} from '../../types'
-import {SectionHeading, Card, ShrinkWhenTouched} from '../parts'
+import {ShrinkWhenTouched} from '../parts'
 import LinearGradient from 'react-native-linear-gradient'
 import Icon from 'react-native-vector-icons/Ionicons'
+import {Card} from 'react-native-paper'
 
 type Viewport = {width: number, height: number}
 
@@ -47,33 +48,24 @@ const Clips = (props: {
 
 	return (
 		<>
-			<SectionHeading>{title}</SectionHeading>
+			<Card.Title title={title} />
 			<glamorous.ScrollView
 				contentContainerStyle={styles.container}
 				horizontal={true}
 				overflow="visible"
 			>
 				{clips.map(t => (
-					<ClipTile key={t.url} clip={t} viewport={viewport} />
+					<ShrinkWhenTouched key={t.url} onPress={() => openUrl(t.url)}>
+						<ClipTile clip={t} viewport={viewport} />
+					</ShrinkWhenTouched>
 				))}
 			</glamorous.ScrollView>
 		</>
 	)
 }
 
-const SpacedCard = ({viewport, children}) => {
-	const width = Math.min(300, viewport.width - 75)
-	return (
-		<Card
-			height={(width / 3) * 2}
-			justifyContent="flex-end"
-			marginHorizontal={10}
-			marginVertical={16}
-			width={width}
-		>
-			{children}
-		</Card>
-	)
+const AndroidSpacedCard = ({children}) => {
+	return <Card style={styles.card}>{children}</Card>
 }
 
 const Padding = glamorous.view({
@@ -93,10 +85,13 @@ const ClipTile = (props: {clip: MovieTrailer, viewport: Viewport}) => {
 
 	// TODO: pick appropriate thumbnail
 	const thumbnailUrl = maxBy(clip.thumbnails, t => t.width).url
+	const width = Math.min(300, viewport.width - 75)
 
 	return (
-		<ShrinkWhenTouched onPress={() => openUrl(clip.url)}>
-			<SpacedCard viewport={viewport}>
+		<AndroidSpacedCard viewport={viewport}>
+			<Card.Content
+				style={[styles.content, {width: width, height: (width / 3) * 2}]}
+			>
 				<glamorous.Image
 					source={{uri: thumbnailUrl}}
 					style={[StyleSheet.absoluteFill, styles.cardBorderRadius]}
@@ -115,12 +110,22 @@ const ClipTile = (props: {clip: MovieTrailer, viewport: Viewport}) => {
 						<Icon name="ios-play" size={18} />
 					</ClipTitle>
 				</Padding>
-			</SpacedCard>
-		</ShrinkWhenTouched>
+			</Card.Content>
+		</AndroidSpacedCard>
 	)
 }
 
 const styles = StyleSheet.create({
+	card: {
+		elevation: 2,
+		marginBottom: 10,
+		marginHorizontal: 10,
+	},
+	content: {
+		marginVertical: 12,
+		marginHorizontal: 10,
+		justifyContent: 'flex-end',
+	},
 	container: {
 		paddingHorizontal: 6,
 	},
