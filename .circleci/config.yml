@@ -6,7 +6,7 @@ executors:
     docker: [{image: 'circleci/node:10'}]
 
   ruby:
-    docker: [{image: 'circleci/ruby:2.6.1'}]
+    docker: [{image: 'circleci/ruby:2.5.5'}]
 
 commands:
   bundler-cache:
@@ -57,7 +57,7 @@ commands:
   set-ruby-version:
     description: 'Set the Ruby Version'
     steps:
-      - run: echo "ruby-2.5.3" > ~/.ruby-version
+      - run: echo "ruby-2.5.5" > ~/.ruby-version
 
   workspace-persist-node_modules:
     description: 'Persist node_modules'
