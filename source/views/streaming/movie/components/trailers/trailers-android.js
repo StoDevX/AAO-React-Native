@@ -122,8 +122,6 @@ const styles = StyleSheet.create({
 		marginHorizontal: 10,
 	},
 	content: {
-		marginVertical: 12,
-		marginHorizontal: 10,
 		justifyContent: 'flex-end',
 	},
 	container: {
