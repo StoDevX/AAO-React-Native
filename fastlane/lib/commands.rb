@@ -26,6 +26,7 @@ end
 def authorize_ci_for_keys
 	token = ENV['GITHUB_KEYS_REPOSITORY_TOKEN']
 
+	# Ensure an entry for github.com exists in ~/.netrc
 	netrc = Netrc.read
 	unless netrc["github.com"]
 		UI.message "An entry for github.com was not found in ~/.netrc; setting..."
