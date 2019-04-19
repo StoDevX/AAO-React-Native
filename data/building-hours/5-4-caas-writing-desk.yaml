@@ -20,7 +20,7 @@ schedule:
       - {days: [Su], from: '7:00pm', to: '10:00pm'}
     notes: Times by appointment.
 
-  - title: CHM library
+  - title: CHM Music Library
     hours:
       - {days: [Mo, Tu, We, Th, Fr], from: '9:00am', to: '5:00pm'}
       - {days: [Mo, Tu, We, Th], from: '7:00pm', to: '10:00pm'}
