@@ -31,12 +31,12 @@ export class DirectoryDetailView extends React.Component {
 			name,
 			title,
 			photo,
-			office,
+			locations,
 			officeHours,
+			departments,
 			phone,
 			profile,
 			email,
-			departments,
 		} = cleanContact(this.props.navigation.state.params.contact)
 
 		return (
@@ -46,9 +46,8 @@ export class DirectoryDetailView extends React.Component {
 				<TableView>
 					<Contact
 						email={email}
-						office={office}
+						locations={locations}
 						officeHours={officeHours}
-						phone={phone}
 						profile={profile}
 					/>
 
@@ -73,21 +72,7 @@ function Header({photo, name, title}) {
 	)
 }
 
-function Contact({email, office, officeHours, phone, profile}) {
-	const contactOffice = office ? (
-		<Cell cellStyle="LeftDetail" detail="Office" title={office} />
-	) : null
-
-	const contactPhone = phone ? (
-		<Cell
-			accessory="DisclosureIndicator"
-			cellStyle="LeftDetail"
-			detail="Phone"
-			onPress={() => callPhone(phone, {prompt: false})}
-			title={phone}
-		/>
-	) : null
-
+function Contact({email, locations, officeHours, profile}) {
 	const contactEmail = email ? (
 		<Cell
 			accessory="DisclosureIndicator"
@@ -117,18 +102,40 @@ function Contact({email, office, officeHours, phone, profile}) {
 	) : null
 
 	return contactOfficeHours ||
-		contactOffice ||
-		contactPhone ||
+		locations.length ||
 		contactEmail ||
 		contactProfile ? (
 		<Section header="ABOUT">
-			{contactOffice}
-			{contactPhone}
+			<OfficeLocations locations={locations} />
 			{contactEmail}
 			{contactOfficeHours}
 			{contactProfile}
 		</Section>
 	) : null
+}
+
+function OfficeLocations({locations}) {
+	const header = locations.length > 1 ? 'Office' : 'Offices'
+	return locations.length
+		? map(locations, (loc, key) => (
+				<Section header={header}>
+					<>
+						<Cell
+							cellStyle="LeftDetail"
+							detail="Location"
+							title={loc.display}
+						/>
+						<Cell
+							accessory="DisclosureIndicator"
+							cellStyle="LeftDetail"
+							detail="Phone"
+							onPress={() => callPhone(loc.phone, {prompt: false})}
+							title={loc.phone}
+						/>
+					</>
+				</Section>
+		  ))
+		: null
 }
 
 function Departments({departments}) {
