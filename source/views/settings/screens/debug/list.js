@@ -13,6 +13,7 @@ import type {NavigationState} from 'react-navigation'
 import type {TopLevelViewPropsType} from '../../../types'
 
 type Props = TopLevelViewPropsType & {
+	apiTest?: boolean,
 	state: any,
 }
 
@@ -28,9 +29,10 @@ export class DebugListView extends React.PureComponent<Props> {
 	}
 
 	onPressRow = (row: any) => {
+		let apiTest = this.props.apiTest
 		let keyPath = this.props.navigation.getParam('keyPath', [])
 		keyPath = [...keyPath, row.key]
-		this.props.navigation.push('DebugView', {keyPath: keyPath})
+		this.props.navigation.push('DebugView', {keyPath, apiTest})
 	}
 
 	keyExtractor = (item: any) => item.key
@@ -44,14 +46,18 @@ export class DebugListView extends React.PureComponent<Props> {
 	)
 
 	render() {
-		let keyed = toPairs(this.props.state).map(([key, value]) => {
+		let parsedData = this.props.apiTest
+			? JSON.parse(this.props.state)
+			: this.props.state
+
+		let keyed = toPairs(parsedData).map(([key, value]) => {
 			return {key, value}
 		})
 
 		return (
 			<FlatList
 				ItemSeparatorComponent={ListSeparator}
-				ListEmptyComponent={<NoticeView text="Nothing found in redux." />}
+				ListEmptyComponent={<NoticeView text="Nothing found." />}
 				data={keyed}
 				keyExtractor={this.keyExtractor}
 				renderItem={this.renderItem}

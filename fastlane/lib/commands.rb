@@ -1,3 +1,5 @@
+require 'netrc'
+
 # Pick what to do - build + deploy, build + sign, or just plain build.
 def auto_beta
 	if should_nightly?
@@ -24,10 +26,12 @@ end
 def authorize_ci_for_keys
 	token = ENV['GITHUB_KEYS_REPOSITORY_TOKEN']
 
-	# see macoscope.com/blog/simplify-your-life-with-fastlane-match
-	# we're allowing the CI access to the keys repo
-	File.open("#{ENV['HOME']}/.netrc", 'a+') do |file|
-		file << "machine github.com\n  login #{token}"
+	# Ensure an entry for github.com exists in ~/.netrc
+	netrc = Netrc.read
+	unless netrc["github.com"]
+		UI.message "An entry for github.com was not found in ~/.netrc; setting..."
+		netrc["github.com"] = token
+		netrc.save
 	end
 end
 

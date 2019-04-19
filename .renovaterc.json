@@ -4,8 +4,9 @@
     ":semanticCommitsDisabled"
   ],
   "lockFileMaintenance": {
+    "enabled": true,
     "schedule": [
-      "after 5pm on every weekday"
+      "before 5am on saturday"
     ]
   },
   "prConcurrentLimit": 10,

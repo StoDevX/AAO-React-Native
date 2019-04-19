@@ -5,15 +5,12 @@ import {appVersion, appBuild} from '@frogpond/constants'
 import type {ReduxState} from '../../../../redux'
 import {connect} from 'react-redux'
 import {type NavigationScreenProp} from 'react-navigation'
-import {isDevMode} from '@frogpond/constants'
 
 type Props = {
 	navigation: NavigationScreenProp<*>,
 }
 
 export class OddsAndEndsSection extends React.Component<Props> {
-	onDebugButton = () => this.props.navigation.navigate('DebugView')
-
 	onNotificationsButton = () => {
 		this.props.navigation.navigate('PushNotificationsSettingsView')
 	}
@@ -30,10 +27,6 @@ export class OddsAndEndsSection extends React.Component<Props> {
 				)}
 
 				<ConnectedNotificationsCell onPress={this.onNotificationsButton} />
-
-				{isDevMode() && (
-					<PushButtonCell onPress={this.onDebugButton} title="Debug" />
-				)}
 			</Section>
 		)
 	}
