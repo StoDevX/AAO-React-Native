@@ -6,7 +6,7 @@ executors:
     docker: [{image: 'circleci/node:10'}]
 
   ruby:
-    docker: [{image: 'circleci/ruby:2.6.1'}]
+    docker: [{image: 'circleci/ruby:2.5.5'}]
 
 commands:
   bundler-cache:
@@ -57,7 +57,7 @@ commands:
   set-ruby-version:
     description: 'Set the Ruby Version'
     steps:
-      - run: echo "ruby-2.5.3" > ~/.ruby-version
+      - run: echo "ruby-2.5.5" > ~/.ruby-version
 
   workspace-persist-node_modules:
     description: 'Persist node_modules'
@@ -112,9 +112,9 @@ workflows:
       - jest:
           filters: *filters
           requires: [cache-yarn-linux]
-      - yarn-dedupe:
-          filters: *filters
-          requires: [cache-yarn-linux]
+      # - yarn-dedupe:
+      #     filters: *filters
+      #     requires: [cache-yarn-linux]
       - prettier:
           filters: *filters
           requires: [cache-yarn-linux]
@@ -148,7 +148,6 @@ workflows:
       - danger: {requires: [cache-yarn-linux]}
       - flow: {requires: [cache-yarn-linux]}
       - jest: {requires: [cache-yarn-linux]}
-      - yarn-dedupe: {requires: [cache-yarn-linux]}
       - prettier: {requires: [cache-yarn-linux]}
       - eslint: {requires: [cache-yarn-linux]}
       - data: {requires: [cache-yarn-linux]}
@@ -306,6 +305,7 @@ jobs:
       task: ANDROID
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_DISABLE_ANIMATION: '1'
+      SENTRY_PROPERTIES: '../android/sentry.properties'
     steps:
       - checkout
       - run:
@@ -372,7 +372,7 @@ jobs:
       - danger
 
   ios: &ios
-    macos: {xcode: '10.1.0'}
+    macos: {xcode: '10.2.0'}
     environment: &ios-env
       task: IOS
       FASTLANE_SKIP_UPDATE_CHECK: '1'
@@ -380,6 +380,7 @@ jobs:
       HOMEBREW_NO_AUTO_UPDATE: '1'
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
+      SENTRY_PROPERTIES: '../ios/sentry.properties'
     shell: /bin/bash --login -o pipefail
     steps:
       - checkout
@@ -416,8 +417,8 @@ jobs:
           command: bundle exec fastlane ios ci-run | tee ./logs/build
           environment:
             GIT_COMMIT_DESC: $(git log --format=oneline -n 1 $CIRCLE_SHA1)
-      - run: yarn detox build --configuration ios.sim.release | xcpretty
-      - run: yarn detox test --configuration ios.sim.release --cleanup
+      - run: yarn detox build e2e --configuration ios.sim.release | xcpretty
+      - run: yarn detox test e2e --configuration ios.sim.release --cleanup
       - store_artifacts: {path: ./ios/build/AllAboutOlaf.app.dSYM.zip}
       - store_artifacts: {path: ./ios/build/AllAboutOlaf.ipa}
       - run:

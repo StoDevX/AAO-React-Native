@@ -3,7 +3,7 @@
 // initialization
 import './init/constants'
 import './init/moment'
-import './init/analytics'
+import './init/sentry'
 import './init/api'
 import './init/theme'
 import './init/data'

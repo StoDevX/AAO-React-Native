@@ -8,9 +8,6 @@
   "scripts": {
     "test": "jest"
   },
-  "peerDependencies": {
-    "bugsnag-react-native": "^2.10.2"
-  },
   "dependencies": {
     "@frogpond/constants": "^1.0.0",
     "@frogpond/storage": "^1.0.0"

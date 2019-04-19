@@ -1,13 +1,14 @@
 // @flow
 
 import * as c from '@frogpond/colors'
+import {type EntypoGlyphs} from 'react-native-vector-icons/Entypo'
 
 export type ViewType =
 	| {
 			type: 'view',
 			view: string,
 			title: string,
-			icon: string,
+			icon: EntypoGlyphs,
 			foreground: 'light' | 'dark',
 			tint: string,
 			gradient?: [string, string],
@@ -17,7 +18,7 @@ export type ViewType =
 			view: string,
 			url: string,
 			title: string,
-			icon: string,
+			icon: EntypoGlyphs,
 			foreground: 'light' | 'dark',
 			tint: string,
 			gradient?: [string, string],
@@ -27,7 +28,7 @@ export type ViewType =
 			view: string,
 			url: string,
 			title: string,
-			icon: string,
+			icon: EntypoGlyphs,
 			foreground: 'light' | 'dark',
 			tint: string,
 			gradient?: [string, string],
