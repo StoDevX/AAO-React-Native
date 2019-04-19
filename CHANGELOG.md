@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Added more descriptive messages provided by Bon Appetit for closed cafeterias (#3374)
 - Added `@frogpond/icon` module with a helper for platform-prefixing modules (#3459)
 - Added consideration of `optionalDependencies` to our build scripts (#3489)
+- Added hours to CAAS study space
 - Added a development section in settings (#3560)
 - Added an API explorer for development (#3560)
 
@@ -51,6 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Upgraded to RN 0.59 (#3557)
 - Migrated our error handling to Sentry.
 - Enabled inline requires in the metro bundler
+- Updated references to ASC to be CAAS in dictionary and hours
 
 ### Fixed
 - Fixed an issue where Fastlane was reporting build failures despite having skipped the build (#3215)
