@@ -1,20 +1,14 @@
 // @flow
 import * as React from 'react'
 import * as c from '@frogpond/colors'
-import {
-	Platform,
-	StyleSheet,
-	TextInput,
-	View,
-	SegmentedControlIOS,
-} from 'react-native'
+import {StyleSheet, TextInput, View, SegmentedControlIOS} from 'react-native'
 import {Toolbar} from '@frogpond/toolbar'
 import {fetch} from '@frogpond/fetch'
 import {API} from '@frogpond/api'
 import glamorous from 'glamorous-native'
-import {iOSUIKit, material} from 'react-native-typography'
+import {iOSUIKit} from 'react-native-typography'
 import type {NavigationScreenProp} from 'react-navigation'
-import {DebugListView} from '../screens/debug'
+import {DebugListView} from '../../screens/debug'
 
 const styles = StyleSheet.create({
 	container: {
@@ -42,10 +36,7 @@ const styles = StyleSheet.create({
 const Output = glamorous(TextInput)({
 	marginVertical: 3,
 	paddingRight: 4,
-	...Platform.select({
-		ios: iOSUIKit.bodyObject,
-		android: material.body1Object,
-	}),
+	...iOSUIKit.bodyObject,
 })
 
 const Segment = glamorous(SegmentedControlIOS)({})
@@ -60,7 +51,7 @@ type State = {
 	selectedIndex: number,
 }
 
-export class APITestView extends React.PureComponent<Props, State> {
+export class IOSAPITestView extends React.PureComponent<Props, State> {
 	static navigationOptions = {
 		title: 'API Tester',
 	}
@@ -135,13 +126,11 @@ export class APITestView extends React.PureComponent<Props, State> {
 					/>
 				</Toolbar>
 
-				{Platform.OS === 'ios' ? (
-					<Segment
-						onChange={this.onChangeSegment}
-						selectedIndex={selectedIndex}
-						values={['Text', 'Parsed']}
-					/>
-				) : null}
+				<Segment
+					onChange={this.onChangeSegment}
+					selectedIndex={selectedIndex}
+					values={['Text', 'Parsed']}
+				/>
 
 				{APIResponse}
 			</View>
