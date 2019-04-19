@@ -90,11 +90,6 @@ Submit a new nightly Beta Build to Testflight
 fastlane ios sourcemap
 ```
 Bundle an iOS sourcemap
-### ios refresh_dsyms
-```
-fastlane ios refresh_dsyms
-```
-Upload dYSM symbols to Sentry from Apple
 ### ios ci-run
 ```
 fastlane ios ci-run
