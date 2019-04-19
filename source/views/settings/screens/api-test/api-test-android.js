@@ -65,16 +65,6 @@ export class AndroidAPITestView extends React.PureComponent<Props, State> {
 	render() {
 		let {error, results} = this.state
 
-		let APIResponse = error ? (
-			<Output>
-				<Text>{error}</Text>
-			</Output>
-		) : (
-			<Output>
-				<Text>{results}</Text>
-			</Output>
-		)
-
 		return (
 			<View style={styles.container}>
 				<Toolbar onPress={() => {}}>
@@ -89,7 +79,9 @@ export class AndroidAPITestView extends React.PureComponent<Props, State> {
 					/>
 				</Toolbar>
 
-				{APIResponse}
+				<Output>
+					<Text>{error ? error : results}</Text>
+				</Output>
 			</View>
 		)
 	}
