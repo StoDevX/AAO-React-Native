@@ -115,6 +115,7 @@ android {
 
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        missingDimensionStrategy "RNN.reactNativeVersion", "reactNative57_5"
 
         versionCode 1
         versionName "1.0.0"
@@ -214,14 +215,30 @@ android {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
         preDexLibraries = preDexEnabled && !ciBuild
     }
+}
 
-    configurations.all {
-        resolutionStrategy.force "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-        resolutionStrategy.force "com.android.support:customtabs:${rootProject.ext.supportLibVersion}"
-        resolutionStrategy.force "com.android.support:support-media-compat:${rootProject.ext.supportLibVersion}"
-        resolutionStrategy.force "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
+configurations.all {
+    resolutionStrategy.force "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    resolutionStrategy.force "com.android.support:customtabs:${rootProject.ext.supportLibVersion}"
+    resolutionStrategy.force "com.android.support:support-media-compat:${rootProject.ext.supportLibVersion}"
+    resolutionStrategy.force "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
 
-        resolutionStrategy.force 'org.webkit:android-jsc:r236355'
+    resolutionStrategy.force 'org.webkit:android-jsc:r236355'
+}
+
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty("android")) {
+            android {
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+
+                defaultConfig {
+                    targetSdkVersion rootProject.ext.targetSdkVersion
+                    minSdkVersion rootProject.ext.minSdkVersion
+                }
+            }
+        }
     }
 }
 
@@ -234,6 +251,7 @@ dependencies {
     implementation project(':react-native-gesture-handler')
     implementation project(':react-native-keychain')
     implementation project(':react-native-linear-gradient')
+    implementation project(':react-native-navigation')
     implementation project(':react-native-network-info')
     implementation project(':react-native-onesignal')
     implementation project(':react-native-restart')

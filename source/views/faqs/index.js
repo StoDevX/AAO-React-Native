@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react'
+import {Navigation} from 'react-native-navigation'
 import {RefreshControl, StyleSheet} from 'react-native'
 import * as c from '@frogpond/colors'
 import {View, ScrollView} from 'glamorous-native'

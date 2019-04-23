@@ -2,22 +2,14 @@ package com.allaboutolaf;
 
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 import com.facebook.react.ReactActivity;
+import com.reactnativenavigation.NavigationActivity;
 import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 import android.os.Bundle;
 
-public class MainActivity extends ReactActivity {
-
-    /**
-     * Returns the name of the main component registered from JavaScript.
-     * This is used to schedule rendering of the component.
-     */
-    @Override
-    protected String getMainComponentName() {
-        return "AllAboutOlaf";
-    }
+public class MainActivity extends NavigationActivity {
 
     @Override
     protected ReactActivityDelegate createReactActivityDelegate() {

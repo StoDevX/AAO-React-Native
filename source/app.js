@@ -7,13 +7,10 @@ import './init/sentry'
 import './init/api'
 import './init/theme'
 import './init/data'
-// import './init/navigation'
+import './init/navigation'
 import {ONESIGNAL_APP_ID} from './init/notifications'
 
 import * as React from 'react'
-import {Provider} from 'react-redux'
-import {makeStore, initRedux} from './redux'
-import * as navigation from './navigation'
 import OneSignal, {
 	type OneSignalOpenResult,
 	type OneSignalNotification,
@@ -21,9 +18,6 @@ import OneSignal, {
 } from 'react-native-onesignal'
 import {ThemeProvider} from '@callstack/react-theme-provider'
 import {getTheme} from '@frogpond/app-theme'
-
-const store = makeStore()
-initRedux(store)
 
 type Props = {}
 
@@ -63,10 +57,7 @@ export default class App extends React.Component<Props> {
 		return (
 			<Provider store={store}>
 				<ThemeProvider theme={theme}>
-					<navigation.AppNavigator
-						onNavigationStateChange={navigation.trackScreenChanges}
-						persistenceKey={navigation.persistenceKey}
-					/>
+					<navigation.AppNavigator />
 				</ThemeProvider>
 			</Provider>
 		)

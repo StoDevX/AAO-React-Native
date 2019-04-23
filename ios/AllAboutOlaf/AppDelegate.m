@@ -13,7 +13,8 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-#import <React/RNSentry.h> // This is used for versions of react >= 0.40
+#import <RNSentry.h>
+#import <ReactNativeNavigation/ReactNativeNavigation.h>
 
 @implementation AppDelegate
 
@@ -21,25 +22,18 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  UIStoryboard *loadingViewStoryBoard = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
-  UIViewController *loadingViewController = [loadingViewStoryBoard instantiateViewControllerWithIdentifier:@"LaunchViewController"];
+  NSURL* jsCodeLocation;
 
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                                   moduleName:@"AllAboutOlaf"
-                                                   initialProperties:nil];
+#if DEBUG
+  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+#else
+  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
 
-  [RNSentry installWithRootView:rootView];
+  [ReactNativeNavigation bootstrap:jsCodeLocation launchOptions:launchOptions];
 
-  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-
-  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  UIViewController *rootViewController = [UIViewController new];
-  rootViewController.view = rootView;
-  self.window.rootViewController = rootViewController;
-  [self.window makeKeyAndVisible];
-
-  rootView.loadingView = loadingViewController.view;
+  RCTBridge* bridge = [ReactNativeNavigation getBridge];
+  [RNSentry installWithBridge:bridge];
 
   // set up the requests cacher
   NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024   // 4 MiB
@@ -51,15 +45,6 @@
   [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error: nil];
 
   return YES;
-}
-
-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-{
-#if DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-#else
-  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-#endif
 }
 
 @end

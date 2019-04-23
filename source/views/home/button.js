@@ -21,7 +21,7 @@ export function HomeScreenButton({view, onPress}: Props) {
 
 	return (
 		<TouchableButton
-			gradient={view.gradient}
+			//gradient={view.gradient}
 			label={view.title}
 			onPress={onPress}
 			tint={view.tint}
